@@ -1,0 +1,59 @@
+Settings
+--------
+
+A facility for storing settings both on global and user contexts. We
+model settings as zope3 interfaces to allow for easy construction of
+forms utilizing settings via the standard form machinery.
+
+To demonstrate let's first create a zope3 schema for some settings.
+
+  >>> from zope import schema, interface
+  >>>
+  >>> class IExampleSettings( interface.Interface ):
+  ...     email = schema.TextLine()
+  ...     frequency = schema.Int()
+  ...     filter_before = schema.Date()
+  ...     filter = schema.Bool(default=False)
+  >>>
+
+after we have created a schema we need to create and register an
+adapter for it. The adapter can be registered against any relational
+object, or against the application itself. The two primary use cases
+are for user settings and and application settings so let's
+demonstrate against those two.
+
+  >>> from bungeni.models.interfaces import IBungeniUser, IBungeniApplication
+  >>> class BungeniApp( object ):
+  ...     interface.implements( IBungeniApplication )
+
+
+First we need to create and register the adapters
+
+  >>> from bungeni.models import settings
+  >>> from zope import component
+
+One for global settings 
+
+  >>> GlobalSettings = settings.GlobalSettingFactory( IExampleSettings )
+  >>> component.provideAdapter( GlobalSettings, ( IBungeniApplication, ), IExampleSettings )
+
+And one for user settings
+
+  >>> UserSettings = settings.UserSettingFactory( IExampleSettings )
+  >>> component.provideAdapter( UserSettings, (IBungeniUser,), IExampleSettings )
+ 
+Now we can adapt these contexts to the settings and set and retrieve values
+
+  >>> app = BungeniApp()
+  >>> app_settings = IExampleSettings( app )
+  >>> app_settings.frequency = 10
+  >>> app_settings.email = u"Slashdot"
+
+  >>> app_settings = IExampleSettings( app )
+  >>> app_settings.frequency
+  10
+  >>> app_settings.email
+  'Slashdot'
+  >>> app_settings.filter
+  False
+

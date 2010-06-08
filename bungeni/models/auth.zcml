@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="bungeni.models">
+
+  <include package="zope.component" file="meta.zcml" />
+  <include package="zope.app.authentication" />
+  
+  <!-- Global/Local Role/Permission/Principal Maps -->
+  <adapter
+     for=".interfaces.IBungeniApplication"
+     provides="zope.securitypolicy.interfaces.IPrincipalRoleMap"
+     factory="alchemist.security.role.GlobalPrincipalRoleMap"
+     />
+     
+  <adapter
+     for=".interfaces.IBungeniApplication"
+     provides="zope.securitypolicy.interfaces.IRolePermissionMap"
+     factory="alchemist.security.permission.GlobalRolePermissionMap"
+     />
+  
+  <adapter
+     for="ore.alchemist.interfaces.IAlchemistContent"
+     provides="zope.securitypolicy.interfaces.IPrincipalRoleMap"
+     factory="alchemist.security.role.LocalPrincipalRoleMap"
+     />
+  
+  <adapter
+     for="ore.alchemist.interfaces.IAlchemistContent"
+     provides="zope.securitypolicy.interfaces.IRolePermissionMap"
+     factory="alchemist.security.permission.LocalRolePermissionMap"
+     />
+
+</configure>

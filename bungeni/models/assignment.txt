@@ -1,0 +1,94 @@
+Group Assignments
+-----------------
+
+A facility for assigning a content item to a group, possibly with a workflow to 
+the assignment.
+
+First some setup code..
+
+  >>> from bungeni.models import domain, interfaces
+  >>> from bungeni.models.interfaces import IAssignmentFactory, IContextAssignments, IContentAssignments 
+  >>> from zope.component import getMultiAdapter
+  >>> from ore.alchemist import Session
+  >>> from datetime import datetime
+  >>> import transaction
+
+To demonstrate let's create some groups and a content object.
+  >>> session = Session()
+  >>> parliament = domain.Parliament( short_name=u"p_1", start_date=datetime.now(), election_date=datetime.now())
+  >>> parliament.language = "en"
+  >>> session.add( parliament )
+  >>> billtype = domain.BillType()
+  >>> billtype.bill_type_id = 1 
+  >>> billtype.bill_type_name=u"private"
+  >>> billtype.language = "en"
+  >>> session.add(billtype)
+  >>> country = domain.Country()
+  >>> country.country_id = 'KE'
+  >>> country.country_name = u"Kenya"
+  >>> country.iso_name = u"KENYA"
+  >>> country.language = "en"
+  >>> session.add(country)
+  >>> session.flush()
+  >>> mp_1 = domain.User(u"mp_1", 
+  ...        first_name=u"a", 
+  ...        last_name=u'ab', 
+  ...        birth_country="KE",
+  ...        email=u"mp1@example.com", 
+  ...        date_of_birth=datetime.now(),
+  ...        language="en",
+  ...        gender='M') 
+  >>> session.add(mp_1)
+  >>> session.flush()
+  >>> bill = domain.Bill()
+  >>> bill.short_name=u"terra"
+  >>> bill.bill_type_id = 1
+  >>> bill.owner_id = mp_1.user_id
+  >>> bill.language = "en"
+  >>> bill2 = domain.Bill()
+  >>> bill2.short_name=u"firma"
+  >>> bill2.bill_type_id = 1
+  >>> bill2.owner_id = mp_1.user_id
+  >>> bill2.language = "en"
+  >>> committee = domain.Committee(short_name=u"Committee", start_date=datetime.now())
+  >>> committee.parent_group_id = parliament.parliament_id
+  >>> committee.language = "en"
+  >>> committee2 = domain.Committee(short_name=u"Committee 2", start_date=datetime.now())
+  >>> committee2.parent_group_id = parliament.parliament_id
+  >>> committee2.language = "en"
+  >>> stored = map( Session().add, ( bill, bill2, committee, committee2 ) )
+  >>> transaction.commit()
+
+After session is committed we need to reattach ( SA-0.5 )
+
+  >>> stored = map( Session().add, ( bill, bill2, committee, committee2 ) )
+
+Now we can assign the bill to a committee.
+
+  >>> getMultiAdapter( (bill, committee ), IAssignmentFactory).new()
+  <bungeni.models.assignment.GroupAssignment object at ...>
+
+  >>> getMultiAdapter( (bill, committee2 ), IAssignmentFactory).new()
+  <bungeni.models.assignment.GroupAssignment object at ...>
+
+  >>> getMultiAdapter( (bill2, committee ), IAssignmentFactory).new()
+  <bungeni.models.assignment.GroupAssignment object at ...>
+
+We can now utilize the content assignments adapter to find all the assignments of this
+content to any group.
+
+ >>> list( IContentAssignments( bill ) )
+ [<bungeni.models.assignment.GroupAssignment object at ...>, <bungeni.models.assignment.GroupAssignment object at ...>]
+
+Or use the context assignments adapter to find all the assignments of a particular
+group.
+
+  >>> list( IContextAssignments( committee ) )
+  [<bungeni.models.assignment.GroupAssignment object at ...>, <bungeni.models.assignment.GroupAssignment object at ...>]
+
+Clean up commit outstanding transactions
+-----------------------------------------
+ >>> session.flush() 
+ >>> session.commit()
+ >>> session.close()
+ 

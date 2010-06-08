@@ -1,0 +1,187 @@
+"""
+
+We model settings as zope3 interfaces and schemas
+
+We can define a property sheet for an arbitrary database object, or for the i application itself
+"""
+
+from zope import schema
+from zope.security.proxy import removeSecurityProxy
+import sqlalchemy as rdb
+from sqlalchemy import orm
+from schema import settings
+
+import datetime
+import interfaces
+
+class TypeSerializer( object ):
+
+    mapping = {
+        schema.Int : ( str, int ),
+        schema.Date : ( lambda x: "%s-%s-%s"%(x.year, x.month, x.day ), lambda x: datetime.date(*(map( int, x.split('-'))) ) ),
+        schema.Float : ( str, float ),
+        schema.Bool : ( lambda x: str(int(x)), lambda x: bool( int( x ) ) ),
+        }
+
+    @classmethod
+    def serialize( cls, value, field ):
+        ops = cls.mapping.get( field.__class__ )
+        if ops is None:
+            return value
+        serializer, deserializer = ops
+        return serializer( value )
+
+    @classmethod
+    def deserialize( cls, value, field ):
+        ops = cls.mapping.get( field.__class__)
+        if ops is None:
+            return value
+        serializer, deserializer = ops
+        return deserializer( value )
+        
+    
+class SettingsBase( object ):
+    
+    settings_schema = None
+
+    def __init__( self, context ):
+        self.context = context
+        self._data, self._storedattrs = self._fetch()
+
+        
+    def _fetch( self ):
+        oid, otype = self._context()
+        values = rdb.select( [settings.c.name, settings.c.value ],
+                             rdb.and_( settings.c.propertysheet == self.settings_schema.__name__,
+                                       settings.c.object_type == otype,
+                                       settings.c.object_id == oid )
+                             )
+        d = {}
+        names = set()
+        for r in values.execute():
+            field = self.settings_schema.get( r.name )
+            if not field:
+                continue
+            d[ r.name ] = TypeSerializer.deserialize( r.value, field )
+            names.add( r.name )
+        for i in ( set( self.settings_schema.names(1) ) - names ):
+            field = self.settings_schema[i]
+            d[i] = field.default
+        return d, names
+        
+    def _context( self ):
+        unwrapped = removeSecurityProxy( self.context )
+        mapper = orm.object_mapper( unwrapped )
+        primary_key = mapper.primary_key_from_instance( unwrapped )[0]
+        return primary_key,  unwrapped.__class__.__name__.lower()
+
+    def _store( self, k, v ):
+
+        fs = self.settings_schema.get( k )
+        if not fs:
+            raise AttributeError("Invalid Settings Field %s"%k)
+        
+        oid, otype = self._context()
+        field = self.settings_schema.get( k )
+        svalue = TypeSerializer.serialize( v, field )
+        values=dict( object_id = oid,
+                     object_type = otype,
+                     propertysheet = self.settings_schema.__name__,
+                     name = k,
+                     value = svalue,
+                     type = fs.__class__.__name__ )
+        
+        if k not in self._storedattrs:
+            statement = settings.insert(values=values)
+            self._storedattrs.add( k )
+        else:
+            statement = settings.update(
+                whereclause=rdb.and_( settings.c.propertysheet == self.settings_schema.__name__,
+                          settings.c.object_type == otype,
+                          settings.c.object_id == oid ),
+                values=values,
+                )
+        statement.execute()
+
+    # mapping interface
+    
+    def __getitem__( self, k ):
+        return self._data[k]
+    
+    def get( self, k, default=None ):
+        return self._data.get(k, default)
+
+    def __setitem__( self, k, v):
+        if k in self._data and self._data[k] == v:
+            return
+        self._store( k, v)
+        self._data[k] = v
+        
+    def keys( self ):
+        return self._data.keys()
+
+    def items( self ):
+        return self._data.items()
+
+    def __len__( self ):
+        return len(self._data)
+    
+class UserSettingsBase( SettingsBase ):
+    pass
+
+class GlobalSettingsBase( SettingsBase ):
+
+    def _context( self ):
+        return None, None
+
+_marker = object()
+
+def UserSettingFactory( iface ):
+    """
+    given a zope3 interface construct a user settings adapter
+    """
+
+    fields = dict( settings_schema = iface )
+    for fs in schema.getFields( iface ).values():
+        def get( self, field_name=fs.__name__, default=fs.default ):
+            value = self.get( field_name, _marker )
+            if value is _marker:
+                return default
+            return value
+        def set( self, value, field_name=fs.__name__):
+            self[field_name]=value
+            
+        fields[ fs.__name__ ] = property( get, set )
+        
+    return type( "UserSettings%s"%( iface.__name__),
+                 ( UserSettingsBase, ),
+                 fields )
+
+def GlobalSettingFactory( iface ):
+    fields = dict( settings_schema = iface )
+    for fs in schema.getFields( iface ).values():
+        def get( self, field_name=fs.__name__, default=fs.default ):
+            value = self.get( field_name, _marker )
+            if value is _marker:
+                return default
+            return value
+        def set( self, value, field_name=fs.__name__):
+            self[field_name]=value
+            
+        fields[ fs.__name__ ] = property( get, set )
+        klass = type( "GlobalSettings%s"%( iface.__name__),
+                      ( GlobalSettingsBase, ), fields )
+                      
+    return klass
+
+BungeniSettings = GlobalSettingFactory( interfaces.IBungeniSettings )
+
+class SettingsUtility( object ):
+    """ allow for lookup of settings in a context less fashion.. ie
+        settings = component.getUtility( IBungeniSettings )()
+        """
+    def __call__( self ):
+        return BungeniSettings( None )
+
+UserSettings = UserSettingFactory( interfaces.IBungeniUserSettings )
+

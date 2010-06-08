@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+<configure
+   xmlns="http://namespaces.zope.org/zope"
+   xmlns:db="http://namespaces.objectrealms.net/rdb"
+   xmlns:xapian="http://namespaces.objectrealms.net/xapian"
+   xmlns:i18n="http://namespaces.zope.org/i18n"
+   i18n_domain="bungeni.models">
+
+  <i18n:registerTranslations directory="locales" />
+  <!-- Include Domain Models Custom Security/Interfaces -->
+  <!--include file="domain.zcml"/-->
+
+  <!-- Security Components -->
+  <include file="auth.zcml"/>
+  <include file="roles.zcml"/>
+  <include file="permissions.zcml"/>
+  
+  <!-- Assignment Infrastructure -->
+  <include file="assignment.zcml"/>
+  
+  <!-- Settings for Users -->
+  <adapter
+     for=".interfaces.IBungeniUser"
+     factory=".settings.UserSettings"
+     provides=".interfaces.IBungeniUserSettings"/>
+
+  <!-- Convience for Access for Settings without Context --> 
+  <utility
+     provides=".interfaces.IBungeniSettings"
+     factory=".settings.SettingsUtility"/>
+
+  <subscriber handler=".events.create_discussion_for_item_scheduling" />
+  <subscriber handler=".events.set_parliament_id" />
+  <!-- date range adapters -->
+  
+  <adapter
+     for=".domain.Bill"
+     provides=".interfaces.IDateRangeFilter"
+     factory=".daterange.bill_filter" />
+
+  <adapter
+     for=".domain.Motion"
+     provides=".interfaces.IDateRangeFilter"
+     factory=".daterange.motion_filter" />
+
+  <adapter
+     for=".domain.Question"
+     provides=".interfaces.IDateRangeFilter"
+     factory=".daterange.question_filter" />
+
+  <adapter
+     for=".domain.TabledDocument"
+     provides=".interfaces.IDateRangeFilter"
+     factory=".daterange.tableddocument_filter" />
+  <!--adapter
+     for=".domain.Group"
+     provides=".interfaces.IDateRangeFilter"
+     factory=".daterange.group_filter" /-->
+     
+  <adapter
+     for=".domain.Parliament"
+     provides=".interfaces.IDateRangeFilter"
+     factory=".daterange.group_filter" />
+  <adapter
+     for=".domain.PoliticalParty"
+     provides=".interfaces.IDateRangeFilter"
+     factory=".daterange.group_filter" />
+  <adapter
+     for=".domain.Committee"
+     provides=".interfaces.IDateRangeFilter"
+     factory=".daterange.group_filter" />
+
+  <adapter
+     for=".domain.Government"
+     provides=".interfaces.IDateRangeFilter"
+     factory=".daterange.group_filter" />
+  <adapter
+     for=".domain.Ministry"
+     provides=".interfaces.IDateRangeFilter"
+     factory=".daterange.group_filter" />
+  <adapter
+     for=".domain.Office"
+     provides=".interfaces.IDateRangeFilter"
+     factory=".daterange.group_filter" />
+     
+     
+  <!--adapter
+     for=".domain.GroupMembership"
+     provides=".interfaces.IDateRangeFilter"
+     factory=".daterange.group_membership_filter" /-->
+          
+  <adapter
+     for=".domain.MemberOfParliament"
+     provides=".interfaces.IDateRangeFilter"
+     factory=".daterange.group_membership_filter" />
+          
+  <adapter
+     for=".domain.CommitteeMember"
+     provides=".interfaces.IDateRangeFilter"
+     factory=".daterange.group_membership_filter" />
+
+ <adapter
+     for=".domain.CommitteeStaff"
+     provides=".interfaces.IDateRangeFilter"
+     factory=".daterange.group_membership_filter" />
+
+  <adapter
+     for=".domain.Minister"
+     provides=".interfaces.IDateRangeFilter"
+     factory=".daterange.group_membership_filter" /> 
+     
+  <adapter
+     for=".domain.PartyMember"
+     provides=".interfaces.IDateRangeFilter"
+     factory=".daterange.group_membership_filter" />
+
+ <!--sessions and sittings date range-->
+
+  <adapter
+     for=".domain.ParliamentSession"
+     provides=".interfaces.IDateRangeFilter"
+     factory=".daterange.session_filter" /> 
+
+  <adapter
+     for=".domain.GroupSitting"
+     provides=".interfaces.IDateRangeFilter"
+     factory=".daterange.sitting_filter" /> 
+
+
+
+
+</configure>
