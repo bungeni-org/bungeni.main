@@ -1,0 +1,10 @@
+<div id="workspace-archive">
+ <dl class="portlet workspace-viewlet listing enableFormTabbing">
+  <tal:viewlet repeat="viewlet view/viewlets">
+      <tal:render replace="structure viewlet/render" />
+  </tal:viewlet>
+ </dl>
+  <div class="visualClear"><!-- nothing here --></div>
+</div>
+
+

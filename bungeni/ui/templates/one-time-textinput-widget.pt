@@ -1,0 +1,7 @@
+<div xmlns:tal="http://xml.zope.org/namespaces/tal">
+  <div tal:content="view/_getFormValue" >
+  </div>
+  <hr/>
+  <textarea rows="1" cols="40"
+  tal:attributes="name view/name ; id view/name"></textarea>
+</div>

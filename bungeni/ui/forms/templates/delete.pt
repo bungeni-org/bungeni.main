@@ -1,0 +1,39 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+       xmlns:metal="http://xml.zope.org/namespaces/metal"
+       metal:use-macro="context/@@standard_macros/page">
+
+  <body metal:fill-slot="body">
+
+    <h1 i18n:translate="">Delete item confirmation</h1>
+    
+    <form metal:use-macro="view/form_template/macros/form">
+      <div metal:fill-slot="pre-fieldset">
+
+        <dl class="portalMessage warning" tal:condition="not: view/status">
+          <dt>
+            <p>Delete</p>
+          </dt>
+          <dd>
+            Please confirm that you wish to delete this item.
+          </dd>
+        </dl>
+
+        <div class="visualClear"><!-- nothing here --></div>
+
+        <p>The following item will be deleted.</p>
+        
+        <ul>
+          <li>
+            <a tal:attributes="href view/context/@@absolute_url"
+               tal:content="view/context/dc:title" />
+            <p class="discreet"
+               tal:content="view/context/dc:description"
+               i18n:translate="" />
+          </li>
+        </ul>
+
+      </div>
+    </form>
+    
+  </body>
+</html>

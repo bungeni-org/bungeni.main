@@ -1,0 +1,427 @@
+Setup
+-----
+Setting up Database Connection and Utilities:
+
+   >>> from ore.alchemist import Session
+   >>> from bungeni.models import domain
+   >>> import datetime
+   >>> import bungeni.models.testing
+   >>> db = bungeni.models.testing.setup_db()
+   >>> from ore.alchemist import Session
+   >>> session = Session()
+   >>> from bungeni.ui.forms.test_dates import today, yesterday, tomorrow, dayat
+   >>> from bungeni.ui.queries import utils
+   >>> class MockContainer(object):
+   ...  __parent__ = None
+   >>> from bungeni.ui.forms import validations
+   
+   
+Note that we only test the overlap of 'peers' here.
+refer to test_dates.py to test  that contained objects are inside
+their parents dates
+   
+Parliaments
+-----------
+low level validations:
+   
+   >>> parliament = domain.Parliament( short_name=u"p_1", start_date=today, election_date=yesterday, end_date=tomorrow)
+   >>> session.add( parliament)
+   >>> session.flush()
+   >>> list(utils.validate_date_in_interval( None, domain.Parliament, yesterday))
+   []
+   >>> list(utils.validate_date_in_interval( None, domain.Parliament, today))
+   [<bungeni.models.domain.Parliament object at ...>]
+
+   >>> list(utils.validate_date_in_interval( None, domain.Parliament, tomorrow))
+   [<bungeni.models.domain.Parliament object at ...>]
+
+   >>> list(utils.validate_date_in_interval( parliament, domain.Parliament, today))
+   []
+   >>> list(utils.validate_date_in_interval( parliament,domain.Parliament, tomorrow))
+   []
+   >>> list(utils.validate_date_in_interval( None, domain.Parliament, dayat))
+   []
+   
+Before you can add a new parliament all others must be closed
+   
+   >>> list(utils.validate_open_interval( None, domain.Parliament))
+   []
+   
+        
+Add a new (open ended) parliament
+   >>> parliament2 = domain.Parliament( short_name=u"p_2", start_date=tomorrow, election_date=today, end_date=None)
+   >>> session.add( parliament2)
+   >>> session.flush()
+   
+   >>> list(utils.validate_open_interval( None, domain.Parliament))
+   [<bungeni.models.domain.Parliament object at ...>]
+ 
+give the 2nd parliament an end date and save
+   >>> parliament2.end_date = dayat
+   >>> session.flush() 
+   
+No open parliaments  anymore 
+   >>> list(utils.validate_open_interval( None, domain.Parliament))
+   []
+      
+Now check for overlapping dates but not for the current (edited) parliament
+   
+   >>> list(utils.validate_date_in_interval( parliament2, domain.Parliament, today))
+   [<bungeni.models.domain.Parliament object at ...>]
+   
+   >>> list(utils.validate_date_in_interval( parliament2 , domain.Parliament, dayat))
+   []
+   >>> list(utils.validate_date_in_interval(parliament, domain.Parliament, dayat))
+   [<bungeni.models.domain.Parliament object at ...>]
+   
+   >>> list(utils.validate_date_in_interval( parliament, domain.Parliament, yesterday)) 
+   []
+   >>> list(utils.validate_date_in_interval( parliament, domain.Parliament, today))
+   []
+   
+give the 2nd parliament an end date and save
+   >>> parliament2.end_date = dayat
+   >>> session.flush() 
+   
+No open parliaments  anymore 
+   >>> list(utils.validate_open_interval( None, domain.Parliament)) 
+   []
+
+High level validations:
+
+   >>> parliament_container = MockContainer()
+   >>> form_data= {'start_date': today, 'end_date': tomorrow, 'election_date': yesterday}
+   >>> validations.validate_parliament_dates(action=None, data=form_data, 
+   ...  context=parliament, container=parliament_container)
+   []
+   
+   >>> validations.validate_parliament_dates(action=None, data=form_data, 
+   ...  context=parliament2, container=parliament_container)
+   [Invalid(u'The start date overlaps with (p_1)', 'start_date'), 
+   Invalid(u'The end date overlaps with (p_1)', 'end_date')]
+   
+   >>> parliament.end_date = None
+   >>> session.flush() 
+   >>> validations.validate_parliament_dates(action=None, data=form_data, 
+   ...  context=parliament2, container=parliament_container)
+   [Invalid(u'Another parliament is not yet dissolved (p_1)', 'election_date')]
+
+Government:
+------------
+
+  >>> government = domain.Government()
+  >>> government.start_date = today
+  >>> government_container = MockContainer()
+  >>> government_container.__parent__ = parliament
+  >>> validations.validate_government_dates(action=None, data=form_data,
+  ...   context=government, container=government_container)
+  []
+  
+  >>> government.parliament_id = parliament.parliament_id
+  >>> government.short_name = u"gov1"
+  >>> session.add(government)
+  >>> session.flush()
+  >>> government.end_date
+  
+  >>> government_container.__parent__ = parliament2
+  >>> validations.validate_government_dates(action=None, data=form_data,
+  ...   context=government, container=government_container)
+  [Invalid(u'Start date must start after the swearing in of the parliament (...)', 'start_date')]
+  
+  >>> government2 = domain.Government()
+  >>> list(utils.validate_open_interval(government2, domain.Government))
+  [<bungeni.models.domain.Government object at ...>]
+  
+  >>> validations.validate_government_dates(action=None, data=form_data,
+  ...   context=government2, container=government_container)
+  [Invalid(u'Start date must start after the swearing in of the parliament (...)', 'start_date'), 
+  Invalid(u'Another Government is not yet dissolved (gov1)', 'start_date')]
+  
+  >>> government_container.__parent__ = parliament
+  >>> parliament.end_date = tomorrow
+  >>> session.flush()
+  >>> form_data['start_date'] = dayat
+  >>> validations.validate_government_dates(action=None, data=form_data,
+  ...   context=government, container=government_container)
+   [Invalid(u'Start date cannot be after the parliaments dissolution (...)', 'start_date')]
+  
+  >>> government.end_date = tomorrow
+  >>> session.flush()
+  >>> form_data['start_date'] = today
+  >>> validations.validate_government_dates(action=None, data=form_data,
+  ...   context=government2, container=government_container)
+  [Invalid(u'The start date overlaps with (gov1)', 'start_date'), 
+  Invalid(u'The end date overlaps with (gov1)', 'end_date')]
+  
+User group memberships:
+----------------------
+  >>> country = domain.Country()
+  >>> country.country_id = 'KE'
+  >>> country.country_name = u"Kenya"
+  >>> session.add(country)
+  >>> session.flush()
+  >>> mp_1 = domain.User(u"mp_1", 
+  ...        first_name=u"a", 
+  ...        last_name=u'ab', 
+  ...        birth_country="KE",
+  ...        email=u"mp1@example.com", 
+  ...        date_of_birth=datetime.datetime.now(),
+  ...        gender='M')
+  >>> mp_2 = domain.User(u"mp_2", 
+  ...        first_name=u"b", 
+  ...        last_name=u"bc", 
+  ...        birth_country="KE",
+  ...        date_of_birth=datetime.datetime.now(),
+  ...        email=u"mp2@example.com",
+  ...        gender='M')
+  >>> mp_3 = domain.User(u"mp_3",
+  ...        first_name=u"c", 
+  ...        birth_country="KE",
+  ...        last_name=u"cd",
+  ...        date_of_birth=datetime.datetime.now(),
+  ...        email=u"mp3@example.com", 
+  ...        gender='F')
+  >>> session.add(mp_1)
+  >>> session.add(mp_2)
+  >>> session.add(mp_3)
+  >>> membership = domain.GroupMembership()
+  >>> membership.user = mp_1
+  >>> membership.group = parliament
+  >>> session.add( membership )
+  >>> session.flush()
+  >>> group_container = MockContainer()
+  >>> group_container.__parent__ = parliament
+
+  
+
+  >>> form_data = {"start_date": today,
+  ...   "end_date": None,
+  ...   "user_id": mp_1.user_id}
+  
+  >>> validations.validate_group_membership_dates(None, form_data, membership, group_container)
+  []
+  >>> validations.validate_group_membership_dates(None, form_data, None, group_container)
+  [Invalid(u'The person is a member in (p_1) at that date', 'end_date')]
+  
+  >>> form_data = {"start_date": yesterday,
+  ...   "end_date": today,
+  ...   "user_id": mp_1.user_id} 
+
+  >>> validations.validate_group_membership_dates(None, form_data, membership, group_container)
+  []
+  >>> validations.validate_group_membership_dates(None, form_data, None, group_container)
+  [Invalid(u'The person is a member in (p_1) at that date', 'end_date')]
+ 
+  >>> membership.end_date = tomorrow
+  >>> session.flush()
+ 
+  >>> form_data = {"start_date": yesterday,
+  ...   "end_date": yesterday,
+  ...   "user_id": mp_1.user_id} 
+  >>> validations.validate_group_membership_dates(None, form_data, None, group_container)
+  []
+
+  >>> form_data = {"start_date": yesterday,
+  ...   "end_date": tomorrow,
+  ...   "user_id": mp_1.user_id} 
+  >>> validations.validate_group_membership_dates(None, form_data, None, group_container)
+  [Invalid(u'The person is a member in (p_1) at that date', 'end_date')]
+    
+  >>> form_data = {"start_date": tomorrow,
+  ...   "end_date": tomorrow,
+  ...   "user_id": mp_1.user_id} 
+  >>> validations.validate_group_membership_dates(None, form_data, None, group_container)
+  [Invalid(u'The person is a member in (p_1) at that date', 'start_date'), 
+  Invalid(u'The person is a member in (p_1) at that date', 'end_date')]
+  >>> validations.validate_group_membership_dates(None, form_data, membership, group_container)
+  []
+
+
+Partymemberships are different from general group memberships as you may
+be only member of one party at any given time:
+
+  >>> party_red = domain.PoliticalParty()
+  >>> party_red.short_name = u"Red"
+  >>> party_red.start_date = today
+  >>> session.save(party_red)
+  >>> session.flush()
+  >>> party_blue = domain.PoliticalParty()
+  >>> party_blue.short_name = u"Blue"
+  >>> party_blue.start_date = today
+  >>> session.save(party_blue)
+  >>> session.flush()
+
+  >>> party_membership1 = domain.GroupMembership()
+  >>> party_membership1.user = mp_1
+  >>> party_membership1.group = party_red
+  >>> session.add( party_membership1  )
+  >>> session.flush()
+
+  >>> party_membership2 = domain.GroupMembership()
+  >>> party_membership2.user = mp_1
+  >>> party_membership2.group = party_blue
+
+  >>> party_membership_container = MockContainer()
+  >>> party_membership_container.__parent__ = party_red
+  >>> validations.validate_party_membership(action=None, data=form_data, 
+  ...   context=party_membership2, container=party_membership_container)
+  [Invalid(u'The person is a member in (Red) at that date', 'end_date')]
+  
+  >>> party_membership1.start_date = yesterday
+  >>> party_membership1.end_date = today
+  >>> session.flush()
+  >>> validations.validate_party_membership(action=None, data=form_data, 
+  ...   context=party_membership2, container=party_membership_container)
+  []
+  
+  >>> session.add(party_membership2)
+  >>> session.flush()
+  >>> validations.validate_party_membership(action=None, data=form_data, 
+  ...   context=party_membership2, container=party_membership_container)
+   [Invalid(u'The person is a member in (Blue) at that date', 'end_date')]
+
+  >>> party_membership3 = domain.GroupMembership()
+  >>> party_membership3.user = mp_3
+  >>> party_membership3.group = party_red
+  >>> form_data['user_id'] = mp_3.user_id
+  >>> validations.validate_party_membership(action=None, data=form_data, 
+  ...   context=party_membership3, container=party_membership_container)
+  []
+  
+
+Titles for group members:
+  >>> user_role_type_chair = domain.MemberTitle()
+  >>> user_role_type_chair.user_unique = True
+  >>> user_role_type_chair.user_type = 'user'
+  >>> user_role_type_chair.user_role_name= u'Chair'
+  >>> user_role_type_chair.sort_order = 0
+  >>> session.add(user_role_type_chair)
+  >>> session.flush()
+  >>> user_role_type_member = domain.MemberTitle()
+  >>> user_role_type_member.user_unique = False
+  >>> user_role_type_member.user_type = 'user'
+  >>> user_role_type_member.user_role_name = u'Member'
+  >>> user_role_type_member.sort_order = 0
+  >>> session.add(user_role_type_member)
+  >>> session.flush()
+  
+We reuse the partymemberships to test the titles:
+
+  >>> member_role_container = MockContainer()
+  >>> member_role_container.__parent__ = party_membership1
+  >>> member_role1 = domain.MemberRoleTitle()
+  >>> member_role1.start_date = today
+  >>> member_role1.title_name_id = user_role_type_chair.user_role_type_id
+  >>> member_role1.membership_id = party_membership1.membership_id
+  
+check that the user does not have the role chaiperson yet
+  
+  >>> form_data['title_name_id'] = user_role_type_chair.user_role_type_id
+  >>> validations.validate_member_titles(action=None, data=form_data, 
+  ...   context=member_role1, container=member_role_container)
+  []
+  >>> session.add(member_role1)
+  >>> session.flush()
+  
+this role can be edited:
+  >>> validations.validate_member_titles(action=None, data=form_data, 
+  ...   context=member_role1, container=member_role_container)
+  []
+
+end his term as a chairperson
+  >>> member_role1.start_date = yesterday
+  >>> member_role1.end_date = today
+  >>> session.flush()
+
+and try to give him the role again:
+  >>> member_role2 = domain.MemberRoleTitle()
+  >>> member_role2.start_date = tomorrow
+  >>> member_role2.end_date = dayat
+  >>> member_role2.title_name_id = user_role_type_chair.user_role_type_id
+  >>> member_role2.membership_id = party_membership1.membership_id
+  >>> form_data['start_date'] = tomorrow
+  >>> form_data['end_date'] = dayat
+  >>> validations.validate_member_titles(action=None, data=form_data, 
+  ...   context=None, container=member_role_container)
+  []
+  >>> session.add(member_role2)
+  >>> session.flush()
+    
+now we give him the additional role 'member':
+  >>> member_role2 = domain.MemberRoleTitle()
+  >>> member_role2.start_date = yesterday
+  >>> member_role2.end_date = dayat
+  >>> member_role2.title_name_id = user_role_type_member.user_role_type_id
+  >>> member_role2.membership_id = party_membership1.membership_id
+  >>> form_data['start_date'] = yesterday
+  >>> form_data['end_date'] = dayat
+  >>> form_data['title_name_id'] = user_role_type_member.user_role_type_id
+  >>> validations.validate_member_titles(action=None, data=form_data, 
+  ...   context=None, container=member_role_container)
+  []
+  >>> session.save(member_role2)
+  >>> session.flush()
+  >>> validations.validate_member_titles(action=None, data=form_data, 
+  ...   context=member_role2, container=member_role_container)
+  []
+  
+he may be chairman in another group:
+  >>> member_role_container.__parent__ = party_membership2
+  >>> member_role3 = domain.MemberRoleTitle()
+  >>> member_role3.start_date = yesterday
+  >>> member_role3.end_date = dayat
+  >>> member_role3.title_name_id = user_role_type_chair.user_role_type_id
+  >>> member_role3.membership_id = party_membership2.membership_id
+  >>> form_data['start_date'] = yesterday
+  >>> form_data['end_date'] = dayat
+  >>> form_data['title_name_id'] = user_role_type_chair.user_role_type_id
+  >>> validations.validate_member_titles(action=None, data=form_data, 
+  ...   context=None, container=member_role_container)
+  []
+  >>> session.add(member_role3)
+  >>> session.flush()
+
+  
+try to give a second user the chairman role
+  
+  >>> member_role_container.__parent__ = party_membership3
+  >>> member_role3 = domain.MemberRoleTitle()
+  >>> member_role3.start_date = yesterday
+  >>> member_role3.title_name_id = user_role_type_chair.user_role_type_id
+  >>> member_role3.membership_id = party_membership3.membership_id
+  >>> form_data['title_name_id'] = user_role_type_chair.user_role_type_id
+  >>> validations.validate_member_titles(action=None, data=form_data, 
+  ...   context=None, container=member_role_container)
+  [Invalid(u'A person with the title Chair allready exists', 'start_date'), 
+  Invalid(u'A person with the title Chair allready exists', 'end_date')]
+
+as this is not possible just give him the member role:
+  >>> member_role3.title_name_id = user_role_type_member.user_role_type_id
+  >>> member_role3.membership_id = party_membership2.membership_id
+  >>> form_data['title_name_id'] = user_role_type_member.user_role_type_id
+  >>> validations.validate_member_titles(action=None, data=form_data, 
+  ...   context=None, container=member_role_container)
+  []
+  >>> session.add(member_role3)
+  >>> session.flush()
+  
+is it possible to edit this role:
+  >>> validations.validate_member_titles(action=None, data=form_data, 
+  ...   context=member_role3, container=member_role_container)
+  [] 
+
+it is not possible to give him the role a second time
+  >>> validations.validate_member_titles(action=None, data=form_data, 
+  ...   context=None, container=member_role_container)
+  [Invalid(u'This persons allready has the title Member', 'start_date'), 
+  Invalid(u'This persons allready has the title Member', 'end_date')]
+
+  
+Clean up commit outstanding transactions
+-----------------------------------------
+ >>> session.flush() 
+ >>> session.commit()
+ >>> session.close()
+ 
+
+   

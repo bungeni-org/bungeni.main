@@ -1,0 +1,26 @@
+<dt id="fieldsetlegend-offices-held" i18n:translate="">
+  Offices held
+</dt>
+
+<dd id="fieldset-offices-held">
+  <table class="listing">
+    <thead>
+      <tr>
+        <th i18n:translate="office_held"> Office </th>
+        <th i18n:translate="office_type"> Type </th>
+        <th i18n:translate="office_title"> Title </th>
+        <th i18n:translate="office_from"> From </th>
+        <th i18n:translate="office_to"> To </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr tal:repeat="result view/get_offices_held">
+        <td tal:content="result/group">  </td>
+        <td tal:content="result/group_type">  </td>
+        <td tal:content="result/member_title">  </td>
+        <td tal:content="result/start_date">  </td>
+        <td tal:content="result/end_date">  </td>
+      </tr>
+    </tbody>
+  </table>
+</dd>

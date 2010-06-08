@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:z3c="http://namespaces.zope.org/z3c"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="bungeni.ui">
+
+  <!-- Reset Container UI on Users back to default-->
+  <browser:page
+     for="bungeni.models.interfaces.IBungeniAdmin"
+     name="index.html"
+     template="templates/admin-index.pt"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     permission="zope.ManageSite"
+     />
+
+  <browser:page
+     for="bungeni.models.interfaces.IBungeniAdmin"
+     name="settings"
+     class=".admin.Settings"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     permission="zope.ManageSite"
+     />
+
+  <!-- only visible to currently authenticated users -->
+  <browser:page
+     for="*"
+     name="user-settings"
+     class=".admin.UserSettings"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     permission="zope.Public"
+     />
+
+  <!--browser:page
+     for="bungeni.models.interfaces.IBungeniAdmin"
+     permission="zope.ManageSite"
+     name="users"
+     class=".admin.UserListing"
+     template="templates/admin-users.pt"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     /-->
+
+  <browser:page
+     for="bungeni.models.interfaces.IBungeniAdmin"
+     permission="zope.ManageSite"
+     name="query-users"
+     class=".admin.UserQueryJSON"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     for="bungeni.models.interfaces.IBungeniAdmin"
+     permission="zope.ManageSite"
+     name="groups"
+     class=".admin.GroupListing"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <!--browser:viewlet
+      name="bungeni.admin"
+      manager="ploned.ui.interfaces.ILeftColumnManager"
+      for="*"
+      layer=".interfaces.IAdminSectionLayer"
+      class=".admin.Menu"
+      permission="zope.ManageSite"
+      allowed_interface="zope.contentprovider.interfaces.IContentProvider"/-->
+
+</configure>
+

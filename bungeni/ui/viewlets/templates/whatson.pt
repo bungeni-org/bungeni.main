@@ -1,0 +1,150 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      metal:use-macro="context/@@standard_macros/page">
+  
+  <div metal:fill-slot="body" i18n:domain="bungeni.ui">
+  <div id="whats-on-overview" >
+    <h1> <a href="/business" i18n:translate="">What's on</a></h1>
+    <p i18n:translate="" class="documentDescription">
+      An overview of the daily operations of the parliament
+    </p>
+    <br/>
+
+    <p i18n:translate='From: ${whats_on_start_date} to: ${whats_on_end_date}'>
+       From: <span tal:replace="view/get_start_date" i18n:name="whats_on_start_date"/>
+       to: <span tal:replace="view/get_end_date" i18n:name="whats_on_end_date" />
+    </p>
+    <dl class="portlet whats-on-viewlet enableFormTabbing" >
+        <dt i18n:translate=""  id="fieldsetlegend-upcoming-sittings"> Sittings </dt>
+        <dd tal:define="days view/get_sittings" tal:condition="days" id="fieldset-upcoming-sittings">
+            <ul>
+              <tal:block tal:repeat="day days">
+                  <li tal:content="day/day" /> 
+              <ul tal:define="sittings day/sittings" >
+                <li tal:repeat="sitting sittings">
+                  <a tal:attributes="href sitting/url">
+                    <span tal:content="sitting/start" /> 
+                    -
+                    <span tal:content="sitting/end" /> 
+                    (<span tal:content="sitting/type" />)
+                    <span tal:content="sitting/name" /> 
+                  </a> 
+                  <ul tal:define="items sitting/items">
+                    <li tal:repeat="item items">
+                        <a tal:attributes="href item/url">
+                          <span i18n:domain="bungeni.models" i18n:translate="" tal:content="item/item_type" />: 
+                          <span tal:content="item/name" />
+                          (<span i18n:domain="bungeni.core" i18n:translate="" tal:content="item/status" />)
+                        </a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+             </tal:block>
+            </ul>
+        </dd>
+
+        <dt i18n:translate="" id="fieldsetlegend-upcoming-bills"> Bills </dt>
+        <dd tal:define="days view/get_bills" tal:condition="days" id="fieldset-upcoming-bills">
+            <ul >
+              <tal:block tal:repeat="day days">
+                  <li tal:content="day/day" /> 
+              <ul tal:define="items day/items" >
+                <li tal:repeat="item items">
+                    <a tal:attributes="href item/url">
+                      <span tal:content="item/name" />
+                      (<span i18n:domain="bungeni.core" i18n:translate="" tal:content="item/status" />)
+                    </a>
+                    <span i18n:domain="bungeni.models" i18n:translate="" tal:content="item/group_type" />
+                    <span tal:content="item/group_name" />
+                    <span tal:content="item/sitting_type" />
+                </li>
+              </ul>
+            </tal:block>
+            </ul>
+        </dd>
+
+        <dt i18n:translate="" id="fieldsetlegend-upcoming-motions"> Motions </dt>
+        <dd tal:define="days view/get_motions" tal:condition="days" id="fieldset-upcoming-motions">
+            <ul>
+              <tal:block tal:repeat="day days">
+                  <li tal:content="day/day" /> 
+                  <ul tal:define="items day/items" >
+                    <li tal:repeat="item items">
+                      <a tal:attributes="href item/url">
+                          <span tal:content="item/name" />
+                          (<span i18n:domain="bungeni.core" i18n:translate="" tal:content="item/status" />)
+                        </a>
+                        <span i18n:domain="bungeni.models" i18n:translate="" tal:content="item/group_type" />
+                        <span tal:content="item/group_name" />
+                        <span tal:content="item/sitting_type" />
+                    </li>
+                  </ul>
+               </tal:block>
+            </ul>
+        </dd>
+
+        <dt i18n:translate="" id="fieldsetlegend-upcoming-questions"> Questions </dt>
+        <dd tal:define="days view/get_questions" tal:condition="days" id="fieldset-upcoming-questions">
+            <ul >
+              <tal:block tal:repeat="day days">
+                  <li tal:content="day/day" /> 
+              <ul tal:define="items day/items" >
+                <li tal:repeat="item items">
+                   <a tal:attributes="href item/url">
+                      <span tal:content="item/name" />
+                      (<span i18n:domain="bungeni.models" i18n:translate="" tal:content="item/status" />)
+                    </a>
+                    <span i18n:domain="bungeni.core" i18n:translate="" tal:content="item/group_type" />
+                    <span tal:content="item/group_name" />
+                    <span tal:content="item/sitting_type" />
+                </li>
+               </ul> 
+             </tal:block>
+            </ul>
+        </dd>
+
+        <dt i18n:translate="" id="fieldsetlegend-upcoming-tableddocuments"> Tabled documents </dt>
+        <dd tal:define="days view/get_tableddocuments" tal:condition="days" id="fieldset-upcoming-tableddocuments">
+            <ul >
+              <tal:block tal:repeat="day days">
+                  <li tal:content="day/day" /> 
+              <ul tal:define="items day/items" >
+                <li tal:repeat="item items">
+                   <a tal:attributes="href item/url">
+                      <span tal:content="item/name" />
+                      (<span i18n:domain="bungeni.core" i18n:translate="" tal:content="item/status" />)
+                    </a>
+                    <span i18n:domain="bungeni.models" i18n:translate="" tal:content="item/group_type" />
+                    <span tal:content="item/group_name" />
+                    <span tal:content="item/sitting_type" />
+                </li>
+               </ul> 
+             </tal:block>
+            </ul>
+        </dd>
+
+        <dt i18n:translate="" id="fieldsetlegend-upcoming-agendaitems"> Agenda items </dt>
+        <dd tal:define="days view/get_agendaitems" tal:condition="days" id="fieldset-upcoming-agendaitems">
+            <ul >
+              <tal:block tal:repeat="day days">
+                  <li tal:content="day/day" /> 
+              <ul tal:define="items day/items" >
+                <li tal:repeat="item items">
+                   <a tal:attributes="href item/url">
+                      <span tal:content="item/name" />
+                      (<span i18n:domain="bungeni.core" i18n:translate="" tal:content="item/status" />)
+                    </a>
+                    <span i18n:domain="bungeni.models" i18n:translate="" tal:content="item/group_type" />
+                    <span tal:content="item/group_name" />
+                    <span tal:content="item/sitting_type" />
+                </li>
+               </ul> 
+             </tal:block>
+            </ul>
+        </dd>
+    </dl>
+    
+  </div>
+  </div>
+</html>

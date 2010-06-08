@@ -1,0 +1,31 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      metal:use-macro="context/@@standard_macros/page">
+  
+  <div metal:fill-slot="body" i18n:domain="bungeni.ui">
+    
+    <h1 i18n:translate="">Workflow</h1>
+
+    <p i18n:translate="">
+      Current state:
+      <em i18n:name="state" tal:content="view/get_wf_state" />.
+    </p>
+
+    
+    <h2 i18n:translate="">History</h2>
+    
+    <tal:history define="viewlet view/history_viewlet">
+      
+      <p tal:condition="not: viewlet/entries"
+         i18n:translate="">
+        No history available for this item
+      </p>
+      
+      <div tal:condition="viewlet/entries"
+           tal:replace="structure viewlet/render" />
+      
+    </tal:history>
+    <div tal:replace="structure view/action_viewlet/render" />
+  </div>
+  
+</html>

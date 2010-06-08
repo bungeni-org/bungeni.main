@@ -1,0 +1,32 @@
+<div class="report_mainTitle">
+        <span tal:content="view/title"/>
+</div>
+<tal:loop tal:repeat="item view/sitting_items">
+    <div class="report_title">
+          <span tal:replace="view/group/short_name"/> Parliament : <span tal:content="item/sitting_type/sitting_type"/> Sitting
+    </div> 
+    <div class="report_date">Date : <span tal:content="python:item.start_date.strftime('%A %d %B %Y')" />
+    </div>
+    <tal:loop tal:repeat="scheduled item/item_schedule">
+        <div class="report_items">
+            <span tal:condition="python:scheduled.item.type == 'motion'">
+                <h2><span tal:replace="scheduled/item/short_name" /></h2>
+            </span>
+            <span tal:condition="python:scheduled.item.type != 'motion'">
+                <h2> <span tal:replace="python:scheduled.item.type.capitalize()" /> : <span tal:replace="scheduled/item/short_name" /></h2>
+            </span>
+            <span tal:condition="python:scheduled.item.type == 'question'">
+                <h3> From <span tal:replace="scheduled/item/owner/first_name" /> 
+                <span tal:replace="scheduled/item/owner/last_name" /> to 
+                <span tal:condition="scheduled/item/ministry | nothing" tal:replace="scheduled/item/ministry/full_name" /></h3>
+            </span>
+            
+            <span tal:condition="python:scheduled.item.type != 'bill'">
+                <p tal:content="structure scheduled/item/body_text" />
+            </span>
+            <p tal:content="structure scheduled/discussion/body_text" tal:condition="view/display_minutes" />
+            <span tal:condition="view/display_minutes"/>
+            <p tal:content="structure scheduled/discussion/body_text"/>
+        </div>
+    </tal:loop>
+</tal:loop>

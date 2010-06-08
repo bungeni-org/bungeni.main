@@ -1,0 +1,9 @@
+<div id="portal-breadcrumbs" i18n:domain="bungeni.ui">
+    <span id="breadcrumbs-you-are-here" i18n:translate="you_are_here">You are here:</span>
+    <a i18n:translate="tabs_home" tal:attributes="href view/site_url">Home</a>
+    <a tal:repeat="item view/path"
+        tal:content="item/name" i18n:translate=""
+        tal:omit-tag="not: item/url"
+        tal:attributes="href item/url" > dir </a>
+</div>
+

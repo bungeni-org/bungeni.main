@@ -1,0 +1,17 @@
+<tal:tabs tal:condition="view/portal_tabs">
+    <h5 class="hiddenStructure" i18n:translate="heading_sections">Sections</h5>
+
+    <ul id="portal-globalnav">
+        <tal:tabs tal:repeat="tab view/portal_tabs">
+            <li tal:attributes="id string:portaltab-${python:tab.id.replace('/', '-')};
+                            class python:view.selected_portal_tab==tab['id'] and 'selected' or 'plain'" >
+                <a href="" 
+                   i18n:domain="bungeni.core"
+                   i18n:translate=""
+                   tal:content="tab/name"
+                   tal:attributes="href tab/url;
+                   title tab/description|nothing;">Tab Name</a>
+               </li>
+           </tal:tabs>
+    </ul>
+</tal:tabs>

@@ -1,0 +1,19 @@
+<dl class="portlet">
+
+  <dt class="portletHeader">
+    <span class="portletTopLeft"></span>
+    Admin
+    <span class="portletTopRight"></span>
+  </dt>
+
+  <dd class="portletItem lastItem">
+    <ul class="admin-menu">
+      <li> <a href="/admin/users" i18n:translate="">Users</a> </li>
+      <!--li> <a href="groups" i18n:translate="">Groups</a> </li-->
+      <li> <a href="/admin/settings" i18n:translate="">Settings</a> </li>
+    </ul>
+    <span class="portletBottomLeft"></span>
+    <span class="portletBottomRight"></span>
+  </dd>
+</dl>
+  

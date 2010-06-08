@@ -1,0 +1,96 @@
+#[  $Id$ ]#
+
+#[ was: ui/viewlets/templates/breadcrumbs.pt ]#
+$begin{breadcrumbs}
+<div id="portal-breadcrumbs">
+    <span id="breadcrumbs-you-are-here">${ i18n("you_are_here") }#[ 
+                                                    You are here: ]#</span>
+    <a href="${view.site_url}">${ i18n("tabs_home") }#[ Home ]#</a>
+$for{ item in view.path }
+$if{ item["url"] }
+    <a href="${ item["url"] }">${ i18n(item["name"]) }</a>
+$fi
+$rof
+</div>
+$end{breadcrumbs}
+
+
+#[ was: ui/viewlets/templates/secondary-navigation.pt ]#
+$begin{secondary}
+$for{ item in view.items }
+<li class="navigation$if{item['selected']} selected$fi">
+    <a href="${item['url']}">${ i18n(item["title"]) }</a>
+</li>
+$rof
+$end{secondary}
+
+
+#[ was: ui/viewlets/templates/sections.pt ]#
+$begin{sections}
+$if{ view.portal_tabs }
+<h5 class="hiddenStructure">${ i18n("heading_sections") }#[ Sections ]#</h5>
+<ul id="portal-globalnav">
+$for{ tab in view.portal_tabs }
+    <li id="portaltab-${tab['id'].replace('/', '-')}" class="${ 
+            view.selected_portal_tab==tab['id'] and 'selected' or 'plain' }">
+        <a href="${tab['url']}" title="${tab['description']}">#[
+            !+ i18n:domain="bungeni.core" 
+            ]#${ i18n(tab["name"]) }</a>
+    </li>
+$rof
+</ul>
+$fi
+$end{sections}
+
+
+#[ was: ui/viewlets/templates/bungeni-navigation-tree.pt ]#
+#[ !+ requires evoque svn HEAD ]#
+$begin{tree}
+<dl class="portlet portletNavigationTree">
+  <dt class="portletHeader">
+    <span class="portletTopLeft"></span>
+    <a class="tile">
+      Bungeni Portal
+    </a>
+    <span class="portletTopRight"></span>
+  </dt>
+  
+  $begin{subtree}
+  <li class="navTreeItem visualNoMarker ${ current }">
+    <a href="${node['url']}" class="${ selected }"><img 
+            width="16" height="16" #[ kind: content|container|location ]#
+            src="/@@/ui-images/icon_${node['kind']}.gif"
+            />&nbsp;${ i18n(node["title"]) }</a>
+      $if{ is_folderish }
+      <ul class="navTree navTreeLevel${nesting_level} navTreeFolderish">
+      $for{ subnode in node["nodes"] }
+        $evoque{ "#subtree",
+            node = subnode,
+            is_folderish = bool(subnode["nodes"]),
+            current = subnode["current"] and "navTreeCurrentNode" or "",
+            selected = subnode["selected"] and "navTreeCurrentItem" or "",
+            nesting_level = nesting_level+1 
+        }
+      $rof
+      </ul>
+      $fi
+  </li>
+  $end{subtree}
+  
+  <dd class="portletItem lastItem">
+  <ul>
+  $for{ subnode in view.nodes }
+    $evoque{ "#subtree",
+        node = subnode,
+        is_folderish = bool(subnode["nodes"]),
+        current = subnode["current"] and "navTreeCurrentNode" or "",
+        selected = subnode["selected"] and "navTreeCurrentItem" or "",
+        nesting_level = 1
+    }
+  $rof
+  </ul>
+  </dd>
+  
+</dl>
+$end{tree}
+

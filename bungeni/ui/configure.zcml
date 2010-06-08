@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser" 
+           xmlns:i18n="http://namespaces.zope.org/i18n"
+           i18n_domain="bungeni.ui">
+  <i18n:registerTranslations directory="locales" />
+  <!-- Catalyze Domain Models -->
+  <include file="catalyst.zcml"/>
+  
+  <!-- Alchemist UI overrides -->
+  <include package="alchemist.ui" />
+  <includeOverrides package=".forms" file="overrides.zcml" />
+  
+  <include package="bungeni.models" file="domain.zcml" />
+  <include package="bungeni.portal" />
+  
+  <!-- Site Menus Definition -->
+  <include file="menu.zcml"/>
+
+  <include package="plone.memoize" />
+  <!--include package="marginalia" /-->
+  
+  <!-- TimeZone Definition -->
+  <adapter factory=".tz.tzinfo" />
+
+  <!-- Site Skin Definition -->
+  <include file="skin.zcml"/>
+
+  <!-- Resources -->
+  <include file="resources.zcml"/>
+
+  <!-- Site Viewlets -->
+  <include package=".viewlets" />
+
+  <!-- Calendar Widgets -->
+  <!--include file="calendar.zcml" /-->
+  
+  <!-- Include Auditing UI-->
+  <include file="audit.zcml" />
+
+  <!-- Include Views -->
+  <include file="views.zcml" />
+
+  <!-- Admin UI -->
+  <include file="admin.zcml"/>
+  
+  <!-- Custom forms -->
+  <include package=".forms"/>
+
+  <!-- Javascript -->
+  <include package="ore.yui"/>
+  <include package="ore.yuiwidget"/>
+  
+  <browser:defaultView
+     for="bungeni.models.interfaces.IBungeniApplication"
+     name="index"
+     />
+
+  <browser:defaultView
+     for="bungeni.core.content.Section"
+     name="index"
+     />
+
+  <subscriber 
+    handler=".publication.on_before_traverse" 
+    trusted="True"
+  />
+  <subscriber 
+    handler=".publication.on_end_request" 
+    trusted="True"
+  />
+  
+  <!-- Marginalia Settings for bungeni types -->
+
+  <!--class class="bungeni.models.domain.Bill">
+    <implements
+       interface="marginalia.interfaces.IMarginaliaAnnotatable"
+       />
+  </class>
+
+   <adapter
+       for="bungeni.models.interfaces.IBill"
+       provides="marginalia.interfaces.IMarginaliaAnnotatableAdaptor"
+       factory="bungeni.ui.adaptors.BillAnnotationAdaptor"
+       /-->
+    <!-- Experimental transcripts support -->
+   <!--class class="bungeni.models.domain.GroupSitting">
+    <implements
+       interface="bungeni.transcripts.interfaces.ITranscribable"
+       />
+  </class--> 
+    <!--End Experimental transcripts support -->
+   <browser:resourceDirectory
+      name="ui-images"
+      directory="images" />
+
+   <!-- vocabularies -->
+   
+   <utility
+      name="bungeni.vocabulary.weekdays"
+      component=".vocabulary.WeekdaysVocabularyFactory" />
+
+   <utility
+      name="bungeni.vocabulary.monthly_recurrence"
+      component=".vocabulary.MonthlyRecurrenceVocabularyFactory" />
+
+   <utility
+      component=".workflow.workflow_vocabulary_factory"
+      name="bungeni.vocabulary.workflow" />
+   
+   <utility
+            component=".calendar.browser.availableItems"
+            name="Available Items"
+            provides="zope.schema.interfaces.IVocabularyFactory"
+            />
+   <utility
+            component=".calendar.browser.billOptions"
+            name="Bill Options"
+            provides="zope.schema.interfaces.IVocabularyFactory"
+            />
+   <utility
+            component=".calendar.browser.motionOptions"
+            name="Motion Options"
+            provides="zope.schema.interfaces.IVocabularyFactory"
+            />
+    <utility
+            component=".calendar.browser.agendaOptions"
+            name="Agenda Options"
+            provides="zope.schema.interfaces.IVocabularyFactory"
+            />
+    <utility
+            component=".calendar.browser.questionOptions"
+            name="Question Options"
+            provides="zope.schema.interfaces.IVocabularyFactory"
+            />
+    <utility
+            component=".calendar.browser.tabledDocumentOptions"
+            name="Tabled Document Options"
+            provides="zope.schema.interfaces.IVocabularyFactory"
+            />
+
+
+  <utility
+     name="bungeni.vocabulary.ParliamentSource"
+     provides="zope.schema.interfaces.IVocabularyFactory"
+     component=".vocabulary.ParliamentSource" />
+            
+</configure>

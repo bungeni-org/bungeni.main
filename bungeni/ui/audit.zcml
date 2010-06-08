@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="bungeni.ui">
+  
+  <browser:page 
+     for="bungeni.models.interfaces.IBungeniContent"
+     class=".audit.ChangeLog"
+     name="audit-log"
+     permission="bungeni.auditlog.View"
+     template="templates/changes.pt"
+     />
+
+  <browser:page 
+     for="bungeni.models.interfaces.IAttachedFile"
+     class=".audit.ChangeLog"
+     name="audit-log"
+     permission="bungeni.auditlog.View"
+     template="templates/changes.pt"
+     />
+</configure>

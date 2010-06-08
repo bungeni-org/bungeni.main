@@ -1,0 +1,45 @@
+<div id="">
+    <table id="" class="listing grid">
+        <theader>
+          <tr>
+          <th><a tal:attributes="href view/getPrevWeek">&lt;&lt;</a></th>
+          <th tal:attributes="colspan python:(view.no_of_columns -1)"> <strong tal:content="view/monthname"> Month - year </strong></th>
+          <th><a tal:attributes="href view/getNextWeek">&gt;&gt;</a></th>
+          </tr>
+          <tr>
+            <th tal:content="view/week_no"> Week number </th>
+            <th tal:repeat="session view/sessions"> Plenary<!--br/><b tal:replace="session/short_name"> parliament </b--> </th>
+            <th tal:repeat="committee view/committees"> <span tal:content="committee/short_name" tal:attributes="title committee/full_name"> committee </span> </th>
+          </tr>
+        </theader>
+        <tbody>
+          <tr tal:repeat="day view/weekcalendar">
+            <th tal:content="python:view.formatDay(day)"> Date </th>
+            <td tal:repeat="session view/sessions" tal:attributes="id python:view.getSessionTdId(day, session.session_id); 
+                                                                    class python:view.getSessionTdClass(session.session_id)"> 
+              <div tal:repeat="sitting python: view.getScheduledParliamentSittings(day, session.session_id)">
+                <span tal:content="sitting/short_name" tal:attributes="title sitting/s_type" />
+                <ol tal:attributes="id sitting/sittingid" tal:define="sid sitting/sid">
+                  <li tal:repeat="question python: view.getActiveSittingItems(sid)"
+                      tal:attributes="id question/schedule_id; class question/schedule_date_class">
+                     <a tal:content="question/subject" tal:attributes="title question/title; href question/url" />
+                   </li>
+                </ol>
+              </div>
+            </td>
+            <td tal:repeat="committee view/committees" tal:attributes="id python:view.getCommitteeTdId(day, committee.committee_id); 
+                                                                        class python:view.getCommitteeTdClass(committee.committee_id)"> 
+              <div tal:repeat="sitting python: view.getScheduledCommitteeSittings(day, committee.committee_id)">
+                <span tal:content="sitting/short_name" tal:attributes="title sitting/s_type" />
+                <ol tal:attributes="id sitting/sittingid" tal:define="sid sitting/sid">
+                  <li tal:repeat="question python: view.getActiveSittingItems(sid)"
+                      tal:attributes="id question/schedule_id; class question/schedule_date_class">
+                     <a tal:content="question/subject" tal:attributes="title question/title; href question/url" />
+                   </li>
+                </ol>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+    </table>
+</div>

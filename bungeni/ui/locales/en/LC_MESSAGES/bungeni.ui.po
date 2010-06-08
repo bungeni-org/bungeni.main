@@ -1,0 +1,2956 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: Wed May 19 14:13:44 2010\n"
+"PO-Revision-Date: 2010-04-13 15:01+0300\n"
+"Last-Translator: peter <kamero@parliaments.info>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language-Code: en\n"
+"Domain: DOMAIN\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"Language-Name: English\n"
+
+#: src/bungeni.ui/bungeni/ui/audit.py:20
+msgid "action"
+msgstr "action"
+
+#: src/bungeni.ui/bungeni/ui/audit.py:21
+#: src/bungeni.ui/bungeni/ui/workflow.py:68
+msgid "date"
+msgstr "date"
+
+#: src/bungeni.ui/bungeni/ui/audit.py:22
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1423
+#: src/bungeni.ui/bungeni/ui/workflow.py:69
+msgid "user"
+msgstr "user"
+
+#: src/bungeni.ui/bungeni/ui/audit.py:23
+#: src/bungeni.ui/bungeni/ui/workflow.py:70
+msgid "description"
+msgstr "description"
+
+#. Default: ""
+#: src/bungeni.ui/bungeni/ui/calendar/browser.py:384
+#: src/bungeni.ui/bungeni/ui/calendar/browserbkcp.py:363
+msgid "$type &mdash; ${start}-${end}"
+msgstr "$type &mdash; ${start}-${end}"
+
+#: src/bungeni.ui/bungeni/ui/calendar/browser.py:549
+#: src/bungeni.ui/bungeni/ui/calendar/browserbkcp.py:513
+msgid "Document Type"
+msgstr "document type"
+
+#: src/bungeni.ui/bungeni/ui/calendar/browser.py:550
+#: src/bungeni.ui/bungeni/ui/calendar/browserbkcp.py:514
+msgid "Type of document to be produced"
+msgstr "type of document to be produced"
+
+#: src/bungeni.ui/bungeni/ui/calendar/browser.py:558
+#: src/bungeni.ui/bungeni/ui/calendar/browserbkcp.py:522
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1419
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1765
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1766
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1831
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2090
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/workspace_sitting_viewlet.pt:23
+#: src/bungeni.ui/bungeni/ui/forms/templates/timeline_viewlet.pt:14
+msgid "Date"
+msgstr "date"
+
+#: src/bungeni.ui/bungeni/ui/calendar/browser.py:559
+#: src/bungeni.ui/bungeni/ui/calendar/browserbkcp.py:523
+msgid "Choose a starting date for this report"
+msgstr "choose a starting date for this report"
+
+#: src/bungeni.ui/bungeni/ui/calendar/browser.py:593
+#: src/bungeni.ui/bungeni/ui/calendar/browserbkcp.py:557
+msgid "Include draft sittings"
+msgstr "include draft sittings"
+
+#: src/bungeni.ui/bungeni/ui/calendar/browser.py:594
+#: src/bungeni.ui/bungeni/ui/calendar/browserbkcp.py:558
+msgid "Whether or not to include sittings still in draft"
+msgstr "whether or not to include sittings still in draft"
+
+#: src/bungeni.ui/bungeni/ui/calendar/browser.py:69
+#: src/bungeni.ui/bungeni/ui/calendar/browserbkcp.py:77
+msgid "Daily"
+msgstr "daily"
+
+#: src/bungeni.ui/bungeni/ui/calendar/browser.py:70
+#: src/bungeni.ui/bungeni/ui/calendar/browserbkcp.py:78
+msgid "Weekly"
+msgstr "weekly"
+
+#: src/bungeni.ui/bungeni/ui/calendar/browser.py:722
+#: src/bungeni.ui/bungeni/ui/calendar/browserbkcp.py:686
+msgid "A parliament must be active in the period"
+msgstr "a parliament must be active in the period"
+
+#: src/bungeni.ui/bungeni/ui/calendar/browser.py:900
+#: src/bungeni.ui/bungeni/ui/calendar/browserbkcp.py:864
+msgid "Preview"
+msgstr "preview"
+
+#: src/bungeni.ui/bungeni/ui/calendar/browser.py:923
+#: src/bungeni.ui/bungeni/ui/calendar/browserbkcp.py:1073
+msgid "Agenda"
+msgstr "agenda"
+
+#: src/bungeni.ui/bungeni/ui/calendar/browser.py:924
+#: src/bungeni.ui/bungeni/ui/calendar/browserbkcp.py:1074
+msgid "ORDER OF THE DAY"
+msgstr "order of the day"
+
+#: src/bungeni.ui/bungeni/ui/calendar/browser.py:925
+#: src/bungeni.ui/bungeni/ui/calendar/browserbkcp.py:1075
+msgid "This form generates the agenda report"
+msgstr "this form generates the agenda report"
+
+#: src/bungeni.ui/bungeni/ui/calendar/browser.py:960
+#: src/bungeni.ui/bungeni/ui/calendar/browserbkcp.py:1110
+msgid "Votes and proceedings"
+msgstr "votes and proceedings"
+
+#: src/bungeni.ui/bungeni/ui/calendar/browser.py:961
+#: src/bungeni.ui/bungeni/ui/calendar/browserbkcp.py:1111
+msgid "This form generates the “votes and proceedings” report"
+msgstr "this form generates the 'votes and proceedings' report"
+
+#: src/bungeni.ui/bungeni/ui/calendar/browser.py:962
+#: src/bungeni.ui/bungeni/ui/calendar/browserbkcp.py:1112
+msgid "VOTES AND PROCEEDINGS"
+msgstr "votes and proceedings"
+
+#: src/bungeni.ui/bungeni/ui/calendar/browserbkcp.py:1258
+msgid "Votes and Proceedings"
+msgstr "votes and proceedings"
+
+#: src/bungeni.ui/bungeni/ui/calendar/browserbkcp.py:1260
+msgid "Order of the day"
+msgstr "order of the day"
+
+#: src/bungeni.ui/bungeni/ui/calendar/browserbkcp.py:875
+msgid "Publish"
+msgstr "publish"
+
+#: src/bungeni.ui/bungeni/ui/calendar/browserbkcp.py:912
+msgid "Download ODT"
+msgstr "download odt"
+
+#: src/bungeni.ui/bungeni/ui/calendar/browserbkcp.py:966
+msgid "Download PDF"
+msgstr "download pdf"
+
+#: src/bungeni.ui/bungeni/ui/calendar/scheduling.pt:12
+#: src/bungeni.ui/bungeni/ui/calendar/macros.pt:12
+msgid "&rarr;"
+msgstr "&rarr;"
+
+#: src/bungeni.ui/bungeni/ui/calendar/scheduling.pt:174
+#: src/bungeni.ui/bungeni/ui/calendar/macros.pt:174
+msgid "No items scheduled"
+msgstr "no items scheduled"
+
+#: src/bungeni.ui/bungeni/ui/calendar/scheduling.pt:210
+#: src/bungeni.ui/bungeni/ui/calendar/macros.pt:207
+#: src/bungeni.ui/bungeni/ui/calendar/macros.pt:303
+msgid "Week ${week_no}"
+msgstr "week ${weekno}"
+
+#: src/bungeni.ui/bungeni/ui/calendar/scheduling.pt:273
+#: src/bungeni.ui/bungeni/ui/calendar/macros.pt:266
+#: src/bungeni.ui/bungeni/ui/calendar/macros.pt:366
+msgid "${count} item(s) scheduled"
+msgstr "${count} item(s) scheduled"
+
+#: src/bungeni.ui/bungeni/ui/calendar/scheduling.pt:47
+#: src/bungeni.ui/bungeni/ui/calendar/macros.pt:46
+msgid "Items scheduled for this meeting"
+msgstr "items scheduled for this meeting"
+
+#: src/bungeni.ui/bungeni/ui/calendar/scheduling.pt:6
+#: src/bungeni.ui/bungeni/ui/calendar/macros.pt:6
+msgid "&larr;"
+msgstr "&larr;"
+
+#: src/bungeni.ui/bungeni/ui/calendar/scheduling.pt:63
+#: src/bungeni.ui/bungeni/ui/calendar/macros.pt:62
+msgid "Refresh"
+msgstr "refresh"
+
+#: src/bungeni.ui/bungeni/ui/calendar/scheduling.pt:77
+#: src/bungeni.ui/bungeni/ui/calendar/macros.pt:76
+msgid "State"
+msgstr "state"
+
+#: src/bungeni.ui/bungeni/ui/calendar/scheduling.pt:78
+#: src/bungeni.ui/bungeni/ui/calendar/macros.pt:77
+msgid "Actions"
+msgstr "actions"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1011
+#, fuzzy
+msgid "Political group"
+msgstr "add political group..."
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1012
+#, fuzzy
+msgid "Political groups"
+msgstr "add political group..."
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1020
+msgid "Office"
+msgstr "office"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1021
+msgid "Offices"
+msgstr "offices"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1029
+msgid "Type of Office"
+msgstr "type of office"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1037
+msgid "Office Member"
+msgstr "office member"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1038
+msgid "Office Members"
+msgstr "office members"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1066
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1620
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1685
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1688
+msgid "Ministry"
+msgstr "ministry"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1067
+msgid "Ministries"
+msgstr "ministries"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1075
+msgid "Minister"
+msgstr "minister"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1076
+msgid "Ministers"
+msgstr "ministers"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1105
+msgid "Government"
+msgstr "government"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1106
+msgid "Governments"
+msgstr "governments"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1115
+msgid "Number"
+msgstr "number"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1165
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1168
+msgid "Due Date"
+msgstr "due date"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1173
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1176
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1280
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1282
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1377
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1379
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/workspace_item_viewlet.pt:27
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/workspace_group_viewlet.pt:27
+msgid "Status date"
+msgstr "status date"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1189
+msgid "Assigned bill"
+msgstr "assigned bill"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1190
+msgid "Assigned bills"
+msgstr "assigned bills"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1194
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1600
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1255
+msgid "Bill"
+msgstr "bill"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1202
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2159
+#: src/bungeni.ui/bungeni/ui/calendar/scheduling.pt:76
+#: src/bungeni.ui/bungeni/ui/calendar/macros.pt:75
+msgid "Item"
+msgstr "item"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1210
+msgid "Assigned group"
+msgstr "assigned group"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1211
+msgid "Assigned groups"
+msgstr "assigned groups"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1216
+msgid "Committee"
+msgstr "committee"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1224
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/workspace_sitting_viewlet.pt:24
+msgid "Group"
+msgstr "group"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1231
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1253
+msgid "File"
+msgstr "file"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1232
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1678
+msgid "Files"
+msgstr "files"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1254
+msgid "Upload a file"
+msgstr "upload a file"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1290
+msgid "Attached file version"
+msgstr "attached file version"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1291
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1529
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1591
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1660
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1746
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1801
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1636
+#: src/bungeni.ui/bungeni/ui/templates/version.pt:6
+msgid "Versions"
+msgstr "versions"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1322
+msgid "Registry number"
+msgstr "registry number"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1328
+msgid "Moved by"
+msgstr "moved by"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1329
+msgid "Select the user who moved the document"
+msgstr "select the user who moved the document"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1350
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1477
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2247
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2248
+msgid "Text"
+msgstr "text"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1356
+msgid "Submission Date"
+msgstr "submission date"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1385
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1489
+msgid "Recommendation note"
+msgstr "recommendation note"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1393
+msgid "Receive notification"
+msgstr "receive notification"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1394
+msgid "Select this option to receive notifications for this item"
+msgstr "select this option to receive notifications for this item"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1412
+msgid "Change"
+msgstr "change"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1413
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1534
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1596
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1665
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1752
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1806
+msgid "Changes"
+msgstr "changes"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1417
+msgid "Action"
+msgstr "action"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1455
+msgid "Summary"
+msgstr "summary"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:147
+#: src/bungeni.ui/bungeni/ui/vocabulary.py:91
+msgid "active"
+msgstr "active"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:148
+#: src/bungeni.ui/bungeni/ui/vocabulary.py:92
+msgid "inactive"
+msgstr "inactive"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:149
+#: src/bungeni.ui/bungeni/ui/vocabulary.py:93
+msgid "deceased"
+msgstr "deceased"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1503
+msgid "Heading"
+msgstr "heading"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1504
+#: src/bungeni.ui/bungeni/ui/viewlets/schedule.py:129
+msgid "Headings"
+msgstr "headings"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1509
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1280
+msgid "Agenda item"
+msgstr "agenda item"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1510
+#: src/bungeni.ui/bungeni/ui/viewlets/schedule.py:190
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/whatson.pt:127
+msgid "Agenda items"
+msgstr "agenda items"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1528
+msgid "Agenda Item version"
+msgstr "agenda item version"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1533
+msgid "Agenda Item change"
+msgstr "agenda item change"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1539
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1263
+msgid "Motion"
+msgstr "motion"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1540
+#: src/bungeni.ui/bungeni/ui/viewlets/schedule.py:166
+#: src/bungeni.ui/bungeni/ui/workspace.py:271
+#: src/bungeni.ui/bungeni/ui/workspace.py:312
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/whatson.pt:67
+msgid "Motions"
+msgstr "motions"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1544
+msgid "Approval Date"
+msgstr "approval date"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1552
+msgid "Notice Date"
+msgstr "notice date"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1559
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1626
+msgid "Identifier"
+msgstr "identifier"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1566
+msgid "Entered By"
+msgstr "entered by"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1590
+msgid "Motion version"
+msgstr "motion version"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1595
+msgid "Motion change"
+msgstr "motion change"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1601
+#: src/bungeni.ui/bungeni/ui/viewlets/schedule.py:137
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:418
+#: src/bungeni.ui/bungeni/ui/workspace.py:281
+#: src/bungeni.ui/bungeni/ui/workspace.py:322
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/whatson.pt:47
+msgid "Bills"
+msgstr "bills"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1605
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1606
+msgid "Statement of Purpose"
+msgstr "statement of purpose"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1612
+msgid "Bill Type"
+msgstr "bill type"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1629
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1635
+msgid "Publication Date"
+msgstr "publication date"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1659
+msgid "Bill version"
+msgstr "bill version"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1664
+msgid "Bill change"
+msgstr "bill change"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1669
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1271
+msgid "Question"
+msgstr "question"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1670
+#: src/bungeni.ui/bungeni/ui/viewlets/schedule.py:155
+#: src/bungeni.ui/bungeni/ui/workspace.py:266
+#: src/bungeni.ui/bungeni/ui/workspace.py:307
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/whatson.pt:87
+msgid "Questions"
+msgstr "questions"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1677
+msgid "Question Number"
+msgstr "question number"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1681
+msgid "Initial/supplementary question"
+msgstr "initial/supplementary question"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1692
+msgid "Date approved"
+msgstr "date approved"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1698
+msgid "Submitted to ministry"
+msgstr "submitted to ministry"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1705
+msgid "Question Type"
+msgstr "question type"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1706
+msgid "Ordinary or Private Notice"
+msgstr "ordinary or private notice"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1711
+msgid "Response Type"
+msgstr "response type"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1712
+msgid "Oral or Written"
+msgstr "oral or written"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1717
+#: src/bungeni.ui/bungeni/ui/forms/viewlets.py:504
+msgid "Response"
+msgstr "response"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1718
+msgid "Response to the Question"
+msgstr "response to the question"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1727
+msgid "Sitting Time"
+msgstr "sitting time"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1745
+msgid "Question version"
+msgstr "question version"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1751
+msgid "Question change"
+msgstr "question change"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1757
+msgid "Event"
+msgstr "event"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1758
+msgid "Events"
+msgstr "events"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1775
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1288
+msgid "Tabled document"
+msgstr "tabled document"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1776
+#: src/bungeni.ui/bungeni/ui/viewlets/schedule.py:177
+#: src/bungeni.ui/bungeni/ui/workspace.py:276
+#: src/bungeni.ui/bungeni/ui/workspace.py:317
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/whatson.pt:107
+msgid "Tabled documents"
+msgstr "tabled documents"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1782
+msgid "Tabled document Number"
+msgstr "tabled document number"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1800
+msgid "Tabled Document version"
+msgstr "tabled document version"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1805
+msgid "Tabled Document change"
+msgstr "tabled document change"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1812
+msgid "Sitting"
+msgstr "sitting"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1813
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/whatson.pt:18
+msgid "Sittings"
+msgstr "sittings"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1821
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1823
+msgid "Sitting Type"
+msgstr "sitting type"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1833
+msgid "Start"
+msgstr "start"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1838
+msgid "End"
+msgstr "end"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1846
+msgid "Venue"
+msgstr "venue"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1869
+msgid "Types"
+msgstr "types"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1872
+msgid "Parliamentary session"
+msgstr "parliamentary session"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1873
+msgid "Parliamentary sessions"
+msgstr "parliamentary sessions"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1879
+msgid "Short Name"
+msgstr "short name"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1924
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1955
+msgid "Sitting attendance"
+msgstr "sitting attendance"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1925
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1956
+msgid "Sitting attendances"
+msgstr "sitting attendances"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1936
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1946
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1951
+msgid "Attendance"
+msgstr "attendance"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1961
+msgid "Attendance type"
+msgstr "attendance type"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1968
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1975
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1979
+msgid "Cosignatory"
+msgstr "cosignatory"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1969
+msgid "Cosignatories"
+msgstr "cosignatories"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1988
+msgid "Constituencies"
+msgstr "constituencies"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2003
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2086
+msgid "Name of the constituency"
+msgstr "name of the constituency"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2008
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2012
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2042
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2048
+msgid "Province"
+msgstr "province"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2016
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2018
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2022
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2055
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2061
+msgid "Region"
+msgstr "region"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2043
+msgid "Provinces"
+msgstr "provinces"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2049
+msgid "Name of the Province"
+msgstr "name of the province"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2056
+msgid "Regions"
+msgstr "regions"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2062
+msgid "Name of the Region"
+msgstr "name of the region"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2071
+msgid "Country Code"
+msgstr "country code"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2072
+msgid "ISO Code of the  country"
+msgstr "iso code of the  country"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2075
+msgid "Name of the Country"
+msgstr "name of the country"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2080
+msgid "Constituency details"
+msgstr "constituency details"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2081
+msgid "Details"
+msgstr "details"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2091
+msgid "Date the data was submitted from the Constituency"
+msgstr "date the data was submitted from the constituency"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2098
+msgid "Population"
+msgstr "population"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2099
+msgid "Total Number of People living in this Constituency"
+msgstr "total number of people living in this constituency"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2103
+msgid "Voters"
+msgstr "voters"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2104
+msgid "Number of Voters registered in this Constituency"
+msgstr "number of voters registered in this constituency"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2118
+msgid "Rota Identifier"
+msgstr "rota identifier"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2140
+msgid "Document source"
+msgstr "document source"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2141
+msgid "Document sources"
+msgstr "document sources"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2145
+#, fuzzy
+msgid "Document Source"
+msgstr "document source"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2151
+#: src/bungeni.ui/bungeni/ui/viewlets/schedule.py:46
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.zcml:57
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.zcml:78
+msgid "Scheduling"
+msgstr "scheduling"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2152
+msgid "Schedulings"
+msgstr "schedulings"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2173
+msgid "Discussion"
+msgstr "discussion"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2174
+msgid "Discussions"
+msgstr "discussions"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2179
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2180
+msgid "Minutes"
+msgstr "minutes"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2196
+msgid "Report"
+msgstr "report"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2197
+#: src/bungeni.ui/bungeni/ui/menu.zcml:101
+msgid "Reports"
+msgstr "reports"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2217
+msgid "Publications type"
+msgstr "publications type"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2221
+msgid "Date published"
+msgstr "date published"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2223
+msgid "Date Published"
+msgstr "date published"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2229
+msgid "Report Start Date"
+msgstr "report start date"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2231
+msgid "Sitting Date"
+msgstr "sitting date"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2239
+msgid "Edited by"
+msgstr "edited by"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2243
+msgid "Note"
+msgstr "note"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:239
+msgid "A parliament has to be elected before it can be sworn in"
+msgstr "a parliament has to be elected before it can be sworn in"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:248
+msgid "End Date must be after Start Date"
+msgstr "end date must be after start date"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:258
+msgid "A committee must be disolved before it can be reinstated"
+msgstr "a committee must be disolved before it can be reinstated"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:266
+msgid "A person cannot be active and substituted at the same time"
+msgstr "a person cannot be active and substituted at the same time"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:274
+msgid "If a person is substituted End Date must be set"
+msgstr "if a person is substituted end date must be set"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:283
+msgid "If a person is inactive End Date must be set"
+msgstr "if a person is inactive end date must be set"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:291
+msgid ""
+"A parliament member has to be elected/nominated before she/he can be sworn in"
+msgstr ""
+"a parliament member has to be elected/nominated before she/he can be sworn in"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:301
+msgid "One cannot die before being born"
+msgstr "one cannot die before being born"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:312
+msgid "You have to enter an Address"
+msgstr "you have to enter an address"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:326
+#: src/bungeni.ui/bungeni/ui/descriptor.py:330
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1343
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1471
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2203
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2211
+msgid "Language"
+msgstr "language"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:340
+#: src/bungeni.ui/bungeni/ui/descriptor.py:459
+#: src/bungeni.ui/bungeni/ui/descriptor.py:465
+msgid "User"
+msgstr "user"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:341
+#: src/bungeni.ui/bungeni/ui/templates/admin-menu-viewlet.pt:11
+msgid "Users"
+msgstr "users"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:346
+#: src/bungeni.ui/bungeni/ui/descriptor.py:530
+#: src/bungeni.ui/bungeni/ui/descriptor.py:536
+#: src/bungeni.ui/bungeni/ui/descriptor.py:593
+#: src/bungeni.ui/bungeni/ui/descriptor.py:597
+#: src/bungeni.ui/bungeni/ui/descriptor.py:669
+#: src/bungeni.ui/bungeni/ui/descriptor.py:677
+#: src/bungeni.ui/bungeni/ui/descriptor.py:717
+#: src/bungeni.ui/bungeni/ui/descriptor.py:819
+#: src/bungeni.ui/bungeni/ui/descriptor.py:824
+#: src/bungeni.ui/bungeni/ui/descriptor.py:968
+#: src/bungeni.ui/bungeni/ui/descriptor.py:974
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1041
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1047
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1079
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1085
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1111
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1112
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1333
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1942
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2002
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2085
+msgid "Name"
+msgstr "name"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:353
+msgid "Salutation"
+msgstr "salutation"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:354
+msgid "e.g. Mr. Mrs, Prof. etc."
+msgstr "e.g. mr. mrs, prof. etc."
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:357
+msgid "First Name"
+msgstr "first name"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:359
+msgid "Middle Name"
+msgstr "middle name"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:361
+msgid "Last Name"
+msgstr "last name"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:363
+#: src/bungeni.ui/bungeni/ui/descriptor.py:904
+msgid "Email"
+msgstr "email"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:364
+#: src/bungeni.ui/bungeni/ui/descriptor.py:905
+msgid "Email address"
+msgstr "email address"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:370
+#: src/bungeni.ui/bungeni/ui/login.py:20 src/bungeni.ui/bungeni/ui/login.py:22
+#: src/bungeni.ui/bungeni/ui/menu.py:58
+msgid "Login"
+msgstr "login"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:375
+msgid "Initial password"
+msgstr "initial password"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:380
+msgid "National Id"
+msgstr "national id"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:383
+msgid "Gender"
+msgstr "gender"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:390
+msgid "Date of Birth"
+msgstr "date of birth"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:395
+msgid "Country of Birth"
+msgstr "country of birth"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:404
+msgid "Nationality at Birth"
+msgstr "nationality at birth"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:413
+msgid "Current Nationality"
+msgstr "current nationality"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:421
+msgid "Date of Death"
+msgstr "date of death"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:426
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1269
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1271
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1366
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1368
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/workspace_sitting_viewlet.pt:25
+msgid "Status"
+msgstr "status"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:430
+msgid "Biographical notes"
+msgstr "biographical notes"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:436
+msgid "Image"
+msgstr "image"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:437
+msgid "Picture of the person"
+msgstr "picture of the person"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:451
+msgid "Delegate to user"
+msgstr "delegate to user"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:452
+msgid "Delegations"
+msgstr "delegations"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:483
+#: src/bungeni.ui/bungeni/ui/descriptor.py:484
+#: src/bungeni.ui/bungeni/ui/descriptor.py:627
+#: src/bungeni.ui/bungeni/ui/descriptor.py:628
+#: src/bungeni.ui/bungeni/ui/descriptor.py:686
+#: src/bungeni.ui/bungeni/ui/descriptor.py:689
+#: src/bungeni.ui/bungeni/ui/descriptor.py:942
+#: src/bungeni.ui/bungeni/ui/descriptor.py:945
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1151
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1154
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1884
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1887
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2026
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2028
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2120
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2122
+msgid "Start Date"
+msgstr "start date"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:489
+#: src/bungeni.ui/bungeni/ui/descriptor.py:492
+#: src/bungeni.ui/bungeni/ui/descriptor.py:634
+#: src/bungeni.ui/bungeni/ui/descriptor.py:636
+#: src/bungeni.ui/bungeni/ui/descriptor.py:693
+#: src/bungeni.ui/bungeni/ui/descriptor.py:696
+#: src/bungeni.ui/bungeni/ui/descriptor.py:949
+#: src/bungeni.ui/bungeni/ui/descriptor.py:952
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1158
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1161
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1840
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1891
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1894
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2032
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2034
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2127
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2129
+msgid "End Date"
+msgstr "end date"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:496
+#: src/bungeni.ui/bungeni/ui/descriptor.py:641
+msgid "Active"
+msgstr "active"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:501
+msgid "Type of Substitution"
+msgstr "type of substitution"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:505
+msgid "Substituted by"
+msgstr "substituted by"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:511
+#: src/bungeni.ui/bungeni/ui/descriptor.py:514
+msgid "Roles/Titles"
+msgstr "roles/titles"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:525
+msgid "Member of parliament"
+msgstr "member of parliament"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:526
+msgid "Members of parliament"
+msgstr "members of parliament"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:552
+msgid "elected/nominated"
+msgstr "elected/nominated"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:556
+msgid "Election/Nomination Date"
+msgstr "election/nomination date"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:562
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1987
+msgid "Constituency"
+msgstr "constituency"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:568
+#: src/bungeni.ui/bungeni/ui/descriptor.py:624
+msgid "Political Party"
+msgstr "political party"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:574
+msgid "Leave Reason"
+msgstr "leave reason"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:576
+#: src/bungeni.ui/bungeni/ui/descriptor.py:604
+#: src/bungeni.ui/bungeni/ui/descriptor.py:647
+#: src/bungeni.ui/bungeni/ui/descriptor.py:831
+#: src/bungeni.ui/bungeni/ui/descriptor.py:980
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1054
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1092
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1133
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1179
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1382
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1384
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1429
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1430
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1488
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1898
+msgid "Notes"
+msgstr "notes"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:588
+msgid "Party member"
+msgstr "party member"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:589
+msgid "Party members"
+msgstr "party members"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:618
+msgid "Party membership"
+msgstr "party membership"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:619
+msgid "Party memberships"
+msgstr "party memberships"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:672
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1882
+msgid "Full Name"
+msgstr "full name"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:674
+msgid "Acronym"
+msgstr "acronym"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:680
+#: src/bungeni.ui/bungeni/ui/descriptor.py:730
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1247
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1424
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1425
+#: src/bungeni.ui/bungeni/ui/forms/templates/timeline_viewlet.pt:13
+msgid "Description"
+msgstr "description"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:709
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1299
+msgid "Parliament"
+msgstr "parliament"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:710
+msgid "Parliaments"
+msgstr "parliaments"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:718
+msgid "Parliament name"
+msgstr "parliament name"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:723
+msgid "Parliament Identifier"
+msgstr "parliament identifier"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:724
+msgid "Unique identifier of each Parliament (e.g. IX Parliament)"
+msgstr "unique identifier of each parliament (e.g. ix parliament)"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:736
+msgid "Election Date"
+msgstr "election date"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:737
+#, fuzzy
+msgid "Date of the election"
+msgstr "date of the election"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:743
+#: src/bungeni.ui/bungeni/ui/descriptor.py:746
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1117
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1121
+msgid "In power from"
+msgstr "in power from"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:744
+#, fuzzy
+msgid "Date of the swearing in"
+msgstr "date of the swearing in"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:752
+#: src/bungeni.ui/bungeni/ui/descriptor.py:755
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1125
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1128
+msgid "In power till"
+msgstr "in power till"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:753
+#, fuzzy
+msgid "Date of the dissolution"
+msgstr "date of the dissolution"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:773
+msgid "Profile"
+msgstr "profile"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:774
+#: src/bungeni.ui/bungeni/ui/workspace.py:290
+msgid "Committees"
+msgstr "committees"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:785
+msgid "Type of committee"
+msgstr "type of committee"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:787
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1028
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1868
+#: src/bungeni.ui/bungeni/ui/forms/templates/timeline_viewlet.pt:12
+#: src/bungeni.ui/bungeni/ui/forms/templates/version-attached-files.pt:11
+#: src/bungeni.ui/bungeni/ui/forms/templates/attached-files.pt:11
+msgid "Type"
+msgstr "type"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:791
+msgid "Number of members"
+msgstr "number of members"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:794
+msgid "Minimum Number of Members"
+msgstr "minimum number of members"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:796
+msgid "Quorum"
+msgstr "quorum"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:798
+msgid "Number of clerks"
+msgstr "number of clerks"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:800
+msgid "Number of researchers"
+msgstr "number of researchers"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:802
+msgid "Proportional representation"
+msgstr "proportional representation"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:804
+msgid "Default chairperson"
+msgstr "default chairperson"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:807
+msgid "Reinstatement Date"
+msgstr "reinstatement date"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:815
+#: src/bungeni.ui/bungeni/ui/forms/viewlets.py:560
+msgid "Member"
+msgstr "member"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:816
+msgid "Membership"
+msgstr "membership"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:843
+msgid "Address type"
+msgstr "address type"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:844
+msgid "Address types"
+msgstr "address types"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:849
+#: src/bungeni.ui/bungeni/ui/descriptor.py:862
+msgid "Address Type"
+msgstr "address type"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:853
+#: src/bungeni.ui/bungeni/ui/descriptor.py:871
+msgid "Address"
+msgstr "address"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:854
+msgid "Addresses"
+msgstr "addresses"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:868
+msgid "P.O. Box"
+msgstr "p.o. box"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:876
+msgid "City"
+msgstr "city"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:877
+msgid "Zip Code"
+msgstr "zip code"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:879
+#: src/bungeni.ui/bungeni/ui/descriptor.py:2074
+msgid "Country"
+msgstr "country"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:887
+msgid "Phone Number(s)"
+msgstr "phone number(s)"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:888
+msgid "Enter one phone number per line"
+msgstr "enter one phone number per line"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:896
+msgid "Fax Number(s)"
+msgstr "fax number(s)"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:897
+msgid "Enter one fax number per line"
+msgstr "enter one fax number per line"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:912
+msgid "Instant Messenger Id"
+msgstr "instant messenger id"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:913
+msgid "ICQ, AOL IM, GoogleTalk..."
+msgstr "icq, aol im, googletalk..."
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:924
+#: src/bungeni.ui/bungeni/ui/descriptor.py:932
+#: src/bungeni.ui/bungeni/ui/descriptor.py:933
+#: src/bungeni.ui/bungeni/ui/descriptor.py:938
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1239
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1305
+#: src/bungeni.ui/bungeni/ui/descriptor.py:1446
+#: src/bungeni.ui/bungeni/ui/forms/templates/version-attached-files.pt:9
+#: src/bungeni.ui/bungeni/ui/forms/templates/attached-files.pt:9
+msgid "Title"
+msgstr "title"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:925
+#: src/bungeni.ui/bungeni/ui/forms/templates/mp_title_viewlet.pt:1
+msgid "Titles"
+msgstr "titles"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:964
+#: src/bungeni.ui/bungeni/ui/descriptor.py:965
+msgid "Staff"
+msgstr "staff"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:991
+msgid "Political party"
+msgstr "political party"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:992
+msgid "Political parties"
+msgstr "political parties"
+
+#: src/bungeni.ui/bungeni/ui/descriptor.py:998
+msgid "Logo"
+msgstr "logo"
+
+#: src/bungeni.ui/bungeni/ui/forms/common.py:263
+msgid "Duplicate Value for Unique Field"
+msgstr "duplicate value for unique field"
+
+#. Default: "Add $name"
+#: src/bungeni.ui/bungeni/ui/forms/common.py:304
+msgid "add_item_legend"
+msgstr "add $name"
+
+#. Default: "Adding $name"
+#: src/bungeni.ui/bungeni/ui/forms/common.py:310
+msgid "add_item_title"
+msgstr "adding $name"
+
+#: src/bungeni.ui/bungeni/ui/forms/common.py:324
+#: src/bungeni.ui/bungeni/ui/forms/common.py:466
+msgid "Save and view"
+msgstr "save and view"
+
+#: src/bungeni.ui/bungeni/ui/forms/common.py:336
+#: src/bungeni.ui/bungeni/ui/forms/common.py:479
+#: src/bungeni.ui/bungeni/ui/widgets.py:356
+msgid "Cancel"
+msgstr "cancel"
+
+#: src/bungeni.ui/bungeni/ui/forms/common.py:345
+#: src/bungeni.ui/bungeni/ui/forms/common.py:457
+#: src/bungeni.ui/bungeni/ui/forms/common.py:720
+msgid "Save"
+msgstr "save"
+
+#: src/bungeni.ui/bungeni/ui/forms/common.py:357
+msgid "Save and add another"
+msgstr "save and add another"
+
+#. Default: "Editing $language translation of \"$title\""
+#: src/bungeni.ui/bungeni/ui/forms/common.py:391
+#: src/bungeni.ui/bungeni/ui/forms/common.py:542
+msgid "edit_translation_legend"
+msgstr "editing $language translation of \"$title\""
+
+#. Default: "Editing \"$title\" (version $version)"
+#: src/bungeni.ui/bungeni/ui/forms/common.py:397
+msgid "edit_version_legend"
+msgstr "editing \"$title\" (version $version)"
+
+#. Default: "Editing \"$title\""
+#: src/bungeni.ui/bungeni/ui/forms/common.py:402
+msgid "edit_item_legend"
+msgstr "editing \"$title\""
+
+#. Default: "The original $language version is shown on the left"
+#: src/bungeni.ui/bungeni/ui/forms/common.py:409
+msgid "edit_translation_help"
+msgstr "the original $language version is shown on the left"
+
+#. Default: "Add $language translation"
+#: src/bungeni.ui/bungeni/ui/forms/common.py:532
+msgid "translate_item_legend"
+msgstr "add $language translation"
+
+#. Default: "The document \"$title\" has not yet been translated into $language. Use this form to add the translation"
+#: src/bungeni.ui/bungeni/ui/forms/common.py:547
+msgid "translate_item_help"
+msgstr ""
+"the document \"$title\" has not yet been translated into $language. Use this "
+"form to add the translation"
+
+#. Default: "Adding $language translation"
+#: src/bungeni.ui/bungeni/ui/forms/common.py:560
+msgid "translate_item_title"
+msgstr "adding $language translation"
+
+#: src/bungeni.ui/bungeni/ui/forms/common.py:629
+msgid "Save translation"
+msgstr "save translation"
+
+#: src/bungeni.ui/bungeni/ui/forms/common.py:702
+msgid "Item reordering"
+msgstr "item reordering"
+
+#: src/bungeni.ui/bungeni/ui/forms/common.py:763
+#: src/bungeni.ui/bungeni/ui/menu.zcml:385
+#: src/bungeni.ui/bungeni/ui/menu.zcml:394
+#: src/bungeni.ui/bungeni/ui/menu.zcml:720
+#: src/bungeni.ui/bungeni/ui/menu.zcml:729
+#: src/bungeni.ui/bungeni/ui/menu.zcml:898
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1391
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1409
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1419
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1446
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1465
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1483
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1536
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1544
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1552
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1561
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1569
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1596
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1605
+msgid "Delete"
+msgstr "delete"
+
+#: src/bungeni.ui/bungeni/ui/forms/common.py:781
+msgid "Could not delete item due to database integrity error"
+msgstr "could not delete item due to database integrity error"
+
+#: src/bungeni.ui/bungeni/ui/forms/fields.py:49
+#: src/bungeni.ui/bungeni/ui/forms/viewlets.py:94
+msgid "General"
+msgstr "general"
+
+#. Default: ""
+#: src/bungeni.ui/bungeni/ui/forms/fields.py:92
+msgid "This content is not yet translated into $language"
+msgstr "this content is not yet translated into $language"
+
+#: src/bungeni.ui/bungeni/ui/forms/files.py:14
+#: src/bungeni.ui/bungeni/ui/forms/templates/version-attached-files.pt:1
+#: src/bungeni.ui/bungeni/ui/forms/templates/attached-files.pt:1
+msgid "attached files"
+msgstr "attached files"
+
+#: src/bungeni.ui/bungeni/ui/forms/forms.py:107
+msgid "Direction"
+msgstr "direction"
+
+#: src/bungeni.ui/bungeni/ui/forms/forms.py:111
+msgid "AM"
+msgstr "am"
+
+#: src/bungeni.ui/bungeni/ui/forms/forms.py:116
+msgid "Move"
+msgstr "move"
+
+#: src/bungeni.ui/bungeni/ui/forms/forms.py:318
+msgid "Weekdays"
+msgstr "weekdays"
+
+#: src/bungeni.ui/bungeni/ui/forms/forms.py:319
+msgid "Select the days on which the event should occur"
+msgstr "select the days on which the event should occur"
+
+#: src/bungeni.ui/bungeni/ui/forms/forms.py:326
+msgid "Monthly"
+msgstr "monthly"
+
+#: src/bungeni.ui/bungeni/ui/forms/forms.py:327
+#, fuzzy
+msgid "Select the mode of monthly recurrence"
+msgstr "select the mode of monthly recurrence"
+
+#: src/bungeni.ui/bungeni/ui/forms/forms.py:332
+msgid "Repeat"
+msgstr "repeat"
+
+#: src/bungeni.ui/bungeni/ui/forms/forms.py:333
+msgid ""
+"Enter the number of times which the event should be repeated (as an integer)"
+msgstr ""
+"enter the number of times which the event should be repeated (as an integer)"
+
+#: src/bungeni.ui/bungeni/ui/forms/forms.py:338
+msgid "Repeat until date"
+msgstr "repeat until date"
+
+#: src/bungeni.ui/bungeni/ui/forms/forms.py:339
+msgid "Limit recurrence to the specified date"
+msgstr "limit recurrence to the specified date"
+
+#: src/bungeni.ui/bungeni/ui/forms/forms.py:343
+msgid "Exceptions"
+msgstr "exceptions"
+
+#: src/bungeni.ui/bungeni/ui/forms/forms.py:344
+msgid ""
+"Events will not be scheduled at dates appearing in this field. Separate with "
+"comma or newline. Format: YYYY/MM/DD"
+msgstr ""
+"events will not be scheduled at dates appearing in this field. separate with "
+"comma or newline. format: yyyy/mm/dd"
+
+#: src/bungeni.ui/bungeni/ui/forms/forms.py:356
+msgid "Must limit recurrence (by number or date)"
+msgstr "must limit recurrence (by number or date)"
+
+#: src/bungeni.ui/bungeni/ui/forms/forms.py:360
+msgid "Recurring events"
+msgstr "recurring events"
+
+#: src/bungeni.ui/bungeni/ui/forms/templates/delete.pt:7
+msgid "Delete item confirmation"
+msgstr "delete item confirmation"
+
+#. Default: "(Required)"
+#: src/bungeni.ui/bungeni/ui/forms/templates/form.pt:13
+msgid "label_required"
+msgstr "required"
+
+#. Default: "Required"
+#: src/bungeni.ui/bungeni/ui/forms/templates/form.pt:13
+msgid "title_required"
+msgstr "required"
+
+#. Default: "Name"
+#: src/bungeni.ui/bungeni/ui/forms/templates/library-macros.pt:70
+msgid "svn_listing_name"
+msgstr "name"
+
+#. Default: "Modified"
+#: src/bungeni.ui/bungeni/ui/forms/templates/library-macros.pt:72
+msgid "svn_listing_modified"
+msgstr "modified"
+
+#. Default: "By"
+#: src/bungeni.ui/bungeni/ui/forms/templates/library-macros.pt:73
+msgid "svn_listing_size"
+msgstr "by"
+
+#. Default: "Message"
+#: src/bungeni.ui/bungeni/ui/forms/templates/library-macros.pt:74
+msgid "svn_listing_message"
+msgstr "message"
+
+#: src/bungeni.ui/bungeni/ui/forms/templates/mp_item_viewlet.pt:1
+msgid "Parliamentary activities"
+msgstr "parliamentary activities"
+
+#: src/bungeni.ui/bungeni/ui/forms/templates/offices_held_viewlet.pt:1
+msgid "Offices held"
+msgstr "offices held"
+
+#. Default: "Type"
+#: src/bungeni.ui/bungeni/ui/forms/templates/offices_held_viewlet.pt:10
+msgid "office_type"
+msgstr "type"
+
+#. Default: "Title"
+#: src/bungeni.ui/bungeni/ui/forms/templates/offices_held_viewlet.pt:11
+msgid "office_title"
+msgstr "title"
+
+#. Default: "From"
+#: src/bungeni.ui/bungeni/ui/forms/templates/offices_held_viewlet.pt:12
+msgid "office_from"
+msgstr "from"
+
+#. Default: "To"
+#: src/bungeni.ui/bungeni/ui/forms/templates/offices_held_viewlet.pt:13
+msgid "office_to"
+msgstr "to"
+
+#. Default: "Office"
+#: src/bungeni.ui/bungeni/ui/forms/templates/offices_held_viewlet.pt:9
+msgid "office_held"
+msgstr "office"
+
+#: src/bungeni.ui/bungeni/ui/forms/templates/version-attached-files.pt:10
+#: src/bungeni.ui/bungeni/ui/forms/templates/attached-files.pt:10
+msgid "File name"
+msgstr "file name"
+
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:129
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:140
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:149
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:259
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:268
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:275
+msgid "The person is a member in (%s) at that date"
+msgstr "the person is a member in (%s) at that date"
+
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:167
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:220
+msgid "The start date overlaps with (%s)"
+msgstr "the start date overlaps with (%s)"
+
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:175
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:229
+msgid "The end date overlaps with (%s)"
+msgstr "the end date overlaps with (%s)"
+
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:181
+msgid "The election date overlaps with (%s)"
+msgstr "the election date overlaps with (%s)"
+
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:191
+msgid "Another parliament is not yet dissolved (%s)"
+msgstr "another parliament is not yet dissolved (%s)"
+
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:206
+msgid "Start date cannot be after the parliaments dissolution (%s)"
+msgstr "start date cannot be after the parliaments dissolution (%s)"
+
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:211
+msgid "Start date must start after the swearing in of the parliament (%s)"
+msgstr "start date must start after the swearing in of the parliament (%s)"
+
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:237
+msgid "Another government is not yet dissolved (%s)"
+msgstr "another government is not yet dissolved (%s)"
+
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:351
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:356
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:370
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:375
+#, fuzzy
+msgid "This persons allready has the title %s"
+msgstr "this person already has the title %s"
+
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:389
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:394
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:409
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:414
+#, fuzzy
+msgid "A person with the title %s allready exists"
+msgstr "a person with the title %s already exists"
+
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:40
+msgid "Start date must be after (%s)"
+msgstr "start date must be after (%s)"
+
+#. Default: ""
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:443
+msgid "Venue \"$venue\" already booked in this time slot"
+msgstr "venue \"$venue\" already booked in this time slot"
+
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:46
+msgid "Start date must be prior to (%s)"
+msgstr "start date must be prior to (%s)"
+
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:477
+msgid "If recurrence is limited by date, it must lie after the starting date"
+msgstr "if recurrence is limited by date, it must lie after the starting date"
+
+#. Default: ""
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:486
+msgid ""
+"One or more events would be scheduled for $F, which is after the scheduling "
+"group's end date"
+msgstr ""
+"one or more events would be scheduled for $f, which is after the scheduling "
+"group's end date"
+
+#. Default: ""
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:530
+msgid ""
+"One or more events would be scheduled for $F, which overlaps with an "
+"existing sitting"
+msgstr ""
+"one or more events would be scheduled for $f, which overlaps with an "
+"existing sitting"
+
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:60
+msgid "End date must be equal to start date"
+msgstr "end date must be equal to start date"
+
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:78
+msgid "End date must be after (%s)"
+msgstr "end date must be after (%s)"
+
+#: src/bungeni.ui/bungeni/ui/forms/validations.py:84
+msgid "End date must be prior to (%s)"
+msgstr "end date must be prior to (%s)"
+
+#: src/bungeni.ui/bungeni/ui/forms/viewlets.py:381
+msgid "Personal Info"
+msgstr "personal info"
+
+#: src/bungeni.ui/bungeni/ui/forms/viewlets.py:410
+msgid "Parliament Membership"
+msgstr "parliament membership"
+
+#: src/bungeni.ui/bungeni/ui/forms/viewlets.py:507
+msgid "Add response"
+msgstr "add response"
+
+#: src/bungeni.ui/bungeni/ui/forms/viewlets.py:600
+msgid "add event"
+msgstr "add event"
+
+#: src/bungeni.ui/bungeni/ui/forms/viewlets.py:633
+msgid "Bill timeline"
+msgstr "bill timeline"
+
+#: src/bungeni.ui/bungeni/ui/forms/viewlets.py:638
+#, fuzzy
+msgid "Motion timeline"
+msgstr "bill timeline"
+
+#: src/bungeni.ui/bungeni/ui/forms/viewlets.py:643
+#, fuzzy
+msgid "Question timeline"
+msgstr "question version"
+
+#: src/bungeni.ui/bungeni/ui/forms/viewlets.py:648
+msgid "Tabled document timeline"
+msgstr "tabled document timeline"
+
+#: src/bungeni.ui/bungeni/ui/forms/viewlets.py:746
+msgid "Add"
+msgstr "add"
+
+#: src/bungeni.ui/bungeni/ui/forms/viewlets.py:758
+msgid "No item has been set"
+msgstr "no item has been set"
+
+#: src/bungeni.ui/bungeni/ui/login.py:14
+msgid "Username"
+msgstr "username"
+
+#: src/bungeni.ui/bungeni/ui/login.py:15
+msgid "Password"
+msgstr "password"
+
+#: src/bungeni.ui/bungeni/ui/login.py:25
+msgid "Invalid account credentials"
+msgstr "invalid account credentials"
+
+#: src/bungeni.ui/bungeni/ui/login.py:29
+msgid "You are now logged in"
+msgstr "you are now logged in"
+
+#. Default: "Language:"
+#: src/bungeni.ui/bungeni/ui/menu.py:126
+msgid "label_translate"
+msgstr "language:"
+
+#. Default: "State:"
+#: src/bungeni.ui/bungeni/ui/menu.py:198
+msgid "label_state"
+msgstr "state:"
+
+#. Default: "Calendar:"
+#: src/bungeni.ui/bungeni/ui/menu.py:301
+msgid "label_calendar_context"
+msgstr "calendar:"
+
+#: src/bungeni.ui/bungeni/ui/menu.py:69
+msgid "Logout"
+msgstr "logout"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1008
+msgid "Add new Question..."
+msgstr "add new question..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1027
+msgid "Add new Bill..."
+msgstr "add new bill..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1046
+msgid "Add new Motion..."
+msgstr "add new motion..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1077
+msgid "Add new Committee..."
+msgstr "add new committee..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1089
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1110
+msgid "Agenda..."
+msgstr "agenda..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1097
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1118
+msgid "Votes and proceedings..."
+msgstr "votes and proceedings..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:113
+msgid "The 'Add..' menu - for political parties"
+msgstr "the 'add..' menu - for political parties"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1159
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1365
+msgid "Info"
+msgstr "info"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1168
+msgid "Edit Discussion"
+msgstr "edit discussion"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1177
+msgid "Schedule Item"
+msgstr "schedule item"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:119
+#: src/bungeni.ui/bungeni/ui/menu.zcml:137
+#: src/bungeni.ui/bungeni/ui/menu.zcml:160
+#: src/bungeni.ui/bungeni/ui/menu.zcml:223
+#: src/bungeni.ui/bungeni/ui/menu.zcml:247
+#: src/bungeni.ui/bungeni/ui/menu.zcml:271
+#: src/bungeni.ui/bungeni/ui/menu.zcml:296
+#: src/bungeni.ui/bungeni/ui/menu.zcml:331
+#: src/bungeni.ui/bungeni/ui/menu.zcml:366
+#: src/bungeni.ui/bungeni/ui/menu.zcml:472
+#: src/bungeni.ui/bungeni/ui/menu.zcml:523
+#: src/bungeni.ui/bungeni/ui/menu.zcml:548
+#: src/bungeni.ui/bungeni/ui/menu.zcml:563
+msgid "Add..."
+msgstr "add..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1195
+msgid "Reorder Schedulings"
+msgstr "reorder schedulings"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1204
+msgid "Schedule"
+msgstr "schedule"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1213
+msgid "Edit Scheduling"
+msgstr "edit scheduling"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1223
+msgid "Delete Scheduling"
+msgstr "delete scheduling"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1233
+msgid "Move Scheduling up"
+msgstr "move scheduling up"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1243
+msgid "Move Scheduling down"
+msgstr "move scheduling down"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:128
+msgid "Add Party Member..."
+msgstr "add party member..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1310
+msgid "Workspace"
+msgstr "workspace"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1318
+msgid "Home"
+msgstr "home"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1334
+msgid "Business"
+msgstr "business"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1341
+msgid "Members"
+msgstr "members"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1348
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.zcml:52
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.zcml:73
+#: src/bungeni.ui/bungeni/ui/templates/archive.pt:6
+msgid "Archive"
+msgstr "archive"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1355
+msgid "Administration"
+msgstr "administration"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1373
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1382
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1400
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1437
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1455
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1474
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1492
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1501
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1509
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1518
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1526
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1578
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1587
+msgid "Edit"
+msgstr "edit"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1428
+msgid "Respond"
+msgstr "respond"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:146
+#, fuzzy
+msgid "Add political group member..."
+msgstr "add political group..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:154
+msgid "The 'Add...' menu - for committees"
+msgstr "the 'add...' menu - for committees"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:16
+#, fuzzy
+msgid "Actions Admin"
+msgstr "actions"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1616
+msgid "Calendar"
+msgstr "calendar"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1627
+msgid "Audit Log"
+msgstr "audit log"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1645
+#, fuzzy
+msgid "download pdf"
+msgstr "download"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1654
+#, fuzzy
+msgid "download odt"
+msgstr "download pdf"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1670
+#: src/bungeni.ui/bungeni/ui/templates/workflow.pt:7
+msgid "Workflow"
+msgstr "workflow"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:170
+#: src/bungeni.ui/bungeni/ui/menu.zcml:572
+msgid "Add Member..."
+msgstr "add member..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:179
+msgid "Add Staff..."
+msgstr "add staff..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:188
+#: src/bungeni.ui/bungeni/ui/menu.zcml:631
+#: src/bungeni.ui/bungeni/ui/menu.zcml:918
+msgid "Add Agenda item..."
+msgstr "add agenda item..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:198
+msgid "Assign a bill..."
+msgstr "assign a bill..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:208
+#: src/bungeni.ui/bungeni/ui/menu.zcml:623
+#: src/bungeni.ui/bungeni/ui/menu.zcml:648
+msgid "Add Sitting..."
+msgstr "add sitting..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:217
+msgid "The 'Add..' menu - for government"
+msgstr "the 'add..' menu - for government"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:23
+msgid "Actions for Calendar Sittings"
+msgstr "actions for calendar sittings"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:232
+#: src/bungeni.ui/bungeni/ui/menu.zcml:767
+msgid "Add Ministry..."
+msgstr "add ministry..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:241
+msgid "The 'Add..' menu - for ministry"
+msgstr "the 'add..' menu - for ministry"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:256
+#: src/bungeni.ui/bungeni/ui/menu.zcml:833
+msgid "Add Minister..."
+msgstr "add minister..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:265
+msgid "The 'Add...' menu - for Group Memberships"
+msgstr "the 'add...' menu - for group memberships"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:28
+msgid "Actions for Scheduling Discussions"
+msgstr "actions for scheduling discussions"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:280
+msgid "Add title..."
+msgstr "add title..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:290
+msgid "The 'Add...' menu - for Group Sittings"
+msgstr "the 'add...' menu - for group sittings"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:305
+msgid "Add Attendance..."
+msgstr "add attendance..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:314
+#: src/bungeni.ui/bungeni/ui/menu.zcml:639
+#: src/bungeni.ui/bungeni/ui/menu.zcml:975
+msgid "Add Heading..."
+msgstr "add heading..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:325
+msgid "The 'Add...' menu - for motion"
+msgstr "the 'add...' menu - for motion"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:33
+msgid "Actions for Calendar Schedulings"
+msgstr "actions for calendar schedulings"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:340
+#: src/bungeni.ui/bungeni/ui/menu.zcml:464
+#: src/bungeni.ui/bungeni/ui/menu.zcml:514
+#, fuzzy
+msgid "Add cosignatory..."
+msgstr "add consignatory..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:349
+#: src/bungeni.ui/bungeni/ui/menu.zcml:422
+#: src/bungeni.ui/bungeni/ui/menu.zcml:446
+#: src/bungeni.ui/bungeni/ui/menu.zcml:497
+#: src/bungeni.ui/bungeni/ui/menu.zcml:539
+#: src/bungeni.ui/bungeni/ui/menu.zcml:997
+msgid "Add file..."
+msgstr "add file..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:360
+msgid "The 'Add...' menu - for bill"
+msgstr "the 'add...' menu - for bill"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:375
+msgid "Add consignatory..."
+msgstr "add consignatory..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:38
+msgid "The 'workflow' menu - allows the user to execute workflow transitions"
+msgstr "the 'workflow' menu - allows the user to execute workflow transitions"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:403
+#: src/bungeni.ui/bungeni/ui/menu.zcml:412
+#: src/bungeni.ui/bungeni/ui/menu.zcml:455
+#: src/bungeni.ui/bungeni/ui/menu.zcml:506
+msgid "Add event..."
+msgstr "add event..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:431
+msgid "Assign bill to a group..."
+msgstr "assign bill to a group..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:44
+msgid "The 'Calendar' menu - allows the user to select a scheduling context"
+msgstr "the 'calendar' menu - allows the user to select a scheduling context"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:440
+msgid "The 'Add...' menu - for question"
+msgstr "the 'add...' menu - for question"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:491
+msgid "The 'Add...' menu - for tabled document"
+msgstr "the 'add...' menu - for tabled document"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:50
+msgid "The 'Add' menu - allows the user to add content"
+msgstr "the 'add...' menu - allows the user to add content"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:533
+msgid "The 'Add...' menu - for agenda item"
+msgstr "the 'add...' menu - for agenda item"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:557
+msgid "The 'Add...' menu - for offices"
+msgstr "the 'add...' menu - for offices"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:56
+msgid "The 'Translate' menu - allows the user to translate content"
+msgstr "the 'add' menu - allows the user to add content"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:587
+msgid "content"
+msgstr "content"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:596
+msgid "settings"
+msgstr "settings"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:606
+msgid "Add ..."
+msgstr "add ..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:616
+msgid "The 'Add..' menu - for calendar"
+msgstr "the 'add...' menu - for calendar"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:657
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1186
+msgid "Delete Sitting"
+msgstr "delete sitting"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:674
+msgid "Add Parliament..."
+msgstr "add parliament..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:683
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1067
+msgid "Add Committee..."
+msgstr "add committee..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:69
+msgid "The 'Actions' menu - provides context-specific actions (views)"
+msgstr "the 'actions' menu - provides context-specific actions (views)"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:693
+#: src/bungeni.ui/bungeni/ui/menu.zcml:929
+msgid "Add Session..."
+msgstr "add session..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:702
+msgid "Add Government..."
+msgstr "add government..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:711
+msgid "Add MP..."
+msgstr "add mp..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:741
+msgid "Add Office..."
+msgstr "add office..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:75
+msgid "The 'Reports' menu - provides reporting actions"
+msgstr "the 'reports' menu - provides reporting actions"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:750
+msgid "Add Political Party..."
+msgstr "add political party..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:759
+msgid "Add Political Group..."
+msgstr "add political group..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:776
+msgid "Add User..."
+msgstr "add user..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:785
+msgid "Add Constituency..."
+msgstr "add constituency..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:794
+msgid "Add Province..."
+msgstr "add province..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:803
+msgid "Add Region..."
+msgstr "add region..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:814
+msgid "Add Committee Member..."
+msgstr "add committee member..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:823
+msgid "Add Committee Staff..."
+msgstr "add committee staff..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:83
+#: src/bungeni.ui/bungeni/ui/menu.zcml:91
+msgid "Add Parliamentary Content..."
+msgstr "add parliamentary content..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:842
+msgid "Add Office Member..."
+msgstr "add office member..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:852
+#: src/bungeni.ui/bungeni/ui/menu.zcml:861
+msgid "Add Address..."
+msgstr "add address..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:870
+msgid "Add Delegation..."
+msgstr "add delegation..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:880
+msgid "Add Title/Function..."
+msgstr "add title/function..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:890
+msgid "Add Consignatory..."
+msgstr "add consignatory..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:908
+msgid "Add Tabled document..."
+msgstr "add tabled document..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:938
+msgid "Delete Session"
+msgstr "delete session"
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:948
+#: src/bungeni.ui/bungeni/ui/menu.zcml:957
+msgid "Add Question..."
+msgstr "add question..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:966
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1037
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1056
+msgid "Add Motion..."
+msgstr "add motion..."
+
+#: src/bungeni.ui/bungeni/ui/menu.zcml:984
+#: src/bungeni.ui/bungeni/ui/menu.zcml:1018
+msgid "Add Bill..."
+msgstr "add bill..."
+
+#: src/bungeni.ui/bungeni/ui/search.py:106
+#: src/bungeni.ui/bungeni/ui/templates/search.pt:7
+msgid "Search"
+msgstr "search"
+
+#: src/bungeni.ui/bungeni/ui/search.py:113
+msgid "Invalid Query"
+msgstr "invalid query"
+
+#: src/bungeni.ui/bungeni/ui/search.py:55
+msgid "Query"
+msgstr "query"
+
+#: src/bungeni.ui/bungeni/ui/search.py:67
+msgid "rank"
+msgstr "rank"
+
+#: src/bungeni.ui/bungeni/ui/search.py:68
+msgid "type"
+msgstr "type"
+
+#: src/bungeni.ui/bungeni/ui/search.py:69
+msgid "title"
+msgstr "title"
+
+#: src/bungeni.ui/bungeni/ui/search.py:70
+msgid "status"
+msgstr "status"
+
+#: src/bungeni.ui/bungeni/ui/search.py:71
+msgid "weight"
+msgstr "weight"
+
+#: src/bungeni.ui/bungeni/ui/search.py:72
+msgid "percent"
+msgstr "percent"
+
+#. Default: "Upload file"
+#: src/bungeni.ui/bungeni/ui/templates/addfilewidget.pt:2
+msgid "upload-file"
+msgstr "upload file"
+
+#: src/bungeni.ui/bungeni/ui/templates/admin-menu-viewlet.pt:13
+msgid "Settings"
+msgstr "settings"
+
+#: src/bungeni.ui/bungeni/ui/templates/app-index.pt:6
+msgid "Welcome to Bungeni"
+msgstr "welcome to bungeni"
+
+#: src/bungeni.ui/bungeni/ui/templates/archive.pt:7
+msgid "Access to current and historical records"
+msgstr "access to current and historical records"
+
+#. Default: "Keep existing file"
+#: src/bungeni.ui/bungeni/ui/templates/editfilewidget.pt:21
+msgid "keep-file"
+msgstr "keep existing file"
+
+#. Default: "Replace with new file:"
+#: src/bungeni.ui/bungeni/ui/templates/editfilewidget.pt:30
+msgid "replace-file"
+msgstr "replace with new file:"
+
+#. Default: "download"
+#: src/bungeni.ui/bungeni/ui/templates/editfilewidget.pt:38
+msgid "download-file"
+msgstr "download"
+
+#. Default: "Keep existing image"
+#: src/bungeni.ui/bungeni/ui/templates/imagewidget.pt:23
+msgid "keep-image"
+msgstr "keep existing image"
+
+#. Default: "Delete current image"
+#: src/bungeni.ui/bungeni/ui/templates/imagewidget.pt:32
+msgid "delete-image"
+msgstr "delete current image"
+
+#. Default: "Replace with new image:"
+#: src/bungeni.ui/bungeni/ui/templates/imagewidget.pt:41
+msgid "replace-image"
+msgstr "replace with new image:"
+
+#. Default: "Upload image"
+#: src/bungeni.ui/bungeni/ui/templates/imagewidget.pt:44
+msgid "upload-image"
+msgstr "upload image"
+
+#: src/bungeni.ui/bungeni/ui/templates/search.pt:19
+msgid "Results"
+msgstr "results"
+
+#: src/bungeni.ui/bungeni/ui/templates/similar.pt:7
+msgid "Similar Content"
+msgstr "similar content"
+
+#: src/bungeni.ui/bungeni/ui/templates/version.pt:11
+msgid ""
+"Select a version to compare to the current working copy, or make two "
+"selections to compare historic versions"
+msgstr ""
+"select a version to compare to the current working copy, or make two "
+"selections to compare historic versions"
+
+#: src/bungeni.ui/bungeni/ui/templates/workflow.pt:11
+msgid "Current state: ${state}."
+msgstr "current state: ${state}."
+
+#: src/bungeni.ui/bungeni/ui/templates/workflow.pt:15
+msgid "History"
+msgstr "history"
+
+#: src/bungeni.ui/bungeni/ui/templates/workflow.pt:19
+msgid "No history available for this item"
+msgstr "no history available for this item"
+
+#: src/bungeni.ui/bungeni/ui/templates/workflow_ajax.pt:7
+msgid "Change state..."
+msgstr "change state..."
+
+#: src/bungeni.ui/bungeni/ui/utils/date.py:24
+#, fuzzy
+msgid "date must be of type datetime or date"
+msgstr "date format must be either date or date and time"
+
+#: src/bungeni.ui/bungeni/ui/utils/misc.py:64
+msgid "Form values must be of type string or list"
+msgstr "form values must be of type string or list"
+
+#: src/bungeni.ui/bungeni/ui/versions.py:133
+msgid "New Version"
+msgstr "new version"
+
+#: src/bungeni.ui/bungeni/ui/versions.py:136
+msgid "New Version Created"
+msgstr "new version created"
+
+#: src/bungeni.ui/bungeni/ui/versions.py:138
+msgid "Revert To"
+msgstr "revert to"
+
+#: src/bungeni.ui/bungeni/ui/versions.py:142
+msgid "Select one item to revert to"
+msgstr "select one item to revert to"
+
+#: src/bungeni.ui/bungeni/ui/versions.py:147
+msgid "Reverted to Previous Version %s"
+msgstr "reverted to previous version %s"
+
+#: src/bungeni.ui/bungeni/ui/versions.py:150
+msgid "Show Differences"
+msgstr "show differences"
+
+#: src/bungeni.ui/bungeni/ui/versions.py:153
+msgid "Displaying differences"
+msgstr "displaying differences"
+
+#: src/bungeni.ui/bungeni/ui/versions.py:158
+msgid "Select one or two items to show differences"
+msgstr "select one or two items to show differences"
+
+#: src/bungeni.ui/bungeni/ui/versions.py:41
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/portlet-contentactions.pt:7
+msgid "View"
+msgstr "view"
+
+#. Default: ""
+#: src/bungeni.ui/bungeni/ui/versions.py:45
+msgid "Currently displaying version ${version}"
+msgstr "currently displaying version ${version}"
+
+#: src/bungeni.ui/bungeni/ui/versions.py:64
+msgid "Change Message"
+msgstr "change message"
+
+#: src/bungeni.ui/bungeni/ui/versions.py:75
+msgid "version"
+msgstr "version"
+
+#: src/bungeni.ui/bungeni/ui/versions.py:78
+msgid "manual"
+msgstr "manual"
+
+#: src/bungeni.ui/bungeni/ui/versions.py:79
+msgid "modified"
+msgstr "modified"
+
+#: src/bungeni.ui/bungeni/ui/versions.py:80
+msgid "by"
+msgstr "by"
+
+#: src/bungeni.ui/bungeni/ui/versions.py:81
+msgid "message"
+msgstr "message"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/archive.py:100
+msgid "Invalid Date Range"
+msgstr "invalid date range"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/archive.py:106
+msgid "Start date must be before %s"
+msgstr "start date must be before %s"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/archive.py:112
+msgid "End date must be after %s"
+msgstr "end date must be after %s"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/archive.py:120
+msgid "Date range set"
+msgstr "date range set"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/archive.py:122
+msgid "Clear"
+msgstr "clear"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/archive.py:128
+msgid "Date range cleared"
+msgstr "date range cleared"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/archive.py:23
+msgid "From"
+msgstr "from"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/archive.py:24
+msgid "Leave blank or set lower limit"
+msgstr "leave blank or set lower limit"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/archive.py:28
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/workspace_item_viewlet.pt:29
+msgid "To"
+msgstr "to"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/archive.py:29
+msgid "Leave blank or set upper limit"
+msgstr "leave blank or set upper limit"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/archive.py:33
+msgid "Or select"
+msgstr "or select"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/archive.py:34
+msgid "Set date range to that of a given particular parliament"
+msgstr "set date range to that of a given particular parliament"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/archive.py:42
+msgid "Filter the archive by date range"
+msgstr "filter the archive by date range"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/archive.py:81
+msgid "parliament..."
+msgstr "parliament..."
+
+#: src/bungeni.ui/bungeni/ui/viewlets/archive.py:92
+msgid "Filter"
+msgstr "filter"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/archive-dates.pt:5
+msgid "Filter by date or parliament"
+msgstr "filter by date or parliament"
+
+#. Default: "You are here:"
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/breadcrumbs.pt:2
+msgid "you_are_here"
+msgstr "you are here:"
+
+#. Default: "Home"
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/breadcrumbs.pt:3
+msgid "tabs_home"
+msgstr "home"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/questions.pt:20
+msgid "No items"
+msgstr "no items"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/scheduling.pt:9
+msgid "Add items to schedule by clicking on them"
+msgstr ""
+
+#. Default: "Sections"
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/sections.pt:2
+msgid "heading_sections"
+msgstr "sections"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/whatson.pt:15
+msgid "From: ${whats_on_start_date} to: ${whats_on_end_date}"
+msgstr "from: ${whats_on_start_date} to: ${whats_on_end_date}"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/whatson.pt:7
+msgid "What's on"
+msgstr "what's on"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/whatson.pt:8
+msgid "An overview of the daily operations of the parliament"
+msgstr "an overview of the daily operations of the parliament"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/workspace_item_portlet.pt:10
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/questions.pt:10
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/workspace_sitting_viewlet.pt:10
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/workspace_sitting_viewlet.pt:32
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/bungeni-navigation-tree.pt:29
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/ministry_ws_viewlet.pt:10
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/schedulable_items.pt:1
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/schedulable_items.pt:30
+#: src/bungeni.ui/bungeni/ui/templates/workspace-section.pt:6
+#: src/bungeni.ui/bungeni/ui/templates/changes.pt:6
+#: src/bungeni.ui/bungeni/ui/forms/templates/library-container.pt:1
+#: src/bungeni.ui/bungeni/ui/forms/templates/timeline_viewlet.pt:1
+#: src/bungeni.ui/bungeni/ui/forms/templates/timeline_viewlet.pt:19
+#: src/bungeni.ui/bungeni/ui/forms/templates/delete.pt:29
+#: src/bungeni.ui/bungeni/ui/forms/templates/content-view.pt:7
+#: src/bungeni.ui/bungeni/ui/forms/templates/content-view.pt:11
+#: src/bungeni.ui/bungeni/ui/forms/templates/content-view.pt:12
+#: src/bungeni.ui/bungeni/ui/forms/templates/generic-sub-container.pt:1
+msgid "${DYNAMIC_CONTENT}"
+msgstr "${dynamiccontent}"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/workspace_item_viewlet.pt:24
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/workspace_group_viewlet.pt:24
+msgid "Subject"
+msgstr "subject"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/workspace_item_viewlet.pt:28
+msgid "Owner"
+msgstr "owner"
+
+#. Default: "No items found"
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/workspace_item_viewlet.pt:43
+#: src/bungeni.ui/bungeni/ui/viewlets/templates/workspace_group_viewlet.pt:39
+msgid "workspace_no_items"
+msgstr "no items found"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:142
+msgid "My Groups"
+msgstr "my groups"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:464
+msgid "Draft Bills"
+msgstr "draft bills"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:557
+msgid "draft items"
+msgstr "draft items"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:572
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:715
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:783
+msgid "to do"
+msgstr "to do"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:587
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:925
+msgid "in progress"
+msgstr "in progress"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:639
+msgid "archived items"
+msgstr "archived items"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:665
+msgid "Items succesfully tabled"
+msgstr "items succesfully tabled"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:685
+msgid "Archived Items"
+msgstr "archived items"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:734
+msgid "pending with the clerk"
+msgstr "pending with the clerk"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:739
+msgid "reviewed & in progress"
+msgstr "reviewed & in progress"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:793
+msgid "approved"
+msgstr "approved"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:809
+msgid "to be scheduled"
+msgstr "to be scheduled"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:832
+msgid "questions at the ministries"
+msgstr "questions at the ministries"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:841
+msgid "questions to the ministry"
+msgstr "questions to the ministry"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:904
+msgid "oral questions"
+msgstr "oral questions"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:914
+msgid "written questions"
+msgstr "written questions"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:934
+msgid "agendas/minutes"
+msgstr "agendas/minutes"
+
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.zcml:37
+#, fuzzy
+msgid "The sections of a user's workspace"
+msgstr "actions for the workspace"
+
+#: src/bungeni.ui/bungeni/ui/views.zcml:427
+msgid "Listing"
+msgstr "listing"
+
+#: src/bungeni.ui/bungeni/ui/vocabulary.py:100
+msgid "Translators Office"
+msgstr "translator's office"
+
+#: src/bungeni.ui/bungeni/ui/vocabulary.py:101
+msgid "Library Office"
+msgstr "library office"
+
+#: src/bungeni.ui/bungeni/ui/vocabulary.py:102
+msgid "Researcher Office"
+msgstr "researcher's office"
+
+#: src/bungeni.ui/bungeni/ui/vocabulary.py:105
+msgid "Yes"
+msgstr "yes"
+
+#: src/bungeni.ui/bungeni/ui/vocabulary.py:106
+msgid "No"
+msgstr "no"
+
+#. Default: ""
+#: src/bungeni.ui/bungeni/ui/vocabulary.py:31
+msgid "day_%d"
+msgstr "day%d"
+
+#. Default: ""
+#: src/bungeni.ui/bungeni/ui/vocabulary.py:65
+msgid "Day $number of every month"
+msgstr "day $number of every month"
+
+#. Default: ""
+#: src/bungeni.ui/bungeni/ui/vocabulary.py:69
+msgid "First $day of every month"
+msgstr "first $day of every month"
+
+#: src/bungeni.ui/bungeni/ui/vocabulary.py:78
+msgid "Ordinary"
+msgstr "ordinary"
+
+#: src/bungeni.ui/bungeni/ui/vocabulary.py:79
+msgid "Private Notice"
+msgstr "private notice"
+
+#: src/bungeni.ui/bungeni/ui/vocabulary.py:81
+msgid "Oral"
+msgstr "oral"
+
+#: src/bungeni.ui/bungeni/ui/vocabulary.py:82
+msgid "Written"
+msgstr "written"
+
+#: src/bungeni.ui/bungeni/ui/vocabulary.py:84
+msgid "Male"
+msgstr "male"
+
+#: src/bungeni.ui/bungeni/ui/vocabulary.py:85
+msgid "Female"
+msgstr "female"
+
+#: src/bungeni.ui/bungeni/ui/vocabulary.py:87
+msgid "elected"
+msgstr "elected"
+
+#: src/bungeni.ui/bungeni/ui/vocabulary.py:88
+msgid "nominated"
+msgstr "nominated"
+
+#: src/bungeni.ui/bungeni/ui/vocabulary.py:89
+msgid "ex officio"
+msgstr "ex officio"
+
+#: src/bungeni.ui/bungeni/ui/vocabulary.py:95
+msgid "initial"
+msgstr "initial"
+
+#: src/bungeni.ui/bungeni/ui/vocabulary.py:96
+msgid "subsequent"
+msgstr "subsequent"
+
+#: src/bungeni.ui/bungeni/ui/vocabulary.py:98
+msgid "House Business Office"
+msgstr "house business office"
+
+#: src/bungeni.ui/bungeni/ui/vocabulary.py:99
+msgid "Clerks Office"
+msgstr "clerk's office"
+
+#: src/bungeni.ui/bungeni/ui/widgets.py:273
+msgid "Supplementary Question to: <br/> %s"
+msgstr "supplementary question to: <br/> %s"
+
+#: src/bungeni.ui/bungeni/ui/widgets.py:275
+msgid "Initial Question"
+msgstr "initial question"
+
+#: src/bungeni.ui/bungeni/ui/widgets.py:353
+msgid "Choose Month"
+msgstr "choose month"
+
+#: src/bungeni.ui/bungeni/ui/widgets.py:354
+msgid "Enter Year"
+msgstr "enter year"
+
+#: src/bungeni.ui/bungeni/ui/widgets.py:355
+msgid "OK"
+msgstr "ok"
+
+#: src/bungeni.ui/bungeni/ui/widgets.py:357
+msgid "Please enter a valid year"
+msgstr "please enter a valid year"
+
+#. Default: ""
+#: src/bungeni.ui/bungeni/ui/widgets.py:37
+msgid "Invalid date: $value"
+msgstr "invalid date: $value"
+
+#: src/bungeni.ui/bungeni/ui/widgets.py:471
+#: src/bungeni.ui/bungeni/ui/widgets.py:537
+msgid "Incorrect string data for date"
+msgstr "incorrect string data for date"
+
+#: src/bungeni.ui/bungeni/ui/widgets.py:630
+#: src/bungeni.ui/bungeni/ui/widgets.py:699
+msgid "Incorrect string data for date and time"
+msgstr "incorrect string data for date and time"
+
+#: src/bungeni.ui/bungeni/ui/widgets.py:95
+#: src/bungeni.ui/bungeni/ui/widgets.py:100
+#: src/bungeni.ui/bungeni/ui/widgets.py:118
+msgid "Form upload is not a file object"
+msgstr "form upload is not a file object"
+
+#: src/bungeni.ui/bungeni/ui/workflow.py:133
+msgid "Comment on workflow change"
+msgstr "comment on workflow change"
+
+#. Default: ""
+#: src/bungeni.ui/bungeni/ui/workflow.py:150
+msgid "Confirmation required for workflow transition: '${title}'"
+msgstr "confirmation required for workflow transition: '${title}'"
+
+#: src/bungeni.ui/bungeni/ui/workflow.py:56
+msgid "Workflow history"
+msgstr "workflow history"
+
+#: src/bungeni.ui/bungeni/ui/workspace.py:256
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.zcml:47
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.zcml:68
+msgid "Parliamentary items"
+msgstr "parliamentary items"
+
+#: src/bungeni.ui/bungeni/ui/workspace.py:257
+#, fuzzy
+msgid "Current parliamentary activity"
+msgstr "parliamentary activities"
+
+#: src/bungeni.ui/bungeni/ui/workspace.py:286
+#: src/bungeni.ui/bungeni/ui/workspace.py:327
+#, fuzzy
+msgid " items"
+msgstr "no items"
+
+#: src/bungeni.ui/bungeni/ui/workspace.py:297
+msgid "My archive"
+msgstr "my archive"
+
+#: src/bungeni.ui/bungeni/ui/workspace.py:298
+#, fuzzy
+msgid "My archive personal items"
+msgstr "archived items"
+
+#: src/bungeni.ui/bungeni/ui/workspace.py:392
+msgid "Unknown principal group"
+msgstr ""
+
+#~ msgid "If a user is deceased he must have the status D"
+#~ msgstr "if a user is deceased he must have the status d"
+
+#~ msgid "A Date of Death must be given if a user is deceased"
+#~ msgstr "a date of death must be given if a user is deceased"
+
+#~ msgid "If a user is deceased he must have the status 'D'"
+#~ msgstr "if a user is deceased he must have the status 'd'"
+
+#, fuzzy
+#~ msgid "Attach a file"
+#~ msgstr "attached files"
+
+#~ msgid "Actions for the Administrator"
+#~ msgstr "actions for the administrator"
+
+#~ msgid "Actions for the 'Business' section"
+#~ msgstr "actions for the 'business' section"
+
+#~ msgid "Actions for the 'Members' section"
+#~ msgstr "actions for the 'members' section"
+
+#~ msgid "Actions for the 'Archive' section"
+#~ msgstr "actions for the 'archive' section"
+
+#~ msgid "Actions for the 'Records' section"
+#~ msgstr "actions for the 'records' section"
+
+#~ msgid "box_sessions"
+#~ msgstr "sessions"
+
+#~ msgid "box_members"
+#~ msgstr "members"
+
+#~ msgid "Add items by dragging to schedule."
+#~ msgstr "add items by dragging to schedule."
+
+#~ msgid "Tasks"
+#~ msgstr "tasks"
+
+#~ msgid "Create Motion"
+#~ msgstr "create motion"
+
+#~ msgid "Create Question"
+#~ msgstr "create question"
+
+#~ msgid "Create Bill"
+#~ msgstr "create bill"
+
+#~ msgid "Add Category..."
+#~ msgstr "add category..."
+
+#~ msgid "$x"
+#~ msgstr "$x"
+
+#, fuzzy
+#~ msgid "Identifer"
+#~ msgstr "identifier"
+
+#~ msgid "Motion amendment"
+#~ msgstr "motion amendment"
+
+#~ msgid "Motion amendments"
+#~ msgstr "motion amendments"
+
+#~ msgid "Motion Amendment Text"
+#~ msgstr "motion amendment text"
+
+#~ msgid "Vote Date"
+#~ msgstr "vote date"
+
+#~ msgid "Accepted"
+#~ msgstr "accepted"
+
+#~ msgid "Category"
+#~ msgstr "category"
+
+#~ msgid "Categories"
+#~ msgstr "categories"
+
+#~ msgid "Short name"
+#~ msgstr "short name"
+
+#~ msgid "Dissolution date"
+#~ msgstr "dissolution date"
+
+#~ msgid "My Motions"
+#~ msgstr "my motions"
+
+#~ msgid "Items that failed to be tabled"
+#~ msgstr "items that failed to be tabled"
+
+#~ msgid "My Questions"
+#~ msgstr "my questions"
+
+#~ msgid "identifier"
+#~ msgstr "identifier"
+
+#~ msgid "roll call identifier"
+#~ msgstr "roll call identifier"

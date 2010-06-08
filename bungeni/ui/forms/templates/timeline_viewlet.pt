@@ -1,0 +1,25 @@
+<dt id="fieldsetlegend-bill-timeline" i18n:translate=""
+    tal:attributes="id string:fieldsetlegend-${view/view_id}"
+    tal:content="view/view_name">
+  Bill timeline
+</dt>
+
+<dd id="fieldset-bill-timeline"
+    tal:attributes="id string:fieldset-${view/view_id}">
+  <table class="listing">
+    <thead>
+      <tr>
+        <th i18n:translate=""> Type </th>
+        <th i18n:translate=""> Description </th>
+        <th i18n:translate=""> Date </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr tal:repeat="data view/results"> 
+        <td><span tal:content="data/atype" i18n:translate=""> Type </span></td>
+        <td><span tal:content="data/title"> description / Title </span></td>
+        <td><span tal:content="python: data['adate'].strftime('%Y-%m-%d %H:%M')">  1/1/2000 </span></td>
+      </tr>
+    </tbody>
+  </table>
+</dd>

@@ -1,0 +1,53 @@
+<div xmlns:tal="http://xml.zope.org/namespaces/tal">
+    <script type="text/javascript" tal:content="structure view/get_js"> </script>
+    <span tal:define="form_value view/_getFormValue"
+          tal:attributes="id string:${view/field_name}-datefields">
+        <select name="year" tal:attributes="name view/_year_name; id view/_year_name" >
+          <option value ="" tal:condition="not:view/required"> -- </option>
+          <tal:loop tal:repeat="year view/_years">
+            <tal:option tal:define="curr python:int(year)==int(form_value[2])">                
+                <option value="1999" tal:condition="not:curr" tal:attributes="value year" tal:content="year">1999</option>
+                <option value="1999" selected="selected" tal:condition="curr" tal:attributes="value year" tal:content="year">2000</option>
+            </tal:option>
+          </tal:loop>
+        </select>
+        <select name="month" tal:attributes="name view/_month_name; id view/_month_name" >
+          <option value ="" tal:condition="not:view/required"> -- </option>
+          <tal:loop tal:repeat="month view/_months">
+            <tal:option tal:define="curr python:int(month['num'])==int(form_value[1])">                  
+                <option value="01" tal:condition="not:curr" tal:attributes="value month/num" tal:content="month/name">January</option>
+                <option value="02" selected="selected" tal:condition="curr" tal:attributes="value month/num" tal:content="month/name">Febuary</option>
+            </tal:option>
+          </tal:loop>
+        </select>
+        <select name="day" tal:attributes="name view/_day_name; id view/_day_name">
+          <option value ="" tal:condition="not:view/required"> -- </option>
+          <tal:loop tal:repeat="day view/_days">
+            <tal:option tal:define="curr python:int(day)==int(form_value[0])">         
+                <option value="01" tal:condition="not:curr" tal:attributes="value day" tal:content="day">01</option>
+                <option value="02" selected="selected" tal:condition="curr" tal:attributes="value day" tal:content="day">02</option>
+            </tal:option>
+          </tal:loop>
+        </select>  -
+        <select name="hour" tal:attributes="name view/_hour_name">
+          <option value ="" tal:condition="not:view/required"> -- </option>
+          <tal:loop tal:repeat="hour view/_hours">
+            <tal:option tal:define="curr python:int(hour)==int(form_value[3])">         
+                <option value="01" tal:condition="not:curr" tal:attributes="value hour" tal:content="hour">01</option>
+                <option value="02" selected="selected" tal:condition="curr" tal:attributes="value hour" tal:content="hour">02</option>
+            </tal:option>
+          </tal:loop>
+        </select> :
+        <select name="minute" tal:attributes="name view/_minute_name">
+          <option value ="" tal:condition="not:view/required"> -- </option>
+          <tal:loop tal:repeat="minute view/_minutes">
+            <tal:option tal:define="curr python:int(minute)==int(form_value[4])">         
+                <option value="01" tal:condition="not:curr" tal:attributes="value minute" tal:content="minute">01</option>
+                <option value="02" selected="selected" tal:condition="curr" tal:attributes="value minute" tal:content="minute">02</option>
+            </tal:option>
+          </tal:loop>
+        </select>
+
+    </span>
+</div>
+

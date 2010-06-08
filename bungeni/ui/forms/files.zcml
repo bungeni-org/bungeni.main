@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser" 
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="bungeni.ui">
+
+
+  <!-- file display viewlet -->
+     
+  <browser:viewlet
+     name="bungeni.viewlet.question-files"
+     manager=".interfaces.ISubFormViewletManager"
+     class=".files.LibraryViewlet"
+     for="bungeni.models.interfaces.IQuestion"
+     permission="zope.View"
+     weight="50"
+     />
+
+  <browser:viewlet
+     name="bungeni.viewlet.bill-files"
+     manager=".interfaces.ISubFormViewletManager"
+     class=".files.LibraryViewlet"
+     for="bungeni.models.interfaces.IBill"
+     permission="zope.View"
+     weight="50"
+     />
+     
+     
+  <browser:viewlet
+     name="bungeni.viewlet.motion-files"
+     manager=".interfaces.ISubFormViewletManager"
+     class=".files.LibraryViewlet"
+     for="bungeni.models.interfaces.IMotion"
+     permission="zope.View"
+     weight="50"
+     />
+
+  <browser:viewlet
+     name="bungeni.viewlet.tableddocument-files"
+     manager=".interfaces.ISubFormViewletManager"
+     class=".files.LibraryViewlet"
+     for="bungeni.models.interfaces.ITabledDocument"
+     permission="zope.View"
+     weight="50"
+     />
+
+  <browser:viewlet
+     name="bungeni.viewlet.agendaitem-files"
+     manager=".interfaces.ISubFormViewletManager"
+     class=".files.LibraryViewlet"
+     for="bungeni.models.interfaces.IAgendaItem"
+     permission="zope.View"
+     weight="50"
+     />
+
+  <browser:viewlet
+     name="bungeni.viewlet.version-files"
+     manager=".interfaces.ISubFormViewletManager"
+     class=".files.VersionLibraryViewlet"
+     for="bungeni.models.interfaces.IVersion"
+     permission="zope.View"
+     weight="50"
+     />
+
+  <browser:viewlet
+     name="bungeni.viewlet.event-files"
+     manager=".interfaces.ISubFormViewletManager"
+     class=".files.LibraryViewlet"
+     for="bungeni.models.interfaces.IEventItem"
+     permission="zope.View"
+     weight="50"
+     />
+
+
+</configure>

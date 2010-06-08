@@ -1,0 +1,42 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      metal:use-macro="context/@@standard_macros/page">
+  
+  <div metal:fill-slot="body" i18n:domain="bungeni.ui">
+    <h1 i18n:translate="">Versions</h1>
+    
+    <div id="version-history">
+      <div metal:use-macro="context/@@standard_macros/form">
+        <div metal:fill-slot="pre-fieldset">
+        <label class="discreet"
+                   for="form.actions.diff"
+                   i18n:domain="bungeni.ui"
+                   i18n:translate="">
+              Select a version to compare to the current working copy, or make two selections to compare historic versions
+         </label>
+          <div tal:replace="structure view/listing"></div>
+          <div id="actionsView">
+            <br />
+          </div>
+          <div tal:replace="structure view/extra" />
+        </div>
+        
+        <div metal:fill-slot="actions">
+          <div id="actionsView">
+            <span class="actionButtons"
+                  tal:condition="view/availableActions">
+              <tal:loop tal:repeat="action view/actions">
+	            <input type="submit" class="context"
+	               id="" name="" value=""
+	               tal:attributes="id action/__name__;
+			               name action/__name__;
+			   	       value python:str(action.label);"
+		            i18n:attributes="value" />
+	          </tal:loop>						
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</html>

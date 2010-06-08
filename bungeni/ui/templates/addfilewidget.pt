@@ -1,0 +1,8 @@
+<div>
+  <b tal:condition="view/empty_field" i18n:translate="upload-file" >Upload file</b>
+  <br/>
+  <input type="hidden" value="add"
+         tal:attributes="id view/update_action_name; name view/update_action_name"/> 
+  <input id="form.logo_data" class="fileType" type="file" size="40" name="form.logo_data"
+         tal:attributes="id view/upload_name; name view/upload_name"/>
+</div>

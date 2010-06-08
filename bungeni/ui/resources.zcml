@@ -1,0 +1,278 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="bungeni.ui">
+
+
+  <!-- Application JS -->
+  
+  <browser:resourceDirectory
+     name="bungeni-js"
+     directory="js"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     />
+  <browser:viewlet
+     name="bungeni-plugins"
+     for="*"
+     class=".js.Plugins"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="10"
+     />
+
+  <browser:viewlet
+     name="bungeni-behavior"
+     for="*"
+     class=".js.Behavior"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="15"
+     />
+
+  <browser:viewlet
+     name="jquery-core"
+     for="*"
+     class=".js.Core"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="15"
+     />
+
+  <browser:viewlet
+     name="jquery-draggable"
+     for="*"
+     class=".js.Draggable"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="20"
+     />
+
+  <browser:viewlet
+     name="jquery-resizable"
+     for="*"
+     class=".js.Resizable"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="25"
+     />
+
+  <browser:viewlet
+     name="jquery-droppable"
+     for="*"
+     class=".js.Droppable"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="25"
+     />
+
+  <browser:viewlet
+     name="jquery-datepicker"
+     for="*"
+     class=".js.Datepicker"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="25"
+     />
+
+  <!--browser:viewlet
+     name="jquery-utils"
+     for="*"
+     class=".js.Utils"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="25"
+     /-->
+
+  <!--browser:viewlet
+     name="jquery-dropslide"
+     for="*"
+     class=".js.DropSlide"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="25"
+     />
+     
+  <browser:viewlet
+     name="jquery-timepicker"
+     for="*"
+     class=".js.TimePicker"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="25"
+     /-->
+          
+
+
+  <browser:viewlet
+     name="jquery-clockpick"
+     for="*"
+     class=".js.ClockPick"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="25"
+     /> 
+
+  <browser:viewlet
+     name="jquery-sortable"
+     for="*"
+     class=".js.Sortable"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="30"
+     />
+
+  <browser:viewlet
+     name="jquery-form"
+     for="*"
+     class=".js.Form"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="25"
+     />
+
+  <browser:viewlet
+     name="jquery-form-tabbing"
+     for="*"
+     class=".js.FormTabbing"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="25"
+     />
+     
+  <browser:viewlet
+     name="jquery-recurring-events"
+     for="*"
+     class=".js.RecurringForm"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="25"
+     />
+          
+
+  <browser:viewlet
+     name="jquery-column-filters"
+     for="*"
+     class=".js.QueryColumnFilters"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="25"
+     />
+
+  <browser:viewlet
+     name="jquery-table-sorter"
+     for="*"
+     class=".js.TableSorter"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="25"
+     />
+  <browser:viewlet
+     name="dhtmlx-calendar"
+     for="*"
+     class=".js.DhtmlxCalendar"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="25"
+     />
+     <browser:viewlet
+     name="dhtmlx-calendarlist"
+     for="*"
+     class=".js.DhtmlxCalendarList"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="30"
+     /> 
+     <!--
+     <browser:viewlet
+     name="dhtmlx-calendarfrench"
+     for="*"
+     class=".js.DhtmlxCalendarFrench"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="35"
+     /> 
+     
+     <browser:viewlet
+     name="dhtmlx-calendarportuguese"
+     for="*"
+     class=".js.DhtmlxCalendarPortuguese"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="35"
+     /> 
+     <browser:viewlet
+     name="dhtmlx-calendaritalian"
+     for="*"
+     class=".js.DhtmlxCalendarItalian"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="35"
+     /> 
+     
+     <browser:viewlet
+     name="dhtmlx-calendarspanish"
+     for="*"
+     class=".js.DhtmlxCalendarSpanish"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="35"
+     /> 
+     -->
+     <!--<browser:viewlet
+     name="dhtmlx-calendar-init"
+     for="*"
+     class=".js.DhtmlxCalendarInit"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="25"
+     /> -->
+    <browser:resource 
+        name="dhtmlxscheduler.css" 
+        file="js/dhtmlxScheduler/codebase/dhtmlxscheduler.css" />
+    <browser:resource 
+        name="locale_fr.js" 
+        file="js/dhtmlxScheduler/sources/locale_fr.js" />
+    <browser:resource 
+        name="locale_it.js" 
+        file="js/dhtmlxScheduler/sources/locale_it.js" />
+    <browser:resource 
+        name="locale_pt.js" 
+        file="js/dhtmlxScheduler/sources/locale_pt.js" />
+     <browser:resource 
+        name="locale_es.js" 
+        file="js/dhtmlxScheduler/sources/locale_es.js" />
+     <browser:resource 
+        name="locale_sw.js" 
+        file="js/dhtmlxScheduler/sources/locale_sw.js" />
+   <!-- <browser:resource 
+        name="dhtmlxscheduler.js" 
+        file="js/dhtmlxScheduler/codebase/dhtmlxscheduler_debug.js" />
+    <browser:resource 
+        name="dhtmlxcalendarinit.js" 
+        file="js/dhtmlxcalendarinit.js" /> -->
+</configure>

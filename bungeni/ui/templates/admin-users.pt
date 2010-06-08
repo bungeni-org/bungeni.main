@@ -1,0 +1,34 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      i18n:domain="bungeni.ui"
+      metal:use-macro="context/@@standard_macros/page">
+
+  <!-- allow any view to fill the header -->
+  <tal:block metal:fill-slot="header">
+   <link rel="stylesheet" type="text/css" href=""
+	 tal:attributes="href context/++resource++yui/build/assets/skins/sam/datatable.css" media="screen">
+
+    <script type="text/javascript" tal:attributes="src context/++resource++yui/build/yahoo-dom-event/yahoo-dom-event.js" src=""></script>
+    <script type="text/javascript" tal:attributes="src context/++resource++yui/build/connection/connection-min.js" src=""></script>
+    <script type="text/javascript" tal:attributes="src context/++resource++yui/build/json/json-min.js" src=""></script>
+    <script type="text/javascript" tal:attributes="src context/++resource++yui/build/element/element-beta-min.js" src=""></script>
+    <script type="text/javascript" tal:attributes="src context/++resource++yui/build/datasource/datasource-beta-min.js" src=""></script>
+    <script type="text/javascript" tal:attributes="src context/++resource++yui/build/datatable/datatable-beta-min.js" src=""></script>
+    <script type="text/javascript" tal:attributes="src context/++resource++bungeni-js/user-admin.js" src=""></script>
+
+  </tal:block>
+
+  <div metal:fill-slot="body">
+    
+    <h2>User</h2>
+    <form>
+      <input id="query" type="text" name="query" /> 
+      <input id="filter-submit" type="submit" value="Filter"/>
+    </form>
+
+    <div id="container_contents">
+    </div>
+
+  </div>
+
+</html>

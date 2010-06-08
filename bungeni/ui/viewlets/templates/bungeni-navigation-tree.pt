@@ -1,0 +1,54 @@
+<dl class="portlet portletNavigationTree">
+  
+  <dt class="portletHeader">
+    <span class="portletTopLeft"></span>
+    <a class="tile">
+      Bungeni Portal
+    </a>
+    <span class="portletTopRight"></span>
+  </dt>
+  
+  <dd class="portletItem lastItem"
+      tal:define="images nocall: context/++resource++ui-images">
+    
+    <tal:ignore condition="False">
+      <metal:subtree define-macro="subtree">
+        <tal:block define="is_folderish node/nodes">
+          
+          <li tal:define="current node/current;
+                          selected node/selected;
+                          current python: current and 'navTreeCurrentNode' or ''"
+              tal:attributes="class string:navTreeItem visualNoMarker $current">
+
+              <a tal:define="selected python: selected and 'navTreeCurrentItem' or ''"
+                 tal:attributes="href node/url;
+                                 class string:${selected}"
+                ><img width="16" height="16"
+                     tal:define="kind node/kind"
+                     tal:attributes="src images/icon_?kind.png|images/icon_?kind.gif"
+                />&nbsp;<span i18n:translate="" tal:replace="node/title" /></a>
+
+            <ul tal:condition="is_folderish"
+                tal:attributes="class string:navTree navTreeLevel${nesting_level} navTreeFolderish">
+              <tal:nesting define="nesting_level python: nesting_level + 1">
+                <tal:children repeat="node node/nodes">
+                  <div metal:use-macro="macros/subtree" />
+                </tal:children>
+              </tal:nesting>
+            </ul>
+          </li>
+          
+        </tal:block>
+      </metal:subtree>
+    </tal:ignore>
+    
+    <ul tal:define="global nesting_level python: 1">
+      <tal:node tal:repeat="node view/nodes">
+        <li metal:use-macro="macros/subtree" />
+      </tal:node>
+    </ul>
+    
+  </dd>
+  
+</dl>
+

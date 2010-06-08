@@ -1,0 +1,15 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal">
+
+  <span class="state-title" tal:content="options/state_title" />
+  
+  <select name="transition" class="workflow-status">
+    <option disabled="disabled" selected="selected"
+            i18n:translate="">Change state...</option>
+    <tal:action repeat="action options/actions">
+      <option tal:attributes="value action/transition_id"
+              tal:content="action/title" />
+    </tal:action>
+  </select>
+  
+</html>

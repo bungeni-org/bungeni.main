@@ -1,0 +1,5 @@
+<dl class="enableFormTabbing">
+  <tal:viewlets repeat="viewlet view/viewlets">
+    <tal:render replace="structure viewlet/render" />
+  </tal:viewlets>
+</dl>

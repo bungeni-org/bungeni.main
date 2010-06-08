@@ -1,0 +1,637 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser" 
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="bungeni.ui">
+
+<!-- Bills -->
+  <browser:page
+     name="view"
+     for="bungeni.models.interfaces.IBill"
+     class=".common.DisplayForm"
+     permission="zope.View"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="add"
+     for="bungeni.models.interfaces.IBillContainer"
+     class=".common.AddForm"
+     permission="bungeni.bill.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="edit"
+     for="bungeni.models.interfaces.IBill"
+     class=".common.EditForm"
+     permission="bungeni.bill.Edit"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="delete"
+     for="bungeni.models.interfaces.IBill"
+     class=".common.DeleteForm"
+     permission="bungeni.bill.Delete"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+<!-- Motions -->
+  <browser:page
+     name="view"
+     for="bungeni.models.interfaces.IMotion"
+     class=".common.DisplayForm"
+     permission="zope.View"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="add"
+     for="bungeni.models.interfaces.IMotionContainer"
+     class=".common.AddForm"
+     permission="bungeni.motion.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="edit"
+     for="bungeni.models.interfaces.IMotion"
+     class=".common.EditForm"
+     permission="bungeni.motion.Edit"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="delete"
+     for="bungeni.models.interfaces.IMotion"
+     class=".common.DeleteForm"
+     permission="bungeni.motion.Delete"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+<!-- questions -->
+ <browser:page
+     name="view"
+     for="bungeni.models.interfaces.IQuestion"
+     class=".common.DisplayForm"
+     permission="zope.View"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="add"
+     for="bungeni.models.interfaces.IQuestionContainer"
+     class=".common.AddForm"
+     permission="bungeni.question.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     /><!--
+
+for non-{speaker, clerk}: /workspace/pi -> Add Question... 
+
+Unauthorized: (<zope.app.publisher.browser.viewmeta.AddForm object at ...>, 'browserDefault', 'bungeni.question.Add')
+
+--> 
+
+  <browser:page
+     name="edit"
+     for="bungeni.models.interfaces.IQuestion"
+     class=".common.EditForm"
+     permission="bungeni.question.Edit"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+
+  <browser:page
+     name="respond"
+     for="bungeni.models.interfaces.IQuestion"
+     class=".common.EditForm"
+     permission="bungeni.response.Edit"
+     />
+
+
+  <browser:page
+     name="delete"
+     for="bungeni.models.interfaces.IQuestion"
+     class=".common.DeleteForm"
+     permission="bungeni.question.Delete"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+<!-- tabled documents -->
+  <browser:page
+     name="view"
+     for="bungeni.models.interfaces.ITabledDocument"
+     class=".common.DisplayForm"
+     permission="zope.View"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="add"
+     for="bungeni.models.interfaces.ITabledDocumentContainer"
+     class=".common.AddForm"
+     permission="bungeni.tableddocument.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="edit"
+     for="bungeni.models.interfaces.ITabledDocument"
+     class=".common.EditForm"
+     permission="bungeni.tableddocument.Edit"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="delete"
+     for="bungeni.models.interfaces.ITabledDocument"
+     class=".common.DeleteForm"
+     permission="bungeni.tableddocument.Delete"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+     
+<!-- agenda items -->
+  <browser:page
+     name="view"
+     for="bungeni.models.interfaces.IAgendaItem"
+     class=".common.DisplayForm"
+     permission="zope.View"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="add"
+     for="bungeni.models.interfaces.IAgendaItemContainer"
+     class=".common.AddForm"
+     permission="bungeni.agendaitem.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="edit"
+     for="bungeni.models.interfaces.IAgendaItem"
+     class=".common.EditForm"
+     permission="bungeni.agendaitem.Edit"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="delete"
+     for="bungeni.models.interfaces.IAgendaItem"
+     class=".common.DeleteForm"
+     permission="bungeni.agendaitem.Delete"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+<!-- Groups -->
+
+  <browser:page
+     name="view"
+     for="bungeni.models.interfaces.IParliament"
+     class=".common.DisplayForm"
+     permission="zope.View"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="add"
+     for="bungeni.models.interfaces.IParliamentContainer"
+     class=".common.AddForm"
+     permission="bungeni.parliament.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="edit"
+     for="bungeni.models.interfaces.IParliament"
+     class=".common.EditForm"
+     permission="bungeni.parliament.Edit"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="delete"
+     for="bungeni.models.interfaces.IParliament"
+     class=".common.DeleteForm"
+     permission="bungeni.parliament.Delete"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="view"
+     for="bungeni.models.interfaces.IGovernment"
+     class=".common.DisplayForm"
+     permission="zope.View"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="add"
+     for="bungeni.models.interfaces.IGovernmentContainer"
+     class=".common.AddForm"
+     permission="bungeni.government.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="edit"
+     for="bungeni.models.interfaces.IGovernment"
+     class=".common.EditForm"
+     permission="bungeni.government.Edit"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="delete"
+     for="bungeni.models.interfaces.IGovernment"
+     class=".common.DeleteForm"
+     permission="bungeni.government.Delete"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="view"
+     for="bungeni.models.interfaces.IMinistry"
+     class=".common.DisplayForm"
+     permission="zope.View"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="add"
+     for="bungeni.models.interfaces.IMinistryContainer"
+     class=".common.AddForm"
+     permission="bungeni.ministry.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="edit"
+     for="bungeni.models.interfaces.IMinistry"
+     class=".common.EditForm"
+     permission="bungeni.ministry.Edit"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="delete"
+     for="bungeni.models.interfaces.IMinistry"
+     class=".common.DeleteForm"
+     permission="bungeni.ministry.Delete"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+     
+
+  <browser:page
+     name="view"
+     for="bungeni.models.interfaces.ICommittee"
+     class=".common.DisplayForm"
+     permission="zope.View"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="add"
+     for="bungeni.models.interfaces.ICommitteeContainer"
+     class=".common.AddForm"
+     permission="bungeni.committee.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="edit"
+     for="bungeni.models.interfaces.ICommittee"
+     class=".common.EditForm"
+     permission="bungeni.committee.Edit"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="delete"
+     for="bungeni.models.interfaces.ICommittee"
+     class=".common.DeleteForm"
+     permission="bungeni.committee.Delete"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+     
+  <browser:page
+     name="view"
+     for="bungeni.models.interfaces.IOffice"
+     class=".common.DisplayForm"
+     permission="zope.View"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="add"
+     for="bungeni.models.interfaces.IOfficeContainer"
+     class=".common.AddForm"
+     permission="bungeni.office.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="edit"
+     for="bungeni.models.interfaces.IOffice"
+     class=".common.EditForm"
+     permission="bungeni.office.Edit"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="delete"
+     for="bungeni.models.interfaces.IOffice"
+     class=".common.DeleteForm"
+     permission="bungeni.office.Delete"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+     
+  <browser:page
+     name="view"
+     for="bungeni.models.interfaces.IPoliticalParty"
+     class=".common.DisplayForm"
+     permission="zope.View"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="add"
+     for="bungeni.models.interfaces.IPoliticalPartyContainer"
+     class=".common.AddForm"
+     permission="bungeni.party.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="edit"
+     for="bungeni.models.interfaces.IPoliticalParty"
+     class=".common.EditForm"
+     permission="bungeni.party.Edit"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="delete"
+     for="bungeni.models.interfaces.IPoliticalParty"
+     class=".common.DeleteForm"
+     permission="bungeni.party.Delete"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+
+  <browser:page
+     name="add"
+     for="bungeni.models.interfaces.IPoliticalGroupContainer"
+     class=".common.AddForm"
+     permission="bungeni.party.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="edit"
+     for="bungeni.models.interfaces.IPoliticalGroup"
+     class=".common.EditForm"
+     permission="bungeni.party.Edit"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="delete"
+     for="bungeni.models.interfaces.IPoliticalGroup"
+     class=".common.DeleteForm"
+     permission="bungeni.party.Delete"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+     
+<!-- Group Memberships -->
+  <browser:page
+     name="add"
+     for="bungeni.models.interfaces.IBungeniGroupMembershipContainer"
+     class=".common.AddForm"
+     permission="bungeni.groupmember.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="edit"
+     for="bungeni.models.interfaces.IBungeniGroupMembership"
+     class=".common.EditForm"
+     permission="bungeni.groupmember.Edit"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="delete"
+     for="bungeni.models.interfaces.IBungeniGroupMembership"
+     class=".common.DeleteForm"
+     permission="bungeni.groupmember.Delete"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="add"
+     for="bungeni.models.interfaces.IMemberOfParliamentContainer"
+     class=".common.AddForm"
+     permission="bungeni.groupmember.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="edit"
+     for="bungeni.models.interfaces.IMemberOfParliament"
+     class=".common.EditForm"
+     permission="bungeni.groupmember.Edit"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="delete"
+     for="bungeni.models.interfaces.IMemberOfParliament"
+     class=".common.DeleteForm"
+     permission="bungeni.groupmember.Delete"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+     
+<!-- Session -->
+  <browser:page
+     name="view"
+     for="bungeni.models.interfaces.IParliamentSession"
+     class=".common.DisplayForm"
+     permission="zope.View"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+<!--browser:page
+     name="view"
+     for="bungeni.models.interfaces.IReport"
+     class=".viewlets.SittingReportDisplay"
+     permission="zope.View"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     /--> 
+  <browser:page
+     name="add"
+     for="bungeni.models.interfaces.IParliamentSessionContainer"
+     class=".common.AddForm"
+     permission="bungeni.session.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="edit"
+     for="bungeni.models.interfaces.IParliamentSession"
+     class=".common.EditForm"
+     permission="bungeni.session.Edit"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="delete"
+     for="bungeni.models.interfaces.IParliamentSession"
+     class=".common.DeleteForm"
+     permission="bungeni.session.Delete"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+
+<!-- UserDelegations -->
+  <browser:page
+     name="view"
+     for="bungeni.models.interfaces.IUserDelegation"
+     class=".common.DisplayForm"
+     permission="zope.View"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="add"
+     for="bungeni.models.domain.UserDelegationContainer"
+     class=".common.AddForm"
+     permission="bungeni.delegation.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="edit"
+     for="bungeni.models.interfaces.IUserDelegation"
+     class=".common.EditForm"
+     permission="bungeni.delegation.Edit"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="delete"
+     for="bungeni.models.interfaces.IUserDelegation"
+     class=".common.DeleteForm"
+     permission="bungeni.delegation.Delete"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+<!-- sitting attendance -->
+  <browser:page
+     name="view"
+     for="bungeni.models.domain.GroupSittingAttendance"
+     class=".common.DisplayForm"
+     permission="zope.View"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="add"
+     for="bungeni.models.domain.GroupSittingAttendanceContainer"
+     class=".common.AddForm"
+     permission="bungeni.sittingattendance.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="edit"
+     for="bungeni.models.domain.GroupSittingAttendance"
+     class=".common.EditForm"
+     permission="bungeni.sittingattendance.Edit"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="delete"
+     for="bungeni.models.domain.GroupSittingAttendance"
+     class=".common.DeleteForm"
+     permission="bungeni.sittingattendance.Delete"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+     
+
+<!-- file attachments -->
+
+  <browser:page
+     name="add"
+     for="bungeni.models.domain.AttachedFileContainer"
+     class=".common.AddForm"
+     permission="bungeni.attachedfile.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="edit"
+     for="bungeni.models.domain.AttachedFile"
+     class=".common.EditForm"
+     permission="bungeni.attachedfile.Edit"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+  <browser:page
+     name="delete"
+     for="bungeni.models.domain.AttachedFile"
+     class=".common.DeleteForm"
+     permission="bungeni.attachedfile.Delete"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+
+
+<!-- consignatories for bills and motions-->
+  <browser:page
+     name="add"
+     for="bungeni.models.domain.ConsignatoryContainer"
+     class=".common.AddForm"
+     permission="bungeni.consignatory.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+
+<!-- group item assignments-->
+  <browser:page
+     name="add"
+     for="bungeni.models.domain.GroupGroupItemAssignmentContainer"
+     class=".common.AddForm"
+     permission="bungeni.groupitemassignment.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+  <browser:page
+     name="add"
+     for="bungeni.models.domain.ItemGroupItemAssignmentContainer"
+     class=".common.AddForm"
+     permission="bungeni.groupitemassignment.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+    
+    <!-- event items -->
+    <browser:page name="add"
+        for="bungeni.models.domain.EventItemContainer"
+        class=".common.AddForm"
+        permission="bungeni.event.Add"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    <browser:page name="edit"
+        for="bungeni.models.domain.EventItem"
+        class=".common.EditForm"
+        permission="bungeni.event.Edit"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    <browser:page name="delete"
+        for="bungeni.models.domain.EventItem"
+        class=".common.DeleteForm"
+        permission="bungeni.event.Delete"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+
+     
+</configure>

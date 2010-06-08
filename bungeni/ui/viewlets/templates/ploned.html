@@ -1,0 +1,32 @@
+#[  $Id$ ]#
+
+$begin{content_actions} #[ portlet-contentactions.pt ]#
+$if{ len(view.context_actions)>1 }
+<dl class="portlet">
+    <dt class="portletHeader">
+        <span class="portletTopLeft"></span>
+        ${i18n("View")}
+        <span class="portletTopRight"></span>
+    </dt>
+    <dd class="portletItem even">
+        <ul class="contentViewsLeftPort">
+        $for{ action in view.context_actions }
+            <li class="${action['selected'] or 'plain'}">
+                <a href="${ action['url'] or action['action']
+                                        }">${i18n(action['title'])}</a>
+            </li>
+        $rof
+        </ul>
+    </dd>
+    
+    #[
+    <dd class="portletFooter">
+        <span class="portletBottomLeft"></span>
+        &nbsp;
+        <span class="portletBottomRight"></span>
+    </dd>
+    ]#
+</dl>
+$fi
+$end{content_actions}
+

@@ -1,0 +1,40 @@
+<div>
+ <script> 
+  function showUploadInput(id)
+    { 
+     var elm = document.getElementById(id) 
+     elm.disabled = false
+    }
+  function hideUploadInput(id)
+   {
+     var elm = document.getElementById(id) 
+     elm.disabled = true
+   }
+  </script>
+  <span >
+      <label for="form.gender.0"
+             tal:attributes="for string:${view/update_action_name}.keep">
+        <input  class="radioType" type="radio" value="keep"  checked="checked"
+                tal:attributes="id string:${view/update_action_name}.keep; 
+                                name view/update_action_name;
+                                onclick string:hideUploadInput('${view/upload_name}')"/>
+        <span i18n:translate="keep-file">Keep existing file</span>
+      </label>
+      <br/>
+      <label for="form.gender.1"
+             tal:attributes="for string:${view/update_action_name}.update">
+        <input  class="radioType" type="radio" value="update" 
+                tal:attributes="id string:${view/update_action_name}.update; 
+                                name view/update_action_name;
+                                onclick string:showUploadInput('${view/upload_name}')"/>
+        <span i18n:translate="replace-file">Replace with new file:</span>
+      </label>
+  </span>
+  <br/>
+  <input id="form.logo_data" class="fileType" type="file" size="40" name="form.logo_data"
+         disabled='true' hidden="true"
+         tal:attributes="id view/upload_name; name view/upload_name"/>
+  <br/>
+  <a tal:attributes="href view/fileURL" i18n:translate="download-file">download</a>
+         
+</div>

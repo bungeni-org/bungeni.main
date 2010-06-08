@@ -1,0 +1,11 @@
+<!-- XXX-INFO-FOR-PLONE - MR - 2010-05-03
+
+<form id="user-workspace-id-section" style="display: none;">
+  <input
+     type="text"
+     id="user-workspace-id"
+     name="user-workspace"
+     tal:attributes="value string:membership/${view/principal_id}"/>
+</form>
+-->
+

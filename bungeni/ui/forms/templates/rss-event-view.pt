@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<rss version="2.0"
+       xmlns:tal="http://xml.zope.org/namespaces/tal"
+       xmlns:metal="http://xml.zope.org/namespaces/metal"
+       xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+   <channel>
+      <title tal:content="view/rssTitle"> Title </title>
+      <link tal:content="view/rssLink">http://....gov/</link>
+      <description tal:content="view/rssDescription"> Description</description>
+      <item tal:repeat="item view/rssItems">
+
+         <title tal:content="item/title" >Event Type</title>
+         <!--link>http://....</link-->
+         <description tal:content="item/description" > Description/ title </description>
+         <pubDate tal:content="item/date" >Tue, 03 Jun 2003 09:39:21 GMT</pubDate>
+      </item>
+   </channel>
+</rss>

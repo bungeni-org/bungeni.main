@@ -1,0 +1,530 @@
+<?xml version="1.0"?>
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:db="http://namespaces.objectrealms.net/rdb"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="bungeni.ui">
+
+
+  <!-- Catalyze Domain Models -->
+
+  <!-- Groups -->
+  <db:catalyst
+     class="bungeni.models.domain.Group"
+     descriptor=".descriptor.GroupDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+     />
+
+  <db:catalyst
+     class="bungeni.models.domain.Government"
+     descriptor=".descriptor.GovernmentDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+     /> 
+          
+  <db:catalyst
+     class="bungeni.models.domain.Parliament"
+     descriptor=".descriptor.ParliamentDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+     />
+
+  <db:catalyst
+     class="bungeni.models.domain.Committee"
+     descriptor=".descriptor.CommitteeDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+     />
+     
+  <db:catalyst
+     class="bungeni.models.domain.CommitteeMember"
+     descriptor=".descriptor.CommitteeMemberDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+     />
+     
+  <db:catalyst
+     class="bungeni.models.domain.CommitteeStaff"
+     descriptor=".descriptor.CommitteeStaffDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+     />
+
+  <!--db:catalyst
+     class="bungeni.models.domain.GroupItemAssignment"
+     descriptor=".descriptor.GroupItemAssignmentDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+     /-->
+
+  <db:catalyst
+     class="bungeni.models.domain.GroupGroupItemAssignment"
+     descriptor=".descriptor.GroupGroupItemAssignmentDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+     />
+  <db:catalyst
+     class="bungeni.models.domain.ItemGroupItemAssignment"
+     descriptor=".descriptor.ItemGroupItemAssignmentDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+     />
+
+
+     
+   <db:catalyst
+     class="bungeni.models.domain.PoliticalParty"
+     descriptor=".descriptor.PoliticalPartyDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+    />
+   
+   <db:catalyst
+     class="bungeni.models.domain.PoliticalGroup"
+     descriptor=".descriptor.PoliticalGroupDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+    />
+       
+   
+   
+  <db:catalyst
+     class="bungeni.models.domain.Office"
+     descriptor=".descriptor.OfficeDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+    />
+   
+   
+   
+   <db:catalyst
+     class="bungeni.models.domain.Ministry"
+     descriptor=".descriptor.MinistryDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+    />
+ 
+        
+  <db:catalyst
+     class="bungeni.models.domain.Minister"
+     descriptor=".descriptor.MinisterDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+    />
+    
+   
+  <db:catalyst
+     class="bungeni.models.domain.OfficeMember"
+     descriptor=".descriptor.OfficeMemberDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+    />
+    
+  <db:catalyst
+     class="bungeni.models.domain.ParliamentSession"
+     descriptor=".descriptor.SessionDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+     />
+     
+  <db:catalyst
+     class="bungeni.models.domain.GroupMembership"
+     descriptor=".descriptor.GroupMembershipDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+     />
+          
+  <db:catalyst
+     class="bungeni.models.domain.GroupSitting"
+     descriptor=".descriptor.SittingDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+     />
+
+  <!-- Content -->
+  
+  
+  
+  <db:catalyst
+     class="bungeni.models.domain.AttachedFile"
+     descriptor=".descriptor.AttachedFileDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+     />
+  
+
+  <db:catalyst
+     class="bungeni.models.domain.AttachedFileVersion"
+     descriptor=".descriptor.AttachedFileVersionDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+     />
+  
+  <db:catalyst
+     class="bungeni.models.domain.ParliamentaryItem"
+     descriptor=".descriptor.ParliamentaryItemDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+     />
+  
+  <db:catalyst
+     class="bungeni.models.domain.Bill"
+     descriptor=".descriptor.BillDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+     />
+
+  <db:catalyst
+     class="bungeni.models.domain.BillVersion"
+     descriptor=".descriptor.BillVersionDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content" 
+     echo="False"
+     />
+  <db:catalyst
+     class="bungeni.models.domain.BillChange"
+     descriptor=".descriptor.BillChangeDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content" 
+     echo="False"
+     />
+  
+  <db:catalyst
+     class="bungeni.models.domain.Consignatory"
+     descriptor=".descriptor.ConsignatoryDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+     />
+     
+  <db:catalyst
+     class="bungeni.models.domain.Motion"
+     descriptor=".descriptor.MotionDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     />
+
+  <db:catalyst
+     class="bungeni.models.domain.MotionVersion"
+     descriptor=".descriptor.MotionVersionDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content" 
+     echo="False"
+     />
+  <db:catalyst
+     class="bungeni.models.domain.MotionChange"
+     descriptor=".descriptor.MotionChangeDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content" 
+     echo="False"
+     />
+
+  <db:catalyst
+    class="bungeni.models.domain.Question"
+    descriptor=".descriptor.QuestionDescriptor"
+    interface_module="bungeni.models.interfaces"
+    ui_module="bungeni.ui.content" 
+    echo="False"
+    />
+
+  <db:catalyst
+     class="bungeni.models.domain.QuestionVersion"
+     descriptor=".descriptor.QuestionVersionDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content" 
+     echo="False"
+     />
+
+  <db:catalyst
+     class="bungeni.models.domain.QuestionChange"
+     descriptor=".descriptor.QuestionChangeDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content" 
+     echo="False"
+     />
+
+
+  <db:catalyst
+    class="bungeni.models.domain.TabledDocument"
+    descriptor=".descriptor.TabledDocumentDescriptor"
+    interface_module="bungeni.models.interfaces"
+    ui_module="bungeni.ui.content" 
+    echo="False"
+    />
+
+  <db:catalyst
+     class="bungeni.models.domain.TabledDocumentVersion"
+     descriptor=".descriptor.TabledDocumentVersionDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content" 
+     echo="False"
+     />
+  <db:catalyst
+     class="bungeni.models.domain.TabledDocumentChange"
+     descriptor=".descriptor.TabledDocumentChangeDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content" 
+     echo="False"
+     />
+     
+
+    
+  <!--db:catalyst
+    class="bungeni.models.domain.DocumentSource"
+    descriptor=".descriptor.DocumentSourceDescriptor"
+    interface_module="bungeni.models.interfaces"
+    ui_module="bungeni.ui.content" 
+    echo="False"
+    /-->
+  
+  <db:catalyst
+    class="bungeni.models.domain.EventItem"
+    descriptor=".descriptor.EventItemDescriptor"
+    interface_module="bungeni.models.interfaces"
+    ui_module="bungeni.ui.content" 
+    echo="False"
+    />
+    
+  <!-- Domain Model -->
+  <db:catalyst
+     class="bungeni.models.domain.Constituency"
+     descriptor=".descriptor.ConstituencyDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+    />
+    
+    <db:catalyst
+     class="bungeni.models.domain.Region"
+     descriptor=".descriptor.RegionDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+    />
+       
+    <db:catalyst
+     class="bungeni.models.domain.Province"
+     descriptor=".descriptor.ProvinceDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+    />
+    
+    <db:catalyst
+     class="bungeni.models.domain.Country"
+     descriptor=".descriptor.CountryDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+    />
+    
+    <db:catalyst
+     class="bungeni.models.domain.ConstituencyDetail"
+     descriptor=".descriptor.ConstituencyDetailDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+    />
+  
+  <!-- User -->
+  <db:catalyst
+     class="bungeni.models.domain.User"
+     descriptor=".descriptor.UserDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+    />
+    
+
+  <db:catalyst
+     class="bungeni.models.domain.PartyMember"
+     descriptor=".descriptor.PartyMemberDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+     />
+
+
+   
+  <db:catalyst
+     class="bungeni.models.domain.SittingType"
+     descriptor=".descriptor.SittingTypeDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+     />
+              
+  <db:catalyst
+     class="bungeni.models.domain.MemberOfParliament"
+     descriptor=".descriptor.MpDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+     />
+    
+  <!--db:catalyst
+     class="bungeni.models.domain.HansardReporter"
+     descriptor=".descriptor.HansardReporterDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+    /-->
+
+  <db:catalyst
+     class="bungeni.models.domain.GroupSittingAttendance"
+     descriptor=".descriptor.AttendanceDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+    />
+      
+  <db:catalyst
+     class="bungeni.models.domain.AttendanceType"
+     descriptor=".descriptor.AttendanceTypeDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+    />
+
+   
+
+ <!--db:catalyst
+     class="bungeni.models.domain.Debate"
+     descriptor=".descriptor.DebateDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+    /-->
+
+<db:catalyst
+     class="bungeni.models.domain.AddressType"
+     descriptor=".descriptor.AddressTypeDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+    />
+
+ <db:catalyst
+     class="bungeni.models.domain.UserAddress"
+     descriptor=".descriptor.AddressDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+    />
+
+ <db:catalyst
+     class="bungeni.models.domain.MemberRoleTitle"
+     descriptor=".descriptor.MemberRoleTitleDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+    />
+    
+ <db:catalyst
+     class="bungeni.models.domain.AgendaItem"
+     descriptor=".descriptor.AgendaItemDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+    />
+
+  <db:catalyst
+     class="bungeni.models.domain.AgendaItemVersion"
+     descriptor=".descriptor.AgendaItemVersionDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content" 
+     echo="False"
+     />
+  <db:catalyst
+     class="bungeni.models.domain.AgendaItemChange"
+     descriptor=".descriptor.AgendaItemChangeDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content" 
+     echo="False"
+     />
+    
+    
+ <!--db:catalyst
+     class="bungeni.models.domain.QuestionScheduleHistory"
+     descriptor=".descriptor.QuestionScheduleHistoryDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+    /-->
+
+ <!-- scheduling -->
+ 
+ <db:catalyst
+    class="bungeni.models.domain.ItemSchedule"
+     descriptor=".descriptor.ItemScheduleDescriptor"
+     interface_module="bungeni.models.interfaces"
+     ui_module="bungeni.ui.content"
+     echo="False"
+    />
+
+ <db:catalyst
+    class="bungeni.models.domain.ScheduledItemDiscussion"
+    descriptor=".descriptor.ScheduledItemDiscussionDescriptor"
+    interface_module="bungeni.models.interfaces"
+    ui_module="bungeni.ui.content"
+    echo="False"
+    />
+
+
+  <!-- delgate rights to act on behalf of user -->
+  
+ <db:catalyst
+    class="bungeni.models.domain.UserDelegation"
+    descriptor=".descriptor.UserDelegationDescriptor"
+    interface_module="bungeni.models.interfaces"
+    ui_module="bungeni.ui.content"
+    echo="False"
+    />
+   
+   <db:catalyst
+    class="bungeni.models.domain.Report"
+    descriptor=".descriptor.ReportDescriptor"
+    interface_module="bungeni.models.interfaces"
+    ui_module="bungeni.ui.content"
+    echo="False"
+    />
+
+   <db:catalyst
+    class="bungeni.models.domain.Report4Sitting"
+    descriptor=".descriptor.Report4SittingDescriptor"
+    interface_module="bungeni.models.interfaces"
+    ui_module="bungeni.ui.content"
+    echo="False"
+    />
+
+   <db:catalyst
+    class="bungeni.models.domain.Heading"
+    descriptor=".descriptor.HeadingDescriptor"
+    interface_module="bungeni.models.interfaces"
+    ui_module="bungeni.ui.content"
+    echo="False"
+    />
+</configure>

@@ -1,0 +1,186 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="context/@@standard_macros/page"
+      i18n:domain="bungeni.ui">
+
+  <tal:macros condition="python: False">
+    <metal:field-header define-macro="header">
+      <label tal:attributes="for widget/name">
+        <span i18n:translate=""
+              tal:content="widget/label">label</span>
+      </label>
+      <span class="fieldRequired" title="Required" tal:condition="widget/required"
+            i18n:translate="label_required"
+            i18n:attributes="title title_required;">
+        (Required)
+      </span>
+      
+      <div class="formHelp"
+           i18n:translate=""
+           tal:content="description"
+           tal:condition="description"
+           >field description</div>
+    </metal:field-header>
+  </tal:macros>
+
+  <body>
+    
+    <div metal:fill-slot="body">
+      <h1 i18n:translate="" tal:content="view/form_name|nothing" />
+
+      <metal:block define-macro="form"
+                   i18n:domain="alchemist">
+
+        <p class="documentDescription"
+           i18n:translate=""
+           tal:content="view/form_description|nothing" />
+
+        <form action=""
+              method="post"
+              tal:define="kls nocall: view/context_class | python: context.__class__;
+                          name python: kls.__name__.lower()"
+              tal:attributes="action view/action_url|request/URL;
+                              class string:$name-form;
+                              method view/action_method|string:post"
+              id="alchemist-form"
+              enctype="multipart/form-data">
+
+          <dl class="portalMessage info"
+              tal:condition="view/status"
+              tal:define="mtype string:info"
+              tal:attributes="class string:portalMessage ${mtype};">
+            <dt tal:content="python:mtype.capitalize()"
+                i18n:translate="">
+              Info
+            </dt>
+            <dd tal:content="view/status | nothing"
+                i18n:translate="">
+              The status message.
+            </dd>
+          </dl>
+          
+          <div class="invariant-errors"
+               tal:define="errors view/invariantErrors|python:();
+                           messages python: [error.message for error in errors];
+                           messages python: filter(None, messages)"
+               tal:condition="messages">
+            <ul>
+              <li tal:repeat="message messages" tal:content="message" />
+            </ul>
+          </div>
+
+          <metal:block define-macro="form-body">
+
+
+            <metal:block define-slot="pre-fieldset">
+            </metal:block>
+
+            <fieldset tal:define="fieldset_name view/fieldset_name|nothing;
+                                  side_by_side view/side_by_side|nothing"
+                      tal:omit-tag="not:fieldset_name">
+
+              <legend tal:condition="fieldset_name"
+                      tal:content="fieldset_name"
+                      i18n:translate="">
+                Form name
+              </legend>
+
+              <metal:block define-macro="fieldset"> 
+
+                <input type="hidden" name="came_from"
+                       tal:condition="view/came_from|nothing"
+                       tal:attributes="value view/came_from" />
+
+                <input type="hidden" name="next_url"
+                       tal:condition="view/next_url|nothing"
+                       tal:attributes="value view/next_url" />
+
+                <metal:block define-slot="top-fieldset">
+                </metal:block>
+
+                <table class="listing side-by-side" style="table-layout: fixed"  tal:omit-tag="not:side_by_side">
+
+                  <tal:groups define="fallback python: dict(fallback=view.widgets);
+                                      groups view/widget_groups|fallback;
+                                      legends view/legends|nothing"
+                              repeat="name groups">
+                    
+                    <fieldset tal:define="legend python: legends and legends.get(name)"
+                              tal:omit-tag="not: legend">
+
+                      <legend tal:condition="legend"
+                              tal:content="legend"
+                              i18n:translate="" />
+                      
+                      <tal:block define="widgets python: groups.get(name)"
+                                 repeat="widget widgets">
+
+                    <tal:field define="description widget/hint;
+                                       error widget/error;
+                                       odd repeat/widget/odd;
+                                       changed widget/changed | nothing"
+                               condition="widget/visible">
+
+
+                      <tal:standard condition="not: side_by_side">
+                        <div class="field"
+                             tal:define="name python: widget.__class__.__name__.lower()"
+                             tal:attributes="class string:$default widget-$name">
+                          <metal:header use-macro="macros/header" />
+                        
+                          <div tal:attributes="class python:'widget'+(error and ' error' or '') + (changed and ' changed' or '')">
+                            <div class="widget" tal:content="structure widget"  >
+                              <input type="text" />
+	                    </div>
+	                    <div tal:condition="error" tal:content="structure error" tal:attributes="class python:'errormessage' + (changed and ' changed' or '')">
+                              The Error
+                            </div>
+	                  </div>
+                        </div>
+                      </tal:standard>
+                      
+                      <tal:side-by-side condition="side_by_side">
+                        <tr tal:attributes="class python:'field'+(error and ' error' or '') + (odd and ' odd' or ' even')">
+                          <th colspan="2">
+                            <metal:header use-macro="macros/header" />
+                          </th>
+                        </tr>
+                        
+                        <tr>
+                          <td valign="top" width="30%" style="overflow: auto">
+                            <div tal:content="structure widget/render_original" />
+                          </td>
+                          <td valign="top">
+                            <div class="widget" tal:content="structure widget" />
+                          </td>
+                        </tr>
+                      </tal:side-by-side>
+
+                    </tal:field>
+                  </tal:block>
+                    </fieldset>
+                  </tal:groups>
+                </table>
+              </metal:block>
+            </fieldset>
+          </metal:block>
+          <div id="actionsView"> 
+            <span class="actionButtons"
+                  tal:condition="view/availableActions">
+              <tal:loop tal:repeat="action view/actions"> 
+                <input type="submit" class="context"
+                       id="" name="" value=""
+                       tal:attributes="id action/__name__;
+                                       name action/__name__;
+                                       value action/label;"
+                       i18n:attributes="value" />
+              </tal:loop>						
+            </span>
+          </div>
+        </form>
+      </metal:block>
+
+    </div>
+  </body>
+</html>

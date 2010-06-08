@@ -1,0 +1,24 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      metal:use-macro="context/@@standard_macros/page">
+
+  <div metal:fill-slot="body" i18n:domain="bungeni.ui"
+       tal:define="display options/display">
+    
+    <div tal:condition="display"
+         metal:use-macro="view/macros/?display" />
+
+    <div tal:condition="not: display">
+      <dl class="portalMessage info"
+          tal:condition="options/status"
+          tal:define="mtype string:info">
+        <dt tal:content="python:mtype.capitalize()"
+            i18n:translate="" />
+        <dd tal:content="options/status | nothing"
+            i18n:translate="" />
+      </dl>
+    </div>
+    
+  </div>
+  
+</html>

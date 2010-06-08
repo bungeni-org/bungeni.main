@@ -1,0 +1,15 @@
+<div xmlns:tal="http://xml.zope.org/namespaces/tal" class="datepicker-div">
+
+    <script type="text/javascript" tal:content="structure view/get_js"> </script>
+                    
+    <span tal:define="form_value view/_getFormValue" 
+          tal:attributes="id string:${view/field_name}-datefields"
+          class="calendarpicker"> 
+        <input type="text" 
+            tal:attributes="name view/date_name; id view/date_name;
+                            value form_value" 
+            size="10" maxlength="10"/>
+    </span>
+
+</div>
+

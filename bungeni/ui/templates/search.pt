@@ -1,0 +1,35 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      metal:use-macro="context/@@standard_macros/page">
+
+  <div metal:fill-slot="body" i18n:domain="bungeni.ui">
+
+      <h2 i18n:translate=""> Search </h2>
+
+      <div tal:condition="view/spelling_suggestion">
+          Did you mean <a href="" tal:attributes="href string:${context/@@absolute_url}/search?form.full_text=${view/spelling_suggestion}&amp;form.actions.search=Search"
+                                  tal:content="view/spelling_suggestion"> This </a>
+      </div>
+
+      <div metal:use-macro="context/@@standard_macros/form">
+      </div>
+      
+      <tal:block condition="python: request.form.get('form.full_text')">
+      
+        <h2 i18n:translate="">Results </h2>
+      
+        <div tal:content="view/search_status"></div>
+        <tal:block tal:condition="view/results">
+          <div tal:replace="structure view/listing">
+          </div>
+        </tal:block>
+       
+        <tal:block tal:condition="python: not view.results">
+          <em>No Results</em>
+        </tal:block>
+        
+      </tal:block>
+      
+  </div>
+
+</html>

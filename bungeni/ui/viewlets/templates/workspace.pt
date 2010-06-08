@@ -1,0 +1,14 @@
+<div id="bungeni-workspace">
+ <dl class="portlet workspace-viewlet listing enableFormTabbing">
+  <tal:viewlet repeat="viewlet view/viewlets">
+    <!--div tal:define="odd repeat/viewlet/odd"
+         tal:attributes="class python: 'item %s' % (odd and 'odd' or 'even')"-->
+      <tal:render replace="structure viewlet/render" />
+    <!--/div-->
+  </tal:viewlet>
+ </dl>
+  <div class="visualClear"><!-- nothing here --></div>
+  <script language="javascript" type="text/javascript">
+    setTimeout("location.reload();",200000);
+  </script>
+</div>

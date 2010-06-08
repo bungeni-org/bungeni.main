@@ -1,0 +1,16 @@
+<dl id="portletArchiveDates" class="portlet inlinePortlet">
+  
+  <dt class="portletHeader" i18n:domain="bungeni.ui" >
+    <span class="portletTopLeft"></span>
+    <span i18n:translate="" class="tile">Filter by date or parliament</span>
+    <span class="portletTopRight"></span>
+  </dt>
+  
+  <dd class="portletItem lastItem"
+    tal:attributes="class string:portletItem lastItem ${view/filter_on}">
+    <tal:form replace="structure view/form" />
+    <div class="visualClear"><!-- nothing here --></div>
+  </dd>
+
+</dl>
+

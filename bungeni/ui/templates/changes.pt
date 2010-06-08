@@ -1,0 +1,22 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+       xmlns:metal="http://xml.zope.org/namespaces/metal"
+       metal:use-macro="context/@@standard_macros/page">
+<body>
+
+<title metal:fill-slot="title"
+       i18n:translate=""
+       tal:content="string:${view/form_name} ${context/short_name|nothing}"/>
+  
+<div metal:fill-slot="body">
+
+   <h2 class="title" tal:content="string: ${view/form_name} ${context/short_name|nothing}"> </h2>
+
+   <form action="" method="GET"> 
+   <div tal:content="structure view/listing">
+       Changes
+   </div>
+   </form>
+</div>
+
+</body>
+</html>

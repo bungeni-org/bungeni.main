@@ -1,0 +1,30 @@
+<!-- XXX-INFO-FOR-PLONE - MR - 2010-05-03
+
+Review (original intention) and replace/remove with a more appropriate 
+and clear implementation.
+
+Apparently the reason for this (and user_id.pt) is simply to be able to pass 
+to plone the group-id and the user-id! Many problems:
+- no need to create (expensive) UI widgets to simply pass a piece of data along
+- the form is invalid HTML (no action, etc)
+- there is no explanations/comments as to why the whole thing is here in the first place
+- inlined CSS to NOT display the output of this form (and no comments as to why)
+- etc.
+
+In addition, given that plone is currently disabled these vielwets/templatre 
+are actually NOT being used anyway (but the need they are trying to address 
+will still be needed in the future). 
+
+So, I am commenting out all code relating to this. To be able to find the 
+bits and pieces of code being commented out in teh future, I am "grep-tagging"
+every change due to tthis with "XXX-INFO-FOR-PLONE".
+
+
+<form id="workgroup-id-section" style="display: none;">
+  <input
+     type="text"
+     id="workgroup-id"
+     name="Workspace"
+     tal:attributes="value string:groups/${view/parent_group_principal_id}/${view/my_group_principal_id}"/>
+</form>
+-->

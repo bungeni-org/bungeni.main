@@ -1,0 +1,22 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      tal:omit-tag="">
+  <tal:loop tal:repeat="ministry view/getData" >
+      <dl class="portlet workspace-viewlet listing"
+          tal:define="results ministry/items"
+          tal:condition="results">
+
+        <dt class="portletHeader">
+          <a i18n:translate="" tal:content="ministry/subject" tal:attributes="href ministry/url" />
+        </dt>
+
+        <dd class="portletItem">
+          <ul tal:attributes="class string:draglist">
+            <li tal:repeat="result results" tal:attributes="id result/qid; class result/result_item_class; title result/title">
+              <a tal:content="result/subject" tal:attributes="href result/url" />
+            </li>
+          </ul>
+        </dd>
+      </dl>
+  </tal:loop>
+</html>
