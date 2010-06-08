@@ -1,1 +1,1 @@
-# this is a namespace package
+# this is not a namespace package

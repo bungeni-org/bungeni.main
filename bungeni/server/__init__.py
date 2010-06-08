@@ -1,1 +1,1 @@
-# Make this directory a package
+# This is not a namespace package  

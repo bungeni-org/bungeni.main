@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# this is not a namespace package
 # encoding: utf-8
 """
 __init__.py
