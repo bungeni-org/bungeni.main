@@ -1,0 +1,52 @@
+ODF export
+==========
+
+Bungeni-content may be exported as an OpenOffice document. The
+approach is to couple a template document with a data source and carry
+out a "mail merge".
+
+Loading and saving documents
+----------------------------
+
+The document is read by passing ``filename`` to the constructor.
+
+  >>> from bungeni.core.odf import OpenDocument
+  >>> doc = OpenDocument("%s/odf/test.odt" % path)
+
+We can save the document back; here to a temporary file location.
+  
+  >>> from tempfile import NamedTemporaryFile
+  >>> archive = NamedTemporaryFile(suffix=".zip")
+  >>> doc.save(archive.name)
+
+Verify file-size:
+  
+  >>> os.path.getsize(archive.name)
+  8384L
+
+Dynamic contents
+----------------
+
+Within the document archive, we may render dynamic content using the
+Chameleon template engine.
+
+  >>> class view:
+  ...     name = u"Joe"
+  ...     context = request = None
+
+The ``process`` method takes a filename and a ``view`` instance.
+  
+  >>> doc.process("content.xml", view)
+  
+The document has been updated. Verify contents:
+
+  >>> content = doc.read("content.xml")
+  >>> content.count("Joe")
+  1
+
+  >>> doc.save(archive.name)
+
+Verify file-size:
+  
+  >>> os.path.getsize(archive.name)
+  8350L

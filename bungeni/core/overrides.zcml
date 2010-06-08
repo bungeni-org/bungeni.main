@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope">
+
+  <!-- Authentication Principal Factory - This one lookups users in a
+  database, so database users become principals-->
+  
+  <adapter
+     factory="alchemist.security.auth.AuthenticatedPrincipalFactory"
+     />
+
+
+  <!-- Cookie based language negotiation like linguaplone-->
+  <adapter
+      factory="bungeni.core.translation.BrowserFormLanguages"
+      />
+
+
+</configure>

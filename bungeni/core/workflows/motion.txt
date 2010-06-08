@@ -1,0 +1,297 @@
+Motion workflow
+===============
+
+Setup
+-----
+
+Setting up database connection and utilities:
+
+  >>> from bungeni.core.testing import setup_db
+  >>> engine = setup_db()
+  
+  >>> from bungeni.core.workflows.testing import setup_adapters
+  >>> from bungeni.core.workflows.testing import setup_security_adapters
+  >>> setup_adapters()
+  >>> setup_security_adapters()
+  
+  >>> from ore.alchemist import Session
+  >>> session = Session()
+  
+Imports.
+
+  >>> from bungeni.models import domain
+  >>> from bungeni.models import schema
+
+Motions are versionable.
+  
+  >>> from zope.interface import classImplements
+  >>> from bungeni.core.interfaces import IVersionable
+  >>> classImplements(domain.Motion, IVersionable)
+
+Content creation
+----------------
+
+  >>> from bungeni.models.testing import add_content
+  
+  >>> country = add_content(
+  ...     domain.Country,
+  ...     country_id='KE',
+  ...     iso_name=u"KENYA",
+  ...     language="en",
+  ...     country_name=u"Kenya")
+
+  >>> mp_1 = add_content(
+  ...        domain.User,
+  ...        u"minister 1",
+  ...        first_name=u"a", 
+  ...        last_name=u'ab', 
+  ...        birth_country="KE",
+  ...        email=u"mp1@example.com", 
+  ...        date_of_birth=today,
+  ...        language="en",
+  ...        gender='M')
+
+  >>> parliament = add_content(
+  ...    domain.Parliament,
+  ...    short_name=u"p_1",
+  ...    language="en",
+  ...    start_date=yesterday,
+  ...    election_date=yesterday)
+
+  >>> motion = add_content(
+  ...     domain.Motion,
+  ...     short_name=u"My subject",
+  ...     owner_id = mp_1.user_id,
+  ...     language="en")
+
+Integrity
+---------
+
+Verify that all states are reachable.
+
+  >>> from bungeni.core.workflows.testing import verify_workflow
+  >>> from ore.workflow.interfaces import IWorkflow
+
+  >>> wf = IWorkflow(motion)
+  >>> verify_workflow(wf)
+
+Principals
+----------
+  
+  >>> from bungeni.core.testing import create_principal, create_participation
+  >>> import zope.security.management
+  >>> zope.security.management.endInteraction()
+
+  >>> member = create_principal("member", "Member", ())
+  >>> zope.security.management.newInteraction(create_participation(member))
+  
+Actions
+-------
+
+  >>> from ore.workflow.interfaces import IWorkflowInfo
+  >>> from bungeni.core.workflows.motion import actions 
+  >>> info = IWorkflowInfo(motion)
+
+"Create". This action assigns the role of "Owner" and sets the
+parliament id.
+
+  >>> actions.create(info, motion)
+  >>> motion.parliament_id == parliament.parliament_id
+  True
+
+  >>> from zope.securitypolicy.interfaces import IPrincipalRoleMap
+  >>> tuple(IPrincipalRoleMap(motion).getRolesForPrincipal("member"))
+  ((u'bungeni.Owner', PermissionSetting: Allow),)
+
+Conditions
+----------
+
+  >>> from bungeni.core.workflows.motion import conditions
+  
+"Is scheduled".
+
+  >>> conditions.is_scheduled(info, motion)
+  False
+
+  >>> from bungeni.models.testing import create_sitting
+  >>> sitting = create_sitting(parliament.parliament_id)
+
+  >>> scheduling = add_content(
+  ...     domain.ItemSchedule,
+  ...     sitting_id=sitting.sitting_id,
+  ...     item_id=motion.parliamentary_item_id)
+  
+  >>> conditions.is_scheduled(info, motion)
+  True
+
+"Submit".
+
+  >>> actions.submit(info, motion)
+
+  >>> motion.submission_date == today
+  True
+
+"Received by clerk". A new version is created.
+
+  >>> actions.received_by_clerk(info, motion)
+
+  >>> from bungeni.core.interfaces import IVersioned
+  >>> versions = IVersioned(motion)
+  >>> len(versions)
+  2
+
+"Require edit by MP".
+
+  >>> actions.require_edit_by_mp(info, motion)
+  >>> len(versions)
+  3
+
+"Complete".
+
+  >>> actions.complete(info, motion)
+  >>> len(versions)
+  5
+
+"Approve".
+
+  >>> actions.approve(info, motion)
+  >>> len(versions)
+  6
+
+"Reject".
+
+  >>> actions.reject(info, motion)
+
+"Require amendment".
+
+  >>> actions.require_amendment(info, motion)
+  >>> len(versions)
+  7
+
+"MP clarify".
+
+  >>> actions.mp_clarify(info, motion)
+  >>> len(versions)
+  8
+
+"Schedule".
+
+  >>> actions.schedule(info, motion)
+
+"Defer".
+
+  >>> actions.defer(info, motion)
+
+"Elapse".
+
+  >>> actions.elapse(info, motion)
+
+"Postpone".
+
+  >>> actions.postpone(info, motion)
+
+"Debate".
+
+  >>> actions.debate(info, motion)
+
+"Withdraw".
+
+  >>> actions.debate(info, motion)
+
+Notifications
+-------------
+
+  >>> from bungeni.core.workflows import motion as notification
+  >>> from zope.component.interfaces import ObjectEvent
+
+Setup mock delivery component.
+
+  >>> import zope.sendmail.interfaces
+  
+  >>> class MockMailDelivery(object):
+  ...     interface.implements(zope.sendmail.interfaces.IMailDelivery)
+  ...
+  ...     def send(self, *args):
+  ...         print "From: %s\nTo: %s\n\n%s" % args
+
+  >>> component.provideUtility(MockMailDelivery())
+
+Set up a user.
+
+  >>> user = add_content(
+  ...     domain.User,
+  ...     first_name=u'John',
+  ...     last_name=u'Doe',
+  ...     email='john.doe@localhost',
+  ...     language="en",
+  ...     owner_id=1)
+  
+  >>> motion.owner_id = user.user_id
+  >>> motion.receive_notification = False
+
+  >>> session.flush()
+  
+Motion received.
+  
+  >>> notification.SendNotificationToMemberUponReceipt(ObjectEvent(motion))
+
+Let's change our setting for receive notification so an email message
+is dispatched.
+
+  >>> motion.receive_notification = True
+  >>> notification.SendNotificationToMemberUponReceipt(ObjectEvent(motion))
+  From: clerks.office@parliament.go.tld
+  To: "John Doe" <john.doe@localhost>...
+  Subject: Motion received: My subject...
+  
+Send notification to Clerk's office upon submit.
+
+  >>> notification.SendNotificationToClerkUponSubmit(ObjectEvent(motion))
+  From: "John Doe" <john.doe@localhost>
+  To: clerks.office@parliament.go.tld ...
+  Subject: Motion submitted: My subject ...
+
+
+A motion was rejected by the speakers office.
+  >>> notification.SendNotificationToMemberUponReject(ObjectEvent(motion))
+  From: speakers.office@parliament.go.tld
+  To: "John Doe" <john.doe@localhost> ...
+  Subject: Motion rejected: My subject ...
+
+
+A motion needs clarification by the MP
+  >>> notification.SendNotificationToMemberUponNeedsClarification(ObjectEvent(motion))
+  From: clerks.office@parliament.go.tld
+  To: "John Doe" <john.doe@localhost> ...
+  Subject: Motion needs clarification: My subject ...
+
+
+A motion was deferred by Clerk's office.
+  >>> notification.SendNotificationToMemberUponDeferred(ObjectEvent(motion))
+  From: speakers.office@parliament.go.tld
+  To: "John Doe" <john.doe@localhost> ...
+  Subject: Motion deferred: My subject ...
+
+A motion was scheduled by Speakers office.
+  >>> notification.SendNotificationToMemberUponSchedule(ObjectEvent(motion))
+  From: clerks.office@parliament.go.tld
+  To: "John Doe" <john.doe@localhost> ...
+  Subject: Motion scheduled: My subject ...
+
+A motion was postponed by the speakers office.
+  >>> notification.SendNotificationToMemberUponPostponed(ObjectEvent(motion))
+  From: clerks.office@parliament.go.tld
+  To: "John Doe" <john.doe@localhost> ...
+  Subject: Motion postponed: My subject ...
+
+A motions answer was debated.
+  >>> notification.SendNotificationToMemberUponDebated(ObjectEvent(motion))
+  From: clerks.office@parliament.go.tld
+  To: "John Doe" <john.doe@localhost> ...
+  Subject: Motion was debated: My subject ...
+  
+Cleanup
+-------
+  >>> session.flush()
+  >>> session.commit()
+  >>> session.close()

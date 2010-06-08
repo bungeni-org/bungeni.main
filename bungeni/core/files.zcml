@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="bungeni.core">
+    
+  <subscriber
+     for="bungeni.models.interfaces.IAttachedFile
+          zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+     handler=".files.fileAddedSubscriber"
+     />
+
+
+  <subscriber
+     for="bungeni.models.interfaces.IAttachedFile
+          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+     handler=".files.fileEditedSubscriber"
+     />
+
+  <subscriber
+     for="bungeni.models.interfaces.IVersion
+          zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+     handler=".files.objectNewVersion"
+     /> 
+
+    
+</configure>

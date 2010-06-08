@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<workflow
+   id="event-workflow"
+   title="event workflow"
+   description="Workflow for attached files"
+   domain="bungeni.ui"
+   initial_state="">
+
+  <state id="I" title="Inactive User">
+    <deny permission="bungeni.delegation.Add" role="bungeni.Owner" />
+    <deny permission="bungeni.delegation.Edit" role="bungeni.Owner" />
+  </state>
+
+  
+  <state id="A" title="Active User">
+    <grant permission="bungeni.delegation.Add" role="bungeni.Owner" />
+    <grant permission="bungeni.delegation.Edit" role="bungeni.Owner" />
+  </state>
+
+  <state id="D" title="Deceased User">
+    <deny permission="bungeni.delegation.Add" role="bungeni.Owner" />
+    <deny permission="bungeni.delegation.Edit" role="bungeni.Owner" />
+  </state>
+
+
+
+  <transition 
+     id="create"
+     title="Create"
+     trigger="automatic"
+     source=""
+     destination="A"
+     action="bungeni.core.workflows.user.actions.create"
+     />
+
+                   
+  <transition 
+     id="deactivate"
+     title="Deactivate"
+     trigger="manual"
+     source="A"
+     destination="I"
+     permission="bungeni.user.Manage"
+     require_confirmation="true"
+     condition="bungeni.core.workflows.user.conditions.not_has_date_of_death"
+     />
+
+
+  <transition 
+     id="activate"
+     title="activate"
+     trigger="manual"
+     source="I"
+     destination="A"
+     permission="bungeni.user.Manage"
+     require_confirmation="true"
+     />
+
+
+  <transition 
+     id="inhume"
+     title="Inhume"
+     trigger="manual"
+     source="A
+            I"
+     destination="D"
+     permission="bungeni.user.Manage"
+     require_confirmation="true"
+     condition="bungeni.core.workflows.user.conditions.has_date_of_death"
+     />
+
+  <transition 
+     id="auto-inhume"
+     title="called when date of death is set"
+     trigger="automatic"
+     source="A
+            I"
+     destination="D"
+     condition="bungeni.core.workflows.user.conditions.has_date_of_death"
+     />
+
+
+  <transition 
+     id="resurrect"
+     title="Resurrect"
+     trigger="manual"
+     source="D"
+     destination="A"
+     permission="bungeni.user.Manage"
+     require_confirmation="true"
+     action="bungeni.core.workflows.user.actions.resurrect"
+     />
+
+
+</workflow>

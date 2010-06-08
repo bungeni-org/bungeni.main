@@ -1,0 +1,70 @@
+
+notes 
+
+
+are all amendments processed with marginala? does openoffice read marginala annotations? 
+
+A: NOT all amedments are processed by Marginalia. Open office will import from Marginalia, format, fix the
+amdements and then export them in a DB 
+
+what kind of volume of bills, questions, and items does a typical parliament see in a year?
+
+A: Bill from 20 to 80 ... Questions in thousands each hears.
+
+
+do we want to maintain two calendaring storages for, scheduled and actual? i don't have schedule aspects modeling yet.
+
+
+
+i'm still unclear on the server storage requirements of the amendment process (specifically bills) and what sort of commonality
+can be extracted if any between these and bills/motions
+
+A: Flavio: I do not seen commonalities between bills and questions/motions if not ...
+that both will have to schedules, end up in the Agenda and minutes etc.
+
+
+
+questions 
+
+ - how are supplementary questions to be created in the user interface? 
+   from the question or as an option from creating a general question.
+ 
+A: from the question as a child. 
+ 
+ 
+ 
+responses
+
+  - responses (p.82) - says respondent is actually the owner of the question, not the user who created the response?
+  
+  logical question, so questions are asked, scheduled, and a response is read.
+  
+   
+ 
+what are some aspects
+
+weave these as patterns, integrated as events, utilities and adapters.
+
+ - workflow status
+ - object log
+ - versioning
+ - voting
+ - member associations
+ - security contexts
+  
+ - group item association
+ - user item association
+ 
+ - item votes
+ - item amendments
+ 
+core types
+
+ - parliamentary activity item (bill, amendment )
+ - groups ( ministries, committees )
+  
+ 
+
+add active to the user table.
+security / question / answer
+ 

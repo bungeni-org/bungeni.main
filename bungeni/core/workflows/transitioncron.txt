@@ -1,0 +1,112 @@
+Transition cron
+===============
+
+Setup
+-----
+
+Setting up database connection and utilities:
+
+  >>> from bungeni.core.testing import setup_db
+  >>> engine = setup_db()
+  
+  >>> from bungeni.core.workflows.testing import setup_adapters
+  >>> from bungeni.core.workflows.testing import setup_security_adapters
+  >>> setup_adapters()
+  >>> setup_security_adapters()
+  
+  >>> from ore.alchemist import Session
+  >>> session = Session()
+  
+Imports.
+
+  >>> from bungeni.models import domain
+  >>> from bungeni.models import schema
+
+  >>> import bungeni.core.workflows.question as question_workflow
+  >>> import bungeni.core.workflows.transitioncron as cron
+  >>> import bungeni.core.workflows.question
+  >>> import ore.workflow
+      
+Questions
+---------
+
+  >>> from bungeni.models.testing import add_content
+  
+  
+  >>> country = add_content(
+  ...     domain.Country,
+  ...     country_id='KE',
+  ...     iso_name = u"KENYA",
+  ...     language="en",
+  ...     country_name=u"Kenya")
+ 
+  >>> mp_1 = add_content(
+  ...     domain.User,
+  ...     u"mp_1",
+  ...     first_name=u"a", 
+  ...     last_name=u'ab', 
+  ...     birth_country="KE",
+  ...     email=u"mp1@example.com", 
+  ...     date_of_birth=today,
+  ...     language="en",
+  ...     gender='M')
+  
+  
+  >>> question = add_content(
+  ...     domain.Question,
+  ...     approval_date=daybeforeyesterday,
+  ...     status=u"admissible",
+  ...     language="en",
+  ...     owner_id=mp_1.user_id,
+  ...     short_name="question 1")
+
+  >>> question2 = add_content(
+  ...     domain.Question,
+  ...     approval_date=yesterday,
+  ...     status=u"admissible",
+  ...     language="en",
+  ...     owner_id=mp_1.user_id,
+  ...     short_name="question 2")
+
+  >>> question3 = add_content(
+  ...     domain.Question,
+  ...     approval_date=yesterday,
+  ...     status=u"complete",
+  ...     language="en",
+  ...     owner_id=mp_1.user_id,
+  ...     short_name="question 3")
+
+Get the questions that are in the workflow state:
+  
+  >>> len(cron._getQuestionsApprovedBefore(
+  ...     today, "admissible"))
+  2
+  
+  >>> len(cron._getQuestionsApprovedBefore(
+  ...     today, "complete"))
+  1
+    
+Defer admissible question older than today.
+
+  >>> cron._deferAdmissibleQuestionsBefore(today)
+  >>> session.flush()
+ 
+  >>> len(cron._getQuestionsApprovedBefore(
+  ...     today, "admissible"))
+  0
+  
+  >>> len(cron._getQuestionsApprovedBefore(
+  ...     today, "complete"))
+  1
+
+  >>> len(cron._getQuestionsApprovedBefore(
+  ...     today, "deferred"))
+  2
+ 
+Cleanup
+-------
+
+  >>> session.flush()
+  >>> session.commit()
+  >>> session.close()
+  

@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<workflow
+   id="attachedfile-workflow"
+   title="attached file workflow"
+   description="Workflow for attached files"
+   domain="bungeni.ui"
+   initial_state="">
+
+  <state id="inactive" title="Inactive file obsolete">
+    <deny permission="zope.View" role="bungeni.Owner" />
+    <grant permission="zope.View" role="bungeni.Clerk" />
+    <grant permission="zope.View" role="bungeni.Speaker" />
+    <deny permission="zope.View" role="bungeni.MP" />
+    <deny permission="zope.View" role="bungeni.Minister" />
+    <deny permission="zope.View" role="bungeni.Everybody" /> 
+    <deny permission="zope.View" role="bungeni.Anybody" /> 
+  </state>
+
+  
+  <state id="public" title="Public">
+    <grant permission="zope.View" role="bungeni.Everybody" /> 
+    <grant permission="zope.View" role="bungeni.Anybody" />
+  </state>
+
+  <transition 
+     id="create"
+     title="Create"
+     trigger="automatic"
+     source=""
+     destination="public"
+     action="bungeni.core.workflows.attachedfile.actions.create"
+     />
+
+                   
+  <transition 
+     id="deactivate"
+     title="Deactivate"
+     trigger="manual"
+     source="public"
+     destination="inactive"
+     permission="bungeni.attachedfile.Deactivate"
+     require_confirmation="true"
+     />
+
+
+</workflow>

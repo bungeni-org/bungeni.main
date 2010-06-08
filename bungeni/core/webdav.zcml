@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           xmlns:i18n="http://namespaces.zope.org/i18n"
+           i18n_domain="bungeni.core">
+
+
+  <include package="z3c.dav" />
+
+  <utility
+     component="lxml.etree"
+     provides="z3c.etree.interfaces.IEtree"
+     />
+
+  <publisher
+     name="WEBDAV"
+     factory=".webdav.WSGIWebDAVRequestFactory"
+     methods="PROPFIND PROPPATCH LOCK UNLOCK OPTIONS PUT MKCOL"
+     priority="20"
+     />
+
+  <adapter
+     name="field"
+     factory=".webdav.FieldNamespaceTraverser" />
+  
+  <adapter factory=".webdav.FieldDirectory" />
+  <adapter factory=".webdav.FieldStorage" />
+  <adapter factory=".webdav.FileFieldWriter" />
+
+  <adapter
+     for="ore.alchemist.interfaces.IAlchemistContent
+          z3c.dav.interfaces.IWebDAVRequest"
+     factory="z3c.dav.adapters.DAVDublinCore" />
+  
+  <subscriber
+     for="*
+          zope.publisher.interfaces.IPublisherRequest"
+     provides="z3c.traverser.interfaces.ITraverserPlugin"
+     factory=".webdav.FieldNamespaceTraverser" />
+  
+  <browser:page
+     name="index.html"
+     for="zope.schema.interfaces.IField"
+     permission="zope.View"
+     layer="zope.publisher.interfaces.http.IHTTPRequest"
+     class=".webdav.FieldView" />
+
+  <browser:page
+     name="LOCK"
+     for="zope.schema.interfaces.IField"
+     permission="zope.View"
+     layer="z3c.dav.interfaces.IWebDAVRequest"
+     class=".webdav.FieldView"
+     attribute="LOCK"
+     />
+
+  <browser:page
+     name="UNLOCK"
+     for="zope.schema.interfaces.IField"
+     permission="zope.View"
+     layer="z3c.dav.interfaces.IWebDAVRequest"
+     class=".webdav.FieldView"
+     attribute="UNLOCK"
+     />
+
+</configure>

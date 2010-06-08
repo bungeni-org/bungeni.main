@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<workflow
+   id="version-workflow"
+   title="Version workflow"
+   description="Workflow for a versioned content item."
+   domain="bungeni.ui"
+   initial_state="">
+
+  <state id="draft-translation" title="Draft Translation">
+    <grant permission="zope.ManageContent" role="bungeni.Owner" />
+  </state>
+  
+  <state id="archived" title="Archived">
+    <deny permission="zope.ManageContent" role="bungeni.Owner" />
+    <grant permission="zope.View" role="bungeni.Everybody" />
+    <grant permission="zope.View" role="bungeni.Anybody" />
+  </state>
+
+  <transition
+     id="archive"
+     title="Archive"
+     trigger="automatic"
+     source=""
+     destination="archived"
+     action=""
+     condition=""
+     />
+  
+  <transition
+     id="create-translation"
+     title="Create Translation"
+     trigger="manual"
+     source=""
+     destination="draft-translation"
+     action=""
+     condition=""
+     />
+
+</workflow>
+

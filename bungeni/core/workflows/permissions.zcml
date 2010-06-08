@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="bungeni.core">
+  <!-- Question Workflow permissions -->
+  <!-- Permissions that are not related to workflow transitions (add, edit, delete,...) 
+    are to be defined in bungeni.core.roles/permissions -->
+  <permission id="bungeni.question.Submit" title="Submit a question" />
+  <permission id="bungeni.question.Recieve" title="Receive a question" />
+  <permission id="bungeni.question.clerk.Review" title="Review a question" />
+  <permission id="bungeni.question.speaker.Review"  title="Speaker review a question" />
+  <permission id="bungeni.question.Schedule" title="Schedule a question" />
+  <permission id="bungeni.question.Respond" title="Respond to a question" />
+  <permission id="bungeni.question.Answer" title="Answer a question" />
+  <permission id="bungeni.question.Withdraw" title="Withdraw a question" />
+  <permission id="bungeni.question.Elapse" title="Elapse a question" />
+  <permission id="bungeni.question.Write_answer" title="Answer a question in writing" />
+  <!-- Response Workflow permissions -->
+  <permission id="bungeni.response.Submit" title="Submit a Response" />
+  <permission id="bungeni.response.Complete" title="Complete a Response" />
+  <!-- Motion Workflow permissions -->
+  <permission id="bungeni.motion.Submit" title="Submit a motion" />
+  <permission id="bungeni.motion.Recieve" title="Receive a motion" />
+  <permission id="bungeni.motion.clerk.Review" title="Review a motion" />
+  <permission id="bungeni.motion.speaker.Review"  title="Speaker review a motion" />
+  <permission id="bungeni.motion.Schedule" title="Schedule a motion" />
+  <permission id="bungeni.motion.Debate" title="Mark a motion as debated" />
+  <permission id="bungeni.motion.Withdraw" title="Withdraw a motion" />
+  <!-- Bill Workflow permissions -->
+  <permission id="bungeni.bill.Submit" title="Submit a bill" />
+  <permission id="bungeni.bill.Schedule" title="Schedule a bill" />
+  <permission id="bungeni.bill.SelectCommittee" title="Assign a bill to a committee" />
+  <permission id="bungeni.bill.ChangeStatus" title="Reject/Approve a bill" />
+  <permission id="bungeni.bill.Withdraw" title="Withdraw a bill" />
+  <permission id="bungeni.bill.RevertTransitions" title="Revert a transition back to an earlier stage" />
+  <!-- Group Workflow Permissions -->
+  <permission id="bungeni.group.Manage" title="Manage Bungeni groups" />
+  <!-- Address Workflow Permissions -->
+  <permission id="bungeni.address.Manage" title="Manage User Adresses" />
+  <!-- agendaitem Workflow permissions -->
+  <permission id="bungeni.agendaitem.Submit" title="Submit an agenda item" />
+  <permission id="bungeni.agendaitem.Recieve" title="Receive an agenda item" />
+  <permission id="bungeni.agendaitem.clerk.Review" title="Review an agenda item" />
+  <permission id="bungeni.agendaitem.speaker.Review"  title="Speaker review a agenda item" />
+  <permission id="bungeni.agendaitem.Schedule" title="Schedule an agenda item" />
+  <permission id="bungeni.agendaitem.Debate" title="Mark an agenda item as debated" />
+  <permission id="bungeni.agendaitem.Withdraw" title="Withdraw an agenda item" />
+  <!-- tableddocument Workflow permissions -->
+  <permission id="bungeni.tableddocument.Submit" title="Submit a tabled document" />
+  <permission id="bungeni.tableddocument.Recieve" title="Receive a tabled document" />
+  <permission id="bungeni.tableddocument.clerk.Review" title="Review a tabled document" />
+  <permission id="bungeni.tableddocument.speaker.Review"  title="Speaker review a tabled document" />
+  <permission id="bungeni.tableddocument.Schedule" title="Schedule a tabled document" />
+  <permission id="bungeni.tableddocument.Debate" title="Mark a tabled document as debated" />
+  <permission id="bungeni.tableddocument.Withdraw" title="Withdraw a tabled document" />
+  
+  <permission id="bungeni.sitting.ChangeStatus" title="Change Sitting Status" />
+
+  <permission id="bungeni.attachedfile.Deactivate" title="Deactivate a file" /> 
+  <permission id="bungeni.event.Deactivate" title="Deactivate an event" /> 
+  <permission id="bungeni.heading.Deactivate" title="Deactivate a heading" /> 
+  <permission id="bungeni.user.Manage" title="Manage user" />
+</configure>

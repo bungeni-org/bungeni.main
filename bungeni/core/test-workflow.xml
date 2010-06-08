@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<workflow
+   id="question-workflow"
+   title="Question Workflow"
+   description=""
+   initial_state="">
+
+  <state id="draft" title="a draft response">
+  </state>
+
+  <state id="submitted" title="response submitted">
+    <grant permission="bungeni.question.edit" role="bungeni.Clerk"/>
+    <deny permission="bungeni.quesiton.edit" role="bungeni.Speaker"/>
+  </state>
+
+  <state id="complete" title="response submitted"/>
+
+  <transition 
+     id="create"
+     title="Create"
+     trigger="automatic"
+     source=""
+     destination="draft"
+     action=".response.create"
+     />
+
+  <transition 
+     id="submit"
+     title="Submit Response"
+     trigger="manual"
+     source="draft"
+     destination="submitted"
+     permission="bungeni.response.Submit" 
+     action=".response.submit"
+     />
+
+  <transition 
+     id="complete"
+     title="Complete Response"
+     trigger="manual"
+     source="submitted"
+     destination="complete"
+     permission="bungeni.response.Complete" 
+     action=".response.complete"
+     />
+
+</workflow>
+
+
+   
+   
+       
+       

@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="bungeni.core">
+  
+  <subscriber
+     for="bungeni.core.interfaces.IAuditable
+          zope.lifecycleevent.IObjectModifiedEvent"
+     handler=".audit.objectModified"
+     trusted="True"
+     />
+     
+  <subscriber
+     for="bungeni.core.interfaces.IAuditable
+          zope.lifecycleevent.IObjectCreatedEvent"
+     handler=".audit.objectAdded"
+     trusted="True"
+     />
+     
+  <subscriber
+     for="bungeni.core.interfaces.IAuditable
+          zope.app.container.interfaces.IObjectRemovedEvent"
+     handler=".audit.objectDeleted"
+     trusted="True"
+     />
+     
+  <subscriber
+      for="bungeni.core.interfaces.IAuditable
+           ore.workflow.interfaces.IWorkflowTransitionEvent"
+      handler=".audit.objectStateChange"
+      />
+
+  <subscriber
+     for="bungeni.core.interfaces.IAuditable
+          .interfaces.IVersionCreated"
+     handler=".audit.objectNewVersion" />
+     
+  <subscriber
+     for="bungeni.core.interfaces.IAuditable
+          .interfaces.IVersionReverted"
+     handler=".audit.objectRevertedVersion" />
+  
+  <subscriber
+     for="bungeni.models.interfaces.IConsignatory
+          zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+     handler=".events.consignatory_added"
+     />
+
+  <subscriber
+     for="bungeni.models.interfaces.IConsignatory
+          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+     handler=".events.consignatory_modified"
+     />
+  
+  
+</configure>

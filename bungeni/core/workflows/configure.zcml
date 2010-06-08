@@ -1,0 +1,235 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="bungeni.core">
+
+  <!-- workflow permissions -->
+  
+  <include file="permissions.zcml" />
+  
+  <!-- grant workflow permissions to roles -->
+  
+  <include file="grants.zcml" />
+
+  <!-- general transition event dispatcher -->
+  
+  <subscriber
+     handler=".events.workflowTransitionEventDispatcher" />
+
+  <!-- workflow events -->
+  
+  <subscriber
+     handler=".events.fireAutomaticTransitions"
+     for="ore.alchemist.interfaces.IAlchemistContent
+          ore.workflow.interfaces.IWorkflowTransitionEvent"
+     />
+
+  <subscriber
+     handler=".events.initializeWorkflow"
+     for="ore.alchemist.interfaces.IAlchemistContent
+          zope.lifecycleevent.IObjectCreatedEvent"
+     />
+
+  <!-- silly versioning thingy for wf runtime-->
+  
+  <utility
+     provides="ore.workflow.interfaces.IWorkflowVersions"
+     factory=".states.NullVersions"
+     />
+
+  <!-- generic workflow adapters -->
+
+  <adapter
+     for="ore.alchemist.interfaces.IAlchemistContent"
+     provides="ore.workflow.interfaces.IWorkflowInfo"
+     factory="bungeni.core.workflows.states.StateWorkflowInfo"/>
+
+  <adapter
+     for="ore.alchemist.interfaces.IAlchemistContent"
+     provides="ore.workflow.interfaces.IWorkflowState"
+     factory=".states.WorkflowState" />
+
+  <!-- content workflow -->
+  
+  <adapter
+     for="bungeni.models.interfaces.IBungeniContent"
+     provides="ore.workflow.interfaces.IWorkflow"
+     factory=".simple.SimpleWorkflowAdapter" />
+
+  <!-- content workflow -->
+  
+  <adapter
+     for="bungeni.models.interfaces.IVersion"
+     provides="ore.workflow.interfaces.IWorkflow"
+     factory=".adapters.VersionWorkflowAdapter" />
+     
+  <subscriber
+     handler=".events.initializeWorkflow"
+     for="bungeni.models.interfaces.IVersion
+          zope.lifecycleevent.IObjectCreatedEvent" />
+
+
+  <!-- group workflow -->
+
+  <adapter
+     for="bungeni.models.interfaces.IBungeniGroup"
+     provides="ore.workflow.interfaces.IWorkflow"
+     factory=".adapters.GroupWorkflowAdapter" />
+
+
+
+  <adapter
+     for="bungeni.models.interfaces.IParliament"
+     provides="ore.workflow.interfaces.IWorkflow"
+     factory=".adapters.ParliamentWorkflowAdapter" />
+
+  <adapter
+     for="bungeni.models.interfaces.ICommittee"
+     provides="ore.workflow.interfaces.IWorkflow"
+     factory=".adapters.CommitteeWorkflowAdapter" />
+
+
+
+  <!-- group-sitting workflow -->
+
+  <adapter
+     for="bungeni.models.interfaces.IGroupSitting"
+     provides="ore.workflow.interfaces.IWorkflow"
+     factory=".adapters.GroupSittingWorkflowAdapter" />
+
+  <!-- user addresses -->
+  <adapter
+     for="bungeni.models.interfaces.IUserAddress"
+     provides="ore.workflow.interfaces.IWorkflow"
+     factory=".adapters.AddressWorkflowAdapter" />
+
+  <!-- bill workflow -->
+  
+  <adapter
+     for="bungeni.models.interfaces.IBill"
+     provides="ore.workflow.interfaces.IWorkflowState"
+     factory=".states.WorkflowState" />
+
+  <adapter
+     for="bungeni.models.interfaces.IBill"
+     provides="ore.workflow.interfaces.IWorkflow"
+     factory=".adapters.BillWorkflowAdapter" />
+
+
+
+  <!-- questions workflow -->
+
+  <adapter
+     for="bungeni.models.interfaces.IQuestion"
+     provides="ore.workflow.interfaces.IWorkflowState"
+     factory=".states.WorkflowState" />
+  
+  <adapter
+     for="bungeni.models.interfaces.IQuestion"
+     provides="ore.workflow.interfaces.IWorkflow"
+     factory=".adapters.QuestionWorkflowAdapter" />
+
+
+
+  <subscriber handler=".question.SendNotificationToMemberUponReceipt" /> 
+  <subscriber handler=".question.SendNotificationToClerkUponSubmit" />
+  <subscriber handler=".question.SendNotificationToMemberUponReject" />
+  <subscriber handler=".question.SendNotificationToMemberUponNeedsClarification" />
+  <subscriber handler=".question.SendNotificationToMemberUponDeferred" />
+  <subscriber handler=".question.SendNotificationToMemberUponSchedule" />
+  <subscriber handler=".question.SendNotificationToMemberUponPostponed" />
+  <subscriber handler=".question.SendNotificationToMemberUponSentToMinistry" />
+  <subscriber handler=".question.SendNotificationToMemberUponAnswer" />
+  <subscriber handler=".question.SendNotificationToMinistryUponComplete" />
+  <subscriber handler=".question.SendNotificationToMemberUponComplete" /> 
+
+
+  <!-- motion workflow -->
+  <adapter
+     for="bungeni.models.interfaces.IMotion"
+     provides="ore.workflow.interfaces.IWorkflowState"
+     factory=".states.WorkflowState" />
+  
+  <adapter
+     for="bungeni.models.interfaces.IMotion"
+     provides="ore.workflow.interfaces.IWorkflow"
+     factory=".adapters.MotionWorkflowAdapter" />
+     
+ 
+
+  <subscriber handler=".motion.SendNotificationToMemberUponReceipt" /> 
+  <subscriber handler=".motion.SendNotificationToClerkUponSubmit" />
+  <subscriber handler=".motion.SendNotificationToMemberUponReject" />
+  <subscriber handler=".motion.SendNotificationToMemberUponNeedsClarification" />
+  <subscriber handler=".motion.SendNotificationToMemberUponDeferred" />
+  <subscriber handler=".motion.SendNotificationToMemberUponSchedule" />
+  <subscriber handler=".motion.SendNotificationToMemberUponPostponed" />
+  <subscriber handler=".motion.SendNotificationToMemberUponDebated" />
+  
+  <!-- agenda item workflow -->
+  <adapter
+     for="bungeni.models.interfaces.IAgendaItem"
+     provides="ore.workflow.interfaces.IWorkflowState"
+     factory=".states.WorkflowState" />
+  
+  <adapter
+     for="bungeni.models.interfaces.IAgendaItem"
+     provides="ore.workflow.interfaces.IWorkflow"
+     factory=".adapters.AgendaItemWorkflowAdapter" />
+     
+       
+  <!-- tabled document workflow -->
+  <adapter
+     for="bungeni.models.interfaces.ITabledDocument"
+     provides="ore.workflow.interfaces.IWorkflowState"
+     factory=".states.WorkflowState" />
+  
+  <adapter
+     for="bungeni.models.interfaces.ITabledDocument"
+     provides="ore.workflow.interfaces.IWorkflow"
+     factory=".adapters.TabledDocumentWorkflowAdapter" />
+
+  <!-- attached files workflow -->
+  <adapter
+     for="bungeni.models.interfaces.IAttachedFile"
+     provides="ore.workflow.interfaces.IWorkflowState"
+     factory=".states.WorkflowState" />
+  
+  <adapter
+     for="bungeni.models.interfaces.IAttachedFile"
+     provides="ore.workflow.interfaces.IWorkflow"
+     factory=".adapters.AttachedFileWorkflowAdapter" />
+
+  <!-- Event workflow -->
+  <adapter
+     for="bungeni.models.interfaces.IEventItem"
+     provides="ore.workflow.interfaces.IWorkflowState"
+     factory=".states.WorkflowState" />
+  
+  <adapter
+     for="bungeni.models.interfaces.IEventItem"
+     provides="ore.workflow.interfaces.IWorkflow"
+     factory=".adapters.EventWorkflowAdapter" />
+
+  <!-- Heading workflow -->
+  <adapter
+     for="bungeni.models.interfaces.IHeading"
+     provides="ore.workflow.interfaces.IWorkflowState"
+     factory=".states.WorkflowState" />
+  
+  <adapter
+     for="bungeni.models.interfaces.IHeading"
+     provides="ore.workflow.interfaces.IWorkflow"
+     factory=".adapters.HeadingWorkflowAdapter" />
+
+  <!-- User workflow -->
+  <adapter
+     for="bungeni.models.interfaces.IBungeniUser"
+     provides="ore.workflow.interfaces.IWorkflowState"
+     factory=".states.WorkflowState" />
+  
+  <adapter
+     for="bungeni.models.interfaces.IBungeniUser"
+     provides="ore.workflow.interfaces.IWorkflow"
+     factory=".adapters.UserWorkflowAdapter" />
+</configure>

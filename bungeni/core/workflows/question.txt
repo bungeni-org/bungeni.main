@@ -1,0 +1,409 @@
+Question and response workflow
+==============================
+
+Setup
+-----
+
+Setting up database connection and utilities:
+
+  >>> from bungeni.core.testing import setup_db
+  >>> engine = setup_db()
+  
+  >>> from bungeni.core.workflows.testing import setup_adapters
+  >>> from bungeni.core.workflows.testing import setup_security_adapters
+  >>> setup_adapters()
+  >>> setup_security_adapters()
+  
+  >>> from ore.alchemist import Session
+  >>> session = Session()
+  
+Imports.
+
+  >>> from bungeni.models import domain
+  >>> from bungeni.models import schema
+
+Questions are versionable.
+  
+  >>> from zope.interface import classImplements
+  >>> from bungeni.core.interfaces import IVersionable
+  >>> classImplements(domain.Question, IVersionable)
+
+Principals
+----------
+  
+In order to create a participation, we need a principal:
+
+  >>> from bungeni.core.testing import create_principal, create_participation
+  >>> import zope.security.management
+  >>> zope.security.management.endInteraction()
+
+  >>> member = create_principal("member", "Member", ())
+  >>> clerk = create_principal("clerk", "Clerk", ())
+  >>> speaker = create_principal("speaker", "Speaker", ())
+  >>> minister = create_principal("minister", "Minister", ())
+
+Assign roles.
+
+  >>> global_prm = zope.securitypolicy.interfaces.IPrincipalRoleMap(app)
+  >>> global_prm.assignRoleToPrincipal( u'bungeni.MP', 'member')
+  >>> global_prm.assignRoleToPrincipal( u'bungeni.Clerk', 'clerk')
+  >>> global_prm.assignRoleToPrincipal( u'bungeni.Speaker', 'speaker')
+  >>> global_prm.assignRoleToPrincipal( u'bungeni.Minister', 'minister')
+
+  >>> zope.security.management.newInteraction(create_participation(member))
+  
+Content creation
+----------------
+
+  >>> from bungeni.models.testing import add_content
+
+  >>> parliament = add_content(
+  ...    domain.Parliament,
+  ...    short_name=u"p_1",
+  ...    language="en",
+  ...    start_date=yesterday,
+  ...    election_date=yesterday)
+
+  >>> gov = add_content(
+  ...    domain.Government,
+  ...    short_name=u"gov_1",
+  ...    language="en",
+  ...    start_date=yesterday,
+  ...    parliament_id=parliament.parliament_id)
+  
+  >>> ministry = add_content(
+  ...    domain.Ministry,
+  ...    short_name=u"ministry",
+  ...    language="en",
+  ...    start_date=yesterday,
+  ...    parent_group_id=gov.group_id)
+ 
+
+We need a parliament, government ministry and ministers to whom we can
+send the question notifications.
+
+  >>> country = add_content(
+  ...    domain.Country,
+  ...    country_id='KE',
+  ...    iso_name = u"KENYA",
+  ...    language="en",
+  ...    country_name=u"Kenya")
+
+  >>> mp_1 = add_content(
+  ...        domain.User,
+  ...        u"minister 1",
+  ...        first_name=u"a", 
+  ...        last_name=u'ab', 
+  ...        birth_country="KE",
+  ...        email=u"mp1@example.com", 
+  ...        date_of_birth=today,
+  ...        language="en",
+  ...        gender='M')
+  
+  >>> mp_2 = add_content(
+  ...        domain.User,
+  ...        u"minister 2",
+  ...        first_name=u"b", 
+  ...        last_name=u"bc", 
+  ...        birth_country="KE",
+  ...        date_of_birth=today,
+  ...        email=u"mp2@example.com",
+  ...        language="en",
+  ...        gender='M')
+  
+  >>> mp_3 = add_content(
+  ...        domain.User,
+  ...        u"No minister",
+  ...        first_name=u"c", 
+  ...        birth_country="KE",
+  ...        last_name=u"cd",
+  ...        date_of_birth=today,
+  ...        email=u"mp3@example.com", 
+  ...        language="en",
+  ...        gender='F')
+
+  >>> question = add_content(
+  ...     domain.Question,
+  ...     short_name=u"My subject",
+  ...     body_text=u"The question",
+  ...     owner_id = mp_1.user_id,
+  ...     language="en")
+
+  >>> question.__parent__ = app
+ 
+  >>> from bungeni.models.testing import create_sitting
+  >>> sitting = create_sitting(parliament.parliament_id, "en")
+
+Set up a security mapping.
+
+  >>> rpm = zope.securitypolicy.interfaces.IRolePermissionMap(question)
+  >>> prm = zope.securitypolicy.interfaces.IPrincipalRoleMap(question)
+
+Integrity
+---------
+
+Verify that all states are reachable.
+
+  >>> from bungeni.core.workflows.testing import verify_workflow
+  >>> from ore.workflow.interfaces import IWorkflow
+
+  >>> wf = IWorkflow(question)
+  >>> verify_workflow(wf)
+
+  
+Questions actions
+-----------------
+
+  >>> from ore.workflow.interfaces import IWorkflowInfo
+  >>> from bungeni.core.workflows.question import actions 
+  >>> info = IWorkflowInfo(question)
+
+"Create". This action assigns the role of "Owner" and sets the
+parliament id (if it's a supplement question, it also sets the
+ministry id, taken from this question).
+
+  >>> actions.create(info, question)
+  >>> question.parliament_id == parliament.parliament_id
+  True
+
+  >>> from zope.securitypolicy.interfaces import IPrincipalRoleMap
+  >>> tuple(IPrincipalRoleMap(question).getRolesForPrincipal("member"))
+  ((u'bungeni.Owner', PermissionSetting: Allow),)
+
+"Submit to clerk".
+
+  >>> actions.submit_to_clerk(info, question)
+  >>> from bungeni.core.interfaces import IVersioned
+  >>> versions = IVersioned(question)
+  >>> len(versions)
+  1
+  
+"Received by clerk".
+
+  >>> actions.received_by_clerk(info, question)
+  >>> len(versions)
+  2
+
+"Require edit by MP".
+
+  >>> actions.require_edit_by_mp(info, question)
+  >>> len(versions)
+  3
+
+"Complete".
+
+  >>> actions.complete(info, question)
+  >>> len(versions)
+  5
+
+"Approve".
+
+  >>> actions.approve(info, question)
+  >>> len(versions)
+  6
+
+  >>> question.approval_date == today
+  True
+
+"Reject".
+
+  >>> actions.reject(info, question)
+
+"Require amendment".
+
+  >>> actions.require_amendment(info, question)
+  >>> len(versions)
+  7
+
+"Complete clarify".
+
+  >>> actions.complete_clarify(info, question)
+  >>> len(versions)
+  8
+
+"MP clarify".
+
+  >>> actions.mp_clarify(info, question)
+  >>> len(versions)
+  9
+
+"Send to ministry".
+
+  >>> actions.send_to_ministry(info, question)
+  >>> question.ministry_submit_date == today
+  True
+
+"Answer".
+
+  >>> actions.answer(info, question)
+
+Question conditions
+-------------------
+
+  >>> from bungeni.core.workflows.question import conditions
+  
+"Is scheduled".
+
+  >>> conditions.is_scheduled(info, question)
+  False
+
+  >>> from bungeni.models.testing import create_sitting
+  >>> sitting = create_sitting(parliament.parliament_id)
+
+  >>> scheduling = add_content(
+  ...     domain.ItemSchedule,
+  ...     sitting_id=sitting.sitting_id,
+  ...     item_id=question.parliamentary_item_id)
+  
+  >>> conditions.is_scheduled(info, question)
+  True
+
+"Is ministry set".
+
+  >>> conditions.is_ministry_set(info, question)
+  False
+
+  >>> question.ministry_id = ministry.group_id
+  >>> conditions.is_ministry_set(info, question)
+  True
+
+Notifications
+-------------
+
+  >>> from bungeni.core.workflows import question as notification
+  >>> from zope.component.interfaces import ObjectEvent
+
+Setup mock delivery component.
+
+  >>> import zope.sendmail.interfaces
+  
+  >>> class MockMailDelivery(object):
+  ...     interface.implements(zope.sendmail.interfaces.IMailDelivery)
+  ...
+  ...     def send(self, *args):
+  ...         print "From: %s\nTo: %s\n\n%s" % args
+
+  >>> component.provideUtility(MockMailDelivery())
+
+Set up a user.
+
+  >>> user = add_content(
+  ...     domain.User,
+  ...     first_name=u'John',
+  ...     last_name=u'Doe',
+  ...     language="en",
+  ...     email = 'john.doe@localhost')
+
+  >>> minister = add_content(
+  ...     domain.Minister,
+  ...     language="en",
+  ...     group_id=ministry.group_id,
+  ...     user_id=mp_1.user_id)
+
+  >>> minister2 = add_content(
+  ...     domain.Minister,
+  ...     language="en",
+  ...     group_id=ministry.group_id,
+  ...     user_id=mp_2.user_id)
+
+  >>> question.receive_notification = False
+  >>> question.owner_id = user.user_id
+  
+Question received.
+  
+  >>> notification.SendNotificationToMemberUponReceipt(ObjectEvent(question))
+
+Let's change our setting for receive notification so an email message
+is dispatched.
+
+  >>> question.receive_notification = True
+  >>> notification.SendNotificationToMemberUponReceipt(ObjectEvent(question))
+  From: clerks.office@parliament.go.tld
+  To: "John Doe" <john.doe@localhost> 
+  ...
+  Subject: Question received: My subject
+  ...
+  
+Send notification to Clerk's office upon submit.
+
+  >>> notification.SendNotificationToClerkUponSubmit(ObjectEvent(question))
+  From: "John Doe" <john.doe@localhost>
+  To: clerks.office@parliament.go.tld ...
+  Subject: Question submitted: My subject ...
+
+the question is marked as “complete” and is made available / forwarded
+to the Speaker's Office for reviewing and to make it “admissible”.
+
+  >>> notification.SendNotificationToMemberUponComplete(ObjectEvent(question))
+  From: clerks.office@parliament.go.tld
+  To: "John Doe" <john.doe@localhost> 
+  ...
+  Question completed for review at the speakers office...
+
+At the same time the question is also forwarded to the ministry.
+
+  >>> question.ministry_id = ministry.group_id
+  >>> notification.SendNotificationToMinistryUponComplete(ObjectEvent(question))
+  From: clerks.office@parliament.go.tld
+  To: "a ab" <mp1@example.com> ,"b bc" <mp2@example.com> 
+  ...
+  Question assigned to ministry...
+  
+A question was rejected by the speakers office.
+
+  >>> notification.SendNotificationToMemberUponReject(ObjectEvent(question))
+  From: speakers.office@parliament.go.tld
+  To: "John Doe" <john.doe@localhost> ...
+  Subject: Question rejected: My subject ... 
+
+A question needs clarification by the MP
+
+  >>> notification.SendNotificationToMemberUponNeedsClarification(ObjectEvent(question))
+  From: clerks.office@parliament.go.tld
+  To: "John Doe" <john.doe@localhost> ...
+  Subject: Question needs clarification: My subject ...
+
+A question was deferred by Clerk's office.
+
+  >>> notification.SendNotificationToMemberUponDeferred(ObjectEvent(question))
+  From: speakers.office@parliament.go.tld
+  To: "John Doe" <john.doe@localhost> ...
+  Subject: Question deferred: My subject ...
+
+A question was scheduled by Speakers office.
+
+  >>> notification.SendNotificationToMemberUponSchedule(ObjectEvent(question))
+  From: clerks.office@parliament.go.tld
+  To: "John Doe" <john.doe@localhost> ...
+  Subject: Question scheduled: My subject ...
+
+A question was postponed by the speakers office.
+
+  >>> notification.SendNotificationToMemberUponPostponed(ObjectEvent(question))
+  From: clerks.office@parliament.go.tld
+  To: "John Doe" <john.doe@localhost> ...
+  Subject: Question postponed: My subject ...
+
+A question was sent to a ministry for written response.
+
+  >>> notification.SendNotificationToMemberUponSentToMinistry(ObjectEvent(question))
+  From: clerks.office@parliament.go.tld
+  To: "John Doe" <john.doe@localhost> ...
+  Subject: Question sent to ministry: My subject ...
+
+A questions answer was reviewed by Clerk's office.
+
+  >>> notification.SendNotificationToMemberUponAnswer(ObjectEvent(question))
+  From: clerks.office@parliament.go.tld
+  To: "John Doe" <john.doe@localhost> ...
+  Subject: Question answered: My subject ...
+
+
+  
+Cleanup
+-------
+
+  >>> session.flush()
+  >>> session.commit()
+  >>> session.close()
+  >>> zope.security.management.endInteraction()

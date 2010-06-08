@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<workflow
+   id="group-workflow"
+   title="Group Workflow"
+   description="Workflow for Parliamentary Groups"
+   domain="bungeni.ui"
+   initial_state="">
+
+  <state id="draft" title="Draft - Group not yet Active">
+    <grant permission="bungeni.group.Delete" role="bungeni.Owner" />
+    <grant permission="zope.View" role="bungeni.Clerk" />
+    <grant permission="zope.View" role="bungeni.Speaker" />
+    <deny permission="zope.View" role="bungeni.MP" />
+    <deny permission="zope.View" role="bungeni.Minister" />
+    <deny permission="zope.View" role="bungeni.Everybody" /> 
+    <deny permission="zope.View" role="bungeni.Anybody" /> 
+    <deny permission="bungeni.groupmember.Add" role="bungeni.Clerk" />
+    <deny permission="bungeni.groupmember.Edit" role="bungeni.Clerk" />
+    <deny permission="bungeni.groupmember.Delete" role="bungeni.Clerk" />
+    <grant permission="bungeni.office.ChangeType" role="bungeni.Clerk" /> 
+  </state>
+
+  <state id="active" title="Active Group">
+    <deny permission="bungeni.group.Delete" role="bungeni.Owner" />
+    <grant permission="zope.View" role="bungeni.MP" />
+    <grant permission="zope.View" role="bungeni.Clerk" />
+    <grant permission="zope.View" role="bungeni.Speaker" />
+    <grant permission="zope.View" role="bungeni.Minister" />
+    <grant permission="zope.View" role="bungeni.Everybody" /> 
+    <grant permission="zope.View" role="bungeni.Anybody" />
+    <grant permission="bungeni.groupmember.Add" role="bungeni.Clerk" />
+    <grant permission="bungeni.groupmember.Edit" role="bungeni.Clerk" />
+    <grant permission="bungeni.groupmember.Delete" role="bungeni.Clerk" />
+    <deny permission="bungeni.office.ChangeType" role="bungeni.Clerk" />
+  </state>
+  
+  <state id="dissolved" title="Group is Dissolved">
+    <deny permission="bungeni.groupmember.Add" role="bungeni.Clerk" />
+    <deny permission="bungeni.groupmember.Edit" role="bungeni.Clerk" />
+    <deny permission="bungeni.groupmember.Delete" role="bungeni.Clerk" />
+  </state>
+
+  <transition 
+     id="create"
+     title="Create"
+     trigger="automatic"
+     source=""
+     destination="draft"
+     action="bungeni.core.workflows.groups.actions.create"
+     />
+
+  <transition 
+     id="activate"
+     title="Activate"
+     trigger="manual"
+     source="draft
+            dissolved"
+     destination="active"
+     action="bungeni.core.workflows.groups.actions.activate"
+     permission="bungeni.group.Manage"
+     require_confirmation="true"
+     />
+
+  <transition 
+     id="dissolve"
+     title="Dissolve"
+     trigger="manual"
+     source="active"
+     destination="dissolved"
+     action="bungeni.core.workflows.groups.actions.dissolve"
+     condition="bungeni.core.workflows.groups.conditions.has_end_date"
+     permission="bungeni.group.Manage"
+     require_confirmation="true"
+     />
+                   
+  <transition 
+     id="deactivate"
+     title="Deactivate"
+     trigger="manual"
+     source="active"
+     destination="draft"
+     action="bungeni.core.workflows.groups.actions.deactivate"
+     permission="bungeni.group.Manage"
+     require_confirmation="true"
+     />
+
+
+</workflow>

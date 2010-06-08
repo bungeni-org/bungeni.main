@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="bungeni.core">
+  <!-- question workflow permissions -->
+  <grant permission="bungeni.question.Submit" role="bungeni.Owner"/>
+  <grant permission="bungeni.question.Recieve" role="bungeni.Clerk"/>
+  <grant permission="bungeni.question.clerk.Review" role="bungeni.Clerk"/>
+  <grant permission="bungeni.question.speaker.Review"  role="bungeni.Speaker"/>
+  <grant permission="bungeni.question.Schedule" role="bungeni.Speaker"/>
+  <grant permission="bungeni.question.Schedule" role="bungeni.Clerk"/>
+  <grant permission="bungeni.question.Respond" role="bungeni.Clerk"/>
+  <grant permission="bungeni.question.Answer" role="bungeni.Clerk"/>
+  <grant permission="bungeni.question.Withdraw" role="bungeni.Owner"/>
+  <grant permission="bungeni.question.Write_answer" role="bungeni.Minister" />
+  <grant permission="bungeni.question.Elapse" role="bungeni.Clerk"/>
+  <grant permission="bungeni.question.Elapse" role="bungeni.Speaker"/>
+  <!-- response workflow permissions -->
+  <grant permission="bungeni.response.Submit" role="bungeni.Minister"/>
+  <grant permission="bungeni.response.Complete" role="bungeni.Clerk"/>
+  <!--TODO motion workflow permissions -->
+  <grant permission="bungeni.motion.Submit" role="bungeni.Owner"/>
+  <grant permission="bungeni.motion.Recieve" role="bungeni.Clerk"/>
+  <grant permission="bungeni.motion.clerk.Review" role="bungeni.Clerk"/>
+  <grant permission="bungeni.motion.speaker.Review"  role="bungeni.Speaker"/>
+  <grant permission="bungeni.motion.Schedule" role="bungeni.Clerk"/>
+  <grant permission="bungeni.motion.Schedule" role="bungeni.Speaker"/>
+  <grant permission="bungeni.motion.Debate" role="bungeni.Clerk"/>
+  <grant permission="bungeni.motion.Debate" role="bungeni.Speaker"/>
+  <grant permission="bungeni.motion.Withdraw" role="bungeni.Owner"/>
+  
+  <!-- Agenda Items -->
+  <grant permission="bungeni.agendaitem.Submit" role="bungeni.Owner"/>
+  <grant permission="bungeni.agendaitem.Recieve" role="bungeni.Clerk"/>
+  <grant permission="bungeni.agendaitem.clerk.Review" role="bungeni.Clerk"/>
+  <grant permission="bungeni.agendaitem.speaker.Review"  role="bungeni.Speaker"/>
+  <grant permission="bungeni.agendaitem.Schedule" role="bungeni.Clerk"/>
+  <grant permission="bungeni.agendaitem.Schedule" role="bungeni.Speaker"/>
+  <grant permission="bungeni.agendaitem.Debate" role="bungeni.Clerk"/>
+  <grant permission="bungeni.agendaitem.Debate" role="bungeni.Speaker"/>
+  <grant permission="bungeni.agendaitem.Withdraw" role="bungeni.Owner"/>
+  
+  <!-- tabled document -->
+  <grant permission="bungeni.tableddocument.Submit" role="bungeni.Owner"/>
+  <grant permission="bungeni.tableddocument.Recieve" role="bungeni.Clerk"/>
+  <grant permission="bungeni.tableddocument.clerk.Review" role="bungeni.Clerk"/>
+  <grant permission="bungeni.tableddocument.speaker.Review"  role="bungeni.Speaker"/>
+  <grant permission="bungeni.tableddocument.Schedule" role="bungeni.Clerk"/>
+  <grant permission="bungeni.tableddocument.Schedule" role="bungeni.Speaker"/>
+  <grant permission="bungeni.tableddocument.Debate" role="bungeni.Clerk"/>
+  <grant permission="bungeni.tableddocument.Debate" role="bungeni.Speaker"/>
+  <grant permission="bungeni.tableddocument.Withdraw" role="bungeni.Owner"/>
+  
+  <!-- Bill Workflow permissions -->
+  <grant permission="bungeni.bill.Submit" role="bungeni.Clerk" />
+  <grant permission="bungeni.bill.Schedule" role="bungeni.Clerk" />
+  <grant permission="bungeni.bill.Schedule" role="bungeni.Speaker" />
+  <grant permission="bungeni.bill.SelectCommittee" role="bungeni.Clerk" />
+  <grant permission="bungeni.bill.ChangeStatus" role="bungeni.Speaker" />
+  <grant permission="bungeni.bill.ChangeStatus" role="bungeni.Clerk" />
+  <grant permission="bungeni.bill.Withdraw" role="bungeni.Clerk" />
+  <grant permission="bungeni.bill.RevertTransitions" role="bungeni.Speaker" />
+
+
+  <!-- Group workflow permissions -->
+  <grant permission="bungeni.group.Manage" role="bungeni.Clerk" />
+  <grant permission="bungeni.group.Manage" role="bungeni.Speaker" />
+  
+  <!-- User addresses -->
+  <grant permission="bungeni.address.Manage" role="bungeni.Clerk" />
+  <grant permission="bungeni.address.Manage" role="bungeni.Owner" />
+        
+  <grant permission="bungeni.sitting.ChangeStatus" role="bungeni.Clerk"/>
+  <grant permission="bungeni.sitting.ChangeStatus" role="bungeni.Speaker"/>
+  
+  <!-- event items -->
+  <grant permission="bungeni.event.Deactivate" role="bungeni.Clerk"/>
+  <grant permission="bungeni.event.Deactivate" role="bungeni.Speaker"/>
+
+  <!-- headings -->
+  <grant permission="bungeni.heading.Deactivate" role="bungeni.Clerk"/>
+  <grant permission="bungeni.heading.Deactivate" role="bungeni.Speaker"/>
+          
+  <!-- file attachments -->
+  <grant permission="bungeni.attachedfile.Deactivate" role="bungeni.Clerk"/>
+  <grant permission="bungeni.attachedfile.Deactivate" role="bungeni.Speaker"/>
+  
+  <!-- users -->
+  <grant permission="bungeni.user.Manage" role="bungeni.Speaker"/>
+          
+</configure>

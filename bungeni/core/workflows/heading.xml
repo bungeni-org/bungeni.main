@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<workflow
+   id="heading-workflow"
+   title="heading workflow"
+   description="Workflow for headings"
+   domain="bungeni.ui"
+   initial_state="">
+
+  <state id="inactive" title="Inactive heading obsolete">
+    <deny permission="zope.View" role="bungeni.Owner" />
+    <grant permission="zope.View" role="bungeni.Clerk" />
+    <grant permission="zope.View" role="bungeni.Speaker" />
+    <deny permission="zope.View" role="bungeni.MP" />
+    <deny permission="zope.View" role="bungeni.Minister" />
+    <deny permission="zope.View" role="bungeni.Everybody" /> 
+    <deny permission="zope.View" role="bungeni.Anybody" /> 
+  </state>
+
+  
+  <state id="public" title="Public">
+    <grant permission="zope.View" role="bungeni.Everybody" /> 
+    <grant permission="zope.View" role="bungeni.Anybody" />
+  </state>
+
+  <transition 
+     id="create"
+     title="Create"
+     trigger="automatic"
+     source=""
+     destination="public"
+     action="bungeni.core.workflows.heading.actions.create"
+     />
+
+                   
+  <transition 
+     id="deactivate"
+     title="Deactivate"
+     trigger="manual"
+     source="public"
+     destination="inactive"
+     permission="bungeni.heading.Deactivate"
+     require_confirmation="true"
+     />
+
+  <transition 
+     id="reactivate"
+     title="Re activate"
+     trigger="manual"
+     source="inactive"
+     destination="public"
+     permission="bungeni.heading.Deactivate"
+     require_confirmation="true"
+     />
+
+
+</workflow>

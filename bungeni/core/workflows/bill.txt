@@ -1,0 +1,151 @@
+Bill workflow
+=============
+
+The default bill workflow models the "Westminister Tradition".
+
+Setup
+-----
+
+Setting up database connection and utilities:
+
+  >>> from bungeni.core.testing import setup_db
+  >>> engine = setup_db()
+  
+  >>> from bungeni.core.workflows.testing import setup_adapters
+  >>> from bungeni.core.workflows.testing import setup_security_adapters
+  >>> setup_adapters()
+  >>> setup_security_adapters()
+  
+  >>> from ore.alchemist import Session
+  >>> session = Session()
+  
+Imports.
+
+  >>> from bungeni.models import domain
+  >>> from bungeni.models import schema
+
+Bills are versionable.
+  
+  >>> from zope.interface import classImplements
+  >>> from bungeni.core.interfaces import IVersionable
+  >>> classImplements(domain.Bill, IVersionable)
+
+Content creation
+----------------
+
+  >>> from bungeni.models.testing import add_content
+  
+  >>> parliament = add_content(
+  ...    domain.Parliament,
+  ...    short_name=u"p_1",
+  ...    language="en",
+  ...    start_date=yesterday,
+  ...    election_date=yesterday)
+
+  >>> country = add_content(
+  ...     domain.Country,
+  ...     country_id='KE',
+  ...     iso_name = u"KENYA",
+  ...     language="en",
+  ...     country_name=u"Kenya")
+ 
+  >>> mp_1 = add_content(
+  ...     domain.User,
+  ...     u"mp_1",
+  ...     first_name=u"a", 
+  ...     last_name=u'ab', 
+  ...     birth_country="KE",
+  ...     email=u"mp1@example.com", 
+  ...     date_of_birth=today,
+  ...     language="en",
+  ...     gender='M')
+
+  >>> bt = add_content(
+  ...     domain.BillType,
+  ...     language="en",
+  ...     bill_type_name=u"Private Bill")
+
+  >>> bill = add_content(
+  ...     domain.Bill,
+  ...     bill_type_id=bt.bill_type_id,
+  ...     owner_id=mp_1.user_id,
+  ...     short_name=u"New Bill",
+  ...     language="en")
+
+Integrity
+---------
+
+Verify that all states are reachable.
+
+  >>> from bungeni.core.workflows.testing import verify_workflow
+  >>> from ore.workflow.interfaces import IWorkflow
+
+  >>> wf = IWorkflow(bill)
+  >>> verify_workflow(wf)
+
+Actions
+-------
+
+  >>> from ore.workflow.interfaces import IWorkflowInfo
+  >>> from bungeni.core.workflows.bill import actions 
+  >>> info = IWorkflowInfo(bill)
+
+"Create". This action sets the submission date and parliament id.
+
+  >>> actions.create(info, bill)
+  >>> bill.parliament_id == parliament.parliament_id
+  True
+
+  >>> bill.submission_date == today
+  True
+
+"Submit".
+
+  >>> actions.submit(info, bill)
+
+  >>> bill.publication_date == today
+  True
+
+  >>> bill.submission_date == today
+  True
+  
+"Schedule first reading".
+
+  >>> actions.schedule_first(info, bill)
+
+"Postpone first reading".
+
+  >>> actions.postpone_first(info, bill)
+
+"Withdraw".
+
+  >>> actions.withdraw(info, bill)
+
+Conditions
+----------
+
+  >>> from bungeni.core.workflows.bill import conditions
+  
+"Is scheduled".
+
+  >>> conditions.is_scheduled(info, bill)
+  False
+
+  >>> from bungeni.models.testing import create_sitting
+  >>> sitting = create_sitting(parliament.parliament_id)
+
+  >>> scheduling = add_content(
+  ...     domain.ItemSchedule,
+  ...     sitting_id=sitting.sitting_id,
+  ...     item_id=bill.parliamentary_item_id)
+  
+  >>> conditions.is_scheduled(info, bill)
+  True
+
+Cleanup
+-------
+
+  >>> session.flush()
+  >>> session.commit()
+  >>> session.close()
+  
