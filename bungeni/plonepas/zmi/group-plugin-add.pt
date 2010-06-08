@@ -1,0 +1,36 @@
+<html>
+  <body>
+
+    <h1 tal:replace="structure here/manage_page_header">Header</h1>
+
+    <h2> Add A Group Manager For PAS </h2>
+
+    <p class="form-help">
+      install a bungeni group manager.
+    </p>
+
+    <form action="manage_addBungeniGroupManager" method="POST">
+
+      <table>
+
+        <tr>
+          <td class="form-label"> Id </td>
+          <td> <input type="text" name="id" /> </td>
+        </tr>
+        <tr>
+          <td class="form-label"> Title </td>
+          <td> <input type="text" name="title" /> </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <div class="form-element">
+              <input type="submit" value="add group manager"/>
+            </div>
+          </td>
+        </tr>
+      </table>
+
+    </form>
+
+  </body>
+</html>
