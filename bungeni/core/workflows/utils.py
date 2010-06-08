@@ -87,13 +87,13 @@ def getOwnerId(context):
         owner_id = getattr(context, 'owner_id', None)
         return dbutils.get_user_login(owner_id)
 
-def user_is_not_context_owner(context):
-    """Test if current user is NOT the context owner e.g. for when the Clerk 
-    creates a parliamentary item on behalf of an MP.
+def user_is_context_owner(context):
+    """Test if current user is the context owner e.g. to check if someone 
+    manipulating the context object is other than the owner of the object.
     """
     user_id = get_principal_id()
     owner_id = getOwnerId(context)
-    return user_id!=owner_id
+    return user_id==owner_id
 
 def createVersion(info, context):
     """Create a new version of an object and return it."""

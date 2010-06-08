@@ -3,17 +3,16 @@
 log = __import__("logging").getLogger("bungeni.core")
 
 from zope import component
+import zope.securitypolicy.interfaces
 from bungeni.core.workflows.notification import Notification
 from bungeni.core.workflows import interfaces
 from bungeni.core import globalsettings as prefs
-from bungeni.core.workflows import dbutils
+from bungeni.core.workflows import dbutils, utils
 from bungeni.core.i18n import _
 from bungeni.models import domain
+from bungeni.models.utils import get_principal_id
 from ore.alchemist import Session
 
-from bungeni.models.utils import get_principal_id
-import bungeni.core.workflows.utils as utils
-import zope.securitypolicy.interfaces
 
 class conditions(object):
     @staticmethod
@@ -35,7 +34,7 @@ class conditions(object):
 
     @staticmethod
     def user_is_not_context_owner(info, context):
-        return utils.user_is_not_context_owner(context)
+        return not utils.user_is_context_owner(context)
 
 class actions(object):
     @staticmethod

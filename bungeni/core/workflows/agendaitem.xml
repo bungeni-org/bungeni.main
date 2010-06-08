@@ -37,413 +37,360 @@
         <deny permission="zope.View" role="bungeni.Anybody" />
     </state>
     
-  <state id="submitted" title="Submitted">
-    <deny permission="bungeni.agendaitem.Edit" role="bungeni.Owner" />
-    <deny permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
-    <deny permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
-    <!--deny permission="zope.View" role="bungeni.Owner" /-->
-    <deny permission="bungeni.agendaitem.Delete" role="bungeni.Owner" />
-    <!--grant permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" /-->
-    <grant permission="zope.View" role="bungeni.Clerk" />
-    <grant permission="zope.View" role="bungeni.Speaker" />
-  </state>
+    <state id="submitted" title="Submitted">
+        <deny permission="bungeni.agendaitem.Edit" role="bungeni.Owner" />
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
+        <deny permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
+        <!-- deny permission="zope.View" role="bungeni.Owner" /-->
+        <deny permission="bungeni.agendaitem.Delete" role="bungeni.Owner" />
+        <!--grant permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" /-->
+        <grant permission="zope.View" role="bungeni.Clerk" />
+        <grant permission="zope.View" role="bungeni.Speaker" />
+    </state>
+    
+    <state id="received" title="Received by Clerks Office">
+        <grant permission="zope.View" role="bungeni.Owner" />
+        <grant permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
+        <grant permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
+        <grant permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
+        <grant permission="zope.View" role="bungeni.Clerk" />
+        <grant permission="zope.View" role="bungeni.Speaker" />
+    </state>
+    
+    <state id="complete" title="Submitted to the Speaker">
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
+        <grant permission="bungeni.fileattachment.Add" role="bungeni.Speaker" /> 
+        <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
+        <grant permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
+        <deny permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
+        <grant permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
+        <grant permission="zope.View" role="bungeni.Speaker" />
+    </state>
+    
+    <state id="admissible" title="Admissible">
+        <grant permission="zope.View" role="bungeni.Everybody" />
+        <grant permission="zope.View" role="bungeni.Anybody" />
+        <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" /> 
+        <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
+        <grant permission="zope.View" role="bungeni.Speaker" />
+    </state>
+    
+    <state id="inadmissible" title="Inadmissible">
+        <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" /> 
+        <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
+    </state>
+    
+    <state id="clarify_clerk" title="Needs Clarification by Clerks Office">
+        <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
+        <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
+        <grant permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
+    </state>
+    
+    <state id="clarify_mp" title="Needs Clarification by MP">
+        <deny permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" /> 
+        <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
+            <grant permission="zope.View" role="bungeni.Owner" />
+        <grant permission="bungeni.agendaitem.Edit" role="bungeni.Owner" />
+        <grant permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
+        <grant permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
+    </state>
+    
+    <state id="schedule_pending" title="Schedule pending">
+        <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
+    </state>
+    
+    <!-- is scheduled for debate at a sitting -->
+    <state id="scheduled" title="Scheduled">
+        <deny permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
+        <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
+    </state>
+    <!-- admissable agenda_item that cannot be debated -->
+    <state id="deferred" title="Deferred">
+    </state>
+    <!--agenda_item was scheduled for but not debated at the sitting -->
+    <state id="postponed" title="Postponed">
+    </state>
+    <!--defered or postponed agenda_item that were not debated -->
+    <state id="elapsed" title="Elapsed">
+        <deny permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
+        <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
+        <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
+        <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
+    </state>
+    <!--a agenda_item was debated  -->
+    <state id="debated" title="Debated">
+        <deny permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
+        <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
+    </state>
+    <!--a agenda_item was debated and the debate adjourned  -->
+    <state id="debate_adjourned" title="Debate adjourned">
+    </state>
+    <state id="withdrawn" title="Withdrawn">
+        <deny permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
+        <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
+        <deny permission="bungeni.agendaitem.Edit" role="bungeni.Owner" /> 
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
+        <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
+        <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
+    </state>
+    <state id="withdrawn_public" title="Withdrawn">
+        <deny permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
+        <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
+        <deny permission="bungeni.agendaitem.Edit" role="bungeni.Owner" /> 
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
+        <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
+        <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
+    </state>
+    
+    
+    <transition id="create"
+        title="Create"
+        trigger="automatic"
+        source=""
+        destination="draft"
+        permission=""
+        action="bungeni.core.workflows.agendaitem.actions.create"
+        condition=""
+    />
+    <transition id="create-on-behalf-of"
+        title="Create"
+        trigger="automatic"
+        source=""
+        destination="working_draft"
+        action="bungeni.core.workflows.agendaitem.actions.create"
+        condition="bungeni.core.workflows.agendaitem.conditions.user_is_not_context_owner"
+    />
+    <transition id="submit-to-clerk"
+        title="Submit to Clerk"
+        trigger="manual"
+        source="draft"
+        destination="submitted"
+        permission="bungeni.agendaitem.Submit"
+        action="bungeni.core.workflows.agendaitem.actions.submit"
+        condition=""
+        event="bungeni.core.workflows.interfaces.IAgendaItemSubmittedEvent"
+    />
+    <transition id="received-by-clerk"
+        title="Receive"
+        trigger="manual"
+        source="working_draft submitted"
+        destination="received"
+        permission="bungeni.agendaitem.Recieve"
+        action="bungeni.core.workflows.agendaitem.actions.received_by_clerk"
+        condition=""
+        event="bungeni.core.workflows.interfaces.IAgendaItemReceivedEvent"
+    />
+    <transition id="require-edit-by-mp"
+        title="Needs Clarification by MP"
+        trigger="manual"
+        source="working_draft received"
+        destination="clarify_mp"
+        permission="bungeni.agendaitem.clerk.Review"
+        action="bungeni.core.workflows.agendaitem.actions.require_edit_by_mp"
+        condition=""
+        event="bungeni.core.workflows.interfaces.IAgendaItemClarifyEvent"
+        require_confirmation="true"
+    />
+    <transition id="complete"
+         title="Submit to the Speaker Office"
+         trigger="manual"
+         source="draft received"
+         destination="complete"
+         permission="bungeni.agendaitem.clerk.Review"
+         action="bungeni.core.workflows.agendaitem.actions.complete"
+         condition=""
+    />
+    <transition id="complete-speaker"
+         title="Submit to the Speaker Office"
+         trigger="manual"
+         source="submitted received"
+         destination="complete"
+         permission="bungeni.agendaitem.speaker.Review"
+         action="bungeni.core.workflows.agendaitem.actions.complete"
+         condition=""
+    />
+    <transition id="approve"
+         title="Approve"
+         trigger="manual"
+         source="draft complete"
+         destination="admissible"
+         permission="bungeni.agendaitem.speaker.Review"
+         action="bungeni.core.workflows.agendaitem.actions.approve"
+         condition=""
+    />
+    <transition id="reject"
+         title="Reject"
+         trigger="manual"
+         source="complete"
+         destination="inadmissible"
+         permission="bungeni.agendaitem.speaker.Review"
+         action="bungeni.core.workflows.agendaitem.actions.reject"
+         condition=""
+         event="bungeni.core.workflows.interfaces.IAgendaItemRejectedEvent"
+         require_confirmation="true"
+    />
+    <transition id="redraft-inadmissible"
+         title="Redraft Rejected"
+         trigger="manual"
+         source="inadmissible"
+         destination="draft"
+         permission="bungeni.agendaitem.RevertTransitions"
+         action=""
+         condition=""
+         event=""
+    />
+    <transition id="require-amendment"
+         title="Needs Clarification"
+         trigger="manual"
+         source="complete"
+         destination="clarify_clerk"
+         permission="bungeni.agendaitem.speaker.Review"
+         action="bungeni.core.workflows.agendaitem.actions.require_amendment"
+         condition=""
+         require_confirmation="true"
+    />
+    <transition id="complete-clarify"
+         title="Complete"
+         trigger="manual"
+         source="clarify_clerk"
+         destination="complete"
+         permission="bungeni.agendaitem.clerk.Review"
+         action=""
+         condition=""
+    />
+    <transition id="mp-clarify"
+         title="Needs Clarification by MP"
+         trigger="manual"
+         source="clarify_clerk"
+         destination="clarify_mp"
+         permission="bungeni.agendaitem.clerk.Review"
+         action="bungeni.core.workflows.agendaitem.actions.mp_clarify"
+         condition=""
+         event="bungeni.core.workflows.interfaces.IAgendaItemClarifyEvent"
+         require_confirmation="true"
+    />
+    <transition id="resubmit-clerk"
+         title="Resubmit to Clerk"
+         trigger="manual"
+         source="clarify_mp"
+         destination="submitted"
+         permission="bungeni.agendaitem.Submit"
+         action="bungeni.core.workflows.agendaitem.actions.submit"
+         condition=""
+    />
+    <transition id="allow_schedule"
+         title="Make available for scheduling"
+         trigger="manual"
+         source="admissible deferred"
+         destination="schedule_pending"
+         permission="bungeni.agendaitem.Schedule"
+         action=""
+         event="bungeni.core.workflows.interfaces.IAgendaItemPendingEvent"
+    /> 
+    <transition id="schedule"
+         title="Schedule"
+         trigger="manual"
+         source="schedule_pending debate_adjourned postponed"
+         destination="scheduled"
+         permission="bungeni.agendaitem.Schedule"
+         action="bungeni.core.workflows.agendaitem.actions.schedule"
+         event="bungeni.core.workflows.interfaces.IAgendaItemScheduledEvent"
+    />
+    <transition id="defer"
+         title="Defer"
+         trigger="manual"
+         source="admissible postponed schedule_pending debate_adjourned"
+         destination="deferred"
+         permission="bungeni.agendaitem.Schedule"
+         action="bungeni.core.workflows.agendaitem.actions.defer"
+         condition=""
+         event="bungeni.core.workflows.interfaces.IAgendaItemDeferredEvent"
+    />
+    <transition id="elapse-defered"
+         title="Elapse"
+         trigger="manual"
+         source="deferred"
+         destination="elapsed"
+         permission="bungeni.agendaitem.Schedule"
+         action="bungeni.core.workflows.agendaitem.actions.elapse"
+         condition=""
+    />
+    <transition id="re-admit-elapsed"
+         title="Readmit Elapsed"
+         trigger="manual"
+         source="elapsed"
+         destination="admissible"
+         permission="bungeni.agendaitem.RevertTransitions"
+         action="bungeni.core.workflows.agendaitem.actions.approve"
+         condition=""
+    />
+    <transition id="postpone"
+         title="Postpone"
+         trigger="manual"
+         source="scheduled"
+         destination="postponed"
+         permission="bungeni.agendaitem.Schedule"
+         action="bungeni.core.workflows.agendaitem.actions.postpone"
+         condition=""
+         event="bungeni.core.workflows.interfaces.IAgendaItemPostponedEvent"
+    />
+    <transition id="debate"
+         title="Debate"
+         trigger="manual"
+         source="scheduled"
+         destination="debated"
+         permission="bungeni.agendaitem.Debate"
+         action="bungeni.core.workflows.agendaitem.actions.debate"
+         condition=""
+         event="bungeni.core.workflows.interfaces.IAgendaItemDebatedEvent"
+    />
+    <transition id="continue-debate"
+         title="Debate adjourned"
+         trigger="manual"
+         source="scheduled"
+         destination="debate_adjourned"
+         permission="bungeni.agendaitem.Schedule"
+         condition=""
+         event=""
+    />
+    <transition id="elapse-postponed"
+         title="Elapse"
+         trigger="manual"
+         source="postponed"
+         destination="elapsed"
+         permission="bungeni.agendaitem.Schedule"
+         action="bungeni.core.workflows.agendaitem.actions.elapse"
+         condition=""
+    />
+    <transition id="withdraw"
+         title="Withdraw"
+         trigger="manual"
+         source="submitted received complete clarify_mp"
+         destination="withdrawn"
+         permission="bungeni.agendaitem.Withdraw"
+         action="bungeni.core.workflows.agendaitem.actions.withdraw"
+         condition=""
+         require_confirmation="true"
+    />
+    <transition id="withdraw_public"
+         title="Withdraw"
+         trigger="manual"
+         source="admissible scheduled deferred postponed 
+                    debate_adjourned schedule_pending"
+         destination="withdrawn_public"
+         permission="bungeni.agendaitem.Withdraw"
+         action="bungeni.core.workflows.agendaitem.actions.withdraw"
+         condition=""
+         require_confirmation="true"
+    />
 
-  <state id="received" title="Received by Clerks Office">
-    <grant permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
-    <grant permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
-    <grant permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
-    <grant permission="zope.View" role="bungeni.Clerk" />
-    <grant permission="zope.View" role="bungeni.Speaker" />
-  </state>
-
-  <state id="complete" title="Submitted to the Speaker">
-    <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
-    <grant permission="bungeni.fileattachment.Add" role="bungeni.Speaker" /> 
-    <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
-    <grant permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
-    <deny permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
-    <grant permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
-    <grant permission="zope.View" role="bungeni.Speaker" />
-  </state>
-
-  <state id="admissible" title="Admissible">
-    <grant permission="zope.View" role="bungeni.Everybody" />
-    <grant permission="zope.View" role="bungeni.Anybody" />
-    <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
-    <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" /> 
-    <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
-    <grant permission="zope.View" role="bungeni.Speaker" />
-  </state>
-
-  <state id="inadmissible" title="Inadmissible">
-    <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
-    <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" /> 
-    <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
-  </state>
-  
-  <state id="clarify_clerk" title="Needs Clarification by Clerks Office">
-    <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
-    <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
-    <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
-    <grant permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
-  </state>
-
-  <state id="clarify_mp" title="Needs Clarification by MP">
-    <deny permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
-    <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" /> 
-    <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
-    <grant permission="bungeni.agendaitem.Edit" role="bungeni.Owner" />
-    <grant permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
-    <grant permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
-  </state>
-
-  <state id="schedule_pending" title="Schedule pending">
-    <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
-  </state>
-
-  <!-- is scheduled for debate at a sitting -->
-  <state id="scheduled" title="Scheduled">
-    <deny permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
-    <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
-  </state>
-  <!-- admissable agenda_item that cannot be debated -->
-  <state id="deferred" title="Deferred">
-
-  </state>
-  <!--agenda_item was scheduled for but not debated at the sitting -->
-  <state id="postponed" title="Postponed">
-
-  </state>
-  <!--defered or postponed agenda_item that were not debated -->
-  <state id="elapsed" title="Elapsed">
-    <deny permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
-    <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
-    <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
-    <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
-    <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
-    <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
-  </state>
-  <!--a agenda_item was debated  -->
-  <state id="debated" title="Debated">
-    <deny permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
-    <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
-  </state>
-  <!--a agenda_item was debated and the debate adjourned  -->
-  <state id="debate_adjourned" title="Debate adjourned">
-  
-  </state>
-
-  <state id="withdrawn" title="Withdrawn">
-    <deny permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
-    <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
-    <deny permission="bungeni.agendaitem.Edit" role="bungeni.Owner" /> 
-    <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
-    <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
-    <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
-    <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
-  </state>
-
-  <state id="withdrawn_public" title="Withdrawn">
-    <deny permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
-    <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
-    <deny permission="bungeni.agendaitem.Edit" role="bungeni.Owner" /> 
-    <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
-    <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
-    <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
-    <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
-  </state>
-
-
-  <transition
-     id="create"
-     title="Create"
-     trigger="automatic"
-     source=""
-     destination="draft"
-     permission=""
-     action="bungeni.core.workflows.agendaitem.actions.create"
-     condition=""
-     />
-  
-  <transition
-     id="submit-to-clerk"
-     title="Submit to Clerk"
-     trigger="manual"
-     source="draft"
-     destination="submitted"
-     permission="bungeni.agendaitem.Submit"
-     action="bungeni.core.workflows.agendaitem.actions.submit"
-     condition=""
-     event="bungeni.core.workflows.interfaces.IAgendaItemSubmittedEvent"
-     />
-  
-  <transition
-     id="received-by-clerk"
-     title="Receive"
-     trigger="manual"
-     source="submitted"
-     destination="received"
-     permission="bungeni.agendaitem.Recieve"
-     action="bungeni.core.workflows.agendaitem.actions.received_by_clerk"
-     condition=""
-     event="bungeni.core.workflows.interfaces.IAgendaItemReceivedEvent"
-     />
-  <transition
-     id="require-edit-by-mp"
-     title="Needs Clarification by MP"
-     trigger="manual"
-     source="received"
-     destination="clarify_mp"
-     permission="bungeni.agendaitem.clerk.Review"
-     action="bungeni.core.workflows.agendaitem.actions.require_edit_by_mp"
-     condition=""
-     event="bungeni.core.workflows.interfaces.IAgendaItemClarifyEvent"
-     require_confirmation="true"
-     />
-  <transition
-     id="complete"
-     title="Submit to the Speaker Office"
-     trigger="manual"
-     source="draft 
-            received"
-     destination="complete"
-     permission="bungeni.agendaitem.clerk.Review"
-     action="bungeni.core.workflows.agendaitem.actions.complete"
-     condition=""
-     />
-     
-
-  <transition
-     id="complete-speaker"
-     title="Submit to the Speaker Office"
-     trigger="manual"
-     source="submitted
-             received"
-     destination="complete"
-     permission="bungeni.agendaitem.speaker.Review"
-     action="bungeni.core.workflows.agendaitem.actions.complete"
-     condition=""
-     />
-     
-     
-  <transition
-     id="approve"
-     title="Approve"
-     trigger="manual"
-     source="draft complete"
-     destination="admissible"
-     permission="bungeni.agendaitem.speaker.Review"
-     action="bungeni.core.workflows.agendaitem.actions.approve"
-     condition=""
-     />
-  <transition
-     id="reject"
-     title="Reject"
-     trigger="manual"
-     source="complete"
-     destination="inadmissible"
-     permission="bungeni.agendaitem.speaker.Review"
-     action="bungeni.core.workflows.agendaitem.actions.reject"
-     condition=""
-     event="bungeni.core.workflows.interfaces.IAgendaItemRejectedEvent"
-     require_confirmation="true"
-     />
-  
-  <transition
-     id="redraft-inadmissible"
-     title="Redraft Rejected"
-     trigger="manual"
-     source="inadmissible"
-     destination="draft"
-     permission="bungeni.agendaitem.RevertTransitions"
-     action=""
-     condition=""
-     event=""
-     />
-
-  
-  <transition
-     id="require-amendment"
-     title="Needs Clarification"
-     trigger="manual"
-     source="complete"
-     destination="clarify_clerk"
-     permission="bungeni.agendaitem.speaker.Review"
-     action="bungeni.core.workflows.agendaitem.actions.require_amendment"
-     condition=""
-     require_confirmation="true"
-     />
-     
-  <transition
-     id="complete-clarify"
-     title="Complete"
-     trigger="manual"
-     source="clarify_clerk"
-     destination="complete"
-     permission="bungeni.agendaitem.clerk.Review"
-     action=""
-     condition=""
-     />
-     
-  <transition
-     id="mp-clarify"
-     title="Needs Clarification by MP"
-     trigger="manual"
-     source="clarify_clerk"
-     destination="clarify_mp"
-     permission="bungeni.agendaitem.clerk.Review"
-     action="bungeni.core.workflows.agendaitem.actions.mp_clarify"
-     condition=""
-     event="bungeni.core.workflows.interfaces.IAgendaItemClarifyEvent"
-     require_confirmation="true"
-     />
-  <transition
-     id="resubmit-clerk"
-     title="Resubmit to Clerk"
-     trigger="manual"
-     source="clarify_mp"
-     destination="submitted"
-     permission="bungeni.agendaitem.Submit"
-     action="bungeni.core.workflows.agendaitem.actions.submit"
-     condition=""
-     />
-
-   <transition 
-     id="allow_schedule"
-     title="Make available for scheduling"
-     trigger="manual"
-     source="admissible deferred"
-     destination="schedule_pending"
-     permission="bungeni.agendaitem.Schedule"
-     action=""
-     event="bungeni.core.workflows.interfaces.IAgendaItemPendingEvent"
-     /> 
-     
-     
-  <transition
-     id="schedule"
-     title="Schedule"
-     trigger="manual"
-     source="schedule_pending debate_adjourned postponed"
-     destination="scheduled"
-     permission="bungeni.agendaitem.Schedule"
-     action="bungeni.core.workflows.agendaitem.actions.schedule"
-     event="bungeni.core.workflows.interfaces.IAgendaItemScheduledEvent"
-     />
-     
-  <transition
-     id="defer"
-     title="Defer"
-     trigger="manual"
-     source="admissible
-            postponed
-            schedule_pending
-            debate_adjourned"
-     destination="deferred"
-     permission="bungeni.agendaitem.Schedule"
-     action="bungeni.core.workflows.agendaitem.actions.defer"
-     condition=""
-     event="bungeni.core.workflows.interfaces.IAgendaItemDeferredEvent"
-     />
-  <transition
-     id="elapse-defered"
-     title="Elapse"
-     trigger="manual"
-     source="deferred"
-     destination="elapsed"
-     permission="bungeni.agendaitem.Schedule"
-     action="bungeni.core.workflows.agendaitem.actions.elapse"
-     condition=""
-     />
-
-  <transition
-     id="re-admit-elapsed"
-     title="Readmit Elapsed"
-     trigger="manual"
-     source="elapsed"
-     destination="admissible"
-     permission="bungeni.agendaitem.RevertTransitions"
-     action="bungeni.core.workflows.agendaitem.actions.approve"
-     condition=""
-     />
-  
-
-     
-  <transition
-     id="postpone"
-     title="Postpone"
-     trigger="manual"
-     source="scheduled"
-     destination="postponed"
-     permission="bungeni.agendaitem.Schedule"
-     action="bungeni.core.workflows.agendaitem.actions.postpone"
-     condition=""
-     event="bungeni.core.workflows.interfaces.IAgendaItemPostponedEvent"
-     />
-  <transition
-     id="debate"
-     title="Debate"
-     trigger="manual"
-     source="scheduled"
-     destination="debated"
-     permission="bungeni.agendaitem.Debate"
-     action="bungeni.core.workflows.agendaitem.actions.debate"
-     condition=""
-     event="bungeni.core.workflows.interfaces.IAgendaItemDebatedEvent"
-     />
-
-  <transition 
-     id="continue-debate"
-     title="Debate adjourned"
-     trigger="manual"
-     source="scheduled"
-     destination="debate_adjourned"
-     permission="bungeni.agendaitem.Schedule"
-     condition=""
-     event=""
-     />
-
-  <transition
-     id="elapse-postponed"
-     title="Elapse"
-     trigger="manual"
-     source="postponed"
-     destination="elapsed"
-     permission="bungeni.agendaitem.Schedule"
-     action="bungeni.core.workflows.agendaitem.actions.elapse"
-     condition=""
-     />
-  
-  <transition
-     id="withdraw"
-     title="Withdraw"
-     trigger="manual"
-     source="submitted
-             received
-             complete
-             clarify_mp"
-     destination="withdrawn"
-     permission="bungeni.agendaitem.Withdraw"
-     action="bungeni.core.workflows.agendaitem.actions.withdraw"
-     condition=""
-     require_confirmation="true"
-     />
-  
-  <transition
-     id="withdraw_public"
-     title="Withdraw"
-     trigger="manual"
-     source="admissible
-             scheduled
-             deferred
-             postponed
-             debate_adjourned
-             schedule_pending"
-     destination="withdrawn_public"
-     permission="bungeni.agendaitem.Withdraw"
-     action="bungeni.core.workflows.agendaitem.actions.withdraw"
-     condition=""
-     require_confirmation="true"
-     />
-       
 </workflow>
+

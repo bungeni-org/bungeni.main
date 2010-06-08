@@ -14,7 +14,7 @@
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
         <grant permission="zope.View" role="bungeni.Clerk" />
         <grant permission="zope.View" role="bungeni.Speaker" />
-        <grant permission="zope.View" role="bungeni.Owner" />
+        <deny permission="zope.View" role="bungeni.Owner" />
         <deny permission="bungeni.question.Add" role="bungeni.MP" />
         <deny permission="zope.View" role="bungeni.MP" />
         <deny permission="zope.View" role="bungeni.Minister" />
@@ -52,6 +52,7 @@
         <grant permission="zope.View" role="bungeni.Speaker" />
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
+        <grant permission="zope.View" role="bungeni.Owner" />
     </state>
 
     <state id="complete" title="Submitted to the Speaker">
@@ -78,6 +79,7 @@
     </state>
 
     <state id="clarify_mp" title="Needs MPs clarification">
+        <grant permission="zope.View" role="bungeni.Owner" />
         <deny permission="bungeni.question.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.question.Edit" role="bungeni.Owner" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.clerk" />

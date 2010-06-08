@@ -4,15 +4,6 @@
     xmlns:z3c="http://namespaces.zope.org/z3c"
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni.ui">
-
-<!-- Note on ZCML style:
-- indentation is 4 space chars
-- empty elements are ended with "/>" either on same line as opening tag, 
-  or at exacly same indent as opening tag
-- when an element has a clear "key" attribute, that is used for identification
-  or for reference grouping, it should be specified first and on same line as 
-  opening tag
--->
     
     <!-- MENUS -->
     
