@@ -1,0 +1,188 @@
+div#portal-globalnav {
+  position: relative;
+  width: 100%;
+  height: 3em;
+  width: 85em; /* a width is required for Opera, older Mozilla browsers, and Konqueror browsers */
+}
+
+div#portal-globalnav ul.level0 {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  bottom: -1px;
+  width: 85em; /* a width is required for Opera, older Mozilla browsers, and Konqueror browsers */
+}
+
+div#portal-globalnav ul.level0 li  {
+  display: inline;
+  list-style: none;
+}
+
+div#portal-globalnav ul.level0 a,
+div#portal-globalnav ul.level0 span,
+div#portal-globalnav ul.level0 a.current {
+  display: block;
+  float: left;
+  padding: 4px 10px;
+  margin: 1px -1px 0 0;
+  text-align: center;
+  font-family: tahoma, verdana, sans-serif;
+  text-decoration: none;
+  color: #333;
+}
+
+div#portal-globalnav ul.level0 span,
+div#portal-globalnav ul.level0 a.current,
+div#portal-globalnav ul.level0 a.current:hover {
+  border: 1px solid #666;
+  border-bottom: none;
+  background: #FFF3B3;
+  padding-bottom: 6px;
+  margin-top: 0;
+}
+
+div#portal-globalnav ul.level0 a {
+  background: #fff;
+  border: 1px solid #aaa;
+  border-bottom: 1px solid #666;
+}
+
+div#portal-globalnav ul.level0 a:hover {
+  border-color: #666;
+  background-color: #fff;
+  color: #000;
+}
+
+div#portal-globalnav ul.level0 li.selected a {
+  color: #000;
+  font-weight: bold;
+  border-bottom-color: #fff;
+}
+
+div#portal-globalnav ul.level1 {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  bottom: -1.6em;
+  left: 1px;
+  width: 90em; /* a width is required for Opera, older Mozilla browsers, and Konqueror browsers */
+}
+
+div#portal-globalnav ul.level1 li a,
+div#portal-globalnav ul.level1 li span {
+  width: auto;
+  display: block;
+  float: left;
+  padding: 0 15px;
+  margin: 0;
+  text-align: auto;
+  border: none;
+  background: none;
+  color: black !important;
+}
+
+div#portal-globalnav ul.level1 li span {
+  font-weight: bold;
+}
+
+div#portal-globalnav ul.level1 li a {
+  color: #06C;
+  text-decoration: none;
+}
+
+div#portal-globalnav ul.level1 li a:hover {
+  color: #333;
+  background: transparent;
+  border: none;
+  text-decoration: underline;
+}
+
+div#portal-globalnav ul.level1 li a:active {
+  color: #000;
+  background: transparent;
+}
+
+div#portal-globalnav ul.level1 li:last-child a { border: none; }
+
+div#portal-globalnav ul.level1 {
+
+}
+
+div#portal-globalnav-bottom {
+  border: 1px solid #666;
+  clear: both;
+  background: #fff;
+  padding-top: 2em;
+}
+
+/* custom navigation tab styles */
+
+/*
+   
+div#portal-globalnav ul.level0 li#portaltab-bungeni.selected a,
+div#portal-globalnav ul.level0 li#portaltab-members.selected a,
+div#portal-globalnav ul.level0 li#portaltab-koha.selected a,
+div#portal-globalnav ul.level0 li#portaltab-dspace.selected a,
+body.section-bungeni #portal-globalnav ul.level1 li span,
+body.section-bungeni #portal-globalnav ul.level1 li a,
+body.section-members #portal-globalnav ul.level1 li span,
+body.section-members #portal-globalnav ul.level1 li a,
+body.section-koha #portal-globalnav ul.level1 li span,
+body.section-koha #portal-globalnav ul.level1 li a,
+body.section-dspace #portal-globalnav ul.level1 li span,
+body.section-dspace #portal-globalnav ul.level1 li a {
+  color: white !important;
+}
+
+div#portal-globalnav ul.level0 li#portaltab-bungeni a,
+div#portal-globalnav ul.level0 li#portaltab-members a,
+div#portal-globalnav ul.level0 li#portaltab-koha a,
+div#portal-globalnav ul.level0 li#portaltab-dspace a {
+  border-bottom-width: 4px;
+  border-bottom-style: solid;
+  height: 1.2em;
+}
+
+div#portal-globalnav ul.level0 li#portaltab-members a {
+  border-bottom-color: #4c72e2 !important;
+}
+
+li#portaltab-members.selected a,
+body.section-members #portal-globalnav-bottom {
+  background: #4c72e2 !important;
+}
+
+div#portal-globalnav ul.level0 li#portaltab-bungeni a {
+  border-bottom-color: #153bca !important;
+}
+
+li#portaltab-bungeni.selected a,
+body.section-bungeni #portal-globalnav-bottom {
+  background: #153bca !important;
+}
+
+div#portal-globalnav ul.level0 li#portaltab-koha a {
+  border-bottom-color: #a8ca09 !important;
+}
+
+li#portaltab-koha.selected a,
+body.section-koha #portal-globalnav-bottom {
+  background: #a8ca09 !important;
+}
+
+div#portal-globalnav ul.level0 li#portaltab-dspace a {
+  border-bottom-color: #9d0907 !important;
+}
+
+li#portaltab-dspace.selected a,
+body.section-dspace #portal-globalnav-bottom {
+  background: #9d0907 !important;
+}
+
+li#portaltab-index_html a {
+  background: url(./home-logo.png) no-repeat !important;
+  padding-left: 28px !important;
+  margin-left: 20px !important;
+}
+
+*/

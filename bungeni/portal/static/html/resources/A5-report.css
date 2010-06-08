@@ -1,0 +1,90 @@
+.reportmaintitle
+{
+    text-align:center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size:25px;
+    line-height:150%;
+}
+.reportdoctype
+{
+    text-align:center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size:23px;
+}
+.report_title
+{
+    text-align:center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size:24px;
+    white-space:nowrap;
+    line-height:150%;
+}
+.report_header
+{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size:18px;
+    font-weight:bold;
+}
+.reportdate
+{
+    text-align:center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size:20px;
+    white-space:nowrap;
+    line-height:150%;
+}
+
+.report_body
+{
+    width: 80%; margin: 0 auto;
+}
+
+.report_mainTitle
+{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size:28px;
+    white-space:nowrap;
+    line-height:150%;
+}
+
+.verticalMultiCheckBoxWidget br
+{
+    clear:both;
+    display:block; !important;
+}
+
+.verticalMultiCheckBoxWidget span
+{
+    padding:0 0 0 0;
+}
+.verticalMultiCheckBoxWidget
+{
+    display:inline;
+    float:left;
+}
+.Report4Sitting div.content-left-column
+{
+    display:none;
+}
+.Report4Sitting div.content-right-column
+{
+    width:100%;
+    line-height:normal;
+}
+
+dd.Report div.content-left-column
+{
+    display:none;
+}
+dd.Report div.content-right-column
+{
+    width:100%;
+    line-height:normal;
+}
+#searchButtonDiv{
+    background-image: url(search_icon.gif);
+    background-color: White;
+    background-repeat: no-repeat;
+    width:30px;
+    float:right;
+}

@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:zcml="http://namespaces.zope.org/zcml"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           xmlns:db="http://namespaces.objectrealms.net/rdb"
+           i18n_domain="bungeni">
+
+  <include package="ore.alchemist" file="meta.zcml" />
+  
+  <!-- Setup Database Connection -->
+  <db:engine
+     name="bungeni-db"
+     url="postgres://localhost/bungeni"
+     />
+
+  <!-- Bind Application Model to Database -->
+  <db:bind
+     engine="bungeni-db"
+     metadata="bungeni.models.schema.metadata" />
+  
+  <!-- Bind Security Model to Database (role, permission maps) -->
+  <db:bind
+     engine="bungeni-db"
+     metadata="alchemist.security.schema.metadata" />
+
+  <!-- The ``bungeni.portal`` package is shared between Bungeni (z3)
+       and Plone; part of the configuration is platform-dependent -->
+  
+  <configure zcml:condition="installed plone.maintemplate">
+
+    <utility
+       name="Bungeni"
+       provides="plone.maintemplate.interfaces.ILayout"
+       component=".layout.bungeni" />
+
+    <browser:resourceDirectory 	
+       name="portal"
+       directory="static/html/resources"
+       permission="zope2.Public"
+       />
+
+  </configure>
+
+  <configure zcml:condition="not-installed plone.maintemplate">
+    
+    <browser:resourceDirectory 	
+       name="portal"
+       directory="static/html/resources"
+       permission="zope.Public"
+       />
+
+    <browser:view
+       for="*"
+       name="ploned-layout"
+       class=".ploned.PlonedLayout"
+       layer="ploned.ui.interfaces.IPlonedSkin"
+       permission="zope.View"
+       />
+
+    <adapter
+       zcml:condition="have devmode"
+       for="* zope.publisher.interfaces.browser.IHTTPRequest str"
+       provides="chameleon.html.interfaces.IResourceLocation"
+       factory=".layout.get_url_dev" />
+
+    <adapter
+       zcml:condition="not-have devmode"
+       for="* zope.publisher.interfaces.browser.IHTTPRequest str"
+       provides="chameleon.html.interfaces.IResourceLocation"
+       factory=".layout.get_url" />
+
+    <include package="ploned.ui" file="skin.zcml" />
+   
+  </configure> 
+
+</configure>

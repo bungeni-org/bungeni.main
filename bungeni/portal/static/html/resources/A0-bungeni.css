@@ -1,0 +1,149 @@
+#version-history table.listingdescription {
+    margin-bottom: 0.5em;
+}
+
+table.diff {
+    display: block;
+    overflow: auto;
+    border: 1px solid #ccc;
+}
+
+table.diff td {
+    padding: 3px;
+}
+
+label.discreet {
+    line-height: 2em;
+}
+
+table.side-by-side th {
+  text-align: left;
+}
+
+table.side-by-side td {
+  padding: 5px;
+}
+
+table.side-by-side th span.fieldRequired {
+  color: #DEE7EC;
+}
+
+#bungeni-workspace .item {
+  width: 50%;
+  float: left;
+  background: transparent;
+}
+
+#bungeni-workspace .even .portlet {
+  margin-right: 5px;
+}
+
+#bungeni-workspace .odd .portlet {
+  margin-left: 5px;
+}
+
+.yui-toolbar-group ul {
+  list-style-image: none;
+}
+
+#portletArchiveDates form .field {
+  float: left;
+  clear: none;
+  margin-right: 5em;
+  width: auto;
+  white-space: nowrap;
+}
+
+#portletArchiveDates .widget-dropdownwidget.field {
+  margin-left: 1em;
+  width: auto;
+  white-space: nowrap;
+}
+
+.inlinePortlet {
+    width: 100%;
+    float: left;
+}
+
+.contentViewsLeftPort li.selected {
+    background-color: white;
+    text-decoration: bold;
+}
+
+.contentViewsLeftPort li:hover {
+    background-color: white;
+    text-decoration: bold;
+}
+
+#contentBottomLeft {
+  clear: both;
+  display: block;
+}
+
+#portletArchiveDates #actionsView {
+  clear: none;
+  float: right;
+}
+
+#portletArchiveDates .formHelp {
+  display: none;
+}
+
+#portletArchiveDates .portletItem {
+  padding-bottom: 0;
+}
+  
+#portletArchiveDates label {
+  float: left;
+  margin-right: 0.6em;
+}
+
+#portletArchiveDates .documentDescription {
+  display: none;
+}
+
+#portletArchiveDates .portletItem.dates-filtered  {
+  background: yellow;
+}
+
+.rowspacer {
+    clear: both;
+}
+
+.workspace-viewlet dd {
+    height: 40em;
+    overflow: auto;
+}
+
+.widget-multicheckboxwidget .widget label {
+  display: inline;
+  margin-right: 1em;
+    font-size: 0.9em;
+}
+
+.widget-multicheckboxwidget br {
+   display: none;
+}
+
+div.content-left-column{
+float: left;
+width : 30%;
+}
+
+div.content-right-column{
+float: right;
+width: 70%;
+}
+
+tr.yui-dt-last th {
+white-space: nowrap; 
+}
+
+dl.enableFormTabbing dd {
+padding-top:15px;
+}
+
+dl.enableFormTabbing form {
+padding-top:1px;
+}
+

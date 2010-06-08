@@ -1,0 +1,75 @@
+table.items-for-scheduling {
+  width: 100%;
+}
+
+dd.items-for-scheduling {
+  height: 10em;
+  overflow: auto;
+  }
+
+table.items-for-scheduling .helper {
+  display: block;
+  padding: 10px;
+  background: white;
+  border: 1px solid #8cacbb;
+}
+  
+table.items-for-scheduling tbody {
+  cursor: move;
+}
+
+table.items-for-scheduling tbody tr:hover {
+  background-color: #dee7ec;
+}
+  
+tr.dd-disable {
+  background-color: lightgrey;
+}
+  
+ul.items-for-scheduling li {
+
+}
+
+ul.items-for-scheduling ul li a {
+  display: block;
+  background-color: #dee7ec;
+  color: #436976;
+  border: 1px solid #8cacbb;
+  padding: 3px;
+}
+
+
+ul.items-for-scheduling ul li { 
+  position:relative;
+  border:4px solid #666;
+  text-align:center;
+  color:#fff;
+  cursor:move;
+}
+
+.scheduling.scheduling-drop-target {
+ height: 20em;
+ overflow: auto;
+}
+
+.scheduling.scheduling-drop-target.published-agenda  {
+ height: auto;
+ overflow: auto;
+}
+
+
+.scheduling.scheduling-drop-target.published-minutes  {
+ height: auto;
+ overflow: auto;
+}
+
+.scheduling.scheduling-drop-target.draft-minutes{
+ height: auto;
+ overflow: auto;
+}
+
+p.scheduling-dd-description {
+  text-align: center;
+  font-weight:bold;
+}
+

@@ -1,0 +1,95 @@
+<metal:master define-macro="page" extend-macro="macro">
+
+  <metal:title fill-slot="title">
+    <title metal:define-slot="title">
+      <metal:title fill-slot="plone.htmlhead.title">
+        <span i18n:translate="" tal:replace="context/title|context/dc:title|string:Bungeni" />
+      </metal:title>
+    </title>
+  </metal:title>
+      
+  <metal:portal-header fill-slot="plone.htmlhead">
+    
+
+    <!-- stylesheets -->
+    <div tal:replace="structure provider:yui.css" />
+
+    <!-- javascripts -->
+    <div tal:replace="structure provider:yui.js" />
+    <div tal:replace="structure provider:plone-js" />
+    <metal:header define-slot="header" />
+  </metal:portal-header>
+
+  <div metal:fill-slot="plone.portaltop">
+    <div tal:replace="structure provider:plone.portalheader" />
+    <div tal:replace="structure provider:plone.portaltools" />
+  </div>
+
+  <metal:left-portlet fill-slot="column_one_slot">
+    <td id="portal-column-one"
+        tal:define="plone context/@@plone"
+        tal:condition="python: plone.have_viewlets(view, 'plone.leftcolumn')">
+      <div class="visualPadding">
+        <metal:portlets define-slot="portlets_one_slot">
+          <tal:block replace="structure provider:plone.leftcolumn" />
+        </metal:portlets>
+        &nbsp;
+      </div>
+    </td>
+  </metal:left-portlet>
+
+  <metal:right-portlet fill-slot="column_two_slot">
+    <td id="portal-column-two"
+        tal:define="plone context/@@plone"
+        tal:condition="python: plone.have_viewlets(view, 'plone.rightcolumn')">
+      <div class="visualPadding">
+        <metal:portlets define-slot="portlets_two_slot">
+          <tal:block replace="structure provider:plone.rightcolumn" />
+        </metal:portlets>
+        &nbsp;
+      </div>
+    </td>
+  </metal:right-portlet>
+
+  <metal:portal-content fill-slot="plone.content">
+    <td id="portal-column-content">
+      
+      <metal:block define-slot="content">
+        <div metal:define-macro="content"
+             tal:define="show_border context/@@plone/show_editable_border"
+             tal:attributes="class python: show_border and 'documentEditable' or ''">
+
+          <div tal:replace="structure provider:plone.contentviews" />
+          
+          <div id="region-content" class="documentContent">
+            
+            <span id="contentTopLeft"></span>
+            <span id="contentTopRight"></span>
+            
+            <a name="documentContent"></a>
+            
+            <div id="viewlet-above-content"
+                 tal:content="structure provider:plone.abovecontent" />
+            
+            <metal:slot metal:define-slot="body" />
+            
+            <metal:sub metal:define-slot="sub">
+              <div tal:replace="structure provider:plone.belowcontent" />
+            </metal:sub>
+            
+            <span id="contentBottomLeft"></span>
+            <span id="contentBottomRight"></span>
+            
+          </div>
+          
+        </div>
+        
+      </metal:block>
+    </td>
+  </metal:portal-content>
+
+  <metal:block fill-slot="plone.portalfooter" i18n:domain="plone">
+    <div tal:replace="structure provider:plone.portalfooter" />
+  </metal:block>
+
+</metal:master>

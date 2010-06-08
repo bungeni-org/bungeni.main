@@ -1,0 +1,73 @@
+html > head title {
+  name: "plone.htmlhead.title";
+  mode: content;
+}
+
+html > head title {
+  name: "title";
+  mode: replace;
+  structure: true;
+}
+
+html > body {
+  attributes: "plone.body.attributes";
+}
+
+html > head {
+  name: "plone.htmlhead";
+  mode: append;
+  structure: true;
+}
+
+html > head {
+  name: "plone.htmlhead.base";
+  mode: append;
+  structure: true;
+}
+
+html > head {
+  name: "plone.htmlhead.meta";
+  mode: append;
+  structure: true;
+}
+
+html > head {
+  name: "plone.htmlhead.links";
+  mode: append;
+  structure: true;
+}
+
+div#portal-top {
+  name: "plone.portaltop";
+  structure: true;
+}
+
+td#portal-column-content {
+  name: "plone.content";
+  mode: replace;
+  structure: true;
+}
+
+td#portal-column-one {
+  name: column_one_slot;
+  structure: true;
+  mode: replace;
+}
+
+td#portal-column-two {
+  name: column_two_slot;
+  structure: true;
+  mode: replace;
+}
+
+div#manage-portlets {
+  name: "plone.manageportlets";
+  structure: true;
+  mode: replace;
+}
+
+div#portal-footer {
+  name: "plone.portalfooter";
+  structure: true;
+  mode: replace;  
+}

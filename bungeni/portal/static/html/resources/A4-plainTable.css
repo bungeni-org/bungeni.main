@@ -1,0 +1,71 @@
+.yui-skin-sam .yui-dt th {
+    background:#FFFFFF !important; 
+    background-image:none !important;
+
+}
+
+.yui-skin-sam th.yui-dt-desc! {
+    background-color:#FFFFFF !important;
+background-image:none !important;
+}
+
+.yui-dt-editor .yui-dt-button button {
+    background:#FFFFFF !important;
+background-image:none !important;
+    border:1px solid #999;
+    width:4em;height:1.8em;
+    margin-left:6px;
+}
+.yui-dt-editor .yui-dt-button button.yui-dt-default {
+    background: #5584E0 !important;
+background-image:none !important;
+    border:1px solid #304369;
+    color:#FFF
+}
+.yui-dt-editor .yui-dt-button button:hover {
+    background:#FFFFFF !important;
+background-image:none !important;
+    color:#000;
+}
+.yui-dt-editor .yui-dt-button button:active {
+    background:#FFFFFF !important;
+background-image:none !important;
+    color:#000;
+}
+.yui-skin-sam th.yui-dt-asc .yui-dt-liner {
+    background:url(sort_up.gif) no-repeat right !important; /* sorted header gradient */
+}
+.yui-skin-sam th.yui-dt-desc .yui-dt-liner {
+    background:url(sort_down.gif) no-repeat right !important; /* sorted header gradient */
+}
+.yui-skin-sam th .yui-dt-liner {
+    background:url(sort_none.gif) no-repeat right !important; /* sorted header gradient */
+}
+
+
+.workspace-viewlet  th.header.headerSortUp  {
+    background:url(sort_up.gif) no-repeat right; 
+}
+.workspace-viewlet th.header.headerSortDown  {
+    background:url(sort_down.gif) no-repeat right; 
+}
+.workspace-viewlet th.header {
+    background:url(sort_none.gif) no-repeat right; 
+}
+
+.yui-dt-sortable a {
+    padding-right: 18px;
+    background:url(search_icon.gif) no-repeat right; 
+}
+.yui-dt-resizeable input {
+ width : 100% 
+}
+
+.filterColumns input {
+  width: 100%;
+  }
+
+.yui-dt-data td {
+  line-height: 150%
+  }
+
