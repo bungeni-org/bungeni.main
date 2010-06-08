@@ -1,0 +1,66 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:meta="http://namespaces.zope.org/meta"
+           i18n_domain="bungeni">
+
+  <!-- Turn on the devmode : WHY was this turned on here ?!? -->
+  <!-- meta:provides feature="devmode" / -->
+
+  <!-- Exclude Unused Configuration, makes startup faster (0.5s atm) -->
+  <exclude package="zope.dublincore"/>
+  <exclude package="zope.copypastemove"/>
+  <exclude package="zope.app.apidoc"/>
+  <exclude package="zope.app.applicationcontrol.browser" />
+  <exclude package="zope.app.appsetup" />
+  <exclude package="zope.app.authentication" file="ftpplugins.zcml" />
+  <exclude package="zope.app.broken" />
+  <exclude package="zope.app.component.browser" />
+  <exclude package="zope.app.container.browser" />
+  <exclude package="zope.app.catalog.browser" />
+  <exclude package="zope.app.folder.browser" />
+  <exclude package="zope.app.file" />
+  <exclude package="zope.app.generations" />
+  <exclude package="zope.app.interface" />
+  <exclude package="zope.app.i18n.xmlrpc" />
+  <exclude package="zope.app.i18n.browser" />
+  <exclude package="zope.app.intid" />
+  <exclude package="zope.app.keyreference" />
+  <exclude package="zope.app.onlinehelp" />
+  <exclude package="zope.app.preference" />
+  <exclude package="zope.app.rotterdam" />
+  <exclude package="zope.app.renderer" />
+  <exclude package="zope.app.security.browser" />
+  <exclude package="zope.app.tree" />
+
+  <include package="zope.security" file="meta.zcml" />
+  <include package="zope.app.zcmlfiles" file="meta.zcml" />
+
+  <include package="zope.publisher" />
+  <include package="zope.traversing" />
+  <include package="zope.app.zcmlfiles" />
+
+  <!-- The following packages aren't needed from the beginning, but
+       end up being used in most applications -->
+  <include package="zope.i18n" file="meta.zcml" />
+  <include package="zope.contentprovider" />
+  <include package="zope.viewlet" file="meta.zcml" />
+  <include package="zope.formlib" />
+  <include package="zope.i18n.locales" />
+  <include package="zope.app.authentication" />
+  
+  <include package="zc.resourcelibrary" file="meta.zcml"/>
+  <include package="zc.resourcelibrary"/>
+  <include package="zc.table"/>
+      
+  <!--
+      <include package="zope.annotation" />
+      <include package="zope.app.intid" />
+      <include package="zope.app.keyreference" />
+      <include package="zope.copypastemove" />
+      <include package="zope.app.catalog" />
+      <include package="zope.app.session" />
+    -->
+  <!-- Add your own component registrations here -->
+
+  <include file="smtp.zcml" />
+  
+</configure>
