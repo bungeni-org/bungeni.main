@@ -264,7 +264,8 @@ class WorkflowMenu(BrowserMenu):
         #state = IWorkflowInfo(context).state().getState()
         wf_info = IWorkflowInfo(context)
         transitions = wf_info.getManualTransitionIds()
-        
+        # !+ context_workflow menu: the order of transitions is alphabetic, but 
+        # should really be order of definition.
         parliament_id = getCurrentParliamentId()
         
         url = ui_url.absoluteURL(context, request)
@@ -288,7 +289,7 @@ class WorkflowMenu(BrowserMenu):
             extra = {'id': 'workflow-transition-%s' % tid,
                      'separator': None,
                      'class': ''}
-                     
+            
             state_title = translate(str(state_transition.title), 
                     domain="bungeni.core", 
                     context=request)
@@ -301,7 +302,7 @@ class WorkflowMenu(BrowserMenu):
                      icon=None,
                      extra=extra,
                      submenu=None))
-
+        
         return results
 
 class CalendarSubMenuItem(BrowserSubMenuItem):

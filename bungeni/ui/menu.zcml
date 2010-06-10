@@ -31,7 +31,10 @@
     <browser:menu id="context_workflow"
         title="The 'workflow' menu - allows user to execute workflow transitions"
         class=".menu.WorkflowMenu"
-    />
+    /><!-- !+
+    the order of the items in this menu is alphabetic on the transition 
+    id/title but it should really be on order of definition
+    -->
     <browser:menu id="context_calendar"
         title="The 'Calendar' menu - allows user to select a scheduling context"
         class=".menu.CalendarMenu"
