@@ -50,30 +50,8 @@ class actions(object):
         """
         q = context # context is the newly created question
         log.debug("[QUESTION CREATE] [%s] [%s]" % (info, q))
-        utils.setQuestionDefaults(info, q)
-        user_id = get_principal_id()
-        if user_id:
-            zope.securitypolicy.interfaces.IPrincipalRoleMap(q
-                            ).assignRoleToPrincipal( u'bungeni.Owner', user_id) 
-        owner_id = utils.getOwnerId(q)
-        log.debug("        user_id:%s owner_id:%s" % (user_id, owner_id))
-        if owner_id and (owner_id!=user_id):
-            zope.securitypolicy.interfaces.IPrincipalRoleMap(q
-                ).assignRoleToPrincipal(u'bungeni.Owner', owner_id)
-    
-    '''
-    @staticmethod
-    def makePrivate(info, context):
-        """A question that is not being asked.
-        """
-        pass
-
-    @staticmethod
-    def reDraft(info, context):
-        """
-        """
-        pass
-    '''
+        utils.setQuestionDefaults(info, q) # !+
+        utils.setBungeniOwner(q)
     
     @staticmethod
     def submit_to_clerk(info, context):
@@ -124,9 +102,9 @@ class actions(object):
         pass
     
     @staticmethod
-    def require_edit_by_mp(info, context):
-        """A question is unclear and requires edits/amendments by the MP
-        Only the MP is able to edit it, the clerks office looses edit rights.
+    def mp_clarify(info, context):
+        """Send from the clerks office to the mp for clarification 
+        the MP can edit it the clerk cannot.
         """
         utils.createVersion(info, context)
     
@@ -187,13 +165,6 @@ class actions(object):
         supplementary question now can be asked. 
         """
         pass
-    
-    @staticmethod
-    def mp_clarify(info, context):
-        """Send from the clerks office to the mp for clarification 
-        the MP can edit it the clerk cannot.
-        """
-        utils.createVersion(info, context)
     
     @staticmethod
     def approve(info, context):
@@ -467,4 +438,35 @@ class SendNotificationToMemberUponDebate(Notification):
     def from_address(self):
         return prefs.getClerksOfficeEmail()
         
-                
+''' 
+Add to question.txt tests, equivalent set of tests running as the clerk:
+
+  >>> zope.security.management.newInteraction(create_participation(clerk))
+
+  >>> question = add_content(
+  ...     domain.Question,
+  ...     short_name=u"My subject - clerk",
+  ...     body_text=u"The question - clerk on behalf of an MP",
+  ...     owner_id = mp_1.user_id,
+  ...     language="en")
+  >>> question.__parent__ = app
+  
+  >>> wf = IWorkflow(question)
+  >>> verify_workflow(wf)
+
+  >>> info = IWorkflowInfo(question)
+
+Transition to "create-on-behalf-of". 
+Assigns the role of "Owner" and sets the parliament id.
+  
+  >>> info.fireTransition("create-on-behalf-of")
+  >>> question.status
+  'working_draft'
+  >>> question.parliament_id == parliament.parliament_id
+  True
+  
+  >>> tuple(IPrincipalRoleMap(question).getRolesForPrincipal("member"))
+  ((u'bungeni.Owner', PermissionSetting: Allow),)
+
+'''
+

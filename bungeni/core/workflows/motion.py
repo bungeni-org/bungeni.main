@@ -6,14 +6,16 @@ from bungeni.core.workflows import interfaces
 from bungeni.core import globalsettings as prefs
 from bungeni.core.i18n import _
 import zope.securitypolicy.interfaces
-import bungeni.core.workflows.utils as utils
-from bungeni.core.workflows import dbutils
-from bungeni.models.utils import get_principal_id
+from bungeni.core.workflows import dbutils, utils
 
 class conditions:
     @staticmethod
     def is_scheduled(info, context):
         return dbutils.isItemScheduled(context.motion_id)
+    
+    @staticmethod
+    def user_is_not_context_owner(info, context):
+        return not utils.user_is_context_owner(context)
 
 class actions:
     @staticmethod
@@ -37,16 +39,9 @@ class actions:
 
     @staticmethod
     def create( info, context ):
-        user_id = get_principal_id()
-        if not user_id:
-            user_id ='-'
-        zope.securitypolicy.interfaces.IPrincipalRoleMap( context ).assignRoleToPrincipal( u'bungeni.Owner', user_id)
         utils.setParliamentId(info, context)
-        owner_id = utils.getOwnerId( context )
-        if owner_id and (owner_id != user_id):
-            zope.securitypolicy.interfaces.IPrincipalRoleMap( context 
-                ).assignRoleToPrincipal( u'bungeni.Owner', owner_id)
-
+        utils.setBungeniOwner(context)
+    
     @staticmethod
     def submit( info, context ):
         utils.setSubmissionDate(info, context)

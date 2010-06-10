@@ -10,10 +10,10 @@
         <grant permission="bungeni.question.Edit" role="bungeni.Speaker" />
         <grant permission="bungeni.question.Delete" role="bungeni.Clerk" />
         <grant permission="bungeni.question.Delete" role="bungeni.Speaker" />
-        <grant permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
-        <grant permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
         <grant permission="zope.View" role="bungeni.Clerk" />
         <grant permission="zope.View" role="bungeni.Speaker" />
+        <grant permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
+        <grant permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
         <deny permission="zope.View" role="bungeni.Owner" />
         <deny permission="bungeni.question.Add" role="bungeni.MP" />
         <deny permission="zope.View" role="bungeni.MP" />
@@ -48,7 +48,14 @@
     </state>
 
     <state id="received" title="Received by clerk">
+        <!-- for when not coming via "submitted" (working_draft) -->
+        <deny permission="bungeni.question.Edit" role="bungeni.Owner" />
+        <deny permission="bungeni.question.Delete" role="bungeni.Owner" />
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
+        <deny permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
+        <!-- -->
         <grant permission="bungeni.question.Edit" role="bungeni.Clerk" />
+        <grant permission="zope.View" role="bungeni.Clerk" />
         <grant permission="zope.View" role="bungeni.Speaker" />
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
@@ -79,6 +86,9 @@
     </state>
 
     <state id="clarify_mp" title="Needs MPs clarification">
+        <!-- for when not coming via "submitted" (working_draft) -->
+        <deny permission="bungeni.question.Delete" role="bungeni.Owner" />
+        <!-- -->
         <grant permission="zope.View" role="bungeni.Owner" />
         <deny permission="bungeni.question.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.question.Edit" role="bungeni.Owner" />
@@ -215,17 +225,19 @@
     
     A question in working_draft at the clerks office may also be sent to the
     MP, for review/clarifications.
+
+    Or send to the mp for clarification from clarify_clerk state.
     
     A new version of the question will be created, once the question is 
     modified and saved.
     -->
-    <transition id="require-edit-by-mp"
+    <transition id="mp-clarify"
         title="Needs Clarification by MP"
         trigger="manual"
-        source="working_draft received"
+        source="working_draft received clarify_clerk"
         destination="clarify_mp"
         permission="bungeni.question.clerk.Review"
-        action="bungeni.core.workflows.question.actions.require_edit_by_mp"
+        action="bungeni.core.workflows.question.actions.mp_clarify"
         condition=""
         event=".interfaces.IQuestionClarifyEvent"
         require_confirmation="true"
@@ -314,20 +326,6 @@
         action="bungeni.core.workflows.question.actions.complete_clarify"
         condition=""
         event=""
-    />
-    <!--
-    Or send to the mp for clarification.
-    -->
-    <transition id="mp-clarify"
-        title="Needs Clarification by MP"
-        trigger="manual"
-        source="clarify_clerk"
-        destination="clarify_mp"
-        permission="bungeni.question.clerk.Review"
-        action="bungeni.core.workflows.question.actions.mp_clarify"
-        condition=""
-        event=""
-        require_confirmation="true"
     />
     <!--
     After a question is amended it can be resubmitted to the clerks office.

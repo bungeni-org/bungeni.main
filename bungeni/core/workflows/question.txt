@@ -128,17 +128,20 @@ send the question notifications.
   ...     body_text=u"The question",
   ...     owner_id = mp_1.user_id,
   ...     language="en")
-
   >>> question.__parent__ = app
- 
+
   >>> from bungeni.models.testing import create_sitting
   >>> sitting = create_sitting(parliament.parliament_id, "en")
 
 Set up a security mapping.
 
-  >>> rpm = zope.securitypolicy.interfaces.IRolePermissionMap(question)
+  >>> from zope.securitypolicy.interfaces import IPrincipalRoleMap
   >>> prm = zope.securitypolicy.interfaces.IPrincipalRoleMap(question)
 
+  >>> #from zope.securitypolicy.interfaces import IRolePermissionMap  
+  >>> from alchemist.security.permission import LocalRolePermissionMap
+  >>> rpm = LocalRolePermissionMap(question)
+  
 Integrity
 ---------
 
@@ -150,34 +153,53 @@ Verify that all states are reachable.
   >>> wf = IWorkflow(question)
   >>> verify_workflow(wf)
 
-  
-Questions actions
------------------
+Questions transitions (as bungeni.MP)
+-------------------------------------
+
+!+ change tests below from using actions to using fireTransition()
+
+!+ is it possible to not hardwire the initial transition i.e. let it decide 
+whether to start into "draft" (mp is the current principal) or into 
+"working_draft" (clerk is the current principal) ?
+
+!+ how to check, at every state, who has what permission ?
+
 
   >>> from ore.workflow.interfaces import IWorkflowInfo
   >>> from bungeni.core.workflows.question import actions 
   >>> info = IWorkflowInfo(question)
 
-"Create". This action assigns the role of "Owner" and sets the
-parliament id (if it's a supplement question, it also sets the
-ministry id, taken from this question).
 
-  >>> actions.create(info, question)
+"create" - assigns the role of "Owner" and sets the parliament id.
+
+  >>> info.fireTransition("create") # actions.create(info, question)
+  >>> question.status
+  'draft'
   >>> question.parliament_id == parliament.parliament_id
   True
 
-  >>> from zope.securitypolicy.interfaces import IPrincipalRoleMap
-  >>> tuple(IPrincipalRoleMap(question).getRolesForPrincipal("member"))
+  >>> tuple(prm.getRolesForPrincipal("member"))
   ((u'bungeni.Owner', PermissionSetting: Allow),)
+  >>> tuple(prm.getRolesForPrincipal("clerk"))
+  ()
+  
+"submit-to-clerk" - 
 
-"Submit to clerk".
-
-  >>> actions.submit_to_clerk(info, question)
+  >>> info.fireTransition("submit-to-clerk") # actions.submit_to_clerk(info, question)
   >>> from bungeni.core.interfaces import IVersioned
   >>> versions = IVersioned(question)
   >>> len(versions)
   1
   
+  >>> tuple(prm.getRolesForPrincipal("member"))
+  ((u'bungeni.Owner', PermissionSetting: Allow),)
+
+  >>> #tuple(prm.getRolesForPrincipal("clerk"))
+  >>> #tuple(rpm.getRolesAndPermissions())
+  >>> #tuple(rpm.getPermissionsForRole(u'bungeni.Owner'))
+  >>> #tuple(rpm.getRolesForPermission(u'bungeni.question.Edit'))
+
+
 "Received by clerk".
 
   >>> actions.received_by_clerk(info, question)
@@ -186,7 +208,7 @@ ministry id, taken from this question).
 
 "Require edit by MP".
 
-  >>> actions.require_edit_by_mp(info, question)
+  >>> actions.mp_clarify(info, question)
   >>> len(versions)
   3
 

@@ -6,6 +6,30 @@
    domain="bungeni.ui"
    initial_state="">
 
+    <state id="working_draft" title="Working Draft">
+        <grant permission="bungeni.motion.Edit" role="bungeni.Clerk" />
+        <grant permission="bungeni.motion.Edit" role="bungeni.Speaker" />
+        <grant permission="bungeni.motion.Delete" role="bungeni.Clerk" />
+        <grant permission="bungeni.motion.Delete" role="bungeni.Speaker" />
+        <grant permission="zope.View" role="bungeni.Clerk" />
+        <grant permission="zope.View" role="bungeni.Speaker" />
+        <deny permission="zope.View" role="bungeni.Owner" />
+        <deny permission="bungeni.motion.Edit" role="bungeni.Owner" />
+        <deny permission="bungeni.motion.Delete" role="bungeni.Owner" />
+        <deny permission="zope.View" role="bungeni.MP" />
+        <deny permission="zope.View" role="bungeni.Minister" />
+        <deny permission="zope.View" role="bungeni.Everybody" />
+        <deny permission="zope.View" role="bungeni.Anybody" />
+        <grant permission="bungeni.consignatory.Add" role="bungeni.Clerk" />
+        <grant permission="bungeni.consignatory.Delete" role="bungeni.Clerk" />
+        <grant permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
+        <grant permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
+        <grant permission="bungeni.consignatory.Add" role="bungeni.Speaker" />
+        <grant permission="bungeni.consignatory.Delete" role="bungeni.Speaker" />
+        <grant permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
+        <grant permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
+    </state>
+    
   <state id="draft" title="Draft">
     <grant permission="bungeni.motion.Edit" role="bungeni.Owner" />
     <grant permission="zope.View" role="bungeni.Owner" />
@@ -36,6 +60,14 @@
   </state>
 
   <state id="received" title="Received by Clerks Office">
+        <!-- for when not coming via "submitted" (working_draft) -->
+        <deny permission="bungeni.motion.Edit" role="bungeni.Owner" />
+        <deny permission="bungeni.motion.Delete" role="bungeni.Owner" />
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
+        <deny permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
+        <deny permission="bungeni.consignatory.Add" role="bungeni.Owner" />
+        <deny permission="bungeni.consignatory.Delete" role="bungeni.Owner" />
+        <!-- -->
     <grant permission="bungeni.consignatory.Add" role="bungeni.Clerk" />
     <grant permission="bungeni.consignatory.Delete" role="bungeni.Clerk" />
     <grant permission="bungeni.motion.Edit" role="bungeni.Clerk" />
@@ -43,6 +75,7 @@
     <grant permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
     <grant permission="zope.View" role="bungeni.Clerk" />
     <grant permission="zope.View" role="bungeni.Speaker" />
+        <grant permission="zope.View" role="bungeni.Owner" />
   </state>
 
   <state id="complete" title="Submitted to the Speaker">
@@ -97,12 +130,16 @@
   </state>
 
   <state id="clarify_mp" title="Needs Clarification by MP">
+        <!-- for when not coming via "submitted" (working_draft) -->
+        <deny permission="bungeni.motion.Delete" role="bungeni.Owner" />
+        <!-- -->
+        <grant permission="zope.View" role="bungeni.Owner" />
     <deny permission="bungeni.motion.Edit" role="bungeni.Clerk" />
     <grant permission="bungeni.motion.Edit" role="bungeni.Owner" />
     <grant permission="bungeni.consignatory.Add" role="bungeni.Owner" />
     <grant permission="bungeni.consignatory.Delete" role="bungeni.Owner" />
-    <deny permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
-    <deny permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
+    <deny permission="bungeni.fileattachment.Add" role="bungeni.Owner" /><!-- !+ ??? -->
+    <deny permission="bungeni.fileattachment.Edit" role="bungeni.Owner" /><!-- !+ ??? -->
     <deny permission="bungeni.consignatory.Add" role="bungeni.Clerk" />
     <deny permission="bungeni.consignatory.Delete" role="bungeni.Clerk" />
     <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" /> 
@@ -204,6 +241,15 @@
      action="bungeni.core.workflows.motion.actions.create"
      condition=""
      />
+    <transition id="create-on-behalf-of"
+        title="Create"
+        trigger="automatic"
+        source=""
+        destination="working_draft"
+        action="bungeni.core.workflows.motion.actions.create"
+        condition="bungeni.core.workflows.motion.conditions.user_is_not_context_owner"
+    />
+
   <!--transition
       id="make-private"
       title="Make private"
@@ -241,7 +287,7 @@
      id="received-by-clerk"
      title="Receive"
      trigger="manual"
-     source="submitted"
+        source="working_draft submitted"
      destination="received"
      permission="bungeni.motion.Recieve"
      action="bungeni.core.workflows.motion.actions.received_by_clerk"
@@ -252,7 +298,7 @@
      id="require-edit-by-mp"
      title="Needs Clarification by MP"
      trigger="manual"
-     source="received"
+        source="working_draft received"
      destination="clarify_mp"
      permission="bungeni.motion.clerk.Review"
      action="bungeni.core.workflows.motion.actions.require_edit_by_mp"

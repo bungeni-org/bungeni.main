@@ -1,3 +1,5 @@
+log = __import__("logging").getLogger("bungeni.core.workflow.utils")
+
 import datetime
 
 from zope import component
@@ -94,6 +96,19 @@ def user_is_context_owner(context):
     user_id = get_principal_id()
     owner_id = getOwnerId(context)
     return user_id==owner_id
+    
+def setBungeniOwner(context):
+    user_id = get_principal_id()
+    if not user_id: 
+        user_id = "-"
+    owner_id = getOwnerId(context)
+    log.debug("setBungeniOwner [%s] user_id:%s owner_id:%s" % (
+                                                context, user_id, owner_id))
+    if user_id:
+        IPrincipalRoleMap(context).assignRoleToPrincipal(u'bungeni.Owner', user_id)
+    if owner_id and (owner_id!=user_id):
+        IPrincipalRoleMap(context).assignRoleToPrincipal(u'bungeni.Owner', owner_id)
+
 
 def createVersion(info, context):
     """Create a new version of an object and return it."""

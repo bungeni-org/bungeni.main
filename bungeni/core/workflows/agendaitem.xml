@@ -49,6 +49,12 @@
     </state>
     
     <state id="received" title="Received by Clerks Office">
+        <!-- for when not coming via "submitted" (working_draft) -->
+        <deny permission="bungeni.agendaitem.Edit" role="bungeni.Owner" />
+        <deny permission="bungeni.agendaitem.Delete" role="bungeni.Owner" />
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
+        <deny permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
+        <!-- -->
         <grant permission="zope.View" role="bungeni.Owner" />
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
@@ -90,10 +96,13 @@
     </state>
     
     <state id="clarify_mp" title="Needs Clarification by MP">
+        <!-- for when not coming via "submitted" (working_draft) -->
+        <deny permission="bungeni.agendaitem.Delete" role="bungeni.Owner" />
+        <!-- -->
         <deny permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" /> 
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
-            <grant permission="zope.View" role="bungeni.Owner" />
+        <grant permission="zope.View" role="bungeni.Owner" />
         <grant permission="bungeni.agendaitem.Edit" role="bungeni.Owner" />
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />

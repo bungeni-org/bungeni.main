@@ -7,7 +7,6 @@ from bungeni.core import globalsettings as prefs
 from bungeni.core.i18n import _
 import zope.securitypolicy.interfaces
 from bungeni.core.workflows import dbutils, utils
-from bungeni.models.utils import get_principal_id
 
 class conditions(object):
     
@@ -40,16 +39,8 @@ class actions(object):
     
     @staticmethod
     def create(info, context):
-        user_id = get_principal_id()
-        if not user_id:
-            user_id ='-'
-        zope.securitypolicy.interfaces.IPrincipalRoleMap(context
-                            ).assignRoleToPrincipal(u'bungeni.Owner', user_id)
         utils.setParliamentId(info, context)
-        owner_id = utils.getOwnerId(context)
-        if owner_id and (owner_id != user_id):
-            zope.securitypolicy.interfaces.IPrincipalRoleMap(context 
-                ).assignRoleToPrincipal(u'bungeni.Owner', owner_id)
+        utils.setBungeniOwner(context)
     
     @staticmethod
     def submit(info, context):

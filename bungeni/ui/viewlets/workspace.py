@@ -723,10 +723,10 @@ class ClerkItemActionRequiredViewlet(AllItemsInStageViewlet):
 
 class ClerkItemsWorkingDraftViewlet(AllItemsInStageViewlet):
     name = _("draft items")
-    states = [#motion_wf_state[u"working_draft"].id,
+    states = [motion_wf_state[u"working_draft"].id,
         question_wf_state[u"working_draft"].id,
         agendaitem_wf_state[u"working_draft"].id,
-        #tableddocument_wf_state[u"working_draft"].id,
+        tableddocument_wf_state[u"working_draft"].id,
     ]
     list_id = "clerk-items-working-draft"
 class SpeakerItemsWorkingDraftViewlet(ClerkItemsWorkingDraftViewlet):
