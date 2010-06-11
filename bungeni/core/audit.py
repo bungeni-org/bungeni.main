@@ -136,7 +136,10 @@ class AuditorFactory( object ):
         
         description = (_(u"""%(transition)s : %(comment)s [ transition from %(source)s to %(destination)s ]""")
                       %event_description  )
-        return self._objectChanged(u'workflow', object, description )
+        # !+ why does the event.transition.transition_id here not 
+        # correspond to the actual transation.@id XML attribute value?
+        notes = repr((event.source, event.destination))
+        return self._objectChanged(u'workflow', object, description, notes=notes)
         
     def objectDeleted( self, object, event ):
         #return self._objectChanged(u'deleted', object )
@@ -148,7 +151,14 @@ class AuditorFactory( object ):
     def objectRevertedVersion( self, object, event ):
         return self._objectChanged(u'reverted-version', object, description=event.message )
         
-    def _objectChanged( self, change_kind, object, description=u'' ):
+    def _objectChanged(self, change_kind, object, description=u'', notes=None):
+        """
+        Convention: the value of "notes" should be a serialized str of a simple 
+        python object e.g. a dict, list, tuple, etc., that is a function of the 
+        "action". For example, for "workflow" action, the value of "notes" is 
+        always a serialized python 2-tuple, consisting of the transition's 
+        (source, destination) states -- that may be eval'ed back to life.
+        """
         oid, otype = self._getKey( object )
         user_id = self._getCurrentUserId()
         session = Session()
@@ -157,6 +167,7 @@ class AuditorFactory( object ):
         change.date = datetime.now()
         change.user_id = user_id
         change.description = description
+        change.notes = notes
         change.content_type = otype
         change.origin = object
         session.add(change)

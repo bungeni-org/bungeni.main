@@ -28,7 +28,34 @@ def getQuestion(question_id):
     session = Session()
     return session.query(domain.Question).get(question_id)
 
+def getQuestionWorkflowTrail(question):
+    """Return tha trail of workflow states traversed by the question.
     
+    Depends on the QuestionChange.notes attribute being filled with a 2-tuple
+    containing the workflow's transition's (source, destination) states.
+    """
+    '''
+    # !+ note, another way to do it is via raw-SQL:
+    # but, replace all such raw-sql with SA-based fetching.
+    item_id = context.parliamentary_item_id
+    from bungeni.ui.utils import queries, statements
+    sql_timeline = statements.sql_question_timeline
+    timeline_changes = queries.execute_sql(sql_timeline, item_id=item_id)
+    ''' 
+    session = Session()
+    wf_changes = session.query(domain.QuestionChange
+        ).filter(domain.QuestionChange.content_id==question.question_id
+        ).filter(domain.QuestionChange.action==u"workflow"
+        ).order_by(domain.QuestionChange.date).all()
+    states = []
+    for wfc in wf_changes:
+        if wfc.notes:
+            transition_states = eval(wfc.notes)
+            for state in transition_states:
+                if state not in states:
+                    states.append(state)
+    return states
+
 def setQuestionMinistryId(question):
     if question.supplement_parent_id:
         sq = getQuestion(question.supplement_parent_id)
