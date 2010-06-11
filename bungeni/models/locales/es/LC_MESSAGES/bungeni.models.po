@@ -1,770 +1,770 @@
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: Mon Apr 12 12:54:47 2010\n"
-"PO-Revision-Date: 2010-06-10 16:42+0200\n"
+"PO-Revision-Date: 2010-06-10 16:20+0200\n"
 "Last-Translator: undesa <admin@apkn.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: sw\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Pootle 2.0.4\n"
 "Language-Code: en\n"
 "Domain: DOMAIN\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Preferred-Encodings: utf-8 latin1\n"
 "Language-Name: English\n"
+"X-Generator: Pootle 2.0.4\n"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:214
 msgid "Speaker's Office Email"
-msgstr "barua pepe ya spika"
+msgstr "email de la oficina de negocios casa"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:216
 msgid "Speaker's Office Notification"
-msgstr "ujumbe kutoka ofisi ya spika"
+msgstr "negocio casa la notificación de oficina"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:217
 msgid "true if the Speakers office wants to be alerted by mailwhenever a bill, motion, question is submitted"
-msgstr "kweli kama ungetaka ofisi ya spika ijulishwe kila mara muswada, msukumo au swali linawasilishwa "
+msgstr "true si la oficina de la casa de negocios quiere que se le avise por correo cada vez que un proyecto de ley, el movimiento, la pregunta se presenta"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:222
 msgid "Clerk's Office Notification"
-msgstr "maarifa ya ofisi ya karani"
+msgstr "empleado de oficina de notificación"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:223
 msgid "true if the clerks office wants to be alerted by mailwhenever a bill, motion, question is submitted"
-msgstr "kweli kama ungetaka ofisi ya karani ijulishwe kila mara muswada, msukumo au swali linawasilishwa "
+msgstr "true si la oficina de los empleados quiere que se le avise por correo cada vez que un proyecto de ley, el movimiento, la pregunta se presenta"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:228
 msgid "Clerks's Office Email"
-msgstr "barua pepe ya ofisi ya karani"
+msgstr "empleado de oficina de correo electrónico"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:231
 msgid "Administrator's Email"
-msgstr "barua pepe ya msimamizi"
+msgstr "administrador de correo electrónico"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:232
 msgid "Allow Question Submission"
-msgstr "ruhusu uwasilishaji wa swali"
+msgstr "permitir que se trate la presentación"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:233
 msgid "Days to Defer Question"
-msgstr "siku hadi ahirisho la swali"
+msgstr "día de aplazar la pregunta"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:234
 msgid "Time after which admissible questions are automatically deferred"
-msgstr "muda uliobaki hadi maswali yaliyokubalika yaahirishwe"
+msgstr "tiempo después del cual las preguntas son admisibles automáticamente diferidos"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:236
 msgid "Days to Notify Ministry of Pending Response"
-msgstr "siku za kujulisha wizara juu ya jibu linalongojwa"
+msgstr "días para notificar a la espera de la respuesta del ministerio"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:237
 msgid "Timeframe after which the clerksoffice and the ministry is alerted thatquestions that are pending response are not yet answered"
-msgstr "muda uliobaki hadi offisi ya karani na wizara wajulishwe kwamba maswali yanayosubiri jibu bado hayajajibiwa"
+msgstr "período de tiempo después del cual la oficina del secretario y el ministerio se alerta de que las cuestiones que están pendientes de respuesta aún no se contestó"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:241
 msgid "Days before question scheduled"
-msgstr "siku kabla uratibu wa swali"
+msgstr "días antes de la pregunta prevista"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:242
 msgid "Days before bill scheduled"
-msgstr "siku kabla uratibu wa muswada"
+msgstr "días antes de la ley prevista"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:243
 msgid "Max Questions Per Sitting"
-msgstr "zaidi ya jumla ya maswali kwa kikao"
+msgstr "preguntas máximo por sesión"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:244
 msgid "Max Questions Per Sitting Per MP"
-msgstr "zaidi ya jumla ya maswali kwa mbunge"
+msgstr "preguntas máximo por sesión por mp"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:249
 msgid "Email Notifications Enabled?"
-msgstr "wezesha maarifa kwa njia ya barua pepe?"
+msgstr "notificaciones por correo electrónico habilitado?"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:255
 msgid "Name of the Assignment"
-msgstr "jina la zoezi"
+msgstr "nombre del trabajo"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:256
 msgid "Start Date of the Assignment"
-msgstr "tarehe ya kwanza ya zoezi"
+msgstr "fecha de inicio de la cesión"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:257
 msgid "End Date of the Assignment"
-msgstr "tarehe ya mwisho ya zoezi"
+msgstr "fecha de finalización de la cesión"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:258
 msgid "Assignment Type"
-msgstr "aina ya zoezi"
+msgstr "la asignación de tipos"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:259
 msgid "Status"
-msgstr "hali"
+msgstr "estado"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:260
 msgid "Notes"
-msgstr "vidokezo"
+msgstr "notas"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:100
 msgid "View party"
-msgstr "tazama chama"
+msgstr "ver parte"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:103
 msgid "Add government"
-msgstr "ongeza serikali"
+msgstr "gobierno añade"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:104
 msgid "Edit government"
-msgstr "hariri serikali"
+msgstr "gobierno edición"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:105
 msgid "Delete government"
-msgstr "futa serikali"
+msgstr "gobierno elimina"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:106
 msgid "View government"
-msgstr "tazama serikali"
+msgstr "ven al gobierno"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:109
 msgid "Add group member"
-msgstr "ongeza mwanachama wa kikundi"
+msgstr "añadir un miembro del grupo"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:110
 msgid "Edit group member"
-msgstr "hariri mwanachama wa kikundi"
+msgstr "editar un miembro del grupo"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:111
 msgid "Delete group member"
-msgstr "futa mwanachama wa kikundi"
+msgstr "miembro del grupo borrar"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:112
 msgid "View group member"
-msgstr "tazama mwanachama wa kikundi"
+msgstr "ver miembros del grupo"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:115
 msgid "Add office"
-msgstr "ongeza ofisi"
+msgstr "agregar la oficina"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:116
 msgid "Edit office"
-msgstr "hariri ofisi"
+msgstr "edición de oficina"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:117
 msgid "Delete office"
-msgstr "futa ofisi"
+msgstr "oficina de eliminar"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:118
 msgid "View office"
-msgstr "tazama ofisi"
+msgstr "ver la oficina"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:119
 msgid "Change office type"
-msgstr "badili aina ya ofisi"
+msgstr "cambiar el tipo de oficina"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:12
 msgid "Edit historical content"
-msgstr "hariri nyaraka za kihistoria"
+msgstr "editar el contenido histórico"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:122
 msgid "Add office member"
-msgstr "ongeza mwanachama wa ofisi"
+msgstr "añadir oficina miembros"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:123
 msgid "Edit office member"
-msgstr "hariri mwanachama wa ofisi"
+msgstr "editar oficina de miembros"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:124
 msgid "Delete office member"
-msgstr "futa mwanachama wa ofisi"
+msgstr "miembro de la oficina eliminar"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:125
 msgid "View office member"
-msgstr "tazama mwanachama wa ofisi"
+msgstr "juicio de este miembro de oficina"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:13
 msgid "Translate content"
-msgstr "tafsiri yaliyomo"
+msgstr "traducir el contenido"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:131
 msgid "Add ministry"
-msgstr "ongeza wizara"
+msgstr "añadir el ministerio"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:132
 msgid "Edit ministry"
-msgstr "hariri wizara"
+msgstr "editar ministerio"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:133
 msgid "Delete ministry"
-msgstr "futa wizara"
+msgstr "ministerio de eliminar"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:134
 msgid "View ministry"
-msgstr "tazama wizara"
+msgstr "ver ministerio"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:137
 msgid "Add mp"
-msgstr "ongeza mbunge"
+msgstr "añadir mp"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:138
 msgid "Edit mp"
-msgstr "hariri mbunge"
+msgstr "editar mp"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:139
 msgid "Delete mp"
-msgstr "futa mbunge"
+msgstr "mp eliminar"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:140
 msgid "View mp"
-msgstr "tazama mbunge"
+msgstr "ver mp"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:146
 msgid "Add user"
-msgstr "ongeza mtumiaji"
+msgstr "añadir usuario"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:147
 msgid "Edit user"
-msgstr "hariri mtumiaji"
+msgstr "editar el usuario"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:148
 msgid "Delete user"
-msgstr "futa mtumiaji"
+msgstr "eliminar el usuario"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:149
 msgid "View user"
-msgstr "tazama mtumiaji"
+msgstr "vista del usuario"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:15
 msgid "Add session"
-msgstr "ongeza kikao"
+msgstr "añadir período de sesiones"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:152
 msgid "Add constituency"
-msgstr "ongeza eneo-bunge"
+msgstr "añadir circunscripción"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:153
 msgid "Edit constituency"
-msgstr "hariri eneo-bunge"
+msgstr "editar circunscripción"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:154
 msgid "Delete constituency"
-msgstr "futa eneo-bunge"
+msgstr "circunscripción eliminar"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:155
 msgid "View constituency"
-msgstr "tazama eneo-bunge"
+msgstr "vista electoral"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:158
 msgid "Add minister"
-msgstr "ongeza waziri"
+msgstr "agregar miembros del ministerio"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:159
 msgid "Edit minister"
-msgstr "hariri waziri"
+msgstr "editar miembro del ministerio"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:16
 msgid "Edit session"
-msgstr "hariri kikao"
+msgstr "sesión de edición"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:160
 msgid "Delete minister"
-msgstr "futa waziri"
+msgstr "miembro del ministerio de eliminar"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:161
 msgid "View minister"
-msgstr "tazama waziri"
+msgstr "ver miembros del ministerio"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:167
 msgid "Add committee member"
-msgstr "ongeza mwanachama wa kamati"
+msgstr "agregar el miembro del comité"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:168
 msgid "Edit committee member"
-msgstr "hariri mwanachama wa kamati"
+msgstr "edición, miembro del comité"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:169
 msgid "Delete committee member"
-msgstr "futa mwanachama wa kamati"
+msgstr "miembro del comité de eliminar"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:17
 msgid "Delete session"
-msgstr "futa kikao"
+msgstr "período de sesiones eliminar"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:170
 msgid "View committee member"
-msgstr "tazama mwanachama wa kamati"
+msgstr "ver miembro del comité"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:176
 msgid "Add committee staff"
-msgstr "ongeza wafanyikazi wa kamati"
+msgstr "añadir la junta de personal"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:177
 msgid "Edit committee staff"
-msgstr "hariri wafanyikazi wa kamati"
+msgstr "editar la junta de personal"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:178
 msgid "Delete committee staff"
-msgstr "futa wafanyikazi wa kamati"
+msgstr "eliminar la junta de personal"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:179
 msgid "View committee staff"
-msgstr "tazama wafanyikazi wa kamati"
+msgstr "ver la junta de personal"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:18
 msgid "Add sitting"
-msgstr "ongeza kikao"
+msgstr "añadir sesión"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:185
 msgid "Add political group member"
-msgstr "ongeza mwanachama wa kikundi cha siasa"
+msgstr "agregar miembros de los grupos políticos"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:186
 msgid "Edit political group member"
-msgstr "hariri mwanachama wa kikundi cha kisiasa"
+msgstr "editar miembro del grupo político"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:187
 msgid "Delete political group member"
-msgstr "futa mwanachama wa kikundi cha kisiasa"
+msgstr "miembro de eliminar los grupos políticos"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:188
 msgid "View political group member"
-msgstr "tazama mwanachama wa kikundi cha kisiasa"
+msgstr "juicio de este miembro de los grupos políticos"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:19
 msgid "Edit sitting"
-msgstr "hariri kikao"
+msgstr "editar sesión"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:194
 msgid "Add address"
-msgstr "ongeza anwani"
+msgstr "agregue la dirección"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:195
 msgid "Edit address"
-msgstr "hariri anwani"
+msgstr "editar dirección"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:196
 msgid "Delete address"
-msgstr "futa anwani"
+msgstr "dirección de eliminar"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:197
 msgid "View address"
-msgstr "tazama anwani"
+msgstr "ver dirección"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:20
 msgid "Delete sitting"
-msgstr "futa kikao"
+msgstr "eliminar la sesión"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:200
 msgid "Add delegation"
-msgstr "ongeza wajumbe"
+msgstr "añadir delegación"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:201
 msgid "Edit delegation"
-msgstr "hariri wajumbe"
+msgstr "editar delegación"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:202
 msgid "Delete delegation"
-msgstr "futa wajumbe"
+msgstr "delegación de eliminar"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:203
 msgid "View delegation"
-msgstr "tazama wajumbe"
+msgstr "opinión de esa delegación"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:206
 msgid "Add title/function"
-msgstr "ongeza kichwa / kazi"
+msgstr "añadir un título o función"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:207
 msgid "Edit title/function"
-msgstr "hariri kichwa / kazi"
+msgstr "editar el título o función"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:208
 msgid "Delete title/function"
-msgstr "futa kichwa / kazi"
+msgstr "título de eliminar o función"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:209
 msgid "View title/function"
-msgstr "tazama kichwa / kazi"
+msgstr "título de la vista o función"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:21
 msgid "Reorder schedulings"
-msgstr "panga ratiba upya"
+msgstr "schedulings reordenar"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:212
 msgid "Add title/event"
-msgstr "ongeza kichwa / tukio"
+msgstr "añadir un título / evento"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:213
 msgid "Edit title/event"
-msgstr "hariri kichwa / tukio"
+msgstr "editar el título / evento"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:214
 msgid "Delete title/event"
-msgstr "futa kichwa / tukio"
+msgstr "título de borrar / evento"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:215
 msgid "View title/event"
-msgstr "tazama kichwa / tukio"
+msgstr "título de la vista / evento"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:219
 msgid "View audit log"
-msgstr "tazama ukaguzi wa historia"
+msgstr "ver registro de auditoría"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:22
 msgid "Add item scheduling"
-msgstr "ongeza ratiba ya pointi"
+msgstr "agregar el tema de programación"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:228
 msgid "Add and edit amendments"
-msgstr "ongeza na hariri marekebisho"
+msgstr "añadir y editar modificaciones"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:229
 msgid "View amendments"
-msgstr "tazama marekebisho"
+msgstr "enmiendas vista"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:23
 msgid "Edit item scheduling"
-msgstr "hariri ratiba ya pointi"
+msgstr "editar la programación de punto"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:231
 msgid "Add and edit comments"
-msgstr "ongeza na hariri maoni"
+msgstr "añadir y editar comentarios"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:232
 msgid "View comments"
-msgstr "tazama maoni"
+msgstr "ver comentarios"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:234
 msgid "View Agenda"
-msgstr "tazama ajenda"
+msgstr "vista de la agenda"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:235
 msgid "View 'Votes and Proceedings'"
-msgstr "tazama 'kura na majadiliano'"
+msgstr "votos vistas y procedimientos"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:237
 msgid "Add Consignatory"
-msgstr "ongeza saini"
+msgstr "añadir cosignatario"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:238
 msgid "Delete Consignatory"
-msgstr "futa saini"
+msgstr "eliminar cosignatario"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:239
 msgid "Edit Consignatory"
-msgstr "futa saini"
+msgstr "editar cosignatario"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:24
 msgid "Delete item scheduling"
-msgstr "futa uratibu wa pointi"
+msgstr "la programación de eliminar el tema"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:241
 #: src/bungeni.models/bungeni/models/permissions.zcml:242
 msgid "Add Group Item Assignment"
-msgstr "ongeza zoezi la kikundi"
+msgstr "agregar la asignación de grupos tema"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:243
 msgid "Delete Group Item Assignment"
-msgstr "futa zoezi la pointi ya kikundi"
+msgstr "grupo de eliminar la asignación tema"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:244
 msgid "Edit Group Item Assignment"
-msgstr "hariri zoezi la kikundi "
+msgstr "modificar la asignación de grupos tema"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:248
 msgid "Permission to generate report"
-msgstr "ruhusa kutoa ripoti"
+msgstr "permiso para generar el informe"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:25
 msgid "Add item scheduling category"
-msgstr "ongeza jamii ya orodha ya ratiba za pointi"
+msgstr "agregar la categoría programación tema"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:250
 msgid "add an attached file"
-msgstr "ongeza faili iliyoambatishwa"
+msgstr "agregar un archivo adjunto"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:251
 msgid "edit an attached file"
-msgstr "hariri faili iliyoambatishwa"
+msgstr "editar un archivo adjunto"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:252
 msgid "view an attached file"
-msgstr "tazama faili iliyoambatishwa"
+msgstr "ver un archivo adjunto"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:253
 msgid "delete an attached file"
-msgstr "futa faili iliyoambatishwa"
+msgstr "eliminar un archivo adjunto"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:256
 msgid "add translation"
-msgstr "badili tafsiri"
+msgstr "agregar traducción"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:27
 msgid "Edit item scheduling discussion"
-msgstr "hariri majadiliano ya uratibu wa pointi"
+msgstr "editar la programación de la discusión el tema"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:29
 msgid "View sitting attendance"
-msgstr "tazama mahudhurio ya kikao"
+msgstr "ver sesión lista de asistencia"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:30
 msgid "Add sitting attendance"
-msgstr "ongeza mahudhurio ya kikao"
+msgstr "añadir sesión lista de asistencia"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:31
 msgid "Edit sitting attendance"
-msgstr "hariri mahudhurio ya kikao"
+msgstr "editar sesión lista de asistencia"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:32
 msgid "Delete sitting attendance"
-msgstr "futa mahudhurio ya kikao"
+msgstr "asistencia a eliminar sesión"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:35
 msgid "Add committee"
-msgstr "ongeza kamati"
+msgstr "añadir comité"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:36
 msgid "Edit committee"
-msgstr "hariri kamati"
+msgstr "editar comité"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:37
 msgid "Delete committee"
-msgstr "futa kamati"
+msgstr "comité de eliminar"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:38
 msgid "View committee"
-msgstr "tazama kamati"
+msgstr "ver comité"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:42
 msgid "Add Question"
-msgstr "ongeza swali"
+msgstr "cuestión agregar"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:43
 msgid "Edit Question"
-msgstr "hariri swali"
+msgstr "edición de preguntas"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:44
 msgid "Delete Question"
-msgstr "futa swali"
+msgstr "cuestión eliminar"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:45
 msgid "View Question"
-msgstr "tazama swali"
+msgstr "ver pregunta"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:54
 msgid "Add heading"
-msgstr "ongeza kichwa"
+msgstr "añadir la partida"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:55
 msgid "Edit heading"
-msgstr "hariri kichwa"
+msgstr "editar la partida"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:56
 msgid "Delete heading"
-msgstr "futa kichwa"
+msgstr "eliminar la partida"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:57
 msgid "View heading"
-msgstr "tazama kichwa"
+msgstr "vista la partida"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:60
 msgid "Add Motion"
-msgstr "ongeza msukumo"
+msgstr "añadir movimiento"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:61
 msgid "Edit Motion"
-msgstr "hariri msukumo"
+msgstr "edición de movimiento"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:62
 msgid "Delete Motion"
-msgstr "futa msukumo"
+msgstr "eliminar el movimiento"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:63
 msgid "View Motion"
-msgstr "tazama msukumo"
+msgstr "ver el movimiento"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:66
 msgid "Add agenda item"
-msgstr "ongeza pointi ya ajenda"
+msgstr "añadir tema del programa"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:67
 msgid "Edit agenda item"
-msgstr "hariri pointi ya ajenda"
+msgstr "editar tema del programa"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:68
 msgid "Delete agenda item"
-msgstr "futa pointi ya ajenda"
+msgstr "tema del programa borrar"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:69
 msgid "View agenda item"
-msgstr "tazama pointi ya ajenda"
+msgstr "ver tema del programa"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:72
 msgid "Add tabled document"
-msgstr "ongeza hati iliyopendekezwa"
+msgstr "adicionar documento presentado"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:73
 msgid "Edit tabled document"
-msgstr "hariri hati iliyopendekezwa"
+msgstr "editar el documento presentado"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:74
 msgid "Delete tabled document"
-msgstr "futa hati iliyopendekezwa"
+msgstr "documento presentado eliminar"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:75
 msgid "View tabled document"
-msgstr "tazama hati iliyopendekezwa"
+msgstr "ver el documento presentado"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:78
 msgid "Edit Response"
-msgstr "hariri jibu"
+msgstr "modificar la respuesta"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:79
 msgid "View Response"
-msgstr "tazama jibu"
+msgstr "ver la respuesta"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:81
 msgid "Add Parliament"
-msgstr "ongeza bunge"
+msgstr "añadir el parlamento"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:82
 msgid "Edit Parliament"
-msgstr "hariri bunge"
+msgstr "editar el parlamento"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:83
 msgid "Delete Parliament"
-msgstr "futa bunge"
+msgstr "eliminar el parlamento"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:84
 msgid "View Parliament"
-msgstr "tazama bunge"
+msgstr "la opinión del parlamento"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:87
 msgid "Add Bill"
-msgstr "ongeza muswada"
+msgstr "proyecto de ley añade"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:88
 msgid "Edit Bill"
-msgstr "futa muswada"
+msgstr "proyecto de ley edición"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:89
 msgid "Delete Bill"
-msgstr "futa muswada"
+msgstr "proyecto de ley elimina"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:90
 msgid "View Bill"
-msgstr "tazama muswada"
+msgstr "ver proyecto"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:93
 msgid "Admin User Record"
-msgstr "ongeza nyaraka ya mtumiaji"
+msgstr "administrador de registro de usuario"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:94
 msgid "Edit historical data"
-msgstr "hariri data ya kihistoria"
+msgstr "editar los datos históricos"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:97
 msgid "Add party"
-msgstr "ongeza chama"
+msgstr "complemento de otro fabricante"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:98
 msgid "Edit party"
-msgstr "hariri chama"
+msgstr "parte editar"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:99
 msgid "Delete party"
-msgstr "futa chama cha kisiasa"
+msgstr "parte eliminar"
 
 #: src/bungeni.models/bungeni/models/roles.zcml:10
 msgid "Member of parliament"
-msgstr "mwanachama wa bunge"
+msgstr "miembro del parlamento"
 
 #: src/bungeni.models/bungeni/models/roles.zcml:11
 msgid "Owner"
-msgstr "mwenyewe"
+msgstr "propietario"
 
 #: src/bungeni.models/bungeni/models/roles.zcml:12
 msgid "Minister"
-msgstr "waziri"
+msgstr "ministro"
 
 #: src/bungeni.models/bungeni/models/roles.zcml:13
 msgid "Clerks Office"
-msgstr "ofisi ya karani"
+msgstr "empleado de la oficina"
 
 #: src/bungeni.models/bungeni/models/roles.zcml:14
 msgid "Speaker Office"
-msgstr "ofisi ya spika "
+msgstr "hablante de oficina"
 
 #: src/bungeni.models/bungeni/models/roles.zcml:15
 msgid "Translators  Office"
-msgstr "ofisi ya tafsiri"
+msgstr "traductor de la oficina"
 
 #: src/bungeni.models/bungeni/models/roles.zcml:16
 msgid "All authenticated users"
-msgstr "watumiaji wote halisi"
+msgstr "todos los usuarios autenticados"
 
 #: src/bungeni.models/bungeni/models/roles.zcml:17
 msgid "Bungeni Visitor"
-msgstr "mgeni wa bungeni"
+msgstr "visitante bungeni"
 
 #: src/bungeni.models/bungeni/models/roles.zcml:8
 msgid "Site Manager"
-msgstr "msimamizi wa tovuti"
+msgstr "site manager"
 
 #: src/bungeni.models/bungeni/models/roles.zcml:9
 msgid "Bungeni Admin"
-msgstr "msimamizi wa bungeni"
+msgstr "administrador bungeni"
 
 #~ msgid "Female"
-#~ msgstr "mwanamke"
+#~ msgstr "femenino"
 
 #~ msgid "Male"
-#~ msgstr "mwanaume"
+#~ msgstr "masculino"
 
 #~ msgid "No"
-#~ msgstr "hapana"
+#~ msgstr "no"
 
 #~ msgid "Oral"
-#~ msgstr "simulizi"
+#~ msgstr "oral"
 
 #~ msgid "Ordinary"
-#~ msgstr "kawaida"
+#~ msgstr "ordinario"
 
 #~ msgid "Private Notice"
-#~ msgstr "taarifa binafsi"
+#~ msgstr "aviso privado"
 
 #~ msgid "Speakers Office"
-#~ msgstr "ofisi ya spika"
+#~ msgstr "altavoces de oficina"
 
 #~ msgid "Written"
-#~ msgstr "imeandikwa"
+#~ msgstr "escrito"
 
 #~ msgid "Yes"
-#~ msgstr "ndio"
+#~ msgstr "sí"
 
 #~ msgid "active"
-#~ msgstr "inaendelea"
+#~ msgstr "activo"
 
 #~ msgid "deceased"
-#~ msgstr "amefariki"
+#~ msgstr "difunto"
 
 #~ msgid "elected"
-#~ msgstr "waliochaguliwa"
+#~ msgstr "elegido"
 
 #~ msgid "ex officio"
-#~ msgstr "ex officio"
+#~ msgstr "de oficio"
 
 #~ msgid "inactive"
-#~ msgstr "haiendelei"
+#~ msgstr "inactivo"
 
 #~ msgid "initial"
-#~ msgstr "awali"
+#~ msgstr "inicial"
 
 #~ msgid "nominated"
-#~ msgstr "ameteuliwa"
+#~ msgstr "nominado"
 
 #~ msgid "subsequent"
-#~ msgstr "inayofuata"
+#~ msgstr "posterior"
