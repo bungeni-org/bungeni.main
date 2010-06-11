@@ -3,29 +3,33 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: Mon Apr 12 12:54:47 2010\n"
-"PO-Revision-Date: 2010-04-13 13:59+0300\n"
-"Last-Translator: peter <kamero@parliaments.info>\n"
+"PO-Revision-Date: 2010-06-10 16:20+0200\n"
+"Last-Translator: undesa <admin@apkn.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.0.4\n"
 "Language-Code: en\n"
 "Domain: DOMAIN\n"
-"Plural-Forms: nplurals=1; plural=0\n"
 "Preferred-Encodings: utf-8 latin1\n"
 "Language-Name: English\n"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:214
 msgid "Speaker's Office Email"
-msgstr "speaker's office email"
+msgstr "house business office email"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:216
 msgid "Speaker's Office Notification"
-msgstr "speaker's office notification"
+msgstr "house business's office notification"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:217
 msgid "true if the Speakers office wants to be alerted by mailwhenever a bill, motion, question is submitted"
-msgstr "true if the speaker's office wants to be alerted by mailwhenever a bill, motion, question is submitted"
+msgstr ""
+"true if the house business's office wants to be alerted by mail whenever a "
+"bill, motion, question is submitted"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:222
 msgid "Clerk's Office Notification"
@@ -33,11 +37,13 @@ msgstr "clerk's office notification"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:223
 msgid "true if the clerks office wants to be alerted by mailwhenever a bill, motion, question is submitted"
-msgstr "true if the clerks office wants to be alerted by mailwhenever a bill, motion, question is submitted"
+msgstr ""
+"true if the clerks office wants to be alerted by mail whenever a bill, "
+"motion, question is submitted"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:228
 msgid "Clerks's Office Email"
-msgstr "clerks's office email"
+msgstr "clerk's office email"
 
 #: src/bungeni.models/bungeni/models/interfaces.py:231
 msgid "Administrator's Email"
@@ -257,11 +263,11 @@ msgstr "view constituency"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:158
 msgid "Add minister"
-msgstr "add minister"
+msgstr "add member of ministry"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:159
 msgid "Edit minister"
-msgstr "edit minister"
+msgstr "edit member of ministry"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:16
 msgid "Edit session"
@@ -269,11 +275,11 @@ msgstr "edit session"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:160
 msgid "Delete minister"
-msgstr "delete minister"
+msgstr "delete member of ministry"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:161
 msgid "View minister"
-msgstr "view minister"
+msgstr "view member of ministry"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:167
 msgid "Add committee member"
@@ -441,19 +447,19 @@ msgstr "view agenda"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:235
 msgid "View 'Votes and Proceedings'"
-msgstr "view 'votes and proceedings'"
+msgstr "view votes and proceedings"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:237
 msgid "Add Consignatory"
-msgstr "add consignatory"
+msgstr "add cosignatory"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:238
 msgid "Delete Consignatory"
-msgstr "delete consignatory"
+msgstr "delete cosignatory"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:239
 msgid "Edit Consignatory"
-msgstr "edit consignatory"
+msgstr "edit cosignatory"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:24
 msgid "Delete item scheduling"
@@ -658,7 +664,7 @@ msgstr "view bill"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:93
 msgid "Admin User Record"
-msgstr "admin user record"
+msgstr "administrator user record"
 
 #: src/bungeni.models/bungeni/models/permissions.zcml:94
 msgid "Edit historical data"
@@ -714,40 +720,55 @@ msgstr "site manager"
 
 #: src/bungeni.models/bungeni/models/roles.zcml:9
 msgid "Bungeni Admin"
-msgstr "bungeni admin"
+msgstr "bungeni administrator"
 
 #~ msgid "Female"
 #~ msgstr "female"
+
 #~ msgid "Male"
 #~ msgstr "male"
+
 #~ msgid "No"
 #~ msgstr "no"
+
 #~ msgid "Oral"
 #~ msgstr "oral"
+
 #~ msgid "Ordinary"
 #~ msgstr "ordinary"
+
 #~ msgid "Private Notice"
 #~ msgstr "private notice"
+
 #~ msgid "Speakers Office"
 #~ msgstr "speakers office"
+
 #~ msgid "Written"
 #~ msgstr "written"
+
 #~ msgid "Yes"
 #~ msgstr "yes"
+
 #~ msgid "active"
 #~ msgstr "active"
+
 #~ msgid "deceased"
 #~ msgstr "deceased"
+
 #~ msgid "elected"
 #~ msgstr "elected"
+
 #~ msgid "ex officio"
 #~ msgstr "ex officio"
+
 #~ msgid "inactive"
 #~ msgstr "inactive"
+
 #~ msgid "initial"
 #~ msgstr "initial"
+
 #~ msgid "nominated"
 #~ msgstr "nominated"
+
 #~ msgid "subsequent"
 #~ msgstr "subsequent"
-
