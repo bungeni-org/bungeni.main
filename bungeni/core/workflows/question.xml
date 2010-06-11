@@ -8,6 +8,10 @@
     <state id="working_draft" title="Working Draft">
         <grant permission="bungeni.question.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.question.Edit" role="bungeni.Speaker" />
+        <!-- actions.received_by_clerk, working_draft->received as clerk,
+        even with this permission, that gives KeyError: 'submit-to-clerk'
+        <grant permission="bungeni.question.Submit" role="bungeni.Clerk" />
+        -->
         <grant permission="bungeni.question.Delete" role="bungeni.Clerk" />
         <grant permission="bungeni.question.Delete" role="bungeni.Speaker" />
         <grant permission="zope.View" role="bungeni.Clerk" />
@@ -202,14 +206,14 @@
     <transition id="submit-to-clerk"
         title="Submit to Clerk"
         trigger="manual"
-        source="draft"
+        source="working_draft draft"
         destination="submitted"
         permission="bungeni.question.Submit"
         action="bungeni.core.workflows.question.actions.submit_to_clerk"
         condition=""
         event=".interfaces.IQuestionSubmittedEvent"
         order="1"
-    />
+    /><!-- added working_draft as possible source, see actions.received_by_clerk --> 
     <transition id="received-by-clerk"
         title="Receive"
         trigger="manual"
