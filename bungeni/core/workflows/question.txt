@@ -50,8 +50,7 @@ Assign roles.
   >>> global_prm.assignRoleToPrincipal( u'bungeni.Speaker', 'speaker')
   >>> global_prm.assignRoleToPrincipal( u'bungeni.Minister', 'minister')
 
-  >>> zope.security.management.newInteraction(create_participation(member))
-  
+
 Content creation
 ----------------
 
@@ -153,26 +152,24 @@ Verify that all states are reachable.
   >>> wf = IWorkflow(question)
   >>> verify_workflow(wf)
 
-Questions transitions (as bungeni.MP)
+Questions transitions 
 -------------------------------------
-
-!+ change tests below from using actions to using fireTransition()
-
-!+ is it possible to not hardwire the initial transition i.e. let it decide 
-whether to start into "draft" (mp is the current principal) or into 
-"working_draft" (clerk is the current principal) ?
-
-!+ how to check, at every state, who has what permission ?
-
 
   >>> from ore.workflow.interfaces import IWorkflowInfo
   >>> from bungeni.core.workflows.question import actions 
   >>> info = IWorkflowInfo(question)
 
+PRINCIPAL: member 
 
+  >>> zope.security.management.newInteraction(create_participation(member))
+  >>> from bungeni.models.utils import get_principal_id
+  >>> get_principal_id()
+  'member'
+  
 "create" - assigns the role of "Owner" and sets the parliament id.
 
-  >>> info.fireTransition("create") # actions.create(info, question)
+  >>> #actions.create(info, question)
+  >>> info.fireTransition("create")
   >>> question.status
   'draft'
   >>> question.parliament_id == parliament.parliament_id
@@ -183,9 +180,12 @@ whether to start into "draft" (mp is the current principal) or into
   >>> tuple(prm.getRolesForPrincipal("clerk"))
   ()
   
-"submit-to-clerk" - 
+"submit-to-clerk"
 
-  >>> info.fireTransition("submit-to-clerk") # actions.submit_to_clerk(info, question)
+  >>> #actions.submit_to_clerk(info, question)
+  >>> info.fireTransition("submit-to-clerk")
+  >>> question.status
+  'submitted'
   >>> from bungeni.core.interfaces import IVersioned
   >>> versions = IVersioned(question)
   >>> len(versions)
@@ -199,22 +199,45 @@ whether to start into "draft" (mp is the current principal) or into
   >>> #tuple(rpm.getPermissionsForRole(u'bungeni.Owner'))
   >>> #tuple(rpm.getRolesForPermission(u'bungeni.question.Edit'))
 
+PRINCIPAL: clerk
 
-"Received by clerk".
+  >>> zope.security.management.endInteraction()
+  >>> zope.security.management.newInteraction(create_participation(clerk))
+  >>> get_principal_id()
+  'clerk'
+
+"Received by clerk"
+!+ trying to execute the *transition* --as the clerk or as the member-- gives:
+Failed example:
+    info.fireTransition("received-by-clerk")
+Exception raised:
+      File "/home/undesa/bungeni/cap_installs/bungeni_install/bungeni/releases/20100305100101/eggs/ore.workflow-1.0.4-py2.5.egg/ore/workflow/workflow.py", line 97, in getTransition
+        transition = self._id_transitions[transition_id]
+    KeyError: 'received-by-clerk'
 
   >>> actions.received_by_clerk(info, question)
+  >>> #info.fireTransition("received-by-clerk")
+  >>> #question.status
+  #'received'
   >>> len(versions)
   2
 
-"Require edit by MP".
+
+"Require edit by MP"
 
   >>> actions.mp_clarify(info, question)
+  >>> #info.fireTransition("mp-clarify")
+  >>> #question.status
+  #'clarify_mp'
   >>> len(versions)
   3
 
 "Complete".
 
   >>> actions.complete(info, question)
+  >>> #info.fireTransition("complete")
+  >>> #question.status
+  #'complete'
   >>> len(versions)
   5
 

@@ -112,7 +112,6 @@ def setBungeniOwner(context):
 
 def createVersion(info, context):
     """Create a new version of an object and return it."""
-
     instance = removeSecurityProxy(context)
     versions =  bungeni.core.interfaces.IVersioned(instance)
     versions.create('New version created upon workflow transition.')

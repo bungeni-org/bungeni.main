@@ -188,6 +188,7 @@
         destination="draft"
         action="bungeni.core.workflows.question.actions.create"
         condition=""
+        order="0"
     />
     <transition id="create-on-behalf-of"
         title="Create"
@@ -196,6 +197,7 @@
         destination="working_draft"
         action="bungeni.core.workflows.question.actions.create"
         condition="bungeni.core.workflows.question.conditions.user_is_not_context_owner"
+        order="0"
     />
     <transition id="submit-to-clerk"
         title="Submit to Clerk"
@@ -206,6 +208,7 @@
         action="bungeni.core.workflows.question.actions.submit_to_clerk"
         condition=""
         event=".interfaces.IQuestionSubmittedEvent"
+        order="1"
     />
     <transition id="received-by-clerk"
         title="Receive"
@@ -216,6 +219,7 @@
         action="bungeni.core.workflows.question.actions.received_by_clerk"
         condition=""
         event=".interfaces.IQuestionReceivedEvent"
+        order="2"
     />
     <!--
     If a question is flagged by the Clerk /' Speakers office as 
@@ -241,6 +245,7 @@
         condition=""
         event=".interfaces.IQuestionClarifyEvent"
         require_confirmation="true"
+        order="3"
     />
     <!--
     After the Clerk's Office is through with the Notices reviews and there 
@@ -261,6 +266,7 @@
         action="bungeni.core.workflows.question.actions.complete"
         condition=""
         event=".interfaces.IQuestionCompleteEvent"
+        order="4"
     />
     <transition id="complete-speaker"
         title="Submit to the Speaker Office"
@@ -271,6 +277,7 @@
         action="bungeni.core.workflows.question.actions.complete"
         condition=""
         event=".interfaces.IQuestionCompleteEvent"
+        order="b5"
     />
     <!--
     the Speaker's office may decide that a proposed Question is “admissible”, 
@@ -290,6 +297,7 @@
         action="bungeni.core.workflows.question.actions.approve"
         condition=""
         event=""
+        order="6"
     />
     <transition id="reject"
         title="Reject"
@@ -301,6 +309,7 @@
         condition=""
         event=".interfaces.IQuestionRejectedEvent"
         require_confirmation="true"
+        order="7"
     />
     <transition id="require-amendment"
         title="Needs Clarification"
@@ -312,6 +321,7 @@
         condition=""
         event=""
         require_confirmation="true"
+        order="8"
     />
     <!--
     A question that requires clarification/amendmends can be resubmitted by 
@@ -326,6 +336,7 @@
         action="bungeni.core.workflows.question.actions.complete_clarify"
         condition=""
         event=""
+        order="9"
     />
     <!--
     After a question is amended it can be resubmitted to the clerks office.
@@ -339,6 +350,7 @@
         action="bungeni.core.workflows.question.actions.submit_to_clerk"
         condition=""
         event=""
+        order="10"
     />
     <!--
     Among the “admissible” questions the Speaker or the Clerk's office will 
@@ -359,6 +371,7 @@
         action=""
         condition="bungeni.core.workflows.question.conditions.is_oral_response"
         event=".interfaces.IQuestionSchedulePendingEvent"
+        order="11"
     />
     <transition id="schedule"
         title="Schedule"
@@ -368,6 +381,7 @@
         permission="bungeni.question.Schedule"
         action="bungeni.core.workflows.question.actions.schedule"
         event=".interfaces.IQuestionScheduledEvent"
+        order="12"
     />
     <!--
     Questions which are flagged as “requiring written response” are never 
@@ -382,6 +396,7 @@
         action="bungeni.core.workflows.question.actions.send_to_ministry"
         condition="bungeni.core.workflows.question.conditions.is_written_response"
         event=".interfaces.IQuestionSentToMinistryEvent"
+        order="13"
     />
     <!--
     Questions can be forwarded to another ministry to be answered.
@@ -396,6 +411,7 @@
         condition="bungeni.core.workflows.question.conditions.is_ministry_set"
         event=".interfaces.IQuestionSentToMinistryEvent"
         require_confirmation="true"
+        order="14"
     />
     <transition id="submit-response"
         title="Submit Response"
@@ -405,6 +421,7 @@
         permission="bungeni.response.Submit" 
         condition="bungeni.core.workflows.utils.response_allow_submit"
         event="bungeni.core.workflows.interfaces.IResponseSubmittedEvent"
+        order="15"
     />
     <transition id="re-draft-response"
         title="Redraft Response"
@@ -415,6 +432,7 @@
         condition=""
         action=""
         event=""
+        order="16"
     />
     <transition id="complete-response"
         title="Complete Response"
@@ -423,6 +441,7 @@
         destination="response_complete"
         permission="bungeni.response.Complete" 
         event="bungeni.core.workflows.interfaces.IResponseCompletedEvent"
+        order="17"
     />
     <transition id="elapse"
         title="Elapse"
@@ -434,6 +453,7 @@
         condition=""
         event=""
         require_confirmation="true"
+        order="18"
     />
     <!--
     All admissible questions awaiting an oral response etc. and flag them for 
@@ -449,6 +469,7 @@
         action="bungeni.core.workflows.question.actions.defer"
         condition=""
         event=".interfaces.IQuestionDeferredEvent"
+        order="19"
     />
     <!--
     A deferred question may be send to a ministry for a written response
@@ -462,6 +483,7 @@
         action="bungeni.core.workflows.question.actions.send_to_ministry"
         condition="bungeni.core.workflows.question.conditions.is_ministry_set"
         event=".interfaces.IQuestionSentToMinistryEvent"
+        order="20"
     />
     <!--
     A defered question can be rescheduled later
@@ -475,6 +497,7 @@
         action="bungeni.core.workflows.question.actions.schedule"
         condition="bungeni.core.workflows.question.conditions.is_oral_response"
         event=""
+        order="21"
     />
     <!--
     In a sitting the question is debated, it gets postponed if it could not be 
@@ -490,6 +513,7 @@
         action="bungeni.core.workflows.question.actions.postpone"
         condition=""
         event=".interfaces.IQuestionPostponedEvent"
+        order="22"
     />
     <transition id="continue-debate"
         title="Debate adjourned"
@@ -499,6 +523,7 @@
         permission="bungeni.question.Schedule"
         condition=""
         event=""
+        order="23"
     />
     <!--
     Postponed question can be send to a ministry for a written response.
@@ -512,6 +537,7 @@
         action="bungeni.core.workflows.question.actions.send_to_ministry"
         condition="bungeni.core.workflows.question.conditions.is_ministry_set"
         event=".interfaces.IQuestionSentToMinistryEvent"
+        order="24"
     />
     <!--
     Question was debated in the plenary
@@ -524,6 +550,7 @@
         permission="bungeni.question.Schedule"
         action="bungeni.core.workflows.question.actions.respondSitting"
         event=".interfaces.IQuestionDebatedEvent"
+        order="25"
     />
     <!--
     The MP can withdraw his question at (almost) any stage i.e the stages where 
@@ -539,6 +566,7 @@
         condition=""
         require_confirmation="true"
         event=""
+        order="26"
     />
     <transition id="withdraw_public"
         title="Withdraw"
@@ -551,6 +579,7 @@
         condition=""
         require_confirmation="true"
         event=""
+        order="27"
     />
 
 </workflow>
