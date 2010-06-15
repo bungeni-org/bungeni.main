@@ -53,6 +53,26 @@ def list_permissions(item):
                 for transition in wf.getTransitions(state))
 
 def setup_adapters():
+    
+    # generic workflow adapters
+    
+    # this is an attempt (that does not give the desired result) to get
+    #   bungeni.core.workflows.states.StateWorkflowInfo 
+    # to be used as the factory provider for
+    #   ore.workflow.interfaces.IWorkflowInfo
+    
+    zope.component.provideAdapter(
+        adapts=[ore.alchemist.interfaces.IAlchemistContent], 
+        provides=ore.workflow.interfaces.IWorkflowInfo,
+        factory=bungeni.core.workflows.states.StateWorkflowInfo)
+    
+    zope.component.provideAdapter(
+        adapts=[ore.alchemist.interfaces.IAlchemistContent], 
+        provides=ore.workflow.interfaces.IWorkflowState,
+        factory=bungeni.core.workflows.states.WorkflowState) 
+    
+    # content workflow
+    
     zope.component.provideAdapter(
         bungeni.core.workflows.states.WorkflowState,
         (bungeni.models.interfaces.IBungeniContent,))

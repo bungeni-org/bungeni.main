@@ -30,7 +30,7 @@ Questions are versionable.
 
 Principals
 ----------
-  
+
 In order to create a participation, we need a principal:
 
   >>> from bungeni.core.testing import create_principal, create_participation
@@ -158,28 +158,66 @@ Questions transitions
   >>> from ore.workflow.interfaces import IWorkflowInfo
   >>> from bungeni.core.workflows.question import actions 
   >>> info = IWorkflowInfo(question)
+  >>> info
+  <ore.workflow.workflow.WorkflowInfo object at ...>
+  
+XXX The IWorkflowInfo interface triggers the incorrect adapter... we want 
+the factory class bungeni.core.workflows.states.StateWorkflowInfo to be used, 
+but all attempts to configure this for within this testing context
+[in: core/ftesting.zcml, core.workflows.testing.setup_adapters()] 
+are so far unsuccessful. So, instead, we explictly adapt the question:
 
-PRINCIPAL: member 
+  >>> from bungeni.core.workflows.states import StateWorkflowInfo
+  >>> info = StateWorkflowInfo(question)
+  >>> info
+  <bungeni.core.workflows.states.StateWorkflowInfo object at ...>
+
+PRINCIPAL: member
 
   >>> zope.security.management.newInteraction(create_participation(member))
   >>> from bungeni.models.utils import get_principal_id
   >>> get_principal_id()
   'member'
-  
+
+-------------------------------------
 "create" - assigns the role of "Owner" and sets the parliament id.
 
   >>> #actions.create(info, question)
   >>> info.fireTransition("create")
   >>> question.status
   'draft'
-  >>> question.parliament_id == parliament.parliament_id
+  >>> question.parliament_id==parliament.parliament_id
   True
-
+  
   >>> tuple(prm.getRolesForPrincipal("member"))
   ((u'bungeni.Owner', PermissionSetting: Allow),)
   >>> tuple(prm.getRolesForPrincipal("clerk"))
   ()
-  
+
+
+PERMISSIONS for member principal for "draft" question.status
+
+  >>> from zope.security import checkPermission
+  >>> [ checkPermission("bungeni.question.Edit", question), 
+  ...   checkPermission("zope.View", question), 
+  ...   checkPermission("bungeni.question.Delete", question), 
+  ...   checkPermission("bungeni.fileattachment.Add", question), 
+  ...   checkPermission("bungeni.fileattachment.Edit", question) ]
+  [True, True, True, True, True]
+
+To check permissions for other roles, such as:
+    <deny permission="bungeni.question.Add" role="bungeni.MP" />
+    <deny permission="zope.View" role="bungeni.MP" />
+    <deny permission="zope.View" role="bungeni.Clerk" />
+    <deny permission="zope.View" role="bungeni.Speaker" />
+    <deny permission="zope.View" role="bungeni.Minister" />
+    <deny permission="zope.View" role="bungeni.Everybody" /> 
+    <deny permission="zope.View" role="bungeni.Anybody" />
+would require to run with an interaction, one with a participation that 
+consists of a principal with the specific role.
+
+
+-------------------------------------
 "submit-to-clerk"
 
   >>> #actions.submit_to_clerk(info, question)
@@ -201,13 +239,18 @@ PRINCIPAL: member
 
 PRINCIPAL: clerk
 
+Switch to the clerk, and check permission for Clerk on the question 
+in "submitted" state:
+
   >>> zope.security.management.endInteraction()
   >>> zope.security.management.newInteraction(create_participation(clerk))
   >>> get_principal_id()
   'clerk'
 
-"Received by clerk"
-!+ trying to execute the *transition* --as the clerk or as the member-- gives:
+-------------------------------------
+"received-by-clerk"
+
+XXX trying to execute the *transition* --as the clerk or as the member-- gives:
 Failed example:
     info.fireTransition("received-by-clerk")
 Exception raised:
@@ -215,12 +258,15 @@ Exception raised:
         transition = self._id_transitions[transition_id]
     KeyError: 'received-by-clerk'
 
-  >>> actions.received_by_clerk(info, question)
-  >>> #info.fireTransition("received-by-clerk")
-  >>> #question.status
-  #'received'
+  >>> #actions.received_by_clerk(info, question)
+  >>> info.fireTransition("received-by-clerk")
+  >>> question.status
+  'received'
   >>> len(versions)
   2
+  
+
+
 
 
 "Require edit by MP"
