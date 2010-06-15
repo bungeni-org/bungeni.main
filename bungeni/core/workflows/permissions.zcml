@@ -5,8 +5,9 @@
   <!-- Question Workflow permissions -->
   <!-- Permissions that are not related to workflow transitions (add, edit, delete,...) 
     are to be defined in bungeni.core.roles/permissions -->
-  <permission id="bungeni.question.Submit" title="Submit a question" />
+    <permission id="bungeni.question.Submit" title="Submit a question to Clerk Office" />
   <permission id="bungeni.question.Recieve" title="Receive a question" />
+    <permission id="bungeni.question.Complete" title="Submit a question to Speaker Office" />
   <permission id="bungeni.question.clerk.Review" title="Review a question" />
   <permission id="bungeni.question.speaker.Review"  title="Speaker review a question" />
   <permission id="bungeni.question.Schedule" title="Schedule a question" />
