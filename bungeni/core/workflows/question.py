@@ -65,12 +65,6 @@ class actions(object):
         """The question is recieved by the clerks office, 
         the clerk can edit the question.
         """
-        # check if coming from "submitted" (or directly from "working_draft")
-        wf_trail = dbutils.getQuestionWorkflowTrail(context)
-        if "submitted" not in wf_trail:
-            print "QUESTION received [NO submitted]:", wf_trail
-            # !+ why does this give: KeyError: 'submit-to-clerk' ?
-            #info.fireTransition("submit-to-clerk")
         utils.createVersion(info, context)
     
     @staticmethod

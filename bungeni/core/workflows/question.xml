@@ -8,10 +8,6 @@
     <state id="working_draft" title="Working Draft">
         <grant permission="bungeni.question.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.question.Edit" role="bungeni.Speaker" />
-        <!-- actions.received_by_clerk, working_draft->received as clerk,
-        even with this permission, that gives KeyError: 'submit-to-clerk'
-        <grant permission="bungeni.question.Submit" role="bungeni.Clerk" />
-        -->
         <grant permission="bungeni.question.Delete" role="bungeni.Clerk" />
         <grant permission="bungeni.question.Delete" role="bungeni.Speaker" />
         <grant permission="zope.View" role="bungeni.Clerk" />
@@ -51,12 +47,6 @@
     </state>
 
     <state id="received" title="Received by clerk">
-        <!-- for when not coming via "submitted" (working_draft) -->
-        <deny permission="bungeni.question.Edit" role="bungeni.Owner" />
-        <deny permission="bungeni.question.Delete" role="bungeni.Owner" />
-        <deny permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
-        <deny permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
-        <!-- -->
         <grant permission="bungeni.question.Edit" role="bungeni.Clerk" />
         <grant permission="zope.View" role="bungeni.Clerk" />
         <grant permission="zope.View" role="bungeni.Speaker" />
@@ -89,9 +79,6 @@
     </state>
 
     <state id="clarify_mp" title="Needs MPs clarification">
-        <!-- for when not coming via "submitted" (working_draft) -->
-        <deny permission="bungeni.question.Delete" role="bungeni.Owner" />
-        <!-- -->
         <grant permission="zope.View" role="bungeni.Owner" />
         <deny permission="bungeni.question.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.question.Edit" role="bungeni.Owner" />
@@ -212,11 +199,11 @@
         condition=""
         event=".interfaces.IQuestionSubmittedEvent"
         order="1"
-    /><!-- added working_draft as possible source, see actions.received_by_clerk --> 
+    />
     <transition id="received-by-clerk"
         title="Receive"
         trigger="manual"
-        source="working_draft submitted"
+        source="submitted"
         destination="received"
         permission="bungeni.question.Recieve"
         action="bungeni.core.workflows.question.actions.received_by_clerk"
@@ -229,9 +216,6 @@
     "requiring editing by the MP" (e.g. missing data etc.) the system sends 
     a notification to the MP to access the question and review it according 
     to Speaker/Clerk's office remarks. 
-    
-    A question in working_draft at the clerks office may also be sent to the
-    MP, for review/clarifications.
 
     Or send to the mp for clarification from clarify_clerk state.
     
@@ -241,7 +225,7 @@
     <transition id="mp-clarify"
         title="Needs Clarification by MP"
         trigger="manual"
-        source="working_draft received clarify_clerk"
+        source="received clarify_clerk"
         destination="clarify_mp"
         permission="bungeni.question.clerk.Review"
         action="bungeni.core.workflows.question.actions.mp_clarify"
@@ -263,7 +247,7 @@
     <transition id="complete"
         title="Submit to the Speaker Office"
         trigger="manual"
-        source="draft received"
+        source="received"
         destination="complete"
         permission="bungeni.question.clerk.Review"
         action="bungeni.core.workflows.question.actions.complete"
@@ -280,7 +264,7 @@
         action="bungeni.core.workflows.question.actions.complete"
         condition=""
         event=".interfaces.IQuestionCompleteEvent"
-        order="b5"
+        order="5"
     />
     <!--
     the Speaker's office may decide that a proposed Question is “admissible”, 
@@ -294,7 +278,7 @@
     <transition id="approve"
         title="Approve"
         trigger="manual"
-        source="draft complete"
+        source="complete"
         destination="admissible"
         permission="bungeni.question.speaker.Review"
         action="bungeni.core.workflows.question.actions.approve"
