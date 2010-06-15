@@ -5,7 +5,7 @@
             table {
 	font: 11px/24px Verdana, Arial, Helvetica, sans-serif;
 	border-collapse: collapse;
-	width: 320px;
+	width: 360px;
 	}
 
 th {
@@ -38,7 +38,8 @@ tr.m0 {background-color: #ffffcc;}
 tr.m1 {background-color: #ffffff;}
 tr.s0 { background-color: #eee; }
 tr.s1 { background-color: #fff; }
-	
+span.ident { font-style:normal; color:gray; }
+span.trig {color:dark-gray;}	
  
             </style></head>
    <h1>bill Workflow States</h1>
@@ -49,8 +50,7 @@ tr.s1 { background-color: #fff; }
          <td>Deny</td>
       </tr>
       <tr class="m1">
-         <td><a name="draft"></a>Draft Bill
-         </td>
+         <td><a name="draft"></a>Draft Bill<br><span class="ident">draft</span></td>
          <td>&nbsp;
             
             <table border="0">
@@ -59,71 +59,71 @@ tr.s1 { background-color: #fff; }
                   <td>Role</td>
                </tr>
                <tr class="s1">
-                  <td>bill.Edit</td>
+                  <td>bungeni.bill.Edit</td>
                   <td>bungeni.Owner</td>
                </tr>
                <tr class="s0">
-                  <td>View</td>
-                  <td>bungeni.Owner</td>
-               </tr>
-               <tr class="s1">
-                  <td>View</td>
-                  <td>bungeni.Clerk</td>
-               </tr>
-               <tr class="s0">
-                  <td>bill.Edit</td>
-                  <td>bungeni.Clerk</td>
-               </tr>
-               <tr class="s1">
-                  <td>bill.Delete</td>
-                  <td>bungeni.Owner</td>
-               </tr>
-               <tr class="s0">
-                  <td>fileattachment.Add</td>
+                  <td>zope.View</td>
                   <td>bungeni.Owner</td>
                </tr>
                <tr class="s1">
-                  <td>fileattachment.Add</td>
+                  <td>zope.View</td>
                   <td>bungeni.Clerk</td>
                </tr>
                <tr class="s0">
-                  <td>fileattachment.Add</td>
+                  <td>bungeni.bill.Edit</td>
+                  <td>bungeni.Clerk</td>
+               </tr>
+               <tr class="s1">
+                  <td>bungeni.bill.Delete</td>
+                  <td>bungeni.Owner</td>
+               </tr>
+               <tr class="s0">
+                  <td>bungeni.fileattachment.Add</td>
+                  <td>bungeni.Owner</td>
+               </tr>
+               <tr class="s1">
+                  <td>bungeni.fileattachment.Add</td>
+                  <td>bungeni.Clerk</td>
+               </tr>
+               <tr class="s0">
+                  <td>bungeni.fileattachment.Add</td>
                   <td>bungeni.Speaker</td>
                </tr>
                <tr class="s1">
-                  <td>fileattachment.Edit</td>
+                  <td>bungeni.fileattachment.Edit</td>
                   <td>bungeni.Owner</td>
                </tr>
                <tr class="s0">
-                  <td>fileattachment.Edit</td>
+                  <td>bungeni.fileattachment.Edit</td>
                   <td>bungeni.Clerk</td>
                </tr>
                <tr class="s1">
-                  <td>fileattachment.Edit</td>
+                  <td>bungeni.fileattachment.Edit</td>
                   <td>bungeni.Speaker</td>
                </tr>
                <tr class="s0">
-                  <td>consignatory.Add</td>
+                  <td>bungeni.consignatory.Add</td>
                   <td>bungeni.Owner</td>
                </tr>
                <tr class="s1">
-                  <td>consignatory.Delete</td>
+                  <td>bungeni.consignatory.Delete</td>
                   <td>bungeni.Owner</td>
                </tr>
                <tr class="s0">
-                  <td>consignatory.Add</td>
+                  <td>bungeni.consignatory.Add</td>
                   <td>bungeni.Clerk</td>
                </tr>
                <tr class="s1">
-                  <td>consignatory.Delete</td>
+                  <td>bungeni.consignatory.Delete</td>
                   <td>bungeni.Clerk</td>
                </tr>
                <tr class="s0">
-                  <td>consignatory.Add</td>
+                  <td>bungeni.consignatory.Add</td>
                   <td>bungeni.Speaker</td>
                </tr>
                <tr class="s1">
-                  <td>consignatory.Delete</td>
+                  <td>bungeni.consignatory.Delete</td>
                   <td>bungeni.Speaker</td>
                </tr>
             </table>
@@ -136,27 +136,26 @@ tr.s1 { background-color: #fff; }
                   <td>Role</td>
                </tr>
                <tr class="s1">
-                  <td>View</td>
+                  <td>zope.View</td>
                   <td>bungeni.MP</td>
                </tr>
                <tr class="s0">
-                  <td>View</td>
+                  <td>zope.View</td>
                   <td>bungeni.Minister</td>
                </tr>
                <tr class="s1">
-                  <td>View</td>
+                  <td>zope.View</td>
                   <td>bungeni.Everybody</td>
                </tr>
                <tr class="s0">
-                  <td>View</td>
+                  <td>zope.View</td>
                   <td>bungeni.Anybody</td>
                </tr>
             </table>
          </td>
       </tr>
       <tr class="m0">
-         <td><a name="gazetted"></a>Bill Published in Gazette
-         </td>
+         <td><a name="gazetted"></a>Bill Published in Gazette<br><span class="ident">gazetted</span></td>
          <td>&nbsp;
             
             <table border="0">
@@ -165,35 +164,35 @@ tr.s1 { background-color: #fff; }
                   <td>Role</td>
                </tr>
                <tr class="s1">
-                  <td>View</td>
+                  <td>zope.View</td>
                   <td>bungeni.Clerk</td>
                </tr>
                <tr class="s0">
-                  <td>bill.Edit</td>
+                  <td>bungeni.bill.Edit</td>
                   <td>bungeni.Clerk</td>
                </tr>
                <tr class="s1">
-                  <td>View</td>
+                  <td>zope.View</td>
                   <td>bungeni.MP</td>
                </tr>
                <tr class="s0">
-                  <td>View</td>
+                  <td>zope.View</td>
                   <td>bungeni.Speaker</td>
                </tr>
                <tr class="s1">
-                  <td>View</td>
+                  <td>zope.View</td>
                   <td>bungeni.Minister</td>
                </tr>
                <tr class="s0">
-                  <td>View</td>
+                  <td>zope.View</td>
                   <td>bungeni.Everybody</td>
                </tr>
                <tr class="s1">
-                  <td>View</td>
+                  <td>zope.View</td>
                   <td>bungeni.Anybody</td>
                </tr>
                <tr class="s0">
-                  <td>groupitemassignment.Add</td>
+                  <td>bungeni.groupitemassignment.Add</td>
                   <td>bungeni.Clerk</td>
                </tr>
             </table>
@@ -206,27 +205,26 @@ tr.s1 { background-color: #fff; }
                   <td>Role</td>
                </tr>
                <tr class="s1">
-                  <td>bill.Edit</td>
+                  <td>bungeni.bill.Edit</td>
                   <td>bungeni.Owner</td>
                </tr>
                <tr class="s0">
-                  <td>fileattachment.Add</td>
+                  <td>bungeni.fileattachment.Add</td>
                   <td>bungeni.Owner</td>
                </tr>
                <tr class="s1">
-                  <td>fileattachment.Edit</td>
+                  <td>bungeni.fileattachment.Edit</td>
                   <td>bungeni.Owner</td>
                </tr>
                <tr class="s0">
-                  <td>bill.Delete</td>
+                  <td>bungeni.bill.Delete</td>
                   <td>bungeni.Owner</td>
                </tr>
             </table>
          </td>
       </tr>
       <tr class="m1">
-         <td><a name="first_reading"></a>First Reading
-         </td>
+         <td><a name="first_reading"></a>First Reading<br><span class="ident">first_reading</span></td>
          <td>&nbsp;
             
             <table border="0">
@@ -247,8 +245,7 @@ tr.s1 { background-color: #fff; }
          </td>
       </tr>
       <tr class="m0">
-         <td><a name="first_reading_postponed"></a>First Reading Postponed
-         </td>
+         <td><a name="first_reading_postponed"></a>First Reading Postponed<br><span class="ident">first_reading_postponed</span></td>
          <td>&nbsp;
             
             <table border="0">
@@ -269,8 +266,7 @@ tr.s1 { background-color: #fff; }
          </td>
       </tr>
       <tr class="m1">
-         <td><a name="first_committee"></a>First Committee
-         </td>
+         <td><a name="first_committee"></a>First Committee<br><span class="ident">first_committee</span></td>
          <td>&nbsp;
             
             <table border="0">
@@ -288,35 +284,34 @@ tr.s1 { background-color: #fff; }
                   <td>Role</td>
                </tr>
                <tr class="s1">
-                  <td>consignatory.Add</td>
+                  <td>bungeni.consignatory.Add</td>
                   <td>bungeni.Owner</td>
                </tr>
                <tr class="s0">
-                  <td>consignatory.Delete</td>
+                  <td>bungeni.consignatory.Delete</td>
                   <td>bungeni.Owner</td>
                </tr>
                <tr class="s1">
-                  <td>consignatory.Add</td>
+                  <td>bungeni.consignatory.Add</td>
                   <td>bungeni.Clerk</td>
                </tr>
                <tr class="s0">
-                  <td>consignatory.Delete</td>
+                  <td>bungeni.consignatory.Delete</td>
                   <td>bungeni.Clerk</td>
                </tr>
                <tr class="s1">
-                  <td>consignatory.Add</td>
+                  <td>bungeni.consignatory.Add</td>
                   <td>bungeni.Speaker</td>
                </tr>
                <tr class="s0">
-                  <td>consignatory.Delete</td>
+                  <td>bungeni.consignatory.Delete</td>
                   <td>bungeni.Speaker</td>
                </tr>
             </table>
          </td>
       </tr>
       <tr class="m0">
-         <td><a name="second_reading"></a>Second Reading
-         </td>
+         <td><a name="second_reading"></a>Second Reading<br><span class="ident">second_reading</span></td>
          <td>&nbsp;
             
             <table border="0">
@@ -334,35 +329,34 @@ tr.s1 { background-color: #fff; }
                   <td>Role</td>
                </tr>
                <tr class="s1">
-                  <td>consignatory.Add</td>
+                  <td>bungeni.consignatory.Add</td>
                   <td>bungeni.Owner</td>
                </tr>
                <tr class="s0">
-                  <td>consignatory.Delete</td>
+                  <td>bungeni.consignatory.Delete</td>
                   <td>bungeni.Owner</td>
                </tr>
                <tr class="s1">
-                  <td>consignatory.Add</td>
+                  <td>bungeni.consignatory.Add</td>
                   <td>bungeni.Clerk</td>
                </tr>
                <tr class="s0">
-                  <td>consignatory.Delete</td>
+                  <td>bungeni.consignatory.Delete</td>
                   <td>bungeni.Clerk</td>
                </tr>
                <tr class="s1">
-                  <td>consignatory.Add</td>
+                  <td>bungeni.consignatory.Add</td>
                   <td>bungeni.Speaker</td>
                </tr>
                <tr class="s0">
-                  <td>consignatory.Delete</td>
+                  <td>bungeni.consignatory.Delete</td>
                   <td>bungeni.Speaker</td>
                </tr>
             </table>
          </td>
       </tr>
       <tr class="m1">
-         <td><a name="second_reading_postponed"></a>Second Reading Postponed
-         </td>
+         <td><a name="second_reading_postponed"></a>Second Reading Postponed<br><span class="ident">second_reading_postponed</span></td>
          <td>&nbsp;
             
             <table border="0">
@@ -383,8 +377,7 @@ tr.s1 { background-color: #fff; }
          </td>
       </tr>
       <tr class="m0">
-         <td><a name="whole_house"></a>Whole House
-         </td>
+         <td><a name="whole_house"></a>Whole House<br><span class="ident">whole_house</span></td>
          <td>&nbsp;
             
             <table border="0">
@@ -405,8 +398,7 @@ tr.s1 { background-color: #fff; }
          </td>
       </tr>
       <tr class="m1">
-         <td><a name="whole_house_postponed"></a>Whole House Postponed
-         </td>
+         <td><a name="whole_house_postponed"></a>Whole House Postponed<br><span class="ident">whole_house_postponed</span></td>
          <td>&nbsp;
             
             <table border="0">
@@ -427,8 +419,7 @@ tr.s1 { background-color: #fff; }
          </td>
       </tr>
       <tr class="m0">
-         <td><a name="second_committee"></a>Second Committee
-         </td>
+         <td><a name="second_committee"></a>Second Committee<br><span class="ident">second_committee</span></td>
          <td>&nbsp;
             
             <table border="0">
@@ -449,8 +440,7 @@ tr.s1 { background-color: #fff; }
          </td>
       </tr>
       <tr class="m1">
-         <td><a name="report_reading"></a>Report Reading
-         </td>
+         <td><a name="report_reading"></a>Report Reading<br><span class="ident">report_reading</span></td>
          <td>&nbsp;
             
             <table border="0">
@@ -471,8 +461,7 @@ tr.s1 { background-color: #fff; }
          </td>
       </tr>
       <tr class="m0">
-         <td><a name="report_reading_postponed"></a>Report Reading Postponed
-         </td>
+         <td><a name="report_reading_postponed"></a>Report Reading Postponed<br><span class="ident">report_reading_postponed</span></td>
          <td>&nbsp;
             
             <table border="0">
@@ -493,8 +482,7 @@ tr.s1 { background-color: #fff; }
          </td>
       </tr>
       <tr class="m1">
-         <td><a name="third_reading"></a>Third Reading
-         </td>
+         <td><a name="third_reading"></a>Third Reading<br><span class="ident">third_reading</span></td>
          <td>&nbsp;
             
             <table border="0">
@@ -515,8 +503,7 @@ tr.s1 { background-color: #fff; }
          </td>
       </tr>
       <tr class="m0">
-         <td><a name="third_reading_postponed"></a>Third Reading Postponed
-         </td>
+         <td><a name="third_reading_postponed"></a>Third Reading Postponed<br><span class="ident">third_reading_postponed</span></td>
          <td>&nbsp;
             
             <table border="0">
@@ -537,8 +524,7 @@ tr.s1 { background-color: #fff; }
          </td>
       </tr>
       <tr class="m1">
-         <td><a name="withdrawn_public"></a>Bill Withdrawn
-         </td>
+         <td><a name="withdrawn_public"></a>Bill Withdrawn<br><span class="ident">withdrawn_public</span></td>
          <td>&nbsp;
             
             <table border="0">
@@ -556,43 +542,42 @@ tr.s1 { background-color: #fff; }
                   <td>Role</td>
                </tr>
                <tr class="s1">
-                  <td>bill.Edit</td>
+                  <td>bungeni.bill.Edit</td>
                   <td>bungeni.Clerk</td>
                </tr>
                <tr class="s0">
-                  <td>fileattachment.Add</td>
+                  <td>bungeni.fileattachment.Add</td>
                   <td>bungeni.Owner</td>
                </tr>
                <tr class="s1">
-                  <td>fileattachment.Add</td>
+                  <td>bungeni.fileattachment.Add</td>
                   <td>bungeni.Clerk</td>
                </tr>
                <tr class="s0">
-                  <td>fileattachment.Add</td>
+                  <td>bungeni.fileattachment.Add</td>
                   <td>bungeni.Speaker</td>
                </tr>
                <tr class="s1">
-                  <td>fileattachment.Edit</td>
+                  <td>bungeni.fileattachment.Edit</td>
                   <td>bungeni.Owner</td>
                </tr>
                <tr class="s0">
-                  <td>fileattachment.Edit</td>
+                  <td>bungeni.fileattachment.Edit</td>
                   <td>bungeni.Clerk</td>
                </tr>
                <tr class="s1">
-                  <td>fileattachment.Edit</td>
+                  <td>bungeni.fileattachment.Edit</td>
                   <td>bungeni.Speaker</td>
                </tr>
                <tr class="s0">
-                  <td>groupitemassignment.Add</td>
+                  <td>bungeni.groupitemassignment.Add</td>
                   <td>bungeni.Clerk</td>
                </tr>
             </table>
          </td>
       </tr>
       <tr class="m0">
-         <td><a name="approved"></a>Approved Bill
-         </td>
+         <td><a name="approved"></a>Approved Bill<br><span class="ident">approved</span></td>
          <td>&nbsp;
             
             <table border="0">
@@ -610,43 +595,42 @@ tr.s1 { background-color: #fff; }
                   <td>Role</td>
                </tr>
                <tr class="s1">
-                  <td>bill.Edit</td>
+                  <td>bungeni.bill.Edit</td>
                   <td>bungeni.Clerk</td>
                </tr>
                <tr class="s0">
-                  <td>fileattachment.Add</td>
+                  <td>bungeni.fileattachment.Add</td>
                   <td>bungeni.Owner</td>
                </tr>
                <tr class="s1">
-                  <td>fileattachment.Add</td>
+                  <td>bungeni.fileattachment.Add</td>
                   <td>bungeni.Clerk</td>
                </tr>
                <tr class="s0">
-                  <td>fileattachment.Add</td>
+                  <td>bungeni.fileattachment.Add</td>
                   <td>bungeni.Speaker</td>
                </tr>
                <tr class="s1">
-                  <td>groupitemassignment.Add</td>
+                  <td>bungeni.groupitemassignment.Add</td>
                   <td>bungeni.Clerk</td>
                </tr>
                <tr class="s0">
-                  <td>fileattachment.Edit</td>
+                  <td>bungeni.fileattachment.Edit</td>
                   <td>bungeni.Owner</td>
                </tr>
                <tr class="s1">
-                  <td>fileattachment.Edit</td>
+                  <td>bungeni.fileattachment.Edit</td>
                   <td>bungeni.Clerk</td>
                </tr>
                <tr class="s0">
-                  <td>fileattachment.Edit</td>
+                  <td>bungeni.fileattachment.Edit</td>
                   <td>bungeni.Speaker</td>
                </tr>
             </table>
          </td>
       </tr>
       <tr class="m1">
-         <td><a name="rejected"></a>Rejected Bill
-         </td>
+         <td><a name="rejected"></a>Rejected Bill<br><span class="ident">rejected</span></td>
          <td>&nbsp;
             
             <table border="0">
@@ -664,35 +648,35 @@ tr.s1 { background-color: #fff; }
                   <td>Role</td>
                </tr>
                <tr class="s1">
-                  <td>bill.Edit</td>
+                  <td>bungeni.bill.Edit</td>
                   <td>bungeni.Clerk</td>
                </tr>
                <tr class="s0">
-                  <td>fileattachment.Add</td>
+                  <td>bungeni.fileattachment.Add</td>
                   <td>bungeni.Owner</td>
                </tr>
                <tr class="s1">
-                  <td>fileattachment.Add</td>
+                  <td>bungeni.fileattachment.Add</td>
                   <td>bungeni.Clerk</td>
                </tr>
                <tr class="s0">
-                  <td>fileattachment.Add</td>
+                  <td>bungeni.fileattachment.Add</td>
                   <td>bungeni.Speaker</td>
                </tr>
                <tr class="s1">
-                  <td>groupitemassignment.Add</td>
+                  <td>bungeni.groupitemassignment.Add</td>
                   <td>bungeni.Clerk</td>
                </tr>
                <tr class="s0">
-                  <td>fileattachment.Edit</td>
+                  <td>bungeni.fileattachment.Edit</td>
                   <td>bungeni.Owner</td>
                </tr>
                <tr class="s1">
-                  <td>fileattachment.Edit</td>
+                  <td>bungeni.fileattachment.Edit</td>
                   <td>bungeni.Clerk</td>
                </tr>
                <tr class="s0">
-                  <td>fileattachment.Edit</td>
+                  <td>bungeni.fileattachment.Edit</td>
                   <td>bungeni.Speaker</td>
                </tr>
             </table>
@@ -705,166 +689,392 @@ tr.s1 { background-color: #fff; }
          <td>Transition Name</td>
          <td>Source</td>
          <td>Destination</td>
+         <td>Permission</td>
+         <td>Action/Condition</td>
       </tr>
       <tr class="m1">
-         <td>Create</td>
+         <td>Create<br><span class="ident">create-bill</span><br><span class="trig">(A)</span></td>
          <td></td>
          <td><a href="#draft">draft</a><br></td>
+         <td></td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident">bungeni.core.workflows.bill.actions.create</span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m0">
-         <td>Reintroduce</td>
+         <td>Reintroduce<br><span class="ident">reintroduce-withdrawn</span><br><span class="trig">(M)</span></td>
          <td><a href="#withdrawn_public">withdrawn_public</a><br></td>
          <td><a href="#draft">draft</a><br></td>
+         <td></td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m1">
-         <td>Publish in Gazette</td>
+         <td>Publish in Gazette<br><span class="ident">submit-bill</span><br><span class="trig">(M)</span></td>
          <td><a href="#draft">draft</a><br></td>
          <td><a href="#gazetted">gazetted</a><br></td>
+         <td>bungeni.bill.Submit</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident">bungeni.core.workflows.bill.actions.submit</span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m0">
-         <td>Schedule First Reading</td>
+         <td>Schedule First Reading<br><span class="ident">schedule-first</span><br><span class="trig">(M)</span></td>
          <td><a href="#gazetted">gazetted</a><br></td>
          <td><a href="#first_reading">first_reading</a><br></td>
+         <td>bungeni.bill.Schedule</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident">bungeni.core.workflows.bill.actions.schedule_first</span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m1">
-         <td>Postpone First Reading</td>
+         <td>Postpone First Reading<br><span class="ident">postpone-first</span><br><span class="trig">(M)</span></td>
          <td><a href="#first_reading">first_reading</a><br></td>
          <td><a href="#first_reading_postponed">first_reading_postponed</a><br></td>
+         <td>bungeni.bill.Schedule</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident">bungeni.core.workflows.bill.actions.postpone_first</span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m0">
-         <td>Reschedule First Reading</td>
+         <td>Reschedule First Reading<br><span class="ident">reschedule-first</span><br><span class="trig">(M)</span></td>
          <td><a href="#first_reading_postponed">first_reading_postponed</a><br></td>
          <td><a href="#first_reading">first_reading</a><br></td>
+         <td>bungeni.bill.Schedule</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident">bungeni.core.workflows.bill.actions.schedule_first</span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m1">
-         <td>Send to Committee</td>
+         <td>Send to Committee<br><span class="ident">select-first-committee</span><br><span class="trig">(M)</span></td>
          <td><a href="#first_reading">first_reading</a><br></td>
          <td><a href="#first_committee">first_committee</a><br></td>
+         <td>bungeni.bill.SelectCommittee</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m0">
-         <td>Back to First Reading</td>
+         <td>Back to First Reading<br><span class="ident">resend-first-reading-from-committee</span><br><span class="trig">(M)</span></td>
          <td><a href="#first_committee">first_committee</a><br></td>
          <td><a href="#first_reading">first_reading</a><br></td>
+         <td>bungeni.bill.RevertTransitions</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m1">
-         <td>Second Reading Schedule</td>
+         <td>Second Reading Schedule<br><span class="ident">schedule-second-from-first-committee</span><br><span class="trig">(M)</span></td>
          <td><a href="#first_committee">first_committee</a><br></td>
          <td><a href="#second_reading">second_reading</a><br></td>
+         <td>bungeni.bill.Schedule</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident">bungeni.core.workflows.bill.actions.schedule_second</span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m0">
-         <td>Schedule Second Reading</td>
+         <td>Schedule Second Reading<br><span class="ident">schedule-second</span><br><span class="trig">(M)</span></td>
          <td><a href="#first_reading">first_reading</a><br></td>
          <td><a href="#second_reading">second_reading</a><br></td>
+         <td>bungeni.bill.Schedule</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident">bungeni.core.workflows.bill.actions.schedule_second</span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m1">
-         <td>Schedule Second Reading</td>
+         <td>Schedule Second Reading<br><span class="ident">resend-first-schedule-second</span><br><span class="trig">(M)</span></td>
          <td><a href="#second_reading">second_reading</a><br></td>
          <td><a href="#first_reading">first_reading</a><br></td>
+         <td>bungeni.bill.RevertTransitions</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m0">
-         <td>Postpone Second Reading</td>
+         <td>Postpone Second Reading<br><span class="ident">postpone-second</span><br><span class="trig">(M)</span></td>
          <td><a href="#second_reading">second_reading</a><br></td>
          <td><a href="#second_reading_postponed">second_reading_postponed</a><br></td>
+         <td>bungeni.bill.Schedule</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m1">
-         <td>Reschedule Second Reading</td>
+         <td>Reschedule Second Reading<br><span class="ident">reschedule-second</span><br><span class="trig">(M)</span></td>
          <td><a href="#second_reading_postponed">second_reading_postponed</a><br></td>
          <td><a href="#second_reading">second_reading</a><br></td>
+         <td>bungeni.bill.Schedule</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m0">
-         <td>Schedule Whole House Committee</td>
+         <td>Schedule Whole House Committee<br><span class="ident">schedule-whole-house</span><br><span class="trig">(M)</span></td>
          <td><a href="#second_reading">second_reading</a><br></td>
          <td><a href="#whole_house">whole_house</a><br></td>
+         <td>bungeni.bill.Schedule</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m1">
-         <td>Resend Second Reading</td>
+         <td>Resend Second Reading<br><span class="ident">resend-second-reading-from-whole-house</span><br><span class="trig">(M)</span></td>
          <td><a href="#whole_house">whole_house</a><br></td>
          <td><a href="#second_reading">second_reading</a><br></td>
+         <td>bungeni.bill.RevertTransitions</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m0">
-         <td>Postpone Whole House Committee</td>
+         <td>Postpone Whole House Committee<br><span class="ident">postpone-whole-house</span><br><span class="trig">(M)</span></td>
          <td><a href="#whole_house">whole_house</a><br></td>
          <td><a href="#whole_house_postponed">whole_house_postponed</a><br></td>
+         <td>bungeni.bill.Schedule</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m1">
-         <td>Reschedule Whole House Committee</td>
+         <td>Reschedule Whole House Committee<br><span class="ident">reschedule-whole-house</span><br><span class="trig">(M)</span></td>
          <td><a href="#whole_house_postponed">whole_house_postponed</a><br></td>
          <td><a href="#whole_house">whole_house</a><br></td>
+         <td>bungeni.bill.Schedule</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m0">
-         <td>Postpone Second Reading and Whole House Committee</td>
+         <td>Postpone Second Reading and Whole House Committee<br><span class="ident">postpone-second-reading-and-whole-house</span><br><span class="trig">(M)</span></td>
          <td><a href="#whole_house">whole_house</a><br></td>
          <td><a href="#second_reading_postponed">second_reading_postponed</a><br></td>
+         <td>bungeni.bill.Schedule</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m1">
-         <td>Send to Committee</td>
+         <td>Send to Committee<br><span class="ident">select-second-committee</span><br><span class="trig">(M)</span></td>
          <td><a href="#whole_house">whole_house</a><br></td>
          <td><a href="#second_committee">second_committee</a><br></td>
+         <td>bungeni.bill.SelectCommittee</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m0">
-         <td>Resend to Whole House</td>
+         <td>Resend to Whole House<br><span class="ident">resend-whole-house-from-second-committee</span><br><span class="trig">(M)</span></td>
          <td><a href="#second_committee">second_committee</a><br></td>
          <td><a href="#whole_house">whole_house</a><br></td>
+         <td>bungeni.bill.RevertTransitions</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m1">
-         <td>Schedule Report Reading</td>
+         <td>Schedule Report Reading<br><span class="ident">schedule-second-report-reading</span><br><span class="trig">(M)</span></td>
          <td><a href="#second_committee">second_committee</a><br></td>
          <td><a href="#report_reading">report_reading</a><br></td>
+         <td>bungeni.bill.SelectCommittee</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m0">
-         <td>Postpone Report Reading</td>
+         <td>Postpone Report Reading<br><span class="ident">postpone-second-report-reading</span><br><span class="trig">(M)</span></td>
          <td><a href="#report_reading">report_reading</a><br></td>
          <td><a href="#report_reading_postponed">report_reading_postponed</a><br></td>
+         <td>bungeni.bill.SelectCommittee</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m1">
-         <td>Reschedule Report Reading</td>
+         <td>Reschedule Report Reading<br><span class="ident">reschedule-second-report-reading</span><br><span class="trig">(M)</span></td>
          <td><a href="#report_reading_postponed">report_reading_postponed</a><br></td>
          <td><a href="#report_reading">report_reading</a><br></td>
+         <td>bungeni.bill.SelectCommittee</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m0">
-         <td>Schedule Third Reading</td>
+         <td>Schedule Third Reading<br><span class="ident">second-committee-schedule-third-reading</span><br><span class="trig">(M)</span></td>
          <td><a href="#report_reading">report_reading</a><br></td>
          <td><a href="#third_reading">third_reading</a><br></td>
+         <td>bungeni.bill.Schedule</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m1">
-         <td>Recommit to 2nd Committee</td>
+         <td>Recommit to 2nd Committee<br><span class="ident">recommit-second-committee</span><br><span class="trig">(M)</span></td>
          <td><a href="#report_reading">report_reading</a><br></td>
          <td><a href="#second_committee">second_committee</a><br></td>
+         <td>bungeni.bill.SelectCommittee</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m0">
-         <td>Schedule Third Reading</td>
+         <td>Schedule Third Reading<br><span class="ident">schedule-third-reading</span><br><span class="trig">(M)</span></td>
          <td><a href="#whole_house">whole_house</a><br></td>
          <td><a href="#third_reading">third_reading</a><br></td>
+         <td>bungeni.bill.Schedule</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m1">
-         <td>Resend to Whole House</td>
+         <td>Resend to Whole House<br><span class="ident">resend-whole-house-from-third-reading</span><br><span class="trig">(M)</span></td>
          <td><a href="#third_reading">third_reading</a><br></td>
          <td><a href="#whole_house">whole_house</a><br></td>
+         <td>bungeni.bill.RevertTransitions</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m0">
-         <td>Postpone Third Reading</td>
+         <td>Postpone Third Reading<br><span class="ident">postpone-third-reading</span><br><span class="trig">(M)</span></td>
          <td><a href="#third_reading">third_reading</a><br></td>
          <td><a href="#third_reading_postponed">third_reading_postponed</a><br></td>
+         <td>bungeni.bill.Schedule</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m1">
-         <td>Postpone Third Reading</td>
+         <td>Postpone Third Reading<br><span class="ident">reschedule-third-reading</span><br><span class="trig">(M)</span></td>
          <td><a href="#third_reading_postponed">third_reading_postponed</a><br></td>
          <td><a href="#third_reading">third_reading</a><br></td>
+         <td>bungeni.bill.Schedule</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m0">
-         <td>Rejected</td>
+         <td>Rejected<br><span class="ident">reject</span><br><span class="trig">(M)</span></td>
          <td><a href="#third_reading">third_reading</a><br></td>
          <td><a href="#rejected">rejected</a><br></td>
+         <td>bungeni.bill.ChangeStatus</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m1">
-         <td>Approved</td>
+         <td>Approved<br><span class="ident">approve</span><br><span class="trig">(M)</span></td>
          <td><a href="#third_reading">third_reading</a><br></td>
          <td><a href="#approved">approved</a><br></td>
+         <td>bungeni.bill.ChangeStatus</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
       <tr class="m0">
-         <td>Withdraw</td>
+         <td>Withdraw<br><span class="ident">withdraw</span><br><span class="trig">(M)</span></td>
          <td><a href="#gazetted">gazetted</a><br><a href="#first_reading">first_reading</a><br><a href="#first_committee">first_committee</a><br><a href="#second_reading">second_reading</a><br><a href="#whole_house">whole_house</a><br><a href="#second_committee">second_committee</a><br><a href="#report_reading">report_reading</a><br><a href="#third_reading">third_reading</a><br></td>
          <td><a href="#withdrawn_public">withdrawn_public</a><br></td>
+         <td>bungeni.bill.Withdraw</td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident">bungeni.core.workflows.bill.actions.withdraw</span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
       </tr>
    </table>
 </html>

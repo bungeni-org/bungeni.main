@@ -8,19 +8,16 @@
             <xd:p></xd:p>
         </xd:desc>
     </xd:doc>
-	<!-- This XSLT file generates tabular documentation out of the workflow xml files 
-	To use it you need to use a XSLT 2 compliant processor e.g. Saxon. Transform is run directly
-	on the workflow xml files -- and the output is a HTML document with 2 tables depicting the
-	workflow states and transitions -->    
+    
     <xsl:template match="workflow">
         <html>
             <head>
                 <title><xsl:value-of select="@title"></xsl:value-of></title>
-            <style>
+                <style>
             table {
 	font: 11px/24px Verdana, Arial, Helvetica, sans-serif;
 	border-collapse: collapse;
-	width: 320px;
+	width: 360px;
 	}
 
 th {
@@ -53,37 +50,40 @@ tr.m0 {background-color: #ffffcc;}
 tr.m1 {background-color: #ffffff;}
 tr.s0 { background-color: #eee; }
 tr.s1 { background-color: #fff; }
-	
+span.ident { font-style:normal; color:gray; }
+span.trig {color:dark-gray;}	
  
             </style>
             </head>
             <h1><xsl:value-of select="@title"></xsl:value-of> States</h1>           
             <table  border="1">
                 <tr class="yellow"><td>State Name</td><td>Allow</td><td>Deny</td></tr>
-            <xsl:for-each select="./state">
-                <xsl:call-template name="match-state"></xsl:call-template>
-            </xsl:for-each>
+                <xsl:for-each select="./state">
+                    <xsl:call-template name="match-state"></xsl:call-template>
+                </xsl:for-each>
             </table>
             <h1><xsl:value-of select="@title"></xsl:value-of> Transitions</h1>           
             
             <table  border="1">
-                <tr class="yellow"><td>Transition Name</td><td>Source</td><td>Destination</td></tr>
+                <tr class="yellow"><td>Transition Name</td><td>Source</td><td>Destination</td><td>Permission</td><td>Action/Condition</td></tr>
                 <xsl:for-each select="./transition">
                     <xsl:call-template name="match-transition"></xsl:call-template>
                 </xsl:for-each>
             </table>
             
-             </html>
+        </html>
     </xsl:template>
     
     <xsl:template name="match-state">
         <xsl:variable name="counter"><xsl:number /></xsl:variable>
         <tr class="m{$counter mod 2}">
             <td><a name="{@id}"></a>
-                <xsl:value-of select="@title"></xsl:value-of></td>
+                <xsl:value-of select="@title"></xsl:value-of><br />
+                <span class="ident"><xsl:value-of select="@id" /></span> 
+            </td>
             <td>&#160;
                 <table border="0">
-                <xsl:call-template name="grants"></xsl:call-template>
+                    <xsl:call-template name="grants"></xsl:call-template>
                 </table>
             </td>
             <td>&#160;
@@ -93,11 +93,22 @@ tr.s1 { background-color: #fff; }
             </td>
         </tr>
     </xsl:template>
-  
+    
     <xsl:template name="match-transition">
         <xsl:variable name="counter"><xsl:number /></xsl:variable>
         <tr class="m{$counter mod 2}">
-            <td><xsl:value-of select="@title"></xsl:value-of></td>
+            <td>
+                <xsl:value-of select="@title"></xsl:value-of><br />
+                <span class="ident"><xsl:value-of select="@id" /></span><br />
+                <xsl:choose>
+                    <xsl:when test="@trigger='manual'">
+                        <span class="trig">(M)</span>  
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <span class="trig">(A)</span>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </td>
             <td><xsl:variable name="tokSource" select="tokenize(@source, '\s+')">
             </xsl:variable>
                 <xsl:for-each select="$tokSource">
@@ -118,6 +129,20 @@ tr.s1 { background-color: #fff; }
                     </a><br />
                 </xsl:for-each>
             </td>
+            <td>
+                <!-- permission -->
+                <xsl:value-of select="@permission"></xsl:value-of>
+            </td>
+            <td>
+                <!-- action -->
+                <p style="text-align:left">
+                    A: <span class="ident"><xsl:value-of select="@action"></xsl:value-of></span>
+                </p>
+                <!-- condition -->
+                <p style="text-align:left">
+                    C: <span class="ident"><xsl:value-of select="@condition"></xsl:value-of></span>
+                </p>
+            </td>
         </tr>
     </xsl:template>
     
@@ -128,7 +153,7 @@ tr.s1 { background-color: #fff; }
                 <xsl:value-of select="position()"></xsl:value-of>
             </xsl:variable>
             <tr class="s{$counter mod 2}">
-            <td><xsl:value-of select="substring-after(@permission, '.')"></xsl:value-of></td><td> <xsl:value-of select="@role"></xsl:value-of></td>
+                <td><xsl:value-of select="@permission"></xsl:value-of></td><td> <xsl:value-of select="@role"></xsl:value-of></td>
             </tr>
         </xsl:for-each>
     </xsl:template>
@@ -140,7 +165,7 @@ tr.s1 { background-color: #fff; }
                 <xsl:value-of select="position()"></xsl:value-of>
             </xsl:variable>
             <tr class="s{$counter mod 2}">
-                <td><xsl:value-of select="substring-after(@permission, '.')"></xsl:value-of></td><td> <xsl:value-of select="@role"></xsl:value-of></td>
+                <td><xsl:value-of select="@permission"></xsl:value-of></td><td> <xsl:value-of select="@role"></xsl:value-of></td>
             </tr>
         </xsl:for-each>
         
