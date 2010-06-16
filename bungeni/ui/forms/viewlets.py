@@ -93,7 +93,7 @@ class AttributesEditViewlet(ui.core.DynamicFields, ui.viewlet.EditFormViewlet):
     template = NamedTemplate('alchemist.subform')
     form_name = _(u"General")
 
-class SubFormViewletManager( manager.WeightOrderedViewletManager ):
+class SubFormViewletManager(manager.WeightOrderedViewletManager):
     """
     display subforms
     """
@@ -103,7 +103,7 @@ class SubFormViewletManager( manager.WeightOrderedViewletManager ):
          viewlets = super(SubFormViewletManager, self).filter(viewlets)
          return [(name, viewlet)
                  for name, viewlet in viewlets
-                 if viewlet.for_display == True]
+                 if viewlet.for_display==True]
 
 class SubformViewlet ( AjaxContainerListing ):
     """
@@ -659,7 +659,6 @@ class MemberItemsViewlet( viewlet.ViewletBase ):
         tableddocument_wf_state[u"admissible"].id,
         
         question_wf_state[u"scheduled"].id,
-        question_wf_state[u"postponed"].id,
         question_wf_state[u"response_pending"].id,
         question_wf_state[u"deferred"].id,
         question_wf_state[u"response_submitted"].id,

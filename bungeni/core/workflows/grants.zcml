@@ -7,7 +7,6 @@
   <grant permission="bungeni.question.Recieve" role="bungeni.Clerk"/>
   <grant permission="bungeni.question.clerk.Review" role="bungeni.Clerk"/>
   <grant permission="bungeni.question.speaker.Review"  role="bungeni.Speaker"/>
-  <grant permission="bungeni.question.Schedule" role="bungeni.Speaker"/>
   <grant permission="bungeni.question.Schedule" role="bungeni.Clerk"/>
   <grant permission="bungeni.question.Respond" role="bungeni.Clerk"/>
   <grant permission="bungeni.question.Answer" role="bungeni.Clerk"/>

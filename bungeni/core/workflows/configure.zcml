@@ -137,7 +137,9 @@
   <subscriber handler=".question.SendNotificationToMemberUponNeedsClarification" />
   <subscriber handler=".question.SendNotificationToMemberUponDeferred" />
   <subscriber handler=".question.SendNotificationToMemberUponSchedule" />
-  <subscriber handler=".question.SendNotificationToMemberUponPostponed" />
+  <!-- !+ remove, grep for: SendNotificationToMemberUponPostponed IQuestionPostponedEvent
+    subscriber handler=".question.SendNotificationToMemberUponPostponed" / 
+  -->
   <subscriber handler=".question.SendNotificationToMemberUponSentToMinistry" />
   <subscriber handler=".question.SendNotificationToMemberUponAnswer" />
   <subscriber handler=".question.SendNotificationToMinistryUponComplete" />

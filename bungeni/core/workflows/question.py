@@ -123,13 +123,6 @@ class actions(object):
         pass
     
     @staticmethod
-    def postpone(info, context):
-        """A question that was scheduled but could not be debated,
-        it is available for rescheduling.
-        """
-        utils.setQuestionScheduleHistory(info, context)
-    
-    @staticmethod
     def complete(info, context):
         """A question is marked as complete by the clerks office, 
         it is available to the speakers office for review.
@@ -144,6 +137,13 @@ class actions(object):
         """
         pass
     
+    @staticmethod
+    def drop(info, context):
+        """A question that was scheduled but could not be debated and has to be 
+        dropped, due to no-show by the MP, etc. 
+        """
+        pass
+
     @staticmethod
     def complete_clarify(info, context):
         """A question that requires clarification/amendmends,
@@ -299,6 +299,7 @@ class SendNotificationToMemberUponSchedule(Notification):
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 
+''' !+ remove, grep for: SendNotificationToMemberUponPostponed IQuestionPostponedEvent
 class SendNotificationToMemberUponPostponed(Notification):
     """Issued when a question was postponed by the speakers office.
     sends a notice that the question could not be debated and was postponed"""
@@ -319,6 +320,7 @@ class SendNotificationToMemberUponPostponed(Notification):
     @property
     def from_address(self):
         return prefs.getClerksOfficeEmail()
+'''
 
 class SendNotificationToMemberUponComplete(Notification):
     """The question is marked as “complete” and is made available /

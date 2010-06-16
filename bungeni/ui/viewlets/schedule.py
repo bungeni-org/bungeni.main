@@ -158,7 +158,6 @@ class SchedulableQuestionsViewlet(SchedulableItemsViewlet):
         question_wf_state[u"scheduled"].id,
         question_wf_state[u"schedule_pending"].id,
         question_wf_state[u"debate_adjourned"].id,
-        question_wf_state[u"postponed"].id,
         )
 
 class SchedulableMotionsViewlet(SchedulableItemsViewlet):
@@ -181,7 +180,6 @@ class SchedulableTabledDocumentsViewlet(SchedulableItemsViewlet):
         tableddocument_wf_state[u"schedule_pending"].id,
         tableddocument_wf_state[u"debate_adjourned"].id,
         tableddocument_wf_state[u"postponed"].id,
-        
         )
                  
         

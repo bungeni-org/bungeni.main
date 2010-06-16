@@ -27,8 +27,13 @@ class IQuestionDeferredEvent(IWorkflowTransitionEvent):
 class IQuestionScheduledEvent(IWorkflowTransitionEvent):
     """Issued when a question was scheduled by Speakers office."""
 
+class IQuestionDroppedEvent(IWorkflowTransitionEvent):
+    """Issued when a question was dropped."""
+
+''' !+ remove, grep for: SendNotificationToMemberUponPostponed IQuestionPostponedEvent
 class IQuestionPostponedEvent(IWorkflowTransitionEvent):
     """Issued when a question was postponed by the speakers office."""
+'''
 
 class IQuestionSentToMinistryEvent(IWorkflowTransitionEvent):
     """Issued when a question was sent to a ministry for written response."""

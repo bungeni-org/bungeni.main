@@ -245,7 +245,7 @@ class WorkspaceContainerTraverser(SimpleComponentTraverser):
 
 # contexts
 
-ARCHIVED = ("debated", "withdrawn", "response_complete", "elapsed")
+ARCHIVED = ("debated", "withdrawn", "response_complete", "elapsed", "dropped")
 
 # Note: for all the following QueryContent "sections", we want to keep 
 # title=None so that no menu item for the entry will be displayed

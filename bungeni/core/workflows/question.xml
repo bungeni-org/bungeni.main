@@ -21,7 +21,7 @@
         <deny permission="zope.View" role="bungeni.Everybody" /> 
         <deny permission="zope.View" role="bungeni.Anybody" />
     </state>
-
+    
     <state id="draft" title="Draft">
         <grant permission="bungeni.question.Edit" role="bungeni.Owner" />
         <grant permission="zope.View" role="bungeni.Owner" />
@@ -52,9 +52,8 @@
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.question.Complete" role="bungeni.Clerk" />
-        <grant permission="bungeni.question.Complete" role="bungeni.Speaker" />
     </state>
-
+    
     <state id="complete" title="Submitted to the Speaker">
         <deny permission="bungeni.question.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.question.Edit" role="bungeni.Speaker" />
@@ -136,14 +135,24 @@
     
     <state id="deferred" title="Deferred">
     </state>
-    <state id="postponed" title="Postponed">
-    </state>
     <state id="elapsed" title="Elapsed">
     </state>
 
     <state id="debated" title="Debated">
         <deny permission="bungeni.question.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.question.Edit" role="bungeni.Speaker" />
+    </state>
+    
+    <state id="dropped" title="Dropped">
+        <deny permission="bungeni.question.Edit" role="bungeni.Speaker" />
+        <deny permission="bungeni.question.Edit" role="bungeni.Clerk" />
+        <deny permission="bungeni.question.Edit" role="bungeni.Owner" />
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
+        <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
+        <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
+        <deny permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
     </state>
     
     <state id="withdrawn" title="Withdrawn">
@@ -157,7 +166,6 @@
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
     </state>
-    
     <state id="withdrawn_public" title="Withdrawn">
         <deny permission="bungeni.question.Edit" role="bungeni.Speaker" />
         <deny permission="bungeni.question.Edit" role="bungeni.Clerk" />
@@ -352,7 +360,7 @@
     <transition id="schedule"
         title="Schedule"
         trigger="manual"
-        source="schedule_pending postponed debate_adjourned"
+        source="schedule_pending debate_adjourned"
         destination="scheduled"
         permission="bungeni.question.Schedule"
         action="bungeni.core.workflows.question.actions.schedule"
@@ -373,21 +381,6 @@
         condition="bungeni.core.workflows.question.conditions.is_written_response"
         event=".interfaces.IQuestionSentToMinistryEvent"
         order="13"
-    />
-    <!--
-    Questions can be forwarded to another ministry to be answered.
-    -->
-    <transition id="forward-ministry"
-        title="Forward to another Ministry"
-        trigger="manual"
-        source="response_pending"
-        destination="complete"
-        permission="bungeni.question.Write_answer"
-        action="bungeni.core.workflows.question.actions.send_to_ministry"
-        condition="bungeni.core.workflows.question.conditions.is_ministry_set"
-        event=".interfaces.IQuestionSentToMinistryEvent"
-        require_confirmation="true"
-        order="14"
     />
     <transition id="submit-response"
         title="Submit Response"
@@ -422,7 +415,7 @@
     <transition id="elapse"
         title="Elapse"
         trigger="manual"
-        source="response_pending deferred postponed"
+        source="response_pending deferred"
         destination="elapsed"
         permission="bungeni.question.Elapse"
         action="bungeni.core.workflows.question.actions.elapse"
@@ -439,7 +432,7 @@
     <transition id="defer"
         title="Defer"
         trigger="manual"
-        source="admissible postponed schedule_pending debate_adjourned"
+        source="admissible schedule_pending debate_adjourned"
         destination="deferred"
         permission="bungeni.question.Schedule"
         action="bungeni.core.workflows.question.actions.defer"
@@ -475,20 +468,30 @@
         event=""
         order="21"
     />
-    <!--
-    In a sitting the question is debated, it gets postponed if it could not be 
-    debated, or it may be debated partially and the debate is continued in 
-    another sitting 
-    -->
-    <transition id="postpone"
-        title="Postpone"
+    <transition id="reschedule"
+        title="Re-schedule"
         trigger="manual"
         source="scheduled"
-        destination="postponed"
+        destination="schedule_pending"
         permission="bungeni.question.Schedule"
-        action="bungeni.core.workflows.question.actions.postpone"
+        condition="bungeni.core.workflows.question.conditions.is_oral_response"
+        action=""
+        event=".interfaces.IQuestionSchedulePendingEvent"
+        order="24"
+    />
+    <!--
+    In a sitting the question is to be debated, but for reasons such as absence
+    of the MP, cannot be, so it is dropped. 
+    -->
+    <transition id="drop"
+        title="Drop"
+        trigger="manual"
+        source="scheduled"
+        destination="dropped"
+        permission="bungeni.question.Schedule"
+        action="bungeni.core.workflows.question.actions.drop"
         condition=""
-        event=".interfaces.IQuestionPostponedEvent"
+        event=".interfaces.IQuestionDroppedEvent"
         order="22"
     />
     <transition id="continue-debate"
@@ -500,20 +503,6 @@
         condition=""
         event=""
         order="23"
-    />
-    <!--
-    Postponed question can be send to a ministry for a written response.
-    -->
-    <transition id="postponed-ministry"
-        title="Send to Ministry"
-        trigger="manual"
-        source="postponed"
-        destination="response_pending"
-        permission="bungeni.question.Schedule"
-        action="bungeni.core.workflows.question.actions.send_to_ministry"
-        condition="bungeni.core.workflows.question.conditions.is_ministry_set"
-        event=".interfaces.IQuestionSentToMinistryEvent"
-        order="24"
     />
     <!--
     Question was debated in the plenary
@@ -547,7 +536,7 @@
     <transition id="withdraw_public"
         title="Withdraw"
         trigger="manual"
-        source="admissible schedule_pending scheduled deferred postponed
+        source="admissible schedule_pending scheduled deferred
              debate_adjourned schedule_pending"
         destination="withdrawn_public"
         permission="bungeni.question.Withdraw"

@@ -221,14 +221,6 @@ class ScheduledQuestionViewlet(QuestionInStateViewlet):
     state = question_wf_state[u"scheduled"].id
     list_id = "scheduled_questions"
         
-class PostponedQuestionViewlet(QuestionInStateViewlet):
-    """
-    display the postponed questions
-    """
-    name = question_wf_state[u"postponed"].title
-    state = question_wf_state[u"postponed"].id
-    list_id = "postponed_questions"
-    
     
 class AdmissibleQuestionViewlet(QuestionInStateViewlet):
     """
@@ -286,8 +278,6 @@ class ElapsedQuestionViewlet(QuestionInStateViewlet):
     name = question_wf_state[u"elapsed"].title
     state = question_wf_state[u"elapsed"].id
     list_id = "elapsed_questions" 
-
-
 
 class WithdrawnQuestionViewlet(QuestionInStateViewlet):
     """
@@ -475,7 +465,7 @@ class DraftBillViewlet(BillItemsViewlet):
 
 class OwnedItemsInStageViewlet(ViewletBase):
     """Group parliamentary items per stage e.g. action required, in progress, 
-    answered/debated, 'dead' (withdrawn, elapsed, inadmissible).
+    answered/debated, 'dead' (withdrawn, elapsed, inadmissible, dropped).
     """
     name = "Items in Stage"
     states = []
@@ -589,7 +579,6 @@ class MPItemInProgressViewlet(OwnedItemsInStageViewlet):
         motion_wf_state[u"clarify_clerk"].id,
         motion_wf_state[u"admissible"].id,
         question_wf_state[u"scheduled"].id,
-        question_wf_state[u"postponed"].id,
         question_wf_state[u"response_pending"].id,
         question_wf_state[u"deferred"].id,
         question_wf_state[u"response_submitted"].id,
@@ -635,6 +624,7 @@ class ItemArchiveViewlet(OwnedItemsInStageViewlet):
         motion_wf_state[u"debated"].id,
         agendaitem_wf_state[u"debated"].id,
         tableddocument_wf_state[u"debated"].id,
+        question_wf_state[u"dropped"].id,
         question_wf_state[u"elapsed"].id,
         question_wf_state[u"withdrawn"].id,
         question_wf_state[u"inadmissible"].id, 
@@ -680,6 +670,7 @@ class AllItemArchiveViewlet(AllItemsInStageViewlet):
         motion_wf_state[u"debated"].id,
         agendaitem_wf_state[u"debated"].id,
         tableddocument_wf_state[u"debated"].id,
+        question_wf_state[u"dropped"].id,
         question_wf_state[u"elapsed"].id,
         question_wf_state[u"withdrawn"].id,
         question_wf_state[u"inadmissible"].id, 
@@ -754,7 +745,6 @@ class ClerkReviewedItemViewlet(AllItemsInStageViewlet):
         tableddocument_wf_state[u"clarify_mp"].id,
         
         question_wf_state[u"scheduled"].id,
-        question_wf_state[u"postponed"].id,
         question_wf_state[u"response_pending"].id,
         question_wf_state[u"deferred"].id,
         question_wf_state[u"response_submitted"].id,
@@ -812,7 +802,6 @@ class ItemsPendingScheduleViewlet(AllItemsInStageViewlet):
     states = [
         question_wf_state[u"schedule_pending"].id,
         question_wf_state[u"scheduled"].id,
-        question_wf_state[u"postponed"].id,
         question_wf_state[u"debate_adjourned"].id,
         agendaitem_wf_state[u"schedule_pending"].id,
         agendaitem_wf_state[u"scheduled"].id,

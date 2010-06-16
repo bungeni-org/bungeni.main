@@ -1734,7 +1734,7 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
                        question_wf_state[u'schedule_pending'].id,
                        question_wf_state[u'scheduled'].id,
                        question_wf_state[u'deferred'].id,
-                       question_wf_state[u'postponed'].id,
+                       question_wf_state[u'dropped'].id,
                        question_wf_state[u'elapsed'].id,
                        question_wf_state[u'debated'].id,
                        question_wf_state[u'debate_adjourned'].id,
