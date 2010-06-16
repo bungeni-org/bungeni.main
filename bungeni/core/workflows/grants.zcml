@@ -23,7 +23,6 @@
   <grant permission="bungeni.motion.clerk.Review" role="bungeni.Clerk"/>
   <grant permission="bungeni.motion.speaker.Review"  role="bungeni.Speaker"/>
   <grant permission="bungeni.motion.Schedule" role="bungeni.Clerk"/>
-  <grant permission="bungeni.motion.Schedule" role="bungeni.Speaker"/>
   <grant permission="bungeni.motion.Debate" role="bungeni.Clerk"/>
   <grant permission="bungeni.motion.Debate" role="bungeni.Speaker"/>
   <grant permission="bungeni.motion.Withdraw" role="bungeni.Owner"/>
@@ -34,7 +33,6 @@
   <grant permission="bungeni.agendaitem.clerk.Review" role="bungeni.Clerk"/>
   <grant permission="bungeni.agendaitem.speaker.Review"  role="bungeni.Speaker"/>
   <grant permission="bungeni.agendaitem.Schedule" role="bungeni.Clerk"/>
-  <grant permission="bungeni.agendaitem.Schedule" role="bungeni.Speaker"/>
   <grant permission="bungeni.agendaitem.Debate" role="bungeni.Clerk"/>
   <grant permission="bungeni.agendaitem.Debate" role="bungeni.Speaker"/>
   <grant permission="bungeni.agendaitem.Withdraw" role="bungeni.Owner"/>
@@ -45,7 +43,6 @@
   <grant permission="bungeni.tableddocument.clerk.Review" role="bungeni.Clerk"/>
   <grant permission="bungeni.tableddocument.speaker.Review"  role="bungeni.Speaker"/>
   <grant permission="bungeni.tableddocument.Schedule" role="bungeni.Clerk"/>
-  <grant permission="bungeni.tableddocument.Schedule" role="bungeni.Speaker"/>
   <grant permission="bungeni.tableddocument.Debate" role="bungeni.Clerk"/>
   <grant permission="bungeni.tableddocument.Debate" role="bungeni.Speaker"/>
   <grant permission="bungeni.tableddocument.Withdraw" role="bungeni.Owner"/>
@@ -53,7 +50,6 @@
   <!-- Bill Workflow permissions -->
   <grant permission="bungeni.bill.Submit" role="bungeni.Clerk" />
   <grant permission="bungeni.bill.Schedule" role="bungeni.Clerk" />
-  <grant permission="bungeni.bill.Schedule" role="bungeni.Speaker" />
   <grant permission="bungeni.bill.SelectCommittee" role="bungeni.Clerk" />
   <grant permission="bungeni.bill.ChangeStatus" role="bungeni.Speaker" />
   <grant permission="bungeni.bill.ChangeStatus" role="bungeni.Clerk" />

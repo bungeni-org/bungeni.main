@@ -51,7 +51,6 @@
         <grant permission="bungeni.question.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
-        <grant permission="bungeni.question.Complete" role="bungeni.Clerk" />
     </state>
     
     <state id="complete" title="Submitted to the Speaker">
@@ -257,7 +256,7 @@
         trigger="manual"
         source="received"
         destination="complete"
-        permission="bungeni.question.Complete"
+        permission="bungeni.question.clerk.Review"
         action="bungeni.core.workflows.question.actions.complete"
         condition=""
         event=".interfaces.IQuestionCompleteEvent"
