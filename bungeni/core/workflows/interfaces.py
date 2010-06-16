@@ -143,8 +143,12 @@ class IAgendaItemDeferredEvent(IWorkflowTransitionEvent):
 class IAgendaItemScheduledEvent(IWorkflowTransitionEvent):
     """Issued when a AgendaItem was scheduled by Speakers office."""
 
+class IAgendaItemDroppedEvent(IWorkflowTransitionEvent):
+    """Issued when an agenda item was dropped."""
+''' !+ remove, grep for: SendNotificationToMemberUponPostponed IQuestionPostponedEvent
 class IAgendaItemPostponedEvent(IWorkflowTransitionEvent):
     """Issued when a AgendaItem was postponed by the speakers office."""
+'''
 
 class IAgendaItemDebatedEvent(IWorkflowTransitionEvent):
     """Issued when a AgendaItem answer was debated"""

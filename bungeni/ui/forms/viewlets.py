@@ -667,7 +667,6 @@ class MemberItemsViewlet( viewlet.ViewletBase ):
         motion_wf_state[u"postponed"].id,
         motion_wf_state[u"scheduled"].id,
         agendaitem_wf_state[u"deferred"].id,
-        agendaitem_wf_state[u"postponed"].id,
         agendaitem_wf_state[u"scheduled"].id,
         tableddocument_wf_state[u"deferred"].id,
         tableddocument_wf_state[u"postponed"].id,

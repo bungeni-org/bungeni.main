@@ -1518,7 +1518,7 @@ class AgendaItemDescriptor(ParliamentaryItemDescriptor):
                        agendaitem_wf_state[u'schedule_pending'].id,
                        agendaitem_wf_state[u'scheduled'].id,
                        agendaitem_wf_state[u'deferred'].id,
-                       agendaitem_wf_state[u'postponed'].id,
+                       agendaitem_wf_state[u'dropped'].id,
                        agendaitem_wf_state[u'elapsed'].id,
                        agendaitem_wf_state[u'debated'].id,
                        agendaitem_wf_state[u'debate_adjourned'].id,

@@ -192,7 +192,6 @@ class SchedulableAgendaItemsViewlet(SchedulableItemsViewlet):
         agendaitem_wf_state[u"scheduled"].id,
         agendaitem_wf_state[u"schedule_pending"].id,
         agendaitem_wf_state[u"debate_adjourned"].id,
-        agendaitem_wf_state[u"postponed"].id,
         )
 
     def get_group_id(self):

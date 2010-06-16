@@ -34,8 +34,8 @@ class actions(object):
     #    rpm.denyPermissionToRole('bungeni.agenda_item.delete', u'bungeni.MP')
     
     @staticmethod
-    def postpone(info, context):
-        utils.setAgendaItemHistory(info, context)
+    def drop(info, context):
+        pass
     
     @staticmethod
     def create(info, context):
@@ -227,6 +227,7 @@ class SendNotificationToMemberUponSchedule(Notification):
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 
+''' !+ remove, grep for: SendNotificationToMemberUponPostponed IQuestionPostponedEvent
 class SendNotificationToMemberUponPostponed(Notification):
     """Issued when a agenda_item was postponed by the speakers office.
     sends a notice that the agenda_item could not be debated and was postponed.
@@ -247,6 +248,7 @@ class SendNotificationToMemberUponPostponed(Notification):
     @property
     def from_address(self):
         return prefs.getClerksOfficeEmail()
+'''
 
 class SendNotificationToMemberUponDebated(Notification):
     """Issued when a agenda_item was debated.
