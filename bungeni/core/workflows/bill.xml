@@ -127,47 +127,42 @@
         action="bungeni.core.workflows.bill.actions.submit"
         condition=""
     />
-  <transition
-     id="schedule-first"
-     title="Schedule First Reading"
-     trigger="manual"
-     source="gazetted"
-     destination="first_reading"
-     permission="bungeni.bill.Schedule"
-     action="bungeni.core.workflows.bill.actions.schedule_first"
-     condition=""
-     />
-  <transition
-     id="postpone-first"
-     title="Postpone First Reading"
-     trigger="manual"
-     source="first_reading"
-     destination="first_reading_postponed"
-     permission="bungeni.bill.Schedule"
-     action="bungeni.core.workflows.bill.actions.postpone_first"
-     condition=""
-     />
-  <transition
-     id="reschedule-first"
-     title="Reschedule First Reading"
-     trigger="manual"
-     source="first_reading_postponed"
-     destination="first_reading"
-     permission="bungeni.bill.Schedule"
-     action="bungeni.core.workflows.bill.actions.schedule_first"
-     condition=""
-     />
-  <transition
-     id="select-first-committee"
-     title="Send to Select Committee (I)"
-     trigger="manual"
-     source="first_reading"
-     destination="first_committee"
-     permission="bungeni.bill.SelectCommittee"
-     action=""
-     condition=""
-     />
-    
+    <transition id="schedule-first"
+        title="Schedule First Reading"
+        trigger="manual"
+        source="gazetted"
+        destination="first_reading"
+        permission="bungeni.bill.Schedule"
+        action="bungeni.core.workflows.bill.actions.schedule_first"
+        condition=""
+    />
+    <transition id="postpone-first"
+        title="Postpone First Reading"
+        trigger="manual"
+        source="first_reading"
+        destination="first_reading_postponed"
+        permission="bungeni.bill.Schedule"
+        action="bungeni.core.workflows.bill.actions.postpone_first"
+        condition=""
+    />
+    <transition id="reschedule-first"
+        title="Reschedule First Reading"
+        trigger="manual"
+        source="first_reading_postponed"
+        destination="first_reading"
+        permission="bungeni.bill.Schedule"
+        action="bungeni.core.workflows.bill.actions.schedule_first"
+        condition=""
+    />
+    <transition id="select-first-committee"
+        title="Send to Select Committee (I)"
+        trigger="manual"
+        source="first_reading"
+        destination="first_committee"
+        permission="bungeni.bill.SelectCommittee"
+        action=""
+        condition=""
+    />
     <transition id="schedule_first_report_reading"
          title="Schedule First Report Reading"
          trigger="manual"
@@ -204,123 +199,114 @@
         action=""
         condition=""
     />
-    
-  <transition
-     id="schedule-second"
-     title="Schedule Second Reading"
-     trigger="manual"
-     source="first_reading"
-     destination="second_reading"
-     permission="bungeni.bill.Schedule"
-     action="bungeni.core.workflows.bill.actions.create_version"
-     condition=""
-     />
-
-  <transition
-     id="postpone-second"
-     title="Postpone Second Reading"
-     trigger="manual"
-     source="second_reading"
-     destination="second_reading_postponed"
-     permission="bungeni.bill.Schedule"
-     action=""
-     condition=""
-     />
-  <transition
-     id="reschedule-second"
-     title="Reschedule Second Reading"
-     trigger="manual"
-     source="second_reading_postponed"
-     destination="second_reading"
-     permission="bungeni.bill.Schedule"
-     action=""
-     condition=""
-     />
-  <transition
-     id="schedule-whole-house"
-     title="Schedule Whole House Committee"
-     trigger="manual"
-     source="second_reading"
-     destination="whole_house"
-     permission="bungeni.bill.Schedule"
-     action=""
-     condition=""
-     />
-
-  <transition
-     id="postpone-whole-house"
-     title="Postpone Whole House Committee"
-     trigger="manual"
-     source="whole_house"
-     destination="whole_house_postponed"
-     permission="bungeni.bill.Schedule"
-     action=""
-     condition=""
-     />
-  <transition
-     id="reschedule-whole-house"
-     title="Reschedule Whole House Committee"
-     trigger="manual"
-     source="whole_house_postponed"
-     destination="whole_house"
-     permission="bungeni.bill.Schedule"
-     action=""
-     condition=""
-     />
+    <transition id="schedule-second"
+        title="Schedule Second Reading"
+        trigger="manual"
+        source="first_reading"
+        destination="second_reading"
+        permission="bungeni.bill.Schedule"
+        action="bungeni.core.workflows.bill.actions.create_version"
+        condition=""
+    />
+    <transition id="postpone-second"
+        title="Postpone Second Reading"
+        trigger="manual"
+        source="second_reading"
+        destination="second_reading_postponed"
+        permission="bungeni.bill.Schedule"
+        action=""
+        condition=""
+    />
+    <transition id="reschedule-second"
+        title="Reschedule Second Reading"
+        trigger="manual"
+        source="second_reading_postponed"
+        destination="second_reading"
+        permission="bungeni.bill.Schedule"
+        action=""
+        condition=""
+    />
+    <transition id="schedule-whole-house"
+        title="Schedule Whole House Committee"
+        trigger="manual"
+        source="second_reading"
+        destination="whole_house"
+        permission="bungeni.bill.Schedule"
+        action=""
+        condition=""
+    />
+    <transition id="postpone-whole-house"
+        title="Postpone Whole House Committee"
+        trigger="manual"
+        source="whole_house"
+        destination="whole_house_postponed"
+        permission="bungeni.bill.Schedule"
+        action=""
+        condition=""
+    />
+    <transition id="reschedule-whole-house"
+        title="Reschedule Whole House Committee"
+        trigger="manual"
+        source="whole_house_postponed"
+        destination="whole_house"
+        permission="bungeni.bill.Schedule"
+        action=""
+        condition=""
+    />
     <transition id="select-second-committee"
         title="Send to Select Committee (II)"
         trigger="manual"
-        source="second_reading whole_house"
+        source="second_reading"
         destination="second_committee"
         permission="bungeni.bill.SelectCommittee"
         action=""
         condition=""
     />
-
-  <transition
-     id="resend-whole-house-from-second-committee"
-     title="Send/Resend to Whole House"
-     trigger="manual"
-     source="second_committee"
-     destination="whole_house"
-     permission="bungeni.bill.RevertTransitions"
-     action=""
-     condition=""
-     />
-
-
-  <transition
-     id="schedule-third-reading"
-     title="Schedule Third Reading"
-     trigger="manual"
-     source="whole_house"
-     destination="third_reading"
-     permission="bungeni.bill.Schedule"
-     action=""
-     condition=""
-     />
-
-  <transition
-     id="postpone-third-reading"
-     title="Postpone Third Reading"
-     trigger="manual"
-     source="third_reading"
-     destination="third_reading_postponed"
-     permission="bungeni.bill.Schedule"
-     action=""
-     condition=""
-     />
-  <transition
-     id="reschedule-third-reading"
-     title="Postpone Third Reading"
-     trigger="manual"
-     source="third_reading_postponed"
-     destination="third_reading"
-     permission="bungeni.bill.Schedule"
-     action=""
-     condition=""
-     />
-
+    <transition id="select-second-committee_via_whole_house"
+        title="Send/Resend to Select Committee (II)"
+        trigger="manual"
+        source="whole_house"
+        destination="second_committee"
+        permission="bungeni.bill.SelectCommittee"
+        action=""
+        condition=""
+    />
+    <transition id="resend-whole-house-from-second-committee"
+        title="Send/Resend to Whole House"
+        trigger="manual"
+        source="second_committee"
+        destination="whole_house"
+        permission="bungeni.bill.RevertTransitions"
+        action=""
+        condition=""
+    />
+    <transition id="schedule-third-reading"
+        title="Schedule Third Reading"
+        trigger="manual"
+        source="whole_house"
+        destination="third_reading"
+        permission="bungeni.bill.Schedule"
+        action=""
+        condition=""
+    />
+    <transition id="postpone-third-reading"
+        title="Postpone Third Reading"
+        trigger="manual"
+        source="third_reading"
+        destination="third_reading_postponed"
+        permission="bungeni.bill.Schedule"
+        action=""
+        condition=""
+    />
+    <transition id="reschedule-third-reading"
+        title="Postpone Third Reading"
+        trigger="manual"
+        source="third_reading_postponed"
+        destination="third_reading"
+        permission="bungeni.bill.Schedule"
+        action=""
+        condition=""
+    />
     <transition id="reject"
         title="Rejected"
         trigger="manual"
@@ -330,35 +316,32 @@
         action=""
         condition=""
     />
-  <transition
-     id="approve"
-     title="Approved"
-     trigger="manual"
-     source="third_reading"
-     destination="approved"
-     permission="bungeni.bill.ChangeStatus"
-     action=""
-     condition=""
-     />
-  
-  <transition
-     id="withdraw"
-     title="Withdraw"
-     trigger="manual"
-     source="gazetted
-             first_reading
-             first_committee
-             first_report_reading
-             second_reading
-             whole_house
-             second_committee
-             third_reading"
-     destination="withdrawn_public"
-     permission="bungeni.bill.Withdraw"
-     action="bungeni.core.workflows.bill.actions.withdraw"
-     require_confirmation="true"
-     condition=""
-     />
+    <transition id="approve"
+        title="Approved"
+        trigger="manual"
+        source="third_reading"
+        destination="approved"
+        permission="bungeni.bill.ChangeStatus"
+        action=""
+        condition=""
+    />
+    <transition id="withdraw"
+        title="Withdraw"
+        trigger="manual"
+        source="gazetted
+                first_reading
+                first_committee
+                first_report_reading
+                second_reading
+                whole_house
+                second_committee
+                third_reading"
+        destination="withdrawn_public"
+        permission="bungeni.bill.Withdraw"
+        action="bungeni.core.workflows.bill.actions.withdraw"
+        require_confirmation="true"
+        condition=""
+    />
 
 </workflow>
 

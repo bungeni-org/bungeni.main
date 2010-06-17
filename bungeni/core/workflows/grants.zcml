@@ -31,7 +31,7 @@
   <grant permission="bungeni.agendaitem.Submit" role="bungeni.Owner"/>
   <grant permission="bungeni.agendaitem.Recieve" role="bungeni.Clerk"/>
   <grant permission="bungeni.agendaitem.clerk.Review" role="bungeni.Clerk"/>
-  <grant permission="bungeni.agendaitem.speaker.Review"  role="bungeni.Speaker"/>
+  <grant permission="bungeni.agendaitem.speaker.Review" role="bungeni.Speaker"/>
   <grant permission="bungeni.agendaitem.Schedule" role="bungeni.Clerk"/>
   <grant permission="bungeni.agendaitem.Debate" role="bungeni.Clerk"/>
   <grant permission="bungeni.agendaitem.Debate" role="bungeni.Speaker"/>
