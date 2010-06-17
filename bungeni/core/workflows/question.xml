@@ -123,7 +123,6 @@
         <grant permission="bungeni.response.View" role="bungeni.Clerk" />
         <grant permission="bungeni.response.View" role="bungeni.Speaker" />
     </state>
-    
     <state id="response_complete" title="Response completed">
         <deny permission="bungeni.response.Edit" role="bungeni.Clerk" />
         <grant permission="zope.View" role="bungeni.Everybody" />
@@ -131,17 +130,14 @@
         <grant permission="bungeni.response.View" role="bungeni.Everybody" />
         <grant permission="bungeni.response.View" role="bungeni.Anybody" />
     </state>
-    
     <state id="deferred" title="Deferred">
     </state>
     <state id="elapsed" title="Elapsed">
     </state>
-
     <state id="debated" title="Debated">
         <deny permission="bungeni.question.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.question.Edit" role="bungeni.Speaker" />
     </state>
-    
     <state id="dropped" title="Dropped">
         <deny permission="bungeni.question.Edit" role="bungeni.Speaker" />
         <deny permission="bungeni.question.Edit" role="bungeni.Clerk" />
@@ -153,7 +149,6 @@
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
     </state>
-    
     <state id="withdrawn" title="Withdrawn">
         <deny permission="bungeni.question.Edit" role="bungeni.Speaker" />
         <deny permission="bungeni.question.Edit" role="bungeni.Clerk" />
@@ -343,12 +338,12 @@
     questions available for scheduling.
     -->
     <!--
-    An admissible question has to be made available for scheduling .
+    An admissible (or deferred) question may be made available for scheduling.
     -->
     <transition id="allow_schedule"
         title="Make available for scheduling"
         trigger="manual"
-        source="admissible"
+        source="admissible deferred"
         destination="schedule_pending"
         permission="bungeni.question.Schedule"
         action=""
@@ -452,20 +447,6 @@
         condition="bungeni.core.workflows.question.conditions.is_ministry_set"
         event=".interfaces.IQuestionSentToMinistryEvent"
         order="20"
-    />
-    <!--
-    A defered question can be rescheduled later
-    -->
-    <transition id="schedule-deferred"
-        title="Schedule"
-        trigger="manual"
-        source="deferred"
-        destination="schedule_pending"
-        permission="bungeni.question.Schedule"
-        action="bungeni.core.workflows.question.actions.schedule"
-        condition="bungeni.core.workflows.question.conditions.is_oral_response"
-        event=""
-        order="21"
     />
     <transition id="reschedule"
         title="Re-schedule"
