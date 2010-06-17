@@ -144,8 +144,6 @@ class SchedulableBillsViewlet(SchedulableItemsViewlet):
         bill_wf_state[u"second_reading_postponed"].id,
         bill_wf_state[u"whole_house"].id,
         bill_wf_state[u"whole_house_postponed"].id,
-        bill_wf_state[u"report_reading"].id,
-        bill_wf_state[u"report_reading_postponed"].id,
         bill_wf_state[u"third_reading"].id,
         bill_wf_state[u"third_reading_postponed"].id,
         )

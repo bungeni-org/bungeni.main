@@ -443,24 +443,9 @@ class BillItemsViewlet(ViewletBase):
             bill_wf_state[u"second_reading_postponed"].id,
             bill_wf_state[u"whole_house_postponed"].id,
             bill_wf_state[u"house_pending"].id,
-            bill_wf_state[u"report_reading_postponed"].id,
-            bill_wf_state[u"report_reading"].id,
             bill_wf_state[u"third_reading"].id,
             bill_wf_state[u"third_reading_postponed"].id
         ] ))
-        self.query = bills
-
-class DraftBillViewlet(BillItemsViewlet):
-    name  = _(u"Draft Bills")
-    list_id = "draft_bills"
-
-    def update(self):
-        """
-        refresh the query
-        """
-        session = Session()
-        bills = session.query(domain.Bill).filter(
-                    domain.Bill.status.in_([bill_wf_state[u"draft"].id]))
         self.query = bills
 
 class OwnedItemsInStageViewlet(ViewletBase):
@@ -541,7 +526,6 @@ class MPItemDraftViewlet(OwnedItemsInStageViewlet):
         question_wf_state[u"draft"].id,
         agendaitem_wf_state[u"draft"].id,
         tableddocument_wf_state[u"draft"].id,
-        bill_wf_state[u"draft"].id,
         ]
     list_id = "items-draft"
 
@@ -607,8 +591,6 @@ class MPItemInProgressViewlet(OwnedItemsInStageViewlet):
         bill_wf_state[u"second_reading_postponed"].id , 
         bill_wf_state[u"whole_house_postponed"].id ,
         bill_wf_state[u"whole_house"].id ,
-        bill_wf_state[u"report_reading_postponed"].id ,
-        bill_wf_state[u"report_reading"].id , 
         bill_wf_state[u"third_reading"].id,
         bill_wf_state[u"third_reading_postponed"].id
         ]
@@ -763,8 +745,6 @@ class ClerkReviewedItemViewlet(AllItemsInStageViewlet):
         bill_wf_state[u"second_reading_postponed"].id , 
         bill_wf_state[u"whole_house_postponed"].id ,
         bill_wf_state[u"whole_house"].id ,
-        bill_wf_state[u"report_reading_postponed"].id ,
-        bill_wf_state[u"report_reading"].id , 
         bill_wf_state[u"third_reading"].id,
         bill_wf_state[u"third_reading_postponed"].id
     ]

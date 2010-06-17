@@ -1646,8 +1646,6 @@ class BillDescriptor(ParliamentaryItemDescriptor):
                         bill_wf_state[u"whole_house"].id ,
                         bill_wf_state[u"second_committee"].id ,
                         bill_wf_state[u"whole_house_postponed"].id ,
-                        bill_wf_state[u"report_reading_postponed"].id ,
-                        bill_wf_state[u"report_reading"].id , 
                         bill_wf_state[u"third_reading"].id,
                         bill_wf_state[u"third_reading_postponed"].id,
                         bill_wf_state[u'withdrawn_public'].id,

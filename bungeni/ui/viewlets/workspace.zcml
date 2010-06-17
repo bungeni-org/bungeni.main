@@ -253,18 +253,6 @@
      weight="50"
      />
 
-
-  <!--browser:viewlet
-     name="bungeni.workspace.draft-bill.clerk"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.DraftBillViewlet"
-     view="bungeni.ui.interfaces.IClerkWorkspace"
-     permission="zope.View"
-     weight="60"
-     /-->
-
-
   <!--browser:viewlet
      name="bungeni.workspace.questions-submitted.clerk"
      for="*"
