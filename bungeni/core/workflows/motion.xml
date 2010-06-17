@@ -1,11 +1,10 @@
 <?xml version="1.0"?>
-<workflow
-   id="motion-workflow"
-   title="Motion Workflow"
-   description="A Motion"
-   domain="bungeni.ui"
-   initial_state="">
-
+<workflow id="motion-workflow"
+    title="Motion Workflow"
+    description="A Motion"
+    domain="bungeni.ui"
+    initial_state="">
+    
     <state id="working_draft" title="Working Draft">
         <grant permission="bungeni.motion.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.motion.Edit" role="bungeni.Speaker" />
@@ -29,22 +28,21 @@
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
     </state>
-    
-  <state id="draft" title="Draft">
-    <grant permission="bungeni.motion.Edit" role="bungeni.Owner" />
-    <grant permission="zope.View" role="bungeni.Owner" />
-    <grant permission="bungeni.motion.Delete" role="bungeni.Owner" />
-    <deny permission="zope.View" role="bungeni.MP" />
-    <deny permission="zope.View" role="bungeni.Clerk" />
-    <deny permission="zope.View" role="bungeni.Speaker" />
-    <deny permission="zope.View" role="bungeni.Minister" />
-    <deny permission="zope.View" role="bungeni.Everybody" /> 
-    <deny permission="zope.View" role="bungeni.Anybody" />
-    <grant permission="bungeni.consignatory.Add" role="bungeni.Owner" />
-    <grant permission="bungeni.consignatory.Delete" role="bungeni.Owner" />
-    <grant permission="bungeni.fileattachment.Add" role="bungeni.Owner" /> 
-    <grant permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
-  </state>
+    <state id="draft" title="Draft">
+        <grant permission="bungeni.motion.Edit" role="bungeni.Owner" />
+        <grant permission="zope.View" role="bungeni.Owner" />
+        <grant permission="bungeni.motion.Delete" role="bungeni.Owner" />
+        <deny permission="zope.View" role="bungeni.MP" />
+        <deny permission="zope.View" role="bungeni.Clerk" />
+        <deny permission="zope.View" role="bungeni.Speaker" />
+        <deny permission="zope.View" role="bungeni.Minister" />
+        <deny permission="zope.View" role="bungeni.Everybody" /> 
+        <deny permission="zope.View" role="bungeni.Anybody" />
+        <grant permission="bungeni.consignatory.Add" role="bungeni.Owner" />
+        <grant permission="bungeni.consignatory.Delete" role="bungeni.Owner" />
+        <grant permission="bungeni.fileattachment.Add" role="bungeni.Owner" /> 
+        <grant permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
+    </state>
 
   <state id="submitted" title="Submitted">
     <deny permission="bungeni.consignatory.Add" role="bungeni.Owner" />
@@ -161,13 +159,29 @@
   </state>
   <!-- admissable motion that cannot be debated -->
   <state id="deferred" title="Deferred">
-
   </state>
-  <!--motion was scheduled for but not debated at the sitting -->
-  <state id="postponed" title="Postponed">
-
-  </state>
-  <!--defered or postponed motion that were not debated -->
+    <!--motion was scheduled for but droped, becuase no show of MP etc -->
+    <state id="dropped" title="Dropped">
+        <deny permission="bungeni.motion.Edit" role="bungeni.Clerk" />
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
+        <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
+    </state>
+    <state id="adopted" title="Adopted">
+        <deny permission="bungeni.motion.Edit" role="bungeni.Clerk" />
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
+        <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
+    </state>
+    <state id="adopted_amendments" title="Adopted with amendments">
+        <deny permission="bungeni.motion.Edit" role="bungeni.Clerk" />
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
+        <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
+    </state>
+    <state id="rejected" title="Rejected">
+        <deny permission="bungeni.motion.Edit" role="bungeni.Clerk" />
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
+        <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
+    </state>
+  <!--defered motion that was not debated -->
   <state id="elapsed" title="Elapsed">
     <deny permission="bungeni.motion.Edit" role="bungeni.Clerk" />
     <deny permission="bungeni.motion.Edit" role="bungeni.Speaker" />
@@ -231,16 +245,15 @@
 
 
 
-  <transition
-     id="create"
-     title="Create"
-     trigger="automatic"
-     source=""
-     destination="draft"
-     permission=""
-     action="bungeni.core.workflows.motion.actions.create"
-     condition=""
-     />
+    <transition id="create"
+        title="Create"
+        trigger="automatic"
+        source=""
+        destination="draft"
+        permission=""
+        action="bungeni.core.workflows.motion.actions.create"
+        condition=""
+    />
     <transition id="create-on-behalf-of"
         title="Create"
         trigger="automatic"
@@ -275,7 +288,7 @@
      id="submit-to-clerk"
      title="Submit to Clerk"
      trigger="manual"
-     source="draft"
+     source="working_draft draft"
      destination="submitted"
      permission="bungeni.motion.Submit"
      action="bungeni.core.workflows.motion.actions.submit"
@@ -287,7 +300,7 @@
      id="received-by-clerk"
      title="Receive"
      trigger="manual"
-        source="working_draft submitted"
+        source="submitted"
      destination="received"
      permission="bungeni.motion.Recieve"
      action="bungeni.core.workflows.motion.actions.received_by_clerk"
@@ -298,7 +311,7 @@
      id="require-edit-by-mp"
      title="Needs Clarification by MP"
      trigger="manual"
-        source="working_draft received"
+        source="received"
      destination="clarify_mp"
      permission="bungeni.motion.clerk.Review"
      action="bungeni.core.workflows.motion.actions.require_edit_by_mp"
@@ -310,31 +323,17 @@
      id="complete"
      title="Submit to the Speaker Office"
      trigger="manual"
-     source="draft 
-            received"
+     source="received"
      destination="complete"
      permission="bungeni.motion.clerk.Review"
      action="bungeni.core.workflows.motion.actions.complete"
      condition=""
      />
-     
-  <transition
-     id="complete-speaker"
-     title="Submit to the Speaker Office"
-     trigger="manual"
-     source="submitted
-             received"
-     destination="complete"
-     permission="bungeni.motion.speaker.Review"
-     action="bungeni.core.workflows.motion.actions.complete"
-     condition=""
-     />
-     
   <transition
      id="approve"
      title="Approve"
      trigger="manual"
-     source="draft complete"
+     source="complete"
      destination="admissible"
      permission="bungeni.motion.speaker.Review"
      action="bungeni.core.workflows.motion.actions.approve"
@@ -352,31 +351,17 @@
      event="bungeni.core.workflows.interfaces.IMotionPendingEvent"
      />
      
-  <transition
-     id="reject"
-     title="Reject"
-     trigger="manual"
-     source="complete"
-     destination="inadmissible"
-     permission="bungeni.motion.speaker.Review"
-     action="bungeni.core.workflows.motion.actions.reject"
-     condition=""
-     event="bungeni.core.workflows.interfaces.IMotionRejectedEvent"
-     require_confirmation="true"
-     />
-  
-  <transition
-     id="redraft-inadmissible"
-     title="Redraft Rejected"
-     trigger="manual"
-     source="inadmissible"
-     destination="draft"
-     permission="bungeni.motion.RevertTransitions"
-     action=""
-     condition=""
-     event=""
-     />
-
+    <transition id="reject"
+        title="Reject"
+        trigger="manual"
+        source="complete"
+        destination="inadmissible"
+        permission="bungeni.motion.speaker.Review"
+        action="bungeni.core.workflows.motion.actions.reject"
+        condition=""
+        event="bungeni.core.workflows.interfaces.IMotionRejectedEvent"
+        require_confirmation="true"
+    />
   
   <transition
      id="require-amendment"
@@ -422,18 +407,6 @@
      condition=""
      />
   <transition
-     id="schedule"
-     title="Schedule"
-     trigger="manual"
-     source="schedule_pending debate_adjourned postponed"
-     destination="scheduled"
-     permission="bungeni.motion.Schedule"
-     action="bungeni.core.workflows.motion.actions.schedule"
-     event="bungeni.core.workflows.interfaces.IMotionScheduledEvent"
-     />
-     
-     
-  <transition
      id="defer"
      title="Defer"
      trigger="manual"
@@ -471,24 +444,23 @@
      id="schedule-deferred"
      title="Schedule"
      trigger="manual"
-     source="deferred"
+     source="schedule_pending"
      destination="scheduled"
      permission="bungeni.motion.Schedule"
      action="bungeni.core.workflows.motion.actions.schedule"
-     condition="bungeni.core.workflows.motion.conditions.is_scheduled"
+     condition=""
      event="bungeni.core.workflows.interfaces.IMotionScheduledEvent"
      />
-  <transition
-     id="postpone"
-     title="Postpone"
-     trigger="manual"
-     source="scheduled"
-     destination="postponed"
-     permission="bungeni.motion.Schedule"
-     action="bungeni.core.workflows.motion.actions.postpone"
-     condition=""
-     event="bungeni.core.workflows.interfaces.IMotionPostponedEvent"
-     />
+    <transition id="drop"
+        title="Drop"
+        trigger="manual"
+        source="scheduled"
+        destination="dropped"
+        permission="bungeni.motion.Schedule"
+        action=""
+        condition=""
+        event="bungeni.core.workflows.interfaces.IMotionDroppedEvent"
+    />
   <transition
      id="debate"
      title="Debate"
@@ -511,28 +483,6 @@
      event=""
      />
   <transition
-     id="schedule-postponed"
-     title="Schedule"
-     trigger="manual"
-     source="postponed"
-     destination="scheduled"
-     permission="bungeni.motion.Schedule"
-     action="bungeni.core.workflows.motion.actions.schedule"
-     condition="bungeni.core.workflows.motion.conditions.is_scheduled"
-     event="bungeni.core.workflows.interfaces.IMotionScheduledEvent"
-     />
-  <transition
-     id="elapse-postponed"
-     title="Elapse"
-     trigger="manual"
-     source="postponed"
-     destination="elapsed"
-     permission="bungeni.motion.Schedule"
-     action="bungeni.core.workflows.motion.actions.elapse"
-     condition=""
-     />
-  
-  <transition
      id="withdraw"
      title="Withdraw"
      trigger="manual"
@@ -554,7 +504,6 @@
      source="admissible
              scheduled
              deferred
-             postponed
              debate_adjourned
              schedule_pending"
      destination="withdrawn_public"
@@ -562,7 +511,40 @@
      action="bungeni.core.workflows.motion.actions.withdraw"
      condition=""
      require_confirmation="true"
-     />
+    />
+    <transition id="adopt"
+        title="Reject"
+        trigger="manual"
+        source="debated"
+        destination="adopted"
+        permission="bungeni.motion.speaker.Review"
+        action="bungeni.core.workflows.motion.actions.adopt"
+        condition=""
+        event="bungeni.core.workflows.interfaces.IMotionAdoptedEvent"
+        require_confirmation="true"
+    />
+    <transition id="adopt"
+        title="Reject"
+        trigger="manual"
+        source="debated"
+        destination="adopted_amendments"
+        permission="bungeni.motion.speaker.Review"
+        action="bungeni.core.workflows.motion.actions.adopt"
+        condition=""
+        event="bungeni.core.workflows.interfaces.IMotionAdoptedEvent"
+        require_confirmation="true"
+    />
+    <transition id="debated_reject"
+        title="Reject"
+        trigger="manual"
+        source="debated"
+        destination="rejected"
+        permission="bungeni.motion.speaker.Review"
+        action="bungeni.core.workflows.motion.actions.reject"
+        condition=""
+        event="bungeni.core.workflows.interfaces.IMotionRejectedEvent"
+        require_confirmation="true"
+    />
 
   
 </workflow>

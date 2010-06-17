@@ -1579,11 +1579,14 @@ class MotionDescriptor(ParliamentaryItemDescriptor):
                        motion_wf_state[u'schedule_pending'].id,
                        motion_wf_state[u'scheduled'].id,
                        motion_wf_state[u'deferred'].id,
-                       motion_wf_state[u'postponed'].id,
+                       motion_wf_state[u'dropped'].id,
                        motion_wf_state[u'elapsed'].id,
                        motion_wf_state[u'debated'].id,
                        motion_wf_state[u'debate_adjourned'].id,
                        motion_wf_state[u'withdrawn_public'].id,
+                       motion_wf_state[u'adopted'].id,
+                       motion_wf_state[u'adopted_amendments'].id,
+                       motion_wf_state[u'rejected'].id,
                     ]
 
 

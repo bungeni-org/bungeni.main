@@ -9,9 +9,11 @@ import zope.securitypolicy.interfaces
 from bungeni.core.workflows import dbutils, utils
 
 class conditions:
+    ''' !+ ?
     @staticmethod
     def is_scheduled(info, context):
         return dbutils.isItemScheduled(context.motion_id)
+    '''
     
     @staticmethod
     def user_is_not_context_owner(info, context):
@@ -32,10 +34,6 @@ class actions:
     #    rpm.denyPermissionToRole( 'bungeni.motion.delete', u'bungeni.Clerk' )
     #    rpm.denyPermissionToRole( 'bungeni.motion.delete', u'bungeni.Speaker' )
     #    rpm.denyPermissionToRole( 'bungeni.motion.delete', u'bungeni.MP' )
-
-    @staticmethod
-    def postpone(info,context):
-        pass
 
     @staticmethod
     def create( info, context ):
@@ -67,7 +65,10 @@ class actions:
         utils.setApprovalDate(info,context)
 
     @staticmethod
-    def reject( info, context ):
+    def adopt(info, context):
+        utils.createVersion(info,context)
+    @staticmethod
+    def reject(info, context):
         pass
 
     @staticmethod
@@ -234,6 +235,7 @@ class SendNotificationToMemberUponSchedule(Notification):
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 
+''' !+ remove, grep for: SendNotificationToMemberUponPostponed IMotionPostponedEvent
 class SendNotificationToMemberUponPostponed(Notification):
     """Issued when a motion was postponed by the speakers office.
     sends a notice that the motion could not be debated and was postponed"""
@@ -254,6 +256,7 @@ class SendNotificationToMemberUponPostponed(Notification):
     @property
     def from_address(self):
         return prefs.getClerksOfficeEmail()
+'''
 
 class SendNotificationToMemberUponDebated(Notification):
     """Issued when a motion was debated."""

@@ -166,7 +166,6 @@ class SchedulableMotionsViewlet(SchedulableItemsViewlet):
         motion_wf_state[u"scheduled"].id,
         motion_wf_state[u"schedule_pending"].id,
         motion_wf_state[u"debate_adjourned"].id,
-        motion_wf_state[u"postponed"].id,
         )
 
 class SchedulableTabledDocumentsViewlet(SchedulableItemsViewlet):

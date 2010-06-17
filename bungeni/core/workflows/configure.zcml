@@ -165,7 +165,9 @@
   <subscriber handler=".motion.SendNotificationToMemberUponNeedsClarification" />
   <subscriber handler=".motion.SendNotificationToMemberUponDeferred" />
   <subscriber handler=".motion.SendNotificationToMemberUponSchedule" />
+  <!-- !+ remove, grep for: SendNotificationToMemberUponPostponed IMotionPostponedEvent
   <subscriber handler=".motion.SendNotificationToMemberUponPostponed" />
+  -->
   <subscriber handler=".motion.SendNotificationToMemberUponDebated" />
   
   <!-- agenda item workflow -->

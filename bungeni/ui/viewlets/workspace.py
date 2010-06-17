@@ -393,14 +393,6 @@ class AdmissibleMotionViewlet(MotionInStateViewlet):
     list_id = "admissible_motions"
     
 
-class PostponedMotionViewlet(MotionInStateViewlet):
-    """
-    display the admissible Motions
-    """
-    name = motion_wf_state[u"postponed"].title
-    state = motion_wf_state[u"postponed"].id
-    list_id = "postponed_motions"
-
 class BillItemsViewlet(ViewletBase): 
     """
     Display all bills that can be scheduled for a parliamentary sitting
@@ -557,17 +549,18 @@ class MPItemInProgressViewlet(OwnedItemsInStageViewlet):
         question_wf_state[u"admissible"].id,
         question_wf_state[u"clarify_clerk"].id,
         question_wf_state[u"complete"].id,
+        question_wf_state[u"debate_adjourned"].id,
         motion_wf_state[u"submitted"].id,
         motion_wf_state[u"received"].id,
         motion_wf_state[u"complete"].id,
         motion_wf_state[u"clarify_clerk"].id,
         motion_wf_state[u"admissible"].id,
+        motion_wf_state[u"debate_adjourned"].id,
         question_wf_state[u"scheduled"].id,
         question_wf_state[u"response_pending"].id,
         question_wf_state[u"deferred"].id,
         question_wf_state[u"response_submitted"].id,
         motion_wf_state[u"deferred"].id,
-        motion_wf_state[u"postponed"].id,
         motion_wf_state[u"scheduled"].id,
         agendaitem_wf_state[u"submitted"].id,
         agendaitem_wf_state[u"received"].id,
@@ -576,6 +569,7 @@ class MPItemInProgressViewlet(OwnedItemsInStageViewlet):
         agendaitem_wf_state[u"admissible"].id,
         agendaitem_wf_state[u"deferred"].id,
         agendaitem_wf_state[u"scheduled"].id,
+        agendaitem_wf_state[u"debate_adjourned"].id,
         tableddocument_wf_state[u"submitted"].id,
         tableddocument_wf_state[u"received"].id,
         tableddocument_wf_state[u"complete"].id,
@@ -584,6 +578,7 @@ class MPItemInProgressViewlet(OwnedItemsInStageViewlet):
         tableddocument_wf_state[u"deferred"].id,
         tableddocument_wf_state[u"postponed"].id,
         tableddocument_wf_state[u"scheduled"].id,
+        tableddocument_wf_state[u"debate_adjourned"].id,
         bill_wf_state[u"gazetted"].id , 
         bill_wf_state[u"first_reading"].id ,
         bill_wf_state[u"first_reading_postponed"].id ,
@@ -731,7 +726,6 @@ class ClerkReviewedItemViewlet(AllItemsInStageViewlet):
         question_wf_state[u"deferred"].id,
         question_wf_state[u"response_submitted"].id,
         motion_wf_state[u"deferred"].id,
-        motion_wf_state[u"postponed"].id,
         motion_wf_state[u"scheduled"].id,
         agendaitem_wf_state[u"deferred"].id,
         agendaitem_wf_state[u"scheduled"].id,
@@ -785,7 +779,6 @@ class ItemsPendingScheduleViewlet(AllItemsInStageViewlet):
         agendaitem_wf_state[u"debate_adjourned"].id,
         motion_wf_state[u"schedule_pending"].id,
         motion_wf_state[u"scheduled"].id,
-        motion_wf_state[u"postponed"].id,
         motion_wf_state[u"debate_adjourned"].id,
         tableddocument_wf_state[u"schedule_pending"].id,
         tableddocument_wf_state[u"scheduled"].id,

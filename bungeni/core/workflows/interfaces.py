@@ -29,7 +29,6 @@ class IQuestionScheduledEvent(IWorkflowTransitionEvent):
 
 class IQuestionDroppedEvent(IWorkflowTransitionEvent):
     """Issued when a question was dropped."""
-
 ''' !+ remove, grep for: SendNotificationToMemberUponPostponed IQuestionPostponedEvent
 class IQuestionPostponedEvent(IWorkflowTransitionEvent):
     """Issued when a question was postponed by the speakers office."""
@@ -77,8 +76,15 @@ class IMotionDeferredEvent(IWorkflowTransitionEvent):
 class IMotionScheduledEvent(IWorkflowTransitionEvent):
     """Issued when a Motion was scheduled by Speakers office."""
 
+class IMotionDroppedEvent(IWorkflowTransitionEvent):
+    """Issued when a motion was dropped."""
+''' !+ remove, grep for: SendNotificationToMemberUponPostponed IMotionPostponedEvent
 class IMotionPostponedEvent(IWorkflowTransitionEvent):
     """Issued when a Motion was postponed by the speakers office."""
+'''
+
+class IMotionAdoptedEvent(IWorkflowTransitionEvent):
+    """Issued when a motion is adopted."""
 
 class IMotionDebatedEvent(IWorkflowTransitionEvent):
     """Issued when a Motions answer was debated"""

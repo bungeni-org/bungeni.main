@@ -664,7 +664,6 @@ class MemberItemsViewlet( viewlet.ViewletBase ):
         question_wf_state[u"response_submitted"].id,
         question_wf_state[u"response_complete"].id,
         motion_wf_state[u"deferred"].id,
-        motion_wf_state[u"postponed"].id,
         motion_wf_state[u"scheduled"].id,
         agendaitem_wf_state[u"deferred"].id,
         agendaitem_wf_state[u"scheduled"].id,
