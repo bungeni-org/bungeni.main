@@ -685,11 +685,9 @@ class MemberItemsViewlet(viewlet.ViewletBase):
         question_wf_state[u"debated"].id,
         question_wf_state[u"elapsed"].id,
         tableddocument_wf_state[u"admissible"].id,
-        tableddocument_wf_state[u"deferred"].id,
         tableddocument_wf_state[u"postponed"].id,
         tableddocument_wf_state[u"scheduled"].id,
-        tableddocument_wf_state[u"debated"].id,
-        tableddocument_wf_state[u"elapsed"].id,
+        tableddocument_wf_state[u"tabled"].id,
     ]
     
     def __init__( self,  context, request, view, manager ):

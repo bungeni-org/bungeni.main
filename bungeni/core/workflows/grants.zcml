@@ -37,15 +37,17 @@
   <grant permission="bungeni.agendaitem.Debate" role="bungeni.Speaker"/>
   <grant permission="bungeni.agendaitem.Withdraw" role="bungeni.Owner"/>
   
-  <!-- tabled document -->
-  <grant permission="bungeni.tableddocument.Submit" role="bungeni.Owner"/>
-  <grant permission="bungeni.tableddocument.Recieve" role="bungeni.Clerk"/>
-  <grant permission="bungeni.tableddocument.clerk.Review" role="bungeni.Clerk"/>
-  <grant permission="bungeni.tableddocument.speaker.Review"  role="bungeni.Speaker"/>
-  <grant permission="bungeni.tableddocument.Schedule" role="bungeni.Clerk"/>
-  <grant permission="bungeni.tableddocument.Debate" role="bungeni.Clerk"/>
-  <grant permission="bungeni.tableddocument.Debate" role="bungeni.Speaker"/>
-  <grant permission="bungeni.tableddocument.Withdraw" role="bungeni.Owner"/>
+      <!-- tabled document -->
+      <grant permission="bungeni.tableddocument.Submit" role="bungeni.Owner"/>
+      <grant permission="bungeni.tableddocument.Recieve" role="bungeni.Clerk"/>
+      <grant permission="bungeni.tableddocument.clerk.Review" role="bungeni.Clerk"/>
+      <grant permission="bungeni.tableddocument.speaker.Review"  role="bungeni.Speaker"/>
+      <grant permission="bungeni.tableddocument.Schedule" role="bungeni.Clerk"/>
+      <grant permission="bungeni.tableddocument.Table" role="bungeni.Clerk"/>
+      <grant permission="bungeni.tableddocument.Table" role="bungeni.Speaker"/>
+      <grant permission="bungeni.tableddocument.Table" role="bungeni.Minister"/>
+      <grant permission="bungeni.tableddocument.Table" role="bungeni.MP"/>
+      <grant permission="bungeni.tableddocument.Withdraw" role="bungeni.Owner"/>
   
   <!-- Bill Workflow permissions -->
   <grant permission="bungeni.bill.Submit" role="bungeni.Clerk" />

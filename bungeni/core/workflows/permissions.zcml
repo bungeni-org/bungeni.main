@@ -51,7 +51,7 @@
   <permission id="bungeni.tableddocument.clerk.Review" title="Review a tabled document" />
   <permission id="bungeni.tableddocument.speaker.Review"  title="Speaker review a tabled document" />
   <permission id="bungeni.tableddocument.Schedule" title="Schedule a tabled document" />
-  <permission id="bungeni.tableddocument.Debate" title="Mark a tabled document as debated" />
+    <permission id="bungeni.tableddocument.Table" title="Table a tabled document" />
   <permission id="bungeni.tableddocument.Withdraw" title="Withdraw a tabled document" />
   
   <permission id="bungeni.sitting.ChangeStatus" title="Change Sitting Status" />

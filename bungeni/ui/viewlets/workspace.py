@@ -575,10 +575,8 @@ class MPItemInProgressViewlet(OwnedItemsInStageViewlet):
         tableddocument_wf_state[u"complete"].id,
         tableddocument_wf_state[u"clarify_clerk"].id,
         tableddocument_wf_state[u"admissible"].id,
-        tableddocument_wf_state[u"deferred"].id,
         tableddocument_wf_state[u"postponed"].id,
         tableddocument_wf_state[u"scheduled"].id,
-        tableddocument_wf_state[u"debate_adjourned"].id,
         bill_wf_state[u"gazetted"].id , 
         bill_wf_state[u"first_reading"].id ,
         bill_wf_state[u"first_reading_postponed"].id ,
@@ -615,9 +613,8 @@ class ItemArchiveViewlet(OwnedItemsInStageViewlet):
         agendaitem_wf_state[u"elapsed"].id,
         agendaitem_wf_state[u"inadmissible"].id,
         tableddocument_wf_state[u"withdrawn"].id,
-        tableddocument_wf_state[u"elapsed"].id,
         tableddocument_wf_state[u"inadmissible"].id,
-        tableddocument_wf_state[u"debated"].id,
+        tableddocument_wf_state[u"tabled"].id,
         bill_wf_state[u"approved"].id , 
         bill_wf_state[u"rejected"].id ,
     ]
@@ -650,9 +647,8 @@ class AllItemArchiveViewlet(AllItemsInStageViewlet):
         agendaitem_wf_state[u"elapsed"].id,
         agendaitem_wf_state[u"inadmissible"].id,
         tableddocument_wf_state[u"withdrawn"].id,
-        tableddocument_wf_state[u"elapsed"].id,
         tableddocument_wf_state[u"inadmissible"].id,
-        tableddocument_wf_state[u"debated"].id,
+        tableddocument_wf_state[u"tabled"].id,
         bill_wf_state[u"approved"].id , 
         bill_wf_state[u"rejected"].id ,
     ]
@@ -739,7 +735,6 @@ class ClerkReviewedItemViewlet(AllItemsInStageViewlet):
         motion_wf_state[u"scheduled"].id,
         agendaitem_wf_state[u"deferred"].id,
         agendaitem_wf_state[u"scheduled"].id,
-        tableddocument_wf_state[u"deferred"].id,
         tableddocument_wf_state[u"postponed"].id,
         tableddocument_wf_state[u"scheduled"].id,
         bill_wf_state[u"gazetted"].id , 
@@ -773,8 +768,6 @@ class ItemsApprovedViewlet(AllItemsInStageViewlet):
         question_wf_state[u"deferred"].id,
         motion_wf_state[u"deferred"].id,
         agendaitem_wf_state[u"deferred"].id,
-        tableddocument_wf_state[u"deferred"].id, 
-        
     ]
     list_id = "items-approved"
 
@@ -793,7 +786,6 @@ class ItemsPendingScheduleViewlet(AllItemsInStageViewlet):
         tableddocument_wf_state[u"schedule_pending"].id,
         tableddocument_wf_state[u"scheduled"].id,
         tableddocument_wf_state[u"postponed"].id,
-        tableddocument_wf_state[u"debate_adjourned"].id,
     ]
     list_id = "items-pending-schedule"
 

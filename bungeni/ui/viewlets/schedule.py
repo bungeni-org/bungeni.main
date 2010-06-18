@@ -175,7 +175,6 @@ class SchedulableTabledDocumentsViewlet(SchedulableItemsViewlet):
     states = (
         tableddocument_wf_state[u"scheduled"].id,
         tableddocument_wf_state[u"schedule_pending"].id,
-        tableddocument_wf_state[u"debate_adjourned"].id,
         tableddocument_wf_state[u"postponed"].id,
         )
                  

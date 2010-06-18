@@ -109,17 +109,14 @@ class ITabledDocumentRejectedEvent(IWorkflowTransitionEvent):
 class ITabledDocumentClarifyEvent(IWorkflowTransitionEvent):
     """Issued when a TabledDocument needs clarification by the MP"""
 
-class ITabledDocumentDeferredEvent(IWorkflowTransitionEvent):
-    """Issued when a TabledDocument was deferred by Clerk's office."""
-
 class ITabledDocumentScheduledEvent(IWorkflowTransitionEvent):
     """Issued when a TabledDocument was scheduled by Speakers office."""
 
 class ITabledDocumentPostponedEvent(IWorkflowTransitionEvent):
     """Issued when a TabledDocument was postponed by the speakers office."""
 
-class ITabledDocumentDebatedEvent(IWorkflowTransitionEvent):
-    """Issued when a TabledDocuments answer was debated"""
+class ITabledDocumentTabledEvent(IWorkflowTransitionEvent):
+    """Issued when a TabledDocument is tabled"""
 
 class ITabledDocumentPendingEvent(IWorkflowTransitionEvent):
     pass

@@ -1785,12 +1785,8 @@ class TabledDocumentDescriptor(ParliamentaryItemDescriptor):
     public_wfstates = [tableddocument_wf_state[u'admissible'].id,
                        tableddocument_wf_state[u'schedule_pending'].id,
                        tableddocument_wf_state[u'scheduled'].id,
-                       tableddocument_wf_state[u'deferred'].id,
                        tableddocument_wf_state[u'postponed'].id,
-                       tableddocument_wf_state[u'elapsed'].id,
-                       tableddocument_wf_state[u'debated'].id,
-                       tableddocument_wf_state[u'debate_adjourned'].id,
-                       tableddocument_wf_state[u'withdrawn_public'].id,
+                       tableddocument_wf_state[u'tabled'].id,
                     ]
     
 class TabledDocumentVersionDescriptor(VersionDescriptor):

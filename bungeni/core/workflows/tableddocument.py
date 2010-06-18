@@ -16,6 +16,11 @@ class conditions:
     @staticmethod
     def user_is_not_context_owner(info, context):
         return not utils.user_is_context_owner(context)
+    # !+ for some reason, the tableddocument flow form "" to either "draft" or 
+    # "working_draft" seems too need the explicit condition on each transition.
+    @staticmethod
+    def user_is_context_owner(info, context):
+        return utils.user_is_context_owner(context)
 
 class actions:
     @staticmethod
@@ -29,74 +34,64 @@ class actions:
         utils.setTabledDocumentHistory(info,context)
 
     @staticmethod
-    def create( info, context ):
+    def create(info, context):
         utils.setParliamentId(info, context)
         utils.setBungeniOwner(context)
     
     @staticmethod
-    def submit( info, context ):
+    def submit(info, context):
         utils.setSubmissionDate(info, context)
-
-
+    
     @staticmethod
-    def received_by_clerk( info, context ):
+    def received_by_clerk(info, context):
         utils.createVersion(info, context)
 
     @staticmethod
-    def require_edit_by_mp( info, context ):
+    def require_edit_by_mp(info, context):
         utils.createVersion(info,context)
 
 
     @staticmethod
-    def complete( info, context ):
+    def complete(info, context):
         utils.createVersion(info,context)
         utils.setSubmissionDate(info, context)
- 
-
+    
     @staticmethod
-    def approve( info, context ):
+    def approve(info, context):
         utils.setApprovalDate(info,context)
 
     @staticmethod
-    def reject( info, context ):
+    def reject(info, context):
         pass
 
     @staticmethod
-    def require_amendment( info, context ):
+    def require_amendment(info, context):
         utils.createVersion(info,context)
     
     @staticmethod
-    def complete_clarify( info, context ):
+    def complete_clarify(info, context):
         utils.createVersion(info,context)
 
 
     @staticmethod
-    def mp_clarify( info, context ):
+    def mp_clarify(info, context):
         utils.createVersion(info,context)
 
 
     @staticmethod
-    def schedule( info, context ):
+    def schedule(info, context):
         pass
 
     @staticmethod
-    def defer( info, context):
+    def schedule(info, context):
         pass
 
     @staticmethod
-    def elapse( info, context ):
+    def table(info, context):
         pass
 
     @staticmethod
-    def schedule( info, context ):
-        pass
-
-    @staticmethod
-    def debate( info, context ):
-        pass
-
-    @staticmethod
-    def withdraw( info, context ):
+    def withdraw(info, context):
         pass
 
 class SendNotificationToMemberUponReceipt(Notification):
@@ -183,26 +178,6 @@ class SendNotificationToMemberUponNeedsClarification(Notification):
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 
-class SendNotificationToMemberUponDeferred(Notification):
-    """Issued when a tabled document was deferred by Clerk's office."""
-
-    component.adapts(interfaces.ITabledDocumentDeferredEvent)
-
-    body = _('notification_email_to_member_upon_defer_of_tabled_document',
-             default="Tabled document deferred")
-
-    @property
-    def subject(self):
-        return u'Tabled document deferred: %s' % self.context.short_name
-
-    @property
-    def condition(self):
-        return self.context.receive_notification
-    
-    @property
-    def from_address(self):
-        return prefs.getSpeakersOfficeEmail()
-
 class SendNotificationToMemberUponSchedule(Notification):
     """Issued when a tabled document was scheduled by Speakers office.
     Sends a Notice that the tabled_document is scheduled for ... """
@@ -245,22 +220,4 @@ class SendNotificationToMemberUponPostponed(Notification):
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 
-class SendNotificationToMemberUponDebated(Notification):
-    """Issued when a tabled_document was debated"""
-
-    component.adapts(interfaces.ITabledDocumentDebatedEvent)
-
-    body = _('notification_email_to_member_upon_debate_of_tabled_document',
-             default=u"Tabled document was debated")
-    @property
-    def subject(self):
-        return u'Tabled document was debated: %s' % self.context.short_name
-
-    @property
-    def condition(self):
-        return self.context.receive_notification
-    
-    @property
-    def from_address(self):
-        return prefs.getClerksOfficeEmail()
 
