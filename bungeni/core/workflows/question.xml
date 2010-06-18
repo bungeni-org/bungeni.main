@@ -5,6 +5,17 @@
     domain="bungeni.ui"
     initial_state="">
     
+    <!-- Workflow state/transition names:
+    
+    State names should be lowercase "adjectives". !+ note, not all are...
+    Transition names should be lowercase "verbs".
+    
+    Note that given that all names are specified as XML @id attributes,
+    state and transition names must be unique for teh XML document.
+    
+    All multiple word names are joined using an "_" (underscore) character.
+    -->
+    
     <state id="working_draft" title="Working Draft">
         <grant permission="bungeni.question.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.question.Edit" role="bungeni.Speaker" />
@@ -21,7 +32,6 @@
         <deny permission="zope.View" role="bungeni.Everybody" /> 
         <deny permission="zope.View" role="bungeni.Anybody" />
     </state>
-    
     <state id="draft" title="Draft">
         <grant permission="bungeni.question.Edit" role="bungeni.Owner" />
         <grant permission="zope.View" role="bungeni.Owner" />
@@ -36,7 +46,6 @@
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
     </state>
-    
     <state id="submitted" title="Submitted to clerk">
         <deny permission="bungeni.question.Edit" role="bungeni.Owner" />
         <grant permission="zope.View" role="bungeni.Owner" />
@@ -46,13 +55,11 @@
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
     </state>
-    
     <state id="received" title="Received by clerk">
         <grant permission="bungeni.question.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
     </state>
-    
     <state id="complete" title="Submitted to the Speaker">
         <deny permission="bungeni.question.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.question.Edit" role="bungeni.Speaker" />
@@ -62,20 +69,17 @@
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
     </state>
-
     <state id="admissible" title="Admissible">
         <grant permission="zope.View" role="bungeni.Everybody" />
         <grant permission="zope.View" role="bungeni.Anybody" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" /> 
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
     </state>
-
     <state id="inadmissible" title="Inadmissible">
         <deny permission="bungeni.question.Edit" role="bungeni.Speaker" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" /> 
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
     </state>
-
     <state id="clarify_mp" title="Needs MPs clarification">
         <grant permission="zope.View" role="bungeni.Owner" />
         <deny permission="bungeni.question.Edit" role="bungeni.Clerk" />
@@ -85,7 +89,6 @@
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.clerk" />
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
     </state>
-
     <state id="clarify_clerk" title="Needs clerks clarification">
         <deny permission="bungeni.question.Edit" role="bungeni.Speaker" />
         <grant permission="bungeni.question.Edit" role="bungeni.Clerk" />
@@ -94,27 +97,22 @@
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
     </state>
-
     <state id="schedule_pending" title="Schedule pending">
         <deny permission="bungeni.question.Edit" role="bungeni.Speaker" />
-    </state> 
-
+    </state>
     <state id="scheduled" title="Scheduled">
         <deny permission="bungeni.question.Edit" role="bungeni.Speaker" />
         <grant permission="bungeni.response.Add" role="bungeni.Clerk" />
         <grant permission="bungeni.response.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.response.View" role="bungeni.Clerk" />
     </state>
-
     <state id="debate_adjourned" title="Debate adjourned">
     </state>
-  
     <state id="response_pending" title="Pending response">
         <deny permission="bungeni.question.Edit" role="bungeni.Speaker" />
         <grant permission="bungeni.response.Edit" role="bungeni.Minister" />
         <grant permission="bungeni.response.View" role="bungeni.Minister" />
     </state>
-
     <state id="response_submitted" title="Response submitted">
         <grant permission="bungeni.response.Edit" role="bungeni.Clerk"/>
         <grant permission="zope.View" role="bungeni.Clerk"/>
@@ -182,7 +180,7 @@
         condition=""
         order="0"
     />
-    <transition id="create-on-behalf-of"
+    <transition id="create_on_behalf_of"
         title="Create Question (On behalf of)"
         trigger="automatic"
         source=""
@@ -191,7 +189,7 @@
         condition="bungeni.core.workflows.question.conditions.user_is_not_context_owner"
         order="0"
     />
-    <transition id="submit-to-clerk"
+    <transition id="submit_to_clerk"
         title="Submit to Clerk"
         trigger="manual"
         source="working_draft draft"
@@ -202,7 +200,7 @@
         event=".interfaces.IQuestionSubmittedEvent"
         order="1"
     />
-    <transition id="received-by-clerk"
+    <transition id="receive_by_clerk"
         title="Receive"
         trigger="manual"
         source="submitted"
@@ -224,10 +222,10 @@
     A new version of the question will be created, once the question is 
     modified and saved.
     -->
-    <transition id="mp-clarify"
+    <transition id="to_clarify_mp"
         title="Needs Clarification by MP"
         trigger="manual"
-        source="received clarify_clerk"
+        source="received  clarify_clerk"
         destination="clarify_mp"
         permission="bungeni.question.clerk.Review"
         action="bungeni.core.workflows.question.actions.mp_clarify"
@@ -246,7 +244,7 @@
     question has been set to “admissible” by the Speaker's office (for details 
     about questions being set to “admissible” see Approval of Questions)
     -->
-    <transition id="complete"
+    <transition id="to_complete"
         title="Submit to the Speaker Office"
         trigger="manual"
         source="received"
@@ -289,7 +287,7 @@
         require_confirmation="true"
         order="7"
     />
-    <transition id="require-amendment"
+    <transition id="require_amendment"
         title="Needs Clarification"
         trigger="manual"
         source="complete"
@@ -305,7 +303,7 @@
     A question that requires clarification/amendmends can be resubmitted by 
     the clerks office.
     -->
-    <transition id="complete-clarify"
+    <transition id="complete_clarify"
         title="Complete"
         trigger="manual"
         source="clarify_clerk"
@@ -319,7 +317,7 @@
     <!--
     After a question is amended it can be resubmitted to the clerks office.
     -->
-    <transition id="resubmit-clerk"
+    <transition id="resubmit_clerk"
         title="Resubmit to Clerk"
         trigger="manual"
         source="clarify_mp"
@@ -365,7 +363,7 @@
     Questions which are flagged as “requiring written response” are never 
     scheduled, but are answered directly by the ministry.
     -->
-    <transition id="send-ministry"
+    <transition id="send_ministry"
         title="Send to Ministry"
         trigger="manual"
         source="admissible"
@@ -376,7 +374,7 @@
         event=".interfaces.IQuestionSentToMinistryEvent"
         order="13"
     />
-    <transition id="submit-response"
+    <transition id="submit_response"
         title="Submit Response"
         trigger="manual"
         source="response_pending"
@@ -386,7 +384,7 @@
         event="bungeni.core.workflows.interfaces.IResponseSubmittedEvent"
         order="15"
     />
-    <transition id="re-draft-response"
+    <transition id="redraft_response"
         title="Redraft Response"
         trigger="manual"
         source="response_submitted"
@@ -397,7 +395,7 @@
         event=""
         order="16"
     />
-    <transition id="complete-response"
+    <transition id="complete_response"
         title="Complete Response"
         trigger="manual"
         source="response_submitted"
@@ -437,7 +435,7 @@
     <!--
     A deferred question may be send to a ministry for a written response
     -->
-    <transition id="defer-ministry"
+    <transition id="defer_ministry"
         title="Send to Ministry"
         trigger="manual"
         source="deferred"

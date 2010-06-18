@@ -111,7 +111,7 @@
     </state>
     
     <transition id="create-bill"
-        title="Create"
+        title="Create Bill"
         trigger="automatic"
         source=""
         destination="working_draft"

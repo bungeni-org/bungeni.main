@@ -22,7 +22,6 @@
         <deny permission="zope.View" role="bungeni.Everybody" /> 
         <deny permission="zope.View" role="bungeni.Anybody" />
     </state>
-    
     <state id="draft" title="Draft">
         <grant permission="bungeni.agendaitem.Edit" role="bungeni.Owner" />
         <grant permission="zope.View" role="bungeni.Owner" />
@@ -36,7 +35,6 @@
         <deny permission="zope.View" role="bungeni.Everybody" /> 
         <deny permission="zope.View" role="bungeni.Anybody" />
     </state>
-    
     <state id="submitted" title="Submitted">
         <deny permission="bungeni.agendaitem.Edit" role="bungeni.Owner" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
@@ -48,13 +46,11 @@
         <grant permission="zope.View" role="bungeni.Clerk" />
         <grant permission="zope.View" role="bungeni.Speaker" />
     </state>
-    
     <state id="received" title="Received by Clerks Office">
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
     </state>
-    
     <state id="complete" title="Submitted to the Speaker">
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Speaker" /> 
@@ -64,7 +60,6 @@
         <grant permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
         <grant permission="zope.View" role="bungeni.Speaker" />
     </state>
-    
     <state id="admissible" title="Admissible">
         <grant permission="zope.View" role="bungeni.Everybody" />
         <grant permission="zope.View" role="bungeni.Anybody" />
@@ -73,20 +68,17 @@
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
         <grant permission="zope.View" role="bungeni.Speaker" />
     </state>
-    
     <state id="inadmissible" title="Inadmissible">
         <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" /> 
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
     </state>
-    
     <state id="clarify_clerk" title="Needs Clarification by Clerks Office">
         <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
         <grant permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
     </state>
-    
     <state id="clarify_mp" title="Needs Clarification by MP">
         <deny permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" /> 
@@ -96,11 +88,9 @@
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
     </state>
-    
     <state id="schedule_pending" title="Schedule pending">
         <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
     </state>
-    
     <!-- is scheduled for debate at a sitting -->
     <state id="scheduled" title="Scheduled">
         <deny permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
@@ -156,7 +146,7 @@
     
     
     <transition id="create"
-        title="Create"
+        title="Create Agenda Item"
         trigger="automatic"
         source=""
         destination="draft"
@@ -165,7 +155,7 @@
         condition=""
     />
     <transition id="create-on-behalf-of"
-        title="Create"
+        title="Create Agenda Item (On behalf of)"
         trigger="automatic"
         source=""
         destination="working_draft"
