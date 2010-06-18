@@ -86,9 +86,6 @@ class IMotionPostponedEvent(IWorkflowTransitionEvent):
 class IMotionAdoptedEvent(IWorkflowTransitionEvent):
     """Issued when a motion is adopted."""
 
-class IMotionDebatedEvent(IWorkflowTransitionEvent):
-    """Issued when a Motions answer was debated"""
-    
 class IMotionPendingEvent(IWorkflowTransitionEvent):
     pass
     

@@ -648,29 +648,16 @@ class TableddocumentTimeLineViewlet(TimeLineViewlet):
     view_name = _("Tabled document timeline") 
     view_id ="tableddocument-timeline"
 
-class MemberItemsViewlet( viewlet.ViewletBase ):
+class MemberItemsViewlet(viewlet.ViewletBase):
     """ A tab with bills, motions etc for an MP
     """
     for_display = True
     states = [
-        question_wf_state[u"admissible"].id,
-        motion_wf_state[u"admissible"].id,
-        agendaitem_wf_state[u"admissible"].id,
-        tableddocument_wf_state[u"admissible"].id,
-        
-        question_wf_state[u"scheduled"].id,
-        question_wf_state[u"response_pending"].id,
-        question_wf_state[u"deferred"].id,
-        question_wf_state[u"response_submitted"].id,
-        question_wf_state[u"response_complete"].id,
-        motion_wf_state[u"deferred"].id,
-        motion_wf_state[u"scheduled"].id,
         agendaitem_wf_state[u"deferred"].id,
         agendaitem_wf_state[u"scheduled"].id,
-        tableddocument_wf_state[u"deferred"].id,
-        tableddocument_wf_state[u"postponed"].id,
-        tableddocument_wf_state[u"scheduled"].id,
-            
+        agendaitem_wf_state[u"admissible"].id,
+        agendaitem_wf_state[u"debated"].id,
+        agendaitem_wf_state[u"elapsed"].id,
         bill_wf_state[u"gazetted"].id , 
         bill_wf_state[u"first_reading"].id ,
         bill_wf_state[u"first_reading_postponed"].id ,
@@ -680,21 +667,31 @@ class MemberItemsViewlet( viewlet.ViewletBase ):
         bill_wf_state[u"whole_house"].id ,
         bill_wf_state[u"third_reading"].id,
         bill_wf_state[u"third_reading_postponed"].id,
-        
-        question_wf_state[u"debated"].id,
-        motion_wf_state[u"debated"].id,
-        agendaitem_wf_state[u"debated"].id,
-        tableddocument_wf_state[u"debated"].id,
-        question_wf_state[u"elapsed"].id,
-        motion_wf_state[u"elapsed"].id,
-        agendaitem_wf_state[u"elapsed"].id,
-        tableddocument_wf_state[u"elapsed"].id,
         bill_wf_state[u"approved"].id , 
         bill_wf_state[u"rejected"].id ,
+        motion_wf_state[u"admissible"].id,
+        motion_wf_state[u"deferred"].id,
+        motion_wf_state[u"scheduled"].id,
+        motion_wf_state[u"adopted"].id,
+        motion_wf_state[u"adopted_amendments"].id,
+        motion_wf_state[u"elapsed"].id,
+        motion_wf_state[u"debate_adjourned"].id,
+        question_wf_state[u"admissible"].id,
+        question_wf_state[u"scheduled"].id,
+        question_wf_state[u"response_pending"].id,
+        question_wf_state[u"deferred"].id,
+        question_wf_state[u"response_submitted"].id,
+        question_wf_state[u"response_complete"].id,
+        question_wf_state[u"debated"].id,
+        question_wf_state[u"elapsed"].id,
+        tableddocument_wf_state[u"admissible"].id,
+        tableddocument_wf_state[u"deferred"].id,
+        tableddocument_wf_state[u"postponed"].id,
+        tableddocument_wf_state[u"scheduled"].id,
+        tableddocument_wf_state[u"debated"].id,
+        tableddocument_wf_state[u"elapsed"].id,
     ]
-        
-        
-        
+    
     def __init__( self,  context, request, view, manager ):
         session = Session()
         self.context = context

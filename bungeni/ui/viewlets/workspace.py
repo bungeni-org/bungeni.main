@@ -597,16 +597,19 @@ class ItemArchiveViewlet(OwnedItemsInStageViewlet):
     states = [
         question_wf_state[u"response_complete"].id,
         question_wf_state[u"debated"].id,
-        motion_wf_state[u"debated"].id,
-        agendaitem_wf_state[u"debated"].id,
-        tableddocument_wf_state[u"debated"].id,
         question_wf_state[u"dropped"].id,
         question_wf_state[u"elapsed"].id,
         question_wf_state[u"withdrawn"].id,
         question_wf_state[u"inadmissible"].id, 
         motion_wf_state[u"withdrawn"].id,
+        motion_wf_state[u"withdrawn_public"].id,
         motion_wf_state[u"elapsed"].id,
         motion_wf_state[u"inadmissible"].id,
+        motion_wf_state[u"dropped"].id,
+        motion_wf_state[u"adopted"].id,
+        motion_wf_state[u"adopted_amendments"].id,
+        motion_wf_state[u"rejected"].id,
+        agendaitem_wf_state[u"debated"].id,
         agendaitem_wf_state[u"dropped"].id,
         agendaitem_wf_state[u"withdrawn"].id,
         agendaitem_wf_state[u"elapsed"].id,
@@ -614,26 +617,11 @@ class ItemArchiveViewlet(OwnedItemsInStageViewlet):
         tableddocument_wf_state[u"withdrawn"].id,
         tableddocument_wf_state[u"elapsed"].id,
         tableddocument_wf_state[u"inadmissible"].id,
+        tableddocument_wf_state[u"debated"].id,
         bill_wf_state[u"approved"].id , 
         bill_wf_state[u"rejected"].id ,
-        ]
+    ]
     list_id = "items-archived"
-
-class MPItemSuccessEndViewlet(OwnedItemsInStageViewlet):
-    """ items in end status that were discussed/answered ..."""
-    name = _("Items succesfully tabled")
-    states = [
-        question_wf_state[u"response_complete"].id,
-        question_wf_state[u"debated"].id,
-        motion_wf_state[u"debated"].id,
-        question_wf_state[u"elapsed"].id,
-        question_wf_state[u"withdrawn"].id,
-        question_wf_state[u"inadmissible"].id,
-        motion_wf_state[u"withdrawn"].id,
-        motion_wf_state[u"elapsed"].id,
-        motion_wf_state[u"inadmissible"].id
-        ]
-    list_id = "items-sucess"
 
 class AllItemArchiveViewlet(AllItemsInStageViewlet):
     types = ['motion',
@@ -644,16 +632,19 @@ class AllItemArchiveViewlet(AllItemsInStageViewlet):
     states = [
         question_wf_state[u"response_complete"].id,
         question_wf_state[u"debated"].id,
-        motion_wf_state[u"debated"].id,
-        agendaitem_wf_state[u"debated"].id,
-        tableddocument_wf_state[u"debated"].id,
         question_wf_state[u"dropped"].id,
         question_wf_state[u"elapsed"].id,
         question_wf_state[u"withdrawn"].id,
         question_wf_state[u"inadmissible"].id, 
         motion_wf_state[u"withdrawn"].id,
+        motion_wf_state[u"withdrawn_public"].id,
         motion_wf_state[u"elapsed"].id,
         motion_wf_state[u"inadmissible"].id,
+        motion_wf_state[u"dropped"].id,
+        motion_wf_state[u"adopted"].id,
+        motion_wf_state[u"adopted_amendments"].id,
+        motion_wf_state[u"rejected"].id,
+        agendaitem_wf_state[u"debated"].id,
         agendaitem_wf_state[u"dropped"].id,
         agendaitem_wf_state[u"withdrawn"].id,
         agendaitem_wf_state[u"elapsed"].id,
@@ -661,10 +652,29 @@ class AllItemArchiveViewlet(AllItemsInStageViewlet):
         tableddocument_wf_state[u"withdrawn"].id,
         tableddocument_wf_state[u"elapsed"].id,
         tableddocument_wf_state[u"inadmissible"].id,
+        tableddocument_wf_state[u"debated"].id,
         bill_wf_state[u"approved"].id , 
         bill_wf_state[u"rejected"].id ,
-        ]
+    ]
     list_id = "items-archived"
+
+class MPItemSuccessEndViewlet(OwnedItemsInStageViewlet):
+    """ items in end status that were discussed/answered ..."""
+    name = _("Items succesfully tabled")
+    states = [
+        question_wf_state[u"response_complete"].id,
+        question_wf_state[u"debated"].id,
+        question_wf_state[u"elapsed"].id,
+        question_wf_state[u"withdrawn"].id,
+        question_wf_state[u"inadmissible"].id,
+        motion_wf_state[u"adopted"].id,
+        motion_wf_state[u"adopted_amendments"].id,
+        motion_wf_state[u"withdrawn"].id,
+        motion_wf_state[u"elapsed"].id,
+        motion_wf_state[u"inadmissible"].id
+        ]
+    list_id = "items-sucess"
+
 
 class ClerkItemActionRequiredViewlet(AllItemsInStageViewlet):
     types = ['motion',

@@ -1575,19 +1575,14 @@ class MotionDescriptor(ParliamentaryItemDescriptor):
               omit=True,),
         ])
 
-    public_wfstates = [motion_wf_state[u'admissible'].id,
-                       motion_wf_state[u'schedule_pending'].id,
-                       motion_wf_state[u'scheduled'].id,
-                       motion_wf_state[u'deferred'].id,
-                       motion_wf_state[u'dropped'].id,
-                       motion_wf_state[u'elapsed'].id,
-                       motion_wf_state[u'debated'].id,
-                       motion_wf_state[u'debate_adjourned'].id,
-                       motion_wf_state[u'withdrawn_public'].id,
-                       motion_wf_state[u'adopted'].id,
-                       motion_wf_state[u'adopted_amendments'].id,
-                       motion_wf_state[u'rejected'].id,
-                    ]
+    public_wfstates = [ motion_wf_state[wf_state_key].id
+                        for wf_state_key in [ 
+            # u"draft", u"working_draft", u"withdrawn", 
+            # u"submitted", u"received", u"complete", 
+            # u"inadmissible", u"clarify_clerk", u"clarify_mp", 
+            u"admissible", u"schedule_pending", u"scheduled", u"deferred", 
+            u"dropped", u"adopted", u"adopted_amendments", u"rejected",
+            u"elapsed", u"debate_adjourned", u"withdrawn_public"] ]
 
 
 class MotionVersionDescriptor(VersionDescriptor):

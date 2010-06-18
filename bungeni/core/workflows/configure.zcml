@@ -168,7 +168,6 @@
   <!-- !+ remove, grep for: SendNotificationToMemberUponPostponed IMotionPostponedEvent
   <subscriber handler=".motion.SendNotificationToMemberUponPostponed" />
   -->
-  <subscriber handler=".motion.SendNotificationToMemberUponDebated" />
   
   <!-- agenda item workflow -->
   <adapter

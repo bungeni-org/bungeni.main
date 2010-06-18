@@ -103,10 +103,6 @@ class actions:
         pass
 
     @staticmethod
-    def debate( info, context ):
-        pass
-
-    @staticmethod
     def withdraw( info, context ):
         pass
 
@@ -257,23 +253,4 @@ class SendNotificationToMemberUponPostponed(Notification):
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 '''
-
-class SendNotificationToMemberUponDebated(Notification):
-    """Issued when a motion was debated."""
-
-    component.adapts(interfaces.IMotionDebatedEvent)
-
-    body = _('notification_email_to_member_upon_debate_of_motion',
-             default=u"Motion was debated")
-    @property
-    def subject(self):
-        return u'Motion was debated: %s' % self.context.short_name
-
-    @property
-    def condition(self):
-        return self.context.receive_notification
-    
-    @property
-    def from_address(self):
-        return prefs.getClerksOfficeEmail()
 
