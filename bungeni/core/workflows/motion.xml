@@ -207,8 +207,8 @@
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" /> 
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
     </state>
-
-
+    
+    
     <transition id="create"
         title="Create Motion"
         trigger="automatic"
@@ -218,7 +218,7 @@
         action="bungeni.core.workflows.motion.actions.create"
         condition=""
     />
-    <transition id="create-on-behalf-of"
+    <transition id="create_on_behalf_of"
         title="Create Motion (On behalf of)"
         trigger="automatic"
         source=""
@@ -226,7 +226,7 @@
         action="bungeni.core.workflows.motion.actions.create"
         condition="bungeni.core.workflows.motion.conditions.user_is_not_context_owner"
     />
-    <transition id="submit-to-clerk"
+    <transition id="submit_to_clerk"
         title="Submit to Clerk"
         trigger="manual"
         source="working_draft draft"
@@ -236,7 +236,7 @@
         condition=""
         event="bungeni.core.workflows.interfaces.IMotionSubmittedEvent"
     />
-    <transition id="received-by-clerk"
+    <transition id="received_by_clerk"
         title="Receive"
         trigger="manual"
         source="submitted"
@@ -246,7 +246,7 @@
         condition=""
         event="bungeni.core.workflows.interfaces.IMotionReceivedEvent"
     />
-    <transition id="require-edit-by-mp"
+    <transition id="require_edit_by_mp"
         title="Needs Clarification by MP"
         trigger="manual"
         source="received"
@@ -295,7 +295,7 @@
         event="bungeni.core.workflows.interfaces.IMotionRejectedEvent"
         require_confirmation="true"
     />
-    <transition id="require-amendment"
+    <transition id="require_amendment"
         title="Needs Clarification"
         trigger="manual"
         source="complete"
@@ -305,7 +305,7 @@
         condition=""
         require_confirmation="true"
     />
-    <transition id="complete-clarify"
+    <transition id="complete_clarify"
         title="Complete"
         trigger="manual"
         source="clarify_clerk"
@@ -314,7 +314,7 @@
         action=""
         condition=""
     />
-    <transition id="mp-clarify"
+    <transition id="mp_clarify"
         title="Needs Clarification by MP"
         trigger="manual"
         source="clarify_clerk"
@@ -325,7 +325,7 @@
         event="bungeni.core.workflows.interfaces.IMotionClarifyEvent"
         require_confirmation="true"
     />
-    <transition id="resubmit-clerk"
+    <transition id="resubmit_clerk"
         title="Resubmit to clerk"
         trigger="manual"
         source="clarify_mp"
@@ -344,7 +344,7 @@
         condition=""
         event="bungeni.core.workflows.interfaces.IMotionDeferredEvent"
     />
-    <transition id="elapse-defered"
+    <transition id="elapse_defered"
         title="Elapse"
         trigger="manual"
         source="deferred"
@@ -354,7 +354,7 @@
         condition=""
         require_confirmation="true"
     />
-    <transition id="schedule-deferred"
+    <transition id="schedule_deferred"
         title="Schedule"
         trigger="manual"
         source="schedule_pending"

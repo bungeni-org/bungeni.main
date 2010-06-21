@@ -110,7 +110,7 @@
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
     </state>
     
-    <transition id="create-bill"
+    <transition id="create_bill"
         title="Create Bill"
         trigger="automatic"
         source=""
@@ -118,7 +118,7 @@
         action="bungeni.core.workflows.bill.actions.create"
         condition=""
     />
-    <transition id="submit-bill"
+    <transition id="submit_bill"
         title="Publish in Gazette"
         trigger="manual"
         source="working_draft"
@@ -127,7 +127,7 @@
         action="bungeni.core.workflows.bill.actions.submit"
         condition=""
     />
-    <transition id="schedule-first"
+    <transition id="schedule_first"
         title="Schedule First Reading"
         trigger="manual"
         source="gazetted"
@@ -136,7 +136,7 @@
         action="bungeni.core.workflows.bill.actions.schedule_first"
         condition=""
     />
-    <transition id="postpone-first"
+    <transition id="postpone_first"
         title="Postpone First Reading"
         trigger="manual"
         source="first_reading"
@@ -145,7 +145,7 @@
         action="bungeni.core.workflows.bill.actions.postpone_first"
         condition=""
     />
-    <transition id="reschedule-first"
+    <transition id="reschedule_first"
         title="Reschedule First Reading"
         trigger="manual"
         source="first_reading_postponed"
@@ -154,7 +154,7 @@
         action="bungeni.core.workflows.bill.actions.schedule_first"
         condition=""
     />
-    <transition id="select-first-committee"
+    <transition id="select_first_committee"
         title="Send to Select Committee (I)"
         trigger="manual"
         source="first_reading"
@@ -199,7 +199,7 @@
         action=""
         condition=""
     />
-    <transition id="schedule-second"
+    <transition id="schedule_second"
         title="Schedule Second Reading"
         trigger="manual"
         source="first_reading"
@@ -208,7 +208,7 @@
         action="bungeni.core.workflows.bill.actions.create_version"
         condition=""
     />
-    <transition id="postpone-second"
+    <transition id="postpone_second"
         title="Postpone Second Reading"
         trigger="manual"
         source="second_reading"
@@ -217,7 +217,7 @@
         action=""
         condition=""
     />
-    <transition id="reschedule-second"
+    <transition id="reschedule_second"
         title="Reschedule Second Reading"
         trigger="manual"
         source="second_reading_postponed"
@@ -226,7 +226,7 @@
         action=""
         condition=""
     />
-    <transition id="schedule-whole-house"
+    <transition id="schedule_whole_house"
         title="Schedule Whole House Committee"
         trigger="manual"
         source="second_reading"
@@ -235,7 +235,7 @@
         action=""
         condition=""
     />
-    <transition id="postpone-whole-house"
+    <transition id="postpone_whole_house"
         title="Postpone Whole House Committee"
         trigger="manual"
         source="whole_house"
@@ -244,7 +244,7 @@
         action=""
         condition=""
     />
-    <transition id="reschedule-whole-house"
+    <transition id="reschedule_whole_house"
         title="Reschedule Whole House Committee"
         trigger="manual"
         source="whole_house_postponed"
@@ -253,7 +253,7 @@
         action=""
         condition=""
     />
-    <transition id="select-second-committee"
+    <transition id="select_second_committee"
         title="Send to Select Committee (II)"
         trigger="manual"
         source="second_reading"
@@ -262,7 +262,7 @@
         action=""
         condition=""
     />
-    <transition id="select-second-committee_via_whole_house"
+    <transition id="select_second_committee_via_whole_house"
         title="Send/Resend to Select Committee (II)"
         trigger="manual"
         source="whole_house"
@@ -271,7 +271,7 @@
         action=""
         condition=""
     />
-    <transition id="resend-whole-house-from-second-committee"
+    <transition id="resend_whole_house_from_second_committee"
         title="Send/Resend to Whole House"
         trigger="manual"
         source="second_committee"
@@ -280,7 +280,7 @@
         action=""
         condition=""
     />
-    <transition id="schedule-third-reading"
+    <transition id="schedule_third_reading"
         title="Schedule Third Reading"
         trigger="manual"
         source="whole_house"
@@ -289,7 +289,7 @@
         action=""
         condition=""
     />
-    <transition id="postpone-third-reading"
+    <transition id="postpone_third_reading"
         title="Postpone Third Reading"
         trigger="manual"
         source="third_reading"
@@ -298,7 +298,7 @@
         action=""
         condition=""
     />
-    <transition id="reschedule-third-reading"
+    <transition id="reschedule_third_reading"
         title="Postpone Third Reading"
         trigger="manual"
         source="third_reading_postponed"

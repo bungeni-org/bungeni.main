@@ -1213,7 +1213,7 @@ class GroupGroupItemAssignmentDescriptor(GroupItemAssignmentDescriptor):
     fields= [
         dict(name="item_id",omit=True),
         dict(name="group_id",
-         property = schema.Choice(
+            property = schema.Choice(
                 title=_(u"Committee"),
                 source=vocabulary.CommitteeSource(
                     title_field='short_name', 
@@ -1283,9 +1283,7 @@ class AttachedFileDescriptor(ModelDescriptor):
                 _(u'Status date')),
                 ) ,
     ]
-
     public_wfstates = [af_wf_state[u'public'].id]
-
 
 class AttachedFileVersionDescriptor(ModelDescriptor):
     display_name = _(u"Attached file version")
@@ -1496,8 +1494,7 @@ class VersionDescriptor(ModelDescriptor):
               omit=True),
         dict(name="type", 
               omit=True,),
-        ]
-
+    ]
     public_wfstates = [version_wf_state[u'archived'].id]
     
 class HeadingDescriptor(ParliamentaryItemDescriptor): 
@@ -1523,7 +1520,7 @@ class AgendaItemDescriptor(ParliamentaryItemDescriptor):
                        agendaitem_wf_state[u'debated'].id,
                        agendaitem_wf_state[u'debate_adjourned'].id,
                        agendaitem_wf_state[u'withdrawn_public'].id,
-                    ]
+    ]
     
 class AgendaItemVersionDescriptor(VersionDescriptor):
     display_name = _(u"Agenda Item version")

@@ -119,8 +119,8 @@
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
     </state>
-  
-
+    
+    
     <transition id="create"
         title="Create Tabled Document"
         trigger="automatic"

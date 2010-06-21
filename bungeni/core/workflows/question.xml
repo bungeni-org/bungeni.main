@@ -461,7 +461,7 @@
         event=".interfaces.IQuestionDroppedEvent"
         order="22"
     />
-    <transition id="continue-debate"
+    <transition id="continue_debate"
         title="Debate adjourned"
         trigger="manual"
         source="scheduled"

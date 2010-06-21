@@ -948,4 +948,4 @@ class DraftSittingsViewlet(viewlet.ViewletBase):
                 eagerload('sitting_type')
                 )
         self.query = sittings
-        
+
