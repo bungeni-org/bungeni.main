@@ -117,7 +117,7 @@
      permission="zope.View"
      name="file-image"
      class=".file.RawView"
-     />
+    />
 
   <browser:view
      for="bungeni.models.interfaces.IAttachedFile"

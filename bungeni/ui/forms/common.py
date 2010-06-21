@@ -369,15 +369,15 @@ class AddForm(BaseForm, ui.AddForm):
 
 class EditForm(BaseForm, ui.EditForm):
     """Custom edit-form for Bungeni content."""
-
+    
     @property
     def is_translation(self):
         return is_translation(self.context)
-
+    
     @property
     def side_by_side(self):
         return self.is_translation
-
+    
     @property
     def form_name(self):
         if IVersion.providedBy(self.context):
@@ -424,7 +424,6 @@ class EditForm(BaseForm, ui.EditForm):
 
     def setUpWidgets(self, ignore_request=False):
         super(EditForm, self).setUpWidgets(ignore_request=ignore_request)
-
         # for translations, add a ``render_original`` method to each
         # widget, which will render the display widget bound to the
         # original (HEAD) document

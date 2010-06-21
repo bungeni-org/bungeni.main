@@ -43,7 +43,7 @@ def getDisplayDate(request):
         except:
             displayDate = None
     else:
-        displayDate=None
+        displayDate = None
     return displayDate
 
 def getFilter(displayDate):

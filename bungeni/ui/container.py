@@ -49,7 +49,7 @@ def dateFilter(request):
     return filter_by
   
     
-def getFields( context ):
+def getFields(context):
     """ get all fields that will be displayed 
     in a containerlisting 
     """
@@ -73,7 +73,6 @@ def get_query(context, request, query=None, domain_model=None):
     If the model has start- and end-dates, constrain the query to
     objects appearing within those dates.
     """
-    
     unproxied = proxy.removeSecurityProxy(context)
     model = unproxied.domain_model
     session = Session()
@@ -107,19 +106,17 @@ def get_query(context, request, query=None, domain_model=None):
     return query
 
 
-
 class ContainerListing(container.ContainerListing):
-
+    
     @property
-    def formatter( self ):
+    def formatter(self):
         """We replace the formatter in our superclass to set up column
         sorting.
-
+        
         Default sort order is defined in the model class
         (``sort_on``); if not set, the table is ordered by the
         ``short_name`` column (also used as secondary sort order).
         """
-
         context = proxy.removeSecurityProxy(self.context)
         model = context.domain_model
         query = get_query(self.context, self.request)
@@ -131,15 +128,15 @@ class ContainerListing(container.ContainerListing):
         if order_by:
             if order_by in names:
                 order_list.append(order_by)
-
+        
         default_order = getattr(model, 'sort_on', None)
         if default_order:
             if default_order in names:
                 order_list.append(default_order)
-
+        
         if 'short_name' in names and 'short_name' not in order_list:
             order_list.append('short_name')
-            
+        
         filter_by = dateFilter(self.request)
         if filter_by:
             if 'start_date' in names and 'end_date' in names:
@@ -153,7 +150,7 @@ class ContainerListing(container.ContainerListing):
         if subset_filter:
             query = query.filter(subset_filter)
         query = secured_iterator("zope.View", query, self.context)
-            
+        
         formatter = zc.table.table.AlternatingRowFormatter(
             context, self.request, query, prefix="form", columns=self.columns)
         
@@ -164,7 +161,7 @@ class ContainerListing(container.ContainerListing):
     @property
     def form_name( self ):
         domain_model = proxy.removeSecurityProxy(self.context).domain_model
-
+        
         descriptor = queryModelDescriptor(domain_model)
         if descriptor:
             name = getattr(descriptor, 'container_name', None)
