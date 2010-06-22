@@ -482,95 +482,72 @@
      weight="5"
      /-->
 
+    <browser:viewlet name="bungeni.viewlet.question-timeline"
+        manager=".interfaces.ISubFormViewletManager"
+        class=".viewlets.QuestionTimeLineViewlet"
+        for="bungeni.models.interfaces.IQuestion"
+        permission="zope.View"
+        weight="20"
+    />
+    <browser:viewlet name="bungeni.viewlet.tableddocument-timeline"
+        manager=".interfaces.ISubFormViewletManager"
+        class=".viewlets.TableddocumentTimeLineViewlet"
+        for="bungeni.models.interfaces.ITabledDocument"
+        permission="zope.View"
+        weight="20"
+    />
+    <browser:viewlet name="bungeni.viewlet.committees"
+        manager="alchemist.ui.interfaces.IContentViewManager"
+        class=".viewlets.CommitteesViewlet"
+        for="bungeni.models.interfaces.IParliament"
+        permission="zope.View"
+        weight="10"
+    />
+    <browser:viewlet name="bungeni.viewlet.member-of-parliament"
+        manager="alchemist.ui.interfaces.IContentViewManager"
+        class=".viewlets.MemberOfParliamentViewlet"
+        for="bungeni.models.interfaces.IParliament"
+        permission="zope.View"
+        weight="20"
+    />
+    <browser:viewlet name="bungeni.viewlet.constituency-mp"
+        manager="alchemist.ui.interfaces.IContentViewManager"
+        class=".viewlets.MemberOfParliamentViewlet"
+        for="bungeni.models.interfaces.IConstituency"
+        permission="zope.View"
+        weight="20"
+    />
+    <browser:viewlet name="bungeni.viewlet.political-groups"
+        manager="alchemist.ui.interfaces.IContentViewManager"
+        class=".viewlets.PoliticalGroupsViewlet"
+        for="bungeni.models.interfaces.IParliament"
+        permission="zope.View"
+        weight="30"
+    />
+    <browser:viewlet name="bungeni.viewlet.government"
+        manager="alchemist.ui.interfaces.IContentViewManager"
+        class=".viewlets.GovernmentViewlet"
+        for="bungeni.models.interfaces.IParliament"
+        permission="zope.View"
+        weight="40"
+    />
+    <browser:viewlet name="bungeni.viewlet.session"
+        manager="alchemist.ui.interfaces.IContentViewManager"
+        class=".viewlets.SessionViewlet"
+        for="bungeni.models.interfaces.IParliament"
+        permission="zope.View"
+        weight="50"
+    />
+    <browser:viewlet name="bungeni.viewlet.session-sitting-calendar"
+        manager="alchemist.ui.interfaces.IContentViewManager"
+        class=".viewlets.SessionCalendarViewlet"
+        for="bungeni.models.interfaces.IParliamentSession"
+        permission="zope.View"
+        weight="20"
+    />
   
-  <browser:viewlet
-     name="bungeni.viewlet.question-timeline"
-     manager=".interfaces.ISubFormViewletManager"
-     class=".viewlets.QuestionTimeLineViewlet"
-     for="bungeni.models.interfaces.IQuestion"
-     permission="zope.View"
-     weight="20"
-     />
-  <browser:viewlet
-     name="bungeni.viewlet.tableddocument-timeline"
-     manager=".interfaces.ISubFormViewletManager"
-     class=".viewlets.TableddocumentTimeLineViewlet"
-     for="bungeni.models.interfaces.ITabledDocument"
-     permission="zope.View"
-     weight="20"
-     />
-
+    <!-- Member Role Title -->
   
-  <browser:viewlet
-     name="bungeni.viewlet.committees"
-     manager="alchemist.ui.interfaces.IContentViewManager"
-     class=".viewlets.CommitteesViewlet"
-     for="bungeni.models.interfaces.IParliament"
-     permission="zope.View"
-     weight="10"
-     />
-  
-  <browser:viewlet
-     name="bungeni.viewlet.member-of-parliament"
-     manager="alchemist.ui.interfaces.IContentViewManager"
-     class=".viewlets.MemberOfParliamentViewlet"
-     for="bungeni.models.interfaces.IParliament"
-     permission="zope.View"
-     weight="20"
-     />
-     
-  <browser:viewlet
-     name="bungeni.viewlet.constituency-mp"
-     manager="alchemist.ui.interfaces.IContentViewManager"
-     class=".viewlets.MemberOfParliamentViewlet"
-     for="bungeni.models.interfaces.IConstituency"
-     permission="zope.View"
-     weight="20"
-     />
-
-  <browser:viewlet
-     name="bungeni.viewlet.political-groups"
-     manager="alchemist.ui.interfaces.IContentViewManager"
-     class=".viewlets.PoliticalGroupsViewlet"
-     for="bungeni.models.interfaces.IParliament"
-     permission="zope.View"
-     weight="30"
-     />
-  
-  <browser:viewlet
-     name="bungeni.viewlet.government"
-     manager="alchemist.ui.interfaces.IContentViewManager"
-     class=".viewlets.GovernmentViewlet"
-     for="bungeni.models.interfaces.IParliament"
-     permission="zope.View"
-     weight="40"
-     />
-
-  <browser:viewlet
-     name="bungeni.viewlet.session"
-     manager="alchemist.ui.interfaces.IContentViewManager"
-     class=".viewlets.SessionViewlet"
-     for="bungeni.models.interfaces.IParliament"
-     permission="zope.View"
-     weight="50"
-     />
-
-  
-  <browser:viewlet
-     name="bungeni.viewlet.session-sitting-calendar"
-     manager="alchemist.ui.interfaces.IContentViewManager"
-     class=".viewlets.SessionCalendarViewlet"
-     for="bungeni.models.interfaces.IParliamentSession"
-     permission="zope.View"
-     weight="20"
-     />
-  
-  
-  
-  <!-- Member Role Title -->
-  
-
-
   <!--browser:viewlet
      name="bungeni.viewlet.title-addresses"
      manager="alchemist.ui.interfaces.IContentViewManager"
@@ -579,84 +556,77 @@
      permission="zope.View"
      weight="10"
      /-->
-  
-  <browser:viewlet
-     name="bungeni.viewlet.party-members"
-     manager="alchemist.ui.interfaces.IContentViewManager"
-     class=".viewlets.PartyMemberViewlet"
-     for="bungeni.models.interfaces.IPoliticalParty"
-     permission="zope.View"
-     weight="10"
-     />
-
-  <browser:viewlet
-     name="bungeni.viewlet.political-group-members"
-     manager="alchemist.ui.interfaces.IContentViewManager"
-     class=".viewlets.PartyMemberViewlet"
-     for="bungeni.models.interfaces.IPoliticalGroup"
-     permission="zope.View"
-     weight="10"
-     />
-  
-  <!-- bills -->
-  
-  <browser:viewlet
-     name="bungeni.viewlet.bill-consignatory"
-     manager=".interfaces.ISubFormViewletManager"
-     class=".viewlets.ConsignatoryViewlet"
-     for="bungeni.models.interfaces.IBill"
-     permission="zope.View"
-     weight="10"
-     />
-  
-  <browser:viewlet
-     name="bungeni.viewlet.bill-timeline"
-     manager=".interfaces.ISubFormViewletManager"
-     class=".viewlets.BillTimeLineViewlet"
-     for="bungeni.models.interfaces.IBill"
-     permission="zope.View"
-     weight="20"
-     />
-  
-  <browser:viewlet
-     name="bungeni.viewlet.bill-assignments"
-     manager=".interfaces.ISubFormViewletManager"
-     class=".viewlets.AssignedGroupsViewlet"
-     for="bungeni.models.interfaces.IBill"
-     permission="zope.View"
-     weight="30"
-     />
-  
-  
-  <!-- Motion -->
-  
-    <browser:viewlet
-     name="bungeni.viewlet.motion-consignatory"
-     manager=".interfaces.ISubFormViewletManager"
-     class=".viewlets.ConsignatoryViewlet"
-     for="bungeni.models.interfaces.IMotion"
-     permission="zope.View"
-     weight="10"
-     />
-  
-  <browser:viewlet
-     name="bungeni.viewlet.motion-timeline"
-     manager=".interfaces.ISubFormViewletManager"
-     class=".viewlets.MotionTimeLineViewlet"
-     for="bungeni.models.interfaces.IMotion"
-     permission="zope.View"
-     weight="20"
-     />
-
-
-  
+    
+    <browser:viewlet name="bungeni.viewlet.party-members"
+        manager="alchemist.ui.interfaces.IContentViewManager"
+        class=".viewlets.PartyMemberViewlet"
+        for="bungeni.models.interfaces.IPoliticalParty"
+        permission="zope.View"
+        weight="10"
+    />
+    <browser:viewlet name="bungeni.viewlet.political-group-members"
+        manager="alchemist.ui.interfaces.IContentViewManager"
+        class=".viewlets.PartyMemberViewlet"
+        for="bungeni.models.interfaces.IPoliticalGroup"
+        permission="zope.View"
+        weight="10"
+    />
+    
+    <!-- bills -->
+    <browser:viewlet name="bungeni.viewlet.bill-consignatory"
+        manager=".interfaces.ISubFormViewletManager"
+        class=".viewlets.ConsignatoryViewlet"
+        for="bungeni.models.interfaces.IBill"
+        permission="zope.View"
+        weight="10"
+    />
+    <browser:viewlet name="bungeni.viewlet.bill-timeline"
+        manager=".interfaces.ISubFormViewletManager"
+        class=".viewlets.BillTimeLineViewlet"
+        for="bungeni.models.interfaces.IBill"
+        permission="zope.View"
+        weight="20"
+    />
+    <browser:viewlet name="bungeni.viewlet.bill-assignments"
+        manager=".interfaces.ISubFormViewletManager"
+        class=".viewlets.AssignedGroupsViewlet"
+        for="bungeni.models.interfaces.IBill"
+        permission="zope.View"
+        weight="30"
+    />
+    
+    <!-- Motion -->
+    <browser:viewlet name="bungeni.viewlet.motion-consignatory"
+        manager=".interfaces.ISubFormViewletManager"
+        class=".viewlets.ConsignatoryViewlet"
+        for="bungeni.models.interfaces.IMotion"
+        permission="zope.View"
+        weight="10"
+    />
+    <browser:viewlet name="bungeni.viewlet.motion-timeline"
+        manager=".interfaces.ISubFormViewletManager"
+        class=".viewlets.MotionTimeLineViewlet"
+        for="bungeni.models.interfaces.IMotion"
+        permission="zope.View"
+        weight="20"
+    />
+    
+    <!-- AgendaItem -->
+    <browser:viewlet name="bungeni.viewlet.agendaitem-timeline"
+        manager=".interfaces.ISubFormViewletManager"
+        class=".viewlets.AgendaItemTimeLineViewlet"
+        for="bungeni.models.interfaces.IAgendaItem"
+        permission="zope.View"
+        weight="20"
+    />
+    
   <!--browser:page
      name="event-rss.xml"
      for="bungeni.models.interfaces.IBill"
      class=".forms.BungeniRSSEventView"
      permission="zope.View"
      /-->
-  
+     
   <!-- Partymembership -->
   
   <!--browser:viewlet
@@ -667,8 +637,5 @@
      permission="zope.View"
      weight="10"
      /-->
-     
-     
-     
-  
+
 </configure>

@@ -6,16 +6,15 @@
 
     <!-- VIEWLET for workspace context navigation 
          actually 2, because we can only specify 1 "for" interface for a viewlet
-         and we need one this menu at container-root and context-section levels
-         (we could make another interface, and assign also where 
+         and we need of this menu at container-root and at context-section 
+         levels (we could make another interface, and assign also where 
          IWorkspaceContainer and IWorkspaceSectionContext are assigned).
     -->
     <!-- NOTE: actually, given that "obj-id" redirects to "obj-id/pi", the 
          IWorkspaceContainer-based viewlet and menuItems are currently 
          not executed anyway.
     -->
-    <browser:viewlet
-        name="bungeni.workspace_context_navigation"
+    <browser:viewlet name="bungeni.workspace_context_navigation"
         for="..interfaces.IWorkspaceContainer"
         layer="..interfaces.IWorkspaceSectionLayer"
         permission="zope.View"
@@ -23,8 +22,7 @@
         class=".workspace.WorkspaceContextNavigation"
         weight="1"
     />
-    <browser:viewlet
-        name="bungeni.workspace_context_navigation"
+    <browser:viewlet name="bungeni.workspace_context_navigation"
         for="..interfaces.IWorkspaceSectionContext"
         layer="..interfaces.IWorkspaceSectionLayer"
         permission="zope.View"
@@ -34,13 +32,11 @@
     />
     <!-- !+ should merge usage of template: 
             ui/portlets/templates/portlet-contentactions.pt -->
-    <browser:menu
-        id="workspace_context_navigation"
+    <browser:menu id="workspace_context_navigation"
         title="The sections of a user's workspace"
         class="ploned.ui.menu.PloneBrowserMenu"
     />
-    <browser:menuItems
-        menu="workspace_context_navigation"
+    <browser:menuItems menu="workspace_context_navigation"
         for="..interfaces.IWorkspaceContainer"
         permission="zope.View"
         >
@@ -60,8 +56,7 @@
             order="3"
         />
     </browser:menuItems>
-    <browser:menuItems
-        menu="workspace_context_navigation"
+    <browser:menuItems menu="workspace_context_navigation"
         for="..interfaces.IWorkspaceSectionContext"
         permission="zope.View"
         >
@@ -83,25 +78,21 @@
     </browser:menuItems>
 
     
-  <browser:viewletManager
-     name="bungeni.workspace-pi"
-     provides=".interfaces.IWorkspaceManager"
-     permission="zope.View"
-     class=".workspace.WorkspaceViewletManager"
-     />
-  
-  <browser:viewletManager
-     name="bungeni.workspace-archive"
-     provides=".interfaces.IWorkspaceArchiveManager"
-     permission="zope.View"
-     class="zope.viewlet.manager.WeightOrderedViewletManager"
-     template="templates/workspace_archive.pt"
-     />
-  
-  
-  <!-- MPs Workspace -->
-  
-   <!--browser:viewlet
+    <browser:viewletManager name="bungeni.workspace-pi"
+        provides=".interfaces.IWorkspaceManager"
+        permission="zope.View"
+        class=".workspace.WorkspaceViewletManager"
+    />
+    <browser:viewletManager name="bungeni.workspace-archive"
+        provides=".interfaces.IWorkspaceArchiveManager"
+        permission="zope.View"
+        class="zope.viewlet.manager.WeightOrderedViewletManager"
+        template="templates/workspace_archive.pt"
+    />
+
+    <!-- MPs Workspace -->
+    
+    <!--browser:viewlet
      name="bungeni.viewlet.ws-user_id"
      for="*"
      manager=".interfaces.IWorkspaceManager"

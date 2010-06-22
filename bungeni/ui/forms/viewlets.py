@@ -596,37 +596,36 @@ class TimeLineViewlet( viewlet.ViewletBase ):
     Chronological changes are aggregated from : bill workflow, bill
     audit, bill scheduling and bill event records. 
     """
+    render = ViewPageTemplateFile('templates/timeline_viewlet.pt')
+    
     sql_timeline = ""
-    add_action = form.Actions( form.Action(_(u'add event'), success='handle_event_add_action'), )
+    add_action = form.Actions(
+        form.Action(_(u'add event'), success='handle_event_add_action'), 
+    )
     for_display = True
     view_name = "Timeline" 
-    view_id ="unknown-timeline"
+    view_id = "unknown-timeline"
     # sqlalchemy give me a rough time sorting a union, with hand coded sql it is much easier.
- 
-                
-    def __init__( self,  context, request, view, manager ):
+    # !+ get rid of the hard-coded sql
+    
+    def __init__(self,  context, request, view, manager):
         self.context = context
         self.request = request
         self.__parent__= view
         self.manager = manager
         self.query = None
     
-    def handle_event_add_action( self, action, data ):
+    def handle_event_add_action(self, action, data):
         self.request.response.redirect(self.addurl)
     
-
     def update(self):
-        """
-        refresh the query
+        """Refresh the query.
         """
         item_id = self.context.parliamentary_item_id
         self.results = queries.execute_sql(
                             self.sql_timeline, item_id=item_id)
         path = ui_url.absoluteURL(self.context, self.request)
-        self.addurl = '%s/event/add' %( path )
-    
-    
-    render = ViewPageTemplateFile ('templates/timeline_viewlet.pt')
+        self.addurl = '%s/event/add' % (path)
 
 class BillTimeLineViewlet(TimeLineViewlet):
     sql_timeline = statements.sql_bill_timeline
@@ -647,6 +646,11 @@ class TableddocumentTimeLineViewlet(TimeLineViewlet):
     sql_timeline = statements.sql_tableddocument_timeline
     view_name = _("Tabled document timeline") 
     view_id ="tableddocument-timeline"
+
+class AgendaItemTimeLineViewlet(TimeLineViewlet):
+    sql_timeline = statements.sql_agendaitem_timeline
+    view_name = _("Agenda item timeline") 
+    view_id ="agendaitem-timeline"
 
 class MemberItemsViewlet(viewlet.ViewletBase):
     """ A tab with bills, motions etc for an MP

@@ -14,7 +14,12 @@ from bungeni.ui.utils import url as ui_url
 
 class TableFormatter(batching.Formatter):
     """The out-of-box table formatter does not let us specify a custom
-    table css class."""
+    table css class.
+    
+    !+ This is currently being used by the Actions workflow and versions views:
+    bungeni/ui/versions.py
+    bungeni/ui/workflow.py
+    """
     
     table_css_class = "listing grid"
     
@@ -38,15 +43,15 @@ class ContextDataTableFormatter(BaseDataTableFormatter):
     data_view ="/jsonlisting"
     prefix = "listing"
     
-    def getFields( self ):
-        return container.getFields( self.context )
+    def getFields(self):
+        return container.getFields(self.context)
 
-    def getFieldColumns( self ):
+    def getFieldColumns(self):
         # get config for data table
         column_model = []
         field_model  = []
 
-        for field in self.getFields( ):
+        for field in self.getFields():
             key = field.__name__
             title =translate(_(field.title), context=self.request)
             coldef = {'key': key, 'label': title, 'formatter': self.context.__name__ }
@@ -66,9 +71,7 @@ class ContextDataTableFormatter(BaseDataTableFormatter):
 	                {key:"%(key)s", sortable:false}]
                     }""" % coldef
                     )
-            field_model.append(
-                '{key:"%s"}'%( key )
-                )
+            field_model.append('{key:"%s"}' % (key))
         return ','.join(column_model), ','.join(field_model)
     
     def getDataTableConfig(self):
@@ -95,14 +98,14 @@ class AjaxContainerListing(container.ContainerListing):
     formatter_factory = ContextDataTableFormatter
 
     @property
-    def formatter( self ):
-        context = proxy.removeSecurityProxy( self.context )
+    def formatter(self):
+        context = proxy.removeSecurityProxy(self.context)
         prefix= "container_contents_" + context.__name__
-        formatter = self.formatter_factory( context,
+        formatter = self.formatter_factory(context,
                                             self.request,
                                             (),
                                             prefix=prefix,
-                                            columns = self.columns )
+                                            columns = self.columns)
         formatter.cssClasses['table'] = 'listing'
         formatter.table_id = "datacontents"
         return formatter

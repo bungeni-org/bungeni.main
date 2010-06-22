@@ -49,7 +49,7 @@ class WorkflowVocabulary(object):
 workflow_vocabulary_factory = WorkflowVocabulary()
 
 
-class WorkflowHistoryViewlet( viewlet.ViewletBase ):
+class WorkflowHistoryViewlet(viewlet.ViewletBase):
     """Implements the workflowHistoryviewlet this viewlet shows the
     current workflow state  and the workflow-history."""
 

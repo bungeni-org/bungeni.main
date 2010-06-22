@@ -49,7 +49,7 @@ class TransitionHandler(object):
     
     def __call__(self, form, action, data):
         """Save data, make version and fire transition.
-
+        
         Redirects to the ``next_url`` location.
         """
         context = getattr(form.context, "_object", form.context)

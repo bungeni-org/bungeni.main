@@ -1753,7 +1753,7 @@ msgstr "bill timeline"
 
 #: src/bungeni.ui/bungeni/ui/forms/viewlets.py:643
 msgid "Question timeline"
-msgstr "question version"
+msgstr "question timeline"
 
 #: src/bungeni.ui/bungeni/ui/forms/viewlets.py:648
 msgid "Tabled document timeline"
