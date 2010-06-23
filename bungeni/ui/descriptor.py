@@ -1756,11 +1756,11 @@ class EventItemDescriptor(ParliamentaryItemDescriptor):
         dict(name="event_item_id", omit=True),
         dict(name="item_id", omit=True),
         dict(name="event_date", 
-            property=schema.Date(title=_(u"Date"), required=True), 
+            property=schema.Datetime(title=_(u"Date"), required=True), 
             listing_column=day_column("event_date", _(u"Date")), 
             listing=True, 
-            edit_widget=DateWidget, 
-            add_widget=DateWidget,
+            edit_widget=DateTimeWidget, 
+            add_widget=DateTimeWidget,
             required=True),
     ])
     public_wfstates = [event_wf_state[u'public'].id]

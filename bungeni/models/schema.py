@@ -835,23 +835,30 @@ tabled_documents = rdb.Table(
 tabled_document_changes = make_changes_table( tabled_documents, metadata )
 tabled_document_versions = make_versions_table( tabled_documents, metadata, parliamentary_items )
  
-#events with dates and possiblity to upload files.
+# Events with dates and possibility to upload files.
+#
+# - events are also a parliamentary_item (of type="event", via fk event_item_id) 
+#   where the attributes title, description are stored
+# - events are related (via fk item_id) to a parliamentary item, that must be a
+#   bill, motion, question or tabled_document i.e NOT agendaitam.
+# - adding event_item to a parliamentary_item is NOT audited as a change 
+#   i.e. there is no record added to the *_changes table [!+ maybe
+#   adding an event should be handled similar to e.g. adding an attachment]. 
+#   But event_items must be included in the timeline of the 
+#   parliamentary_item... so, to be consistent with other (time-stamped) 
+#   timeline changes, the event_date here is defined as a DateTime field
+#   (contrary to most date fields on other parliamentary items). 
 
-# events have a title, description and may be related to a sitting (house, committee or other group sittings)
-# events are related to an parliamentary item (bill, motion, ...)
-# and a date for items that are not related to a sitting.
-
-event_items = rdb.Table(
-   "event_items",
-   metadata,
-   rdb.Column( "event_item_id", rdb.Integer, 
-                rdb.ForeignKey('parliamentary_items.parliamentary_item_id'), 
-                primary_key=True ),
-   rdb.Column( "item_id", rdb.Integer, 
-                rdb.ForeignKey('parliamentary_items.parliamentary_item_id'),
-                nullable=True ),
-   rdb.Column( "event_date", rdb.Date, nullable=False ),
-   )
+event_items = rdb.Table("event_items", metadata,
+    rdb.Column("event_item_id", rdb.Integer,
+        rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
+        primary_key=True),
+    rdb.Column("item_id", rdb.Integer,
+        rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
+        nullable=True),
+    rdb.Column("event_date", rdb.DateTime(timezone=False),
+        nullable=False),
+)
 
 
 
