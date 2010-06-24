@@ -468,8 +468,6 @@ class UserDelegationDescriptor(ModelDescriptor):
 ]
 
        
-        
-
 
 class GroupMembershipDescriptor(ModelDescriptor):
 
@@ -611,7 +609,7 @@ class PartyMemberDescriptor(ModelDescriptor):
     custom_validators = [validations.validate_date_range_within_parent,
                     validations.validate_party_membership]
     
-    
+
 class MemberOfPartyDescriptor(ModelDescriptor):
     """partymemberships of a member of a user"""
     
@@ -1664,7 +1662,7 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
     container_name = _(u"Questions")
     custom_validators = ()
     
-    fields = deepcopy(ParliamentaryItemDescriptor.fields )
+    fields = deepcopy(ParliamentaryItemDescriptor.fields)
     fields.extend([
         dict(name="question_id", omit=True),
         dict(name="question_number", 

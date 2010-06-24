@@ -1749,7 +1749,7 @@ msgstr "bill timeline"
 
 #: src/bungeni.ui/bungeni/ui/forms/viewlets.py:638
 msgid "Motion timeline"
-msgstr "bill timeline"
+msgstr "motion timeline"
 
 #: src/bungeni.ui/bungeni/ui/forms/viewlets.py:643
 msgid "Question timeline"

@@ -121,7 +121,6 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
         return map( dict, content_changes)
 
 
-    
 class WorkflowComment(object):
     note = u""
     

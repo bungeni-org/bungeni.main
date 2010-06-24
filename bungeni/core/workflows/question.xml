@@ -379,9 +379,10 @@
         trigger="manual"
         source="response_pending"
         destination="response_submitted"
-        permission="bungeni.response.Submit" 
+        permission="bungeni.response.Submit"
         condition="bungeni.core.workflows.utils.response_allow_submit"
         event="bungeni.core.workflows.interfaces.IResponseSubmittedEvent"
+        action="bungeni.core.workflows.question.actions.respondWriting"
         order="15"
     />
     <transition id="redraft_response"

@@ -75,15 +75,13 @@ sql_item_timeline = """
     
     ORDER BY adate DESC
 """
-# !+ add inclusion of event_items to the timeline data?
-
-#
 
 sql_bill_timeline = sql_item_timeline % {"PI_TYPE": "bill"}
 sql_motion_timeline = sql_item_timeline % {"PI_TYPE": "motion"}
 sql_question_timeline = sql_item_timeline % {"PI_TYPE": "question"}
 sql_tableddocument_timeline = sql_item_timeline % {"PI_TYPE": "tabled_document"}
+# Note: event_items UNION block is not relevant for agendaitems as these 
+# do not support addition of events
 sql_agendaitem_timeline = sql_item_timeline % {"PI_TYPE": "agenda_item"}
 
-#
 
