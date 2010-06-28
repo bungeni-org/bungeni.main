@@ -23,6 +23,21 @@ import bungeni.core.globalsettings as prefs
 
 import dbutils
 
+class conditions(object):
+    """Commonly used transition conditions.
+    """
+    
+    # the condition for the transition from "" (None) to either "draft" or to 
+    # "working_draft" seems to need the explicit condition (and negation of 
+    # condition) on each of the two transition options 
+    @staticmethod
+    def user_is_not_context_owner(info, context):
+        return not user_is_context_owner(context)
+    @staticmethod
+    def user_is_context_owner(info, context):
+        return user_is_context_owner(context)
+
+
 def get_parliament(context):
     """go up until we find a parliament """
     parent = context.__parent__

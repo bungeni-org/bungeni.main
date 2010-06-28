@@ -34,10 +34,6 @@ class conditions(object):
     def is_oral_response(info, context):
         return context.response_type == u"O"
 
-    @staticmethod
-    def user_is_not_context_owner(info, context):
-        return not utils.user_is_context_owner(context)
-
 class actions(object):
     @staticmethod
     def denyAllWrites(question):

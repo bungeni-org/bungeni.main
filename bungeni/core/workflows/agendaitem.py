@@ -14,10 +14,6 @@ class conditions(object):
     def is_scheduled(info, context):
         return dbutils.isItemScheduled(context.agenda_item_id)
     
-    @staticmethod
-    def user_is_not_context_owner(info, context):
-        return not utils.user_is_context_owner(context)
-
 class actions(object):
     @staticmethod
     def denyAllWrites(agenda_item):

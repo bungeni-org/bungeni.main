@@ -127,7 +127,7 @@
         source=""
         destination="draft"
         action="bungeni.core.workflows.tableddocument.actions.create"
-        condition="bungeni.core.workflows.tableddocument.conditions.user_is_context_owner"
+        condition="bungeni.core.workflows.utils.conditions.user_is_context_owner"
     />
     <transition id="create_on_behalf_of"
         title="Create Tabled Document (On behalf of)"
@@ -135,7 +135,7 @@
         source=""
         destination="working_draft"
         action="bungeni.core.workflows.tableddocument.actions.create"
-        condition="bungeni.core.workflows.tableddocument.conditions.user_is_not_context_owner"
+        condition="bungeni.core.workflows.utils.conditions.user_is_not_context_owner"
     />
     <transition id="submit_to_clerk"
         title="Submit to Clerk"

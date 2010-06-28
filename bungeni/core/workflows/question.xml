@@ -177,7 +177,7 @@
         source=""
         destination="draft"
         action="bungeni.core.workflows.question.actions.create"
-        condition=""
+        condition="bungeni.core.workflows.utils.conditions.user_is_context_owner"
         order="0"
     />
     <transition id="create_on_behalf_of"
@@ -186,7 +186,7 @@
         source=""
         destination="working_draft"
         action="bungeni.core.workflows.question.actions.create"
-        condition="bungeni.core.workflows.question.conditions.user_is_not_context_owner"
+        condition="bungeni.core.workflows.utils.conditions.user_is_not_context_owner"
         order="0"
     />
     <transition id="submit_to_clerk"

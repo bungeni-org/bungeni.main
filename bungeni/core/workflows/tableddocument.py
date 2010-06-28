@@ -13,15 +13,6 @@ class conditions:
     def is_scheduled(info, context):
         return dbutils.isItemScheduled(context.tabled_document_id)
     
-    @staticmethod
-    def user_is_not_context_owner(info, context):
-        return not utils.user_is_context_owner(context)
-    # !+ for some reason, the tableddocument flow form "" to either "draft" or 
-    # "working_draft" seems too need the explicit condition on each transition.
-    @staticmethod
-    def user_is_context_owner(info, context):
-        return utils.user_is_context_owner(context)
-
 class actions:
     @staticmethod
     def denyAllWrites(tabled_document):
