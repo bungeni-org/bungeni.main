@@ -234,16 +234,7 @@
      permission="zope.View"
      weight="40"
      />
-  <browser:viewlet
-     name="bungeni.workspace.questions-pending.clerk"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.QuestionsPendingResponseViewlet"
-     view="bungeni.ui.interfaces.IClerkWorkspace"
-     permission="zope.View"
-     weight="50"
-     />
-
+    
   <!--browser:viewlet
      name="bungeni.workspace.questions-submitted.clerk"
      for="*"
@@ -397,17 +388,7 @@
      permission="zope.View"
      weight="40"
      />
-
-  <browser:viewlet
-     name="bungeni.workspace.speaker-questions-pending"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.QuestionsPendingResponseViewlet"
-     view="bungeni.ui.interfaces.ISpeakerWorkspace"
-     permission="zope.View"
-     weight="50"
-     />
-     
+    
   <!-- Ministers workspace -->
 
   <!--browser:viewlet

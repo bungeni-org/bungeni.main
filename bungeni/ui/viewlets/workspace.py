@@ -241,7 +241,7 @@ class InadmissibleQuestionViewlet(QuestionInStateViewlet):
 
 class ClarifyClerkQuestionViewlet(QuestionInStateViewlet):
     """
-    display the admissible questions
+    
     """
     name = question_wf_state[u"clarify_clerk"].title
     state = question_wf_state[u"clarify_clerk"].id
@@ -249,7 +249,7 @@ class ClarifyClerkQuestionViewlet(QuestionInStateViewlet):
 
 class ResponsePendingQuestionViewlet(QuestionInStateViewlet):
     """
-    display the admissible questions
+    
     """
     name = question_wf_state[u"response_pending"].title
     state = question_wf_state[u"response_pending"].id
@@ -257,7 +257,7 @@ class ResponsePendingQuestionViewlet(QuestionInStateViewlet):
 
 class CompleteQuestionViewlet(QuestionInStateViewlet):
     """
-    display the admissible questions
+    
     """
     name = question_wf_state[u"complete"].title
     state = question_wf_state[u"complete"].id
@@ -265,7 +265,7 @@ class CompleteQuestionViewlet(QuestionInStateViewlet):
 
 class DeferredQuestionViewlet(QuestionInStateViewlet):
     """
-    display the admissible questions
+    
     """
     name = question_wf_state[u"deferred"].title
     state = question_wf_state[u"deferred"].id
@@ -273,7 +273,7 @@ class DeferredQuestionViewlet(QuestionInStateViewlet):
 
 class ElapsedQuestionViewlet(QuestionInStateViewlet):
     """
-    display the admissible questions
+    
     """
     name = question_wf_state[u"elapsed"].title
     state = question_wf_state[u"elapsed"].id
@@ -281,7 +281,7 @@ class ElapsedQuestionViewlet(QuestionInStateViewlet):
 
 class WithdrawnQuestionViewlet(QuestionInStateViewlet):
     """
-    display the admissible questions
+    
     """
     name = question_wf_state[u"withdrawn"].title
     state = question_wf_state[u"withdrawn"].id
@@ -546,7 +546,6 @@ class MPItemInProgressViewlet(OwnedItemsInStageViewlet):
     states = [
         question_wf_state[u"submitted"].id,
         question_wf_state[u"received"].id,
-        question_wf_state[u"admissible"].id,
         question_wf_state[u"clarify_clerk"].id,
         question_wf_state[u"complete"].id,
         question_wf_state[u"debate_adjourned"].id,
@@ -554,7 +553,6 @@ class MPItemInProgressViewlet(OwnedItemsInStageViewlet):
         motion_wf_state[u"received"].id,
         motion_wf_state[u"complete"].id,
         motion_wf_state[u"clarify_clerk"].id,
-        motion_wf_state[u"admissible"].id,
         motion_wf_state[u"debate_adjourned"].id,
         question_wf_state[u"scheduled"].id,
         question_wf_state[u"response_pending"].id,
@@ -566,7 +564,6 @@ class MPItemInProgressViewlet(OwnedItemsInStageViewlet):
         agendaitem_wf_state[u"received"].id,
         agendaitem_wf_state[u"complete"].id,
         agendaitem_wf_state[u"clarify_clerk"].id,
-        agendaitem_wf_state[u"admissible"].id,
         agendaitem_wf_state[u"deferred"].id,
         agendaitem_wf_state[u"scheduled"].id,
         agendaitem_wf_state[u"debate_adjourned"].id,
@@ -574,7 +571,6 @@ class MPItemInProgressViewlet(OwnedItemsInStageViewlet):
         tableddocument_wf_state[u"received"].id,
         tableddocument_wf_state[u"complete"].id,
         tableddocument_wf_state[u"clarify_clerk"].id,
-        tableddocument_wf_state[u"admissible"].id,
         tableddocument_wf_state[u"postponed"].id,
         tableddocument_wf_state[u"scheduled"].id,
         bill_wf_state[u"gazetted"].id , 
@@ -719,10 +715,6 @@ class ClerkReviewedItemViewlet(AllItemsInStageViewlet):
         motion_wf_state[u"complete"].id,
         agendaitem_wf_state[u"complete"].id,
         tableddocument_wf_state[u"complete"].id, 
-        question_wf_state[u"admissible"].id,
-        motion_wf_state[u"admissible"].id,
-        agendaitem_wf_state[u"admissible"].id,
-        tableddocument_wf_state[u"admissible"].id,
         question_wf_state[u"clarify_mp"].id,
         motion_wf_state[u"clarify_mp"].id,
         agendaitem_wf_state[u"clarify_mp"].id,
@@ -789,14 +781,6 @@ class ItemsPendingScheduleViewlet(AllItemsInStageViewlet):
     ]
     list_id = "items-pending-schedule"
 
-
-class QuestionsPendingResponseViewlet(AllItemsInStageViewlet): 
-    name = _("questions at the ministries")
-    states = [
-        question_wf_state[u"response_submitted"].id,
-        question_wf_state[u"response_pending"].id,
-    ]
-    list_id = "questions-pending-response"
 
 class MinistryItemsViewlet(ViewletBase):
     list_id = "ministry-items"
