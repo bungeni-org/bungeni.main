@@ -186,17 +186,6 @@ Conditions
 
   >>> actions.elapse(info, motion)
 
-"Postpone".
-
-  >>> actions.postpone(info, motion)
-
-"Debate".
-
-  >>> actions.debate(info, motion)
-
-"Withdraw".
-
-  >>> actions.debate(info, motion)
 
 Notifications
 -------------

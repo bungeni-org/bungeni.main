@@ -9,11 +9,11 @@ import zope.securitypolicy.interfaces
 from bungeni.core.workflows import dbutils, utils
 
 class conditions:
-    ''' !+ ?
+    
     @staticmethod
     def is_scheduled(info, context):
         return dbutils.isItemScheduled(context.motion_id)
-    '''
+    
 
 class actions:
     @staticmethod

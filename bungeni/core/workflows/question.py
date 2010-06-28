@@ -15,11 +15,10 @@ from ore.alchemist import Session
 
 
 class conditions(object):
-    ''' !+ ?
+    
     @staticmethod 
     def is_scheduled(info, context):
         return dbutils.isItemScheduled(context.question_id)
-    '''
     
     @staticmethod
     def is_ministry_set(info, context):
