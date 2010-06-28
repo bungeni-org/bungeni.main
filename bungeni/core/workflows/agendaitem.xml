@@ -41,6 +41,8 @@
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
         <!-- deny permission="zope.View" role="bungeni.Owner" /-->
         <deny permission="bungeni.agendaitem.Delete" role="bungeni.Owner" />
+        <deny permission="bungeni.agendaitem.Delete" role="bungeni.Clerk" />
+        <deny permission="bungeni.agendaitem.Delete" role="bungeni.Speaker" />
         <!--grant permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" /-->
         <grant permission="zope.View" role="bungeni.Owner" />
         <grant permission="zope.View" role="bungeni.Clerk" />

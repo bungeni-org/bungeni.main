@@ -52,6 +52,8 @@
         <grant permission="zope.View" role="bungeni.Clerk" />
         <grant permission="zope.View" role="bungeni.Speaker" />
         <deny permission="bungeni.question.Delete" role="bungeni.Owner" />
+        <deny permission="bungeni.question.Delete" role="bungeni.Clerk" />
+        <deny permission="bungeni.question.Delete" role="bungeni.Speaker" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
     </state>
