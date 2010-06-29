@@ -100,14 +100,11 @@ Unauthorized: (<zope.app.publisher.browser.viewmeta.AddForm object at ...>, 'bro
      layer="bungeni.ui.interfaces.IBungeniSkin"
      />
 
-
-  <browser:page
-     name="respond"
-     for="bungeni.models.interfaces.IQuestion"
-     class=".common.EditForm"
-     permission="bungeni.response.Edit"
-     />
-
+    <browser:page name="respond"
+        for="bungeni.models.interfaces.IQuestion"
+        class=".common.EditForm"
+        permission="bungeni.response.Edit"
+    />
 
   <browser:page
      name="delete"

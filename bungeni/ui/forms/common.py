@@ -39,9 +39,10 @@ from bungeni.core.translation import is_translation
 from bungeni.core.translation import get_translation_for
 from bungeni.core.translation import CurrentLanguageVocabulary
 from bungeni.core.interfaces import IVersioned
-from bungeni.ui.i18n import _
-from bungeni.models.interfaces import IVersion
+from bungeni.models.interfaces import IVersion, IBungeniContent
 from bungeni.models import domain
+from bungeni.ui.interfaces import IFormEditLayer
+from bungeni.ui.i18n import _
 
 import bungeni.ui.utils as ui_utils
 from bungeni.ui.forms.fields import filterFields
@@ -156,7 +157,7 @@ class BaseForm(form.FormBase):
         # the order seems to be determined by the self.actions.actions 
         # tuple of zope.formlib.form.Action instances
         print "XXX Order of Form Submit Buttons:", [ (a.name, a.label)
-                                                for a in self.actions.actions ]        
+                                                for a in self.actions.actions ]
         call = super(BaseForm, self).__call__()
         #session.close()
         return call
@@ -372,7 +373,16 @@ class AddForm(BaseForm, ui.AddForm):
                               
 
 class EditForm(BaseForm, ui.EditForm):
-    """Custom edit-form for Bungeni content."""
+    """Custom edit-form for Bungeni content.
+    """
+    
+    def __init__(self, *args):
+        super(EditForm, self).__init__(*args)
+        # For bungeni content, mark the request that we are in edit mode e.g. 
+        # useful for when editing a question's response, but not wanting to 
+        # offer option to submit the response while in response edit mode. 
+        if IBungeniContent.providedBy(self.context): # and self.mode=="edit"
+            interface.alsoProvides(self.request, IFormEditLayer)
     
     @property
     def is_translation(self):

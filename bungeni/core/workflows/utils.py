@@ -3,16 +3,16 @@ log = __import__("logging").getLogger("bungeni.core.workflow.utils")
 import datetime
 
 from zope import component
+from zope import interface
 from zope.security.proxy import removeSecurityProxy
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.security.management import getInteraction
 from zope.publisher.interfaces import IRequest
 
+from ore.alchemist import Session
 from ore.workflow.interfaces import IWorkflowInfo, InvalidTransitionError
 from ore.workflow.interfaces import NoTransitionAvailableError
-
 import ore.workflow.workflow
-from ore.alchemist import Session
 
 import bungeni.models.interfaces as interfaces
 import bungeni.models.domain as domain
@@ -20,6 +20,8 @@ from bungeni.models.utils import get_principal_id
 from bungeni.core.app import BungeniApp
 import bungeni.core.interfaces
 import bungeni.core.globalsettings as prefs
+from bungeni.ui.utils import common
+from bungeni.ui.interfaces import IFormEditLayer
 
 import dbutils
 
@@ -216,17 +218,11 @@ def setParliamentId(info, context):
 def response_allow_submit(info, context):
     instance = removeSecurityProxy(context)
     # The "submit_response" workflow transition should NOT be displayed when 
-    # the UI is displaying the if the question in "edit" mode (as this 
-    # transition will cause deny of bungeni.Question.Edit to the Minister).
-    # XXX The proper way is to determine when the form is in "edit" mode
-    # BEGIN TMP partial fix [check if have just been submittted with "Save", that 
-    # means redisplay edit form, but this is not all possibilities to arrive
-    # into display of edit question]
-    from bungeni.ui.utils import common
+    # the UI is displaying the question in "edit" mode (as this transition
+    # will cause deny of bungeni.Question.Edit to the Minister).
     request = common.get_request()
-    if request.form.has_key("form.actions.save"):
+    if IFormEditLayer.providedBy(request):
         return False
-    # END TMP tmp partial fix
     if instance.response_text is None:
         return False
     else:

@@ -37,6 +37,8 @@ class IHomePageLayer(IDefaultBrowserLayer):
     """Requests for the Home Page."""
 class IResourceNonLayer(interface.Interface):
     """A fake layer, to mark that the request is for some resource"""
+class IFormEditLayer(interface.Interface):
+    """Views showing a Form in edit mode."""
 
 class IArchiveSectionLayer(IDefaultBrowserLayer):
     """Requests for an object within the archive."""
