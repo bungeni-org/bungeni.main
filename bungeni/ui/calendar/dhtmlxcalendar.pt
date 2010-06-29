@@ -34,7 +34,7 @@
                 scheduler.locale.labels.agenda_tab = "Upcoming";
                 scheduler.init('scheduler_here', null, "week");
                 scheduler.setLoadMode("month");
-                scheduler.load("/dhtmlxcalendar?uid="+scheduler.uid());
+                scheduler.load(location.href+"/dhtmlxcalendar?uid="+scheduler.uid());
                 
                 scheduler.form_blocks["my_editor"]={
 		            render:function(sns){
