@@ -1,0 +1,146 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <title>Version workflow</title><style>
+            table {
+	font: 11px/24px Verdana, Arial, Helvetica, sans-serif;
+	border-collapse: collapse;
+	width: 360px;
+	}
+
+th {
+	padding: 0 0.5em;
+	text-align: left;
+	}
+
+tr.yellow td {
+	border-top: 1px solid #FB7A31;
+	border-bottom: 1px solid #FB7A31;
+	background: #FFC;
+	}
+
+td {
+	border-bottom: 1px solid #CCC;
+	padding: 0 0.5em;
+	vertical-align:top;
+	}
+
+td:first-child {
+	width: 190px;
+	}
+
+td+td {
+	border-left: 1px solid #CCC;
+	text-align: center;
+	}
+	
+tr.m0 {background-color: #ffffcc;}
+tr.m1 {background-color: #ffffff;}
+tr.s0 { background-color: #eee; }
+tr.s1 { background-color: #fff; }
+span.ident { font-style:normal; color:gray; }
+span.trig {color:dark-gray;}	
+ 
+            </style></head>
+   <h1>Version workflow States</h1>
+   <p><a href="./version.dot.png" target="_blank">Click here to view the workflow diagram</a></p>
+   <table border="1">
+      <tr class="yellow">
+         <td>State Name</td>
+         <td>Allow</td>
+         <td>Deny</td>
+      </tr>
+      <tr class="m1">
+         <td><a name="draft-translation"></a>Draft Translation<br><span class="ident">draft-translation</span></td>
+         <td>&nbsp;
+            
+            <table border="0">
+               <tr>
+                  <td>Permission</td>
+                  <td>Role</td>
+               </tr>
+               <tr class="s1">
+                  <td>zope.ManageContent</td>
+                  <td>bungeni.Owner</td>
+               </tr>
+            </table>
+         </td>
+         <td>&nbsp;
+            
+            <table border="0">
+               <tr>
+                  <td>Permission</td>
+                  <td>Role</td>
+               </tr>
+            </table>
+         </td>
+      </tr>
+      <tr class="m0">
+         <td><a name="archived"></a>Archived<br><span class="ident">archived</span></td>
+         <td>&nbsp;
+            
+            <table border="0">
+               <tr>
+                  <td>Permission</td>
+                  <td>Role</td>
+               </tr>
+               <tr class="s1">
+                  <td>zope.View</td>
+                  <td>bungeni.Everybody</td>
+               </tr>
+               <tr class="s0">
+                  <td>zope.View</td>
+                  <td>bungeni.Anybody</td>
+               </tr>
+            </table>
+         </td>
+         <td>&nbsp;
+            
+            <table border="0">
+               <tr>
+                  <td>Permission</td>
+                  <td>Role</td>
+               </tr>
+               <tr class="s1">
+                  <td>zope.ManageContent</td>
+                  <td>bungeni.Owner</td>
+               </tr>
+            </table>
+         </td>
+      </tr>
+   </table>
+   <h1>Version workflow Transitions</h1>
+   <table border="1">
+      <tr class="yellow">
+         <td>Transition Name</td>
+         <td>Source</td>
+         <td>Destination</td>
+         <td>Permission</td>
+         <td>Action/Condition</td>
+      </tr>
+      <tr class="m1">
+         <td>Archive<br><span class="ident">archive</span><br><span class="trig">(A)</span></td>
+         <td></td>
+         <td><a href="#archived">archived</a><br></td>
+         <td></td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
+      </tr>
+      <tr class="m0">
+         <td>Create Translation<br><span class="ident">create-translation</span><br><span class="trig">(M)</span></td>
+         <td></td>
+         <td><a href="#draft-translation">draft-translation</a><br></td>
+         <td></td>
+         <td>
+            <p style="text-align:left">
+               A: <span class="ident"></span></p>
+            <p style="text-align:left">
+               C: <span class="ident"></span></p>
+         </td>
+      </tr>
+   </table>
+</html>

@@ -55,7 +55,13 @@ span.trig {color:dark-gray;}
  
             </style>
             </head>
-            <h1><xsl:value-of select="@title"></xsl:value-of> States</h1>           
+            <h1><xsl:value-of select="@title"></xsl:value-of> States</h1>
+            <xsl:variable name="diagImage">
+                <xsl:value-of select="tokenize(@id,'-')[1]"></xsl:value-of>
+            </xsl:variable>
+            <p>
+            <a href="./{$diagImage}.dot.png" target="_blank">Click here to view the workflow diagram</a>
+            </p>
             <table  border="1">
                 <tr class="yellow"><td>State Name</td><td>Allow</td><td>Deny</td></tr>
                 <xsl:for-each select="./state">
