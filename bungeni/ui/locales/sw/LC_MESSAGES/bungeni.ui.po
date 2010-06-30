@@ -2621,10 +2621,11 @@ msgstr "pointi rasimu"
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:572
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:715
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:783
-msgid "to do"
+msgid "to review"
 msgstr "kufanya"
 
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:587
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:739
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:925
 msgid "in progress"
 msgstr "katika maendeleo"
@@ -2644,10 +2645,6 @@ msgstr "vitu vilimo kwenye nyaraka"
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:734
 msgid "pending with the clerk"
 msgstr "inasubiri kwa karani"
-
-#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:739
-msgid "reviewed & in progress"
-msgstr "imepitiwa na ipo katika maendeleo"
 
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:793
 msgid "approved"

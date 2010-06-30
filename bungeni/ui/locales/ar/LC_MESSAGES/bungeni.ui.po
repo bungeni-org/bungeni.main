@@ -2578,10 +2578,11 @@ msgstr "مشروع البنود"
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:572
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:715
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:783
-msgid "to do"
+msgid "to review"
 msgstr "للقيام"
 
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:587
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:739
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:925
 msgid "in progress"
 msgstr "في التقدم"
@@ -2601,10 +2602,6 @@ msgstr "أرشفة العناصر"
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:734
 msgid "pending with the clerk"
 msgstr "المعلقة مع كاتب"
-
-#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:739
-msgid "reviewed & in progress"
-msgstr "واستعرض التقدم في"
 
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:793
 msgid "approved"

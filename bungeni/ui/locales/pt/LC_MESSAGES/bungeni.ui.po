@@ -2578,10 +2578,11 @@ msgstr "itens de rascunho"
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:572
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:715
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:783
-msgid "to do"
+msgid "to review"
 msgstr "fazer"
 
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:587
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:739
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:925
 msgid "in progress"
 msgstr "em andamento"
@@ -2601,10 +2602,6 @@ msgstr "itens arquivados"
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:734
 msgid "pending with the clerk"
 msgstr "pendência com o secretário"
-
-#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:739
-msgid "reviewed & in progress"
-msgstr "revista e em andamento"
 
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:793
 msgid "approved"

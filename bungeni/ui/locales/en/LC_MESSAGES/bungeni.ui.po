@@ -2599,13 +2599,8 @@ msgstr "draft items"
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:572
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:715
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:783
-msgid "to do"
-msgstr "to do"
-
-#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:587
-#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:925
-msgid "in progress"
-msgstr "in progress"
+msgid "to review"
+msgstr "to review"
 
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:639
 msgid "archived items"
@@ -2623,9 +2618,11 @@ msgstr "archived items"
 msgid "pending with the clerk"
 msgstr "pending with the clerk"
 
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:587
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:925
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:739
-msgid "reviewed & in progress"
-msgstr "reviewed & in progress"
+msgid "in progress"
+msgstr "in progress"
 
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:793
 msgid "approved"

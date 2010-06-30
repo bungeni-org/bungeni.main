@@ -2592,10 +2592,11 @@ msgstr "points du projet"
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:572
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:715
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:783
-msgid "to do"
+msgid "to review"
 msgstr "à faire"
 
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:587
+#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:739
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:925
 msgid "in progress"
 msgstr "en cours"
@@ -2615,10 +2616,6 @@ msgstr "articles archivés"
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:734
 msgid "pending with the clerk"
 msgstr "en suspens avec le greffier"
-
-#: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:739
-msgid "reviewed & in progress"
-msgstr "examinée et en cours"
 
 #: src/bungeni.ui/bungeni/ui/viewlets/workspace.py:793
 msgid "approved"

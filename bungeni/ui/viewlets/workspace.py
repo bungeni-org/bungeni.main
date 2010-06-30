@@ -392,7 +392,7 @@ class AdmissibleMotionViewlet(MotionInStateViewlet):
     state = motion_wf_state[u"admissible"].id
     list_id = "admissible_motions"
     
-
+''' !+ unused:
 class BillItemsViewlet(ViewletBase): 
     """
     Display all bills that can be scheduled for a parliamentary sitting
@@ -439,6 +439,7 @@ class BillItemsViewlet(ViewletBase):
             bill_wf_state[u"third_reading_postponed"].id
         ] ))
         self.query = bills
+'''
 
 class OwnedItemsInStageViewlet(ViewletBase):
     """Group parliamentary items per stage e.g. action required, in progress, 
@@ -527,7 +528,7 @@ class MPItemActionRequiredViewlet(OwnedItemsInStageViewlet):
     Display all questions and motions that require action
     (e.g. draft, clarification required)
     """
-    name = _("to do")
+    name = _("to review")
     states = [motion_wf_state[u"clarify_mp"].id,
         question_wf_state[u"clarify_mp"].id,
         agendaitem_wf_state[u"clarify_mp"].id,
@@ -589,12 +590,14 @@ class MPItemInProgressViewlet(OwnedItemsInStageViewlet):
 class ItemArchiveViewlet(OwnedItemsInStageViewlet):
     name = _("archived items")
     states = [
-        question_wf_state[u"response_complete"].id,
-        question_wf_state[u"debated"].id,
-        question_wf_state[u"dropped"].id,
-        question_wf_state[u"elapsed"].id,
-        question_wf_state[u"withdrawn"].id,
-        question_wf_state[u"inadmissible"].id, 
+        agendaitem_wf_state[u"debated"].id,
+        agendaitem_wf_state[u"dropped"].id,
+        agendaitem_wf_state[u"withdrawn"].id,
+        agendaitem_wf_state[u"elapsed"].id,
+        agendaitem_wf_state[u"inadmissible"].id,
+        bill_wf_state[u"approved"].id, 
+        bill_wf_state[u"rejected"].id,
+        bill_wf_state[u"withdrawn_public"].id,
         motion_wf_state[u"withdrawn"].id,
         motion_wf_state[u"withdrawn_public"].id,
         motion_wf_state[u"elapsed"].id,
@@ -603,16 +606,15 @@ class ItemArchiveViewlet(OwnedItemsInStageViewlet):
         motion_wf_state[u"adopted"].id,
         motion_wf_state[u"adopted_amendments"].id,
         motion_wf_state[u"rejected"].id,
-        agendaitem_wf_state[u"debated"].id,
-        agendaitem_wf_state[u"dropped"].id,
-        agendaitem_wf_state[u"withdrawn"].id,
-        agendaitem_wf_state[u"elapsed"].id,
-        agendaitem_wf_state[u"inadmissible"].id,
+        question_wf_state[u"response_complete"].id,
+        question_wf_state[u"debated"].id,
+        question_wf_state[u"dropped"].id,
+        question_wf_state[u"elapsed"].id,
+        question_wf_state[u"withdrawn"].id,
+        question_wf_state[u"inadmissible"].id, 
         tableddocument_wf_state[u"withdrawn"].id,
         tableddocument_wf_state[u"inadmissible"].id,
         tableddocument_wf_state[u"tabled"].id,
-        bill_wf_state[u"approved"].id , 
-        bill_wf_state[u"rejected"].id ,
     ]
     list_id = "items-archived"
 
@@ -623,12 +625,14 @@ class AllItemArchiveViewlet(AllItemsInStageViewlet):
             'tableddocument']
     name = _("Archived Items")
     states = [
-        question_wf_state[u"response_complete"].id,
-        question_wf_state[u"debated"].id,
-        question_wf_state[u"dropped"].id,
-        question_wf_state[u"elapsed"].id,
-        question_wf_state[u"withdrawn"].id,
-        question_wf_state[u"inadmissible"].id, 
+        agendaitem_wf_state[u"debated"].id,
+        agendaitem_wf_state[u"dropped"].id,
+        agendaitem_wf_state[u"withdrawn"].id,
+        agendaitem_wf_state[u"elapsed"].id,
+        agendaitem_wf_state[u"inadmissible"].id,
+        bill_wf_state[u"approved"].id, 
+        bill_wf_state[u"rejected"].id,
+        bill_wf_state[u"withdrawn_public"].id,
         motion_wf_state[u"withdrawn"].id,
         motion_wf_state[u"withdrawn_public"].id,
         motion_wf_state[u"elapsed"].id,
@@ -637,16 +641,15 @@ class AllItemArchiveViewlet(AllItemsInStageViewlet):
         motion_wf_state[u"adopted"].id,
         motion_wf_state[u"adopted_amendments"].id,
         motion_wf_state[u"rejected"].id,
-        agendaitem_wf_state[u"debated"].id,
-        agendaitem_wf_state[u"dropped"].id,
-        agendaitem_wf_state[u"withdrawn"].id,
-        agendaitem_wf_state[u"elapsed"].id,
-        agendaitem_wf_state[u"inadmissible"].id,
+        question_wf_state[u"response_complete"].id,
+        question_wf_state[u"debated"].id,
+        question_wf_state[u"dropped"].id,
+        question_wf_state[u"elapsed"].id,
+        question_wf_state[u"withdrawn"].id,
+        question_wf_state[u"inadmissible"].id, 
         tableddocument_wf_state[u"withdrawn"].id,
         tableddocument_wf_state[u"inadmissible"].id,
         tableddocument_wf_state[u"tabled"].id,
-        bill_wf_state[u"approved"].id , 
-        bill_wf_state[u"rejected"].id ,
     ]
     list_id = "items-archived"
 
@@ -673,19 +676,18 @@ class ClerkItemActionRequiredViewlet(AllItemsInStageViewlet):
             'question',
             'agendaitem',
             'tableddocument']
-
-    name = _("to do")
+    name = _("to review")
     states = [
+        agendaitem_wf_state[u"submitted"].id,
+        agendaitem_wf_state[u"received"].id,
+        agendaitem_wf_state[u"clarify_clerk"].id,
+        motion_wf_state[u"submitted"].id,
+        motion_wf_state[u"received"].id,
+        motion_wf_state[u"clarify_clerk"].id,
         question_wf_state[u"submitted"].id,
         question_wf_state[u"received"].id,
         question_wf_state[u"clarify_clerk"].id,
         question_wf_state[u"response_submitted"].id,
-        motion_wf_state[u"submitted"].id,
-        motion_wf_state[u"received"].id,
-        motion_wf_state[u"clarify_clerk"].id,
-        agendaitem_wf_state[u"submitted"].id,
-        agendaitem_wf_state[u"received"].id,
-        agendaitem_wf_state[u"clarify_clerk"].id,
         tableddocument_wf_state[u"submitted"].id,
         tableddocument_wf_state[u"received"].id,
         tableddocument_wf_state[u"clarify_clerk"].id,
@@ -695,8 +697,9 @@ class ClerkItemActionRequiredViewlet(AllItemsInStageViewlet):
 class ClerkItemsWorkingDraftViewlet(AllItemsInStageViewlet):
     name = _("draft items")
     states = [motion_wf_state[u"working_draft"].id,
-        question_wf_state[u"working_draft"].id,
         agendaitem_wf_state[u"working_draft"].id,
+        bill_wf_state[u"working_draft"].id,
+        question_wf_state[u"working_draft"].id,
         tableddocument_wf_state[u"working_draft"].id,
     ]
     list_id = "clerk-items-working-draft"
@@ -709,7 +712,7 @@ class SpeakersClerkItemActionRequiredViewlet(ClerkItemActionRequiredViewlet):
 
 
 class ClerkReviewedItemViewlet(AllItemsInStageViewlet): 
-    name = _("reviewed & in progress")
+    name = _("in progress")
     states = [
         question_wf_state[u"complete"].id,
         motion_wf_state[u"complete"].id,
@@ -741,7 +744,7 @@ class ClerkReviewedItemViewlet(AllItemsInStageViewlet):
     ]
     
 class ItemsCompleteViewlet(AllItemsInStageViewlet): 
-    name = _("to do")
+    name = _("to review")
     states = [
         question_wf_state[u"complete"].id,
         motion_wf_state[u"complete"].id,
@@ -753,33 +756,53 @@ class ItemsCompleteViewlet(AllItemsInStageViewlet):
 class ItemsApprovedViewlet(AllItemsInStageViewlet): 
     name = _("approved")
     states = [
-        question_wf_state[u"admissible"].id,
-        motion_wf_state[u"admissible"].id,
         agendaitem_wf_state[u"admissible"].id,
-        tableddocument_wf_state[u"admissible"].id,
-        question_wf_state[u"deferred"].id,
-        motion_wf_state[u"deferred"].id,
         agendaitem_wf_state[u"deferred"].id,
+        bill_wf_state[u"approved"].id,
+        motion_wf_state[u"admissible"].id,
+        motion_wf_state[u"deferred"].id,
+        question_wf_state[u"admissible"].id,
+        question_wf_state[u"deferred"].id,
+        tableddocument_wf_state[u"admissible"].id,
     ]
     list_id = "items-approved"
 
 class ItemsPendingScheduleViewlet(AllItemsInStageViewlet): 
     name = _("to be scheduled")
     states = [
-        question_wf_state[u"schedule_pending"].id,
-        question_wf_state[u"scheduled"].id,
-        question_wf_state[u"debate_adjourned"].id,
         agendaitem_wf_state[u"schedule_pending"].id,
-        agendaitem_wf_state[u"scheduled"].id,
         agendaitem_wf_state[u"debate_adjourned"].id,
+        bill_wf_state[u"gazetted"].id,
+        bill_wf_state[u"first_reading_postponed"].id,
+        bill_wf_state[u"first_committee"].id,
+        bill_wf_state[u"first_report_reading_postponed"].id,
+        bill_wf_state[u"second_reading_postponed"].id,
+        bill_wf_state[u"whole_house_postponed"].id,
+        bill_wf_state[u"second_committee"].id,
+        bill_wf_state[u"third_reading_postponed"].id,
         motion_wf_state[u"schedule_pending"].id,
-        motion_wf_state[u"scheduled"].id,
         motion_wf_state[u"debate_adjourned"].id,
+        question_wf_state[u"schedule_pending"].id,
+        question_wf_state[u"debate_adjourned"].id,
         tableddocument_wf_state[u"schedule_pending"].id,
-        tableddocument_wf_state[u"scheduled"].id,
         tableddocument_wf_state[u"postponed"].id,
     ]
     list_id = "items-pending-schedule"
+
+class ItemsScheduledViewlet(AllItemsInStageViewlet): 
+    name = _("scheduled")
+    states = [
+        agendaitem_wf_state[u"scheduled"].id,
+        bill_wf_state[u"first_reading"].id,
+        bill_wf_state[u"first_report_reading"].id,
+        bill_wf_state[u"second_reading"].id,
+        bill_wf_state[u"whole_house"].id,
+        bill_wf_state[u"third_reading"].id,
+        motion_wf_state[u"scheduled"].id,
+        question_wf_state[u"scheduled"].id,
+        tableddocument_wf_state[u"scheduled"].id,
+    ]
+    list_id = "items-scheduled"
 
 
 class MinistryItemsViewlet(ViewletBase):

@@ -216,15 +216,22 @@
      permission="zope.View"
      weight="25"
      />
-  <browser:viewlet
-     name="bungeni.workspace.items-pending-schedule.clerk"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.ItemsPendingScheduleViewlet"
-     view="bungeni.ui.interfaces.IClerkWorkspace"
-     permission="zope.View"
-     weight="30"
-     />
+    <browser:viewlet name="bungeni.workspace.items-pending-schedule.clerk"
+        for="*"
+        manager=".interfaces.IWorkspaceManager"
+        class=".workspace.ItemsPendingScheduleViewlet"
+        view="bungeni.ui.interfaces.IClerkWorkspace"
+        permission="zope.View"
+        weight="30"
+    />
+    <browser:viewlet name="bungeni.workspace.items-scheduled.clerk"
+        for="*"
+        manager=".interfaces.IWorkspaceManager"
+        class=".workspace.ItemsScheduledViewlet"
+        view="bungeni.ui.interfaces.IClerkWorkspace"
+        permission="zope.View"
+        weight="35"
+    />
   <browser:viewlet
      name="bungeni.workspace.sittings.clerk"
      for="*"
@@ -234,6 +241,7 @@
      permission="zope.View"
      weight="40"
      />
+
     
   <!--browser:viewlet
      name="bungeni.workspace.questions-submitted.clerk"
@@ -340,15 +348,14 @@
      />
 -->
   
-  <browser:viewlet
-     name="bungeni.workspace.items-complete"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.ItemsCompleteViewlet"
-     view="bungeni.ui.interfaces.ISpeakerWorkspace"
-     permission="zope.View"
-     weight="10"
-     />
+    <browser:viewlet name="bungeni.workspace.items-complete"
+        for="*"
+        manager=".interfaces.IWorkspaceManager"
+        class=".workspace.ItemsCompleteViewlet"
+        view="bungeni.ui.interfaces.ISpeakerWorkspace"
+        permission="zope.View"
+        weight="10"
+    />
      
     <browser:viewlet name="bungeni.workspace.working-draft.speaker"
         for="*"
@@ -369,16 +376,23 @@
      weight="20"
      />
 
-  <browser:viewlet
-     name="bungeni.workspace.items-pending-schedule"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.ItemsPendingScheduleViewlet"
-     view="bungeni.ui.interfaces.ISpeakerWorkspace"
-     permission="zope.View"
-     weight="30"
-     />
-
+    <browser:viewlet name="bungeni.workspace.items-pending-schedule.speaker"
+        for="*"
+        manager=".interfaces.IWorkspaceManager"
+        class=".workspace.ItemsPendingScheduleViewlet"
+        view="bungeni.ui.interfaces.ISpeakerWorkspace"
+        permission="zope.View"
+        weight="30"
+    />
+    <browser:viewlet name="bungeni.workspace.items-scheduled.clerk"
+        for="*"
+        manager=".interfaces.IWorkspaceManager"
+        class=".workspace.ItemsScheduledViewlet"
+        view="bungeni.ui.interfaces.ISpeakerWorkspace"
+        permission="zope.View"
+        weight="35"
+    />
+    
   <browser:viewlet
      name="bungeni.workspace.items-pending"
      for="*"
