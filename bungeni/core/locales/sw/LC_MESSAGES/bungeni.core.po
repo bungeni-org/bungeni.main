@@ -1341,16 +1341,21 @@ msgstr "yahitaji ufafanuzi kutoka mbunge"
 
 #~ msgid "Scheduling"
 #~ msgstr "ratibu"
+
 #~ msgid " items"
 #~ msgstr "vipengele"
+
 #~ msgid "items"
 #~ msgstr "vipengele"
+
 #~ msgid "Parliamentary items"
 #~ msgstr "simamia vigezo vya bungeni"
+
 #~ msgid "My archive"
 #~ msgstr "nyaraka yangu"
+
 #~ msgid "My archive personal items"
 #~ msgstr "vitu binafsi vya nyaraka yangu"
+
 #~ msgid "("
 #~ msgstr "("
-

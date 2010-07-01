@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: Wed May 19 14:14:20 2010\n"
-"PO-Revision-Date: 2010-06-09 19:48+0200\n"
+"PO-Revision-Date: 2010-06-15 12:20+0200\n"
 "Last-Translator: Flavio <flavio.zeni@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: en\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Pootle 2.0.3\n"
+"X-Generator: Pootle 2.0.4\n"
 "Language-Code: en\n"
 "Domain: DOMAIN\n"
 "Preferred-Encodings: utf-8 latin1\n"
@@ -551,7 +551,7 @@ msgstr "question postponed"
 #. Default: "Question completed for review at the speakers office"
 #: src/bungeni.core/bungeni/core/workflows/question.py:393
 msgid "notification_email_to_member_upon_complete_of_question"
-msgstr "question completed for review at the house business's office"
+msgstr "question is compliant and for review at the house business's office"
 
 #. Default: "Question assigned to ministry"
 #: src/bungeni.core/bungeni/core/workflows/question.py:414
@@ -691,7 +691,7 @@ msgstr "redraft response"
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:258
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:316
 msgid "Complete"
-msgstr "complete"
+msgstr "in compliance"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:119
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:176

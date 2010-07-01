@@ -1369,10 +1369,12 @@ msgstr "doit être clarifiée par mp"
 #, fuzzy
 #~ msgid "Parliamentary items"
 #~ msgstr "publications parlementaires"
+
 #~ msgid "My archive"
 #~ msgstr "mes archives"
+
 #~ msgid "My archive personal items"
 #~ msgstr "mes archives des articles personnels"
+
 #~ msgid "("
 #~ msgstr "("
-
