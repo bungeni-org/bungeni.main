@@ -1,7 +1,0 @@
-digraph g {
-None [shape=doublecircle]
-t1 [shape=none, label="Create Translation"]
-"None" -> t1 -> "draft-translation"
-t2 [shape=none, label="Archive"]
-"None" -> t2 -> "archived"
-}
