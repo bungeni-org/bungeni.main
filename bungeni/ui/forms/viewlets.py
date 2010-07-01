@@ -23,7 +23,6 @@ from bungeni.ui.i18n import _
 import bungeni.core.globalsettings as prefs
 from bungeni.core.workflows.question import states as question_wf_state 
 from bungeni.core.workflows.motion import states as motion_wf_state
-from bungeni.core.workflows.tableddocument import states as tableddocument_wf_state
 from bungeni.core.workflows.agendaitem import states as agendaitem_wf_state
 from bungeni.core.workflows.groupsitting import states as sitting_wf_state
 
@@ -677,11 +676,10 @@ class MemberItemsViewlet(viewlet.ViewletBase):
         question_wf_state[u"response_complete"].id,
         question_wf_state[u"debated"].id,
         question_wf_state[u"elapsed"].id,
-        tableddocument_wf_state[u"admissible"].id,
-        tableddocument_wf_state[u"postponed"].id,
-        tableddocument_wf_state[u"scheduled"].id,
-        tableddocument_wf_state[u"tabled"].id,
-    ] + get_states("bill", tagged=["private"], negate=True)
+        ] + \
+        get_states("bill", tagged=["private"], negate=True) + \
+        get_states("tableddocument", tagged=["public"])
+    
     
     def __init__( self,  context, request, view, manager ):
         session = Session()

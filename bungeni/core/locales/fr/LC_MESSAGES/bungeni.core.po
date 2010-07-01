@@ -661,7 +661,7 @@ msgstr "dépôt du document reporté"
 msgid "notification_email_to_member_upon_schedule_of_tabled_document"
 msgstr "dépôt du document prévu"
 
-#. Default: "Tabled document postponed"
+#. Default: "Tabled document adjourned"
 #: src/bungeni.core/bungeni/core/workflows/tableddocument.py:240
 msgid "notification_email_to_member_upon_postpone_of_tabled_document"
 msgstr "dépôt du document reportée"

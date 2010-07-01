@@ -16,7 +16,6 @@ import sqlalchemy.sql.expression as sql
 from bungeni.core.workflows.question import states as question_wf_state
 from bungeni.core.workflows.motion import states as motion_wf_state
 from bungeni.core.workflows.agendaitem import states as agendaitem_wf_state
-from bungeni.core.workflows.tableddocument import states as tableddocument_wf_state
 from bungeni.core.workflows.heading import states as heading_wf_state
 from bungeni.models import domain
 from bungeni.models.interfaces import IBungeniApplication, IBungeniGroup, ICommittee
@@ -162,12 +161,7 @@ class SchedulableTabledDocumentsViewlet(SchedulableItemsViewlet):
     model = domain.TabledDocument
     name = _('Tabled documents')
     view_name="tableddocument"
-    states = (
-        tableddocument_wf_state[u"scheduled"].id,
-        tableddocument_wf_state[u"schedule_pending"].id,
-        tableddocument_wf_state[u"postponed"].id,
-        )
-                 
+    states = get_states("tableddocument", tagged=["tobescheduled"]) 
         
 class SchedulableAgendaItemsViewlet(SchedulableItemsViewlet):
     model = domain.AgendaItem

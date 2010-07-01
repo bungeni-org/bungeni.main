@@ -641,7 +641,7 @@ msgstr "hati iliyopendekezwa imeahirishwa"
 msgid "notification_email_to_member_upon_schedule_of_tabled_document"
 msgstr "hati iliyopendekezwa imeratibiwa"
 
-#. Default: "Tabled document postponed"
+#. Default: "Tabled document adjourned"
 #: src/bungeni.core/bungeni/core/workflows/tableddocument.py:240
 msgid "notification_email_to_member_upon_postpone_of_tabled_document"
 msgstr "hati iliyopendekezwa imeahirishwa"

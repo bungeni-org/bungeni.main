@@ -13,6 +13,7 @@ ACTIVE_TAGS = [
     "public",
     "tobescheduled",
     "scheduled",
+    "actionclerk",
     "terminal",
     "succeed", # terminal
     "fail", # terminal
@@ -45,7 +46,20 @@ TAG_MAPPINGS["bill"] = {
     "approved": ["terminal", "succeed",],
     "rejected": ["terminal", "fail",],
 }
-
-
-
+TAG_MAPPINGS["tableddocument"] = {
+    "working_draft": ["private",],
+    "draft": ["private",],
+    "submitted": ["actionclerk",],
+    "received": ["actionclerk",],
+    "complete": [],
+    "admissible": ["public",],
+    "schedule_pending": ["public", "tobescheduled",],
+    "inadmissible": ["terminal", "fail",],
+    "clarify_clerk": ["actionclerk",],
+    "clarify_mp": [],
+    "scheduled": ["public",],
+    "adjourned": ["public", "tobescheduled",],
+    "tabled": ["public", "terminal", "succeed",],
+    "withdrawn": ["terminal", "fail",],
+}
 

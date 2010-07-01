@@ -21,8 +21,8 @@ class actions:
         """
     
     @staticmethod
-    def postpone(info,context):
-        utils.setTabledDocumentHistory(info,context)
+    def adjourn(info,context):
+        utils.setTabledDocumentHistory(info, context)
 
     @staticmethod
     def create(info, context):
@@ -190,18 +190,18 @@ class SendNotificationToMemberUponSchedule(Notification):
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 
-class SendNotificationToMemberUponPostponed(Notification):
-    """Issued when a tabled_document was postponed by the speakers office.
-    sends a notice that the tabled_document could not be debated and was postponed"""
+class SendNotificationToMemberUponAdjourned(Notification):
+    """Issued when a tabled_document was adjourned by the speakers office.
+    sends a notice that the tabled_document could not be debated and was adjourned"""
 
-    component.adapts(interfaces.ITabledDocumentPostponedEvent)
+    component.adapts(interfaces.ITabledDocumentAdjournedEvent)
 
     body = _('notification_email_to_member_upon_postpone_of_tabled_document',
-             default="Tabled document postponed")
+             default="Tabled document adjourned")
 
     @property
     def subject(self):
-        return u'Tabled document postponed: %s' % self.context.short_name
+        return u'Tabled document adjourned: %s' % self.context.short_name
 
     @property
     def condition(self):

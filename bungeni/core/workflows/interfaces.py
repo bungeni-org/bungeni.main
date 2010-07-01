@@ -112,8 +112,8 @@ class ITabledDocumentClarifyEvent(IWorkflowTransitionEvent):
 class ITabledDocumentScheduledEvent(IWorkflowTransitionEvent):
     """Issued when a TabledDocument was scheduled by Speakers office."""
 
-class ITabledDocumentPostponedEvent(IWorkflowTransitionEvent):
-    """Issued when a TabledDocument was postponed by the speakers office."""
+class ITabledDocumentAdjournedEvent(IWorkflowTransitionEvent):
+    """Issued when a TabledDocument was adjourned by the speakers office."""
 
 class ITabledDocumentTabledEvent(IWorkflowTransitionEvent):
     """Issued when a TabledDocument is tabled"""

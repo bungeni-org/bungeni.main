@@ -29,7 +29,6 @@ from bungeni.core.translation import get_all_languages
 from bungeni.core.workflows.question import states as question_wf_state
 from bungeni.core.workflows.motion import states as motion_wf_state
 from bungeni.core.workflows.agendaitem import states as agendaitem_wf_state
-from bungeni.core.workflows.tableddocument import states as tableddocument_wf_state
 from bungeni.core.workflows.groups import states as group_wf_state
 from bungeni.core.workflows.attachedfile import states as af_wf_state
 from bungeni.core.workflows.address import states as address_wf_state
@@ -1761,12 +1760,7 @@ class TabledDocumentDescriptor(ParliamentaryItemDescriptor):
             edit=True,
             view=True,),
     ])
-    public_wfstates = [tableddocument_wf_state[u'admissible'].id,
-                       tableddocument_wf_state[u'schedule_pending'].id,
-                       tableddocument_wf_state[u'scheduled'].id,
-                       tableddocument_wf_state[u'postponed'].id,
-                       tableddocument_wf_state[u'tabled'].id,
-                    ]
+    public_wfstates = get_states("tableddocument", tagged=["public"])
     
 class TabledDocumentVersionDescriptor(VersionDescriptor):
     display_name = _(u"Tabled Document version")

@@ -642,10 +642,10 @@ msgstr "tabled document deferred"
 msgid "notification_email_to_member_upon_schedule_of_tabled_document"
 msgstr "tabled document scheduled"
 
-#. Default: "Tabled document postponed"
+#. Default: "Tabled document adjourned"
 #: src/bungeni.core/bungeni/core/workflows/tableddocument.py:240
 msgid "notification_email_to_member_upon_postpone_of_tabled_document"
-msgstr "tabled document postponed"
+msgstr "tabled document adjourned"
 
 #. Default: "Tabled document was debated"
 #: src/bungeni.core/bungeni/core/workflows/tableddocument.py:260
