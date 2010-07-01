@@ -22,12 +22,12 @@ from bungeni.models.utils import get_parliament_for_group_id
 from bungeni.ui.i18n import _
 import bungeni.core.globalsettings as prefs
 from bungeni.core.workflows.question import states as question_wf_state 
-from bungeni.core.workflows.motion import states as motion_wf_state 
-from bungeni.core.workflows.bill import states as bill_wf_state 
+from bungeni.core.workflows.motion import states as motion_wf_state
 from bungeni.core.workflows.tableddocument import states as tableddocument_wf_state
 from bungeni.core.workflows.agendaitem import states as agendaitem_wf_state
 from bungeni.core.workflows.groupsitting import states as sitting_wf_state
 
+from bungeni.ui.tagged import get_states
 from bungeni.ui.table import AjaxContainerListing
 from bungeni.ui.utils import queries, statements, url as ui_url, misc
 from bungeni.ui.utils import date
@@ -662,17 +662,6 @@ class MemberItemsViewlet(viewlet.ViewletBase):
         agendaitem_wf_state[u"admissible"].id,
         agendaitem_wf_state[u"debated"].id,
         agendaitem_wf_state[u"elapsed"].id,
-        bill_wf_state[u"gazetted"].id , 
-        bill_wf_state[u"first_reading"].id ,
-        bill_wf_state[u"first_reading_postponed"].id ,
-        bill_wf_state[u"second_reading"].id , 
-        bill_wf_state[u"second_reading_postponed"].id , 
-        bill_wf_state[u"whole_house_postponed"].id ,
-        bill_wf_state[u"whole_house"].id ,
-        bill_wf_state[u"third_reading"].id,
-        bill_wf_state[u"third_reading_postponed"].id,
-        bill_wf_state[u"approved"].id , 
-        bill_wf_state[u"rejected"].id ,
         motion_wf_state[u"admissible"].id,
         motion_wf_state[u"deferred"].id,
         motion_wf_state[u"scheduled"].id,
@@ -692,7 +681,7 @@ class MemberItemsViewlet(viewlet.ViewletBase):
         tableddocument_wf_state[u"postponed"].id,
         tableddocument_wf_state[u"scheduled"].id,
         tableddocument_wf_state[u"tabled"].id,
-    ]
+    ] + get_states("bill", tagged=["private"], negate=True)
     
     def __init__( self,  context, request, view, manager ):
         session = Session()

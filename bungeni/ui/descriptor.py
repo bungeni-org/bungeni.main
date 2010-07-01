@@ -28,7 +28,6 @@ from bungeni.core.translation import get_default_language
 from bungeni.core.translation import get_all_languages
 from bungeni.core.workflows.question import states as question_wf_state
 from bungeni.core.workflows.motion import states as motion_wf_state
-from bungeni.core.workflows.bill import states as bill_wf_state
 from bungeni.core.workflows.agendaitem import states as agendaitem_wf_state
 from bungeni.core.workflows.tableddocument import states as tableddocument_wf_state
 from bungeni.core.workflows.groups import states as group_wf_state
@@ -62,6 +61,7 @@ from bungeni.ui.forms import validations
 from bungeni.ui.i18n import _
 import bungeni.ui.utils as ui_utils
 from bungeni.ui import vocabulary
+from bungeni.ui.tagged import get_states
 
 ###
 # Listing Columns 
@@ -1629,24 +1629,8 @@ class BillDescriptor(ParliamentaryItemDescriptor):
                     _(u"Publication Date")),),
 
         ])
-
-    public_wfstates = [bill_wf_state[u"gazetted"].id , 
-                        bill_wf_state[u"first_reading"].id ,
-                        bill_wf_state[u"first_reading_postponed"].id ,
-                        bill_wf_state[u"first_committee"].id ,
-                        bill_wf_state[u"second_reading"].id , 
-                        bill_wf_state[u"second_reading_postponed"].id , 
-                        bill_wf_state[u"whole_house"].id ,
-                        bill_wf_state[u"second_committee"].id ,
-                        bill_wf_state[u"whole_house_postponed"].id ,
-                        bill_wf_state[u"third_reading"].id,
-                        bill_wf_state[u"third_reading_postponed"].id,
-                        bill_wf_state[u'withdrawn_public'].id,
-                        bill_wf_state[u"rejected"].id,
-                        bill_wf_state[u'approved'].id,
-                    ]
-
-
+    public_wfstates = get_states("bill", tagged=["private"], negate=True)
+    
 class BillVersionDescriptor(VersionDescriptor):
     display_name = _(u"Bill version")
     container_name = _(u"Versions")

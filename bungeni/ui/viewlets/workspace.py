@@ -23,7 +23,6 @@ from ore.alchemist import Session
 
 from bungeni.core.workflows.question import states as question_wf_state 
 from bungeni.core.workflows.motion import states as motion_wf_state 
-from bungeni.core.workflows.bill import states as bill_wf_state 
 from bungeni.core.workflows.tableddocument import states as tableddocument_wf_state
 from bungeni.core.workflows.agendaitem import states as agendaitem_wf_state
 from bungeni.core.workflows.groupsitting import states as sitting_wf_state
@@ -32,7 +31,7 @@ import bungeni.models.utils  as model_utils
 import bungeni.models.domain as domain
 from bungeni.models.interfaces import ICommittee
 from bungeni.ui.interfaces import IWorkspaceContainer, IWorkspaceSectionContext
-
+from bungeni.ui.tagged import get_states, get_keyed_states
 from bungeni.ui import z3evoque
 from bungeni.ui.utils import common, misc, debug
 from bungeni.ui.i18n import _
@@ -393,6 +392,7 @@ class AdmissibleMotionViewlet(MotionInStateViewlet):
     list_id = "admissible_motions"
     
 ''' !+ unused:
+from bungeni.core.workflows.bill import states as bill_wf_state
 class BillItemsViewlet(ViewletBase): 
     """
     Display all bills that can be scheduled for a parliamentary sitting
@@ -574,16 +574,7 @@ class MPItemInProgressViewlet(OwnedItemsInStageViewlet):
         tableddocument_wf_state[u"clarify_clerk"].id,
         tableddocument_wf_state[u"postponed"].id,
         tableddocument_wf_state[u"scheduled"].id,
-        bill_wf_state[u"gazetted"].id , 
-        bill_wf_state[u"first_reading"].id ,
-        bill_wf_state[u"first_reading_postponed"].id ,
-        bill_wf_state[u"second_reading"].id , 
-        bill_wf_state[u"second_reading_postponed"].id , 
-        bill_wf_state[u"whole_house_postponed"].id ,
-        bill_wf_state[u"whole_house"].id ,
-        bill_wf_state[u"third_reading"].id,
-        bill_wf_state[u"third_reading_postponed"].id
-        ]
+    ] + get_states("bill", tagged=["private", "terminal"], negate=True)
     list_id = "items-in-progress"
 
 
@@ -595,9 +586,6 @@ class ItemArchiveViewlet(OwnedItemsInStageViewlet):
         agendaitem_wf_state[u"withdrawn"].id,
         agendaitem_wf_state[u"elapsed"].id,
         agendaitem_wf_state[u"inadmissible"].id,
-        bill_wf_state[u"approved"].id, 
-        bill_wf_state[u"rejected"].id,
-        bill_wf_state[u"withdrawn_public"].id,
         motion_wf_state[u"withdrawn"].id,
         motion_wf_state[u"withdrawn_public"].id,
         motion_wf_state[u"elapsed"].id,
@@ -615,7 +603,7 @@ class ItemArchiveViewlet(OwnedItemsInStageViewlet):
         tableddocument_wf_state[u"withdrawn"].id,
         tableddocument_wf_state[u"inadmissible"].id,
         tableddocument_wf_state[u"tabled"].id,
-    ]
+    ] + get_states("bill", tagged=["terminal"])
     list_id = "items-archived"
 
 class AllItemArchiveViewlet(AllItemsInStageViewlet):
@@ -630,9 +618,6 @@ class AllItemArchiveViewlet(AllItemsInStageViewlet):
         agendaitem_wf_state[u"withdrawn"].id,
         agendaitem_wf_state[u"elapsed"].id,
         agendaitem_wf_state[u"inadmissible"].id,
-        bill_wf_state[u"approved"].id, 
-        bill_wf_state[u"rejected"].id,
-        bill_wf_state[u"withdrawn_public"].id,
         motion_wf_state[u"withdrawn"].id,
         motion_wf_state[u"withdrawn_public"].id,
         motion_wf_state[u"elapsed"].id,
@@ -650,7 +635,7 @@ class AllItemArchiveViewlet(AllItemsInStageViewlet):
         tableddocument_wf_state[u"withdrawn"].id,
         tableddocument_wf_state[u"inadmissible"].id,
         tableddocument_wf_state[u"tabled"].id,
-    ]
+    ] + get_states("bill", tagged=["terminal"])
     list_id = "items-archived"
 
 class MPItemSuccessEndViewlet(OwnedItemsInStageViewlet):
@@ -698,10 +683,10 @@ class ClerkItemsWorkingDraftViewlet(AllItemsInStageViewlet):
     name = _("draft items")
     states = [motion_wf_state[u"working_draft"].id,
         agendaitem_wf_state[u"working_draft"].id,
-        bill_wf_state[u"working_draft"].id,
         question_wf_state[u"working_draft"].id,
         tableddocument_wf_state[u"working_draft"].id,
-    ]
+    ] + get_keyed_states("bill", ["working_draft"])
+    
     list_id = "clerk-items-working-draft"
 class SpeakerItemsWorkingDraftViewlet(ClerkItemsWorkingDraftViewlet):
     list_id = "speaker-items-working-draft"
@@ -732,16 +717,7 @@ class ClerkReviewedItemViewlet(AllItemsInStageViewlet):
         agendaitem_wf_state[u"scheduled"].id,
         tableddocument_wf_state[u"postponed"].id,
         tableddocument_wf_state[u"scheduled"].id,
-        bill_wf_state[u"gazetted"].id , 
-        bill_wf_state[u"first_reading"].id ,
-        bill_wf_state[u"first_reading_postponed"].id ,
-        bill_wf_state[u"second_reading"].id , 
-        bill_wf_state[u"second_reading_postponed"].id , 
-        bill_wf_state[u"whole_house_postponed"].id ,
-        bill_wf_state[u"whole_house"].id ,
-        bill_wf_state[u"third_reading"].id,
-        bill_wf_state[u"third_reading_postponed"].id
-    ]
+    ] + get_states("bill", tagged=["private", "terminal"], negate=True)
     
 class ItemsCompleteViewlet(AllItemsInStageViewlet): 
     name = _("to review")
@@ -758,13 +734,12 @@ class ItemsApprovedViewlet(AllItemsInStageViewlet):
     states = [
         agendaitem_wf_state[u"admissible"].id,
         agendaitem_wf_state[u"deferred"].id,
-        bill_wf_state[u"approved"].id,
         motion_wf_state[u"admissible"].id,
         motion_wf_state[u"deferred"].id,
         question_wf_state[u"admissible"].id,
         question_wf_state[u"deferred"].id,
         tableddocument_wf_state[u"admissible"].id,
-    ]
+    ] + get_keyed_states("bill", ["approved"])
     list_id = "items-approved"
 
 class ItemsPendingScheduleViewlet(AllItemsInStageViewlet): 
@@ -772,36 +747,23 @@ class ItemsPendingScheduleViewlet(AllItemsInStageViewlet):
     states = [
         agendaitem_wf_state[u"schedule_pending"].id,
         agendaitem_wf_state[u"debate_adjourned"].id,
-        bill_wf_state[u"gazetted"].id,
-        bill_wf_state[u"first_reading_postponed"].id,
-        bill_wf_state[u"first_committee"].id,
-        bill_wf_state[u"first_report_reading_postponed"].id,
-        bill_wf_state[u"second_reading_postponed"].id,
-        bill_wf_state[u"whole_house_postponed"].id,
-        bill_wf_state[u"second_committee"].id,
-        bill_wf_state[u"third_reading_postponed"].id,
         motion_wf_state[u"schedule_pending"].id,
         motion_wf_state[u"debate_adjourned"].id,
         question_wf_state[u"schedule_pending"].id,
         question_wf_state[u"debate_adjourned"].id,
         tableddocument_wf_state[u"schedule_pending"].id,
         tableddocument_wf_state[u"postponed"].id,
-    ]
+    ] + get_states("bill", tagged=["tobescheduled"])
     list_id = "items-pending-schedule"
 
 class ItemsScheduledViewlet(AllItemsInStageViewlet): 
     name = _("scheduled")
     states = [
         agendaitem_wf_state[u"scheduled"].id,
-        bill_wf_state[u"first_reading"].id,
-        bill_wf_state[u"first_report_reading"].id,
-        bill_wf_state[u"second_reading"].id,
-        bill_wf_state[u"whole_house"].id,
-        bill_wf_state[u"third_reading"].id,
         motion_wf_state[u"scheduled"].id,
         question_wf_state[u"scheduled"].id,
         tableddocument_wf_state[u"scheduled"].id,
-    ]
+    ]+ get_states("bill", tagged=["scheduled"])
     list_id = "items-scheduled"
 
 

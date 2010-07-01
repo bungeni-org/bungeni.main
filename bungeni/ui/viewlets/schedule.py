@@ -15,7 +15,6 @@ import sqlalchemy.sql.expression as sql
 
 from bungeni.core.workflows.question import states as question_wf_state
 from bungeni.core.workflows.motion import states as motion_wf_state
-from bungeni.core.workflows.bill import states as bill_wf_state
 from bungeni.core.workflows.agendaitem import states as agendaitem_wf_state
 from bungeni.core.workflows.tableddocument import states as tableddocument_wf_state
 from bungeni.core.workflows.heading import states as heading_wf_state
@@ -29,6 +28,7 @@ from ore.alchemist.container import contained
 from ore.alchemist.model import queryModelDescriptor
 from ore.workflow.interfaces import IWorkflow
 
+from bungeni.ui.tagged import get_states, get_keyed_states
 from bungeni.ui.i18n import _
 import bungeni.ui.utils as ui_utils
 from bungeni.ui.calendar.utils import datetimedict
@@ -136,17 +136,7 @@ class SchedulableBillsViewlet(SchedulableItemsViewlet):
     model = domain.Bill
     name = _('Bills')
     view_name="bill"
-    states = (
-        bill_wf_state[u"gazetted"].id,
-        bill_wf_state[u"first_reading"].id,
-        bill_wf_state[u"first_reading_postponed"].id,
-        bill_wf_state[u"second_reading"].id,
-        bill_wf_state[u"second_reading_postponed"].id,
-        bill_wf_state[u"whole_house"].id,
-        bill_wf_state[u"whole_house_postponed"].id,
-        bill_wf_state[u"third_reading"].id,
-        bill_wf_state[u"third_reading_postponed"].id,
-        )
+    states = get_states("bill", tagged=["tobescheduled"]) 
 
 class SchedulableQuestionsViewlet(SchedulableItemsViewlet):
     model = domain.Question
@@ -240,9 +230,4 @@ class SchedulableAgendaItemsViewlet(SchedulableItemsViewlet):
             IDCDescriptiveProperties(item))) for
              item in items]]
 
-        
 
-
-             
-             
-                     
