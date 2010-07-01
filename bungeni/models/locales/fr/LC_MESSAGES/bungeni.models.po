@@ -718,36 +718,51 @@ msgstr "administrateur de bungeni"
 
 #~ msgid "Female"
 #~ msgstr "femelle"
+
 #~ msgid "Male"
 #~ msgstr "mâle"
+
 #~ msgid "No"
 #~ msgstr "non"
+
 #~ msgid "Oral"
 #~ msgstr "oral"
+
 #~ msgid "Ordinary"
 #~ msgstr "ordinaire"
+
 #~ msgid "Private Notice"
 #~ msgstr "avis privé "
+
 #~ msgid "Speakers Office"
 #~ msgstr "bureau du président de l'assemblée"
+
 #~ msgid "Written"
 #~ msgstr "écrit"
+
 #~ msgid "Yes"
 #~ msgstr "oui"
+
 #~ msgid "active"
 #~ msgstr "actif"
+
 #~ msgid "deceased"
 #~ msgstr "décédée"
+
 #~ msgid "elected"
 #~ msgstr "élus"
+
 #~ msgid "ex officio"
 #~ msgstr "ex officio"
+
 #~ msgid "inactive"
 #~ msgstr "inactifs"
+
 #~ msgid "initial"
 #~ msgstr "initiale"
+
 #~ msgid "nominated"
 #~ msgstr "nommés"
+
 #~ msgid "subsequent"
 #~ msgstr "ultérieures"
-
