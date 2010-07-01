@@ -39,7 +39,7 @@ class actions(object):
         pass
 
     @staticmethod
-    def postpone_first(info, context):
+    def adjourn_first(info, context):
         pass
 
 

@@ -113,9 +113,9 @@ Actions
 
   >>> actions.schedule_first(info, bill)
 
-"Postpone first reading".
+"Adjourn first reading".
 
-  >>> actions.postpone_first(info, bill)
+  >>> actions.adjourn_first(info, bill)
 
 "Withdraw".
 

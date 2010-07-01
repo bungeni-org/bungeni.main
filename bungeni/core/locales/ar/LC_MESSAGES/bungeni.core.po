@@ -763,7 +763,7 @@ msgid "Readmit elpapsed"
 msgstr "اعادة قبول elpapsed"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:18
-msgid "Report Reading Postponed"
+msgid "Report Reading Adjourned"
 msgstr "تأجيل قراءة تقرير"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:180
@@ -830,7 +830,7 @@ msgid "Active Group"
 msgstr "مجموعة نشطة"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:20
-msgid "First Reading Postponed"
+msgid "First Reading Adjourned"
 msgstr "تأجيل القراءة الأولى"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:200
@@ -1104,7 +1104,7 @@ msgid "Create"
 msgstr "خلق"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:6
-msgid "Second Reading Postponed"
+msgid "Second Reading Adjourned"
 msgstr "تأجيل القراءة الثانية"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:60
@@ -1160,7 +1160,7 @@ msgid "Submitted to clerk"
 msgstr "المقدم إلى كاتب"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:7
-msgid "Third Reading Postponed"
+msgid "Third Reading Adjourned"
 msgstr "تأجيل القراءة الثالثة"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:70
@@ -1237,7 +1237,7 @@ msgid "Response completed"
 msgstr "أكملت استجابة"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:8
-msgid "Whole House Postponed"
+msgid "Whole House Adjourned"
 msgstr "تأجيل البيت كله"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:81

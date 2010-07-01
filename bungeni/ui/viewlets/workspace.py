@@ -420,7 +420,6 @@ class BillItemsViewlet(ViewletBase):
             data_list.append(data)
         return data_list
     
-    
     def update(self):
         """
         refresh the query
@@ -429,13 +428,13 @@ class BillItemsViewlet(ViewletBase):
         bills = session.query(domain.Bill).filter(domain.Bill.status.in_([
             bill_wf_state[u"gazetted"].id,
             bill_wf_state[u"first_reading"].id ,
-            bill_wf_state[u"first_reading_postponed"].id,
+            bill_wf_state[u"first_reading_adjourned"].id,
             bill_wf_state[u"second_reading"].id,
-            bill_wf_state[u"second_reading_postponed"].id,
-            bill_wf_state[u"whole_house_postponed"].id,
+            bill_wf_state[u"second_reading_adjourned"].id,
+            bill_wf_state[u"whole_house_adjourned"].id,
             bill_wf_state[u"house_pending"].id,
             bill_wf_state[u"third_reading"].id,
-            bill_wf_state[u"third_reading_postponed"].id
+            bill_wf_state[u"third_reading_adjourned"].id
         ] ))
         self.query = bills
 '''

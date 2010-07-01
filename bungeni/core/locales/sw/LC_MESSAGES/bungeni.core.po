@@ -762,7 +762,7 @@ msgid "Readmit elpapsed"
 msgstr "anzisha tena hati lililochelewa"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:18
-msgid "Report Reading Postponed"
+msgid "Report Reading Adjourned"
 msgstr "somo la ripoti limeahirishwa"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:180
@@ -829,7 +829,7 @@ msgid "Active Group"
 msgstr "kikundi tenzi"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:20
-msgid "First Reading Postponed"
+msgid "First Reading Adjourned"
 msgstr "somo la kwanza limeahirishwa"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:200
@@ -907,11 +907,11 @@ msgid "Schedule Report Reading"
 msgstr "ratibu usomaji wa somo"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:24
-msgid "Postpone Report Reading"
+msgid "Adjourn Report Reading"
 msgstr "ahirisha usomaji wa ripoti"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:25
-msgid "Postpone Second Reading and Whole House Committee"
+msgid "Adjourn Second Reading and Whole House Committee"
 msgstr "ahirisha somo la pili na kamati ya jumba zima"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:26
@@ -1027,7 +1027,7 @@ msgstr "tukio halianzi"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:36
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:56
-msgid "Postpone Third Reading"
+msgid "Adjourn Third Reading"
 msgstr "ahirisha somo la tatu"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:37
@@ -1056,11 +1056,11 @@ msgid "Reintroduce"
 msgstr "anzisha tena"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:48
-msgid "Postpone Whole House Committee"
+msgid "Adjourn Whole House Committee"
 msgstr "ahirisha kamati ya jumba zima"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:49
-msgid "Postpone First Reading"
+msgid "Adjourn First Reading"
 msgstr "ahirisha somo la kwanza"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:50
@@ -1072,7 +1072,7 @@ msgid "Second Reading Schedule"
 msgstr "ratiba ya somo la pili"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:52
-msgid "Postpone Second Reading"
+msgid "Adjourn Second Reading"
 msgstr "ahirisha somo la pili"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:53
@@ -1103,7 +1103,7 @@ msgid "Create"
 msgstr "unda"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:6
-msgid "Second Reading Postponed"
+msgid "Second Reading Adjourned"
 msgstr "somo la pili limeahirishwa"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:60
@@ -1159,7 +1159,7 @@ msgid "Submitted to clerk"
 msgstr "imewasilishwa kwa karani"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:7
-msgid "Third Reading Postponed"
+msgid "Third Reading Adjourned"
 msgstr "somo la tatu limeahirishwa"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:70
@@ -1236,7 +1236,7 @@ msgid "Response completed"
 msgstr "jibu limekamilika"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:8
-msgid "Whole House Postponed"
+msgid "Whole House Adjourned"
 msgstr "jumba zima limeahirishwa"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:81

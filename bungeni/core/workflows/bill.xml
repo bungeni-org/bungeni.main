@@ -49,7 +49,7 @@
     </state>
     <state id="first_reading" title="First Reading">
     </state>
-    <state id="first_reading_postponed" title="First Reading Postponed">
+    <state id="first_reading_adjourned" title="First Reading Adjourned">
     </state>
     <state id="first_committee" title="Select Committee (after 1st reading)">
         <deny permission="bungeni.consignatory.Add" role="bungeni.Owner" />
@@ -63,7 +63,7 @@
     </state>
     <state id="first_report_reading" title="First Report Reading">
     </state>
-    <state id="first_report_reading_postponed" title="First Report Reading Postponed">
+    <state id="first_report_reading_adjourned" title="First Report Reading Adjourned">
     </state>
     <state id="second_reading_pending" title="Second Reading Pending">
     </state>
@@ -75,13 +75,13 @@
         <deny permission="bungeni.consignatory.Add" role="bungeni.Speaker" />
         <deny permission="bungeni.consignatory.Delete" role="bungeni.Speaker" />
     </state>
-    <state id="second_reading_postponed" title="Second Reading Postponed">
+    <state id="second_reading_adjourned" title="Second Reading Adjourned">
     </state>
     <state id="whole_house_pending" title="Whole House Pending">
     </state>
     <state id="whole_house" title="Whole House">
     </state>
-    <state id="whole_house_postponed" title="Whole House Postponed">
+    <state id="whole_house_adjourned" title="Whole House Adjourned">
     </state>
     <state id="second_committee" title="Select Committee (after 2nd reading)">
     </state>
@@ -89,7 +89,7 @@
     </state>
     <state id="third_reading" title="Third Reading">
     </state>
-    <state id="third_reading_postponed" title="Third Reading Postponed">
+    <state id="third_reading_adjourned" title="Third Reading Adjourned">
     </state>
     <state id="withdrawn_public" title="Bill Withdrawn">
         <deny permission="bungeni.bill.Edit" role="bungeni.Clerk" />
@@ -142,7 +142,7 @@
     <transition id="allow_reschedule_first"
         title="Allow scheduling of First Reading"
         trigger="manual"
-        source="gazetted first_reading_postponed"
+        source="gazetted first_reading_adjourned"
         destination="first_reading_pending"
         permission="bungeni.bill.Schedule"
         action=""
@@ -157,13 +157,13 @@
         action="bungeni.core.workflows.bill.actions.schedule_first"
         condition=""
     />
-    <transition id="postpone_first"
-        title="Postpone First Reading"
+    <transition id="adjourn_first"
+        title="Adjourn First Reading"
         trigger="manual"
         source="first_reading"
-        destination="first_reading_postponed"
+        destination="first_reading_adjourned"
         permission="bungeni.bill.Schedule"
-        action="bungeni.core.workflows.bill.actions.postpone_first"
+        action="bungeni.core.workflows.bill.actions.adjourn_first"
         condition=""
     />
     <transition id="select_first_committee"
@@ -187,7 +187,7 @@
     <transition id="allow_schedule_second_reading"
         title="Allow scheduling of Second Reading "
         trigger="manual"
-        source="first_reading first_report_reading second_reading_postponed"
+        source="first_reading first_report_reading second_reading_adjourned"
         destination="second_reading_pending"
         permission="bungeni.bill.Schedule"
         action=""
@@ -202,11 +202,11 @@
         action="bungeni.core.workflows.bill.actions.create_version"
         condition=""
     />
-    <transition id="postpone_first_report_reading"
-        title="Postpone First Report Reading"
+    <transition id="adjourn_first_report_reading"
+        title="Adjourn First Report Reading"
         trigger="manual"
         source="first_report_reading"
-        destination="first_report_reading_postponed"
+        destination="first_report_reading_adjourned"
         permission="bungeni.bill.Schedule"
         action=""
         condition=""
@@ -214,17 +214,17 @@
     <transition id="allow_schedule_first_report_reading"
         title="Allow scheduling of First Report Reading"
         trigger="manual"
-        source="first_committee first_report_reading_postponed"
+        source="first_committee first_report_reading_adjourned"
         destination="first_report_reading_pending"
         permission="bungeni.bill.Schedule"
         action=""
         condition=""
     />
-    <transition id="postpone_second"
-        title="Postpone Second Reading"
+    <transition id="adjourn_second"
+        title="Adjourn Second Reading"
         trigger="manual"
         source="second_reading"
-        destination="second_reading_postponed"
+        destination="second_reading_adjourned"
         permission="bungeni.bill.Schedule"
         action=""
         condition=""
@@ -232,7 +232,7 @@
     <transition id="allow_schedule_whole_house"
         title="Allow scheduling of Whole House Committee"
         trigger="manual"
-        source="second_reading whole_house_postponed"
+        source="second_reading whole_house_adjourned"
         destination="whole_house_pending"
         permission="bungeni.bill.Schedule"
         action=""
@@ -256,11 +256,11 @@
         action=""
         condition=""
     />
-    <transition id="postpone_whole_house"
-        title="Postpone Whole House Committee"
+    <transition id="adjourn_whole_house"
+        title="Adjourn Whole House Committee"
         trigger="manual"
         source="whole_house"
-        destination="whole_house_postponed"
+        destination="whole_house_adjourned"
         permission="bungeni.bill.Schedule"
         action=""
         condition=""
@@ -286,7 +286,7 @@
     <transition id="allow_schedule_third_reading"
         title="Allow scheduling of Third Reading"
         trigger="manual"
-        source="whole_house third_reading_postponed"
+        source="whole_house third_reading_adjourned"
         destination="third_reading_pending"
         permission="bungeni.bill.Schedule"
         action=""
@@ -301,11 +301,11 @@
         action=""
         condition=""
     />
-    <transition id="postpone_third_reading"
-        title="Postpone Third Reading"
+    <transition id="adjourn_third_reading"
+        title="Adjourn Third Reading"
         trigger="manual"
         source="third_reading"
-        destination="third_reading_postponed"
+        destination="third_reading_adjourned"
         permission="bungeni.bill.Schedule"
         action=""
         condition=""

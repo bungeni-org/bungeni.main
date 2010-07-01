@@ -763,8 +763,8 @@ msgid "Readmit elpapsed"
 msgstr "readmit elpapsed"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:18
-msgid "Report Reading Postponed"
-msgstr "report reading postponed"
+msgid "Report Reading Adjourned"
+msgstr "report reading adjourned"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:180
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:268
@@ -830,8 +830,8 @@ msgid "Active Group"
 msgstr "active group"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:20
-msgid "First Reading Postponed"
-msgstr "first reading postponed"
+msgid "First Reading Adjourned"
+msgstr "first reading adjourned"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:200
 msgid "Group is Dissolved"
@@ -908,12 +908,12 @@ msgid "Schedule Report Reading"
 msgstr "schedule report reading"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:24
-msgid "Postpone Report Reading"
-msgstr "postpone report reading"
+msgid "Adjourn Report Reading"
+msgstr "adjourn report reading"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:25
-msgid "Postpone Second Reading and Whole House Committee"
-msgstr "postpone second reading and whole house committee"
+msgid "Adjourn Second Reading and Whole House Committee"
+msgstr "adjourn second reading and whole house committee"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:26
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:45
@@ -1028,8 +1028,8 @@ msgstr "inactive event"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:36
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:56
-msgid "Postpone Third Reading"
-msgstr "postpone third reading"
+msgid "Adjourn Third Reading"
+msgstr "adjourn third reading"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:37
 msgid "Recommit to 2nd Committee"
@@ -1057,12 +1057,12 @@ msgid "Reintroduce"
 msgstr "reintroduce"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:48
-msgid "Postpone Whole House Committee"
-msgstr "postpone whole house committee"
+msgid "Adjourn Whole House Committee"
+msgstr "adjourn whole house committee"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:49
-msgid "Postpone First Reading"
-msgstr "postpone first reading"
+msgid "Adjourn First Reading"
+msgstr "adjourn first reading"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:50
 msgid "Reschedule Second Reading"
@@ -1073,8 +1073,8 @@ msgid "Second Reading Schedule"
 msgstr "second reading schedule"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:52
-msgid "Postpone Second Reading"
-msgstr "postpone second reading"
+msgid "Adjourn Second Reading"
+msgstr "adjourn second reading"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:53
 msgid "Back to First Reading"
@@ -1104,8 +1104,8 @@ msgid "Create"
 msgstr "create"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:6
-msgid "Second Reading Postponed"
-msgstr "second reading postponed"
+msgid "Second Reading Adjourned"
+msgstr "second reading adjourned"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:60
 msgid "Reschedule Report Reading"
@@ -1160,8 +1160,8 @@ msgid "Submitted to clerk"
 msgstr "submitted to clerk"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:7
-msgid "Third Reading Postponed"
-msgstr "third reading postponed"
+msgid "Third Reading Adjourned"
+msgstr "third reading adjourned"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:70
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:136
@@ -1237,8 +1237,8 @@ msgid "Response completed"
 msgstr "response completed"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:8
-msgid "Whole House Postponed"
-msgstr "whole house postponed"
+msgid "Whole House Adjourned"
+msgstr "whole house adjourned"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:81
 msgid "Response submitted"

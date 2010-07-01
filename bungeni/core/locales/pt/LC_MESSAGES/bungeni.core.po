@@ -763,7 +763,7 @@ msgid "Readmit elpapsed"
 msgstr "readmitir elpapsed"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:18
-msgid "Report Reading Postponed"
+msgid "Report Reading Adjourned"
 msgstr "leitura do relatório adiada"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:180
@@ -830,7 +830,7 @@ msgid "Active Group"
 msgstr "grupo ativo"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:20
-msgid "First Reading Postponed"
+msgid "First Reading Adjourned"
 msgstr "primeira leitura adiada"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:200
@@ -908,11 +908,11 @@ msgid "Schedule Report Reading"
 msgstr "relatório de programação leitura"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:24
-msgid "Postpone Report Reading"
+msgid "Adjourn Report Reading"
 msgstr "adiar a leitura do relatório"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:25
-msgid "Postpone Second Reading and Whole House Committee"
+msgid "Adjourn Second Reading and Whole House Committee"
 msgstr "adiar a segunda leitura ea comissão casa inteira"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:26
@@ -1028,7 +1028,7 @@ msgstr "evento inativos"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:36
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:56
-msgid "Postpone Third Reading"
+msgid "Adjourn Third Reading"
 msgstr "adiar a terceira leitura"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:37
@@ -1057,11 +1057,11 @@ msgid "Reintroduce"
 msgstr "reintroduzir"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:48
-msgid "Postpone Whole House Committee"
+msgid "Adjourn Whole House Committee"
 msgstr "adiar comissão casa inteira"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:49
-msgid "Postpone First Reading"
+msgid "Adjourn First Reading"
 msgstr "adiar a primeira leitura"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:50
@@ -1073,7 +1073,7 @@ msgid "Second Reading Schedule"
 msgstr "cronograma da segunda leitura"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:52
-msgid "Postpone Second Reading"
+msgid "Adjourn Second Reading"
 msgstr "adiar a segunda leitura"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:53
@@ -1104,7 +1104,7 @@ msgid "Create"
 msgstr "criar"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:6
-msgid "Second Reading Postponed"
+msgid "Second Reading Adjourned"
 msgstr "segunda leitura adiada"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:60
@@ -1160,7 +1160,7 @@ msgid "Submitted to clerk"
 msgstr "submetidos ao funcionário"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:7
-msgid "Third Reading Postponed"
+msgid "Third Reading Adjourned"
 msgstr "terceira leitura adiada"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:70
@@ -1237,7 +1237,7 @@ msgid "Response completed"
 msgstr "resposta completa"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:8
-msgid "Whole House Postponed"
+msgid "Whole House Adjourned"
 msgstr "casa toda adiada"
 
 #: src/bungeni.core/bungeni/core/workflows/wfi18n.pt:81

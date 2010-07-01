@@ -3,9 +3,9 @@
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="bungeni.core"> <body>
-      <b i18n:translate="" >Second Reading Postponed</b>
-<b i18n:translate="" >Third Reading Postponed</b>
-<b i18n:translate="" >Whole House Postponed</b>
+      <b i18n:translate="" >Second Reading Adjourned</b>
+<b i18n:translate="" >Third Reading Adjourned</b>
+<b i18n:translate="" >Whole House Adjourned</b>
 <b i18n:translate="" >Bill Withdrawn</b>
 <b i18n:translate="" >Whole House</b>
 <b i18n:translate="" >Second Committee</b>
@@ -15,9 +15,9 @@
 <b i18n:translate="" >Rejected Bill</b>
 <b i18n:translate="" >First Reading</b>
 <b i18n:translate="" >First Committee</b>
-<b i18n:translate="" >Report Reading Postponed</b>
+<b i18n:translate="" >Report Reading Adjourned</b>
 <b i18n:translate="" >Report Reading</b>
-<b i18n:translate="" >First Reading Postponed</b>
+<b i18n:translate="" >First Reading Adjourned</b>
 <b i18n:translate="" >Bill Published in Gazette</b>
 <b i18n:translate="" >Approved Bill</b>
 <b i18n:translate="" >Schedule Report Reading</b>
