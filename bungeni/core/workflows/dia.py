@@ -1,5 +1,5 @@
 #
-
+import sys
 from bungeni.core.workflows import adapters
 
 from bungeni.core.workflows import bill
@@ -14,55 +14,37 @@ from bungeni.core.workflows import agendaitem
 from bungeni.core.workflows import committee
 from bungeni.core.workflows import parliament
 
-
-def main():
-    f = open('bill.dot', 'w')
-    f.write(bill.wf.dot())
+def write_file(in_folder, file_name, contents):
+    f = open(in_folder + file_name, 'w')
+    f.write(contents)
     f.close()
 
-    f = open('question.dot', 'w')
-    f.write(question.wf.dot())
-    f.close()
+
+def main(argv):
+    output_folder = ''
+    if (len(argv) > 0 ):
+	    output_folder = argv[0]
+	    if (output_folder.endswith("/") == False):
+		output_folder = output_folder + "/"
     
-    f = open('motion.dot', 'w')
-    f.write(motion.wf.dot())
-    f.close()
-
-    f = open('version.dot', 'w')
-    f.write(version.wf.dot())
-    f.close()
+    write_file(output_folder, 'bill.dot', bill.wf.dot())
+    write_file(output_folder, 'question.dot', question.wf.dot())
     
-    f = open('groupsitting.dot', 'w')
-    f.write(groupsitting.wf.dot())
-    f.close()
+    write_file(output_folder, 'motion.dot', motion.wf.dot())
+    write_file(output_folder, 'version.dot', version.wf.dot())
+    write_file(output_folder, 'groupsitting.dot', groupsitting.wf.dot())
+    write_file(output_folder, 'groups.dot', groups.wf.dot())
+    write_file(output_folder, 'question.dot', question.wf.dot())
+    write_file(output_folder, 'address.dot', address.wf.dot())
+    write_file(output_folder, 'question.dot', tableddocument.wf.dot())
+    write_file(output_folder, 'agendaitem.dot', agendaitem.wf.dot())
+    write_file(output_folder, 'committee.dot', committee.wf.dot())
+    write_file(output_folder, 'parliament.dot', parliament.wf.dot())
 
-    f = open('groups.dot', 'w')
-    f.write(groups.wf.dot())
-    f.close()
-
-    f = open('address.dot', 'w')
-    f.write(address.wf.dot())
-    f.close()
-    
-    f = open('tableddocument.dot', 'w')
-    f.write(tableddocument.wf.dot())
-    f.close()
-
-    f = open('agendaitem.dot', 'w')
-    f.write(agendaitem.wf.dot())
-    f.close()
-
-    f = open('committee.dot', 'w')
-    f.write(committee.wf.dot())
-    f.close()
-
-    f = open('parliament.dot', 'w')
-    f.write(parliament.wf.dot())
-    f.close()
 
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
 
 
