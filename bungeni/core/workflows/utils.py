@@ -180,6 +180,7 @@ def getQuestionMinistry(info, context):
     ministry_id = context.ministry_id
     return ministry_id != None
 
+''' UNUSUED (and incorrect) :
 def getQuestionSchedule(info, context):
     question_id = context.question_id
     return dbutils.isItemScheduled(question_id)
@@ -187,10 +188,10 @@ def getQuestionSchedule(info, context):
 def getMotionSchedule(info, context):
     motion_id = context.motion_id
     return dbutils.isItemScheduled(motion_id)
+'''
 
 def getQuestionSubmissionAllowed(info, context):
     return prefs.getQuestionSubmissionAllowed()
-
 
 def setBillSubmissionDate(info, context):
     instance = removeSecurityProxy(context)

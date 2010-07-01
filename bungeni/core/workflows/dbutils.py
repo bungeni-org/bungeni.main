@@ -65,15 +65,15 @@ def setQuestionMinistryId(question):
 def removeQuestionFromItemSchedule(question_id):
     """
     when a question gets postponed the previous schedules of that
-    question are invalidated so the do not show up in the schedule 
+    question are invalidated so they do not show up in the schedule 
     calendar any more
     """
     session = Session()
-    active_question_filter = rdb.and_( schema.items_schedule.c.item_id == question_id,
-                                       schema.items_schedule.c.active == True)
-    item_schedule = session.query(domain.ItemSchedule).filter(active_question_filter)
+    active_filter = rdb.and_(schema.items_schedule.c.item_id==question_id,
+                                      schema.items_schedule.c.active==True)
+    item_schedule = session.query(domain.ItemSchedule).filter(active_filter)
     results = item_schedule.all()
-    if (len(results) == 1):
+    if (len(results)==1):
         results[0].active = False
     
 def setRegistryNumber(item):
@@ -100,15 +100,26 @@ def setQuestionSerialNumber(question):
     sequence = rdb.Sequence('question_number_sequence')
     question.question_number = connection.execute(sequence)
 
-def isItemScheduled(item_id):
+def isItemScheduled(parliamentary_item_id):
+    return (len(getActiveItemSchedule(parliamentary_item_id))>=1)
+    
+def getActiveItemSchedule(parliamentary_item_id):
+    """Get active itemSchedule instances for parliamentary item.
+    
+    Use may also be to get scheduled dates e.g.
+    for item_schedule in getActiveItemSchedule(parliamentary_item_id)
+        # item_schedule.item_status, item_schedule.item
+        s = item_schedule.sitting
+        s.start_date, s.end_date, s.status
+    """
     session = Session()
-    active_question_filter = rdb.and_( schema.items_schedule.c.item_id == item_id,
-                                       schema.items_schedule.c.active == True)
-    item_schedule = session.query(domain.ItemSchedule).filter(active_question_filter)
+    active_filter = rdb.and_(
+        schema.items_schedule.c.item_id==parliamentary_item_id,
+        schema.items_schedule.c.active==True)
+    item_schedule = session.query(domain.ItemSchedule).filter(active_filter)
     results = item_schedule.all()
-    return (len(results) >= 1)
-    
-    
+    return results
+
 def setMotionSerialNumber(motion):
     """
      Number that indicate the order in which motions have been approved 
