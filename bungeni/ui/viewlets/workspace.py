@@ -30,7 +30,7 @@ import bungeni.models.utils  as model_utils
 import bungeni.models.domain as domain
 from bungeni.models.interfaces import ICommittee
 from bungeni.ui.interfaces import IWorkspaceContainer, IWorkspaceSectionContext
-from bungeni.ui.tagged import get_states, get_keyed_states
+from bungeni.ui.tagged import get_states
 from bungeni.ui import z3evoque
 from bungeni.ui.utils import common, misc, debug
 from bungeni.ui.i18n import _
@@ -517,7 +517,7 @@ class MPItemDraftViewlet(OwnedItemsInStageViewlet):
         question_wf_state[u"draft"].id,
         agendaitem_wf_state[u"draft"].id,
         ] + \
-        get_keyed_states("tableddocument", ["draft"])
+        get_states("tableddocument", keys=["draft"])
     list_id = "items-draft"
 
 
@@ -531,7 +531,7 @@ class MPItemActionRequiredViewlet(OwnedItemsInStageViewlet):
         question_wf_state[u"clarify_mp"].id,
         agendaitem_wf_state[u"clarify_mp"].id,
         ] + \
-        get_keyed_states("tableddocument", ["clarify_mp"])
+        get_states("tableddocument", keys=["clarify_mp"])
     list_id = "items-action-required"
 
 
@@ -567,14 +567,12 @@ class MPItemInProgressViewlet(OwnedItemsInStageViewlet):
         agendaitem_wf_state[u"scheduled"].id,
         agendaitem_wf_state[u"debate_adjourned"].id,
         ] + \
-        get_states("bill", tagged=["private", "terminal"], negate=True) + \
-        get_states("tableddocument", tagged=["private", "terminal"], negate=True)
+        get_states("bill", not_tagged=["private", "terminal"]) + \
+        get_states("tableddocument", not_tagged=["private", "terminal"])
     list_id = "items-in-progress"
 
-
-class ItemArchiveViewlet(OwnedItemsInStageViewlet):
-    name = _("archived items")
-    states = [
+def get_archived_states():
+    return [
         agendaitem_wf_state[u"debated"].id,
         agendaitem_wf_state[u"dropped"].id,
         agendaitem_wf_state[u"withdrawn"].id,
@@ -597,6 +595,10 @@ class ItemArchiveViewlet(OwnedItemsInStageViewlet):
         ] + \
         get_states("bill", tagged=["terminal"]) + \
         get_states("tableddocument", tagged=["terminal"])
+
+class ItemArchiveViewlet(OwnedItemsInStageViewlet):
+    name = _("archived items")
+    states = get_archived_states()
     list_id = "items-archived"
 
 class AllItemArchiveViewlet(AllItemsInStageViewlet):
@@ -604,30 +606,8 @@ class AllItemArchiveViewlet(AllItemsInStageViewlet):
             'question',
             'agendaitem',
             'tableddocument']
-    name = _("Archived Items")
-    states = [
-        agendaitem_wf_state[u"debated"].id,
-        agendaitem_wf_state[u"dropped"].id,
-        agendaitem_wf_state[u"withdrawn"].id,
-        agendaitem_wf_state[u"elapsed"].id,
-        agendaitem_wf_state[u"inadmissible"].id,
-        motion_wf_state[u"withdrawn"].id,
-        motion_wf_state[u"withdrawn_public"].id,
-        motion_wf_state[u"elapsed"].id,
-        motion_wf_state[u"inadmissible"].id,
-        motion_wf_state[u"dropped"].id,
-        motion_wf_state[u"adopted"].id,
-        motion_wf_state[u"adopted_amendments"].id,
-        motion_wf_state[u"rejected"].id,
-        question_wf_state[u"response_complete"].id,
-        question_wf_state[u"debated"].id,
-        question_wf_state[u"dropped"].id,
-        question_wf_state[u"elapsed"].id,
-        question_wf_state[u"withdrawn"].id,
-        question_wf_state[u"inadmissible"].id, 
-        ] + \
-        get_states("bill", tagged=["terminal"]) + \
-        get_states("tableddocument", tagged=["terminal"])
+    name = _("Archived Items AllItemArchiveViewlet")
+    states = get_archived_states()
     list_id = "items-archived"
 
 class MPItemSuccessEndViewlet(OwnedItemsInStageViewlet):
@@ -675,8 +655,8 @@ class ClerkItemsWorkingDraftViewlet(AllItemsInStageViewlet):
         agendaitem_wf_state[u"working_draft"].id,
         question_wf_state[u"working_draft"].id,
         ] + \
-        get_keyed_states("bill", ["working_draft"]) + \
-        get_keyed_states("tableddocument", ["working_draft"])    
+        get_states("bill", keys=["working_draft"]) + \
+        get_states("tableddocument", keys=["working_draft"])    
     list_id = "clerk-items-working-draft"
 class SpeakerItemsWorkingDraftViewlet(ClerkItemsWorkingDraftViewlet):
     list_id = "speaker-items-working-draft"
@@ -684,7 +664,6 @@ class SpeakerItemsWorkingDraftViewlet(ClerkItemsWorkingDraftViewlet):
 class SpeakersClerkItemActionRequiredViewlet(ClerkItemActionRequiredViewlet):
     name = _("pending with the clerk")
     list_id = "clerks-items-action-required"
-
 
 class ClerkReviewedItemViewlet(AllItemsInStageViewlet): 
     name = _("in progress")
@@ -704,9 +683,9 @@ class ClerkReviewedItemViewlet(AllItemsInStageViewlet):
         agendaitem_wf_state[u"deferred"].id,
         agendaitem_wf_state[u"scheduled"].id,
         ] + \
-        get_states("bill", tagged=["private", "terminal"], negate=True) + \
+        get_states("bill", not_tagged=["private", "terminal"]) + \
         get_states("tableddocument", 
-            tagged=["private", "terminal", "actionclerk"], negate=True)
+            not_tagged=["private", "terminal", "actionclerk"])
     
 class ItemsCompleteViewlet(AllItemsInStageViewlet): 
     name = _("to review")
@@ -715,7 +694,7 @@ class ItemsCompleteViewlet(AllItemsInStageViewlet):
         motion_wf_state[u"complete"].id,
         agendaitem_wf_state[u"complete"].id,
         ] + \
-        get_keyed_states("tableddocument", ["complete"])
+        get_states("tableddocument", keys=["complete"])
     list_id = "items-action-required"
 
 class ItemsApprovedViewlet(AllItemsInStageViewlet): 
@@ -728,8 +707,8 @@ class ItemsApprovedViewlet(AllItemsInStageViewlet):
         question_wf_state[u"admissible"].id,
         question_wf_state[u"deferred"].id,
         ] + \
-        get_keyed_states("bill", ["approved"]) + \
-        get_keyed_states("tableddocument", ["admissible"])
+        get_states("bill", keys=["approved"]) + \
+        get_states("tableddocument", keys=["admissible"])
     list_id = "items-approved"
 
 class ItemsPendingScheduleViewlet(AllItemsInStageViewlet): 
@@ -754,7 +733,7 @@ class ItemsScheduledViewlet(AllItemsInStageViewlet):
         question_wf_state[u"scheduled"].id,
         ] + \
         get_states("bill", tagged=["scheduled"]) + \
-        get_keyed_states("tableddocument", ["scheduled"])
+        get_states("tableddocument", keys=["scheduled"])
     list_id = "items-scheduled"
 
 
@@ -820,6 +799,10 @@ class MinistryItemsViewlet(ViewletBase):
             domain.Ministry.start_date.desc())
         self.query = ministries
 
+class MinistryArchiveViewlet(MinistryItemsViewlet):
+    name = _("archived items")
+    states = get_archived_states()
+    list_id = "items-archived"
 
 class OralMinistryQuestionsViewlet(MinistryItemsViewlet):
     list_id = "ministry-oral-questions"

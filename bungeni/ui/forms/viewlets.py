@@ -677,7 +677,7 @@ class MemberItemsViewlet(viewlet.ViewletBase):
         question_wf_state[u"debated"].id,
         question_wf_state[u"elapsed"].id,
         ] + \
-        get_states("bill", tagged=["private"], negate=True) + \
+        get_states("bill", not_tagged=["private"]) + \
         get_states("tableddocument", tagged=["public"])
     
     

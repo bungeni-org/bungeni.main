@@ -27,7 +27,7 @@ from ore.alchemist.container import contained
 from ore.alchemist.model import queryModelDescriptor
 from ore.workflow.interfaces import IWorkflow
 
-from bungeni.ui.tagged import get_states, get_keyed_states
+from bungeni.ui.tagged import get_states
 from bungeni.ui.i18n import _
 import bungeni.ui.utils as ui_utils
 from bungeni.ui.calendar.utils import datetimedict

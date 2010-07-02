@@ -1628,7 +1628,7 @@ class BillDescriptor(ParliamentaryItemDescriptor):
                     _(u"Publication Date")),),
 
         ])
-    public_wfstates = get_states("bill", tagged=["private"], negate=True)
+    public_wfstates = get_states("bill", not_tagged=["private"])
     
 class BillVersionDescriptor(VersionDescriptor):
     display_name = _(u"Bill version")

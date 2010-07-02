@@ -18,35 +18,49 @@ from states import ACTIVE_TAGS, TAG_MAPPINGS
 
 # Utilities
 
-def get_states(pi_type, tagged=[], negate=False):
+EMPTY_SET = set()
+
+def get_states(pi_type, tagged=[], not_tagged=[], keys=[], conjunction="OR"):
     """Get the list of matching states.
-    tagged: list of tags to match against.
-    negate: 
-        when False (default), get list of all states tagged by ANY tag in tagged; 
-        when True, get list of all states NOT tagged by ANY tag in tagged.
+    
+    tagged: matches all states tagged with ANY tag in in this list
+    not_tagged: matches all states tagged with NONE of these tags
+    keys: matches all states explictly named by keye here 
+    conjunction: 
+        "OR": matches any state that is matched by ANY criteria above
+        "AND": matches any state that is matched by ALL criteria above
     """
     tag_mapping = TAG_MAPPINGS[pi_type]
+    # validate input parameters
+    if tagged:
+        assert tagged==[ t for t in tagged if t in ACTIVE_TAGS ]
+    if not_tagged:
+        assert not_tagged==[ t for t in not_tagged if t in ACTIVE_TAGS ]
+    if keys:
+        assert keys==[ k for k in keys if k in tag_mapping ]
+    assert conjunction in ("OR", "AND"), "Not supported."
+    # process
     states = STATES_MAPPING[pi_type]
-    matched = []
-    _tagged = [ t for t in tagged if t in ACTIVE_TAGS ]
-    assert _tagged==tagged
-    for state_id, state_tags in tag_mapping.items():
-        if not negate:
+    _tagged = _not_tagged = _keys = EMPTY_SET
+    if tagged:
+        _tagged = set()
+        for state_id, state_tags in tag_mapping.items():
             for t in tagged:
                 if t in state_tags:
-                    matched.append(states[state_id].id)
+                    _tagged.add(states[state_id].id)
                     break
-        else:
-            matched.append(states[state_id].id)
-            for t in tagged:
+    if not_tagged:
+        _not_tagged = set()
+        for state_id, state_tags in tag_mapping.items():
+            _not_tagged.add(states[state_id].id)
+            for t in not_tagged:
                 if t in state_tags:
-                    matched.remove(states[state_id].id)
-                    break                
-    return matched
-
-def get_keyed_states(pi_type, keys=[]):
-    states = STATES_MAPPING[pi_type]
-    return [ states[key].id for key in keys ]
-    
-#
+                    _not_tagged.remove(states[state_id].id)
+                    break
+    if keys:
+        _keys = set([ states[key].id for key in keys ])
+    if conjunction=="OR":
+        return list(_tagged.union(_not_tagged).union(_keys))
+    elif conjunction=="AND":
+        return list(_tagged.intersection(_not_tagged).intersection(_keys))
 

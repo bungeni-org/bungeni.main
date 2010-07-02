@@ -477,14 +477,13 @@
      weight="50"
      />
 
-   <browser:viewlet
-     name="bungeni.workspace.minister-item-archive"
-     for="*"
-     manager=".interfaces.IWorkspaceArchiveManager"
-     class=".workspace.ItemArchiveViewlet"
-     view="bungeni.ui.interfaces.IMinisterWorkspace"
-     permission="zope.View"
-     weight="50"
-     />
-  
+    <browser:viewlet name="bungeni.workspace.minister-item-archive"
+        for="*"
+        manager=".interfaces.IWorkspaceArchiveManager"
+        class=".workspace.MinistryArchiveViewlet"
+        view="bungeni.ui.interfaces.IMinisterWorkspace"
+        permission="zope.View"
+        weight="50"
+    />
+
 </configure>
