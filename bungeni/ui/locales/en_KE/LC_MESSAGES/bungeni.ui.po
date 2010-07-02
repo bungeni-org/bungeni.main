@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: Wed May 19 14:13:44 2010\n"
-"PO-Revision-Date: 2010-06-11 11:19+0200\n"
-"Last-Translator: Flavio <flavio.zeni@gmail.com>\n"
+"PO-Revision-Date: 2010-07-02 10:50+0300\n"
+"Last-Translator: Administrator <admin@apkn.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: en_KE\n"
 "MIME-Version: 1.0\n"
@@ -701,7 +701,7 @@ msgstr "province"
 #: src/bungeni.ui/bungeni/ui/descriptor.py:2055
 #: src/bungeni.ui/bungeni/ui/descriptor.py:2061
 msgid "Region"
-msgstr "region"
+msgstr "district"
 
 #: src/bungeni.ui/bungeni/ui/descriptor.py:2043
 msgid "Provinces"
@@ -713,11 +713,11 @@ msgstr "name of province"
 
 #: src/bungeni.ui/bungeni/ui/descriptor.py:2056
 msgid "Regions"
-msgstr "regions"
+msgstr "districts"
 
 #: src/bungeni.ui/bungeni/ui/descriptor.py:2062
 msgid "Name of the Region"
-msgstr "name of region"
+msgstr "name of district"
 
 #: src/bungeni.ui/bungeni/ui/descriptor.py:2071
 msgid "Country Code"
@@ -2193,7 +2193,7 @@ msgstr "add province..."
 
 #: src/bungeni.ui/bungeni/ui/menu.zcml:803
 msgid "Add Region..."
-msgstr "add region..."
+msgstr "add district..."
 
 #: src/bungeni.ui/bungeni/ui/menu.zcml:814
 msgid "Add Committee Member..."
