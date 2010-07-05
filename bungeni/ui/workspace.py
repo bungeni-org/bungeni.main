@@ -473,7 +473,10 @@ class WorkspaceSectionView(BungeniBrowserView):
         self.government_id = LD.government_id # may be None
         self.ministries = LD.ministries # may be None
         if self.ministries:
-            interface.alsoProvides(self, interfaces.IMinisterWorkspace)
+            # then, ONLY if an ancestor container is actually a Ministry, 
+            # this must be a MinisterWorkspace
+            if misc.get_parent_with_interface(self, model_interfaces.IMinistry):
+                interface.alsoProvides(self, interfaces.IMinisterWorkspace)
         
         # roles are function of the context, so always recalculate
         roles = get_roles(self.context)
