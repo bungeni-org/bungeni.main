@@ -21,7 +21,6 @@ from bungeni.models.utils import get_offices_held_for_user_in_parliament
 from bungeni.models.utils import get_parliament_for_group_id
 from bungeni.ui.i18n import _
 import bungeni.core.globalsettings as prefs
-from bungeni.core.workflows.question import states as question_wf_state 
 from bungeni.core.workflows.motion import states as motion_wf_state
 from bungeni.core.workflows.agendaitem import states as agendaitem_wf_state
 from bungeni.core.workflows.groupsitting import states as sitting_wf_state
@@ -441,23 +440,6 @@ class ParliamentMembershipInfo(BungeniAttributeDisplay):
             return
         self.context.__parent__= parent
         super( ParliamentMembershipInfo, self).update()
-        
-
-class SupplementaryQuestionsViewlet( SubformViewlet ):
-    form_name = (u"Supplementary Questions")
-    
-    @property
-    def for_display(self):
-        return self.context.__parent__.status == question_wf_state[u"response_submitted"].id
-    
-    def __init__( self,  context, request, view, manager ):
-
-        self.context = context.supplementaryquestions
-        self.request = request
-        self.__parent__= context
-        self.manager = manager
-        self.query = None
-        #elf.form_name = (u"Supplementary Questions")
 
 
 class InitialQuestionsViewlet( BungeniAttributeDisplay ):
@@ -652,7 +634,8 @@ class AgendaItemTimeLineViewlet(TimeLineViewlet):
     view_id ="agendaitem-timeline"
 
 class MemberItemsViewlet(viewlet.ViewletBase):
-    """ A tab with bills, motions etc for an MP
+    """A tab with bills, motions etc for an MP 
+    (the "parliamentary activities" tab of of the "member" view)
     """
     for_display = True
     states = [
@@ -668,20 +651,14 @@ class MemberItemsViewlet(viewlet.ViewletBase):
         motion_wf_state[u"adopted_amendments"].id,
         motion_wf_state[u"elapsed"].id,
         motion_wf_state[u"debate_adjourned"].id,
-        question_wf_state[u"admissible"].id,
-        question_wf_state[u"scheduled"].id,
-        question_wf_state[u"response_pending"].id,
-        question_wf_state[u"deferred"].id,
-        question_wf_state[u"response_submitted"].id,
-        question_wf_state[u"response_complete"].id,
-        question_wf_state[u"debated"].id,
-        question_wf_state[u"elapsed"].id,
         ] + \
         get_states("bill", not_tagged=["private"]) + \
+        get_states("question", tagged=["public"]) + \
         get_states("tableddocument", tagged=["public"])
     
     
     def __init__( self,  context, request, view, manager ):
+        print "MemberItemsViewlet.INIT", vars()
         session = Session()
         self.context = context
         user_id = self.context.user_id
@@ -707,8 +684,7 @@ class MemberItemsViewlet(viewlet.ViewletBase):
                 'status': misc.get_wf_state(result),
                 'submission_date' : result.submission_date.strftime('%Y-%m-%d'), 
                 'url': url }
-
-        
+    
     render = ViewPageTemplateFile ('templates/mp_item_viewlet.pt')
 
 class DisplayViewlet(BungeniAttributeDisplay):

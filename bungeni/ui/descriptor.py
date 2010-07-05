@@ -26,7 +26,6 @@ from bungeni.models import domain
 
 from bungeni.core.translation import get_default_language
 from bungeni.core.translation import get_all_languages
-from bungeni.core.workflows.question import states as question_wf_state
 from bungeni.core.workflows.motion import states as motion_wf_state
 from bungeni.core.workflows.agendaitem import states as agendaitem_wf_state
 from bungeni.core.workflows.groups import states as group_wf_state
@@ -1702,19 +1701,8 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
             label=_(u"Sitting Time"), 
             listing=False,
             omit=True),
-        ])
-
-    public_wfstates = [question_wf_state[u'admissible'].id,
-                       question_wf_state[u'schedule_pending'].id,
-                       question_wf_state[u'scheduled'].id,
-                       question_wf_state[u'deferred'].id,
-                       question_wf_state[u'dropped'].id,
-                       question_wf_state[u'elapsed'].id,
-                       question_wf_state[u'debated'].id,
-                       question_wf_state[u'debate_adjourned'].id,
-                       question_wf_state[u'withdrawn_public'].id,
-                    ]
-
+    ])
+    public_wfstates = get_states("question", tagged=["public"])
 
 class QuestionVersionDescriptor(VersionDescriptor):
     display_name = _(u"Question version")

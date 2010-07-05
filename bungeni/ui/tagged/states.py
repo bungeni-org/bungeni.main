@@ -17,6 +17,8 @@ ACTIVE_TAGS = [
     "terminal",
     "succeed", # terminal
     "fail", # terminal
+    "oral", # oral questions
+    "written", # written questions
 ] 
 
 # Tags for Workflow States, per Parliamentary Item
@@ -46,6 +48,29 @@ TAG_MAPPINGS["bill"] = {
     "approved": ["terminal", "succeed",],
     "rejected": ["terminal", "fail",],
 }
+TAG_MAPPINGS["question"] = {
+    "working_draft": ["private",],
+    "draft": ["private",],
+    "submitted": ["actionclerk",],
+    "received": ["actionclerk",],
+    "complete": [],
+    "admissible": ["public", "oral", "written",],
+    "inadmissible": ["terminal", "fail",],
+    "clarify_mp": [],
+    "clarify_clerk": ["actionclerk",],
+    "schedule_pending": ["public", "tobescheduled", "oral",],
+    "scheduled": ["public", "scheduled", "oral",],
+    "debate_adjourned": ["public", "tobescheduled",],
+    "response_pending": ["public", "written",],
+    "response_submitted": ["public", "actionclerk",],
+    "response_complete": ["public", "terminal", "succeed",],
+    "deferred": ["public",],
+    "elapsed": ["public", "terminal", "fail",],
+    "debated": ["public", "terminal", "succeed",],
+    "dropped": ["public","terminal", "fail",],
+    "withdrawn": ["terminal", "fail",],
+    "withdrawn_public": ["public", "terminal", "fail",],
+}
 TAG_MAPPINGS["tableddocument"] = {
     "working_draft": ["private",],
     "draft": ["private",],
@@ -57,7 +82,7 @@ TAG_MAPPINGS["tableddocument"] = {
     "inadmissible": ["terminal", "fail",],
     "clarify_clerk": ["actionclerk",],
     "clarify_mp": [],
-    "scheduled": ["public",],
+    "scheduled": ["public", "scheduled"],
     "adjourned": ["public", "tobescheduled",],
     "tabled": ["public", "terminal", "succeed",],
     "withdrawn": ["terminal", "fail",],

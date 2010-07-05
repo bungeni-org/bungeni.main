@@ -21,7 +21,6 @@ from zope.viewlet.manager import WeightOrderedViewletManager
 
 from ore.alchemist import Session
 
-from bungeni.core.workflows.question import states as question_wf_state 
 from bungeni.core.workflows.motion import states as motion_wf_state 
 from bungeni.core.workflows.agendaitem import states as agendaitem_wf_state
 from bungeni.core.workflows.groupsitting import states as sitting_wf_state
@@ -198,97 +197,6 @@ class MyGroupsViewlet(ViewletBase):
         self.query = groups
 
 
-class SubmittedQuestionViewlet(QuestionInStateViewlet):
-    """
-    display the submitted questions
-    """
-    name = question_wf_state[u"submitted"].title
-    state =  question_wf_state[u"submitted"].id
-    list_id = "submitted_questions"
-    
-class ReceivedQuestionViewlet(QuestionInStateViewlet):
-    """
-    display the recieved questions
-    """
-    name = question_wf_state[u"received"].title
-    state = question_wf_state[u"received"].id
-    list_id = "recieved_questions"
-    
-class ScheduledQuestionViewlet(QuestionInStateViewlet): 
-    name = question_wf_state[u"scheduled"].title
-    state = question_wf_state[u"scheduled"].id
-    list_id = "scheduled_questions"
-        
-    
-class AdmissibleQuestionViewlet(QuestionInStateViewlet):
-    """
-    display the admissible questions
-    """
-    name = question_wf_state[u"admissible"].title
-    state = question_wf_state[u"admissible"].id
-    list_id = "admissible_questions"
-   
-class InadmissibleQuestionViewlet(QuestionInStateViewlet):
-    """
-    display the admissible questions
-    """
-    name = question_wf_state[u"inadmissible"].title
-    state = question_wf_state[u"inadmissible"].id
-    list_id = "inadmissible_questions"
-  
-
-class ClarifyClerkQuestionViewlet(QuestionInStateViewlet):
-    """
-    
-    """
-    name = question_wf_state[u"clarify_clerk"].title
-    state = question_wf_state[u"clarify_clerk"].id
-    list_id = "clarify_clerk_questions"
-
-class ResponsePendingQuestionViewlet(QuestionInStateViewlet):
-    """
-    
-    """
-    name = question_wf_state[u"response_pending"].title
-    state = question_wf_state[u"response_pending"].id
-    list_id = "response_pending_questions" 
-
-class CompleteQuestionViewlet(QuestionInStateViewlet):
-    """
-    
-    """
-    name = question_wf_state[u"complete"].title
-    state = question_wf_state[u"complete"].id
-    list_id = "complete_questions" 
-
-class DeferredQuestionViewlet(QuestionInStateViewlet):
-    """
-    
-    """
-    name = question_wf_state[u"deferred"].title
-    state = question_wf_state[u"deferred"].id
-    list_id = "deferred_questions" 
-
-class ElapsedQuestionViewlet(QuestionInStateViewlet):
-    """
-    
-    """
-    name = question_wf_state[u"elapsed"].title
-    state = question_wf_state[u"elapsed"].id
-    list_id = "elapsed_questions" 
-
-class WithdrawnQuestionViewlet(QuestionInStateViewlet):
-    """
-    
-    """
-    name = question_wf_state[u"withdrawn"].title
-    state = question_wf_state[u"withdrawn"].id
-    list_id = "withdrawn_questions" 
-
-#"Question pending response"
-
-
- 
 class MotionInStateViewlet(ViewletBase):
     name = state = None
     list_id = "_motions"
@@ -514,9 +422,9 @@ class AllItemsInStageViewlet(OwnedItemsInStageViewlet):
 class MPItemDraftViewlet(OwnedItemsInStageViewlet): 
     name = _("draft items")
     states = [motion_wf_state[u"draft"].id,
-        question_wf_state[u"draft"].id,
         agendaitem_wf_state[u"draft"].id,
         ] + \
+        get_states("question", keys=["draft"]) + \
         get_states("tableddocument", keys=["draft"])
     list_id = "items-draft"
 
@@ -528,9 +436,9 @@ class MPItemActionRequiredViewlet(OwnedItemsInStageViewlet):
     """
     name = _("to review")
     states = [motion_wf_state[u"clarify_mp"].id,
-        question_wf_state[u"clarify_mp"].id,
         agendaitem_wf_state[u"clarify_mp"].id,
         ] + \
+        get_states("question", keys=["clarify_mp"]) + \
         get_states("tableddocument", keys=["clarify_mp"])
     list_id = "items-action-required"
 
@@ -543,20 +451,11 @@ class MPItemInProgressViewlet(OwnedItemsInStageViewlet):
     """
     name = _("in progress")
     states = [
-        question_wf_state[u"submitted"].id,
-        question_wf_state[u"received"].id,
-        question_wf_state[u"clarify_clerk"].id,
-        question_wf_state[u"complete"].id,
-        question_wf_state[u"debate_adjourned"].id,
         motion_wf_state[u"submitted"].id,
         motion_wf_state[u"received"].id,
         motion_wf_state[u"complete"].id,
         motion_wf_state[u"clarify_clerk"].id,
         motion_wf_state[u"debate_adjourned"].id,
-        question_wf_state[u"scheduled"].id,
-        question_wf_state[u"response_pending"].id,
-        question_wf_state[u"deferred"].id,
-        question_wf_state[u"response_submitted"].id,
         motion_wf_state[u"deferred"].id,
         motion_wf_state[u"scheduled"].id,
         agendaitem_wf_state[u"submitted"].id,
@@ -568,6 +467,7 @@ class MPItemInProgressViewlet(OwnedItemsInStageViewlet):
         agendaitem_wf_state[u"debate_adjourned"].id,
         ] + \
         get_states("bill", not_tagged=["private", "terminal"]) + \
+        get_states("question", not_tagged=["private", "terminal"]) + \
         get_states("tableddocument", not_tagged=["private", "terminal"])
     list_id = "items-in-progress"
 
@@ -586,14 +486,9 @@ def get_archived_states():
         motion_wf_state[u"adopted"].id,
         motion_wf_state[u"adopted_amendments"].id,
         motion_wf_state[u"rejected"].id,
-        question_wf_state[u"response_complete"].id,
-        question_wf_state[u"debated"].id,
-        question_wf_state[u"dropped"].id,
-        question_wf_state[u"elapsed"].id,
-        question_wf_state[u"withdrawn"].id,
-        question_wf_state[u"inadmissible"].id, 
         ] + \
         get_states("bill", tagged=["terminal"]) + \
+        get_states("question", tagged=["terminal"]) + \
         get_states("tableddocument", tagged=["terminal"])
 
 class ItemArchiveViewlet(OwnedItemsInStageViewlet):
@@ -610,24 +505,6 @@ class AllItemArchiveViewlet(AllItemsInStageViewlet):
     states = get_archived_states()
     list_id = "items-archived"
 
-class MPItemSuccessEndViewlet(OwnedItemsInStageViewlet):
-    """ items in end status that were discussed/answered ..."""
-    name = _("Items succesfully tabled")
-    states = [
-        question_wf_state[u"response_complete"].id,
-        question_wf_state[u"debated"].id,
-        question_wf_state[u"elapsed"].id,
-        question_wf_state[u"withdrawn"].id,
-        question_wf_state[u"inadmissible"].id,
-        motion_wf_state[u"adopted"].id,
-        motion_wf_state[u"adopted_amendments"].id,
-        motion_wf_state[u"withdrawn"].id,
-        motion_wf_state[u"elapsed"].id,
-        motion_wf_state[u"inadmissible"].id
-        ]
-    list_id = "items-sucess"
-
-
 class ClerkItemActionRequiredViewlet(AllItemsInStageViewlet):
     types = ['motion',
             'question',
@@ -641,11 +518,8 @@ class ClerkItemActionRequiredViewlet(AllItemsInStageViewlet):
         motion_wf_state[u"submitted"].id,
         motion_wf_state[u"received"].id,
         motion_wf_state[u"clarify_clerk"].id,
-        question_wf_state[u"submitted"].id,
-        question_wf_state[u"received"].id,
-        question_wf_state[u"clarify_clerk"].id,
-        question_wf_state[u"response_submitted"].id,
         ] + \
+        get_states("question", tagged=["actionclerk"]) + \
         get_states("tableddocument", tagged=["actionclerk"])
     list_id = "items-action-required"
 
@@ -653,9 +527,9 @@ class ClerkItemsWorkingDraftViewlet(AllItemsInStageViewlet):
     name = _("draft items")
     states = [motion_wf_state[u"working_draft"].id,
         agendaitem_wf_state[u"working_draft"].id,
-        question_wf_state[u"working_draft"].id,
         ] + \
         get_states("bill", keys=["working_draft"]) + \
+        get_states("question", keys=["working_draft"]) + \
         get_states("tableddocument", keys=["working_draft"])    
     list_id = "clerk-items-working-draft"
 class SpeakerItemsWorkingDraftViewlet(ClerkItemsWorkingDraftViewlet):
@@ -668,32 +542,28 @@ class SpeakersClerkItemActionRequiredViewlet(ClerkItemActionRequiredViewlet):
 class ClerkReviewedItemViewlet(AllItemsInStageViewlet): 
     name = _("in progress")
     states = [
-        question_wf_state[u"complete"].id,
         motion_wf_state[u"complete"].id,
         agendaitem_wf_state[u"complete"].id,
-        question_wf_state[u"clarify_mp"].id,
         motion_wf_state[u"clarify_mp"].id,
         agendaitem_wf_state[u"clarify_mp"].id,
-        question_wf_state[u"scheduled"].id,
-        question_wf_state[u"response_pending"].id,
-        question_wf_state[u"deferred"].id,
-        question_wf_state[u"response_submitted"].id,
         motion_wf_state[u"deferred"].id,
         motion_wf_state[u"scheduled"].id,
         agendaitem_wf_state[u"deferred"].id,
         agendaitem_wf_state[u"scheduled"].id,
         ] + \
         get_states("bill", not_tagged=["private", "terminal"]) + \
+        get_states("question", 
+            not_tagged=["private", "terminal", "actionclerk"]) + \
         get_states("tableddocument", 
             not_tagged=["private", "terminal", "actionclerk"])
     
 class ItemsCompleteViewlet(AllItemsInStageViewlet): 
     name = _("to review")
     states = [
-        question_wf_state[u"complete"].id,
         motion_wf_state[u"complete"].id,
         agendaitem_wf_state[u"complete"].id,
         ] + \
+        get_states("question", keys=["complete"]) + \
         get_states("tableddocument", keys=["complete"])
     list_id = "items-action-required"
 
@@ -704,10 +574,9 @@ class ItemsApprovedViewlet(AllItemsInStageViewlet):
         agendaitem_wf_state[u"deferred"].id,
         motion_wf_state[u"admissible"].id,
         motion_wf_state[u"deferred"].id,
-        question_wf_state[u"admissible"].id,
-        question_wf_state[u"deferred"].id,
         ] + \
         get_states("bill", keys=["approved"]) + \
+        get_states("question", keys=["admissible", "deferred"]) + \
         get_states("tableddocument", keys=["admissible"])
     list_id = "items-approved"
 
@@ -718,10 +587,9 @@ class ItemsPendingScheduleViewlet(AllItemsInStageViewlet):
         agendaitem_wf_state[u"debate_adjourned"].id,
         motion_wf_state[u"schedule_pending"].id,
         motion_wf_state[u"debate_adjourned"].id,
-        question_wf_state[u"schedule_pending"].id,
-        question_wf_state[u"debate_adjourned"].id,
         ] + \
         get_states("bill", tagged=["tobescheduled"]) + \
+        get_states("question", tagged=["tobescheduled"]) + \
         get_states("tableddocument", tagged=["tobescheduled"])
     list_id = "items-pending-schedule"
 
@@ -730,9 +598,9 @@ class ItemsScheduledViewlet(AllItemsInStageViewlet):
     states = [
         agendaitem_wf_state[u"scheduled"].id,
         motion_wf_state[u"scheduled"].id,
-        question_wf_state[u"scheduled"].id,
         ] + \
         get_states("bill", tagged=["scheduled"]) + \
+        get_states("question", keys=["scheduled"]) + \
         get_states("tableddocument", keys=["scheduled"])
     list_id = "items-scheduled"
 
@@ -740,11 +608,7 @@ class ItemsScheduledViewlet(AllItemsInStageViewlet):
 class MinistryItemsViewlet(ViewletBase):
     list_id = "ministry-items"
     name = _("questions to the ministry")
-    states = [
-        question_wf_state[u"admissible"].id,
-        question_wf_state[u"scheduled"].id,
-        question_wf_state[u"response_pending"].id,
-    ]
+    states = None
     response_types = ['O','W']
     
     def _getItems(self, ministry):
@@ -801,32 +665,21 @@ class MinistryItemsViewlet(ViewletBase):
 
 class MinistryArchiveViewlet(MinistryItemsViewlet):
     name = _("archived items")
-    # Ministry archive only includes Questions in a "public" terminal state
-    states = [
-        question_wf_state[u"response_complete"].id,
-        question_wf_state[u"debated"].id,
-        question_wf_state[u"dropped"].id,
-        question_wf_state[u"elapsed"].id,
-    ]
+    # Ministry archive only includes Questions in a public terminal state
+    states = get_states("question", 
+                    tagged=["public", "terminal"], conjunction="AND")
     list_id = "items-archived"
 
 class OralMinistryQuestionsViewlet(MinistryItemsViewlet):
     list_id = "ministry-oral-questions"
     name = _("oral questions")
-    states = [
-        question_wf_state[u"admissible"].id,
-        question_wf_state[u"scheduled"].id,
-        question_wf_state[u"schedule_pending"].id,
-    ]
+    states = get_states("question", tagged=["oral"])
     response_types = ['O']
 
 class WrittenMinistryQuestionsViewlet(MinistryItemsViewlet):
     list_id = "ministry-written-questions"
     name = _("written questions")
-    states = [
-        question_wf_state[u"admissible"].id,
-        question_wf_state[u"response_pending"].id,
-    ]
+    states = get_states("question", tagged=["written"])
     response_types = ['W']
 
 class InProgressMinistryItemsViewlet(MinistryItemsViewlet):
@@ -834,9 +687,7 @@ class InProgressMinistryItemsViewlet(MinistryItemsViewlet):
     going through the workflow in clerks/speakers office
     """
     name = _("in progress")
-    states = [
-        question_wf_state[u"response_submitted"].id,
-        ]
+    states = get_states("question", keys=["response_submitted"])
     list_id = "items-in-progress"
 
 class DraftSittingsViewlet(viewlet.ViewletBase):

@@ -11,6 +11,7 @@ log = __import__("logging").getLogger("bungeni.ui.tagged")
 from bungeni.core import workflows
 STATES_MAPPING = {
     "bill": workflows.bill.states,
+    "question": workflows.question.states,
     "tableddocument": workflows.tableddocument.states,
 }
 

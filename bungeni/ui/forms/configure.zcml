@@ -300,14 +300,13 @@
      weight="30"
      />
 
-  <browser:viewlet
-     name="bungeni.viewlet.mp-items"
-     manager=".interfaces.ISubFormViewletManager"
-     class=".viewlets.MemberItemsViewlet"
-     for="bungeni.models.interfaces.IMemberOfParliament"
-     permission="zope.View"
-     weight="40"
-     />
+    <browser:viewlet name="bungeni.viewlet.mp-items"
+        manager=".interfaces.ISubFormViewletManager"
+        class=".viewlets.MemberItemsViewlet"
+        for="bungeni.models.interfaces.IMemberOfParliament"
+        permission="zope.View"
+        weight="40"
+    />
 
   <!--browser:viewlet
       name="bungeni.viewlet.mp-partymembership"
@@ -463,16 +462,7 @@
      />
   
 
-
-  <!--browser:viewlet
-     name="bungeni.viewlet.supplementaryquestions"
-     manager=".interfaces.ISubFormViewletManager"
-     class=".viewlets.SupplementaryQuestionsViewlet"
-     for="bungeni.models.interfaces.IQuestion"
-     permission="bungeni.question.View"
-     weight="20"
-     />
-
+  <!--
   <browser:viewlet
      name="bungeni.viewlet.initialquestion"
      manager=".interfaces.ISubFormViewletManager"

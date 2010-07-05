@@ -232,108 +232,15 @@
         permission="zope.View"
         weight="35"
     />
-  <browser:viewlet
-     name="bungeni.workspace.sittings.clerk"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.DraftSittingsViewlet"
-     view="bungeni.ui.interfaces.IClerkWorkspace"
-     permission="zope.View"
-     weight="40"
-     />
-
+    <browser:viewlet name="bungeni.workspace.sittings.clerk"
+        for="*"
+        manager=".interfaces.IWorkspaceManager"
+        class=".workspace.DraftSittingsViewlet"
+        view="bungeni.ui.interfaces.IClerkWorkspace"
+        permission="zope.View"
+        weight="40"
+    />
     
-  <!--browser:viewlet
-     name="bungeni.workspace.questions-submitted.clerk"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.SubmittedQuestionViewlet"
-     view="bungeni.ui.interfaces.IClerkWorkspace"
-     permission="zope.View"
-     weight="10"
-     />
-  
-  <browser:viewlet
-     name="bungeni.workspace.questions-recieved"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.ReceivedQuestionViewlet"
-     view="bungeni.ui.interfaces.IClerkWorkspace"
-     permission="zope.View"
-     weight="20"
-     />
-
-  <browser:viewlet
-     name="bungeni.workspace.questions-clerk-clarify"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.ClarifyClerkQuestionViewlet"
-     view="bungeni.ui.interfaces.IClerkWorkspace"
-     permission="zope.View"
-     weight="5"
-     />
-  
-  <browser:viewlet
-     name="bungeni.workspace.questions-clerk-deferred"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.DeferredQuestionViewlet"
-     view="bungeni.ui.interfaces.IClerkWorkspace"
-     permission="zope.View"
-     weight="40"
-     />
-  
-  <browser:viewlet
-     name="bungeni.workspace.questions-clerk-responded"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.RespondedQuestionViewlet"
-     view="bungeni.ui.interfaces.IClerkWorkspace"
-     permission="zope.View"
-     weight="50"
-     />
-  
-  <browser:viewlet
-     name="bungeni.workspace.questions-postponed"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.PostponedQuestionViewlet"
-     view="bungeni.ui.interfaces.IClerkWorkspace"
-     permission="zope.View"
-     weight="35"
-     />
-
-
-  <browser:viewlet
-     name="bungeni.workspace.motions-submitted"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.SubmittedMotionViewlet"
-     view="bungeni.ui.interfaces.IClerkWorkspace"
-     permission="zope.View"
-     weight="60"
-     />
-
-  <browser:viewlet
-     name="bungeni.workspace.motions-recieved"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.ReceivedMotionViewlet"
-     view="bungeni.ui.interfaces.IClerkWorkspace"
-     permission="zope.View"
-     weight="70"
-     />
-
-  <browser:viewlet
-     name="bungeni.workspace.motions-clarify-clerk"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.ClarifyClerkMotionViewlet"
-     view="bungeni.ui.interfaces.IClerkWorkspace"
-     permission="zope.View"
-     weight="80"
-     /-->
-
   <!-- speakers workspace -->
 
 <!-- XXX-INFO-FOR-PLONE - MR - 2010-05-03
@@ -405,25 +312,14 @@
     
   <!-- Ministers workspace -->
 
-  <!--browser:viewlet
-     name="bungeni.minister-workspace.items-action"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.MinistryItemsViewlet"
-     view="bungeni.ui.interfaces.IMinisterWorkspace"
-     permission="zope.View"
-     weight="10"
-     /-->
-
-  <browser:viewlet
-     name="bungeni.minister-workspace.oral-questions"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.OralMinistryQuestionsViewlet"
-     view="bungeni.ui.interfaces.IMinisterWorkspace"
-     permission="zope.View"
-     weight="5"
-     />
+    <browser:viewlet name="bungeni.minister-workspace.oral-questions"
+        for="*"
+        manager=".interfaces.IWorkspaceManager"
+        class=".workspace.OralMinistryQuestionsViewlet"
+        view="bungeni.ui.interfaces.IMinisterWorkspace"
+        permission="zope.View"
+        weight="5"
+    />
   
   <browser:viewlet
      name="bungeni.minister-workspace.written-questions"
@@ -435,15 +331,14 @@
      weight="7"
      />
   
-  <browser:viewlet
-     name="bungeni.workspace.minister-in-progress"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.InProgressMinistryItemsViewlet"
-     view="bungeni.ui.interfaces.IMinisterWorkspace"
-     permission="zope.View"
-     weight="20"
-     />
+    <browser:viewlet name="bungeni.workspace.minister-in-progress"
+        for="*"
+        manager=".interfaces.IWorkspaceManager"
+        class=".workspace.InProgressMinistryItemsViewlet"
+        view="bungeni.ui.interfaces.IMinisterWorkspace"
+        permission="zope.View"
+        weight="20"
+    />
 
   <!-- Workspace Archive -->
 
