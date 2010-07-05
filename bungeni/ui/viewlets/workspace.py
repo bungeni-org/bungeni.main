@@ -801,7 +801,13 @@ class MinistryItemsViewlet(ViewletBase):
 
 class MinistryArchiveViewlet(MinistryItemsViewlet):
     name = _("archived items")
-    states = get_archived_states()
+    # Ministry archive only includes Questions in a "public" terminal state
+    states = [
+        question_wf_state[u"response_complete"].id,
+        question_wf_state[u"debated"].id,
+        question_wf_state[u"dropped"].id,
+        question_wf_state[u"elapsed"].id,
+    ]
     list_id = "items-archived"
 
 class OralMinistryQuestionsViewlet(MinistryItemsViewlet):
