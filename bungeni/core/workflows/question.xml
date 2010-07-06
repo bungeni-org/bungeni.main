@@ -11,7 +11,7 @@
     Transition names should be lowercase "verbs".
     
     Note that given that all names are specified as XML @id attributes,
-    state and transition names must be unique for teh XML document.
+    state and transition names must be unique for the XML document.
     
     All multiple word names are joined using an "_" (underscore) character.
     -->

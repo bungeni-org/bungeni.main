@@ -5,14 +5,15 @@
     i18n_domain="bungeni.ui">
 
     <!-- VIEWLET for workspace context navigation 
-         actually 2, because we can only specify 1 "for" interface for a viewlet
-         and we need of this menu at container-root and at context-section 
-         levels (we could make another interface, and assign also where 
-         IWorkspaceContainer and IWorkspaceSectionContext are assigned).
-    -->
-    <!-- NOTE: actually, given that "obj-id" redirects to "obj-id/pi", the 
-         IWorkspaceContainer-based viewlet and menuItems are currently 
-         not executed anyway.
+        actually 2 (under smae name), 
+        because we can only specify 1 "for" interface for a viewlet
+        and we need of this menu at container-root and at context-section 
+        levels (we could make another interface, and assign also where 
+        IWorkspaceContainer and IWorkspaceSectionContext are assigned).
+
+        NOTE: actually, given that "obj-id" redirects to "obj-id/pi", the 
+        IWorkspaceContainer-based viewlet and menuItems are currently 
+        not executed anyway.
     -->
     <browser:viewlet name="bungeni.workspace_context_navigation"
         for="..interfaces.IWorkspaceContainer"
@@ -30,8 +31,9 @@
         class=".workspace.WorkspaceContextNavigation"
         weight="1"
     />
-    <!-- !+ should merge usage of template: 
-            ui/portlets/templates/portlet-contentactions.pt -->
+    <!-- END VIEWLET for workspace context navigation  -->
+    
+    
     <browser:menu id="workspace_context_navigation"
         title="The sections of a user's workspace"
         class="ploned.ui.menu.PloneBrowserMenu"
@@ -40,18 +42,15 @@
         for="..interfaces.IWorkspaceContainer"
         permission="zope.View"
         >
-        <browser:menuItem
-            title="Parliamentary items"
+        <browser:menuItem title="Parliamentary items"
             action="pi"
             order="1"
         />
-        <browser:menuItem
-            title="Archive"
+        <browser:menuItem title="Archive"
             action="archive"
             order="2"
         />
-        <browser:menuItem
-            title="Scheduling"
+        <browser:menuItem title="Scheduling"
             action="calendar"
             order="3"
         />
@@ -60,23 +59,19 @@
         for="..interfaces.IWorkspaceSectionContext"
         permission="zope.View"
         >
-        <browser:menuItem
-            title="Parliamentary items"
+        <browser:menuItem title="Parliamentary items"
             action="./../pi"
             order="1"
         />
-        <browser:menuItem
-            title="Archive"
+        <browser:menuItem title="Archive"
             action="./../archive"
             order="2"
         />
-        <browser:menuItem
-            title="Scheduling"
+        <browser:menuItem title="Scheduling"
             action="./../calendar"
             order="3"
         />
     </browser:menuItems>
-
     
     <browser:viewletManager name="bungeni.workspace-pi"
         provides=".interfaces.IWorkspaceManager"
@@ -89,7 +84,8 @@
         class="zope.viewlet.manager.WeightOrderedViewletManager"
         template="templates/workspace_archive.pt"
     />
-
+    <!-- !+ should not define template in ZCML -->
+    
     <!-- MPs Workspace -->
     
     <!--browser:viewlet
@@ -101,7 +97,7 @@
      permission="zope.View"
      weight="1"
      /-->
-
+    
 <!-- XXX-INFO-FOR-PLONE - MR - 2010-05-03
   <browser:viewlet
      name="bungeni.viewlet.ws-user_id"
@@ -122,52 +118,41 @@
      weight="10"
      />
 -->
-
-   <browser:viewlet
-     name="bungeni.workspace.mp-draft"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.MPItemDraftViewlet"
-     view="bungeni.ui.interfaces.IMPWorkspace"
-     permission="zope.View"
-     weight="30"
-     />
-  
-   <browser:viewlet
-     name="bungeni.workspace.mp-action-required"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.MPItemActionRequiredViewlet"
-     view="bungeni.ui.interfaces.IMPWorkspace"
-     permission="zope.View"
-     weight="10"
-     />
-
-   <browser:viewlet
-     name="bungeni.workspace.mp-in-progress"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.MPItemInProgressViewlet"
-     view="bungeni.ui.interfaces.IMPWorkspace"
-     permission="zope.View"
-     weight="20"
-     />
-
-
-  <browser:viewlet
-     name="bungeni.workspace.my-groups"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.MyGroupsViewlet"
-     view="bungeni.ui.interfaces.IMPWorkspace"
-     permission="zope.View"
-     weight="40"
-     />
-
-
-
-
-  <!-- clerks workspace -->
+    
+    <browser:viewlet name="bungeni.workspace.mp-draft"
+        for="*"
+        manager=".interfaces.IWorkspaceManager"
+        class=".workspace.MPItemDraftViewlet"
+        view="bungeni.ui.interfaces.IMPWorkspace"
+        permission="zope.View"
+        weight="30"
+    />
+    <browser:viewlet name="bungeni.workspace.mp-action-required"
+        for="*"
+        manager=".interfaces.IWorkspaceManager"
+        class=".workspace.MPItemActionRequiredViewlet"
+        view="bungeni.ui.interfaces.IMPWorkspace"
+        permission="zope.View"
+        weight="10"
+    />
+    <browser:viewlet name="bungeni.workspace.mp-in-progress"
+        for="*"
+        manager=".interfaces.IWorkspaceManager"
+        class=".workspace.MPItemInProgressViewlet"
+        view="bungeni.ui.interfaces.IMPWorkspace"
+        permission="zope.View"
+        weight="20"
+    />
+    <browser:viewlet name="bungeni.workspace.my-groups"
+        for="*"
+        manager=".interfaces.IWorkspaceManager"
+        class=".workspace.MyGroupsViewlet"
+        view="bungeni.ui.interfaces.IMPWorkspace"
+        permission="zope.View"
+        weight="40"
+    />
+    
+    <!-- Clerk Workspace -->
 
 <!-- XXX-INFO-FOR-PLONE - MR - 2010-05-03
   <browser:viewlet
@@ -181,15 +166,14 @@
      />
 -->
 
-  <browser:viewlet
-     name="bungeni.workspace.action-required.clerk"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.ClerkItemActionRequiredViewlet"
-     view="bungeni.ui.interfaces.IClerkWorkspace"
-     permission="zope.View"
-     weight="10"
-     />
+    <browser:viewlet name="bungeni.workspace.action-required.clerk"
+        for="*"
+        manager=".interfaces.IWorkspaceManager"
+        class=".workspace.ClerkItemActionRequiredViewlet"
+        view="bungeni.ui.interfaces.IClerkWorkspace"
+        permission="zope.View"
+        weight="10"
+    />
     <browser:viewlet name="bungeni.workspace.working-draft.clerk"
         for="*"
         manager=".interfaces.IWorkspaceManager"
@@ -198,24 +182,22 @@
         permission="zope.View"
         weight="15"
     />
-  <browser:viewlet
-     name="bungeni.workspace.reviewed.clerk"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.ClerkReviewedItemViewlet"
-     view="bungeni.ui.interfaces.IClerkWorkspace"
-     permission="zope.View"
-     weight="20"
-     />
-  <browser:viewlet
-     name="bungeni.workspace.items-approved.clerk"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.ItemsApprovedViewlet"
-     view="bungeni.ui.interfaces.IClerkWorkspace"
-     permission="zope.View"
-     weight="25"
-     />
+    <browser:viewlet name="bungeni.workspace.reviewed.clerk"
+        for="*"
+        manager=".interfaces.IWorkspaceManager"
+        class=".workspace.ClerkReviewedItemViewlet"
+        view="bungeni.ui.interfaces.IClerkWorkspace"
+        permission="zope.View"
+        weight="20"
+    />
+    <browser:viewlet name="bungeni.workspace.items-approved.clerk"
+        for="*"
+        manager=".interfaces.IWorkspaceManager"
+        class=".workspace.ItemsApprovedViewlet"
+        view="bungeni.ui.interfaces.IClerkWorkspace"
+        permission="zope.View"
+        weight="25"
+    />
     <browser:viewlet name="bungeni.workspace.items-pending-schedule.clerk"
         for="*"
         manager=".interfaces.IWorkspaceManager"
@@ -241,7 +223,7 @@
         weight="40"
     />
     
-  <!-- speakers workspace -->
+    <!-- Speaker Workspace -->
 
 <!-- XXX-INFO-FOR-PLONE - MR - 2010-05-03
   <browser:viewlet
@@ -254,7 +236,6 @@
      weight="10"
      />
 -->
-  
     <browser:viewlet name="bungeni.workspace.items-complete"
         for="*"
         manager=".interfaces.IWorkspaceManager"
@@ -263,7 +244,6 @@
         permission="zope.View"
         weight="10"
     />
-     
     <browser:viewlet name="bungeni.workspace.working-draft.speaker"
         for="*"
         manager=".interfaces.IWorkspaceManager"
@@ -272,17 +252,14 @@
         permission="zope.View"
         weight="15"
     />
-
-  <browser:viewlet
-     name="bungeni.workspace.items-approved.speaker"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.ItemsApprovedViewlet"
-     view="bungeni.ui.interfaces.ISpeakerWorkspace"
-     permission="zope.View"
-     weight="20"
-     />
-
+    <browser:viewlet name="bungeni.workspace.items-approved.speaker"
+        for="*"
+        manager=".interfaces.IWorkspaceManager"
+        class=".workspace.ItemsApprovedViewlet"
+        view="bungeni.ui.interfaces.ISpeakerWorkspace"
+        permission="zope.View"
+        weight="20"
+    />
     <browser:viewlet name="bungeni.workspace.items-pending-schedule.speaker"
         for="*"
         manager=".interfaces.IWorkspaceManager"
@@ -299,19 +276,17 @@
         permission="zope.View"
         weight="35"
     />
-    
-  <browser:viewlet
-     name="bungeni.workspace.items-pending"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.SpeakersClerkItemActionRequiredViewlet"
-     view="bungeni.ui.interfaces.ISpeakerWorkspace"
-     permission="zope.View"
-     weight="40"
-     />
-    
-  <!-- Ministers workspace -->
+    <browser:viewlet name="bungeni.workspace.items-pending"
+        for="*"
+        manager=".interfaces.IWorkspaceManager"
+        class=".workspace.SpeakersClerkItemActionRequiredViewlet"
+        view="bungeni.ui.interfaces.ISpeakerWorkspace"
+        permission="zope.View"
+        weight="40"
+    />
 
+    <!-- Minister Workspace -->
+    
     <browser:viewlet name="bungeni.minister-workspace.oral-questions"
         for="*"
         manager=".interfaces.IWorkspaceManager"
@@ -320,17 +295,14 @@
         permission="zope.View"
         weight="5"
     />
-  
-  <browser:viewlet
-     name="bungeni.minister-workspace.written-questions"
-     for="*"
-     manager=".interfaces.IWorkspaceManager"
-     class=".workspace.WrittenMinistryQuestionsViewlet"
-     view="bungeni.ui.interfaces.IMinisterWorkspace"
-     permission="zope.View"
-     weight="7"
-     />
-  
+    <browser:viewlet name="bungeni.minister-workspace.written-questions"
+        for="*"
+        manager=".interfaces.IWorkspaceManager"
+        class=".workspace.WrittenMinistryQuestionsViewlet"
+        view="bungeni.ui.interfaces.IMinisterWorkspace"
+        permission="zope.View"
+        weight="7"
+    />
     <browser:viewlet name="bungeni.workspace.minister-in-progress"
         for="*"
         manager=".interfaces.IWorkspaceManager"
@@ -340,38 +312,32 @@
         weight="20"
     />
 
-  <!-- Workspace Archive -->
+    <!-- Workspace Archive -->
 
-   <browser:viewlet
-     name="bungeni.workspace.mp-item-archive"
-     for="*"
-     manager=".interfaces.IWorkspaceArchiveManager"
-     class=".workspace.ItemArchiveViewlet"
-     view="bungeni.ui.interfaces.IMPWorkspace"
-     permission="zope.View"
-     weight="50"
-     />
-
-   <browser:viewlet
-     name="bungeni.workspace.clerk-item-archive"
-     for="*"
-     manager=".interfaces.IWorkspaceArchiveManager"
-     class=".workspace.AllItemArchiveViewlet"
-     view="bungeni.ui.interfaces.IClerkWorkspace"
-     permission="zope.View"
-     weight="50"
-     />
-
-   <browser:viewlet
-     name="bungeni.workspace.speaker-item-archive"
-     for="*"
-     manager=".interfaces.IWorkspaceArchiveManager"
-     class=".workspace.AllItemArchiveViewlet"
-     view="bungeni.ui.interfaces.ISpeakerWorkspace"
-     permission="zope.View"
-     weight="50"
-     />
-
+   <browser:viewlet name="bungeni.workspace.mp-item-archive"
+        for="*"
+        manager=".interfaces.IWorkspaceArchiveManager"
+        class=".workspace.ItemArchiveViewlet"
+        view="bungeni.ui.interfaces.IMPWorkspace"
+        permission="zope.View"
+        weight="50"
+    />
+    <browser:viewlet name="bungeni.workspace.clerk-item-archive"
+        for="*"
+        manager=".interfaces.IWorkspaceArchiveManager"
+        class=".workspace.AllItemArchiveViewlet"
+        view="bungeni.ui.interfaces.IClerkWorkspace"
+        permission="zope.View"
+        weight="50"
+    />
+    <browser:viewlet name="bungeni.workspace.speaker-item-archive"
+        for="*"
+        manager=".interfaces.IWorkspaceArchiveManager"
+        class=".workspace.AllItemArchiveViewlet"
+        view="bungeni.ui.interfaces.ISpeakerWorkspace"
+        permission="zope.View"
+        weight="50"
+    />
     <browser:viewlet name="bungeni.workspace.minister-item-archive"
         for="*"
         manager=".interfaces.IWorkspaceArchiveManager"

@@ -60,6 +60,7 @@ def get_states(pi_type, tagged=[], not_tagged=[], keys=[], conjunction="OR"):
                     break
     if keys:
         _keys = set([ states[key].id for key in keys ])
+    # combine
     if conjunction=="OR":
         return list(_tagged.union(_not_tagged).union(_keys))
     elif conjunction=="AND":

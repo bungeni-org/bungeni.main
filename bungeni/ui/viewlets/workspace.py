@@ -236,68 +236,6 @@ class MotionInStateViewlet(ViewletBase):
         motions = session.query(domain.Motion).filter(domain.Motion.status==self.state)
         self.query = motions
 
-
-class SubmittedMotionViewlet(MotionInStateViewlet):
-    """
-    display the submitted Motions
-    """
-    name = motion_wf_state[u"submitted"].title
-    state = motion_wf_state[u"submitted"].id
-    list_id = "submitted_motions"
-
-
-class ReceivedMotionViewlet(MotionInStateViewlet):
-    """
-    display the submitted Motions
-    """
-    name = motion_wf_state[u"received"].title
-    state = motion_wf_state[u"received"].id
-    list_id = "received_motions"
-
-class CompleteMotionViewlet(MotionInStateViewlet):
-    """
-    display the submitted Motions
-    """
-    name = motion_wf_state[u"complete"].title
-    state = motion_wf_state[u"complete"].id
-    list_id = "complete_motions"
-    
-   
-
-class ClarifyMpMotionViewlet(MotionInStateViewlet):
-    """
-    display the submitted Motions
-    """
-    name = motion_wf_state[u"clarify_mp"].title
-    state = motion_wf_state[u"clarify_mp"].id
-    list_id = "clarify_mp_motions"
-    
-class ClarifyClerkMotionViewlet(MotionInStateViewlet):
-    """
-    display the submitted Motions
-    """
-    name = motion_wf_state[u"clarify_clerk"].title
-    state = motion_wf_state[u"clarify_clerk"].id
-    list_id = "clarify_clerk_motions"
-
-class DeferredMotionViewlet(MotionInStateViewlet):
-    """
-    display the submitted Motions
-    """
-    name =  motion_wf_state[u"deferred"].title
-    state = motion_wf_state[u"deferred"].id
-    list_id = "deferred_motions"
-    
-    
-    
-class AdmissibleMotionViewlet(MotionInStateViewlet):
-    """
-    display the admissible Motions
-    """
-    name = motion_wf_state[u"admissible"].title
-    state = motion_wf_state[u"admissible"].id
-    list_id = "admissible_motions"
-    
 ''' !+ unused:
 from bungeni.core.workflows.bill import states as bill_wf_state
 class BillItemsViewlet(ViewletBase): 
@@ -418,7 +356,6 @@ class AllItemsInStageViewlet(OwnedItemsInStageViewlet):
             ).order_by(domain.ParliamentaryItem.parliamentary_item_id.desc()) 
             
 
-
 class MPItemDraftViewlet(OwnedItemsInStageViewlet): 
     name = _("draft items")
     states = [motion_wf_state[u"draft"].id,
@@ -442,8 +379,6 @@ class MPItemActionRequiredViewlet(OwnedItemsInStageViewlet):
         get_states("tableddocument", keys=["clarify_mp"])
     list_id = "items-action-required"
 
-
-    
 
 class MPItemInProgressViewlet(OwnedItemsInStageViewlet):
     """
@@ -470,6 +405,7 @@ class MPItemInProgressViewlet(OwnedItemsInStageViewlet):
         get_states("question", not_tagged=["private", "terminal"]) + \
         get_states("tableddocument", not_tagged=["private", "terminal"])
     list_id = "items-in-progress"
+
 
 def get_archived_states():
     return [
