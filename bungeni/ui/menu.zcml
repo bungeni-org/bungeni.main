@@ -580,48 +580,45 @@
      />
 
 
-  <browser:subMenuItem
-     menu="plone_contentmenu"
-     for="bungeni.core.interfaces.ISchedulingContext"
-     title="Add ..."
-     action="add_content"
+    <browser:subMenuItem menu="plone_contentmenu"
+        for="bungeni.core.interfaces.ISchedulingContext"
+        title="Add ..."
+        action="add_content"
         order="10"
-     permission="zope.View"
-     submenu="schedule_additems"
+        permission="zope.View"
+        submenu="schedule_additems"
+    />
+    <browser:menu id="schedule_additems"
+        title="The 'Add..' menu - for calendar"
+        class="ploned.ui.menu.PloneBrowserMenu"
+    />
+    <browser:menuItem menu="schedule_additems"
+        for="bungeni.core.interfaces.ISchedulingContext"
+        title="Add Sitting..."
+        action="./sittings/add"
+        permission="bungeni.sitting.Add"
+        layer=".interfaces.IWorkspaceSectionLayer"
+        order="100"
+    /><!-- !+ rework all schedule_additems for IWorkspaceSectionLayer -->
+    <browser:menuItem menu="schedule_additems"
+        for="bungeni.core.interfaces.ISchedulingContext"
+        title="Add Sitting..."
+        action="./add?next_url=..."
+        permission="bungeni.sitting.Add"
+        order="100"
+    />
+    <browser:menuItem menu="schedule_additems"
+        for="bungeni.core.interfaces.ISchedulingContext"
+        title="Add Agenda item..."
+        action="./add?next_url=..."
+        permission="bungeni.agendaitem.Add"
+    />
+    <browser:menuItem menu="schedule_additems"
+        for="bungeni.core.interfaces.ISchedulingContext"
+        title="Add Heading..."
+        action="/admin/content/headings/add?next_url=..."
+        permission="bungeni.heading.Add"
      />
-
-     
-  <browser:menu
-     id="schedule_additems"
-     title="The 'Add..' menu - for calendar"
-     class="ploned.ui.menu.PloneBrowserMenu"
-     />
-  
-
-  <browser:menuItem
-     menu="schedule_additems"
-     for="bungeni.core.interfaces.ISchedulingContext"
-     title="Add Sitting..."
-     action="./add?next_url=..."
-     permission="bungeni.sitting.Add"
-     order="100"
-     />
-  <browser:menuItem
-     menu="schedule_additems"
-     for="bungeni.core.interfaces.ISchedulingContext"
-     title="Add Agenda item..."
-     action="./add?next_url=..."
-     permission="bungeni.agendaitem.Add"
-     />
-
-  <browser:menuItem
-     menu="schedule_additems"
-     for="bungeni.core.interfaces.ISchedulingContext"
-     title="Add Heading..."
-     action="/admin/content/headings/add?next_url=..."
-     permission="bungeni.heading.Add"
-     />
-          
 
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.domain.GroupSittingContainer"

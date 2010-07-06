@@ -5,11 +5,20 @@
     domain="bungeni.ui"
     initial_state="">
     
-    <state id="draft_agenda" title="Draft Agenda">
+    <state id="sitting" title="Sitting">
         <grant permission="bungeni.sitting.Edit" role="bungeni.Owner" />
         <grant permission="bungeni.sitting.Delete" role="bungeni.Owner" />
         <grant permission="bungeni.agenda.View" role="bungeni.Clerk" />
         <grant permission="bungeni.agenda.View" role="bungeni.Speaker" />
+        <grant permission="zope.View" role="bungeni.Owner" />
+        <grant permission="zope.View" role="bungeni.Clerk" />
+        <grant permission="zope.View" role="bungeni.Speaker" />
+        <grant permission="zope.View" role="bungeni.MP" />
+        <grant permission="zope.View" role="bungeni.Minister" />
+        <grant permission="zope.View" role="bungeni.Everybody" />
+        <grant permission="zope.View" role="bungeni.Anybody" />
+    </state>
+    <state id="draft_agenda" title="Draft Agenda">
         <grant permission="bungeni.sitting.Reorder" role="bungeni.Speaker" />
         <grant permission="bungeni.sitting.Reorder" role="bungeni.Clerk" />
         <grant permission="bungeni.itemschedule.Edit" role="bungeni.Owner" />
@@ -23,10 +32,6 @@
         <grant permission="bungeni.itemschedule.Add" role="bungeni.Owner" />
         <grant permission="bungeni.itemschedule.Add" role="bungeni.Speaker" />
         <grant permission="bungeni.itemschedule.Add" role="bungeni.Clerk" />
-        <deny permission="zope.View" role="bungeni.MP" />
-        <deny permission="zope.View" role="bungeni.Minister" />
-        <deny permission="zope.View" role="bungeni.Everybody" /> 
-        <deny permission="zope.View" role="bungeni.Anybody" />
     </state>
     <state id="published_agenda" title="Published Agenda">
         <grant permission="bungeni.sitting.Edit" role="bungeni.Owner" />
@@ -47,10 +52,6 @@
         <deny permission="bungeni.itemschedule.Add" role="bungeni.Owner" />
         <deny permission="bungeni.itemschedule.Add" role="bungeni.Speaker" />
         <deny permission="bungeni.itemschedule.Add" role="bungeni.Clerk" />
-        <grant permission="zope.View" role="bungeni.MP" />
-        <grant permission="zope.View" role="bungeni.Minister" />
-        <grant permission="zope.View" role="bungeni.Everybody" /> 
-        <grant permission="zope.View" role="bungeni.Anybody" />
     </state>
     <state id="draft_minutes" title="Draft Minutes">
         <grant permission="bungeni.sitting.Edit" role="bungeni.Owner" />
@@ -111,9 +112,17 @@
     </state>
     
     <transition id="create_groupsitting"
-        title="Create"
+        title="Create Sitting"
         trigger="automatic"
         source=""
+        destination="sitting"
+        action=""
+        condition=""
+    />
+    <transition id="to_draft_agenda"
+        title="Draft Agenda"
+        trigger="manual"
+        source="sitting"
         destination="draft_agenda"
         action=""
         condition=""

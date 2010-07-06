@@ -8,12 +8,12 @@ from ore.alchemist import Session
 from sqlalchemy.orm import eagerload, lazyload
 import sqlalchemy.sql.expression as sql
 
-
 from bungeni.models import domain, schema
 from bungeni.core.globalsettings import getCurrentParliamentId
 
 from bungeni.ui.utils import misc
 from bungeni.ui.cookies import get_date_range
+from bungeni.ui.tagged import get_states
 
 class WhatsOnBrowserView(BrowserView):
     __call__ = ViewPageTemplateFile("templates/whatson.pt")
@@ -68,7 +68,7 @@ class WhatsOnBrowserView(BrowserView):
         query = session.query(domain.GroupSitting).filter(
             sql.and_(
                 schema.sittings.c.status!=get_states(
-                                    "groupsittings", keys=["draft_agenda"])[0],
+                                    "groupsitting", keys=["draft_agenda"])[0],
                 sql.between(
                     schema.sittings.c.start_date,
                     self.start_date,
