@@ -105,7 +105,6 @@
     <state id="scheduled" title="Scheduled">
         <deny permission="bungeni.question.Edit" role="bungeni.Speaker" />
         <grant permission="bungeni.response.Add" role="bungeni.Clerk" />
-        <grant permission="bungeni.response.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.response.View" role="bungeni.Clerk" />
     </state>
     <state id="debate_adjourned" title="Debate adjourned">
@@ -114,17 +113,22 @@
         <deny permission="bungeni.question.Edit" role="bungeni.Speaker" />
         <grant permission="bungeni.response.Edit" role="bungeni.Minister" />
         <grant permission="bungeni.response.View" role="bungeni.Minister" />
+        <!-- for when coming via redraft_response -->
+        <deny permission="bungeni.question.Edit" role="bungeni.Clerk" />
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" /> 
+        <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
     </state>
     <state id="response_submitted" title="Response submitted">
-        <grant permission="bungeni.response.Edit" role="bungeni.Clerk"/>
         <grant permission="zope.View" role="bungeni.Clerk"/>
-        <deny permission="bungeni.response.Edit" role="bungeni.Owner"/>
         <deny permission="bungeni.response.Edit" role="bungeni.Minister"/>
         <grant permission="bungeni.response.View" role="bungeni.Clerk" />
         <grant permission="bungeni.response.View" role="bungeni.Speaker" />
+        <!-- to enable edit, thus enabling follow-up via redraft_response -->
+        <grant permission="bungeni.question.Edit" role="bungeni.Clerk" />
+        <grant permission="bungeni.fileattachment.Add" role="bungeni.Clerk" /> 
+        <grant permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
     </state>
     <state id="response_complete" title="Response completed">
-        <deny permission="bungeni.response.Edit" role="bungeni.Clerk" />
         <grant permission="zope.View" role="bungeni.Everybody" />
         <grant permission="zope.View" role="bungeni.Anybody" />
         <grant permission="bungeni.response.View" role="bungeni.Everybody" />
@@ -397,7 +401,10 @@
         action=""
         event=""
         order="16"
-    />
+    /><!-- 
+        !+ Note that there is no error triggered when using an undeclared 
+        permission -:- each perssion shoudl be explicitly tested for 
+    -->
     <transition id="complete_response"
         title="Complete Response"
         trigger="manual"

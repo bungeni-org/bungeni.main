@@ -18,6 +18,8 @@
   <!-- Response Workflow permissions -->
   <permission id="bungeni.response.Submit" title="Submit a Response" />
   <permission id="bungeni.response.Complete" title="Complete a Response" />
+  <permission id="bungeni.response.RevertTransitions" 
+        title="Revert a question response transition back to an earlier stage" />
   <!-- Motion Workflow permissions -->
   <permission id="bungeni.motion.Submit" title="Submit a motion" />
   <permission id="bungeni.motion.Recieve" title="Receive a motion" />
