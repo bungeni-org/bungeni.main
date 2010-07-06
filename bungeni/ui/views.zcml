@@ -79,20 +79,17 @@
      class=".workspace.WorkspaceArchiveView"
      permission="zope.View"
   />
-  <adapter 
-    factory=".workspace.WorkspaceSchedulingContext" 
-    for="bungeni.ui.interfaces.IWorkspaceContainer"
-    provides="bungeni.core.interfaces.ISchedulingContext"
-  />
-  <browser:page
-     for="bungeni.ui.interfaces.IWorkspaceContainer"
-     permission="zope.View"
-     name="workspace-calendar"
-     class=".calendar.browser.CalendarView"
-     layer=".interfaces.IWorkspaceSectionLayer"
-  /><!-- bungeni.models.interfaces.IGroupSittingContainer -->
-  
-  
+    <adapter factory=".workspace.WorkspaceSchedulingContext" 
+        for="bungeni.ui.interfaces.IWorkspaceContainer"
+        provides="bungeni.core.interfaces.ISchedulingContext"
+    />
+    <browser:page name="workspace-calendar"
+        for="bungeni.ui.interfaces.IWorkspaceContainer"
+        permission="zope.View"
+        class=".calendar.browser.CalendarView"
+        layer=".interfaces.IWorkspaceSectionLayer"
+    /><!-- bungeni.models.interfaces.IGroupSittingContainer -->
+    
   <!-- Setup Access to Browser Resources on the Application -->
   
   <browser:page

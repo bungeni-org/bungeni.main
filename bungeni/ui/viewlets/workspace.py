@@ -27,7 +27,6 @@ from bungeni.core.workflows.groupsitting import states as sitting_wf_state
 
 import bungeni.models.utils  as model_utils
 import bungeni.models.domain as domain
-from bungeni.models.interfaces import ICommittee
 from bungeni.ui.interfaces import IWorkspaceContainer, IWorkspaceSectionContext
 from bungeni.ui.tagged import get_states
 from bungeni.ui import z3evoque
@@ -627,6 +626,8 @@ class InProgressMinistryItemsViewlet(MinistryItemsViewlet):
     list_id = "items-in-progress"
 
 class DraftSittingsViewlet(viewlet.ViewletBase):
+    """Appears as a tab in the workspace/pi view for the Clerk.
+    """
     render = ViewPageTemplateFile ('templates/workspace_sitting_viewlet.pt')
     
     name = _("agendas/minutes")
@@ -635,45 +636,40 @@ class DraftSittingsViewlet(viewlet.ViewletBase):
         sitting_wf_state[u"draft-minutes"].id,
     ]
     list_id = "sitting-draft"
-
+    
     def getData(self):
-        """
-        return the data of the query
+        """Return the data of the query
         """
         data_list = []
         results = self.query.all()
         formatter = self.request.locale.dates.getFormatter('date', 'short')
         for result in results:
-            data ={}
+            data = {}
             data['subject'] = result.short_name
-            if ICommittee.providedBy(result.group):
-                #http://localhost:8081/business/committees/obj-194/calendar/group/sittings/obj-5012/schedule
-                data['url'] = 'committees/obj-%i/calendar/group/sittings/obj-%i/schedule' % (
-                    result.group.group_id, result.sitting_id)
-            else:
-                #http://localhost:8081/calendar/group/sittings/obj-5011/schedule
-                data['url'] = 'calendar/obj-%i/schedule' % result.sitting_id
+            # this tab appears in the workspace pi/ view...
+            data['url'] = "../calendar/sittings/obj-%i/schedule" % result.sitting_id
+            # Note: same UI is also displayed at: 
+            # /business/sittings/obj-%i/schedule % result.sitting_id
             data['items'] = ''
             data['status'] = misc.get_wf_state(result)
             data['status_date'] = formatter.format(result.status_date)
             data['owner'] = ""
             data['type'] =  result.group.type
-            data['group'] = u"%s %s" %(result.group.type.capitalize(), 
-                result.group.short_name)
+            data['group'] = u"%s %s" % (
+                    result.group.type.capitalize(), result.group.short_name)
             data['date'] = u"%s %s" % (
-                result.start_date.strftime('%Y-%m-%d %H:%M'), 
-                #formatter.format(
-                result.sitting_type.sitting_type)
+                    result.start_date.strftime('%Y-%m-%d %H:%M'), 
+                    #formatter.format(
+                    _(result.sitting_type.sitting_type))
             if type(result)==domain.Question:
                 data['to'] = result.ministry.short_name
             else:
                 data['to']= u""
             data_list.append(data)
         return data_list
-
+    
     def update(self):
-        """
-        refresh the query
+        """Refresh the query
         """
         session = Session()
         qfilter = domain.GroupSitting.status.in_(self.states)
