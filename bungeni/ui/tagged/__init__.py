@@ -13,6 +13,7 @@ STATES_MAPPING = {
     "bill": workflows.bill.states,
     "question": workflows.question.states,
     "tableddocument": workflows.tableddocument.states,
+    "groupsitting": workflows.groupsitting.states,
 }
 
 from states import ACTIVE_TAGS, TAG_MAPPINGS

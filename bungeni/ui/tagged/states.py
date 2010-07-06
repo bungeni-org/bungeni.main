@@ -19,6 +19,8 @@ ACTIVE_TAGS = [
     "fail", # terminal
     "oral", # oral questions
     "written", # written questions
+    "draft", # groupsitting
+    "published", # groupsitting
 ] 
 
 # Tags for Workflow States, per Parliamentary Item
@@ -87,4 +89,9 @@ TAG_MAPPINGS["tableddocument"] = {
     "tabled": ["public", "terminal", "succeed",],
     "withdrawn": ["terminal", "fail",],
 }
-
+TAG_MAPPINGS["groupsitting"] = {
+    "draft_agenda": ["public", "draft"],
+    "published_agenda": ["public", "published"],
+    "draft_minutes": ["public", "draft"],
+    "published_minutes": ["public", "published"],
+}

@@ -32,7 +32,6 @@ from bungeni.core.workflows.groups import states as group_wf_state
 from bungeni.core.workflows.attachedfile import states as af_wf_state
 from bungeni.core.workflows.address import states as address_wf_state
 from bungeni.core.workflows.event import states as event_wf_state
-from bungeni.core.workflows.groupsitting import states as sitting_wf_state
 from bungeni.core.workflows.heading import states as heading_wf_state
 from bungeni.core.workflows.committee import states as committee_wf_state
 from bungeni.core.workflows.parliament import states as parliament_wf_state
@@ -1812,11 +1811,7 @@ class SittingDescriptor(ModelDescriptor):
                          validations.validate_venues,
                          #validations.validate_non_overlapping_sitting
                          ]
-
-    public_wfstates = [sitting_wf_state[u'published-agenda'].id,
-                       sitting_wf_state[u'draft-minutes'].id,
-                       sitting_wf_state[u'published-minutes'].id,
-                    ]
+    public_wfstates = get_states("groupsitting", tagged=["public"])
 
 class SittingTypeDescriptor(ModelDescriptor):
     display_name = _(u"Type")

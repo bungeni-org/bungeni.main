@@ -23,7 +23,6 @@ from bungeni.ui.i18n import _
 import bungeni.core.globalsettings as prefs
 from bungeni.core.workflows.motion import states as motion_wf_state
 from bungeni.core.workflows.agendaitem import states as agendaitem_wf_state
-from bungeni.core.workflows.groupsitting import states as sitting_wf_state
 
 from bungeni.ui.tagged import get_states
 from bungeni.ui.table import AjaxContainerListing

@@ -23,7 +23,6 @@ from ore.alchemist import Session
 
 from bungeni.core.workflows.motion import states as motion_wf_state 
 from bungeni.core.workflows.agendaitem import states as agendaitem_wf_state
-from bungeni.core.workflows.groupsitting import states as sitting_wf_state
 
 import bungeni.models.utils  as model_utils
 import bungeni.models.domain as domain
@@ -631,10 +630,7 @@ class DraftSittingsViewlet(viewlet.ViewletBase):
     render = ViewPageTemplateFile ('templates/workspace_sitting_viewlet.pt')
     
     name = _("agendas/minutes")
-    states = [
-        sitting_wf_state[u"draft-agenda"].id,
-        sitting_wf_state[u"draft-minutes"].id,
-    ]
+    states = get_states("groupsitting", tagged=["draft"])
     list_id = "sitting-draft"
     
     def getData(self):

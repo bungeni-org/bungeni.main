@@ -11,7 +11,6 @@ import sqlalchemy.sql.expression as sql
 
 from bungeni.models import domain, schema
 from bungeni.core.globalsettings import getCurrentParliamentId
-from bungeni.core.workflows.groupsitting import states as sitting_wf_state
 
 from bungeni.ui.utils import misc
 from bungeni.ui.cookies import get_date_range
@@ -67,15 +66,18 @@ class WhatsOnBrowserView(BrowserView):
         formatter = self.request.locale.dates.getFormatter('date', 'full') 
         session = Session()
         query = session.query(domain.GroupSitting).filter(
-            sql.and_( schema.sittings.c.status != sitting_wf_state[u'draft-agenda'].id ,
-            sql.between(
-                schema.sittings.c.start_date,
-                self.start_date,
-                self.end_date))).order_by(
-                    schema.sittings.c.start_date).options(
-                    eagerload('group'), eagerload('sitting_type'),
-                    eagerload('item_schedule'), 
-                    eagerload('item_schedule.item'))
+            sql.and_(
+                schema.sittings.c.status!=get_states(
+                                    "groupsittings", keys=["draft_agenda"])[0],
+                sql.between(
+                    schema.sittings.c.start_date,
+                    self.start_date,
+                    self.end_date))).order_by(
+                        schema.sittings.c.start_date).options(
+                        eagerload('group'), eagerload('sitting_type'),
+                        eagerload('item_schedule'), 
+                        eagerload('item_schedule.item')
+            )
         sittings = query.all()
         day = u''
         day_list = []
@@ -114,8 +116,9 @@ class WhatsOnBrowserView(BrowserView):
 
     def get_items(self):
         session = Session()
-        where_clause = sql.and_( schema.sittings.c.status != 
-                sitting_wf_state[u'draft-agenda'].id ,
+        where_clause = sql.and_(
+                schema.sittings.c.status!=get_states(
+                                    "groupsitting", keys=["draft_agenda"])[0],
                 sql.between(
                     schema.sittings.c.start_date,
                     self.start_date,

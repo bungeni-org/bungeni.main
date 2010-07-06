@@ -42,15 +42,16 @@ from zope.app.form.browser import MultiCheckBoxWidget as _MultiCheckBoxWidget
 
 from bungeni.ui.widgets import SelectDateWidget
 from bungeni.ui.calendar import utils
+from bungeni.ui.tagged import get_states
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import misc, url as ui_url, queries, debug
 from bungeni.ui.menu import get_actions
 from bungeni.ui.forms.common import set_widget_errors
+from bungeni.ui import vocabulary
 from bungeni.core.location import location_wrapped
 from bungeni.core.interfaces import ISchedulingContext
 #from bungeni.core.schedule import PlenarySchedulingContext
 from bungeni.core.odf import OpenDocument
-from bungeni.ui import vocabulary
 from bungeni.models import domain
 from bungeni.models.utils import get_principal_id
 from bungeni.models.interfaces import IGroupSitting
@@ -62,8 +63,6 @@ from ore.alchemist import Session
 from ore.workflow.interfaces import IWorkflowInfo
 
 from zc.resourcelibrary import need
-
-from bungeni.core.workflows.groupsitting import states as sitting_wf_state
 
 class TIME_SPAN:
     daily = _(u"Daily")
@@ -84,7 +83,8 @@ def get_workflow_actions(context, request):
 def get_sitting_items(sitting, request, include_actions=False):
     items = []
 
-    if sitting.status in [sitting_wf_state[u'draft-agenda'].id , sitting_wf_state[u'published-agenda'].id]:
+    if sitting.status in get_states("groupsitting", 
+                                keys=["draft_agenda", "published_agenda"]):
         order = "planned_order"
     else:
         order = "real_order"
@@ -334,9 +334,9 @@ class GroupSittingScheduleView(BrowserView):
         return rendered
         
     def reorder_field(self):
-        if self.context.status == "draft-agenda":
+        if self.context.status=="draft_agenda":
             return 'planned_order'
-        elif self.context.status == "draft-minutes": 
+        elif self.context.status=="draft_minutes": 
             return 'real_order'
         else:
             return None
@@ -871,14 +871,16 @@ class ReportingView(form.PageForm):
                         if item.item_status not in ["draft"]:
                             items.append(item)
                     sitting.item_schedule = items'''
-        if 'draft' in data:
+        if "draft" in data:
             sitting_items = []
             for sitting in self.sitting_items:
-                if data["draft"] ==  'No':
-                    if sitting.status in ["published-agenda","published-minutes"]:
+                if data["draft"]=="No":
+                    if sitting.status in get_states("groupsitting", 
+                                                tagged=["published"]):
                         sitting_items.append(sitting)
-                elif data["draft"] ==  'Yes':
-                    if sitting.status in [ "published-agenda", "draft-minutes", "published-minutes", "draft-agenda"]:
+                elif data["draft"]=="Yes":
+                    if sitting.status in get_states("groupsitting", 
+                                                tagged=["draft", "published"]):
                         sitting_items.append(sitting)
             self.sitting_items = sitting_items
         if self.display_minutes:
@@ -1134,10 +1136,11 @@ class StoreReportView(BrowserView):
         sitting_items = []
         for sitting in self.sitting_items:
             if self.display_minutes:
-                if sitting.status in ["published-minutes"]:
+                if sitting.status in ["published_minutes"]:
                     sitting_items.append(sitting)
             else:
-                if sitting.status in [ "published-agenda", "draft-minutes", "published-minutes"]:
+                if sitting.status in ["published_agenda", "draft_minutes", 
+                                      "published_minutes"]:
                     sitting_items.append(sitting)
         if len(sitting_items) == 0:
             referer = self.request.getHeader('HTTP_REFERER')
