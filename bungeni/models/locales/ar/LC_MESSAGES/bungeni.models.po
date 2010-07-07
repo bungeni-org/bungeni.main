@@ -1,8 +1,8 @@
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: Mon Apr 12 12:54:47 2010\n"
+"POT-Creation-Date: Wed Jul  7 15:07:24 2010\n"
 "PO-Revision-Date: 2010-06-10 16:20+0200\n"
 "Last-Translator: undesa <admin@apkn.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,706 +17,565 @@ msgstr ""
 "Language-Name: English\n"
 "X-Generator: Pootle 2.0.4\n"
 
-#: src/bungeni.models/bungeni/models/interfaces.py:214
+#: src/bungeni.main/bungeni/models/interfaces.py:214
 msgid "Speaker's Office Email"
 msgstr "البريد الإلكتروني المنزل الاعمال المكتبية"
 
-#: src/bungeni.models/bungeni/models/interfaces.py:216
+#: src/bungeni.main/bungeni/models/interfaces.py:216
 msgid "Speaker's Office Notification"
 msgstr "إخطار المكاتب التجارية في منزل"
 
-#: src/bungeni.models/bungeni/models/interfaces.py:217
-msgid "true if the Speakers office wants to be alerted by mailwhenever a bill, motion, question is submitted"
-msgstr "صحيح إذا كان مكتب العمل منزل وتريد أن يتم تنبيهك عن طريق البريد كلما تم تقديم مشروع قانون ، اقتراح ، سؤال"
+#: src/bungeni.main/bungeni/models/interfaces.py:217
+msgid ""
+"true if the Speakers office wants to be alerted by mailwhenever a bill, "
+"motion, question is submitted"
+msgstr ""
+"صحيح إذا كان مكتب العمل منزل وتريد أن يتم تنبيهك عن طريق البريد كلما تم "
+"تقديم مشروع قانون ، اقتراح ، سؤال"
 
-#: src/bungeni.models/bungeni/models/interfaces.py:222
+#: src/bungeni.main/bungeni/models/interfaces.py:222
 msgid "Clerk's Office Notification"
 msgstr "إعلام مكتب لكاتب"
 
-#: src/bungeni.models/bungeni/models/interfaces.py:223
-msgid "true if the clerks office wants to be alerted by mailwhenever a bill, motion, question is submitted"
-msgstr "صحيح إذا كان مكتب كتبة تريد أن يتم تنبيهك عن طريق البريد كلما تم تقديم مشروع قانون ، اقتراح ، سؤال"
+#: src/bungeni.main/bungeni/models/interfaces.py:223
+msgid ""
+"true if the clerks office wants to be alerted by mailwhenever a bill, "
+"motion, question is submitted"
+msgstr ""
+"صحيح إذا كان مكتب كتبة تريد أن يتم تنبيهك عن طريق البريد كلما تم تقديم مشروع "
+"قانون ، اقتراح ، سؤال"
 
-#: src/bungeni.models/bungeni/models/interfaces.py:228
+#: src/bungeni.main/bungeni/models/interfaces.py:228
 msgid "Clerks's Office Email"
 msgstr "البريد الالكتروني للمكتب كاتب"
 
-#: src/bungeni.models/bungeni/models/interfaces.py:231
+#: src/bungeni.main/bungeni/models/interfaces.py:231
 msgid "Administrator's Email"
 msgstr "المسؤول البريد الإلكتروني"
 
-#: src/bungeni.models/bungeni/models/interfaces.py:232
+#: src/bungeni.main/bungeni/models/interfaces.py:232
 msgid "Allow Question Submission"
 msgstr "تسمح مسألة تقديم"
 
-#: src/bungeni.models/bungeni/models/interfaces.py:233
+#: src/bungeni.main/bungeni/models/interfaces.py:233
 msgid "Days to Defer Question"
 msgstr "أيام إرجاء مسألة"
 
-#: src/bungeni.models/bungeni/models/interfaces.py:234
+#: src/bungeni.main/bungeni/models/interfaces.py:234
 msgid "Time after which admissible questions are automatically deferred"
 msgstr "بعد وقت الأسئلة التي فيها قبول تأجيل تلقائيا"
 
-#: src/bungeni.models/bungeni/models/interfaces.py:236
+#: src/bungeni.main/bungeni/models/interfaces.py:236
 msgid "Days to Notify Ministry of Pending Response"
 msgstr "أيام لإبلاغ الوزارة في انتظار رد من"
 
-#: src/bungeni.models/bungeni/models/interfaces.py:237
-msgid "Timeframe after which the clerksoffice and the ministry is alerted thatquestions that are pending response are not yet answered"
-msgstr "نبهت الإطار الزمني بعد ذلك في مكتب كاتب والوزارة هو أن الأسئلة التي لا تزال معلقة حتى الآن استجابة ليست الإجابة"
+#: src/bungeni.main/bungeni/models/interfaces.py:237
+msgid ""
+"Timeframe after which the clerksoffice and the ministry is alerted "
+"thatquestions that are pending response are not yet answered"
+msgstr ""
+"نبهت الإطار الزمني بعد ذلك في مكتب كاتب والوزارة هو أن الأسئلة التي لا تزال "
+"معلقة حتى الآن استجابة ليست الإجابة"
 
-#: src/bungeni.models/bungeni/models/interfaces.py:241
+#: src/bungeni.main/bungeni/models/interfaces.py:241
 msgid "Days before question scheduled"
 msgstr "السؤال قبل أيام من المقرر"
 
-#: src/bungeni.models/bungeni/models/interfaces.py:242
+#: src/bungeni.main/bungeni/models/interfaces.py:242
 msgid "Days before bill scheduled"
 msgstr "قبل أيام مشروع قانون من المقرر"
 
-#: src/bungeni.models/bungeni/models/interfaces.py:243
+#: src/bungeni.main/bungeni/models/interfaces.py:243
 msgid "Max Questions Per Sitting"
 msgstr "أسئلة كحد أقصى في الجلوس"
 
-#: src/bungeni.models/bungeni/models/interfaces.py:244
+#: src/bungeni.main/bungeni/models/interfaces.py:244
 msgid "Max Questions Per Sitting Per MP"
 msgstr "أسئلة كحد أقصى في جلسة في البرلمان"
 
-#: src/bungeni.models/bungeni/models/interfaces.py:249
+#: src/bungeni.main/bungeni/models/interfaces.py:249
 msgid "Email Notifications Enabled?"
 msgstr "تمكين إعلامات البريد الإلكتروني؟"
 
-#: src/bungeni.models/bungeni/models/interfaces.py:255
+#: src/bungeni.main/bungeni/models/interfaces.py:255
 msgid "Name of the Assignment"
 msgstr "اسم الاحالة"
 
-#: src/bungeni.models/bungeni/models/interfaces.py:256
+#: src/bungeni.main/bungeni/models/interfaces.py:256
 msgid "Start Date of the Assignment"
 msgstr "تاريخ بدء المهمة"
 
-#: src/bungeni.models/bungeni/models/interfaces.py:257
+#: src/bungeni.main/bungeni/models/interfaces.py:257
 msgid "End Date of the Assignment"
 msgstr "نهاية تاريخ الاحالة"
 
-#: src/bungeni.models/bungeni/models/interfaces.py:258
+#: src/bungeni.main/bungeni/models/interfaces.py:258
 msgid "Assignment Type"
 msgstr "تعيين نوع"
 
-#: src/bungeni.models/bungeni/models/interfaces.py:259
+#: src/bungeni.main/bungeni/models/interfaces.py:259
 msgid "Status"
 msgstr "حالة"
 
-#: src/bungeni.models/bungeni/models/interfaces.py:260
+#: src/bungeni.main/bungeni/models/interfaces.py:260
 msgid "Notes"
 msgstr "تلاحظ"
 
-#: src/bungeni.models/bungeni/models/permissions.zcml:100
-msgid "View party"
-msgstr "رأي الحزب"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:103
-msgid "Add government"
-msgstr "إضافة الحكومة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:104
-msgid "Edit government"
-msgstr "تعديل الحكومة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:105
-msgid "Delete government"
-msgstr "حذف الحكومة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:106
-msgid "View government"
-msgstr "رأي الحكومة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:109
-msgid "Add group member"
-msgstr "إضافة مجموعة الأعضاء"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:110
-msgid "Edit group member"
-msgstr "تحرير مجموعة الأعضاء"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:111
-msgid "Delete group member"
-msgstr "حذف مجموعة الأعضاء"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:112
-msgid "View group member"
-msgstr "عرض مجموعة الأعضاء"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:115
-msgid "Add office"
-msgstr "إضافة مكتب"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:116
-msgid "Edit office"
-msgstr "عدل مكتب"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:117
-msgid "Delete office"
-msgstr "حذف المكتب"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:118
-msgid "View office"
-msgstr "عرض مكتب"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:119
-msgid "Change office type"
-msgstr "تغيير نوع مكتب"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:12
-msgid "Edit historical content"
-msgstr "تحرير محتوى التاريخية"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:122
-msgid "Add office member"
-msgstr "إضافة عضو المكتب"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:123
-msgid "Edit office member"
-msgstr "عدل مكتب عضو"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:124
-msgid "Delete office member"
-msgstr "حذف عضو المكتب"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:125
-msgid "View office member"
-msgstr "عرض عضو المكتب"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:13
-msgid "Translate content"
-msgstr "ترجمة محتوى"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:131
-msgid "Add ministry"
-msgstr "إضافة وزارة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:132
-msgid "Edit ministry"
-msgstr "عدل وزارة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:133
-msgid "Delete ministry"
-msgstr "حذف الوزارة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:134
-msgid "View ministry"
-msgstr "رأي الوزارة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:137
-msgid "Add mp"
-msgstr "إضافة النائب"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:138
-msgid "Edit mp"
-msgstr "عدل النائب"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:139
-msgid "Delete mp"
-msgstr "حذف النائب"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:140
-msgid "View mp"
-msgstr "عرض النائب"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:146
-msgid "Add user"
-msgstr "إضافة مستخدم"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:147
-msgid "Edit user"
-msgstr "تحرير مستخدم"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:148
-msgid "Delete user"
-msgstr "حذف مستخدم"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:149
-msgid "View user"
-msgstr "رأي المستخدم"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:15
-msgid "Add session"
-msgstr "إضافة الدورة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:152
-msgid "Add constituency"
-msgstr "إضافة الدائرة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:153
-msgid "Edit constituency"
-msgstr "تعديل الدوائر الانتخابية"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:154
-msgid "Delete constituency"
-msgstr "حذف الدائرة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:155
-msgid "View constituency"
-msgstr "رأي الدائرة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:158
-msgid "Add minister"
-msgstr "إضافة عضو من وزارة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:159
-msgid "Edit minister"
-msgstr "تحرير عضو من وزارة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:16
-msgid "Edit session"
-msgstr "عدل الدورة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:160
-msgid "Delete minister"
-msgstr "حذف عضو من وزارة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:161
-msgid "View minister"
-msgstr "عضو رأي الوزارة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:167
-msgid "Add committee member"
-msgstr "إضافة عضو اللجنة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:168
-msgid "Edit committee member"
-msgstr "عضو لجنة تحرير"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:169
-msgid "Delete committee member"
-msgstr "حذف عضو اللجنة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:17
-msgid "Delete session"
-msgstr "حذف الدورة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:170
-msgid "View committee member"
-msgstr "رأي عضو اللجنة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:176
-msgid "Add committee staff"
-msgstr "إضافة لجنة الموظفين"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:177
-msgid "Edit committee staff"
-msgstr "عدل لجنة الأركان"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:178
-msgid "Delete committee staff"
-msgstr "حذف لجنة الموظفين"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:179
-msgid "View committee staff"
-msgstr "رأي لجنة الموظفين"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:18
-msgid "Add sitting"
-msgstr "إضافة الجلوس"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:185
-msgid "Add political group member"
-msgstr "إضافة عضو في المجموعة السياسية"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:186
-msgid "Edit political group member"
-msgstr "عضو في المجموعة تحرير السياسية"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:187
-msgid "Delete political group member"
-msgstr "حذف مجموعة سياسية الأعضاء"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:188
-msgid "View political group member"
-msgstr "عرض عضو المجموعة السياسية"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:19
-msgid "Edit sitting"
-msgstr "عدل الجلوس"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:194
-msgid "Add address"
-msgstr "إضافة عنوان"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:195
-msgid "Edit address"
-msgstr "عدل عنوان"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:196
-msgid "Delete address"
-msgstr "حذف عنوان"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:197
-msgid "View address"
-msgstr "عرض عنوان"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:20
-msgid "Delete sitting"
-msgstr "حذف الجلوس"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:200
-msgid "Add delegation"
-msgstr "إضافة وفد"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:201
-msgid "Edit delegation"
-msgstr "تحرير الوفد"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:202
-msgid "Delete delegation"
-msgstr "وفد حذف"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:203
-msgid "View delegation"
-msgstr "عرض وفد"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:206
-msgid "Add title/function"
-msgstr "إضافة عنوان / الوظيفة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:207
-msgid "Edit title/function"
-msgstr "عدل عنوان / الوظيفة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:208
-msgid "Delete title/function"
-msgstr "حذف عنوان / الوظيفة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:209
-msgid "View title/function"
-msgstr "عرض عنوان / الوظيفة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:21
-msgid "Reorder schedulings"
-msgstr "إعادة ترتيب schedulings"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:212
-msgid "Add title/event"
-msgstr "إضافة عنوان / الحدث"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:213
-msgid "Edit title/event"
-msgstr "تحرير العنوان / الحدث"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:214
-msgid "Delete title/event"
-msgstr "العنوان حذف / الحدث"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:215
-msgid "View title/event"
-msgstr "عرض عنوان / الحدث"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:219
-msgid "View audit log"
-msgstr "عرض سجل التدقيق"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:22
-msgid "Add item scheduling"
-msgstr "إضافة جدولة البند"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:228
-msgid "Add and edit amendments"
-msgstr "إضافة وتحرير التعديلات"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:229
-msgid "View amendments"
-msgstr "عرض التعديلات"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:23
-msgid "Edit item scheduling"
-msgstr "عدل جدولة البند"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:231
-msgid "Add and edit comments"
-msgstr "إضافة وتحرير التعليقات"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:232
-msgid "View comments"
-msgstr "عرض التعليقات"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:234
-msgid "View Agenda"
-msgstr "عرض جدول الأعمال"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:235
-msgid "View 'Votes and Proceedings'"
-msgstr "عرض الأصوات والإجراءات"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:237
-msgid "Add Consignatory"
-msgstr "إضافة موقع مع غيره"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:238
-msgid "Delete Consignatory"
-msgstr "حذف موقع مع غيره"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:239
-msgid "Edit Consignatory"
-msgstr "تحرير موقع مع غيره"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:24
-msgid "Delete item scheduling"
-msgstr "جدولة حذف البند"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:241
-#: src/bungeni.models/bungeni/models/permissions.zcml:242
-msgid "Add Group Item Assignment"
-msgstr "إضافة مهمة المجموعة البند"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:243
-msgid "Delete Group Item Assignment"
-msgstr "البند الاحالة المجموعة حذف"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:244
-msgid "Edit Group Item Assignment"
-msgstr "تحرير مجموعة مهمة من جدول الأعمال"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:248
-msgid "Permission to generate report"
-msgstr "إذن لتوليد تقرير"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:25
-msgid "Add item scheduling category"
-msgstr "إضافة بند الفئة جدولة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:250
-msgid "add an attached file"
-msgstr "إضافة ملف مرفق"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:251
-msgid "edit an attached file"
-msgstr "تحرير ملف مرفق"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:252
-msgid "view an attached file"
-msgstr "عرض ملف مرفق"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:253
-msgid "delete an attached file"
-msgstr "حذف ملف مرفق"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:256
-msgid "add translation"
-msgstr "إضافة ترجمة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:27
-msgid "Edit item scheduling discussion"
-msgstr "عدل البند مناقشة جدولة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:29
-msgid "View sitting attendance"
-msgstr "عرض يجلس الحضور"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:30
-msgid "Add sitting attendance"
-msgstr "إضافة يجلس الحضور"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:31
-msgid "Edit sitting attendance"
-msgstr "عدل يجلس الحضور"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:32
-msgid "Delete sitting attendance"
-msgstr "حذف يجلس الحضور"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:35
-msgid "Add committee"
-msgstr "إضافة لجنة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:36
-msgid "Edit committee"
-msgstr "لجنة تحرير"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:37
-msgid "Delete committee"
-msgstr "حذف لجنة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:38
-msgid "View committee"
-msgstr "رأي لجنة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:42
-msgid "Add Question"
-msgstr "إضافة سؤال"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:43
-msgid "Edit Question"
-msgstr "عدل السؤال"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:44
-msgid "Delete Question"
-msgstr "حذف السؤال"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:45
-msgid "View Question"
-msgstr "عرض السؤال"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:54
-msgid "Add heading"
-msgstr "إضافة البند"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:55
-msgid "Edit heading"
-msgstr "عدل البند"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:56
-msgid "Delete heading"
-msgstr "حذف البند"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:57
-msgid "View heading"
-msgstr "عرض البند"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:60
-msgid "Add Motion"
-msgstr "إضافة اقتراح"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:61
-msgid "Edit Motion"
-msgstr "حركة تحرير"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:62
-msgid "Delete Motion"
-msgstr "اقتراح حذف"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:63
-msgid "View Motion"
-msgstr "عرض اقتراح"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:66
-msgid "Add agenda item"
-msgstr "إضافة البند من جدول الأعمال"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:67
-msgid "Edit agenda item"
-msgstr "عدل البند من جدول الأعمال"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:68
-msgid "Delete agenda item"
-msgstr "حذف البند"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:69
-msgid "View agenda item"
-msgstr "عرض جدول الأعمال"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:72
-msgid "Add tabled document"
-msgstr "إضافة وثيقة قدمت"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:73
-msgid "Edit tabled document"
-msgstr "تحرير وثيقة قدمت"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:74
-msgid "Delete tabled document"
-msgstr "قدمت وثيقة حذف"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:75
-msgid "View tabled document"
-msgstr "قدم عرض المستند"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:78
-msgid "Edit Response"
-msgstr "تحرير الاستجابة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:79
-msgid "View Response"
-msgstr "عرض الرد"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:81
-msgid "Add Parliament"
-msgstr "إضافة البرلمان"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:82
-msgid "Edit Parliament"
-msgstr "عدل البرلمان"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:83
-msgid "Delete Parliament"
-msgstr "حذف البرلمان"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:84
-msgid "View Parliament"
-msgstr "رأي البرلمان"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:87
-msgid "Add Bill"
-msgstr "إضافة فاتورة"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:88
-msgid "Edit Bill"
-msgstr "تعديل مشروع قانون"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:89
-msgid "Delete Bill"
-msgstr "حذف مشروع قانون"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:90
-msgid "View Bill"
-msgstr "عرض مشروع قانون"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:93
-msgid "Admin User Record"
-msgstr "مسؤول المستخدم تسجيل"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:94
-msgid "Edit historical data"
-msgstr "تحرير البيانات التاريخية"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:97
-msgid "Add party"
-msgstr "إضافة الطرف"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:98
-msgid "Edit party"
-msgstr "حزب التحرير"
-
-#: src/bungeni.models/bungeni/models/permissions.zcml:99
-msgid "Delete party"
-msgstr "حذف الطرف"
-
-#: src/bungeni.models/bungeni/models/roles.zcml:10
-msgid "Member of parliament"
-msgstr "عضو في البرلمان"
-
-#: src/bungeni.models/bungeni/models/roles.zcml:11
-msgid "Owner"
-msgstr "مالك"
-
-#: src/bungeni.models/bungeni/models/roles.zcml:12
-msgid "Minister"
-msgstr "وزير"
-
-#: src/bungeni.models/bungeni/models/roles.zcml:13
-msgid "Clerks Office"
-msgstr "كاتب في مكتب"
-
-#: src/bungeni.models/bungeni/models/roles.zcml:14
-msgid "Speaker Office"
-msgstr "مكتب المتحدث"
-
-#: src/bungeni.models/bungeni/models/roles.zcml:15
-msgid "Translators  Office"
-msgstr "المترجم مكتب"
-
-#: src/bungeni.models/bungeni/models/roles.zcml:16
-msgid "All authenticated users"
-msgstr "جميع المستخدمين المصادق"
-
-#: src/bungeni.models/bungeni/models/roles.zcml:17
-msgid "Bungeni Visitor"
-msgstr "bungeni زائر"
-
-#: src/bungeni.models/bungeni/models/roles.zcml:8
-msgid "Site Manager"
-msgstr "مدير موقع"
-
-#: src/bungeni.models/bungeni/models/roles.zcml:9
-msgid "Bungeni Admin"
-msgstr "مسؤول bungeni"
+#~ msgid "View party"
+#~ msgstr "رأي الحزب"
+
+#~ msgid "Add government"
+#~ msgstr "إضافة الحكومة"
+
+#~ msgid "Edit government"
+#~ msgstr "تعديل الحكومة"
+
+#~ msgid "Delete government"
+#~ msgstr "حذف الحكومة"
+
+#~ msgid "View government"
+#~ msgstr "رأي الحكومة"
+
+#~ msgid "Add group member"
+#~ msgstr "إضافة مجموعة الأعضاء"
+
+#~ msgid "Edit group member"
+#~ msgstr "تحرير مجموعة الأعضاء"
+
+#~ msgid "Delete group member"
+#~ msgstr "حذف مجموعة الأعضاء"
+
+#~ msgid "View group member"
+#~ msgstr "عرض مجموعة الأعضاء"
+
+#~ msgid "Add office"
+#~ msgstr "إضافة مكتب"
+
+#~ msgid "Edit office"
+#~ msgstr "عدل مكتب"
+
+#~ msgid "Delete office"
+#~ msgstr "حذف المكتب"
+
+#~ msgid "View office"
+#~ msgstr "عرض مكتب"
+
+#~ msgid "Change office type"
+#~ msgstr "تغيير نوع مكتب"
+
+#~ msgid "Edit historical content"
+#~ msgstr "تحرير محتوى التاريخية"
+
+#~ msgid "Add office member"
+#~ msgstr "إضافة عضو المكتب"
+
+#~ msgid "Edit office member"
+#~ msgstr "عدل مكتب عضو"
+
+#~ msgid "Delete office member"
+#~ msgstr "حذف عضو المكتب"
+
+#~ msgid "View office member"
+#~ msgstr "عرض عضو المكتب"
+
+#~ msgid "Translate content"
+#~ msgstr "ترجمة محتوى"
+
+#~ msgid "Add ministry"
+#~ msgstr "إضافة وزارة"
+
+#~ msgid "Edit ministry"
+#~ msgstr "عدل وزارة"
+
+#~ msgid "Delete ministry"
+#~ msgstr "حذف الوزارة"
+
+#~ msgid "View ministry"
+#~ msgstr "رأي الوزارة"
+
+#~ msgid "Add mp"
+#~ msgstr "إضافة النائب"
+
+#~ msgid "Edit mp"
+#~ msgstr "عدل النائب"
+
+#~ msgid "Delete mp"
+#~ msgstr "حذف النائب"
+
+#~ msgid "View mp"
+#~ msgstr "عرض النائب"
+
+#~ msgid "Add user"
+#~ msgstr "إضافة مستخدم"
+
+#~ msgid "Edit user"
+#~ msgstr "تحرير مستخدم"
+
+#~ msgid "Delete user"
+#~ msgstr "حذف مستخدم"
+
+#~ msgid "View user"
+#~ msgstr "رأي المستخدم"
+
+#~ msgid "Add session"
+#~ msgstr "إضافة الدورة"
+
+#~ msgid "Add constituency"
+#~ msgstr "إضافة الدائرة"
+
+#~ msgid "Edit constituency"
+#~ msgstr "تعديل الدوائر الانتخابية"
+
+#~ msgid "Delete constituency"
+#~ msgstr "حذف الدائرة"
+
+#~ msgid "View constituency"
+#~ msgstr "رأي الدائرة"
+
+#~ msgid "Add minister"
+#~ msgstr "إضافة عضو من وزارة"
+
+#~ msgid "Edit minister"
+#~ msgstr "تحرير عضو من وزارة"
+
+#~ msgid "Edit session"
+#~ msgstr "عدل الدورة"
+
+#~ msgid "Delete minister"
+#~ msgstr "حذف عضو من وزارة"
+
+#~ msgid "View minister"
+#~ msgstr "عضو رأي الوزارة"
+
+#~ msgid "Add committee member"
+#~ msgstr "إضافة عضو اللجنة"
+
+#~ msgid "Edit committee member"
+#~ msgstr "عضو لجنة تحرير"
+
+#~ msgid "Delete committee member"
+#~ msgstr "حذف عضو اللجنة"
+
+#~ msgid "Delete session"
+#~ msgstr "حذف الدورة"
+
+#~ msgid "View committee member"
+#~ msgstr "رأي عضو اللجنة"
+
+#~ msgid "Add committee staff"
+#~ msgstr "إضافة لجنة الموظفين"
+
+#~ msgid "Edit committee staff"
+#~ msgstr "عدل لجنة الأركان"
+
+#~ msgid "Delete committee staff"
+#~ msgstr "حذف لجنة الموظفين"
+
+#~ msgid "View committee staff"
+#~ msgstr "رأي لجنة الموظفين"
+
+#~ msgid "Add sitting"
+#~ msgstr "إضافة الجلوس"
+
+#~ msgid "Add political group member"
+#~ msgstr "إضافة عضو في المجموعة السياسية"
+
+#~ msgid "Edit political group member"
+#~ msgstr "عضو في المجموعة تحرير السياسية"
+
+#~ msgid "Delete political group member"
+#~ msgstr "حذف مجموعة سياسية الأعضاء"
+
+#~ msgid "View political group member"
+#~ msgstr "عرض عضو المجموعة السياسية"
+
+#~ msgid "Edit sitting"
+#~ msgstr "عدل الجلوس"
+
+#~ msgid "Add address"
+#~ msgstr "إضافة عنوان"
+
+#~ msgid "Edit address"
+#~ msgstr "عدل عنوان"
+
+#~ msgid "Delete address"
+#~ msgstr "حذف عنوان"
+
+#~ msgid "View address"
+#~ msgstr "عرض عنوان"
+
+#~ msgid "Delete sitting"
+#~ msgstr "حذف الجلوس"
+
+#~ msgid "Add delegation"
+#~ msgstr "إضافة وفد"
+
+#~ msgid "Edit delegation"
+#~ msgstr "تحرير الوفد"
+
+#~ msgid "Delete delegation"
+#~ msgstr "وفد حذف"
+
+#~ msgid "View delegation"
+#~ msgstr "عرض وفد"
+
+#~ msgid "Add title/function"
+#~ msgstr "إضافة عنوان / الوظيفة"
+
+#~ msgid "Edit title/function"
+#~ msgstr "عدل عنوان / الوظيفة"
+
+#~ msgid "Delete title/function"
+#~ msgstr "حذف عنوان / الوظيفة"
+
+#~ msgid "View title/function"
+#~ msgstr "عرض عنوان / الوظيفة"
+
+#~ msgid "Reorder schedulings"
+#~ msgstr "إعادة ترتيب schedulings"
+
+#~ msgid "Add title/event"
+#~ msgstr "إضافة عنوان / الحدث"
+
+#~ msgid "Edit title/event"
+#~ msgstr "تحرير العنوان / الحدث"
+
+#~ msgid "Delete title/event"
+#~ msgstr "العنوان حذف / الحدث"
+
+#~ msgid "View title/event"
+#~ msgstr "عرض عنوان / الحدث"
+
+#~ msgid "View audit log"
+#~ msgstr "عرض سجل التدقيق"
+
+#~ msgid "Add item scheduling"
+#~ msgstr "إضافة جدولة البند"
+
+#~ msgid "Add and edit amendments"
+#~ msgstr "إضافة وتحرير التعديلات"
+
+#~ msgid "View amendments"
+#~ msgstr "عرض التعديلات"
+
+#~ msgid "Edit item scheduling"
+#~ msgstr "عدل جدولة البند"
+
+#~ msgid "Add and edit comments"
+#~ msgstr "إضافة وتحرير التعليقات"
+
+#~ msgid "View comments"
+#~ msgstr "عرض التعليقات"
+
+#~ msgid "View Agenda"
+#~ msgstr "عرض جدول الأعمال"
+
+#~ msgid "View 'Votes and Proceedings'"
+#~ msgstr "عرض الأصوات والإجراءات"
+
+#~ msgid "Add Consignatory"
+#~ msgstr "إضافة موقع مع غيره"
+
+#~ msgid "Delete Consignatory"
+#~ msgstr "حذف موقع مع غيره"
+
+#~ msgid "Edit Consignatory"
+#~ msgstr "تحرير موقع مع غيره"
+
+#~ msgid "Delete item scheduling"
+#~ msgstr "جدولة حذف البند"
+
+#~ msgid "Add Group Item Assignment"
+#~ msgstr "إضافة مهمة المجموعة البند"
+
+#~ msgid "Delete Group Item Assignment"
+#~ msgstr "البند الاحالة المجموعة حذف"
+
+#~ msgid "Edit Group Item Assignment"
+#~ msgstr "تحرير مجموعة مهمة من جدول الأعمال"
+
+#~ msgid "Permission to generate report"
+#~ msgstr "إذن لتوليد تقرير"
+
+#~ msgid "Add item scheduling category"
+#~ msgstr "إضافة بند الفئة جدولة"
+
+#~ msgid "add an attached file"
+#~ msgstr "إضافة ملف مرفق"
+
+#~ msgid "edit an attached file"
+#~ msgstr "تحرير ملف مرفق"
+
+#~ msgid "view an attached file"
+#~ msgstr "عرض ملف مرفق"
+
+#~ msgid "delete an attached file"
+#~ msgstr "حذف ملف مرفق"
+
+#~ msgid "add translation"
+#~ msgstr "إضافة ترجمة"
+
+#~ msgid "Edit item scheduling discussion"
+#~ msgstr "عدل البند مناقشة جدولة"
+
+#~ msgid "View sitting attendance"
+#~ msgstr "عرض يجلس الحضور"
+
+#~ msgid "Add sitting attendance"
+#~ msgstr "إضافة يجلس الحضور"
+
+#~ msgid "Edit sitting attendance"
+#~ msgstr "عدل يجلس الحضور"
+
+#~ msgid "Delete sitting attendance"
+#~ msgstr "حذف يجلس الحضور"
+
+#~ msgid "Add committee"
+#~ msgstr "إضافة لجنة"
+
+#~ msgid "Edit committee"
+#~ msgstr "لجنة تحرير"
+
+#~ msgid "Delete committee"
+#~ msgstr "حذف لجنة"
+
+#~ msgid "View committee"
+#~ msgstr "رأي لجنة"
+
+#~ msgid "Add Question"
+#~ msgstr "إضافة سؤال"
+
+#~ msgid "Edit Question"
+#~ msgstr "عدل السؤال"
+
+#~ msgid "Delete Question"
+#~ msgstr "حذف السؤال"
+
+#~ msgid "View Question"
+#~ msgstr "عرض السؤال"
+
+#~ msgid "Add heading"
+#~ msgstr "إضافة البند"
+
+#~ msgid "Edit heading"
+#~ msgstr "عدل البند"
+
+#~ msgid "Delete heading"
+#~ msgstr "حذف البند"
+
+#~ msgid "View heading"
+#~ msgstr "عرض البند"
+
+#~ msgid "Add Motion"
+#~ msgstr "إضافة اقتراح"
+
+#~ msgid "Edit Motion"
+#~ msgstr "حركة تحرير"
+
+#~ msgid "Delete Motion"
+#~ msgstr "اقتراح حذف"
+
+#~ msgid "View Motion"
+#~ msgstr "عرض اقتراح"
+
+#~ msgid "Add agenda item"
+#~ msgstr "إضافة البند من جدول الأعمال"
+
+#~ msgid "Edit agenda item"
+#~ msgstr "عدل البند من جدول الأعمال"
+
+#~ msgid "Delete agenda item"
+#~ msgstr "حذف البند"
+
+#~ msgid "View agenda item"
+#~ msgstr "عرض جدول الأعمال"
+
+#~ msgid "Add tabled document"
+#~ msgstr "إضافة وثيقة قدمت"
+
+#~ msgid "Edit tabled document"
+#~ msgstr "تحرير وثيقة قدمت"
+
+#~ msgid "Delete tabled document"
+#~ msgstr "قدمت وثيقة حذف"
+
+#~ msgid "View tabled document"
+#~ msgstr "قدم عرض المستند"
+
+#~ msgid "Edit Response"
+#~ msgstr "تحرير الاستجابة"
+
+#~ msgid "View Response"
+#~ msgstr "عرض الرد"
+
+#~ msgid "Add Parliament"
+#~ msgstr "إضافة البرلمان"
+
+#~ msgid "Edit Parliament"
+#~ msgstr "عدل البرلمان"
+
+#~ msgid "Delete Parliament"
+#~ msgstr "حذف البرلمان"
+
+#~ msgid "View Parliament"
+#~ msgstr "رأي البرلمان"
+
+#~ msgid "Add Bill"
+#~ msgstr "إضافة فاتورة"
+
+#~ msgid "Edit Bill"
+#~ msgstr "تعديل مشروع قانون"
+
+#~ msgid "Delete Bill"
+#~ msgstr "حذف مشروع قانون"
+
+#~ msgid "View Bill"
+#~ msgstr "عرض مشروع قانون"
+
+#~ msgid "Admin User Record"
+#~ msgstr "مسؤول المستخدم تسجيل"
+
+#~ msgid "Edit historical data"
+#~ msgstr "تحرير البيانات التاريخية"
+
+#~ msgid "Add party"
+#~ msgstr "إضافة الطرف"
+
+#~ msgid "Edit party"
+#~ msgstr "حزب التحرير"
+
+#~ msgid "Delete party"
+#~ msgstr "حذف الطرف"
+
+#~ msgid "Member of parliament"
+#~ msgstr "عضو في البرلمان"
+
+#~ msgid "Owner"
+#~ msgstr "مالك"
+
+#~ msgid "Minister"
+#~ msgstr "وزير"
+
+#~ msgid "Clerks Office"
+#~ msgstr "كاتب في مكتب"
+
+#~ msgid "Speaker Office"
+#~ msgstr "مكتب المتحدث"
+
+#~ msgid "Translators  Office"
+#~ msgstr "المترجم مكتب"
+
+#~ msgid "All authenticated users"
+#~ msgstr "جميع المستخدمين المصادق"
+
+#~ msgid "Bungeni Visitor"
+#~ msgstr "bungeni زائر"
+
+#~ msgid "Site Manager"
+#~ msgstr "مدير موقع"
+
+#~ msgid "Bungeni Admin"
+#~ msgstr "مسؤول bungeni"
 
 #~ msgid "Female"
 #~ msgstr "أنثى"
