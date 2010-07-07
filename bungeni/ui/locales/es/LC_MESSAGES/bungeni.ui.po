@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: Wed Jul  7 14:42:55 2010\n"
+"POT-Creation-Date: Wed Jul  7 16:34:58 2010\n"
 "PO-Revision-Date: 2010-06-11 11:19+0200\n"
 "Last-Translator: Flavio <flavio.zeni@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -56,6 +56,8 @@ msgstr "tipo de documento a ser producido"
 #: src/bungeni.main/bungeni/ui/descriptor.py:1729
 #: src/bungeni.main/bungeni/ui/descriptor.py:1785
 #: src/bungeni.main/bungeni/ui/descriptor.py:2044
+#: src/bungeni.main/bungeni/ui/viewlets/templates/workspace_sitting_viewlet.pt:23
+#: src/bungeni.main/bungeni/ui/forms/templates/timeline_viewlet.pt:14
 msgid "Date"
 msgstr "fecha"
 
@@ -110,6 +112,44 @@ msgstr "esta forma genera los votos y actas de informe"
 #: src/bungeni.main/bungeni/ui/calendar/browser.py:962
 msgid "VOTES AND PROCEEDINGS"
 msgstr "votos y actas"
+
+#: src/bungeni.main/bungeni/ui/calendar/macros.pt:12
+msgid "&rarr;"
+msgstr "→"
+
+#: src/bungeni.main/bungeni/ui/calendar/macros.pt:174
+msgid "No items scheduled"
+msgstr "sin elementos programados"
+
+#: src/bungeni.main/bungeni/ui/calendar/macros.pt:207
+#: src/bungeni.main/bungeni/ui/calendar/macros.pt:303
+msgid "Week ${week_no}"
+msgstr "${weekno} semana"
+
+#: src/bungeni.main/bungeni/ui/calendar/macros.pt:266
+#: src/bungeni.main/bungeni/ui/calendar/macros.pt:366
+msgid "${count} item(s) scheduled"
+msgstr "${count} artículo (s) previsto"
+
+#: src/bungeni.main/bungeni/ui/calendar/macros.pt:46
+msgid "Items scheduled for this meeting"
+msgstr "temas previstos para esta reunión"
+
+#: src/bungeni.main/bungeni/ui/calendar/macros.pt:6
+msgid "&larr;"
+msgstr "←"
+
+#: src/bungeni.main/bungeni/ui/calendar/macros.pt:62
+msgid "Refresh"
+msgstr "refrescar"
+
+#: src/bungeni.main/bungeni/ui/calendar/macros.pt:76
+msgid "State"
+msgstr "estado"
+
+#: src/bungeni.main/bungeni/ui/calendar/macros.pt:77
+msgid "Actions"
+msgstr "acciones"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1008
 #, fuzzy
@@ -183,6 +223,8 @@ msgstr "fecha de vencimiento"
 #: src/bungeni.main/bungeni/ui/descriptor.py:1279
 #: src/bungeni.main/bungeni/ui/descriptor.py:1372
 #: src/bungeni.main/bungeni/ui/descriptor.py:1374
+#: src/bungeni.main/bungeni/ui/viewlets/templates/workspace_item_viewlet.pt:27
+#: src/bungeni.main/bungeni/ui/viewlets/templates/workspace_group_viewlet.pt:27
 msgid "Status date"
 msgstr "etapa fecha"
 
@@ -196,11 +238,13 @@ msgstr "cuentas asignadas"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1191
 #: src/bungeni.main/bungeni/ui/descriptor.py:1592
+#: src/bungeni.main/bungeni/ui/menu.zcml:1059
 msgid "Bill"
 msgstr "proyecto de ley"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1199
 #: src/bungeni.main/bungeni/ui/descriptor.py:2113
+#: src/bungeni.main/bungeni/ui/calendar/macros.pt:75
 msgid "Item"
 msgstr "artículo"
 
@@ -217,6 +261,7 @@ msgid "Committee"
 msgstr "comité"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1221
+#: src/bungeni.main/bungeni/ui/viewlets/templates/workspace_sitting_viewlet.pt:24
 msgid "Group"
 msgstr "grupo"
 
@@ -226,6 +271,7 @@ msgid "File"
 msgstr "expediente"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1229
+#: src/bungeni.main/bungeni/ui/menu.zcml:1179
 msgid "Files"
 msgstr "archivos"
 
@@ -243,6 +289,8 @@ msgstr "versión adjunta archivo"
 #: src/bungeni.main/bungeni/ui/descriptor.py:1634
 #: src/bungeni.main/bungeni/ui/descriptor.py:1709
 #: src/bungeni.main/bungeni/ui/descriptor.py:1755
+#: src/bungeni.main/bungeni/ui/menu.zcml:1190
+#: src/bungeni.main/bungeni/ui/templates/version.pt:6
 msgid "Versions"
 msgstr "versiones"
 
@@ -328,11 +376,13 @@ msgid "Headings"
 msgstr "las partidas"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1503
+#: src/bungeni.main/bungeni/ui/menu.zcml:1077
 msgid "Agenda item"
 msgstr "relación con el tema"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1504
 #: src/bungeni.main/bungeni/ui/viewlets/schedule.py:163
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:127
 msgid "Agenda items"
 msgstr "los temas del programa"
 
@@ -345,6 +395,7 @@ msgid "Agenda Item change"
 msgstr "relación con el tema cambio"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1533
+#: src/bungeni.main/bungeni/ui/menu.zcml:1065
 msgid "Motion"
 msgstr "movimiento"
 
@@ -352,6 +403,7 @@ msgstr "movimiento"
 #: src/bungeni.main/bungeni/ui/viewlets/schedule.py:147
 #: src/bungeni.main/bungeni/ui/workspace.py:271
 #: src/bungeni.main/bungeni/ui/workspace.py:312
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:67
 msgid "Motions"
 msgstr "propuestas de resolución"
 
@@ -384,6 +436,7 @@ msgstr "el cambio de movimiento"
 #: src/bungeni.main/bungeni/ui/viewlets/schedule.py:135
 #: src/bungeni.main/bungeni/ui/workspace.py:281
 #: src/bungeni.main/bungeni/ui/workspace.py:322
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:47
 msgid "Bills"
 msgstr "billetes"
 
@@ -410,6 +463,7 @@ msgid "Bill change"
 msgstr "proyecto de ley el cambio"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1643
+#: src/bungeni.main/bungeni/ui/menu.zcml:1071
 msgid "Question"
 msgstr "cuestión"
 
@@ -417,6 +471,7 @@ msgstr "cuestión"
 #: src/bungeni.main/bungeni/ui/viewlets/schedule.py:141
 #: src/bungeni.main/bungeni/ui/workspace.py:266
 #: src/bungeni.main/bungeni/ui/workspace.py:307
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:87
 msgid "Questions"
 msgstr "preguntas"
 
@@ -482,6 +537,7 @@ msgid "Events"
 msgstr "eventos"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1738
+#: src/bungeni.main/bungeni/ui/menu.zcml:1083
 msgid "Tabled document"
 msgstr "documento presentado"
 
@@ -489,6 +545,7 @@ msgstr "documento presentado"
 #: src/bungeni.main/bungeni/ui/viewlets/schedule.py:157
 #: src/bungeni.main/bungeni/ui/workspace.py:276
 #: src/bungeni.main/bungeni/ui/workspace.py:317
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:107
 msgid "Tabled documents"
 msgstr "los documentos presentados"
 
@@ -509,6 +566,7 @@ msgid "Sitting"
 msgstr "sesión"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1767
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:18
 msgid "Sittings"
 msgstr "sesiones"
 
@@ -673,6 +731,8 @@ msgstr "documento de origen"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:2105
 #: src/bungeni.main/bungeni/ui/viewlets/schedule.py:44
+#: src/bungeni.main/bungeni/ui/viewlets/workspace.zcml:53
+#: src/bungeni.main/bungeni/ui/viewlets/workspace.zcml:70
 msgid "Scheduling"
 msgstr "programación"
 
@@ -698,6 +758,7 @@ msgid "Report"
 msgstr "informe"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:2151
+#: src/bungeni.main/bungeni/ui/menu.zcml:97
 msgid "Reports"
 msgstr "informes"
 
@@ -785,6 +846,7 @@ msgid "User"
 msgstr "usuario"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:339
+#: src/bungeni.main/bungeni/ui/templates/admin-menu-viewlet.pt:11
 msgid "Users"
 msgstr "usuarios"
 
@@ -887,6 +949,7 @@ msgstr "fecha de la muerte"
 #: src/bungeni.main/bungeni/ui/descriptor.py:1268
 #: src/bungeni.main/bungeni/ui/descriptor.py:1361
 #: src/bungeni.main/bungeni/ui/descriptor.py:1363
+#: src/bungeni.main/bungeni/ui/viewlets/templates/workspace_sitting_viewlet.pt:25
 msgid "Status"
 msgstr "estado"
 
@@ -1047,6 +1110,7 @@ msgstr "acrónimo"
 #: src/bungeni.main/bungeni/ui/descriptor.py:1244
 #: src/bungeni.main/bungeni/ui/descriptor.py:1419
 #: src/bungeni.main/bungeni/ui/descriptor.py:1420
+#: src/bungeni.main/bungeni/ui/forms/templates/timeline_viewlet.pt:13
 msgid "Description"
 msgstr "descripción"
 
@@ -1117,6 +1181,9 @@ msgstr "tipo de comité"
 #: src/bungeni.main/bungeni/ui/descriptor.py:783
 #: src/bungeni.main/bungeni/ui/descriptor.py:1025
 #: src/bungeni.main/bungeni/ui/descriptor.py:1822
+#: src/bungeni.main/bungeni/ui/forms/templates/timeline_viewlet.pt:12
+#: src/bungeni.main/bungeni/ui/forms/templates/version-attached-files.pt:11
+#: src/bungeni.main/bungeni/ui/forms/templates/attached-files.pt:11
 msgid "Type"
 msgstr "tipo"
 
@@ -1231,10 +1298,13 @@ msgstr "msn messenger, aol im, googletalk ..."
 #: src/bungeni.main/bungeni/ui/descriptor.py:1236
 #: src/bungeni.main/bungeni/ui/descriptor.py:1300
 #: src/bungeni.main/bungeni/ui/descriptor.py:1441
+#: src/bungeni.main/bungeni/ui/forms/templates/version-attached-files.pt:9
+#: src/bungeni.main/bungeni/ui/forms/templates/attached-files.pt:9
 msgid "Title"
 msgstr "título"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:921
+#: src/bungeni.main/bungeni/ui/forms/templates/mp_title_viewlet.pt:1
 msgid "Titles"
 msgstr "títulos"
 
@@ -1339,6 +1409,24 @@ msgid "Item reordering"
 msgstr "reordenación de la partida"
 
 #: src/bungeni.main/bungeni/ui/forms/common.py:776
+#: src/bungeni.main/bungeni/ui/menu.zcml:365
+#: src/bungeni.main/bungeni/ui/menu.zcml:373
+#: src/bungeni.main/bungeni/ui/menu.zcml:685
+#: src/bungeni.main/bungeni/ui/menu.zcml:692
+#: src/bungeni.main/bungeni/ui/menu.zcml:819
+#: src/bungeni.main/bungeni/ui/menu.zcml:1204
+#: src/bungeni.main/bungeni/ui/menu.zcml:1209
+#: src/bungeni.main/bungeni/ui/menu.zcml:1223
+#: src/bungeni.main/bungeni/ui/menu.zcml:1240
+#: src/bungeni.main/bungeni/ui/menu.zcml:1259
+#: src/bungeni.main/bungeni/ui/menu.zcml:1277
+#: src/bungeni.main/bungeni/ui/menu.zcml:1330
+#: src/bungeni.main/bungeni/ui/menu.zcml:1338
+#: src/bungeni.main/bungeni/ui/menu.zcml:1346
+#: src/bungeni.main/bungeni/ui/menu.zcml:1355
+#: src/bungeni.main/bungeni/ui/menu.zcml:1363
+#: src/bungeni.main/bungeni/ui/menu.zcml:1390
+#: src/bungeni.main/bungeni/ui/menu.zcml:1399
 msgid "Delete"
 msgstr "borrar"
 
@@ -1358,6 +1446,8 @@ msgid "This content is not yet translated into $language"
 msgstr "este contenido no está traducido todavía en $language"
 
 #: src/bungeni.main/bungeni/ui/forms/files.py:14
+#: src/bungeni.main/bungeni/ui/forms/templates/version-attached-files.pt:1
+#: src/bungeni.main/bungeni/ui/forms/templates/attached-files.pt:1
 msgid "attached files"
 msgstr "archivos adjuntos"
 
@@ -1426,6 +1516,78 @@ msgstr "deben limitar la recurrencia (en número o fecha)"
 #: src/bungeni.main/bungeni/ui/forms/forms.py:359
 msgid "Recurring events"
 msgstr "citas que se repiten"
+
+#: src/bungeni.main/bungeni/ui/forms/templates/delete.pt:7
+msgid "Delete item confirmation"
+msgstr "confirmación de eliminar el tema"
+
+#. Default: "(Required)"
+#: src/bungeni.main/bungeni/ui/forms/templates/form.pt:13
+msgid "label_required"
+msgstr "necesario"
+
+#. Default: "Required"
+#: src/bungeni.main/bungeni/ui/forms/templates/form.pt:13
+msgid "title_required"
+msgstr "necesario"
+
+#. Default: "Name"
+#: src/bungeni.main/bungeni/ui/forms/templates/library-macros.pt:70
+msgid "svn_listing_name"
+msgstr "nombre"
+
+#. Default: "Modified"
+#: src/bungeni.main/bungeni/ui/forms/templates/library-macros.pt:72
+msgid "svn_listing_modified"
+msgstr "modificada"
+
+#. Default: "By"
+#: src/bungeni.main/bungeni/ui/forms/templates/library-macros.pt:73
+msgid "svn_listing_size"
+msgstr "por"
+
+#. Default: "Message"
+#: src/bungeni.main/bungeni/ui/forms/templates/library-macros.pt:74
+msgid "svn_listing_message"
+msgstr "mensaje"
+
+#: src/bungeni.main/bungeni/ui/forms/templates/mp_item_viewlet.pt:1
+msgid "Parliamentary activities"
+msgstr "las actividades parlamentarias"
+
+#: src/bungeni.main/bungeni/ui/forms/templates/offices_held_viewlet.pt:1
+msgid "Offices held"
+msgstr "cargos desempeñados"
+
+#. Default: "Type"
+#: src/bungeni.main/bungeni/ui/forms/templates/offices_held_viewlet.pt:10
+msgid "office_type"
+msgstr "tipo"
+
+#. Default: "Title"
+#: src/bungeni.main/bungeni/ui/forms/templates/offices_held_viewlet.pt:11
+msgid "office_title"
+msgstr "título"
+
+#. Default: "From"
+#: src/bungeni.main/bungeni/ui/forms/templates/offices_held_viewlet.pt:12
+msgid "office_from"
+msgstr "de"
+
+#. Default: "To"
+#: src/bungeni.main/bungeni/ui/forms/templates/offices_held_viewlet.pt:13
+msgid "office_to"
+msgstr "a"
+
+#. Default: "Office"
+#: src/bungeni.main/bungeni/ui/forms/templates/offices_held_viewlet.pt:9
+msgid "office_held"
+msgstr "oficina"
+
+#: src/bungeni.main/bungeni/ui/forms/templates/version-attached-files.pt:10
+#: src/bungeni.main/bungeni/ui/forms/templates/attached-files.pt:10
+msgid "File name"
+msgstr "el nombre de archivo"
 
 #: src/bungeni.main/bungeni/ui/forms/validations.py:129
 #: src/bungeni.main/bungeni/ui/forms/validations.py:140
@@ -1612,7 +1774,456 @@ msgstr "calendario:"
 msgid "Logout"
 msgstr "cierre de sesión"
 
+#: src/bungeni.main/bungeni/ui/menu.zcml:1007
+#, fuzzy
+msgid "Schedule"
+msgstr "horario"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1016
+msgid "Edit Scheduling"
+msgstr "modificar la programación"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1026
+msgid "Delete Scheduling"
+msgstr "la programación de eliminar"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1036
+msgid "Move Scheduling up"
+msgstr "mover la programación hasta"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1046
+msgid "Move Scheduling down"
+msgstr "mover hacia abajo la programación"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:109
+#, fuzzy
+msgid "The 'Add...' menu - for political parties"
+msgstr "en '..' menu - para los partidos políticos"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1102
+msgid "Workspace"
+msgstr "área de trabajo"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1109
+msgid "Home"
+msgstr "casa"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1124
+msgid "Business"
+msgstr "negocios"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:113
+#: src/bungeni.main/bungeni/ui/menu.zcml:128
+#: src/bungeni.main/bungeni/ui/menu.zcml:146
+#: src/bungeni.main/bungeni/ui/menu.zcml:204
+#: src/bungeni.main/bungeni/ui/menu.zcml:229
+#: src/bungeni.main/bungeni/ui/menu.zcml:254
+#: src/bungeni.main/bungeni/ui/menu.zcml:280
+#: src/bungeni.main/bungeni/ui/menu.zcml:316
+#: src/bungeni.main/bungeni/ui/menu.zcml:350
+#: src/bungeni.main/bungeni/ui/menu.zcml:445
+#: src/bungeni.main/bungeni/ui/menu.zcml:497
+#: src/bungeni.main/bungeni/ui/menu.zcml:523
+#: src/bungeni.main/bungeni/ui/menu.zcml:539
+msgid "Add..."
+msgstr "añadir ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1130
+#, fuzzy
+msgid "Members"
+msgstr "miembro"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1136
+#: src/bungeni.main/bungeni/ui/viewlets/workspace.zcml:49
+#: src/bungeni.main/bungeni/ui/viewlets/workspace.zcml:66
+#: src/bungeni.main/bungeni/ui/templates/archive.pt:6
+msgid "Archive"
+msgstr "archivo"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1142
+msgid "Administration"
+msgstr "administración"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1152
+#, fuzzy
+msgid "Actions..."
+msgstr "acciones"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1172
+#: src/bungeni.main/bungeni/ui/menu.zcml:1201
+#: src/bungeni.main/bungeni/ui/menu.zcml:1220
+#: src/bungeni.main/bungeni/ui/menu.zcml:1231
+#: src/bungeni.main/bungeni/ui/menu.zcml:1249
+#: src/bungeni.main/bungeni/ui/menu.zcml:1268
+#: src/bungeni.main/bungeni/ui/menu.zcml:1286
+#: src/bungeni.main/bungeni/ui/menu.zcml:1295
+#: src/bungeni.main/bungeni/ui/menu.zcml:1303
+#: src/bungeni.main/bungeni/ui/menu.zcml:1312
+#: src/bungeni.main/bungeni/ui/menu.zcml:1320
+#: src/bungeni.main/bungeni/ui/menu.zcml:1372
+#: src/bungeni.main/bungeni/ui/menu.zcml:1381
+msgid "Edit"
+msgstr "editar"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1178
+#: src/bungeni.main/bungeni/ui/templates/workflow.pt:7
+msgid "Workflow"
+msgstr "flujo de trabajo"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1183
+msgid "Audit Log"
+msgstr "registro de auditoría"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:121
+msgid "Add Party Member..."
+msgstr "añadir miembro del partido ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1226
+msgid "Respond"
+msgstr "responder"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:136
+#, fuzzy
+msgid "add political group member..."
+msgstr "añadir un miembro del grupo político ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1410
+msgid "Calendar"
+msgstr "calendario"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:142
+msgid "The 'Add...' menu - for committees"
+msgstr "en '... \" menú - para los comités"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1422
+msgid "download pdf"
+msgstr "descargar pdf"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1431
+msgid "download odt"
+msgstr "descarga odt"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:15
+msgid "Actions Admin"
+msgstr "acciones"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:154
+#: src/bungeni.main/bungeni/ui/menu.zcml:549
+msgid "Add Member..."
+msgstr "añadir miembros ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:161
+msgid "Add Staff..."
+msgstr "añadir personal ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:169
+#: src/bungeni.main/bungeni/ui/menu.zcml:609
+#: src/bungeni.main/bungeni/ui/menu.zcml:833
+msgid "Add Agenda item..."
+msgstr "añadir tema del programa ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:179
+msgid "Assign a bill..."
+msgstr "asignar un proyecto de ley ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:189
+#: src/bungeni.main/bungeni/ui/menu.zcml:601
+#: src/bungeni.main/bungeni/ui/menu.zcml:626
+msgid "Add Sitting..."
+msgstr "añadir sentado ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:198
+msgid "The 'Add..' menu - for government"
+msgstr "\"añadir ...\" menu - para el gobierno"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:214
+#: src/bungeni.main/bungeni/ui/menu.zcml:721
+msgid "Add Ministry..."
+msgstr "añadir ministerio ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:22
+msgid "Actions for Calendar Sittings"
+msgstr "acciones de las sesiones de calendario"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:223
+msgid "The 'Add..' menu - for ministry"
+msgstr "\"añadir ...\" menu - para el ministerio"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:239
+#: src/bungeni.main/bungeni/ui/menu.zcml:770
+msgid "Add Minister..."
+msgstr "añadir el ministro ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:248
+msgid "The 'Add...' menu - for Group Memberships"
+msgstr "\"añadir ...\" menú - para miembros de grupos"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:25
+msgid "Actions for Scheduling Discussions"
+msgstr "acciones para la programación de los debates"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:264
+msgid "Add title..."
+msgstr "añadir un título ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:274
+msgid "The 'Add...' menu - for Group Sittings"
+msgstr "\"añadir ...\" menú - en sesiones de grupo"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:28
+msgid "Actions for Calendar Schedulings"
+msgstr "acciones para el calendario de programación"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:290
+msgid "Add Attendance..."
+msgstr "añadir la asistencia ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:299
+#: src/bungeni.main/bungeni/ui/menu.zcml:617
+#: src/bungeni.main/bungeni/ui/menu.zcml:876
+msgid "Add Heading..."
+msgstr "añadir la partida ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:31
+#, fuzzy
+msgid "The 'workflow' menu - allows user to execute workflow transitions"
+msgstr ""
+"el flujo de trabajo \"menú\" - permite al usuario ejecutar transiciones de "
+"flujo de trabajo"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:310
+msgid "The 'Add...' menu - for motion"
+msgstr "\"añadir ...\" menu - para el movimiento"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:326
+#: src/bungeni.main/bungeni/ui/menu.zcml:438
+#: src/bungeni.main/bungeni/ui/menu.zcml:488
+msgid "Add cosignatory..."
+msgstr "añadir cosignatario ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:335
+#: src/bungeni.main/bungeni/ui/menu.zcml:401
+#: src/bungeni.main/bungeni/ui/menu.zcml:424
+#: src/bungeni.main/bungeni/ui/menu.zcml:471
+#: src/bungeni.main/bungeni/ui/menu.zcml:514
+#: src/bungeni.main/bungeni/ui/menu.zcml:890
+msgid "Add file..."
+msgstr "añadir el archivo ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:346
+msgid "The 'Add...' menu - for bill"
+msgstr "\"añadir ...\" menu - para proyecto de ley"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:358
+msgid "Add consignatory..."
+msgstr "añadir cosignatario ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:38
+#, fuzzy
+msgid "The 'Calendar' menu - allows user to select a scheduling context"
+msgstr ""
+"el calendario \"menú\" - permite al usuario seleccionar un contexto de "
+"planificación"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:382
+#: src/bungeni.main/bungeni/ui/menu.zcml:391
+#: src/bungeni.main/bungeni/ui/menu.zcml:431
+#: src/bungeni.main/bungeni/ui/menu.zcml:480
+msgid "Add event..."
+msgstr "agregar un nuevo evento ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:410
+msgid "Assign bill to a group..."
+msgstr "proyecto de ley asigna a la comisión ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:42
+#, fuzzy
+msgid "The 'Add' menu - allows user to add content"
+msgstr "\"añadir ...\" menú - permite al usuario agregar contenido"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:420
+msgid "The 'Add...' menu - for question"
+msgstr "\"añadir ...\" menú - para la pregunta"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:46
+#, fuzzy
+msgid "The 'Translate' menu - allows user to translate content"
+msgstr "el \"añadir\" del menú - permite al usuario agregar contenido"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:465
+msgid "The 'Add...' menu - for tabled document"
+msgstr "\"añadir ...\" menu - para el documento presentado"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:508
+msgid "The 'Add...' menu - for agenda item"
+msgstr "\"añadir ...\" menu - para el tema"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:533
+msgid "The 'Add...' menu - for offices"
+msgstr "\"añadir ...\" menu - para oficinas"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:564
+msgid "content"
+msgstr "contenido"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:573
+msgid "settings"
+msgstr "ajustes"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:583
+msgid "Add ..."
+msgstr "añadir ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:594
+msgid "The 'Add..' menu - for calendar"
+msgstr "\"añadir ...\" menu - para el calendario"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:634
+#: src/bungeni.main/bungeni/ui/menu.zcml:989
+msgid "Delete Sitting"
+msgstr "eliminar la sesión"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:650
+msgid "Add Parliament..."
+msgstr "añadir el parlamento ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:657
+msgid "Add Committee..."
+msgstr "añadir comité ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:664
+#: src/bungeni.main/bungeni/ui/menu.zcml:841
+msgid "Add Session..."
+msgstr "añadir período de sesiones ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:671
+msgid "Add Government..."
+msgstr "gobierno añadir ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:678
+msgid "Add MP..."
+msgstr "mp añadir ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:68
+msgid "The 'Actions' menu - provides context-specific actions (views)"
+msgstr ""
+"las \"acciones\" del menú - prevé acciones específicas al contexto (vistas)"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:700
+msgid "Add Office..."
+msgstr "añadir oficina ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:707
+msgid "Add Political Party..."
+msgstr "parte añadir política ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:714
+msgid "Add Political Group..."
+msgstr "añadir grupo político ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:72
+msgid "The 'Reports' menu - provides reporting actions"
+msgstr "los informes \"menú\" - proporciona informes acciones"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:728
+msgid "Add User..."
+msgstr "añadir usuario ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:735
+msgid "Add Constituency..."
+msgstr "añadir circunscripción ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:742
+msgid "Add Province..."
+msgstr "añadir la provincia de ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:749
+msgid "Add Region..."
+msgstr "añadir región ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:756
+msgid "Add Committee Member..."
+msgstr "añadir miembro del comité ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:763
+msgid "Add Committee Staff..."
+msgstr "añadir la junta de personal ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:777
+msgid "Add Office Member..."
+msgstr "añadir miembro oficina ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:784
+#: src/bungeni.main/bungeni/ui/menu.zcml:791
+msgid "Add Address..."
+msgstr "agregar la dirección ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:79
+#: src/bungeni.main/bungeni/ui/menu.zcml:87
+msgid "Add Parliamentary Content..."
+msgstr "agregar contenido parlamentarias ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:798
+msgid "Add Delegation..."
+msgstr "añadir delegación ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:805
+msgid "Add Title/Function..."
+msgstr "añadir un título / papel ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:812
+msgid "Add Consignatory..."
+msgstr "añadir cosignatario ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:826
+msgid "Add Tabled document..."
+msgstr "adicionar documento presentado ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:850
+msgid "Delete Session"
+msgstr "período de sesiones eliminar"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:862
+msgid "Add Question..."
+msgstr "cuestión agregar ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:869
+msgid "Add Motion..."
+msgstr "añadir movimiento ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:883
+msgid "Add Bill..."
+msgstr "proyecto de ley añadir ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:900
+#: src/bungeni.main/bungeni/ui/menu.zcml:916
+msgid "Agenda..."
+msgstr "orden del día ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:906
+#: src/bungeni.main/bungeni/ui/menu.zcml:922
+msgid "Votes and proceedings..."
+msgstr "votos y actas de ..."
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:962
+#: src/bungeni.main/bungeni/ui/menu.zcml:1171
+msgid "Info"
+msgstr "info"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:971
+msgid "Edit Discussion"
+msgstr "edición de discusión"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:980
+msgid "Schedule Item"
+msgstr "programa de"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:998
+msgid "Reorder Schedulings"
+msgstr "schedulings reordenar"
+
 #: src/bungeni.main/bungeni/ui/search.py:106
+#: src/bungeni.main/bungeni/ui/templates/search.pt:7
 msgid "Search"
 msgstr "búsqueda"
 
@@ -1647,6 +2258,90 @@ msgstr "peso"
 #: src/bungeni.main/bungeni/ui/search.py:72
 msgid "percent"
 msgstr "por ciento"
+
+#. Default: "Upload file"
+#: src/bungeni.main/bungeni/ui/templates/addfilewidget.pt:2
+msgid "upload-file"
+msgstr "archivo de carga"
+
+#: src/bungeni.main/bungeni/ui/templates/admin-menu-viewlet.pt:13
+msgid "Settings"
+msgstr "ajustes"
+
+#: src/bungeni.main/bungeni/ui/templates/app-index.pt:6
+msgid "Welcome to Bungeni"
+msgstr "bienvenido a bungeni"
+
+#: src/bungeni.main/bungeni/ui/templates/archive.pt:7
+msgid "Access to current and historical records"
+msgstr "acceso a los registros actuales e históricos"
+
+#. Default: "Keep existing file"
+#: src/bungeni.main/bungeni/ui/templates/editfilewidget.pt:21
+msgid "keep-file"
+msgstr "mantener el archivo existente"
+
+#. Default: "Replace with new file:"
+#: src/bungeni.main/bungeni/ui/templates/editfilewidget.pt:30
+msgid "replace-file"
+msgstr "reemplazar con nuevo archivo"
+
+#. Default: "download"
+#: src/bungeni.main/bungeni/ui/templates/editfilewidget.pt:38
+msgid "download-file"
+msgstr "descargar"
+
+#. Default: "Keep existing image"
+#: src/bungeni.main/bungeni/ui/templates/imagewidget.pt:23
+msgid "keep-image"
+msgstr "mantener la imagen existente"
+
+#. Default: "Delete current image"
+#: src/bungeni.main/bungeni/ui/templates/imagewidget.pt:32
+msgid "delete-image"
+msgstr "borrar la imagen actual"
+
+#. Default: "Replace with new image:"
+#: src/bungeni.main/bungeni/ui/templates/imagewidget.pt:41
+msgid "replace-image"
+msgstr "reemplazar con la nueva imagen"
+
+#. Default: "Upload image"
+#: src/bungeni.main/bungeni/ui/templates/imagewidget.pt:44
+msgid "upload-image"
+msgstr "de carga de imágenes"
+
+#: src/bungeni.main/bungeni/ui/templates/search.pt:19
+msgid "Results"
+msgstr "resultados"
+
+#: src/bungeni.main/bungeni/ui/templates/similar.pt:7
+msgid "Similar Content"
+msgstr "contenido similar"
+
+#: src/bungeni.main/bungeni/ui/templates/version.pt:11
+msgid ""
+"Select a version to compare to the current working copy, or make two "
+"selections to compare historic versions"
+msgstr ""
+"escoger una versión para compararla con la copia de trabajo actual, o hacer "
+"dos selecciones para comparar las versiones anteriores"
+
+#: src/bungeni.main/bungeni/ui/templates/workflow.pt:11
+msgid "Current state: ${state}."
+msgstr "estado actual: ${state}"
+
+#: src/bungeni.main/bungeni/ui/templates/workflow.pt:15
+msgid "History"
+msgstr "historia"
+
+#: src/bungeni.main/bungeni/ui/templates/workflow.pt:19
+msgid "No history available for this item"
+msgstr "sin antecedentes para este artículo"
+
+#: src/bungeni.main/bungeni/ui/templates/workflow_ajax.pt:7
+msgid "Change state..."
+msgstr "cambio de estado ..."
 
 #: src/bungeni.main/bungeni/ui/utils/date.py:24
 msgid "date must be of type datetime or date"
@@ -1689,6 +2384,7 @@ msgid "Select one or two items to show differences"
 msgstr "seleccionar uno o dos temas para mostrar las diferencias"
 
 #: src/bungeni.main/bungeni/ui/versions.py:41
+#: src/bungeni.main/bungeni/ui/viewlets/templates/portlet-contentactions.pt:7
 msgid "View"
 msgstr "vista"
 
@@ -1754,6 +2450,7 @@ msgid "Leave blank or set lower limit"
 msgstr "límite inferior dejar en blanco o un conjunto"
 
 #: src/bungeni.main/bungeni/ui/viewlets/archive.py:28
+#: src/bungeni.main/bungeni/ui/viewlets/templates/workspace_item_viewlet.pt:29
 msgid "To"
 msgstr "a"
 
@@ -1780,6 +2477,81 @@ msgstr "el parlamento ..."
 #: src/bungeni.main/bungeni/ui/viewlets/archive.py:92
 msgid "Filter"
 msgstr "filtro"
+
+#: src/bungeni.main/bungeni/ui/viewlets/templates/archive-dates.pt:5
+msgid "Filter by date or parliament"
+msgstr "filtrar por fecha o el parlamento"
+
+#. Default: "You are here:"
+#: src/bungeni.main/bungeni/ui/viewlets/templates/breadcrumbs.pt:2
+msgid "you_are_here"
+msgstr "estás aquí:"
+
+#. Default: "Home"
+#: src/bungeni.main/bungeni/ui/viewlets/templates/breadcrumbs.pt:3
+msgid "tabs_home"
+msgstr "casa"
+
+#: src/bungeni.main/bungeni/ui/viewlets/templates/questions.pt:20
+msgid "No items"
+msgstr "no hay artículos"
+
+#: src/bungeni.main/bungeni/ui/viewlets/templates/scheduling.pt:9
+msgid "Add items to schedule by clicking on them"
+msgstr "agregue la prenda para programar haciendo clic sobre ellas"
+
+#. Default: "Sections"
+#: src/bungeni.main/bungeni/ui/viewlets/templates/sections.pt:2
+msgid "heading_sections"
+msgstr "secciones"
+
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:15
+msgid "From: ${whats_on_start_date} to: ${whats_on_end_date}"
+msgstr "desde: ${whatsonstartdate} a: ${whatsonenddate}"
+
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:7
+msgid "What's on"
+msgstr "lo que está en"
+
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:8
+msgid "An overview of the daily operations of the parliament"
+msgstr "una visión general de las operaciones diarias del parlamento"
+
+#: src/bungeni.main/bungeni/ui/viewlets/templates/workspace_item_portlet.pt:10
+#: src/bungeni.main/bungeni/ui/viewlets/templates/questions.pt:10
+#: src/bungeni.main/bungeni/ui/viewlets/templates/workspace_sitting_viewlet.pt:10
+#: src/bungeni.main/bungeni/ui/viewlets/templates/workspace_sitting_viewlet.pt:32
+#: src/bungeni.main/bungeni/ui/viewlets/templates/bungeni-navigation-tree.pt:29
+#: src/bungeni.main/bungeni/ui/viewlets/templates/ministry_ws_viewlet.pt:10
+#: src/bungeni.main/bungeni/ui/viewlets/templates/schedulable_items.pt:1
+#: src/bungeni.main/bungeni/ui/viewlets/templates/schedulable_items.pt:30
+#: src/bungeni.main/bungeni/ui/templates/workspace-section.pt:6
+#: src/bungeni.main/bungeni/ui/templates/changes.pt:6
+#: src/bungeni.main/bungeni/ui/forms/templates/library-container.pt:1
+#: src/bungeni.main/bungeni/ui/forms/templates/timeline_viewlet.pt:1
+#: src/bungeni.main/bungeni/ui/forms/templates/timeline_viewlet.pt:19
+#: src/bungeni.main/bungeni/ui/forms/templates/delete.pt:29
+#: src/bungeni.main/bungeni/ui/forms/templates/content-view.pt:7
+#: src/bungeni.main/bungeni/ui/forms/templates/content-view.pt:11
+#: src/bungeni.main/bungeni/ui/forms/templates/content-view.pt:12
+#: src/bungeni.main/bungeni/ui/forms/templates/generic-sub-container.pt:1
+msgid "${DYNAMIC_CONTENT}"
+msgstr "${dynamiccontent}"
+
+#: src/bungeni.main/bungeni/ui/viewlets/templates/workspace_item_viewlet.pt:24
+#: src/bungeni.main/bungeni/ui/viewlets/templates/workspace_group_viewlet.pt:24
+msgid "Subject"
+msgstr "tema"
+
+#: src/bungeni.main/bungeni/ui/viewlets/templates/workspace_item_viewlet.pt:28
+msgid "Owner"
+msgstr "propietario"
+
+#. Default: "No items found"
+#: src/bungeni.main/bungeni/ui/viewlets/templates/workspace_item_viewlet.pt:43
+#: src/bungeni.main/bungeni/ui/viewlets/templates/workspace_group_viewlet.pt:39
+msgid "workspace_no_items"
+msgstr "no se han encontrado"
 
 #: src/bungeni.main/bungeni/ui/viewlets/workspace.py:139
 msgid "My Groups"
@@ -1843,6 +2615,14 @@ msgstr "preguntas escritas"
 #: src/bungeni.main/bungeni/ui/viewlets/workspace.py:632
 msgid "agendas/minutes"
 msgstr "órdenes del día / minuto"
+
+#: src/bungeni.main/bungeni/ui/viewlets/workspace.zcml:37
+msgid "The sections of a user's workspace"
+msgstr "acciones para el área de trabajo"
+
+#: src/bungeni.main/bungeni/ui/views.zcml:427
+msgid "Listing"
+msgstr "listado"
 
 #: src/bungeni.main/bungeni/ui/vocabulary.py:100
 msgid "Translators Office"
@@ -1991,6 +2771,8 @@ msgid "Workflow history"
 msgstr "flujo de trabajo de la historia"
 
 #: src/bungeni.main/bungeni/ui/workspace.py:256
+#: src/bungeni.main/bungeni/ui/viewlets/workspace.zcml:45
+#: src/bungeni.main/bungeni/ui/viewlets/workspace.zcml:62
 msgid "Parliamentary items"
 msgstr "artículos parlamentaria"
 
@@ -2015,6 +2797,28 @@ msgstr "elementos archivados"
 msgid "Unknown principal group"
 msgstr "principal grupo de desconocidos"
 
+#: src/bungeni.transcripts/bungeni/transcripts/configure.zcml:102
+#, fuzzy
+msgid "generate takes"
+msgstr "los temas del programa"
+
+#: src/bungeni.transcripts/bungeni/transcripts/configure.zcml:110
+msgid "assign staff"
+msgstr ""
+
+#: src/bungeni.transcripts/bungeni/transcripts/configure.zcml:81
+msgid "transcripts"
+msgstr ""
+
+#: src/bungeni.transcripts/bungeni/transcripts/configure.zcml:88
+msgid "Transcripts menu"
+msgstr ""
+
+#: src/bungeni.transcripts/bungeni/transcripts/configure.zcml:93
+#, fuzzy
+msgid "edit transcript"
+msgstr "la versión original es $language muestra a la izquierda"
+
 #~ msgid "Votes and Proceedings"
 #~ msgstr "votos y actas"
 
@@ -2030,83 +2834,11 @@ msgstr "principal grupo de desconocidos"
 #~ msgid "Download PDF"
 #~ msgstr "descargar pdf"
 
-#~ msgid "&rarr;"
-#~ msgstr "→"
-
-#~ msgid "No items scheduled"
-#~ msgstr "sin elementos programados"
-
-#~ msgid "Week ${week_no}"
-#~ msgstr "${weekno} semana"
-
-#~ msgid "${count} item(s) scheduled"
-#~ msgstr "${count} artículo (s) previsto"
-
-#~ msgid "Items scheduled for this meeting"
-#~ msgstr "temas previstos para esta reunión"
-
-#~ msgid "&larr;"
-#~ msgstr "←"
-
-#~ msgid "Refresh"
-#~ msgstr "refrescar"
-
-#~ msgid "State"
-#~ msgstr "estado"
-
-#~ msgid "Actions"
-#~ msgstr "acciones"
-
 #~ msgid "Party member"
 #~ msgstr "miembro del partido"
 
 #~ msgid "Party members"
 #~ msgstr "los miembros del partido"
-
-#~ msgid "Delete item confirmation"
-#~ msgstr "confirmación de eliminar el tema"
-
-#~ msgid "label_required"
-#~ msgstr "necesario"
-
-#~ msgid "title_required"
-#~ msgstr "necesario"
-
-#~ msgid "svn_listing_name"
-#~ msgstr "nombre"
-
-#~ msgid "svn_listing_modified"
-#~ msgstr "modificada"
-
-#~ msgid "svn_listing_size"
-#~ msgstr "por"
-
-#~ msgid "svn_listing_message"
-#~ msgstr "mensaje"
-
-#~ msgid "Parliamentary activities"
-#~ msgstr "las actividades parlamentarias"
-
-#~ msgid "Offices held"
-#~ msgstr "cargos desempeñados"
-
-#~ msgid "office_type"
-#~ msgstr "tipo"
-
-#~ msgid "office_title"
-#~ msgstr "título"
-
-#~ msgid "office_from"
-#~ msgstr "de"
-
-#~ msgid "office_to"
-#~ msgstr "a"
-
-#~ msgid "office_held"
-#~ msgstr "oficina"
-
-#~ msgid "File name"
-#~ msgstr "el nombre de archivo"
 
 #~ msgid "Add new Question..."
 #~ msgstr "cuestión agregar nuevos ..."
@@ -2120,386 +2852,6 @@ msgstr "principal grupo de desconocidos"
 #~ msgid "Add new Committee..."
 #~ msgstr "añadir nuevo comité ..."
 
-#~ msgid "Agenda..."
-#~ msgstr "orden del día ..."
-
-#~ msgid "Votes and proceedings..."
-#~ msgstr "votos y actas de ..."
-
-#~ msgid "The 'Add..' menu - for political parties"
-#~ msgstr "en '..' menu - para los partidos políticos"
-
-#~ msgid "Info"
-#~ msgstr "info"
-
-#~ msgid "Edit Discussion"
-#~ msgstr "edición de discusión"
-
-#~ msgid "Schedule Item"
-#~ msgstr "programa de"
-
-#~ msgid "Add..."
-#~ msgstr "añadir ..."
-
-#~ msgid "Reorder Schedulings"
-#~ msgstr "schedulings reordenar"
-
-#~ msgid "Edit Scheduling"
-#~ msgstr "modificar la programación"
-
-#~ msgid "Delete Scheduling"
-#~ msgstr "la programación de eliminar"
-
-#~ msgid "Move Scheduling up"
-#~ msgstr "mover la programación hasta"
-
-#~ msgid "Move Scheduling down"
-#~ msgstr "mover hacia abajo la programación"
-
-#~ msgid "Add Party Member..."
-#~ msgstr "añadir miembro del partido ..."
-
-#~ msgid "Workspace"
-#~ msgstr "área de trabajo"
-
-#~ msgid "Home"
-#~ msgstr "casa"
-
-#~ msgid "Business"
-#~ msgstr "negocios"
-
-#~ msgid "Archive"
-#~ msgstr "archivo"
-
-#~ msgid "Administration"
-#~ msgstr "administración"
-
-#~ msgid "Edit"
-#~ msgstr "editar"
-
-#~ msgid "Respond"
-#~ msgstr "responder"
-
-#~ msgid "Add political group member..."
-#~ msgstr "añadir un miembro del grupo político ..."
-
-#~ msgid "The 'Add...' menu - for committees"
-#~ msgstr "en '... \" menú - para los comités"
-
-#~ msgid "Actions Admin"
-#~ msgstr "acciones"
-
-#~ msgid "Calendar"
-#~ msgstr "calendario"
-
-#~ msgid "Audit Log"
-#~ msgstr "registro de auditoría"
-
-#~ msgid "download pdf"
-#~ msgstr "descargar pdf"
-
-#~ msgid "download odt"
-#~ msgstr "descarga odt"
-
-#~ msgid "Workflow"
-#~ msgstr "flujo de trabajo"
-
-#~ msgid "Add Member..."
-#~ msgstr "añadir miembros ..."
-
-#~ msgid "Add Staff..."
-#~ msgstr "añadir personal ..."
-
-#~ msgid "Add Agenda item..."
-#~ msgstr "añadir tema del programa ..."
-
-#~ msgid "Assign a bill..."
-#~ msgstr "asignar un proyecto de ley ..."
-
-#~ msgid "Add Sitting..."
-#~ msgstr "añadir sentado ..."
-
-#~ msgid "The 'Add..' menu - for government"
-#~ msgstr "\"añadir ...\" menu - para el gobierno"
-
-#~ msgid "Actions for Calendar Sittings"
-#~ msgstr "acciones de las sesiones de calendario"
-
-#~ msgid "Add Ministry..."
-#~ msgstr "añadir ministerio ..."
-
-#~ msgid "The 'Add..' menu - for ministry"
-#~ msgstr "\"añadir ...\" menu - para el ministerio"
-
-#~ msgid "Add Minister..."
-#~ msgstr "añadir el ministro ..."
-
-#~ msgid "The 'Add...' menu - for Group Memberships"
-#~ msgstr "\"añadir ...\" menú - para miembros de grupos"
-
-#~ msgid "Actions for Scheduling Discussions"
-#~ msgstr "acciones para la programación de los debates"
-
-#~ msgid "Add title..."
-#~ msgstr "añadir un título ..."
-
-#~ msgid "The 'Add...' menu - for Group Sittings"
-#~ msgstr "\"añadir ...\" menú - en sesiones de grupo"
-
-#~ msgid "Add Attendance..."
-#~ msgstr "añadir la asistencia ..."
-
-#~ msgid "Add Heading..."
-#~ msgstr "añadir la partida ..."
-
-#~ msgid "The 'Add...' menu - for motion"
-#~ msgstr "\"añadir ...\" menu - para el movimiento"
-
-#~ msgid "Actions for Calendar Schedulings"
-#~ msgstr "acciones para el calendario de programación"
-
-#~ msgid "Add cosignatory..."
-#~ msgstr "añadir cosignatario ..."
-
-#~ msgid "Add file..."
-#~ msgstr "añadir el archivo ..."
-
-#~ msgid "The 'Add...' menu - for bill"
-#~ msgstr "\"añadir ...\" menu - para proyecto de ley"
-
-#~ msgid "Add consignatory..."
-#~ msgstr "añadir cosignatario ..."
-
-#~ msgid ""
-#~ "The 'workflow' menu - allows the user to execute workflow transitions"
-#~ msgstr ""
-#~ "el flujo de trabajo \"menú\" - permite al usuario ejecutar transiciones "
-#~ "de flujo de trabajo"
-
-#~ msgid "Add event..."
-#~ msgstr "agregar un nuevo evento ..."
-
-#~ msgid "Assign bill to a group..."
-#~ msgstr "proyecto de ley asigna a la comisión ..."
-
-#~ msgid "The 'Calendar' menu - allows the user to select a scheduling context"
-#~ msgstr ""
-#~ "el calendario \"menú\" - permite al usuario seleccionar un contexto de "
-#~ "planificación"
-
-#~ msgid "The 'Add...' menu - for question"
-#~ msgstr "\"añadir ...\" menú - para la pregunta"
-
-#~ msgid "The 'Add...' menu - for tabled document"
-#~ msgstr "\"añadir ...\" menu - para el documento presentado"
-
-#~ msgid "The 'Add' menu - allows the user to add content"
-#~ msgstr "\"añadir ...\" menú - permite al usuario agregar contenido"
-
-#~ msgid "The 'Add...' menu - for agenda item"
-#~ msgstr "\"añadir ...\" menu - para el tema"
-
-#~ msgid "The 'Add...' menu - for offices"
-#~ msgstr "\"añadir ...\" menu - para oficinas"
-
-#~ msgid "The 'Translate' menu - allows the user to translate content"
-#~ msgstr "el \"añadir\" del menú - permite al usuario agregar contenido"
-
-#~ msgid "content"
-#~ msgstr "contenido"
-
-#~ msgid "settings"
-#~ msgstr "ajustes"
-
-#~ msgid "Add ..."
-#~ msgstr "añadir ..."
-
-#~ msgid "The 'Add..' menu - for calendar"
-#~ msgstr "\"añadir ...\" menu - para el calendario"
-
-#~ msgid "Delete Sitting"
-#~ msgstr "eliminar la sesión"
-
-#~ msgid "Add Parliament..."
-#~ msgstr "añadir el parlamento ..."
-
-#~ msgid "Add Committee..."
-#~ msgstr "añadir comité ..."
-
-#~ msgid "The 'Actions' menu - provides context-specific actions (views)"
-#~ msgstr ""
-#~ "las \"acciones\" del menú - prevé acciones específicas al contexto "
-#~ "(vistas)"
-
-#~ msgid "Add Session..."
-#~ msgstr "añadir período de sesiones ..."
-
-#~ msgid "Add Government..."
-#~ msgstr "gobierno añadir ..."
-
-#~ msgid "Add MP..."
-#~ msgstr "mp añadir ..."
-
-#~ msgid "Add Office..."
-#~ msgstr "añadir oficina ..."
-
-#~ msgid "The 'Reports' menu - provides reporting actions"
-#~ msgstr "los informes \"menú\" - proporciona informes acciones"
-
-#~ msgid "Add Political Party..."
-#~ msgstr "parte añadir política ..."
-
-#~ msgid "Add Political Group..."
-#~ msgstr "añadir grupo político ..."
-
-#~ msgid "Add User..."
-#~ msgstr "añadir usuario ..."
-
-#~ msgid "Add Constituency..."
-#~ msgstr "añadir circunscripción ..."
-
-#~ msgid "Add Province..."
-#~ msgstr "añadir la provincia de ..."
-
-#~ msgid "Add Region..."
-#~ msgstr "añadir región ..."
-
-#~ msgid "Add Committee Member..."
-#~ msgstr "añadir miembro del comité ..."
-
-#~ msgid "Add Committee Staff..."
-#~ msgstr "añadir la junta de personal ..."
-
-#~ msgid "Add Parliamentary Content..."
-#~ msgstr "agregar contenido parlamentarias ..."
-
-#~ msgid "Add Office Member..."
-#~ msgstr "añadir miembro oficina ..."
-
-#~ msgid "Add Address..."
-#~ msgstr "agregar la dirección ..."
-
-#~ msgid "Add Delegation..."
-#~ msgstr "añadir delegación ..."
-
-#~ msgid "Add Title/Function..."
-#~ msgstr "añadir un título / papel ..."
-
-#~ msgid "Add Consignatory..."
-#~ msgstr "añadir cosignatario ..."
-
-#~ msgid "Add Tabled document..."
-#~ msgstr "adicionar documento presentado ..."
-
-#~ msgid "Delete Session"
-#~ msgstr "período de sesiones eliminar"
-
-#~ msgid "Add Question..."
-#~ msgstr "cuestión agregar ..."
-
-#~ msgid "Add Motion..."
-#~ msgstr "añadir movimiento ..."
-
-#~ msgid "Add Bill..."
-#~ msgstr "proyecto de ley añadir ..."
-
-#~ msgid "upload-file"
-#~ msgstr "archivo de carga"
-
-#~ msgid "Settings"
-#~ msgstr "ajustes"
-
-#~ msgid "Welcome to Bungeni"
-#~ msgstr "bienvenido a bungeni"
-
-#~ msgid "Access to current and historical records"
-#~ msgstr "acceso a los registros actuales e históricos"
-
-#~ msgid "keep-file"
-#~ msgstr "mantener el archivo existente"
-
-#~ msgid "replace-file"
-#~ msgstr "reemplazar con nuevo archivo"
-
-#~ msgid "download-file"
-#~ msgstr "descargar"
-
-#~ msgid "keep-image"
-#~ msgstr "mantener la imagen existente"
-
-#~ msgid "delete-image"
-#~ msgstr "borrar la imagen actual"
-
-#~ msgid "replace-image"
-#~ msgstr "reemplazar con la nueva imagen"
-
-#~ msgid "upload-image"
-#~ msgstr "de carga de imágenes"
-
-#~ msgid "Results"
-#~ msgstr "resultados"
-
-#~ msgid "Similar Content"
-#~ msgstr "contenido similar"
-
-#~ msgid ""
-#~ "Select a version to compare to the current working copy, or make two "
-#~ "selections to compare historic versions"
-#~ msgstr ""
-#~ "escoger una versión para compararla con la copia de trabajo actual, o "
-#~ "hacer dos selecciones para comparar las versiones anteriores"
-
-#~ msgid "Current state: ${state}."
-#~ msgstr "estado actual: ${state}"
-
-#~ msgid "History"
-#~ msgstr "historia"
-
-#~ msgid "No history available for this item"
-#~ msgstr "sin antecedentes para este artículo"
-
-#~ msgid "Change state..."
-#~ msgstr "cambio de estado ..."
-
-#~ msgid "Filter by date or parliament"
-#~ msgstr "filtrar por fecha o el parlamento"
-
-#~ msgid "you_are_here"
-#~ msgstr "estás aquí:"
-
-#~ msgid "tabs_home"
-#~ msgstr "casa"
-
-#~ msgid "No items"
-#~ msgstr "no hay artículos"
-
-#~ msgid "Add items to schedule by clicking on them"
-#~ msgstr "agregue la prenda para programar haciendo clic sobre ellas"
-
-#~ msgid "heading_sections"
-#~ msgstr "secciones"
-
-#~ msgid "From: ${whats_on_start_date} to: ${whats_on_end_date}"
-#~ msgstr "desde: ${whatsonstartdate} a: ${whatsonenddate}"
-
-#~ msgid "What's on"
-#~ msgstr "lo que está en"
-
-#~ msgid "An overview of the daily operations of the parliament"
-#~ msgstr "una visión general de las operaciones diarias del parlamento"
-
-#~ msgid "${DYNAMIC_CONTENT}"
-#~ msgstr "${dynamiccontent}"
-
-#~ msgid "Subject"
-#~ msgstr "tema"
-
-#~ msgid "Owner"
-#~ msgstr "propietario"
-
-#~ msgid "workspace_no_items"
-#~ msgstr "no se han encontrado"
-
 #~ msgid "Draft Bills"
 #~ msgstr "proyectos de ley"
 
@@ -2511,12 +2863,6 @@ msgstr "principal grupo de desconocidos"
 
 #~ msgid "questions at the ministries"
 #~ msgstr "preguntas de los ministerios"
-
-#~ msgid "The sections of a user's workspace"
-#~ msgstr "acciones para el área de trabajo"
-
-#~ msgid "Listing"
-#~ msgstr "listado"
 
 #~ msgid "If a user is deceased he must have the status D"
 #~ msgstr "si un usuario ha fallecido, debe tener la condición d"
