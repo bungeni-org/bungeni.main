@@ -227,16 +227,14 @@ class WorkspaceContainerTraverser(SimpleComponentTraverser):
         elif name=="archive":
             return getWorkSpaceArchiveSection(workspace)
         elif name=="calendar":
-            #return ISchedulingContext(workspace)
-            view = component.queryMultiAdapter(
-                        (workspace, request), name="calendar")
+            sc = ISchedulingContext(workspace)
+            view = component.queryMultiAdapter((sc, request), name="calendar")
             # !+ NOTE: Zope calculates the URL of the resulting view sometimes 
             # from the parent view's child attribute name "calendar" and 
             # and sometimes from the ZCML declaration name (as per this lookup)
             if view is None:
-                raise NotFound(workspace, name)
+                raise NotFound(sc, name)
             return view
-        
         return super(WorkspaceContainerTraverser, 
                         self).publishTraverse(request, name)
 
@@ -377,7 +375,7 @@ class WorkspaceSchedulingContext(PrincipalGroupSchedulingContext):
     def __init__(self, workspace):
         # super sets self.__parent__ = workspace
         super(WorkspaceSchedulingContext, self).__init__(workspace)
-        self.__name__ = ""
+        self.__name__ = "calendar"
         self.group_id = workspace.group_id
         interface.alsoProvides(self, interfaces.IWorkspaceSchedulingContext)
         log.debug("WorkspaceSchedulingContext %s" % debug.location_stack(self))
