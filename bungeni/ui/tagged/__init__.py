@@ -12,6 +12,7 @@ from bungeni.core import workflows
 STATES_MAPPING = {
     "agendaitem": workflows.agendaitem.states,
     "bill": workflows.bill.states,
+    "motion": workflows.motion.states,
     "question": workflows.question.states,
     "tableddocument": workflows.tableddocument.states,
     "groupsitting": workflows.groupsitting.states,

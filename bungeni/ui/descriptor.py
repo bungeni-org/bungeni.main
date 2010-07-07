@@ -26,7 +26,6 @@ from bungeni.models import domain
 
 from bungeni.core.translation import get_default_language
 from bungeni.core.translation import get_all_languages
-from bungeni.core.workflows.motion import states as motion_wf_state
 from bungeni.core.workflows.groups import states as group_wf_state
 from bungeni.core.workflows.attachedfile import states as af_wf_state
 from bungeni.core.workflows.address import states as address_wf_state
@@ -1556,16 +1555,7 @@ class MotionDescriptor(ParliamentaryItemDescriptor):
 #              required=False),
               omit=True,),
         ])
-
-    public_wfstates = [ motion_wf_state[wf_state_key].id
-                        for wf_state_key in [ 
-            # u"draft", u"working_draft", u"withdrawn", 
-            # u"submitted", u"received", u"complete", 
-            # u"inadmissible", u"clarify_clerk", u"clarify_mp", 
-            u"admissible", u"schedule_pending", u"scheduled", u"deferred", 
-            u"dropped", u"adopted", u"adopted_amendments", u"rejected",
-            u"elapsed", u"debate_adjourned", u"withdrawn_public"] ]
-
+    public_wfstates = get_states("motion", tagged=["public"])
 
 class MotionVersionDescriptor(VersionDescriptor):
     display_name = _(u"Motion version")

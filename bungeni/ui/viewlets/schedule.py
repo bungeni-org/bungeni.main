@@ -13,7 +13,6 @@ from zope.app.component.hooks import getSite
 
 import sqlalchemy.sql.expression as sql
 
-from bungeni.core.workflows.motion import states as motion_wf_state
 from bungeni.core.workflows.heading import states as heading_wf_state
 from bungeni.models import domain
 from bungeni.models.interfaces import IBungeniApplication, IBungeniGroup, ICommittee
@@ -145,11 +144,7 @@ class SchedulableMotionsViewlet(SchedulableItemsViewlet):
     model = domain.Motion
     name = _('Motions')
     view_name="motion"
-    states = (
-        motion_wf_state[u"scheduled"].id,
-        motion_wf_state[u"schedule_pending"].id,
-        motion_wf_state[u"debate_adjourned"].id,
-        )
+    states = get_states("motion", tagged=["tobescheduled"])
 
 class SchedulableTabledDocumentsViewlet(SchedulableItemsViewlet):
     model = domain.TabledDocument

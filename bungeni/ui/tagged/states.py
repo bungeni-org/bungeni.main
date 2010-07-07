@@ -29,7 +29,7 @@ ACTIVE_TAGS = [
 
 TAG_MAPPINGS = {}
 
-
+# !+ fgrep -ir "_wf_state" --include="*.p?" .
 
 TAG_MAPPINGS["agendaitem"] = {
     "working_draft": ["private",],
@@ -74,6 +74,28 @@ TAG_MAPPINGS["bill"] = {
     "withdrawn_public": ["terminal", "fail",],
     "approved": ["terminal", "succeed", "approved",],
     "rejected": ["terminal", "fail",],
+}
+TAG_MAPPINGS["motion"] = {
+    "working_draft": ["private",],
+    "draft": ["private",],
+    "submitted": ["actionclerk",],
+    "received": ["actionclerk",],
+    "complete": [],
+    "admissible": ["public", "approved",],
+    "inadmissible": ["terminal", "fail",],
+    "clarify_mp": ["actionmp",],
+    "clarify_clerk": ["actionclerk",],
+    "schedule_pending": ["public", "tobescheduled",],
+    "scheduled": [  "public", "scheduled",],
+    "deferred": ["public", "approved",],
+    "dropped": ["public","terminal", "fail",],
+    "adopted": ["public", "terminal", "succeed",],
+    "adopted_amendments": ["public", "terminal", "succeed",],
+    "rejected": ["public", "terminal", "fail",],
+    "elapsed": ["public", "terminal", "fail",],
+    "debate_adjourned": ["public", "tobescheduled",],
+    "withdrawn": ["terminal", "fail",],
+    "withdrawn_public": ["public", "terminal", "fail",],
 }
 TAG_MAPPINGS["question"] = {
     "working_draft": ["private",],
