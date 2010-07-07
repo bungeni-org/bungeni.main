@@ -18,19 +18,14 @@ from zope.publisher.browser import BrowserView
 from zope.publisher.interfaces import NotFound
 from zope.publisher.interfaces import IPublishTraverse
 from zope.publisher.interfaces.browser import IHTTPRequest
-from zope.security.proxy import ProxyFactory
-from zope.security.proxy import removeSecurityProxy
 from zope.annotation.interfaces import IAnnotations
 
 from sqlalchemy import sql
 
-from ore.alchemist import Session
-
 from bungeni.core.i18n import _
 from bungeni.core.content import Section, QueryContent
-from bungeni.core.proxy import LocationProxy
 from bungeni.core.interfaces import ISchedulingContext
-from bungeni.core.schedule import format_date
+from bungeni.core.schedule import PrincipalGroupSchedulingContext
 from bungeni.core.dc import IDCDescriptiveProperties
 
 from bungeni.models import interfaces as model_interfaces
@@ -234,7 +229,10 @@ class WorkspaceContainerTraverser(SimpleComponentTraverser):
         elif name=="calendar":
             #return ISchedulingContext(workspace)
             view = component.queryMultiAdapter(
-                        (workspace, request), name="workspace-calendar")
+                        (workspace, request), name="calendar")
+            # !+ NOTE: Zope calculates the URL of the resulting view sometimes 
+            # from the parent view's child attribute name "calendar" and 
+            # and sometimes from the ZCML declaration name (as per this lookup)
             if view is None:
                 raise NotFound(workspace, name)
             return view
@@ -372,61 +370,32 @@ class WorkspacePIContext(Section):
 from zope.app.container.sample import SampleContainer
 '''
 
-class WorkspaceSchedulingContext(object):
+class WorkspaceSchedulingContext(PrincipalGroupSchedulingContext):
     component.adapts(interfaces.IWorkspaceContainer)
     interface.implements(ISchedulingContext)
     
     def __init__(self, workspace):
-        self.workspace = workspace
+        # super sets self.__parent__ = workspace
+        super(WorkspaceSchedulingContext, self).__init__(workspace)
+        self.__name__ = ""
         self.group_id = workspace.group_id
         interface.alsoProvides(self, interfaces.IWorkspaceSchedulingContext)
-        self.__parent__ = workspace
-        self.__name__ = ""
         log.debug("WorkspaceSchedulingContext %s" % debug.location_stack(self))
-        
-    @property
-    def label(self):
-        group = self.get_group()
-        if group is not None:
-            return u"%s (%s)" % (group.short_name, group.full_name)
-        return _(u"Unknown principal group")
-    
-    def get_group(self, name="group"):
-        if self.group_id is None:
-            return
-        try:
-            session = Session()
-            group = session.query(domain.Group).filter_by(group_id=self.group_id)[0]
-        except IndexError:
-            raise RuntimeError("Group not found (%d)." % self.group_id)
-        return group
-    
-    def get_sittings(self, start_date=None, end_date=None):
-        try: 
-            sittings = self.get_group().sittings
-        except (AttributeError,):
-            # e.g. ministry has no sittings attribute
-            return {} # !+ should be a bungeni.models.domain.ManagedContainer
-            # !+ could add sittings to a ministry
-            #    could not have calendar appear for ministries
-        if start_date is None and end_date is None:
-            return sittings
-        assert start_date and end_date
-        unproxied = removeSecurityProxy(sittings)
-        unproxied.subset_query = sql.and_(
-            unproxied.subset_query,
-            domain.GroupSitting.start_date.between(
-                format_date(start_date),
-                format_date(end_date))
-            )
-        unproxied.__parent__ = ProxyFactory(LocationProxy(
-            unproxied.__parent__, container=self, name="group"))
-        return sittings
-
+    # !+ NOTE: there is an error when following "Add sitting..." in this view
+    # as, after submitting the form, NotFound error is returned (that Parliament
+    # has no attribute "sittings"). The cause seems to be that the calculation 
+    # of the URL for the newly created object is omitting the "calendar" 
+    # component i.e. the initial form URL is:
+    #   /workspace/obj-1/calendar/sittings/add
+    # and url.absoluteURL(newSittingObject, self.request) returns
+    #   /workspace/obj-1/sittings/obj-32'
+    # when the correct URL for this is:
+    #   /workspace/obj-1/calendar/sittings/obj-32'
+    # see: bungeni.ui.forms.common.AddForm.handle_and_save()
 
 # views
 from bungeni.ui import z3evoque
-from zope.app.pagetemplate import ViewPageTemplateFile
+#from zope.app.pagetemplate import ViewPageTemplateFile
 
 class WorkspaceSectionView(BungeniBrowserView):
     

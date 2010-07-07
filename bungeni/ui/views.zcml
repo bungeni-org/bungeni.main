@@ -15,27 +15,25 @@
 
 -->
   
-  <!-- Application UI -->
+    <!-- Application UI -->
   
-  <!-- app-index -:- the names of these two IBungeniApplication views 
+    <!-- app-index -:- the names of these two IBungeniApplication views 
        should be "app-index" -->
-  <browser:page
-     name="index"
-     for="bungeni.models.interfaces.IBungeniApplication"
-     permission="zope.Public"
-     template="templates/app-index.pt"
-  />
-  <!-- when logged in, requests to "/" are redirected to the index view of the 
-       user's first workspace OR (if no workspaces) to "/workspace" -->
-  <browser:page
-     name="index"
-     for="bungeni.models.interfaces.IBungeniApplication"
-     permission="zope.View"
-     layer=".interfaces.IBungeniAuthenticatedSkin"
-     class=".container.WorkspaceRootRedirect"
-  />
+    <browser:page name="index"
+        for="bungeni.models.interfaces.IBungeniApplication"
+        permission="zope.Public"
+        template="templates/app-index.pt"
+    />
+    <!-- when logged in, requests to "/" are redirected to the index view of  
+    the user's first workspace OR (if no workspaces) to "/workspace" -->
+    <browser:page name="index"
+        for="bungeni.models.interfaces.IBungeniApplication"
+        permission="zope.View"
+        layer=".interfaces.IBungeniAuthenticatedSkin"
+        class=".container.WorkspaceRootRedirect"
+    />
   
-  <!-- Workspace -->
+    <!-- Workspace -->
 
     <browser:page
         name="workspace-index"
@@ -60,30 +58,33 @@
     /><!-- why does name must be "view"? e.g. "workspace-container-index" will 
            not match -->
 
-  <adapter 
-    factory=".workspace.WorkspaceContainerTraverser"
-    permission="zope.Public"
-    trusted="true"
-  />
-  <browser:page
-     name="workspace-pi"
-     for=".interfaces.IWorkspacePIContext"
-     layer=".interfaces.IBungeniAuthenticatedSkin"
-     class=".workspace.WorkspacePIView"
-     permission="zope.View"
-  />
-  <browser:page
-     name="workspace-archive"
-     for=".interfaces.IWorkspaceArchiveContext"
-     layer=".interfaces.IBungeniAuthenticatedSkin"
-     class=".workspace.WorkspaceArchiveView"
-     permission="zope.View"
-  />
+    <adapter factory=".workspace.WorkspaceContainerTraverser"
+        permission="zope.Public"
+        trusted="true"
+    />
+    <browser:page name="workspace-pi"
+        for=".interfaces.IWorkspacePIContext"
+        layer=".interfaces.IBungeniAuthenticatedSkin"
+        class=".workspace.WorkspacePIView"
+        permission="zope.View"
+    />
+    <browser:page name="workspace-archive"
+        for=".interfaces.IWorkspaceArchiveContext"
+        layer=".interfaces.IBungeniAuthenticatedSkin"
+        class=".workspace.WorkspaceArchiveView"
+        permission="zope.View"
+    />
+    <class class=".workspace.WorkspaceSchedulingContext">
+        <require permission="zope.Public"
+            interface="bungeni.core.interfaces.ISchedulingContext"
+            set_schema="bungeni.core.interfaces.ISchedulingContext" />
+        <allow interface="zope.publisher.interfaces.IPublishTraverse" />
+    </class>
     <adapter factory=".workspace.WorkspaceSchedulingContext" 
         for="bungeni.ui.interfaces.IWorkspaceContainer"
         provides="bungeni.core.interfaces.ISchedulingContext"
     />
-    <browser:page name="workspace-calendar"
+    <browser:page name="calendar"
         for="bungeni.ui.interfaces.IWorkspaceContainer"
         permission="zope.View"
         class=".calendar.browser.CalendarView"

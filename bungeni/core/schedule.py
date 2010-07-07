@@ -80,46 +80,37 @@ class PrincipalGroupSchedulingContext(object):
         return _(u"Unknown principal group")
     
     def get_group(self, name="group"):
-        session = Session()
-
         if self.group_id is None:
             return
-
         try:
-            group = session.query(Group).filter_by(
-                group_id=self.group_id)[0]
+            session = Session()
+            group = session.query(domain.Group).filter_by(group_id=self.group_id)[0]
         except IndexError:
             raise RuntimeError("Group not found (%d)." % self.group_id)
-            
         return group
-
+    
     def get_sittings(self, start_date=None, end_date=None):
-        sittings = self.get_group().sittings
+        try: 
+            sittings = self.get_group().sittings
+        except (AttributeError,):
+            # e.g. ministry has no sittings attribute
+            return {} # !+ should be a bungeni.models.domain.ManagedContainer
+            # !+ could add sittings to a ministry
+            #    could not have calendar appear for ministries
         if start_date is None and end_date is None:
             return sittings
-
         assert start_date and end_date
         unproxied = removeSecurityProxy(sittings)
-        session = Session()
-
         unproxied.subset_query = sql.and_(
             unproxied.subset_query,
-            GroupSitting.start_date.between(
+            domain.GroupSitting.start_date.between(
                 format_date(start_date),
                 format_date(end_date))
             )
-
         unproxied.__parent__ = ProxyFactory(LocationProxy(
             unproxied.__parent__, container=self, name="group"))
-#        r_sittings = []
         return sittings
-#        for sitting in sittings:
-#            sitting.__parent__ = self
-#            proxied = ProxyFactory(sitting)
-#            if checkPermission("zope.View", proxied):
-#                r_sittings.append(sitting)
-#        return r_sittings
-
+    
     def get_categories(self):
         return domain.ItemScheduleCategoryContainer()
 
