@@ -12,8 +12,10 @@ ACTIVE_TAGS = [
     "private", 
     "public",
     "tobescheduled",
+    "approved",
     "scheduled",
     "actionclerk",
+    "actionmp",
     "terminal",
     "succeed", # terminal
     "fail", # terminal
@@ -26,6 +28,29 @@ ACTIVE_TAGS = [
 # Tags for Workflow States, per Parliamentary Item
 
 TAG_MAPPINGS = {}
+
+
+
+TAG_MAPPINGS["agendaitem"] = {
+    "working_draft": ["private",],
+    "draft": ["private",],
+    "submitted": ["actionclerk",],
+    "received": ["actionclerk",],
+    "complete": [],
+    "admissible": ["public", "approved",],
+    "inadmissible": ["terminal", "fail",],
+    "clarify_clerk": ["actionclerk",],
+    "clarify_mp": ["actionmp",],
+    "schedule_pending": ["public", "tobescheduled",],
+    "scheduled": ["public", "scheduled",],
+    "debate_adjourned": ["public", "tobescheduled",],
+    "deferred": ["public", "approved",],
+    "elapsed": ["public", "terminal", "fail",],
+    "debated": ["public", "terminal", "succeed",],
+    "dropped": ["public","terminal", "fail",],
+    "withdrawn": ["terminal", "fail",],
+    "withdrawn_public": ["public", "terminal", "fail",],
+}
 TAG_MAPPINGS["bill"] = {
     "working_draft": ["private",],
     "gazetted": [],
@@ -47,7 +72,7 @@ TAG_MAPPINGS["bill"] = {
     "third_reading": ["scheduled",],
     "third_reading_adjourned": ["tobescheduled",],
     "withdrawn_public": ["terminal", "fail",],
-    "approved": ["terminal", "succeed",],
+    "approved": ["terminal", "succeed", "approved",],
     "rejected": ["terminal", "fail",],
 }
 TAG_MAPPINGS["question"] = {
@@ -56,9 +81,9 @@ TAG_MAPPINGS["question"] = {
     "submitted": ["actionclerk",],
     "received": ["actionclerk",],
     "complete": [],
-    "admissible": ["public", "oral", "written",],
+    "admissible": ["public", "approved", "oral", "written",],
     "inadmissible": ["terminal", "fail",],
-    "clarify_mp": [],
+    "clarify_mp": ["actionmp",],
     "clarify_clerk": ["actionclerk",],
     "schedule_pending": ["public", "tobescheduled", "oral",],
     "scheduled": ["public", "scheduled", "oral",],
@@ -66,7 +91,7 @@ TAG_MAPPINGS["question"] = {
     "response_pending": ["public", "written",],
     "response_submitted": ["public", "actionclerk",],
     "response_complete": ["public", "terminal", "succeed",],
-    "deferred": ["public",],
+    "deferred": ["public", "approved",],
     "elapsed": ["public", "terminal", "fail",],
     "debated": ["public", "terminal", "succeed",],
     "dropped": ["public","terminal", "fail",],
@@ -79,11 +104,11 @@ TAG_MAPPINGS["tableddocument"] = {
     "submitted": ["actionclerk",],
     "received": ["actionclerk",],
     "complete": [],
-    "admissible": ["public",],
+    "admissible": ["public", "approved",],
     "schedule_pending": ["public", "tobescheduled",],
     "inadmissible": ["terminal", "fail",],
     "clarify_clerk": ["actionclerk",],
-    "clarify_mp": [],
+    "clarify_mp": ["actionmp",],
     "scheduled": ["public", "scheduled"],
     "adjourned": ["public", "tobescheduled",],
     "tabled": ["public", "terminal", "succeed",],

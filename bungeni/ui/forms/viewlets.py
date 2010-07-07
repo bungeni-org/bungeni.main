@@ -22,7 +22,6 @@ from bungeni.models.utils import get_parliament_for_group_id
 from bungeni.ui.i18n import _
 import bungeni.core.globalsettings as prefs
 from bungeni.core.workflows.motion import states as motion_wf_state
-from bungeni.core.workflows.agendaitem import states as agendaitem_wf_state
 
 from bungeni.ui.tagged import get_states
 from bungeni.ui.table import AjaxContainerListing
@@ -638,11 +637,6 @@ class MemberItemsViewlet(viewlet.ViewletBase):
     """
     for_display = True
     states = [
-        agendaitem_wf_state[u"deferred"].id,
-        agendaitem_wf_state[u"scheduled"].id,
-        agendaitem_wf_state[u"admissible"].id,
-        agendaitem_wf_state[u"debated"].id,
-        agendaitem_wf_state[u"elapsed"].id,
         motion_wf_state[u"admissible"].id,
         motion_wf_state[u"deferred"].id,
         motion_wf_state[u"scheduled"].id,
@@ -651,6 +645,7 @@ class MemberItemsViewlet(viewlet.ViewletBase):
         motion_wf_state[u"elapsed"].id,
         motion_wf_state[u"debate_adjourned"].id,
         ] + \
+        get_states("agendaitem", tagged=["public"]) + \
         get_states("bill", not_tagged=["private"]) + \
         get_states("question", tagged=["public"]) + \
         get_states("tableddocument", tagged=["public"])

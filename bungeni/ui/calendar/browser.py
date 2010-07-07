@@ -223,8 +223,7 @@ class CalendarView(BrowserView):
         traverser = component.getMultiAdapter(
             (self.context, request), IPublishTraverse)
         return traverser.publishTraverse(request, name)
-
-            
+    
     def render(self, template=None):
         if template is None:
             template = self.template

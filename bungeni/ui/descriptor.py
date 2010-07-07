@@ -27,7 +27,6 @@ from bungeni.models import domain
 from bungeni.core.translation import get_default_language
 from bungeni.core.translation import get_all_languages
 from bungeni.core.workflows.motion import states as motion_wf_state
-from bungeni.core.workflows.agendaitem import states as agendaitem_wf_state
 from bungeni.core.workflows.groups import states as group_wf_state
 from bungeni.core.workflows.attachedfile import states as af_wf_state
 from bungeni.core.workflows.address import states as address_wf_state
@@ -1506,16 +1505,7 @@ class AgendaItemDescriptor(ParliamentaryItemDescriptor):
         dict(name="agenda_item_id", omit=True), 
         dict(name="group_id", omit=True),
     ])
-    public_wfstates = [agendaitem_wf_state[u'admissible'].id,
-                       agendaitem_wf_state[u'schedule_pending'].id,
-                       agendaitem_wf_state[u'scheduled'].id,
-                       agendaitem_wf_state[u'deferred'].id,
-                       agendaitem_wf_state[u'dropped'].id,
-                       agendaitem_wf_state[u'elapsed'].id,
-                       agendaitem_wf_state[u'debated'].id,
-                       agendaitem_wf_state[u'debate_adjourned'].id,
-                       agendaitem_wf_state[u'withdrawn_public'].id,
-    ]
+    public_wfstates = get_states("agendaitem", tagged=["public"])
     
 class AgendaItemVersionDescriptor(VersionDescriptor):
     display_name = _(u"Agenda Item version")

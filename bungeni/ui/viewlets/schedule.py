@@ -14,7 +14,6 @@ from zope.app.component.hooks import getSite
 import sqlalchemy.sql.expression as sql
 
 from bungeni.core.workflows.motion import states as motion_wf_state
-from bungeni.core.workflows.agendaitem import states as agendaitem_wf_state
 from bungeni.core.workflows.heading import states as heading_wf_state
 from bungeni.models import domain
 from bungeni.models.interfaces import IBungeniApplication, IBungeniGroup, ICommittee
@@ -163,12 +162,8 @@ class SchedulableAgendaItemsViewlet(SchedulableItemsViewlet):
     name = _('Agenda items')
     view_name="agendaitem"
     visible = True
-    states = (
-        agendaitem_wf_state[u"scheduled"].id,
-        agendaitem_wf_state[u"schedule_pending"].id,
-        agendaitem_wf_state[u"debate_adjourned"].id,
-        )
-
+    states = get_states("agendaitem", tagged=["tobescheduled"]) 
+    
     def get_group_id(self):
         parent=self.context
         while parent is not None:
