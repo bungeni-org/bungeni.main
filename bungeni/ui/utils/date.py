@@ -12,6 +12,7 @@ $Id: utils.py 6292 2010-03-22 12:33:25Z mario.ruggier $
 
 import datetime
 from bungeni.ui.i18n import _
+from bungeni.ui.utils import common
 
 # date
 
@@ -57,4 +58,15 @@ def getFilter(displayDate):
         filter_by = ""
     return filter_by
 
+
+def getLocaleFormatter(
+            request=None, 
+            category="date",    # "date" | "time" | "dateTime"
+            length="medium"     # "short" | "medium" | "long" | "full" | None
+        ):
+    """See: zope.i18n.locales.LocaleDates.getFormatter
+    """
+    if request is None:
+        request = common.get_request()
+    return request.locale.dates.getFormatter(category, length)
 

@@ -1,0 +1,37 @@
+#[ $Id$ ]#
+
+#[ was: ui/viewlets/templates/workspace_sitting_viewlet.pt ]#
+$begin{sittings}
+<dt class="portletHeader" id="fieldsetlegend-${view.list_id}">
+    <span>${i18n(view.name)}</span>
+</dt>
+<dd id="fieldset-${view.list_id}" class="portletItem">
+    $if{view.getData()}
+    <table id="workspace-table-${view.list_id}" class="listing grid">
+        <thead>
+            <tr>
+                <th>${i18n("Date")}</th>
+                <th>${i18n("Venue")}</th>
+                <th>${i18n("Type")}</th>
+                <th>${i18n("Group")}</th>
+                <th>${i18n("Status")}</th>
+            </tr>
+        </thead>
+        <tbody>
+            $for{result in view.getData()}
+            <tr class="${result["css_class"]}">
+                <td><a href="${result['url']}">${result["date"]},
+                    ${result["time_from_to"][0]} - ${result["time_from_to"][1]}
+                    </a></td>
+                <td>${result["venue"]}</td>
+                <td>${result["sitting_type"]}</td>
+                <td>${result["group"]}</td>
+                <td>${i18n(result["status"])}</td>
+            </tr>
+            $rof
+        </tbody>
+    </table>
+    $fi
+</dd>
+$end{sittings}
+

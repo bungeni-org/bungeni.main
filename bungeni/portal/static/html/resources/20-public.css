@@ -725,6 +725,26 @@ table.listing td a label,
 .stx table td a label {
     cursor: pointer;
 }
+table.listing tr.past {
+    background-color: #eeeeee;
+    font-weight: normal;
+    color: #666666;
+}
+table.listing tr.present {
+    background-color: #fffacd; /* lemon chiffon */
+    font-weight: bold;
+    color: black;
+}
+table.listing tr.future {
+    background-color: #ffffff;
+    font-weight: normal;
+    color: black;
+}
+table.listing tr.past td,
+table.listing tr.present td,
+table.listing tr.future td {
+    white-space: nowrap;
+}
 
 /* Vertical addition class */
 table.vertical {

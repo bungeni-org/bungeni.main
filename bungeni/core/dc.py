@@ -13,7 +13,7 @@ from bungeni.models import domain
 from bungeni.core.translation import is_translation
 from bungeni.core.translation import get_language_by_name
 from bungeni.core.i18n import _
-from bungeni.ui.utils.common import get_request
+from bungeni.ui.utils import date
 
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 
@@ -54,18 +54,9 @@ class DescriptiveProperties(object):
     
     def __init__(self, context):
         self.context = context
-        
-    def getLocaleDateFormatter(self, 
-            category="date",    # "date" | "time" | "dateTime"
-            length="medium"     # "short" | "medium" | "long" | "full" | None
-        ):
-        """
-        See: zope.i18n.locales.LocaleDates.getFormatter
-        """
-        return get_request().locale.dates.getFormatter(category, length)
     
-    def formatDate(self, date, category="date", length="medium"):
-        return self.getLocaleDateFormatter(category, length).format(date)
+    def formatDate(self, date_, category="date", length="medium"):
+        return date.getLocaleFormatter(None, category, length).format(date_)
     
 class QuestionDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IQuestion)

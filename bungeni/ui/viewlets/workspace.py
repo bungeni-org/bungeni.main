@@ -26,7 +26,7 @@ import bungeni.models.domain as domain
 from bungeni.ui.interfaces import IWorkspaceContainer, IWorkspaceSectionContext
 from bungeni.ui.tagged import get_states
 from bungeni.ui import z3evoque
-from bungeni.ui.utils import common, misc, debug
+from bungeni.ui.utils import common, misc, debug, date
 from bungeni.ui.i18n import _
 from bungeni.core.translation import translate_obj
 
@@ -56,7 +56,7 @@ class WorkspaceViewletManager(WeightOrderedViewletManager):
 class WorkspaceContextNavigation(StructureAwareViewlet):
     
     # evoque
-    render = z3evoque.ViewTemplateFile("workspace.html#context_navigation")
+    render = z3evoque.ViewTemplateFile("workspace.html#context_navigation",)
     
     # zpt
     #render = ViewPageTemplateFile('templates/workspace_context_navigation.pt')
@@ -107,7 +107,7 @@ class QuestionInStateViewlet(ViewletBase):
         """return the data of the query
         """
         #offset = datetime.timedelta(prefs.getNoOfDaysBeforeQuestionSchedule())
-        date_formatter = self.request.locale.dates.getFormatter('date', 'short')
+        date_formatter = date.getLocaleFormatter(self.request, "date", "long")
         def _q_data_item(q):
             item = {}
             item['qid']= 'q_%s' % q.question_id
@@ -143,7 +143,7 @@ class MyGroupsViewlet(ViewletBase):
     def getData(self):
         """Return the data of the query
         """
-        formatter = self.request.locale.dates.getFormatter('date', 'short')
+        formatter = date.getLocaleFormatter(self.request, "date", "long")
         data_list = []
         results = self.query.all()
         
@@ -206,7 +206,7 @@ class MotionInStateViewlet(ViewletBase):
         """
         data_list = []
         results = self.query.all()
-        formatter = self.request.locale.dates.getFormatter('date', 'short')
+        formatter = date.getLocaleFormatter(self.request, "date", "long")
         for result in results:
             data ={}
             data['qid']= ('m_' + str(result.motion_id))
@@ -250,7 +250,7 @@ class BillItemsViewlet(ViewletBase):
         """
         data_list = []
         results = self.query.all()
-        formatter = self.request.locale.dates.getFormatter('date', 'short')
+        formatter = date.getLocaleFormatter(self.request, "date", "long")
         for result in results:
             data ={}
             data['qid']= ('b_' + str(result.bill_id))
@@ -303,7 +303,7 @@ class OwnedItemsInStageViewlet(ViewletBase):
         """
         data_list = []
         results = self.query.all()
-        formatter = self.request.locale.dates.getFormatter('date', 'short')
+        formatter = date.getLocaleFormatter(self.request, "date", "long")
         for result in results:
             data = {}
             data['qid']= ('i-' + str(result.parliamentary_item_id))
@@ -506,7 +506,7 @@ class MinistryItemsViewlet(ViewletBase):
     
     def _getItems(self, ministry):
         session = Session()
-        date_formatter = self.request.locale.dates.getFormatter('date', 'short')
+        date_formatter = date.getLocaleFormatter(self.request, "date", "long")
         def _q_data_item(q):
             item = {}
             item['qid']= 'q_%s' % q.question_id
@@ -584,44 +584,64 @@ class InProgressMinistryItemsViewlet(MinistryItemsViewlet):
     list_id = "items-in-progress"
 
 class DraftSittingsViewlet(viewlet.ViewletBase):
-    """Appears as a tab in the workspace/pi view for the Clerk.
+    """The "agendas/minutes" tab in the workspace/pi view for the Clerk.
     """
-    render = ViewPageTemplateFile ('templates/workspace_sitting_viewlet.pt')
+
+    # evoque
+    render = z3evoque.ViewTemplateFile("workspace_viewlets.html#sittings")
     
+    # zpt
+    #render = ViewPageTemplateFile("templates/workspace_sitting_viewlet.pt")
+
     name = _("agendas/minutes")
     states = get_states("groupsitting", tagged=["draft"])
     list_id = "sitting-draft"
     
-    def getData(self):
-        """Return the data of the query
+    _data = None
+    def _setData(self):
+        """Get the data of the query
         """
         data_list = []
         results = self.query.all()
-        formatter = self.request.locale.dates.getFormatter('date', 'short')
+        formatter = date.getLocaleFormatter(self.request, "date", "long")
+        time_formatter = date.getLocaleFormatter(self.request, "time", "short")
         for result in results:
             data = {}
-            data['subject'] = result.short_name
+            data["subject"] = result.short_name
             # this tab appears in the workspace pi/ view...
-            data['url'] = "../calendar/sittings/obj-%i/schedule" % result.sitting_id
+            data["url"] = "../calendar/sittings/obj-%i/schedule" % result.sitting_id
             # Note: same UI is also displayed at: 
             # /business/sittings/obj-%i/schedule % result.sitting_id
-            data['items'] = ''
-            data['status'] = misc.get_wf_state(result)
-            data['status_date'] = formatter.format(result.status_date)
-            data['owner'] = ""
-            data['type'] =  result.group.type
-            data['group'] = u"%s %s" % (
+            data["items"] = ""
+            data["status"] = misc.get_wf_state(result)
+            data["status_date"] = formatter.format(result.status_date)
+            data["owner"] = ""
+            data["type"] =  result.group.type
+            data["group"] = u"%s %s" % (
                     result.group.type.capitalize(), result.group.short_name)
-            data['date'] = u"%s %s" % (
-                    result.start_date.strftime('%Y-%m-%d %H:%M'), 
-                    #formatter.format(
-                    _(result.sitting_type.sitting_type))
+            data["time_from_to"] = (
+                    time_formatter.format(result.start_date),
+                    time_formatter.format(result.end_date))
+            data["date"] = formatter.format(result.start_date) 
+            data["sitting_type"] = _(result.sitting_type.sitting_type)
+            data["venue"] = _(result.venue.short_name)
             if type(result)==domain.Question:
-                data['to'] = result.ministry.short_name
+                data["to"] = result.ministry.short_name
             else:
-                data['to']= u""
+                data["to"]= u""
+            # past, present, future
+            today = datetime.datetime.today().date()
+            startday = result.start_date.date()
+            if today==startday:
+                data["css_class"] = "present"
+            elif today>startday:
+                data["css_class"] = "past"
+            else:
+                data["css_class"] = "future"
             data_list.append(data)
-        return data_list
+        self._data = data_list
+    def getData(self):
+        return self._data
     
     def update(self):
         """Refresh the query
@@ -631,8 +651,9 @@ class DraftSittingsViewlet(viewlet.ViewletBase):
         sittings = session.query(domain.GroupSitting).filter(
                 qfilter).order_by(domain.GroupSitting.start_date.desc()
                     ).options(
-                eagerload('group'),
-                eagerload('sitting_type')
+                eagerload("group"),
+                eagerload("sitting_type")
                 )
         self.query = sittings
+        self._setData()
 
