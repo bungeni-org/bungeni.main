@@ -1,6 +1,9 @@
 <div id="user_actions">
-  
 </div>
+<!--
+$Id$
+$URL$
+-->
 
 <form name="make_schedule" method="POST" action="" enctype="multipart/form-data">
   <input type="button" id="saveButton" value="Save" />

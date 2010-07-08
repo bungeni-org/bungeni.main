@@ -4,7 +4,7 @@
 """Workflow States tagging mechanism and processing, 
 to manage logical collections of Workflow States.
 
-$Id: app.py 6682 2010-06-03 14:32:56Z mario.ruggier $
+$Id$
 """
 log = __import__("logging").getLogger("bungeni.ui.tagged")
 

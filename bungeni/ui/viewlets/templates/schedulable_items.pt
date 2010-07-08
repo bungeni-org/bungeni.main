@@ -3,6 +3,10 @@
     tal:condition="view/visible"
     i18n:translate="" tal:content="view/name">
 </dt>
+<!--
+$Id$
+$URL$
+-->
 
 <dd id="fieldset-..." 
     tal:attributes="id string:fieldset-${view/view_name}-for-scheduling" 

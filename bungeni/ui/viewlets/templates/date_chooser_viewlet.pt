@@ -1,5 +1,8 @@
-
 <div tal:attributes="class view/error">
+<!--
+$Id$
+$URL$
+-->
   <form action="" >
     <input name="date" type="text" tal:attributes="value view/DateStr" id="select-dates"  /> 
     <button type="button" id="select-dates-btn" title="Show Calendar">

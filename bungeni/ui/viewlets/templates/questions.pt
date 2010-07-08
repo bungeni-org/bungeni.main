@@ -1,6 +1,10 @@
 <html xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       i18n_domain="bungeni.ui">
+<!--
+$Id$
+$URL$
+-->
 
   <div class="workspace-viewlet"
        tal:define="results view/results"

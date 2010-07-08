@@ -2,6 +2,10 @@
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       i18n:domain="bungeni.ui"
       tal:omit-tag="">
+<!--
+$Id$
+$URL$
+-->
 
   <tal:dl 
       tal:define="results view/getData"

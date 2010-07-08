@@ -1,6 +1,10 @@
 <dl class="portlet"
     i18n:domain="bungeni.ui"
     tal:condition="python: len(view.sections) > 1">
+<!--
+$Id$
+$URL$
+-->
     
     <dt class="portletHeader">
         <span class="portletTopLeft"></span>

@@ -1,4 +1,8 @@
 <tal:tabs tal:condition="view/portal_tabs">
+<!--
+$Id$
+$URL$
+-->
     <h5 class="hiddenStructure" i18n:translate="heading_sections">Sections</h5>
 
     <ul id="portal-globalnav">

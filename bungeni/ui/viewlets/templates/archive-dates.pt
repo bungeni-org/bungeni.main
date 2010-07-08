@@ -1,4 +1,8 @@
 <dl id="portletArchiveDates" class="portlet inlinePortlet">
+<!--
+$Id$
+$URL$
+-->
   
   <dt class="portletHeader" i18n:domain="bungeni.ui" >
     <span class="portletTopLeft"></span>

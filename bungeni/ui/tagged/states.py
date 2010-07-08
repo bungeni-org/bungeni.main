@@ -3,7 +3,7 @@
 # Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 """Taggings of Workflow States
 
-$Id: app.py 6682 2010-06-03 14:32:56Z mario.ruggier $
+$Id$
 """
 
 # Declaration of active tags (it is an error to specify an undeclared tag)

@@ -1,4 +1,8 @@
 <div id="bungeni-workspace">
+<!--
+$Id$
+$URL$
+-->
  <dl class="portlet workspace-viewlet listing enableFormTabbing">
   <tal:viewlet repeat="viewlet view/viewlets">
     <!--div tal:define="odd repeat/viewlet/odd"

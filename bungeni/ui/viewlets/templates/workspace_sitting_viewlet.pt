@@ -1,6 +1,10 @@
 <html xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       tal:omit-tag="">
+<!--
+$Id$
+$URL$
+-->
 
   <tal:dl 
       tal:define="results view/getData"
