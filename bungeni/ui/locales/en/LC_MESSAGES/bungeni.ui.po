@@ -3,13 +3,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: Wed Jul  7 16:34:58 2010\n"
-"PO-Revision-Date: 2010-06-11 11:19+0200\n"
-"Last-Translator: Flavio <flavio.zeni@gmail.com>\n"
+"PO-Revision-Date: 2010-07-07 23:53+0300\n"
+"Last-Translator: Administrator <admin@apkn.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.0.4\n"
 "Language-Code: en\n"
@@ -152,12 +152,10 @@ msgid "Actions"
 msgstr "actions"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1008
-#, fuzzy
 msgid "political group"
 msgstr "political group..."
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1009
-#, fuzzy
 msgid "political groups"
 msgstr "political group..."
 
@@ -1077,12 +1075,10 @@ msgid "Notes"
 msgstr "notes"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:584
-#, fuzzy
 msgid "member"
 msgstr "member"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:585
-#, fuzzy
 msgid "members"
 msgstr "members"
 
@@ -1312,12 +1308,10 @@ msgid "Staff"
 msgstr "staff"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:988
-#, fuzzy
 msgid "political party"
 msgstr "political party"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:989
-#, fuzzy
 msgid "political parties"
 msgstr "political parties"
 
@@ -1719,9 +1713,8 @@ msgid "Tabled document timeline"
 msgstr "tabled document timeline"
 
 #: src/bungeni.main/bungeni/ui/forms/viewlets.py:633
-#, fuzzy
 msgid "Agenda item timeline"
-msgstr "agenda item version"
+msgstr "agenda item timeline"
 
 #: src/bungeni.main/bungeni/ui/forms/viewlets.py:703
 msgid "Add"
@@ -1767,7 +1760,6 @@ msgid "Logout"
 msgstr "logout"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:1007
-#, fuzzy
 msgid "Schedule"
 msgstr "schedule"
 
@@ -1788,9 +1780,8 @@ msgid "Move Scheduling down"
 msgstr "move scheduling down"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:109
-#, fuzzy
 msgid "The 'Add...' menu - for political parties"
-msgstr "the 'add..' menu - for political parties"
+msgstr "the 'add...' menu - for political parties"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:1102
 msgid "Workspace"
@@ -1821,9 +1812,8 @@ msgid "Add..."
 msgstr "add..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:1130
-#, fuzzy
 msgid "Members"
-msgstr "member"
+msgstr "members"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:1136
 #: src/bungeni.main/bungeni/ui/viewlets/workspace.zcml:49
@@ -1837,7 +1827,6 @@ msgid "Administration"
 msgstr "administration"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:1152
-#, fuzzy
 msgid "Actions..."
 msgstr "actions"
 
@@ -1875,7 +1864,6 @@ msgid "Respond"
 msgstr "respond"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:136
-#, fuzzy
 msgid "add political group member..."
 msgstr "add political group member..."
 
@@ -1977,10 +1965,8 @@ msgid "Add Heading..."
 msgstr "add heading..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:31
-#, fuzzy
 msgid "The 'workflow' menu - allows user to execute workflow transitions"
-msgstr ""
-"the \"workflow\" menu - allows the user to execute workflow transitions"
+msgstr "the \"workflow\" menu - allows the user to execute workflow transitions"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:310
 msgid "The 'Add...' menu - for motion"
@@ -2010,7 +1996,6 @@ msgid "Add consignatory..."
 msgstr "add cosignatory..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:38
-#, fuzzy
 msgid "The 'Calendar' menu - allows user to select a scheduling context"
 msgstr "the \"calendar\" menu - allows the user to select a scheduling context"
 
@@ -2026,7 +2011,6 @@ msgid "Assign bill to a group..."
 msgstr "assign bill to committee..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:42
-#, fuzzy
 msgid "The 'Add' menu - allows user to add content"
 msgstr "the \"add...\" menu - allows the user to add content"
 
@@ -2035,9 +2019,8 @@ msgid "The 'Add...' menu - for question"
 msgstr "the \"add...\" menu - for question"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:46
-#, fuzzy
 msgid "The 'Translate' menu - allows user to translate content"
-msgstr "the \"add\" menu - allows the user to add content"
+msgstr "the \"translate\" menu - allows the user to add content"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:465
 msgid "The 'Add...' menu - for tabled document"
@@ -2569,7 +2552,7 @@ msgstr "archived items"
 
 #: src/bungeni.main/bungeni/ui/viewlets/workspace.py:440
 msgid "Archived Items AllItemArchiveViewlet"
-msgstr ""
+msgstr "archived items"
 
 #: src/bungeni.main/bungeni/ui/viewlets/workspace.py:475
 msgid "pending with the clerk"
@@ -2584,9 +2567,8 @@ msgid "to be scheduled"
 msgstr "to be scheduled"
 
 #: src/bungeni.main/bungeni/ui/viewlets/workspace.py:533
-#, fuzzy
 msgid "scheduled"
-msgstr "schedule"
+msgstr "scheduled"
 
 #: src/bungeni.main/bungeni/ui/viewlets/workspace.py:546
 msgid "questions to the ministry"
@@ -2785,26 +2767,24 @@ msgid "Unknown principal group"
 msgstr "unknown principal group"
 
 #: src/bungeni.transcripts/bungeni/transcripts/configure.zcml:102
-#, fuzzy
 msgid "generate takes"
-msgstr "agenda items"
+msgstr "generate takes"
 
 #: src/bungeni.transcripts/bungeni/transcripts/configure.zcml:110
 msgid "assign staff"
-msgstr ""
+msgstr "assign staff"
 
 #: src/bungeni.transcripts/bungeni/transcripts/configure.zcml:81
 msgid "transcripts"
-msgstr ""
+msgstr "transcripts"
 
 #: src/bungeni.transcripts/bungeni/transcripts/configure.zcml:88
 msgid "Transcripts menu"
-msgstr ""
+msgstr "transcripts menu"
 
 #: src/bungeni.transcripts/bungeni/transcripts/configure.zcml:93
-#, fuzzy
 msgid "edit transcript"
-msgstr "the original $language version is shown on the left"
+msgstr "edit transcript"
 
 #~ msgid "Votes and Proceedings"
 #~ msgstr "votes and proceedings"
