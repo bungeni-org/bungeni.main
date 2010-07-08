@@ -67,6 +67,11 @@ class WorkspaceContextNavigation(StructureAwareViewlet):
                 IWorkspaceSectionContext.providedBy(self.context))
         self.sections = getMenu("workspace_context_navigation", 
                                                 self.context, self.request)
+        # Append a trailing slash to each workspace viewlet navigation entry so that
+        # the right context is always maintained when using this navigation.
+        for section in self.sections:
+            if section['url'][-1:] !="/":
+                section["url"] = section["url"] + "/"
         # get a translated copy of original workspace object
         workspace = translate_obj(
                 misc.get_parent_with_interface(self, IWorkspaceContainer))

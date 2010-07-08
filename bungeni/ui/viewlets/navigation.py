@@ -284,6 +284,13 @@ class BreadCrumbsViewlet(viewlet.ViewletBase):
             path.extend(self._get_path(context.__parent__))
         
         _url = url.absoluteURL(context, self.request)
+
+        # Append a trailing slash to each breadcrumb entry so that
+        # the right context is always maintained when the breadcrumbs
+        #are used for navigation.
+        if _url[-1:] != "/":
+            _url = _url + "/"
+
         title = get_title_from_context(context)
         
         if title is not None:
