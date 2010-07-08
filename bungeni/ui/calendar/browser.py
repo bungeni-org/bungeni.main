@@ -5,8 +5,8 @@ log = __import__("logging").getLogger("bungeni.ui.calendar")
 
 
 import time
-import datetime
 import tempfile
+import datetime
 timedelta = datetime.timedelta
 
 import operator
@@ -63,6 +63,9 @@ from ore.alchemist import Session
 from ore.workflow.interfaces import IWorkflowInfo
 
 from zc.resourcelibrary import need
+
+from bungeni.core.workflows.groupsitting import states as sitting_wf_state
+from dateutil.rrule import *
 
 class TIME_SPAN:
     daily = _(u"Daily")
@@ -970,6 +973,48 @@ class DhtmlxCalendarSittingsEdit(BrowserView):
             ISchedulingContext(context), request)
         interface.alsoProvides(self.context, ILocation)
         interface.alsoProvides(self.context, IDCDescriptiveProperties)
+
+    def generate_recurrence_dates(self, recurrence_start_date, recurrence_end_date, recurrence_type):
+        '''This function generates the sitting recurrence dates 
+        based on the input from dhtmlxscheduler
+        to know more http://docs.dhtmlx.com/doku.php?id=dhtmlxscheduler:recurring_events
+        '''
+        rec_args = recurrence_type.split("_")
+        #rec_type - type of repeating “day”,”week”,”month”,”year”
+        rec_type = rec_args[0]
+        #count - how much intervals of “type” come between events
+        count  = rec_args[1]
+        #count2 and day - used to define day of month ( first Monday, third Friday, etc )
+        day = rec_args[2]
+        count2 = rec_args[3]
+        #days - comma separated list of affected week days
+        days = rec_args[4].split("#")[0]
+        #extra - this info is not necessary for calculation
+        #but can be used to correct presentation of recurring details
+        extra  = rec_args[4].split("#")[1]
+        freq_map = {"day":DAILY,"week":WEEKLY,"month":MONTHLY,"year":YEARLY}
+        freq = freq_map[rec_type]
+        if count != "":
+            interval = int(count)
+        else:
+            interval = 1
+        print "RECURRENCE TYPE", recurrence_type  
+        print "FREQUENCY", freq
+        print "DAY", day 
+        print "DAYS", days 
+        print "COUNT2", count2
+        print "INTERVAL", interval 
+        byweekday=None
+        day_map = {0:SU,1:MO,2:TU,3:WE,4:TU,5:FR,6:SA}
+        if (count2 != "") and (day != ""):    
+            byweekday = day_map[int(day)](+int(count2))
+        elif (days != ""):
+            byweekday = map(int,days.split(","))
+        print "BYWEEKDAY",byweekday
+        if byweekday is not None:
+            return list(rrule(freq, dtstart=recurrence_start_date, until=recurrence_end_date, byweekday=byweekday, interval=interval))  
+        else:
+            return list(rrule(freq, dtstart=recurrence_start_date, until=recurrence_end_date, interval=interval))
     def __call__(self):
         ids = self.request.form['ids']
         action = self.request.form[ids+"_!nativeeditor_status"]
@@ -977,20 +1022,66 @@ class DhtmlxCalendarSittingsEdit(BrowserView):
         sitting = domain.GroupSitting()
         trusted = removeSecurityProxy(self.context)
         sitting.group_id = trusted.group_id
+        group = session.query(domain.Group).get(trusted.group_id)
+        #import pdb; pdb.set_trace()
+        print "XXXXXXXXXXXXXX group id", trusted.group_id
         if action == "inserted":
-            sitting.start_date = self.request.form[ids+"_start_date"]
-            sitting.end_date = self.request.form[ids+"_end_date"]
-            sitting.sitting_type_id = self.request.form[ids+"_type"]
-            sitting.status = None
-            if ids+"_type" in self.request.form.keys():
+            if (ids+"_rec_type" not in self.request.form.keys()) or (self.request.form[ids+"_rec_type"] == ""):
+                sitting.start_date = self.request.form[ids+"_start_date"]
+                sitting.end_date = self.request.form[ids+"_end_date"]
                 sitting.sitting_type_id = self.request.form[ids+"_type"]
-            if ids+"_language" in self.request.form.keys():
-                sitting.language = self.request.form[ids+"_language"]
-            if ids+"_venue" in self.request.form.keys():
-                sitting.venue_id = self.request.form[ids+"_venue"]
-            session.add(sitting)
-            notify(ObjectCreatedEvent(sitting))
-            session.commit()
+                sitting.status = None
+                if ids+"_type" in self.request.form.keys():
+                    sitting.sitting_type_id = self.request.form[ids+"_type"]
+                if ids+"_language" in self.request.form.keys():
+                    sitting.language = self.request.form[ids+"_language"]
+                if ids+"_venue" in self.request.form.keys():
+                    sitting.venue_id = self.request.form[ids+"_venue"]
+                session.add(sitting)
+                notify(ObjectCreatedEvent(sitting))
+                session.commit()
+                self.request.response.setHeader('Content-type', 'text/xml')
+                return '<data><action type="inserted" sid="'+str(ids)+'" tid="'+str(sitting.sitting_id)+'" /></data>'
+            else:
+                recurrence_start_date = datetime.datetime.strptime(self.request.form[ids+"_start_date"], '%Y-%m-%d %H:%M')
+                recurrence_end_date = datetime.datetime.strptime(self.request.form[ids+"_end_date"], '%Y-%m-%d %H:%M')
+                year = timedelta(days=365)
+                #max end date is one year from now or end_date of the group which is sooner
+                if (group is not None) and (group.end_date is not None):
+                    if (datetime.datetime.now() + year) < group.end_date:
+                        end = datetime.datetime.now() + year 
+                    else:
+                        end = group.end_date
+                    if recurrence_end_date > end:
+                        recurrence_end_date = end 
+                else:
+                    if recurrence_end_date > (datetime.datetime.now() + year):
+                        recurrence_end_date = datetime.datetime.now() + year
+                recurrence_type = self.request.form[ids+"_rec_type"]
+                length = self.request.form[ids+"_event_length"]
+                sitting_length = timedelta(seconds=int(length))
+                dates = self.generate_recurrence_dates(recurrence_start_date, recurrence_end_date, recurrence_type)
+                output = '<data>'
+                for date in dates:
+                    sitting = domain.GroupSitting()
+                    sitting.group_id = trusted.group_id
+                    sitting.start_date = date
+                    sitting.end_date = date + sitting_length
+                    sitting.sitting_type_id = self.request.form[ids+"_type"]
+                    sitting.status = None
+                    if ids+"_type" in self.request.form.keys():
+                        sitting.sitting_type_id = self.request.form[ids+"_type"]
+                    if ids+"_language" in self.request.form.keys():
+                        sitting.language = self.request.form[ids+"_language"]
+                    if ids+"_venue" in self.request.form.keys():
+                        sitting.venue_id = self.request.form[ids+"_venue"]
+                    session.add(sitting)
+                    notify(ObjectCreatedEvent(sitting))
+                    output = output+'<action type="inserted" sid="'+str(ids)+'" tid="'+str(sitting.sitting_id)+'" />'
+                session.commit()
+                output = output + '</data>'
+                self.request.response.setHeader('Content-type', 'text/xml')
+                return output
         elif action == "updated":
             sitting = session.query(domain.GroupSitting).get(ids)
             sitting.start_date = self.request.form[ids+"_start_date"]
@@ -1003,13 +1094,17 @@ class DhtmlxCalendarSittingsEdit(BrowserView):
                 sitting.venue_id = self.request.form[ids+"_venue"]
             session.update(sitting)
             session.commit()
+            self.request.response.setHeader('Content-type', 'text/xml')
+            return '<data><action type="updated" sid="'+str(ids)+'" tid="'+str(sitting.sitting_id)+'" /></data>'
         elif action == "deleted":
             sitting = session.query(domain.GroupSitting).get(ids)
             session.delete(sitting)
             session.commit()
-        self.request.response.setHeader('Content-type', 'text/xml')
-        return '<data><action type="'+action+'" sid="'+str(ids)+'" tid="'+str(sitting.sitting_id)+'" /></data>'
-        
+            self.request.response.setHeader('Content-type', 'text/xml')
+            return '<data><action type="deleted" sid="'+str(ids)+'" tid="'+str(sitting.sitting_id)+'" /></data>'
+      
+
+                          
 class DhtmlxCalendarSittings(BrowserView):
     
     interface.implements(IStructuralView)
@@ -1022,7 +1117,8 @@ class DhtmlxCalendarSittings(BrowserView):
         interface.alsoProvides(self.context, ILocation)
         interface.alsoProvides(self.context, IDCDescriptiveProperties)
         self.__parent__ = context
-        
+               
+                          
     def __call__(self):
         '''date = utils.datetimedict.fromdate(datetime.date.today())
         date = date - timedelta(days=date.weekday())
