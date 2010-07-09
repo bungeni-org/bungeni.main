@@ -68,7 +68,8 @@
                 
                 scheduler.config.lightbox.sections=[	
                         { name:"description", height:200, type:"my_editor" },
-		                { name:"time", height:72, type:"time", map_to:"auto"}	
+                        {name:"recurring", height:115, type:"recurring", map_to:"rec_type", button:"recurring"},
+		                { name:"time", height:72, type:"time", map_to:"auto"}
 	                ]
                 
                 scheduler.attachEvent("onDblClick", function (event_id, native_event_object){
