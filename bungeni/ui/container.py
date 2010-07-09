@@ -496,7 +496,7 @@ class ContainerWFStatesJSONListing( ContainerJSONListing ):
                     d[f] = v.strftime('%F %I:%M %p')
                 elif isinstance( v, datetime.date ):
                     d[f] = v.strftime('%F')
-            d['object_id'] =   stringKey(n)
+            d['object_id'] =   url.set_url_context(stringKey(n))
             values.append( d )
         return values
 

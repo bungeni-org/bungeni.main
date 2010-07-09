@@ -288,8 +288,7 @@ class BreadCrumbsViewlet(viewlet.ViewletBase):
         # Append a trailing slash to each breadcrumb entry so that
         # the right context is always maintained when the breadcrumbs
         #are used for navigation.
-        if _url[-1:] != "/":
-            _url = _url + "/"
+        _url = url.set_url_context(_url)
 
         title = get_title_from_context(context)
         

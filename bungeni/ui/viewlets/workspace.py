@@ -26,7 +26,7 @@ import bungeni.models.domain as domain
 from bungeni.ui.interfaces import IWorkspaceContainer, IWorkspaceSectionContext
 from bungeni.ui.tagged import get_states
 from bungeni.ui import z3evoque
-from bungeni.ui.utils import common, misc, debug, date
+from bungeni.ui.utils import common, misc, debug, date, url
 from bungeni.ui.i18n import _
 from bungeni.core.translation import translate_obj
 
@@ -70,8 +70,8 @@ class WorkspaceContextNavigation(StructureAwareViewlet):
         # Append a trailing slash to each workspace viewlet navigation entry so that
         # the right context is always maintained when using this navigation.
         for section in self.sections:
-            if section['url'][-1:] !="/":
-                section["url"] = section["url"] + "/"
+            section["url"] = url.set_url_context(section["url"])
+
         # get a translated copy of original workspace object
         workspace = translate_obj(
                 misc.get_parent_with_interface(self, IWorkspaceContainer))
@@ -314,7 +314,7 @@ class OwnedItemsInStageViewlet(ViewletBase):
             data['subject'] = result.short_name
             data['title'] = result.short_name
             data['result_item_class'] = 'workflow-state-' + result.status
-            data['url'] = '%ss/obj-%i' % (
+            data['url'] = '%ss/obj-%i%s' % (
                         result.type, result.parliamentary_item_id)
             data['status'] = misc.get_wf_state(result)
             data['status_date'] = formatter.format(result.status_date)

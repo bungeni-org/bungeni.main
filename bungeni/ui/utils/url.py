@@ -87,3 +87,10 @@ def get_menu_item_descriptor(title, selected, url, name=None):
     return {'title':title, 'selected':selected, 'url':url}
 
 
+def set_url_context(url):
+    # Append a trailing slash to any url that is used for navigation
+    # Links in viewlets, breadcrumbs and listings.
+    if url[-1:] != "/":
+        url = url + "/"
+    return url
+
