@@ -118,7 +118,10 @@ def getActiveItemSchedule(parliamentary_item_id):
         schema.items_schedule.c.active==True)
     item_schedule = session.query(domain.ItemSchedule).filter(active_filter)
     results = item_schedule.all()
-    return results
+    sorted_results = [ (r.sitting.start_date, r) for r in results ]
+    sorted_results = sorted(sorted_results)
+    sorted_results.reverse()
+    return [ r for (d, r) in sorted_results ]
 
 def setMotionSerialNumber(motion):
     """

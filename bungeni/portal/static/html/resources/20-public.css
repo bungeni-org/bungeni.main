@@ -745,6 +745,9 @@ table.listing tr.present td,
 table.listing tr.future td {
     white-space: nowrap;
 }
+table.listing tr td {
+    vertical-align: top;
+}
 
 /* Vertical addition class */
 table.vertical {

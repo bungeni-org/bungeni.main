@@ -138,7 +138,7 @@ class SchedulableQuestionsViewlet(SchedulableItemsViewlet):
     model = domain.Question
     name = _('Questions')
     view_name="question"
-    states = get_states("bill", tagged=["tobescheduled"]) 
+    states = get_states("question", tagged=["tobescheduled"]) 
 
 class SchedulableMotionsViewlet(SchedulableItemsViewlet):
     model = domain.Motion

@@ -1,5 +1,43 @@
 #[ $Id$ ]#
 
+
+
+#[ was: ui/viewlets/templates/workspace_item_viewlet.pt ]#
+$begin{items}
+<dt class="portletHeader" id="fieldsetlegend-${view.list_id}">
+    <span>${i18n(view.name)}</span>
+</dt>
+<dd id="fieldset-${view.list_id}" class="portletItem">
+    $if{view.getData()}
+    <table id="workspace-table-${view.list_id}" class="listing grid">
+        <thead>
+            <tr>
+                <th>${i18n("Subject")}</th>
+                <th>${i18n("Type")}</th>
+                <th>${i18n("Status")}</th>
+                <th>${i18n("Status date")}</th>
+                <th>${i18n("Owner")}</th>
+                <th>${i18n("To")}</th>
+            </tr>
+        </thead>
+        <tbody>
+            $for{result in view.getData()}
+            <tr $if{result.get("css_class")}class="${result['css_class']}"$fi>
+                <td><a href="${result['url']}">${result["subject"]}</a></td>
+                <td>${i18n(result["type"])}</td>
+                <td>${i18n(result["status"])}</td>
+                <td>${result["status_date"]}</td>
+                <td>${result["owner"]}</td>
+                <td>${result["to"]}</td>
+            </tr>
+            $rof
+        </tbody>
+    </table>
+    $fi
+</dd>
+$end{items}
+
+
 #[ was: ui/viewlets/templates/workspace_sitting_viewlet.pt ]#
 $begin{sittings}
 <dt class="portletHeader" id="fieldsetlegend-${view.list_id}">
@@ -34,4 +72,43 @@ $begin{sittings}
     $fi
 </dd>
 $end{sittings}
+
+
+$begin{scheduled}
+<dt class="portletHeader" id="fieldsetlegend-${view.list_id}">
+    <span>${i18n(view.name)}</span>
+</dt>
+<dd id="fieldset-${view.list_id}" class="portletItem">
+    $if{view.getData()}
+    <table id="workspace-table-${view.list_id}" class="listing grid">
+        <thead>
+            <tr>
+                <th>${i18n("Subject")}</th>
+                <th>${i18n("Type")}</th>
+                <th>${i18n("Status")}</th>
+                #[ <th>${i18n("Status date")}</th> ]#
+                <th>${i18n("Owner")}</th>
+                <th>${i18n("To")}</th>
+                <th>${i18n("Sittings start")}</th>
+                <th>${i18n("Sittings status")}</th>
+            </tr>
+        </thead>
+        <tbody>
+            $for{result in view.getData()}
+            <tr $if{result.get("css_class")}class="${result['css_class']}"$fi>
+                <td><a href="${result['url']}">${result["subject"]}</a></td>
+                <td>${i18n(result["type"])}</td>
+                <td>${i18n(result["status"])}</td>
+                #[ <td>${result["status_date"]}</td> ]#
+                <td>${result["owner"]}</td>
+                <td>${result["to"]}</td>
+                <td>${xml("<br/>".join(result["sittings_start"]))}</td>
+                <td>${xml("<br/>".join(result["sittings_status"]))}</td>
+            </tr>
+            $rof
+        </tbody>
+    </table>
+    $fi
+</dd>
+$end{scheduled}
 

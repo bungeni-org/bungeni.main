@@ -4,7 +4,6 @@ from zope.viewlet import viewlet
 import zope.interface
 from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
 from zope.security.proxy import removeSecurityProxy
-from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.publisher.browser import BrowserView
 from zope.app.schema.vocabulary import IVocabularyFactory
 from zope.app.form.browser.textwidgets import TextAreaWidget
@@ -26,6 +25,9 @@ from bungeni.ui.forms.common import BaseForm
 from bungeni.ui.table import TableFormatter
 from bungeni.ui.menu import get_actions
 from bungeni.ui.utils import misc
+
+from bungeni.ui import z3evoque
+from zope.app.pagetemplate import ViewPageTemplateFile
 
 from i18n import _
 
@@ -135,6 +137,7 @@ class WorkflowActionViewlet(BaseForm, viewlet.ViewletBase):
     form_fields = form.Fields(IWorkflowComment)
     actions = ()
     
+    # !+ metal:use-macro="context/@@standard_macros/form" ?
     render = ViewPageTemplateFile ('templates/viewlet.pt')
     
     def update(self, transition=None):
@@ -186,9 +189,20 @@ class WorkflowActionViewlet(BaseForm, viewlet.ViewletBase):
             self.form_fields, self.prefix, self.context, self.request,
             ignore_request = ignore_request )
 
-class WorkflowView(BrowserView):
-    template = ViewPageTemplateFile('templates/workflow.pt')
+from bungeni.ui.workspace import BungeniBrowserView
+class WorkflowView(BungeniBrowserView):
+    
+    # the instance of the ViewProvideViewletManager
+    provide = z3evoque.ViewProvideViewletManager()
+    
+    # evoque
+    template = z3evoque.PageViewTemplateFile("workflow.html#main")
+    
+    # zpt
+    #template = ViewPageTemplateFile('templates/workflow.pt')
 
+    _page_title = "Workflow"
+    
     def update(self, transition=None):
         # set up viewlets; the view is rendered from viewlets for
         # historic reasons; this may be refactored anytime.
@@ -213,7 +227,12 @@ class WorkflowView(BrowserView):
         return template
         
 class WorkflowChangeStateView(WorkflowView):
-    ajax_template = ViewPageTemplateFile('templates/workflow_ajax.pt')
+    
+    # evoque
+    ajax_template = z3evoque.PageViewTemplateFile("workflow.html#ajax")
+    
+    # zpt
+    #ajax_template = ViewPageTemplateFile('templates/workflow_ajax.pt')
     
     def __call__(self, headless=False, transition=None):
         method = self.request['REQUEST_METHOD']
@@ -225,7 +244,7 @@ class WorkflowChangeStateView(WorkflowView):
             self.update(transition)
         else:
             self.update()
-            
+        
         if transition and require_confirmation is False and method == 'POST':
             actions = bindTransitions(
                 self.action_viewlet, (transition,), None, 
@@ -234,20 +253,20 @@ class WorkflowChangeStateView(WorkflowView):
 
             # execute action
             result = actions[0].success({})
-
+        
         if headless is True:
             actions = get_actions("context_workflow", self.context, self.request)
             state_title = IWorkflowInfo(self.context).workflow().workflow.states[
                 self.context.status].title
             result = self.ajax_template(actions=actions, state_title=state_title)
-
+            
             if require_confirmation is True:
                 self.request.response.setStatus(403)
             else:
                 self.request.response.setStatus(200)
                 self.request.response.setResult(result)
                 self.request.response.setHeader("Content-Type", "text/xml")
-
+            
             return result
             
         template = self.template()

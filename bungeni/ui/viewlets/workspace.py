@@ -29,6 +29,7 @@ from bungeni.ui import z3evoque
 from bungeni.ui.utils import common, misc, debug, date, url
 from bungeni.ui.i18n import _
 from bungeni.core.translation import translate_obj
+from bungeni.core.workflows.dbutils import getActiveItemSchedule
 
 from ploned.ui.viewlet import StructureAwareViewlet
 
@@ -67,11 +68,11 @@ class WorkspaceContextNavigation(StructureAwareViewlet):
                 IWorkspaceSectionContext.providedBy(self.context))
         self.sections = getMenu("workspace_context_navigation", 
                                                 self.context, self.request)
-        # Append a trailing slash to each workspace viewlet navigation entry so that
-        # the right context is always maintained when using this navigation.
+        # Append a trailing slash to each workspace viewlet navigation entry so 
+        # that the right context is always maintained when using this navigation.
         for section in self.sections:
             section["url"] = url.set_url_context(section["url"])
-
+        
         # get a translated copy of original workspace object
         workspace = translate_obj(
                 misc.get_parent_with_interface(self, IWorkspaceContainer))
@@ -80,7 +81,20 @@ class WorkspaceContextNavigation(StructureAwareViewlet):
 #
 
 class ViewletBase(viewlet.ViewletBase):
-    render = ViewPageTemplateFile('templates/workspace_item_viewlet.pt')
+    # evoque
+    render = z3evoque.ViewTemplateFile("workspace_viewlets.html#items")
+    
+    # zpt
+    #render = ViewPageTemplateFile('templates/workspace_item_viewlet.pt')
+
+    def __init__(self,  context, request, view, manager):
+        super(ViewletBase, self).__init__(context, request, view, manager)
+        self._data = None
+
+    def getData(self):
+        """return the data of the query."""
+        return self._data
+    
 
 ''' XXX-INFO-FOR-PLONE - MR - 2010-05-03
 class UserIdViewlet(viewlet.ViewletBase):
@@ -103,7 +117,7 @@ class QuestionInStateViewlet(ViewletBase):
     name = state = None
     list_id = "_questions"
     
-    def getData(self):
+    def _setData(self):
         """return the data of the query
         """
         #offset = datetime.timedelta(prefs.getNoOfDaysBeforeQuestionSchedule())
@@ -124,7 +138,7 @@ class QuestionInStateViewlet(ViewletBase):
             item['type'] = _(q.type)
             item['to'] = q.ministry.short_name
             return item
-        return [ _q_data_item(question) for question in self.query.all() ]
+        self._data = [ _q_data_item(question) for question in self.query.all() ]
     
     def update(self):
         """refresh the query
@@ -133,6 +147,7 @@ class QuestionInStateViewlet(ViewletBase):
         qfilter = (domain.Question.status==self.state)
         questions = session.query(domain.Question).filter(qfilter)
         self.query = questions
+        self._setData()
 
 
 class MyGroupsViewlet(ViewletBase):
@@ -140,7 +155,7 @@ class MyGroupsViewlet(ViewletBase):
     list_id = "my_groups"
     render = ViewPageTemplateFile('templates/workspace_group_viewlet.pt')
     
-    def getData(self):
+    def _setData(self):
         """Return the data of the query
         """
         formatter = date.getLocaleFormatter(self.request, "date", "long")
@@ -182,7 +197,7 @@ class MyGroupsViewlet(ViewletBase):
             data['type'] =  _(result.type)
             data['to'] = u""
             data_list.append(data)
-        return data_list
+        self._data = data_list
     
     def update(self):
         """refresh the query
@@ -195,12 +210,12 @@ class MyGroupsViewlet(ViewletBase):
                             domain.Group.status=='active')
         groups = session.query(domain.Group).filter(gfilter)
         self.query = groups
-
+        self._setData()
 
 class MotionInStateViewlet(ViewletBase):
     name = state = None
     list_id = "_motions"
-    def getData(self):
+    def _setData(self):
         """
         return the data of the query
         """
@@ -225,8 +240,7 @@ class MotionInStateViewlet(ViewletBase):
             data['type'] =  _(result.type)
             data['to'] = ""
             data_list.append(data)
-        return data_list
-    
+        self._data = data_list
     
     def update(self):
         """
@@ -235,6 +249,7 @@ class MotionInStateViewlet(ViewletBase):
         session = Session()
         motions = session.query(domain.Motion).filter(domain.Motion.status==self.state)
         self.query = motions
+        self._setData()
 
 ''' !+ unused:
 from bungeni.core.workflows.bill import states as bill_wf_state
@@ -298,7 +313,7 @@ class OwnedItemsInStageViewlet(ViewletBase):
             'tableddocument',
             'bill']
     
-    def getData(self):
+    def _setData(self):
         """Return the data of the query.
         """
         data_list = []
@@ -306,7 +321,7 @@ class OwnedItemsInStageViewlet(ViewletBase):
         formatter = date.getLocaleFormatter(self.request, "date", "long")
         for result in results:
             data = {}
-            data['qid']= ('i-' + str(result.parliamentary_item_id))
+            data['qid'] = ('i-' + str(result.parliamentary_item_id))
             if type(result)==domain.AgendaItem:
                 g = u' ' + result.group.type + u' ' + result.group.short_name
             else:
@@ -319,13 +334,17 @@ class OwnedItemsInStageViewlet(ViewletBase):
             data['status'] = misc.get_wf_state(result)
             data['status_date'] = formatter.format(result.status_date)
             data['owner'] = "%s %s" %(result.owner.first_name, result.owner.last_name)
-            data['type'] =  _(result.type)
+            data['type'] = _(result.type)
             if type(result)==domain.Question:
                 data['to'] = result.ministry.short_name
             else:
                 data['to']= u""
+            # remember original domain object
+            data['id'] = result.parliamentary_item_id
+            data["_obj"] = result
+            # append processed result item
             data_list.append(data)
-        return data_list
+        self._data = data_list
 
     def update(self):
         """Refresh the query.
@@ -341,6 +360,7 @@ class OwnedItemsInStageViewlet(ViewletBase):
                         domain.ParliamentaryItem.type.in_(self.types))
         self.query = session.query(domain.ParliamentaryItem).filter(qfilter
             ).order_by(domain.ParliamentaryItem.parliamentary_item_id.desc())
+        self._setData()
 
 class AllItemsInStageViewlet(OwnedItemsInStageViewlet): 
 
@@ -354,7 +374,7 @@ class AllItemsInStageViewlet(OwnedItemsInStageViewlet):
                     )
         self.query = session.query(domain.ParliamentaryItem).filter(qfilter
             ).order_by(domain.ParliamentaryItem.parliamentary_item_id.desc()) 
-            
+        self._setData()
 
 class MPItemDraftViewlet(OwnedItemsInStageViewlet): 
     name = _("draft items")
@@ -487,7 +507,9 @@ class ItemsPendingScheduleViewlet(AllItemsInStageViewlet):
         get_states("tableddocument", tagged=["tobescheduled"])
     list_id = "items-pending-schedule"
 
-class ItemsScheduledViewlet(AllItemsInStageViewlet): 
+class ItemsScheduledViewlet(AllItemsInStageViewlet):
+    # evoque
+    render = z3evoque.ViewTemplateFile("workspace_viewlets.html#scheduled")
     name = _("scheduled")
     states = \
         get_states("agendaitem", keys=["scheduled"]) + \
@@ -496,7 +518,31 @@ class ItemsScheduledViewlet(AllItemsInStageViewlet):
         get_states("question", keys=["scheduled"]) + \
         get_states("tableddocument", keys=["scheduled"])
     list_id = "items-scheduled"
-
+    
+    def update(self):
+        super(ItemsScheduledViewlet, self).update()
+        formatter = date.getLocaleFormatter(self.request, "dateTime", "medium")
+        for d in self._data:
+            d["sittings_start"] = []
+            d["sittings_status"] = []
+            items_schedule = getActiveItemSchedule(d["id"])
+            for item_schedule in items_schedule:
+                s = item_schedule.sitting
+                d["sittings_start"].append(formatter.format(s.start_date))
+                d["sittings_status"].append(s.status)
+            # past, present, future
+            d["css_class"] = None
+            if items_schedule:
+                today = datetime.datetime.today().date()
+                # take "last" sitting date
+                startday = items_schedule[0].sitting.start_date.date()
+                if today==startday:
+                    d["css_class"] = "present"
+                elif today>startday:
+                    d["css_class"] = "past"
+                else:
+                    d["css_class"] = "future"
+            
 
 class MinistryItemsViewlet(ViewletBase):
     list_id = "ministry-items"
@@ -535,11 +581,11 @@ class MinistryItemsViewlet(ViewletBase):
                 ))
         return [ _q_data_item(question) for question in mq_query.all() ]
            
-    def getData(self):
+    def _setData(self):
         """ template calls this to get the data of the query setup in update()
         """
-        return [ item for ministry in self.query.all() 
-                 for item in self._getItems(ministry) ]
+        self._data = [ item for ministry in self.query.all() 
+                       for item in self._getItems(ministry) ]
     
     def update(self):
         """
@@ -555,6 +601,7 @@ class MinistryItemsViewlet(ViewletBase):
         ministries = session.query(domain.Ministry).filter(qfilter).order_by(
             domain.Ministry.start_date.desc())
         self.query = ministries
+        self._setData()
 
 class MinistryArchiveViewlet(MinistryItemsViewlet):
     name = _("archived items")
@@ -583,7 +630,7 @@ class InProgressMinistryItemsViewlet(MinistryItemsViewlet):
     states = get_states("question", keys=["response_submitted"])
     list_id = "items-in-progress"
 
-class DraftSittingsViewlet(viewlet.ViewletBase):
+class DraftSittingsViewlet(ViewletBase):
     """The "agendas/minutes" tab in the workspace/pi view for the Clerk.
     """
 
@@ -597,7 +644,6 @@ class DraftSittingsViewlet(viewlet.ViewletBase):
     states = get_states("groupsitting", tagged=["draft"])
     list_id = "sitting-draft"
     
-    _data = None
     def _setData(self):
         """Get the data of the query
         """
@@ -640,8 +686,6 @@ class DraftSittingsViewlet(viewlet.ViewletBase):
                 data["css_class"] = "future"
             data_list.append(data)
         self._data = data_list
-    def getData(self):
-        return self._data
     
     def update(self):
         """Refresh the query

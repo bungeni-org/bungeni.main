@@ -40,12 +40,14 @@ def pathjoin(basefilepath, filepath):
 # workflow 
 
 def get_wf_state(context):
-    # return human readable workflow title
+    """Get the human readable title for the context's workflow state
+    """
+    # !+ rename to: workflow_state_title
     wf = interfaces.IWorkflow(context)
-    wf_state = interfaces.IWorkflowState(context).getState()
-    return wf.workflow.states[wf_state].title
+    wf_state_id = interfaces.IWorkflowState(context).getState()
+    return wf.workflow.states[wf_state_id].title
 
-    
+
 # request 
 
 def is_ajax_request(request):

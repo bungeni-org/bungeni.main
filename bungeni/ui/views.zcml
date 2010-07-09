@@ -287,20 +287,19 @@
     class=".search.Similar"
     />
     
-  <!-- workflow view -->
-  
-  <browser:page 
-     for="bungeni.models.interfaces.IBungeniContent"
-     name="workflow"
-     class=".workflow.WorkflowView"
-     permission="zope.Public"/>
-
-  <browser:page 
-     for="ore.alchemist.interfaces.IAlchemistContent"
-     name="change_workflow_state"
-     class=".workflow.WorkflowChangeStateView"
-     permission="zope.View"/>
-
+    <!-- workflow view -->
+    
+    <browser:page name="workflow"
+        for="bungeni.models.interfaces.IBungeniContent"
+        class=".workflow.WorkflowView"
+        permission="zope.Public"
+    />
+    <browser:page name="change_workflow_state"
+        for="ore.alchemist.interfaces.IAlchemistContent"
+        class=".workflow.WorkflowChangeStateView"
+        permission="zope.View"
+    />
+    
   <!-- versions -->
   
   <browser:page 
