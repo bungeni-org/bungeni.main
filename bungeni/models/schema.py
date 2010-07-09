@@ -86,7 +86,7 @@ users = rdb.Table(
    rdb.Column( "first_name", rdb.Unicode(256), nullable=False ),
    rdb.Column( "last_name", rdb.Unicode(256), nullable=False ),
    rdb.Column( "middle_name", rdb.Unicode(256) ),
-   rdb.Column( "email", rdb.String(32), nullable=False ),
+   rdb.Column( "email", rdb.String(512), nullable=False ),
    rdb.Column( "gender", rdb.String(1),
         rdb.CheckConstraint("gender in ('M', 'F')")
         ), # (M)ale (F)emale
@@ -401,8 +401,8 @@ addresses = rdb.Table(
     rdb.Column( "country", rdb.String(2), rdb.ForeignKey("countries.country_id") ),
     rdb.Column( "phone", rdb.Unicode(256) ),
     rdb.Column( "fax", rdb.Unicode(256) ),
-    rdb.Column( "email", rdb.String(40) ),
-    rdb.Column( "im_id", rdb.String(40) ),
+    rdb.Column( "email", rdb.String(512) ),
+    rdb.Column( "im_id", rdb.String(512) ),
     # Workflow State -> determins visibility
     rdb.Column( "status", rdb.Unicode(16) ),
     rdb.Column( "status_date", rdb.DateTime( timezone=False ), server_default=(text('now()')), nullable=False ),
