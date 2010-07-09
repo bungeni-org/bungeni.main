@@ -989,9 +989,14 @@ class DhtmlxCalendarSittingsEdit(BrowserView):
         count2 = rec_args[3]
         #days - comma separated list of affected week days
         days = rec_args[4].split("#")[0]
-        #extra - this info is not necessary for calculation
-        #but can be used to correct presentation of recurring details
+        #extra - extra info
         extra  = rec_args[4].split("#")[1]
+        rrule_count = None
+        if (extra != "no") and (extra != ""):
+            try:
+                rrule_count = int(extra)
+            except TypeError:
+                rrule_count = None
         freq_map = {"day":DAILY,"week":WEEKLY,"month":MONTHLY,"year":YEARLY}
         freq = freq_map[rec_type]
         if count != "":
@@ -1011,10 +1016,16 @@ class DhtmlxCalendarSittingsEdit(BrowserView):
         elif (days != ""):
             byweekday = map(int,days.split(","))
         print "BYWEEKDAY",byweekday
-        if byweekday is not None:
-            return list(rrule(freq, dtstart=recurrence_start_date, until=recurrence_end_date, byweekday=byweekday, interval=interval))  
+        if rrule_count is not None:
+            if byweekday is not None:
+                return list(rrule(freq, dtstart=recurrence_start_date, until=recurrence_end_date, count=rrule_count, byweekday=byweekday, interval=interval))  
+            else:
+                return list(rrule(freq, dtstart=recurrence_start_date, until=recurrence_end_date, count=rrule_count, interval=interval))
         else:
-            return list(rrule(freq, dtstart=recurrence_start_date, until=recurrence_end_date, interval=interval))
+            if byweekday is not None:
+                return list(rrule(freq, dtstart=recurrence_start_date, until=recurrence_end_date, byweekday=byweekday, interval=interval))  
+            else:
+                return list(rrule(freq, dtstart=recurrence_start_date, until=recurrence_end_date, interval=interval))
     def __call__(self):
         ids = self.request.form['ids']
         action = self.request.form[ids+"_!nativeeditor_status"]
