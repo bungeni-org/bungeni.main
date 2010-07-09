@@ -314,7 +314,7 @@ class OwnedItemsInStageViewlet(ViewletBase):
             data['subject'] = result.short_name
             data['title'] = result.short_name
             data['result_item_class'] = 'workflow-state-' + result.status
-            data['url'] = '%ss/obj-%i%s' % (
+            data['url'] = '%ss/obj-%i' % (
                         result.type, result.parliamentary_item_id)
             data['status'] = misc.get_wf_state(result)
             data['status_date'] = formatter.format(result.status_date)
