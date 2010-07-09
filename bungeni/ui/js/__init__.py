@@ -15,9 +15,11 @@ Sortable = JSViewlet('bungeni-js/jquery/ui.sortable.js')
 Datepicker = JSViewlet('bungeni-js/jquery/ui.datepicker.js')
 QueryColumnFilters = JSViewlet('bungeni-js/jquery/jquery.columnfilters.js')
 TableSorter = JSViewlet('bungeni-js/jquery/jquery.tablesorter.js')
+#Slider = JSViewlet('bungeni-js/jquery/ui.slider.js')
 
 ClockPick = JSViewlet('bungeni-js/jquery/jquery.clockpick.1.2.5.js')
 
 Form = JSViewlet('bungeni-js/jquery/jquery.form-2.12.js')
 DhtmlxCalendar = JSViewlet('bungeni-js/dhtmlxScheduler/codebase/dhtmlxscheduler.js')
 DhtmlxCalendarList = JSViewlet('bungeni-js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_agenda_view.js')
+DhtmlxCalendarRecurring = JSViewlet('bungeni-js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_recurring.js')
