@@ -11,7 +11,7 @@ import sqlalchemy.sql.expression as sql
 from bungeni.models import domain, schema
 from bungeni.core.globalsettings import getCurrentParliamentId
 
-from bungeni.ui.utils import misc
+from bungeni.ui.utils import misc, url as ui_url
 from bungeni.ui.cookies import get_date_range
 from bungeni.ui.tagged import get_states
 
@@ -56,8 +56,9 @@ class WhatsOnBrowserView(BrowserView):
             s_list.append({
                     'name': schedule.item.short_name,
                     'status' : misc.get_wf_state(schedule.item),
-                    'url' : ('/business/' + schedule.item.type + 's/obj-' + 
-                        str(schedule.item.parliamentary_item_id)),
+                    'url' : ui_url.set_url_context(('/business/' +
+                            schedule.item.type + 's/obj-' + 
+                        str(schedule.item.parliamentary_item_id))),
                     'item_type' : schedule.item.type,
                      })
         return s_list
@@ -91,12 +92,12 @@ class WhatsOnBrowserView(BrowserView):
                     day_list.append(s_dict)
                 s_dict = {}
             if sitting.group.type == 'parliament':
-                url = '/business/sittings/obj-%i' % (
-                     sitting.sitting_id)
+                url = ui_url.set_url_context('/business/sittings/obj-%i' % (
+                     sitting.sitting_id))
             elif sitting.group.type == 'committee':
-                url = '/business/committees/obj-%i/sittings/obj-%i' % (
-                    sitting.group.group_id, 
-                    sitting.sitting_id)
+                url = ui_url.set_url_context(
+                    '/business/committees/obj-%i/sittings/obj-%i'
+                    % (sitting.group.group_id, sitting.sitting_id))
             else:
                 url ='#'
             s_list.append({
@@ -150,8 +151,9 @@ class WhatsOnBrowserView(BrowserView):
                 s_list.append({
                     'name': schedule.item.short_name,
                     'status' : misc.get_wf_state(schedule.item),
-                    'url' : ('/business/' + schedule.item.type + 's/obj-' + 
-                        str(schedule.item.parliamentary_item_id)),
+                    'url' : ui_url.set_url_context(('/business/' +
+                            schedule.item.type + 's/obj-' + 
+                            str(schedule.item.parliamentary_item_id))),
                     'group_type': schedule.sitting.group.type,
                     'group_name' : schedule.sitting.group.short_name,
                     'sitting_type' : schedule.sitting.sitting_type.sitting_type,

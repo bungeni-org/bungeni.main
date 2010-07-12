@@ -26,7 +26,7 @@ from ore.workflow.interfaces import IWorkflow
 
 from bungeni.ui.tagged import get_states
 from bungeni.ui.i18n import _
-import bungeni.ui.utils as ui_utils
+from bungeni.ui.utils import url as ui_url
 from bungeni.ui.calendar.utils import datetimedict
 from interfaces import ISchedulingManager
 
@@ -114,7 +114,7 @@ class SchedulableItemsViewlet(viewlet.ViewletBase):
             'state': IWorkflow(item).workflow.states[item.status].title,
             'id': item.parliamentary_item_id,
             'class': (item.parliamentary_item_id in scheduled_item_ids) and "dd-disable" or "",
-            'url': ui_utils.url.absoluteURL(item, self.request)
+            'url': ui_url.url.set_url_context(ui_url.absoluteURL(item, self.request))
             } for item, properties in \
             [(item, (IDCDescriptiveProperties.providedBy(item) and item or \
             IDCDescriptiveProperties(item))) for
@@ -203,7 +203,7 @@ class SchedulableAgendaItemsViewlet(SchedulableItemsViewlet):
             'state': _(IWorkflow(item).workflow.states[item.status].title),
             'id': item.parliamentary_item_id,
             'class': (item.parliamentary_item_id in scheduled_item_ids) and "dd-disable" or "",
-            'url': ui_utils.url.absoluteURL(item, self.request)
+            'url': ui_url.set_url_context(ui_url.absoluteURL(item, self.request))
             } for item, properties in \
             [(item, (IDCDescriptiveProperties.providedBy(item) and item or \
             IDCDescriptiveProperties(item))) for
