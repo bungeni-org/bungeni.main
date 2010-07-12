@@ -51,25 +51,57 @@
     
     $(this).click(function() {
         var target = $('#scheduling-calendar').find("fieldset");
-        var id = $(this).find("a[rel=id]").attr('name');
-        var link = target.find("a[rel=schedule-item]");
-        var url = link.attr('href');
-        // ask for a redirect to the current (updated) calendar
-        var next_url = $("a[rel=calendar]").attr('href');
-        var t =  $(this);                   
-        $("#kss-spinner").show();
-        $.post(url, {
-                headless: "true",
-                    next_url: next_url,
-                    item_id: id}, function(data, status) {
-                  $("#kss-spinner").hide();
-                  if (status == 'success') {
-                    _update_tables(selector, data);
-                    calendar.bungeniInteractiveSchedule();
-                    $("#scheduling-table tbody").dragRearrange();
-                    t.addClass("dd-disable");
-                  }
-                });
+        var id = $(this).attr('id');
+        if ($(this).is(':checked'))
+        {
+            var link = target.find("a[rel=schedule-item]");
+            var url = link.attr('href');
+            // ask for a redirect to the current (updated) calendar
+            var next_url = $("a[rel=calendar]").attr('href');
+            var t =  $(this).parent().parent();                   
+            $("#kss-spinner").show();
+            $.post(url, {
+                    headless: "true",
+                        next_url: next_url,
+                        item_id: id}, function(data, status) {
+                    $("#kss-spinner").hide();
+                    if (status == 'success') {
+                        _update_tables(selector, data);
+                        calendar.bungeniInteractiveSchedule();
+                        $("#scheduling-table tbody").dragRearrange();
+                        t.addClass("dd-disable");
+                        }
+                    });
+        }            
+        else
+        {   
+            //var id = $(this).attr('id');
+            //var selector2 = "#obj-"+id;
+            //var url = $(selector2);
+            //var url2= url.find("a[rel=delete-scheduling]").attr("href");
+            // ask for a redirect to the current (updated) calendar
+            
+            var link = target.find("a[rel=remove-scheduled-item]");
+            var url = link.attr('href');
+            var next_url = $("a[rel=calendar]").attr('href');
+            var t =  $(this).parent().parent();     
+            
+                          
+            $("#kss-spinner").show();
+            $.post(url, {
+                    headless: "true",
+                        next_url: next_url,
+                        item_id: id}, function(data, status) {
+                    $("#kss-spinner").hide();
+                    if (status == 'success') {
+                        _update_tables(selector, data);
+                        calendar.bungeniInteractiveSchedule();
+                        $("#scheduling-table tbody").dragRearrange();
+                        t.removeClass("dd-disable");
+                        }
+                    });
+        }        
+        
       });
       return this;
   }

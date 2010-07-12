@@ -92,7 +92,14 @@
      permission="bungeni.itemschedule.Add"
      layer="bungeni.ui.interfaces.IBungeniSkin"
      />
-  
+
+<browser:page
+     name="delete"
+     for="bungeni.models.interfaces.IItemScheduleContainer"
+     class=".common.DeleteForm"
+     permission="bungeni.itemschedule.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />  
   
 
   <browser:page

@@ -986,10 +986,10 @@
   <browser:menuItem
      menu="sitting_actions"
      for="bungeni.models.interfaces.IGroupSitting"
-     title="Delete Sitting"
-     action="./delete"
+     title="Remove Scheduled Item"
+     action="./items/delete"
      icon="++resource++ui-images/icon_delete.gif"
-     permission="bungeni.sitting.Delete"
+     permission="bungeni.itemschedule.Add"
      />
 
   <browser:menuItem
