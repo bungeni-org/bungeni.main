@@ -24,22 +24,18 @@
      provides="ore.wsgiapp.interfaces.IApplication"
      factory=".app.BungeniApp"
      />
-  
-  <!-- ErrorReportingUtility -->
-  <!--
-  <exclude package="zope.app.error" />
-  <utility
-    provides="zope.app.error.interfaces.IErrorReportingUtility"
-    component="zope.app.error.error.globalErrorReportingUtility"
-  />
-  gives... Conflicting configuration actions: 
-  zope/app/error/configure.zcml", line 33.2-36.8
-        <utility
-            provides=".interfaces.IErrorReportingUtility"
-            component=".error.globalErrorReportingUtility"
-            />
-  -->
-  
+    
+    <!-- ErrorReportingUtility
+    
+    Declare zope.error.error.RootErrorReportingUtility as the default
+    error reporting utility -:- may wish to specify a different utility
+    to for example report specific errors differently e.g. to email 
+    critical errors to some mailing list.
+    -->
+    <utility component="zope.error.error.globalErrorReportingUtility"
+        provides="zope.error.interfaces.IErrorReportingUtility"
+    />
+    
   <!-- Setup Domain Model Audit/ObjectLog Feature-->
   <include file="audit.zcml"/>
   
