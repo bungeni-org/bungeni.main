@@ -22,7 +22,12 @@
     
     <replace content="children:#portal-personaltools :not(.navigation)"
             theme="children:#portal-personaltools" />
-    <pyquery pyref="bungeni.portal/static/themes/rules:image_links" />    
+    <pyquery pyref="bungeni.portal/static/themes/rules:image_links" />
+
+    <!-- language selector -->
+    <replace content="#portal-languageselector"
+             theme="#portal-languageselector"/>
+    
     <!-- breadcrumbs -->
     <append content="children:#portal-breadcrumbs" theme="children:#portal-breadcrumbs" />
     <!-- content -->

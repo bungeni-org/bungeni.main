@@ -431,6 +431,13 @@ ul#portal-globalnav li a:hover {
 #portal-languageselector li {
     display: inline;
 }
+ 
+#portal-languageselector li.selected a {
+    background: #fffd6e;
+    border: 1px #cccccc solid;
+    text-decoration: none;
+    padding-left: 4px;
+}  
 #portal-breadcrumbs {
     /* The path bar, including breadcrumbs and add to favorites */
     border-bottom-color: #8cacbb;

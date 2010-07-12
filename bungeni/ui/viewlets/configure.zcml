@@ -125,7 +125,7 @@
      name="bungeni.content.languages"
      for="*"
      permission="zope.Public"
-     manager="ploned.ui.interfaces.IAboveContentManager"
+     manager="ploned.ui.interfaces.IPortalHeaderManager"     
      class=".language.LanguageViewlet"
      />
      
