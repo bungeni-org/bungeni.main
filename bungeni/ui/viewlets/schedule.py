@@ -114,7 +114,7 @@ class SchedulableItemsViewlet(viewlet.ViewletBase):
             'state': IWorkflow(item).workflow.states[item.status].title,
             'id': item.parliamentary_item_id,
             'class': (item.parliamentary_item_id in scheduled_item_ids) and "dd-disable" or "",
-            'url': ui_url.url.set_url_context(ui_url.absoluteURL(item, self.request))
+            'url': ui_url.set_url_context(ui_url.absoluteURL(item, self.request))
             } for item, properties in \
             [(item, (IDCDescriptiveProperties.providedBy(item) and item or \
             IDCDescriptiveProperties(item))) for
