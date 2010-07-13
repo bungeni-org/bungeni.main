@@ -1,5 +1,14 @@
-# encoding: utf-8
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
+"""Forms Viewlets
+
+$Id$
+"""
+log = __import__("logging").getLogger("bungeni.ui.forms.viewlets")
+
+import sys
 from dateutil import relativedelta
 import datetime, calendar
 from zope import interface
@@ -23,9 +32,9 @@ from bungeni.ui.i18n import _
 import bungeni.core.globalsettings as prefs
 
 from bungeni.ui.tagged import get_states
+from bungeni.ui import z3evoque
 from bungeni.ui.table import AjaxContainerListing
-from bungeni.ui.utils import queries, statements, url as ui_url, misc
-from bungeni.ui.utils import date
+from bungeni.ui.utils import queries, statements, url, misc, date, debug
 
 from fields import BungeniAttributeDisplay
 from interfaces import ISubFormViewletManager
@@ -493,7 +502,7 @@ class ResponseViewlet( BungeniAttributeDisplay ):
         self.query = None
         md = queryModelDescriptor(domain.Response)
         self.form_fields=md.fields
-        self.add_url = '%s/responses/add' % ui_url.absoluteURL(
+        self.add_url = '%s/responses/add' % url.absoluteURL(
             self.context, self.request)
         
     def handle_response_add_action(self, action, data):
@@ -567,15 +576,22 @@ class OfficesHeldViewlet( viewlet.ViewletBase ):
     render = ViewPageTemplateFile ('templates/offices_held_viewlet.pt')
 
         
-class TimeLineViewlet( viewlet.ViewletBase ):
+class TimeLineViewlet(viewlet.ViewletBase):
     """
     tracker/timeline view:
-
+    
     Chronological changes are aggregated from : bill workflow, bill
     audit, bill scheduling and bill event records. 
     """
-    render = ViewPageTemplateFile('templates/timeline_viewlet.pt')
+    # evoque
+    render = z3evoque.ViewTemplateFile("workspace_viewlets.html#timeline")
     
+    # zpt
+    #render = ViewPageTemplateFile('templates/timeline_viewlet.pt')
+    
+    # sqlalchemy give me a rough time sorting a union, 
+    # with hand coded sql it is much easier.
+    # !+ get rid of the hard-coded sql
     sql_timeline = ""
     add_action = form.Actions(
         form.Action(_(u'add event'), success='handle_event_add_action'), 
@@ -583,8 +599,6 @@ class TimeLineViewlet( viewlet.ViewletBase ):
     for_display = True
     view_name = "Timeline" 
     view_id = "unknown-timeline"
-    # sqlalchemy give me a rough time sorting a union, with hand coded sql it is much easier.
-    # !+ get rid of the hard-coded sql
     
     def __init__(self,  context, request, view, manager):
         self.context = context
@@ -592,6 +606,7 @@ class TimeLineViewlet( viewlet.ViewletBase ):
         self.__parent__= view
         self.manager = manager
         self.query = None
+        self.formatter = date.getLocaleFormatter(self.request, "dateTime", "medium")
     
     def handle_event_add_action(self, action, data):
         self.request.response.redirect(self.addurl)
@@ -599,10 +614,55 @@ class TimeLineViewlet( viewlet.ViewletBase ):
     def update(self):
         """Refresh the query.
         """
+        def _eval(s):
+            try:
+                d = eval(s)
+                assert isinstance(d, dict)
+                return d
+            except (SyntaxError, TypeError, AssertionError):
+                #debug.log_exc(sys.exc_info(), log_handler=log.info)
+                return {}
+        # NOTE: only *Change records have a "notes" dict attribute and the 
+        # content of this depends on the value of "atype" (see core/audit.py)
         item_id = self.context.parliamentary_item_id
-        self.results = queries.execute_sql(
-                            self.sql_timeline, item_id=item_id)
-        path = ui_url.absoluteURL(self.context, self.request)
+        self.results = [ dict(atype=action, item_id=piid, description=desc, 
+                              adate=date, notes=_eval(notes))
+                for action, piid, desc, date, notes in
+                queries.execute_sql(self.sql_timeline, item_id=item_id) ]
+        #change_cls = getattr(domain, "%sChange" % (self.context.__class__.__name__))
+        for r in self.results:
+            # workflow
+            if r["atype"]=="workflow":
+                # description
+                # the workflow transition change log stores the (unlocalized) 
+                # human title for the transition's destination workflow state 
+                # -- here we just localize what is supplied:
+                r["description"] = _(r["description"])
+                # NOTE: we could elaborate an entirely custom description 
+                # from scratch e.g via interpolation of a template string:
+                '''
+                if r["notes"].get("destination", ""):
+                    description = "%s %s" % (
+                                _("some text"),
+                                _(misc.get_wf_state(
+                                    self.context, r["notes"]["destination"])))
+                '''
+            # event
+            elif r["atype"]=="event":
+                # description 
+                r["description"] = """<a href="event/obj-%s">%s</a>""" % ( 
+                        r["item_id"], _(r["description"]) )
+            # version
+            elif r["atype"]=="version":
+                # description 
+                try:
+                    r["description"] = """<a href="versions/obj-%s">%s</a>""" % ( 
+                                    r["notes"]["version_id"], _(r["description"]) )
+                except (KeyError,):
+                    # no recorded version_id, just localize what is supplied
+                    r["description"] = _(r["description"])
+        #
+        path = url.absoluteURL(self.context, self.request)
         self.addurl = '%s/event/add' % (path)
 
 class BillTimeLineViewlet(TimeLineViewlet):
@@ -662,13 +722,13 @@ class MemberItemsViewlet(viewlet.ViewletBase):
         
     def results(self):
         for result in self.query.all():
-            url = '/business/%ss/obj-%i' % (result.type,
+            _url = '/business/%ss/obj-%i' % (result.type,
                 result.parliamentary_item_id)
             yield {'type': result.type, 
                 'short_name': result.short_name,
                 'status': misc.get_wf_state(result),
                 'submission_date' : result.submission_date.strftime('%Y-%m-%d'), 
-                'url': url }
+                'url': _url }
     
     render = ViewPageTemplateFile ('templates/mp_item_viewlet.pt')
 
@@ -749,7 +809,7 @@ class SchedulingMinutesViewlet(DisplayViewlet):
         self.context.discussion = target
 
     def get_add_url(self):
-        return '%s/discussions/add' % ui_url.absoluteURL(
+        return '%s/discussions/add' % url.absoluteURL(
             self.context, self.request)
             
             

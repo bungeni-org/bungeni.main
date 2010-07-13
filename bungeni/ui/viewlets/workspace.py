@@ -636,7 +636,7 @@ class InProgressMinistryItemsViewlet(MinistryItemsViewlet):
 class DraftSittingsViewlet(ViewletBase):
     """The "agendas/minutes" tab in the workspace/pi view for the Clerk.
     """
-
+    
     # evoque
     render = z3evoque.ViewTemplateFile("workspace_viewlets.html#sittings")
     

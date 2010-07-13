@@ -88,9 +88,11 @@ def get_menu_item_descriptor(title, selected, url, name=None):
 
 
 def set_url_context(url):
-    # Append a trailing slash to any url that is used for navigation
-    # Links in viewlets, breadcrumbs and listings.
+    """Append a trailing slash to any url that is used for navigation links 
+    in viewlets, breadcrumbs and listings.
+    """
+    # !+ rename: ensure_trailing_slash()
     if not url.endswith("/"):
-        url = url + "/"
+        return url + "/"
     return url
 

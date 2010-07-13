@@ -112,3 +112,30 @@ $begin{scheduled}
 </dd>
 $end{scheduled}
 
+#[ was: ui/forms/templates/timeline_viewlet.pt ]#
+$begin{timeline}
+<dt id="fieldsetlegend-${view.view_id}">
+    <span>${i18n(view.view_name)}</span>
+</dt>
+<dd id="fieldset-${view.view_id}">
+    <table class="listing">
+        <thead>
+            <tr>
+                <th>${i18n("Type")}</th>
+                <th>${i18n("Description")}</th>
+                <th>${i18n("Date")}</th>
+            </tr>
+        </thead>
+        <tbody>
+            $for{data in view.results}
+            <tr> 
+                <td><span>${i18n(data["atype"])}</span></td>
+                <td><span>${xml(data["description"])}</span></td>
+                <td><span>${view.formatter.format(data['adate'])}</span></td>
+            </tr>
+            $rof
+        </tbody>
+    </table>
+</dd>
+$end{timeline}
+

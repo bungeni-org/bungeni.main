@@ -34,7 +34,7 @@ def objectAdded(ob, event):
 
 def objectModified(ob, event):
     auditor = getAuditor(ob)
-    if getattr(event, 'change_id', None):
+    if getattr(event, "change_id", None):
         return
     auditor.objectModified(removeSecurityProxy(ob), event)
 
@@ -49,7 +49,7 @@ def objectStateChange(ob, event):
 
 def objectNewVersion(ob, event):
     auditor = getAuditor(ob)
-    if not getattr(event, 'change_id', None):
+    if not getattr(event, "change_id", None):
         change_id = auditor.objectNewVersion(removeSecurityProxy(ob), event)
     else:
         change_id = event.change_id
@@ -79,27 +79,26 @@ def getAuditableParent(obj):
         if  interfaces.IAuditable.providedBy(parent):
             return parent
         else:
-            parent = getattr(parent, '__parent__', None)
+            parent = getattr(parent, "__parent__", None)
 
 def getAuditor(ob):
-    return globals().get('%sAuditor' %(ob.__class__.__name__))
+    return globals().get("%sAuditor" %(ob.__class__.__name__))
 
 
 class AuditorFactory(object):
-
+    
     def __init__(self, change_table, change_object):
         self.change_table = change_table
         self.change_object = change_object
-
+    
     def objectContained(self, object, event):
         self._objectChanged(event.cls, object, event.description)
-        
-    def objectAttachment(self, object, event):
-        self._objectChanged(u'Files', object, event.description)
     
-
+    def objectAttachment(self, object, event):
+        self._objectChanged("attachment", object, event.description)
+    
     def objectAdded(self, object, event):
-        return self._objectChanged(u'added', object)
+        return self._objectChanged("added", object)
     
     def objectModified(self, object, event):
         attrset =[]
@@ -111,58 +110,101 @@ class AuditorFactory(object):
             elif IRelationChange.providedBy(attr):
                 if attr.description:
                     attrset.append(attr.description)
-        attrset.append(getattr(object, 'note', u""))
+        attrset.append(getattr(object, "note", u""))
         str_attrset = []
         for a in attrset:
             if type(a) in StringTypes:
                 str_attrset.append(a)
         description = u", ".join(str_attrset)
-        return self._objectChanged(u'modified', object, description)
+        return self._objectChanged("modified", object, description)
         
     def objectStateChanged(self, object, event):
+        """
+        object: origin domain workflowed object 
+        event: ore.workflow.workflow.WorkflowTransitionEvent
+            .object # origin domain workflowed object 
+            .source # souirce state
+            .destination # destination state
+            .transition # transition
+            .comment #
+        """
         comment = event.comment
         if comment is None:
-            comment =u""
+            comment = u""
         else:
-            if hasattr(object, 'note') and len(comment)>1:
+            if hasattr(object, "note") and len(comment)>1:
                 object.note = comment
-        wf = IWorkflowInfo(object)
-        if hasattr(object, 'status_date'):
+        if hasattr(object, "status_date"):
             object.status_date = datetime.now()
-        if event.source:
-            #get human readable titles for workflow state
-            event_title = wf.workflow().workflow.states[event.source].title
-        else:
-            event_title = 'new'
-        event_description={ 'source': event_title, 
-                            'destination': wf.workflow().workflow.states[event.destination].title,
-                            'transition': event.transition.title,
-                            'comment': comment }
-        
-        description = (_(u"""%(transition)s : %(comment)s [ transition from %(source)s to %(destination)s ]""")
-                      %event_description  )
-        # !+ why does the event.transition.transition_id here not 
-        # correspond to the actual transation.@id XML attribute value?
-        notes = repr((event.source, event.destination))
-        return self._objectChanged(u'workflow', object, description, notes=notes)
+        # as base description, record a human readable title of workflow state
+        wf = IWorkflowInfo(object).workflow().workflow
+        description = wf.states[event.destination].title
+        # extras, that may be used e.g. to elaborate description at runtime
+        notes = {
+            "source": event.source, 
+            "destination": event.destination,
+            "transition": event.transition.transition_id,
+            "comment": comment
+        }
+        return self._objectChanged("workflow", object, description, notes)
+        # description field becomes templates string?
+        # notes field becomes interpolation data
         
     def objectDeleted(self, object, event):
-        #return self._objectChanged(u'deleted', object)
+        #return self._objectChanged("deleted", object)
         return
 
     def objectNewVersion(self, object, event):
-        return self._objectChanged(u"new-version", object, description=event.message)
+        """
+        object: origin domain workflowed object 
+        event: bungeni.core.interfaces.VersionCreated
+            .object # origin domain workflowed object 
+            .message # title of the version object
+            .version # bungeni.models.domain.*Version
+            .versioned # bungeni.core.version.Versioned
+        """
+        # At this point, the new version instance (at event.version) is not yet 
+        # persisted to the db (or added to the session!) so its version_id is
+        # still None. We force the issue, by adding it to session and flushing.
+        session = Session()
+        session.add(event.version)
+        session.flush()
+        # as base description, record a the version object's title
+        description = event.message
+        # extras, that may be used e.g. to elaborate description at runtime        
+        notes = {
+            "version_id": event.version.version_id
+        }
+        return self._objectChanged("new-version", object, description, notes)
+        #vkls = getattr(domain, "%sVersion" % (object.__class__.__name__))
+        #versions = session.query(vkls
+        #            ).filter(vkls.content_id==event.version.content_id
+        #            ).order_by(vkls.status_date).all()
 
     def objectRevertedVersion(self, object, event):
-        return self._objectChanged(u'reverted-version', object, description=event.message)
+        return self._objectChanged("reverted-version", object, description=event.message)
         
-    def _objectChanged(self, change_kind, object, description=u'', notes=None):
+    def _objectChanged(self, change_kind, object, description="", notes=None):
         """
-        Convention: the value of "notes" should be a serialized str of a simple 
-        python object e.g. a dict, list, tuple, etc., that is a function of the 
-        "action". For example, for "workflow" action, the value of "notes" is 
-        always a serialized python 2-tuple, consisting of the transition's 
-        (source, destination) states -- that may be eval'ed back to life.
+        description: 
+            this is a non-localized string as base description of the log item.
+             offers a (building block) for 
+            the description of this log item. 
+            UI components may use this in any of the following ways:
+            - AS IS, optionally localized
+            - as a building block for an elaborated description e.g. for 
+              generating descriptions that are hyperlinks to an event or 
+              version objects
+            - ignore it entirely, and generate a custom descrition via other
+              means e.g. from the "notes" extras dict.
+        
+        notes:
+            a python dict, containing "extra" information about the log item;
+            the entries in this dict are a function of the "change_kind".
+            It is serialized for storing in the db.
+            For specific examples, see:
+                "workflow": self.objectStateChanged()
+                "new-version": self.objectNewVersion()
         """
         oid, otype = self._getKey(object)
         user_id = get_principal_id()
@@ -173,7 +215,10 @@ class AuditorFactory(object):
         change.date = datetime.now()
         change.user_id = user_id
         change.description = description
-        change.notes = notes
+        if notes:
+            change.notes = repr(notes)
+        else:
+            change.notes = None
         change.content_type = otype
         change.origin = object
         session.add(change)

@@ -65,7 +65,7 @@ import traceback
 def log_exc_info(exc_info, log_handler=log.error):
     """Traceback log an exception.
     exc_info: the 3-tuple as returned by sys.get_exc_info()
-        the client is required to call sys.get_exc_info() himself
+        the client is required to call sys.get_exc_info() itself
     log_handler: to allow logging via the caller's logger, 
         but defaults to bungeni.ui.utils.log.error
     """
@@ -75,12 +75,18 @@ def log_exc_info(exc_info, log_handler=log.error):
 def log_exc(exc_info, log_handler=log.error):
     """Short log of an exception.
     exc_info: the 3-tuple as returned by sys.get_exc_info()
-        the client is required to call sys.get_exc_info() himself
+        the client is required to call sys.get_exc_info() itself
     log_handler: to allow logging via the caller's logger, 
         but defaults to bungeni.ui.utils.log.error
+        
+    Sample usage:
+        import sys
+        try: ...
+        except (AnError, AnotherError, ... ):
+            debug.log_exc(sys.exc_info(), log_handler=log.info)
     """
-    cls, exception, tb = exc_info
-    log_handler(""" [%s] %s""" % (cls.__name__, exception))
+    cls, exc, tb = exc_info
+    log_handler(""" [%s] %s""" % (cls.__name__, exc))
 
 # events 
 
