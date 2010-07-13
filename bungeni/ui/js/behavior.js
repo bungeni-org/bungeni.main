@@ -29,12 +29,14 @@
       
       $("#scheduling-table tbody").dragRearrange();
       // Set up calendar item scheduling (by clicking)
-      $("#items-for-scheduling-bill tbody tr input").clickScheduling();
-      $("#items-for-scheduling-motion tbody tr input").clickScheduling();
-      $("#items-for-scheduling-question tbody tr input").clickScheduling();
-      $("#items-for-scheduling-agendaitem tbody tr input").clickScheduling();
-      $("#items-for-scheduling-tableddocument tbody tr input").clickScheduling();
-      $("#items-for-scheduling-heading tbody tr input").clickScheduling();
+      //$("#items-for-scheduling-bill tbody tr input").clickScheduling();
+      //$("#items-for-scheduling-motion tbody tr input").clickScheduling();
+      //$("#items-for-scheduling-question tbody tr input").clickScheduling();
+      //$("#items-for-scheduling-agendaitem tbody tr input").clickScheduling();
+      //$("#items-for-scheduling-tableddocument tbody tr input").clickScheduling();
+      //$("#items-for-scheduling-heading tbody tr input").clickScheduling();
+      
+      $(".scheduling-checkbox").clickScheduling();
                              
       // set up calendar ajax
       $('#weekly-calendar').bungeniCalendarInteractivity(true);

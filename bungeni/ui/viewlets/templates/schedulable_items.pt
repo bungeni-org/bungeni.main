@@ -23,16 +23,12 @@ $URL$
           <tbody>
             <tal:items repeat="item view/items">
               <tr tal:attributes="id string:row-${item/id}; class item/class;">
-                <span tal:condition="item/class" >
-                    <td>
-                        <input type="checkbox" tal:attributes="id item/id" checked="checked"/>
+                    <td tal:condition="item/class">
+                        <input type="checkbox" tal:attributes="id item/id" checked="checked" class="scheduling-checkbox"/>
                     </td>
-                </span>
-                <span tal:condition="not:item/class" >
-                    <td>
-                        <input type="checkbox" tal:attributes="id item/id"/>
+                    <td tal:condition="not:item/class">
+                        <input type="checkbox" tal:attributes="id item/id" class="scheduling-checkbox"/>
                     </td>
-                </span>
                 <td>
                   <a rel="id"
                      tal:attributes="href item/url;

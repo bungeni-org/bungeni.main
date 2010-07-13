@@ -362,11 +362,12 @@
                 mode = 'down';
                 break;            
             }
-            
+        var next_url = $("a[rel=calendar]").attr('href');
         var data = {
           "headless": "true",
           "mode": mode,
-          "field": field
+          "field": field,
+          "next_url": next_url,
         };
 
         $("#kss-spinner").show();
@@ -395,7 +396,16 @@
                   element.insertBefore(row);
                   break;
                 case "delete-scheduling":
-                    row.remove();
+                    //row.remove();
+                    var calendar = $('#scheduling-calendar')
+                    var selector = '#'+calendar.attr('id');
+                    _update_tables(selector, data);
+                    var old_tables = $('#items-to-be-scheduled-dl');
+                    var new_tables = $(data).find('#items-to-be-scheduled-dl');
+                    old_tables.eq(0).replaceWith(new_tables.eq(0));
+                    $("form.enableFormTabbing,div.enableFormTabbing").each(ploneFormTabbing.initializeForm);
+                    $("dl.enableFormTabbing").each(ploneFormTabbing.initializeDL);
+                    $(".scheduling-checkbox").clickScheduling();
                     break;                  
                 default:
                     return true;

@@ -19,6 +19,7 @@ from ore.alchemist import Session
 from alchemist.ui import generic
 
 from bungeni.models import domain
+from bungeni.models import schema as model_schema
 from bungeni.core.i18n import _
 from bungeni.ui.forms import validations
 from bungeni.ui.forms.common import ReorderForm
@@ -132,7 +133,7 @@ class ItemScheduleReorderForm(PageForm):
         """
         field = data['field']
         mode = data['mode']
-        container = self.context.__parent__
+        container = copy.copy(removeSecurityProxy(self.context.__parent__))
         name = self.context.__name__
         schedulings = container.batch(order_by=field, limit=None)
         ordering = [scheduling.__name__ for scheduling in schedulings]
@@ -195,6 +196,22 @@ class ItemScheduleDeleteForm(DeleteForm):
             count += 1
         #session.close()
         return count
+        
+class ItemScheduleContainerDeleteForm(DeleteForm):
+    class IDeleteForm(interface.Interface):
+        item_id = schema.Int(
+            title=_(u"Item ID"),
+            required=True)
+    form_fields = form.Fields(IDeleteForm)
+    
+    @form.action(_(u"Delete"))
+    def handle_delete(self, action, data):
+        session = Session()
+        sitting_id = self.context.__parent__.sitting_id
+        sch = session.query(domain.ItemSchedule).filter(sql.and_(model_schema.items_schedule.c.sitting_id == sitting_id, model_schema.items_schedule.c.item_id == data['item_id'])).all()        
+        for i in sch:
+            session.delete(i)
+        self.request.response.redirect(self.next_url)
 
 class GroupSittingAddForm(AddForm):
     """Add group-sittings form.
