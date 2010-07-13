@@ -82,7 +82,7 @@ def setup_adapters():
         (domain.Question,))
 
     zope.component.provideAdapter(
-        ore.workflow.workflow.WorkflowInfo,
+        bungeni.core.workflows.states.StateWorkflowInfo,
         (domain.Question,))
 
     zope.component.provideAdapter(
@@ -90,7 +90,7 @@ def setup_adapters():
         (domain.Bill,))
 
     zope.component.provideAdapter(
-        ore.workflow.workflow.WorkflowInfo,
+        bungeni.core.workflows.states.StateWorkflowInfo,
         (domain.Bill,))
 
     zope.component.provideAdapter(
@@ -98,7 +98,7 @@ def setup_adapters():
         (domain.Motion,))
 
     zope.component.provideAdapter(
-        ore.workflow.workflow.WorkflowInfo,
+        bungeni.core.workflows.states.StateWorkflowInfo,
         (domain.Motion,))
 
     zope.component.provideHandler(
@@ -114,7 +114,7 @@ def setup_adapters():
         (domain.GroupSitting,))
 
     zope.component.provideAdapter(
-        ore.workflow.workflow.WorkflowInfo,
+        bungeni.core.workflows.states.StateWorkflowInfo,
         (domain.GroupSitting,))
         
     zope.component.provideAdapter(
@@ -122,7 +122,7 @@ def setup_adapters():
         (domain.UserAddress,))
 
     zope.component.provideAdapter(
-        ore.workflow.workflow.WorkflowInfo,
+        bungeni.core.workflows.states.StateWorkflowInfo,
         (domain.UserAddress,))
         
     zope.component.provideAdapter(
@@ -130,7 +130,7 @@ def setup_adapters():
         (domain.TabledDocument,))
 
     zope.component.provideAdapter(
-        ore.workflow.workflow.WorkflowInfo,
+        bungeni.core.workflows.states.StateWorkflowInfo,
         (domain.TabledDocument,))
     
     zope.component.provideAdapter(
@@ -138,7 +138,7 @@ def setup_adapters():
         (domain.AgendaItem,))
 
     zope.component.provideAdapter(
-        ore.workflow.workflow.WorkflowInfo,
+        bungeni.core.workflows.states.StateWorkflowInfo,
         (domain.AgendaItem,))
 
 

@@ -159,17 +159,6 @@ Questions transitions
   >>> from bungeni.core.workflows.question import actions 
   >>> info = IWorkflowInfo(question)
   >>> info
-  <ore.workflow.workflow.WorkflowInfo object at ...>
-  
-XXX-1 The IWorkflowInfo interface triggers the incorrect adapter... we want 
-the factory class bungeni.core.workflows.states.StateWorkflowInfo to be used, 
-but all attempts to configure this for within this testing context
-[in: core/ftesting.zcml, core.workflows.testing.setup_adapters()] 
-are so far unsuccessful. So, instead, we explictly adapt the question:
-
-  >>> from bungeni.core.workflows.states import StateWorkflowInfo
-  >>> info = StateWorkflowInfo(question)
-  >>> info
   <bungeni.core.workflows.states.StateWorkflowInfo object at ...>
 
 PRINCIPAL: member

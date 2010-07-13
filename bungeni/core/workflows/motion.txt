@@ -91,6 +91,8 @@ Actions
   >>> from ore.workflow.interfaces import IWorkflowInfo
   >>> from bungeni.core.workflows.motion import actions 
   >>> info = IWorkflowInfo(motion)
+  >>> info
+  <bungeni.core.workflows.states.StateWorkflowInfo object at ...>
 
 "Create". This action assigns the role of "Owner" and sets the
 parliament id.
