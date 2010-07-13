@@ -141,6 +141,11 @@ div#portal-globalnav {
 #portal-column-content #whats-on-overview .whats-on-viewlet dd.formPanel ul ul li ul li a{  background: white !important;
 }
 
+/*Language selector - workspace*/
+.template-workspace div ul#portal-languageselector {
+  margin: -1.5em 1em 0 1em;
+}
+
 /*Navigation styles - workspace*/
 .template-workspace div#portal-globalnav ul.level0 {
   height: 1.85em;
@@ -250,11 +255,11 @@ div#portal-globalnav {
 
 .template-workspace #portal-personaltools {
   margin-top: -2em;
-  margin-bottom: 2em;
+  margin-bottom: 1.8em;
   background-color: #d4e2ef;
   border-top: 1px solid #a4bed7;
   border-bottom: 0px;
-  padding:0 0em;
+  padding:0.3em 0em;
   line-height: 0.7em;
 }
 
@@ -321,6 +326,11 @@ div#portal-globalnav {
   text-transform:none;
   white-space:nowrap;
   z-index:2;
+}
+
+/*Language selector - workspace*/
+.template-portal div ul#portal-languageselector {
+  margin: 0 -4.5em 0 0;
 }
 
 /*Navigation styles - portal*/
@@ -464,7 +474,7 @@ div#portal-globalnav {
 
 .template-portal #portal-personaltools {
   background-color: #f8ba61;
-  margin-top: -3.5em;
+  margin-top: -2.0em;
   margin-bottom: 2em;
   background-color: #;
   border-top: 1px solid #f8ba61;
@@ -634,6 +644,7 @@ div#portal-globalnav ul.level0 li.plain a{
 .template-workspace div#portal-globalnav ul.level1{
   width: 87em;
   height: 1.60em;
+  background: transparent none repeat scroll 0 0;
 }
 
 .template-member-space div#portal-globalnav ul.level1{
