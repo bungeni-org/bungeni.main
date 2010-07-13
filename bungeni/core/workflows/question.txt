@@ -40,7 +40,8 @@ In order to create a participation, we need a principal:
   >>> member = create_principal("member", "Member", ())
   >>> clerk = create_principal("clerk", "Clerk", ())
   >>> speaker = create_principal("speaker", "Speaker", ())
-  >>> minister = create_principal("minister", "Minister", ())
+  >>> minister_1 = create_principal("minister 1", "Minister", ())
+  >>> minister_2 = create_principal("minister 2", "Minister", ())
 
 Assign roles.
 
@@ -48,7 +49,8 @@ Assign roles.
   >>> global_prm.assignRoleToPrincipal(u"bungeni.MP", "member")
   >>> global_prm.assignRoleToPrincipal(u"bungeni.Clerk", "clerk")
   >>> global_prm.assignRoleToPrincipal(u"bungeni.Speaker", "speaker")
-  >>> global_prm.assignRoleToPrincipal(u"bungeni.Minister", "minister")
+  >>> global_prm.assignRoleToPrincipal(u"bungeni.Minister", "minister 1")
+  >>> global_prm.assignRoleToPrincipal(u"bungeni.Minister", "minister 2")
 
 
 Content creation
@@ -101,7 +103,7 @@ send the question notifications.
   
   >>> mp_2 = add_content(
   ...    domain.User,
-  ...    u"mp_2",
+  ...    u"minister 2",
   ...    first_name=u"b", 
   ...    last_name=u"bc", 
   ...    birth_country="KE",
@@ -112,7 +114,7 @@ send the question notifications.
   
   >>> mp_3 = add_content(
   ...    domain.User,
-  ...    u"No minister",
+  ...    u"member",
   ...    first_name=u"c", 
   ...    birth_country="KE",
   ...    last_name=u"cd",
@@ -120,26 +122,26 @@ send the question notifications.
   ...    email=u"mp3@example.com", 
   ...    language="en",
   ...    gender="F")
-
+  
   >>> question = add_content(
   ...     domain.Question,
   ...     short_name=u"My subject",
   ...     body_text=u"The question",
-  ...     owner_id = mp_1.user_id,
+  ...     owner_id = mp_3.user_id,
   ...     language="en")
   >>> question.__parent__ = app
-
+  
   >>> from bungeni.models.testing import create_sitting
   >>> sitting = create_sitting(parliament.parliament_id, "en")
 
 Set up a security mapping.
 
   >>> from zope.securitypolicy.interfaces import IPrincipalRoleMap
-  >>> prm = zope.securitypolicy.interfaces.IPrincipalRoleMap(question)
+  >>> qprm = zope.securitypolicy.interfaces.IPrincipalRoleMap(question)
 
   >>> #from zope.securitypolicy.interfaces import IRolePermissionMap  
   >>> from alchemist.security.permission import LocalRolePermissionMap
-  >>> rpm = LocalRolePermissionMap(question)
+  >>> qrpm = LocalRolePermissionMap(question)
   
 Integrity
 ---------
@@ -169,38 +171,41 @@ PRINCIPAL: member
   'member'
 
 -------------------------------------
-"create" - assigns the role of "Owner" and sets the parliament id.
+Transition: "create" - assigns the role of "Owner" and sets the parliament id.
 
-  >>> actions.create(info, question)
-
-# XXX-2 failing:  
-#  >>> info.fireTransition("create")
-#  >>> question.status
-#  'draft'
+  #>>> actions.create(info, question)
+  >>> info.fireTransition("create")
+  >>> question.status
+  'draft'
 
   >>> question.parliament_id==parliament.parliament_id
   True
   
-  >>> tuple(prm.getRolesForPrincipal("member"))
+  >>> tuple(qprm.getRolesForPrincipal("member"))
   ((u'bungeni.Owner', PermissionSetting: Allow),)
-  >>> tuple(prm.getRolesForPrincipal("clerk"))
+  >>> tuple(qprm.getRolesForPrincipal("clerk"))
+  ()
+  >>> tuple(qprm.getRolesForPrincipal("speaker"))
+  ()
+  >>> tuple(qprm.getRolesForPrincipal("minister 1"))
+  ()
+  >>> tuple(qprm.getRolesForPrincipal("minister 2"))
   ()
 
 
 PERMISSIONS for member principal for "draft" question.status
 
-# XXX-3 failing:
-#  >>> from zope.security import checkPermission
-#  >>> [ checkPermission("bungeni.question.Edit", question), 
-#  ...   checkPermission("zope.View", question), 
-#  ...   checkPermission("bungeni.question.Delete", question), 
-#  ...   checkPermission("bungeni.fileattachment.Add", question), 
-#  ...   checkPermission("bungeni.fileattachment.Edit", question) ]
-#  [True, True, True, True, True]
+  >>> from zope.security import checkPermission
+  >>> [ checkPermission("bungeni.question.Edit", question), 
+  ...   checkPermission("bungeni.question.Add", question),
+  ...   checkPermission("zope.View", question), 
+  ...   checkPermission("bungeni.question.Delete", question), 
+  ...   checkPermission("bungeni.fileattachment.Add", question), 
+  ...   checkPermission("bungeni.fileattachment.Edit", question),
+  ... ]
+  [True, False, True, True, True, True]
 
-Should also check permissions for other roles, i.e.
-    <deny permission="bungeni.question.Add" role="bungeni.MP" />
-    <deny permission="zope.View" role="bungeni.MP" />
+TODO: also check permissions for other roles, i.e.
     <deny permission="zope.View" role="bungeni.Clerk" />
     <deny permission="zope.View" role="bungeni.Speaker" />
     <deny permission="zope.View" role="bungeni.Minister" />
@@ -209,14 +214,15 @@ Should also check permissions for other roles, i.e.
 this would require to run with an interaction, one with a participation that 
 consists of a principal with the specific role.
 
+TODO: also check Clerk create_on_behalf_of MP
 
 -------------------------------------
-"submit-to-clerk"
+Transition: "submit_to_clerk"
 
   >>> actions.submit_to_clerk(info, question)
 
 # XXX-4 failing:
-#  >>> info.fireTransition("submit-to-clerk")
+#  >>> info.fireTransition("submit_to_clerk")
 #  >>> question.status
 #  'submitted'
   >>> from bungeni.core.interfaces import IVersioned
@@ -224,13 +230,13 @@ consists of a principal with the specific role.
   >>> len(versions)
   1
   
-  >>> tuple(prm.getRolesForPrincipal("member"))
+  >>> tuple(qprm.getRolesForPrincipal("member"))
   ((u'bungeni.Owner', PermissionSetting: Allow),)
 
-  >>> #tuple(prm.getRolesForPrincipal("clerk"))
-  >>> #tuple(rpm.getRolesAndPermissions())
-  >>> #tuple(rpm.getPermissionsForRole(u"bungeni.Owner"))
-  >>> #tuple(rpm.getRolesForPermission(u"bungeni.question.Edit"))
+  >>> #tuple(qprm.getRolesForPrincipal("clerk"))
+  >>> #tuple(qrpm.getRolesAndPermissions())
+  >>> #tuple(qrpm.getPermissionsForRole(u"bungeni.Owner"))
+  >>> #tuple(qrpm.getRolesForPermission(u"bungeni.question.Edit"))
 
 PRINCIPAL: clerk
 
@@ -243,7 +249,7 @@ in "submitted" state:
   'clerk'
 
 -------------------------------------
-"received-by-clerk"
+Transition: "receive_by_clerk"
 
   >>> actions.received_by_clerk(info, question)
 
@@ -255,7 +261,7 @@ Exception raised:
       File "/home/undesa/bungeni/cap_installs/bungeni_install/bungeni/releases/20100305100101/eggs/ore.workflow-1.0.4-py2.5.egg/ore/workflow/workflow.py", line 97, in getTransition
         transition = self._id_transitions[transition_id]
     KeyError: 'received-by-clerk'
-#  >>> info.fireTransition("received-by-clerk")
+#  >>> info.fireTransition("receive_by_clerk")
 #  >>> question.status
 #  'received'
   >>> len(versions)
@@ -379,13 +385,13 @@ Set up a user.
   ...     language="en",
   ...     email = "john.doe@localhost")
 
-  >>> minister = add_content(
+  >>> _minister_1 = add_content(
   ...     domain.Minister,
   ...     language="en",
   ...     group_id=ministry.group_id,
   ...     user_id=mp_1.user_id)
 
-  >>> minister2 = add_content(
+  >>> _minister_2 = add_content(
   ...     domain.Minister,
   ...     language="en",
   ...     group_id=ministry.group_id,
