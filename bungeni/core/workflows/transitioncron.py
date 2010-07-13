@@ -89,7 +89,7 @@ def main(argv=None):
       (domain.Question,))
 
     component.provideAdapter(
-      ore.workflow.workflow.WorkflowInfo,
+      bungeni.core.workflows.states.StateWorkflowInfo,
       (domain.Question,))
 
     component.provideHandler(
@@ -100,7 +100,6 @@ def main(argv=None):
     #    (domain.Question, ))
     #component.provideAdapter( audit.objectModified, 
     #(domain.Question, bungeni.core.interfaces.IAuditable, ))
-    
     
     deferAdmissibleQuestions() 
     session.flush()

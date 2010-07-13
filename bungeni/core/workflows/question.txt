@@ -45,10 +45,10 @@ In order to create a participation, we need a principal:
 Assign roles.
 
   >>> global_prm = zope.securitypolicy.interfaces.IPrincipalRoleMap(app)
-  >>> global_prm.assignRoleToPrincipal( u'bungeni.MP', 'member')
-  >>> global_prm.assignRoleToPrincipal( u'bungeni.Clerk', 'clerk')
-  >>> global_prm.assignRoleToPrincipal( u'bungeni.Speaker', 'speaker')
-  >>> global_prm.assignRoleToPrincipal( u'bungeni.Minister', 'minister')
+  >>> global_prm.assignRoleToPrincipal(u"bungeni.MP", "member")
+  >>> global_prm.assignRoleToPrincipal(u"bungeni.Clerk", "clerk")
+  >>> global_prm.assignRoleToPrincipal(u"bungeni.Speaker", "speaker")
+  >>> global_prm.assignRoleToPrincipal(u"bungeni.Minister", "minister")
 
 
 Content creation
@@ -83,43 +83,43 @@ send the question notifications.
 
   >>> country = add_content(
   ...    domain.Country,
-  ...    country_id='KE',
+  ...    country_id="KE",
   ...    iso_name = u"KENYA",
   ...    language="en",
   ...    country_name=u"Kenya")
-
+  
   >>> mp_1 = add_content(
-  ...        domain.User,
-  ...        u"minister 1",
-  ...        first_name=u"a", 
-  ...        last_name=u'ab', 
-  ...        birth_country="KE",
-  ...        email=u"mp1@example.com", 
-  ...        date_of_birth=today,
-  ...        language="en",
-  ...        gender='M')
+  ...    domain.User,
+  ...    u"minister 1",
+  ...    first_name=u"a", 
+  ...    last_name=u"ab", 
+  ...    birth_country="KE",
+  ...    email=u"mp1@example.com", 
+  ...    date_of_birth=today,
+  ...    language="en",
+  ...    gender="M")
   
   >>> mp_2 = add_content(
-  ...        domain.User,
-  ...        u"minister 2",
-  ...        first_name=u"b", 
-  ...        last_name=u"bc", 
-  ...        birth_country="KE",
-  ...        date_of_birth=today,
-  ...        email=u"mp2@example.com",
-  ...        language="en",
-  ...        gender='M')
+  ...    domain.User,
+  ...    u"mp_2",
+  ...    first_name=u"b", 
+  ...    last_name=u"bc", 
+  ...    birth_country="KE",
+  ...    date_of_birth=today,
+  ...    email=u"mp2@example.com",
+  ...    language="en",
+  ...    gender="M")
   
   >>> mp_3 = add_content(
-  ...        domain.User,
-  ...        u"No minister",
-  ...        first_name=u"c", 
-  ...        birth_country="KE",
-  ...        last_name=u"cd",
-  ...        date_of_birth=today,
-  ...        email=u"mp3@example.com", 
-  ...        language="en",
-  ...        gender='F')
+  ...    domain.User,
+  ...    u"No minister",
+  ...    first_name=u"c", 
+  ...    birth_country="KE",
+  ...    last_name=u"cd",
+  ...    date_of_birth=today,
+  ...    email=u"mp3@example.com", 
+  ...    language="en",
+  ...    gender="F")
 
   >>> question = add_content(
   ...     domain.Question,
@@ -148,7 +148,7 @@ Verify that all states are reachable.
 
   >>> from bungeni.core.workflows.testing import verify_workflow
   >>> from ore.workflow.interfaces import IWorkflow
-
+  
   >>> wf = IWorkflow(question)
   >>> verify_workflow(wf)
 
@@ -229,8 +229,8 @@ consists of a principal with the specific role.
 
   >>> #tuple(prm.getRolesForPrincipal("clerk"))
   >>> #tuple(rpm.getRolesAndPermissions())
-  >>> #tuple(rpm.getPermissionsForRole(u'bungeni.Owner'))
-  >>> #tuple(rpm.getRolesForPermission(u'bungeni.question.Edit'))
+  >>> #tuple(rpm.getPermissionsForRole(u"bungeni.Owner"))
+  >>> #tuple(rpm.getRolesForPermission(u"bungeni.question.Edit"))
 
 PRINCIPAL: clerk
 
@@ -374,10 +374,10 @@ Set up a user.
 
   >>> user = add_content(
   ...     domain.User,
-  ...     first_name=u'John',
-  ...     last_name=u'Doe',
+  ...     first_name=u"John",
+  ...     last_name=u"Doe",
   ...     language="en",
-  ...     email = 'john.doe@localhost')
+  ...     email = "john.doe@localhost")
 
   >>> minister = add_content(
   ...     domain.Minister,

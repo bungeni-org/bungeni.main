@@ -10,7 +10,7 @@ from bungeni import models as model
 from bungeni.models.testing import setup_db
 
 def setup_indexer():
-    store_dir = index.setupStorageDirectory() + '-test'
+    store_dir = index.setupStorageDirectory() + "-test"
 
     # search connection hub
     searcher = index.search.IndexSearch(store_dir)
@@ -21,7 +21,7 @@ def setup_indexer():
     # field definitions
     index.setupFieldDefinitions(indexer)
 
-def create_principal(id='manager', title="Manager", groups=()):
+def create_principal(id="manager", title="Manager", groups=()):
     return zope.security.testing.Principal(id, title, groups)
 
 def create_participation(principal=None):
