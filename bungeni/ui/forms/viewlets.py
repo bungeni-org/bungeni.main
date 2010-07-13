@@ -28,6 +28,7 @@ from ore.alchemist.model import queryModelDescriptor
 from bungeni.models import domain, interfaces
 from bungeni.models.utils import get_offices_held_for_user_in_parliament
 from bungeni.models.utils import get_parliament_for_group_id
+from bungeni.models.utils import get_principal_id
 from bungeni.ui.i18n import _
 import bungeni.core.globalsettings as prefs
 
@@ -614,7 +615,8 @@ class TimeLineViewlet(viewlet.ViewletBase):
     def update(self):
         """Refresh the query.
         """
-        def _eval(s):
+        # evaluate serialization of a dict, failure returns an empty dict
+        def _eval_as_dict(s):
             try:
                 d = eval(s)
                 assert isinstance(d, dict)
@@ -622,13 +624,26 @@ class TimeLineViewlet(viewlet.ViewletBase):
             except (SyntaxError, TypeError, AssertionError):
                 #debug.log_exc(sys.exc_info(), log_handler=log.info)
                 return {}
+        
         # NOTE: only *Change records have a "notes" dict attribute and the 
         # content of this depends on the value of "atype" (see core/audit.py)
         item_id = self.context.parliamentary_item_id
         self.results = [ dict(atype=action, item_id=piid, description=desc, 
-                              adate=date, notes=_eval(notes))
+                              adate=date, notes=_eval_as_dict(notes))
                 for action, piid, desc, date, notes in
                 queries.execute_sql(self.sql_timeline, item_id=item_id) ]
+                
+        # Filter out workflow draft items for anonymous users
+        if get_principal_id() in ("zope.anybody",):
+            _draft_states = ("draft", "working_draft")
+            def show_timeline_item(result):
+                if result["atype"]=="workflow":
+                    if result["notes"].get("destination") in _draft_states:
+                        return False
+                return True
+            self.results = [ result for result in self.results 
+                             if show_timeline_item(result) ]
+        
         #change_cls = getattr(domain, "%sChange" % (self.context.__class__.__name__))
         for r in self.results:
             # workflow
