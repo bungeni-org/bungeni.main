@@ -162,7 +162,7 @@ class AppSetup(object):
         #Parliamentary reports
         business[u"preports"] = QueryContent(
             container_getter(get_current_parliament, 'preports'),
-            title=_(u"Parliamentary publications"),
+            title=_(u"Publications"),
             marker=interfaces.IReportAddContext,
             description=_(u"View Agenda and Minutes reports of the current parliament"))
         

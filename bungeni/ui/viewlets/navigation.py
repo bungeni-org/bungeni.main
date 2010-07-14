@@ -78,8 +78,8 @@ def get_title_from_context(context):
 class SecondaryNavigationViewlet(object):
     
     # evoque
-    render = z3evoque.ViewTemplateFile("navigation.html#secondary")
-    # !+                                       , i18n_domain="bungeni.core")
+    render = z3evoque.ViewTemplateFile("navigation.html#secondary",
+                                           i18n_domain="bungeni.core")
     # zpt
     #render = ViewPageTemplateFile("templates/secondary-navigation.pt")
     

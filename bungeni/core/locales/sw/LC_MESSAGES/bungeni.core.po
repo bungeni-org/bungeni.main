@@ -88,8 +88,8 @@ msgid "View the sittings of the current parliament"
 msgstr "tazama vikao vya bunge la sasa"
 
 #: src/bungeni.main/bungeni/core/app.py:165
-msgid "Parliamentary publications"
-msgstr "machapisho ya bunge"
+msgid "Publications"
+msgstr "machapisho"
 
 #: src/bungeni.main/bungeni/core/app.py:167
 msgid "View Agenda and Minutes reports of the current parliament"

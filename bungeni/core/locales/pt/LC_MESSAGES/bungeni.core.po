@@ -90,8 +90,8 @@ msgid "View the sittings of the current parliament"
 msgstr "ver as sessões do parlamento atual"
 
 #: src/bungeni.main/bungeni/core/app.py:165
-msgid "Parliamentary publications"
-msgstr "publicações parlamentares"
+msgid "Publications"
+msgstr "publicações"
 
 #: src/bungeni.main/bungeni/core/app.py:167
 msgid "View Agenda and Minutes reports of the current parliament"

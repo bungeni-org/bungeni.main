@@ -94,8 +94,8 @@ msgid "View the sittings of the current parliament"
 msgstr "voir toutes les séances du parlement actuel"
 
 #: src/bungeni.main/bungeni/core/app.py:165
-msgid "Parliamentary publications"
-msgstr "publications parlementaires"
+msgid "Publications"
+msgstr "publications"
 
 #: src/bungeni.main/bungeni/core/app.py:167
 #, fuzzy
