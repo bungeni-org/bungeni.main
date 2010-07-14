@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: Wed Jul  7 15:15:45 2010\n"
-"PO-Revision-Date: 2010-07-08 00:18+0300\n"
+"PO-Revision-Date: 2010-07-10 22:28+0300\n"
 "Last-Translator: Administrator <admin@apkn.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: en_KE\n"
@@ -988,7 +988,7 @@ msgstr "debate"
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:28
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:54
 msgid "Allow scheduling of Third Reading"
-msgstr "schedule for third reading"
+msgstr "allow scheduling for third reading"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:282
 msgid "Create Agenda Item"
@@ -1104,29 +1104,28 @@ msgstr "adjourn third reading"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:36
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:43
-#, fuzzy
 msgid "Allow scheduling of Whole House Committee"
-msgstr "reschedule whole house committee"
+msgstr "allow scheduling whole house committee"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:37
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:42
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:56
 msgid "Allow scheduling of Second Reading"
-msgstr "reschedule second reading"
+msgstr "allow scheduling second reading"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:41
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:58
 msgid "Allow scheduling of First Reading"
-msgstr "reschedule first reading"
+msgstr "allow rescheduling first reading"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:45
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:53
 msgid "Allow scheduling of First Report Reading"
-msgstr "reschedule report reading"
+msgstr "allow rescheduling report reading"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:46
 msgid "Allow scheduling/rescheduling of Whole House Committee"
-msgstr "reschedule whole house committee"
+msgstr "allow scheduling/rescheduling whole house committee"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:49
 msgid "Adjourn First Report Reading"
