@@ -121,7 +121,7 @@ class SendNotificationToClerkUponSubmit(Notification):
 
     @property
     def condition(self):
-        return prefs.getClerksOfficeRecieveNotification()
+        return prefs.getClerksOfficeReceiveNotification()
     
     @property
     def recipient_address(self):

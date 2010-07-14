@@ -53,13 +53,13 @@ class actions(object):
     @staticmethod
     def submit_to_clerk(info, context):
         """A question submitted to the clerks office, the owner cannot edit it 
-        anymore the clerk has no edit rights until it is recieved.
+        anymore the clerk has no edit rights until it is received.
         """
         utils.setSubmissionDate(info, context)
     
     @staticmethod
     def received_by_clerk(info, context):
-        """The question is recieved by the clerks office, 
+        """The question is received by the clerks office, 
         the clerk can edit the question.
         """
         utils.createVersion(info, context)
@@ -207,7 +207,7 @@ class SendNotificationToClerkUponSubmit(Notification):
     
     @property
     def condition(self):
-        return prefs.getClerksOfficeRecieveNotification()
+        return prefs.getClerksOfficeReceiveNotification()
     
     @property
     def recipient_address(self):
@@ -393,7 +393,7 @@ class SendNotificationToMemberUponSentToMinistry(Notification):
 
 class SendNotificationToMemberUponAnswer(Notification):
     """Issued when a questions answer was reviewed by Clerk's office.
-    sends a notice that the question was either debated or recieved a
+    sends a notice that the question was either debated or received a
     written answer by the ministry and that the answer is available
     ..."""
     
@@ -416,7 +416,7 @@ class SendNotificationToMemberUponAnswer(Notification):
 
 class SendNotificationToMemberUponDebate(Notification):
     """Issued when a questions answer was reviewed by Clerk's office.
-    sends a notice that the question was either debated or recieved a
+    sends a notice that the question was either debated or received a
     written answer by the ministry and that the answer is available
     ..."""
     

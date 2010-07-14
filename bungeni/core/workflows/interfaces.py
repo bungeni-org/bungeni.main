@@ -59,7 +59,7 @@ class IResponseCompletedEvent(IWorkflowTransitionEvent):
 ###################
 
 class IMotionReceivedEvent(IWorkflowTransitionEvent):
-    """ Motion recieved by clerks office"""
+    """ Motion received by clerks office"""
 
 class IMotionSubmittedEvent(IWorkflowTransitionEvent):
     """ Motion submitted to clerks office """
@@ -98,7 +98,7 @@ class IMotionPendingEvent(IWorkflowTransitionEvent):
 ###################
 
 class ITabledDocumentReceivedEvent(IWorkflowTransitionEvent):
-    """ TabledDocument recieved by clerks office"""
+    """ TabledDocument received by clerks office"""
 
 class ITabledDocumentSubmittedEvent(IWorkflowTransitionEvent):
     """ TabledDocument submitted to clerks office """
@@ -126,7 +126,7 @@ class ITabledDocumentPendingEvent(IWorkflowTransitionEvent):
 ###################
 
 class IAgendaItemReceivedEvent(IWorkflowTransitionEvent):
-    """ AgendaItem recieved by clerks office"""
+    """ AgendaItem received by clerks office"""
 
 class IAgendaItemSubmittedEvent(IWorkflowTransitionEvent):
     """ AgendaItem submitted to clerks office """

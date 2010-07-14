@@ -90,7 +90,7 @@ def setTabledDocumentSerialNumber(tabled_document):
 def setQuestionSerialNumber(question):
     """
      Approved questions are given a serial number enabling the clerks office
-     to record the order in which questions are recieved and hence enforce 
+     to record the order in which questions are received and hence enforce 
      a first come first served policy in placing the questions on the order
      paper. The serial number is re-initialized at the start of each session
     """

@@ -62,7 +62,7 @@ def getSpeakersOfficeEmail():
     email = BungeniSettings(app).speakers_office_email
     return email
     
-def getSpeakersOfficeRecieveNotification():
+def getSpeakersOfficeReceiveNotification():
     """
     returns true if the Speakers office wants to be alerted by mail
     whenever a bill, motion, question is submitted 
@@ -76,7 +76,7 @@ def getClerksOfficeEmail():
     """
     return BungeniSettings(app).clerks_office_email
     
-def getClerksOfficeRecieveNotification():
+def getClerksOfficeReceiveNotification():
     """
     returns true if the clerks office wants to be alerted by mail
     whenever a bill, motion, question is submitted 

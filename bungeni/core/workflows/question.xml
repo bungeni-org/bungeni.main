@@ -211,7 +211,7 @@
         trigger="manual"
         source="submitted"
         destination="received"
-        permission="bungeni.question.Recieve"
+        permission="bungeni.question.Receive"
         action="bungeni.core.workflows.question.actions.received_by_clerk"
         condition=""
         event=".interfaces.IQuestionReceivedEvent"

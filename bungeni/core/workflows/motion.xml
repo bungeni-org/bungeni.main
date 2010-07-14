@@ -243,7 +243,7 @@
         trigger="manual"
         source="submitted"
         destination="received"
-        permission="bungeni.motion.Recieve"
+        permission="bungeni.motion.Receive"
         action="bungeni.core.workflows.motion.actions.received_by_clerk"
         condition=""
         event="bungeni.core.workflows.interfaces.IMotionReceivedEvent"

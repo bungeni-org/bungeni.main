@@ -48,7 +48,7 @@ class PropertyProvider( BasePlugin, Cacheable ):
                     'fullname' : u"%s %s" %(b_user.first_name, b_user.last_name),
                     'email' : b_user.email or u"",
                     'description' : b_user.description or u"",
-                    'notification': b_user.recieve_notification or False,
+                    'notification': b_user.receive_notification or False,
                     }
         if data:
             self.ZCacheable_set(data, view_name=view_name)
@@ -75,9 +75,9 @@ class PropertyProvider( BasePlugin, Cacheable ):
                 email =  propertysheet.getProperty('email')
                 if email:
                     b_user.email = email
-                recieve_notification = propertysheet.getProperty('notification')
-                if recieve_notification != None:
-                    b_user.recieve_notification = recieve_notification
+                receive_notification = propertysheet.getProperty('notification')
+                if receive_notification != None:
+                    b_user.receive_notification = receive_notification
         view_name = createViewName('getPropertiesForUser', user) 
         cached_info = self.ZCacheable_invalidate(view_name=view_name)
 

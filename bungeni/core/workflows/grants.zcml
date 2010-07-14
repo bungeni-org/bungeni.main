@@ -4,7 +4,7 @@
     i18n_domain="bungeni.core">
   <!-- question workflow permissions -->
   <grant permission="bungeni.question.Submit" role="bungeni.Owner"/>
-  <grant permission="bungeni.question.Recieve" role="bungeni.Clerk"/>
+  <grant permission="bungeni.question.Receive" role="bungeni.Clerk"/>
   <grant permission="bungeni.question.clerk.Review" role="bungeni.Clerk"/>
   <grant permission="bungeni.question.speaker.Review"  role="bungeni.Speaker"/>
   <grant permission="bungeni.question.Schedule" role="bungeni.Clerk"/>
@@ -21,7 +21,7 @@
     <grant permission="bungeni.response.RevertTransitions" role="bungeni.Clerk" />
   <!--TODO motion workflow permissions -->
   <grant permission="bungeni.motion.Submit" role="bungeni.Owner"/>
-  <grant permission="bungeni.motion.Recieve" role="bungeni.Clerk"/>
+  <grant permission="bungeni.motion.Receive" role="bungeni.Clerk"/>
   <grant permission="bungeni.motion.clerk.Review" role="bungeni.Clerk"/>
   <grant permission="bungeni.motion.speaker.Review"  role="bungeni.Speaker"/>
   <grant permission="bungeni.motion.Schedule" role="bungeni.Clerk"/>
@@ -32,7 +32,7 @@
   
   <!-- Agenda Items -->
   <grant permission="bungeni.agendaitem.Submit" role="bungeni.Owner"/>
-  <grant permission="bungeni.agendaitem.Recieve" role="bungeni.Clerk"/>
+  <grant permission="bungeni.agendaitem.Receive" role="bungeni.Clerk"/>
   <grant permission="bungeni.agendaitem.clerk.Review" role="bungeni.Clerk"/>
   <grant permission="bungeni.agendaitem.speaker.Review" role="bungeni.Speaker"/>
   <grant permission="bungeni.agendaitem.Schedule" role="bungeni.Clerk"/>
@@ -43,7 +43,7 @@
   
     <!-- tabled document -->
     <grant permission="bungeni.tableddocument.Submit" role="bungeni.Owner"/>
-    <grant permission="bungeni.tableddocument.Recieve" role="bungeni.Clerk"/>
+    <grant permission="bungeni.tableddocument.Receive" role="bungeni.Clerk"/>
     <grant permission="bungeni.tableddocument.clerk.Review" role="bungeni.Clerk"/>
     <grant permission="bungeni.tableddocument.speaker.Review"  role="bungeni.Speaker"/>
     <grant permission="bungeni.tableddocument.Schedule" role="bungeni.Clerk"/>

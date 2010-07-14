@@ -104,10 +104,10 @@ users = rdb.Table(
    rdb.Column( "image", rdb.Binary),
    rdb.Column( "active_p", rdb.String(1),
                 rdb.CheckConstraint("active_p in ('A', 'I', 'D')"),
-                default="A", #activ/inactiv/deceased
-                ), 
+                default="A", # activ/inactiv/deceased
+                ),
    # comment out for now - will be used for user preferences
-   rdb.Column( "recieve_notification", rdb.Boolean, default=True),
+   rdb.Column( "receive_notification", rdb.Boolean, default=True),
    rdb.Column( "language", rdb.String(5), nullable=False),
    )
 
@@ -705,7 +705,7 @@ agenda_item_versions = make_versions_table( agenda_items, metadata, parliamentar
 
 QuestionSequence = rdb.Sequence('question_number_sequence', metadata)
 # Approved questions are given a serial number enabling the clerks office
-# to record the order in which questions are recieved and hence enforce 
+# to record the order in which questions are received and hence enforce 
 # a first come first served policy in placing the questions on the order
 # paper. The serial number is re-initialized at the start of each session
 

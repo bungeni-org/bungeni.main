@@ -179,7 +179,7 @@
         trigger="manual"
         source="submitted"
         destination="received"
-        permission="bungeni.agendaitem.Recieve"
+        permission="bungeni.agendaitem.Receive"
         action="bungeni.core.workflows.agendaitem.actions.received_by_clerk"
         condition=""
         event="bungeni.core.workflows.interfaces.IAgendaItemReceivedEvent"

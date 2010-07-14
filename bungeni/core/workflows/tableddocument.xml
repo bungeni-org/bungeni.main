@@ -155,7 +155,7 @@
         trigger="manual"
         source="submitted"
         destination="received"
-        permission="bungeni.tableddocument.Recieve"
+        permission="bungeni.tableddocument.Receive"
         action="bungeni.core.workflows.tableddocument.actions.received_by_clerk"
         condition=""
         event="bungeni.core.workflows.interfaces.ITabledDocumentReceivedEvent"

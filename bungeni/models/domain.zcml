@@ -647,7 +647,7 @@
         national_id
         description
         image
-        recieve_notification
+        receive_notification
         language" />
 
     <require permission="zope.ManageContent"
@@ -670,7 +670,7 @@
         national_id
         description
         image
-        recieve_notification
+        receive_notification
         language" />
         
   </class>
