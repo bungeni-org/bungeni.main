@@ -75,7 +75,8 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
     def update(self):
         has_wfstate = False
         try:
-            wf_state = interfaces.IWorkflowState( removeSecurityProxy(self.context) ).getState()
+            wf_state = interfaces.IWorkflowState( 
+                                removeSecurityProxy(self.context)).getState()
             has_wfstate = True
         except:
             wf_state = u'undefined'
@@ -169,20 +170,18 @@ class WorkflowActionViewlet(BaseForm, viewlet.ViewletBase):
             note_widget = TextAreaWidget
             note_widget.height = 1
             self.form_fields['note'].custom_widget = note_widget
-                        
+        
         self.setUpWidgets()
-
+    
     def setupActions(self, transition):
-        self.wf = interfaces.IWorkflowInfo( self.context )
-
+        self.wf = interfaces.IWorkflowInfo(self.context)
         if transition is None:
             transitions = self.wf.getManualTransitionIds()
         else:
             transitions = (transition,)
-            
         self.actions = bindTransitions(
             self, transitions, None, interfaces.IWorkflow(self.context))
-
+    
     def setUpWidgets(self, ignore_request=False):
         # setup widgets in data entry mode not bound to context
         self.widgets = form.setUpDataWidgets(

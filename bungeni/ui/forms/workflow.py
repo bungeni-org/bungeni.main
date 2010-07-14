@@ -1,7 +1,18 @@
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""Workflow Forms
+
+$Id$
+"""
+log = __import__("logging").getLogger("bungeni.ui.forms.workflow")
+
 from zope import component
 from zope.formlib import form
 from zope.security.proxy import removeSecurityProxy
 from bungeni.core.interfaces import IVersioned
+from bungeni.models.utils import get_principal_id
 from bungeni.ui.i18n import _
 from ore.workflow import interfaces
 from alchemist.ui.core import handle_edit_action
@@ -68,5 +79,26 @@ class TransitionHandler(object):
             return result
         else:
             info.fireTransition(self.transition_id, notes)
-            return form.request.response.redirect(form.next_url)
+            # NOTE: for some reason form.next_url is (always?) None --
+            # for when it is None, we redirect to HTTP_REFERER instead.
+            log.debug(""" TransitionHandler.__call__()
+        form=%s 
+        action=(name=%s, label=%s)
+        data=%s
+        principal_id=%s
+        context=%s
+        transition_id=%s
+        notes=%s
+        result=%s
+        next_url=%s 
+        current_url=%s """ % (form, action.label, action.name, data, 
+                get_principal_id(), context, self.transition_id, 
+                notes, result, form.next_url, form.request.getURL()))
+            next_url = form.next_url
+            if next_url is None:
+                next_url = form.request["HTTP_REFERER"]
+                log.error(" TransitionHandler.__call__() => CANNOT redirect to "
+                    "next_url [None]... will try instead to redirect to "
+                    "HTTP_REFERER [%s]" % (next_url,))
+            return form.request.response.redirect(next_url)
 
