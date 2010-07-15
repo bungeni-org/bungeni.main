@@ -3,15 +3,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: Wed Jul  7 16:34:58 2010\n"
-"PO-Revision-Date: 2010-05-24 10:28+0300\n"
-"Last-Translator: peter <kamero@parliaments.info>\n"
+"PO-Revision-Date: 2010-07-15 12:25+0300\n"
+"Last-Translator: Administrator <admin@apkn.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Pootle 2.0.4\n"
 "Language-Code: en\n"
 "Domain: DOMAIN\n"
-"Plural-Forms: nplurals=1; plural=0\n"
 "Preferred-Encodings: utf-8 latin1\n"
 "Language-Name: English\n"
 
@@ -61,16 +63,16 @@ msgstr "date"
 
 #: src/bungeni.main/bungeni/ui/calendar/browser.py:559
 msgid "Choose a starting date for this report"
-msgstr "choisissez une date de départ de ce rapport"
+msgstr "Choisissez la date à laquelle commence ce rapport"
 
 #: src/bungeni.main/bungeni/ui/calendar/browser.py:593
 msgid "Include draft sittings"
-msgstr "inclurez le projet de séances"
+msgstr "incluez les séances ayant un ordre du jour préliminaire"
 
 #: src/bungeni.main/bungeni/ui/calendar/browser.py:594
 msgid "Whether or not to include sittings still in draft"
 msgstr ""
-"qu'il s'agisse ou non d'inclurer de séances qui sont encore dans le projet  "
+"s'il faut ou non inclure les séances ayant un ordre du jour préliminaire"
 
 #: src/bungeni.main/bungeni/ui/calendar/browser.py:69
 msgid "Daily"
@@ -86,11 +88,11 @@ msgstr "un parlement doit être actif dans la période"
 
 #: src/bungeni.main/bungeni/ui/calendar/browser.py:900
 msgid "Preview"
-msgstr "prévisualiser"
+msgstr "aperçu"
 
 #: src/bungeni.main/bungeni/ui/calendar/browser.py:923
 msgid "Agenda"
-msgstr "l'ordre du jour"
+msgstr "ordre du jour"
 
 #: src/bungeni.main/bungeni/ui/calendar/browser.py:924
 msgid "ORDER OF THE DAY"
@@ -106,7 +108,7 @@ msgstr "votes et délibérations"
 
 #: src/bungeni.main/bungeni/ui/calendar/browser.py:961
 msgid "This form generates the “votes and proceedings” report"
-msgstr "$type - ${start}-${end}"
+msgstr "ce formulaire génère le compte-rendu des votes et délibérations"
 
 #: src/bungeni.main/bungeni/ui/calendar/browser.py:962
 msgid "VOTES AND PROCEEDINGS"
@@ -118,7 +120,7 @@ msgstr "→"
 
 #: src/bungeni.main/bungeni/ui/calendar/macros.pt:174
 msgid "No items scheduled"
-msgstr "pas d'articles prévu"
+msgstr "pas de point prévu"
 
 #: src/bungeni.main/bungeni/ui/calendar/macros.pt:207
 #: src/bungeni.main/bungeni/ui/calendar/macros.pt:303
@@ -151,12 +153,10 @@ msgid "Actions"
 msgstr "actions"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1008
-#, fuzzy
 msgid "political group"
 msgstr "groupe politique ..."
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1009
-#, fuzzy
 msgid "political groups"
 msgstr "groupes politiques"
 
@@ -205,7 +205,7 @@ msgstr "gouvernement"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1103
 msgid "Governments"
-msgstr "les gouvernements"
+msgstr "gouvernements"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1112
 msgid "Number"
@@ -249,11 +249,11 @@ msgstr "article"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1207
 msgid "Assigned group"
-msgstr "groupe attribuée"
+msgstr "groupe attribué"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1208
 msgid "Assigned groups"
-msgstr "les groupes attribuées"
+msgstr "groupes attribués"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1213
 msgid "Committee"
@@ -280,7 +280,7 @@ msgstr "télécharger un fichier vers un serveur "
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1285
 msgid "Attached file version"
-msgstr "version de fichier attaché "
+msgstr "version du fichier attaché "
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1286
 #: src/bungeni.main/bungeni/ui/descriptor.py:1523
@@ -299,7 +299,7 @@ msgstr "numéro de registre"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1323
 msgid "Moved by"
-msgstr "proposée par"
+msgstr "déplacé par"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1324
 msgid "Select the user who moved the document"
@@ -359,12 +359,12 @@ msgstr "sommaire"
 #: src/bungeni.main/bungeni/ui/descriptor.py:146
 #: src/bungeni.main/bungeni/ui/vocabulary.py:92
 msgid "inactive"
-msgstr "inactifs"
+msgstr "inactif"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:147
 #: src/bungeni.main/bungeni/ui/vocabulary.py:93
 msgid "deceased"
-msgstr "décédée"
+msgstr "décédé"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1497
 msgid "Heading"
