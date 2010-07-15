@@ -85,20 +85,20 @@ slots {
 
 #[ stylesheets ]#
 <!-- provider: "yui.css" -->
-${ xml(view.provide("yui.css")) }
+${ xml(view.provide(provider_name="yui.css")) }
 
 #[ javascripts ]#
 <!-- provider: "yui.js" -->
-${ xml(view.provide("yui.js")) }
+${ xml(view.provide(provider_name="yui.js")) }
 <!-- provider: "plone-js" -->
-${ xml(view.provide("plone-js")) }
+${ xml(view.provide(provider_name="plone-js")) }
 
   </head>
   <body class="yui-skin-sam">#[ + for section: section-bungeni-workspace ]#
     <div id="visual-portal-wrapper">
       <div id="portal-top">
-      ${ xml(view.provide("plone.portalheader")) }
-      ${ xml(view.provide("plone.portaltools")) }
+      ${ xml(view.provide(provider_name="plone.portalheader")) }
+      ${ xml(view.provide(provider_name="plone.portaltools")) }
       </div>
       
       <div class="visualClear" id="clear-space-before-wrapper-table"><!-- --></div>
@@ -113,7 +113,7 @@ ${ xml(view.provide("plone-js")) }
             <td id="portal-column-content">
               <div class="$if{ views['plone'].show_editable_border()
                                }documentEditable$fi">
-                ${ xml(view.provide("plone.contentviews")) }
+                ${ xml(view.provide(provider_name="plone.contentviews")) }
                 <div id="region-content" class="documentContent">
                   <span id="contentTopLeft"></span>
                   <span id="contentTopRight"></span>
@@ -125,7 +125,7 @@ ${ xml(view.provide("plone-js")) }
                   </div>]#
                   
                   <div id="viewlet-above-content">
-                    ${ xml(view.provide("plone.abovecontent")) }
+                    ${ xml(view.provide(provider_name="plone.abovecontent")) }
                   </div>
                   
                   <div id="content">
@@ -133,7 +133,7 @@ ${ xml(view.provide("plone-js")) }
                   $evoque{#content}
                   </div>
                   
-                  ${ xml(view.provide("plone.belowcontent")) }
+                  ${ xml(view.provide(provider_name="plone.belowcontent")) }
                   <span id="contentBottomLeft"></span>
                   <span id="contentBottomRight"></span>
                 </div>
@@ -154,7 +154,7 @@ ${ xml(view.provide("plone-js")) }
       </div>]#
       
       <div id="portal-footer">
-      ${ xml(view.provide("plone.portalfooter")) }
+      ${ xml(view.provide(provider_name="plone.portalfooter")) }
       </div>
       <div class="visualClear"><!-- --></div>
     </div>
@@ -176,7 +176,7 @@ $if{ td_id and
      views["plone"].have_viewlets(view, plone_viewlet_manager_name) }
 <td id="${td_id}">
   <div class="visualPadding">
-  ${ xml(view.provide(plone_viewlet_manager_name)) }
+  ${ xml(view.provide(provider_name=plone_viewlet_manager_name)) }
   &nbsp;
 </div>
 </td>

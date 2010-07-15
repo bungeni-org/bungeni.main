@@ -370,9 +370,6 @@ from bungeni.ui import z3evoque
 
 class WorkspaceSectionView(browser.BungeniBrowserView):
     
-    # the instance of the ViewProvideViewletManager
-    provide = z3evoque.ViewProvideViewletManager()
-    
     # evoque
     __call__ = z3evoque.PageViewTemplateFile("workspace.html#section_page")
     

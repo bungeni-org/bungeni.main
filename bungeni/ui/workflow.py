@@ -198,9 +198,6 @@ class WorkflowActionViewlet(BaseForm, viewlet.ViewletBase):
 
 class WorkflowView(browser.BungeniBrowserView):
     
-    # the instance of the ViewProvideViewletManager
-    provide = z3evoque.ViewProvideViewletManager()
-    
     # evoque
     template = z3evoque.PageViewTemplateFile("workflow.html#main")
     

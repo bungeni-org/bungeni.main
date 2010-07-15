@@ -209,9 +209,6 @@ from bungeni.ui import z3evoque
 
 class DisplayForm(ui.DisplayForm, browser.BungeniBrowserView):
     
-    # the instance of the ViewProvideViewletManager
-    provide = z3evoque.ViewProvideViewletManager()
-    
     # evoque
     template = z3evoque.PageViewTemplateFile("content.html#view")
     

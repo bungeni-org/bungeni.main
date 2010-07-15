@@ -14,10 +14,14 @@ from zope.publisher.browser import BrowserView
 
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.models.interfaces import IBungeniContent
+from bungeni.ui import z3evoque
 from bungeni.ui.utils import debug, misc
 from bungeni.ui.i18n import _
 
 class BungeniBrowserView(BrowserView):
+    
+    # the instance of the ViewProvideViewletManager
+    provide = z3evoque.ViewProvideViewletManager()
     
     @property
     def page_title(self):
