@@ -203,15 +203,25 @@ class BaseForm(form.FormBase):
 class PageForm(BaseForm, form.PageForm):
     template = NamedTemplate('alchemist.form')
 
-class DisplayForm(ui.DisplayForm):
-        
-    template = ViewPageTemplateFile('templates/content-view.pt')
+
+from bungeni.ui import browser
+from bungeni.ui import z3evoque
+
+class DisplayForm(ui.DisplayForm, browser.BungeniBrowserView):
+    
+    # the instance of the ViewProvideViewletManager
+    provide = z3evoque.ViewProvideViewletManager()
+    
+    # evoque
+    template = z3evoque.PageViewTemplateFile("content.html#view")
+    
+    # zpt
+    #template = ViewPageTemplateFile('templates/content-view.pt')
+    
+    form_name = _("View")
     
     def __call__(self):
-        session = Session()
-        call = super(DisplayForm, self).__call__()
-        session.close()
-        return call
+        return self.template()
 
 class AddForm(BaseForm, ui.AddForm):
     """Custom add-form for Bungeni content.

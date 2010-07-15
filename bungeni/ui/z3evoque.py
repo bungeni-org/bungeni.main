@@ -528,7 +528,7 @@ class ViewProvideBase(object):
         if provider_interface is not None: 
             self.provider_interface = provider_interface
         # this is updated each time a caller view gets this ViewProvide
-        _view = None
+        self._view = None
     
     def __call__(self, provider_name=None):
         if provider_name is None:
@@ -539,7 +539,7 @@ class ViewProvideBase(object):
                             name=provider_name)
         provider.update()
         return provider.render()
-
+    
     def __get__(self, view, type_):
         """Non-data descriptor to grab a reference to the caller view.
         """

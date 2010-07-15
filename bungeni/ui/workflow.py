@@ -24,7 +24,6 @@ from bungeni.core import audit
 from bungeni.ui.forms.common import BaseForm
 from bungeni.ui.table import TableFormatter
 from bungeni.ui.menu import get_actions
-from bungeni.ui.utils import misc
 
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
@@ -213,10 +212,6 @@ class WorkflowView(browser.BungeniBrowserView):
         # update viewlets
         self.history_viewlet.update()
         self.action_viewlet.update(transition=transition)
-
-    def get_wf_state(self):
-        # return human readable, and localized, workflow title
-        return _(misc.get_wf_state(removeSecurityProxy(self.context)))
     
     def __call__(self):
         #session = Session()
