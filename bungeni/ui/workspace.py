@@ -14,7 +14,6 @@ from zope import component
 from zope import interface
 from zope.app.publication.traversers import SimpleComponentTraverser
 from zope.location.interfaces import ILocation
-from zope.publisher.browser import BrowserView
 from zope.publisher.interfaces import NotFound
 from zope.publisher.interfaces import IPublishTraverse
 from zope.publisher.interfaces.browser import IHTTPRequest
@@ -26,7 +25,6 @@ from bungeni.core.i18n import _
 from bungeni.core.content import Section, QueryContent
 from bungeni.core.interfaces import ISchedulingContext
 from bungeni.core.schedule import PrincipalGroupSchedulingContext
-from bungeni.core.dc import IDCDescriptiveProperties
 
 from bungeni.models import interfaces as model_interfaces
 from bungeni.models import domain
@@ -38,35 +36,10 @@ from bungeni.models.utils import get_ministries_for_user_in_government
 from bungeni.models.utils import get_current_parliament
 from bungeni.models.utils import get_current_parliament_governments
 
-from bungeni.ui.utils import url, misc, debug
+from bungeni.ui import browser
 from bungeni.ui import interfaces
+from bungeni.ui.utils import url, misc, debug
 
-# !+ move this to ui/browser.py
-class BungeniBrowserView(BrowserView):
-    
-    # View subclasses may set a custom page_title by overriding this attribute
-    # Note: title values are localized in the template itself.
-    _page_title = None
-    
-    @property
-    def page_title(self):
-        """Formalize view.page_title as a view property to factor the logic for 
-        determining the page title for a view out of the template. 
-        Templates should always simply call view.page_title.
-        """
-        if self._page_title:
-            return self._page_title
-        if getattr(self.context, "title"):
-            return self.context.title 
-        try:
-            # This is the equivalent of the ZPT expression "context/dc:title"
-            # i.e. to "load the value of the variable context, then find a 
-            # component that adapts that object to Dublin Core and read the 
-            # title attribute of the component."
-            return IDCDescriptiveProperties(self.context).title
-        except (Exception,):
-            debug.log_exc(sys.exc_info(), log_handler=log.debug)
-            return "Bungeni"
 
 def prepare_user_workspaces(event):
     """Determine the current principal's workspaces, depending on roles and
@@ -395,7 +368,7 @@ class WorkspaceSchedulingContext(PrincipalGroupSchedulingContext):
 from bungeni.ui import z3evoque
 #from zope.app.pagetemplate import ViewPageTemplateFile
 
-class WorkspaceSectionView(BungeniBrowserView):
+class WorkspaceSectionView(browser.BungeniBrowserView):
     
     # the instance of the ViewProvideViewletManager
     provide = z3evoque.ViewProvideViewletManager()

@@ -26,6 +26,7 @@ from bungeni.ui.table import TableFormatter
 from bungeni.ui.menu import get_actions
 from bungeni.ui.utils import misc
 
+from bungeni.ui import browser
 from bungeni.ui import z3evoque
 from zope.app.pagetemplate import ViewPageTemplateFile
 
@@ -188,8 +189,7 @@ class WorkflowActionViewlet(BaseForm, viewlet.ViewletBase):
             self.form_fields, self.prefix, self.context, self.request,
             ignore_request = ignore_request )
 
-from bungeni.ui.workspace import BungeniBrowserView
-class WorkflowView(BungeniBrowserView):
+class WorkflowView(browser.BungeniBrowserView):
     
     # the instance of the ViewProvideViewletManager
     provide = z3evoque.ViewProvideViewletManager()
