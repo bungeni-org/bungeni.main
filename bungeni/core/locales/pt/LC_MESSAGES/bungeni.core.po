@@ -51,7 +51,7 @@ msgstr "facturas emitidas por ver o parlamento atual"
 
 #: src/bungeni.main/bungeni/core/app.py:128
 msgid "Questions"
-msgstr "registros e documentos do Parlamento"
+msgstr "perguntas"
 
 #: src/bungeni.main/bungeni/core/app.py:130
 msgid "View questions issued by the current parliament"

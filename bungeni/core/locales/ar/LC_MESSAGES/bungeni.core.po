@@ -51,7 +51,7 @@ msgstr "عرض مشاريع القوانين الصادرة عن البرلما�
 
 #: src/bungeni.main/bungeni/core/app.py:128
 msgid "Questions"
-msgstr "البرلمان السجلات والوثائق"
+msgstr "الأسئلة"
 
 #: src/bungeni.main/bungeni/core/app.py:130
 msgid "View questions issued by the current parliament"
