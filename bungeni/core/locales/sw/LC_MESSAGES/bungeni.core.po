@@ -3,15 +3,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: Wed Jul  7 15:15:45 2010\n"
-"PO-Revision-Date: 2010-05-20 16:33+0300\n"
-"Last-Translator: peter <kamero@parliaments.info>\n"
+"PO-Revision-Date: 2010-07-15 14:14+0300\n"
+"Last-Translator: Administrator <admin@apkn.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: sw\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.0.4\n"
 "Language-Code: en\n"
 "Domain: DOMAIN\n"
-"Plural-Forms: nplurals=1; plural=0\n"
 "Preferred-Encodings: utf-8 latin1\n"
 "Language-Name: English\n"
 
@@ -191,7 +193,7 @@ msgstr "ajenda iliyochapishwa"
 
 #: src/bungeni.main/bungeni/core/dc.py:137
 msgid "notice given on"
-msgstr ""
+msgstr "tarehe ya utoaji notisi"
 
 #. Default: ""
 #: src/bungeni.main/bungeni/core/dc.py:148
@@ -711,7 +713,7 @@ msgstr "kamilisha"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:118
 msgid "Create Question (On behalf of)"
-msgstr ""
+msgstr "unda swali kwa niaba ya..."
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:12
 #, fuzzy
@@ -758,7 +760,7 @@ msgstr "imewasilishwa"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:139
 msgid "Adopted with amendments"
-msgstr ""
+msgstr "imedhibitishwa pamoja na mabadiliko"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:14
 msgid "Draft Bill"
@@ -766,11 +768,11 @@ msgstr "muswada rasimu"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:145
 msgid "Adopted"
-msgstr ""
+msgstr "imesilikiwa"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:148
 msgid "Adopt"
-msgstr ""
+msgstr "siliki"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:15
 #, fuzzy
@@ -783,7 +785,7 @@ msgstr "wasilisha upya kwa karani"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:156
 msgid "Adopt with amendments"
-msgstr ""
+msgstr "siliki ikizingatia marekebisho"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:157
 #, fuzzy
@@ -800,7 +802,7 @@ msgstr "muswada umekataliwa"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:173
 msgid "Create Motion (On behalf of)"
-msgstr ""
+msgstr "tengeza azima kwa niaba ya..."
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:18
 #, fuzzy
@@ -853,7 +855,7 @@ msgstr "kamilisha agenda"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:19
 msgid "Select Committee (after 1st reading)"
-msgstr ""
+msgstr "kamati teule"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:191
 msgid "Redraft Agenda"
@@ -949,12 +951,12 @@ msgstr "jumba zima"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:221
 msgid "Tabled"
-msgstr ""
+msgstr "iliyosujudika"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:225
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:245
 msgid "Adjourn"
-msgstr ""
+msgstr "kawisha"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:23
 #, fuzzy
@@ -964,7 +966,7 @@ msgstr "somo la ripoti limeahirishwa"
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:232
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:246
 msgid "Table"
-msgstr ""
+msgstr "sujudi"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:235
 #, fuzzy
@@ -973,7 +975,7 @@ msgstr "hati zilizopendekezwa"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:24
 msgid "Select Committee (after 2nd reading)"
-msgstr ""
+msgstr "kamati teule (baada ya somo la pili)"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:25
 msgid "Second Reading"
@@ -981,7 +983,7 @@ msgstr "somo la pili"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:250
 msgid "Create Tabled Document (On behalf of)"
-msgstr ""
+msgstr "tengeza hati kwa niaba ya..."
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:26
 msgid "First Reading"
@@ -1015,6 +1017,7 @@ msgstr "pointi za ajenda"
 msgid "Adjourn Second Reading"
 msgstr "ahirisha somo la pili"
 
+# tengeza pointi ya ajenda kwa niaba ya...
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:298
 msgid "Create Agenda Item (On behalf of)"
 msgstr ""
@@ -1212,7 +1215,7 @@ msgstr "pitisha"
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:212
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:254
 msgid "Working Draft"
-msgstr ""
+msgstr "hawala"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:67
 msgid "Received by clerk"
@@ -1251,7 +1254,7 @@ msgstr "yahitaji ufafanuzi wa karani"
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:138
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:271
 msgid "Dropped"
-msgstr ""
+msgstr "imeshushwa"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:73
 msgid "Pending response"
@@ -1340,7 +1343,7 @@ msgstr "jibu limewasilishwa"
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:174
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:300
 msgid "Drop"
-msgstr ""
+msgstr "shusha"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:88
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:120
