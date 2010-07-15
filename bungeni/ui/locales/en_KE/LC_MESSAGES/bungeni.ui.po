@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: Wed Jul  7 16:34:58 2010\n"
-"PO-Revision-Date: 2010-07-08 00:02+0300\n"
+"PO-Revision-Date: 2010-07-10 21:24+0300\n"
 "Last-Translator: Administrator <admin@apkn.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: en_KE\n"
@@ -153,11 +153,11 @@ msgstr "actions"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1008
 msgid "political group"
-msgstr "political group..."
+msgstr "political group"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1009
 msgid "political groups"
-msgstr "political group..."
+msgstr "political groups"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1017
 msgid "Office"
