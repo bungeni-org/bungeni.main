@@ -300,15 +300,13 @@
         permission="zope.View"
     />
     
-  <!-- versions -->
-  
-  <browser:page 
-     name="index"
-     for="bungeni.models.interfaces.IVersionContainer"
-     class=".versions.VersionLogView"
-     layer="bungeni.ui.interfaces.IBungeniSkin"
-     permission="zope.Public"
-     />
+    <!-- versions -->
+    <browser:page name="index"
+        for="bungeni.models.interfaces.IVersionContainer"
+        class=".versions.VersionLogView"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+        permission="zope.Public"
+    />
 
   <!-- business -->
 

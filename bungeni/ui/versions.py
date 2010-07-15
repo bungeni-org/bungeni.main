@@ -20,12 +20,12 @@ from ore.alchemist.interfaces import IIModelInterface
 
 from bungeni.ui.i18n import MessageFactory as _
 from bungeni.ui.table import TableFormatter
+from bungeni.ui.utils import date, url
+
 from bungeni.core.interfaces import IVersioned
 
 from alchemist.ui.core import BaseForm, getSelected
 from zc.table import column
-
-import bungeni.ui.utils as ui_utils
 
 class VersionsView(BrowserView):
     """To-Do: Find out why this class isn't hooked up."""
@@ -43,7 +43,7 @@ class VersionsView(BrowserView):
             @property
             def description(self):
                 return _(u"Currently displaying version ${version}",
-                         mapping={'version': self.context.version_id})
+                         mapping={"version": self.context.version_id})
             
             def setUpWidgets( self, ignore_request=False):
                 self.adapters = dict(
@@ -66,30 +66,38 @@ class VersionLogView(BaseForm):
     form_fields = form.Fields(IVersionEntry)
     formatter_factory = TableFormatter
     
-    render = ViewPageTemplateFile('templates/version.pt')
+    render = ViewPageTemplateFile("templates/version.pt")
     extra = None
     
-    columns = [
-        column.SelectionColumn(lambda item: str(item.version_id), name="selection"),
-        column.GetterColumn(
-            title=_(u"version"),
-            getter=lambda i,f: '<a href="%s">%d</a>' % (
-                "%s/versions/obj-%d" % (f.url, i.version_id), i.version_id)),
-        column.GetterColumn(title=_(u"manual"), getter=lambda i,f:i.manual),
-        column.GetterColumn(title=_(u"modified"), getter=lambda i,f: i.change.date.strftime('%Y-%m-%d %H:%M')),
-        column.GetterColumn(title=_(u"by"), getter=lambda i,f:i.change.user_id),
-        column.GetterColumn(title=_(u"message"), getter=lambda i,f:i.change.description ),
-        ]
-    
-    selection_column = columns[0]
-
     def __init__(self, context, request):
         super(VersionLogView, self).__init__(context.__parent__, request)
-        
+        # table to display the versions history
+        formatter = date.getLocaleFormatter(self.request, "dateTime", "short")
+        # !+ note this breaks the previous sort-dates-as-strings-hack of 
+        # formatting dates, for all locales, as date.strftime("%Y-%m-%d %H:%M")
+        # that, when sorted as a string, gives correct results.
+        self.columns = [
+            column.SelectionColumn(
+                    lambda item:str(item.version_id), name="selection"),
+            column.GetterColumn(title=_(u"version"),
+                    getter=lambda i,f:'<a href="%s">%d</a>' % (
+                            "%s/versions/obj-%d" % (f.url, i.version_id), 
+                            i.version_id)),
+            column.GetterColumn(title=_(u"manual"), 
+                    getter=lambda i,f:i.manual),
+            column.GetterColumn(title=_(u"modified"), 
+                    getter=lambda i,f:formatter.format(i.change.date)),
+            column.GetterColumn(title=_(u"by"), 
+                    getter=lambda i,f:i.change.user_id),
+            column.GetterColumn(title=_(u"message"), 
+                    getter=lambda i,f:i.change.description),
+        ]
+        self.selection_column = self.columns[0]
+    
     def listing(self):
         # set up table
         values = list(self._versions.values())
-        values.sort(key=operator.attrgetter('version_id'))
+        values.sort(key=operator.attrgetter("version_id"))
         values.reverse()
         formatter = self.formatter_factory(
             self.context, self.request,
@@ -99,7 +107,7 @@ class VersionLogView(BaseForm):
             columns = self.columns)
 
         # the column getter methods expect an ``url`` attribute
-        formatter.url = ui_utils.url.absoluteURL(self.context, self.request)
+        formatter.url = url.absoluteURL(self.context, self.request)
 
         # update and render
         formatter.updateBatching()
@@ -124,15 +132,15 @@ class VersionLogView(BaseForm):
 
     def action_url(self):
         # this avoids that "POST"ed forms get a "@@index" appended to action URL
-        return ''
+        return ""
     def action_method(self):
         # XXX - for forms that only View information, this should return "get"
         # e.g. business / questions / <q> / versions / Show Differences
-        return 'post'
+        return "post"
     
     @form.action(label=_("New Version"), condition=has_write_permission)
     def handle_new_version( self, action, data ):
-        self._versions.create( message = data['commit_message'], manual=True )
+        self._versions.create( message = data["commit_message"], manual=True )
         self.status = _(u"New Version Created")
 
     @form.action(label=_("Revert To"), condition=has_write_permission)
@@ -142,7 +150,7 @@ class VersionLogView(BaseForm):
             self.status = _("Select one item to revert to")
             return
         version = self._versions.get( selected[0] )
-        message = data['commit_message']
+        message = data["commit_message"]
         self._versions.revert( version, message )
         self.status = (_(u"Reverted to Previous Version %s") %(version.version_id))
 
@@ -183,13 +191,13 @@ class VersionLogView(BaseForm):
         actions = self.actions
         self.actions = []
         for action in actions:
-            if getattr(action, 'condition', None):
+            if getattr(action, "condition", None):
                 if action.condition(self, self.context):
                     self.actions.append(action) 
             else:
                 self.actions.append(action)
         if not self.has_write_permission(self.context):
-            self.form_fields = self.form_fields.omit('commit_message')
+            self.form_fields = self.form_fields.omit("commit_message")
         self.adapters = {}
         self.widgets = form.setUpDataWidgets(
             self.form_fields, self.prefix, self.context, self.request,

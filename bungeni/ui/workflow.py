@@ -25,6 +25,7 @@ from bungeni.ui.forms.common import BaseForm
 from bungeni.ui.table import TableFormatter
 from bungeni.ui.menu import get_actions
 
+from bungeni.ui.utils import date
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
 from zope.app.pagetemplate import ViewPageTemplateFile
@@ -63,13 +64,20 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
         self.request = request
         self.__parent__= view
         self.manager = manager
-        self.wf_status = u'new'
+        self.wf_status = "new"
         self.has_status = False
         # table to display the workflow history
+        formatter = date.getLocaleFormatter(self.request, "dateTime", "short")
+        # !+ note this breaks the previous sort-dates-as-strings-hack of 
+        # formatting dates, for all locales, as date.strftime("%Y-%m-%d %H:%M")
+        # that, when sorted as a string, gives correct results.
         self.columns = [
-            column.GetterColumn( title=_(u"date"), getter=lambda i,f: i['date'].strftime('%Y-%m-%d %H:%M') ),
-            column.GetterColumn( title=_(u"user"), getter=lambda i,f:i['user_id'] ),
-            column.GetterColumn( title=_(u"description"), getter=lambda i,f:i['description'] ),
+            column.GetterColumn(title=_(u"date"), 
+                    getter=lambda i,f:formatter.format(i["date"])),
+            column.GetterColumn(title=_(u"user"), 
+                    getter=lambda i,f:i["user_id"]),
+            column.GetterColumn(title=_(u"description"), 
+                    getter=lambda i,f:i["description"]),
             ]
         
     def update(self):
@@ -79,9 +87,9 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
                                 removeSecurityProxy(self.context)).getState()
             has_wfstate = True
         except:
-            wf_state = u'undefined'
+            wf_state = u"undefined"
         if wf_state is None:
-           wf_state =u'undefined'
+           wf_state =u"undefined"
            has_wfstate = False
         self.wf_status = wf_state
         self.has_status = has_wfstate
@@ -96,7 +104,7 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
             prefix="results",
             visible_column_names = [c.name for c in columns],
             columns = columns)
-        formatter.cssClasses['table'] = 'listing',
+        formatter.cssClasses["table"] = "listing",
         formatter.updateBatching()
         return formatter()
 
@@ -115,8 +123,8 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
             return ()
         
         query = table.select().where(
-            rdb.and_(table.c.content_id == rdb.bindparam('content_id'),
-            rdb.and_(table.c.action == 'workflow') )
+            rdb.and_(table.c.content_id==rdb.bindparam("content_id"),
+            rdb.and_(table.c.action=="workflow") )
             ).order_by(table.c.change_id.desc())
 
         content_id = mapper.primary_key_from_instance( instance )[0] 
@@ -132,14 +140,14 @@ class WorkflowActionViewlet(BaseForm, viewlet.ViewletBase):
 
     class IWorkflowComment(zope.interface.Interface):
         note = zope.schema.Text(
-            title=_("Comment on workflow change"), required=True )
-
+            title=_("Comment on workflow change"), required=True)
+    
     form_name = "Workflow"
     form_fields = form.Fields(IWorkflowComment)
     actions = ()
     
     # !+ metal:use-macro="context/@@standard_macros/form" ?
-    render = ViewPageTemplateFile ('templates/viewlet.pt')
+    render = ViewPageTemplateFile ("templates/viewlet.pt")
     
     def update(self, transition=None):
         self.adapters = {
@@ -152,7 +160,7 @@ class WorkflowActionViewlet(BaseForm, viewlet.ViewletBase):
             state_transition = wf.getTransitionById(transition)
             self.status = _(
                 u"Confirmation required for workflow transition: '${title}'",
-                mapping={'title': _(state_transition.title)})
+                mapping={"title": _(state_transition.title)})
 
         self.setupActions(transition)
         super(WorkflowActionViewlet, self).update()
@@ -162,14 +170,14 @@ class WorkflowActionViewlet(BaseForm, viewlet.ViewletBase):
         # only display the notes field to comment if there is an action
         # and a log table
         auditor = audit.getAuditor( self.context )
-        if len(self.actions) == 0: 
-            self.form_fields = self.form_fields.omit('note')
+        if len(self.actions)==0: 
+            self.form_fields = self.form_fields.omit("note")
         elif auditor is None:
-            self.form_fields = self.form_fields.omit('note')
+            self.form_fields = self.form_fields.omit("note")
         else:
             note_widget = TextAreaWidget
             note_widget.height = 1
-            self.form_fields['note'].custom_widget = note_widget
+            self.form_fields["note"].custom_widget = note_widget
         
         self.setUpWidgets()
     
@@ -197,7 +205,7 @@ class WorkflowView(browser.BungeniBrowserView):
     template = z3evoque.PageViewTemplateFile("workflow.html#main")
     
     # zpt
-    #template = ViewPageTemplateFile('templates/workflow.pt')
+    #template = ViewPageTemplateFile("templates/workflow.pt")
 
     _page_title = "Workflow"
     
@@ -226,10 +234,10 @@ class WorkflowChangeStateView(WorkflowView):
     ajax_template = z3evoque.PageViewTemplateFile("workflow.html#ajax")
     
     # zpt
-    #ajax_template = ViewPageTemplateFile('templates/workflow_ajax.pt')
+    #ajax_template = ViewPageTemplateFile("templates/workflow_ajax.pt")
     
     def __call__(self, headless=False, transition=None):
-        method = self.request['REQUEST_METHOD']
+        method = self.request["REQUEST_METHOD"]
         if transition:
             wf = interfaces.IWorkflow(self.context) 
             state_transition = wf.getTransitionById(transition)
@@ -239,11 +247,11 @@ class WorkflowChangeStateView(WorkflowView):
         else:
             self.update()
         
-        if transition and require_confirmation is False and method == 'POST':
+        if transition and require_confirmation is False and method=="POST":
             actions = bindTransitions(
                 self.action_viewlet, (transition,), None, 
                 interfaces.IWorkflow(self.context))
-            assert len(actions) == 1
+            assert len(actions)==1
 
             # execute action
             result = actions[0].success({})
