@@ -6,10 +6,12 @@ from sqlalchemy import orm
 from zc.table import batching, column
 import sqlalchemy as rdb
 
-from bungeni.core.i18n import _
+from bungeni.ui.i18n import _
 from bungeni.ui.utils import date
+from bungeni.ui import browser
+from bungeni.ui import z3evoque
 
-class ChangeBaseView(BrowserView):
+class ChangeBaseView(browser.BungeniBrowserView):
     """Base view for looking at changes to context.
     """
     
@@ -67,5 +69,18 @@ class RSS2(ChangeBaseView):
 class ChangeLog(ChangeBaseView):
     """Change Log View for an object
     """
-    form_name = "Change Log"
+    
+    # evoque
+    __call__ = z3evoque.PageViewTemplateFile("audit.html#changes")
+    
+    # zpt
+    #__call__ = ViewPageTemplateFile("templates/changes.pt")
+    
+    _page_title = _("Change Log")
+    
+    def __init__(self, context, request):
+        super(ChangeLog, self).__init__(context, request)
+        if hasattr(self.context, "short_name"):
+            self._page_title = "%s: %s" % (
+                                self._page_title, _(self.context.short_name))
 

@@ -8,13 +8,11 @@
         for="bungeni.models.interfaces.IBungeniContent"
         class=".audit.ChangeLog"
         permission="bungeni.auditlog.View"
-        template="templates/changes.pt"
     />
     <browser:page name="audit-log"
         for="bungeni.models.interfaces.IAttachedFile"
         class=".audit.ChangeLog"
         permission="bungeni.auditlog.View"
-        template="templates/changes.pt"
     />
 
 </configure>

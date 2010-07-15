@@ -1,0 +1,15 @@
+#[ $Id$ ]#
+
+#[ was: ui/templates/changes.pt ]#
+$begin{changes}
+    $overlay{bungeni.html}
+    $begin{content}
+    <h2>${ i18n(view.page_title) }</h2>
+    <form action="" method="GET">
+        <div>
+        ${ xml(view.listing()) }
+        </div>
+    </form>
+    $end{content}
+$end{changes}
+
