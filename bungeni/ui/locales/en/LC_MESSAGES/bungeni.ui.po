@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: Wed Jul  7 16:34:58 2010\n"
-"PO-Revision-Date: 2010-07-07 23:53+0300\n"
+"PO-Revision-Date: 2010-07-10 21:22+0300\n"
 "Last-Translator: Administrator <admin@apkn.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: en\n"
@@ -67,11 +67,11 @@ msgstr "choose starting date for this report"
 
 #: src/bungeni.main/bungeni/ui/calendar/browser.py:593
 msgid "Include draft sittings"
-msgstr "include draft sittings"
+msgstr "include sittings with draft agenda"
 
 #: src/bungeni.main/bungeni/ui/calendar/browser.py:594
 msgid "Whether or not to include sittings still in draft"
-msgstr "whether or not to include sittings still in draft"
+msgstr "whether or not to include sittings with draft agenda"
 
 #: src/bungeni.main/bungeni/ui/calendar/browser.py:69
 msgid "Daily"
@@ -153,11 +153,11 @@ msgstr "actions"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1008
 msgid "political group"
-msgstr "political group..."
+msgstr "political group"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1009
 msgid "political groups"
-msgstr "political group..."
+msgstr "political groups"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1017
 msgid "Office"
