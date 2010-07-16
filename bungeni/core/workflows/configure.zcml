@@ -96,6 +96,11 @@
      for="bungeni.models.interfaces.IGroupSitting"
      provides="ore.workflow.interfaces.IWorkflow"
      factory=".adapters.GroupSittingWorkflowAdapter" />
+     
+  <subscriber
+     handler=".schedule.handleSchedule"
+     for="bungeni.models.interfaces.IGroupSitting
+          zope.lifecycleevent.IObjectModifiedEvent" />
 
   <!-- user addresses -->
   <adapter
