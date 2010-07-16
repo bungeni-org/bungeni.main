@@ -5,7 +5,7 @@ $begin{view}
     $overlay{bungeni.html}
     $begin{content}
     <div>
-        <h2>${ i18n(view.page_title) }$if{ view.is_workflowed } 
+        <h2>${ i18n(view.page_title) }$if{ view.is_workflowed }
             <span class="workflow_info">[${ view.get_wf_state() }]</span> $fi
        </h2>
         #[ if no view.page_translation, avoid translating empty string 

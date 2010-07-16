@@ -32,6 +32,7 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 
 from i18n import _
 
+
 class WorkflowVocabulary(object):
     zope.interface.implements(IVocabularyFactory)
 
@@ -39,30 +40,29 @@ class WorkflowVocabulary(object):
         if IAlchemistContent.providedBy(context):
             ctx = context
         elif  IAlchemistContainer.providedBy(context):
-            domain_model = removeSecurityProxy( context.domain_model )
+            domain_model = removeSecurityProxy(context.domain_model)
             ctx = domain_model()
         wf = interfaces.IWorkflow(ctx)
-        items=[]
+        items = []
         for state in wf.workflow.states.keys():
             items.append(SimpleTerm(wf.workflow.states[state].id,
                         wf.workflow.states[state].id,
                         _(wf.workflow.states[state].title)))
         return SimpleVocabulary(items)
-
 workflow_vocabulary_factory = WorkflowVocabulary()
 
 
 class WorkflowHistoryViewlet(viewlet.ViewletBase):
     """Implements the workflowHistoryviewlet this viewlet shows the
-    current workflow state  and the workflow-history."""
-
+    current workflow state  and the workflow-history.
+    """
     form_name = _(u"Workflow history")
     formatter_factory = TableFormatter
     
-    def __init__( self,  context, request, view, manager ):
+    def __init__(self,  context, request, view, manager):
         self.context = context
         self.request = request
-        self.__parent__= view
+        self.__parent__ = view
         self.manager = manager
         self.wf_status = "new"
         self.has_status = False
@@ -83,40 +83,40 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
     def update(self):
         has_wfstate = False
         try:
-            wf_state = interfaces.IWorkflowState( 
+            wf_state = interfaces.IWorkflowState(
                                 removeSecurityProxy(self.context)).getState()
             has_wfstate = True
         except:
             wf_state = u"undefined"
         if wf_state is None:
-           wf_state =u"undefined"
-           has_wfstate = False
+            wf_state = u"undefined"
+            has_wfstate = False
         self.wf_status = wf_state
         self.has_status = has_wfstate
         self.entries = self.getFeedEntries()
-        
-    def render( self ):
+    
+    def render(self):
         columns = self.columns
         formatter = self.formatter_factory(
             self.context,
             self.request,
             self.entries,
             prefix="results",
-            visible_column_names = [c.name for c in columns],
-            columns = columns)
+            visible_column_names=[c.name for c in columns],
+            columns=columns)
         formatter.cssClasses["table"] = "listing",
         formatter.updateBatching()
         return formatter()
-
+    
     @property
-    def _log_table( self ):
-        auditor = audit.getAuditor( self.context )
+    def _log_table(self):
+        auditor = audit.getAuditor(self.context)
         if auditor is not None:
             return auditor.change_table
 
-    def getFeedEntries( self ):
-        instance = removeSecurityProxy( self.context )
-        mapper = orm.object_mapper( instance )
+    def getFeedEntries(self):
+        instance = removeSecurityProxy(self.context)
+        mapper = orm.object_mapper(instance)
 
         table = self._log_table
         if table is None:
@@ -124,17 +124,18 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
         
         query = table.select().where(
             rdb.and_(table.c.content_id==rdb.bindparam("content_id"),
-            rdb.and_(table.c.action=="workflow") )
+            rdb.and_(table.c.action=="workflow"))
             ).order_by(table.c.change_id.desc())
-
-        content_id = mapper.primary_key_from_instance( instance )[0] 
-        content_changes = query.execute( content_id = content_id )
-        return map( dict, content_changes)
+        
+        content_id = mapper.primary_key_from_instance(instance)[0] 
+        content_changes = query.execute(content_id=content_id)
+        return map(dict, content_changes)
 
 
 class WorkflowComment(object):
     note = u""
-    
+
+
 class WorkflowActionViewlet(BaseForm, viewlet.ViewletBase):
     """Display workflow status and actions."""
 
@@ -147,12 +148,12 @@ class WorkflowActionViewlet(BaseForm, viewlet.ViewletBase):
     actions = ()
     
     # !+ metal:use-macro="context/@@standard_macros/form" ?
-    render = ViewPageTemplateFile ("templates/viewlet.pt")
+    render = ViewPageTemplateFile("templates/viewlet.pt")
     
     def update(self, transition=None):
         self.adapters = {
             self.IWorkflowComment: WorkflowComment(),
-            }
+        }
 
         wf = interfaces.IWorkflow(self.context) 
         
@@ -169,7 +170,7 @@ class WorkflowActionViewlet(BaseForm, viewlet.ViewletBase):
         self.setupActions(transition)
         # only display the notes field to comment if there is an action
         # and a log table
-        auditor = audit.getAuditor( self.context )
+        auditor = audit.getAuditor(self.context)
         if len(self.actions)==0: 
             self.form_fields = self.form_fields.omit("note")
         elif auditor is None:
@@ -194,7 +195,7 @@ class WorkflowActionViewlet(BaseForm, viewlet.ViewletBase):
         # setup widgets in data entry mode not bound to context
         self.widgets = form.setUpDataWidgets(
             self.form_fields, self.prefix, self.context, self.request,
-            ignore_request = ignore_request )
+            ignore_request = ignore_request)
 
 class WorkflowView(browser.BungeniBrowserView):
     

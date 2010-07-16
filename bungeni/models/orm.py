@@ -8,64 +8,67 @@ import domain
 
 # Users
 # general representation of a person
-mapper( domain.User, schema.users,
-        properties={
-            'user_addresses': relation( domain.UserAddress ),
-       }
-       )
-
+mapper(domain.User, schema.users,
+    properties={
+        "user_addresses": relation(domain.UserAddress),
+    }
+)
 
 # Groups
 
-
-mapper( domain.Group, schema.groups,
-        primary_key=[schema.groups.c.group_id],
-        properties={
-            'members': relation( domain.GroupMembership ),
-            'group_principal_id': column_property(
-                ("group." + schema.groups.c.type + "." + 
-                rdb.cast(schema.groups.c.group_id, rdb.String)
-                ).label('group_principal_id')),
-             'contained_groups' : relation( domain.Group, 
-                    backref =
-                    backref('parent_group',
-                    remote_side=schema.groups.c.group_id)
-                    ),
-#            'keywords': relation( domain.Keyword,  secondary=schema.groups_keywords,  )
-            },
-        polymorphic_on=schema.groups.c.type,
-        polymorphic_identity='group'
-        )
+mapper(domain.Group, schema.groups,
+    primary_key=[schema.groups.c.group_id],
+    properties={
+        "members": relation(domain.GroupMembership),
+        "group_principal_id": column_property(
+                ("group.%s." % (schema.groups.c.type) + 
+                    rdb.cast(schema.groups.c.group_id, rdb.String)
+            ).label("group_principal_id")),
+        "contained_groups": relation(domain.Group, 
+            backref=backref("parent_group", 
+                remote_side=schema.groups.c.group_id)
+        ),
+        # "keywords": relation(domain.Keyword, secondary=schema.groups_keywords)
+    },
+    polymorphic_on=schema.groups.c.type,
+    polymorphic_identity="group"
+)
 
 # Keywords for groups
-#mapper (domain.Keyword, schema.keywords,
-#         properties = {
-#                'groups': relation(domain.Group, secondary=schema.groups_keywords, backref='keywords'),
-#
-#                   })
+#mapper(domain.Keyword, schema.keywords,
+#    properties = {
+#       "groups": relation(domain.Group, 
+#            secondary=schema.groups_keywords, backref="keywords"
+#       ),
+#    }
+#)
 
 # delegate rights to act on behalf of a user
-mapper (domain.UserDelegation, schema.user_delegations, 
-        properties={
-            'user': relation( domain.User,
-                        primaryjoin=rdb.and_(
-                            schema.user_delegations.c.user_id==
-                            schema.users.c.user_id ),
-                      uselist=False,
-                      lazy=True ),
-            'delegation': relation( domain.User,
-                        primaryjoin=rdb.and_(
-                            schema.user_delegations.c.delegation_id==
-                            schema.users.c.user_id,
-                            schema.users.c.active_p=='A'
-                             ),
-                      uselist=False,
-                      lazy=True ),
-                }
-        )
+mapper(domain.UserDelegation, schema.user_delegations, 
+    properties={
+        "user": relation(domain.User,
+            primaryjoin=rdb.and_(
+                schema.user_delegations.c.user_id==
+                schema.users.c.user_id
+            ),
+            uselist=False,
+            lazy=True
+        ),
+        "delegation": relation(domain.User,
+            primaryjoin=rdb.and_(
+                schema.user_delegations.c.delegation_id==
+                schema.users.c.user_id,
+                schema.users.c.active_p=="A"
+            ),
+            uselist=False,
+            lazy=True
+        ),
+    }
+)
+
 # group subclasses
 
-s_government =  rdb.select([schema.groups.c.group_id,
+s_government = rdb.select([schema.groups.c.group_id,
                     schema.groups.c.start_date,
                     schema.groups.c.end_date,
                     schema.groups.c.parent_group_id,
@@ -74,17 +77,16 @@ s_government =  rdb.select([schema.groups.c.group_id,
                     schema.groups.c.full_name],
                     whereclause = 
                     schema.groups.c.type ==
-                    'government',
-                    from_obj=[schema.groups]).alias('list_government')
-                    
+                    "government",
+                    from_obj=[schema.groups]).alias("list_government")
 
 mapper(domain.ListGovernment, s_government)
 
-mapper( domain.Government,
+mapper(domain.Government,
         inherits=domain.Group,
         polymorphic_on=schema.groups.c.type,
-        polymorphic_identity='government'
-        )
+        polymorphic_identity="government"
+)
 
 s_parliament = rdb.select([schema.groups.c.group_id,
                     schema.groups.c.start_date,
@@ -96,10 +98,10 @@ s_parliament = rdb.select([schema.groups.c.group_id,
                     schema.groups.c.full_name],
                     whereclause = 
                     schema.groups.c.type ==
-                    'parliament',
+                    "parliament",
                     from_obj=[schema.groups.join(schema.parliaments)
                         ]
-                    ).alias('list_parliament')
+                    ).alias("list_parliament")
 
 
 mapper( domain.ListParliament, s_parliament)
@@ -107,31 +109,31 @@ mapper( domain.ListParliament, s_parliament)
 mapper( domain.Parliament, schema.parliaments,
         inherits=domain.Group,
         polymorphic_on=schema.groups.c.type,
-        polymorphic_identity='parliament'
+        polymorphic_identity="parliament"
         )
 
 mapper( domain.PoliticalEntity, schema.political_parties,
         inherits=domain.Group,
         polymorphic_on=schema.groups.c.type,
-        polymorphic_identity='political-entity'
+        polymorphic_identity="political-entity"
         )
         
 mapper( domain.PoliticalParty, 
         inherits=domain.PoliticalEntity,
         polymorphic_on=schema.groups.c.type,
-        polymorphic_identity='political-party'
+        polymorphic_identity="political-party"
         )
 
 mapper( domain.PoliticalGroup, 
         inherits=domain.PoliticalEntity,
         polymorphic_on=schema.groups.c.type,
-        polymorphic_identity='political-group'
+        polymorphic_identity="political-group"
         )
         
 mapper( domain.Ministry,
         inherits=domain.Group,
         polymorphic_on=schema.groups.c.type,
-        polymorphic_identity='ministry'
+        polymorphic_identity="ministry"
         )
 
 
@@ -141,19 +143,19 @@ s_committee = rdb.select([schema.groups.c.group_id,
                     schema.groups.c.parent_group_id,
                     schema.groups.c.short_name,
                     schema.groups.c.status,
-                    schema.committee_type.c.committee_type_id.label('_fk_committee_type_id'),
-                    schema.committee_type.c.committee_type.label('committee_type_id'),
+                    schema.committee_type.c.committee_type_id.label("_fk_committee_type_id"),
+                    schema.committee_type.c.committee_type.label("committee_type_id"),
                     schema.committee_type.c.committee_type,
                     schema.groups.c.full_name],
                     whereclause = 
                     schema.groups.c.type ==
-                    'committee',
+                    "committee",
                     from_obj=[schema.groups.join(schema.committees.join(
                             schema.committee_type),
                         schema.groups.c.group_id == 
                         schema.committees.c.committee_id)
                         ]
-                    ).alias('list_committee')
+                    ).alias("list_committee")
 
 
 mapper(domain.ListCommittee, s_committee)
@@ -161,9 +163,9 @@ mapper(domain.ListCommittee, s_committee)
 mapper( domain.Committee, schema.committees,
         inherits=domain.Group,
         polymorphic_on=schema.groups.c.type,
-        polymorphic_identity='committee',
+        polymorphic_identity="committee",
         properties={
-            'committee_type': relation( domain.CommitteeType,
+            "committee_type": relation( domain.CommitteeType,
                               uselist=False,
                               lazy=False ),
             },
@@ -173,7 +175,7 @@ mapper( domain.Committee, schema.committees,
 mapper( domain.Office, schema.offices,
         inherits=domain.Group,
         polymorphic_on=schema.groups.c.type,
-        polymorphic_identity='office'
+        polymorphic_identity="office"
         )
 
    
@@ -210,25 +212,25 @@ mapper(domain.MemberOfParliament, schema.parliament_memberships,
     inherits=domain.GroupMembership,
     primary_key=[schema.user_group_memberships.c.membership_id], 
     properties={
-        'constituency':relation(domain.Constituency,
+        "constituency":relation(domain.Constituency,
             primaryjoin=(schema.parliament_memberships.c.constituency_id==
                             schema.constituencies.c.constituency_id),
             uselist=False,
             lazy=False),
-        'constituency_id':[schema.parliament_memberships.c.constituency_id],
-        'party':relation(domain.PoliticalParty,
+        "constituency_id":[schema.parliament_memberships.c.constituency_id],
+        "party":relation(domain.PoliticalParty,
             primaryjoin=(schema.parliament_memberships.c.party_id==
                             schema.political_parties.c.party_id),
             uselist=False,
             lazy=False),
-        'party_id':[schema.parliament_memberships.c.party_id],
-        'start_date':column_property(
-            schema.user_group_memberships.c.start_date.label('start_date')), 
-        'end_date':column_property(
-            schema.user_group_memberships.c.end_date.label('end_date')),
+        "party_id":[schema.parliament_memberships.c.party_id],
+        "start_date":column_property(
+            schema.user_group_memberships.c.start_date.label("start_date")), 
+        "end_date":column_property(
+            schema.user_group_memberships.c.end_date.label("end_date")),
     },
     polymorphic_on=schema.user_group_memberships.c.membership_type,
-    polymorphic_identity='parliamentmember',
+    polymorphic_identity="parliamentmember",
 )
 
 s_member_of_parliament = rdb.select([schema.user_group_memberships.c.membership_id,
@@ -239,17 +241,17 @@ s_member_of_parliament = rdb.select([schema.user_group_memberships.c.membership_
                     schema.users.c.first_name,
                     schema.users.c.middle_name,
                     schema.users.c.last_name,
-                    (schema.users.c.first_name + ' ' +
-                    schema.users.c.last_name).label('user_id'),
-                    schema.users.c.user_id.label('_fk_user_id'),
-                    schema.constituencies.c.name.label('constituency_id'),
-                    schema.parliament_memberships.c.constituency_id.label('_fk_constituency_id'),
-                    schema.constituencies.c.name.label('name')],
+                    (schema.users.c.first_name + " " +
+                    schema.users.c.last_name).label("user_id"),
+                    schema.users.c.user_id.label("_fk_user_id"),
+                    schema.constituencies.c.name.label("constituency_id"),
+                    schema.parliament_memberships.c.constituency_id.label("_fk_constituency_id"),
+                    schema.constituencies.c.name.label("name")],
                     from_obj=[schema.parliament_memberships.join(
                             schema.constituencies).join(schema.user_group_memberships
                         ).join(
                         schema.users, schema.user_group_memberships.c.user_id==
-                              schema.users.c.user_id)]).alias('list_member_of_parliament')
+                              schema.users.c.user_id)]).alias("list_member_of_parliament")
                     
 
 
@@ -262,23 +264,23 @@ s_minister = rdb.select([schema.user_group_memberships.c.membership_id,
                     schema.users.c.first_name,
                     schema.users.c.middle_name,
                     schema.users.c.last_name,
-                    (schema.users.c.first_name + ' ' +
-                    schema.users.c.last_name).label('user_id'),
-                    schema.users.c.user_id.label('_fk_user_id'),],
+                    (schema.users.c.first_name + " " +
+                    schema.users.c.last_name).label("user_id"),
+                    schema.users.c.user_id.label("_fk_user_id"),],
                     whereclause = 
                     schema.user_group_memberships.c.membership_type ==
-                    'minister',
+                    "minister",
                     from_obj=[schema.user_group_memberships.join(
                         schema.users, schema.user_group_memberships.c.user_id==
                               schema.users.c.user_id)],
-                              ).alias('list_minister')
+                              ).alias("list_minister")
 
 mapper( domain.ListMinister, s_minister)
    
 mapper( domain.Minister, 
         inherits=domain.GroupMembership,
         polymorphic_on=schema.user_group_memberships.c.membership_type,
-        polymorphic_identity='minister',
+        polymorphic_identity="minister",
         )
              
 s_committeemember = rdb.select([schema.user_group_memberships.c.membership_id,
@@ -288,23 +290,23 @@ s_committeemember = rdb.select([schema.user_group_memberships.c.membership_id,
                     schema.users.c.first_name,
                     schema.users.c.middle_name,
                     schema.users.c.last_name,
-                    (schema.users.c.first_name + ' ' +
-                    schema.users.c.last_name).label('user_id'),
-                    schema.users.c.user_id.label('_fk_user_id'),],
+                    (schema.users.c.first_name + " " +
+                    schema.users.c.last_name).label("user_id"),
+                    schema.users.c.user_id.label("_fk_user_id"),],
                     whereclause = 
                     schema.user_group_memberships.c.membership_type ==
-                    'committeemember',
+                    "committeemember",
                     from_obj=[schema.user_group_memberships.join(
                         schema.users, schema.user_group_memberships.c.user_id==
                               schema.users.c.user_id)],
-                              ).alias('list_committeemember')
+                              ).alias("list_committeemember")
 
 mapper(domain.ListCommitteeMember, s_committeemember)
  
 mapper( domain.CommitteeMember, 
         inherits=domain.GroupMembership,
         polymorphic_on=schema.user_group_memberships.c.membership_type,
-        polymorphic_identity='committeemember',
+        polymorphic_identity="committeemember",
         )
 
 s_partymember = rdb.select([schema.user_group_memberships.c.membership_id,
@@ -314,23 +316,23 @@ s_partymember = rdb.select([schema.user_group_memberships.c.membership_id,
                     schema.users.c.first_name,
                     schema.users.c.middle_name,
                     schema.users.c.last_name,
-                    (schema.users.c.first_name + ' ' +
-                    schema.users.c.last_name).label('user_id'),
-                    schema.users.c.user_id.label('_fk_user_id'),],
+                    (schema.users.c.first_name + " " +
+                    schema.users.c.last_name).label("user_id"),
+                    schema.users.c.user_id.label("_fk_user_id"),],
                     whereclause = 
                     schema.user_group_memberships.c.membership_type ==
-                    'partymember',
+                    "partymember",
                     from_obj=[schema.user_group_memberships.join(
                         schema.users, schema.user_group_memberships.c.user_id==
                               schema.users.c.user_id)],
-                              ).alias('list_partymember')
+                              ).alias("list_partymember")
 
 mapper(domain.ListPartyMember,s_partymember)
                 
 mapper( domain.PartyMember, 
         inherits=domain.GroupMembership,
         polymorphic_on=schema.user_group_memberships.c.membership_type,
-        polymorphic_identity='partymember',
+        polymorphic_identity="partymember",
         )
         
 s_officemember = rdb.select([schema.user_group_memberships.c.membership_id,
@@ -340,16 +342,16 @@ s_officemember = rdb.select([schema.user_group_memberships.c.membership_id,
                     schema.users.c.first_name,
                     schema.users.c.middle_name,
                     schema.users.c.last_name,
-                    (schema.users.c.first_name + ' ' +
-                    schema.users.c.last_name).label('user_id'),
-                    schema.users.c.user_id.label('_fk_user_id'),],
+                    (schema.users.c.first_name + " " +
+                    schema.users.c.last_name).label("user_id"),
+                    schema.users.c.user_id.label("_fk_user_id"),],
                     whereclause = 
                     schema.user_group_memberships.c.membership_type ==
-                    'officemember',
+                    "officemember",
                     from_obj=[schema.user_group_memberships.join(
                         schema.users, schema.user_group_memberships.c.user_id==
                               schema.users.c.user_id)],
-                              ).alias('list_officemember')
+                              ).alias("list_officemember")
 
 
 
@@ -358,7 +360,7 @@ mapper(domain.ListOfficeMember, s_officemember)
 mapper( domain.OfficeMember, 
         inherits=domain.GroupMembership,
         polymorphic_on=schema.user_group_memberships.c.membership_type,
-        polymorphic_identity='officemember',
+        polymorphic_identity="officemember",
         )
                                          
  
@@ -373,39 +375,39 @@ s_committeestaff = rdb.select([schema.user_group_memberships.c.membership_id,
                     schema.users.c.first_name,
                     schema.users.c.middle_name,
                     schema.users.c.last_name,
-                    (schema.users.c.first_name + ' ' +
-                    schema.users.c.last_name).label('user_id'),
-                    schema.users.c.user_id.label('_fk_user_id'),],
+                    (schema.users.c.first_name + " " +
+                    schema.users.c.last_name).label("user_id"),
+                    schema.users.c.user_id.label("_fk_user_id"),],
                     whereclause = 
                     schema.user_group_memberships.c.membership_type ==
-                    'committeestaff',
+                    "committeestaff",
                     from_obj=[schema.user_group_memberships.join(
                         schema.users, schema.user_group_memberships.c.user_id==
                               schema.users.c.user_id)],
-                              ).alias('list_committeestaff')
+                              ).alias("list_committeestaff")
 
 mapper(domain.ListCommitteeStaff,s_committeestaff)
 
 mapper( domain.CommitteeStaff,
         inherits=domain.GroupMembership,
         polymorphic_on=schema.user_group_memberships.c.membership_type,
-        polymorphic_identity='committeestaff',
+        polymorphic_identity="committeestaff",
         )
 
                 
 mapper( domain.ParliamentSession, schema.parliament_sessions )
 mapper( domain.GroupSitting, schema.sittings,
         properties = {
-            'sitting_type': relation(
+            "sitting_type": relation(
                 domain.SittingType, uselist=False),
-            'group': relation( domain.Group,
+            "group": relation( domain.Group,
                                primaryjoin=schema.sittings.c.group_id==schema.groups.c.group_id,
                                uselist=False,
                                lazy=True ),
-            'start_date' :  column_property(schema.sittings.c.start_date.label('start_date')), 
-            'end_date' :  column_property(schema.sittings.c.end_date.label('end_date')), 
-            'item_schedule' : relation(domain.ItemSchedule, order_by=schema.items_schedule.c.planned_order),
-            'venue' : relation(domain.Venue)
+            "start_date" :  column_property(schema.sittings.c.start_date.label("start_date")), 
+            "end_date" :  column_property(schema.sittings.c.end_date.label("end_date")), 
+            "item_schedule" : relation(domain.ItemSchedule, order_by=schema.items_schedule.c.planned_order),
+            "venue" : relation(domain.Venue)
             })
 
 mapper( domain.ResourceType, schema.resource_types )
@@ -419,38 +421,38 @@ mapper( domain.Venue, schema.venues )
 
 mapper( domain.ParliamentaryItem, schema.parliamentary_items,
         polymorphic_on=schema.parliamentary_items.c.type,
-        polymorphic_identity='item', 
+        polymorphic_identity="item", 
         properties = {
-                    'owner': relation( domain.User,
+                    "owner": relation( domain.User,
                               primaryjoin=rdb.and_(schema.parliamentary_items.c.owner_id==schema.users.c.user_id ),
                               uselist=False,
                               lazy=False ),
-                    'consignatories': relation( domain.User,
+                    "consignatories": relation( domain.User,
                               secondary=schema.consignatories,),
-                    'attached_files': relation( domain.AttachedFile),
+                    "attached_files": relation( domain.AttachedFile),
                 }
          )
 
 s_heading = rdb.select([schema.parliamentary_items.c.parliamentary_item_id,
                     schema.parliamentary_items.c.short_name,
-                    schema.parliamentary_items.c.submission_date.label('submission_date'),
+                    schema.parliamentary_items.c.submission_date.label("submission_date"),
                     schema.parliamentary_items.c.status,
                     schema.parliamentary_items.c.status_date,
                     schema.parliamentary_items.c.parliament_id,
                     schema.users.c.first_name,
                     schema.users.c.middle_name,
                     schema.users.c.last_name,
-                    (schema.users.c.first_name + ' ' +
-                    schema.users.c.last_name).label('owner_id'),
-                    schema.parliamentary_items.c.owner_id.label('_fk_owner_id')
+                    (schema.users.c.first_name + " " +
+                    schema.users.c.last_name).label("owner_id"),
+                    schema.parliamentary_items.c.owner_id.label("_fk_owner_id")
                     ],
                     whereclause = 
                     schema.parliamentary_items.c.type ==
-                    'heading',
+                    "heading",
                     from_obj=[schema.parliamentary_items.join(
                         schema.users, schema.parliamentary_items.c.owner_id==
                               schema.users.c.user_id)],
-                              ).alias('list_heading')
+                              ).alias("list_heading")
 
 
 mapper( domain.ListHeading, s_heading)
@@ -458,11 +460,11 @@ mapper( domain.ListHeading, s_heading)
 mapper( domain.Heading,
         inherits=domain.ParliamentaryItem,
         polymorphic_on=schema.parliamentary_items.c.type,
-        polymorphic_identity='heading')
+        polymorphic_identity="heading")
 
 s_question = rdb.select([schema.parliamentary_items.c.parliamentary_item_id,
                     schema.parliamentary_items.c.short_name,
-                    schema.parliamentary_items.c.submission_date.label('submission_date'),
+                    schema.parliamentary_items.c.submission_date.label("submission_date"),
                     schema.parliamentary_items.c.status,
                     schema.parliamentary_items.c.status_date,
                     schema.parliamentary_items.c.parliament_id,
@@ -472,15 +474,15 @@ s_question = rdb.select([schema.parliamentary_items.c.parliamentary_item_id,
                     schema.users.c.first_name,
                     schema.users.c.middle_name,
                     schema.users.c.last_name,
-                    (schema.users.c.first_name + ' ' +
-                    schema.users.c.last_name).label('owner_id'),
-                    schema.groups.c.full_name.label('ministry_id'),
-                    schema.parliamentary_items.c.owner_id.label('_fk_owner_id'),
-                    schema.questions.c.ministry_id.label('_fk_ministry_id'),
+                    (schema.users.c.first_name + " " +
+                    schema.users.c.last_name).label("owner_id"),
+                    schema.groups.c.full_name.label("ministry_id"),
+                    schema.parliamentary_items.c.owner_id.label("_fk_owner_id"),
+                    schema.questions.c.ministry_id.label("_fk_ministry_id"),
                     ],
                     whereclause = 
                     schema.parliamentary_items.c.type ==
-                    'question',
+                    "question",
                     from_obj=[schema.parliamentary_items.join(
                         schema.questions.join(schema.groups, schema.questions.c.ministry_id==
                         schema.groups.c.group_id), 
@@ -488,7 +490,7 @@ s_question = rdb.select([schema.parliamentary_items.c.parliamentary_item_id,
                         schema.questions.c.question_id
                         ).join(schema.users, schema.parliamentary_items.c.owner_id==
                               schema.users.c.user_id)],
-                              ).alias('list_questions')
+                              ).alias("list_questions")
 
 mapper(domain.ListQuestion,s_question)
 
@@ -496,19 +498,19 @@ mapper(domain.ListQuestion,s_question)
 mapper( domain.Question, schema.questions,
         inherits=domain.ParliamentaryItem,
         polymorphic_on=schema.parliamentary_items.c.type,
-        polymorphic_identity='question',
+        polymorphic_identity="question",
         properties = {
-             'changes':relation( domain.QuestionChange, backref='origin',
+             "changes":relation( domain.QuestionChange, backref="origin",
              cascade="all, delete-orphan", passive_deletes=False),
-             'ministry': relation( domain.Ministry),
+             "ministry": relation( domain.Ministry),
              }
         )
         
 mapper( domain.QuestionChange, schema.question_changes )
 mapper( domain.QuestionVersion, schema.question_versions,
-        properties= {'change': relation( domain.QuestionChange, uselist=False),
-                     'head': relation( domain.Question, uselist=False),
-                     'attached_files': relation( domain.AttachedFileVersion,
+        properties= {"change": relation( domain.QuestionChange, uselist=False),
+                     "head": relation( domain.Question, uselist=False),
+                     "attached_files": relation( domain.AttachedFileVersion,
                         primaryjoin = rdb.and_(
                             schema.question_versions.c.content_id ==
                             schema.attached_file_versions.c.item_id,
@@ -533,33 +535,33 @@ s_motion = rdb.select([schema.parliamentary_items.c.parliamentary_item_id,
                     schema.users.c.first_name,
                     schema.users.c.middle_name,
                     schema.users.c.last_name,
-                    schema.parliamentary_items.c.owner_id.label('_fk_owner_id'),
-                    (schema.users.c.first_name + ' ' +
-                    schema.users.c.last_name).label('owner_id'),],
+                    schema.parliamentary_items.c.owner_id.label("_fk_owner_id"),
+                    (schema.users.c.first_name + " " +
+                    schema.users.c.last_name).label("owner_id"),],
                     whereclause = 
                     schema.parliamentary_items.c.type ==
-                    'motion',
+                    "motion",
                     from_obj=[schema.parliamentary_items.join(
                         schema.motions).join(schema.users, schema.parliamentary_items.c.owner_id==
                               schema.users.c.user_id)],
-                              ).alias('list_motion')
+                              ).alias("list_motion")
 
 mapper(domain.ListMotion,s_motion)
 
 mapper( domain.Motion, schema.motions,
         inherits=domain.ParliamentaryItem,
         polymorphic_on=schema.parliamentary_items.c.type,
-        polymorphic_identity='motion',
+        polymorphic_identity="motion",
         properties = {
-             'changes':relation( domain.MotionChange, backref='origin',
+             "changes":relation( domain.MotionChange, backref="origin",
              cascade="all, delete-orphan", passive_deletes=False),}
         )
         
 mapper( domain.MotionChange, schema.motion_changes )
 mapper( domain.MotionVersion, schema.motion_versions,
-        properties= {'change':relation( domain.MotionChange, uselist=False),
-                     'head': relation( domain.Motion, uselist=False),
-                     'attached_files': relation( domain.AttachedFileVersion,
+        properties= {"change":relation( domain.MotionChange, uselist=False),
+                     "head": relation( domain.Motion, uselist=False),
+                     "attached_files": relation( domain.AttachedFileVersion,
                         primaryjoin = rdb.and_(
                             schema.motion_versions.c.content_id ==
                             schema.attached_file_versions.c.item_id,
@@ -583,16 +585,16 @@ s_bill= rdb.select([schema.parliamentary_items.c.parliamentary_item_id,
                     schema.users.c.first_name,
                     schema.users.c.middle_name,
                     schema.users.c.last_name,
-                    (schema.users.c.first_name + ' ' +
-                    schema.users.c.last_name).label('owner_id'),
-                    schema.parliamentary_items.c.owner_id.label('_fk_owner_id'),],
+                    (schema.users.c.first_name + " " +
+                    schema.users.c.last_name).label("owner_id"),
+                    schema.parliamentary_items.c.owner_id.label("_fk_owner_id"),],
                     whereclause = 
                     schema.parliamentary_items.c.type ==
-                    'bill',
+                    "bill",
                     from_obj=[schema.parliamentary_items.join(
                         schema.bills).join(schema.users, schema.parliamentary_items.c.owner_id==
                               schema.users.c.user_id)],
-                              ).alias('list_bill')
+                              ).alias("list_bill")
 
 
 mapper( domain.ListBill, s_bill)
@@ -600,17 +602,17 @@ mapper( domain.ListBill, s_bill)
 mapper( domain.Bill, schema.bills,
         inherits=domain.ParliamentaryItem,
         polymorphic_on=schema.parliamentary_items.c.type,
-        polymorphic_identity='bill',
+        polymorphic_identity="bill",
         properties = {
-             'changes':relation( domain.BillChange, backref='origin',
+             "changes":relation( domain.BillChange, backref="origin",
              cascade="all, delete-orphan", passive_deletes=False)
              }
         )
 mapper( domain.BillChange, schema.bill_changes )
 mapper( domain.BillVersion, schema.bill_versions, 
-        properties= {'change':relation( domain.BillChange, uselist=False),
-                     'head': relation( domain.Bill, uselist=False),
-                     'attached_files': relation( domain.AttachedFileVersion,
+        properties= {"change":relation( domain.BillChange, uselist=False),
+                     "head": relation( domain.Bill, uselist=False),
+                     "attached_files": relation( domain.AttachedFileVersion,
                         primaryjoin = rdb.and_(
                             schema.bill_versions.c.content_id ==
                             schema.attached_file_versions.c.item_id,
@@ -634,16 +636,16 @@ s_event = rdb.select([schema.parliamentary_items.c.parliamentary_item_id,
                     schema.users.c.first_name,
                     schema.users.c.middle_name,
                     schema.users.c.last_name,
-                    (schema.users.c.first_name + ' ' +
-                    schema.users.c.last_name).label('owner_id'),
-                    schema.parliamentary_items.c.owner_id.label('_fk_owner_id'),],
+                    (schema.users.c.first_name + " " +
+                    schema.users.c.last_name).label("owner_id"),
+                    schema.parliamentary_items.c.owner_id.label("_fk_owner_id"),],
                     whereclause = 
                     schema.parliamentary_items.c.type ==
-                    'event',
+                    "event",
                     from_obj=[schema.parliamentary_items.join(
                         schema.agenda_items).join(schema.users, schema.parliamentary_items.c.owner_id==
                               schema.users.c.user_id)],
-                              ).alias('list_event')
+                              ).alias("list_event")
 
 mapper( domain.ListEventItem, s_event) 
 
@@ -653,7 +655,7 @@ mapper( domain.EventItem, schema.event_items,
                     schema.event_items.c.event_item_id == 
                     schema.parliamentary_items.c.parliamentary_item_id),
         polymorphic_on=schema.parliamentary_items.c.type,
-        polymorphic_identity='event')
+        polymorphic_identity="event")
 
 
 s_agendaitem = rdb.select([schema.parliamentary_items.c.parliamentary_item_id,
@@ -667,16 +669,16 @@ s_agendaitem = rdb.select([schema.parliamentary_items.c.parliamentary_item_id,
                     schema.users.c.first_name,
                     schema.users.c.middle_name,
                     schema.users.c.last_name,
-                    (schema.users.c.first_name + ' ' +
-                    schema.users.c.last_name).label('owner_id'),
-                    schema.parliamentary_items.c.owner_id.label('_fk_owner_id'),],
+                    (schema.users.c.first_name + " " +
+                    schema.users.c.last_name).label("owner_id"),
+                    schema.parliamentary_items.c.owner_id.label("_fk_owner_id"),],
                     whereclause = 
                     schema.parliamentary_items.c.type ==
-                    'agendaitem',
+                    "agendaitem",
                     from_obj=[schema.parliamentary_items.join(
                         schema.agenda_items).join(schema.users, schema.parliamentary_items.c.owner_id==
                               schema.users.c.user_id)],
-                              ).alias('list_agendaitem')
+                              ).alias("list_agendaitem")
 
 
 mapper(domain.ListAgendaItem, s_agendaitem)
@@ -684,21 +686,21 @@ mapper(domain.ListAgendaItem, s_agendaitem)
 mapper( domain.AgendaItem, schema.agenda_items, 
         inherits=domain.ParliamentaryItem,
         polymorphic_on=schema.parliamentary_items.c.type,
-        polymorphic_identity='agendaitem',
+        polymorphic_identity="agendaitem",
         properties = {
-             'changes' : relation( domain.AgendaItemChange, backref='origin',
+             "changes" : relation( domain.AgendaItemChange, backref="origin",
              cascade="all, delete-orphan", passive_deletes=False),
-             'group' : relation(domain.Group, 
+             "group" : relation(domain.Group, 
                 primaryjoin=(schema.agenda_items.c.group_id==schema.groups.c.group_id ),
-                backref = 'agenda_items',
+                backref = "agenda_items",
                 lazy = False,
                 uselist=False,)
              })
 mapper( domain.AgendaItemChange, schema.agenda_item_changes )
 mapper( domain.AgendaItemVersion, schema.agenda_item_versions,
-        properties= {'change':relation( domain.AgendaItemChange, uselist=False),
-                     'head': relation( domain.AgendaItem, uselist=False),
-                     'attached_files': relation( domain.AttachedFileVersion,
+        properties= {"change":relation( domain.AgendaItemChange, uselist=False),
+                     "head": relation( domain.AgendaItem, uselist=False),
+                     "attached_files": relation( domain.AttachedFileVersion,
                         primaryjoin = rdb.and_(
                             schema.agenda_item_versions.c.content_id ==
                             schema.attached_file_versions.c.item_id,
@@ -721,33 +723,33 @@ s_tableddocument = rdb.select([schema.parliamentary_items.c.parliamentary_item_i
                     schema.users.c.first_name,
                     schema.users.c.middle_name,
                     schema.users.c.last_name,
-                    (schema.users.c.first_name + ' ' +
-                    schema.users.c.last_name).label('owner_id'),
-                    schema.parliamentary_items.c.owner_id.label('_fk_owner_id'),],
+                    (schema.users.c.first_name + " " +
+                    schema.users.c.last_name).label("owner_id"),
+                    schema.parliamentary_items.c.owner_id.label("_fk_owner_id"),],
                     whereclause = 
                     schema.parliamentary_items.c.type ==
-                    'tableddocument',
+                    "tableddocument",
                     from_obj=[schema.parliamentary_items.join(
                         schema.tabled_documents).join(schema.users, schema.parliamentary_items.c.owner_id==
                               schema.users.c.user_id)],
-                              ).alias('list_tableddocument')
+                              ).alias("list_tableddocument")
 
 mapper( domain.ListTabledDocument, s_tableddocument)
               
 mapper( domain.TabledDocument, schema.tabled_documents,
         inherits=domain.ParliamentaryItem,
         polymorphic_on=schema.parliamentary_items.c.type,
-        polymorphic_identity='tableddocument',
+        polymorphic_identity="tableddocument",
         properties = {
-             'changes':relation( domain.TabledDocumentChange, backref='origin',
+             "changes":relation( domain.TabledDocumentChange, backref="origin",
              cascade="all, delete-orphan", passive_deletes=False),
              } )
              
 mapper( domain.TabledDocumentChange, schema.tabled_document_changes )
 mapper( domain.TabledDocumentVersion, schema.tabled_document_versions,
-        properties= {'change':relation( domain.TabledDocumentChange, uselist=False),
-                     'head': relation( domain.TabledDocument, uselist=False),
-                     'attached_files': relation( domain.AttachedFileVersion,
+        properties= {"change":relation( domain.TabledDocumentChange, uselist=False),
+                     "head": relation( domain.TabledDocument, uselist=False),
+                     "attached_files": relation( domain.AttachedFileVersion,
                         primaryjoin = rdb.and_(
                             schema.tabled_document_versions.c.content_id ==
                             schema.attached_file_versions.c.item_id,
@@ -761,13 +763,13 @@ mapper( domain.TabledDocumentVersion, schema.tabled_document_versions,
 
 mapper( domain.AttachedFile, schema.attached_files,
         properties = {
-             'changes':relation( domain.AttachedFileChange, backref='origin',
+             "changes":relation( domain.AttachedFileChange, backref="origin",
              cascade="all, delete-orphan", passive_deletes=False),
              } )
 mapper( domain.AttachedFileChange, schema.attached_file_changes )
 mapper( domain.AttachedFileVersion, schema.attached_file_versions,
-        properties= {'change':relation( domain.AttachedFileChange, uselist=False),
-                     'head': relation( domain.AttachedFile, uselist=False)}
+        properties= {"change":relation( domain.AttachedFileChange, uselist=False),
+                     "head": relation( domain.AttachedFile, uselist=False)}
         )
 
 
@@ -776,14 +778,14 @@ mapper( domain.AttachedFileVersion, schema.attached_file_versions,
         
 mapper(domain.ItemSchedule, schema.items_schedule,
        properties = {
-           'item': relation(
+           "item": relation(
                domain.ParliamentaryItem,
                uselist=False),
-           'discussion': relation(
+           "discussion": relation(
                domain.ScheduledItemDiscussion,
                uselist=False,
-               cascade='all, delete-orphan'),
-           'sitting' : relation( domain.GroupSitting, uselist=False),
+               cascade="all, delete-orphan"),
+           "sitting" : relation( domain.GroupSitting, uselist=False),
            }
        ) 
 
@@ -794,9 +796,9 @@ mapper(domain.ScheduledItemDiscussion, schema.item_discussion)
 # expressed as a join between item and schedule
 
 s_consignatories  = rdb.select([schema.consignatories.c.item_id,
-                    schema.consignatories.c.user_id.label('consignatory'),
-                    (schema.users.c.first_name + ' ' +
-                    schema.users.c.last_name).label('user_id'),
+                    schema.consignatories.c.user_id.label("consignatory"),
+                    (schema.users.c.first_name + " " +
+                    schema.users.c.last_name).label("user_id"),
                     schema.users.c.first_name,
                     schema.users.c.middle_name,
                     schema.users.c.last_name,
@@ -804,14 +806,14 @@ s_consignatories  = rdb.select([schema.consignatories.c.item_id,
                     from_obj=[
                         schema.consignatories.join(schema.users)
                         ],
-                              ).alias('list_consignatories')
+                              ).alias("list_consignatories")
 
 mapper( domain.ListConsignatory, s_consignatories)
 
        
 mapper( domain.Consignatory, schema.consignatories,
-        properties= {'item': relation(domain.ParliamentaryItem, uselist=False),
-                      'user': relation(domain.User, uselist=False)})
+        properties= {"item": relation(domain.ParliamentaryItem, uselist=False),
+                      "user": relation(domain.User, uselist=False)})
 #mapper( domain.Debate, schema.debates )
 
 
@@ -831,22 +833,22 @@ s_constituency = rdb.select([schema.constituencies.c.constituency_id,
                     schema.constituencies.c.end_date,
                     schema.provinces.c.province,
                     schema.regions.c.region,
-                    schema.constituencies.c.province_id.label('_fk_province_id'),
-                    schema.constituencies.c.region_id.label('_fk_region_id'),
-                    schema.provinces.c.province.label('province_id'),
-                    schema.regions.c.region.label('region_id'),],
+                    schema.constituencies.c.province_id.label("_fk_province_id"),
+                    schema.constituencies.c.region_id.label("_fk_region_id"),
+                    schema.provinces.c.province.label("province_id"),
+                    schema.regions.c.region.label("region_id"),],
                     from_obj=[schema.constituencies.outerjoin(
                         schema.regions).outerjoin(schema.provinces)],
-                              ).alias('list_constituency')
+                              ).alias("list_constituency")
     
 mapper(domain.ListConstituency, s_constituency)
 
 mapper( domain.Constituency, schema.constituencies,
         properties={
-        'province': relation( domain.Province,
+        "province": relation( domain.Province,
                               uselist=False,
                               lazy=False ),
-        'region': relation( domain.Region,
+        "region": relation( domain.Region,
                               uselist=False,
                               lazy=False ),
         }
@@ -856,20 +858,20 @@ mapper( domain.Region, schema.regions )
 mapper( domain.Country, schema.countries )
 mapper( domain.ConstituencyDetail, schema.constituency_details,
     properties={
-    'constituency': relation( domain.Constituency,
+    "constituency": relation( domain.Constituency,
                               uselist=False,
                               lazy=True,
-                              backref = 'details' ),
+                              backref = "details" ),
     } )
 mapper( domain.CommitteeType, schema.committee_type )
 mapper( domain.SittingType, schema.sitting_type )
 
 s_sittingattendance  = rdb.select([schema.sitting_attendance.c.sitting_id,
-                    schema.sitting_attendance.c.attendance_id.label('_fk_attendance_id'),
-                    schema.sitting_attendance.c.member_id.label('_fk_member_id'),
-                    schema.attendance_type.c.attendance_type.label('attendance_id'),
-                    (schema.users.c.first_name + ' ' +
-                    schema.users.c.last_name).label('member_id'),
+                    schema.sitting_attendance.c.attendance_id.label("_fk_attendance_id"),
+                    schema.sitting_attendance.c.member_id.label("_fk_member_id"),
+                    schema.attendance_type.c.attendance_type.label("attendance_id"),
+                    (schema.users.c.first_name + " " +
+                    schema.users.c.last_name).label("member_id"),
                     schema.users.c.first_name,
                     schema.users.c.middle_name,
                     schema.users.c.last_name,
@@ -878,19 +880,19 @@ s_sittingattendance  = rdb.select([schema.sitting_attendance.c.sitting_id,
                         schema.sitting_attendance.join(
                         schema.attendance_type).join(schema.users)
                         ],
-                              ).alias('list_sittingattendance')
+                              ).alias("list_sittingattendance")
 
 mapper( domain.ListGroupSittingAttendance, s_sittingattendance)
 
 mapper( domain.GroupSittingAttendance, schema.sitting_attendance,
         properties={
-            'user': relation( domain.User,
+            "user": relation( domain.User,
                               uselist=False,
                               lazy=False ),
-            'attendance_type': relation( domain.AttendanceType,
+            "attendance_type": relation( domain.AttendanceType,
                                 uselist = False,
                                 lazy = False ), 
-            'sitting': relation( domain.GroupSitting,
+            "sitting": relation( domain.GroupSitting,
                                 uselist = False,
                                 lazy = False ),
                   }
@@ -899,7 +901,7 @@ mapper( domain.AttendanceType, schema.attendance_type )
 mapper( domain.MemberTitle, schema.user_role_types )
 mapper( domain.MemberRoleTitle, schema.role_titles.join(schema.addresses),
     properties={
-        'title_name': relation( domain.MemberTitle,
+        "title_name": relation( domain.MemberTitle,
                               uselist=False,
                               lazy=False ),
     }
@@ -910,11 +912,11 @@ mapper( domain.UserAddress, schema.addresses)
 
 
 s_group_item_assignments = rdb.select([schema.group_item_assignments.c.assignment_id,
-                    schema.group_item_assignments.c.group_id.label('_fk_group_id'),
-                    schema.group_item_assignments.c.item_id.label('_fk_item_id'),
-                    schema.groups.c.short_name.label('item_id'),
-                    (schema.groups.c.short_name + ' - ' +
-                    schema.groups.c.full_name).label('group_id'),
+                    schema.group_item_assignments.c.group_id.label("_fk_group_id"),
+                    schema.group_item_assignments.c.item_id.label("_fk_item_id"),
+                    schema.groups.c.short_name.label("item_id"),
+                    (schema.groups.c.short_name + " - " +
+                    schema.groups.c.full_name).label("group_id"),
                     schema.group_item_assignments.c.start_date,
                     schema.group_item_assignments.c.end_date,
                     schema.group_item_assignments.c.due_date,
@@ -923,21 +925,21 @@ s_group_item_assignments = rdb.select([schema.group_item_assignments.c.assignmen
                         schema.groups.join(
                         schema.group_item_assignments).join(schema.parliamentary_items)
                         ],
-                              ).alias('list_group_item_assignments')
+                              ).alias("list_group_item_assignments")
 
 
 mapper(domain.ListGroupItemAssignment, s_group_item_assignments);
 
 mapper(domain.GroupItemAssignment, schema.group_item_assignments,
         properties={
-            'group': relation(domain.Group, 
+            "group": relation(domain.Group, 
                 primaryjoin=(schema.group_item_assignments.c.group_id==schema.groups.c.group_id ),
-                backref = 'group_assignments',
+                backref = "group_assignments",
                 lazy = True,
                 uselist=False,),
-            'item': relation(
+            "item": relation(
                domain.ParliamentaryItem,
-                backref = 'item_assignments',
+                backref = "item_assignments",
                uselist=False),
             }
         )
@@ -949,9 +951,9 @@ mapper(domain.GroupGroupItemAssignment, schema.group_item_assignments,
         
 mapper(domain.Report, schema.reports,
         properties={
-            'group': relation(domain.Group, 
+            "group": relation(domain.Group, 
                 primaryjoin=(schema.reports.c.group_id == schema.groups.c.group_id ),
-                backref = 'reports',
+                backref = "reports",
                 lazy = True,
                 uselist=False,),}
 
@@ -959,12 +961,12 @@ mapper(domain.Report, schema.reports,
 
 mapper( domain.SittingReport, schema.sitting_reports,
     properties={
-        'sitting': relation(domain.GroupSitting, 
-            backref = 'reports',
+        "sitting": relation(domain.GroupSitting, 
+            backref = "reports",
             lazy = True,
             uselist=False,),
-        'report': relation(domain.Report, 
-            backref = 'sittings',
+        "report": relation(domain.Report, 
+            backref = "sittings",
             lazy = True,
             uselist=False,),
             }

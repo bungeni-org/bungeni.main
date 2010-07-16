@@ -605,8 +605,8 @@ class Constituency(Entity):
     listings_class = ListConstituency
     interface.implements(interfaces.ITranslatable)
         
-ConstituencyChange = ItemLog.makeLogFactory("ConstituencyChange")
-ConstituencyVersion = ItemVersions.makeVersionFactory("ConstituencyVersion")
+#ConstituencyChange = ItemLog.makeLogFactory("ConstituencyChange")
+#ConstituencyVersion = ItemVersions.makeVersionFactory("ConstituencyVersion")
 
 class Region(Entity):
     """
