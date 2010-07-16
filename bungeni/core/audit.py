@@ -212,7 +212,8 @@ class AuditorFactory(object):
         session = Session()
         change = self.change_object()
         change.action = change_kind
-        change.date = datetime.now()
+        change.date_audit = datetime.now()
+        change.date_active = datetime.now()
         change.user_id = user_id
         change.description = description
         if notes:

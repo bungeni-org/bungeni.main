@@ -73,7 +73,7 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
         # that, when sorted as a string, gives correct results.
         self.columns = [
             column.GetterColumn(title=_(u"date"), 
-                    getter=lambda i,f:formatter.format(i["date"])),
+                    getter=lambda i,f:formatter.format(i["date_active"])),
             column.GetterColumn(title=_(u"user"), 
                     getter=lambda i,f:i["user_id"]),
             column.GetterColumn(title=_(u"description"), 

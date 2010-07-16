@@ -86,7 +86,7 @@ class VersionLogView(BaseForm):
             column.GetterColumn(title=_(u"manual"), 
                     getter=lambda i,f:i.manual),
             column.GetterColumn(title=_(u"modified"), 
-                    getter=lambda i,f:formatter.format(i.change.date)),
+                    getter=lambda i,f:formatter.format(i.change.date_active)),
             column.GetterColumn(title=_(u"by"), 
                     getter=lambda i,f:i.change.user_id),
             column.GetterColumn(title=_(u"message"), 

@@ -27,12 +27,14 @@ class ChangeBaseView(browser.BungeniBrowserView):
         self.columns = [
             column.GetterColumn(title=_(u"action"), 
                     getter=lambda i,f:i["action"]),
-            column.GetterColumn(title=_(u"date"), 
-                    getter=lambda i,f:formatter.format(i["date"])),
+            column.GetterColumn(title=_(u"date"),
+                    getter=lambda i,f:formatter.format(i["date_active"])),
             column.GetterColumn(title=_(u"user"), 
                     getter=lambda i,f:i["user_id"]),
             column.GetterColumn(title=_(u"description"), 
                     getter=lambda i,f:i["description"]),
+            column.GetterColumn(title=_(u"audit date"),
+                    getter=lambda i,f:formatter.format(i["date_audit"])),
         ]
     
     def listing(self):

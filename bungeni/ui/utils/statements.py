@@ -63,7 +63,7 @@ sql_item_timeline = """
         SELECT "action" as "atype", 
             "content_id" AS "item_id", 
             "description" AS "description", 
-            "date" AS "adate",
+            "date_active" AS "adate",
             "notes" as "notes"
         FROM "public"."%(PI_TYPE)s_changes" AS "%(PI_TYPE)s_changes" 
         WHERE "action" = 'workflow'
@@ -72,7 +72,7 @@ sql_item_timeline = """
         SELECT 'version' AS "atype", 
             "%(PI_TYPE)s_changes"."change_id" AS "item_id", 
             "%(PI_TYPE)s_changes"."description" AS "description", 
-            "%(PI_TYPE)s_changes"."date" AS "adate", 
+            "%(PI_TYPE)s_changes"."date_active" AS "adate", 
             "notes" as "notes"
         FROM "public"."%(PI_TYPE)s_versions" AS "%(PI_TYPE)s_versions", 
             "public"."%(PI_TYPE)s_changes" AS "%(PI_TYPE)s_changes" 

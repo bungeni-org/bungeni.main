@@ -25,7 +25,18 @@ def make_changes_table(table, metadata):
         rdb.Column("change_id", rdb.Integer, primary_key=True),
         rdb.Column("content_id", rdb.Integer, rdb.ForeignKey(table.c[fk_id])),
         rdb.Column("action", rdb.Unicode(16)),
-        rdb.Column("date", rdb.DateTime(timezone=False), default=datetime.now),
+        # audit date, exclusively managed by the system
+        rdb.Column("date_audit", rdb.DateTime(timezone=False),
+            server_default=(text("now()")), 
+            nullable=False
+        ),
+        # user-modifiable effective date, defaults to same value as audit date;
+        # this is the date to be used for all intents and purposes other than 
+        # for data auditing
+        rdb.Column("date_active", rdb.DateTime(timezone=False),
+            server_default=(text("now()")), 
+            nullable=False
+        ),
         rdb.Column("description", rdb.UnicodeText),
         rdb.Column("notes", rdb.UnicodeText),
         rdb.Column("user_id", rdb.Unicode(32)
