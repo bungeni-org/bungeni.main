@@ -1003,19 +1003,12 @@ class DhtmlxCalendarSittingsEdit(BrowserView):
             interval = int(count)
         else:
             interval = 1
-        print "RECURRENCE TYPE", recurrence_type  
-        print "FREQUENCY", freq
-        print "DAY", day 
-        print "DAYS", days 
-        print "COUNT2", count2
-        print "INTERVAL", interval 
         byweekday=None
         day_map = {0:SU,1:MO,2:TU,3:WE,4:TU,5:FR,6:SA}
         if (count2 != "") and (day != ""):    
             byweekday = day_map[int(day)](+int(count2))
         elif (days != ""):
             byweekday = map(int,days.split(","))
-        print "BYWEEKDAY",byweekday
         if rrule_count is not None:
             if byweekday is not None:
                 return list(rrule(freq, dtstart=recurrence_start_date, until=recurrence_end_date, count=rrule_count, byweekday=byweekday, interval=interval))  
@@ -1034,12 +1027,10 @@ class DhtmlxCalendarSittingsEdit(BrowserView):
         trusted = removeSecurityProxy(self.context)
         sitting.group_id = trusted.group_id
         group = session.query(domain.Group).get(trusted.group_id)
-        #import pdb; pdb.set_trace()
-        print "XXXXXXXXXXXXXX group id", trusted.group_id
         if action == "inserted":
             if (ids+"_rec_type" not in self.request.form.keys()) or (self.request.form[ids+"_rec_type"] == ""):
-                sitting.start_date = self.request.form[ids+"_start_date"]
-                sitting.end_date = self.request.form[ids+"_end_date"]
+                sitting.start_date = datetime.datetime.strptime(self.request.form[ids+"_start_date"], '%Y-%m-%d %H:%M')
+                sitting.end_date = datetime.datetime.strptime(self.request.form[ids+"_end_date"], '%Y-%m-%d %H:%M')
                 sitting.sitting_type_id = self.request.form[ids+"_type"]
                 sitting.status = None
                 if ids+"_type" in self.request.form.keys():
@@ -1054,8 +1045,11 @@ class DhtmlxCalendarSittingsEdit(BrowserView):
                 self.request.response.setHeader('Content-type', 'text/xml')
                 return '<data><action type="inserted" sid="'+str(ids)+'" tid="'+str(sitting.sitting_id)+'" /></data>'
             else:
-                recurrence_start_date = datetime.datetime.strptime(self.request.form[ids+"_start_date"], '%Y-%m-%d %H:%M')
-                recurrence_end_date = datetime.datetime.strptime(self.request.form[ids+"_end_date"], '%Y-%m-%d %H:%M')
+                try:
+                    recurrence_start_date = datetime.datetime.strptime(self.request.form[ids+"_start_date"], '%Y-%m-%d %H:%M')
+                    recurrence_end_date = datetime.datetime.strptime(self.request.form[ids+"_end_date"], '%Y-%m-%d %H:%M')
+                except:
+                    print "Date is not in the correct format"
                 year = timedelta(days=365)
                 #max end date is one year from now or end_date of the group which is sooner
                 if (group is not None) and (group.end_date is not None):
@@ -1169,7 +1163,6 @@ class DhtmlxCalendarSittings(BrowserView):
             if checkPermission("zope.View", sitting):
                 trusted = removeSecurityProxy(sitting)
                 self.sittings.append(trusted)
-        #import pdb; pdb.set_trace()
         self.request.response.setHeader('Content-type', 'text/xml')
         return self.render()
         #return super(DhtmlxCalendarSittings, self).__call__() 
