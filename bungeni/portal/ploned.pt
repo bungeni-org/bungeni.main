@@ -26,7 +26,7 @@
   </div>
 
   <metal:left-portlet fill-slot="column_one_slot">
-    <td id="portal-column-one"
+    <div id="portal-column-one"
         tal:define="plone context/@@plone"
         tal:condition="python: plone.have_viewlets(view, 'plone.leftcolumn')">
       <div class="visualPadding">
@@ -35,24 +35,29 @@
         </metal:portlets>
         &nbsp;
       </div>
-    </td>
+    </div>
   </metal:left-portlet>
 
   <metal:right-portlet fill-slot="column_two_slot">
-    <td id="portal-column-two"
+    <div id="portal-column-two"
         tal:define="plone context/@@plone"
-        tal:condition="python: plone.have_viewlets(view, 'plone.rightcolumn')">
+        tal:condition="python: plone.have_viewlets(view, 'plone.rightcolumn')"
+        >
       <div class="visualPadding">
         <metal:portlets define-slot="portlets_two_slot">
           <tal:block replace="structure provider:plone.rightcolumn" />
         </metal:portlets>
         &nbsp;
       </div>
-    </td>
+    </div>
   </metal:right-portlet>
 
   <metal:portal-content fill-slot="plone.content">
-    <td id="portal-column-content">
+    <div id="portal-column-content"
+         tal:define ="plone context/@@plone;
+                      sl python: plone.have_viewlets(view, 'plone.leftcolumn');
+                      sr python: plone.have_viewlets(view, 'plone.rightcolumn')"
+         tal:attributes="class python:(sl and sr and 'sl sr') or (sl and 'sl') or (sr and 'sr') or ''">
       
       <metal:block define-slot="content">
         <div metal:define-macro="content"
@@ -85,7 +90,7 @@
         </div>
         
       </metal:block>
-    </td>
+    </div>
   </metal:portal-content>
 
   <metal:block fill-slot="plone.portalfooter" i18n:domain="plone">

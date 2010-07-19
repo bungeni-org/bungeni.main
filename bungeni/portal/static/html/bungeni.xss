@@ -42,19 +42,19 @@ div#portal-top {
   structure: true;
 }
 
-td#portal-column-content {
+div#portal-column-content {
   name: "plone.content";
   mode: replace;
   structure: true;
 }
 
-td#portal-column-one {
+div#portal-column-one {
   name: column_one_slot;
   structure: true;
   mode: replace;
 }
 
-td#portal-column-two {
+div#portal-column-two {
   name: column_two_slot;
   structure: true;
   mode: replace;

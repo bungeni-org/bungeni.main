@@ -103,14 +103,14 @@ ${ xml(view.provide(provider_name="plone-js")) }
       
       <div class="visualClear" id="clear-space-before-wrapper-table"><!-- --></div>
 
-      <table id="portal-columns">
-        <tbody>
-          <tr>
+      <div id="portal-columns">
             $evoque{ #plone_viewlets_td,
                      td_id="portal-column-one",
                      plone_viewlet_manager_name="plone.leftcolumn" }
             
-            <td id="portal-column-content">
+            <div id="portal-column-content"
+                  $if{views['plone'].have_viewlets(view, 'plone.leftcolumn')
+                 } class="sl"$fi>
               <div class="$if{ views['plone'].show_editable_border()
                                }documentEditable$fi">
                 ${ xml(view.provide(provider_name="plone.contentviews")) }
@@ -138,13 +138,11 @@ ${ xml(view.provide(provider_name="plone-js")) }
                   <span id="contentBottomRight"></span>
                 </div>
               </div>
-            </td>
+            </div>
             $evoque{ #plone_viewlets_td,
                      td_id="portal-column-two",
                      plone_viewlet_manager_name="plone.rightcolumn" }
-          </tr>
-        </tbody>
-      </table>
+      </div>
 
       <div class="visualClear" id="clear-space-before-footer"><!-- --></div>
 
@@ -174,12 +172,12 @@ $prefer{
 $if{ td_id and 
      plone_viewlet_manager_name and 
      views["plone"].have_viewlets(view, plone_viewlet_manager_name) }
-<td id="${td_id}">
+<div id="${td_id}">
   <div class="visualPadding">
   ${ xml(view.provide(provider_name=plone_viewlet_manager_name)) }
   &nbsp;
 </div>
-</td>
+</div>
 $fi
 $end{plone_viewlets_td}
 
