@@ -22,9 +22,10 @@ def handleSchedule( object, event):
                 transitions = wf_info.getManualTransitionIds()
                 state = wf_info.state()
                 wf = wf_info.workflow()
+                next_state = get_states(sch.item.type, tagged=["tobescheduled"])
                 for transition_id in transitions:
                     t = wf.getTransition(state.getState(), transition_id)
-                    if t.destination in get_states(sch.item.type, tagged=["tobescheduled"]):
+                    if t.destination in next_state:
                         wf_info.fireTransition(transition_id)
                         break
                         
@@ -35,8 +36,9 @@ def handleSchedule( object, event):
                 transitions = wf_info.getManualTransitionIds()
                 state = wf_info.state()
                 wf = wf_info.workflow()
+                next_state = get_states(sch.item.type, tagged=["scheduled"])
                 for transition_id in transitions:
                     t = wf.getTransition(state.getState(), transition_id)
-                    if t.destination in get_states(sch.item.type, tagged=["scheduled"]):
+                    if t.destination in next_state:
                         wf_info.fireTransition(transition_id)
                         break
