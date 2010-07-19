@@ -36,7 +36,7 @@ def main(argv):
     write_file(output_folder, 'groups.dot', groups.wf.dot())
     write_file(output_folder, 'question.dot', question.wf.dot())
     write_file(output_folder, 'address.dot', address.wf.dot())
-    write_file(output_folder, 'question.dot', tableddocument.wf.dot())
+    write_file(output_folder, 'tableddocument.dot', tableddocument.wf.dot())
     write_file(output_folder, 'agendaitem.dot', agendaitem.wf.dot())
     write_file(output_folder, 'committee.dot', committee.wf.dot())
     write_file(output_folder, 'parliament.dot', parliament.wf.dot())
