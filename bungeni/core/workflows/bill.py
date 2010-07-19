@@ -37,7 +37,11 @@ class actions(object):
     @staticmethod
     def schedule_first(info, context):
         pass
-
+        
+    @staticmethod
+    def reschedule_first(info, context):
+        pass
+        
     @staticmethod
     def adjourn_first(info, context):
         pass
