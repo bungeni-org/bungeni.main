@@ -139,7 +139,7 @@
         action="bungeni.core.workflows.bill.actions.submit"
         condition=""
     />
-    <transition id="allow_reschedule_first"
+    <transition id="allow_schedule_first"
         title="Allow scheduling of First Reading"
         trigger="manual"
         source="gazetted first_reading_adjourned"
