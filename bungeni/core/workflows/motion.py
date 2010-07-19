@@ -85,6 +85,10 @@ class actions:
     @staticmethod
     def schedule( info, context ):
         pass
+    
+    @staticmethod
+    def reschedule( info, context ):
+        pass
 
     @staticmethod
     def defer( info, context):
@@ -95,7 +99,7 @@ class actions:
         pass
 
     @staticmethod
-    def schedule( info, context ):
+    def revert_to_admissible( info, context ):
         pass
 
     @staticmethod
