@@ -273,13 +273,12 @@
          event=".interfaces.IAgendaItemPendingEvent"
     /> 
     <transition id="reschedule"
-        title="Re-schedule"
+        title="Reschedule"
         trigger="manual"
         source="scheduled"
         destination="schedule_pending"
         permission="bungeni.agendaitem.Schedule"
         action=""
-        event=".interfaces.IAgendaItemPendingEvent"
     />
     <transition id="schedule"
          title="Schedule"
@@ -289,6 +288,14 @@
          permission="bungeni.agendaitem.Schedule"
          action="bungeni.core.workflows.agendaitem.actions.schedule"
          event="bungeni.core.workflows.interfaces.IAgendaItemScheduledEvent"
+    />
+    <transition id="revert_to_admissible"
+        title="Revert to admissible"
+        trigger="manual"
+        source="schedule_pending"
+        destination="admissible"
+        permission="bungeni.agendaitem.Schedule"
+        action=""
     />
     <transition id="defer"
          title="Defer"

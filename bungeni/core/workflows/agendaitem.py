@@ -88,9 +88,13 @@ class actions(object):
         pass
     
     @staticmethod
-    def schedule(info, context):
+    def reschedule(info, context):
         pass
-    
+        
+    @staticmethod
+    def revert_to_admissible(info, context):
+        pass
+        
     @staticmethod
     def debate(info, context):
         pass
