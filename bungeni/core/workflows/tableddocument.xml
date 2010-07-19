@@ -198,6 +198,8 @@
         action=""
         event="bungeni.core.workflows.interfaces.ITabledDocumentPendingEvent"
     />
+    
+    
     <transition id="reject"
         title="Reject"
         trigger="manual"
@@ -248,15 +250,36 @@
         action="bungeni.core.workflows.tableddocument.actions.submit"
         condition=""
     />
+    
+    <transition id="revert_to_admissible"
+        title="Revert to admissible"
+        trigger="manual"
+        source="schedule_pending"
+        destination="admissible"
+        permission="bungeni.tableddocument.Schedule"
+        action="bungeni.core.workflows.tableddocument.actions.revert_to_admissible"
+    />
+    
     <transition id="schedule"
         title="Schedule"
-        trigger="manual"
+        trigger="automatic"
         source="schedule_pending"
         destination="scheduled"
         permission="bungeni.tableddocument.Schedule"
         action="bungeni.core.workflows.tableddocument.actions.schedule"
         event="bungeni.core.workflows.interfaces.ITabledDocumentScheduledEvent"
     />
+    
+    <transition id="reschedule"
+        title="Reschedule"
+        trigger="automatic"
+        source="scheduled"
+        destination="schedule_pending"
+        permission="bungeni.tableddocument.Schedule"
+        action="bungeni.core.workflows.tableddocument.actions.reschedule"
+        event="bungeni.core.workflows.interfaces.ITabledDocumentPendingEvent"
+    />
+    
     <transition id="adjourn"
         title="Adjourn"
         trigger="manual"
