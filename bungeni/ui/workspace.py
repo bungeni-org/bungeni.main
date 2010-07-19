@@ -124,10 +124,12 @@ def prepare_user_workspaces(event):
                                             LD.user_id, LD.government_id)
         log.debug(""" [prepare_user_workspaces]
             user_id:%s
+            roles:%s
             parliament:(%s, %s) 
             government_id:%s
             ministries:%s""" % (
-                LD.user_id, 
+                LD.user_id,
+                roles,
                 parliament.full_name, parliament.group_id, 
                 LD.government_id, 
                 [(m.full_name, m.group_id) for m in LD.ministries] ))

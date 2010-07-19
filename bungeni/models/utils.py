@@ -20,7 +20,7 @@ from zope.publisher.interfaces import IRequest
 from ore.alchemist import Session
 import sqlalchemy as rdb
 from sqlalchemy import sql
-from sqlalchemy.orm import eagerload #, lazyload
+from sqlalchemy.orm import eagerload  #, lazyload
 import domain, schema
 
 # !+ move "contextual" utils to ui.utils.contextual
@@ -114,13 +114,13 @@ def get_roles(context):
     def add_roles(principal, prms):
         message.append("             principal: %s" % principal)
         for prm in prms:
-            l_roles = prm.getRolesForPrincipal(principal) # -> generator
+            l_roles = prm.getRolesForPrincipal(principal)  # -> generator
             for role in l_roles:
                 message.append("               role: %s" % str(role))
-                if role[1] == Allow:
+                if role[1]==Allow:
                     if not role[0] in roles:
                         roles.append(role[0])
-                elif role[1] == Deny:
+                elif role[1]==Deny:
                     if role[0] in roles:
                         roles.remove(role[0])
     
@@ -133,9 +133,12 @@ def get_roles(context):
     for principal_id in pg:
         add_roles(principal_id, prms)
     
-    log.debug("get_roles: principal: %s" % principal.id)
-    log.debug("           groups %s ::\n%s" % (str(pg), "\n".join(message)))
-    log.debug("           roles %s" % roles)
+    log.debug("get_roles: principal: %s\n" 
+              "           groups %s ::\n%s\n" 
+              "           roles %s" % (
+                principal.id, 
+                str(pg), "\n".join(message), 
+                roles))
     return roles
 
 
@@ -215,19 +218,18 @@ def get_offices_held_for_user_in_parliament(user_id, parliament_id):
         schema.user_group_memberships.c.start_date,
         schema.user_group_memberships.c.end_date,
         ], 
-        from_obj=[
+        from_obj = [
         rdb.join(schema.groups, schema.user_group_memberships,
-        schema.groups.c.group_id == schema.user_group_memberships.c.group_id
+        schema.groups.c.group_id==schema.user_group_memberships.c.group_id
             ).outerjoin(
             schema.role_titles, schema.user_group_memberships.c.membership_id==
             schema.role_titles.c.membership_id).outerjoin(
                 schema.user_role_types,
-                schema.role_titles.c.title_name_id ==
-                schema.user_role_types.c.user_role_type_id)],
-            whereclause =
-            rdb.and_(
+                schema.role_titles.c.title_name_id==
+                    schema.user_role_types.c.user_role_type_id)],
+            whereclause = rdb.and_(
                 schema.groups.c.group_id.in_(group_ids),
-                schema.user_group_memberships.c.user_id == user_id),
+                schema.user_group_memberships.c.user_id==user_id),
             order_by = [schema.user_group_memberships.c.start_date,
                         schema.user_group_memberships.c.end_date,
                         schema.role_titles.c.start_date, 
@@ -242,8 +244,8 @@ def get_group_ids_for_user_in_parliament(user_id, parliament_id):
     connection = session.connection(domain.Group)
     group_ids  = get_all_group_ids_in_parliament(parliament_id)
     my_groups = rdb.select([schema.user_group_memberships.c.group_id],
-        rdb.and_(schema.user_group_memberships.c.active_p == True,
-            schema.user_group_memberships.c.user_id == user_id,
+        rdb.and_(schema.user_group_memberships.c.active_p==True,
+            schema.user_group_memberships.c.user_id==user_id,
             schema.user_group_memberships.c.group_id.in_(group_ids)),
         distinct=True)
     my_group_ids = []
@@ -256,7 +258,7 @@ def get_parliament_for_group_id(group_id):
         return None
     session = Session()
     group = session.query(domain.Group).get(group_id)
-    if group.type == 'parliament':
+    if group.type=='parliament':
         return group
     else:
         return get_parliament_for_group_id(group.parent_group_id)
