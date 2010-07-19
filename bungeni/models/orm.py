@@ -21,7 +21,17 @@ mapper(domain.Group, schema.groups,
     properties={
         "members": relation(domain.GroupMembership),
         "group_principal_id": column_property(
-                ("group.%s." % (schema.groups.c.type) + 
+                #
+                # !+ ATTENTION: the following sqlalchemy str concat (on c.type) 
+                # gives some VERY strange behaviour :
+                #
+                # print "group." + schema.groups.c.type + "."
+                # >>> :type_1 || groups.type || :param_1
+                #
+                # print group.groups.type.
+                # >>> "group.%s." % (schema.groups.c.type)
+                #
+                ("group." + schema.groups.c.type + "." + 
                     rdb.cast(schema.groups.c.group_id, rdb.String)
             ).label("group_principal_id")),
         "contained_groups": relation(domain.Group, 
