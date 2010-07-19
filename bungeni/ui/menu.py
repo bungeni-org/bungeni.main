@@ -27,7 +27,7 @@ from bungeni.core.schedule import PlenarySchedulingContext
 from bungeni.ui.i18n import  _
 from bungeni.ui.utils import url as ui_url, debug
 from bungeni.ui import interfaces
-
+from bungeni.ui.tagged import get_states
 # r5327 - following added inorder to fix issue 319. needs review
 
 ''' !+ add mechanism for a better overview/control of menu order
@@ -263,7 +263,15 @@ class WorkflowMenu(BrowserMenu):
             return ()
         #state = IWorkflowInfo(context).state().getState()
         wf_info = IWorkflowInfo(context)
-        transitions = wf_info.getManualTransitionIds()
+        state = wf_info.state()
+        wf = wf_info.workflow()
+        all_valid_manual_transitions = wf_info.getManualTransitionIds()
+        transitions = []
+        scheduling_states = get_states(context.type, tagged=["tobescheduled", "scheduled"])
+        for trans in all_valid_manual_transitions:
+            t = wf.getTransition(state.getState(), trans)
+            if t.destination not in scheduling_states:
+                transitions.append(trans)
         # !+ context_workflow menu: the order of transitions is alphabetic, but 
         # should really be order of definition.
         parliament_id = getCurrentParliamentId()
