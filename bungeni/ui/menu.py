@@ -271,7 +271,7 @@ class WorkflowMenu(BrowserMenu):
             scheduling_states = get_states(context.type, tagged=["tobescheduled", "scheduled"])
             for trans in all_valid_manual_transitions:
                 t = wf.getTransition(state.getState(), trans)
-                if t.destination not in scheduling_states:
+                if not((t.destination in scheduling_states) and (t.source in scheduling_states)):
                     transitions.append(trans)
         else:
             transitions = all_valid_manual_transitions
