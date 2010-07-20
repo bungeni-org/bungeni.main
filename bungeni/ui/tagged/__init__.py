@@ -34,6 +34,8 @@ def get_states(pi_type, tagged=[], not_tagged=[], keys=[], conjunction="OR"):
         "OR": matches any state that is matched by ANY criteria above
         "AND": matches any state that is matched by ALL criteria above
     """
+    if pi_type not in TAG_MAPPINGS:
+        return list()
     tag_mapping = TAG_MAPPINGS[pi_type]
     # validate input parameters
     if tagged:
@@ -44,6 +46,8 @@ def get_states(pi_type, tagged=[], not_tagged=[], keys=[], conjunction="OR"):
         assert keys==[ k for k in keys if k in tag_mapping ]
     assert conjunction in ("OR", "AND"), "Not supported."
     # process
+    if pi_type not in STATES_MAPPING:
+        return list()
     states = STATES_MAPPING[pi_type]
     _tagged = _not_tagged = _keys = EMPTY_SET
     if tagged:

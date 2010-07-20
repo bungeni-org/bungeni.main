@@ -15,7 +15,7 @@ import z3c.menu.ready2go.item
 from ore.workflow.interfaces import IWorkflow, IWorkflowInfo
 
 from bungeni.models.utils import get_db_user_id
-from bungeni.models.interfaces import IBungeniApplication
+from bungeni.models.interfaces import IBungeniApplication, IBungeniContent
 
 from bungeni.core.translation import get_language
 from bungeni.core.translation import get_all_languages
@@ -267,11 +267,14 @@ class WorkflowMenu(BrowserMenu):
         wf = wf_info.workflow()
         all_valid_manual_transitions = wf_info.getManualTransitionIds()
         transitions = []
-        scheduling_states = get_states(context.type, tagged=["tobescheduled", "scheduled"])
-        for trans in all_valid_manual_transitions:
-            t = wf.getTransition(state.getState(), trans)
-            if t.destination not in scheduling_states:
-                transitions.append(trans)
+        if IBungeniContent.providedBy(context):
+            scheduling_states = get_states(context.type, tagged=["tobescheduled", "scheduled"])
+            for trans in all_valid_manual_transitions:
+                t = wf.getTransition(state.getState(), trans)
+                if t.destination not in scheduling_states:
+                    transitions.append(trans)
+        else:
+            transitions = all_valid_manual_transitions
         # !+ context_workflow menu: the order of transitions is alphabetic, but 
         # should really be order of definition.
         parliament_id = getCurrentParliamentId()
