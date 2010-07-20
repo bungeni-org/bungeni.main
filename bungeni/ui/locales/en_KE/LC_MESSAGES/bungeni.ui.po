@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: Wed Jul  7 16:34:58 2010\n"
-"PO-Revision-Date: 2010-07-10 21:24+0300\n"
+"PO-Revision-Date: 2010-07-19 19:02+0300\n"
 "Last-Translator: Administrator <admin@apkn.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: en_KE\n"
@@ -416,7 +416,7 @@ msgstr "notice date"
 #: src/bungeni.main/bungeni/ui/descriptor.py:1553
 #: src/bungeni.main/bungeni/ui/descriptor.py:1618
 msgid "Identifier"
-msgstr "identifier"
+msgstr "id"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1560
 msgid "Entered By"
@@ -475,7 +475,7 @@ msgstr "questions"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1651
 msgid "Question Number"
-msgstr "question number"
+msgstr "id"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1655
 msgid "Initial/supplementary question"
