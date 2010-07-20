@@ -87,7 +87,7 @@ users = rdb.Table("users", metadata,
     rdb.Column("middle_name", rdb.Unicode(256)),
     rdb.Column("email", rdb.String(512), nullable=False),
     rdb.Column("gender", rdb.String(1),
-        rdb.CheckConstraint('gender in ("M", "F")')  # (M)ale (F)emale
+        rdb.CheckConstraint("""gender in ('M', 'F')""")  # (M)ale (F)emale
     ),
     rdb.Column("date_of_birth", rdb.Date),
     rdb.Column("birth_country", rdb.String(2), 
@@ -110,7 +110,7 @@ users = rdb.Table("users", metadata,
     rdb.Column("description", rdb.UnicodeText),
     rdb.Column("image", rdb.Binary),
     rdb.Column("active_p", rdb.String(1),
-        rdb.CheckConstraint('active_p in ("A", "I", "D")'),
+        rdb.CheckConstraint("""active_p in ('A', 'I', 'D')"""),
         default="A",  # activ/inactiv/deceased
     ),
     # comment out for now - will be used for user preferences
@@ -147,7 +147,7 @@ parliament_memberships = rdb.Table("parliament_memberships", metadata,
     ),
     # is the MP elected, nominated, ex officio member, ...
     rdb.Column("elected_nominated", rdb.String(1), 
-        rdb.CheckConstraint('elected_nominated in ("E","O","N")'),
+        rdb.CheckConstraint("""elected_nominated in ('E','O','N')"""),
         nullable=False
     ),
     rdb.Column("election_nomination_date", rdb.Date),  # nullable=False),
@@ -235,7 +235,7 @@ offices = rdb.Table("offices", metadata,
     # Speakers office or Clerks office, the members of members of
     # this group will get local roles in the parliament accordingly
     rdb.Column("office_type", rdb.String(1),
-        rdb.CheckConstraint('office_type in ("S","C", "T","L","R")'),
+        rdb.CheckConstraint("""office_type in ('S','C', 'T','L','R')"""),
         nullable=False
     ),
 )
@@ -274,7 +274,7 @@ committee_type = rdb.Table("committee_types", metadata,
     # Indicate whether this type of committees are: 
     # ‘P" - Permanent, ‘T" - Temporary
     rdb.Column("status", rdb.String(1),
-        rdb.CheckConstraint('status in ("P","T")'),
+        rdb.CheckConstraint("""status in ('P','T')"""),
         nullable=False
     ),
     rdb.Column("language", rdb.String(5), nullable=False),
@@ -753,12 +753,12 @@ questions = rdb.Table("questions", metadata,
     rdb.Column("approval_date", rdb.Date,),  # date speaker approved question
     rdb.Column("ministry_submit_date", rdb.Date,), 
     rdb.Column("question_type", rdb.String(1), 
-        rdb.CheckConstraint('question_type in ("O", "P")'), 
+        rdb.CheckConstraint("""question_type in ('O', 'P')"""), 
         # (O)rdinary (P)rivate Notice
         default=u"O"
     ),
     rdb.Column("response_type", rdb.String(1), 
-        rdb.CheckConstraint('response_type in ("O", "W")'),  # (O)ral (W)ritten
+        rdb.CheckConstraint("""response_type in ('O', 'W')"""),  # (O)ral (W)ritten
         default=u"O"
     ),
     # if supplementary question, this is the original/previous question
