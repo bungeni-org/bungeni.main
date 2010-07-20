@@ -149,7 +149,7 @@ class BaseForm(form.FormBase):
         # superclass to implement formlib's ``nextURL`` method
         next_url = self._next_url = self.request.get('next_url', None)
         if next_url == "...":
-            self._next_url = self.request['HTTP_REFERER']
+            self._next_url = self.request.get('HTTP_REFERER', "")
     
     def __call__(self):
         #session = Session()
