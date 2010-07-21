@@ -35,11 +35,18 @@ $URL$
                   </a> 
                   <ul tal:define="items sitting/items">
                     <li tal:repeat="item items">
+		       <span tal:condition="python:item.item_type !='heading'">
                         <a tal:attributes="href item/url">
                           <span i18n:domain="bungeni.models" i18n:translate="" tal:content="item/item_type" />: 
                           <span tal:content="item/name" />
                           (<span i18n:domain="bungeni.core" i18n:translate="" tal:content="item/status" />)
                         </a>
+		        </span>
+			<span tal:condition="python:item.item_type == 'heading'">
+                          <span i18n:domain="bungeni.models" i18n:translate="" tal:content="item/item_type" />: 
+                          <span tal:content="item/name" />
+                          (<span i18n:domain="bungeni.core" i18n:translate="" tal:content="item/status" />)
+			</span>
                     </li>
                   </ul>
                 </li>
