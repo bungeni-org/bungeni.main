@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: Wed Jul  7 16:34:58 2010\n"
-"PO-Revision-Date: 2010-07-19 18:58+0300\n"
+"PO-Revision-Date: 2010-07-21 14:34+0300\n"
 "Last-Translator: Administrator <admin@apkn.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: en\n"
@@ -1573,7 +1573,7 @@ msgstr "to"
 #. Default: "Office"
 #: src/bungeni.main/bungeni/ui/forms/templates/offices_held_viewlet.pt:9
 msgid "office_held"
-msgstr "office"
+msgstr "office held"
 
 #: src/bungeni.main/bungeni/ui/forms/templates/version-attached-files.pt:10
 #: src/bungeni.main/bungeni/ui/forms/templates/attached-files.pt:10
@@ -1613,7 +1613,7 @@ msgstr "start date cannot be after parliament's dissolution (%s)"
 
 #: src/bungeni.main/bungeni/ui/forms/validations.py:211
 msgid "Start date must start after the swearing in of the parliament (%s)"
-msgstr "start date must start after the swearing in of parliament (%s)"
+msgstr "start date must be after the swearing in of parliament (%s)"
 
 #: src/bungeni.main/bungeni/ui/forms/validations.py:237
 msgid "Another government is not yet dissolved (%s)"
@@ -1648,16 +1648,14 @@ msgstr "start date must be prior to (%s)"
 
 #: src/bungeni.main/bungeni/ui/forms/validations.py:477
 msgid "If recurrence is limited by date, it must lie after the starting date"
-msgstr "if recurrence is limited by date, it must lie after the starting date"
+msgstr "if recurrence is limited by date, it must be after the starting date"
 
 #. Default: ""
 #: src/bungeni.main/bungeni/ui/forms/validations.py:486
 msgid ""
 "One or more events would be scheduled for $F, which is after the scheduling "
 "group's end date"
-msgstr ""
-"one or more events would be scheduled for $f, which is after the scheduling "
-"group's end date"
+msgstr "one or more events would be scheduled for $f, which is after end date"
 
 #. Default: ""
 #: src/bungeni.main/bungeni/ui/forms/validations.py:530
@@ -1765,19 +1763,19 @@ msgstr "schedule"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:1016
 msgid "Edit Scheduling"
-msgstr "edit scheduling"
+msgstr "edit item"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:1026
 msgid "Delete Scheduling"
-msgstr "delete scheduling"
+msgstr "delete item"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:1036
 msgid "Move Scheduling up"
-msgstr "move scheduling up"
+msgstr "move item up"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:1046
 msgid "Move Scheduling down"
-msgstr "move scheduling down"
+msgstr "move item down"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:109
 msgid "The 'Add...' menu - for political parties"
