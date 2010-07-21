@@ -23,7 +23,7 @@ $URL$
         <dd tal:define="days view/get_sittings" tal:condition="days" id="fieldset-upcoming-sittings">
             <ul>
               <tal:block tal:repeat="day days">
-                  <h2 class="whats_on_upcoming_sitting_date" tal:content="day/day" /> 
+                  <li><h2 class="whats_on_upcoming_sitting_date" tal:content="day/day" /> 
               <ul tal:define="sittings day/sittings" >
                 <li tal:repeat="sitting sittings">
                   <a tal:attributes="href sitting/url">
@@ -43,14 +43,14 @@ $URL$
                         </a>
 		        </span>
 			<span tal:condition="python:item.item_type == 'heading'">
-                          <span i18n:domain="bungeni.models" i18n:translate="" tal:content="item/item_type" />: 
+                          <h3><span i18n:domain="bungeni.models" i18n:translate="" tal:content="item/item_type" />: 
                           <span tal:content="item/name" />
-                          (<span i18n:domain="bungeni.core" i18n:translate="" tal:content="item/status" />)
+                          (<span i18n:domain="bungeni.core" i18n:translate="" tal:content="item/status" />)</h3>
 			</span>
                     </li>
                   </ul>
                 </li>
-              </ul>
+              </ul></li>
              </tal:block>
             </ul>
         </dd>
@@ -59,7 +59,7 @@ $URL$
         <dd tal:define="days view/get_bills" tal:condition="days" id="fieldset-upcoming-bills">
             <ul >
               <tal:block tal:repeat="day days">
-                  <h2 class="whats_on_upcoming_bill_date" tal:content="day/day" /> 
+                  <li><h2 class="whats_on_upcoming_bill_date" tal:content="day/day" /> 
               <ul tal:define="items day/items" >
                 <li tal:repeat="item items">
                     <a tal:attributes="href item/url">
@@ -70,7 +70,7 @@ $URL$
                     <span tal:content="item/group_name" />
                     <span tal:content="item/sitting_type" />
                 </li>
-              </ul>
+              </ul></li>
             </tal:block>
             </ul>
         </dd>
@@ -79,7 +79,7 @@ $URL$
         <dd tal:define="days view/get_motions" tal:condition="days" id="fieldset-upcoming-motions">
             <ul>
               <tal:block tal:repeat="day days">
-                  <h2 class="whats_on_upcoming_motion_date" tal:content="day/day" /> 
+                  <li><h2 class="whats_on_upcoming_motion_date" tal:content="day/day" /> 
                   <ul tal:define="items day/items" >
                     <li tal:repeat="item items">
                       <a tal:attributes="href item/url">
@@ -90,7 +90,7 @@ $URL$
                         <span tal:content="item/group_name" />
                         <span tal:content="item/sitting_type" />
                     </li>
-                  </ul>
+                  </ul></li>
                </tal:block>
             </ul>
         </dd>
@@ -99,7 +99,7 @@ $URL$
         <dd tal:define="days view/get_questions" tal:condition="days" id="fieldset-upcoming-questions">
             <ul >
               <tal:block tal:repeat="day days">
-                  <h2 class="whats_on_upcoming_question_date" tal:content="day/day" /> 
+                  <li><h2 class="whats_on_upcoming_question_date" tal:content="day/day" /> 
               <ul tal:define="items day/items" >
                 <li tal:repeat="item items">
                    <a tal:attributes="href item/url">
@@ -110,7 +110,7 @@ $URL$
                     <span tal:content="item/group_name" />
                     <span tal:content="item/sitting_type" />
                 </li>
-               </ul> 
+               </ul> </li>
              </tal:block>
             </ul>
         </dd>
@@ -119,7 +119,7 @@ $URL$
         <dd tal:define="days view/get_tableddocuments" tal:condition="days" id="fieldset-upcoming-tableddocuments">
             <ul >
               <tal:block tal:repeat="day days">
-                  <h2 class="whats_on_upcoming_tableddocument_date" tal:content="day/day" /> 
+                  <li><h2 class="whats_on_upcoming_tableddocument_date" tal:content="day/day" /> 
               <ul tal:define="items day/items" >
                 <li tal:repeat="item items">
                    <a tal:attributes="href item/url">
@@ -130,7 +130,7 @@ $URL$
                     <span tal:content="item/group_name" />
                     <span tal:content="item/sitting_type" />
                 </li>
-               </ul> 
+               </ul> </li>
              </tal:block>
             </ul>
         </dd>
@@ -139,7 +139,7 @@ $URL$
         <dd tal:define="days view/get_agendaitems" tal:condition="days" id="fieldset-upcoming-agendaitems">
             <ul >
               <tal:block tal:repeat="day days">
-                  <h2 class="whats_on_upcoming_agendaitem_date" tal:content="day/day" /> 
+                  <li><h2 class="whats_on_upcoming_agendaitem_date" tal:content="day/day" /> 
               <ul tal:define="items day/items" >
                 <li tal:repeat="item items">
                    <a tal:attributes="href item/url">
@@ -150,7 +150,7 @@ $URL$
                     <span tal:content="item/group_name" />
                     <span tal:content="item/sitting_type" />
                 </li>
-               </ul> 
+               </ul> </li>
              </tal:block>
             </ul>
         </dd>
