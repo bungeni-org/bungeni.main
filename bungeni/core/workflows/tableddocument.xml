@@ -268,6 +268,7 @@
         permission="bungeni.tableddocument.Schedule"
         action="bungeni.core.workflows.tableddocument.actions.schedule"
         event="bungeni.core.workflows.interfaces.ITabledDocumentScheduledEvent"
+        condition="bungeni.core.workflows.tableddocument.conditions.is_scheduled"
     />
     
     <transition id="reschedule"

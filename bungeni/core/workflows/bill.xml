@@ -155,7 +155,7 @@
         destination="first_reading"
         permission="bungeni.bill.Schedule"
         action="bungeni.core.workflows.bill.actions.schedule_first"
-        condition=""
+        condition="bungeni.core.workflows.bill.conditions.is_scheduled"
     />
     <transition id="reschedule_first"
         title="Reschedule First Reading"
@@ -191,7 +191,7 @@
         destination="first_report_reading"
         permission="bungeni.bill.Schedule"
         action="bungeni.core.workflows.bill.actions.create_version"
-        condition=""
+        condition="bungeni.core.workflows.bill.conditions.is_scheduled"
     />
     
     <transition id="reschedule_first_report_reading"
@@ -219,7 +219,7 @@
         destination="second_reading"
         permission="bungeni.bill.Schedule"
         action="bungeni.core.workflows.bill.actions.create_version"
-        condition=""
+        condition="bungeni.core.workflows.bill.conditions.is_scheduled"
     />
     <transition id="reschedule_second_reading"
         title="Reschedule Second Reading "
@@ -282,7 +282,7 @@
         destination="whole_house"
         permission="bungeni.bill.Schedule"
         action=""
-        condition=""
+        condition="bungeni.core.workflows.bill.conditions.is_scheduled"
     />
     
     <transition id="reschedule_whole_house"
@@ -338,7 +338,7 @@
         destination="third_reading"
         permission="bungeni.bill.Schedule"
         action=""
-        condition=""
+        condition="bungeni.core.workflows.bill.conditions.is_scheduled"
     />
     <transition id="reschedule_third_reading"
         title="Reschedule Third Reading"

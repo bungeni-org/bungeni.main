@@ -288,6 +288,7 @@
          permission="bungeni.agendaitem.Schedule"
          action="bungeni.core.workflows.agendaitem.actions.schedule"
          event="bungeni.core.workflows.interfaces.IAgendaItemScheduledEvent"
+         condition="bungeni.core.workflows.agendaitem.conditions.is_scheduled"
     />
     <transition id="revert_to_admissible"
         title="Revert to admissible"
