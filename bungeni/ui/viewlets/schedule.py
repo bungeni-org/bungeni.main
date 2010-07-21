@@ -26,7 +26,7 @@ from ore.workflow.interfaces import IWorkflow
 
 from bungeni.ui.tagged import get_states
 from bungeni.ui.i18n import _
-from bungeni.ui.utils import url as ui_url
+from bungeni.ui.utils import url
 from bungeni.ui.calendar.utils import datetimedict
 from interfaces import ISchedulingManager
 
@@ -114,7 +114,7 @@ class SchedulableItemsViewlet(viewlet.ViewletBase):
             'state': IWorkflow(item).workflow.states[item.status].title,
             'id': item.parliamentary_item_id,
             'class': (item.parliamentary_item_id in scheduled_item_ids) and "dd-disable" or "",
-            'url': ui_url.set_url_context(ui_url.absoluteURL(item, self.request))
+            'url': url.set_url_context(url.absoluteURL(item, self.request))
             } for item, properties in \
             [(item, (IDCDescriptiveProperties.providedBy(item) and item or \
             IDCDescriptiveProperties(item))) for
@@ -188,25 +188,27 @@ class SchedulableAgendaItemsViewlet(SchedulableItemsViewlet):
         adapter = gsm.adapters.lookup(
             (interface.implementedBy(self.model),
              interface.providedBy(self)), ILocation)
-
+        
         items = [adapter(item, None) for item in items]
-
+        
         # for each item, format dictionary for use in template
         self.items = [{
             'title': properties.title,
             'name': item.__class__.__name__,
             'description': properties.description,
-#            'date': _(u"$F", mapping={'F':
-#                      datetimedict.fromdatetime(item.changes[-1].date)}),
-            'date': item.changes[-1].date,
-#
+            #'date': _(u"$F", mapping={'F':
+            #           datetimedict.fromdatetime(item.changes[-1].date)}),
+            'date': item.changes[-1].date_active,
             'state': _(IWorkflow(item).workflow.states[item.status].title),
             'id': item.parliamentary_item_id,
-            'class': (item.parliamentary_item_id in scheduled_item_ids) and "dd-disable" or "",
-            'url': ui_url.set_url_context(ui_url.absoluteURL(item, self.request))
-            } for item, properties in \
-            [(item, (IDCDescriptiveProperties.providedBy(item) and item or \
-            IDCDescriptiveProperties(item))) for
-             item in items]]
+            'class': (item.parliamentary_item_id in 
+                            scheduled_item_ids) and "dd-disable" or "",
+            'url': url.set_url_context(url.absoluteURL(item, self.request))
+        } for (item, properties) in [
+              (item, (IDCDescriptiveProperties.providedBy(item) and item or
+                      IDCDescriptiveProperties(item))) 
+              for item in items ]
+       ]
+
 
 
