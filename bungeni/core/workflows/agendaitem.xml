@@ -274,7 +274,7 @@
     /> 
     <transition id="reschedule"
         title="Reschedule"
-        trigger="manual"
+        trigger="system"
         source="scheduled"
         destination="schedule_pending"
         permission="bungeni.agendaitem.Schedule"
@@ -282,7 +282,7 @@
     />
     <transition id="schedule"
          title="Schedule"
-         trigger="manual"
+         trigger="system"
          source="schedule_pending debate_adjourned"
          destination="scheduled"
          permission="bungeni.agendaitem.Schedule"

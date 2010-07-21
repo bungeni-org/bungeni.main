@@ -263,18 +263,8 @@ class WorkflowMenu(BrowserMenu):
             return ()
         #state = IWorkflowInfo(context).state().getState()
         wf_info = IWorkflowInfo(context)
-        state = wf_info.state()
-        wf = wf_info.workflow()
-        all_valid_manual_transitions = wf_info.getManualTransitionIds()
-        transitions = []
-        if IBungeniContent.providedBy(context):
-            scheduling_states = get_states(context.type, tagged=["tobescheduled", "scheduled"])
-            for trans in all_valid_manual_transitions:
-                t = wf.getTransition(state.getState(), trans)
-                if not((t.destination in scheduling_states) and (t.source in scheduling_states)):
-                    transitions.append(trans)
-        else:
-            transitions = all_valid_manual_transitions
+        transitions = wf_info.getManualTransitionIds()
+        
         # !+ context_workflow menu: the order of transitions is alphabetic, but 
         # should really be order of definition.
         parliament_id = getCurrentParliamentId()

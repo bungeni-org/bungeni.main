@@ -150,7 +150,7 @@
     />
     <transition id="schedule_first"
         title="Schedule First Reading"
-        trigger="manual"
+        trigger="system"
         source="first_reading_pending"
         destination="first_reading"
         permission="bungeni.bill.Schedule"
@@ -159,7 +159,7 @@
     />
     <transition id="reschedule_first"
         title="Reschedule First Reading"
-        trigger="manual"
+        trigger="system"
         source="first_reading"
         destination="first_reading_pending"
         permission="bungeni.bill.Schedule"
@@ -186,7 +186,7 @@
     />
     <transition id="schedule_first_report_reading"
         title="Schedule First Report Reading"
-        trigger="manual"
+        trigger="system"
         source="first_report_reading_pending"
         destination="first_report_reading"
         permission="bungeni.bill.Schedule"
@@ -196,7 +196,7 @@
     
     <transition id="reschedule_first_report_reading"
         title="Reschedule First Report Reading"
-        trigger="manual"
+        trigger="system"
         source="first_report_reading"
         destination="first_report_reading_pending"
         permission="bungeni.bill.Schedule"
@@ -214,7 +214,7 @@
     />
     <transition id="schedule_second_reading"
         title="Schedule Second Reading "
-        trigger="manual"
+        trigger="system"
         source="second_reading_pending"
         destination="second_reading"
         permission="bungeni.bill.Schedule"
@@ -223,7 +223,7 @@
     />
     <transition id="reschedule_second_reading"
         title="Reschedule Second Reading "
-        trigger="manual"
+        trigger="system"
         source="second_reading"
         destination="second_reading_pending"
         permission="bungeni.bill.Schedule"
@@ -277,7 +277,7 @@
     />
     <transition id="schedule_whole_house"
         title="Schedule Whole House Committee"
-        trigger="manual"
+        trigger="system"
         source="whole_house_pending"
         destination="whole_house"
         permission="bungeni.bill.Schedule"
@@ -287,7 +287,7 @@
     
     <transition id="reschedule_whole_house"
         title="Reschedule Whole House Committee"
-        trigger="manual"
+        trigger="system"
         source="whole_house"
         destination="whole_house_pending"
         permission="bungeni.bill.Schedule"
@@ -333,7 +333,7 @@
     />
     <transition id="schedule_third_reading"
         title="Schedule Third Reading"
-        trigger="manual"
+        trigger="system"
         source="third_reading_pending"
         destination="third_reading"
         permission="bungeni.bill.Schedule"
@@ -342,7 +342,7 @@
     />
     <transition id="reschedule_third_reading"
         title="Reschedule Third Reading"
-        trigger="manual"
+        trigger="system"
         source="third_reading"
         destination="third_reading_pending"
         permission="bungeni.bill.Schedule"

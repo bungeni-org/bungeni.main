@@ -358,7 +358,7 @@
     
     <transition id="reschedule"
         title="Reschedule"
-        trigger="manual"
+        trigger="system"
         source="scheduled"
         destination="schedule_pending"
         permission="bungeni.question.Schedule"
@@ -368,13 +368,14 @@
     
     <transition id="schedule"
         title="Schedule"
-        trigger="manual"
+        trigger="system"
         source="schedule_pending"
         destination="scheduled"
         permission="bungeni.question.Schedule"
         action="bungeni.core.workflows.question.actions.schedule"
         event=".interfaces.IQuestionScheduledEvent"
         order="12"
+        condition="bungeni.core.workflows.question.conditions.is_scheduled"
     />
     <!--
     Questions which are flagged as “requiring written response” are never 
