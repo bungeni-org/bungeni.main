@@ -1398,35 +1398,6 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
         ]
 
 
-
-
-class ChangeDescriptor(ModelDescriptor):
-    display_name =_(u"Change")
-    container_name =_(u"Changes")
-    fields= [
-        dict(name="change_id", omit=True),
-        dict(name="content_id", omit=True),
-        dict(name="action", property=schema.TextLine(title=_(u"Action")),listing=True),
-        dict(name="date", 
-            property=schema.Date(title=_(u"Date")),
-            listing=True ,
-            edit_widget=DateTimeWidget, 
-            add_widget=DateTimeWidget,),
-        dict(name="user_id", label=_(u"user"), listing=True),
-        dict(name="description", label= _(u"Description"),
-            property = schema.Text(title=_(u"Description")),
-            listing=True,
-            ),
-        dict(name="notes", 
-            label=_(u"Notes"),
-            property = schema.Text(title=_(u"Notes"), required=False),
-            view_widget=HTMLDisplay,
-            edit_widget=RichTextEditor, 
-            add_widget=RichTextEditor,
-        ),
-    ]
-        
-        
 class VersionDescriptor(ModelDescriptor):
     fields= [
         dict(name="parliamentary_item_id", omit=True),
@@ -1511,12 +1482,7 @@ class AgendaItemVersionDescriptor(VersionDescriptor):
     container_name = _(u"Versions")
     fields = deepcopy(VersionDescriptor.fields)
 
-class AgendaItemChangeDescriptor(ChangeDescriptor):
-    display_name = _(u"Agenda Item change")
-    container_name = _(u"Changes")
-    fields = deepcopy(ChangeDescriptor.fields)
-    
-        
+
 class MotionDescriptor(ParliamentaryItemDescriptor):
     display_name = _(u"Motion")
     container_name = _(u"Motions")
@@ -1561,12 +1527,8 @@ class MotionVersionDescriptor(VersionDescriptor):
     display_name = _(u"Motion version")
     container_name = _(u"Versions")
     fields = deepcopy(VersionDescriptor.fields)
- 
-class MotionChangeDescriptor(ChangeDescriptor):
-    display_name = _(u"Motion change")
-    container_name = _(u"Changes")
-    fields = deepcopy(ChangeDescriptor.fields)
-    
+
+
 class BillDescriptor(ParliamentaryItemDescriptor):
     display_name = _(u"Bill")
     container_name = _(u"Bills")
@@ -1613,11 +1575,7 @@ class BillVersionDescriptor(VersionDescriptor):
     container_name = _(u"Versions")
     fields = deepcopy(VersionDescriptor.fields)
 
-class BillChangeDescriptor(ChangeDescriptor):
-    display_name = _(u"Bill change")
-    container_name = _(u"Changes")
-    fields = deepcopy(ChangeDescriptor.fields)
-    
+
 class QuestionDescriptor(ParliamentaryItemDescriptor):
     display_name = _(u"Question")
     container_name = _(u"Questions")
@@ -1689,12 +1647,6 @@ class QuestionVersionDescriptor(VersionDescriptor):
     fields = deepcopy(VersionDescriptor.fields)
     
 
-class QuestionChangeDescriptor(ChangeDescriptor):
-    display_name = _(u"Question change")
-    container_name = _(u"Changes")
-    fields = deepcopy(ChangeDescriptor.fields)
-
-    
 class EventItemDescriptor(ParliamentaryItemDescriptor):
     display_name =_(u"Event")
     container_name =_(u"Events")
@@ -1733,12 +1685,6 @@ class TabledDocumentVersionDescriptor(VersionDescriptor):
     display_name = _(u"Tabled Document version")
     container_name = _(u"Versions")
     fields = deepcopy(VersionDescriptor.fields)
-
-class TabledDocumentChangeDescriptor(ChangeDescriptor):
-    display_name = _(u"Tabled Document change")
-    container_name = _(u"Changes")
-    fields = deepcopy(ChangeDescriptor.fields)
-    
 
 
 class SittingDescriptor(ModelDescriptor):

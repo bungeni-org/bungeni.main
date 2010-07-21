@@ -205,14 +205,6 @@
      echo="False"
      />
   <db:catalyst
-     class="bungeni.models.domain.BillChange"
-     descriptor=".descriptor.BillChangeDescriptor"
-     interface_module="bungeni.models.interfaces"
-     ui_module="bungeni.ui.content" 
-     echo="False"
-     />
-  
-  <db:catalyst
      class="bungeni.models.domain.Consignatory"
      descriptor=".descriptor.ConsignatoryDescriptor"
      interface_module="bungeni.models.interfaces"
@@ -235,14 +227,6 @@
      echo="False"
      />
   <db:catalyst
-     class="bungeni.models.domain.MotionChange"
-     descriptor=".descriptor.MotionChangeDescriptor"
-     interface_module="bungeni.models.interfaces"
-     ui_module="bungeni.ui.content" 
-     echo="False"
-     />
-
-  <db:catalyst
     class="bungeni.models.domain.Question"
     descriptor=".descriptor.QuestionDescriptor"
     interface_module="bungeni.models.interfaces"
@@ -257,16 +241,6 @@
      ui_module="bungeni.ui.content" 
      echo="False"
      />
-
-  <db:catalyst
-     class="bungeni.models.domain.QuestionChange"
-     descriptor=".descriptor.QuestionChangeDescriptor"
-     interface_module="bungeni.models.interfaces"
-     ui_module="bungeni.ui.content" 
-     echo="False"
-     />
-
-
   <db:catalyst
     class="bungeni.models.domain.TabledDocument"
     descriptor=".descriptor.TabledDocumentDescriptor"
@@ -282,16 +256,6 @@
      ui_module="bungeni.ui.content" 
      echo="False"
      />
-  <db:catalyst
-     class="bungeni.models.domain.TabledDocumentChange"
-     descriptor=".descriptor.TabledDocumentChangeDescriptor"
-     interface_module="bungeni.models.interfaces"
-     ui_module="bungeni.ui.content" 
-     echo="False"
-     />
-     
-
-    
   <!--db:catalyst
     class="bungeni.models.domain.DocumentSource"
     descriptor=".descriptor.DocumentSourceDescriptor"
@@ -458,15 +422,6 @@
      ui_module="bungeni.ui.content" 
      echo="False"
      />
-  <db:catalyst
-     class="bungeni.models.domain.AgendaItemChange"
-     descriptor=".descriptor.AgendaItemChangeDescriptor"
-     interface_module="bungeni.models.interfaces"
-     ui_module="bungeni.ui.content" 
-     echo="False"
-     />
-    
-    
  <!--db:catalyst
      class="bungeni.models.domain.QuestionScheduleHistory"
      descriptor=".descriptor.QuestionScheduleHistoryDescriptor"
