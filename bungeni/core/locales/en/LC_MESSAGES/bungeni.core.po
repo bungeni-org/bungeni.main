@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: Wed Jul  7 15:15:45 2010\n"
-"PO-Revision-Date: 2010-07-15 11:13+0300\n"
+"PO-Revision-Date: 2010-07-20 19:47+0300\n"
 "Last-Translator: Administrator <admin@apkn.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: en\n"
@@ -91,7 +91,7 @@ msgstr "view the sittings of the current parliament"
 
 #: src/bungeni.main/bungeni/core/app.py:165
 msgid "Publications"
-msgstr "parliamentary publications"
+msgstr "publications"
 
 #: src/bungeni.main/bungeni/core/app.py:167
 msgid "View Agenda and Minutes reports of the current parliament"
