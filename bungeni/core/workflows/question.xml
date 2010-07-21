@@ -363,7 +363,6 @@
         destination="schedule_pending"
         permission="bungeni.question.Schedule"
         action=""
-        event=".interfaces.IQuestionSchedulePendingEvent"
     />
     
     <transition id="schedule"

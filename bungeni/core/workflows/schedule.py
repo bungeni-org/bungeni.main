@@ -14,31 +14,32 @@ def handleSchedule( object, event):
                         eagerload('sitting_type'),
                         eagerload('item_schedule')).get(s.sitting_id)
     schedulings = map( removeSecurityProxy, sitting.item_schedule)
-    
     if sitting.status == "draft_agenda":
         for sch in schedulings:
             if sch.item.type != "heading":
                 wf_info = IWorkflowInfo(sch.item)
-                transitions = wf_info.getManualTransitionIds()
+                transitions = wf_info.getSystemTransitionIds()
                 state = wf_info.state()
                 wf = wf_info.workflow()
                 next_state = get_states(sch.item.type, tagged=["tobescheduled"])
                 for transition_id in transitions:
                     t = wf.getTransition(state.getState(), transition_id)
                     if t.destination in next_state:
-                        wf_info.fireTransition(transition_id)
+                        #TODO find out why firetransition fails for reschedule even 
+                        #when the user has requisite permissions
+                        wf_info.fireTransition(transition_id, check_security=False)
                         break
                         
     elif sitting.status == "published_agenda":
         for sch in schedulings:
             if sch.item.type != "heading":
                 wf_info = IWorkflowInfo(sch.item)
-                transitions = wf_info.getManualTransitionIds()
+                transitions = wf_info.getSystemTransitionIds()
                 state = wf_info.state()
                 wf = wf_info.workflow()
                 next_state = get_states(sch.item.type, tagged=["scheduled"])
                 for transition_id in transitions:
                     t = wf.getTransition(state.getState(), transition_id)
                     if t.destination in next_state:
-                        wf_info.fireTransition(transition_id)
+                        wf_info.fireTransition(transition_id, check_security=False)
                         break

@@ -277,8 +277,6 @@
         source="scheduled"
         destination="schedule_pending"
         permission="bungeni.tableddocument.Schedule"
-        action="bungeni.core.workflows.tableddocument.actions.reschedule"
-        event="bungeni.core.workflows.interfaces.ITabledDocumentPendingEvent"
     />
     
     <transition id="adjourn"

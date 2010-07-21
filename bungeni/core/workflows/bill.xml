@@ -163,7 +163,7 @@
         source="first_reading"
         destination="first_reading_pending"
         permission="bungeni.bill.Schedule"
-        action="bungeni.core.workflows.bill.actions.reschedule_first"
+        action=""
         condition=""
     />
     <transition id="adjourn_first"
@@ -227,7 +227,6 @@
         source="second_reading"
         destination="second_reading_pending"
         permission="bungeni.bill.Schedule"
-        action="bungeni.core.workflows.bill.actions.create_version"
         condition=""
     />
     <transition id="adjourn_first_report_reading"

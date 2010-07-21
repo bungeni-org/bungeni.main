@@ -373,7 +373,6 @@
         source="scheduled"
         destination="schedule_pending"
         permission="bungeni.motion.Schedule"
-        action="bungeni.core.workflows.motion.actions.reschedule"
         condition=""
     />
     <transition id="revert_to_admissible"
