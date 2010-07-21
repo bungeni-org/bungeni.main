@@ -11,6 +11,8 @@ log = __import__("logging").getLogger("bungeni.ui.forms.workflow")
 from zope import component
 from zope.formlib import form
 from zope.security.proxy import removeSecurityProxy
+from zope.annotation.interfaces import IAnnotations
+
 from bungeni.core.interfaces import IVersioned
 from bungeni.models.utils import get_principal_id
 from bungeni.ui.i18n import _
@@ -50,7 +52,8 @@ def bindTransitions(form_instance, transitions, wf_name=None, wf=None):
     return actions
     
 class TransitionHandler(object):
-    """Workflow transition 2 formlib action bindings."""
+    """Workflow transition 2 formlib action bindings.
+    """
     
     def __init__(self, transition_id, wf_name=None):
         self.transition_id = transition_id
@@ -64,21 +67,16 @@ class TransitionHandler(object):
         Redirects to the ``next_url`` location.
         """
         context = getattr(form.context, "_object", form.context)
-        notes = None
         if self.wf_name:
             info = component.getAdapter(
                 context, interfaces.IWorkflowInfo, self.wf_name)
         else:
             info = interfaces.IWorkflowInfo(context)
-        if data.has_key("note"):
-            notes = data["note"]
-        else:
-            notes = ""
         result = handle_edit_action(form, action, data)
+        #
         if form.errors: 
             return result
         else:
-            info.fireTransition(self.transition_id, notes)
             # NOTE: for some reason form.next_url is (always?) None --
             # for when it is None, we redirect to HTTP_REFERER instead.
             log.debug(""" TransitionHandler.__call__()
@@ -88,12 +86,20 @@ class TransitionHandler(object):
         principal_id=%s
         context=%s
         transition_id=%s
-        notes=%s
         result=%s
         next_url=%s 
         current_url=%s """ % (form, action.label, action.name, data, 
                 get_principal_id(), context, self.transition_id, 
-                notes, result, form.next_url, form.request.getURL()))
+                result, form.next_url, form.request.getURL()))
+            # dress-up transition data object
+            data.setdefault("note", data.get("note", ""))
+            data.setdefault("date_active", data.get("data_active", None))
+            # and because WorkflowInfo API e.g. fireTransition(), ONLY 
+            # foresees for a comment attribute as additional data, we bypass 
+            # using that altogether, and pass it along downstream by stuffing 
+            # onto the request
+            IAnnotations(form.request)["change_data"] = data
+            info.fireTransition(self.transition_id)
             next_url = form.next_url
             if next_url is None:
                 next_url = form.request["HTTP_REFERER"]

@@ -10,8 +10,8 @@ $Id$
 from datetime import datetime
 from types import StringTypes
 
+from zope.annotation.interfaces import IAnnotations
 from zope.security.proxy import removeSecurityProxy
-
 from zope import lifecycleevent
 
 from ore.workflow.interfaces import IWorkflowInfo
@@ -22,6 +22,7 @@ from sqlalchemy import orm
 from bungeni.models import schema, domain
 from bungeni.models.utils import get_principal_id
 from bungeni.core import interfaces
+from bungeni.ui.utils import common
 
 from i18n import _ 
 
@@ -101,7 +102,7 @@ class AuditorFactory(object):
         return self._objectChanged("added", object)
     
     def objectModified(self, object, event):
-        attrset =[]
+        attrset = []
         for attr in event.descriptions:
             if lifecycleevent.IAttributes.providedBy(attr):
                 attrset.extend(
@@ -116,8 +117,16 @@ class AuditorFactory(object):
             if type(a) in StringTypes:
                 str_attrset.append(a)
         description = u", ".join(str_attrset)
-        return self._objectChanged("modified", object, description)
-        
+        change_data = self._get_change_data()
+        if change_data["note"]:
+            extras = {"comment": change_data["note"]}
+        else:
+            extras = None
+        return self._objectChanged("modified", object, 
+                        description=description,
+                        notes=extras,
+                        date_active=change_data["date_active"])
+    
     def objectStateChanged(self, object, event):
         """
         object: origin domain workflowed object 
@@ -128,28 +137,31 @@ class AuditorFactory(object):
             .transition # transition
             .comment #
         """
-        comment = event.comment
-        if comment is None:
-            comment = u""
-        else:
-            if hasattr(object, "note") and len(comment)>1:
-                object.note = comment
+        change_data = self._get_change_data()
+        # if note, attach it on object (if object supports such an attribute)
+        if change_data["note"]:
+            if hasattr(object, "note"):
+                object.note = change_data["note"]
+        # update object's workflow status date (if supported by object)
         if hasattr(object, "status_date"):
-            object.status_date = datetime.now()
-        # as base description, record a human readable title of workflow state
+            object.status_date = change_data["date_active"] or datetime.now()
+        # as a "base" description, use human readable workflow state title
         wf = IWorkflowInfo(object).workflow().workflow
         description = wf.states[event.destination].title
         # extras, that may be used e.g. to elaborate description at runtime
-        notes = {
+        extras = {
             "source": event.source, 
             "destination": event.destination,
             "transition": event.transition.transition_id,
-            "comment": comment
+            "comment": change_data["note"]
         }
-        return self._objectChanged("workflow", object, description, notes)
-        # description field becomes templates string?
+        return self._objectChanged("workflow", object, 
+                        description=description,
+                        notes=extras,
+                        date_active=change_data["date_active"])
+        # description field is a "building block" for a UI description
         # notes field becomes interpolation data
-        
+    
     def objectDeleted(self, object, event):
         #return self._objectChanged("deleted", object)
         return
@@ -182,20 +194,23 @@ class AuditorFactory(object):
         #            ).order_by(vkls.status_date).all()
 
     def objectRevertedVersion(self, object, event):
-        return self._objectChanged("reverted-version", object, description=event.message)
-        
-    def _objectChanged(self, change_kind, object, description="", notes=None):
+        return self._objectChanged("reverted-version", object,
+            description=event.message)
+    
+    #
+    
+    def _objectChanged(self, change_kind, object, 
+                            description="", notes=None, date_active=None):
         """
         description: 
-            this is a non-localized string as base description of the log item.
-             offers a (building block) for 
-            the description of this log item. 
+            this is a non-localized string as base description of the log item,
+            offers a (building block) for the description of this log item. 
             UI components may use this in any of the following ways:
             - AS IS, optionally localized
             - as a building block for an elaborated description e.g. for 
               generating descriptions that are hyperlinks to an event or 
               version objects
-            - ignore it entirely, and generate a custom descrition via other
+            - ignore it entirely, and generate a custom description via other
               means e.g. from the "notes" extras dict.
         
         notes:
@@ -205,6 +220,13 @@ class AuditorFactory(object):
             For specific examples, see:
                 "workflow": self.objectStateChanged()
                 "new-version": self.objectNewVersion()
+                
+        date_active:
+            the UI for some changes allow the user to manually set the 
+            date_active -- this is what should be used as the *effective* date 
+            i.e. the date to be used for all intents and purposes other than 
+            for data auditing. When not user-modified, the value should be equal 
+            to date_audit. 
         """
         oid, otype = self._getKey(object)
         user_id = get_principal_id()
@@ -213,7 +235,10 @@ class AuditorFactory(object):
         change = self.change_object()
         change.action = change_kind
         change.date_audit = datetime.now()
-        change.date_active = datetime.now()
+        if date_active:
+            change.date_active = date_active
+        else:
+            change.date_active = change.date_audit
         change.user_id = user_id
         change.description = description
         if notes:
@@ -230,6 +255,16 @@ class AuditorFactory(object):
         mapper = orm.object_mapper(ob)
         primary_key = mapper.primary_key_from_instance(ob)[0]
         return primary_key, unicode(ob.__class__.__name__)
+
+    def _get_change_data(self):
+        """If request defines change_data, use it, else return a dummy dict.
+        """
+        cd = IAnnotations(common.get_request()).get("change_data")
+        if cd is None:
+            cd = {}
+        cd.setdefault("note", cd.get("note", ""))
+        cd.setdefault("date_active", cd.get("date_active", None))
+        return cd
 
 
 # dedicated auditor instances
