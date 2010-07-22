@@ -136,19 +136,18 @@ class SittingDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return _(u"Sitting: $group ($start to $end)",
-                 mapping={'group': context.group.short_name,
-                          'start': context.start_date.strftime('%Y-%m-%d %H:%M'),
-                          'end': context.end_date.strftime('%H:%M')})
+        return "%s %s, %s %s %s" % (_(u"Sitting:"), context.group.short_name, \
+                context.start_date.strftime('%Y-%m-%d, %H:%M'), _(u"to"), \
+                context.end_date.strftime('%H:%M'))
+                 
 
     @property
     def description(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return _(u"Sitting scheduled for '$group' ($start to $end)",
-                 mapping={'group': context.group.short_name,
-                          'start': context.start_date.strftime('%Y-%m-%d %H:%M'),
-                          'end': context.end_date.strftime('%H:%M')})
+        return "%s %s (%s %s %s)" %(_(u"Sitting scheduled for"), context.group.short_name, \
+                                context.start_date.strftime('%Y-%m-%d %H:%M'), _(u"to"), \
+                                context.end_date.strftime('%H:%M'))
 
 class ItemScheduleDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IItemSchedule)
@@ -173,15 +172,11 @@ class VersionDescriptiveProperties(DescriptiveProperties):
     def title(self):
         if is_translation(self.context):
             language = get_language_by_name(self.context.language)['name']
-            return _(u"$language translation",
-                     mapping={'language': language})
-        return _(u"Version $version",
-                 mapping={'version': self.context.version_id})
-    
+            return "%s %s" % (language, _(u"translation"))
+        return "%s %s" % (_(u"Version"), self.context.version_id)
     @property
     def description(self):
-        return _(u"Last modified $date",
-                 mapping={'date': self.context.change.date})
+        return "%s %s" % (_(u"Last modified"), self.context.change.date)
                  
 class GroupDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IBungeniGroup)
@@ -317,8 +312,7 @@ class ScheduledItemDiscussionDescriptiveProperties(DescriptiveProperties):
         context = session.merge(removeSecurityProxy(self.context))
         time = context.sitting_time
         if time is not None:
-            return _(u"Discussion ($time)",
-                     mapping={'time': context.sitting_time})
+            return "%s (%s)" % (_(u"Discussion"), context.sitting_time)
         return _(u"Discussion")
     
     @property
