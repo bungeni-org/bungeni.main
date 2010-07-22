@@ -99,7 +99,7 @@ class SchedulableItemsViewlet(viewlet.ViewletBase):
              interface.providedBy(self)), ILocation)
 
         items = [adapter(item, None) for item in items]
-
+        site_url = url.absoluteURL(getSite(), self.request)
         # for each item, format dictionary for use in template
         self.items = [{
             'title': properties.title,
@@ -114,7 +114,7 @@ class SchedulableItemsViewlet(viewlet.ViewletBase):
             'state': IWorkflow(item).workflow.states[item.status].title,
             'id': item.parliamentary_item_id,
             'class': (item.parliamentary_item_id in scheduled_item_ids) and "dd-disable" or "",
-            'url': url.set_url_context(url.absoluteURL(item, self.request))
+            'url': url.set_url_context(site_url+('/business/%ss/obj-%s' % (item.type, item.parliamentary_item_id)))
             } for item, properties in \
             [(item, (IDCDescriptiveProperties.providedBy(item) and item or \
             IDCDescriptiveProperties(item))) for
@@ -127,7 +127,44 @@ class SchedulableHeadingsViewlet(SchedulableItemsViewlet):
     states = (
         heading_wf_state[u"public"].id,
         )
+    
+    def update(self):
+        need('yui-dragdrop')
+        need('yui-container')
+        session = Session()
+        items = tuple(session.query(self.model).filter(
+            self.model.status.in_(self.states)))
 
+        sitting = self._parent._parent.context
+        scheduled_item_ids = [item.item_id for item in sitting.item_schedule]
+        
+        # add location to items
+        gsm = component.getSiteManager()
+        adapter = gsm.adapters.lookup(
+            (interface.implementedBy(self.model),
+             interface.providedBy(self)), ILocation)
+
+        items = [adapter(item, None) for item in items]
+        site_url = url.absoluteURL(getSite(), self.request)
+        # for each item, format dictionary for use in template
+        self.items = [{
+            'title': properties.title,
+            'name': item.__class__.__name__,
+            'description': properties.description,
+#            'date': _(u"$F", mapping={"F":
+#                      datetimedict.fromdatetime(item.changes[-1].date)}),
+            #'date':item.changes[-1].date,
+            # not every item has a auditlog (headings) use last status change instead.
+            'date':item.status_date,
+#
+            'state': IWorkflow(item).workflow.states[item.status].title,
+            'id': item.parliamentary_item_id,
+            'class': (item.parliamentary_item_id in scheduled_item_ids) and "dd-disable" or "",
+            'url': url.set_url_context(url.absoluteURL(item,self.request))
+            } for item, properties in \
+            [(item, (IDCDescriptiveProperties.providedBy(item) and item or \
+            IDCDescriptiveProperties(item))) for
+             item in items]]
 class SchedulableBillsViewlet(SchedulableItemsViewlet):
     model = domain.Bill
     name = _('Bills')

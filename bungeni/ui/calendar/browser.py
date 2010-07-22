@@ -95,7 +95,7 @@ def get_sitting_items(sitting, request, include_actions=False):
     schedulings = map(
         removeSecurityProxy,
         sitting.items.batch(order_by=order, limit=None))
-
+    site_url = ui_url.absoluteURL(getSite(), request)
     for scheduling in schedulings:
         item = ProxyFactory(location_wrapped(scheduling.item, sitting))
        
@@ -120,7 +120,7 @@ def get_sitting_items(sitting, request, include_actions=False):
             #'category': scheduling.category,
             'discussion': discussion,
             'delete_url': "%s/delete" % ui_url.absoluteURL(scheduling, request),
-            'url': ui_url.set_url_context(ui_url.absoluteURL(item, request))}
+            'url': ui_url.set_url_context(site_url+('/business/%ss/obj-%s' % (item.type, item.parliamentary_item_id)))}
         
         if include_actions:
             record['actions'] = get_scheduling_actions(scheduling, request)
