@@ -125,6 +125,7 @@ def abs_norm_path(path):
     else:
         return os.path.normpath(os.path.join(ABS_BASE, path))
 
+'''
 def set_additional_collections():
     """Define and set additional collections (other than default collection) 
     onto the evoque domain. 
@@ -142,7 +143,7 @@ def set_additional_collections():
     #"bungeni.ui.forms":"forms/templates",
     #"ploned.ui":"../../../ploned.ui/ploned/ui/templates",
     #"alchemist.ui":"../../../alchemist.ui/alchemist/ui/templates"
-    
+'''
 
 # i18n domains
 
@@ -215,10 +216,9 @@ class IEvoqueDomain(zope.interface.Interface):
 ABS_BASE = None
 
 def setup_evoque(abs_base=None):
-    
     if abs_base is None:
-        # then we just use the parent folder for this package
-        abs_base = os.path.dirname(os.path.abspath(__file__))
+        # then we just use the grand-parent folder for this package
+        abs_base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     assert os.path.isabs(abs_base) # ensure that base path is absolute
     global ABS_BASE
     ABS_BASE = abs_base

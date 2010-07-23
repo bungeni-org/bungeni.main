@@ -67,7 +67,6 @@ class AppSetup(object):
         from bungeni.ui import z3evoque
         z3evoque.set_get_gettext()
         z3evoque.setup_evoque()
-        z3evoque.set_additional_collections()
         
         # !+ where is the view name for the app root (slash) set?
         
