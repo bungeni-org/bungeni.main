@@ -50,6 +50,7 @@ import re
 import htmlentitydefs
 TRUE_VALS = "true", "1"
 
+
 def set_widget_errors(widgets, errors):
     for widget in widgets:
         name = widget.context.getName()
@@ -58,12 +59,13 @@ def set_widget_errors(widgets, errors):
                 if widget._error is None:
                     widget._error = error
 
+
 def unescape(text):
-    '''Removes HTML or XML character references 
+    """Removes HTML or XML character references 
         entities from a text string.
         keep &amp;, &gt;, &lt; in the source code.
         from Fredrik Lundh
-        http://effbot.org/zone/re-sub.htm#unescape-html'''
+        http://effbot.org/zone/re-sub.htm#unescape-html"""
     def fixup(m):
         text = m.group(0)
         if text[:2] == "&#":
@@ -84,6 +86,7 @@ def unescape(text):
         return text # leave as is
     return re.sub("&#?\w+;", fixup, text)
 
+
 class NoPrefix(unicode):
     """The ``formlib`` library insists on concatenating the form
     prefix with field names; we override the ``__add__`` method to
@@ -96,7 +99,6 @@ class NoPrefix(unicode):
 NO_PREFIX = NoPrefix()
 
 
-
 class DefaultAction(form.Action):
     def __init__(self, action):
         self.__dict__.update(action.__dict__)
@@ -104,12 +106,13 @@ class DefaultAction(form.Action):
     def submitted(self):
         return True
 
+
 class BaseForm(form.FormBase):
     """Base form class for Bungeni content.
 
     Headless submission
 
-        Adds support for 'headless' submission, relying only on the
+        Adds support for "headless" submission, relying only on the
         schema field ids. The headless mode is enabled by giving a
         true value for the request parameter ``headless``.  In this
         mode, no form prefix is applied and the default action is
@@ -147,9 +150,9 @@ class BaseForm(form.FormBase):
 
         # the ``_next_url`` attribute is used internally by our
         # superclass to implement formlib's ``nextURL`` method
-        next_url = self._next_url = self.request.get('next_url', None)
+        next_url = self._next_url = self.request.get("next_url", None)
         if next_url == "...":
-            self._next_url = self.request.get('HTTP_REFERER', "")
+            self._next_url = self.request.get("HTTP_REFERER", "")
     
     def __call__(self):
         #session = Session()
@@ -173,35 +176,33 @@ class BaseForm(form.FormBase):
             group = groups.setdefault(iface, [])
             group.append(widget)
         return groups
-
+    
     def update(self):
-        self.status = self.request.get('portal_status_message', self.status)
+        self.status = self.request.get("portal_status_message", self.status)
         self.form_fields = self.filter_fields()
         super(BaseForm, self).update()
         set_widget_errors(self.widgets, self.errors)
-
+    
     def filter_fields(self):
         return self.form_fields
-
+    
     def validate(self, action, data):
         """Validation that require context must be called here,
         invariants may be defined in the descriptor."""
-
         errors = (
             form.getWidgetsData(self.widgets, self.prefix, data) +
             form.checkInvariants(self.form_fields, data))
-
         if not errors and self.CustomValidation is not None:
             return list(self.CustomValidation(self.context, data))
-
         return errors
-
+    
     @property
     def next_url(self):
         return self._next_url
 
+
 class PageForm(BaseForm, form.PageForm):
-    template = NamedTemplate('alchemist.form')
+    template = NamedTemplate("alchemist.form")
 
 
 from bungeni.ui import browser
@@ -213,12 +214,13 @@ class DisplayForm(ui.DisplayForm, browser.BungeniBrowserView):
     template = z3evoque.PageViewTemplateFile("content.html#view")
     
     # zpt
-    #template = ViewPageTemplateFile('templates/content-view.pt')
+    #template = ViewPageTemplateFile("templates/content-view.pt")
     
     form_name = _("View")
     
     def __call__(self):
         return self.template()
+
 
 class AddForm(BaseForm, ui.AddForm):
     """Custom add-form for Bungeni content.
@@ -231,7 +233,7 @@ class AddForm(BaseForm, ui.AddForm):
     description = None
     
     def getDomainModel( self ):
-        return getattr( self.context, 'domain_model', self.context.__class__)
+        return getattr( self.context, "domain_model", self.context.__class__)
     
     def validate(self, action, data):
         errors = super(AddForm, self).validate(action, data)
@@ -264,30 +266,28 @@ class AddForm(BaseForm, ui.AddForm):
                 if isinstance( self.context, domain_model ) \
                    and data[key] == getattr( self.context, key, None):
                    continue
-                
-                value = session.query( domain_model ).filter( col == data[key] ).count()
+                value = session.query(domain_model
+                    ).filter(col == data[key]).count()
                 if not value:
                     continue
-                
                 widget = self.widgets[ key ]
-                error = form.WidgetInputError( widget.name, 
-                               widget.label, 
-                              _(u"Duplicate Value for Unique Field"))
+                error = form.WidgetInputError(widget.name, widget.label, 
+                    _(u"Duplicate Value for Unique Field"))
                 widget._error = error
                 errors.append( error )
-
         return errors
-
+    
     def filter_fields(self):
         return filterFields(self.context, self.form_fields)
 
     def update(self):
         super(AddForm, self).update()
         # set default values for required choice fields
-
         for widget in self.widgets:
             field = widget.context
-            if IChoice.providedBy(field) and field.required and field.default is None:
+            if (IChoice.providedBy(field) and field.required and
+                field.default is None
+                ):
                 for term in field.vocabulary:
                     field.default = term.value
 
@@ -302,25 +302,21 @@ class AddForm(BaseForm, ui.AddForm):
     @property
     def type_name( self ):
         descriptor = queryModelDescriptor(self.domain_model)
-        
         if descriptor:
-            name = getattr(descriptor, 'display_name', None)
-            
+            name = getattr(descriptor, "display_name", None)
         if not name:
-            name = getattr( self.domain_model, '__name__', None)
-
+            name = getattr( self.domain_model, "__name__", None)
         return name
-
+    
     @property
     def form_name(self):
-        return _(u"add_item_legend", default=u"Add $name",
-                 mapping={'name': translate(self.type_name.lower(), context=self.request)})
-
-
+        return _(u"add_item_legend", default=u"Add $name", mapping={
+            "name": translate(self.type_name.lower(), context=self.request)})
+    
     @property
     def title(self):
-        return _(u"add_item_title", default=u"Adding $name",
-                 mapping={'name': translate(self.type_name.lower(), context=self.request)})
+        return _(u"add_item_title", default=u"Adding $name", mapping={
+            "name": translate(self.type_name.lower(), context=self.request)})
 
     def finishConstruction(self, ob):
         """Adapt the custom fields to the object."""
@@ -344,7 +340,7 @@ class AddForm(BaseForm, ui.AddForm):
         if not self._next_url:
             self._next_url = ui_utils.url.absoluteURL(
                 ob, self.request) + \
-                '?portal_status_message=%s added' % name
+                "?portal_status_message=%s added" % name
         
     @form.action(_(u"Cancel"), validator=null_validator )
     def handle_cancel( self, action, data ):
@@ -376,7 +372,7 @@ class AddForm(BaseForm, ui.AddForm):
 
         if not self._next_url:
             self._next_url = ui_utils.url.absoluteURL(self.context, self.request) + \
-                             '/add?portal_status_message=%s Added' % name
+                             "/add?portal_status_message=%s Added" % name
                               
 
 class EditForm(BaseForm, ui.EditForm):
@@ -408,28 +404,28 @@ class EditForm(BaseForm, ui.EditForm):
                 and context or IDCDescriptiveProperties(context)
 
         if self.is_translation:
-            language = get_language_by_name(self.context.language)['name']
+            language = get_language_by_name(self.context.language)["name"]
             return _(u"edit_translation_legend",
                      default=u'Editing $language translation of "$title"',
-                     mapping={'title': translate(props.title, context=self.request),
-                              'language': language})
+                     mapping={"title": translate(props.title, context=self.request),
+                              "language": language})
         
         elif IVersion.providedBy(self.context):
             return _(u"edit_version_legend",
                      default=u'Editing "$title" (version $version)',
-                     mapping={'title': translate(props.title, context=self.request),
-                              'version': self.context.version_id})
+                     mapping={"title": translate(props.title, context=self.request),
+                              "version": self.context.version_id})
 
         return _(u"edit_item_legend", default=u'Editing "$title"',
-                 mapping={'title': translate(props.title, context=self.request)})
+                 mapping={"title": translate(props.title, context=self.request)})
 
     @property
     def form_description(self):
         if self.is_translation:
-            language = get_language_by_name(self.context.head.language)['name']
+            language = get_language_by_name(self.context.head.language)["name"]
             return _(u"edit_translation_help",
-                     default=u'The original $language version is shown on the left',
-                     mapping={'language': language})
+                     default=u"The original $language version is shown on the left",
+                     mapping={"language": language})
             
     def validate(self, action, data):
         errors = super(EditForm, self).validate(action, data)
@@ -493,7 +489,7 @@ class EditForm(BaseForm, ui.EditForm):
         if not self._next_url:
             self._next_url = ui_utils.url.absoluteURL(
                 self.context, self.request) + \
-                '?portal_status_message= Saved'
+                "?portal_status_message= Saved"
         self.request.response.redirect(self._next_url)
  
     @form.action(_(u"Cancel"), validator=null_validator )
@@ -522,12 +518,12 @@ class TranslateForm(AddForm):
 
     def __init__(self, *args):
         super(TranslateForm, self).__init__(*args)
-        self.language = self.request.get('language', get_default_language())
+        self.language = self.request.get("language", get_default_language())
         
     def translatable_field_names(self):
         trusted = removeSecurityProxy(self.context)
         table = rdb.orm.object_mapper(trusted).mapped_table
-        names = ['language',]
+        names = ["language",]
         for column in table.columns:
             if type(column.type) in [rdb.Unicode, rdb.UnicodeText]:
                 names.append(column.name)
@@ -547,38 +543,38 @@ class TranslateForm(AddForm):
         
     @property
     def form_name(self):
-        language = get_language_by_name(self.language)['name']
+        language = get_language_by_name(self.language)["name"]
                 
         return _(u"translate_item_legend",
                  default=u"Add $language translation",
-                 mapping={'language': language})
+                 mapping={"language": language})
 
     @property
     def form_description(self):
-        language = get_language_by_name(self.language)['name']
+        language = get_language_by_name(self.language)["name"]
         props = IDCDescriptiveProperties.providedBy(self.context) \
                 and self.context or IDCDescriptiveProperties(self.context)
         if self.is_translation:
             return _(u"edit_translation_legend",
              default=u'Editing $language translation of "$title"',
-             mapping={'title': translate(props.title, context=self.request),
-                      'language': language}) 
+             mapping={"title": translate(props.title, context=self.request),
+                      "language": language}) 
         else:
             return _(
                 u"translate_item_help",
                 default=u'The document "$title" has not yet been translated into $language. Use this form to add the translation',
-                mapping={'title': translate(props.title, context=self.request),
-                         'language': language})
+                mapping={"title": translate(props.title, context=self.request),
+                         "language": language})
 
 
 
 
     @property
     def title(self):
-        language = get_language_by_name(self.language)['name']
+        language = get_language_by_name(self.language)["name"]
 
         return _(u"translate_item_title", default=u"Adding $language translation",
-                 mapping={'language': language})
+                 mapping={"language": language})
 
     @property
     def domain_model(self):
@@ -589,7 +585,7 @@ class TranslateForm(AddForm):
         self.set_untranslatable_fields_for_display()
         
         #get the translation if available
-        language = self.request.get('language')
+        language = self.request.get("language")
         
         translation = get_translation_for(self.context, language)
         if translation:
@@ -605,7 +601,7 @@ class TranslateForm(AddForm):
             adapters=self.adapters, ignore_request=ignore_request)
 
         if language is not None:
-            widget = self.widgets['language']
+            widget = self.widgets["language"]
             try:
                 self.language = language
                 widget.vocabulary = CurrentLanguageVocabulary().__call__(self)
@@ -656,7 +652,7 @@ class TranslateForm(AddForm):
             
         url = ui_utils.url.absoluteURL(self.context, self.request)
         
-        language = get_language_by_name(data['language'])['name']
+        language = get_language_by_name(data["language"])["name"]
 
         
         session = Session()
@@ -664,20 +660,20 @@ class TranslateForm(AddForm):
         mapper = rdb.orm.object_mapper(trusted)
         pk = getattr(trusted, mapper.primary_key[0].name) 
         
-        current_translation = get_translation_for(self.context, data['language'])
+        current_translation = get_translation_for(self.context, data["language"])
         if current_translation:
             for translation in current_translation:
                 session.delete(translation)
                 
         
         for form_field in data.keys():
-            if form_field == 'language':
+            if form_field == "language":
                 continue
             translation = domain.ObjectTranslation()
             translation.object_id = pk
             translation.object_type = trusted.__class__.__name__
             translation.field_name = form_field
-            translation.lang = data['language']
+            translation.lang = data["language"]
             translation.field_text = data[form_field]
             session.add(translation)
         session.flush()
@@ -718,7 +714,7 @@ class ReorderForm(BaseForm, form.PageForm):
             title=u"Ordering",
             value_type=schema.TextLine())
 
-    template = NamedTemplate('alchemist.form')
+    template = NamedTemplate("alchemist.form")
     form_name = _(u"Item reordering")
     form_fields = form.Fields(IReorderForm, render_context=True)
 
@@ -739,7 +735,7 @@ class ReorderForm(BaseForm, form.PageForm):
     
     @form.action(_(u"Save"))
     def handle_save(self, action, data):
-        self.save_ordering(data['ordering'])
+        self.save_ordering(data["ordering"])
 
 class DeleteForm(BaseForm, form.PageForm):
     """Delete-form for Bungeni content.
@@ -758,7 +754,7 @@ class DeleteForm(BaseForm, form.PageForm):
     Will redirect back to the container on success.
     """
 
-    form_template = NamedTemplate('alchemist.form')
+    form_template = NamedTemplate("alchemist.form")
     template = ViewPageTemplateFile("templates/delete.pt")
 
     _next_url = None
@@ -813,7 +809,7 @@ class DeleteForm(BaseForm, form.PageForm):
         
         if next_url is None:
             next_url = ui_utils.url.absoluteURL(container, self.request) + \
-                       '/?portal_status_message=%d items deleted' % count
+                       "/?portal_status_message=%d items deleted" % count
 
         self.request.response.redirect(next_url)
 

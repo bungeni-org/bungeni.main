@@ -168,7 +168,7 @@
     domain types.
     -->
     <grant permission="bungeni.constituency.View" role="bungeni.Anybody" />
-    <!-- /!+CONSTITUENCY -->
+    <!-- /!+CONSTITUENCY-Issue666 -->
 
   <permission id="bungeni.minister.Add" title="Add minister" />
   <permission id="bungeni.minister.Edit" title="Edit minister" />

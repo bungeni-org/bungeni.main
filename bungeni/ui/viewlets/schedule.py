@@ -242,10 +242,10 @@ class SchedulableAgendaItemsViewlet(SchedulableItemsViewlet):
                             scheduled_item_ids) and "dd-disable" or "",
             'url': url.set_url_context(url.absoluteURL(item, self.request))
         } for (item, properties) in [
-              (item, (IDCDescriptiveProperties.providedBy(item) and item or
+             (item, (IDCDescriptiveProperties.providedBy(item) and item or
                       IDCDescriptiveProperties(item))) 
               for item in items ]
-       ]
+        ]
 
 
 

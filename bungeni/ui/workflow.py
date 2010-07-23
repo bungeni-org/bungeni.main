@@ -71,16 +71,16 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
         # table to display the workflow history
         formatter = date.getLocaleFormatter(self.request, "dateTime", "short")
         # !+ note this breaks the previous sort-dates-as-strings-hack of 
-        # formatting dates, for all locales, as date.strftime("%Y-%m-%d %H:%M")
-        # that, when sorted as a string, gives correct results.
+        # formatting dates as date.strftime("%Y-%m-%d %H:%M") -- when sorted
+        # as a string -- gives correct results (for all locales).
         self.columns = [
             column.GetterColumn(title=_(u"date"), 
-                    getter=lambda i,f:formatter.format(i["date_active"])),
+                getter=lambda i,f:formatter.format(i["date_active"])),
             column.GetterColumn(title=_(u"user"), 
-                    getter=lambda i,f:i["user_id"]),
+                getter=lambda i,f:i["user_id"]),
             column.GetterColumn(title=_(u"description"), 
-                    getter=lambda i,f:i["description"]),
-            ]
+                getter=lambda i,f:i["description"]),
+        ]
         
     def update(self):
         has_wfstate = False
@@ -103,7 +103,7 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
         else:
             # then use the current parliament's atart_date
             min_date_active = globalsettings.get_current_parliament().start_date
-        # remember "min_date_active" it on the request
+        # remember "min_date_active" on the request
         IAnnotations(self.request)["min_date_active"] = min_date_active
     
     def render(self):
@@ -155,16 +155,16 @@ class WorkflowActionViewlet(BaseForm, viewlet.ViewletBase):
         @zope.interface.invariant
         def valid_date_active(comment):
             request = common.get_request()
-            # recover min_date_active, and adjust it to be 1 minute earlier to
+            # recover min_date_active, and adjust it to be 59 secs earlier to
             # avoid issues of doing 2 transitions in quick succession (within 
-            # the same minute) the 2nd of which would be taken to be too old...
+            # the same minute) the 2nd of which could be taken to be too old...
             min_date_active = (IAnnotations(request)["min_date_active"] - 
                                                         timedelta(seconds=59))
             if not hasattr(comment, "date_active"):
                 # !+ because of a BUG in the datetime widget (probably) :
                 # after a server restart, resubmitting a previously loaded 
                 # form -- that displays valid data_active value results in a
-                # form.NoDataInput(|date_active") error... thus causing:
+                # form.NoDataInput("date_active") error... thus causing:
                 # (comment.date_active<min_date_active) to be False !
                 raise zope.interface.Invalid(_("NoDataInput for Active Date."))
             elif comment.date_active < min_date_active:
@@ -211,13 +211,15 @@ class WorkflowActionViewlet(BaseForm, viewlet.ViewletBase):
             # note widget
             note_widget = TextAreaWidget
             note_widget.height = 1
-            # date_active widget
             self.form_fields["note"].custom_widget = note_widget
+            # date_active widget
             self.form_fields["date_active"].custom_widget = TextDateTimeWidget
             # !+ for "past data entry" mode, the default "date_active" value
             # should be gotten from a "pseudo_current_date" service utility
         self.setUpWidgets()
-        # update form status in case of any erros !+ move up to form.common
+        # update form status in case of any errors
+        # !+ follow the "bungeni descriptor schema_invariants" way of doing 
+        # this, i.e. displaying widget-specific errors next to each widget
         if self.errors:
             if self.status is None: 
                 self.status = _("Errors")
