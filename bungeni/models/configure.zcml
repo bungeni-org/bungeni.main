@@ -9,6 +9,9 @@
   <i18n:registerTranslations directory="locales" />
   <!-- Include Domain Models Custom Security/Interfaces -->
   <!--include file="domain.zcml"/-->
+    <!-- !+CONSTITUENCY-Issue666(mr, 23-Jul-2010) 
+    why is the include="domain.zcml" above commented? 
+    -->
 
   <!-- Security Components -->
   <include file="auth.zcml"/>
