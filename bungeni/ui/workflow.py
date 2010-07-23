@@ -280,10 +280,10 @@ class WorkflowChangeStateView(WorkflowView):
     """
     
     # evoque
-    ajax_template = z3evoque.PageViewTemplateFile("workflow.html#ajax")
+    #ajax_template = z3evoque.PageViewTemplateFile("workflow.html#ajax")
     
     # zpt
-    #ajax_template = ViewPageTemplateFile("templates/workflow_ajax.pt")
+    ajax_template = ViewPageTemplateFile("templates/workflow_ajax.pt")
     
     def __call__(self, headless=False, transition=None):
         method = self.request["REQUEST_METHOD"]
