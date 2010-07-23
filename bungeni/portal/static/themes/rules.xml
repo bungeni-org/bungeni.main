@@ -4,25 +4,24 @@
  	 abort="1" />
   <match path="/"
          class="primary" />
-
+  
   <rule class="image-links">
-
-   </rule>    
+  </rule>    
   
   <rule class="primary">
     <append theme="//head" content="//head/meta" nocontent="ignore" />
-
+    
     <!-- menu -->
     <append content="#portal-globalnav > li"
             theme="children:#portal-globalnav > ul" />
     <prepend content="ul#portal-personaltools li.navigation"
-            theme="children:#portal-globalnav ul.level1"
-            if-content=".navigation" />
+             theme="children:#portal-globalnav ul.level1"
+             if-content=".navigation" />
     
     <replace content="children:#portal-personaltools :not(.navigation)"
-            theme="children:#portal-personaltools" />
+             theme="children:#portal-personaltools" />
     <pyquery pyref="bungeni.portal/static/themes/rules:image_links" />
-
+    
     <!-- language selector -->
     <replace content="#portal-languageselector"
              theme="#portal-languageselector"/>
@@ -32,12 +31,11 @@
     <!-- content -->
     <replace content="#portal-columns"
              theme="#portal-columns"/>
-
+    
     <!-- body attributes -->
     <append content="attributes:body" theme="attributes:body" />
     <pyquery pyref="bungeni.portal/static/themes/rules:add_section_links"/>
     <pyquery pyref="bungeni.portal/static/themes/rules:add_plone_tabs"/>
-    
-   </rule>
-
+    <pyquery pyref="bungeni.portal/static/themes/rules:rewrite_links"/>    
+  </rule>
 </ruleset>

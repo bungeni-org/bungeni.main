@@ -40,30 +40,30 @@ function listTogglr(){
 function searchTogglr(){
   var portletHeader = $('#portletArchiveDates .portletHeader');
   portletHeader.css('cursor','pointer');
-  portletHeader.css('background','url(/static/images/minus.png) 2px 4px no-repeat');
-  portletHeader.css('padding-left','20px');
-  portletHeader.hover(function(){
-      portletHeader.css('text-decoration','underline');
-    },function(){
-      portletHeader.css('text-decoration','none');
-    });
-  var portletItem = $('#portletArchiveDates .portletItem');
-  portletItem.css('padding-left','10px');
-  if(!portletItem.hasClass('dates-filtered')){
-    portletItem.hide();
-    portletHeader.css('background-image','url(/static/images/plus.png)');
-  }
-  portletHeader.click(function(){
-      var state = portletItem.css('display');
-      if(state == 'hidden' || state == 'none'){
-        portletHeader.css('background-image','url(/static/images/minus.png)');
-        portletItem.slideDown('fast');
-      }
-      else {
-        portletHeader.css('background-image','url(/static/images/plus.png)');
-        portletItem.slideUp('fast');
-      }
-    });
+				portletHeader.css('background','url(/static/images/minus.png) 2px 4px no-repeat');
+                                portletHeader.css('padding-left','20px');
+                                portletHeader.hover(function(){
+                                    portletHeader.css('text-decoration','underline');
+                                  },function(){
+                                    portletHeader.css('text-decoration','none');
+                                  });
+                                var portletItem = $('#portletArchiveDates .portletItem');
+                                portletItem.css('padding-left','10px');
+                                if(!portletItem.hasClass('dates-filtered')){
+                                  portletItem.hide();
+                                  portletHeader.css('background-image','url(/static/images/plus.png)');
+                                }
+                                portletHeader.click(function(){
+                                    var state = portletItem.css('display');
+                                    if(state == 'hidden' || state == 'none'){
+                                      portletHeader.css('background-image','url(/static/images/minus.png)');
+                                      portletItem.slideDown('fast');
+                                    }
+                                    else {
+                                      portletHeader.css('background-image','url(/static/images/plus.png)');
+                                      portletItem.slideUp('fast');
+                                    }
+                                  });
 }
 $(document).ready(function(){
     searchTogglr();

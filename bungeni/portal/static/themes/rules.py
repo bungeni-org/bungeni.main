@@ -41,3 +41,15 @@ def add_plone_tabs(content, theme, resource_fetcher, log):
     theme('.level0').append("<li class='plain'><a href='#'>have your say</a></li>")
     theme('.level0').append("<li class='plain'><a href='#'>how we work</a></li>")
     theme('.level0').append("<li class='plain'><a href='#'>reference material</a></li>")
+
+def rewrite_links(content, theme, resource_fetcher, log):
+    """
+    Fix links for css imports.
+    """
+    head_styles = content("head style")
+    for stylevalue in head_styles:
+        stylevalue =  stylevalue.text.split('(')[1]
+        stylevalue = stylevalue.split(')')[0]
+        
+        content('head').append('<link rel="stylesheet" type="text/css" href=' \
+                               + stylevalue + ' />')
