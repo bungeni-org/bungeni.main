@@ -21,16 +21,16 @@ $end{main}
 
 #[ was: ui/templates/workflow_ajax.pt ]#
 $begin{ajax}
-    $overlay{ bungeni.html }
-    $begin{content}
-    <span class="state-title">${ options.state_title }</span>
+<xhtml-snippet>
+    <span class="state-title">${ state_title }</span>
     <select name="transition" class="workflow-status">
         <option disabled="disabled" selected="selected">
             ${ i18n("Change state...") }
         </option>
-        $for{ action in options.actions } 
-        <option value="${action.transition_id}">${ action.title }</option>
+        $for{ action in actions } 
+        <option value="${action['transition_id']}">${ action["title"] }</option>
+        $rof
     </select>
-    $end{content}
+</xhtml-snippet>
 $end{ajax}
 
