@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: Wed Jul  7 16:34:58 2010\n"
-"PO-Revision-Date: 2010-07-24 11:42+0300\n"
-"Last-Translator: Ashok <ashok@parliaments.info>\n"
+"PO-Revision-Date: 2010-07-24 13:11+0300\n"
+"Last-Translator: Administrator <admin@apkn.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
@@ -463,7 +463,7 @@ msgstr "Alterar Projeto de lei"
 #: src/bungeni.main/bungeni/ui/descriptor.py:1643
 #: src/bungeni.main/bungeni/ui/menu.zcml:1071
 msgid "Question"
-msgstr "Questão"
+msgstr "Pergunta"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1644
 #: src/bungeni.main/bungeni/ui/viewlets/schedule.py:141
@@ -471,7 +471,7 @@ msgstr "Questão"
 #: src/bungeni.main/bungeni/ui/workspace.py:307
 #: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:87
 msgid "Questions"
-msgstr "Questões"
+msgstr "Perguntas"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1651
 msgid "Question Number"
