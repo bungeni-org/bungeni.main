@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: Wed Jul  7 16:34:58 2010\n"
-"PO-Revision-Date: 2010-07-22 14:37+0300\n"
-"Last-Translator: Ana Carolina <kobe@un.org>\n"
+"PO-Revision-Date: 2010-07-24 11:30+0300\n"
+"Last-Translator: Ashok <ashok@parliaments.info>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
@@ -2016,7 +2016,7 @@ msgstr "adicionar evento ..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:410
 msgid "Assign bill to a group..."
-msgstr "lei atribuir à comissão ..."
+msgstr "Atribuir projeto de lei à comissão"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:42
 msgid "The 'Add' menu - allows user to add content"
@@ -2052,11 +2052,11 @@ msgstr "definições"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:583
 msgid "Add ..."
-msgstr "add ..."
+msgstr "adicionar"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:594
 msgid "The 'Add..' menu - for calendar"
-msgstr "\"adicionar ...\" menu - para o calendário"
+msgstr "o menu \"adicionar ...\" - para o calendário"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:634
 #: src/bungeni.main/bungeni/ui/menu.zcml:989
@@ -2065,11 +2065,11 @@ msgstr "excluir sessão"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:650
 msgid "Add Parliament..."
-msgstr "adicionar parlamento ..."
+msgstr "adicionar parlamento"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:657
 msgid "Add Committee..."
-msgstr "adicionar comissão ..."
+msgstr "adicionar comissão "
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:664
 #: src/bungeni.main/bungeni/ui/menu.zcml:841
@@ -2086,7 +2086,7 @@ msgstr "adicionar membro do parlamento"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:68
 msgid "The 'Actions' menu - provides context-specific actions (views)"
-msgstr "as ações \"menu - prevê ações de contexto específico (views)"
+msgstr "o menu \"ações\" - prevê ações para contexto específico (visões)"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:700
 msgid "Add Office..."
@@ -2102,7 +2102,7 @@ msgstr "adicionar grupo político ..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:72
 msgid "The 'Reports' menu - provides reporting actions"
-msgstr "\"relatórios\" menu - prevê ações de comunicação"
+msgstr "o menu \"relatórios\" - prevê ações de comunicação"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:728
 msgid "Add User..."
@@ -2126,7 +2126,7 @@ msgstr "adicionar membro da comissão ..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:763
 msgid "Add Committee Staff..."
-msgstr "add pessoal da comissão ..."
+msgstr "adicionar pessoal da comissão ..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:777
 msgid "Add Office Member..."
@@ -2135,7 +2135,7 @@ msgstr "adicionar membro do escritório ..."
 #: src/bungeni.main/bungeni/ui/menu.zcml:784
 #: src/bungeni.main/bungeni/ui/menu.zcml:791
 msgid "Add Address..."
-msgstr "adicione o endereço ..."
+msgstr "adicionar endereço..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:79
 #: src/bungeni.main/bungeni/ui/menu.zcml:87
@@ -2148,7 +2148,7 @@ msgstr "adicionar delegação ..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:805
 msgid "Add Title/Function..."
-msgstr "adicionar um título / papel ..."
+msgstr "adicionar título / função ..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:812
 msgid "Add Consignatory..."
@@ -2156,23 +2156,23 @@ msgstr "adicionar co-signatário ..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:826
 msgid "Add Tabled document..."
-msgstr "adicionar documento entregue ..."
+msgstr "adicionar documento ..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:850
 msgid "Delete Session"
-msgstr "sessão apagar"
+msgstr "apagar sessão"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:862
 msgid "Add Question..."
-msgstr "questão de acrescentar ..."
+msgstr "adicionar questão..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:869
 msgid "Add Motion..."
-msgstr "adicionar movimento ..."
+msgstr "adicionar moção..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:883
 msgid "Add Bill..."
-msgstr "bill adicionar ..."
+msgstr "adicionar projeto de lei..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:900
 #: src/bungeni.main/bungeni/ui/menu.zcml:916
@@ -2182,7 +2182,7 @@ msgstr "agenda ..."
 #: src/bungeni.main/bungeni/ui/menu.zcml:906
 #: src/bungeni.main/bungeni/ui/menu.zcml:922
 msgid "Votes and proceedings..."
-msgstr "votos e processos ..."
+msgstr "votos e sessões ..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:962
 #: src/bungeni.main/bungeni/ui/menu.zcml:1171
@@ -2191,7 +2191,7 @@ msgstr "info"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:971
 msgid "Edit Discussion"
-msgstr "edit discussão"
+msgstr "editar discussão"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:980
 msgid "Schedule Item"
@@ -2199,12 +2199,12 @@ msgstr "item do cronograma"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:998
 msgid "Reorder Schedulings"
-msgstr "agendamentos reordenar"
+msgstr "reordenar agendamentos"
 
 #: src/bungeni.main/bungeni/ui/search.py:106
 #: src/bungeni.main/bungeni/ui/templates/search.pt:7
 msgid "Search"
-msgstr "pesquisa"
+msgstr "pesquisar"
 
 #: src/bungeni.main/bungeni/ui/search.py:113
 msgid "Invalid Query"
@@ -2216,7 +2216,7 @@ msgstr "pergunta"
 
 #: src/bungeni.main/bungeni/ui/search.py:67
 msgid "rank"
-msgstr "espesso"
+msgstr "classificar"
 
 #: src/bungeni.main/bungeni/ui/search.py:68
 msgid "type"
@@ -2241,7 +2241,7 @@ msgstr "por cento"
 #. Default: "Upload file"
 #: src/bungeni.main/bungeni/ui/templates/addfilewidget.pt:2
 msgid "upload-file"
-msgstr "upload de arquivo"
+msgstr "carregar arquivo"
 
 #: src/bungeni.main/bungeni/ui/templates/admin-menu-viewlet.pt:13
 msgid "Settings"
@@ -2249,7 +2249,7 @@ msgstr "definições"
 
 #: src/bungeni.main/bungeni/ui/templates/app-index.pt:6
 msgid "Welcome to Bungeni"
-msgstr "bem-vindo ao bungeni"
+msgstr "Bem-vindo ao Bungeni"
 
 #: src/bungeni.main/bungeni/ui/templates/archive.pt:7
 msgid "Access to current and historical records"
@@ -2258,7 +2258,7 @@ msgstr "acesso aos registros atuais e históricos"
 #. Default: "Keep existing file"
 #: src/bungeni.main/bungeni/ui/templates/editfilewidget.pt:21
 msgid "keep-file"
-msgstr "manter o arquivo existente"
+msgstr "manter arquivo existente"
 
 #. Default: "Replace with new file:"
 #: src/bungeni.main/bungeni/ui/templates/editfilewidget.pt:30
@@ -2273,12 +2273,12 @@ msgstr "baixar"
 #. Default: "Keep existing image"
 #: src/bungeni.main/bungeni/ui/templates/imagewidget.pt:23
 msgid "keep-image"
-msgstr "manter a imagem existente"
+msgstr "manter imagem existente"
 
 #. Default: "Delete current image"
 #: src/bungeni.main/bungeni/ui/templates/imagewidget.pt:32
 msgid "delete-image"
-msgstr "imagem atual apagar"
+msgstr "apagar imagem atual"
 
 #. Default: "Replace with new image:"
 #: src/bungeni.main/bungeni/ui/templates/imagewidget.pt:41
@@ -2288,7 +2288,7 @@ msgstr "substituir com nova imagem"
 #. Default: "Upload image"
 #: src/bungeni.main/bungeni/ui/templates/imagewidget.pt:44
 msgid "upload-image"
-msgstr "enviar imagem"
+msgstr "carregar imagem"
 
 #: src/bungeni.main/bungeni/ui/templates/search.pt:19
 msgid "Results"
@@ -2304,11 +2304,11 @@ msgid ""
 "selections to compare historic versions"
 msgstr ""
 "selecione uma versão para comparar com a cópia de trabalho atual, ou fazer "
-"duas seleções para comparar versões anteriores"
+"duas seleções para comparar versões anterior"
 
 #: src/bungeni.main/bungeni/ui/templates/workflow.pt:11
 msgid "Current state: ${state}."
-msgstr "estado actual: ${state}"
+msgstr "estado atual: ${state}"
 
 #: src/bungeni.main/bungeni/ui/templates/workflow.pt:15
 msgid "History"
@@ -2316,11 +2316,11 @@ msgstr "história"
 
 #: src/bungeni.main/bungeni/ui/templates/workflow.pt:19
 msgid "No history available for this item"
-msgstr "sem história disponíveis para este item"
+msgstr "Não há história disponível para este item"
 
 #: src/bungeni.main/bungeni/ui/templates/workflow_ajax.pt:7
 msgid "Change state..."
-msgstr "estado de mudança ..."
+msgstr "mudar estado..."
 
 #: src/bungeni.main/bungeni/ui/utils/date.py:24
 msgid "date must be of type datetime or date"
@@ -2328,7 +2328,7 @@ msgstr "formato da data deve ser a data ou data e hora"
 
 #: src/bungeni.main/bungeni/ui/utils/misc.py:64
 msgid "Form values must be of type string or list"
-msgstr "valores formulário deve ser do tipo string ou lista"
+msgstr "os valores do formulário devem ser do tipo string ou list"
 
 #: src/bungeni.main/bungeni/ui/versions.py:133
 msgid "New Version"
@@ -2340,23 +2340,23 @@ msgstr "nova versão criada"
 
 #: src/bungeni.main/bungeni/ui/versions.py:138
 msgid "Revert To"
-msgstr "reverter"
+msgstr "reverter para"
 
 #: src/bungeni.main/bungeni/ui/versions.py:142
 msgid "Select one item to revert to"
-msgstr "selecionar um item para reverter a"
+msgstr "selecionar um item para reverter a/para"
 
 #: src/bungeni.main/bungeni/ui/versions.py:147
 msgid "Reverted to Previous Version %s"
-msgstr "revertido para %s versão anterior"
+msgstr "revertido para versão anterior"
 
 #: src/bungeni.main/bungeni/ui/versions.py:150
 msgid "Show Differences"
-msgstr "apresentam diferenças"
+msgstr "apresentar diferenças"
 
 #: src/bungeni.main/bungeni/ui/versions.py:153
 msgid "Displaying differences"
-msgstr "mostrar as diferenças"
+msgstr "mostrar diferenças"
 
 #: src/bungeni.main/bungeni/ui/versions.py:158
 msgid "Select one or two items to show differences"
@@ -2370,11 +2370,11 @@ msgstr "ver"
 #. Default: ""
 #: src/bungeni.main/bungeni/ui/versions.py:45
 msgid "Currently displaying version ${version}"
-msgstr "exibindo a versão ${version}"
+msgstr "atualmente exibindo versão {versão)"
 
 #: src/bungeni.main/bungeni/ui/versions.py:64
 msgid "Change Message"
-msgstr "mensagem de mudança"
+msgstr "mudar mensagem"
 
 #: src/bungeni.main/bungeni/ui/versions.py:75
 msgid "version"
@@ -2398,7 +2398,7 @@ msgstr "mensagem"
 
 #: src/bungeni.main/bungeni/ui/viewlets/archive.py:100
 msgid "Invalid Date Range"
-msgstr "intervalo de data inválida"
+msgstr "intervalo de data inválido"
 
 #: src/bungeni.main/bungeni/ui/viewlets/archive.py:106
 msgid "Start date must be before %s"
@@ -2410,15 +2410,15 @@ msgstr "data de término deve ser posterior %s"
 
 #: src/bungeni.main/bungeni/ui/viewlets/archive.py:120
 msgid "Date range set"
-msgstr "intervalo de data definida"
+msgstr "intervalo de data definido"
 
 #: src/bungeni.main/bungeni/ui/viewlets/archive.py:122
 msgid "Clear"
-msgstr "claro"
+msgstr "limpar"
 
 #: src/bungeni.main/bungeni/ui/viewlets/archive.py:128
 msgid "Date range cleared"
-msgstr "intervalo de datas apuradas"
+msgstr "intervalo de data apurado"
 
 #: src/bungeni.main/bungeni/ui/viewlets/archive.py:23
 msgid "From"
@@ -2426,7 +2426,7 @@ msgstr "de"
 
 #: src/bungeni.main/bungeni/ui/viewlets/archive.py:24
 msgid "Leave blank or set lower limit"
-msgstr "deixar em branco ou limite inferior"
+msgstr "deixar em branco ou definir limite inferior"
 
 #: src/bungeni.main/bungeni/ui/viewlets/archive.py:28
 #: src/bungeni.main/bungeni/ui/viewlets/templates/workspace_item_viewlet.pt:29
@@ -2435,27 +2435,27 @@ msgstr "a"
 
 #: src/bungeni.main/bungeni/ui/viewlets/archive.py:29
 msgid "Leave blank or set upper limit"
-msgstr "deixar em branco ou limite superior"
+msgstr "deixar em branco ou definir limite superior"
 
 #: src/bungeni.main/bungeni/ui/viewlets/archive.py:33
 msgid "Or select"
-msgstr "ou selecione"
+msgstr "ou selecionar"
 
 #: src/bungeni.main/bungeni/ui/viewlets/archive.py:34
 msgid "Set date range to that of a given particular parliament"
-msgstr "intervalo de data definida para que um parlamento dada particular"
+msgstr "definir intervalo de data para a de um parlamento particular"
 
 #: src/bungeni.main/bungeni/ui/viewlets/archive.py:42
 msgid "Filter the archive by date range"
-msgstr "filtrar os arquivos por intervalo de datas"
+msgstr "filtrar os arquivos por intervalo de data"
 
 #: src/bungeni.main/bungeni/ui/viewlets/archive.py:81
 msgid "parliament..."
-msgstr "parlamento europeu ..."
+msgstr "parlamento..."
 
 #: src/bungeni.main/bungeni/ui/viewlets/archive.py:92
 msgid "Filter"
-msgstr "filtro"
+msgstr "filtro/filtrar"
 
 #: src/bungeni.main/bungeni/ui/viewlets/templates/archive-dates.pt:5
 msgid "Filter by date or parliament"
@@ -2469,7 +2469,7 @@ msgstr "você está aqui:"
 #. Default: "Home"
 #: src/bungeni.main/bungeni/ui/viewlets/templates/breadcrumbs.pt:3
 msgid "tabs_home"
-msgstr "casa"
+msgstr "home"
 
 #: src/bungeni.main/bungeni/ui/viewlets/templates/questions.pt:20
 msgid "No items"
@@ -2486,11 +2486,11 @@ msgstr "seções"
 
 #: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:15
 msgid "From: ${whats_on_start_date} to: ${whats_on_end_date}"
-msgstr "de: ${whatsonstartdate} para: ${whatsonenddate}"
+msgstr "de: ${whats_on_start_date} para: ${whats_on_end_date}"
 
 #: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:7
 msgid "What's on"
-msgstr "o que está em"
+msgstr "Atualidades"
 
 #: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:8
 msgid "An overview of the daily operations of the parliament"
@@ -2545,7 +2545,7 @@ msgstr "itens de rascunho"
 #: src/bungeni.main/bungeni/ui/viewlets/workspace.py:449
 #: src/bungeni.main/bungeni/ui/viewlets/workspace.py:497
 msgid "to review"
-msgstr "fazer"
+msgstr "revisar"
 
 #: src/bungeni.main/bungeni/ui/viewlets/workspace.py:387
 #: src/bungeni.main/bungeni/ui/viewlets/workspace.py:479
@@ -2564,7 +2564,7 @@ msgstr "items arquivados"
 
 #: src/bungeni.main/bungeni/ui/viewlets/workspace.py:475
 msgid "pending with the clerk"
-msgstr "pendência com o secretário"
+msgstr "pendente com o Secretário Geral"
 
 #: src/bungeni.main/bungeni/ui/viewlets/workspace.py:507
 msgid "approved"
@@ -2572,7 +2572,7 @@ msgstr "aprovado"
 
 #: src/bungeni.main/bungeni/ui/viewlets/workspace.py:520
 msgid "to be scheduled"
-msgstr "a ser agendada"
+msgstr "a ser agendada/o"
 
 #: src/bungeni.main/bungeni/ui/viewlets/workspace.py:533
 msgid "scheduled"
@@ -2592,7 +2592,7 @@ msgstr "perguntas escritas"
 
 #: src/bungeni.main/bungeni/ui/viewlets/workspace.py:632
 msgid "agendas/minutes"
-msgstr "agendas / minuto"
+msgstr "agendas / atas"
 
 #: src/bungeni.main/bungeni/ui/viewlets/workspace.zcml:37
 msgid "The sections of a user's workspace"
@@ -2604,11 +2604,11 @@ msgstr "listagem"
 
 #: src/bungeni.main/bungeni/ui/vocabulary.py:100
 msgid "Translators Office"
-msgstr "escritório tradutor"
+msgstr "escritório do tradutor"
 
 #: src/bungeni.main/bungeni/ui/vocabulary.py:101
 msgid "Library Office"
-msgstr "escritório biblioteca"
+msgstr "escritório da biblioteca"
 
 #: src/bungeni.main/bungeni/ui/vocabulary.py:102
 msgid "Researcher Office"
@@ -2625,17 +2625,17 @@ msgstr "não"
 #. Default: ""
 #: src/bungeni.main/bungeni/ui/vocabulary.py:31
 msgid "day_%d"
-msgstr "day%d"
+msgstr "dia%d"
 
 #. Default: ""
 #: src/bungeni.main/bungeni/ui/vocabulary.py:65
 msgid "Day $number of every month"
-msgstr "$number dia de cada mês"
+msgstr "dia $número de cada mês"
 
 #. Default: ""
 #: src/bungeni.main/bungeni/ui/vocabulary.py:69
 msgid "First $day of every month"
-msgstr "$day primeiro de cada mês"
+msgstr "primeiro dia de cada mês"
 
 #: src/bungeni.main/bungeni/ui/vocabulary.py:78
 msgid "Ordinary"
@@ -2683,11 +2683,11 @@ msgstr "subseqüente"
 
 #: src/bungeni.main/bungeni/ui/vocabulary.py:98
 msgid "House Business Office"
-msgstr "escritório casa"
+msgstr "escritório de negócios"
 
 #: src/bungeni.main/bungeni/ui/vocabulary.py:99
 msgid "Clerks Office"
-msgstr "escriturário de"
+msgstr "escritório do Secretário Geral"
 
 #: src/bungeni.main/bungeni/ui/widgets.py:273
 msgid "Supplementary Question to: <br/> %s"
@@ -2716,23 +2716,23 @@ msgstr "por favor, digite um ano válido"
 #. Default: ""
 #: src/bungeni.main/bungeni/ui/widgets.py:37
 msgid "Invalid date: $value"
-msgstr "data inválida: $value"
+msgstr "data inválida: $valor"
 
 #: src/bungeni.main/bungeni/ui/widgets.py:471
 #: src/bungeni.main/bungeni/ui/widgets.py:537
 msgid "Incorrect string data for date"
-msgstr "incorreta de dados de cadeia para a data"
+msgstr "dado string incorreto para data "
 
 #: src/bungeni.main/bungeni/ui/widgets.py:630
 #: src/bungeni.main/bungeni/ui/widgets.py:699
 msgid "Incorrect string data for date and time"
-msgstr "incorreta de dados de cadeia de data e hora"
+msgstr "dado string incorreto para data e hora"
 
 #: src/bungeni.main/bungeni/ui/widgets.py:95
 #: src/bungeni.main/bungeni/ui/widgets.py:100
 #: src/bungeni.main/bungeni/ui/widgets.py:118
 msgid "Form upload is not a file object"
-msgstr "upload formulário não é um objeto de arquivo"
+msgstr "formulário carregado não é um objeto de arquivo"
 
 #: src/bungeni.main/bungeni/ui/workflow.py:132
 msgid "Comment on workflow change"
@@ -2741,21 +2741,22 @@ msgstr "comentário sobre a mudança do fluxo de trabalho"
 #. Default: ""
 #: src/bungeni.main/bungeni/ui/workflow.py:149
 msgid "Confirmation required for workflow transition: '${title}'"
-msgstr "confirmação de transição o fluxo de trabalho: \"${title}\""
+msgstr ""
+"confirmação necessária para a transição do fluxo de trabalho: \"${título}\""
 
 #: src/bungeni.main/bungeni/ui/workflow.py:56
 msgid "Workflow history"
-msgstr "história de fluxo de trabalho"
+msgstr "histórico do fluxo de trabalho"
 
 #: src/bungeni.main/bungeni/ui/workspace.py:256
 #: src/bungeni.main/bungeni/ui/viewlets/workspace.zcml:45
 #: src/bungeni.main/bungeni/ui/viewlets/workspace.zcml:62
 msgid "Parliamentary items"
-msgstr "itens parlamentar"
+msgstr "itens parlamentares"
 
 #: src/bungeni.main/bungeni/ui/workspace.py:257
 msgid "Current parliamentary activity"
-msgstr "atividades parlamentares"
+msgstr "atividade parlamentar atual"
 
 #: src/bungeni.main/bungeni/ui/workspace.py:286
 #: src/bungeni.main/bungeni/ui/workspace.py:327
