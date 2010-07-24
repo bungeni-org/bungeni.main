@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: Wed Jul  7 15:15:45 2010\n"
-"PO-Revision-Date: 2010-07-22 12:46+0300\n"
-"Last-Translator: Ana Carolina <kobe@un.org>\n"
+"PO-Revision-Date: 2010-07-24 13:09+0300\n"
+"Last-Translator: Administrator <admin@apkn.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
@@ -55,7 +55,7 @@ msgstr "perguntas"
 
 #: src/bungeni.main/bungeni/core/app.py:130
 msgid "View questions issued by the current parliament"
-msgstr "Vizualizar as questões emitidas pelo parlamento atual"
+msgstr "vizualizar as perguntas emitidas pelo parlamento atual"
 
 #: src/bungeni.main/bungeni/core/app.py:134
 msgid "Motions"
