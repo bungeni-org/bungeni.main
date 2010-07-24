@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: Wed Jul  7 16:34:58 2010\n"
-"PO-Revision-Date: 2010-07-24 11:30+0300\n"
+"PO-Revision-Date: 2010-07-24 11:42+0300\n"
 "Last-Translator: Ashok <ashok@parliaments.info>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: pt\n"
@@ -2370,7 +2370,7 @@ msgstr "ver"
 #. Default: ""
 #: src/bungeni.main/bungeni/ui/versions.py:45
 msgid "Currently displaying version ${version}"
-msgstr "atualmente exibindo versão {versão)"
+msgstr "atualmente exibindo versão ${version}"
 
 #: src/bungeni.main/bungeni/ui/versions.py:64
 msgid "Change Message"
@@ -2716,7 +2716,7 @@ msgstr "por favor, digite um ano válido"
 #. Default: ""
 #: src/bungeni.main/bungeni/ui/widgets.py:37
 msgid "Invalid date: $value"
-msgstr "data inválida: $valor"
+msgstr "data inválida: $value"
 
 #: src/bungeni.main/bungeni/ui/widgets.py:471
 #: src/bungeni.main/bungeni/ui/widgets.py:537
@@ -2742,7 +2742,7 @@ msgstr "comentário sobre a mudança do fluxo de trabalho"
 #: src/bungeni.main/bungeni/ui/workflow.py:149
 msgid "Confirmation required for workflow transition: '${title}'"
 msgstr ""
-"confirmação necessária para a transição do fluxo de trabalho: \"${título}\""
+"confirmação necessária para a transição do fluxo de trabalho: '${title}'"
 
 #: src/bungeni.main/bungeni/ui/workflow.py:56
 msgid "Workflow history"
