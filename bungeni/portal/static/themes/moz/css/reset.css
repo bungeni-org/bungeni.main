@@ -132,37 +132,50 @@ input.inputLabelActive {
    */
 .template-portal {
   text-align: center;
-  background: #fff2d5;
+  background: #2b2b2b url(../images/moz-bg.png) top left repeat-x;
   height: 100%;
   margin: 0;
 }
+.template-portal .portalMessage {
+	border: 1px solid black;
+}
+.template-portal a {
+	color: #222;
+}
 .template-portal #top-layer {
-  height: 28px;
+  height: 20px;
   text-align: center;
-  background: url(/static/images/shadow_2.png) repeat-y top center;
+  /*background: url(/static/images/shadow_2.png) repeat-y top center;*/
 }
 .template-portal #top-layer div {
   margin: 0 auto;
   padding: 0;
-  width: 1034px;
+  width: 960px;
   height: 20px;
-  border: 1px solid #fb9c14;
-  border-top: 0 none;
-  background: #f8ba61;
+  border: 0 none;
+}
+.template-portal #top-layer #demoWarning {
+	background: #fff;
+	color: #222;
+	text-shadow: 0px 0px 1px #fff;
 }
 .template-portal #top-layer ul#portal-languageselector {
   height: 20px;
   line-height: 20px;
-  margin: 0 .5em;
+  margin: 0 ;
   float: left;
-  padding; 0;
+  padding: 0;
   font-size: 100%;
 }
 .template-portal #top-layer ul#portal-languageselector a {
-  color: #222;
+  color: #fff;
 }
 .template-portal #top-layer ul#portal-languageselector a:hover {
-  color: #888;
+  color: #ccc;
+}
+.template-portal #top-layer ul#portal-languageselector li.selected a {
+	background: transparent;
+	font-weight: bold;
 }
 .template-portal #top-layer ul#portal-personaltools {
   margin: 0 .5em;
@@ -178,7 +191,7 @@ input.inputLabelActive {
   border: 0 none;
 }
 .template-portal #top-layer ul#portal-personaltools li a {
-  color: #222;
+  color: #fff;
   display: block;
   margin: 0;
   padding: 0;
@@ -191,22 +204,34 @@ input.inputLabelActive {
   color: #888;
 }
 .template-portal #visual-table-wrapper {
-  background: url(/static/images/shadow_2.png) repeat-y top center;
-  width: 1054px;
+  /*background: url(/static/images/shadow_2.png) repeat-y top center;*/
+  width: 960px;
   text-align: left;
   margin: 0 auto;	
   padding: 0;
   height: auto;
-  min-height: 100%;
+  min-height: 95%;
+}
+.template-portal #portal-siteactions {
+	margin: 0;
+	padding: 0;
+	display: none;
+}
+.template-portal #portal-searchbox {
+	margin: 0;
+	padding: 0;
+	display: none;
 }
 .template-portal #portal-logo {
   display: block;
-  margin: .5em 0;
+  margin: 0;
+  padding: 0;
+  background: #ab1a03;
 }
 .template-portal #portal-logo img {
   border: 0 none;
   margin: 0;
-  padding:0;
+  padding: 0;
   display: block;
 }
 .template-portal #main-body-table {
@@ -214,6 +239,7 @@ input.inputLabelActive {
   padding: 0;
   padding-bottom: 25px;
   position: relative;
+  width: 960px;
 }
 /*
    * These two columns aren't necesarry in terms of design.
@@ -240,14 +266,15 @@ input.inputLabelActive {
 .template-portal div.main-column {
   background: #fff;
   height: 100%;
-  margin: 0 1em;
+  margin: 0;
   padding: 0;
+  width: 960px;
 }
 .template-portal div.main-column h1 {
   font-size: 200%;
   font-weight: bold;
   line-height: 20px;
-  color: #C8631B;
+  color: #ab1a03;
   text-shadow: 0px 0px 1px #fff;
   display: block;
   margin: .25em 0 0;
@@ -257,7 +284,7 @@ input.inputLabelActive {
   font-size: 120%;
   font-weight: normal;
   line-height: 20px;
-  color: #C8631B;
+  color: #ab1a03;
   text-shadow: 0px 0px 1px #fff;
   display: block;
   margin: 0;
@@ -268,13 +295,16 @@ input.inputLabelActive {
   font-weight: normal;
   color: #444;
 }
+.template-portal #portal-columns {
+	margin: 0 1em;
+}
 .template-portal #portal-column-content #whats-on-overview h1 {
   font-size:135%;
   text-align: center;
 }
 .template-portal #portal-column-content #whats-on-overview h1 a {
   text-decoration: none;
-  color: #C8631B !important;
+  color: #ab1a03 !important;
 }
 .template-portal #portal-column-content #whats-on-overview p {
   color: #222;
@@ -310,21 +340,22 @@ input.inputLabelActive {
 }
 /* portal-globalnav*/
 .template-portal div#portal-globalnav {
-  height: 1.6em;
-  line-height: 1.6em;
   position: relative;
+  width: 960px;
+  padding: 0;
+  margin: 0;
+  background: #ab1a03;
 }
 .template-portal div#portal-globalnav ul.level0 {
   margin: 0;
   padding: 0;
+  border: 0 none;
   width: auto;
-  height: 1.8em;
-  background: #fff;
+  height: 31px;
+  background: #ab1a03;
   line-height: normal;
   list-style-type: none;
   white-space: nowrap;
-  border: 0 none;
-  border-bottom: 1px solid #fb9c14;
   position: relative;
 }
 .template-portal div#portal-globalnav ul.level0 li a {
@@ -332,123 +363,51 @@ input.inputLabelActive {
      margin-left: 8px;
      border: 1px solid #a4bed7;
      position: relative;*/
-  background: #fff;
-  text-shadow: 0px 1px 1px #fff;
-  color: #222;
+  background: transparent;
+  text-transform: uppercase;
+  color: #fff;
   padding: .25em 1.25em;
-	margin: 0 .15em;
-  background: #eee;
-  height: 16px;
-  line-height: 16px;
-  border: 1px solid #aaa;
-  border-bottom: 1px solid #eee;
-  -webkit-border-top-left-radius: 5px;
-  -webkit-border-top-right-radius: 5px;
-  -moz-border-radius-topleft: 5px;
-  -moz-border-radius-topright: 5px;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
+  margin: 0 .15em;
+  border: 0 none;
+  height: 31px;
+  line-height: 31px;
 }
 .template-portal div#portal-globalnav ul.level0 li.selected {
+	margin: 0;
+	padding: 0;
 }
 .template-portal div#portal-globalnav ul.level0 li.selected a,
 .template-portal div#portal-globalnav ul.level0 li a:hover {
   font-weight: normal;
-  background:#f9cd8f;
-  position: relative;
-  line-height: 16px;
-  color: #222;
-  border-top: 2px solid #fb9c14;
-  border-right: 1px solid #999;
-  border-left: 1px solid #999;
-  border-bottom: 1px solid #fb9c14;
+  border: 0 none;
+  padding: 0 1.25em;
+  margin: 0 .15em;
 }
 .template-portal div#portal-globalnav ul.level0 li.selected a {
-  border-bottom: 2px solid #f8ba61;
-  position: relative;
-  top: -2px;
-  background:#f8ba61;
-  /*border-bottom:2px solid #fff;*/
 }
-/*
-   .template-portal div#portal-globalnav ul.level0 li a:hover{
-  background: #f8ba61;
-  border-color: #faa631 #faa631 #faa631;
-  margin-left: 8px;
-  border-bottom: 0px;
-}
-.template-portal div#portal-globalnav ul.level0 li.selected {
-  background: #f8ba61;
-  border-top: .5px solid #f8ba61;
-}
-.template-portal div#portal-globalnav ul.level0 li.selected a {
-  background: #f8ba61;
-  border-top: 0.5px solid #f8ba61;
-  border-left: 1px solid #f8ba61;
-  border-right: 1px solid #f8ba61;
-  border-bottom: 0px solid ;
-  font-weight:normal;
-  height: 1.8em;
-  line-height: 1.8em;
-}*/
-/*
-   .template-portal div#portal-globalnav ul.level0 ul.level1 {
-  width: 87em;
-  height: 1.5em;
-  clear: left;
-}
-.template-portal div#portal-globalnav ul.level0 ul.level1 li a {
-  background: #f8ba61;
-  border-color: #f8ba61 #f8ba61 #f8ba61;
-  margin-left: 8px;
-  padding: 0 .75em;
-  height: 1.8em;
-  line-height: 1.8em;
-}
-.template-portal div#portal-globalnav ul.level0 ul.level1 li.selected a {
-  background: transparent;
-  border-top: 0.5px solid #f8ba61;
-  border-left: 1px solid #f8ba61;
-  border-right: 1px solid #f8ba61;
-  border-bottom: 0px solid #f8ba61;
-  color: #d50005 !important;
-  font-weight:normal;
-  height: 1.7em;
-  line-height: 1.75em;
-}
-.template-portal div#portal-globalnav ul.level0 li#portaltab- a {
-  font-weight: normal;
-  border-top: 1.5px solid #f8ba61;
-  border-left: 1px solid #f8ba61;
-  border-right: 1px solid #f8ba61;
-  border-bottom: 0px solid #f8ba61;
-}
-
-.template-portal div#portal-globalnav-bottom {
-  padding-top:1.8em;
-  background: #f8ba61;
-  border: 1px solid #FB9C14;
-}
-*/
 .template-portal div#portal-globalnav ul.level1 {
   height: 2em;
-  background: #f8ba61;
-  border: 1px solid #fb9c14;
-  border-top: 0 none;
+  background: #fff;
+  border: 0 none;
   position: absolute;
-  top: 1.85em;
+  top: 2.75em;
   left: 0;
   margin: 0;
   width: 100%;
 }
 .template-portal div#portal-globalnav ul.level0 ul.level1 a {
+	color: #ab1a03 !important;
+	text-decoration: none !important;
   background: transparent;
   /*margin-left: 8px;
      margin-top: 2px;*/
   margin: 0;
   border: 0 none;
   text-shadow: none;
-  padding: 0 .75em;
+  padding: 0 .5em 0 .75em;
+  text-transform: lowercase;
+  font-variant: small-caps;
+  font-size: 115%;
   line-height: 2em;
 }
 .template-portal div#portal-globalnav ul.level0 ul.level1 li a:hover {
@@ -462,42 +421,27 @@ input.inputLabelActive {
   border: 0 none;
   color: #d50005 !important;
   font-weight:normal;
-  margin: 0px;
-  padding-top: 2px;
+  margin: 0;
 }
 .template-portal div#portal-globalnav ul.level0 li#portaltab- a {
-  /*border: #a4bed7;
-     font-weight: normal;
-     border: 1px solid #a4bed7;
-     border-bottom: 0px none;*/
 }
 .section-bungeni-portal div#portal-globalnav ul.level0 li#portaltab- a {
-  background: #D4E2EF;
 }
 .template-portal div#portal-globalnav-bottom {
-  /*padding-top:1.8em;*/
-  border: 1px solid #a4bed7;
-  background:#d4e2ef none repeat scroll 0 0;
-  display: none;
+  /*padding-top:31px;*/
+  background: none;
+  border: 0 none;
+  display: block;
 }
 .template-portal .section-front-page div#portal-globalnav ul.level0 li#portaltab- a {
-  /*background: #d4e2ef;
-     border-top: 0.5px solid #a4bed7;
-     border-left: 1px solid #a4bed7;
-     border-right: 1px solid #a4bed7;
-     border-bottom: 5px solid #d4e2ef;
-     font-weight:normal;
-     padding:0 10px;
-     height: 1.1em;*/
 }
 
 .template-portal #portal-breadcrumbs {
-  /*margin-top: 1.5em;*/
-  /*background-color: #ffffff;*/
-  /*border-top:1px solid #FAAD5F;*/
-  border-bottom:1px solid #FAAD5F;
+  border-top: 1px solid #ccc;
+  border-bottom:1px solid #ab1a03;
+  text-transform: capitalize;
   padding: 0;
-  margin: .5em 0;
+  margin: 1em;
   clear: both;
   color: #555;
   font-size: 95%;
@@ -508,6 +452,7 @@ input.inputLabelActive {
   border-right: transparent;
   margin-bottom: 10px;
   padding-top: 3px;
+  z-index: 10;
 }
 .template-portal .actionMenu .actionMenuContent li a:hover {
   backgroundr:#ffd79f;
@@ -540,25 +485,66 @@ input.inputLabelActive {
 }
 .template-portal #portal-footer {
   clear: both;
-  width: 1054px;
+  width: 960px;
   height: 25px;
   line-height: 25px;
   padding: 0;
   border: 0 none;
   margin: -25px auto 0;
   position: relative;
-  background: url(/static/images/shadow_2.png) repeat-y top center;
+  /*background: url(/static/images/shadow_2.png) repeat-y top center;*/
+ background: #fff;
   text-align: center;
   color: #444;
 }
 .template-portal #portal-footer div {
   margin: 0 auto;
-  width: 170px;
+  width: 160px;
+  background: #fff;
 }
 .template-portal #portal-footer img {
   display: block;
   float: left;
   margin: 0 .25em;
+}
+.template-portal li.formTab a:hover,
+.template-portal li.formTab a:active,
+.template-portal li.formTab a.selected {
+	background:#fff;
+	color: #222;
+	border-top: 2px solid #ab1a03;
+}
+.template-portal #portal-column-one .portletHeader,
+.template-portal #portal-column-content .portletHeader,
+.template-portal #portal-column-two .portletHeader,
+.template-portal #portal-column-two .portlet dt,
+.template-portal #whats-on-overview .portlet dt
+.template-portal #whats-on-overview .portlet dt {
+  border-color:#ab1a03;
+}
+.template-portal #portal-column-one .portlet,
+.template-portal #portal-column-one .portlet .portletHeader,
+.template-portal #portal-column-one .portlet .portletItem {
+  border-color: #ab1a03;
+}
+.template-portal .formPanel form .field {
+	border-bottom: 0 none;
+}
+.template-portal .formPanel form .field .content-left-column {
+	border-bottom: 1px dotted #aaa;
+  padding: .25em 1em .25em .25em;
+}
+.template-portal .formPanel form .field .content-right-column {
+  /*
+     width: 80%;*/
+	width: 600px;
+	float: left;
+	display: block;
+	text-shadow: 0px 0px 1px #fff;
+	color: #333;
+	padding: .25em .25em .25em 1em;
+	background: #f2f2f2;
+	border-bottom: 1px dotted #aaa;
 }
 /* end of .template-portal styles*/
 
@@ -1236,7 +1222,7 @@ input.inputLabelActive {
 .section-bungeni-business div#portal-globalnav ul.level0 li#portaltab-business-whats-on a,
 .section-bungeni-archive div#portal-globalnav ul.level0 li#portaltab-archive-browse a
 {
-  background:#f8ba61;
+  /*background:#f8ba61;*/	
 }
 
 .template-workspace.section-bungeni-whats-on div#portal-globalnav ul.level0 li#portaltab-business-whats-on a,
@@ -1609,11 +1595,11 @@ table.listing th, .stx table th {
      border:1px solid #FAAD5F;
      border-left: 0 none;
      */
-  background: url(/static/images/table-bg.png) repeat-x top left !important;
+  background: url(..//images/table-bg.png) repeat-x top left !important;
   padding: 0 .5em;
   border: 0 none;
   border-left: 1px solid #fff;
-  border-right: 1px solid #faa631;
+  border-right: 1px solid #ab1a03;
   height: 22px;
   line-height: 22px;
   text-shadow: 0px 1px 1px #fff;
@@ -1657,18 +1643,18 @@ tr.yui-dt-last th {
   text-shadow: 0px 1px 1px #fff;
 }
 .yui-skin-sam .yui-dt-first th {
-  background: url(/static/images/table-bg.png) repeat-x top left !important;
+  background: url(../images/table-bg.png) repeat-x top left !important;
   padding: 0;
   border: 0 none;
   border-left: 1px solid #fff;
-  border-right: 1px solid #faa631;
+  border-right: 1px solid #ab1a03;
   height: 18px;
   line-height: 18px;
   text-shadow: 0px 1px 1px #fff;
   color: #444;
 }
 .yui-skin-sam .yui-dt-first th:active {
-  background: url(/static/images/table-bg-active.png) repeat-x top left !important;
+  background: url(../images/table-bg-active.png) repeat-x top left !important;
 }
 .yui-skin-sam .yui-dt-last th {
   /*background: red !important;*/
@@ -1755,7 +1741,7 @@ li.lastFormTab a {
   border-bottom: 1px dotted #aaa;
 }
 .formPanel form { 
-  border:1px solid #FAAD5F;
+  border:1px solid #aaa;
   margin: 0;
   padding: 0;
   border: 0 none;

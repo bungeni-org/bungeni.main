@@ -68,4 +68,11 @@ function searchTogglr(){
 $(document).ready(function(){
     searchTogglr();
     listTogglr();
+	// hides the dead links in the global nav.
+	$('#portal-globalnav ul.level0 li a').each(function(){
+		var link = $(this).attr('href');
+		if(link.indexOf('#') != -1){
+			$(this).parent().hide();
+		}
+	});
   });
