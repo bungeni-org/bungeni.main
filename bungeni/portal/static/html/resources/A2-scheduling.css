@@ -1,3 +1,13 @@
+#scheduling-calendar {
+    width: 48%;
+    height:100%;
+    float:right;
+}
+#items-to-be-scheduled-dl{
+    width: 48%;
+    height:100%;
+    margin-left:0;
+}
 table.items-for-scheduling {
   width: 100%;
 }

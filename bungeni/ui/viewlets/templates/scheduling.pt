@@ -10,7 +10,7 @@ $URL$
     <span class="portletTopRight"></span>
   </dt>
   <dd id="items-to-be-scheduled-dl"> 
-    <p class="scheduling-dd-description" i18n:translate="">Add items to schedule by clicking on them</p>
+    <p class="scheduling-dd-description" i18n:translate="">Add items to schedule by clicking on the checkbox</p>
    <dl class="enableFormTabbing" >
         <dd tal:replace="structure provider:bungeni.scheduling" />
    </dl>
