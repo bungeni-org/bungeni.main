@@ -1396,6 +1396,25 @@
      permission="zope.View"
      order="30"
      /> 
+     
+     <browser:menuItem
+     menu="context_actions"
+     for="bungeni.models.domain.Report4Sitting"
+     action="pdf"
+     title="download pdf"
+     permission="zope.View"
+     order="30"
+     /> 
+     
+     <browser:menuItem
+     menu="context_actions"
+     for="bungeni.models.domain.Report4Sitting"
+     action="odt"
+     title="download odt"
+     permission="zope.View"
+     order="30"
+     /> 
+     
    <!--browser:menuItem
      menu="context_actions"
      for="bungeni.models.interfaces.IBungeniContent"
