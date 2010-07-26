@@ -126,10 +126,10 @@ input.inputLabelActive {
   color: transparent;
 }
 /*
-   * *******************************************************
-   * .template-portal styles.
-   * ******************************************************
-   */
+ * *******************************************************
+ * .template-portal styles.
+ * ******************************************************
+ */
 .template-portal {
   text-align: center;
   background: #2b2b2b url(../images/moz-bg.png) top left repeat-x;
@@ -204,13 +204,13 @@ input.inputLabelActive {
   color: #888;
 }
 .template-portal #visual-table-wrapper {
-  /*background: url(/static/images/shadow_2.png) repeat-y top center;*/
-  width: 960px;
-  text-align: left;
-  margin: 0 auto;	
-  padding: 0;
-  height: auto;
-  min-height: 95%;
+	background: #fff;
+	width: 960px;
+	text-align: left;
+	margin: 0 auto;	
+	padding: 0;
+	height: auto;
+	min-height: 95%;
 }
 .template-portal #portal-siteactions {
 	margin: 0;
@@ -484,23 +484,23 @@ input.inputLabelActive {
   height: 1.1em;
 }
 .template-portal #portal-footer {
-  clear: both;
-  width: 960px;
-  height: 25px;
-  line-height: 25px;
-  padding: 0;
-  border: 0 none;
-  margin: -25px auto 0;
-  position: relative;
-  /*background: url(/static/images/shadow_2.png) repeat-y top center;*/
- background: #fff;
-  text-align: center;
-  color: #444;
+	margin: -25px auto 0;
+	position: relative;
+	height: 25px;
+	line-height: 25px;
+	padding: 0;
+	border: 0 none;
+	clear: both;
+	width: 960px;
+	text-align: center;
+	text-shadow: 0 1px 0px #111;
+	color: #ccc;
+	background: #2b2b2b;
 }
 .template-portal #portal-footer div {
-  margin: 0 auto;
-  width: 160px;
-  background: #fff;
+	margin: 0 auto;
+	width: 160px;
+	background: transparent;
 }
 .template-portal #portal-footer img {
   display: block;
@@ -598,14 +598,18 @@ input.inputLabelActive {
   margin: 0 .25em;
 }
 .template-workspace #portal-logo {
-  display: block;
-  margin: .5em 0;
+	display: block;
+	margin: .5em 0;
+	display: block;
+	margin: .5em 0;
+	height: 85px;
+	background: url(../images/bungeni.png) top left no-repeat;
 }
 .template-workspace #portal-logo img {
-  border: 0 none;
-  margin: 0;
-  padding:0;
-  display: block;
+	border: 0 none;
+	margin: 0;
+	padding:0;
+	display: none;
 }
 .template-workspace #top-layer {
   height: 20px;
