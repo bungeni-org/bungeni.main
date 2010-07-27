@@ -147,3 +147,8 @@ dl.enableFormTabbing form {
 padding-top:1px;
 }
 
+span.workflow_info {
+    /* inlined workflow info */
+    font-size: 80%;
+    color: #888;
+}

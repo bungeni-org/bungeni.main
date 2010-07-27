@@ -57,6 +57,21 @@
        permission="zope.View"
        />
 
+
+    <!--Skin Images-->
+    <browser:resourceDirectory
+       name="images"
+       directory="static/html/resources"
+       layer="ploned.ui.interfaces.IPlonedSkin"
+       />
+
+    <!--Skin css-->
+    <browser:resourceDirectory
+       name="css"
+       directory="static/html/resources"
+       layer="ploned.ui.interfaces.IPlonedSkin"
+       />
+
     <adapter
        zcml:condition="have devmode"
        for="* zope.publisher.interfaces.browser.IHTTPRequest str"

@@ -598,12 +598,6 @@ dl.error dd {
     background-color: #fd7; 
 }
 
-span.workflow_info {
-    /* inlined workflow info */
-    font-size: 80%;
-    color: #888;
-}
-
 .documentDescription {
     /* The summary text describing the document */
     font-weight: bold;
