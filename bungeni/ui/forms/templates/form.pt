@@ -31,6 +31,7 @@
 
       <metal:block define-macro="form"
                    i18n:domain="alchemist">
+<!-- !+DEFINE-MACRO-FORM(mr, jul-2010) ui/forms/templates/form.pt START line34 -->
 
         <p class="documentDescription"
            i18n:translate=""
@@ -179,6 +180,7 @@
             </span>
           </div>
         </form>
+<!-- !+DEFINE-MACRO-FORM(mr, jul-2010) ui/forms/templates/form.pt END line183 -->
       </metal:block>
 
     </div>

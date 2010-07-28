@@ -1,4 +1,5 @@
 <metal:master define-macro="page" extend-macro="macro">
+<!-- !+DEFINE-MACRO-PAGE(mr, jul-2010) portal/ploned.pt -->
 
   <metal:title fill-slot="title">
     <title metal:define-slot="title">
@@ -9,7 +10,6 @@
   </metal:title>
       
   <metal:portal-header fill-slot="plone.htmlhead">
-    
 
     <!-- stylesheets -->
     <div tal:replace="structure provider:yui.css" />

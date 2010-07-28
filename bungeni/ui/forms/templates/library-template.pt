@@ -5,7 +5,10 @@
     lang="en"
     i18n:domain="zope">
 
-  <head>
+  <head><!-- 
+    !+DEFINE-MACRO-PAGE(mr, jul-2010) ui/forms/templates/library-template.pt 
+    UNUSED? 
+-->
     <title metal:define-slot="title"
            tal:content="string:Z3: ${context/id}">Z3 UI</title>
 

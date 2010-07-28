@@ -1,6 +1,7 @@
 <metal:block metal:define-macro="form"
              i18n:domain="bungeni.ui">
-  
+<!-- !+DEFINE-MACRO-FORM(mr, jul-2010) ui/forms/templates/display_form.pt line3 -->
+
   <dt id="fieldsetlegend-display-form"
       tal:attributes="id string:${default}-${python: id(view)}"
       i18n:translate=""
