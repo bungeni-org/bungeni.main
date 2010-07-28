@@ -132,7 +132,9 @@ class BaseForm(form.FormBase):
     Adapts = None
     CustomValidation = None
     
-    legends = {}
+    legends = {} # { iface:_(str) } i.e. 
+    # keys are of type Interface, values are localized strings
+    
     status = None
     
     def __init__(self, *args):

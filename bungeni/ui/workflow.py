@@ -143,7 +143,8 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
         return map(dict, content_changes)
 
 
-class WorkflowActionViewlet(BaseForm, viewlet.ViewletBase):
+class WorkflowActionViewlet(browser.BungeniBrowserView, 
+        BaseForm, viewlet.ViewletBase):
     """Display workflow status and actions."""
     
     class IWorkflowComment(zope.interface.Interface):
@@ -180,8 +181,12 @@ class WorkflowActionViewlet(BaseForm, viewlet.ViewletBase):
     form_fields = form.Fields(IWorkflowComment)  # [form.FormField]
     actions = ()
     
+    # evoque
+    render = z3evoque.ViewTemplateFile("form.html#form")
+    
+    # zpt
     # !+ metal:use-macro="context/@@standard_macros/form" ?
-    render = ViewPageTemplateFile("templates/viewlet.pt")
+    #render = ViewPageTemplateFile("templates/viewlet.pt")
     
     def update(self, transition=None):
         self.adapters = {
@@ -226,6 +231,30 @@ class WorkflowActionViewlet(BaseForm, viewlet.ViewletBase):
             self.status = "%s: %s " % (self.status, 
                             " / ".join([ e.message #or e.__class__.__name__ 
                                          for e in self.errors ]))
+    
+    ''' !+invariantErrors(mr, 27-jul-2010) -- 
+    Called from the form template -- BUT only sub-classes of 
+    (alchemist.ui.content) AddFormBase or EditForm (i.e. NOT this form class)
+    define an invariantErrors() method ().
+    
+    Generalize the following properties up to bungeni FormBase:
+    - invariantErrors() -> [(?,?)]
+    - invarianteMessages() -> [message:str]
+    '''
+    @property
+    def invariantErrors(self):
+        """ () -> [error:zope.interface.Invalid]
+        """
+        # !+invariantErrors(mr) not defined by any ancestor class !
+        if hasattr(super(WorkflowActionViewlet, self), "invariantErrors"):
+            return super(WorkflowActionViewlet, self).invariantErrors
+        return []
+    @property
+    def invariantMessages(self):
+        """ () -> [message:str]
+        """
+        return filter(None,
+                [ error.message for error in self.invariantErrors ])
     
     def setupActions(self, transition):
         self.wf = interfaces.IWorkflowInfo(self.context)
