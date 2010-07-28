@@ -49,7 +49,7 @@ setup(name='bungeni',
                         'zope.sendmail',
                         'ore.wsgiapp',
 			#
-			# The following are required by bungeni.models	
+			# The following are required by bungeni.models
                         'SQLAlchemy',
                         'zope.schema',
                         'zope.interface',
@@ -62,7 +62,7 @@ setup(name='bungeni',
 		        'pyquery>=0.3.1',
 		        'Deliverance',
 		        'chameleon.html',
-			# The following are used by bungeni.core 
+			# The following are used by bungeni.core
 			#
                         'ore.xapian',
                         'ore.workflow',
@@ -76,17 +76,17 @@ setup(name='bungeni',
                         'alchemist.ui',
                         'marginalia',
                         'ore.yui',
-                        'z3c.menu.ready2go',			
+                        'z3c.menu.ready2go',
                         'zc.displayname',
                         'zope.formlib',
 			# the following are used by bungeni.plonepas
-			'pysqlite',			
+			'pysqlite',
 			],
-      entry_points = 
+      entry_points =
 	{
 	'console_scripts' : [
 		'bungeni-reset-db = bungeni.core.schema:reset_database',
-                'bungeni-sync-index = bungeni.core.index:reset_index',		
+                'bungeni-sync-index = bungeni.core.index:reset_index',
 		],
 	'paste.app_factory' : [
 		'main = bungeni.server.startup:application_factory',
@@ -94,7 +94,7 @@ setup(name='bungeni',
 		],
 	'paste.filter_app_factory' : [
 		'deliverance = bungeni.portal.middleware:make_deliverance_middleware'
-		]	
+		]
 	}
  )
 
