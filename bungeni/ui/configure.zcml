@@ -51,7 +51,7 @@
   <include package="ore.yui"/>
   <include package="ore.yuiwidget"/>
   <!-- Transcripts -->
-  <include package="bungeni.transcripts"/>
+  <!--include package="bungeni.transcripts"/ -->
   <browser:defaultView
      for="bungeni.models.interfaces.IBungeniApplication"
      name="index"
