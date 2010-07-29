@@ -29,7 +29,6 @@
                 scheduler.config.show_loading=true;
                 scheduler.config.scroll_hour=8;
                 scheduler.config.details_on_create=true;
-                scheduler.config.details_on_dblclick=true; 
                 scheduler.config.icons_select=["icon_details","icon_delete"]
                 scheduler.locale.labels.agenda_tab = "Upcoming";
                 scheduler.init('scheduler_here', null, "week");
@@ -66,15 +65,17 @@
 		            }
 	            }
                 
+                scheduler.attachEvent("onClick", function (event_id, native_event_object){
+                    parent.location = "/business/sittings/obj-"+event_id+"/schedule";
+                });
+                
                 scheduler.config.lightbox.sections=[	
                         { name:"description", height:200, type:"my_editor" },
                         {name:"recurring", height:115, type:"recurring", map_to:"rec_type", button:"recurring"},
 		                { name:"time", height:72, type:"time", map_to:"auto"}
 	                ]
                 
-                scheduler.attachEvent("onDblClick", function (event_id, native_event_object){
-                    parent.location = "/business/sittings/obj-"+event_id+"/schedule";
-                }); 
+                 
                 
             }
             
@@ -94,7 +95,7 @@
             {
                 init();
                 scheduler.config.readonly = true;
-                var dp = new dataProcessor("/dhtmlxcalendaredit");
+                var dp = new dataProcessor(location.href+"/dhtmlxcalendaredit");
 		        dp.init(scheduler);
             }
             window.onload = cannotEdit;
