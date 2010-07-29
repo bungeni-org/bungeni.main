@@ -8,7 +8,9 @@ import tempfile
 from zope.security.proxy import removeSecurityProxy
 import htmlentitydefs
 from xml.dom.minidom import parseString
-
+from bungeni.ui import zcml
+from interfaces import IOpenOfficeConfig
+from zope.component import getUtility
 
 def unescape(text):
     def fixup(m):
@@ -80,6 +82,7 @@ class DownloadODT(DownloadDocument):
         f.close()      
         os.remove(self.tempFileName)    
         return doc  
+
     
 class  DownloadPDF(DownloadDocument):
     #appy.Renderer expects a file name of a file that does not exist.
@@ -89,9 +92,8 @@ class  DownloadPDF(DownloadDocument):
     def __call__(self): 
         params = {}
         params['body_text'] = self.cleanupText()
-        #uses system open office and python uno to generate pdf
-        #TO DO : fix this to use user python
-        renderer = Renderer(self.odt_file, params, self.tempFileName, pythonWithUnoPath="/usr/bin/python2.5")
+        openofficepath = getUtility(IOpenOfficeConfig).getPath()
+        renderer = Renderer(self.odt_file, params, self.tempFileName, pythonWithUnoPath=openofficepath)
         renderer.run()
         self.request.response.setHeader('Content-type', 'application/pdf')
         self.request.response.setHeader('Content-disposition', 'inline;filename="'

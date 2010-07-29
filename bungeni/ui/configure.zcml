@@ -16,7 +16,7 @@
   
   <!-- Site Menus Definition -->
   <include file="menu.zcml"/>
-
+    
   <include package="plone.memoize" />
   <!--include package="marginalia" /-->
   
@@ -50,7 +50,8 @@
   <!-- Javascript -->
   <include package="ore.yui"/>
   <include package="ore.yuiwidget"/>
-  
+  <!-- Transcripts -->
+  <include package="bungeni.transcripts"/>
   <browser:defaultView
      for="bungeni.models.interfaces.IBungeniApplication"
      name="index"
@@ -90,6 +91,7 @@
        />
   </class--> 
     <!--End Experimental transcripts support -->
+    
    <browser:resourceDirectory
       name="ui-images"
       directory="images" />

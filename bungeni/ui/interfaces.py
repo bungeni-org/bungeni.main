@@ -4,6 +4,8 @@ from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 from ploned.ui.interfaces import IPlonedSkin
 from ore.yui.interfaces import IYUILayer
 
+from zope.configuration import fields
+
 class IBungeniSkin(IPlonedSkin, IYUILayer):
     """Bungeni application skin."""
 class IBungeniAuthenticatedSkin(IBungeniSkin):
@@ -57,4 +59,14 @@ class IAdminSectionLayer(IWorkspaceOrAdminSectionLayer):
     """Requests for an object within the admin section."""
 class IWorkspaceSectionLayer(IWorkspaceOrAdminSectionLayer):
     """Requests for an object within the workspace section."""
-
+    
+class IOpenOfficeConfig(interface.Interface):
+    def getPath():
+        "Path to the Openoffice Python binary"
+    
+class IOpenOfficePath(interface.Interface):
+    path = fields.Path(
+        title=u"OpenOffice.org Python Path",
+        description=u"This is the path name of the openoffice to be used to generate pdf reports",
+        required=True
+        )
