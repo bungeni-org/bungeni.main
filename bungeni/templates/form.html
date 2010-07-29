@@ -219,3 +219,15 @@ ${ unicode(inspect(output=False)) }
     </form>
 $end{ form }
 
+
+$begin{ page }
+    $overlay{ bungeni.html }
+    $begin{ content }
+        <div>
+        #[ !+form_name(mr, jul-2010) shouldn't this just be view.page_title? ]#
+        <h1>${ i18n(getattr(view, "form_name", " ")) }</h1>
+        $evoque{ #form }
+        </div>
+    $end{ content }
+$end{ page }
+

@@ -12,7 +12,6 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.security.proxy import removeSecurityProxy
 import zope.security.management
 
-
 from sqlalchemy import sql
 
 from ore.alchemist import Session
@@ -31,11 +30,11 @@ from bungeni.ui.forms.common import DeleteForm
 
 FormTemplate = namedtemplate.NamedTemplateImplementation(
     ViewPageTemplateFile('templates/form.pt')
-    )
+)
 
 ContentTemplate = namedtemplate.NamedTemplateImplementation(
     ViewPageTemplateFile('templates/content.pt')
-    )
+)
 
 def hasDeletePermission(context):
     """Generic check if the user has rights to delete the object. The
@@ -97,6 +96,7 @@ class ItemScheduleContainerReorderForm(ReorderForm):
     def save_ordering(self, ordering):
         for name, scheduling in self.context.items():
             scheduling.planned_order = ordering.index(name)
+
 
 class ItemScheduleReorderForm(PageForm):
     """Form to reorder a scheduling within a list of schedulings."""

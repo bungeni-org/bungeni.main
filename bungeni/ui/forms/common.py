@@ -5,15 +5,16 @@ from zope.publisher.interfaces import BadRequest
 from zope import component
 from zope import interface
 from zope import schema
+from zope import formlib
 
 from zope.i18n import translate
 from zope.security.proxy import removeSecurityProxy
 from zope.event import notify
 from zope.schema.interfaces import IChoice
-from zope.formlib import form
+
 from zope.location.interfaces import ILocation
 from zope.dublincore.interfaces import IDCDescriptiveProperties
-from zope.formlib.namedtemplate import NamedTemplate
+#from zope.formlib.namedtemplate import NamedTemplate
 from zope.container.contained import ObjectRemovedEvent
 from zope.app.pagetemplate import ViewPageTemplateFile
 import sqlalchemy as rdb
@@ -28,6 +29,7 @@ from alchemist.ui.core import setUpFields
 from alchemist.ui.core import unique_columns
 from zope.app.form.interfaces import IDisplayWidget
 
+# !+sqlalchemy.exc(mr, jul-2010) why this try/except ?
 try:
     from sqlalchemy.exceptions import IntegrityError
 except ImportError:
@@ -41,11 +43,13 @@ from bungeni.core.translation import CurrentLanguageVocabulary
 from bungeni.core.interfaces import IVersioned
 from bungeni.models.interfaces import IVersion, IBungeniContent
 from bungeni.models import domain
+from bungeni.ui.forms.fields import filterFields
 from bungeni.ui.interfaces import IFormEditLayer
 from bungeni.ui.i18n import _
+from bungeni.ui import browser
+from bungeni.ui import z3evoque
+from bungeni.ui.utils import url
 
-import bungeni.ui.utils as ui_utils
-from bungeni.ui.forms.fields import filterFields
 import re
 import htmlentitydefs
 TRUE_VALS = "true", "1"
@@ -99,7 +103,7 @@ class NoPrefix(unicode):
 NO_PREFIX = NoPrefix()
 
 
-class DefaultAction(form.Action):
+class DefaultAction(formlib.form.Action):
     def __init__(self, action):
         self.__dict__.update(action.__dict__)
     
@@ -107,7 +111,7 @@ class DefaultAction(form.Action):
         return True
 
 
-class BaseForm(form.FormBase):
+class BaseForm(formlib.form.FormBase):
     """Base form class for Bungeni content.
 
     Headless submission
@@ -147,7 +151,7 @@ class BaseForm(form.FormBase):
             # by default
             for action in self.actions:
                 default = DefaultAction(action)
-                self.actions = form.Actions(default)
+                self.actions = formlib.form.Actions(default)
                 break
 
         # the ``_next_url`` attribute is used internally by our
@@ -192,8 +196,8 @@ class BaseForm(form.FormBase):
         """Validation that require context must be called here,
         invariants may be defined in the descriptor."""
         errors = (
-            form.getWidgetsData(self.widgets, self.prefix, data) +
-            form.checkInvariants(self.form_fields, data))
+            formlib.form.getWidgetsData(self.widgets, self.prefix, data) +
+            formlib.form.checkInvariants(self.form_fields, data))
         if not errors and self.CustomValidation is not None:
             return list(self.CustomValidation(self.context, data))
         return errors
@@ -220,12 +224,13 @@ class BaseForm(form.FormBase):
                 [ error.message for error in self.invariantErrors ])
 
 
-class PageForm(BaseForm, form.PageForm):
-    template = NamedTemplate("alchemist.form")
+# !+PageForm(mr, jul-2010) converge usage of formlib.form.PageForm to PageForm
+# !+NamedTemplate(mr, jul-2010) converge all views to not use anymore
+# !+alchemist.form(mr, jul-2010) converge all form views to not use anymore
+class PageForm(BaseForm, formlib.form.PageForm, browser.BungeniBrowserView):
+    #template = NamedTemplate("alchemist.form")
+    template = z3evoque.PageViewTemplateFile("form.html#page")
 
-
-from bungeni.ui import browser
-from bungeni.ui import z3evoque
 
 class DisplayForm(ui.DisplayForm, browser.BungeniBrowserView):
     
@@ -290,7 +295,8 @@ class AddForm(BaseForm, ui.AddForm):
                 if not value:
                     continue
                 widget = self.widgets[ key ]
-                error = form.WidgetInputError(widget.name, widget.label, 
+                error = formlib.form.WidgetInputError(
+                    widget.name, widget.label, 
                     _(u"Duplicate Value for Unique Field"))
                 widget._error = error
                 errors.append( error )
@@ -348,7 +354,9 @@ class AddForm(BaseForm, ui.AddForm):
             adapts : ob
             }
             
-    @form.action(_(u"Save and view"), condition=form.haveInputWidgets)
+    @formlib.form.action(
+        _(u"Save and view"), 
+        condition=formlib.form.haveInputWidgets)
     def handle_add_save(self, action, data):
         for key in data.keys():
             print "[handle_add_save] KEY:%s VALUE:%s" % (key, data[key])
@@ -357,20 +365,19 @@ class AddForm(BaseForm, ui.AddForm):
         ob = self.createAndAdd(data)
         name = self.context.domain_model.__name__
         if not self._next_url:
-            self._next_url = ui_utils.url.absoluteURL(
-                ob, self.request) + \
+            self._next_url = url.absoluteURL(ob, self.request) + \
                 "?portal_status_message=%s added" % name
         
-    @form.action(_(u"Cancel"), validator=null_validator )
+    @formlib.form.action(_(u"Cancel"), validator=null_validator)
     def handle_cancel( self, action, data ):
         """Cancelling redirects to the listing."""
         session = Session()
         if not self._next_url:
-            self._next_url = ui_utils.url.absoluteURL(self.__parent__, self.request)
+            self._next_url = url.absoluteURL(self.__parent__, self.request)
         self.request.response.redirect(self._next_url)
         session.close()
         
-    @form.action(_(u"Save"), condition=form.haveInputWidgets)
+    @formlib.form.action(_(u"Save"), condition=formlib.form.haveInputWidgets)
     def handle_add_edit( self, action, data ):
         for key in data.keys():
             if isinstance(data[key], str): 
@@ -378,10 +385,11 @@ class AddForm(BaseForm, ui.AddForm):
         ob = self.createAndAdd(data)
         name = self.context.domain_model.__name__
         if not self._next_url:
-            self._next_url = ui_utils.url.absoluteURL(ob, self.request ) + \
+            self._next_url = url.absoluteURL(ob, self.request ) + \
                              "/edit?portal_status_message=%s Added" % name
 
-    @form.action(_(u"Save and add another"), condition=form.haveInputWidgets)
+    @formlib.form.action(
+        _(u"Save and add another"), condition=formlib.form.haveInputWidgets)
     def handle_add_and_another(self, action, data ):
         for key in data.keys():
             if isinstance(data[key], str): 
@@ -390,7 +398,7 @@ class AddForm(BaseForm, ui.AddForm):
         name = self.context.domain_model.__name__
 
         if not self._next_url:
-            self._next_url = ui_utils.url.absoluteURL(self.context, self.request) + \
+            self._next_url = url.absoluteURL(self.context, self.request) + \
                              "/add?portal_status_message=%s Added" % name
                               
 
@@ -469,7 +477,7 @@ class EditForm(BaseForm, ui.EditForm):
             for widget in self.widgets:
                 form_field = form_fields.get(widget.context.__name__)
                 if form_field is None:
-                    form_field = form.Field(widget.context)
+                    form_field = formlib.form.Field(widget.context)
 
                 # bind field to head document
                 field = form_field.field.bind(head)
@@ -489,29 +497,29 @@ class EditForm(BaseForm, ui.EditForm):
                 widget.render_original = display_widget
 
 
-    @form.action(_(u"Save"), condition=form.haveInputWidgets)
+    @formlib.form.action(_(u"Save"), condition=formlib.form.haveInputWidgets)
     def handle_edit_save( self, action, data ):
         """Saves the document and goes back to edit page"""
         for key in data.keys():
             if isinstance(data[key], str): 
                 data[key] = unescape(data[key])
-        form.applyChanges(self.context, self.form_fields, data)
+        formlib.form.applyChanges(self.context, self.form_fields, data)
 
 
-    @form.action(_(u"Save and view"), condition=form.haveInputWidgets)
+    @formlib.form.action(
+        _(u"Save and view"), condition=formlib.form.haveInputWidgets)
     def handle_edit_save_and_view(self, action, data):
         """Saves the  document and redirects to its view page"""
         for key in data.keys():
             if isinstance(data[key], str): 
                 data[key] = unescape(data[key])
-    	form.applyChanges(self.context, self.form_fields, data)
+    	formlib.form.applyChanges(self.context, self.form_fields, data)
         if not self._next_url:
-            self._next_url = ui_utils.url.absoluteURL(
-                self.context, self.request) + \
+            self._next_url = url.absoluteURL(self.context, self.request) + \
                 "?portal_status_message= Saved"
         self.request.response.redirect(self._next_url)
  
-    @form.action(_(u"Cancel"), validator=null_validator )
+    @formlib.form.action(_(u"Cancel"), validator=null_validator)
     def handle_edit_cancel( self, action, data ):
         """Cancelling redirects to the listing."""
         for key in data.keys():
@@ -519,8 +527,7 @@ class EditForm(BaseForm, ui.EditForm):
                 data[key] = unescape(data[key])
         session = Session()
         if not self._next_url:
-            self._next_url = ui_utils.url.absoluteURL(
-                self.context, self.request) 
+            self._next_url = url.absoluteURL(self.context, self.request) 
         self.request.response.redirect(self._next_url)
         session.close()
 
@@ -532,9 +539,7 @@ class TranslateForm(AddForm):
     @property
     def side_by_side(self):
         return True
-
-
-
+    
     def __init__(self, *args):
         super(TranslateForm, self).__init__(*args)
         self.language = self.request.get("language", get_default_language())
@@ -557,7 +562,7 @@ class TranslateForm(AddForm):
                 
     def validate(self, action, data):
         return (
-            form.getWidgetsData(self.widgets, self.prefix, data) 
+            formlib.form.getWidgetsData(self.widgets, self.prefix, data) 
             )
         
     @property
@@ -615,7 +620,7 @@ class TranslateForm(AddForm):
         for field_translation in translation:
             setattr(context, field_translation.field_name, 
                     field_translation.field_text)
-        self.widgets = form.setUpEditWidgets(
+        self.widgets = formlib.form.setUpEditWidgets(
             self.form_fields, self.prefix, context, self.request,
             adapters=self.adapters, ignore_request=ignore_request)
 
@@ -639,7 +644,7 @@ class TranslateForm(AddForm):
         for widget in self.widgets:
             form_field = form_fields.get(widget.context.__name__)
             if form_field is None:
-                form_field = form.Field(widget.context)
+                form_field = formlib.form.Field(widget.context)
 
             # bind field to head document
             field = form_field.field.bind(head)
@@ -661,7 +666,8 @@ class TranslateForm(AddForm):
 
             
 
-    @form.action(_(u"Save translation"), condition=form.haveInputWidgets)
+    @formlib.form.action(
+        _(u"Save translation"), condition=formlib.form.haveInputWidgets)
     def handle_add_save(self, action, data ):
         """After succesful creation of translation, redirect to the
         view."""
@@ -669,7 +675,7 @@ class TranslateForm(AddForm):
             if isinstance(data[key], str): 
                 data[key] = unescape(data[key])
             
-        url = ui_utils.url.absoluteURL(self.context, self.request)
+        #url = url.absoluteURL(self.context, self.request)
         
         language = get_language_by_name(data["language"])["name"]
 
@@ -719,7 +725,7 @@ class TranslateForm(AddForm):
 
         self._finished_add = True
         
-class ReorderForm(BaseForm, form.PageForm):
+class ReorderForm(PageForm):
     """Item reordering form.
 
     We use an intermediate list of ids to represent the item order.
@@ -733,9 +739,12 @@ class ReorderForm(BaseForm, form.PageForm):
             title=u"Ordering",
             value_type=schema.TextLine())
 
-    template = NamedTemplate("alchemist.form")
+    # evoque
+    template = z3evoque.PageViewTemplateFile("form.html#page")
+    # zpt
+    #template = NamedTemplate("alchemist.form")
     form_name = _(u"Item reordering")
-    form_fields = form.Fields(IReorderForm, render_context=True)
+    form_fields = formlib.form.Fields(IReorderForm, render_context=True)
 
     def setUpWidgets(self, ignore_request=False):
         class context:
@@ -745,18 +754,18 @@ class ReorderForm(BaseForm, form.PageForm):
             self.IReorderForm: context,
             }
 
-        self.widgets = form.setUpWidgets(
+        self.widgets = formlib.form.setUpWidgets(
             self.form_fields, self.prefix, self.context, self.request,
             form=self, adapters=self.adapters, ignore_request=ignore_request)
-
+    
     def save_ordering(self, ordering):
         raise NotImplementedError("Must be defined by subclass")
     
-    @form.action(_(u"Save"))
+    @formlib.form.action(_(u"Save"))
     def handle_save(self, action, data):
         self.save_ordering(data["ordering"])
 
-class DeleteForm(BaseForm, form.PageForm):
+class DeleteForm(PageForm):
     """Delete-form for Bungeni content.
 
     Confirmation
@@ -772,12 +781,17 @@ class DeleteForm(BaseForm, form.PageForm):
 
     Will redirect back to the container on success.
     """
-
-    form_template = NamedTemplate("alchemist.form")
-    template = ViewPageTemplateFile("templates/delete.pt")
-
+    # evoque
+    template = z3evoque.PageViewTemplateFile("delete.html")
+    
+    # zpt
+    # !+form_template(mr, jul-2010) this is unused here, but needed by
+    # some adapter of this "object delete" view
+    #form_template = NamedTemplate("alchemist.form")
+    #template = ViewPageTemplateFile("templates/delete.pt")
+    
     _next_url = None
-    form_fields = form.Fields()
+    form_fields = formlib.form.Fields()
     
     def _can_delete_item(self, action):
         return True
@@ -795,7 +809,7 @@ class DeleteForm(BaseForm, form.PageForm):
     def delete_subobjects(self):
         return 0
     
-    @form.action(_(u"Delete"), condition=_can_delete_item)
+    @formlib.form.action(_(u"Delete"), condition=_can_delete_item)
     def handle_delete(self, action, data):
         count = self.delete_subobjects()
         container = self.context.__parent__
@@ -827,7 +841,7 @@ class DeleteForm(BaseForm, form.PageForm):
         next_url = self.nextURL()
         
         if next_url is None:
-            next_url = ui_utils.url.absoluteURL(container, self.request) + \
+            next_url = url.absoluteURL(container, self.request) + \
                        "/?portal_status_message=%d items deleted" % count
 
         self.request.response.redirect(next_url)

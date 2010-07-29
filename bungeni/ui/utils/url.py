@@ -11,7 +11,10 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.ui.utils.url")
 
-import common
+import zope
+
+from bungeni.ui.utils import common
+
 
 def get_destination_url_path(request=None):
     """Get the (effective, sans any "traversal namespace notation" components
@@ -39,6 +42,7 @@ def get_destination_url_path(request=None):
     log.debug(" [get_destination_url_path] %s " % _url)
     return _url
 
+
 def urljoin(base, action):
     if action is None:
         return
@@ -48,7 +52,9 @@ def urljoin(base, action):
         raise NotImplementedError(action)
     return "/".join((base, action.lstrip('./')))
 
+
 indexNames = ("index", "index.html", "@@index.html")
+
 
 def absoluteURL(context, request):
     """
@@ -58,12 +64,12 @@ def absoluteURL(context, request):
     used instead of zope.traversing.browser.absoluteURL.
     
     """
-    from zope.traversing import browser
-    url = browser.absoluteURL(context, request).split("/")
+    url = zope.traversing.browser.absoluteURL(context, request).split("/")
     while url[-1] in indexNames:
         log.warning(" POPPING: %s -> %s" % ('/'.join(url), url[-1]))
         url.pop()
     return '/'.join(url)
+
 
 def same_path_names(base_path_name, path_name):
     """ (base_path_name, path_name) -> bool

@@ -3,17 +3,14 @@
     xmlns:browser="http://namespaces.zope.org/browser" 
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni.ui">
-
-  <adapter
-     for="*"
-     name="alchemist.form"
-     factory=".forms.FormTemplate"
-     />
-
-  <adapter
-     for="*"
-     name="alchemist.content"
-     factory=".forms.ContentTemplate"
-     />
+    
+    <adapter name="alchemist.form"
+        for="*"
+        factory=".forms.FormTemplate"
+    />
+    <adapter name="alchemist.content"
+        for="*"
+        factory=".forms.ContentTemplate"
+    />
 
 </configure>
