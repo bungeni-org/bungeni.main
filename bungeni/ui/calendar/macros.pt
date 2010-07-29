@@ -157,7 +157,8 @@
                     <li tal:repeat="action item/actions">
                       <a tal:attributes="rel action/id;
                                          rev view/reorder_field;
-                                         href action/url">
+                                         href action/url;
+                                         class action/id">
                         <span tal:condition="not: action/icon"
                               tal:replace="action/title" />
                         <img tal:condition="action/icon"
