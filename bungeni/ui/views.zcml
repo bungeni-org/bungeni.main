@@ -141,16 +141,14 @@
      class=".login.Logout"
      />
 
-  <!-- Content Search Form -->
-  
-  <browser:page
-    for="bungeni.models.interfaces.IBungeniApplication"
-    permission="zope.View"
-    name="search"
-    class=".search.Search"
+    <!-- Content Search Form -->
+    
+    <browser:page name="search"
+        for="bungeni.models.interfaces.IBungeniApplication"
+        permission="zope.View"
+        class=".search.Search"
     />
-
-  
+    
   <!-- Reporting -->
 
   <browser:page

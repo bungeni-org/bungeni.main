@@ -48,7 +48,7 @@ class VersionsView(BrowserView):
                 return _(u"Currently displaying version ${version}",
                          mapping={"version": self.context.version_id})
             
-            def setUpWidgets( self, ignore_request=False):
+            def setUpWidgets(self, ignore_request=False):
                 self.adapters = dict(
                     [(iface, self.context) for iface in ifaces])
 
@@ -66,7 +66,7 @@ class VersionsView(BrowserView):
 class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
     class IVersionEntry(interface.Interface):
         commit_message = schema.Text(title=_(u"Change Message"))
-
+    
     form_fields = formlib.form.Fields(IVersionEntry)
     formatter_factory = TableFormatter
     
@@ -151,25 +151,25 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
         return "post"
     
     @formlib.form.action(label=_("New Version"), condition=has_write_permission)
-    def handle_new_version( self, action, data ):
-        self._versions.create( message = data["commit_message"], manual=True )
+    def handle_new_version(self, action, data):
+        self._versions.create(message = data["commit_message"], manual=True)
         self.status = _(u"New Version Created")
 
     @formlib.form.action(label=_("Revert To"), condition=has_write_permission)
-    def handle_revert_version( self, action, data):
-        selected = getSelected( self.selection_column, self.request )
+    def handle_revert_version(self, action, data):
+        selected = getSelected(self.selection_column, self.request)
         if len(selected) != 1:
             self.status = _("Select one item to revert to")
             return
-        version = self._versions.get( selected[0] )
+        version = self._versions.get(selected[0])
         message = data["commit_message"]
-        self._versions.revert( version, message )
+        self._versions.revert(version, message)
         self.status = (_(u"Reverted to Previous Version %s") %(version.version_id))
 
     @formlib.form.action(
         label=_("Show Differences"), name="diff",
         validator=lambda form, action, data: ())
-    def handle_diff_version( self, action, data):
+    def handle_diff_version(self, action, data):
         self.status = _("Displaying differences")
 
         selected = getSelected(self.selection_column, self.request)
@@ -179,10 +179,10 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
             return
 
         context = removeSecurityProxy(self.context)
-        source = self._versions.get( selected[0] )
+        source = self._versions.get(selected[0])
                 
         try:
-            target = self._versions.get( selected[1] )
+            target = self._versions.get(selected[1])
             if source.version_id > target.version_id:
                 t = source
                 source = target
@@ -198,7 +198,7 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
                         source, target, self.diff_view))
 
 
-    def setUpWidgets( self, ignore_request=False):
+    def setUpWidgets(self, ignore_request=False):
         # setup widgets in data entry mode not bound to context
         actions = self.actions
         self.actions = []
@@ -213,12 +213,12 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
         self.adapters = {}
         self.widgets = formlib.form.setUpDataWidgets(
             self.form_fields, self.prefix, self.context, self.request,
-            ignore_request = ignore_request )
+            ignore_request = ignore_request)
         
     @property
-    def _versions( self ):
-        instance = removeSecurityProxy( self.context )
-        versions = IVersioned( instance )
+    def _versions(self):
+        instance = removeSecurityProxy(self.context)
+        versions = IVersioned(instance)
         return versions
         
     def __call__(self):
