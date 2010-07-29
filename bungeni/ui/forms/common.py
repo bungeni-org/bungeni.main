@@ -201,6 +201,23 @@ class BaseForm(form.FormBase):
     @property
     def next_url(self):
         return self._next_url
+    
+    @property
+    def invariantErrors(self):
+        """ () -> [error:zope.interface.Invalid]
+        """
+        errors = []
+        for error in self.errors:
+            if isinstance(error, interface.Invalid):
+                errors.append(error)
+        return errors
+    @property
+    def invariantMessages(self):
+        """ () -> [message:str]
+        Called from the form template.
+        """
+        return filter(None,
+                [ error.message for error in self.invariantErrors ])
 
 
 class PageForm(BaseForm, form.PageForm):

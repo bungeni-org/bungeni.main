@@ -43,7 +43,9 @@ ${ unicode(inspect(output=False)) }
                                     }</p>
     
     <form 
-        #[ !+action_url(mr) bungeni forms have no "action_url" attr! ]#
+        #[ !+action_url(mr) throughout bungeni UI, only versions.VersionLogView
+            defines an "action_url" property!
+        ]#
         action="${ getattr(view, 'action_url', request.URL) }"
         #[ !+context_class(mr) -- Only instances of a sub-class of
             bungeni.ui.forms.common.AddForm have a context_class property;

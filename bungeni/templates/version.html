@@ -1,0 +1,28 @@
+#[ $Id$ ]#
+#[ was: ui/forms/templates/version.pt ]#
+
+$overlay{ bungeni.html }
+
+$begin{ content }
+<div>
+    <h1>${ i18n("Versions") }</h1>
+    <div id="version-history">
+    $begin{ form }
+        $overlay{ form.html#form }
+        $begin{ pre_fieldset }
+        <label class="discreet" for="form.actions.diff">${ 
+            i18n("Select a version to compare to the current working copy, "
+                 "or make two selections to compare historic versions")
+        }</label>
+        ${ xml(view.listing()) }
+        <br />
+        $if{ view.diff_view is not None }
+            ${ view.diff_view }
+        $fi
+        $end{ pre_fieldset }
+    $end{ form }
+    $evoque{ #form }
+    </div>
+</div>
+$end{ content }
+

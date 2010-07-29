@@ -7,7 +7,6 @@ import zope.interface
 from zope.annotation.interfaces import IAnnotations
 from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
 from zope.security.proxy import removeSecurityProxy
-from zope.publisher.browser import BrowserView
 from zope.app.schema.vocabulary import IVocabularyFactory
 from zope.app.form.browser.textwidgets import TextAreaWidget
 from zc.table import column
@@ -30,7 +29,7 @@ from bungeni.ui.menu import get_actions
 from bungeni.ui.utils import date, common
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
-from zope.app.pagetemplate import ViewPageTemplateFile
+#from zope.app.pagetemplate import ViewPageTemplateFile
 
 from bungeni.ui.i18n import _
 
@@ -185,7 +184,6 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
     render = z3evoque.ViewTemplateFile("form.html#form")
     
     # zpt
-    # !+ metal:use-macro="context/@@standard_macros/form" ?
     #render = ViewPageTemplateFile("templates/viewlet.pt")
     
     def update(self, transition=None):
@@ -231,30 +229,6 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
             self.status = "%s: %s " % (self.status, 
                             " / ".join([ e.message #or e.__class__.__name__ 
                                          for e in self.errors ]))
-    
-    ''' !+invariantErrors(mr, 27-jul-2010) -- 
-    Called from the form template -- BUT only sub-classes of 
-    (alchemist.ui.content) AddFormBase or EditForm (i.e. NOT this form class)
-    define an invariantErrors() method ().
-    
-    Generalize the following properties up to bungeni FormBase:
-    - invariantErrors() -> [(?,?)]
-    - invarianteMessages() -> [message:str]
-    '''
-    @property
-    def invariantErrors(self):
-        """ () -> [error:zope.interface.Invalid]
-        """
-        # !+invariantErrors(mr) not defined by any ancestor class !
-        if hasattr(super(WorkflowActionViewlet, self), "invariantErrors"):
-            return super(WorkflowActionViewlet, self).invariantErrors
-        return []
-    @property
-    def invariantMessages(self):
-        """ () -> [message:str]
-        """
-        return filter(None,
-                [ error.message for error in self.invariantErrors ])
     
     def setupActions(self, transition):
         self.wf = interfaces.IWorkflowInfo(self.context)

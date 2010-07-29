@@ -15,12 +15,16 @@
               Select a version to compare to the current working copy, or make two selections to compare historic versions
          </label>
           <div tal:replace="structure view/listing"></div>
+        <!-- !+actionsView(mr) why is this here at all? 
+            the enclosing form macro *already* defines a <div id="actionsView">
+        -->
           <div id="actionsView">
             <br />
           </div>
           <div tal:replace="structure view/extra" />
         </div>
         
+        <!-- !+SLOT-ACTIONS(mr) no such slot defined anywhere!! -->
         <div metal:fill-slot="actions">
           <div id="actionsView">
             <span class="actionButtons"

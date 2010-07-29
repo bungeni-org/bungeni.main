@@ -3,13 +3,10 @@ log = __import__("logging").getLogger("bungeni.ui.versions")
 import operator
 
 from zope import interface
-from zope import component
 from zope import schema
+from zope import formlib
 
-from zope.publisher.browser import BrowserView
-from zope.app.pagetemplate import ViewPageTemplateFile
-from zope.app.publisher.browser import queryDefaultViewName
-from zope.formlib import form
+#from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.security.proxy import removeSecurityProxy
 from zope.security import canWrite
 from zope.security.interfaces import ForbiddenAttribute
@@ -21,12 +18,18 @@ from ore.alchemist.interfaces import IIModelInterface
 from bungeni.ui.i18n import MessageFactory as _
 from bungeni.ui.table import TableFormatter
 from bungeni.ui.utils import date, url
+from bungeni.ui.diff import textDiff
+from bungeni.ui import browser
+from bungeni.ui import z3evoque
+from bungeni.ui import forms
 
 from bungeni.core.interfaces import IVersioned
 
-from alchemist.ui.core import BaseForm, getSelected
+from alchemist.ui.core import getSelected
 from zc.table import column
 
+'''
+from zope.publisher.browser import BrowserView
 class VersionsView(BrowserView):
     """To-Do: Find out why this class isn't hooked up."""
     
@@ -34,10 +37,10 @@ class VersionsView(BrowserView):
         context = self.context.__parent__.__parent__
         ifaces = filter(IIModelInterface.providedBy, interface.providedBy(context))
         
-        class Form(form.DisplayForm):
-            template = ViewPageTemplateFile("templates/form.pt")
-            form_fields = form.FormFields(*ifaces)
+        class Form(formlib.form.DisplayForm):
             
+            template = ViewPageTemplateFile("templates/form.pt")
+            form_fields = formlib.form.FormFields(*ifaces)
             form_name = _(u"View")
             
             @property
@@ -49,7 +52,7 @@ class VersionsView(BrowserView):
                 self.adapters = dict(
                     [(iface, self.context) for iface in ifaces])
 
-                self.widgets = form.setUpEditWidgets(
+                self.widgets = formlib.form.setUpEditWidgets(
                     self.form_fields, self.prefix, self.context, self.request,
                     adapters=self.adapters, for_display=True,
                     ignore_request=ignore_request
@@ -58,16 +61,21 @@ class VersionsView(BrowserView):
         view = Form(self.context, self.request)
         
         return view()
+'''
 
-class VersionLogView(BaseForm):
+class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
     class IVersionEntry(interface.Interface):
         commit_message = schema.Text(title=_(u"Change Message"))
 
-    form_fields = form.Fields(IVersionEntry)
+    form_fields = formlib.form.Fields(IVersionEntry)
     formatter_factory = TableFormatter
     
-    render = ViewPageTemplateFile("templates/version.pt")
-    extra = None
+    # evoque
+    render = z3evoque.PageViewTemplateFile("version.html")
+    # zpt
+    #render = ViewPageTemplateFile("templates/version.pt")
+    
+    diff_view = None
     
     def __init__(self, context, request):
         super(VersionLogView, self).__init__(context.__parent__, request)
@@ -129,21 +137,25 @@ class VersionLogView(BaseForm):
                 pass
         else:
             return False
-
+    
+    # !+action_url(mr, jul-2010) - throughout bungeni UI, defined only here
+    @property
     def action_url(self):
         # this avoids that "POST"ed forms get a "@@index" appended to action URL
         return ""
+    # !+action_method(mr, jul-2010) - throughout bungeni UI, defined only here
+    @property
     def action_method(self):
         # XXX - for forms that only View information, this should return "get"
         # e.g. business / questions / <q> / versions / Show Differences
         return "post"
     
-    @form.action(label=_("New Version"), condition=has_write_permission)
+    @formlib.form.action(label=_("New Version"), condition=has_write_permission)
     def handle_new_version( self, action, data ):
         self._versions.create( message = data["commit_message"], manual=True )
         self.status = _(u"New Version Created")
 
-    @form.action(label=_("Revert To"), condition=has_write_permission)
+    @formlib.form.action(label=_("Revert To"), condition=has_write_permission)
     def handle_revert_version( self, action, data):
         selected = getSelected( self.selection_column, self.request )
         if len(selected) != 1:
@@ -154,7 +166,7 @@ class VersionLogView(BaseForm):
         self._versions.revert( version, message )
         self.status = (_(u"Reverted to Previous Version %s") %(version.version_id))
 
-    @form.action(
+    @formlib.form.action(
         label=_("Show Differences"), name="diff",
         validator=lambda form, action, data: ())
     def handle_diff_version( self, action, data):
@@ -177,13 +189,13 @@ class VersionLogView(BaseForm):
                 target = t
         except IndexError:
             target = context
-        view = DiffView(source, target, self.request)
+        diff_view = DiffView(source, target, self.request)
         
-        self.extra = view(
+        self.diff_view = diff_view(
             *filter(IIModelInterface.providedBy, interface.providedBy(context)))
         
         log.debug("handle_diff_version: source=%s target=%s \n%s" % (
-                        source, target, self.extra))
+                        source, target, self.diff_view))
 
 
     def setUpWidgets( self, ignore_request=False):
@@ -199,7 +211,7 @@ class VersionLogView(BaseForm):
         if not self.has_write_permission(self.context):
             self.form_fields = self.form_fields.omit("commit_message")
         self.adapters = {}
-        self.widgets = form.setUpDataWidgets(
+        self.widgets = formlib.form.setUpDataWidgets(
             self.form_fields, self.prefix, self.context, self.request,
             ignore_request = ignore_request )
         
@@ -229,10 +241,6 @@ class VersionLogView(BaseForm):
 # This implementation also removes all dependencies on the z3c.schemadiff
 # package, that may therefore be removed.
 # 
-
-from bungeni.ui import z3evoque
-from bungeni.ui.diff import textDiff
-
 class DiffView(object):
 
     # evoque
