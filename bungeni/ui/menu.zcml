@@ -340,7 +340,6 @@
         title="Delete"
         order="10"
         permission="bungeni.event.Delete"
-        icon="++resource++ui-images/icon_delete.gif"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IHeading"
@@ -348,7 +347,6 @@
         action="delete"
         order="100"
         permission="bungeni.heading.Delete"
-        icon="++resource++ui-images/icon_delete.gif"
     />
 
   <browser:menuItem
@@ -601,7 +599,6 @@
         for="bungeni.models.interfaces.IGroupSitting"
         title="Delete Sitting"
         action="./delete"
-        icon="++resource++ui-images/icon_delete.gif"
         permission="bungeni.sitting.Delete"
     />
     <!-- !+ ??: 
@@ -653,7 +650,6 @@
         title="Delete"
         order="10"
         permission="bungeni.mp.Delete"
-        icon="++resource++ui-images/icon_delete.gif"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IBungeniGroupMembership"
@@ -661,7 +657,6 @@
         title="Delete"
         order="10"
         permission="bungeni.groupmember.Delete"
-        icon="++resource++ui-images/icon_delete.gif"
     />
       
     <browser:menuItem menu="plone_contentmenu"
@@ -788,7 +783,6 @@
         title="Delete"
         action="./delete"
         permission="bungeni.consignatory.Delete"
-        icon="++resource++ui-images/icon_delete.gif"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
@@ -819,7 +813,6 @@
         for="bungeni.models.interfaces.IParliamentSession"
         title="Delete Session"
         action="./delete"
-        icon="++resource++ui-images/icon_delete.gif"
         permission="bungeni.session.Delete"
     />
 
@@ -940,7 +933,6 @@
      for="bungeni.models.domain.ScheduledItemDiscussion"
      title="Edit Discussion"
      action="./edit"
-     icon="++resource++ui-images/icon_edit.gif"
      permission="bungeni.itemschedulediscussion.Edit"
      />
 
@@ -949,7 +941,6 @@
      for="bungeni.models.interfaces.IGroupSitting"
      title="Schedule Item"
      action="./items/add"
-     icon="++resource++ui-images/icon_add.png"
      permission="bungeni.itemschedule.Add"
      />
 
@@ -958,7 +949,6 @@
      for="bungeni.models.interfaces.IGroupSitting"
      title="Remove Scheduled Item"
      action="./items/delete"
-     icon="++resource++ui-images/icon_delete.gif"
      permission="bungeni.itemschedule.Add"
      />
 
@@ -967,7 +957,6 @@
      for="bungeni.models.interfaces.IGroupSitting"
      title="Reorder Schedulings"
      action="./items/reorder"
-     icon="++resource++ui-images/icon_reorder.png"
      permission="bungeni.sitting.Reorder"
      />
 
@@ -986,7 +975,6 @@
         action="./edit?next_url=..."
         order="40"
         permission="bungeni.itemschedule.Edit"
-        icon="++resource++ui-images/icon_edit.gif"
     />
     <browser:menuItem menu="scheduling_actions"
         for="bungeni.models.interfaces.IItemSchedule"
@@ -994,7 +982,6 @@
         action="./delete?next_url=..."
         order="41"
         permission="bungeni.itemschedule.Delete"
-        icon="++resource++ui-images/icon_delete.gif"
     />
 
   <browser:menuItem
@@ -1167,7 +1154,6 @@
         />
         <browser:menuItem action="delete" title="Delete" order="10"
             permission="bungeni.bill.Delete"
-            icon="++resource++ui-images/icon_delete.gif"
         />
     </browser:menuItems>
     
@@ -1187,7 +1173,6 @@
         />
         <browser:menuItem action="delete" title="Delete" order="10"
             permission="bungeni.question.Delete"
-            icon="++resource++ui-images/icon_delete.gif"
         />
         <browser:menuItem action="respond" title="Respond" order="10"
             permission="bungeni.response.Edit"
@@ -1209,7 +1194,6 @@
         title="Delete"
         order="10"
         permission="bungeni.motion.Delete"
-        icon="++resource++ui-images/icon_delete.gif"
     />
  
   <browser:menuItem
@@ -1228,7 +1212,6 @@
         title="Delete"
         order="10"
         permission="bungeni.tableddocument.Delete"
-        icon="++resource++ui-images/icon_delete.gif"
      />
      
   <browser:menuItem
@@ -1246,7 +1229,6 @@
         title="Delete"
         order="10"
         permission="bungeni.agendaitem.Delete"
-        icon="++resource++ui-images/icon_delete.gif"
     />
     
   <browser:menuItem
@@ -1298,7 +1280,6 @@
         title="Delete"
         order="10"
         permission="bungeni.parliament.Delete"
-        icon="++resource++ui-images/icon_delete.gif"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IOffice"
@@ -1306,7 +1287,6 @@
         title="Delete"
         order="10"
         permission="bungeni.office.Delete"
-        icon="++resource++ui-images/icon_delete.gif"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.ICommittee"
@@ -1314,7 +1294,6 @@
         title="Delete"
         order="10"
         permission="bungeni.committee.Delete"
-        icon="++resource++ui-images/icon_delete.gif"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IPoliticalParty"
@@ -1322,7 +1301,6 @@
         title="Delete"
         order="10"
         permission="bungeni.party.Delete"
-        icon="++resource++ui-images/icon_delete.gif"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IPoliticalGroup"
@@ -1330,7 +1308,6 @@
         title="Delete"
         order="10"
         permission="bungeni.party.Delete"
-        icon="++resource++ui-images/icon_delete.gif"
     />
   <browser:menuItem
      menu="context_actions"
@@ -1356,7 +1333,6 @@
         title="Delete"
         order="10"
         permission="bungeni.government.Delete"
-        icon="++resource++ui-images/icon_delete.gif"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IMinistry"
@@ -1364,7 +1340,6 @@
         title="Delete"
         order="10"
         permission="bungeni.ministry.Delete"
-        icon="++resource++ui-images/icon_delete.gif"
     />
 
   <browser:menuItem
@@ -1376,8 +1351,6 @@
      order="20"
      />
   
-
-
      
    <browser:menuItem
      menu="context_actions"

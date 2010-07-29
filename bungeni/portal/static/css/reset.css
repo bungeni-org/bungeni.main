@@ -640,7 +640,7 @@ input.inputLabelActive {
     padding: 0;
     border: 1px solid #aaf;
     background: #bdd1d7;
-    height: 18px;
+    height: 1.8em;
 }
 .template-workspace .contentActions ul {
     margin: 0;
@@ -648,11 +648,10 @@ input.inputLabelActive {
     border: 0 none;
 }
 .template-workspace .contentActions ul li {
-    height: 18px;
-    line-height: 18px;
+    height: 1.8em;
+    line-height: 1.8em;
     border: 0 none;
     border-left: 1px solid #aaf;
-    border-right: 1px solid #aaf;
 }
 .template-workspace .actionMenu .actionMenuContent {
     width: 100%;
@@ -667,18 +666,16 @@ input.inputLabelActive {
 }
 .template-workspace .actionMenu .actionMenuContent ul li {
     margin: 0;
-    padding: 0;
     border: 0 none;
-    border-bottom: 1px solid #aaf;
     display: block;
+    border-bottom: 1px solid #aaf;
 }
 .template-workspace .actionMenu .actionMenuContent ul li a {
     background: none;
     color: #000;
     display: block;
-    line-height: 18px;
     margin: 0;
-    padding: 0 .15em;
+    padding: 0 .25em;
 }
 .template-workspace .actionMenu .actionMenuContent ul li a:hover {
     background: #cceaf3;
@@ -707,6 +704,13 @@ input.inputLabelActive {
     line-height: 20px;
     text-shadow: 0px 0px 1px #fff;
     color: #222;
+}
+.template-workspace div.main-column h1.reportmaintitle,
+.template-workspace div.main-column h1.reportdoctype {
+	clear: both;
+	margin: .25em 0;
+	text-align: left;
+	font-size: 125%;
 }
 .template-workspace div.main-column h2 {
     display: block;
@@ -1582,4 +1586,41 @@ div.calendar th.description a,
 div.calendar span.sitting-type,
 div.calendar div.sitting {
     color: #444;
+}
+
+dl#context_actions.actionMenu .actionMenuHeader {
+	display: none;
+}
+dl#context_actions.actionMenu.deactivated .actionMenuContent {
+	display: block !important;
+	position: relative;
+	margin: 0;
+	padding: 0;
+	top: auto;
+	left: auto;
+}
+dl#context_actions.actionMenu .actionMenuContent ul {
+	margin: 0;
+	padding: 0;
+	border: 0 none;
+}
+dl#context_actions.actionMenu .actionMenuContent ul li {
+	float: left;
+}
+dl#context_actions.actionMenu .actionMenuContent ul li a {
+	padding: 0;
+	margin: 0 .25em;
+}
+.template-workspace dl#context_actions.actionMenu .actionMenuContent ul li a.selected,
+.template-workspace dl#context_actions.actionMenu .actionMenuContent ul li a:hover {
+	border-right: 1px solid #aaf;
+	background-color: #6CA6CD !important;
+}
+
+span.yui-button.yui-link-button span a {
+	padding: 0 3px;
+	line-height: 1.5em;
+	height: 1.5em;
+	min-height: 1.5em;
+	font-size: 90%;	
 }

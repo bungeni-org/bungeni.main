@@ -66,6 +66,7 @@
 */
 .contentActions {
     background-color: #cde2a7;
+	border: 1px solid #aaa;
     border-left: 1px solid #74ae0b;
     border-right: 1px solid #74ae0b;
     color: #578308;
@@ -74,21 +75,22 @@
     padding: 0 0 0 1em;
     z-index: 2;
     position:relative;
-    height: 1.6em;
+    height: 1.8em !important;
 }
-.contentActions ul,
-.contentActions li {
+.contentActions ul {
     margin: 0;
     list-style: none;
     list-style-image: none;
-    color: Black;
+    color: #000;
     text-align: left;
-    line-height: 1.6em;
 }
 .contentActions li {
-    float: right;
+    height: 1.8em;
+    line-height: 1.8em;
     z-index: 4;
     border-left: 1px solid #74ae0b;
+	display: block;
+    float: right;
 }
 .contentActions li.context_actions {
     float: left;
@@ -137,7 +139,7 @@
     display: none;
     z-index: 5;
     position: absolute;
-    top: 1.6em;
+    top: 1.8em;
     right: -1px;
     height: auto;
     padding: 0;
@@ -163,6 +165,7 @@
     border-style: none solid solid solid;
     margin: -2px 0 0 0;
     padding: 0;
+	border: 0 none;
 }
 .actionMenu .actionMenuContent li {
     float: none;
@@ -170,26 +173,134 @@
     display: inline;
     padding: 0;
     margin: 0;
-    border: 0;
+    border: 0 none;
+    display: block;
+    border-bottom: 1px solid #aaa;
 }
 .actionMenu .actionMenuContent li a {
     display: block;
     white-space: nowrap;
-    margin: 0.2em 0;
+    margin: 0;
+    padding: 0 .25em;
+	border: 0 none;
 }
 .actionMenu .actionMenuContent .selected {
     display: block;
     white-space: nowrap;
-    padding: 0 0.5em;
-    margin: 0.2em 0;
+    padding: 0 .5em;
+    margin: 0;
 }
 .actionMenu .actionMenuContent li a:hover {
     background-color: #74ae0b;
-    color: White;
+    color: #fff;
 }
 .actionMenu .actionMenuContent .actionSeparator a {
     padding-top: 0.2em;
     border-top: 1px solid #74ae0b;
+}
+
+dl#add_content dt a {
+	padding-left: 22px;
+	background: transparent url(images/plus_16.png) 2px 2px no-repeat;
+}
+dl#reports dt a {
+	padding-left: 22px;
+	background: transparent url(images/clipboard.png) 2px 2px no-repeat;
+}
+dl#plone-contentmenu-workflow dt a {
+	padding-left: 22px;
+	background: transparent url(images/clock_16.png) 2px 2px no-repeat;
+}
+dl#plone-contentmenu-translation dt a {
+	padding-left: 22px;
+	background: transparent url(images/flag_grey.png) 2px 2px no-repeat;
+}
+dl#plone-contentmenu-calendar dt a {
+	padding-left: 22px;
+	background: transparent url(images/calendar_2.png) 2px 2px no-repeat;
+}
+
+dl#context_actions.actionMenu .actionMenuHeader {
+	display: none;
+}
+dl#context_actions.actionMenu.deactivated .actionMenuContent {
+	display: block !important;
+	position: relative;
+	margin: 0;
+	padding: 0;
+	top: auto;
+	left: auto;
+}
+dl#context_actions.actionMenu .actionMenuContent ul {
+	margin: 0;
+	padding: 0;
+	border: 0 none;
+}
+dl#context_actions.actionMenu .actionMenuContent ul li {
+	float: left;
+	margin: 0 .25em;
+}
+dl#context_actions.actionMenu .actionMenuContent ul li a {
+	padding: 0;
+	margin: 0;
+    height: 1.8em;
+	line-height: 1.8em;
+	border: 0 none;
+    border-left: 1px solid #aaa;
+    border-right: 1px solid #aaa;
+}
+dl#context_actions.actionMenu .actionMenuContent ul li a.selected,
+dl#context_actions.actionMenu .actionMenuContent ul li a:hover {
+	border-right: 1px solid #090;
+	background-color: #A2CD5A !important;
+	color: #fff !important;
+}
+dl#context_actions.actionMenu .actionMenuContent ul li a#view,
+dl#context_actions.actionMenu .actionMenuContent ul li a#schedule,
+dl#context_actions.actionMenu .actionMenuContent ul li a#edit,
+dl#context_actions.actionMenu .actionMenuContent ul li a#calendar,
+dl#context_actions.actionMenu .actionMenuContent ul li a#versions,
+dl#context_actions.actionMenu .actionMenuContent ul li a#workflow,
+dl#context_actions.actionMenu .actionMenuContent ul li a#audit-log,
+dl#context_actions.actionMenu .actionMenuContent ul li a#odt,
+dl#context_actions.actionMenu .actionMenuContent ul li a#pdf,
+dl#context_actions.actionMenu .actionMenuContent ul li a#delete  {
+	padding: 0 .5em;
+	margin: 0;
+	float: left;
+	display: block;
+	padding-left: 22px;
+	background: transparent 2px 2px no-repeat;
+}
+dl#context_actions.actionMenu .actionMenuContent ul li a#view {
+	background-image: url(images/info_16.png);
+}
+dl#context_actions.actionMenu .actionMenuContent ul li a#delete {
+	background-image: url(images/cross.png);
+}
+dl#context_actions.actionMenu .actionMenuContent ul li a#schedule {
+	background-image: url(images/calendar_2.png);
+}
+dl#context_actions.actionMenu .actionMenuContent ul li a#edit {
+	background-image: url(images/page_white_edit.png);
+}
+dl#context_actions.actionMenu .actionMenuContent ul li a#calendar {
+	background-image: url(images/calendar.png);
+}
+dl#context_actions.actionMenu .actionMenuContent ul li a#versions {
+	background-image: url(images/page_2_copy.png);
+}
+dl#context_actions.actionMenu .actionMenuContent ul li a#workflow {
+	background-image: url(images/chart_line.png);
+}
+dl#context_actions.actionMenu .actionMenuContent ul li a#audit-log {
+	background-image: url(images/page_white_database.png) ;
+}
+dl#context_actions.actionMenu .actionMenuContent ul li a#odt {
+	background-image: url(images/ODF_16x16.png);
+}
+dl#context_actions.actionMenu .actionMenuContent ul li a#pdf {
+	background-image: url(images/PDF_16x16.png) ;
 }
 #templateMenu li a {
     padding-left: 16px;
