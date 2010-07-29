@@ -583,11 +583,11 @@ items_schedule = rdb.Table("items_schedule", metadata,
     rdb.Column("schedule_id", rdb.Integer, primary_key=True),
     rdb.Column("item_id", rdb.Integer,
         rdb.ForeignKey("parliamentary_items.parliamentary_item_id"), 
-        nullable=True
+        nullable=False
     ),
     rdb.Column("sitting_id", rdb.Integer, 
         rdb.ForeignKey("group_sittings.sitting_id"), 
-        nullable=True
+        nullable=False
     ),
     rdb.Column("planned_order", rdb.Integer, 
         rdb.Sequence("planned_order", 0, 1)
