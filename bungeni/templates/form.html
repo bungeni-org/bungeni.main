@@ -30,7 +30,7 @@ when output=False, dumps out GLOBALS, LOCALS, EXPRESSIONS to
 evoque_domain.log.info() i.e. evoque logger level should be INFO.
 See: http://evoque.gizmojo.org/syntax/
 
-${ unicode(inspect(output=False)) }
+${ inspect(output=False) }
 -->
 ]#
 
@@ -99,6 +99,8 @@ ${ unicode(inspect(output=False)) }
            only in /src/alchemist.ui/alchemist/ui/templates/subform.pt 
         ]#
         $begin{ fieldset }
+            $prefer{ data=dict(side_by_side=False) }
+            
             #[ !+came_from(mr) only set as a QS variable in portal/login.py ]#
             $if{ getattr(view, "came_from", None) }
             <input type="hidden" name="came_from" value="${ view.came_from }" />
@@ -114,32 +116,22 @@ ${ unicode(inspect(output=False)) }
             $begin{ top_fieldset } $end{ top_fieldset }
             $evoque{ #top_fieldset }
             ]#
-
-            #[ !+side_by_side(mr) / getattr(view, "side_by_side", False) 
-                Only the ui.forms.common.TranslateForm (in Edit mode!) defines 
-                a "side_by_side" property.
-                
-                The TranslateForm views should specifiy a separate template to
-                support side_by_side rendering, as opposed to shackle all 
-                form views with this additional overhead.
-            ]#
-            $if{ getattr(view, "side_by_side", False) } 
+            
+            $if{ side_by_side } 
             <table class="listing side-by-side" style="table-layout: fixed">
             $fi
-            
             #[ !+widget_groups(mr) redefine on BaseForm to return fallback ]#
             $for{ name in view.widget_groups or dict(fallback=view.widgets) }
-                $if{ view.legends and view.legends.get(name) } 
+                $if{ view.legends and view.legends.get(name) }
                 <fieldset>
                     <legend>${ i18n(view.legends.get(name)) }</legend>
                 $fi
-                
                 $for{ widget in 
                        (view.widget_groups or dict(fallback=view.widgets)
                        ).get(name) 
                     }
                     $if{ widget.visible }
-                        $if{ not getattr(view, "side_by_side", False) }
+                        $if{ not side_by_side }
                         <div class="field widget-${
                                         widget.__class__.__name__.lower() }">
                             $evoque{ #widget_header }
@@ -189,13 +181,13 @@ ${ unicode(inspect(output=False)) }
                 </fieldset>
                 $fi
             $rof
-            
-            $if{ getattr(view, "side_by_side", False) }
+            $if{ side_by_side }
             </table>
             $fi
-        
         $end{ fieldset }
-        $evoque{ #fieldset }
+        $evoque{ #fieldset, 
+            side_by_side=getattr(view, "side_by_side", False)
+        }
         
         #[ !+fieldset_name(mr) 
            there are NO bungeni forms with a "fieldset_name" attr !!
@@ -230,4 +222,23 @@ $begin{ page }
         </div>
     $end{ content }
 $end{ page }
+
+
+#[ 
+    !+form.html(mr) would require that all usage of "form.html#form" 
+    be changed to use "form.html" instead.
+
+    This basically allows that the "form.html" template is evoked directly,
+    that will thus simply delegate to evoking the appropriate nexsted template.
+    
+    We can also pre-define variables as needed to pass down e.g. here we
+    define "invariantMessages" (that is thus calculated once instead of
+    the view.invariantMessages property being called on each use.
+
+$evoque( #form, 
+    invariantMessages=view.invariantMessages,
+    fieldset_name=getattr(view, "fieldset_name", None)
+}
+
+]#
 

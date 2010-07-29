@@ -16,15 +16,15 @@ from zope.location.interfaces import ILocation
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 #from zope.formlib.namedtemplate import NamedTemplate
 from zope.container.contained import ObjectRemovedEvent
-from zope.app.pagetemplate import ViewPageTemplateFile
+#from zope.app.pagetemplate import ViewPageTemplateFile
 import sqlalchemy as rdb
 from ore.alchemist import Session
 from alchemist.catalyst import ui
 from alchemist.ui.core import null_validator
 from ore.alchemist.model import queryModelDescriptor
-from ore.alchemist.container import stringKey
-from ore.workflow.interfaces import IWorkflowInfo
-from alchemist.ui.core import handle_edit_action
+#from ore.alchemist.container import stringKey
+#from ore.workflow.interfaces import IWorkflowInfo
+#from alchemist.ui.core import handle_edit_action
 from alchemist.ui.core import setUpFields
 from alchemist.ui.core import unique_columns
 from zope.app.form.interfaces import IDisplayWidget
@@ -40,7 +40,7 @@ from bungeni.core.translation import get_default_language
 from bungeni.core.translation import is_translation
 from bungeni.core.translation import get_translation_for
 from bungeni.core.translation import CurrentLanguageVocabulary
-from bungeni.core.interfaces import IVersioned
+#from bungeni.core.interfaces import IVersioned
 from bungeni.models.interfaces import IVersion, IBungeniContent
 from bungeni.models import domain
 from bungeni.ui.forms.fields import filterFields
@@ -256,8 +256,8 @@ class AddForm(BaseForm, ui.AddForm):
     interface.implements(ILocation, IDCDescriptiveProperties)
     description = None
     
-    def getDomainModel( self ):
-        return getattr( self.context, "domain_model", self.context.__class__)
+    def getDomainModel(self):
+        return getattr(self.context, "domain_model", self.context.__class__)
     
     def validate(self, action, data):
         errors = super(AddForm, self).validate(action, data)
@@ -278,8 +278,8 @@ class AddForm(BaseForm, ui.AddForm):
         domain_model = removeSecurityProxy(self.getDomainModel())
         
         # find unique columns in data model.. TODO do this statically
-        mapper = rdb.orm.class_mapper( domain_model  )
-        ucols = list( unique_columns( mapper ) )
+        mapper = rdb.orm.class_mapper(domain_model)
+        ucols = list(unique_columns(mapper))
 
         # query out any existing values with the same unique values,
         session = Session()
@@ -287,8 +287,8 @@ class AddForm(BaseForm, ui.AddForm):
         for key, col in ucols:
             if key in data:
                 # on edit ignore new value if its the same as the previous value
-                if isinstance( self.context, domain_model ) \
-                   and data[key] == getattr( self.context, key, None):
+                if isinstance(self.context, domain_model) \
+                   and data[key] == getattr(self.context, key, None):
                    continue
                 value = session.query(domain_model
                     ).filter(col == data[key]).count()
@@ -299,7 +299,7 @@ class AddForm(BaseForm, ui.AddForm):
                     widget.name, widget.label, 
                     _(u"Duplicate Value for Unique Field"))
                 widget._error = error
-                errors.append( error )
+                errors.append(error)
         return errors
     
     def filter_fields(self):
@@ -325,12 +325,12 @@ class AddForm(BaseForm, ui.AddForm):
         return self.domain_model
     
     @property
-    def type_name( self ):
+    def type_name(self):
         descriptor = queryModelDescriptor(self.domain_model)
         if descriptor:
             name = getattr(descriptor, "display_name", None)
         if not name:
-            name = getattr( self.domain_model, "__name__", None)
+            name = getattr(self.domain_model, "__name__", None)
         return name
     
     @property
@@ -369,7 +369,7 @@ class AddForm(BaseForm, ui.AddForm):
                 "?portal_status_message=%s added" % name
         
     @formlib.form.action(_(u"Cancel"), validator=null_validator)
-    def handle_cancel( self, action, data ):
+    def handle_cancel(self, action, data):
         """Cancelling redirects to the listing."""
         session = Session()
         if not self._next_url:
@@ -378,19 +378,19 @@ class AddForm(BaseForm, ui.AddForm):
         session.close()
         
     @formlib.form.action(_(u"Save"), condition=formlib.form.haveInputWidgets)
-    def handle_add_edit( self, action, data ):
+    def handle_add_edit(self, action, data):
         for key in data.keys():
             if isinstance(data[key], str): 
                 data[key] = unescape(data[key])
         ob = self.createAndAdd(data)
         name = self.context.domain_model.__name__
         if not self._next_url:
-            self._next_url = url.absoluteURL(ob, self.request ) + \
+            self._next_url = url.absoluteURL(ob, self.request) + \
                              "/edit?portal_status_message=%s Added" % name
 
     @formlib.form.action(
         _(u"Save and add another"), condition=formlib.form.haveInputWidgets)
-    def handle_add_and_another(self, action, data ):
+    def handle_add_and_another(self, action, data):
         for key in data.keys():
             if isinstance(data[key], str): 
                 data[key] = unescape(data[key])
@@ -495,17 +495,15 @@ class EditForm(BaseForm, ui.EditForm):
 
                 # attach widget as ``render_original``
                 widget.render_original = display_widget
-
-
+    
     @formlib.form.action(_(u"Save"), condition=formlib.form.haveInputWidgets)
-    def handle_edit_save( self, action, data ):
+    def handle_edit_save(self, action, data):
         """Saves the document and goes back to edit page"""
         for key in data.keys():
             if isinstance(data[key], str): 
                 data[key] = unescape(data[key])
         formlib.form.applyChanges(self.context, self.form_fields, data)
-
-
+    
     @formlib.form.action(
         _(u"Save and view"), condition=formlib.form.haveInputWidgets)
     def handle_edit_save_and_view(self, action, data):
@@ -520,7 +518,7 @@ class EditForm(BaseForm, ui.EditForm):
         self.request.response.redirect(self._next_url)
  
     @formlib.form.action(_(u"Cancel"), validator=null_validator)
-    def handle_edit_cancel( self, action, data ):
+    def handle_edit_cancel(self, action, data):
         """Cancelling redirects to the listing."""
         for key in data.keys():
             if isinstance(data[key], str): 
@@ -530,6 +528,7 @@ class EditForm(BaseForm, ui.EditForm):
             self._next_url = url.absoluteURL(self.context, self.request) 
         self.request.response.redirect(self._next_url)
         session.close()
+
 
 class TranslateForm(AddForm):
     """Custom translate-form for Bungeni content.
@@ -589,10 +588,7 @@ class TranslateForm(AddForm):
                 default=u'The document "$title" has not yet been translated into $language. Use this form to add the translation',
                 mapping={"title": translate(props.title, context=self.request),
                          "language": language})
-
-
-
-
+    
     @property
     def title(self):
         language = get_language_by_name(self.language)["name"]
@@ -603,8 +599,7 @@ class TranslateForm(AddForm):
     @property
     def domain_model(self):
         return type(removeSecurityProxy(self.context))
-
-
+    
     def setUpWidgets(self, ignore_request=False):
         self.set_untranslatable_fields_for_display()
         
@@ -662,13 +657,10 @@ class TranslateForm(AddForm):
 
             # attach widget as ``render_original``
             widget.render_original = display_widget
-
-
-            
-
+    
     @formlib.form.action(
         _(u"Save translation"), condition=formlib.form.haveInputWidgets)
-    def handle_add_save(self, action, data ):
+    def handle_add_save(self, action, data):
         """After succesful creation of translation, redirect to the
         view."""
         for key in data.keys():
@@ -677,7 +669,7 @@ class TranslateForm(AddForm):
             
         #url = url.absoluteURL(self.context, self.request)
         
-        language = get_language_by_name(data["language"])["name"]
+        #language = get_language_by_name(data["language"])["name"]
 
         
         session = Session()
