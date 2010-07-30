@@ -21,17 +21,19 @@ $end{ widget_header }
 
 
 $begin{ form }
+$if{ devmode }<!-- template: bungeni/templates/form.html#form -->$fi
 #[ !+i18n_domain(mr) 
     orig ZPT "form" macro declares i18n:domain="alchemist" ?!? 
 ]#
 #[
-<!-- inspect(output=True) -:-
+inspect(output=True) -:-
 when output=False, dumps out GLOBALS, LOCALS, EXPRESSIONS to 
 evoque_domain.log.info() i.e. evoque logger level should be INFO.
-See: http://evoque.gizmojo.org/syntax/
+See: http://evoque.gizmojo.org/syntax/ 
 
+$if{ devmode }<!--
 ${ inspect(output=False) }
--->
+-->$fi
 ]#
 
     #[ !+form_description(mr)
@@ -215,6 +217,7 @@ $end{ form }
 $begin{ page }
     $overlay{ bungeni.html }
     $begin{ content }
+        $if{ devmode }<!-- template: bungeni/templates/form.html#content -->$fi
         <div>
         #[ !+form_name(mr, jul-2010) shouldn't this just be view.page_title? ]#
         <h1>${ i18n(getattr(view, "form_name", " ")) }</h1>
@@ -229,7 +232,7 @@ $end{ page }
     be changed to use "form.html" instead.
 
     This basically allows that the "form.html" template is evoked directly,
-    that will thus simply delegate to evoking the appropriate nexsted template.
+    that will thus simply delegate to evoking the appropriate nested template.
     
     We can also pre-define variables as needed to pass down e.g. here we
     define "invariantMessages" (that is thus calculated once instead of

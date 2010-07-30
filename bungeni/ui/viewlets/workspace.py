@@ -51,7 +51,6 @@ class WorkspaceViewletManager(WeightOrderedViewletManager):
 
     def update(self):
         super(WorkspaceViewletManager, self).update()
-        self.devmode = common.has_feature("devmode")
          
 
 class WorkspaceContextNavigation(StructureAwareViewlet):

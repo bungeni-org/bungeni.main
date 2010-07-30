@@ -30,7 +30,7 @@ from bungeni.core.content import QueryContent
 from bungeni.core.i18n import _
 from bungeni.models.utils import get_current_parliament
 from bungeni.models.utils import container_getter
-import bungeni.ui.utils.url
+from bungeni.ui.utils import url, common
 
 
 def onWSGIApplicationCreatedEvent(application, event):
@@ -68,8 +68,8 @@ class AppSetup(object):
         from bungeni.ui import z3evoque
         z3evoque.set_get_gettext()
         z3evoque.setup_evoque()
-        z3evoque.domain.set_on_globals(
-            "absoluteURL", bungeni.ui.utils.url.absoluteURL)
+        z3evoque.domain.set_on_globals("devmode", common.has_feature("devmode"))
+        z3evoque.domain.set_on_globals("absoluteURL", url.absoluteURL)
         
         # !+ where is the view name for the app root (slash) set?
         

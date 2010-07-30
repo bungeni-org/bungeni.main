@@ -2,6 +2,7 @@
 
 #[ was: ui/viewlets/templates/breadcrumbs.pt ]#
 $begin{breadcrumbs}
+$if{ devmode }<!-- template: bungeni/templates/navigation.html#breadcrumbs -->$fi
 <div id="portal-breadcrumbs">
     <span id="breadcrumbs-you-are-here">${ i18n("you_are_here") }#[ 
                                                     You are here: ]#</span>
@@ -17,6 +18,7 @@ $end{breadcrumbs}
 
 #[ was: ui/viewlets/templates/secondary-navigation.pt ]#
 $begin{secondary}
+$if{ devmode }<!-- template: bungeni/templates/navigation.html#secondary -->$fi
 $for{ item in view.items }
 <li class="navigation$if{item['selected']} selected$fi">
     <a href="${item['url']}">${ i18n(item["title"]) }</a>
@@ -27,6 +29,7 @@ $end{secondary}
 
 #[ was: ui/viewlets/templates/sections.pt ]#
 $begin{sections}
+$if{ devmode }<!-- template: bungeni/templates/navigation.html#sections -->$fi
 $if{ view.portal_tabs }
 <h5 class="hiddenStructure">${ i18n("heading_sections") }#[ Sections ]#</h5>
 <ul id="portal-globalnav">
@@ -46,6 +49,7 @@ $end{sections}
 #[ was: ui/viewlets/templates/bungeni-navigation-tree.pt ]#
 #[ !+ requires evoque svn HEAD ]#
 $begin{tree}
+$if{ devmode }<!-- template: bungeni/templates/navigation.html#tree -->$fi
 <dl class="portlet portletNavigationTree">
   <dt class="portletHeader">
     <span class="portletTopLeft"></span>

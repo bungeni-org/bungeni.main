@@ -31,6 +31,7 @@
 
       <metal:block define-macro="form"
                    i18n:domain="alchemist">
+<!-- template: bungeni/ui/forms/templates/form.pt -->
 <!-- !+DEFINE-MACRO-FORM(mr, jul-2010) ui/forms/templates/form.pt START line34 -->
 
         <p class="documentDescription"

@@ -1,10 +1,10 @@
 #[ $Id$ ]#
 #[ was: ui/forms/templates/delete.pt ]#
 
-
 $overlay{ bungeni.html }
 
 $begin{ content }
+$if{ devmode }<!-- template: bungeni/templates/delete.html#content -->$fi
 <div>
     <h1>${ i18n("Delete item confirmation") }</h1>
     $begin{ form }

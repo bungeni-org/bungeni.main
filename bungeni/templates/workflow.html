@@ -5,6 +5,7 @@
 $begin{main}
     $overlay{ bungeni.html }
     $begin{content}
+    $if{ devmode }<!-- template: bungeni/templates/workflow.html#content -->$fi
         <h1>${ i18n(view.page_title) }</h1>
         #[ i18n:name="state" ]#
         <p>${ i18n("Current state:") } <em>${ view.get_wf_state() }</em></p>
