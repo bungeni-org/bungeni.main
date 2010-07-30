@@ -18,9 +18,9 @@ from zope.lifecycleevent import ObjectCreatedEvent
 from zope import interface
 from zope import component
 from zope import schema
+from zope import formlib
 from zope.i18n import translate
-from zope.formlib import form
-from zope.formlib import namedtemplate
+#from zope.formlib import namedtemplate
 from zope.location.interfaces import ILocation
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.publisher.browser import BrowserView
@@ -40,13 +40,14 @@ from zope.app.form.browser import MultiCheckBoxWidget as _MultiCheckBoxWidget
 #from zope.publisher.interfaces.http import IResult, IHTTPRequest
 #from zope.publisher.http import DirectResult
 
+import bungeni.ui
 from bungeni.ui.widgets import SelectDateWidget
 from bungeni.ui.calendar import utils
 from bungeni.ui.tagged import get_states
 from bungeni.ui.i18n import _
-from bungeni.ui.utils import misc, url as ui_url, queries, debug
+from bungeni.ui.utils import misc, url, queries, debug
 from bungeni.ui.menu import get_actions
-from bungeni.ui.forms.common import set_widget_errors
+from bungeni.ui.forms import common
 from bungeni.ui import vocabulary
 from bungeni.core.location import location_wrapped
 from bungeni.core.interfaces import ISchedulingContext
@@ -95,7 +96,7 @@ def get_sitting_items(sitting, request, include_actions=False):
     schedulings = map(
         removeSecurityProxy,
         sitting.items.batch(order_by=order, limit=None))
-    site_url = ui_url.absoluteURL(getSite(), request)
+    site_url = url.absoluteURL(getSite(), request)
     for scheduling in schedulings:
         item = ProxyFactory(location_wrapped(scheduling.item, sitting))
        
@@ -119,8 +120,8 @@ def get_sitting_items(sitting, request, include_actions=False):
             #'category_id': scheduling.category_id,
             #'category': scheduling.category,
             'discussion': discussion,
-            'delete_url': "%s/delete" % ui_url.absoluteURL(scheduling, request),
-            'url': ui_url.set_url_context(site_url+('/business/%ss/obj-%s' % (item.type, item.parliamentary_item_id)))}
+            'delete_url': "%s/delete" % url.absoluteURL(scheduling, request),
+            'url': url.set_url_context(site_url+('/business/%ss/obj-%s' % (item.type, item.parliamentary_item_id)))}
         
         if include_actions:
             record['actions'] = get_scheduling_actions(scheduling, request)
@@ -173,9 +174,9 @@ def create_sittings_map(sittings, request):
         proxied = ProxyFactory(sitting)
         
         if checkPermission(u"bungeni.agendaitem.Schedule", proxied):
-            link = "%s/schedule" % ui_url.absoluteURL(sitting, request)
+            link = "%s/schedule" % url.absoluteURL(sitting, request)
         else:
-            link = ui_url.absoluteURL(sitting, request)
+            link = url.absoluteURL(sitting, request)
         
         if checkPermission("zope.View", proxied):
             mapping[day, hour] = {
@@ -274,7 +275,7 @@ class DailyCalendarView(CalendarView):
         if template is None:
             template = self.template
 
-        calendar_url = ui_url.absoluteURL(self.context.__parent__, self.request)
+        calendar_url = url.absoluteURL(self.context.__parent__, self.request)
         date = removeSecurityProxy(self.context.date)
 
         sittings = self.context.get_sittings()
@@ -354,7 +355,7 @@ class GroupSittingScheduleView(BrowserView):
 
         container = self.context.__parent__
         #schedule_url = self.request.getURL()
-        container_url = ui_url.absoluteURL(container, self.request)
+        container_url = url.absoluteURL(container, self.request)
         
         # determine position in container
         key = stringKey(self.context)
@@ -375,7 +376,7 @@ class GroupSittingScheduleView(BrowserView):
         #session = Session()
         sitting_type_dc = IDCDescriptiveProperties(self.context.sitting_type)
 
-        site_url = ui_url.absoluteURL(getSite(), self.request)
+        site_url = url.absoluteURL(getSite(), self.request)
 
         return template(
             display="sitting",
@@ -421,12 +422,12 @@ class ItemScheduleOrder(BrowserView):
             setattr(sch, 'planned_order', i+1)
         session.commit()
 
+
 class SittingCalendarView(CalendarView):
     """Sitting calendar view."""
     
     def __init__(self, context, request):
         BrowserView.__init__(self, context, request)
-
 
 
 def verticalMultiCheckBoxWidget(field, request):
@@ -436,17 +437,20 @@ def verticalMultiCheckBoxWidget(field, request):
     widget.orientation='vertical'
     return widget 
 
+
 def horizontalMultiCheckBoxWidget(field, request):
     vocabulary = field.value_type.vocabulary
     widget = _MultiCheckBoxWidget(field, vocabulary, request)
     widget.cssClass = u"horizontalMultiCheckBoxWidget"
     widget.orientation='horizontal'
-    return widget 
-    
+    return widget
+
+
 #def MultiCheckBoxWidgetFactory(field, request):
 #            return _MultiCheckBoxWidget(
 #                field, field.vocabulary, request)
-                
+
+
 def availableItems(context):
     items = ('Bills',
                 'Agenda Items',
@@ -455,6 +459,7 @@ def availableItems(context):
                 'Tabled Documents',
                 )
     return SimpleVocabulary.fromValues(items)
+           
            
 def billOptions(context):
     items = ('Title',
@@ -465,12 +470,14 @@ def billOptions(context):
             )
     return SimpleVocabulary.fromValues(items)
 
+
 def agendaOptions(context):
     items = ('Title',
              'Text', 
              'Owner',
             )
     return SimpleVocabulary.fromValues(items)
+
 
 def motionOptions(context):
     items = ('Title',
@@ -480,6 +487,7 @@ def motionOptions(context):
             )
     return SimpleVocabulary.fromValues(items)
 
+
 def tabledDocumentOptions(context):
     items = ('Title',
              'Number', 
@@ -487,6 +495,7 @@ def tabledDocumentOptions(context):
              'Owner',
             )
     return SimpleVocabulary.fromValues(items)
+
 
 def questionOptions(context):
     items = ('Title',
@@ -498,7 +507,8 @@ def questionOptions(context):
             )
     return SimpleVocabulary.fromValues(items)
 
-class ReportingView(form.PageForm):
+
+class ReportingView(common.PageForm):
     """Reporting view base class.
 
     The context of the view is a scheduling context, which always
@@ -524,7 +534,6 @@ class ReportingView(form.PageForm):
     on the type of report. The ``get_sittings`` method will fetch the
     relevant sittings.
     """
-
     date = None
     display_minutes = None
     
@@ -544,8 +553,9 @@ class ReportingView(form.PageForm):
                 #raise RuntimeError(
                 #    "No scheduling context found.")
         if context is not None:
-            self.scheduling_context = context'''
-
+            self.scheduling_context = context
+        '''
+    
     class IReportingForm(interface.Interface):
         doc_type = schema.Choice(
                     title = _(u"Document Type"),
@@ -598,8 +608,13 @@ class ReportingView(form.PageForm):
                              'No'],
                     required=True
                     )
-    template = namedtemplate.NamedTemplate('alchemist.form')
-    form_fields = form.Fields(IReportingForm)
+    
+    # evoque
+    template = bungeni.ui.z3evoque.PageViewTemplateFile("form.html#page")
+    # zpt
+    #template = namedtemplate.NamedTemplate('alchemist.form')
+    
+    form_fields = formlib.form.Fields(IReportingForm)
     form_fields['item_types'].custom_widget = horizontalMultiCheckBoxWidget
     form_fields['date'].custom_widget = SelectDateWidget
     form_fields['bill_options'].custom_widget = verticalMultiCheckBoxWidget
@@ -608,9 +623,8 @@ class ReportingView(form.PageForm):
     form_fields['question_options'].custom_widget = verticalMultiCheckBoxWidget
     form_fields['tabled_document_options'].custom_widget = verticalMultiCheckBoxWidget
     odf_filename = None
-        
+    
     class IReportingForm2(interface.Interface):
-        
         item_types = schema.List(title=u'Items to include',
                    required=False,
                    value_type=schema.Choice(
@@ -641,9 +655,8 @@ class ReportingView(form.PageForm):
                                 required=False,
                                 description=u'Optional note regarding this report'
                         )
-                        
-    template = namedtemplate.NamedTemplate('alchemist.form')
-    form_fields2 = form.Fields(IReportingForm2)
+    
+    form_fields2 = formlib.form.Fields(IReportingForm2)
     form_fields2['item_types'].custom_widget = horizontalMultiCheckBoxWidget
     form_fields2['bill_options'].custom_widget = verticalMultiCheckBoxWidget
     form_fields2['agenda_options'].custom_widget = verticalMultiCheckBoxWidget
@@ -651,7 +664,6 @@ class ReportingView(form.PageForm):
     form_fields2['question_options'].custom_widget = verticalMultiCheckBoxWidget
     form_fields2['tabled_document_options'].custom_widget = verticalMultiCheckBoxWidget
     
-   
     def setUpWidgets(self, ignore_request=False):
         if IGroupSitting.providedBy(self.context):
             class context:
@@ -665,7 +677,7 @@ class ReportingView(form.PageForm):
             self.adapters = {
                     self.IReportingForm2: context
                 }
-            self.widgets = form.setUpEditWidgets(
+            self.widgets = formlib.form.setUpEditWidgets(
                     self.form_fields2, self.prefix, self.context, self.request,
                     adapters=self.adapters, ignore_request=ignore_request)
         elif ISchedulingContext.providedBy(self.context):
@@ -684,19 +696,17 @@ class ReportingView(form.PageForm):
             self.adapters = {
                     self.IReportingForm: context
                 }
-            self.widgets = form.setUpEditWidgets(
+            self.widgets = formlib.form.setUpEditWidgets(
                 self.form_fields, self.prefix, self.context, self.request,
                 adapters=self.adapters, ignore_request=ignore_request)
         else:
             raise NotImplementedError
-        
-        
-
+    
     def update(self):
         self.status = self.request.get('portal_status_message', '')
         super(ReportingView, self).update()
-        set_widget_errors(self.widgets, self.errors)
-
+        common.set_widget_errors(self.widgets, self.errors)
+    
     def validate(self, action, data):
         errors = super(ReportingView, self).validate(action, data)
         time_span = TIME_SPAN.daily
@@ -709,16 +719,16 @@ class ReportingView(form.PageForm):
                 time_span = TIME_SPAN.weekly
             elif data['doc_type'] == "Questions of the week":
                 time_span = TIME_SPAN.weekly
-       
+        
         if 'date' in data:
             start_date = data['date']
         else:
             start_date = self.date
         end_date = self.get_end_date(start_date, time_span)
-
+        
         parliament = queries.get_parliament_by_date_range(self, start_date, end_date)
         session = queries.get_session_by_date_range(self, start_date, end_date)
-
+        
         if parliament is None:
             errors.append(interface.Invalid(
                 _(u"A parliament must be active in the period"),
@@ -727,7 +737,7 @@ class ReportingView(form.PageForm):
         #    errors.append(interface.Invalid(
         #        _(u"A session must be active in the period."),
         #        "date"))
-
+        
         return errors
     
     def process_form(self, data):
@@ -886,39 +896,34 @@ class ReportingView(form.PageForm):
                         sitting_items.append(sitting)
             self.sitting_items = sitting_items
         if self.display_minutes:
-            self.link = ui_url.absoluteURL(self.context, self.request)+'/votes-and-proceedings'
+            self.link = url.absoluteURL(self.context, self.request)+'/votes-and-proceedings'
         else :
-            self.link = ui_url.absoluteURL(self.context, self.request)+'/agenda'
+            self.link = url.absoluteURL(self.context, self.request)+'/agenda'
         try:
             self.group = self.context.get_group()
         except:
             session = Session()
             self.group = session.query(domain.Group).get(self.context.group_id)
         if IGroupSitting.providedBy(self.context):
-            self.back_link = ui_url.absoluteURL(self.context, self.request)  + '/schedule'
+            self.back_link = url.absoluteURL(self.context, self.request)  + '/schedule'
         elif ISchedulingContext.providedBy(self.context):
-            self.back_link = ui_url.absoluteURL(self.context, self.request)
-            
+            self.back_link = url.absoluteURL(self.context, self.request)
     
-        
-    @form.action(_(u"Preview"))
+    @formlib.form.action(_(u"Preview"))
     def handle_preview(self, action, data):
         self.process_form(data)
         #import pdb; pdb.set_trace()
-        self.save_link = ui_url.absoluteURL(self.context, self.request)+"/save_report"
+        self.save_link = url.absoluteURL(self.context, self.request)+"/save_report"
         self.body_text = self.result_template()
         #import pdb; pdb.set_trace()
         return self.main_result_template()
-
-
+    
     def get_end_date(self, start_date, time_span):
         if time_span is TIME_SPAN.daily:
             return start_date + timedelta(days=1)
         elif time_span is TIME_SPAN.weekly:
             return start_date + timedelta(weeks=1)
-        
         raise RuntimeError("Unknown time span: %s" % time_span)
-
 
 
 class AgendaReportingView(ReportingView):
@@ -931,7 +936,6 @@ class AgendaReportingView(ReportingView):
     display_minutes = False
     main_result_template = ViewPageTemplateFile('main_reports.pt')
     result_template = ViewPageTemplateFile('reports.pt')
-    
     
     def get_sittings_items(self, start, end):
             """ return the sittings with scheduled items for 
@@ -1274,9 +1278,9 @@ class StoreReportView(BrowserView):
         rpm.grantPermissionToRole( u'zope.View', 'bungeni.Anybody' )
         
         if IGroupSitting.providedBy(self.context):
-            back_link = ui_url.absoluteURL(self.context, self.request)  + '/schedule'
+            back_link = url.absoluteURL(self.context, self.request)  + '/schedule'
         elif ISchedulingContext.providedBy(self.context):
-            back_link = ui_url.absoluteURL(self.context, self.request)
+            back_link = url.absoluteURL(self.context, self.request)
         else:
             raise NotImplementedError
         self.request.response.redirect(back_link)

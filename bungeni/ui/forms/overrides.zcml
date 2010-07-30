@@ -4,13 +4,57 @@
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni.ui">
     
+    <!-- 
+        !+NamedTemplate(mr, jul-2010) delete this file all "NamedTemplate" 
+        references are removed
+    -->
+    
+    <!-- !+alchemist.form(mr) 
     <adapter name="alchemist.form"
         for="*"
         factory=".forms.FormTemplate"
     />
+    -->
+    
+    <!-- !+alchemist.content(mr)
     <adapter name="alchemist.content"
         for="*"
         factory=".forms.ContentTemplate"
     />
+    -->
+    
+    
+    
+    <!-- 
+    !+NamedTemplate(mr) alchemist.content/alchemist-form not being invoked
+    <adapter name="alchemist.content"
+        for="*"
+        factory=".common.ContentViewletManagerTemplate"
+    />
+    <browser:page name="alchemist-form"
+        for="*"
+        permission="zope.Public"
+        class=".common.ContentForm"
+    />
+        template="templates/form.pt"
+        layer="bungeni.ui.interfaces.IBungeniSkin" 
+    -->
+    
+    
+    
+    <!-- !+NamedTemplate(mr) to redefine which template is to be used
+        may need to do same for others declared in alchemist.ui configure.zcml 
+
+    <browser:viewletManager name="alchemist.content.view"
+        provides="alchemist.ui.interfaces.IContentViewManager"
+        class=".common.ContentViewletManager"
+        permission="zope.ManageContent"
+    />
+    <browser:viewletManager name="alchemist.content.edit"
+        provides="alchemist.ui.interfaces.IContentEditManager"
+        class=".common.ContentViewletManager"
+        permission="zope.ManageContent"
+    />
+    -->
 
 </configure>
