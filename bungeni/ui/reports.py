@@ -11,7 +11,8 @@ from xml.dom.minidom import parseString
 from bungeni.ui import zcml
 from interfaces import IOpenOfficeConfig
 from zope.component import getUtility
-
+from ore.alchemist import Session
+from bungeni.models import domain
 def unescape(text):
     def fixup(m):
         text = m.group(0)
@@ -37,13 +38,17 @@ class DownloadDocument(BrowserView):
     
     #path to the odt template
     odt_file = os.path.dirname(__file__) + '/calendar/agenda.odt'
+    def __init__(self, context, request):
+        self.report = removeSecurityProxy(context)
+        super(DownloadDocument, self).__init__(context, request)
+        
     def cleanupText(self):
         '''This function generates an ODT document from the text of a report'''
         #This should really be at the top of this file.
         #Leaving it here for the time being so that having 
         #libtidy is not a requirement to run bungeni
         import tidy
-        body_text = removeSecurityProxy(self.context.body_text)
+        body_text = self.report.body_text
         #utidylib options
         options = dict(output_xhtml=1, 
                     add_xml_decl=1, 
@@ -69,19 +74,29 @@ class DownloadODT(DownloadDocument):
     #TODO Find a better way
     tempFileName = os.path.dirname(__file__) + '/tmp/%f.odt' % ( time.time())  
     def __call__(self):
-        params = {}
-        params['body_text'] = self.cleanupText()
-        renderer = Renderer(self.odt_file, params, self.tempFileName)
-        renderer.run()
-        self.request.response.setHeader('Content-type', 'application/vnd.oasis.opendocument.text')
-        self.request.response.setHeader('Content-disposition', 'inline;filename="'+
-                                            removeSecurityProxy(self.context.report_type)+"_"+
-                                            removeSecurityProxy(self.context.start_date).strftime('%Y-%m-%d')+'.odt"')
-        f = open(self.tempFileName, 'rb')
-        doc = f.read()
-        f.close()      
-        os.remove(self.tempFileName)    
-        return doc  
+        self.request.response.setHeader('Content-type', 
+                                        'application/vnd.oasis.opendocument.text')
+        self.request.response.setHeader('Content-disposition', 
+                                        'inline;filename="'+
+                                        removeSecurityProxy(self.report.report_type)+"_"+
+                                        removeSecurityProxy(self.report.start_date).strftime('%Y-%m-%d')+'.odt"')
+        if self.report.odt_report is None:
+            params = {}
+            params['body_text'] = self.cleanupText()
+            renderer = Renderer(self.odt_file, params, self.tempFileName)
+            renderer.run()
+            f = open(self.tempFileName, 'rb')
+            doc = f.read()
+            f.close()      
+            os.remove(self.tempFileName)    
+            session = Session()
+            r = session.query(domain.Report).get(self.report.report_id)
+            r.odt_report = doc
+            session.commit()
+            return doc  
+        else:
+            #import pdb; pdb.set_trace()
+            return ""+self.report.odt_report.__str__()
 
     
 class  DownloadPDF(DownloadDocument):
@@ -90,18 +105,25 @@ class  DownloadPDF(DownloadDocument):
     tempFileName = os.path.dirname(__file__) + '/tmp/%f.pdf' % ( time.time())
      
     def __call__(self): 
-        params = {}
-        params['body_text'] = self.cleanupText()
-        openofficepath = getUtility(IOpenOfficeConfig).getPath()
-        renderer = Renderer(self.odt_file, params, self.tempFileName, pythonWithUnoPath=openofficepath)
-        renderer.run()
         self.request.response.setHeader('Content-type', 'application/pdf')
         self.request.response.setHeader('Content-disposition', 'inline;filename="'
-                            +removeSecurityProxy(self.context.report_type)+"_"
-                            +removeSecurityProxy(self.context.start_date).strftime('%Y-%m-%d')+'.pdf"')
-        f = open(self.tempFileName, 'rb')
-        doc = f.read()
-        f.close()
-        os.remove(self.tempFileName)
-        return doc 
+                            +removeSecurityProxy(self.report.report_type)+"_"
+                            +removeSecurityProxy(self.report.start_date).strftime('%Y-%m-%d')+'.pdf"')
+        if self.report.pdf_report is None:
+            params = {}
+            params['body_text'] = self.cleanupText()
+            openofficepath = getUtility(IOpenOfficeConfig).getPath()
+            renderer = Renderer(self.odt_file, params, self.tempFileName, pythonWithUnoPath=openofficepath)
+            renderer.run()
+            f = open(self.tempFileName, 'rb')
+            doc = f.read()
+            f.close()
+            os.remove(self.tempFileName)
+            session = Session()
+            r = session.query(domain.Report).get(self.report.report_id)
+            r.pdf_report = doc
+            session.commit()
+            return doc 
+        else:
+            return self.report.pdf_report.__str__()
         
