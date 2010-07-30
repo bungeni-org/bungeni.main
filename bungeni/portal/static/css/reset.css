@@ -907,13 +907,12 @@ input.inputLabelActive {
     display: none;
 }
 
-/*
- * Most of the styles are defined in reset.css
- */
-.template-workspace table.listing td {
+.template-workspace table.listing td,
+.template-workspace table.listingdescription td {
     border-right: 1px solid #aaf;
 }
 .template-workspace table.listing th,
+.template-workspace table.listingdescription th,
 .template-workspace .stx table th,
 .template-workspace.yui-skin-sam .yui-dt-first th {
     background: url(/static/images/table-workspace-bg.png) repeat-x top left !important;
@@ -1372,30 +1371,41 @@ div#portal-globalnav ul.level0 li#portaltab-index_html {
  * Default styles.
  */
 table.listing,
+table.listingdescription,
 .stx table {
     border: 1px solid #ccc;
     border-top-color: #eee;
     border-bottom-color: #aaa;
     border-right: 0 none;
     width: 100%;
+	font-size: 100%;
+	margin: .5em 0;
+}
+table.listing tr:hover,
+table.listingdescription tr:hover,
+.stx table tr:hover {
+    background: #e6e6e6;
 }
 table.listing th,
+table.listingdescription th,
 .stx table th {
     background: url(/static/images/table-bg.png) repeat-x top left !important;
     padding: 0 .5em;
     border: 0 none;
     border-left: 1px solid #fff;
     border-right: 1px solid #faa631;
-    height: 22px;
-    line-height: 22px;
+   /*height: 23px !important;*/
+    line-height: 23px !important;
     text-shadow: 0 1px 1px #fff;
     color: #222;
 }
 table.listing th a,
+table.listingdescription th a,
 .stx table th a {
     color: #222;
 }
 table.listing td,
+table.listingdescription td,
 .stx table td {
     border-right: 1px solid #FAAD5F;
     padding: .25em .5em;
