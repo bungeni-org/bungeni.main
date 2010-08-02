@@ -989,7 +989,6 @@
      for="bungeni.models.interfaces.IItemSchedule"
      title="Move Scheduling up"
      action="../reorder"
-     icon="++resource++ui-images/icon_up.gif"
      permission="bungeni.sitting.Reorder"
      order="10"
      />
@@ -999,7 +998,6 @@
      for="bungeni.models.interfaces.IItemSchedule"
      title="Move Scheduling down"
      action="../reorder"
-     icon="++resource++ui-images/icon_down.gif"
      permission="bungeni.sitting.Reorder"
      order="11"
      />

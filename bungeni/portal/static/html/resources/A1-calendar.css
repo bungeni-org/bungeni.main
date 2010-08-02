@@ -154,6 +154,7 @@ div.scheduling ul.actions li {
   margin: 0;
   padding: 0;
   margin-right: 0.2em;
+  border: 1px solid black;
 }
   
 div.scheduling ul.actions li, div.calendar ul.actions li,
@@ -162,6 +163,24 @@ div.scheduling ul.actions a, div.calendar ul.actions a {
   color: white;
   border: none;
   text-decoration: none;
+}
+
+div.scheduling ul.actions li a.move-scheduling-up,
+div.scheduling ul.actions li a.delete-scheduling,
+div.scheduling ul.actions li a.move-scheduling-down {
+    display: block;
+    width: 16px;
+    height: 16px;
+    text-indent: -9999em;
+}
+div.scheduling ul.actions li a.move-scheduling-up {
+    background: url(images/icon-up.gif) 0 3px no-repeat;
+}
+div.scheduling ul.actions li a.move-scheduling-down {
+    background: url(images/icon-down.gif) 0 3px no-repeat;
+}
+div.scheduling ul.actions li a.delete-scheduling {
+    background: url(images/cross.png) 0 0 no-repeat;
 }
 
 div.calendar td.sitting .discreet {

@@ -683,6 +683,7 @@ dl.searchResults span.documentByLine {
 
 /* The table used for listings - horizontal and vertical variants */
 table.listing,
+table.listingdescription,
 .stx table {
     /* The default table for document listings. Contains name, document types, modification times etc in a file-browser-like fashion */
     border-collapse: collapse;
@@ -695,6 +696,7 @@ table.listing,
     width: 95%
 }
 table.listing th,
+table.listingdescription th,
 .stx table th {
     background: #dee7ec;
     border-top: 1px solid #8cacbb;
@@ -715,6 +717,7 @@ table.listing .listingCheckbox {
     text-align: center;
 }
 table.listing td,
+table.listingdescription td,
 .stx table td {
     border-right: 1px solid #8cacbb;
     padding: 0.25em 0.5em;
