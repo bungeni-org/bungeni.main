@@ -35,6 +35,7 @@ input {
     vertical-align: top;
     background: transparent;
     font-size: 1em;
+	clear: left;
 }
 
 /* Code to work around IE's lacking support of sub-elements of the input element */
@@ -90,7 +91,8 @@ legend {
     font-size: 90%;
 }
 label {
-    font-weight: bold;
+    font-weight: bold !important;
+	color: #444;
 }
 optgroup {
   font-style: normal;
@@ -125,7 +127,6 @@ dl.enableFormTabbing dd {
     background-position: 9px 5px;
     margin-bottom: 1em;
 }
-
 #forgotten-password {
     float: right; 
     width: 35%; 
@@ -145,14 +146,27 @@ dl.enableFormTabbing dd {
 .context,
 .formControls .actionButtons .button,
 .documentEditable * .context {
-    background: transparent url(linkTransparent.gif) 9px 1px no-repeat;
-    color: Black;
+    background: transparent url(linkTransparent.gif) 5px 3px no-repeat;
+    color: #222;
     cursor: pointer;
     font-size: 90%;
-    padding: 1px 1px 1px 15px;
+    /*padding: 1px 1px 1px 15px;*/
+	padding: 0;
+	padding-right: .25em;
+	padding-left: 15px;
+	line-height: 16px;
+	height: 22px;
     text-transform: none;
     border: 1px solid #8cacbb;
+	border-radius: 5px;
+	webkit-border-radius: 5px;
+	moz-border-radius: 5px;
 }
+.context:hover,
+.formControls .actionButtons .button:hover,
+.documentEditable * .context:hover {
+	background-color: #ccf;
+} 
 .destructive,
 .documentEditable * .destructive {
     background: #ffce7b url(linkTransparent.gif) 9px 1px no-repeat;
@@ -188,16 +202,18 @@ input.searchButton {
 .field {
     top: 0;
     left: 0;
-    margin: 0 0em 1em 0;
-    clear: right;
+    margin: .5em;
 }
 .field .field {
     margin: 0;
 }
+.field div {
+	margin: .25em 0;
+}
 .fieldRequired {
     background: url(required.gif) center left no-repeat;
     padding: 0 0 0 8px;
-    color: White;
+    color: #fff;
 }
 .fieldUploadFile {
     text-align: right; 
@@ -242,7 +258,7 @@ div.error {
     font-weight: bold;
 }
 input.inputLabelActive {
-  color: #76797c;
+	color: #76797c;
 }
 
 textarea#form\.description {
@@ -255,28 +271,33 @@ tr.selected {
 }
 
 .kupu-save-message {
-  color: white;
-  font-weight: bold;
-  background-color: red;
-  padding: 0.3em;
-  position: fixed;
-  top: 0;
-  right: 0;
-  z-index: 999;
+	color: white;
+	font-weight: bold;
+	background-color: red;
+	padding: 0.3em;
+	position: fixed;
+	top: 0;
+	right: 0;
+	z-index: 999;
 }
 
 div.content-left-column{
-float: left;
-width : 30%;
+	float: left;
+	width : 30%;
 }
-
 div.content-right-column{
-float: right;
-width: 70%;
+	float: right;
+	width: 70%;
 }
 
 
-/*  */
-
+#field\.form\.registry_number,
+#field\.form\.owner_id,
+#field\.form\.language {
+	float: left;
+	margin: .5em;
 }
-
+#field\.form\.body_text {
+	clear: left;
+}
+}
