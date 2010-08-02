@@ -127,8 +127,8 @@
 
                       <tal:standard condition="not: side_by_side">
                         <div class="field"
-                             tal:define="name python: widget.__class__.__name__.lower()"
-                             tal:attributes="class string:$default widget-$name">
+                             tal:define="name python: widget.__class__.__name__.lower(); fieldid widget/name"
+                             tal:attributes="class string:$default widget-$name;id string:field.$fieldid">
                           <metal:header use-macro="macros/header" />
                         
                           <div tal:attributes="class python:'widget'+(error and ' error' or '') + (changed and ' changed' or '')">
