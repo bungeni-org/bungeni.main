@@ -5,8 +5,7 @@ import copy
 import datetime
 
 from zope.event import notify
-from zope.formlib import form
-#from zope.formlib import namedtemplate
+from zope.formlib import form, namedtemplate
 from zope.lifecycleevent import ObjectCreatedEvent
 from zope import schema, interface
 from zope.app.pagetemplate import ViewPageTemplateFile
@@ -22,18 +21,20 @@ from bungeni.models import domain
 from bungeni.models import schema as model_schema
 from bungeni.core.i18n import _
 from bungeni.ui.forms import validations
-from bungeni.ui.forms import common
+from bungeni.ui.forms.common import ReorderForm
+from bungeni.ui.forms.common import PageForm
+from bungeni.ui.forms.common import AddForm
+from bungeni.ui.forms.common import EditForm
+from bungeni.ui.forms.common import DeleteForm
 
-# !+alchemist.form(mr) to be removed along with all "alchemist.form" references
-#FormTemplate = namedtemplate.NamedTemplateImplementation(
-#    ViewPageTemplateFile('templates/form.pt')
-#)
 
-# !+alchemist.content(mr) to rm along with all "alchemist.content" references
-#ContentTemplate = namedtemplate.NamedTemplateImplementation(
-#    ViewPageTemplateFile('templates/content.pt')
-#)
+FormTemplate = namedtemplate.NamedTemplateImplementation(
+    ViewPageTemplateFile('templates/form.pt')
+)
 
+ContentTemplate = namedtemplate.NamedTemplateImplementation(
+    ViewPageTemplateFile('templates/content.pt')
+)
 
 def hasDeletePermission(context):
     """Generic check if the user has rights to delete the object. The
@@ -71,7 +72,7 @@ def flag_changed_widgets( widgets, context, data):
             widget.changed = True
     return []
 
-class ResponseEditForm(common.EditForm):
+class ResponseEditForm( EditForm ):
     """ Answer a Question
     UI for ministry to input response
     Display the question when adding the answer.
@@ -79,7 +80,7 @@ class ResponseEditForm(common.EditForm):
     CustomValidations =  validations.null_validator
 
     
-class ResponseAddForm(common.AddForm):
+class ResponseAddForm( AddForm ):
     """
     Answer a Question
     UI for ministry to input response
@@ -88,7 +89,7 @@ class ResponseAddForm(common.AddForm):
     CustomValidation =  validations.null_validator
 
     
-class ItemScheduleContainerReorderForm(common.ReorderForm):
+class ItemScheduleContainerReorderForm(ReorderForm):
     """Specialization of the general reorder form for item
     schedulings."""
     
@@ -97,7 +98,7 @@ class ItemScheduleContainerReorderForm(common.ReorderForm):
             scheduling.planned_order = ordering.index(name)
 
 
-class ItemScheduleReorderForm(common.PageForm):
+class ItemScheduleReorderForm(PageForm):
     """Form to reorder a scheduling within a list of schedulings."""
 
     class IReorderForm(interface.Interface):
@@ -155,7 +156,7 @@ class ItemScheduleReorderForm(common.PageForm):
             next = container[ordering[index+1]]
  
 
-class ItemScheduleDeleteForm(common.DeleteForm):
+class ItemScheduleDeleteForm(DeleteForm):
     def get_subobjects(self):
         items = []
         discussion = self.context.discussion
@@ -196,7 +197,7 @@ class ItemScheduleDeleteForm(common.DeleteForm):
         #session.close()
         return count
         
-class ItemScheduleContainerDeleteForm(common.DeleteForm):
+class ItemScheduleContainerDeleteForm(DeleteForm):
     class IDeleteForm(interface.Interface):
         item_id = schema.Int(
             title=_(u"Item ID"),
@@ -212,7 +213,7 @@ class ItemScheduleContainerDeleteForm(common.DeleteForm):
             session.delete(i)
         self.request.response.redirect(self.next_url)
 
-class GroupSittingAddForm(common.AddForm):
+class GroupSittingAddForm(AddForm):
     """Add group-sittings form.
 
     This form includes functionality to create recurring events, which
