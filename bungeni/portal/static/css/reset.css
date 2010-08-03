@@ -172,7 +172,6 @@ input.inputLabelActive {
 }
 .template-portal #top-layer ul#portal-languageselector {
     height: 20px;
-    line-height: 20px;
     margin: 0 .5em;
     float: left;
     padding: 0;
@@ -180,6 +179,8 @@ input.inputLabelActive {
 }
 .template-portal #top-layer ul#portal-languageselector a {
     color: #222;
+    height: 20px;
+    line-height: 20px;
 }
 .template-portal #top-layer ul#portal-languageselector a:hover {
     color: #888;
@@ -610,6 +611,10 @@ input.inputLabelActive {
     padding; 0;
     font-size: 100%;
 }
+.template-workspace #top-layer ul#portal-languageselector a {
+    height: 20px;
+    line-height: 20px;
+}
 .template-workspace #top-layer ul#portal-personaltools {
     margin: 0;
     padding: 0;
@@ -933,7 +938,7 @@ input.inputLabelActive {
 .template-workspace li.formTab a:hover,
 .template-workspace li.formTab a:active,
 .template-workspace li.formTab a.selected {
-    border-top-color: #1763aa !important;
+    border-top-color: #6CA6CD  !important;
 }
 /* end of .template-workspace styles*/
 
@@ -1396,12 +1401,14 @@ table.listing,
 table.listingdescription,
 .stx table {
     border: 1px solid #ccc;
-    border-top-color: #eee;
+    /*border-top-color: #eee;*/
+    border-top-color: #6ca6cd;
     border-bottom-color: #aaa;
     border-right: 0 none;
     width: 100%;
 	font-size: 100%;
-	margin: .5em 0;
+	margin: 0 auto;
+	width: 960px;
 }
 table.listing tr:hover,
 table.listingdescription tr:hover,
@@ -1411,7 +1418,7 @@ table.listingdescription tr:hover,
 table.listing th,
 table.listingdescription th,
 .stx table th {
-    background: url(/static/images/table-bg.png) repeat-x top left !important;
+    background: url(/static/images/table-bg.png) repeat-x 0 -3px !important;
     padding: 0 .5em;
     border: 0 none;
     border-left: 1px solid #fff;
@@ -1447,6 +1454,7 @@ table.listingdescription td,
     border-right: 0 none;
     margin: auto;
     width: 100%;
+	width: 960px;
 }
 .yui-skin-sam .yui-dt table tr.yui-dt-odd {
     background: #F3F3F3;
@@ -1537,6 +1545,10 @@ li.formTab a.selected {
 }
 .template-workspace li.formTab a.selected {
 	background: transparent url(../images/tab-bg.png) 0 0 repeat-x;
+	background:#6CA6CD;
+	border-bottom-color: #6ca6cd;
+}
+.enableFormTabbing {
 }
 .formPanel {
     border: 0 none;
@@ -1554,12 +1566,10 @@ li.formTab a.selected {
 }
 .formPanel form { 
     border:1px solid #FAAD5F;
-    margin: 1em auto;
+    margin: 0 auto;
     padding: 0;
     border: 0 none;
     text-align: center;
-	width: 800px; 
-	background: #eee;
 }
 .formPanel .field,
 .formPanel form .field {
@@ -1568,6 +1578,7 @@ li.formTab a.selected {
     clear: both;
     width: 800px;
     text-align: left;
+    border-bottom: 1px dotted #ccc;
 }
 .formPanel .field .content-left-column {
     float: left;
@@ -1578,14 +1589,12 @@ li.formTab a.selected {
     font-weight: bold;
 	margin: 0;
     padding: .15em;
-	padding-right: 1.25em;
 	border: 0 none;
     line-height: 20px;
-    border-bottom: 1px dotted #ccc;
 }
 .formPanel .field .content-right-column {
-    width: 632px;
-    float: left;
+    width: 630px;
+    float: right;
     display: block;
     text-shadow: 0 0 1px #fff;
     color: #333;
@@ -1593,8 +1602,6 @@ li.formTab a.selected {
 	border: 0 none;
     line-height: 20px;
 	margin: 0;
-	background: #fff;
-    border-bottom: 1px dotted #ccc;
 }
 .formPanel .field .content-right-column div,
 .formPanel .field .content-right-column widget {
@@ -1679,12 +1686,13 @@ span.yui-button.yui-link-button span a {
 }
 
 .yui-dt-paginator {
-	margin: 0;
+	margin: 0 auto !important;
 	padding: 0;
 	font-size: 90%;
 	line-height: 16px;
 	height: 20px;
 	text-align: left;
+	width: 960px;
 }
 .yui-dt-paginator select {
 	font-size:95%;
