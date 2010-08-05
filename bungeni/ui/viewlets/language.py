@@ -10,6 +10,7 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.app.publisher.interfaces.browser import IBrowserMenu
 from zope.app.component.hooks import getSite
 from zope.publisher.browser import BrowserView
+from zope.i18n.negotiator import normalize_lang
 
 from ore.alchemist.interfaces import IAlchemistContainer, IAlchemistContent
 from ore.alchemist.model import queryModelDescriptor
@@ -51,12 +52,12 @@ class LanguageViewlet(object):
             if langname == None:
                 langname = language.get('name')
             return langname
-        
+
         translations = get_available_translations(self.context)
         if hasattr(self.context,'language'):
             translations[self.context.language] = None
         languages = get_all_languages()
-        selected = self.request.locale.getLocaleID()
+        selected = normalize_lang(self.request.locale.getLocaleID())
         url = ui_utils.url.absoluteURL(getSite(), self.request)
         
         self.languages = [{
