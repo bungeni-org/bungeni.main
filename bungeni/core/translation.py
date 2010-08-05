@@ -28,6 +28,7 @@ from sqlalchemy import orm, sql
 
 from ore.alchemist import Session
 from plone.i18n.locales.interfaces import ILanguageAvailability
+from zope.i18n.config import ALLOWED_LANGUAGES
 
 from bungeni.core.interfaces import IVersionable
 from bungeni.models.interfaces import IVersion, ITranslatable
@@ -78,14 +79,14 @@ def get_default_language():
 def get_language(translatable):
     return translatable.language
 
-def get_all_languages(filter=('en', 'fr', 'sw', 'pt')):
+def get_all_languages(filter=tuple(ALLOWED_LANGUAGES)):
     """Build a list of all languages.
 
     To-do: the result of this method should be cached indefinitely.
     """
     availability = component.getUtility(ILanguageAvailability)
     languages = {}
-    _languages = availability.getLanguages()
+    _languages = availability.getLanguages(combined=True)
     for name in filter:
         languages[name] = _languages[name]
     return languages
