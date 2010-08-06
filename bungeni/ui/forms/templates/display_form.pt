@@ -10,7 +10,7 @@
   <dd id="fieldset-display-form"
       tal:attributes="id string:${default}-${python: id(view)};
                     class view/getObjectClass">
-    
+    <div id="display_form_spacer"></div>
     <form action="."
           tal:attributes="action request/URL" 
 	  method="post"
