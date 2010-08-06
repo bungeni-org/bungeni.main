@@ -1,7 +1,7 @@
 function listTogglr(){
   var viewletDateToggle = $('#whats-on-overview .whats-on-viewlet dd ul li h2');
   viewletDateToggle.css({
-  	background: '#fdcd8b url(/static/images/minus.png) 2px 4px no-repeat',
+  	background: 'url(/static/images/minus.png) 2px 4px no-repeat',
 	paddingLeft: '20px',
 	cursor: 'pointer'
   });
