@@ -57,6 +57,7 @@ $URL$
 
         <dt i18n:translate="" id="fieldsetlegend-upcoming-bills"> Bills </dt>
         <dd tal:define="days view/get_bills" tal:condition="days" id="fieldset-upcoming-bills">
+        	<h2 class="whats_on_print_heading">Bills</h2>
             <ul >
               <tal:block tal:repeat="day days">
                   <li><h2 class="whats_on_upcoming_bill_date" tal:content="day/day" /> 
@@ -77,6 +78,7 @@ $URL$
 
         <dt i18n:translate="" id="fieldsetlegend-upcoming-motions"> Motions </dt>
         <dd tal:define="days view/get_motions" tal:condition="days" id="fieldset-upcoming-motions">
+            <h2 class="whats_on_print_heading">Motions</h2>
             <ul>
               <tal:block tal:repeat="day days">
                   <li><h2 class="whats_on_upcoming_motion_date" tal:content="day/day" /> 
@@ -97,6 +99,7 @@ $URL$
 
         <dt i18n:translate="" id="fieldsetlegend-upcoming-questions"> Questions </dt>
         <dd tal:define="days view/get_questions" tal:condition="days" id="fieldset-upcoming-questions">
+            <h2 class="whats_on_print_heading">Questions</h2>
             <ul >
               <tal:block tal:repeat="day days">
                   <li><h2 class="whats_on_upcoming_question_date" tal:content="day/day" /> 
@@ -117,6 +120,7 @@ $URL$
 
         <dt i18n:translate="" id="fieldsetlegend-upcoming-tableddocuments"> Tabled documents </dt>
         <dd tal:define="days view/get_tableddocuments" tal:condition="days" id="fieldset-upcoming-tableddocuments">
+            <h2 class="whats_on_print_heading">Tabled documents</h2>
             <ul >
               <tal:block tal:repeat="day days">
                   <li><h2 class="whats_on_upcoming_tableddocument_date" tal:content="day/day" /> 
@@ -137,6 +141,7 @@ $URL$
 
         <dt i18n:translate="" id="fieldsetlegend-upcoming-agendaitems"> Agenda items </dt>
         <dd tal:define="days view/get_agendaitems" tal:condition="days" id="fieldset-upcoming-agendaitems">
+            <h2 class="whats_on_print_heading">Agenda items</h2>
             <ul >
               <tal:block tal:repeat="day days">
                   <li><h2 class="whats_on_upcoming_agendaitem_date" tal:content="day/day" /> 
