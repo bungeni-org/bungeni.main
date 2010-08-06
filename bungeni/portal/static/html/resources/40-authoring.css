@@ -273,7 +273,7 @@ dl#context_actions.actionMenu .actionMenuContent ul li a#delete  {
 	background: transparent 2px 2px no-repeat;
 }
 dl#context_actions.actionMenu .actionMenuContent ul li a#view {
-	background-image: url(images/info_16.png);
+	background-image: url(images/view.png);
 }
 dl#context_actions.actionMenu .actionMenuContent ul li a#delete {
 	background-image: url(images/cross.png);

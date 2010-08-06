@@ -99,7 +99,7 @@ html, body {
  *   work in webkit browsers(chrome/safari)
  */
 #top-layer #demoWarning {
-    width: 100px;
+    width: 150px;
     height: 18px;
     line-height: 18px;
     margin: 0 auto;
@@ -121,14 +121,15 @@ html, body {
     border-top: 0 none;
 }
 #portal-breadcrumbs {
-    line-height: 18px;
+    line-height: 20px;
     font-size: 95%;
     color: #555;
-    padding: 0;
+    padding: 0 .25em;
     background: #fff;
     width: auto;
     text-align: left;
     clear: both;
+	position: relative;
 }
 #portal-breadcrumbs a:hover {
 	text-decoration: underline;
@@ -275,7 +276,7 @@ input.inputLabelActive {
 }
 .template-portal #portal-breadcrumbs {
     border-bottom:1px solid #FAAD5F;
-    margin: .5em 0;
+    margin: 2.5em 0 .25em;
 }
 
 .template-portal div.main-column {
@@ -538,12 +539,15 @@ input.inputLabelActive {
     border: 0 none;
     margin: -25px auto 0;
     clear: both;
-    width: 1054px;
+    width: 960px;
     height: 25px;
     line-height: 25px;
     text-align: center;
     color: #444;
-    background: url(/static/images/shadow_2.png) repeat-y top center;
+    /*background: url(/static/images/shadow_2.png) repeat-y top center;*/
+	border-top: 1px solid #ccc;
+	background: trasnparent;
+	background: none;
 }
 .template-portal #portal-footer div {
     margin: 0 auto;
@@ -553,6 +557,13 @@ input.inputLabelActive {
     display: block;
     float: left;
     margin: 0 .25em;
+}
+
+.template-portal li.formTab a:hover,
+.template-portal li.formTab a:active,
+.template-portal li.formTab a.selected {
+	background: #fdcd8b;
+	border-bottom-color: #fdcd8b;
 }
 /* end of .template-portal styles*/
 
@@ -576,7 +587,7 @@ input.inputLabelActive {
     line-height: 1em;
 }
 .template-workspace #visual-table-wrapper {
-    padding:0 .75em 0 1.75em;
+    padding:0 1em 0 2em;
     text-align: left;
     margin: 0 !important;
 	margin-top: 20px;
@@ -587,7 +598,7 @@ input.inputLabelActive {
      * - required for sticky footer
      */
     height: auto;
-    min-height: 100%;
+    min-height: 99%;
 }
 .template-workspace #main-body-table {
     width:100% !important;
@@ -605,7 +616,7 @@ input.inputLabelActive {
     padding: 0;
     border: 0 none;
     border-top: 1px solid #D4E2EF;
-    background: none;
+    background: #fff;
     text-align: center;
     color: #444;
     /* 
@@ -617,7 +628,7 @@ input.inputLabelActive {
     position: relative;
     height: 25px;
     line-height: 25px;
-    margin: -25px 2em 0;
+    margin: -25px 2.5em 0;
 }
 .template-workspace #portal-footer div {
     margin: 0 auto;
@@ -634,9 +645,7 @@ input.inputLabelActive {
     border-bottom: 1px solid #eee;
 	margin: 0;
 	padding: 0;
-    margin-left:2em;
-    padding-right: 1em;
-    background: url(/static/images/right_margin_workspace.png) repeat-y top right;
+    /*background: url(/static/images/right_margin_workspace.png) repeat-y top right;*/
 }
 
 .template-workspace #top-layer div {
@@ -1008,10 +1017,13 @@ input.inputLabelActive {
 }
 #portal-column-content #whats-on-overview .whats-on-viewlet {
     border-bottom: 1px solid #ccc;
+	padding: 0;
+	border-top: 0 none;
+	margin: 0;
 }
 #portal-column-content #whats-on-overview .whats-on-viewlet dd {
     border: 0 none;
-    margin: .25em auto !important;
+    margin: 0 auto .25em !important;
     padding: 0;
 	width: 960px;
 }
@@ -1023,6 +1035,7 @@ input.inputLabelActive {
     margin: 0;
     border: 1px solid #ccc;
     border-bottom-color: #aaa;
+	border-top: 0 none;
 }
 #portal-column-content #whats-on-overview .whats-on-viewlet dd ul li {
     margin: 0 0 .5em;
@@ -1032,9 +1045,11 @@ input.inputLabelActive {
     font-size: 100%;
     margin: 0;
     color: #222;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #fcc373;
     background: #eee;
+	background: #fdcd8b;
 	text-align: left;
+	text-shadow: 0px 0px 1px #fff;
 }
 #portal-column-content #whats-on-overview .whats-on-viewlet dd ul li ul {
     margin: 0;
@@ -1095,8 +1110,6 @@ input.inputLabelActive {
 }
 .section-bungeni-whats-on div#portal-globalnav ul.level0 li.selected a,
 .section-bungeni-archive div#portal-globalnav ul.level0 li.selected a {
-    background: #fff;
-    border-top: .5px solid #f8ba61;
 }
 .section-bungeni-whats-on div#portal-globalnav ul.level0 li#portaltab-business-whats-on a,
 .section-bungeni-business div#portal-globalnav ul.level0 li#portaltab-business-whats-on a,
@@ -1163,9 +1176,14 @@ input.inputLabelActive {
 #whats-on-overview .portlet dt
 #whats-on-overview .portlet dt {
     background: #E3E3E3;
-    border: 1px solid #FAAD5F;
-    line-height: 1.6em;
+    border-bottom: 1px solid #FAAD5F;
+    line-height: 20px;
     text-align: justify;
+	text-shadow: 0px 1px 1px #fff;
+	position: relative;
+	margin: 0;
+	padding: 0 .25em;
+	width: auto;
 }
 #portal-column-one .portletItem,
 #portal-column-content .portletItem,
@@ -1173,6 +1191,38 @@ input.inputLabelActive {
 #portal-column-two .portletItem {
     border-left: 1px solid #FAAD5F;
     border-right: 1px solid #FAAD5F;
+	position: relative;
+	margin: 0;
+	padding: 0;
+}
+#portal-column-one .portletItem a {
+	background: #fff;
+	line-height: 18px;
+	border: 0 none;
+	border-bottom: 1px solid transparent;
+}
+#portal-column-one .portletItem a img {
+	margin: 1px 0;
+	float: left;
+}
+#portal-column-one .portletItem a.navTreeCurrentItem {
+	background: #eee;
+	line-height: 18px;
+	border: 0 none;
+	border-bottom-color: #FB9C14 !important;
+	border-top: 0 none !important;
+}
+.template-portal #portal-column-one .portletItem a.navTreeCurrentItem {
+	background: #fcc373;
+	border-bottom-color: #FB9C14 !important;
+}
+#portal-column-one .portletItem a:hover {
+	background: #eee;
+	border-bottom: 1px solid #aaa;
+}
+.template-portal #portal-column-one .portletItem a:hover {
+	background: #fcc373;
+	border-bottom: 1px solid #aaa;
 }
 #whats-on-overview .portlet dt {
     padding: 0 2px 0 5px;
@@ -1289,6 +1339,7 @@ h4.tabberHeading {
 }
 .documentDescription {
     font-weight: normal;
+	text-align: center;
 }
 .documentEditable .documentContent {
     border: 1px solid #BDD1D7;
@@ -1364,9 +1415,10 @@ div#portal-globalnav ul.level0 li#portaltab-index_html {
 }
 #portletArchiveDates {
     border: 1px solid #eee;
+	border: 0 none;
 }
 #portletArchiveDates .portletHeader {
-    text-align: left;
+    text-align: right;
     background: #fff;
     color: #444;
     padding: 0;
@@ -1376,13 +1428,16 @@ div#portal-globalnav ul.level0 li#portaltab-index_html {
 #portletArchiveDates .portletItem {
     border: 1px solid #aaa;
     padding: 0;
+	text-align: center;
 }
 #portletArchiveDates .portletItem form {
-    margin: .25em;
+    margin: .25em auto;
+	width: 725px;
+	text-align: center;
 }
 #portletArchiveDates .portletItem form .field {
     clear: none;
-    float: left;
+	float: left;
     margin: .25em;
     padding: .15em;
 }
@@ -1467,7 +1522,9 @@ table.listingdescription,
 	font-size: 100%;
 	margin: 0 auto;
 	width: 960px;
+	width: 95%;
 }
+#container_contents_agendaitems table,
 #items-to-be-scheduled-dl table.listing {
 	width: 100% !important;
 }
@@ -1519,8 +1576,7 @@ table.listingdescription td,
     border-bottom-color: #aaa;
     border-right: 0 none;
     margin: auto;
-    width: 100%;
-	width: 960px;
+	width: 95%;
 }
 .yui-skin-sam .yui-dt table tr.yui-dt-odd {
     background: #F3F3F3;
@@ -1623,9 +1679,10 @@ li.formTab a.selected {
     border: 0 none;
     padding: 0 !important;
     margin: 0;
-	text-align: left;
+	text-align: center;
 }
-.formPanel h2 {
+.formPanel h2,
+.formPanel ul {
 	text-align:left;
 }
 .formPanel table.listing {
@@ -1637,7 +1694,7 @@ li.formTab a.selected {
     border-bottom: 1px dotted #aaa;
 }
 .formPanel form { 
-    border:1px solid #FAAD5F;
+    /*border:1px solid #FAAD5F;*/
     margin: 0 auto;
     padding: 0;
     border: 0 none;
@@ -1774,17 +1831,22 @@ span.yui-button.yui-link-button span a {
 	height: 20px;
 	text-align: left;
 	width: 960px;
+	width: 95%;
+}
+#container_contents_agendaitems .yui-dt-paginator {
+	width: 100% !important;
 }
 .yui-dt-paginator select {
 	font-size:95%;
 	color: #444;
-	padding: 1px;
+	padding: .1em;
 	margin: 0;
 	background: #fff;
+	border: 1px solid #ccc;
 }
 .yui-dt-paginator select:hover {
-	border: 1px solid #44f;
-	color: #44f;
+	border: 1px solid #aaa;
+	color: #444;
 }
 .yui-skin-sam .yui-button {
 	margin: 0 .25em;
