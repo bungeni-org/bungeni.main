@@ -8,7 +8,7 @@
 
 
 <h1 class="reportdoctype">
-    <span tal:replace="view/option_data/doc_type"/>
+    <span tal:replace="view/doc_type"/>
 </h1>
         
 <!-- Loop through sittings -->
@@ -25,17 +25,17 @@
         <tal:loop tal:repeat="scheduled item/item_schedule">
                 <!-- Formatting for motions -->
                 <span tal:condition="python:scheduled.item.type == 'motion'" >
-                    <span tal:condition="view/option_data/items_types/motion">
+                    <span tal:condition="view/options/motions | nothing">
                         <h1 tal:condition="scheduled/category  | nothing"
                             tal:attributes="name scheduled/category_id"
                             tal:replace="scheduled/category/short_name" class="reportheading"/> 
                          <span tal:condition="scheduled/category  | nothing"><hr/></span>
                          <h2 class="reporttitle">
-                            <span tal:replace="python:scheduled.item.type.capitalize()" /> <span tal:condition="view/motion_number" tal:replace="scheduled/item/motion_number" />
-                            <span tal:condition="view/motion_title" tal:replace="scheduled/item/short_name" />
+                            <span tal:replace="python:scheduled.item.type.capitalize()" /> <span tal:condition="view/options/motions_number | nothing" tal:replace="scheduled/item/motion_number" />
+                            <span tal:condition="view/options/motions_title | nothing" tal:replace="scheduled/item/short_name" />
                             
                          </h2>
-                         <span tal:condition="view/motion_owner">
+                         <span tal:condition="view/options/motions_owner | nothing">
                             <h3 class="reportmover">
                                 <span tal:condition="scheduled/item/owner/first_name | nothing">
                                     Moved by 
@@ -43,7 +43,7 @@
                                     <span tal:replace="scheduled/item/owner/last_name" 
                                           tal:condition="scheduled/item/owner/last_name | nothing" />
                                     </span>
-                                    <!-- <span tal:condition="view/motion_seconded">
+                                    <!-- <span tal:condition="view/options/motions_seconded | nothing">
                                             <span> Seconded By
                                                 <span tal:replace="scheduled/item/owner/first_name" 
                                                       tal:condition="scheduled/item/owner/first_name | nothing"/> 
@@ -56,7 +56,7 @@
                 </span>
                 <span class="reporttext" 
                       tal:replace="structure scheduled/item/body_text"
-                      tal:condition="python:(scheduled.item.type == 'motion' and view.motion_text == True)"/>
+                      tal:condition="python:(scheduled.item.type == 'motion' and view.options.motions_text == True)"/>
                 
                 <h3 class="reportminutes" 
                     tal:condition="python:(scheduled.item.type == 'motion' and view.display_minutes == True and scheduled.discussion.body_text != None)">Minutes</h3>   
@@ -65,12 +65,12 @@
                         
                 <!-- Formatting for bills -->       
                 <span tal:condition="python:scheduled.item.type == 'bill'">
-                    <span tal:condition="view/option_data/items_types/bill">
+                    <span tal:condition="view/options/bills | nothing">
                         <h1 tal:condition="scheduled/category  | nothing"
                             tal:attributes="name scheduled/category_id"
                             tal:content="scheduled/category/short_name" class="reportheading"/> 
                         <span tal:condition="scheduled/category  | nothing"><hr/></span>
-                        <span tal:condition="view/bill_title">
+                        <span tal:condition="view/options/bills_title | nothing">
                             <h2 class="reporttitle"> 
                                 <span tal:replace="python:scheduled.item.type.capitalize()" /> : 
                                 <span tal:replace="scheduled/item/short_name" tal:condition="scheduled/item/short_name | nothing"/>
@@ -84,7 +84,7 @@
                             </h3>
                         </span>
                                   
-                        <span tal:condition="view/bill_cosignatories">
+                        <span tal:condition="view/options/bills_cosignatories | nothing">
                             <h3 class="reportcosignatories">
                                 <span tal:condition="cosignatory/item/consignatories | nothing"> Cosignatories :
                                     <tal:loop tal:repeat="cosignatory scheduled/item/consignatories"> 
@@ -97,7 +97,7 @@
                             </h3>
                         </span>
                                         
-                        <span tal:condition="view/bill_summary">
+                        <span tal:condition="view/options/bills_summary | nothing">
                             <span tal:condition="scheduled/item/summary | nothing">
                                 <h3 class="reportsummary">Summary</h3>
                                 <span tal:content="structure scheduled/item/summary"/>
@@ -108,27 +108,27 @@
                 
                 <span class="reporttext" 
                                 tal:replace="structure scheduled/item/body_text"
-                                tal:condition="python:(scheduled.item.type == 'bill' and view.motion_text == True)"/>
+                                tal:condition="python:(scheduled.item.type == 'bill' and view.options.bills_text == True)"/>
                 
                           <h3 class="reportminutes" 
                                 tal:condition="python:(scheduled.item.type == 'bill' and view.display_minutes == True and scheduled.discussion.body_text != None)">Minutes</h3>   
                         <span tal:condition="python:(scheduled.item.type == 'bill' and view.display_minutes == True and scheduled.discussion.body_text != None)" 
                                 tal:replace="structure scheduled/discussion/body_text"/>
                 <span tal:condition="python:scheduled.item.type == 'question'" >
-                    <span tal:condition="view/option_data/items_types/question">
+                    <span tal:condition="view/options/questions | nothing">
                         <h1 tal:condition="scheduled/category  | nothing"
                             tal:attributes="name scheduled/category_id"
                             tal:content="scheduled/category/short_name" class="reportheading"/> 
                         <span tal:condition="scheduled/category  | nothing"><hr/></span>
                         <h2 class="reporttitle">
                             <span tal:replace="python:scheduled.item.type.capitalize()" />
-                            <span tal:condition="view/question_number"> : <span tal:replace="scheduled/item/question_number"/>
+                            <span tal:condition="view/options/questions_number | nothing"> : <span tal:replace="scheduled/item/question_number"/>
                     </span>
-                    <span tal:condition="view/question_title">
+                    <span tal:condition="view/options/questions_title | nothing">
                                          - <span tal:replace="scheduled/item/short_name"/>
                                     </span>
                                 </h2>
-                                <span tal:condition="view/question_owner">
+                                <span tal:condition="view/options/questions_owner | nothing">
                                     <h3 class="reportmover"> Moved by <span tal:replace="scheduled/item/owner/first_name" /> 
                                         <span tal:replace="scheduled/item/owner/last_name" />
                                         <span tal:condition="scheduled/item/ministry | nothing"> to 
@@ -141,7 +141,7 @@
                 
                 <span class="reporttext" 
                       tal:replace="structure scheduled/item/body_text"
-                      tal:condition="python:(scheduled.item.type == 'question' and view.question_text == True)"/>
+                      tal:condition="python:(scheduled.item.type == 'question' and view.options.questions_text == True)"/>
                 
                 <h3 class="reportminutes" 
                     tal:condition="python:(scheduled.item.type == 'question' and view.display_minutes == True and scheduled.discussion.body_text != None)">Minutes</h3>   
@@ -149,7 +149,7 @@
                       tal:replace="structure scheduled/discussion/body_text"/>
                     
                 <span tal:condition="python:scheduled.item.type == 'agendaitem'">
-                    <span tal:condition="view/option_data/items_types/agenda">
+                    <span tal:condition="view/options/agendaitems | nothing">
                           <h1 tal:condition="scheduled/category  | nothing"
                               tal:attributes="name scheduled/category_id"
                               tal:content="scheduled/category/short_name" class="reportheading"/> 
@@ -165,7 +165,7 @@
                 </span>
                           <span class="reporttext" 
                                 tal:replace="structure scheduled/item/body_text"
-                                tal:condition="python:(scheduled.item.type == 'agendaitem' and view.motion_text == True)"/>
+                                tal:condition="python:(scheduled.item.type == 'agendaitem' and view.options.agendaitems_text == True)"/>
                 
                           <h3 class="reportminutes" 
                                 tal:condition="python:(scheduled.item.type == 'agendaitem' and view.display_minutes == True and scheduled.discussion.body_text != None)">Minutes</h3>   
@@ -174,20 +174,20 @@
                      
                     
                 <span tal:condition="python:scheduled.item.type == 'tableddocument'"> 
-                    <span tal:condition="view/option_data/items_types/tabled_document">
+                    <span tal:condition="view/options/tabled_documents | nothing">
                         <h1 tal:condition="scheduled/category  | nothing"
                             tal:attributes="name scheduled/category_id"
                             tal:content="scheduled/category/short_name" class="reportheading"/> 
                         <span tal:condition="scheduled/category  | nothing"><hr/></span>
                         <h2 class="reporttitle"> Tabled Document
-                            <span tal:condition="view/tabled_document_number"> : 
+                            <span tal:condition="view/options/tabled_documents_number | nothing"> : 
                                 <span tal:replace="scheduled/item/tabled_document_id"/>
                             </span>
-                            <span tal:condition="view/tabled_document_title">
+                            <span tal:condition="view/options/tabled_documents_title | nothing">
                                 - <span tal:replace="scheduled/item/short_name"/>
                             </span>
                         </h2>
-                        <span tal:condition="view/tabled_document_owner">
+                        <span tal:condition="view/options/tabled_documents_owner | nothing">
                             <h3 class="reportmover"> Moved by <span tal:replace="scheduled/item/owner/first_name" /> 
                                 <span tal:replace="scheduled/item/owner/last_name" />
                             </h3>
@@ -196,7 +196,7 @@
                 </span>
                         <span class="reporttext" 
                       tal:replace="structure scheduled/item/body_text"
-                      tal:condition="python:(scheduled.item.type == 'tableddocument' and view.motion_text == True)"/>
+                      tal:condition="python:(scheduled.item.type == 'tableddocument' and view.options.tabled_documents_text == True)"/>
                 
                 <h3 class="reportminutes" 
                     tal:condition="python:(scheduled.item.type == 'tableddocument' and view.display_minutes == True and scheduled.discussion.body_text != None)">Minutes</h3>   
@@ -206,4 +206,3 @@
                 
     </tal:loop>
 </tal:loop>
-    

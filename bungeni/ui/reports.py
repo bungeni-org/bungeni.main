@@ -4,6 +4,7 @@ from appy.pod.renderer import Renderer
 from zope.publisher.browser import BrowserView
 import time
 import datetime
+timedelta = datetime.timedelta
 import tempfile
 from zope.security.proxy import removeSecurityProxy
 import htmlentitydefs
@@ -32,6 +33,18 @@ from bungeni.core.interfaces import ISchedulingContext
 from bungeni.core.odf import OpenDocument
 from zope.schema.vocabulary import SimpleVocabulary
 from zope.app.form.browser import MultiCheckBoxWidget as _MultiCheckBoxWidget
+from sqlalchemy.orm import eagerload
+import sqlalchemy.sql.expression as sql
+import operator
+from bungeni.models import domain
+from bungeni.models.utils import get_principal_id
+from bungeni.models.interfaces import IGroupSitting
+from bungeni.server.interfaces import ISettings
+
+class TIME_SPAN:
+    daily = _(u"Daily")
+    weekly = _(u"Weekly")
+    
 def verticalMultiCheckBoxWidget(field, request):
     vocabulary = field.value_type.vocabulary
     widget = _MultiCheckBoxWidget(field, vocabulary, request)
@@ -100,31 +113,42 @@ def questionOptions(context):
 
 
 class ReportView(form.PageForm):
+    
+    main_result_template = ViewPageTemplateFile('templates/main_reports.pt')
     result_template = ViewPageTemplateFile('templates/reports.pt')
+    
+    def __init__(self, context, request):
+        super(ReportView, self).__init__(context, request)
+        if IGroupSitting.providedBy(context):
+            self.date = datetime.date(
+                context.start_date.year,
+                context.start_date.month,
+                context.start_date.day) 
+            
     class IReportForm(interface.Interface):
         item_types = schema.List(title=u'Items to include',
                    required=False,
                    value_type=schema.Choice(
                     vocabulary="Available Items"),
                    )
-        bill_options = schema.List( title=u'Bill options',
+        bills_options = schema.List( title=u'Bill options',
                        required=False,
                        value_type=schema.Choice(
                        vocabulary='Bill Options'),
                          )
-        agenda_options = schema.List( title=u'Agenda options',
+        agenda_items_options = schema.List( title=u'Agenda options',
                                         required=False,
                                         value_type=schema.Choice(
                                         vocabulary='Agenda Options'),)
-        motion_options = schema.List( title=u'Motion options',
+        motions_options = schema.List( title=u'Motion options',
                                         required=False,
                                         value_type=schema.Choice(
                                         vocabulary='Motion Options'),)
-        question_options = schema.List( title=u'Question options',
+        questions_options = schema.List( title=u'Question options',
                                           required=False,
                                           value_type=schema.Choice(
                                           vocabulary='Question Options'),)
-        tabled_document_options = schema.List( title=u'Tabled Document options',
+        tabled_documents_options = schema.List( title=u'Tabled Document options',
                                           required=False,
                                           value_type=schema.Choice(
                                           vocabulary='Tabled Document Options'),)
@@ -136,24 +160,25 @@ class ReportView(form.PageForm):
     template = namedtemplate.NamedTemplate('alchemist.form')
     form_fields = form.Fields(IReportForm)
     form_fields['item_types'].custom_widget = horizontalMultiCheckBoxWidget
-    form_fields['bill_options'].custom_widget = verticalMultiCheckBoxWidget
-    form_fields['agenda_options'].custom_widget = verticalMultiCheckBoxWidget
-    form_fields['motion_options'].custom_widget = verticalMultiCheckBoxWidget
-    form_fields['question_options'].custom_widget = verticalMultiCheckBoxWidget
-    form_fields['tabled_document_options'].custom_widget = verticalMultiCheckBoxWidget
+    form_fields['bills_options'].custom_widget = verticalMultiCheckBoxWidget
+    form_fields['agenda_items_options'].custom_widget = verticalMultiCheckBoxWidget
+    form_fields['motions_options'].custom_widget = verticalMultiCheckBoxWidget
+    form_fields['questions_options'].custom_widget = verticalMultiCheckBoxWidget
+    form_fields['tabled_documents_options'].custom_widget = verticalMultiCheckBoxWidget
     
-    class contexta:
-        item_types = 'Bills'
-        bill_options = 'Title'
-        agenda_options = 'Title'
-        question_options = 'Title'
-        motion_options = 'Title'
-        tabled_document_options = 'Title'
-        note = None
+    
     
     def setUpWidgets(self, ignore_request=False):
+        class context:
+            item_types = 'Bills'
+            bills_options = 'Title'
+            agenda_items_options = 'Title'
+            questions_options = 'Title'
+            motions_options = 'Title'
+            tabled_documents_options = 'Title'
+            note = None
         self.adapters = {
-            self.IReportForm: self.contexta
+            self.IReportForm: context
             }
         self.widgets = form.setUpEditWidgets(
             self.form_fields, self.prefix, self.context, self.request,
@@ -180,7 +205,7 @@ class ReportView(form.PageForm):
             start_date = data['date']
         else:
             start_date = self.date
-        end_date = self.get_end_date(start_date, time_span)
+        end_date = self.get_end_date(start_date, self.time_span)
 
         parliament = queries.get_parliament_by_date_range(self, start_date, end_date)
         session = queries.get_session_by_date_range(self, start_date, end_date)
@@ -220,8 +245,7 @@ class ReportView(form.PageForm):
                         eagerload('sitting_type'),
                         eagerload('item_schedule'), 
                         eagerload('item_schedule.item'),
-                        eagerload('item_schedule.discussion'),
-                        eagerload('item_schedule.category'))
+                        eagerload('item_schedule.discussion'))
             items = query.all()
         #items.sort(key=operator.attrgetter('start_date'))
             for item in items:
@@ -234,14 +258,19 @@ class ReportView(form.PageForm):
                 
             return items    
     def process_form(self, data):
+        class optionsobj(object):
+            '''Object that holds all the options.'''
+            pass    
+        self.options = optionsobj()
         if 'date' in data:
             self.start_date = data['date']
         else:
             self.start_date = self.date
-        time_span = TIME_SPAN.daily 
+        self.time_span = TIME_SPAN.daily 
         
-        self.end_date = self.get_end_date(self.start_date, time_span)
+        self.end_date = self.get_end_date(self.start_date, self.time_span)
         if 'date' in data:
+            
             self.sitting_items = self.get_sittings_items(self.start_date, self.end_date)
             self.single="False"
         else:
@@ -251,8 +280,18 @@ class ReportView(form.PageForm):
             sitting = session.query(domain.GroupSitting).get(st)
             self.sitting_items.append(sitting)
             self.single="True"
-            
-        self.option_data = data
+        
+        def cleanup(string):
+            temp = string.lower()
+            return temp.replace(" ", "_")
+        
+        for item_type in data['item_types']:
+            itemtype = cleanup(item_type)
+            setattr(self.options,itemtype,True)
+            for option in data[itemtype+"_options"]:
+                setattr(self.options,cleanup(itemtype+"_"+option),True)
+                
+        #import pdb; pdb.set_trace()
         if "draft" in data:
             sitting_items = []
             for sitting in self.sitting_items:
@@ -284,12 +323,14 @@ class ReportView(form.PageForm):
                          
 class GroupSittingContextAgendaReportView(ReportView):
     display_minutes = False
-                        
+    doc_type = "Sitting Agenda" 
+    note = ""                    
 class GroupSittingContextMinutesReportView(ReportView):
     display_minutes = True
-        
+    doc_type = "Votes and Proceedings"    
+    note = ""
 class SchedulingContextReportView(ReportView):
-    class ISchedulingContextReportForm(ReportView.IReportForm):
+    class IReportForm(interface.Interface):
         doc_type = schema.Choice(
                     title = _(u"Document Type"),
                     description = _(u"Type of document to be produced"),
@@ -298,26 +339,62 @@ class SchedulingContextReportView(ReportView):
                              'Questions of the week'],
                     required=True
                     )
+        item_types = schema.List(title=u'Items to include',
+                   required=False,
+                   value_type=schema.Choice(
+                    vocabulary="Available Items"),
+                   )
+        bill_options = schema.List( title=u'Bill options',
+                       required=False,
+                       value_type=schema.Choice(
+                       vocabulary='Bill Options'),
+                         )
+        agenda_options = schema.List( title=u'Agenda options',
+                                        required=False,
+                                        value_type=schema.Choice(
+                                        vocabulary='Agenda Options'),)
+        motion_options = schema.List( title=u'Motion options',
+                                        required=False,
+                                        value_type=schema.Choice(
+                                        vocabulary='Motion Options'),)
+        question_options = schema.List( title=u'Question options',
+                                          required=False,
+                                          value_type=schema.Choice(
+                                          vocabulary='Question Options'),)
+        tabled_document_options = schema.List( title=u'Tabled Document options',
+                                          required=False,
+                                          value_type=schema.Choice(
+                                          vocabulary='Tabled Document Options'),)
         date = schema.Date(
             title=_(u"Date"),
             description=_(u"Choose a starting date for this report"),
             required=True)
-    class contexta(ReportView.contexta):
-            date = None
-            doc_type = 'Order of the day'        
-    form_fields = form.Fields(ISchedulingContextReportForm)        
+        note = schema.TextLine( title = u'Note',
+                                required=False,
+                                description=u'Optional note regarding this report'
+                        )
+    form_fields = form.Fields(IReportForm)
+    form_fields['item_types'].custom_widget = horizontalMultiCheckBoxWidget
+    form_fields['bill_options'].custom_widget = verticalMultiCheckBoxWidget
+    form_fields['agenda_options'].custom_widget = verticalMultiCheckBoxWidget
+    form_fields['motion_options'].custom_widget = verticalMultiCheckBoxWidget
+    form_fields['question_options'].custom_widget = verticalMultiCheckBoxWidget
+    form_fields['tabled_document_options'].custom_widget = verticalMultiCheckBoxWidget    
+    form_fields['date'].custom_widget = SelectDateWidget 
     def setUpWidgets(self, ignore_request=False):
+        self.contexta.date = None
+        self.contexta.doc_type = 'Order of the day'
         self.adapters = {
-                self.ISchedulingContextReportForm: self.contexta
+                self.IReportForm: self.contexta
             }
         self.widgets = form.setUpEditWidgets(
             self.form_fields, self.prefix, self.context, self.request,
             adapters=self.adapters, ignore_request=ignore_request)
         
-class SchedulingContextAgendaReportView(ReportView):
+class SchedulingContextAgendaReportView(SchedulingContextReportView):
     display_minutes = False
 
-class SchedulingContextMinutesReportView(ReportView):
+class SchedulingContextMinutesReportView(SchedulingContextReportView):
     display_minutes = True
 
 
