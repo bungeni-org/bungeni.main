@@ -161,6 +161,7 @@ input.inputLabelActive {
 .links li {
     line-height: 1.54em;
 }
+
 /*
  * *******************************************************
  * .template-portal styles.
@@ -180,9 +181,10 @@ input.inputLabelActive {
 }
 
 .template-portal #top-layer {
-    height: 28px;
-    text-align: center;
-    background: url(/static/images/shadow_2.png) repeat-y top center;
+    height: 20px;
+	text-align:center;
+	border: 0 none;
+    /*background: url(/static/images/shadow_2.png) repeat-y top center;*/
 }
 .template-portal #top-layer div {
     margin: 0 auto;
@@ -236,7 +238,7 @@ input.inputLabelActive {
 }
 
 .template-portal #visual-table-wrapper {
-    background: url(/static/images/shadow_2.png) repeat-y top center;
+    background: url(/static/images/shadow_3.png) repeat-y top center;
     width: 1054px;
     text-align: left;
     margin: 0 auto;    
@@ -271,7 +273,7 @@ input.inputLabelActive {
     * - padding bottom must have the same value as the 
     *   height of the footer.
     */
-    padding-bottom: 25px;
+    padding-bottom: 30px;
     position: relative;
 }
 .template-portal #portal-breadcrumbs {
@@ -323,7 +325,7 @@ input.inputLabelActive {
     text-shadow: 0px 0px 1px #fff;
 	text-align: center;
     display: block;
-    margin: 0;
+    margin: .75em 0;
     padding: 0;
 }
 .template-portal div.main-column h2 span {
@@ -331,9 +333,14 @@ input.inputLabelActive {
     font-weight: normal;
     color: #444;
 }
+.template-portal #portal-column-content #whats-on-overview {
+	clear: both;
+	margin: 0;
+}
 .template-portal #portal-column-content #whats-on-overview h1 {
     font-size:135%;
     text-align: center;
+	margin: 0;
 }
 .template-portal #portal-column-content #whats-on-overview h1 a {
     text-decoration: none;
@@ -537,26 +544,25 @@ input.inputLabelActive {
     position: relative;
     padding: 0;
     border: 0 none;
-    margin: -25px auto 0;
+    margin: -30px auto 0;
     clear: both;
-    width: 960px;
-    height: 25px;
-    line-height: 25px;
+	width: 1044px;
+    height: 30px;
     text-align: center;
     color: #444;
-    /*background: url(/static/images/shadow_2.png) repeat-y top center;*/
-	border-top: 1px solid #ccc;
-	background: trasnparent;
-	background: none;
+    background: url(/static/images/footer-bg.png) repeat-x bottom center;
 }
 .template-portal #portal-footer div {
     margin: 0 auto;
     width: 170px;
+	height: 25px;
+    line-height: 25px;
+	border-top: 1px solid #ccc;
 }
 .template-portal #portal-footer img {
     display: block;
     float: left;
-    margin: 0 .25em;
+    margin: .25em;
 }
 
 .template-portal li.formTab a:hover,
@@ -564,6 +570,28 @@ input.inputLabelActive {
 .template-portal li.formTab a.selected {
 	background: #fdcd8b;
 	border-bottom-color: #fdcd8b;
+}
+.template-portal #portal-column-content #whats-on-overview .whats-on-viewlet dd {
+	border-top: 4px solid #fdcd8b;
+    border-bottom: 1px solid #fcc373;
+}
+.template-portal #portal-column-one .portletItem a.navTreeCurrentItem {
+	background: #fcc373;
+	border-bottom-color: #FB9C14 !important;
+}
+.template-portal #portal-column-one .portletItem a:hover {
+	background: #fcc373;
+	border-bottom: 1px solid #aaa;
+}
+.template-portal #portletArchiveDates .portletItem.dates-filtered form {
+	background: #FFF68F;
+	border-color: #EEE685;
+	border-bottom-color: #BDB76B;
+}
+.template-portal table.listing,
+.template-portal table.listingdescription,
+.template-portal .stx table {
+	border-top: 0 none;	
 }
 /* end of .template-portal styles*/
 
@@ -645,7 +673,6 @@ input.inputLabelActive {
     border-bottom: 1px solid #eee;
 	margin: 0;
 	padding: 0;
-    /*background: url(/static/images/right_margin_workspace.png) repeat-y top right;*/
 }
 
 .template-workspace #top-layer div {
@@ -796,7 +823,7 @@ input.inputLabelActive {
 }
 .template-workspace div.main-column h2 {
     display: block;
-    margin: .25em 0;
+    margin: .75em 0;
     padding: 0;
     font-size: 120%;
     font-weight: bold;
@@ -1003,6 +1030,28 @@ input.inputLabelActive {
 .template-workspace li.formTab a.selected {
     border-top-color: #6CA6CD  !important;
 }
+.template-workspace #portal-column-content #whats-on-overview .whats-on-viewlet dd {
+	border-top: 4px solid #6CA6CD;
+}
+.template-workspace #portletArchiveDates .portletItem.dates-filtered form {
+	background: #FFF68F;
+	border-color: #EEE685;
+	border-bottom-color: #BDB76B;
+}
+.template-workspace li.formTab a.selected {
+	background: transparent url(../images/tab-bg.png) 0 0 repeat-x;
+	background:#6CA6CD;
+	border-bottom-color: #6ca6cd;
+	text-decoration: none;
+}
+.template-workspace .formPanel .field:first-child {
+	border-top: 4px solid #6CA6CD !important;
+}
+.template-workspace dl#context_actions.actionMenu .actionMenuContent ul li a.selected,
+.template-workspace dl#context_actions.actionMenu .actionMenuContent ul li a:hover {
+	border-right: 1px solid #aaf;
+	background-color: #6CA6CD !important;
+}
 /* end of .template-workspace styles*/
 
 /*
@@ -1025,13 +1074,6 @@ input.inputLabelActive {
     margin: 0 auto .25em !important;
     padding: 0;
 	width: 960px;
-}
-.template-portal #portal-column-content #whats-on-overview .whats-on-viewlet dd {
-	border-top: 4px solid #fdcd8b;
-    border-bottom: 1px solid #fcc373;
-}
-.template-workspace #portal-column-content #whats-on-overview .whats-on-viewlet dd {
-	border-top: 4px solid #6CA6CD;
 }
 #portal-column-content #whats-on-overview .whats-on-viewlet dd ul {
     background: #fff;
@@ -1155,6 +1197,7 @@ input.inputLabelActive {
 .portletHeader,
 .portletFooter {
     border: 0 none;
+	margin: 0;
 }
 .portletItem {
     border: 1px solid #FAAD5F;
@@ -1218,16 +1261,8 @@ input.inputLabelActive {
 	border-bottom-color: #aaa !important;
 	border-top: 0 none !important;
 }
-.template-portal #portal-column-one .portletItem a.navTreeCurrentItem {
-	background: #fcc373;
-	border-bottom-color: #FB9C14 !important;
-}
 #portal-column-one .portletItem a:hover {
 	background: #eee;
-	border-bottom: 1px solid #aaa;
-}
-.template-portal #portal-column-one .portletItem a:hover {
-	background: #fcc373;
 	border-bottom: 1px solid #aaa;
 }
 #whats-on-overview .portlet dt {
@@ -1423,6 +1458,7 @@ div#portal-globalnav ul.level0 li#portaltab-index_html {
     border: 1px solid #eee;
 	border: 0 none;
 	position: relative;
+	margin: 0;
 }
 #portletArchiveDates .portletHeader {
     text-align: right;
@@ -1435,11 +1471,8 @@ div#portal-globalnav ul.level0 li#portaltab-index_html {
 #portletArchiveDates .portletItem {
 	border: 0 none;
     padding: 0;
-	position: absolute;
-	right: 0;
-	top: 22px;
-	z-index: 20;
 	background: none;
+	z-index: 10;
 }
 #portletArchiveDates .portletItem form {
     margin: .25em auto;
@@ -1518,6 +1551,9 @@ div#portal-globalnav ul.level0 li#portaltab-index_html {
 }
 #portletArchiveDates .portletItem.dates-filtered {
     background: #fff !important;
+	background: #FFF68F;
+	border-color: #EEE685;
+	border-bottom-color: #BDB76B;
 }
 #portletArchiveDates .widget-dropdownwidget.field {
     margin-left: -40px;
@@ -1547,11 +1583,6 @@ table.listingdescription,
 #items-to-be-scheduled-dl table.listing {
 	width: 100% !important;
 }
-.template-portal table.listing,
-.template-portal table.listingdescription,
-.template-portal .stx table {
-	border-top-color: #FAAD5F;
-}
 table.listing tr:hover,
 table.listingdescription tr:hover,
 .stx table tr:hover {
@@ -1560,13 +1591,12 @@ table.listingdescription tr:hover,
 table.listing th,
 table.listingdescription th,
 .stx table th {
-    background: url(/static/images/table-bg-active.png) repeat-x 0 -3px !important;
+    background: url(/static/images/table-bg.png) repeat-x 0 -3px !important;
     padding: 0 .5em;
     border: 0 none;
-    border-left: 1px solid #fff;
     border-right: 1px solid #faa631;
    /*height: 23px !important;*/
-    line-height: 23px !important;
+    line-height: 20px !important;
     text-shadow: 0 1px 1px #fff;
     color: #222;
 }
@@ -1594,6 +1624,7 @@ table.listingdescription td,
     border-top-color: #eee;
     border-bottom-color: #aaa;
     border-right: 0 none;
+	border-top: 0 none;
     margin: auto;
 	width: 95%;
 }
@@ -1608,21 +1639,23 @@ table.listingdescription td,
     text-shadow: 0px 1px 1px #fff;
 }
 .yui-skin-sam .yui-dt-first th {
-    background: url(/static/images/table-bg-active.png) repeat-x top left !important;
-    padding: 0;
+    background: url(/static/images/table-bg.png) repeat-x top left !important;
+    padding: 0 .5em;
     border: 0 none;
-    border-left: 1px solid #fff;
     border-right: 1px solid #faa631;
-    height: 18px;
-    line-height: 18px;
+    height: 20px;
+    line-height: 20px !important;
     text-shadow: 0px 1px 1px #fff;
     color: #444;
 }
 .yui-skin-sam .yui-dt-first th:active {
-    background-image: url(/static/images/table-bg.png) !important;
+    background-image: url(/static/images/table-bg-active.png) !important;
 }
 .yui-skin-sam .yui-dt-first th a {
     border: 0 none;
+}
+.yui-skin-sam .yui-dt-first th div {
+	padding: 0;
 }
 .yui-skin-sam .yui-dt-last th {
     background: #fff !important;
@@ -1633,9 +1666,10 @@ table.listingdescription td,
     border: 1px solid #aaa;
     border-left: 0 none;
     border-bottom: 0 none;
-    line-height: 25px;
-    height: 25px;
+    line-height: 20px;
+    height: 20px;
     font-size: 95%;
+	font-family: Arial, Helvetica, sans-serif;
     color: #222;
     padding: 0;
 }
@@ -1683,14 +1717,8 @@ li.formTab a.selected {
 }
 li.formTab a.selected {
     position: relative;
-    top: 1px;
+    top: 2px;
     border-bottom: 2px solid #fff;
-}
-.template-workspace li.formTab a.selected {
-	background: transparent url(../images/tab-bg.png) 0 0 repeat-x;
-	background:#6CA6CD;
-	border-bottom-color: #6ca6cd;
-	text-decoration: none;
 }
 .enableFormTabbing {
 }
@@ -1713,14 +1741,14 @@ li.formTab a.selected {
     border-bottom: 1px dotted #aaa;
 }
 .formPanel form { 
-    /*border:1px solid #FAAD5F;*/
     margin: 0 auto;
-    padding: 0;
+    padding: 0 !important;
     border: 0 none;
     text-align: center;
 }
 .formPanel .field {
     margin: 0 auto !important;
+	padding: 0;
     clear: both;
     width: 800px;
 	height: auto;
@@ -1728,6 +1756,9 @@ li.formTab a.selected {
     border-bottom: 1px dotted #ccc;
 	display: inline-block;
 	background: #eee;
+}
+.template-portal .formPanel .field:first-child {
+	border-top: 4px solid #FDCD8B !important;
 }
 .formPanel .field:after {
 	content: ".";
@@ -1828,11 +1859,6 @@ dl#context_actions.actionMenu .actionMenuContent ul li a {
 	padding: 0;
 	margin: 0 .25em;
 }
-.template-workspace dl#context_actions.actionMenu .actionMenuContent ul li a.selected,
-.template-workspace dl#context_actions.actionMenu .actionMenuContent ul li a:hover {
-	border-right: 1px solid #aaf;
-	background-color: #6CA6CD !important;
-}
 
 span.yui-button.yui-link-button span a {
 	padding: 0 3px;
@@ -1852,7 +1878,9 @@ span.yui-button.yui-link-button span a {
 	width: 960px;
 	width: 95%;
 }
-#yui-dt0-paginator0 {
+#yui-dt0-paginator0,
+#yui-dt1-paginator0,
+#yui-dt2-paginator0 {
 	display: none;
 }
 #container_contents_agendaitems .yui-dt-paginator {

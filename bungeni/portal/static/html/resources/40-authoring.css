@@ -238,7 +238,7 @@ dl#context_actions.actionMenu .actionMenuContent ul {
 }
 dl#context_actions.actionMenu .actionMenuContent ul li {
 	float: left;
-	margin: 0 .25em;
+	padding: 0 .5em 0 0;
 }
 dl#context_actions.actionMenu .actionMenuContent ul li a {
 	padding: 0;
@@ -246,7 +246,6 @@ dl#context_actions.actionMenu .actionMenuContent ul li a {
     height: 1.8em;
 	line-height: 1.8em;
 	border: 0 none;
-    border-left: 1px solid #aaa;
     border-right: 1px solid #aaa;
 }
 dl#context_actions.actionMenu .actionMenuContent ul li a.selected,
@@ -273,7 +272,7 @@ dl#context_actions.actionMenu .actionMenuContent ul li a#delete  {
 	background: transparent 2px 2px no-repeat;
 }
 dl#context_actions.actionMenu .actionMenuContent ul li a#view {
-	background-image: url(images/view.png);
+	background-image: url(images/page_portrait.png);
 }
 dl#context_actions.actionMenu .actionMenuContent ul li a#delete {
 	background-image: url(images/cross.png);
