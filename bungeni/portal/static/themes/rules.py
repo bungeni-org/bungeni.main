@@ -53,3 +53,13 @@ def rewrite_links(content, theme, resource_fetcher, log):
         
         content('head').append('<link rel="stylesheet" type="text/css" href=' \
                                + stylevalue + ' />')
+
+def enable_text_editor(content, theme, resource_fetcher, log):
+    """
+    Disable rich text editor in favor of plain text editor for Selenium.
+    """
+    scripts = theme('#alchemist-form script')
+    for script in scripts:
+        if script.text.__contains__('YAHOO.widget.Editor'):
+            script.text=""
+            script.drop_tag()                               
