@@ -137,7 +137,8 @@ TAG_MAPPINGS["tableddocument"] = {
     "withdrawn": ["terminal", "fail",],
 }
 TAG_MAPPINGS["groupsitting"] = {
-    "draft_agenda": ["public", "draft"],
+    "sitting":["private", "draft"],                            
+    "draft_agenda": ["private", "draft"],
     "published_agenda": ["public", "published"],
     "draft_minutes": ["public", "draft"],
     "published_minutes": ["public", "published"],

@@ -68,14 +68,14 @@ class WhatsOnBrowserView(BrowserView):
         session = Session()
         query = session.query(domain.GroupSitting).filter(
             sql.and_(
-                schema.sittings.c.status!=get_states(
-                                    "groupsitting", keys=["draft_agenda"])[0],
+                schema.sittings.c.status.in_(get_states('groupsitting',tagged=['public'])),
                 sql.between(
                     schema.sittings.c.start_date,
                     self.start_date,
                     self.end_date))).order_by(
                         schema.sittings.c.start_date).options(
-                        eagerload('group'), eagerload('sitting_type'),
+                        eagerload('group'), 
+                        eagerload('sitting_type'),
                         eagerload('item_schedule'), 
                         eagerload('item_schedule.item')
             )
@@ -118,8 +118,8 @@ class WhatsOnBrowserView(BrowserView):
     def get_items(self):
         session = Session()
         where_clause = sql.and_(
-                schema.sittings.c.status!=get_states(
-                                    "groupsitting", keys=["draft_agenda"])[0],
+                schema.sittings.c.status.in_(get_states(
+                                    "groupsitting", tagged=["public"])),
                 sql.between(
                     schema.sittings.c.start_date,
                     self.start_date,
