@@ -111,32 +111,32 @@
       name="bungeni.vocabulary.workflow" />
    
    <utility
-            component=".calendar.browser.availableItems"
+            component=".reports.availableItems"
             name="Available Items"
             provides="zope.schema.interfaces.IVocabularyFactory"
             />
    <utility
-            component=".calendar.browser.billOptions"
+            component=".reports.billOptions"
             name="Bill Options"
             provides="zope.schema.interfaces.IVocabularyFactory"
             />
    <utility
-            component=".calendar.browser.motionOptions"
+            component=".reports.motionOptions"
             name="Motion Options"
             provides="zope.schema.interfaces.IVocabularyFactory"
             />
     <utility
-            component=".calendar.browser.agendaOptions"
+            component=".reports.agendaOptions"
             name="Agenda Options"
             provides="zope.schema.interfaces.IVocabularyFactory"
             />
     <utility
-            component=".calendar.browser.questionOptions"
+            component=".reports.questionOptions"
             name="Question Options"
             provides="zope.schema.interfaces.IVocabularyFactory"
             />
     <utility
-            component=".calendar.browser.tabledDocumentOptions"
+            component=".reports.tabledDocumentOptions"
             name="Tabled Document Options"
             provides="zope.schema.interfaces.IVocabularyFactory"
             />
