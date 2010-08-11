@@ -18,6 +18,11 @@ function listTogglr(){
     });
   
   var viewlet = $('#fieldset-upcoming-sittings ul li ul li');
+  var viewletLink = viewlet.children('a');
+  var linkClicked = false;
+  viewletLink.click(function(){
+		linkClicked = true;
+  });
   viewlet.css({
   	background: '#fff url(/static/images/plus.png) 2px 4px no-repeat',
 	paddingLeft: '20px',
@@ -26,15 +31,17 @@ function listTogglr(){
   $('#fieldset-upcoming-sittings ul li ul li ul li').css({background: '#fff', padding: '0'});
   viewlet.children('ul').hide();
   viewlet.click(function(){
-      var state = $(this).children('ul').css('display');
-      if(state == 'hidden' || state == 'none'){
-        $(this).css('background-image','url(/static/images/minus.png)');
-        $(this).children('ul').slideDown('fast');
-      }
-      else {
-        $(this).css('background-image','url(/static/images/plus.png)');
-        $(this).children('ul').slideUp('fast');
-      }
+  	  if(!linkClicked){
+	      var state = $(this).children('ul').css('display');
+	      if(state == 'hidden' || state == 'none'){
+	        $(this).css('background-image','url(/static/images/minus.png)');
+	        $(this).children('ul').slideDown('fast');
+	      }
+	      else {
+	        $(this).css('background-image','url(/static/images/plus.png)');
+	        $(this).children('ul').slideUp('fast');
+	      }
+	  }
     });
   $('#fieldset-upcoming-sittings ul li ul li ul li').css('cursor','default');
   $('#fieldset-upcoming-sittings ul li ul li ul li').click(function(){

@@ -45,6 +45,7 @@ q:before,q:after {
 blockquote, q {
     quotes:"" "";
 }
+
 /*
  * Uncomment the following code if you want to disable the outlining of clicked elements.
  * Warning: Accesibility wise, this is a not a wise decision to enable.)
@@ -63,10 +64,10 @@ html, body {
     font-size: 85%;
     height: 100%;
 }
-
 /* 
  * Clearfix Hack
- * Used to clear divs without having to insert html like: <div style="clear:both"></div>
+ * Used to clear divs without having to insert html like: 
+ * <div style="clear:both"></div>
  * after the elemnts to be cleared.
  * - more information: http://perishablepress.com/press/2008/06/18/css-hackz-
  * series-clearing-floats-with-the-clearfix-hack/
@@ -80,6 +81,9 @@ html, body {
     visibility: hidden;
 }
 
+/*
+ * Basic styles.
+ */
 #top-layer {
     height: 20px;
 }
@@ -95,12 +99,12 @@ html, body {
  *   work in webkit browsers(chrome/safari)
  */
 #top-layer #demoWarning {
-    width: 100px;
+    width: 150px;
     height: 18px;
     line-height: 18px;
     margin: 0 auto;
     padding: 0;
-    color:#fff;
+    color: #fff;
     background: #900;
     text-decoration: blink;
     text-transform: uppercase;
@@ -116,18 +120,47 @@ html, body {
     border-bottom-right-radius: 5px;
     border-top: 0 none;
 }
+#portal-breadcrumbs {
+    line-height: 20px;
+    font-size: 95%;
+    color: #555;
+    padding: 0 .25em;
+    background: #fff;
+    width: auto;
+    text-align: left;
+    clear: both;
+	position: relative;
+}
+#portal-breadcrumbs a:hover {
+	text-decoration: underline;
+}
+
 #main-body-table {
     height: 100%;
-    width:1054px;
+    width: 1054px;
 }
-.documentDescription {
-    font-weight: normal;
+.documentContent dd a {
+	border-bottom: 0 none;
+	text-decoration: none;
 }
+.documentContent a {
+	text-decoration: none;
+}
+.documentContent a:hover {
+	text-decoration: underline;
+}
+div#footer {
+    background: none;
+}
+
 #portal-searchbox input.searchButton {
     height: 17px;
 }
 input.inputLabelActive {
     color: transparent;
+}
+.links li {
+    line-height: 1.54em;
 }
 
 /*
@@ -147,15 +180,13 @@ input.inputLabelActive {
     */
     height: 100%;
 }
-.template-portal .portalMessage {
-    border: 1px solid black;
-}
 .template-portal a {
     color: #222;
 }
 .template-portal #top-layer {
     height: 20px;
     text-align: center;
+	background: #AB1A03;
 }
 .template-portal #top-layer div {
     margin: 0 auto;
@@ -179,6 +210,8 @@ input.inputLabelActive {
 }
 .template-portal #top-layer ul#portal-languageselector a {
     color: #fff;
+    height: 20px;
+    line-height: 20px;
 }
 .template-portal #top-layer ul#portal-languageselector a:hover {
     color: #ccc;
@@ -227,7 +260,7 @@ input.inputLabelActive {
     *   bottom of the page.
     */
     height: auto;
-    min-height: 95%;
+    min-height: 100%;
 }
 .template-portal #portal-siteactions {
     margin: 0;
@@ -314,12 +347,12 @@ input.inputLabelActive {
     margin: .25em 0;
     color: #222;
     text-shadow: 0px 0px 1px #fff;
-    text-align:center;
+    text-align: left;
     line-height: 18px;
 }
-.template-portal #portal-column-content #whats-on-overview p.documentDescription {
+.template-portal #portal-column-content #whats-on-overview .documentDescription {
     font-weight: normal;
-    text-align: center;
+    text-align: left;
 }
 .template-portal #portal-column-content {
     margin: 0;
@@ -522,14 +555,18 @@ input.inputLabelActive {
 .template-portal #portal-footer img {
     display: block;
     float: left;
-    margin: 0 .25em;
+    margin: .25em;
 }
 .template-portal li.formTab a:hover,
 .template-portal li.formTab a:active,
 .template-portal li.formTab a.selected {
     background: #fff;
+	background: #ae220b;
     color: #222;
+	color: #fff;
     border-top: 2px solid #ab1a03;
+	border-bottom-color: #af2610;
+	text-shadow: 0px -1px 1px #222;
 }
 .template-portal #portal-column-one .portletHeader,
 .template-portal #portal-column-content .portletHeader,
@@ -543,23 +580,6 @@ input.inputLabelActive {
 .template-portal #portal-column-one .portlet .portletHeader,
 .template-portal #portal-column-one .portlet .portletItem {
     border-color: #ab1a03;
-}
-.template-portal .formPanel form .field {
-    border-bottom: 0 none;
-}
-.template-portal .formPanel form .field .content-left-column {
-    border-bottom: 1px dotted #aaa;
-    padding: .25em 1em .25em .25em;
-}
-.template-portal .formPanel form .field .content-right-column {
-    display: block;
-    width: 600px;
-    float: left;
-    text-shadow: 0px 0px 1px #fff;
-    color: #333;
-    padding: .25em .25em .25em 1em;
-    background: #f2f2f2;
-    border-bottom: 1px dotted #aaa;
 }
 /* end of .template-portal styles*/
 
@@ -583,9 +603,10 @@ input.inputLabelActive {
     line-height: 1em;
 }
 .template-workspace #visual-table-wrapper {
-    padding:0 .75em 0 1.75em;
+    padding:0 1em 0 2em;
     text-align: left;
     margin: 0 !important;
+	margin-top: 20px;
     background: url(/static/images/right_margin_workspace.png) repeat-y top right;
     /* 
      * Sticky Footer
@@ -593,7 +614,7 @@ input.inputLabelActive {
      * - required for sticky footer
      */
     height: auto;
-    min-height: 95%;
+    min-height: 99%;
 }
 .template-workspace #main-body-table {
     width:100% !important;
@@ -611,7 +632,7 @@ input.inputLabelActive {
     padding: 0;
     border: 0 none;
     border-top: 1px solid #D4E2EF;
-    background: none;
+    background: #fff;
     text-align: center;
     color: #444;
     /* 
@@ -623,7 +644,7 @@ input.inputLabelActive {
     position: relative;
     height: 25px;
     line-height: 25px;
-    margin: -25px 2em 0;
+    margin: -25px 2.5em 0;
 }
 .template-workspace #portal-footer div {
     margin: 0 auto;
@@ -638,9 +659,8 @@ input.inputLabelActive {
     height: 20px;
     background: none;
     border-bottom: 1px solid #eee;
-    margin-left:2em;
-    padding-right: 1em;
-    background: url(/static/images/right_margin_workspace.png) repeat-y top right;
+	margin: 0;
+	padding: 0;
 }
 
 .template-workspace #top-layer div {
@@ -653,6 +673,10 @@ input.inputLabelActive {
     float: left;
     padding; 0;
     font-size: 100%;
+}
+.template-workspace #top-layer ul#portal-languageselector a {
+    height: 20px;
+    line-height: 20px;
 }
 .template-workspace #top-layer ul#portal-personaltools {
     margin: 0;
@@ -684,7 +708,7 @@ input.inputLabelActive {
     padding: 0;
     border: 1px solid #aaf;
     background: #bdd1d7;
-    height: 18px;
+    height: 1.8em;
 }
 .template-workspace .contentActions ul {
     margin: 0;
@@ -692,11 +716,10 @@ input.inputLabelActive {
     border: 0 none;
 }
 .template-workspace .contentActions ul li {
-    height: 18px;
-    line-height: 18px;
+    height: 1.8em;
+    line-height: 1.8em;
     border: 0 none;
     border-left: 1px solid #aaf;
-    border-right: 1px solid #aaf;
 }
 .template-workspace .actionMenu .actionMenuContent {
     width: 100%;
@@ -711,18 +734,16 @@ input.inputLabelActive {
 }
 .template-workspace .actionMenu .actionMenuContent ul li {
     margin: 0;
-    padding: 0;
     border: 0 none;
-    border-bottom: 1px solid #aaf;
     display: block;
+    border-bottom: 1px solid #aaf;
 }
 .template-workspace .actionMenu .actionMenuContent ul li a {
     background: none;
     color: #000;
     display: block;
-    line-height: 18px;
     margin: 0;
-    padding: 0 .15em;
+    padding: 0 .25em;
 }
 .template-workspace .actionMenu .actionMenuContent ul li a:hover {
     background: #cceaf3;
@@ -731,64 +752,72 @@ input.inputLabelActive {
 .template-workspace .documentContent {
     padding: .25em !important;
 }
-
-/*
- * these two columns aren't necessary for the design.
- */
-/*
-.template-workspace div.left-column {
-  background: none;
-  width: 21px !important;
-  height: 100%;
-  position:fixed;
-  z-index: 10;
-  display: none;
+.template-workspace #portal-breadcrumbs {
+    margin: 1em 0;
+    border-bottom:1px solid #d4e2ef;
 }
-.template-workspace div.right-column {
-  background: none;
-  width:10px !important;  
-  height:100%;
-  position: fixed;
-  display: none;
-}
-*/.template-workspace #portal-logo {
+.template-workspace #portal-logo {
     display: block;
     margin: .5em 0;
     height: 85px;
     background: url(../images/bungeni.png) top left no-repeat;
 }
 .template-workspace #portal-logo img {
-    border: 0 none;
-    margin: 0;
-    padding:0;
     display: none; /* removes the default logo set in the template */
 }
 .template-workspace div.main-column h1 {
     display: block;
-    margin: .25em 0 0;
+    margin: .25em 0;
     padding: 0;
     font-size: 150%;
     font-weight: bold;
     line-height: 20px;
     text-shadow: 0px 0px 1px #fff;
+	text-align: center;
     color: #222;
+	display: none;
+}
+.template-workspace div.main-column h1.title {
+    display: block;
+    margin: .25em 0;
+    padding: 0;
+    font-size: 150%;
+    font-weight: bold;
+    line-height: 20px;
+    text-shadow: 0px 0px 1px #fff;
+	text-align: center;
+    color: #222;
+}
+.template-workspace div.main-column h1.reportmaintitle,
+.template-workspace div.main-column h1.reportdoctype {
+	clear: both;
+	margin: .25em 0;
+	text-align: left;
+	font-size: 125%;
 }
 .template-workspace div.main-column h2 {
     display: block;
-    margin: 0;
+    margin: .75em 0;
     padding: 0;
     font-size: 120%;
     font-weight: bold;
     color: #222;
     line-height: 20px;
     text-shadow: 0px 0px 1px #fff;
+	text-align: center;
 }
 .template-workspace div.main-column h2 span {
     font-size: 75%;
     font-weight: normal;
 }
+.template-workspace div.main-column p {
+	text-align: center;
+    text-shadow: 0px 0px 1px #fff;
+}
 .template-workspace #portal-column-content #whats-on-overview h1 {
-    font-size:135%;
+    font-size: 135%;
+	text-align: center;
+	padding: 0;
 }
 .template-workspace #portal-column-content #whats-on-overview p {
     color: #222;
@@ -798,19 +827,7 @@ input.inputLabelActive {
 }
 .template-workspace #portal-column-content #whats-on-overview p.documentDescription {
     font-weight: normal;
-    text-align: left;
-}
-
-.template-workspace #portal-breadcrumbs {
-    margin: 1em 0;
-    line-height: 18px;
-    background: #fff;
-    border-bottom:1px solid #d4e2ef;
-    padding: 0;
-    text-align: left;
-    color: #555;
-    font-size: 95%;
-    width: auto;
+    text-align: center;
 }
 
 /*
@@ -851,7 +868,6 @@ input.inputLabelActive {
     line-height: 20px;
 }
 .template-workspace #portal-column-content .portletItem {
-    border-color: #aaf;
 }
 .template-workspace #portal-column-two #whats-on-overview {
     display: none;
@@ -953,7 +969,7 @@ input.inputLabelActive {
     padding-top: 2px;
 }
 .section-bungeni-workspace div#portal-globalnav ul.level0 li#portaltab- a {
-    background: #D4E2EF;
+    /*background: #D4E2EF;*/
 }
 /*
  * Notes:
@@ -968,13 +984,12 @@ input.inputLabelActive {
     display: none;
 }
 
-/*
- * Most of the styles are defined in reset.css
- */
-.template-workspace table.listing td {
+.template-workspace table.listing td,
+.template-workspace table.listingdescription td {
     border-right: 1px solid #aaf;
 }
 .template-workspace table.listing th,
+.template-workspace table.listingdescription th,
 .template-workspace .stx table th,
 .template-workspace.yui-skin-sam .yui-dt-first th {
     background: url(/static/images/table-workspace-bg.png) repeat-x top left !important;
@@ -987,7 +1002,29 @@ input.inputLabelActive {
 .template-workspace li.formTab a:hover,
 .template-workspace li.formTab a:active,
 .template-workspace li.formTab a.selected {
-    border-top-color: #1763aa !important;
+    border-top-color: #6CA6CD  !important;
+}
+.template-workspace #portal-column-content #whats-on-overview .whats-on-viewlet dd {
+	border-top: 4px solid #6CA6CD;
+}
+.template-workspace #portletArchiveDates .portletItem.dates-filtered form {
+	background: #FFF68F;
+	border-color: #EEE685;
+	border-bottom-color: #BDB76B;
+}
+.template-workspace li.formTab a.selected {
+	background: transparent url(../images/tab-bg.png) 0 0 repeat-x;
+	background:#6CA6CD;
+	border-bottom-color: #6ca6cd;
+	text-decoration: none;
+}
+.template-workspace .formPanel .field:first-child {
+	border-top: 4px solid #6CA6CD !important;
+}
+.template-workspace dl#context_actions.actionMenu .actionMenuContent ul li a.selected,
+.template-workspace dl#context_actions.actionMenu .actionMenuContent ul li a:hover {
+	border-right: 1px solid #aaf;
+	background-color: #6CA6CD !important;
 }
 /* end of .template-workspace styles*/
 
@@ -1002,11 +1039,15 @@ input.inputLabelActive {
 }
 #portal-column-content #whats-on-overview .whats-on-viewlet {
     border-bottom: 1px solid #ccc;
+	padding: 0;
+	border-top: 0 none;
+	margin: 0;
 }
 #portal-column-content #whats-on-overview .whats-on-viewlet dd {
     border: 0 none;
-    margin: 0;
+    margin: 0 auto .25em !important;
     padding: 0;
+	width: 960px;
 }
 #portal-column-content #whats-on-overview .whats-on-viewlet dd ul {
     background: #fff;
@@ -1016,6 +1057,7 @@ input.inputLabelActive {
     margin: 0;
     border: 1px solid #ccc;
     border-bottom-color: #aaa;
+	border-top: 0 none;
 }
 #portal-column-content #whats-on-overview .whats-on-viewlet dd ul li {
     margin: 0 0 .5em;
@@ -1025,8 +1067,10 @@ input.inputLabelActive {
     font-size: 100%;
     margin: 0;
     color: #222;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #aaa;
     background: #eee;
+	text-align: left;
+	text-shadow: 0px 0px 1px #fff;
 }
 #portal-column-content #whats-on-overview .whats-on-viewlet dd ul li ul {
     margin: 0;
@@ -1087,18 +1131,16 @@ input.inputLabelActive {
 }
 .section-bungeni-whats-on div#portal-globalnav ul.level0 li.selected a,
 .section-bungeni-archive div#portal-globalnav ul.level0 li.selected a {
-    background: #fff;
-    border-top: .5px solid #f8ba61;
 }
 .section-bungeni-whats-on div#portal-globalnav ul.level0 li#portaltab-business-whats-on a,
 .section-bungeni-business div#portal-globalnav ul.level0 li#portaltab-business-whats-on a,
 .section-bungeni-archive div#portal-globalnav ul.level0 li#portaltab-archive-browse a {
-    background: #f8ba61;
+    /*background: #f8ba61;*/
 }
 .template-workspace.section-bungeni-whats-on div#portal-globalnav ul.level0 li#portaltab-business-whats-on a,
 .template-workspace.section-bungeni-business div#portal-globalnav ul.level0 li#portaltab-business-whats-on a,
 .template-workspace.section-bungeni-archive div#portal-globalnav ul.level0 li#portaltab-archive-browse a {
-    background: #d4e2ef;
+    /*background: #d4e2ef;*/
 }
 .section-front-page {
     display: none;
@@ -1129,6 +1171,7 @@ input.inputLabelActive {
 .portletHeader,
 .portletFooter {
     border: 0 none;
+	margin: 0;
 }
 .portletItem {
     border: 1px solid #FAAD5F;
@@ -1155,9 +1198,14 @@ input.inputLabelActive {
 #whats-on-overview .portlet dt
 #whats-on-overview .portlet dt {
     background: #E3E3E3;
-    border: 1px solid #FAAD5F;
-    line-height: 1.6em;
+    border-bottom: 1px solid #FAAD5F;
+    line-height: 20px;
     text-align: justify;
+	text-shadow: 0px 1px 1px #fff;
+	position: relative;
+	margin: 0;
+	padding: 0 .25em;
+	width: auto;
 }
 #portal-column-one .portletItem,
 #portal-column-content .portletItem,
@@ -1165,6 +1213,31 @@ input.inputLabelActive {
 #portal-column-two .portletItem {
     border-left: 1px solid #FAAD5F;
     border-right: 1px solid #FAAD5F;
+	border-color: #aaa;
+	position: relative;
+	margin: 0;
+	padding: 0;
+}
+#portal-column-one .portletItem a {
+	background: #fff;
+	line-height: 18px;
+	border: 0 none;
+	border-bottom: 1px solid transparent;
+}
+#portal-column-one .portletItem a img {
+	margin: 1px 0;
+	float: left;
+}
+#portal-column-one .portletItem a.navTreeCurrentItem {
+	background: #eee;
+	line-height: 18px;
+	border: 0 none;
+	border-bottom-color: #aaa !important;
+	border-top: 0 none !important;
+}
+#portal-column-one .portletItem a:hover {
+	background: #eee;
+	border-bottom: 1px solid #aaa;
 }
 #whats-on-overview .portlet dt {
     padding: 0 2px 0 5px;
@@ -1238,6 +1311,7 @@ h4.tabberHeading {
 #content a[href^="http:"], #content a.link-external {
     background:transparent;
     padding: 1px 0 1px 16px;
+	padding: .1em;
 }
 /* center archive table */
 .section-bungeni-archive table {
@@ -1280,6 +1354,7 @@ h4.tabberHeading {
 }
 .documentDescription {
     font-weight: normal;
+	text-align: left;
 }
 .documentEditable .documentContent {
     border: 1px solid #BDD1D7;
@@ -1355,9 +1430,12 @@ div#portal-globalnav ul.level0 li#portaltab-index_html {
 }
 #portletArchiveDates {
     border: 1px solid #eee;
+	border: 0 none;
+	position: relative;
+	margin: 0;
 }
 #portletArchiveDates .portletHeader {
-    text-align: left;
+    text-align: right;
     background: #fff;
     color: #444;
     padding: 0;
@@ -1365,18 +1443,27 @@ div#portal-globalnav ul.level0 li#portaltab-index_html {
     border: 0 none;
 }
 #portletArchiveDates .portletItem {
-    border: 1px solid #aaa;
+	border: 0 none;
     padding: 0;
+	background: none;
+	z-index: 10;
 }
 #portletArchiveDates .portletItem form {
-    margin: .5em;
+    margin: .25em auto;
+	float: right;
+    border: 1px solid #ccc;
+	background: #eee;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+	text-shadow: 0px 1px 1px #fff;
+	border-bottom: 1px solid #aaa;
 }
 #portletArchiveDates .portletItem form .field {
     clear: none;
-    float: left;
+	float: left;
     margin: .25em;
-    padding: .25em;
-    width: 14em;
+    padding: .15em;
 }
 #portletArchiveDates .portletItem form .field input {
     border: 1px solid #aaa;
@@ -1386,12 +1473,26 @@ div#portal-globalnav ul.level0 li#portaltab-index_html {
     height: 20px;
     line-height: 18px;
     font-size: 95%;
+	margin: .15em;
+	background: #fff;
+}
+#portletArchiveDates .portletItem form .field span.calendarpicker {
+	position: relative;
+	display: block;
+	height: 25px;
+	margin: 0;
+}
+#portletArchiveDates .portletItem form .field .widget {
+	float: left;
+	margin: 0 .25em;
+	padding: 0;
 }
 #portletArchiveDates .portletItem form label {
     height: 23px;
     line-height: 25px;
     float: left;
     font-size: 95%;
+	margin: .25em 0;
 }
 #portletArchiveDates .portletItem form #actionsView {
     margin: .25em 0;
@@ -1413,19 +1514,25 @@ div#portal-globalnav ul.level0 li#portaltab-index_html {
     text-align: left;
     padding: 0 .5em 0 15px;
     background-position: 5px center;
+	background-color: #fff;
 }
-#portletArchiveDates .portletItem form #actionsView .actionButtons input:hover,
+#portletArchiveDates .portletItem form #actionsView .actionButtons input:hover {
+    background-color: #eef;
+}
 #portletArchiveDates .portletItem form #actionsView .actionButtons input:active {
     background-color: #eef;
     margin-top: 1px;
 }
 #portletArchiveDates .portletItem.dates-filtered {
     background: #fff !important;
+	background: #FFF68F;
+	border-color: #EEE685;
+	border-bottom-color: #BDB76B;
 }
 #portletArchiveDates .widget-dropdownwidget.field {
     margin-left: -40px;
     margin-right: 0;
-    width: 18em;
+    /*width: 18em;*/
 }
 
 /*
@@ -1433,32 +1540,48 @@ div#portal-globalnav ul.level0 li#portaltab-index_html {
  * Default styles.
  */
 table.listing,
+table.listingdescription,
 .stx table {
     border: 1px solid #ccc;
-    border-top-color: #eee;
     border-bottom-color: #aaa;
     border-right: 0 none;
+	border-top: 0 none;
     width: 100%;
+	font-size: 100%;
+	margin: 0 auto;
+	width: 960px;
+	width: 95%;
+}
+#container_contents_agendaitems table,
+#items-to-be-scheduled-dl table.listing {
+	width: 100% !important;
+}
+table.listing tr:hover,
+table.listingdescription tr:hover,
+.stx table tr:hover {
+    background: #e6e6e6;
 }
 table.listing th,
+table.listingdescription th,
 .stx table th {
-    background: url(/static/images/table-bg.png) repeat-x top left !important;
+    background: url(../images/table-bg.png) repeat-x 0 -3px !important;
     padding: 0 .5em;
     border: 0 none;
-    border-left: 1px solid #fff;
-    border-right: 1px solid #faa631;
-    height: 22px;
-    line-height: 22px;
+    border-right: 1px solid #aaa;
+   /*height: 23px !important;*/
+    line-height: 20px !important;
     text-shadow: 0 1px 1px #fff;
     color: #222;
 }
 table.listing th a,
+table.listingdescription th a,
 .stx table th a {
     color: #222;
 }
 table.listing td,
+table.listingdescription td,
 .stx table td {
-    border-right: 1px solid #FAAD5F;
+    border-right: 1px solid #aaa;
     padding: .25em .5em;
     color: #222;
     text-shadow: 0 1px 1px #fff;
@@ -1474,8 +1597,9 @@ table.listing td,
     border-top-color: #eee;
     border-bottom-color: #aaa;
     border-right: 0 none;
+	border-top: 0 none;
     margin: auto;
-    width: 100%;
+	width: 95%;
 }
 .yui-skin-sam .yui-dt table tr.yui-dt-odd {
     background: #F3F3F3;
@@ -1488,21 +1612,23 @@ table.listing td,
     text-shadow: 0px 1px 1px #fff;
 }
 .yui-skin-sam .yui-dt-first th {
-    background: url(/static/images/table-bg.png) repeat-x top left !important;
-    padding: 0;
+    background: url(../images/table-bg.png) repeat-x top left !important;
+    padding: 0 .5em;
     border: 0 none;
-    border-left: 1px solid #fff;
-    border-right: 1px solid #faa631;
-    height: 18px;
-    line-height: 18px;
+    border-right: 1px solid #aaa;
+    height: 20px;
+    line-height: 20px !important;
     text-shadow: 0px 1px 1px #fff;
     color: #444;
 }
 .yui-skin-sam .yui-dt-first th:active {
-    background-image: url(/static/images/table-bg-active.png) !important;
+    background-image: url(../images/table-bg-active-new.png) !important;
 }
 .yui-skin-sam .yui-dt-first th a {
     border: 0 none;
+}
+.yui-skin-sam .yui-dt-first th div {
+	padding: 0;
 }
 .yui-skin-sam .yui-dt-last th {
     background: #fff !important;
@@ -1513,9 +1639,10 @@ table.listing td,
     border: 1px solid #aaa;
     border-left: 0 none;
     border-bottom: 0 none;
-    line-height: 25px;
-    height: 25px;
+    line-height: 20px;
+    height: 20px;
     font-size: 95%;
+	font-family: Arial, Helvetica, sans-serif;
     color: #222;
     padding: 0;
 }
@@ -1535,6 +1662,7 @@ ul.formTabs {
 li.formTab a {
     position: relative;
     text-shadow: 0px 1px 1px #fff;
+	text-decoration: none;
     color: #444;
     padding: .25em 1em;
     margin: 0 .25em;
@@ -1558,16 +1686,24 @@ li.formTab a.selected {
     border-right: 1px solid #999;
     border-left: 1px solid #999;
     border-bottom: 2px solid #fff;
+	text-decoration: none;
 }
 li.formTab a.selected {
     position: relative;
     top: 1px;
     border-bottom: 2px solid #fff;
 }
+.enableFormTabbing {
+}
 .formPanel {
     border: 0 none;
-    padding: 0;
+    padding: 0 !important;
     margin: 0;
+	text-align: center;
+}
+.formPanel h2,
+.formPanel ul {
+	text-align:left;
 }
 .formPanel table.listing {
     font-size: 100%;
@@ -1578,67 +1714,88 @@ li.formTab a.selected {
     border-bottom: 1px dotted #aaa;
 }
 .formPanel form { 
-    border:1px solid #FAAD5F;
-    margin: 0;
-    padding: 0;
+    margin: 0 auto;
+    padding: 0 !important;
     border: 0 none;
     text-align: center;
 }
-.formPanel form .field {
-    border-bottom: 1px dotted #ccc;
-    margin: 0 auto;
-    display: block;
-    line-height: 20px;
+.formPanel .field {
+    margin: 0 auto !important;
+	padding: 0;
     clear: both;
     width: 800px;
+	height: auto;
     text-align: left;
+    border-bottom: 1px dotted #ccc;
+	display: inline-block;
+	background: #eee;
 }
-.formPanel form .field .content-left-column {
+.formPanel .field:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+.formPanel .field .content-left-column {
     float: left;
     width: 150px;
     text-align: right;
+	color: #111;
+    text-shadow: 0 1px 1px #fff;
     font-weight: bold;
-    padding: .25em;
+	margin: 0;
+    padding: .15em;
+	border: 0 none;
+    line-height: 20px;
 }
-.formPanel form .field .content-right-column {
-    width: 625px;
-    float: left;
+.formPanel .field .content-right-column {
+    width: 630px;
+    float: right;
     display: block;
     text-shadow: 0 0 1px #fff;
     color: #333;
-    padding: .25em;
+    padding: .15em .35em;
+	border: 0 none;
+    line-height: 20px;
+	margin: 0;
+	background: #fff;
 }
-.formPanel form .field .content-right-column div div {
+.formPanel .field .content-right-column div,
+.formPanel .field .content-right-column widget {
+	margin: 0;
+}
+.formPanel .field .content-right-column div div {
     margin: .75em 0;
     line-height: 18px;
 }
-.formPanel form .field .content-right-column strong {
+.formPanel .field .content-right-column strong {
     font-weight: bold;
 }
-.formPanel form .field .content-right-column em {
+.formPanel .field .content-right-column em {
     font-style: italic;
 }
-.formPanel form .field .content-right-column sub {
+.formPanel .field .content-right-column sub {
     font-size: xx-small;
     vertical-align: bottom;
 }
-.formPanel form .field .content-right-column sup {
+.formPanel .field .content-right-column sup {
     font-size: xx-small;
     vertical-align: top;
 }
-.formPanel form .field .content-right-column ul,
-.formPanel form .field .content-right-column ol {
+.formPanel .field .content-right-column ul,
+.formPanel .field .content-right-column ol {
     margin: 1em;
     padding: 0 0 0 2.5em;
     list-style-position: outside;
 }
-.formPanel form .field .content-right-column ul {
+.formPanel .field .content-right-column ul {
     list-style-type:square;
 }
-.formPanel form .field .content-right-column ol {
+.formPanel .field .content-right-column ol {
     list-style-type:decimal;
 }
-.formPanel form .field .content-right-column li {
+.formPanel .field .content-right-column li {
     margin: .5em 0;
     line-height: 18px;
 }
@@ -1647,4 +1804,74 @@ div.calendar th.description a,
 div.calendar span.sitting-type,
 div.calendar div.sitting {
     color: #444;
+}
+
+dl#context_actions.actionMenu .actionMenuHeader {
+	display: none;
+}
+dl#context_actions.actionMenu.deactivated .actionMenuContent {
+	display: block !important;
+	position: relative;
+	margin: 0;
+	padding: 0;
+	top: auto;
+	left: auto;
+}
+dl#context_actions.actionMenu .actionMenuContent ul {
+	margin: 0;
+	padding: 0;
+	border: 0 none;
+}
+dl#context_actions.actionMenu .actionMenuContent ul li {
+	float: left;
+}
+dl#context_actions.actionMenu .actionMenuContent ul li a {
+	padding: 0;
+	margin: 0 .25em;
+}
+
+span.yui-button.yui-link-button span a {
+	padding: 0 3px;
+	line-height: 1.5em;
+	height: 1.5em;
+	min-height: 1.5em;
+	font-size: 90%;	
+}
+
+.yui-dt-paginator {
+	margin: 0 auto !important;
+	padding: 0;
+	font-size: 90%;
+	line-height: 16px;
+	height: 20px;
+	text-align: left;
+	width: 960px;
+	width: 95%;
+}
+#yui-dt0-paginator0,
+#yui-dt1-paginator0,
+#yui-dt2-paginator0 {
+	display: none;
+}
+#container_contents_agendaitems .yui-dt-paginator {
+	width: 100% !important;
+}
+.yui-dt-paginator select {
+	font-size:95%;
+	color: #444;
+	padding: .1em;
+	margin: 0;
+	background: #fff;
+	border: 1px solid #ccc;
+}
+.yui-dt-paginator select:hover {
+	border: 1px solid #aaa;
+	color: #444;
+}
+.yui-skin-sam .yui-button {
+	margin: 0 .25em;
+}
+.yui-skin-sam .yui-split-button button,
+.yui-skin-sam .yui-menu-button button {
+	padding: .15em .25em;
 }

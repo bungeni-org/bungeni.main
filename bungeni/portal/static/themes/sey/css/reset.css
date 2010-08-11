@@ -7,7 +7,7 @@
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,
 abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,
 strike,strong,sub,sup,tt,var,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,
-caption,tbody,tfoot,thead,tr,th,td {
+caption,tbody,tfoot,head,tr,th,td {
     margin:0;
     padding:0;
     border:0;
@@ -45,9 +45,9 @@ q:before,q:after {
 blockquote, q {
     quotes:"" "";
 }
-
 /*
- * Uncomment the following code if you want to disable the outlining of clicked elements.
+ * Uncomment the following code if you want to disable the outlining of clicked 
+ * elements.
  * Warning: Accesibility wise, this is a not a wise decision to enable.)
  * :focus is only for firefox, other browser engines highlight on :active 
  */
@@ -64,12 +64,12 @@ html, body {
     font-size: 85%;
     height: 100%;
 }
+
 /* 
  * Clearfix Hack
  * Used to clear divs without having to insert html like: 
- * <div style="clear:both"></div>
- * after the elemnts to be cleared.
- * - more information: http://perishablepress.com/press/2008/06/18/css-hackz-
+ * <div style="clear:both"></div> after the elemnts to be cleared.
+ * more information: http://perishablepress.com/press/2008/06/18/css-hackz-
  * series-clearing-floats-with-the-clearfix-hack/
  */
 .clearfix{display: inline-block;}
@@ -134,7 +134,6 @@ html, body {
 #portal-breadcrumbs a:hover {
 	text-decoration: underline;
 }
-
 #main-body-table {
     height: 100%;
     width: 1054px;
@@ -171,7 +170,7 @@ input.inputLabelActive {
 .template-portal {
     margin: 0;
     text-align: center;
-    background: #fff;
+    background: url(../images/background_sky.gif) top left repeat;
     /* 
     * Sticky Footer.
     * more information: http://www.cssstickyfooter.com/
@@ -180,57 +179,55 @@ input.inputLabelActive {
     */
     height: 100%;
 }
-.template-portal .portalMessage {
-}
 .template-portal a {
-    color: #036;
-	text-decoration: none;
+	color: #00c;
 }
-.template-portal a:hover {
-    color: #222;
-	text-decoration:underline;
+.template-portal #visual-table-wrapper {
+	background: #FCEB72;
+    width: 780px;
+    text-align: left;
+    margin: 0 auto;    
+    padding: 0;
+    /* 
+    * Sticky Footer.
+    * more information: http://www.cssstickyfooter.com/
+    * - these are requried to make the footer stick to the 
+    *   bottom of the page.
+    */
+    height: auto;
+    min-height: 100%;
 }
 .template-portal #top-layer {
     height: 20px;
-    text-align: center;
+	text-align:center;
+	border: 0 none;
+    width: 780px;
+	background: #fff;
 }
 .template-portal #top-layer div {
     margin: 0 auto;
     padding: 0;
-    border: 0 none;
-    width: 800px;
     height: 20px;
-}
-.template-portal #top-layer #demoWarning {
-    background: #fff;
-    color: #222;
-    text-shadow: 0px 0px 1px #fff;
 }
 .template-portal #top-layer ul#portal-languageselector {
-    float: left;
-    margin: 0 ;
-    padding: 0;
     height: 20px;
+    margin: 0 .25em;
+    float: left;
+    padding: 0;
     font-size: 100%;
 }
 .template-portal #top-layer ul#portal-languageselector a {
-    color: #036;
+    color: #222;
     height: 20px;
     line-height: 20px;
-}
-.template-portal #top-layer ul#portal-languageselector a:hover {
-    color: #222;
-}
-.template-portal #top-layer ul#portal-languageselector li.selected a {
-    background: transparent;
-    font-weight: bold;
+	text-decoration: none;
 }
 .template-portal #top-layer ul#portal-personaltools {
-    float: right;
     margin: 0 .5em;
     padding: 0;
-    border: 0 none;
     background: transparent;
+    float: right;
+    border: 0 none;
 }
 .template-portal #top-layer ul#portal-personaltools li {
     margin: 0;
@@ -243,193 +240,207 @@ input.inputLabelActive {
     margin: 0;
     padding: 0;
     border: 0 none;
-    color: #036;
     background: transparent !important;
     line-height: 20px;
-}
-.template-portal #top-layer ul#portal-personaltools li a:hover {
     color: #222;
-    text-decoration: underline;
 }
 
-.template-portal #visual-table-wrapper {
-    margin: 0 auto;    
-    padding: 0;
-    background: #fff;
-    width: 800px;
-    text-align: left;
-    /* 
-    * Sticky Footer.
-    * more information: http://www.cssstickyfooter.com/
-    * - these are requried to make the fotter stick to the 
-    *   bottom of the page.
-    */
-    height: auto;
-    min-height: 100%;
-}
-.template-portal #portal-siteactions {
-    margin: 0;
-    padding: 0;
-    display: none;
-}
-.template-portal #portal-searchbox {
-    margin: 0;
-    padding: 0;
-    display: none;
-}
 .template-portal #portal-logo {
     display: block;
     margin: 0;
-    padding: 0;
-    background: #ab1a03;
+	background: #fff;
 }
 .template-portal #portal-logo img {
-    display: block;
+    border: 0 none;
     margin: 0;
     padding: 0;
-    border: 0 none;
+    display: block;
+    width: 780px;
 }
 .template-portal #main-body-table {
     margin: 0;
     padding: 0;
-    width: 800px;
     /* 
     * Sticky Footer.
     * more information: http://www.cssstickyfooter.com/
-    * - these are requried to make the fotter stick to the 
+    * - these are requried to make the footer stick to the 
     *   bottom of the page.
     * - padding bottom must have the same value as the 
     *   height of the footer.
     */
-    padding-bottom: 50px;
+    padding-bottom: 30px;
     position: relative;
+    width: 780px;
+}
+.template-portal #portal-breadcrumbs {
+    border:1px solid #fc0;
+	background: #FCEB72;
+    margin: 2.25em 0 .25em;
 }
 
+.template-portal #portal-column-content {
+    border:1px solid #fc0;
+	background: #FCEB72;
+}
 .template-portal div.main-column {
+	background: #FCEB72;
     margin: 0;
     padding: 0;
-    background: #fff;
     height: 100%;
-    width: 800px;
 }
+
 .template-portal div.main-column h1 {
-    display: block;
-    margin: .25em 0;
-    padding: 0;
-    color: #036;
-    font-size: 200%;
-    font-weight: normal;
-    text-shadow: 0px 0px 1px #fff;
+    font-size: 150%;
+    font-weight: bold;
+	font-family: "Times New Roman", Times, serif;
 	text-transform: capitalize;
-    line-height: 20px;
+    line-height: 25px;
+	height: 25px;
+    color: #111;
+	background: url(../images/heading.gif) center no-repeat;
+    display: block;
+    padding: 0;
+    margin: .5em 0;
+	text-align: center;
+	/*display: none;*/
+}
+.template-portal div.main-column h1.title {
+    font-size: 150%;
+	color: #111;
+}
+.template-portal div.main-column h1.reportmaintitle,
+.template-portal div.main-column h1.reportdoctype {
+	clear: both;
+	margin: .5em 0;
+	text-align: left;
+	font-size: 125%;
 }
 .template-portal div.main-column h2 {
-    display: block;
-    margin: 0;
-    padding: 0;
-    color: #036;
     font-size: 120%;
     font-weight: normal;
-    text-shadow: 0px 0px 1px #fff;
+	font-family:"Times New Roman", Times, serif;
     line-height: 20px;
+    color: #222;
+	text-align: center;
+    display: block;
+    margin: .75em 0;
+    padding: 0;
+	background: url(../images/heading.gif) center no-repeat;
 }
 .template-portal div.main-column h2 span {
-    color: #036;
     font-size: 75%;
     font-weight: normal;
+    color: #444;
 }
-.template-portal #portal-columns {
-    margin: 0 0 0 .1em;
-	border: 1px dotted #036;
+.template-portal #portal-column-content #whats-on-overview {
+	clear: both;
+	margin: 0;
 }
 .template-portal #portal-column-content #whats-on-overview h1 {
-    font-size:150%;
-	font-weight: normal;
+    font-size:135%;
     text-align: center;
+	margin: 0;
+	background: url(../images/heading.gif) center no-repeat;
 }
 .template-portal #portal-column-content #whats-on-overview h1 a {
-    color: #036 !important;
     text-decoration: none;
+    color: #222 !important;
 }
 .template-portal #portal-column-content #whats-on-overview p {
+    color: #111;
+    text-align:center;
     margin: .25em 0;
-    color: #222;
-    text-shadow: 0px 0px 1px #fff;
-    text-align:left;
     line-height: 18px;
 }
 .template-portal #portal-column-content #whats-on-overview p.documentDescription {
     font-weight: normal;
-    text-align: left;
+    text-align: center;
 }
 .template-portal #portal-column-content {
     margin: 0;
     padding: 0;
 }
-.template-portal #portal-column-content h1.title {
-    font-size: 175%;
-	font-weight: normal;
-    line-height: 30px;
-}
 .template-portal #portal-searchbox {
-    z-index: 2;
+    background-color:transparent;
     float: right;
     margin: 0;
     padding: 2px 1em 0 0;
-    background-color: transparent;
     text-align: right;
     text-transform: none;
     white-space: nowrap;
+    z-index: 2;
 }
 .template-portal li {
     line-height: 1.1em;
 }
-/* portal-globalnav*/
+
+/*
+ * portal-globalnav
+ */
 .template-portal div#portal-globalnav {
+    height: 1.6em;
+    line-height: 1.6em;
     position: relative;
-    padding: 0;
-    margin: 0;
-    background: #005984;
-    width: 800px;
+	background: #fff;
 }
 .template-portal div#portal-globalnav ul.level0 {
     position: relative;
     margin: 0;
     padding: 0;
     border: 0 none;
-	border-top: 1px solid #fff;
-	border-bottom: 2px solid #fff;
     width: auto;
-    height: 30px;
-    background: #005984 url(../images/level0bg.png) 0 0 repeat-x;
-    line-height: normal;
+    height: 1.8em;
+    background: #fff;
     list-style-type: none;
     white-space: nowrap;
 }
+.template-portal div#portal-globalnav ul.level0 li {
+}
 .template-portal div#portal-globalnav ul.level0 li a {
     padding: .25em 1.25em;
-    margin: 0;
-    border: 0 none;
-	border-left: 1px solid #fff;
-	border-right: 1px solid #fff;
-    background: transparent;
-    text-transform: capitalize;
-	text-shadow: 0px 0px 1px #005984;
-	font-weight: bold;
-    color: #fff;
-    height: 30px;
-    line-height: 30px;
+    margin: 0 .15em;
+    color: #111;
+    background: url(../images/tab-bg.gif) top center no-repeat;
+    height: 20px;
+    line-height: 20px;
+	border: 0 none;
+	width: 80px;
+	padding: 0;
+	/*
+    border: 1px solid #aaa;
+    border-bottom: 1px solid #eee;
+    -webkit-border-top-left-radius: 5px;
+    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    */
 }
-.template-portal div#portal-globalnav ul.level0 li.selected {
-    margin: 0;
-    padding: 0;
-}
+/*
+ * default styles.
 .template-portal div#portal-globalnav ul.level0 li.selected a,
 .template-portal div#portal-globalnav ul.level0 li a:hover {
-    margin: 0;
-    padding: 0 1.25em;
-    background: #d50100 !important;
-	text-shadow: 0px 0px 1px #d50100;
+    font-weight: normal;
+    background: #f9cd8f;
+    position: relative;
+    line-height: 16px;
+    color: #222;
+    border-top: 2px solid #fb9c14;
+    border-right: 1px solid #999;
+    border-left: 1px solid #999;
+    border-bottom: 1px solid #fb9c14;
+}
+.template-portal div#portal-globalnav ul.level0 li.selected a {
+    border-bottom: 2px solid #f8ba61;
+    position: relative;
+    top: -2px;
+    background: #f8ba61;
+}
+*/
+.template-portal div#portal-globalnav ul.level0 li.selected a,
+.template-portal div#portal-globalnav ul.level0 li a:hover {
+	font-weight: normal;
 }
 /*
  * Notes:
@@ -447,40 +458,40 @@ input.inputLabelActive {
  */
 .template-portal div#portal-globalnav ul.level0 ul.level1 {
     position: absolute;
-    top: 2.75em;
+    top: 1.85em;
     left: 0;
-    border: 1px solid #fff;
-    border-top: 0 none;
+    height: 1.5em;
     margin: 0;
-    height: 2em;
     width: 100%;
-    background: #005984;
+    border:1px solid #fc0;
+    border-right: 0 none;
+    border-left: 0 none;
+	background: #FCEB72;
 }
 .template-portal div#portal-globalnav ul.level0 ul.level1 a {
+    background: transparent;
     margin: 0;
     border: 0 none;
-    padding: 0 .5em 0 .75em;
-    background: transparent;
-    color: #fff !important;
+    padding: 0 .75em;
     text-shadow: none;
-    text-transform: lowercase;
-    text-decoration: underline !important;
-	text-transform: capitalize;
-    font-size: 100%;
-    font-weight: normal;
-    line-height: 2em;
+    line-height: 1.5em;
+	width: auto;
 }
 .template-portal div#portal-globalnav ul.level0 ul.level1 li a:hover {
-    background: transparent !important;
+    background: transparent;
     border: 0 none;
-    color: #111 !important;
+    color: #000;
+    text-decoration: none;
 }
 .template-portal div#portal-globalnav ul.level0 ul.level1 li.selected a {
-    background: transparent !important;
+    background: transparent;
     border: 0 none;
+    color: #d50005 !important;
+    font-weight: normal;
     margin: 0;
-    padding: 0 .5em 0 .75em;
-    font-weight:bold;
+}
+.section-bungeni-portal div#portal-globalnav ul.level0 li#portaltab- a {
+    background: #D4E2EF;
 }
 /*
  * Notes:
@@ -490,21 +501,13 @@ input.inputLabelActive {
  * as mentioned in the previous Note.
  */
 .template-portal div#portal-globalnav-bottom {
-    background: none;
-    border: 0 none;
-    display: block;
-}
-
-.template-portal #portal-breadcrumbs {
-    clear: both;
-    padding: 0;
-    margin: 0 0 0 .1em;
-	border: 1px dotted #036;
-    border-top: 0 none;
-    border-bottom: 0 none;
-    text-transform: capitalize;
-    color: #555;
-    font-size: 95%;
+    background: #fff url(../images/trail-bg.gif) top left repeat-x;
+	position: relative;
+	top: 2em;
+	padding: 0;
+	margin: 0;
+	border: 0 none;
+	height: 20px;
 }
 .template-portal .contentActions {
     background: #ea8712;
@@ -512,33 +515,35 @@ input.inputLabelActive {
     border-right: transparent;
     margin-bottom: 10px;
     padding-top: 3px;
-    z-index: 10; /* stops the contentActions div from appearing over the dialog box */
+    z-index: 10;
 }
 .template-portal .actionMenu .actionMenuContent li a:hover {
-    background: #ffd79f;
+    backgroundr: #ffd79f;
     color: #000;
 }
 .template-portal .actionMenu .actionMenuContent ul {
-    display:block;
-    background:#f39e39;
-    margin:-2px 0 0;
-    padding:0;
-    border-color: black;
-    border-style:none solid solid;
-    border-width:1px;
+    background: #f39e39;
+    border-color: #000;
+    border-style: none solid solid;
+    border-width: 1px;
+    display: block;
+    margin: -2px 0 0;
+    padding: 0;
 }
 .template-portal .documentContent {
     padding: 0 !important;
+	background: none;
 }
 .section-front-page .template-portal div#portal-globalnav ul.level0 li.selected a,
 .template-portal .section-bungeni-workspace_archive div#portal-globalnav ul.level0 li#portaltab- a,
-.template-portal .section-bungeni-calendar div#portal-globalnav ul.level0 li#portaltab- a {
+.template-portal .section-bungeni-calendar div#portal-globalnav ul.level0 li#portaltab- a
+{
     background: #fae2a1;
     border-top: 0.5px solid #faa631;
     border-left: 1px solid #faa631;
     border-right: 1px solid #faa631;
     border-bottom: 5px solid #faa631;
-    font-weight:bold;
+    font-weight: bold;
     padding:0 10px;
     height: 1.1em;
 }
@@ -551,77 +556,94 @@ input.inputLabelActive {
  */
 .template-portal #portal-footer {
     position: relative;
-    margin: -50px auto 0;
     padding: 0;
     border: 0 none;
-	border-top: 1px solid #aaa;
-    height: 50px;
-    line-height: 50px;
-    width: 800px;
+    margin: -30px auto 0;
     clear: both;
+    width: 780px;
+    height: 30px;
     text-align: center;
-    text-shadow: 0 1px 0px #777;
-    color: #fff;
-    background: #006699;
+    color: #222;
+	font-weight: bold;
+    background: #fc0;
 }
 .template-portal #portal-footer div {
     margin: 0 auto;
-    width: 160px;
-    background: transparent;
+    width: 170px;
+	height: 25px;
+    line-height: 25px;
 }
 .template-portal #portal-footer img {
     display: block;
     float: left;
-    margin: 1.25em .25em;
+    margin: .25em;
+}
+
+.template-portal .formTabs {
+	border-color: #a98900;
 }
 .template-portal li.formTab a:hover,
 .template-portal li.formTab a:active,
 .template-portal li.formTab a.selected {
-    background: #fff;
-    color: #005984;
-    border-top: 2px solid #005984;
+	background: url(../images/form-tab-bg.png) repeat-x;
+	border-color: #a98900;
+	border-bottom-color: #fff;
 }
-.template-portal #portal-column-one .portletHeader,
-.template-portal #portal-column-content .portletHeader,
-.template-portal #portal-column-two .portletHeader,
-.template-portal #portal-column-two .portlet dt,
-.template-portal #whats-on-overview .portlet dt
-.template-portal #whats-on-overview .portlet dt {
-    border-color: #ab1a03;
+.template-portal .formPanel {
+	border-color: #a98900;
 }
-.template-portal #portal-column-one .portlet,
-.template-portal #portal-column-one .portlet .portletHeader,
-.template-portal #portal-column-one .portlet .portletItem {
-    border-color: #ab1a03;
+.template-portal .formPanel .field {
+	width: 780px;
 }
-.template-portal .formPanel form .field {
-	width: 790px;
+.template-portal .formPanel .field .content-right-column {
+	width: 615px;
 }
-.template-portal .formPanel form .field .content-right-column {
-	width: 620px;
+.template-portal #portal-column-content #whats-on-overview .whats-on-viewlet dd {
+	border-top: 4px solid #fdcd8b;
+    border-bottom: 1px solid #fcc373;
+}
+.template-portal #portal-column-one .portletItem a.navTreeCurrentItem {
+	background: #fcc373;
+	border-bottom-color: #FB9C14 !important;
+}
+.template-portal #portal-column-one .portletItem a:hover {
+	background: #fcc373;
+	border-bottom: 1px solid #aaa;
+}
+
+
+.template-portal #portletArchiveDates,
+.template-portal #portletArchiveDates .portletItem,
+.template-portal #portletArchiveDates .portletHeader {
+	color: #222;
+	text-shadow: none;
+	background: none;
+}
+.template-portal #portletArchiveDates .portletItem.dates-filtered {
+	background: none !important;
+}
+.template-portal #portletArchiveDates .portletItem.dates-filtered form {
+	background: #F08080;
+	border-color: #CD2626;
+	border-bottom-color: #8B1A1A;
 }
 
 .template-portal table.listing,
+.template-portal table.listingdescription,
 .template-portal .stx table,
 .template-portal.yui-skin-sam .yui-dt table {
 	width: 100%;
+	border-top: 0 none;
+}
+.template-portal table.listing td,
+.template-portal table.listingdescription td,
+.template-portal .stx table td,
+.template-portal.yui-skin-sam .yui-dt table td {
+	background: #fff;
 }
 
-.template-portal table.listing th,
-.template-portal .stx table th,
-.template-portal.yui-skin-sam .yui-dt-first th {
-    background: url(../images/table-bg.png) repeat-x top left !important;
-	border-left: 0 none;
-	border-right: 1px solid #005984;
-	text-transform: capitalize;
-}
-.template-portal.yui-skin-sam .yui-dt th, 
-.template-portal.yui-skin-sam .yui-dt th a {
-    text-shadow: 0px 1px 1px #222;
-    color: #fff !important;
-}
-.template-portal.yui-skin-sam .yui-dt-first th:active {
-    background-image: url(../images/table-bg-active.png) !important;
+.template-portal .yui-dt-paginator {
+	width: 100%;
 }
 /* end of .template-portal styles*/
 
@@ -798,14 +820,15 @@ input.inputLabelActive {
     margin: 1em 0;
     border-bottom:1px solid #d4e2ef;
 }
+
 .template-workspace #portal-logo {
     display: block;
     margin: .5em 0;
-    height: 85px;
+    height: 80px;
     background: url(../images/bungeni.png) top left no-repeat;
 }
 .template-workspace #portal-logo img {
-    display: none; /* removes the default logo set in the template */
+    display: none;
 }
 .template-workspace div.main-column h1 {
     display: block;
@@ -1011,7 +1034,7 @@ input.inputLabelActive {
     padding-top: 2px;
 }
 .section-bungeni-workspace div#portal-globalnav ul.level0 li#portaltab- a {
-    /*background: #D4E2EF;*/
+    background: #D4E2EF;
 }
 /*
  * Notes:
@@ -1171,6 +1194,7 @@ input.inputLabelActive {
 .section-bungeni-business #whats-on-overview li {
     line-height: 1.8em;
 }
+/*
 .section-bungeni-whats-on div#portal-globalnav ul.level0 li.selected a,
 .section-bungeni-archive div#portal-globalnav ul.level0 li.selected a {
 }
@@ -1179,10 +1203,11 @@ input.inputLabelActive {
 .section-bungeni-archive div#portal-globalnav ul.level0 li#portaltab-archive-browse a {
     /*background: #f8ba61;*/
 }
+*/
 .template-workspace.section-bungeni-whats-on div#portal-globalnav ul.level0 li#portaltab-business-whats-on a,
 .template-workspace.section-bungeni-business div#portal-globalnav ul.level0 li#portaltab-business-whats-on a,
 .template-workspace.section-bungeni-archive div#portal-globalnav ul.level0 li#portaltab-archive-browse a {
-    /*background: #d4e2ef;*/
+    background: #d4e2ef;
 }
 .section-front-page {
     display: none;
@@ -1396,7 +1421,7 @@ h4.tabberHeading {
 }
 .documentDescription {
     font-weight: normal;
-	text-align: left;
+	text-align: center;
 }
 .documentEditable .documentContent {
     border: 1px solid #BDD1D7;
@@ -1585,9 +1610,9 @@ table.listing,
 table.listingdescription,
 .stx table {
     border: 1px solid #ccc;
+    border-top-color: #6ca6cd;
     border-bottom-color: #aaa;
     border-right: 0 none;
-	border-top: 0 none;
     width: 100%;
 	font-size: 100%;
 	margin: 0 auto;
@@ -1606,10 +1631,10 @@ table.listingdescription tr:hover,
 table.listing th,
 table.listingdescription th,
 .stx table th {
-    background: url(../images/table-bg.png) repeat-x 0 -3px !important;
+    background: url(../images/form-tab-bg.png) repeat-x 0 0 !important;
     padding: 0 .5em;
     border: 0 none;
-    border-right: 1px solid #aaa;
+    border-right: 1px solid #faa631;
    /*height: 23px !important;*/
     line-height: 20px !important;
     text-shadow: 0 1px 1px #fff;
@@ -1623,7 +1648,7 @@ table.listingdescription th a,
 table.listing td,
 table.listingdescription td,
 .stx table td {
-    border-right: 1px solid #aaa;
+    border-right: 1px solid #FAAD5F;
     padding: .25em .5em;
     color: #222;
     text-shadow: 0 1px 1px #fff;
@@ -1654,17 +1679,17 @@ table.listingdescription td,
     text-shadow: 0px 1px 1px #fff;
 }
 .yui-skin-sam .yui-dt-first th {
-    background: url(../images/table-bg.png) repeat-x top left !important;
+    background: #fff url(../images/form-tab-bg.png) repeat-x top left !important;
     padding: 0 .5em;
     border: 0 none;
-    border-right: 1px solid #aaa;
+    border-right: 1px solid #faa631;
     height: 20px;
     line-height: 20px !important;
     text-shadow: 0px 1px 1px #fff;
     color: #444;
 }
 .yui-skin-sam .yui-dt-first th:active {
-    background-image: url(../images/table-bg-active.png) !important;
+	background-position-y: 1px !important;
 }
 .yui-skin-sam .yui-dt-first th a {
     border: 0 none;
@@ -1732,7 +1757,7 @@ li.formTab a.selected {
 }
 li.formTab a.selected {
     position: relative;
-    top: 1px;
+    top: 2px;
     border-bottom: 2px solid #fff;
 }
 .enableFormTabbing {
@@ -1887,8 +1912,8 @@ span.yui-button.yui-link-button span a {
 	line-height: 16px;
 	height: 20px;
 	text-align: left;
-	width: 960px;
 	width: 95%;
+	background: #fff;
 }
 #yui-dt0-paginator0,
 #yui-dt1-paginator0,

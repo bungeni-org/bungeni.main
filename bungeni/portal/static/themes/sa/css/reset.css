@@ -511,7 +511,7 @@ input.inputLabelActive {
 
 .template-portal .formPanel,
 .template-portal #portal-column-content #whats-on-overview .portlet dd {
-    padding: .5em 1em 1em .5em;
+    padding: .5em !important;
     margin: 0;
     border: 0 none;
     background: url(../images/table-content-bg.png) bottom right no-repeat;
@@ -536,7 +536,6 @@ input.inputLabelActive {
     font-size: 90%;
     text-transform: capitalize;
 }
-
 .template-portal #portal-column-content #whats-on-overview .whats-on-viewlet dd ul {
     border: 1px solid #b19659;
     border-top: 5px solid #e07900;
@@ -638,10 +637,10 @@ input.inputLabelActive {
     margin: 0 .25em;
 }
 .template-portal .formPanel form .field {
-	width: 765px;
+	width: 725px;
 }
 .template-portal .formPanel form .field .content-right-column {
-	width: 600px;
+	width: 550px;
 }
 /* end of .template-portal styles*/
 

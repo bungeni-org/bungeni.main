@@ -184,7 +184,6 @@ input.inputLabelActive {
     height: 20px;
 	text-align:center;
 	border: 0 none;
-    /*background: url(/static/images/shadow_2.png) repeat-y top center;*/
 }
 .template-portal #top-layer div {
     margin: 0 auto;
@@ -351,7 +350,7 @@ input.inputLabelActive {
     text-shadow: 0px 0px 1px #fff;
     text-align:center;
     margin: .25em 0;
-    line-height: 18px;
+    line-height: 20px;
 }
 .template-portal #portal-column-content #whats-on-overview p.documentDescription {
     font-weight: normal;
@@ -1116,7 +1115,7 @@ input.inputLabelActive {
 }
 #portal-column-content #whats-on-overview .whats-on-viewlet dd ul li ul li ul li {
     border: 0 none;
-    line-height: 14px;
+    line-height: 18px;
 }
 #portal-column-content #whats-on-overview .whats-on-viewlet dd ul li ul li ul li h3 {
     font-size: 100%;
@@ -1750,7 +1749,7 @@ li.formTab a.selected {
     margin: 0 auto !important;
 	padding: 0;
     clear: both;
-    width: 800px;
+	width: 95%;
 	height: auto;
     text-align: left;
     border-bottom: 1px dotted #ccc;
@@ -1769,7 +1768,7 @@ li.formTab a.selected {
 }
 .formPanel .field .content-left-column {
     float: left;
-    width: 150px;
+    width: 18%;
     text-align: right;
 	color: #111;
     text-shadow: 0 1px 1px #fff;
@@ -1780,7 +1779,7 @@ li.formTab a.selected {
     line-height: 20px;
 }
 .formPanel .field .content-right-column {
-    width: 630px;
+    width: 80%;
     float: right;
     display: block;
     text-shadow: 0 0 1px #fff;
@@ -1828,6 +1827,21 @@ li.formTab a.selected {
 .formPanel .field .content-right-column li {
     margin: .5em 0;
     line-height: 18px;
+}
+.formPanel.Report4Sitting .field {
+	background: #fff;
+}
+.formPanel.Report4Sitting .field .content-left-column {
+	width: 5%;
+}
+.formPanel.Report4Sitting .field .content-right-column {
+	float: left;
+	width: 90%;
+}
+.formPanel.Report4Sitting .field .content-right-column,
+.formPanel.Report4Sitting .field .content-right-column h1,
+.formPanel.Report4Sitting .field .content-right-column h2 {
+	text-align: left;
 }
 
 div.calendar th.description a,
