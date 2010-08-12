@@ -12,7 +12,7 @@
 </h1>
         
 <!-- Loop through sittings -->
-<tal:loop tal:repeat="item view/sitting_items">
+<tal:loop tal:repeat="item view/sittings">
     <br style="line-height:200%"/>
         <!-- Sitting Title -->
         <h2 class="reportdate"> 

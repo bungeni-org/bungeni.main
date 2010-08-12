@@ -8,12 +8,13 @@
                 <a tal:attributes="href view/link"> Back </a>
                 <a href="#" style="float:right" onclick="document.hidden_form_save.submit();"> Publish Report </a>
         <form name="hidden_form_save" method="post" tal:attributes="action view/save_link" style="visibility:hidden">
-            <input type="text" name="body_text" tal:attributes="value view/body_text" style="visibility:hidden" />
-            <input type="text" name="note" tal:attributes="value view/note" style="visibility:hidden" />
-            <input type="text" name="report_type" tal:attributes="value view/doc_type" style="visibility:hidden" />
-            <input type="text" name="start_date" tal:attributes="value view/start_date" style="visibility:hidden" />
-            <input type="text" name="end_date" tal:attributes="value view/end_date" style="visibility:hidden" />
-            <input type="text" name="single" tal:attributes="value view/single" style="visibility:hidden" />
+            <input type="text" name="form.body_text" tal:attributes="value view/body_text" style="visibility:hidden" />
+            <input type="text" name="form.note" tal:attributes="value view/note" style="visibility:hidden" />
+            <input type="text" name="form.report_type" tal:attributes="value view/doc_type" style="visibility:hidden" />
+            <input type="text" name="form.start_date" tal:attributes="value view/start_date" style="visibility:hidden" />
+            <input type="text" name="form.end_date" tal:attributes="value view/end_date" style="visibility:hidden" />
+            <input type="text" name="form.sittings" tal:attributes="value view/ids" style="visibility:hidden" />
+            <input type="text" name="form.actions.save" value="save" style="visibility:hidden" />
             <input type="submit" style="visibility:hidden" />
         </form>
         </div>
