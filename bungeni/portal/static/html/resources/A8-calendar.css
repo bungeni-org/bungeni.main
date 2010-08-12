@@ -26,3 +26,7 @@
 .dhx_repeat_right {
     padding:0; !important;
 }
+.dhx_scale_hour {
+    font-size:10px;
+    line-height:20px;
+}

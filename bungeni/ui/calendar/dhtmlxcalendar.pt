@@ -30,9 +30,11 @@
                 scheduler.config.scroll_hour=8;
                 scheduler.config.details_on_create=true;
                 scheduler.config.icons_select=["icon_details","icon_delete"]
+                scheduler.config.hour_size_px = 21;
                 scheduler.locale.labels.agenda_tab = "Upcoming";
                 scheduler.init('scheduler_here', null, "week");
                 scheduler.setLoadMode("month");
+                
                 scheduler.load(location.href+"/dhtmlxcalendar?uid="+scheduler.uid());
                 
                 scheduler.form_blocks["my_editor"]={
