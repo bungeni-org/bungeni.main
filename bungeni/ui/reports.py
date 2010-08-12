@@ -29,7 +29,7 @@ from bungeni.ui.forms.common import set_widget_errors
 from bungeni.ui import vocabulary
 from bungeni.core.location import location_wrapped
 from bungeni.core.interfaces import ISchedulingContext
-#from bungeni.core.schedule import PlenarySchedulingContext
+import zope.securitypolicy.interfaces
 from bungeni.core.odf import OpenDocument
 from zope.schema.vocabulary import SimpleVocabulary
 from zope.app.form.browser import MultiCheckBoxWidget as _MultiCheckBoxWidget
@@ -38,9 +38,11 @@ import sqlalchemy.sql.expression as sql
 import operator
 from bungeni.models import domain
 from bungeni.models.utils import get_principal_id
+from bungeni.models.utils import get_db_user_id
+from bungeni.models.utils import get_current_parliament
 from bungeni.models.interfaces import IGroupSitting
 from bungeni.server.interfaces import ISettings
-
+from bungeni.ui.forms.common import AddForm
 class TIME_SPAN:
     daily = _(u"Daily")
     weekly = _(u"Weekly")
@@ -111,21 +113,27 @@ def questionOptions(context):
     return SimpleVocabulary.fromValues(items)
 
 
-
 class ReportView(form.PageForm):
     
     main_result_template = ViewPageTemplateFile('templates/main_reports.pt')
     result_template = ViewPageTemplateFile('templates/reports.pt')
     
     def __init__(self, context, request):
-        super(ReportView, self).__init__(context, request)
-        if IGroupSitting.providedBy(context):
-            self.date = datetime.date(
-                context.start_date.year,
-                context.start_date.month,
-                context.start_date.day) 
+        super(ReportView, self).__init__(context, request) 
             
     class IReportForm(interface.Interface):
+        doc_type = schema.Choice(
+                    title = _(u"Document Type"),
+                    description = _(u"Type of document to be produced"),
+                    values= ['Order of the day',
+                             'Weekly Business',
+                             'Questions of the week'],
+                    required=True
+                    )
+        date = schema.Date(
+            title=_(u"Date"),
+            description=_(u"Choose a starting date for this report"),
+            required=True)
         item_types = schema.List(title=u'Items to include',
                    required=False,
                    value_type=schema.Choice(
@@ -165,7 +173,7 @@ class ReportView(form.PageForm):
     form_fields['motions_options'].custom_widget = verticalMultiCheckBoxWidget
     form_fields['questions_options'].custom_widget = verticalMultiCheckBoxWidget
     form_fields['tabled_documents_options'].custom_widget = verticalMultiCheckBoxWidget
-    
+    form_fields['date'].custom_widget = SelectDateWidget 
     
     
     def setUpWidgets(self, ignore_request=False):
@@ -177,6 +185,8 @@ class ReportView(form.PageForm):
             motions_options = 'Title'
             tabled_documents_options = 'Title'
             note = None
+            date = None
+            doc_type = 'Order of the day'
         self.adapters = {
             self.IReportForm: context
             }
@@ -184,7 +194,6 @@ class ReportView(form.PageForm):
             self.form_fields, self.prefix, self.context, self.request,
                     adapters=self.adapters, ignore_request=ignore_request)
     def update(self):
-        self.status = self.request.get('portal_status_message', '')
         super(ReportView, self).update()
         set_widget_errors(self.widgets, self.errors)
 
@@ -200,15 +209,22 @@ class ReportView(form.PageForm):
                 self.time_span = TIME_SPAN.weekly
             elif data['doc_type'] == "Questions of the week":
                 self.time_span = TIME_SPAN.weekly
-       
-        if 'date' in data:
-            start_date = data['date']
+        
+        if IGroupSitting.providedBy(self.context):
+            self.start_date = datetime.date(
+                self.context.start_date.year,
+                self.context.start_date.month,
+                self.context.start_date.day)
+        elif ISchedulingContext.providedBy(self.context):
+            if 'date' in data:
+                self.start_date = data['date']
         else:
-            start_date = self.date
-        end_date = self.get_end_date(start_date, self.time_span)
+            self.start_date = datetime.today().date()
+            
+        self.end_date = self.get_end_date(self.start_date, self.time_span)
 
-        parliament = queries.get_parliament_by_date_range(self, start_date, end_date)
-        session = queries.get_session_by_date_range(self, start_date, end_date)
+        parliament = queries.get_parliament_by_date_range(self, self.start_date, self.end_date)
+        #session = queries.get_session_by_date_range(self, start_date, end_date)
 
         if parliament is None:
             errors.append(interface.Invalid(
@@ -220,7 +236,7 @@ class ReportView(form.PageForm):
     @form.action(_(u"Preview"))
     def handle_preview(self, action, data):
         self.process_form(data)
-        self.save_link = ui_url.absoluteURL(self.context, self.request)+"/save_report"
+        self.save_link = ui_url.absoluteURL(self.context, self.request)+"/save-report"
         self.body_text = self.result_template()
         return self.main_result_template()
         
@@ -232,7 +248,7 @@ class ReportView(form.PageForm):
         
         raise RuntimeError("Unknown time span: %s" % time_span)
         
-    def get_sittings_items(self, start, end):
+    def get_sittings(self, start, end):
             """ return the sittings with scheduled items for 
                 the given daterange"""
             session = Session()
@@ -247,63 +263,47 @@ class ReportView(form.PageForm):
                         eagerload('item_schedule.item'),
                         eagerload('item_schedule.discussion'))
             items = query.all()
-        #items.sort(key=operator.attrgetter('start_date'))
             for item in items:
                 if self.display_minutes:
                     item.item_schedule.sort(key=operator.attrgetter('real_order'))
                 else:
                     item.item_schedule.sort(key=operator.attrgetter('planned_order'))
                     item.sitting_type.sitting_type = item.sitting_type.sitting_type.capitalize() 
-                    #s = queries.get_session_by_date_range(self, item.start_date, item.end_date)
-                
             return items    
+        
     def process_form(self, data):
         class optionsobj(object):
             '''Object that holds all the options.'''
             pass    
-        self.options = optionsobj()
-        if 'date' in data:
-            self.start_date = data['date']
-        else:
-            self.start_date = self.date
-        self.time_span = TIME_SPAN.daily 
+        self.options = optionsobj() 
+        if not hasattr(self,'doc_type'):
+            if 'doc_type' in data:
+                self.doc_type = data['doc_type']
+        self.sittings = []
         
-        self.end_date = self.get_end_date(self.start_date, self.time_span)
-        if 'date' in data:
-            
-            self.sitting_items = self.get_sittings_items(self.start_date, self.end_date)
-            self.single="False"
-        else:
+        if IGroupSitting.providedBy(self.context):
             session = Session()
-            self.sitting_items = []
             st = self.context.sitting_id
             sitting = session.query(domain.GroupSitting).get(st)
-            self.sitting_items.append(sitting)
-            self.single="True"
-        
+            self.sittings.append(sitting)
+            back_link = ui_url.absoluteURL(self.context, self.request)  + '/schedule'
+        elif ISchedulingContext.providedBy(self.context):
+            self.sittings = self.get_sittings(self.start_date, self.end_date)
+            back_link = ui_url.absoluteURL(self.context, self.request)
+        else:
+            raise NotImplementedError
+        count = 0
+        self.ids = ""
+        for s in self.sittings:
+            self.ids = self.ids+str(s.sitting_id)+","
         def cleanup(string):
-            temp = string.lower()
-            return temp.replace(" ", "_")
+            return string.lower().replace(" ", "_")
         
         for item_type in data['item_types']:
             itemtype = cleanup(item_type)
             setattr(self.options,itemtype,True)
             for option in data[itemtype+"_options"]:
                 setattr(self.options,cleanup(itemtype+"_"+option),True)
-                
-        #import pdb; pdb.set_trace()
-        if "draft" in data:
-            sitting_items = []
-            for sitting in self.sitting_items:
-                if data["draft"]=="No":
-                    if sitting.status in get_states("groupsitting", 
-                                                tagged=["published"]):
-                        sitting_items.append(sitting)
-                elif data["draft"]=="Yes":
-                    if sitting.status in get_states("groupsitting", 
-                                                tagged=["draft", "published"]):
-                        sitting_items.append(sitting)
-            self.sitting_items = sitting_items
         
         if self.display_minutes:
             self.link = ui_url.absoluteURL(self.context, self.request)+'/votes-and-proceedings'
@@ -315,89 +315,27 @@ class ReportView(form.PageForm):
         except:
             session = Session()
             self.group = session.query(domain.Group).get(self.context.group_id)
-            
-        if IGroupSitting.providedBy(self.context):
-            self.back_link = ui_url.absoluteURL(self.context, self.request)  + '/schedule'
-        elif ISchedulingContext.providedBy(self.context):
-            self.back_link = ui_url.absoluteURL(self.context, self.request)
-                         
+                 
 class GroupSittingContextAgendaReportView(ReportView):
     display_minutes = False
     doc_type = "Sitting Agenda" 
-    note = ""                    
+    note = ""           
+    form_fields = ReportView.form_fields.omit('doc_type', 'date')   
+    
 class GroupSittingContextMinutesReportView(ReportView):
     display_minutes = True
     doc_type = "Votes and Proceedings"    
     note = ""
-class SchedulingContextReportView(ReportView):
-    class IReportForm(interface.Interface):
-        doc_type = schema.Choice(
-                    title = _(u"Document Type"),
-                    description = _(u"Type of document to be produced"),
-                    values= ['Order of the day',
-                             'Weekly Business',
-                             'Questions of the week'],
-                    required=True
-                    )
-        item_types = schema.List(title=u'Items to include',
-                   required=False,
-                   value_type=schema.Choice(
-                    vocabulary="Available Items"),
-                   )
-        bill_options = schema.List( title=u'Bill options',
-                       required=False,
-                       value_type=schema.Choice(
-                       vocabulary='Bill Options'),
-                         )
-        agenda_options = schema.List( title=u'Agenda options',
-                                        required=False,
-                                        value_type=schema.Choice(
-                                        vocabulary='Agenda Options'),)
-        motion_options = schema.List( title=u'Motion options',
-                                        required=False,
-                                        value_type=schema.Choice(
-                                        vocabulary='Motion Options'),)
-        question_options = schema.List( title=u'Question options',
-                                          required=False,
-                                          value_type=schema.Choice(
-                                          vocabulary='Question Options'),)
-        tabled_document_options = schema.List( title=u'Tabled Document options',
-                                          required=False,
-                                          value_type=schema.Choice(
-                                          vocabulary='Tabled Document Options'),)
-        date = schema.Date(
-            title=_(u"Date"),
-            description=_(u"Choose a starting date for this report"),
-            required=True)
-        note = schema.TextLine( title = u'Note',
-                                required=False,
-                                description=u'Optional note regarding this report'
-                        )
-    form_fields = form.Fields(IReportForm)
-    form_fields['item_types'].custom_widget = horizontalMultiCheckBoxWidget
-    form_fields['bill_options'].custom_widget = verticalMultiCheckBoxWidget
-    form_fields['agenda_options'].custom_widget = verticalMultiCheckBoxWidget
-    form_fields['motion_options'].custom_widget = verticalMultiCheckBoxWidget
-    form_fields['question_options'].custom_widget = verticalMultiCheckBoxWidget
-    form_fields['tabled_document_options'].custom_widget = verticalMultiCheckBoxWidget    
-    form_fields['date'].custom_widget = SelectDateWidget 
-    def setUpWidgets(self, ignore_request=False):
-        self.contexta.date = None
-        self.contexta.doc_type = 'Order of the day'
-        self.adapters = {
-                self.IReportForm: self.contexta
-            }
-        self.widgets = form.setUpEditWidgets(
-            self.form_fields, self.prefix, self.context, self.request,
-            adapters=self.adapters, ignore_request=ignore_request)
-        
-class SchedulingContextAgendaReportView(SchedulingContextReportView):
+    form_fields = ReportView.form_fields.omit('doc_type', 'date')
+    
+class SchedulingContextAgendaReportView(ReportView):
     display_minutes = False
-
-class SchedulingContextMinutesReportView(SchedulingContextReportView):
+    note = ""
+    
+class SchedulingContextMinutesReportView(ReportView):
     display_minutes = True
-
-
+    note = ""
+    
 def unescape(text):
     def fixup(m):
         text = m.group(0)
@@ -511,4 +449,95 @@ class  DownloadPDF(DownloadDocument):
             return doc 
         else:
             return self.report.pdf_report.__str__()
+
+class SaveReportView(form.PageForm):
+    
+    def __init__(self, context, request):
+        super(SaveReportView, self).__init__(context, request) 
+            
+    class ISaveReportForm(interface.Interface):
+        start_date = schema.Date(
+            title=_(u"Date"),
+            description=_(u"Choose a starting date for this report"),
+            required=True)
+        end_date = schema.Date(
+            title=_(u"Date"),
+            description=_(u"Choose an end date for this report"),
+            required=True)
+        note = schema.TextLine( title = u'Note',
+                                required=False,
+                                description=u'Optional note regarding this report'
+                        )
+        report_type = schema.TextLine( title = u'Report Type',
+                                required=True,
+                                description=u'Report Type'
+                        )
+        body_text = schema.Text( title = u'Report Text',
+                                required=True,
+                                description=u'Report Type'
+                        )
+        sittings = schema.TextLine(
+                    title = _(u"Sittings included in this report"),
+                    description = _(u"Sittings included in this report"),
+                    required = True
+                               )
+    template = namedtemplate.NamedTemplate('alchemist.form')
+    form_fields = form.Fields(ISaveReportForm)
+    
+    def setUpWidgets(self, ignore_request=False):
+        class context:
+            start_date = None
+            end_date = None
+            body_text = None
+            note = None
+            report_type = None
+            sittings = None
+        self.adapters = {
+            self.ISaveReportForm: context
+            }
+        self.widgets = form.setUpEditWidgets(
+            self.form_fields, self.prefix, self.context, self.request,
+                    adapters=self.adapters, ignore_request=ignore_request)
+        
+    @form.action(_(u"Save"))
+    def handle_save(self, action, data):
+        report = domain.Report()
+        session = Session()  
+        report.body_text = data['body_text']
+        report.start_date = data['start_date']
+        report.end_date = data['end_date']
+        report.note = data['note']
+        report.report_type = data['report_type']
+        report.short_name = data['report_type']
+        report.owner_id = get_db_user_id()
+        report.language = "en"
+        report.created_date = datetime.datetime.now()
+        report.group_id = self.context.group_id
+        session.add(report)
+        ids = data["sittings"].split(",")
+        for id in ids:
+            try:
+                sit_id = int(id)
+            except:
+                continue
+            sitting = session.query(domain.GroupSitting).get(sit_id)
+            sr = domain.SittingReport()
+            sr.report = report
+            sr.sitting = sitting
+            session.add(sr)
+        session.commit()
+        
+        rpm = zope.securitypolicy.interfaces.IRolePermissionMap( report )
+        rpm.grantPermissionToRole( u'zope.View', 'bungeni.Anybody' )
+        
+        
+        if IGroupSitting.providedBy(self.context):
+            back_link =  './schedule'
+        elif ISchedulingContext.providedBy(self.context):
+            back_link = './'
+        else:
+            raise NotImplementedError
+        self.request.response.redirect(back_link) 
+                                            
+
         

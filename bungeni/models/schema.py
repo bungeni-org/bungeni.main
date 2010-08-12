@@ -616,27 +616,24 @@ item_discussion = rdb.Table("item_discussion", metadata,
 )
 
 reports = rdb.Table("reports", metadata,
-    rdb.Column("report_id", rdb.Integer, primary_key=True),
+    rdb.Column("report_id", rdb.Integer, 
+        rdb.ForeignKey("parliamentary_items.parliamentary_item_id"), 
+        primary_key=True
+    ),
+    rdb.Column("group_id", rdb.Integer, rdb.ForeignKey("groups.group_id")),
     rdb.Column("start_date", rdb.Date, nullable=False),
     rdb.Column("end_date", rdb.Date), 
     rdb.Column("created_date", rdb.DateTime, nullable=False), 
     rdb.Column("report_type", rdb.String(32), nullable=False),
-    rdb.Column("body_text", rdb.UnicodeText),
-    rdb.Column("odt_report", rdb.Binary),
-    rdb.Column("pdf_report", rdb.Binary),
-    rdb.Column("user_id", rdb.Unicode(32)),
-    rdb.Column("group_id", rdb.Integer, rdb.ForeignKey("groups.group_id")),
-    rdb.Column("note", rdb.String(256)),
-    rdb.Column("language", rdb.String(5), nullable=False),
+    rdb.Column("user_id", rdb.Unicode(32)), 
 )
 
 sitting_reports = rdb.Table("sitting_reports", metadata,
-    rdb.Column("sitting_report_id", rdb.Integer, primary_key=True),
     rdb.Column("report_id", rdb.Integer, 
-        rdb.ForeignKey("reports.report_id")
+        rdb.ForeignKey("reports.report_id"), primary_key=True
     ),
     rdb.Column("sitting_id", rdb.Integer,
-        rdb.ForeignKey("group_sittings.sitting_id"),
+        rdb.ForeignKey("group_sittings.sitting_id"), primary_key=True
     ),
 )
 

@@ -178,15 +178,18 @@
      permission="zope.View"
      class=".reports.SchedulingContextMinutesReportView"
      />
-
-
-  <!--browser:page
-     name="preview.html"
-     for="zope.location.interfaces.ILocation"
+	<browser:page
+     name="save-report"
+     for="bungeni.models.interfaces.IGroupSitting"
      permission="zope.View"
-     class=".calendar.browser.MinutesHtmlReportingView"
-     /-->
-  
+     class=".reports.SaveReportView"
+     />
+  	<browser:page
+     name="save-report"
+     for="bungeni.core.interfaces.ISchedulingContext"
+     permission="zope.View"
+     class=".reports.SaveReportView"
+     />
   
   <!-- Calendar -->
 
