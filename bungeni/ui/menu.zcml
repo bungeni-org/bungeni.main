@@ -92,7 +92,7 @@
         submenu="context_add_parliamentary_content"
     />
     <browser:subMenuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.ISchedulingContext"
+        for="bungeni.core.interfaces.ISchedulingContext"
         title="Reports"
         action="reports"
         permission="zope.View"
@@ -100,7 +100,7 @@
         order="20"
     />
 	<browser:subMenuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.IGroupSittingContext"
+        for="bungeni.models.interfaces.IGroupSitting"
         title="Reports"
         action="reports"
         permission="zope.View"
