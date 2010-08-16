@@ -930,7 +930,7 @@
      menu="context_actions"
      for="bungeni.core.interfaces.IDailySchedulingContext"
      action="view"
-     title="Info"
+     title="View"
      order="0"
      permission="zope.View"
      />
@@ -1124,7 +1124,7 @@
     -->
     <browser:menuItems menu="context_actions"
         for="ore.alchemist.interfaces.IAlchemistContent">
-        <browser:menuItem action="view" title="Info" order="0" />
+        <browser:menuItem action="view" title="View" order="0" />
         <browser:menuItem action="edit" title="Edit" order="10"
             permission="zope.ManageContent"
         />
