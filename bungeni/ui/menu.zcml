@@ -92,14 +92,21 @@
         submenu="context_add_parliamentary_content"
     />
     <browser:subMenuItem menu="plone_contentmenu"
-        for="*"
+        for="bungeni.models.interfaces.ISchedulingContext"
         title="Reports"
         action="reports"
         permission="zope.View"
         submenu="reporting_actions"
         order="20"
     />
-
+	<browser:subMenuItem menu="plone_contentmenu"
+        for="bungeni.models.interfaces.IGroupSittingContext"
+        title="Reports"
+        action="reports"
+        permission="zope.View"
+        submenu="reporting_actions"
+        order="20"
+    />
     <!-- add menus for content -->
 
     <browser:menu id="party_additems"
@@ -268,14 +275,14 @@
      order="10"
      />
 
- <browser:menuItem
+ <!-- browser:menuItem
      menu="sitting_additems"
      for="bungeni.models.interfaces.IGroupSitting"
      title="Add Heading..."
      action="/admin/content/headings/add?next_url=..."
      permission="bungeni.heading.Add"
      order="20"
-     />
+     / -->
 
 
                
@@ -580,12 +587,12 @@
         action="./add?next_url=..."
         permission="bungeni.agendaitem.Add"
     />
-    <browser:menuItem menu="schedule_additems"
+    <!-- browser:menuItem menu="schedule_additems"
         for="bungeni.core.interfaces.ISchedulingContext"
         title="Add Heading..."
         action="/admin/content/headings/add?next_url=..."
         permission="bungeni.heading.Add"
-     />
+     / -->
 
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.domain.GroupSittingContainer"
