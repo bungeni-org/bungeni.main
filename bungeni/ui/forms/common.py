@@ -48,7 +48,7 @@ from bungeni.ui.interfaces import IFormEditLayer
 from bungeni.ui.i18n import _
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
-from bungeni.ui.utils import url
+from bungeni.ui.utils import url, debug
 
 import re
 import htmlentitydefs

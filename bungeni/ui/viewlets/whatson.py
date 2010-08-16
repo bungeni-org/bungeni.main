@@ -11,7 +11,7 @@ import sqlalchemy.sql.expression as sql
 from bungeni.models import domain, schema
 from bungeni.core.globalsettings import getCurrentParliamentId
 
-from bungeni.ui.utils import misc, url as ui_url
+from bungeni.ui.utils import misc, url, debug
 from bungeni.ui.cookies import get_date_range
 from bungeni.ui.tagged import get_states
 
@@ -40,7 +40,7 @@ class WhatsOnBrowserView(BrowserView):
             self.end_date = datetime.datetime(end_date.year, end_date.month, 
                 end_date.day, 23, 59)
         self.get_items()
-        
+    
     def get_end_date(self): 
         formatter = self.request.locale.dates.getFormatter('date', 'full') 
         return formatter.format(self.end_date)
@@ -56,7 +56,7 @@ class WhatsOnBrowserView(BrowserView):
             s_list.append({
                     'name': schedule.item.short_name,
                     'status' : misc.get_wf_state(schedule.item),
-                    'url' : ui_url.set_url_context(('/business/' +
+                    'url' : url.set_url_context(('/business/' +
                             schedule.item.type + 's/obj-' + 
                         str(schedule.item.parliamentary_item_id))),
                     'item_type' : schedule.item.type,
@@ -92,20 +92,20 @@ class WhatsOnBrowserView(BrowserView):
                     day_list.append(s_dict)
                 s_dict = {}
             if sitting.group.type == 'parliament':
-                url = ui_url.set_url_context('/business/sittings/obj-%i' % (
+                _url = url.set_url_context('/business/sittings/obj-%i' % (
                      sitting.sitting_id))
             elif sitting.group.type == 'committee':
-                url = ui_url.set_url_context(
+                _url = url.set_url_context(
                     '/business/committees/obj-%i/sittings/obj-%i'
                     % (sitting.group.group_id, sitting.sitting_id))
             else:
-                url ='#'
+                _url ='#'
             s_list.append({
                 'start': sitting.start_date.strftime("%H:%M"),
                 'end' : sitting.end_date.strftime("%H:%M"),
                 'type' : sitting.group.type,
                 'name' : sitting.group.short_name,
-                'url' : url, 
+                'url' : _url, 
                 'items' : self.get_sitting_items(sitting),
                 })
             s_dict['day'] = day
@@ -151,9 +151,9 @@ class WhatsOnBrowserView(BrowserView):
                 s_list.append({
                     'name': schedule.item.short_name,
                     'status' : misc.get_wf_state(schedule.item),
-                    'url' : ui_url.set_url_context(('/business/' +
-                            schedule.item.type + 's/obj-' + 
-                            str(schedule.item.parliamentary_item_id))),
+                    'url' : url.set_url_context("/business/%ss/obj-%s" % (
+                                        schedule.item.type,
+                                        schedule.item.parliamentary_item_id)),
                     'group_type': schedule.sitting.group.type,
                     'group_name' : schedule.sitting.group.short_name,
                     'sitting_type' : schedule.sitting.sitting_type.sitting_type,
@@ -178,8 +178,9 @@ class WhatsOnBrowserView(BrowserView):
 
     def get_agendaitems(self):
         return self.get_items_by_type(domain.AgendaItem) 
-                
-class WhatsOnPortletBrowserView (WhatsOnBrowserView):
+
+
+class WhatsOnPortletBrowserView(WhatsOnBrowserView):
     max_items = 5
     def get_sittings(self):
         return super(WhatsOnPortletBrowserView,
@@ -188,9 +189,5 @@ class WhatsOnPortletBrowserView (WhatsOnBrowserView):
     def get_items_by_type(self, item_type):
         return super(WhatsOnPortletBrowserView,
                 self).get_items_by_type(item_type)[:self.max_items]
-    
-    
-            
-                 
-                        
+
 

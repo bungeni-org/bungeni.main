@@ -600,8 +600,8 @@
         action="./add"
         permission="bungeni.sitting.Add"
         layer=".interfaces.IAdminSectionLayer"
-     />
-
+    />
+    
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IGroupSitting"
         title="Delete Sitting"
@@ -926,14 +926,13 @@
      name="view"
      />
 
-  <browser:menuItem
-     menu="context_actions"
-     for="bungeni.core.interfaces.IDailySchedulingContext"
-     action="view"
-     title="View"
-     order="0"
-     permission="zope.View"
-     />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.core.interfaces.IDailySchedulingContext"
+        action="view"
+        title="View"
+        order="0"
+        permission="zope.View"
+    />
 
   <browser:menuItem
      menu="discussion_actions"
@@ -1123,14 +1122,18 @@
          values SHOULD be grouped in a <menuItems> declaration.
     -->
     <browser:menuItems menu="context_actions"
-        for="ore.alchemist.interfaces.IAlchemistContent">
+        for="ore.alchemist.interfaces.IAlchemistContent"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        >
         <browser:menuItem action="view" title="View" order="0" />
         <browser:menuItem action="edit" title="Edit" order="10"
             permission="zope.ManageContent"
         />
     </browser:menuItems>
     <browser:menuItems menu="context_actions"
-        for="bungeni.models.interfaces.IBungeniContent">
+        for="bungeni.models.interfaces.IBungeniContent"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        >
         <browser:menuItem action="workflow" title="Workflow" order="30" />
         <browser:menuItem action="files" title="Files" order="40"
             permission="bungeni.attachedfile.Edit"
@@ -1236,14 +1239,14 @@
         permission="bungeni.agendaitem.Delete"
     />
     
-  <browser:menuItem
-     menu="context_actions"
-     for="bungeni.models.interfaces.IParliament"
-     action="edit"
-     title="Edit"
-     order="10"
-     permission="bungeni.parliament.Edit"
-     />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IParliament"
+        action="edit"
+        title="Edit"
+        order="10"
+        layer=".interfaces.IAdminSectionLayer"
+        permission="bungeni.parliament.Edit"
+    />
      
   <browser:menuItem
      menu="context_actions"
@@ -1285,6 +1288,7 @@
         title="Delete"
         order="10"
         permission="bungeni.parliament.Delete"
+        layer=".interfaces.IAdminSectionLayer"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IOffice"
@@ -1331,7 +1335,7 @@
      order="10"
      permission="bungeni.ministry.Edit"
      />
-
+    
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IGovernment"
         action="delete"

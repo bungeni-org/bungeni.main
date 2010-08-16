@@ -1,6 +1,3 @@
-
-# encoding: utf-8
-
 log = __import__("logging").getLogger("bungeni.ui.container")
 
 import datetime

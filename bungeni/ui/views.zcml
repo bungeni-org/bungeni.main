@@ -17,8 +17,8 @@
   
     <!-- Application UI -->
   
-    <!-- app-index -:- the names of these two IBungeniApplication views 
-       should be "app-index" -->
+    <!-- !+app-index(mr) -:- the names of these two IBungeniApplication views 
+       should both be "app-index" -->
     <browser:page name="index"
         for="bungeni.models.interfaces.IBungeniApplication"
         permission="zope.Public"
@@ -35,8 +35,12 @@
   
     <!-- Workspace -->
 
-    <browser:page
-        name="workspace-index"
+    <!-- !+NotAuthenticated(mr, 08-2010), not-logged-in gives NotFound? 
+        adopt a standard handling of (the numerous) such situations e.g.
+        - redirect to login? 
+        - standard error page, with suggestion that may need to log in?
+    --> 
+    <browser:page name="workspace-index"
         for="bungeni.core.interfaces.ISection"
         permission="zope.View"
         layer=".interfaces.IBungeniAuthenticatedSkin"
@@ -49,8 +53,7 @@
         layer=".interfaces.IBungeniAuthenticatedSkin"
         template="templates/app-index.pt"
     /> !+ ??? -->
-    <browser:page
-        name="view"
+    <browser:page name="view"
         for=".interfaces.IWorkspaceContainer"
         class=".container.WorkspaceContainerIndexRedirect"
         permission="zope.View"
@@ -91,14 +94,13 @@
         layer=".interfaces.IWorkspaceSectionLayer"
     /><!-- bungeni.models.interfaces.IGroupSittingContainer -->
     
-  <!-- Setup Access to Browser Resources on the Application -->
-  
-  <browser:page
-    name=""
-    for="bungeni.models.interfaces.IBungeniApplication"
-    class="zope.app.publisher.browser.resources.Resources"
-    permission="zope.Public"
-    allowed_interface="zope.publisher.interfaces.browser.IBrowserPublisher"
+    <!-- Setup Access to Browser Resources on the Application -->
+    
+    <browser:page name=""
+        for="bungeni.models.interfaces.IBungeniApplication"
+        class="zope.app.publisher.browser.resources.Resources"
+        permission="zope.Public"
+        allowed_interface="zope.publisher.interfaces.browser.IBrowserPublisher"
     />
 
   <!-- redirects -->
@@ -302,23 +304,20 @@
     />
 
   <!-- business -->
-
-    <browser:page
-        name="business-index"
+    
+    <browser:page name="business-index"
         for="*"
         layer="bungeni.ui.interfaces.IBungeniSkin"
         class=".container.BusinessIndexRedirect"
         permission="zope.Public"
     />
-    <browser:page
-        name="whats-on"
+    <browser:page name="whats-on"
         for="bungeni.core.interfaces.ISection"
         layer="bungeni.ui.interfaces.IBungeniSkin"
         class=".viewlets.whatson.WhatsOnBrowserView"
         permission="zope.Public"
     />
-    <browser:page
-        name="whats-on-portlet"
+    <browser:page name="whats-on-portlet"
         for="bungeni.models.interfaces.IBungeniApplication"
         layer="bungeni.ui.interfaces.IBungeniSkin"
         class=".viewlets.whatson.WhatsOnPortletBrowserView"
