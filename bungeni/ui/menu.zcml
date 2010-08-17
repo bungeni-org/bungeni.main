@@ -5,6 +5,19 @@
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni.ui">
     
+    <!-- Consistent appearance order of menu items:
+    
+    "context_actions" menu :
+         0- 9 : view=0
+        10-19 : edit=10, respond=11
+        20-29 : workflow=20, versions=21, auditlog=22
+        30-39 : files=30
+        40-49 : calendar=40, schedule=41, pdf=42, odt=43
+        90-99 : delete=99
+    
+    -->
+    
+    
     <!-- MENUS -->
     
     <!-- Top-level sections *may* define a ZCML menu for navigating to 
@@ -73,7 +86,8 @@
         title="The 'Reports' menu - provides reporting actions"
         class="ploned.ui.menu.PloneBrowserMenu"
     />
-
+    
+    
     <!-- CONTENT SUBMENUS -->
     
     <browser:subMenuItem menu="plone_contentmenu"
@@ -107,6 +121,7 @@
         submenu="reporting_actions"
         order="20"
     />
+    
     <!-- add menus for content -->
 
     <browser:menu id="party_additems"
@@ -127,7 +142,6 @@
         action="./partymembers/add"
         permission="bungeni.politicalgroupmember.Add"
     />
-    
     <browser:subMenuItem menu="plone_contentmenu"
         for="bungeni.models.interfaces.IPoliticalGroup"
         title="Add..."
@@ -249,31 +263,26 @@
         permission="bungeni.function.Add"
         order="10"
     />
-
-  <browser:menu
-     id="sitting_additems"
-     title="The 'Add...' menu - for Group Sittings"
-     class="ploned.ui.menu.PloneBrowserMenu"
-     />
-     
-  <browser:subMenuItem
-     menu="plone_contentmenu"
-     for="bungeni.models.interfaces.IGroupSitting"
-     title="Add..."
-     action="add_content"
+    
+    <browser:menu id="sitting_additems"
+        title="The 'Add...' menu - for Group Sittings"
+        class="ploned.ui.menu.PloneBrowserMenu"
+    />
+    <browser:subMenuItem menu="plone_contentmenu"
+        for="bungeni.models.interfaces.IGroupSitting"
+        title="Add..."
+        action="add_content"
         order="10"
-     permission="zope.View"
-     submenu="sitting_additems"
-     />
-
-  <browser:menuItem
-     menu="sitting_additems"
-     for="bungeni.models.interfaces.IGroupSitting"
-     title="Add Attendance..."
-     action="./attendance/add"
-     permission="bungeni.sittingattendance.Add"
-     order="10"
-     />
+        permission="zope.View"
+        submenu="sitting_additems"
+    />
+    <browser:menuItem menu="sitting_additems"
+        for="bungeni.models.interfaces.IGroupSitting"
+        title="Add Attendance..."
+        action="./attendance/add"
+        permission="bungeni.sittingattendance.Add"
+        order="10"
+    />
 
  <!-- browser:menuItem
      menu="sitting_additems"
@@ -283,45 +292,34 @@
      permission="bungeni.heading.Add"
      order="20"
      / -->
-
-
                
-  <browser:menu
-     id="motion_additems"
-     title="The 'Add...' menu - for motion"
-     class="ploned.ui.menu.PloneBrowserMenu"
-     />
-     
-  <browser:subMenuItem
-     menu="plone_contentmenu"
-     for="bungeni.models.interfaces.IMotion"
-     title="Add..."
-     action="add_content"
+    <browser:menu id="motion_additems"
+        title="The 'Add...' menu - for motion"
+        class="ploned.ui.menu.PloneBrowserMenu"
+    />
+    <browser:subMenuItem menu="plone_contentmenu"
+        for="bungeni.models.interfaces.IMotion"
+        title="Add..."
+        action="add_content"
         order="10"
-     permission="zope.View"
-     submenu="motion_additems"
-     />
-
-  <browser:menuItem
-     menu="motion_additems"
-     for="bungeni.models.interfaces.IMotion"
-     title="Add cosignatory..."
-     action="./consignatory/add"
-     permission="bungeni.consignatory.Add"
-     order="10"
-     />
-
-  <browser:menuItem
-     menu="motion_additems"
-     for="bungeni.models.interfaces.IMotion"
-     title="Add file..."
-     action="./files/add"
-     permission="bungeni.attachedfile.Add"
-     order="20"
-     /> 
-
-
-
+        permission="zope.View"
+        submenu="motion_additems"
+    />
+    <browser:menuItem menu="motion_additems"
+        for="bungeni.models.interfaces.IMotion"
+        title="Add cosignatory..."
+        action="./consignatory/add"
+        permission="bungeni.consignatory.Add"
+        order="10"
+    />
+    <browser:menuItem menu="motion_additems"
+        for="bungeni.models.interfaces.IMotion"
+        title="Add file..."
+        action="./files/add"
+        permission="bungeni.attachedfile.Add"
+        order="20"
+    />
+    
     <browser:menu id="bill_additems"
         title="The 'Add...' menu - for bill"
         class="ploned.ui.menu.PloneBrowserMenu"
@@ -345,14 +343,14 @@
         for="bungeni.models.domain.EventItem"
         action="delete"
         title="Delete"
-        order="10"
+        order="99"
         permission="bungeni.event.Delete"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IHeading"
         title="Delete"
         action="delete"
-        order="100"
+        order="99"
         permission="bungeni.heading.Delete"
     />
 
@@ -607,6 +605,7 @@
         title="Delete Sitting"
         action="./delete"
         permission="bungeni.sitting.Delete"
+        order="99"
     />
     <!-- !+ ??: 
     should be using:
@@ -655,14 +654,14 @@
         for="bungeni.models.interfaces.IMemberOfParliament"
         action="delete"
         title="Delete"
-        order="10"
+        order="99"
         permission="bungeni.mp.Delete"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IBungeniGroupMembership"
         action="delete"
         title="Delete"
-        order="10"
+        order="99"
         permission="bungeni.groupmember.Delete"
     />
       
@@ -789,6 +788,7 @@
         for="bungeni.models.interfaces.IConsignatory"
         title="Delete"
         action="./delete"
+        order="99"
         permission="bungeni.consignatory.Delete"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
@@ -820,6 +820,7 @@
         for="bungeni.models.interfaces.IParliamentSession"
         title="Delete Session"
         action="./delete"
+        order="99"
         permission="bungeni.session.Delete"
     />
 
@@ -921,11 +922,10 @@
 
   <!-- calendar actions -->
 
-  <browser:defaultView
-     for="bungeni.core.interfaces.IDailySchedulingContext"
-     name="view"
-     />
-
+    <browser:defaultView name="view"
+        for="bungeni.core.interfaces.IDailySchedulingContext"
+    />
+    
     <browser:menuItem menu="context_actions"
         for="bungeni.core.interfaces.IDailySchedulingContext"
         action="view"
@@ -971,7 +971,7 @@
      for="bungeni.models.interfaces.IGroupSitting"
      action="schedule"
      title="Schedule"
-     order="10"
+     order="41"
      permission="bungeni.agendaitem.Schedule"
      />
 
@@ -1134,8 +1134,8 @@
         for="bungeni.models.interfaces.IBungeniContent"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         >
-        <browser:menuItem action="workflow" title="Workflow" order="30" />
-        <browser:menuItem action="files" title="Files" order="40"
+        <browser:menuItem action="workflow" title="Workflow" order="20" />
+        <browser:menuItem action="files" title="Files" order="30"
             permission="bungeni.attachedfile.Edit"
         />
     </browser:menuItems>
@@ -1144,14 +1144,14 @@
         action="audit-log"
         title="Audit Log"
         permission="bungeni.auditlog.View"
-        order="30"
+        order="22"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.core.interfaces.IVersionable"
         action="versions"
         title="Versions"
         permission="zope.View"
-        order="30"
+        order="21"
     />
     
     <!-- bill context actions -->
@@ -1160,7 +1160,7 @@
         <browser:menuItem action="edit" title="Edit" order="10"
             permission="bungeni.bill.Edit"
         />
-        <browser:menuItem action="delete" title="Delete" order="10"
+        <browser:menuItem action="delete" title="Delete" order="99"
             permission="bungeni.bill.Delete"
         />
     </browser:menuItems>
@@ -1169,7 +1169,7 @@
         for="bungeni.models.interfaces.IBungeniUser"
         action="delete"
         title="Delete"
-        order="10"
+        order="99"
         permission="zope.ManageContent"
     />
     
@@ -1179,10 +1179,10 @@
         <browser:menuItem action="edit" title="Edit" order="10"
             permission="bungeni.question.Edit"
         />
-        <browser:menuItem action="delete" title="Delete" order="10"
+        <browser:menuItem action="delete" title="Delete" order="99"
             permission="bungeni.question.Delete"
         />
-        <browser:menuItem action="respond" title="Respond" order="10"
+        <browser:menuItem action="respond" title="Respond" order="11"
             permission="bungeni.response.Edit"
         />
     </browser:menuItems>
@@ -1200,45 +1200,37 @@
         for="bungeni.models.interfaces.IMotion"
         action="delete"
         title="Delete"
-        order="10"
+        order="99"
         permission="bungeni.motion.Delete"
     />
- 
-  <browser:menuItem
-     menu="context_actions"
-     for="bungeni.models.interfaces.ITabledDocument"
-     action="edit"
-     title="Edit"
-     order="10"
-     permission="bungeni.tableddocument.Edit"
-     />
-
-
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.ITabledDocument"
+        action="edit"
+        title="Edit"
+        order="10"
+        permission="bungeni.tableddocument.Edit"
+    />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.ITabledDocument"
         action="delete"
         title="Delete"
-        order="10"
+        order="99"
         permission="bungeni.tableddocument.Delete"
      />
-     
-  <browser:menuItem
-     menu="context_actions"
-     for="bungeni.models.interfaces.IAgendaItem"
-     action="edit"
-     title="Edit"
-     order="10"
-     permission="bungeni.agendaitem.Edit"
-     />
-     
+     <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IAgendaItem"
+        action="edit"
+        title="Edit"
+        order="10"
+        permission="bungeni.agendaitem.Edit"
+    />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IAgendaItem"
         action="delete"
         title="Delete"
-        order="10"
+        order="99"
         permission="bungeni.agendaitem.Delete"
     />
-    
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IParliament"
         action="edit"
@@ -1247,46 +1239,39 @@
         layer=".interfaces.IAdminSectionLayer"
         permission="bungeni.parliament.Edit"
     />
-     
-  <browser:menuItem
-     menu="context_actions"
-     for="bungeni.models.interfaces.IOffice"
-     action="edit"
-     title="Edit"
-     order="10"
-     permission="bungeni.office.Edit"
-     />
-  <browser:menuItem
-     menu="context_actions"
-     for="bungeni.models.interfaces.ICommittee"
-     action="edit"
-     title="Edit"
-     order="10"
-     permission="bungeni.committee.Edit"
-     />
-
-  <browser:menuItem
-     menu="context_actions"
-     for="bungeni.models.interfaces.IPoliticalParty"
-     action="edit"
-     title="Edit"
-     order="10"
-     permission="bungeni.party.Edit"
-     />
-  <browser:menuItem
-     menu="context_actions"
-     for="bungeni.models.interfaces.IPoliticalGroup"
-     action="edit"
-     title="Edit"
-     order="10"
-     permission="bungeni.party.Edit"
-     />
-    
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IOffice"
+        action="edit"
+        title="Edit"
+        order="10"
+        permission="bungeni.office.Edit"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.ICommittee"
+        action="edit"
+        title="Edit"
+        order="10"
+        permission="bungeni.committee.Edit"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IPoliticalParty"
+        action="edit"
+        title="Edit"
+        order="10"
+        permission="bungeni.party.Edit"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IPoliticalGroup"
+        action="edit"
+        title="Edit"
+        order="10"
+        permission="bungeni.party.Edit"
+    />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IParliament"
         action="delete"
         title="Delete"
-        order="10"
+        order="99"
         permission="bungeni.parliament.Delete"
         layer=".interfaces.IAdminSectionLayer"
     />
@@ -1294,109 +1279,94 @@
         for="bungeni.models.interfaces.IOffice"
         action="delete"
         title="Delete"
-        order="10"
+        order="99"
         permission="bungeni.office.Delete"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.ICommittee"
         action="delete"
         title="Delete"
-        order="10"
+        order="99"
         permission="bungeni.committee.Delete"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IPoliticalParty"
         action="delete"
         title="Delete"
-        order="10"
+        order="99"
         permission="bungeni.party.Delete"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IPoliticalGroup"
         action="delete"
         title="Delete"
-        order="10"
+        order="99"
         permission="bungeni.party.Delete"
     />
-  <browser:menuItem
-     menu="context_actions"
-     for="bungeni.models.interfaces.IGovernment"
-     action="edit"
-     title="Edit"
-     order="10"
-     permission="bungeni.government.Edit"
-     />
-
-  <browser:menuItem
-     menu="context_actions"
-     for="bungeni.models.interfaces.IMinistry"
-     action="edit"
-     title="Edit"
-     order="10"
-     permission="bungeni.ministry.Edit"
-     />
-    
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IGovernment"
+        action="edit"
+        title="Edit"
+        order="10"
+        permission="bungeni.government.Edit"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IMinistry"
+        action="edit"
+        title="Edit"
+        order="10"
+        permission="bungeni.ministry.Edit"
+    />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IGovernment"
         action="delete"
         title="Delete"
-        order="10"
+        order="99"
         permission="bungeni.government.Delete"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IMinistry"
         action="delete"
         title="Delete"
-        order="10"
+        order="99"
         permission="bungeni.ministry.Delete"
     />
-
-  <browser:menuItem
-     menu="context_actions"
-     layer=".interfaces.IBusinessSectionLayer"
-     for="bungeni.models.interfaces.ICommittee"
-     action="./calendar"
-     title="Calendar"
-     order="20"
-     />
-  
-     
-   <browser:menuItem
-     menu="context_actions"
-     for="bungeni.models.domain.Report"
-     action="pdf"
-     title="download pdf"
-     permission="zope.View"
-     order="30"
-     /> 
-     
-     <browser:menuItem
-     menu="context_actions"
-     for="bungeni.models.domain.Report"
-     action="odt"
-     title="download odt"
-     permission="zope.View"
-     order="30"
-     /> 
-     
-     <browser:menuItem
-     menu="context_actions"
-     for="bungeni.models.domain.Report4Sitting"
-     action="pdf"
-     title="download pdf"
-     permission="zope.View"
-     order="30"
-     /> 
-     
-     <browser:menuItem
-     menu="context_actions"
-     for="bungeni.models.domain.Report4Sitting"
-     action="odt"
-     title="download odt"
-     permission="zope.View"
-     order="30"
-     /> 
-     
+    <browser:menuItem menu="context_actions"
+        layer=".interfaces.IBusinessSectionLayer"
+        for="bungeni.models.interfaces.ICommittee"
+        action="./calendar"
+        title="Calendar"
+        order="40"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.domain.Report"
+        action="pdf"
+        title="download pdf"
+        permission="zope.View"
+        order="42"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.domain.Report"
+        action="odt"
+        title="download odt"
+        permission="zope.View"
+        order="43"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.domain.Report4Sitting"
+        action="pdf"
+        title="download pdf"
+        permission="zope.View"
+        order="42"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.domain.Report4Sitting"
+        action="odt"
+        title="download odt"
+        permission="zope.View"
+        order="43"
+    />
+    
    <!--browser:menuItem
      menu="context_actions"
      for="bungeni.models.interfaces.IBungeniContent"
