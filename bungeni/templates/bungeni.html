@@ -94,7 +94,8 @@ ${ xml(view.provide(provider_name="yui.js")) }
 ${ xml(view.provide(provider_name="plone-js")) }
 
   </head>
-  <body class="yui-skin-sam bungeni-section-${get_section_name()}">
+  #[ !+section-bungeni(mr, aug-2010) shouldn't this be bungeni-section? ]#
+  <body class="yui-skin-sam section-bungeni-${get_section_name()}">
     <div id="visual-portal-wrapper">
       <div id="portal-top">
       ${ xml(view.provide(provider_name="plone.portalheader")) }
