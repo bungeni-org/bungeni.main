@@ -70,6 +70,7 @@ class AppSetup(object):
         z3evoque.setup_evoque()
         z3evoque.domain.set_on_globals("devmode", common.has_feature("devmode"))
         z3evoque.domain.set_on_globals("absoluteURL", url.absoluteURL)
+        z3evoque.domain.set_on_globals("get_section_name", url.get_section_name)
         
         # !+ where is the view name for the app root (slash) set?
         

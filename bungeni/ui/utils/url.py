@@ -33,14 +33,22 @@ def get_destination_url_path(request=None):
     # - (++) any number of Zope "traversal namespace notation" url components
     # - (@@/) to indicate that the URL is for an object that is a resource
     # - (@@)) to indicate a view name
-    # we need to get rid 
-    # of them:
+    # we need to get rid of them:
     _url = "/".join([ url_component 
                       for url_component in request.get("PATH_INFO").split("/")
                       if not url_component.startswith("++") and
                          not url_component.startswith("@@") ])
     log.debug(" [get_destination_url_path] %s " % _url)
     return _url
+
+
+def get_section_name(request=None):
+    """Pick off the first URL component i.e. the section name.
+    """
+    url_comps = get_destination_url_path(request).split("/")
+    if len(url_comps)>1: 
+       return url_comps[1]
+    return ""
 
 
 def urljoin(base, action):
