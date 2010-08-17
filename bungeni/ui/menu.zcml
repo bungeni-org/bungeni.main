@@ -896,17 +896,16 @@
     
     <!-- submenu adapters -->
     
-  <adapter
-     for="* *"
-     name="plone.contentmenu.workflow"
-     factory=".menu.WorkflowSubMenuItem"
-     provides="ploned.ui.interfaces.IContentMenuItem" />
- 
-  <adapter
-     for="bungeni.core.interfaces.ISchedulingContext *"
-     name="plone.contentmenu.calendar"
-     factory=".menu.CalendarSubMenuItem"
-     provides="ploned.ui.interfaces.IContentMenuItem" />
+    <adapter name="plone.contentmenu.workflow"
+        for="* *"
+        factory=".menu.WorkflowSubMenuItem"
+        provides="ploned.ui.interfaces.IContentMenuItem" 
+    />
+    <adapter name="plone.contentmenu.calendar"
+        for="bungeni.core.interfaces.ISchedulingContext *"
+        factory=".menu.CalendarSubMenuItem"
+        provides="ploned.ui.interfaces.IContentMenuItem"
+    />
 
   <!--adapter
      for="bungeni.core.interfaces.IVersionable *"
