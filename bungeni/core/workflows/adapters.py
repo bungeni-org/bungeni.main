@@ -17,7 +17,7 @@ import attachedfile
 import event
 import heading
 import user
-
+import report
 from bungeni.models import domain
 from bungeni.models.interfaces import IVersion
 
@@ -50,7 +50,7 @@ TabledDocumentWorkflowAdapter = workflow.AdaptedWorkflow(
 AgendaItemWorkflowAdapter = workflow.AdaptedWorkflow(
     load_workflow(agendaitem, domain.AgendaItem))
 ParliamentWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(parliament, domain.Parliament)) 
+    load_workflow(parliament, domain.Parliament))
 CommitteeWorkflowAdapter = workflow.AdaptedWorkflow(
     load_workflow(committee, domain.Committee))
 GroupWorkflowAdapter = workflow.AdaptedWorkflow(
@@ -62,6 +62,7 @@ EventWorkflowAdapter = workflow.AdaptedWorkflow(
 HeadingWorkflowAdapter = workflow.AdaptedWorkflow(
     load_workflow(heading, domain.Heading))
 UserWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(user, domain.User)) 
-    
-    
+    load_workflow(user, domain.User))
+ReportWorkflowAdapter = workflow.AdaptedWorkflow(
+    load_workflow(report, domain.Report))
+
