@@ -92,7 +92,7 @@ class UserIdViewlet(viewlet.ViewletBase):
     render = ViewPageTemplateFile ('templates/user_id.pt')
 '''
 
-    
+
 class AttributesEditViewlet(ui.core.DynamicFields, ui.viewlet.EditFormViewlet):
     mode = "edit"
     template = NamedTemplate('alchemist.subform')
@@ -103,14 +103,14 @@ class SubFormViewletManager(manager.WeightOrderedViewletManager):
     display subforms
     """
     interface.implements(ISubFormViewletManager)
-      
+
     def filter(self, viewlets):
          viewlets = super(SubFormViewletManager, self).filter(viewlets)
          return [(name, viewlet)
                  for name, viewlet in viewlets
-                 if viewlet.for_display==True]
+                 if viewlet.for_display == True]
 
-class SubformViewlet ( AjaxContainerListing ):
+class SubformViewlet (AjaxContainerListing):
     """
     
     """
@@ -118,153 +118,153 @@ class SubformViewlet ( AjaxContainerListing ):
     for_display = True
 
 
-class SessionViewlet( SubformViewlet ):
+class SessionViewlet(SubformViewlet):
 
 
-    def __init__( self,  context, request, view, manager ):
+    def __init__(self, context, request, view, manager):
 
         self.context = context.sessions
         self.request = request
-        self.__parent__= context
+        self.__parent__ = context
         self.manager = manager
         self.query = None
 
 
-class ConsignatoryViewlet( SubformViewlet ):
+class ConsignatoryViewlet(SubformViewlet):
 
 
-    def __init__( self,  context, request, view, manager ):
+    def __init__(self, context, request, view, manager):
 
         self.context = context.consignatory
         self.request = request
-        self.__parent__= context
+        self.__parent__ = context
         self.manager = manager
         self.query = None
         self.for_display = len(self.context) > 0
 
-class GovernmentViewlet( SubformViewlet ):
+class GovernmentViewlet(SubformViewlet):
 
 
-    def __init__( self,  context, request, view, manager ):
+    def __init__(self, context, request, view, manager):
 
         self.context = context.governments
         self.request = request
-        self.__parent__= context
+        self.__parent__ = context
         self.manager = manager
         self.query = None
 
-class MemberOfParliamentViewlet( SubformViewlet ):
+class MemberOfParliamentViewlet(SubformViewlet):
 
 
-    def __init__( self,  context, request, view, manager ):
+    def __init__(self, context, request, view, manager):
 
         self.context = context.parliamentmembers
         self.request = request
-        self.__parent__= context
+        self.__parent__ = context
         self.manager = manager
         self.query = None
 
 
 
-class SittingAttendanceViewlet( SubformViewlet ):
+class SittingAttendanceViewlet(SubformViewlet):
 
 
-    def __init__( self,  context, request, view, manager ):
+    def __init__(self, context, request, view, manager):
 
         self.context = context.attendance
         self.request = request
-        self.__parent__= context
+        self.__parent__ = context
         self.manager = manager
         self.query = None
         self.for_display = len(self.context) > 0
 
-class SittingReportsViewlet( SubformViewlet ):
-    def __init__( self,  context, request, view, manager ):
+class SittingReportsViewlet(SubformViewlet):
+    def __init__(self, context, request, view, manager):
         self.context = context.sreports
         self.request = request
-        self.__parent__= context
+        self.__parent__ = context
         self.manager = manager
         self.query = None
-        self.for_display = len(self.context) > 0 
+        self.for_display = len(self.context) > 0
 
 
-class MinistersViewlet( SubformViewlet ):
-    def __init__( self,  context, request, view, manager ):
+class MinistersViewlet(SubformViewlet):
+    def __init__(self, context, request, view, manager):
 
         self.context = context.ministers
         self.request = request
-        self.__parent__= context
+        self.__parent__ = context
         self.manager = manager
         self.query = None
 
 
-class BillsViewlet( SubformViewlet ):
-    def __init__( self,  context, request, view, manager ):
+class BillsViewlet(SubformViewlet):
+    def __init__(self, context, request, view, manager):
 
         self.context = context.bills
         self.request = request
-        self.__parent__= context
+        self.__parent__ = context
         self.manager = manager
         self.query = None
 
-class QuestionsViewlet( SubformViewlet ):
-    def __init__( self,  context, request, view, manager ):
+class QuestionsViewlet(SubformViewlet):
+    def __init__(self, context, request, view, manager):
 
         self.context = context.questions
         self.request = request
-        self.__parent__= context
+        self.__parent__ = context
         self.manager = manager
         self.query = None
 
-class AgendaItemsViewlet( SubformViewlet ):
-    def __init__( self,  context, request, view, manager ):
+class AgendaItemsViewlet(SubformViewlet):
+    def __init__(self, context, request, view, manager):
 
         self.context = context.agendaitems
         self.request = request
-        self.__parent__= context
+        self.__parent__ = context
         self.manager = manager
         self.query = None
 
-class AssignedItemsViewlet( SubformViewlet ):
-    def __init__( self,  context, request, view, manager ):
+class AssignedItemsViewlet(SubformViewlet):
+    def __init__(self, context, request, view, manager):
 
         self.context = context.assigneditems
         self.request = request
-        self.__parent__= context
+        self.__parent__ = context
         self.manager = manager
         self.query = None
         self.for_display = len(self.context) > 0
 
-class AssignedGroupsViewlet( SubformViewlet ):
-    def __init__( self,  context, request, view, manager ):
+class AssignedGroupsViewlet(SubformViewlet):
+    def __init__(self, context, request, view, manager):
 
         self.context = context.assignedgroups
         self.request = request
-        self.__parent__= context
+        self.__parent__ = context
         self.manager = manager
         self.query = None
         self.for_display = len(self.context) > 0
 
 
-class SittingsViewlet( SubformViewlet ):
-    def __init__( self,  context, request, view, manager ):
+class SittingsViewlet(SubformViewlet):
+    def __init__(self, context, request, view, manager):
 
         self.context = context.sittings
         self.request = request
-        self.__parent__= context
+        self.__parent__ = context
         self.manager = manager
         self.query = None
         self.for_display = len(self.context) > 0
 
 
-class MinistriesViewlet( SubformViewlet ):
+class MinistriesViewlet(SubformViewlet):
 
 
-    def __init__( self,  context, request, view, manager ):
+    def __init__(self, context, request, view, manager):
 
         self.context = context.ministries
         self.request = request
-        self.__parent__= context
+        self.__parent__ = context
         self.manager = manager
         self.query = None
 
@@ -272,89 +272,89 @@ class MinistriesViewlet( SubformViewlet ):
 
 
 
-class CommitteesViewlet( SubformViewlet ):
+class CommitteesViewlet(SubformViewlet):
 
-    def __init__( self,  context, request, view, manager ):
+    def __init__(self, context, request, view, manager):
 
         self.context = context.committees
         self.request = request
-        self.__parent__= context
+        self.__parent__ = context
         self.manager = manager
         self.query = None
 
 
 
-class CommitteeStaffViewlet( SubformViewlet ):
+class CommitteeStaffViewlet(SubformViewlet):
 
-    def __init__( self,  context, request, view, manager ):
+    def __init__(self, context, request, view, manager):
 
         self.context = context.committeestaff
         self.request = request
-        self.__parent__= context
+        self.__parent__ = context
         self.manager = manager
         self.query = None
 
 
 
 
-class CommitteeMemberViewlet( SubformViewlet ):
+class CommitteeMemberViewlet(SubformViewlet):
 
-    def __init__( self,  context, request, view, manager ):
+    def __init__(self, context, request, view, manager):
 
         self.context = context.committeemembers
         self.request = request
-        self.__parent__= context
+        self.__parent__ = context
         self.manager = manager
         self.query = None
 
 
-class TitleViewlet ( SubformViewlet ):
+class TitleViewlet (SubformViewlet):
 
-    def __init__( self,  context, request, view, manager ):
+    def __init__(self, context, request, view, manager):
 
         self.context = context.titles
         self.request = request
-        self.__parent__= context
+        self.__parent__ = context
         self.manager = manager
         self.query = None
 
-class AddressesViewlet( SubformViewlet ):
+class AddressesViewlet(SubformViewlet):
 
-    def __init__( self,  context, request, view, manager ):
+    def __init__(self, context, request, view, manager):
 
         self.context = context.addresses
         self.request = request
-        self.__parent__= context
+        self.__parent__ = context
         self.manager = manager
         self.query = None
 
-class PoliticalGroupsViewlet( SubformViewlet ):
-    def __init__( self,  context, request, view, manager ):
+class PoliticalGroupsViewlet(SubformViewlet):
+    def __init__(self, context, request, view, manager):
 
         self.context = context.politicalgroups
         self.request = request
-        self.__parent__= context
+        self.__parent__ = context
         self.manager = manager
         self.query = None
 
-class PartyMemberViewlet( SubformViewlet ):
-    def __init__( self,  context, request, view, manager ):
+class PartyMemberViewlet(SubformViewlet):
+    def __init__(self, context, request, view, manager):
 
         self.context = context.partymembers
         self.request = request
-        self.__parent__= context
+        self.__parent__ = context
         self.manager = manager
         self.query = None
-        
-class PartyMembershipViewlet( SubformViewlet ):
-    def __init__( self,  context, request, view, manager ):
+
+class PartyMembershipViewlet(SubformViewlet):
+    def __init__(self, context, request, view, manager):
 
         self.context = context.party
         self.request = request
-        self.__parent__= context
+        self.__parent__ = context
         self.manager = manager
         self.query = None
-            
+
 #class ResponseViewlet( SubformViewlet ):
 #    def __init__( self,  context, request, view, manager ):
 #
@@ -364,19 +364,19 @@ class PartyMembershipViewlet( SubformViewlet ):
 #        self.manager = manager
 #        self.query = None
 
-   
-class OfficeMembersViewlet( SubformViewlet ):
-    def __init__( self,  context, request, view, manager ):
+
+class OfficeMembersViewlet(SubformViewlet):
+    def __init__(self, context, request, view, manager):
 
         self.context = context.officemembers
         self.request = request
-        self.__parent__= context
+        self.__parent__ = context
         self.manager = manager
         self.query = None
 
 
-    
-class PersonInfo( BungeniAttributeDisplay ):
+
+class PersonInfo(BungeniAttributeDisplay):
     """
     Bio Info / personal data about the MP
     """
@@ -384,16 +384,16 @@ class PersonInfo( BungeniAttributeDisplay ):
     mode = "view"
 
     form_name = _(u"Personal Info")
-    
-    def __init__( self,  context, request, view, manager ):
+
+    def __init__(self, context, request, view, manager):
         self.context = context
         self.request = request
-        self.__parent__= context.__parent__
+        self.__parent__ = context.__parent__
         self.manager = manager
         self.query = None
         md = queryModelDescriptor(domain.User)
-        self.form_fields=md.fields #.select('user_id', 'start_date', 'end_date')
-        
+        self.form_fields = md.fields #.select('user_id', 'start_date', 'end_date')
+
     def update(self):
         """
         refresh the query
@@ -401,10 +401,10 @@ class PersonInfo( BungeniAttributeDisplay ):
         session = Session()
         user_id = self.context.user_id
         parent = self.context.__parent__
-        self.query = session.query(domain.User).filter(domain.User.user_id == user_id) 
+        self.query = session.query(domain.User).filter(domain.User.user_id == user_id)
         self.context = self.query.all()[0]
-        self.context.__parent__= parent
-        super( PersonInfo, self).update()
+        self.context.__parent__ = parent
+        super(PersonInfo, self).update()
         #session.close()
 
 class ParliamentMembershipInfo(BungeniAttributeDisplay):
@@ -414,14 +414,14 @@ class ParliamentMembershipInfo(BungeniAttributeDisplay):
     mode = "view"
     form_name = _(u"Parliament Membership")
 
-    def __init__( self,  context, request, view, manager ):
+    def __init__(self, context, request, view, manager):
         self.context = context
         self.request = request
-        self.__parent__= context.__parent__
+        self.__parent__ = context.__parent__
         self.manager = manager
         self.query = None
         md = queryModelDescriptor(domain.MemberOfParliament)
-        self.form_fields=md.fields
+        self.form_fields = md.fields
         session = Session()
         trusted = removeSecurityProxy(self.context)
         user_id = self.context.user_id
@@ -431,10 +431,10 @@ class ParliamentMembershipInfo(BungeniAttributeDisplay):
             domain.MemberOfParliament.user_id == user_id,
             domain.MemberOfParliament.group_id == parliament_id)
             ).order_by(
-            domain.MemberOfParliament.start_date.desc()) 
-        self.for_display = self.query.count() >0
+            domain.MemberOfParliament.start_date.desc())
+        self.for_display = self.query.count() > 0
         #session.close()
-        
+
     def update(self):
         """
         refresh the query
@@ -445,18 +445,18 @@ class ParliamentMembershipInfo(BungeniAttributeDisplay):
         except IndexError:
             self.context = None
             return
-        self.context.__parent__= parent
-        super( ParliamentMembershipInfo, self).update()
+        self.context.__parent__ = parent
+        super(ParliamentMembershipInfo, self).update()
 
 
-class InitialQuestionsViewlet( BungeniAttributeDisplay ):
+class InitialQuestionsViewlet(BungeniAttributeDisplay):
     form_name = (u"Initial Questions")
 
-    
+
     @property
     def for_display(self):
         return self.context.supplement_parent_id is not None
-        
+
     def update(self):
         """
         refresh the query
@@ -465,9 +465,9 @@ class InitialQuestionsViewlet( BungeniAttributeDisplay ):
             self.context = self.__parent__
             #self.for_display = False
             return
-               
+
         session = Session()
-        results = session.query(domain.Question).get(self.context.supplement_parent_id) 
+        results = session.query(domain.Question).get(self.context.supplement_parent_id)
 
         if results:
             #parent = self.context.__parent__
@@ -479,36 +479,36 @@ class InitialQuestionsViewlet( BungeniAttributeDisplay ):
         else:
             self.has_data = False
             self.context = None
-            
-        super( InitialQuestionsViewlet, self).update()
+
+        super(InitialQuestionsViewlet, self).update()
         #session.close()
-        
-class ResponseViewlet( BungeniAttributeDisplay ):
+
+class ResponseViewlet(BungeniAttributeDisplay):
     """Response to question."""
 
     mode = "view"
     for_display = True
-    
+
     form_name = _(u"Response")
-    
+
     add_action = form.Actions(
         form.Action(_(u'Add response'), success='handle_response_add_action'),
         )
-    
-    def __init__( self,  context, request, view, manager ):
+
+    def __init__(self, context, request, view, manager):
         self.context = context
         self.request = request
-        self.__parent__= view
+        self.__parent__ = view
         self.manager = manager
         self.query = None
         md = queryModelDescriptor(domain.Response)
-        self.form_fields=md.fields
+        self.form_fields = md.fields
         self.add_url = '%s/responses/add' % url.absoluteURL(
             self.context, self.request)
-        
+
     def handle_response_add_action(self, action, data):
         self.request.response.redirect(self.add_url)
-        
+
     def update(self):
         context = self.context
         responses = context.responses
@@ -516,9 +516,9 @@ class ResponseViewlet( BungeniAttributeDisplay ):
             self.context = tuple(responses.values())[0]
             self.has_data = True
         else:
-            self.context =  domain.Response()
+            self.context = domain.Response()
             self.has_data = False
-            
+
         super(ResponseViewlet, self).update()
 
     def setupActions(self):
@@ -527,17 +527,17 @@ class ResponseViewlet( BungeniAttributeDisplay ):
         else:
             self.actions = self.add_action.actions
 
-class OfficesHeldViewlet( viewlet.ViewletBase ):
+class OfficesHeldViewlet(viewlet.ViewletBase):
     for_display = True
-    def __init__( self,  context, request, view, manager ):
+    def __init__(self, context, request, view, manager):
         self.context = context
         self.request = request
-        self.__parent__= view
+        self.__parent__ = view
         self.manager = manager
         self.query = None
-     
+
     def get_offices_held(self):
-        office_list=[]
+        office_list = []
         for oh in self.offices_held:
             title = {}
             title['group'] = oh[0] + ' - ' + (oh[1] or'')
@@ -556,7 +556,7 @@ class OfficesHeldViewlet( viewlet.ViewletBase ):
                 title['end_date'] = oh[7]
             office_list.append(title)
         return office_list
-    
+
     def update(self):
         """
         refresh the query
@@ -571,12 +571,12 @@ class OfficesHeldViewlet( viewlet.ViewletBase ):
                 parliament_id = parliament.parliament_id
         self.offices_held = get_offices_held_for_user_in_parliament(
                 user_id, parliament_id)
-         
-    
-    
+
+
+
     render = ViewPageTemplateFile ('templates/offices_held_viewlet.pt')
 
-        
+
 class TimeLineViewlet(viewlet.ViewletBase):
     """
     tracker/timeline view:
@@ -586,32 +586,32 @@ class TimeLineViewlet(viewlet.ViewletBase):
     """
     # evoque
     render = z3evoque.ViewTemplateFile("workspace_viewlets.html#timeline")
-    
+
     # zpt
     #render = ViewPageTemplateFile('templates/timeline_viewlet.pt')
-    
+
     # sqlalchemy give me a rough time sorting a union, 
     # with hand coded sql it is much easier.
     # !+ get rid of the hard-coded sql
     sql_timeline = ""
     add_action = form.Actions(
-        form.Action(_(u'add event'), success='handle_event_add_action'), 
+        form.Action(_(u'add event'), success='handle_event_add_action'),
     )
     for_display = True
-    view_name = "Timeline" 
+    view_name = "Timeline"
     view_id = "unknown-timeline"
-    
-    def __init__(self,  context, request, view, manager):
+
+    def __init__(self, context, request, view, manager):
         self.context = context
         self.request = request
-        self.__parent__= view
+        self.__parent__ = view
         self.manager = manager
         self.query = None
         self.formatter = date.getLocaleFormatter(self.request, "dateTime", "medium")
-    
+
     def handle_event_add_action(self, action, data):
         self.request.response.redirect(self.addurl)
-    
+
     def update(self):
         """Refresh the query.
         """
@@ -624,30 +624,30 @@ class TimeLineViewlet(viewlet.ViewletBase):
             except (SyntaxError, TypeError, AssertionError):
                 #debug.log_exc(sys.exc_info(), log_handler=log.info)
                 return {}
-        
+
         # NOTE: only *Change records have a "notes" dict attribute and the 
         # content of this depends on the value of "atype" (see core/audit.py)
         item_id = self.context.parliamentary_item_id
-        self.results = [ dict(atype=action, item_id=piid, description=desc, 
+        self.results = [ dict(atype=action, item_id=piid, description=desc,
                               adate=date, notes=_eval_as_dict(notes))
                 for action, piid, desc, date, notes in
                 queries.execute_sql(self.sql_timeline, item_id=item_id) ]
-                
+
         # Filter out workflow draft items for anonymous users
         if get_principal_id() in ("zope.anybody",):
             _draft_states = ("draft", "working_draft")
             def show_timeline_item(result):
-                if result["atype"]=="workflow":
+                if result["atype"] == "workflow":
                     if result["notes"].get("destination") in _draft_states:
                         return False
                 return True
-            self.results = [ result for result in self.results 
+            self.results = [ result for result in self.results
                              if show_timeline_item(result) ]
-        
+
         #change_cls = getattr(domain, "%sChange" % (self.context.__class__.__name__))
         for r in self.results:
             # workflow
-            if r["atype"]=="workflow":
+            if r["atype"] == "workflow":
                 # description
                 # the workflow transition change log stores the (unlocalized) 
                 # human title for the transition's destination workflow state 
@@ -663,16 +663,16 @@ class TimeLineViewlet(viewlet.ViewletBase):
                                     self.context, r["notes"]["destination"])))
                 '''
             # event
-            elif r["atype"]=="event":
+            elif r["atype"] == "event":
                 # description 
-                r["description"] = """<a href="event/obj-%s">%s</a>""" % ( 
-                        r["item_id"], _(r["description"]) )
+                r["description"] = """<a href="event/obj-%s">%s</a>""" % (
+                        r["item_id"], _(r["description"]))
             # version
-            elif r["atype"]=="version":
+            elif r["atype"] == "version":
                 # description 
                 try:
-                    r["description"] = """<a href="versions/obj-%s">%s</a>""" % ( 
-                                    r["notes"]["version_id"], _(r["description"]) )
+                    r["description"] = """<a href="versions/obj-%s">%s</a>""" % (
+                                    r["notes"]["version_id"], _(r["description"]))
                 except (KeyError,):
                     # no recorded version_id, just localize what is supplied
                     r["description"] = _(r["description"])
@@ -682,28 +682,28 @@ class TimeLineViewlet(viewlet.ViewletBase):
 
 class BillTimeLineViewlet(TimeLineViewlet):
     sql_timeline = statements.sql_bill_timeline
-    view_name = _("Bill timeline") 
-    view_id ="bill-timeline"
+    view_name = _("Timeline")
+    view_id = "bill-timeline"
 
 class MotionTimeLineViewlet(TimeLineViewlet):
     sql_timeline = statements.sql_motion_timeline
-    view_name = _("Motion timeline") 
-    view_id ="motion-timeline"
-    
+    view_name = _("Timeline")
+    view_id = "motion-timeline"
+
 class QuestionTimeLineViewlet(TimeLineViewlet):
     sql_timeline = statements.sql_question_timeline
-    view_name = _("Question timeline") 
-    view_id ="question-timeline"
+    view_name = _("Timeline")
+    view_id = "question-timeline"
 
 class TableddocumentTimeLineViewlet(TimeLineViewlet):
     sql_timeline = statements.sql_tableddocument_timeline
-    view_name = _("Tabled document timeline") 
-    view_id ="tableddocument-timeline"
+    view_name = _("Timeline")
+    view_id = "tableddocument-timeline"
 
 class AgendaItemTimeLineViewlet(TimeLineViewlet):
     sql_timeline = statements.sql_agendaitem_timeline
-    view_name = _("Agenda item timeline") 
-    view_id ="agendaitem-timeline"
+    view_name = _("Timeline")
+    view_id = "agendaitem-timeline"
 
 class MemberItemsViewlet(viewlet.ViewletBase):
     """A tab with bills, motions etc for an MP 
@@ -716,15 +716,15 @@ class MemberItemsViewlet(viewlet.ViewletBase):
         get_states("motion", tagged=["public"]) + \
         get_states("question", tagged=["public"]) + \
         get_states("tableddocument", tagged=["public"])
-    
-    def __init__( self,  context, request, view, manager ):
+
+    def __init__(self, context, request, view, manager):
         print "MemberItemsViewlet.INIT", vars()
         session = Session()
         self.context = context
         user_id = self.context.user_id
         parliament_id = self.context.group_id
         self.request = request
-        self.__parent__= view
+        self.__parent__ = view
         self.manager = manager
         self.query = session.query(domain.ParliamentaryItem).filter(
             sql.and_(
@@ -734,17 +734,17 @@ class MemberItemsViewlet(viewlet.ViewletBase):
             )).order_by(domain.ParliamentaryItem.parliamentary_item_id.desc())
         #self.for_display = (self.query.count() > 0)
         #session.close()
-        
+
     def results(self):
         for result in self.query.all():
             _url = '/business/%ss/obj-%i' % (result.type,
                 result.parliamentary_item_id)
-            yield {'type': result.type, 
+            yield {'type': result.type,
                 'short_name': result.short_name,
                 'status': misc.get_wf_state(result),
-                'submission_date' : result.submission_date.strftime('%Y-%m-%d'), 
+                'submission_date' : result.submission_date.strftime('%Y-%m-%d'),
                 'url': _url }
-    
+
     render = ViewPageTemplateFile ('templates/mp_item_viewlet.pt')
 
 class DisplayViewlet(BungeniAttributeDisplay):
@@ -763,7 +763,7 @@ class DisplayViewlet(BungeniAttributeDisplay):
         form.Action(_(u"Add"), success='handle_add'),
         )
 
-    def __init__( self,  context, request, view, manager):
+    def __init__(self, context, request, view, manager):
         super(DisplayViewlet, self).__init__(
             context, request, view, manager)
 
@@ -813,7 +813,7 @@ class DisplayViewlet(BungeniAttributeDisplay):
         descriptor = queryModelDescriptor(self.factory)
         return descriptor.display_name
 
-    
+
 class SchedulingMinutesViewlet(DisplayViewlet):
     factory = domain.ScheduledItemDiscussion
 
@@ -826,24 +826,24 @@ class SchedulingMinutesViewlet(DisplayViewlet):
     def get_add_url(self):
         return '%s/discussions/add' % url.absoluteURL(
             self.context, self.request)
-            
-            
-class SessionCalendarViewlet( viewlet.ViewletBase ):
+
+
+class SessionCalendarViewlet(viewlet.ViewletBase):
     """
     display a monthly calendar with all sittings for a session
     """
-    def __init__( self,  context, request, view, manager ):
+    def __init__(self, context, request, view, manager):
         self.context = context
         self.request = request
-        self.__parent__= view
+        self.__parent__ = view
         self.manager = manager
         self.query = None
-        self.Date=datetime.date.today()
+        self.Date = datetime.date.today()
         self.Data = []
         session = Session()
         self.type_query = session.query(domain.SittingType)
         #session.close()
-        
+
     def _getDisplayDate(self, request):
         display_date = date.getDisplayDate(self.request)
         session = self.context
@@ -856,7 +856,7 @@ class SessionCalendarViewlet( viewlet.ViewletBase ):
         else:
             display_date = session.end_date
         return display_date
-        
+
     def current_sittings_query(self, date):
         session = removeSecurityProxy(self.context)
         group_id = session.parliament_id
@@ -879,7 +879,7 @@ class SessionCalendarViewlet( viewlet.ViewletBase ):
                     )
         return session.query(domain.GroupSitting).filter(s_filter).order_by(
                 domain.GroupSitting.start_date)
-        
+
 
     def previous(self):
         """
@@ -891,21 +891,21 @@ class SessionCalendarViewlet( viewlet.ViewletBase ):
             month = 12
             year = self.Date.year - 1
         else:
-            month = self.Date.month -1
+            month = self.Date.month - 1
             year = self.Date.year
         try:
-            prevdate = datetime.date(year,month,self.Date.day)
+            prevdate = datetime.date(year, month, self.Date.day)
         except:
             # in case we try to move to Feb 31st (or so)
-            prevdate = datetime.date(year,month,15)
-        if session.start_date < datetime.date( 
+            prevdate = datetime.date(year, month, 15)
+        if session.start_date < datetime.date(
                 self.Date.year, self.Date.month, 1):
-            return ('<a href="?date=' 
-                + datetime.date.strftime(prevdate,'%Y-%m-%d') 
-                + '"> &lt;&lt; </a>' )
+            return ('<a href="?date='
+                + datetime.date.strftime(prevdate, '%Y-%m-%d')
+                + '"> &lt;&lt; </a>')
         else:
             return ""
-        
+
     def next(self):
         """
         return link to the next month if the end date
@@ -919,45 +919,45 @@ class SessionCalendarViewlet( viewlet.ViewletBase ):
             month = self.Date.month + 1
             year = self.Date.year
         try:
-            nextdate = datetime.date(year,month,self.Date.day)
+            nextdate = datetime.date(year, month, self.Date.day)
         except:
             # if we try to move from 31 of jan to 31 of feb or so
-            nextdate = datetime.date(year,month,15)
+            nextdate = datetime.date(year, month, 15)
         if session:
             if session.end_date:
-                if session.end_date < datetime.date(year,month,1):
+                if session.end_date < datetime.date(year, month, 1):
                     return ""
-        return ('<a href="?date=' 
-                + datetime.date.strftime(nextdate,'%Y-%m-%d' )
-                + '"> &gt;&gt; </a>' )
+        return ('<a href="?date='
+                + datetime.date.strftime(nextdate, '%Y-%m-%d')
+                + '"> &gt;&gt; </a>')
 
 
     def getData(self):
         """
         return the data of the query
         """
-        sit_types ={}
+        sit_types = {}
         type_results = self.type_query.all()
         for sit_type in type_results:
             sit_types[sit_type.sitting_type_id] = sit_type.sitting_type
-        data_list=[]
+        data_list = []
         path = '/calendar/group/sittings/'
         results = self.query.all()
         for result in results:
-            data ={}
-            data['sittingid']= ('sid_' + str(result.sitting_id) )
-            data['sid'] =  result.sitting_id
-            data['short_name'] = ( datetime.datetime.strftime(result.start_date,'%H:%M')
-                                    + ' - ' + datetime.datetime.strftime(result.end_date,'%H:%M')
+            data = {}
+            data['sittingid'] = ('sid_' + str(result.sitting_id))
+            data['sid'] = result.sitting_id
+            data['short_name'] = (datetime.datetime.strftime(result.start_date, '%H:%M')
+                                    + ' - ' + datetime.datetime.strftime(result.end_date, '%H:%M')
                                     + ' (' + sit_types[result.sitting_type_id] + ')')
             data['start_date'] = result.start_date
             data['end_date'] = result.end_date
             data['start_time'] = result.start_date.time()
             data['end_time'] = result.end_date.time()
             data['day'] = result.start_date.date()
-            data['url']= ( path + 'obj-' + str(result.sitting_id) )
-            data['did'] = ('dlid_' +  datetime.datetime.strftime(result.start_date,'%Y-%m-%d') +
-                           '_stid_' + str( result.sitting_type))
+            data['url'] = (path + 'obj-' + str(result.sitting_id))
+            data['did'] = ('dlid_' + datetime.datetime.strftime(result.start_date, '%Y-%m-%d') +
+                           '_stid_' + str(result.sitting_type))
             data_list.append(data)
         return data_list
 
@@ -967,7 +967,7 @@ class SessionCalendarViewlet( viewlet.ViewletBase ):
         consiting of tdid- + date
         like tdid-2008-01-17
         """
-        return 'tdid-' + datetime.date.strftime(Date,'%Y-%m-%d') 
+        return 'tdid-' + datetime.date.strftime(Date, '%Y-%m-%d')
 
     def getDayClass(self, Date):
         """
@@ -989,7 +989,7 @@ class SessionCalendarViewlet( viewlet.ViewletBase ):
             css_class = css_class + "holyday-date "
         #session.close()
         return css_class.strip()
-            
+
     def getWeekNo(self, Date):
         """
         return the weeknumber for a given date
@@ -1001,12 +1001,12 @@ class SessionCalendarViewlet( viewlet.ViewletBase ):
         """
         return the sittings for that day
         """
-        day_data=[]
+        day_data = []
         for data in self.Data:
             if data['day'] == Date:
                 day_data.append(data)
         return day_data
-        
+
 
     def update(self):
         """
@@ -1014,10 +1014,10 @@ class SessionCalendarViewlet( viewlet.ViewletBase ):
         """
         self.Date = self._getDisplayDate(self.request)
         if not self.Date:
-            self.Date=datetime.date.today()
+            self.Date = datetime.date.today()
         self.query = self.current_sittings_query(self.Date)
-        self.monthcalendar = calendar.Calendar(prefs.getFirstDayOfWeek()).monthdatescalendar(self.Date.year,self.Date.month)
-        self.monthname = datetime.date.strftime(self.Date,'%B %Y')
+        self.monthcalendar = calendar.Calendar(prefs.getFirstDayOfWeek()).monthdatescalendar(self.Date.year, self.Date.month)
+        self.monthname = datetime.date.strftime(self.Date, '%B %Y')
         self.Data = self.getData()
-    
+
     render = ViewPageTemplateFile ('templates/session_calendar_viewlet.pt')
