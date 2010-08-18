@@ -344,6 +344,7 @@
         action="delete"
         title="Delete"
         order="99"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.event.Delete"
     />
     <browser:menuItem menu="context_actions"
@@ -351,6 +352,7 @@
         title="Delete"
         action="delete"
         order="99"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.heading.Delete"
     />
 
@@ -605,6 +607,7 @@
         title="Delete Sitting"
         action="./delete"
         permission="bungeni.sitting.Delete"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="99"
     />
     <!-- !+ ??: 
@@ -655,6 +658,7 @@
         action="delete"
         title="Delete"
         order="99"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.mp.Delete"
     />
     <browser:menuItem menu="context_actions"
@@ -662,6 +666,7 @@
         action="delete"
         title="Delete"
         order="99"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.groupmember.Delete"
     />
       
@@ -821,6 +826,7 @@
         title="Delete Session"
         action="./delete"
         order="99"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.session.Delete"
     />
 
@@ -965,15 +971,14 @@
      permission="bungeni.sitting.Reorder"
      />
 
-  <browser:menuItem
-     menu="context_actions"
-     for="bungeni.models.interfaces.IGroupSitting"
-     action="schedule"
-     title="Schedule"
-     order="41"
-     permission="bungeni.agendaitem.Schedule"
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IGroupSitting"
+        action="schedule"
+        title="Schedule"
+        order="41"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        permission="bungeni.agendaitem.Schedule"
      />
-
     <browser:menuItem menu="scheduling_actions"
         for="bungeni.models.interfaces.IItemSchedule"
         title="Edit Scheduling"
@@ -1142,6 +1147,7 @@
         for="bungeni.core.interfaces.IAuditable"
         action="audit-log"
         title="Audit Log"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.auditlog.View"
         order="22"
     />
@@ -1149,13 +1155,15 @@
         for="bungeni.core.interfaces.IVersionable"
         action="versions"
         title="Versions"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="zope.View"
         order="21"
     />
     
     <!-- bill context actions -->
     <browser:menuItems menu="context_actions"
-        for="bungeni.models.interfaces.IBill">
+        for="bungeni.models.interfaces.IBill"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer">
         <browser:menuItem action="edit" title="Edit" order="10"
             permission="bungeni.bill.Edit"
         />
@@ -1169,12 +1177,14 @@
         action="delete"
         title="Delete"
         order="99"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="zope.ManageContent"
     />
     
     <!-- question context actions -->
     <browser:menuItems menu="context_actions"
-        for="bungeni.models.interfaces.IQuestion">
+        for="bungeni.models.interfaces.IQuestion"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer">
         <browser:menuItem action="edit" title="Edit" order="10"
             permission="bungeni.question.Edit"
         />
@@ -1185,21 +1195,20 @@
             permission="bungeni.response.Edit"
         />
     </browser:menuItems>
-    
-  <browser:menuItem
-     menu="context_actions"
-     for="bungeni.models.interfaces.IMotion"
-     action="edit"
-     title="Edit"
-     order="10"
-     permission="bungeni.motion.Edit"
-     />
-
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IMotion"
+        action="edit"
+        title="Edit"
+        order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        permission="bungeni.motion.Edit"
+    />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IMotion"
         action="delete"
         title="Delete"
         order="99"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.motion.Delete"
     />
     <browser:menuItem menu="context_actions"
@@ -1207,6 +1216,7 @@
         action="edit"
         title="Edit"
         order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.tableddocument.Edit"
     />
     <browser:menuItem menu="context_actions"
@@ -1214,6 +1224,7 @@
         action="delete"
         title="Delete"
         order="99"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.tableddocument.Delete"
      />
      <browser:menuItem menu="context_actions"
@@ -1221,6 +1232,7 @@
         action="edit"
         title="Edit"
         order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.agendaitem.Edit"
     />
     <browser:menuItem menu="context_actions"
@@ -1228,6 +1240,7 @@
         action="delete"
         title="Delete"
         order="99"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.agendaitem.Delete"
     />
     <browser:menuItem menu="context_actions"
@@ -1243,6 +1256,7 @@
         action="edit"
         title="Edit"
         order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.office.Edit"
     />
     <browser:menuItem menu="context_actions"
@@ -1250,6 +1264,7 @@
         action="edit"
         title="Edit"
         order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.committee.Edit"
     />
     <browser:menuItem menu="context_actions"
@@ -1257,6 +1272,7 @@
         action="edit"
         title="Edit"
         order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.party.Edit"
     />
     <browser:menuItem menu="context_actions"
@@ -1264,6 +1280,7 @@
         action="edit"
         title="Edit"
         order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.party.Edit"
     />
     <browser:menuItem menu="context_actions"
@@ -1279,6 +1296,7 @@
         action="delete"
         title="Delete"
         order="99"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.office.Delete"
     />
     <browser:menuItem menu="context_actions"
@@ -1286,6 +1304,7 @@
         action="delete"
         title="Delete"
         order="99"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.committee.Delete"
     />
     <browser:menuItem menu="context_actions"
@@ -1293,6 +1312,7 @@
         action="delete"
         title="Delete"
         order="99"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.party.Delete"
     />
     <browser:menuItem menu="context_actions"
@@ -1300,6 +1320,7 @@
         action="delete"
         title="Delete"
         order="99"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.party.Delete"
     />
     <browser:menuItem menu="context_actions"
@@ -1307,6 +1328,7 @@
         action="edit"
         title="Edit"
         order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.government.Edit"
     />
     <browser:menuItem menu="context_actions"
@@ -1314,6 +1336,7 @@
         action="edit"
         title="Edit"
         order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.ministry.Edit"
     />
     <browser:menuItem menu="context_actions"
@@ -1321,6 +1344,7 @@
         action="delete"
         title="Delete"
         order="99"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.government.Delete"
     />
     <browser:menuItem menu="context_actions"
@@ -1328,6 +1352,7 @@
         action="delete"
         title="Delete"
         order="99"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.ministry.Delete"
     />
     <browser:menuItem menu="context_actions"
