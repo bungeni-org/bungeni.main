@@ -36,81 +36,99 @@ $end{content_actions}
 
 
 $begin{action_menus} #[ plond/ui/templates/contentmenu.pt ]#
-$if{ devmode }<!-- template: bungeni/templates/ploned.html#action_menus
+    $if{ devmode }
+<!-- template: bungeni/templates/ploned.html#action_menus
 $Id$
--->$fi
-#[ i18n:domain="plone" ]#
-$if{ view.available() }
+--> 
+    $fi
+    $if{ view.available() }
 <ul id="contentActionMenus">
-    $for{ menu_item in view.menu() }
+        $for{ menu_item in view.menu() }
     <li class="${ menu_item['extra']['id'] }">
-        #[ tal:define="submenu menuItem/submenu;
-                       state menuItem/extra/state|nothing" ]#
-        #[ tal:omit-tag="menuItem/extra/hideChildren | nothing" ]#
-        $if{ not menu_item["submenu"] or 
-             len(menu_item["submenu"]) or 
-             menuItem["extra"].get("state", None)
+        $evoque{ #menu_item,
+            submenu=menu_item["submenu"] or [],
+            state=menu_item["extra"].get("state", None),
+            state_class=menu_item['extra'].get("class", ""),
+            state_title=menu_item["extra"].get("stateTitle", None),
+            show_children=not menu_item["extra"].get("hideChildren", False)
         }
+    </li>
+        $rof
+</ul>
+    $fi
+$end{action_menus}
+
+
+$begin{menu_item}
+    $if{ not submenu or len(submenu) or state }
+        $if{ show_children } 
         <dl class="actionMenu" id="${ menu_item['extra']['id'] }">
-            #[ tal:omit-tag="menuItem/extra/hideChildren | nothing" ]#
-            <dt class="actionMenuHeader label-${
-                                menu_item['extra'].get('class', '') }">
-                $if{ menu_item["action"] } 
+            <dt class="actionMenuHeader label-${ state_class }">
+        $fi
+        $if{ menu_item["action"] } 
                 <a href="${ menu_item['url'] or menu_item['action'] 
-                   }" $if{ menu_item['description'] 
-                   }title="${ i18n(menu_item['description']) }"$fi>
-                $fi
+                   }"$if{ menu_item['description'] 
+                   } title="${ i18n(menu_item['description']) }"$fi>
+        $fi
                     $evoque{ #menu_item_label, 
-                        menu_item=menu_item, css_class="menuTitle" }
-                    $if{ menu_item["extra"].get("stateTitle", None) }
-                    <span$if{ menu_item['extra'].get('class', None) 
-                         } class="${ menu_item['extra']['class'] }"$fi>
-                        ${ i18n(menu_item["extra"]["stateTitle"]) }
+                        menu_item=menu_item, 
+                        css_class="menuTitle" 
+                    }
+        $if{ state_title }
+                    <span$if{ state_class } class="${ state_class }"$fi>
+                        ${ i18n(state_title) }
                     </span>
-                    $fi
-                    $if{ not menu_item["extra"].get("hideChildren", True) or 
-                         menu_item["submenu"] }
+        $fi
+        $if{ show_children and submenu }
                     <span class="arrowDownAlternative">&#9660;</span>
-                    $fi
-                $if{ menu_item["action"] }
+        $fi
+        $if{ menu_item["action"] }
                 </a>
-                $fi
+        $fi
+        $if{ show_children }
             </dt>
-            $if{ not menu_item["extra"].get("hideChildren", True) or 
-                 menu_item["submenu"] }
+        $fi
+        $if{ submenu }
+            $if{ show_children }
             <dd class="actionMenuContent">
+            $fi
                 <ul>
-                    $for{ sub_menu_item in menu_item.get("submenu") or [] }
+            $for{ sub_menu_item in submenu }
                     <li class="${ sub_menu_item['extra'].get('separator', 'separator') }">
-                        $if{ sub_menu_item["action"] }
+                $if{ sub_menu_item["action"] }
                         <a id="${ sub_menu_item['extra'].get('id', '') 
                            }" class="${ sub_menu_item.get('selected', '') 
                            }" href="${ sub_menu_item['url'] or sub_menu_item['action'] 
-                           }"$if{ sub_menu_item['description'] }
-                              title="${ i18n(sub_menu_item['description']) }"$fi>
+                           }"$if{ sub_menu_item['description'] 
+                           } title="${ i18n(sub_menu_item['description']) }"$fi>
                             $evoque{ #menu_item_label, 
-                                menu_item=sub_menu_item, css_class="subMenuTitle" }
+                                menu_item=sub_menu_item, 
+                                css_class="subMenuTitle" 
+                            }
                         </a>
-                        $else
+                $else
                         <div id="${ sub_menu_item['extra'].get('id', '') }"
                             class="${ sub_menu_item['extra'].get('class', '') }">
                             $if{ sub_menu_item.get("selected") }&bull;$fi
                             $evoque{ #menu_item_label, 
-                                menu_item=sub_menu_item, css_class="subMenuTitle" }
+                                menu_item=sub_menu_item,
+                                css_class="subMenuTitle" 
+                            }
                         </div>
-                        $fi
+                $fi
                     </li>
-                    $rof
+            $rof
                 </ul>
+            $if{ show_children }
             </dd>
             $fi
+            $fi #[ submenu ]#
+        $if{ show_children }
         </dl>
         $fi
-    </li>
-    $rof
-</ul>
-$fi
-$end{action_menus}
+    $fi
+$end{menu_item}
+
 
 $begin{menu_item_label}
     #[ !+MENU_ICON(mr, aug-2010) remove, icon is always managed via CSS ]#
