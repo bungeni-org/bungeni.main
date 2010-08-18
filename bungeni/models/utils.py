@@ -32,7 +32,7 @@ def get_principal():
     for participation in interaction.participations:
         if IRequest.providedBy(participation):
             return participation.principal
-    
+
 def get_principal_id():
     """ () -> either(str, None)
     """
@@ -49,9 +49,9 @@ def get_db_user(context=None):
     """
     principal_id = get_principal_id()
     session = Session()
-    query = session.query(domain.User).filter(domain.User.login==principal_id)
+    query = session.query(domain.User).filter(domain.User.login == principal_id)
     results = query.all()
-    if len(results)==1:
+    if len(results) == 1:
         return results[0]
 
 def get_db_user_id(context=None):
@@ -78,7 +78,7 @@ def container_getter(parent_container_or_getter, name, query_modifier=None):
     def func(context):
         if IBungeniGroup.providedBy(parent_container_or_getter):
             parent_container = parent_container_or_getter
-        else: 
+        else:
             parent_container = parent_container_or_getter(context)
         #
         try:
@@ -109,7 +109,7 @@ def get_roles(context):
             _build_principal_role_maps(getattr(ctx, '__parent__', None))
     _build_principal_role_maps(context)
     prms.reverse()
-    
+
     roles, message = [], []
     def add_roles(principal, prms):
         message.append("             principal: %s" % principal)
@@ -117,49 +117,49 @@ def get_roles(context):
             l_roles = prm.getRolesForPrincipal(principal)  # -> generator
             for role in l_roles:
                 message.append("               role: %s" % str(role))
-                if role[1]==Allow:
+                if role[1] == Allow:
                     if not role[0] in roles:
                         roles.append(role[0])
-                elif role[1]==Deny:
+                elif role[1] == Deny:
                     if role[0] in roles:
                         roles.remove(role[0])
-    
+
     principal = get_principal()
     pg = principal.groups.keys()
     # ensure that the actual principal.id is included
     if not principal.id in pg:
         pg.append(principal.id)
-    
+
     for principal_id in pg:
         add_roles(principal_id, prms)
-    
-    log.debug("get_roles: principal: %s\n" 
-              "           groups %s ::\n%s\n" 
+
+    log.debug("get_roles: principal: %s\n"
+              "           groups %s ::\n%s\n"
               "           roles %s" % (
-                principal.id, 
-                str(pg), "\n".join(message), 
+                principal.id,
+                str(pg), "\n".join(message),
                 roles))
     return roles
 
 
 def get_current_parliament_governments(parliament=None):
-    if parliament is None: 
+    if parliament is None:
         parliament = get_current_parliament()
     import sqlalchemy.sql.expression as sql
     session = Session()
     governments = session.query(domain.Government).filter(
-            sql.and_(domain.Government.parent_group_id==parliament.group_id,
-                     domain.Government.status=='active')).all()
+            sql.and_(domain.Government.parent_group_id == parliament.group_id,
+                     domain.Government.status == 'active')).all()
     return governments
-    
+
 def get_all_group_ids_in_parliament(parliament_id):
     """ get all groups (group_ids) in a parliament
     including the sub (e.g. ministries) groups """
     session = Session()
-    group_ids = [parliament_id,]
+    group_ids = [parliament_id, ]
     query = session.query(domain.Group).filter(
         domain.Group.parent_group_id == parliament_id).options(
-            eagerload('contained_groups'), 
+            eagerload('contained_groups'),
             )
     results = query.all()
     for result in results:
@@ -167,21 +167,21 @@ def get_all_group_ids_in_parliament(parliament_id):
         for group in result.contained_groups:
             group_ids.append(group.group_id)
     return group_ids
-    
-    
+
+
 def get_ministries_for_user_in_government(user_id, government_id):
     """Get the ministries where user_id is a active member."""
     session = Session()
     query = session.query(domain.Ministry).join(domain.Minister).filter(
         rdb.and_(
-            schema.user_group_memberships.c.user_id==user_id,
-            schema.groups.c.parent_group_id==government_id,
-            schema.groups.c.status=='active',
-            schema.user_group_memberships.c.active_p==True))
+            schema.user_group_memberships.c.user_id == user_id,
+            schema.groups.c.parent_group_id == government_id,
+            schema.groups.c.status == 'active',
+            schema.user_group_memberships.c.active_p == True))
     return query.all()
 def get_ministry_ids_for_user_in_government(user_id, government_id):
     """Get the ministry ids where user_id is a active member."""
-    return [ ministry.group_id for ministry in 
+    return [ ministry.group_id for ministry in
              get_ministries_for_user_in_government(user_id, government_id) ]
     '''
     # alternative approach to get ministry_ids: 
@@ -217,51 +217,51 @@ def get_offices_held_for_user_in_parliament(user_id, parliament_id):
         schema.role_titles.c.end_date,
         schema.user_group_memberships.c.start_date,
         schema.user_group_memberships.c.end_date,
-        ], 
-        from_obj = [
+        ],
+        from_obj=[
         rdb.join(schema.groups, schema.user_group_memberships,
-        schema.groups.c.group_id==schema.user_group_memberships.c.group_id
+        schema.groups.c.group_id == schema.user_group_memberships.c.group_id
             ).outerjoin(
-            schema.role_titles, schema.user_group_memberships.c.membership_id==
+            schema.role_titles, schema.user_group_memberships.c.membership_id ==
             schema.role_titles.c.membership_id).outerjoin(
                 schema.user_role_types,
-                schema.role_titles.c.title_name_id==
+                schema.role_titles.c.title_name_id ==
                     schema.user_role_types.c.user_role_type_id)],
-            whereclause = rdb.and_(
+            whereclause=rdb.and_(
                 schema.groups.c.group_id.in_(group_ids),
-                schema.user_group_memberships.c.user_id==user_id),
-            order_by = [schema.user_group_memberships.c.start_date,
+                schema.user_group_memberships.c.user_id == user_id),
+            order_by=[schema.user_group_memberships.c.start_date,
                         schema.user_group_memberships.c.end_date,
-                        schema.role_titles.c.start_date, 
+                        schema.role_titles.c.start_date,
                         schema.role_titles.c.end_date]
             )
     o_held = connection.execute(offices_held)
     return o_held
-    
+
 def get_group_ids_for_user_in_parliament(user_id, parliament_id):
     """ get the groups a user is member of for a specific parliament """
     session = Session()
     connection = session.connection(domain.Group)
-    group_ids  = get_all_group_ids_in_parliament(parliament_id)
+    group_ids = get_all_group_ids_in_parliament(parliament_id)
     my_groups = rdb.select([schema.user_group_memberships.c.group_id],
-        rdb.and_(schema.user_group_memberships.c.active_p==True,
-            schema.user_group_memberships.c.user_id==user_id,
+        rdb.and_(schema.user_group_memberships.c.active_p == True,
+            schema.user_group_memberships.c.user_id == user_id,
             schema.user_group_memberships.c.group_id.in_(group_ids)),
         distinct=True)
     my_group_ids = []
     for group_id in connection.execute(my_groups):
         my_group_ids.append(group_id[0])
     return my_group_ids
-                                    
+
 def get_parliament_for_group_id(group_id):
     if group_id is None:
         return None
     session = Session()
     group = session.query(domain.Group).get(group_id)
-    if group.type=='parliament':
+    if group.type == 'parliament':
         return group
     else:
         return get_parliament_for_group_id(group.parent_group_id)
-        
-        
-        
+
+
+
