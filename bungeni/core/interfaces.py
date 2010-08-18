@@ -50,29 +50,29 @@ class ISessionAddContext(IAddContext):
 
 class ITabledDocumentAddContext(IAddContext):
     """Add-context for tabled documents."""
-    
+
 class IAgendaItemAddContext(IAddContext):
     """Add-context for agenda items."""
 
 class IReportAddContext(IAddContext):
-    """Add-context for agenda items."""
-    
+    """Add-context for report items."""
+
 ####################
 # Feature - Marker Interfaces 
 # 
 # declare implemented to apply feature to a domain model
 
-class IAuditable( interface.Interface ):
+class IAuditable(interface.Interface):
     """
     marker interface to apply auditing/object log feature
     """
 
-class ISubscribable( interface.Interface ):
+class ISubscribable(interface.Interface):
     """
     marker interface to add a subscription to an object
     """
-        
-class IVersionable( interface.Interface ):
+
+class IVersionable(interface.Interface):
     """
     marker interface to apply versioning feature ( requires iauditable / object log)
     """
@@ -80,69 +80,69 @@ class IVersionable( interface.Interface ):
 #####################
 # Versioned Object Interfaces
 #
-class IVersioned( IContainer ):
+class IVersioned(IContainer):
     """ a versioning system interface to an object, versioned is a container
         of versions.
     """
 
-    def create( ):
+    def create():
         """
         store the existing state of the adapted context as a new version
         """
-        
-    def revert( version ):
+
+    def revert(version):
         """
         revert the current state of the adapted object to the values specified
         in version.
         """
 
-class IVersionEvent( IObjectEvent ):
+class IVersionEvent(IObjectEvent):
     """
     a versioning event
     """
-    
-    versioned = schema.Object( IVersioned )
-    version = schema.Object( IVersion )
-    message = schema.Text(description=u"Message accompanying versioning event")
-    
-class VersionEvent( ObjectEvent ):
-    """
-    """
-    interface.implements( IVersionEvent )
 
-    def __init__( self, object, versioned, version, msg ):
+    versioned = schema.Object(IVersioned)
+    version = schema.Object(IVersion)
+    message = schema.Text(description=u"Message accompanying versioning event")
+
+class VersionEvent(ObjectEvent):
+    """
+    """
+    interface.implements(IVersionEvent)
+
+    def __init__(self, object, versioned, version, msg):
         self.object = object
         self.versioned = versioned
         self.version = version
         self.message = msg
-        
-class IVersionCreated( IVersionEvent ):
+
+class IVersionCreated(IVersionEvent):
     """ a new version was created, but is not yet
     saved to the db
     """
 
-class VersionCreated( VersionEvent ):
-    
-    interface.implements( IVersionCreated )
+class VersionCreated(VersionEvent):
+
+    interface.implements(IVersionCreated)
 
 
 
 
-class IVersionReverted( IVersionEvent, lifecycleevent.IObjectModifiedEvent ):
+class IVersionReverted(IVersionEvent, lifecycleevent.IObjectModifiedEvent):
     """
     the context version was reverted
     """
-    
-class VersionReverted( VersionEvent ):
-    
-    interface.implements( IVersionReverted )
-    
+
+class VersionReverted(VersionEvent):
+
+    interface.implements(IVersionReverted)
+
     descriptions = ()
 
 
-class IFilePathChooser( interface.Interface ):
+class IFilePathChooser(interface.Interface):
 
-    def path( ):
+    def path():
         """
         return the path to store a context's files within the repo 
         """
@@ -150,18 +150,18 @@ class IFilePathChooser( interface.Interface ):
 ########################
 # Versioned Files
 
-class IVersionedFileRepository( interface.Interface ):
+class IVersionedFileRepository(interface.Interface):
 
-    def locations( context ):
+    def locations(context):
         """
         get all the directory locations for this content
         """
 
-    def new( context, path=None):
+    def new(context, path=None):
         """create a new directory location for context
         """
-        
-    def get( path ):
+
+    def get(path):
         """
         fetch the versioned directory for the given repository
         path
@@ -184,12 +184,12 @@ class ISchedulingContext(ILocation):
 
     def get_group():
         """Returns group."""
-        
+
     def get_sittings(start_date=None, end_date=None):
         """Return sittings defined for this context."""
 
 class IDailySchedulingContext(ISchedulingContext):
     """Daily scheduling context."""
-    
+
     date = interface.Attribute(
         """Date to which this scheduling context is bound.""")
