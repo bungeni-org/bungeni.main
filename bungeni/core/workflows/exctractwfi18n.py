@@ -18,6 +18,7 @@ from bungeni.core.workflows import parliament
 from bungeni.core.workflows import attachedfile
 from bungeni.core.workflows import event
 from bungeni.core.workflows import user
+from bungeni.core.workflows import report
 import os
 
 path = os.path.split(os.path.abspath(bill.__file__))[0]
@@ -32,19 +33,19 @@ f.write(
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="bungeni.core"> <body>
       """)
-      
+
 for wf in [bill, question, motion, version, groupsitting, groups,
     address, tableddocument, agendaitem, committee, parliament,
-    attachedfile, event]:
+    attachedfile, event, report]:
     name = wf.__name__.split('.')[-1]
     for state in wf.states:
         #f.write( '<b i18n:translate="%s_wf_state_%s" >' % ( name, state))
-        f.write( '<b i18n:translate="" >' + wf.states[state].title + '</b>')
+        f.write('<b i18n:translate="" >' + wf.states[state].title + '</b>')
         f.write('\n')
     for t in wf.wf._id_transitions:
         #f.write( '<b i18n:translate="%s_wf_transition_%s" >' %( name, t))
-        f.write( '<b i18n:translate="" >' + wf.wf.getTransitionById(t).title + '</b>')
+        f.write('<b i18n:translate="" >' + wf.wf.getTransitionById(t).title + '</b>')
         f.write('\n')
 f.write('</body></html>')
 f.close()
-  
+
