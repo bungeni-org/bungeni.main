@@ -15,6 +15,16 @@
         40-49 : calendar=40, schedule=41, pdf=42, odt=43
         90-99 : delete=99
     
+    
+    { committee, bill, motion, question, schedule, sitting, agendaitem, 
+      party, government, ministry, member, office }_additems menus:
+    
+        file=20, event=21, cosignatory=22
+        title=30
+        sitting=40, agendaitem=41, attendance=42
+        (assign-)bill=50
+        partymember=60, groupmember=61, committeemember=62, officemember=63
+        ministry=70
     -->
     
     
@@ -134,6 +144,7 @@
         action="add_content"
         order="10"
         permission="zope.View"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         submenu="party_additems"
     />
     <browser:menuItem menu="party_additems"
@@ -141,6 +152,8 @@
         title="Add Party Member..."
         action="./partymembers/add"
         permission="bungeni.politicalgroupmember.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="60"
     />
     <browser:subMenuItem menu="plone_contentmenu"
         for="bungeni.models.interfaces.IPoliticalGroup"
@@ -148,6 +161,7 @@
         action="add_content"
         order="10"
         permission="zope.View"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         submenu="party_additems"
     />
     <browser:menuItem menu="party_additems"
@@ -155,6 +169,8 @@
         title="add political group member..."
         action="./partymembers/add"
         permission="bungeni.politicalgroupmember.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="61"
     />
     <browser:menu id="committee_additems"
         title="The 'Add...' menu - for committees"
@@ -166,6 +182,7 @@
         action="add_content"
         order="10"
         permission="zope.View"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         submenu="committee_additems"
     />
     <browser:menuItem menu="committee_additems"
@@ -173,27 +190,31 @@
         title="Add Member..."
         action="./committeemembers/add"
         permission="bungeni.committeemember.Add"
-        order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="62"
     />
     <browser:menuItem menu="committee_additems"
         for="bungeni.models.interfaces.ICommittee"
         title="Add Staff..."
         action="./committeestaff/add"
         permission="bungeni.committeestaff.Add"
-        order="20"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="63"
     />
     <browser:menuItem menu="committee_additems"
         for="bungeni.models.interfaces.ICommittee"
         title="Add Agenda item..."
         action="./agendaitems/add"
         permission="bungeni.agendaitem.Add"
-        order="30"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="41"
     />
     <browser:menuItem menu="committee_additems"
         for="bungeni.models.interfaces.ICommittee"
         title="Assign a bill..."
         action="./assigneditems/add"
         permission="bungeni.groupitemassignment.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="50"
     />
     <browser:menuItem menu="committee_additems"
@@ -201,6 +222,7 @@
         title="Add Sitting..."
         action="./sittings/add"
         permission="bungeni.sitting.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="40"
     />
     
@@ -221,28 +243,29 @@
         title="Add Ministry..."
         action="./ministries/add"
         permission="bungeni.ministry.Add"
-        order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="70"
     />
     <browser:menu id="ministry_additems"
         title="The 'Add..' menu - for ministry"
         class="ploned.ui.menu.PloneBrowserMenu"
     />
-    <browser:subMenuItem
-        menu="plone_contentmenu"
+    <browser:subMenuItem menu="plone_contentmenu"
         for="bungeni.models.interfaces.IMinistry"
         title="Add..."
         action="add_content"
         order="10"
         permission="zope.View"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         submenu="ministry_additems"
     />
-    <browser:menuItem
-        menu="ministry_additems"
+    <browser:menuItem menu="ministry_additems"
         for="bungeni.models.interfaces.IMinistry"
         title="Add Minister..."
         action="./ministers/add"
         permission="bungeni.minister.Add"
-        order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="70"
     />
     <browser:menu id="member_additems"
         title="The 'Add...' menu - for Group Memberships"
@@ -254,6 +277,7 @@
         action="add_content"
         order="10"
         permission="zope.View"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         submenu="member_additems"
     />
     <browser:menuItem menu="member_additems"
@@ -261,7 +285,8 @@
         title="Add title..."
         action="./titles/add"
         permission="bungeni.function.Add"
-        order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="30"
     />
     
     <browser:menu id="sitting_additems"
@@ -274,6 +299,7 @@
         action="add_content"
         order="10"
         permission="zope.View"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         submenu="sitting_additems"
     />
     <browser:menuItem menu="sitting_additems"
@@ -281,7 +307,8 @@
         title="Add Attendance..."
         action="./attendance/add"
         permission="bungeni.sittingattendance.Add"
-        order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="42"
     />
 
  <!-- browser:menuItem
@@ -303,6 +330,7 @@
         action="add_content"
         order="10"
         permission="zope.View"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         submenu="motion_additems"
     />
     <browser:menuItem menu="motion_additems"
@@ -310,13 +338,15 @@
         title="Add cosignatory..."
         action="./consignatory/add"
         permission="bungeni.consignatory.Add"
-        order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="22"
     />
     <browser:menuItem menu="motion_additems"
         for="bungeni.models.interfaces.IMotion"
         title="Add file..."
         action="./files/add"
         permission="bungeni.attachedfile.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="20"
     />
     
@@ -330,6 +360,7 @@
         action="add_content"
         order="10"
         permission="zope.View"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         submenu="bill_additems"
     />
     <browser:menuItem menu="bill_additems"
@@ -337,7 +368,8 @@
         title="Add consignatory..."
         action="./consignatory/add"
         permission="bungeni.consignatory.Add"
-        order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="22"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.domain.EventItem"
@@ -356,42 +388,39 @@
         permission="bungeni.heading.Delete"
     />
 
-  <browser:menuItem
-     menu="bill_additems"
-     for="bungeni.models.interfaces.IBill"
-     title="Add event..."
-     action="./event/add"
-     permission="bungeni.event.Add"
-     order="10"
-     />
-
-  <browser:menuItem
-     menu="motion_additems"
-     for="bungeni.models.interfaces.IMotion"
-     title="Add event..."
-     action="./event/add"
-     permission="bungeni.event.Add"
-     order="10"
-     />
-               
-
-  <browser:menuItem
-     menu="bill_additems"
-     for="bungeni.models.interfaces.IBill"
-     title="Add file..."
-     action="./files/add"
-     permission="bungeni.attachedfile.Add"
-     order="10"
-     />
-     
- <browser:menuItem
-     menu="bill_additems"
-     for="bungeni.models.interfaces.IBill"
-     title="Assign bill to a group..."
-     action="./assignedgroups/add"
-     permission="bungeni.groupitemassignment.Add"
-     order="50"
-     />
+    <browser:menuItem menu="bill_additems"
+        for="bungeni.models.interfaces.IBill"
+        title="Add event..."
+        action="./event/add"
+        permission="bungeni.event.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="21"
+    />
+    <browser:menuItem menu="motion_additems"
+        for="bungeni.models.interfaces.IMotion"
+        title="Add event..."
+        action="./event/add"
+        permission="bungeni.event.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="21"
+    />
+    
+    <browser:menuItem menu="bill_additems"
+        for="bungeni.models.interfaces.IBill"
+        title="Add file..."
+        action="./files/add"
+        permission="bungeni.attachedfile.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="20"
+    />
+    <browser:menuItem menu="bill_additems"
+        for="bungeni.models.interfaces.IBill"
+        title="Assign bill to a group..."
+        action="./assignedgroups/add"
+        permission="bungeni.groupitemassignment.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="50"
+    />
 
     <!-- Question 'Add...' menu -->
     <browser:menu id="question_additems"
@@ -403,21 +432,24 @@
         title="Add file..."
         action="./files/add"
         permission="bungeni.attachedfile.Add"
-        order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="20"
     />
     <browser:menuItem menu="question_additems"
         for="bungeni.models.interfaces.IQuestion"
         title="Add event..."
         action="./event/add"
         permission="bungeni.event.Add"
-        order="20"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="21"
     />
     <browser:menuItem menu="question_additems"
         for="bungeni.models.interfaces.IQuestion"
         title="Add cosignatory..."
         action="./consignatory/add"
         permission="bungeni.consignatory.Add"
-        order="30"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="22"
     />
     <browser:subMenuItem menu="plone_contentmenu"
         for="bungeni.models.interfaces.IQuestion"
@@ -425,6 +457,7 @@
         action="add_content"
         order="10"
         permission="zope.View"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         submenu="question_additems"
     />
 
@@ -439,105 +472,88 @@
      /-->
 
 
-  <browser:menu
-     id="tableddocument_additems"
-     title="The 'Add...' menu - for tabled document"
-     class="ploned.ui.menu.PloneBrowserMenu"
-     />
-     
-  <browser:menuItem
-     menu="tableddocument_additems"
-     for="bungeni.models.interfaces.ITabledDocument"
-     title="Add file..."
-     action="./files/add"
-     permission="bungeni.attachedfile.Add"
-     order="10"
-     />
-
-  <browser:menuItem
-     menu="tableddocument_additems"
-     for="bungeni.models.interfaces.ITabledDocument"
-     title="Add event..."
-     action="./event/add"
-     permission="bungeni.event.Add"
-     order="10"
-     />
-  <browser:menuItem
-     menu="tableddocument_additems"
-     for="bungeni.models.interfaces.ITabledDocument"
-     title="Add cosignatory..."
-     action="./consignatory/add"
-     permission="bungeni.consignatory.Add"
-     order="10"
-     />
-
-  <browser:subMenuItem
-     menu="plone_contentmenu"
-     for="bungeni.models.interfaces.ITabledDocument"
-     title="Add..."
-     action="add_content"
+    <browser:menu id="tableddocument_additems"
+        title="The 'Add...' menu - for tabled document"
+        class="ploned.ui.menu.PloneBrowserMenu"
+    />
+    <browser:menuItem menu="tableddocument_additems"
+        for="bungeni.models.interfaces.ITabledDocument"
+        title="Add file..."
+        action="./files/add"
+        permission="bungeni.attachedfile.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="20"
+    />
+    <browser:menuItem menu="tableddocument_additems"
+        for="bungeni.models.interfaces.ITabledDocument"
+        title="Add event..."
+        action="./event/add"
+        permission="bungeni.event.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="21"
+    />
+    <browser:menuItem menu="tableddocument_additems"
+        for="bungeni.models.interfaces.ITabledDocument"
+        title="Add cosignatory..."
+        action="./consignatory/add"
+        permission="bungeni.consignatory.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="22"
+    />
+    <browser:subMenuItem menu="plone_contentmenu"
+        for="bungeni.models.interfaces.ITabledDocument"
+        title="Add..."
+        action="add_content"
         order="10"
-     permission="zope.View"
-     submenu="tableddocument_additems"
-     />
-
-
-  <browser:menu
-     id="agendaitem_additems"
-     title="The 'Add...' menu - for agenda item"
-     class="ploned.ui.menu.PloneBrowserMenu"
-     />
-
-  <browser:menuItem
-     menu="agendaitem_additems"
-     for="bungeni.models.interfaces.IAgendaItem"
-     title="Add file..."
-     action="./files/add"
-     permission="bungeni.attachedfile.Add"
-     order="10"
-     />
-     
-  <browser:subMenuItem
-     menu="plone_contentmenu"
-     for="bungeni.models.interfaces.IAgendaItem"
-     title="Add..."
-     action="add_content"
+        permission="zope.View"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        submenu="tableddocument_additems"
+    />
+    <browser:menu id="agendaitem_additems"
+        title="The 'Add...' menu - for agenda item"
+        class="ploned.ui.menu.PloneBrowserMenu"
+    />
+    <browser:menuItem menu="agendaitem_additems"
+        for="bungeni.models.interfaces.IAgendaItem"
+        title="Add file..."
+        action="./files/add"
+        permission="bungeni.attachedfile.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="20"
+    />
+    <browser:subMenuItem menu="plone_contentmenu"
+        for="bungeni.models.interfaces.IAgendaItem"
+        title="Add..."
+        action="add_content"
         order="10"
-     permission="zope.View"
-     submenu="agendaitem_additems"
-     />
-     
-  <browser:menu
-     id="office_additems"
-     title="The 'Add...' menu - for offices"
-     class="ploned.ui.menu.PloneBrowserMenu"
-     />
-     
-  <browser:subMenuItem
-     menu="plone_contentmenu"
-     for="bungeni.models.interfaces.IOffice"
-     title="Add..."
-     action="add_content"
+        permission="zope.View"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        submenu="agendaitem_additems"
+    />
+    <browser:menu id="office_additems"
+        title="The 'Add...' menu - for offices"
+        class="ploned.ui.menu.PloneBrowserMenu"
+    />
+    <browser:subMenuItem menu="plone_contentmenu"
+        for="bungeni.models.interfaces.IOffice"
+        title="Add..."
+        action="add_content"
         order="10"
-     permission="zope.View"
-     submenu="office_additems"
-     />
-     
-  <browser:menuItem
-     menu="office_additems"
-     for="bungeni.models.interfaces.IOffice"
-     title="Add Member..."
-     action="./officemembers/add"
-     permission="bungeni.officemember.Add"
-     />
-
-     
-
-
-  <!-- Navigation -->
-
-
-
+        permission="zope.View"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        submenu="office_additems"
+    />
+    <browser:menuItem menu="office_additems"
+        for="bungeni.models.interfaces.IOffice"
+        title="Add Member..."
+        action="./officemembers/add"
+        permission="bungeni.officemember.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="63"
+    />
+    
+    <!-- Navigation -->
+    
     <browser:menuItem menu="admin_navigation"
         for="bungeni.models.interfaces.IBungeniApplication"
         title="content"
@@ -560,6 +576,7 @@
         action="add_content"
         order="10"
         permission="zope.View"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         submenu="schedule_additems"
     />
     <browser:menu id="schedule_additems"
@@ -572,20 +589,23 @@
         action="./sittings/add"
         permission="bungeni.sitting.Add"
         layer=".interfaces.IWorkspaceSectionLayer"
-        order="100"
-    /><!-- !+ rework all schedule_additems for IWorkspaceSectionLayer -->
+        order="40"
+    /><!-- !+ rework all schedule_additems in IWorkspaceSectionLayer -->
     <browser:menuItem menu="schedule_additems"
         for="bungeni.core.interfaces.ISchedulingContext"
         title="Add Sitting..."
         action="./add?next_url=..."
         permission="bungeni.sitting.Add"
-        order="100"
+        layer=".interfaces.IAdminSectionLayer"
+        order="40"
     />
     <browser:menuItem menu="schedule_additems"
         for="bungeni.core.interfaces.ISchedulingContext"
         title="Add Agenda item..."
         action="./add?next_url=..."
         permission="bungeni.agendaitem.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="41"
     />
     <!-- browser:menuItem menu="schedule_additems"
         for="bungeni.core.interfaces.ISchedulingContext"
