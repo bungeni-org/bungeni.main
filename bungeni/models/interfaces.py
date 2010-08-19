@@ -47,7 +47,7 @@ class IBungeniUser(interface.Interface):
     """
     a user in bungeni
     """
-    
+
 class IBungeniGroup(interface.Interface):
     """
     a group in bungeni
@@ -62,14 +62,14 @@ class IMinistry(IBungeniGroup):
     """ marker interface for group ministry """
 
 class ICommittee(IBungeniGroup):
-    """ marker interface for group ministry """ 
-    
+    """ marker interface for group ministry """
+
 class IPoliticalParty(IBungeniGroup):
     """ marker interface for political party """
 
 class IOffice(IBungeniGroup):
     """ marker interface for a parliamentary office """
-    
+
 class ICommittee(IBungeniGroup):
     pass
 
@@ -80,19 +80,19 @@ class IBungeniGroupMembership(interface.Interface):
 
 class IMemberOfParliament(IBungeniGroupMembership):
     pass
-    
+
 class IPartyMember(IBungeniGroupMembership):
     pass
-    
+
 class IMinister(IBungeniGroupMembership):
     pass
-    
+
 class ICommitteeMember(IBungeniGroupMembership):
     pass
 
 class ICommitteeStaff(IBungeniGroupMembership):
     pass
-    
+
 class IOfficeMember(IBungeniGroupMembership):
     pass
 
@@ -122,10 +122,10 @@ class IBungeniGroupMembershipContainer(IBungeniContainer):
 
 class ICommitteeMemberContainer(IBungeniGroupMembershipContainer):
     pass
-    
+
 class ICommitteeStaffContainer(IBungeniGroupMembershipContainer):
     pass
-       
+
 class IVersionContainer(IBungeniContainer):
     pass
 
@@ -166,7 +166,7 @@ class IMotionVersion(IMotion):
 
 class IMotionVersionContainer(IVersionContainer):
     pass
-    
+
 
 
 class IGroupSitting(interface.Interface):
@@ -195,16 +195,16 @@ class ITabledDocumentVersion(ITabledDocument):
 
 class ITabledDocumentVersionContainer(IVersionContainer):
     pass
-    
+
 class IAgendaItem(IBungeniContent):
     pass
-    
+
 class IAgendaItemVersion(IAgendaItem):
     pass
 
 class IAgendaItemVersionContainer(IVersionContainer):
     pass
-    
+
 class IParliamentSession(interface.Interface):
     pass
 
@@ -216,7 +216,7 @@ class IBungeniSetup(interface.Interface):
         """
 
 class IBungeniSettings(interface.Interface):
-    speakers_office_email = schema.TextLine(title=_(u"Speaker's Office Email"), 
+    speakers_office_email = schema.TextLine(title=_(u"Speaker's Office Email"),
                                             default=u"speakers.office@parliament.go.tld")
     speakers_office_notification = schema.Bool(title=_(u"Speaker's Office Notification"),
                                                 description=_(
@@ -230,10 +230,10 @@ class IBungeniSettings(interface.Interface):
                                                   u"whenever a bill, motion, question is submitted"),
                                               default=True
                                              )
-    clerks_office_email   = schema.TextLine(title=_(u"Clerks's Office Email"),
+    clerks_office_email = schema.TextLine(title=_(u"Clerks's Office Email"),
                                             default=u"clerks.office@parliament.go.tld")
-    
-    administrators_email  = schema.TextLine(title=_(u"Administrator's Email"))
+
+    administrators_email = schema.TextLine(title=_(u"Administrator's Email"))
     question_submission_allowed = schema.Bool(title=_(u"Allow Question Submission"), default=True)
     days_to_defer_question = schema.Int(title=_(u"Days to Defer Question"),
                                         description=_(u"Time after which admissible questions are automatically deferred"),
@@ -252,7 +252,7 @@ class IBungeniUserSettings(interface.Interface):
 
     # examples
     email_delivery = schema.Bool(title=_(u"Email Notifications Enabled?"), default=True)
-    
+
 class IAssignment(IAlchemistContent):
 
     content = schema.Object(IAlchemistContent)
@@ -262,38 +262,38 @@ class IAssignment(IAlchemistContent):
     end_date = schema.Date(title=_(u"End Date of the Assignment"))
     type = schema.TextLine(title=_(u"Assignment Type"), readonly=True)
     status = schema.TextLine(title=_(u"Status"), readonly=True)
-    notes  = schema.Text(title=_(u"Notes"), description=_(u"Notes"))
-    
+    notes = schema.Text(title=_(u"Notes"), description=_(u"Notes"))
+
 class IContentAssignments(interface.Interface):
-    """ assignments of this content to different contexts""" 
+    """ assignments of this content to different contexts"""
 
     def __iter__():
         """ iterate over assignments for this context """
 
 class IContextAssignments(interface.Interface):
     """ content assignments for the given context/group """
-    
+
     def __iter__():
         """ iterate over assignments for this context """
 
 class IAssignmentFactory(interface.Interface):
     """ assignment factory """
-    
+
     def new(**kw):
         """
         create a new assignment
         """
-        
+
 class IAttachedFile(interface.Interface):
     pass
-        
-       
+
+
 class IAttachedFileVersionContainer(IVersionContainer):
     pass
-        
+
 class IConsignatory(interface.Interface):
     """ consignatories for bills, motions,.."""
-    
+
 class IConstituency(interface.Interface):
     """ Constituencies """
 
@@ -303,7 +303,7 @@ class IConstituencyDetail(interface.Interface):
 class IItemScheduleCategory(interface.Interface):
     pass
 
-    
+
 class IDirectoryLocation(interface.Interface):
 
     repo_path = schema.ASCIILine()
@@ -314,7 +314,7 @@ class IProxiedDirectory(interface.Interface):
     """ an interface for a contained directory we can attach menu links
         to that point back to our parent
     """
-    
+
 class IVersion(interface.Interface):
     """
     a version of an object is identical in attributes to the actual object, based
@@ -333,15 +333,15 @@ class IDateRangeFilter(interface.Interface):
 
     These must be bound before the query is executed.
     """
-    
-    
+
+
 class IChange(interface.Interface):
     """ Marker for Change (log table) """
-        
+
 class IMemberRoleTitle(interface.Interface):
     pass
-        
-    
+
+
 class IUserAddress(interface.Interface):
     """ marker interface addresses of a user """
 
@@ -353,16 +353,16 @@ class IGroupGroupItemAssignment(IGroupItemAssignment):
 
 class IItemGroupItemAssignment(IGroupItemAssignment):
     pass
-    
-class IReport(interface.Interface):
+
+class IReport(IBungeniContent):
     pass
-            
+
 class IUserDelegation(interface.Interface):
     pass
 
 class IProvince(interface.Interface):
     pass
-    
+
 class IRegion(interface.Interface):
     pass
 
@@ -372,4 +372,4 @@ class ITranslatable(interface.Interface):
         """The language of the values of the translatable attributes of 
         the instance""")
 
-                
+
