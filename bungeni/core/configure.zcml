@@ -143,7 +143,11 @@
                             ore.xapian.interfaces.IIndexable
                             .interfaces.IAuditable" />
   </class>
-         
+  
+  <class class="bungeni.models.domain.Report">
+    <implements interface="ore.xapian.interfaces.IIndexable" />
+  </class>       
+  
   <!-- Workflow -->
   <include package=".workflows" />
   
