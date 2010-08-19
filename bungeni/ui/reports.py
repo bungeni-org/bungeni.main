@@ -395,7 +395,6 @@ class DownloadDocument(BrowserView):
 
 class DownloadODT(DownloadDocument):
     #appy.Renderer expects a file name of a file that does not exist.
-    #TODO Find a better way
     tempFileName = os.path.dirname(__file__) + '/tmp/%f.odt' % (time.time())
     def __call__(self):
         self.request.response.setHeader('Content-type',
@@ -404,7 +403,10 @@ class DownloadODT(DownloadDocument):
                                         'inline;filename="' +
                                         removeSecurityProxy(self.report.report_type) + "_" +
                                         removeSecurityProxy(self.report.start_date).strftime('%Y-%m-%d') + '.odt"')
-        if self.report.odt_report is None:
+        session = Session()
+        report = session.query(domain.Report).get(self.report.report_id)
+        d = dict([(f.file_title, f.file_data) for f in report.attached_files])
+        if "odt" not in d.keys():
             params = {}
             params['body_text'] = self.cleanupText()
             renderer = Renderer(self.odt_file, params, self.tempFileName)
@@ -413,19 +415,21 @@ class DownloadODT(DownloadDocument):
             doc = f.read()
             f.close()
             os.remove(self.tempFileName)
-            session = Session()
-            r = session.query(domain.Report).get(self.report.report_id)
-            r.odt_report = doc
+            attached_file = domain.AttachedFile()
+            attached_file.file_title = "odt"
+            attached_file.file_data = doc
+            attached_file.language = report.language
+            report.attached_files.append(attached_file)
+            notify(ObjectCreatedEvent(attached_file))
+            session.add(report)
             session.commit()
             return doc
         else:
-            #import pdb; pdb.set_trace()
-            return "" + self.report.odt_report.__str__()
+            return d["odt"].__str__()
 
 
 class  DownloadPDF(DownloadDocument):
     #appy.Renderer expects a file name of a file that does not exist.
-    #TODO Find a better way
     tempFileName = os.path.dirname(__file__) + '/tmp/%f.pdf' % (time.time())
 
     def __call__(self):
@@ -433,7 +437,12 @@ class  DownloadPDF(DownloadDocument):
         self.request.response.setHeader('Content-disposition', 'inline;filename="'
                             + removeSecurityProxy(self.report.report_type) + "_"
                             + removeSecurityProxy(self.report.start_date).strftime('%Y-%m-%d') + '.pdf"')
-        if self.report.pdf_report is None:
+        
+        
+        session = Session()
+        report = session.query(domain.Report).get(self.report.report_id)
+        d = dict([(f.file_title, f.file_data) for f in report.attached_files])
+        if "pdf" not in d.keys():
             params = {}
             params['body_text'] = self.cleanupText()
             openofficepath = getUtility(IOpenOfficeConfig).getPath()
@@ -443,13 +452,17 @@ class  DownloadPDF(DownloadDocument):
             doc = f.read()
             f.close()
             os.remove(self.tempFileName)
-            session = Session()
-            r = session.query(domain.Report).get(self.report.report_id)
-            r.pdf_report = doc
+            attached_file = domain.AttachedFile()
+            attached_file.file_title = "pdf"
+            attached_file.file_data = doc
+            attached_file.language = report.language
+            report.attached_files.append(attached_file)
+            notify(ObjectCreatedEvent(attached_file))
+            session.add(report)
             session.commit()
             return doc
         else:
-            return self.report.pdf_report.__str__()
+            return d["pdf"].__str__()
 
 class SaveReportView(form.PageForm):
 
@@ -518,7 +531,6 @@ class SaveReportView(form.PageForm):
         if owner_id is not None:
             report.owner_id = owner_id
         else:
-            session = Session()
             query = session.query(domain.User)
             results = query.all()
             report.owner_id = results[0].user_id
@@ -539,10 +551,6 @@ class SaveReportView(form.PageForm):
             sr.sitting = sitting
             session.add(sr)
         session.commit()
-
-        rpm = zope.securitypolicy.interfaces.IRolePermissionMap(report)
-        rpm.grantPermissionToRole(u'zope.View', 'bungeni.Anybody')
-
 
         if IGroupSitting.providedBy(self.context):
             back_link = './schedule'
