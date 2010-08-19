@@ -5,22 +5,14 @@ log = __import__("logging").getLogger("bungeni.ui.calendar")
 
 
 import time
-import tempfile
 import datetime
 timedelta = datetime.timedelta
 
-import operator
-
-from sqlalchemy.orm import eagerload
-import sqlalchemy.sql.expression as sql
 from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent
 from zope import interface
 from zope import component
-from zope import schema
 from zope.i18n import translate
-from zope.formlib import form
-from zope.formlib import namedtemplate
 from zope.location.interfaces import ILocation
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.publisher.browser import BrowserView
@@ -29,33 +21,19 @@ from zope.app.component.hooks import getSite
 from zope.security.proxy import removeSecurityProxy
 from zope.security.proxy import ProxyFactory
 from zope.security import checkPermission
-import zope.securitypolicy.interfaces
 from bungeni.core.translation import get_all_languages
 from zope.publisher.interfaces import IPublishTraverse
-from zope.schema.vocabulary import SimpleVocabulary
-#from zope.schema.vocabulary import SimpleTerm
-from zope.app.file.file import File
-from zope.datetime import rfc1123_date
-from zope.app.form.browser import MultiCheckBoxWidget as _MultiCheckBoxWidget
-#from zope.publisher.interfaces.http import IResult, IHTTPRequest
-#from zope.publisher.http import DirectResult
 
-from bungeni.ui.widgets import SelectDateWidget
 from bungeni.ui.calendar import utils
 from bungeni.ui.tagged import get_states
 from bungeni.ui.i18n import _
-from bungeni.ui.utils import misc, url as ui_url, queries, debug
+from bungeni.ui.utils import misc, url, debug
 from bungeni.ui.menu import get_actions
-from bungeni.ui.forms.common import set_widget_errors
-from bungeni.ui import vocabulary
+from bungeni.ui.forms import common
 from bungeni.core.location import location_wrapped
 from bungeni.core.interfaces import ISchedulingContext
 #from bungeni.core.schedule import PlenarySchedulingContext
-from bungeni.core.odf import OpenDocument
 from bungeni.models import domain
-from bungeni.models.utils import get_principal_id
-from bungeni.models.interfaces import IGroupSitting
-from bungeni.server.interfaces import ISettings
 
 from ploned.ui.interfaces import IStructuralView
 from ore.alchemist.container import stringKey
@@ -64,8 +42,7 @@ from ore.workflow.interfaces import IWorkflowInfo
 
 from zc.resourcelibrary import need
 
-from bungeni.core.workflows.groupsitting import states as sitting_wf_state
-from dateutil.rrule import *
+from dateutil.rrule import * # !+IMPORT*(mr, aug-2010) how did this get here??
 
 class TIME_SPAN:
     daily = _(u"Daily")
@@ -95,7 +72,7 @@ def get_sitting_items(sitting, request, include_actions=False):
     schedulings = map(
         removeSecurityProxy,
         sitting.items.batch(order_by=order, limit=None))
-    site_url = ui_url.absoluteURL(getSite(), request)
+    site_url = url.absoluteURL(getSite(), request)
     for scheduling in schedulings:
         item = ProxyFactory(location_wrapped(scheduling.item, sitting))
        
@@ -119,8 +96,8 @@ def get_sitting_items(sitting, request, include_actions=False):
             #'category_id': scheduling.category_id,
             #'category': scheduling.category,
             'discussion': discussion,
-            'delete_url': "%s/delete" % ui_url.absoluteURL(scheduling, request),
-            'url': ui_url.set_url_context(site_url+('/business/%ss/obj-%s' % (item.type, item.parliamentary_item_id)))}
+            'delete_url': "%s/delete" % url.absoluteURL(scheduling, request),
+            'url': url.set_url_context(site_url+('/business/%ss/obj-%s' % (item.type, item.parliamentary_item_id)))}
         
         if include_actions:
             record['actions'] = get_scheduling_actions(scheduling, request)
@@ -173,9 +150,9 @@ def create_sittings_map(sittings, request):
         proxied = ProxyFactory(sitting)
         
         if checkPermission(u"bungeni.agendaitem.Schedule", proxied):
-            link = "%s/schedule" % ui_url.absoluteURL(sitting, request)
+            link = "%s/schedule" % url.absoluteURL(sitting, request)
         else:
-            link = ui_url.absoluteURL(sitting, request)
+            link = url.absoluteURL(sitting, request)
         
         if checkPermission("zope.View", proxied):
             mapping[day, hour] = {
@@ -274,7 +251,7 @@ class DailyCalendarView(CalendarView):
         if template is None:
             template = self.template
 
-        calendar_url = ui_url.absoluteURL(self.context.__parent__, self.request)
+        calendar_url = url.absoluteURL(self.context.__parent__, self.request)
         date = removeSecurityProxy(self.context.date)
 
         sittings = self.context.get_sittings()
@@ -354,7 +331,7 @@ class GroupSittingScheduleView(BrowserView):
 
         container = self.context.__parent__
         #schedule_url = self.request.getURL()
-        container_url = ui_url.absoluteURL(container, self.request)
+        container_url = url.absoluteURL(container, self.request)
         
         # determine position in container
         key = stringKey(self.context)
@@ -375,7 +352,7 @@ class GroupSittingScheduleView(BrowserView):
         #session = Session()
         sitting_type_dc = IDCDescriptiveProperties(self.context.sitting_type)
 
-        site_url = ui_url.absoluteURL(getSite(), self.request)
+        site_url = url.absoluteURL(getSite(), self.request)
 
         return template(
             display="sitting",
@@ -421,16 +398,12 @@ class ItemScheduleOrder(BrowserView):
             setattr(sch, 'planned_order', i+1)
         session.commit()
 
+
 class SittingCalendarView(CalendarView):
     """Sitting calendar view."""
     
     def __init__(self, context, request):
         BrowserView.__init__(self, context, request)
-
-
-
-
-
 
 
 class DhtmlxCalendarSittingsEdit(BrowserView):
@@ -636,6 +609,5 @@ class DhtmlxCalendarSittings(BrowserView):
         
     def render(self, template = None):
         return self.template()
-        
-        
+
 

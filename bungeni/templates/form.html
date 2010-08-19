@@ -57,10 +57,12 @@ ${ inspect(output=False) }
         class="${
             getattr(view, 'context_class', context.__class__).__name__.lower()
                 }-form"
-        #[ !+action_method(mr) bungeni forms have no "action_method" attr! ]#
+        #[ !+action_method(mr) bungeni forms have no "action_method" property! ]#
         method="${ getattr(view, 'action_method', 'post') }"
+        #[ !+alchemist-form(mr) why is this id fixed to this value? ]#
         id="alchemist-form"
-        enctype="multipart/form-data">
+        #[ !+enctype(mr) isn't this only applicable for method="post"? ]#
+        enctype="multipart/form-data"#[ ]#>
         
         $if{ view.status }
         #[ !+mtype(mr) add an "mtype" attr (here "info") to bungeni forms? ]#
@@ -238,7 +240,7 @@ $end{ page }
     define "invariantMessages" (that is thus calculated once instead of
     the view.invariantMessages property being called on each use.
 
-$evoque( #form, 
+$evoque{ #form, 
     invariantMessages=view.invariantMessages,
     fieldset_name=getattr(view, "fieldset_name", None)
 }
