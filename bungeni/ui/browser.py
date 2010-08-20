@@ -33,11 +33,8 @@ class BungeniBrowserView(BrowserView):
         # if view explicitly sets a page_title, use it
         if self._page_title:
             return self._page_title
-        # otherwise first try to determine it from the context
-        context = removeSecurityProxy(self.context)
-        if getattr(context, "title", None):
-            return context.title 
         # then try to determine it from DC annotations
+        context = removeSecurityProxy(self.context)
         try:
             # This is the equivalent of the ZPT expression "context/dc:title"
             # i.e. to "load the value of the variable context, then find a 
@@ -45,6 +42,12 @@ class BungeniBrowserView(BrowserView):
             # title attribute of the component."
             return IDCDescriptiveProperties(context).title
         except (Exception,):
+            pass
+            
+        # otherwise try to determine it from the context
+        if getattr(context, "title", None):
+            return context.title 
+        else:
             debug.log_exc(sys.exc_info(), log_handler=log.debug)
             return "Bungeni"
     # View subclasses may set a custom page_title by overriding this attr
@@ -63,11 +66,9 @@ class BungeniBrowserView(BrowserView):
         # if view explicitly sets a page_description, use it
         if self._page_description:
             return self._page_description
-        # otherwise first try to determine it from the context
-        context = removeSecurityProxy(self.context)
-        if getattr(context, "description", None):
-            return context.description 
+        
         # then try to determine it from DC annotations
+        context = removeSecurityProxy(self.context)
         try:
             # This is equivalent of the ZPT expression "context/dc:description"
             # i.e. to "load the value of the variable context, then find a 
@@ -75,6 +76,12 @@ class BungeniBrowserView(BrowserView):
             # description attribute of the component."
             return IDCDescriptiveProperties(context).description
         except (Exception,):
+            pass
+         
+        # otherwise try to determine it from the context
+        if getattr(context, "description", None):
+            return context.description  
+        else:
             debug.log_exc(sys.exc_info(), log_handler=log.debug)
             return "Bungeni"
     # View subclasses may set a custom page_description by resetting this attr
