@@ -133,7 +133,7 @@
         source="draft_agenda"
         destination="published_agenda"
         action="bungeni.core.workflows.groupsitting.actions.publish_agenda"
-        condition=""
+        condition="bungeni.core.workflows.groupsitting.conditions.has_venue"
         require_confirmation="false"
         permission="bungeni.sitting.ChangeStatus"
     />

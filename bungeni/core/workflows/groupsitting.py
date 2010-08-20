@@ -21,3 +21,7 @@ class conditions:
                 return False
         return True
 
+    @staticmethod
+    def has_venue(info, context):
+        return removeSecurityProxy(context).venue is not None
+
