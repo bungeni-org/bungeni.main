@@ -236,6 +236,7 @@
         action="add_content"
         order="10"
         permission="zope.View"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         submenu="government_additems"
     />
     <browser:menuItem menu="government_additems"

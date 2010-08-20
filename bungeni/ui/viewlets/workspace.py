@@ -673,11 +673,14 @@ class DraftSittingsViewlet(ViewletBase):
                     time_formatter.format(result.end_date))
             data["date"] = formatter.format(result.start_date) 
             data["sitting_type"] = _(result.sitting_type.sitting_type)
-            data["venue"] = _(result.venue.short_name)
+            if result.venue:
+                data["venue"] = _(result.venue.short_name)
+            else:
+                date["venue"] = ""
             if type(result)==domain.Question:
                 data["to"] = result.ministry.short_name
             else:
-                data["to"]= u""
+                data["to"]= ""
             # past, present, future
             today = datetime.datetime.today().date()
             startday = result.start_date.date()

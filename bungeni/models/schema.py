@@ -440,7 +440,8 @@ addresses = rdb.Table("addresses", metadata,
 parliament_sessions = rdb.Table("sessions", metadata,
     rdb.Column("session_id", rdb.Integer, primary_key=True),
     rdb.Column("parliament_id", rdb.Integer,
-        rdb.ForeignKey("parliaments.parliament_id")
+        rdb.ForeignKey("parliaments.parliament_id"),
+        nullable=False
     ),
     rdb.Column("short_name", rdb.Unicode(32), nullable=False),
     rdb.Column("full_name", rdb.Unicode(256), nullable=False),
