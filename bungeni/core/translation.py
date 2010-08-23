@@ -93,6 +93,7 @@ def get_all_languages(filter=tuple(ALLOWED_LANGUAGES)):
 
 def get_translation_for(context, lang):
     """Get the translation for context in language lang
+    NOTE: context may NOT be None
     """
     assert ITranslatable.providedBy(context), "%s %s" % (lang, context)
     trusted = removeSecurityProxy(context)
@@ -109,8 +110,8 @@ def get_translation_for(context, lang):
     return query.all()
 
 def translate_obj(context):
-    """ translate a ITranslatable content object (context) into
-    the language defined in the request
+    """Translate a ITranslatable content object (context, that may NOT be None)
+    into the language defined in the request
     -> copy of the object translated into language of the request
     """
     trusted = removeSecurityProxy(context)

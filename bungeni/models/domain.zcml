@@ -1,680 +1,780 @@
 <?xml version="1.0"?>
-<configure
-    xmlns="http://namespaces.zope.org/zope"
+<configure xmlns="http://namespaces.zope.org/zope"
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni.models">
-
-
-  <class class=".domain.ParliamentaryItem">
-    <require permission="zope.View"
-             attributes="parliamentary_item_id
-                        parliament_id
-                        owner_id
-                        language
-                        short_name
-                        full_name
-                        body_text
-                        submission_date
-                        status
-                        status_date
-                        registry_number
-                        note
-                        receive_notification" />
-    <require permission="bungeni.edit.historical"
-            set_attributes="parliament_id
-                            status
-                            registry_number
-                            status_date" />
-  </class>
-  
-  <class class=".domain.Bill">
-    <require permission="zope.View"
-             attributes="submission_date
-                        status
-                        identifier
-                        short_name
-                        language
-                        body_text
-                        bill_type_id
-                        summary
-                        ministry_id
-                        full_name
-                        publication_date
-                        receive_notification
-                        registry_number
-                        owner_id
-                        parliament_id" />
-    <require permission="bungeni.bill.Edit"
-            attributes="note" />
-    <require permission="bungeni.bill.Edit"
-             set_attributes="short_name
-                            language
-                            body_text
-                            bill_type_id
-                            summary
-                            ministry_id
-                            full_name
-                            receive_notification
-                            owner_id
-                            note" />
-    <require permission="bungeni.edit.historical"
-            set_attributes="parliament_id
-                            status
-                            status_date
-                            identifier
-                            registry_number
-                            publication_date" /> 
-
-             
-  </class>
-
-  <class class=".domain.Question">
-    <require permission="zope.View"
-             attributes="submission_date
-                        status
-                        short_name
-                        language
-                        body_text
-                        supplement_parent_id
-                        approval_date
-                        ministry_submit_date
-                        ministry_id
-                        response_type
-                        full_name
-                        question_type
-                        question_number
-                        receive_notification
-                        registry_number
-                        parliament_id
-                        owner_id" />
-    <require permission="bungeni.question.Edit"
-            attributes="note" />
-    <require permission="bungeni.question.Edit"
-             set_attributes="short_name
-                            language
-                            body_text
-                            ministry_id
-                            response_type
-                            full_name
-                            question_type
-                            receive_notification
-                            owner_id
-                            note" />
-    <require permission="bungeni.response.View"
-             attributes="response_text" />
-    <require permission="bungeni.response.Edit"
-             set_attributes="response_text" />
-                                       
-    <require permission="bungeni.edit.historical"
-            set_attributes="parliament_id
-                            submission_date
-                            status
-                            status_date
-                            supplement_parent_id
-                            approval_date
-                            sitting_time
-                            question_number
-                            registry_number
-                            ministry_submit_date" />
-                         
-  </class>
-
-  <class class=".domain.Motion">
-    <require permission="zope.View"
-             attributes="parliamentary_item_id
-                        motion_id
-                        owner_id
-                        language
-                        short_name
-                        full_name
-                        body_text
-                        status
-                        status_date
-                        receive_notification
-                        motion_number
-                        approval_date
-                        public
-                        registry_number
-                        seconder_id
-                        entered_by_id
-                        party_id
-                        notice_date" />
-    <require permission="bungeni.motion.Edit"
-            attributes="note" />
-    <require permission="bungeni.motion.Edit"
-             set_attributes="parliamentary_item_id 
-                            motion_id
-                            owner_id
-                            language
-                            short_name
-                            full_name
-                            body_text
-                            note
-                            receive_notification
-                            public
-                            seconder_id
-                            party_id" />
-    <require permission="bungeni.edit.historical"
-            attributes="parliament_id
-                        submission_date" />
-    <require permission="bungeni.edit.historical"
-            set_attributes="parliament_id
-                            submission_date
-                            status
-                            status_date
-                            motion_number
-                            approval_date
-                            entered_by_id
-                            registry_number
-                            notice_date" />
-             
-  </class>
-
-  <class class=".domain.ItemSchedule">
-    <require permission="zope.View"
-             attributes="schedule_id
-                        item_id
-                        sitting_id
-                        category_id
-                        planned_order
-                        real_order
-                        active
-                        getItem
-                        getDiscussion
-                        item_status" />
-    <require permission="bungeni.itemschedule.Edit"
-             set_attributes=" item_id
-                        sitting_id
-                        category_id
-                        planned_order
-                        real_order
-                        active
-                        item_status" />
-  </class>
-  <class class=".domain.ScheduledItemDiscussion">
-    <require permission="zope.View"
-             attributes="schedule_id
-                        body_text sitting_time" />
-    <require permission="bungeni.itemschedule.Edit"
-             set_attributes=" item_id
-                        body_text sitting_time" />
-  </class>
-  
-  
-  <class class=".domain.GroupSittingAttendance">
-    <require permission="zope.View"
-             attributes="sitting_id
-                        member_id
-                        attendance_id" />
-    <require permission="bungeni.sittingattendance.Edit"
-             set_attributes="sitting_id
-                        member_id
-                        attendance_id" />
-  </class>
-
-  
-  
-  <class class=".domain.AgendaItem">
-    <require permission="zope.View"
-             attributes="parliamentary_item_id
-                        owner_id
-                        language
-                        short_name
-                        full_name
-                        body_text
-                        status
-                        status_date
-                        receive_notification
-                        group_id
-                        approval_date
-                        registry_number
-                        " />
-    <require permission="bungeni.agendaitem.Edit"
-            attributes="note" />
-    <require permission="bungeni.agendaitem.Edit"
-             set_attributes="parliamentary_item_id 
-                            owner_id
-                            language
-                            short_name
-                            full_name
-                            body_text
-                            note
-                            receive_notification
-                            group_id
-                            " />
-    <require permission="bungeni.edit.historical"
-            attributes="parliament_id
-                        submission_date" />
-    <require permission="bungeni.edit.historical"
-            set_attributes="parliament_id
-                            submission_date
-                            approval_date
-                            registry_number
-                            status
-                            status_date" />
-             
-  </class> 
-
-  <class class=".domain.TabledDocument">
-    <require permission="zope.View"
-             attributes="parliamentary_item_id
-                        owner_id
-                        language
-                        short_name
-                        full_name
-                        body_text
-                        status
-                        registry_number
-                        tabled_document_number
-                        status_date
-                        receive_notification
-                        approval_date
-                        link
-                        " />
-    <require permission="bungeni.tableddocument.Edit"
-            attributes="note" />
-    <require permission="bungeni.tableddocument.Edit"
-             set_attributes="parliamentary_item_id 
-                            owner_id
-                            language
-                            short_name
-                            full_name
-                            body_text
-                            note
-                            receive_notification
-                            link
-                            " />
-    <require permission="bungeni.edit.historical"
-            attributes="parliament_id
-                        submission_date" />
-    <require permission="bungeni.edit.historical"
-            set_attributes="parliament_id
-                            submission_date
-                            approval_date
-                            registry_number
-                            tabled_document_number
-                            status
-                            status_date" />
-             
-  </class>
-
-  <class class=".domain.Office">
-    <require permission="zope.View"
-             attributes="group_id
-                       office_id
-                       short_name
-                       full_name
-                       description
-                       status
-                       start_date
-                       end_date
-                       type 
-                       office_type
-                       " />
-    <require permission= "bungeni.office.ChangeType" 
-        set_attributes="office_type" />
-    <require permission="bungeni.office.Edit"
-             set_attributes="short_name
-                       full_name
-                       description
-                       start_date
-                       end_date" />
-    <require permission="bungeni.edit.historical"
-            attributes="parent_group_id" />
-    <require permission="bungeni.edit.historical"
-            set_attributes="parent_group_id
-                            status" />
-  </class>
-  
-  <class class=".domain.Parliament">
-    <require permission="zope.View"
-             attributes="group_id
-                       parliament_id
-                       short_name
-                       full_name
-                       description
-                       status
-                       start_date
-                       end_date
-                       type
-                       election_date
-                       " />
-    <require permission="bungeni.parliament.Edit"
-             set_attributes="short_name
-                       full_name
-                       description
-                       start_date
-                       end_date
-                       election_date" />
-    <require permission="bungeni.edit.historical"
-            attributes="parent_group_id" />
-    <require permission="bungeni.edit.historical"
-            set_attributes="parent_group_id
-                            status" />
-  </class>
-  
-  <class class=".domain.Committee">
-    <require permission="zope.View"
-             attributes="group_id
-                       short_name
-                       full_name
-                       description
-                       status
-                       start_date
-                       end_date
-                       type
-                       committee_type_id 
-                       no_members
-                       min_no_members
-                       quorum
-                       no_clerks
-                       no_researchers 
-                       proportional_representation 
-                       default_chairperson 
-                       reinstatement_date
-                       " />
-    <require permission="bungeni.committee.Edit"
-             set_attributes="short_name
-                       full_name
-                       description
-                       start_date
-                       end_date
-                       committee_type_id
-                       no_members
-                       min_no_members
-                       quorum
-                       no_clerks
-                       no_researchers
-                       proportional_representation
-                       default_chairperson
-                       reinstatement_date
-                       " />
-    <require permission="bungeni.edit.historical"
-            attributes="parent_group_id" />
-    <require permission="bungeni.edit.historical"
-            set_attributes="parent_group_id
-                            status" />
-  </class>
-
-  <class class=".domain.PoliticalParty">
-    <require permission="zope.View"
-             attributes="group_id
-                       short_name
-                       full_name
-                       description
-                       status
-                       start_date
-                       end_date
-                       type
-                       logo_data
-                       " />
-    <require permission="bungeni.party.Edit"
-             set_attributes="short_name
-                       full_name
-                       description
-                       start_date
-                       end_date
-                       logo_data" />
-  </class>
-  
-  <class class=".domain.PoliticalGroup">
-   <require like_class=".domain.PoliticalParty" />
-   <require permission="bungeni.edit.historical"
-            attributes="parent_group_id" />
-    <require permission="bungeni.edit.historical"
-            set_attributes="parent_group_id
-                            status" />
-  </class>
-  
-  <class class=".domain.Government">
-    <require permission="zope.View"
-             attributes="group_id
-                       short_name
-                       full_name
-                       description
-                       status
-                       start_date
-                       end_date
-                       type
-                       " />
-    <require permission="bungeni.government.Edit"
-             set_attributes="short_name
-                       full_name
-                       description
-                       start_date
-                       end_date" />
-    <require permission="bungeni.edit.historical"
-            attributes="parent_group_id" />
-    <require permission="bungeni.edit.historical"
-            set_attributes="parent_group_id
-                            status" />
-  </class>
-  
-  <class class=".domain.Ministry">
-    <require permission="zope.View"
-             attributes="group_id
-                       short_name
-                       full_name
-                       description
-                       status
-                       start_date
-                       end_date
-                       type
-                       " />
-    <require permission="bungeni.ministry.Edit"
-             set_attributes="short_name
-                       full_name
-                       description
-                       start_date
-                       end_date" />
-    <require permission="bungeni.edit.historical"
-            attributes="parent_group_id" />
-    <require permission="bungeni.edit.historical"
-            set_attributes="parent_group_id
-                            status" />
-  </class>
-  
-  <class class=".domain.Consignatory">
-    <require permission="zope.View"
-             attributes="user_id
-                       item_id" />
-    <require permission="bungeni.consignatory.Edit"
-             set_attributes="user_id
-                       item_id" />
-  </class>
-
-  <class class=".domain.GroupItemAssignment" >
-    <require permission="zope.View"
-             attributes="assignment_id
-                        item_id
-                        group_id
-                        start_date
-                        end_date
-                        due_date
-                        status
-                        notes" />
-                                  
-    <require permission="bungeni.groupitemassignment.Edit"
-             set_attributes="assignment_id
-                        item_id
-                        group_id
-                        start_date
-                        end_date
-                        due_date
-                        status
-                        notes" />
-  </class>
-          
-  <class class=".domain.GroupMembership" >
-    <require permission="zope.View"
-             attributes="membership_id
-                        user_id
-                        group_id
-                        start_date
-                        end_date
-                        notes
-                        active_p
-                        replaced_id
-                        substitution_type
-                        membership_type" />
-                                  
-    <require permission="bungeni.groupmember.Edit"
-             set_attributes="membership_id
-                        user_id
-                        group_id
-                        start_date
-                        end_date
-                        notes
-                        active_p
-                        replaced_id
-                        substitution_type
-                        membership_type" />
-  </class>
-  <class class=".domain.MemberOfParliament" >
-    <require permission="zope.View"
-             attributes="membership_id
-                        user_id
-                        group_id
-                        start_date
-                        end_date
-                        notes
-                        active_p
-                        replaced_id
-                        substitution_type
-                        membership_type
-                        constituency_id
-                        elected_nominated
-                        election_nomination_date
-                        leave_reason" />
-                                  
-    <require permission="bungeni.groupmember.Edit"
-             set_attributes="membership_id
-                        user_id
-                        group_id
-                        start_date
-                        end_date
-                        notes
-                        active_p
-                        replaced_id
-                        substitution_type
-                        membership_type
-                        constituency_id
-                        elected_nominated
-                        election_nomination_date
-                        leave_reason" />
-  </class>
-
-  <class class=".domain.Constituency" >
-    <require permission="zope.View"
-        attributes="constituency_id
-                    name
-                    province_id
-                    region_id
-                    start_date
-                    end_date"/>
-    <require permission="zope.ManageContent"
-        set_attributes="constituency_id
-                    name
-                    province_id
-                    region_id
-                    start_date
-                    end_date"/>
-  </class>
- 
-  <class class=".domain.AttachedFile" >
-    <require permission="zope.View"
-        attributes="attached_file_id
-                    item_id
-                    file_version_id
-                    file_title
-                    file_description
-                    file_data
-                    file_name
-                    file_mimetype
-                    status
-                    status_date"/>
-        <require permission="bungeni.attachedfile.Edit"
-             set_attributes="attached_file_id
-                    item_id
-                    file_version_id
-                    file_title
-                    file_description
-                    file_data
-                    file_name
-                    file_mimetype"/>
+    
+    <!-- 
+        !+DOMAIN_SCHEMA(mr, aug-2010) keep in sync with domain.py, unittests?
+    -->
+    
+    <class class=".domain.ParliamentaryItem">
+        <require permission="zope.View"
+            attributes="
+                parliamentary_item_id
+                parliament_id
+                owner_id
+                language
+                short_name
+                full_name
+                body_text
+                submission_date
+                status
+                status_date
+                registry_number
+                note
+                receive_notification"
+        />
         <require permission="bungeni.edit.historical"
-            set_attributes="status_date
-                            status" />
-  </class>
-  
-  <class class=".domain.EventItem" >
-    <require like_class=".domain.ParliamentaryItem" />
-    <require permission="bungeni.event.Edit"
-         set_attributes="event_date
-                        parliamentary_item_id
-                        owner_id
-                        language
-                        short_name
-                        full_name
-                        body_text
-                        submission_date
-                        note
-                        receive_notification"/>
-  </class>
-  
-  <class class=".domain.Heading" >
-    <require like_class=".domain.ParliamentaryItem" />
-  </class>
-  
-  <class class=".domain.User" >
-    <require permission="zope.View"
-        attributes="user_id
-        status
-        login
-        titles
-        first_name
-        last_name
-        middle_name
-        email
-        gender
-        date_of_birth
-        date_of_death
-        birth_country
-        birth_nationality
-        current_nationality
-        uri
-        type_of_id
-        national_id
-        description
-        image
-        receive_notification
-        language" />
-
-    <require permission="zope.ManageContent"
-        set_attributes="user_id
-        status
-        login
-        titles
-        first_name
-        last_name
-        middle_name
-        email
-        gender
-        date_of_birth
-        date_of_death
-        birth_country
-        birth_nationality
-        current_nationality
-        uri
-        type_of_id
-        national_id
-        description
-        image
-        receive_notification
-        language" />
-        
-  </class>
-  
+            set_attributes="
+                parliament_id
+                status
+                registry_number
+                status_date"
+        />
+    </class>
+    
+    <class class=".domain.Bill">
+        <require permission="zope.View"
+            attributes="
+                submission_date
+                status
+                identifier
+                short_name
+                language
+                body_text
+                bill_type_id
+                summary
+                ministry_id
+                full_name
+                publication_date
+                receive_notification
+                registry_number
+                owner_id
+                parliament_id" 
+        />
+        <require permission="bungeni.bill.Edit"
+            attributes="note" 
+        />
+        <require permission="bungeni.bill.Edit"
+            set_attributes="
+                short_name
+                language
+                body_text
+                bill_type_id
+                summary
+                ministry_id
+                full_name
+                receive_notification
+                owner_id
+                note"
+        />
+        <require permission="bungeni.edit.historical"
+            set_attributes="
+                parliament_id
+                status
+                status_date
+                identifier
+                registry_number
+                publication_date"
+        />
+    </class>
+    
+    <class class=".domain.Question">
+        <require permission="zope.View"
+            attributes="
+                submission_date
+                status
+                short_name
+                language
+                body_text
+                supplement_parent_id
+                approval_date
+                ministry_submit_date
+                ministry_id
+                response_type
+                full_name
+                question_type
+                question_number
+                receive_notification
+                registry_number
+                parliament_id
+                owner_id"
+        />
+        <require permission="bungeni.question.Edit"
+            attributes="note" 
+        />
+        <require permission="bungeni.question.Edit"
+            set_attributes="short_name
+                language
+                body_text
+                ministry_id
+                response_type
+                full_name
+                question_type
+                receive_notification
+                owner_id
+                note"
+        />
+        <require permission="bungeni.response.View"
+            attributes="response_text"
+        />
+        <require permission="bungeni.response.Edit"
+            set_attributes="response_text" 
+        />
+        <require permission="bungeni.edit.historical"
+            set_attributes="parliament_id
+                submission_date
+                status
+                status_date
+                supplement_parent_id
+                approval_date
+                sitting_time
+                question_number
+                registry_number
+                ministry_submit_date" 
+        />         
+    </class>
+    
+    <class class=".domain.Motion">
+        <require permission="zope.View"
+            attributes="
+                parliamentary_item_id
+                motion_id
+                owner_id
+                language
+                short_name
+                full_name
+                body_text
+                status
+                status_date
+                receive_notification
+                motion_number
+                approval_date
+                public
+                registry_number
+                seconder_id
+                entered_by_id
+                party_id
+                notice_date"
+        />
+        <require permission="bungeni.motion.Edit"
+            attributes="note"
+        />
+        <require permission="bungeni.motion.Edit"
+            set_attributes="
+                parliamentary_item_id 
+                motion_id
+                owner_id
+                language
+                short_name
+                full_name
+                body_text
+                note
+                receive_notification
+                public
+                seconder_id
+                party_id"
+        />
+        <require permission="bungeni.edit.historical"
+            attributes="
+                parliament_id
+                submission_date" 
+        />
+        <require permission="bungeni.edit.historical"
+            set_attributes="
+                parliament_id
+                submission_date
+                status
+                status_date
+                motion_number
+                approval_date
+                entered_by_id
+                registry_number
+                notice_date"
+        />
+    </class>
+    
+    <class class=".domain.ItemSchedule">
+        <require permission="zope.View"
+            attributes="
+                schedule_id
+                item_id
+                sitting_id
+                category_id
+                planned_order
+                real_order
+                active
+                getItem
+                getDiscussion
+                item_status"
+        />
+        <require permission="bungeni.itemschedule.Edit"
+            set_attributes="
+                item_id
+                sitting_id
+                category_id
+                planned_order
+                real_order
+                active
+                item_status"
+        />
+    </class>
+    <class class=".domain.ScheduledItemDiscussion">
+        <require permission="zope.View"
+            attributes="
+                schedule_id
+                body_text sitting_time"
+        />
+        <require permission="bungeni.itemschedule.Edit"
+            set_attributes="
+                item_id
+                body_text 
+                sitting_time"
+        />
+    </class>
+    
+    <class class=".domain.GroupSittingAttendance">
+        <require permission="zope.View"
+            attributes="
+                sitting_id
+                member_id
+                attendance_id"
+        />
+        <require permission="bungeni.sittingattendance.Edit"
+            set_attributes="
+                sitting_id
+                member_id
+                attendance_id"
+        />
+    </class>
+    
+    <class class=".domain.AgendaItem">
+        <require permission="zope.View"
+            attributes="
+                parliamentary_item_id
+                owner_id
+                language
+                short_name
+                full_name
+                body_text
+                status
+                status_date
+                receive_notification
+                group_id
+                approval_date
+                registry_number"
+        />
+        <require permission="bungeni.agendaitem.Edit"
+            attributes="note" 
+        />
+        <require permission="bungeni.agendaitem.Edit"
+             set_attributes="
+                parliamentary_item_id 
+                owner_id
+                language
+                short_name
+                full_name
+                body_text
+                note
+                receive_notification
+                group_id
+                "
+        />
+        <require permission="bungeni.edit.historical"
+            attributes="
+                parliament_id
+                submission_date"
+        />
+        <require permission="bungeni.edit.historical"
+            set_attributes="
+                parliament_id
+                submission_date
+                approval_date
+                registry_number
+                status
+                status_date"
+        />
+    </class>
+    <class class=".domain.TabledDocument">
+        <require permission="zope.View"
+            attributes="
+                parliamentary_item_id
+                owner_id
+                language
+                short_name
+                full_name
+                body_text
+                status
+                registry_number
+                tabled_document_number
+                status_date
+                receive_notification
+                approval_date
+                link"
+        />
+        <require permission="bungeni.tableddocument.Edit"
+            attributes="note"
+        />
+        <require permission="bungeni.tableddocument.Edit"
+            set_attributes="
+                parliamentary_item_id 
+                owner_id
+                language
+                short_name
+                full_name
+                body_text
+                note
+                receive_notification
+                link"
+        />
+        <require permission="bungeni.edit.historical"
+            attributes="
+                parliament_id
+                submission_date"
+        />
+        <require permission="bungeni.edit.historical"
+            set_attributes="
+                parliament_id
+                submission_date
+                approval_date
+                registry_number
+                tabled_document_number
+                status
+                status_date"
+        />
+    </class>
+    
+    <class class=".domain.Office">
+        <require permission="zope.View"
+            attributes="
+                group_id
+                office_id
+                short_name
+                full_name
+                description
+                status
+                start_date
+                end_date
+                type 
+                office_type"
+        />
+        <require permission= "bungeni.office.ChangeType" 
+            set_attributes="office_type"
+        />
+        <require permission="bungeni.office.Edit"
+            set_attributes="
+                short_name
+                full_name
+                description
+                start_date
+                end_date"
+        />
+        <require permission="bungeni.edit.historical"
+            attributes="parent_group_id"
+        />
+        <require permission="bungeni.edit.historical"
+            set_attributes="parent_group_id
+                status" 
+        />
+    </class>
+    
+    <class class=".domain.Parliament">
+        <require permission="zope.View"
+            attributes="
+                group_id
+                parliament_id
+                short_name
+                full_name
+                description
+                status
+                start_date
+                end_date
+                type
+                election_date"
+        />
+        <require permission="bungeni.parliament.Edit"
+            set_attributes="
+                short_name
+                full_name
+                description
+                start_date
+                end_date
+                election_date"
+        />
+        <require permission="bungeni.edit.historical"
+            attributes="parent_group_id"
+        />
+        <require permission="bungeni.edit.historical"
+            set_attributes="
+                parent_group_id
+                status"
+        />
+    </class>
+    <class class=".domain.Committee">
+        <require permission="zope.View"
+            attributes="
+                group_id
+                short_name
+                full_name
+                description
+                status
+                start_date
+                end_date
+                type
+                committee_type_id 
+                no_members
+                min_no_members
+                quorum
+                no_clerks
+                no_researchers 
+                proportional_representation 
+                default_chairperson 
+                reinstatement_date"
+        />
+        <require permission="bungeni.committee.Edit"
+             set_attributes="
+                short_name
+                full_name
+                description
+                start_date
+                end_date
+                committee_type_id
+                no_members
+                min_no_members
+                quorum
+                no_clerks
+                no_researchers
+                proportional_representation
+                default_chairperson
+                reinstatement_date"
+        />
+        <require permission="bungeni.edit.historical"
+            attributes="parent_group_id"
+        />
+        <require permission="bungeni.edit.historical"
+            set_attributes="
+                parent_group_id
+                status"
+        />
+    </class>
+    
+    <class class=".domain.PoliticalParty">
+        <require permission="zope.View"
+             attributes="
+                group_id
+                short_name
+                full_name
+                description
+                status
+                start_date
+                end_date
+                type
+                logo_data"
+        />
+        <require permission="bungeni.party.Edit"
+             set_attributes="
+                short_name
+                full_name
+                description
+                start_date
+                end_date
+                logo_data"
+        />
+    </class>
+    <class class=".domain.PoliticalGroup">
+        <require like_class=".domain.PoliticalParty" />
+        <require permission="bungeni.edit.historical"
+            attributes="parent_group_id"
+        />
+        <require permission="bungeni.edit.historical"
+            set_attributes="
+                parent_group_id
+                status"
+        />
+    </class>
+    
+    <class class=".domain.Government">
+        <require permission="zope.View"
+            attributes="
+                group_id
+                short_name
+                full_name
+                description
+                status
+                start_date
+                end_date
+                type" 
+        />
+        <require permission="bungeni.government.Edit"
+            set_attributes="
+                short_name
+                full_name
+                description
+                start_date
+                end_date"
+        />
+        <require permission="bungeni.edit.historical"
+            attributes="parent_group_id"
+        />
+        <require permission="bungeni.edit.historical"
+            set_attributes="
+                parent_group_id
+                status"
+        />
+    </class>
+    
+    <class class=".domain.Ministry">
+        <require permission="zope.View"
+            attributes="
+                group_id
+                short_name
+                full_name
+                description
+                status
+                start_date
+                end_date
+                type"
+        />
+        <require permission="bungeni.ministry.Edit"
+            set_attributes="
+                short_name
+                full_name
+                description
+                start_date
+                end_date"
+        />
+        <require permission="bungeni.edit.historical"
+            attributes="parent_group_id"
+        />
+        <require permission="bungeni.edit.historical"
+            set_attributes="
+                parent_group_id
+                status"
+        />
+    </class>
+    <class class=".domain.Consignatory">
+        <require permission="zope.View"
+            attributes="
+                user_id
+                item_id"
+        />
+        <require permission="bungeni.consignatory.Edit"
+             set_attributes="
+                user_id
+                item_id" 
+        />
+    </class>
+    
+    <class class=".domain.GroupItemAssignment">
+        <require permission="zope.View"
+            attributes="
+                assignment_id
+                item_id
+                group_id
+                start_date
+                end_date
+                due_date
+                status
+                notes" 
+        />
+        <require permission="bungeni.groupitemassignment.Edit"
+            set_attributes="
+                assignment_id
+                item_id
+                group_id
+                start_date
+                end_date
+                due_date
+                status
+                notes"
+        />
+    </class>
+    
+    <class class=".domain.GroupMembership">
+        <require permission="zope.View"
+            attributes="
+                membership_id
+                user_id
+                group_id
+                start_date
+                end_date
+                notes
+                active_p
+                replaced_id
+                substitution_type
+                membership_type"
+        />
+        <require permission="bungeni.groupmember.Edit"
+            set_attributes="membership_id
+                user_id
+                group_id
+                start_date
+                end_date
+                notes
+                active_p
+                replaced_id
+                substitution_type
+                membership_type"
+        />
+    </class>
+    <class class=".domain.MemberOfParliament">
+        <require permission="zope.View"
+            attributes="
+                membership_id
+                user_id
+                group_id
+                start_date
+                end_date
+                notes
+                active_p
+                replaced_id
+                substitution_type
+                membership_type
+                constituency_id
+                elected_nominated
+                election_nomination_date
+                leave_reason"
+        />
+        <require permission="bungeni.groupmember.Edit"
+            set_attributes="
+                membership_id
+                user_id
+                group_id
+                start_date
+                end_date
+                notes
+                active_p
+                replaced_id
+                substitution_type
+                membership_type
+                constituency_id
+                elected_nominated
+                election_nomination_date
+                leave_reason"
+        />
+    </class>
+    <class class=".domain.Constituency" >
+        <require permission="zope.View"
+            attributes="
+                constituency_id
+                name
+                province_id
+                region_id
+                start_date
+                end_date"
+        />
+        <require permission="zope.ManageContent"
+            set_attributes="
+                constituency_id
+                name
+                province_id
+                region_id
+                start_date
+                end_date"
+        />
+    </class>
+    <class class=".domain.AttachedFile">
+        <require permission="zope.View"
+            attributes="
+                attached_file_id
+                item_id
+                file_version_id
+                file_title
+                file_description
+                file_data
+                file_name
+                file_mimetype
+                status
+                status_date"
+        />
+        <require permission="bungeni.attachedfile.Edit"
+            set_attributes="
+                attached_file_id
+                item_id
+                file_version_id
+                file_title
+                file_description
+                file_data
+                file_name
+                file_mimetype"
+        />
+        <require permission="bungeni.edit.historical"
+            set_attributes="
+                status_date
+                status" 
+        />
+    </class>
+    <class class=".domain.EventItem">
+        <require like_class=".domain.ParliamentaryItem" />
+        <require permission="bungeni.event.Edit"
+            set_attributes="
+                event_date
+                parliamentary_item_id
+                owner_id
+                language
+                short_name
+                full_name
+                body_text
+                submission_date
+                note
+                receive_notification"
+        />
+    </class>
+    
+    <class class=".domain.Heading">
+        <require like_class=".domain.ParliamentaryItem" />
+    </class>
+    
+    <class class=".domain.User">
+        <require permission="zope.View"
+            attributes="
+                user_id
+                status
+                login
+                titles
+                first_name
+                last_name
+                middle_name
+                email
+                gender
+                date_of_birth
+                date_of_death
+                birth_country
+                birth_nationality
+                current_nationality
+                uri
+                type_of_id
+                national_id
+                description
+                image
+                receive_notification
+                language"
+        />
+        <require permission="zope.ManageContent"
+            set_attributes="
+                user_id
+                status
+                login
+                titles
+                first_name
+                last_name
+                middle_name
+                email
+                gender
+                date_of_birth
+                date_of_death
+                birth_country
+                birth_nationality
+                current_nationality
+                uri
+                type_of_id
+                national_id
+                description
+                image
+                receive_notification
+                language"
+        />
+    </class>
   
 </configure>
 
