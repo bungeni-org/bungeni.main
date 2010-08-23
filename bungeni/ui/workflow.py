@@ -148,7 +148,7 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
     
     class IWorkflowComment(zope.interface.Interface):
         note = zope.schema.Text(
-            title=_("Comment on workflow change"), required=True)
+            title=_("Comment on workflow change"), required=False)
         date_active = zope.schema.Datetime(
             title=_("Active Date"), required=True)
         
