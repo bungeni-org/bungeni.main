@@ -78,17 +78,18 @@ mapper(domain.UserDelegation, schema.user_delegations,
 
 # group subclasses
 
-s_government = rdb.select([schema.groups.c.group_id,
-                    schema.groups.c.start_date,
-                    schema.groups.c.end_date,
-                    schema.groups.c.parent_group_id,
-                    schema.groups.c.status,
-                    schema.groups.c.short_name,
-                    schema.groups.c.full_name],
-                    whereclause=
-                    schema.groups.c.type ==
-                    "government",
-                    from_obj=[schema.groups]).alias("list_government")
+s_government = rdb.select([
+            schema.groups.c.group_id,
+            schema.groups.c.start_date,
+            schema.groups.c.end_date,
+            schema.groups.c.parent_group_id,
+            schema.groups.c.status,
+            schema.groups.c.short_name,
+            schema.groups.c.full_name
+        ],
+        whereclause=schema.groups.c.type=="government",
+        from_obj=[schema.groups]
+    ).alias("list_government")
 
 mapper(domain.ListGovernment, s_government)
 
@@ -228,6 +229,18 @@ mapper(domain.MemberOfParliament, schema.parliament_memberships,
             uselist=False,
             lazy=False),
         "constituency_id":[schema.parliament_memberships.c.constituency_id],
+        "province":relation(domain.Province,
+            primaryjoin=(schema.parliament_memberships.c.province_id ==
+                            schema.provinces.c.province_id),
+            uselist=False,
+            lazy=False),
+        "province_id":[schema.parliament_memberships.c.province_id],
+        "region":relation(domain.Region,
+            primaryjoin=(schema.parliament_memberships.c.region_id ==
+                            schema.regions.c.region_id),
+            uselist=False,
+            lazy=False),
+        "region_id":[schema.parliament_memberships.c.region_id],
         "party":relation(domain.PoliticalParty,
             primaryjoin=(schema.parliament_memberships.c.party_id ==
                             schema.political_parties.c.party_id),
@@ -243,27 +256,38 @@ mapper(domain.MemberOfParliament, schema.parliament_memberships,
     polymorphic_identity="parliamentmember",
 )
 
-s_member_of_parliament = rdb.select([schema.user_group_memberships.c.membership_id,
-                    schema.user_group_memberships.c.start_date,
-                    schema.user_group_memberships.c.end_date,
-                    schema.user_group_memberships.c.group_id,
-                    schema.parliament_memberships.c.elected_nominated,
-                    schema.users.c.first_name,
-                    schema.users.c.middle_name,
-                    schema.users.c.last_name,
-                    (schema.users.c.first_name + " " +
-                    schema.users.c.last_name).label("user_id"),
-                    schema.users.c.user_id.label("_fk_user_id"),
-                    schema.constituencies.c.name.label("constituency_id"),
-                    schema.parliament_memberships.c.constituency_id.label("_fk_constituency_id"),
-                    schema.constituencies.c.name.label("name")],
-                    from_obj=[schema.parliament_memberships.join(
-                            schema.constituencies).join(schema.user_group_memberships
-                        ).join(
-                        schema.users, schema.user_group_memberships.c.user_id ==
-                              schema.users.c.user_id)]).alias("list_member_of_parliament")
-
-
+s_member_of_parliament = rdb.select([
+        schema.user_group_memberships.c.membership_id,
+        schema.user_group_memberships.c.start_date,
+        schema.user_group_memberships.c.end_date,
+        schema.user_group_memberships.c.group_id,
+        schema.parliament_memberships.c.elected_nominated,
+        schema.users.c.first_name,
+        schema.users.c.middle_name,
+        schema.users.c.last_name,
+        (schema.users.c.first_name+" "+schema.users.c.last_name
+            ).label("user_id"),
+        schema.users.c.user_id.label("_fk_user_id"),
+        schema.constituencies.c.name.label("constituency_id"),
+        schema.parliament_memberships.c.constituency_id.label(
+            "_fk_constituency_id"),
+        schema.constituencies.c.name.label("name"),
+        # !+PROVINCE_REGION(mr, aug-2010) is this needed?
+        schema.provinces.c.province_id.label("province_id"),
+        schema.parliament_memberships.c.province_id.label("_fk_province_id"),
+        schema.provinces.c.province_id.label("province"),
+        schema.regions.c.region_id.label("region_id"),
+        schema.parliament_memberships.c.region_id.label("_fk_region_id"),
+        schema.regions.c.region_id.label("region"),
+    ],
+    from_obj=[
+        schema.parliament_memberships.join(schema.constituencies
+            ).join(schema.provinces # !+PROVINCE(mr, aug-2010) needed?
+            ).join(schema.regions # !+REGION(mr, aug-2010) needed?
+            ).join(schema.user_group_memberships
+            ).join(schema.users, 
+                schema.user_group_memberships.c.user_id==schema.users.c.user_id)
+    ]).alias("list_member_of_parliament")
 
 mapper(domain.ListMemberOfParliament, s_member_of_parliament)
 
@@ -837,32 +861,18 @@ mapper(domain.HoliDay, schema.holidays)
 ######################
 #
 
-s_constituency = rdb.select([schema.constituencies.c.constituency_id,
-                    schema.constituencies.c.name,
-                    schema.constituencies.c.start_date,
-                    schema.constituencies.c.end_date,
-                    schema.provinces.c.province,
-                    schema.regions.c.region,
-                    schema.constituencies.c.province_id.label("_fk_province_id"),
-                    schema.constituencies.c.region_id.label("_fk_region_id"),
-                    schema.provinces.c.province.label("province_id"),
-                    schema.regions.c.region.label("region_id"), ],
-                    from_obj=[schema.constituencies.outerjoin(
-                        schema.regions).outerjoin(schema.provinces)],
-                              ).alias("list_constituency")
+s_constituency = rdb.select([
+            schema.constituencies.c.constituency_id,
+            schema.constituencies.c.name,
+            schema.constituencies.c.start_date,
+            schema.constituencies.c.end_date
+        ],
+        from_obj=[schema.constituencies]
+    ).alias("list_constituency")
 
 mapper(domain.ListConstituency, s_constituency)
 
-mapper(domain.Constituency, schema.constituencies,
-        properties={
-        "province": relation(domain.Province,
-                              uselist=False,
-                              lazy=False),
-        "region": relation(domain.Region,
-                              uselist=False,
-                              lazy=False),
-        }
-    )
+mapper(domain.Constituency, schema.constituencies)
 mapper(domain.Province, schema.provinces)
 mapper(domain.Region, schema.regions)
 mapper(domain.Country, schema.countries)

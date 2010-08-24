@@ -302,14 +302,6 @@ class ConstituencyDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         return context.name
-    
-    @property
-    def description(self):
-        session = Session()
-        context = session.merge(removeSecurityProxy(self.context))
-        return u"%s - %s -%s" % (context.name,
-            context.province.province,
-            context.region.region)
 
 
 class ProvinceDescriptiveProperties(DescriptiveProperties):

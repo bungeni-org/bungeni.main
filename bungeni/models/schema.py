@@ -138,8 +138,15 @@ parliament_memberships = rdb.Table("parliament_memberships", metadata,
         rdb.ForeignKey("user_group_memberships.membership_id"),
         primary_key=True
     ),
+    # the constituency/province/region of the MP as of the time he was elected
     rdb.Column("constituency_id", rdb.Integer,
         rdb.ForeignKey("constituencies.constituency_id")
+    ),
+    rdb.Column("province_id", rdb.Integer,
+        rdb.ForeignKey("provinces.province_id")
+    ),
+    rdb.Column("region_id", rdb.Integer,
+        rdb.ForeignKey("regions.region_id")
     ),
     # the political party of the MP as of the time he was elected
     rdb.Column("party_id", rdb.Integer,
@@ -156,31 +163,32 @@ parliament_memberships = rdb.Table("parliament_memberships", metadata,
 
 
 #########################
-# Constituencies
+# Geo Localities
 #########################
+
+# !+GEO_LOCALITIES(mr, aug-2010) there is no longer any conceptual differences
+# between constituency/region/province entities -- maybe should be reduced to
+# a single table "geo_localities" plus a (parametrizable) type qualifier column.
+# This implies reworking: db schema, "add mp" form, core/ dc.py app.py, etc.
+
+# !+GEO_LOCALITIES(mr, aug-2010) all geo_localities should have start/end dates
+# as well as additional extra (dated) details.
 
 constituencies = rdb.Table("constituencies", metadata,
     rdb.Column("constituency_id", rdb.Integer, primary_key=True),
     rdb.Column("name", rdb.Unicode(256), nullable=False),
-    rdb.Column("province_id", rdb.Integer,
-        rdb.ForeignKey("provinces.province_id")
-    ),
-    rdb.Column("region_id", rdb.Integer, rdb.ForeignKey("regions.region_id")),
     rdb.Column("start_date", rdb.Date, nullable=False),
     rdb.Column("end_date", rdb.Date),
     rdb.Column("language", rdb.String(5), nullable=False),
 )
-
 provinces = rdb.Table("provinces", metadata,
     rdb.Column("province_id", rdb.Integer, primary_key=True),
-    #rdb.Column("region_id", rdb.Integer, rdb.ForeignKey("regions.region_id")),
-    rdb.Column("province", rdb.Unicode(256), nullable=False),
+    rdb.Column("province", rdb.Unicode(256), nullable=False), # !+name
     rdb.Column("language", rdb.String(5), nullable=False),
 )
-
 regions = rdb.Table("regions", metadata,
     rdb.Column("region_id", rdb.Integer, primary_key=True),
-    rdb.Column("region", rdb.Unicode(256), nullable=False),
+    rdb.Column("region", rdb.Unicode(256), nullable=False), # !+name
     rdb.Column("language", rdb.String(5), nullable=False),
 )
 
@@ -193,6 +201,7 @@ countries = rdb.Table("countries", metadata,
     rdb.Column("language", rdb.String(5), nullable=False),
 )
 
+# !+GEO_LOCALITIES_DETAILS(mr, aug-2010) generalize/apply to all geo_localities
 constituency_details = rdb.Table("constituency_details", metadata,
     rdb.Column("constituency_detail_id", rdb.Integer, primary_key=True),
     rdb.Column("constituency_id", rdb.Integer,

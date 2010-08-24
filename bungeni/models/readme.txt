@@ -94,7 +94,7 @@ different table. Bungeni uses this feature to model parliaments, committees,
 political parties, etc. Let's create some groups in the system to examine how
 they work.
 
-  >>> parliament = model.Parliament( short_name=u"p_1", start_date=datetime.datetime.now(), election_date=datetime.datetime.now())
+  >>> parliament = model.Parliament(short_name=u"p_1", start_date=datetime.datetime.now(), election_date=datetime.datetime.now())
   >>> parliament.language = "en"
   >>> session.add( parliament )
   >>> session.flush()
@@ -107,9 +107,9 @@ they work.
   >>> political_party_b.language = "en"
   >>> session.add(political_party_a)
   >>> session.add(political_party_b)
-  >>> session.add( mp_1 )
-  >>> session.add( mp_2 )
-  >>> session.add( mp_3 )
+  >>> session.add(mp_1)
+  >>> session.add(mp_2)
+  >>> session.add(mp_3)
   >>> session.flush()
   
   >>> committee_a = model.Committee(short_name=u"commitee_1", start_date=datetime.datetime.now())
@@ -128,7 +128,7 @@ Let's create some memberships and see what we can do with them.
   ...    membership.user = mp
   ...    membership.group = parliament
   ...    membership.language = "en"
-  ...    session.add( membership )
+  ...    session.add(membership)
   ...    membership = model.GroupMembership()
   ...    membership.user = mp
   ...    membership.group = political_party_a
@@ -188,8 +188,6 @@ Constituencies have a fk on regions and provinces:
 
   >>> constituency = model.Constituency()
   >>> constituency.name = u"Nairobi/Westlands"
-  >>> constituency.region_id = region.region_id
-  >>> constituency.province_id = province.province_id
   >>> constituency.start_date = datetime.datetime.now()
   >>> constituency.language = "en"
 
@@ -228,6 +226,8 @@ the parliaments group and additional attributes.
   >>> mp4.start_date = datetime.datetime.now()
   >>> mp4.constituency_id = constituency.constituency_id
   >>> mp4.constituency = constituency
+  >>> mp4.province_id = province.province_id
+  >>> mp4.region_id = region.region_id
   >>> mp4.elected_nominated = 'E'
   >>> mp4.language = "en"
   >>> session.add(mp4)
@@ -432,10 +432,5 @@ Clean up commit outstanding transactions
  >>> session.flush() 
  >>> session.commit()
  >>> session.close()
- 
-
- 
-
-
 
 

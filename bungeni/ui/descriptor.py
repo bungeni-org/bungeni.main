@@ -175,8 +175,24 @@ def workflow_column(name, title, default=u""):
 
 def constituency_column(name, title, default=u""):
     def getter(item, formatter):
+        if item.constituency is None:
+            return default
         obj = translate_obj(item.constituency)
         return obj.name
+    return column.GetterColumn(title, getter)
+def province_column(name, title, default=u""):
+    def getter(item, formatter):
+        if item.province is None:
+            return default
+        obj = translate_obj(item.province)
+        return obj.province
+    return column.GetterColumn(title, getter)
+def region_column(name, title, default=u""):
+    def getter(item, formatter):
+        if item.region is None:
+            return default
+        obj = translate_obj(item.region)
+        return obj.region
     return column.GetterColumn(title, getter)
 
 def party_column(name, title, default=u""):
@@ -209,18 +225,6 @@ def attendance_column(name, title, default=u""):
     def getter(item, formatter):
         obj = translate_obj(item.attendance_type)
         return obj.attendance_type
-    return column.GetterColumn(title, getter)
-
-def province_column(name, title, default=u""):
-    def getter(item, formatter):
-        obj = translate_obj(item.province)
-        return obj.province
-    return column.GetterColumn(title, getter)
-
-def region_column(name, title, default=u""):
-    def getter(item, formatter):
-        obj = translate_obj(item.region)
-        return obj.region
     return column.GetterColumn(title, getter)
 
 ####
@@ -535,6 +539,14 @@ class MpDescriptor(ModelDescriptor):
                     token_field="constituency_id",
                     title_field="name",
                     value_field="constituency_id")
+    provinceSource = vocabulary.DatabaseSource(domain.Province,
+                    token_field="province_id",
+                    title_field="province",
+                    value_field="province_id")
+    regionSource = vocabulary.DatabaseSource(domain.Region,
+                    token_field="region_id",
+                    title_field="region",
+                    value_field="region_id")
     partySource = vocabulary.DatabaseSource(domain.PoliticalParty,
                     token_field="party_id",
                     title_field="full_name",
@@ -546,15 +558,36 @@ class MpDescriptor(ModelDescriptor):
                 source=vocabulary.ElectedNominated),
                 listing=True),
         dict(name="election_nomination_date",
-            property=schema.Date(title=_("Election/Nomination Date"), required=True),
+            property=schema.Date(title=_("Election/Nomination Date"),
+                required=True),
             required=True,
             edit_widget=DateWidget,
             add_widget=DateWidget),
         dict(name="constituency_id",
             property=schema.Choice(
                 title=_(u"Constituency"),
-                source=constituencySource,),
+                source=constituencySource,
+                required=False),
+            # !+REQUIRED_FIELD(mr, aug-2010) this is not working -- what we 
+            # *may* want to achieve is: to require that this field be set 
+            # but without assuming any default value (that, for SELECT widgets, 
+            # the first item is used as the default):
+            #required=True, 
             listing_column=constituency_column("constituency_id", "Constituency"),
+            listing=True),
+        dict(name="province_id",
+            property=schema.Choice(
+                title=_(u"Province"),
+                source=provinceSource,
+                required=False),
+            listing_column=province_column("province_id", "Province"),
+            listing=True),
+        dict(name="region_id",
+            property=schema.Choice(
+                title=_(u"region"),
+                source=regionSource,
+                required=False),
+            listing_column=region_column("region_id", "region"),
             listing=True),
         dict(name="party_id",
             property=schema.Choice(
@@ -1862,14 +1895,6 @@ class ConstituencyDescriptor(ModelDescriptor):
     display_name = _(u"Constituency")
     container_name = _(u"Constituencies")
 
-    provinceSource = vocabulary.DatabaseSource(domain.Province,
-                    token_field='province_id',
-                    title_field='province',
-                    value_field='province_id')
-    regionSource = vocabulary.DatabaseSource(domain.Region,
-                    token_field='region_id',
-                    title_field='region',
-                    value_field='region_id')
     fields = [
         dict(name="constituency_id", omit=True),
         LanguageField("language"),
@@ -1878,25 +1903,6 @@ class ConstituencyDescriptor(ModelDescriptor):
             description=_("Name of the constituency"),
             required=True),
             listing=True),
-        dict(name="province_id",
-            property=schema.Choice(
-                title=_(u"Province"),
-                source=provinceSource,
-                required=True),
-            listing_column=province_column("province_id",
-                _(u"Province")),
-            listing=True,
-        ),
-        dict(name="region_id",
-            label=_(u"Region"),
-            property=schema.Choice(
-                title=_(u"Region"),
-                source=regionSource,
-                required=True),
-             listing_column=region_column("region_id",
-                _(u"Region")),
-            listing=True,
-        ),
         dict(name="start_date",
                 property=schema.Date(title=_(u"Start Date"), required=True),
                 listing=True,

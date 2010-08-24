@@ -631,6 +631,8 @@
                 substitution_type
                 membership_type
                 constituency_id
+                province_id
+                region_id
                 elected_nominated
                 election_nomination_date
                 leave_reason"
@@ -648,6 +650,8 @@
                 substitution_type
                 membership_type
                 constituency_id
+                province_id
+                region_id
                 elected_nominated
                 election_nomination_date
                 leave_reason"
@@ -658,8 +662,6 @@
             attributes="
                 constituency_id
                 name
-                province_id
-                region_id
                 start_date
                 end_date"
         />
@@ -667,8 +669,6 @@
             set_attributes="
                 constituency_id
                 name
-                province_id
-                region_id
                 start_date
                 end_date"
         />
