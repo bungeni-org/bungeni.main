@@ -26,9 +26,8 @@ class TableFormatter(batching.Formatter):
     def __call__(self):
         return (
             '''
-            <div style="width: 100%%">
+            <div>
               <table class="%s"
-                     style="width:100%%"
                      name="%s">
                  %s
               </table>
