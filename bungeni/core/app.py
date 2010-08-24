@@ -258,14 +258,14 @@ class AppSetup(object):
         content[u'headings'] = domain.HeadingContainer()
         to_locatable_container(domain.Heading, content[u"headings"])
         
+        content[u"constituencies"] = domain.ConstituencyContainer()
+        to_locatable_container(domain.Constituency, content[u"constituencies"])
+        
         content[u"provinces"] = domain.ProvinceContainer()
         to_locatable_container(domain.Province, content[u"provinces"])
         
         content[u"regions"] = domain.RegionContainer()
         to_locatable_container(domain.Region, content[u"regions"])
-        
-        content[u"constituencies"] = domain.ConstituencyContainer()
-        to_locatable_container(domain.Constituency, content[u"constituencies"])
         
         content[u"parties"] = domain.PoliticalPartyContainer()
         to_locatable_container(domain.PoliticalParty, content[u"parties"])
