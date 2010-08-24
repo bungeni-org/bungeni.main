@@ -33,7 +33,7 @@ class BungeniBrowserView(BrowserView):
         # if view explicitly sets a page_title, use it
         if self._page_title:
             return self._page_title
-        # then try to determine it from DC annotations
+        # otherwise try to determine it from DC annotations
         context = removeSecurityProxy(self.context)
         try:
             # This is the equivalent of the ZPT expression "context/dc:title"
@@ -42,13 +42,11 @@ class BungeniBrowserView(BrowserView):
             # title attribute of the component."
             return IDCDescriptiveProperties(context).title
         except (Exception,):
-            pass
-            
+            debug.log_exc(sys.exc_info(), log_handler=log.debug)
         # otherwise try to determine it from the context
         if getattr(context, "title", None):
             return context.title 
         else:
-            debug.log_exc(sys.exc_info(), log_handler=log.debug)
             return "Bungeni"
     # View subclasses may set a custom page_title by overriding this attr
     # Note: title values are localized in the template itself.
@@ -66,8 +64,7 @@ class BungeniBrowserView(BrowserView):
         # if view explicitly sets a page_description, use it
         if self._page_description:
             return self._page_description
-        
-        # then try to determine it from DC annotations
+        # otherwise try to determine it from DC annotations
         context = removeSecurityProxy(self.context)
         try:
             # This is equivalent of the ZPT expression "context/dc:description"
@@ -76,13 +73,11 @@ class BungeniBrowserView(BrowserView):
             # description attribute of the component."
             return IDCDescriptiveProperties(context).description
         except (Exception,):
-            pass
-         
+            debug.log_exc(sys.exc_info(), log_handler=log.debug)
         # otherwise try to determine it from the context
         if getattr(context, "description", None):
             return context.description  
         else:
-            debug.log_exc(sys.exc_info(), log_handler=log.debug)
             return "Bungeni"
     # View subclasses may set a custom page_description by resetting this attr
     # Note: description values are localized in the template itself.
