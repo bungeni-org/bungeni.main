@@ -445,7 +445,8 @@ addresses = rdb.Table("addresses", metadata,
 
 ##################
 # Activity 
-# 
+#
+
 parliament_sessions = rdb.Table("sessions", metadata,
     rdb.Column("session_id", rdb.Integer, primary_key=True),
     rdb.Column("parliament_id", rdb.Integer,
