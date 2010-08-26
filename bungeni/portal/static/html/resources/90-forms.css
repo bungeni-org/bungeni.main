@@ -36,6 +36,13 @@ input {
     background: transparent;
     font-size: 1em;
 	clear: left;
+	background: #fff;
+}
+
+.actionButtons {
+	display: block;
+	height: 25px;
+	padding-left: .5em;
 }
 
 /* Code to work around IE's lacking support of sub-elements of the input element */
@@ -146,7 +153,7 @@ dl.enableFormTabbing dd {
 .context,
 .formControls .actionButtons .button,
 .documentEditable * .context {
-    background: transparent url(linkTransparent.gif) 5px 3px no-repeat;
+    background: #fff url(linkTransparent.gif) 5px 3px no-repeat;
     color: #222;
     cursor: pointer;
     font-size: 90%;
@@ -159,14 +166,19 @@ dl.enableFormTabbing dd {
     text-transform: none;
     border: 1px solid #8cacbb;
 	border-radius: 5px;
-	webkit-border-radius: 5px;
-	moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
 }
 .context:hover,
 .formControls .actionButtons .button:hover,
 .documentEditable * .context:hover {
 	background-color: #ccf;
-} 
+}
+.context:active,
+.formControls .actionButtons .button:active,
+.documentEditable * .context:active {
+	margin-top: 1px;
+}
 .destructive,
 .documentEditable * .destructive {
     background: #ffce7b url(linkTransparent.gif) 9px 1px no-repeat;
@@ -203,6 +215,7 @@ input.searchButton {
     top: 0;
     left: 0;
     margin: .5em;
+    clear: right;
 }
 .field .field {
     margin: 0;
@@ -291,13 +304,40 @@ div.content-right-column{
 }
 
 
+.section-bungeni-admin form#alchemist-form {
+	position: relative;
+	float: left;
+	width: 100%;
+}
+.section-bungeni-admin form#alchemist-form p {
+	text-align: left;
+}
+.section-bungeni-workspace form#alchemist-form {
+	width: 90%;
+	margin: 0 auto;
+}
 #field\.form\.registry_number,
 #field\.form\.owner_id,
 #field\.form\.language {
 	float: left;
 	margin: .5em;
 }
-#field\.form\.body_text {
+#field\.form\.language select {
+	margin-top: 1.2em;
+}
+#field\.form\.body_text,
+#field\.form\.description {
 	clear: left;
+}
+#field\.form\.receive_notification div.value {
+	overflow: hidden;
+	height: 20px;
+}
+#field\.form\.receive_notification div.value label {
+	float: left;
+	display: block;
+}
+#field\.form\.receive_notification div.value br {
+	display: none;
 }
 }

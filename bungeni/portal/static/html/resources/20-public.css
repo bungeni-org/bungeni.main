@@ -61,7 +61,7 @@ h3, h4, h5, h6 {
 .documentContent ul {
     list-style-image: url(bullet.gif);
     list-style-type: square;
-    margin: 0.5em 0 0 1.5em;
+    margin: 0.5em 0 1em 2em;
 }
 .documentContent ol {
     margin: 0.5em 0 0 2.5em;
@@ -553,6 +553,9 @@ dl.portalMessage {
     background-color: #ffffe3; 
     border: 1px solid #996;
     margin-bottom: 0.5em;
+	
+	border: 0 none;
+	width: 100%;
 }
 dl.portalMessage a {
     color: black;
@@ -565,13 +568,19 @@ dl.portalMessage dt {
     float: left;
     margin: 0 0.5em 0 0;
     padding: 0.5em 0.75em;
-    color: White;
-    line-height: 1.25em;
+    color: #fff;
+    line-height: 1.2em;
+	
+	border: 0 none;
+	padding: .45em;
 }
 dl.portalMessage dd {
     padding: 0.5em 0.5em; 
     margin: 0;
     line-height: 1.25em;
+	
+	padding: .5em;
+    border: 1px solid #996;
 }
 dl.warning {
     border-color: #d80;

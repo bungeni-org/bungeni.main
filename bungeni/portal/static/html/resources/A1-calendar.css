@@ -136,6 +136,9 @@ div.calendar ul.actions {
   z-index: 1000;
 }
 
+div.scheduling ul.actions {
+	width:55px;
+}
 div.scheduling ul.actions, div.calendar ul.actions,
 div.scheduling ul.items, div.calendar ul.items {
   list-style: none;
