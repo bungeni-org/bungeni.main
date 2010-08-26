@@ -36,6 +36,6 @@
     <append content="attributes:body" theme="attributes:body" />
     <pyquery pyref="bungeni.portal/static/themes/rules:add_section_links"/>
     <pyquery pyref="bungeni.portal/static/themes/rules:add_plone_tabs"/>
-    <pyquery pyref="bungeni.portal/static/themes/rules:rewrite_links"/>    
+
   </rule>
 </ruleset>
