@@ -23,6 +23,7 @@ ACTIVE_TAGS = [
     "written", # written questions
     "draft", # groupsitting
     "published", # groupsitting
+    "workspace",
 ] 
 
 # Tags for Workflow States, per Parliamentary Item
