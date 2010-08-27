@@ -287,7 +287,8 @@ def MpStartBeforeElection(obj):
     """ For members of parliament start date must be after election """
     if obj.election_nomination_date > obj.start_date:
         raise interface.Invalid(
-            _("A parliament member has to be elected/nominated before she/he can be sworn in"),
+            _("A parliament member has to be elected/nominated before "
+              "she/he can be sworn in"),
             "election_nomination_date",
             "start_date")
 
@@ -467,52 +468,62 @@ class UserDelegationDescriptor(ModelDescriptor):
 ]
 
 
-
 class GroupMembershipDescriptor(ModelDescriptor):
-
+    
     SubstitutionSource = vocabulary.SubstitutionSource(
                     token_field='user_id',
                     title_field='fullname',
                     value_field='user_id')
-
+    
     fields = [
         dict(name="start_date",
-                property=schema.Date(title=_(u"Start Date"), required=True),
-                listing_column=day_column("start_date", _(u'Start Date')),
-                listing=True,
-                edit_widget=DateWidget, add_widget=DateWidget
+            property=schema.Date(title=_(u"Start Date"), required=True),
+            listing_column=day_column("start_date", _(u'Start Date')),
+            listing=True,
+            edit_widget=DateWidget, 
+            add_widget=DateWidget
         ),
         dict(name="end_date",
-                property=schema.Date(title=_(u"End Date"), required=False),
-                listing=False,
-                listing_column=day_column("end_date",
-                _(u'End Date')),
-                edit_widget=DateWidget,
-                add_widget=DateWidget),
+            property=schema.Date(title=_(u"End Date"), required=False),
+            listing=False,
+            listing_column=day_column("end_date", _(u'End Date')),
+            edit_widget=DateWidget,
+            add_widget=DateWidget
+        ),
         dict(name="active_p",
-            property=schema.Bool(title=_(u"Active"), default=True, required=True),
-             #label=_(u"Active"),
-             #required=True,
-             view=False),
+            property=schema.Bool(
+                title=_(u"Active"), default=True, 
+                required=True
+            ),
+            #label=_(u"Active"),
+            #required=True,
+            view=False
+        ),
+        LanguageField("language"),
         dict(name="substitution_type",
-                property=schema.TextLine(title=_(u"Type of Substitution"), required=False),
-                add=False),
+            property=schema.TextLine(
+                title=_(u"Type of Substitution"), 
+                required=False
+            ),
+            add=False
+        ),
         dict(name="replaced_id",
-                property=schema.Choice(
-                    title=_(u"Substituted by"),
-                    source=SubstitutionSource,
-                    required=False),
-                add=False
+            property=schema.Choice(
+                title=_(u"Substituted by"),
+                source=SubstitutionSource,
+                required=False
+            ),
+            add=False
         ),
         dict(name="group_id", omit=True),
         dict(name="membership_id", label=_(u"Roles/Titles"),
             add=False, edit=False, view=False, listing=False,
-            listing_column=current_titles_in_group_column("membership_id",
-                _(u"Roles/Titles"))),
+            listing_column=current_titles_in_group_column(
+                "membership_id", _(u"Roles/Titles"))
+        ),
         dict(name="membership_type", omit=True),
-        LanguageField("language"),
-        ]
-
+    ]
+    
     schema_invariants = [EndAfterStart, ActiveAndSubstituted,
         SubstitudedEndDate, InactiveNoEndDate]
     custom_validators = [validations.validate_date_range_within_parent,
@@ -522,17 +533,33 @@ class MpDescriptor(ModelDescriptor):
     display_name = _(u"Member of parliament")
     container_name = _(u"Members of parliament")
 
-    fields = [dict(name="user_id",
-              property=schema.Choice(
-                title=_(u"Name"),
+    fields = [
+        dict(name="user_id",
+            property=schema.Choice(title=_(u"Name"),
                 source=vocabulary.UserSource(
                     token_field="user_id",
                     title_field="fullname",
-                    value_field="user_id")),
-                listing_column=user_name_column("user_id",
-                    _(u"Name"), "user"),
-              listing=True,
-            ), ]
+                    value_field="user_id"
+                )
+            ),
+            listing_column=user_name_column("user_id", _(u"Name"), "user"),
+            listing=True,
+        ), 
+        dict(name="elected_nominated",
+            property=schema.Choice(title=_(u"elected/nominated"),
+                source=vocabulary.ElectedNominated
+            ),
+            listing=True
+        ),
+        dict(name="election_nomination_date",
+            property=schema.Date(title=_("Election/Nomination Date"),
+                required=True
+            ),
+            required=True,
+            edit_widget=DateWidget,
+            add_widget=DateWidget
+        ),
+    ]
 
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
     constituencySource = vocabulary.DatabaseSource(domain.Constituency,
@@ -551,18 +578,8 @@ class MpDescriptor(ModelDescriptor):
                     token_field="party_id",
                     title_field="full_name",
                     value_field="party_id")
+
     fields.extend([
-        dict(name="elected_nominated",
-            property=schema.Choice(
-                title=_(u"elected/nominated"),
-                source=vocabulary.ElectedNominated),
-                listing=True),
-        dict(name="election_nomination_date",
-            property=schema.Date(title=_("Election/Nomination Date"),
-                required=True),
-            required=True,
-            edit_widget=DateWidget,
-            add_widget=DateWidget),
         dict(name="constituency_id",
             property=schema.Choice(
                 title=_(u"Constituency"),
