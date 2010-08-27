@@ -643,7 +643,7 @@ class DraftSittingsViewlet(ViewletBase):
     #render = ViewPageTemplateFile("templates/workspace_sitting_viewlet.pt")
 
     name = _("agendas/minutes")
-    states = get_states("groupsitting", tagged=["draft"])
+    states = get_states("groupsitting", tagged=["workspace"])
     list_id = "sitting-draft"
     
     def _setData(self):

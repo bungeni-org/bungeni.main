@@ -138,8 +138,8 @@ TAG_MAPPINGS["tableddocument"] = {
 }
 TAG_MAPPINGS["groupsitting"] = {
     "sitting":["private", "draft"],                            
-    "draft_agenda": ["private", "draft"],
-    "published_agenda": ["public", "published"],
-    "draft_minutes": ["public", "draft"],
+    "draft_agenda": ["private", "draft","workspace"],
+    "published_agenda": ["public", "published","workspace"],
+    "draft_minutes": ["public", "draft","workspace"],
     "published_minutes": ["public", "published"],
 }
