@@ -62,7 +62,7 @@ def get_db_user_id(context=None):
         return db_user.user_id
 
 # contextual
-def get_current_parliament(context):
+def get_current_parliament(context=None):
     from bungeni.core import globalsettings
     return globalsettings.get_current_parliament()
 
@@ -151,6 +151,16 @@ def get_current_parliament_governments(parliament=None):
             sql.and_(domain.Government.parent_group_id == parliament.group_id,
                      domain.Government.status == 'active')).all()
     return governments
+
+def get_current_parliament_committees(parliament=None):
+    if parliament is None:
+        parliament = get_current_parliament(None)
+    import sqlalchemy.sql.expression as sql
+    session = Session()
+    committees = session.query(domain.Committee).filter(
+            sql.and_(domain.Committee.parent_group_id == parliament.group_id,
+                     domain.Committee.status == 'active')).all()
+    return committees
 
 def get_all_group_ids_in_parliament(parliament_id):
     """ get all groups (group_ids) in a parliament
