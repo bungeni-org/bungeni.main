@@ -67,7 +67,10 @@ def on_end_request(event):
 mapping_on_path = (
     (re.compile(r'^/$'), interfaces.IHomePageLayer),
     (re.compile(r'^/archive(/.*)?$'), interfaces.IArchiveSectionLayer),
-    (re.compile(r'^/workspace(/.*)?$'), interfaces.IWorkspaceSectionLayer),
+    # Matches "workspace/" followed by anything but "/scheduling"
+    (re.compile(r'^/workspace(?!/scheduling)(/.*)?$'), interfaces.IWorkspaceSectionLayer),
+    # Matches "workspace/scheduling"
+    (re.compile(r'^/workspace/scheduling(/.*)?$'), interfaces.IWorkspaceSchedulingSectionLayer),
     # Matches "business/" followed by anything but "/whats-on"
     (re.compile(r'^/business(?!/whats-on)(/.*)+$'), interfaces.IBusinessSectionLayer),
     # Matches "business/whats-on"

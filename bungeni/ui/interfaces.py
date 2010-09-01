@@ -20,9 +20,14 @@ class IWorkspacePIContext(IWorkspaceSectionContext):
     """Marker for the PI section of a workspace."""
 class IWorkspaceArchiveContext(IWorkspaceSectionContext):
     """Marker for the Archive section of a workspace."""
-class IWorkspaceSchedulingContext(IWorkspaceSectionContext):
-    """Marker for the Scheduling section of a workspace."""
 
+class IWorkspacePlenaryContainer(interface.Interface):
+    """Marker for a domain object that is also a user's workspace container."""
+
+class IWorkspaceSchedulingContainer(interface.Interface):
+    """Marker"""
+class IWorkspaceCommitteeSchedulingContainer(interface.Interface):
+    """Marker"""
 class ISpeakerWorkspace(IBrowserView):
     """Speaker's workspace."""
 class IClerkWorkspace(IBrowserView):
@@ -59,10 +64,13 @@ class IAdminSectionLayer(IWorkspaceOrAdminSectionLayer):
     """Requests for an object within the admin section."""
 class IWorkspaceSectionLayer(IWorkspaceOrAdminSectionLayer):
     """Requests for an object within the workspace section."""
-    
+class IWorkspaceSchedulingSectionLayer(IWorkspaceOrAdminSectionLayer):
+    """Requests for an object within the scheduling section."""    
 class IOpenOfficeConfig(interface.Interface):
     def getPath():
         "Path to the Openoffice Python binary"
+
+
     
 class IOpenOfficePath(interface.Interface):
     path = fields.Path(

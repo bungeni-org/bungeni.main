@@ -65,6 +65,14 @@
         permission="zope.Public"
         trusted="true"
     />
+    <adapter factory=".workspace.WorkspaceSchedulingContainerTraverser"
+        permission="zope.Public"
+        trusted="true"
+    />
+    <adapter factory=".workspace.WorkspaceCommitteeSchedulingContainerTraverser"
+        permission="zope.Public"
+        trusted="true"
+    />
     <browser:page name="workspace-pi"
         for=".interfaces.IWorkspacePIContext"
         layer=".interfaces.IBungeniAuthenticatedSkin"
@@ -77,22 +85,7 @@
         class=".workspace.WorkspaceArchiveView"
         permission="zope.View"
     />
-    <class class=".workspace.WorkspaceSchedulingContext">
-        <require permission="zope.Public"
-            interface="bungeni.core.interfaces.ISchedulingContext"
-            set_schema="bungeni.core.interfaces.ISchedulingContext" />
-        <allow interface="zope.publisher.interfaces.IPublishTraverse" />
-    </class>
-    <adapter factory=".workspace.WorkspaceSchedulingContext" 
-        for="bungeni.ui.interfaces.IWorkspaceContainer"
-        provides="bungeni.core.interfaces.ISchedulingContext"
-    />
-    <browser:page name="calendar"
-        for="bungeni.core.interfaces.ISchedulingContext"
-        permission="zope.View"
-        class=".calendar.browser.CalendarView"
-        layer=".interfaces.IWorkspaceSectionLayer"
-    /><!-- bungeni.models.interfaces.IGroupSittingContainer -->
+    <!-- bungeni.models.interfaces.IGroupSittingContainer -->
     
     <!-- Setup Access to Browser Resources on the Application -->
     
@@ -156,40 +149,40 @@
   <browser:page
      name="agenda"
      for="bungeni.models.interfaces.IGroupSitting"
-     permission="zope.View"
+     permission="bungeni.reports.Edit"
      class=".reports.GroupSittingContextAgendaReportView"
      />
      
 	<browser:page
      name="agenda"
      for="bungeni.core.interfaces.ISchedulingContext"
-     permission="zope.View"
+     permission="bungeni.reports.Edit"
      class=".reports.SchedulingContextAgendaReportView"
      />
      
    <browser:page
      name="votes-and-proceedings"
      for="bungeni.models.interfaces.IGroupSitting"
-     permission="zope.View"
+     permission="bungeni.reports.Edit"
      class=".reports.GroupSittingContextMinutesReportView"
      />
      
   	<browser:page
      name="votes-and-proceedings"
      for="bungeni.core.interfaces.ISchedulingContext"
-     permission="zope.View"
+     permission="bungeni.reports.Edit"
      class=".reports.SchedulingContextMinutesReportView"
      />
 	<browser:page
      name="save-report"
      for="bungeni.models.interfaces.IGroupSitting"
-     permission="zope.View"
+     permission="bungeni.reports.Edit"
      class=".reports.SaveReportView"
      />
   	<browser:page
      name="save-report"
      for="bungeni.core.interfaces.ISchedulingContext"
-     permission="zope.View"
+     permission="bungeni.reports.Edit"
      class=".reports.SaveReportView"
      />
   
@@ -202,12 +195,6 @@
      class=".calendar.browser.DailyCalendarView"
      />
 
-   <browser:page
-     for="bungeni.models.interfaces.IBungeniApplication"
-     permission="zope.Public"
-     name="calendar"
-     class=".calendar.browser.CalendarView"
-    />
     <!--
     <browser:page
      for="bungeni.models.interfaces.IBungeniApplication"
@@ -247,10 +234,15 @@
   <browser:page
      for="bungeni.models.interfaces.ICommittee"
      permission="zope.View"
-     name="calendar"
+     name="schedule"
      class=".calendar.browser.CommitteeCalendarView"
     />
-
+    <browser:page
+     for="bungeni.models.interfaces.IBungeniApplication"
+     permission="zope.View"
+     name="schedule"
+     class=".calendar.browser.CalendarView"
+    />
   <browser:page
      for="bungeni.models.interfaces.IGroupSittingContainer"
      permission="zope.View"
@@ -258,8 +250,13 @@
      class=".calendar.browser.CalendarView"
      layer=".interfaces.IBusinessSectionLayer"
     />
-
-
+    <browser:page
+     for="bungeni.models.interfaces.IGroupSittingContainer"
+     permission="zope.View"
+     name="index"
+     class=".calendar.browser.CalendarView"
+     layer=".interfaces.IWorkspaceSchedulingSectionLayer"
+    />
   <browser:page
      for="bungeni.models.interfaces.IGroupSitting"
      permission="zope.View"

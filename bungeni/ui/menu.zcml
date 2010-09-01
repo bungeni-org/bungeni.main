@@ -32,9 +32,17 @@
     
     <!-- Top-level sections *may* define a ZCML menu for navigating to 
          sub-sections, see SecondaryNavigationViewlet: -->
-    <!-- 
+    
     <browser:menu id="workspace_navigation" title="Actions Workspace" />
-    -->
+    <browser:menuItem menu="workspace_navigation"
+        for="*"
+        title="Scheduling"
+        action="scheduling/plenary/schedule"
+        order="10"
+        permission="zope.View"
+    />
+    
+    
     <browser:menu id="admin_navigation" title="Actions Admin" />
     <!--
     <browser:menu id="business_navigation" title="Actions Business" />
@@ -201,6 +209,7 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="63"
     />
+    
     <browser:menuItem menu="committee_additems"
         for="bungeni.models.interfaces.ICommittee"
         title="Add Agenda item..."
@@ -225,6 +234,7 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="40"
     />
+    
     
     <browser:menu id="government_additems"
         title="The 'Add..' menu - for government"
@@ -584,44 +594,7 @@
         title="The 'Add..' menu - for calendar"
         class="ploned.ui.menu.PloneBrowserMenu"
     />
-    <browser:menuItem menu="schedule_additems"
-        for="bungeni.core.interfaces.ISchedulingContext"
-        title="Add Sitting..."
-        action="./sittings/add"
-        permission="bungeni.sitting.Add"
-        layer=".interfaces.IWorkspaceSectionLayer"
-        order="40"
-    /><!-- !+ rework all schedule_additems in IWorkspaceSectionLayer -->
-    <browser:menuItem menu="schedule_additems"
-        for="bungeni.core.interfaces.ISchedulingContext"
-        title="Add Sitting..."
-        action="./add?next_url=..."
-        permission="bungeni.sitting.Add"
-        layer=".interfaces.IAdminSectionLayer"
-        order="40"
-    />
-    <browser:menuItem menu="schedule_additems"
-        for="bungeni.core.interfaces.ISchedulingContext"
-        title="Add Agenda item..."
-        action="./add?next_url=..."
-        permission="bungeni.agendaitem.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="41"
-    />
-    <!-- browser:menuItem menu="schedule_additems"
-        for="bungeni.core.interfaces.ISchedulingContext"
-        title="Add Heading..."
-        action="/admin/content/headings/add?next_url=..."
-        permission="bungeni.heading.Add"
-     / -->
 
-    <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.GroupSittingContainer"
-        title="Add Sitting..."
-        action="./add"
-        permission="bungeni.sitting.Add"
-        layer=".interfaces.IAdminSectionLayer"
-    />
     
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IGroupSitting"
@@ -895,14 +868,14 @@
     <browser:menuItem menu="reporting_actions"
         for="bungeni.core.interfaces.ISchedulingContext"
         title="Agenda..."
-        action="agenda"
+        action="./../agenda"
         permission="bungeni.reports.Edit"
     />
     <browser:menuItem
         menu="reporting_actions"
         for="bungeni.core.interfaces.ISchedulingContext"
         title="Votes and proceedings..."
-        action="votes-and-proceedings"
+        action="./../votes-and-proceedings"
         permission="bungeni.reports.Edit"
     />
     

@@ -9,7 +9,7 @@ from zope.app.publisher.browser.menu import BrowserMenu
 from zope.app.publisher.browser.menu import BrowserSubMenuItem
 from zope.security import checkPermission
 from zope.i18n import translate
-
+from bungeni.models.utils import get_current_parliament_committees
 import z3c.menu.ready2go.item
 
 from ore.workflow.interfaces import IWorkflow, IWorkflowInfo
@@ -336,74 +336,80 @@ class CalendarSubMenuItem(BrowserSubMenuItem):
     def selected(self):
         return False
 
+from zope.annotation.interfaces import IAnnotations
+from bungeni.core.dc import IDCDescriptiveProperties
 class CalendarMenu(BrowserMenu):
     """Retrieve menu actions for available calendars."""
     
-    def getSchedulingContexts(self):
-        """Set up scheduling contexts.
-
-        Currently we include:
-
-        - committees
-        - plenary
-
-        """
-
-        contexts = []
+    def getGroups(self, ctx, request):
+        groups = []
         app = getSite()
         today = datetime.date.today()
-        committees = app[u"business"]["committees"].values()
-        user_id = get_db_user_id()
+        if interfaces.IWorkspaceSchedulingSectionLayer.providedBy(request):
+            committees = IAnnotations(request)["layer_data"].committees
+        else:
+            committees = app["business"]["committees"].values()
         for committee in committees:
-            if user_id:
-                if ((committee.end_date is None or committee.end_date >= today) and 
-                   (committee.start_date is None or committee.start_date <= today) and
-                   checkPermission("bungeni.agendaitem.Add", committee) and
-                   (committee.status == "active")):
-                    contexts.append(schedule.CommitteeSchedulingContext(committee))
-            else:
-                if ((committee.end_date is None or committee.end_date >= today) and 
-                   (committee.start_date is None or committee.start_date <= today) and
-                   (committee.status == "active")):
-                    contexts.append(schedule.CommitteeSchedulingContext(committee))
-
-        contexts.append(schedule.PlenarySchedulingContext(app))
-
-        for context in contexts:
-            context.__name__ = u"calendar"
-
-        return contexts
+            groups.append(committee)
+        groups.append(app)
+        return groups
     
     def getMenuItems(self, context, request):
         """Return menu item entries in a TAL-friendly form."""
 
         group_id = context.get_group().group_id
-        contexts = self.getSchedulingContexts()
+        groups = self.getGroups(context, request)
         
         results = []
-        for context in contexts:
-            group = context.get_group()
-            if group.group_id==group_id:
-                continue
-            
-            url = ui_url.absoluteURL(context, request)
-            # !+ the url for the Plenary is incorrectly calculated to be 
-            # "/calendar" when in a committee calendar view
-            if isinstance(context, PlenarySchedulingContext):
-                url = "/business/sittings"
-            
-            extra = {'id': 'calendar-link-%s' % group.group_id,
-                     'separator': None,
-                     'class': ''}
-
-            results.append(
-                dict(title=context.label,
-                     description=group.description,
-                     action=url,
-                     selected=False,
-                     icon=None,
-                     extra=extra,
-                     submenu=None))
+        if isinstance(context, PlenarySchedulingContext):
+            for group in groups:
+                if not IBungeniApplication.providedBy(group):
+                    url = ui_url.absoluteURL(group, request)+"/schedule"
+                    extra = {'id': 'calendar-link',
+                             'separator': None,
+                             'class': ''}
+                    results.append(
+                        dict(title=IDCDescriptiveProperties(group).title,
+                        description=IDCDescriptiveProperties(group).description,
+                        action=url,
+                        selected=False,
+                        icon=None,
+                        extra=extra,
+                        submenu=None))
+        else:
+            for group in groups:
+                if not IBungeniApplication.providedBy(group):
+                    if group.committee_id == group_id:
+                        continue
+                    else:
+                        url = ui_url.absoluteURL(group, request)+"/schedule"
+                    extra = {'id': 'calendar-link',
+                             'separator': None,
+                             'class': ''}
+                    results.append(
+                        dict(title=IDCDescriptiveProperties(group).title,
+                        description=IDCDescriptiveProperties(group).description,
+                        action=url,
+                        selected=False,
+                        icon=None,
+                        extra=extra,
+                        submenu=None))
+                else:
+                    if interfaces.IWorkspaceSchedulingSectionLayer.providedBy(request):
+                        url = "/workspace/scheduling/plenary/schedule"
+                    else:
+                        url = "/business/sittings"
+                    extra = {'id': 'calendar-link',
+                        'separator': None,
+                        'class': ''}
+                    results.append(
+                        dict(title="Plenary",
+                        description="Plenary Scheduling",
+                        action=url,
+                        selected=False,
+                        icon=None,
+                        extra=extra,
+                        submenu=None))
 
         # sort on title
         results.sort(key=operator.itemgetter("title"))

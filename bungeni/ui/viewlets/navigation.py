@@ -99,14 +99,15 @@ class SecondaryNavigationViewlet(object):
             if not IReadContainer.providedBy(container):
                 return # container has no readable content
         assert container is not None
-        # add any menu items from zcml
-        self.add_zcml_menu_items(container)
+        
         # add container items
         if length > 2:
             context = chain[-3]
         else:
             context = None
         self.add_container_menu_items(context, container)
+        # add any menu items from zcml
+        self.add_zcml_menu_items(container)
         
     def add_zcml_menu_items(self, container):
         """Add the list of ZCML menu items (if any) for this top-level 
@@ -151,7 +152,8 @@ class SecondaryNavigationViewlet(object):
         # add a menu item for each user workspace, if we are in an 
         # IWorkspaceSectionLayer 
         # !+ if user is logged in or if request.layer_data
-        if interfaces.IWorkspaceSectionLayer.providedBy(request):
+        
+        if interfaces.IWorkspaceSectionLayer.providedBy(request) or interfaces.IWorkspaceSchedulingSectionLayer.providedBy(request):
             try:
                 workspaces = IAnnotations(request)["layer_data"].get("workspaces")
             except:

@@ -50,10 +50,6 @@
             action="archive"
             order="2"
         />
-        <browser:menuItem title="Scheduling"
-            action="calendar"
-            order="3"
-        />
     </browser:menuItems>
     <browser:menuItems menu="workspace_context_navigation"
         for="..interfaces.IWorkspaceSectionContext"
@@ -66,10 +62,6 @@
         <browser:menuItem title="Archive"
             action="./../archive"
             order="2"
-        />
-        <browser:menuItem title="Scheduling"
-            action="./../calendar"
-            order="3"
         />
     </browser:menuItems>
     

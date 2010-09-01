@@ -25,7 +25,7 @@ from bungeni.core.i18n import _
 from bungeni.core.content import Section, QueryContent
 from bungeni.core.interfaces import ISchedulingContext
 from bungeni.core.schedule import PrincipalGroupSchedulingContext
-
+from zope.app.component.hooks import getSite
 from bungeni.models import interfaces as model_interfaces
 from bungeni.models import domain
 from bungeni.models.utils import container_getter
@@ -35,11 +35,12 @@ from bungeni.models.utils import get_group_ids_for_user_in_parliament
 from bungeni.models.utils import get_ministries_for_user_in_government
 from bungeni.models.utils import get_current_parliament
 from bungeni.models.utils import get_current_parliament_governments
-
+from bungeni.models.utils import get_current_parliament_committees
 from bungeni.ui import browser
 from bungeni.ui import interfaces
 from bungeni.ui.utils import url, misc, debug
-
+from zope.app.container.sample import SampleContainer
+from zope.interface import implements
 
 def prepare_user_workspaces(event):
     """Determine the current principal's workspaces, depending on roles and
@@ -76,6 +77,8 @@ def prepare_user_workspaces(event):
                 # have already been called
                 interfaces.IWorkspaceSectionLayer.providedBy(req)
                 or 
+                interfaces.IWorkspaceSchedulingSectionLayer.providedBy(req)
+                or
                 # or the request is for *the* Home Page (as in this case
                 # we still need to know the user workspaces to be able to 
                 # redirect appropriately)
@@ -143,6 +146,8 @@ def prepare_user_workspaces(event):
     LD.workspaces[:] = [ workspace for i,workspace in enumerate(LD.workspaces) 
                          if LD.workspaces.index(workspace)==i ]
     
+    LD.committees = get_current_parliament_committees()
+    
     # mark each workspace container with IWorkspaceContainer
     for workspace in LD.workspaces:
         interface.alsoProvides(workspace, interfaces.IWorkspaceContainer)
@@ -155,8 +160,11 @@ def prepare_user_workspaces(event):
             id(request), destination_url_path, request.get("PATH_INFO"),
             IAnnotations(request).get("layer_data", None)))
 
-# traversers
 
+class WorkspaceSchedulingContainer(SampleContainer):
+    """Workspace scheduling Container"""
+    implements(interfaces.IWorkspaceSchedulingContainer)
+# traversers
 def workspace_resolver(context, request, name):
     """Get the workspace domain object identified by name.
     
@@ -176,9 +184,57 @@ def workspace_resolver(context, request, name):
                 workspace.__parent__ = context
                 workspace.__name__ = name
                 return workspace
+    elif name == "scheduling":
+        schedulingContainer = WorkspaceSchedulingContainer()
+        schedulingContainer.__name__ = name
+        schedulingContainer.__parent__ = context
+        return schedulingContainer
     raise NotFound(context, name, request)
 
-
+class WorkspaceSchedulingContainerTraverser(SimpleComponentTraverser):
+    """Workspace scheduling container traverser
+    """
+    interface.implementsOnly(IPublishTraverse)
+    component.adapts(interfaces.IWorkspaceSchedulingContainer, IHTTPRequest)
+    
+    def __init__(self, context, request):
+        self.context = context 
+        self.request = request
+        log.debug(" __init__ %s context=%s url=%s" % (
+                        self, self.context, request.getURL()))
+    
+    def publishTraverse(self, request, name):
+        committeeContainer = domain.CommitteeContainer()
+        committeeContainer.__name__ = "committees"
+        committeeContainer.__parent__ = self.context
+        interface.alsoProvides(committeeContainer, interfaces.IWorkspaceCommitteeSchedulingContainer)
+        for committee in IAnnotations(request)["layer_data"].committees:
+            committee.__parent__ = committeeContainer
+            committee.__name__ = "obj-"+str(committee.committee_id)
+        if name == "plenary":
+            app = getSite()
+            return app
+        elif name == "committees":
+            return committeeContainer
+            
+class WorkspaceCommitteeSchedulingContainerTraverser(SimpleComponentTraverser):
+    """Custom Workspace (domain IBungeniGroup object) container traverser.
+    This object is the "root" of each user's workspace.
+    """
+    interface.implementsOnly(IPublishTraverse)
+    component.adapts(interfaces.IWorkspaceCommitteeSchedulingContainer, IHTTPRequest)
+    
+    def __init__(self, context, request):
+        self.context = context # workspace domain object
+        self.request = request
+        log.debug(" __init__ %s context=%s url=%s" % (
+                        self, self.context, request.getURL()))
+    def publishTraverse(self, request, name):        
+        if name.startswith("obj-"):
+            obj_id = int(name[4:])
+            for committee in IAnnotations(request)["layer_data"].committees:
+                if obj_id==committee.group_id:
+                    return committee
 class WorkspaceContainerTraverser(SimpleComponentTraverser):
     """Custom Workspace (domain IBungeniGroup object) container traverser.
     This object is the "root" of each user's workspace.
@@ -197,19 +253,11 @@ class WorkspaceContainerTraverser(SimpleComponentTraverser):
         workspace = self.context
         _meth_id = "%s.publishTraverse" % self.__class__.__name__
         log.debug("%s: name=%s context=%s " % (_meth_id, name, workspace))
+        
         if name=="pi":
             return getWorkSpacePISection(workspace)
         elif name=="archive":
             return getWorkSpaceArchiveSection(workspace)
-        elif name=="calendar":
-            sc = ISchedulingContext(workspace)
-            view = component.queryMultiAdapter((sc, request), name="calendar")
-            # !+ NOTE: Zope calculates the URL of the resulting view sometimes 
-            # from the parent view's child attribute name "calendar" and 
-            # and sometimes from the ZCML declaration name (as per this lookup)
-            if view is None:
-                raise NotFound(sc, name)
-            return view
         return super(WorkspaceContainerTraverser, 
                         self).publishTraverse(request, name)
 
@@ -343,28 +391,6 @@ class WorkspacePIContext(Section):
 from zope.app.container.sample import SampleContainer
 '''
 
-class WorkspaceSchedulingContext(PrincipalGroupSchedulingContext):
-    component.adapts(interfaces.IWorkspaceContainer)
-    interface.implements(ISchedulingContext)
-    
-    def __init__(self, workspace):
-        # super sets self.__parent__ = workspace
-        super(WorkspaceSchedulingContext, self).__init__(workspace)
-        self.__name__ = "calendar"
-        self.group_id = workspace.group_id
-        interface.alsoProvides(self, interfaces.IWorkspaceSchedulingContext)
-        log.debug("WorkspaceSchedulingContext %s" % debug.location_stack(self))
-    # !+ NOTE: there is an error when following "Add sitting..." in this view
-    # as, after submitting the form, NotFound error is returned (that Parliament
-    # has no attribute "sittings"). The cause seems to be that the calculation 
-    # of the URL for the newly created object is omitting the "calendar" 
-    # component i.e. the initial form URL is:
-    #   /workspace/obj-1/calendar/sittings/add
-    # and url.absoluteURL(newSittingObject, self.request) returns
-    #   /workspace/obj-1/sittings/obj-32'
-    # when the correct URL for this is:
-    #   /workspace/obj-1/calendar/sittings/obj-32'
-    # see: bungeni.ui.forms.common.AddForm.handle_and_save()
 
 # views
 from bungeni.ui import z3evoque
