@@ -79,8 +79,6 @@ setup(name='bungeni',
                         'z3c.menu.ready2go',
                         'zc.displayname',
                         'zope.formlib',
-			# the following are used by bungeni.plonepas
-			'pysqlite',
 			],
       entry_points =
 	{
