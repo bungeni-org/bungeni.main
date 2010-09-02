@@ -341,75 +341,59 @@
         permission="zope.Public"
     />
 
-  <!-- admin -->
-
-    <browser:page
-        name="admin-index"
+    <!-- admin -->
+    <browser:page name="admin-index"
         for="*"
         layer="bungeni.ui.interfaces.IBungeniSkin"
         class=".container.AdminIndexRedirect"
         permission="zope.View"
     />
-    <browser:page
-        name="browse-admin"
+    <browser:page name="browse-admin"
         for="bungeni.core.interfaces.ISection"
         layer="bungeni.ui.interfaces.IBungeniSkin"
         class=".archive.AdminBrowseContentView"
         permission="zope.ManageSite"
     />
+    
+    <!-- json view of containers-->
+    <browser:page name="jsonlisting"
+        for="ore.alchemist.interfaces.IAlchemistContainer"
+        permission="zope.Public"
+        class=".container.ContainerJSONListing"
+    />
+    <browser:page name="jsonlisting"
+        for="ore.alchemist.interfaces.IAlchemistContainer"
+        permission="zope.Public"
+        class=".container.ContainerWFStatesJSONListing"
+        layer=".interfaces.IBusinessSectionLayer"
+    />
+    <browser:page name="jsonlisting"
+        for="ore.alchemist.interfaces.IAlchemistContainer"
+        permission="zope.Public"
+        class=".container.ContainerWFStatesJSONListing"
+        layer=".interfaces.IMembersSectionLayer"
+    />
+    <browser:page name="jsonlisting"
+        for="ore.alchemist.interfaces.IAlchemistContainer"
+        permission="zope.Public"
+        class=".container.ContainerWFStatesJSONListing"
+        layer=".interfaces.IArchiveSectionLayer"
+    />
+    <browser:page name="jsontableheaders"
+        for="ore.alchemist.interfaces.IAlchemistContainer"
+        permission="zope.Public"
+        class=".container.ContainerJSONTableHeaders"
+    />
 
-  <!-- json view of containers-->
-  
-  <browser:page
-     for="ore.alchemist.interfaces.IAlchemistContainer"
-     permission="zope.Public"
-     name="jsonlisting"
-     class=".container.ContainerJSONListing"
-     />
-  
-    <browser:page
-     for="ore.alchemist.interfaces.IAlchemistContainer"
-     permission="zope.Public"
-     name="jsonlisting"
-     class=".container.ContainerWFStatesJSONListing"
-     layer=".interfaces.IBusinessSectionLayer"
-     />
-  
-  <browser:page
-     for="ore.alchemist.interfaces.IAlchemistContainer"
-     permission="zope.Public"
-     name="jsonlisting"
-     class=".container.ContainerWFStatesJSONListing"
-     layer=".interfaces.IMembersSectionLayer"
-     />
-     
-  <browser:page
-     for="ore.alchemist.interfaces.IAlchemistContainer"
-     permission="zope.Public"
-     name="jsonlisting"
-     class=".container.ContainerWFStatesJSONListing"
-     layer=".interfaces.IArchiveSectionLayer"
-     />
-  
-  
-  <browser:page
-     for="ore.alchemist.interfaces.IAlchemistContainer"
-     permission="zope.Public"
-     name="jsontableheaders"
-     class=".container.ContainerJSONTableHeaders"
-     />
-
-  <!-- container UI -->
-  
-  <browser:page
-     for="ore.alchemist.interfaces.IAlchemistContainer"
-     permission="zope.Public"
-     name="index"
-     menu="context_actions"
-     title="Listing"
-     template="templates/generic-container.pt"
-     class=".table.AjaxContainerListing"
-     layer="bungeni.ui.interfaces.IBungeniSkin"
-     />
+    <!-- container UI -->
+    <browser:page name="index"
+        for="ore.alchemist.interfaces.IAlchemistContainer"
+        permission="zope.Public"
+        menu="context_actions"
+        title="Listing"
+        template="templates/generic-container.pt"
+        class=".table.AjaxContainerListing"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
 
 </configure>
