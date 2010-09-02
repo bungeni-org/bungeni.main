@@ -29,8 +29,7 @@
                 scheduler.config.show_loading=true;
                 scheduler.config.scroll_hour=8;
                 scheduler.config.details_on_create=true;
-                scheduler.config.icons_select=["icon_details","icon_delete"]
-                scheduler.config.hour_size_px = 21;
+                
                 scheduler.locale.labels.agenda_tab = "Upcoming";
                 scheduler.init('scheduler_here', null, "week");
                 scheduler.setLoadMode("month");
@@ -67,9 +66,7 @@
 		            }
 	            }
                 
-                scheduler.attachEvent("onClick", function (event_id, native_event_object){
-                    parent.location = "/business/sittings/obj-"+event_id+"/schedule";
-                });
+                
                 
                 scheduler.config.lightbox.sections=[	
                         { name:"description", height:200, type:"my_editor" },
@@ -86,7 +83,11 @@
             function canEdit()
             {
                 init();
+                scheduler.config.icons_select=["icon_details","icon_delete"]
                 scheduler.config.readonly = false;
+                scheduler.attachEvent("onDblClick", function (event_id, native_event_object){
+                    parent.location = "/business/sittings/obj-"+event_id+"/view";
+                });
                 var dp = new dataProcessor(location.href+"/dhtmlxcalendaredit");
 		        dp.init(scheduler);
             }
@@ -96,7 +97,14 @@
             function cannotEdit()
             {
                 init();
-                scheduler.config.readonly = true;
+                scheduler.config.icons_select=[]
+                scheduler.config.drag_resize = false;
+                scheduler.config.drag_move = false;
+                scheduler.config.drag_create = false;
+                scheduler.config.dblclick_create = false;
+                scheduler.attachEvent("onDblClick", function (event_id, native_event_object){
+                    parent.location = "/business/sittings/obj-"+event_id+"/view";
+                });
                 var dp = new dataProcessor(location.href+"/dhtmlxcalendaredit");
 		        dp.init(scheduler);
             }

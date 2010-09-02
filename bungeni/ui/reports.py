@@ -493,7 +493,7 @@ class SaveReportView(form.PageForm):
         sittings = schema.TextLine(
                     title=_(u"Sittings included in this report"),
                     description=_(u"Sittings included in this report"),
-                    required=True
+                    required=False
                                )
     template = namedtemplate.NamedTemplate('alchemist.form')
     form_fields = form.Fields(ISaveReportForm)
