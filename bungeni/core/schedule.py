@@ -19,7 +19,9 @@ from bungeni.models.domain import Group
 from bungeni.models.domain import GroupSitting
 from bungeni.models import domain
 from bungeni.core.interfaces import ISchedulingContext
+from bungeni.core.interfaces import IWorkspaceScheduling
 from bungeni.core.interfaces import IDailySchedulingContext
+from bungeni.core.interfaces import ISection
 from bungeni.core.globalsettings import getCurrentParliamentId
 from bungeni.core.i18n import _
 from bungeni.core.proxy import LocationProxy
@@ -149,6 +151,13 @@ class SittingContainerSchedulingContext(PrincipalGroupSchedulingContext):
     def get_group(self, name=None):
         assert name is None
         return self.__parent__.__parent__
+
+class WorkspaceSchedulingContext(PrincipalGroupSchedulingContext):
+    component.adapts(ISection)
+
+    @property
+    def group_id(self):
+        return getCurrentParliamentId()
 
 
 class DailySchedulingContext(object):

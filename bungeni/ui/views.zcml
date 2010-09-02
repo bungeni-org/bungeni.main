@@ -65,14 +65,6 @@
         permission="zope.Public"
         trusted="true"
     />
-    <adapter factory=".workspace.WorkspaceSchedulingContainerTraverser"
-        permission="zope.Public"
-        trusted="true"
-    />
-    <adapter factory=".workspace.WorkspaceCommitteeSchedulingContainerTraverser"
-        permission="zope.Public"
-        trusted="true"
-    />
     <browser:page name="workspace-pi"
         for=".interfaces.IWorkspacePIContext"
         layer=".interfaces.IBungeniAuthenticatedSkin"
@@ -251,12 +243,13 @@
      layer=".interfaces.IBusinessSectionLayer"
     />
     <browser:page
-     for="bungeni.models.interfaces.IGroupSittingContainer"
-     permission="zope.View"
-     name="index"
-     class=".calendar.browser.CalendarView"
-     layer=".interfaces.IWorkspaceSchedulingSectionLayer"
+        name="scheduling"
+        for="bungeni.core.interfaces.ISection"
+        layer=".interfaces.IWorkspaceSchedulingSectionLayer"
+        class=".calendar.browser.CalendarView"
+        permission="zope.View"
     />
+    
   <browser:page
      for="bungeni.models.interfaces.IGroupSitting"
      permission="zope.View"

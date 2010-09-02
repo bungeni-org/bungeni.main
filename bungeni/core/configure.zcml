@@ -196,7 +196,7 @@
   <adapter factory=".schedule.CommitteeSchedulingContext" />
   <adapter factory=".schedule.SchedulingContextTraverser" />
   <adapter factory=".schedule.SittingContainerSchedulingContext" />
-  
+  <adapter factory=".schedule.WorkspaceSchedulingContext" />
   <!-- principal roles -->
   
   <subscriber

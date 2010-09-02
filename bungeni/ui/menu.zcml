@@ -34,13 +34,13 @@
          sub-sections, see SecondaryNavigationViewlet: -->
     
     <browser:menu id="workspace_navigation" title="Actions Workspace" />
-    <browser:menuItem menu="workspace_navigation"
+    <!-- browser:menuItem menu="workspace_navigation"
         for="*"
         title="Scheduling"
         action="scheduling/plenary/schedule"
         order="10"
         permission="zope.View"
-    />
+    / -->
     
     
     <browser:menu id="admin_navigation" title="Actions Admin" />

@@ -146,8 +146,6 @@ def prepare_user_workspaces(event):
     LD.workspaces[:] = [ workspace for i,workspace in enumerate(LD.workspaces) 
                          if LD.workspaces.index(workspace)==i ]
     
-    LD.committees = get_current_parliament_committees()
-    
     # mark each workspace container with IWorkspaceContainer
     for workspace in LD.workspaces:
         interface.alsoProvides(workspace, interfaces.IWorkspaceContainer)
@@ -160,10 +158,6 @@ def prepare_user_workspaces(event):
             id(request), destination_url_path, request.get("PATH_INFO"),
             IAnnotations(request).get("layer_data", None)))
 
-
-class WorkspaceSchedulingContainer(SampleContainer):
-    """Workspace scheduling Container"""
-    implements(interfaces.IWorkspaceSchedulingContainer)
 # traversers
 def workspace_resolver(context, request, name):
     """Get the workspace domain object identified by name.
@@ -184,57 +178,8 @@ def workspace_resolver(context, request, name):
                 workspace.__parent__ = context
                 workspace.__name__ = name
                 return workspace
-    elif name == "scheduling":
-        schedulingContainer = WorkspaceSchedulingContainer()
-        schedulingContainer.__name__ = name
-        schedulingContainer.__parent__ = context
-        return schedulingContainer
     raise NotFound(context, name, request)
 
-class WorkspaceSchedulingContainerTraverser(SimpleComponentTraverser):
-    """Workspace scheduling container traverser
-    """
-    interface.implementsOnly(IPublishTraverse)
-    component.adapts(interfaces.IWorkspaceSchedulingContainer, IHTTPRequest)
-    
-    def __init__(self, context, request):
-        self.context = context 
-        self.request = request
-        log.debug(" __init__ %s context=%s url=%s" % (
-                        self, self.context, request.getURL()))
-    
-    def publishTraverse(self, request, name):
-        committeeContainer = domain.CommitteeContainer()
-        committeeContainer.__name__ = "committees"
-        committeeContainer.__parent__ = self.context
-        interface.alsoProvides(committeeContainer, interfaces.IWorkspaceCommitteeSchedulingContainer)
-        for committee in IAnnotations(request)["layer_data"].committees:
-            committee.__parent__ = committeeContainer
-            committee.__name__ = "obj-"+str(committee.committee_id)
-        if name == "plenary":
-            app = getSite()
-            return app
-        elif name == "committees":
-            return committeeContainer
-            
-class WorkspaceCommitteeSchedulingContainerTraverser(SimpleComponentTraverser):
-    """Custom Workspace (domain IBungeniGroup object) container traverser.
-    This object is the "root" of each user's workspace.
-    """
-    interface.implementsOnly(IPublishTraverse)
-    component.adapts(interfaces.IWorkspaceCommitteeSchedulingContainer, IHTTPRequest)
-    
-    def __init__(self, context, request):
-        self.context = context # workspace domain object
-        self.request = request
-        log.debug(" __init__ %s context=%s url=%s" % (
-                        self, self.context, request.getURL()))
-    def publishTraverse(self, request, name):        
-        if name.startswith("obj-"):
-            obj_id = int(name[4:])
-            for committee in IAnnotations(request)["layer_data"].committees:
-                if obj_id==committee.group_id:
-                    return committee
 class WorkspaceContainerTraverser(SimpleComponentTraverser):
     """Custom Workspace (domain IBungeniGroup object) container traverser.
     This object is the "root" of each user's workspace.

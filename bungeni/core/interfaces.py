@@ -57,6 +57,8 @@ class IAgendaItemAddContext(IAddContext):
 class IReportAddContext(IAddContext):
     """Add-context for report items."""
 
+class IWorkspaceScheduling(interface.Interface):
+    """Marker inteface for workspace scheduling"""
 ####################
 # Feature - Marker Interfaces 
 # 

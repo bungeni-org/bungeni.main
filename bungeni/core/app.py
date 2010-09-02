@@ -80,12 +80,23 @@ class AppSetup(object):
         
         # top-level sections
         from bungeni.ui.workspace import workspace_resolver
-        self.context["workspace"] = Section(
+        workspace = self.context["workspace"] = Section(
             title=_(u"Workspace"),
             description=_(u"Current parliamentary activity"),
             default_name="workspace-index",
             publishTraverseResolver=workspace_resolver
         )
+        workspace["scheduling"] = Section(
+            title=_(u"Scheduling"),
+            description=_(u"Scheduling"),
+            default_name="scheduling",
+            marker = interfaces.IWorkspaceScheduling,
+        )
+        workspace["scheduling"]["committees"] = QueryContent(
+            container_getter(get_current_parliament, 'committees'),
+            title=_(u"Committees"),
+            marker=interfaces.ICommitteeAddContext,
+            description=_(u"Committee schedules"))
         # Proof-of-concept: support for selective inclusion in breadcrumb trail:
         # a view marked with an attribute __crumb__=False is NOT included in 
         # the breadcrumb trail (see ui/viewlets/navigation.py)
