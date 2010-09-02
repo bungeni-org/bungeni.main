@@ -1,0 +1,83 @@
+/*
+ * CSS Reset
+ * Resets all the styles.
+ * - more information: http://www.meyerweb.com/eric/thoughts/2007/05/01/reset-reloaded/ 
+ *   for code and explanation
+ */ 
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,
+abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,
+strike,strong,sub,sup,tt,var,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,
+caption,tbody,tfoot,head,tr,th,td {
+    margin:0;
+    padding:0;
+    border:0;
+    outline:0;
+    font-weight:inherit;
+    font-style:inherit;
+    font-size:100%;
+    font-family:inherit;
+    vertical-align:baseline;
+}
+:focus {
+    outline:0;
+}
+body {
+    line-height:1;
+    color:#000;
+    background:#fff;
+}
+ol,ul {
+    list-style:none;
+}
+table {
+    border-collapse:separate;
+    border-spacing:0;
+}
+caption, th, td {
+    text-align: left;
+    font-weight:normal;
+}
+blockquote:before,
+blockquote:after,
+q:before,q:after {
+    content:"";
+}
+blockquote, q {
+    quotes:"" "";
+}
+/*
+ * Uncomment the following code if you want to disable the outlining of clicked 
+ * elements.
+ * Warning: Accesibility wise, this is a not a wise decision to enable.)
+ * :focus is only for firefox, other browser engines highlight on :active 
+ */
+/*:focus, :active { outline: 0; }*/
+
+/*
+ * Forces the scroll bar to appear,
+ * Note: compatibility issues with older versions of Opera.
+ */
+html {overflow-y: scroll;}
+
+html, body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 85%;
+    height: 100%;
+}
+
+/* 
+ * Clearfix Hack
+ * Used to clear divs without having to insert html like: 
+ * <div style="clear:both"></div> after the elemnts to be cleared.
+ * more information: http://perishablepress.com/press/2008/06/18/css-hackz-
+ * series-clearing-floats-with-the-clearfix-hack/
+ */
+.clearfix{display: inline-block;}
+.clearfix:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+

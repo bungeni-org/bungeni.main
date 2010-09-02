@@ -304,6 +304,15 @@ div.content-right-column{
 }
 
 
+form#alchemist-form table {
+	width: 100%;
+}
+/*
+ * clear all fields to the left so that they begin on a new line.
+ */
+form#alchemist-form .field {
+	clear: left;
+}
 .section-bungeni-admin form#alchemist-form {
 	position: relative;
 	float: left;
@@ -313,32 +322,28 @@ div.content-right-column{
 	text-align: left;
 }
 .section-bungeni-workspace form#alchemist-form {
-	width: 90%;
+	width: 95%;
 	margin: 0 auto;
 }
-/* !+#field.form.language(mr, 27-aug-2010), 
-    commenting out this style rule, until such time as what it breaks is 
-    corrected. For further explanations see the changeset comments at: 
-    http://code.google.com/p/bungeni-portal/source/detail?r=7219
 
-    Plus, there should not be the need for any # or ID based style rule; 
-    each of the # style rules below (if they are needed at all) are really 
-    styling hacks -- they should be replaced with proper addressing of the
-    real issue. 
-    
-#field\.form\.language
-*/
-#field\.form\.registry_number,
-#field\.form\.owner_id {
+/* 
+ * float these fields to be next to each other in the forms
+ * - this applies to all edit forms.
+ */
+form#alchemist-form #field\.form\.registry_number,
+form#alchemist-form #field\.form\.owner_id,
+form#alchemist-form #field\.form\.language {
 	float: left;
-	margin: .5em;
+	clear: none !important; /* these three float next to each other so they shouldn't clear */
 }
+/*
+ * Comment these out to remove the spacing between the form element
+ * and the label.
+ * Or remove it entirely if not needed anymore
+ */
+#field\.form\.registry_number input,
 #field\.form\.language select {
 	margin-top: 1.2em;
-}
-#field\.form\.body_text,
-#field\.form\.description {
-	clear: left;
 }
 #field\.form\.receive_notification div.value {
 	overflow: hidden;
