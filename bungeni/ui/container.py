@@ -364,6 +364,44 @@ class ContainerJSONListing(BrowserView):
         self.set_size = len(nodes)
         return nodes[start : start + limit]
     
+    def _get_anno_getters_by_field_name(self, context):
+        domain_model = proxy.removeSecurityProxy(context.domain_model)
+        domain_interface = queryModelInterface(domain_model)
+        domain_annotation = queryModelDescriptor(domain_interface)
+        # dict of domain_annotation field getters by name, for fast lookup
+        return dict([ 
+            (da_field.name, getattr(da_field.listing_column, "getter", None)) 
+            for da_field in domain_annotation.fields
+        ])
+    
+    def _jsonValues(self, nodes, fields, context, getters_by_field_name={}):
+        """
+        filter values from the nodes to respresent in json, currently
+        that means some footwork around, probably better as another
+        set of adapters.
+        """
+        values = []
+        for n in nodes:
+            d = {}
+            for field in fields:
+                f = field.__name__
+                getter = getters_by_field_name.get(f, None)
+                if getter is not None:
+                    d[f] = v = getter(n, field)
+                else:
+                    d[f] = v = field.query(n)
+                # !+i18n_DATE(mr, sep-2010) two problems with the isinstance 
+                # tests below: 
+                # a) they seem to always fail
+                # b) this is incorrect way to localize dates
+                if isinstance(v, datetime.datetime):
+                    d[f] = v.strftime("%F %I:%M %p")
+                elif isinstance(v, datetime.date):
+                    d[f] = v.strftime("%F")
+            d["object_id"] = url.set_url_context(stringKey(n))
+            values.append(d)
+        return values
+    
     #TODO: Merge this getbatch code with the one in ContainerWFStatesJSONListing below
     def getBatch(self, start=0, limit=20):
         order_by = self.getSort()
@@ -389,40 +427,10 @@ class ContainerJSONListing(BrowserView):
                 t_nodes.append(translate_obj(node))
             except (AssertionError,): # node is not ITranslatable 
                 t_nodes.append(node)
-        batch = self._jsonValues(t_nodes, self.fields, self.context)
+        batch = self._jsonValues(t_nodes, self.fields, self.context,
+            self._get_anno_getters_by_field_name(self.context))
         return batch
     
-    def _jsonValues(self, nodes, fields, context):
-        """
-        filter values from the nodes to respresent in json, currently
-        that means some footwork around, probably better as another
-        set of adapters.
-        """
-        values = []
-        domain_model = proxy.removeSecurityProxy(context.domain_model)
-        domain_interface = queryModelInterface(domain_model)
-        domain_annotation = queryModelDescriptor(domain_interface)
-        for n in nodes:
-            d = {}
-            # field to dictionaries
-            for field in fields:
-                f = field.__name__
-                getter = field.query
-                for anno_field in domain_annotation.fields:
-                    if anno_field.name == f:
-                        if getattr(anno_field.listing_column, "getter", None):
-                            getter=anno_field.listing_column.getter
-                            d[f] = v = getter(n, field)
-                        else:
-                            d[f] = v = field.query(n)
-                if isinstance(v, datetime.datetime):
-                    d[f] = v.strftime("%F %I:%M %p")
-                elif isinstance(v, datetime.date):
-                    d[f] = v.strftime("%F")
-                d["object_id"] =   stringKey(n)
-            values.append(d)
-        return values
-        
     def __call__(self):
         context = proxy.removeSecurityProxy(self.context)
         self.domain_model = context.domain_model
@@ -433,38 +441,19 @@ class ContainerJSONListing(BrowserView):
         self.fields = list(getFields(self.context))
         start, limit = self.getOffsets()
         batch = self.getBatch(start, limit)
-        data = dict(length=self.set_size,
-                     start=start,
-                     recordsReturned=len(batch),
-                     sort = self.request.get("sort"),
-                     dir  = self.request.get("dir", "asc"),
-                     nodes=batch)
+        data = dict(
+            length=self.set_size,
+            start=start,
+            recordsReturned=len(batch),
+            sort=self.request.get("sort"),
+            dir=self.request.get("dir", "asc"),
+            nodes=batch
+        )
         session.close()
         return simplejson.dumps(data)
 
 
 class ContainerWFStatesJSONListing(ContainerJSONListing):
-
-    def _jsonValues(self, nodes, fields, context):
-        """
-        filter values from the nodes to respresent in json, currently
-        that means some footwork around, probably better as another
-        set of adapters.
-        """
-        values = []
-        for n in nodes:
-            d = {}
-            # field to dictionaries
-            for field in fields:
-                f = field.__name__
-                d[f] = v = field.query(n)
-                if isinstance(v, datetime.datetime):
-                    d[f] = v.strftime("%F %I:%M %p")
-                elif isinstance(v, datetime.date):
-                    d[f] = v.strftime("%F")
-            d["object_id"] =   url.set_url_context(stringKey(n))
-            values.append(d)
-        return values
     
     def getBatch(self, start=0, limit=20, order_by=None):
         context = proxy.removeSecurityProxy(self.context)
