@@ -35,7 +35,6 @@ def object_hierarchy_type(object):
 
 
 class Entity(object):
-
     interface.implements(location.ILocation)
 
     __name__ = None
@@ -56,6 +55,12 @@ class Entity(object):
                     "Invalid attribute on %s %s" % (
                         self.__class__.__name__, k))
 
+class ListEntity(object):
+    """Base listings_class for domain objects
+    """
+    pass #interface.implements(interfaces.ITranslatable)
+    
+    
 # sort_on is the column the query is sorted on by default
 # sort_replace is a dictionary that maps one column to another
 # so when the key is requested in a sort the value gets sorted
@@ -155,7 +160,6 @@ class Group(Entity):
             return True
 
 
-
 class GroupMembership(Entity):
     """ a user's membership in a group- abstract
     basis for ministers, committeemembers, etc
@@ -169,11 +173,10 @@ class GroupMembership(Entity):
         return self.user.image
 
 
-
 class OfficesHeld(Entity):
     """ Offices held by this group member """
 
-class ListCommitteeStaff(object):
+class ListCommitteeStaff(ListEntity):
     pass
 
 class CommitteeStaff(GroupMembership):
@@ -205,7 +208,7 @@ class SittingType(object):
     """ Type of sitting: morning/afternoon/... """
     interface.implements(interfaces.ITranslatable)
 
-class ListGroupSittingAttendance(object):
+class ListGroupSittingAttendance(ListEntity):
     pass
 
 class GroupSittingAttendance(object):
@@ -221,7 +224,7 @@ class AttendanceType(object):
     """
     interface.implements(interfaces.ITranslatable)
 
-class ListGroupItemAssignment(object):
+class ListGroupItemAssignment(ListEntity):
     pass
 
 
@@ -242,7 +245,7 @@ class ItemGroupItemAssignment(GroupItemAssignment):
 
 #############
 
-class ListParliament(object):
+class ListParliament(ListEntity):
     pass
 
 class Parliament(Group):
@@ -266,7 +269,7 @@ class Parliament(Group):
     listings_class = ListParliament
 
 
-class ListMemberOfParliament(object):
+class ListMemberOfParliament(ListEntity):
     """
     Listing for the parliament membership
     """
@@ -297,7 +300,7 @@ class PoliticalGroup(PoliticalEntity):
     """
     partymembers = one2many("partymembers", "bungeni.models.domain.PartyMemberContainer", "group_id")
 
-class ListPartyMember(object):
+class ListPartyMember(ListEntity):
     pass
 
 class PartyMember(GroupMembership):
@@ -308,7 +311,7 @@ class PartyMember(GroupMembership):
     listings_class = ListPartyMember
 
 
-class ListGovernment(object):
+class ListGovernment(ListEntity):
     pass
 
 class Government(Group):
@@ -325,7 +328,7 @@ class Ministry(Group):
     questions = one2many("questions", "bungeni.models.domain.QuestionContainer", "ministry_id")
     bills = one2many("bills", "bungeni.models.domain.BillContainer", "ministry_id")
 
-class ListMinister(object):
+class ListMinister(ListEntity):
     pass
 
 class Minister(GroupMembership):
@@ -336,7 +339,7 @@ class Minister(GroupMembership):
     listings_class = ListMinister
 
 
-class ListCommittee(object):
+class ListCommittee(ListEntity):
     pass
 
 class Committee(Group):
@@ -350,7 +353,7 @@ class Committee(Group):
     assigneditems = one2many("assigneditems", "bungeni.models.domain.ItemGroupItemAssignmentContainer", "group_id")
     listings_class = ListCommittee
 
-class ListCommitteeMember(object):
+class ListCommitteeMember(ListEntity):
     pass
 
 class CommitteeMember(GroupMembership):
@@ -369,7 +372,7 @@ class Office(Group):
     clerks office etc. internal only"""
     officemembers = one2many("officemembers", "bungeni.models.domain.OfficeMemberContainer", "group_id")
 
-class ListOfficeMember(object):
+class ListOfficeMember(ListEntity):
     pass
 
 class OfficeMember(GroupMembership):
@@ -451,7 +454,7 @@ AttachedFileChange = ItemLog.makeLogFactory("AttachedFileChange")
 AttachedFileVersion = ItemVersions.makeVersionFactory("AttachedFileVersion")
 
 
-class ListHeading(object):
+class ListHeading(ListEntity):
     pass
 
 class Heading(ParliamentaryItem):
@@ -459,7 +462,7 @@ class Heading(ParliamentaryItem):
     listings_class = ListHeading
     interface.implements(interfaces.ITranslatable)
 
-class ListAgendaItem(object):
+class ListAgendaItem(ListEntity):
     pass
 
 class AgendaItem(ParliamentaryItem):
@@ -476,7 +479,7 @@ class AgendaItem(ParliamentaryItem):
 AgendaItemChange = ItemLog.makeLogFactory("AgendaItemChange")
 AgendaItemVersion = ItemVersions.makeVersionFactory("AgendaItemVersion")
 
-class ListQuestion(object):
+class ListQuestion(ListEntity):
     pass
 
 class Question(ParliamentaryItem):
@@ -504,7 +507,7 @@ class Question(ParliamentaryItem):
 QuestionChange = ItemLog.makeLogFactory("QuestionChange")
 QuestionVersion = ItemVersions.makeVersionFactory("QuestionVersion")
 
-class ListMotion(object):
+class ListMotion(ListEntity):
     pass
 
 
@@ -529,7 +532,7 @@ class BillType(object):
     type of bill: public/ private, ....
     """
 
-class ListBill(object):
+class ListBill(ListEntity):
     pass
 
 class Bill(ParliamentaryItem):
@@ -548,7 +551,7 @@ class Bill(ParliamentaryItem):
 BillChange = ItemLog.makeLogFactory("BillChange")
 BillVersion = ItemVersions.makeVersionFactory("BillVersion")
 
-class ListConsignatory(object):
+class ListConsignatory(ListEntity):
     pass
 
 class Consignatory(Entity):
@@ -590,7 +593,7 @@ class ObjectSubscriptions(object):
 
 # ###############
 
-class ListConstituency(object):
+class ListConstituency(ListEntity):
     pass
 
 class Constituency(Entity):
@@ -686,7 +689,7 @@ class ScheduledItemDiscussion(Entity):
     """A discussion on a scheduled item."""
     interface.implements(interfaces.ITranslatable)
 
-class ListTabledDocument(object):
+class ListTabledDocument(ListEntity):
     pass
 
 class TabledDocument(ParliamentaryItem):
@@ -727,7 +730,7 @@ class DocumentSource(object):
     Document source for a tabled document
     """
 
-class ListEventItem(object):
+class ListEventItem(ListEntity):
     pass
 
 class EventItem(ParliamentaryItem):

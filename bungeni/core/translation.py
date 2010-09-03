@@ -105,8 +105,9 @@ def get_translation_for(context, lang):
         sql.and_(
             domain.ObjectTranslation.object_id == pk,
             domain.ObjectTranslation.object_type == class_name,
-            domain.ObjectTranslation.lang == lang)
-            )
+            domain.ObjectTranslation.lang == lang
+        )
+    )
     return query.all()
 
 def translate_obj(context):
