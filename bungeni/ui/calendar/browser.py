@@ -443,19 +443,19 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         start_date = schema.TextLine(
             title=_(u"Start Date"),
             description=_(u"Choose a start date and time"),
-            required=True)
+            required=False)
             
         end_date = schema.TextLine(
             title=_(u"End Date"),
             description=_(u"Choose an end date and time"),
-            required=True)
+            required=False)
             
         venue = schema.TextLine(title=u'Venue',
-                                required=True,
+                                required=False,
                                 description=u'Location of the sitting'
                         )
         language = schema.TextLine(title=u'Language',
-                                required=True,
+                                required=False,
                                 description=u'Language'
                         )
         recurrence_type = schema.TextLine( title = u'Recurrence Type',
