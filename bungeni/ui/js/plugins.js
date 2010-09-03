@@ -367,8 +367,8 @@
           "headless": "true",
           "mode": mode,
           "field": field,
-          "next_url": next_url,
-        };
+          "next_url": next_url
+        }
 
         $("#kss-spinner").show();
         $.post(url, data, function(data, status) {
