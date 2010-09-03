@@ -450,7 +450,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
             description=_(u"Choose an end date and time"),
             required=True)
             
-        location = schema.TextLine(title=u'Location',
+        venue = schema.TextLine(title=u'Venue',
                                 required=True,
                                 description=u'Location of the sitting'
                         )
@@ -602,9 +602,9 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                 sitting.start_date = date
                 sitting.end_date = date + sitting_length
                 sitting.status = None
-                if "language" in data:
+                if "language" in data.keys():
                     sitting.language = data["language"]
-                if "venue" in data:
+                if "venue" in data.keys():
                     sitting.venue_id = data["venue"]
                 session.add(sitting)
                 notify(ObjectCreatedEvent(sitting))
@@ -686,6 +686,14 @@ class DhtmlxCalendarSittings(BrowserView):
         for sitting in sittings.values():
             if checkPermission("zope.View", sitting):
                 trusted = removeSecurityProxy(sitting)
+                if trusted.venue:
+                    trusted.text = '<![CDATA[<b>Venue:</b></br>' \
+                                + trusted.venue.short_name + '</br>' \
+                                + '<b>Status:</b>' + '</br>' \
+                                + trusted.status + ']]>'
+                else:
+                    trusted.text = '<![CDATA[<b>Status:</b>' + '</br>' \
+                                + trusted.status + ']]>'
                 self.sittings.append(trusted)
         self.request.response.setHeader('Content-type', 'text/xml')
         return self.render()
