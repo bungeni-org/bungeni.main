@@ -32,7 +32,8 @@ from bungeni.ui.menu import get_actions
 from bungeni.ui.forms import common
 from bungeni.core.location import location_wrapped
 from bungeni.core.interfaces import ISchedulingContext
-#from bungeni.core.schedule import PlenarySchedulingContext
+from bungeni.core.schedule import SittingContainerSchedulingContext
+from bungeni.ui.interfaces import IBusinessSectionLayer
 
 from bungeni.core.odf import OpenDocument
 from bungeni.models import domain
@@ -197,6 +198,11 @@ class CalendarView(BrowserView):
         trusted.title = self.short_name
         interface.alsoProvides(trusted, ILocation)
         interface.alsoProvides(trusted, IDCDescriptiveProperties)
+        if (IBusinessSectionLayer.providedBy(request) and 
+            isinstance(trusted, SittingContainerSchedulingContext)):
+            self.url = url.absoluteURL(trusted.__parent__.__parent__, request)
+        else:
+            self.url = url.absoluteURL(trusted.__parent__, request)
         self.__parent__ = context
         log.debug(debug.interfaces(self))
         log.debug(debug.location_stack(self))

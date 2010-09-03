@@ -118,9 +118,6 @@ class PrincipalGroupSchedulingContext(object):
 
 class PlenarySchedulingContext(PrincipalGroupSchedulingContext):
     component.adapts(IBungeniApplication)
-
-    label = _(u"Plenary")
-    
     @property
     def group_id(self):
         """Return current parliament's group id."""

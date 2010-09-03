@@ -65,7 +65,10 @@
 		            focus:function(node){
 		            }
 	            }
-                
+	            
+                scheduler.attachEvent("onDblClick", function (event_id, native_event_object){
+                    parent.location = '<span tal:replace="structure view/url"/>' + "/sittings/obj-"+event_id+"/view";
+                });
                 
                 
                 scheduler.config.lightbox.sections=[	
@@ -85,9 +88,6 @@
                 init();
                 scheduler.config.icons_select=["icon_details","icon_delete"]
                 scheduler.config.readonly = false;
-                scheduler.attachEvent("onDblClick", function (event_id, native_event_object){
-                    parent.location = "/business/sittings/obj-"+event_id+"/view";
-                });
                 var dp = new dataProcessor(location.href+"/dhtmlxcalendaredit");
 		        dp.init(scheduler);
             }
@@ -102,9 +102,6 @@
                 scheduler.config.drag_move = false;
                 scheduler.config.drag_create = false;
                 scheduler.config.dblclick_create = false;
-                scheduler.attachEvent("onDblClick", function (event_id, native_event_object){
-                    parent.location = "/business/sittings/obj-"+event_id+"/view";
-                });
                 var dp = new dataProcessor(location.href+"/dhtmlxcalendaredit");
 		        dp.init(scheduler);
             }

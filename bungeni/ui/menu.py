@@ -22,7 +22,7 @@ from bungeni.core.translation import get_all_languages
 from bungeni.core.translation import get_available_translations
 from bungeni.core import schedule
 from bungeni.core.globalsettings import getCurrentParliamentId
-from bungeni.core.schedule import PlenarySchedulingContext
+from bungeni.core.schedule import ISchedulingContext
 
 from bungeni.ui.i18n import  _
 from bungeni.ui.utils import url as ui_url, debug
@@ -373,9 +373,9 @@ class CalendarMenu(BrowserMenu):
         for context in contexts:
             context.__name__ = u"schedule"
         if interfaces.IWorkspaceSchedulingSectionLayer.providedBy(request):
-            contexts.append(schedule.WorkspaceSchedulingContext(app["workspace"]["scheduling"]))
+            contexts.append(schedule.ISchedulingContext(app["workspace"]["scheduling"]))
         else:
-            contexts.append(schedule.PlenarySchedulingContext(app))
+            contexts.append(schedule.ISchedulingContext(app["business"]["sittings"]))
         contexts[-1].__name__ = u""
 
         

@@ -97,6 +97,10 @@ class AppSetup(object):
             title=_(u"Committees"),
             marker=interfaces.ICommitteeAddContext,
             description=_(u"Committee schedules"))
+        workspace["scheduling"]["sittings"] = QueryContent(
+            container_getter(get_current_parliament, 'sittings'),
+            title=_(u"Sittings"),
+            description=_(u"Plenary Sittings"))
         # Proof-of-concept: support for selective inclusion in breadcrumb trail:
         # a view marked with an attribute __crumb__=False is NOT included in 
         # the breadcrumb trail (see ui/viewlets/navigation.py)
