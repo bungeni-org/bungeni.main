@@ -672,7 +672,6 @@ class DraftSittingsViewlet(ViewletBase):
                     time_formatter.format(result.start_date),
                     time_formatter.format(result.end_date))
             data["date"] = formatter.format(result.start_date) 
-            data["sitting_type"] = _(result.sitting_type.sitting_type)
             if result.venue:
                 data["venue"] = _(result.venue.short_name)
             else:
@@ -701,8 +700,7 @@ class DraftSittingsViewlet(ViewletBase):
         sittings = session.query(domain.GroupSitting).filter(
                 qfilter).order_by(domain.GroupSitting.start_date.desc()
                     ).options(
-                eagerload("group"),
-                eagerload("sitting_type")
+                eagerload("group")
                 )
         self.query = sittings
         self._setData()
