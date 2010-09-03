@@ -209,14 +209,6 @@
   
   <!-- GroupSitting -->
   
-  <browser:page
-     name="add"
-     for="bungeni.models.domain.GroupSittingContainer"
-     class=".forms.GroupSittingAddForm"
-     permission="bungeni.sitting.Add"
-     layer="bungeni.ui.interfaces.IBungeniSkin"
-     />
-  
   <browser:viewlet
      name="bungeni.viewlet.sittingattendance"
      manager=".interfaces.ISubFormViewletManager"
