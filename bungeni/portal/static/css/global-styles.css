@@ -81,3 +81,6 @@ html, body {
     visibility: hidden;
 }
 
+h3.printHeading {
+	display: none !important;
+}

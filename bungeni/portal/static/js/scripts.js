@@ -51,7 +51,7 @@ function listTogglr(){
 }
 function searchTogglr(){
 	var portletHeader = $('#portletArchiveDates .portletHeader');
-	var portletHeaderSpan = portletHeader.children('span');
+	var portletHeaderSpan = portletHeader.children('span.tile');
 	portletHeaderSpan.css({
 		float:'right',
 		display:'block',
@@ -65,11 +65,23 @@ function searchTogglr(){
 		portletHeaderSpan.css('text-decoration','none');
 	});
 	var portletItem = $('#portletArchiveDates .portletItem');
-	portletItem.css('clear','right');
+	portletItem.css({
+		clear: 'both',
+		height: '50px'
+	});
+	var portletItemForm = $('#portletArchiveDates .portletItem form');
+	portletItemForm.css({
+		display: 'block',
+		position: 'absolute',
+		top: 0,
+		right: 0
+	});
+	
 	if(!portletItem.hasClass('dates-filtered')){
 		portletItem.hide();
 		portletHeaderSpan.css('background-image','url(/static/images/plus.png)');
 	}
+	
 	portletHeader.click(function(){
 		var state = portletItem.css('display');
 		if(state == 'hidden' || state == 'none'){
@@ -92,6 +104,19 @@ $(document).ready(function(){
 			$(this).parent().hide();
 		}
 	});
+
+	$('ul.formTabs li a span').each(function(index){
+		console.log(index + ':' + $(this).text());
+		// store the name of this particular tab
+		var name = $(this).text();
+		// create a new h3 tag for the name
+		var nameH3 = $(document.createElement('h3'));
+		nameH3.text(name);
+		nameH3.addClass('printHeading');
+		// add the heading to the corresponding Panel
+		$('dd.formPanel:eq('+index+')').prepend(nameH3);
+	});
+	// add each name to a corresponding formPanel.
 	
 	/*
 	 * AutoComplete Code - buggy.

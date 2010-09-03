@@ -44,9 +44,6 @@
 .template-portal #top-layer ul#portal-personaltools li {
     padding: 0 0 0 .5em;
 }
-.template-workspace #top-layer a {
-	color: #D4E2EF;
-}
 #top-layer ul#portal-personaltools li a {
     display: block;
     margin: 0;
@@ -55,11 +52,12 @@
     line-height: 22px;
     background: transparent !important;
     text-decoration: underline;
+	color: #aaa;
 }
 .template-portal #top-layer ul#portal-personaltools li a {
     color: #222;
 }
-.template-portal #top-layer ul#portal-personaltools li a:hover {
+#top-layer ul#portal-personaltools li a:hover {
     color: #888;
 }
 #top-layer ul#portal-languageselector {
@@ -78,6 +76,10 @@
 #top-layer ul#portal-languageselector li a {
     height: 20px;
     line-height: 20px;
+	color: #aaa;
+}
+.template-portal #top-layer ul#portal-languageselector li a {
+	color: #222;
 }
 #top-layer ul#portal-languageselector li a:hover {
 	color: #888;
@@ -138,6 +140,10 @@
     border-bottom:1px solid #d4e2ef;
 }
 
+/* portal-searchbox and portal-siteactions are empty tags,
+ * so they have been set to display: none because they make
+ * the layout break in IE.
+ */
 /*
  * portal-searchbox
  */
@@ -150,6 +156,17 @@
     text-transform: none;
     white-space: nowrap;
     z-index: 2;
+	display: none;
+}
+#portal-searchbox input.searchButton {
+    height: 17px;
+}
+
+/*
+ * portal-siteactions
+ */
+#portal-siteactions {
+	display: none;
 }
 
 /*
@@ -609,6 +626,9 @@ input.inputLabelActive {
 	margin: 0 .25em 0 0;
 	border-right: 1px solid #aaa;
 }
+.section-bungeni-archive #portal-column-one .portlet .portletItem ul li {
+	display: inline;
+}
 .section-bungeni-archive #portal-column-one .portlet .portletItem ul li a {
 	float: left;
 }
@@ -678,6 +698,7 @@ input.inputLabelActive {
     display: block;
     line-height: 20px;
 	margin: 0;
+	list-style-type: none;
 }
 #portal-column-one .portlet .portletItem ul li a {
     display: block;
@@ -1281,10 +1302,6 @@ li.formTab a.selected {
 	text-decoration: none;
 	background:#f9ac32 url(/static/images/globalnav-level0-a.png) top left repeat-x;
 }
-.template-workspace li.formTab a:hover,
-.template-workspace li.formTab a:active,
-.template-workspace li.formTab a.selected {
-}
 li.formTab a.selected {
     position: relative;
     top: 2px;
@@ -1298,7 +1315,7 @@ li.formTab a.selected {
 .template-workspace.section-bungeni-admin ul.formTabs li.formTab a:hover,
 .template-workspace.section-bungeni-admin ul.formTabs li.formTab a:active,
 .template-workspace.section-bungeni-admin ul.formTabs li.formTab a.selected,
-.template-workspace.section-bungeni-workspace ul.formTabs li.formTab a:hover
+.template-workspace.section-bungeni-workspace ul.formTabs li.formTab a:hover,
 .template-workspace.section-bungeni-workspace ul.formTabs li.formTab a:active,
 .template-workspace.section-bungeni-workspace ul.formTabs li.formTab a.selected {
 	text-align: left;
@@ -1345,6 +1362,9 @@ body.template-workspace.section-bungeni-workspace #portal-column-content div#wha
     padding: 0 !important;
     border: 0 none;
     text-align: center;
+	clear: none;
+	float: left;
+	width: 100%;
 }
 .formPanel .field {
     margin: 0 auto !important;
@@ -1483,7 +1503,6 @@ span.yui-button.yui-link-button span a {
 	line-height: 16px;
 	height: 20px;
 	text-align: left;
-	width: 960px;
 	width: 95%;
 }
 #yui-dt0-paginator0, #yui-dt1-paginator0, #yui-dt2-paginator0 {
@@ -1630,7 +1649,7 @@ span.yui-button.yui-link-button span a {
 }
 .template-workspace #portal-logo {
     display: block;
-    height: 60px;
+    height: 50px;
 	margin: 0;
 	padding: .5em 0;
     background:#4d4d4d url(/static/images/empowered.png) center right no-repeat;
@@ -1691,7 +1710,7 @@ h4.tabberHeading {
 	padding: 0 !important;
 }
 .documentEditable .documentContent {
-    border: 1px solid #BDD1D7;
+	border: 0 none;
 }
 .contentViews {
     border-color: transparent;

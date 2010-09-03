@@ -173,6 +173,10 @@
 	width: 100%;
 }
 
+/* portal-searchbox and portal-siteactions are empty tags,
+ * so they have been set to display: none because they make
+ * the layout break in IE.
+ */
 /*
  * portal-searchbox
  */
@@ -185,9 +189,17 @@
     text-transform: none;
     white-space: nowrap;
     z-index: 2;
+	display: none;
 }
 #portal-searchbox input.searchButton {
     height: 17px;
+}
+
+/*
+ * portal-siteactions
+ */
+#portal-siteactions {
+	display: none;
 }
 
 /*
@@ -677,6 +689,9 @@ input.inputLabelActive {
 	margin: 0 .25em 0 0;
 	border-right: 1px solid #aaa;
 }
+.section-bungeni-archive #portal-column-one .portlet .portletItem ul li {
+	display: inline;
+}
 .section-bungeni-archive #portal-column-one .portlet .portletItem ul li a {
 	float: left;
 }
@@ -713,6 +728,7 @@ input.inputLabelActive {
 }
 #portal-column-one .portlet .portletItem a {
 	background: #fff;
+	color: #090;
 	border: 0 none;
 }
 #portal-column-one .portlet .portletItem a img {
@@ -1434,7 +1450,7 @@ li.formTab a.selected {
 .template-workspace.section-bungeni-admin ul.formTabs li.formTab a:hover,
 .template-workspace.section-bungeni-admin ul.formTabs li.formTab a:active,
 .template-workspace.section-bungeni-admin ul.formTabs li.formTab a.selected,
-.template-workspace.section-bungeni-workspace ul.formTabs li.formTab a:hover
+.template-workspace.section-bungeni-workspace ul.formTabs li.formTab a:hover,
 .template-workspace.section-bungeni-workspace ul.formTabs li.formTab a:active,
 .template-workspace.section-bungeni-workspace ul.formTabs li.formTab a.selected {
 	text-align: left;
@@ -1482,6 +1498,9 @@ body.template-workspace.section-bungeni-workspace #portal-column-content div#wha
     padding: 0 !important;
     border: 0 none;
     text-align: center;
+	clear: none;
+	float: left;
+	width: 100%;
 }
 .formPanel .field {
     margin: 0 auto !important;
@@ -1786,7 +1805,7 @@ span.yui-button.yui-link-button span a {
 }
 .template-workspace #portal-logo {
     display: block;
-    height: 60px;
+    height: 50px;
 	margin: 0;
 	padding: .5em 0;
     background:#4d4d4d url(/static/images/empowered.png) center right no-repeat;

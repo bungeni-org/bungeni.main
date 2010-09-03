@@ -156,6 +156,10 @@
 	width: 100%;
 }
 
+/* portal-searchbox and portal-siteactions are empty tags,
+ * so they have been set to display: none because they make
+ * the layout break in IE.
+ */
 /*
  * portal-searchbox
  */
@@ -168,9 +172,17 @@
     text-transform: none;
     white-space: nowrap;
     z-index: 2;
+	display: none;
 }
 #portal-searchbox input.searchButton {
     height: 17px;
+}
+
+/*
+ * portal-siteactions
+ */
+#portal-siteactions {
+	display: none;
 }
 
 /*
@@ -674,6 +686,9 @@ input.inputLabelActive {
 	margin: 0 .25em 0 0;
 	border-right: 1px solid #aaa;
 }
+.section-bungeni-archive #portal-column-one .portlet .portletItem ul li {
+	display: inline;
+}
 .section-bungeni-archive #portal-column-one .portlet .portletItem ul li a {
 	float: left;
 }
@@ -710,7 +725,6 @@ input.inputLabelActive {
 }
 .template-workspace #portal-column-one .portlet .portletItem.even,
 .template-workspace #portal-column-one .portlet .portletItem {
-	width:96%;
 	margin: 0 auto;
 }
 .section-bungeni-archive #portal-column-one .portlet .portletItem.even,
@@ -867,10 +881,10 @@ input.inputLabelActive {
     display: block;
     margin: 0;
     padding: 0 .25em;
-    background: #fff;
+    background: transparent;
 }
 .actionMenu .actionMenuContent ul li a:hover {
-    background: #fff;
+    background: transparent;
     color: #000;
 }
 .template-workspace.section-bungeni-admin .actionMenu .actionMenuContent li a:hover,
@@ -1211,21 +1225,20 @@ table.listing,
 table.listingdescription,
 .stx table,
 .yui-skin-sam .yui-dt table {
-    border: 1px solid #ccc;
-    border-bottom-color: #aaa;
-    border-right: 0 none;
-	border-top: 0 none;
     margin: 0 auto;
 	font-size: 100%;
-	
 	text-align: left !important;
 	width: 100%;
-	border-color: #FFCC00;
+	border: 1px solid #FFCC00;
 }
 .template-workspace table.listing,
 .template-workspace table.listingdescription,
 .template-workspace.stx table,
 .template-workspace.yui-skin-sam .yui-dt table {
+    border: 1px solid #ccc;
+    border-bottom-color: #aaa;
+    border-right: 0 none;
+	border-top: 0 none;
 	width: 95%;
 }
 table.listingdescription[style] {
@@ -1329,7 +1342,7 @@ table.listingdescription td,
 .template-workspace.section-bungeni-admin table.listingdescription td,
 .template-workspace.section-bungeni-admin.stx table td,
 .template-workspace.section-bungeni-admin.yui-skin-sam .yui-dt table tr td {
-    border-right: 1px solid #b19659;
+    border-color: #aaa;
 }
 .section-bungeni-archive table {
     margin: auto;
@@ -1400,7 +1413,6 @@ li.formTab a.selected {
     border-left: 1px solid #999;
 	border-bottom: 2px solid #f9ac32;
 	text-decoration: none;
-	background:#f9ac32 url(/static/images/globalnav-level0-a.png) top left repeat-x;
 	
 	/* new */
 	background: url(../images/form-tab-bg.png) repeat-x;
@@ -1411,17 +1423,10 @@ li.formTab a.selected {
     position: relative;
     top: 2px;
 }
-.template-workspace.section-bungeni-admin li.formTab a.selected,
-.template-workspace.section-bungeni-workspace li.formTab a.selected {
-	background: #6CA6CD;
-	border-top: 0 none !important;
-	border-bottom-color: #6ca6cd;
-	text-decoration: none;
-}
 .template-workspace.section-bungeni-admin ul.formTabs li.formTab a:hover,
 .template-workspace.section-bungeni-admin ul.formTabs li.formTab a:active,
 .template-workspace.section-bungeni-admin ul.formTabs li.formTab a.selected,
-.template-workspace.section-bungeni-workspace ul.formTabs li.formTab a:hover
+.template-workspace.section-bungeni-workspace ul.formTabs li.formTab a:hover,
 .template-workspace.section-bungeni-workspace ul.formTabs li.formTab a:active,
 .template-workspace.section-bungeni-workspace ul.formTabs li.formTab a.selected {
 	text-align: left;
@@ -1471,6 +1476,9 @@ body.template-workspace.section-bungeni-workspace #portal-column-content div#wha
     padding: 0 !important;
     border: 0 none;
     text-align: center;
+	clear: none;
+	float: left;
+	width: 100%;
 }
 .formPanel .field {
     margin: 0 auto !important;
@@ -1782,7 +1790,7 @@ span.yui-button.yui-link-button span a {
 }
 .template-workspace #portal-logo {
     display: block;
-    height: 60px;
+    height: 50px;
 	margin: 0;
 	padding: .5em 0;
     background:#4d4d4d url(/static/images/empowered.png) center right no-repeat;

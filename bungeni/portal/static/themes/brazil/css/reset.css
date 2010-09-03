@@ -65,6 +65,7 @@
 .template-workspace #top-layer ul#portal-personaltools li a {
     line-height: 22px;
     text-decoration: underline;
+	color: #aaa;
 }
 #top-layer ul#portal-personaltools li a:hover {
     color: #888;
@@ -93,6 +94,7 @@
     height: 20px;
     line-height: 20px;
 	text-decoration: underline;
+	color: #aaa;
 }
 .template-workspace #top-layer ul#portal-languageselector li a:hover {
 	color: #888;
@@ -155,10 +157,15 @@
 	text-decoration: underline;
 }
 .template-workspace #portal-breadcrumbs {
+	border: 0 none;
     border-bottom:1px solid #d4e2ef;
     margin: 0 0 .5em;
 }
 
+/* portal-searchbox and portal-siteactions are empty tags,
+ * so they have been set to display: none because they make
+ * the layout break in IE.
+ */
 /*
  * portal-searchbox
  */
@@ -171,9 +178,17 @@
     text-transform: none;
     white-space: nowrap;
     z-index: 2;
+	display: none;
 }
 #portal-searchbox input.searchButton {
     height: 17px;
+}
+
+/*
+ * portal-siteactions
+ */
+#portal-siteactions {
+	display: none;
 }
 
 /*
@@ -238,6 +253,7 @@ div.main-column h2 {
 	font-weight: bold !important;
 	color: #222 !important;
 	margin-top: 1em;
+	border: 0 none;
 }
 div.main-column h2 span {
     font-size: 75%;
@@ -642,6 +658,9 @@ input.inputLabelActive {
 	margin: 0 .25em 0 0;
 	border-right: 1px solid #aaa;
 }
+.section-bungeni-archive #portal-column-one .portlet .portletItem ul li {
+	display: inline;
+}
 .section-bungeni-archive #portal-column-one .portlet .portletItem ul li a {
 	float: left;
 }
@@ -917,7 +936,7 @@ div#portal-globalnav ul.level0 li a {
 .template-portal div#portal-globalnav ul.level0 li a {
     margin: 0;
     border-right: 1px solid #aaa;
-	border-bottom: 2px solid #999;
+	border-left: 0 none;
 	border-top: 0 none;
 	border-bottom: 0 none;
 	border-radius: 0;
@@ -945,10 +964,9 @@ div#portal-globalnav ul.level0 li.selected a {
 .template-portal div#portal-globalnav ul.level0 li.selected a,
 .template-portal div#portal-globalnav ul.level0 li a:hover {
     background: #555;
-    line-height: 2.5em;
 	border: 0 none;
     border-right: 1px solid #aaa;
-	border-bottom: 2px solid #999;
+	border-bottom: 0 none;
 	top: 0;
 }
 /*
@@ -1165,24 +1183,9 @@ table.listingdescription,
     border-right: 0 none;
 	border-top: 0 none;
     margin: 0 auto;
-	width: 95%;
 	font-size: 100%;
-	
 	text-align: left !important;
 	width: 100%;
-}
-.section-bungeni-admin table.listing,
-.section-bungeni-admin table.listingdescription,
-.section-bungeni-admin.stx table,
-.section-bungeni-admin.yui-skin-sam .yui-dt table,
-.section-bungeni-workspace table.listing,
-.section-bungeni-workspace table.listingdescription,
-.section-bungeni-workspace table,
-.section-bungeni-workspace.yui-skin-sam .yui-dt table {
-	width: 95%;
-}
-table.listingdescription[style] {
-	width: 95% !important;
 }
 
 table.listing tr:hover,
@@ -1274,6 +1277,14 @@ table.listingdescription td,
     text-shadow: 0 1px 1px #fff;
 	
 	border-right:1px solid #aaa;
+}
+
+table.listing tr.filterColumns td
+table.listingdescription tr.filterColumns td,
+.stx table tr.filterColumns td,
+.yui-skin-sam .yui-dt table tr.filterColumns td {
+	padding: 0 !important;
+	border: 1px solid red !important;
 }
 .section-bungeni-archive table {
     margin: auto;
@@ -1414,17 +1425,20 @@ body.template-workspace.section-bungeni-workspace #portal-column-content div#wha
     padding: 0 !important;
     border: 0 none;
     text-align: center;
+	clear: none;
+	float: left;
+	width: 100%;
 }
 .formPanel .field {
     margin: 0 auto !important;
 	padding: 0;
     clear: both;
-	width: 95%;
 	height: auto;
     text-align: left;
     border-bottom: 1px dotted #ccc;
 	display: inline-block;
 	background: #eee;
+	width: 99.5%;
 }
 #display_form_spacer {
 	height:20px;
@@ -1435,7 +1449,6 @@ body.template-workspace.section-bungeni-workspace #portal-column-content div#wha
 .template-workspace.section-bungeni-admin .formPanel #display_form_spacer,
 .template-workspace.section-bungeni-workspace .formPanel #display_form_spacer {
 	background: url(/static/images/w-globalnav-level1-bg.png) bottom left repeat-x;
-	width: 95%;
 }
 .formPanel .field:after {
 	content: ".";
@@ -1553,8 +1566,7 @@ span.yui-button.yui-link-button span a {
 	line-height: 16px;
 	height: 20px;
 	text-align: left;
-	width: 960px;
-	width: 95%;
+	width: 100%;
 }
 #yui-dt0-paginator0, #yui-dt1-paginator0, #yui-dt2-paginator0 {
 	display: none;
@@ -1701,7 +1713,7 @@ span.yui-button.yui-link-button span a {
 }
 .template-workspace #portal-logo {
     display: block;
-    height: 60px;
+    height: 50px;
 	margin: 0;
 	padding: .5em 0;
     background:#4d4d4d url(/static/images/empowered.png) center right no-repeat;
