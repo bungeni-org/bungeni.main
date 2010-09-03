@@ -174,20 +174,20 @@ class MyGroupsViewlet(ViewletBase):
             data['subject'] = result.short_name
             data['title'] = result.short_name  + ' (' + result.type + ')'
             data['result_item_class'] = 'workflow-state-' + result.status
-            url = "/archive/browse/parliaments/obj-" + str(parliament_id) 
+            data_url = "/archive/browse/parliaments/obj-" + str(parliament_id)
             if type(result)==domain.Parliament:
-                data['url'] = url.set_url_context(url)
+                data['url'] = url.set_url_context(data_url)
                 continue
             elif type(result)==domain.Committee:
                 #data['url'] = url + '/committees/obj-' + str(result.group_id) 
-                data['url'] = url.set_context_url(('/groups/' + 
+                data['url'] = url.set_url_context(('/groups/' + 
                     result.parent_group.group_principal_id + 
                     '/' + result.group_principal_id))
             elif type(result)==domain.PoliticalGroup:
-                data['url'] = url.set_context_url(url + '/politicalgroups/obj-' +
+                data['url'] = url.set_url_context(data_url + '/politicalgroups/obj-' +
                                                   str(result.group_id))
             elif type(result)==domain.Ministry:
-                data['url'] = url.set_context_url(url +
+                data['url'] = url.set_url_context(data_url +
                             ('/governments/obj-%s/ministries/obj-%s' % (
                         str(government_id), str(result.group_id))))
             else:
@@ -234,7 +234,7 @@ class MotionInStateViewlet(ViewletBase):
                     datetime.date.strftime(result.approval_date, '%Y-%m-%d'))
             else:
                 data['result_item_class'] = 'workflow-state-' + result.status
-            data['url'] = url.set_context_url('motions/obj-' + str(result.motion_id))
+            data['url'] = url.set_url_context('motions/obj-' + str(result.motion_id))
             data['status'] = misc.get_wf_state(result)
             data['status_date'] = formatter.format(result.status_date)
             data['owner'] = "%s %s" %(result.owner.first_name, result.owner.last_name)
@@ -273,7 +273,7 @@ class BillItemsViewlet(ViewletBase):
             data['subject'] = result.short_name
             data['title'] = result.short_name
             data['result_item_class'] = ('workflow-state-' + result.status)
-            data['url'] = url.set_context_url('%ss/obj-%i' %
+            data['url'] = url.set_url_context('%ss/obj-%i' %
                                         (result.type, result.parliamentary_item_id))
             data['status'] = misc.get_wf_state(result)
             data['status_date'] = formatter.format(result.status_date)
