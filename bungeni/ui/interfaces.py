@@ -3,6 +3,7 @@ from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 
 from ploned.ui.interfaces import IPlonedSkin
 from ore.yui.interfaces import IYUILayer
+from bungeni.rest.interfaces import IRESTLayer
 
 from zope.configuration import fields
 
@@ -10,6 +11,8 @@ class IBungeniSkin(IPlonedSkin, IYUILayer):
     """Bungeni application skin."""
 class IBungeniAuthenticatedSkin(IBungeniSkin):
     """Skin for authenticated users."""
+class IBungeniRESTSkin(IRESTLayer):
+    """Bungeni REST API skin."""    
 
 from zope import interface
 class IWorkspaceContainer(interface.Interface):

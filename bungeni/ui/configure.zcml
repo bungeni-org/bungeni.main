@@ -62,6 +62,80 @@
      name="index"
      />
 
+ <!--rest views -->
+  <interface
+     interface=".interfaces.IBungeniRESTSkin"
+     type="bungeni.rest.interfaces.IRESTSkinType"
+     name="brs"
+     />
+
+  <browser:page name="users"
+    for="bungeni.models.interfaces.IBungeniApplication"
+    class=".views.Users"
+    layer="bungeni.rest.interfaces.IRESTLayer"
+    permission="zope.Public"
+    allowed_attributes="GET POST PUT DELETE"
+  />
+
+  <browser:page name="enumerateusers"
+    for="bungeni.models.interfaces.IBungeniApplication"
+    class=".views.enumerateUsers"
+    layer="bungeni.rest.interfaces.IRESTLayer"
+    permission="zope.Public"
+    allowed_attributes="GET"
+  />    
+
+  <browser:page name="groups"
+    for="bungeni.models.interfaces.IBungeniApplication"
+    class=".views.Groups"
+    layer="bungeni.rest.interfaces.IRESTLayer"
+    permission="zope.Public"
+    allowed_attributes="GET"
+  />
+
+  <browser:page name="enumerategroups"
+    for="bungeni.models.interfaces.IBungeniApplication"
+    class=".views.enumerateGroups"
+    layer="bungeni.rest.interfaces.IRESTLayer"
+    permission="zope.Public"
+    allowed_attributes="GET"
+  />  
+
+  <browser:page name="roles"
+    for="bungeni.models.interfaces.IBungeniApplication"
+    class=".views.Roles"
+    layer="bungeni.rest.interfaces.IRESTLayer"
+    permission="zope.Public"
+    allowed_attributes="GET POST PUT DELETE"
+   />
+
+  <browser:page name="enumerateroles"
+    for="bungeni.models.interfaces.IBungeniApplication"
+    class=".views.enumerateRoles"
+    layer="bungeni.rest.interfaces.IRESTLayer"
+    permission="zope.Public"
+    allowed_attributes="GET"
+  />
+
+  <browser:page name="groupmembers"
+    for="bungeni.models.interfaces.IBungeniApplication"
+    class=".views.GroupMembers"
+    layer="bungeni.rest.interfaces.IRESTLayer"
+    permission="zope.Public"
+    allowed_attributes="GET POST PUT DELETE"
+  />      
+
+  <browser:page name="memberships"
+    for="bungeni.models.interfaces.IBungeniApplication"
+    class=".views.Memberships"
+    layer="bungeni.rest.interfaces.IRESTLayer"
+    permission="zope.Public"
+    allowed_attributes="GET POST PUT DELETE"
+  />
+  
+
+<!--end of rest views-->    
+
   <subscriber 
     handler=".publication.on_before_traverse" 
     trusted="True"

@@ -12,8 +12,6 @@ $URL$
     <p i18n:translate="" class="documentDescription">
       An overview of the daily operations of the parliament
     </p>
-    <br/>
-
     <p i18n:translate='From: ${whats_on_start_date} to: ${whats_on_end_date}'>
        From: <span tal:replace="view/get_start_date" i18n:name="whats_on_start_date"/>
        to: <span tal:replace="view/get_end_date" i18n:name="whats_on_end_date" />
