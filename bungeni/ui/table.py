@@ -2,7 +2,8 @@
 
 from ore.yuiwidget.table import BaseDataTableFormatter
 
-from bungeni.ui import container
+from bungeni.ui import container 
+from bungeni.ui import common
 from bungeni.ui.i18n import _
 from zope.i18n import translate
 from zope.security import proxy
@@ -93,20 +94,12 @@ class ContextDataTableFormatter(BaseDataTableFormatter):
             self.renderContents(),
             self.script(**self.getDataTableConfig()))
 
-class AjaxContainerListing(container.ContainerListing):
+
+class AjaxContainerListing(common.AjaxContainerListing):
     formatter_factory = ContextDataTableFormatter
 
     @property
-    def formatter(self):
+    def prefix(self):
         context = proxy.removeSecurityProxy(self.context)
-        prefix= "container_contents_" + context.__name__
-        formatter = self.formatter_factory(context,
-                                            self.request,
-                                            (),
-                                            prefix=prefix,
-                                            columns = self.columns)
-        formatter.cssClasses['table'] = 'listing'
-        formatter.table_id = "datacontents"
-        return formatter
+        return "container_contents_%s" % (context.__name__)
 
-    

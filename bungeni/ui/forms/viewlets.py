@@ -34,7 +34,7 @@ import bungeni.core.globalsettings as prefs
 
 from bungeni.ui.tagged import get_states
 from bungeni.ui import z3evoque
-from bungeni.ui.table import AjaxContainerListing
+from bungeni.ui import table
 from bungeni.ui.utils import queries, statements, url, misc, date, debug
 
 from fields import BungeniAttributeDisplay
@@ -110,19 +110,17 @@ class SubFormViewletManager(manager.WeightOrderedViewletManager):
                  for name, viewlet in viewlets
                  if viewlet.for_display == True]
 
-class SubformViewlet (AjaxContainerListing):
+
+class SubformViewlet(table.AjaxContainerListing):
     """
-    
     """
-    render = ViewPageTemplateFile ('templates/generic-sub-container.pt')
+    render = ViewPageTemplateFile ("templates/generic-sub-container.pt")
     for_display = True
 
 
 class SessionViewlet(SubformViewlet):
-
-
+    
     def __init__(self, context, request, view, manager):
-
         self.context = context.sessions
         self.request = request
         self.__parent__ = context
@@ -131,10 +129,8 @@ class SessionViewlet(SubformViewlet):
 
 
 class ConsignatoryViewlet(SubformViewlet):
-
-
+    
     def __init__(self, context, request, view, manager):
-
         self.context = context.consignatory
         self.request = request
         self.__parent__ = context
@@ -146,7 +142,6 @@ class GovernmentViewlet(SubformViewlet):
 
 
     def __init__(self, context, request, view, manager):
-
         self.context = context.governments
         self.request = request
         self.__parent__ = context
@@ -155,9 +150,7 @@ class GovernmentViewlet(SubformViewlet):
 
 class MemberOfParliamentViewlet(SubformViewlet):
 
-
     def __init__(self, context, request, view, manager):
-
         self.context = context.parliamentmembers
         self.request = request
         self.__parent__ = context
@@ -165,18 +158,16 @@ class MemberOfParliamentViewlet(SubformViewlet):
         self.query = None
 
 
-
 class SittingAttendanceViewlet(SubformViewlet):
 
-
     def __init__(self, context, request, view, manager):
-
         self.context = context.attendance
         self.request = request
         self.__parent__ = context
         self.manager = manager
         self.query = None
         self.for_display = len(self.context) > 0
+
 
 class SittingReportsViewlet(SubformViewlet):
     def __init__(self, context, request, view, manager):
