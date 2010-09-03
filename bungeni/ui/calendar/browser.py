@@ -360,8 +360,6 @@ class GroupSittingScheduleView(BrowserView):
         #start_date = utils.datetimedict.fromdatetime(self.context.start_date)
         #end_date = utils.datetimedict.fromdatetime(self.context.end_date)
         
-        #session = Session()
-        sitting_type_dc = IDCDescriptiveProperties(self.context.sitting_type)
 
         site_url = url.absoluteURL(getSite(), self.request)
 
@@ -372,7 +370,6 @@ class GroupSittingScheduleView(BrowserView):
                 self.context.start_date.strftime('%Y-%m-%d %H:%M'), 
                 self.context.end_date.strftime('%H:%M')),
             description=_(u"$type &mdash; ${start}-${end}", mapping={
-                'type': translate(sitting_type_dc.title),
                 'start': self.context.start_date.strftime('%Y-%m-%d %H:%M'), 
                 'end': self.context.end_date.strftime('%H:%M')
                 }),
