@@ -124,7 +124,6 @@ def current_titles_in_group_column(name, title, default=u""):
         today = date.today()
         if not value:
             return default
-        session = Session()
         title_list = []
         for title in item.member_titles:
             if title.start_date <= today:
@@ -147,13 +146,11 @@ def inActiveDead_Column(name, title, default):
 
 def item_name_column(name, title, default=u""):
     def getter(item, formatter):
-        session = Session()
         return u"%s %s" % (item.item.type, item.item.short_name)
     return column.GetterColumn(title, getter)
 
 def group_name_column(name, title, default=u""):
     def getter(item, formatter):
-        session = Session()
         obj = translate_obj(item)
         #TODO: translate group.type
         return u"%s %s" % (item.group.type, obj.group.short_name)
