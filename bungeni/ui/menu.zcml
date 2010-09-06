@@ -130,6 +130,7 @@
         permission="zope.View"
         submenu="reporting_actions"
         order="20"
+        layer=".interfaces.IWorkspaceSchedulingSectionLayer"
     />
 	<browser:subMenuItem menu="plone_contentmenu"
         for="bungeni.models.interfaces.IGroupSitting"
@@ -138,6 +139,7 @@
         permission="zope.View"
         submenu="reporting_actions"
         order="20"
+        layer=".interfaces.IWorkspaceSchedulingSectionLayer"
     />
     
     <!-- add menus for content -->
@@ -868,14 +870,14 @@
     <browser:menuItem menu="reporting_actions"
         for="bungeni.core.interfaces.ISchedulingContext"
         title="Agenda..."
-        action="./../agenda"
+        action="agenda"
         permission="bungeni.reports.Edit"
     />
     <browser:menuItem
         menu="reporting_actions"
         for="bungeni.core.interfaces.ISchedulingContext"
         title="Votes and proceedings..."
-        action="./../votes-and-proceedings"
+        action="votes-and-proceedings"
         permission="bungeni.reports.Edit"
     />
     
