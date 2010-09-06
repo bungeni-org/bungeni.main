@@ -223,7 +223,12 @@ class ReportView(form.PageForm):
             self.start_date = datetime.today().date()
 
         self.end_date = self.get_end_date(self.start_date, self.time_span)
-
+        if ISchedulingContext.providedBy(self.context):
+            self.sittings = self.get_sittings(self.start_date, self.end_date)
+            if len(self.sittings) == 0:
+                errors.append(interface.Invalid(
+                _(u"The period selected has no sittings"),
+                "date"))
         parliament = queries.get_parliament_by_date_range(self, self.start_date, self.end_date)
         #session = queries.get_session_by_date_range(self, start_date, end_date)
 
@@ -269,7 +274,7 @@ class ReportView(form.PageForm):
                     item.item_schedule.sort(key=operator.attrgetter('real_order'))
                 else:
                     item.item_schedule.sort(key=operator.attrgetter('planned_order'))
-                    item.sitting_type.sitting_type = item.sitting_type.sitting_type.capitalize()
+                    #item.sitting_type.sitting_type = item.sitting_type.sitting_type.capitalize()
             return items
 
     def process_form(self, data):
@@ -539,17 +544,19 @@ class SaveReportView(form.PageForm):
         report.group_id = self.context.group_id
         session.add(report)
         notify(ObjectCreatedEvent(report))
-        ids = data["sittings"].split(",")
-        for id in ids:
+        if "sittings" in data.keys():
             try:
-                sit_id = int(id)
+                ids = data["sittings"].split(",")
+                for id_number in ids:
+                    sit_id = int(id_number)
+                    sitting = session.query(domain.GroupSitting).get(sit_id)
+                    sr = domain.SittingReport()
+                    sr.report = report
+                    sr.sitting = sitting
+                    session.add(sr)
             except:
-                continue
-            sitting = session.query(domain.GroupSitting).get(sit_id)
-            sr = domain.SittingReport()
-            sr.report = report
-            sr.sitting = sitting
-            session.add(sr)
+                #if no sittings are present in report or some other error occurs
+                pass
         session.commit()
 
         if IGroupSitting.providedBy(self.context):
