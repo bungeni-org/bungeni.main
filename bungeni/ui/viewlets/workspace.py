@@ -680,8 +680,8 @@ class DraftSittingsViewlet(ViewletBase):
             data["date"] = formatter.format(result.start_date) 
             if result.venue:
                 data["venue"] = _(result.venue.short_name)
-            else:
-                date["venue"] = ""
+            #else:
+            #    date["venue"] = ""
             if type(result)==domain.Question:
                 data["to"] = result.ministry.short_name
             else:
