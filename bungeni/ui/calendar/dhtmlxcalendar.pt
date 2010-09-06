@@ -45,7 +45,6 @@
 			            //node.childNodes[1].value=ev.type||"";
 			            //node.childNodes[4].value=ev.venue||"";
 			            //node.childNodes[7].value=ev.language||"";
-			            $("#select_sitting_type").val(ev.type||"");
 			            $("#select_sitting_venue").val(ev.venue||"");
 			            $("#select_sitting_lang").val(ev.language||"en");
 		            },
@@ -56,11 +55,11 @@
 			            //ev.venue = node.childNodes[4].value;
 			            //ev.language = node.childNodes[7].value;
 			            //return node.childNodes[1].value;
-			            ev.type = $("#select_sitting_type").val();
 			            //ev.text = $("#select_sitting_type").options[ev.type].text;
 			            
 			            ev.language = $("#select_sitting_lang").val();
 			            ev.venue = $("#select_sitting_venue").val();
+			            ev.text = '<span tal:replace="structure python:'&lt;b&gt;Venue:&lt;/b&gt;&lt;/br&gt;'"/>' + $("#select_sitting_venue option:selected").text();
 		            },
 		            focus:function(node){
 		            }
@@ -70,7 +69,7 @@
                     parent.location = '<span tal:replace="structure view/url"/>' + "/sittings/obj-"+event_id+"/view";
                 });
                 
-                
+                 
                 scheduler.config.lightbox.sections=[	
                         { name:"description", height:200, type:"my_editor" },
                         {name:"recurring", height:115, type:"recurring", map_to:"rec_type", button:"recurring"},
