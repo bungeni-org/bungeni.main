@@ -29,7 +29,7 @@ from bungeni.models.interfaces import ICommitteeStaffContainer
 
 from bungeni.core.translation import translate_obj
 
-from bungeni.ui.utils import url, date, debug
+from bungeni.ui.utils import url, date
 from bungeni.ui.cookies import get_date_range
 from bungeni.ui.interfaces import IBusinessSectionLayer, IMembersSectionLayer
 
@@ -178,12 +178,12 @@ class WorkspaceRootRedirect(BrowserView):
         request = self.request
         try: 
             first_workspace = IAnnotations(request)["layer_data"].workspaces[0]
-            to_url = "/workspace/obj-%s/pi" % first_workspace.group_id
+            # !+ deliverance issue: "pi" url path needs to end with a "/", as
+            # otherwise the url for other child items will have "pi/" omitted
+            to_url = "/workspace/obj-%s/pi/" % first_workspace.group_id
         except:
             to_url = "/workspace"
-        # !+TRAILING_SLASH(mr, sep-2010) this is still needed?
-        to_url = url.set_url_context(to_url)
-        if url.get_destination_url_path(request) != to_url:
+        if url.get_destination_url_path(request)!=to_url:
             # never redirect to same destination!
             log.warn("WorkspaceRootRedirect %s -> %s" % (request.getURL(), to_url))
             request.response.redirect(to_url)
@@ -204,8 +204,9 @@ class _IndexRedirect(BrowserView):
             self.__class__.__name__, request.getURL(), self.index_name))
         request.response.redirect(self.index_name)
 class WorkspaceContainerIndexRedirect(_IndexRedirect):
-    # !+TRAILING_SLASH(mr, sep-2010) this is still needed?
-    index_name = url.set_url_context("pi")
+    # !+ deliverance issue: "pi" url path needs to end with a "/", as
+    # otherwise the url for other child items will have "pi/" omitted
+    index_name = "pi/"
 class BusinessIndexRedirect(_IndexRedirect):
     index_name = "whats-on"
 class MembersIndexRedirect(_IndexRedirect):
@@ -259,9 +260,7 @@ class ContainerJSONListing(BrowserView):
         return fs
     
     def getFilter(self):
-        """ () -> str
-        """
-        fs = [] # filter string
+        fs = "" # filter string
         domain_model = proxy.removeSecurityProxy(self.context.domain_model)
         table = orm.class_mapper(self.domain_model).mapped_table
         utk = {}
@@ -273,45 +272,37 @@ class ContainerJSONListing(BrowserView):
             if fn in utk:
                 column = table.columns[utk[fn]]
                 kls = column.type.__class__
-            ff_name = "filter_%s" % (fn) # field filter name
+            ff_name = "filter_" + fn # field filter name
             ff = self.request.get(ff_name, None) # field filter
             if ff:
                 if fs:
-                    fs.append(" AND ")
+                    fs += " AND "
                 if getattr(domain_model, "sort_replace", None):
                     if fn in domain_model.sort_replace.keys():
-                        rfs = [] # replace filter string
+                        rfs = "" # replace filter string
                         op, ffs = self._get_operator_field_filters(ff)
                         # sort_replace field_names
                         for srfn in (domain_model.sort_replace[fn]):
                             if rfs:
-                                rfs.append(op)
+                                rfs += op
                             else:
-                                rfs.append(" (")
-                            rfs.append(self._getFilterStr(srfn, ffs, " OR "))
+                                rfs += " ("
+                            rfs += self._getFilterStr(srfn, ffs, " OR ")
                         if rfs:
-                             rfs.append(") ")
-                        fs.extend(rfs)
+                             rfs += ") "
+                        fs += rfs
                         continue
                 if fn in utk:
                     if kls in (types.String, types.Unicode):
                         op, ffs = self._get_operator_field_filters(ff)
-                        fs = [self._getFilterStr(str(column), ffs, op)]
+                        fs = self._getFilterStr(str(column), ffs, op)
                     elif kls in (types.Date, types.DateTime):
                         f_name = "to_char(%s, 'YYYY-MM-DD')" % (column)
-                        fs = [self._getFilterStr(f_name, [ff], "")]
+                        fs = self._getFilterStr(f_name, [ff], "")
                     else:
-                        fs.append("%s = %s" % (column, ff))
-        return "".join(fs)
-    
-    def query_add_filters(self, query, *filter_strings):
-        """ (filter_sytings) -> query
-        """
-        for fs in filter_strings:
-            if fs:
-                query = query.filter(fs)
-        return query
-    
+                        fs += "%s = %s" % (column, ff)
+        return fs
+
     def getSort(self):
         """ server side sort,
         @web_parameter sort - request variable for sort column
@@ -319,8 +310,7 @@ class ContainerJSONListing(BrowserView):
         """
         columns = []
         default_sort = None
-        sort_key = self.request.get("sort")
-        sort_dir = self.request.get("dir")
+        sort_key, sort_dir = self.request.get("sort"), self.request.get("dir")
         domain_model = proxy.removeSecurityProxy(self.context.domain_model)
         table = orm.class_mapper(self.domain_model).mapped_table
         utk = {}
@@ -367,7 +357,7 @@ class ContainerJSONListing(BrowserView):
 
     def _get_secured_batch(self, query, start, limit):
         secured_query = secured_iterator("zope.View", query, self.context)
-        nodes = []
+        nodes =[]
         for ob in secured_query:
             ob = contained(ob, self, stringKey(ob))
             nodes.append(ob)
@@ -402,7 +392,7 @@ class ContainerJSONListing(BrowserView):
                     d[f] = v = field.query(n)
                 # !+i18n_DATE(mr, sep-2010) two problems with the isinstance 
                 # tests below: 
-                # a) they seem to always fail (no field values of this type?)
+                # a) they seem to always fail
                 # b) this is incorrect way to localize dates
                 if isinstance(v, datetime.datetime):
                     d[f] = v.strftime("%F %I:%M %p")
@@ -412,47 +402,34 @@ class ContainerJSONListing(BrowserView):
             values.append(d)
         return values
     
-    # !+BATCH(mr, sep-2010) this method (plus other support methods here) 
-    # replaces the logic in:
-    #   - alchemist.ui.container.ContainerJSONListing.getBatch()
-    #   - ore.alchemist.container.AlchemistContainer.batch()
+    #TODO: Merge this getbatch code with the one in ContainerWFStatesJSONListing below
     def getBatch(self, start=0, limit=20):
+        order_by = self.getSort()
         context = proxy.removeSecurityProxy(self.context)
-        query = get_query(self.context, self.request)
-        # filters
+        query=get_query(self.context, self.request)
+        # fetch the nodes from the container
         filter_by = dateFilter(self.request)
         if filter_by:
-            if (("start_date" in context._class.c) and 
-                ("end_date" in context._class.c)
-            ):
+            if ("start_date" in  context._class.c 
+                and "end_date" in  context._class.c):
                 # apply date range resrictions
-                query = query.filter(filter_by)
-        query = self.query_add_filters(query, self.getFilter())
-        # order_by
-        order_by = self.getSort()
+                query=query.filter(filter_by)
+        #query = query.limit(limit).offset(start)
+        ud_filter = self.getFilter()
+        if ud_filter != "":
+            query=query.filter(ud_filter)
         if order_by:
             query = query.order_by(order_by)
-        
-        # ore.alchemist.container.AlchemistContainer.batch()
-        # nodes: [<bungeni.models.domain.Question]
         nodes = self._get_secured_batch(query, start, limit)
-        nodes = self.translate_objects(nodes)
-        batch = self._jsonValues(nodes, self.fields, self.context,
-            self._get_anno_getters_by_field_name(self.context))
-        return batch
-    
-    def translate_objects(self, nodes):
-        """ (nodes:[ITranslatable]) -> [nodes]
-        """
-        import sys
         t_nodes = []
         for node in nodes:
             try:
                 t_nodes.append(translate_obj(node))
-            except (AssertionError,): # node is not ITranslatable
-                debug.log_exc_info(sys.exc_info(), log_handler=log.warn)
+            except (AssertionError,): # node is not ITranslatable 
                 t_nodes.append(node)
-        return t_nodes
+        batch = self._jsonValues(t_nodes, self.fields, self.context,
+            self._get_anno_getters_by_field_name(self.context))
+        return batch
     
     def __call__(self):
         context = proxy.removeSecurityProxy(self.context)
@@ -478,23 +455,7 @@ class ContainerJSONListing(BrowserView):
 
 class ContainerWFStatesJSONListing(ContainerJSONListing):
     
-    def query_add_filters(self, query, *filter_strings):
-        """Add filtering on public_wfstates
-        """
-        public_wfstates = getattr(self.domain_annotation, "public_wfstates", 
-            None)
-        if public_wfstates:
-            query = query.filter(self.domain_model.status.in_(public_wfstates))
-        return super(ContainerWFStatesJSONListing, self
-            ).query_add_filters(query, *filter_strings)
-    
-    ''' 
-    !+BATCH(mr, sep-2010) what was the reason that there be a 
-        different getBatch() form the superclass's
-    !+LISTINGS_CLASS(mr, sep-2010) if listings_class is not used here, 
-        is it then superfluous?
-    
-    def getBatch(self, start=0, limit=20):
+    def getBatch(self, start=0, limit=20, order_by=None):
         context = proxy.removeSecurityProxy(self.context)
         mapper = orm.class_mapper(self.domain_model) 
         listing_class = getattr(self.domain_model, "listings_class", None)
@@ -504,7 +465,7 @@ class ContainerWFStatesJSONListing(ContainerJSONListing):
             pk = p_mapper.primary_key_from_instance(context_parent)[0]
         except orm.exc.UnmappedClassError: 
             pk = None
-        l_query = None
+        l_query=None
         if listing_class:
             session = Session()
             self.domain_model = listing_class
@@ -513,42 +474,29 @@ class ContainerWFStatesJSONListing(ContainerJSONListing):
             # if we substituted a foreign key in our listing class with 
             # clear text we have to adjust our modifier accordingly
             # "_fk_" + field name is the convention
-            _fk_fieldname = "_fk_%s" % (context.constraints.fk)
-            if hasattr(listing_class, _fk_fieldname):
-                modifier = getattr(listing_class, _fk_fieldname) == pk
+            if hasattr(listing_class, "_fk_" + 
+                    context.constraints.fk):
+                modifier = getattr(listing_class, "_fk_" + 
+                    context.constraints.fk) == pk
             else:
                 modifier = getattr(listing_class, context.constraints.fk) == pk
             l_query = l_query.filter(modifier)
-        query = get_query(self.context,  self.request, l_query, 
-            self.domain_model)
-        
-        # filters
-        # workflow public states
+        query=get_query(self.context,  self.request, l_query, self.domain_model)
+        # fetch the nodes from the container
         public_wfstates = getattr(self.domain_annotation, "public_wfstates", 
                 None)
         if public_wfstates:
-            query = query.filter(self.domain_model.status.in_(public_wfstates))
-        query = self.query_add_filters(query, self.getFilter())
-        
-        # order_by
+            query=query.filter(self.domain_model.status.in_(public_wfstates))
+        ud_filter = self.getFilter()
+        if ud_filter != "":
+            query=query.filter(ud_filter)
+        self.set_size = query.count()
         order_by = self.getSort()
         if order_by:
             query = query.order_by(order_by)
-        
-        #query = query.limit(limit).offset(start) 
-        #nodes = query.all()
-        #self.set_size = query.count()
-        # nodes: [<bungeni.models.domain.ListQuestion]
-        nodes = self._get_secured_batch(query, start, limit)
-        #
-        # !+LIST_TRANSLATIONS(mr, sep-2010) the numerous derived domain objects, 
-        # conventionally named "List<ClassName>", also should be translatable ?
-        # There should be a way to map the i18n attributes of the derived object 
-        # to use the translations for the master object...
-        nodes = self.translate_objects(nodes)
-        #batch = self._jsonValues(nodes, self.fields, self.context)
-        batch = self._jsonValues(nodes, self.fields, self.context,
-            self._get_anno_getters_by_field_name(self.context))
+        query = query.limit(limit).offset(start) 
+        nodes = query.all()
+        batch = self._jsonValues(nodes, self.fields, self.context)
         return batch
-    '''
+
 
