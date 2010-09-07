@@ -440,7 +440,42 @@ class ParliamentMembershipInfo(BungeniAttributeDisplay):
         self.context.__parent__ = parent
         super(ParliamentMembershipInfo, self).update()
 
+class ParliamentaryItemMinutesViewlet(BungeniAttributeDisplay):
 
+    mode = "view"
+    for_display = True
+
+    form_name = _(u"Minutes")
+    
+    def __init__(self, context, request, view, manager):
+        self.request = request
+        self.context = context
+        self.manager = manager
+        trusted = removeSecurityProxy(context)
+        item_id = trusted.parliamentary_item_id
+        session = Session()
+        self.query = session.query(domain.ScheduledItemDiscussion).filter(
+            sql.and_(
+            domain.ScheduledItemDiscussion.schedule_id == \
+                domain.ItemSchedule.schedule_id,
+            domain.ItemSchedule.item_id == item_id
+                )
+            )
+        #self.context = self.query.all()[0]
+        self.for_display = self.query.count() > 0
+    def update(self):
+        """
+        refresh the query
+        """
+        parent = self.context.__parent__
+        try:
+            self.context = self.query.all()[0]
+        except IndexError:
+            self.context = None
+            return
+        self.context.__parent__ = parent
+        super(ParliamentaryItemMinutesViewlet, self).update()
+        
 class InitialQuestionsViewlet(BungeniAttributeDisplay):
     form_name = (u"Initial Questions")
 
