@@ -3,7 +3,7 @@
 </div>
 <tal:loop tal:repeat="item view/sitting_items">
     <div class="report_title">
-          <span tal:replace="view/group/short_name"/> Parliament : <span tal:content="item/sitting_type/sitting_type"/> Sitting
+          <span tal:replace="view/group/short_name"/> Parliament : Sitting
     </div> 
     <div class="report_date">Date : <span tal:content="python:item.start_date.strftime('%A %d %B %Y')" />
     </div>

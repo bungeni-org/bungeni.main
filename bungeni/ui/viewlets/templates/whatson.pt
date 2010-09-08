@@ -69,7 +69,7 @@ $URL$
                     </a>
                     <span i18n:domain="bungeni.models" i18n:translate="" tal:content="item/group_type" />
                     <span tal:content="item/group_name" />
-                    <span tal:content="item/sitting_type" />
+                    <!-- span tal:content="item/sitting_type" /-->
                 </li>
               </ul></li>
             </tal:block>

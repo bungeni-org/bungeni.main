@@ -242,8 +242,8 @@
                                 tal:replace="sitting/formatted_end_time" />
                         </span>
                         
-                        <span class="sitting-type" 
-                              tal:content="string:(${sitting/record/sitting_type/sitting_type})" />
+                        <!-- span class="sitting-type" 
+                              tal:content="string:(${sitting/record/sitting_type/sitting_type})" / -->
                       </a>
                     </div>
 
@@ -338,8 +338,8 @@
                                 tal:replace="sitting/formatted_end_time" />
                         </span>
                         
-                        <span class="sitting-type" 
-                              tal:content="string:(${sitting/record/sitting_type/sitting_type})" />
+                        <!-- span class="sitting-type" 
+                              tal:content="string:(${sitting/record/sitting_type/sitting_type})" / -->
                       </a>
                     </div>
 

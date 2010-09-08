@@ -156,7 +156,7 @@ class WhatsOnBrowserView(BrowserView):
                                         schedule.item.parliamentary_item_id)),
                     'group_type': schedule.sitting.group.type,
                     'group_name' : schedule.sitting.group.short_name,
-                    'sitting_type' : schedule.sitting.sitting_type.sitting_type,
+                    #'sitting_type' : schedule.sitting.sitting_type.sitting_type,
                      })
                 s_dict['day'] = day
                 s_dict['items'] = s_list
