@@ -30,7 +30,7 @@ $URL$
                     <span tal:content="sitting/start" /> 
                     -
                     <span tal:content="sitting/end" /> 
-                    (<span tal:content="sitting/type" />)
+                    <!-- (<span tal:content="sitting/type" />) -->
                     <span tal:content="sitting/name" /> 
                   </a> 
                   <ul tal:define="items sitting/items">
@@ -90,7 +90,7 @@ $URL$
                         </a>
                         <span i18n:domain="bungeni.models" i18n:translate="" tal:content="item/group_type" />
                         <span tal:content="item/group_name" />
-                        <span tal:content="item/sitting_type" />
+                        <!-- span tal:content="item/sitting_type" / -->
                     </li>
                   </ul></li>
                </tal:block>
@@ -111,7 +111,7 @@ $URL$
                     </a>
                     <span i18n:domain="bungeni.core" i18n:translate="" tal:content="item/group_type" />
                     <span tal:content="item/group_name" />
-                    <span tal:content="item/sitting_type" />
+                    <!-- span tal:content="item/sitting_type" / -->
                 </li>
                </ul> </li>
              </tal:block>
@@ -132,7 +132,7 @@ $URL$
                     </a>
                     <span i18n:domain="bungeni.models" i18n:translate="" tal:content="item/group_type" />
                     <span tal:content="item/group_name" />
-                    <span tal:content="item/sitting_type" />
+                    <!-- span tal:content="item/sitting_type" /-->
                 </li>
                </ul> </li>
              </tal:block>
@@ -153,7 +153,7 @@ $URL$
                     </a>
                     <span i18n:domain="bungeni.models" i18n:translate="" tal:content="item/group_type" />
                     <span tal:content="item/group_name" />
-                    <span tal:content="item/sitting_type" />
+                    <!-- span tal:content="item/sitting_type" / -->
                 </li>
                </ul> </li>
              </tal:block>

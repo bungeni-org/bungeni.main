@@ -983,8 +983,9 @@ class SessionCalendarViewlet(viewlet.ViewletBase):
             data['end_time'] = result.end_date.time()
             data['day'] = result.start_date.date()
             data['url'] = (path + 'obj-' + str(result.sitting_id))
-            data['did'] = ('dlid_' + datetime.datetime.strftime(result.start_date, '%Y-%m-%d') +
-                           '_stid_' + str(result.sitting_type))
+            data['did'] = ('dlid_' + datetime.datetime.strftime(result.start_date, '%Y-%m-%d') 
+                            # +'_stid_' + str(result.sitting_type)
+                           )
             data_list.append(data)
         return data_list
 

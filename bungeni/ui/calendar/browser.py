@@ -369,10 +369,7 @@ class GroupSittingScheduleView(BrowserView):
             title = "%s: %s - %s" % (self.context.group.short_name, 
                 self.context.start_date.strftime('%Y-%m-%d %H:%M'), 
                 self.context.end_date.strftime('%H:%M')),
-            description=_(u"$type &mdash; ${start}-${end}", mapping={
-                'start': self.context.start_date.strftime('%Y-%m-%d %H:%M'), 
-                'end': self.context.end_date.strftime('%H:%M')
-                }),
+            description=_(u"Sitting Info"),
 #            title = u"",
 #            description = u"",
 #
