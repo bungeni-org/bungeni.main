@@ -171,6 +171,7 @@ class SittingAttendanceViewlet(SubformViewlet):
 
 
 class SittingReportsViewlet(SubformViewlet):
+    form_name = "Reports"
     def __init__(self, context, request, view, manager):
         self.context = context.sreports
         self.request = request
