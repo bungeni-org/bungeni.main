@@ -1,0 +1,10 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope">
+
+    <!-- we register a ++rest++ traversal namespace -->
+    <adapter name="rest"
+        factory="bungeni.rest.rest.RESTNamespace"
+        for="* zope.publisher.interfaces.browser.IHTTPRequest"
+    />
+
+</configure>

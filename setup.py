@@ -70,7 +70,6 @@ setup(name='bungeni',
                         'plone.i18n',
                         'plone.transforms',
 			# The followning are used by bungeni.ui
-                        'simplejson',
                         'zope.app.cache',
                         'plone.memoize',
                         'alchemist.ui',
@@ -79,6 +78,9 @@ setup(name='bungeni',
                         'z3c.menu.ready2go',
                         'zc.displayname',
                         'zope.formlib',
+			# The followning packages are used by:
+			# bungeni.ui & bungeni.rest                        
+                        'simplejson',                                                
 			],
       entry_points =
 	{

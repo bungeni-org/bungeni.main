@@ -62,6 +62,13 @@
      name="index"
      />
 
+ <!--rest views interface -->
+  <interface
+     interface=".interfaces.IBungeniRESTSkin"
+     type="bungeni.rest.interfaces.IRESTSkinType"
+     name="brs"
+     />  
+
   <subscriber 
     handler=".publication.on_before_traverse" 
     trusted="True"
