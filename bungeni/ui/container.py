@@ -9,15 +9,16 @@ from sqlalchemy import types, orm
 
 from zope import interface
 from zope import component
+from zope import formlib
 from zope.security import proxy
 from zope.security import checkPermission
 from zope.publisher.browser import BrowserView
+from zc.table import column, table
 
 from ore.alchemist.model import queryModelDescriptor
 from ore.alchemist.model import queryModelInterface
 from ore.alchemist.container import contained
 
-import alchemist.ui
 from bungeni.models.interfaces import IDateRangeFilter
 from bungeni.models.interfaces import ICommitteeContainer
 from bungeni.models.interfaces import IMemberOfParliamentContainer
@@ -27,10 +28,10 @@ from bungeni.models.interfaces import ICommitteeStaffContainer
 from bungeni.core import translation
 
 from bungeni.ui.utils import url, date, debug
-from bungeni.ui.cookies import get_date_range
+from bungeni.ui import cookies
 from bungeni.ui.interfaces import IBusinessSectionLayer
 from bungeni.ui.interfaces import IMembersSectionLayer
-
+from bungeni.ui.i18n import _
 
 def stringKey(obj):
     """Replacement for ore.alchemist.container.stringKey
@@ -66,13 +67,6 @@ def getFields(context, interface=None, annotation=None):
         yield interface[column]
 
 
-def dateFilter(request):
-    displayDate = date.getDisplayDate(request)
-    if displayDate:
-        return date.getFilter(displayDate)
-    return ""
-
-
 def query_iterator(query, parent, permission=None):
     """Generator of the items in a query. 
     
@@ -89,17 +83,16 @@ def query_iterator(query, parent, permission=None):
                 yield item
 
 
-def get_query(context, request, query=None, domain_model=None):
-    """Prepare query.
+def get_query(context):
+    """Get context's query.
+    """
+    return proxy.removeSecurityProxy(context)._query
 
-    If the model has start- and end-dates, constrain the query to
+
+def query_filter_date_range(context, request, query, domain_model):
+    """If the model has start- and end-dates, constrain the query to
     objects appearing within those dates.
     """
-    unproxied = proxy.removeSecurityProxy(context)
-    if query is None:
-        query = unproxied._query
-    model = unproxied.domain_model
-    
     if ((IBusinessSectionLayer.providedBy(request) and
             ICommitteeContainer.providedBy(context)) or 
         (IMembersSectionLayer.providedBy(request) and
@@ -109,29 +102,58 @@ def get_query(context, request, query=None, domain_model=None):
         (IBusinessSectionLayer.providedBy(request) and
             ICommitteeStaffContainer.providedBy(context))
     ):
-        start_date = datetime.date.today()
-        end_date = None
+        start_date, end_date = datetime.date.today(), None
     else:
-        start_date, end_date = get_date_range(request)
-    
-    if start_date or end_date:
-        if start_date is None:
+        start_date, end_date = cookies.get_date_range(request)
+    if not start_date and not end_date:
+        return query
+    else:
+        if not start_date:
             start_date = datetime.date(1900, 1, 1)
-        if end_date is None:
+        elif not end_date:
             end_date = datetime.date(2100, 1, 1)
-        if domain_model is not None:
-            model = domain_model
         date_range_filter = component.getSiteManager().adapters.lookup(
-            (interface.implementedBy(model),), IDateRangeFilter)
+            (interface.implementedBy(domain_model),), IDateRangeFilter)
         if date_range_filter is not None:
-            query = query.filter(date_range_filter(model)).params(
+            query = query.filter(date_range_filter(domain_model)).params(
                 start_date=start_date, end_date=end_date)
-    return query
+        return query
 
 
-class ContainerListing(alchemist.ui.container.ContainerListing):
-    """Formatted listing (inherits from form.DisplayForm).
+def dateFilter(request):
+    return date.getFilter(date.getDisplayDate(request))
+
+
+
+'''
+from zope.app.pagetemplate import ViewPageTemplateFile
+#from bungeni.ui import z3evoque
+class ContainerListing(formlib.form.DisplayForm):
+    """Formatted listing.
     """
+    form_fields = formlib.form.Fields()
+    mode = "listing"
+    
+    # evoque
+    #index = z3evoque.PageViewTemplateFile("content.html#container")
+    
+    # zpt
+    index = ViewPageTemplateFile("templates/generic-container.pt")
+    
+    def update(self):
+        context = proxy.removeSecurityProxy(self.context)
+        columns = core.setUpColumns(context.domain_model)
+        columns.append(
+            column.GetterColumn(title=_(u'Actions'), getter=viewEditLinks)
+        )
+        self.columns = columns
+        super(ContainerListing, self).update()
+    
+    def render(self):
+        return self.index()
+    
+    def listing(self):
+        return self.formatter()
     
     @property
     def formatter(self):
@@ -182,7 +204,7 @@ class ContainerListing(alchemist.ui.container.ContainerListing):
         formatter.cssClasses["table"] = "listing"
         formatter.table_id = "datacontents"
         return formatter
-
+    
     @property
     def form_name(self):
         domain_model = proxy.removeSecurityProxy(self.context).domain_model
@@ -195,8 +217,11 @@ class ContainerListing(alchemist.ui.container.ContainerListing):
         if not name:
             name = getattr(self.context, "__name__", None)
         return name
-
-
+    
+    @formlib.form.action(_(u"Add"))
+    def handle_add(self, action, data):
+        self.request.response.redirect("add")
+'''
 
 class ContainerBrowserView(BrowserView):
     """Base BrowserView Container listing.
@@ -248,7 +273,7 @@ class ContainerJSONListing(ContainerBrowserView):
         """
         fs = operator.join([ 
                 "lower(%s) LIKE '%%%s%%' " % (fieldname, f.lower())
-                for f in  field_filters ])
+                for f in field_filters ])
         if fs:
             return "(%s)" % (fs)
         return ""
@@ -274,18 +299,13 @@ class ContainerJSONListing(ContainerBrowserView):
                     fs.append(" AND ")
                 if getattr(self.domain_model, "sort_replace", None):
                     if fn in self.domain_model.sort_replace.keys():
-                        rfs = [] # replace filter string
                         op, ffs = self._get_operator_field_filters(ff)
-                        # sort_replace field_names
-                        for srfn in (self.domain_model.sort_replace[fn]):
-                            if rfs:
-                                rfs.append(op)
-                            else:
-                                rfs.append(" (")
-                            rfs.append(self._getFieldFilter(srfn, ffs, " OR "))
+                        rfs = op.join([ 
+                                self._getFieldFilter(srfn, ffs, " OR ")
+                                for srfn in ( # srfn: sort_replace field_name
+                                    self.domain_model.sort_replace[fn]) ])
                         if rfs:
-                             rfs.append(") ")
-                        fs.extend(rfs)
+                            fs.extend(" (%s) " % (rfs))
                         continue
                 if fn in utk:
                     if kls in (types.String, types.Unicode):
@@ -410,8 +430,13 @@ class ContainerJSONListing(ContainerBrowserView):
     #   - ore.alchemist.container.AlchemistContainer.batch()
     def getBatch(self, start=0, limit=20, lang=None):
         context = proxy.removeSecurityProxy(self.context)
-        query = get_query(context, self.request)
-        # filters
+        query = get_query(context)
+        
+        # !+DATE_FILTERS(mr, sep-2010) why so many date filters?
+        # date_range filter (cookie)
+        query = query_filter_date_range(context, self.request, query, 
+            self.domain_model)
+        # displayDate filter (request)
         filter_by = dateFilter(self.request)
         if filter_by:
             if (("start_date" in context._class.c) and 
@@ -419,7 +444,9 @@ class ContainerJSONListing(ContainerBrowserView):
             ):
                 # apply date range resrictions
                 query = query.filter(filter_by)
+        # other filters 
         query = self.query_add_filters(query, self.getFilter())
+        
         # order_by
         order_by = self.getSort() # [columns]
         if order_by:
@@ -644,7 +671,14 @@ JSLCaches = {
         ("filter_status", u""),
         ("filter_status_date", u""),
         ("filter_publication_date", u""),
+        ("filter_note", u""),
     ]),
+    "attendance": JSLCache(99, ["GroupSittingAttendance"], [
+        ("sort", u""),
+        ("filter_member_id", u""),
+        ("filter_sitting_id", u""),
+        ("filter_attendance_id", u""),
+    ]),    
     # /members/...
     "current": JSLCache(99, 
         ["MemberOfParliament", "Constituency", "Province", "Region",
@@ -721,6 +755,8 @@ JSLCaches = {
 JSLCaches["politicalgroups"] = JSLCaches["political-groups"] 
 # /browse/constituencies/
 JSLCaches["parliamentmembers"] = JSLCaches["current"] 
+# /business/sittings/...
+JSLCaches["sreports"] = JSLCaches["preports"]
 
 
 def get_CacheByClassName():
