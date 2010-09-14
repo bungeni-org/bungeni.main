@@ -84,7 +84,6 @@ class ContextDataTableFormatter(BaseDataTableFormatter):
         return config
     
     def __call__(self):
-        need('yui-datatable')
         need('yui-paginator')
         need('yui-dragdrop')
         
