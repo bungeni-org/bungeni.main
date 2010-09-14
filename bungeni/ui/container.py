@@ -527,70 +527,7 @@ class ContainerWFStatesJSONListing(ContainerJSONListing):
             log.info("SETTING CACHE for key: %s" % (cache_key,))
             cache.set(cache_key, self.json_batch(start, limit, lang))
         return cache.get(cache_key)
-    
-    ''' 
-    !+BATCH(mr, sep-2010) what was the reason that there be a 
-        different getBatch() form the superclass's
-    !+LISTINGS_CLASS(mr, sep-2010) if listings_class is not used here, 
-        is it then superfluous?
-    
-    def getBatch(self, start=0, limit=20):
-        context = proxy.removeSecurityProxy(self.context)
-        mapper = orm.class_mapper(self.domain_model) 
-        listing_class = getattr(self.domain_model, "listings_class", None)
-        context_parent = proxy.removeSecurityProxy(context.__parent__)
-        try:
-            p_mapper = orm.class_mapper(context_parent.__class__)
-            pk = p_mapper.primary_key_from_instance(context_parent)[0]
-        except orm.exc.UnmappedClassError: 
-            pk = None
-        l_query = None
-        if listing_class:
-            session = Session()
-            self.domain_model = listing_class
-            l_query = session.query(listing_class)
-        if listing_class and pk:
-            # if we substituted a foreign key in our listing class with 
-            # clear text we have to adjust our modifier accordingly
-            # "_fk_" + field name is the convention
-            _fk_fieldname = "_fk_%s" % (context.constraints.fk)
-            if hasattr(listing_class, _fk_fieldname):
-                modifier = getattr(listing_class, _fk_fieldname) == pk
-            else:
-                modifier = getattr(listing_class, context.constraints.fk) == pk
-            l_query = l_query.filter(modifier)
-        query = get_query(self.context,  self.request, l_query, 
-            self.domain_model)
-        
-        # filters
-        # workflow public states
-        public_wfstates = getattr(self.domain_annotation, "public_wfstates", 
-                None)
-        if public_wfstates:
-            query = query.filter(self.domain_model.status.in_(public_wfstates))
-        query = self.query_add_filters(query, self.getFilter())
-        
-        # order_by
-        order_by = self.getSort()
-        if order_by:
-            query = query.order_by(order_by)
-        
-        #query = query.limit(limit).offset(start) 
-        #nodes = query.all()
-        #self.set_size = query.count()
-        # nodes: [<bungeni.models.domain.ListQuestion]
-        nodes = self._get_secured_batch(query, start, limit)
-        #
-        # !+LIST_TRANSLATIONS(mr, sep-2010) the numerous derived domain objects, 
-        # conventionally named "List<ClassName>", also should be translatable ?
-        # There should be a way to map the i18n attributes of the derived object 
-        # to use the translations for the master object...
-        nodes = self.translate_objects(nodes)
-        #batch = self._jsonValues(nodes, self.fields, self.context)
-        batch = self._jsonValues(nodes, self.fields, self.context,
-            self._get_anno_getters_by_field_name(self.context))
-        return batch
-    '''
+
 
 # caches for json container listings
 

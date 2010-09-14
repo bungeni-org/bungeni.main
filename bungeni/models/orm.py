@@ -76,40 +76,11 @@ mapper(domain.UserDelegation, schema.user_delegations,
 
 # group subclasses
 
-s_government = rdb.select([
-        schema.groups.c.group_id,
-        schema.groups.c.start_date,
-        schema.groups.c.end_date,
-        schema.groups.c.parent_group_id,
-        schema.groups.c.status,
-        schema.groups.c.short_name,
-        schema.groups.c.full_name
-    ],
-    whereclause=schema.groups.c.type=="government",
-    from_obj=[schema.groups]
-).alias("list_government")
-mapper(domain.ListGovernment, s_government)
-
 mapper(domain.Government,
     inherits=domain.Group,
     polymorphic_on=schema.groups.c.type,
     polymorphic_identity="government"
 )
-
-s_parliament = rdb.select([
-        schema.groups.c.group_id,
-        schema.groups.c.start_date,
-        schema.groups.c.end_date,
-        schema.groups.c.parent_group_id,
-        schema.groups.c.short_name,
-        schema.groups.c.status,
-        schema.parliaments.c.election_date,
-        schema.groups.c.full_name
-    ],
-    whereclause=schema.groups.c.type=="parliament",
-    from_obj=[schema.groups.join(schema.parliaments)]
-).alias("list_parliament")
-mapper(domain.ListParliament, s_parliament)
 
 mapper(domain.Parliament, schema.parliaments,
     inherits=domain.Group,
@@ -140,25 +111,6 @@ mapper(domain.Ministry,
     polymorphic_on=schema.groups.c.type,
     polymorphic_identity="ministry"
 )
-
-s_committee = rdb.select([
-        schema.groups.c.group_id,
-        schema.groups.c.start_date,
-        schema.groups.c.end_date,
-        schema.groups.c.parent_group_id,
-        schema.groups.c.short_name,
-        schema.groups.c.status,
-        schema.committee_type.c.committee_type_id.label("_fk_committee_type_id"),
-        schema.committee_type.c.committee_type.label("committee_type_id"),
-        schema.committee_type.c.committee_type,
-        schema.groups.c.full_name],
-    whereclause=schema.groups.c.type=="committee",
-    from_obj=[schema.groups.join(
-        schema.committees.join(schema.committee_type),
-        schema.groups.c.group_id==schema.committees.c.committee_id
-    )]
-).alias("list_committee")
-mapper(domain.ListCommittee, s_committee)
 
 mapper(domain.Committee, schema.committees,
     inherits=domain.Group,
@@ -244,86 +196,11 @@ mapper(domain.MemberOfParliament, schema.parliament_memberships,
     polymorphic_identity="parliamentmember",
 )
 
-s_member_of_parliament = rdb.select([
-        schema.user_group_memberships.c.membership_id,
-        schema.user_group_memberships.c.start_date,
-        schema.user_group_memberships.c.end_date,
-        schema.user_group_memberships.c.group_id,
-        schema.parliament_memberships.c.elected_nominated,
-        schema.users.c.first_name,
-        schema.users.c.middle_name,
-        schema.users.c.last_name,
-        (schema.users.c.first_name+" "+schema.users.c.last_name
-            ).label("user_id"),
-        schema.users.c.user_id.label("_fk_user_id"),
-        schema.constituencies.c.name.label("constituency_id"),
-        schema.parliament_memberships.c.constituency_id.label(
-            "_fk_constituency_id"),
-        schema.constituencies.c.name.label("name"),
-        # !+PROVINCE_REGION(mr, aug-2010) is this needed?
-        schema.provinces.c.province_id.label("province_id"),
-        schema.parliament_memberships.c.province_id.label("_fk_province_id"),
-        schema.provinces.c.province_id.label("province"),
-        schema.regions.c.region_id.label("region_id"),
-        schema.parliament_memberships.c.region_id.label("_fk_region_id"),
-        schema.regions.c.region_id.label("region"),
-    ],
-    from_obj=[
-        schema.parliament_memberships.join(schema.constituencies
-            ).join(schema.provinces # !+PROVINCE(mr, aug-2010) needed?
-            ).join(schema.regions # !+REGION(mr, aug-2010) needed?
-            ).join(schema.user_group_memberships
-            ).join(schema.users, 
-                schema.user_group_memberships.c.user_id==schema.users.c.user_id)
-    ]
-).alias("list_member_of_parliament")
-mapper(domain.ListMemberOfParliament, s_member_of_parliament)
-
-s_minister = rdb.select([
-        schema.user_group_memberships.c.membership_id,
-        schema.user_group_memberships.c.start_date,
-        schema.user_group_memberships.c.end_date,
-        schema.user_group_memberships.c.group_id,
-        schema.users.c.first_name,
-        schema.users.c.middle_name,
-        schema.users.c.last_name,
-        (schema.users.c.first_name + " " + schema.users.c.last_name
-            ).label("user_id"),
-        schema.users.c.user_id.label("_fk_user_id"), 
-    ],
-    whereclause=schema.user_group_memberships.c.membership_type=="minister",
-    from_obj=[schema.user_group_memberships.join(
-            schema.users, 
-            schema.user_group_memberships.c.user_id==schema.users.c.user_id
-    )],
-).alias("list_minister")
-mapper(domain.ListMinister, s_minister)
-
 mapper(domain.Minister,
     inherits=domain.GroupMembership,
     polymorphic_on=schema.user_group_memberships.c.membership_type,
     polymorphic_identity="minister",
 )
-
-s_committeemember = rdb.select([
-        schema.user_group_memberships.c.membership_id,
-        schema.user_group_memberships.c.start_date,
-        schema.user_group_memberships.c.end_date,
-        schema.user_group_memberships.c.group_id,
-        schema.users.c.first_name,
-        schema.users.c.middle_name,
-        schema.users.c.last_name,
-        (schema.users.c.first_name + " " + schema.users.c.last_name
-            ).label("user_id"),
-        schema.users.c.user_id.label("_fk_user_id"),
-    ],
-    whereclause=schema.user_group_memberships.c.membership_type=="committeemember",
-    from_obj=[schema.user_group_memberships.join(
-            schema.users, 
-            schema.user_group_memberships.c.user_id==schema.users.c.user_id
-    )],
-).alias("list_committeemember")
-mapper(domain.ListCommitteeMember, s_committeemember)
 
 mapper(domain.CommitteeMember,
     inherits=domain.GroupMembership,
@@ -331,51 +208,11 @@ mapper(domain.CommitteeMember,
     polymorphic_identity="committeemember",
 )
 
-s_partymember = rdb.select([
-        schema.user_group_memberships.c.membership_id,
-        schema.user_group_memberships.c.start_date,
-        schema.user_group_memberships.c.end_date,
-        schema.user_group_memberships.c.group_id,
-        schema.users.c.first_name,
-        schema.users.c.middle_name,
-        schema.users.c.last_name,
-        (schema.users.c.first_name + " " + schema.users.c.last_name
-            ).label("user_id"),
-        schema.users.c.user_id.label("_fk_user_id"),
-    ],
-    whereclause=schema.user_group_memberships.c.membership_type=="partymember",
-    from_obj=[schema.user_group_memberships.join(
-            schema.users, 
-            schema.user_group_memberships.c.user_id==schema.users.c.user_id
-    )],
-).alias("list_partymember")
-mapper(domain.ListPartyMember, s_partymember)
-
 mapper(domain.PartyMember,
     inherits=domain.GroupMembership,
     polymorphic_on=schema.user_group_memberships.c.membership_type,
     polymorphic_identity="partymember",
 )
-
-s_officemember = rdb.select([
-        schema.user_group_memberships.c.membership_id,
-        schema.user_group_memberships.c.start_date,
-        schema.user_group_memberships.c.end_date,
-        schema.user_group_memberships.c.group_id,
-        schema.users.c.first_name,
-        schema.users.c.middle_name,
-        schema.users.c.last_name,
-        (schema.users.c.first_name + " " + schema.users.c.last_name
-            ).label("user_id"),
-        schema.users.c.user_id.label("_fk_user_id"),
-    ],
-    whereclause=schema.user_group_memberships.c.membership_type=="officemember",
-    from_obj=[schema.user_group_memberships.join(
-            schema.users,
-            schema.user_group_memberships.c.user_id==schema.users.c.user_id
-    )],
-).alias("list_officemember")
-mapper(domain.ListOfficeMember, s_officemember)
 
 mapper(domain.OfficeMember,
     inherits=domain.GroupMembership,
@@ -384,26 +221,6 @@ mapper(domain.OfficeMember,
 )
 
 # staff assigned to a group (committee, ...)
-
-s_committeestaff = rdb.select([
-        schema.user_group_memberships.c.membership_id,
-        schema.user_group_memberships.c.start_date,
-        schema.user_group_memberships.c.end_date,
-        schema.user_group_memberships.c.group_id,
-        schema.users.c.first_name,
-        schema.users.c.middle_name,
-        schema.users.c.last_name,
-        (schema.users.c.first_name + " " + schema.users.c.last_name
-            ).label("user_id"),
-        schema.users.c.user_id.label("_fk_user_id"),
-    ],
-    whereclause=schema.user_group_memberships.c.membership_type=="committeestaff",
-    from_obj=[schema.user_group_memberships.join(
-            schema.users, 
-            schema.user_group_memberships.c.user_id==schema.users.c.user_id
-    )],
-).alias("list_committeestaff")
-mapper(domain.ListCommitteeStaff, s_committeestaff)
 
 mapper(domain.CommitteeStaff,
     inherits=domain.GroupMembership,
@@ -457,66 +274,11 @@ mapper(domain.ParliamentaryItem, schema.parliamentary_items,
     }
 )
 
-s_heading = rdb.select([
-        schema.parliamentary_items.c.parliamentary_item_id,
-        schema.parliamentary_items.c.short_name,
-        schema.parliamentary_items.c.submission_date.label("submission_date"),
-        schema.parliamentary_items.c.status,
-        schema.parliamentary_items.c.status_date,
-        schema.parliamentary_items.c.parliament_id,
-        schema.users.c.first_name,
-        schema.users.c.middle_name,
-        schema.users.c.last_name,
-        (schema.users.c.first_name + " " + schema.users.c.last_name
-            ).label("owner_id"),
-        schema.parliamentary_items.c.owner_id.label("_fk_owner_id")
-    ],
-    whereclause=schema.parliamentary_items.c.type == "heading",
-    from_obj=[schema.parliamentary_items.join(
-            schema.users, schema.parliamentary_items.c.owner_id ==
-                schema.users.c.user_id
-    )],
-).alias("list_heading")
-mapper(domain.ListHeading, s_heading)
-
 mapper(domain.Heading,
     inherits=domain.ParliamentaryItem,
     polymorphic_on=schema.parliamentary_items.c.type,
     polymorphic_identity="heading"
 )
-
-s_question = rdb.select([
-        schema.parliamentary_items.c.parliamentary_item_id,
-        schema.parliamentary_items.c.short_name,
-        schema.parliamentary_items.c.submission_date.label("submission_date"),
-        schema.parliamentary_items.c.status,
-        schema.parliamentary_items.c.status_date,
-        schema.parliamentary_items.c.parliament_id,
-        schema.questions.c.approval_date,
-        schema.questions.c.ministry_submit_date,
-        schema.questions.c.question_number,
-        schema.users.c.first_name,
-        schema.users.c.middle_name,
-        schema.users.c.last_name,
-        (schema.users.c.first_name + " " + schema.users.c.last_name
-            ).label("owner_id"),
-        schema.groups.c.full_name.label("ministry_id"),
-        schema.parliamentary_items.c.owner_id.label("_fk_owner_id"),
-        schema.questions.c.ministry_id.label("_fk_ministry_id"),
-    ],
-    whereclause=schema.parliamentary_items.c.type == "question",
-    from_obj=[schema.parliamentary_items.join(
-            schema.questions.join(
-                schema.groups,
-                schema.questions.c.ministry_id == schema.groups.c.group_id),
-            schema.parliamentary_items.c.parliamentary_item_id ==
-                schema.questions.c.question_id
-        ).join(
-            schema.users, 
-            schema.parliamentary_items.c.owner_id == schema.users.c.user_id)
-    ],
-).alias("list_questions")
-mapper(domain.ListQuestion, s_question)
 
 mapper(domain.Question, schema.questions,
     inherits=domain.ParliamentaryItem,
@@ -551,33 +313,6 @@ mapper(domain.QuestionVersion, schema.question_versions,
     }
 )
 
-s_motion = rdb.select([
-        schema.parliamentary_items.c.parliamentary_item_id,
-        schema.parliamentary_items.c.short_name,
-        schema.parliamentary_items.c.submission_date,
-        schema.parliamentary_items.c.status,
-        schema.parliamentary_items.c.status_date,
-        schema.parliamentary_items.c.parliament_id,
-        schema.motions.c.approval_date,
-        schema.motions.c.motion_number,
-        schema.motions.c.notice_date,
-        schema.users.c.first_name,
-        schema.users.c.middle_name,
-        schema.users.c.last_name,
-        schema.parliamentary_items.c.owner_id.label("_fk_owner_id"),
-        (schema.users.c.first_name + " " + schema.users.c.last_name
-            ).label("owner_id"),
-    ],
-    whereclause=schema.parliamentary_items.c.type == "motion",
-    from_obj=[schema.parliamentary_items.join(
-            schema.motions).join(
-                schema.users, 
-                schema.parliamentary_items.c.owner_id == schema.users.c.user_id
-            )
-    ],
-).alias("list_motion")
-mapper(domain.ListMotion, s_motion)
-
 mapper(domain.Motion, schema.motions,
     inherits=domain.ParliamentaryItem,
     polymorphic_on=schema.parliamentary_items.c.type,
@@ -611,32 +346,6 @@ mapper(domain.MotionVersion, schema.motion_versions,
     }
 )
 
-s_bill = rdb.select([
-        schema.parliamentary_items.c.parliamentary_item_id,
-        schema.parliamentary_items.c.short_name,
-        schema.parliamentary_items.c.submission_date,
-        schema.parliamentary_items.c.status,
-        schema.parliamentary_items.c.status_date,
-        schema.parliamentary_items.c.parliament_id,
-        schema.bills.c.publication_date,
-        schema.bills.c.ministry_id,
-        schema.users.c.first_name,
-        schema.users.c.middle_name,
-        schema.users.c.last_name,
-        (schema.users.c.first_name + " " + schema.users.c.last_name
-            ).label("owner_id"),
-        schema.parliamentary_items.c.owner_id.label("_fk_owner_id"),
-    ],
-    whereclause=schema.parliamentary_items.c.type == "bill",
-    from_obj=[schema.parliamentary_items.join(
-            schema.bills).join(
-                schema.users, 
-                schema.parliamentary_items.c.owner_id == schema.users.c.user_id
-            )
-    ],
-).alias("list_bill")
-mapper(domain.ListBill, s_bill)
-
 mapper(domain.Bill, schema.bills,
     inherits=domain.ParliamentaryItem,
     polymorphic_on=schema.parliamentary_items.c.type,
@@ -669,31 +378,6 @@ mapper(domain.BillVersion, schema.bill_versions,
     }
 )
 
-s_event = rdb.select([
-        schema.parliamentary_items.c.parliamentary_item_id,
-        schema.parliamentary_items.c.short_name,
-        schema.parliamentary_items.c.submission_date,
-        schema.parliamentary_items.c.status,
-        schema.parliamentary_items.c.status_date,
-        schema.parliamentary_items.c.parliament_id,
-        schema.event_items.c.event_date,
-        schema.event_items.c.item_id,
-        schema.users.c.first_name,
-        schema.users.c.middle_name,
-        schema.users.c.last_name,
-        (schema.users.c.first_name + " " + schema.users.c.last_name
-            ).label("owner_id"),
-        schema.parliamentary_items.c.owner_id.label("_fk_owner_id"),
-    ],
-    whereclause=schema.parliamentary_items.c.type == "event",
-    from_obj=[schema.parliamentary_items.join(
-            schema.agenda_items).join(
-                schema.users, 
-                schema.parliamentary_items.c.owner_id == schema.users.c.user_id
-    )],
-).alias("list_event")
-mapper(domain.ListEventItem, s_event)
-
 mapper(domain.EventItem, schema.event_items,
     inherits=domain.ParliamentaryItem,
     inherit_condition=(
@@ -703,31 +387,6 @@ mapper(domain.EventItem, schema.event_items,
     polymorphic_on=schema.parliamentary_items.c.type,
     polymorphic_identity="event"
 )
-
-s_agendaitem = rdb.select([
-        schema.parliamentary_items.c.parliamentary_item_id,
-        schema.parliamentary_items.c.short_name,
-        schema.parliamentary_items.c.submission_date,
-        schema.parliamentary_items.c.status,
-        schema.parliamentary_items.c.status_date,
-        schema.parliamentary_items.c.parliament_id,
-        schema.agenda_items.c.approval_date,
-        schema.agenda_items.c.group_id,
-        schema.users.c.first_name,
-        schema.users.c.middle_name,
-        schema.users.c.last_name,
-        (schema.users.c.first_name + " " + schema.users.c.last_name
-            ).label("owner_id"),
-        schema.parliamentary_items.c.owner_id.label("_fk_owner_id"),
-    ],
-    whereclause=schema.parliamentary_items.c.type == "agendaitem",
-    from_obj=[schema.parliamentary_items.join(
-            schema.agenda_items).join(
-                schema.users, 
-                schema.parliamentary_items.c.owner_id == schema.users.c.user_id
-    )],
-).alias("list_agendaitem")
-mapper(domain.ListAgendaItem, s_agendaitem)
 
 mapper(domain.AgendaItem, schema.agenda_items,
     inherits=domain.ParliamentaryItem,
@@ -767,30 +426,6 @@ mapper(domain.AgendaItemVersion, schema.agenda_item_versions,
         ), 
     }
 )
-
-s_tableddocument = rdb.select([
-        schema.parliamentary_items.c.parliamentary_item_id,
-        schema.parliamentary_items.c.short_name,
-        schema.parliamentary_items.c.submission_date,
-        schema.parliamentary_items.c.status,
-        schema.parliamentary_items.c.status_date,
-        schema.parliamentary_items.c.parliament_id,
-        schema.tabled_documents.c.approval_date,
-        schema.users.c.first_name,
-        schema.users.c.middle_name,
-        schema.users.c.last_name,
-        (schema.users.c.first_name + " " + schema.users.c.last_name
-            ).label("owner_id"),
-        schema.parliamentary_items.c.owner_id.label("_fk_owner_id"), ],
-        whereclause=schema.parliamentary_items.c.type == "tableddocument",
-        from_obj=[schema.parliamentary_items.join(
-                schema.tabled_documents).join(
-                    schema.users, 
-                    schema.parliamentary_items.c.owner_id == 
-                        schema.users.c.user_id
-        )],
-).alias("list_tableddocument")
-mapper(domain.ListTabledDocument, s_tableddocument)
 
 mapper(domain.TabledDocument, schema.tabled_documents,
     inherits=domain.ParliamentaryItem,
@@ -865,19 +500,6 @@ mapper(domain.ScheduledItemDiscussion, schema.item_discussion)
 # items scheduled for a sitting
 # expressed as a join between item and schedule
 
-s_consignatories = rdb.select([
-        schema.consignatories.c.item_id,
-        schema.consignatories.c.user_id.label("consignatory"),
-        (schema.users.c.first_name + " " + schema.users.c.last_name
-            ).label("user_id"),
-        schema.users.c.first_name,
-        schema.users.c.middle_name,
-        schema.users.c.last_name,
-    ],
-    from_obj=[schema.consignatories.join(schema.users)],
-).alias("list_consignatories")
-mapper(domain.ListConsignatory, s_consignatories)
-
 mapper(domain.Consignatory, schema.consignatories,
     properties={
         "item": relation(domain.ParliamentaryItem, uselist=False),
@@ -892,16 +514,6 @@ mapper(domain.HoliDay, schema.holidays)
 
 ######################
 #
-
-s_constituency = rdb.select([
-        schema.constituencies.c.constituency_id,
-        schema.constituencies.c.name,
-        schema.constituencies.c.start_date,
-        schema.constituencies.c.end_date
-    ],
-    from_obj=[schema.constituencies]
-).alias("list_constituency")
-mapper(domain.ListConstituency, s_constituency)
 
 mapper(domain.Constituency, schema.constituencies)
 mapper(domain.Province, schema.provinces)
@@ -918,23 +530,6 @@ mapper(domain.ConstituencyDetail, schema.constituency_details,
 )
 mapper(domain.CommitteeType, schema.committee_type)
 mapper(domain.SittingType, schema.sitting_type)
-
-s_sittingattendance = rdb.select([
-        schema.sitting_attendance.c.sitting_id,
-        schema.sitting_attendance.c.attendance_id.label("_fk_attendance_id"),
-        schema.sitting_attendance.c.member_id.label("_fk_member_id"),
-        schema.attendance_type.c.attendance_type.label("attendance_id"),
-        (schema.users.c.first_name + " " + schema.users.c.last_name
-            ).label("member_id"),
-        schema.users.c.first_name,
-        schema.users.c.middle_name,
-        schema.users.c.last_name,
-    ],
-    from_obj=[schema.sitting_attendance.join(
-            schema.attendance_type).join(schema.users)
-    ],
-).alias("list_sittingattendance")
-mapper(domain.ListGroupSittingAttendance, s_sittingattendance)
 
 mapper(domain.GroupSittingAttendance, schema.sitting_attendance,
     properties={
@@ -957,23 +552,6 @@ mapper(domain.MemberRoleTitle, schema.role_titles.join(schema.addresses),
 mapper(domain.AddressType, schema.address_types)
 mapper(domain.UserAddress, schema.addresses)
 
-s_group_item_assignments = rdb.select([
-        schema.group_item_assignments.c.assignment_id,
-        schema.group_item_assignments.c.group_id.label("_fk_group_id"),
-        schema.group_item_assignments.c.item_id.label("_fk_item_id"),
-        schema.groups.c.short_name.label("item_id"),
-        (schema.groups.c.short_name + " - " + schema.groups.c.full_name
-            ).label("group_id"),
-        schema.group_item_assignments.c.start_date,
-        schema.group_item_assignments.c.end_date,
-        schema.group_item_assignments.c.due_date,
-    ],
-    from_obj=[schema.groups.join(
-            schema.group_item_assignments).join(schema.parliamentary_items)
-    ],
-).alias("list_group_item_assignments")
-
-mapper(domain.ListGroupItemAssignment, s_group_item_assignments);
 mapper(domain.GroupItemAssignment, schema.group_item_assignments,
     properties={
         "group": relation(domain.Group,
