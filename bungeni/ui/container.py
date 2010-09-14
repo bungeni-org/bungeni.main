@@ -12,9 +12,7 @@ from zope import component
 from zope.security import proxy
 from zope.security import checkPermission
 from zope.publisher.browser import BrowserView
-from zope.annotation.interfaces import IAnnotations
 
-from ore.alchemist import Session
 from ore.alchemist.model import queryModelDescriptor
 from ore.alchemist.model import queryModelInterface
 from ore.alchemist.container import contained
@@ -200,52 +198,6 @@ class ContainerListing(alchemist.ui.container.ContainerListing):
 
 
 
-class WorkspaceRootRedirect(BrowserView):
-    """Redirect to the the "pi" view of the user's *first* workspace OR for the 
-    case on no workspaces, to "/workspace".
-    """
-    def __call__(self):
-        request = self.request
-        try: 
-            first_workspace = IAnnotations(request)["layer_data"].workspaces[0]
-            to_url = "/workspace/obj-%s/pi" % first_workspace.group_id
-        except:
-            to_url = "/workspace"
-        # !+TRAILING_SLASH(mr, sep-2010) this is still needed?
-        to_url = url.set_url_context(to_url)
-        if url.get_destination_url_path(request) != to_url:
-            # never redirect to same destination!
-            log.warn("WorkspaceRootRedirect %s -> %s" % (request.getURL(), to_url))
-            request.response.redirect(to_url)
-        else:
-            # !+
-            # user has no workspaces and is requesting /workspace view
-            # return the "no workspace" *rendered* view for /workspace
-            return component.getMultiAdapter(
-                        (self.context, request), name="no-workspace-index")()
-
-class _IndexRedirect(BrowserView):
-    """Redirect to the named "index" view."""
-    index_name = "index"
-    def __call__(self):
-        request = self.request
-        log.warn("%s: %s -> %s" % (
-            self.__class__.__name__, request.getURL(), self.index_name))
-        request.response.redirect(self.index_name)
-class WorkspaceContainerIndexRedirect(_IndexRedirect):
-    # !+TRAILING_SLASH(mr, sep-2010) this is still needed?
-    index_name = url.set_url_context("pi")
-class BusinessIndexRedirect(_IndexRedirect):
-    index_name = "whats-on"
-class MembersIndexRedirect(_IndexRedirect):
-    index_name = "current"
-class ArchiveIndexRedirect(_IndexRedirect):
-    index_name = "browse"
-class AdminIndexRedirect(_IndexRedirect):
-    index_name = "content"
-
-
-
 class ContainerBrowserView(BrowserView):
     """Base BrowserView Container listing.
     """
@@ -392,7 +344,6 @@ class ContainerJSONListing(ContainerBrowserView):
         return columns
     
     def getOffsets(self, default_start=0, default_limit=25):
-        nodes = []
         start = self.request.get("start", default_start)
         limit = self.request.get("limit", default_limit)
         try:

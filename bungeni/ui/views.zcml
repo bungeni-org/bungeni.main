@@ -30,7 +30,7 @@
         for="bungeni.models.interfaces.IBungeniApplication"
         permission="zope.View"
         layer=".interfaces.IBungeniAuthenticatedSkin"
-        class=".container.WorkspaceRootRedirect"
+        class=".redirect.WorkspaceRootRedirect"
     />
   
     <!-- Workspace -->
@@ -45,7 +45,7 @@
         permission="zope.View"
         layer=".interfaces.IBungeniAuthenticatedSkin"
         template="templates/app-index.pt"
-    /><!-- class=".container.WorkspaceRootRedirect" 
+    /><!-- class=".redirect.WorkspaceRootRedirect" 
     <browser:page
         name="no-workspace-index"
         for="bungeni.core.interfaces.ISection"
@@ -55,7 +55,7 @@
     /> !+ ??? -->
     <browser:page name="view"
         for=".interfaces.IWorkspaceContainer"
-        class=".container.WorkspaceContainerIndexRedirect"
+        class=".redirect.WorkspaceContainerIndexRedirect"
         permission="zope.View"
         layer=".interfaces.IWorkspaceSectionLayer"
     /><!-- why does name must be "view"? e.g. "workspace-container-index" will 
@@ -298,7 +298,7 @@
     <browser:page name="business-index"
         for="*"
         layer="bungeni.ui.interfaces.IBungeniSkin"
-        class=".container.BusinessIndexRedirect"
+        class=".redirect.BusinessIndexRedirect"
         permission="zope.Public"
     />
     <browser:page name="whats-on"
@@ -320,7 +320,7 @@
         name="members-index"
         for="*"
         layer="bungeni.ui.interfaces.IBungeniSkin"
-        class=".container.MembersIndexRedirect"
+        class=".redirect.MembersIndexRedirect"
         permission="zope.Public"
     />
   
@@ -330,7 +330,7 @@
         name="archive-index"
         for="*"
         layer="bungeni.ui.interfaces.IBungeniSkin"
-        class=".container.ArchiveIndexRedirect"
+        class=".redirect.ArchiveIndexRedirect"
         permission="zope.Public"
     />
     <browser:page
@@ -345,7 +345,7 @@
     <browser:page name="admin-index"
         for="*"
         layer="bungeni.ui.interfaces.IBungeniSkin"
-        class=".container.AdminIndexRedirect"
+        class=".redirect.AdminIndexRedirect"
         permission="zope.View"
     />
     <browser:page name="browse-admin"
