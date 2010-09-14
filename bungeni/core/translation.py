@@ -37,7 +37,6 @@ from bungeni.core.i18n import _
 from bungeni.ui.utils import common
 
 
-
 class BrowserFormLanguages(BrowserLanguages):
 
     def getPreferredLanguages(self):
@@ -60,6 +59,7 @@ class LanguageVocabulary(object):
         return SimpleVocabulary(items)
 
 language_vocabulary_factory = LanguageVocabulary()
+
 
 class CurrentLanguageVocabulary(LanguageVocabulary):
     def __call__(self, context):
@@ -91,6 +91,10 @@ def get_all_languages(filter=tuple(ALLOWED_LANGUAGES)):
         languages[name] = _languages[name]
     return languages
 
+def get_request_language():
+    return common.get_request().locale.getLocaleID() # !+ get_browser_language()
+
+
 def get_translation_for(context, lang):
     """Get the translation for context in language lang
     NOTE: context may NOT be None
@@ -103,26 +107,52 @@ def get_translation_for(context, lang):
     session = Session()
     query = session.query(domain.ObjectTranslation).filter(
         sql.and_(
-            domain.ObjectTranslation.object_id == pk,
             domain.ObjectTranslation.object_type == class_name,
-            domain.ObjectTranslation.lang == lang)
-            )
+            domain.ObjectTranslation.object_id == pk,
+            domain.ObjectTranslation.lang == lang
+        )
+    )
     return query.all()
 
-def translate_obj(context):
-    """Translate a ITranslatable content object (context, that may NOT be None)
-    into the language defined in the request
+def translate_obj(context, lang=None):
+    """Translate an ITranslatable content object (context, that may NOT be None)
+    into the specified language or that defined in the request
     -> copy of the object translated into language of the request
     """
+    if lang is None:
+        lang = get_request_language()
     trusted = removeSecurityProxy(context)
-    request = common.get_request()
-    lang = request.locale.getLocaleID() # !+ get_browser_language()
-    translation = get_translation_for(context, lang)
+    translation = get_translation_for(trusted, lang)
     obj = copy(trusted)
     for field_translation in translation:
         setattr(obj, field_translation.field_name, 
-                    field_translation.field_text)
+            field_translation.field_text)
     return obj
+
+'''
+def translate_attr(obj, pk, attr_name, lang=None):
+    """Translate a single object attribute, an optimization on translate_obj().
+        
+        !+TRANSLATE_ATTR(mr, sep-2010) as it turnes out (at least for a simple
+        object e.g. ministry) this is slower than using translate_obj(obj).
+    """
+    if lang is None:
+        lang = get_request_language()
+    session = Session()
+    query = session.query(domain.ObjectTranslation).filter(
+        sql.and_(
+            domain.ObjectTranslation.object_type == obj.__class__.__name__,
+            domain.ObjectTranslation.object_id == pk,
+            domain.ObjectTranslation.field_name == attr_name,
+            domain.ObjectTranslation.lang == lang
+        )
+    )
+    from sqlalchemy.orm.exc import NoResultFound
+    try:
+        return query.one().field_text
+    except (NoResultFound,):
+        return getattr(obj, attr_name)
+'''
 
 def get_available_translations(context):
     """ returns a dictionary of all
@@ -145,7 +175,7 @@ def get_available_translations(context):
         return dict(query)
     except:
         return {}
-    
+
 def is_translation(context):
     return IVersion.providedBy(context) and \
            context.status in (u"draft-translation",)

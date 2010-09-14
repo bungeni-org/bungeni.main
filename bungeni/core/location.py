@@ -7,7 +7,7 @@ from bungeni.core.interfaces import IContainerLocation
 from bungeni.core.interfaces import IQueryContent
 
 from ore.alchemist.container import stringKey
-
+# !+checkPermission(mr, sep-2010) should use: bungeni.ui.container.stringKey
 
 def location_wrapped(context, location):
     """Provides location information to ``context`` based on the

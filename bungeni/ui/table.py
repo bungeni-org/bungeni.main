@@ -11,7 +11,7 @@ from zc.resourcelibrary import need
 from zc.table import batching
 
 from z3c.pt.texttemplate import ViewTextTemplateFile
-from bungeni.ui.utils import url as ui_url
+from bungeni.ui.utils import url
 
 class TableFormatter(batching.Formatter):
     """The out-of-box table formatter does not let us specify a custom
@@ -79,7 +79,7 @@ class ContextDataTableFormatter(BaseDataTableFormatter):
         config['columns'], config['fields'] = self.getFieldColumns()
         config['data_url'] = self.getDataSourceURL()
         config['table_id'] = self.prefix
-        config['link_url'] = ui_url.absoluteURL(self.context, self.request)
+        config['link_url'] = url.absoluteURL(self.context, self.request)
         config['context_name'] = self.context.__name__
         return config
     
@@ -87,7 +87,7 @@ class ContextDataTableFormatter(BaseDataTableFormatter):
         need('yui-datatable')
         need('yui-paginator')
         need('yui-dragdrop')
-
+        
         return '<div id="%s">\n<table %s>\n%s</table>\n%s</div>' % (
             self.prefix,
             self._getCSSClass('table'),
@@ -97,7 +97,7 @@ class ContextDataTableFormatter(BaseDataTableFormatter):
 
 class AjaxContainerListing(common.AjaxContainerListing):
     formatter_factory = ContextDataTableFormatter
-
+    
     @property
     def prefix(self):
         context = proxy.removeSecurityProxy(self.context)

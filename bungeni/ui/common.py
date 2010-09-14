@@ -33,5 +33,5 @@ class AjaxTableFormatter(yuiwidget.ContainerDataTableFormatter):
     def getFields(self):
         if self.fields:
             return self.fields
-        return super( AjaxTableFormatter, self).getFields()
+        return super(AjaxTableFormatter, self).getFields()
         

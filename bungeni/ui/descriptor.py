@@ -34,7 +34,7 @@ from bungeni.core.workflows.heading import states as heading_wf_state
 from bungeni.core.workflows.committee import states as committee_wf_state
 from bungeni.core.workflows.parliament import states as parliament_wf_state
 from bungeni.core.workflows.version import states as version_wf_state
-from bungeni.core.translation import translate_obj
+from bungeni.core import translation
 
 #from bungeni.ui.widgets import SelectDateWidget, SelectDateTimeWidget
 from bungeni.ui.widgets import TextDateWidget as DateWidget
@@ -129,10 +129,10 @@ def current_titles_in_group_column(name, title, default=u""):
             if title.start_date <= today:
                 if title.end_date:
                     if title.end_date >= today:
-                        obj = translate_obj(title.title_name)
+                        obj = translation.translate_obj(title.title_name)
                         title_list.append(obj.user_role_name)
                 else:
-                    obj = translate_obj(title.title_name)
+                    obj = translation.translate_obj(title.title_name)
                     title_list.append(obj.user_role_name)
         return ", ".join(title_list)
     return column.GetterColumn(title, getter)
@@ -151,7 +151,7 @@ def item_name_column(name, title, default=u""):
 
 def group_name_column(name, title, default=u""):
     def getter(item, formatter):
-        obj = translate_obj(item)
+        obj = translation.translate_obj(item)
         #TODO: translate group.type
         return u"%s %s" % (item.group.type, obj.group.short_name)
     return column.GetterColumn(title, getter)
@@ -174,21 +174,21 @@ def constituency_column(name, title, default=u""):
     def getter(item, formatter):
         if item.constituency is None:
             return default
-        obj = translate_obj(item.constituency)
+        obj = translation.translate_obj(item.constituency)
         return obj.name
     return column.GetterColumn(title, getter)
 def province_column(name, title, default=u""):
     def getter(item, formatter):
         if item.province is None:
             return default
-        obj = translate_obj(item.province)
+        obj = translation.translate_obj(item.province)
         return obj.province
     return column.GetterColumn(title, getter)
 def region_column(name, title, default=u""):
     def getter(item, formatter):
         if item.region is None:
             return default
-        obj = translate_obj(item.region)
+        obj = translation.translate_obj(item.region)
         return obj.region
     return column.GetterColumn(title, getter)
 
@@ -196,31 +196,34 @@ def party_column(name, title, default=u""):
     def getter(item, formatter):
         obj = item.party
         if obj is not None:
-            return translate_obj(obj).full_name
+            return translation.translate_obj(obj).full_name
         return u"-"
     return column.GetterColumn(title, getter)
 
 def committee_type_column(name, title, default=u""):
     def getter(item, formatter):
-        obj = translate_obj(item.committee_type)
+        obj = translation.translate_obj(item.committee_type)
         return obj.committee_type
     return column.GetterColumn(title, getter)
 
 def ministry_column(name, title, default=u""):
     def getter(item, formatter):
-        obj = translate_obj(item.ministry)
+        # !+TRANSLATE_ATTR(mr, sep-2010)
+        #m = item.ministry
+        #return translation.translate_attr(m, m.group_id, "short_name")
+        obj = translation.translate_obj(item.ministry)
         return obj.short_name
     return column.GetterColumn(title, getter)
 
 def sitting_type_column(name, title, default=u""):
     def getter(item, formatter):
-        obj = translate_obj(item.sitting_type)
+        obj = translation.translate_obj(item.sitting_type)
         return obj.sitting_type
     return column.GetterColumn(title, getter)
 
 def attendance_column(name, title, default=u""):
     def getter(item, formatter):
-        obj = translate_obj(item.attendance_type)
+        obj = translation.translate_obj(item.attendance_type)
         return obj.attendance_type
     return column.GetterColumn(title, getter)
 

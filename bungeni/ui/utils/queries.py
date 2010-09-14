@@ -18,6 +18,7 @@ from zope.security.proxy import removeSecurityProxy
 from ore.alchemist import Session
 from ore.alchemist.container import valueKey
 from ore.alchemist.container import stringKey
+# !+checkPermission(mr, sep-2010) should use: bungeni.ui.container.stringKey
 
 from bungeni.models import domain
 from bungeni.models import schema

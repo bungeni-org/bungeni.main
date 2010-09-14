@@ -22,7 +22,7 @@ from ore.alchemist import Session
 from alchemist.catalyst import ui
 from alchemist.ui.core import null_validator
 from ore.alchemist.model import queryModelDescriptor
-#from ore.alchemist.container import stringKey
+#from bungeni.ui.container import stringKey
 #from ore.workflow.interfaces import IWorkflowInfo
 #from alchemist.ui.core import handle_edit_action
 from alchemist.ui.core import setUpFields
@@ -49,6 +49,7 @@ from bungeni.ui.i18n import _
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
 from bungeni.ui.utils import url, debug
+from bungeni.ui.container import invalidate_caches_for
 
 import re
 import htmlentitydefs
@@ -345,15 +346,25 @@ class AddForm(BaseForm, ui.AddForm):
 
     def finishConstruction(self, ob):
         """Adapt the custom fields to the object."""
-
         adapts = self.Adapts
         if adapts is None:
             adapts = self.model_schema
-            
         self.adapters = {
             adapts : ob
-            }
-            
+        }
+    
+    def createAndAdd(self, data):
+        added_obj = super(AddForm, self).createAndAdd(data)
+        # invalidate caches for this domain object type
+        invalidate_caches_for(added_obj.__class__.__name__, "add")
+        # !+ADD_invalidate_CACHE(mr, sep-2010) should not be necessary as 
+        # all domain items are created into a "draft" workflow state that 
+        # is NOT public, so in theory any existing cache of listings of public 
+        # items are NOT affected. Plus, the required subsequent modification 
+        # of the item (to transit the item into a public state) will anyway
+        # invalidate the cache.
+        return added_obj
+    
     @formlib.form.action(
         _(u"Save and view"), 
         condition=formlib.form.haveInputWidgets)
@@ -496,27 +507,29 @@ class EditForm(BaseForm, ui.EditForm):
                 # attach widget as ``render_original``
                 widget.render_original = display_widget
     
+    def _do_save(self, data):
+        for key in data.keys():
+            if isinstance(data[key], str):
+                data[key] = unescape(data[key])
+        formlib.form.applyChanges(self.context, self.form_fields, data)
+        # invalidate caches for this domain object type
+        invalidate_caches_for(self.context.__class__.__name__, "edit")
+    
     @formlib.form.action(_(u"Save"), condition=formlib.form.haveInputWidgets)
     def handle_edit_save(self, action, data):
         """Saves the document and goes back to edit page"""
-        for key in data.keys():
-            if isinstance(data[key], str): 
-                data[key] = unescape(data[key])
-        formlib.form.applyChanges(self.context, self.form_fields, data)
+        self._do_save(data)
     
     @formlib.form.action(
         _(u"Save and view"), condition=formlib.form.haveInputWidgets)
     def handle_edit_save_and_view(self, action, data):
         """Saves the  document and redirects to its view page"""
-        for key in data.keys():
-            if isinstance(data[key], str): 
-                data[key] = unescape(data[key])
-    	formlib.form.applyChanges(self.context, self.form_fields, data)
+        self._do_save(data)
         if not self._next_url:
             self._next_url = url.absoluteURL(self.context, self.request) + \
                 "?portal_status_message= Saved"
         self.request.response.redirect(self._next_url)
- 
+    
     @formlib.form.action(_(u"Cancel"), validator=null_validator)
     def handle_edit_cancel(self, action, data):
         """Cancelling redirects to the listing."""
@@ -567,7 +580,6 @@ class TranslateForm(AddForm):
     @property
     def form_name(self):
         language = get_language_by_name(self.language)["name"]
-                
         return _(u"translate_item_legend",
                  default=u"Add $language translation",
                  mapping={"language": language})
@@ -583,19 +595,21 @@ class TranslateForm(AddForm):
              mapping={"title": translate(props.title, context=self.request),
                       "language": language}) 
         else:
-            return _(
-                u"translate_item_help",
-                default=u'The document "$title" has not yet been translated into $language. Use this form to add the translation',
-                mapping={"title": translate(props.title, context=self.request),
-                         "language": language})
+            return _(u"translate_item_help",
+                default=u'The document "$title" has not yet been translated ' \
+                    u'into $language. Use this form to add the translation',
+                mapping={
+                    "title": translate(props.title, context=self.request),
+                    "language": language
+                }
+            )
     
     @property
     def title(self):
         language = get_language_by_name(self.language)["name"]
-
         return _(u"translate_item_title", default=u"Adding $language translation",
                  mapping={"language": language})
-
+    
     @property
     def domain_model(self):
         return type(removeSecurityProxy(self.context))
@@ -824,6 +838,9 @@ class DeleteForm(PageForm):
 
             return self.render()
         session.close()
+        # invalidate caches for this domain object type
+        invalidate_caches_for(self.context.__class__.__name__, "delete")
+        
         #TODO: check that it is removed from the index!
         notify(ObjectRemovedEvent(
             self.context, oldParent=container, oldName=self.context.__name__))

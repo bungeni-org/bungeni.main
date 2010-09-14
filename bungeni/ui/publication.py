@@ -68,13 +68,21 @@ mapping_on_path = (
     (re.compile(r'^/$'), interfaces.IHomePageLayer),
     (re.compile(r'^/archive(/.*)?$'), interfaces.IArchiveSectionLayer),
     # Matches "workspace/" followed by anything but "/scheduling"
-    (re.compile(r'^/workspace(?!/scheduling)(/.*)?$'), interfaces.IWorkspaceSectionLayer),
+    (re.compile(r'^/workspace(?!/scheduling)(/.*)?$'), 
+        interfaces.IWorkspaceSectionLayer
+    ),
     # Matches "workspace/scheduling"
-    (re.compile(r'^/workspace/scheduling(/.*)?$'), interfaces.IWorkspaceSchedulingSectionLayer),
+    (re.compile(r'^/workspace/scheduling(/.*)?$'),
+        interfaces.IWorkspaceSchedulingSectionLayer
+    ),
     # Matches "business/" followed by anything but "/whats-on"
-    (re.compile(r'^/business(?!/whats-on)(/.*)+$'), interfaces.IBusinessSectionLayer),
+    (re.compile(r'^/business(?!/whats-on)(/.*)+$'), 
+        interfaces.IBusinessSectionLayer
+    ),
     # Matches "business/whats-on"
-    (re.compile(r'^/business/whats-on(/.*)?$'), interfaces.IBusinessWhatsOnSectionLayer),
+    (re.compile(r'^/business/whats-on(/.*)?$'), 
+        interfaces.IBusinessWhatsOnSectionLayer
+    ),
     (re.compile(r'^/members(/.*)?$'), interfaces.IMembersSectionLayer),
     (re.compile(r'^/admin(/.*)?$'), interfaces.IAdminSectionLayer),
 )

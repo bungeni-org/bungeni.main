@@ -528,7 +528,7 @@ mapper(domain.Question, schema.questions,
             cascade="all, delete-orphan", 
             passive_deletes=False
         ),
-        "ministry": relation(domain.Ministry),
+        "ministry": relation(domain.Ministry, lazy=False, join_depth=2),
     }
 )
 
@@ -594,7 +594,7 @@ mapper(domain.Motion, schema.motions,
 mapper(domain.MotionChange, schema.motion_changes)
 mapper(domain.MotionVersion, schema.motion_versions,
     properties={
-        "change":relation(domain.MotionChange, uselist=False),
+        "change": relation(domain.MotionChange, uselist=False),
         "head": relation(domain.Motion, uselist=False),
         "attached_files": relation(domain.AttachedFileVersion,
             primaryjoin=rdb.and_(
