@@ -39,7 +39,8 @@ from bungeni.core.odf import OpenDocument
 from bungeni.models import domain
 from bungeni.models.interfaces import IGroupSitting
 from ploned.ui.interfaces import IStructuralView
-from ore.alchemist.container import stringKey
+from bungeni.ui.container import stringKey
+#from ore.alchemist.container import stringKey
 from ore.alchemist import Session
 from ore.workflow.interfaces import IWorkflowInfo
 from zope.formlib import form
