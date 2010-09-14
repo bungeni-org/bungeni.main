@@ -24,39 +24,39 @@ def get_date(date):
     else:
         raise TypeError (_("date must be of type datetime or date"))
 
+
 def getDisplayDate(request):
-    """
-    get the date for which to display the data.
+    """ () -> datetime.date
+    
+    Get the date for which to display the data.
     #SQL WHERE:
     # displayDate BETWEEN start_date and end_date
     # OR
     # displayDate > start_date and end_date IS NULL
     """
-    DisplayDate = request.get('date', None)
+    DisplayDate = request.get("date", None)
     if not DisplayDate:
-        if request.has_key('display_date'):
-            DisplayDate = request['display_date']
-    displayDate = None
+        if request.has_key("display_date"):
+            DisplayDate = request["display_date"]
     if DisplayDate:
         try:
-            y, m, d = (int(x) for x in DisplayDate.split('-'))
-            displayDate = datetime.date(y,m,d)
+            y, m, d = (int(x) for x in DisplayDate.split("-"))
+            return datetime.date(y, m, d)
         except:
-            displayDate = None
-    else:
-        displayDate = None
-    return displayDate
+            pass
+    return None
+
 
 def getFilter(displayDate):
+    """(either(datetime.date|None) -> filter_by:str
+    """
     if displayDate:
-        filter_by = """
+        return """
         ( ('%(displayDate)s' BETWEEN start_date AND end_date )
         OR
         ( '%(displayDate)s' > start_date AND end_date IS NULL) )
-        """ % ({ 'displayDate' : displayDate})
-    else:
-        filter_by = ""
-    return filter_by
+        """ % ({ "displayDate" : displayDate})
+    return ""
 
 
 def getLocaleFormatter(

@@ -21,7 +21,7 @@ from zope.annotation.interfaces import IAnnotations
 
 from sqlalchemy import sql
 
-from bungeni.core.i18n import _
+from bungeni.core.i18n import _ # !+(mr, sep-2010) shound't this be ui.i18n ?
 from bungeni.core.content import Section, QueryContent
 from bungeni.core.interfaces import ISchedulingContext
 from bungeni.core.schedule import PrincipalGroupSchedulingContext
