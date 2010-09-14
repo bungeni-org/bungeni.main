@@ -89,6 +89,7 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.ui.z3evoque")
 
+import sys
 import os
 import zope
 from evoque.domain import Domain
@@ -173,10 +174,20 @@ def set_get_gettext():
                 zope.i18nmessageid.MessageFactory(self.i18n_domain)
         """
         import gettext
-        t = gettext.translation(
-            i18n_domain,
-            localedir=_i18n_domain_localedirs[i18n_domain],
-            languages=[language])
+        try:
+            t = gettext.translation(i18n_domain,
+                    localedir=_i18n_domain_localedirs[i18n_domain],
+                    languages=[language])
+        except (IOError,):
+            cls, exc, tb = sys.exc_info()
+            if language != "en":
+                log.error(""" [%s] %s [lang=%s] -> trying with [lang=%s]""" % (
+                    cls.__name__, exc, language, "en"))
+                return _get_gettext(i18n_domain, "en")
+            else:
+                log.error(""" [%s] %s [lang=%s]""" % (
+                    cls.__name__, exc, language))
+                raise exc
         return t.gettext
     global get_gettext
     get_gettext = _get_gettext
