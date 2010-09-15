@@ -27,37 +27,45 @@ def get_date(date):
 
 def getDisplayDate(request):
     """ () -> datetime.date
+    Get the date (for filtering data display) from the request, first 
+    trying request["date"], then request["display_date"].
     
-    Get the date for which to display the data.
-    #SQL WHERE:
-    # displayDate BETWEEN start_date and end_date
-    # OR
-    # displayDate > start_date and end_date IS NULL
+    Assumption: relation being being queried has date columns named 
+    "start_date" and "end_date"
     """
-    DisplayDate = request.get("date", None)
-    if not DisplayDate:
-        if request.has_key("display_date"):
-            DisplayDate = request["display_date"]
+    # !+DISPLAYDATE(mr, sep-2010) 
+    # when are request["date"] and request["display_date"] defined?
+    DisplayDate = request.get("date", request.get("display_date", None))
     if DisplayDate:
         try:
             y, m, d = (int(x) for x in DisplayDate.split("-"))
             return datetime.date(y, m, d)
         except:
             pass
-    return None
 
+''' !+DATEFILTER(mr, sep-2010) should use IDateRangeFilter adaptors,
+    defined in models.daterange.py
 
 def getFilter(displayDate):
     """(either(datetime.date|None) -> filter_by:str
+    
+    Filter on a date for which to display the data.
+    #SQL WHERE:
+    # displayDate BETWEEN start_date and end_date
+    # OR
+    # displayDate > start_date and end_date IS NULL
+
+    Assumption: relation being being queried has date columns named 
+    "start_date" and "end_date"
     """
     if displayDate:
         return """
         ( ('%(displayDate)s' BETWEEN start_date AND end_date )
         OR
         ( '%(displayDate)s' > start_date AND end_date IS NULL) )
-        """ % ({ "displayDate" : displayDate})
+        """ % ({"displayDate": displayDate})
     return ""
-
+'''
 
 def getLocaleFormatter(
             request=None, 

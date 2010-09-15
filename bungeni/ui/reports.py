@@ -42,6 +42,7 @@ from bungeni.models.utils import get_current_parliament
 from bungeni.models.interfaces import IGroupSitting
 from bungeni.server.interfaces import ISettings
 from bungeni.ui.forms.common import AddForm
+from bungeni.ui import container
 from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent
 class TIME_SPAN:
@@ -544,6 +545,8 @@ class SaveReportView(form.PageForm):
         report.group_id = self.context.group_id
         session.add(report)
         notify(ObjectCreatedEvent(report))
+        # !+INVALIDATE(mr, sep-2010)
+        container.invalidate_caches_for("Report", "add")
         if "sittings" in data.keys():
             try:
                 ids = data["sittings"].split(",")
@@ -554,11 +557,13 @@ class SaveReportView(form.PageForm):
                     sr.report = report
                     sr.sitting = sitting
                     session.add(sr)
+                    # !+INVALIDATE(mr, sep-2010) via an event...
+                    container.invalidate_caches_for("SittingReport", "add")
             except:
                 #if no sittings are present in report or some other error occurs
                 pass
         session.commit()
-
+        
         if IGroupSitting.providedBy(self.context):
             back_link = './schedule'
         elif ISchedulingContext.providedBy(self.context):

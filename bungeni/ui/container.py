@@ -2,18 +2,15 @@ log = __import__("logging").getLogger("bungeni.ui.container")
 
 import sys
 import datetime
-import zc.table
 import simplejson
 import sqlalchemy.sql.expression as sql
 from sqlalchemy import types, orm
 
 from zope import interface
 from zope import component
-from zope import formlib
 from zope.security import proxy
 from zope.security import checkPermission
 from zope.publisher.browser import BrowserView
-from zc.table import column, table
 
 from ore.alchemist.model import queryModelDescriptor
 from ore.alchemist.model import queryModelInterface
@@ -29,12 +26,11 @@ from bungeni.core import translation
 
 from bungeni.ui.utils import url, date, debug
 from bungeni.ui import cookies
-from bungeni.ui.interfaces import IBusinessSectionLayer
-from bungeni.ui.interfaces import IMembersSectionLayer
-from bungeni.ui.i18n import _
+from bungeni.ui.interfaces import IBusinessSectionLayer, \
+    IMembersSectionLayer, IArchiveSectionLayer
 
 def stringKey(obj):
-    """Replacement for ore.alchemist.container.stringKey
+    """Replacement of ore.alchemist.container.stringKey
     
     The difference is that here the primary_key is not determined by 
     sqlalchemy.orm.mapper.primary_key_from_instance(obj) but by doing the 
@@ -56,7 +52,9 @@ def stringKey(obj):
 
 
 def getFields(context, interface=None, annotation=None):
-    """Generator of all fields that will be displayed in a containerlisting 
+    """Generator of all fields that will be displayed in a containerlisting .
+    
+    Replacement of alchemist.ui.container.getFields
     """
     if interface is None: 
         model = proxy.removeSecurityProxy(context.domain_model)
@@ -83,145 +81,41 @@ def query_iterator(query, parent, permission=None):
                 yield item
 
 
-def get_query(context):
-    """Get context's query.
-    """
-    return proxy.removeSecurityProxy(context)._query
-
-
 def query_filter_date_range(context, request, query, domain_model):
-    """If the model has start- and end-dates, constrain the query to
-    objects appearing within those dates.
+    """Add date range filter to query:
+    - if the model has start & end dates, constrain the query to objects 
+      appearing within those dates.
+    - else pick off start/end date from the request's cookies
+    - else try getting a display date off request
     """
-    if ((IBusinessSectionLayer.providedBy(request) and
-            ICommitteeContainer.providedBy(context)) or 
-        (IMembersSectionLayer.providedBy(request) and
-            IMemberOfParliamentContainer.providedBy(context)) or 
-        (IBusinessSectionLayer.providedBy(request) and
-            ICommitteeMemberContainer.providedBy(context)) or 
-        (IBusinessSectionLayer.providedBy(request) and
+    if ((IBusinessSectionLayer.providedBy(request) and (
+            ICommitteeContainer.providedBy(context) or 
+            ICommitteeMemberContainer.providedBy(context) or
             ICommitteeStaffContainer.providedBy(context))
+        ) or
+        (IMembersSectionLayer.providedBy(request) and
+            IMemberOfParliamentContainer.providedBy(context))
     ):
         start_date, end_date = datetime.date.today(), None
-    else:
+    elif IArchiveSectionLayer.providedBy(request):
         start_date, end_date = cookies.get_date_range(request)
+    else:
+        start_date, end_date = date.getDisplayDate(request), None
+    
     if not start_date and not end_date:
         return query
-    else:
-        if not start_date:
-            start_date = datetime.date(1900, 1, 1)
-        elif not end_date:
-            end_date = datetime.date(2100, 1, 1)
-        date_range_filter = component.getSiteManager().adapters.lookup(
-            (interface.implementedBy(domain_model),), IDateRangeFilter)
-        if date_range_filter is not None:
-            query = query.filter(date_range_filter(domain_model)).params(
-                start_date=start_date, end_date=end_date)
-        return query
+    elif not start_date:
+        start_date = datetime.date(1900, 1, 1)
+    elif not end_date:
+        end_date = datetime.date(2100, 1, 1)
+    
+    date_range_filter = component.getSiteManager().adapters.lookup(
+        (interface.implementedBy(domain_model),), IDateRangeFilter)
+    if date_range_filter is not None:
+        query = query.filter(date_range_filter(domain_model)).params(
+            start_date=start_date, end_date=end_date)
+    return query
 
-
-def dateFilter(request):
-    return date.getFilter(date.getDisplayDate(request))
-
-
-
-'''
-from zope.app.pagetemplate import ViewPageTemplateFile
-#from bungeni.ui import z3evoque
-class ContainerListing(formlib.form.DisplayForm):
-    """Formatted listing.
-    """
-    form_fields = formlib.form.Fields()
-    mode = "listing"
-    
-    # evoque
-    #index = z3evoque.PageViewTemplateFile("content.html#container")
-    
-    # zpt
-    index = ViewPageTemplateFile("templates/generic-container.pt")
-    
-    def update(self):
-        context = proxy.removeSecurityProxy(self.context)
-        columns = core.setUpColumns(context.domain_model)
-        columns.append(
-            column.GetterColumn(title=_(u'Actions'), getter=viewEditLinks)
-        )
-        self.columns = columns
-        super(ContainerListing, self).update()
-    
-    def render(self):
-        return self.index()
-    
-    def listing(self):
-        return self.formatter()
-    
-    @property
-    def formatter(self):
-        """We replace the formatter in our superclass to set up column
-        sorting.
-        
-        Default sort order is defined in the model class
-        (``sort_on``); if not set, the table is ordered by the
-        ``short_name`` column (also used as secondary sort order).
-        """
-        context = proxy.removeSecurityProxy(self.context)
-        model = context.domain_model
-        query = get_query(self.context, self.request)
-        table = query.table
-        names = table.columns.keys()
-        order_list = []
-        
-        order_by = self.request.get("order_by", None)
-        if order_by:
-            if order_by in names:
-                order_list.append(order_by)
-        
-        default_order = getattr(model, "sort_on", None)
-        if default_order:
-            if default_order in names:
-                order_list.append(default_order)
-        
-        if "short_name" in names and "short_name" not in order_list:
-            order_list.append("short_name")
-        
-        filter_by = dateFilter(self.request)
-        if filter_by:
-            if "start_date" in names and "end_date" in names:
-                query = query.filter(filter_by).order_by(order_list)
-            else:
-                query = query.order_by(order_list)
-        else:
-            query = query.order_by(order_list)
-        
-        subset_filter = getattr(context,"_subset_query", None)
-        if subset_filter:
-            query = query.filter(subset_filter)
-        query = query_iterator(query, self.context, "zope.View")
-        
-        formatter = zc.table.table.AlternatingRowFormatter(
-            context, self.request, query, prefix="form", columns=self.columns)
-        
-        formatter.cssClasses["table"] = "listing"
-        formatter.table_id = "datacontents"
-        return formatter
-    
-    @property
-    def form_name(self):
-        domain_model = proxy.removeSecurityProxy(self.context).domain_model
-        
-        descriptor = queryModelDescriptor(domain_model)
-        if descriptor:
-            name = getattr(descriptor, "container_name", None)
-            if name is None:
-                name = getattr(descriptor, "display_name", None)
-        if not name:
-            name = getattr(self.context, "__name__", None)
-        return name
-    
-    @formlib.form.action(_(u"Add"))
-    def handle_add(self, action, data):
-        self.request.response.redirect("add")
-'''
 
 class ContainerBrowserView(BrowserView):
     """Base BrowserView Container listing.
@@ -240,13 +134,11 @@ class ContainerBrowserView(BrowserView):
         self.sort_dir = self.request.get("dir", self.default_sort_dir)
 
 class ContainerJSONTableHeaders(ContainerBrowserView):
-
     def __call__(self):
-        th = []
-        for field in self.fields:
-            th.append({"name":  field.__name__, "title": field.title})
-        return simplejson.dumps(th)
-
+        return simplejson.dumps([ 
+            dict(name=field.__name__, title=field.title)
+            for field in self.fields 
+        ])
 
 class ContainerJSONListing(ContainerBrowserView):
     """Paging, batching, sorting, json contents of a container.
@@ -430,20 +322,13 @@ class ContainerJSONListing(ContainerBrowserView):
     #   - ore.alchemist.container.AlchemistContainer.batch()
     def getBatch(self, start=0, limit=20, lang=None):
         context = proxy.removeSecurityProxy(self.context)
-        query = get_query(context)
+        query = context._query
         
         # !+DATE_FILTERS(mr, sep-2010) why so many date filters?
-        # date_range filter (cookie)
+        # date_range filter (try from: model, then cookie, then request)
         query = query_filter_date_range(context, self.request, query, 
             self.domain_model)
-        # displayDate filter (request)
-        filter_by = dateFilter(self.request)
-        if filter_by:
-            if (("start_date" in context._class.c) and 
-                ("end_date" in context._class.c)
-            ):
-                # apply date range resrictions
-                query = query.filter(filter_by)
+        
         # other filters 
         query = self.query_add_filters(query, self.getFilter())
         
@@ -502,26 +387,25 @@ class ContainerWFStatesJSONListing(ContainerJSONListing):
         return super(ContainerWFStatesJSONListing, self
             ).query_add_filters(query, *filter_strings)
     
-    def get_cache_key(self, context, start, limit, lang):
+    def get_cache_key(self, context, lang, start, limit, sort_direction):
         qs_params = tuple(
             self.request.get(name, default)
             for name, default in JSLCaches[context.__name__].qs_params
         )
-        # as sort_dir may have a (overridable) model default, we treat 
-        # it specially (note that sort_on may also have a model default, but
-        # the values here accumulate, so for key uniqueness it suffices to 
-        # only consider only the sort_on parameter in the request.
-        return (lang, start, limit, self.sort_dir, qs_params)
-        # !+ class name and context name are actually unnecessary to guarantee 
-        # uniqueness for each item within *this* cache:
-        #self.__class__.__name__, context.__name__,
+        # as sort_dir qs_param may have a (overridable) model default, we 
+        # treat it differently than other qs_params (note that sort_on may 
+        # also have a model default, but the values here accumulate, so for
+        # key uniqueness it suffices to only consider only the sort_on 
+        # parameter in the request.
+        return (lang, start, limit, sort_direction, qs_params)
     
     def __call__(self):
         # prepare required parameters
         start, limit = self.getOffsets()
         lang = self.request.locale.getLocaleID() # get_request_language()
         context = proxy.removeSecurityProxy(self.context)
-        cache_key = self.get_cache_key(context, start, limit, lang)
+        cache_key = self.get_cache_key(context, 
+            lang, start, limit, self.sort_dir)
         cache = JSLCaches[context.__name__].cache
         if not cache.has(cache_key):
             log.info("SETTING CACHE for key: %s" % (cache_key,))
@@ -602,12 +486,16 @@ JSLCaches = {
     # sittings
     "preports": JSLCache(99, ["Report"], [
         ("sort", u""),
-        ("filter_short_name", u""),
-        ("filter_owner_id", u""),
-        ("filter_submission_date", u""),
-        ("filter_status", u""),
-        ("filter_status_date", u""),
-        ("filter_publication_date", u""),
+        ("filter_report_type", u""),
+        ("filter_start_date", u""),
+        ("filter_end_date", u""),
+        ("filter_note", u""),
+    ]),
+    "sreports": JSLCache(99, ["SittingReport"], [
+        ("sort", u""),
+        ("filter_report_type", u""),
+        ("filter_start_date", u""),
+        ("filter_end_date", u""),
         ("filter_note", u""),
     ]),
     "attendance": JSLCache(99, ["GroupSittingAttendance"], [
@@ -691,10 +579,7 @@ JSLCaches = {
 # /browse/politicalgroups
 JSLCaches["politicalgroups"] = JSLCaches["political-groups"] 
 # /browse/constituencies/
-JSLCaches["parliamentmembers"] = JSLCaches["current"] 
-# /business/sittings/...
-JSLCaches["sreports"] = JSLCaches["preports"]
-
+JSLCaches["parliamentmembers"] = JSLCaches["current"]
 
 def get_CacheByClassName():
     """ build mapping of class_name to caches to invalidate."""
