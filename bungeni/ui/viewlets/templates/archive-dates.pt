@@ -6,6 +6,9 @@ $URL$
   
   <dt class="portletHeader" i18n:domain="bungeni.ui" >
     <span class="portletTopLeft"></span>
+    <!-- !+ARCHIVE_FILTER_TITLE(mr, sep-2010) parematrize,
+        use view.is_in_parliament() 
+    -->
     <span i18n:translate="" class="tile">Filter by date or parliament</span>
     <span class="portletTopRight"></span>
   </dt>
