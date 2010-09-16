@@ -2,9 +2,9 @@ function listTogglr(){
   var viewletDateToggle = $('#whats-on-overview .whats-on-viewlet dd ul li h2');
   viewletDateToggle.css({
     background: 'url(/static/images/minus.png) 2px 4px no-repeat',
-        paddingLeft: '20px',
-        cursor: 'pointer'
-        });
+    paddingLeft: '20px',
+    cursor: 'pointer'
+    });
   viewletDateToggle.click(function(){
       var state = $(this).siblings('ul').css('display');
       if (state == 'hidden' || state == 'none') {
@@ -26,9 +26,9 @@ function listTogglr(){
     });
   viewlet.css({
     background: '#fff url(/static/images/plus.png) 2px 4px no-repeat',
-        paddingLeft: '20px',
-        cursor: 'pointer'
-        });
+    paddingLeft: '20px',
+    cursor: 'pointer'
+    });
   $('#fieldset-upcoming-sittings ul li ul li ul li').css({background: '#fff', padding: '0'});
   viewlet.children('ul').hide();
   viewlet.click(function(){
@@ -53,29 +53,31 @@ function searchTogglr(){
   var portletHeader = $('#portletArchiveDates .portletHeader');
   var portletHeaderSpan = portletHeader.children('span.tile');
   portletHeaderSpan.css({
-      float:'right',
-        display:'block',
-        paddingLeft: '20px',
-        cursor: 'pointer',
-        background: 'url(/static/images/minus.png) 2px 4px no-repeat'
-        });
+      float: "right",
+      display: "block",
+      paddingLeft: "20px",
+      cursor: "pointer",
+      background: "url(/static/images/minus.png) 2px 4px no-repeat"
+      });
+  
   portletHeaderSpan.hover(function(){
       portletHeaderSpan.css('text-decoration','underline');
     },function(){
       portletHeaderSpan.css('text-decoration','none');
     });
+  
   var portletItem = $('#portletArchiveDates .portletItem');
   portletItem.css({
     clear: 'both',
-        height: '50px'
-        });
+    height: '50px'
+    });
+  
   var portletItemForm = $('#portletArchiveDates .portletItem form');
   portletItemForm.css({
-    display: 'block',
-        position: 'absolute',
-        top: 0,
-        right: 0
-        });
+    position: 'relative',
+    top: 0,
+    right: 0
+    });
   
   if(!portletItem.hasClass('dates-filtered')){
     portletItem.hide();
@@ -94,9 +96,22 @@ function searchTogglr(){
       }
     });
 }
+
 $(document).ready(function(){
     searchTogglr();
     listTogglr();
+    
+    $('ul.formTabs li a span').each(function(index){
+        // store the name of this particular tab
+        var name = $(this).text();
+        // create a new h3 tag for the name
+        var nameH3 = $(document.createElement('h3'));
+        nameH3.text(name);
+        nameH3.addClass('printHeading');
+        // add the heading to the corresponding Panel
+        $('dd.formPanel:eq('+index+')').prepend(nameH3);
+      });
+    
     // Hides the dead links in the global nav.
     $('#portal-globalnav ul.level0 li a').each(function(){
         var link = $(this).attr('href');
@@ -104,3 +119,4 @@ $(document).ready(function(){
           $(this).parent().hide();
         }
       });
+  });
