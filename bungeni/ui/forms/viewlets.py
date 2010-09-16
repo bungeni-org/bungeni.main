@@ -47,7 +47,7 @@ class GroupIdViewlet(viewlet.ViewletBase):
     parent_group_principal_id = None
     my_group_principal_id = None
     
-    def __init__( self,  context, request, view, manager ):
+    def __init__(self,  context, request, view, manager):
         self.context = context
         self.request = request
         self.__parent__= context
@@ -74,7 +74,7 @@ class UserIdViewlet(viewlet.ViewletBase):
     principal id """
     principal_id = None
     
-    def __init__( self,  context, request, view, manager ):
+    def __init__(self,  context, request, view, manager):
 
         self.context = context
         self.request = request
@@ -90,13 +90,13 @@ class UserIdViewlet(viewlet.ViewletBase):
         except:
             pass
         
-    render = ViewPageTemplateFile ('templates/user_id.pt')
+    render = ViewPageTemplateFile('templates/user_id.pt')
 '''
 
 
 class AttributesEditViewlet(ui.core.DynamicFields, ui.viewlet.EditFormViewlet):
     mode = "edit"
-    template = NamedTemplate('alchemist.subform')
+    template = NamedTemplate("alchemist.subform")
     form_name = _(u"General")
 
 class SubFormViewletManager(manager.WeightOrderedViewletManager):
@@ -115,7 +115,7 @@ class SubFormViewletManager(manager.WeightOrderedViewletManager):
 class SubformViewlet(table.AjaxContainerListing):
     """
     """
-    render = ViewPageTemplateFile ("templates/generic-sub-container.pt")
+    render = ViewPageTemplateFile("templates/generic-sub-container.pt")
     for_display = True
 
 
@@ -348,8 +348,8 @@ class PartyMembershipViewlet(SubformViewlet):
         self.manager = manager
         self.query = None
 
-#class ResponseViewlet( SubformViewlet ):
-#    def __init__( self,  context, request, view, manager ):
+#class ResponseViewlet(SubformViewlet):
+#    def __init__(self,  context, request, view, manager):
 #
 #        self.context = context.responses
 #        self.request = request
@@ -385,7 +385,7 @@ class PersonInfo(BungeniAttributeDisplay):
         self.manager = manager
         self.query = None
         md = queryModelDescriptor(domain.User)
-        self.form_fields = md.fields #.select('user_id', 'start_date', 'end_date')
+        self.form_fields = md.fields #.select("user_id", "start_date", "end_date")
 
     def update(self):
         """
@@ -479,8 +479,7 @@ class ParliamentaryItemMinutesViewlet(BungeniAttributeDisplay):
         
 class InitialQuestionsViewlet(BungeniAttributeDisplay):
     form_name = (u"Initial Questions")
-
-
+    
     @property
     def for_display(self):
         return self.context.supplement_parent_id is not None
@@ -520,8 +519,8 @@ class ResponseViewlet(BungeniAttributeDisplay):
     form_name = _(u"Response")
 
     add_action = form.Actions(
-        form.Action(_(u'Add response'), success='handle_response_add_action'),
-        )
+        form.Action(_(u"Add response"), success="handle_response_add_action"),
+    )
 
     def __init__(self, context, request, view, manager):
         self.context = context
@@ -531,7 +530,7 @@ class ResponseViewlet(BungeniAttributeDisplay):
         self.query = None
         md = queryModelDescriptor(domain.Response)
         self.form_fields = md.fields
-        self.add_url = '%s/responses/add' % url.absoluteURL(
+        self.add_url = "%s/responses/add" % url.absoluteURL(
             self.context, self.request)
 
     def handle_response_add_action(self, action, data):
@@ -568,20 +567,20 @@ class OfficesHeldViewlet(viewlet.ViewletBase):
         office_list = []
         for oh in self.offices_held:
             title = {}
-            title['group'] = oh[0] + ' - ' + (oh[1] or'')
-            title['group_type'] = oh[2].capitalize()
+            title["group"] = oh[0] + " - " + (oh[1] or"")
+            title["group_type"] = oh[2].capitalize()
             if oh[3]:
-                title['member_title'] = oh[3]
+                title["member_title"] = oh[3]
             else:
-                title['member_title'] = _(u"Member")
+                title["member_title"] = _(u"Member")
             if oh[4]:
-                title['start_date'] = oh[4]
+                title["start_date"] = oh[4]
             else:
-                title['start_date'] = oh[6]
+                title["start_date"] = oh[6]
             if oh[5]:
-                title['end_date'] = oh[5]
+                title["end_date"] = oh[5]
             else:
-                title['end_date'] = oh[7]
+                title["end_date"] = oh[7]
             office_list.append(title)
         return office_list
 
@@ -599,10 +598,8 @@ class OfficesHeldViewlet(viewlet.ViewletBase):
                 parliament_id = parliament.parliament_id
         self.offices_held = get_offices_held_for_user_in_parliament(
                 user_id, parliament_id)
-
-
-
-    render = ViewPageTemplateFile ('templates/offices_held_viewlet.pt')
+    
+    render = ViewPageTemplateFile("templates/offices_held_viewlet.pt")
 
 
 class TimeLineViewlet(viewlet.ViewletBase):
@@ -616,14 +613,14 @@ class TimeLineViewlet(viewlet.ViewletBase):
     render = z3evoque.ViewTemplateFile("workspace_viewlets.html#timeline")
 
     # zpt
-    #render = ViewPageTemplateFile('templates/timeline_viewlet.pt')
+    #render = ViewPageTemplateFile("templates/timeline_viewlet.pt")
 
     # sqlalchemy give me a rough time sorting a union, 
     # with hand coded sql it is much easier.
     # !+ get rid of the hard-coded sql
     sql_timeline = ""
     add_action = form.Actions(
-        form.Action(_(u'add event'), success='handle_event_add_action'),
+        form.Action(_(u"add event"), success="handle_event_add_action"),
     )
     for_display = True
     view_name = "Timeline"
@@ -635,7 +632,8 @@ class TimeLineViewlet(viewlet.ViewletBase):
         self.__parent__ = view
         self.manager = manager
         self.query = None
-        self.formatter = date.getLocaleFormatter(self.request, "dateTime", "medium")
+        self.formatter = date.getLocaleFormatter(
+            self.request, "dateTime", "medium")
 
     def handle_event_add_action(self, action, data):
         self.request.response.redirect(self.addurl)
@@ -706,21 +704,18 @@ class TimeLineViewlet(viewlet.ViewletBase):
                     r["description"] = _(r["description"])
         #
         path = url.absoluteURL(self.context, self.request)
-        self.addurl = '%s/event/add' % (path)
+        self.addurl = "%s/event/add" % (path)
 
 class BillTimeLineViewlet(TimeLineViewlet):
     sql_timeline = statements.sql_bill_timeline
-    view_name = _("Timeline")
     view_id = "bill-timeline"
 
 class MotionTimeLineViewlet(TimeLineViewlet):
     sql_timeline = statements.sql_motion_timeline
-    view_name = _("Timeline")
     view_id = "motion-timeline"
 
 class QuestionTimeLineViewlet(TimeLineViewlet):
     sql_timeline = statements.sql_question_timeline
-    view_name = _("Timeline")
     view_id = "question-timeline"
 
 class TableddocumentTimeLineViewlet(TimeLineViewlet):
@@ -730,7 +725,6 @@ class TableddocumentTimeLineViewlet(TimeLineViewlet):
 
 class AgendaItemTimeLineViewlet(TimeLineViewlet):
     sql_timeline = statements.sql_agendaitem_timeline
-    view_name = _("Timeline")
     view_id = "agendaitem-timeline"
 
 class MemberItemsViewlet(viewlet.ViewletBase):
@@ -744,7 +738,16 @@ class MemberItemsViewlet(viewlet.ViewletBase):
         get_states("motion", tagged=["public"]) + \
         get_states("question", tagged=["public"]) + \
         get_states("tableddocument", tagged=["public"])
+    
+    view_name = "Parliamentary activities"
+    view_id = "mp-items"
+    
+    # evoque
+    render = z3evoque.ViewTemplateFile("workspace_viewlets.html#mp_items")
 
+    # zpt
+    #render = ViewPageTemplateFile("templates/mp_item_viewlet.pt")
+    
     def __init__(self, context, request, view, manager):
         print "MemberItemsViewlet.INIT", vars()
         session = Session()
@@ -761,26 +764,25 @@ class MemberItemsViewlet(viewlet.ViewletBase):
                 domain.ParliamentaryItem.status.in_(self.states),
             )).order_by(domain.ParliamentaryItem.parliamentary_item_id.desc())
         #self.for_display = (self.query.count() > 0)
-        #session.close()
-
+        self.formatter = date.getLocaleFormatter(
+            self.request, "date", "medium")
+    
     def results(self):
         for result in self.query.all():
-            _url = '/business/%ss/obj-%i' % (result.type,
+            _url = "/business/%ss/obj-%i" % (result.type,
                 result.parliamentary_item_id)
-            yield {'type': result.type,
-                'short_name': result.short_name,
-                'status': misc.get_wf_state(result),
-                'submission_date' : result.submission_date.strftime('%Y-%m-%d'),
-                'url': _url }
-
-    render = ViewPageTemplateFile ('templates/mp_item_viewlet.pt')
+            yield {"type": result.type,
+                "short_name": result.short_name,
+                "status": misc.get_wf_state(result),
+                "submission_date" : result.submission_date,
+                "url": _url }
 
 class DisplayViewlet(BungeniAttributeDisplay):
     """Display a target object; if the object is `None`, the user is
     prompted to add it."""
 
-    render = ViewPageTemplateFile ('templates/display_form.pt')
-    mode = 'view'
+    render = ViewPageTemplateFile("templates/display_form.pt")
+    mode = "view"
     for_display = True
     query = None
     factory = None
@@ -788,7 +790,7 @@ class DisplayViewlet(BungeniAttributeDisplay):
     form_fields = form.Fields()
 
     add_action = form.Actions(
-        form.Action(_(u"Add"), success='handle_add'),
+        form.Action(_(u"Add"), success="handle_add"),
         )
 
     def __init__(self, context, request, view, manager):
@@ -852,7 +854,7 @@ class SchedulingMinutesViewlet(DisplayViewlet):
         self.context.discussion = target
 
     def get_add_url(self):
-        return '%s/discussions/add' % url.absoluteURL(
+        return "%s/discussions/add" % url.absoluteURL(
             self.context, self.request)
 
 
@@ -897,15 +899,15 @@ class SessionCalendarViewlet(viewlet.ViewletBase):
                 end_date = date + relativedelta.relativedelta(day=31)
         else:
             end_date = date + relativedelta.relativedelta(day=31)
-        session = Session()
 
         s_filter = sql.and_(
-                domain.GroupSitting.group_id == group_id,
-                sql.between(
-                    domain.GroupSitting.start_date,
-                    start_date, end_date)
-                    )
-        return session.query(domain.GroupSitting).filter(s_filter).order_by(
+            domain.GroupSitting.group_id == group_id,
+            sql.between(
+                domain.GroupSitting.start_date,
+                start_date, end_date
+            )
+        )
+        return Session().query(domain.GroupSitting).filter(s_filter).order_by(
                 domain.GroupSitting.start_date)
 
 
@@ -928,9 +930,8 @@ class SessionCalendarViewlet(viewlet.ViewletBase):
             prevdate = datetime.date(year, month, 15)
         if session.start_date < datetime.date(
                 self.Date.year, self.Date.month, 1):
-            return ('<a href="?date='
-                + datetime.date.strftime(prevdate, '%Y-%m-%d')
-                + '"> &lt;&lt; </a>')
+            return """<a href="?date=%s"> &lt;&lt; </a>""" % (
+                datetime.date.strftime(prevdate, "%Y-%m-%d"))
         else:
             return ""
 
@@ -955,11 +956,9 @@ class SessionCalendarViewlet(viewlet.ViewletBase):
             if session.end_date:
                 if session.end_date < datetime.date(year, month, 1):
                     return ""
-        return ('<a href="?date='
-                + datetime.date.strftime(nextdate, '%Y-%m-%d')
-                + '"> &gt;&gt; </a>')
-
-
+        return """<a href="?date=%s"> &gt;&gt; </a>""" % (
+            datetime.date.strftime(nextdate, "%Y-%m-%d"))
+    
     def getData(self):
         """
         return the data of the query
@@ -969,23 +968,25 @@ class SessionCalendarViewlet(viewlet.ViewletBase):
         for sit_type in type_results:
             sit_types[sit_type.sitting_type_id] = sit_type.sitting_type
         data_list = []
-        path = '/calendar/group/sittings/'
+        path = "/calendar/group/sittings/"
         results = self.query.all()
         for result in results:
             data = {}
-            data['sittingid'] = ('sid_' + str(result.sitting_id))
-            data['sid'] = result.sitting_id
-            data['short_name'] = (datetime.datetime.strftime(result.start_date, '%H:%M')
-                                    + ' - ' + datetime.datetime.strftime(result.end_date, '%H:%M')
-                                    + ' (' + sit_types[result.sitting_type_id] + ')')
-            data['start_date'] = result.start_date
-            data['end_date'] = result.end_date
-            data['start_time'] = result.start_date.time()
-            data['end_time'] = result.end_date.time()
-            data['day'] = result.start_date.date()
-            data['url'] = (path + 'obj-' + str(result.sitting_id))
-            data['did'] = ('dlid_' + datetime.datetime.strftime(result.start_date, '%Y-%m-%d') 
-                            # +'_stid_' + str(result.sitting_type)
+            data["sittingid"] = ("sid_" + str(result.sitting_id))
+            data["sid"] = result.sitting_id
+            data["short_name"] = "%s - %s (%s)" % (
+                datetime.datetime.strftime(result.start_date, "%H:%M"),
+                datetime.datetime.strftime(result.end_date, "%H:%M"),
+                sit_types[result.sitting_type_id]
+            )
+            data["start_date"] = result.start_date
+            data["end_date"] = result.end_date
+            data["start_time"] = result.start_date.time()
+            data["end_time"] = result.end_date.time()
+            data["day"] = result.start_date.date()
+            data["url"] = (path + "obj-" + str(result.sitting_id))
+            data["did"] = ("dlid_" + datetime.datetime.strftime(result.start_date, "%Y-%m-%d") 
+                            # +"_stid_" + str(result.sitting_type)
                            )
             data_list.append(data)
         return data_list
@@ -996,7 +997,7 @@ class SessionCalendarViewlet(viewlet.ViewletBase):
         consiting of tdid- + date
         like tdid-2008-01-17
         """
-        return 'tdid-' + datetime.date.strftime(Date, '%Y-%m-%d')
+        return "tdid-" + datetime.date.strftime(Date, "%Y-%m-%d")
 
     def getDayClass(self, Date):
         """
@@ -1011,12 +1012,11 @@ class SessionCalendarViewlet(viewlet.ViewletBase):
             css_class = css_class + "current-date "
         if Date.weekday() in prefs.getWeekendDays():
             css_class = css_class + "weekend-date "
-        session = Session()
-        query = session.query(domain.HoliDay).filter(domain.HoliDay.holiday_date == Date)
+        query = Session().query(domain.HoliDay
+            ).filter(domain.HoliDay.holiday_date == Date)
         results = query.all()
         if results:
             css_class = css_class + "holyday-date "
-        #session.close()
         return css_class.strip()
 
     def getWeekNo(self, Date):
@@ -1024,19 +1024,17 @@ class SessionCalendarViewlet(viewlet.ViewletBase):
         return the weeknumber for a given date
         """
         return Date.isocalendar()[1]
-
-
+    
     def getSittings4Day(self, Date):
         """
         return the sittings for that day
         """
         day_data = []
         for data in self.Data:
-            if data['day'] == Date:
+            if data["day"] == Date:
                 day_data.append(data)
         return day_data
-
-
+    
     def update(self):
         """
         refresh the query
@@ -1046,7 +1044,8 @@ class SessionCalendarViewlet(viewlet.ViewletBase):
             self.Date = datetime.date.today()
         self.query = self.current_sittings_query(self.Date)
         self.monthcalendar = calendar.Calendar(prefs.getFirstDayOfWeek()).monthdatescalendar(self.Date.year, self.Date.month)
-        self.monthname = datetime.date.strftime(self.Date, '%B %Y')
+        self.monthname = datetime.date.strftime(self.Date, "%B %Y")
         self.Data = self.getData()
 
-    render = ViewPageTemplateFile ('templates/session_calendar_viewlet.pt')
+    render = ViewPageTemplateFile("templates/session_calendar_viewlet.pt")
+

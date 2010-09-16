@@ -39,6 +39,37 @@ $begin{items}
 $end{items}
 
 
+#[ was: ui/viewlets/templates/mp_item_viewlet.pt ]#
+$begin{mp_items}
+<!-- template: bungeni/templates/workspace_viewlets.html#mp_items -->
+<dt id="fieldsetlegend-${view.view_id}">
+  ${i18n(view.view_name)}
+</dt>
+<dd id="fieldset-${view.view_id}">
+    <table class="listing">
+        <thead>
+            <tr>
+                <th>${i18n("Type")}</th>
+                <th>${i18n("Title")}</th>
+                <th>${i18n("Status")}</th>
+                <th>${i18n("Submission date")}</th>
+            </tr>
+        </thead>
+        <tbody>
+            $for{result in view.results()}
+            <tr>
+                <td>${i18n(result["type"])}</td>
+                <td><a href="${result['url']}">${result["short_name"]}</a></td>
+                <td>${i18n(result["status"])}</td>
+                <td>${view.formatter.format(result['submission_date'])}</td>
+            </tr>
+            $rof
+        </tbody>
+  </table>
+</dd>
+$end{mp_items}
+
+
 #[ was: ui/viewlets/templates/workspace_sitting_viewlet.pt ]#
 $begin{sittings}
 <!-- template: bungeni/templates/workspace_viewlets.html#sittings -->
