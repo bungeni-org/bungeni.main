@@ -129,9 +129,16 @@ class ContainerBrowserView(BrowserView):
         self.domain_annotation = queryModelDescriptor(self.domain_interface)
         self.fields = tuple(getFields(
             self.context, self.domain_interface, self.domain_annotation))
+        # table keys
+        self.table = orm.class_mapper(self.domain_model).mapped_table
+        self.utk = dict([ (self.table.columns[k].key, k) 
+                          for k in self.table.columns.keys() ])
+        # sort defaults
         self.defaults_sort_on = getattr(self.domain_model, "sort_on", None)
-        self.default_sort_dir = getattr(self.domain_model, "sort_dir", "desc")
-        self.sort_dir = self.request.get("dir", self.default_sort_dir)
+        self.sort_dir = self.request.get("dir", 
+            # if defined, use model's sort_dir as default, otherwise "desc"
+            getattr(self.domain_model, "sort_dir", "desc")
+        )
 
 class ContainerJSONTableHeaders(ContainerBrowserView):
     def __call__(self):
@@ -165,7 +172,8 @@ class ContainerJSONListing(ContainerBrowserView):
         """
         fs = operator.join([ 
                 "lower(%s) LIKE '%%%s%%' " % (fieldname, f.lower())
-                for f in field_filters ])
+                for f in field_filters 
+        ])
         if fs:
             return "(%s)" % (fs)
         return ""
@@ -173,11 +181,8 @@ class ContainerJSONListing(ContainerBrowserView):
     def getFilter(self):
         """ () -> str
         """
+        table, utk = self.table, self.utk
         fs = [] # filter string
-        table = orm.class_mapper(self.domain_model).mapped_table
-        utk = {}
-        for k in table.columns.keys():
-            utk[table.columns[k].key] = k
         for field in self.fields:
             fn = field.__name__ # field name
             column, kls = None, None
@@ -218,18 +223,17 @@ class ContainerJSONListing(ContainerBrowserView):
                 query = query.filter(fs)
         return query
     
+    _sort_dir_funcs = dict(asc=sql.asc, desc=sql.desc)
     def getSort(self):
         """ server side sort,
         @web_parameter sort - request variable for sort column
         @web_parameter dir - sort direction, only once acceptable value "desc"
         """
+        table, utk = self.table, self.utk
+        sort_dir_func = self._sort_dir_funcs.get(self.sort_dir, sql.desc)
         columns = []
         # first process user specified values
         sort_on = self.request.get("sort", None)
-        table = orm.class_mapper(self.domain_model).mapped_table
-        utk = {}
-        for k in table.columns.keys():
-            utk[table.columns[k].key] = k
         if sort_on:
             sort_on = sort_on[5:]
         sort_on_keys = []
@@ -240,19 +244,12 @@ class ContainerJSONListing(ContainerBrowserView):
         elif sort_on and (sort_on in utk):
             sort_on_keys = [str(table.columns[utk[sort_on]])]
         for sort_on in sort_on_keys:
-            if self.sort_dir == "desc":
-                columns.append(sql.desc(sort_on))
-            else:
-                columns.append(sort_on)
+                columns.append(sort_dir_func(sort_on))
         # second, process model defaults
-        sd_dir = sql.asc
-        if self.default_sort_dir:
-            if self.default_sort_dir == "desc":
-                sd_dir = sql.desc
         if self.defaults_sort_on:
             for sort_on in self.defaults_sort_on:
                 if sort_on not in sort_on_keys:
-                    columns.append(sd_dir(sort_on))
+                    columns.append(sort_dir_func(sort_on))
         return columns
     
     def getOffsets(self, default_start=0, default_limit=25):
@@ -395,8 +392,8 @@ class ContainerWFStatesJSONListing(ContainerJSONListing):
         # as sort_dir qs_param may have a (overridable) model default, we 
         # treat it differently than other qs_params (note that sort_on may 
         # also have a model default, but the values here accumulate, so for
-        # key uniqueness it suffices to only consider only the sort_on 
-        # parameter in the request.
+        # key uniqueness it suffices to consider only the sort_on parameter 
+        # in the request.
         return (lang, start, limit, sort_direction, qs_params)
     
     def __call__(self):
@@ -429,9 +426,13 @@ class JSLCache(object):
         self.class_names = class_names
         self.qs_params = qs_params
 
+# !+PARAMS_DESCRIPTOR_LISTING=TRUE(mr, sep-2010) it should be possible to 
+# dynamically build the filetr parameter lists below from the corresponding 
+# domain class descriptor.
+
 JSLCaches = {
     # /business/...
-    "committees": JSLCache(99, ["Committee"], [
+    "committees": JSLCache(49, ["Committee"], [
         ("sort", u""),
         ("filter_full_name", u""),
         ("filter_short_name", u""),
@@ -447,6 +448,24 @@ JSLCaches = {
         ("filter_status", u""),
         ("filter_status_date", u""),
         ("filter_publication_date", u""),
+    ]),
+    "assigneditems": JSLCache(49, ["ItemGroupItemAssignment"], [
+        ("sort", u""),
+        ("filter_item_id", u""),
+        ("filter_start_date", u""),
+        ("filter_end_date", u""),
+        ("filter_due_date", u""),
+    ]),
+    "assignedgroups": JSLCache(49, ["GroupGroupItemAssignment"], [
+        ("sort", u""),
+        ("filter_group_id", u""),
+        ("filter_start_date", u""),
+        ("filter_end_date", u""),
+        ("filter_due_date", u""),
+    ]),
+    "consignatory": JSLCache(49, ["Consignatory"], [
+        ("sort", u""),
+        ("filter_user_id", u""),
     ]),
     "questions": JSLCache(199, ["Question", "Ministry"], [
         ("sort", u""),
@@ -484,14 +503,14 @@ JSLCaches = {
         ("filter_status_date", u""),
     ]),
     # sittings
-    "preports": JSLCache(99, ["Report"], [
+    "preports": JSLCache(49, ["Report"], [
         ("sort", u""),
         ("filter_report_type", u""),
         ("filter_start_date", u""),
         ("filter_end_date", u""),
         ("filter_note", u""),
     ]),
-    "sreports": JSLCache(99, ["SittingReport"], [
+    "sreports": JSLCache(49, ["SittingReport"], [
         ("sort", u""),
         ("filter_report_type", u""),
         ("filter_start_date", u""),
@@ -505,7 +524,8 @@ JSLCaches = {
         ("filter_attendance_id", u""),
     ]),    
     # /members/...
-    "current": JSLCache(99, 
+    # current
+    "parliamentmembers": JSLCache(99, 
         ["MemberOfParliament", "Constituency", "Province", "Region",
          "PoliticalParty"], [
         ("sort", u""),
@@ -517,7 +537,8 @@ JSLCaches = {
         ("filter_region_id", u""),
         ("filter_party_id", u""),
     ]),
-    "political-groups": JSLCache(99, ["PoliticalGroup"], [
+    # politicalgroups
+    "political-groups": JSLCache(49, ["PoliticalGroup"], [
         ("sort", u""),
         ("filter_full_name", u""),
         ("filter_short_name", u""),
@@ -525,41 +546,41 @@ JSLCaches = {
         ("filter_end_date", u""),
     ]),
     # /archive/browse/...
-    "parliaments": JSLCache(99, ["Parliament"], [
+    "parliaments": JSLCache(49, ["Parliament"], [
         ("sort", u""),
         ("filter_full_name", u""),
         ("filter_short_name", u""),
         ("filter_start_date", u""),
         ("filter_end_date", u""),
     ]),
-    "governments": JSLCache(99, ["Government"], [
+    "governments": JSLCache(49, ["Government"], [
         ("sort", u""),
         ("filter_short_name", u""),
         ("filter_start_date", u""),
         ("filter_end_date", u""),
     ]),
-    "sessions": JSLCache(99, ["ParliamentSession"], [
+    "sessions": JSLCache(49, ["ParliamentSession"], [
         ("sort", u""),
         ("filter_short_name", u""),
         ("filter_start_date", u""),
         ("filter_end_date", u""),
     ]),
-    "sittings": JSLCache(99, ["GroupSitting"], [
+    "sittings": JSLCache(49, ["GroupSitting"], [
         ("sort", u""),
         ("filter_sitting_type_id", u""),
         ("filter_start_date", u""),
     ]),
-    "committeestaff": JSLCache(99, ["CommitteeStaff"], [
+    "committeestaff": JSLCache(49, ["CommitteeStaff"], [
         ("sort", u""),
         ("filter_user_id", u""),
         ("filter_short_name", u""),
     ]),
-    "committeemembers": JSLCache(99, ["CommitteeMember"], [
+    "committeemembers": JSLCache(49, ["CommitteeMember"], [
         ("sort", u""),
         ("filter_user_id", u""),
         ("filter_short_name", u""),
     ]),
-    "ministries": JSLCache(99, ["Ministry"], [
+    "ministries": JSLCache(49, ["Ministry"], [
         ("sort", u""),
         ("filter_short_name", u""),
         ("filter_full_name", u""),
@@ -568,7 +589,7 @@ JSLCaches = {
     ]),
     # politicalgroups -- same as for /members/political-groups
     # committees -- same as under /business/
-    "constituencies": JSLCache(99, ["Parliament"], [
+    "constituencies": JSLCache(49, ["Constituency"], [
         ("sort", u""),
         ("filter_name", u""),
         ("filter_start_date", u""),
@@ -579,7 +600,8 @@ JSLCaches = {
 # /browse/politicalgroups
 JSLCaches["politicalgroups"] = JSLCaches["political-groups"] 
 # /browse/constituencies/
-JSLCaches["parliamentmembers"] = JSLCaches["current"]
+JSLCaches["current"] = JSLCaches["parliamentmembers"]
+
 
 def get_CacheByClassName():
     """ build mapping of class_name to caches to invalidate."""
