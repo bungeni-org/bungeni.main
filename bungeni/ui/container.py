@@ -498,7 +498,7 @@ def get_CacheByClassName():
     CacheByClassName = {} # {class_name: set(JSCache.cache)}
     for jslc in JSLCaches.values():
         for class_name in jslc.invalidating_class_names:
-            CacheByClassName.setdefault(class_name, set()).add(jslc.cache)
+            CacheByClassName.setdefault(class_name, set()).add(jslc)
     return CacheByClassName
 CacheByClassName = get_CacheByClassName()
 
@@ -510,16 +510,20 @@ def invalidate_caches_for(class_name, action):
     class_name: domain class name for the modified instance 
     action: edit | add | delete
     """
-    assert action in ("add", "edit", "delete"), \
+    assert action in ("add", "edit", "delete", "translate"), \
         "Unknown cache invalidation action: %s" % action
     # !+ is action needed?
     if class_name in CacheByClassName:
-        for cache in CacheByClassName[class_name]:
-            log.warn("Invalidating cache [num items: %i] on [%s] of an "
-                "instance of [%s]" % (len(cache.order), action, class_name))
+        for jslc in CacheByClassName[class_name]:
+            log.debug("Invalidating [descriptor: %s] cache [num items: %i] "
+                "on [%s] of an instance of [%s]" % (
+                    jslc.descriptor.__name__,
+                    len(jslc.cache.order),
+                    action, 
+                    class_name))
             # !+ encapsulate as a clear() method on evoque.collection.Cache
-            cache.cache.clear()
-            cache.order[:] = []
+            jslc.cache.cache.clear()
+            jslc.cache.order[:] = []
     else:
         log.warn("No cache for class_name [%s] / action [%s] " % (
             class_name, action))

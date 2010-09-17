@@ -547,7 +547,7 @@ class TranslateForm(AddForm):
     """Custom translate-form for Bungeni content.
     """
     is_translation = False
-
+    
     @property
     def side_by_side(self):
         return True
@@ -555,49 +555,54 @@ class TranslateForm(AddForm):
     def __init__(self, *args):
         super(TranslateForm, self).__init__(*args)
         self.language = self.request.get("language", get_default_language())
-        
+    
     def translatable_field_names(self):
         trusted = removeSecurityProxy(self.context)
         table = rdb.orm.object_mapper(trusted).mapped_table
-        names = ["language",]
+        names = ["language"]
         for column in table.columns:
             if type(column.type) in [rdb.Unicode, rdb.UnicodeText]:
                 names.append(column.name)
         return names
-
+    
     def set_untranslatable_fields_for_display(self):
         md = queryModelDescriptor(self.context.__class__)
         for field in self.form_fields:
             if field.__name__ not in self.translatable_field_names():
                 field.for_display = True
                 field.custom_widget = md.get(field.__name__).view_widget
-                
+    
     def validate(self, action, data):
-        return (
-            formlib.form.getWidgetsData(self.widgets, self.prefix, data) 
-            )
-        
+        return formlib.form.getWidgetsData(self.widgets, self.prefix, data)
+    
     @property
     def form_name(self):
         language = get_language_by_name(self.language)["name"]
         return _(u"translate_item_legend",
-                 default=u"Add $language translation",
-                 mapping={"language": language})
-
+            default=u"Add $language translation",
+            mapping={"language": language}
+        )
+    
     @property
     def form_description(self):
         language = get_language_by_name(self.language)["name"]
-        props = IDCDescriptiveProperties.providedBy(self.context) \
-                and self.context or IDCDescriptiveProperties(self.context)
+        props = (
+            (IDCDescriptiveProperties.providedBy(self.context) and 
+                self.context) or
+            IDCDescriptiveProperties(self.context)
+        )
         if self.is_translation:
             return _(u"edit_translation_legend",
-             default=u'Editing $language translation of "$title"',
-             mapping={"title": translate(props.title, context=self.request),
-                      "language": language}) 
+                default=u'Editing $language translation of "$title"',
+                mapping={
+                    "title": translate(props.title, context=self.request),
+                    "language": language
+                }
+            )
         else:
             return _(u"translate_item_help",
                 default=u'The document "$title" has not yet been translated ' \
-                    u'into $language. Use this form to add the translation',
+                    u"into $language. Use this form to add the translation",
                 mapping={
                     "title": translate(props.title, context=self.request),
                     "language": language
@@ -607,8 +612,10 @@ class TranslateForm(AddForm):
     @property
     def title(self):
         language = get_language_by_name(self.language)["name"]
-        return _(u"translate_item_title", default=u"Adding $language translation",
-                 mapping={"language": language})
+        return _(u"translate_item_title", 
+            default=u"Adding $language translation",
+            mapping={"language": language}
+        )
     
     @property
     def domain_model(self):
@@ -632,7 +639,7 @@ class TranslateForm(AddForm):
         self.widgets = formlib.form.setUpEditWidgets(
             self.form_fields, self.prefix, context, self.request,
             adapters=self.adapters, ignore_request=ignore_request)
-
+        
         if language is not None:
             widget = self.widgets["language"]
             try:
@@ -641,7 +648,7 @@ class TranslateForm(AddForm):
                 widget.vocabulary.getTermByToken(language)
             except LookupError:
                 raise BadRequest("No such language token: '%s'" % language)
-
+            
             # if the term exists in the vocabulary, set the value on
             # the widget
             widget.setRenderedValue(language)
@@ -654,10 +661,10 @@ class TranslateForm(AddForm):
             form_field = form_fields.get(widget.context.__name__)
             if form_field is None:
                 form_field = formlib.form.Field(widget.context)
-
+            
             # bind field to head document
             field = form_field.field.bind(head)
-
+            
             # create custom widget or instantiate widget using
             # component lookup
             if form_field.custom_widget is not None:
@@ -668,7 +675,7 @@ class TranslateForm(AddForm):
                     (field, self.request), IDisplayWidget)
             
             display_widget.setRenderedValue(field.get(head))
-
+            
             # attach widget as ``render_original``
             widget.render_original = display_widget
     
@@ -680,12 +687,8 @@ class TranslateForm(AddForm):
         for key in data.keys():
             if isinstance(data[key], str): 
                 data[key] = unescape(data[key])
-            
         #url = url.absoluteURL(self.context, self.request)
-        
         #language = get_language_by_name(data["language"])["name"]
-
-        
         session = Session()
         trusted = removeSecurityProxy(self.context)
         mapper = rdb.orm.object_mapper(trusted)
@@ -695,7 +698,6 @@ class TranslateForm(AddForm):
         if current_translation:
             for translation in current_translation:
                 session.delete(translation)
-                
         
         for form_field in data.keys():
             if form_field == "language":
@@ -711,9 +713,12 @@ class TranslateForm(AddForm):
         session.commit()
         session.close()
         
+        # invalidate caches for this domain object type
+        invalidate_caches_for(trusted.__class__.__name__, "translate")
+        
         #versions = IVersioned(self.context)
         #version = versions.create("'%s' translation added" % language)
-
+        
         # reset workflow state
         #version.status = None
         #IWorkflowInfo(version).fireTransition("create-translation")
@@ -726,9 +731,9 @@ class TranslateForm(AddForm):
         
         #if not self._next_url:
         #    self._next_url = ( \
-        #        '%s/versions/%s' % (url, stringKey(version)) + \
-        #        '?portal_status_message=Translation added')
-
+        #        "%s/versions/%s" % (url, stringKey(version)) + \
+        #        "?portal_status_message=Translation added")
+        
         self._finished_add = True
         
 class ReorderForm(PageForm):
