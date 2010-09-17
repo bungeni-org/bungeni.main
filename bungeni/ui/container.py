@@ -85,7 +85,7 @@ def query_filter_date_range(context, request, query, domain_model):
     """Add date range filter to query:
     - if the model has start & end dates, constrain the query to objects 
       appearing within those dates.
-    - else pick off start/end date from the request's cookies
+    - else (archive section) pick off start/end date from the request's cookies
     - else try getting a display date off request
     """
     if ((IBusinessSectionLayer.providedBy(request) and (
@@ -321,7 +321,6 @@ class ContainerJSONListing(ContainerBrowserView):
         context = proxy.removeSecurityProxy(self.context)
         query = context._query
         
-        # !+DATE_FILTERS(mr, sep-2010) why so many date filters?
         # date_range filter (try from: model, then cookie, then request)
         query = query_filter_date_range(context, self.request, query, 
             self.domain_model)
@@ -385,16 +384,14 @@ class ContainerWFStatesJSONListing(ContainerJSONListing):
             ).query_add_filters(query, *filter_strings)
     
     def get_cache_key(self, context, lang, start, limit, sort_direction):
-        qs_params = tuple(
-            self.request.get(name, default)
-            for name, default in JSLCaches[context.__name__].qs_params
-        )
+        r, jslc = self.request, JSLCaches[context.__name__]
+        filters = tuple(r.get(name) or None for name in jslc.filter_params)
         # as sort_dir qs_param may have a (overridable) model default, we 
         # treat it differently than other qs_params (note that sort_on may 
         # also have a model default, but the values here accumulate, so for
-        # key uniqueness it suffices to consider only the sort_on parameter 
-        # in the request.
-        return (lang, start, limit, sort_direction, qs_params)
+        # key uniqueness it suffices to consider only any sort_on parameter 
+        # value incoming in the request.
+        return (lang, start, limit, sort_direction, r.get("sort"), filters)
     
     def __call__(self):
         # prepare required parameters
@@ -405,201 +402,94 @@ class ContainerWFStatesJSONListing(ContainerJSONListing):
             lang, start, limit, self.sort_dir)
         cache = JSLCaches[context.__name__].cache
         if not cache.has(cache_key):
-            log.info("SETTING CACHE for key: %s" % (cache_key,))
+            log.debug(" [%s] CACHE SETTING key: %s" % (
+                context.__name__, cache_key,))
             cache.set(cache_key, self.json_batch(start, limit, lang))
         return cache.get(cache_key)
 
 
 # caches for json container listings
 
-from evoque.collection import Cache
+import evoque.collection
+import bungeni.ui.descriptor as bud
 
 class JSLCache(object):
     """JSON Listing Cache"""
-    def __init__(self, max_size, class_names, qs_params):
+    def __init__(self, max_size, descriptor, invalidating_class_names):
         """ max_size:int - max number of items to cache, 0 implies unlimited,
                 oldest in excess of max are discarded
-            class_names:[str] - name of target domain class
-            qs_params:[(param_name:str, default:str)] - query string params
+            descriptor: domain.descriptor class for this listing
+            invalidating_class_names:[str] - names of domain classes that 
+                when modified will invalidate this cache
+            
+            filter_params: [name:str] - query string filter parameter names
         """
-        self.cache = Cache(max_size)
-        self.class_names = class_names
-        self.qs_params = qs_params
-
-# !+PARAMS_DESCRIPTOR_LISTING=TRUE(mr, sep-2010) it should be possible to 
-# dynamically build the filetr parameter lists below from the corresponding 
-# domain class descriptor.
+        self.cache = evoque.collection.Cache(max_size)
+        self.descriptor = descriptor
+        self.invalidating_class_names = invalidating_class_names
+        # dynamically build the incoming (request querystring) filter 
+        # parameter names lists from the domain class descriptor
+        self.filter_params = [
+            "filter_%s" % (field["name"])
+            for field in self.descriptor.fields
+            if field.get("listing")
+        ]
 
 JSLCaches = {
-    # /business/...
-    "committees": JSLCache(49, ["Committee"], [
-        ("sort", u""),
-        ("filter_full_name", u""),
-        ("filter_short_name", u""),
-        ('filter_start_date', u""),
-        ('filter_end_date', u""),
-        ('filter_committee_type_id', u""),
-    ]),
-    "bills": JSLCache(99, ["Bill"], [
-        ("sort", u""),
-        ("filter_short_name", u""),
-        ("filter_owner_id", u""),
-        ("filter_submission_date", u""),
-        ("filter_status", u""),
-        ("filter_status_date", u""),
-        ("filter_publication_date", u""),
-    ]),
-    "assigneditems": JSLCache(49, ["ItemGroupItemAssignment"], [
-        ("sort", u""),
-        ("filter_item_id", u""),
-        ("filter_start_date", u""),
-        ("filter_end_date", u""),
-        ("filter_due_date", u""),
-    ]),
-    "assignedgroups": JSLCache(49, ["GroupGroupItemAssignment"], [
-        ("sort", u""),
-        ("filter_group_id", u""),
-        ("filter_start_date", u""),
-        ("filter_end_date", u""),
-        ("filter_due_date", u""),
-    ]),
-    "consignatory": JSLCache(49, ["Consignatory"], [
-        ("sort", u""),
-        ("filter_user_id", u""),
-    ]),
-    "questions": JSLCache(199, ["Question", "Ministry"], [
-        ("sort", u""),
-        ("filter_short_name", u""),
-        ("filter_owner_id", u""),
-        ("filter_submission_date", u""),
-        ("filter_status", u""),
-        ("filter_status_date", u""),
-        ("filter_question_number", u""),
-        ("filter_ministry_id", u""),
-    ]),
-    "motions": JSLCache(99, ["Motion"], [
-        ("sort", u""),
-        ("filter_short_name", u""),
-        ("filter_owner_id", u""),
-        ("filter_submission_date", u""),
-        ("filter_status", u""),
-        ("filter_status_date", u""),
-        ("filter_motion_number", u""),
-    ]),
-    "tableddocuments": JSLCache(99, ["TabledDocument"], [
-        ("sort", u""),
-        ("filter_short_name", u""),
-        ("filter_owner_id", u""),
-        ("filter_submission_date", u""),
-        ("filter_status", u""),
-        ("filter_status_date", u""),
-    ]),
-    "agendaitems": JSLCache(99, ["AgendaItem"], [
-        ("sort", u""),
-        ("filter_short_name", u""),
-        ("filter_owner_id", u""),
-        ("filter_submission_date", u""),
-        ("filter_status", u""),
-        ("filter_status_date", u""),
-    ]),
-    # sittings
-    "preports": JSLCache(49, ["Report"], [
-        ("sort", u""),
-        ("filter_report_type", u""),
-        ("filter_start_date", u""),
-        ("filter_end_date", u""),
-        ("filter_note", u""),
-    ]),
-    "sreports": JSLCache(49, ["SittingReport"], [
-        ("sort", u""),
-        ("filter_report_type", u""),
-        ("filter_start_date", u""),
-        ("filter_end_date", u""),
-        ("filter_note", u""),
-    ]),
-    "attendance": JSLCache(99, ["GroupSittingAttendance"], [
-        ("sort", u""),
-        ("filter_member_id", u""),
-        ("filter_sitting_id", u""),
-        ("filter_attendance_id", u""),
-    ]),    
-    # /members/...
-    # current
-    "parliamentmembers": JSLCache(99, 
-        ["MemberOfParliament", "Constituency", "Province", "Region",
-         "PoliticalParty"], [
-        ("sort", u""),
-        ("filter_user_id", u""),
-        ("filter_elected_nominated", u""),
-        ("filter_start_date", u""),
-        ("filter_constituency_id", u""),
-        ("filter_province_id", u""),
-        ("filter_region_id", u""),
-        ("filter_party_id", u""),
-    ]),
-    # politicalgroups
-    "political-groups": JSLCache(49, ["PoliticalGroup"], [
-        ("sort", u""),
-        ("filter_full_name", u""),
-        ("filter_short_name", u""),
-        ("filter_start_date", u""),
-        ("filter_end_date", u""),
-    ]),
-    # /archive/browse/...
-    "parliaments": JSLCache(49, ["Parliament"], [
-        ("sort", u""),
-        ("filter_full_name", u""),
-        ("filter_short_name", u""),
-        ("filter_start_date", u""),
-        ("filter_end_date", u""),
-    ]),
-    "governments": JSLCache(49, ["Government"], [
-        ("sort", u""),
-        ("filter_short_name", u""),
-        ("filter_start_date", u""),
-        ("filter_end_date", u""),
-    ]),
-    "sessions": JSLCache(49, ["ParliamentSession"], [
-        ("sort", u""),
-        ("filter_short_name", u""),
-        ("filter_start_date", u""),
-        ("filter_end_date", u""),
-    ]),
-    "sittings": JSLCache(49, ["GroupSitting"], [
-        ("sort", u""),
-        ("filter_sitting_type_id", u""),
-        ("filter_start_date", u""),
-    ]),
-    "committeestaff": JSLCache(49, ["CommitteeStaff"], [
-        ("sort", u""),
-        ("filter_user_id", u""),
-        ("filter_short_name", u""),
-    ]),
-    "committeemembers": JSLCache(49, ["CommitteeMember"], [
-        ("sort", u""),
-        ("filter_user_id", u""),
-        ("filter_short_name", u""),
-    ]),
-    "ministries": JSLCache(49, ["Ministry"], [
-        ("sort", u""),
-        ("filter_short_name", u""),
-        ("filter_full_name", u""),
-        ("filter_start_date", u""),
-        ("filter_end_date", u""),
-    ]),
-    # politicalgroups -- same as for /members/political-groups
-    # committees -- same as under /business/
-    "constituencies": JSLCache(49, ["Constituency"], [
-        ("sort", u""),
-        ("filter_name", u""),
-        ("filter_start_date", u""),
-        ("filter_end_date", u""),
-    ]),
+    "committees": 
+        JSLCache(49, bud.CommitteeDescriptor, ["Committee"]),
+    "bills": 
+        JSLCache(99, bud.BillDescriptor, ["Bill"]),
+    "assigneditems": 
+        JSLCache(49, bud.ItemGroupItemAssignmentDescriptor, 
+            ["ItemGroupItemAssignment"], 
+        ),
+    "assignedgroups": 
+        JSLCache(49, bud.GroupGroupItemAssignmentDescriptor,
+            ["GroupGroupItemAssignment"], 
+        ),
+    "consignatory": 
+        JSLCache(49, bud.ConsignatoryDescriptor, ["Consignatory"]),
+    "questions": 
+        JSLCache(199, bud.QuestionDescriptor, ["Question", "Ministry"]),
+    "motions": 
+        JSLCache(99, bud.MotionDescriptor, ["Motion"]),
+    "tableddocuments": 
+        JSLCache(99, bud.TabledDocumentDescriptor, ["TabledDocument"]),
+    "agendaitems": 
+        JSLCache(99, bud.AgendaItemDescriptor, ["AgendaItem"]),
+    "preports": 
+        JSLCache(49, bud.ReportDescriptor, ["Report"]),
+    "sreports": 
+        JSLCache(49, bud.Report4SittingDescriptor, ["SittingReport"]),
+    "attendance": 
+        JSLCache(99, bud.AttendanceDescriptor, ["GroupSittingAttendance"]),
+    "parliamentmembers": # alias: "current"
+        JSLCache(99, bud.MpDescriptor, 
+            ["MemberOfParliament", "Constituency", "Province", "Region",
+                "PoliticalParty"]
+        ),
+    "political-groups": # alias: "politicalgroups"
+        JSLCache(49, bud.PoliticalGroupDescriptor, ["PoliticalGroup"]),
+    "parliaments": 
+        JSLCache(49, bud.ParliamentDescriptor, ["Parliament"]),
+    "governments": 
+        JSLCache(49, bud.GovernmentDescriptor, ["Government"]),
+    "sessions": 
+        JSLCache(49, bud.SessionDescriptor, ["ParliamentSession"]),
+    "sittings": 
+        JSLCache(49, bud.SittingDescriptor, ["GroupSitting"]),
+    "committeestaff": 
+        JSLCache(49, bud.CommitteeStaffDescriptor, ["CommitteeStaff"]),
+    "committeemembers": 
+        JSLCache(49, bud.CommitteeMemberDescriptor, ["CommitteeMember"]),
+    "ministries": 
+        JSLCache(49, bud.MinistryDescriptor, ["Ministry"]),
+    "constituencies": 
+        JSLCache(49, bud.ConstituencyDescriptor, ["Constituency"]),
 }
 # aliases for same JSLCache instances
-# /browse/politicalgroups
 JSLCaches["politicalgroups"] = JSLCaches["political-groups"] 
-# /browse/constituencies/
 JSLCaches["current"] = JSLCaches["parliamentmembers"]
 
 
@@ -607,7 +497,7 @@ def get_CacheByClassName():
     """ build mapping of class_name to caches to invalidate."""
     CacheByClassName = {} # {class_name: set(JSCache.cache)}
     for jslc in JSLCaches.values():
-        for class_name in jslc.class_names:
+        for class_name in jslc.invalidating_class_names:
             CacheByClassName.setdefault(class_name, set()).add(jslc.cache)
     return CacheByClassName
 CacheByClassName = get_CacheByClassName()
