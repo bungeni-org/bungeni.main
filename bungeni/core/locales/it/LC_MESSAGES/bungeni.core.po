@@ -3,19 +3,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: Wed Jul  7 15:15:45 2010\n"
-"PO-Revision-Date: 2010-07-20 19:47+0300\n"
-"Last-Translator: Administrator <admin@apkn.org>\n"
+"PO-Revision-Date: 2010-09-20 01:24+0300\n"
+"Last-Translator: Flavio <flavio.zeni@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.0.4\n"
 "Language-Code: en\n"
 "Domain: DOMAIN\n"
-"Language: en\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Preferred-Encodings: utf-8 latin1\n"
 "Language-Name: English\n"
-"X-Generator: Pootle 2.0.4\n"
 
 #: src/bungeni.main/bungeni/core/app.py:100
 msgid "Parliament records and documents"
@@ -31,11 +31,11 @@ msgstr "gestire le impostazioni bungeni"
 
 #: src/bungeni.main/bungeni/core/app.py:110
 msgid "What's on"
-msgstr "che cosa c'è in"
+msgstr "in agenda"
 
 #: src/bungeni.main/bungeni/core/app.py:116
 msgid "Committees"
-msgstr "le commissioni"
+msgstr "commissioni"
 
 #: src/bungeni.main/bungeni/core/app.py:118
 msgid "View committees created by the current parliament"
@@ -43,7 +43,7 @@ msgstr "comitati di vista creata dal parlamento attuale"
 
 #: src/bungeni.main/bungeni/core/app.py:122
 msgid "Bills"
-msgstr "banconote"
+msgstr "disegni di legge"
 
 #: src/bungeni.main/bungeni/core/app.py:124
 msgid "View bills issued by the current parliament"
@@ -152,7 +152,7 @@ msgstr "area di lavoro"
 #: src/bungeni.main/bungeni/core/app.py:82
 #: src/bungeni.main/bungeni/core/app.py:111
 msgid "Current parliamentary activity"
-msgstr "corrente di attività parlamentare"
+msgstr "attività parlamentari in corso"
 
 #: src/bungeni.main/bungeni/core/app.py:91
 msgid "Business"
@@ -1050,7 +1050,7 @@ msgstr "ritirare"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:306
 msgid "Active Committee"
-msgstr "commisione attivi"
+msgstr "commisione attiva"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:307
 msgid "Committee is Dissolved"
@@ -1058,7 +1058,7 @@ msgstr "commissione si scioglie"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:308
 msgid "Draft - Committee not yet Active"
-msgstr "progetto: commissione non ancora attivo"
+msgstr "bozza: commissione non ancora attiva"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:31
 msgid "Schedule Third Reading"
@@ -1074,7 +1074,7 @@ msgstr "parlamento è sciolto"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:317
 msgid "Draft - Parliament not yet Active"
-msgstr "progetto: il parlamento non ancora attivo"
+msgstr "bozza: il parlamento non ancora attivo"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:32
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:39
