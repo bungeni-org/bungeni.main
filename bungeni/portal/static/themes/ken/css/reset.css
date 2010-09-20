@@ -189,7 +189,7 @@
     text-transform: none;
     white-space: nowrap;
     z-index: 2;
-	display: none;
+    display: none;
 }
 #portal-searchbox input.searchButton {
     height: 17px;
@@ -199,7 +199,7 @@
  * portal-siteactions
  */
 #portal-siteactions {
-	display: none;
+    display: none;
 }
 
 /*
@@ -210,84 +210,103 @@ div.main-column {
     padding: 0;
     background: none;
     border-bottom: 2px solid #f00;
-	width: 980px;
-	margin: 0 auto 1em;
-	text-align: left;
+    width: 980px;
+    margin: 0 auto 1em;
+    text-align: left;
 }
 .template-workspace div.main-column {
-	width: auto;
-	border: 0 none;
+    width: auto;
+    border: 0 none;
 }
 div.main-column h1 {
     display: block;
     margin: .25em auto !important;
-	padding: .25em 0;
+    padding: .25em 0;
     font-size: 200%;
     font-family: Georgia, "Times New Roman", Times, serif;
     color: #222;
-	text-align: left !important;
+    text-align: left !important;
     text-transform: capitalize;
     text-shadow: 0px 1px 1px #fff;
     line-height: 30px;
-	width: 95%;
-	clear: both;
+    width: 95%;
+    clear: both;
 }
 .template-workspace.section-bungeni-admin div.main-column h1,
 .template-workspace.section-bungeni-workspace div.main-column h1 {
-	display: none;
-	width: 100%;
+    width: 100%;
+    font-size: 200%;
+    font-family: Arial, Helvetica, sans-serif;
+    text-transform: none;
+    color: #222;
 }
 div.main-column h1.title {
     display: block;
     margin: .25em auto !important;
-	padding: .25em 0;
+    padding: .25em 0;
     font-size: 200%;
     font-family: Georgia, "Times New Roman", Times, serif;
     color: #222;
-	text-align: left !important;
+    text-align: left !important;
     text-transform: capitalize;
     text-shadow: 0px 1px 1px #fff;
     line-height: 30px;
-	width: 95%;
+    width: 95%;
 }
 .template-workspace.section-bungeni-admin div.main-column h1.title,
 .template-workspace.section-bungeni-workspace div.main-column h1.title {
     color: #222;
-	width: 100%;
+    width: 100%;
 }
 div.main-column h1.reportmaintitle,
 div.main-column h1.reportdoctype {
-	text-align: left;
 	font-size: 125%;
 }
 div.main-column h2 {
-	color: #222;
-	font-weight: bold;
+    font-size: 120%;
+    color: #222;
+    font-weight: bold;
     font-family: Georgia, "Times New Roman", Times, serif;
-	font-size: 145%;
+    font-size: 145%;
     text-shadow: 0px 1px 1px #fff;
     text-transform: capitalize;
-	text-align: left;
-	margin: .25em auto;
-	width: 95%;
+    text-align: left;
+    margin: .25em auto;
+    width: 95%;
 }
 .template-workspace.section-bungeni-workspace div.main-column h2,
 .template-workspace.section-bungeni-admin div.main-column h2 {
-	font-weight: bold !important;
-	color: #222 !important;
-	margin-top: 1em;
-	width: 100%;
+    font-weight: bold !important;
+    color: #222 !important;
+    margin-top: 1em;
+    width: 100%;
 }
 div.main-column h2 span {
     font-size: 60%;
     font-weight: normal;
     color: #444;
 }
-div.main-column p {
+div.main-column h3 {
+    display: block;
 	text-align: left;
+    text-shadow: 0px 0px 1px #fff;
+    line-height: 20px;
+    font-size: 100%;
+    padding: 0;
+    font-weight: normal !important;
+    margin: .25em 0 .5em;
+}
+.template-workspace.section-bungeni-workspace div.main-column h3,
+.template-workspace.section-bungeni-admin div.main-column h3 {
+    font-weight: bold !important;
+    color: #444 !important;
+    margin-top: 1em;
+}
+div.main-column p {
+    text-align: left;
     text-shadow: 0px 1px 1px #fff;
-	width: 95%;
-	margin: auto;
+    width: 95%;
+    margin: auto;
 }
 .template-workspace.section-bungeni-workspace div.main-column p,
 .template-workspace.section-bungeni-admin div.main-column p {
@@ -298,10 +317,10 @@ div.main-column p {
  * portal-columns-* styles
  */
 #portal-columns {
-	background: #fff;
+    background: #fff;
 }
 .template-workspace #portal-columns {
-	padding: 0 .5em;
+    padding: 0 .5em;
 }
 #portal-column-two .visualPadding {
     padding: 0;
@@ -309,21 +328,21 @@ div.main-column p {
 
 /* portal-column-content */
 #portal-column-content {
-	position: relative;
-	padding: 0 0 2em;
-	margin: 0;
-	overflow: hidden;
+    position: relative;
+    padding: 0 0 2em;
+    margin: 0;
+    overflow: hidden;
 }
 .section-bungeni-admin #portal-column-content {
-	padding: 0;
-	overflow: visible;
+    padding: 0;
+    overflow: visible;
 }
 .section-bungeni-archive #portal-column-content {
-	float: none;
+    float: none;
 }
 #portal-column-content.sl {
-	margin-left: 17em;
-	width: auto;
+    margin-left: 17em;
+    width: auto;
 }
 .section-bungeni-archive #portal-column-content.sl,
 .section-bungeni-workspace #portal-column-content.sl {
@@ -333,25 +352,25 @@ div.main-column p {
 /* portal-column-one */
 #portal-column-one {
     border-color: #aaf;
-	width: 16em;
-	float: left;
-	position: relative;
+    width: 16em;
+    float: left;
+    position: relative;
 }
 #portal-column-one .visualPadding {
     padding: 0;
 }
 .section-bungeni-workspace #portal-column-one {
-	float: none;
-	width: auto;
-	position: absolute;
-	z-index: 10051;
-	border-color: #FB9C14;
+    float: none;
+    width: auto;
+    position: absolute;
+    z-index: 10051;
+    border-color: #FB9C14;
 }
 .section-bungeni-archive #portal-column-one {
-	width: 95%;
-	float: none;
-	margin: .25em auto;
-	border-color: #FB9C14;
+    width: 95%;
+    float: none;
+    margin: .25em auto;
+    border-color: #FB9C14;
 }
 
 /* portal-footer */
@@ -381,10 +400,10 @@ div.main-column p {
 #portal-footer div {
     margin: 0 auto;
     width: 170px;
-	height: 25px;
+    height: 25px;
     line-height: 25px;
-	background: #fff;
-	border: 0 none;
+    background: #fff;
+    border: 0 none;
 }
 #portal-footer img {
     display: block;
@@ -398,15 +417,15 @@ div.main-column p {
  */
 .documentContent {
     padding: .25em .5em  1em!important;
-	border: 0 none;
+    border: 0 none;
 }
 .template-workspace.section-bungeni-workspace .documentContent,
 .template-workspace.section-bungeni-workspace .documentContent { 
     padding: .25em !important;
 }
 .documentContent dd a {
-	text-decoration: none;
-	border: 0 none;
+    text-decoration: none;
+    border: 0 none;
 }
 .section-bungeni-archive .documentContent,
 .section-bungeni-business .documentContent,
@@ -414,8 +433,8 @@ div.main-column p {
     padding: 0 !important;
 }
 #portal-column-content .documentContent {
-	width: 100%;
-	padding: 0 !important;
+    width: 100%;
+    padding: 0 !important;
 }
 
 
@@ -445,8 +464,8 @@ input.inputLabelActive {
 .template-portal .dhx_cal_container,
 .template-portal .dhx_scale_bar,
 .template-portal .dhx_scale_hour {
-	background: #aaa;
-	border-color: #888;
+    background: #aaa;
+    border-color: #888;
 }
 .template-workspace.section-bungeni-archive .dhx_cal_header,
 .template-workspace.section-bungeni-archive .dhx_cal_data,
@@ -456,13 +475,13 @@ input.inputLabelActive {
 .template-workspace.section-bungeni-members .dhx_cal_data,
 .template-portal .dhx_cal_header,
 .template-portal .dhx_cal_data{
-	border-color: #888;
+    border-color: #888;
 }
 .template-workspace.section-bungeni-archive .dhx_cal_tab,
 .template-workspace.section-bungeni-business .dhx_cal_tab,
 .template-workspace.section-bungeni-members .dhx_cal_tab,
 .template-portal .dhx_cal_tab {
-	background: #ddd;
+    background: #ddd;
     -webkit-border-top-left-radius: 5px;
     -webkit-border-top-right-radius: 5px;
     -moz-border-radius-topleft: 5px;
@@ -482,19 +501,19 @@ input.inputLabelActive {
 .template-portal .dhx_cal_prev_button,
 .template-portal .dhx_cal_next_button,
 .template-portal .dhx_cal_today_button {
-	background-image:url(../images/orange_buttons.png);
+     background-image:url(../images/orange_buttons.png);
 }
 .template-workspace.section-bungeni-archive .dhx_cal_tab.active,
 .template-workspace.section-bungeni-business .dhx_cal_tab.active,
 .template-workspace.section-bungeni-members .dhx_cal_tab.active,
 .template-portal .dhx_cal_tab.active {
-	background-image:url(../images/orange_tab.png);
+    background-image:url(../images/orange_tab.png);
 }
 .template-workspace.section-bungeni-archive .dhx_scale_holder_now,
 .template-workspace.section-bungeni-business .dhx_scale_holder_now,
 .template-workspace.section-bungeni-members .dhx_scale_holder_now,
 .template-portal .dhx_scale_holder_now {
-	background-image:url(../images/databg_now2.png);
+    background-image:url(../images/databg_now2.png);
 }
 
 /*
@@ -504,23 +523,23 @@ input.inputLabelActive {
     display: none;
 }
 #portal-column-content #whats-on-overview {
-	clear: both;
-	margin: 0;
+    clear: both;
+    margin: 0;
 }
 #whats-on-overview h1 {
     font-size:135%;
-	margin: 0;
+    margin: 0;
     text-align: left;
 }
 #whats-on-overview h1 a {
-	padding: .25em 0;
+    padding: .25em 0;
     font-size: 200%;
     font-family: Georgia, "Times New Roman", Times, serif;
     color: #222;
     text-transform: capitalize;
     text-shadow: 0px 1px 1px #fff;
     line-height: 30px;
-	width: 95%;
+    width: 95%;
 }
 #whats-on-overview p {
     color: #222;
@@ -528,7 +547,7 @@ input.inputLabelActive {
     text-align:left;
     margin: .25em auto;
     line-height: 18px;
-	width: 95%;
+    width: 95%;
 }
 #whats-on-overview p.documentDescription {
     font-weight: normal;
@@ -536,16 +555,16 @@ input.inputLabelActive {
 }
 #portal-column-content #whats-on-overview .whats-on-viewlet {
     border-bottom: 1px solid #ccc;
-	padding: 0;
-	border-top: 0 none;
-	margin: 0;
-}
+    padding: 0;
+    border-top: 0 none;
+    margin: 0;
+} 
 #portal-column-content #whats-on-overview .whats-on-viewlet dd {
     border: 0 none;
     margin: 0 auto .25em !important;
     padding: 0;
-	width: 95%;
-	border-top: 4px solid #fdcd8b;
+    width: 95%;
+    border-top: 4px solid #fdcd8b;
     border-bottom: 1px solid #fcc373;
 }
 #portal-column-content #whats-on-overview .whats-on-viewlet dd ul {
@@ -556,7 +575,7 @@ input.inputLabelActive {
     margin: 0;
     border: 1px solid #ccc;
     border-bottom-color: #aaa;
-	border-top: 0 none;
+    border-top: 0 none;
 }
 #portal-column-content #whats-on-overview .whats-on-viewlet dd ul li {
     margin: 0 0 .5em;
@@ -568,8 +587,8 @@ input.inputLabelActive {
     color: #222;
     border-bottom: 1px solid #aaa;
     background: #eee;
-	text-align: left;
-	text-shadow: 0px 1px 1px #fff;
+    text-align: left;
+    text-shadow: 0px 1px 1px #fff;
 }
 #portal-column-content #whats-on-overview .whats-on-viewlet dd ul li ul {
     margin: 0;
@@ -633,11 +652,11 @@ input.inputLabelActive {
 .portletItem { border: 1px solid #FAAD5F; border-top: 0 none; }
 #portal-column-two .portletNews, 
 #portal-column-two #review-portlet {
-	width: 20em;
+    width: 20em;
     margin: 1px -1em 1em 1em;
 }
 .portletsBelowContentA .portletNews {
-  width: 100%;
+    width: 100%;
 }
 #portal-column-one .portletHeader,
 #portal-column-content .portletHeader,
@@ -648,11 +667,11 @@ input.inputLabelActive {
     border-bottom: 1px solid #FAAD5F;
     line-height: 20px;
     text-align: justify;
-	text-shadow: 0px 1px 1px #fff;
-	position: relative;
-	margin: 0;
-	padding: 0 .25em;
-	width: auto;
+    text-shadow: 0px 1px 1px #fff;
+    position: relative;
+    margin: 0;
+    padding: 0 .25em;
+    width: auto;
 }
 #portal-column-one .portletItem,
 #portal-column-content .portletItem,
@@ -660,9 +679,9 @@ input.inputLabelActive {
 #portal-column-two .portletItem {
     border-left: 1px solid #ccc;
     border-right: 1px solid #ccc;
-	position: relative;
-	margin: 0;
-	padding: 0;
+    position: relative;
+    margin: 0;
+    padding: 0;
 }
 #portal-column-one .portletFooter,
 #portal-column-content .portletFooter,
@@ -677,113 +696,113 @@ input.inputLabelActive {
 .section-bungeni-workspace #portal-column-one dl.portlet dd.portletItem ul li,
 .section-bungeni-workspace #portal-column-one dl.portlet dd.portletItem ul li.selected,
 .section-bungeni-workspace #portal-column-one dl.portlet dd.portletItem ul li a {
-	background: transparent;
-	border: 0 none;
-	color: #222;
+    background: transparent;
+    border: 0 none;
+    color: #222;
 }
 .section-bungeni-workspace #portal-column-one dl.portlet dd.portletItem ul li {
-	float: left;
+    float: left;
 }
 .section-bungeni-workspace #portal-column-one dl.portlet dd.portletItem ul li a {
-	padding: 0 .5em;
-	margin: 0 .25em 0 0;
-	border-right: 1px solid #aaa;
+    padding: 0 .5em;
+    margin: 0 .25em 0 0;
+    border-right: 1px solid #aaa;
 }
 .section-bungeni-archive #portal-column-one .portlet .portletItem ul li {
-	display: inline;
+    display: inline;
 }
 .section-bungeni-archive #portal-column-one .portlet .portletItem ul li a {
-	float: left;
+   float: left;
 }
 .template-workspace.section-bungeni-archive #portal-column-one .portlet .portletItem ul li a,
 .template-workspace.section-bungeni-business #portal-column-one .portlet .portletItem ul li a,
 .template-workspace.section-bungeni-members #portal-column-one .portlet .portletItem ul li a {
-	border: 0 none !important;
+    border: 0 none !important;
 }
 .section-bungeni-workspace #portal-column-one dl.portlet dd.portletItem ul li.selected a,
 .section-bungeni-workspace #portal-column-one dl.portlet dd.portletItem ul li a:hover {
-	background: #6CA6CD;
-	color: #fff;
+    background: #6CA6CD;
+    color: #fff;
 }
 
 .section-bungeni-admin #portal-column-one .portlet {
     width: 16em;
-	float: left;
+    float: left;
 }
 .section-bungeni-archive #portal-column-one .portlet {
-	width: auto;
+    width: auto;
 }
 .section-bungeni-archive #portal-column-one .portletNavigationTree {
-	width: auto;
+    width: auto;
 }
 /* hides the portlet header. */
 #portal-column-one .portletHeader {
-	display: none;
+    display: none;
 }
 #portal-column-one .portlet .portletItem.even,
 #portal-column-one .portlet .portletItem {
-	background: #fff;
-	overflow: hidden;
-	border: 1px solid #aaa;
+    background: #fff;
+    overflow: hidden;
+    border: 1px solid #aaa;
 }
 #portal-column-one .portlet .portletItem a {
-	background: #fff;
-	color: #090;
-	border: 0 none;
+    background: #fff;
+    color: #090;
+    border: 0 none;
 }
 #portal-column-one .portlet .portletItem a img {
-	margin: 1px 0;
-	float: left;
+    margin: 1px 0;
+    float: left;
 }
 #portal-column-one .portlet .portletItem a.navTreeCurrentItem {
-	line-height: 20px;
-	background: #eee;
-	border: 0 none !important;
+    line-height: 20px;
+    background: #eee;
+    border: 0 none !important;
 }
 #portal-column-one .portlet .portletItem a:hover {
 	background: #eee;
 }
 #portal-column-one .portlet .portletItem ul {
     margin: 0;
-	clear: none;
-	background: #fff;
+    clear: none;
+    background: #fff;
 }
 #portal-column-one .portlet .portletItem ul li {
     display: block;
     line-height: 20px;
-	margin: 0;
+    margin: 0;
 }
 #portal-column-one .portlet .portletItem ul li a {
     display: block;
     line-height: 20px;
-	padding: 0 .5em 0 0;
+    padding: 0 .5em 0 0;
 }
 #portal-column-one .portlet .portletItem ul li ul {
-	padding-left: 1em;
+    padding-left: 1em;
 }
 #portal-column-one .portlet .portletItem ul li ul a {
 }
 #portal-column-one .portlet .portletItem ul li ul li.navTreeCurrentNode {
 }
 #portal-column-one .portlet .portletItem ul li ul li.navTreeCurrentNode a {
-	font-weight: bold;
-	background: #eee;
+    font-weight: bold;
+    background: #eee;
 }
 #portal-column-one .portlet .portletItem ul li ul li.navTreeCurrentNode ul {
-	border-bottom: 1px solid #aaa;
+    border-bottom: 1px solid #aaa;
 }
 #portal-column-one .portlet .portletItem ul li ul li.navTreeCurrentNode ul a {
-	font-weight: normal;
-	font-size: 95%;
-	background: #fff;
-	border: 0 none;
+    font-weight: normal;
+    font-size: 95%;
+    background: #fff;
+    border: 0 none;
 }
 #portal-column-one .portlet .portletItem ul li ul li.navTreeCurrentNode ul a:hover,
 #portal-column-one .portlet .portletItem ul li ul li.navTreeCurrentNode ul a.navTreeCurrentItem {
-	background: #eee;
+    background: #eee;
 }
 #portal-column-one .portlet .portletItem ul li ul li.navTreeCurrentNode ul ul {
-	border: 0 none;
+    border: 0 none;
 }
 
 /* whats-on-overview portlets */
@@ -812,21 +831,21 @@ input.inputLabelActive {
     clear:both;
 }
 .contentActions {
-	background: #fff;
-	border: 0 none !important;
-	border-bottom: 1px solid #ccc !important;
-	margin: 0 auto;
+    background: #fff;
+    border: 0 none !important;
+    border-bottom: 1px solid #ccc !important;
+    margin: 0 auto;
     padding-top: 3px;
-	width: 95%;
+    width: 95%;
 }
 .template-workspace.section-bungeni-admin .contentActions,
 .template-workspace.section-bungeni-workspace .contentActions {
-	background: url(/static/images/content-actions-bg.png) repeat-x top left;
+    background: url(/static/images/content-actions-bg.png) repeat-x top left;
     margin: .15em 0 1em;
-	border: 0 none;
+    border: 0 none;
     height: 1.8em;
-	padding: 0;
-	width: 100%;
+    padding: 0;
+    width: 100%;
 }
 .contentActions a {
     color: #000;
@@ -848,7 +867,7 @@ input.inputLabelActive {
     border: 0 none;
 }
 .contentActions ul li.context_actions {
-	border: 0 none;
+    border: 0 none;
 }
 
 .actionMenu .actionMenuContent {
@@ -890,33 +909,33 @@ input.inputLabelActive {
 }
 
 dl#context_actions.actionMenu .actionMenuHeader {
-	display: none;
+    display: none;
 }
 dl#context_actions.actionMenu.deactivated .actionMenuContent {
-	display: block !important;
-	position: relative;
-	margin: 0;
-	padding: 0;
-	top: auto;
-	left: auto;
+    display: block !important;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    top: auto;
+    left: auto;
 }
 dl#context_actions.actionMenu .actionMenuContent ul {
-	margin: 0;
-	padding: 0;
-	border: 0 none;
+    margin: 0;
+    padding: 0;
+    border: 0 none;
 }
 dl#context_actions.actionMenu .actionMenuContent ul li {
-	float: left;
-	border-bottom: 0 none;
+    float: left;
+    border-bottom: 0 none;
 }
 dl#context_actions.actionMenu .actionMenuContent ul li a {
-	padding: 0;
-	margin: 0 .25em;
+    padding: 0;
+    margin: 0 .25em;
 }
 .template-workspace dl#context_actions.actionMenu .actionMenuContent ul li a.selected,
 .template-workspace dl#context_actions.actionMenu .actionMenuContent ul li a:hover {
-	border-right: 1px solid #aaf;
-	background-color: #6CA6CD !important;
+    border-right: 1px solid #aaf;
+    background-color: #6CA6CD !important;
 }
 
 
@@ -925,9 +944,9 @@ dl#context_actions.actionMenu .actionMenuContent ul li a {
  */
 div#portal-globalnav {
     width: 100%;
-	height: 4em;
+    height: 4em;
     position: relative;
-	background: #4d4d4d;
+    background: #4d4d4d;
 }
 .template-portal div#portal-globalnav {
     display: block;
@@ -947,7 +966,7 @@ div#portal-globalnav ul.level0 {
     list-style-type: none;
     white-space: nowrap;
     border-bottom: 1px solid #aaa;
-	background: transparent;
+    background: transparent;
 }
 .template-portal div#portal-globalnav ul.level0 {
     bottom: auto;
@@ -985,11 +1004,11 @@ div#portal-globalnav ul.level0 li a {
     color: #fff;
     margin:0;
     border: 0 none;
-	border-radius: 0;
-	-moz-border-radius: 0;
-	-webkit-border-radius: 0;
+    border-radius: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
     text-transform: capitalize;
-	text-shadow: none;
+    text-shadow: none;
     font-weight: bold;
     font-size: 100%;
     height: 34px;
@@ -1000,7 +1019,7 @@ div#portal-globalnav ul.level0 li a:hover {
     position: relative;
     border-top: 2px solid #1763aa;
     border-bottom: 1px solid #d8d8d9;
-	background: #d8d8d9 url(/static/images/w-globalnav-level0-a.png) top left repeat-x;
+    background: #d8d8d9 url(/static/images/w-globalnav-level0-a.png) top left repeat-x;
 }
 div#portal-globalnav ul.level0 li.selected a {
     top: -1px;
@@ -1009,11 +1028,11 @@ div#portal-globalnav ul.level0 li.selected a {
 .template-portal div#portal-globalnav ul.level0 li.selected a {
     background: #ddd;
     color: #000;
-	border: 0 none;
-	top: 0;
-	padding-top: 0;
-	line-height: 34px;
-	font-weight: bold;
+    border: 0 none;
+    top: 0;
+    padding-top: 0;
+    line-height: 34px;
+    font-weight: bold;
 }
 .template-portal div#portal-globalnav ul.level0 li.selected a {
     background: #f00;
@@ -1042,16 +1061,16 @@ div#portal-globalnav ul.level0 ul.level1 {
     width: 100%;
     border: 1px solid #aaf;
     border-right: 0 none;
-	border-top: 0 none;
-	border-bottom:1px solid #d8d8d9;
-	background:#d8d8d9 url(/static/images/w-globalnav-level1-bg.png) bottom left repeat-x !important;
+    border-top: 0 none;
+    border-bottom:1px solid #d8d8d9;
+    background:#d8d8d9 url(/static/images/w-globalnav-level1-bg.png) bottom left repeat-x !important;
 }
 .template-portal div#portal-globalnav ul.level0 ul.level1 {
     top: 34px;
     display: block;
     background: #f00 !important;
     padding:0;
-	border: 0 none;
+    border: 0 none;
     height: 24px;
 }
 .template-portal div#portal-globalnav ul.level0 ul.level1 li {
@@ -1073,7 +1092,7 @@ div#portal-globalnav ul.level0 ul.level1 a {
     line-height: 24px;
     height: 24px;
     font-size: 90%;
-	font-weight: normal;
+    font-weight: normal;
 }
 div#portal-globalnav ul.level0 ul.level1 li a:hover {
     background: transparent;
@@ -1091,8 +1110,8 @@ div#portal-globalnav ul.level0 ul.level1 li.selected a {
 }
 .template-portal div#portal-globalnav ul.level0 ul.level1 li.selected a {
     color: #fff !important;
-	font-weight: bold;
-	top: auto;
+    font-weight: bold;
+    top: auto;
     padding: 0 10px;
 }
 /*
@@ -1108,7 +1127,7 @@ div#portal-globalnav-bottom {
     height: 10px;
     background: none;
     border: 0 none;
-	display: block;
+    display: block;
 }
 .template-workspace div#portal-globalnav-bottom {
     display: none;
@@ -1121,8 +1140,8 @@ div#portal-globalnav-bottom {
     width: 150px;
 }
 #portletArchiveDates {
-	position: relative;
-	margin: 0;
+    position: relative;
+    margin: 0;
 }
 #portletArchiveDates .portletHeader {
     text-align: right;
@@ -1132,33 +1151,33 @@ div#portal-globalnav-bottom {
     line-height: 20px;
     border: 0 none;
     text-transform: capitalize;
-	margin: 0 2.5%;
+    margin: 0 2.5%;
 }
 .section-bungeni-admin #portletArchiveDates .portletHeader,
 .section-bungeni-workspace #portletArchiveDates .portletHeader {
-	text-transform: none;
+    text-transform: none;
 }
 #portletArchiveDates .portletItem {
-	border: 0 none;
+    border: 0 none;
     padding: 0;
-	background: none;
-	z-index: 10;
-	margin: 0 2.5%;
+    background: none;
+    z-index: 10;
+    margin: 0 2.5%;
 }
 #portletArchiveDates .portletItem form {
     margin: .25em auto;
-	float: right;
+    float: right;
     border: 1px solid #ccc;
-	background: #eee;
+    background: #eee;
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
     border-radius: 2px;
-	text-shadow: 0px 1px 1px #fff;
-	border-bottom: 1px solid #aaa;
+    text-shadow: 0px 1px 1px #fff;
+    border-bottom: 1px solid #aaa;
 }
 #portletArchiveDates .portletItem form .field {
     clear: none;
-	float: left;
+    float: left;
     margin: .25em;
     padding: .15em;
 }
@@ -1170,26 +1189,26 @@ div#portal-globalnav-bottom {
     height: 20px;
     line-height: 18px;
     font-size: 95%;
-	margin: .15em;
-	background: #fff;
+    margin: .15em;
+    background: #fff;
 }
 #portletArchiveDates .portletItem form .field span.calendarpicker {
-	position: relative;
-	display: block;
-	height: 25px;
-	margin: 0;
+    position: relative;
+    display: block;
+    height: 25px;
+    margin: 0;
 }
 #portletArchiveDates .portletItem form .field .widget {
-	float: left;
-	margin: 0 .25em;
-	padding: 0;
+    float: left;
+    margin: 0 .25em;
+    padding: 0;
 }
 #portletArchiveDates .portletItem form label {
     height: 23px;
     line-height: 25px;
     float: left;
     font-size: 95%;
-	margin: .25em 0;
+    margin: .25em 0;
 }
 #portletArchiveDates .portletItem form #actionsView {
     margin: .25em 0;
@@ -1211,7 +1230,7 @@ div#portal-globalnav-bottom {
     text-align: left;
     padding: 0 .5em 0 15px;
     background-position: 5px center;
-	background-color: #fff;
+    background-color: #fff;
 }
 #portletArchiveDates .portletItem form #actionsView .actionButtons input:hover {
     background-color: #eef;
@@ -1222,18 +1241,18 @@ div#portal-globalnav-bottom {
 }
 #portletArchiveDates .portletItem.dates-filtered {
     background: #fff !important;
-	background: #FFF68F;
-	border-color: #EEE685;
-	border-bottom-color: #BDB76B;
+    background: #FFF68F;
+    border-color: #EEE685;
+    border-bottom-color: #BDB76B;
 }
 #portletArchiveDates .widget-dropdownwidget.field {
     margin-left: -40px;
     margin-right: 0;
 }
 #portletArchiveDates .portletItem.dates-filtered form {
-	background: #FFF68F;
-	border-color: #EEE685;
-	border-bottom-color: #BDB76B;
+    background: #FFF68F;
+    border-color: #EEE685;
+    border-bottom-color: #BDB76B;
 }
 
 /*
@@ -1246,14 +1265,13 @@ table.listingdescription,
     border: 1px solid #ccc;
     border-bottom-color: #aaa;
     border-right: 0 none;
-	border-top: 0 none;
+    border-top: 0 none;
     margin: 0 auto;
-	width: 95%;
-	font-size: 100%;
-	
+    width: 95%;
+    font-size: 100%;
     border: 1px solid #aaa;
-	border-top: 0 none;
-	text-align: left !important;
+    border-top: 0 none;
+    text-align: left !important;
 }
 .section-bungeni-admin table.listing,
 .section-bungeni-admin table.listingdescription,
@@ -1263,10 +1281,10 @@ table.listingdescription,
 .section-bungeni-workspace table.listingdescription,
 .section-bungeni-workspace table,
 .section-bungeni-workspace.yui-skin-sam .yui-dt table {
-	width: 95%;
+    width: 95%;
 }
 table.listingdescription[style] {
-	width: 95% !important;
+    width: 95% !important;
 }
 
 table.listing tr:hover,
@@ -1283,14 +1301,13 @@ table.listingdescription th,
 .stx table th,
 .yui-skin-sam .yui-dt-first th {
     padding: 0 .5em;
-	border: 0 none;
+    border: 0 none;
     border-left: 1px solid #bbf;
     border-right: 1px solid #88f;
-	border-top: 0 none;
+    border-top: 0 none;
     line-height: 20px !important;
     text-shadow: 0px 1px 1px #fff;
     color: #444;
-	
     background: url(../images/table-bg-active.png) repeat-x top left !important;
     border: 0 none;
     border-right: 1px solid #aaa;
@@ -1303,7 +1320,7 @@ table.listingdescription th,
 .section-bungeni-admin table.listingdescription th,
 .section-bungeni-admin.stx table th,
 .section-bungeni-admin.yui-skin-sam .yui-dt-first th {
-	background:#d8d8d9 url(/static/images/w-globalnav-level1-bg.png) bottom left repeat-x !important;
+    background:#d8d8d9 url(/static/images/w-globalnav-level1-bg.png) bottom left repeat-x !important;
 }
 .yui-skin-sam .yui-dt-first th {
     height: 20px;
@@ -1313,10 +1330,10 @@ table.listingdescription th,
     white-space: normal;
 }
 .yui-skin-sam .yui-dt-first th:active {
-	background:#d8d8d9 url(/static/images/w-globalnav-level0-a.png) top left -2px !important;
+    background:#d8d8d9 url(/static/images/w-globalnav-level0-a.png) top left -2px !important;
 }
 .yui-skin-sam .yui-dt-first th div {
-	padding: 0;
+    padding: 0;
 }
 .yui-skin-sam .yui-dt-last th input {
     background: #fff;
@@ -1326,7 +1343,7 @@ table.listingdescription th,
     line-height: 20px;
     height: 20px;
     font-size: 95%;
-	font-family: Arial, Helvetica, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     color: #222;
     padding: 0;
 }
@@ -1377,19 +1394,19 @@ ul.formTabs {
 }
 .template-workspace.section-bungeni-admin ul.formTabs,
 .template-workspace.section-bungeni-workspace ul.formTabs {
-	float: left;
-	width: 135px;
+    float: left;
+    width: 135px;
 }
 .template-workspace.section-bungeni-admin ul.formTabs li.formTab,
 .template-workspace.section-bungeni-workspace ul.formTabs li.formTab {
-	float: none;
-	display: block;
-	padding: 0;
+    float: none;
+    display: block;
+    padding: 0;
 }
 li.formTab a {
     position: relative;
     text-shadow: 0px 1px 1px #fff;
-	text-decoration: none;
+    text-decoration: none;
     color: #444;
     padding: .25em 1em;
     margin: 0 .25em;
@@ -1406,35 +1423,35 @@ li.formTab a {
 }
 .template-workspace.section-bungeni-admin ul.formTabs li.formTab a,
 .template-workspace.section-bungeni-workspace ul.formTabs li.formTab a {
-	text-align: left;
-	border-radius: 0;
-	-moz-border-radius: 0;
-	-webkit-border-radius: 0;
-	border: 0 none;
-	border-bottom: 1px solid #ccc;
-	display: block;
-	margin: 0;
-	top: 0;
-	padding-left: 0.15em;
+    text-align: left;
+    border-radius: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border: 0 none;
+    border-bottom: 1px solid #ccc;
+    display: block;
+    margin: 0;
+    top: 0;
+    padding-left: 0.15em;
 }
 li.formTab a:hover,
 li.formTab a:active,
 li.formTab a.selected {
     color: #222;
     border-top: 2px solid #FAAD5F;
-	border-top-color: #FB9C14;
+    border-top-color: #FB9C14;
     border-right: 1px solid #999;
     border-left: 1px solid #999;
-	border-bottom: 2px solid #f9ac32;
-	text-decoration: none;
-	background:#f9ac32 url(/static/images/globalnav-level0-a.png) top left repeat-x;
+    border-bottom: 2px solid #f9ac32;
+    text-decoration: none;
+    background:#f9ac32 url(/static/images/globalnav-level0-a.png) top left repeat-x;
 	
 	/* new */
-	background: #62605f;
-	color: #fff;
-	text-shadow: none;
+    background: #62605f;
+    color: #fff;
+    text-shadow: none;
     border-top: 2px solid #222 !important;
-	border-bottom-color: #62605f;
+    border-bottom-color: #62605f;
 }
 li.formTab a.selected {
     position: relative;
@@ -1442,10 +1459,10 @@ li.formTab a.selected {
 }
 .template-workspace.section-bungeni-admin li.formTab a.selected,
 .template-workspace.section-bungeni-workspace li.formTab a.selected {
-	background: #6CA6CD;
-	border-top: 0 none !important;
-	border-bottom-color: #6ca6cd;
-	text-decoration: none;
+    background: #6CA6CD;
+    border-top: 0 none !important;
+    border-bottom-color: #6ca6cd;
+    text-decoration: none;
 }
 .template-workspace.section-bungeni-admin ul.formTabs li.formTab a:hover,
 .template-workspace.section-bungeni-admin ul.formTabs li.formTab a:active,
@@ -1453,24 +1470,24 @@ li.formTab a.selected {
 .template-workspace.section-bungeni-workspace ul.formTabs li.formTab a:hover,
 .template-workspace.section-bungeni-workspace ul.formTabs li.formTab a:active,
 .template-workspace.section-bungeni-workspace ul.formTabs li.formTab a.selected {
-	text-align: left;
-	text-decoration: none;
-	margin: 0;
-	border-top: 0 none !important;
-	border: 0 none;
-	background: #d8d8d9 url(/static/images/w-globalnav-level0-a.png) top left repeat-x;
-	color: #222;
-	top: 0;
+    text-align: left;
+    text-decoration: none;
+    margin: 0;
+    border-top: 0 none !important;
+    border: 0 none;
+    background: #d8d8d9 url(/static/images/w-globalnav-level0-a.png) top left repeat-x;
+    color: #222;
+    top: 0;
 }
 
 /*
  * formPanel styles
  */
 .formPanel {
-    border: 0 none;
+    border: 1px solid transparent;
     padding: 0 !important;
     margin: 0;
-	text-align: center;
+    text-align: center;
 }
 .template-workspace.section-bungeni-admin .formPanel,
 .template-workspace.section-bungeni-workspace .formPanel {
@@ -1478,12 +1495,12 @@ li.formTab a.selected {
 }
 body.template-workspace.section-bungeni-admin #portal-column-content div#whats-on-overview dl.portlet.whats-on-viewlet.enableFormTabbing
 body.template-workspace.section-bungeni-workspace #portal-column-content div#whats-on-overview dl.portlet.whats-on-viewlet.enableFormTabbing  {
-	width: auto !important;
-	margin-left: 155px;
+    width: auto !important;
+    margin-left: 155px;
 }
 .formPanel h2,
 .formPanel ul {
-	text-align:left;
+    text-align:left;
 }
 .formPanel table.listing {
     font-size: 100%;
@@ -1498,52 +1515,56 @@ body.template-workspace.section-bungeni-workspace #portal-column-content div#wha
     padding: 0 !important;
     border: 0 none;
     text-align: center;
-	clear: none;
-	float: left;
-	width: 100%;
+    clear: none;
+    float: left;
+    width: 100%;
 }
 .formPanel .field {
     margin: 0 auto !important;
-	padding: 0;
+    padding: 0;
     clear: both;
-	width: 95%;
-	height: auto;
+    width: 95%;
+    height: auto;
     text-align: left;
     border-bottom: 1px dotted #ccc;
-	display: inline-block;
-	background: #eee;
+    display: inline-block;
+    background: #eee;
+}
+dl.portalMessage {
+    width: 95%;
+    margin: 0 auto;
 }
 #display_form_spacer {
-	background: #62605f;
-	height:20px;
-	margin: 0 auto;
-	width: 95%;
-	background: url("../images/table-bg-active.png") repeat-x scroll left top transparent !important;
+    background: #62605f;
+    height:20px;
+    margin: 0 auto;
+    width: 95%;
+    background: url("../images/table-bg-active.png") repeat-x scroll left top transparent !important;
 }
 .template-workspace.section-bungeni-admin .formPanel #display_form_spacer,
 .template-workspace.section-bungeni-workspace .formPanel #display_form_spacer {
-	background: url(/static/images/w-globalnav-level1-bg.png) bottom left repeat-x;
-	width: 95%;
+    background: url(/static/images/w-globalnav-level1-bg.png) bottom left repeat-x;
+    width: 95%;
 }
 .formPanel .field:after {
-	content: ".";
-	display: block;
-	height: 0;
-	clear: both;
-	visibility: hidden;
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
 }
 .formPanel .field .content-left-column {
     float: left;
     width: 19%;
     text-align: right;
-	color: #111;
+    color: #111;
     text-shadow: 0 1px 1px #fff;
     font-weight: bold;
-	margin: 0;
+    margin: 0;
     padding: .15em .5em;
-	border: 0 none;
+    border: 0 none;
     line-height: 20px;
-	background: #eee;
+    background: #eee;
 }
 .formPanel .field .content-right-column {
     width: 79%;
@@ -1552,14 +1573,16 @@ body.template-workspace.section-bungeni-workspace #portal-column-content div#wha
     text-shadow: 0 0 1px #fff;
     color: #333;
     padding: .15em;
-	border: 0 none;
+    border: 0 none;
     line-height: 20px;
-	margin: 0;
-	background: #fff;
+    margin: 0;
+    background: #fff;
 }
 .formPanel .field .content-right-column div,
-.formPanel .field .content-right-column widget {
-	margin: 0;
+.formPanel .field .content-right-column.widget {
+    margin: 0;
+    width: auto;
+    float: none;
 }
 .formPanel .field .content-right-column div div {
     margin: .75em 0;
@@ -1596,19 +1619,19 @@ body.template-workspace.section-bungeni-workspace #portal-column-content div#wha
     line-height: 18px;
 }
 .formPanel.Report4Sitting .field {
-	background: #fff;
+    background: #fff;
 }
 .formPanel.Report4Sitting .field .content-left-column {
-	width: 5%;
+    width: 5%;
 }
 .formPanel.Report4Sitting .field .content-right-column {
-	float: left;
-	width: 90%;
+    float: left;
+    width: 90%;
 }
 .formPanel.Report4Sitting .field .content-right-column,
 .formPanel.Report4Sitting .field .content-right-column h1,
 .formPanel.Report4Sitting .field .content-right-column h2 {
-	text-align: left;
+    text-align: left;
 }
 
 /*
@@ -1624,47 +1647,47 @@ div.calendar div.sitting {
  * YUI button styles
  */
 span.yui-button.yui-link-button span a {
-	padding: 0 3px;
-	line-height: 1.5em;
-	height: 1.5em;
-	min-height: 1.5em;
-	font-size: 90%;	
+    padding: 0 3px;
+    line-height: 1.5em;
+    height: 1.5em;
+    min-height: 1.5em;
+    font-size: 90%;	
 }
 
 /*
  * YUI paginator styles
  */
 .yui-dt-paginator {
-	margin: 0 auto !important;
-	padding: 0;
-	font-size: 90%;
-	line-height: 16px;
-	height: 20px;
-	text-align: left;
-	width: 960px;
-	width: 95%;
+    margin: 0 auto !important;
+    padding: 0;
+    font-size: 90%;
+    line-height: 16px;
+    height: 20px;
+    text-align: left;
+    width: 960px;
+    width: 95%;
 }
 #yui-dt0-paginator0, #yui-dt1-paginator0, #yui-dt2-paginator0 {
-	display: none;
+    display: none;
 }
 .yui-dt-paginator select {
-	font-size:95%;
-	color: #444;
-	padding: .1em;
-	margin: 0;
-	background: #fff;
-	border: 1px solid #ccc;
+    font-size:95%;
+    color: #444;
+    padding: .1em;
+    margin: 0;
+    background: #fff;
+    border: 1px solid #ccc;
 }
 .yui-dt-paginator select:hover {
-	border: 1px solid #aaa;
-	color: #444;
+    border: 1px solid #aaa;
+    color: #444;
 }
 .yui-skin-sam .yui-button {
-	margin: 0 .25em;
+    margin: 0 .25em;
 }
 .yui-skin-sam .yui-split-button button,
 .yui-skin-sam .yui-menu-button button {
-	padding: .15em .25em;
+    padding: .15em .25em;
 }
 
 /*
@@ -1702,8 +1725,8 @@ span.yui-button.yui-link-button span a {
 }
 .template-portal #visual-table-wrapper {
     margin: 0 auto;
-	padding: 0;
-	width: 100%;
+    padding: 0;
+    width: 100%;
     text-align: center;
     background: none;
     /* 
@@ -1732,17 +1755,17 @@ span.yui-button.yui-link-button span a {
     display: none;
 }
 .template-portal #main-body-table {
-	width: 100%;
+    width: 100%;
     margin: 0 auto;
     padding: 0;
     padding-bottom: 25px;
     position: relative;
-	text-align:center;
-	background: transparent;
+    text-align:center;
+    background: transparent;
 }
 .template-portal.section-bungeni-login #alchemist-form {
-	margin: 0 auto;
-	width: 95%;
+    margin: 0 auto;
+    width: 95%;
 }
 
 /*
@@ -1751,7 +1774,7 @@ span.yui-button.yui-link-button span a {
 .template-workspace {
     margin: 0;
     padding: 0;
-	background: #4d4d4d url(/static/images/workspace-border-left.png) repeat-y top left;
+    background: #4d4d4d url(/static/images/workspace-border-left.png) repeat-y top left;
     /* 
      * Sticky Footer
      * more information: http://www.cssstickyfooter.com/
@@ -1760,12 +1783,12 @@ span.yui-button.yui-link-button span a {
     height: 100%;
 }
 .template-workspace #visual-table-wrapper {
-	position: relative;
+    position: relative;
     padding: 0 1.4em 0 0;
     text-align: left;
     margin: 0;
-	margin-left: 1.4em;
-	background: #fff url(/static/images/workspace-border-right.png) top right repeat-y;
+    margin-left: 1.4em;
+    background: #fff url(/static/images/workspace-border-right.png) top right repeat-y;
     /* 
      * Sticky Footer
      * more information: http://www.cssstickyfooter.com/
@@ -1776,22 +1799,22 @@ span.yui-button.yui-link-button span a {
 }
 .template-workspace span#corner-a,
 .template-workspace span#corner-b {
-	position: absolute;
-	top: 0;
-	display: block;
-	width: 16px;
-	height: 16px;
+    position: absolute;
+    top: 0;
+    display: block;
+    width: 16px;
+    height: 16px;
 }
 .template-workspace span#corner-a {
-	left: 0;
-	background: #4d4d4d url(/static/images/workspace-border-left-corner.png) top left no-repeat;
+    left: 0;
+    background: #4d4d4d url(/static/images/workspace-border-left-corner.png) top left no-repeat;
 }
 .template-workspace span#corner-b {
-	right: 0;
-	background: #4d4d4d url(/static/images/workspace-border-right-corner.png) top right no-repeat;
+    right: 0;
+    background: #4d4d4d url(/static/images/workspace-border-right-corner.png) top right no-repeat;
 }
 .template-workspace #main-body-table {
-	background: #fff;
+    background: #fff;
     width:100% !important;
     padding: 0;
     /* 
@@ -1806,8 +1829,8 @@ span.yui-button.yui-link-button span a {
 .template-workspace #portal-logo {
     display: block;
     height: 50px;
-	margin: 0;
-	padding: .5em 0;
+    margin: 0;
+    padding: .5em 0;
     background:#4d4d4d url(/static/images/empowered.png) center right no-repeat;
 }
 .template-workspace #portal-logo img {
@@ -1830,7 +1853,7 @@ h4.tabberHeading {
 #content a[href^="http:"], #content a.link-external {
     background:transparent;
     padding: 1px 0 1px 16px;
-	padding: .1em;
+    padding: .1em;
 }
 #tabber-block .documentFirstHeading{
     margin-top: 2em;
@@ -1858,14 +1881,14 @@ h4.tabberHeading {
 }
 .documentDescription {
     font-weight: normal;
-	text-align: center;
+    text-align: center;
 }
 .documentEditable {
-	margin: 0;
-	padding: 0 !important;
+    margin: 0;
+    padding: 0 !important;
 }
 .documentEditable .documentContent {
-	border: 0 none;
+    border: 0 none;
 }
 .contentViews {
     border-color: transparent;

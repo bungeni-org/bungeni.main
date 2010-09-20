@@ -5,9 +5,10 @@
 #top-layer {
     height: 20px;
 	text-align:center;
-	border: 0 none;
+	border: 1px solid transparent;
 }
 .template-workspace #top-layer {
+	border: 0 none;
     border-bottom: 1px solid #4d4d4d;
 	margin: 0;
 	padding: 10px 0 0;
@@ -191,7 +192,7 @@ div.main-column h1 {
 }
 .template-workspace.section-bungeni-admin div.main-column h1,
 .template-workspace.section-bungeni-workspace div.main-column h1 {
-	display: none;
+    color: #222;
 }
 div.main-column h1.title {
 	clear: both;
@@ -212,7 +213,6 @@ div.main-column h1.title {
 }
 div.main-column h1.reportmaintitle,
 div.main-column h1.reportdoctype {
-	text-align: left;
 	font-size: 125%;
 }
 div.main-column h2 {
@@ -231,11 +231,29 @@ div.main-column h2 {
 	font-weight: bold !important;
 	color: #222 !important;
 	margin-top: 1em;
+	text-align: left;
 }
 div.main-column h2 span {
     font-size: 75%;
     font-weight: normal;
     color: #444;
+}
+div.main-column h3 {
+    display: block;
+	text-align: center;
+    text-shadow: 0px 0px 1px #fff;
+    line-height: 20px;
+    font-size: 100%;
+    padding: 0;
+    font-weight: normal !important;
+    margin: .25em 0 .5em;
+}
+.template-workspace.section-bungeni-workspace div.main-column h3,
+.template-workspace.section-bungeni-admin div.main-column h3 {
+	font-weight: bold !important;
+	color: #222 !important;
+	margin-top: 1em;
+	text-align: left;
 }
 .template-workspace div.main-column p {
 	text-align: center;
@@ -395,6 +413,13 @@ input.inputLabelActive {
 .template-portal .dhx_scale_hour {
 	background: #F8BA61;
 	border-color: #FB9C14;
+}
+.template-workspace.section-bungeni-archive .dhx_cal_container,
+.template-workspace.section-bungeni-business .dhx_cal_container,
+.template-workspace.section-bungeni-members .dhx_cal_container,
+.template-portal .dhx_cal_container {
+	margin-top: 0;
+	margin-bottom: 0;
 }
 .template-workspace.section-bungeni-archive .dhx_cal_header,
 .template-workspace.section-bungeni-archive .dhx_cal_data,
@@ -1025,7 +1050,6 @@ div#portal-globalnav-bottom {
 	border: 0 none;
     padding: 0;
 	background: none;
-	z-index: 10;
 	margin-right: 2.5%;
 }
 #portletArchiveDates .portletItem form {
@@ -1061,6 +1085,7 @@ div#portal-globalnav-bottom {
 	display: block;
 	height: 25px;
 	margin: 0;
+	z-index: 1000;
 }
 #portletArchiveDates .portletItem form .field .widget {
 	float: left;
@@ -1331,10 +1356,10 @@ li.formTab a.selected {
  * formPanel styles
  */
 .formPanel {
-    border: 0 none;
     padding: 0 !important;
     margin: 0;
 	text-align: center;
+	border: 1px solid transparent;
 }
 .template-workspace.section-bungeni-admin .formPanel,
 .template-workspace.section-bungeni-workspace .formPanel {
@@ -1376,6 +1401,10 @@ body.template-workspace.section-bungeni-workspace #portal-column-content div#wha
     border-bottom: 1px dotted #ccc;
 	display: inline-block;
 	background: #eee;
+}
+dl.portalMessage {
+	width: 95%;
+	margin: 0 auto;
 }
 #display_form_spacer {
 	width: 95%;
@@ -1420,8 +1449,10 @@ body.template-workspace.section-bungeni-workspace #portal-column-content div#wha
 	background: #fff;
 }
 .formPanel .field .content-right-column div,
-.formPanel .field .content-right-column widget {
+.formPanel .field .content-right-column.widget {
 	margin: 0;
+	width: auto;
+	float: none;
 }
 .formPanel .field .content-right-column div div {
     margin: .75em 0;
@@ -1505,7 +1536,7 @@ span.yui-button.yui-link-button span a {
 	text-align: left;
 	width: 95%;
 }
-#yui-dt0-paginator0, #yui-dt1-paginator0, #yui-dt2-paginator0, #yui-dt3-paginator0 {
+#yui-dt0-paginator0, #yui-dt1-paginator0, #yui-dt2-paginator0, #yui-dt3-paginator0, #yui-dt4-paginator0 {
 	display: none;
 }
 .yui-dt-paginator select {

@@ -5,7 +5,7 @@
 #top-layer {
     height: 20px;
 	text-align:center;
-	border: 0 none;
+	border: 1px solid transparent;
 }
 .template-workspace #top-layer {
     border-bottom: 1px solid #4d4d4d;
@@ -216,8 +216,11 @@ div.main-column h1 {
 }
 .template-workspace.section-bungeni-admin div.main-column h1,
 .template-workspace.section-bungeni-workspace div.main-column h1 {
-	display: none;
 	width: 100%;
+	font-size: 200%;
+	font-family: Arial, Helvetica, sans-serif;
+	text-transform: none;
+	color: #222;
 }
 div.main-column h1.title {
     display: block;
@@ -237,7 +240,6 @@ div.main-column h1.title {
 }
 div.main-column h1.reportmaintitle,
 div.main-column h1.reportdoctype {
-	text-align: left;
 	font-size: 125%;
 }
 div.main-column h2 {
@@ -262,6 +264,23 @@ div.main-column h2 span {
     font-size: 75%;
     font-weight: normal;
     color: #e07900;
+}
+div.main-column h3 {
+    display: block;
+	text-align: center;
+    text-shadow: 0px 0px 1px #fff;
+    line-height: 20px;
+    font-size: 100%;
+    padding: 0;
+    font-weight: normal !important;
+    margin: .25em 0 .5em;
+}
+.template-workspace.section-bungeni-workspace div.main-column h3,
+.template-workspace.section-bungeni-admin div.main-column h3 {
+	font-weight: bold !important;
+	color: #444 !important;
+	margin-top: 1em;
+	text-align: left;
 }
 div.main-column p {
 	text-align: center;
@@ -1423,7 +1442,7 @@ li.formTab a.selected {
  * formPanel styles
  */
 .formPanel {
-    border: 0 none;
+	border: 1px solid transparent;
     padding: 0 !important;
     margin: 0;
 	text-align: center;
@@ -1474,6 +1493,10 @@ body.template-workspace.section-bungeni-workspace #portal-column-content div#wha
 .template-workspace .formPanel .field {
 	width: 95%;
 }
+dl.portalMessage {
+	width: 95%;
+	margin: 0 auto;
+}
 #display_form_spacer {
 	background: #C5DAB2 !important;
 	height:20px;
@@ -1520,8 +1543,10 @@ body.template-workspace.section-bungeni-workspace #portal-column-content div#wha
 	background: #fff;
 }
 .formPanel .field .content-right-column div,
-.formPanel .field .content-right-column widget {
+.formPanel .field .content-right-column.widget {
 	margin: 0;
+	width: auto;
+	float: none;
 }
 .formPanel .field .content-right-column div div {
     margin: .75em 0;
