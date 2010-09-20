@@ -25,7 +25,7 @@ from bungeni.core.globalsettings import getCurrentParliamentId
 from bungeni.core.schedule import ISchedulingContext
 
 from bungeni.ui.i18n import  _
-from bungeni.ui.utils import url as ui_url, debug
+from bungeni.ui.utils import url, debug
 from bungeni.ui import interfaces
 from bungeni.ui.tagged import get_states
 # r5327 - following added inorder to fix issue 319. needs review
@@ -43,13 +43,13 @@ def get_actions(name, context, request):
     menu = component.getUtility(IBrowserMenu, name)
     items = menu.getMenuItems(context, request)
     
-    site_url = ui_url.absoluteURL(getSite(), request)
-    url = ui_url.absoluteURL(context, request)
+    site_url = url.absoluteURL(getSite(), request)
+    _url = ui_url.absoluteURL(context, request)
     
     for item in items:
-        item['url'] = ui_url.urljoin(url, item['action'])
-        item['id'] = item['title'].lower().replace(' ', '-')
-        item['icon'] = ui_url.urljoin(site_url, item['icon'])
+        item["url"] = url.urljoin(_url, item["action"])
+        item["id"] = item["title"].lower().replace(" ", "-")
+        item["icon"] = url.urljoin(site_url, item["icon"])
     return items
 
 class GlobalMenuItem(z3c.menu.ready2go.item.GlobalMenuItem):
@@ -96,12 +96,12 @@ class AdminAction(GlobalMenuItem):
     
     def getURLContext(self):
         site = getSite()
-        return site['admin']
+        return site["admin"]
 
     #@property
     #def available(self):
     #    context = self.getURLContext()
-    #    return getInteraction().checkPermission('zope.ManageSite', context)
+    #    return getInteraction().checkPermission("zope.ManageSite", context)
 
 
 # 
@@ -135,8 +135,8 @@ class TranslationSubMenuItem(BrowserSubMenuItem):
     # Note: 
     # BrowserSubMenuItem is a BrowserView but BrowserMenu is just an object.
     
-    title = _(u'label_translate', default=u'Language:')
-    submenuId = 'context_translate'
+    title = _(u"label_translate", default=u"Language:")
+    submenuId = "context_translate"
     order = 50
     
     #def __init__(self, context, request):
@@ -146,23 +146,23 @@ class TranslationSubMenuItem(BrowserSubMenuItem):
     def extra(self):
         language = get_language(self.context)
         return {
-            'id'         : 'plone-contentmenu-translation',
-            'class'      : 'language-%s' % language,
-            'state'      : language,
-            'stateTitle' : language
+            "id"         : "plone-contentmenu-translation",
+            "class"      : "language-%s" % language,
+            "state"      : language,
+            "stateTitle" : language
             }
     
     @property
     def description(self):
-        return u''
+        return u""
 
     @property
     def action(self):
-        url = ui_url.absoluteURL(self.context, self.request)
+        _url = url.absoluteURL(self.context, self.request)
         if checkPermission("bungeni.translation.Add", self.context):
-            return "%s/translate" % url
+            return "%s/translate" % _url
         else:
-            return url
+            return _url
     
     def selected(self):
         return False
@@ -174,20 +174,22 @@ class TranslateMenu(BrowserMenu):
     
     def getMenuItems(self, context, request):
         """Return menu item entries in a TAL-friendly form."""
-        url = ui_url.absoluteURL(context, request)
+        _url = url.absoluteURL(context, request)
         if checkPermission("bungeni.translation.Add", context):
             language = get_language(context)
             available = get_available_translations(context)
             results = []
             for name, obj in get_all_languages().items():
-                title = obj['name']
+                title = obj["name"]
                 # skip the current language
                 if name==language:
                     continue
-                action_url = url + '/translate?language=%s' % name
-                extra = {'id': 'translation-action-%s' % name,
-                         'separator': None,
-                         'class': ''}
+                action_url = "%s/translate?language=%s" % (_url, name)
+                extra = {
+                    "id": "translation-action-%s" % name,
+                    "separator": None,
+                    "class": ""
+                }
                 translation_id = available.get(name)
                 results.append(
                     dict(title=title,
@@ -203,13 +205,13 @@ class TranslateMenu(BrowserMenu):
     
 
 class WorkflowSubMenuItem(BrowserSubMenuItem):
-    title = _(u'label_state', default=u'State:')
-    submenuId = 'context_workflow'
+    title = _(u"label_state", default=u"State:")
+    submenuId = "context_workflow"
     order = 40
     
     def __new__(cls, context, request):
         # this is currently the only way to make sure this menu only
-        # 'adapts' to a workflowed context; the idea is that the
+        # "adapts" to a workflowed context; the idea is that the
         # component lookup will fail, which will propagate back to the
         # original lookup request
         workflow = IWorkflow(context, None)
@@ -220,28 +222,28 @@ class WorkflowSubMenuItem(BrowserSubMenuItem):
     def __init__(self, context, request):
         BrowserSubMenuItem.__init__(self, context, request)
         self.context = context
-        self.url = ui_url.absoluteURL(context, request)
+        self.url = url.absoluteURL(context, request)
         self.request = request
         
     @property
     def extra(self):
         info = IWorkflowInfo(self.context, None)
         if info is None:
-            return {'id': 'plone-contentmenu-workflow'}
+            return {"id": "plone-contentmenu-workflow"}
         state = info.state().getState()
         stateTitle = translate(
             str(info.workflow().workflow.states[state].title), 
             domain="bungeni.core",
             context=self.request)
         
-        return {'id'         : 'plone-contentmenu-workflow',
-                'class'      : 'state-%s' % state,
-                'state'      : state,
-                'stateTitle' : stateTitle,} # TODO: should be translated
+        return {"id"         : "plone-contentmenu-workflow",
+                "class"      : "state-%s" % state,
+                "state"      : state,
+                "stateTitle" : stateTitle,} # TODO: should be translated
 
     @property
     def description(self):
-        return u''
+        return u""
 
     @property
     def action(self):
@@ -269,8 +271,8 @@ class WorkflowMenu(BrowserMenu):
         # should really be order of definition.
         parliament_id = getCurrentParliamentId()
         
-        url = ui_url.absoluteURL(context, request)
-        site_url2 = ui_url.absoluteURL(getSite(), request)
+        _url = url.absoluteURL(context, request)
+        site_url2 = url.absoluteURL(getSite(), request)
         results = []
         for transition in transitions:
             tid = transition
@@ -278,18 +280,18 @@ class WorkflowMenu(BrowserMenu):
             #Compares the current url to homepage to determine whether we are on workspace or not.
             #Fix for bug 319
             #Someone should probably review this.
-            if url == site_url2:
+            if _url == site_url2:
                 transition_url = site_url2 + \
-                             '/archive/browse/parliaments/obj-' + str(parliament_id) + \
-                             '/change_workflow_state?' + \
-                             'transition=%s&next_url=...' % tid
+                             "/archive/browse/parliaments/obj-" + str(parliament_id) + \
+                             "/change_workflow_state?" + \
+                             "transition=%s&next_url=..." % tid
             else:
-                transition_url = url + \
-                             '/change_workflow_state?'\
-                             'transition=%s&next_url=...' % tid
-            extra = {'id': 'workflow-transition-%s' % tid,
-                     'separator': None,
-                     'class': ''}
+                transition_url = _url + \
+                             "/change_workflow_state?"\
+                             "transition=%s&next_url=..." % tid
+            extra = {"id": "workflow-transition-%s" % tid,
+                     "separator": None,
+                     "class": ""}
             
             state_title = translate(str(state_transition.title), 
                     domain="bungeni.core", 
@@ -307,8 +309,8 @@ class WorkflowMenu(BrowserMenu):
         return results
 
 class CalendarSubMenuItem(BrowserSubMenuItem):
-    title = _(u'label_calendar_context', default=u'Calendar:')
-    submenuId = 'context_calendar'
+    title = _(u"label_calendar_context", default=u"Calendar:")
+    submenuId = "context_calendar"
     order = 10
 
     def __new__(cls, context, request):
@@ -318,16 +320,16 @@ class CalendarSubMenuItem(BrowserSubMenuItem):
     def __init__(self, context, request):
         BrowserSubMenuItem.__init__(self, context, request)
         self.context = context
-        self.url = ui_url.absoluteURL(context, request)
+        self.url = url.absoluteURL(context, request)
         
     @property
     def extra(self):
-        return {'id': 'plone-contentmenu-calendar',
-                'stateTitle': self.context.label}
+        return {"id": "plone-contentmenu-calendar",
+                "stateTitle": self.context.label}
 
     @property
     def description(self):
-        return u''
+        return u""
 
     @property
     def action(self):
@@ -348,7 +350,6 @@ class CalendarMenu(BrowserMenu):
         - plenary
 
         """
-
         contexts = []
         app = getSite()
         today = datetime.date.today()
@@ -377,39 +378,36 @@ class CalendarMenu(BrowserMenu):
         else:
             contexts.append(schedule.ISchedulingContext(app["business"]["sittings"]))
         contexts[-1].__name__ = u""
-
         
-
         return contexts
     
     def getMenuItems(self, context, request):
         """Return menu item entries in a TAL-friendly form."""
-
         group_id = context.get_group().group_id
         contexts = self.getSchedulingContexts(request)
-        
         results = []
         for context in contexts:
             group = context.get_group()
             if group.group_id==group_id:
                 continue
-            
-            url = ui_url.absoluteURL(context, request)
-            
-            extra = {'id': 'calendar-link-%s' % group.group_id,
-                     'separator': None,
-                     'class': ''}
-
-            results.append(
-                dict(title=context.label,
-                     description=group.description,
-                     action=url,
-                     selected=False,
-                     icon=None,
-                     extra=extra,
-                     submenu=None))
-
+            _url = url.absoluteURL(context, request)
+            extra = {
+                "id": "calendar-link-%s" % group.group_id,
+                "separator": None,
+                "class": ""
+            }
+            results.append(dict(
+                    title=context.label,
+                    description=group.description,
+                    action=_url,
+                    selected=False,
+                    icon=None,
+                    extra=extra,
+                    submenu=None
+            ))
+        
         # sort on title
         results.sort(key=operator.itemgetter("title"))
-
+        
         return results
+
