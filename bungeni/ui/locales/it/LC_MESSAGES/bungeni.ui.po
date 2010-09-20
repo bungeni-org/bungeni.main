@@ -3,19 +3,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: Wed Jul  7 16:34:58 2010\n"
-"PO-Revision-Date: 2010-07-21 14:34+0300\n"
-"Last-Translator: Administrator <admin@apkn.org>\n"
+"PO-Revision-Date: 2010-09-20 01:26+0300\n"
+"Last-Translator: Flavio <flavio.zeni@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.0.4\n"
 "Language-Code: en\n"
 "Domain: DOMAIN\n"
-"Language: en\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Preferred-Encodings: utf-8 latin1\n"
 "Language-Name: English\n"
-"X-Generator: Pootle 2.0.4\n"
 
 #: src/bungeni.main/bungeni/ui/audit.py:20
 msgid "action"
@@ -224,6 +224,8 @@ msgstr "scadenza"
 #: src/bungeni.main/bungeni/ui/viewlets/templates/workspace_item_viewlet.pt:27
 #: src/bungeni.main/bungeni/ui/viewlets/templates/workspace_group_viewlet.pt:27
 msgid "Status date"
+msgstr "data di stato"
+
 #: src/bungeni.main/bungeni/ui/descriptor.py:1186
 msgid "Assigned bill"
 msgstr "disegno di legge assegnato"
@@ -1162,7 +1164,7 @@ msgstr "profilo"
 #: src/bungeni.main/bungeni/ui/descriptor.py:770
 #: src/bungeni.main/bungeni/ui/workspace.py:290
 msgid "Committees"
-msgstr "le commissioni"
+msgstr "commissioni"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:781
 msgid "Type of committee"
@@ -1774,7 +1776,7 @@ msgstr "home"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:1124
 msgid "Business"
-msgstr "Lavori"
+msgstr "lavori"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:113
 #: src/bungeni.main/bungeni/ui/menu.zcml:128
@@ -1794,7 +1796,7 @@ msgstr "aggiungi ..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:1130
 msgid "Members"
-msgstr "Membri"
+msgstr "membri"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:1136
 #: src/bungeni.main/bungeni/ui/viewlets/workspace.zcml:49
@@ -2459,7 +2461,7 @@ msgstr "da: a ${whatsonstartdate}: ${whatsonenddate}"
 
 #: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:7
 msgid "What's on"
-msgstr "che cosa c'è in"
+msgstr "in agenda"
 
 #: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:8
 msgid "An overview of the daily operations of the parliament"
