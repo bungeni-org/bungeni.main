@@ -12,9 +12,9 @@ from zope.security import proxy
 from zope.security import checkPermission
 from zope.publisher.browser import BrowserView
 
-from ore.alchemist.model import queryModelDescriptor
-from ore.alchemist.model import queryModelInterface
-from ore.alchemist.container import contained
+from bungeni.alchemist.model import queryModelDescriptor
+from bungeni.alchemist.model import queryModelInterface
+from bungeni.alchemist.container import contained, stringKey
 
 from bungeni.models.interfaces import IDateRangeFilter
 from bungeni.models.interfaces import ICommitteeContainer
@@ -28,27 +28,6 @@ from bungeni.ui.utils import url, date, debug
 from bungeni.ui import cookies
 from bungeni.ui.interfaces import IBusinessSectionLayer, \
     IMembersSectionLayer, IArchiveSectionLayer
-
-def stringKey(obj):
-    """Replacement of ore.alchemist.container.stringKey
-    
-    The difference is that here the primary_key is not determined by 
-    sqlalchemy.orm.mapper.primary_key_from_instance(obj) but by doing the 
-    logically equivalent (but a little more laborious) 
-    [ getattr(instance, c.name) for c in mapper.primary_key ].
-    
-    This is because, in some hard-to-debug cases, the previous was returning 
-    None to all pk values e.g. for objects on which checkPermission() has not
-    been called. Using this version, the primary_key is correctly determined
-    irrespective of whether checkPermission() had previously been called on
-    the object.
-    """
-    unproxied = proxy.removeSecurityProxy(obj)
-    mapper = orm.object_mapper(unproxied)
-    #primary_key = mapper.primary_key_from_instance(unproxied)
-    identity_values = [ getattr(unproxied, c.name) for c in mapper.primary_key ]
-    identity_key = '-'.join(map(str, identity_values))
-    return "obj-%s" % (identity_key)
 
 
 def getFields(context, interface=None, annotation=None):

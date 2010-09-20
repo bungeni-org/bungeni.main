@@ -15,8 +15,8 @@ from zope.security.proxy import removeSecurityProxy
 from zope import lifecycleevent
 
 from ore.workflow.interfaces import IWorkflowInfo
-from ore.alchemist.interfaces import IRelationChange
-from ore.alchemist import Session
+from bungeni.alchemist.interfaces import IRelationChange
+from bungeni.alchemist import Session
 from sqlalchemy import orm
 
 from bungeni.models import schema, domain

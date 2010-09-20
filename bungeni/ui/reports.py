@@ -12,7 +12,7 @@ from xml.dom.minidom import parseString
 from bungeni.ui import zcml
 from interfaces import IOpenOfficeConfig
 from zope.component import getUtility
-from ore.alchemist import Session
+from bungeni.alchemist import Session
 from bungeni.models import domain
 from zope import interface
 from zope.formlib import form
@@ -45,6 +45,7 @@ from bungeni.ui.forms.common import AddForm
 from bungeni.ui import container
 from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent
+
 class TIME_SPAN:
     daily = _(u"Daily")
     weekly = _(u"Weekly")

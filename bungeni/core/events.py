@@ -6,7 +6,7 @@ import datetime
 
 from zope.security.proxy import removeSecurityProxy
 
-from ore.alchemist import Session
+from bungeni.alchemist import Session
 from bungeni.models import domain
 from bungeni.core import audit
 

@@ -62,12 +62,12 @@ def setup_adapters():
     #   ore.workflow.interfaces.IWorkflowInfo
     
     zope.component.provideAdapter(
-        adapts=[ore.alchemist.interfaces.IAlchemistContent], 
+        adapts=[bungeni.alchemist.interfaces.IAlchemistContent], 
         provides=ore.workflow.interfaces.IWorkflowInfo,
         factory=bungeni.core.workflows.states.StateWorkflowInfo)
     
     zope.component.provideAdapter(
-        adapts=[ore.alchemist.interfaces.IAlchemistContent], 
+        adapts=[bungeni.alchemist.interfaces.IAlchemistContent], 
         provides=ore.workflow.interfaces.IWorkflowState,
         factory=bungeni.core.workflows.states.WorkflowState) 
     

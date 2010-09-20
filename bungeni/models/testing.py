@@ -2,12 +2,12 @@ import datetime
 
 from zope import component
 from alchemist.security import schema as security
-from ore.alchemist.interfaces import IDatabaseEngine
+from bungeni.alchemist.interfaces import IDatabaseEngine
 from sqlalchemy import create_engine
 from bungeni.models import domain
 from bungeni.models import metadata
 from bungeni.models import schema
-from ore.alchemist import Session
+from bungeni.alchemist import Session
 
 def add_content(kls, *args, **kwargs):
     session = Session()

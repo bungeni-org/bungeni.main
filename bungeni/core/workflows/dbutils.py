@@ -4,7 +4,7 @@
 # from the db implementation
 import sqlalchemy as rdb
 from sqlalchemy.orm import mapper
-from ore.alchemist import Session
+from bungeni.alchemist import Session
 import bungeni.models.domain as domain
 import bungeni.models.schema as schema
 import bungeni.models.interfaces as interfaces

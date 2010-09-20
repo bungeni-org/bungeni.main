@@ -1042,7 +1042,7 @@
         permission="bungeni.tableddocument.Add"
     />
     <!--browser:menuItem
-     for="ore.alchemist.interfaces.IAlchemistContainer"
+     for="bungeni.alchemist.interfaces.IAlchemistContainer"
      menu="context_actions"
      title="Listing"
      action="index"
@@ -1122,7 +1122,7 @@
          values SHOULD be grouped in a <menuItems> declaration.
     -->
     <browser:menuItems menu="context_actions"
-        for="ore.alchemist.interfaces.IAlchemistContent"
+        for="bungeni.alchemist.interfaces.IAlchemistContent"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         >
         <browser:menuItem action="view" title="View" order="0" />

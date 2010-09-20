@@ -18,9 +18,9 @@ from bungeni.models import domain
 from bungeni.models.interfaces import IBungeniApplication, IBungeniGroup, ICommittee
 from bungeni.core.interfaces import ISchedulingContext
 
-from ore.alchemist import Session
-from ore.alchemist.container import contained
-from ore.alchemist.model import queryModelDescriptor
+from bungeni.alchemist import Session
+from bungeni.alchemist.container import contained
+from bungeni.alchemist.model import queryModelDescriptor
 from ore.workflow.interfaces import IWorkflow
 
 from bungeni.ui.tagged import get_states

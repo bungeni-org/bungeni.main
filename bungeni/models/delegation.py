@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
-from ore.alchemist import Session
+from bungeni.alchemist import Session
 import sqlalchemy as rdb
 import  domain
 

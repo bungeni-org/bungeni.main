@@ -27,8 +27,7 @@
   <adapter factory=".webdav.FieldStorage" />
   <adapter factory=".webdav.FileFieldWriter" />
 
-  <adapter
-     for="ore.alchemist.interfaces.IAlchemistContent
+    <adapter for="bungeni.alchemist.interfaces.IAlchemistContent
           z3c.dav.interfaces.IWebDAVRequest"
      factory="z3c.dav.adapters.DAVDublinCore" />
   

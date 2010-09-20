@@ -26,10 +26,10 @@ from zope.publisher.browser import BrowserLanguages
 
 from sqlalchemy import orm, sql
 
-from ore.alchemist import Session
 from plone.i18n.locales.interfaces import ILanguageAvailability
 from zope.i18n.config import ALLOWED_LANGUAGES
 
+from bungeni.alchemist import Session
 from bungeni.core.interfaces import IVersionable
 from bungeni.models.interfaces import IVersion, ITranslatable
 from bungeni.models import domain

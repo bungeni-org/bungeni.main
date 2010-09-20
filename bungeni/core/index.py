@@ -28,12 +28,10 @@ from zope.security.proxy import removeSecurityProxy
 import xappy, os, os.path as path
 import logging
 
-#from sqlalchemy.orm.session import Session
-from ore.alchemist import Session
 from sqlalchemy import exceptions
-from ore.alchemist import container
-# !+checkPermission(mr, sep-2010) should use: bungeni.ui.container.stringKey
-from ore.alchemist import model
+from bungeni.alchemist import Session
+from bungeni.alchemist import container
+from bungeni.alchemist import model
 from ore.xapian import search, queue, interfaces as iindex
 
 from bungeni.models.schema import metadata

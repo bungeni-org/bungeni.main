@@ -15,10 +15,10 @@ from sqlalchemy import orm
 import sqlalchemy as rdb
 
 from ore.workflow import interfaces
-from ore.alchemist.interfaces import IAlchemistContainer
-from ore.alchemist.interfaces import IAlchemistContent
-
 from ore.workflow.interfaces import IWorkflowInfo
+
+from bungeni.alchemist.interfaces import IAlchemistContainer
+from bungeni.alchemist.interfaces import IAlchemistContent
 from bungeni.core import audit
 from bungeni.core import globalsettings
 from bungeni.ui.forms.workflow import bindTransitions

@@ -15,10 +15,9 @@ from zope.schema.interfaces import IContextSourceBinder
 from zope.schema import vocabulary
 from zope.security.proxy import removeSecurityProxy
 
-from ore.alchemist import Session
-from ore.alchemist.container import valueKey
-from ore.alchemist.container import stringKey
-# !+checkPermission(mr, sep-2010) should use: bungeni.ui.container.stringKey
+from bungeni.alchemist import Session
+from bungeni.alchemist.container import valueKey
+from bungeni.alchemist.container import stringKey
 
 from bungeni.models import domain
 from bungeni.models import schema

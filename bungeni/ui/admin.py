@@ -2,7 +2,7 @@ from zope import schema, component
 from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from zope.publisher.browser import BrowserView
 from zope.formlib import form
-from ore.alchemist import Session
+from bungeni.alchemist import Session
 
 from bungeni.models import domain, interfaces, utils
 from alchemist.ui import content

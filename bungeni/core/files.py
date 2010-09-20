@@ -8,7 +8,7 @@ from zope.location.interfaces import ILocation
 from zope.event import notify
 
 from sqlalchemy import orm
-from ore.alchemist import Session
+from bungeni.alchemist import Session
 
 from bungeni.core import interfaces
 from bungeni.models import schema as dbschema

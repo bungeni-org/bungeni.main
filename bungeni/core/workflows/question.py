@@ -11,7 +11,7 @@ from bungeni.core.workflows import dbutils, utils
 from bungeni.core.i18n import _
 from bungeni.models import domain
 from bungeni.models.utils import get_principal_id
-from ore.alchemist import Session
+from bungeni.alchemist import Session
 
 
 class conditions(object):

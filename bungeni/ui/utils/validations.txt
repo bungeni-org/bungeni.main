@@ -2,12 +2,11 @@ Setup
 -----
 Setting up Database Connection and Utilities:
 
-   >>> from ore.alchemist import Session
    >>> from bungeni.models import domain
    >>> import datetime
    >>> import bungeni.models.testing
    >>> db = bungeni.models.testing.setup_db()
-   >>> from ore.alchemist import Session
+   >>> from bungeni.alchemist import Session
    >>> session = Session()
    >>> from bungeni.ui.forms.test_dates import today, yesterday, tomorrow, dayat
    >>> from bungeni.ui.queries import utils

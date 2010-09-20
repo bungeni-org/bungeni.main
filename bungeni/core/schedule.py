@@ -26,9 +26,9 @@ from bungeni.core.globalsettings import getCurrentParliamentId
 from bungeni.core.i18n import _
 from bungeni.core.proxy import LocationProxy
 from bungeni.ui.calendar import utils
-
-from ore.alchemist import Session
+from bungeni.alchemist import Session
 from sqlalchemy import sql
+
 
 def format_date(date):
     return time.strftime("%Y-%m-%d %H:%M:%S", date.timetuple())

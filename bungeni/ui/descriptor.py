@@ -17,8 +17,7 @@ import zope.app.form.browser
 from zope.i18n import translate
 from zc.table import column
 
-from ore.alchemist import Session
-from ore.alchemist.model import ModelDescriptor
+from bungeni.alchemist.model import ModelDescriptor
 
 from alchemist.ui import widgets
 
@@ -321,9 +320,9 @@ def POBoxOrAddress(obj):
 # Fields
 
 # Each field is described as a dict, for details see:
-# ore.alchemist.model.Field.fromDict(dict)
+# bungeni.alchemist.model.Field.fromDict(dict)
 # 
-# NOTE: contrary to what is indicated in ore.alchemist.model, the "differ" 
+# NOTE: contrary to what is indicated in bungeni.alchemist.model, the "differ" 
 # field descriptor dictionary key is actually ignored. 
 
 def LanguageField(name="language"):
@@ -342,6 +341,12 @@ def LanguageField(name="language"):
 
 ####
 # Descriptors
+
+# !+bungeni.alchemist.model.Field.modes(mr, sep-2010) it seems that the 
+# Field.modes attribute does not work as claimed in the code -- 
+# use exclusively the boolean keyword alternative for each of the 
+# following modes:
+# _valid_modes = ('edit', 'view', 'read', 'add', 'listing', 'search')
 
 class UserDescriptor(ModelDescriptor):
     display_name = _(u"User")
@@ -1800,7 +1805,7 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
         dict(name="supplement_parent_id",
             label=_(u"Initial/supplementary question"),
             view_widget=SupplementaryQuestionDisplay,
-            add=False, 
+            add=False,
             edit=False, 
             view=False
         ),
@@ -1810,7 +1815,7 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
                 required=True
             ),
             listing_column=ministry_column("ministry_id" , _(u"Ministry")),
-            listing=True,
+            listing=True
         ),
         dict(name="approval_date",
             property=schema.Date(title=_(u"Date approved"), required=False),
@@ -1829,18 +1834,18 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
             add=False
         ),
         dict(name="question_type",
-            listing=False,
             property=schema.Choice(title=_(u"Question Type"),
                 description=_("Ordinary or Private Notice"),
                 vocabulary=vocabulary.QuestionType
             ),
+            listing=False
         ),
         dict(name="response_type",
-            listing=False,
             property=schema.Choice(title=_(u"Response Type"),
                 description=_("Oral or Written"),
                 vocabulary=vocabulary.ResponseType
             ),
+            listing=False
         ),
         dict(name="response_text",
             property=schema.TextLine(title=_(u"Response"),
@@ -1851,7 +1856,7 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
             edit_widget=RichTextEditor,
             edit=True,
             view=True,
-            add=False,
+            add=False
         ),
         dict(name="sitting_time",
             label=_(u"Sitting Time"),

@@ -5,11 +5,9 @@ from zope.schema import vocabulary
 from zope.security.proxy import removeSecurityProxy
 from zope.security import checkPermission
 
-import ore.alchemist.vocabulary 
-
-from ore.alchemist import Session
-
-from ore.alchemist.container import valueKey
+import bungeni.alchemist.vocabulary
+from bungeni.alchemist import Session
+from bungeni.alchemist.container import valueKey
 
 from sqlalchemy.orm import mapper,  column_property 
 import sqlalchemy as rdb
@@ -106,7 +104,7 @@ YesNoSource = vocabulary.SimpleVocabulary( [
     vocabulary.SimpleTerm(False, _(u"No"), _(u"No"))] )
 
 
-class DatabaseSource(ore.alchemist.vocabulary.DatabaseSource):
+class DatabaseSource(bungeni.alchemist.vocabulary.DatabaseSource):
 
     def __call__( self, context=None ):
         query = self.constructQuery( context )

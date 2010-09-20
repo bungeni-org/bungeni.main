@@ -19,7 +19,7 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.viewlet import viewlet
 from zope.viewlet.manager import WeightOrderedViewletManager
 
-from ore.alchemist import Session
+from bungeni.alchemist import Session
 
 import bungeni.models.utils  as model_utils
 import bungeni.models.domain as domain

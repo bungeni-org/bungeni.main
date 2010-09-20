@@ -5,7 +5,7 @@ $Id$
 """
 
 from zope import interface
-from ore.alchemist import Session
+from bungeni.alchemist import Session
 from zope.security.proxy import removeSecurityProxy
 from zope.dottedname.resolve import resolve
 from sqlalchemy import orm

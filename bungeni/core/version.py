@@ -9,8 +9,8 @@ from zope.security.proxy import removeSecurityProxy
 from zope.security.interfaces import Unauthorized, ForbiddenAttribute
 
 from sqlalchemy import orm
-from ore.alchemist import container
-from ore.alchemist import Session
+from bungeni.alchemist import container
+from bungeni.alchemist import Session
 
 
 from i18n import _

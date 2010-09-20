@@ -22,8 +22,8 @@ from zope.security.proxy import removeSecurityProxy
 import sqlalchemy.sql.expression as sql
 
 from alchemist import ui
-from ore.alchemist import Session
-from ore.alchemist.model import queryModelDescriptor
+from bungeni.alchemist import Session
+from bungeni.alchemist.model import queryModelDescriptor
 
 from bungeni.models import domain, interfaces
 from bungeni.models.utils import get_offices_held_for_user_in_parliament

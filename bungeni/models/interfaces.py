@@ -2,8 +2,8 @@
 from zope import interface, schema, lifecycleevent
 from zope.component.interfaces import IObjectEvent, ObjectEvent
 from zope.app.container.interfaces import IContainer
-from ore.alchemist.interfaces import IAlchemistContent
-from ore.alchemist.interfaces import IAlchemistContainer
+from bungeni.alchemist.interfaces import IAlchemistContent
+from bungeni.alchemist.interfaces import IAlchemistContainer
 from ore.wsgiapp.interfaces import IApplication
 from i18n import _
 

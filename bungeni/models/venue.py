@@ -6,7 +6,7 @@ import sqlalchemy.sql.expression as sql
 from sqlalchemy.orm import mapper
 import sqlalchemy as rdb
 
-from ore.alchemist import Session
+from bungeni.alchemist import Session
 
 from bungeni.models import domain, schema
 

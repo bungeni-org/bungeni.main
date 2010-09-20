@@ -9,7 +9,7 @@ import zope.lifecycleevent
 
 import sqlalchemy.sql.expression as sql
 
-from ore.alchemist import Session
+from bungeni.alchemist import Session
 
 import bungeni.models.domain as domain
 import bungeni.models.schema as schema
@@ -25,8 +25,8 @@ from ore.workflow.interfaces import IWorkflowInfo
 # imports for main
 from zope import component
 from sqlalchemy import create_engine
-from ore.alchemist.interfaces import IDatabaseEngine
 import ore.workflow.workflow
+from bungeni.alchemist.interfaces import IDatabaseEngine
 import bungeni.core.interfaces
 import bungeni.core.workflows.question
 import bungeni.core.workflows.adapters

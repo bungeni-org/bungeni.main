@@ -5,7 +5,7 @@
            xmlns:db="http://namespaces.objectrealms.net/rdb"
            i18n_domain="bungeni">
 
-  <include package="ore.alchemist" file="meta.zcml" />
+  <include package="bungeni.alchemist" file="meta.zcml" />
   
   <!-- Setup Database Connection -->
   <db:engine

@@ -2,9 +2,9 @@ from zope import interface
 from zope import component
 from zope.security.proxy import removeSecurityProxy
 from zope.dublincore.interfaces import IDCDescriptiveProperties
-from ore.alchemist import Session
-from ore.alchemist.interfaces import IAlchemistContainer
-from ore.alchemist.model import queryModelDescriptor
+from bungeni.alchemist import Session
+from bungeni.alchemist.interfaces import IAlchemistContainer
+from bungeni.alchemist.model import queryModelDescriptor
 
 #from marginalia.interfaces import IMarginaliaAnnotation
 

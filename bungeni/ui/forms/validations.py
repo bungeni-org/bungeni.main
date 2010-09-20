@@ -7,10 +7,9 @@ import datetime
 from zope import interface
 from bungeni.core.i18n import _
 
-from ore.alchemist import Session
-from ore.alchemist.interfaces import IAlchemistContent
-from ore.alchemist.interfaces import IAlchemistContainer
-
+from bungeni.alchemist import Session
+from bungeni.alchemist.interfaces import IAlchemistContent
+from bungeni.alchemist.interfaces import IAlchemistContainer
 
 import sqlalchemy as rdb
 

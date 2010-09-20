@@ -3,7 +3,7 @@ import zope.securitypolicy.interfaces
 
 from zope.security.proxy import removeSecurityProxy
 
-from ore.alchemist import Session
+from bungeni.alchemist import Session
 
 from ore.workflow.workflow import Workflow
 from ore.workflow.workflow import WorkflowInfo

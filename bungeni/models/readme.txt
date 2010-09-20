@@ -7,7 +7,7 @@ Setup
 
 some setup for tests
    >>> from zope import component
-   >>> from ore.alchemist import Session
+   >>> from bungeni.alchemist import Session
    >>> from bungeni import models as model
    >>> import datetime
    >>> from sqlalchemy.orm import mapper

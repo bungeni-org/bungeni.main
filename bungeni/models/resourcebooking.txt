@@ -1,7 +1,7 @@
 Setup
 -----
 
-  >>> from ore.alchemist import Session
+  >>> from bungeni.alchemist import Session
   >>> import copy, datetime
  
   some setup for tests

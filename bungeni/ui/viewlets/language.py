@@ -12,11 +12,11 @@ from zope.app.component.hooks import getSite
 from zope.publisher.browser import BrowserView
 from zope.i18n.negotiator import normalize_lang
 
-from ore.alchemist.interfaces import IAlchemistContainer, IAlchemistContent
-from ore.alchemist.model import queryModelDescriptor
 from ore.wsgiapp.interfaces import IApplication
 from alchemist.traversal.managed import ManagedContainerDescriptor
 
+from bungeni.alchemist.interfaces import IAlchemistContainer, IAlchemistContent
+from bungeni.alchemist.model import queryModelDescriptor
 from bungeni.core.translation import get_all_languages
 from bungeni.core.translation import get_available_translations
 from bungeni.core.app import BungeniApp

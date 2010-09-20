@@ -20,7 +20,7 @@ zcml_slug = """
 <configure xmlns="http://namespaces.zope.org/zope"
            xmlns:db="http://namespaces.objectrealms.net/rdb">
 
-  <include package="ore.alchemist" file="meta.zcml"/>
+  <include package="bungeni.alchemist" file="meta.zcml"/>
   <include package="alchemist.catalyst" file="meta.zcml"/>
 
   <!-- Setup Database Connection -->

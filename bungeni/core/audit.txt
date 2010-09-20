@@ -18,7 +18,7 @@ database imports:
   >>> import sqlalchemy as rdb
   >>> from datetime import datetime
   >>> metadata = rdb.MetaData()
-  >>> from ore.alchemist import Session
+  >>> from bungeni.alchemist import Session
   >>> from bungeni.models.schema import make_changes_table
   >>> from sqlalchemy.orm import mapper
   >>> import bungeni.core.audit as audit

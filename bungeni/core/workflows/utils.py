@@ -9,7 +9,7 @@ from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.security.management import getInteraction
 from zope.publisher.interfaces import IRequest
 
-from ore.alchemist import Session
+from bungeni.alchemist import Session
 from ore.workflow.interfaces import IWorkflowInfo, InvalidTransitionError
 from ore.workflow.interfaces import NoTransitionAvailableError
 import ore.workflow.workflow

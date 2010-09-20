@@ -6,13 +6,13 @@ from zope import security
 from zope.formlib import form
 from zope.i18n import translate
 
-from ore.alchemist.model import queryModelDescriptor
-from ore.alchemist.interfaces import IAlchemistContainer
-from ore.alchemist.interfaces import IAlchemistContent
 from ore.workflow import interfaces
 from alchemist.ui.core import DynamicFields
 from alchemist.ui.viewlet import DisplayFormViewlet
 
+from bungeni.alchemist.model import queryModelDescriptor
+from bungeni.alchemist.interfaces import IAlchemistContainer
+from bungeni.alchemist.interfaces import IAlchemistContent
 from bungeni.ui.forms.workflow import bindTransitions
 from bungeni.ui.i18n import _
 from bungeni.core.translation import get_translation_for, get_all_languages

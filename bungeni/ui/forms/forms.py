@@ -14,7 +14,7 @@ import zope.security.management
 
 from sqlalchemy import sql
 
-from ore.alchemist import Session
+from bungeni.alchemist import Session
 from alchemist.ui import generic
 
 from bungeni.models import domain

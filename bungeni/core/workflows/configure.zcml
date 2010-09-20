@@ -20,13 +20,13 @@
   
   <subscriber
      handler=".events.fireAutomaticTransitions"
-     for="ore.alchemist.interfaces.IAlchemistContent
+     for="bungeni.alchemist.interfaces.IAlchemistContent
           ore.workflow.interfaces.IWorkflowTransitionEvent"
      />
 
   <subscriber
      handler=".events.initializeWorkflow"
-     for="ore.alchemist.interfaces.IAlchemistContent
+     for="bungeni.alchemist.interfaces.IAlchemistContent
           zope.lifecycleevent.IObjectCreatedEvent"
      />
 
@@ -40,12 +40,12 @@
   <!-- generic workflow adapters -->
 
   <adapter
-     for="ore.alchemist.interfaces.IAlchemistContent"
+     for="bungeni.alchemist.interfaces.IAlchemistContent"
      provides="ore.workflow.interfaces.IWorkflowInfo"
      factory="bungeni.core.workflows.states.StateWorkflowInfo"/>
 
   <adapter
-     for="ore.alchemist.interfaces.IAlchemistContent"
+     for="bungeni.alchemist.interfaces.IAlchemistContent"
      provides="ore.workflow.interfaces.IWorkflowState"
      factory=".states.WorkflowState" />
 

@@ -21,7 +21,7 @@ from email.mime.text import MIMEText
 
 import sqlalchemy.sql.expression as sql
 
-from ore.alchemist import Session
+from bungeni.alchemist import Session
 import bungeni.core.workflow.dbutils as dbutils
 import bungeni.core.domain as domain
 import bungeni.core.schema as schema
@@ -33,7 +33,7 @@ from bungeni.server.smtp import dispatch
 # imports for main
 from zope import component
 from sqlalchemy import create_engine
-from ore.alchemist.interfaces import IDatabaseEngine
+from bungeni.alchemist.interfaces import IDatabaseEngine
 #import bungeni.core.interfaces
 from bungeni import core as model
 

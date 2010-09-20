@@ -10,8 +10,8 @@ global settings
 import datetime
 
 import sqlalchemy.sql.expression as sql
-from ore.alchemist import Session
 
+from bungeni.alchemist import Session
 from bungeni.core.i18n import _
 from bungeni.core.app import BungeniApp
 

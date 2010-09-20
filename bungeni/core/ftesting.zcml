@@ -55,11 +55,10 @@
   -->
   <include package="bungeni.core.workflows" file="configure.zcml" />
   
-  <include package="ore.alchemist" file="meta.zcml"/>
+  <include package="bungeni.alchemist" file="meta.zcml"/>
   <include package="alchemist.catalyst" file="meta.zcml"/>
   <include package="ore.xapian" file="meta.zcml" />
   
-  <include package="ore.alchemist" />
   <include package="ore.xapian" />
   <include package="z3c.pt" />
 

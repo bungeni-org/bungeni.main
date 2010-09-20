@@ -9,7 +9,7 @@ First some setup code..
   >>> from bungeni.models import domain, interfaces
   >>> from bungeni.models.interfaces import IAssignmentFactory, IContextAssignments, IContentAssignments 
   >>> from zope.component import getMultiAdapter
-  >>> from ore.alchemist import Session
+  >>> from bungeni.alchemist import Session
   >>> from datetime import datetime
   >>> import transaction
 

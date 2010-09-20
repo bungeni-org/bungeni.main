@@ -14,7 +14,7 @@ from zope.app.publication.interfaces import IBeforeTraverseEvent
 from zope.app.publication.interfaces import IEndRequestEvent
 from zope.annotation.interfaces import IAnnotations
 
-from ore.alchemist import Session
+from bungeni.alchemist import Session
 
 import re
 import interfaces

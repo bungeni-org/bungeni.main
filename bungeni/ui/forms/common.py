@@ -18,11 +18,9 @@ from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.container.contained import ObjectRemovedEvent
 #from zope.app.pagetemplate import ViewPageTemplateFile
 import sqlalchemy as rdb
-from ore.alchemist import Session
 from alchemist.catalyst import ui
 from alchemist.ui.core import null_validator
-from ore.alchemist.model import queryModelDescriptor
-#from bungeni.ui.container import stringKey
+#from bungeni.alchemist.container import stringKey
 #from ore.workflow.interfaces import IWorkflowInfo
 #from alchemist.ui.core import handle_edit_action
 from alchemist.ui.core import setUpFields
@@ -35,6 +33,8 @@ try:
 except ImportError:
     from sqlalchemy.exc import IntegrityError
 
+from bungeni.alchemist import Session
+from bungeni.alchemist.model import queryModelDescriptor
 from bungeni.core.translation import get_language_by_name
 from bungeni.core.translation import get_default_language
 from bungeni.core.translation import is_translation

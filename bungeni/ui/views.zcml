@@ -88,20 +88,17 @@
         allowed_interface="zope.publisher.interfaces.browser.IBrowserPublisher"
     />
 
-  <!-- redirects -->
-  
-  <browser:page
-     name="current"
-     for="bungeni.models.interfaces.IBungeniApplication"
-     permission="zope.Public"
-     class=".redirect.RedirectToCurrent"
-     />
-
-  <browser:view
-     for="ore.alchemist.interfaces.IAlchemistContent"
-     permission="zope.View"
-     name="file-image"
-     class=".file.RawView"
+    <!-- redirects -->
+    
+    <browser:page name="current"
+        for="bungeni.models.interfaces.IBungeniApplication"
+        permission="zope.Public"
+        class=".redirect.RedirectToCurrent"
+    />
+    <browser:view for="bungeni.alchemist.interfaces.IAlchemistContent"
+        permission="zope.View"
+        name="file-image"
+        class=".file.RawView"
     />
 
   <browser:view
@@ -280,7 +277,7 @@
         permission="zope.Public"
     />
     <browser:page name="change_workflow_state"
-        for="ore.alchemist.interfaces.IAlchemistContent"
+        for="bungeni.alchemist.interfaces.IAlchemistContent"
         class=".workflow.WorkflowChangeStateView"
         permission="zope.View"
     />
@@ -357,37 +354,37 @@
     
     <!-- json view of containers-->
     <browser:page name="jsonlisting"
-        for="ore.alchemist.interfaces.IAlchemistContainer"
+        for="bungeni.alchemist.interfaces.IAlchemistContainer"
         permission="zope.Public"
         class=".container.ContainerJSONListing"
     />
     <browser:page name="jsonlisting"
-        for="ore.alchemist.interfaces.IAlchemistContainer"
+        for="bungeni.alchemist.interfaces.IAlchemistContainer"
         permission="zope.Public"
         class=".container.ContainerWFStatesJSONListing"
         layer=".interfaces.IBusinessSectionLayer"
     />
     <browser:page name="jsonlisting"
-        for="ore.alchemist.interfaces.IAlchemistContainer"
+        for="bungeni.alchemist.interfaces.IAlchemistContainer"
         permission="zope.Public"
         class=".container.ContainerWFStatesJSONListing"
         layer=".interfaces.IMembersSectionLayer"
     />
     <browser:page name="jsonlisting"
-        for="ore.alchemist.interfaces.IAlchemistContainer"
+        for="bungeni.alchemist.interfaces.IAlchemistContainer"
         permission="zope.Public"
         class=".container.ContainerWFStatesJSONListing"
         layer=".interfaces.IArchiveSectionLayer"
     />
     <browser:page name="jsontableheaders"
-        for="ore.alchemist.interfaces.IAlchemistContainer"
+        for="bungeni.alchemist.interfaces.IAlchemistContainer"
         permission="zope.Public"
         class=".container.ContainerJSONTableHeaders"
     />
 
     <!-- container UI -->
     <browser:page name="index"
-        for="ore.alchemist.interfaces.IAlchemistContainer"
+        for="bungeni.alchemist.interfaces.IAlchemistContainer"
         permission="zope.Public"
         menu="context_actions"
         title="Listing"

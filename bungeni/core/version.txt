@@ -15,7 +15,7 @@ Adding a question.
 
   >>> from bungeni.models.testing import add_content
   >>> from bungeni.models import domain
-  >>> from ore.alchemist import Session
+  >>> from bungeni.alchemist import Session
   >>> session = Session()
 
 

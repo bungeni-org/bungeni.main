@@ -16,7 +16,7 @@ Setting up database connection and utilities:
   >>> setup_adapters()
   >>> setup_security_adapters()
   
-  >>> from ore.alchemist import Session
+  >>> from bungeni.alchemist import Session
   >>> session = Session()
   
 Imports.

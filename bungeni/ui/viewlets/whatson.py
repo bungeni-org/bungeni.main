@@ -4,7 +4,7 @@ from zope import interface
 from zope.publisher.browser import BrowserView
 from zope.app.pagetemplate import ViewPageTemplateFile
 
-from ore.alchemist import Session
+from bungeni.alchemist import Session
 from sqlalchemy.orm import eagerload, lazyload
 import sqlalchemy.sql.expression as sql
 

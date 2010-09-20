@@ -1,10 +1,11 @@
 from zope.i18n import translate
 
+from bungeni.alchemist import Session
 from bungeni.models import domain
 from bungeni.server.smtp import dispatch
+
 from email.mime.text import MIMEText
 
-from ore.alchemist import Session
 
 def get_owner_email(context):
     session = Session()

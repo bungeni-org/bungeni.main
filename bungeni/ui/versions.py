@@ -13,7 +13,7 @@ from zope.security.interfaces import ForbiddenAttribute
 
 from sqlalchemy import orm
 
-from ore.alchemist.interfaces import IIModelInterface
+from bungeni.alchemist.interfaces import IIModelInterface
 
 from bungeni.ui.i18n import MessageFactory as _
 from bungeni.ui.table import TableFormatter

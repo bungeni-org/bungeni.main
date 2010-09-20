@@ -10,7 +10,7 @@ from zope.app.security.interfaces import PrincipalLookupError
 from repoze.who.interfaces import IAuthenticator
 from repoze.who.interfaces import IMetadataProvider
 
-from ore.alchemist import Session
+from bungeni.alchemist import Session
 from sqlalchemy.exceptions import UnboundExecutionError
 import sqlalchemy as rdb
 from sqlalchemy.orm import eagerload, lazyload

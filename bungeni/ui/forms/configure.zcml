@@ -31,7 +31,7 @@
 
   <browser:page
      name="view"
-     for="ore.alchemist.interfaces.IAlchemistContent"
+        for="bungeni.alchemist.interfaces.IAlchemistContent"
      class=".common.DisplayForm"
      permission="zope.View"
      layer="bungeni.ui.interfaces.IBungeniSkin"
@@ -39,7 +39,7 @@
 
   <browser:page
      name="add"
-     for="ore.alchemist.interfaces.IAlchemistContainer"
+        for="bungeni.alchemist.interfaces.IAlchemistContainer"
      class=".common.AddForm"
      permission="zope.ManageContent"
      layer="bungeni.ui.interfaces.IBungeniSkin"
@@ -47,7 +47,7 @@
 
   <browser:page
      name="edit"
-     for="ore.alchemist.interfaces.IAlchemistContent"
+        for="bungeni.alchemist.interfaces.IAlchemistContent"
      class=".common.EditForm"
      permission="zope.ManageContent"
      layer="bungeni.ui.interfaces.IBungeniSkin"
@@ -55,7 +55,7 @@
 
   <browser:page
      name="delete"
-     for="ore.alchemist.interfaces.IAlchemistContent"
+        for="bungeni.alchemist.interfaces.IAlchemistContent"
      class=".common.DeleteForm"
      permission="zope.ManageContent"
      layer="bungeni.ui.interfaces.IBungeniSkin"
@@ -117,7 +117,7 @@
   
   <browser:page
      name="translate"
-     for="ore.alchemist.interfaces.IAlchemistContent"
+        for="bungeni.alchemist.interfaces.IAlchemistContent"
      class=".common.TranslateForm"
      permission="zope.ManageContent"
      />
@@ -132,7 +132,7 @@
      name="alchemist.attributes.view"
      manager="alchemist.ui.interfaces.IContentViewManager"
      class=".fields.BungeniAttributeDisplay"
-     for="ore.alchemist.interfaces.IAlchemistContent"
+        for="bungeni.alchemist.interfaces.IAlchemistContent"
      permission="zope.View"
      allowed_interface="zope.formlib.interfaces.ISubPageForm"
      layer="bungeni.ui.interfaces.IBungeniSkin"

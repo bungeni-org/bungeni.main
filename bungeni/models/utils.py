@@ -17,7 +17,7 @@ from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.securitypolicy.settings import Allow, Deny
 from zope.security.management import getInteraction
 from zope.publisher.interfaces import IRequest
-from ore.alchemist import Session
+from bungeni.alchemist import Session
 import sqlalchemy as rdb
 from sqlalchemy import sql
 from sqlalchemy.orm import eagerload  #, lazyload
@@ -70,7 +70,7 @@ def get_current_parliament(context=None):
 def container_getter(parent_container_or_getter, name, query_modifier=None):
     """Get a child container with name from the specified parent 
     container/container_callback."""
-    #from ore.alchemist.interfaces import IAlchemistContainer
+    #from bungeni.alchemist.interfaces import IAlchemistContainer
     # !+ the parent container SHOULD be implementing IAlchemistContainer but it
     # does not seem to! As a best alternative, that is close but conceptually 
     # not quite the same, we check for IBungeniGroup
