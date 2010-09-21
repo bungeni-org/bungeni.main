@@ -24,7 +24,6 @@ from bungeni.ui.utils import url, date, debug
 from bungeni.ui import cookies
 
 
-
 def query_iterator(query, parent, permission=None):
     """Generator of the items in a query. 
     
@@ -398,8 +397,8 @@ class JSLCache(object):
     
     def clear(self):
         # !+ encapsulate as a evoque.collection.Cache.clear() method
-        jslc.cache.cache.clear()
-        jslc.cache.order[:] = []
+        self.cache.cache.clear()
+        self.cache.order[:] = []
 
 
 JSLCaches = {
@@ -488,7 +487,7 @@ def invalidate_caches_for(class_name, action):
         for jslc in CacheByClassName[class_name]:
             log.debug("Invalidating [descriptor: %s] cache [num items: %i] "
                 "on [%s] of an instance of [%s]" % (
-                    jslc.descriptor.__name__,
+                    jslc.descriptor.__class__.__name__,
                     len(jslc.cache.order),
                     action, 
                     class_name))
@@ -496,5 +495,4 @@ def invalidate_caches_for(class_name, action):
     else:
         log.warn("No cache for class_name [%s] / action [%s] " % (
             class_name, action))
-
 
