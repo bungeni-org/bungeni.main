@@ -1,7 +1,8 @@
 <configure xmlns='http://namespaces.zope.org/zope'
-           xmlns:meta="http://namespaces.zope.org/meta"
-           i18n_domain="zalchemy">
-
-  <include package="ore.alchemist" file="meta.zcml"/>
-  
+    xmlns:meta="http://namespaces.zope.org/meta"
+    i18n_domain="zalchemy">
+    
+    <include package="ore.alchemist" file="meta.zcml"/>
+    
 </configure>
+

@@ -2,12 +2,16 @@
 # Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
 # Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
-"""Bungeni Alchemist interfaces
+"""Bungeni Alchemist interfaces - [
+    ore.alchemist.interfaces
+]
 
 $Id$
 """
 log = __import__("logging").getLogger("bungeni.alchemist")
 
+
+# ore.alchemist.interfaces
 
 from ore.alchemist.interfaces import IAlchemistContent
 from ore.alchemist.interfaces import IAlchemistContainer

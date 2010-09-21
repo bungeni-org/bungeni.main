@@ -2,17 +2,22 @@
 # Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
 # Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
-"""Bungeni Alchemist container
+"""Bungeni Alchemist container - [
+    ore.alchemist.container
+    alchemist.ui.container
+]
 
 $Id$
 """
 log = __import__("logging").getLogger("bungeni.alchemist")
 
+
+# ore.alchemist.container
+
 from ore.alchemist.container import valueKey
 from ore.alchemist.container import contained
 from ore.alchemist.container import PartialContainer
 
-#
 
 from sqlalchemy import orm
 from zope.security import proxy
@@ -37,4 +42,9 @@ def stringKey(obj):
     identity_values = [ getattr(unproxied, c.name) for c in mapper.primary_key ]
     identity_key = '-'.join(map(str, identity_values))
     return "obj-%s" % (identity_key)
+
+
+# alchemist.ui.container
+
+from alchemist.ui.container import ContainerListing
 

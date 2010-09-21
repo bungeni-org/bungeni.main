@@ -5,8 +5,11 @@
 """Bungeni Alchemist -- intermediary to ore.alchemist package
 
 - all bungeni usage of ore.alchemist should go through this package
-- any customizations/fixes of ore.alchemist elements should be done here 
-    (as opposed to sprinkled in various places over the code. 
+- any customizations/enhancements/fixes of ore.alchemist elements should 
+    be done here (as opposed to having forked code sprinkled in various 
+    places over the code). 
+    E.g. of a customization might be as simple as to intercept specific calls 
+    to add logging.
 
 $Id$
 """

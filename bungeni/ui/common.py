@@ -1,5 +1,5 @@
 
-from alchemist.ui import container
+from bungeni.alchemist import container
 from zope.security import proxy
 from ore import yuiwidget
 

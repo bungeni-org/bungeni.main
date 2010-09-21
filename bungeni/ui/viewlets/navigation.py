@@ -25,13 +25,12 @@ from zope.annotation.interfaces import IAnnotations
 
 from ore.wsgiapp.interfaces import IApplication
 
-from alchemist.traversal.managed import ManagedContainerDescriptor
-
 from ploned.ui.menu import make_absolute
 from ploned.ui.menu import pos_action_in_url
 
 from bungeni.alchemist.interfaces import IAlchemistContainer, IAlchemistContent
 from bungeni.alchemist.model import queryModelDescriptor
+from bungeni.alchemist.traversal import ManagedContainerDescriptor
 from bungeni.core import location
 from bungeni.ui.utils import url, debug
 from bungeni.ui import interfaces

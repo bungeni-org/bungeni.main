@@ -15,8 +15,9 @@ log = __import__("logging").getLogger("bungeni.models.domain")
 import md5, random, string
 
 from zope import interface, location, component
-from bungeni.alchemist import model, Session
-from alchemist.traversal.managed import one2many
+from bungeni.alchemist import Session
+from bungeni.alchemist import model
+from bungeni.alchemist.traversal import one2many
 from zope.location.interfaces import ILocation
 import sqlalchemy.sql.expression as sql
 
