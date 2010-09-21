@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: Wed Jul  7 15:15:45 2010\n"
-"PO-Revision-Date: 2010-09-20 01:24+0300\n"
-"Last-Translator: Flavio <flavio.zeni@gmail.com>\n"
+"PO-Revision-Date: 2010-09-21 14:34+0300\n"
+"Last-Translator: Ashok <ashok@parliaments.info>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
@@ -1137,7 +1137,7 @@ msgstr "aggiornare prima lettura"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:52
 msgid "Schedule First Report Reading"
-msgstr "metti in calendario "prima lettura una relazione"
+msgstr "metti in calendario prima lettura una relazione"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:55
 msgid "Send/Resend to Select Committee (II)"
