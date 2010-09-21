@@ -361,19 +361,19 @@
     <browser:page name="jsonlisting"
         for="bungeni.alchemist.interfaces.IAlchemistContainer"
         permission="zope.Public"
-        class=".container.ContainerWFStatesJSONListing"
+        class=".container.PublicStatesContainerJSONListing"
         layer=".interfaces.IBusinessSectionLayer"
     />
     <browser:page name="jsonlisting"
         for="bungeni.alchemist.interfaces.IAlchemistContainer"
         permission="zope.Public"
-        class=".container.ContainerWFStatesJSONListing"
+        class=".container.PublicStatesContainerJSONListing"
         layer=".interfaces.IMembersSectionLayer"
     />
     <browser:page name="jsonlisting"
         for="bungeni.alchemist.interfaces.IAlchemistContainer"
         permission="zope.Public"
-        class=".container.ContainerWFStatesJSONListing"
+        class=".container.PublicStatesContainerJSONListing"
         layer=".interfaces.IArchiveSectionLayer"
     />
     <browser:page name="jsontableheaders"

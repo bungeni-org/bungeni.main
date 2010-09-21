@@ -11,16 +11,17 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.alchemist")
 
+from sqlalchemy import orm
+from zope.security import proxy
+
+from bungeni.alchemist import model
+
 
 # ore.alchemist.container
 
 from ore.alchemist.container import valueKey
 from ore.alchemist.container import contained
 from ore.alchemist.container import PartialContainer
-
-
-from sqlalchemy import orm
-from zope.security import proxy
 
 def stringKey(obj):
     """Replacement of ore.alchemist.container.stringKey
@@ -47,4 +48,19 @@ def stringKey(obj):
 # alchemist.ui.container
 
 from alchemist.ui.container import ContainerListing
+
+def getFields(context, interface=None, annotation=None):
+    """Generator of all fields that will be displayed in a containerlisting .
+    
+    Redefines alchemist.ui.container.getFields, making use of the 
+    listing_columns declaration of the field's descriptor.
+    """
+    if interface is None: 
+        domain_model = proxy.removeSecurityProxy(context.domain_model)
+        interface = model.queryModelInterface(domain_model)
+    if annotation is None:
+        annotation = model.queryModelDescriptor(interface)
+    for column in annotation.listing_columns:
+        yield interface[column]
+
 

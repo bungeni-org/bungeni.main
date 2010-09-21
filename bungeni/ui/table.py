@@ -2,7 +2,7 @@
 
 from ore.yuiwidget.table import BaseDataTableFormatter
 
-from bungeni.ui import container 
+from bungeni.alchemist import container
 from bungeni.ui import common
 from bungeni.ui.i18n import _
 from zope.i18n import translate

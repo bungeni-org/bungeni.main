@@ -12,36 +12,17 @@ from zope.security import proxy
 from zope.security import checkPermission
 from zope.publisher.browser import BrowserView
 
-from bungeni.alchemist.model import queryModelDescriptor
-from bungeni.alchemist.model import queryModelInterface
-from bungeni.alchemist.container import contained, stringKey
+from bungeni.alchemist import model
+from bungeni.alchemist import container
 
-from bungeni.models.interfaces import IDateRangeFilter
-from bungeni.models.interfaces import ICommitteeContainer
-from bungeni.models.interfaces import IMemberOfParliamentContainer
-from bungeni.models.interfaces import ICommitteeMemberContainer
-from bungeni.models.interfaces import ICommitteeStaffContainer
+from bungeni.models import interfaces as mfaces
 
 from bungeni.core import translation
 
+from bungeni.ui import interfaces as ufaces
 from bungeni.ui.utils import url, date, debug
 from bungeni.ui import cookies
-from bungeni.ui.interfaces import IBusinessSectionLayer, \
-    IMembersSectionLayer, IArchiveSectionLayer
 
-
-def getFields(context, interface=None, annotation=None):
-    """Generator of all fields that will be displayed in a containerlisting .
-    
-    Replacement of alchemist.ui.container.getFields
-    """
-    if interface is None: 
-        model = proxy.removeSecurityProxy(context.domain_model)
-        interface = queryModelInterface(model)
-    if annotation is None:
-        annotation = queryModelDescriptor(interface)
-    for column in annotation.listing_columns:
-        yield interface[column]
 
 
 def query_iterator(query, parent, permission=None):
@@ -67,16 +48,16 @@ def query_filter_date_range(context, request, query, domain_model):
     - else (archive section) pick off start/end date from the request's cookies
     - else try getting a display date off request
     """
-    if ((IBusinessSectionLayer.providedBy(request) and (
-            ICommitteeContainer.providedBy(context) or 
-            ICommitteeMemberContainer.providedBy(context) or
-            ICommitteeStaffContainer.providedBy(context))
+    if ((ufaces.IBusinessSectionLayer.providedBy(request) and (
+            mfaces.ICommitteeContainer.providedBy(context) or 
+            mfaces.ICommitteeMemberContainer.providedBy(context) or
+            mfaces.ICommitteeStaffContainer.providedBy(context))
         ) or
-        (IMembersSectionLayer.providedBy(request) and
-            IMemberOfParliamentContainer.providedBy(context))
+        (ufaces.IMembersSectionLayer.providedBy(request) and
+            mfaces.IMemberOfParliamentContainer.providedBy(context))
     ):
         start_date, end_date = datetime.date.today(), None
-    elif IArchiveSectionLayer.providedBy(request):
+    elif ufaces.IArchiveSectionLayer.providedBy(request):
         start_date, end_date = cookies.get_date_range(request)
     else:
         start_date, end_date = date.getDisplayDate(request), None
@@ -89,7 +70,7 @@ def query_filter_date_range(context, request, query, domain_model):
         end_date = datetime.date(2100, 1, 1)
     
     date_range_filter = component.getSiteManager().adapters.lookup(
-        (interface.implementedBy(domain_model),), IDateRangeFilter)
+        (interface.implementedBy(domain_model),), mfaces.IDateRangeFilter)
     if date_range_filter is not None:
         query = query.filter(date_range_filter(domain_model)).params(
             start_date=start_date, end_date=end_date)
@@ -104,9 +85,10 @@ class ContainerBrowserView(BrowserView):
     def __init__(self, context, request):
         super(ContainerBrowserView, self).__init__(context, request)
         self.domain_model = proxy.removeSecurityProxy(self.context).domain_model
-        self.domain_interface = queryModelInterface(self.domain_model)
-        self.domain_annotation = queryModelDescriptor(self.domain_interface)
-        self.fields = tuple(getFields(
+        self.domain_interface = model.queryModelInterface(self.domain_model)
+        self.domain_annotation = model.queryModelDescriptor(
+            self.domain_interface)
+        self.fields = tuple(container.getFields(
             self.context, self.domain_interface, self.domain_annotation))
         # table keys
         self.table = orm.class_mapper(self.domain_model).mapped_table
@@ -132,7 +114,7 @@ class ContainerJSONListing(ContainerBrowserView):
     permission = "zope.View"
     
     def _get_operator_field_filters(self, field_filter):
-        field_filters = field_filter.strip().split(" ")
+        field_filters = [ ff for ff in field_filter.strip().split(" ") if ff ]
         if "AND" in field_filters:
             operator = " AND "
             while "AND" in field_filters:
@@ -141,8 +123,6 @@ class ContainerJSONListing(ContainerBrowserView):
             operator = " OR " 
         while "OR" in field_filters:
             field_filters.remove("OR")
-        while "" in field_filters:
-            field_filters.remove("")
         return operator, field_filters
     
     def _getFieldFilter(self, fieldname, field_filters, operator):
@@ -211,24 +191,25 @@ class ContainerJSONListing(ContainerBrowserView):
         table, utk = self.table, self.utk
         sort_dir_func = self._sort_dir_funcs.get(self.sort_dir, sql.desc)
         columns = []
+        sort_on_keys = []
         # first process user specified values
         sort_on = self.request.get("sort", None)
         if sort_on:
             sort_on = sort_on[5:]
-        sort_on_keys = []
-        # in the domain model you may replace the sort with another column
-        sort_replace = getattr(self.domain_model, "sort_replace", None) # dict
-        if sort_replace and (sort_on in sort_replace):
-            sort_on_keys = sort_replace[sort_on]
-        elif sort_on and (sort_on in utk):
-            sort_on_keys = [str(table.columns[utk[sort_on]])]
-        for sort_on in sort_on_keys:
-                columns.append(sort_dir_func(sort_on))
+            # in the domain model you may replace the sort with another column
+            sort_replace = getattr(self.domain_model, "sort_replace", None) # dict
+            if sort_replace and (sort_on in sort_replace):
+                sort_on_keys.extend(sort_replace[sort_on])
+            elif sort_on in utk:
+                sort_on_keys.append(str(table.columns[utk[sort_on]]))
+            if sort_on_keys:
+                for sort_on in sort_on_keys:
+                    columns.append(sort_dir_func(sort_on))
         # second, process model defaults
         if self.defaults_sort_on:
-            for sort_on in self.defaults_sort_on:
-                if sort_on not in sort_on_keys:
-                    columns.append(sort_dir_func(sort_on))
+            for dso in self.defaults_sort_on:
+                if dso not in sort_on_keys:
+                    columns.append(sort_dir_func(dso))
         return columns
     
     def getOffsets(self, default_start=0, default_limit=25):
@@ -236,7 +217,9 @@ class ContainerJSONListing(ContainerBrowserView):
         limit = self.request.get("limit", default_limit)
         try:
             start, limit = int(start), int(limit)
-            if not limit:
+            if start < 0:
+                start = default_start
+            if limit <= 0:
                 limit = default_limit
         except ValueError:
             start, limit = default_start, default_limit
@@ -262,33 +245,31 @@ class ContainerJSONListing(ContainerBrowserView):
         that means some footwork around, probably better as another
         set of adapters.
         """
-        def get_anno_getters_by_field_name():
-            # dict of domain_annotation field getters by name, for fast lookup
-            da_getters = dict([ 
-                (da_field.name, getattr(da_field.listing_column, "getter", None)) 
-                for da_field in self.domain_annotation.fields
+        def get_listing_column_getters():
+            # dict of (descriptor) field getters by name, for fast lookup
+            getters = dict([ 
+                (f.name, getattr(f.listing_column, "getter", 
+                    lambda n, field: field.query(n)))
+                for f in self.domain_annotation.fields
             ])
-            return da_getters
-        getters_by_field_name = get_anno_getters_by_field_name()
+            return getters
+        listing_column_getters = get_listing_column_getters()
         values = []
-        for n in nodes:
+        for node in nodes:
             d = {}
             for field in fields:
-                f = field.__name__
-                getter = getters_by_field_name.get(f, None)
-                if getter is not None:
-                    d[f] = v = getter(n, field)
-                else:
-                    d[f] = v = field.query(n)
+                fn = field.__name__
+                d[fn] = listing_column_getters[fn](node, field)
                 # !+i18n_DATE(mr, sep-2010) two problems with the isinstance 
                 # tests below: 
                 # a) they seem to always fail (no field values of this type?)
                 # b) this is incorrect way to localize dates
+                v = d[fn]
                 if isinstance(v, datetime.datetime):
-                    d[f] = v.strftime("%F %I:%M %p")
+                    d[fn] = v.strftime("%F %I:%M %p")
                 elif isinstance(v, datetime.date):
-                    d[f] = v.strftime("%F")
-            d["object_id"] = url.set_url_context(stringKey(n))
+                    d[fn] = v.strftime("%F")
+            d["object_id"] = url.set_url_context(container.stringKey(node))
             values.append(d)
         return values
     
@@ -313,7 +294,8 @@ class ContainerJSONListing(ContainerBrowserView):
             query = query.order_by(order_by)
         # ore.alchemist.container.AlchemistContainer.batch()
         # nodes: [<bungeni.models.domain.Question]
-        nodes = [ contained(ob, self, stringKey(ob)) for ob in 
+        nodes = [ container.contained(ob, self, container.stringKey(ob)) 
+                  for ob in 
                   query_iterator(query, self.context, self.permission) ]
         self.set_size = len(nodes)
         nodes[:] = nodes[start : start + limit]
@@ -340,14 +322,14 @@ class ContainerJSONListing(ContainerBrowserView):
         return self.json_batch(start, limit, lang)
 
 
-class ContainerWFStatesJSONListing(ContainerJSONListing):
+class PublicStatesContainerJSONListing(ContainerJSONListing):
     """JSON Listing based on public workflow states.
     
     Given public states only, for viewing no permission checking is needed.
     Given results are the same (for a given set of input parameters) for all 
     users, they are cached.
     
-    Used for listings for all roles/users in the layers: 
+    Used for listings for all roles/users in the UI layers: 
     IBusinessSectionLayer, IMembersSectionLayer, IArchiveSectionLayer
     """
     permission = None
@@ -359,14 +341,14 @@ class ContainerWFStatesJSONListing(ContainerJSONListing):
             None)
         if public_wfstates:
             query = query.filter(self.domain_model.status.in_(public_wfstates))
-        return super(ContainerWFStatesJSONListing, self
+        return super(PublicStatesContainerJSONListing, self
             ).query_add_filters(query, *filter_strings)
     
     def get_cache_key(self, context, lang, start, limit, sort_direction):
         r, jslc = self.request, JSLCaches[context.__name__]
         filters = tuple(r.get(name) or None for name in jslc.filter_params)
-        # as sort_dir qs_param may have a (overridable) model default, we 
-        # treat it differently than other qs_params (note that sort_on may 
+        # as sort_dir param may have a (overridable) model default, we 
+        # treat it differently than other params (note that sort_on may 
         # also have a model default, but the values here accumulate, so for
         # key uniqueness it suffices to consider only any sort_on parameter 
         # value incoming in the request.
@@ -390,82 +372,92 @@ class ContainerWFStatesJSONListing(ContainerJSONListing):
 # caches for json container listings
 
 import evoque.collection
-import bungeni.ui.descriptor as bud
 
 class JSLCache(object):
     """JSON Listing Cache"""
-    def __init__(self, max_size, descriptor, invalidating_class_names):
+    def __init__(self, max_size, model_interface, invalidating_class_names):
         """ max_size:int - max number of items to cache, 0 implies unlimited,
                 oldest in excess of max are discarded
-            descriptor: domain.descriptor class for this listing
+            model_interface: interface domain model for this listing
             invalidating_class_names:[str] - names of domain classes that 
                 when modified will invalidate this cache
             
             filter_params: [name:str] - query string filter parameter names
         """
         self.cache = evoque.collection.Cache(max_size)
-        self.descriptor = descriptor
+        # descriptor instance
+        self.descriptor = model.queryModelDescriptor(model_interface)
         self.invalidating_class_names = invalidating_class_names
+        #import pdb; pdb.set_trace();
         # dynamically build the incoming (request querystring) filter 
         # parameter names lists from the domain class descriptor
         self.filter_params = [
-            "filter_%s" % (field["name"])
-            for field in self.descriptor.fields
-            if field.get("listing")
+            "filter_%s" % (field_name)
+            for field_name in self.descriptor.listing_columns
         ]
+    
+    def clear(self):
+        # !+ encapsulate as a evoque.collection.Cache.clear() method
+        jslc.cache.cache.clear()
+        jslc.cache.order[:] = []
+
 
 JSLCaches = {
     "committees": 
-        JSLCache(49, bud.CommitteeDescriptor, ["Committee"]),
+        JSLCache(49, mfaces.ICommittee, ["Committee"]),
     "bills": 
-        JSLCache(99, bud.BillDescriptor, ["Bill"]),
+        JSLCache(99, mfaces.IBill, ["Bill"]),
     "assigneditems": 
-        JSLCache(49, bud.ItemGroupItemAssignmentDescriptor, 
+        JSLCache(49, mfaces.IItemGroupItemAssignment, 
             ["ItemGroupItemAssignment"], 
         ),
     "assignedgroups": 
-        JSLCache(49, bud.GroupGroupItemAssignmentDescriptor,
+        JSLCache(49, mfaces.IGroupGroupItemAssignment,
             ["GroupGroupItemAssignment"], 
         ),
     "consignatory": 
-        JSLCache(49, bud.ConsignatoryDescriptor, ["Consignatory"]),
+        JSLCache(49, mfaces.IConsignatory, ["Consignatory"]),
     "questions": 
-        JSLCache(199, bud.QuestionDescriptor, ["Question", "Ministry"]),
+        JSLCache(199, mfaces.IQuestion, ["Question", "Ministry"]),
     "motions": 
-        JSLCache(99, bud.MotionDescriptor, ["Motion"]),
+        JSLCache(99, mfaces.IMotion, ["Motion"]),
     "tableddocuments": 
-        JSLCache(99, bud.TabledDocumentDescriptor, ["TabledDocument"]),
+        JSLCache(99, mfaces.ITabledDocument, ["TabledDocument"]),
     "agendaitems": 
-        JSLCache(99, bud.AgendaItemDescriptor, ["AgendaItem"]),
+        JSLCache(99, mfaces.IAgendaItem, ["AgendaItem"]),
     "preports": 
-        JSLCache(49, bud.ReportDescriptor, ["Report"]),
+        JSLCache(49, mfaces.IReport, ["Report"]),
     "sreports": 
-        JSLCache(49, bud.Report4SittingDescriptor, ["SittingReport"]),
+        JSLCache(49, mfaces.IReport4Sitting, ["SittingReport"]),
     "attendance": 
-        JSLCache(99, bud.AttendanceDescriptor, ["GroupSittingAttendance"]),
+        # !+NAMING(mr, sep-2010) descriptor name: AttendanceDescriptor
+        JSLCache(99, mfaces.IGroupSittingAttendance, ["GroupSittingAttendance"]),
     "parliamentmembers": # alias: "current"
-        JSLCache(99, bud.MpDescriptor, 
+        # !+NAMING(mr, sep-2010) descriptor name: MpDescriptor
+        JSLCache(99, mfaces.IMemberOfParliament, 
             ["MemberOfParliament", "Constituency", "Province", "Region",
                 "PoliticalParty"]
         ),
     "political-groups": # alias: "politicalgroups"
-        JSLCache(49, bud.PoliticalGroupDescriptor, ["PoliticalGroup"]),
+        JSLCache(49, mfaces.IPoliticalGroup, ["PoliticalGroup"]),
     "parliaments": 
-        JSLCache(49, bud.ParliamentDescriptor, ["Parliament"]),
+        JSLCache(49, mfaces.IParliament, ["Parliament"]),
     "governments": 
-        JSLCache(49, bud.GovernmentDescriptor, ["Government"]),
+        JSLCache(49, mfaces.IGovernment, ["Government"]),
     "sessions": 
-        JSLCache(49, bud.SessionDescriptor, ["ParliamentSession"]),
+        # !+NAMING(mr, sep-2010) descriptor name: SessionDescriptor
+        JSLCache(49, mfaces.IParliamentSession, ["ParliamentSession"]),
     "sittings": 
-        JSLCache(49, bud.SittingDescriptor, ["GroupSitting"]),
+        # !+NAMING(mr) descriptor name: SittingDescriptor
+        JSLCache(49, mfaces.IGroupSitting, ["GroupSitting"]),
     "committeestaff": 
-        JSLCache(49, bud.CommitteeStaffDescriptor, ["CommitteeStaff"]),
+        JSLCache(49, mfaces.ICommitteeStaff, ["CommitteeStaff"]),
     "committeemembers": 
-        JSLCache(49, bud.CommitteeMemberDescriptor, ["CommitteeMember"]),
+        JSLCache(49, mfaces.ICommitteeMember, ["CommitteeMember"]),
     "ministries": 
-        JSLCache(49, bud.MinistryDescriptor, ["Ministry"]),
+        JSLCache(49, mfaces.IMinistry, ["Ministry"]),
     "constituencies": 
-        JSLCache(49, bud.ConstituencyDescriptor, ["Constituency"]),
+        JSLCache(49, mfaces.IConstituency, ["Constituency"]),
 }
 # aliases for same JSLCache instances
 JSLCaches["politicalgroups"] = JSLCaches["political-groups"] 
@@ -473,7 +465,7 @@ JSLCaches["current"] = JSLCaches["parliamentmembers"]
 
 
 def get_CacheByClassName():
-    """ build mapping of class_name to caches to invalidate."""
+    """ build mapping of class_name to JSLCaches to invalidate."""
     CacheByClassName = {} # {class_name: set(JSCache.cache)}
     for jslc in JSLCaches.values():
         for class_name in jslc.invalidating_class_names:
@@ -487,7 +479,7 @@ def invalidate_caches_for(class_name, action):
     of an instance of the specified domain class_name.
     
     class_name: domain class name for the modified instance 
-    action: edit | add | delete
+    action: originating action (see code for allowed values)
     """
     assert action in ("add", "edit", "delete", "translate"), \
         "Unknown cache invalidation action: %s" % action
@@ -500,9 +492,7 @@ def invalidate_caches_for(class_name, action):
                     len(jslc.cache.order),
                     action, 
                     class_name))
-            # !+ encapsulate as a clear() method on evoque.collection.Cache
-            jslc.cache.cache.clear()
-            jslc.cache.order[:] = []
+            jslc.clear()
     else:
         log.warn("No cache for class_name [%s] / action [%s] " % (
             class_name, action))
