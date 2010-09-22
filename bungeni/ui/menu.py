@@ -44,7 +44,7 @@ def get_actions(name, context, request):
     items = menu.getMenuItems(context, request)
     
     site_url = url.absoluteURL(getSite(), request)
-    _url = ui_url.absoluteURL(context, request)
+    _url = url.absoluteURL(context, request)
     
     for item in items:
         item["url"] = url.urljoin(_url, item["action"])

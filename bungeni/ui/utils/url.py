@@ -5,7 +5,7 @@
 """URL path/name utilities for the UI
 
 recommended usage:
-from bungeni.ui.utils import url as ui_url
+from bungeni.ui.utils import url
 
 $Id$
 """
