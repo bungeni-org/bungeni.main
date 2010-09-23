@@ -18,7 +18,7 @@ from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.container.contained import ObjectRemovedEvent
 #from zope.app.pagetemplate import ViewPageTemplateFile
 import sqlalchemy as rdb
-from alchemist.catalyst import ui
+from bungeni.alchemist import catalyst
 from alchemist.ui.core import null_validator
 #from bungeni.alchemist.container import stringKey
 #from ore.workflow.interfaces import IWorkflowInfo
@@ -233,7 +233,7 @@ class PageForm(BaseForm, formlib.form.PageForm, browser.BungeniBrowserView):
     template = z3evoque.PageViewTemplateFile("form.html#page")
 
 
-class DisplayForm(ui.DisplayForm, browser.BungeniBrowserView):
+class DisplayForm(catalyst.DisplayForm, browser.BungeniBrowserView):
     
     # evoque
     template = z3evoque.PageViewTemplateFile("content.html#view")
@@ -247,7 +247,7 @@ class DisplayForm(ui.DisplayForm, browser.BungeniBrowserView):
         return self.template()
 
 
-class AddForm(BaseForm, ui.AddForm):
+class AddForm(BaseForm, catalyst.AddForm):
     """Custom add-form for Bungeni content.
 
     Additional actions are set up to allow users to continue editing
@@ -413,7 +413,7 @@ class AddForm(BaseForm, ui.AddForm):
                              "/add?portal_status_message=%s Added" % name
                               
 
-class EditForm(BaseForm, ui.EditForm):
+class EditForm(BaseForm, catalyst.EditForm):
     """Custom edit-form for Bungeni content.
     """
     

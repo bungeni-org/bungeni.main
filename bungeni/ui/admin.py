@@ -3,21 +3,22 @@ from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from zope.publisher.browser import BrowserView
 from zope.formlib import form
 from bungeni.alchemist import Session
+from bungeni.alchemist import catalyst
 
 from bungeni.models import domain, interfaces, utils
 from alchemist.ui import content
 
-from alchemist.catalyst.ui import EditForm
-
 import common, search
 from zope.viewlet import viewlet
+
 
 class Menu(viewlet.ViewletBase):
     
     template = ViewPageTemplateFile("templates/admin-menu-viewlet.pt")
-
+    
     def render(self):
         return self.template()
+
 
 class UserFormatter(common.AjaxTableFormatter):
     i = interfaces.IUser
@@ -28,8 +29,10 @@ class UserFormatter(common.AjaxTableFormatter):
     def getFields(self):
         return self.fields
 
+
 class UserListing(BrowserView):
     pass
+
 
 class GroupFormatter(common.AjaxTableFormatter):
     i = interfaces.IGroup
@@ -38,23 +41,25 @@ class GroupFormatter(common.AjaxTableFormatter):
     def getFields(self):
         return self.fields
 
+
 class GroupListing(common.AjaxContainerListing):
     formatter_factory = GroupFormatter
 
+
 class UserQueryJSON(search.ConstraintQueryJSON):
+    
     def getConstraintQuery(self):
         return self.searcher.query_field("object_kind", "user")
-
+    
     def formatResults(self, results):
         r = []
         for i in results:
-            r.append(
-                dict(
-                    login = i.data.get("login", ("",))[0],
-                    title = i.data.get("title", ("",))[0],
-                    email = i.data.get("email", ("",))[0],
-                    object_type=i.data.get("object_type",("",))[0],
-                ))
+            r.append(dict(
+                login=i.data.get("login", ("",))[0],
+                title=i.data.get("title", ("",))[0],
+                email=i.data.get("email", ("",))[0],
+                object_type=i.data.get("object_type", ("",))[0]
+            ))
         return r
         
 
@@ -62,10 +67,12 @@ class GroupQueryJSON(search.ConstraintQueryJSON):
     def getConstraintQuery(self):
         return self.searcher.query_field("object_kind", domain.Group.__name__)
 
+
 class Index(BrowserView):
     pass
 
-class Settings(EditForm):
+
+class Settings(catalyst.EditForm):
 
     form_fields = form.Fields(interfaces.IBungeniSettings)
         
@@ -98,8 +105,9 @@ class UserGroups(BrowserView):
     
     def table(self):
         pass
-    
-class UserSettings(EditForm):
+
+
+class UserSettings(catalyst.EditForm):
 
     form_fields = form.Fields(interfaces.IBungeniUserSettings, interfaces.IUser)
     form_fields = form_fields.omit("user_id", "login", "date_of_death", "status")
@@ -118,13 +126,6 @@ class UserSettings(EditForm):
             raise SyntaxError("User Settings Only For Database Users")
         self.adapters = {interfaces.IBungeniUserSettings : settings,
                           interfaces.IUser : user}
-        
         super(UserSettings, self).update()
-    
-
-
-
-
-
 
 
