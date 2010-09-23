@@ -21,7 +21,7 @@
   <!-- Bind Security Model to Database (role, permission maps) -->
   <db:bind
      engine="bungeni-db"
-     metadata="alchemist.security.schema.metadata" />
+     metadata="bungeni.alchemist.security.metadata" />
 
   <!-- The ``bungeni.portal`` package is shared between Bungeni (z3)
        and Plone; part of the configuration is platform-dependent -->

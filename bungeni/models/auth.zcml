@@ -9,19 +9,19 @@
     <!-- Global/Local Role/Permission/Principal Maps -->
     <adapter for=".interfaces.IBungeniApplication"
         provides="zope.securitypolicy.interfaces.IPrincipalRoleMap"
-        factory="alchemist.security.role.GlobalPrincipalRoleMap"
+        factory="bungeni.alchemist.security.GlobalPrincipalRoleMap"
     />
     <adapter for=".interfaces.IBungeniApplication"
         provides="zope.securitypolicy.interfaces.IRolePermissionMap"
-        factory="alchemist.security.permission.GlobalRolePermissionMap"
+        factory="bungeni.alchemist.security.GlobalRolePermissionMap"
     />
     <adapter for="bungeni.alchemist.interfaces.IAlchemistContent"
         provides="zope.securitypolicy.interfaces.IPrincipalRoleMap"
-        factory="alchemist.security.role.LocalPrincipalRoleMap"
+        factory="bungeni.alchemist.security.LocalPrincipalRoleMap"
     />
     <adapter for="bungeni.alchemist.interfaces.IAlchemistContent"
         provides="zope.securitypolicy.interfaces.IRolePermissionMap"
-        factory="alchemist.security.permission.LocalRolePermissionMap"
+        factory="bungeni.alchemist.security.LocalRolePermissionMap"
     />
 
 </configure>

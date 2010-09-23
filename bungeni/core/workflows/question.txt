@@ -140,7 +140,7 @@ Set up a security mapping.
   >>> qprm = zope.securitypolicy.interfaces.IPrincipalRoleMap(question)
 
   >>> #from zope.securitypolicy.interfaces import IRolePermissionMap  
-  >>> from alchemist.security.permission import LocalRolePermissionMap
+  >>> from bungeni.alchemist.security import LocalRolePermissionMap
   >>> qrpm = LocalRolePermissionMap(question)
   
 Integrity

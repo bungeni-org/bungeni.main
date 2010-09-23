@@ -1,7 +1,7 @@
 import datetime
 
 from zope import component
-from alchemist.security import schema as security
+from bungeni.alchemist.security import schema as security
 from bungeni.alchemist.interfaces import IDatabaseEngine
 from sqlalchemy import create_engine
 from bungeni.models import domain

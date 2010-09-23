@@ -9,8 +9,7 @@ import bungeni.core.version
 import bungeni.models.interfaces
 import bungeni.core.workflows.adapters
 import bungeni.core.workflows.events
-import alchemist.security.permission
-import alchemist.security.role
+import bungeni.alchemist.security
 
 def verify_workflow(wf):
     states = wf.workflow.states
@@ -146,23 +145,23 @@ def setup_security_adapters():
     gsm = zope.component.getGlobalSiteManager()
 
     gsm.registerAdapter(
-        alchemist.security.role.GlobalPrincipalRoleMap,
+        bungeni.alchemist.security.GlobalPrincipalRoleMap,
          (bungeni.models.interfaces.IBungeniApplication, ),
          zope.securitypolicy.interfaces.IPrincipalRoleMap)
 
     gsm.registerAdapter(
-        alchemist.security.permission.GlobalRolePermissionMap,
+        bungeni.alchemist.security.GlobalRolePermissionMap,
          (bungeni.models.interfaces.IBungeniApplication, ),
          zope.securitypolicy.interfaces.IRolePermissionMap)
       
       
     gsm.registerAdapter(
-        alchemist.security.role.LocalPrincipalRoleMap,
+        bungeni.alchemist.security.LocalPrincipalRoleMap,
          (bungeni.models.interfaces.IBungeniContent, ),
          zope.securitypolicy.interfaces.IPrincipalRoleMap)
         
     gsm.registerAdapter(
-        alchemist.security.permission.LocalRolePermissionMap,
+        bungeni.alchemist.security.LocalRolePermissionMap,
          (bungeni.models.interfaces.IBungeniContent, ),
          zope.securitypolicy.interfaces.IRolePermissionMap) 
 

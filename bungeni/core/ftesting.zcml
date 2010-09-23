@@ -75,6 +75,6 @@
 
   <db:bind
      engine="bungeni-db"
-     metadata="alchemist.security.metadata" />
+     metadata="bungeni.alchemist.security.metadata" />
            
 </configure>

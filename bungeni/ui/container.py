@@ -16,6 +16,7 @@ from bungeni.alchemist import model
 from bungeni.alchemist import container
 
 from bungeni.models import interfaces as mfaces
+from bungeni.models import domain
 
 from bungeni.core import translation
 
@@ -350,7 +351,7 @@ class PublicStatesContainerJSONListing(ContainerJSONListing):
         # treat it differently than other params (note that sort_on may 
         # also have a model default, but the values here accumulate, so for
         # key uniqueness it suffices to consider only any sort_on parameter 
-        # value incoming in the request.
+        # value incoming in the request).
         return (lang, start, limit, sort_direction, r.get("sort"), filters)
     
     def __call__(self):
@@ -381,13 +382,16 @@ class JSLCache(object):
             invalidating_class_names:[str] - names of domain classes that 
                 when modified will invalidate this cache
             
+            descriptor: descriptor instance for domain model for this listing
             filter_params: [name:str] - query string filter parameter names
         """
         self.cache = evoque.collection.Cache(max_size)
-        # descriptor instance
         self.descriptor = model.queryModelDescriptor(model_interface)
+        # !+CACHE_INVALIDATION(mr, sep-2010) this should be left open-ended?
+        # sanity check -- ensure every specified (domain) class_name exists
+        for icn in invalidating_class_names:
+            assert getattr(domain, icn), "No such doamin class: %s" % (icn)
         self.invalidating_class_names = invalidating_class_names
-        #import pdb; pdb.set_trace();
         # dynamically build the incoming (request querystring) filter 
         # parameter names lists from the domain class descriptor
         self.filter_params = [
@@ -427,6 +431,8 @@ JSLCaches = {
     "preports": 
         JSLCache(49, mfaces.IReport, ["Report"]),
     "sreports": 
+        # !+NAMING(mr, sep-2010) models.interfaces - no IReport4Sitting class
+        # !+NAMING(mr, sep-2010) descriptor name: Report4SittingDescriptor
         JSLCache(49, mfaces.IReport4Sitting, ["SittingReport"]),
     "attendance": 
         # !+NAMING(mr, sep-2010) descriptor name: AttendanceDescriptor
@@ -459,12 +465,13 @@ JSLCaches = {
         JSLCache(49, mfaces.IConstituency, ["Constituency"]),
 }
 # aliases for same JSLCache instances
-JSLCaches["politicalgroups"] = JSLCaches["political-groups"] 
+JSLCaches["politicalgroups"] = JSLCaches["political-groups"] # !+ same?
 JSLCaches["current"] = JSLCaches["parliamentmembers"]
 
 
 def get_CacheByClassName():
-    """ build mapping of class_name to JSLCaches to invalidate."""
+    """Build mapping of class_name to JSLCaches to invalidate.
+    """
     CacheByClassName = {} # {class_name: set(JSCache.cache)}
     for jslc in JSLCaches.values():
         for class_name in jslc.invalidating_class_names:
