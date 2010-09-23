@@ -18,8 +18,7 @@ from zope.i18n import translate
 from zc.table import column
 
 from bungeni.alchemist.model import ModelDescriptor
-
-from alchemist.ui import widgets
+from bungeni.alchemist.ui import widgets
 
 from bungeni.models import domain
 

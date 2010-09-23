@@ -14,6 +14,7 @@ from zope.security.interfaces import ForbiddenAttribute
 from sqlalchemy import orm
 
 from bungeni.alchemist.interfaces import IIModelInterface
+from bungeni.alchemist.ui import getSelected
 
 from bungeni.ui.i18n import MessageFactory as _
 from bungeni.ui.table import TableFormatter
@@ -25,7 +26,6 @@ from bungeni.ui import forms
 
 from bungeni.core.interfaces import IVersioned
 
-from alchemist.ui.core import getSelected
 from zc.table import column
 
 '''

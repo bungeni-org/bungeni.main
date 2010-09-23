@@ -21,7 +21,7 @@ from zope.security.proxy import removeSecurityProxy
 
 import sqlalchemy.sql.expression as sql
 
-from alchemist import ui
+from bungeni.alchemist.ui import DynamicFields, EditFormViewlet
 from bungeni.alchemist import Session
 from bungeni.alchemist.model import queryModelDescriptor
 
@@ -94,7 +94,7 @@ class UserIdViewlet(viewlet.ViewletBase):
 '''
 
 
-class AttributesEditViewlet(ui.core.DynamicFields, ui.viewlet.EditFormViewlet):
+class AttributesEditViewlet(DynamicFields, EditFormViewlet):
     mode = "edit"
     template = NamedTemplate("alchemist.subform")
     form_name = _(u"General")

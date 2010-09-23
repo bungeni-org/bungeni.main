@@ -19,12 +19,9 @@ from zope.container.contained import ObjectRemovedEvent
 #from zope.app.pagetemplate import ViewPageTemplateFile
 import sqlalchemy as rdb
 from bungeni.alchemist import catalyst
-from alchemist.ui.core import null_validator
 #from bungeni.alchemist.container import stringKey
 #from ore.workflow.interfaces import IWorkflowInfo
-#from alchemist.ui.core import handle_edit_action
-from alchemist.ui.core import setUpFields
-from alchemist.ui.core import unique_columns
+#from bungeni.alchemist.ui import handle_edit_action
 from zope.app.form.interfaces import IDisplayWidget
 
 # !+sqlalchemy.exc(mr, jul-2010) why this try/except ?
@@ -34,7 +31,10 @@ except ImportError:
     from sqlalchemy.exc import IntegrityError
 
 from bungeni.alchemist import Session
+from bungeni.alchemist.ui import null_validator
 from bungeni.alchemist.model import queryModelDescriptor
+from bungeni.alchemist.ui import setUpFields
+from bungeni.alchemist.ui import unique_columns
 from bungeni.core.translation import get_language_by_name
 from bungeni.core.translation import get_default_language
 from bungeni.core.translation import is_translation

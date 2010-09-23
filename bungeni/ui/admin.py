@@ -6,7 +6,6 @@ from bungeni.alchemist import Session
 from bungeni.alchemist import catalyst
 
 from bungeni.models import domain, interfaces, utils
-from alchemist.ui import content
 
 import common, search
 from zope.viewlet import viewlet

@@ -7,8 +7,8 @@ from zope.formlib import form
 from zope.i18n import translate
 
 from ore.workflow import interfaces
-from alchemist.ui.core import DynamicFields
-from alchemist.ui.viewlet import DisplayFormViewlet
+from bungeni.alchemist.ui import DynamicFields
+from bungeni.alchemist.ui import DisplayFormViewlet
 
 from bungeni.alchemist.model import queryModelDescriptor
 from bungeni.alchemist.interfaces import IAlchemistContainer

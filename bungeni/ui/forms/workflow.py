@@ -17,7 +17,7 @@ from bungeni.core.interfaces import IVersioned
 from bungeni.models.utils import get_principal_id
 from bungeni.ui.i18n import _
 from ore.workflow import interfaces
-from alchemist.ui.core import handle_edit_action
+from bungeni.alchemist.ui import handle_edit_action
 
 def createVersion(context, comment=""):
     """Create a new version of an object and return it.
