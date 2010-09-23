@@ -442,7 +442,11 @@ class ParliamentaryItemMinutesViewlet(BungeniAttributeDisplay):
         self.context = context
         self.manager = manager
         trusted = removeSecurityProxy(context)
-        item_id = trusted.parliamentary_item_id
+        try:
+            item_id = trusted.parliamentary_item_id
+        except AttributeError:
+            self.for_display = False
+            return
         self.query = Session().query(domain.ScheduledItemDiscussion).filter(
             sql.and_(
                 domain.ScheduledItemDiscussion.schedule_id == \
@@ -460,6 +464,7 @@ class ParliamentaryItemMinutesViewlet(BungeniAttributeDisplay):
         except IndexError:
             self.context = None
             return
+        
         self.context.__parent__ = parent
         super(ParliamentaryItemMinutesViewlet, self).update()
 
