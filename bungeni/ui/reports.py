@@ -264,7 +264,7 @@ class ReportView(form.PageForm):
                     domain.GroupSitting.group_id == self.context.group_id)
                     ).order_by(domain.GroupSitting.start_date
                     ).options(
-                        eagerload("sitting_type"),
+                        #eagerload("sitting_type"),
                         eagerload("item_schedule"),
                         eagerload("item_schedule.item"),
                         eagerload("item_schedule.discussion"))

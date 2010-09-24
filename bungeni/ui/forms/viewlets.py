@@ -946,8 +946,11 @@ class SessionCalendarViewlet(viewlet.ViewletBase):
         """
         sit_types = {}
         type_results = self.type_query.all()
-        for sit_type in type_results:
-            sit_types[sit_type.sitting_type_id] = sit_type.sitting_type
+        #Sitting type is commented out below because it is not set during
+        #creation of a sitting but is left here because it may be used in the
+        #future related to r7243
+        #for sit_type in type_results:
+        #    sit_types[sit_type.sitting_type_id] = sit_type.sitting_type
         data_list = []
         path = "/calendar/group/sittings/"
         results = self.query.all()
@@ -955,10 +958,9 @@ class SessionCalendarViewlet(viewlet.ViewletBase):
             data = {}
             data["sittingid"] = ("sid_" + str(result.sitting_id))
             data["sid"] = result.sitting_id
-            data["short_name"] = "%s - %s (%s)" % (
+            data["short_name"] = "%s - %s" % (
                 datetime.datetime.strftime(result.start_date, "%H:%M"),
-                datetime.datetime.strftime(result.end_date, "%H:%M"),
-                sit_types[result.sitting_type_id]
+                datetime.datetime.strftime(result.end_date, "%H:%M")
             )
             data["start_date"] = result.start_date
             data["end_date"] = result.end_date
