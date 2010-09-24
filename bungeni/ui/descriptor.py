@@ -1929,20 +1929,21 @@ class SittingDescriptor(ModelDescriptor):
         #Sitting type is commented out below because it is not set during
         #creation of a sitting but is left here because it may be used in the
         #future related to r7243
-        '''dict(name="sitting_type_id",
-            listing_column=sitting_type_column("sitting_type_id",
-                _(u"Sitting Type")
-            ),
-            property=schema.Choice(title=_(u"Sitting Type"),
-                source=vocabulary.SittingTypes(
-                    title_field="sitting_type",
-                    token_field="sitting_type_id",
-                    value_field="sitting_type_id"
-                ),
-                required=True
-            ),
-            listing=True
-        ),'''
+
+        #dict(name="sitting_type_id",
+        #    listing_column=sitting_type_column("sitting_type_id",
+        #        _(u"Sitting Type")
+        #    ),
+        #    property=schema.Choice(title=_(u"Sitting Type"),
+        #        source=vocabulary.SittingTypes(
+        #            title_field="sitting_type",
+        #            token_field="sitting_type_id",
+        #            value_field="sitting_type_id"
+        #        ),
+        #        required=True
+        #    ),
+        #    listing=True
+        #),
         dict(name="start_date",
             property=schema.Datetime(title=_(u"Date"), required=True),
             listing_column=date_from_to_column("start_date", _(u"Start")),
