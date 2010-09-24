@@ -94,7 +94,13 @@ $begin{sittings}
                     ${result["time_from_to"][0]} - ${result["time_from_to"][1]}
                     </a></td>
                 <td>${result["venue"]}</td>
-                <td>${result["sitting_type"]}</td>
+                #[
+!+SITTING_TYPE(mr, sep-2010) the following key lookup is changed to a get() 
+call to glaze over the cases when a sitting.sitting_type is not set.
+For more context see this email thread:
+http://groups.google.com/group/bungeni-dev/browse_thread/thread/2d46b20634798b5e
+                ]#
+                <td>${result.get("sitting_type", "")}</td>
                 <td>${result["group"]}</td>
                 <td>${i18n(result["status"])}</td>
             </tr>
