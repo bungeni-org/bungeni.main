@@ -391,8 +391,8 @@ try to give a second user the chairman role
   >>> form_data['title_name_id'] = user_role_type_chair.user_role_type_id
   >>> validations.validate_member_titles(action=None, data=form_data, 
   ...   context=None, container=member_role_container)
-  [Invalid(u'A person with the title Chair allready exists', 'start_date'), 
-  Invalid(u'A person with the title Chair allready exists', 'end_date')]
+  [Invalid(u'A person with the title Chair already exists', 'start_date'), 
+  Invalid(u'A person with the title Chair already exists', 'end_date')]
 
 as this is not possible just give him the member role:
   >>> member_role3.title_name_id = user_role_type_member.user_role_type_id
@@ -412,8 +412,8 @@ is it possible to edit this role:
 it is not possible to give him the role a second time
   >>> validations.validate_member_titles(action=None, data=form_data, 
   ...   context=None, container=member_role_container)
-  [Invalid(u'This persons allready has the title Member', 'start_date'), 
-  Invalid(u'This persons allready has the title Member', 'end_date')]
+  [Invalid(u'This persons already has the title Member', 'start_date'), 
+  Invalid(u'This persons already has the title Member', 'end_date')]
 
   
 Clean up commit outstanding transactions

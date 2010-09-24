@@ -1614,14 +1614,14 @@ msgstr "(%s) il governo non è stato ancora sciolto"
 #: src/bungeni.main/bungeni/ui/forms/validations.py:356
 #: src/bungeni.main/bungeni/ui/forms/validations.py:370
 #: src/bungeni.main/bungeni/ui/forms/validations.py:375
-msgid "This persons allready has the title %s"
+msgid "This persons already has the title %s"
 msgstr "questa persona ha già il titolo %s"
 
 #: src/bungeni.main/bungeni/ui/forms/validations.py:389
 #: src/bungeni.main/bungeni/ui/forms/validations.py:394
 #: src/bungeni.main/bungeni/ui/forms/validations.py:409
 #: src/bungeni.main/bungeni/ui/forms/validations.py:414
-msgid "A person with the title %s allready exists"
+msgid "A person with the title %s already exists"
 msgstr "una persona con la %s titolo esiste già"
 
 #: src/bungeni.main/bungeni/ui/forms/validations.py:40

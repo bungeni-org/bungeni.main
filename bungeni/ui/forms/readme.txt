@@ -253,7 +253,7 @@ Some titles must be unique inside a group
    
 second check for same title at a time
 
-A president is allready there
+A president is already there
   
 
 Members do not have to be unique

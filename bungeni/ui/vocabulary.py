@@ -226,8 +226,9 @@ mapper(MemberOfParliament, member_of_parliament)
         
 
 class MemberOfParliamentImmutableSource(SpecializedSource):
-    """if a user is allready assigned to the context 
-    the user will not be editable """
+    """If a user is already assigned to the context 
+    the user will not be editable.
+    """
     def __init__(self, value_field):
         self.value_field = value_field
                           

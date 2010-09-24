@@ -141,7 +141,7 @@ so r1 must not be available any more:
        
    >>> rb.book_resource( sit1, r2 )
    >>> rb.book_resource( sit1, r2 )
-   allready booked
+   already booked
       
    >>> rb.check_bookings( datetime.datetime(2000,1,1,0,0), datetime.datetime(2000,1,2,23,59), r2)
    [<bungeni.models.resourcebooking.BookedResources object at ...>]

@@ -1635,7 +1635,7 @@ msgstr "serikali nyingine bado haijafutwa (%s)"
 #: src/bungeni.main/bungeni/ui/forms/validations.py:370
 #: src/bungeni.main/bungeni/ui/forms/validations.py:375
 #, fuzzy
-msgid "This persons allready has the title %s"
+msgid "This persons already has the title %s"
 msgstr "mtu huyu tayari ana cheo cha %s"
 
 #: src/bungeni.main/bungeni/ui/forms/validations.py:389
@@ -1643,7 +1643,7 @@ msgstr "mtu huyu tayari ana cheo cha %s"
 #: src/bungeni.main/bungeni/ui/forms/validations.py:409
 #: src/bungeni.main/bungeni/ui/forms/validations.py:414
 #, fuzzy
-msgid "A person with the title %s allready exists"
+msgid "A person with the title %s already exists"
 msgstr "mtu mwenye cheo %s yupo tayari"
 
 #: src/bungeni.main/bungeni/ui/forms/validations.py:40
