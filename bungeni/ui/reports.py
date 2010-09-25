@@ -65,53 +65,53 @@ def horizontalMultiCheckBoxWidget(field, request):
     return widget
 
 def availableItems(context):
-    items = ("Bills",
-                "Agenda Items",
-                "Motions",
-                "Questions",
-                "Tabled Documents",
+    items = (_(u"Bills"),
+                _(u"Agenda Items"),
+                _(u"Motions"),
+                _(u"Questions"),
+                _(u"Tabled Documents"),
                 )
     return SimpleVocabulary.fromValues(items)
 
 def billOptions(context):
-    items = ("Title",
-             "Summary",
-             "Text",
-             "Owner",
-             "Cosignatories",
+    items = (_(u"Title"),
+             _(u"Summary"),
+             _(u"Text"),
+             _(u"Owner"),
+             _(u"Cosignatories"),
             )
     return SimpleVocabulary.fromValues(items)
 
 def agendaOptions(context):
-    items = ("Title",
-             "Text",
-             "Owner",
+    items = (_(u"Title"),
+             _(u"Text"),
+             _(u"Owner"),
             )
     return SimpleVocabulary.fromValues(items)
 
 def motionOptions(context):
-    items = ("Title",
-             "Number",
-             "Text",
-             "Owner",
+    items = (_(u"Title"),
+             _(u"Number"),
+             _(u"Text"),
+             _(u"Owner"),
             )
     return SimpleVocabulary.fromValues(items)
 
 def tabledDocumentOptions(context):
-    items = ("Title",
-             "Number",
-             "Text",
-             "Owner",
+    items = (_(u"Title"),
+             _(u"Number"),
+             _(u"Text"),
+             _(u"Owner"),
             )
     return SimpleVocabulary.fromValues(items)
 
 def questionOptions(context):
-    items = ("Title",
-             "Number",
-             "Text",
-             "Owner",
+    items = (_(u"Title"),
+             _(u"Number"),
+             _(u"Text"),
+             _(u"Owner"),
              #"Response",
-             "Type",
+             _(u"Type"),
             )
     return SimpleVocabulary.fromValues(items)
 
