@@ -11,7 +11,9 @@ from zc.resourcelibrary import need
 from zc.table import batching
 
 from z3c.pt.texttemplate import ViewTextTemplateFile
+#from bungeni.ui import z3evoque
 from bungeni.ui.utils import url
+
 
 class TableFormatter(batching.Formatter):
     """The out-of-box table formatter does not let us specify a custom
@@ -37,7 +39,17 @@ class TableFormatter(batching.Formatter):
                          self.renderContents(), self.renderExtra())
             )
 
+
 class ContextDataTableFormatter(BaseDataTableFormatter):
+    
+    # evoque
+    #script = z3evoque.PageViewTemplateFile("container.html#datatable")
+    # !+NEED_ZC_RESOURCE_LIBRARIES(mr, sep-2010)
+    # Evoque rendering needs to take into account any zc.resourcelibrary 
+    # declared additional libs, declared with need() below, see:
+    # zc.resourcelibrary.publication.Response._addDependencies
+    
+    # zpt
     script = ViewTextTemplateFile("templates/datatable.pt")
     
     data_view ="/jsonlisting"
@@ -86,7 +98,6 @@ class ContextDataTableFormatter(BaseDataTableFormatter):
     def __call__(self):
         need('yui-paginator')
         need('yui-dragdrop')
-        
         return '<div id="%s">\n<table %s>\n%s</table>\n%s</div>' % (
             self.prefix,
             self._getCSSClass('table'),

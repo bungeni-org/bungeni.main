@@ -1,10 +1,32 @@
 
-from bungeni.alchemist import container
-from zope.security import proxy
 from ore import yuiwidget
 
-class AjaxContainerListing(container.ContainerListing):
+from zope.security import proxy
+
+from bungeni.alchemist import container
+from bungeni.alchemist import model
+from bungeni.ui import browser
+from bungeni.ui import z3evoque
+
+
+class AjaxContainerListing(
+    container.ContainerListing, 
+    browser.BungeniBrowserView
+):
     formatter_factory = yuiwidget.ContainerDataTableFormatter
+    
+    # evoque
+    template = z3evoque.PageViewTemplateFile("container.html#generic")
+    
+    def __call__(self):
+        self.update()
+        return self.template()
+    
+    @property
+    def form_name(self):
+        dm = self.context.domain_model
+        return getattr(model.queryModelDescriptor(dm), "container_name", 
+            dm.__name__)
     
     @property
     def prefix(self):

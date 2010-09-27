@@ -388,7 +388,6 @@
         permission="zope.Public"
         menu="context_actions"
         title="Listing"
-        template="templates/generic-container.pt"
         class=".table.AjaxContainerListing"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />

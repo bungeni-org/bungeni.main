@@ -1,0 +1,42 @@
+#[ $Id$ ]#
+
+#[ was: ui/templates/generic-container.pt ]#
+$begin{generic}
+    $overlay{bungeni.html}
+    $begin{content}
+    $if{ devmode }<!-- template: bungeni/templates/container.html#generic -->$fi
+    <div>
+        #[ !+form_name(mr, sep-2010) shouldn't this just be view.page_title? ]#
+        <h1 class="title">${ i18n(getattr(view, "form_name", " ")) }</h1>
+        <form action="${ request.URL }" 
+            method="post"
+            class="edit-form" 
+            enctype="multipart/form-data"
+            id="alchemist.container.listing">
+            <div>
+            ${ xml(view.listing()) }
+            </div>
+        </form>
+    </div>
+    $end{content}
+$end{generic}
+
+
+#[ was: ui/templates/datatable.pt ]#
+#[ !+NEED_ZC_RESOURCE_LIBRARIES(mr, sep-2010)
+$begin{datatable}
+$if{ devmode }<!-- template: bungeni/templates/container.html#datatable -->$fi
+<script type="text/javascript">
+  (function($$) {
+  $$(document).ready(function() {
+    $$(this).yuiDataTable('${context_name}',
+                         '${link_url}',
+                         '${data_url}',
+                         [${fields}],
+                         [${columns}],
+                         '${table_id}');
+  });
+  })(jQuery);
+</script>
+$end{datatable}
+#]

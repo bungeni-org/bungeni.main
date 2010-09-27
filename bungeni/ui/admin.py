@@ -2,13 +2,12 @@ from zope import schema, component
 from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from zope.publisher.browser import BrowserView
 from zope.formlib import form
+from zope.viewlet import viewlet
+
 from bungeni.alchemist import Session
 from bungeni.alchemist import catalyst
-
 from bungeni.models import domain, interfaces, utils
-
-import common, search
-from zope.viewlet import viewlet
+from bungeni.ui import common, search
 
 
 class Menu(viewlet.ViewletBase):
@@ -33,15 +32,15 @@ class UserListing(BrowserView):
     pass
 
 
-class GroupFormatter(common.AjaxTableFormatter):
-    i = interfaces.IGroup
-    fields = [i["short_name"],i["full_name"], i["start_date"], i["end_date"], 
-              schema.TextLine(title=u"Type", __name__="type")]
-    def getFields(self):
-        return self.fields
-
-
 class GroupListing(common.AjaxContainerListing):
+    
+    class GroupFormatter(common.AjaxTableFormatter):
+        i = interfaces.IGroup
+        fields = [i["short_name"],i["full_name"], i["start_date"], i["end_date"], 
+                  schema.TextLine(title=u"Type", __name__="type")]
+        def getFields(self):
+            return self.fields
+    
     formatter_factory = GroupFormatter
 
 
