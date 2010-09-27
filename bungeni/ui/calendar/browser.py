@@ -86,7 +86,16 @@ def get_sitting_items(sitting, request, include_actions=False):
 
         discussions = tuple(scheduling.discussions.values())
         discussion = discussions and discussions[0] or None
-
+        if discussion is not None:
+            #First hundred characters of a discussion
+            t_discussion = discussion.body_text[0:100]
+            try:
+                #First two lines of the discussion
+                index = t_discussion.index("<br>")
+                index2 = t_discussion.index("<br>", index+4)
+                truncated_discussion = t_discussion[0:index2] + "..."
+            except ValueError:
+                truncated_discussion = t_discussion + "..."
         info = IWorkflowInfo(item, None)
         state_title = info.workflow().workflow.states[item.status].title
         
@@ -101,6 +110,7 @@ def get_sitting_items(sitting, request, include_actions=False):
             #'category_id': scheduling.category_id,
             #'category': scheduling.category,
             'discussion': discussion,
+            'truncated_discussion': truncated_discussion,
             'delete_url': "%s/delete" % url.absoluteURL(scheduling, request),
             'url': url.set_url_context(site_url+('/business/%ss/obj-%s' % (item.type, item.parliamentary_item_id)))}
         
