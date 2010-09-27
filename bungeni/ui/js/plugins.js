@@ -183,12 +183,31 @@
 	
 	    var onSuccess = function(o) {
 	            var discussion_id = "discussion_"+id;
-                var html2 = textarea.val().substring(0,100)+"...";
+                var minutes = textarea.val().substring(0,100);
+                var minutes2 = minutes.indexOf("<br>");
+                var display_minutes = "";
+                if (minutes2 == -1)
+                {
+                    display_minutes = minutes+"...";
+                }
+                else
+                {
+                    var minutes3 = minutes.indexOf("<br>", minutes2+4);
+                    if (minutes3 == -1)
+                    {
+                        display_minutes = minutes + "...";
+                    }
+                    else
+                    {
+                        display_minutes = minutes.substring(0, minutes3)+"...";
+                    }
+                }    
+
                 //$('#'+discussion_id).html("<div>"+html2+"</div>");
                 //alert(discussion_id);
                 //alert(id);
                 var d = document.getElementById(discussion_id);
-                d.innerHTML = "<div>"+html2+"</div>";
+                d.innerHTML = "<div>"+display_minutes+"</div>";
                 //alert(html2);
                 /*
                 var html2 = textarea.val();

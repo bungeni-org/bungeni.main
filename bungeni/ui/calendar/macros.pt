@@ -125,7 +125,7 @@
                      </div>
                     </span>
                      <p tal:define="id repeat/item/number" tal:attributes="id string:discussion_$id">
-                        <span tal:replace="structure body_text" />
+                        <span tal:replace="structure item/truncated_discussion" />
                     </p>
                 </td>
                 <td tal:condition="python:item.t=='heading'"></td>
