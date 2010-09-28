@@ -1,9 +1,9 @@
 # encoding: utf-8
 
-from ore.yuiwidget.table import BaseDataTableFormatter
+from ore import yuiwidget
 
-from bungeni.alchemist import container
-from bungeni.ui import common
+from bungeni import alchemist
+from bungeni.ui import container
 from bungeni.ui.i18n import _
 from zope.i18n import translate
 from zope.security import proxy
@@ -40,7 +40,7 @@ class TableFormatter(batching.Formatter):
             )
 
 
-class ContextDataTableFormatter(BaseDataTableFormatter):
+class ContextDataTableFormatter(yuiwidget.table.BaseDataTableFormatter):
     
     # evoque
     #script = z3evoque.PageViewTemplateFile("container.html#datatable")
@@ -56,7 +56,7 @@ class ContextDataTableFormatter(BaseDataTableFormatter):
     prefix = "listing"
     
     def getFields(self):
-        return container.getFields(self.context)
+        return alchemist.container.getFields(self.context)
 
     def getFieldColumns(self):
         # get config for data table
@@ -105,7 +105,7 @@ class ContextDataTableFormatter(BaseDataTableFormatter):
             self.script(**self.getDataTableConfig()))
 
 
-class AjaxContainerListing(common.AjaxContainerListing):
+class AjaxContainerListing(container.AjaxContainerListing):
     formatter_factory = ContextDataTableFormatter
     
     @property

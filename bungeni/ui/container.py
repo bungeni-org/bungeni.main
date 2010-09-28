@@ -6,6 +6,8 @@ import simplejson
 import sqlalchemy.sql.expression as sql
 from sqlalchemy import types, orm
 
+from ore import yuiwidget
+
 from zope import interface
 from zope import component
 from zope.security import proxy
@@ -23,6 +25,8 @@ from bungeni.core import translation
 from bungeni.ui import interfaces as ufaces
 from bungeni.ui.utils import url, date, debug
 from bungeni.ui import cookies
+from bungeni.ui import browser
+from bungeni.ui import z3evoque
 
 
 def query_iterator(query, parent, permission=None):
@@ -77,13 +81,53 @@ def query_filter_date_range(context, request, query, domain_model):
     return query
 
 
-class ContainerBrowserView(BrowserView):
-    """Base BrowserView Container listing.
+class AjaxContainerListing(
+    container.ContainerListing, 
+    browser.BungeniBrowserView
+):
+    """Container listing as an HTML Page.
+    """
+    formatter_factory = yuiwidget.ContainerDataTableFormatter
+    
+    # evoque
+    template = z3evoque.PageViewTemplateFile("container.html#generic")
+    
+    def __call__(self):
+        self.update()
+        return self.template()
+    
+    @property
+    def form_name(self):
+        dm = self.context.domain_model
+        return getattr(model.queryModelDescriptor(dm), "container_name", 
+            dm.__name__)
+    
+    @property
+    def prefix(self):
+        return "container_contents"
+    
+    @property
+    def formatter(self):
+        context = proxy.removeSecurityProxy(self.context)
+        formatter = self.formatter_factory(
+            context,
+            self.request,
+            (),
+            prefix=self.prefix,
+            columns=self.columns
+        )
+        formatter.cssClasses["table"] = "listing"
+        formatter.table_id = "datacontents"
+        return formatter
+
+
+class ContainerJSONBrowserView(BrowserView):
+    """Base BrowserView Container listing as a JSON AJAX callback.
     """
     permission = None
     
     def __init__(self, context, request):
-        super(ContainerBrowserView, self).__init__(context, request)
+        super(ContainerJSONBrowserView, self).__init__(context, request)
         self.domain_model = proxy.removeSecurityProxy(self.context).domain_model
         self.domain_interface = model.queryModelInterface(self.domain_model)
         self.domain_annotation = model.queryModelDescriptor(
@@ -101,14 +145,14 @@ class ContainerBrowserView(BrowserView):
             getattr(self.domain_model, "sort_dir", "desc")
         )
 
-class ContainerJSONTableHeaders(ContainerBrowserView):
+class ContainerJSONTableHeaders(ContainerJSONBrowserView):
     def __call__(self):
         return simplejson.dumps([ 
             dict(name=field.__name__, title=field.title)
             for field in self.fields 
         ])
 
-class ContainerJSONListing(ContainerBrowserView):
+class ContainerJSONListing(ContainerJSONBrowserView):
     """Paging, batching, sorting, json contents of a container.
     """
     permission = "zope.View"

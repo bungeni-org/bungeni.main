@@ -1,3 +1,6 @@
+
+from ore import yuiwidget
+
 from zope import schema, component
 from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from zope.publisher.browser import BrowserView
@@ -7,7 +10,8 @@ from zope.viewlet import viewlet
 from bungeni.alchemist import Session
 from bungeni.alchemist import catalyst
 from bungeni.models import domain, interfaces, utils
-from bungeni.ui import common, search
+from bungeni.ui import container
+from bungeni.ui import search
 
 
 class Menu(viewlet.ViewletBase):
@@ -17,7 +21,7 @@ class Menu(viewlet.ViewletBase):
     def render(self):
         return self.template()
 
-
+''' !+FORMATTER(mr, sep-2010) unused, remove
 class UserFormatter(common.AjaxTableFormatter):
     i = interfaces.IUser
     fields = [ i["login"], i["first_name"], i["last_name"],
@@ -26,15 +30,15 @@ class UserFormatter(common.AjaxTableFormatter):
     ]
     def getFields(self):
         return self.fields
-
+'''
 
 class UserListing(BrowserView):
     pass
 
 
-class GroupListing(common.AjaxContainerListing):
+class GroupListing(container.AjaxContainerListing):
     
-    class GroupFormatter(common.AjaxTableFormatter):
+    class GroupFormatter(yuiwidget.ContainerDataTableFormatter):
         i = interfaces.IGroup
         fields = [i["short_name"],i["full_name"], i["start_date"], i["end_date"], 
                   schema.TextLine(title=u"Type", __name__="type")]
