@@ -86,11 +86,13 @@ def get_sitting_items(sitting, request, include_actions=False):
 
         discussions = tuple(scheduling.discussions.values())
         discussion = discussions and discussions[0] or None
-        if discussion is not None:
-            #First hundred characters of a discussion
+        truncated_discussion = None
+        if ((discussion is not None) 
+           and (discussion.body_text is not None)):
+            #truncate discussion to first hundred characters
             t_discussion = discussion.body_text[0:100]
             try:
-                #First two lines of the discussion
+                #truncate discussion to first two lines
                 index = t_discussion.index("<br>")
                 index2 = t_discussion.index("<br>", index+4)
                 truncated_discussion = t_discussion[0:index2] + "..."
