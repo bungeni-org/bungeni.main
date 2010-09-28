@@ -167,6 +167,7 @@ def set_get_gettext():
         "bungeni.core": os.path.join(os.path.dirname(os.path.abspath(
             bungeni.core.__file__)), "locales"), 
     }
+    _untranslated = []
     def _get_gettext(i18n_domain, language):
         """Get a _() i18n gettext function bound to domain and language.
         !+ There is probably a better way to do this; the following "obvious"
@@ -188,7 +189,17 @@ def set_get_gettext():
                 log.error(""" [%s] %s [lang=%s]""" % (
                     cls.__name__, exc, language))
                 raise exc
-        return t.gettext
+        # wrap t.gettext to intercept and log possibly untranslated msgids
+        def _gt(msgid):
+            try: 
+                msgstr = t.gettext(msgid)
+                return msgstr
+            finally:
+                if msgid == msgstr and msgid not in _untranslated:
+                    _untranslated.append(msgid)
+                    log.warn('i18n NOT LOCALIZED [%s, %s] "%s"' % (
+                        i18n_domain, language, msgid))
+        return _gt
     global get_gettext
     get_gettext = _get_gettext
 
