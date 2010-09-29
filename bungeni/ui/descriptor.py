@@ -58,7 +58,11 @@ from bungeni.ui.tagged import get_states
 
 ###
 # Listing Columns 
-# 
+#
+
+# !+COLUMN_DEFAULT(mr, sep-2010) why is there a default param on all custom 
+# column getters, that seems to not be used anywhere
+
 def _column(name, title, renderer, default=""):
     def getter(item, formatter):
         value = getattr(item, name)
@@ -99,15 +103,14 @@ def name_column(name, title, default=""):
         return value
     return _column(name, title, renderer, default)
 
-
-def user_name_column(name, title, attr, default=u""):
+def user_name_column(name, title, attr):
     def getter(item, formatter):
         if attr:
             user = getattr(item, attr, None)
-            if user:
-                return u"%s %s" % (user.first_name, user.last_name)
-        else:
-            return u"%s %s" % (item.first_name, item.last_name)
+            assert user is not None, \
+                "Item [%s] may not have None as [%s]" % (item, attr)
+            item = user
+        return u"%s %s" % (item.first_name, item.last_name)
     return column.GetterColumn(title, getter)
 
 
@@ -2101,7 +2104,7 @@ class ConsignatoryDescriptor(ModelDescriptor):
             ),
             listing_column=user_name_column("user_id", 
                 _(u"Cosignatory"),
-                "owner"
+                "user"
             ),
             listing=True,
         ),
