@@ -128,15 +128,14 @@
 
   <!-- content display viewlets -->
   
-  <browser:viewlet
-     name="alchemist.attributes.view"
-     manager="alchemist.ui.interfaces.IContentViewManager"
-     class=".fields.BungeniAttributeDisplay"
+    <browser:viewlet name="alchemist.attributes.view"
+        manager="bungeni.alchemist.interfaces.IContentViewManager"
+        class=".fields.BungeniAttributeDisplay"
         for="bungeni.alchemist.interfaces.IAlchemistContent"
-     permission="zope.View"
-     allowed_interface="zope.formlib.interfaces.ISubPageForm"
-     layer="bungeni.ui.interfaces.IBungeniSkin"
-     />
+        permission="zope.View"
+        allowed_interface="zope.formlib.interfaces.ISubPageForm"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
 
  <!-- Viewlet manager for subforms -->
   
@@ -237,7 +236,7 @@
           
     <!--browser:viewlet
      name="bungeni.viewlet.sittingreportdisplay"
-     manager="alchemist.ui.interfaces.IContentViewManager"
+     manager="bungeni.alchemist.interfaces.IContentViewManager"
      class=".viewlets.SittingReportDisplay"
      for="bungeni.models.interfaces.IReport"
      permission="zope.View"
@@ -247,7 +246,7 @@
 
   <browser:viewlet
      name="bungeni.viewlet.minutes"
-     manager="alchemist.ui.interfaces.IContentViewManager"
+     manager="bungeni.alchemist.interfaces.IContentViewManager"
      class=".viewlets.SchedulingMinutesViewlet"
      for="bungeni.models.interfaces.IItemSchedule"
      permission="zope.View"
@@ -256,7 +255,7 @@
 
   <!--browser:viewlet
      name="bungeni.viewlet.mp-titles"
-     manager="alchemist.ui.interfaces.IContentViewManager"
+     manager="bungeni.alchemist.interfaces.IContentViewManager"
      class=".viewlets.OfficesHeldViewlet"
      for="bungeni.models.interfaces.IMemberOfParliament"
      permission="zope.View"
@@ -312,7 +311,7 @@
 
   <!--browser:viewlet
       name="bungeni.viewlet.mp-partymembership"
-      manager="alchemist.ui.interfaces.IContentViewManager"
+      manager="bungeni.alchemist.interfaces.IContentViewManager"
       class=".viewlets.PartyMembershipViewlet"
       for="bungeni.core.interfaces.IMemberOfParliament"
       permission="zope.View"
@@ -404,7 +403,7 @@
 
   <browser:viewlet
      name="bungeni.viewlet.minstries"
-     manager="alchemist.ui.interfaces.IContentViewManager"
+     manager="bungeni.alchemist.interfaces.IContentViewManager"
      class=".viewlets.MinistriesViewlet"
      for="bungeni.models.interfaces.IGovernment"
      permission="zope.View"
@@ -445,7 +444,7 @@
   
   <browser:viewlet
      name="bungeni.viewlet.minister-titles"
-     manager="alchemist.ui.interfaces.IContentViewManager"
+     manager="bungeni.alchemist.interfaces.IContentViewManager"
      class=".viewlets.OfficesHeldViewlet"
      for="bungeni.models.interfaces.IMinister"
      permission="zope.View"
@@ -454,7 +453,7 @@
 
   <browser:viewlet
      name="bungeni.viewlet.minister-personal-info"
-     manager="alchemist.ui.interfaces.IContentViewManager"
+     manager="bungeni.alchemist.interfaces.IContentViewManager"
      class=".viewlets.PersonInfo"
      for="bungeni.models.interfaces.IMinister"
      permission="zope.View"
@@ -487,49 +486,49 @@
         weight="20"
     />
     <browser:viewlet name="bungeni.viewlet.committees"
-        manager="alchemist.ui.interfaces.IContentViewManager"
+        manager="bungeni.alchemist.interfaces.IContentViewManager"
         class=".viewlets.CommitteesViewlet"
         for="bungeni.models.interfaces.IParliament"
         permission="zope.View"
         weight="10"
     />
     <browser:viewlet name="bungeni.viewlet.member-of-parliament"
-        manager="alchemist.ui.interfaces.IContentViewManager"
+        manager="bungeni.alchemist.interfaces.IContentViewManager"
         class=".viewlets.MemberOfParliamentViewlet"
         for="bungeni.models.interfaces.IParliament"
         permission="zope.View"
         weight="20"
     />
     <browser:viewlet name="bungeni.viewlet.constituency-mp"
-        manager="alchemist.ui.interfaces.IContentViewManager"
+        manager="bungeni.alchemist.interfaces.IContentViewManager"
         class=".viewlets.MemberOfParliamentViewlet"
         for="bungeni.models.interfaces.IConstituency"
         permission="zope.View"
         weight="20"
     />
     <browser:viewlet name="bungeni.viewlet.political-groups"
-        manager="alchemist.ui.interfaces.IContentViewManager"
+        manager="bungeni.alchemist.interfaces.IContentViewManager"
         class=".viewlets.PoliticalGroupsViewlet"
         for="bungeni.models.interfaces.IParliament"
         permission="zope.View"
         weight="30"
     />
     <browser:viewlet name="bungeni.viewlet.government"
-        manager="alchemist.ui.interfaces.IContentViewManager"
+        manager="bungeni.alchemist.interfaces.IContentViewManager"
         class=".viewlets.GovernmentViewlet"
         for="bungeni.models.interfaces.IParliament"
         permission="zope.View"
         weight="40"
     />
     <browser:viewlet name="bungeni.viewlet.session"
-        manager="alchemist.ui.interfaces.IContentViewManager"
+        manager="bungeni.alchemist.interfaces.IContentViewManager"
         class=".viewlets.SessionViewlet"
         for="bungeni.models.interfaces.IParliament"
         permission="zope.View"
         weight="50"
     />
     <browser:viewlet name="bungeni.viewlet.session-sitting-calendar"
-        manager="alchemist.ui.interfaces.IContentViewManager"
+        manager="bungeni.alchemist.interfaces.IContentViewManager"
         class=".viewlets.SessionCalendarViewlet"
         for="bungeni.models.interfaces.IParliamentSession"
         permission="zope.View"
@@ -540,7 +539,7 @@
   
   <!--browser:viewlet
      name="bungeni.viewlet.title-addresses"
-     manager="alchemist.ui.interfaces.IContentViewManager"
+     manager="bungeni.alchemist.interfaces.IContentViewManager"
      class=".viewlets.AddressesViewlet"
      for="bungeni.models.interfaces.IMemberRoleTitle"
      permission="zope.View"
@@ -548,14 +547,14 @@
      /-->
     
     <browser:viewlet name="bungeni.viewlet.party-members"
-        manager="alchemist.ui.interfaces.IContentViewManager"
+        manager="bungeni.alchemist.interfaces.IContentViewManager"
         class=".viewlets.PartyMemberViewlet"
         for="bungeni.models.interfaces.IPoliticalParty"
         permission="zope.View"
         weight="10"
     />
     <browser:viewlet name="bungeni.viewlet.political-group-members"
-        manager="alchemist.ui.interfaces.IContentViewManager"
+        manager="bungeni.alchemist.interfaces.IContentViewManager"
         class=".viewlets.PartyMemberViewlet"
         for="bungeni.models.interfaces.IPoliticalGroup"
         permission="zope.View"
@@ -621,7 +620,7 @@
   
   <!--browser:viewlet
      name="bungeni.viewlet.party-member-titles"
-     manager="alchemist.ui.interfaces.IContentViewManager"
+     manager="bungeni.alchemist.interfaces.IContentViewManager"
      class=".viewlets.OfficesHeldViewlet"
      for="bungeni.models.interfaces.IPartyMember"
      permission="zope.View"

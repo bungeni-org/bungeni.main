@@ -36,34 +36,35 @@ def filterFields(context, form_fields):
             else:
                 omit_names.append(field.__name__)
     elif not IAlchemistContainer.providedBy(context):
-        ctx=getattr(context, 'context', None)
+        ctx=getattr(context, "context", None)
         if ctx:
             filterFields(ctx, form_fields)
         else:
             raise NotImplementedError
     return form_fields.omit(*omit_names)
 
+
 class BungeniAttributeDisplay(DynamicFields, DisplayFormViewlet):
     mode = "view"
-    template = ViewPageTemplateFile('templates/display_form.pt')
+    template = ViewPageTemplateFile("templates/display_form.pt")
     form_name = _(u"General")
     has_data = True
     adapters = None
-
     
     def get_note(self):
-        """ return Notes if supplied by context"""
-        if getattr(self.context, 'note', False):
+        """Return Notes if supplied by context.
+        """
+        if getattr(self.context, "note", False):
             return self.context.note
-
+    
     def setupActions(self):
-        return
-        wf = self.wf = interfaces.IWorkflowInfo(self.context, None)
-        if wf is not None:
+        return # !+ ??
+        self.wf = interfaces.IWorkflowInfo(self.context, None)
+        if self.wf is not None:
             transitions = self.wf.getManualTransitionIds()
             self.actions = tuple(bindTransitions(
-                self, transitions, None, interfaces.IWorkflow( self.context)))
-
+                self, transitions, None, interfaces.IWorkflow(self.context)))
+    
     def setUpWidgets(self, ignore_request=False):
         languages = get_all_languages()
         self.form_fields = filterFields(self.context, self.form_fields)
@@ -81,28 +82,33 @@ class BungeniAttributeDisplay(DynamicFields, DisplayFormViewlet):
             translation = get_translation_for(self.context, lang)
         except:
             translation = []
-        if (not translation) and (getattr(self.context, 'language', None) and
-                (getattr(self.context, 'language', None) != lang)):
+        if (not translation and 
+            getattr(self.context, "language", None) and
+            getattr(self.context, "language", None) != lang
+        ):
             supported_lang = languages.get(lang)
             if supported_lang:
-                langname = supported_lang.get('native',None)
+                langname = supported_lang.get("native", None)
                 if langname == None:
-                    langname = supported_lang.get('name')
+                    langname = supported_lang.get("name")
                 self.status = translate(
-                    _(u'This content is not yet translated into $language', 
-                        mapping={'language': langname}),
+                    _(u"This content is not yet translated into $language", 
+                        mapping={"language": langname}),
                     domain="bungeni.ui",
-                    context=self.request)
+                    context=self.request
+                )
         context = copy(removeSecurityProxy(self.context))
         for field_translation in translation:
             setattr(context, field_translation.field_name, 
                     field_translation.field_text)
         self.widgets = form.setUpEditWidgets(
             self.form_fields, self.prefix, context, self.request,
-            adapters=self.adapters, for_display=True, ignore_request=ignore_request)
-     
-
-    def update( self ):
+            adapters=self.adapters, 
+            for_display=True, 
+            ignore_request=ignore_request
+        )
+    
+    def update(self):
         self.setupActions()
         super(BungeniAttributeDisplay, self).update() 
         self.setupActions()  # after we transition we have different actions
@@ -112,9 +118,9 @@ class BungeniAttributeDisplay(DynamicFields, DisplayFormViewlet):
             self.wf_status = wf_state
         except:
             pass
-
+    
     @property
-    def form_name( self ):
+    def form_name(self):
         parent = self.context.__parent__
         if IAlchemistContainer.providedBy(parent):
             descriptor = queryModelDescriptor(parent.domain_model)
@@ -124,13 +130,13 @@ class BungeniAttributeDisplay(DynamicFields, DisplayFormViewlet):
             raise RuntimeError("Unsupported object: %s." % repr(self.context))
         
         if descriptor:
-            name = getattr(descriptor, 'display_name', None)
-
+            name = getattr(descriptor, "display_name", None)
+        
         if name is None:
             name = self.context.__class__.__name__
-
+        
         return name
-
+        
     def getObjectClass(self):
         return self.context.__class__.__name__
 

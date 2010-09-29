@@ -4,6 +4,7 @@
 
 """Bungeni Alchemist interfaces - [
     ore.alchemist.interfaces
+    alchemist.ui.interfaces
 ]
 
 $Id$
@@ -18,4 +19,6 @@ from ore.alchemist.interfaces import IAlchemistContainer
 from ore.alchemist.interfaces import IDatabaseEngine
 from ore.alchemist.interfaces import IIModelInterface
 from ore.alchemist.interfaces import IRelationChange
+
+from alchemist.ui.interfaces import IContentViewManager
 

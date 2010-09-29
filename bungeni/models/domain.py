@@ -105,11 +105,14 @@ class User(Entity):
 
     sort_on = ['last_name', 'first_name', 'middle_name']
     sort_replace = {'user_id': ['last_name', 'first_name']}
-    addresses = one2many("addresses", "bungeni.models.domain.UserAddressContainer", "user_id")
-    delegations = one2many("delegations", "bungeni.models.domain.UserDelegationContainer", "user_id")
+    addresses = one2many("addresses", 
+        "bungeni.models.domain.UserAddressContainer", "user_id")
+    delegations = one2many("delegations", 
+        "bungeni.models.domain.UserDelegationContainer", "user_id")
     _password = property(getPassword, setPassword)
-
-    bills = one2many("bills", "bungeni.models.domain.BillContainer", "owner_id")
+    
+    bills = one2many("bills", 
+        "bungeni.models.domain.BillContainer", "owner_id")
     questions = one2many("questions",
         "bungeni.models.domain.QuestionContainer", "owner_id")
     motions = one2many("motions",
@@ -160,7 +163,8 @@ class GroupMembership(Entity):
     """ a user's membership in a group- abstract
     basis for ministers, committeemembers, etc
     """
-    interface.implements(interfaces.IBungeniGroupMembership, interfaces.ITranslatable)
+    interface.implements(
+        interfaces.IBungeniGroupMembership, interfaces.ITranslatable)
     sort_on = ['last_name', 'first_name', 'middle_name']
     sort_replace = {'user_id': ['last_name', 'first_name']}
 
