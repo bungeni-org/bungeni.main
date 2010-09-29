@@ -17,6 +17,7 @@ import zope.app.form.browser
 from zope.i18n import translate
 from zc.table import column
 
+from bungeni.alchemist import Session
 from bungeni.alchemist.model import ModelDescriptor
 from bungeni.alchemist.ui import widgets
 
@@ -52,7 +53,7 @@ from bungeni.ui.widgets import NoInputWidget
 from bungeni.ui import constraints
 from bungeni.ui.forms import validations
 from bungeni.ui.i18n import _
-import bungeni.ui.utils as ui_utils
+from bungeni.ui.utils import misc
 from bungeni.ui import vocabulary
 from bungeni.ui.tagged import get_states
 
@@ -110,7 +111,7 @@ def user_name_column(name, title, attr):
             assert user is not None, \
                 "Item [%s] may not have None as [%s]" % (item, attr)
             item = user
-        return u"%s %s" % (item.first_name, item.last_name)
+        return user.fullname
     return column.GetterColumn(title, getter)
 
 
@@ -160,7 +161,7 @@ def group_name_column(name, title, default=u""):
 
 def workflow_column(name, title, default=u""):
     def getter(item, formatter):
-        state_title = ui_utils.misc.get_wf_state(item)
+        state_title = misc.get_wf_state(item)
         interaction = getInteraction()
         for participation in interaction.participations:
             if IRequest.providedBy(participation):
@@ -2095,6 +2096,20 @@ class ConsignatoryDescriptor(ModelDescriptor):
     display_name = _(u"Cosignatory")
     container_name = _(u"Cosignatories")
     
+    class MemberURLDisplayWidget(zope.app.form.browser.widget.BrowserWidget):
+        def get_member_of_parliament(self, user_id):
+            """Get the MemberOfParliament instance for user_id.
+            """
+            return Session().query(domain.MemberOfParliament).filter(
+                domain.MemberOfParliament.user_id == user_id).one()
+        def __call__(self):
+            # this (user_id) attribute's value IS self._data
+            mp = self.get_member_of_parliament(self._data)
+            return zope.app.form.browser.widget.renderElement("a", 
+                contents=mp.user.fullname,
+                href="/members/current/obj-%s/" % (mp.membership_id)
+            )
+    
     fields = [
         dict(name="bill_id", omit=True),
         dict(name="user_id",
@@ -2107,6 +2122,7 @@ class ConsignatoryDescriptor(ModelDescriptor):
                 "user"
             ),
             listing=True,
+            view_widget=MemberURLDisplayWidget
         ),
     ]
 
