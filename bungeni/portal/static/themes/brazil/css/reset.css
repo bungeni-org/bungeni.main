@@ -258,6 +258,7 @@ div.main-column h2 {
 	color: #222 !important;
 	margin-top: 1em;
 	border: 0 none;
+	text-align: center;
 }
 div.main-column h2 span {
     font-size: 75%;
@@ -634,14 +635,20 @@ input.inputLabelActive {
 #portal-column-two .portlet dt,
 #whats-on-overview .portlet dt {
     background: #E3E3E3;
-    border-bottom: 1px solid #FAAD5F;
     line-height: 20px;
+	height: 20px;
     text-align: justify;
 	text-shadow: 0px 1px 1px #fff;
 	position: relative;
 	margin: 0;
 	padding: 0 .25em;
 	width: auto;
+}
+#portal-column-content .portletHeader span.tile {
+	display: block;
+	text-align: center;
+	position: absolute;
+	width: 100%;
 }
 #portal-column-one .portletItem,
 #portal-column-content .portletItem,
@@ -1090,6 +1097,12 @@ div#portal-globalnav-bottom {
     text-transform: capitalize;
 	margin: 0;
 }
+#portletArchiveDates .portletHeader span.tile {
+	display: inline;
+	width: auto;
+	text-align: right;
+	position: relative;
+}
 .section-bungeni-admin #portletArchiveDates .portletHeader,
 .section-bungeni-workspace #portletArchiveDates .portletHeader {
 	text-transform: none;
@@ -1308,6 +1321,7 @@ table.listingdescription td,
  * formTabs
  * Default styles.
  */
+dd#items-to-be-scheduled-dl ul.formTabs,
 ul.formTabs {
     margin: 0;
     padding: 0;
@@ -1316,18 +1330,24 @@ ul.formTabs {
     text-align: center;
     position: relative;
 }
-.template-workspace.section-bungeni-admin ul.formTabs,
+dd#items-to-be-scheduled-dl ul.formTabs {
+	margin: .7em 0 0;
+}
 .template-workspace.section-bungeni-workspace ul.formTabs {
 	float: left;
 	width: 135px;
 }
-.template-workspace.section-bungeni-admin ul.formTabs li.formTab,
+dd#items-to-be-scheduled-dl ul.formTabs li.formTab {
+	display: inline;
+	border: 0 none;
+}
 .template-workspace.section-bungeni-workspace ul.formTabs li.formTab {
 	float: none;
 	display: block;
 	padding: 0;
 }
-li.formTab a {
+li.formTab a,
+dd#items-to-be-scheduled-dl ul.formTabs li.formTab a {
     position: relative;
     text-shadow: 0px 1px 1px #fff;
 	text-decoration: none;
@@ -1345,7 +1365,13 @@ li.formTab a {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 }
-.template-workspace.section-bungeni-admin ul.formTabs li.formTab a,
+dd#items-to-be-scheduled-dl ul.formTabs li.formTab a {
+	font-size: 95%;
+	display: inline;
+	padding: .25em .5em 0;
+	margin: 0 .25em 0 0;
+	line-height: 16px;
+}
 .template-workspace.section-bungeni-workspace ul.formTabs li.formTab a {
 	text-align: left;
 	border-radius: 0;
@@ -1380,13 +1406,15 @@ li.formTab a.selected {
     position: relative;
     top: 2px;
 }
-.template-workspace.section-bungeni-admin li.formTab a.selected,
 .template-workspace.section-bungeni-workspace li.formTab a.selected {
 	background: #6CA6CD;
 	border-top: 0 none !important;
 	border-bottom-color: #6ca6cd;
 	text-decoration: none;
 }
+dd#items-to-be-scheduled-dl ul.formTabs li.formTab a:hover,
+dd#items-to-be-scheduled-dl ul.formTabs li.formTab a:active,
+dd#items-to-be-scheduled-dl ul.formTabs li.formTab a.selected,
 .template-workspace.section-bungeni-admin ul.formTabs li.formTab a:hover,
 .template-workspace.section-bungeni-admin ul.formTabs li.formTab a:active,
 .template-workspace.section-bungeni-admin ul.formTabs li.formTab a.selected,
@@ -1397,10 +1425,26 @@ li.formTab a.selected {
 	text-decoration: none;
 	margin: 0;
 	border-top: 0 none !important;
-	border: 0 none;
 	background: #d8d8d9 url(/static/images/w-globalnav-level0-a.png) top left repeat-x;
 	color: #222;
 	top: 0;
+}
+dd#items-to-be-scheduled-dl ul.formTabs li.formTab a:hover,
+dd#items-to-be-scheduled-dl ul.formTabs li.formTab a:active,
+dd#items-to-be-scheduled-dl ul.formTabs li.formTab a.selected {
+	border: 1px solid #aaa;
+	border-bottom: 0 none;
+	top: 1px;
+	margin: 0 .25em 0 0;
+}
+.template-workspace.section-bungeni-admin ul.formTabs li.formTab a:hover,
+.template-workspace.section-bungeni-admin ul.formTabs li.formTab a:active,
+.template-workspace.section-bungeni-admin ul.formTabs li.formTab a.selected {
+	border: 1px solid #aaa;
+	border-bottom: 0 none;
+	top: 2px;
+    margin: 0 .25em;
+	line-height: 17px;
 }
 
 /*
@@ -1411,8 +1455,9 @@ li.formTab a.selected {
     padding: 0 !important;
     margin: 0;
 	text-align: center;
+	top: -1px;
+	position: relative;
 }
-.template-workspace.section-bungeni-admin .formPanel,
 .template-workspace.section-bungeni-workspace .formPanel {
 	margin-left: 135px;
 }
@@ -1502,8 +1547,12 @@ dl.portalMessage {
 .formPanel .field .content-right-column div,
 .formPanel .field .content-right-column.widget {
 	margin: 0;
+	/*
 	width: auto;
-	float: none;
+	float: none;*/
+}
+dd.Report.formPanel .field .content-right-column.widget {
+	width: 100%;
 }
 .formPanel .field .content-right-column div div {
     margin: .75em 0;

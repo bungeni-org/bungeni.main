@@ -102,6 +102,10 @@ $(document).ready(function(){
     listTogglr();
     
     $('ul.formTabs li a span').each(function(index){
+		// don't do this on the whats-on page
+		if($(this).parents('#whats-on-overview').length > 0){
+			return;
+		}
         // store the name of this particular tab
         var name = $(this).text();
         // create a new h3 tag for the name

@@ -49,6 +49,7 @@ tr.dd-disable {
 	font-size: 100%;
 	border-right: 1px solid #ccc;
 	padding-right: .5em;
+	position: relative;
 }
 .scheduling.scheduling-drop-target table {
 	font-size: 105%;

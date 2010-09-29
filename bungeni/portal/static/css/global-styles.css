@@ -81,6 +81,7 @@ html, body {
     visibility: hidden;
 }
 
-h3.printHeading {
+h3.printHeading,
+.whats_on_print_heading {
 	display: none !important;
 }
