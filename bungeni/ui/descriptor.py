@@ -1111,7 +1111,8 @@ class MemberRoleTitleDescriptor(ModelDescriptor):
             add_widget=DateWidget
         ),
         LanguageField("language"),
-    ] + deepcopy(AddressDescriptor.fields)
+    ] + [ deepcopy(f) for f in AddressDescriptor.fields 
+          if f["name"] not in ("role_title_id") ]
     
     schema_invariants = [
         EndAfterStart, 
@@ -1502,7 +1503,7 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
             omit=False,
         ),
         dict(name="full_name",
-            #property=schema.TextLine(title=_(u"Summary"),required=False), 
+            #property=schema.TextLine(title=_(u"Summary"), required=False), 
             listing=False,
             edit_widget=widgets.LongTextWidget,
             add_widget=widgets.LongTextWidget,
@@ -1742,11 +1743,10 @@ class BillDescriptor(ParliamentaryItemDescriptor):
     display_name = _(u"Bill")
     container_name = _(u"Bills")
     fields = deepcopy(ParliamentaryItemDescriptor.fields)
-    for field in fields:
-        if field["name"] == "body_text":
-            field["label"] = _(u"Statement of Purpose")
-            field["property"] = schema.Text(title=_(u"Statement of Purpose"),
-                required=False)
+    _bt = misc.get_keyed_item(fields, "body_text", key="name")
+    _bt["label"] = _(u"Statement of Purpose")
+    _bt["property"] = schema.Text(
+        title=_(u"Statement of Purpose"), required=False)
     
     fields.extend([
         dict(name="bill_id", omit=True),
@@ -1804,7 +1804,6 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
             add=False, 
             edit=True
         ),
-        dict(name="short_name", omit=True),
         dict(name="supplement_parent_id",
             label=_(u"Initial/supplementary question"),
             view_widget=SupplementaryQuestionDisplay,
@@ -2389,7 +2388,6 @@ class Report4SittingDescriptor(ReportDescriptor):
     fields = deepcopy(ReportDescriptor.fields)
     fields.extend([
         dict(name="sitting_report_id", omit=True),
-        dict(name="report_id", omit=True),
         dict(name="sitting_id", omit=True),
     ])
 

@@ -67,6 +67,12 @@ def makeList(itemIds):
     else:
          raise TypeError( _("Form values must be of type string or list"))
 
+def get_keyed_item(seq, value, key="name"):
+    for s in seq:
+        if s[key] == value:
+            return s
+        
+
 # object
 
 class bunch(dict):
