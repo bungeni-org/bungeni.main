@@ -67,7 +67,7 @@ class IModelDescriptorField(interface.Interface):
 class Field(object):
     interface.implements(IModelDescriptorField)
     
-    # INIT Parameters 
+    # INIT Parameter (and Defaults)
     
     # CONVENTION: the defualt value for each init parameter is the value 
     # assigned to the corresponding class attribute - reasons for this are:
@@ -94,14 +94,7 @@ class Field(object):
     view_permission = "zope.Public"         # str
     edit_permission = "zope.ManageContent"  # str
     
-    # OTHER (not init) Attributes
-    
-    # are any of the allowed modes enabled? 
-    # note: to disable all modes, set modes=""
-    #@property
-    #def omit(self):
-    #    return not self.modes
-    omit = False # !+OMIT(mr) replace with modes=""
+    # OTHER Attributes (and Defaults)
     
     # required flag can only be used if the field is not required by database
     required = False # !+REQUIRED(mr) is this actually used?
@@ -118,9 +111,7 @@ class Field(object):
     # via a single provider with a vocabulary for the relation.
     group = None
     
-    #differ = None         # z3c.schemadiff.interfaces.IFieldDiff 
-    #!+DIFFER(mr) this is unused, to be removed
-    
+    #
     
     _valid_modes = ("edit", "view", "add", "listing", "search")
     
@@ -130,8 +121,7 @@ class Field(object):
         view_widget=None, edit_widget=None, add_widget=None, search_widget=None,
         view_permission=None, edit_permission=None,
         # !+PARAMS_TMP(mr) these are here until descriptor is cleaned up
-        omit=None, required=None,
-        edit=None, view=None, add=None, listing=None, search=None
+        required=None
     ):
         """The defaults of each init paremeter is set as a class attribute --
         if not explicitly specified, then an attribute on the instance is
@@ -142,27 +132,25 @@ class Field(object):
         """
         kw = vars()
         cls = self.__class__
-        assert name, "Field must specify valid name [%s]" % (name)
-        assert not (property and omit), \
-            """Can't specify "property" and "omit" for field: %s""" % (name)
-        
-        self.name = name
-        
-        if modes is None:
-            modes = cls.modes
-        _modes = filter(None, modes.split("|"))
-        # !+PARAMS_TMP(mr)
-        for p in ("edit", "view", "add", "listing", "search"):
-            v = kw[p]
-            if v and p not in _modes:
-                _modes.append(p)
-        self.modes = "|".join(_modes)                
-        
-        for p in ("label", "description", "property", "listing_column", 
+        # parameter integrity
+        assert name or self.Name, "Field [%s] must specify valid name" % (name)
+        assert not ((property or self.property) and 
+                not (modes or self.modes)), \
+            """Can't specify "property" and no "modes" for field: %s""" % (
+                name)
+        if listing_column:
+            assert (modes and 
+                    ("listing" in modes or "listing" in self.modes)), \
+                "Field [%s] sets listing_column but listing mode False" % (
+                    name)
+        # set attribute values (for specified attributes only)
+        for p in (
+            "name", "label", "description", "modes", 
+            "property", "listing_column", 
             "view_widget", "edit_widget", "add_widget", "search_widget", 
             "view_permission", "edit_permission",
             # !+PARAMS_TMP(mr)
-            "omit", "required",
+            "required",
         ):
             v = kw[p]
             if v is not None:

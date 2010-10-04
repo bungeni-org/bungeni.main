@@ -105,13 +105,12 @@ def name_column(name, title, default=""):
     return _column(name, title, renderer, default)
 
 def user_name_column(name, title, attr):
-    def getter(item, formatter):
+    def getter(item_user, formatter):
         if attr:
-            user = getattr(item, attr, None)
+            item_user = getattr(item_user, attr, None)
             assert user is not None, \
-                "Item [%s] may not have None as [%s]" % (item, attr)
-            item = user
-        return user.fullname
+                "Item [%s] may not have None as [%s]" % (item_user, attr)
+        return item_user.fullname
     return column.GetterColumn(title, getter)
 
 
@@ -322,28 +321,25 @@ def POBoxOrAddress(obj):
 ####
 # Fields
 
+# Note: 
+# - default for modes="edit|view|add"
+# - the equivalent of omit=True is simply to set modes="" (empty str, no modes)
+# - the individual mode bool params are no longer supported: 
+#   edit, view, add, listing, search
+
 def LanguageField(name="language"):
     return Field(name=name, 
         label=_(u"Language"),
-        listing=False, 
-        add=True, 
-        edit=True, 
-        omit=False,
-        required=True,
+        modes="edit|add",
         property=schema.Choice(title=_(u"Language"),
             default=get_default_language(),
             vocabulary="language_vocabulary"
-        )
+        ),
+        required=True,
     )
 
 ####
 # Descriptors
-
-# !+bungeni.alchemist.model.Field.modes(mr, sep-2010) it seems that the 
-# Field.modes attribute does not work as claimed in the code -- 
-# use exclusively the boolean keyword alternative for each of the 
-# following modes:
-# _valid_modes = ('edit', 'view', 'read', 'add', 'listing', 'search')
 
 class UserDescriptor(ModelDescriptor):
     display_name = _(u"User")
@@ -352,11 +348,8 @@ class UserDescriptor(ModelDescriptor):
     fields = [
         Field(name="user_id",
             label="Name",
+            modes="listing",
             listing_column=user_name_column("user_id", _(u"Name"), None),
-            listing=True,
-            edit=False,
-            add=False,
-            view=False
         ),
         Field(name="titles",
             property=schema.TextLine(title=_(u"Salutation"),
@@ -381,19 +374,15 @@ class UserDescriptor(ModelDescriptor):
             )
         ),
         Field(name="login",
+            modes="view|add",
             property=schema.TextLine(title=_(u"Login"), required=True),
-            add=True, 
-            edit=False, 
-            view=True
         ),
-        Field(name="password", omit=True),
+        Field(name="password", modes=""),
         Field(name="_password",
+            modes="add",
             property=schema.TextLine(title=_(u"Initial password"), 
                 required=True
             ),
-            add=True,
-            view=False,
-            edit=False,
             required=True
         ),
         Field(name="national_id",
@@ -448,7 +437,7 @@ class UserDescriptor(ModelDescriptor):
             edit_widget=DateWidget,
             add_widget=DateWidget
         ),
-        Field(name="active_p", label=_(u"Status"), omit=True),
+        Field(name="active_p", label=_(u"Status"), modes=""),
         LanguageField("language"),
         Field(name="description",
             property=schema.Text(title=_(u"Biographical notes"), 
@@ -465,10 +454,9 @@ class UserDescriptor(ModelDescriptor):
             ),
             view_widget=ImageDisplayWidget,
             edit_widget=ImageInputWidget,
-            listing=False
         ),
-        Field(name="salt", omit=True),
-        Field(name="type", omit=True),
+        Field(name="salt", modes=""),
+        Field(name="type", modes=""),
     ]
     schema_invariants = [DeathBeforeLife]
     custom_validators = []
@@ -479,8 +467,9 @@ class UserDelegationDescriptor(ModelDescriptor):
     display_name = _(u"Delegate to user")
     container_name = _(u"Delegations")
     fields = [
-        Field(name="user_id", omit=True),
+        Field(name="user_id", modes=""),
         Field(name="delegation_id",
+            modes="edit|view|add|listing",
             property=schema.Choice(title=_(u"User"),
                 source=vocabulary.DatabaseSource(domain.User,
                     token_field="user_id",
@@ -489,7 +478,6 @@ class UserDelegationDescriptor(ModelDescriptor):
                 )
             ),
             listing_column=user_name_column("delegation_id", _(u"User"), "user"),
-            listing=True,
         ),
     ]
 
@@ -504,56 +492,50 @@ class GroupMembershipDescriptor(ModelDescriptor):
     
     fields = [
         Field(name="start_date",
+            modes="edit|view|add|listing",
             property=schema.Date(title=_(u"Start Date"), required=True),
             listing_column=day_column("start_date", _(u"Start Date")),
-            listing=True,
             edit_widget=DateWidget,
             add_widget=DateWidget
         ),
         Field(name="end_date",
             property=schema.Date(title=_(u"End Date"), required=False),
-            listing=False,
-            listing_column=day_column("end_date", _(u"End Date")),
+            #listing_column=day_column("end_date", _(u"End Date")),
             edit_widget=DateWidget,
             add_widget=DateWidget
         ),
         Field(name="active_p",
+            modes="edit|add",
             property=schema.Bool(title=_(u"Active"), 
                 default=True, 
                 required=True
             ),
-            #label=_(u"Active"),
-            #required=True,
-            view=False
         ),
         LanguageField("language"),
         Field(name="substitution_type",
+            modes="edit|view",
             property=schema.TextLine(
                 title=_(u"Type of Substitution"), 
                 required=False
             ),
-            add=False
         ),
         Field(name="replaced_id",
+            modes="edit|view",
             property=schema.Choice(
                 title=_(u"Substituted by"),
                 source=SubstitutionSource,
                 required=False
             ),
-            add=False
         ),
-        Field(name="group_id", omit=True),
+        Field(name="group_id", modes=""),
         Field(name="membership_id", 
             label=_(u"Roles/Titles"),
-            add=False, 
-            edit=False, 
-            view=False, 
-            listing=False,
-            listing_column=current_titles_in_group_column("membership_id", 
-                _(u"Roles/Titles")
-            )
+            modes="",
+            #listing_column=current_titles_in_group_column("membership_id", 
+            #    _(u"Roles/Titles")
+            #)
         ),
-        Field(name="membership_type", omit=True),
+        Field(name="membership_type", modes=""),
     ]
     schema_invariants = [
         EndAfterStart, 
@@ -573,6 +555,7 @@ class MpDescriptor(ModelDescriptor):
     
     fields = [
         Field(name="user_id",
+            modes="edit|view|add|listing",
             property=schema.Choice(title=_(u"Name"),
                 source=vocabulary.UserSource(
                     token_field="user_id",
@@ -581,15 +564,15 @@ class MpDescriptor(ModelDescriptor):
                 )
             ),
             listing_column=user_name_column("user_id", _(u"Name"), "user"),
-            listing=True,
         ),
         Field(name="elected_nominated",
+            modes="edit|view|add|listing",
             property=schema.Choice(title=_(u"elected/nominated"),
                 source=vocabulary.ElectedNominated
             ),
-            listing=True
         ),
         Field(name="election_nomination_date",
+            modes="edit|view|add",
             property=schema.Date(title=_("Election/Nomination Date"),
                 required=True
             ),
@@ -623,6 +606,7 @@ class MpDescriptor(ModelDescriptor):
     
     fields.extend([
         Field(name="constituency_id",
+            modes="edit|view|add|listing",
             property=schema.Choice(title=_(u"Constituency"),
                 source=constituencySource,
                 required=False
@@ -635,30 +619,29 @@ class MpDescriptor(ModelDescriptor):
             listing_column=constituency_column("constituency_id", 
                 "Constituency"
             ),
-            listing=True
         ),
         Field(name="province_id",
+            modes="edit|view|add|listing",
             property=schema.Choice(title=_(u"Province"),
                 source=provinceSource,
                 required=False
             ),
             listing_column=province_column("province_id", "Province"),
-            listing=True
         ),
         Field(name="region_id",
+            modes="edit|view|add|listing",
             property=schema.Choice(title=_(u"region"),
                 source=regionSource,
                 required=False
             ),
             listing_column=region_column("region_id", "region"),
-            listing=True
         ),
         Field(name="party_id",
+            modes="edit|view|add|listing",
             property=schema.Choice(title=_(u"Political Party"),
                 source=partySource,
                 required=False),
             listing_column=party_column("party_id", "Party"),
-            listing=True
         ),
         Field(name="leave_reason",
             property=schema.Text(title=_("Leave Reason"), required=False)
@@ -690,11 +673,11 @@ class PartyMemberDescriptor(ModelDescriptor):
     
     fields = [
         Field(name="user_id",
+            modes="edit|view|add|listing",
             property=schema.Choice(title=_(u"Name"),
                 source=vocabulary.MemberOfParliamentSource("user_id",)
             ),
             listing_column=user_name_column("user_id", _(u"Name"), "user"),
-            listing=True,
         ),
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
@@ -719,33 +702,33 @@ class MemberOfPartyDescriptor(ModelDescriptor):
     container_name = _(u"Party memberships")
     
     fields = [
-        Field(name="user_id", omit=True),
+        Field(name="user_id", modes=""),
         Field(name="short_name",
+            modes="edit|view|add|listing",
             property=schema.Text(title=_(u"Political Party"), required=True),
-            listing=True
         ),
         Field(name="start_date",
+            modes="edit|view|add|listing",
             property=schema.Date(title=_(u"Start Date"), required=True),
             listing_column=day_column("start_date", _(u"Start Date")),
-            listing=True,
             edit_widget=DateWidget,
             add_widget=DateWidget,
         ),
         Field(name="end_date",
+            modes="edit|view|add|listing",
             property=schema.Date(title=_(u"End Date"), required=False),
-            listing=True,
             listing_column=day_column("end_date", _(u"End Date")),
             edit_widget=DateWidget,
             add_widget=DateWidget,
         ),
         Field(name="active_p",
+            modes="edit|add",
             property=schema.Bool(title=_(u"Active"), 
                 default=True, 
                 required=True
             ),
             #label=_(u"Active"),
             #required=True,
-            view=False
         ),
         LanguageField("language"),
         Field(name="notes",
@@ -754,11 +737,11 @@ class MemberOfPartyDescriptor(ModelDescriptor):
             edit_widget=RichTextEditor,
             add_widget=RichTextEditor,
         ),
-        Field(name="substitution_type", omit=True),
-        Field(name="replaced_id", omit=True),
-        Field(name="membership_id", omit=True),
-        Field(name="status", omit=True),
-        Field(name="membership_type", omit=True),
+        Field(name="substitution_type", modes=""),
+        Field(name="replaced_id", modes=""),
+        Field(name="membership_id", modes=""),
+        Field(name="status", modes=""),
+        Field(name="membership_type", modes=""),
     ]
     #schema_invariants = [EndAfterStart]
     #custom_validators =[validations.validate_date_range_within_parent,]
@@ -767,19 +750,19 @@ class MemberOfPartyDescriptor(ModelDescriptor):
 class GroupDescriptor(ModelDescriptor):
     
     fields = [
-        Field(name="group_id", omit=True),
-        Field(name="type", omit=True),
+        Field(name="group_id", modes=""),
+        Field(name="type", modes=""),
         Field(name="full_name",
+            modes="edit|view|add|listing",
             property=schema.TextLine(
                 title=_(u"Name"),
                 required=True
             ),
-            listing=True,
             listing_column=name_column("full_name", _(u"Full Name"))
         ),
         Field(name="short_name",
+            modes="edit|view|add|listing",
             property=schema.TextLine(title=_(U"Acronym"), required=True),
-            listing=True,
             listing_column=name_column("short_name", _(u"Name"))
         ),
         LanguageField("language"),
@@ -790,21 +773,21 @@ class GroupDescriptor(ModelDescriptor):
             add_widget=RichTextEditor,
         ),
         Field(name="start_date",
+            modes="edit|view|add|listing",
             property=schema.Date(title=_(u"Start Date"), required=True),
-            listing=True,
             listing_column=day_column("start_date", _(u"Start Date")),
             edit_widget=DateWidget,
             add_widget=DateWidget
         ),
         Field(name="end_date",
+            modes="edit|view|add|listing",
             property=schema.Date(title=_(u"End Date"), required=False),
-            listing=True,
             listing_column=day_column("end_date", _(u"End Date")),
             edit_widget=DateWidget,
             add_widget=DateWidget
         ),
-        Field(name="status", omit=True),
-        Field(name="status_date", omit=True),
+        Field(name="status", modes=""),
+        Field(name="status_date", modes=""),
     ]
     schema_invariants = [EndAfterStart]
     custom_validators = [validations.validate_date_range_within_parent]
@@ -820,21 +803,21 @@ class ParliamentDescriptor(GroupDescriptor):
     custom_validators = validations.validate_parliament_dates,
     
     fields = [
-        Field(name="group_id", omit=True),
-        Field(name="parliament_id", omit=True),
+        Field(name="group_id", modes=""),
+        Field(name="parliament_id", modes=""),
         Field(name="full_name",
-            property=schema.TextLine(title=_(u"Name"), required=True),
             description=_(u"Parliament name"),
-            listing=True,
+            modes="edit|view|add|listing",
+            property=schema.TextLine(title=_(u"Name"), required=True),
             listing_column=name_column("full_name", "Name"),
         ),
         Field(name="short_name",
+            modes="edit|view|add|listing",
             property=schema.TextLine(title=_(u"Parliament Identifier"),
                 description=_("Unique identifier of each Parliament "
                     "(e.g. IX Parliament)"),
                 required=True
             ),
-            listing=True,
         ),
         LanguageField("language"),
         Field(name="description",
@@ -852,28 +835,28 @@ class ParliamentDescriptor(GroupDescriptor):
             add_widget=DateWidget
         ),
         Field(name="start_date",
+            modes="edit|view|add|listing",
             property=schema.Date(title=_(u"In power from"),
                 description=_(u"Date of the swearing in"),
                 required=True
             ),
             listing_column=day_column("start_date", _(u"In power from")),
-            listing=True,
             edit_widget=DateWidget,
             add_widget=DateWidget
         ),
         Field(name="end_date",
+            modes="edit|view|add|listing",
             property=schema.Date(title=_(u"In power till"),
                 description=_(u"Date of the dissolution"),
                 required=False
             ),
             listing_column=day_column("end_date", _(u"In power till")),
-            listing=True,
             edit_widget=DateWidget,
             add_widget=DateWidget
         ),
-        Field(name="status", omit=True),
-        Field(name="status_date", omit=True),
-        Field(name="type", omit=True),
+        Field(name="status", modes=""),
+        Field(name="status_date", modes=""),
+        Field(name="type", modes=""),
     ]
     schema_invariants = [
         EndAfterStart, 
@@ -898,15 +881,15 @@ class CommitteeDescriptor(GroupDescriptor):
     
     fields = deepcopy(GroupDescriptor.fields)
     fields.extend([
-        Field(name="committee_id", omit=True),
+        Field(name="committee_id", modes=""),
         Field(name="committee_type_id",
+            modes="edit|view|add|listing",
             property=schema.Choice(title=_(u"Type of committee"), 
                 source=typeSource
             ),
             listing_column=committee_type_column("committee_type_id", 
                 _(u"Type")
             ),
-            listing=True,
         ),
         Field(name="no_members",
             property=schema.Int(title=_(u"Number of members"), required=False),
@@ -935,7 +918,7 @@ class CommitteeDescriptor(GroupDescriptor):
         ),
         Field(name="default_chairperson", 
             label=_(u"Default chairperson"),
-            omit=True
+            modes=""
         ),
         Field(name="reinstatement_date",
             property=schema.Date(title=_(u"Reinstatement Date"), 
@@ -960,6 +943,7 @@ class CommitteeMemberDescriptor(ModelDescriptor):
     container_name = _(u"Membership")
     fields = [
         Field(name="user_id",
+            modes="edit|view|add|listing",
             property=schema.Choice(title=_(u"Name"),
                 source=vocabulary.UserSource(
                     token_field="user_id",
@@ -968,7 +952,6 @@ class CommitteeMemberDescriptor(ModelDescriptor):
                 )
             ),
             listing_column=user_name_column("user_id", _(u"Name"), "user"),
-            listing=True,
         ),
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
@@ -995,7 +978,7 @@ class AddressTypeDescriptor(ModelDescriptor):
     container_name = _(u"Address types")
     
     fields = [
-        Field(name="address_type_id", omit=True),
+        Field(name="address_type_id", modes=""),
         Field(name="address_type_name",
             property=schema.TextLine(title=_(u"Address Type"))
         ),
@@ -1007,9 +990,9 @@ class AddressDescriptor(ModelDescriptor):
     container_name = _(u"Addresses")
     
     fields = [
-        Field(name="address_id", omit=True),
-        Field(name="role_title_id", omit=True),
-        Field(name="user_id", omit=True),
+        Field(name="address_id", modes=""),
+        Field(name="role_title_id", modes=""),
+        Field(name="user_id", modes=""),
         Field(name="address_type_id",
             property=schema.Choice(title=_(u"Address Type"),
                 source=vocabulary.DatabaseSource(domain.AddressType,
@@ -1059,12 +1042,12 @@ class AddressDescriptor(ModelDescriptor):
             add_widget=zope.app.form.browser.TextAreaWidget,
         ),
         Field(name="email",
+            modes="edit|view|add|listing",
             property=schema.TextLine(title=_(u"Email"),
                 description=_(u"Email address"),
                 constraint=constraints.check_email,
                 required=False
             ),
-            listing=True,
         ),
         Field(name="im_id",
             property=schema.TextLine(title=_(u"Instant Messenger Id"),
@@ -1072,8 +1055,8 @@ class AddressDescriptor(ModelDescriptor):
                 required=False
             )
         ),
-        Field(name="status", omit=True),
-        Field(name="status_date", omit=True),
+        Field(name="status", modes=""),
+        Field(name="status_date", modes=""),
     ]
     schema_invariants = [POBoxOrAddress]
     public_wfstates = [address_wf_state[u"public"].id]
@@ -1084,25 +1067,25 @@ class MemberRoleTitleDescriptor(ModelDescriptor):
     container_name = _(u"Titles")
     
     fields = [
-        Field(name="role_title_id", omit=True),
-        Field(name="membership_id", omit=True),
+        Field(name="role_title_id", modes=""),
+        Field(name="membership_id", modes=""),
         Field(name="title_name_id", label=_(u"Title"),
+            modes="edit|view|add|listing",
             property=schema.Choice(title=_(u"Title"),
                 source=vocabulary.MemberTitleSource("title_name_id"),
             ),
             listing_column=member_title_column("title_name_id", _(u"Title")),
-            listing=True,
         ),
         Field(name="start_date",
+            modes="edit|view|add|listing",
             property=schema.Date(title=_(u"Start Date"), required=True),
-            listing=True,
             listing_column=day_column("start_date", _(u"Start Date")),
             edit_widget=DateWidget,
             add_widget=DateWidget
         ),
         Field(name="end_date",
+            modes="edit|view|add|listing",
             property=schema.Date(title=_(u"End Date"), required=False),
-            listing=True,
             listing_column=day_column("end_date", _(u"End Date")),
             edit_widget=DateWidget,
             add_widget=DateWidget
@@ -1126,6 +1109,7 @@ class CommitteeStaffDescriptor(ModelDescriptor):
     container_name = _(u"Staff")
     fields = [
         Field(name="user_id",
+            modes="edit|view|add|listing",
             property=schema.Choice(title=_(u"Name"),
                 source=vocabulary.UserNotMPSource(
                     token_field="user_id",
@@ -1134,7 +1118,6 @@ class CommitteeStaffDescriptor(ModelDescriptor):
                 )
             ),
             listing_column=user_name_column("user_id", _(u"Name"), "user"),
-            listing=True,
         ),
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
@@ -1164,14 +1147,10 @@ class PoliticalPartyDescriptor(GroupDescriptor):
     fields.extend([
         Field(name="logo_data",
             property=schema.Bytes(title=_(u"Logo"), required=False),
-            edit=True,
-            add=True,
-            view=True,
-            listing=False,
             view_widget=ImageDisplayWidget,
             edit_widget=ImageInputWidget
         ),
-        Field(name="party_id", omit=True),
+        Field(name="party_id", modes=""),
     ])
     schema_invariants = [EndAfterStart]
 
@@ -1193,7 +1172,6 @@ class OfficeDescriptor(GroupDescriptor):
                 description=_(u"Type of Office"),
                 source=vocabulary.OfficeType
             ),
-            listing=False,
         )
     ]
     fields.extend(deepcopy(GroupDescriptor.fields))
@@ -1205,6 +1183,7 @@ class OfficeMemberDescriptor(ModelDescriptor):
     container_name = _(u"Office Members")
     fields = [
         Field(name="user_id",
+            modes="edit|view|add|listing",
             property=schema.Choice(title=_(u"Name"),
                 source=vocabulary.UserNotMPSource(
                     token_field="user_id",
@@ -1213,7 +1192,6 @@ class OfficeMemberDescriptor(ModelDescriptor):
                 )
             ),
             listing_column=user_name_column("user_id", _(u"Name"), "user"),
-            listing=True,
         )
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
@@ -1248,6 +1226,7 @@ class MinisterDescriptor(ModelDescriptor):
     
     fields = [
         Field(name="user_id",
+            modes="edit|view|add|listing",
             property=schema.Choice(title=_(u"Name"),
                 source=vocabulary.UserSource(
                     token_field="user_id",
@@ -1256,7 +1235,6 @@ class MinisterDescriptor(ModelDescriptor):
                 )
             ),
             listing_column=user_name_column("user_id", _(u"Name"), "user"),
-            listing=True,
         )
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
@@ -1281,25 +1259,25 @@ class GovernmentDescriptor(GroupDescriptor):
     container_name = _(u"Governments")
     
     fields = [
-        Field(name="group_id", omit=True),
+        Field(name="group_id", modes=""),
         Field(name="short_name",
+            modes="edit|view|add|listing",
             property=schema.TextLine(title=_(u"Name"),
                 description=_(u"Name"), 
                 required=False
             ),
-            listing=True
         ),
         Field(name="full_name", label=_(u"Number")),
         Field(name="start_date",
+            modes="edit|view|add|listing",
             property=schema.Date(title=_(u"In power from"), required=True),
-            listing=True,
             listing_column=day_column("start_date", _(u"In power from")),
             edit_widget=DateWidget,
             add_widget=DateWidget
         ),
         Field(name="end_date",
+            modes="edit|view|add|listing",
             property=schema.Date(title=_(u"In power till"), required=False),
-            listing=True,
             listing_column=day_column("end_date", _(u"In power till")),
             edit_widget=DateWidget,
             add_widget=DateWidget
@@ -1311,9 +1289,9 @@ class GovernmentDescriptor(GroupDescriptor):
             edit_widget=RichTextEditor,
             add_widget=RichTextEditor,
         ),
-        Field(name="status", omit=True),
-        Field(name="status_date", omit=True),
-        Field(name="type", omit=True),
+        Field(name="status", modes=""),
+        Field(name="status_date", modes=""),
+        Field(name="type", modes=""),
     ]
     schema_invariants = [EndAfterStart]
     custom_validators = [validations.validate_government_dates]
@@ -1321,36 +1299,34 @@ class GovernmentDescriptor(GroupDescriptor):
 
 class GroupItemAssignmentDescriptor(ModelDescriptor):
     fields = [
-        Field(name="assignment_id", omit=True),
+        Field(name="assignment_id", modes=""),
         Field(name="start_date",
+            modes="edit|view|add|listing",
             property=schema.Date(title=_(u"Start Date"),
                 required=True),
-            listing_column=day_column("start_date",
-                _(u"Start Date")),
-                listing=True,
-            edit_widget=DateWidget, add_widget=DateWidget),
+            listing_column=day_column("start_date", _(u"Start Date")),
+            edit_widget=DateWidget, 
+            add_widget=DateWidget
+        ),
         Field(name="end_date",
-            property=schema.Date(title=_(u"End Date"),
-            required=False),
-            listing_column=day_column("end_date",
-                _(u"End Date")),
-                listing=True,
-            edit_widget=DateWidget, add_widget=DateWidget),
+            modes="edit|view|add|listing",
+            property=schema.Date(title=_(u"End Date"), required=False),
+            listing_column=day_column("end_date", _(u"End Date")),
+            edit_widget=DateWidget, 
+            add_widget=DateWidget
+        ),
         Field(name="due_date",
-            property=schema.Date(title=_(u"Due Date"),
-            required=False),
-            listing_column=day_column("due_date",
-                _(u"Due Date")),
-                listing=True,
-            edit_widget=DateWidget, add_widget=DateWidget),
-        Field(name="status", omit=True),
+            modes="edit|view|add|listing",
+            property=schema.Date(title=_(u"Due Date"), required=False),
+            listing_column=day_column("due_date", _(u"Due Date")),
+            edit_widget=DateWidget, 
+            add_widget=DateWidget
+        ),
+        Field(name="status", modes=""),
         Field(name="status_date", 
-            add=False, 
-            edit=False,
             label=_(u"Status date"),
-            view=False, 
-            listing=False,
-            listing_column=day_column("status_date", _(u"Status date")),
+            modes="",
+            #listing_column=day_column("status_date", _(u"Status date")),
         ),
         Field(name="notes",
             property=schema.Text(title=_(u"Notes") , required=False),
@@ -1367,6 +1343,7 @@ class ItemGroupItemAssignmentDescriptor(GroupItemAssignmentDescriptor):
     container_name = _(u"Assigned bills")
     fields = [
         Field(name="item_id",
+            modes="edit|view|add|listing",
             property=schema.Choice(title=_(u"Bill"),
                 source=vocabulary.BillSource(
                     title_field="short_name",
@@ -1375,9 +1352,8 @@ class ItemGroupItemAssignmentDescriptor(GroupItemAssignmentDescriptor):
                 ),
             ),
             listing_column=item_name_column("parliamentary_item_id", _(u"Item")),
-            listing=True,
         ),
-        Field(name="group_id", omit=True),
+        Field(name="group_id", modes=""),
     ]
     fields.extend(deepcopy(GroupItemAssignmentDescriptor.fields))
 
@@ -1386,8 +1362,9 @@ class GroupGroupItemAssignmentDescriptor(GroupItemAssignmentDescriptor):
     display_name = _(u"Assigned group")
     container_name = _(u"Assigned groups")
     fields = [
-        Field(name="item_id", omit=True),
+        Field(name="item_id", modes=""),
         Field(name="group_id",
+            modes="edit|view|add|listing",
             property=schema.Choice(title=_(u"Committee"),
                 source=vocabulary.CommitteeSource(
                     title_field="short_name",
@@ -1396,7 +1373,6 @@ class GroupGroupItemAssignmentDescriptor(GroupItemAssignmentDescriptor):
                 ),
             ),
             listing_column=group_name_column("group_id", _(u"Group")),
-            listing=True,
         ),
     ]
     fields.extend(deepcopy(GroupItemAssignmentDescriptor.fields))
@@ -1406,18 +1382,15 @@ class AttachedFileDescriptor(ModelDescriptor):
     display_name = _(u"File")
     container_name = _(u"Files")
     fields = [
-        Field(name="attached_file_id", omit=True),
-        Field(name="item_id", omit=True),
-        Field(name="file_version_id", omit=True),
+        Field(name="attached_file_id", modes=""),
+        Field(name="item_id", modes=""),
+        Field(name="file_version_id", modes=""),
         LanguageField("language"),
         Field(name="file_title",
+            modes="edit|view|add|listing",
             property=schema.TextLine(title=_(u"Title"), required=True),
-            listing=True,
             edit_widget=widgets.LongTextWidget,
             add_widget=widgets.LongTextWidget,
-            add=True,
-            edit=True,
-            omit=False
         ),
         Field(name="file_description",
             property=schema.Text(title=_(u"Description"), required=False),
@@ -1432,36 +1405,30 @@ class AttachedFileDescriptor(ModelDescriptor):
             add_widget=FileAddWidget,
             view_widget=FileDisplayWidget,
             required=True,
-            listing=False
         ),
         Field(name="file_name", 
             label=u"",
+            modes="edit|add",
             edit_widget=NoInputWidget,
             add_widget=NoInputWidget,
-            view=False
         ),
         Field(name="file_mimetype", 
             label=u"",
+            modes="edit|add",
             edit_widget=NoInputWidget,
             add_widget=NoInputWidget,
-            view=False
         ),
         Field(name="status",
             label=_(u"Status"),
-             property=schema.Choice(title=_(u"Status"),
+            modes="edit|view|listing",
+            property=schema.Choice(title=_(u"Status"),
                  vocabulary="bungeni.vocabulary.workflow",
             ),
             listing_column=workflow_column("status", "Workflow status"),
-            add=False,
-            listing=True,
-            omit=False
         ),
-        Field(name="status_date", 
-            add=False, 
-            edit=False,
-            view=True, 
-            listing=True,
+        Field(name="status_date",
             label=_(u"Status date"),
+            modes="view|listing",
             listing_column=day_column("status_date", _(u"Status date")),
         ),
     ]
@@ -1482,52 +1449,39 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
         value_field="parliament_id"
     )
     fields = [
-        Field(name="parliamentary_item_id", omit=True),
+        Field(name="parliamentary_item_id", modes=""),
         Field(name="parliament_id",
+            modes="edit|view",
             property=schema.Choice(title=_(u"Parliament"),
                 source=parliamentSource,
                 required=True
             ),
-            add=False,
         ),
         Field(name="short_name",
+            modes="edit|view|add|listing",
             property=schema.TextLine(title=_(u"Title"), required=True),
-            listing=True,
             edit_widget=widgets.LongTextWidget,
             add_widget=widgets.LongTextWidget,
-            add=True,
-            edit=True,
-            omit=False,
         ),
         Field(name="full_name",
             #property=schema.TextLine(title=_(u"Summary"), required=False), 
-            listing=False,
             edit_widget=widgets.LongTextWidget,
             add_widget=widgets.LongTextWidget,
-            add=True,
-            edit=True,
-            omit=True
         ),
         Field(name="registry_number",
+            modes="edit|view",
             property=schema.Int(title=_(u"Registry number"), required=False),
-            listing=False,
-            add=False,
-            edit=True,
         ),
         Field(name="owner_id",
+            modes="edit|view|add|listing",
             property=schema.Choice(title=_(u"Moved by"),
                 description=_(u"Select the user who moved the document"),
                 source=vocabulary.MemberOfParliamentDelegationSource("owner_id"),
             ),
             listing_column=user_name_column("owner_id", _(u"Name"), "owner"),
-            listing=True
         ),
         #LanguageField("language"),
         Field(name="language",
-            listing=False,
-            add=True,
-            edit=True,
-            omit=False,
             property=schema.Choice(title=_(u"Language"),
                 default=get_default_language(),
                 vocabulary="language_vocabulary",
@@ -1541,44 +1495,34 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
             add_widget=RichTextEditor,
         ),
         Field(name="submission_date",
+            modes="edit|view|listing",
             property=schema.Date(title=_(u"Submission Date"), required=False),
-            add=False,
-            edit=True,
             view_permission="bungeni.edit.historical",
             edit_permission="bungeni.edit.historical",
-            listing=True ,
             edit_widget=DateWidget,
             add_widget=DateWidget,
-            omit=False
         ),
         Field(name="status",
             label=_(u"Status"),
+            modes="edit|view|listing",
             property=schema.Choice(title=_(u"Status"),
                 vocabulary="bungeni.vocabulary.workflow",
             ),
             listing_column=workflow_column("status", "Workflow status"),
-            add=False,
-            listing=True,
-            omit=False
         ),
         Field(name="status_date", 
-            add=False, 
-            edit=False,
-            view=True, 
-            listing=True,
             label=_(u"Status date"),
+            modes="view|listing",
             listing_column=day_column("status_date", _(u"Status date")),
         ),
         Field(name="note",
             label=_(u"Notes"),
             description="Recommendation note",
+            modes="edit|add",
             property=schema.Text(title=_(u"Notes"),
                 description=_(u"Recommendation note"), 
                 required=False
             ),
-            edit=True,
-            add=True,
-            view=False,
             add_widget=OneTimeEditWidget,
             edit_widget=OneTimeEditWidget,
         ),
@@ -1590,52 +1534,34 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
             ),
             edit_widget=CustomRadioWidget,
             add_widget=CustomRadioWidget,
-            listing=False,
-            omit=False
         ),
-        Field(name="type",
-            omit=False,
-            listing=False,
-            edit=False,
-            add=False,
-            view=False,
-        ),
+        Field(name="type", modes=""),
     ]
 
 
 class VersionDescriptor(ModelDescriptor):
     fields = [
-        Field(name="parliamentary_item_id", omit=True),
-        Field(name="parliament_id", omit=True),
-        Field(name="owner_id", omit=True),
+        Field(name="parliamentary_item_id", modes=""),
+        Field(name="parliament_id", modes=""),
+        Field(name="owner_id", modes=""),
         Field(name="short_name",
+            modes="edit|view|add|listing",
             property=schema.TextLine(title=_(u"Title"), required=True),
             edit_widget=widgets.LongTextWidget,
             add_widget=widgets.LongTextWidget,
-            listing=True,
-            add=True,
-            edit=True,
-            omit=False,
         ),
         Field(name="full_name",
             property=schema.TextLine(title=_(u"Summary"), required=True),
-            listing=False,
             edit_widget=widgets.LongTextWidget,
             add_widget=widgets.LongTextWidget,
-            add=True,
-            edit=True,
-            omit=False,
         ),
         #LanguageField("language"),
         Field(name="language",
+            modes="view|add|listing",
             property=schema.Choice(title=_(u"Language"),
                 default=get_default_language(),
                 vocabulary="language_vocabulary",
             ),
-            listing=True,
-            add=True,
-            edit=False,
-            omit=False,
             required=True,
         ),
         Field(name="body_text",
@@ -1644,21 +1570,19 @@ class VersionDescriptor(ModelDescriptor):
             edit_widget=RichTextEditor,
             add_widget=RichTextEditor,
         ),
-        Field(name="submission_date", omit=True),
-        Field(name="status", omit=True),
+        Field(name="submission_date", modes=""),
+        Field(name="status", modes=""),
         Field(name="note",
             description="Recommendation note",
+            modes="edit|add",
             property=schema.Text(title=_(u"Notes"),
                 description=_(u"Recommendation note"), 
                 required=False
             ),
-            edit=True,
-            add=True,
-            view=False,
             edit_widget=OneTimeEditWidget,
         ),
-        Field(name="receive_notification", omit=True),
-        Field(name="type", omit=True,),
+        Field(name="receive_notification", modes=""),
+        Field(name="type", modes="",),
     ]
     public_wfstates = [version_wf_state[u"archived"].id]
 
@@ -1675,8 +1599,8 @@ class AgendaItemDescriptor(ParliamentaryItemDescriptor):
     container_name = _(u"Agenda items")
     fields = deepcopy(ParliamentaryItemDescriptor.fields)
     fields.extend([
-        Field(name="agenda_item_id", omit=True),
-        Field(name="group_id", omit=True),
+        Field(name="agenda_item_id", modes=""),
+        Field(name="group_id", modes=""),
     ])
     public_wfstates = get_states("agendaitem", tagged=["public"])
 
@@ -1693,38 +1617,32 @@ class MotionDescriptor(ParliamentaryItemDescriptor):
     fields = deepcopy(ParliamentaryItemDescriptor.fields)
     fields.extend([
         Field(name="approval_date",
+            modes="edit|view",
             property=schema.Date(title=_(u"Approval Date"), required=False),
             view_permission="bungeni.edit.historical",
             edit_permission="bungeni.edit.historical",
-            add=False,
-            listing=False,
             edit_widget=DateWidget,
             add_widget=DateWidget
         ),
         Field(name="notice_date",
+            modes="view",
             property=schema.Date(title=_(u"Notice Date"), required=False),
-            add=False,
-            edit=False,
-            listing=False,
             edit_widget=DateWidget,
             add_widget=DateWidget
         ),
         Field(name="motion_number",
+            modes="view|listing",
             property=schema.Int(title=_(u"Identifier"), required=False),
-            add=False,
-            edit=False,
-            listing=True
         ),
         # TODO omit for now
-        Field(name="entered_by", label=_(u"Entered By"), omit=True),
-        Field(name="party_id",
+        Field(name="entered_by", label=_(u"Entered By"), modes=""),
+        Field(name="party_id", modes="",
             #property = schema.Choice(title=_(u"Political Party"), 
             #   source=vocabulary.MotionPartySource(
             #     title_field="short_name", 
             #     token_field="party_id", 
             #     value_field = "party_id"), 
             #   required=False),
-            omit=True
         ),
     ])
     public_wfstates = get_states("motion", tagged=["public"])
@@ -1746,7 +1664,7 @@ class BillDescriptor(ParliamentaryItemDescriptor):
         title=_(u"Statement of Purpose"), required=False)
     
     fields.extend([
-        Field(name="bill_id", omit=True),
+        Field(name="bill_id", modes=""),
         Field(name="bill_type_id", 
             property=schema.Choice(title=_(u"Bill Type"),
                 source=vocabulary.DatabaseSource(domain.BillType,
@@ -1759,18 +1677,16 @@ class BillDescriptor(ParliamentaryItemDescriptor):
         Field(name="ministry_id",
             property=schema.Choice(title=_(u"Ministry"),
                 source=vocabulary.MinistrySource("ministry_id"), 
-                    required=False
-                ),
-            listing=False
+                required=False
+            ),
         ),
         Field(name="identifier",
+            modes="edit|view",
             property=schema.Text(title=_(u"Identifier"), required=False),
-            add=False
         ),
         Field(name="publication_date",
+            modes="edit|view|add|listing",
             property=schema.Date(title=_(u"Publication Date"), required=False),
-            listing=True,
-            add=True,
             edit_widget=DateWidget,
             add_widget=DateWidget ,
             listing_column=day_column("publication_date", 
@@ -1794,73 +1710,62 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
     
     fields = deepcopy(ParliamentaryItemDescriptor.fields)
     fields.extend([
-        Field(name="question_id", omit=True),
+        Field(name="question_id", modes=""),
         Field(name="question_number",
+            modes="edit|view|listing",
             property=schema.Int(title=_(u"Question Number"), required=False),
-            listing=True, 
-            add=False, 
-            edit=True
         ),
         Field(name="supplement_parent_id",
             label=_(u"Initial/supplementary question"),
+            modes="",
             view_widget=SupplementaryQuestionDisplay,
-            add=False,
-            edit=False, 
-            view=False
         ),
         Field(name="ministry_id",
+            modes="edit|view|add|listing",
             property=schema.Choice(title=_(u"Ministry"),
                 source=vocabulary.MinistrySource("ministry_id"), 
                 required=True
             ),
             listing_column=ministry_column("ministry_id" , _(u"Ministry")),
-            listing=True
         ),
         Field(name="approval_date",
+            modes="edit|view",
             property=schema.Date(title=_(u"Date approved"), required=False),
             edit_widget=DateWidget,
             add_widget=DateWidget,
-            listing=False,
-            add=False
         ),
         Field(name="ministry_submit_date",
+            modes="edit|view",
             property=schema.Date(title=_(u"Submitted to ministry"), 
                 required=False
             ),
             edit_widget=DateWidget,
             add_widget=DateWidget,
-            listing=False,
-            add=False
         ),
         Field(name="question_type",
             property=schema.Choice(title=_(u"Question Type"),
                 description=_("Ordinary or Private Notice"),
                 vocabulary=vocabulary.QuestionType
             ),
-            listing=False
         ),
         Field(name="response_type",
             property=schema.Choice(title=_(u"Response Type"),
                 description=_("Oral or Written"),
                 vocabulary=vocabulary.ResponseType
             ),
-            listing=False
         ),
         Field(name="response_text",
+            modes="edit|view",
             property=schema.TextLine(title=_(u"Response"),
                 description=_(u"Response to the Question"),
                 required=False
             ),
             view_widget=HTMLDisplay,
             edit_widget=RichTextEditor,
-            edit=True,
-            view=True,
-            add=False
         ),
         Field(name="sitting_time",
             label=_(u"Sitting Time"),
-            listing=False,
-            omit=True
+            modes=""
         ),
     ])
     public_wfstates = get_states("question", tagged=["public"])
@@ -1878,12 +1783,12 @@ class EventItemDescriptor(ParliamentaryItemDescriptor):
     
     fields = deepcopy(ParliamentaryItemDescriptor.fields)
     fields.extend([
-        Field(name="event_item_id", omit=True),
-        Field(name="item_id", omit=True),
+        Field(name="event_item_id", modes=""),
+        Field(name="item_id", modes=""),
         Field(name="event_date",
+            modes="edit|view|add|listing",
             property=schema.Datetime(title=_(u"Date"), required=True),
             listing_column=day_column("event_date", _(u"Date")),
-            listing=True,
             edit_widget=DateTimeWidget,
             add_widget=DateTimeWidget,
             required=True
@@ -1897,16 +1802,13 @@ class TabledDocumentDescriptor(ParliamentaryItemDescriptor):
     container_name = _(u"Tabled documents")
     fields = deepcopy(ParliamentaryItemDescriptor.fields)
     fields.extend([
-        Field(name="tabled_document_id", omit=True),
-        Field(name="group_id", omit=True),
+        Field(name="tabled_document_id", modes=""),
+        Field(name="group_id", modes=""),
         Field(name="tabled_document_number",
+            modes="edit|view",
             property=schema.Int(title=_(u"Tabled document Number"), 
                 required=True
             ),
-            add=False,
-            listing=False,
-            edit=True,
-            view=True,
         ),
     ])
     public_wfstates = get_states("tableddocument", tagged=["public"])
@@ -1923,14 +1825,15 @@ class SittingDescriptor(ModelDescriptor):
     container_name = _(u"Sittings")
     
     fields = [
-        Field(name="sitting_id", omit=True),
-        Field(name="group_id", omit=True),
+        Field(name="sitting_id", modes=""),
+        Field(name="group_id", modes=""),
         LanguageField("language"),
         #Sitting type is commented out below because it is not set during
         #creation of a sitting but is left here because it may be used in the
         #future related to r7243
 
         #Field(name="sitting_type_id",
+        #    modes="edit|view|add|listing",
         #    listing_column=sitting_type_column("sitting_type_id",
         #        _(u"Sitting Type")
         #    ),
@@ -1942,21 +1845,19 @@ class SittingDescriptor(ModelDescriptor):
         #        ),
         #        required=True
         #    ),
-        #    listing=True
         #),
         Field(name="start_date",
+            modes="edit|view|add|listing",
             property=schema.Datetime(title=_(u"Date"), required=True),
             listing_column=date_from_to_column("start_date", _(u"Start")),
             edit_widget=DateTimeWidget,
             add_widget=DateTimeWidget,
-            listing=True
         ),
         Field(name="end_date",
             property=schema.Datetime(title=_(u"End"), required=True),
-            listing_column=time_column("end_date", _(u"End Date")),
+            #listing_column=time_column("end_date", _(u"End Date")),
             edit_widget=DateTimeWidget,
             add_widget=DateTimeWidget,
-            listing=False
         ),
         Field(name="venue_id",
             property=schema.Choice(title=_(u"Venue"),
@@ -1967,7 +1868,6 @@ class SittingDescriptor(ModelDescriptor):
                 ),
                 required=False
             ),
-            listing=False,
         )
     ]
     schema_invariants = [EndAfterStart]
@@ -1990,25 +1890,25 @@ class SessionDescriptor(ModelDescriptor):
     container_name = _(u"Parliamentary sessions")
     
     fields = [
-        Field(name="session_id", omit=True),
-        Field(name="parliament_id", omit=True),
+        Field(name="session_id", modes=""),
+        Field(name="parliament_id", modes=""),
         Field(name="short_name",
+            modes="edit|view|add|listing",
             property=schema.TextLine(title=_(u"Short Name"), required=True),
-            listing=True
         ),
         Field(name="full_name",
             property=schema.TextLine(title=_(u"Full Name"), required=True)
         ),
         Field(name="start_date",
+            modes="edit|view|add|listing",
             property=schema.Date(title=_(u"Start Date"), required=True),
-            listing=True,
             listing_column=day_column("start_date", _(u"Start Date")),
             edit_widget=DateWidget,
             add_widget=DateWidget
         ),
         Field(name="end_date",
+            modes="edit|view|add|listing",
             property=schema.Date(title=_(u"End Date"), required=True),
-            listing=True,
             listing_column=day_column("end_date", _(u"End Date")),
             edit_widget=DateWidget,
             add_widget=DateWidget
@@ -2025,11 +1925,11 @@ class SessionDescriptor(ModelDescriptor):
 #    container_name = _(u"Debate")
 
 #    fields = [
-#        Field(name="sitting_id", omit=True), 
-#        Field(name="debate_id", omit=True),
+#        Field(name="sitting_id", modes=""), 
+#        Field(name="debate_id", modes=""),
 #        Field(name="short_name", 
 #                label=_(u"Short Name"), 
-#                listing=True,
+#                modes="edit|view|add|listing",
 #                listing_column=name_column("short_name", 
 #                    _(u"Name"))), 
 #        Field(name="body_text", label=_(u"Transcript"),
@@ -2052,8 +1952,9 @@ class AttendanceDescriptor(ModelDescriptor):
         value_field="attendance_id"
     )
     fields = [
-        Field(name="sitting_id", omit=True),
-        Field(name="member_id", listing=True,
+        Field(name="sitting_id", modes=""),
+        Field(name="member_id",
+            modes="edit|view|add|listing",
             property=schema.Choice(title=_(u"Attendance"),
                 source=vocabulary.SittingAttendanceSource(
                     title_field="fullname",
@@ -2064,12 +1965,12 @@ class AttendanceDescriptor(ModelDescriptor):
             listing_column=user_name_column("member_id", _(u"Name"), "user")
         ),
         Field(name="attendance_id",
+            modes="edit|view|add|listing",
             property=schema.Choice(title=_(u"Attendance"),
                 source=attendanceVocab,
                 required=True
             ),
             listing_column=attendance_column("attendance_id", _(u"Attendance")),
-            listing=True,
         ),
     ]
 
@@ -2079,11 +1980,12 @@ class AttendanceTypeDescriptor(ModelDescriptor):
     container_name = _(u"Sitting attendances")
     
     fields = [
-        Field(name="attendance_id", omit=True),
+        Field(name="attendance_id", modes=""),
         Field(name="attendance_type",
             property=schema.TextLine(title=_(u"Attendance type"), 
-                required=True)
-            ),
+                required=True
+            )
+        ),
         LanguageField("language"),
     ]
 
@@ -2107,8 +2009,9 @@ class ConsignatoryDescriptor(ModelDescriptor):
             )
     
     fields = [
-        Field(name="bill_id", omit=True),
+        Field(name="bill_id", modes=""),
         Field(name="user_id",
+            modes="edit|view|add|listing",
             property=schema.Choice(title=_(u"Cosignatory"),
                 source=vocabulary.MemberOfParliamentDelegationSource("user_id"),
                 required=True
@@ -2117,7 +2020,6 @@ class ConsignatoryDescriptor(ModelDescriptor):
                 _(u"Cosignatory"),
                 "user"
             ),
-            listing=True,
             view_widget=MemberURLDisplayWidget
         ),
     ]
@@ -2128,25 +2030,25 @@ class ConstituencyDescriptor(ModelDescriptor):
     container_name = _(u"Constituencies")
     
     fields = [
-        Field(name="constituency_id", omit=True),
+        Field(name="constituency_id", modes=""),
         LanguageField("language"),
         Field(name="name",
+            modes="edit|view|add|listing",
             property=schema.TextLine(title=_(u"Name"),
                 description=_("Name of the constituency"),
                 required=True
             ),
-            listing=True
         ),
         Field(name="start_date",
+            modes="edit|view|add|listing",
             property=schema.Date(title=_(u"Start Date"), required=True),
-            listing=True,
             listing_column=day_column("start_date", _(u"Start Date")),
             edit_widget=DateWidget,
             add_widget=DateWidget
         ),
         Field(name="end_date",
+            modes="edit|view|add|listing",
             property=schema.Date(title=_(u"End Date"), required=False),
-            listing=True,
             listing_column=day_column("end_date", _(u"End Date")),
             edit_widget=DateWidget,
             add_widget=DateWidget
@@ -2160,13 +2062,13 @@ class ProvinceDescriptor(ModelDescriptor):
     container_name = _(u"Provinces")
     fields = [
         LanguageField("language"),
-        Field(name="province_id", omit=True),
+        Field(name="province_id", modes=""),
         Field(name="province",
+            modes="edit|view|add|listing",
             property=schema.TextLine(title=_(u"Province"),
                 description=_(u"Name of the Province"),
                 required=True
             ),
-            listing=True
         ),
     ]
 
@@ -2176,13 +2078,13 @@ class RegionDescriptor(ModelDescriptor):
     container_name = _(u"Regions")
     fields = [
         LanguageField("language"),
-        Field(name="region_id", omit=True),
+        Field(name="region_id", modes=""),
         Field(name="region",
+            modes="edit|view|add|listing",
             property=schema.TextLine(title=_(u"Region"),
                 description=_(u"Name of the Region"),
                 required=True
             ),
-            listing=True
         ),
     ]
 
@@ -2196,10 +2098,10 @@ class CountryDescriptor(ModelDescriptor):
             )
         ),
         Field(name="country_name",
+            modes="edit|view|add|listing",
             property=schema.TextLine(title=_(u"Country"),
                 description=_(u"Name of the Country")
             ),
-            listing=True
         ),
     ]
 
@@ -2208,39 +2110,38 @@ class ConstituencyDetailDescriptor(ModelDescriptor):
     display_name = _(u"Constituency details")
     container_name = _(u"Details")
     fields = [
-        Field(name="constituency_detail_id", omit=True),
+        Field(name="constituency_detail_id", modes=""),
         Field(name="constituency_id",
             label=_(u"Name"),
             description=_("Name of the constituency"),
-            listing=False,
-            omit=True
+            modes=""
         ),
         Field(name="date",
+            modes="edit|view|add|listing",
             property=schema.Date(title=_(u"Date"),
                 description=_("Date the data was submitted from the "
                     "Constituency"),
                 required=True
             ),
-            listing=True,
             listing_column=day_column("date", "Date"),
             edit_widget=DateWidget,
             add_widget=DateWidget
         ),
         Field(name="population",
+            modes="edit|view|add|listing",
             property=schema.Int(title=_(u"Population"),
                 description=_(u"Total Number of People living in this "
                     "Constituency"),
                 required=True
             ),
-            listing=True
         ),
         Field(name="voters",
+            modes="edit|view|add|listing",
             property=schema.Int(title=_(u"Voters"),
                 description=_(u"Number of Voters registered in this "
                     "Constituency"),
                 required=True
             ),
-            listing=True
         ),
     ]
 
@@ -2251,20 +2152,22 @@ class ConstituencyDetailDescriptor(ModelDescriptor):
 
 class RotaDescriptor(ModelDescriptor):
     fields = [
-        Field(name="rota_id", omit=True),
-        Field(name="reporter_id", omit=True), #XXX
-        Field(name="identifier", listing=True), # !+ title=_("Rota Identifier"), 
+        Field(name="rota_id", modes=""),
+        Field(name="reporter_id", modes=""), #XXX
+        Field(name="identifier", 
+            modes="edit|view|add|listing",
+        ), # !+ title=_("Rota Identifier"), 
         Field(name="start_date",
+            modes="edit|view|add|listing",
             label=_(u"Start Date"),
             listing_column=day_column("start_date", _(u"Start Date")),
-            listing=True,
             edit_widget=DateWidget,
             add_widget=DateWidget
         ),
         Field(name="end_date",
+            modes="edit|view|add|listing",
             label=_(u"End Date"),
             listing_column=day_column("end_date", _(u"End Date")),
-            listing=True,
             edit_widget=DateWidget,
             add_widget=DateWidget
         ),
@@ -2277,7 +2180,7 @@ class DocumentSourceDescriptor(ModelDescriptor):
     container_name = _(u"Document sources")
     
     fields = [
-        Field(name="document_source_id", omit=True),
+        Field(name="document_source_id", modes=""),
         Field(name="document_source", label=_(u"Document Source")),
     ]
 
@@ -2287,8 +2190,8 @@ class ItemScheduleDescriptor(ModelDescriptor):
     container_name = _(u"Schedulings")
     
     fields = [
-        Field(name="sitting_id", omit=True),
-        Field(name="schedule_id", omit=True),
+        Field(name="sitting_id", modes=""),
+        Field(name="schedule_id", modes=""),
         Field(name="item_id",
             property=schema.Choice(title=_(u"Item"),
                 source=vocabulary.DatabaseSource(domain.ParliamentaryItem,
@@ -2298,7 +2201,6 @@ class ItemScheduleDescriptor(ModelDescriptor):
                         type(obj).__name__, obj.short_name)
                 )
             ),
-            listing=False,
         ),
     ]
 
@@ -2309,7 +2211,7 @@ class ScheduledItemDiscussionDescriptor(ModelDescriptor):
     
     fields = [
         LanguageField("language"),
-        Field(name="schedule_id", omit=True),
+        Field(name="schedule_id", modes=""),
         Field(name="body_text", 
             label=_(u"Minutes"),
             property=schema.Text(title=_(u"Minutes")),
@@ -2320,7 +2222,7 @@ class ScheduledItemDiscussionDescriptor(ModelDescriptor):
         #Field(name="sitting_time", 
         #    label=_(u"Sitting time"), 
         #    description=_(u"The time at which the discussion took place."), 
-        #    listing=True
+        #    modes="edit|view|add|listing",
         #),
     ]
 
@@ -2330,16 +2232,12 @@ class ReportDescriptor(ModelDescriptor):
     container_name = _(u"Reports")
     
     fields = [
-        Field(name="report_id", omit=True),
+        Field(name="report_id", modes=""),
         #LanguageField("language"),
         Field(name="language",
             label=_(u"Language"),
-            listing=False,
-            add=True,
-            edit=True,
-            omit=False,
+            modes="edit|add",
             required=True,
-            view=False,
             property=schema.Choice(title=_(u"Language"),
                 default=get_default_language(),
                 vocabulary="language_vocabulary",
@@ -2347,29 +2245,25 @@ class ReportDescriptor(ModelDescriptor):
         ),
         Field(name="report_type",
             label=_(u"Publications type"),
-            listing=True,
-            view=False
+            modes="edit|add|listing",
         ),
         Field(name="start_date",
             label=_(u"Report Start Date"),
+            modes="edit|add|listing",
             listing_column=day_column("start_date", _(u"Start Date")),
-            listing=True,
             edit_widget=DateWidget,
             add_widget=DateWidget,
-            view=False
         ),
         Field(name="end_date",
             label=_(u"Report End Date"),
+            modes="edit|add|listing",
             listing_column=day_column("end_date", _(u"End Date")),
-            listing=True,
             edit_widget=DateWidget,
             add_widget=DateWidget,
-            view=False
         ),
         Field(name="note",
+            modes="edit|add|listing",
             label=_(u"Note"),
-            listing=True,
-            view=False
         ),
         Field(name="body_text",
             label=_(u"Text"),
@@ -2384,8 +2278,7 @@ class ReportDescriptor(ModelDescriptor):
 class Report4SittingDescriptor(ReportDescriptor):
     fields = deepcopy(ReportDescriptor.fields)
     fields.extend([
-        Field(name="sitting_report_id", omit=True),
-        Field(name="sitting_id", omit=True),
+        Field(name="sitting_report_id", modes=""),
+        Field(name="sitting_id", modes=""),
     ])
-
 
