@@ -28,7 +28,7 @@ class IModelDescriptorField(interface.Interface):
     modes = schema.ASCIILine(
         title=u"View Usage Modes for Field",
         description=u"Pipe separated string of different modes.. "
-            "add|edit|view|search|listing are all valid"
+            "view|edit|add|listing|search are all valid"
     )
     # property
     listing_column = schema.Object(interface.Interface,
@@ -49,7 +49,7 @@ class IModelDescriptorField(interface.Interface):
     )
     search_widget = schema.ASCIILine(
         title=u"A Custom Search Widget Factory",
-        required = False
+        required=False
     )
     view_permission = schema.ASCIILine(
         title=u"Read Permission",
@@ -80,9 +80,9 @@ class Field(object):
     label = ""       # str: title for field
     description = "" # str : description for field
     
-    modes = "edit|view|add" # str : see _valid modes for allows values
+    modes = "view|edit|add" # str : see _valid_modes for allows values
     
-    property = None # zope.schema.?
+    property = None # zope.schema.interfaces.IField
     
     listing_column = None   # zc.table.interfaces.IColumn
     
@@ -97,10 +97,14 @@ class Field(object):
     # OTHER Attributes (and Defaults)
     
     # required flag can only be used if the field is not required by database
-    required = False # !+REQUIRED(mr) is this actually used?
-    
-    # !+FIELDSET(mr) what is this for?
-    fieldset = "default"
+    #required = False 
+    # !+Field.required(mr, oct-2010) this is OBSOLETED as it has no affect on
+    # generated forms -- whether a field, in the UI, is handled as required 
+    # or not depe4nds entirely on the value of Field.property.required and/or 
+    # whether the corresponding column is nullable or not.
+
+    #fieldset = "default"
+    # !+FIELDSET(mr, oct-2010) not used - determine intention, remove.
     
     # for relations, we want to enable grouping them together based on
     # model, this attribute specifies a group. the relation name will be
@@ -109,19 +113,17 @@ class Field(object):
     # if we specify both as group "People", we inform the view machinery
     # to create a single relation viewlet, that displays and edits
     # via a single provider with a vocabulary for the relation.
-    group = None
+    #group = None
+    # !+GROUP(mr, oct-2010) not used - determine intention, remove.
     
-    #
     
-    _valid_modes = ("edit", "view", "add", "listing", "search")
+    _valid_modes = ("view", "edit", "add", "listing", "search")
     
     def __init__(self, 
         name=None, label=None, description=None, 
         modes=None, property=None, listing_column=None, 
         view_widget=None, edit_widget=None, add_widget=None, search_widget=None,
-        view_permission=None, edit_permission=None,
-        # !+PARAMS_TMP(mr) these are here until descriptor is cleaned up
-        required=None
+        view_permission=None, edit_permission=None
     ):
         """The defaults of each init paremeter is set as a class attribute --
         if not explicitly specified, then an attribute on the instance is
