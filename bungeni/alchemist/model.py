@@ -150,9 +150,7 @@ class Field(object):
             "name", "label", "description", "modes", 
             "property", "listing_column", 
             "view_widget", "edit_widget", "add_widget", "search_widget", 
-            "view_permission", "edit_permission",
-            # !+PARAMS_TMP(mr)
-            "required",
+            "view_permission", "edit_permission"
         ):
             v = kw[p]
             if v is not None:

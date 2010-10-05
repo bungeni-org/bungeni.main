@@ -1894,7 +1894,7 @@ class SessionDescriptor(ModelDescriptor):
             add_widget=DateWidget
         ),
         LanguageField("language"),
-        Field(name="notes", label=_(u"Notes"), required=False)
+        Field(name="notes", label=_(u"Notes"))
     ]
     schema_invariants = [EndAfterStart]
     custom_validators = [validations.validate_date_range_within_parent]
