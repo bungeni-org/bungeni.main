@@ -104,6 +104,13 @@ def name_column(name, title, default=""):
         return value
     return _column(name, title, renderer, default)
 
+def combined_name_column(name, title, default=""):
+    """Combine full_name as the full_name and short_name columns.
+    """
+    def getter(item, formatter):
+        return "%s &nbsp; [%s]" % (item.full_name, item.short_name)
+    return column.GetterColumn(title, getter)
+
 def user_name_column(name, title, attr):
     def getter(item_user, formatter):
         if attr:
@@ -749,14 +756,20 @@ class GroupDescriptor(ModelDescriptor):
         Field(name="group_id", modes=""),
         Field(name="type", modes=""),
         Field(name="full_name",
-            modes="view|edit|add|listing",
+            modes="view|edit|add",
             property=schema.TextLine(title=_(u"Name")),
-            listing_column=name_column("full_name", _(u"Full Name"))
+            #listing_column=name_column("full_name", _(u"Full Name"))
         ),
         Field(name="short_name",
-            modes="view|edit|add|listing",
+            modes="view|edit|add",
             property=schema.TextLine(title=_(U"Acronym")),
-            listing_column=name_column("short_name", _(u"Name"))
+            #listing_column=name_column("short_name", _(u"Name"))
+        ),
+        Field(name="combined_name",
+            modes="listing",
+            property=schema.TextLine(title=_(u"Name [Acronym]")),
+            listing_column=combined_name_column("full_name", 
+                "%s &nbsp; [%s]" % (_(u"Name"), _(u"Acronym")))
         ),
         LanguageField("language"),
         Field(name="description",
