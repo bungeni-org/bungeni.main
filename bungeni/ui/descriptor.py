@@ -516,8 +516,9 @@ class GroupMembershipDescriptor(ModelDescriptor):
             add_widget=DateWidget
         ),
         Field(name="end_date",
+            modes="view|edit|add|listing",
             property=schema.Date(title=_(u"End Date"), required=False),
-            #listing_column=day_column("end_date", _(u"End Date")),
+            listing_column=day_column("end_date", _(u"End Date")),
             edit_widget=DateWidget,
             add_widget=DateWidget
         ),
@@ -592,8 +593,8 @@ class MpDescriptor(ModelDescriptor):
             add_widget=DateWidget
         ),
     ]
-    
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
+    
     constituencySource = vocabulary.DatabaseSource(domain.Constituency,
         token_field="constituency_id",
         title_field="name",
@@ -943,7 +944,7 @@ class CommitteeDescriptor(GroupDescriptor):
 
 class CommitteeMemberDescriptor(ModelDescriptor):
     display_name = _(u"Member")
-    container_name = _(u"Membership")
+    container_name = _(u"Members")
     fields = [
         Field(name="user_id",
             modes="view|edit|add|listing",
