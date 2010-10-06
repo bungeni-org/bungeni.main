@@ -53,7 +53,7 @@ from bungeni.ui.widgets import NoInputWidget
 from bungeni.ui import constraints
 from bungeni.ui.forms import validations
 from bungeni.ui.i18n import _
-from bungeni.ui.utils import misc
+from bungeni.ui.utils import date, misc
 from bungeni.ui import vocabulary
 from bungeni.ui.tagged import get_states
 
@@ -61,41 +61,48 @@ from bungeni.ui.tagged import get_states
 # Listing Columns 
 #
 
-# !+COLUMN_DEFAULT(mr, sep-2010) why is there a default param on all custom 
-# column getters, that seems to not be used anywhere
-
 def _column(name, title, renderer, default=""):
     def getter(item, formatter):
+        # item.__parent__.request
         value = getattr(item, name)
         if value:
             return renderer(value)
         return default
     return column.GetterColumn(title, getter)
 
-
+def localized_datetime_column(name, title, default="", 
+        category="date",    # "date" | "time" | "dateTime"
+        length="medium"     # "short" | "medium" | "long" | "full" | None
+    ):
+    def getter(item, formatter):
+        value = getattr(item, name)
+        if value:
+            request = item.__parent__.request
+            date_formatter = date.getLocaleFormatter(request, category, length)
+            return date_formatter.format(value)
+        return default
+    return column.GetterColumn(title, getter)
 def day_column(name, title, default=""):
-    renderer = lambda x: x.strftime("%Y-%m-%d")
-    return _column(name, title, renderer, default)
+    return localized_datetime_column(name, title, default, "date", "long")
+#def datetime_column(name, title, default=""):
+#    return localized_datetime_column(name, title, default, "dateTime", "long")
+#def time_column(name, title, default=""):
+#    return localized_datetime_column(name, title, default, "time", "long")
 
 def date_from_to_column(name, title, default=""):
     def getter(item, formatter):
+        request = item.__parent__.request
         start = getattr(item, "start_date")
-        end = getattr(item, "end_date")
         if start:
-            start = start.strftime("%Y-%m-%d %H:%M")
+            start = date.getLocaleFormatter(request, 
+                "dateTime", "short").format(start)
+        end = getattr(item, "end_date")
         if end:
-            end = end.strftime("%H:%M")
+            end = date.getLocaleFormatter(request, 
+                "time", "short").format(end)
         return u"%s - %s" % (start, end)
     return column.GetterColumn(title, getter)
 
-
-def datetime_column(name, title, default=""):
-    renderer = lambda x: x.strftime("%Y-%m-%d %H:%M")
-    return _column(name, title, renderer, default)
-
-def time_column(name, title, default=""):
-    renderer = lambda x: x.strftime("%H:%M")
-    return _column(name, title, renderer, default)
 
 def name_column(name, title, default=""):
     def renderer(value, size=50):

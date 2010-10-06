@@ -135,16 +135,19 @@ class Field(object):
         kw = vars()
         cls = self.__class__
         # parameter integrity
-        assert name or self.Name, "Field [%s] must specify valid name" % (name)
+        assert name, "Field [%s] must specify valid name" % (name)
         assert not ((property or self.property) and 
                 not (modes or self.modes)), \
             """Can't specify "property" and no "modes" for field: %s""" % (
                 name)
+        if modes: 
+            assert not " " in modes, \
+                """Field [%s] "modes" [%s] may not contain whitespace""" % (
+                    name, modes)
         if listing_column:
-            assert (modes and 
-                    ("listing" in modes or "listing" in self.modes)), \
-                "Field [%s] sets listing_column but listing mode False" % (
-                    name)
+            assert ((modes and "listing" in modes) or 
+                    (self.modes and "listing" in self.modes)), \
+                "Field [%s] sets listing_column but no listing mode" % (name)
         # set attribute values (for specified attributes only)
         for p in (
             "name", "label", "description", "modes", 
