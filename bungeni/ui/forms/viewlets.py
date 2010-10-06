@@ -40,8 +40,18 @@ from bungeni.ui.utils import queries, statements, url, misc, date, debug
 from fields import BungeniAttributeDisplay
 from interfaces import ISubFormViewletManager
 
+# !+ViewletBase(mr, oct-2010) standardize on a central bungeni ViewletBase 
+class ViewletBase(viewlet.ViewletBase):
+
+    def __init__(self,  context, request, view, manager):
+        super(ViewletBase, self).__init__(context, request, view, manager)
+
+    def get_date_formatter(self, category="date", length="long"):
+        return date.getLocaleFormatter(self.request, category, length)
+
+
 ''' XXX-INFO-FOR-PLONE - MR - 2010-05-03
-class GroupIdViewlet(viewlet.ViewletBase):
+class GroupIdViewlet(ViewletBase):
     """ display the group and parent group
     principal id """
     parent_group_principal_id = None
@@ -69,7 +79,7 @@ class GroupIdViewlet(viewlet.ViewletBase):
 
 
 ''' XXX-INFO-FOR-PLONE - MR - 2010-05-03
-class UserIdViewlet(viewlet.ViewletBase):
+class UserIdViewlet(ViewletBase):
     """ display the users
     principal id """
     principal_id = None
@@ -540,7 +550,7 @@ class ResponseViewlet(BungeniAttributeDisplay):
             self.actions = self.add_action.actions
 
 
-class OfficesHeldViewlet(viewlet.ViewletBase):
+class OfficesHeldViewlet(ViewletBase):
     for_display = True
     def __init__(self, context, request, view, manager):
         self.context = context
@@ -585,7 +595,7 @@ class OfficesHeldViewlet(viewlet.ViewletBase):
     render = ViewPageTemplateFile("templates/offices_held_viewlet.pt")
 
 
-class TimeLineViewlet(viewlet.ViewletBase):
+class TimeLineViewlet(ViewletBase):
     """
     tracker/timeline view:
     
@@ -615,8 +625,7 @@ class TimeLineViewlet(viewlet.ViewletBase):
         self.__parent__ = view
         self.manager = manager
         self.query = None
-        self.formatter = date.getLocaleFormatter(
-            self.request, "dateTime", "medium")
+        self.formatter = self.get_date_formatter("dateTime", "medium")
     
     def handle_event_add_action(self, action, data):
         self.request.response.redirect(self.addurl)
@@ -716,7 +725,7 @@ class AgendaItemTimeLineViewlet(TimeLineViewlet):
     view_id = "agendaitem-timeline"
 
 
-class MemberItemsViewlet(viewlet.ViewletBase):
+class MemberItemsViewlet(ViewletBase):
     """A tab with bills, motions etc for an MP 
     (the "parliamentary activities" tab of of the "member" view)
     """
@@ -751,8 +760,7 @@ class MemberItemsViewlet(viewlet.ViewletBase):
                 domain.ParliamentaryItem.status.in_(self.states),
             )).order_by(domain.ParliamentaryItem.parliamentary_item_id.desc())
         #self.for_display = (self.query.count() > 0)
-        self.formatter = date.getLocaleFormatter(
-            self.request, "date", "medium")
+        self.formatter = get_date_formatter("date", "medium")
     
     def results(self):
         for result in self.query.all():
@@ -845,7 +853,7 @@ class SchedulingMinutesViewlet(DisplayViewlet):
             self.context, self.request)
 
 
-class SessionCalendarViewlet(viewlet.ViewletBase):
+class SessionCalendarViewlet(ViewletBase):
     """Display a monthly calendar with all sittings for a session.
     """
     def __init__(self, context, request, view, manager):
@@ -954,13 +962,14 @@ class SessionCalendarViewlet(viewlet.ViewletBase):
         data_list = []
         path = "/calendar/group/sittings/"
         results = self.query.all()
+        data_formatter = self.get_date_formatter("time", "short")
         for result in results:
             data = {}
             data["sittingid"] = ("sid_" + str(result.sitting_id))
             data["sid"] = result.sitting_id
             data["short_name"] = "%s - %s" % (
-                datetime.datetime.strftime(result.start_date, "%H:%M"),
-                datetime.datetime.strftime(result.end_date, "%H:%M")
+                self.data_formatter.format(result.start_date),
+                self.data_formatter.format(result.end_date)
             )
             data["start_date"] = result.start_date
             data["end_date"] = result.end_date
@@ -975,13 +984,13 @@ class SessionCalendarViewlet(viewlet.ViewletBase):
             data_list.append(data)
         return data_list
     
-    def getTdId(self, Date):
+    def getTdId(self, date):
         """
         return an Id for that td element:
         consiting of tdid- + date
         like tdid-2008-01-17
         """
-        return "tdid-" + datetime.date.strftime(Date, "%Y-%m-%d")
+        return "tdid-" + datetime.date.strftime(date, "%Y-%m-%d")
     
     def getDayClass(self, Date):
         """Return the class settings for that calendar day.

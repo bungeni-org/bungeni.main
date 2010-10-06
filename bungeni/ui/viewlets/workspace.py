@@ -79,6 +79,7 @@ class WorkspaceContextNavigation(StructureAwareViewlet):
 
 #
 
+# !+ViewletBase(mr, oct-2010) standardize on a central bungeni ViewletBase
 class ViewletBase(viewlet.ViewletBase):
     # evoque
     render = z3evoque.ViewTemplateFile("workspace_viewlets.html#items")
@@ -89,11 +90,13 @@ class ViewletBase(viewlet.ViewletBase):
     def __init__(self,  context, request, view, manager):
         super(ViewletBase, self).__init__(context, request, view, manager)
         self._data = None
-
+    
     def getData(self):
         """return the data of the query."""
         return self._data
     
+    def get_date_formatter(self, category="date", length="long"):
+        return date.getLocaleFormatter(self.request, category, length)
 
 ''' XXX-INFO-FOR-PLONE - MR - 2010-05-03
 class UserIdViewlet(viewlet.ViewletBase):
@@ -120,7 +123,7 @@ class QuestionInStateViewlet(ViewletBase):
         """return the data of the query
         """
         #offset = datetime.timedelta(prefs.getNoOfDaysBeforeQuestionSchedule())
-        date_formatter = date.getLocaleFormatter(self.request, "date", "long")
+        date_formatter = self.get_date_formatter("date", "long")
         def _q_data_item(q):
             item = {}
             item["qid"]= "q_%s" % q.question_id
@@ -157,7 +160,7 @@ class MyGroupsViewlet(ViewletBase):
     def _setData(self):
         """Return the data of the query
         """
-        formatter = date.getLocaleFormatter(self.request, "date", "long")
+        formatter = self.get_date_formatter("date", "long")
         data_list = []
         results = self.query.all()
         
@@ -222,7 +225,7 @@ class MotionInStateViewlet(ViewletBase):
         """
         data_list = []
         results = self.query.all()
-        formatter = date.getLocaleFormatter(self.request, "date", "long")
+        formatter = self.get_date_formatter("date", "long")
         for result in results:
             data ={}
             data["qid"]= ("m_" + str(result.motion_id))
@@ -266,7 +269,7 @@ class BillItemsViewlet(ViewletBase):
         """
         data_list = []
         results = self.query.all()
-        formatter = date.getLocaleFormatter(self.request, "date", "long")
+        formatter = self.get_date_formatter("date", "long")
         for result in results:
             data ={}
             data["qid"]= ("b_" + str(result.bill_id))
@@ -322,7 +325,7 @@ class OwnedItemsInStageViewlet(ViewletBase):
         """
         data_list = []
         results = self.query.all()
-        formatter = date.getLocaleFormatter(self.request, "date", "long")
+        formatter = self.get_date_formatter("date", "long")
         for result in results:
             data = {}
             data["qid"] = ("i-" + str(result.parliamentary_item_id))
@@ -529,7 +532,7 @@ class ItemsScheduledViewlet(AllItemsInStageViewlet):
     
     def update(self):
         super(ItemsScheduledViewlet, self).update()
-        formatter = date.getLocaleFormatter(self.request, "dateTime", "medium")
+        formatter = self.get_date_formatter("dateTime", "medium")
         for d in self._data:
             d["sittings_start"] = []
             d["sittings_status"] = []
@@ -560,7 +563,7 @@ class MinistryItemsViewlet(ViewletBase):
     
     def _getItems(self, ministry):
         session = Session()
-        date_formatter = date.getLocaleFormatter(self.request, "date", "long")
+        date_formatter = self.get_date_formatter("date", "long")
         def _q_data_item(q):
             item = {}
             item["qid"]= "q_%s" % q.question_id
@@ -657,8 +660,8 @@ class DraftSittingsViewlet(ViewletBase):
         """
         data_list = []
         results = self.query.all()
-        formatter = date.getLocaleFormatter(self.request, "date", "long")
-        time_formatter = date.getLocaleFormatter(self.request, "time", "short")
+        formatter = self.get_date_formatter("date", "long")
+        time_formatter = self.get_date_formatter("time", "short")
         for result in results:
             data = {}
             data["subject"] = result.short_name

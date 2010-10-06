@@ -36,7 +36,7 @@ $URL$
                                      title item/description"
                      tal:content="item/title" />
                 </td>
-                <td i18n:translate="" tal:content="python:item.date.strftime('%Y-%m-%d')" />
+                <td tal:content="item/date" />
               </tr>
             </tal:items>
           </tbody>
