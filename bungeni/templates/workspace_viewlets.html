@@ -3,7 +3,7 @@
 
 #[ was: ui/viewlets/templates/workspace_item_viewlet.pt ]#
 $begin{items}
-<!-- template: bungeni/templates/workspace_viewlets.html#items -->
+$if{devmode}<!-- template: bungeni/templates/workspace_viewlets.html#items -->$fi
 <dt class="portletHeader" id="fieldsetlegend-${view.list_id}">
     <span>${i18n(view.name)}</span>
 </dt>
@@ -40,7 +40,7 @@ $end{items}
 
 #[ was: ui/viewlets/templates/mp_item_viewlet.pt ]#
 $begin{mp_items}
-<!-- template: bungeni/templates/workspace_viewlets.html#mp_items -->
+$if{devmode}<!-- template: bungeni/templates/workspace_viewlets.html#mp_items -->$fi
 <dt id="fieldsetlegend-${view.view_id}">
   ${i18n(view.view_name)}
 </dt>
@@ -71,7 +71,7 @@ $end{mp_items}
 
 #[ was: ui/viewlets/templates/workspace_sitting_viewlet.pt ]#
 $begin{sittings}
-<!-- template: bungeni/templates/workspace_viewlets.html#sittings -->
+$if{devmode}<!-- template: bungeni/templates/workspace_viewlets.html#sittings -->$fi
 <dt class="portletHeader" id="fieldsetlegend-${view.list_id}">
     <span>${i18n(view.name)}</span>
 </dt>
@@ -113,7 +113,7 @@ $end{sittings}
 
 
 $begin{scheduled}
-<!-- template: bungeni/templates/workspace_viewlets.html#scheduled -->
+$if{devmode}<!-- template: bungeni/templates/workspace_viewlets.html#scheduled -->$fi
 <dt class="portletHeader" id="fieldsetlegend-${view.list_id}">
     <span>${i18n(view.name)}</span>
 </dt>
@@ -154,7 +154,7 @@ $end{scheduled}
 
 #[ was: ui/forms/templates/timeline_viewlet.pt ]#
 $begin{timeline}
-<!-- template: bungeni/templates/workspace_viewlets.html#timeline -->
+$if{devmode}<!-- template: bungeni/templates/workspace_viewlets.html#timeline -->$fi
 <dt id="fieldsetlegend-${view.view_id}">
     <span>${i18n(view.view_name)}</span>
 </dt>
@@ -179,4 +179,37 @@ $begin{timeline}
     </table>
 </dd>
 $end{timeline}
+
+
+#[ was: ui/forms/templates/offices_held_viewlet.pt ]#
+$begin{offices_held}
+$if{devmode}<!-- template: bungeni/templates/workspace_viewlets.html#offices_held -->$fi
+<dt id="fieldsetlegend-${view.view_id}">
+    <span>${i18n(view.view_name)}</span>
+</dt>
+<dd id="fieldset-${view.view_id}">
+    <table class="listing">
+        <thead>
+            <tr>
+                <th>${i18n("Office")}</th>
+                <th>${i18n("Type")}</th>
+                <th>${i18n("Title")}</th>
+                <th>${i18n("From")}</th>
+                <th>${i18n("To")}</th>
+            </tr>
+        </thead>
+        <tbody>
+            $for{oh in view.get_offices_held()}
+            <tr> 
+                <td><span>${oh["group"]}</span></td>
+                <td><span>${oh["group_type"]}</span></td>
+                <td><span>${oh["member_title"]}</span></td>
+                <td><span>${oh["start_date"]}</span></td>
+                <td><span>${oh["end_date"]}</span></td>
+            </tr>
+            $rof
+        </tbody>
+    </table>
+</dd>
+$end{offices_held}
 

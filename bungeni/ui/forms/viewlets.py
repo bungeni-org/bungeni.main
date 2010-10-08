@@ -551,7 +551,17 @@ class ResponseViewlet(BungeniAttributeDisplay):
 
 
 class OfficesHeldViewlet(ViewletBase):
+
+    # evoque
+    render = z3evoque.ViewTemplateFile("workspace_viewlets.html#offices_held")
+    
+    # zpt
+    #render = ViewPageTemplateFile("templates/offices_held_viewlet.pt")
+    
     for_display = True
+    view_name = "Offices held"
+    view_id = "offices-held"
+    
     def __init__(self, context, request, view, manager):
         self.context = context
         self.request = request
@@ -561,22 +571,27 @@ class OfficesHeldViewlet(ViewletBase):
     
     def get_offices_held(self):
         office_list = []
+        formatter = self.get_date_formatter("date", "long")
         for oh in self.offices_held:
             title = {}
-            title["group"] = oh[0] + " - " + (oh[1] or"")
-            title["group_type"] = oh[2].capitalize()
+            # !+FULL_NAME(mr, oct-2010) this should probably make use of 
+            # the GroupDescriptor (combined) listing Field full_name
+            title["group"] = "%s - %s" % (_(oh[0]), oh[1] and _(oh[1]) or "")
+            title["group_type"] = _(oh[2])
             if oh[3]:
-                title["member_title"] = oh[3]
+                title["member_title"] = _(oh[3])
             else:
                 title["member_title"] = _(u"Member")
+            title["start_date"] = None
             if oh[4]:
-                title["start_date"] = oh[4]
-            else:
-                title["start_date"] = oh[6]
+                title["start_date"] = formatter.format(oh[4])
+            elif oh[6]:
+                title["start_date"] = formatter.format(oh[6])
+            title["end_date"] = None
             if oh[5]:
-                title["end_date"] = oh[5]
-            else:
-                title["end_date"] = oh[7]
+                title["end_date"] = formatter.format(oh[5])
+            elif oh[7]:
+                title["end_date"] = formatter.format(oh[7])
             office_list.append(title)
         return office_list
     
@@ -592,7 +607,6 @@ class OfficesHeldViewlet(ViewletBase):
         self.offices_held = get_offices_held_for_user_in_parliament(
                 user_id, parliament_id)
     
-    render = ViewPageTemplateFile("templates/offices_held_viewlet.pt")
 
 
 class TimeLineViewlet(ViewletBase):
@@ -760,7 +774,7 @@ class MemberItemsViewlet(ViewletBase):
                 domain.ParliamentaryItem.status.in_(self.states),
             )).order_by(domain.ParliamentaryItem.parliamentary_item_id.desc())
         #self.for_display = (self.query.count() > 0)
-        self.formatter = get_date_formatter("date", "medium")
+        self.formatter = self.get_date_formatter("date", "medium")
     
     def results(self):
         for result in self.query.all():
