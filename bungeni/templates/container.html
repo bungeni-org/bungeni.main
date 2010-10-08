@@ -27,16 +27,17 @@ $end{generic}
 $begin{datatable}
 $if{ devmode }<!-- template: bungeni/templates/container.html#datatable -->$fi
 <script type="text/javascript">
-  (function($$) {
-  $$(document).ready(function() {
-    $$(this).yuiDataTable('${context_name}',
-                         '${link_url}',
-                         '${data_url}',
-                         [${fields}],
-                         [${columns}],
-                         '${table_id}');
-  });
-  })(jQuery);
+(function($$) {
+    $$(document).ready(function() {
+        $$(this).yuiDataTable('${context_name}',
+            '${link_url}',
+            '${data_url}',
+            [${fields}],
+            [${columns}],
+            '${table_id}'
+        );
+    });
+})(jQuery);
 </script>
 $end{datatable}
 #]
