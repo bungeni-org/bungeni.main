@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: Fri Oct  8 11:28:20 2010\n"
+"POT-Creation-Date: Fri Oct  8 14:35:08 2010\n"
 "PO-Revision-Date: 2010-07-21 14:34+0300\n"
 "Last-Translator: Administrator <admin@apkn.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,632 +16,6 @@ msgstr ""
 "Domain: DOMAIN\n"
 "Preferred-Encodings: utf-8 latin1\n"
 "Language-Name: English\n"
-
-#: src/bungeni.main/bungeni/core/app.py:102
-#: src/bungeni.main/bungeni/core/app.py:177
-#: src/bungeni.main/bungeni/ui/descriptor.py:1827
-#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:22
-msgid "Sittings"
-msgstr "sittings"
-
-#: src/bungeni.main/bungeni/core/app.py:103
-#, fuzzy
-msgid "Plenary Sittings"
-msgstr "sittings"
-
-#: src/bungeni.main/bungeni/core/app.py:109
-#: src/bungeni.main/bungeni/ui/menu.zcml:1079
-msgid "Business"
-msgstr "business"
-
-#: src/bungeni.main/bungeni/core/app.py:110
-#, fuzzy
-msgid "Daily operations of the parliament"
-msgstr "an overview of the daily operations of the parliament"
-
-#: src/bungeni.main/bungeni/core/app.py:113
-#: src/bungeni.main/bungeni/ui/descriptor.py:954
-#: src/bungeni.main/bungeni/ui/menu.zcml:1085
-msgid "Members"
-msgstr "members"
-
-#: src/bungeni.main/bungeni/core/app.py:114
-#, fuzzy
-msgid "Records on members of parliament"
-msgstr "members of parliament"
-
-#: src/bungeni.main/bungeni/core/app.py:117
-#: src/bungeni.main/bungeni/ui/menu.zcml:1091
-#: src/bungeni.main/bungeni/ui/viewlets/workspace.zcml:49
-#: src/bungeni.main/bungeni/ui/viewlets/workspace.zcml:62
-#: src/bungeni.main/bungeni/ui/templates/archive.pt:6
-msgid "Archive"
-msgstr "archive"
-
-#: src/bungeni.main/bungeni/core/app.py:118
-msgid "Parliament records and documents"
-msgstr ""
-
-#: src/bungeni.main/bungeni/core/app.py:121
-#: src/bungeni.main/bungeni/ui/menu.zcml:1097
-msgid "Administration"
-msgstr "administration"
-
-#: src/bungeni.main/bungeni/core/app.py:122
-msgid "Administer bungeni settings"
-msgstr ""
-
-#: src/bungeni.main/bungeni/core/app.py:128
-#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:11
-msgid "What's on"
-msgstr "what's on"
-
-#: src/bungeni.main/bungeni/core/app.py:136
-msgid "View committees created by the current parliament"
-msgstr ""
-
-#: src/bungeni.main/bungeni/core/app.py:140
-#: src/bungeni.main/bungeni/ui/descriptor.py:1665
-#: src/bungeni.main/bungeni/ui/reports.py:68
-#: src/bungeni.main/bungeni/ui/viewlets/schedule.py:159
-#: src/bungeni.main/bungeni/ui/workspace.py:245
-#: src/bungeni.main/bungeni/ui/workspace.py:286
-#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:58
-msgid "Bills"
-msgstr "bills"
-
-#: src/bungeni.main/bungeni/core/app.py:142
-#, fuzzy
-msgid "View bills issued by the current parliament"
-msgstr "filter by date or parliament"
-
-#: src/bungeni.main/bungeni/core/app.py:146
-#: src/bungeni.main/bungeni/ui/descriptor.py:1714
-#: src/bungeni.main/bungeni/ui/reports.py:71
-#: src/bungeni.main/bungeni/ui/viewlets/schedule.py:165
-#: src/bungeni.main/bungeni/ui/workspace.py:230
-#: src/bungeni.main/bungeni/ui/workspace.py:271
-#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:100
-msgid "Questions"
-msgstr "questions"
-
-#: src/bungeni.main/bungeni/core/app.py:148
-msgid "View questions issued by the current parliament"
-msgstr ""
-
-#: src/bungeni.main/bungeni/core/app.py:152
-#: src/bungeni.main/bungeni/ui/descriptor.py:1622
-#: src/bungeni.main/bungeni/ui/reports.py:70
-#: src/bungeni.main/bungeni/ui/viewlets/schedule.py:171
-#: src/bungeni.main/bungeni/ui/workspace.py:235
-#: src/bungeni.main/bungeni/ui/workspace.py:276
-#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:79
-msgid "Motions"
-msgstr "motions"
-
-#: src/bungeni.main/bungeni/core/app.py:154
-#, fuzzy
-msgid "View motions issued by the current parliament"
-msgstr "filter by date or parliament"
-
-#: src/bungeni.main/bungeni/core/app.py:159
-#: src/bungeni.main/bungeni/ui/descriptor.py:1806
-#: src/bungeni.main/bungeni/ui/viewlets/schedule.py:177
-#: src/bungeni.main/bungeni/ui/workspace.py:240
-#: src/bungeni.main/bungeni/ui/workspace.py:281
-#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:121
-msgid "Tabled documents"
-msgstr "tabled documents"
-
-#: src/bungeni.main/bungeni/core/app.py:161
-#, fuzzy
-msgid "View the tabled documents of the current parliament"
-msgstr "an overview of the daily operations of the parliament"
-
-#: src/bungeni.main/bungeni/core/app.py:165
-#: src/bungeni.main/bungeni/ui/descriptor.py:1605
-#: src/bungeni.main/bungeni/ui/viewlets/schedule.py:183
-#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:142
-msgid "Agenda items"
-msgstr "agenda items"
-
-#: src/bungeni.main/bungeni/core/app.py:167
-#, fuzzy
-msgid "View the agenda items of the current parliament"
-msgstr "an overview of the daily operations of the parliament"
-
-#: src/bungeni.main/bungeni/core/app.py:178
-#, fuzzy
-msgid "View the sittings of the current parliament"
-msgstr "an overview of the daily operations of the parliament"
-
-#: src/bungeni.main/bungeni/core/app.py:183
-#, fuzzy
-msgid "Publications"
-msgstr "publications type"
-
-#: src/bungeni.main/bungeni/core/app.py:185
-msgid "View Agenda and Minutes reports of the current parliament"
-msgstr ""
-
-#: src/bungeni.main/bungeni/core/app.py:191
-msgid "Current"
-msgstr ""
-
-#: src/bungeni.main/bungeni/core/app.py:192
-msgid "View current parliament members (MPs)"
-msgstr ""
-
-#: src/bungeni.main/bungeni/core/app.py:196
-#, fuzzy
-msgid "Political groups"
-msgstr "political groups"
-
-#: src/bungeni.main/bungeni/core/app.py:197
-#, fuzzy
-msgid "View current political groups"
-msgstr "political groups"
-
-#: src/bungeni.main/bungeni/core/app.py:201
-msgid "Browse"
-msgstr ""
-
-#: src/bungeni.main/bungeni/core/app.py:202
-#, fuzzy
-msgid "Current and historical records"
-msgstr "access to current and historical records"
-
-#: src/bungeni.main/bungeni/core/app.py:206
-#, fuzzy
-msgid "Documents"
-msgstr "document source"
-
-#: src/bungeni.main/bungeni/core/app.py:207
-msgid "Visit the digital document repository"
-msgstr ""
-
-#: src/bungeni.main/bungeni/core/app.py:257
-#, fuzzy
-msgid "Content"
-msgstr "content"
-
-#: src/bungeni.main/bungeni/core/app.py:258
-msgid "browse the content"
-msgstr ""
-
-#: src/bungeni.main/bungeni/core/app.py:262
-#: src/bungeni.main/bungeni/ui/templates/admin-menu-viewlet.pt:13
-msgid "Settings"
-msgstr "settings"
-
-#: src/bungeni.main/bungeni/core/app.py:263
-#: src/bungeni.main/bungeni/ui/menu.zcml:577
-msgid "settings"
-msgstr "settings"
-
-#: src/bungeni.main/bungeni/core/app.py:84
-#: src/bungeni.main/bungeni/ui/menu.zcml:1057
-msgid "Workspace"
-msgstr "workspace"
-
-#: src/bungeni.main/bungeni/core/app.py:85
-#: src/bungeni.main/bungeni/core/app.py:129
-#: src/bungeni.main/bungeni/ui/workspace.py:221
-msgid "Current parliamentary activity"
-msgstr "parliamentary activities"
-
-#: src/bungeni.main/bungeni/core/app.py:90
-#: src/bungeni.main/bungeni/core/app.py:91
-#: src/bungeni.main/bungeni/ui/descriptor.py:2180
-#: src/bungeni.main/bungeni/ui/viewlets/schedule.py:53
-msgid "Scheduling"
-msgstr "scheduling"
-
-#: src/bungeni.main/bungeni/core/app.py:97
-#: src/bungeni.main/bungeni/core/app.py:134
-#: src/bungeni.main/bungeni/ui/descriptor.py:884
-#: src/bungeni.main/bungeni/ui/workspace.py:254
-msgid "Committees"
-msgstr "committees"
-
-#: src/bungeni.main/bungeni/core/app.py:99
-#, fuzzy
-msgid "Committee schedules"
-msgstr "no items scheduled"
-
-#: src/bungeni.main/bungeni/core/audit.py:233
-msgid "No IRequest in interaction"
-msgstr ""
-
-#: src/bungeni.main/bungeni/core/dc.py:110
-#, fuzzy
-msgid "published on"
-msgstr "date published"
-
-#: src/bungeni.main/bungeni/core/dc.py:135
-msgid "notice given on"
-msgstr ""
-
-#: src/bungeni.main/bungeni/core/dc.py:147
-#, fuzzy
-msgid "Sitting:"
-msgstr "sitting"
-
-#: src/bungeni.main/bungeni/core/dc.py:150
-#: src/bungeni.main/bungeni/core/dc.py:160
-msgid "to"
-msgstr ""
-
-#: src/bungeni.main/bungeni/core/dc.py:157
-#, fuzzy
-msgid "Sitting scheduled for"
-msgstr "no items scheduled"
-
-#: src/bungeni.main/bungeni/core/dc.py:169
-#, fuzzy
-msgid "Item scheduling"
-msgstr "delete item"
-
-#. Default: ""
-#: src/bungeni.main/bungeni/core/dc.py:176
-msgid "Scheduled for sitting ($start to $end)"
-msgstr ""
-
-#: src/bungeni.main/bungeni/core/dc.py:188
-#, fuzzy
-msgid "translation"
-msgstr "save translation"
-
-#: src/bungeni.main/bungeni/core/dc.py:189
-#, fuzzy
-msgid "Version"
-msgstr "versions"
-
-#: src/bungeni.main/bungeni/core/dc.py:193
-#, fuzzy
-msgid "Last modified"
-msgstr "modified"
-
-#: src/bungeni.main/bungeni/core/dc.py:336
-#: src/bungeni.main/bungeni/core/dc.py:337
-#: src/bungeni.main/bungeni/ui/descriptor.py:2200
-msgid "Discussion"
-msgstr "discussion"
-
-#: src/bungeni.main/bungeni/core/dc.py:84
-#: src/bungeni.main/bungeni/core/dc.py:107
-#: src/bungeni.main/bungeni/core/dc.py:132
-#, fuzzy
-msgid "Submitted by"
-msgstr "substituted by"
-
-#: src/bungeni.main/bungeni/core/dc.py:87
-#, fuzzy
-msgid "approved on"
-msgstr "approved"
-
-#. Default: ""
-#: src/bungeni.main/bungeni/core/schedule.py:171
-msgid "$x"
-msgstr "$x"
-
-#: src/bungeni.main/bungeni/core/schedule.py:82
-msgid "Unknown principal group"
-msgstr "unknown principal group"
-
-#. Default: "HTML fragment to OpenDocument format"
-#: src/bungeni.main/bungeni/core/transformation.py:189
-msgid "title_html_fragment_odf_transform"
-msgstr ""
-
-#. Default: ""
-#: src/bungeni.main/bungeni/core/version.py:117
-#, fuzzy
-msgid "Reverted to previous version $version"
-msgstr "reverted to previous version %s"
-
-#. Default: "Agenda Item received"
-#: src/bungeni.main/bungeni/core/workflows/agendaitem.py:109
-msgid "notification_email_to_member_upon_receipt_of_agenda_item"
-msgstr ""
-
-#. Default: "Agenda Item submitted"
-#: src/bungeni.main/bungeni/core/workflows/agendaitem.py:132
-msgid "notification_email_to_clerk_upon_submit_of_agenda_item"
-msgstr ""
-
-#. Default: "Agenda Item rejected"
-#: src/bungeni.main/bungeni/core/workflows/agendaitem.py:153
-msgid "notification_email_to_member_upon_rejection_of_agenda_item"
-msgstr ""
-
-#. Default: "Your agenda_item needs to be clarified"
-#: src/bungeni.main/bungeni/core/workflows/agendaitem.py:174
-msgid "notification_email_to_member_upon_need_clarification_of_agenda_item"
-msgstr ""
-
-#. Default: "Agenda Item deferred"
-#: src/bungeni.main/bungeni/core/workflows/agendaitem.py:194
-msgid "notification_email_to_member_upon_defer_of_agenda_item"
-msgstr ""
-
-#. Default: "Agenda Item scheduled"
-#: src/bungeni.main/bungeni/core/workflows/agendaitem.py:215
-msgid "notification_email_to_member_upon_schedule_of_agenda_item"
-msgstr ""
-
-#. Default: "Agenda Item was debated"
-#: src/bungeni.main/bungeni/core/workflows/agendaitem.py:258
-msgid "notification_email_to_member_upon_debate_of_agenda_item"
-msgstr ""
-
-#. Default: "Motion received"
-#: src/bungeni.main/bungeni/core/workflows/motion.py:112
-msgid "notification_email_to_member_upon_receipt_of_motion"
-msgstr ""
-
-#. Default: "Motion submitted"
-#: src/bungeni.main/bungeni/core/workflows/motion.py:136
-msgid "notification_email_to_clerk_upon_submit_of_motion"
-msgstr ""
-
-#. Default: "Motion rejected"
-#: src/bungeni.main/bungeni/core/workflows/motion.py:157
-msgid "notification_email_to_member_upon_rejection_of_motion"
-msgstr ""
-
-#. Default: "Your motion needs to be clarified"
-#: src/bungeni.main/bungeni/core/workflows/motion.py:178
-msgid "notification_email_to_member_upon_need_clarification_of_motion"
-msgstr ""
-
-#. Default: "Motion deferred"
-#: src/bungeni.main/bungeni/core/workflows/motion.py:198
-msgid "notification_email_to_member_upon_defer_of_motion"
-msgstr ""
-
-#. Default: "Motion scheduled"
-#: src/bungeni.main/bungeni/core/workflows/motion.py:219
-msgid "notification_email_to_member_upon_schedule_of_motion"
-msgstr ""
-
-#. Default: "Question received"
-#: src/bungeni.main/bungeni/core/workflows/question.py:177
-msgid "notification_email_to_member_upon_receipt_of_question"
-msgstr ""
-
-#. Default: "Question submitted"
-#: src/bungeni.main/bungeni/core/workflows/question.py:201
-msgid "notification_email_to_clerk_upon_submit_of_question"
-msgstr ""
-
-#. Default: "Question rejected"
-#: src/bungeni.main/bungeni/core/workflows/question.py:222
-msgid "notification_email_to_member_upon_rejection_of_question"
-msgstr ""
-
-#. Default: "Your question needs to be clarified"
-#: src/bungeni.main/bungeni/core/workflows/question.py:243
-msgid "notification_email_to_member_upon_need_clarification_of_question"
-msgstr ""
-
-#. Default: "Question deferred"
-#: src/bungeni.main/bungeni/core/workflows/question.py:263
-msgid "notification_email_to_member_upon_defer_of_question"
-msgstr ""
-
-#. Default: "Question scheduled"
-#: src/bungeni.main/bungeni/core/workflows/question.py:284
-msgid "notification_email_to_member_upon_schedule_of_question"
-msgstr ""
-
-#. Default: "Question completed for review at the speakers office"
-#: src/bungeni.main/bungeni/core/workflows/question.py:329
-msgid "notification_email_to_member_upon_complete_of_question"
-msgstr ""
-
-#. Default: "Question assigned to ministry"
-#: src/bungeni.main/bungeni/core/workflows/question.py:350
-msgid "notification_email_to_ministry_upon_complete_question"
-msgstr ""
-
-#. Default: "Question sent to ministry for a written answer"
-#: src/bungeni.main/bungeni/core/workflows/question.py:379
-msgid "notification_email_to_member_upon_sent_to_ministry_of_question"
-msgstr ""
-
-#. Default: "Question answered"
-#: src/bungeni.main/bungeni/core/workflows/question.py:402
-msgid "notification_email_to_member_upon_answer_of_question"
-msgstr ""
-
-#. Default: "Question debated"
-#: src/bungeni.main/bungeni/core/workflows/question.py:425
-msgid "notification_email_to_member_upon_debate_question"
-msgstr ""
-
-#: src/bungeni.main/bungeni/core/workflows/simple.py:12
-msgid "visible"
-msgstr ""
-
-#: src/bungeni.main/bungeni/core/workflows/simple.py:13
-#, fuzzy
-msgid "pending"
-msgstr "heading"
-
-#: src/bungeni.main/bungeni/core/workflows/simple.py:14
-#: src/bungeni.main/bungeni/ui/viewlets/workspace.py:524
-msgid "scheduled"
-msgstr "scheduled"
-
-#: src/bungeni.main/bungeni/core/workflows/simple.py:30
-#, fuzzy
-msgid "Submit to Clerk"
-msgstr "submitted to ministry"
-
-#: src/bungeni.main/bungeni/core/workflows/simple.py:37
-#: src/bungeni.main/bungeni/ui/menu.zcml:970
-msgid "Schedule"
-msgstr "schedule"
-
-#. Default: "Tabled document submitted"
-#: src/bungeni.main/bungeni/core/workflows/tableddocument.py:119
-msgid "notification_email_to_clerk_upon_submit_of_tabled_document"
-msgstr ""
-
-#. Default: "Tabled document rejected"
-#: src/bungeni.main/bungeni/core/workflows/tableddocument.py:140
-msgid "notification_email_to_member_upon_rejection_of_tabled_document"
-msgstr ""
-
-#. Default: "Your tabled document needs to be clarified"
-#: src/bungeni.main/bungeni/core/workflows/tableddocument.py:161
-msgid "notification_email_to_member_upon_need_clarification_of_tabled_document"
-msgstr ""
-
-#. Default: "Tabled document scheduled"
-#: src/bungeni.main/bungeni/core/workflows/tableddocument.py:182
-msgid "notification_email_to_member_upon_schedule_of_tabled_document"
-msgstr ""
-
-#. Default: "Tabled document adjourned"
-#: src/bungeni.main/bungeni/core/workflows/tableddocument.py:203
-msgid "notification_email_to_member_upon_postpone_of_tabled_document"
-msgstr ""
-
-#. Default: "Tabled document received"
-#: src/bungeni.main/bungeni/core/workflows/tableddocument.py:95
-msgid "notification_email_to_member_upon_receipt_of_tabled_document"
-msgstr ""
-
-#: src/bungeni.main/bungeni/models/interfaces.py:217
-msgid "Speaker's Office Email"
-msgstr ""
-
-#: src/bungeni.main/bungeni/models/interfaces.py:221
-#, fuzzy
-msgid "Speaker's Office Notification"
-msgstr "receive notification"
-
-#: src/bungeni.main/bungeni/models/interfaces.py:222
-msgid ""
-"true if the Speakers office wants to be alerted by mail whenever a bill, "
-"motion, question is submitted"
-msgstr ""
-
-#: src/bungeni.main/bungeni/models/interfaces.py:227
-#, fuzzy
-msgid "Clerk's Office Notification"
-msgstr "clerk's office"
-
-#: src/bungeni.main/bungeni/models/interfaces.py:228
-msgid ""
-"true if the clerks office wants to be alerted by mailwhenever a bill, "
-"motion, question is submitted"
-msgstr ""
-
-#: src/bungeni.main/bungeni/models/interfaces.py:233
-#, fuzzy
-msgid "Clerks's Office Email"
-msgstr "clerk's office"
-
-#: src/bungeni.main/bungeni/models/interfaces.py:236
-#, fuzzy
-msgid "Administrator's Email"
-msgstr "administration"
-
-#: src/bungeni.main/bungeni/models/interfaces.py:238
-#, fuzzy
-msgid "Allow Question Submission"
-msgstr "question version"
-
-#: src/bungeni.main/bungeni/models/interfaces.py:242
-#, fuzzy
-msgid "Days to Defer Question"
-msgstr "response to the question"
-
-#: src/bungeni.main/bungeni/models/interfaces.py:243
-msgid "Time after which admissible questions are automatically deferred"
-msgstr ""
-
-#: src/bungeni.main/bungeni/models/interfaces.py:248
-msgid "Days to Notify Ministry of Pending Response"
-msgstr ""
-
-#: src/bungeni.main/bungeni/models/interfaces.py:249
-msgid ""
-"Timeframe after which the clerksoffice and the ministry is alerted that "
-"questions that are pending response are not yet answered"
-msgstr ""
-
-#: src/bungeni.main/bungeni/models/interfaces.py:254
-msgid "Days before question scheduled"
-msgstr ""
-
-#: src/bungeni.main/bungeni/models/interfaces.py:258
-#, fuzzy
-msgid "Days before bill scheduled"
-msgstr "to be scheduled"
-
-#: src/bungeni.main/bungeni/models/interfaces.py:262
-#, fuzzy
-msgid "Max Questions Per Sitting"
-msgstr "question version"
-
-#: src/bungeni.main/bungeni/models/interfaces.py:266
-msgid "Max Questions Per Sitting Per MP"
-msgstr ""
-
-#: src/bungeni.main/bungeni/models/interfaces.py:274
-msgid "Email Notifications Enabled?"
-msgstr ""
-
-#: src/bungeni.main/bungeni/models/interfaces.py:283
-#, fuzzy
-msgid "Name of the Assignment"
-msgstr "name of province"
-
-#: src/bungeni.main/bungeni/models/interfaces.py:284
-#, fuzzy
-msgid "Start Date of the Assignment"
-msgstr "date of the swearing in"
-
-#: src/bungeni.main/bungeni/models/interfaces.py:285
-#, fuzzy
-msgid "End Date of the Assignment"
-msgstr "date of the swearing in"
-
-#: src/bungeni.main/bungeni/models/interfaces.py:286
-#, fuzzy
-msgid "Assignment Type"
-msgstr "document type"
-
-#: src/bungeni.main/bungeni/models/interfaces.py:287
-#: src/bungeni.main/bungeni/ui/descriptor.py:464
-#: src/bungeni.main/bungeni/ui/descriptor.py:1431
-#: src/bungeni.main/bungeni/ui/descriptor.py:1433
-#: src/bungeni.main/bungeni/ui/descriptor.py:1513
-#: src/bungeni.main/bungeni/ui/descriptor.py:1515
-#: src/bungeni.main/bungeni/ui/viewlets/templates/workspace_sitting_viewlet.pt:29
-msgid "Status"
-msgstr "status"
-
-#: src/bungeni.main/bungeni/models/interfaces.py:288
-#: src/bungeni.main/bungeni/ui/descriptor.py:665
-#: src/bungeni.main/bungeni/ui/descriptor.py:701
-#: src/bungeni.main/bungeni/ui/descriptor.py:746
-#: src/bungeni.main/bungeni/ui/descriptor.py:971
-#: src/bungeni.main/bungeni/ui/descriptor.py:1137
-#: src/bungeni.main/bungeni/ui/descriptor.py:1211
-#: src/bungeni.main/bungeni/ui/descriptor.py:1254
-#: src/bungeni.main/bungeni/ui/descriptor.py:1298
-#: src/bungeni.main/bungeni/ui/descriptor.py:1342
-#: src/bungeni.main/bungeni/ui/descriptor.py:1526
-#: src/bungeni.main/bungeni/ui/descriptor.py:1529
-#: src/bungeni.main/bungeni/ui/descriptor.py:1584
-#: src/bungeni.main/bungeni/ui/descriptor.py:1918
-msgid "Notes"
-msgstr "notes"
 
 #: src/bungeni.main/bungeni/ui/audit.py:28
 msgid "action"
@@ -658,10 +32,10 @@ msgid "user"
 msgstr "user"
 
 #: src/bungeni.main/bungeni/ui/audit.py:34
-#: src/bungeni.main/bungeni/ui/forms/viewlets.py:673
 #: src/bungeni.main/bungeni/ui/forms/viewlets.py:687
-#: src/bungeni.main/bungeni/ui/forms/viewlets.py:693
-#: src/bungeni.main/bungeni/ui/forms/viewlets.py:696
+#: src/bungeni.main/bungeni/ui/forms/viewlets.py:701
+#: src/bungeni.main/bungeni/ui/forms/viewlets.py:707
+#: src/bungeni.main/bungeni/ui/forms/viewlets.py:710
 #: src/bungeni.main/bungeni/ui/workflow.py:80
 msgid "description"
 msgstr "description"
@@ -1103,6 +477,12 @@ msgstr "headings"
 msgid "Agenda item"
 msgstr "agenda item"
 
+#: src/bungeni.main/bungeni/ui/descriptor.py:1605
+#: src/bungeni.main/bungeni/ui/viewlets/schedule.py:183
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:142
+msgid "Agenda items"
+msgstr "agenda items"
+
 #: src/bungeni.main/bungeni/ui/descriptor.py:1615
 msgid "Agenda Item version"
 msgstr "agenda item version"
@@ -1111,6 +491,15 @@ msgstr "agenda item version"
 #: src/bungeni.main/bungeni/ui/menu.zcml:1020
 msgid "Motion"
 msgstr "motion"
+
+#: src/bungeni.main/bungeni/ui/descriptor.py:1622
+#: src/bungeni.main/bungeni/ui/reports.py:70
+#: src/bungeni.main/bungeni/ui/viewlets/schedule.py:171
+#: src/bungeni.main/bungeni/ui/workspace.py:235
+#: src/bungeni.main/bungeni/ui/workspace.py:276
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:79
+msgid "Motions"
+msgstr "motions"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1627
 msgid "Approval Date"
@@ -1132,6 +521,15 @@ msgstr "entered by"
 #: src/bungeni.main/bungeni/ui/descriptor.py:1658
 msgid "Motion version"
 msgstr "motion version"
+
+#: src/bungeni.main/bungeni/ui/descriptor.py:1665
+#: src/bungeni.main/bungeni/ui/reports.py:68
+#: src/bungeni.main/bungeni/ui/viewlets/schedule.py:159
+#: src/bungeni.main/bungeni/ui/workspace.py:245
+#: src/bungeni.main/bungeni/ui/workspace.py:286
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:58
+msgid "Bills"
+msgstr "bills"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1668
 #: src/bungeni.main/bungeni/ui/descriptor.py:1670
@@ -1155,6 +553,15 @@ msgstr "bill version"
 #: src/bungeni.main/bungeni/ui/menu.zcml:1026
 msgid "Question"
 msgstr "question"
+
+#: src/bungeni.main/bungeni/ui/descriptor.py:1714
+#: src/bungeni.main/bungeni/ui/reports.py:71
+#: src/bungeni.main/bungeni/ui/viewlets/schedule.py:165
+#: src/bungeni.main/bungeni/ui/workspace.py:230
+#: src/bungeni.main/bungeni/ui/workspace.py:271
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:100
+msgid "Questions"
+msgstr "questions"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1722
 msgid "Question Number"
@@ -1230,6 +637,14 @@ msgstr "date"
 msgid "Tabled document"
 msgstr "tabled document"
 
+#: src/bungeni.main/bungeni/ui/descriptor.py:1806
+#: src/bungeni.main/bungeni/ui/viewlets/schedule.py:177
+#: src/bungeni.main/bungeni/ui/workspace.py:240
+#: src/bungeni.main/bungeni/ui/workspace.py:281
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:121
+msgid "Tabled documents"
+msgstr "tabled documents"
+
 #: src/bungeni.main/bungeni/ui/descriptor.py:1813
 msgid "Tabled document Number"
 msgstr "tabled document number"
@@ -1241,6 +656,11 @@ msgstr "tabled document version"
 #: src/bungeni.main/bungeni/ui/descriptor.py:1826
 msgid "Sitting"
 msgstr "sitting"
+
+#: src/bungeni.main/bungeni/ui/descriptor.py:1827
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:22
+msgid "Sittings"
+msgstr "sittings"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:1853
 msgid "Start"
@@ -1387,9 +807,18 @@ msgstr "document sources"
 msgid "Document Source"
 msgstr "document source"
 
+#: src/bungeni.main/bungeni/ui/descriptor.py:2180
+#: src/bungeni.main/bungeni/ui/viewlets/schedule.py:53
+msgid "Scheduling"
+msgstr "scheduling"
+
 #: src/bungeni.main/bungeni/ui/descriptor.py:2181
 msgid "Schedulings"
 msgstr "schedulings"
+
+#: src/bungeni.main/bungeni/ui/descriptor.py:2200
+msgid "Discussion"
+msgstr "discussion"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:2201
 msgid "Discussions"
@@ -1580,6 +1009,15 @@ msgstr "current nationality"
 msgid "Date of Death"
 msgstr "date of death"
 
+#: src/bungeni.main/bungeni/ui/descriptor.py:464
+#: src/bungeni.main/bungeni/ui/descriptor.py:1431
+#: src/bungeni.main/bungeni/ui/descriptor.py:1433
+#: src/bungeni.main/bungeni/ui/descriptor.py:1513
+#: src/bungeni.main/bungeni/ui/descriptor.py:1515
+#: src/bungeni.main/bungeni/ui/viewlets/templates/workspace_sitting_viewlet.pt:29
+msgid "Status"
+msgstr "status"
+
 #: src/bungeni.main/bungeni/ui/descriptor.py:467
 msgid "Biographical notes"
 msgstr "biographical notes"
@@ -1657,6 +1095,22 @@ msgstr "political party"
 #: src/bungeni.main/bungeni/ui/descriptor.py:662
 msgid "Leave Reason"
 msgstr "leave reason"
+
+#: src/bungeni.main/bungeni/ui/descriptor.py:665
+#: src/bungeni.main/bungeni/ui/descriptor.py:701
+#: src/bungeni.main/bungeni/ui/descriptor.py:746
+#: src/bungeni.main/bungeni/ui/descriptor.py:971
+#: src/bungeni.main/bungeni/ui/descriptor.py:1137
+#: src/bungeni.main/bungeni/ui/descriptor.py:1211
+#: src/bungeni.main/bungeni/ui/descriptor.py:1254
+#: src/bungeni.main/bungeni/ui/descriptor.py:1298
+#: src/bungeni.main/bungeni/ui/descriptor.py:1342
+#: src/bungeni.main/bungeni/ui/descriptor.py:1526
+#: src/bungeni.main/bungeni/ui/descriptor.py:1529
+#: src/bungeni.main/bungeni/ui/descriptor.py:1584
+#: src/bungeni.main/bungeni/ui/descriptor.py:1918
+msgid "Notes"
+msgstr "notes"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:686
 msgid "member"
@@ -1746,6 +1200,11 @@ msgstr "date of the dissolution"
 msgid "Profile"
 msgstr "profile"
 
+#: src/bungeni.main/bungeni/ui/descriptor.py:884
+#: src/bungeni.main/bungeni/ui/workspace.py:254
+msgid "Committees"
+msgstr "committees"
+
 #: src/bungeni.main/bungeni/ui/descriptor.py:898
 msgid "Type of committee"
 msgstr "type of committee"
@@ -1793,9 +1252,14 @@ msgid "Reinstatement Date"
 msgstr "reinstatement date"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:953
-#: src/bungeni.main/bungeni/ui/forms/viewlets.py:571
+#: src/bungeni.main/bungeni/ui/forms/viewlets.py:584
 msgid "Member"
 msgstr "member"
+
+#: src/bungeni.main/bungeni/ui/descriptor.py:954
+#: src/bungeni.main/bungeni/ui/menu.zcml:1085
+msgid "Members"
+msgstr "members"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:988
 msgid "Address type"
@@ -2160,20 +1624,20 @@ msgstr "parliament membership"
 msgid "Add response"
 msgstr "add response"
 
-#: src/bungeni.main/bungeni/ui/forms/viewlets.py:616
+#: src/bungeni.main/bungeni/ui/forms/viewlets.py:630
 msgid "add event"
 msgstr "add event"
 
-#: src/bungeni.main/bungeni/ui/forms/viewlets.py:719
+#: src/bungeni.main/bungeni/ui/forms/viewlets.py:733
 #, fuzzy
 msgid "Timeline"
 msgstr "bill timeline"
 
-#: src/bungeni.main/bungeni/ui/forms/viewlets.py:789
+#: src/bungeni.main/bungeni/ui/forms/viewlets.py:803
 msgid "Add"
 msgstr "add"
 
-#: src/bungeni.main/bungeni/ui/forms/viewlets.py:801
+#: src/bungeni.main/bungeni/ui/forms/viewlets.py:815
 msgid "No item has been set"
 msgstr "no item has been set"
 
@@ -2220,9 +1684,28 @@ msgstr "move item down"
 msgid "The 'Reports' menu - provides reporting actions"
 msgstr "the \"reports\" menu - provides reporting actions"
 
+#: src/bungeni.main/bungeni/ui/menu.zcml:1057
+msgid "Workspace"
+msgstr "workspace"
+
 #: src/bungeni.main/bungeni/ui/menu.zcml:1064
 msgid "Home"
 msgstr "home"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1079
+msgid "Business"
+msgstr "business"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1091
+#: src/bungeni.main/bungeni/ui/viewlets/workspace.zcml:49
+#: src/bungeni.main/bungeni/ui/viewlets/workspace.zcml:62
+#: src/bungeni.main/bungeni/ui/templates/archive.pt:6
+msgid "Archive"
+msgstr "archive"
+
+#: src/bungeni.main/bungeni/ui/menu.zcml:1097
+msgid "Administration"
+msgstr "administration"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:1107
 msgid "Actions..."
@@ -2439,6 +1922,10 @@ msgstr "actions for scheduling discussions"
 msgid "content"
 msgstr "content"
 
+#: src/bungeni.main/bungeni/ui/menu.zcml:577
+msgid "settings"
+msgstr "settings"
+
 #: src/bungeni.main/bungeni/ui/menu.zcml:586
 msgid "Add ..."
 msgstr "add ..."
@@ -2601,6 +2088,10 @@ msgstr "schedule item"
 msgid "Reorder Schedulings"
 msgstr "reorder schedulings"
 
+#: src/bungeni.main/bungeni/ui/menu.zcml:970
+msgid "Schedule"
+msgstr "schedule"
+
 #: src/bungeni.main/bungeni/ui/menu.zcml:978
 msgid "Edit Scheduling"
 msgstr "edit item"
@@ -2713,6 +2204,10 @@ msgstr "percent"
 #: src/bungeni.main/bungeni/ui/templates/addfilewidget.pt:2
 msgid "upload-file"
 msgstr "upload file"
+
+#: src/bungeni.main/bungeni/ui/templates/admin-menu-viewlet.pt:13
+msgid "Settings"
+msgstr "settings"
 
 #: src/bungeni.main/bungeni/ui/templates/app-index.pt:7
 msgid "Welcome to Bungeni"
@@ -2942,6 +2437,10 @@ msgstr "add items to schedule by clicking on them"
 msgid "heading_sections"
 msgstr "sections"
 
+#: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:11
+msgid "What's on"
+msgstr "what's on"
+
 #: src/bungeni.main/bungeni/ui/viewlets/templates/whatson.pt:12
 msgid "An overview of the daily operations of the parliament"
 msgstr "an overview of the daily operations of the parliament"
@@ -3002,6 +2501,10 @@ msgstr "approved"
 #: src/bungeni.main/bungeni/ui/viewlets/workspace.py:512
 msgid "to be scheduled"
 msgstr "to be scheduled"
+
+#: src/bungeni.main/bungeni/ui/viewlets/workspace.py:524
+msgid "scheduled"
+msgstr "scheduled"
 
 #: src/bungeni.main/bungeni/ui/viewlets/workspace.py:560
 msgid "questions to the ministry"
@@ -3199,6 +2702,10 @@ msgstr "workflow history"
 msgid "Parliamentary items"
 msgstr "parliamentary items"
 
+#: src/bungeni.main/bungeni/ui/workspace.py:221
+msgid "Current parliamentary activity"
+msgstr "parliamentary activities"
+
 #: src/bungeni.main/bungeni/ui/workspace.py:250
 #: src/bungeni.main/bungeni/ui/workspace.py:291
 msgid " items"
@@ -3265,6 +2772,9 @@ msgstr "archived items"
 
 #~ msgid "Rota Identifier"
 #~ msgstr "rota identifier"
+
+#~ msgid "Date published"
+#~ msgstr "date published"
 
 #~ msgid "Date Published"
 #~ msgstr "date published"
@@ -3342,6 +2852,9 @@ msgstr "archived items"
 
 #~ msgid "Archived Items AllItemArchiveViewlet"
 #~ msgstr "archived items"
+
+#~ msgid "Unknown principal group"
+#~ msgstr "unknown principal group"
 
 #~ msgid "generate takes"
 #~ msgstr "generate takes"
@@ -3451,6 +2964,9 @@ msgstr "archived items"
 
 #~ msgid "Add Category..."
 #~ msgstr "add category..."
+
+#~ msgid "$x"
+#~ msgstr "$x"
 
 #, fuzzy
 #~ msgid "Identifer"
