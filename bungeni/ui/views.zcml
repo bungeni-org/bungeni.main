@@ -391,5 +391,111 @@
         class=".table.AjaxContainerListing"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
+	
+	<!-- RSS/XML views -->
+	
+	<browser:page
+	    name="feed.rss"
+	    for="bungeni.models.interfaces.IBillContainer"
+	    class=".rss.BillRSSView"
+	    permission="zope.View"
+		layer=".interfaces.IRSSRepresentationLayer"
+	 />
+	 
+	 <browser:page
+        name="feed.rss"
+        for="bungeni.models.interfaces.ICommitteeContainer"
+        class=".rss.CommitteeRSSView"
+        permission="zope.View"
+		layer=".interfaces.IRSSRepresentationLayer"
+     />
+	 
+	 <browser:page
+        name="feed.rss"
+        for="bungeni.models.interfaces.IQuestionContainer"
+        class=".rss.QuestionRSSView"
+        permission="zope.View"
+		layer=".interfaces.IRSSRepresentationLayer"
+     />
+	 
+	 <browser:page
+        name="feed.rss"
+        for="bungeni.models.interfaces.IMotionContainer"
+        class=".rss.MotionRSSView"
+        permission="zope.View"
+		layer=".interfaces.IRSSRepresentationLayer"
+     />
+	 
+	 <browser:page
+        name="feed.rss"
+        for="bungeni.models.interfaces.ITabledDocumentContainer"
+        class=".rss.TabledDocumentRSSView"
+        permission="zope.View"
+		layer=".interfaces.IRSSRepresentationLayer"
+     />
+	 
+	 <browser:page
+        name="feed.rss"
+        for="bungeni.models.interfaces.IAgendaItemContainer"
+        class=".rss.AgendaItemRSSView"
+        permission="zope.View"
+		layer=".interfaces.IRSSRepresentationLayer"
+     />
+	 
+	 <browser:page
+        name="feed.rss"
+        for="bungeni.models.interfaces.IGroupSittingContainer"
+        class=".rss.SittingRSSView"
+        permission="zope.View"
+		layer=".interfaces.IRSSRepresentationLayer"
+     />
+	 
+	 <browser:page
+        name="feed.rss"
+        for="bungeni.models.interfaces.IReportContainer"
+        class=".rss.ReportRSSView"
+        permission="zope.View"
+		layer=".interfaces.IRSSRepresentationLayer"
+     />
+	 
+	 <browser:page
+	    name="feed.rss"
+		for="bungeni.models.interfaces.IBill"
+		class=".rss.BillTimelineRSSView"
+		permission="zope.View"
+		layer=".interfaces.IRSSRepresentationLayer"
+	 />
+	 
+	 <browser:page
+        name="feed.rss"
+        for="bungeni.models.interfaces.IQuestion"
+        class=".rss.QuestionTimelineRSSView"
+        permission="zope.View"
+		layer=".interfaces.IRSSRepresentationLayer"
+     />
+	 
+	 <browser:page
+        name="feed.rss"
+        for="bungeni.models.interfaces.IMotion"
+        class=".rss.MotionTimelineRSSView"
+        permission="zope.View"
+		layer=".interfaces.IRSSRepresentationLayer"
+     />
+	 
+	 <browser:page
+        name="feed.rss"
+        for="bungeni.models.interfaces.ITabledDocument"
+        class=".rss.TabledDocumentTimelineRSSView"
+        permission="zope.View"
+		layer=".interfaces.IRSSRepresentationLayer"
+     />
+	 
+	 <browser:page
+        name="feed.rss"
+        for="bungeni.models.interfaces.IAgendaItem"
+        class=".rss.AgendaItemTimelineRSSView"
+        permission="zope.View"
+		layer=".interfaces.IRSSRepresentationLayer"
+     />
 
 </configure>

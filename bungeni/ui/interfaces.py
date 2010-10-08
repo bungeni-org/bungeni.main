@@ -12,7 +12,7 @@ class IBungeniSkin(IPlonedSkin, IYUILayer):
 class IBungeniAuthenticatedSkin(IBungeniSkin):
     """Skin for authenticated users."""
 class IBungeniRESTSkin(IRESTLayer):
-    """Bungeni REST skin."""    
+    """Bungeni REST skin."""
 
 from zope import interface
 class IWorkspaceContainer(interface.Interface):
@@ -50,10 +50,15 @@ class IResourceNonLayer(interface.Interface):
 class IFormEditLayer(interface.Interface):
     """Views showing a Form in edit mode."""
 
+class IRSSRepresentationLayer(IDefaultBrowserLayer):
+    """ Requests for rss representation of
+        some objects
+    """
+
 class IArchiveSectionLayer(IDefaultBrowserLayer):
     """Requests for an object within the archive."""
 
-class IBusinessSectionLayer(IDefaultBrowserLayer):
+class IBusinessSectionLayer(IRSSRepresentationLayer):
     """Requests for an object within the business section."""
 class IBusinessWhatsOnSectionLayer(IDefaultBrowserLayer):
     """Requests for an object within the whats on page of the business section."""
@@ -68,13 +73,12 @@ class IAdminSectionLayer(IWorkspaceOrAdminSectionLayer):
 class IWorkspaceSectionLayer(IWorkspaceOrAdminSectionLayer):
     """Requests for an object within the workspace section."""
 class IWorkspaceSchedulingSectionLayer(IWorkspaceOrAdminSectionLayer):
-    """Requests for an object within the scheduling section."""    
+    """Requests for an object within the scheduling section."""
 class IOpenOfficeConfig(interface.Interface):
     def getPath():
         "Path to the Openoffice Python binary"
 
 
-    
 class IOpenOfficePath(interface.Interface):
     path = fields.Path(
         title=u"OpenOffice.org Python Path",

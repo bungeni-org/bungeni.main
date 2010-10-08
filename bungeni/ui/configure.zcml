@@ -153,5 +153,43 @@
      name="bungeni.vocabulary.ParliamentSource"
      provides="zope.schema.interfaces.IVocabularyFactory"
      component=".vocabulary.ParliamentSource" />
+	 
+     <!-- Adapters to provide values for RSS views -->
+	 
+	 <adapter
+	     for="*"
+		 provides="bungeni.core.interfaces.IRSSValues"
+		 factory=".adaptors.RSSValues"
+	  />
+	  
+	  <adapter
+	     for="bungeni.models.interfaces.IBill"
+		 provides="bungeni.core.interfaces.IRSSValues"
+		 factory=".adaptors.TimelineRSSValues"
+	  />
+	  
+	  <adapter
+         for="bungeni.models.interfaces.IQuestion"
+         provides="bungeni.core.interfaces.IRSSValues"
+         factory=".adaptors.TimelineRSSValues"
+      />
+	  
+	  <adapter
+         for="bungeni.models.interfaces.IMotion"
+         provides="bungeni.core.interfaces.IRSSValues"
+         factory=".adaptors.TimelineRSSValues"
+      />
+	  
+	  <adapter
+         for="bungeni.models.interfaces.ITabledDocument"
+         provides="bungeni.core.interfaces.IRSSValues"
+         factory=".adaptors.TimelineRSSValues"
+      />
+	  
+	  <adapter
+         for="bungeni.models.interfaces.IAgendaItem"
+         provides="bungeni.core.interfaces.IRSSValues"
+         factory=".adaptors.TimelineRSSValues"
+      />
             
 </configure>

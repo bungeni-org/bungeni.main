@@ -195,3 +195,22 @@ class IDailySchedulingContext(ISchedulingContext):
 
     date = interface.Attribute(
         """Date to which this scheduling context is bound.""")
+
+# Interfaces for XML views
+
+class IRSSValues(interface.Interface):
+    """ Interface to get data for forming
+        rss feed.
+    """
+
+    values = interface.Attribute("Values")
+
+
+class IAkomantosoRSSValues(interface.Interface):
+    """ Interface to get data for forming
+        rss feed which links to content
+        in Akomantoso format
+    """
+
+    values = interface.Attribute("Values")
+
