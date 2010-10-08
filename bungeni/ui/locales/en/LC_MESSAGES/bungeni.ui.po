@@ -3,13 +3,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: Fri Oct  8 14:35:08 2010\n"
-"PO-Revision-Date: 2010-07-21 14:34+0300\n"
-"Last-Translator: Administrator <admin@apkn.org>\n"
+"PO-Revision-Date: 2010-10-08 16:45+0300\n"
+"Last-Translator: Ashok <ashok@parliaments.info>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.0.4\n"
 "Language-Code: en\n"
@@ -41,17 +41,14 @@ msgid "description"
 msgstr "description"
 
 #: src/bungeni.main/bungeni/ui/audit.py:36
-#, fuzzy
 msgid "audit date"
 msgstr "status date"
 
 #: src/bungeni.main/bungeni/ui/audit.py:81
-#, fuzzy
 msgid "Change Log"
 msgstr "change"
 
 #: src/bungeni.main/bungeni/ui/calendar/browser.py:384
-#, fuzzy
 msgid "Sitting Info"
 msgstr "sitting"
 
@@ -77,7 +74,6 @@ msgid "Start Date"
 msgstr "start date"
 
 #: src/bungeni.main/bungeni/ui/calendar/browser.py:454
-#, fuzzy
 msgid "Choose a start date and time"
 msgstr "choose starting date for this report"
 
@@ -103,7 +99,6 @@ msgid "End Date"
 msgstr "end date"
 
 #: src/bungeni.main/bungeni/ui/calendar/browser.py:459
-#, fuzzy
 msgid "Choose an end date and time"
 msgstr "choose starting date for this report"
 
@@ -118,17 +113,14 @@ msgid "Weekly"
 msgstr "weekly"
 
 #: src/bungeni.main/bungeni/ui/calendar/browser.py:566
-#, fuzzy
 msgid "insert"
 msgstr "minister"
 
 #: src/bungeni.main/bungeni/ui/calendar/browser.py:626
-#, fuzzy
 msgid "update"
 msgstr "date"
 
 #: src/bungeni.main/bungeni/ui/calendar/browser.py:642
-#, fuzzy
 msgid "delete"
 msgstr "delete"
 
@@ -849,9 +841,8 @@ msgid "Report Start Date"
 msgstr "report start date"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:2248
-#, fuzzy
 msgid "Report End Date"
-msgstr "report start date"
+msgstr "report end date"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:2256
 msgid "Note"
@@ -1083,7 +1074,6 @@ msgid "Province"
 msgstr "province"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:647
-#, fuzzy
 msgid "region"
 msgstr "region"
 
@@ -1134,9 +1124,8 @@ msgid "Acronym"
 msgstr "acronym"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:778
-#, fuzzy
 msgid "Name [Acronym]"
-msgstr "acronym"
+msgstr "name [acronym]"
 
 #: src/bungeni.main/bungeni/ui/descriptor.py:784
 #: src/bungeni.main/bungeni/ui/descriptor.py:837
@@ -1419,7 +1408,6 @@ msgid "Move"
 msgstr "move"
 
 #: src/bungeni.main/bungeni/ui/forms/forms.py:202
-#, fuzzy
 msgid "Item ID"
 msgstr "item"
 
@@ -1629,9 +1617,8 @@ msgid "add event"
 msgstr "add event"
 
 #: src/bungeni.main/bungeni/ui/forms/viewlets.py:733
-#, fuzzy
 msgid "Timeline"
-msgstr "bill timeline"
+msgstr "timeline"
 
 #: src/bungeni.main/bungeni/ui/forms/viewlets.py:803
 msgid "Add"
@@ -1867,7 +1854,6 @@ msgid "Add file..."
 msgstr "add file..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:36
-#, fuzzy
 msgid "Actions Workspace"
 msgstr "workspace"
 
@@ -2080,9 +2066,8 @@ msgid "Schedule Item"
 msgstr "schedule item"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:954
-#, fuzzy
 msgid "Remove Scheduled Item"
-msgstr "schedule item"
+msgstr "remove schedule item"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:962
 msgid "Reorder Schedulings"
@@ -2123,7 +2108,7 @@ msgstr "choose starting date for this report"
 
 #: src/bungeni.main/bungeni/ui/reports.py:232
 msgid "The period selected has no sittings"
-msgstr ""
+msgstr "the period selected has no sittings"
 
 #: src/bungeni.main/bungeni/ui/reports.py:238
 msgid "A parliament must be active in the period"
@@ -2134,23 +2119,19 @@ msgid "Preview"
 msgstr "preview"
 
 #: src/bungeni.main/bungeni/ui/reports.py:484
-#, fuzzy
 msgid "Choose an end date for this report"
-msgstr "choose starting date for this report"
+msgstr "choose an end date for this report"
 
 #: src/bungeni.main/bungeni/ui/reports.py:499
 #: src/bungeni.main/bungeni/ui/reports.py:500
-#, fuzzy
 msgid "Sittings included in this report"
-msgstr "choose starting date for this report"
+msgstr "sittings included in this report"
 
 #: src/bungeni.main/bungeni/ui/reports.py:69
-#, fuzzy
 msgid "Agenda Items"
 msgstr "agenda items"
 
 #: src/bungeni.main/bungeni/ui/reports.py:72
-#, fuzzy
 msgid "Tabled Documents"
 msgstr "tabled documents"
 
@@ -2428,7 +2409,6 @@ msgid "No items"
 msgstr "no items"
 
 #: src/bungeni.main/bungeni/ui/viewlets/templates/scheduling.pt:13
-#, fuzzy
 msgid "Add items to schedule by clicking on the checkbox"
 msgstr "add items to schedule by clicking on them"
 
@@ -2667,21 +2647,20 @@ msgid "Comment on workflow change"
 msgstr "comment on workflow change"
 
 #: src/bungeni.main/bungeni/ui/workflow.py:153
-#, fuzzy
 msgid "Active Date"
 msgstr "notice date"
 
 #: src/bungeni.main/bungeni/ui/workflow.py:169
 msgid "NoDataInput for Active Date."
-msgstr ""
+msgstr "active data cannot be empty"
 
 #: src/bungeni.main/bungeni/ui/workflow.py:171
 msgid "Active Date is too old."
-msgstr ""
+msgstr "active date is too old"
 
 #: src/bungeni.main/bungeni/ui/workflow.py:173
 msgid "Active Date is in the future."
-msgstr ""
+msgstr "active date is in the future"
 
 #. Default: ""
 #: src/bungeni.main/bungeni/ui/workflow.py:197
@@ -2690,7 +2669,7 @@ msgstr "confirmation required for workflow transition: '${title}'"
 
 #: src/bungeni.main/bungeni/ui/workflow.py:228
 msgid "Errors"
-msgstr ""
+msgstr "errors"
 
 #: src/bungeni.main/bungeni/ui/workflow.py:60
 msgid "Workflow history"
