@@ -96,7 +96,7 @@
                   
                   <span tal:condition="python:item.t!='heading'">
                   <div class="discussion" tal:condition="discussion_action" tal:define="id repeat/item/number"
-                                tal:attributes="id string:dialog-$id" style="width:725px; visibility:inherit;">
+                                tal:attributes="id string:dialog-$id">
                         
                         <div class="hd">Minutes</div>
                         <div class="bd">
