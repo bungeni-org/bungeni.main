@@ -223,3 +223,35 @@ white-space: normal;
     width:725px;
 }
 
+/* .contentActions {
+    z-index: 10050; !important;
+} */
+.dhx_cal_prev_button{
+    left:60px;!important;
+    right:auto;  !important;
+}
+.dhx_cal_next_button{
+    left:310px; !important;
+    right:auto;  !important;
+}
+.dhx_cal_today_button
+{
+    left:350px; !important;
+}
+.dhx_cal_navline .dhx_cal_date
+{
+    left:440px; !important;
+}
+.dhx_cal_larea{
+    width:620px;
+}
+.dhx_cal_light{
+    width:632px;
+}
+.dhx_repeat_right {
+    padding:0; !important;
+}
+.dhx_scale_hour {
+    font-size:10px;
+    line-height:20px;
+}
