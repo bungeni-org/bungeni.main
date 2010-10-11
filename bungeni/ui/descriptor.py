@@ -39,6 +39,7 @@ from bungeni.core import translation
 from bungeni.ui.widgets import TextDateWidget as DateWidget
 from bungeni.ui.widgets import TextDateTimeWidget as DateTimeWidget
 
+from bungeni.ui.widgets import AutocompleteWidget
 from bungeni.ui.widgets import CustomRadioWidget
 from bungeni.ui.widgets import HTMLDisplay
 from bungeni.ui.widgets import RichTextEditor
@@ -586,6 +587,10 @@ class MpDescriptor(ModelDescriptor):
                 )
             ),
             listing_column=user_name_column("user_id", _(u"Name"), "user"),
+            #edit_widget=AutocompleteWidget,
+            #add_widget=AutocompleteWidget,
+            # !+AUTOCOMPLETE(mr, oct-2010) not working with the current 
+            # field.vocabulary being passed to AutocompleteWidget 
         ),
         Field(name="elected_nominated",
             modes="view|edit|add|listing",

@@ -12,7 +12,8 @@ from zope.interface.common import idatetime
 from zope.app.form.browser.widget import UnicodeDisplayWidget, DisplayWidget
 from zope.app.form.browser.textwidgets import TextAreaWidget, FileWidget, \
     TextWidget 
-from zope.app.form.browser.itemswidgets import  RadioWidget
+from zope.app.form.browser.itemswidgets import RadioWidget, \
+    SingleDataHelper, ItemsWidgetBase
 from zope.i18n import translate
 
 from zc.resourcelibrary import need
@@ -716,5 +717,26 @@ class SelectDateTimeWidget(SelectDateWidget):
             except ValueError, e:
                 raise ConversionError(
                     _(u"Incorrect string data for date and time"), e)
-                            
-                           
+
+
+class AutocompleteWidget(SingleDataHelper, ItemsWidgetBase):
+    """Render a single selection autocomplete widget using YUI Autocomplete.
+    """
+    __call__ = ViewPageTemplateFile("templates/autocompletewidget.pt")
+    
+    def __init__(self, field, request):
+        vocabulary = field.vocabulary
+        super(AutocompleteWidget, self).__init__(field, vocabulary, request)
+        # !+AUTOCOMPLETE(mr, oct-2010) super class ItemsWidgetBase requires 
+        # the additional vocabulary parameter, but passing it the one defined
+        # by the field does not work
+        
+        #need("yui-autocomplete")
+        # !+AUTOCOMPLETE(mr, oct-2010) get the hardwired absolute ref to the 
+        # public (across network) YUI js resource files out of the template, 
+        # and configured to pick up the file from the deployment instance. 
+    
+    def value(self):
+        return self._getFormValue()
+
+
