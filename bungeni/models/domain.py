@@ -55,13 +55,19 @@ class Entity(object):
                 log.warn(
                     "Invalid attribute on %s %s" % (
                         self.__class__.__name__, k))
+    
+    # sort_on: the list of column names the query is sorted on by default
+    sort_on = None
+    
+    # sort_dir = desc | asc
+    #sort_dir = "desc"
+    
+    # sort_replace: a dictionary that maps one column to another
+    # so when the key is requested in a sort the value gets sorted
+    # eg: {"user_id":"sort_name"} when the sort on user_id is requested the 
+    # query gets sorted by sort_name
+    #sort_replace = None
 
-
-# sort_on is the column the query is sorted on by default
-# sort_replace is a dictionary that maps one column to another
-# so when the key is requested in a sort the value gets sorted
-# eg: {"user_id":"sort_name"} when the sort on user_id is requested the 
-# query gets sorted by sort_name
 
 class User(Entity):
     """Domain Object For A User. General representation of a person.
@@ -475,7 +481,7 @@ class Motion(ParliamentaryItem):
     versions = one2many("versions",
         "bungeni.models.domain.MotionVersionContainer", "content_id")
     sort_on = ["motion_number", "submission_date"]
-    sort_dir = "desc"
+
 
 MotionChange = ItemLog.makeLogFactory("MotionChange")
 MotionVersion = ItemVersions.makeVersionFactory("MotionVersion")

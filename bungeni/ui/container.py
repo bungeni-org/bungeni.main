@@ -138,12 +138,21 @@ class ContainerJSONBrowserView(BrowserView):
         self.table = orm.class_mapper(self.domain_model).mapped_table
         self.utk = dict([ (self.table.columns[k].key, k) 
                           for k in self.table.columns.keys() ])
-        # sort defaults
+        # sort_on defaults: [str] 
         self.defaults_sort_on = getattr(self.domain_model, "sort_on", None)
-        self.sort_dir = self.request.get("dir", 
-            # if defined, use model's sort_dir as default, otherwise "desc"
-            getattr(self.domain_model, "sort_dir", "desc")
-        )
+        # sort_on parameter name: str
+        # pick off request, if necessary setting it from the first name 
+        # defined in defaults_sort_on
+        if not self.request.get("sort") and self.defaults_sort_on:
+            self.request.form["sort"] = u"sort_%s" % (self.defaults_sort_on[0])
+        self.sort_on = request.get("sort")
+        # sort_dir: "desc" | "asc"
+        # pick off request, if necessary setting it from default in 
+        # domain model, else "desc"
+        if not self.request.get("dir"):
+            self.request.form["dir"] = unicode(
+                getattr(self.domain_model, "sort_dir", "desc"))
+        self.sort_dir = self.request.get("dir")
 
 class ContainerJSONTableHeaders(ContainerJSONBrowserView):
     def __call__(self):
@@ -234,10 +243,10 @@ class ContainerJSONListing(ContainerJSONBrowserView):
         """
         table, utk = self.table, self.utk
         sort_dir_func = self._sort_dir_funcs.get(self.sort_dir, sql.desc)
-        columns = []
+        sort_on_expressions = []
         sort_on_keys = []
         # first process user specified values
-        sort_on = self.request.get("sort", None)
+        sort_on = self.sort_on
         if sort_on:
             sort_on = sort_on[5:]
             # in the domain model you may replace the sort with another column
@@ -248,13 +257,13 @@ class ContainerJSONListing(ContainerJSONBrowserView):
                 sort_on_keys.append(str(table.columns[utk[sort_on]]))
             if sort_on_keys:
                 for sort_on in sort_on_keys:
-                    columns.append(sort_dir_func(sort_on))
+                    sort_on_expressions.append(sort_dir_func(sort_on))
         # second, process model defaults
         if self.defaults_sort_on:
             for dso in self.defaults_sort_on:
                 if dso not in sort_on_keys:
-                    columns.append(sort_dir_func(dso))
-        return columns
+                    sort_on_expressions.append(sort_dir_func(dso))
+        return sort_on_expressions
     
     def getOffsets(self, default_start=0, default_limit=25):
         start = self.request.get("start", default_start)
@@ -333,7 +342,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
         query = self.query_add_filters(query, self.getFilter())
         
         # order_by
-        order_by = self.getSort() # [columns]
+        order_by = self.getSort() # [sort_on_expressions]
         if order_by:
             query = query.order_by(order_by)
         # ore.alchemist.container.AlchemistContainer.batch()
@@ -353,7 +362,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
             length=self.set_size, # total result set length, set in getBatch()
             start=start,
             recordsReturned=len(batch), # batch length
-            sort=self.request.get("sort"),
+            sort=self.sort_on,
             dir=self.sort_dir,
             nodes=batch
         )
@@ -396,7 +405,7 @@ class PublicStatesContainerJSONListing(ContainerJSONListing):
         # also have a model default, but the values here accumulate, so for
         # key uniqueness it suffices to consider only any sort_on parameter 
         # value incoming in the request).
-        return (lang, start, limit, sort_direction, r.get("sort"), filters)
+        return (lang, start, limit, sort_direction, self.sort_on, filters)
     
     def __call__(self):
         # prepare required parameters
@@ -434,7 +443,7 @@ class JSLCache(object):
         # !+CACHE_INVALIDATION(mr, sep-2010) this should be left open-ended?
         # sanity check -- ensure every specified (domain) class_name exists
         for icn in invalidating_class_names:
-            assert getattr(domain, icn), "No such doamin class: %s" % (icn)
+            assert getattr(domain, icn), "No such domain class: %s" % (icn)
         self.invalidating_class_names = invalidating_class_names
         # dynamically build the incoming (request querystring) filter 
         # parameter names lists from the domain class descriptor
@@ -489,6 +498,8 @@ JSLCaches = {
         ),
     "political-groups": # alias: "politicalgroups"
         JSLCache(49, mfaces.IPoliticalGroup, ["PoliticalGroup"]),
+    "partymembers":
+        JSLCache(49, mfaces.IPartyMember, ["PartyMember"]),        
     "parliaments": 
         JSLCache(49, mfaces.IParliament, ["Parliament"]),
     "governments": 
