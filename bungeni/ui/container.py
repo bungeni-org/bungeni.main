@@ -542,7 +542,7 @@ def invalidate_caches_for(class_name, action):
     class_name: domain class name for the modified instance 
     action: originating action (see code for allowed values)
     """
-    assert action in ("add", "edit", "delete", "translate"), \
+    assert action in ("add", "edit", "delete", "transition", "translate"), \
         "Unknown cache invalidation action: %s" % action
     # !+ is action needed?
     if class_name in CacheByClassName:
