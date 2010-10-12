@@ -1354,8 +1354,8 @@
     <browser:menuItem menu="context_actions"
         layer=".interfaces.IBusinessSectionLayer"
         for="bungeni.models.interfaces.ICommittee"
-        action="./calendar"
-        title="Calendar"
+        action="./schedule"
+        title="Schedule"
         order="40"
     />
     <browser:menuItem menu="context_actions"
