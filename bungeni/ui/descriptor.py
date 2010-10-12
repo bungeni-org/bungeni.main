@@ -2223,7 +2223,7 @@ class ScheduledItemDiscussionDescriptor(ModelDescriptor):
     ]
 
 
-class ReportDescriptor(ModelDescriptor):
+class ReportDescriptor(ParliamentaryItemDescriptor):
     display_name = _(u"Report")
     container_name = _(u"Reports")
     

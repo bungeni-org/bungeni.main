@@ -417,6 +417,10 @@ class ParliamentaryItem(Entity):
     """
     interface.implements(interfaces.IBungeniContent, interfaces.ITranslatable)
     #     interfaces.IHeadFileAttachments)
+
+    sort_on = ["parliamentary_items.status_date"]
+    sort_dir = "desc"
+    
     sort_replace = {"owner_id": ["last_name", "first_name"]}
     files = one2many("files", "bungeni.models.domain.AttachedFileContainer", "item_id")
     # votes
@@ -460,8 +464,8 @@ class Question(ParliamentaryItem):
         "bungeni.models.domain.ConsignatoryContainer", "item_id")
     versions = one2many("versions",
         "bungeni.models.domain.QuestionVersionContainer", "content_id")
-    sort_on = ["question_number", "submission_date"]
-    sort_dir = "desc"
+    sort_on = ParliamentaryItem.sort_on + [
+        "question_number", "submission_date"]
     
     def getParentQuestion(self):
         if self.supplement_parent_id:
@@ -480,7 +484,7 @@ class Motion(ParliamentaryItem):
         "bungeni.models.domain.EventItemContainer", "item_id")
     versions = one2many("versions",
         "bungeni.models.domain.MotionVersionContainer", "content_id")
-    sort_on = ["motion_number", "submission_date"]
+    sort_on = ParliamentaryItem.sort_on + ["motion_number", "submission_date"]
 
 
 MotionChange = ItemLog.makeLogFactory("MotionChange")
@@ -500,8 +504,7 @@ class Bill(ParliamentaryItem):
         "bungeni.models.domain.GroupGroupItemAssignmentContainer", "item_id")
     versions = one2many("versions",
         "bungeni.models.domain.BillVersionContainer", "content_id")
-    sort_on = ["submission_date"]
-    sort_dir = "desc"
+    sort_on = ParliamentaryItem.sort_on + ["submission_date"]
 
 BillChange = ItemLog.makeLogFactory("BillChange")
 BillVersion = ItemVersions.makeVersionFactory("BillVersion")
@@ -711,6 +714,7 @@ class Report(ParliamentaryItem):
     """Agendas and minutes.
     """
     interface.implements(interfaces.ITranslatable)
+    sort_on = ["end_date"] + ParliamentaryItem.sort_on
 
 class SittingReport(Report):
     """Which reports are created for this sitting.
