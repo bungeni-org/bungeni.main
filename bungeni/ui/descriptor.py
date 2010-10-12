@@ -572,7 +572,7 @@ class GroupMembershipDescriptor(ModelDescriptor):
     ]
 
 
-class MpDescriptor(ModelDescriptor):
+class MpDescriptor(GroupMembershipDescriptor):
     display_name = _(u"Member of parliament")
     container_name = _(u"Members of parliament")
     
@@ -673,20 +673,11 @@ class MpDescriptor(ModelDescriptor):
             add_widget=RichTextEditor
         ),
     ])
-    schema_invariants = [
-        EndAfterStart, 
-        ActiveAndSubstituted,
-        SubstitudedEndDate, 
-        InactiveNoEndDate, 
-        MpStartBeforeElection
-    ]
-    custom_validators = [
-        validations.validate_date_range_within_parent,
-        validations.validate_group_membership_dates
-    ]
+    schema_invariants = GroupMembershipDescriptor.schema_invariants + [
+        MpStartBeforeElection]
 
 
-class PartyMemberDescriptor(ModelDescriptor):
+class PartyMemberDescriptor(GroupMembershipDescriptor):
     """Membership of a user in a party."""
     display_name = _(u"member")
     container_name = _(u"members")
@@ -709,10 +700,6 @@ class PartyMemberDescriptor(ModelDescriptor):
             add_widget=RichTextEditor,
         ),
     ])
-    custom_validators = [
-        validations.validate_date_range_within_parent,
-        validations.validate_party_membership
-    ]
 
 
 class MemberOfPartyDescriptor(ModelDescriptor):
@@ -954,7 +941,7 @@ class CommitteeDescriptor(GroupDescriptor):
     ]
 
 
-class CommitteeMemberDescriptor(ModelDescriptor):
+class CommitteeMemberDescriptor(GroupMembershipDescriptor):
     display_name = _(u"Member")
     container_name = _(u"Members")
     fields = [
@@ -979,14 +966,6 @@ class CommitteeMemberDescriptor(ModelDescriptor):
             add_widget=RichTextEditor,
         ),
     ])
-    
-    custom_validators = [validations.validate_date_range_within_parent]
-    schema_invariants = [
-        EndAfterStart, 
-        ActiveAndSubstituted,
-        SubstitudedEndDate, 
-        InactiveNoEndDate
-    ]
 
 
 class AddressTypeDescriptor(ModelDescriptor):
@@ -1120,7 +1099,7 @@ class MemberRoleTitleDescriptor(ModelDescriptor):
     ]
 
 
-class CommitteeStaffDescriptor(ModelDescriptor):
+class CommitteeStaffDescriptor(GroupMembershipDescriptor):
     display_name = _(u"Staff")
     container_name = _(u"Staff")
     fields = [
@@ -1145,13 +1124,6 @@ class CommitteeStaffDescriptor(ModelDescriptor):
             add_widget=RichTextEditor,
         ),
     ])
-    custom_validators = [validations.validate_date_range_within_parent]
-    schema_invariants = [
-        EndAfterStart, 
-        ActiveAndSubstituted,
-        SubstitudedEndDate, 
-        InactiveNoEndDate
-    ]
 
 
 class PoliticalPartyDescriptor(GroupDescriptor):
@@ -1194,7 +1166,7 @@ class OfficeDescriptor(GroupDescriptor):
     custom_validators = [validations.validate_date_range_within_parent]
 
 
-class OfficeMemberDescriptor(ModelDescriptor):
+class OfficeMemberDescriptor(GroupMembershipDescriptor):
     display_name = _(u"Office Member")
     container_name = _(u"Office Members")
     fields = [
@@ -1219,12 +1191,6 @@ class OfficeMemberDescriptor(ModelDescriptor):
               add_widget=RichTextEditor,
         ),
     ])
-    custom_validators = [validations.validate_date_range_within_parent]
-    schema_invariants = [
-        ActiveAndSubstituted, 
-        SubstitudedEndDate,
-        InactiveNoEndDate
-    ]
 
 
 class MinistryDescriptor(GroupDescriptor):
@@ -1236,7 +1202,7 @@ class MinistryDescriptor(GroupDescriptor):
     custom_validators = [validations.validate_date_range_within_parent]
 
 
-class MinisterDescriptor(ModelDescriptor):
+class MinisterDescriptor(GroupMembershipDescriptor):
     display_name = _(u"Minister")
     container_name = _(u"Ministers")
     
@@ -1262,12 +1228,6 @@ class MinisterDescriptor(ModelDescriptor):
             add_widget=RichTextEditor,
         ),
     ])
-    custom_validators = [validations.validate_date_range_within_parent]
-    schema_invariants = [
-        ActiveAndSubstituted, 
-        SubstitudedEndDate,
-        InactiveNoEndDate
-    ]
 
 
 class GovernmentDescriptor(GroupDescriptor):
