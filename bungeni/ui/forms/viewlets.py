@@ -294,18 +294,51 @@ class CommitteeStaffViewlet(SubformViewlet):
         self.manager = manager
         self.query = None
 
-
-class CommitteeMemberViewlet(SubformViewlet):
+class CommitteeMembersViewlet(ViewletBase):
+    
+    # evoque
+    render = z3evoque.ViewTemplateFile("workspace_viewlets.html#committee_members")
+    
+    for_display = True
+    view_name = "Members"
+    view_id = "committee-members"
+    
+    items = None
     
     def __init__(self, context, request, view, manager):
-        self.context = context.committeemembers
+        self.context = context
         self.request = request
-        self.__parent__ = context
+        self.__parent__ = view
         self.manager = manager
-        self.query = None
+    
+    def update(self):
+        session = Session()
+        members = [ cm for cm in 
+            session.query(domain.CommitteeMember).filter(
+                domain.CommitteeMember.group_id == self.context.committee_id
+            ).all()
+        ]
+        user_mp_id_map = dict([
+            (cm.user_id, session.query(domain.MemberOfParliament).filter(
+                    domain.MemberOfParliament.user_id == cm.user_id
+                ).one().membership_id)
+            for cm in members
+        ])
+        formatter = self.get_date_formatter("date", "long")
+        self.items = [{
+                "fullname": m.user.fullname,
+                "url": 
+                    "/members/current/obj-%s/" % (user_mp_id_map[m.user_id]),
+                "start_date":
+                    m.start_date and formatter.format(m.start_date) or None,
+                "end_date":
+                    m.end_date and formatter.format(m.end_date) or None
+            }
+            for m in members
+        ]
 
 
-class TitleViewlet (SubformViewlet):
+class TitleViewlet(SubformViewlet):
     
     def __init__(self, context, request, view, manager):
         self.context = context.titles

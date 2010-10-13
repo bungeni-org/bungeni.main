@@ -319,14 +319,13 @@
       /-->
 
   
-  <browser:viewlet
-     name="bungeni.viewlet.committee-members"
-     manager=".interfaces.ISubFormViewletManager"
-     class=".viewlets.CommitteeMemberViewlet"
-     for="bungeni.models.interfaces.ICommittee"
-     permission="zope.View"
-     weight="10"
-     />
+    <browser:viewlet name="bungeni.viewlet.committee-members"
+        manager=".interfaces.ISubFormViewletManager"
+        class=".viewlets.CommitteeMembersViewlet"
+        for="bungeni.models.interfaces.ICommittee"
+        permission="zope.View"
+        weight="10"
+    />
   
   <browser:viewlet
      name="bungeni.viewlet.committee-staff"
