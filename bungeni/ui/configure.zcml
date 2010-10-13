@@ -67,7 +67,10 @@
      interface=".interfaces.IBungeniRESTSkin"
      type="bungeni.rest.interfaces.IRESTSkinType"
      name="brs"
-     />  
+     />
+  
+  <!-- rest views -->
+  <include file="rest.zcml"/>   
 
   <subscriber 
     handler=".publication.on_before_traverse" 
