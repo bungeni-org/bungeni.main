@@ -4,7 +4,6 @@
 $begin{generic}
     $overlay{bungeni.html}
     $begin{content}
-    $if{ devmode }<!-- template: bungeni/templates/container.html#generic -->$fi
     <div>
         #[ !+form_name(mr, sep-2010) shouldn't this just be view.page_title? ]#
         <h1 class="title">${ i18n(getattr(view, "form_name", " ")) }</h1>
@@ -23,9 +22,8 @@ $end{generic}
 
 
 #[ was: ui/templates/datatable.pt ]#
-#[ !+NEED_ZC_RESOURCE_LIBRARIES(mr, sep-2010)
+#[ !+NEED_ZC_RESOURCE_LIBRARIES(mr, sep-2010) ]#
 $begin{datatable}
-$if{ devmode }<!-- template: bungeni/templates/container.html#datatable -->$fi
 <script type="text/javascript">
 (function($$) {
     $$(document).ready(function() {
@@ -40,4 +38,4 @@ $if{ devmode }<!-- template: bungeni/templates/container.html#datatable -->$fi
 })(jQuery);
 </script>
 $end{datatable}
-#]
+

@@ -3,7 +3,6 @@
 
 #[ was: ui/viewlets/templates/workspace_item_viewlet.pt ]#
 $begin{items}
-$if{devmode}<!-- template: bungeni/templates/workspace_viewlets.html#items -->$fi
 <dt class="portletHeader" id="fieldsetlegend-${view.list_id}">
     <span>${i18n(view.name)}</span>
 </dt>
@@ -40,7 +39,6 @@ $end{items}
 
 #[ was: ui/viewlets/templates/mp_item_viewlet.pt ]#
 $begin{mp_items}
-$if{devmode}<!-- template: bungeni/templates/workspace_viewlets.html#mp_items -->$fi
 <dt id="fieldsetlegend-${view.view_id}">
   ${i18n(view.view_name)}
 </dt>
@@ -71,7 +69,6 @@ $end{mp_items}
 
 #[ was: ui/viewlets/templates/workspace_sitting_viewlet.pt ]#
 $begin{sittings}
-$if{devmode}<!-- template: bungeni/templates/workspace_viewlets.html#sittings -->$fi
 <dt class="portletHeader" id="fieldsetlegend-${view.list_id}">
     <span>${i18n(view.name)}</span>
 </dt>
@@ -113,7 +110,6 @@ $end{sittings}
 
 
 $begin{scheduled}
-$if{devmode}<!-- template: bungeni/templates/workspace_viewlets.html#scheduled -->$fi
 <dt class="portletHeader" id="fieldsetlegend-${view.list_id}">
     <span>${i18n(view.name)}</span>
 </dt>
@@ -154,7 +150,6 @@ $end{scheduled}
 
 #[ was: ui/forms/templates/timeline_viewlet.pt ]#
 $begin{timeline}
-$if{devmode}<!-- template: bungeni/templates/workspace_viewlets.html#timeline -->$fi
 <dt id="fieldsetlegend-${view.view_id}">
     <span>${i18n(view.view_name)}</span>
 </dt>
@@ -183,7 +178,6 @@ $end{timeline}
 
 #[ was: ui/forms/templates/offices_held_viewlet.pt ]#
 $begin{offices_held}
-$if{devmode}<!-- template: bungeni/templates/workspace_viewlets.html#offices_held -->$fi
 <dt id="fieldsetlegend-${view.view_id}">
     <span>${i18n(view.view_name)}</span>
 </dt>
@@ -215,7 +209,7 @@ $end{offices_held}
 
 #[ was: a generic ui.forms.viewlets.SubformViewlet (auto db model reflection) ]#
 $begin{committee_members}
-$if{devmode}<!-- template: bungeni/templates/workspace_viewlets.html#committee_members -->$fi
+$evoque{#DEV, tid="bungeni/templates/workspace_viewlets.html#committee_members"}
 <dt id="fieldsetlegend-${view.view_id}">
     <span>${i18n(view.view_name)}</span>
 </dt>

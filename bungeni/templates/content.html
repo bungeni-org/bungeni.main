@@ -4,7 +4,6 @@
 $begin{view}
     $overlay{bungeni.html}
     $begin{content}
-    $if{ devmode }<!-- template: bungeni/templates/content.html#content -->$fi
     <div>
         <h2>${ i18n(view.page_title) }$if{ view.is_workflowed }
             <span class="workflow_info">[${ view.get_wf_state() }]</span> $fi
@@ -19,7 +18,6 @@ $end{view}
 
 #[ was: ui/forms/templates/content.pt ]#
 $begin{viewlets}
-$if{ devmode }<!-- template: bungeni/templates/content.html#viewlets -->$fi
 <dl class="enableFormTabbing">
     $for{ viewlet in view.viewlets }
         ${ xml( viewlet.render() ) }

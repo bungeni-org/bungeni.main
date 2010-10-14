@@ -21,7 +21,6 @@ $end{ widget_header }
 
 
 $begin{ form }
-$if{ devmode }<!-- template: bungeni/templates/form.html#form -->$fi
 #[ !+i18n_domain(mr) 
     orig ZPT "form" macro declares i18n:domain="alchemist" ?!? 
 ]#
@@ -219,7 +218,6 @@ $end{ form }
 $begin{ page }
     $overlay{ bungeni.html }
     $begin{ content }
-        $if{ devmode }<!-- template: bungeni/templates/form.html#content -->$fi
         <div>
         #[ !+form_name(mr, jul-2010) shouldn't this just be view.page_title? ]#
         <h1>${ i18n(getattr(view, "form_name", " ")) }</h1>

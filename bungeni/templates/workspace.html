@@ -7,7 +7,6 @@
 
 #[ was: ui/templates/workspace-section.pt ]#
 $begin{section_page}
-$if{ devmode }<!-- template: bungeni/templates/workspace.html#section_page -->$fi
     $overlay{ bungeni.html }
     $begin{content}
         <h1>${ i18n(view.page_title) }</h1>
@@ -18,7 +17,6 @@ $end{section_page}
 
 #[ was: ui/viewlets/templates/workspace.pt ]#
 $begin{viewlet_manager} 
-$if{ devmode }<!-- template: bungeni/templates/workspace.html#viewlet_manager -->$fi
 <div id="bungeni-workspace">
     <dl class="portlet workspace-viewlet listing enableFormTabbing">
     $for{ viewlet in view.viewlets }
@@ -39,7 +37,6 @@ $end{viewlet_manager}
 
 #[ was: ui/viewlets/templates/workspace_context_navigation.pt ]#
 $begin{context_navigation}
-$if{ devmode }<!-- template: bungeni/templates/workspace.html#context_navigation -->$fi
 <dl class="portlet">
     <dt class="portletHeader">
         <span class="portletTopLeft"></span>

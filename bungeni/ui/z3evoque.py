@@ -312,7 +312,7 @@ def setup_evoque(abs_base=None):
         domain.set_on_globals(
                     _ViewTemplateBase.i18n_gettext_alias, 
                     get_gettext(i18n_domain, i18n_lang))
-        
+    
     # log setup finished
     domain.log.debug(domain.__dict__)
 
@@ -374,7 +374,21 @@ class _ViewTemplateBase(object):
                         self, namespace, kwds))
         if args:
             log.warn(" __call__ IGNORING args: %s" % str(args))
+        # !+ bungeni+html specific
+        if t.collection.domain.globals.get("devmode"):
+            return self._devmode_call__(t.evoque(namespace, **kwds))
         return t.evoque(namespace, **kwds)
+    
+    def _devmode_call__(self, s):
+        """delineates the generated output between debug-friendly XML comments.
+        !+ bungeni+html specific
+        !+ an XML doc does should not start with a comment
+        """
+        t = self.template
+        di = "\nVIEW:%s\nTEMPLATE:%s:%s\n" % (
+            self._descriptor_view.__class__, 
+            t.collection.name, t.name)
+        return """<!--%s-->%s<!--END%s-->""" % (di, s, di)
     
     def _get_context(self):
         view = self._descriptor_view

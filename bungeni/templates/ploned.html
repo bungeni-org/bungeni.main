@@ -1,9 +1,6 @@
 #[  $Id$ ]#
 
 $begin{content_actions} #[ portlet-contentactions.pt ]#
-$if{ devmode }<!-- template: bungeni/templates/ploned.html#content_actions
-$Id$
--->$fi
 $if{ len(view.context_actions)>1 }
 <dl class="portlet">
     <dt class="portletHeader">
@@ -36,11 +33,6 @@ $end{content_actions}
 
 
 $begin{action_menus} #[ plond/ui/templates/contentmenu.pt ]#
-    $if{ devmode }
-<!-- template: bungeni/templates/ploned.html#action_menus
-$Id$
---> 
-    $fi
     $if{ view.available() }
 <ul id="contentActionMenus">
         $for{ menu_item in view.menu() }
