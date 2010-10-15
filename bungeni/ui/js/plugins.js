@@ -1,50 +1,56 @@
 (function($) {
-  var re_time_range = /(.*) \((\d+):(\d+):\d+-(\d+):(\d+):\d+\)/;
-  var re_date_range = /(.*) \((?:(\d+)\/(\d+)\/(\d+)|\?)-(?:(\d+)\/(\d+)\/(\d+)|\?)\)/;
+	$('.workflow-status').css('border','1px solid black');
+  
+	var re_time_range = /(.*) \((\d+):(\d+):\d+-(\d+):(\d+):\d+\)/;
+	var re_date_range = /(.*) \((?:(\d+)\/(\d+)\/(\d+)|\?)-(?:(\d+)\/(\d+)\/(\d+)|\?)\)/;
 
-  function _update_tables(selector, data) {
-    var calendar = $(selector);
-    var old_tables = calendar.find("table");
-    var new_tables = $(data).find(selector).find("table");
-    
-    old_tables.eq(0).replaceWith(new_tables.eq(0));
-    old_tables.eq(1).replaceWith(new_tables.eq(1));
-  }
+	function _update_tables(selector, data) {
+		var calendar = $(selector);
+		var old_tables = calendar.find("table");
+		var new_tables = $(data).find(selector).find("table");
+		
+		old_tables.eq(0).replaceWith(new_tables.eq(0));
+		old_tables.eq(1).replaceWith(new_tables.eq(1));
+	}
 
-  $.fn.bungeniDragAndDropScheduling = function() {
-    $(this).draggable({
-        cursor: 'move',
+	$.fn.bungeniDragAndDropScheduling = function() {
+		$(this).draggable({
+			cursor: 'move',
             cursorAt: { left: 5 },
             helper: function() {
-            var title = $(this).children().eq(1).children().eq(1).text();
-            var helper = $('<div class="helper" />');
-            helper.text(title);
-            return helper;
-          }
-        });
-        return this;
+	            var title = $(this).children().eq(1).children().eq(1).text();
+	            var helper = $('<div class="helper" />');
+	            helper.text(title);
+	            return helper;
+			}
+		});
+		return this;
+	};
+	
+	$.fn.dragRearrange= function(){
+		var helperfn = function(event, ui) {
+			//var title = ui[0].childNodes[1].childNodes[1].textContent +": "+ ui[0].childNodes[1].childNodes[3].text;
+			// jquery substitute
+			var title = ui.children('td.item').children('span:first').text() + ': ' + ui.children('td.item').children('a').text();
+	        var helper = $('<div class="helper" />');
+	        helper.text(title);
+	        return helper;
+	    };
+		var updatefn = function(event, ui) {
+	        var ar = $(this).sortable('serialize');
+	        $("#kss-spinner").show();
+	        $.post('schedule_order', ar ,function(data, status) {
+				$("#kss-spinner").hide();
+			});
+		};
 
-  };
-  $.fn.dragRearrange= function(){
-     var helperfn = function(event, ui) {
-	        var title = ui[0].childNodes[1].childNodes[1].textContent +": "+ ui[0].childNodes[1].childNodes[3].text;
-            var helper = $('<div class="helper" />');
-            helper.text(title);
-            return helper;
-        };
-     var updatefn = function(event, ui) {
-            var ar = $(this).sortable('serialize');
-            $("#kss-spinner").show();
-            $.post('schedule_order', ar ,function(data, status) {
-                            $("#kss-spinner").hide();
-                        });
-            };
-
-      $(this).sortable({
-	    helper: helperfn,
-        update: updatefn
-    });
-  }
+		$(this).sortable({
+	    	helper: helperfn,
+	    	update: updatefn
+		});
+	}
+	
+	
   $.fn.clickScheduling = function() {
     var calendar = $('#scheduling-calendar')
     var selector = '#'+calendar.attr('id');
@@ -137,7 +143,6 @@
       */
     var discussion = calendar.find("div.discussion")
     $.each(discussion, function(i, o){
-        //alert("test");
         var form = $(this).find("form");
         var dialog = $(this);
         var textarea = form.find("textarea");
@@ -145,11 +150,7 @@
         a = $(this).attr('id').split("-");
         
         var id = a[1];
-        //alert(form.attr('id'));
 	    //var editor = new YAHOO.widget.Editor(id);
-	    //alert(id);
-	    //alert(dialog.attr('id'));
-	    //alert(textarea.attr('id'));
         var editor = new YAHOO.widget.Editor(textarea.attr('id'), { 
 	        width: '702px', 
 	        height: '200px' 
@@ -204,11 +205,8 @@
                 }    
 
                 //$('#'+discussion_id).html("<div>"+html2+"</div>");
-                //alert(discussion_id);
-                //alert(id);
                 var d = document.getElementById(discussion_id);
                 d.innerHTML = "<div>"+display_minutes+"</div>";
-                //alert(html2);
                 /*
                 var html2 = textarea.val();
                 id2 = "#discussion_" + id;
@@ -229,51 +227,54 @@
 	    btn.on("click", dlg.show, dlg, true);
 	});
 	
-    var selects = calendar.find('#scheduling-table select.workflow-status');
-    $.each(selects, function(i, o) {
-        var select = $(o);
-        var label = select.siblings(".state-title");
-        var form = select.parents("form").eq(0);
-        select.change(function(event) {
-            var selected = select.children().eq(o.selectedIndex);
-            $("#kss-spinner").show();
-            form.ajaxSubmit({
-                dataType: "html",
-                complete: function(xmlHttp) {
-                  $("#kss-spinner").hide();
-                  o.selectedIndex = 0;
-                  select.blur();
-                  
-                  if (xmlHttp.status != 200) {
-                    select.attr('disabled', 'disabled');
-                    label.text("");
-                    var tid = selected.attr('value');
-                    top.location.href = form.attr('action')+
-                      '?next_url=...&transition='+tid;
-                  } else {
-                    var data = xmlHttp.responseXML;
-                    var html = $(data.documentElement);
-                    var title = html.children().eq(0);
-                    var options = html.find("option");
+	var selects = calendar.find('#scheduling-table select.workflow-status');
+	$.each(selects, function(i, o) {
+		var select = $(o);
+		var label = select.siblings(".state-title");
+		var form = select.parents("form").eq(0);
+		
+		select.change(function(event) {
+			var selected = select.children().eq(o.selectedIndex);
+			$("#kss-spinner").show();
+            
+			form.ajaxSubmit({
+				dataType: "html",
+				complete: function(xmlHttp){
+					$("#kss-spinner").hide();
+					o.selectedIndex = 0;
+					select.blur();
+
+					if (xmlHttp.status != 200) {
+                    	select.attr('disabled', 'disabled');
+                    	label.text("");
+                    	var tid = selected.attr('value');
+                    	top.location.href = form.attr('action') + '?next_url=...&transition=' + tid;
+					}
+					else {
+						var data = xmlHttp.responseXML;
+                    	var html = $(data.documentElement);
+                    	var title = html.children().eq(0);
+                    	var options = html.find("option");
                     
-                    select.children().remove();
-                    $.each(options, function(j, p) {
-                        var option = $("<option />");
-                        option.text($(p).text());
-                        option.attr('value', $(p).attr('value'));
-                        select.append(option);
-                      });
+                    	select.children().remove();
+                    	$.each(options, function(j, p) {
+                        	var option = $("<option />");
+                        	option.text($(p).text());
+                        	option.attr('value', $(p).attr('value'));
+                        	select.append(option);
+                    	});
 
-                    label.text(title.text());
+						label.text(title.text());
 
-                    if (options.length == 1)
-                    {
-                      select.hide();
-                    }
-                  }
-                }});
-          });
-      });
+						if (options.length == 1){
+							select.hide();
+						}
+					}
+				}
+			});
+		});
+	});
+	
     
     // create and insert category rows
     var current = null;
@@ -782,10 +783,7 @@
       "&dir=" + dir +
       "&start=" + startIndex +
       "&limit=" +  results +
-      get_filter(oSelf); 
-     
-      
-      
+      get_filter(oSelf);
     };
 
     
@@ -898,4 +896,5 @@
     };
 
   };
+  
  })(jQuery);
