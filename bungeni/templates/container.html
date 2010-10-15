@@ -21,6 +21,37 @@ $begin{generic}
 $end{generic}
 
 
+#[ was: ui/forms/templates/generic-sub-container.pt ]#
+$begin{generic_sub}
+<dt id="fieldsetlegend-generic-sub-container-${view.view_name}">
+  ${i18n(view.form_name)}
+</dt>
+<dd id="fieldset-generic-sub-container-${view.view_name}">
+    <form action="./${view.view_name}" method="post"
+        class="edit-form" enctype="multipart/form-data"
+        id="alchemist.container.listing"
+        >
+        <div>
+            ${ xml(view.listing()) }
+        </div>
+#[
+        <div id="actionsView">
+            <span class="actionButtons" tal:condition="view/availableActions">
+                <tal:loop tal:repeat="action view/actions">
+	                <input type="submit" class="context" id="" name="" value=""
+		                tal:attributes="id action/__name__;
+                            name action/__name__;
+			           	    value python:str(action.label);"
+		                i18n:attributes="value" />
+                </tal:loop>
+            </span>
+        </div> 
+]#
+    </form>
+</dd>
+$end{generic_sub}
+
+
 #[ was: ui/templates/datatable.pt ]#
 #[ !+NEED_ZC_RESOURCE_LIBRARIES(mr, sep-2010) ]#
 $begin{datatable}

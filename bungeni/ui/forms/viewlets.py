@@ -52,12 +52,13 @@ class ViewletBase(viewlet.ViewletBase):
         self.request = request
         self.manager = manager
     
-    for_display = True
     view_name = None
     view_id = None
     
-    items = None
-    formatter = None
+    # for the several "display a list of items" class of viewlets
+    for_display = True # typically, no items means no display
+    items = None # list of data items to be displayed
+    formatter = None # subclasses should use get_date_formatter() to set this
     
     def get_date_formatter(self, category="date", length="long"):
         return date.getLocaleFormatter(self.request, category, length)
@@ -142,7 +143,11 @@ class SubFormViewletManager(manager.WeightOrderedViewletManager):
 class SubformViewlet(table.AjaxContainerListing):
     """
     """
-    render = ViewPageTemplateFile("templates/generic-sub-container.pt")
+    # evoque
+    render = z3evoque.ViewTemplateFile("container.html#generic_sub")
+    
+    # zpt
+    #render = ViewPageTemplateFile("templates/generic-sub-container.pt")
     
     def __init__(self, context, request, view, manager):
         # The parent for SubformViewlets is the context (not the view)
@@ -158,6 +163,10 @@ class SubformViewlet(table.AjaxContainerListing):
     @property
     def context(self):
         return getattr(self._context, self.sub_attr_name)
+    
+    @property
+    def view_name(self):
+        return self.sub_attr_name # self.context.__name__
     
     @property
     def for_display(self):
@@ -213,9 +222,6 @@ class CommitteesViewlet(SubformViewlet):
 class CommitteeStaffViewlet(SubformViewlet):
     sub_attr_name = "committeestaff"
 
-class TitleViewlet(SubformViewlet):
-    sub_attr_name = "titles"
-
 class AddressesViewlet(SubformViewlet):
     sub_attr_name = "addresses"
 
@@ -224,14 +230,6 @@ class PoliticalGroupsViewlet(SubformViewlet):
 
 class PartyMemberViewlet(SubformViewlet):
     sub_attr_name = "partymembers"
-
-#class ResponseViewlet(SubformViewlet):
-#   
-#    def __init__(self,  context, request, view, manager):
-#        self.context = context.responses
-#        self.request = request
-#        self.__parent__= context
-#        self.manager = manager
 
 class OfficeMembersViewlet(SubformViewlet):
     sub_attr_name = "officemembers"
@@ -370,7 +368,7 @@ class InitialQuestionsViewlet(BungeniAttributeDisplay):
             self.context = None
         super(InitialQuestionsViewlet, self).update()
 
-
+'''
 class ResponseViewlet(BungeniAttributeDisplay):
     """Response to question.
     """
@@ -413,7 +411,7 @@ class ResponseViewlet(BungeniAttributeDisplay):
             super(ResponseViewlet, self).setupActions()
         else:
             self.actions = self.add_action.actions
-
+'''
 
 # ViewletBase
 

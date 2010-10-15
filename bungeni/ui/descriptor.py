@@ -374,6 +374,10 @@ def LanguageField(name="language"):
 ####
 # Descriptors
 
+# !+ID_NAME_LABEL_TITLE(mr, oct-2010) use of "id", "name", "label", "title", 
+# should be conistent -- the (localized) {display, container}_name attributes 
+# here should really all be {display, container}_label.
+
 class UserDescriptor(ModelDescriptor):
     display_name = _(u"User")
     container_name = _(u"Users")
