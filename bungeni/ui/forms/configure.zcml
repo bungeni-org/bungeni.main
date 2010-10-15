@@ -309,16 +309,6 @@
         weight="40"
     />
 
-  <!--browser:viewlet
-      name="bungeni.viewlet.mp-partymembership"
-      manager="bungeni.alchemist.interfaces.IContentViewManager"
-      class=".viewlets.PartyMembershipViewlet"
-      for="bungeni.core.interfaces.IMemberOfParliament"
-      permission="zope.View"
-      weight="30"
-      /-->
-
-  
     <browser:viewlet name="bungeni.viewlet.committee-members"
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.CommitteeMembersViewlet"
