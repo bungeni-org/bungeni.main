@@ -1,8 +1,8 @@
 #scheduling-calendar {
 	width: 58%;
 	height:100%;
-	/*float: right;*/
 	float: left;
+	position:static;
 }
 dl.portlet.portletNavigationTree {
 	position: relative;
