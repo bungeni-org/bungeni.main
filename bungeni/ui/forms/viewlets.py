@@ -141,7 +141,7 @@ class SubFormViewletManager(manager.WeightOrderedViewletManager):
 
 
 class SubformViewlet(table.AjaxContainerListing):
-    """
+    """A container listing of the items indicated by "sub_attr_name". 
     """
     # evoque
     render = z3evoque.ViewTemplateFile("container.html#generic_sub")
@@ -264,6 +264,7 @@ class PersonInfo(BungeniAttributeDisplay):
         super(PersonInfo, self).update()
 
 
+'''
 class ParliamentMembershipInfo(BungeniAttributeDisplay):
     """ for a given user get his last parliament 
     membership.
@@ -301,7 +302,7 @@ class ParliamentMembershipInfo(BungeniAttributeDisplay):
             return
         self.context.__parent__ = parent
         super(ParliamentMembershipInfo, self).update()
-
+'''
 
 class ParliamentaryItemMinutesViewlet(BungeniAttributeDisplay):
     
@@ -415,21 +416,22 @@ class ResponseViewlet(BungeniAttributeDisplay):
 
 # ViewletBase
 
-class CommitteeMembersViewlet(ViewletBase):
+class GroupMembersViewlet(ViewletBase):
     
     # evoque
-    render = z3evoque.ViewTemplateFile("workspace_viewlets.html#committee_members")
+    render = z3evoque.ViewTemplateFile("workspace_viewlets.html#group_members")
     
     view_name = "Members"
-    view_id = "committee-members"
+    view_id = "group-members"
+    
+    def _get_members(self):
+        """Get the list of members of the context group.
+        """
+        raise NotImplemented
     
     def update(self):
         session = Session()
-        members = [ m for m in 
-            session.query(domain.CommitteeMember).filter(
-                domain.CommitteeMember.group_id == self.context.committee_id
-            ).all()
-        ]
+        members = self._get_members()
         user_mp_id_map = dict([
             (m.user_id, session.query(domain.MemberOfParliament).filter(
                     domain.MemberOfParliament.user_id == m.user_id
@@ -448,6 +450,29 @@ class CommitteeMembersViewlet(ViewletBase):
             }
             for m in members
         ]
+
+class CommitteeMembersViewlet(GroupMembersViewlet):
+    
+    def _get_members(self):
+        session = Session()
+        return [ m for m in 
+            session.query(domain.CommitteeMember).filter(
+                domain.CommitteeMember.group_id == self.context.committee_id
+            ).all()
+        ]
+    
+class PoliticalGroupMembersViewlet(GroupMembersViewlet):
+    
+    def _get_members(self):
+        pg = removeSecurityProxy(self.context)
+        session = Session()
+        return [ m for m in 
+            session.query(domain.PartyMember).filter(
+                domain.PartyMember.group_id == pg.group_id
+            ).all()
+        ]
+    # !+PoliticalGroupMember(mr, oct-2010) is not explicitly defined in domain
+    # !+IPoliticalGroup(mr, oct-2010) is not explicitly defined in domain
 
 
 class OfficesHeldViewlet(ViewletBase):

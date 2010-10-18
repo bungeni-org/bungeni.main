@@ -78,7 +78,7 @@ class SecondaryNavigationViewlet(object):
     
     # evoque
     render = z3evoque.ViewTemplateFile("navigation.html#secondary",
-                                           i18n_domain="bungeni.core")
+        i18n_domain="bungeni.core")
     # zpt
     #render = ViewPageTemplateFile("templates/secondary-navigation.pt")
     
@@ -249,7 +249,6 @@ class BreadCrumbsViewlet(viewlet.ViewletBase):
     """Breadcrumbs.
     
     Render the breadcrumbs to show a user his current location.
-    
     """
     # evoque
     render = z3evoque.ViewTemplateFile("navigation.html#breadcrumbs")
