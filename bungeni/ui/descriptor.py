@@ -1441,6 +1441,7 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
             add_widget=widgets.LongTextWidget,
         ),
         Field(name="full_name",
+            modes="",
             #property=schema.TextLine(title=_(u"Summary"), required=False), 
             edit_widget=widgets.LongTextWidget,
             add_widget=widgets.LongTextWidget,
