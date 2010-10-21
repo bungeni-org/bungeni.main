@@ -292,13 +292,6 @@
         permission="zope.View"
         weight="10"
     />
-    <browser:viewlet name="bungeni.viewlet.pg-members"
-        manager=".interfaces.ISubFormViewletManager"
-        class=".viewlets.PoliticalGroupMembersViewlet"
-        for="bungeni.models.interfaces.IPoliticalGroup"
-        permission="zope.View"
-        weight="10"
-    />
     
   <browser:viewlet
      name="bungeni.viewlet.committee-staff"
@@ -517,6 +510,19 @@
         permission="zope.View"
         weight="10"
     />
+    
+    <!-- !+PartyMemberViewlet(mr, oct-2010)
+    This viewlet is replaced with the other viewlet below it, with:
+        for="bungeni.models.interfaces.IPoliticalGroup"
+    (a matching view: /members/political-groups/obj-NNN/ ).
+    But:
+    - how to determine whether this view was indeed the ONLY one matching,
+    to know whether we can just thus simply replace it ???
+    - disabling this viewlet will also "obsolete" the URL 
+        ${url}/partymembers/*
+    but, that URL still continues to work... 
+    Should explicitly block it from anonymous or any given user?
+    
     <browser:viewlet name="bungeni.viewlet.political-group-members"
         manager="bungeni.alchemist.interfaces.IContentViewManager"
         class=".viewlets.PartyMemberViewlet"
@@ -524,7 +530,15 @@
         permission="zope.View"
         weight="10"
     />
-    
+    -->
+    <browser:viewlet name="bungeni.viewlet.political-group-members"
+        manager=".interfaces.ISubFormViewletManager"
+        class=".viewlets.PoliticalGroupMembersViewlet"
+        for="bungeni.models.interfaces.IPoliticalGroup"
+        permission="zope.View"
+        weight="10"
+    />
+
     <!-- bills -->
     <browser:viewlet name="bungeni.viewlet.bill-consignatory"
         manager=".interfaces.ISubFormViewletManager"

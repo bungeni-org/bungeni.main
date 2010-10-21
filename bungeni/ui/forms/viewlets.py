@@ -12,10 +12,9 @@ import sys
 from dateutil import relativedelta
 import datetime, calendar
 from zope import interface
-from zope.viewlet import viewlet, manager
+from zope.viewlet import manager
 from zope.app.pagetemplate import ViewPageTemplateFile
 
-from zope.formlib.namedtemplate import NamedTemplate
 from zope.formlib import form
 from zope.security.proxy import removeSecurityProxy
 
@@ -33,39 +32,17 @@ from bungeni.ui.i18n import _
 import bungeni.core.globalsettings as prefs
 
 from bungeni.ui.tagged import get_states
+from bungeni.ui import browser
 from bungeni.ui import z3evoque
 from bungeni.ui import table
-from bungeni.ui.utils import queries, statements, url, misc, date, debug
+from bungeni.ui.utils import queries, statements, url, misc, debug
 
 from fields import BungeniAttributeDisplay
 from interfaces import ISubFormViewletManager
 
 
-# !+ViewletBase(mr, oct-2010) standardize on a central bungeni ViewletBase
-class ViewletBase(viewlet.ViewletBase):
-
-    def __init__(self,  context, request, view, manager):
-        # the following 4 lines do exactly what calling super.__init__ does --
-        # we re-state them here for convenient explictness
-        self.__parent__ = view
-        self.context = context
-        self.request = request
-        self.manager = manager
-    
-    view_name = None
-    view_id = None
-    
-    # for the several "display a list of items" class of viewlets
-    for_display = True # typically, no items means no display
-    items = None # list of data items to be displayed
-    formatter = None # subclasses should use get_date_formatter() to set this
-    
-    def get_date_formatter(self, category="date", length="long"):
-        return date.getLocaleFormatter(self.request, category, length)
-
-
 ''' XXX-INFO-FOR-PLONE - MR - 2010-05-03
-class GroupIdViewlet(ViewletBase):
+class GroupIdViewlet(browser.BungeniViewlet):
     """ display the group and parent group
     principal id """
     parent_group_principal_id = None
@@ -90,10 +67,8 @@ class GroupIdViewlet(ViewletBase):
         
     render = ViewPageTemplateFile('templates/group_id.pt')
 '''
-
-
 ''' XXX-INFO-FOR-PLONE - MR - 2010-05-03
-class UserIdViewlet(ViewletBase):
+class UserIdViewlet(browser.BungeniViewlet):
     """ display the users
     principal id """
     principal_id = None
@@ -118,15 +93,8 @@ class UserIdViewlet(ViewletBase):
 '''
 
 
-'''
-class AttributesEditViewlet(DynamicFields, EditFormViewlet):
-    mode = "edit"
-    template = NamedTemplate("alchemist.subform")
-    form_name = _(u"General")
-'''
-
-
 # SubformViewlets
+# !+BungeniViewlet(mr) make these inherit from BungeniViewlet
 
 class SubFormViewletManager(manager.WeightOrderedViewletManager):
     """Display subforms.
@@ -152,10 +120,11 @@ class SubformViewlet(table.AjaxContainerListing):
     def __init__(self, context, request, view, manager):
         # The parent for SubformViewlets is the context (not the view)
         self.__parent__ = context
-        # !+ using self.__parent__ to get to context will give recursion error: 
+        self._context = context
+        # !+_context(mr, oct-2010) using self.__parent__ to get to context 
+        # gives recursion error: 
         # zope/publisher/browser.py", line 849, in __getParent 
         # return getattr(self, '_parent', self.context)
-        self._context = context 
         self.request = request
         self.manager = manager
     
@@ -236,6 +205,7 @@ class OfficeMembersViewlet(SubformViewlet):
 
 
 # BungeniAttributeDisplay
+# !+BungeniViewlet(mr) make these inherit from BungeniViewlet
 
 class PersonInfo(BungeniAttributeDisplay):
     """Bio Info / personal data about the MP.
@@ -414,14 +384,14 @@ class ResponseViewlet(BungeniAttributeDisplay):
             self.actions = self.add_action.actions
 '''
 
-# ViewletBase
 
-class GroupMembersViewlet(ViewletBase):
+
+class GroupMembersViewlet(browser.BungeniViewlet):
     
     # evoque
     render = z3evoque.ViewTemplateFile("workspace_viewlets.html#group_members")
     
-    view_name = "Members"
+    view_title = "Members"
     view_id = "group-members"
     
     def _get_members(self):
@@ -466,16 +436,15 @@ class PoliticalGroupMembersViewlet(GroupMembersViewlet):
     def _get_members(self):
         pg = removeSecurityProxy(self.context)
         session = Session()
+        dkls = domain.PartyMember # !+domain.PoliticalGroupMember
         return [ m for m in 
-            session.query(domain.PartyMember).filter(
-                domain.PartyMember.group_id == pg.group_id
-            ).all()
+            session.query(dkls).filter(dkls.group_id == pg.group_id).all()
         ]
-    # !+PoliticalGroupMember(mr, oct-2010) is not explicitly defined in domain
-    # !+IPoliticalGroup(mr, oct-2010) is not explicitly defined in domain
+    # !+domain.PoliticalGroupMember(mr, oct-2010) is not defined
+    # !+IPoliticalGroup(mr, oct-2010) is not explicitly defined
 
 
-class OfficesHeldViewlet(ViewletBase):
+class OfficesHeldViewlet(browser.BungeniViewlet):
 
     # evoque
     render = z3evoque.ViewTemplateFile("workspace_viewlets.html#offices_held")
@@ -483,7 +452,7 @@ class OfficesHeldViewlet(ViewletBase):
     # zpt
     #render = ViewPageTemplateFile("templates/offices_held_viewlet.pt")
     
-    view_name = "Offices held"
+    view_title = "Offices held"
     view_id = "offices-held"
     
     def get_offices_held(self):
@@ -526,7 +495,7 @@ class OfficesHeldViewlet(ViewletBase):
     
 
 
-class TimeLineViewlet(ViewletBase):
+class TimeLineViewlet(browser.BungeniViewlet):
     """
     tracker/timeline view:
     
@@ -546,7 +515,7 @@ class TimeLineViewlet(ViewletBase):
     add_action = form.Actions(
         form.Action(_(u"add event"), success="handle_event_add_action"),
     )
-    view_name = "Timeline"
+    view_title = "Timeline"
     view_id = "unknown-timeline"
     
     def __init__(self, context, request, view, manager):
@@ -642,7 +611,6 @@ class QuestionTimeLineViewlet(TimeLineViewlet):
 
 class TableddocumentTimeLineViewlet(TimeLineViewlet):
     sql_timeline = statements.sql_tableddocument_timeline
-    view_name = _("Timeline")
     view_id = "tableddocument-timeline"
 
 
@@ -651,7 +619,7 @@ class AgendaItemTimeLineViewlet(TimeLineViewlet):
     view_id = "agendaitem-timeline"
 
 
-class MemberItemsViewlet(ViewletBase):
+class MemberItemsViewlet(browser.BungeniViewlet):
     """A tab with bills, motions etc for an MP 
     (the "parliamentary activities" tab of of the "member" view)
     """
@@ -662,7 +630,7 @@ class MemberItemsViewlet(ViewletBase):
         get_states("question", tagged=["public"]) + \
         get_states("tableddocument", tagged=["public"])
     
-    view_name = "Parliamentary activities"
+    view_title = "Parliamentary activities"
     view_id = "mp-items"
     
     # evoque
@@ -776,7 +744,7 @@ class SchedulingMinutesViewlet(DisplayViewlet):
             self.context, self.request)
 
 
-class SessionCalendarViewlet(ViewletBase):
+class SessionCalendarViewlet(browser.BungeniViewlet):
     """Display a monthly calendar with all sittings for a session.
     """
     def __init__(self, context, request, view, manager):

@@ -40,7 +40,7 @@ $end{items}
 #[ was: ui/viewlets/templates/mp_item_viewlet.pt ]#
 $begin{mp_items}
 <dt id="fieldsetlegend-${view.view_id}">
-  ${i18n(view.view_name)}
+  ${i18n(view.view_title)}
 </dt>
 <dd id="fieldset-${view.view_id}">
     <table class="listing">
@@ -151,7 +151,7 @@ $end{scheduled}
 #[ was: ui/forms/templates/timeline_viewlet.pt ]#
 $begin{timeline}
 <dt id="fieldsetlegend-${view.view_id}">
-    <span>${i18n(view.view_name)}</span>
+    <span>${i18n(view.view_title)}</span>
 </dt>
 <dd id="fieldset-${view.view_id}">
     <table class="listing">
@@ -179,7 +179,7 @@ $end{timeline}
 #[ was: ui/forms/templates/offices_held_viewlet.pt ]#
 $begin{offices_held}
 <dt id="fieldsetlegend-${view.view_id}">
-    <span>${i18n(view.view_name)}</span>
+    <span>${i18n(view.view_title)}</span>
 </dt>
 <dd id="fieldset-${view.view_id}">
     <table class="listing">
@@ -210,7 +210,7 @@ $end{offices_held}
 #[ was: a generic ui.forms.viewlets.SubformViewlet (auto db model reflection) ]#
 $begin{group_members}
 <dt id="fieldsetlegend-${view.view_id}">
-    <span>${i18n(view.view_name)}</span>
+    <span>${i18n(view.view_title)}</span>
 </dt>
 <dd id="fieldset-${view.view_id}">
     <table class="listing">

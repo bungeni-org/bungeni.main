@@ -1440,11 +1440,13 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
             edit_widget=widgets.LongTextWidget,
             add_widget=widgets.LongTextWidget,
         ),
+        # some parliaments have a requirement for the "full_name" field, but 
+        # by default it is hidden in a default deployment 
         Field(name="full_name",
-            modes="",
+            modes="", # to enable, comment this line and uncommment the others
             #property=schema.TextLine(title=_(u"Summary"), required=False), 
-            edit_widget=widgets.LongTextWidget,
-            add_widget=widgets.LongTextWidget,
+            #edit_widget=widgets.LongTextWidget,
+            #add_widget=widgets.LongTextWidget,
         ),
         Field(name="registry_number",
             modes="edit|view",

@@ -10,15 +10,19 @@ log = __import__("logging").getLogger("bungeni.ui.browser")
 
 import sys
 from zope.security.proxy import removeSecurityProxy
-from zope.publisher.browser import BrowserView
+import zope.publisher.browser
+import zope.viewlet.viewlet
 
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.models.interfaces import IBungeniContent
 from bungeni.ui import z3evoque
-from bungeni.ui.utils import debug, misc
+from bungeni.ui.utils import date, debug, misc
 from bungeni.ui.i18n import _
 
-class BungeniBrowserView(BrowserView):
+
+# browser page
+
+class BungeniBrowserView(zope.publisher.browser.BrowserView):
     
     # the instance of the ViewProvideViewletManager
     provide = z3evoque.ViewProvideViewletManager()
@@ -93,4 +97,37 @@ class BungeniBrowserView(BrowserView):
         """Get the human readable, and localized, workflow state title.
         """
         return _(misc.get_wf_state(removeSecurityProxy(self.context)))
+
+
+# viewlet
+
+class BungeniViewlet(zope.viewlet.viewlet.ViewletBase):
+    
+    def __init__(self,  context, request, view, manager):
+        # the following 4 lines do exactly what calling 
+        # zope.viewlet.viewlet.ViewletBase.__init__ does --
+        # we re-state them here for convenient explicitness.
+        self.__parent__ = view
+        self.context = context
+        self.request = request
+        self.manager = manager
+    
+    view_title = None # localized
+    view_name = None # a (not necessarily unique) identifier, NOT localized
+    view_id = None # a unique identifier, NOT localized
+    # !+ID/NAME/TITLE/LABEL(mr, oct-2010) standardize usage & naming: view_*
+    # !+form_*(mr, oct-2010) rename to view_* e.g. form_name to view_name
+    
+    # for "items" viewlets (the most common case):
+    
+    # list of data items to be displayed
+    items = None
+    
+    # typically, may want that no items means no display e.g. bool(self.items)
+    for_display = True
+    
+    # locale formatter instance, subclasses use self.get_date_formatter() to set
+    formatter = None 
+    def get_date_formatter(self, category="date", length="long"):
+        return date.getLocaleFormatter(self.request, category, length)
 
