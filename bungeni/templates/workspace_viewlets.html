@@ -1,14 +1,19 @@
 #[ $Id$ ]#
 
+#[ !+CONVERGE_SIMILAR_TEMPLATES(mr, oct-2010) several templates here are 
+    very similar -- with moving more of the data preparaton and localization 
+    to handler code, and few additional parameters e.g. columns, data, 
+    most of these templates may be collapsed into one 
+]#
 
 #[ was: ui/viewlets/templates/workspace_item_viewlet.pt ]#
 $begin{items}
-<dt class="portletHeader" id="fieldsetlegend-${view.list_id}">
-    <span>${i18n(view.name)}</span>
+<dt class="portletHeader" id="fieldsetlegend-${view.view_id}">
+    <span>${view.view_title}</span>
 </dt>
-<dd id="fieldset-${view.list_id}" class="portletItem">
-    $if{view.getData()}
-    <table id="workspace-table-${view.list_id}" class="listing grid">
+<dd id="fieldset-${view.view_id}" class="portletItem">
+    $if{view.items}
+    <table id="workspace-table-${view.view_id}" class="listing grid">
         <thead>
             <tr>
                 <th>${i18n("Subject")}</th>
@@ -20,14 +25,14 @@ $begin{items}
             </tr>
         </thead>
         <tbody>
-            $for{result in view.getData()}
-            <tr $if{result.get("css_class")}class="${result['css_class']}"$fi>
-                <td><a href="${result['url']}">${result["subject"]}</a></td>
-                <td>${i18n(result["type"])}</td>
-                <td>${i18n(result["status"])}</td>
-                <td>${result["status_date"]}</td>
-                <td>${result["owner"]}</td>
-                <td>${result["to"]}</td>
+            $for{item in view.items}
+            <tr $if{item.get("css_class")}class="${item['css_class']}"$fi>
+                <td><a href="${item['url']}">${item["subject"]}</a></td>
+                <td>${i18n(item["type"])}</td>
+                <td>${i18n(item["status"])}</td>
+                <td>${item["status_date"]}</td>
+                <td>${item["owner"]}</td>
+                <td>${item["to"]}</td>
             </tr>
             $rof
         </tbody>
@@ -36,6 +41,36 @@ $begin{items}
 </dd>
 $end{items}
 
+#[ was: ui/viewlets/templates/workspace_group_viewlet.pt ]#
+$begin{groups}
+<dt class="portletHeader" id="fieldsetlegend-${view.view_id}">
+    <span>${view.view_title}</span>
+</dt>
+<dd id="fieldset-${view.view_id}" class="portletItem">
+    $if{view.items}
+    <table id="workspace-table-${view.view_id}" class="listing grid">
+        <thead>
+            <tr>
+                <th>${i18n("Subject")}</th>
+                <th>${i18n("Type")}</th>
+                <th>${i18n("Status")}</th>
+                <th>${i18n("Status date")}</th>
+            </tr>
+        </thead>
+        <tbody>
+            $for{item in view.items}
+            <tr $if{item.get("css_class")}class="${item['css_class']}"$fi>
+                <td><a href="${item['url']}">${item["subject"]}</a></td>
+                <td>${i18n(item["type"])}</td>
+                <td>${i18n(item["status"])}</td>
+                <td>${item["status_date"]}</td>
+            </tr>
+            $rof
+        </tbody>
+    </table>
+    $fi
+</dd>
+$end{groups}
 
 #[ was: ui/viewlets/templates/mp_item_viewlet.pt ]#
 $begin{mp_items}
@@ -53,12 +88,12 @@ $begin{mp_items}
             </tr>
         </thead>
         <tbody>
-            $for{result in view.results()}
+            $for{item in view.items}
             <tr>
-                <td>${i18n(result["type"])}</td>
-                <td><a href="${result['url']}">${result["short_name"]}</a></td>
-                <td>${i18n(result["status"])}</td>
-                <td>${view.formatter.format(result['submission_date'])}</td>
+                <td>${i18n(item["type"])}</td>
+                <td><a href="${item['url']}">${item["short_name"]}</a></td>
+                <td>${i18n(item["status"])}</td>
+                <td>${view.formatter.format(item['submission_date'])}</td>
             </tr>
             $rof
         </tbody>
@@ -69,12 +104,12 @@ $end{mp_items}
 
 #[ was: ui/viewlets/templates/workspace_sitting_viewlet.pt ]#
 $begin{sittings}
-<dt class="portletHeader" id="fieldsetlegend-${view.list_id}">
-    <span>${i18n(view.name)}</span>
+<dt class="portletHeader" id="fieldsetlegend-${view.view_id}">
+    <span>${view.view_title}</span>
 </dt>
-<dd id="fieldset-${view.list_id}" class="portletItem">
-    $if{view.getData()}
-    <table id="workspace-table-${view.list_id}" class="listing grid">
+<dd id="fieldset-${view.view_id}" class="portletItem">
+    $if{view.items}
+    <table id="workspace-table-${view.view_id}" class="listing grid">
         <thead>
             <tr>
                 <th>${i18n("Date")}</th>
@@ -85,21 +120,21 @@ $begin{sittings}
             </tr>
         </thead>
         <tbody>
-            $for{result in view.getData()}
-            <tr class="${result["css_class"]}">
-                <td><a href="${result['url']}">${result["date"]},
-                    ${result["time_from_to"][0]} - ${result["time_from_to"][1]}
+            $for{item in view.items}
+            <tr class="${item["css_class"]}">
+                <td><a href="${item['url']}">${item["date"]},
+                    ${item["time_from_to"][0]} - ${item["time_from_to"][1]}
                     </a></td>
-                <td>${result["venue"]}</td>
+                <td>${item["venue"]}</td>
                 #[
 !+SITTING_TYPE(mr, sep-2010) the following key lookup is changed to a get() 
 call to glaze over the cases when a sitting.sitting_type is not set.
 For more context see this email thread:
 http://groups.google.com/group/bungeni-dev/browse_thread/thread/2d46b20634798b5e
                 ]#
-                <td>${result.get("sitting_type", "")}</td>
-                <td>${result["group"]}</td>
-                <td>${i18n(result["status"])}</td>
+                <td>${item.get("sitting_type", "")}</td>
+                <td>${item["group"]}</td>
+                <td>${i18n(item["status"])}</td>
             </tr>
             $rof
         </tbody>
@@ -110,12 +145,12 @@ $end{sittings}
 
 
 $begin{scheduled}
-<dt class="portletHeader" id="fieldsetlegend-${view.list_id}">
-    <span>${i18n(view.name)}</span>
+<dt class="portletHeader" id="fieldsetlegend-${view.view_id}">
+    <span>${view.view_title}</span>
 </dt>
-<dd id="fieldset-${view.list_id}" class="portletItem">
-    $if{view.getData()}
-    <table id="workspace-table-${view.list_id}" class="listing grid">
+<dd id="fieldset-${view.view_id}" class="portletItem">
+    $if{view.items}
+    <table id="workspace-table-${view.view_id}" class="listing grid">
         <thead>
             <tr>
                 <th>${i18n("Subject")}</th>
@@ -129,16 +164,16 @@ $begin{scheduled}
             </tr>
         </thead>
         <tbody>
-            $for{result in view.getData()}
-            <tr $if{result.get("css_class")}class="${result['css_class']}"$fi>
-                <td><a href="${result['url']}">${result["subject"]}</a></td>
-                <td>${i18n(result["type"])}</td>
-                <td>${i18n(result["status"])}</td>
-                #[ <td>${result["status_date"]}</td> ]#
-                <td>${result["owner"]}</td>
-                <td>${result["to"]}</td>
-                <td>${xml("<br/>".join(result["sittings_start"]))}</td>
-                <td>${xml("<br/>".join(result["sittings_status"]))}</td>
+            $for{item in view.items}
+            <tr $if{item.get("css_class")}class="${item['css_class']}"$fi>
+                <td><a href="${item['url']}">${item["subject"]}</a></td>
+                <td>${i18n(item["type"])}</td>
+                <td>${i18n(item["status"])}</td>
+                #[ <td>${item["status_date"]}</td> ]#
+                <td>${item["owner"]}</td>
+                <td>${item["to"]}</td>
+                <td>${xml("<br/>".join(item["sittings_start"]))}</td>
+                <td>${xml("<br/>".join(item["sittings_status"]))}</td>
             </tr>
             $rof
         </tbody>
@@ -163,11 +198,11 @@ $begin{timeline}
             </tr>
         </thead>
         <tbody>
-            $for{data in view.results}
+            $for{item in view.items}
             <tr> 
-                <td><span>${i18n(data["atype"])}</span></td>
-                <td><span>${xml(data["description"])}</span></td>
-                <td><span>${view.formatter.format(data['adate'])}</span></td>
+                <td><span>${i18n(item["atype"])}</span></td>
+                <td><span>${xml(item["description"])}</span></td>
+                <td><span>${view.formatter.format(item['adate'])}</span></td>
             </tr>
             $rof
         </tbody>
@@ -193,13 +228,13 @@ $begin{offices_held}
             </tr>
         </thead>
         <tbody>
-            $for{oh in view.get_offices_held()}
+            $for{ item in view.items }
             <tr> 
-                <td><span>${oh["group"]}</span></td>
-                <td><span>${oh["group_type"]}</span></td>
-                <td><span>${oh["member_title"]}</span></td>
-                <td><span>${oh["start_date"]}</span></td>
-                <td><span>${oh["end_date"]}</span></td>
+                <td><span>${item["group"]}</span></td>
+                <td><span>${item["group_type"]}</span></td>
+                <td><span>${item["member_title"]}</span></td>
+                <td><span>${item["start_date"]}</span></td>
+                <td><span>${item["end_date"]}</span></td>
             </tr>
             $rof
         </tbody>
@@ -233,4 +268,20 @@ $begin{group_members}
     </table>
 </dd>
 $end{group_members}
-
+#[
+    !+i18n_CodeOrTemplates(mr, oct-2010)
+    localization calls, for text/date values, are currently sometimes made in 
+    application python code and other times in the templates (that is messy,
+    and in some cases text is "twice-localized"! For clarity and consistency,
+    we should standardize where all localization is to be done -- either ALL
+    in the view handling python code or ALL in the template.
+    
+    An argument against localizing in the template is that it is not always 
+    possible or convenient e.g. 
+    - in the #group_members template, it is quite cumbersome to localize a 
+    date (that may be None) as formatter.format(None) will give an error, 
+    so need to check for a None date each time;
+    - in the #offices_held template, localizing "group" is also cumbersome, 
+    as it is the combined result of a number of individually localized pieces
+    of text. 
+]#

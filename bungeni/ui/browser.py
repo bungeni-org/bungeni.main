@@ -99,7 +99,7 @@ class BungeniBrowserView(zope.publisher.browser.BrowserView):
         return _(misc.get_wf_state(removeSecurityProxy(self.context)))
 
 
-# viewlet
+# bungeni viewlet
 
 class BungeniViewlet(zope.viewlet.viewlet.ViewletBase):
     
@@ -112,13 +112,16 @@ class BungeniViewlet(zope.viewlet.viewlet.ViewletBase):
         self.request = request
         self.manager = manager
     
-    view_title = None # localized
-    view_name = None # a (not necessarily unique) identifier, NOT localized
     view_id = None # a unique identifier, NOT localized
+    view_name = None # a (not necessarily unique) identifier, NOT localized
+    view_title = None # localized
     # !+ID/NAME/TITLE/LABEL(mr, oct-2010) standardize usage & naming: view_*
     # !+form_*(mr, oct-2010) rename to view_* e.g. form_name to view_name
-    
-    # for "items" viewlets (the most common case):
+
+
+class BungeniItemsViewlet(BungeniViewlet):
+    """A viewlet listing items (a common case).
+    """
     
     # list of data items to be displayed
     items = None

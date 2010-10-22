@@ -386,7 +386,7 @@ class ResponseViewlet(BungeniAttributeDisplay):
 
 
 
-class GroupMembersViewlet(browser.BungeniViewlet):
+class GroupMembersViewlet(browser.BungeniItemsViewlet):
     
     # evoque
     render = z3evoque.ViewTemplateFile("workspace_viewlets.html#group_members")
@@ -444,7 +444,7 @@ class PoliticalGroupMembersViewlet(GroupMembersViewlet):
     # !+IPoliticalGroup(mr, oct-2010) is not explicitly defined
 
 
-class OfficesHeldViewlet(browser.BungeniViewlet):
+class OfficesHeldViewlet(browser.BungeniItemsViewlet):
 
     # evoque
     render = z3evoque.ViewTemplateFile("workspace_viewlets.html#offices_held")
@@ -455,10 +455,20 @@ class OfficesHeldViewlet(browser.BungeniViewlet):
     view_title = "Offices held"
     view_id = "offices-held"
     
-    def get_offices_held(self):
-        office_list = []
+    def _get_items(self):
         formatter = self.get_date_formatter("date", "long")
-        for oh in self.offices_held:
+        trusted = removeSecurityProxy(self.context)
+        user_id = trusted.user_id
+        if interfaces.IMemberOfParliament.providedBy(self.context):
+            parliament_id = trusted.group_id
+        else:
+            parliament = get_parliament_for_group_id(trusted.group_id)
+            if parliament:
+                parliament_id = parliament.parliament_id
+        office_list = []
+        for oh in get_offices_held_for_user_in_parliament(
+            user_id, parliament_id
+        ):
             title = {}
             # !+FULL_NAME(mr, oct-2010) this should probably make use of 
             # the GroupDescriptor (combined) listing Field full_name
@@ -482,20 +492,11 @@ class OfficesHeldViewlet(browser.BungeniViewlet):
         return office_list
     
     def update(self):
-        trusted = removeSecurityProxy(self.context)
-        user_id = trusted.user_id
-        if interfaces.IMemberOfParliament.providedBy(self.context):
-            parliament_id = trusted.group_id
-        else:
-            parliament = get_parliament_for_group_id(trusted.group_id)
-            if parliament:
-                parliament_id = parliament.parliament_id
-        self.offices_held = get_offices_held_for_user_in_parliament(
-                user_id, parliament_id)
+        self.items = self._get_items()
     
 
 
-class TimeLineViewlet(browser.BungeniViewlet):
+class TimeLineViewlet(browser.BungeniItemsViewlet):
     """
     tracker/timeline view:
     
@@ -541,7 +542,7 @@ class TimeLineViewlet(browser.BungeniViewlet):
         # NOTE: only *Change records have a "notes" dict attribute and the 
         # content of this depends on the value of "atype" (see core/audit.py)
         item_id = self.context.parliamentary_item_id
-        self.results = [ dict(atype=action, item_id=piid, description=desc,
+        self.items = [ dict(atype=action, item_id=piid, description=desc,
                               adate=date, notes=_eval_as_dict(notes))
                 for action, piid, desc, date, notes in
                 queries.execute_sql(self.sql_timeline, item_id=item_id) ]
@@ -549,16 +550,16 @@ class TimeLineViewlet(browser.BungeniViewlet):
         # Filter out workflow draft items for anonymous users
         if get_principal_id() in ("zope.anybody",):
             _draft_states = ("draft", "working_draft")
-            def show_timeline_item(result):
-                if result["atype"] == "workflow":
-                    if result["notes"].get("destination") in _draft_states:
+            def show_timeline_item(item):
+                if item["atype"] == "workflow":
+                    if item["notes"].get("destination") in _draft_states:
                         return False
                 return True
-            self.results = [ result for result in self.results
-                             if show_timeline_item(result) ]
+            self.items = [ item for item in self.items
+                             if show_timeline_item(item) ]
         
         #change_cls = getattr(domain, "%sChange" % (self.context.__class__.__name__))
-        for r in self.results:
+        for r in self.items:
             # workflow
             if r["atype"] == "workflow":
                 # description
@@ -619,7 +620,7 @@ class AgendaItemTimeLineViewlet(TimeLineViewlet):
     view_id = "agendaitem-timeline"
 
 
-class MemberItemsViewlet(browser.BungeniViewlet):
+class MemberItemsViewlet(browser.BungeniItemsViewlet):
     """A tab with bills, motions etc for an MP 
     (the "parliamentary activities" tab of of the "member" view)
     """
@@ -653,14 +654,15 @@ class MemberItemsViewlet(browser.BungeniViewlet):
         #self.for_display = (self.query.count() > 0)
         self.formatter = self.get_date_formatter("date", "medium")
     
-    def results(self):
-        for result in self.query.all():
-            _url = "/business/%ss/obj-%i" % (result.type,
-                result.parliamentary_item_id)
-            yield {"type": result.type,
-                "short_name": result.short_name,
-                "status": misc.get_wf_state(result),
-                "submission_date" : result.submission_date,
+    @property
+    def items(self):
+        for item in self.query.all():
+            _url = "/business/%ss/obj-%i" % (item.type,
+                item.parliamentary_item_id)
+            yield {"type": item.type,
+                "short_name": item.short_name,
+                "status": misc.get_wf_state(item),
+                "submission_date" : item.submission_date,
                 "url": _url }
 
 
@@ -744,15 +746,14 @@ class SchedulingMinutesViewlet(DisplayViewlet):
             self.context, self.request)
 
 
-class SessionCalendarViewlet(browser.BungeniViewlet):
+class SessionCalendarViewlet(browser.BungeniItemsViewlet):
     """Display a monthly calendar with all sittings for a session.
     """
     def __init__(self, context, request, view, manager):
         super(SessionCalendarViewlet, self).__init__(
             context, request, view, manager)
         self.query = None
-        self.Date = datetime.date.today()
-        self.Data = []
+        self.Date = datetime.date.today() # !+ self.today
         self.type_query = Session().query(domain.SittingType)
     
     def _getDisplayDate(self, request):
@@ -837,7 +838,7 @@ class SessionCalendarViewlet(browser.BungeniViewlet):
         return """<a href="?date=%s"> &gt;&gt; </a>""" % (
             datetime.date.strftime(nextdate, "%Y-%m-%d"))
     
-    def getData(self):
+    def _get_items(self):
         """
         return the data of the query
         """
@@ -850,15 +851,14 @@ class SessionCalendarViewlet(browser.BungeniViewlet):
         #    sit_types[sit_type.sitting_type_id] = sit_type.sitting_type
         data_list = []
         path = "/calendar/group/sittings/"
-        results = self.query.all()
-        data_formatter = self.get_date_formatter("time", "short")
-        for result in results:
+        formatter = self.get_date_formatter("time", "short")
+        for result in self.query.all():
             data = {}
             data["sittingid"] = ("sid_" + str(result.sitting_id))
             data["sid"] = result.sitting_id
             data["short_name"] = "%s - %s" % (
-                self.data_formatter.format(result.start_date),
-                self.data_formatter.format(result.end_date)
+                formatter.format(result.start_date),
+                formatter.format(result.end_date)
             )
             data["start_date"] = result.start_date
             data["end_date"] = result.end_date
@@ -927,7 +927,7 @@ class SessionCalendarViewlet(browser.BungeniViewlet):
         self.monthcalendar = calendar.Calendar(prefs.getFirstDayOfWeek()
             ).monthdatescalendar(self.Date.year, self.Date.month)
         self.monthname = datetime.date.strftime(self.Date, "%B %Y")
-        self.Data = self.getData()
+        self.items = self._get_items()
     
     render = ViewPageTemplateFile("templates/session_calendar_viewlet.pt")
 
