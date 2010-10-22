@@ -3,10 +3,9 @@
 from zope import interface
 from zope import component
 
-from zope.app.pagetemplate import ViewPageTemplateFile
+#from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.location.interfaces import ILocation
-from zope.viewlet import viewlet
 from zope.viewlet.manager import WeightOrderedViewletManager
 from zc.resourcelibrary import need
 from zope.app.component.hooks import getSite
@@ -23,9 +22,11 @@ from bungeni.alchemist.container import contained
 from bungeni.alchemist.model import queryModelDescriptor
 from ore.workflow.interfaces import IWorkflow
 
+from bungeni.ui import browser
+from bungeni.ui import z3evoque
 from bungeni.ui.tagged import get_states
 from bungeni.ui.i18n import _
-from bungeni.ui.utils import date, url
+from bungeni.ui.utils import url
 from bungeni.ui.calendar.utils import datetimedict
 from interfaces import ISchedulingManager
 
@@ -34,24 +35,22 @@ class SchedulingManager(WeightOrderedViewletManager):
     interface.implements(ISchedulingManager)
 
 
-# !+ViewletBase(mr, oct-2010) standardize on a central bungeni ViewletBase 
-class ViewletBase(viewlet.ViewletBase):
-
-    def __init__(self,  context, request, view, manager):
-        super(ViewletBase, self).__init__(context, request, view, manager)
-
-    def get_date_formatter(self, category="date", length="long"):
-        return date.getLocaleFormatter(self.request, category, length)
-
-
-class SchedulablesViewlet(ViewletBase):
+class SchedulablesViewlet(browser.BungeniItemsViewlet):
     """Renders a portlet which calls upon the scheduling viewlet
     manager to render a list of schedulable items."""
     
-    for_display = True
-    render = ViewPageTemplateFile("templates/scheduling.pt")
-    title = _(u"Scheduling")
+    view_title = _(u"Scheduling")
 
+    # the instance of the ViewProvideViewletManager
+    provide = z3evoque.ViewProvideViewletManager()
+
+    # evoque
+    render = z3evoque.ViewTemplateFile("scheduling.html#main")
+    # zpt
+    #render = ViewPageTemplateFile("templates/scheduling.pt")
+
+    for_display = True
+    
     def __init__(self, context, request, view, manager):
         while not ISchedulingContext.providedBy(context):
             context = ISchedulingContext(context, context.__parent__)
@@ -60,15 +59,21 @@ class SchedulablesViewlet(ViewletBase):
         super(SchedulablesViewlet, self).__init__(
             context, request, view, manager)
 
-class SchedulableItemsViewlet(ViewletBase):
+
+# !+BungeniViewlet(mr, oct-2010) standardize visible<->for_display ?
+
+class SchedulableItemsViewlet(browser.BungeniItemsViewlet):
     """Renders a list of schedulable items for a particular ``model``,
     filtered by workflow ``states``.
 
     Must subclass.
     """
-    model = states = container = name = None
+    model = states = container = view_title = None
     
-    render = ViewPageTemplateFile("templates/schedulable_items.pt")
+    # evoque
+    render = z3evoque.ViewTemplateFile("scheduling.html#items")
+    # zpt
+    #render = ViewPageTemplateFile("templates/schedulable_items.pt")
     
     @property
     def app(self):
@@ -88,6 +93,7 @@ class SchedulableItemsViewlet(ViewletBase):
         return None
         raise ValueError("Unable to locate application.")
 
+    @property
     def visible(self):
         return not(ICommittee.providedBy(self.group()))
     
@@ -146,44 +152,44 @@ class SchedulableItemsViewlet(ViewletBase):
 
 
 class SchedulableHeadingsViewlet(SchedulableItemsViewlet):
-    model = domain.Heading
-    name = _("Headings")
-    view_name="heading"
+    view_name = "heading"
+    view_title = _("Headings")
     states = (heading_wf_state[u"public"].id,)
+    model = domain.Heading
     
     def _item_url(self, item):
         return url.set_url_context(url.absoluteURL(item, self.request))
 
 class SchedulableBillsViewlet(SchedulableItemsViewlet):
-    model = domain.Bill
-    name = _("Bills")
-    view_name="bill"
+    view_name = "bill"
+    view_title = _("Bills")
     states = get_states("bill", tagged=["tobescheduled"]) 
+    model = domain.Bill
 
 class SchedulableQuestionsViewlet(SchedulableItemsViewlet):
-    model = domain.Question
-    name = _("Questions")
-    view_name="question"
+    view_name = "question"
+    view_title = _("Questions")
     states = get_states("question", tagged=["tobescheduled"]) 
+    model = domain.Question
 
 class SchedulableMotionsViewlet(SchedulableItemsViewlet):
-    model = domain.Motion
-    name = _("Motions")
-    view_name="motion"
+    view_name = "motion"
+    view_title = _("Motions")
     states = get_states("motion", tagged=["tobescheduled"])
+    model = domain.Motion
 
 class SchedulableTabledDocumentsViewlet(SchedulableItemsViewlet):
-    model = domain.TabledDocument
-    name = _("Tabled documents")
-    view_name="tableddocument"
+    view_name = "tableddocument"
+    view_title = _("Tabled documents")
     states = get_states("tableddocument", tagged=["tobescheduled"]) 
+    model = domain.TabledDocument
 
 class SchedulableAgendaItemsViewlet(SchedulableItemsViewlet):
-    model = domain.AgendaItem
-    name = _("Agenda items")
-    view_name="agendaitem"
+    view_name = "agendaitem"
+    view_title = _("Agenda items")
     visible = True
     states = get_states("agendaitem", tagged=["tobescheduled"]) 
+    model = domain.AgendaItem
     
     def get_group_id(self):
         parent=self.context

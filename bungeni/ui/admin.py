@@ -5,7 +5,7 @@ from zope import schema, component
 from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from zope.publisher.browser import BrowserView
 from zope.formlib import form
-from zope.viewlet import viewlet
+#from zope.viewlet import viewlet
 
 from bungeni.alchemist import Session
 from bungeni.alchemist import catalyst
@@ -14,12 +14,15 @@ from bungeni.ui import container
 from bungeni.ui import search
 
 
+''' !+UNUSED(mr, oct-2010)
 class Menu(viewlet.ViewletBase):
     
     template = ViewPageTemplateFile("templates/admin-menu-viewlet.pt")
     
     def render(self):
         return self.template()
+'''
+
 
 ''' !+FORMATTER(mr, sep-2010) unused, remove
 class UserFormatter(common.AjaxTableFormatter):
