@@ -16,7 +16,6 @@ from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.container.interfaces import IReadContainer
 from zope.security import proxy
 from zope.proxy import sameProxiedObjects
-from zope.viewlet import viewlet
 from zope.app.component.hooks import getSite
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.app.publisher.interfaces.browser import IBrowserMenu
@@ -34,9 +33,10 @@ from bungeni.alchemist.traversal import ManagedContainerDescriptor
 from bungeni.core import location
 from bungeni.ui.utils import url, debug
 from bungeni.ui import interfaces
+from bungeni.ui import browser
 from bungeni.ui import z3evoque
 
-def get_context_chain(context):
+def _get_context_chain(context):
     context = proxy.removeSecurityProxy(context)
     chain = []
     while context is not None:
@@ -44,7 +44,9 @@ def get_context_chain(context):
         context = context.__parent__
     return chain
 
-def get_title_from_context(context):
+# !+DUPLICATE(mr, oct-2010)
+# this code is very similar to BungeniBrowserView.page_title property
+def _get_title_from_context(context):
     title = None
     if IAlchemistContent.providedBy(context):
         if IDCDescriptiveProperties.providedBy(context):
@@ -74,7 +76,7 @@ def get_title_from_context(context):
         title = context.title
     return title
 
-class SecondaryNavigationViewlet(object):
+class SecondaryNavigationViewlet(browser.BungeniViewlet):
     
     # evoque
     render = z3evoque.ViewTemplateFile("navigation.html#secondary",
@@ -85,7 +87,7 @@ class SecondaryNavigationViewlet(object):
     def update(self):
         request = self.request
         context = self.context
-        chain = get_context_chain(context)
+        chain = _get_context_chain(context)
         length = len(chain)
         self.items = []
         if length < 2:
@@ -199,7 +201,8 @@ class SecondaryNavigationViewlet(object):
                     _url))
 
     
-class GlobalSectionsViewlet(viewlet.ViewletBase):
+class GlobalSectionsViewlet(browser.BungeniViewlet):
+    
     # evoque
     render = z3evoque.ViewTemplateFile("navigation.html#sections")
     
@@ -245,7 +248,7 @@ class GlobalSectionsViewlet(viewlet.ViewletBase):
             if _action_is_on_path(item['action']):
                 self.selected_portal_tab = item['id']
         
-class BreadCrumbsViewlet(viewlet.ViewletBase):
+class BreadCrumbsViewlet(browser.BungeniViewlet):
     """Breadcrumbs.
     
     Render the breadcrumbs to show a user his current location.
@@ -290,7 +293,7 @@ class BreadCrumbsViewlet(viewlet.ViewletBase):
         # are used for navigation.
         _url = url.set_url_context(_url)
         
-        title = get_title_from_context(context)
+        title = _get_title_from_context(context)
         
         if title is not None:
             path.append({ 'name':title, 'url':_url})
@@ -313,7 +316,7 @@ class BreadCrumbsViewlet(viewlet.ViewletBase):
             pass
     
 
-class NavigationTreeViewlet(viewlet.ViewletBase):
+class NavigationTreeViewlet(browser.BungeniViewlet):
     """Render a navigation tree."""
     
     # evoque !+ requires evoque svn HEAD
@@ -327,7 +330,7 @@ class NavigationTreeViewlet(viewlet.ViewletBase):
     def __new__(cls, context, request, view, manager):
         # we have both primary and secondary navigation, so we won't
         # show the navigation tree unless we're at a depth > 2
-        chain = get_context_chain(context)[:-2]
+        chain = _get_context_chain(context)[:-2]
         if not chain:
             return
 
@@ -419,8 +422,10 @@ class NavigationTreeViewlet(viewlet.ViewletBase):
                 if IApplication.providedBy(parent):
                     containers = [
                         (name, parent[name])
-                        for name in location.model_to_container_name_mapping.values()
-                        if name in parent]
+                        for name in 
+                            location.model_to_container_name_mapping.values()
+                        if name in parent
+                    ]
                 elif IReadContainer.providedBy(parent):
                     containers = list(parent.items())
                 else:
@@ -447,7 +452,8 @@ class NavigationTreeViewlet(viewlet.ViewletBase):
             if selected and IReadContainer.providedBy(context):
                 nodes = []
                 try:
-                    self.expand_containers(nodes, context.items(), _url, chain, context)
+                    self.expand_containers(
+                        nodes, context.items(), _url, chain, context)
                 except:
                     pass
             else:
@@ -512,7 +518,7 @@ class TopLevelContainerNavigation(NavigationTreeViewlet):
    def __new__(cls, context, request, view, manager):
         # we have both primary and secondary navigation, so we won't
         # show the navigation tree unless we're at a depth > 2
-        chain = get_context_chain(context)[:-2]
+        chain = _get_context_chain(context)[:-2]
         if len(chain) > 2:
             chain = chain[-2:]
 
@@ -530,3 +536,4 @@ class TopLevelContainerNavigation(NavigationTreeViewlet):
             inst = object.__new__(cls, context, request, view, manager)
             inst.chain = chain
             return inst
+
