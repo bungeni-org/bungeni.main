@@ -2,6 +2,7 @@
 # encoding: utf-8
 import sqlalchemy as rdb
 from sqlalchemy.sql import text
+from sqlalchemy.sql import functions
 
 from datetime import datetime
 
@@ -27,14 +28,14 @@ def make_changes_table(table, metadata):
         rdb.Column("action", rdb.Unicode(16)),
         # audit date, exclusively managed by the system
         rdb.Column("date_audit", rdb.DateTime(timezone=False),
-            server_default=(text("now()")),
+            default=functions.current_timestamp(),
             nullable=False
         ),
         # user-modifiable effective date, defaults to same value as audit date;
         # this is the date to be used for all intents and purposes other than 
         # for data auditing
         rdb.Column("date_active", rdb.DateTime(timezone=False),
-            server_default=(text("now()")),
+            default=functions.current_timestamp(),
             nullable=False
         ),
         rdb.Column("description", rdb.UnicodeText),
