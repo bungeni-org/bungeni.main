@@ -1,4 +1,6 @@
+from bungeni.alchemist import model
 from zope.component import getMultiAdapter
+from zope.security.proxy import removeSecurityProxy
 
 class BillAnnotationAdaptor(object):
     """Annotation Adaptor for Bills."""
@@ -31,9 +33,18 @@ class RSSValues(object):
 
     def __init__(self, context):
         self.context = context
+        self.domain_model = removeSecurityProxy(self.context).domain_model
+        self.domain_interface = model.queryModelInterface(self.domain_model)
+        self.domain_annotation = model.queryModelDescriptor(
+            self.domain_interface)
+
 
     @property
     def values(self):
+        public_wfstates = getattr(self.domain_annotation, "public_wfstates",
+            None)
+        if public_wfstates:
+            return filter(lambda x: x.status in public_wfstates, self.context.values())
         return self.context.values()
 
 

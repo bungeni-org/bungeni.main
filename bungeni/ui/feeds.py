@@ -7,34 +7,34 @@ from zope.publisher.browser import BrowserView
 from bungeni.ui.utils import queries, statements, url
 
 class BungeniRSSEventView(BrowserView):
-    __call__ = ViewPageTemplateFile('templates/rss-event-view.pt') 
+    __call__ = ViewPageTemplateFile('templates/rss-event-view.pt')
     form_name = None
 
     # Required channel elements:
-    
-    def rssTitle( self ):
+
+    def rssTitle(self):
         """title	The name of the channel. 
         It's how people refer to your service. 
         If you have an HTML website that contains the same information as your RSS file, 
         the title of your channel should be the same as the title of your website.
-        """ 
+        """
         return self.context.short_name
-        
-    def rssDescription ( self ):
+
+    def rssDescription (self):
         """description
         Phrase or sentence describing the channel.
         """
         return self.context.summary
-        
-    def rssLink( self ):
+
+    def rssLink(self):
         """link	
         The URL to the HTML website corresponding to the channel.
         """
         return url.absoluteURL(self.context, self.request)
-        
+
     # items of a channel:
-    
-    def rssItems( self ):
+
+    def rssItems(self):
         """Elements of <item> 
         A channel may contain any number of <item>s. 
         An item may represent a "story" -- much like a story in a newspaper or magazine; 
@@ -49,17 +49,18 @@ class BungeniRSSEventView(BrowserView):
         description     	The item synopsis.
         pubDate	Indicates when the item was published. 
         """
-        
+
         bill_id = self.context.bill_id
+
         results = queries.execute_sql(
                             statements.sql_bill_timeline, item_id=bill_id)
         path = url.absoluteURL(self.context, self.request)
         rlist = []
         for result in results:
             rlist.append({
-                    'title': result.atype, 
-                    'description': result.title, 
+                    'title': result.atype,
+                    'description': result.title,
                     'date': result.adate.isoformat()
                 })
         return rlist
-        
+
