@@ -330,6 +330,11 @@ class Minister(GroupMembership):
 class Committee(Group):
     """A parliamentary committee of MPs.
     """
+    # !+ManagedContainer(mr, oct-2010) why do all these Managed container 
+    # attributes return a list of processed-id-derived strings instead of the 
+    # list of actual objects in question? 
+    # e.g. committee.committeemembers returns: ['obj-41', 'obj-42']
+    #
     committeemembers = one2many("committeemembers",
         "bungeni.models.domain.CommitteeMemberContainer", "group_id")
     committeestaff = one2many("committeestaff",

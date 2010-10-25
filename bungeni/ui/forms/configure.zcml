@@ -310,16 +310,14 @@
         weight="30"
     />
       
-   <browser:viewlet
-     name="bungeni.viewlet.committee-sittings"
-     manager=".interfaces.ISubFormViewletManager"
-     class=".viewlets.SittingsViewlet"
-     for="bungeni.models.interfaces.ICommittee"
-     permission="zope.View"
-     weight="50"
-     />
-
-
+    <browser:viewlet name="bungeni.viewlet.committee-sittings"
+        manager=".interfaces.ISubFormViewletManager"
+        class=".viewlets.GroupSittingsViewlet"
+        for="bungeni.models.interfaces.ICommittee"
+        permission="zope.View"
+        weight="50"
+    />
+    
     <browser:viewlet name="bungeni.viewlet.committee-member-titles"
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.OfficesHeldViewlet"

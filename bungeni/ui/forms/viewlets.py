@@ -35,7 +35,7 @@ from bungeni.ui.tagged import get_states
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
 from bungeni.ui import table
-from bungeni.ui.utils import queries, statements, url, misc, debug
+from bungeni.ui.utils import queries, statements, url, misc, debug, date
 
 from fields import BungeniAttributeDisplay
 from interfaces import ISubFormViewletManager
@@ -93,8 +93,9 @@ class UserIdViewlet(browser.BungeniViewlet):
 '''
 
 
-# SubformViewlets
-# !+BungeniViewlet(mr) make these inherit from BungeniViewlet
+# !+SubformViewlet(mr, oct-2010) in this usage case this this should really
+# be made to inherit from browser.BungeniViewlet (but, note that
+# table.AjaxContainerListing already inherits from BungeniBrowserView). 
 
 class SubFormViewletManager(manager.WeightOrderedViewletManager):
     """Display subforms.
@@ -178,9 +179,6 @@ class AssignedItemsViewlet(SubformViewlet):
 
 class AssignedGroupsViewlet(SubformViewlet):
     sub_attr_name = "assignedgroups"
-
-class SittingsViewlet(SubformViewlet):
-    sub_attr_name = "sittings"
 
 class MinistriesViewlet(SubformViewlet):
     sub_attr_name = "ministries"
@@ -442,6 +440,58 @@ class PoliticalGroupMembersViewlet(GroupMembersViewlet):
         ]
     # !+domain.PoliticalGroupMember(mr, oct-2010) is not defined
     # !+IPoliticalGroup(mr, oct-2010) is not explicitly defined
+
+
+class GroupSittingsViewlet(browser.BungeniItemsViewlet):
+    """Display the sittings of a group. 
+    
+    Note 1: to be able to customize the URL for each sitting, this custom 
+    viewlet replaces the previous model-introspected container listing:
+        class GroupSittingsViewlet(SubformViewlet):
+            sub_attr_name = "sittings"
+    so replacing a url of the form: 
+            .../committees/obj-59/sittings/obj-17/
+    with:   /business/sittings/obj-17
+    
+    Note 2: this viewlet should probably be merged or better share the 
+    implementation at: ui.workspace.DraftSittingsViewlet
+    
+    !+ManagedContainer(mr, oct-2010) this would have been a lot simpler if
+    the Group.sittings attribute was simply returning the list of sitting
+    objects.
+    """
+    
+    # evoque
+    render = z3evoque.ViewTemplateFile("workspace_viewlets.html#group_sittings")
+    
+    view_title = "Sittings"
+    view_id = "sittings"
+    
+    def _get_items(self):
+        def _format_from_to(item):
+            start = item.start_date
+            if start:
+                start = dt_formatter.format(start)
+            end = item.end_date
+            if end:
+                end = t_formatter.format(end)
+            return u"%s - %s" % (start, end)
+        dt_formatter = self.get_date_formatter("dateTime", "medium")
+        t_formatter = self.get_date_formatter("time", "medium")
+        def _format_venue(item):
+            return item.venue and _(item.venue.short_name) or ""
+        #
+        trusted_context = removeSecurityProxy(self.context)
+        sittings = Session().query(domain.GroupSitting
+            ).filter(domain.GroupSitting.group == trusted_context
+            ).order_by(domain.GroupSitting.start_date.desc())
+        return [{"url": "/business/sittings/obj-%s" % (item.sitting_id), 
+                 "date_from_to": _format_from_to(item),
+                 "venue": _format_venue(item)
+                } for item in sittings ]
+    
+    def update(self):
+        self.items = self._get_items()
 
 
 class OfficesHeldViewlet(browser.BungeniItemsViewlet):
@@ -911,7 +961,7 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
         return the sittings for that day
         """
         day_data = []
-        for data in self.Data:
+        for data in self.items:
             if data["day"] == Date:
                 day_data.append(data)
         return day_data

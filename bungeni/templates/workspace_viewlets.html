@@ -143,6 +143,31 @@ http://groups.google.com/group/bungeni-dev/browse_thread/thread/2d46b20634798b5e
 </dd>
 $end{sittings}
 
+#[ was: a generic ui.forms.viewlets.SubformViewlet (auto db model reflection) ]#
+$begin{group_sittings}
+<dt id="fieldsetlegend-${view.view_id}">
+    <span>${i18n(view.view_title)}</span>
+</dt>
+<dd id="fieldset-${view.view_id}">
+    <table class="listing">
+        <thead>
+            <tr>
+                <th>${i18n("Date")}</th>
+                <th>${i18n("Venue")}</th>
+            </tr>
+        </thead>
+        <tbody>
+            $for{item in view.items}
+            <tr> 
+                <td><a href="${item['url']}">${item["date_from_to"]}</a></td>
+                <td>${item["venue"]}</td>
+            </tr>
+            $rof
+        </tbody>
+    </table>
+</dd>
+$end{group_sittings}
+
 
 $begin{scheduled}
 <dt class="portletHeader" id="fieldsetlegend-${view.view_id}">
@@ -285,3 +310,4 @@ $end{group_members}
     as it is the combined result of a number of individually localized pieces
     of text. 
 ]#
+

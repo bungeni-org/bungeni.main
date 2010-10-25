@@ -90,20 +90,22 @@ def day_column(name, title, default=""):
 #def time_column(name, title, default=""):
 #    return localized_datetime_column(name, title, default, "time", "long")
 
+'''
 def date_from_to_column(name, title, default=""):
+    format_length = "medium"
     def getter(item, formatter):
         request = item.__parent__.request
         start = getattr(item, "start_date")
         if start:
             start = date.getLocaleFormatter(request, 
-                "dateTime", "short").format(start)
+                "dateTime", format_length).format(start)
         end = getattr(item, "end_date")
         if end:
             end = date.getLocaleFormatter(request, 
-                "time", "short").format(end)
+                "time", format_length).format(end)
         return u"%s - %s" % (start, end)
     return column.GetterColumn(title, getter)
-
+'''
 
 def name_column(name, title, default=""):
     def renderer(value, size=50):
@@ -1820,9 +1822,9 @@ class SittingDescriptor(ModelDescriptor):
         #    ),
         #),
         Field(name="start_date",
-            modes="view|edit|add|listing",
+            modes="view|edit|add", #|listing",
             property=schema.Datetime(title=_(u"Date")),
-            listing_column=date_from_to_column("start_date", _(u"Start")),
+            #listing_column=date_from_to_column("start_date", _(u"Start")),
             edit_widget=DateTimeWidget,
             add_widget=DateTimeWidget,
         ),

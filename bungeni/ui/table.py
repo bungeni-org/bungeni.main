@@ -27,17 +27,14 @@ class TableFormatter(batching.Formatter):
     table_css_class = "listing grid"
     
     def __call__(self):
-        return (
-            '''
+        return ("""
             <div>
-              <table class="%s"
-                     name="%s">
+                <table class="%s" name="%s">
                  %s
-              </table>
-              %s
-            </div>''' % (self.table_css_class, self.prefix,
-                         self.renderContents(), self.renderExtra())
-            )
+                </table>
+                %s
+            </div>""" % (self.table_css_class, self.prefix, 
+                self.renderContents(), self.renderExtra()))
 
 
 class ContextDataTableFormatter(yuiwidget.table.BaseDataTableFormatter):
@@ -62,11 +59,12 @@ class ContextDataTableFormatter(yuiwidget.table.BaseDataTableFormatter):
         # get config for data table
         column_model = []
         field_model  = []
-
+        
         for field in self.getFields():
             key = field.__name__
             title =translate(_(field.title), context=self.request)
-            coldef = {'key': key, 'label': title, 'formatter': self.context.__name__ }
+            coldef = {"key": key, "label": title, "formatter": self.context.__name__ 
+            }
             if column_model == []:
                 column_model.append(
                     """{label:"%(label)s", key:"sort_%(key)s", 
@@ -84,23 +82,23 @@ class ContextDataTableFormatter(yuiwidget.table.BaseDataTableFormatter):
                     }""" % coldef
                     )
             field_model.append('{key:"%s"}' % (key))
-        return ','.join(column_model), ','.join(field_model)
+        return ",".join(column_model), ",".join(field_model)
     
     def getDataTableConfig(self):
         config = {}
-        config['columns'], config['fields'] = self.getFieldColumns()
-        config['data_url'] = self.getDataSourceURL()
-        config['table_id'] = self.prefix
-        config['link_url'] = url.absoluteURL(self.context, self.request)
-        config['context_name'] = self.context.__name__
+        config["columns"], config["fields"] = self.getFieldColumns()
+        config["data_url"] = self.getDataSourceURL()
+        config["table_id"] = self.prefix
+        config["link_url"] = url.absoluteURL(self.context, self.request)
+        config["context_name"] = self.context.__name__
         return config
     
     def __call__(self):
-        need('yui-paginator')
-        need('yui-dragdrop')
+        need("yui-paginator")
+        need("yui-dragdrop")
         return '<div id="%s">\n<table %s>\n%s</table>\n%s</div>' % (
             self.prefix,
-            self._getCSSClass('table'),
+            self._getCSSClass("table"),
             self.renderContents(),
             self.script(**self.getDataTableConfig()))
 
