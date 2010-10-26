@@ -116,10 +116,13 @@ def name_column(name, title, default=""):
     return _column(name, title, renderer, default)
 
 def combined_name_column(name, title, default=""):
-    """Combine full_name as the full_name and short_name columns.
+    """A extended name, combining full_name (localized) and short_name columns.
+    
+    For types that have both a full_name and a short_name attribute:
+    Group, ParliamentaryItem, ParliamentarySession
     """
     def getter(item, formatter):
-        return "%s &nbsp; [%s]" % (item.full_name, item.short_name)
+        return "%s [%s]" % (_(item.full_name), item.short_name)
     return column.GetterColumn(title, getter)
 
 
@@ -795,6 +798,7 @@ class MemberOfPartyDescriptor(ModelDescriptor):
 
 class GroupDescriptor(ModelDescriptor):
     
+    _combined_name_title = "%s [%s]" % (_(u"Name"), _(u"Acronym"))
     fields = [
         Field(name="group_id", modes=""),
         Field(name="type", modes=""),
@@ -810,9 +814,9 @@ class GroupDescriptor(ModelDescriptor):
         ),
         Field(name="combined_name",
             modes="listing",
-            property=schema.TextLine(title=_(u"Name [Acronym]")),
+            property=schema.TextLine(title=_combined_name_title), 
             listing_column=combined_name_column("full_name", 
-                "%s &nbsp; [%s]" % (_(u"Name"), _(u"Acronym")))
+                _combined_name_title)
         ),
         LanguageField("language"),
         Field(name="description",
@@ -1130,7 +1134,7 @@ class MemberRoleTitleDescriptor(ModelDescriptor):
         ),
         LanguageField("language"),
     ] + [ deepcopy(f) for f in AddressDescriptor.fields 
-          if f["name"] not in ("role_title_id") ]
+          if f["name"] not in ("role_title_id",) ]
     
     schema_invariants = [
         EndAfterStart, 
@@ -1516,7 +1520,7 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
         Field(name="submission_date",
             modes="edit|view|listing",
             property=schema.Date(title=_(u"Submission Date"), required=False),
-            listing_column=day_column("submission_date", _(u"Submission date")),
+            listing_column=day_column("submission_date", _(u"Submission Date")),
             view_permission="bungeni.edit.historical",
             edit_permission="bungeni.edit.historical",
             edit_widget=DateWidget,

@@ -335,23 +335,18 @@ form#alchemist-form .field {
 
 /* 
  * float these fields to be next to each other in the forms
- * - this applies to all edit forms.
+ * - this applies to all ParliamentaryItem edit forms.
+ * - these three float next to each other so they shouldn't clear
  */
 form#alchemist-form #field\.form\.registry_number,
-form#alchemist-form #field\.form\.owner_id,
-form#alchemist-form #field\.form\.language {
+form#alchemist-form #field\.form\.owner_id {
 	float: left;
-	clear: none !important; /* these three float next to each other so they shouldn't clear */
+	clear: none !important; 
 }
-/*
- * Comment these out to remove the spacing between the form element
- * and the label.
- * Or remove it entirely if not needed anymore
- */
-#field\.form\.registry_number input,
-#field\.form\.language select {
-	margin-top: 1.2em;
+form#alchemist-form #field\.form\.language {
+	clear: right;
 }
+
 #field\.form\.receive_notification div.value {
 	overflow: hidden;
 	height: 20px;

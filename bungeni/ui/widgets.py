@@ -745,7 +745,7 @@ class AutocompleteWidget(SingleDataHelper, ItemsWidgetBase):
         return self._getFormValue()
 
 
-class MemberURLDisplayWidget(zope.app.form.browser.widget.BrowserWidget):
+class MemberURLDisplayWidget(zope.app.form.browser.widget.DisplayWidget):
     """Display the linked name of a Member of Parliament, using as URL the 
     MP's "home" view.
     
