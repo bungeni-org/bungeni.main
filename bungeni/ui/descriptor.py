@@ -1516,6 +1516,7 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
         Field(name="submission_date",
             modes="edit|view|listing",
             property=schema.Date(title=_(u"Submission Date"), required=False),
+            listing_column=day_column("submission_date", _(u"Submission date")),
             view_permission="bungeni.edit.historical",
             edit_permission="bungeni.edit.historical",
             edit_widget=DateWidget,
