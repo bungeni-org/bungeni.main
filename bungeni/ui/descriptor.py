@@ -7,8 +7,8 @@
 $Id$
 """
 
+import datetime
 from copy import deepcopy
-from datetime import date
 from zope import schema, interface
 
 from zope.security.management import getInteraction
@@ -24,7 +24,6 @@ from bungeni.alchemist.ui import widgets
 from bungeni.models import domain
 
 from bungeni.core.translation import get_default_language
-from bungeni.core.translation import get_all_languages
 from bungeni.core.workflows.groups import states as group_wf_state
 from bungeni.core.workflows.attachedfile import states as af_wf_state
 from bungeni.core.workflows.address import states as address_wf_state
@@ -39,7 +38,8 @@ from bungeni.core import translation
 from bungeni.ui.widgets import TextDateWidget as DateWidget
 from bungeni.ui.widgets import TextDateTimeWidget as DateTimeWidget
 
-from bungeni.ui.widgets import AutocompleteWidget
+from bungeni.ui.widgets import MemberURLDisplayWidget
+#from bungeni.ui.widgets import AutocompleteWidget
 from bungeni.ui.widgets import CustomRadioWidget
 from bungeni.ui.widgets import HTMLDisplay
 from bungeni.ui.widgets import RichTextEditor
@@ -90,7 +90,8 @@ def day_column(name, title, default=""):
 #def time_column(name, title, default=""):
 #    return localized_datetime_column(name, title, default, "time", "long")
 
-'''
+''' !+CustomListingURL(mr, oct-2010)
+
 def date_from_to_column(name, title, default=""):
     format_length = "medium"
     def getter(item, formatter):
@@ -121,13 +122,47 @@ def combined_name_column(name, title, default=""):
         return "%s &nbsp; [%s]" % (item.full_name, item.short_name)
     return column.GetterColumn(title, getter)
 
+
+def _get_related_user(item_user, attr):
+    """Get trhe user instance that is related to this item via <attr>, 
+    or if <attr> is None, return the item_user itself. 
+    """
+    if attr:
+        item_user = getattr(item_user, attr, None)
+        assert item_user is not None, \
+            "Item [%s] may not have None as [%s]" % (item_user, attr)
+    else:
+        assert item_user is not None, \
+            "Item User [%s] may not be None" % (item_user)        
+    return item_user
+
 def user_name_column(name, title, attr):
     def getter(item_user, formatter):
-        if attr:
-            item_user = getattr(item_user, attr, None)
-            assert item_user is not None, \
-                "Item [%s] may not have None as [%s]" % (item_user, attr)
+        item_user = _get_related_user(item_user, attr)
         return item_user.fullname # User.fullname property 
+    return column.GetterColumn(title, getter)
+
+def linked_mp_name_column(name, title, attr):
+    """This may be used to customize the default URL generated as part of the 
+    container listing. 
+    
+    E.g. instead of the URL to the association view between a cosignatory (MP) 
+    and a bill:
+        /business/bills/obj-169/consignatory/obj-169-61/
+    the direct URL for the MP's "home" view is used instead:
+        /members/current/obj-55/
+    """
+    def get_member_of_parliament(user_id):
+        """Get the MemberOfParliament instance for user_id."""
+        return Session().query(domain.MemberOfParliament).filter(
+            domain.MemberOfParliament.user_id == user_id).one()
+    def getter(item_user, formatter):
+        item_user = _get_related_user(item_user, attr)
+        mp = get_member_of_parliament(item_user.user_id)
+        return zope.app.form.browser.widget.renderElement("a", 
+            contents=item_user.fullname, # User.fullname derived property 
+            href="/members/current/obj-%s/" % (mp.membership_id)
+        )
     return column.GetterColumn(title, getter)
 
 
@@ -139,7 +174,7 @@ def member_title_column(name, title, default=u""):
 def current_titles_in_group_column(name, title, default=u""):
     def getter(item, formatter):
         value = getattr(item, name)
-        today = date.today()
+        today = datetime.date.today()
         if not value:
             return default
         title_list = []
@@ -694,7 +729,8 @@ class PartyMemberDescriptor(GroupMembershipDescriptor):
             property=schema.Choice(title=_(u"Name"),
                 source=vocabulary.MemberOfParliamentSource("user_id",)
             ),
-            listing_column=user_name_column("user_id", _(u"Name"), "user"),
+            listing_column=linked_mp_name_column("user_id", _(u"Name"), "user"),
+            view_widget=MemberURLDisplayWidget
         ),
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
@@ -708,6 +744,7 @@ class PartyMemberDescriptor(GroupMembershipDescriptor):
     ])
 
 
+''' !+UNUSED(mr, oct-2010)
 class MemberOfPartyDescriptor(ModelDescriptor):
     """Partymemberships of a member of a user."""
     
@@ -754,7 +791,7 @@ class MemberOfPartyDescriptor(ModelDescriptor):
     ]
     #schema_invariants = [EndAfterStart]
     #custom_validators =[validations.validate_date_range_within_parent,]
-
+'''
 
 class GroupDescriptor(ModelDescriptor):
     
@@ -1460,7 +1497,8 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
                 description=_(u"Select the user who moved the document"),
                 source=vocabulary.MemberOfParliamentDelegationSource("owner_id"),
             ),
-            listing_column=user_name_column("owner_id", _(u"Name"), "owner"),
+            listing_column=linked_mp_name_column("owner_id", _(u"Name"), "owner"),
+            view_widget=MemberURLDisplayWidget
         ),
         #LanguageField("language"),
         Field(name="language",
@@ -1825,6 +1863,12 @@ class SittingDescriptor(ModelDescriptor):
             modes="view|edit|add", #|listing",
             property=schema.Datetime(title=_(u"Date")),
             #listing_column=date_from_to_column("start_date", _(u"Start")),
+            # !+CustomListingURL(mr, oct-2010) the listing of this type has 
+            # been replaced by the custom GroupSittingsViewlet -- but it 
+            # should still be possible use the generic container listing in
+            # combination with a further customized listing_column -- for an
+            # example of this see how the listing of the column "owner_id" 
+            # is configured in: descriptor.ParliamentaryItemDescriptor
             edit_widget=DateTimeWidget,
             add_widget=DateTimeWidget,
         ),
@@ -1966,20 +2010,6 @@ class ConsignatoryDescriptor(ModelDescriptor):
     display_name = _(u"Cosignatory")
     container_name = _(u"Cosignatories")
     
-    class MemberURLDisplayWidget(zope.app.form.browser.widget.BrowserWidget):
-        def get_member_of_parliament(self, user_id):
-            """Get the MemberOfParliament instance for user_id.
-            """
-            return Session().query(domain.MemberOfParliament).filter(
-                domain.MemberOfParliament.user_id == user_id).one()
-        def __call__(self):
-            # this (user_id) attribute's value IS self._data
-            mp = self.get_member_of_parliament(self._data)
-            return zope.app.form.browser.widget.renderElement("a", 
-                contents=mp.user.fullname,
-                href="/members/current/obj-%s/" % (mp.membership_id)
-            )
-    
     fields = [
         Field(name="bill_id", modes=""),
         Field(name="user_id",
@@ -1987,7 +2017,7 @@ class ConsignatoryDescriptor(ModelDescriptor):
             property=schema.Choice(title=_(u"Cosignatory"),
                 source=vocabulary.MemberOfParliamentDelegationSource("user_id"),
             ),
-            listing_column=user_name_column("user_id", 
+            listing_column=linked_mp_name_column("user_id", 
                 _(u"Cosignatory"),
                 "user"
             ),

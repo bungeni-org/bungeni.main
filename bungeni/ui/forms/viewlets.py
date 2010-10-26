@@ -456,6 +456,12 @@ class GroupSittingsViewlet(browser.BungeniItemsViewlet):
     Note 2: this viewlet should probably be merged or better share the 
     implementation at: ui.workspace.DraftSittingsViewlet
     
+    !+CustomListingURL(mr, oct-2010) an alternative way to do this is to 
+    essentially stuff all the logic below into a custom column_listing to be 
+    used when listing the column -- for an example of this see how the 
+    listing of the column "owner_id" (moved by) is configured in:
+    descriptor.ParliamentaryItemDescriptor
+    
     !+ManagedContainer(mr, oct-2010) this would have been a lot simpler if
     the Group.sittings attribute was simply returning the list of sitting
     objects.

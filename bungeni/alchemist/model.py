@@ -69,7 +69,7 @@ class Field(object):
     
     # INIT Parameter (and Defaults)
     
-    # CONVENTION: the defualt value for each init parameter is the value 
+    # CONVENTION: the default value for each init parameter is the value 
     # assigned to the corresponding class attribute - reasons for this are:
     # a) makes it easier to override init param default values by trivial 
     # subclassing.

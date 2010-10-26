@@ -9,14 +9,19 @@ from zope.app.form.interfaces import ConversionError, InputErrors
 from zope.app.form.browser.widget import SimpleInputWidget
 from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from zope.interface.common import idatetime
-from zope.app.form.browser.widget import UnicodeDisplayWidget, DisplayWidget
+import zope.app.form.browser.widget
 from zope.app.form.browser.textwidgets import TextAreaWidget, FileWidget, \
     TextWidget 
 from zope.app.form.browser.itemswidgets import RadioWidget, \
     SingleDataHelper, ItemsWidgetBase
+
 from zope.i18n import translate
 
 from zc.resourcelibrary import need
+
+
+from bungeni.alchemist import Session
+from bungeni.models import domain
 from bungeni.core.i18n import _
 
 
@@ -169,19 +174,19 @@ class FileAddWidget(FileInputWidget):
 class FileEditWidget(FileInputWidget):
     __call__ = ViewPageTemplateFile("templates/editfilewidget.pt")
 
-class FileDisplayWidget(DisplayWidget):
+class FileDisplayWidget(zope.app.form.browser.widget.DisplayWidget):
     def __call__(self):
         return u'<a href="./download"> download </a>'
 
 
-class ImageDisplayWidget(DisplayWidget):
+class ImageDisplayWidget(zope.app.form.browser.widget.DisplayWidget):
     def __call__(self):
         #from bungeni.ui.utils.url import absoluteURL
         #url = absoluteURL(self.__parent__.context, self.request)
         #return '<img src="' + url + '/file-image/%s" />' % self.context.__name__
         return '<img src="./file-image/%s" />' % self.context.__name__
 
-class HTMLDisplay(UnicodeDisplayWidget):
+class HTMLDisplay(zope.app.form.browser.widget.UnicodeDisplayWidget):
     
     def __call__(self):
         if self._renderedValueSet():
@@ -263,7 +268,7 @@ class OneTimeEditWidget(TextAreaWidget):
     __call__ = ViewPageTemplateFile("templates/one-time-textinput-widget.pt")
 
 
-class SupplementaryQuestionDisplay(DisplayWidget):
+class SupplementaryQuestionDisplay(zope.app.form.browser.widget.DisplayWidget):
     """
     If a question has a parent i.e it is a supplementary question
     this displays the subject of the parent, else it states that this is an
@@ -738,5 +743,27 @@ class AutocompleteWidget(SingleDataHelper, ItemsWidgetBase):
     
     def value(self):
         return self._getFormValue()
+
+
+class MemberURLDisplayWidget(zope.app.form.browser.widget.BrowserWidget):
+    """Display the linked name of a Member of Parliament, using as URL the 
+    MP's "home" view.
+    
+    For use by forms in "view" mode.
+    """
+    
+    def get_member_of_parliament(self, user_id):
+        """Get the MemberOfParliament instance for user_id.
+        """
+        return Session().query(domain.MemberOfParliament).filter(
+            domain.MemberOfParliament.user_id == user_id).one()
+    
+    def __call__(self):
+        # this (user_id) attribute's value IS self._data
+        mp = self.get_member_of_parliament(self._data)
+        return zope.app.form.browser.widget.renderElement("a", 
+            contents=mp.user.fullname,
+            href="/members/current/obj-%s/" % (mp.membership_id)
+        )
 
 
