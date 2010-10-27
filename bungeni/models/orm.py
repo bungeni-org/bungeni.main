@@ -550,7 +550,11 @@ mapper(domain.MemberRoleTitle, schema.role_titles.join(schema.addresses),
 )
 
 mapper(domain.AddressType, schema.address_types)
-mapper(domain.UserAddress, schema.addresses)
+mapper(domain.UserAddress, schema.addresses,
+    properties={
+        "address_type": relation(domain.AddressType, uselist=False, lazy=False),
+    },
+)
 
 mapper(domain.GroupItemAssignment, schema.group_item_assignments,
     properties={

@@ -256,12 +256,6 @@ def party_column(name, title, default=u""):
         return u"-"
     return column.GetterColumn(title, getter)
 
-def committee_type_column(name, title, default=u""):
-    def getter(item, formatter):
-        obj = translation.translate_obj(item.committee_type)
-        return obj.committee_type
-    return column.GetterColumn(title, getter)
-
 def ministry_column(name, title, default=u""):
     def getter(item, formatter):
         # !+TRANSLATE_ATTR(mr, sep-2010)
@@ -271,16 +265,21 @@ def ministry_column(name, title, default=u""):
         return obj.short_name
     return column.GetterColumn(title, getter)
 
-def sitting_type_column(name, title, default=u""):
+def enumeration_column(name, title,
+    item_reference_attr=None, # parent item attribute, for enum 
+    enum_value_attr=None, # enum attribute, for desired value
+    ):
+    """Get getter for the enum-value of an enumerated column.
+    """
+    if enum_value_attr is None:
+        # then assume that value-attr on enum is same as enum-attr on parent
+        enum_value_attr = item_reference_attr
+    assert item_reference_attr is not None
+    assert enum_value_attr is not None
     def getter(item, formatter):
-        obj = translation.translate_obj(item.sitting_type)
-        return obj.sitting_type
-    return column.GetterColumn(title, getter)
-
-def attendance_column(name, title, default=u""):
-    def getter(item, formatter):
-        obj = translation.translate_obj(item.attendance_type)
-        return obj.attendance_type
+        enum_obj = getattr(item, item_reference_attr)
+        enum_obj = translation.translate_obj(enum_obj)
+        return getattr(enum_obj, enum_value_attr)
     return column.GetterColumn(title, getter)
 
 ####
@@ -923,22 +922,21 @@ class CommitteeDescriptor(GroupDescriptor):
     container_name = _(u"Committees")
     custom_validators = [validations.validate_date_range_within_parent, ]
     
-    typeSource = vocabulary.DatabaseSource(domain.CommitteeType,
-        token_field="committee_type_id",
-        title_field="committee_type",
-        value_field="committee_type_id"
-    )
-    
     fields = deepcopy(GroupDescriptor.fields)
     fields.extend([
         Field(name="committee_id", modes=""),
         Field(name="committee_type_id",
             modes="view|edit|add|listing",
             property=schema.Choice(title=_(u"Type of committee"), 
-                source=typeSource
+                source=vocabulary.DatabaseSource(domain.CommitteeType,
+                    token_field="committee_type_id",
+                    title_field="committee_type",
+                    value_field="committee_type_id"
+                )
             ),
-            listing_column=committee_type_column("committee_type_id", 
-                _(u"Type")
+            listing_column=enumeration_column("committee_type_id", 
+                _(u"Type"),
+                item_reference_attr="committee_type"
             ),
         ),
         Field(name="no_members",
@@ -1036,13 +1034,19 @@ class AddressDescriptor(ModelDescriptor):
         Field(name="role_title_id", modes=""),
         Field(name="user_id", modes=""),
         Field(name="address_type_id",
+            modes="view|edit|add|listing",
             property=schema.Choice(title=_(u"Address Type"),
                 source=vocabulary.DatabaseSource(domain.AddressType,
                     title_field="address_type_name",
                     token_field="address_type_id",
                     value_field="address_type_id"
                 ),
-            )
+            ),
+            listing_column=enumeration_column("address_type_id", 
+                _(u"Type"),
+                item_reference_attr="address_type",
+                enum_value_attr="address_type_name"
+            ),
         ),
         Field(name="po_box", 
             property=schema.TextLine(title=_(u"P.O. Box"), required=False)
@@ -1053,6 +1057,7 @@ class AddressDescriptor(ModelDescriptor):
             add_widget=zope.app.form.browser.TextAreaWidget,
         ),
         Field(name="city",
+            modes="view|edit|add|listing",
             property=schema.TextLine(title=_(u"City"), required=False)
         ),
         Field(name="zipcode", label=_(u"Zip Code")),
@@ -1133,12 +1138,13 @@ class MemberRoleTitleDescriptor(ModelDescriptor):
             add_widget=DateWidget
         ),
         LanguageField("language"),
-    ] + [ deepcopy(f) for f in AddressDescriptor.fields 
-          if f["name"] not in ("role_title_id",) ]
+    ]
+    #] + [ deepcopy(f) for f in AddressDescriptor.fields 
+    #      if f["name"] not in ("role_title_id",) ]
     
     schema_invariants = [
-        EndAfterStart, 
-        POBoxOrAddress
+        EndAfterStart,
+    #    POBoxOrAddress
     ]
     custom_validators = [
         validations.validate_date_range_within_parent,
@@ -1850,11 +1856,12 @@ class SittingDescriptor(ModelDescriptor):
         #Sitting type is commented out below because it is not set during
         #creation of a sitting but is left here because it may be used in the
         #future related to r7243
-
+        
         #Field(name="sitting_type_id",
         #    modes="view|edit|add|listing",
-        #    listing_column=sitting_type_column("sitting_type_id",
-        #        _(u"Sitting Type")
+        #    listing_column=enumeration_column("sitting_type_id",
+        #        _(u"Sitting Type"),
+        #        item_reference_attr="sitting_type"
         #    ),
         #    property=schema.Choice(title=_(u"Sitting Type"),
         #        source=vocabulary.SittingTypes(
@@ -1993,7 +2000,10 @@ class AttendanceDescriptor(ModelDescriptor):
             property=schema.Choice(title=_(u"Attendance"),
                 source=attendanceVocab,
             ),
-            listing_column=attendance_column("attendance_id", _(u"Attendance")),
+            listing_column=enumeration_column("attendance_id", 
+                _(u"Attendance"),
+                item_reference_attr="attendance_type"
+            ),
         ),
     ]
 

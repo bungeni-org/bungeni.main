@@ -289,7 +289,10 @@ class ContainerJSONListing(ContainerJSONBrowserView):
                 t_nodes.append(translation.translate_obj(node, lang))
             except (AssertionError,): # node is not ITranslatable
                 debug.log_exc_info(sys.exc_info(), log_handler=log.warn)
-                t_nodes.append(node)
+                # if a node is not translatable then we assume that NONE of 
+                # the nodes are translatable, se we simply break out, 
+                # returning the untranslated nodes as is
+                return nodes
         return t_nodes
     
     def _jsonValues(self, nodes, fields):
