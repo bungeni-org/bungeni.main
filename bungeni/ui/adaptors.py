@@ -41,11 +41,13 @@ class RSSValues(object):
 
     @property
     def values(self):
-        public_wfstates = getattr(self.domain_annotation, "public_wfstates",
-            None)
+        public_wfstates = getattr(self.domain_annotation,
+                                  "public_wfstates",
+                                  None)
+        trusted = removeSecurityProxy(self.context)
         if public_wfstates:
-            return filter(lambda x: x.status in public_wfstates, self.context.values())
-        return self.context.values()
+            return filter(lambda x: x.status in public_wfstates, trusted.values())
+        return trusted.values()
 
 
 class TimelineRSSValues(RSSValues):
