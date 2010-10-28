@@ -929,10 +929,10 @@ class CommitteeDescriptor(GroupDescriptor):
                 item_reference_attr="committee_type"
             ),
         ),
-        Field(name="no_members",
+        Field(name="num_members",
             property=schema.Int(title=_(u"Number of members"), required=False),
         ),
-        Field(name="min_no_members",
+        Field(name="min_num_members",
             property=schema.Int(title=_(u"Minimum Number of Members"), 
                 required=False
             )
@@ -940,10 +940,10 @@ class CommitteeDescriptor(GroupDescriptor):
         Field(name="quorum",
             property=schema.Int(title=_(u"Quorum"), required=False)
         ),
-        Field(name="no_clerks",
+        Field(name="num_clerks",
             property=schema.Int(title=_(u"Number of clerks"), required=False)
         ),
-        Field(name="no_researchers",
+        Field(name="num_researchers",
             property=schema.Int(title=_(u"Number of researchers"), 
                 required=False
             )

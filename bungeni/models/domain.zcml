@@ -422,11 +422,11 @@
                 end_date
                 type
                 committee_type_id 
-                no_members
-                min_no_members
+                num_members
+                min_num_members
                 quorum
-                no_clerks
-                no_researchers 
+                num_clerks
+                num_researchers 
                 proportional_representation 
                 default_chairperson 
                 reinstatement_date"
@@ -439,11 +439,11 @@
                 start_date
                 end_date
                 committee_type_id
-                no_members
-                min_no_members
+                num_members
+                min_num_members
                 quorum
-                no_clerks
-                no_researchers
+                num_clerks
+                num_researchers
                 proportional_representation
                 default_chairperson
                 reinstatement_date"
