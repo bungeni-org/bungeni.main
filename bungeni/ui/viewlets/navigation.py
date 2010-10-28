@@ -154,7 +154,9 @@ class SecondaryNavigationViewlet(browser.BungeniViewlet):
         # IWorkspaceSectionLayer 
         # !+ if user is logged in or if request.layer_data
         
-        if interfaces.IWorkspaceSectionLayer.providedBy(request) or interfaces.IWorkspaceSchedulingSectionLayer.providedBy(request):
+        if (interfaces.IWorkspaceSectionLayer.providedBy(request) or
+            interfaces.IWorkspaceSchedulingSectionLayer.providedBy(request)
+        ):
             try:
                 workspaces = IAnnotations(request)["layer_data"].get("workspaces")
             except:

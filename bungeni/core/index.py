@@ -386,6 +386,7 @@ if interfaces.DEBUG:
 else:
     searcher.hub.auto_refresh_delta = 10
 
+''' !+WTF(mr, oct-2010) what is this? To start, there is no bungeni.core.util module !
 def main():
     import logging
     logging.basicConfig()
@@ -419,4 +420,5 @@ def reset_index():
        import pdb, traceback, sys
        traceback.print_exc()
        pdb.post_mortem(sys.exc_info()[-1]) 
+'''
 
