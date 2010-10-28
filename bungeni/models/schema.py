@@ -112,7 +112,7 @@ users = rdb.Table("users", metadata,
     rdb.Column("image", rdb.Binary),
     rdb.Column("active_p", rdb.String(1),
         rdb.CheckConstraint("""active_p in ('A', 'I', 'D')"""),
-        default="A", # activ/inactiv/deceased
+        default="A", # active/inactive/deceased
     ),
     # comment out for now - will be used for user preferences
     rdb.Column("receive_notification", rdb.Boolean, default=True),
@@ -414,36 +414,47 @@ address_types = rdb.Table("address_types", metadata,
     rdb.Column("language", rdb.String(5), nullable=False),
 )
 
-addresses = rdb.Table("addresses", metadata,
-    rdb.Column("address_id", rdb.Integer, primary_key=True),
-    # official address - only one official address is allowed per title
-    rdb.Column("role_title_id", rdb.Integer,
-        rdb.ForeignKey("role_titles.role_title_id"),
-        unique=True
-    ),
-    # personal address, multiple addresses are allowed for a user
-    rdb.Column("user_id", rdb.Integer, rdb.ForeignKey("users.user_id")),
-    rdb.Column("address_type_id", rdb.Integer,
-        rdb.ForeignKey("address_types.address_type_id")
-    ),
-    rdb.Column("po_box", rdb.Unicode(40)),
-    rdb.Column("address", rdb.Unicode(256)),
-    rdb.Column("city", rdb.Unicode(256)),
-    rdb.Column("zipcode", rdb.Unicode(20)),
-    rdb.Column("country", rdb.String(2),
-        rdb.ForeignKey("countries.country_id")
-    ),
-    rdb.Column("phone", rdb.Unicode(256)),
-    rdb.Column("fax", rdb.Unicode(256)),
-    rdb.Column("email", rdb.String(512)),
-    rdb.Column("im_id", rdb.String(512)),
-    # Workflow State -> determins visibility
-    rdb.Column("status", rdb.Unicode(16)),
-    rdb.Column("status_date", rdb.DateTime(timezone=False),
-        server_default=(text("now()")),
-        nullable=False
-    ),
-)
+def _make_address_table(metadata, fk_key="user"):
+    assert fk_key in ("user", "group")
+    table_name = "%s_addresses" % (fk_key) # e.g. user_addresses
+    fk_col_name = "%s_id" % (fk_key) # e.g. user_id
+    fk_target = "%ss.%s_id" % (fk_key, fk_key) # e.g. users.user_id
+    return rdb.Table(table_name, metadata,
+        rdb.Column("address_id", rdb.Integer, primary_key=True),
+        # user|personal or group|official addresses
+        rdb.Column(fk_col_name, rdb.Integer, 
+            rdb.ForeignKey(fk_target),
+            nullable=False
+        ),
+        rdb.Column("address_type_id", rdb.Integer,
+            rdb.ForeignKey("address_types.address_type_id"),
+            nullable=False
+        ),
+        rdb.Column("postal_type", rdb.String(1),
+            # po box | street, physical | military | undefined, unknown
+            rdb.CheckConstraint("""postal_type in ('P', 'S', 'M', 'U')"""),
+            default="S",
+            nullable=False
+        ),
+        rdb.Column("street", rdb.Unicode(256), nullable=False),
+        rdb.Column("city", rdb.Unicode(256), nullable=False),
+        rdb.Column("zipcode", rdb.Unicode(20)),
+        rdb.Column("country", rdb.String(2),
+            rdb.ForeignKey("countries.country_id"),
+            nullable=False
+        ),
+        rdb.Column("phone", rdb.Unicode(256)),
+        rdb.Column("fax", rdb.Unicode(256)),
+        rdb.Column("email", rdb.String(512)),
+        # Workflow State -> determins visibility
+        rdb.Column("status", rdb.Unicode(16)),
+        rdb.Column("status_date", rdb.DateTime(timezone=False),
+            server_default=(text("now()")),
+            nullable=False
+        ),
+    )
+group_addresses = _make_address_table(metadata, "group")
+user_addresses = _make_address_table(metadata, "user")
 
 
 ##################
@@ -996,14 +1007,14 @@ translation_lookup_index = rdb.Index("translation_lookup_index",
     translations.c.lang
 )
 
-
+''' !+WTF(mr, oct-2010) what is this? To start, there is no .util module !
 def reset_database():
     import util
     mdset = util.cli_setup()
     for m in mdset:
         m.drop_all(checkfirst=True)
         m.create_all(checkfirst=True)
-
+'''
 
 #for table_name in metadata.tables.keys():
 #    print metadata.tables[table_name].name

@@ -362,16 +362,6 @@ def DeathBeforeLife(User):
             "date_of_birth"
         )
 
-def POBoxOrAddress(obj):
-    """
-    An Address must have either an entry for a physical address or a P.O. Box
-    """
-    if obj.po_box is None and obj.address is None:
-        raise interface.Invalid(_(u"You have to enter an Address"),
-            "po_box",
-            "address"
-        )
-
 ####
 # Fields
 
@@ -1048,17 +1038,20 @@ class AddressDescriptor(ModelDescriptor):
                 enum_value_attr="address_type_name"
             ),
         ),
-        Field(name="po_box", 
-            property=schema.TextLine(title=_(u"P.O. Box"), required=False)
+        Field(name="postal_type", 
+            property=schema.Choice(title=_(u"Postal Type"),
+                source=vocabulary.AddressPostalType,
+                required=True
+            ),
         ),
-        Field(name="address",
-            property=schema.Text(title=_(u"Address"), required=False),
+        Field(name="street",
+            property=schema.Text(title=_(u"Street"), required=True),
             edit_widget=zope.app.form.browser.TextAreaWidget,
             add_widget=zope.app.form.browser.TextAreaWidget,
         ),
         Field(name="city",
             modes="view|edit|add|listing",
-            property=schema.TextLine(title=_(u"City"), required=False)
+            property=schema.TextLine(title=_(u"City"), required=True)
         ),
         Field(name="zipcode", label=_(u"Zip Code")),
         Field(name="country",
@@ -1068,7 +1061,7 @@ class AddressDescriptor(ModelDescriptor):
                     token_field="country_id",
                     value_field="country_id"
                 ),
-                required=False
+                required=True
             ),
         ),
         Field(name="phone",
@@ -1096,16 +1089,15 @@ class AddressDescriptor(ModelDescriptor):
                 required=False
             ),
         ),
-        Field(name="im_id",
-            property=schema.TextLine(title=_(u"Instant Messenger Id"),
-                description=_(u"ICQ, AOL IM, GoogleTalk..."), 
-                required=False
-            )
-        ),
+        #Field(name="im_id",
+        #    property=schema.TextLine(title=_(u"Instant Messenger Id"),
+        #        description=_(u"ICQ, AOL IM, GoogleTalk..."), 
+        #        required=False
+        #    )
+        #), !+IM(mr, oct-2010) morph to some "extra_info" on User
         Field(name="status", modes=""),
         Field(name="status_date", modes=""),
     ]
-    schema_invariants = [POBoxOrAddress]
     public_wfstates = [address_wf_state[u"public"].id]
 
 
@@ -1144,7 +1136,6 @@ class MemberRoleTitleDescriptor(ModelDescriptor):
     
     schema_invariants = [
         EndAfterStart,
-    #    POBoxOrAddress
     ]
     custom_validators = [
         validations.validate_date_range_within_parent,

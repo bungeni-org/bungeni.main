@@ -72,37 +72,53 @@ MonthlyRecurrenceVocabularyFactory = MonthlyRecurrenceVocabulary()
 
 # you have to add title_field to the vocabulary as only this gets 
 # translated, the token_field will NOT get translated
-QuestionType = vocabulary.SimpleVocabulary( [
+QuestionType = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm('O', _(u"Ordinary"), _(u"Ordinary")), 
-    vocabulary.SimpleTerm('P', _(u"Private Notice"), _(u"Private Notice"))] )
-ResponseType = vocabulary.SimpleVocabulary( [
+    vocabulary.SimpleTerm('P', _(u"Private Notice"), _(u"Private Notice"))
+])
+ResponseType = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm('O', _("Oral"), _("Oral")), 
-    vocabulary.SimpleTerm('W', _(u"Written"), _(u"Written"))] )
-Gender = vocabulary.SimpleVocabulary( [
+    vocabulary.SimpleTerm('W', _(u"Written"), _(u"Written"))
+])
+Gender = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm('M', _(u"Male"), _(u"Male")), 
-    vocabulary.SimpleTerm('F', _(u"Female"), _(u"Female") )] )
-ElectedNominated = vocabulary.SimpleVocabulary( [
+    vocabulary.SimpleTerm('F', _(u"Female"), _(u"Female"))
+])
+ElectedNominated = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm('E', _(u"elected"), _(u"elected")),
     vocabulary.SimpleTerm('N', _(u"nominated"), _(u"nominated") ), 
-    vocabulary.SimpleTerm('O', _(u"ex officio"), _(u"ex officio"))])
+    vocabulary.SimpleTerm('O', _(u"ex officio"), _(u"ex officio"))
+])
 InActiveDead = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm('A', _(u"active"), _(u"active")),
     vocabulary.SimpleTerm('I', _(u"inactive"), _(u"inactive")),
-    vocabulary.SimpleTerm('D', _(u"deceased"),  _(u"deceased"))])
+    vocabulary.SimpleTerm('D', _(u"deceased"),  _(u"deceased"))
+])
 ISResponse = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm('I', _(u"initial"), _(u"initial")),
-    vocabulary.SimpleTerm('S', _(u"subsequent"), _(u"subsequent")),])
-OfficeType = vocabulary.SimpleVocabulary( [
-    vocabulary.SimpleTerm('S', _(u"House Business Office"), _(u"House Business Office")), 
+    vocabulary.SimpleTerm('S', _(u"subsequent"), _(u"subsequent"))
+])
+OfficeType = vocabulary.SimpleVocabulary([
+    vocabulary.SimpleTerm('S', _(u"House Business Office"), 
+        _(u"House Business Office")), 
     vocabulary.SimpleTerm('C', _(u"Clerks Office"), _(u"Clerks Office")), 
-    vocabulary.SimpleTerm('T', _(u"Translators Office"), _(u"Translators Office")), 
+    vocabulary.SimpleTerm('T', _(u"Translators Office"), 
+        _(u"Translators Office")), 
     vocabulary.SimpleTerm('L', _(u"Library Office"), _(u"Library Office")),
-    vocabulary.SimpleTerm('R', _(u"Researcher Office"), _(u"Researcher Office")),
-    ] )
+    vocabulary.SimpleTerm('R', _(u"Researcher Office"), 
+        _(u"Researcher Office")),
+])
 YesNoSource = vocabulary.SimpleVocabulary( [
     vocabulary.SimpleTerm(True, _(u"Yes"), _(u"Yes")), 
     vocabulary.SimpleTerm(False, _(u"No"), _(u"No"))] )
-
+AddressPostalType = vocabulary.SimpleVocabulary([
+    vocabulary.SimpleTerm("P", _(u"P.O. Box"), _(u"P.O. Box")),
+    vocabulary.SimpleTerm("S", _(u"Street / Physical"), 
+        _(u"Street / Physical")),
+    vocabulary.SimpleTerm("M", _(u"Military"), _(u"Military")),
+    vocabulary.SimpleTerm("S", _(u"Undefined / Unknown"), 
+        _(u"Undefined / Unknown")),
+])
 
 class DatabaseSource(bungeni.alchemist.vocabulary.DatabaseSource):
 

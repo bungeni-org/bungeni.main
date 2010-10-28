@@ -37,6 +37,7 @@ mapper(domain.Group, schema.groups,
             backref=backref("parent_group",
                 remote_side=schema.groups.c.group_id)
         ),
+        "group_addresses": relation(domain.GroupAddress),
         # "keywords": relation(domain.Keyword, secondary=schema.groups_keywords)
     },
     polymorphic_on=schema.groups.c.type,
@@ -543,14 +544,19 @@ mapper(domain.GroupSittingAttendance, schema.sitting_attendance,
 )
 mapper(domain.AttendanceType, schema.attendance_type)
 mapper(domain.MemberTitle, schema.user_role_types)
-mapper(domain.MemberRoleTitle, schema.role_titles.join(schema.addresses),
+mapper(domain.MemberRoleTitle, schema.role_titles,
     properties={
         "title_name": relation(domain.MemberTitle, uselist=False, lazy=False),
     }
 )
 
 mapper(domain.AddressType, schema.address_types)
-mapper(domain.UserAddress, schema.addresses,
+mapper(domain.UserAddress, schema.user_addresses,
+    properties={
+        "address_type": relation(domain.AddressType, uselist=False, lazy=False),
+    },
+)
+mapper(domain.GroupAddress, schema.group_addresses,
     properties={
         "address_type": relation(domain.AddressType, uselist=False, lazy=False),
     },

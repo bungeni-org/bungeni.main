@@ -149,14 +149,18 @@ class Group(Entity):
     #sittings = one2many("sittings", 
     #   "bungeni.models.domain.GroupSittingContainer", "group_id")
 
+    addresses = one2many("addresses", 
+        "bungeni.models.domain.GroupAddressContainer", "group_id")
+    
     def active_membership(self, user_id):
         session = Session()
         query = session.query(GroupMembership).filter(
-            sql.and_(GroupMembership.group_id == self.group_id,
-                    GroupMembership.user_id == user_id,
-                    GroupMembership.active_p == True
-                )
+            sql.and_(
+                GroupMembership.group_id == self.group_id,
+                GroupMembership.user_id == user_id,
+                GroupMembership.active_p == True
             )
+        )
         if query.count() == 0:
             return False
         else:
@@ -385,8 +389,14 @@ class AddressType(object):
     """
     interface.implements(interfaces.ITranslatable)
 
-class UserAddress(Entity):
-    """Addresses of a user.
+class _Address(Entity):
+    """Address base class
+    """
+class UserAddress(_Address):
+    """User address (personal)
+    """
+class GroupAddress(_Address):
+    """Group address (official)
     """
 
 
@@ -427,7 +437,8 @@ class ParliamentaryItem(Entity):
     sort_dir = "desc"
     
     sort_replace = {"owner_id": ["last_name", "first_name"]}
-    files = one2many("files", "bungeni.models.domain.AttachedFileContainer", "item_id")
+    files = one2many("files", 
+        "bungeni.models.domain.AttachedFileContainer", "item_id")
     # votes
     # schedule
     # object log
