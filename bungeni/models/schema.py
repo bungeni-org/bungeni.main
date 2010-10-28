@@ -520,12 +520,12 @@ sitting_attendance = rdb.Table("sitting_attendance", metadata,
         primary_key=True
     ),
     rdb.Column("attendance_id", rdb.Integer,
-        rdb.ForeignKey("attendance_type.attendance_id"),
+        rdb.ForeignKey("attendance_types.attendance_id"),
         nullable=False
     ),
 )
 
-attendance_type = rdb.Table("attendance_type", metadata,
+attendance_types = rdb.Table("attendance_types", metadata,
     rdb.Column("attendance_id", rdb.Integer, primary_key=True),
     rdb.Column("attendance_type", rdb.Unicode(40), nullable=False),
     rdb.Column("language", rdb.String(5), nullable=False),

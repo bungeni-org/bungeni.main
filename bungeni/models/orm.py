@@ -542,7 +542,7 @@ mapper(domain.GroupSittingAttendance, schema.sitting_attendance,
         "sitting": relation(domain.GroupSitting, uselist=False, lazy=False),
     }
 )
-mapper(domain.AttendanceType, schema.attendance_type)
+mapper(domain.AttendanceType, schema.attendance_types)
 mapper(domain.MemberTitle, schema.user_role_types)
 mapper(domain.MemberRoleTitle, schema.role_titles,
     properties={

@@ -1967,12 +1967,6 @@ class AttendanceDescriptor(ModelDescriptor):
     display_name = _(u"Sitting attendance")
     container_name = _(u"Sitting attendances")
     
-    attendanceVocab = vocabulary.DatabaseSource(
-        domain.AttendanceType,
-        token_field="attendance_id",
-        title_field="attendance_type",
-        value_field="attendance_id"
-    )
     fields = [
         Field(name="sitting_id", modes=""),
         Field(name="member_id",
@@ -1989,7 +1983,12 @@ class AttendanceDescriptor(ModelDescriptor):
         Field(name="attendance_id",
             modes="view|edit|add|listing",
             property=schema.Choice(title=_(u"Attendance"),
-                source=attendanceVocab,
+                source=vocabulary.DatabaseSource(
+                    domain.AttendanceType,
+                    token_field="attendance_id",
+                    title_field="attendance_type",
+                    value_field="attendance_id"
+                )
             ),
             listing_column=enumeration_column("attendance_id", 
                 _(u"Attendance"),
