@@ -530,7 +530,7 @@ mapper(domain.ConstituencyDetail, schema.constituency_details,
     }
 )
 mapper(domain.CommitteeType, schema.committee_type)
-mapper(domain.SittingType, schema.sitting_type)
+mapper(domain.SittingType, schema.sitting_types)
 
 mapper(domain.GroupSittingAttendance, schema.sitting_attendance,
     properties={

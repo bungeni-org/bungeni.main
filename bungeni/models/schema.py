@@ -485,7 +485,7 @@ sittings = rdb.Table("group_sittings", metadata,
     rdb.Column("start_date", rdb.DateTime(timezone=False), nullable=False),
     rdb.Column("end_date", rdb.DateTime(timezone=False), nullable=False),
     rdb.Column("sitting_type_id", rdb.Integer,
-        rdb.ForeignKey("sitting_type.sitting_type_id")
+        rdb.ForeignKey("sitting_types.sitting_type_id")
     ),
     # if a sitting is recurring this is the id of the original sitting
     # there is no foreign key to the original sitting
@@ -502,7 +502,7 @@ sittings = rdb.Table("group_sittings", metadata,
     rdb.Column("language", rdb.String(5), nullable=False),
 )
 
-sitting_type = rdb.Table("sitting_type", metadata,
+sitting_types = rdb.Table("sitting_types", metadata,
     rdb.Column("sitting_type_id", rdb.Integer, primary_key=True),
     rdb.Column("sitting_type", rdb.Unicode(40)),
     rdb.Column("start_time", rdb.Time, nullable=False),
