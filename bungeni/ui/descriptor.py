@@ -2205,7 +2205,7 @@ class ItemScheduleDescriptor(ModelDescriptor):
     ]
 
 
-class ScheduledItemDiscussionDescriptor(ModelDescriptor):
+class ItemScheduleDiscussionDescriptor(ModelDescriptor):
     display_name = _(u"Discussion")
     container_name = _(u"Discussions")
     

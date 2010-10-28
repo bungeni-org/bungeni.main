@@ -245,7 +245,7 @@ mapper(domain.GroupSitting, schema.sittings,
             schema.sittings.c.end_date.label("end_date")
         ),
         "item_schedule": relation(domain.ItemSchedule,
-            order_by=schema.items_schedule.c.planned_order
+            order_by=schema.item_schedules.c.planned_order
         ),
         "venue": relation(domain.Venue)
     }
@@ -481,14 +481,14 @@ mapper(domain.AttachedFileVersion, schema.attached_file_versions,
 #Items scheduled for a sitting expressed as a relation
 # to their item schedule
 
-mapper(domain.ItemSchedule, schema.items_schedule,
+mapper(domain.ItemSchedule, schema.item_schedules,
     properties={
         "item": relation(
             domain.ParliamentaryItem,
             uselist=False
         ),
         "discussion": relation(
-            domain.ScheduledItemDiscussion,
+            domain.ItemScheduleDiscussion,
             uselist=False,
             cascade="all, delete-orphan"
         ),
@@ -496,7 +496,7 @@ mapper(domain.ItemSchedule, schema.items_schedule,
     }
 )
 
-mapper(domain.ScheduledItemDiscussion, schema.item_discussion)
+mapper(domain.ItemScheduleDiscussion, schema.item_schedule_discussions)
 
 # items scheduled for a sitting
 # expressed as a join between item and schedule

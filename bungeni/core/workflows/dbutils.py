@@ -68,8 +68,10 @@ def removeQuestionFromItemSchedule(question_id):
     calendar any more
     """
     session = Session()
-    active_filter = rdb.and_(schema.items_schedule.c.item_id==question_id,
-                                      schema.items_schedule.c.active==True)
+    active_filter = rdb.and_(
+        schema.item_schedules.c.item_id == question_id,
+        schema.item_schedules.c.active==True
+    )
     item_schedule = session.query(domain.ItemSchedule).filter(active_filter)
     results = item_schedule.all()
     if (len(results)==1):
@@ -113,8 +115,9 @@ def getActiveItemSchedule(parliamentary_item_id):
     """
     session = Session()
     active_filter = rdb.and_(
-        schema.items_schedule.c.item_id==parliamentary_item_id,
-        schema.items_schedule.c.active==True)
+        schema.item_schedules.c.item_id == parliamentary_item_id,
+        schema.item_schedules.c.active == True
+    )
     item_schedule = session.query(domain.ItemSchedule).filter(active_filter)
     results = item_schedule.all()
     sorted_results = [ (r.sitting.start_date, r) for r in results ]

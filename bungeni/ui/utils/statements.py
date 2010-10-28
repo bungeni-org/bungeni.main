@@ -18,15 +18,15 @@ $Id$
 
 sql_item_timeline = """
      SELECT 'schedule' AS "atype",
-            "items_schedule"."item_id" AS "item_id", 
-            "items_schedule"."item_status" AS "description", 
+            "item_schedules"."item_id" AS "item_id", 
+            "item_schedules"."item_status" AS "description", 
             "group_sittings"."start_date" AS "adate",
             '' as "notes"
-        FROM "public"."items_schedule" AS "items_schedule", 
+        FROM "public"."item_schedules" AS "item_schedules", 
             "public"."group_sittings" AS "group_sittings" 
-        WHERE "items_schedule"."sitting_id" = "group_sittings"."sitting_id" 
-        AND "items_schedule"."active" = True
-        AND "items_schedule"."item_id" = :item_id
+        WHERE "item_schedules"."sitting_id" = "group_sittings"."sitting_id" 
+        AND "item_schedules"."active" = True
+        AND "item_schedules"."item_id" = :item_id
      UNION
         SELECT "parliamentary_items"."type" AS "atype", 
             "parliamentary_items"."parliamentary_item_id" AS "item_id", 

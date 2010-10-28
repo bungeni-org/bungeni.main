@@ -109,7 +109,7 @@
      
   <browser:page
      name="edit"
-     for="bungeni.models.domain.ScheduledItemDiscussion"
+     for="bungeni.models.domain.ItemScheduleDiscussion"
      class=".common.EditForm"
      permission="bungeni.itemschedule.Edit"
      layer="bungeni.ui.interfaces.IBungeniSkin"

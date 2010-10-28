@@ -289,9 +289,9 @@ class ParliamentaryItemMinutesViewlet(BungeniAttributeDisplay):
         except AttributeError:
             self.for_display = False
             return
-        self.query = Session().query(domain.ScheduledItemDiscussion).filter(
+        self.query = Session().query(domain.ItemScheduleDiscussion).filter(
             sql.and_(
-                domain.ScheduledItemDiscussion.schedule_id == \
+                domain.ItemScheduleDiscussion.schedule_id == \
                     domain.ItemSchedule.schedule_id,
                 domain.ItemSchedule.item_id == item_id
             )
@@ -789,7 +789,7 @@ class DisplayViewlet(BungeniAttributeDisplay):
 
 
 class SchedulingMinutesViewlet(DisplayViewlet):
-    factory = domain.ScheduledItemDiscussion
+    factory = domain.ItemScheduleDiscussion
     
     def get_target(self):
         return self.context.discussion

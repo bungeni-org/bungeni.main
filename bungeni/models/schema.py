@@ -604,7 +604,7 @@ item_member_votes = rdb.Table("item_member_votes", metadata,
     rdb.Column("vote", rdb.Boolean,),
 )
 
-items_schedule = rdb.Table("items_schedule", metadata,
+item_schedules = rdb.Table("item_schedules", metadata,
     rdb.Column("schedule_id", rdb.Integer, primary_key=True),
     rdb.Column("item_id", rdb.Integer,
         rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
@@ -628,9 +628,9 @@ items_schedule = rdb.Table("items_schedule", metadata,
 # to produce the proceedings:
 # capture the discussion on this item
 
-item_discussion = rdb.Table("item_discussion", metadata,
+item_schedule_discussions = rdb.Table("item_schedule_discussions", metadata,
     rdb.Column("schedule_id", rdb.Integer,
-        rdb.ForeignKey("items_schedule.schedule_id"),
+        rdb.ForeignKey("item_schedules.schedule_id"),
         primary_key=True),
     rdb.Column("body_text", rdb.UnicodeText),
     rdb.Column("sitting_time", rdb.Time(timezone=False)),

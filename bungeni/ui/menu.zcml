@@ -937,7 +937,7 @@
 
   <browser:menuItem
      menu="discussion_actions"
-     for="bungeni.models.domain.ScheduledItemDiscussion"
+     for="bungeni.models.domain.ItemScheduleDiscussion"
      title="Edit Discussion"
      action="./edit"
      permission="bungeni.itemschedulediscussion.Edit"

@@ -5,7 +5,7 @@ import domain, utils
 
 @component.adapter(domain.ItemSchedule, IObjectCreatedEvent)
 def create_discussion_for_item_scheduling(context, event):
-    context.discussion = domain.ScheduledItemDiscussion()
+    context.discussion = domain.ItemScheduleDiscussion()
     
 @component.adapter(domain.AgendaItem, IObjectCreatedEvent)
 def set_parliament_id(context, event):

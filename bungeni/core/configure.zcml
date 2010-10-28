@@ -233,7 +233,7 @@
   <adapter factory=".dc.GroupSittingAttendanceDescriptiveProperties" />
   <adapter factory=".dc.ParliamentSessionDescriptiveProperties" />
   <adapter factory=".dc.ContainerDescriptiveProperties" />
-  <adapter factory=".dc.ScheduledItemDiscussionDescriptiveProperties" />
+  <adapter factory=".dc.ItemScheduleDiscussionDescriptiveProperties" />
   <adapter factory=".dc.ConsignatoryDescriptiveProperties" />
   <adapter factory=".dc.SittingTypeDescriptiveProperties" />
   <adapter factory=".dc.ConstituencyDescriptiveProperties" />

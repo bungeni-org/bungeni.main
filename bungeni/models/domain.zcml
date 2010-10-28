@@ -219,7 +219,7 @@
                 item_status"
         />
     </class>
-    <class class=".domain.ScheduledItemDiscussion">
+    <class class=".domain.ItemScheduleDiscussion">
         <require permission="zope.View"
             attributes="
                 schedule_id

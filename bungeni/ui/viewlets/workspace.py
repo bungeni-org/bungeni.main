@@ -487,17 +487,17 @@ class ItemsScheduledViewlet(AllItemsInStageViewlet):
         for d in self.items:
             d["sittings_start"] = []
             d["sittings_status"] = []
-            items_schedule = getActiveItemSchedule(d["id"])
-            for item_schedule in items_schedule:
+            item_schedules = getActiveItemSchedule(d["id"])
+            for item_schedule in item_schedules:
                 s = item_schedule.sitting
                 d["sittings_start"].append(formatter.format(s.start_date))
                 d["sittings_status"].append(s.status)
             # past, present, future
             d["css_class"] = None
-            if items_schedule:
+            if item_schedules:
                 today = datetime.datetime.today().date()
                 # take "last" sitting date
-                startday = items_schedule[0].sitting.start_date.date()
+                startday = item_schedules[0].sitting.start_date.date()
                 if today==startday:
                     d["css_class"] = "present"
                 elif today>startday:

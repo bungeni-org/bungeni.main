@@ -324,8 +324,8 @@ class RegionDescriptiveProperties(DescriptiveProperties):
         return context.region
 
 
-class ScheduledItemDiscussionDescriptiveProperties(DescriptiveProperties):
-    component.adapts(interfaces.IScheduledItemDiscussion)
+class ItemScheduleDiscussionDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.IItemScheduleDiscussion)
     
     @property
     def title(self):

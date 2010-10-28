@@ -182,7 +182,7 @@ class ISittingType(interface.Interface):
     pass
 
 
-class IScheduledItemDiscussion(interface.Interface):
+class IItemScheduleDiscussion(interface.Interface):
     pass
 
 class ITabledDocument(IBungeniContent):

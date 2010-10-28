@@ -625,7 +625,7 @@ class ItemSchedule(Entity):
     """For which sitting was a parliamentary item scheduled.
     """
     discussions = one2many("discussions",
-        "bungeni.models.domain.ScheduledItemDiscussionContainer", "schedule_id")
+        "bungeni.models.domain.ItemScheduleDiscussionContainer", "schedule_id")
     
     @property
     def getItem(self):
@@ -642,7 +642,7 @@ class ItemSchedule(Entity):
         return s_discussion
 
 
-class ScheduledItemDiscussion(Entity):
+class ItemScheduleDiscussion(Entity):
     """A discussion on a scheduled item.
     """
     interface.implements(interfaces.ITranslatable)
