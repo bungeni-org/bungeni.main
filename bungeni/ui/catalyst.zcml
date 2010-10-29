@@ -149,8 +149,8 @@
         ui_module="bungeni.ui.content" 
         echo="False"
     />
-    <db:catalyst class="bungeni.models.domain.Consignatory"
-        descriptor=".descriptor.ConsignatoryDescriptor"
+    <db:catalyst class="bungeni.models.domain.Cosignatory"
+        descriptor=".descriptor.CosignatoryDescriptor"
         interface_module="bungeni.models.interfaces"
         ui_module="bungeni.ui.content"
         echo="False"

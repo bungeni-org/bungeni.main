@@ -19,12 +19,12 @@
         <deny permission="zope.View" role="bungeni.Minister" />
         <deny permission="zope.View" role="bungeni.Everybody" />
         <deny permission="zope.View" role="bungeni.Anybody" />
-        <grant permission="bungeni.consignatory.Add" role="bungeni.Clerk" />
-        <grant permission="bungeni.consignatory.Delete" role="bungeni.Clerk" />
+        <grant permission="bungeni.cosignatory.Add" role="bungeni.Clerk" />
+        <grant permission="bungeni.cosignatory.Delete" role="bungeni.Clerk" />
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
-        <grant permission="bungeni.consignatory.Add" role="bungeni.Speaker" />
-        <grant permission="bungeni.consignatory.Delete" role="bungeni.Speaker" />
+        <grant permission="bungeni.cosignatory.Add" role="bungeni.Speaker" />
+        <grant permission="bungeni.cosignatory.Delete" role="bungeni.Speaker" />
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
     </state>
@@ -38,14 +38,14 @@
         <deny permission="zope.View" role="bungeni.Minister" />
         <deny permission="zope.View" role="bungeni.Everybody" /> 
         <deny permission="zope.View" role="bungeni.Anybody" />
-        <grant permission="bungeni.consignatory.Add" role="bungeni.Owner" />
-        <grant permission="bungeni.consignatory.Delete" role="bungeni.Owner" />
+        <grant permission="bungeni.cosignatory.Add" role="bungeni.Owner" />
+        <grant permission="bungeni.cosignatory.Delete" role="bungeni.Owner" />
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Owner" /> 
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
     </state>
     <state id="submitted" title="Submitted">
-        <deny permission="bungeni.consignatory.Add" role="bungeni.Owner" />
-        <deny permission="bungeni.consignatory.Delete" role="bungeni.Owner" />
+        <deny permission="bungeni.cosignatory.Add" role="bungeni.Owner" />
+        <deny permission="bungeni.cosignatory.Delete" role="bungeni.Owner" />
         <deny permission="bungeni.motion.Edit" role="bungeni.Owner" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Owner" /> 
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
@@ -58,8 +58,8 @@
         <grant permission="zope.View" role="bungeni.Speaker" />
     </state>
     <state id="received" title="Received by Clerks Office">
-        <grant permission="bungeni.consignatory.Add" role="bungeni.Clerk" />
-        <grant permission="bungeni.consignatory.Delete" role="bungeni.Clerk" />
+        <grant permission="bungeni.cosignatory.Add" role="bungeni.Clerk" />
+        <grant permission="bungeni.cosignatory.Delete" role="bungeni.Clerk" />
         <grant permission="bungeni.motion.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
@@ -71,10 +71,10 @@
         <deny permission="bungeni.motion.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.motion.Edit" role="bungeni.Speaker" />
         <grant permission="zope.View" role="bungeni.Speaker" />
-        <deny permission="bungeni.consignatory.Add" role="bungeni.Clerk" />
-        <deny permission="bungeni.consignatory.Delete" role="bungeni.Clerk" />
-        <grant permission="bungeni.consignatory.Add" role="bungeni.Speaker" />
-        <grant permission="bungeni.consignatory.Delete" role="bungeni.Speaker" />
+        <deny permission="bungeni.cosignatory.Add" role="bungeni.Clerk" />
+        <deny permission="bungeni.cosignatory.Delete" role="bungeni.Clerk" />
+        <grant permission="bungeni.cosignatory.Add" role="bungeni.Speaker" />
+        <grant permission="bungeni.cosignatory.Delete" role="bungeni.Speaker" />
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
@@ -85,8 +85,8 @@
         <grant permission="zope.View" role="bungeni.Anybody" />
         <grant permission="bungeni.motion.Edit" role="bungeni.Speaker" />
         <grant permission="zope.View" role="bungeni.Speaker" />
-        <deny permission="bungeni.consignatory.Add" role="bungeni.Speaker" />
-        <deny permission="bungeni.consignatory.Delete" role="bungeni.Speaker" />
+        <deny permission="bungeni.cosignatory.Add" role="bungeni.Speaker" />
+        <deny permission="bungeni.cosignatory.Delete" role="bungeni.Speaker" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
     </state>
@@ -95,18 +95,18 @@
     </state>
     <state id="inadmissible" title="Inadmissible">
         <deny permission="bungeni.motion.Edit" role="bungeni.Speaker" /> 
-        <deny permission="bungeni.consignatory.Add" role="bungeni.Speaker" />
-        <deny permission="bungeni.consignatory.Delete" role="bungeni.Speaker" />
+        <deny permission="bungeni.cosignatory.Add" role="bungeni.Speaker" />
+        <deny permission="bungeni.cosignatory.Delete" role="bungeni.Speaker" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
     </state>
     <state id="clarify_clerk" title="Needs Clarification by Clerks Office">
         <deny permission="bungeni.motion.Edit" role="bungeni.Speaker" />
         <grant permission="bungeni.motion.Edit" role="bungeni.Clerk" /> 
-        <grant permission="bungeni.consignatory.Add" role="bungeni.Clerk" />
-        <grant permission="bungeni.consignatory.Delete" role="bungeni.Clerk" />
-        <deny permission="bungeni.consignatory.Add" role="bungeni.Speaker" />
-        <deny permission="bungeni.consignatory.Delete" role="bungeni.Speaker" />
+        <grant permission="bungeni.cosignatory.Add" role="bungeni.Clerk" />
+        <grant permission="bungeni.cosignatory.Delete" role="bungeni.Clerk" />
+        <deny permission="bungeni.cosignatory.Add" role="bungeni.Speaker" />
+        <deny permission="bungeni.cosignatory.Delete" role="bungeni.Speaker" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
@@ -116,12 +116,12 @@
         <grant permission="zope.View" role="bungeni.Owner" />
         <deny permission="bungeni.motion.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.motion.Edit" role="bungeni.Owner" />
-        <grant permission="bungeni.consignatory.Add" role="bungeni.Owner" />
-        <grant permission="bungeni.consignatory.Delete" role="bungeni.Owner" />
+        <grant permission="bungeni.cosignatory.Add" role="bungeni.Owner" />
+        <grant permission="bungeni.cosignatory.Delete" role="bungeni.Owner" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Owner" /><!-- !+ ??? -->
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Owner" /><!-- !+ ??? -->
-        <deny permission="bungeni.consignatory.Add" role="bungeni.Clerk" />
-        <deny permission="bungeni.consignatory.Delete" role="bungeni.Clerk" />
+        <deny permission="bungeni.cosignatory.Add" role="bungeni.Clerk" />
+        <deny permission="bungeni.cosignatory.Delete" role="bungeni.Clerk" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" /> 
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
     </state>
@@ -179,12 +179,12 @@
         <deny permission="bungeni.motion.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.motion.Edit" role="bungeni.Speaker" />
         <deny permission="bungeni.motion.Edit" role="bungeni.Owner" /> 
-        <deny permission="bungeni.consignatory.Add" role="bungeni.Owner" />
-        <deny permission="bungeni.consignatory.Delete" role="bungeni.Owner" />
-        <deny permission="bungeni.consignatory.Add" role="bungeni.Clerk" />
-        <deny permission="bungeni.consignatory.Delete" role="bungeni.Clerk" />
-        <deny permission="bungeni.consignatory.Add" role="bungeni.Speaker" />
-        <deny permission="bungeni.consignatory.Delete" role="bungeni.Speaker" />
+        <deny permission="bungeni.cosignatory.Add" role="bungeni.Owner" />
+        <deny permission="bungeni.cosignatory.Delete" role="bungeni.Owner" />
+        <deny permission="bungeni.cosignatory.Add" role="bungeni.Clerk" />
+        <deny permission="bungeni.cosignatory.Delete" role="bungeni.Clerk" />
+        <deny permission="bungeni.cosignatory.Add" role="bungeni.Speaker" />
+        <deny permission="bungeni.cosignatory.Delete" role="bungeni.Speaker" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
@@ -196,12 +196,12 @@
         <deny permission="bungeni.motion.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.motion.Edit" role="bungeni.Speaker" />
         <deny permission="bungeni.motion.Edit" role="bungeni.Owner" /> 
-        <deny permission="bungeni.consignatory.Add" role="bungeni.Owner" />
-        <deny permission="bungeni.consignatory.Delete" role="bungeni.Owner" />
-        <deny permission="bungeni.consignatory.Add" role="bungeni.Clerk" />
-        <deny permission="bungeni.consignatory.Delete" role="bungeni.Clerk" />
-        <deny permission="bungeni.consignatory.Add" role="bungeni.Speaker" />
-        <deny permission="bungeni.consignatory.Delete" role="bungeni.Speaker" />
+        <deny permission="bungeni.cosignatory.Add" role="bungeni.Owner" />
+        <deny permission="bungeni.cosignatory.Delete" role="bungeni.Owner" />
+        <deny permission="bungeni.cosignatory.Add" role="bungeni.Clerk" />
+        <deny permission="bungeni.cosignatory.Delete" role="bungeni.Clerk" />
+        <deny permission="bungeni.cosignatory.Add" role="bungeni.Speaker" />
+        <deny permission="bungeni.cosignatory.Delete" role="bungeni.Speaker" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Owner" />

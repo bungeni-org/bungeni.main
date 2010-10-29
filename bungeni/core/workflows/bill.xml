@@ -22,12 +22,12 @@
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
-        <grant permission="bungeni.consignatory.Add" role="bungeni.Owner" />
-        <grant permission="bungeni.consignatory.Delete" role="bungeni.Owner" />
-        <grant permission="bungeni.consignatory.Add" role="bungeni.Clerk" />
-        <grant permission="bungeni.consignatory.Delete" role="bungeni.Clerk" />
-        <grant permission="bungeni.consignatory.Add" role="bungeni.Speaker" />
-        <grant permission="bungeni.consignatory.Delete" role="bungeni.Speaker" />
+        <grant permission="bungeni.cosignatory.Add" role="bungeni.Owner" />
+        <grant permission="bungeni.cosignatory.Delete" role="bungeni.Owner" />
+        <grant permission="bungeni.cosignatory.Add" role="bungeni.Clerk" />
+        <grant permission="bungeni.cosignatory.Delete" role="bungeni.Clerk" />
+        <grant permission="bungeni.cosignatory.Add" role="bungeni.Speaker" />
+        <grant permission="bungeni.cosignatory.Delete" role="bungeni.Speaker" />
     </state>
     <state id="gazetted" title="Bill Published in Gazette">
         <deny permission="bungeni.bill.Edit" role="bungeni.Owner" />
@@ -52,12 +52,12 @@
     <state id="first_reading_adjourned" title="First Reading Adjourned">
     </state>
     <state id="first_committee" title="Select Committee (after 1st reading)">
-        <deny permission="bungeni.consignatory.Add" role="bungeni.Owner" />
-        <deny permission="bungeni.consignatory.Delete" role="bungeni.Owner" />
-        <deny permission="bungeni.consignatory.Add" role="bungeni.Clerk" />
-        <deny permission="bungeni.consignatory.Delete" role="bungeni.Clerk" />
-        <deny permission="bungeni.consignatory.Add" role="bungeni.Speaker" />
-        <deny permission="bungeni.consignatory.Delete" role="bungeni.Speaker" />
+        <deny permission="bungeni.cosignatory.Add" role="bungeni.Owner" />
+        <deny permission="bungeni.cosignatory.Delete" role="bungeni.Owner" />
+        <deny permission="bungeni.cosignatory.Add" role="bungeni.Clerk" />
+        <deny permission="bungeni.cosignatory.Delete" role="bungeni.Clerk" />
+        <deny permission="bungeni.cosignatory.Add" role="bungeni.Speaker" />
+        <deny permission="bungeni.cosignatory.Delete" role="bungeni.Speaker" />
     </state>
     <state id="first_report_reading_pending" title="First Report Reading Pending">
     </state>
@@ -68,12 +68,12 @@
     <state id="second_reading_pending" title="Second Reading Pending">
     </state>
     <state id="second_reading" title="Second Reading">
-        <deny permission="bungeni.consignatory.Add" role="bungeni.Owner" />
-        <deny permission="bungeni.consignatory.Delete" role="bungeni.Owner" />
-        <deny permission="bungeni.consignatory.Add" role="bungeni.Clerk" />
-        <deny permission="bungeni.consignatory.Delete" role="bungeni.Clerk" />
-        <deny permission="bungeni.consignatory.Add" role="bungeni.Speaker" />
-        <deny permission="bungeni.consignatory.Delete" role="bungeni.Speaker" />
+        <deny permission="bungeni.cosignatory.Add" role="bungeni.Owner" />
+        <deny permission="bungeni.cosignatory.Delete" role="bungeni.Owner" />
+        <deny permission="bungeni.cosignatory.Add" role="bungeni.Clerk" />
+        <deny permission="bungeni.cosignatory.Delete" role="bungeni.Clerk" />
+        <deny permission="bungeni.cosignatory.Add" role="bungeni.Speaker" />
+        <deny permission="bungeni.cosignatory.Delete" role="bungeni.Speaker" />
     </state>
     <state id="second_reading_adjourned" title="Second Reading Adjourned">
     </state>

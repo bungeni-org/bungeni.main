@@ -1886,7 +1886,7 @@ msgid "The 'Add...' menu - for bill"
 msgstr "le menu 'ajouter ...' - pour un projet de loi"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:379
-msgid "Add consignatory..."
+msgid "Add cosignatory..."
 msgstr "ajouter un cosignataire..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:404
@@ -2047,7 +2047,7 @@ msgid "Add Title/Function..."
 msgstr "ajouter un titre ou une fonction ..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:781
-msgid "Add Consignatory..."
+msgid "Add Cosignatory..."
 msgstr "ajouter un cosignataire ..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:796

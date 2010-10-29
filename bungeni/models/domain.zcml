@@ -552,13 +552,13 @@
                 status"
         />
     </class>
-    <class class=".domain.Consignatory">
+    <class class=".domain.Cosignatory">
         <require permission="zope.View"
             attributes="
                 user_id
                 item_id"
         />
-        <require permission="bungeni.consignatory.Edit"
+        <require permission="bungeni.cosignatory.Edit"
              set_attributes="
                 user_id
                 item_id" 

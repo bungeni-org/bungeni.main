@@ -1887,7 +1887,7 @@ msgid "The 'Add...' menu - for bill"
 msgstr "\"إضافة\". القائمة -- لمشروع قانون"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:379
-msgid "Add consignatory..."
+msgid "Add cosignatory..."
 msgstr "إضافة موقع مع غيره..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:404
@@ -2048,7 +2048,7 @@ msgid "Add Title/Function..."
 msgstr "إضافة عنوان / دور..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:781
-msgid "Add Consignatory..."
+msgid "Add Cosignatory..."
 msgstr "إضافة موقع مع غيره..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:796

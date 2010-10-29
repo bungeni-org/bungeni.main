@@ -151,7 +151,7 @@ def linked_mp_name_column(name, title, attr):
     
     E.g. instead of the URL to the association view between a cosignatory (MP) 
     and a bill:
-        /business/bills/obj-169/consignatory/obj-169-61/
+        /business/bills/obj-169/cosignatory/obj-169-61/
     the direct URL for the MP's "home" view is used instead:
         /members/current/obj-55/
     """
@@ -1716,7 +1716,6 @@ class BillDescriptor(ParliamentaryItemDescriptor):
     ])
     public_wfstates = get_states("bill", not_tagged=["private"])
 
-
 class BillVersionDescriptor(VersionDescriptor):
     display_name = _(u"Bill version")
     container_name = _(u"Versions")
@@ -2011,7 +2010,7 @@ class AttendanceTypeDescriptor(ModelDescriptor):
     ]
 
 
-class ConsignatoryDescriptor(ModelDescriptor):
+class CosignatoryDescriptor(ModelDescriptor):
     display_name = _(u"Cosignatory")
     container_name = _(u"Cosignatories")
     

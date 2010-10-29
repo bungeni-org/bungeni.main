@@ -791,7 +791,6 @@ questions = rdb.Table("questions", metadata,
     rdb.Column("ministry_id", rdb.Integer, rdb.ForeignKey("groups.group_id")),
     rdb.Column("response_text", rdb.UnicodeText),
 )
-
 question_changes = make_changes_table(questions, metadata)
 question_versions = make_versions_table(questions, metadata,
     parliamentary_items
@@ -824,11 +823,8 @@ motions = rdb.Table("motions", metadata,
     # Receive Notifications -> triggers notification on workflow change
     rdb.Column("receive_notification", rdb.Boolean, default=True),
 )
-
 motion_changes = make_changes_table(motions, metadata)
-motion_versions = make_versions_table(motions, metadata,
-    parliamentary_items
-)
+motion_versions = make_versions_table(motions, metadata, parliamentary_items)
 
 bill_types = rdb.Table("bill_types", metadata,
     rdb.Column("bill_type_id", rdb.Integer, primary_key=True),
@@ -852,13 +848,12 @@ bills = rdb.Table("bills", metadata,
     rdb.Column("identifier", rdb.Integer),
     rdb.Column("publication_date", rdb.Date),
 )
-
 bill_changes = make_changes_table(bills, metadata)
 bill_versions = make_versions_table(bills, metadata, parliamentary_items)
 
 committee_reports = ()
 
-consignatories = rdb.Table("consignatories", metadata,
+cosignatories = rdb.Table("cosignatories", metadata,
     rdb.Column("item_id", rdb.Integer,
         rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
         nullable=False,

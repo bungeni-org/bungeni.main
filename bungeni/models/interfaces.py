@@ -314,8 +314,8 @@ class IAttachedFile(interface.Interface):
 class IAttachedFileVersionContainer(IVersionContainer):
     pass
 
-class IConsignatory(interface.Interface):
-    """Consignatories for bills, motions, ...
+class ICosignatory(interface.Interface):
+    """Cosignatories for bills, motions, ...
     """
 
 class IConstituency(interface.Interface):

@@ -249,9 +249,9 @@
   <permission id="bungeni.agenda.View" title="View Agenda" />
   <permission id="bungeni.minutes.View" title="View 'Votes and Proceedings'" />
 
-  <permission id="bungeni.consignatory.Add" title="Add Consignatory" />
-  <permission id="bungeni.consignatory.Delete" title="Delete Consignatory" />
-  <permission id="bungeni.consignatory.Edit" title="Edit Consignatory" />
+  <permission id="bungeni.cosignatory.Add" title="Add Cosignatory" />
+  <permission id="bungeni.cosignatory.Delete" title="Delete Cosignatory" />
+  <permission id="bungeni.cosignatory.Edit" title="Edit Cosignatory" />
 
   <permission id="bungeni.groupitemassignment.View" title="Add Group Item Assignment" />
   <permission id="bungeni.groupitemassignment.Add" title="Add Group Item Assignment" />

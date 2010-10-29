@@ -1858,7 +1858,7 @@ msgid "The 'Add...' menu - for bill"
 msgstr ""
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:379
-msgid "Add consignatory..."
+msgid "Add cosignatory..."
 msgstr ""
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:404
@@ -2015,7 +2015,7 @@ msgid "Add Title/Function..."
 msgstr ""
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:781
-msgid "Add Consignatory..."
+msgid "Add Cosignatory..."
 msgstr ""
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:796

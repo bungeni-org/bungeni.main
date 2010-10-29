@@ -460,15 +460,15 @@ msgid "View 'Votes and Proceedings'"
 msgstr ""
 
 #: src/bungeni.main/bungeni/models/permissions.zcml:252
-msgid "Add Consignatory"
+msgid "Add Cosignatory"
 msgstr ""
 
 #: src/bungeni.main/bungeni/models/permissions.zcml:253
-msgid "Delete Consignatory"
+msgid "Delete Cosignatory"
 msgstr ""
 
 #: src/bungeni.main/bungeni/models/permissions.zcml:254
-msgid "Edit Consignatory"
+msgid "Edit Cosignatory"
 msgstr ""
 
 #: src/bungeni.main/bungeni/models/permissions.zcml:256

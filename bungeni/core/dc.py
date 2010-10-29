@@ -263,8 +263,8 @@ class GroupSittingAttendanceDescriptiveProperties(DescriptiveProperties):
         return context.attendance_type.attendance_type
 
 
-class ConsignatoryDescriptiveProperties(DescriptiveProperties):
-    component.adapts(interfaces.IConsignatory)
+class CosignatoryDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.ICosignatory)
     
     @property
     def title(self):

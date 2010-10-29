@@ -476,8 +476,8 @@ class Question(ParliamentaryItem):
     #"bungeni.models.domain.QuestionContainer", "supplement_parent_id")
     event = one2many("event", 
         "bungeni.models.domain.EventItemContainer", "item_id")
-    consignatory = one2many("consignatory", 
-        "bungeni.models.domain.ConsignatoryContainer", "item_id")
+    cosignatory = one2many("cosignatory", 
+        "bungeni.models.domain.CosignatoryContainer", "item_id")
     versions = one2many("versions",
         "bungeni.models.domain.QuestionVersionContainer", "content_id")
     sort_on = ParliamentaryItem.sort_on + [
@@ -494,8 +494,8 @@ QuestionVersion = ItemVersions.makeVersionFactory("QuestionVersion")
 
 
 class Motion(ParliamentaryItem):
-    consignatory = one2many("consignatory", 
-        "bungeni.models.domain.ConsignatoryContainer", "item_id")
+    cosignatory = one2many("cosignatory", 
+        "bungeni.models.domain.CosignatoryContainer", "item_id")
     event = one2many("event", 
         "bungeni.models.domain.EventItemContainer", "item_id")
     versions = one2many("versions",
@@ -512,8 +512,8 @@ class BillType(object):
     """
 
 class Bill(ParliamentaryItem):
-    consignatory = one2many("consignatory", 
-        "bungeni.models.domain.ConsignatoryContainer", "item_id")
+    cosignatory = one2many("cosignatory", 
+        "bungeni.models.domain.CosignatoryContainer", "item_id")
     event = one2many("event", 
         "bungeni.models.domain.EventItemContainer", "item_id")
     assignedgroups = one2many("assignedgroups",
@@ -525,8 +525,8 @@ class Bill(ParliamentaryItem):
 BillChange = ItemLog.makeLogFactory("BillChange")
 BillVersion = ItemVersions.makeVersionFactory("BillVersion")
 
-class Consignatory(Entity):
-    """Consignatories for a Bill or Motion.
+class Cosignatory(Entity):
+    """Cosignatories for a Bill or Motion.
     """
 
 
@@ -666,8 +666,8 @@ class TabledDocument(ParliamentaryItem):
 
     It must be possible to schedule a tabled document for a sitting.
     """
-    consignatory = one2many("consignatory", 
-        "bungeni.models.domain.ConsignatoryContainer", "item_id")
+    cosignatory = one2many("cosignatory", 
+        "bungeni.models.domain.CosignatoryContainer", "item_id")
     event = one2many("event", 
         "bungeni.models.domain.EventItemContainer", "item_id")
     versions = one2many("versions",

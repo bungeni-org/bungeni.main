@@ -1862,7 +1862,7 @@ msgid "The 'Add...' menu - for bill"
 msgstr "the \"add...\" menu - for bill"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:379
-msgid "Add consignatory..."
+msgid "Add cosignatory..."
 msgstr "add cosignatory..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:404
@@ -2020,7 +2020,7 @@ msgid "Add Title/Function..."
 msgstr "add title/role..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:781
-msgid "Add Consignatory..."
+msgid "Add Cosignatory..."
 msgstr "add cosignatory..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:796

@@ -146,8 +146,8 @@ class SubformViewlet(table.AjaxContainerListing):
 class SessionViewlet(SubformViewlet):
     sub_attr_name = "sessions"
 
-class ConsignatoryViewlet(SubformViewlet):
-    sub_attr_name = "consignatory"
+class CosignatoryViewlet(SubformViewlet):
+    sub_attr_name = "cosignatory"
     
 class GovernmentViewlet(SubformViewlet):
     sub_attr_name = "governments"

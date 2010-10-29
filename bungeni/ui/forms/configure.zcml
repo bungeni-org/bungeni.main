@@ -29,37 +29,30 @@
 
   <!-- Generic forms -->
 
-  <browser:page
-     name="view"
+    <browser:page name="view"
         for="bungeni.alchemist.interfaces.IAlchemistContent"
-     class=".common.DisplayForm"
-     permission="zope.View"
-     layer="bungeni.ui.interfaces.IBungeniSkin"
-     />
-
-  <browser:page
-     name="add"
+        class=".common.DisplayForm"
+        permission="zope.View"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    <browser:page name="add"
         for="bungeni.alchemist.interfaces.IAlchemistContainer"
-     class=".common.AddForm"
-     permission="zope.ManageContent"
-     layer="bungeni.ui.interfaces.IBungeniSkin"
-     />
-
-  <browser:page
-     name="edit"
+        class=".common.AddForm"
+        permission="zope.ManageContent"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    <browser:page name="edit"
         for="bungeni.alchemist.interfaces.IAlchemistContent"
-     class=".common.EditForm"
-     permission="zope.ManageContent"
-     layer="bungeni.ui.interfaces.IBungeniSkin"
-     />
-
-  <browser:page
-     name="delete"
+        class=".common.EditForm"
+        permission="zope.ManageContent"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    <browser:page name="delete"
         for="bungeni.alchemist.interfaces.IAlchemistContent"
-     class=".common.DeleteForm"
-     permission="zope.ManageContent"
-     layer="bungeni.ui.interfaces.IBungeniSkin"
-     />
+        class=".common.DeleteForm"
+        permission="zope.ManageContent"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
 
     <browser:page name="reorder"
         for="bungeni.models.domain.ItemScheduleContainer"
@@ -538,9 +531,9 @@
     />
 
     <!-- bills -->
-    <browser:viewlet name="bungeni.viewlet.bill-consignatory"
+    <browser:viewlet name="bungeni.viewlet.bill-cosignatory"
         manager=".interfaces.ISubFormViewletManager"
-        class=".viewlets.ConsignatoryViewlet"
+        class=".viewlets.CosignatoryViewlet"
         for="bungeni.models.interfaces.IBill"
         permission="zope.View"
         weight="10"
@@ -561,9 +554,9 @@
     />
     
     <!-- Motion -->
-    <browser:viewlet name="bungeni.viewlet.motion-consignatory"
+    <browser:viewlet name="bungeni.viewlet.motion-cosignatory"
         manager=".interfaces.ISubFormViewletManager"
-        class=".viewlets.ConsignatoryViewlet"
+        class=".viewlets.CosignatoryViewlet"
         for="bungeni.models.interfaces.IMotion"
         permission="zope.View"
         weight="10"

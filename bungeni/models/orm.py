@@ -269,8 +269,8 @@ mapper(domain.ParliamentaryItem, schema.parliamentary_items,
                 schema.users.c.user_id),
             uselist=False,
             lazy=False),
-        "consignatories": relation(domain.User,
-            secondary=schema.consignatories),
+        "cosignatories": relation(domain.User,
+            secondary=schema.cosignatories),
         "attached_files": relation(domain.AttachedFile)
     }
 )
@@ -501,7 +501,7 @@ mapper(domain.ItemScheduleDiscussion, schema.item_schedule_discussions)
 # items scheduled for a sitting
 # expressed as a join between item and schedule
 
-mapper(domain.Consignatory, schema.consignatories,
+mapper(domain.Cosignatory, schema.cosignatories,
     properties={
         "item": relation(domain.ParliamentaryItem, uselist=False),
         "user": relation(domain.User, uselist=False)

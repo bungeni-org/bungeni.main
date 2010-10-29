@@ -41,15 +41,15 @@
      handler=".audit.objectRevertedVersion" />
   
   <subscriber
-     for="bungeni.models.interfaces.IConsignatory
+     for="bungeni.models.interfaces.ICosignatory
           zope.lifecycleevent.interfaces.IObjectCreatedEvent"
-     handler=".events.consignatory_added"
+     handler=".events.cosignatory_added"
      />
 
   <subscriber
-     for="bungeni.models.interfaces.IConsignatory
+     for="bungeni.models.interfaces.ICosignatory
           zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-     handler=".events.consignatory_modified"
+     handler=".events.cosignatory_modified"
      />
   
   

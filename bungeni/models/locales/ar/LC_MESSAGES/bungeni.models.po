@@ -468,15 +468,15 @@ msgid "View 'Votes and Proceedings'"
 msgstr "عرض الأصوات والإجراءات"
 
 #: src/bungeni.main/bungeni/models/permissions.zcml:252
-msgid "Add Consignatory"
+msgid "Add Cosignatory"
 msgstr "إضافة موقع مع غيره"
 
 #: src/bungeni.main/bungeni/models/permissions.zcml:253
-msgid "Delete Consignatory"
+msgid "Delete Cosignatory"
 msgstr "حذف موقع مع غيره"
 
 #: src/bungeni.main/bungeni/models/permissions.zcml:254
-msgid "Edit Consignatory"
+msgid "Edit Cosignatory"
 msgstr "تحرير موقع مع غيره"
 
 #: src/bungeni.main/bungeni/models/permissions.zcml:256

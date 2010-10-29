@@ -469,15 +469,15 @@ msgid "View 'Votes and Proceedings'"
 msgstr "votos vista e processos"
 
 #: src/bungeni.main/bungeni/models/permissions.zcml:252
-msgid "Add Consignatory"
+msgid "Add Cosignatory"
 msgstr "adicionar co-signatário"
 
 #: src/bungeni.main/bungeni/models/permissions.zcml:253
-msgid "Delete Consignatory"
+msgid "Delete Cosignatory"
 msgstr "excluir co-signatário"
 
 #: src/bungeni.main/bungeni/models/permissions.zcml:254
-msgid "Edit Consignatory"
+msgid "Edit Cosignatory"
 msgstr "editar co-signatário"
 
 #: src/bungeni.main/bungeni/models/permissions.zcml:256

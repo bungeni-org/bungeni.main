@@ -1899,7 +1899,7 @@ msgid "The 'Add...' menu - for bill"
 msgstr "menyu ya 'ongeza ...' - kwa muswada"
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:379
-msgid "Add consignatory..."
+msgid "Add cosignatory..."
 msgstr "ongeza saini ..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:404
@@ -2064,7 +2064,7 @@ msgid "Add Title/Function..."
 msgstr "ongeza kichwa / kazi ..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:781
-msgid "Add Consignatory..."
+msgid "Add Cosignatory..."
 msgstr "ongeza saini ..."
 
 #: src/bungeni.main/bungeni/ui/menu.zcml:796
