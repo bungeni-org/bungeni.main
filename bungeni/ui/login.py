@@ -7,7 +7,6 @@ from zope.publisher.browser import BrowserView
 from zope.app.security.interfaces import IUnauthenticatedPrincipal
 
 import bungeni.ui.utils as ui_utils
-from bungeni.alchemist.ui import BaseForm
 from bungeni.core.i18n import _
 
 
@@ -16,11 +15,15 @@ class ILoginForm(interface.Interface):
     password = schema.Password(title=_(u"Password"))
 
 
-class Login(BaseForm):
-    form_fields = form.Fields( ILoginForm )
+from zope.formlib.namedtemplate import NamedTemplate
+class Login(form.FormBase):
+    form_fields = form.Fields(ILoginForm)
     prefix = ""
     form_name = _(u"Login")
     
+    # !+ only used here [ bungeni.ui.login.Login ] ?
+    template = NamedTemplate("alchemist.form")
+
     @form.action(_(u"Login"))
     def handle_login(self, action, data):
         if IUnauthenticatedPrincipal.providedBy(self.request.principal):

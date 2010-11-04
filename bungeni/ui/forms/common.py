@@ -18,7 +18,6 @@ from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.container.contained import ObjectRemovedEvent
 #from zope.app.pagetemplate import ViewPageTemplateFile
 import sqlalchemy as rdb
-from bungeni.alchemist import catalyst
 #from bungeni.alchemist.container import stringKey
 #from ore.workflow.interfaces import IWorkflowInfo
 #from bungeni.alchemist.ui import handle_edit_action
@@ -31,10 +30,9 @@ except ImportError:
     from sqlalchemy.exc import IntegrityError
 
 from bungeni.alchemist import Session
-from bungeni.alchemist.ui import null_validator
+from bungeni.alchemist import catalyst
+from bungeni.alchemist import ui
 from bungeni.alchemist.model import queryModelDescriptor
-from bungeni.alchemist.ui import setUpFields
-from bungeni.alchemist.ui import unique_columns
 from bungeni.core.translation import get_language_by_name
 from bungeni.core.translation import get_default_language
 from bungeni.core.translation import is_translation
@@ -219,11 +217,10 @@ class BaseForm(formlib.form.FormBase):
     @property
     def invariantMessages(self):
         """ () -> [message:str]
-        Called from the form template.
+        Called from the form.html#form template.
         """
         return filter(None,
                 [ error.message for error in self.invariantErrors ])
-
 
 # !+PageForm(mr, jul-2010) converge usage of formlib.form.PageForm to PageForm
 # !+NamedTemplate(mr, jul-2010) converge all views to not use anymore
@@ -280,7 +277,7 @@ class AddForm(BaseForm, catalyst.AddForm):
         
         # find unique columns in data model.. TODO do this statically
         mapper = rdb.orm.class_mapper(domain_model)
-        ucols = list(unique_columns(mapper))
+        ucols = list(ui.unique_columns(mapper))
 
         # query out any existing values with the same unique values,
         session = Session()
@@ -379,7 +376,7 @@ class AddForm(BaseForm, catalyst.AddForm):
             self._next_url = url.absoluteURL(ob, self.request) + \
                 "?portal_status_message=%s added" % name
         
-    @formlib.form.action(_(u"Cancel"), validator=null_validator)
+    @formlib.form.action(_(u"Cancel"), validator=ui.null_validator)
     def handle_cancel(self, action, data):
         """Cancelling redirects to the listing."""
         session = Session()
@@ -484,7 +481,7 @@ class EditForm(BaseForm, catalyst.EditForm):
         # original (HEAD) document
         if self.is_translation:
             head = self.context.head
-            form_fields = setUpFields(self.context.__class__, "view")
+            form_fields = ui.setUpFields(self.context.__class__, "view")
             for widget in self.widgets:
                 form_field = form_fields.get(widget.context.__name__)
                 if form_field is None:
@@ -530,7 +527,7 @@ class EditForm(BaseForm, catalyst.EditForm):
                 "?portal_status_message= Saved"
         self.request.response.redirect(self._next_url)
     
-    @formlib.form.action(_(u"Cancel"), validator=null_validator)
+    @formlib.form.action(_(u"Cancel"), validator=ui.null_validator)
     def handle_edit_cancel(self, action, data):
         """Cancelling redirects to the listing."""
         for key in data.keys():
@@ -656,7 +653,7 @@ class TranslateForm(AddForm):
         # widget, which will render the display widget bound to the
         # original (HEAD) document
         head = self.context
-        form_fields = setUpFields(self.context.__class__, "view")
+        form_fields = ui.setUpFields(self.context.__class__, "view")
         for widget in self.widgets:
             form_field = form_fields.get(widget.context.__name__)
             if form_field is None:

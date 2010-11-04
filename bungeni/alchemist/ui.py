@@ -13,9 +13,6 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.alchemist")
 
-from zope.formlib import form
-from zope.formlib.namedtemplate import NamedTemplate
-
 #
 
 from alchemist.ui import widgets
@@ -30,18 +27,4 @@ from alchemist.ui.core import unique_columns
 from alchemist.ui.viewlet import DisplayFormViewlet
 from alchemist.ui.viewlet import EditFormViewlet
 
-
-class BaseForm(form.FormBase):
-    """Only used by: bungeni.ui.login.Login
-    
-    was: alchemist.ui.core.BaseForm
-    """
-    template = NamedTemplate("alchemist.form")
-    
-    def invariantErrors(self):
-        errors = []
-        for error in self.errors:
-            if isinstance(error, interface.Invalid):
-                errors.append(error)
-        return errors
 
