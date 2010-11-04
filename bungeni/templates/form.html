@@ -1,10 +1,8 @@
 #[ $Id$ ]#
 
-#[ was: ui/forms/templates/form.pt ]#
-
 
 #[ was: ui/forms/templates/form.pt : macros/header ]#
-$begin{ widget_header }
+$begin{ _widget_header }
     $prefer{ data=dict(widget=None) } #[ expects that context defines "widget" ]# 
     <label for="${ widget.name }">
         <span>${ widget.label }</span>
@@ -17,13 +15,48 @@ $begin{ widget_header }
     $if{ widget.hint }
     <div class="formHelp">${ i18n(widget.hint) }</div>
     $fi
-$end{ widget_header }
+$end{ _widget_header }
 
 
+$begin{ _message }
+    $if{ message }
+    <dl class="portalMessage info"
+        <dt>${ i18n(mtype.capitalize()) }</dt>
+        <dd>${ i18n(message) }</dd>
+    </dl>
+    $fi
+$end{ _message }
+$begin{ _invariant_messages }
+    $if{ view.invariantMessages }
+    <div class="invariant-errors">
+        <ul>
+            $for{ message in view.invariantMessages }
+            <li>${ i18n(message) }</li>
+            $rof
+        </ul>
+    </div>
+    $fi
+$end{ _invariant_messages }
+
+$begin{ _actions }
+<div id="actionsView">
+    $if{ view.availableActions() }
+    <span class="actionButtons">
+        $for{ action in view.actions }
+        <input type="submit" class="context"
+           id="${ action.__name__ }"
+           name="${ action.__name__ }"
+           value="${ i18n(action.label) }" />
+        $rof
+    </span>
+    $fi
+</div>
+$end{ _actions }
+
+
+#[ was: ui/forms/templates/form.pt ]#
 $begin{ form }
-#[ !+i18n_domain(mr) 
-    orig ZPT "form" macro declares i18n:domain="alchemist" ?!? 
-]#
+#[ !+i18n_domain(mr) orig ZPT "form" macro declares i18n:domain="alchemist" !?]#
 #[
 inspect(output=True) -:-
 when output=False, dumps out GLOBALS, LOCALS, EXPRESSIONS to 
@@ -40,7 +73,7 @@ ${ inspect(output=False) }
         "form_description" property -- add to BaseForm? 
     ]#
     <p class="documentDescription">${ 
-        i18n(getattr(view, "form_description", " ")) 
+        i18n(getattr(view, "form_description", " "))
                                     }</p>
     
     <form 
@@ -63,24 +96,9 @@ ${ inspect(output=False) }
         #[ !+enctype(mr) isn't this only applicable for method="post"? ]#
         enctype="multipart/form-data"#[ ]#>
         
-        $if{ view.status }
-        #[ !+mtype(mr) add an "mtype" attr (here "info") to bungeni forms? ]#
-        <dl class="portalMessage info"
-            <dt>${ i18n("info".capitalize()) }</dt>
-            <dd>${ i18n(view.status) }</dd>
-        </dl>
-        $fi
-        
-        $if{ view.invariantMessages }
-        <div class="invariant-errors">
-            <ul>
-                $for{ message in view.invariantMessages }
-                <li>${ i18n(message) }</li>
-                $rof
-            </ul>
-        </div>
-        $fi
-        
+        $evoque{ #_message, message=view.status, mtype="info"}
+        $evoque{ #_invariant_messages }
+
         #[ !+pre-fieldset(mr) / define-slot="pre-fieldset"
             fill-slot="pre-fieldset" : only occurs in:
             bungeni/ui/templates/version.pt
@@ -89,7 +107,7 @@ ${ inspect(output=False) }
         $begin{ pre_fieldset }$end{ pre_fieldset }
         $evoque{ #pre_fieldset }
         
-        #[ !+fieldset_name(mr) 
+        #[ !+fieldset_name(mr)
            there are NO bungeni forms with a "fieldset_name" attr !!
         ]#
         $if{ getattr(view, "fieldset_name", None) }
@@ -133,23 +151,24 @@ ${ inspect(output=False) }
                        (view.widget_groups or dict(fallback=view.widgets)
                        ).get(name) 
                     }
+                    #[ !+FIELD(mr, nov-2010) converge into a #_field template ]#
                     $if{ widget.visible }
                         $if{ not side_by_side }
                         <div class="field widget-${
                                         widget.__class__.__name__.lower() }">
-                            $evoque{ #widget_header }
+                            $evoque{ #_widget_header }
                             #[ !+changed(mr) may not be defined? ]#
                             <div class="widget${ (
                     (widget.error() and ' error' or '') +
                     (getattr(widget, 'changed', '') and ' changed' or '')
-                                                ) }">
+                                ) }">
                                 <div class="widget"> 
                                     ${ xml(widget()) }
 	                            </div>
 	                            $if{ widget.error() }
 	                            <div class="errormessage${ (
                     getattr(widget, 'changed', '') and ' changed' or ''
-                                                        ) }">
+                                    ) }">
                                     ${ xml(widget.error()) }
                                 </div>
                                 $fi
@@ -158,10 +177,10 @@ ${ inspect(output=False) }
                         $else #[ side_by_side ]#
                         <tr class="field${ (
                     (widget.error() and ' error' or '') + 
-                    (getattr(widget, 'changed', None) and ' odd' or ' even')
-                                            ) }">
+                    (i%2 and ' odd' or ' even')
+                            ) }">
                             <th colspan="2">
-                                $evoque{ #widget_header }
+                                $evoque{ #_widget_header }
                             </th>
                         </tr>
                         <tr>
@@ -199,20 +218,73 @@ ${ inspect(output=False) }
         </fieldset>
         $fi
         
-        <div id="actionsView">
-            $if{ view.availableActions() }
-            <span class="actionButtons">
-                $for{ action in view.actions }
-                <input type="submit" class="context"
-                   id="${ action.__name__ }"
-                   name="${ action.__name__ }"
-                   value="${ i18n(action.label) }" />
-                $rof
-            </span>
-            $fi
-        </div>
+        $evoque{ #_actions }
     </form>
 $end{ form }
+
+
+#[ was: ui/forms/templates/display_form.pt ]#
+$begin{ display }
+    <dt id="fieldsetlegend-display-form-${id(view)}">${i18n(view.form_name)}</dt>
+    <dd id="fieldset-display-form-${id(view)}" class="${view.getObjectClass()}">
+        <div id="display_form_spacer"></div>
+        <form action="${ getattr(view, 'action_url', request.URL) }"
+            method="post"
+            enctype="multipart/form-data">
+            $evoque{ #_message, message=view.status, mtype="info" }
+            #[ !+ AttributeError: 'BungeniAttributeDisplay' object has no attribute 'invariantMessages'
+            ]#
+            $evoque{ #_invariant_messages }
+            $evoque{ #_message, message=view.get_note(), mtype="note" }
+            $evoque{ #pre_fieldset }
+            
+            #[ !+fieldset_name(mr) pre... need to recover as in #form? ]#
+            #[ !+fieldset(mr) need to recover this macro?
+             <metal:block define-macro="fieldset"> ... </>
+            ]#
+            $for{ i, widget in enumerate(view.widgets) }
+                #[ !+FIELD(mr, nov-2010) converge into a #_field template ]#
+                $if{ widget.visible }
+                <div class="field${ (widget.error() and ' error' or '' +
+                (i%2 and ' odd' or ' even')) }" id="${widget.name}">
+                    <div class="content-left-column">
+                        <label for="${widget.name}">
+                            <span>${i18n(widget.label)}</span>
+                        </label>
+                        $if{ widget.required }
+                        #[ !+ i18n:domain="plone" ]#
+                        <span class="fieldRequired" 
+                            title="${i18n('title_required')}">
+                            ${i18n('label_required')}
+                        </span>
+                        $fi
+                    </div>
+                    <div class="widget${ (widget.error() and ' error' or '' +
+                (getattr(widget, 'changed', None) and ' changed' or ''))
+                            } content-right-column">
+                        <div class="widget">
+                            ${ xml(widget()) }
+                        </div>
+                        $if{ widget.error() }
+	                    <div class="errormessage${ (
+                getattr(widget, 'changed', None) and ' changed' or '') }">
+                            ${ xml(widget.error()) }
+                        </div>
+                        $fi
+                    </div>
+                </div>
+                $fi
+            $rof
+            #[ !+fieldset_name(mr) post... need to recover as in #form? ]#
+            <div class="rowspacer"></div>
+            $evoque{ #_actions }
+            
+        </form>
+    </dd>
+    #[ some viewlets are only displayed if they have content ]#
+    ${ xml(view.provide(provider_name="bungeni.subform.manager")) }
+$end{ display }
+
 
 
 $begin{ page }

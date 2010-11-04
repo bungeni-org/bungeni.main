@@ -24,7 +24,6 @@ from alchemist.ui.core import null_validator
 from alchemist.ui.core import setUpFields
 from alchemist.ui.core import unique_columns
 
-from alchemist.ui.viewlet import DisplayFormViewlet
 from alchemist.ui.viewlet import EditFormViewlet
 
 

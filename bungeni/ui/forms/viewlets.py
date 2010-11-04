@@ -726,7 +726,7 @@ class DisplayViewlet(BungeniAttributeDisplay):
     """Display a target object; if the object is `None`, the user is
     prompted to add it.
     """
-    render = ViewPageTemplateFile("templates/display_form.pt")
+    
     mode = "view"
     for_display = True
     query = None

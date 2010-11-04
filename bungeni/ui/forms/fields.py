@@ -1,20 +1,22 @@
 # encoding: utf-8
 
-from zope.app.pagetemplate import ViewPageTemplateFile
-from zope.security.proxy import removeSecurityProxy, ProxyFactory
+#from zope.app.pagetemplate import ViewPageTemplateFile
+from zope.security.proxy import removeSecurityProxy
 from zope import security
+from zope import interface
 from zope.formlib import form
 from zope.i18n import translate
 
 from ore.workflow import interfaces
 from bungeni.alchemist.ui import DynamicFields
-from bungeni.alchemist.ui import DisplayFormViewlet
 
 from bungeni.alchemist.model import queryModelDescriptor
 from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.alchemist.interfaces import IAlchemistContent
 from bungeni.ui.forms.workflow import bindTransitions
 from bungeni.ui.i18n import _
+from bungeni.ui import browser
+from bungeni.ui import z3evoque
 from bungeni.core.translation import get_translation_for, get_all_languages
 from copy import copy
 
@@ -44,9 +46,22 @@ def filterFields(context, form_fields):
     return form_fields.omit(*omit_names)
 
 
-class BungeniAttributeDisplay(DynamicFields, DisplayFormViewlet):
+class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm, 
+    browser.BungeniViewlet):
+    """
+    bungeni.subform.manager
+    """
+
+    # evoque
+    render = z3evoque.ViewTemplateFile("form.html#display")
+    # zpt
+    #render = ViewPageTemplateFile("templates/display_form.pt")
+    
+    # the instance of the ViewProvideViewletManager
+    provide = z3evoque.ViewProvideViewletManager(
+        default_provider_name="bungeni.subform.manager")
+    
     mode = "view"
-    template = ViewPageTemplateFile("templates/display_form.pt")
     form_name = _(u"General")
     has_data = True
     adapters = None
@@ -54,8 +69,9 @@ class BungeniAttributeDisplay(DynamicFields, DisplayFormViewlet):
     def get_note(self):
         """Return Notes if supplied by context.
         """
-        if getattr(self.context, "note", False):
-            return self.context.note
+        context = removeSecurityProxy(self.context)
+        if getattr(context, "note", False):
+            return context.note
     
     def setupActions(self):
         return # !+ ??
@@ -110,7 +126,8 @@ class BungeniAttributeDisplay(DynamicFields, DisplayFormViewlet):
     
     def update(self):
         self.setupActions()
-        super(BungeniAttributeDisplay, self).update() 
+        #super(BungeniAttributeDisplay, self).update()
+        DynamicFields.update(self)
         self.setupActions()  # after we transition we have different actions
         try:
             wf_state =interfaces.IWorkflowState(
@@ -139,4 +156,22 @@ class BungeniAttributeDisplay(DynamicFields, DisplayFormViewlet):
         
     def getObjectClass(self):
         return self.context.__class__.__name__
+
+    # !+ from ui.forms.common.BaseForm -- merge these 2 base classes? 
+    @property
+    def invariantErrors(self):
+        """ () -> [error:zope.interface.Invalid]
+        """
+        errors = []
+        for error in self.errors:
+            if isinstance(error, interface.Invalid):
+                errors.append(error)
+        return errors
+    @property
+    def invariantMessages(self):
+        """ () -> [message:str]
+        Called from the form.html#display template.
+        """
+        return filter(None,
+                [ error.message for error in self.invariantErrors ])
 
