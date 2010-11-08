@@ -1862,15 +1862,22 @@ class SittingDescriptor(ModelDescriptor):
         #    ),
         #),
         Field(name="start_date",
-            modes="view|edit|add", #|listing",
+            modes="view|edit|add|listing",
             property=schema.Datetime(title=_(u"Date")),
-            #listing_column=date_from_to_column("start_date", _(u"Start")),
+            listing_column=date_from_to_column("start_date", _(u"Start")),
             # !+CustomListingURL(mr, oct-2010) the listing of this type has 
             # been replaced by the custom GroupSittingsViewlet -- but it 
             # should still be possible use the generic container listing in
             # combination with a further customized listing_column -- for an
             # example of this see how the listing of the column "owner_id" 
             # is configured in: descriptor.ParliamentaryItemDescriptor
+            
+            # !+CustomListingURL(miano, nov-2010) 
+            # Since the custom listing column function was missing
+            # the sitting listing was broken in archive.
+            # Reverted to fix the issue.
+            # This listing does not need to be customised because it is
+            # only used in the archive.
             edit_widget=DateTimeWidget,
             add_widget=DateTimeWidget,
         ),
