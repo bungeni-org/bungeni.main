@@ -85,3 +85,6 @@ h3.printHeading,
 .whats_on_print_heading {
 	display: none !important;
 }
+.yui-skin-sam .yui-calcontainer {
+	z-index:1 !important;
+}

@@ -228,7 +228,7 @@ input.searchButton {
 
 #form__range_start_date-calendarmenu[style] {
 	z-index: 9 !important;
-	border: 1px solid blue !important;
+	border: 1px solid transparent !important;
 }
 .fieldRequired {
     background: url(required.gif) center left no-repeat;

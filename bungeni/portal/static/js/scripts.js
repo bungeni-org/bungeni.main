@@ -102,25 +102,25 @@ $(document).ready(function(){
     listTogglr();
     
     $('ul.formTabs li a span').each(function(index){
-		// don't do this on the whats-on page
-		if($(this).parents('#whats-on-overview').length > 0){
-			return;
-		}
-        // store the name of this particular tab
-        var name = $(this).text();
-        // create a new h3 tag for the name
-        var nameH3 = $(document.createElement('h3'));
-        nameH3.text(name);
-        nameH3.addClass('printHeading');
-        // add the heading to the corresponding Panel
-        $('dd.formPanel:eq('+index+')').prepend(nameH3);
-      });
+		  // don't do this on the whats-on page
+		  if($(this).parents('#whats-on-overview').length > 0){
+			  return;
+		  }
+      // store the name of this particular tab
+      var name = $(this).text();
+      // create a new h3 tag for the name
+      var nameH3 = $(document.createElement('h3'));
+      nameH3.text(name);
+      nameH3.addClass('printHeading');
+      // add the heading to the corresponding Panel
+      $('dd.formPanel:eq('+index+')').prepend(nameH3);
+    });
     
     // Hides the dead links in the global nav.
     $('#portal-globalnav ul.level0 li a').each(function(){
-        var link = $(this).attr('href');
-        if(link.indexOf('#') != -1){
-          $(this).parent().hide();
-        }
-      });
-  });
+      var link = $(this).attr('href');
+      if(link.indexOf('#') != -1){
+        $(this).parent().hide();
+      }
+    });
+});
