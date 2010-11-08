@@ -90,7 +90,7 @@ def day_column(name, title, default=""):
 #def time_column(name, title, default=""):
 #    return localized_datetime_column(name, title, default, "time", "long")
 
-''' !+CustomListingURL(mr, oct-2010)
+
 
 def date_from_to_column(name, title, default=""):
     format_length = "medium"
@@ -106,7 +106,7 @@ def date_from_to_column(name, title, default=""):
                 "time", format_length).format(end)
         return u"%s - %s" % (start, end)
     return column.GetterColumn(title, getter)
-'''
+
 
 def name_column(name, title, default=""):
     def renderer(value, size=50):
