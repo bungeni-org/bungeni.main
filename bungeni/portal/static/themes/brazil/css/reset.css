@@ -1220,12 +1220,27 @@ table.listingdescription,
 	text-align: left !important;
 	width: 100%;
 }
+.template-workspace table.listing,
+.template-workspace table.listingdescription,
+.template-workspace.stx table,
+.template-workspace.yui-skin-sam .yui-dt table {
+    width: 95%;
+}
 
 table.listing tr:hover,
 table.listingdescription tr:hover,
 .stx table tr:hover,
 .yui-skin-sam .yui-dt table tr:hover {
     background: #e6e6e6;
+}
+
+
+.section-bungeni-workspace.template-workspace table.listing tr:hover,
+.section-bungeni-workspace.template-workspace table.listingdescription tr:hover,
+.section-bungeni-workspace.template-workspace.stx table tr:hover,
+.section-bungeni-workspace.template-workspace.yui-skin-sam .yui-dt table tr.yui-dt-odd:hover,
+.section-bungeni-workspace.template-workspace.yui-skin-sam .yui-dt table tr:hover {
+    background:#C2D5FC !important;
 }
 .yui-skin-sam .yui-dt table tr.yui-dt-odd {
     background: #F3F3F3;
@@ -1328,27 +1343,27 @@ ul.formTabs {
     border: 0 none;
     border-bottom: 1px solid #ccc;
     text-align: center;
-    position: relative;
+    position: static;
 }
 dd#items-to-be-scheduled-dl ul.formTabs {
 	margin: .7em 0 0;
 }
 .template-workspace.section-bungeni-workspace ul.formTabs {
-	float: left;
-	width: 135px;
+    border-bottom: 1px dotted #ccc;
+    margin: .5em auto;
+    width: 95%;
+    height: 30px;
 }
 dd#items-to-be-scheduled-dl ul.formTabs li.formTab {
 	display: inline;
 	border: 0 none;
 }
 .template-workspace.section-bungeni-workspace ul.formTabs li.formTab {
-	float: none;
-	display: block;
-	padding: 0;
+    float: left;
+    margin: .25em .5em .25em 0;
 }
 li.formTab a,
 dd#items-to-be-scheduled-dl ul.formTabs li.formTab a {
-    position: relative;
     text-shadow: 0px 1px 1px #fff;
 	text-decoration: none;
     color: #444;
@@ -1373,16 +1388,16 @@ dd#items-to-be-scheduled-dl ul.formTabs li.formTab a {
 	line-height: 16px;
 }
 .template-workspace.section-bungeni-workspace ul.formTabs li.formTab a {
-	text-align: left;
-	border-radius: 0;
-	-moz-border-radius: 0;
-	-webkit-border-radius: 0;
-	border: 0 none;
-	border-bottom: 1px solid #ccc;
-	display: block;
-	margin: 0;
-	top: 0;
-	padding-left: 0.15em;
+    text-align: left;
+    border: 1px solid #ccc;
+    border-top-color: #ddd;
+    border-bottom-color: #aaa;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    display: block;
+    margin: 0;
+    top: 0;
+    background: #f9f9f9;
 }
 li.formTab a:hover,
 li.formTab a:active,
@@ -1421,13 +1436,15 @@ dd#items-to-be-scheduled-dl ul.formTabs li.formTab a.selected,
 .template-workspace.section-bungeni-workspace ul.formTabs li.formTab a:hover,
 .template-workspace.section-bungeni-workspace ul.formTabs li.formTab a:active,
 .template-workspace.section-bungeni-workspace ul.formTabs li.formTab a.selected {
-	text-align: left;
-	text-decoration: none;
-	margin: 0;
-	border-top: 0 none !important;
-	background: #d8d8d9 url(/static/images/w-globalnav-level0-a.png) top left repeat-x;
-	color: #222;
-	top: 0;
+    text-align: left;
+    text-decoration: none;
+    margin: 0;
+    background: #d8d8d9 url(/static/images/w-globalnav-level0-a.png) top left repeat-x;
+    border: 1px solid #aaa;
+    border-bottom-color: #bbb;
+    border-top-color: #999;
+    color: #222;
+    top: 0;
 }
 dd#items-to-be-scheduled-dl ul.formTabs li.formTab a:hover,
 dd#items-to-be-scheduled-dl ul.formTabs li.formTab a:active,
@@ -1456,7 +1473,6 @@ dd#items-to-be-scheduled-dl ul.formTabs li.formTab a.selected {
     margin: 0;
 	text-align: center;
 	top: -1px;
-	position: relative;
 }
 .template-workspace.section-bungeni-workspace .formPanel {
 	margin-left: 135px;
@@ -1852,4 +1868,23 @@ h4.tabberHeading {
 }
 .even {
     background: #F3F3F3;
+}
+
+
+.section-bungeni-login #alchemist-form{
+    width: 190px;
+    margin: 0 auto;
+    border-top: 1px solid #ddd;
+}
+
+.zc-table-batching-pager-next,
+.zc-table-batching-pager-prev {
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.zc-table-batching-pager-next:hover,
+.zc-table-batching-pager-prev:hover {
+
+    text-decoration:underline;
 }
