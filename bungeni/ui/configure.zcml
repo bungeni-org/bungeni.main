@@ -98,10 +98,6 @@
        />
   </class--> 
     <!--End Experimental transcripts support -->
-    
-   <browser:resourceDirectory
-      name="ui-images"
-      directory="images" />
 
    <!-- vocabularies -->
    
