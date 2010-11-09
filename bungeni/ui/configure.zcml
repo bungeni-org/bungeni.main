@@ -31,9 +31,6 @@
 
   <!-- Site Viewlets -->
   <include package=".viewlets" />
-
-  <!-- Calendar Widgets -->
-  <!--include file="calendar.zcml" /-->
   
   <!-- Include Auditing UI-->
   <include file="audit.zcml" />
