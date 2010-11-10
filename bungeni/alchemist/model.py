@@ -100,7 +100,7 @@ class Field(object):
     #required = False 
     # !+Field.required(mr, oct-2010) this is OBSOLETED as it has no affect on
     # generated forms -- whether a field, in the UI, is handled as required 
-    # or not depe4nds entirely on the value of Field.property.required and/or 
+    # or not depends entirely on the value of Field.property.required and/or 
     # whether the corresponding column is nullable or not.
 
     #fieldset = "default"

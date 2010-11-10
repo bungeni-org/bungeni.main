@@ -168,6 +168,33 @@ def linked_mp_name_column(name, title, attr):
         )
     return column.GetterColumn(title, getter)
 
+''' !+AssignedItemsListing(mr, nov-2010) this is meant to replace the 
+    "item_name_column" getter, to intercept and customize the default 
+    alchemist behaviour -- in this case the item would be default be
+    an ItemGroupItemAssignment instance, and the link would point to the 
+    association view of that assigned item and the group it is assigned to.
+    However, it is not activated as the behavior is probably incorrect in some
+    cases e.g. under /admin -- as that association also allows to modify the
+    "assignemnt" properties, a "feature" that would be lost if this was to be 
+    activated (do we need different behaviour for differeent layers?).
+
+def linked_item_name_column(name, title):
+    """To customize the default URL generated as part of the container listing. 
+    
+    E.g. instead of the URL to the association view between a committee and
+    an assigned bill:
+        /business/committees/obj-46/assigneditems/obj-1/
+    the direct URL for the MP's "home" view is used instead:
+        /business/bills/obj-37/
+    """
+    def getter(item, formatter):
+        bill = item.item
+        return zope.app.form.browser.widget.renderElement("a", 
+            contents="%s %s" % (bill.type, bill.short_name),
+            href="/business/bills/obj-%s/" % (bill.parliamentary_item_id)
+        )
+    return column.GetterColumn(title, getter)
+'''
 
 def member_title_column(name, title, default=u""):
     def getter(item, formatter):
@@ -204,7 +231,6 @@ def item_name_column(name, title, default=u""):
     def getter(item, formatter):
         return u"%s %s" % (item.item.type, item.item.short_name)
     return column.GetterColumn(title, getter)
-
 def group_name_column(name, title, default=u""):
     def getter(item, formatter):
         obj = translation.translate_obj(item)
@@ -1370,7 +1396,9 @@ class ItemGroupItemAssignmentDescriptor(GroupItemAssignmentDescriptor):
                     value_field="parliamentary_item_id"
                 ),
             ),
-            listing_column=item_name_column("parliamentary_item_id", _(u"Item")),
+            # !+AssignedItemsListing(mr, nov-2010)
+            listing_column=item_name_column( #=linked_item_name_column(
+                "parliamentary_item_id", _(u"Item")),
         ),
         Field(name="group_id", modes=""),
     ]

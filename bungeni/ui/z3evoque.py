@@ -385,7 +385,7 @@ class _ViewTemplateBase(object):
         !+ an XML doc does should not start with a comment
         """
         t = self.template
-        di = "\nVIEW:%s\nTEMPLATE:%s:%s\n" % (
+        di = "\nVIEW:%s\nTEMPLATE:[%s]%s\n" % (
             self._descriptor_view.__class__, 
             t.collection.name, t.name)
         return """<!--%s-->%s<!--END%s-->""" % (di, s, di)
