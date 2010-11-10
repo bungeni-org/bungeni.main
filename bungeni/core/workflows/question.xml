@@ -231,7 +231,7 @@
     <transition id="to_clarify_mp"
         title="Needs Clarification by MP"
         trigger="manual"
-        source="received  clarify_clerk"
+        source="received clarify_clerk"
         destination="clarify_mp"
         permission="bungeni.question.clerk.Review"
         action="bungeni.core.workflows.question.actions.mp_clarify"

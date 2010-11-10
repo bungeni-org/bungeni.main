@@ -18,6 +18,7 @@ from ore.workflow.interfaces import IWorkflowState
 GRANT = 1
 DENY  = 0
 
+
 class WorkflowState(object):
     zope.interface.implements(IWorkflowState)
     
@@ -43,9 +44,11 @@ class WorkflowState(object):
     def getId(self):
         return "1"
 
+
 class NullVersions(WorkflowVersions):
     def hasVersionId( self, id): 
         return False
+
 
 class State(object):
     def __init__(self, id, title, permissions):
@@ -54,7 +57,8 @@ class State(object):
         self.permissions = permissions
     
     def initialize(self, context):
-        """ initialize content now in this state """
+        """Initialize content now in this state.
+        """
         session = Session()
         _context = removeSecurityProxy(context)
         session.merge(_context)
@@ -65,8 +69,10 @@ class State(object):
             if action==DENY:
                rpm.denyPermissionToRole(permission, role)
 
+
 class StateTransition(Transition):
-    """A state transition."""
+    """A state transition.
+    """
     
     def __init__(self, transition_id, title, source, destination,
                  condition=NullCondition, action=NullAction,
@@ -78,6 +84,7 @@ class StateTransition(Transition):
             action, trigger, permission, order=0, **user_data)
         self.event = event
         self.require_confirmation = require_confirmation
+
 
 class StateWorkflow(Workflow):
     
@@ -97,7 +104,8 @@ class StateWorkflow(Workflow):
         unreachable_states = state_names - t_state_names
         if unreachable_states:
             raise SyntaxError("Workflow Contains Unreachable States %s" % (
-                                                        unreachable_states))
+                    unreachable_states))
+
 
 class StateWorkflowInfo(WorkflowInfo):
 

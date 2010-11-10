@@ -1,78 +1,65 @@
 <?xml version="1.0"?>
-<workflow
-   id="address-workflow"
-   title="Address Workflow"
-   description="Workflow for user addresss"
-   domain="bungeni.ui"
-   initial_state="">
-
-  <state id="private" title="Private">
-    <grant permission="bungeni.address.Delete" role="bungeni.Owner" />
-    <grant permission="zope.View" role="bungeni.Owner" />
-    <grant permission="zope.View" role="bungeni.Clerk" />
-    <deny permission="zope.View" role="bungeni.Speaker" />
-    <deny permission="zope.View" role="bungeni.MP" />
-    <deny permission="zope.View" role="bungeni.Minister" />
-    <deny permission="zope.View" role="bungeni.Everybody" /> 
-    <deny permission="zope.View" role="bungeni.Anybody" /> 
-  </state>
-
-  <state id="internal" title="Internal - visible to bungeni users">
-    <deny permission="bungeni.address.Delete" role="bungeni.Owner" />
-    <grant permission="zope.View" role="bungeni.MP" />
-    <grant permission="zope.View" role="bungeni.Clerk" />
-    <grant permission="zope.View" role="bungeni.Speaker" />
-    <grant permission="zope.View" role="bungeni.Minister" />
-    <deny permission="zope.View" role="bungeni.Everybody" /> 
-    <deny permission="zope.View" role="bungeni.Anybody" />
-  </state>
-  
-  <state id="public" title="Public">
-    <grant permission="zope.View" role="bungeni.Everybody" /> 
-    <grant permission="zope.View" role="bungeni.Anybody" />
-  </state>
-
-  <transition 
-     id="create"
-     title="Create"
-     trigger="automatic"
-     source=""
-     destination="private"
-     action="bungeni.core.workflows.address.actions.create"
-     />
-
-  <transition 
-     id="publish-internal"
-     title="Publish internal"
-     trigger="manual"
-     source="private
-            public"
-     destination="internal"
-     permission="bungeni.address.Manage"
-     require_confirmation="false"
-     />
-
-  <transition 
-     id="publish"
-     title="Publish"
-     trigger="manual"
-     source="private
-            internal"
-     destination="public"
-     permission="bungeni.address.Manage"
-     require_confirmation="true"
-     />
-                   
-  <transition 
-     id="make-private"
-     title="Make private"
-     trigger="manual"
-     source="public 
-            internal"
-     destination="private"
-     permission="bungeni.address.Manage"
-     require_confirmation="false"
-     />
-
+<workflow id="address-workflow"
+    title="Address Workflow"
+    description="Workflow for user addresss"
+    domain="bungeni.ui"
+    initial_state="">
+    
+    <state id="private" title="Private">
+        <grant permission="bungeni.address.Delete" role="bungeni.Owner" />
+        <grant permission="zope.View" role="bungeni.Owner" />
+        <grant permission="zope.View" role="bungeni.Clerk" />
+        <deny permission="zope.View" role="bungeni.Speaker" />
+        <deny permission="zope.View" role="bungeni.MP" />
+        <deny permission="zope.View" role="bungeni.Minister" />
+        <deny permission="zope.View" role="bungeni.Everybody" /> 
+        <deny permission="zope.View" role="bungeni.Anybody" /> 
+    </state>
+    <state id="internal" title="Internal - visible to bungeni users">
+        <deny permission="bungeni.address.Delete" role="bungeni.Owner" />
+        <grant permission="zope.View" role="bungeni.MP" />
+        <grant permission="zope.View" role="bungeni.Clerk" />
+        <grant permission="zope.View" role="bungeni.Speaker" />
+        <grant permission="zope.View" role="bungeni.Minister" />
+        <deny permission="zope.View" role="bungeni.Everybody" /> 
+        <deny permission="zope.View" role="bungeni.Anybody" />
+    </state>
+    <state id="public" title="Public">
+        <grant permission="zope.View" role="bungeni.Everybody" /> 
+        <grant permission="zope.View" role="bungeni.Anybody" />
+    </state>
+    
+    <transition id="create"
+        title="Create"
+        trigger="automatic"
+        source=""
+        destination="private"
+        action="bungeni.core.workflows.address.actions.create"
+    />
+    <transition id="publish-internal"
+        title="Publish internal"
+        trigger="manual"
+        source="private public"
+        destination="internal"
+        permission="bungeni.address.Manage"
+        require_confirmation="false"
+    />
+    <transition id="publish"
+        title="Publish"
+        trigger="manual"
+        source="private internal"
+        destination="public"
+        permission="bungeni.address.Manage"
+        require_confirmation="true"
+    />
+    <transition id="make-private"
+        title="Make private"
+        trigger="manual"
+        source="public internal"
+        destination="private"
+        permission="bungeni.address.Manage"
+        require_confirmation="false"
+    />
 
 </workflow>
+
