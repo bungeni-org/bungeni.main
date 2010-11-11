@@ -277,8 +277,7 @@
                 body_text
                 note
                 receive_notification
-                group_id
-                "
+                group_id"
         />
         <require permission="bungeni.historical.Edit"
             attributes="
@@ -749,7 +748,7 @@
                 image
                 receive_notification
                 language"
-        />
+        /><!-- !+ date_of_death: bungeni.user.AdminRecord? -->
         <require permission="zope.ManageContent"
             set_attributes="
                 user_id
@@ -773,7 +772,7 @@
                 image
                 receive_notification
                 language"
-        />
+        /><!-- !+ date_of_death: bungeni.user.AdminRecord? -->
     </class>
   
 </configure>

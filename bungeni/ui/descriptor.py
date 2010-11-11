@@ -395,8 +395,12 @@ def DeathBeforeLife(User):
 #
 # Field parameters, if specified, should be in the following order:
 #   name, label, description, modes, property, listing_column, 
-#   view_widget, edit_widget, add_widget, search_widget, 
-#   view_permission, edit_permission
+#   view_widget, edit_widget, add_widget, search_widget
+#   
+#   !+FIELD_PERMISSIONS(mr, nov-2010) view_permission/edit_permission params 
+#   are deprecated -- when applied to any field (that corresponds to an 
+#   attribute of the domain's class), the domain.zcml setting for that same 
+#   class attribute will anyway take precedence.
 #
 # modes:
 # - default: "view|edit|add"
@@ -516,8 +520,6 @@ class UserDescriptor(ModelDescriptor):
         ),
         Field(name="date_of_death",
             property=schema.Date(title=_(u"Date of Death"), required=False),
-            #view_permission="bungeni.user.AdminRecord",
-            edit_permission="bungeni.user.AdminRecord",
             edit_widget=DateWidget,
             add_widget=DateWidget
         ),

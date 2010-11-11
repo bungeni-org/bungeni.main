@@ -51,6 +51,11 @@ class IModelDescriptorField(interface.Interface):
         title=u"A Custom Search Widget Factory",
         required=False
     )
+    ''' !+FIELD_PERMISSIONS(mr, nov-2010) these params are deprecated -- when 
+    applied to any field (that corresponds to an attribute of the domain's 
+    class), the domain.zcml setting for that same class attribute will anyway 
+    take precedence.
+
     view_permission = schema.ASCIILine(
         title=u"Read Permission",
         description=u"If the user does not have this permission this field "
@@ -63,7 +68,8 @@ class IModelDescriptorField(interface.Interface):
             "will not appear in write views",
         required=False
     )
-
+    '''
+    
 class Field(object):
     interface.implements(IModelDescriptorField)
     
@@ -93,6 +99,10 @@ class Field(object):
     
     view_permission = "zope.Public"         # str
     edit_permission = "zope.ManageContent"  # str
+    # !+FIELD_PERMISSIONS(mr, nov-2010) these attributes are left here because 
+    # alchemist.catalyst.domain.ApplySecurity accesses them directly (even if
+    # resulting permission is what is anyway what is specified in domain.zcml).
+    
     
     # OTHER Attributes (and Defaults)
     
@@ -123,7 +133,12 @@ class Field(object):
         name=None, label=None, description=None, 
         modes=None, property=None, listing_column=None, 
         view_widget=None, edit_widget=None, add_widget=None, search_widget=None,
-        view_permission=None, edit_permission=None
+        #view_permission=None, edit_permission=None
+        # !+FIELD_PERMISSIONS(mr, nov-2010) deprecated -- permission on any 
+        # domain class attribute (and so, descriptor field) are declared in
+        # domain.zcml. There is however still the possibility that these may 
+        # be useful for when a descriptor field does not correspond directly 
+        # to a domain class attribute (to be determined). 
     ):
         """The defaults of each init paremeter is set as a class attribute --
         if not explicitly specified, then an attribute on the instance is
@@ -153,7 +168,8 @@ class Field(object):
             "name", "label", "description", "modes", 
             "property", "listing_column", 
             "view_widget", "edit_widget", "add_widget", "search_widget", 
-            "view_permission", "edit_permission"
+            #"view_permission", "edit_permission"
+            # !+FIELD_PERMISSIONS(mr, nov-2010) deprecated
         ):
             v = kw[p]
             if v is not None:
