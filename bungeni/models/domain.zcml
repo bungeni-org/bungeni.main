@@ -24,7 +24,7 @@
                 note
                 receive_notification"
         />
-        <require permission="bungeni.edit.historical"
+        <require permission="bungeni.historical.Edit"
             set_attributes="
                 parliament_id
                 status
@@ -68,7 +68,7 @@
                 owner_id
                 note"
         />
-        <require permission="bungeni.edit.historical"
+        <require permission="bungeni.historical.Edit"
             set_attributes="
                 parliament_id
                 status
@@ -121,7 +121,7 @@
         <require permission="bungeni.response.Edit"
             set_attributes="response_text" 
         />
-        <require permission="bungeni.edit.historical"
+        <require permission="bungeni.historical.Edit"
             set_attributes="parliament_id
                 submission_date
                 status
@@ -175,12 +175,12 @@
                 seconder_id
                 party_id"
         />
-        <require permission="bungeni.edit.historical"
+        <require permission="bungeni.historical.Edit"
             attributes="
                 parliament_id
                 submission_date" 
         />
-        <require permission="bungeni.edit.historical"
+        <require permission="bungeni.historical.Edit"
             set_attributes="
                 parliament_id
                 submission_date
@@ -280,12 +280,12 @@
                 group_id
                 "
         />
-        <require permission="bungeni.edit.historical"
+        <require permission="bungeni.historical.Edit"
             attributes="
                 parliament_id
                 submission_date"
         />
-        <require permission="bungeni.edit.historical"
+        <require permission="bungeni.historical.Edit"
             set_attributes="
                 parliament_id
                 submission_date
@@ -327,12 +327,12 @@
                 receive_notification
                 link"
         />
-        <require permission="bungeni.edit.historical"
+        <require permission="bungeni.historical.Edit"
             attributes="
                 parliament_id
                 submission_date"
         />
-        <require permission="bungeni.edit.historical"
+        <require permission="bungeni.historical.Edit"
             set_attributes="
                 parliament_id
                 submission_date
@@ -369,10 +369,10 @@
                 start_date
                 end_date"
         />
-        <require permission="bungeni.edit.historical"
+        <require permission="bungeni.historical.Edit"
             attributes="parent_group_id"
         />
-        <require permission="bungeni.edit.historical"
+        <require permission="bungeni.historical.Edit"
             set_attributes="parent_group_id
                 status" 
         />
@@ -401,10 +401,10 @@
                 end_date
                 election_date"
         />
-        <require permission="bungeni.edit.historical"
+        <require permission="bungeni.historical.Edit"
             attributes="parent_group_id"
         />
-        <require permission="bungeni.edit.historical"
+        <require permission="bungeni.historical.Edit"
             set_attributes="
                 parent_group_id
                 status"
@@ -448,10 +448,10 @@
                 default_chairperson
                 reinstatement_date"
         />
-        <require permission="bungeni.edit.historical"
+        <require permission="bungeni.historical.Edit"
             attributes="parent_group_id"
         />
-        <require permission="bungeni.edit.historical"
+        <require permission="bungeni.historical.Edit"
             set_attributes="
                 parent_group_id
                 status"
@@ -483,10 +483,10 @@
     </class>
     <class class=".domain.PoliticalGroup">
         <require like_class=".domain.PoliticalParty" />
-        <require permission="bungeni.edit.historical"
+        <require permission="bungeni.historical.Edit"
             attributes="parent_group_id"
         />
-        <require permission="bungeni.edit.historical"
+        <require permission="bungeni.historical.Edit"
             set_attributes="
                 parent_group_id
                 status"
@@ -513,10 +513,10 @@
                 start_date
                 end_date"
         />
-        <require permission="bungeni.edit.historical"
+        <require permission="bungeni.historical.Edit"
             attributes="parent_group_id"
         />
-        <require permission="bungeni.edit.historical"
+        <require permission="bungeni.historical.Edit"
             set_attributes="
                 parent_group_id
                 status"
@@ -543,10 +543,10 @@
                 start_date
                 end_date"
         />
-        <require permission="bungeni.edit.historical"
+        <require permission="bungeni.historical.Edit"
             attributes="parent_group_id"
         />
-        <require permission="bungeni.edit.historical"
+        <require permission="bungeni.historical.Edit"
             set_attributes="
                 parent_group_id
                 status"
@@ -698,7 +698,7 @@
                 file_name
                 file_mimetype"
         />
-        <require permission="bungeni.edit.historical"
+        <require permission="bungeni.historical.Edit"
             set_attributes="
                 status_date
                 status" 

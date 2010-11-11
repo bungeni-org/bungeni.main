@@ -1546,8 +1546,6 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
             modes="edit|view|listing",
             property=schema.Date(title=_(u"Submission Date"), required=False),
             listing_column=day_column("submission_date", _(u"Submission Date")),
-            view_permission="bungeni.edit.historical",
-            edit_permission="bungeni.edit.historical",
             edit_widget=DateWidget,
             add_widget=DateWidget,
         ),
@@ -1667,8 +1665,6 @@ class MotionDescriptor(ParliamentaryItemDescriptor):
         Field(name="approval_date",
             modes="edit|view",
             property=schema.Date(title=_(u"Approval Date"), required=False),
-            view_permission="bungeni.edit.historical",
-            edit_permission="bungeni.edit.historical",
             edit_widget=DateWidget,
             add_widget=DateWidget
         ),

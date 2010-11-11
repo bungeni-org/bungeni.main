@@ -9,7 +9,6 @@
        workflows/permissions.zcml
     -->
     
-  <permission id="bungeni.edit.Historical" title="Edit historical content" />
   <permission id="bungeni.TranslateContent" title="Translate content" />
 
   <permission id="bungeni.session.Add" title="Add session" />
@@ -91,8 +90,7 @@
   <!--meta:redefinePermission from="bungeni.bill.View" to="zope.View" /-->
   
   <permission id="bungeni.user.AdminRecord" title="Admin User Record" />
-  <permission id="bungeni.edit.historical" title="Edit historical data" />
-  
+  <permission id="bungeni.historical.Edit" title="Edit historical data" />
   
   <permission id="bungeni.party.Add" title="Add party" />
   <permission id="bungeni.party.Edit" title="Edit party" />
