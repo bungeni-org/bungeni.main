@@ -25,7 +25,7 @@ from bungeni.models import interfaces as model_interfaces
 
 from bungeni.core import interfaces
 from bungeni.core import location
-from bungeni.core.content import Section
+from bungeni.core.content import Section, AdminSection
 from bungeni.core.content import QueryContent
 from bungeni.core.i18n import _
 from bungeni.models.utils import get_current_parliament
@@ -43,9 +43,9 @@ def onWSGIApplicationCreatedEvent(application, event):
 
 class BungeniApp(Application):
     implements(model_interfaces.IBungeniApplication)
-
-class BungeniAdmin(SampleContainer):
-    implements(model_interfaces.IBungeniAdmin )
+#!CRUFT (miano, nov-2010) possible cruft
+#class BungeniAdmin(SampleContainer):
+#    implements(model_interfaces.IBungeniAdmin )
 
 
 
@@ -117,7 +117,13 @@ class AppSetup(object):
             title=_(u"Archive"),
             description=_(u"Parliament records and documents"),
             default_name="archive-index")
-        admin = self.context["admin"] = Section(
+            
+        #!+SECURITY(miano. nov-2010) Admin section now uses AdminSection
+        # container that is identical to Section, only difference is that
+        # traversing though it requires zope.ManageSite permission as defined
+        # in core/configure.zcml
+            
+        admin = self.context["admin"] = AdminSection(
             title=_(u"Administration"),
             description=_(u"Administer bungeni settings"),
             default_name="admin-index",
@@ -256,6 +262,7 @@ class AppSetup(object):
         content = admin["content"] = Section(
             title=_(u"Content"),
             description=_(u"browse the content"),
+            marker=model_interfaces.IBungeniAdmin,
             default_name="browse-admin")
 
         admin["settings"] = Section(

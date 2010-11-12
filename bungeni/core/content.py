@@ -126,14 +126,20 @@ class Section(OrderedContainer):
         traverser = ItemTraverser(self, request)
         return traverser.publishTraverse(request, name)
 
+class AdminSection(Section):
+    pass
+
+
+#!+SECURITY (miano, nov-2010) the security checker below does not seem to be
+# used.
 # ensure public security setting for these Section attributes
-from zope.security.checker import CheckerPublic, Checker, defineChecker
-_PUBLIC_ATTRS = { 
-    'browserDefault':CheckerPublic, 
-    '__call__':CheckerPublic,
-    'publishTraverse':CheckerPublic
-}
-defineChecker(Section, Checker(_PUBLIC_ATTRS))
+#from zope.security.checker import CheckerPublic, Checker, defineChecker
+#_PUBLIC_ATTRS = { 
+#    'browserDefault':CheckerPublic, 
+#    '__call__':CheckerPublic,
+#    'publishTraverse':CheckerPublic
+#}
+#defineChecker(Section, Checker(_PUBLIC_ATTRS))
 
 
 class QueryContent(object):

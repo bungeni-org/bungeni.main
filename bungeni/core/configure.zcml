@@ -99,7 +99,8 @@
   <class class=".content.Section">
     <allow interface="zope.publisher.interfaces.browser.IBrowserPublisher" />
   </class>
-
+  
+  <!-- interface="zope.publisher.interfaces.browser.IBrowserPublisher" -->
   <!--class class="bungeni.models.domain.ParliamentaryItem">
     <implements interface="ore.xapian.interfaces.IIndexable" />
   </class>
@@ -179,17 +180,21 @@
      class=".app.BungeniApp">
      <allow interface="zope.app.container.interfaces.IReadContainer" />
   </class>
-
-  <class 
+  <!--#!CRUFT (miano, nov-2010) possible cruft-->
+  <!--class 
      class=".app.BungeniAdmin">
      <allow interface="zope.app.container.interfaces.IReadContainer" />
-  </class>
+  </class-->
 
   <class class=".content.Section">
     <allow attributes="title description"
            interface="zope.container.interfaces.IContentContainer" />
   </class>
-
+  <class class=".content.AdminSection">
+    <require 
+            permission="zope.ManageSite"
+           interface="zope.publisher.interfaces.browser.IBrowserPublisher" />
+  </class> 
   <!-- scheduling -->
 
   <adapter factory=".schedule.PlenarySchedulingContext" />
