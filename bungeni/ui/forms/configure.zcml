@@ -138,6 +138,15 @@
      class=".viewlets.SubFormViewletManager"
      permission="zope.View"
      />
+	 
+  <!-- Viewlet manager for rss subscription mark -->
+  
+  <browser:viewletManager
+     name="bungeni.content.rss"
+	 provides=".interfaces.ISubformRssSubscriptionViewletManager"
+	 class=".viewlets.SubformRssSubscriptionViewletManager"
+	 permission="zope.View"
+	 />
 
 
   <!--browser:viewlet
@@ -198,6 +207,17 @@
      weight="10"
      />
 -->
+
+  <!-- Rss subscription marks -->
+  
+  <browser:viewlet
+     name="bungeni.viewlet.rsslink"
+	 manager=".interfaces.ISubformRssSubscriptionViewletManager"
+	 class=".viewlets.RssLinkViewlet"
+	 for="bungeni.models.interfaces.IBungeniContent"
+	 permission="zope.View"
+     layer="bungeni.ui.interfaces.IBungeniAuthenticatedSkin"
+	 />
   
   <!-- GroupSitting -->
   

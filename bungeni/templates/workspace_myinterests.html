@@ -1,0 +1,18 @@
+#[ $Id: workspace_viewlets.html 7451 2010-10-25 13:12:07Z mario.ruggier $ ]#
+
+<dt class="portletHeader" id="fieldsetlegend-${view.view_id}">
+    <span>${view.view_title}</span>
+</dt>
+
+<dd id="fieldset-${view.view_id}" class="portletItem">
+    $for{item in view.items}
+	   <div class="item">
+	   	   <strong>
+	   	   	   ${item["title"]}
+	   	   </strong>
+		   <p>
+		   	   ${item["description"]}
+		   </p>
+	   </div>
+	$rof        
+</dd>

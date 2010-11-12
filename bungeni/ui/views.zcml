@@ -71,6 +71,12 @@
         class=".workspace.WorkspacePIView"
         permission="zope.View"
     />
+	<browser:page name="workspace-mi"
+        for=".interfaces.IWorkspaceMIContext"
+        layer=".interfaces.IBungeniAuthenticatedSkin"
+        class=".workspace.WorkspaceMIView"
+        permission="zope.View"
+    />
     <browser:page name="workspace-archive"
         for=".interfaces.IWorkspaceArchiveContext"
         layer=".interfaces.IBungeniAuthenticatedSkin"
@@ -581,5 +587,20 @@
         permission="zope.View"
         layer=".interfaces.IRSSRepresentationLayer"
      />
+	 
+	 <browser:pages
+	    for="bungeni.models.interfaces.IBungeniContent"
+        class=".rss.SubscriptionView"
+        permission="zope.View"
+        layer="bungeni.ui.interfaces.IBungeniAuthenticatedSkin">
+        	<browser:page
+			   name="subscribe"
+			   attribute="subscribe"
+			/>
+			<browser:page
+               name="unsubscribe"
+               attribute="unsubscribe"
+            />
+     </browser:pages>
 	 
 </configure>

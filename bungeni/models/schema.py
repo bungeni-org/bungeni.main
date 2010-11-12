@@ -119,6 +119,12 @@ users = rdb.Table("users", metadata,
     rdb.Column("language", rdb.String(5), nullable=False),
 )
 
+# associations table for many-to-many relation between user and parliamentary item
+
+users_parliementary_items = rdb.Table("users_parliementary_items", metadata,
+                                      rdb.Column("users_id", rdb.Integer, rdb.ForeignKey("users.user_id")),
+                                      rdb.Column("parliamentary_items_id", rdb.Integer, rdb.ForeignKey("parliamentary_items.parliamentary_item_id"))
+                                      )
 
 # delegate rights to act on behalf of a user to another user
 user_delegations = rdb.Table("user_delegations", metadata,
@@ -132,6 +138,7 @@ user_delegations = rdb.Table("user_delegations", metadata,
     )
 )
 
+# user subscriptions table
 
 # specific user classes
 parliament_memberships = rdb.Table("parliament_memberships", metadata,
@@ -422,7 +429,7 @@ def _make_address_table(metadata, fk_key="user"):
     return rdb.Table(table_name, metadata,
         rdb.Column("address_id", rdb.Integer, primary_key=True),
         # user|personal or group|official addresses
-        rdb.Column(fk_col_name, rdb.Integer, 
+        rdb.Column(fk_col_name, rdb.Integer,
             rdb.ForeignKey(fk_target),
             nullable=False
         ),

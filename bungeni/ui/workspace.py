@@ -31,7 +31,7 @@ from bungeni.models import domain
 from bungeni.models.utils import container_getter
 from bungeni.models.utils import get_db_user_id
 from bungeni.models.utils import get_roles
-from bungeni.models.utils import get_group_ids_for_user_in_parliament 
+from bungeni.models.utils import get_group_ids_for_user_in_parliament
 from bungeni.models.utils import get_ministries_for_user_in_government
 from bungeni.models.utils import get_current_parliament
 from bungeni.models.utils import get_current_parliament_governments
@@ -76,7 +76,7 @@ def prepare_user_workspaces(event):
                 # publication.apply_request_layer_by_url() that therefore must 
                 # have already been called
                 interfaces.IWorkspaceSectionLayer.providedBy(req)
-                or 
+                or
                 interfaces.IWorkspaceSchedulingSectionLayer.providedBy(req)
                 or
                 # or the request is for *the* Home Page (as in this case
@@ -87,7 +87,7 @@ def prepare_user_workspaces(event):
         )
     if not need_to_prepare_workspaces(application, request):
         return
-    
+
     # initialize a layer data object, for the views in the layer
     LD = IAnnotations(request)["layer_data"] = misc.bunch(
         workspaces=[], # workspace containers !+ unique?
@@ -99,7 +99,7 @@ def prepare_user_workspaces(event):
         government_id=None,
         ministries=None, # list of ministries (that are also workspaces)
     )
-    
+
     LD.user_id = get_db_user_id()
     try:
         parliament = get_current_parliament(None)
@@ -115,7 +115,7 @@ def prepare_user_workspaces(event):
                 log.debug("adding parliament workspace %s (for role %s)" % (
                                                         parliament, role_id))
                 LD.workspaces.append(parliament)
-    
+
         # "bungeni.Minister"
         # need to check for ministry groups to which the principal belongs, and 
         # for each such ministry assign a ministry workspace
@@ -133,24 +133,24 @@ def prepare_user_workspaces(event):
             ministries:%s""" % (
                 LD.user_id,
                 roles,
-                parliament.full_name, parliament.group_id, 
-                LD.government_id, 
-                [(m.full_name, m.group_id) for m in LD.ministries] ))
+                parliament.full_name, parliament.group_id,
+                LD.government_id,
+                [(m.full_name, m.group_id) for m in LD.ministries]))
         for ministry in LD.ministries:
             log.debug("adding ministry workspace %s" % ministry)
             LD.workspaces.append(ministry)
     except (Exception,):
         debug.log_exc_info(sys.exc_info(), log_handler=log.info)
-    
+
     # ensure unique workspaces, preserving order, retaining same list obj ref
-    LD.workspaces[:] = [ workspace for i,workspace in enumerate(LD.workspaces) 
-                         if LD.workspaces.index(workspace)==i ]
-    
+    LD.workspaces[:] = [ workspace for i, workspace in enumerate(LD.workspaces)
+                         if LD.workspaces.index(workspace) == i ]
+
     # mark each workspace container with IWorkspaceContainer
     for workspace in LD.workspaces:
         interface.alsoProvides(workspace, interfaces.IWorkspaceContainer)
         log.debug(debug.interfaces(workspace))
-    
+
     log.debug(" [prepare_user_workspaces] %s" % debug.interfaces(request))
     log.info(""" [prepare_user_workspaces] DONE:
         for: [request=%s][path=%s][path_info=%s]
@@ -169,7 +169,7 @@ def workspace_resolver(context, request, name):
     if name.startswith("obj-"):
         obj_id = int(name[4:])
         for workspace in IAnnotations(request)["layer_data"].workspaces:
-            if obj_id==workspace.group_id:
+            if obj_id == workspace.group_id:
                 log.debug("[workspace_resolver] name=%s workspace=%s context=%s" % (
                                         name, workspace, context))
                 assert interfaces.IWorkspaceContainer.providedBy(workspace)
@@ -186,24 +186,25 @@ class WorkspaceContainerTraverser(SimpleComponentTraverser):
     """
     interface.implementsOnly(IPublishTraverse)
     component.adapts(interfaces.IWorkspaceContainer, IHTTPRequest)
-    
+
     def __init__(self, context, request):
         assert interfaces.IWorkspaceContainer.providedBy(context)
         self.context = context # workspace domain object
         self.request = request
         log.debug(" __init__ %s context=%s url=%s" % (
                         self, self.context, request.getURL()))
-    
+
     def publishTraverse(self, request, name):
         workspace = self.context
         _meth_id = "%s.publishTraverse" % self.__class__.__name__
         log.debug("%s: name=%s context=%s " % (_meth_id, name, workspace))
-        
-        if name=="pi":
+        if name == "pi":
             return getWorkSpacePISection(workspace)
-        elif name=="archive":
+        elif name == "archive":
             return getWorkSpaceArchiveSection(workspace)
-        return super(WorkspaceContainerTraverser, 
+        elif name == "mi":
+            return getWorkSpaceMISection(workspace)
+        return super(WorkspaceContainerTraverser,
                         self).publishTraverse(request, name)
 
 
@@ -213,6 +214,47 @@ ARCHIVED = ("debated", "withdrawn", "response_complete", "elapsed", "dropped")
 
 # Note: for all the following QueryContent "sections", we want to keep 
 # title=None so that no menu item for the entry will be displayed
+
+def getWorkSpaceMISection(workspace):
+    """ /workspace/obj-id/pi -> non-ARCHIVED parliamentary items
+    """
+    s = Section(title=_(u"My interests"),
+            description=_(u"Your current interests"),
+            default_name="workspace-mi")
+    interface.alsoProvides(s, interfaces.IWorkspaceMIContext)
+    s.__parent__ = workspace
+    s.__name__ = "mi"
+    s["questions"] = QueryContent(
+            container_getter(workspace, 'questions',
+            query_modifier=sql.not_(domain.Question.status.in_(ARCHIVED))),
+            #title=_(u"Questions"),
+            description=_(u"Questions"))
+    s["motions"] = QueryContent(
+            container_getter(workspace, 'motions',
+                query_modifier=sql.not_(domain.Motion.status.in_(ARCHIVED))),
+            #title=_(u"Motions"),
+            description=_(u"Motions"))
+    s["tableddocuments"] = QueryContent(
+            container_getter(workspace, 'tableddocuments',
+                query_modifier=sql.not_(domain.TabledDocument.status.in_(ARCHIVED))),
+            #title=_(u"Tabled documents"),
+            description=_(u"Tabled documents"))
+    s["bills"] = QueryContent(
+            container_getter(workspace, 'bills',
+                query_modifier=sql.not_(domain.Bill.status.in_(ARCHIVED))),
+            #title=_(u"Bills"),
+            description=_(u"Bills"))
+    s["agendaitems"] = QueryContent(
+            container_getter(workspace, 'agendaitems',
+                query_modifier=sql.not_(domain.AgendaItem.status.in_(ARCHIVED))),
+            #title=_(u"Agenda items"),
+            description=_(u" items"))
+    s["committees"] = QueryContent(
+            container_getter(workspace, 'committees'),
+            #title=_(u"Committees"),
+            description=_(u"Committees"))
+    log.debug("WorkspaceMISection %s" % debug.interfaces(s))
+    return s
 
 def getWorkSpacePISection(workspace):
     """ /workspace/obj-id/pi -> non-ARCHIVED parliamentary items
@@ -342,19 +384,19 @@ from bungeni.ui import z3evoque
 #from zope.app.pagetemplate import ViewPageTemplateFile
 
 class WorkspaceSectionView(browser.BungeniBrowserView):
-    
+
     # evoque
     __call__ = z3evoque.PageViewTemplateFile("workspace.html#section_page")
-    
+
     # zpt
     #__call__ = ViewPageTemplateFile("templates/workspace-section.pt")
-    
+
     # set on request.layer_data
     user_id = None
     user_group_ids = None
     government_id = None
     ministries = None
-    
+
     role_interface_mapping = {
         u'bungeni.Admin': interfaces.IAdministratorWorkspace,
         u'bungeni.Minister': interfaces.IMinisterWorkspace,
@@ -362,7 +404,7 @@ class WorkspaceSectionView(browser.BungeniBrowserView):
         u'bungeni.Speaker': interfaces.ISpeakerWorkspace,
         u'bungeni.Clerk': interfaces.IClerkWorkspace
     }
-    
+
     def __init__(self, context, request):
         """self:zope.app.pagetemplate.simpleviewclass.SimpleViewClass -> 
                     templates/workspace-index.pt
@@ -372,11 +414,11 @@ class WorkspaceSectionView(browser.BungeniBrowserView):
         assert interfaces.IWorkspaceSectionLayer.providedBy(request)
         assert LD.get("workspaces") is not None
         super(WorkspaceSectionView, self).__init__(context, request)
-        cls_name = self.__class__.__name__ 
+        cls_name = self.__class__.__name__
         # NOTE: Zope morphs this class's name to "SimpleViewClass from ..." 
         log.debug("%s.__init__ %s context=%s url=%s" % (
                             cls_name, self, self.context, request.getURL()))
-        
+
         # transfer layer data items, for the view/template
         self.user_id = LD.user_id
         self.user_group_ids = LD.user_group_ids
@@ -387,7 +429,7 @@ class WorkspaceSectionView(browser.BungeniBrowserView):
             # this must be a MinisterWorkspace
             if misc.get_parent_with_interface(self, model_interfaces.IMinistry):
                 interface.alsoProvides(self, interfaces.IMinisterWorkspace)
-        
+
         # roles are function of the context, so always recalculate
         roles = get_roles(self.context)
         for role_id in roles:
@@ -395,12 +437,18 @@ class WorkspaceSectionView(browser.BungeniBrowserView):
             if iface is not None:
                 interface.alsoProvides(self, iface)
         log.debug("%s.__init__ %s" % (cls_name, debug.interfaces(self)))
-        
+
 class WorkspacePIView(WorkspaceSectionView):
     def __init__(self, context, request):
         self.provide.default_provider_name = "bungeni.workspace-pi"
         super(WorkspacePIView, self).__init__(
                 interfaces.IWorkspacePIContext(context), request)
+
+class WorkspaceMIView(WorkspaceSectionView):
+    def __init__(self, context, request):
+        self.provide.default_provider_name = "bungeni.workspace-mi"
+        super(WorkspaceMIView, self).__init__(
+                interfaces.IWorkspaceMIContext(context), request)
 
 class WorkspaceArchiveView(WorkspaceSectionView):
     def __init__(self, context, request):

@@ -26,8 +26,8 @@ def filterFields(context, form_fields):
         md = queryModelDescriptor(context.__class__)
         for field in form_fields:
             try:
-                can_write = security.canWrite( context, field.__name__)
-                can_read = security.canAccess( context, field.__name__)
+                can_write = security.canWrite(context, field.__name__)
+                can_read = security.canAccess(context, field.__name__)
             except AttributeError:
                 can_write = can_read = False
             if can_write:
@@ -38,7 +38,7 @@ def filterFields(context, form_fields):
             else:
                 omit_names.append(field.__name__)
     elif not IAlchemistContainer.providedBy(context):
-        ctx=getattr(context, "context", None)
+        ctx = getattr(context, "context", None)
         if ctx:
             filterFields(ctx, form_fields)
         else:
@@ -46,7 +46,7 @@ def filterFields(context, form_fields):
     return form_fields.omit(*omit_names)
 
 
-class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm, 
+class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
     browser.BungeniViewlet):
     """
     bungeni.subform.manager
@@ -56,23 +56,23 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
     render = z3evoque.ViewTemplateFile("form.html#display")
     # zpt
     #render = ViewPageTemplateFile("templates/display_form.pt")
-    
+
     # the instance of the ViewProvideViewletManager
     provide = z3evoque.ViewProvideViewletManager(
         default_provider_name="bungeni.subform.manager")
-    
+
     mode = "view"
     form_name = _(u"General")
     has_data = True
     adapters = None
-    
+
     def get_note(self):
         """Return Notes if supplied by context.
         """
         context = removeSecurityProxy(self.context)
         if getattr(context, "note", False):
             return context.note
-    
+
     def setupActions(self):
         return # !+ ??
         self.wf = interfaces.IWorkflowInfo(self.context, None)
@@ -80,11 +80,11 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
             transitions = self.wf.getManualTransitionIds()
             self.actions = tuple(bindTransitions(
                 self, transitions, None, interfaces.IWorkflow(self.context)))
-    
+
     def setUpWidgets(self, ignore_request=False):
         languages = get_all_languages()
         self.form_fields = filterFields(self.context, self.form_fields)
-        
+
         #do not display empty form fields
         omit_names = []
         for f in self.form_fields:
@@ -92,13 +92,13 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
             if val is None:
                 omit_names.append(f.__name__)
         self.form_fields = self.form_fields.omit(*omit_names)
-        
+
         lang = self.request.locale.getLocaleID()
         try:
             translation = get_translation_for(self.context, lang)
         except:
             translation = []
-        if (not translation and 
+        if (not translation and
             getattr(self.context, "language", None) and
             getattr(self.context, "language", None) != lang
         ):
@@ -108,34 +108,34 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
                 if langname == None:
                     langname = supported_lang.get("name")
                 self.status = translate(
-                    _(u"This content is not yet translated into $language", 
+                    _(u"This content is not yet translated into $language",
                         mapping={"language": langname}),
                     domain="bungeni.ui",
                     context=self.request
                 )
         context = copy(removeSecurityProxy(self.context))
         for field_translation in translation:
-            setattr(context, field_translation.field_name, 
+            setattr(context, field_translation.field_name,
                     field_translation.field_text)
         self.widgets = form.setUpEditWidgets(
             self.form_fields, self.prefix, context, self.request,
-            adapters=self.adapters, 
-            for_display=True, 
+            adapters=self.adapters,
+            for_display=True,
             ignore_request=ignore_request
         )
-    
+
     def update(self):
         self.setupActions()
         #super(BungeniAttributeDisplay, self).update()
         DynamicFields.update(self)
         self.setupActions()  # after we transition we have different actions
         try:
-            wf_state =interfaces.IWorkflowState(
+            wf_state = interfaces.IWorkflowState(
                 removeSecurityProxy(self.context)).getState()
             self.wf_status = wf_state
         except:
             pass
-    
+
     @property
     def form_name(self):
         parent = self.context.__parent__
@@ -145,15 +145,15 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
             descriptor = queryModelDescriptor(self.context.__class__)
         else:
             raise RuntimeError("Unsupported object: %s." % repr(self.context))
-        
+
         if descriptor:
             name = getattr(descriptor, "display_name", None)
-        
+
         if name is None:
             name = self.context.__class__.__name__
-        
+
         return name
-        
+
     def getObjectClass(self):
         return self.context.__class__.__name__
 
@@ -167,6 +167,7 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
             if isinstance(error, interface.Invalid):
                 errors.append(error)
         return errors
+
     @property
     def invariantMessages(self):
         """ () -> [message:str]

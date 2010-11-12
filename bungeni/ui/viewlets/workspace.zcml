@@ -50,6 +50,10 @@
             action="archive"
             order="2"
         />
+		<browser:menuItem title="My interests"
+            action="mi"
+            order="3"
+        />
     </browser:menuItems>
     <browser:menuItems menu="workspace_context_navigation"
         for="..interfaces.IWorkspaceSectionContext"
@@ -63,10 +67,19 @@
             action="./../archive"
             order="2"
         />
+		<browser:menuItem title="My interests"
+            action="./../mi"
+            order="3"
+        />
     </browser:menuItems>
     
     <browser:viewletManager name="bungeni.workspace-pi"
         provides=".interfaces.IWorkspaceManager"
+        permission="zope.View"
+        class=".workspace.WorkspaceViewletManager"
+    />
+	<browser:viewletManager name="bungeni.workspace-mi"
+        provides=".interfaces.IWorkspaceMIManager"
         permission="zope.View"
         class=".workspace.WorkspaceViewletManager"
     />
@@ -338,5 +351,14 @@
         permission="zope.View"
         weight="50"
     />
+	
+	<browser:viewlet name="bungeni.workspace.my-interests"
+	    for="*"
+		manager=".interfaces.IWorkspaceMIManager"
+		class=".workspace.MyInterestsViewlet"
+		permission="zope.View"
+		weight="0"
+		layer="bungeni.ui.interfaces.IBungeniAuthenticatedSkin"
+	/>
 
 </configure>

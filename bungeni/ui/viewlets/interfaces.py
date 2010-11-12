@@ -15,6 +15,11 @@ class IWorkspaceArchiveManager(IViewletManager):
     """Workspace-archive viewlet manager."""
 
 
+class IWorkspaceMIManager(IViewletManager):
+    """ Workspace viewlet manager for my interests
+        section.
+    """
+
 class ISchedulingManager(IViewletManager):
     """Scheduling viewlet manager."""
 

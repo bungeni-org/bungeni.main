@@ -21,6 +21,8 @@ class IWorkspaceSectionContext(interface.Interface):
     """Marker for a section of a workspace."""
 class IWorkspacePIContext(IWorkspaceSectionContext):
     """Marker for the PI section of a workspace."""
+class IWorkspaceMIContext(IWorkspaceSectionContext):
+    """Marker for the MI section of a workspace."""
 class IWorkspaceArchiveContext(IWorkspaceSectionContext):
     """Marker for the Archive section of a workspace."""
 

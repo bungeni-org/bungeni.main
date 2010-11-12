@@ -95,7 +95,7 @@ class NoPrefix(unicode):
     prefix with field names; we override the ``__add__`` method to
     prevent this.
     """
-    
+
     def __add__(self, name):
         return name
 
@@ -105,7 +105,7 @@ NO_PREFIX = NoPrefix()
 class DefaultAction(formlib.form.Action):
     def __init__(self, action):
         self.__dict__.update(action.__dict__)
-    
+
     def submitted(self):
         return True
 
@@ -134,12 +134,12 @@ class BaseForm(formlib.form.FormBase):
 
     Adapts = None
     CustomValidation = None
-    
+
     legends = {} # { iface:_(str) } i.e. 
     # keys are of type Interface, values are localized strings
-    
+
     status = None
-    
+
     def __init__(self, *args):
         super(BaseForm, self).__init__(*args)
 
@@ -158,7 +158,7 @@ class BaseForm(formlib.form.FormBase):
         next_url = self._next_url = self.request.get("next_url", None)
         if next_url == "...":
             self._next_url = self.request.get("HTTP_REFERER", "")
-    
+
     def __call__(self):
         #session = Session()
         # XXX control the display order of the submit buttons 
@@ -169,7 +169,7 @@ class BaseForm(formlib.form.FormBase):
         call = super(BaseForm, self).__call__()
         #session.close()
         return call
-    
+
     @property
     def widget_groups(self):
         groups = {}
@@ -181,16 +181,16 @@ class BaseForm(formlib.form.FormBase):
             group = groups.setdefault(iface, [])
             group.append(widget)
         return groups
-    
+
     def update(self):
         self.status = self.request.get("portal_status_message", self.status)
         self.form_fields = self.filter_fields()
         super(BaseForm, self).update()
         set_widget_errors(self.widgets, self.errors)
-    
+
     def filter_fields(self):
         return self.form_fields
-    
+
     def validate(self, action, data):
         """Validation that require context must be called here,
         invariants may be defined in the descriptor."""
@@ -200,11 +200,11 @@ class BaseForm(formlib.form.FormBase):
         if not errors and self.CustomValidation is not None:
             return list(self.CustomValidation(self.context, data))
         return errors
-    
+
     @property
     def next_url(self):
         return self._next_url
-    
+
     @property
     def invariantErrors(self):
         """ () -> [error:zope.interface.Invalid]
@@ -231,15 +231,15 @@ class PageForm(BaseForm, formlib.form.PageForm, browser.BungeniBrowserView):
 
 
 class DisplayForm(catalyst.DisplayForm, browser.BungeniBrowserView):
-    
+
     # evoque
     template = z3evoque.PageViewTemplateFile("content.html#view")
-    
+
     # zpt
     #template = ViewPageTemplateFile("templates/content-view.pt")
-    
+
     form_name = _("View")
-    
+
     def __call__(self):
         return self.template()
 
@@ -253,10 +253,10 @@ class AddForm(BaseForm, catalyst.AddForm):
 
     interface.implements(ILocation, IDCDescriptiveProperties)
     description = None
-    
+
     def getDomainModel(self):
         return getattr(self.context, "domain_model", self.context.__class__)
-    
+
     def validate(self, action, data):
         errors = super(AddForm, self).validate(action, data)
         errors += self.validateUnique(action, data)
@@ -264,7 +264,7 @@ class AddForm(BaseForm, catalyst.AddForm):
         for validator in getattr(descriptor, "custom_validators", ()):
             errors += validator(action, data, None, self.context)
         return errors
-    
+
     def validateUnique(self, action, data):
         """Validate unique.
         
@@ -274,7 +274,7 @@ class AddForm(BaseForm, catalyst.AddForm):
         """
         errors = []
         domain_model = removeSecurityProxy(self.getDomainModel())
-        
+
         # find unique columns in data model.. TODO do this statically
         mapper = rdb.orm.class_mapper(domain_model)
         ucols = list(ui.unique_columns(mapper))
@@ -294,12 +294,12 @@ class AddForm(BaseForm, catalyst.AddForm):
                     continue
                 widget = self.widgets[ key ]
                 error = formlib.form.WidgetInputError(
-                    widget.name, widget.label, 
+                    widget.name, widget.label,
                     _(u"Duplicate Value for Unique Field"))
                 widget._error = error
                 errors.append(error)
         return errors
-    
+
     def filter_fields(self):
         return filterFields(self.context, self.form_fields)
 
@@ -321,7 +321,7 @@ class AddForm(BaseForm, catalyst.AddForm):
     @property
     def context_class(self):
         return self.domain_model
-    
+
     @property
     def type_name(self):
         descriptor = queryModelDescriptor(self.domain_model)
@@ -330,12 +330,12 @@ class AddForm(BaseForm, catalyst.AddForm):
         if not name:
             name = getattr(self.domain_model, "__name__", None)
         return name
-    
+
     @property
     def form_name(self):
         return _(u"add_item_legend", default=u"Add $name", mapping={
             "name": translate(self.type_name.lower(), context=self.request)})
-    
+
     @property
     def title(self):
         return _(u"add_item_title", default=u"Adding $name", mapping={
@@ -349,7 +349,7 @@ class AddForm(BaseForm, catalyst.AddForm):
         self.adapters = {
             adapts : ob
         }
-    
+
     def createAndAdd(self, data):
         added_obj = super(AddForm, self).createAndAdd(data)
         # invalidate caches for this domain object type
@@ -361,21 +361,21 @@ class AddForm(BaseForm, catalyst.AddForm):
         # of the item (to transit the item into a public state) will anyway
         # invalidate the cache.
         return added_obj
-    
+
     @formlib.form.action(
-        _(u"Save and view"), 
+        _(u"Save and view"),
         condition=formlib.form.haveInputWidgets)
     def handle_add_save(self, action, data):
         for key in data.keys():
             print "[handle_add_save] KEY:%s VALUE:%s" % (key, data[key])
-            if isinstance(data[key], str): 
+            if isinstance(data[key], str):
                 data[key] = unescape(data[key])
         ob = self.createAndAdd(data)
         name = self.context.domain_model.__name__
         if not self._next_url:
             self._next_url = url.absoluteURL(ob, self.request) + \
                 "?portal_status_message=%s added" % name
-        
+
     @formlib.form.action(_(u"Cancel"), validator=ui.null_validator)
     def handle_cancel(self, action, data):
         """Cancelling redirects to the listing."""
@@ -384,11 +384,11 @@ class AddForm(BaseForm, catalyst.AddForm):
             self._next_url = url.absoluteURL(self.__parent__, self.request)
         self.request.response.redirect(self._next_url)
         session.close()
-        
+
     @formlib.form.action(_(u"Save"), condition=formlib.form.haveInputWidgets)
     def handle_add_edit(self, action, data):
         for key in data.keys():
-            if isinstance(data[key], str): 
+            if isinstance(data[key], str):
                 data[key] = unescape(data[key])
         ob = self.createAndAdd(data)
         name = self.context.domain_model.__name__
@@ -400,7 +400,7 @@ class AddForm(BaseForm, catalyst.AddForm):
         _(u"Save and add another"), condition=formlib.form.haveInputWidgets)
     def handle_add_and_another(self, action, data):
         for key in data.keys():
-            if isinstance(data[key], str): 
+            if isinstance(data[key], str):
                 data[key] = unescape(data[key])
         self.createAndAdd(data)
         name = self.context.domain_model.__name__
@@ -408,12 +408,12 @@ class AddForm(BaseForm, catalyst.AddForm):
         if not self._next_url:
             self._next_url = url.absoluteURL(self.context, self.request) + \
                              "/add?portal_status_message=%s Added" % name
-                              
+
 
 class EditForm(BaseForm, catalyst.EditForm):
     """Custom edit-form for Bungeni content.
     """
-    
+
     def __init__(self, *args):
         super(EditForm, self).__init__(*args)
         # For bungeni content, mark the request that we are in edit mode e.g. 
@@ -421,15 +421,15 @@ class EditForm(BaseForm, catalyst.EditForm):
         # offer option to submit the response while in response edit mode. 
         if IBungeniContent.providedBy(self.context): # and self.mode=="edit"
             interface.alsoProvides(self.request, IFormEditLayer)
-    
+
     @property
     def is_translation(self):
         return is_translation(self.context)
-    
+
     @property
     def side_by_side(self):
         return self.is_translation
-    
+
     @property
     def form_name(self):
         if IVersion.providedBy(self.context):
@@ -444,7 +444,7 @@ class EditForm(BaseForm, catalyst.EditForm):
                      default=u'Editing $language translation of "$title"',
                      mapping={"title": translate(props.title, context=self.request),
                               "language": language})
-        
+
         elif IVersion.providedBy(self.context):
             return _(u"edit_version_legend",
                      default=u'Editing "$title" (version $version)',
@@ -461,14 +461,14 @@ class EditForm(BaseForm, catalyst.EditForm):
             return _(u"edit_translation_help",
                      default=u"The original $language version is shown on the left",
                      mapping={"language": language})
-            
+
     def validate(self, action, data):
         errors = super(EditForm, self).validate(action, data)
 
         descriptor = queryModelDescriptor(self.context.__class__)
         for validator in getattr(descriptor, "custom_validators", ()):
             errors += validator(action, data, self.context, self.context.__parent__)
-        
+
         return errors
 
     def filter_fields(self):
@@ -498,12 +498,12 @@ class EditForm(BaseForm, catalyst.EditForm):
                 else:
                     display_widget = component.getMultiAdapter(
                         (field, self.request), IDisplayWidget)
-                
+
                 display_widget.setRenderedValue(field.get(head))
 
                 # attach widget as ``render_original``
                 widget.render_original = display_widget
-    
+
     def _do_save(self, data):
         for key in data.keys():
             if isinstance(data[key], str):
@@ -511,12 +511,12 @@ class EditForm(BaseForm, catalyst.EditForm):
         formlib.form.applyChanges(self.context, self.form_fields, data)
         # invalidate caches for this domain object type
         invalidate_caches_for(self.context.__class__.__name__, "edit")
-    
+
     @formlib.form.action(_(u"Save"), condition=formlib.form.haveInputWidgets)
     def handle_edit_save(self, action, data):
         """Saves the document and goes back to edit page"""
         self._do_save(data)
-    
+
     @formlib.form.action(
         _(u"Save and view"), condition=formlib.form.haveInputWidgets)
     def handle_edit_save_and_view(self, action, data):
@@ -526,16 +526,16 @@ class EditForm(BaseForm, catalyst.EditForm):
             self._next_url = url.absoluteURL(self.context, self.request) + \
                 "?portal_status_message= Saved"
         self.request.response.redirect(self._next_url)
-    
+
     @formlib.form.action(_(u"Cancel"), validator=ui.null_validator)
     def handle_edit_cancel(self, action, data):
         """Cancelling redirects to the listing."""
         for key in data.keys():
-            if isinstance(data[key], str): 
+            if isinstance(data[key], str):
                 data[key] = unescape(data[key])
         session = Session()
         if not self._next_url:
-            self._next_url = url.absoluteURL(self.context, self.request) 
+            self._next_url = url.absoluteURL(self.context, self.request)
         self.request.response.redirect(self._next_url)
         session.close()
 
@@ -544,15 +544,15 @@ class TranslateForm(AddForm):
     """Custom translate-form for Bungeni content.
     """
     is_translation = False
-    
+
     @property
     def side_by_side(self):
         return True
-    
+
     def __init__(self, *args):
         super(TranslateForm, self).__init__(*args)
         self.language = self.request.get("language", get_default_language())
-    
+
     def translatable_field_names(self):
         trusted = removeSecurityProxy(self.context)
         table = rdb.orm.object_mapper(trusted).mapped_table
@@ -561,17 +561,17 @@ class TranslateForm(AddForm):
             if type(column.type) in [rdb.Unicode, rdb.UnicodeText]:
                 names.append(column.name)
         return names
-    
+
     def set_untranslatable_fields_for_display(self):
         md = queryModelDescriptor(self.context.__class__)
         for field in self.form_fields:
             if field.__name__ not in self.translatable_field_names():
                 field.for_display = True
                 field.custom_widget = md.get(field.__name__).view_widget
-    
+
     def validate(self, action, data):
         return formlib.form.getWidgetsData(self.widgets, self.prefix, data)
-    
+
     @property
     def form_name(self):
         language = get_language_by_name(self.language)["name"]
@@ -579,12 +579,12 @@ class TranslateForm(AddForm):
             default=u"Add $language translation",
             mapping={"language": language}
         )
-    
+
     @property
     def form_description(self):
         language = get_language_by_name(self.language)["name"]
         props = (
-            (IDCDescriptiveProperties.providedBy(self.context) and 
+            (IDCDescriptiveProperties.providedBy(self.context) and
                 self.context) or
             IDCDescriptiveProperties(self.context)
         )
@@ -605,25 +605,25 @@ class TranslateForm(AddForm):
                     "language": language
                 }
             )
-    
+
     @property
     def title(self):
         language = get_language_by_name(self.language)["name"]
-        return _(u"translate_item_title", 
+        return _(u"translate_item_title",
             default=u"Adding $language translation",
             mapping={"language": language}
         )
-    
+
     @property
     def domain_model(self):
         return type(removeSecurityProxy(self.context))
-    
+
     def setUpWidgets(self, ignore_request=False):
         self.set_untranslatable_fields_for_display()
-        
+
         #get the translation if available
         language = self.request.get("language")
-        
+
         translation = get_translation_for(self.context, language)
         if translation:
             self.is_translation = True
@@ -631,12 +631,12 @@ class TranslateForm(AddForm):
             self.is_translation = False
         context = copy(removeSecurityProxy(self.context))
         for field_translation in translation:
-            setattr(context, field_translation.field_name, 
+            setattr(context, field_translation.field_name,
                     field_translation.field_text)
         self.widgets = formlib.form.setUpEditWidgets(
             self.form_fields, self.prefix, context, self.request,
             adapters=self.adapters, ignore_request=ignore_request)
-        
+
         if language is not None:
             widget = self.widgets["language"]
             try:
@@ -645,7 +645,7 @@ class TranslateForm(AddForm):
                 widget.vocabulary.getTermByToken(language)
             except LookupError:
                 raise BadRequest("No such language token: '%s'" % language)
-            
+
             # if the term exists in the vocabulary, set the value on
             # the widget
             widget.setRenderedValue(language)
@@ -658,10 +658,10 @@ class TranslateForm(AddForm):
             form_field = form_fields.get(widget.context.__name__)
             if form_field is None:
                 form_field = formlib.form.Field(widget.context)
-            
+
             # bind field to head document
             field = form_field.field.bind(head)
-            
+
             # create custom widget or instantiate widget using
             # component lookup
             if form_field.custom_widget is not None:
@@ -670,32 +670,32 @@ class TranslateForm(AddForm):
             else:
                 display_widget = component.getMultiAdapter(
                     (field, self.request), IDisplayWidget)
-            
+
             display_widget.setRenderedValue(field.get(head))
-            
+
             # attach widget as ``render_original``
             widget.render_original = display_widget
-    
+
     @formlib.form.action(
         _(u"Save translation"), condition=formlib.form.haveInputWidgets)
     def handle_add_save(self, action, data):
         """After succesful creation of translation, redirect to the
         view."""
         for key in data.keys():
-            if isinstance(data[key], str): 
+            if isinstance(data[key], str):
                 data[key] = unescape(data[key])
         #url = url.absoluteURL(self.context, self.request)
         #language = get_language_by_name(data["language"])["name"]
         session = Session()
         trusted = removeSecurityProxy(self.context)
         mapper = rdb.orm.object_mapper(trusted)
-        pk = getattr(trusted, mapper.primary_key[0].name) 
-        
+        pk = getattr(trusted, mapper.primary_key[0].name)
+
         current_translation = get_translation_for(self.context, data["language"])
         if current_translation:
             for translation in current_translation:
                 session.delete(translation)
-        
+
         for form_field in data.keys():
             if form_field == "language":
                 continue
@@ -709,13 +709,13 @@ class TranslateForm(AddForm):
         session.flush()
         session.commit()
         session.close()
-        
+
         # invalidate caches for this domain object type
         invalidate_caches_for(trusted.__class__.__name__, "translate")
-        
+
         #versions = IVersioned(self.context)
         #version = versions.create("'%s' translation added" % language)
-        
+
         # reset workflow state
         #version.status = None
         #IWorkflowInfo(version).fireTransition("create-translation")
@@ -725,14 +725,14 @@ class TranslateForm(AddForm):
 
         # commit version such that it gets a version id
         #transaction.commit()
-        
+
         #if not self._next_url:
         #    self._next_url = ( \
         #        "%s/versions/%s" % (url, stringKey(version)) + \
         #        "?portal_status_message=Translation added")
-        
+
         self._finished_add = True
-        
+
 class ReorderForm(PageForm):
     """Item reordering form.
 
@@ -765,10 +765,10 @@ class ReorderForm(PageForm):
         self.widgets = formlib.form.setUpWidgets(
             self.form_fields, self.prefix, self.context, self.request,
             form=self, adapters=self.adapters, ignore_request=ignore_request)
-    
+
     def save_ordering(self, ordering):
         raise NotImplementedError("Must be defined by subclass")
-    
+
     @formlib.form.action(_(u"Save"))
     def handle_save(self, action, data):
         self.save_ordering(data["ordering"])
@@ -791,16 +791,16 @@ class DeleteForm(PageForm):
     """
     # evoque
     template = z3evoque.PageViewTemplateFile("delete.html")
-    
+
     # zpt
     # !+form_template(mr, jul-2010) this is unused here, but needed by
     # some adapter of this "object delete" view
     #form_template = NamedTemplate("alchemist.form")
     #template = ViewPageTemplateFile("templates/delete.pt")
-    
+
     _next_url = None
     form_fields = formlib.form.Fields()
-    
+
     def _can_delete_item(self, action):
         return True
 
@@ -813,10 +813,10 @@ class DeleteForm(PageForm):
 
     def get_subobjects(self):
         return ()
-    
+
     def delete_subobjects(self):
         return 0
-    
+
     @formlib.form.action(_(u"Delete"), condition=_can_delete_item)
     def handle_delete(self, action, data):
         count = self.delete_subobjects()
@@ -842,7 +842,7 @@ class DeleteForm(PageForm):
         session.close()
         # invalidate caches for this domain object type
         invalidate_caches_for(self.context.__class__.__name__, "delete")
-        
+
         #TODO: check that it is removed from the index!
         notify(ObjectRemovedEvent(
             self.context, oldParent=container, oldName=self.context.__name__))
@@ -850,7 +850,7 @@ class DeleteForm(PageForm):
         # be merged into the session again and reappear magically
         self.context = container
         next_url = self.nextURL()
-        
+
         if next_url is None:
             next_url = url.absoluteURL(container, self.request) + \
                        "/?portal_status_message=%d items deleted" % count

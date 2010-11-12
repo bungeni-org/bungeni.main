@@ -13,9 +13,10 @@ import datetime
 
 import sqlalchemy.sql.expression as sql
 from sqlalchemy.orm import eagerload
-
+from zope.app.component.hooks import getSite
 from zope.app.publisher.browser.menu import getMenu
 from zope.app.pagetemplate import ViewPageTemplateFile
+from zope.traversing.browser import absoluteURL
 from zope.viewlet.manager import WeightOrderedViewletManager
 
 from bungeni.alchemist import Session
@@ -42,36 +43,36 @@ class ViewTemplateFile(z3evoque.ViewTemplateFile):
 '''
 
 class WorkspaceViewletManager(WeightOrderedViewletManager):
-    
+
     # evoque
     template = z3evoque.ViewTemplateFile("workspace.html#viewlet_manager")
-    
+
     # zpt
     #template = ViewPageTemplateFile("templates/workspace.pt")
 
     def update(self):
         super(WorkspaceViewletManager, self).update()
-         
+
 
 class WorkspaceContextNavigation(StructureAwareViewlet):
-    
+
     # evoque
     render = z3evoque.ViewTemplateFile("workspace.html#context_navigation",)
-    
+
     # zpt
     #render = ViewPageTemplateFile("templates/workspace_context_navigation.pt")
-    
+
     def update(self):
         # should only ever be called for contexts with these interfaces
-        assert (IWorkspaceContainer.providedBy(self.context) or 
+        assert (IWorkspaceContainer.providedBy(self.context) or
                 IWorkspaceSectionContext.providedBy(self.context))
-        self.sections = getMenu("workspace_context_navigation", 
+        self.sections = getMenu("workspace_context_navigation",
                                                 self.context, self.request)
         # Append a trailing slash to each workspace viewlet navigation entry so 
         # that the right context is always maintained when using this navigation.
         for section in self.sections:
             section["url"] = url.set_url_context(section["url"])
-        
+
         # get a translated copy of original workspace object
         workspace = translate_obj(
                 misc.get_parent_with_interface(self, IWorkspaceContainer))
@@ -80,10 +81,10 @@ class WorkspaceContextNavigation(StructureAwareViewlet):
 #
 
 class WorkspaceViewlet(browser.BungeniItemsViewlet):
-    
+
     # evoque
     render = z3evoque.ViewTemplateFile("workspace_viewlets.html#items")
-    
+
     # zpt
     #render = ViewPageTemplateFile("templates/workspace_item_viewlet.pt")
 
@@ -145,21 +146,21 @@ class QuestionInStateViewlet(WorkspaceViewlet):
 class MyGroupsViewlet(WorkspaceViewlet):
     view_id = "my_groups"
     view_title = _("My Groups")
-    
+
     # evoque
     render = z3evoque.ViewTemplateFile("workspace_viewlets.html#groups")
     # ZPT
     #render = ViewPageTemplateFile("templates/workspace_group_viewlet.pt")
-    
+
     def _get_items(self):
         formatter = self.get_date_formatter("date", "long")
         data_list = []
         results = self.query.all()
-        
+
         # if no current parliament, no data
         try:
             parliament_id = model_utils.get_current_parliament().parliament_id
-        except: 
+        except:
             return data_list
         #
         government_id = self.__parent__.government_id
@@ -190,11 +191,11 @@ class MyGroupsViewlet(WorkspaceViewlet):
             data["status"] = misc.get_wf_state(result)
             data["status_date"] = formatter.format(result.status_date)
             data["owner"] = ""
-            data["type"] =  _(result.type)
+            data["type"] = _(result.type)
             data["to"] = ""
             data_list.append(data)
         self.items = data_list
-    
+
     def update(self):
         """refresh the query
         """
@@ -203,7 +204,7 @@ class MyGroupsViewlet(WorkspaceViewlet):
         #parliament_id = self.__parent__.context.parliament_id
         group_ids = self.__parent__.user_group_ids
         gfilter = sql.and_(domain.Group.group_id.in_(group_ids),
-                            domain.Group.status=="active")
+                            domain.Group.status == "active")
         groups = session.query(domain.Group).filter(gfilter)
         self.query = groups
         self.items = self._get_items()
@@ -266,7 +267,7 @@ class OwnedItemsInStageViewlet(WorkspaceViewlet):
         "tableddocument",
         "bill"
     ]
-    
+
     def _get_items(self):
         data_list = []
         results = self.query.all()
@@ -274,7 +275,7 @@ class OwnedItemsInStageViewlet(WorkspaceViewlet):
         for result in results:
             data = {}
             data["qid"] = ("i-" + str(result.parliamentary_item_id))
-            if type(result)==domain.AgendaItem:
+            if type(result) == domain.AgendaItem:
                 g = u" " + result.group.type + u" " + result.group.short_name
             else:
                 g = u"" # !+ g?
@@ -285,12 +286,12 @@ class OwnedItemsInStageViewlet(WorkspaceViewlet):
                         result.type, result.parliamentary_item_id))
             data["status"] = misc.get_wf_state(result)
             data["status_date"] = formatter.format(result.status_date)
-            data["owner"] = "%s %s" %(result.owner.first_name, result.owner.last_name)
+            data["owner"] = "%s %s" % (result.owner.first_name, result.owner.last_name)
             data["type"] = _(result.type)
-            if type(result)==domain.Question:
+            if type(result) == domain.Question:
                 data["to"] = result.ministry.short_name
             else:
-                data["to"]= u""
+                data["to"] = u""
             # remember original domain object
             data["id"] = result.parliamentary_item_id
             data["_obj"] = result
@@ -307,14 +308,14 @@ class OwnedItemsInStageViewlet(WorkspaceViewlet):
         except:
             user_id = None
         qfilter = sql.and_(
-                        domain.ParliamentaryItem.owner_id==user_id,
+                        domain.ParliamentaryItem.owner_id == user_id,
                         domain.ParliamentaryItem.status.in_(self.states),
                         domain.ParliamentaryItem.type.in_(self.types))
         self.query = session.query(domain.ParliamentaryItem).filter(qfilter
             ).order_by(domain.ParliamentaryItem.parliamentary_item_id.desc())
         self.items = self._get_items()
 
-class AllItemsInStageViewlet(OwnedItemsInStageViewlet): 
+class AllItemsInStageViewlet(OwnedItemsInStageViewlet):
 
     def update(self):
         """Refresh the query.
@@ -325,10 +326,10 @@ class AllItemsInStageViewlet(OwnedItemsInStageViewlet):
                 domain.ParliamentaryItem.type.in_(self.types)
                     )
         self.query = session.query(domain.ParliamentaryItem).filter(qfilter
-            ).order_by(domain.ParliamentaryItem.parliamentary_item_id.desc()) 
+            ).order_by(domain.ParliamentaryItem.parliamentary_item_id.desc())
         self.items = self._get_items()
 
-class MPItemDraftViewlet(OwnedItemsInStageViewlet): 
+class MPItemDraftViewlet(OwnedItemsInStageViewlet):
     view_id = "items-draft"
     view_title = _("draft items")
     states = \
@@ -338,7 +339,7 @@ class MPItemDraftViewlet(OwnedItemsInStageViewlet):
         get_states("tableddocument", keys=["draft"])
 
 
-class MPItemActionRequiredViewlet(OwnedItemsInStageViewlet): 
+class MPItemActionRequiredViewlet(OwnedItemsInStageViewlet):
     """
     Display all questions and motions that require action
     (e.g. draft, clarification required)
@@ -412,7 +413,7 @@ class ClerkItemsWorkingDraftViewlet(AllItemsInStageViewlet):
         get_states("bill", keys=["working_draft"]) + \
         get_states("motion", keys=["working_draft"]) + \
         get_states("question", keys=["working_draft"]) + \
-        get_states("tableddocument", keys=["working_draft"])    
+        get_states("tableddocument", keys=["working_draft"])
 class SpeakerItemsWorkingDraftViewlet(ClerkItemsWorkingDraftViewlet):
     view_id = "speaker-items-working-draft"
 
@@ -420,7 +421,7 @@ class SpeakersClerkItemActionRequiredViewlet(ClerkItemActionRequiredViewlet):
     view_id = "clerks-items-action-required"
     view_title = _("pending with the clerk")
 
-class ClerkReviewedItemViewlet(AllItemsInStageViewlet): 
+class ClerkReviewedItemViewlet(AllItemsInStageViewlet):
     view_title = _("in progress")
     states = (
         get_states("agendaitem", not_tagged=[
@@ -439,8 +440,8 @@ class ClerkReviewedItemViewlet(AllItemsInStageViewlet):
                 "private", "terminal", "actionclerk", "scheduled", "approved",
         ])
     )
-    
-class ItemsCompleteViewlet(AllItemsInStageViewlet): 
+
+class ItemsCompleteViewlet(AllItemsInStageViewlet):
     view_id = "items-action-required"
     view_title = _("to review")
     states = \
@@ -449,7 +450,7 @@ class ItemsCompleteViewlet(AllItemsInStageViewlet):
         get_states("question", keys=["complete"]) + \
         get_states("tableddocument", keys=["complete"])
 
-class ItemsApprovedViewlet(AllItemsInStageViewlet): 
+class ItemsApprovedViewlet(AllItemsInStageViewlet):
     view_id = "items-approved"
     view_title = _("approved")
     states = \
@@ -459,7 +460,7 @@ class ItemsApprovedViewlet(AllItemsInStageViewlet):
         get_states("question", tagged=["approved"]) + \
         get_states("tableddocument", tagged=["approved"])
 
-class ItemsPendingScheduleViewlet(AllItemsInStageViewlet): 
+class ItemsPendingScheduleViewlet(AllItemsInStageViewlet):
     view_id = "items-pending-schedule"
     view_title = _("to be scheduled")
     states = \
@@ -480,7 +481,7 @@ class ItemsScheduledViewlet(AllItemsInStageViewlet):
         get_states("motion", keys=["scheduled"]) + \
         get_states("question", keys=["scheduled"]) + \
         get_states("tableddocument", keys=["scheduled"])
-    
+
     def update(self):
         super(ItemsScheduledViewlet, self).update()
         formatter = self.get_date_formatter("dateTime", "medium")
@@ -498,26 +499,26 @@ class ItemsScheduledViewlet(AllItemsInStageViewlet):
                 today = datetime.datetime.today().date()
                 # take "last" sitting date
                 startday = item_schedules[0].sitting.start_date.date()
-                if today==startday:
+                if today == startday:
                     d["css_class"] = "present"
-                elif today>startday:
+                elif today > startday:
                     d["css_class"] = "past"
                 else:
                     d["css_class"] = "future"
-            
+
 
 class MinistryItemsViewlet(WorkspaceViewlet):
     view_id = "ministry-items"
     view_title = _("questions to the ministry")
     states = None
-    response_types = ["O","W"]
-    
+    response_types = ["O", "W"]
+
     def _get_ministry_items(self, ministry):
         session = Session()
         date_formatter = self.get_date_formatter("date", "long")
         def _q_data_item(q):
             item = {}
-            item["qid"]= "q_%s" % q.question_id
+            item["qid"] = "q_%s" % q.question_id
             if q.question_number:
                 item["subject"] = u"Q %s %s (%s)" % (
                                     q.question_number, q.short_name, q.status)
@@ -528,21 +529,21 @@ class MinistryItemsViewlet(WorkspaceViewlet):
             item["url"] = url.set_url_context("questions/obj-%s" % q.question_id)
             item["status"] = misc.get_wf_state(q)
             item["status_date"] = date_formatter.format(q.status_date)
-            item["owner"] = "%s %s" %(q.owner.first_name, q.owner.last_name)
+            item["owner"] = "%s %s" % (q.owner.first_name, q.owner.last_name)
             item["type"] = _(q.type)
-            if type(q)==domain.Question:
+            if type(q) == domain.Question:
                 item["to"] = q.ministry.short_name
             else:
-                item["to"]= u""
+                item["to"] = u""
             return item
         # prepare query for this ministry's questions
         mq_query = session.query(domain.Question).filter(sql.and_(
-                domain.Question.ministry_id==ministry.group_id,
+                domain.Question.ministry_id == ministry.group_id,
                 domain.Question.status.in_(self.states),
                 domain.Question.response_type.in_(self.response_types)
                 ))
         return [ _q_data_item(question) for question in mq_query.all() ]
-           
+
     def update(self):
         session = Session()
         try:
@@ -554,14 +555,14 @@ class MinistryItemsViewlet(WorkspaceViewlet):
         ministries = session.query(domain.Ministry).filter(qfilter).order_by(
             domain.Ministry.start_date.desc())
         self.query = ministries
-        self.items = [ item for ministry in self.query.all() 
+        self.items = [ item for ministry in self.query.all()
                        for item in self._get_ministry_items(ministry) ]
 
 class MinistryArchiveViewlet(MinistryItemsViewlet):
     view_id = "items-archived"
     view_title = _("archived items")
     # Ministry archive only includes Questions in a public terminal state
-    states = get_states("question", 
+    states = get_states("question",
                     tagged=["public", "terminal"], conjunction="AND")
 
 class OralMinistryQuestionsViewlet(MinistryItemsViewlet):
@@ -587,17 +588,17 @@ class InProgressMinistryItemsViewlet(MinistryItemsViewlet):
 class DraftSittingsViewlet(WorkspaceViewlet):
     """The "agendas/minutes" tab in the workspace/pi view for the Clerk.
     """
-    
+
     # evoque
     render = z3evoque.ViewTemplateFile("workspace_viewlets.html#sittings")
-    
+
     # zpt
     #render = ViewPageTemplateFile("templates/workspace_sitting_viewlet.pt")
 
     view_id = "sitting-draft"
     view_title = _("agendas/minutes")
     states = get_states("groupsitting", tagged=["workspace"])
-    
+
     def _get_items(self):
         data_list = []
         results = self.query.all()
@@ -615,33 +616,33 @@ class DraftSittingsViewlet(WorkspaceViewlet):
             data["status"] = misc.get_wf_state(result)
             data["status_date"] = formatter.format(result.status_date)
             data["owner"] = ""
-            data["type"] =  result.group.type
+            data["type"] = result.group.type
             data["group"] = u"%s %s" % (
                     result.group.type.capitalize(), result.group.short_name)
             data["time_from_to"] = (
                     time_formatter.format(result.start_date),
                     time_formatter.format(result.end_date))
-            data["date"] = formatter.format(result.start_date) 
+            data["date"] = formatter.format(result.start_date)
             if result.venue:
                 data["venue"] = _(result.venue.short_name)
             #else:
             #    date["venue"] = ""
-            if type(result)==domain.Question:
+            if type(result) == domain.Question:
                 data["to"] = result.ministry.short_name
             else:
-                data["to"]= ""
+                data["to"] = ""
             # past, present, future
             today = datetime.datetime.today().date()
             startday = result.start_date.date()
-            if today==startday:
+            if today == startday:
                 data["css_class"] = "present"
-            elif today>startday:
+            elif today > startday:
                 data["css_class"] = "past"
             else:
                 data["css_class"] = "future"
             data_list.append(data)
         return data_list
-    
+
     def update(self):
         """Refresh the query
         """
@@ -655,3 +656,42 @@ class DraftSittingsViewlet(WorkspaceViewlet):
         self.query = sittings
         self.items = self._get_items()
 
+
+class MyInterestsViewlet(browser.BungeniItemsViewlet):
+    """ Renders subscribed items
+    """
+    render = z3evoque.ViewTemplateFile("workspace_myinterests.html#interests")
+
+    view_id = "my-interests"
+    view_title = _("My interests")
+
+    def __init__(self, context, request, view, manager):
+        super(MyInterestsViewlet, self).__init__(context, request, view, manager)
+        self.site_url = absoluteURL(getSite(), self.request)
+
+    def format_date(self, date):
+        return self.get_date_formatter().format(date)
+
+    def get_description(self, item):
+        return item.description
+
+    def get_title(self, item):
+        return "%s %s %s" % (translate_obj(item.origin, self.request.locale.id.language).short_name,
+                             _(u"changes from"),
+                             self.format_date(item.date_audit))
+
+    def update(self):
+        """ Getting necessary items
+        """
+        session = Session()
+        user = session.query(domain.User).filter(domain.User.login == self.request.principal.id).first()
+        if user is None:
+            self.items = []
+        else:
+            subscriptions = []
+            map(lambda x: subscriptions.extend(x.changes),
+                user.subscriptions)
+            subscriptions.sort(key=lambda x: x.date_audit, reverse=True)
+            self.items = [{'title': self.get_title(item),
+                           'description': self.get_description(item)}
+                           for item in subscriptions]

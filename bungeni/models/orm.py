@@ -9,7 +9,8 @@ import domain
 # Users
 # general representation of a person
 mapper(domain.User, schema.users,
-    properties={"user_addresses": relation(domain.UserAddress)}
+    properties={"user_addresses": relation(domain.UserAddress),
+                "subscriptions": relation(domain.ParliamentaryItem, secondary=schema.users_parliementary_items)}
 )
 
 # Groups
@@ -65,7 +66,7 @@ mapper(domain.UserDelegation, schema.user_delegations,
         ),
         "delegation": relation(domain.User,
             primaryjoin=rdb.and_(
-                (schema.user_delegations.c.delegation_id == 
+                (schema.user_delegations.c.delegation_id ==
                     schema.users.c.user_id),
                 schema.users.c.active_p == "A"
             ),
@@ -286,9 +287,9 @@ mapper(domain.Question, schema.questions,
     polymorphic_on=schema.parliamentary_items.c.type,
     polymorphic_identity="question",
     properties={
-        "changes":relation(domain.QuestionChange, 
+        "changes":relation(domain.QuestionChange,
             backref="origin",
-            cascade="all, delete-orphan", 
+            cascade="all, delete-orphan",
             passive_deletes=False
         ),
         "ministry": relation(domain.Ministry, lazy=False, join_depth=2),
@@ -319,11 +320,11 @@ mapper(domain.Motion, schema.motions,
     polymorphic_on=schema.parliamentary_items.c.type,
     polymorphic_identity="motion",
     properties={
-        "changes": relation(domain.MotionChange, 
+        "changes": relation(domain.MotionChange,
             backref="origin",
-            cascade="all, delete-orphan", 
+            cascade="all, delete-orphan",
             passive_deletes=False
-        ), 
+        ),
     }
 )
 
@@ -343,7 +344,7 @@ mapper(domain.MotionVersion, schema.motion_versions,
                 schema.attached_file_versions.c.item_id,
                 schema.attached_file_versions.c.file_version_id
             ]
-        ), 
+        ),
     }
 )
 
@@ -352,9 +353,9 @@ mapper(domain.Bill, schema.bills,
     polymorphic_on=schema.parliamentary_items.c.type,
     polymorphic_identity="bill",
     properties={
-        "changes": relation(domain.BillChange, 
+        "changes": relation(domain.BillChange,
             backref="origin",
-            cascade="all, delete-orphan", 
+            cascade="all, delete-orphan",
             passive_deletes=False
         )
     }
@@ -375,7 +376,7 @@ mapper(domain.BillVersion, schema.bill_versions,
                 schema.attached_file_versions.c.item_id,
                 schema.attached_file_versions.c.file_version_id
             ]
-        ), 
+        ),
     }
 )
 
@@ -424,7 +425,7 @@ mapper(domain.AgendaItemVersion, schema.agenda_item_versions,
                 schema.attached_file_versions.c.item_id,
                 schema.attached_file_versions.c.file_version_id
             ]
-        ), 
+        ),
     }
 )
 
@@ -433,9 +434,9 @@ mapper(domain.TabledDocument, schema.tabled_documents,
     polymorphic_on=schema.parliamentary_items.c.type,
     polymorphic_identity="tableddocument",
     properties={
-        "changes": relation(domain.TabledDocumentChange, 
+        "changes": relation(domain.TabledDocumentChange,
             backref="origin",
-            cascade="all, delete-orphan", 
+            cascade="all, delete-orphan",
             passive_deletes=False
         ),
     }
@@ -457,15 +458,15 @@ mapper(domain.TabledDocumentVersion, schema.tabled_document_versions,
                 schema.attached_file_versions.c.item_id,
                 schema.attached_file_versions.c.file_version_id
             ]
-        ), 
+        ),
     }
 )
 
 mapper(domain.AttachedFile, schema.attached_files,
     properties={
-        "changes": relation(domain.AttachedFileChange, 
+        "changes": relation(domain.AttachedFileChange,
             backref="origin",
-            cascade="all, delete-orphan", 
+            cascade="all, delete-orphan",
             passive_deletes=False
         ),
     }
@@ -535,7 +536,7 @@ mapper(domain.SittingType, schema.sitting_types)
 mapper(domain.GroupSittingAttendance, schema.sitting_attendance,
     properties={
         "user": relation(domain.User, uselist=False, lazy=False),
-        "attendance_type": relation(domain.AttendanceType, 
+        "attendance_type": relation(domain.AttendanceType,
             uselist=False,
             lazy=False
         ),
@@ -571,7 +572,7 @@ mapper(domain.GroupItemAssignment, schema.group_item_assignments,
             lazy=True,
             uselist=False
         ),
-        "item": relation(domain.ParliamentaryItem, 
+        "item": relation(domain.ParliamentaryItem,
             backref="item_assignments",
             uselist=False
         ),

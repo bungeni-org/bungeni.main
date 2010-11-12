@@ -1,5 +1,7 @@
+from bungeni.alchemist import Session
 from bungeni.core.interfaces import IRSSValues
 from bungeni.core.translation import translate_obj
+from bungeni.models.domain import User
 from datetime import datetime
 from i18n import _
 from zope.app.component.hooks import getSite
@@ -1101,3 +1103,38 @@ class AkomantosoAgendaItemXMLView(AkomantosoXMLView):
                                                   showAs="",
                                                   date=ob.submission_date.strftime("%Y-%m-%d"))
         return publication_element
+
+
+class SubscriptionView(BrowserView):
+    """ View to manipulate with user's
+        subscriptions (add or remove)
+    """
+
+    def subscribe(self):
+        session = Session()
+        redirect_url = absoluteURL(self.context, self.request)
+        user = session.query(User).filter(User.login == self.request.principal.id).first()
+        # In case we somewhy couldn't find the user
+        if user is None:
+            return self.request.response.redirect(redirect_url)
+        # Adding context item to user's subscriptions
+        trusted = removeSecurityProxy(self.context)
+        user.subscriptions.append(trusted)
+        # Redirecting back to the item's page
+        return self.request.response.redirect(redirect_url)
+
+    def unsubscribe(self):
+        session = Session()
+        redirect_url = absoluteURL(self.context, self.request)
+        user = session.query(User).filter(User.login == self.request.principal.id).first()
+        # In case we somewhy couldn't find the user
+        if user is None:
+            return self.request.response.redirect(redirect_url)
+        # Removing context item from user's subscriptions
+        trusted = removeSecurityProxy(self.context)
+        try:
+            user.subscriptions.remove(trusted)
+        except ValueError:
+            pass
+        # Redirecting back to the item's page
+        return self.request.response.redirect(redirect_url)
