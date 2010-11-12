@@ -1,41 +1,178 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ruleset>
-  <match path="regex:.*/(emptypage)$"
- 	 abort="1" />
-  <match path="/"
-         class="primary" />
-  
-  <rule class="image-links">
-  </rule>    
-  
-  <rule class="primary">
-    <append theme="//head" content="//head/meta" nocontent="ignore" />
-    
-    <!-- menu -->
-    <append content="#portal-globalnav > li"
-            theme="children:#portal-globalnav > ul" />
-    <prepend content="ul#portal-personaltools li.navigation"
-             theme="children:#portal-globalnav ul.level1"
-             if-content=".navigation" />
-    
-    <replace content="children:#portal-personaltools :not(.navigation)"
-             theme="children:#portal-personaltools" />
-    <pyquery pyref="bungeni.portal/static/themes/rules:image_links" />
-    
-    <!-- language selector -->
-    <replace content="#portal-languageselector"
-             theme="#portal-languageselector"/>
-    
-    <!-- breadcrumbs -->
-    <append content="children:#portal-breadcrumbs" theme="children:#portal-breadcrumbs" />
-    <!-- content -->
-    <replace content="#portal-columns"
-             theme="#portal-columns"/>
-    
-    <!-- body attributes -->
-    <append content="attributes:body" theme="attributes:body" />
-    <pyquery pyref="bungeni.portal/static/themes/rules:add_section_links"/>
-    <pyquery pyref="bungeni.portal/static/themes/rules:add_plone_tabs"/>
+    <match path="regex:.*/(emptypage)$"
+        abort="1" />
+    <match path="regex:.*/(addcontentselector)$"
+        abort="1" />   
+    <match path="regex:.*/(fullviewmindmap)$"
+        abort="1" />
+    <match path="/plone/" class="load-plone-navigation" />
+    <match path="/cynin/" class="load-cynin-navigation" />   
+    <match path="regex:^/(workspace|business|members|archive|admin)/?"
+        class="load-bungeni-navigation" />
+    <match path="regex:^/(workspace)/?"
+        class="load-workspace-navigation" />
+    <match path="regex:^/(members/current)/obj-([0-9])+(/)?(view)?$"
+        class="load-member-content" />
+    <match path="exact:/cynin/login_form"
+        class="login" />
+    <match path="exact:/"
+        class="frontpage" />
+    <match path="exact:/front-page"
+        class="frontpage" />
+    <match path="/" class="primary" />
 
-  </rule>
+    
+    <rule class="load-plone-navigation">
+        <!-- navigation -->
+        <prepend href="/bungeni/business/whats-on"
+            content="#portal-globalnav > li"
+            theme="children:#portal-globalnav > ul" />
+        <append content="#portal-globalnav > li:not(:first-child)"
+            theme="children:#portal-globalnav > ul" />
+        <prepend content="ul#portal-subnavbar li"
+            theme="children:#portal-globalnav ul.level1" /> 
+    </rule>
+
+    
+    <rule class="load-workspace-navigation">    
+        <pyquery pyref=
+            "bungeni.portal/static/themes/rules:add_member_workspace_links"
+        />
+    </rule>  
+
+    
+    <rule class="load-member-content">    
+        <pyquery pyref=
+            "bungeni.portal/static/themes/rules:add_member_public_links"
+        />  
+    </rule>                         
+
+    
+    <rule class="load-cynin-navigation">
+        <!-- language selector -->
+        <replace href="/bungeni/business/whats-on"
+            content="#portal-languageselector"
+            theme="#portal-languageselector"/>
+
+        <!-- navigation -->
+        <prepend href="/bungeni/@@index"
+            content="#portal-globalnav > li"
+            theme="children:#portal-globalnav > ul" />
+
+        <append href="/plone"
+            content="#portal-globalnav > li:not(:first-child)"
+            theme="children:#portal-globalnav > ul" /> 
+                
+        <prepend href="/bungeni/"
+            content="ul#portal-personaltools li.navigation"
+            theme="children:#portal-globalnav ul.level1" />
+                               
+        <!-- content -->
+        <append href="/bungeni/"
+            content="ul.formTabs"
+            theme="#portal-columns"/>
+                
+        <append content="#main" theme="#portal-columns"/>  
+    </rule>
+    
+
+    <rule class="load-bungeni-navigation">
+        <pyquery pyref=
+                 "bungeni.portal/static/themes/rules:switch_links_to_cynin"
+        />
+        
+
+    </rule>
+
+    <rule class="login">
+        <!-- content -->
+        <append content="#login_form"
+                theme="children:#portal-column-content"/>        
+    </rule>
+    
+
+    <rule class="load-bungeni-navigation">
+        <!-- navigation -->
+        <append href="/plone" content="#portal-globalnav > li:not(:first-child)"
+            theme="children:#portal-globalnav > ul" /> 
+        <pyquery pyref=
+                 "bungeni.portal/static/themes/rules:switch_links_to_cynin"
+        /> 
+    </rule>
+    
+    <rule class="frontpage">
+        <replace content="#portal-logo" theme="#portal-logo" />
+        <replace content="#portal-siteactions" theme="#portal-siteactions" />
+        <replace content="#portal-searchbox" theme="#portal-searchbox" />
+
+    <!-- menu -->
+        <drop href="/plone"
+            content="#portal-globalnav > li:first-child"/>
+        <append href="/bungeni"
+            content="#portal-globalnav > li:first-child"
+            theme="children:#portal-globalnav > ul" />
+        <append content="#portal-globalnav > li"
+            theme="children:#portal-globalnav > ul" />
+        <append href="/plone" content="#portal-globalnav > li:not(:first-child)"
+            theme="children:#portal-globalnav > ul" />            
+        <prepend href="/bungeni"
+            content=".contentActions"
+            theme="children:.main-content"
+        />
+        <append href="/bungeni"
+            content="#viewlet-above-content"
+            theme="children:.main-content"
+        />    
+        <replace content="#portal-personaltools" theme="#portal-personaltools" />
+        <append href="/bungeni"
+            content="ul#portal-personaltools li.navigation"
+            theme="children:#portal-globalnav ul.level1"
+        />
+
+        <!-- right portlet -->
+        <replace href="/plone"
+            content="#content"
+            theme="#portal-columns"/>    
+    </rule>  
+
+    
+    <rule class="primary">
+        <append theme="//head" content="//head/meta" nocontent="ignore" />
+        <!-- menu -->
+        <prepend content="#portal-globalnav > li"
+            theme="children:#portal-globalnav > ul"
+            if-content="not:base[href*='plone']"
+        />
+        <prepend content="ul#portal-personaltools li.navigation"
+            theme="children:#portal-globalnav ul.level1"
+            if-content=".navigation"
+        />
+        
+        <replace content="children:#portal-personaltools :not(.navigation)"
+            theme="children:#portal-personaltools"
+        />
+        <pyquery pyref="bungeni.portal/static/themes/rules:image_links" />
+        
+        <!-- language selector -->
+        <replace content="#portal-languageselector"
+            theme="#portal-languageselector"
+        />
+        <pyquery pyref="bungeni.portal/static/themes/rules:replace_login_link"/>
+        
+        <!-- breadcrumbs -->
+        <append content="children:#portal-breadcrumbs"
+            theme="children:#portal-breadcrumbs"
+        />
+        <!-- content -->
+        <replace content="#portal-columns"
+            theme="#portal-columns"
+        />
+        
+        <!-- body attributes -->
+        <append content="attributes:body" theme="attributes:body" />
+        <pyquery pyref=
+            "bungeni.portal/static/themes/rules:add_section_links"
+        />
+    </rule>
 </ruleset>
