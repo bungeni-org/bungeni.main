@@ -151,7 +151,7 @@ class MyGroupsViewlet(WorkspaceViewlet):
     render = z3evoque.ViewTemplateFile("workspace_viewlets.html#groups")
     # ZPT
     #render = ViewPageTemplateFile("templates/workspace_group_viewlet.pt")
-
+    
     def _get_items(self):
         formatter = self.get_date_formatter("date", "long")
         data_list = []
@@ -194,8 +194,8 @@ class MyGroupsViewlet(WorkspaceViewlet):
             data["type"] = _(result.type)
             data["to"] = ""
             data_list.append(data)
-        self.items = data_list
-
+        return data_list
+    
     def update(self):
         """refresh the query
         """
