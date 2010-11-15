@@ -1,0 +1,14 @@
+#fieldset-my-interests .rssItem {
+	min-height: 50px;
+	border-bottom: 1px solid #8CACBB;
+	margin-top: 5px;
+}
+
+#fieldset-my-interests .rssItem p{
+	margin: 10px 25px 10px;
+	font-size: 12px;
+}
+
+#fieldset-my-interests .rssItem a{
+	border: none;
+}

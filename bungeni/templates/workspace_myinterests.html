@@ -7,10 +7,10 @@ $begin{interests}
 
 <dd id="fieldset-${view.view_id}" class="portletItem">
     $for{item in view.items}
-	   <div class="item">
-	   	   <strong>
+	   <div class="rssItem">
+	   	   <a title="${item["title"]}" href="${item["url"]}">
 	   	   	   ${item["title"]}
-	   	   </strong>
+	   	   </a>
 		   <p>
 		   	   ${item["description"]}
 		   </p>

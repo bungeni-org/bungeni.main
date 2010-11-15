@@ -151,7 +151,7 @@ class MyGroupsViewlet(WorkspaceViewlet):
     render = z3evoque.ViewTemplateFile("workspace_viewlets.html#groups")
     # ZPT
     #render = ViewPageTemplateFile("templates/workspace_group_viewlet.pt")
-    
+
     def _get_items(self):
         formatter = self.get_date_formatter("date", "long")
         data_list = []
@@ -195,7 +195,7 @@ class MyGroupsViewlet(WorkspaceViewlet):
             data["to"] = ""
             data_list.append(data)
         return data_list
-    
+
     def update(self):
         """refresh the query
         """
@@ -680,6 +680,12 @@ class MyInterestsViewlet(browser.BungeniItemsViewlet):
                              _(u"changes from"),
                              self.format_date(item.date_audit))
 
+    def get_url(self, item):
+        site = getSite()
+        base_url = absoluteURL(site, self.request)
+        return base_url + "/business/%ss/obj-%s" % (item.origin.type,
+                                                    item.origin.parliamentary_item_id)
+
     def update(self):
         """ Getting necessary items
         """
@@ -693,5 +699,6 @@ class MyInterestsViewlet(browser.BungeniItemsViewlet):
                 user.subscriptions)
             subscriptions.sort(key=lambda x: x.date_audit, reverse=True)
             self.items = [{'title': self.get_title(item),
+                           'url': self.get_url(item),
                            'description': self.get_description(item)}
                            for item in subscriptions]
