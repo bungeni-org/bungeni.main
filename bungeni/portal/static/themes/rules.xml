@@ -56,7 +56,7 @@
             theme="#portal-languageselector"/>
 
         <!-- navigation -->
-        <prepend href="/bungeni/@@index"
+        <prepend href="/bungeni/workspace/obj-1/pi/"
             content="#portal-globalnav > li"
             theme="children:#portal-globalnav > ul" />
 
@@ -130,10 +130,17 @@
             theme="children:#portal-globalnav ul.level1"
         />
 
-        <!-- right portlet -->
+        <!--main content -->
         <replace href="/plone"
             content="#content"
-            theme="#portal-columns"/>    
+            theme="children:#portal-column-content"/>
+
+        <!--right portlet -->
+        <prepend href="/plone"
+                 content="children:#portal-column-two"
+                 theme="children:#portal-column-two"
+        />     
+        <drop content="#portal-column-content" />
     </rule>  
 
     
@@ -165,8 +172,8 @@
             theme="children:#portal-breadcrumbs"
         />
         <!-- content -->
-        <replace content="#portal-columns"
-            theme="#portal-columns"
+        <append content="children:#portal-column-content"
+            theme="children:#portal-column-content"
         />
         
         <!-- body attributes -->

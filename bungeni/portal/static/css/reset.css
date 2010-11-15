@@ -288,6 +288,13 @@ div.main-column h3 {
     padding: 0;
     margin: 0;
 }
+
+.section-bungeni-\@\@index #portal-column-content {
+    margin:0 20em 0 0;
+    position: absolute;
+}
+
+
 .section-bungeni-admin #portal-column-content {
     padding: 0;
     overflow: visible;
@@ -623,8 +630,8 @@ input.inputLabelActive {
 .portletItem { border: 1px solid #FAAD5F; border-top: 0 none; }
 #portal-column-two .portletNews, 
 #portal-column-two #review-portlet {
-    width: 20em;
-    margin: 1px -1em 1em 1em;
+    width: 16em;
+    margin-bottom: 1em;
 }
 .portletsBelowContentA .portletNews {
     width: 100%;
