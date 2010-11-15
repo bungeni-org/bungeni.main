@@ -9,8 +9,12 @@ import domain
 # Users
 # general representation of a person
 mapper(domain.User, schema.users,
-    properties={"user_addresses": relation(domain.UserAddress),
-                "subscriptions": relation(domain.ParliamentaryItem, secondary=schema.users_parliementary_items)}
+    properties={
+        "user_addresses": relation(domain.UserAddress),
+        "subscriptions": relation(domain.ParliamentaryItem,
+            secondary=schema.users_parliamentary_items
+        )
+    }
 )
 
 # Groups

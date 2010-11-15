@@ -119,12 +119,16 @@ users = rdb.Table("users", metadata,
     rdb.Column("language", rdb.String(5), nullable=False),
 )
 
-# associations table for many-to-many relation between user and parliamentary item
-
-users_parliementary_items = rdb.Table("users_parliementary_items", metadata,
-                                      rdb.Column("users_id", rdb.Integer, rdb.ForeignKey("users.user_id")),
-                                      rdb.Column("parliamentary_items_id", rdb.Integer, rdb.ForeignKey("parliamentary_items.parliamentary_item_id"))
-                                      )
+# associations table for many-to-many relation between user and 
+# parliamentary item
+users_parliamentary_items = rdb.Table("users_parliamentary_items", metadata,
+    rdb.Column("users_id", rdb.Integer, 
+        rdb.ForeignKey("users.user_id")
+    ),
+    rdb.Column("parliamentary_items_id", rdb.Integer, 
+        rdb.ForeignKey("parliamentary_items.parliamentary_item_id")
+    )
+)
 
 # delegate rights to act on behalf of a user to another user
 user_delegations = rdb.Table("user_delegations", metadata,
