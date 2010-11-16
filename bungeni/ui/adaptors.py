@@ -56,6 +56,10 @@ class TimelineRSSValues(RSSValues):
         changes
     """
 
+    def __init__(self, context):
+        self.context = context
+
     @property
     def values(self):
-        return self.context.changes
+        return filter(lambda x: x.action not in [u'modified', u'added'],
+                      self.context.changes)

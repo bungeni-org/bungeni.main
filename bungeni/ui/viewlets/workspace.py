@@ -695,7 +695,9 @@ class MyInterestsViewlet(browser.BungeniItemsViewlet):
             self.items = []
         else:
             subscriptions = []
-            map(lambda x: subscriptions.extend(x.changes),
+            map(lambda x: subscriptions.extend(filter(lambda change: change.action not in
+                                                      [u'modified', u'added'],
+                                                      x.changes)),
                 user.subscriptions)
             subscriptions.sort(key=lambda x: x.date_audit, reverse=True)
             self.items = [{'title': self.get_title(item),
