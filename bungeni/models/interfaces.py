@@ -65,8 +65,11 @@ class ICommittee(IBungeniGroup):
     """Marker interface for group ministry.
     """
 
+class IPoliticalGroup(IBungeniGroup):
+    """Marker interface for political group (inside parliament).
+    """
 class IPoliticalParty(IBungeniGroup):
-    """Marker interface for political party.
+    """Marker interface for political party (outside parliament).
     """
 
 class IOffice(IBungeniGroup):

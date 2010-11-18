@@ -465,7 +465,6 @@ class PoliticalGroupMembersViewlet(GroupMembersViewlet):
             session.query(dkls).filter(dkls.group_id == pg.group_id).all()
         ]
     # !+domain.PoliticalGroupMember(mr, oct-2010) is not defined
-    # !+IPoliticalGroup(mr, oct-2010) is not explicitly defined
 
 
 class GroupSittingsViewlet(browser.BungeniItemsViewlet):

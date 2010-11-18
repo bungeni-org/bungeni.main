@@ -214,6 +214,12 @@ class ModelDescriptor(ore.alchemist.model.ModelDescriptor):
             "[%s] Can't have two fields with same name [%s]" % (
                 self.__class__.__name__, name)
         self._fields_by_name[name] = f
+        # !+DESCRIPTOR_VALIDATION(mr, nov-2010) a descriptor may specify a 
+        # field with a name that does not correspond to an attribute on the 
+        # model -- this may be useful, but we do not use it, and any such
+        # occurance is most likely an code error... should we check for such
+        # situations?
+    
     
     # we override the following methods as, thanks to self._fields_by_name, 
     # they may be redefined in a much simpler way (as well as being faster).
