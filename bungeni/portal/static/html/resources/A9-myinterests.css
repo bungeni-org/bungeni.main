@@ -4,9 +4,10 @@
 	margin-top: 5px;
 }
 
-#fieldset-my-interests .rssItem p{
+#fieldset-my-interests .rssItem span{
 	margin: 10px 25px 10px;
 	font-size: 12px;
+	display: block;
 }
 
 #fieldset-my-interests .rssItem a{

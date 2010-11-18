@@ -15,7 +15,6 @@ import sqlalchemy.sql.expression as sql
 from sqlalchemy.orm import eagerload
 from zope.app.component.hooks import getSite
 from zope.app.publisher.browser.menu import getMenu
-from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.traversing.browser import absoluteURL
 from zope.viewlet.manager import WeightOrderedViewletManager
 
@@ -27,7 +26,7 @@ from bungeni.ui.interfaces import IWorkspaceContainer, IWorkspaceSectionContext
 from bungeni.ui.tagged import get_states
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
-from bungeni.ui.utils import common, misc, debug, url
+from bungeni.ui.utils import misc, debug, url
 from bungeni.ui.i18n import _
 from bungeni.core.translation import translate_obj
 from bungeni.core.workflows.dbutils import getActiveItemSchedule
@@ -694,11 +693,14 @@ class MyInterestsViewlet(browser.BungeniItemsViewlet):
         if user is None:
             self.items = []
         else:
+            # Taking latest change from each item
             subscriptions = []
-            map(lambda x: subscriptions.extend(filter(lambda change: change.action not in
-                                                      [u'modified', u'added'],
-                                                      x.changes)),
+            map(lambda x: subscriptions.extend(sorted(filter(lambda change: change.action not in
+                                                             [u'modified', u'added'],
+                                                             x.changes),
+                                                      key=lambda x: x.date_audit, reverse=True)[:1]),
                 user.subscriptions)
+            # Soring all items by date
             subscriptions.sort(key=lambda x: x.date_audit, reverse=True)
             self.items = [{'title': self.get_title(item),
                            'url': self.get_url(item),
