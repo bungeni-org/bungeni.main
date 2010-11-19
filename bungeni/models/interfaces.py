@@ -370,9 +370,16 @@ class IMemberRoleTitle(interface.Interface):
     pass
 
 
-class IUserAddress(interface.Interface):
+class _IAddress(interface.Interface):
+    """Base marker interface for an Address
+    """
+class IGroupAddress(_IAddress):
+    """Marker interface addresses of a group.
+    """
+class IUserAddress(_IAddress):
     """Marker interface addresses of a user.
     """
+
 
 class IGroupItemAssignment(interface.Interface):
     pass

@@ -56,7 +56,13 @@ def _get_title_from_context(context):
             if props is not None:
                 title = props.title
             else:
-                title = context.short_name
+                ''' !+
+AttributeError: 'GroupAddress' object has no attribute 'short_name':   File "/home/undesa/bungeni/cap_installs/bungeni_install/bungeni/releases/20100305100101/src/bungeni.main/bungeni/ui/viewlets/navigation.py", line 59, in _get_title_from_context
+                #title = context.short_name 
+So, we temporarily default the above to the context.__class__.__name__:
+                '''
+                title = getattr(context, "short_name", 
+                    context.__class__.__name__)
     elif IAlchemistContainer.providedBy(context):
         domain_model = context._class 
         try:

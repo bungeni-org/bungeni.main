@@ -399,7 +399,6 @@ class GroupAddress(_Address):
     """Group address (official)
     """
 
-
 #############
 
 class ItemLog(object):

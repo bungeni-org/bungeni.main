@@ -480,8 +480,12 @@
                 logo_data"
         />
     </class>
+    
     <class class=".domain.PoliticalGroup">
         <require like_class=".domain.PoliticalParty" />
+        <require permission="zope.View" 
+            attributes="addresses" 
+        />
         <require permission="bungeni.historical.Edit"
             attributes="parent_group_id"
         />

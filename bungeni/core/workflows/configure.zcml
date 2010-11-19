@@ -102,11 +102,15 @@
      for="bungeni.models.interfaces.IGroupSitting
           zope.lifecycleevent.IObjectModifiedEvent" />
 
-  <!-- user addresses -->
-  <adapter
-     for="bungeni.models.interfaces.IUserAddress"
-     provides="ore.workflow.interfaces.IWorkflow"
-     factory=".adapters.AddressWorkflowAdapter" />
+    <!-- addresses -->
+    <adapter for="bungeni.models.interfaces.IUserAddress"
+        provides="ore.workflow.interfaces.IWorkflow"
+        factory=".adapters.UserAddressWorkflowAdapter"
+    />
+    <adapter for="bungeni.models.interfaces.IGroupAddress"
+        provides="ore.workflow.interfaces.IWorkflow"
+        factory=".adapters.GroupAddressWorkflowAdapter"
+    />
 
   <!-- bill workflow -->
   

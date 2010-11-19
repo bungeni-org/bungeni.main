@@ -1049,8 +1049,6 @@ class AddressDescriptor(ModelDescriptor):
     
     fields = [
         Field(name="address_id", modes=""),
-        Field(name="role_title_id", modes=""),
-        Field(name="user_id", modes=""),
         Field(name="address_type_id",
             modes="view|edit|add|listing",
             property=schema.Choice(title=_(u"Address Type"),
@@ -1127,6 +1125,15 @@ class AddressDescriptor(ModelDescriptor):
         Field(name="status_date", modes=""),
     ]
     public_wfstates = [address_wf_state[u"public"].id]
+
+class GroupAddressDescriptor(AddressDescriptor):
+    fields = [
+        Field(name="group_id", modes="")
+    ] + deepcopy(AddressDescriptor.fields)
+class UserAddressDescriptor(AddressDescriptor):
+    fields = [
+        Field(name="user_id", modes=""),
+    ] + deepcopy(AddressDescriptor.fields)
 
 
 class MemberRoleTitleDescriptor(ModelDescriptor):
