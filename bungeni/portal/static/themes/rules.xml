@@ -78,6 +78,9 @@
     
 
     <rule class="load-bungeni-navigation">
+        <append content="children:#portal-column-one"
+            theme="children:#portal-column-one"
+        />    
         <pyquery pyref=
                  "bungeni.portal/static/themes/rules:switch_links_to_cynin"
         />
