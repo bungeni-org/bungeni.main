@@ -192,7 +192,7 @@
      layer="ploned.ui.interfaces.IPlonedSkin"
      weight="25"
      />
-     <browser:viewlet
+     <!-- browser:viewlet
      name="dhtmlx-calendarlist"
      for="*"
      class=".js.DhtmlxCalendarList"
@@ -200,7 +200,7 @@
      permission="zope.Public"
      layer="ploned.ui.interfaces.IPlonedSkin"
      weight="30"
-     /> 
+     /--> 
      <browser:viewlet
      name="dhtmlx-calendarrecurring"
      for="*"
@@ -219,9 +219,9 @@
      layer="ploned.ui.interfaces.IPlonedSkin"
      weight="30"
      />
-    <browser:resource 
+    <!--browser:resource 
         name="dhtmlxscheduler.css" 
-        file="js/dhtmlxScheduler/codebase/dhtmlxscheduler.css" />
+        file="js/dhtmlxScheduler/codebase/dhtmlxscheduler.css" /-->
     <browser:resource 
         name="locale_fr.js" 
         file="js/dhtmlxScheduler/sources/locale_fr.js" />
