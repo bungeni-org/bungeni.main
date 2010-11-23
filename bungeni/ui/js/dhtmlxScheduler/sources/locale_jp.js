@@ -27,6 +27,7 @@ scheduler.locale={
                 section_recurring:"イベントを繰り返す",
                 button_recurring:"無効",
                 button_recurring_open:"有効",
+				full_day:"終日",
 		
 				/*agenda view extension*/
 				agenda_tab:"議題は",

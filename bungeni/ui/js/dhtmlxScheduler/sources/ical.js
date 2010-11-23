@@ -6,7 +6,7 @@ scheduler.ical={
 		//unfolding 
 		data[0]=data[0].replace(/[\r\n]+(?=[a-z \t])/g," ");
 		//drop property
-		data[0]=data[0].replace(/\;[^:]*/g,"");
+		data[0]=data[0].replace(/\;[^:\r\n]*/g,"");
 		
 		
 		var incoming=[];
@@ -15,9 +15,10 @@ scheduler.ical={
 		while (match=event_r.exec(data)){
 			var e={};
 			var param;
-			var param_r = /[^\r\n]+\r\n/g;
+			var param_r = /[^\r\n]+[\r\n]+/g;
 			while (param=param_r.exec(match[1]))
 				this.parse_param(param.toString(),e);
+			if (e.uid && !e.id) e.id = e.uid; //fallback to UID, when ID is not defined
 			incoming.push(e);	
 		}
 		return incoming;
@@ -44,7 +45,7 @@ scheduler.ical={
 		obj[name]=value;
 	},
 	parse_date:function(value,dh,dm){
-		var t = value.split("T");
+		var t = value.split("T");	
 		if (t[1]){
 			dh=t[1].substr(0,2);
 			dm=t[1].substr(2,2);
@@ -52,11 +53,13 @@ scheduler.ical={
 		var dy = t[0].substr(0,4);
 		var dn = parseInt(t[0].substr(4,2),10)-1;
 		var dd = t[0].substr(6,2);
-		
+		if (scheduler.config.server_utc && !t[1]) { // if no hours/minutes were specified == full day event
+			return new Date(Date.UTC(dy,dn,dd,dh,dm)) ;
+		}
 		return new Date(dy,dn,dd,dh,dm);
 	},
 	c_start:"BEGIN:VCALENDAR",
 	e_start:"BEGIN:VEVENT",
 	e_end:"END:VEVENT",
 	c_end:"END:VCALENDAR"	
-}
+};

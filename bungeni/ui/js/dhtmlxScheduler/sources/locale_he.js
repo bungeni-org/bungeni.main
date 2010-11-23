@@ -25,6 +25,7 @@ scheduler.locale={
 		section_recurring:"להעתיק ארוע",
 		button_recurring:"לא פעיל",
 		button_recurring_open:"פעיל",
+		full_day:"יום שלם",
 		
 		/*agenda view extension*/
 		agenda_tab:"סדר יום",

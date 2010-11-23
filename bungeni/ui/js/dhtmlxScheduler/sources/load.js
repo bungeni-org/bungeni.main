@@ -2,7 +2,7 @@ scheduler._loaded={};
 scheduler._load=function(url,from){
 	url=url||this._load_url;
 	url+=(url.indexOf("?")==-1?"?":"&")+"timeshift="+(new Date()).getTimezoneOffset();
-		
+	if (this.config.prevent_cache)	url+="&uid="+this.uid();
 	var to;
 	from=from||this._date;
 	
@@ -59,6 +59,24 @@ scheduler.on_load=function(loader){
 	this._loading=false;
 	this.callEvent("onXLE",[]);
 }
+scheduler.json={};
+scheduler.json.parse = function(data){
+	if (typeof data == "string"){
+		eval("scheduler._temp = "+data+";");
+		data = scheduler._temp;
+	}
+	var evs = [];
+	for (var i=0; i < data.length; i++){
+		data[i].start_date = scheduler.templates.xml_date(data[i].start_date);
+		data[i].end_date = scheduler.templates.xml_date(data[i].end_date);
+		evs.push(data[i]);
+	}
+	return evs;
+}
+scheduler.parse=function(data,type){
+	this._process=type;
+	this.on_load({xmlDoc:{responseText:data}});
+}
 scheduler.load=function(url,call){
 	if (typeof call == "string"){
 		this._process=call;
@@ -83,13 +101,43 @@ scheduler.refresh=function(refresh_all){
 	this._load();
 	*/
 }
+scheduler.serverList=function(name){
+	return this.serverList[name] = (this.serverList[name]||[]);
+}
+
+scheduler._userdata={};
 scheduler._magic_parser=function(loader){
-	//xml only for now
+	if (!loader.getXMLTopNode){ //from a string
+		var xml_string = loader.xmlDoc.responseText;
+		loader = new dtmlXMLLoaderObject(function(){});
+		loader.loadXMLString(xml_string);
+	}
+	
 	var xml=loader.getXMLTopNode("data");
 	if (xml.tagName!="data") return [];//not an xml
 	
+	var opts = loader.doXPath("//coll_options");
+	for (var i=0; i < opts.length; i++) {
+		var bind = opts[i].getAttribute("for");
+		var arr = this.serverList[bind];
+		if (!arr) continue;
+		arr.splice(0,arr.length);	//clear old options
+		var itms = loader.doXPath(".//item",opts[i]);
+		for (var j=0; j < itms.length; j++)
+			arr.push({ key:itms[j].getAttribute("value"), label:itms[j].getAttribute("label")});
+	}
+	if (opts.length)
+		scheduler.callEvent("onOptionsLoad",[]);
+	
+	var ud=loader.doXPath("//userdata");	
+	for (var i=0; i < ud.length; i++) {
+		var udx = this.xmlNodeToJSON(ud[i]);
+		this._userdata[udx.name]=udx.text;
+	};
+	
 	var evs=[];
 	var xml=loader.doXPath("//event");
+	
 	
 	for (var i=0; i < xml.length; i++) {
 		evs[i]=this.xmlNodeToJSON(xml[i])

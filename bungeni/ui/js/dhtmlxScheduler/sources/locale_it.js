@@ -1,9 +1,9 @@
 scheduler.locale={
 	date:{
-		month_full:["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Jiugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"],
-		month_short:["Gen", "Feb", "Mar", "Apr", "Mag", "Jui", "Lu", "Ago", "Set", "Ott", "Nov", "Dic"],
-		day_full:["Domenica", "Lunedì", "Martedì", "Mercoledì", "Jovedì", "Venerdì", "Sabato"],
-    	day_short:["Dom", "Lun", "Mar", "Mer", "Jov", "Ven", "Sab"]
+		month_full:["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"],
+		month_short:["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"],
+		day_full:["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
+    	day_short:["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"]
     },
     labels:{
     	dhx_cal_today_button:"Oggi",
@@ -20,6 +20,7 @@ scheduler.locale={
 		confirm_deleting:"L'evento verrà eliminato, siete sicuri?",
 		section_description:"Descrizione",
 		section_time:"Periodo di tempo",
+		full_day:"Intera giornata",
 		
 		confirm_recurring:"Vuoi modificare l'intera serie di eventi?",
 		section_recurring:"Ripetere l'evento",

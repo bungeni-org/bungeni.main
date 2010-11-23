@@ -27,6 +27,7 @@ scheduler.locale={
 		confirm_deleting: "是否删除日程?",
 		section_description: "描述",
 		section_time: "时间范围",
+		full_day: "整天",
 
 		confirm_recurring:"请确认是否将日程设为重复模式?",
 		section_recurring:"重复周期",

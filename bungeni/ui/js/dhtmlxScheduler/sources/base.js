@@ -52,23 +52,25 @@ scheduler.date={
 	date_to_str:function(format,utc){
 		format=format.replace(/%[a-zA-Z]/g,function(a){
 			switch(a){
-				
 				case "%d": return "\"+scheduler.date.to_fixed(date.getDate())+\"";
 				case "%m": return "\"+scheduler.date.to_fixed((date.getMonth()+1))+\"";
 				case "%j": return "\"+date.getDate()+\"";
 				case "%n": return "\"+(date.getMonth()+1)+\"";
-				case "%y": return "\"+date.getYear()+\"";
+				case "%y": return "\"+scheduler.date.to_fixed(date.getFullYear()%100)+\""; 
 				case "%Y": return "\"+date.getFullYear()+\"";
 				case "%D": return "\"+scheduler.locale.date.day_short[date.getDay()]+\"";
 				case "%l": return "\"+scheduler.locale.date.day_full[date.getDay()]+\"";
 				case "%M": return "\"+scheduler.locale.date.month_short[date.getMonth()]+\"";
 				case "%F": return "\"+scheduler.locale.date.month_full[date.getMonth()]+\"";
 				case "%h": return "\"+scheduler.date.to_fixed((date.getHours()+11)%12+1)+\"";
+				case "%g": return "\"+((date.getHours()+11)%12+1)+\"";
+				case "%G": return "\"+date.getHours()+\"";
 				case "%H": return "\"+scheduler.date.to_fixed(date.getHours())+\"";
 				case "%i": return "\"+scheduler.date.to_fixed(date.getMinutes())+\"";
 				case "%a": return "\"+(date.getHours()>11?\"pm\":\"am\")+\"";
 				case "%A": return "\"+(date.getHours()>11?\"PM\":\"AM\")+\"";
 				case "%s": return "\"+scheduler.date.to_fixed(date.getSeconds())+\"";
+				case "%W": return "\"+scheduler.date.to_fixed(scheduler.date.getISOWeek(date))+\"";
 				default: return a;
 			}
 		})
@@ -81,13 +83,15 @@ scheduler.date={
 		for (var i=0; i<mask.length; i++){
 			switch(mask[i]){
 				case "%j":
-				case "%d": splt+="set[2]=temp["+i+"]||0;";
+				case "%d": splt+="set[2]=temp["+i+"]||1;";
 					break;
 				case "%n":
 				case "%m": splt+="set[1]=(temp["+i+"]||1)-1;";
 					break;
 				case "%y": splt+="set[0]=temp["+i+"]*1+(temp["+i+"]>50?1900:2000);";
 					break;
+				case "%g":
+				case "%G":
 				case "%h": 
 				case "%H":
 							splt+="set[3]=temp["+i+"]||0;";
@@ -106,6 +110,24 @@ scheduler.date={
 		}
 		var code ="set[0],set[1],set[2],set[3],set[4],set[5]";
 		if (utc) code =" Date.UTC("+code+")";
-		return new Function("date","var set=[0,0,0,0,0,0]; "+splt+" return new Date("+code+");");
-	}
+		return new Function("date","var set=[0,0,1,0,0,0]; "+splt+" return new Date("+code+");");
+	},
+		
+	getISOWeek: function(ndate) {
+		if(!ndate) return false;
+		var nday = ndate.getDay();
+		if (nday == 0) {
+			nday = 7;
+		}
+		var first_thursday = new Date(ndate.valueOf());
+		first_thursday.setDate(ndate.getDate() + (4 - nday));
+		var year_number = first_thursday.getFullYear(); // year of the first Thursday
+		var ordinal_date = Math.floor( (first_thursday.getTime() - new Date(year_number, 0, 1).getTime()) / 86400000); //ordinal date of the first Thursday - 1 (so not really ordinal date)
+		var week_number = 1 + Math.floor( ordinal_date / 7);	
+		return week_number;
+	},
+	
+	getUTCISOWeek: function(ndate){
+   	return this.getISOWeek(ndate);
+   }
 }

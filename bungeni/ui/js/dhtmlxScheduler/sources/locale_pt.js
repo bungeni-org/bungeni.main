@@ -31,6 +31,7 @@ scheduler.locale={
 		confirm_deleting:"Tem certeza que deseja excluir?",
 		section_description:"Descrição",
 		section_time:"Período de tempo",
+		full_day:"Dia inteiro",
 		
 		confirm_recurring:"Deseja editar todos esses eventos repetidos?",
 		section_recurring:"Repetir evento",

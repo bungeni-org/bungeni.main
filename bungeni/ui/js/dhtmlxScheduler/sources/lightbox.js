@@ -24,21 +24,31 @@ scheduler.form_blocks={
 			return html;
 		},
 		set_value:function(node,value,ev){
+			if (typeof value == "undefined")
+				value = (node.firstChild.options[0]||{}).value;
 			node.firstChild.value=value||"";
 		},
 		get_value:function(node,ev){
 			return node.firstChild.value;
 		},
 		focus:function(node){
-			var a=node.firstChild; a.select(); a.focus(); 
+			var a=node.firstChild; if (a.select) a.select(); a.focus(); 
 		}
 	},	
 	time:{
 		render:function(){
 			//hours
+			var cfg = scheduler.config;
 			var dt = this.date.date_part(new Date());
+			var last = 24*60, first = 0;
+			if(scheduler.config.limit_time_select){
+				last = 60*cfg.last_hour+1;
+				first = 60*cfg.first_hour;
+				dt.setHours(cfg.first_hour);
+			}
+				
 			var html="<select>";
-			for (var i=0; i<60*24; i+=this.config.time_step*1){
+			for (var i=first; i<last; i+=this.config.time_step*1){
 				var time=this.templates.time_picker(dt);
 				html+="<option value='"+i+"'>"+time+"</option>";
 				dt=this.date.add(dt,this.config.time_step,"minute");
@@ -61,16 +71,59 @@ scheduler.form_blocks={
 				html+="<option value='"+(dt+i)+"'>"+(dt+i)+"</option>";
 			html+="</select> ";
 			
-			return "<div style='height:30px; padding-top:0px; font-size:inherit;' class='dhx_cal_lsection'>"+html+"<span style='font-weight:normal; font-size:10pt;'> &nbsp;&ndash;&nbsp; </span>"+html+"</div>";
+			return "<div style='height:30px; padding-top:0px; font-size:inherit;' class='dhx_cal_lsection dhx_section_time'>"+html+"<span style='font-weight:normal; font-size:10pt;'> &nbsp;&ndash;&nbsp; </span>"+html+"</div>";			
+
 		},
 		set_value:function(node,value,ev){
+
+			var s=node.getElementsByTagName("select");
+
+			if(scheduler.config.full_day) {
+				if (!node._full_day){
+					node.previousSibling.innerHTML+="<div class='dhx_fullday_checkbox'><label><input type='checkbox' name='full_day' value='true'> "+scheduler.locale.labels.full_day+"&nbsp;</label></input></div>";
+					node._full_day=true;
+				}
+				var input=node.previousSibling.getElementsByTagName("input")[0];
+				var isFulldayEvent = (scheduler.date.time_part(ev.start_date)==0 && scheduler.date.time_part(ev.end_date)==0 && ev.end_date.valueOf()-ev.start_date.valueOf() < 2*24*60*60*1000);
+				input.checked = isFulldayEvent;
+				
+				for(var k in s)
+					s[k].disabled=input.checked;
+
+				input.onclick = function(){ 
+					if(input.checked) {
+						var start_date = new Date(ev.start_date);
+						var end_date = new Date(ev.end_date);
+						
+						scheduler.date.date_part(start_date);
+						end_date = scheduler.date.add(start_date, 1, "day")
+					} 
+					for(var i in s)
+						s[i].disabled=input.checked;
+					
+					_fill_lightbox_select(s,0,start_date||ev.start_date);
+					_fill_lightbox_select(s,4,end_date||ev.end_date);
+				}
+			}
+			
+			if(scheduler.config.auto_end_date && scheduler.config.event_duration) {
+				function _update_lightbox_select() {
+					ev.start_date=new Date(s[3].value,s[2].value,s[1].value,0,s[0].value);
+					ev.end_date.setTime(ev.start_date.getTime() + (scheduler.config.event_duration * 60 * 1000));
+					_fill_lightbox_select(s,4,ev.end_date);
+				}
+				for(var i=0; i<4; i++) {
+					s[i].onchange = _update_lightbox_select;
+				}
+			}
+			
 			function _fill_lightbox_select(s,i,d){
-				s[i+0].value=d.getHours()*60+d.getMinutes();	
+				s[i+0].value=Math.round((d.getHours()*60+d.getMinutes())/scheduler.config.time_step)*scheduler.config.time_step;	
 				s[i+1].value=d.getDate();
 				s[i+2].value=d.getMonth();
 				s[i+3].value=d.getFullYear();
 			}
-			var s=node.getElementsByTagName("select");
+			
 			_fill_lightbox_select(s,0,ev.start_date);
 			_fill_lightbox_select(s,4,ev.end_date);
 		},
@@ -101,18 +154,25 @@ scheduler.showLightbox=function(id){
 	var box = this._get_lightbox();
 	this.showCover(box);
 	this._fill_lightbox(id,box);
+	this.callEvent("onLightbox",[id]);
 }
 scheduler._fill_lightbox=function(id,box){ 
 	var ev=this.getEvent(id);
 	var s=box.getElementsByTagName("span");
-	s[1].innerHTML=this.templates.event_header(ev.start_date,ev.end_date,ev);
-	s[2].innerHTML=this.templates.event_bar_text(ev.start_date,ev.end_date,ev);
+	if (scheduler.templates.lightbox_header){
+		s[1].innerHTML="";
+		s[2].innerHTML=scheduler.templates.lightbox_header(ev.start_date,ev.end_date,ev);
+	} else {
+		s[1].innerHTML=this.templates.event_header(ev.start_date,ev.end_date,ev);
+		s[2].innerHTML=(this.templates.event_bar_text(ev.start_date,ev.end_date,ev)||"").substr(0,70); //IE6 fix	
+	}
+	
 	
 	var sns = this.config.lightbox.sections;	
 	for (var i=0; i < sns.length; i++) {
 		var node=document.getElementById(sns[i].id).nextSibling;
 		var block=this.form_blocks[sns[i].type];
-		block.set_value.call(this,node,ev[sns[i].map_to],ev)
+		block.set_value.call(this,node,ev[sns[i].map_to],ev, sns[i])
 		if (sns[i].focus)
 			block.focus.call(this,node);
 	};
@@ -124,7 +184,7 @@ scheduler._lightbox_out=function(ev){
 	for (var i=0; i < sns.length; i++) {
 		var node=document.getElementById(sns[i].id).nextSibling;
 		var block=this.form_blocks[sns[i].type];
-		var res=block.get_value.call(this,node,ev);
+		var res=block.get_value.call(this,node,ev, sns[i]);
 		if (sns[i].map_to!="auto")
 			ev[sns[i].map_to]=res;
 	}
@@ -161,6 +221,30 @@ scheduler.show_cover=function(){
 	this._cover.className="dhx_cal_cover";
 	document.body.appendChild(this._cover);
 }
+scheduler.save_lightbox=function(){
+	if (this.checkEvent("onEventSave") && 						!this.callEvent("onEventSave",[this._lightbox_id,this._lightbox_out({ id: this._lightbox_id}), this._new_event]))
+		return;
+	this._empty_lightbox()
+	this.hide_lightbox();
+};
+scheduler.startLightbox = function(id, box){
+	this._lightbox_id=id;
+	this.showCover(box);
+}
+scheduler.endLightbox = function(mode, box){
+	this._edit_stop_event(scheduler.getEvent(this._lightbox_id),mode);
+	if (mode)
+		scheduler.render_view_data();
+	this.hideCover(box);
+};
+scheduler.resetLightbox = function(){
+	scheduler._lightbox = null;
+};
+scheduler.cancel_lightbox=function(){
+	this.callEvent("onEventCancel",[this._lightbox_id, this._new_event]);
+	this.endLightbox(false);
+	this.hide_lightbox();
+};
 scheduler._init_lightbox_events=function(){
 	this._get_lightbox().onclick=function(e){
 		var src=e?e.target:event.srcElement;
@@ -168,22 +252,18 @@ scheduler._init_lightbox_events=function(){
 		if (src && src.className)
 			switch(src.className){
 				case "dhx_save_btn":
-					if (scheduler.checkEvent("onEventSave") && 						!scheduler.callEvent("onEventSave",[scheduler._lightbox_id,scheduler._lightbox_out({})]))
-							return;
-					scheduler._empty_lightbox()
-					scheduler.hide_lightbox();
+					scheduler.save_lightbox();
 					break;
 				case "dhx_delete_btn":
 					var c=scheduler.locale.labels.confirm_deleting; 
 					if (!c||confirm(c)) {
 						scheduler.deleteEvent(scheduler._lightbox_id);
+						scheduler._new_event = null; //clear flag, if it was unsaved event
 						scheduler.hide_lightbox();
 					}
 					break;
 				case "dhx_cancel_btn":
-					scheduler.callEvent("onEventCancel",[scheduler._lightbox_id]);
-					scheduler._edit_stop_event(scheduler.getEvent(scheduler._lightbox_id),false);
-					scheduler.hide_lightbox();
+					scheduler.cancel_lightbox();
 					break;
 					
 				default:
@@ -197,14 +277,12 @@ scheduler._init_lightbox_events=function(){
 	};
 	this._get_lightbox().onkeypress=function(e){
 		switch((e||event).keyCode){
-			case 13:
+			case scheduler.keys.edit_save:
 				if ((e||event).shiftKey) return;
-				scheduler._empty_lightbox()
-				scheduler.hide_lightbox();
+				scheduler.save_lightbox();
 				break;
-			case 27:
-				scheduler._edit_stop_event(scheduler.getEvent(scheduler._lightbox_id),false)
-				scheduler.hide_lightbox();
+			case scheduler.keys.edit_cancel:
+				scheduler.cancel_lightbox();
 				break;
 		}
 	}

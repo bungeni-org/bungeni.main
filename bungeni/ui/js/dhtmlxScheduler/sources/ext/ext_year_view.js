@@ -1,7 +1,11 @@
 scheduler.config.year_x = 4;
 scheduler.config.year_y = 3;
+scheduler.config.year_mode_name = "year";
+scheduler.xy.year_top = 0;
 
-scheduler.templates.year_date =  scheduler.date.date_to_str(scheduler.locale.labels.year_tab+" %Y");
+scheduler.templates.year_date =  function(date){
+	return scheduler.date.date_to_str(scheduler.locale.labels.year_tab+" %Y")(date);
+};
 scheduler.templates.year_month =  scheduler.date.date_to_str("%F");
 scheduler.templates.year_scale_date = scheduler.date.date_to_str("%D");
 scheduler.templates.year_tooltip = function(s,e,ev){
@@ -9,25 +13,30 @@ scheduler.templates.year_tooltip = function(s,e,ev){
 };
 
 
-	
+   
 (function(){
+   
+var is_year_mode = function(){
+   return scheduler._mode == scheduler.config.year_mode_name;
+}
 
 scheduler.dblclick_dhx_month_head=function(e){
-	if (this._mode != "year") return;
-	var t = (e.target||e.srcElement);
-	if (t.parentNode.className.indexOf("dhx_before")!=-1 || t.parentNode.className.indexOf("dhx_after")!=-1) return false;
-	var start = this.templates.xml_date(t.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.getAttribute("date"));
-	start.setDate(parseInt(t.innerHTML,10));
-	var end = this.date.add(start,1,"day")
-	if (!this.config.readonly && this.config.dblclick_create)
-		this.addEventNow(start.valueOf(), end.valueOf(), e);
-}	
+   if (is_year_mode()){
+      var t = (e.target||e.srcElement);
+      if (t.parentNode.className.indexOf("dhx_before")!=-1 || t.parentNode.className.indexOf("dhx_after")!=-1) return false;
+      var start = this.templates.xml_date(t.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.getAttribute("date"));
+      start.setDate(parseInt(t.innerHTML,10));
+      var end = this.date.add(start,1,"day")
+      if (!this.config.readonly && this.config.dblclick_create)
+         this.addEventNow(start.valueOf(), end.valueOf(), e);
+   }
+}   
 
 var chid = scheduler.changeEventId;
 scheduler.changeEventId = function(){
-	chid.apply(this,arguments);
-	if (this._mode == "year")
-		this.year_view(true);
+   chid.apply(this,arguments);
+   if (is_year_mode())
+      this.year_view(true);
 }
 
 
@@ -35,19 +44,19 @@ var old = scheduler.render_data;
 var to_attr = scheduler.date.date_to_str("%Y/%m/%d");
 var from_attr = scheduler.date.str_to_date("%Y/%m/%d");
 scheduler.render_data=function(evs){ 
-   if (this._mode!="year") return old.apply(this,arguments);
+   if (!is_year_mode()) return old.apply(this,arguments);
    for (var i=0; i<evs.length; i++)
       this._year_render_event(evs[i]);
 }
 
 var clear = scheduler.clear_view;
 scheduler.clear_view = function(){
-	if (this._mode!="year") return clear.apply(this,arguments);
-	for (var i=0; i < marked.length; i++) {
-		marked[i].className = "dhx_month_head";
-		marked[i].setAttribute("date","")
-	};
-	marked = [];
+   if (!is_year_mode()) return clear.apply(this,arguments);
+   for (var i=0; i < marked.length; i++) {
+      marked[i].className = "dhx_month_head";
+      marked[i].setAttribute("date","")
+   };
+   marked = [];
 }
 
 
@@ -59,47 +68,47 @@ scheduler.hideToolTip=function(){
     
 }
 scheduler.showToolTip=function(date,pos,e,src){
-	if (this._tooltip){
-	  if (this._tooltip.date.valueOf() == date.valueOf()) return;
-	  this._tooltip.innerHTML="";
-	} else {
-	  var t = this._tooltip = document.createElement("DIV");
-	  t.className = "dhx_tooltip";
-	  document.body.appendChild(t);
-	  t.onclick = scheduler._click.dhx_cal_data;
-	  
-	}
-	var evs = this.getEvents(date,this.date.add(date,1,"day"));
-	var html = "";
-	
-	for (var i=0; i<evs.length; i++){
-		  html+="<div class='dhx_tooltip_line' event_id='"+evs[i].id+"'>"
-		  html+="<div class='dhx_tooltip_date'>"+(evs[i]._timed?this.templates.event_date(evs[i].start_date):"")+"</div>";
-		  html+="<div class='dhx_event_icon icon_details'>&nbsp;</div>";
-	  html+=this.templates.year_tooltip(evs[i].start_date, evs[i].end_date,evs[i])+"</div>";
-	}
-	
-	this._tooltip.style.display="";   
-	this._tooltip.style.top = "0px";
-	
-			
-	if (document.body.offsetWidth-pos.left-this._tooltip.offsetWidth < 0)
-		this._tooltip.style.left = pos.left-this._tooltip.offsetWidth+"px";
-	else
-		this._tooltip.style.left = pos.left+src.offsetWidth+"px";
-		
-	this._tooltip.date = date;
-	this._tooltip.innerHTML = html;
-	
-	if (document.body.offsetHeight-pos.top-this._tooltip.offsetHeight < 0)
-		this._tooltip.style.top= pos.top-this._tooltip.offsetHeight+src.offsetHeight+"px";
-	else
-		this._tooltip.style.top= pos.top+"px";
+   if (this._tooltip){
+     if (this._tooltip.date.valueOf() == date.valueOf()) return;
+     this._tooltip.innerHTML="";
+   } else {
+     var t = this._tooltip = document.createElement("DIV");
+     t.className = "dhx_tooltip";
+     document.body.appendChild(t);
+     t.onclick = scheduler._click.dhx_cal_data;
+     
+   }
+   var evs = this.getEvents(date,this.date.add(date,1,"day"));
+   var html = "";
+   
+   for (var i=0; i<evs.length; i++){
+        html+="<div class='dhx_tooltip_line' event_id='"+evs[i].id+"'>"
+        html+="<div class='dhx_tooltip_date'>"+(evs[i]._timed?this.templates.event_date(evs[i].start_date):"")+"</div>";
+        html+="<div class='dhx_event_icon icon_details'>&nbsp;</div>";
+     html+=this.templates.year_tooltip(evs[i].start_date, evs[i].end_date,evs[i])+"</div>";
+   }
+   
+   this._tooltip.style.display="";   
+   this._tooltip.style.top = "0px";
+   
+         
+   if (document.body.offsetWidth-pos.left-this._tooltip.offsetWidth < 0)
+      this._tooltip.style.left = pos.left-this._tooltip.offsetWidth+"px";
+   else
+      this._tooltip.style.left = pos.left+src.offsetWidth+"px";
+      
+   this._tooltip.date = date;
+   this._tooltip.innerHTML = html;
+   
+   if (document.body.offsetHeight-pos.top-this._tooltip.offsetHeight < 0)
+      this._tooltip.style.top= pos.top-this._tooltip.offsetHeight+src.offsetHeight+"px";
+   else
+      this._tooltip.style.top= pos.top+"px";
 }
 
 scheduler._init_year_tooltip=function(){
    dhtmlxEvent(scheduler._els["dhx_cal_data"][0], "mouseover", function(e){
-      if (scheduler._mode!="year") return;
+      if (!is_year_mode()) return;
       
       var e = e || event;
       var src = e.target||e.srcElement;
@@ -112,14 +121,16 @@ scheduler._init_year_tooltip=function(){
 }
 
 scheduler.attachEvent("onSchedulerResize",function(){
-   if (this._mode == "year"){
+   if (is_year_mode()){
       this.year_view(true);
       return false;
    }
    return true;
 });
 scheduler._get_year_cell=function(d){
-   var m = d.getMonth()+12*(d.getFullYear()-this._min_date.getFullYear()); //there can be more than 1 year in view
+   //there can be more than 1 year in view
+   //year can start not from January
+   var m = d.getMonth()+12*(d.getFullYear()-this._min_date.getFullYear())-this.week_starts._month; 
    var t = this._els["dhx_cal_data"][0].childNodes[m];
    var d  = this.week_starts[m]+d.getDate()-1;
    
@@ -129,9 +140,9 @@ scheduler._get_year_cell=function(d){
 
 
 var marked = [];
-scheduler._mark_year_date=function(d){
+scheduler._mark_year_date=function(d,ev){
    var c = this._get_year_cell(d);
-   c.className = "dhx_month_head dhx_year_event";
+   c.className = "dhx_month_head dhx_year_event "+this.templates.event_class(ev.start_date,ev.end_date,ev);
    c.setAttribute("date",to_attr(d))
    marked.push(c);
 }
@@ -140,15 +151,30 @@ scheduler._unmark_year_date=function(d){
 }
 scheduler._year_render_event=function(ev){
    var d = ev.start_date;
+   if (d.valueOf()<this._min_date.valueOf()) 
+      d = this._min_date;
+   else d = this.date.date_part(new Date(d));
+   
    while (d<ev.end_date){
-      this._mark_year_date(d);
+     this._mark_year_date(d,ev);
       d = this.date.add(d,1,"day");
+      if (d.valueOf()>=this._max_date.valueOf()) 
+         return;
    }
 }
 scheduler.year_view=function(mode){
-   scheduler.xy.nav_height = mode?1:22;
-   scheduler._els["dhx_cal_header"][0].style.display=mode?"none":"";
-   scheduler.set_sizes();
+   if (mode){
+      var temp = scheduler.xy.scale_height;
+      scheduler.xy.scale_height = -1;
+   }
+   
+      scheduler._els["dhx_cal_header"][0].style.display=mode?"none":"";
+      scheduler.set_sizes();
+      
+   if (mode)
+      scheduler.xy.scale_height = temp;
+   
+   
    scheduler._table_view = mode;
    if (this._load_mode && this._load()) return;
    
@@ -166,10 +192,11 @@ scheduler._reset_year_scale = function(){
    var b=this._els["dhx_cal_data"][0];
    
    var c = this.config;
+   b.scrollTop=0; //fix flickering in FF
    b.innerHTML="";
    
    var dx = Math.floor(parseInt(b.style.width)/c.year_x);
-   var dy = Math.floor(parseInt(b.style.height)/c.year_y);
+   var dy = Math.floor((parseInt(b.style.height)-scheduler.xy.year_top)/c.year_y);
    if (dy<190) {
       dy = 190;
       dx = Math.floor((parseInt(b.style.width)-scheduler.xy.scroll_width)/c.year_x);
@@ -200,22 +227,24 @@ scheduler._reset_year_scale = function(){
          d.childNodes[0].innerHTML=this.templates.year_month(sd);
          
          var dd = this.date.week_start(sd);
-         this._reset_month_scale(d.childNodes[2],sd,dd);
+         var ed = this._reset_month_scale(d.childNodes[2],sd,dd);
          
          var r=d.childNodes[2].firstChild.rows;
-		 for (var k=r.length; k<6; k++) {
-         	r[0].parentNode.appendChild(r[0].cloneNode(true));
-         	for (var ri=0; ri < r[k].childNodes.length; ri++) {
-         		r[k].childNodes[ri].className = "dhx_after";
-         	};
+       for (var k=r.length; k<6; k++) {
+            r[0].parentNode.appendChild(r[0].cloneNode(true));
+            for (var ri=0; ri < r[k].childNodes.length; ri++) {
+               r[k].childNodes[ri].className = "dhx_after";
+               r[k].childNodes[ri].firstChild.innerHTML = scheduler.templates.month_day(ed);
+               ed = scheduler.date.add(ed,1,"day");
+            };
          }
-         	
+            
          
          b.appendChild(d);
          
          var dt = Math.round((dy-190)/2);
          d.style.marginTop=dt+"px";
-         this.set_xy(d,dx-10,dy-dt-10,dx*j+5,dy*i+5);
+         this.set_xy(d,dx-10,dy-dt-10,dx*j+5,dy*i+5+scheduler.xy.year_top);
          
          week_starts[i*c.year_x+j] = (sd.getDay()-(this.config.start_on_monday?1:0)+7)%7;
          sd = this.date.add(sd,1,"month");
@@ -223,8 +252,9 @@ scheduler._reset_year_scale = function(){
       }
    this._els["dhx_cal_date"][0].innerHTML=this.templates[this._mode+"_date"](ssd,sd,this._mode);      
    this.week_starts = week_starts;
+   week_starts._month = ssd.getMonth();
    this._min_date = ssd;
    this._max_date = sd;
 }
 
-})()
+})();

@@ -1,17 +1,11 @@
-scheduler.attachEvent("onTemplatesReady",function(){
-   var t = document.createElement("DIV");
-   t.className="dhx_expand_icon";
-   scheduler._obj.appendChild(t);   
-   
-   function expand(obj){
-      var t=obj;
+scheduler.expand = function(){
+      var t = scheduler._obj;
       do {
-         obj._position = obj.style.position||"";
-         obj.style.position = "static";
-         
-      } while ((obj = obj.parentNode) && obj.style );
+         t._position = t.style.position||"";
+         t.style.position = "static";
+      } while ((t = t.parentNode) && t.style );
+	  t = scheduler._obj;
       t.style.position="absolute";
-      t.style.zIndex = 9998;
       t._width = t.style.width;
       t._height = t.style.height;
       t.style.width = t.style.height = "100%";
@@ -25,34 +19,36 @@ scheduler.attachEvent("onTemplatesReady",function(){
    		  top.scrollTop = 0;
    	  document.body._overflow=document.body.style.overflow||"";
    	  document.body.style.overflow = "hidden";
-   }
+	  scheduler._maximize()
+}
    
-   function collapse(obj){
-      var t=obj;
+scheduler.collapse = function(){
+      var t = scheduler._obj;
       do {
-         obj.style.position = obj._position;
-      } while ((obj = obj.parentNode) && obj.style );
+         t.style.position = t._position;
+      } while ((t = t.parentNode) && t.style );
+	  t = scheduler._obj;
       t.style.width = t._width;
       t.style.height = t._height;
-      
       document.body.style.overflow=document.body._overflow;
-   }
+	  scheduler._maximize()
+}
    
+scheduler.attachEvent("onTemplatesReady",function(){
+   var t = document.createElement("DIV");
+   t.className="dhx_expand_icon";
+   scheduler.toggleIcon = t;
+   scheduler._obj.appendChild(t);   
    t.onclick = function(){
-      if (!this._expand)
-         expand(scheduler._obj);
+      if (!scheduler.expanded)
+         scheduler.expand();
       else 
-         collapse(scheduler._obj);
-      this._expand=!this._expand;
-      this.style.backgroundPosition="0px "+(this._expand?"0":"18")+"px";
+         scheduler.collapse();
+   }
+});
+scheduler._maximize = function(){
+	  this.expanded = !this.expanded;
+      this.toggleIcon.style.backgroundPosition="0px "+(this._expand?"0":"18")+"px";
       if (scheduler.callEvent("onSchedulerResize",[]))
          scheduler.update_view();
-   }
-   
-	scheduler.show_cover=function(){
-		this._cover=document.createElement("DIV");
-		this._cover.className="dhx_cal_cover";
-		this._obj.appendChild(this._cover);
-	}
-
-});
+}

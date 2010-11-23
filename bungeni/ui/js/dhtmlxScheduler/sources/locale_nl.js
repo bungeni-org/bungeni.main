@@ -20,6 +20,7 @@ scheduler.locale={
 		confirm_deleting:"Item zal permanent worden verwijderd, doorgaan?",
 		section_description:"Beschrijving",
 		section_time:"Tijd periode",
+		full_day:"Hele dag",
 		
 		confirm_recurring:"Wilt u alle terugkerende items bijwerken?",
 		section_recurring:"Item herhalen",

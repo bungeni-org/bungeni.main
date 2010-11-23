@@ -2,32 +2,33 @@ scheduler.locale={
 	date:{
 		month_full:[" Januar", " Februar", " März ", " April", " Mai", " Juni", " Juli", " August", " September ", " Oktober", " November ", " Dezember"],
 		month_short:["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"],
-		day_full:[ "Sonntag", "Montag", "Dienstag", " Mittwoch", " Donnerstag", "Freitag", " Sonnabend"],
-    	day_short:["Sonnt", "Mon", "Dienst", "Mitt", "Don", "Fr", "Sona"]
+		day_full:[ "Sonntag", "Montag", "Dienstag", " Mittwoch", " Donnerstag", "Freitag", "Samstag"],
+    	day_short:["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"]
     },
     labels:{
-    	dhx_cal_today_button: " Heute",
-    	day_tab:" Tag",
-    	week_tab:" Woche",
-    	month_tab:" Monat",
-    	new_event:" das Ereignis",
-		icon_save:" Einhalten",
+    	dhx_cal_today_button: "Heute",
+    	day_tab:"Tag",
+    	week_tab:"Woche",
+    	month_tab:"Monat",
+    	new_event:"neuer Eintrag",
+		icon_save:"Speichern",
 		icon_cancel:"Annulieren",
-		icon_details:" Details",
-		icon_edit:" Andern ",
-		icon_delete:"Entfernen",
+		icon_details:"Details",
+		icon_edit:"Ändern",
+		icon_delete:"Löschen",
 		confirm_closing:"",//"Ihre Veränderungen werden verloren sein, wollen Sie ergänzen? "
-		confirm_deleting:" Das Ereignis wird entfert sein, wollen Sie ergänzen?",
-		section_description:" Schilderung",
-		section_time:" Zeitspanne",
+		confirm_deleting:"Der Eintrag wird gelöscht",
+		section_description:"Beschreibung",
+		section_time:"Zeitspanne",
+		full_day:"Ganzer Tag",
 		
-		confirm_recurring:"Sie bearbeiten wollen das aktuelle Ereignis oder neine Reihe von Wiederkehrende Ereignisse?",
-		section_recurring:"Wiederholen Ereignis",
-		button_recurring:"Behinderte",
-		button_recurring_open:"Aktiviert",
+		confirm_recurring:"Wollen Sie alle Einträge bearbeiten (OK) oder nur diesen einzelnen Eintrag (Abbrechen)?",
+		section_recurring:"Wiederholung",
+		button_recurring:"Aus",
+		button_recurring_open:"An",
 			
 		/*agenda view extension*/
-		agenda_tab:"Tagesordnung",
+		agenda_tab:"Agenda",
 		date:"Datum",
 		description:"Beschreibung",
 		

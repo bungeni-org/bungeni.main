@@ -29,6 +29,7 @@
 		font-size:8pt;
 		color:#887A2E;		
 		padding:2px;
+		margin:0px;
 	}
 	.dhx_cal_ltitle{
 		padding:2px 0px 2px 5px;
@@ -133,3 +134,18 @@
 		line-height:21px;
 		vertical-align:middle;
 	}	
+	
+	.dhx_fullday_checkbox {
+		padding-top: 5px;
+		float:right;
+	}
+	
+	.dhx_fullday_checkbox input{
+		vertical-align: middle;
+	}
+	
+	.dhx_fullday_checkbox label{
+		font-size: 12pt;
+		font-weight: bold;
+		vertical-align: middle;		
+	}

@@ -20,6 +20,7 @@ scheduler.locale={
 		confirm_deleting:"Событие будет удалено безвозвратно, продолжить?",
 		section_description:"Описание",
 		section_time:"Период времени",
+		full_day:"Весь день",
 		
 		confirm_recurring:"Вы хотите изменить всю серию повторяющихся событий?",
 		section_recurring:"Повторение",

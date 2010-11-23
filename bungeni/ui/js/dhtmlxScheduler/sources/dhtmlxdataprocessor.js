@@ -7,12 +7,13 @@ function dataProcessor(serverProcessorURL){
     this.serverProcessor = serverProcessorURL;
     this.action_param="!nativeeditor_status";
     
-	this.obj = null;
+	this.object = null;
 	this.updatedRows = []; //ids of updated rows
 	
 	this.autoUpdate = true;
 	this.updateMode = "cell";
 	this._tMode="GET"; 
+	this.post_delim = "_";
 	
     this._waitMode=0;
     this._in_progress={};//?
@@ -28,7 +29,7 @@ function dataProcessor(serverProcessorURL){
     	invalid_cell:"border-bottom:2px solid red;",
     	error:"color:red;",
     	clear:"font-weight:normal;text-decoration:none;"
-    }
+    };
     
     this.enableUTFencoding(true);
     dhtmlxEventable(this);
@@ -103,6 +104,11 @@ dataProcessor.prototype={
 		this.updateMode = mode;
 		this.dnd=dnd;
 	},
+	ignore:function(code,master){
+		this._silent_mode=true;
+		code.call(master||window);
+		this._silent_mode=false;
+	},
 	/**
 	* 	@desc: mark row as updated/normal. check mandatory fields,initiate autoupdate (if turned on)
 	*	@param: rowId - id of row to set update-status for
@@ -111,16 +117,18 @@ dataProcessor.prototype={
 	*	@type: public
 	*/
 	setUpdated:function(rowId,state,mode){
+		if (this._silent_mode) return;
 		var ind=this.findRow(rowId);
 		
 		mode=mode||"updated";
 		var existing = this.obj.getUserData(rowId,this.action_param);
 		if (existing && mode == "updated") mode=existing;
-			
 		if (state){
 			this.set_invalid(rowId,false); //clear previous error flag
 			this.updatedRows[ind]=rowId;
 			this.obj.setUserData(rowId,this.action_param,mode);
+			if (this._in_progress[rowId]) 
+				this._in_progress[rowId]="wait";
 		} else{
 			if (!this.is_invalid(rowId)){
 				this.updatedRows.splice(ind,1);
@@ -135,27 +143,18 @@ dataProcessor.prototype={
 		this.markRow(rowId,state,mode);
 		if (state && this.autoUpdate) this.sendData(rowId);
 	},
-	_clearUpdateFlag:function(){
-		if (this.obj.mytype!="tree"){
-        	var row=this.obj.getRowById(rowId);
-            if (row)
-	      	for (var j=0; j<this.obj._cCount; j++)
-         		this.obj.cells(rowId,j).cell.wasChanged=false;	//using cells because of split
-     	}			
-	},
+	_clearUpdateFlag:function(id){},
 	markRow:function(id,state,mode){ 
 		var str="";
-		var invalid=this.is_invalid(id)
+		var invalid=this.is_invalid(id);
 		if (invalid){
-        	str=this.styles[invalid]
+        	str=this.styles[invalid];
         	state=true;
     	}
 		if (this.callEvent("onRowMark",[id,state,mode,invalid])){
 			//default logic
-			if (state)
-				str+=this.styles[mode];
-			else
-        		str+=this.styles.clear;
+			str=this.styles[state?mode:"clear"]+str;
+			
         	this.obj[this._methods[0]](id,str);
 
 			if (invalid && invalid.details){
@@ -173,7 +172,7 @@ dataProcessor.prototype={
 		return this._invalid[id];
 	},
 	set_invalid:function(id,mode,details){ 
-		if (details) mode={value:mode, details:details, toString:function(){ return this.value.toString(); }}
+		if (details) mode={value:mode, details:details, toString:function(){ return this.value.toString(); }};
 		this._invalid[id]=mode;
 	},
 	/**
@@ -182,22 +181,7 @@ dataProcessor.prototype={
 	*	@type: public
 	*/
 	checkBeforeUpdate:function(rowId){ 
-		var valid=true; var c_invalid=[];
-		for (var i=0; i<this.obj._cCount; i++)
-			if (this.mandatoryFields[i]){
-				var res=this.mandatoryFields[i](this.obj.cells(rowId,i).getValue(),rowId,i);
-				if (typeof res == "string")
-					this.messages.push(res);
-				else {
-					valid&=res;
-					c_invalid[i]=!res;
-				}
-			}
-		if (!valid){
-			this.set_invalid(rowId,"invalid",c_invalid);
-			this.setUpdated(rowId,false);
-		}
-		return valid;
+		return true;
 	},
 	/**
 	* 	@desc: send row(s) values to server
@@ -207,8 +191,7 @@ dataProcessor.prototype={
 	sendData:function(rowId){
 		if (this._waitMode && (this.obj.mytype=="tree" || this.obj._h2)) return;
 		if (this.obj.editStop) this.obj.editStop();
-		if (this.obj.linked_form) this.obj.linked_form.update();
-		
+	
 		
 		if(typeof rowId == "undefined" || this._tSend) return this.sendAllData();
 		if (this._in_progress[rowId]) return false;
@@ -218,22 +201,49 @@ dataProcessor.prototype={
 		this._beforeSendData(this._getRowData(rowId),rowId);
     },
     _beforeSendData:function(data,rowId){
-    	if (!this.callEvent("onBeforeUpdate",[rowId,this.getState(rowId)])) return false;	
+    	if (!this.callEvent("onBeforeUpdate",[rowId,this.getState(rowId),data])) return false;	
 		this._sendData(data,rowId);
+    },
+    serialize:function(data, id){
+    	if (typeof data == "string")
+    		return data;
+    	if (typeof id != "undefined")
+    		return this.serialize_one(data,"");
+    	else{
+    		var stack = [];
+    		var keys = [];
+    		for (var key in data)
+    			if (data.hasOwnProperty(key)){
+    				stack.push(this.serialize_one(data[key],key+this.post_delim));
+    				keys.push(key);
+				}
+    		stack.push("ids="+this.escape(keys.join(",")));
+    		return stack.join("&");
+    	}
+    },
+    serialize_one:function(data, pref){
+    	if (typeof data == "string")
+    		return data;
+    	var stack = [];
+    	for (var key in data)
+    		if (data.hasOwnProperty(key))
+    			stack.push(this.escape((pref||"")+key)+"="+this.escape(data[key]));
+		return stack.join("&");
     },
     _sendData:function(a1,rowId){
     	if (!a1) return; //nothing to send
+		if (!this.callEvent("onBeforeDataSending",rowId?[rowId,this.getState(rowId),a1]:[null, null, a1])) return false;				
+		
     	if (rowId)
 			this._in_progress[rowId]=(new Date()).valueOf();
-	    
-		if (!this.callEvent("onBeforeDataSending",rowId?[rowId,this.getState(rowId)]:[])) return false;				
 		var a2=new dtmlXMLLoaderObject(this.afterUpdate,this,true);
-        var a3=this.serverProcessor;
+		
+		var a3 = this.serverProcessor+(this._user?(getUrlSymbol(this.serverProcessor)+["dhx_user="+this._user,"dhx_version="+this.obj.getUserData(0,"version")].join("&")):"");
 
 		if (this._tMode!="POST")
-        	a2.loadXML(a3+((a3.indexOf("?")!=-1)?"&":"?")+a1);
+        	a2.loadXML(a3+((a3.indexOf("?")!=-1)?"&":"?")+this.serialize(a1,rowId));
 		else
-        	a2.loadXML(a3,true,a1);
+        	a2.loadXML(a3,true,this.serialize(a1,rowId));
 
 		this._waitMode++;
     },
@@ -264,83 +274,18 @@ dataProcessor.prototype={
 	
 	
 	_getAllData:function(rowId){
-		var out=new Array();
-		var rs=new Array();
+		var out={};
+		var has_one = false;
 		for(var i=0;i<this.updatedRows.length;i++){
 			var id=this.updatedRows[i];
 			if (this._in_progress[id] || this.is_invalid(id)) continue;
 			if (!this.callEvent("onBeforeUpdate",[id,this.getState(id)])) continue;	
-			out[out.length]=this._getRowData(id,id+"_");
-			rs[rs.length]=id;
+			out[id]=this._getRowData(id,id+this.post_delim);
+			has_one = true;
 			this._in_progress[id]=(new Date()).valueOf();
 		}
-		if (out.length)
-			out[out.length]="ids="+rs.join(",");
-		return out.join("&");
+		return has_one?out:null;
 	},
-	_getRowData:function(rowId,pref){
-		pref=(pref||"");
-        if (this.obj.mytype=="tree"){
-			var z=this.obj._globalIdStorageFind(rowId);
-			var z2=z.parentObject;
-			
-			var i=0;
-			for (i=0; i<z2.childsCount; i++)
-				if (z2.childNodes[i]==z) break;
-			
-			var str=pref+"tr_id="+this.escape(z.id);
-			str+="&"+pref+"tr_pid="+this.escape(z2.id);
-			str+="&"+pref+"tr_order="+i;
-			str+="&"+pref+"tr_text="+this.escape(z.span.innerHTML);
-			
-			z2=(z._userdatalist||"").split(",");
-			for (i=0; i<z2.length; i++)
-				str+="&"+pref+this.escape(z2[i])+"="+this.escape(z.userData["t_"+z2[i]]);
-
-        }
-        else{
-           var str=pref+"gr_id="+this.escape(rowId);
-		   if (this.obj.isTreeGrid())
-		   str+="&"+pref+"gr_pid="+this.escape(this.obj.getParentId(rowId));
-
-           var r=this.obj.getRowById(rowId);
-
-           for (var i=0; i<this.obj._cCount; i++)
-               {
-			   if (this.obj._c_order)
-			   		var i_c=this.obj._c_order[i];
-			   else
-				   	var i_c=i;
-
-			   var c=this.obj.cells(r.idd,i);
-			   if (this._changed && !c.wasChanged()) continue;
-			   if (this._endnm)
-	               str+="&"+pref+this.obj.getColumnId(i)+"="+this.escape(c.getValue());
-			   else
-	               str+="&"+pref+"c"+i_c+"="+this.escape(c.getValue());
-               }
-           var data=this.obj.UserData[rowId];
-           if (data){
-               for (var j=0; j<data.keys.length; j++)
-                   str+="&"+pref+data.keys[j]+"="+this.escape(data.values[j]);
-           }
-           var data=this.obj.UserData["gridglobaluserdata"];
-           if (data){
-               for (var j=0; j<data.keys.length; j++)
-                   str+="&"+pref+data.keys[j]+"="+this.escape(data.values[j]);
-           }
-           
-        }
-        if (this.obj.linked_form)
-        	str+=this.obj.linked_form.get_serialized(rowId,pref);
-    	return str;
-	},
-	
-	
-	
-	
-	
-	
 	
 	
 	/**
@@ -405,12 +350,15 @@ dataProcessor.prototype={
 *     @topic: 0
 */
 	afterUpdateCallback:function(sid, tid, action, btag) {
-		delete this._in_progress[sid];
+		var marker = sid;
 		var correct=(action!="error" && action!="invalid");
 		if (!correct) this.set_invalid(sid,action);
-		if ((this._uActions)&&(this._uActions[action])&&(!this._uActions[action](btag))) return;
-    	this.setUpdated(sid, false);
-	    
+		if ((this._uActions)&&(this._uActions[action])&&(!this._uActions[action](btag))) 
+			return (delete this._in_progress[marker]);
+			
+		if (this._in_progress[marker]!="wait")
+	    	this.setUpdated(sid, false);
+	    	
 	    var soid = sid;
 	
 	    switch (action) {
@@ -425,12 +373,20 @@ dataProcessor.prototype={
 	    case "deleted":
 	    	this.obj.setUserData(sid, this.action_param, "true_deleted");
 	        this.obj[this._methods[3]](sid);
-	        return this.callEvent("onAfterUpdate", [sid, action, tid, btag])
+	        delete this._in_progress[marker];
+	        return this.callEvent("onAfterUpdate", [sid, action, tid, btag]);
 	        break;
 	    }
-	    //???
-	    if (correct) this.obj.setUserData(sid, this.action_param,'');
-	    this.callEvent("onAfterUpdate", [sid, action, tid, btag])
+	    
+	    if (this._in_progress[marker]!="wait"){
+	    	if (correct) this.obj.setUserData(sid, this.action_param,'');
+	    	delete this._in_progress[marker];
+    	} else {
+    		delete this._in_progress[marker];
+    		this.setUpdated(tid,true,this.obj.getUserData(sid,this.action_param));
+		}
+	    
+	    this.callEvent("onAfterUpdate", [sid, action, tid, btag]);
 	},
 
 	/**
@@ -448,16 +404,18 @@ dataProcessor.prototype={
 			var sid = btag.getAttribute("sid");
 			var tid = btag.getAttribute("tid");
 			
-		    
 			that.afterUpdateCallback(sid,tid,action,btag);
 		}
-		if (that._waitMode) that._waitMode--;
+		that.finalizeUpdate();
+	},
+	finalizeUpdate:function(){
+		if (this._waitMode) this._waitMode--;
 		
-		if ((that.obj.mytype=="tree" || that.obj._h2) && that.updatedRows.length) 
-			that.sendData();
-		that.callEvent("onAfterUpdateFinish",[]);
-		if (!that.updatedRows.length)
-			that.callEvent("onFullSync",[]);
+		if ((this.obj.mytype=="tree" || this.obj._h2) && this.updatedRows.length) 
+			this.sendData();
+		this.callEvent("onAfterUpdateFinish",[]);
+		if (!this.updatedRows.length)
+			this.callEvent("onFullSync",[]);
 	},
 
 
@@ -471,101 +429,11 @@ dataProcessor.prototype={
 	*/
 	init:function(anObj){
 		this.obj = anObj;
-		if (this.obj._dp_init) return this.obj._dp_init(this);
-		var self = this;
-		
-        if (this.obj.mytype=="tree"){
-        	this._methods=["setItemStyle","","changeItemId","deleteItem"];
-            this.obj.attachEvent("onEdit",function(state,id){
-                if (state==3)
-                    self.setUpdated(id,true)
-                return true;
-            });
-            this.obj.attachEvent("onDrop",function(id,id_2,id_3,tree_1,tree_2){
-                if (tree_1==tree_2)
-                	self.setUpdated(id,true);
-            });
-    		this.obj._onrdlh=function(rowId){
-    			if (self.getState(rowId)=="true_deleted")
-    				return true;
-    			self.setUpdated(rowId,true,"deleted")
-    			return false;
-    		};
-    		this.obj._onradh=function(rowId){
-    			self.setUpdated(rowId,true,"inserted")
-    		};
-        }
-        else{
-        	this._methods=["setRowTextStyle","setCellTextStyle","changeRowId",,"deleteRow"];
-      		this.obj.attachEvent("onEditCell",function(state,id,index){
-      			if (self._columns && !self._columns[index]) return true;
-      			var cell = self.obj.cells(id,index)
-      			if(state==1){
-					if(cell.isCheckbox()){
-      					self.setUpdated(id,true)
-      				}
-      			}else if(state==2){
-      				if(cell.wasChanged()){
-						self.setUpdated(id,true)
-      				}
-      			}
-                return true;
-      		})
-      		this.obj.attachEvent("onRowPaste",function(id){
-      			self.setUpdated(id,true)
-  			})
-  			this.obj.attachEvent("onRowIdChange",function(id,newid){
-  				var ind=self.findRow(id);
-  				if (ind<self.updatedRows.length)
-      				self.updatedRows[ind]=newid;
-  			})
-      		this.obj.attachEvent("onSelectStateChanged",function(rowId){
-      			if(self.updateMode=="row")
-      				self.sendData();
-                    return true;
-      		});
-      		this.obj.attachEvent("onEnter",function(rowId,celInd){
-      			if(self.updateMode=="row")
-      				self.sendData();
-                    return true;
-      		});
-      		this.obj.attachEvent("onBeforeRowDeleted",function(rowId){
-      			if (this.dragContext && self.dnd) {
-      				window.setTimeout(function(){
-      					self.setUpdated(rowId,true);
-  					},1)
-      				return true;
-  				}
-                var z=self.getState(rowId);
-				if (this._h2){
-      				this._h2.forEachChild(rowId,function(el){
-      					self.setUpdated(el.id,false);
-      					self.markRow(el.id,true,"deleted");
-  					},this);
-      			}
-    			if (z=="inserted") {  self.setUpdated(rowId,false);		return true; }
-    			if (z=="deleted")  return false;
-    			if (z=="true_deleted")  return true;
-
-      			self.setUpdated(rowId,true,"deleted");
-      			return false;
-      		});
-      		this.obj.attachEvent("onRowAdded",function(rowId){
-      			if (this.dragContext && self.dnd) return true;
-				self.setUpdated(rowId,true,"inserted")
-                return true;
-      		});
-      		this.obj.on_form_update=function(id){
-				self.setUpdated(id,true);
-				return true;
-			}
-        }
+		if (this.obj._dp_init) 
+			this.obj._dp_init(this);
 	},
 	
 	
-	link_form:function(obj){
-		obj.on_update=this.obj.on_form_update;
-	},
 	setOnAfterUpdate:function(ev){
 		this.attachEvent("onAfterUpdate",ev);
 	},
@@ -573,6 +441,141 @@ dataProcessor.prototype={
 	},
 	setOnBeforeUpdateHandler:function(func){  
 		this.attachEvent("onBeforeDataSending",func);
+	},
+
+
+
+	/*! starts autoupdate mode
+		@param interval
+			time interval for sending update requests
+	*/
+	setAutoUpdate: function(interval, user) {
+		interval = interval || 2000;
+		
+		this._user = user || (new Date()).valueOf();
+		this._need_update = false;
+		this._loader = null;
+		this._update_busy = false;
+		
+		this.attachEvent("onAfterUpdate",function(sid,action,tid,xml_node){
+			this.afterAutoUpdate(sid, action, tid, xml_node);
+		});
+		this.attachEvent("onFullSync",function(){
+			this.fullSync();
+		});
+		
+		var self = this;
+		window.setInterval(function(){
+			self.loadUpdate();
+		}, interval);
+	},
+
+
+	/*! process updating request answer
+		if status == collision version is depricated
+		set flag for autoupdating immidiatly
+	*/
+	afterAutoUpdate: function(sid, action, tid, xml_node) {
+		if (action == 'collision') {
+			this._need_update = true;
+			return false;
+		} else {
+			return true;
+		}
+	},
+
+
+	/*! callback function for onFillSync event
+		call update function if it's need
+	*/
+	fullSync: function() {
+		if (this._need_update == true) {
+			this._need_update = false;
+			this.loadUpdate();
+		}
+		return true;
+	},
+
+
+	/*! sends query to the server and call callback function
+	*/
+	getUpdates: function(url,callback){
+		if (this._update_busy) 
+			return false;
+		else
+			this._update_busy = true;
+		
+		this._loader = this._loader || new dtmlXMLLoaderObject(true);
+		
+		this._loader.async=true;
+		this._loader.waitCall=callback;
+		this._loader.loadXML(url);
+	},
+
+
+	/*! returns xml node value
+		@param node
+			xml node
+	*/
+	_v: function(node) {
+		if (node.firstChild) return node.firstChild.nodeValue;
+		return "";
+	},
+
+
+	/*! returns values array of xml nodes array
+		@param arr
+			array of xml nodes
+	*/
+	_a: function(arr) {
+		var res = [];
+		for (var i=0; i < arr.length; i++) {
+			res[i]=this._v(arr[i]);
+		};
+		return res;
+	},
+
+
+	/*! loads updates and processes them
+	*/
+	loadUpdate: function(){
+		var self = this;
+		var version = this.obj.getUserData(0,"version");
+		var url = this.serverProcessor+getUrlSymbol(this.serverProcessor)+["dhx_user="+this._user,"dhx_version="+version].join("&");
+		url = url.replace("editing=true&","");
+		this.getUpdates(url, function(){
+			var vers = self._loader.doXPath("//userdata");
+			self.obj.setUserData(0,"version",self._v(vers[0]));
+			
+			var upds = self._loader.doXPath("//update");
+			if (upds.length){
+				self._silent_mode = true;
+				
+				for (var i=0; i<upds.length; i++) {
+					var status = upds[i].getAttribute('status');
+					var id = upds[i].getAttribute('id');
+					var parent = upds[i].getAttribute('parent');
+					switch (status) {
+						case 'inserted':
+							self.callEvent("insertCallback",[upds[i], id, parent]);
+							break;
+						case 'updated':
+							self.callEvent("updateCallback",[upds[i], id, parent]);
+							break;
+						case 'deleted':
+							self.callEvent("deleteCallback",[upds[i], id, parent]);
+							break;
+					}
+				}
+				
+				self._silent_mode = false;
+			}
+			
+			self._update_busy = false;
+			self = null;
+		});
 	}
-}
+
+};
+
 //(c)dhtmlx ltd. www.dhtmlx.com

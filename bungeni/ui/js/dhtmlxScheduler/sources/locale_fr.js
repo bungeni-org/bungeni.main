@@ -1,7 +1,7 @@
 scheduler.locale={
 	date:{
-		month_full:["Janvier", "Fevrier", "Mars", "April", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
-		month_short:["Jan", "Fev", "Mar", "Apr", "Mai", "Juin", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+		month_full:["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
+		month_short:["Jan", "Fev", "Mar", "Avr", "Mai", "Juin", "Juil", "Aou", "Sep", "Oct", "Nov", "Dec"],	
 		day_full:["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
     	day_short:["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"]
     },
@@ -20,6 +20,7 @@ scheduler.locale={
 		confirm_deleting:"L'événement sera effacé sans appel, êtes-vous sûr ?",
 		section_description:"Description",
 		section_time:"Période de temps",
+		full_day:"Journée complète",
 		
 		confirm_recurring:"Voulez-vous éditer toute une série d'évènements répétés?",
 		section_recurring:"Répéter l'évènement",

@@ -6,8 +6,8 @@ scheduler.locale={
     	day_short:["Su", "Ma", "Ti", "Ke", "To", "Pe", "La"]
     },
     labels:{
-    	dhx_cal_today_button:"T&auml;n&auml;&auml;n",
-    	day_tab:"P&auml;iv&auml;",
+    	dhx_cal_today_button:"Tänään",
+    	day_tab:"Päivä",
     	week_tab:"Viikko",
     	month_tab:"Kuukausi",
     	new_event:"Uusi tapahtuma",
@@ -20,6 +20,7 @@ scheduler.locale={
 		confirm_deleting:"Haluatko varmasti poistaa tapahtuman?",
 		section_description:"Kuvaus",
 		section_time:"Aikajakso",
+		full_day:"Koko päivä",
 		
 		confirm_recurring:"Haluatko varmasti muokata toistuvan tapahtuman kaikkia jaksoja?",
 		section_recurring:"Toista tapahtuma",

@@ -1,3 +1,33 @@
+dhtmlx=function(obj){
+	for (var a in obj) dhtmlx[a]=obj[a];
+	return dhtmlx; //simple singleton
+};
+dhtmlx.extend_api=function(name,map,ext){
+	var t = window[name];
+	if (!t) return; //component not defined
+	window[name]=function(obj){
+		if (obj && typeof obj == "object" && !obj.tagName && !(obj instanceof Array)){
+			var that = t.apply(this,(map._init?map._init(obj):arguments));
+			//global settings
+			for (var a in dhtmlx)
+				if (map[a]) this[map[a]](dhtmlx[a]);			
+			//local settings
+			for (var a in obj){
+				if (map[a]) this[map[a]](obj[a]);
+				else if (a.indexOf("on")==0){
+					this.attachEvent(a,obj[a]);
+				}
+			}
+		} else
+			var that = t.apply(this,arguments);
+		if (map._patch) map._patch(this);
+		return that||this;
+	};
+	window[name].prototype=t.prototype;
+	if (ext)
+		dhtmlXHeir(window[name].prototype,ext);
+};
+
 dhtmlxAjax={
 	get:function(url,callback){
 		var t=new dtmlXMLLoaderObject(true);
@@ -150,17 +180,10 @@ dtmlXMLLoaderObject.prototype.loadXML=function(filePath, postMode, postVars, rpc
 	if (this.rSeed)
 		filePath+=((filePath.indexOf("?") != -1) ? "&" : "?")+"a_dhx_rSeed="+(new Date()).valueOf();
 	this.filePath=filePath;
-
 	if ((!_isIE)&&(window.XMLHttpRequest))
 		this.xmlDoc=new XMLHttpRequest();
 	else {
-		if (document.implementation&&document.implementation.createDocument){
-			this.xmlDoc=document.implementation.createDocument("", "", null);
-			this.xmlDoc.onload=new this.waitLoadFunction(this);
-			this.xmlDoc.load(filePath);
-			return;
-		} else
-			this.xmlDoc=new ActiveXObject("Microsoft.XMLHTTP");
+		this.xmlDoc=new ActiveXObject("Microsoft.XMLHTTP");
 	}
 
 	if (this.async)
@@ -234,14 +257,6 @@ function callerFunction(funcObject, dhtmlObject){
   */
 function getAbsoluteLeft(htmlObject){
 	return getOffset(htmlObject).left;
-	var xPos = htmlObject.offsetLeft;
-	var temp = htmlObject.offsetParent;
-
-	while (temp != null){
-		xPos+=temp.offsetLeft;
-		temp=temp.offsetParent;
-	}
-	return xPos;
 }
 /**
   *     @desc: Calculate absolute position of html object
@@ -251,13 +266,6 @@ function getAbsoluteLeft(htmlObject){
   */
 function getAbsoluteTop(htmlObject){
 	return getOffset(htmlObject).top;
-	var yPos = htmlObject.offsetTop;
-	var temp = htmlObject.offsetParent;
-	while (temp != null){
-		yPos+=temp.offsetTop;
-		temp=temp.offsetParent;
-	}
-	return yPos;
 }
 
 function getOffsetSum(elem) {
@@ -282,7 +290,7 @@ function getOffsetRect(elem) {
 	return { top: Math.round(top), left: Math.round(left) };
 }
 function getOffset(elem) {
-	if (elem.getBoundingClientRect) {
+	if (elem.getBoundingClientRect && !_isChrome) {
 		return getOffsetRect(elem);
 	} else {
 		return getOffsetSum(elem);
@@ -356,7 +364,7 @@ dhtmlDragAndDropObject.prototype.addDragLanding=function(htmlNode, dhtmlObject){
 	htmlNode.dragLanding=dhtmlObject;
 }
 dhtmlDragAndDropObject.prototype.preCreateDragCopy=function(e){
-	if (e&&(e||event).button == 2)
+	if ((e||event) && (e||event).button == 2)
 		return;
 
 	if (window.dhtmlDragAndDrop.waitDrag){
@@ -373,6 +381,8 @@ dhtmlDragAndDropObject.prototype.preCreateDragCopy=function(e){
 	window.dhtmlDragAndDrop.dragStartObject=this.dragStarter;
 	document.body.onmouseup=window.dhtmlDragAndDrop.preCreateDragCopy;
 	document.body.onmousemove=window.dhtmlDragAndDrop.callDrag;
+	window.dhtmlDragAndDrop.downtime = new Date().valueOf();
+	
 
 	if ((e)&&(e.preventDefault)){
 		e.preventDefault();
@@ -384,6 +394,7 @@ dhtmlDragAndDropObject.prototype.callDrag=function(e){
 	if (!e)
 		e=window.event;
 	dragger=window.dhtmlDragAndDrop;
+	if ((new Date()).valueOf()-dragger.downtime<100) return;
 
 	if ((e.button == 0)&&(_isIE))
 		return dragger.stopDrag();
@@ -527,16 +538,21 @@ dhtmlDragAndDropObject.prototype.stopFrameRoute=function(win){
 	if (win)
 		window.dhtmlDragAndDrop.stopDrag(1, 1);
 
-	for (var i = 0; i < window.frames.length; i++)
+	for (var i = 0; i < window.frames.length; i++){
+		try{
 		if ((window.frames[i] != win)&&(window.frames[i].dhtmlDragAndDrop))
 			window.frames[i].dhtmlDragAndDrop.stopFrameRoute(window);
+		} catch(e){}
+	}
 
+	try{
 	if ((parent.dhtmlDragAndDrop)&&(parent != window)&&(parent != win))
 		parent.dhtmlDragAndDrop.stopFrameRoute(window);
+	} catch(e){}
 }
 dhtmlDragAndDropObject.prototype.initFrameRoute=function(win, mode){
 	if (win){
-		window.dhtmlDragAndDrop.preCreateDragCopy();
+		window.dhtmlDragAndDrop.preCreateDragCopy({});
 		window.dhtmlDragAndDrop.dragStartNode=win.dhtmlDragAndDrop.dragStartNode;
 		window.dhtmlDragAndDrop.dragStartObject=win.dhtmlDragAndDrop.dragStartObject;
 		window.dhtmlDragAndDrop.dragNode=win.dhtmlDragAndDrop.dragNode;
@@ -547,13 +563,17 @@ dhtmlDragAndDropObject.prototype.initFrameRoute=function(win, mode){
 		if (((!_isIE)&&(mode))&&((!_isFF)||(_FFrv < 1.8)))
 			window.dhtmlDragAndDrop.calculateFramePosition();
 	}
-
+	try{
 	if ((parent.dhtmlDragAndDrop)&&(parent != window)&&(parent != win))
 		parent.dhtmlDragAndDrop.initFrameRoute(window);
+	}catch(e){}
 
-	for (var i = 0; i < window.frames.length; i++)
+	for (var i = 0; i < window.frames.length; i++){
+		try{
 		if ((window.frames[i] != win)&&(window.frames[i].dhtmlDragAndDrop))
 			window.frames[i].dhtmlDragAndDrop.initFrameRoute(window, ((!win||mode) ? 1 : 0));
+		} catch(e){}
+	}
 }
 
 var _isFF = false;
@@ -561,9 +581,14 @@ var _isIE = false;
 var _isOpera = false;
 var _isKHTML = false;
 var _isMacOS = false;
+var _isChrome = false;
 
 if (navigator.userAgent.indexOf('Macintosh') != -1)
 	_isMacOS=true;
+
+
+if (navigator.userAgent.toLowerCase().indexOf('chrome')>-1)
+	_isChrome=true;
 
 if ((navigator.userAgent.indexOf('Safari') != -1)||(navigator.userAgent.indexOf('Konqueror') != -1)){
 	var _KHTMLrv = parseFloat(navigator.userAgent.substr(navigator.userAgent.indexOf('Safari')+7, 5));
@@ -590,7 +615,7 @@ else if (navigator.appName.indexOf("Microsoft") != -1){
 
 //multibrowser Xpath processor
 dtmlXMLLoaderObject.prototype.doXPath=function(xpathExp, docObj, namespace, result_type){
-	if ((_isKHTML))
+	if (_isKHTML || (!_isIE && !window.XPathResult))
 		return this.doXPathOpera(xpathExp, docObj);
 
 	if (_isIE){ //IE

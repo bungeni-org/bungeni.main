@@ -14,7 +14,12 @@ scheduler.attachEvent("onTemplatesReady",function(){
          }
          
          if (p.date || p.mode){
-            this.setCurrentView((p.date?s2d(p.date):null),(p.mode||null));
+         	try{
+            	this.setCurrentView((p.date?s2d(p.date):null),(p.mode||null));
+        	} catch(e){
+        		//assuming that mode is not available anymore
+        		this.setCurrentView((p.date?s2d(p.date):null),m);
+        	}
             return false;
          }
       }

@@ -86,7 +86,7 @@ dataProcessor.wrap("sendData",function(rowId){
         	if (!this.obj._idpull[rowId])
 	    		this._log("&nbsp;Error! item with such ID not exists <b>"+rowId+"</b>");
 		} else {
-			if (this.obj.rowsAr && !this.obj.rowsAr[rowId])
+			if (!this.obj.rowsAr[rowId])
 	        	this._log("&nbsp;Error! row with such ID not exists <b>"+rowId+"</b>");
         }
 	}
@@ -99,14 +99,34 @@ dataProcessor.wrap("sendAllData",function(){
 },function(){
 	
 });
+dataProcessor.logSingle=function(data,id){
+	var tdata = {};
+	if (id)
+		tdata[id] = data;
+	else
+		tdata = data;
+		
+	var url = [];
+	for (var key in tdata) {
+		url.push("<fieldset><legend>"+key+"</legend>");
+		var suburl = [];
+		
+		for (var ikey in tdata[key])
+			suburl.push(ikey+" = "+tdata[key][ikey]);
 
-dataProcessor.wrap("_sendData",function(url,rowId){
+		url.push(suburl.join("<br>"));
+		url.push("</fieldset>");
+	}
+	return url.join("");
+}
+dataProcessor.wrap("_sendData",function(data,rowId){
 	if (rowId)
 		this._log("&nbsp;Sending in one-by-one mode, current ID = "+rowId);
 	else
 		this._log("&nbsp;Sending all data at once");
 	this._log("&nbsp;Server url: "+this.serverProcessor+" <a onclick='this.parentNode.nextSibling.firstChild.style.display=\"block\"' href='#'>parameters</a>");
-	this._log("<blockquote style='display:none;'>"+url.replace(/\&/g,"<br/>")+"<blockquote>");
+	var url = [];
+	this._log("<blockquote style='display:none;'>"+dataProcessor.logSingle(data,rowId)+"<blockquote>");
 },function(){
 	
 });
@@ -130,7 +150,7 @@ dataProcessor.wrap("afterUpdateCallback",function(sid,tid,action){
 	if (this.obj.mytype=="tree"){
 		if (!this.obj._idpull[sid]) this._log("Incorrect SID, item with such ID not exists in grid");
 	} else {
-		if (this.obj.rowsAr && !this.obj.rowsAr[sid]) this._log("Incorrect SID, row with such ID not exists in grid");
+		if (!this.obj.rowsAr[sid]) this._log("Incorrect SID, row with such ID not exists in grid");
 	}
 	this._log("&nbsp;Action: "+action+" SID:"+sid+" TID:"+tid);
 },function(){

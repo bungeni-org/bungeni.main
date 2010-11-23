@@ -53,7 +53,8 @@ scheduler.form_blocks["recurring"]={
 	 		else { 
 	 			scheduler.transpose_type(code.join("_"));
 	 			repeat=Math.max(1,els["occurences_count"].value);
-	 			dates.end = scheduler.date.add(new Date(dates.start-1),repeat,code.join("_")); 
+	 			var transp = ((code[0]=="week" && code[4] && code[4].toString().indexOf(scheduler.config.start_on_monday?1:0)==-1)?1:0);
+	 			dates.end = scheduler.date.add(new Date(dates.start),repeat+transp,code.join("_")); 
 	 		}
 	 			
 	 		return code.join("_")+"#"+repeat;
@@ -79,10 +80,12 @@ scheduler.form_blocks["recurring"]={
 				for (var i=0; i < col.length; i++) {
 					if (col[i].checked) t.push(col[i].value);
 				}
-				if (t.length){
-					dates.start=scheduler.date.week_start(dates.start);
-					dates._start = true;
-				}
+				if (!t.length)
+					t.push(dates.start.getDay());
+					
+				dates.start=scheduler.date.week_start(dates.start);
+				dates._start = true;
+				
 				code.push(t.sort().join(","));
 			 },
 			 day:function(code){
@@ -109,7 +112,7 @@ scheduler.form_blocks["recurring"]={
 		 		}
 		 		dates._start = true;
 	 		} 	
- 		}
+ 		};
  		var set_rcode={
  			week:function(code,dates){
  				els["week_count"].value=code[1];
@@ -146,8 +149,8 @@ scheduler.form_blocks["recurring"]={
 		 			els["year_day2"].value=code[2];
 		 			els["year_month2"].value=dates.start.getMonth();
 		 		}
-				}
 			}
+		};
 	 	function set_repeat_code(code,dates){
 	 		var data = code.split("#");
 	 		code = data[0].split("_");
@@ -159,7 +162,6 @@ scheduler.form_blocks["recurring"]={
 	 				break;
 	 			case "":
 	 				els["end"][2].checked=true;
-	 				
 	 				els["date_of_end"].value=date_str(dates.end);
 	 				break;
 	 			default:
@@ -186,11 +188,13 @@ scheduler.form_blocks["recurring"]={
 			else node.blocked=false;
 			
 			ds.start = ev.start_date;
-			scheduler.form_blocks["recurring"].button_click(0,node.previousSibling.firstChild.firstChild,node,node)
+			ds.end = ev._end_date;
+			
+			scheduler.form_blocks["recurring"].button_click(0,node.previousSibling.firstChild.firstChild,node,node);
 			if (value)
 				set_repeat_code(value,ds);
 			
-		}
+		};
 		scheduler.form_blocks["recurring"].get_value=function(node,ev){
 			if (node.open){
 				ev.rec_type=get_repeat_code(ds);
@@ -207,7 +211,7 @@ scheduler.form_blocks["recurring"]={
 				ev._end_date = ev.end_date;
 			}
 			return ev.rec_type;
-		}
+		};
 		scheduler.form_blocks["recurring"].set_value(node,value,ev);
 	},
 	get_value:function(node,ev){
@@ -228,59 +232,71 @@ scheduler.form_blocks["recurring"]={
 		
 		scheduler.setLightboxSize();
 	}
-}
+};
 
 
 //problem may occur if we will have two repeating events in the same moment of time
 scheduler._rec_markers = {};
+scheduler._rec_markers_pull = {};
+scheduler._add_rec_marker = function(ev,time){
+	ev._pid_time = time;
+	this._rec_markers[ev.id] = ev;
+	if (!this._rec_markers_pull[ev.event_pid]) this._rec_markers_pull[ev.event_pid] = {};
+	this._rec_markers_pull[ev.event_pid][time]=ev;
+};
+scheduler._get_rec_marker = function(time, id){
+	var ch = this._rec_markers_pull[id];
+	if (ch) return ch[time];
+	return null;	 
+};
+scheduler._get_rec_markers = function(id){
+	return (this._rec_markers_pull[id]||[]);	
+};
 scheduler._rec_temp = [];
 scheduler.attachEvent("onEventLoading",function(ev){
 	if (ev.event_pid!=0)
-		scheduler._rec_markers[ev.event_length*1000]=ev;
+		scheduler._add_rec_marker(ev,ev.event_length*1000);
 	if (ev.rec_type)
 		ev.rec_pattern = ev.rec_type.split("#")[0];
 	return true;
-})
+});
 scheduler.attachEvent("onEventIdChange",function(id,new_id){
 	if (this._ignore_call) return;
 	this._ignore_call = true;
 	
 	for (var i=0; i<this._rec_temp.length; i++){
-		var tev = this._rec_temp[i]
+		var tev = this._rec_temp[i];
 		if (tev.event_pid == id){
 			tev.event_pid = new_id;
-			this.changeEventId(tev.id,new_id+"#"+tev.id.split("#")[1])
+			this.changeEventId(tev.id,new_id+"#"+tev.id.split("#")[1]);
 		}
 	}
 	
 	delete this._ignore_call;
-})
+});
 scheduler.attachEvent("onBeforeEventDelete",function(id){
 	var ev = this.getEvent(id);
 	if (id.toString().indexOf("#")!=-1) {
 		var id = id.split("#");
 		var nid = this.uid();
-		this.addEvent({
-			id:nid,
-			start_date:ev.start_date,
-			end_date:ev.end_date,
-			event_pid:ev.event_pid,
-			event_length:id[1],
-			rec_type:"none",
-			rec_pattern:"none"
-		});
-		this._rec_markers[id[1]*1000]=this.getEvent(nid);
+		
+		var nev = this._copy_event(ev);
+		nev.id = nid; 
+		nev.event_pid = id[0];
+		nev.event_length = id[1];
+		nev.rec_type = nev.rec_pattern = "none";
+		this.addEvent(nev);
+		
+		this._add_rec_marker(this.getEvent(nid), id[1]*1000);
 	} else {
 		if (ev.rec_type)
 			this._roll_back_dates(ev);
-		for (var a in this._rec_markers){
-			if (this._rec_markers[a].event_pid == id){
-				this.deleteEvent(this._rec_markers[a].id,true);		
-			}
-		}				
+		var sub = this._get_rec_markers(id);
+		for (var i in sub)
+			this.deleteEvent(sub[i].id,true);		
 	}
 	return true;
-})
+});
 
 scheduler.attachEvent("onEventChanged",function(id){
 	if (this._loading) return true;
@@ -290,28 +306,30 @@ scheduler.attachEvent("onEventChanged",function(id){
 		var id = id.split("#");
 		var nid = this.uid();
 		this._not_render=true;
-		this.addEvent({
-			id:nid,
-			start_date:ev.start_date,
-			end_date:ev.end_date,
-			text:ev.text,
-			event_pid:id[0],
-			event_length:id[1]
-		});
+		
+		var nev = this._copy_event(ev);
+		nev.id = nid;
+		nev.event_pid = id[0];
+		nev.event_length=id[1];
+		nev.rec_type = nev.rec_pattern = "";
+		this.addEvent(nev);
+		
 		this._not_render=false;
-		this._rec_markers[id[1]*1000]=this.getEvent(nid);
+		this._add_rec_marker(this.getEvent(nid),id[1]*1000);
 	} else{
 		if (ev.rec_type)
 			this._roll_back_dates(ev);
-		for (var a in this._rec_markers){
-			if (this._rec_markers[a].event_pid == id){
-				this.deleteEvent(this._rec_markers[a].id,true);		
-				delete this._rec_markers[a];
-			}
-		}
+		var sub = this._get_rec_markers(id);
+		for (var i in sub) {
+			delete this._rec_markers[sub[i].id];
+			this.deleteEvent(sub[i].id,true);		
+		};
+		delete this._rec_markers_pull[id];
+		
+		this._select_id = null; //remove selectin , because now was can have complex-ids
 	}
 	return true;
-})
+});
 scheduler.attachEvent("onEventAdded",function(id){
 	if (!this._loading){
 		var ev = this.getEvent(id);	
@@ -319,13 +337,13 @@ scheduler.attachEvent("onEventAdded",function(id){
 			this._roll_back_dates(ev);
 	}
 	return true;
-})
+});
 scheduler.attachEvent("onEventCreated",function(id){
 	var ev = this.getEvent(id);
 	if (!ev.rec_type)
 		ev.rec_type = ev.rec_pattern = "";
 	return true;
-})
+});
 scheduler.attachEvent("onEventCancel",function(id){
 	var ev = this.getEvent(id);	
 	if (ev.rec_type){
@@ -333,7 +351,7 @@ scheduler.attachEvent("onEventCancel",function(id){
 		// a bit expensive, but we need to be sure that event re-rendered, because view can be corrupted by resize , during edit process
 		this.render_view_data(ev.id);
 	}
-})
+});
 scheduler._roll_back_dates=function(ev){
 	ev.event_length = (ev.end_date.valueOf() - ev.start_date.valueOf())/1000;
 	ev.end_date = ev._end_date;
@@ -344,12 +362,12 @@ scheduler._roll_back_dates=function(ev){
 		ev.start_date.setFullYear(ev._start_date.getFullYear());
 		
 	}
-}
+};
 
 
 scheduler.validId=function(id){
 	return id.toString().indexOf("#")==-1;
-}
+};
 
 
 scheduler.showLightbox_rec=scheduler.showLightbox;
@@ -357,12 +375,12 @@ scheduler.showLightbox=function(id){
 	var pid=this.getEvent(id).event_pid;
 	if (id.toString().indexOf("#")!=-1)
 		pid = id.split("#")[0];
-	if (!pid || pid == 0 || !confirm(this.locale.labels.confirm_recurring)) return this.showLightbox_rec(id);
+	if (!pid || pid == 0 || (!this.locale.labels.confirm_recurring || !confirm(this.locale.labels.confirm_recurring))) return this.showLightbox_rec(id);
 	pid = this.getEvent(pid);
 	pid._end_date = pid.end_date;
 	pid.end_date = new Date(pid.start_date.valueOf()+pid.event_length*1000);
 	return this.showLightbox_rec(pid.id);
-}
+};
 scheduler.get_visible_events_rec = scheduler.get_visible_events;
 scheduler.get_visible_events=function(){
 	for (var i=0; i<this._rec_temp.length; i++)
@@ -375,7 +393,7 @@ scheduler.get_visible_events=function(){
 		if (stack[i].rec_type){
 			//deleted element of serie
 			if (stack[i].rec_pattern != "none")
-				this.repeat_date(stack[i],out)
+				this.repeat_date(stack[i],out);
 		} 
 		else out.push(stack[i]);
 	}
@@ -387,27 +405,27 @@ var old = scheduler.is_one_day_event;
 scheduler.is_one_day_event=function(ev){
 	if (ev.rec_type) return true;
 	return old.call(this,ev);
-}
+};
 })();
 
 scheduler.transponse_size={
 	day:1, week:7, month:1, year:12 
-}
+};
 scheduler.date.day_week=function(sd,day,week){
 	sd.setDate(1);
 	week = (week-1)*7;
 	var cday = sd.getDay();
 	var nday=day*1+week-cday+1;
 	sd.setDate(nday<=week?(nday+7):nday);
-}
+};
 scheduler.transpose_day_week=function(sd,list,cor,size,cor2){
-	var cday = sd.getDay()-cor;
+	var cday = (sd.getDay()||(scheduler.config.start_on_monday?7:0))-cor;
 	for (var i=0; i < list.length; i++) {
 		if (list[i]>cday)
 			return sd.setDate(sd.getDate()+list[i]*1-cday-(size?cor:cor2));
 	}
-	this.transpose_day_week(sd,list,cor+size,null,cor)
-}		
+	this.transpose_day_week(sd,list,cor+size,null,cor);
+};	
 scheduler.transpose_type = function(type){
 	var f = "transpose_"+type;
 	if (!this.date[f]) {
@@ -418,7 +436,15 @@ scheduler.transpose_type = function(type){
 		
 		if (str[0]=="day" || str[0]=="week"){
 			var days = null;
-			if (str[4]) days=str[4].split(",");
+			if (str[4]){
+				days=str[4].split(",");
+				if (scheduler.config.start_on_monday){
+					for (var i=0; i < days.length; i++)
+						days[i]=(days[i]*1)||7;
+					days.sort();
+				}
+			}
+			
 			
 			this.date[f] = function(nd,td){
 				var delta = Math.floor((td.valueOf()-nd.valueOf())/(day*step));
@@ -426,7 +452,7 @@ scheduler.transpose_type = function(type){
 					nd.setDate(nd.getDate()+delta*step);
 				if (days)
 						scheduler.transpose_day_week(nd,days,1,step);
-			}
+			};
 			this.date[gf] = function(sd,inc){
 				var nd =  new Date(sd.valueOf());
 				if (days){
@@ -436,7 +462,7 @@ scheduler.transpose_type = function(type){
 					nd.setDate(nd.getDate()+inc*step);
 				
 				return nd;
-			}
+			};
 		}
 		else if (str[0]=="month" || str[0]=="year"){
 			this.date[f] = function(nd,td){
@@ -445,29 +471,32 @@ scheduler.transpose_type = function(type){
 					nd.setMonth(nd.getMonth()+delta*step);
 				if (str[3])
 					scheduler.date.day_week(nd,str[2],str[3]);
-			}
+			};
 			this.date[gf] = function(sd,inc){
 				var nd =  new Date(sd.valueOf());
 				nd.setMonth(nd.getMonth()+inc*step);
 				if (str[3])
 					scheduler.date.day_week(nd,str[2],str[3]);
 				return nd;
-			}
+			};
 		}
 	}
-}
+};
 scheduler.repeat_date=function(ev,stack,non_render,from,to){
 	from = from||this._min_date;
 	to = to||this._max_date;
 	
-	var td = new Date(ev.start_date.valueOf())
+	var td = new Date(ev.start_date.valueOf());
+	if (!ev.rec_pattern && ev.rec_type) 
+		ev.rec_pattern = ev.rec_type.split("#")[0];
+		
 	this.transpose_type(ev.rec_pattern);
 	scheduler.date["transpose_"+ev.rec_pattern](td, from);
 	while (td<ev.start_date || (td.valueOf()+ev.event_length*1000)<=from.valueOf()) 
 		td = this.date.add(td,1,ev.rec_pattern);
 	while (td < to && td < ev.end_date){
-		var ch = this._rec_markers[td.valueOf()];
-		if (!ch || ch.event_pid != ev.id) { //not changed element of serie
+		var ch = this._get_rec_marker(td.valueOf(),ev.id);
+		if (!ch) { //not changed element of serie
 			var ted = new Date(td.valueOf()+ev.event_length*1000);
 			var copy=this._copy_event(ev);
 			//copy._timed = ev._timed;
@@ -475,6 +504,16 @@ scheduler.repeat_date=function(ev,stack,non_render,from,to){
 			copy.event_pid = ev.id;
 			copy.id = ev.id+"#"+Math.ceil(td.valueOf()/1000);
 			copy.end_date = ted;
+			
+			var shift = copy.start_date.getTimezoneOffset() - copy.end_date.getTimezoneOffset();
+			if (shift){
+				if (shift>0) 
+					copy.end_date = new Date(td.valueOf()+ev.event_length*1000-shift*60*1000);
+				else {
+					copy.end_date = new Date(copy.end_date.valueOf() + shift*60*1000);
+				}
+			}
+							
 			copy._timed=this.is_one_day_event(copy);
 			
 			if (!copy._timed && !this._table_view && !this.config.multi_day) return;
@@ -490,8 +529,39 @@ scheduler.repeat_date=function(ev,stack,non_render,from,to){
 			
 		td = this.date.add(td,1,ev.rec_pattern);
 	}		
-}
+};
 
+scheduler.getRecDates = function(id, max){
+	var ev = typeof id == "object" ? id : scheduler.getEvent(id);
+	var count = 0;
+	var result = [];
+	max = max || 1000;
+	
+	
+	var td = new Date(ev.start_date.valueOf());
+	var from = new Date(td.valueOf());
+	
+	if(!ev.rec_type) {
+		return [ { start_date: ev.start_date, end_date: ev.end_date } ];
+	}
+	this.transpose_type(ev.rec_pattern);
+	scheduler.date["transpose_"+ev.rec_pattern](td, from);
+	
+	while (td<ev.start_date || (td.valueOf()+ev.event_length*1000)<=from.valueOf())
+		td = this.date.add(td,1,ev.rec_pattern);
+	while (td < ev.end_date){
+		var ch = this._get_rec_marker(td.valueOf(),ev.id);
+		if (!ch){ //not changed element of serie
+			var ted = new Date(td.valueOf()+ev.event_length*1000);
+			var sed = new Date(td);
+			result.push({start_date:sed, end_date:ted});
+			td = this.date.add(td,1,ev.rec_pattern);
+			count++;
+		}
+		if (count == max) break;
+	}
+	return result;
+};
 scheduler.getEvents = function(from,to){
 	var result = [];
 	for (var a in this._events){
@@ -504,23 +574,23 @@ scheduler.getEvents = function(from,to){
 				for (var i=0; i < sev.length; i++)
 					if (!sev[i].rec_pattern && sev[i].start_date<to && sev[i].end_date>from)
 						result.push(sev[i]);
-			} else if (ev.event_pid==0){
+			} else if (!ev.event_pid || ev.event_pid==0){
 				result.push(ev);
 			}
 		}
 	}
 	return result;
-}
+};
 
 scheduler.config.repeat_date="%m.%d.%Y";
 scheduler.config.lightbox.sections=[	
 	{name:"description", height:130, map_to:"text", type:"textarea" , focus:true},
 	{name:"recurring", height:115, type:"recurring", map_to:"rec_type", button:"recurring"},
 	{name:"time", height:72, type:"time", map_to:"auto"}
-]
+];
 //drop secondary attributes
 scheduler._copy_dummy=function(ev){
 	this.start_date=new Date(this.start_date);
 	this.end_date=new Date(this.end_date);
-	this.event_lengt=this.event_pid=this.rec_pattern=this.rec_type=this._timed=null;
-}
+	this.event_length=this.event_pid=this.rec_pattern=this.rec_type=this._timed=null;
+};

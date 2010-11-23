@@ -21,6 +21,6 @@ ClockPick = JSViewlet('bungeni-js/jquery/jquery.clockpick.1.2.5.js')
 
 Form = JSViewlet('bungeni-js/jquery/jquery.form-2.12.js')
 DhtmlxCalendar = JSViewlet('bungeni-js/dhtmlxScheduler/codebase/dhtmlxscheduler.js')
-DhtmlxCalendarList = JSViewlet('bungeni-js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_agenda_view.js')
+#DhtmlxCalendarList = JSViewlet('bungeni-js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_agenda_view.js')
 DhtmlxCalendarRecurring = JSViewlet('bungeni-js/dhtmlxScheduler/codebase/ext/dhtmlxscheduler_recurring.js')
 Reports = JSViewlet('bungeni-js/report.js')

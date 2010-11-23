@@ -55,9 +55,11 @@ div.dhx_cal_event_clear,  div.dhx_cal_event{
 }
 
 .dhx_cal_ltext textarea {
+	-moz-box-shadow:none;
 	border-width:0;
 	padding:0;
 	background:transparent none repeat scroll 0 0;
+	-webkit-box-shadow:none;
 }
 
 .dhx_cal_light{
@@ -66,6 +68,11 @@ div.dhx_cal_event_clear,  div.dhx_cal_event{
 .dhx_cal_light div, .dhx_cal_container div{
 	line-height:normal;
 }
+
+.dhx_cal_light .dhx_form_repeat div,.dhx_cal_light  .dhx_form_repeat{
+	line-height:24px;
+}
+
 
 /* anti-joomla */
 div.dhx_cal_navline div, .dhx_scale_bar, .dhx_scale_hour, .dhx_title{
@@ -82,4 +89,18 @@ div.dhx_cal_container, div.dhx_cal_lsection{
 }
 div.dhx_cal_container, div.dhx_cal_lsection{
 	line-height:normal;
+}
+.dhx_cal_header .dhx_agenda_line div, .dhx_year_month{
+	text-align:center !important;
+}
+.dhx_tooltip{
+	text-align:left;
+}
+
+
+.dhx_cal_data table{
+	border-width:0px !important;
+}
+.dhx_cal_data table tr td{
+	border-top-width:0px !important;
 }
