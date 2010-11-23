@@ -30,7 +30,7 @@
                 scheduler.config.scroll_hour=8;
                 scheduler.config.details_on_create=true;
                 
-                scheduler.locale.labels.agenda_tab = "Upcoming";
+                //scheduler.locale.labels.agenda_tab = "Upcoming";
                 scheduler.init('scheduler_here', null, "week");
                 scheduler.setLoadMode("month");
                 
@@ -122,7 +122,7 @@
 			        <div class="dhx_cal_tab" name="day_tab" style="left:100px;"></div>
 			        <div class="dhx_cal_tab" name="week_tab" style="left:170px;"></div>
 			        <div class="dhx_cal_tab" name="month_tab" style="left:240px;"></div>
-			        <div class="dhx_cal_tab" name="agenda_tab" style="right:20px;"></div>
+			        <!-- div class="dhx_cal_tab" name="agenda_tab" style="right:20px;"></div-->
 		        </div>
 		        <div class="dhx_cal_header">
 		        </div>
