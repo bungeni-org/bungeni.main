@@ -16,6 +16,7 @@ from zope.i18n import translate
 from zope.location.interfaces import ILocation
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.publisher.browser import BrowserView
+from bungeni.ui.browser import BungeniBrowserView
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.app.component.hooks import getSite
 from zope.security.proxy import removeSecurityProxy
@@ -192,7 +193,7 @@ def create_sittings_map(sittings, request):
 
     return mapping
 
-class CalendarView(BrowserView):
+class CalendarView(BungeniBrowserView):
     """Main calendar view."""
 
     interface.implements(IStructuralView)
@@ -205,21 +206,20 @@ class CalendarView(BrowserView):
         log.debug("CalendarView.__init__: %s" % (context))
         super(CalendarView, self).__init__(
             ISchedulingContext(context), request)
-        trusted = removeSecurityProxy(self.context)
-        trusted.__name__ = self.__name__
-        trusted.title = self.short_name
-        interface.alsoProvides(trusted, ILocation)
-        interface.alsoProvides(trusted, IDCDescriptiveProperties)
-        if (IBusinessSectionLayer.providedBy(request) and 
-            isinstance(trusted, SittingContainerSchedulingContext)):
-            self.url = url.absoluteURL(trusted.__parent__.__parent__, request)
-        else:
-            self.url = url.absoluteURL(trusted.__parent__, request)
-        self.__parent__ = context
-        log.debug(debug.interfaces(self))
-        log.debug(debug.location_stack(self))
         
     def __call__(self, timestamp=None):
+        log.debug("CalendarView.__call__: %s" % (self.context))
+        trusted = removeSecurityProxy(self.context)
+        trusted.__name__ = self.__name__
+        interface.alsoProvides(trusted, ILocation)
+        if (IBusinessSectionLayer.providedBy(self.request) and 
+            isinstance(trusted, SittingContainerSchedulingContext)):
+            self.url = url.absoluteURL(trusted.__parent__.__parent__, self.request)
+        else:
+            self.url = url.absoluteURL(trusted.__parent__, self.request)
+        self.title = ISchedulingContext(self.context).label
+        log.debug(debug.interfaces(self))
+        log.debug(debug.location_stack(self))
         return self.render()
         
     def publishTraverse(self, request, name):
@@ -230,10 +230,11 @@ class CalendarView(BrowserView):
     def render(self, template=None):
         if template is None:
             template = self.template
-        if checkPermission(u"bungeni.sitting.Add", self.context):
-            self.edit = True
-        else:
+        if (not checkPermission(u"bungeni.sitting.Add", self.context)) or \
+            (IBusinessSectionLayer.providedBy(self.request)):
             self.edit = False
+        else:
+            self.edit = True
         session = Session()
         venues = session.query(domain.Venue).all()
         languages = get_all_languages()
