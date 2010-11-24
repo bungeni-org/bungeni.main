@@ -10,16 +10,56 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.alchemist")
 
+from zope import component, interface, schema
+from zope.interface.interfaces import IInterface
+
+from bungeni.alchemist.interfaces import (
+    IAlchemistContent,
+    IModelAnnotation,
+    IIModelInterface,
+    IModelDescriptor
+)
+
 
 # ore.alchemist.model
 
-from ore.alchemist.model import queryModelDescriptor
-from ore.alchemist.model import queryModelInterface
+
+def queryModelInterface(cls):
+    """We can passed in a class or an interface.
+    """
+    if not IInterface.providedBy(cls):
+        candidates = list(interface.implementedBy(cls))
+        ifaces = filter(IIModelInterface.providedBy, candidates)
+        #import pdb; pdb.set_trace()
+        if not ifaces:
+            for i in candidates:
+                if issubclass(i, IAlchemistContent):
+                    ifaces.append(i)
+        if not ifaces:
+            raise SyntaxError("No Model Interface on Domain Object")
+        if ifaces:
+            assert len(ifaces)==1, "Multiple Model Interfaces on Domain Object"
+        #import pdb; pdb.set_trace()
+        cls = ifaces[0]
+    else:
+        assert IIModelInterface.providedBy(cls), "Invalid Interface"
+    return cls
 
 
-from zope import interface
-from zope import schema
-import ore.alchemist
+def queryModelDescriptor(ob):
+    if not IInterface.providedBy(ob):
+        ob = filter(IIModelInterface.providedBy, 
+            list(interface.implementedBy(ob)))[0]    
+    name = "%s.%s" % (ob.__module__, ob.__name__)
+    return component.queryAdapter(ob, IModelDescriptor, name)
+
+# Register queryModelDescriptor adaptor (to override their upstream ZCML reg)
+# signature: factory, adapts:[iface], provides:iface, name, event=False
+component.getGlobalSiteManager().registerAdapter(queryModelDescriptor, 
+    [IAlchemistContent],
+    IModelAnnotation
+)
+
 
 class IModelDescriptorField(interface.Interface):
     # name
@@ -29,6 +69,7 @@ class IModelDescriptorField(interface.Interface):
         title=u"View Usage Modes for Field",
         description=u"Pipe separated string of different modes.. "
             "view|edit|add|listing|search are all valid"
+            # !+PIPE(mr, nov-2010) get rid of it, use whitespace instead?
     )
     # property
     listing_column = schema.Object(interface.Interface,
@@ -182,7 +223,8 @@ class Field(object):
         return self.__dict__[k]
 
 
-class ModelDescriptor(ore.alchemist.model.ModelDescriptor):
+
+class ModelDescriptor(object):
     """Model type descriptor for table/mapped objects. 
     
     The notion is that an annotation Field object corresponds to a column, 
@@ -194,11 +236,21 @@ class ModelDescriptor(ore.alchemist.model.ModelDescriptor):
     Always retrieve the *same* descriptor *instance* for a model class via:
         queryModelDescriptor(model_interface)
     """
+    interface.implements(IModelDescriptor)
+    
     # editable table listing !+
     #edit_grid = True 
     
-    # fields - subclasses must set
-    #fields = None # [Field]
+    # for subclasses to reset
+    fields = () # [Field]
+    properties = () # !+USED?
+    schema_order = () # !+USED?
+    schema_invariants = ()
+    
+    def __call__(self, iface):
+        """Models are also adapters for the underlying objects
+        """
+        return self
     
     def __init__(self):
         self._fields_by_name = {}
@@ -227,9 +279,34 @@ class ModelDescriptor(ore.alchemist.model.ModelDescriptor):
     def get(self, name, default=None):
         return self._fields_by_name.get(name, default)
     
+    def keys(self):
+        return self._fields_by_name.keys()
+    
+    def values(self):
+        return self._fields_by_name.values()
+    
     def __getitem__(self, name):
         return self._fields_by_name[name]
     
     def __contains__(self, name):
         return name in self._fields_by_name
+
+    def _mode_columns(self, mode):
+        return [ f for f in self.__class__.fields if mode in f.modes ]
+    
+    @property
+    def listing_columns(self): # !+listing_column_NAMES(mr, nov-2010) !
+        return [ f.name for f in self._mode_columns("listing") ]
+    @property
+    def search_columns(self): 
+        return self._mode_columns("search")
+    @property
+    def edit_columns(self):
+        return self._mode_columns("edit")
+    @property
+    def add_columns(self):
+        return self._mode_columns("add")
+    @property
+    def view_columns(self):
+        return self._mode_columns("view")
 

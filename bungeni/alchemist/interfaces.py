@@ -14,11 +14,17 @@ log = __import__("logging").getLogger("bungeni.alchemist")
 
 # ore.alchemist.interfaces
 
-from ore.alchemist.interfaces import IAlchemistContent
-from ore.alchemist.interfaces import IAlchemistContainer
-from ore.alchemist.interfaces import IDatabaseEngine
-from ore.alchemist.interfaces import IIModelInterface
-from ore.alchemist.interfaces import IRelationChange
+from ore.alchemist.interfaces import (
+    IAlchemistContent,
+    IAlchemistContainer,
+    
+    IDatabaseEngine,
+    IRelationChange,
+
+    IIModelInterface,
+    IModelAnnotation,
+    IModelDescriptor
+)
 
 from alchemist.ui.interfaces import IContentViewManager
 
