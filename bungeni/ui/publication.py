@@ -38,6 +38,8 @@ def once_per_request(event_handler):
 prepare_user_workspaces = once_per_request(prepare_user_workspaces)
 
 
+# event subscribers, dispatch co-ordinators
+
 @component.adapter(IBeforeTraverseEvent)
 def on_before_traverse(event):
     """Subscriber to intercept traversal, and dispatch as needed to dedicated 
@@ -46,9 +48,9 @@ def on_before_traverse(event):
     """
     log.info("IBeforeTraverseEvent:%s:%s" % (id(event.request), event.object))
     apply_request_layer_by_url(event)
+    remember_traversed_context(event)
     prepare_user_workspaces(event)
 
-#
 
 @component.adapter(IEndRequestEvent)
 def on_end_request(event):
@@ -61,6 +63,20 @@ def on_end_request(event):
                                     id(event.request), event.object, session))
     session.close()
 
+
+# some actual handlers
+
+from zope.security.proxy import removeSecurityProxy
+def remember_traversed_context(event):
+    """Called per IBeforeTraverseEvent -- remember request's context
+    (event.object) at each traversal, for downstream convenience.
+    
+    The intended usage is for generic non-contextual code -- that needs to 
+    do some action depending on the context -- called by framework/3rd-party 
+    code using an API not under the control of this application.
+    """
+    IAnnotations(event.request).setdefault("contexts", []
+        ).append(removeSecurityProxy(event.object))
 
 #
 
@@ -110,6 +126,7 @@ def apply_request_layer_by_url(event):
             interface.alsoProvides(request, layer)
             break # only apply first matching layer
     else: # there was no break, no mapping_on_path layer added
+        # !+IResourceNonLayer(mr, nov-2010) almost never passes thru here
         for condition, layer in mapping_on_path_info:
             if condition.match(path_info) is not None:
                 log.debug("Adding %s layer to request for path_info <%s>" % (

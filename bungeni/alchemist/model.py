@@ -12,6 +12,7 @@ log = __import__("logging").getLogger("bungeni.alchemist")
 
 from zope import component, interface, schema
 from zope.interface.interfaces import IInterface
+from zope.app.security.interfaces import IUnauthenticatedPrincipal
 
 from bungeni.alchemist.interfaces import (
     IAlchemistContent,
@@ -19,6 +20,8 @@ from bungeni.alchemist.interfaces import (
     IIModelInterface,
     IModelDescriptor
 )
+
+from bungeni.ui.utils import common 
 
 
 # ore.alchemist.model
@@ -277,21 +280,27 @@ class ModelDescriptor(object):
     # they may be redefined in a much simpler way (as well as being faster).
     
     def get(self, name, default=None):
+        print '!+ModelDescriptor.get("%s")' % (name), self
         return self._fields_by_name.get(name, default)
     
     def keys(self):
+        print "!+ModelDescriptor.keys", self
         return self._fields_by_name.keys()
     
     def values(self):
+        print "!+ModelDescriptor.values", self
         return self._fields_by_name.values()
     
     def __getitem__(self, name):
+        print "!+ModelDescriptor.__getitem__", self
         return self._fields_by_name[name]
     
     def __contains__(self, name):
+        print "!+ModelDescriptor.__contains__", self
         return name in self._fields_by_name
 
     def _mode_columns(self, mode):
+        self.test_context_roles(mode)
         return [ f for f in self.__class__.fields if mode in f.modes ]
     
     @property
@@ -309,4 +318,36 @@ class ModelDescriptor(object):
     @property
     def view_columns(self):
         return self._mode_columns("view")
+    
+    
+    def test_context_roles(self, mode):
+        """EXPERIMENTAL sample code to get a user's roles and whether is_admin 
+        or not -- this is the info needed (in addition to the field's modes) 
+        to further filter whether a field is visible or not for a 
+        given (user, mode).
+        """
+        request = common.get_request()
+        if request is None:
+            context = None
+            principal = None
+        else:
+            context = common.get_traversed_context(request)
+            principal = request.principal
+        if IUnauthenticatedPrincipal.providedBy(principal):
+            roles = None
+        else: 
+            roles = common.get_context_roles(context)
+        print """!+ModelDescriptor TEST_CONTEXT_ROLES [%s]
+        PRINCIPAL: %s
+        CONTEXT: %s
+        MODE: %s
+        ROLES: %s
+        IS ADMIN: %s""" % (self,
+            principal, 
+            context,
+            mode,
+            roles, 
+            common.is_admin(context)
+        )
+
 
