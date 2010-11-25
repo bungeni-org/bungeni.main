@@ -396,9 +396,13 @@ class CalendarMenu(BrowserMenu):
                 "separator": None,
                 "class": ""
             }
+            #!+(miano. nov-2010) description is set to be the same as title 
+            # below because the description of a group is a rich text field 
+            # that may have HTML formatting etc thus is not suitable to be 
+            # used as a tootip
             results.append(dict(
                     title=context.label,
-                    description=group.description,
+                    description=context.label,
                     action=_url,
                     selected=False,
                     icon=None,
