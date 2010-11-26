@@ -105,6 +105,10 @@
     </rule>
     
     <rule class="frontpage">
+        <append href="/plone"
+                theme="//head"
+                content="//head"
+                nocontent="ignore" />      
         <replace content="#portal-logo" theme="#portal-logo" />
         <replace content="#portal-siteactions" theme="#portal-siteactions" />
         <replace content="#portal-searchbox" theme="#portal-searchbox" />
@@ -135,15 +139,10 @@
 
         <!--main content -->
         <replace href="/plone"
-            content="#content"
-            theme="children:#portal-column-content"/>
+            content="#portal-column-content"
+            theme="#portal-column-content"/>
 
-        <!--right portlet -->
-        <prepend href="/plone"
-                 content="children:#portal-column-two"
-                 theme="children:#portal-column-two"
-        />     
-        <drop content="#portal-column-content" />
+        <drop content="#portal-column-content" /> 
     </rule>  
 
     
