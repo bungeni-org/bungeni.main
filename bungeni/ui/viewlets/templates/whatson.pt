@@ -50,8 +50,7 @@ $URL$
 		                </tal:block>
 			            <tal:block tal:condition="python:item.item_type == 'heading'">
                           <dt><h3><span i18n:domain="bungeni.models" i18n:translate="" tal:content="item/item_type" />: 
-                          <span tal:content="item/name" />
-                          (<span i18n:domain="bungeni.core" i18n:translate="" tal:content="item/status" />)</h3></dt>
+                          <span tal:content="item/name" /></h3></dt>
 			            </tal:block>
                     </tal:block>
                   </dl>
