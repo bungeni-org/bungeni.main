@@ -267,7 +267,7 @@ class OneTimeEditWidget(TextAreaWidget):
     """
     __call__ = ViewPageTemplateFile("templates/one-time-textinput-widget.pt")
 
-
+'''
 class SupplementaryQuestionDisplay(zope.app.form.browser.widget.DisplayWidget):
     """
     If a question has a parent i.e it is a supplementary question
@@ -283,6 +283,7 @@ class SupplementaryQuestionDisplay(zope.app.form.browser.widget.DisplayWidget):
             return _(u"Supplementary Question to: <br/> %s") % parent
         else:
             return _(u"Initial Question")
+'''
 
 class SelectDateWidget(SimpleInputWidget):
     """A more user freindly date input.

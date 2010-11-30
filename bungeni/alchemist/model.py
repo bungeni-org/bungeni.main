@@ -79,6 +79,7 @@ class IModelDescriptorField(interface.Interface):
         title=u"A Custom Column Widget for Listing Views",
         required=False
     )
+    # !+LISTING_WIDGET(mr, nov-2010) why inconsistently named "listing_column"?
     view_widget = schema.Object(interface.Interface,
         title=u"A Custom Widget Factory for Read Views",
         required=False
@@ -218,6 +219,16 @@ class Field(object):
             v = kw[p]
             if v is not None:
                 setattr(self, p, v)
+        
+        # Ensure that a field is included in a descriptor only when it is 
+        # relevant to the UI i.e. it is displayed in at least one mode -- 
+        # this obsoletes/replaces the previous concept of descripor "omit". 
+        # Apparently there has been a security-related issue as motivation 
+        # for the previous "omit" concept -- as per this discussion:
+        # http://groups.google.com/group/bungeni-dev/browse_thread/thread/7f7831b32e798708
+        # But, testing the UI with all such fields removed has uncovered no 
+        # such security-related issues (see r19 commit log of bungeni-testing).
+        assert self.modes, "A descriptor field must specify one or more modes."
     
     def get(self, k, default=None):
         return self.__dict__.get(k, default)
