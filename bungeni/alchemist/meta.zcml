@@ -4,5 +4,12 @@
     
     <include package="ore.alchemist" file="meta.zcml"/>
     
+    <!-- !+ gives conflict, defined in python: bungeni.alchemist.model
+    <adapter for="ore.alchemist.interfaces.IAlchemistContent"
+        provides="ore.alchemist.interfaces.IModelAnnotation"
+        factory=".model.queryModelDescriptor"
+    />
+    -->
+
 </configure>
 

@@ -256,7 +256,8 @@ offices = rdb.Table("offices", metadata,
     # Speakers office or Clerks office, the members of members of
     # this group will get local roles in the parliament accordingly
     rdb.Column("office_type", rdb.String(1),
-        rdb.CheckConstraint("""office_type in ('S','C', 'T','L','R')"""),
+        # legend: S:Speaker, C:Clerk, T:Translator, L:Library, R:Reseach
+        rdb.CheckConstraint("""office_type in ('S','C','T','L','R')"""),
         nullable=False
     ),
 )
@@ -293,7 +294,7 @@ committee_type = rdb.Table("committee_types", metadata,
     rdb.Column("description", rdb.UnicodeText),
     rdb.Column("life_span", rdb.Unicode(16)),
     # Indicate whether this type of committees are: 
-    # ‘P" - Permanent, ‘T" - Temporary
+    # P:Permanent, T:Temporary
     rdb.Column("status", rdb.String(1),
         rdb.CheckConstraint("""status in ('P','T')"""),
         nullable=False
