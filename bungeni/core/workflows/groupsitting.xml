@@ -85,7 +85,7 @@
     <state id="published_minutes" title="Published Minutes">
         <deny permission="bungeni.sitting.Edit" role="bungeni.Owner" />
         <deny permission="bungeni.sitting.Edit" role="bungeni.Clerk" />
-        <deny permission="bungeni.sitting.Edit" role="bungeni.speaker" />
+        <deny permission="bungeni.sitting.Edit" role="bungeni.Speaker" />
         <deny permission="bungeni.agenda.View" role="bungeni.Clerk" />
         <deny permission="bungeni.agenda.View" role="bungeni.Speaker" />
         <deny permission="bungeni.agenda.View" role="bungeni.MP" />
