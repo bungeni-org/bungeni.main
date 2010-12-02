@@ -118,6 +118,10 @@ class IModelDescriptorField(interface.Interface):
 class Field(object):
     interface.implements(IModelDescriptorField)
     
+    # A field in a descriptor must be displayable in at least one of these modes
+    _modes = ("view", "edit", "add", "listing", "search")
+    
+    
     # INIT Parameter (and Defaults)
     
     # CONVENTION: the default value for each init parameter is the value 
@@ -131,7 +135,8 @@ class Field(object):
     label = ""       # str: title for field
     description = "" # str : description for field
     
-    modes = "view|edit|add" # str : see _valid_modes for allows values
+    # see _modes for allows values
+    modes = "view edit add".split() # list (but init param should be a str)
     
     property = None # zope.schema.interfaces.IField
     
@@ -172,8 +177,6 @@ class Field(object):
     # !+GROUP(mr, oct-2010) not used - determine intention, remove.
     
     
-    _valid_modes = ("view", "edit", "add", "listing", "search")
-    
     def __init__(self, 
         name=None, label=None, description=None, 
         modes=None, property=None, listing_column=None, 
@@ -200,10 +203,14 @@ class Field(object):
                 not (modes or self.modes)), \
             """Can't specify "property" and no "modes" for field: %s""" % (
                 name)
-        if modes: 
-            assert not " " in modes, \
-                """Field [%s] "modes" [%s] may not contain whitespace""" % (
-                    name, modes)
+        
+        if modes:
+            # get list, removing any additional whitespace
+            modes = modes.split()
+            for mode in modes:
+                assert mode in self._modes, \
+                    """Invalid "mode" [%s] for Field [%s]""" % (mode, name)
+        
         if listing_column:
             assert ((modes and "listing" in modes) or 
                     (self.modes and "listing" in self.modes)), \
@@ -220,6 +227,7 @@ class Field(object):
             if v is not None:
                 setattr(self, p, v)
         
+        
         # Ensure that a field is included in a descriptor only when it is 
         # relevant to the UI i.e. it is displayed in at least one mode -- 
         # this obsoletes/replaces the previous concept of descripor "omit". 
@@ -229,7 +237,8 @@ class Field(object):
         # But, testing the UI with all such fields removed has uncovered no 
         # such security-related issues (see r19 commit log of bungeni-testing).
         assert self.modes, "A descriptor field must specify one or more modes."
-    
+
+        
     def get(self, k, default=None):
         return self.__dict__.get(k, default)
     
