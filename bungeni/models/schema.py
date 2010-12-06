@@ -748,7 +748,6 @@ parliamentary_items = rdb.Table("parliamentary_items", metadata,
     ),
     # type for polymorphic_identity
     rdb.Column("type", rdb.String(30), nullable=False),
-    rdb.Column("language", rdb.String(5), nullable=False),
 )
 
 # Agenda Items:
@@ -832,8 +831,6 @@ motions = rdb.Table("motions", metadata,
         rdb.ForeignKey("political_parties.party_id")
     ),
     rdb.Column("notice_date", rdb.Date),
-    # Receive Notifications -> triggers notification on workflow change
-    rdb.Column("receive_notification", rdb.Boolean, default=True),
 )
 motion_changes = make_changes_table(motions, metadata)
 motion_versions = make_versions_table(motions, metadata, parliamentary_items)
