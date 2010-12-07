@@ -18,7 +18,7 @@ from zope.i18n import translate
 from zc.table import column
 
 from bungeni.alchemist import Session
-from bungeni.alchemist.model import ModelDescriptor, Field
+from bungeni.alchemist.model import ModelDescriptor, Field, show, hide
 from bungeni.alchemist.ui import widgets
 
 from bungeni.models import domain
@@ -1488,6 +1488,9 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
         ),
         Field(name="owner_id",
             modes="view edit add listing",
+            localizable=[
+                hide("view listing", "bungeni.Anybody"),
+            ],
             property=schema.Choice(title=_(u"Moved by"),
                 description=_(u"Select the user who moved the document"),
                 source=vocabulary.MemberOfParliamentDelegationSource("owner_id"),
@@ -1730,6 +1733,7 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
         ),
         Field(name="ministry_submit_date",
             modes="edit view",
+            localizable=[ show("view") ],
             property=schema.Date(title=_(u"Submitted to ministry"), 
                 required=False
             ),

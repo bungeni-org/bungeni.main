@@ -60,9 +60,44 @@ def queryModelDescriptor(ob):
 # signature: factory, adapts:[iface], provides:iface, name, event=False
 component.getGlobalSiteManager().registerAdapter(queryModelDescriptor, 
     [IAlchemistContent],
-    IModelAnnotation
+    IModelAnnotation # !+IModelDescriptor ?
 )
 
+#
+
+def validated_set(key, allowed_values, str_or_seq):
+    """ (str_or_seq:either(str, sequence), allowed_values:sequence(str) 
+            ) -> tuple
+    
+    We return a tuple becuase tuples are immutable AND python automatically
+    optimizes by interning and automatically re-using equivalent instances. !+?
+    """
+    if str_or_seq is None:
+        str_or_seq = allowed_values
+    if isinstance(str_or_seq, basestring):
+        # str, convert to a list removing any additional whitespace
+        values = sorted(set(str_or_seq.split()))
+    else: 
+        # sequence (should be)
+        values = sorted(set(str_or_seq))
+    for value in values:
+        assert value in allowed_values, """Invalid "%s" [%s]""" % (key, value)
+    return tuple(values)
+
+#
+
+class show(object):
+    def __init__(self, modes=None, roles=None):
+        self.modes = Field.validated_modes(modes)
+        self.roles = Field.validated_roles(roles)
+    def __str__(self):
+        return "<show(modes=%s, roles=%s)>" % (self.modes, self.roles)
+
+def hide(modes=None, roles=None):
+    roles = Field.validated_roles(roles)
+    return show(modes, list(Field._roles.difference(roles)))
+
+#
 
 class IModelDescriptorField(interface.Interface):
     # name
@@ -70,9 +105,7 @@ class IModelDescriptorField(interface.Interface):
     # description
     modes = schema.ASCIILine(
         title=u"View Usage Modes for Field",
-        description=u"Pipe separated string of different modes.. "
-            "view|edit|add|listing|search are all valid"
-            # !+PIPE(mr, nov-2010) get rid of it, use whitespace instead?
+        description=u"Whitespace separated string of different modes."
     )
     # property
     listing_column = schema.Object(interface.Interface,
@@ -119,8 +152,24 @@ class Field(object):
     interface.implements(IModelDescriptorField)
     
     # A field in a descriptor must be displayable in at least one of these modes
-    _modes = ("view", "edit", "add", "listing", "search")
+    _modes = set(["view", "edit", "add", "listing", "search"])
+    @classmethod 
+    def validated_modes(cls, modes):
+        return validated_set("modes", cls._modes, modes)
     
+    # The set of roles exposed to localization
+    _roles = set([
+        "bungeni.Admin", # parliament, has all privileges
+        "bungeni.Clerk", "bungeni.Speaker", "bungeni.MP", # parliament 
+        "bungeni.Minister", # ministry 
+        #"bungeni.Owner", # instance
+        #"bungeni.Translator", # parliament
+        #"bungeni.Everybody", # all authenticated users, all above roles
+        "bungeni.Anybody" # unauthenticated user, anonymous
+    ])
+    @classmethod 
+    def validated_roles(cls, roles):
+        return validated_set("roles", cls._roles, roles)
     
     # INIT Parameter (and Defaults)
     
@@ -135,8 +184,12 @@ class Field(object):
     label = ""       # str: title for field
     description = "" # str : description for field
     
-    # see _modes for allows values
-    modes = "view edit add".split() # list (but init param should be a str)
+    modes = validated_set("modes", _modes, "view edit add")
+    
+    # the default list of show/hide localization directives -- by default
+    # a field is NOT localizable in any mode and for any role.
+    localizable = []
+    _localizable_modes = None # set, to cache list of localizable modes
     
     property = None # zope.schema.interfaces.IField
     
@@ -179,7 +232,7 @@ class Field(object):
     
     def __init__(self, 
         name=None, label=None, description=None, 
-        modes=None, property=None, listing_column=None, 
+        modes=None, localizable=None, property=None, listing_column=None, 
         view_widget=None, edit_widget=None, add_widget=None, search_widget=None,
         #view_permission=None, edit_permission=None
         # !+FIELD_PERMISSIONS(mr, nov-2010) deprecated -- permission on any 
@@ -195,30 +248,11 @@ class Field(object):
         CONVENTION: not specifying a parameter or specifying it as None
         are interpreted to be equivalent.
         """
+        # set attribute values
         kw = vars()
-        cls = self.__class__
-        # parameter integrity
-        assert name, "Field [%s] must specify valid name" % (name)
-        assert not ((property or self.property) and 
-                not (modes or self.modes)), \
-            """Can't specify "property" and no "modes" for field: %s""" % (
-                name)
-        
-        if modes:
-            # get list, removing any additional whitespace
-            modes = modes.split()
-            for mode in modes:
-                assert mode in self._modes, \
-                    """Invalid "mode" [%s] for Field [%s]""" % (mode, name)
-        
-        if listing_column:
-            assert ((modes and "listing" in modes) or 
-                    (self.modes and "listing" in self.modes)), \
-                "Field [%s] sets listing_column but no listing mode" % (name)
-        # set attribute values (for specified attributes only)
         for p in (
             "name", "label", "description", "modes", 
-            "property", "listing_column", 
+            "localizable", "property", "listing_column", 
             "view_widget", "edit_widget", "add_widget", "search_widget", 
             #"view_permission", "edit_permission"
             # !+FIELD_PERMISSIONS(mr, nov-2010) deprecated
@@ -227,7 +261,10 @@ class Field(object):
             if v is not None:
                 setattr(self, p, v)
         
-        
+        # parameter integrity
+        assert self.name, "[%s] Field [%s] must specify a valid name" % (
+            dname, self.name)
+        self.modes = self.validated_modes(self.modes)
         # Ensure that a field is included in a descriptor only when it is 
         # relevant to the UI i.e. it is displayed in at least one mode -- 
         # this obsoletes/replaces the previous concept of descripor "omit". 
@@ -236,9 +273,32 @@ class Field(object):
         # http://groups.google.com/group/bungeni-dev/browse_thread/thread/7f7831b32e798708
         # But, testing the UI with all such fields removed has uncovered no 
         # such security-related issues (see r19 commit log of bungeni-testing).
-        assert self.modes, "A descriptor field must specify one or more modes."
-
-        
+        assert self.modes, "Field [%s] must specify one or more modes." % (
+            self.name)
+        if self.property:
+            assert self.modes, \
+                """Field [%s] can't specify "property" and no "modes""" % (
+                    self.name)
+        if listing_column:
+            assert (self.modes and "listing" in self.modes), \
+                "Field [%s] sets listing_column but no listing mode" % (
+                    self.name)
+        self.validate_localizable()
+    
+    def validate_localizable(self):
+        self._localizable_modes = set() # reset
+        for show_directive in self.localizable:
+            count = len(self._localizable_modes)
+            self._localizable_modes.update(show_directive.modes)
+            assert (count + len(show_directive.modes) == 
+                    len(self._localizable_modes)), \
+                "Field [%s] duplicates mode in localizable directive: %s" % (
+                    self.name, show_directive)
+        for mode in self._localizable_modes:
+            assert mode in self._modes, \
+                "Field [%s] mode [%s] may only localize support modes [%s]" % (
+                    self.name, mode, self.modes)
+    
     def get(self, k, default=None):
         return self.__dict__.get(k, default)
     
@@ -260,6 +320,9 @@ class ModelDescriptor(object):
         queryModelDescriptor(model_interface)
     """
     interface.implements(IModelDescriptor)
+    
+    # Is this descriptor exposed for localization? 
+    localizable = False
     
     # editable table listing !+
     #edit_grid = True 
@@ -319,9 +382,47 @@ class ModelDescriptor(object):
         print "!+ModelDescriptor.__contains__", self
         return name in self._fields_by_name
 
+    def _is_displayable(self, field, mode, user_roles):
+        """Does this field pass localization directives?
+        """
+        if mode not in field._localizable_modes:
+            return True
+        for show_directive in field.localizable:
+            for role in user_roles:
+                if role in show_directive.roles:
+                    return True
+        return False
+    
+    def get_context_user_roles(self):
+        """Get the list of user's roles (including whether admin or not)--this 
+        is the info needed (in addition to the field's modes) to further 
+        filter whether a field is visible or not for a given (user, mode).
+        """
+        request = common.get_request()
+        if request is None:
+            context = None
+            principal = None
+        else:
+            context = common.get_traversed_context(request)
+            principal = request.principal
+        if IUnauthenticatedPrincipal.providedBy(principal):
+            roles = ["bungeni.Anybody"]
+        else: 
+            roles = common.get_context_roles(context)
+            if common.is_admin(context):
+                roles.append("bungeni.Admin")
+        log.debug("""ModelDescriptor.get_context_user_roles [%s]
+        PRINCIPAL: %s
+        CONTEXT: %s
+        ROLES: %s
+        """ % (self, principal, context, roles))
+        return roles
+
     def _mode_columns(self, mode):
-        self.test_context_roles(mode)
-        return [ f for f in self.__class__.fields if mode in f.modes ]
+        user_roles = set(self.get_context_user_roles())
+        return [ f for f in self.__class__.fields 
+            if mode in f.modes and 
+                self._is_displayable(f, mode, user_roles) ]
     
     @property
     def listing_columns(self): # !+listing_column_NAMES(mr, nov-2010) !
@@ -339,35 +440,4 @@ class ModelDescriptor(object):
     def view_columns(self):
         return self._mode_columns("view")
     
-    
-    def test_context_roles(self, mode):
-        """EXPERIMENTAL sample code to get a user's roles and whether is_admin 
-        or not -- this is the info needed (in addition to the field's modes) 
-        to further filter whether a field is visible or not for a 
-        given (user, mode).
-        """
-        request = common.get_request()
-        if request is None:
-            context = None
-            principal = None
-        else:
-            context = common.get_traversed_context(request)
-            principal = request.principal
-        if IUnauthenticatedPrincipal.providedBy(principal):
-            roles = None
-        else: 
-            roles = common.get_context_roles(context)
-        print """!+ModelDescriptor TEST_CONTEXT_ROLES [%s]
-        PRINCIPAL: %s
-        CONTEXT: %s
-        MODE: %s
-        ROLES: %s
-        IS ADMIN: %s""" % (self,
-            principal, 
-            context,
-            mode,
-            roles, 
-            common.is_admin(context)
-        )
-
 
