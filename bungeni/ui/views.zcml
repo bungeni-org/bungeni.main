@@ -216,12 +216,11 @@
      permission="zope.Public"
      name="dhtmlxcalendar"
      class=".calendar.browser.DhtmlxCalendarSittings"
-     template="calendar/dhtmlxcalendarxml.pt"
     />
     
     <browser:page
      for="*"
-     permission="zope.Public"
+     permission="bungeni.sitting.Edit"
      name="dhtmlxcalendaredit"
      class=".calendar.browser.DhtmlxCalendarSittingsEdit"
     />
