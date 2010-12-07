@@ -105,6 +105,9 @@
                 scheduler.config.drag_move = false;
                 scheduler.config.drag_create = false;
                 scheduler.config.dblclick_create = false;
+                //scheduler.config.readonly = true;
+                //scheduler.getEvent("onClick").readonly = true;
+                //scheduler.getEvent("onDblClick").readonly = true;
                 var dp = new dataProcessor(location.href+"/dhtmlxcalendaredit");
 		        dp.init(scheduler);
             }

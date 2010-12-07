@@ -198,7 +198,7 @@ class CalendarView(BungeniBrowserView):
 
     interface.implements(IStructuralView)
 
-    template = ViewPageTemplateFile("dhtmlxcalendar.pt")
+    template = ViewPageTemplateFile("templates/dhtmlxcalendar.pt")
     
     short_name = u"Scheduling"
     
@@ -309,10 +309,10 @@ class GroupSittingScheduleView(BrowserView):
     manage the agenda.
     """
 
-    template = ViewPageTemplateFile("main.pt")
-    ajax = ViewPageTemplateFile("ajax.pt")
+    template = ViewPageTemplateFile("templates/main.pt")
+    ajax = ViewPageTemplateFile("templates/ajax.pt")
     
-    _macros = ViewPageTemplateFile("macros.pt")
+    _macros = ViewPageTemplateFile("templates/macros.pt")
     def __init__(self, context, request):
         super(GroupSittingScheduleView, self).__init__(context, request)
         self.__parent__ = context
@@ -432,7 +432,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
     # recurrence a la google calendar.
     
     prefix = ""
-    template = ViewPageTemplateFile("dhtmlxcalendar_edit_form.pt")
+    template = ViewPageTemplateFile("templates/dhtmlxcalendar_edit_form.pt")
     template_data = []
     
     def __init__(self, context, request):
@@ -713,7 +713,7 @@ class DhtmlxCalendarSittings(BrowserView):
     requested in a format acceptable by DHTMLX scheduler"""
     interface.implements(IStructuralView)
     
-    template = ViewPageTemplateFile('dhtmlxcalendarxml.pt')
+    template = ViewPageTemplateFile('templates/dhtmlxcalendarxml.pt')
     def __init__(self, context, request):
         super(DhtmlxCalendarSittings, self).__init__(
             ISchedulingContext(context), request)
