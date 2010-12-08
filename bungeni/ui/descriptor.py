@@ -560,7 +560,8 @@ class UserDelegationDescriptor(ModelDescriptor):
                     value_field="user_id"
                 )
             ),
-            listing_column=user_name_column("delegation_id", _(u"User"), "user"),
+            listing_column=user_name_column("delegation_id", _(u"User"), 
+                "delegation"),
         ),
     ]
 
