@@ -30,7 +30,6 @@ from bungeni.models import interfaces as model_interfaces
 from bungeni.models import domain
 from bungeni.models.utils import container_getter
 from bungeni.models.utils import get_db_user_id
-from bungeni.models.utils import get_roles
 from bungeni.models.utils import get_group_ids_for_user_in_parliament
 from bungeni.models.utils import get_ministries_for_user_in_government
 from bungeni.models.utils import get_current_parliament
@@ -38,7 +37,7 @@ from bungeni.models.utils import get_current_parliament_governments
 from bungeni.models.utils import get_current_parliament_committees
 from bungeni.ui import browser
 from bungeni.ui import interfaces
-from bungeni.ui.utils import url, misc, debug
+from bungeni.ui.utils import url, misc, debug, common
 from zope.app.container.sample import SampleContainer
 from zope.interface import implements
 
@@ -104,11 +103,11 @@ def prepare_user_workspaces(event):
     try:
         parliament = get_current_parliament(None)
         assert parliament is not None # force exception
-        # we do get_roles under the current parliament as context, but we 
-        # must also ensure that the BungeniApp is present somewhere along 
+        # we do get_context_roles under the current parliament as context, but
+        # we must also ensure that the BungeniApp is present somewhere along 
         # the __parent__ stack:
         parliament.__parent__ = application
-        roles = get_roles(parliament)
+        roles = common.get_context_roles(parliament)
         # "bungeni.Clerk", "bungeni.Speaker", "bungeni.MP"
         for role_id in roles:
             if role_id in ("bungeni.Clerk", "bungeni.Speaker", "bungeni.MP"):
@@ -431,7 +430,7 @@ class WorkspaceSectionView(browser.BungeniBrowserView):
                 interface.alsoProvides(self, interfaces.IMinisterWorkspace)
 
         # roles are function of the context, so always recalculate
-        roles = get_roles(self.context)
+        roles = common.get_context_roles(self.context)
         for role_id in roles:
             iface = self.role_interface_mapping.get(role_id)
             if iface is not None:

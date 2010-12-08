@@ -12,9 +12,6 @@ $Id$
 '''
 log = __import__("logging").getLogger("bungeni.models.utils")
 
-from zope import component
-from zope.securitypolicy.interfaces import IPrincipalRoleMap
-from zope.securitypolicy.settings import Allow, Deny
 from zope.security.management import getInteraction
 from zope.publisher.interfaces import IRequest
 from bungeni.alchemist import Session
@@ -91,55 +88,6 @@ def container_getter(parent_container_or_getter, name, query_modifier=None):
         return c
     func.__name__ = "get_%s_container" % name
     return func
-
-def get_roles(context):
-    """Get contextual principal's roles
-    
-    return [ role_id for role_id, role 
-             in component.getUtilitiesFor(IRole, context) ]
-    eeks we have to loop through all groups of the principal and all 
-    PrincipalRoleMaps to get all roles
-    
-    """
-    prms = []
-    def _build_principal_role_maps(ctx):
-        if ctx is not None:
-            if component.queryAdapter(ctx, IPrincipalRoleMap):
-                prms.append(IPrincipalRoleMap(ctx))
-            _build_principal_role_maps(getattr(ctx, '__parent__', None))
-    _build_principal_role_maps(context)
-    prms.reverse()
-
-    roles, message = [], []
-    def add_roles(principal, prms):
-        message.append("             principal: %s" % principal)
-        for prm in prms:
-            l_roles = prm.getRolesForPrincipal(principal)  # -> generator
-            for role in l_roles:
-                message.append("               role: %s" % str(role))
-                if role[1] == Allow:
-                    if not role[0] in roles:
-                        roles.append(role[0])
-                elif role[1] == Deny:
-                    if role[0] in roles:
-                        roles.remove(role[0])
-
-    principal = get_principal()
-    pg = principal.groups.keys()
-    # ensure that the actual principal.id is included
-    if not principal.id in pg:
-        pg.append(principal.id)
-
-    for principal_id in pg:
-        add_roles(principal_id, prms)
-
-    log.debug("get_roles: principal: %s\n"
-              "           groups %s ::\n%s\n"
-              "           roles %s" % (
-                principal.id,
-                str(pg), "\n".join(message),
-                roles))
-    return roles
 
 
 def get_current_parliament_governments(parliament=None):

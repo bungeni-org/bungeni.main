@@ -13,7 +13,10 @@ log = __import__("logging").getLogger("bungeni.ui.utils.common")
 
 import zope
 from zope.annotation.interfaces import IAnnotations
+from zope.securitypolicy.interfaces import IPrincipalRoleMap
+from zope.securitypolicy.settings import Allow, Deny
 
+import bungeni
 
 from ore.wsgiapp.interfaces import IApplication
 def get_application():
@@ -59,21 +62,60 @@ def get_traversed_context(request=None, index=-1):
         return IAnnotations(request).get("contexts")[index]
 
 
-import bungeni.models.utils
 def get_context_roles(context):
-    """Get the list of current user's roles for the specified context.
+    """Get the list of current principal's roles for the specified context.
     
-    A further optimization would be to simply cache the user's resulting roles 
-    on a context -- but this seems to not be necessary as it seems this is 
-    only called up to once per request.
+    return [ role_id for role_id, role 
+             in zope.component.getUtilitiesFor(IRole, context) ]
+    eeks we have to loop through all groups of the principal and all 
+    PrincipalRoleMaps to get all roles
+
+    Assumption: current principal is authenticated i.e. 
+    zope.app.security.interfaces.IAuthenticatedPrincipal.providedBy(principal)
+    
     """
     if context is None:
         log.warn(" [get_context_roles] CANNOT DETERMINE CONTEXT")
         return []
-    # assumption: current user is authenticated
-    roles = bungeni.models.utils.get_roles(context)
+    
+    prms = []
+    def _build_principal_role_maps(ctx):
+        if ctx is not None:
+            if zope.component.queryAdapter(ctx, IPrincipalRoleMap):
+                prms.append(IPrincipalRoleMap(ctx))
+            _build_principal_role_maps(getattr(ctx, '__parent__', None))
+    _build_principal_role_maps(context)
+    prms.reverse()
+    
+    roles, message = [], []
+    def add_roles(principal, prms):
+        message.append("             principal: %s" % principal)
+        for prm in prms:
+            l_roles = prm.getRolesForPrincipal(principal)  # -> generator
+            for role in l_roles:
+                message.append("               role: %s" % str(role))
+                if role[1] == Allow:
+                    if not role[0] in roles:
+                        roles.append(role[0])
+                elif role[1] == Deny:
+                    if role[0] in roles:
+                        roles.remove(role[0])
+    
+    principal = bungeni.models.utils.get_principal()
+    pg = principal.groups.keys()
+    # ensure that the actual principal.id is included
+    if not principal.id in pg:
+        pg.append(principal.id)
+    
+    for principal_id in pg:
+        add_roles(principal_id, prms)
+    
+    log.debug("get_context_roles: \n"
+              "            principal: %s\n"
+              "            groups %s ::\n%s\n"
+              "            roles %s" % (
+            principal.id, str(pg), "\n".join(message), roles))
     return roles
-
 
 def is_admin(context):
     """Check if current interaction has admin privileges on specified context
