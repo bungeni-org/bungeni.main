@@ -14,7 +14,6 @@ log = __import__("logging").getLogger("bungeni.ui.utils.common")
 import zope
 from zope.annotation.interfaces import IAnnotations
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
-from zope.securitypolicy.settings import Allow, Deny
 
 import bungeni
 
@@ -88,6 +87,8 @@ def get_context_roles(context):
     prms.reverse()
     
     roles, message = [], []
+    Allow = zope.securitypolicy.settings.Allow
+    Deny = zope.securitypolicy.settings.Deny
     def add_roles(principal, prms):
         message.append("             principal: %s" % principal)
         for prm in prms:

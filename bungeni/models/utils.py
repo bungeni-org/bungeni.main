@@ -93,9 +93,7 @@ def container_getter(parent_container_or_getter, name, query_modifier=None):
 def get_current_parliament_governments(parliament=None):
     if parliament is None:
         parliament = get_current_parliament()
-    import sqlalchemy.sql.expression as sql
-    session = Session()
-    governments = session.query(domain.Government).filter(
+    governments = Session().query(domain.Government).filter(
             sql.and_(domain.Government.parent_group_id == parliament.group_id,
                      domain.Government.status == 'active')).all()
     return governments
@@ -103,9 +101,7 @@ def get_current_parliament_governments(parliament=None):
 def get_current_parliament_committees(parliament=None):
     if parliament is None:
         parliament = get_current_parliament(None)
-    import sqlalchemy.sql.expression as sql
-    session = Session()
-    committees = session.query(domain.Committee).filter(
+    committees = Session().query(domain.Committee).filter(
             sql.and_(domain.Committee.parent_group_id == parliament.group_id,
                      domain.Committee.status == 'active')).all()
     return committees
