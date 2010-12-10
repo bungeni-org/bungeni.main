@@ -63,7 +63,8 @@ component.getGlobalSiteManager().registerAdapter(queryModelDescriptor,
     IModelAnnotation # !+IModelDescriptor ?
 )
 
-#
+
+# local utils
 
 class interned(object):
     """Re-use of same immutable instances."""
@@ -82,7 +83,10 @@ def validated_set(key, allowed_values, str_or_seq, nullable=False):
          nullable:bool # whether to leave a None str_or_seq as is
         ) -> tuple
     
-    We return a tuple becuase tuples are immutable and we can thus safely and
+    Note the zero length sequence (or string) is considered valid here--the 
+    returned value being the empty tuple.
+    
+    We return a tuple because tuples are immutable and we can thus safely and
     easily reuse same instances (to reduce application runtime memory usage 
     for these numerous and repetitive memory-resident instances).
     """
@@ -106,13 +110,44 @@ def validated_set(key, allowed_values, str_or_seq, nullable=False):
                 key, value, tuple(allowed_values))
     return interned.tuple(seq)
 
-#
+def get_user_context_roles():
+    """Get the list of user's roles (including whether admin or not)--this 
+    is the info needed (in addition to the field's modes) to further 
+    filter whether a field is visible or not for a given (user, mode).
+    
+    Wraps common.get_context_roles(context), with the following differcnes: 
+    - auto retrieves the context, needed param by common.get_context_roles()
+    - handles case when user is not authenticated
+    - handles case for when user is "admin"
+    """
+    request = common.get_request()
+    if request is None:
+        context = None
+        principal = None
+    else:
+        context = common.get_traversed_context(request)
+        principal = request.principal
+    if IUnauthenticatedPrincipal.providedBy(principal):
+        roles = ["bungeni.Anybody"]
+    else: 
+        roles = common.get_context_roles(context)
+        if common.is_admin(context):
+            roles.append("bungeni.Admin")
+    log.debug(""" [get_user_context_roles]
+    PRINCIPAL: %s
+    CONTEXT: %s
+    ROLES: %s
+    """ % (principal, context, roles))
+    return roles
+
+
+# show/hide directives
 
 class show(object):
     __slots__ = ["modes", "roles", "_from_hide"]
     def __init__(self, modes=None, roles=None):
-        self.modes = Field.validated_modes(modes)
-        self.roles = Field.validated_roles(roles)
+        self.modes = Field.validated_modes(modes, nullable=True)
+        self.roles = Field.validated_roles(roles, nullable=False)
         self._from_hide = False
     def __str__(self):
         if not self._from_hide:
@@ -122,12 +157,15 @@ class show(object):
                 tuple(Field._roles.difference(self.roles)))
 
 def hide(modes=None, roles=None):
-    roles = Field.validated_roles(roles)
+    """Syntactic sugar, shorthand for show() when negating is easier to state.
+    """
+    roles = Field.validated_roles(roles, nullable=False)
     s = show(modes, list(Field._roles.difference(roles)))
     s._from_hide = True
     return s
 
-#
+
+# Field
 
 class IModelDescriptorField(interface.Interface):
     # name
@@ -184,7 +222,7 @@ class Field(object):
     # A field in a descriptor must be displayable in at least one of these modes
     _modes = set(["view", "edit", "add", "listing", "search"])
     @classmethod 
-    def validated_modes(cls, modes, nullable=True):
+    def validated_modes(cls, modes, nullable=False):
         return validated_set("modes", cls._modes, modes, nullable=nullable)
     
     # The set of roles exposed to localization
@@ -198,8 +236,8 @@ class Field(object):
         "bungeni.Anybody" # unauthenticated user, anonymous
     ])
     @classmethod 
-    def validated_roles(cls, roles):
-        return validated_set("roles", cls._roles, roles)
+    def validated_roles(cls, roles, nullable=False):
+        return validated_set("roles", cls._roles, roles, nullable=nullable)
     
     # INIT Parameter (and Defaults)
     
@@ -292,8 +330,7 @@ class Field(object):
                 setattr(self, p, v)
         
         # parameter integrity
-        assert self.name, "[%s] Field [%s] must specify a valid name" % (
-            dname, self.name)
+        assert self.name, "Field [%s] must specify a valid name" % (self.name)
         self.modes = self.validated_modes(self.modes)
         # Ensure that a field is included in a descriptor only when it is 
         # relevant to the UI i.e. it is displayed in at least one mode -- 
@@ -305,29 +342,31 @@ class Field(object):
         # such security-related issues (see r19 commit log of bungeni-testing).
         assert self.modes, "Field [%s] must specify one or more modes." % (
             self.name)
-        if self.property:
-            assert self.modes, \
-                """Field [%s] can't specify "property" and no "modes""" % (
-                    self.name)
         if listing_column:
-            assert (self.modes and "listing" in self.modes), \
+            assert "listing" in self.modes, \
                 "Field [%s] sets listing_column but no listing mode" % (
                     self.name)
         self.validate_localizable()
     
     def validate_localizable(self):
         self._localizable_modes = set() # reset cache of localizable modes
-        for show_directive in self.localizable:
-            # if modes is still None, we default to instance's modes
-            if show_directive.modes is None:
-                show_directive.modes = self.modes
+        for loc in self.localizable:
+            # if modes is still None, we now default to this field's modes
+            if loc.modes is None:
+                loc.modes = self.modes
+            # each loc directive must have a non-empty modes and roles
+            assert loc.modes, \
+                "Invalid modes for Field [%s] localizable directive: %s" % (
+                    self.name, loc)
+            assert loc.roles, \
+                "Invalid roles for Field [%s] localizable directive: %s" % (
+                    self.name, loc)
             # build list of localizable modes
             count = len(self._localizable_modes)
-            self._localizable_modes.update(show_directive.modes)
-            assert (count + len(show_directive.modes) == 
-                    len(self._localizable_modes)), \
+            self._localizable_modes.update(loc.modes)
+            assert (count + len(loc.modes) == len(self._localizable_modes)), \
                 "Field [%s] duplicates mode in localizable directive: %s" % (
-                    self.name, show_directive)
+                    self.name, loc)
         for mode in self._localizable_modes:
             assert mode in self.modes, \
                 "Field [%s] may only localize mode [%s] if mode is " \
@@ -340,12 +379,11 @@ class Field(object):
             return False
         if mode not in self._localizable_modes:
             return True
-        for show_directive in self.localizable:
+        for loc in self.localizable:
             for role in user_roles:
-                if role in show_directive.roles:
+                if role in loc.roles:
                     return True
         return False
-
     
     def get(self, k, default=None):
         return self.__dict__.get(k, default)
@@ -354,6 +392,7 @@ class Field(object):
         return self.__dict__[k]
 
 
+# Model
 
 class ModelDescriptor(object):
     """Model type descriptor for table/mapped objects. 
@@ -404,12 +443,11 @@ class ModelDescriptor(object):
         # !+DESCRIPTOR_VALIDATION(mr, nov-2010) a descriptor may specify a 
         # field with a name that does not correspond to an attribute on the 
         # model -- this may be useful, but we do not use it, and any such
-        # occurance is most likely an code error... should we check for such
+        # occurance is most likely a code error... should we check for such
         # situations?
     
-    
-    # we override the following methods as, thanks to self._fields_by_name, 
-    # they may be redefined in a much simpler way (as well as being faster).
+    # we use self._fields_by_name to define the following methods as this 
+    # makes the implementation simpler and faster.
     
     def get(self, name, default=None):
         #print '!+ModelDescriptor.get("%s")' % (name), self
@@ -431,35 +469,10 @@ class ModelDescriptor(object):
         #print "!+ModelDescriptor.__contains__", self
         return name in self._fields_by_name
     
-    def get_context_user_roles(self):
-        """Get the list of user's roles (including whether admin or not)--this 
-        is the info needed (in addition to the field's modes) to further 
-        filter whether a field is visible or not for a given (user, mode).
-        """
-        request = common.get_request()
-        if request is None:
-            context = None
-            principal = None
-        else:
-            context = common.get_traversed_context(request)
-            principal = request.principal
-        if IUnauthenticatedPrincipal.providedBy(principal):
-            roles = ["bungeni.Anybody"]
-        else: 
-            roles = common.get_context_roles(context)
-            if common.is_admin(context):
-                roles.append("bungeni.Admin")
-        log.debug("""ModelDescriptor.get_context_user_roles [%s]
-        PRINCIPAL: %s
-        CONTEXT: %s
-        ROLES: %s
-        """ % (self, principal, context, roles))
-        return roles
-
     def _mode_columns(self, mode):
-        user_roles = set(self.get_context_user_roles())
-        return [ f for f in self.__class__.fields 
-            if f.is_displayable(mode, user_roles) ]
+        user_context_roles = get_user_context_roles()
+        return [ field for field in self.__class__.fields 
+            if field.is_displayable(mode, user_context_roles) ]
     
     @property
     def listing_columns(self): # !+listing_column_NAMES(mr, nov-2010) !
