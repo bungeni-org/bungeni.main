@@ -71,7 +71,6 @@ def get_context_roles(context):
 
     Assumption: current principal is authenticated i.e. 
     zope.app.security.interfaces.IAuthenticatedPrincipal.providedBy(principal)
-    
     """
     if context is None:
         log.warn(" [get_context_roles] CANNOT DETERMINE CONTEXT")

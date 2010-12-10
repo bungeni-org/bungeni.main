@@ -354,12 +354,10 @@ class Field(object):
             # if modes is still None, we now default to this field's modes
             if loc.modes is None:
                 loc.modes = self.modes
-            # each loc directive must have a non-empty modes and roles
+            # each loc directive must specify at least one mode (but OK to have 
+            # empty roles--meaning no roles)
             assert loc.modes, \
                 "Invalid modes for Field [%s] localizable directive: %s" % (
-                    self.name, loc)
-            assert loc.roles, \
-                "Invalid roles for Field [%s] localizable directive: %s" % (
                     self.name, loc)
             # build list of localizable modes
             count = len(self._localizable_modes)
