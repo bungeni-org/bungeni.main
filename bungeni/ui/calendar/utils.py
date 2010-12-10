@@ -3,11 +3,12 @@ from datetime import timedelta
 from datetime import time
 from datetime import date
 from time import mktime
-from dateutil import rrule
+from dateutil.rrule import rrule
+from dateutil.rrule import DAILY, WEEKLY, MONTHLY, YEARLY
+from dateutil.rrule import SU, MO, TU, WE, TH, FR, SA
 
 marker = object()
 date_range_delimiter=':'
-
 def timestamp_from_date(date):
     return mktime(date.timetuple())
 
@@ -187,4 +188,68 @@ class datetimedict(datetime, base):
     def totimestamp(self):
         return mktime(self.timetuple())
 
-    
+def generate_recurrence_dates(recurrence_start_date, 
+                                        recurrence_end_date, recurrence_type):
+    '''generates recurrence dates for sittings given the start date, end
+       date and the recurrence type in the format used by dhtmlxcalendar 
+       Refer to the URL below
+       http://docs.dhtmlx.com/doku.php?id=dhtmlxscheduler:recurring_events
+       tests in ui/calendar/readme.txt
+    '''
+    rec_args = recurrence_type.split("_")
+    #rec_type - type of repeating "day","week","month","year"
+    rec_type = rec_args[0]
+    #count - how much intervals of "type" come between events
+    count  = rec_args[1]
+    #count2 and day - used to define day of month (first Monday, third Friday, etc)
+    day = rec_args[2]
+    count2 = rec_args[3]
+    #days - comma separated list of affected week days
+    days = rec_args[4].split("#")[0]
+    #extra - extra may contain the number of occurences of the recurrence
+    extra  = rec_args[4].split("#")[1]
+    rrule_count = None
+    if (extra != "no") and (extra != ""):
+        try:
+            rrule_count = int(extra)
+        except TypeError, ValueError:
+            rrule_count = None
+    freq_map = {"day":DAILY,"week":WEEKLY,"month":MONTHLY,"year":YEARLY}
+    freq = freq_map[rec_type]
+    if count != "":
+        interval = int(count)
+    else:
+        interval = 1
+    byweekday=None
+    # rrule map starts with 0:MO, dhtmlxcalendar starts with 0:SU
+    day_map = {0:SU,1:MO,2:TU,3:WE,4:TH,5:FR,6:SA}
+    if (count2 != "") and (day != ""):    
+        byweekday = day_map[int(day)](+int(count2))
+    elif (days != ""):
+        byweekday = map(int,days.split(","))
+    if rrule_count is not None:
+        if byweekday is not None:
+            return list(rrule(freq, 
+                                  dtstart=recurrence_start_date, 
+                                  until=recurrence_end_date, 
+                                  count=rrule_count, 
+                                  byweekday=byweekday, 
+                                  interval=interval))  
+        else:
+            return list(rrule(freq, 
+                                  dtstart=recurrence_start_date, 
+                                  until=recurrence_end_date, 
+                                  count=rrule_count, 
+                                  interval=interval))
+    else:
+        if byweekday is not None:
+            return list(rrule(freq, 
+                                dtstart=recurrence_start_date, 
+                                until=recurrence_end_date, 
+                                byweekday=byweekday, 
+                                interval=interval))  
+        else:
+            return list(rrule(freq, 
+                                dtstart=recurrence_start_date, 
+                                until=recurrence_end_date, 
+                                interval=interval))   

@@ -36,7 +36,6 @@ from bungeni.core.interfaces import ISchedulingContext
 from bungeni.core.schedule import SittingContainerSchedulingContext
 from bungeni.ui.interfaces import IBusinessSectionLayer
 
-from bungeni.core.odf import OpenDocument
 from bungeni.models import domain
 from bungeni.models.interfaces import IGroupSitting
 from ploned.ui.interfaces import IStructuralView
@@ -47,9 +46,7 @@ from zope.formlib import form
 from zope import schema
 from zope.formlib import namedtemplate
 from zc.resourcelibrary import need
-from dateutil.rrule import rrule
-from dateutil.rrule import DAILY, WEEKLY, MONTHLY, YEARLY
-from dateutil.rrule import SU, MO, TU, WE, TH, FR, SA
+from sqlalchemy.orm import eagerload
 class TIME_SPAN:
     daily = _(u"Daily")
     weekly = _(u"Weekly")
@@ -509,82 +506,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                     adapters=self.adapters, ignore_request=ignore_request)
 
 
-    def generate_recurrence_dates(self, recurrence_start_date, 
-                                        recurrence_end_date, recurrence_type):
-        # Check the end date of the recurrence
-        # The end date is set to be the end date of the current group 
-        # or one year from the present date whichever is sooner.      
-        session = Session()                         
-        trusted = removeSecurityProxy(ISchedulingContext(self.context))
-        group = session.query(domain.Group).get(trusted.group_id)      
-        year = timedelta(days=365)
-        now = datetime.datetime.now()                          
-        if (group is not None) and (group.end_date is not None):
-                if (now + year) < group.end_date:
-                    end = now + year 
-                else:
-                    end = group.end_date
-                if recurrence_end_date > end:
-                    recurrence_end_date = end 
-        else:
-            if recurrence_end_date > (now + year):
-                recurrence_end_date = now + year
-        rec_args = recurrence_type.split("_")
-        #rec_type - type of repeating “day”,”week”,”month”,”year”
-        rec_type = rec_args[0]
-        #count - how much intervals of “type” come between events
-        count  = rec_args[1]
-        #count2 and day - used to define day of month ( first Monday, third Friday, etc )
-        day = rec_args[2]
-        count2 = rec_args[3]
-        #days - comma separated list of affected week days
-        days = rec_args[4].split("#")[0]
-        #extra - extra info
-        extra  = rec_args[4].split("#")[1]
-        rrule_count = None
-        if (extra != "no") and (extra != ""):
-            try:
-                rrule_count = int(extra)
-            except TypeError:
-                rrule_count = None
-        freq_map = {"day":DAILY,"week":WEEKLY,"month":MONTHLY,"year":YEARLY}
-        freq = freq_map[rec_type]
-        if count != "":
-            interval = int(count)
-        else:
-            interval = 1
-        byweekday=None
-        day_map = {0:SU,1:MO,2:TU,3:WE,4:TH,5:FR,6:SA}
-        if (count2 != "") and (day != ""):    
-            byweekday = day_map[int(day)](+int(count2))
-        elif (days != ""):
-            byweekday = map(int,days.split(","))
-        if rrule_count is not None:
-            if byweekday is not None:
-                return list(rrule(freq, 
-                                  dtstart=recurrence_start_date, 
-                                  until=recurrence_end_date, 
-                                  count=rrule_count, 
-                                  byweekday=byweekday, 
-                                  interval=interval))  
-            else:
-                return list(rrule(freq, 
-                                  dtstart=recurrence_start_date, 
-                                  until=recurrence_end_date, 
-                                  count=rrule_count, 
-                                  interval=interval))
-        else:
-            if byweekday is not None:
-                return list(rrule(freq, 
-                                  dtstart=recurrence_start_date, 
-                                  until=recurrence_end_date, 
-                                  byweekday=byweekday, 
-                                  interval=interval))  
-            else:
-                return list(rrule(freq, 
-                                  dtstart=recurrence_start_date, 
-                                  until=recurrence_end_date, 
-                                  interval=interval))
+    
                 
     def validate(self, action, data):
         errors = super(DhtmlxCalendarSittingsEdit, self).validate(action, data)
@@ -602,7 +524,6 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
             except:
                 log.error("The start date of the recurrence  \
                                     is not in the correct format")
-                
             try:
                 recurrence_end_date = datetime.datetime.strptime(
                                             data["end_date"], '%Y-%m-%d %H:%M')
@@ -611,7 +532,22 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                                                         the correct format")   
             length = data["event_length"]
             sitting_length = timedelta(seconds=int(length))
-            dates = self.generate_recurrence_dates(recurrence_start_date, 
+            # Check the end date of the recurrence
+            # The end date is set to be the end date of the current group 
+            # or one year from the present date whichever is sooner.   
+               
+            group = trusted.get_group()
+            # If group is none then there is a big problem
+            assert group is not None    
+            year = timedelta(days=365)
+            now = datetime.datetime.now()                          
+            if ((group.end_date is not None) and ((now + year) < group.end_date)) or (group.end_date is None):
+                end = now + year 
+            else:
+                end = group.end_date
+            if recurrence_end_date > end:
+                recurrence_end_date = end 
+            dates = utils.generate_recurrence_dates(recurrence_start_date, 
                                             recurrence_end_date, data["rec_type"])
             for date in dates:
                 sitting = domain.GroupSitting()
@@ -626,16 +562,19 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                 # set extra data needed by template
                 sitting.ids = data["ids"]
                 sitting.action = 'inserted'
+                session.add(sitting)
+                # commiting after adding a sitting is incredibly inefficient
+                # but thats the only way to get the sitting id.
+                # Adding recurrring sittings is not a recurrent activity (see,
+                # what I did there :)) so we can live with it.
+                session.commit(sitting)
+                notify(ObjectCreatedEvent(sitting))
                 self.template_data.append({"sitting_id": sitting.sitting_id, 
                                            "action": "inserted",
                                            "ids": data["ids"]})
-                session.add(sitting)
-                notify(ObjectCreatedEvent(sitting))
-                session.commit()
             self.request.response.setHeader('Content-type', 'text/xml')
             return self.template()
         else:
-            self.template_data = []
             sitting = domain.GroupSitting()
             try:
                 sitting.start_date = datetime.datetime.strptime(
@@ -659,16 +598,17 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
             sitting.ids = data["ids"]
             sitting.action = 'inserted'
             session.add(sitting)
+            session.commit()
+            notify(ObjectCreatedEvent(sitting))
             self.template_data.append({"sitting_id": sitting.sitting_id, 
                                        "action": "inserted",
                                        "ids": data["ids"]})
-            notify(ObjectCreatedEvent(sitting))
+            
             self.request.response.setHeader('Content-type', 'text/xml')
             return self.template()
                
     @form.action(_(u"update"))
     def handle_update(self, action, data):
-        self.template_data = []
         session = Session()
         sitting = domain.GroupSitting()
         sitting = session.query(domain.GroupSitting).get(data["ids"])
@@ -679,8 +619,6 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         if "venue" in data.keys():
             sitting.venue_id = data["venue"]
         # set extra data needed by template
-        sitting.ids = data["ids"]
-        sitting.action = 'updated'
         session.update(sitting)
         self.template_data.append({"sitting_id": sitting.sitting_id, 
                                     "action": "inserted",
@@ -697,8 +635,6 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         # set extra data needed by template
         self.template_data = []
         if sitting is not None:
-            sitting.ids = data["ids"]
-            sitting.action = 'deleted'
             self.request.response.setHeader('Content-type', 'text/xml')
             self.template_data.append({"sitting_id": sitting.sitting_id, 
                                        "action": "deleted",
