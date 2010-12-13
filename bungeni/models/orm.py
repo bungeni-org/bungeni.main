@@ -5,6 +5,30 @@ from sqlalchemy.orm import mapper, relation, column_property, backref
 import schema
 import domain
 
+def changes_relation(change_class):
+    return relation(change_class,
+        backref="origin",
+        cascade="all, delete-orphan",
+        passive_deletes=False
+    )
+def versions_properties(item_class, change_class, versions_table):
+    return {
+        "change": relation(change_class, uselist=False),
+        "head": relation(item_class, uselist=False),
+        "attached_files": relation(domain.AttachedFileVersion,
+            primaryjoin=rdb.and_(
+                versions_table.c.content_id == 
+                    schema.attached_file_versions.c.item_id,
+                versions_table.c.version_id ==
+                    schema.attached_file_versions.c.file_version_id
+            ),
+            foreign_keys=[
+                schema.attached_file_versions.c.item_id,
+                schema.attached_file_versions.c.file_version_id
+            ]
+        ),
+    }
+
 
 # Users
 # general representation of a person
@@ -291,32 +315,15 @@ mapper(domain.Question, schema.questions,
     polymorphic_on=schema.parliamentary_items.c.type,
     polymorphic_identity="question",
     properties={
-        "changes":relation(domain.QuestionChange,
-            backref="origin",
-            cascade="all, delete-orphan",
-            passive_deletes=False
-        ),
+        "changes": changes_relation(domain.QuestionChange),
         "ministry": relation(domain.Ministry, lazy=False, join_depth=2),
     }
 )
 
 mapper(domain.QuestionChange, schema.question_changes)
 mapper(domain.QuestionVersion, schema.question_versions,
-    properties={
-        "change": relation(domain.QuestionChange, uselist=False),
-        "head": relation(domain.Question, uselist=False),
-        "attached_files": relation(domain.AttachedFileVersion,
-            primaryjoin=rdb.and_(
-                schema.question_versions.c.content_id ==
-                    schema.attached_file_versions.c.item_id,
-                schema.question_versions.c.version_id ==
-                    schema.attached_file_versions.c.file_version_id
-            ),
-            foreign_keys=[schema.attached_file_versions.c.item_id,
-                schema.attached_file_versions.c.file_version_id
-            ]
-        ),
-    }
+    properties=versions_properties(domain.Question, domain.QuestionChange,
+        schema.question_versions)
 )
 
 mapper(domain.Motion, schema.motions,
@@ -324,32 +331,14 @@ mapper(domain.Motion, schema.motions,
     polymorphic_on=schema.parliamentary_items.c.type,
     polymorphic_identity="motion",
     properties={
-        "changes": relation(domain.MotionChange,
-            backref="origin",
-            cascade="all, delete-orphan",
-            passive_deletes=False
-        ),
+        "changes": changes_relation(domain.MotionChange),
     }
 )
 
 mapper(domain.MotionChange, schema.motion_changes)
 mapper(domain.MotionVersion, schema.motion_versions,
-    properties={
-        "change": relation(domain.MotionChange, uselist=False),
-        "head": relation(domain.Motion, uselist=False),
-        "attached_files": relation(domain.AttachedFileVersion,
-            primaryjoin=rdb.and_(
-                schema.motion_versions.c.content_id ==
-                    schema.attached_file_versions.c.item_id,
-                schema.motion_versions.c.version_id ==
-                    schema.attached_file_versions.c.file_version_id
-            ),
-            foreign_keys=[
-                schema.attached_file_versions.c.item_id,
-                schema.attached_file_versions.c.file_version_id
-            ]
-        ),
-    }
+    properties=versions_properties(domain.Motion, domain.MotionChange,
+        schema.motion_versions)
 )
 
 mapper(domain.Bill, schema.bills,
@@ -357,31 +346,13 @@ mapper(domain.Bill, schema.bills,
     polymorphic_on=schema.parliamentary_items.c.type,
     polymorphic_identity="bill",
     properties={
-        "changes": relation(domain.BillChange,
-            backref="origin",
-            cascade="all, delete-orphan",
-            passive_deletes=False
-        )
+        "changes": changes_relation(domain.BillChange),
     }
 )
 mapper(domain.BillChange, schema.bill_changes)
 mapper(domain.BillVersion, schema.bill_versions,
-    properties={
-        "change": relation(domain.BillChange, uselist=False),
-        "head": relation(domain.Bill, uselist=False),
-        "attached_files": relation(domain.AttachedFileVersion,
-            primaryjoin=rdb.and_(
-                schema.bill_versions.c.content_id ==
-                    schema.attached_file_versions.c.item_id,
-                schema.bill_versions.c.version_id ==
-                    schema.attached_file_versions.c.file_version_id
-            ),
-            foreign_keys=[
-                schema.attached_file_versions.c.item_id,
-                schema.attached_file_versions.c.file_version_id
-            ]
-        ),
-    }
+    properties=versions_properties(domain.Bill, domain.BillChange,
+        schema.bill_versions)
 )
 
 mapper(domain.EventItem, schema.event_items,
@@ -399,11 +370,7 @@ mapper(domain.AgendaItem, schema.agenda_items,
     polymorphic_on=schema.parliamentary_items.c.type,
     polymorphic_identity="agendaitem",
     properties={
-        "changes": relation(domain.AgendaItemChange,
-            backref="origin",
-            cascade="all, delete-orphan",
-            passive_deletes=False
-        ),
+        "changes": changes_relation(domain.AgendaItemChange),
         "group": relation(domain.Group,
             primaryjoin=(
                 schema.agenda_items.c.group_id == schema.groups.c.group_id),
@@ -415,22 +382,8 @@ mapper(domain.AgendaItem, schema.agenda_items,
 )
 mapper(domain.AgendaItemChange, schema.agenda_item_changes)
 mapper(domain.AgendaItemVersion, schema.agenda_item_versions,
-    properties={
-        "change": relation(domain.AgendaItemChange, uselist=False),
-        "head": relation(domain.AgendaItem, uselist=False),
-        "attached_files": relation(domain.AttachedFileVersion,
-            primaryjoin=rdb.and_(
-                schema.agenda_item_versions.c.content_id ==
-                    schema.attached_file_versions.c.item_id,
-                schema.agenda_item_versions.c.version_id ==
-                    schema.attached_file_versions.c.file_version_id
-            ),
-            foreign_keys=[
-                schema.attached_file_versions.c.item_id,
-                schema.attached_file_versions.c.file_version_id
-            ]
-        ),
-    }
+    properties=versions_properties(domain.AgendaItem, domain.AgendaItemChange,
+        schema.agenda_item_versions)
 )
 
 mapper(domain.TabledDocument, schema.tabled_documents,
@@ -438,41 +391,19 @@ mapper(domain.TabledDocument, schema.tabled_documents,
     polymorphic_on=schema.parliamentary_items.c.type,
     polymorphic_identity="tableddocument",
     properties={
-        "changes": relation(domain.TabledDocumentChange,
-            backref="origin",
-            cascade="all, delete-orphan",
-            passive_deletes=False
-        ),
+        "changes": changes_relation(domain.TabledDocumentChange),
     }
 )
 
 mapper(domain.TabledDocumentChange, schema.tabled_document_changes)
 mapper(domain.TabledDocumentVersion, schema.tabled_document_versions,
-    properties={
-        "change": relation(domain.TabledDocumentChange, uselist=False),
-        "head": relation(domain.TabledDocument, uselist=False),
-        "attached_files": relation(domain.AttachedFileVersion,
-            primaryjoin=rdb.and_(
-                schema.tabled_document_versions.c.content_id ==
-                    schema.attached_file_versions.c.item_id,
-                schema.tabled_document_versions.c.version_id ==
-                    schema.attached_file_versions.c.file_version_id
-            ),
-            foreign_keys=[
-                schema.attached_file_versions.c.item_id,
-                schema.attached_file_versions.c.file_version_id
-            ]
-        ),
-    }
+    properties=versions_properties(domain.TabledDocument, 
+        domain.TabledDocumentChange, schema.tabled_document_versions)
 )
 
 mapper(domain.AttachedFile, schema.attached_files,
     properties={
-        "changes": relation(domain.AttachedFileChange,
-            backref="origin",
-            cascade="all, delete-orphan",
-            passive_deletes=False
-        ),
+        "changes": changes_relation(domain.AttachedFileChange),
     }
 )
 mapper(domain.AttachedFileChange, schema.attached_file_changes)
