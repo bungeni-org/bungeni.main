@@ -409,6 +409,14 @@ class ItemLog(object):
         factory = type(name, (klass,), {})
         interface.classImplements(factory, interfaces.IChange)
         return factory
+    
+    # !+CHANGE_EXTRAS(mr, dec-2010)
+    def _get_extras(self):
+        if self.notes is not None:
+            return eval(self.notes)
+    def _set_extras(self, dictionary):
+        self.notes = dictionary and repr(dictionary) or None
+    extras = property(_get_extras, _set_extras)
 
 class ItemVersions(Entity):
     """A collection of the versions of a parliamentary content object.

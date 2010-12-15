@@ -620,7 +620,8 @@ class TimeLineViewlet(browser.BungeniItemsViewlet):
                 #debug.log_exc(sys.exc_info(), log_handler=log.info)
                 return {}
 
-        # NOTE: only *Change records have a "notes" dict attribute and the 
+        # !+CHANGE_EXTRAS(mr, dec-2010)
+        # only *Change records have an extras dict (as "notes" str attr) and the 
         # content of this depends on the value of "atype" (see core/audit.py)
         item_id = self.context.parliamentary_item_id
         self.items = [ dict(atype=action, item_id=piid, description=desc,

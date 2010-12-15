@@ -124,7 +124,7 @@ class AuditorFactory(object):
             extras = None
         return self._objectChanged("modified", object, 
                         description=description,
-                        notes=extras,
+                        extras=extras,
                         date_active=change_data["date_active"])
     
     def objectStateChanged(self, object, event):
@@ -157,10 +157,10 @@ class AuditorFactory(object):
         }
         return self._objectChanged("workflow", object, 
                         description=description,
-                        notes=extras,
+                        extras=extras,
                         date_active=change_data["date_active"])
-        # description field is a "building block" for a UI description
-        # notes field becomes interpolation data
+        # description field is a "building block" for a UI description;
+        # extras/notes field becomes interpolation data
     
     def objectDeleted(self, object, event):
         #return self._objectChanged("deleted", object)
@@ -184,10 +184,10 @@ class AuditorFactory(object):
         # as base description, record a the version object's title
         description = event.message
         # extras, that may be used e.g. to elaborate description at runtime        
-        notes = {
+        extras = {
             "version_id": event.version.version_id
         }
-        return self._objectChanged("new-version", object, description, notes)
+        return self._objectChanged("new-version", object, description, extras)
         #vkls = getattr(domain, "%sVersion" % (object.__class__.__name__))
         #versions = session.query(vkls
         #            ).filter(vkls.content_id==event.version.content_id
@@ -200,7 +200,7 @@ class AuditorFactory(object):
     #
     
     def _objectChanged(self, change_kind, object, 
-                            description="", notes=None, date_active=None):
+            description="", extras=None, date_active=None):
         """
         description: 
             this is a non-localized string as base description of the log item,
@@ -213,14 +213,28 @@ class AuditorFactory(object):
             - ignore it entirely, and generate a custom description via other
               means e.g. from the "notes" extras dict.
         
-        notes:
-            a python dict, containing "extra" information about the log item;
-            the entries in this dict are a function of the "change_kind".
-            It is serialized for storing in the db.
-            For specific examples, see:
-                "workflow": self.objectStateChanged()
-                "new-version": self.objectNewVersion()
-                
+        extras: !+CHANGE_EXTRAS(mr, dec-2010)
+            a python dict, containing "extra" information about the log item, 
+            with the "key/value" entries depending on the change "action"; 
+
+            Specific examples, for acttions: 
+                workflow: self.objectStateChanged()
+                    source
+                    destination
+                    transition
+                    comment
+                new-version: self.objectNewVersion()
+                    version_id
+                modified: self.objectModified()
+                    comment
+            
+            For now, this dict is serialized (using repr(), values are assumed 
+            to be simple strings or numbers) as the value of the notes column, 
+            for storing in the db--but if and when the big picture of these 
+            extra keys is understood clearly then the changes table may be 
+            redesigned to accomodate for a selection of these keys as real 
+            table columns.                        
+        
         date_active:
             the UI for some changes allow the user to manually set the 
             date_active -- this is what should be used as the *effective* date 
@@ -241,10 +255,7 @@ class AuditorFactory(object):
             change.date_active = change.date_audit
         change.user_id = user_id
         change.description = description
-        if notes:
-            change.notes = repr(notes)
-        else:
-            change.notes = None
+        change.extras = extras
         change.content_type = otype
         change.origin = object
         session.add(change)
