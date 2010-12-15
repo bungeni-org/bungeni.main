@@ -27,9 +27,10 @@ class actions(object):
     @staticmethod
     def submit(info, context):
         utils.setBillPublicationDate(info, context)
-        utils.setSubmissionDate(info, context)
-
-
+        utils.createVersion(info, context,
+            message="New version on workflow transition to: submit")
+        utils.setRegistryNumber(info, context)
+    
     @staticmethod
     def withdraw(info, context):
         pass

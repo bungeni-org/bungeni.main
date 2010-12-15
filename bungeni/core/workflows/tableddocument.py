@@ -31,7 +31,9 @@ class actions:
     
     @staticmethod
     def submit(info, context):
-        utils.setSubmissionDate(info, context)
+        utils.createVersion(info, context,
+            message="New version on workflow transition to: submit")
+        utils.setRegistryNumber(info, context)
     
     @staticmethod
     def received_by_clerk(info, context):
@@ -44,8 +46,8 @@ class actions:
 
     @staticmethod
     def complete(info, context):
-        utils.createVersion(info,context)
-        utils.setSubmissionDate(info, context)
+        utils.createVersion(info, context,
+            message="New version on workflow transition to: complete")
     
     @staticmethod
     def approve(info, context):

@@ -8,6 +8,7 @@ import domain
 def changes_relation(change_class):
     return relation(change_class,
         backref="origin",
+        lazy=False,
         cascade="all, delete-orphan",
         passive_deletes=False
     )

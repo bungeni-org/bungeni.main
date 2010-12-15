@@ -55,7 +55,9 @@ class actions(object):
         """A question submitted to the clerks office, the owner cannot edit it 
         anymore the clerk has no edit rights until it is received.
         """
-        utils.setSubmissionDate(info, context)
+        utils.createVersion(info, context,
+            message="New version on workflow transition to: submit")
+        utils.setRegistryNumber(info, context)
     
     @staticmethod
     def received_by_clerk(info, context):
@@ -124,8 +126,8 @@ class actions(object):
         """A question is marked as complete by the clerks office, 
         it is available to the speakers office for review.
         """
-        utils.createVersion(info, context)
-        utils.setSubmissionDate(info, context)
+        utils.createVersion(info, context,
+            message="New version on workflow transition to: complete")
     
     @staticmethod
     def schedule(info, context):

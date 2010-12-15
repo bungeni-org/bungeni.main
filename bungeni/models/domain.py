@@ -450,6 +450,32 @@ class ParliamentaryItem(Entity):
     # schedule
     # object log
     # versions
+    
+    def _get_workflow_date(self, *states):
+        """ (states:seq(str) -> date
+        Get the date of the most RECENT workflow transition to any one of 
+        the workflow states specified as input parameters. 
+        
+        Returns None if none of such workflow states has been transited to 
+        as yet.
+        """
+        assert states, "Must specify at least one workflow state."
+        # order of self.changes is chronological--we want latest first
+        for c in reversed(self.changes):
+            if c.action != "workflow":
+                continue
+            extras = c.extras
+            if extras:
+                if extras.get("destination") in states:
+                    return c.date_active
+    
+    @property
+    def submission_date(self):
+        # As base meaning of "submission_date" we take the most recent date 
+        # of worklfow transition to either "complete" (speaker) or to 
+        # "submit" (clerk). Subclasses should overload this meaning as 
+        # appropriate for their respective workflows.
+        return self._get_workflow_date("submitted", "complete")
 
 
 class AttachedFile(Entity):
@@ -487,8 +513,7 @@ class Question(ParliamentaryItem):
         "bungeni.models.domain.CosignatoryContainer", "item_id")
     versions = one2many("versions",
         "bungeni.models.domain.QuestionVersionContainer", "content_id")
-    sort_on = ParliamentaryItem.sort_on + [
-        "question_number", "submission_date"]
+    sort_on = ParliamentaryItem.sort_on + ["question_number"]
     
     def getParentQuestion(self):
         if self.supplement_parent_id:
@@ -507,7 +532,7 @@ class Motion(ParliamentaryItem):
         "bungeni.models.domain.EventItemContainer", "item_id")
     versions = one2many("versions",
         "bungeni.models.domain.MotionVersionContainer", "content_id")
-    sort_on = ParliamentaryItem.sort_on + ["motion_number", "submission_date"]
+    sort_on = ParliamentaryItem.sort_on + ["motion_number"]
 
 
 MotionChange = ItemLog.makeLogFactory("MotionChange")
@@ -527,7 +552,6 @@ class Bill(ParliamentaryItem):
         "bungeni.models.domain.GroupGroupItemAssignmentContainer", "item_id")
     versions = one2many("versions",
         "bungeni.models.domain.BillVersionContainer", "content_id")
-    sort_on = ParliamentaryItem.sort_on + ["submission_date"]
 
 BillChange = ItemLog.makeLogFactory("BillChange")
 BillVersion = ItemVersions.makeVersionFactory("BillVersion")

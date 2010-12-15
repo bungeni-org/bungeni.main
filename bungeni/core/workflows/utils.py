@@ -127,12 +127,14 @@ def setBungeniOwner(context):
         IPrincipalRoleMap(context).assignRoleToPrincipal(u'bungeni.Owner', owner_id)
 
 
-def createVersion(info, context):
+def createVersion(info, context, 
+    message="New version created upon workflow transition."
+):
     """Create a new version of an object and return it."""
     instance = removeSecurityProxy(context)
     versions =  bungeni.core.interfaces.IVersioned(instance)
-    versions.create('New version created upon workflow transition.')
-    
+    versions.create(message)
+
 def setQuestionDefaults(info, context):
     """get the default values for a question.
     current parliament, ... """ 
@@ -140,15 +142,14 @@ def setQuestionDefaults(info, context):
     dbutils.setQuestionParliamentId(instance)
     dbutils.setQuestionMinistryId(instance)
 
-def setSubmissionDate(info, context):
+def setRegistryNumber(info, context):
+    """A parliamentary_item's registry_number should be set on the item being 
+    submitted to parliament.
+    """
     instance = removeSecurityProxy(context)
-    if instance.submission_date == None:
-        instance.submission_date = datetime.date.today()
-    versions =  bungeni.core.interfaces.IVersioned(instance)
-    versions.create('New version created upon submission to clerks office')
     if instance.registry_number == None:
         dbutils.setRegistryNumber(instance)
-    
+
 def setApprovalDate(info, context):
     instance = removeSecurityProxy(context)
     if instance.approval_date == None:

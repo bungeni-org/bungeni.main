@@ -52,7 +52,9 @@ def make_versions_table(table, metadata, secondarytable=None):
     some version metadata information will be stored.
     
     A secondary table may be defined if the object mapped to this
-    table consists of a join between two tables
+    table consists of a join between two tables.
+    
+    Assumption: table and secondarytable both have only a single surrogate pk.
     """
     table_name = table.name
     entity_name = table_name.endswith("s") and table_name[:-1] or table_name
@@ -66,10 +68,16 @@ def make_versions_table(table, metadata, secondarytable=None):
         ),
         rdb.Column("manual", rdb.Boolean, nullable=False, default=False),
     ]
-    columns.extend([ c.copy() for c in table.columns if not c.primary_key ])
+    def extend_cols(cols, ext_cols):
+        names = [ c.name for c in cols ]
+        for c in ext_cols:
+            if not c.primary_key:
+                assert c.name not in names, "Duplicate column."
+                names.append(c.name)
+                cols.append(c.copy())
+    extend_cols(columns, table.columns)
     if secondarytable:
-        columns.extend([ c.copy() for c in secondarytable.columns
-                         if not c.primary_key ])
+        extend_cols(columns, secondarytable.columns)
     versions_table = rdb.Table(versions_name, metadata, *columns)
     return versions_table
 
@@ -732,7 +740,6 @@ parliamentary_items = rdb.Table("parliamentary_items", metadata,
     rdb.Column("short_name", rdb.Unicode(255), nullable=False),
     rdb.Column("full_name", rdb.Unicode(1024), nullable=True),
     rdb.Column("body_text", rdb.UnicodeText),
-    rdb.Column("submission_date", rdb.Date),
     # Workflow State
     rdb.Column("status", rdb.Unicode(48)),
     rdb.Column("status_date", rdb.DateTime(timezone=False),

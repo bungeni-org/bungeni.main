@@ -17,7 +17,6 @@
                 short_name
                 full_name
                 body_text
-                submission_date
                 status
                 status_date
                 registry_number
@@ -36,7 +35,6 @@
     <class class=".domain.Bill">
         <require permission="zope.View"
             attributes="
-                submission_date
                 status
                 identifier
                 short_name
@@ -82,7 +80,6 @@
     <class class=".domain.Question">
         <require permission="zope.View"
             attributes="
-                submission_date
                 status
                 short_name
                 language
@@ -123,7 +120,6 @@
         />
         <require permission="bungeni.historical.Edit"
             set_attributes="parliament_id
-                submission_date
                 status
                 status_date
                 supplement_parent_id
@@ -177,13 +173,11 @@
         />
         <require permission="bungeni.historical.Edit"
             attributes="
-                parliament_id
-                submission_date" 
+                parliament_id" 
         />
         <require permission="bungeni.historical.Edit"
             set_attributes="
                 parliament_id
-                submission_date
                 status
                 status_date
                 motion_number
@@ -281,13 +275,11 @@
         />
         <require permission="bungeni.historical.Edit"
             attributes="
-                parliament_id
-                submission_date"
+                parliament_id"
         />
         <require permission="bungeni.historical.Edit"
             set_attributes="
                 parliament_id
-                submission_date
                 approval_date
                 registry_number
                 status
@@ -328,13 +320,11 @@
         />
         <require permission="bungeni.historical.Edit"
             attributes="
-                parliament_id
-                submission_date"
+                parliament_id"
         />
         <require permission="bungeni.historical.Edit"
             set_attributes="
                 parliament_id
-                submission_date
                 approval_date
                 registry_number
                 tabled_document_number
@@ -718,7 +708,6 @@
                 short_name
                 full_name
                 body_text
-                submission_date
                 note
                 receive_notification"
         />

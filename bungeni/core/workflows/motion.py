@@ -37,8 +37,10 @@ class actions:
         utils.setBungeniOwner(context)
     
     @staticmethod
-    def submit( info, context ):
-        utils.setSubmissionDate(info, context)
+    def submit(info, context):
+        utils.createVersion(info, context,
+            message="New version on workflow transition to: submit")
+        utils.setRegistryNumber(info, context)
 
 
     @staticmethod
@@ -51,11 +53,10 @@ class actions:
 
 
     @staticmethod
-    def complete( info, context ):
-        utils.createVersion(info,context)
-        utils.setSubmissionDate(info, context)
- 
-
+    def complete(info, context):
+        utils.createVersion(info, context,
+            message="New version on workflow transition to: complete")
+    
     @staticmethod
     def approve( info, context ):
         utils.setApprovalDate(info,context)
