@@ -35,6 +35,7 @@
     <subscriber handler=".events.set_parliament_id" />
     
     <!-- date range adapters -->
+    <!-- !+DATERANGEFILTER(mr, dec-2010)
     <adapter for=".domain.Bill"
         provides=".interfaces.IDateRangeFilter"
         factory=".daterange.bill_filter" 
@@ -51,10 +52,10 @@
         provides=".interfaces.IDateRangeFilter"
         factory=".daterange.tableddocument_filter"
     />
-    <!--adapter for=".domain.Group"
+    <!-:-adapter for=".domain.Group"
         provides=".interfaces.IDateRangeFilter"
         factory=".daterange.group_filter" 
-    /-->
+    /-:->
     <adapter for=".domain.Parliament"
         provides=".interfaces.IDateRangeFilter"
         factory=".daterange.group_filter"
@@ -79,11 +80,11 @@
         provides=".interfaces.IDateRangeFilter"
         factory=".daterange.group_filter" 
     />
-    <!--adapter
+    <!-:-adapter
         for=".domain.GroupMembership"
         provides=".interfaces.IDateRangeFilter"
         factory=".daterange.group_membership_filter"
-    /-->
+    /-:->
     <adapter for=".domain.MemberOfParliament"
         provides=".interfaces.IDateRangeFilter"
         factory=".daterange.group_membership_filter"
@@ -104,7 +105,7 @@
         provides=".interfaces.IDateRangeFilter"
         factory=".daterange.group_membership_filter"
     />
-    <!--sessions and sittings date range-->
+    <!-:-sessions and sittings date range-:->
     <adapter for=".domain.ParliamentSession"
         provides=".interfaces.IDateRangeFilter"
         factory=".daterange.session_filter"
@@ -113,5 +114,7 @@
         provides=".interfaces.IDateRangeFilter"
         factory=".daterange.sitting_filter"
     /> 
+    
+    /DATERANGEFILTER -->
 
 </configure>

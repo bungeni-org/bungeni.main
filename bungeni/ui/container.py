@@ -66,6 +66,7 @@ def query_filter_date_range(context, request, query, domain_model):
     else:
         start_date, end_date = date.getDisplayDate(request), None
     
+    ''' !+DATERANGEFILTER(mr, dec-2010) disabled until intention is understood
     if not start_date and not end_date:
         return query
     elif not start_date:
@@ -78,6 +79,7 @@ def query_filter_date_range(context, request, query, domain_model):
     if date_range_filter is not None:
         query = query.filter(date_range_filter(domain_model)).params(
             start_date=start_date, end_date=end_date)
+    '''
     return query
 
 

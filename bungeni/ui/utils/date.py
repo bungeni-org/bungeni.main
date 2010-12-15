@@ -43,8 +43,7 @@ def getDisplayDate(request):
         except:
             pass
 
-''' !+DATEFILTER(mr, sep-2010) should use IDateRangeFilter adaptors,
-    defined in models.daterange.py
+''' !+DATERANGEFILTER(mr, sep-2010) use IDateRangeFilter adaptors?
 
 def getFilter(displayDate):
     """(either(datetime.date|None) -> filter_by:str

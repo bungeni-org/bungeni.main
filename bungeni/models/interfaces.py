@@ -350,8 +350,9 @@ class IVersion(interface.Interface):
 
 class IAttachedFileVersion(IVersion):
     pass
-    
 
+
+''' !+DATERANGEFILTER(mr, dec-2010) disabled until intention is understood
 class IDateRangeFilter(interface.Interface):
     """Adapts a model container instance and a SQLAlchemy query
     object, applies a date range filter and returns a query.
@@ -360,6 +361,7 @@ class IDateRangeFilter(interface.Interface):
 
     These must be bound before the query is executed.
     """
+'''
 
 
 class IChange(interface.Interface):

@@ -1,3 +1,5 @@
+''' !+DATERANGEFILTER(mr, dec-2010) disabled until intention is understood
+
 from sqlalchemy import sql
 import domain
 
@@ -18,6 +20,7 @@ def bill_filter(domain_model):
     )
 
 def motion_filter(domain_model):
+    import pdb; pdb.set_trace();
     return sql.or_(
     between(domain_model.submission_date),
     between(domain_model.notice_date),
@@ -104,4 +107,4 @@ def sitting_filter(domain_model):
     )
     
     
-    
+'''
