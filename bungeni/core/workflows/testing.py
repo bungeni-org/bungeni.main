@@ -115,11 +115,14 @@ def setup_adapters():
     zope.component.provideAdapter(
         bungeni.core.workflows.states.StateWorkflowInfo,
         (domain.GroupSitting,))
-        
+    
     zope.component.provideAdapter(
-        bungeni.core.workflows.adapters.AddressWorkflowAdapter,
+        bungeni.core.workflows.adapters.UserAddressWorkflowAdapter,
         (domain.UserAddress,))
-
+    zope.component.provideAdapter(
+        bungeni.core.workflows.adapters.GroupAddressWorkflowAdapter,
+        (domain.GroupAddress,))
+    
     zope.component.provideAdapter(
         bungeni.core.workflows.states.StateWorkflowInfo,
         (domain.UserAddress,))

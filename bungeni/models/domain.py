@@ -456,8 +456,7 @@ class ParliamentaryItem(Entity):
         Get the date of the most RECENT workflow transition to any one of 
         the workflow states specified as input parameters. 
         
-        Returns None if none of such workflow states has been transited to 
-        as yet.
+        Returns None if no such workflow states has been transited to as yet.
         """
         assert states, "Must specify at least one workflow state."
         # order of self.changes is chronological--we want latest first
@@ -471,11 +470,10 @@ class ParliamentaryItem(Entity):
     
     @property
     def submission_date(self):
-        # As base meaning of "submission_date" we take the most recent date 
-        # of worklfow transition to either "complete" (speaker) or to 
-        # "submit" (clerk). Subclasses should overload this meaning as 
-        # appropriate for their respective workflows.
-        return self._get_workflow_date("submitted", "complete")
+        # As base meaning of "submission_date" we take the most recent date
+        # of workflow transition to "submit" to clerk. Subclasses may need
+        # to overload as appropriate for their respective workflows.
+        return self._get_workflow_date("submitted")
 
 
 class AttachedFile(Entity):
@@ -552,6 +550,10 @@ class Bill(ParliamentaryItem):
         "bungeni.models.domain.GroupGroupItemAssignmentContainer", "item_id")
     versions = one2many("versions",
         "bungeni.models.domain.BillVersionContainer", "content_id")
+    
+    @property
+    def submission_date(self):
+        return self._get_workflow_date("working_draft")
 
 BillChange = ItemLog.makeLogFactory("BillChange")
 BillVersion = ItemVersions.makeVersionFactory("BillVersion")

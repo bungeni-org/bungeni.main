@@ -217,19 +217,41 @@ consists of a principal with the specific role.
 TODO: also check Clerk create_on_behalf_of MP
 
 -------------------------------------
-Transition: "submit_to_clerk"
 
-  >>> actions.submit_to_clerk(info, question)
+Setup mock delivery component.
 
-# XXX-4 failing:
-#  >>> info.fireTransition("submit_to_clerk")
-#  >>> question.status
-#  'submitted'
+  >>> import zope.sendmail.interfaces
+  
+  >>> class MockMailDelivery(object):
+  ...     interface.implements(zope.sendmail.interfaces.IMailDelivery)
+  ...
+  ...     def send(self, *args):
+  ...         pass#print "From: %s\nTo: %s\n\n%s" % args
+
+  >>> component.provideUtility(MockMailDelivery())
+
+  >>> question.status
+  'draft'
+  
   >>> from bungeni.core.interfaces import IVersioned
   >>> versions = IVersioned(question)
   >>> len(versions)
+  0
+
+Transition: "submit_to_clerk"
+
+  >>> #actions.submit_to_clerk(info, question)
+  >>> info.fireTransition("submit_to_clerk-%s" % question.status)
+  >>> question.status
+  'submitted'
+  >>> len(versions)
   1
   
+!+FIRETRANSITION(mr, dec-2010) the above fireTransition works, but subsequent 
+calls below do NOT work. This issue was claimed resolved, see this discussion:
+http://groups.google.com/group/bungeni-dev/browse_thread/thread/11ed33aac12bd94e/d9c0c20967099cfd  
+
+
   >>> tuple(qprm.getRolesForPrincipal("member"))
   ((u'bungeni.Owner', PermissionSetting: Allow),)
 
@@ -252,6 +274,11 @@ in "submitted" state:
 Transition: "receive_by_clerk"
 
   >>> actions.received_by_clerk(info, question)
+  >>> #info.fireTransition("receive_by_clerk-%s" % question.status)
+  >>> #question.status
+  #'received'
+  >>> len(versions)
+  2
 
 # XXX-5 failing:
 trying to execute the *transition* --as the clerk or as the member-- gives:
@@ -261,18 +288,12 @@ Exception raised:
       File "/home/undesa/bungeni/cap_installs/bungeni_install/bungeni/releases/20100305100101/eggs/ore.workflow-1.0.4-py2.5.egg/ore/workflow/workflow.py", line 97, in getTransition
         transition = self._id_transitions[transition_id]
     KeyError: 'received-by-clerk'
-#  >>> info.fireTransition("receive_by_clerk")
-#  >>> question.status
-#  'received'
-  >>> len(versions)
-  2
-  
 
 
 "Require edit by MP"
 
   >>> actions.mp_clarify(info, question)
-  >>> #info.fireTransition("mp-clarify")
+  >>> #info.fireTransition("mp-clarify-%s" % question.status)
   >>> #question.status
   #'clarify_mp'
   >>> len(versions)
@@ -281,17 +302,17 @@ Exception raised:
 "Complete".
 
   >>> actions.complete(info, question)
-  >>> #info.fireTransition("complete")
+  >>> #info.fireTransition("complete-%s" % question.status)
   >>> #question.status
   #'complete'
   >>> len(versions)
-  5
+  4
 
 "Approve".
 
   >>> actions.approve(info, question)
   >>> len(versions)
-  6
+  5
 
   >>> question.approval_date == today
   True
@@ -304,19 +325,19 @@ Exception raised:
 
   >>> actions.require_amendment(info, question)
   >>> len(versions)
-  7
+  6
 
 "Complete clarify".
 
   >>> actions.complete_clarify(info, question)
   >>> len(versions)
-  8
+  7
 
 "MP clarify".
 
   >>> actions.mp_clarify(info, question)
   >>> len(versions)
-  9
+  8
 
 "Send to ministry".
 

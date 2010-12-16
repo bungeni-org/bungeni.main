@@ -11,7 +11,6 @@ class conditions(object):
 class actions(object):
     @staticmethod
     def create(info, context):
-        utils.setBillSubmissionDate(info, context)
         utils.setParliamentId(info, context)
         user_id = get_principal_id()
         if not user_id:

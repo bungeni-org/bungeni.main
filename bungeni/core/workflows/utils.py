@@ -154,8 +154,6 @@ def setApprovalDate(info, context):
     instance = removeSecurityProxy(context)
     if instance.approval_date == None:
         instance.approval_date = datetime.date.today()
-    if instance.submission_date == None:
-        instance.submission_date = datetime.date.today()
     versions =  bungeni.core.interfaces.IVersioned(instance)
     versions.create('New Version created upon approval by speakers office')
     if type(instance) == domain.Question:
@@ -193,11 +191,6 @@ def getMotionSchedule(info, context):
 
 def getQuestionSubmissionAllowed(info, context):
     return prefs.getQuestionSubmissionAllowed()
-
-def setBillSubmissionDate(info, context):
-    instance = removeSecurityProxy(context)
-    if instance.submission_date == None:
-        instance.submission_date = datetime.date.today()
 
 def setBillPublicationDate( info, context ):
     instance = removeSecurityProxy(context)

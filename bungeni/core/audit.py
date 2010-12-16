@@ -270,8 +270,12 @@ class AuditorFactory(object):
     def _get_change_data(self):
         """If request defines change_data, use it, else return a dummy dict.
         """
-        cd = IAnnotations(common.get_request()).get("change_data")
-        if cd is None:
+        try:
+            cd = IAnnotations(common.get_request()).get("change_data")
+            assert cd is not None, "change_data dict is None."
+        except (TypeError, AssertionError):
+            # Could not adapt... under testing, the "request" is a 
+            # participation that has no IAnnotations.
             cd = {}
         cd.setdefault("note", cd.get("note", ""))
         cd.setdefault("date_active", cd.get("date_active", None))
