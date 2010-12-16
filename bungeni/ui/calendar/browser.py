@@ -237,9 +237,9 @@ class CalendarView(BungeniBrowserView):
         languages = get_all_languages()
         session.close()
         #defaults to english
-        self.display_language = 'en'
-        if self.request.get('I18N_LANGUAGES'):
-            self.display_language = self.request.get('I18N_LANGUAGES')
+        self.display_language = "en"
+        if self.request.get("I18N_LANGUAGE"):
+            self.display_language = self.request.get("I18N_LANGUAGE")
         #html is hardcoded in here because doing it in the template
         #would have been a colossal pain
         #TODO: FIX THIS

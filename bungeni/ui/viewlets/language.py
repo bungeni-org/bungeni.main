@@ -71,14 +71,14 @@ class LanguageViewlet(object):
 class ChangeLanguage(BrowserView):
 
     def __call__(self):
-        """set the I18N_LANGUAGES cookie and redirect back to referrer"""
+        """set the I18N_LANGUAGE cookie and redirect back to referrer"""
         response = self.request.response
-        lang = self.request.get('language', None)
+        lang = self.request.get("language", None)
         if lang:
-            response.setCookie('I18N_LANGUAGES', lang, path='/')
+            response.setCookie("I18N_LANGUAGE", lang, path="/")
         else:
-            response.expireCookie('I18N_LANGUAGES', path='/')
-        url =  self.request.get('HTTP_REFERER','..')
+            response.expireCookie("I18N_LANGUAGE", path="/")
+        url =  self.request.get("HTTP_REFERER", "..")
         return response.redirect(url)
 
               

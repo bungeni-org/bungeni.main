@@ -42,7 +42,7 @@ class BrowserFormLanguages(BrowserLanguages):
     def getPreferredLanguages(self):
         langs = super(BrowserFormLanguages, self).getPreferredLanguages()
         # use same cookie as linguaplone 
-        form_lang = self.request.getCookies().get("I18N_LANGUAGES")
+        form_lang = self.request.getCookies().get("I18N_LANGUAGE")
         if form_lang is not None:
             langs.insert(0, form_lang)
         return langs
