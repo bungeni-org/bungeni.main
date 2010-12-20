@@ -10,7 +10,7 @@ from bungeni.alchemist import Session
 
 from bungeni.models import domain, schema
 
-bookedvenues = schema.venues.join(schema.sittings)
+bookedvenues = schema.venues.join(schema.group_sittings)
 
 class BookedVenue(object):
     """ venue booked for a Sitting """
@@ -39,22 +39,22 @@ def get_available_venues( start, end, sitting=None ):
     query = session.query(domain.Venue)
     b_filter = sql.and_(
                     sql.or_( 
-                        sql.between(schema.sittings.c.start_date, start, end), 
-                        sql.between(schema.sittings.c.end_date, start, end),
-                        sql.between(start, schema.sittings.c.start_date, 
-                                    schema.sittings.c.end_date),
-                        sql.between(end, schema.sittings.c.start_date, 
-                                    schema.sittings.c.end_date)
+                        sql.between(schema.group_sittings.c.start_date, start, end), 
+                        sql.between(schema.group_sittings.c.end_date, start, end),
+                        sql.between(start, schema.group_sittings.c.start_date, 
+                                    schema.group_sittings.c.end_date),
+                        sql.between(end, schema.group_sittings.c.start_date, 
+                                    schema.group_sittings.c.end_date)
                         ),
-                    schema.sittings.c.venue_id != None)
+                    schema.group_sittings.c.venue_id != None)
     if sitting:
-        if sitting.sitting_id:
+        if sitting.group_sitting_id:
             b_filter = sql.and_(b_filter,
-                        schema.sittings.c.sitting_id != sitting.sitting_id)
+                        schema.group_sittings.c.group_sitting_id != sitting.group_sitting_id)
     query = query.filter(
                 sql.not_(
                     schema.venues.c.venue_id.in_(
-                        sql.select( [schema.sittings.c.venue_id] 
+                        sql.select( [schema.group_sittings.c.venue_id] 
                                     ).where(b_filter)
                     )))
     venues = query.all()
@@ -70,17 +70,17 @@ def get_unavailable_venues( start, end, sitting = None ):
     assert( type(end) == datetime.datetime )
     session = Session()
     b_filter = sql.or_( 
-                    sql.between(schema.sittings.c.start_date, start, end), 
-                    sql.between(schema.sittings.c.end_date, start, end),
-                    sql.between(start, schema.sittings.c.start_date, 
-                                schema.sittings.c.end_date),
-                    sql.between(end, schema.sittings.c.start_date, 
-                                schema.sittings.c.end_date)
+                    sql.between(schema.group_sittings.c.start_date, start, end), 
+                    sql.between(schema.group_sittings.c.end_date, start, end),
+                    sql.between(start, schema.group_sittings.c.start_date, 
+                                schema.group_sittings.c.end_date),
+                    sql.between(end, schema.group_sittings.c.start_date, 
+                                schema.group_sittings.c.end_date)
                     )
     if sitting:
-        if sitting.sitting_id:
+        if sitting.group_sitting_id:
             b_filter = sql.and_(b_filter,
-                        schema.sittings.c.sitting_id != sitting.sitting_id)
+                        schema.group_sittings.c.group_sitting_id != sitting.group_sitting_id)
     query = session.query(BookedVenue).filter(b_filter)
     venues = query.all()
     #session.close()
@@ -95,18 +95,18 @@ def check_venue_bookings( start, end, venue, sitting=None ):
     assert( type(end) == datetime.datetime ) 
     session = Session()
     b_filter = sql.and_(sql.or_( 
-                    sql.between(schema.sittings.c.start_date, start, end), 
-                    sql.between(schema.sittings.c.end_date, start, end),
-                    sql.between(start, schema.sittings.c.start_date, 
-                                schema.sittings.c.end_date),
-                    sql.between(end, schema.sittings.c.start_date, 
-                                schema.sittings.c.end_date)
+                    sql.between(schema.group_sittings.c.start_date, start, end), 
+                    sql.between(schema.group_sittings.c.end_date, start, end),
+                    sql.between(start, schema.group_sittings.c.start_date, 
+                                schema.group_sittings.c.end_date),
+                    sql.between(end, schema.group_sittings.c.start_date, 
+                                schema.group_sittings.c.end_date)
                         ),
-                    schema.sittings.c.venue_id == venue.venue_id)
+                    schema.group_sittings.c.venue_id == venue.venue_id)
     if sitting:
-        if sitting.sitting_id:
+        if sitting.group_sitting_id:
             b_filter = sql.and_(b_filter,
-                        schema.sittings.c.sitting_id != sitting.sitting_id)
+                        schema.group_sittings.c.group_sitting_id != sitting.group_sitting_id)
     query = session.query(BookedVenue).filter(b_filter)
     venues = query.all()
     #session.close()

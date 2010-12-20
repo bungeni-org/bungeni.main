@@ -13,7 +13,7 @@ from schema import metadata
 from domain import User, Minister
 from domain import GroupMembership, Group, Government, Parliament, \
     PoliticalParty, Ministry, Committee
-from domain import GroupSitting, SittingType, \
+from domain import GroupSitting, GroupSittingType, \
     GroupSittingAttendance, AttendanceType
 from domain import ParliamentSession, PoliticalGroup
 from domain import Question, QuestionVersion, QuestionChange

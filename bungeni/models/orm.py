@@ -260,25 +260,36 @@ mapper(domain.CommitteeStaff,
 )
 
 mapper(domain.ParliamentSession, schema.parliament_sessions)
-mapper(domain.GroupSitting, schema.sittings,
+mapper(domain.GroupSitting, schema.group_sittings,
     properties={
-        "sitting_type": relation(domain.SittingType, uselist=False),
+        "group_sitting_type": relation(domain.GroupSittingType, uselist=False),
         "group": relation(domain.Group,
-            primaryjoin=schema.sittings.c.group_id == schema.groups.c.group_id,
+            primaryjoin=schema.group_sittings.c.group_id == schema.groups.c.group_id,
             uselist=False,
             lazy=True
         ),
         "start_date": column_property(
-            schema.sittings.c.start_date.label("start_date")
+            schema.group_sittings.c.start_date.label("start_date")
         ),
         "end_date": column_property(
-            schema.sittings.c.end_date.label("end_date")
+            schema.group_sittings.c.end_date.label("end_date")
         ),
         "item_schedule": relation(domain.ItemSchedule,
             order_by=schema.item_schedules.c.planned_order
         ),
-        "venue": relation(domain.Venue)
+        "venue": relation(domain.Venue),
+        "changes": changes_relation(domain.GroupSittingChange),
     }
+)
+
+mapper(domain.GroupSittingChange, schema.group_sitting_changes,
+         properties={
+        "user": relation(domain.User,
+            primaryjoin=schema.group_sitting_changes.c.user_id == schema.users.c.user_id,
+            uselist=False,
+            lazy=True
+        ),
+     }
 )
 
 mapper(domain.ResourceType, schema.resource_types)
@@ -467,9 +478,9 @@ mapper(domain.ConstituencyDetail, schema.constituency_details,
     }
 )
 mapper(domain.CommitteeType, schema.committee_type)
-mapper(domain.SittingType, schema.sitting_types)
+mapper(domain.GroupSittingType, schema.group_sitting_types)
 
-mapper(domain.GroupSittingAttendance, schema.sitting_attendance,
+mapper(domain.GroupSittingAttendance, schema.group_sitting_attendance,
     properties={
         "user": relation(domain.User, uselist=False, lazy=False),
         "attendance_type": relation(domain.AttendanceType,
@@ -535,7 +546,7 @@ mapper(domain.SittingReport, schema.sitting_reports,
             uselist=False
         ),
         "report": relation(domain.Report,
-            backref="sittings",
+            backref="group_sittings",
             lazy=True,
             uselist=False
         ),

@@ -67,7 +67,36 @@ class Entity(object):
     # eg: {"user_id":"sort_name"} when the sort on user_id is requested the 
     # query gets sorted by sort_name
     #sort_replace = None
+    
+#############
 
+class ItemLog(object):
+    """An audit log of events in the lifecycle of a parliamentary content.
+    """
+    @classmethod
+    def makeLogFactory(klass, name):
+        factory = type(name, (klass,), {})
+        interface.classImplements(factory, interfaces.IChange)
+        return factory
+    
+    # !+CHANGE_EXTRAS(mr, dec-2010)
+    def _get_extras(self):
+        if self.notes is not None:
+            return eval(self.notes)
+    def _set_extras(self, dictionary):
+        self.notes = dictionary and repr(dictionary) or None
+    extras = property(_get_extras, _set_extras)
+
+class ItemVersions(Entity):
+    """A collection of the versions of a parliamentary content object.
+    """
+    @classmethod
+    def makeVersionFactory(klass, name):
+        factory = type(name, (klass,), {})
+        interface.classImplements(factory, interfaces.IVersion)
+        return factory
+    
+    #files = one2many("files", "bungeni.models.domain.AttachedFileContainer", "file_version_id")
 
 class User(Entity):
     """Domain Object For A User. General representation of a person.
@@ -196,18 +225,19 @@ class GroupSitting(Entity):
     """
     interface.implements(interfaces.ITranslatable)
     attendance = one2many("attendance",
-        "bungeni.models.domain.GroupSittingAttendanceContainer", "sitting_id")
+        "bungeni.models.domain.GroupSittingAttendanceContainer", "group_sitting_id")
     items = one2many("items", 
-        "bungeni.models.domain.ItemScheduleContainer", "sitting_id")
+        "bungeni.models.domain.ItemScheduleContainer", "group_sitting_id")
     sreports = one2many("sreports", 
-        "bungeni.models.domain.Report4SittingContainer", "sitting_id")
+        "bungeni.models.domain.Report4SittingContainer", "group_sitting_id")
     
     @property
     def short_name(self):
         return self.start_date.strftime("%d %b %y %H:%M")
 
+GroupSittingChange = ItemLog.makeLogFactory("GroupSittingChange")
 
-class SittingType(object):
+class GroupSittingType(object):
     """Type of sitting: morning/afternoon/... 
     """
     interface.implements(interfaces.ITranslatable)
@@ -262,7 +292,7 @@ class Parliament(Group):
         "bungeni.models.domain.QuestionContainer", "parliament_id")
     motions = one2many("motions", 
         "bungeni.models.domain.MotionContainer", "parliament_id")
-    sittings = one2many("sittings", 
+    sittings = one2many("group_sittings", 
         "bungeni.models.domain.GroupSittingContainer", "group_id")
     offices = one2many("offices", 
         "bungeni.models.domain.OfficeContainer", "parent_group_id")
@@ -345,7 +375,7 @@ class Committee(Group):
         "bungeni.models.domain.CommitteeStaffContainer", "group_id")
     agendaitems = one2many("agendaitems",
         "bungeni.models.domain.AgendaItemContainer", "group_id")
-    sittings = one2many("sittings",
+    sittings = one2many("group_sittings",
         "bungeni.models.domain.GroupSittingContainer", "group_id")
     assigneditems = one2many("assigneditems",
         "bungeni.models.domain.ItemGroupItemAssignmentContainer", "group_id")
@@ -399,35 +429,7 @@ class GroupAddress(_Address):
     """Group address (official)
     """
 
-#############
 
-class ItemLog(object):
-    """An audit log of events in the lifecycle of a parliamentary content.
-    """
-    @classmethod
-    def makeLogFactory(klass, name):
-        factory = type(name, (klass,), {})
-        interface.classImplements(factory, interfaces.IChange)
-        return factory
-    
-    # !+CHANGE_EXTRAS(mr, dec-2010)
-    def _get_extras(self):
-        if self.notes is not None:
-            return eval(self.notes)
-    def _set_extras(self, dictionary):
-        self.notes = dictionary and repr(dictionary) or None
-    extras = property(_get_extras, _set_extras)
-
-class ItemVersions(Entity):
-    """A collection of the versions of a parliamentary content object.
-    """
-    @classmethod
-    def makeVersionFactory(klass, name):
-        factory = type(name, (klass,), {})
-        interface.classImplements(factory, interfaces.IVersion)
-        return factory
-    
-    #files = one2many("files", "bungeni.models.domain.AttachedFileContainer", "file_version_id")
 
 
 class ItemVotes(object):

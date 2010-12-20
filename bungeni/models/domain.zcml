@@ -193,7 +193,7 @@
             attributes="
                 schedule_id
                 item_id
-                sitting_id
+                group_sitting_id
                 category_id
                 planned_order
                 real_order
@@ -205,7 +205,7 @@
         <require permission="bungeni.itemschedule.Edit"
             set_attributes="
                 item_id
-                sitting_id
+                group_sitting_id
                 category_id
                 planned_order
                 real_order
@@ -230,13 +230,13 @@
     <class class=".domain.GroupSittingAttendance">
         <require permission="zope.View"
             attributes="
-                sitting_id
+                group_sitting_id
                 member_id
                 attendance_id"
         />
         <require permission="bungeni.sittingattendance.Edit"
             set_attributes="
-                sitting_id
+                group_sitting_id
                 member_id
                 attendance_id"
         />

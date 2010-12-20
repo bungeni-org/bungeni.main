@@ -40,9 +40,7 @@ def make_changes_table(table, metadata):
         ),
         rdb.Column("description", rdb.UnicodeText),
         rdb.Column("notes", rdb.UnicodeText),
-        rdb.Column("user_id", rdb.Unicode(32)
-            # Integer, rdb.ForeignKey("users.user_id")),
-        )
+        rdb.Column("user_id", rdb.Integer, rdb.ForeignKey("users.user_id")),
     )
     return changes_table
 
@@ -495,8 +493,8 @@ parliament_sessions = rdb.Table("sessions", metadata,
     rdb.Column("language", rdb.String(5), nullable=False),
 )
 
-sittings = rdb.Table("group_sittings", metadata,
-    rdb.Column("sitting_id", rdb.Integer, primary_key=True),
+group_sittings = rdb.Table("group_sittings", metadata,
+    rdb.Column("group_sitting_id", rdb.Integer, primary_key=True),
     rdb.Column("group_id", rdb.Integer,
         rdb.ForeignKey("groups.group_id"),
         nullable=False
@@ -504,12 +502,12 @@ sittings = rdb.Table("group_sittings", metadata,
     rdb.Column("short_name", rdb.Unicode(32)),
     rdb.Column("start_date", rdb.DateTime(timezone=False), nullable=False),
     rdb.Column("end_date", rdb.DateTime(timezone=False), nullable=False),
-    rdb.Column("sitting_type_id", rdb.Integer,
-        rdb.ForeignKey("sitting_types.sitting_type_id")
+    rdb.Column("group_sitting_type_id", rdb.Integer,
+        rdb.ForeignKey("group_sitting_types.group_sitting_type_id")
     ),
     # if a sitting is recurring this is the id of the original sitting
     # there is no foreign key to the original sitting
-    # like rdb.ForeignKey("group_sittings.sitting_id")
+    # like rdb.ForeignKey("group_sittings.group_sitting_id")
     # to make it possible to delete the original sitting
     rdb.Column("recurring_id", rdb.Integer),
     rdb.Column("status", rdb.Unicode(48)),
@@ -522,17 +520,20 @@ sittings = rdb.Table("group_sittings", metadata,
     rdb.Column("language", rdb.String(5), nullable=False),
 )
 
-sitting_types = rdb.Table("sitting_types", metadata,
-    rdb.Column("sitting_type_id", rdb.Integer, primary_key=True),
-    rdb.Column("sitting_type", rdb.Unicode(40)),
+group_sitting_changes = make_changes_table(group_sittings, metadata)
+
+# Currently not used
+group_sitting_types = rdb.Table("group_sitting_types", metadata,
+    rdb.Column("group_sitting_type_id", rdb.Integer, primary_key=True),
+    rdb.Column("group_sitting_type", rdb.Unicode(40)),
     rdb.Column("start_time", rdb.Time, nullable=False),
     rdb.Column("end_time", rdb.Time, nullable=False),
     rdb.Column("language", rdb.String(5), nullable=False),
 )
 
-sitting_attendance = rdb.Table("sitting_attendance", metadata,
-    rdb.Column("sitting_id", rdb.Integer,
-        rdb.ForeignKey("group_sittings.sitting_id"),
+group_sitting_attendance = rdb.Table("group_sitting_attendance", metadata,
+    rdb.Column("group_sitting_id", rdb.Integer,
+        rdb.ForeignKey("group_sittings.group_sitting_id"),
         primary_key=True
     ),
     rdb.Column("member_id", rdb.Integer,
@@ -586,8 +587,8 @@ resourcebookings = rdb.Table("resourcebookings", metadata,
         rdb.ForeignKey("resources.resource_id"),
         primary_key=True
     ),
-    rdb.Column("sitting_id", rdb.Integer,
-        rdb.ForeignKey("group_sittings.sitting_id"),
+    rdb.Column("group_sitting_id", rdb.Integer,
+        rdb.ForeignKey("group_sittings.group_sitting_id"),
         primary_key=True
     ),
 )
@@ -630,8 +631,8 @@ item_schedules = rdb.Table("item_schedules", metadata,
         rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
         nullable=False
     ),
-    rdb.Column("sitting_id", rdb.Integer,
-        rdb.ForeignKey("group_sittings.sitting_id"),
+    rdb.Column("group_sitting_id", rdb.Integer,
+        rdb.ForeignKey("group_sittings.group_sitting_id"),
         nullable=False
     ),
     rdb.Column("planned_order", rdb.Integer,
@@ -653,7 +654,7 @@ item_schedule_discussions = rdb.Table("item_schedule_discussions", metadata,
         rdb.ForeignKey("item_schedules.schedule_id"),
         primary_key=True),
     rdb.Column("body_text", rdb.UnicodeText),
-    rdb.Column("sitting_time", rdb.Time(timezone=False)),
+    rdb.Column("group_sitting_time", rdb.Time(timezone=False)),
     rdb.Column("language", rdb.String(5),
         nullable=False,
         default="en"
@@ -667,16 +668,15 @@ reports = rdb.Table("reports", metadata,
     ),
     rdb.Column("group_id", rdb.Integer, rdb.ForeignKey("groups.group_id")),
     rdb.Column("start_date", rdb.Date, nullable=False),
-    rdb.Column("end_date", rdb.Date),
-    rdb.Column("report_type", rdb.String(32), nullable=False)
+    rdb.Column("end_date", rdb.Date)
 )
 
 sitting_reports = rdb.Table("sitting_reports", metadata,
     rdb.Column("report_id", rdb.Integer,
         rdb.ForeignKey("reports.report_id"), primary_key=True
     ),
-    rdb.Column("sitting_id", rdb.Integer,
-        rdb.ForeignKey("group_sittings.sitting_id"), primary_key=True
+    rdb.Column("group_sitting_id", rdb.Integer,
+        rdb.ForeignKey("group_sittings.group_sitting_id"), primary_key=True
     ),
 )
 

@@ -41,7 +41,7 @@ def create_sitting(group_id=1, language="en"):
     
     session = Session()
     
-    st = domain.SittingType()
+    st = domain.GroupSittingType()
     st.sitting_type = u"morning"
     st.start_time = datetime.time(8,30)
     st.end_time = datetime.time(12,30)
