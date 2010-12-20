@@ -73,7 +73,8 @@ def add_member_public_links(content, theme, resource_fetcher, log):
 
 
 def replace_login_link(content, theme, resource_fetcher, log):
-    """Login will be via cynin to facilitate creation of cynin member spaces.
+    """Login and logout will be via cynin to facilitate creation of
+    cynin member spaces.
     """
     if ("logout" or "Log out") not in theme.html() and \
            theme("#portal-personaltools").html() != None:
@@ -82,7 +83,76 @@ def replace_login_link(content, theme, resource_fetcher, log):
             login_url = login_url.replace("plone", "cynin")
         else:
             login_url = login_url.replace("login", "cynin/login_form")
-        pq(theme("#portal-personaltools li:first-child a")).attr("href", login_url)     
+        pq(theme("#portal-personaltools li:first-child a")).attr("href", login_url)
+    elif ("logout" or "Log out") in theme.html():
+        plone_lnk = theme("#portal-personaltools li a:last-child").attr("href")
+        bungeni_lnk = theme("#portal-personaltools li:nth-child(4) a").attr("href")
+        if plone_lnk:
+            theme("#portal-personaltools li a:last-child").attr(
+                "href", plone_lnk.replace("/plone", "/cynin"))
+        elif bungeni_lnk:
+            pq(theme("#portal-personaltools li:nth-child(4) a")).attr(
+                "href", bungeni_lnk.replace("/logout", "/cynin/logout"))
+
+
+def add_menu_items(content, theme, resource_fetcher, log):
+    """
+    Add menu items
+    """
+    newlist = theme("div#portal-globalnav").clone()("li")
+
+    theme(".row_1 .three-columns-equal .block_1").append(
+        "<h1 class='documentFirstHeading'>Menu</h1>")    
+    theme(".row_1 .three-columns-equal .block_1").append("<ul></ul>")    
+    for item in newlist:
+        pq(item).removeClass("plain")
+        theme(".row_1 .three-columns-equal .block_1 ul").append(item)
+        for list_item in theme("div#portal-column-one li"):
+            check_val = urlsplit(pq(list_item.getchildren()).attr("href"))[2]
+            if "plone" in pq(list_item.getchildren()).attr("href"):
+                check_val = check_val.split("/")[2]
+            else:
+                check_val = check_val.split("/")[1]                
+                
+            if check_val in pq(item).children().attr("href"):
+                pq(list_item).addClass("2ndlevel")
+                theme(".row_1 .three-columns-equal .block_1 ul").append(
+                    list_item)
+     
+def add_rss_feeds(content, theme, resource_fetcher, log):
+    """
+    Add rss feeds and news content.
+    """
+    news_query_value = "/plone/news"
+    language_selector = content("#portal-languageselector .selected a").attr(
+        "href")
+    if language_selector != None:
+        language = language_selector.split("=")[1]
+        if language !="en":
+            news_query_value = "/plone/news-" + language + "?set_language=" + \
+                               language
+
+    host_url = urlsplit(log.theme_url)
+    source_dest_mapping = {news_query_value:
+                           ".row_1 .three-columns-equal .block_2",
+                           "/plone/feeds/sittings":
+                           ".row_1 .three-columns-equal .block_3",                      
+                           "/plone/feeds/question-listing":
+                           ".row_1 .three-columns-equal .block_3",
+                           "/plone/feeds/motion-listing":
+                           ".row_1 .three-columns-equal .block_3",
+                           "/plone/feeds/bill-listing":
+                           ".row_1 .three-columns-equal .block_3"}
+    for item in source_dest_mapping:
+        try:
+            response = urllib2.urlopen(host_url[0] + "://" + host_url[1] +
+                                   item)
+            url_content = response.read()
+            content_data =  pq(url_content)
+            theme(source_dest_mapping[item]).append(
+                content_data("#content").html().replace("/akomantoso.xml", ""))
+        except:
+            pass
 
 
 def enable_text_editor(content, theme, resource_fetcher, log):

@@ -1,7 +1,12 @@
 @import url(/static/css/global-styles.css);
+b, strong {
+    font-weight:bolder;
+}
+
 /*
  * top-layer
  */
+
 #top-layer {
     height: 20px;
     text-align:center;
@@ -198,7 +203,6 @@ div.main-column h1 {
     display: block;
     margin: 1em 0 .5em;
     padding: 0;
-    text-align: center;
 }
 .template-workspace.section-bungeni-admin div.main-column h1,
 .template-workspace.section-bungeni-workspace div.main-column h1 {
@@ -227,7 +231,6 @@ div.main-column h1.reportdoctype {
 }
 div.main-column h2 {
     display: block;
-    text-align: center;
     text-shadow: 0px 0px 1px #fff;
     line-height: 20px;
     font-size: 120%;
@@ -250,7 +253,6 @@ div.main-column h2 span {
 }
 div.main-column h3 {
     display: block;
-    text-align: center;
     text-shadow: 0px 0px 1px #fff;
     line-height: 20px;
     font-size: 100%;
@@ -288,12 +290,6 @@ div.main-column h3 {
     padding: 0;
     margin: 0;
 }
-
-.section-bungeni-\@\@index #portal-column-content {
-    margin:0 20em 0 0;
-    position: absolute;
-}
-
 
 .section-bungeni-admin #portal-column-content {
     padding: 0;
@@ -421,6 +417,7 @@ div.main-column h3 {
     float: left;
     width: 99%;
     padding: 0 !important;
+    margin-top: 2em !important;
 }
 
 #portal-searchbox input.searchButton {
@@ -949,14 +946,14 @@ dl#context_actions.actionMenu .actionMenuContent ul li a {
  * portal-globalnav
  */
 #portal-globalnav {
-    padding:0 0 0 0em;
+    padding:0;
 }
 div#portal-globalnav {
     width: 100%;
     height: 4em;
     position: relative;
     background: #fff;
-    padding:0 0 0 0em;  
+    padding:0;  
 }
 .template-workspace div#portal-globalnav {
     background: #4d4d4d;
@@ -988,10 +985,7 @@ div#portal-globalnav ul.level0 li,
     border-bottom: 1px solid #aaa;
     background: transparent;
 }
-div#portal-globalnav ul.level0 li a,
-.section-how-we-work div#portal-globalnav ul.level0 li#portaltab-business-whats-on a,
-.section-have-your-say div#portal-globalnav ul.level0 li#portaltab-business-whats-on a ,
-.section-reference-material div#portal-globalnav ul.level0 li#portaltab-business-whats-on a {
+div#portal-globalnav ul.level0 li a { 
     text-shadow: 0px 1px 1px #fff;
     padding: 0 1.25em;
     margin: 0 .25em 0 0;
@@ -1008,6 +1002,32 @@ div#portal-globalnav ul.level0 li a,
     font-family:tahoma,verdana,sans-serif;
     font-size: 12px;
 }
+
+.template-portal div#portal-globalnav ul.level0 li#portaltab-business-whats-on a  {
+    -moz-border-radius-topleft:5px;
+    -moz-border-radius-topright:5px;
+    background:#EEEEEE none repeat scroll 0 0;
+    border-color:#AAAAAA #AAAAAA #EEEEEE;
+    border-style:solid;
+    border-width:1px;
+    color:#222222;
+    font-family:tahoma,verdana,sans-serif;
+    font-size:12px;
+    margin:0 0.25em 0 0;
+    padding:0 1.25em;
+    text-shadow:0 1px 1px #FFFFFF;
+}
+
+.section-bungeni-business div#portal-globalnav ul.level0 li#portaltab-business-whats-on a{
+    background:#F9AC32 url(/static/images/globalnav-level0-a.png) repeat-x scroll left top;
+    border-color:#FB9C14 #999999 #F9AC32;
+    border-style:solid;
+    border-width:2px 1px 1px;
+    color:#222222;
+    font-weight:normal;
+    position:relative;
+}
+
 div#portal-globalnav ul.level0 li.selected a {
     position: relative;
     top:0px;
@@ -1019,7 +1039,8 @@ div#portal-globalnav ul.level0 li.selected a {
     background:#d8d8d9  url(/static/images/w-globalnav-level0-a.png) top left repeat-x;
 }
 div#portal-globalnav ul.level0 li.selected a,
-div#portal-globalnav ul.level0 li a:hover {
+div#portal-globalnav ul.level0 li a:hover,
+.template-portal div#portal-globalnav ul.level0 li#portaltab-business-whats-on a:hover{
     font-weight: normal;
     position: relative;
     color: #222;
@@ -1087,7 +1108,7 @@ div#portal-globalnav ul.level0 ul.level1 li.selected a {
     border: 0 none;
     font-weight: normal;
     margin: 0;
-    padding-top: 2px;
+    padding-top: 0px;
     color: #d50005 !important;
 }
 .template-workspace div#portal-globalnav ul.level0 ul.level1 li.selected a {
@@ -1893,7 +1914,7 @@ h4.tabberHeading {
 }
 .documentDescription {
     font-weight: normal;
-    text-align: center;
+/*    text-align: center;*/
 }
 .documentEditable {
     margin: 0;
@@ -2017,4 +2038,149 @@ div.navTreeCurrentNode, .portletNavigationTree div.navTreeCurrentNode.hover, .na
 }
 .template-login_form #portal-columns {
     margin-bottom: -15em;
+}
+
+/*
+ * frontpage
+ */
+
+.section-bungeni-\@\@index #portal-column-one {
+    display: none;
+}
+
+div.main-column #collage h2 {
+    display: block;
+    text-align: justify;
+    text-shadow: 0px 0px 1px #fff;
+    line-height: 20px;
+    font-size: 120%;
+    padding: 0;
+    font-weight: bold !important;
+    color: #C8631B !important;
+    margin: 0em 0 .5em;
+}
+
+#collage .three-columns-equal .block_1 ul li.2ndlevel{
+    margin-left: 12em;
+}
+
+#collage .three-columns-equal .block_1{
+    width:15% !important;
+    margin-left: 0em;
+    margin-right: 0.5em;  
+}
+
+#collage .three-columns-equal .block_2 {
+    width:50% !important;
+    margin-right: 2em;
+}
+
+#collage .three-columns-equal .block_3 {
+    width:30% !important;
+}
+
+#collage .three-columns-equal .block_1 ul {
+    list-style-type:none; 
+}
+
+#collage .three-columns-equal .block_1 ul {
+#    list-style-image:none;  
+#    list-style-type:square;
+}
+
+#collage .three-columns-equal .block_1 ul li {
+    margin-bottom: 1px;
+}
+
+#collage .three-columns-equal .block_1 ul li.navigation,
+#collage .three-columns-equal .block_1 ul li.plain{
+    margin-left: 1em;
+    list-style-image:none;  
+    list-style-type:none;
+}
+
+#collage .three-columns-equal .block_1 ul li a{
+    border-bottom: 0px;
+    text-align: left;  
+}
+
+#collage .three-columns-equal .block_1 ul li a:visited {
+    color:#436976;
+}
+
+#collage .tileImage {
+    border:1px solid black;
+    float:right;
+    margin:2em 0 0.5em 0.5em;
+}
+
+.template-newsitem_view div#portal-globalnav ul.level0 ul.level1 li{
+    display: none;
+}
+
+#collage > h1:first-child {
+    display: none;
+}
+
+.section-bungeni-\@\@index #content div{
+    margin:0;
+}
+
+.section-bungeni-\@\@index #portal-columns {
+    margin-top: -2.5em;
+}
+
+#collage .documentActions {
+    display: none;
+}
+
+.template-document_view #content h1.documentFirstHeading {
+    font-size:160% !important;
+}
+
+.template-document_view #content p.documentDescription {
+    font-size:115% !important;
+}
+
+.template-document_view #content h2 {
+    font-size: 125% !important;
+    font-weight: bold !important;  
+}
+
+.template-document_view #content h3,
+#bodyContent h3{
+   font-size:125% !important;
+   font-weight:bold !important;
+}
+
+#document-toc legend,
+#document-toc .portletItem li {
+   font-size:110% !important;
+}
+
+#document-toc .portletItem {
+    border-left: 1px solid #8CACBB;
+    border-right: 1px solid #8CACBB;
+    border-bottom: 0px solid #8CACBB;
+    margin:0;
+    padding:1em;
+}
+
+#tabber-block .tabberlive .tabbertab {
+    padding:0 0 0 1em;
+}
+
+.hide{
+    display: none;
+}
+
+.section-bungeni-\@\@index #content h1.documentFirstHeading {
+    font-size:140% !important;
+}
+
+#portal-languageselector li.selected a {
+    background:#FFFD6E none repeat scroll 0 0;
+    border:1px solid #CCCCCC;
+    padding-left:4px;
+    text-decoration:none;
 }
