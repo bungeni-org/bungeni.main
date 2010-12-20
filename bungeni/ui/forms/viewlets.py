@@ -516,7 +516,7 @@ class GroupSittingsViewlet(browser.BungeniItemsViewlet):
         sittings = Session().query(domain.GroupSitting
             ).filter(domain.GroupSitting.group == trusted_context
             ).order_by(domain.GroupSitting.start_date.desc())
-        return [{"url": "/business/sittings/obj-%s" % (item.sitting_id),
+        return [{"url": "/business/sittings/obj-%s" % (item.group_sitting_id),
                  "date_from_to": _format_from_to(item),
                  "venue": _format_venue(item)
                 } for item in sittings ]
@@ -836,7 +836,7 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
             context, request, view, manager)
         self.query = None
         self.Date = datetime.date.today() # !+ self.today
-        self.type_query = Session().query(domain.SittingType)
+        self.type_query = Session().query(domain.GroupSittingType)
 
     def _getDisplayDate(self, request):
         display_date = date.getDisplayDate(self.request)
@@ -936,8 +936,8 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
         formatter = self.get_date_formatter("time", "short")
         for result in self.query.all():
             data = {}
-            data["sittingid"] = ("sid_" + str(result.sitting_id))
-            data["sid"] = result.sitting_id
+            data["sittingid"] = ("sid_" + str(result.group_sitting_id))
+            data["sid"] = result.group_sitting_id
             data["short_name"] = "%s - %s" % (
                 formatter.format(result.start_date),
                 formatter.format(result.end_date)
@@ -947,7 +947,7 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
             data["start_time"] = result.start_date.time()
             data["end_time"] = result.end_date.time()
             data["day"] = result.start_date.date()
-            data["url"] = (path + "obj-" + str(result.sitting_id))
+            data["url"] = (path + "obj-" + str(result.group_sitting_id))
             data["did"] = ("dlid_" +
                 datetime.datetime.strftime(result.start_date, "%Y-%m-%d")
                 # +"_stid_" + str(result.sitting_type)

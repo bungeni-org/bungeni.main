@@ -1888,7 +1888,7 @@ class SittingDescriptor(ModelDescriptor):
     public_wfstates = get_states("groupsitting", tagged=["public"])
 
 
-class SittingTypeDescriptor(ModelDescriptor):
+class GroupSittingTypeDescriptor(ModelDescriptor):
     display_name = _(u"Type")
     container_name = _(u"Types")
 
@@ -2208,7 +2208,7 @@ class ReportDescriptor(ParliamentaryItemDescriptor):
                 vocabulary="language_vocabulary",
             ),
         ),
-        Field(name="report_type",
+        Field(name="short_name",
             label=_(u"Publications type"),
             modes="edit add listing",
         ),

@@ -342,7 +342,7 @@ class SittingTypeDescriptiveProperties(DescriptiveProperties):
 
     @property
     def title(self):
-        return self.context.sitting_type
+        return self.context.group_sitting_type
 
 
 class ChangeDescriptiveProperties(DescriptiveProperties):

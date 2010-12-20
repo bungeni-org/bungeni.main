@@ -9,7 +9,7 @@ import datetime
 timedelta = datetime.timedelta
 
 from zope.event import notify
-from zope.lifecycleevent import ObjectCreatedEvent
+from zope.lifecycleevent import ObjectCreatedEvent, ObjectModifiedEvent
 from zope import interface
 from zope import component
 from zope.i18n import translate
@@ -569,7 +569,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                 # what I did there :)) so we can live with it.
                 session.commit(sitting)
                 notify(ObjectCreatedEvent(sitting))
-                self.template_data.append({"sitting_id": sitting.sitting_id, 
+                self.template_data.append({"group_sitting_id": sitting.group_sitting_id, 
                                            "action": "inserted",
                                            "ids": data["ids"]})
             self.request.response.setHeader('Content-type', 'text/xml')
@@ -600,7 +600,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
             session.add(sitting)
             session.commit()
             notify(ObjectCreatedEvent(sitting))
-            self.template_data.append({"sitting_id": sitting.sitting_id, 
+            self.template_data.append({"group_sitting_id": sitting.group_sitting_id, 
                                        "action": "inserted",
                                        "ids": data["ids"]})
             
@@ -620,7 +620,8 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
             sitting.venue_id = data["venue"]
         # set extra data needed by template
         session.update(sitting)
-        self.template_data.append({"sitting_id": sitting.sitting_id, 
+        notify(ObjectModifiedEvent(sitting))
+        self.template_data.append({"group_sitting_id": sitting.group_sitting_id, 
                                     "action": "inserted",
                                     "ids": data["ids"]})
         session.commit()
@@ -636,7 +637,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         self.template_data = []
         if sitting is not None:
             self.request.response.setHeader('Content-type', 'text/xml')
-            self.template_data.append({"sitting_id": sitting.sitting_id, 
+            self.template_data.append({"group_sitting_id": sitting.group_sitting_id, 
                                        "action": "deleted",
                                        "ids": data["ids"]})
             session.delete(sitting)

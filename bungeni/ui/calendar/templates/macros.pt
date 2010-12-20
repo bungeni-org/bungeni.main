@@ -229,7 +229,7 @@
                                 today_class python: options['day']['today'] and 'today' or None"
                     tal:attributes="rowspan sitting/span|nothing;
                                     class string:${sitting/class|string:} ${today_class};
-                                    id string:sitting-${sitting/record/sitting_id}|nothing"
+                                    id string:sitting-${sitting/record/group_sitting_id}|nothing"
                     tal:condition="python: sitting is not None">
                   <tal:sitting condition="sitting">
                     <div class="header">
@@ -325,7 +325,7 @@
                                 today_class python: options['days'][day]['today'] and 'today' or None"
                     tal:attributes="rowspan sitting/span|nothing;
                                     class string:${sitting/class|string:} ${today_class};
-                                    id string:sitting-${sitting/record/sitting_id}|nothing"
+                                    id string:sitting-${sitting/record/group_sitting_id}|nothing"
                     tal:condition="python: sitting is not None">
                   <tal:sitting condition="sitting">
                     <div class="header">

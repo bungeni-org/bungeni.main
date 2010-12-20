@@ -24,7 +24,7 @@ sql_item_timeline = """
             '' as "notes"
         FROM "public"."item_schedules" AS "item_schedules", 
             "public"."group_sittings" AS "group_sittings" 
-        WHERE "item_schedules"."sitting_id" = "group_sittings"."sitting_id" 
+        WHERE "item_schedules"."group_sitting_id" = "group_sittings"."group_sitting_id" 
         AND "item_schedules"."active" = True
         AND "item_schedules"."item_id" = :item_id
      UNION

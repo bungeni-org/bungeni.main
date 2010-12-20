@@ -2,6 +2,6 @@
     <tal:loop tal:repeat="sitting view/template_data">
         <action tal:attributes="type sitting/action; 
                                 sid sitting/ids;
-                                tid sitting/sitting_id;"/>
+                                tid sitting/group_sitting_id;"/>
     </tal:loop>
 </data>                              

@@ -144,7 +144,9 @@
                             ore.xapian.interfaces.IIndexable
                             .interfaces.IAuditable" />
   </class>
-  
+  <class class="bungeni.models.domain.GroupSitting">
+    <implements interface=".interfaces.IAuditable" />
+  </class>
   <class class="bungeni.models.domain.Report">
     <implements interface="ore.xapian.interfaces.IIndexable" />
   </class>       

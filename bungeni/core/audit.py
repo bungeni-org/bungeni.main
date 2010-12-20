@@ -20,7 +20,7 @@ from bungeni.alchemist import Session
 from sqlalchemy import orm
 
 from bungeni.models import schema, domain
-from bungeni.models.utils import get_principal_id
+from bungeni.models.utils import get_db_user_id
 from bungeni.core import interfaces
 from bungeni.ui.utils import common
 
@@ -243,7 +243,7 @@ class AuditorFactory(object):
             to date_audit. 
         """
         oid, otype = self._getKey(object)
-        user_id = get_principal_id()
+        user_id = get_db_user_id()
         assert user_id is not None, _("No IRequest in interaction")
         session = Session()
         change = self.change_object()
@@ -296,6 +296,7 @@ TabledDocumentAuditor =  AuditorFactory(
                 schema.tabled_document_changes, domain.TabledDocumentChange)
 AttachedFileAuditor =  AuditorFactory(
                 schema.attached_file_changes, domain.AttachedFileChange)
-
+GroupSittingAuditor = AuditorFactory(
+                schema.group_sitting_changes, domain.GroupSittingChange)
 #
 

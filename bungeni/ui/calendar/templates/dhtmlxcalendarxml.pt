@@ -1,9 +1,8 @@
 <data>
 <tal:loop tal:repeat="s python:view.sittings">
-<event tal:attributes="id python:s.sitting_id">
+<event tal:attributes="id python:s.group_sitting_id">
 <start_date><span tal:replace="structure python:s.start_date.strftime('%Y-%m-%d %H:%M')"/></start_date>
 <end_date><span tal:replace="structure python:s.end_date.strftime('%Y-%m-%d %H:%M')"/></end_date>
-<type><span tal:condition="s/sitting_type | nothing" tal:replace="structure python:str(s.sitting_type.sitting_type_id)"/></type>
 <text tal:content="structure s/text"></text>
 <venue><span tal:condition="s/venue | nothing" tal:replace="structure python:str(s.venue.venue_id)"/></venue>
 <status><span tal:condition="s/status | nothing" tal:replace="structure python:s.status"/></status>

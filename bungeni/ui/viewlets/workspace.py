@@ -608,9 +608,9 @@ class DraftSittingsViewlet(WorkspaceViewlet):
             data["subject"] = result.short_name
             # this tab appears in the workspace pi/ view...
             data["url"] = url.set_url_context(
-                "../../scheduling/sittings/obj-%i/schedule" % result.sitting_id)
+                "../../scheduling/sittings/obj-%i/schedule" % result.group_sitting_id)
             # Note: same UI is also displayed at: 
-            # /business/sittings/obj-%i/schedule % result.sitting_id
+            # /business/sittings/obj-%i/schedule % result.group_sitting_id
             data["items"] = ""
             data["status"] = misc.get_wf_state(result)
             data["status_date"] = formatter.format(result.status_date)

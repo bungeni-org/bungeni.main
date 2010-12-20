@@ -250,8 +250,8 @@
         ui_module="bungeni.ui.content"
         echo="False"
     />
-    <db:catalyst class="bungeni.models.domain.SittingType"
-        descriptor=".descriptor.SittingTypeDescriptor"
+    <db:catalyst class="bungeni.models.domain.GroupSittingType"
+        descriptor=".descriptor.GroupSittingTypeDescriptor"
         interface_module="bungeni.models.interfaces"
         ui_module="bungeni.ui.content"
         echo="False"

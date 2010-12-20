@@ -68,12 +68,12 @@ class WhatsOnBrowserView(BrowserView):
         session = Session()
         query = session.query(domain.GroupSitting).filter(
             sql.and_(
-                schema.sittings.c.status.in_(get_states('groupsitting',tagged=['public'])),
+                schema.group_sittings.c.status.in_(get_states('groupsitting',tagged=['public'])),
                 sql.between(
-                    schema.sittings.c.start_date,
+                    schema.group_sittings.c.start_date,
                     self.start_date,
                     self.end_date))).order_by(
-                        schema.sittings.c.start_date).options(
+                        schema.group_sittings.c.start_date).options(
                         eagerload('group'), 
                         #eagerload('sitting_type'),
                         eagerload('item_schedule'), 
@@ -93,11 +93,11 @@ class WhatsOnBrowserView(BrowserView):
                 s_dict = {}
             if sitting.group.type == 'parliament':
                 _url = url.set_url_context('/business/sittings/obj-%i' % (
-                     sitting.sitting_id))
+                     sitting.group_sitting_id))
             elif sitting.group.type == 'committee':
                 _url = url.set_url_context(
                     '/business/committees/obj-%i/sittings/obj-%i'
-                    % (sitting.group.group_id, sitting.sitting_id))
+                    % (sitting.group.group_id, sitting.group_sitting_id))
             else:
                 _url ='#'
             s_list.append({
@@ -118,17 +118,17 @@ class WhatsOnBrowserView(BrowserView):
     def get_items(self):
         session = Session()
         where_clause = sql.and_(
-                schema.sittings.c.status.in_(get_states(
+                schema.group_sittings.c.status.in_(get_states(
                                     "groupsitting", tagged=["public"])),
                 sql.between(
-                    schema.sittings.c.start_date,
+                    schema.group_sittings.c.start_date,
                     self.start_date,
                     self.end_date))
             
         query = session.query(domain.ItemSchedule).join(
             domain.GroupSitting
             ).filter( 
-            where_clause).order_by(schema.sittings.c.start_date).options(
+            where_clause).order_by(schema.group_sittings.c.start_date).options(
                     eagerload('sitting'), eagerload('item'),
                     #eagerload('sitting.sitting_type'),
                     lazyload('item.owner'))

@@ -151,12 +151,12 @@ def get_sittings_between(sittings, start, end):
         sql.and_(
             modifier,
             sql.or_( 
-                sql.between(schema.sittings.c.start_date, start, end), 
-                sql.between(schema.sittings.c.end_date, start, end),
-                sql.between(start, schema.sittings.c.start_date, 
-                            schema.sittings.c.end_date),
-                sql.between(end, schema.sittings.c.start_date, 
-                            schema.sittings.c.end_date)
+                sql.between(schema.group_sittings.c.start_date, start, end), 
+                sql.between(schema.group_sittings.c.end_date, start, end),
+                sql.between(start, schema.group_sittings.c.start_date, 
+                            schema.group_sittings.c.end_date),
+                sql.between(end, schema.group_sittings.c.start_date, 
+                            schema.group_sittings.c.end_date)
                 ),
             ))
 

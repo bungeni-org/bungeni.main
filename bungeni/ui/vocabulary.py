@@ -188,7 +188,7 @@ class SittingTypes(SpecializedSource):
 
     def constructQuery(self, context):
         session= Session()
-        return session.query(domain.SittingType)
+        return session.query(domain.GroupSittingType)
 
     def __call__(self, context=None):
         query = self.constructQuery(context)
@@ -550,13 +550,13 @@ class SittingAttendanceSource(SpecializedSource):
         else:
             sitting = trusted.__parent__
             group_id = sitting.group_id
-            sitting_id = sitting.sitting_id
+            group_sitting_id = sitting.group_sitting_id
             all_member_ids = sql.select([schema.user_group_memberships.c.user_id], 
                     sql.and_(
                         schema.user_group_memberships.c.group_id == group_id,
                         schema.user_group_memberships.c.active_p == True))
             attended_ids = sql.select([schema.sitting_attendance.c.member_id],
-                     schema.sitting_attendance.c.sitting_id == sitting_id)
+                     schema.sitting_attendance.c.group_sitting_id == group_sitting_id)
             query = session.query(domain.User).filter(
                 sql.and_(domain.User.user_id.in_(all_member_ids),
                     ~ domain.User.user_id.in_(attended_ids))).order_by(
