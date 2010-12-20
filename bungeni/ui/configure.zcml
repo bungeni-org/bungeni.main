@@ -189,5 +189,9 @@
          provides="bungeni.core.interfaces.IRSSValues"
          factory=".adaptors.TimelineRSSValues"
       />
-            
+      <subscriber
+        for="bungeni.models.interfaces.IGroupSitting
+          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+        handler=".reports.default_reports"
+     />       
 </configure>
