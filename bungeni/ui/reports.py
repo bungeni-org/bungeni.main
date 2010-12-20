@@ -45,7 +45,7 @@ from bungeni.ui.forms.common import AddForm
 from bungeni.ui import container
 from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent
-
+from bungeni.core.translation import get_default_language
 class TIME_SPAN:
     daily = _(u"Daily")
     weekly = _(u"Weekly")
@@ -125,7 +125,7 @@ class ReportView(form.PageForm):
         super(ReportView, self).__init__(context, request)
 
     class IReportForm(interface.Interface):
-        doc_type = schema.Choice(
+        report_type = schema.Choice(
                     title=_(u"Document Type"),
                     description=_(u"Type of document to be produced"),
                     values=["Order of the day",
@@ -189,7 +189,7 @@ class ReportView(form.PageForm):
             tabled_documents_options = "Title"
             note = None
             date = None
-            doc_type = "Order of the day"
+            report_type = "Order of the day"
         self.adapters = {
             self.IReportForm: context
             }
@@ -203,14 +203,14 @@ class ReportView(form.PageForm):
     def validate(self, action, data):
         errors = super(ReportView, self).validate(action, data)
         self.time_span = TIME_SPAN.daily
-        if "doc_type" in data:
-            if data["doc_type"] == "Order of the day":
+        if "report_type" in data:
+            if data["report_type"] == "Order of the day":
                 self.time_span = TIME_SPAN.daily
-            elif data["doc_type"] == "Proceedings of the day":
+            elif data["report_type"] == "Proceedings of the day":
                 self.time_span = TIME_SPAN.daily
-            elif data["doc_type"] == "Weekly Business":
+            elif data["report_type"] == "Weekly Business":
                 self.time_span = TIME_SPAN.weekly
-            elif data["doc_type"] == "Questions of the week":
+            elif data["report_type"] == "Questions of the week":
                 self.time_span = TIME_SPAN.weekly
 
         if IGroupSitting.providedBy(self.context):
@@ -282,14 +282,14 @@ class ReportView(form.PageForm):
             """Object that holds all the options."""
             pass
         self.options = optionsobj()
-        if not hasattr(self, "doc_type"):
-            if "doc_type" in data:
-                self.doc_type = data["doc_type"]
+        if not hasattr(self, "report_type"):
+            if "report_type" in data:
+                self.report_type = data["report_type"]
         self.sittings = []
 
         if IGroupSitting.providedBy(self.context):
             session = Session()
-            st = self.context.sitting_id
+            st = self.context.group_sitting_id
             sitting = session.query(domain.GroupSitting).get(st)
             self.sittings.append(sitting)
             back_link = url.absoluteURL(self.context, self.request) + "/schedule"
@@ -301,7 +301,7 @@ class ReportView(form.PageForm):
         count = 0
         self.ids = ""
         for s in self.sittings:
-            self.ids = self.ids + str(s.sitting_id) + ","
+            self.ids = self.ids + str(s.group_sitting_id) + ","
         def cleanup(string):
             return string.lower().replace(" ", "_")
 
@@ -324,15 +324,15 @@ class ReportView(form.PageForm):
 
 class GroupSittingContextAgendaReportView(ReportView):
     display_minutes = False
-    doc_type = "Sitting Agenda"
+    report_type = "Sitting Agenda"
     note = ""
-    form_fields = ReportView.form_fields.omit("doc_type", "date")
+    form_fields = ReportView.form_fields.omit("report_type", "date")
 
 class GroupSittingContextMinutesReportView(ReportView):
     display_minutes = True
-    doc_type = "Votes and Proceedings"
+    report_type = "Sitting Votes and Proceedings"
     note = ""
-    form_fields = ReportView.form_fields.omit("doc_type", "date")
+    form_fields = ReportView.form_fields.omit("report_type", "date")
 
 class SchedulingContextAgendaReportView(ReportView):
     display_minutes = False
@@ -526,8 +526,7 @@ class SaveReportView(form.PageForm):
         report.start_date = data["start_date"]
         report.end_date = data["end_date"]
         report.note = data["note"]
-        report.report_type = data["report_type"]
-        report.short_name = data["report_type"]
+        report.short_name = report.report_type = data["report_type"]
         owner_id = get_db_user_id()
         '''!+TODO(Miano, 18/08/2010) The admin user is currently not a db user
             thus the line above returns None when the admin publishes a report.
@@ -539,6 +538,7 @@ class SaveReportView(form.PageForm):
             query = session.query(domain.User)
             results = query.all()
             report.owner_id = results[0].user_id
+        # TODO get language from config
         report.language = "en"
         report.created_date = datetime.datetime.now()
         report.group_id = self.context.group_id
@@ -571,5 +571,71 @@ class SaveReportView(form.PageForm):
             raise NotImplementedError
         self.request.response.redirect(back_link)
 
+class DefaultReportView(BrowserView):
 
+    template = ViewPageTemplateFile("templates/default-report.pt")
 
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
+        
+    def __call__(self):
+        return self.template() 
+
+class DefaultReportContent:
+    def __init__(self, sittings, short_name, display_minutes):
+        self.sittings = sittings
+        self.short_name = short_name
+        self.display_minutes = display_minutes
+
+# Event handler that publishes reports on sitting status change
+# if the status is published_agenda or published_minutes
+# it generates report based on the default template and publishes it
+# To disable remove the lines below from ui/configure.zcml
+# <subscriber
+#        for="bungeni.models.interfaces.IGroupSitting
+#          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+#        handler=".reports.default_reports"
+#     />       
+
+def default_reports(sitting, event):
+    if sitting.status in ("published_agenda", "published_minutes"):
+        sitting = removeSecurityProxy(sitting)
+        sittings = []
+        sittings.append(sitting)
+        report = domain.Report()
+        session = Session()
+        #!+REPORTS(miano, dec-2010) using test request here is not quite right
+        # TODO : fix this.
+        from zope.publisher.browser import TestRequest
+        report.start_date = sitting.start_date
+        report.end_date = sitting.end_date
+        # The owner ID is the ID of the user that performed the last workflow
+        # change
+        for change in reversed(sitting.changes):
+            if change.action == "workflow":
+                owner_id = change.user_id
+                break
+        assert owner_id is not None, _("No user is defined. Are you logged in as Admin?")
+        report.owner_id = owner_id
+        report.language = get_default_language()
+        report.created_date = datetime.datetime.now()
+        report.group_id = sitting.group_id
+        if sitting.status == 'published_agenda':
+            report.short_name = "Sitting Agenda"
+            drc = DefaultReportContent(sittings, report.short_name, False)
+            report.body_text = DefaultReportView(drc, TestRequest())()
+        elif sitting.status == 'published_minutes':
+            report.short_name = "Sitting Votes and Proceedings"
+            drc = DefaultReportContent(sittings, report.short_name, True)
+            report.body_text = DefaultReportView(drc, TestRequest())()
+        session.add(report)
+        notify(ObjectCreatedEvent(report))
+        sr = domain.SittingReport()
+        sr.report = report
+        sr.sitting = sitting
+        session.add(sr)
+        notify(ObjectCreatedEvent(sr))
+        session.commit()
+        container.invalidate_caches_for("Report", "add")
+        container.invalidate_caches_for("SittingReport", "add")

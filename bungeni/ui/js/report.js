@@ -26,10 +26,10 @@
         var pathname = window.location.pathname;
         var path = new Array();
         path = pathname.split("/");
-        var doc_type = path[path.length-1];
-        if (doc_type == "")
+        var report_type = path[path.length-1];
+        if (report_type == "")
         {
-            doc_type = path[path.length-2];
+            report_type = path[path.length-2];
         }  
         $("input#form\\.item_types\\.0").change(function () {
             if ($("#form\\.item_types\\.0").is(":checked"))
@@ -83,7 +83,7 @@
                 $('input[name="form.tabled_documents_options"]').attr('disabled', true);
             }
         });
-        $("#form\\.doc_type").change(function() {
+        $("#form\\.report_type").change(function() {
             var choice = $("option:selected", this).val();
             if (choice == "Order of the day")
             {
