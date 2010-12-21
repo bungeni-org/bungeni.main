@@ -125,7 +125,7 @@ class ReportView(form.PageForm):
         super(ReportView, self).__init__(context, request)
 
     class IReportForm(interface.Interface):
-        report_type = schema.Choice(
+        short_name = schema.Choice(
                     title=_(u"Document Type"),
                     description=_(u"Type of document to be produced"),
                     values=["Order of the day",
@@ -189,7 +189,7 @@ class ReportView(form.PageForm):
             tabled_documents_options = "Title"
             note = None
             date = None
-            report_type = "Order of the day"
+            short_name = "Order of the day"
         self.adapters = {
             self.IReportForm: context
             }
@@ -203,14 +203,14 @@ class ReportView(form.PageForm):
     def validate(self, action, data):
         errors = super(ReportView, self).validate(action, data)
         self.time_span = TIME_SPAN.daily
-        if "report_type" in data:
-            if data["report_type"] == "Order of the day":
+        if "short_name" in data:
+            if data["short_name"] == "Order of the day":
                 self.time_span = TIME_SPAN.daily
-            elif data["report_type"] == "Proceedings of the day":
+            elif data["short_name"] == "Proceedings of the day":
                 self.time_span = TIME_SPAN.daily
-            elif data["report_type"] == "Weekly Business":
+            elif data["short_name"] == "Weekly Business":
                 self.time_span = TIME_SPAN.weekly
-            elif data["report_type"] == "Questions of the week":
+            elif data["short_name"] == "Questions of the week":
                 self.time_span = TIME_SPAN.weekly
 
         if IGroupSitting.providedBy(self.context):
@@ -282,9 +282,9 @@ class ReportView(form.PageForm):
             """Object that holds all the options."""
             pass
         self.options = optionsobj()
-        if not hasattr(self, "report_type"):
-            if "report_type" in data:
-                self.report_type = data["report_type"]
+        if not hasattr(self, "short_name"):
+            if "short_name" in data:
+                self.short_name = data["short_name"]
         self.sittings = []
 
         if IGroupSitting.providedBy(self.context):
@@ -324,15 +324,15 @@ class ReportView(form.PageForm):
 
 class GroupSittingContextAgendaReportView(ReportView):
     display_minutes = False
-    report_type = "Sitting Agenda"
+    short_name = "Sitting Agenda"
     note = ""
-    form_fields = ReportView.form_fields.omit("report_type", "date")
+    form_fields = ReportView.form_fields.omit("short_name", "date")
 
 class GroupSittingContextMinutesReportView(ReportView):
     display_minutes = True
-    report_type = "Sitting Votes and Proceedings"
+    short_name = "Sitting Votes and Proceedings"
     note = ""
-    form_fields = ReportView.form_fields.omit("report_type", "date")
+    form_fields = ReportView.form_fields.omit("short_name", "date")
 
 class SchedulingContextAgendaReportView(ReportView):
     display_minutes = False
@@ -406,7 +406,7 @@ class DownloadODT(DownloadDocument):
                                         "application/vnd.oasis.opendocument.text")
         self.request.response.setHeader("Content-disposition",
                                         'inline;filename="' +
-                                        removeSecurityProxy(self.report.report_type) + "_" +
+                                        removeSecurityProxy(self.report.short_name) + "_" +
                                         removeSecurityProxy(self.report.start_date).strftime("%Y-%m-%d") + '.odt"')
         session = Session()
         report = session.query(domain.Report).get(self.report.report_id)
@@ -440,7 +440,7 @@ class  DownloadPDF(DownloadDocument):
     def __call__(self):
         self.request.response.setHeader("Content-type", "application/pdf")
         self.request.response.setHeader("Content-disposition", 'inline;filename="'
-                            + removeSecurityProxy(self.report.report_type) + "_"
+                            + removeSecurityProxy(self.report.short_name) + "_"
                             + removeSecurityProxy(self.report.start_date).strftime("%Y-%m-%d") + '.pdf"')
         
         
@@ -487,7 +487,7 @@ class SaveReportView(form.PageForm):
                                 required=False,
                                 description=u"Optional note regarding this report"
                         )
-        report_type = schema.TextLine(title=u"Report Type",
+        short_name = schema.TextLine(title=u"Report Type",
                                 required=True,
                                 description=u"Report Type"
                         )
@@ -509,7 +509,7 @@ class SaveReportView(form.PageForm):
             end_date = None
             body_text = None
             note = None
-            report_type = None
+            short_name = None
             sittings = None
         self.adapters = {
             self.ISaveReportForm: context
@@ -526,7 +526,7 @@ class SaveReportView(form.PageForm):
         report.start_date = data["start_date"]
         report.end_date = data["end_date"]
         report.note = data["note"]
-        report.short_name = report.report_type = data["report_type"]
+        report.short_name = report.short_name = data["short_name"]
         owner_id = get_db_user_id()
         '''!+TODO(Miano, 18/08/2010) The admin user is currently not a db user
             thus the line above returns None when the admin publishes a report.
