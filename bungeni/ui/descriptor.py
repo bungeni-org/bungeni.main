@@ -1842,7 +1842,7 @@ class SittingDescriptor(ModelDescriptor):
         #    ),
         #),
         Field(name="start_date",
-            modes="view edit add listing",
+            modes="view listing",
             property=schema.Datetime(title=_(u"Date")),
             listing_column=date_from_to_column("start_date", _(u"Start")),
             # !+CustomListingURL(mr, oct-2010) the listing of this type has 
@@ -1862,6 +1862,7 @@ class SittingDescriptor(ModelDescriptor):
             add_widget=DateTimeWidget,
         ),
         Field(name="end_date",
+            modes="view listing",
             property=schema.Datetime(title=_(u"End")),
             #listing_column=time_column("end_date", _(u"End Date")),
             edit_widget=DateTimeWidget,

@@ -151,7 +151,11 @@
      name="bungeni.vocabulary.ParliamentSource"
      provides="zope.schema.interfaces.IVocabularyFactory"
      component=".vocabulary.ParliamentSource" />
-	 
+    <utility
+        component=".vocabulary.venues_factory"
+        name="bungeni.vocabulary.Venues"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+            />	 
      <!-- Adapters to provide values for RSS views -->
 	 
 	 <adapter

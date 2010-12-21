@@ -180,6 +180,26 @@ class SpecializedSource(object):
             ))
         return vocabulary.SimpleVocabulary(terms)
 
+class Venues(object):
+    interface.implements(IVocabularyFactory)
+    def constructQuery(self, context):
+        session= Session()
+        return session.query(domain.Venue)
+
+    def __call__(self, context=None):
+        query = self.constructQuery(context)
+        results = query.all()
+        terms = []
+        for ob in results:
+            terms.append(vocabulary.SimpleTerm(
+                    value = ob.venue_id, 
+                    token = ob.short_name,
+                    title = "%s" % (
+                        ob.short_name
+                )))
+        return vocabulary.SimpleVocabulary(terms)
+
+venues_factory = Venues()
 
 class SittingTypes(SpecializedSource):
     #domain.SittingType, 'sitting_type', 'sitting_type_id',

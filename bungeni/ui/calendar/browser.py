@@ -47,6 +47,8 @@ from zope import schema
 from zope.formlib import namedtemplate
 from zc.resourcelibrary import need
 from sqlalchemy.orm import eagerload
+from bungeni.ui import vocabulary
+from bungeni.core.translation import get_default_language
 class TIME_SPAN:
     daily = _(u"Daily")
     weekly = _(u"Weekly")
@@ -236,8 +238,7 @@ class CalendarView(BungeniBrowserView):
         venues = session.query(domain.Venue).all()
         languages = get_all_languages()
         session.close()
-        #defaults to english
-        self.display_language = "en"
+        self.display_language = get_default_language()
         if self.request.get("I18N_LANGUAGE"):
             self.display_language = self.request.get("I18N_LANGUAGE")
         #html is hardcoded in here because doing it in the template
@@ -429,7 +430,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
     # recurrence a la google calendar.
     
     prefix = ""
-    template = ViewPageTemplateFile("templates/dhtmlxcalendar_edit_form.pt")
+    xml_template = ViewPageTemplateFile("templates/dhtmlxcalendar_edit_form.pt")
     template_data = []
     
     def __init__(self, context, request):
@@ -447,31 +448,28 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                 request.form["actions.update"] = "update"
             elif request.form["!nativeeditor_status"] == "deleted":
                 request.form["actions.delete"] = "delete"
-            super(DhtmlxCalendarSittingsEdit, self).__init__(context, request)
+        super(DhtmlxCalendarSittingsEdit, self).__init__(context, request)
     
     class DhtmlxCalendarSittingsEditForm(interface.Interface):
         ids = schema.TextLine(title=u'ID',
                                 required=False,
                                 description=u'Sitting ID'
                         )
-        start_date = schema.TextLine(
-            title=_(u"Start Date"),
-            description=_(u"Choose a start date and time"),
-            required=False)
-            
-        end_date = schema.TextLine(
-            title=_(u"End Date"),
-            description=_(u"Choose an end date and time"),
-            required=False)
-            
-        venue = schema.TextLine(title=u'Venue',
-                                required=False,
-                                description=u'Location of the sitting'
-                        )
-        language = schema.TextLine(title=u'Language',
-                                required=False,
-                                description=u'Language'
-                        )
+        start_date = schema.TextLine(title=_(u"Start Date"),
+                            description=_(u"Choose a start date and time"),
+                            required=False)
+        end_date = schema.TextLine(title=_(u"End Date"),
+                            description=_(u"Choose an end date and time"),
+                            required=False)
+        venue = schema.Choice(title=_(u"Venue"),
+                              source="bungeni.vocabulary.Venues",
+                              description=_(u"Venues"),
+                             required=False)
+        language = schema.Choice(title=_(u"Language"),
+                    default=get_default_language(),
+                    vocabulary="language_vocabulary",
+                    description=_(u'Language')
+        )
         rec_type = schema.TextLine( title = u'Recurrence Type',
                                     required=False,
                                     description = u"A string that contains the \
@@ -483,7 +481,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                         )      
         nativeeditor_status = schema.TextLine( title = u'editor status',
                                     required=False,
-                                    description = u'Length of event'
+                                    description = u'Editor Status'
                         ) 
                         
     form_fields = form.Fields(DhtmlxCalendarSittingsEditForm)
@@ -495,6 +493,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
             end_date = None
             location = None
             language = None
+            venue = None
             rec_type = None
             event_length = None
             nativeeditor_status = None
@@ -512,9 +511,8 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         errors = super(DhtmlxCalendarSittingsEdit, self).validate(action, data)
         return errors         
         
-    @form.action(_(u"insert"))
+    @form.action(u"insert")
     def handle_insert(self, action, data):
-        self.template_data = []
         session = Session()
         trusted = removeSecurityProxy(ISchedulingContext(self.context))
         if ("rec_type" in data.keys()) and (data["rec_type"] is not None):
@@ -573,7 +571,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                                            "action": "inserted",
                                            "ids": data["ids"]})
             self.request.response.setHeader('Content-type', 'text/xml')
-            return self.template()
+            return self.xml_template()
         else:
             sitting = domain.GroupSitting()
             try:
@@ -605,9 +603,9 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                                        "ids": data["ids"]})
             
             self.request.response.setHeader('Content-type', 'text/xml')
-            return self.template()
+            return self.xml_template()
                
-    @form.action(_(u"update"))
+    @form.action(u"update")
     def handle_update(self, action, data):
         session = Session()
         sitting = domain.GroupSitting()
@@ -626,10 +624,10 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                                     "ids": data["ids"]})
         session.commit()
         self.request.response.setHeader('Content-type', 'text/xml')
-        return self.template()
+        return self.xml_template()
         
         
-    @form.action(_(u"delete"))
+    @form.action(u"delete")
     def handle_delete(self, action, data):
         session = Session()
         sitting = session.query(domain.GroupSitting).get(data["ids"])
@@ -642,7 +640,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                                        "ids": data["ids"]})
             session.delete(sitting)
             session.commit()
-            return self.template()
+            return self.xml_template()
 
                           
 class DhtmlxCalendarSittings(BrowserView):

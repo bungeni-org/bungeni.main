@@ -276,12 +276,6 @@
         order="80"
     />
     
-    
-    <!-- !+ADD_SITTING(mr, 5-nov-2010) this adds menu option to a parliament's 
-    sittings container under admin, that has mysteriously disappeared -!- 
-    is this related to an other newly appearing problem that the sittings 
-    container itself never shows any data?
-    -->
     <browser:menu id="group_sitting_additems"
         title="The 'Add...' menu - for a Parliament's GroupSittingContainer"
         class="ploned.ui.menu.PloneBrowserMenu"
@@ -298,7 +292,7 @@
     <browser:menuItem menu="group_sitting_additems"
         for="bungeni.models.interfaces.IGroupSittingContainer"
         title="Add Sitting..."
-        action="./add"
+        action="./dhtmlxcalendaredit"
         permission="bungeni.sitting.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="40"
