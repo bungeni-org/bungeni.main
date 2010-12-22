@@ -562,10 +562,10 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                 sitting.action = 'inserted'
                 session.add(sitting)
                 # commiting after adding a sitting is incredibly inefficient
-                # but thats the only way to get the sitting id.
+                # but thats the only way to get the sitting id immediately
                 # Adding recurrring sittings is not a recurrent activity (see,
                 # what I did there :)) so we can live with it.
-                session.commit(sitting)
+                session.commit()
                 notify(ObjectCreatedEvent(sitting))
                 self.template_data.append({"group_sitting_id": sitting.group_sitting_id, 
                                            "action": "inserted",
