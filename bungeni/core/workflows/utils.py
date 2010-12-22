@@ -1,5 +1,6 @@
 log = __import__("logging").getLogger("bungeni.core.workflow.utils")
 
+import sys
 import datetime
 
 from zope import component
@@ -20,7 +21,7 @@ from bungeni.models.utils import get_principal_id
 from bungeni.core.app import BungeniApp
 import bungeni.core.interfaces
 import bungeni.core.globalsettings as prefs
-from bungeni.ui.utils import common
+from bungeni.ui.utils import common, debug
 from bungeni.ui.interfaces import IFormEditLayer
 
 import dbutils
@@ -229,32 +230,34 @@ def dissolveChildGroups(groups, context):
         
           
 def schedule_sitting_items(info, context):
-    instance = removeSecurityProxy(context)
-    for schedule in instance.item_schedule:
+    
+    # !+fireTransitionToward(mr, dec-2010) sequence of fireTransitionToward 
+    # calls was introduced in r5818, 28-jan-2010 -- here the code is reworked
+    # to be somewhat more sane, and added logging of both SUCCESS and of 
+    # FAILURE of each calll to fireTransitionToward().
+    #
+    # The check/logging should be removed once it is understood whether
+    # NoTransitionAvailableError is *always* raised (i.e. fireTransitionToward is
+    # broken) or it is indeed raised correctly when it should be.
+    
+    def fireTransitionScheduled(item, check_security=False):
+        try:
+            IWorkflowInfo(item).fireTransitionToward("scheduled", 
+                    check_security=False)
+            raise RuntimeWarning(
+                """It has WORKED !!! fireTransitionToward("scheduled")""")
+        except (NoTransitionAvailableError, RuntimeWarning):
+            debug.log_exc_info(sys.exc_info(), log.error)
+    
+    for schedule in removeSecurityProxy(context).item_schedule:
         item = schedule.item
         if interfaces.IQuestion.providedBy(item):
-            try:
-                IWorkflowInfo(item).fireTransitionToward('scheduled', 
-                        check_security=False)
-            except NoTransitionAvailableError:
-                pass
+            fireTransitionScheduled(item)
         elif interfaces.IMotion.providedBy(item):
-            try:
-                IWorkflowInfo(item).fireTransitionToward('scheduled', 
-                        check_security=False)
-            except NoTransitionAvailableError:
-                pass
+            fireTransitionScheduled(item)
         elif interfaces.IAgendaItem.providedBy(item):
-            try:
-                IWorkflowInfo(item).fireTransitionToward('scheduled', 
-                        check_security=False)
-            except NoTransitionAvailableError:
-                pass
+            fireTransitionScheduled(item)
         elif interfaces.ITabledDocument.providedBy(item):
-            try:
-                IWorkflowInfo(item).fireTransitionToward('scheduled', 
-                        check_security=False)
-            except NoTransitionAvailableError:
-                pass
+            fireTransitionScheduled(item)
 
 
