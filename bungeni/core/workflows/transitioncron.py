@@ -37,18 +37,16 @@ from bungeni import core as model
 
 
 def _getQuestionsApprovedBefore(date, status):
-    """
-    get all questions with the workflow status before date
+    """Get all questions in the workflow status, that were approved before date.
     """
     session = Session()
-    qfilter=sql.and_(
-                (domain.Question.approval_date < date ),
-                (domain.Question.status == status)
-                )
+    qfilter=sql.and_(domain.Question.status == status)
     query = session.query(domain.Question).filter(qfilter)
-    return query.all()
-    
-    
+    return [ q for q in query.all() if (
+        (q.admissible_date is not None) and (q.admissible_date < date) 
+    ) ]
+
+''' !+UNUSED/fireTransitionToward(mr, dec-2010)
 def _deferAdmissibleQuestionsBefore(date):
     """
     set all admissible Questions before this
@@ -59,9 +57,8 @@ def _deferAdmissibleQuestionsBefore(date):
     for question in admissibleQuestions:
         IWorkflowInfo(question).fireTransitionToward(u'deferred', 
                 check_security=False)
-    
-    
-    
+
+
 def deferAdmissibleQuestions():
     """
     get the timeframe and defer all questions 
@@ -70,7 +67,8 @@ def deferAdmissibleQuestions():
     timedelta = prefs.getDaysToDeferAdmissibleQuestions()
     deferDate = datetime.date.today() - timedelta
     _deferAdmissibleQuestionsBefore(deferDate)
-    
+'''
+
 def main(argv=None):
     """
     run this as a cron job and execute all

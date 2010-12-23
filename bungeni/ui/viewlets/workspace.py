@@ -226,10 +226,10 @@ class MotionInStateViewlet(WorkspaceViewlet):
             data["subject"] = u"M " + str(result.motion_number) + \
                 u" " +  result.short_name
             data["title"] = result.short_name
-            if result.approval_date:
+            if result.admissible_date:
                 data["result_item_class"] = ("workflow-state-" + 
                     result.status  + "sc-after-" + 
-                    datetime.date.strftime(result.approval_date, "%Y-%m-%d"))
+                    datetime.date.strftime(result.admissible_date, "%Y-%m-%d"))
             else:
                 data["result_item_class"] = "workflow-state-" + result.status
             data["url"] = url.set_url_context("motions/obj-" + str(result.motion_id))

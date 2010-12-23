@@ -425,11 +425,18 @@ def DeathBeforeLife(User):
 def LanguageField(name="language"):
     return Field(name=name,
         label=_(u"Language"),
-        modes=" edit   add ",
+        modes="edit add",
         property=schema.Choice(title=_(u"Language"),
             default=get_default_language(),
             vocabulary="language_vocabulary"
         ),
+    )
+
+def AdmissibleDateField(name="admissible_date"):
+    return Field(name=name,
+        modes="view listing",
+        localizable=[ show("view listing"), ],
+        property=schema.Date(title=_(u"Admissible Date"), required=False),
     )
 
 ####
@@ -1612,6 +1619,7 @@ class AgendaItemDescriptor(ParliamentaryItemDescriptor):
     display_name = _(u"Agenda item")
     container_name = _(u"Agenda items")
     fields = deepcopy(ParliamentaryItemDescriptor.fields)
+    fields.append(AdmissibleDateField())
     public_wfstates = get_states("agendaitem", tagged=["public"])
 
 
@@ -1626,13 +1634,7 @@ class MotionDescriptor(ParliamentaryItemDescriptor):
     container_name = _(u"Motions")
     fields = deepcopy(ParliamentaryItemDescriptor.fields)
     fields.extend([
-        Field(name="approval_date",
-            modes="edit view",
-            localizable=[ show("view"), ],
-            property=schema.Date(title=_(u"Approval Date"), required=False),
-            edit_widget=DateWidget,
-            add_widget=DateWidget
-        ),
+        AdmissibleDateField(),
         Field(name="notice_date",
             modes="view",
             localizable=[ show("view"), ],
@@ -1735,12 +1737,7 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
             ),
             listing_column=ministry_column("ministry_id" , _(u"Ministry")),
         ),
-        Field(name="approval_date",
-            modes="edit view",
-            property=schema.Date(title=_(u"Date approved"), required=False),
-            edit_widget=DateWidget,
-            add_widget=DateWidget,
-        ),
+        AdmissibleDateField(),
         Field(name="ministry_submit_date",
             modes="edit view",
             localizable=[ show("view") ],
@@ -1807,6 +1804,7 @@ class TabledDocumentDescriptor(ParliamentaryItemDescriptor):
             modes="edit view",
             property=schema.Int(title=_(u"Tabled document Number")),
         ),
+        AdmissibleDateField(),
     ])
     public_wfstates = get_states("tableddocument", tagged=["public"])
 

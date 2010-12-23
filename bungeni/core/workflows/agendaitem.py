@@ -59,7 +59,8 @@ class actions(object):
     
     @staticmethod
     def approve(info, context):
-        utils.setApprovalDate(info, context)
+        utils.createVersion(info, context,
+            message="New Version on approval by speakers office")
     
     @staticmethod
     def reject(info, context):

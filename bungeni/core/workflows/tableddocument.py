@@ -51,8 +51,10 @@ class actions:
     
     @staticmethod
     def approve(info, context):
-        utils.setApprovalDate(info,context)
-
+        utils.createVersion(info, context,
+            message="New Version on approval by speakers office")
+        dbutils.setTabledDocumentSerialNumber(context)
+    
     @staticmethod
     def reject(info, context):
         pass

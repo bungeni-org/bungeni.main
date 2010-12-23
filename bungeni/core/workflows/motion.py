@@ -58,8 +58,10 @@ class actions:
             message="New version on workflow transition to: complete")
     
     @staticmethod
-    def approve( info, context ):
-        utils.setApprovalDate(info,context)
+    def approve(info, context):
+        utils.createVersion(info, context,
+            message="New Version on approval by speakers office")
+        dbutils.setMotionSerialNumber(context)
 
     @staticmethod
     def adopt(info, context):

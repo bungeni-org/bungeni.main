@@ -134,7 +134,7 @@
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
     </state>
-    <!-- admissable motion that cannot be debated -->
+    <!-- admissible motion that cannot be debated -->
     <state id="deferred" title="Deferred">
     </state>
     <!--motion was scheduled for but droped, becuase no show of MP etc -->

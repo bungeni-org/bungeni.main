@@ -392,9 +392,9 @@ class QuestionTimelineRSSView(TimelineRSSView):
         text = "%s %s %s" % (_("Submitted by"),
                             self.i18n_context.owner.first_name,
                             self.i18n_context.owner.last_name)
-        if self.i18n_context.approval_date:
-            text += " (%s %s)" % (_(u"approved on"),
-                                  self.format_date(self.i18n_context.approval_date))
+        if self.i18n_context.admissible_date:
+            text += " (%s %s)" % (_(u"Approved on"),
+                self.format_date(self.i18n_context.admissible_date))
         return text + "."
 
 

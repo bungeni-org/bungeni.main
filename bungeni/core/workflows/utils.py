@@ -151,21 +151,6 @@ def setRegistryNumber(info, context):
     if instance.registry_number == None:
         dbutils.setRegistryNumber(instance)
 
-def setApprovalDate(info, context):
-    instance = removeSecurityProxy(context)
-    if instance.approval_date == None:
-        instance.approval_date = datetime.date.today()
-    versions =  bungeni.core.interfaces.IVersioned(instance)
-    versions.create('New Version created upon approval by speakers office')
-    if type(instance) == domain.Question:
-        dbutils.setQuestionSerialNumber(instance)
-    elif type(instance) == domain.Motion:
-        dbutils.setMotionSerialNumber(instance) 
-    elif type(instance) == domain.TabledDocument:
-        dbutils.setTabledDocumentSerialNumber(instance)
-    if instance.registry_number == None:
-        dbutils.setRegistryNumber(instance)
-
 def setMinistrySubmissionDate(info, context):
     instance = removeSecurityProxy(context)
     if instance.ministry_submit_date == None:

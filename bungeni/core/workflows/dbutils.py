@@ -98,7 +98,7 @@ def setQuestionSerialNumber(question):
     """
     session = Session()
     connection = session.connection(domain.Question)
-    sequence = rdb.Sequence('question_number_sequence')
+    sequence = rdb.Sequence("question_number_sequence")
     question.question_number = connection.execute(sequence)
 
 def isItemScheduled(parliamentary_item_id):

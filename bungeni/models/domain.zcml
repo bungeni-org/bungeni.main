@@ -85,7 +85,6 @@
                 language
                 body_text
                 supplement_parent_id
-                approval_date
                 ministry_submit_date
                 ministry_id
                 response_type
@@ -123,7 +122,6 @@
                 status
                 status_date
                 supplement_parent_id
-                approval_date
                 sitting_time
                 question_number
                 registry_number
@@ -145,7 +143,6 @@
                 status_date
                 receive_notification
                 motion_number
-                approval_date
                 public
                 registry_number
                 seconder_id
@@ -181,7 +178,6 @@
                 status
                 status_date
                 motion_number
-                approval_date
                 entered_by_id
                 registry_number
                 notice_date"
@@ -255,7 +251,6 @@
                 status_date
                 receive_notification
                 group_id
-                approval_date
                 registry_number"
         />
         <require permission="bungeni.agendaitem.Edit"
@@ -280,7 +275,6 @@
         <require permission="bungeni.historical.Edit"
             set_attributes="
                 parliament_id
-                approval_date
                 registry_number
                 status
                 status_date"
@@ -300,7 +294,6 @@
                 tabled_document_number
                 status_date
                 receive_notification
-                approval_date
                 link"
         />
         <require permission="bungeni.tableddocument.Edit"
@@ -325,7 +318,6 @@
         <require permission="bungeni.historical.Edit"
             set_attributes="
                 parliament_id
-                approval_date
                 registry_number
                 tabled_document_number
                 status

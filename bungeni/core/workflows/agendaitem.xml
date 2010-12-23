@@ -98,7 +98,7 @@
         <deny permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
     </state>
-    <!-- admissable agenda_item that cannot be debated -->
+    <!-- admissible agenda_item that cannot be debated -->
     <state id="deferred" title="Deferred">
     </state>
     <!--defered agenda_item that were not debated -->

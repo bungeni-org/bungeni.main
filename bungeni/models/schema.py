@@ -770,7 +770,6 @@ agenda_items = rdb.Table("agenda_items", metadata,
         rdb.ForeignKey("groups.group_id"),
         nullable=False
     ),
-    rdb.Column("approval_date", rdb.Date,),
 )
 
 agenda_item_changes = make_changes_table(agenda_items, metadata)
@@ -790,7 +789,6 @@ questions = rdb.Table("questions", metadata,
         primary_key=True
     ),
     rdb.Column("question_number", rdb.Integer),
-    rdb.Column("approval_date", rdb.Date,), # date speaker approved question
     rdb.Column("ministry_submit_date", rdb.Date,),
     rdb.Column("question_type", rdb.String(1),
         rdb.CheckConstraint("""question_type in ('O', 'P')"""),
@@ -825,7 +823,6 @@ motions = rdb.Table("motions", metadata,
         primary_key=True
     ),
     rdb.Column("motion_number", rdb.Integer),
-    rdb.Column("approval_date", rdb.Date), # date speaker approved question
     rdb.Column("public", rdb.Boolean),
     rdb.Column("seconder_id", rdb.Integer,
         rdb.ForeignKey("users.user_id")
@@ -912,7 +909,6 @@ tabled_documents = rdb.Table("tabled_documents", metadata,
         primary_key=True
     ),
     rdb.Column("link", rdb.String(256)),
-    rdb.Column("approval_date", rdb.Date,),
     rdb.Column("tabled_document_number", rdb.Integer),
 )
 

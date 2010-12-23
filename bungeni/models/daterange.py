@@ -24,20 +24,20 @@ def motion_filter(domain_model):
     return sql.or_(
     between(domain_model.submission_date),
     between(domain_model.notice_date),
-    between(domain_model.approval_date),
+    between(domain_model.admissible_date),
     )
 
 def question_filter(domain_model):
     return sql.or_(
     between(domain_model.submission_date),
     between(domain_model.ministry_submit_date),
-    between(domain_model.approval_date),
+    between(domain_model.admissible_date),
     )
 
 def tableddocument_filter(domain_model):
     return sql.or_(
     between(domain_model.submission_date),
-    between(domain_model.approval_date),
+    between(domain_model.admissible_date),
     )
 
 

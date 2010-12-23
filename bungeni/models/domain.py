@@ -494,7 +494,15 @@ class Heading(ParliamentaryItem):
     interface.implements(interfaces.ITranslatable)
 
 
-class AgendaItem(ParliamentaryItem):
+class _AdmissibleMixin(object):
+    """Assumes self._get_workflow_date()
+    """
+    @property
+    def admissible_date(self):
+        return self._get_workflow_date("admissible")
+
+
+class AgendaItem(ParliamentaryItem, _AdmissibleMixin):
     """Generic Agenda Item that can be scheduled on a sitting.
     """
     versions = one2many("versions",
@@ -504,7 +512,7 @@ AgendaItemChange = ItemLog.makeLogFactory("AgendaItemChange")
 AgendaItemVersion = ItemVersions.makeVersionFactory("AgendaItemVersion")
 
 
-class Question(ParliamentaryItem):
+class Question(ParliamentaryItem, _AdmissibleMixin):
     #supplementaryquestions = one2many("supplementaryquestions", 
     #"bungeni.models.domain.QuestionContainer", "supplement_parent_id")
     event = one2many("event", 
@@ -525,7 +533,7 @@ QuestionChange = ItemLog.makeLogFactory("QuestionChange")
 QuestionVersion = ItemVersions.makeVersionFactory("QuestionVersion")
 
 
-class Motion(ParliamentaryItem):
+class Motion(ParliamentaryItem, _AdmissibleMixin):
     cosignatory = one2many("cosignatory", 
         "bungeni.models.domain.CosignatoryContainer", "item_id")
     event = one2many("event", 
@@ -683,7 +691,7 @@ class ItemScheduleDiscussion(Entity):
     interface.implements(interfaces.ITranslatable)
 
 
-class TabledDocument(ParliamentaryItem):
+class TabledDocument(ParliamentaryItem, _AdmissibleMixin):
     """Tabled documents:
     a tabled document captures metadata about the document 
     (owner, date, title, description) 

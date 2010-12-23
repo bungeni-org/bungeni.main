@@ -170,8 +170,9 @@ class actions(object):
         """The question is admissible and can be send to ministry,
         or is available for scheduling in a sitting.
         """
-        utils.setApprovalDate(info, context)
-
+        utils.createVersion(info, context,
+            message="New Version on approval by speakers office")
+        dbutils.setQuestionSerialNumber(context)
 
 class SendNotificationToMemberUponReceipt(Notification):
     component.adapts(interfaces.IQuestionReceivedEvent)
