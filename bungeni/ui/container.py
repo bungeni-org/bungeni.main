@@ -466,7 +466,7 @@ class JSLCache(object):
         ]
     
     def clear(self):
-        # !+ encapsulate as a evoque.collection.Cache.clear() method
+        # !+ self.cache.clear()
         self.cache.cache.clear()
         self.cache.order[:] = []
 

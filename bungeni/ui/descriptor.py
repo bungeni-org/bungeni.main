@@ -1636,11 +1636,9 @@ class MotionDescriptor(ParliamentaryItemDescriptor):
     fields.extend([
         AdmissibleDateField(),
         Field(name="notice_date",
-            modes="view",
-            localizable=[ show("view"), ],
+            modes="view listing",
+            localizable=[ show("view listing"), ],
             property=schema.Date(title=_(u"Notice Date"), required=False),
-            edit_widget=DateWidget,
-            add_widget=DateWidget
         ),
         Field(name="motion_number",
             modes="view listing",

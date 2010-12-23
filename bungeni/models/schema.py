@@ -834,7 +834,6 @@ motions = rdb.Table("motions", metadata,
     rdb.Column("party_id", rdb.Integer,
         rdb.ForeignKey("political_parties.party_id")
     ),
-    rdb.Column("notice_date", rdb.Date),
 )
 motion_changes = make_changes_table(motions, metadata)
 motion_versions = make_versions_table(motions, metadata, parliamentary_items)

@@ -542,6 +542,10 @@ class Motion(ParliamentaryItem, _AdmissibleMixin):
         "bungeni.models.domain.MotionVersionContainer", "content_id")
     sort_on = ParliamentaryItem.sort_on + ["motion_number"]
 
+    @property
+    def notice_date(self):
+        return self._get_workflow_date("scheduled")
+
 
 MotionChange = ItemLog.makeLogFactory("MotionChange")
 MotionVersion = ItemVersions.makeVersionFactory("MotionVersion")

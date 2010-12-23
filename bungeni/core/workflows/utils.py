@@ -219,7 +219,7 @@ def schedule_sitting_items(info, context):
     # !+fireTransitionToward(mr, dec-2010) sequence of fireTransitionToward 
     # calls was introduced in r5818, 28-jan-2010 -- here the code is reworked
     # to be somewhat more sane, and added logging of both SUCCESS and of 
-    # FAILURE of each calll to fireTransitionToward().
+    # FAILURE of each call to fireTransitionToward().
     #
     # The check/logging should be removed once it is understood whether
     # NoTransitionAvailableError is *always* raised (i.e. fireTransitionToward is
