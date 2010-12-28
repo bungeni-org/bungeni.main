@@ -436,7 +436,7 @@
         for="bungeni.models.interfaces.IMotion"
         title="Add file..."
         action="./files/add"
-        permission="bungeni.attachedfile.Add"
+        permission="bungeni.fileattachment.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="20"
     />
@@ -500,7 +500,7 @@
         for="bungeni.models.interfaces.IBill"
         title="Add file..."
         action="./files/add"
-        permission="bungeni.attachedfile.Add"
+        permission="bungeni.fileattachment.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="20"
     />
@@ -522,7 +522,7 @@
         for="bungeni.models.interfaces.IQuestion"
         title="Add file..."
         action="./files/add"
-        permission="bungeni.attachedfile.Add"
+        permission="bungeni.fileattachment.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="20"
     />
@@ -571,7 +571,7 @@
         for="bungeni.models.interfaces.ITabledDocument"
         title="Add file..."
         action="./files/add"
-        permission="bungeni.attachedfile.Add"
+        permission="bungeni.fileattachment.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="20"
     />
@@ -608,7 +608,7 @@
         for="bungeni.models.interfaces.IAgendaItem"
         title="Add file..."
         action="./files/add"
-        permission="bungeni.attachedfile.Add"
+        permission="bungeni.fileattachment.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="20"
     />
@@ -967,7 +967,7 @@
         for="bungeni.models.domain.AttachedFileContainer"
         title="Add file..."
         action="./add"
-        permission="bungeni.attachedfile.Add"
+        permission="bungeni.fileattachment.Add"
         layer=".interfaces.IAdminSectionLayer"
     /> 
     
@@ -1242,7 +1242,7 @@
         >
         <browser:menuItem action="workflow" title="Workflow" order="20" />
         <browser:menuItem action="files" title="Files" order="30"
-            permission="bungeni.attachedfile.Edit"
+            permission="bungeni.fileattachment.Edit"
         />
     </browser:menuItems>
     <browser:menuItem menu="context_actions"

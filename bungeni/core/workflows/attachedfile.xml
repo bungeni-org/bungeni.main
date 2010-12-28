@@ -38,7 +38,7 @@
      trigger="manual"
      source="public"
      destination="inactive"
-     permission="bungeni.attachedfile.Deactivate"
+     permission="bungeni.fileattachment.Deactivate"
      require_confirmation="true"
      />
 

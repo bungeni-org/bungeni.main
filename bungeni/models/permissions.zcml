@@ -260,11 +260,11 @@
   <!--Permission to generate report -->
   <permission id="bungeni.reports.Edit" title="Permission to generate report" />
   
-  <permission id="bungeni.attachedfile.Add" title="add an attached file" />
-  <permission id="bungeni.attachedfile.Edit" title="edit an attached file" />
-  <permission id="bungeni.attachedfile.View" title="view an attached file" />
-  <permission id="bungeni.attachedfile.Delete" title="delete an attached file" />
-  <meta:redefinePermission from="bungeni.attachedfile.View" to="zope.View" />
+  <permission id="bungeni.fileattachment.Add" title="add an attached file" />
+  <permission id="bungeni.fileattachment.Edit" title="edit an attached file" />
+  <permission id="bungeni.fileattachment.View" title="view an attached file" />
+  <permission id="bungeni.fileattachment.Delete" title="delete an attached file" />
+  <meta:redefinePermission from="bungeni.fileattachment.View" to="zope.View" />
    
   <permission id="bungeni.translation.Add" title="add translation" />
    

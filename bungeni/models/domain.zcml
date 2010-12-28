@@ -670,7 +670,7 @@
                 status
                 status_date"
         />
-        <require permission="bungeni.attachedfile.Edit"
+        <require permission="bungeni.fileattachment.Edit"
             set_attributes="
                 attached_file_id
                 item_id
