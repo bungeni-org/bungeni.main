@@ -113,7 +113,13 @@
      name="download"
      class=".file.FileDownload"
      />
-
+	 
+  <browser:view
+     for="bungeni.models.interfaces.IAttachedFile"
+     permission="bungeni.fileattachment.Deactivate"
+     name="deactivate"
+     class=".file.FileDeactivate"
+     />
 
   <!-- Login UI -->
   

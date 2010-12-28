@@ -18,7 +18,7 @@ def versions_properties(item_class, change_class, versions_table):
         "head": relation(item_class, uselist=False),
         "attached_files": relation(domain.AttachedFileVersion,
             primaryjoin=rdb.and_(
-                versions_table.c.content_id == 
+                versions_table.c.content_id ==
                     schema.attached_file_versions.c.item_id,
                 versions_table.c.version_id ==
                     schema.attached_file_versions.c.file_version_id
@@ -409,20 +409,23 @@ mapper(domain.TabledDocument, schema.tabled_documents,
 
 mapper(domain.TabledDocumentChange, schema.tabled_document_changes)
 mapper(domain.TabledDocumentVersion, schema.tabled_document_versions,
-    properties=versions_properties(domain.TabledDocument, 
+    properties=versions_properties(domain.TabledDocument,
         domain.TabledDocumentChange, schema.tabled_document_versions)
 )
+
+mapper(domain.AttachedFileType, schema.attached_file_types)
 
 mapper(domain.AttachedFile, schema.attached_files,
     properties={
         "changes": changes_relation(domain.AttachedFileChange),
+        "type": relation(domain.AttachedFileType, uselist=False)
     }
 )
 mapper(domain.AttachedFileChange, schema.attached_file_changes)
 mapper(domain.AttachedFileVersion, schema.attached_file_versions,
     properties={
         "change": relation(domain.AttachedFileChange, uselist=False),
-        "head": relation(domain.AttachedFile, uselist=False)
+        "head": relation(domain.AttachedFile, uselist=False),
     }
 )
 

@@ -687,6 +687,7 @@
                 status" 
         />
     </class>
+	
     <class class=".domain.EventItem">
         <require like_class=".domain.ParliamentaryItem" />
         <require permission="bungeni.event.Edit"

@@ -214,3 +214,43 @@ class IAkomantosoRSSValues(interface.Interface):
 
     values = interface.Attribute("Values")
 
+
+# Interfaces for file storage utility
+
+class IFSUtilitySchema(interface.Interface):
+    """ Schema for file storage utility,
+        which contains only storage path
+    """
+
+    fs_path = schema.TextLine(title=u"Path to file system storage")
+
+
+class IFSUtilityDirective(IFSUtilitySchema):
+    """ Interface for fs directive
+    """
+
+    name = schema.TextLine(title=u"Name of the registered utility",
+                           required=False)
+
+
+class IFSUtility(IFSUtilitySchema):
+    """ Just stores the path to file storage.
+        Can store and remove files by
+        their names.
+    """
+
+    def store(data, filename=None):
+        """ Stores data with the given 
+            filename. If no filename given,
+            generates unique for it.
+        """
+
+    def remove(filename):
+        """ Removes the file with given
+            filename from the storage.
+        """
+
+    def get(filename):
+        """ Returns data by filename.
+            If no files found returns None.
+        """

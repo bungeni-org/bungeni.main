@@ -210,7 +210,7 @@ class IParliamentSession(interface.Interface):
     pass
 
 class IBungeniSetup(interface.Interface):
-    
+
     def setUp(app):
         """Setup the application on server start.
         """
@@ -238,7 +238,7 @@ class IBungeniSettings(interface.Interface):
     )
     administrators_email = schema.TextLine(title=_(u"Administrator's Email"))
     question_submission_allowed = schema.Bool(
-        title=_(u"Allow Question Submission"), 
+        title=_(u"Allow Question Submission"),
         default=True
     )
     days_to_defer_question = schema.Int(
@@ -254,33 +254,33 @@ class IBungeniSettings(interface.Interface):
             "are not yet answered")
     )
     days_before_question_schedule = schema.Int(
-        title=_(u"Days before question scheduled"), 
+        title=_(u"Days before question scheduled"),
         default=3
     )
     days_before_bill_schedule = schema.Int(
-        title=_(u"Days before bill scheduled"), 
+        title=_(u"Days before bill scheduled"),
         default=3
     )
     max_questions_sitting = schema.Int(
-        title=_(u"Max Questions Per Sitting"), 
+        title=_(u"Max Questions Per Sitting"),
         default=15
     )
     max_mp_questions_sitting = schema.Int(
-        title=_(u"Max Questions Per Sitting Per MP"), 
+        title=_(u"Max Questions Per Sitting Per MP"),
         default=1
     )
 
 class IBungeniUserSettings(interface.Interface):
-    
+
     # examples
     email_delivery = schema.Bool(
-        title=_(u"Email Notifications Enabled?"), 
+        title=_(u"Email Notifications Enabled?"),
         default=True
     )
 
 
 class IAssignment(IAlchemistContent):
-    
+
     content = schema.Object(IAlchemistContent)
     context = schema.Object(IAlchemistContent)
     title = schema.TextLine(title=_(u"Name of the Assignment"))

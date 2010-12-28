@@ -9,7 +9,6 @@
      handler=".files.fileAddedSubscriber"
      />
 
-
   <subscriber
      for="bungeni.models.interfaces.IAttachedFile
           zope.lifecycleevent.interfaces.IObjectModifiedEvent"

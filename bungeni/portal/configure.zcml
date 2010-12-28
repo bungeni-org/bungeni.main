@@ -1,11 +1,18 @@
 <?xml version="1.0"?>
 <configure xmlns="http://namespaces.zope.org/zope"
            xmlns:zcml="http://namespaces.zope.org/zcml"
+		   xmlns:bungeni="http://namespaces.bungeni.org/zope"
            xmlns:browser="http://namespaces.zope.org/browser"
            xmlns:db="http://namespaces.objectrealms.net/rdb"
            i18n_domain="bungeni">
 
   <include package="bungeni.alchemist" file="meta.zcml" />
+  <include package="bungeni.core" file="meta.zcml"  />
+  
+  <!-- Setup file storage -->
+  <bungeni:fs
+     fs_path="fs"
+	 />
   
   <!-- Setup Database Connection -->
   <db:engine

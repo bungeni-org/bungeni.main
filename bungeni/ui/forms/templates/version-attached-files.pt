@@ -13,9 +13,18 @@
     </thead>
     <tbody>
       <tr tal:repeat="data view/results"> 
-        <td tal:content="data/file_title"> title</td>
-        <td><a tal:attributes="href data/url" tal:content="data/file_name">  filename </a></td>
-        <td tal:content="data/file_mimetype">  mimetype </td>
+        <td>
+        	<tal:block content="data/title"    />
+            <div class="attachedFilesMenu">
+                <tal:loop repeat="item data/menu">
+                    <a tal:attributes="title item/title; href item/url">
+                        <tal:block content="item/title"    />
+                    </a>
+                </tal:loop>
+            </div>
+        </td>
+        <td><a tal:attributes="href data/url" tal:content="data/name">  filename </a></td>
+        <td tal:content="data/type">  attachment type </td>
       </tr>
     </tbody>
   </table>

@@ -55,19 +55,19 @@ class Entity(object):
                 log.warn(
                     "Invalid attribute on %s %s" % (
                         self.__class__.__name__, k))
-    
+
     # sort_on: the list of column names the query is sorted on by default
     sort_on = None
-    
+
     # sort_dir = desc | asc
     #sort_dir = "desc"
-    
+
     # sort_replace: a dictionary that maps one column to another
     # so when the key is requested in a sort the value gets sorted
     # eg: {"user_id":"sort_name"} when the sort on user_id is requested the 
     # query gets sorted by sort_name
     #sort_replace = None
-    
+
 #############
 
 class ItemLog(object):
@@ -78,7 +78,7 @@ class ItemLog(object):
         factory = type(name, (klass,), {})
         interface.classImplements(factory, interfaces.IChange)
         return factory
-    
+
     # !+CHANGE_EXTRAS(mr, dec-2010)
     def _get_extras(self):
         if self.notes is not None:
@@ -95,56 +95,56 @@ class ItemVersions(Entity):
         factory = type(name, (klass,), {})
         interface.classImplements(factory, interfaces.IVersion)
         return factory
-    
+
     #files = one2many("files", "bungeni.models.domain.AttachedFileContainer", "file_version_id")
 
 class User(Entity):
     """Domain Object For A User. General representation of a person.
     """
-    
+
     interface.implements(interfaces.IBungeniUser, interfaces.ITranslatable)
-    
+
     def __init__(self, login=None, **kw):
         if login:
             self.login = login
         super(User, self).__init__(**kw)
         self.salt = self._makeSalt()
-    
+
     def _makeSalt(self):
         return "".join(random.sample(string.letters[:52], 12))
-    
+
     def setPassword(self, password):
         self.password = self.encode(password)
-    
+
     def getPassword(self):
         return None
-    
+
     def encode(self, password):
         return md5.md5(password + self.salt).hexdigest()
-    
+
     def checkPassword(self, password_attempt):
         attempt = self.encode(password_attempt)
         return attempt == self.password
-    
+
     def _get_status(self):
         return self.active_p
     def _set_status(self, value):
         self.active_p = value
     status = property(_get_status, _set_status)
-    
+
     @property
     def fullname(self):
         return "%s %s" % (self.first_name, self.last_name)
-    
+
     sort_on = ["last_name", "first_name", "middle_name"]
     sort_replace = {"user_id": ["last_name", "first_name"]}
-    addresses = one2many("addresses", 
+    addresses = one2many("addresses",
         "bungeni.models.domain.UserAddressContainer", "user_id")
-    delegations = one2many("delegations", 
+    delegations = one2many("delegations",
         "bungeni.models.domain.UserDelegationContainer", "user_id")
     _password = property(getPassword, setPassword)
-    
-    bills = one2many("bills", 
+
+    bills = one2many("bills",
         "bungeni.models.domain.BillContainer", "owner_id")
     questions = one2many("questions",
         "bungeni.models.domain.QuestionContainer", "owner_id")
@@ -178,9 +178,9 @@ class Group(Entity):
     #sittings = one2many("sittings", 
     #   "bungeni.models.domain.GroupSittingContainer", "group_id")
 
-    addresses = one2many("addresses", 
+    addresses = one2many("addresses",
         "bungeni.models.domain.GroupAddressContainer", "group_id")
-    
+
     def active_membership(self, user_id):
         session = Session()
         query = session.query(GroupMembership).filter(
@@ -217,7 +217,7 @@ class OfficesHeld(Entity):
 class CommitteeStaff(GroupMembership):
     """Comittee Staff.
     """
-    titles = one2many("titles", 
+    titles = one2many("titles",
         "bungeni.models.domain.MemberRoleTitleContainer", "membership_id")
 
 class GroupSitting(Entity):
@@ -226,11 +226,11 @@ class GroupSitting(Entity):
     interface.implements(interfaces.ITranslatable)
     attendance = one2many("attendance",
         "bungeni.models.domain.GroupSittingAttendanceContainer", "group_sitting_id")
-    items = one2many("items", 
+    items = one2many("items",
         "bungeni.models.domain.ItemScheduleContainer", "group_sitting_id")
-    sreports = one2many("sreports", 
+    sreports = one2many("sreports",
         "bungeni.models.domain.Report4SittingContainer", "group_sitting_id")
-    
+
     @property
     def short_name(self):
         return self.start_date.strftime("%d %b %y %H:%M")
@@ -276,27 +276,27 @@ class Parliament(Group):
     """A parliament.
     """
     sort_on = ["start_date"]
-    sessions = one2many("sessions", 
+    sessions = one2many("sessions",
         "bungeni.models.domain.ParliamentSessionContainer", "parliament_id")
-    committees = one2many("committees", 
+    committees = one2many("committees",
         "bungeni.models.domain.CommitteeContainer", "parent_group_id")
-    governments = one2many("governments", 
+    governments = one2many("governments",
         "bungeni.models.domain.GovernmentContainer", "parent_group_id")
     parliamentmembers = one2many("parliamentmembers",
         "bungeni.models.domain.MemberOfParliamentContainer", "group_id")
     politicalgroups = one2many("politicalgroups",
         "bungeni.models.domain.PoliticalGroupContainer", "parent_group_id")
-    bills = one2many("bills", 
+    bills = one2many("bills",
         "bungeni.models.domain.BillContainer", "parliament_id")
-    questions = one2many("questions", 
+    questions = one2many("questions",
         "bungeni.models.domain.QuestionContainer", "parliament_id")
-    motions = one2many("motions", 
+    motions = one2many("motions",
         "bungeni.models.domain.MotionContainer", "parliament_id")
-    sittings = one2many("group_sittings", 
+    sittings = one2many("group_sittings",
         "bungeni.models.domain.GroupSittingContainer", "group_id")
-    offices = one2many("offices", 
+    offices = one2many("offices",
         "bungeni.models.domain.OfficeContainer", "parent_group_id")
-    agendaitems = one2many("agendaitems", 
+    agendaitems = one2many("agendaitems",
         "bungeni.models.domain.AgendaItemContainer", "group_id")
     tableddocuments = one2many("tableddocuments",
         "bungeni.models.domain.TabledDocumentContainer", "parliament_id")
@@ -309,7 +309,7 @@ class MemberOfParliament(GroupMembership):
     """
     sort_on = ["last_name", "first_name", "middle_name"]
     sort_replace = {"user_id": ["last_name", "first_name"],
-        "constituency_id":["name"], "province_id":["name"], 
+        "constituency_id":["name"], "province_id":["name"],
         "region_id":["name"], "party_id":["name"]}
     titles = one2many("titles",
         "bungeni.models.domain.MemberRoleTitleContainer", "membership_id")
@@ -328,36 +328,36 @@ class PoliticalParty(PoliticalEntity):
 class PoliticalGroup(PoliticalEntity):
     """A political group in a parliament.
     """
-    partymembers = one2many("partymembers", 
+    partymembers = one2many("partymembers",
         "bungeni.models.domain.PartyMemberContainer", "group_id")
 
 class PartyMember(GroupMembership):
     """Member of a political party or group, defined by its group membership.
     """
-    titles = one2many("titles", 
+    titles = one2many("titles",
         "bungeni.models.domain.MemberRoleTitleContainer", "membership_id")
 
 class Government(Group):
     """A government.
     """
     sort_on = ["start_date"]
-    ministries = one2many("ministries", 
+    ministries = one2many("ministries",
         "bungeni.models.domain.MinistryContainer", "parent_group_id")
 
 class Ministry(Group):
     """A government ministry.
     """
-    ministers = one2many("ministers", 
+    ministers = one2many("ministers",
         "bungeni.models.domain.MinisterContainer", "group_id")
-    questions = one2many("questions", 
+    questions = one2many("questions",
         "bungeni.models.domain.QuestionContainer", "ministry_id")
-    bills = one2many("bills", 
+    bills = one2many("bills",
         "bungeni.models.domain.BillContainer", "ministry_id")
 
 class Minister(GroupMembership):
     """A Minister defined by its user_group_membership in a ministry (group).
     """
-    titles = one2many("titles", 
+    titles = one2many("titles",
         "bungeni.models.domain.MemberRoleTitleContainer", "membership_id")
 
 
@@ -385,7 +385,7 @@ class Committee(Group):
 class CommitteeMember(GroupMembership):
     """A Member of a committee defined by its membership to a committee (group).
     """
-    titles = one2many("titles", 
+    titles = one2many("titles",
         "bungeni.models.domain.MemberRoleTitleContainer", "membership_id")
 
 
@@ -405,7 +405,7 @@ class Office(Group):
 class OfficeMember(GroupMembership):
     """Clerks, .... 
     """
-    titles = one2many("titles", 
+    titles = one2many("titles",
         "bungeni.models.domain.MemberRoleTitleContainer", "membership_id")
 
 
@@ -444,15 +444,15 @@ class ParliamentaryItem(Entity):
 
     sort_on = ["parliamentary_items.status_date"]
     sort_dir = "desc"
-    
+
     sort_replace = {"owner_id": ["last_name", "first_name"]}
-    files = one2many("files", 
+    files = one2many("files",
         "bungeni.models.domain.AttachedFileContainer", "item_id")
     # votes
     # schedule
     # object log
     # versions
-    
+
     def _get_workflow_date(self, *states):
         """ (states:seq(str) -> date
         Get the date of the most RECENT workflow transition to any one of 
@@ -469,7 +469,7 @@ class ParliamentaryItem(Entity):
             if extras:
                 if extras.get("destination") in states:
                     return c.date_active
-    
+
     @property
     def submission_date(self):
         # As base meaning of "submission_date" we take the most recent date
@@ -477,10 +477,15 @@ class ParliamentaryItem(Entity):
         # to overload as appropriate for their respective workflows.
         return self._get_workflow_date("submitted")
 
+class AttachedFileType(object):
+    """Type of attachment: image/annex/... 
+    """
+    interface.implements(interfaces.ITranslatable)
 
 class AttachedFile(Entity):
     """Files attached to a parliamentary item.
     """
+
     versions = one2many("versions",
         "bungeni.models.domain.AttachedFileVersionContainer", "content_id")
 
@@ -515,14 +520,14 @@ AgendaItemVersion = ItemVersions.makeVersionFactory("AgendaItemVersion")
 class Question(ParliamentaryItem, _AdmissibleMixin):
     #supplementaryquestions = one2many("supplementaryquestions", 
     #"bungeni.models.domain.QuestionContainer", "supplement_parent_id")
-    event = one2many("event", 
+    event = one2many("event",
         "bungeni.models.domain.EventItemContainer", "item_id")
-    cosignatory = one2many("cosignatory", 
+    cosignatory = one2many("cosignatory",
         "bungeni.models.domain.CosignatoryContainer", "item_id")
     versions = one2many("versions",
         "bungeni.models.domain.QuestionVersionContainer", "content_id")
     sort_on = ParliamentaryItem.sort_on + ["question_number"]
-    
+
     def getParentQuestion(self):
         if self.supplement_parent_id:
             session = Session()
@@ -534,9 +539,9 @@ QuestionVersion = ItemVersions.makeVersionFactory("QuestionVersion")
 
 
 class Motion(ParliamentaryItem, _AdmissibleMixin):
-    cosignatory = one2many("cosignatory", 
+    cosignatory = one2many("cosignatory",
         "bungeni.models.domain.CosignatoryContainer", "item_id")
-    event = one2many("event", 
+    event = one2many("event",
         "bungeni.models.domain.EventItemContainer", "item_id")
     versions = one2many("versions",
         "bungeni.models.domain.MotionVersionContainer", "content_id")
@@ -556,15 +561,15 @@ class BillType(object):
     """
 
 class Bill(ParliamentaryItem):
-    cosignatory = one2many("cosignatory", 
+    cosignatory = one2many("cosignatory",
         "bungeni.models.domain.CosignatoryContainer", "item_id")
-    event = one2many("event", 
+    event = one2many("event",
         "bungeni.models.domain.EventItemContainer", "item_id")
     assignedgroups = one2many("assignedgroups",
         "bungeni.models.domain.GroupGroupItemAssignmentContainer", "item_id")
     versions = one2many("versions",
         "bungeni.models.domain.BillVersionContainer", "content_id")
-    
+
     @property
     def submission_date(self):
         return self._get_workflow_date("working_draft")
@@ -673,7 +678,7 @@ class ItemSchedule(Entity):
     """
     discussions = one2many("discussions",
         "bungeni.models.domain.ItemScheduleDiscussionContainer", "schedule_id")
-    
+
     @property
     def getItem(self):
         session = Session()
@@ -713,9 +718,9 @@ class TabledDocument(ParliamentaryItem, _AdmissibleMixin):
 
     It must be possible to schedule a tabled document for a sitting.
     """
-    cosignatory = one2many("cosignatory", 
+    cosignatory = one2many("cosignatory",
         "bungeni.models.domain.CosignatoryContainer", "item_id")
-    event = one2many("event", 
+    event = one2many("event",
         "bungeni.models.domain.EventItemContainer", "item_id")
     versions = one2many("versions",
         "bungeni.models.domain.TabledDocumentVersionContainer", "content_id")

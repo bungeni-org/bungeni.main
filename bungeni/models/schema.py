@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # encoding: utf-8
 import sqlalchemy as rdb
-from sqlalchemy.sql import text
-from sqlalchemy.sql import functions
-
+from fields import FSBlob
+from sqlalchemy.sql import text, functions
 from datetime import datetime
 
 metadata = rdb.MetaData()
@@ -128,10 +127,10 @@ users = rdb.Table("users", metadata,
 # associations table for many-to-many relation between user and 
 # parliamentary item
 users_parliamentary_items = rdb.Table("users_parliamentary_items", metadata,
-    rdb.Column("users_id", rdb.Integer, 
+    rdb.Column("users_id", rdb.Integer,
         rdb.ForeignKey("users.user_id")
     ),
-    rdb.Column("parliamentary_items_id", rdb.Integer, 
+    rdb.Column("parliamentary_items_id", rdb.Integer,
         rdb.ForeignKey("parliamentary_items.parliamentary_item_id")
     )
 )
@@ -694,18 +693,27 @@ subscriptions = rdb.Table("object_subscriptions", metadata,
     # rdb.Column("delivery_type", rdb.Integer),
 )
 
+attached_file_types = rdb.Table("attached_file_types", metadata,
+    rdb.Column("attached_file_type_id", rdb.Integer, primary_key=True),
+    rdb.Column("attached_file_type_name", rdb.Unicode(40)),
+    rdb.Column("language", rdb.String(5), nullable=False),
+)
+
 # parliamentary items contains the common fields for motions, questions,
 # bills and agenda items.
-
 attached_files = rdb.Table("attached_files", metadata,
     rdb.Column("attached_file_id", rdb.Integer, primary_key=True),
     rdb.Column("item_id", rdb.Integer,
         rdb.ForeignKey("parliamentary_items.parliamentary_item_id")
     ),
+    rdb.Column("attached_file_type_id", rdb.Integer,
+        rdb.ForeignKey("attached_file_types.attached_file_type_id"),
+        nullable=False
+    ),
     rdb.Column("file_version_id", rdb.Integer),
     rdb.Column("file_title", rdb.Unicode(255), nullable=False),
     rdb.Column("file_description", rdb.UnicodeText),
-    rdb.Column("file_data", rdb.Binary),
+    rdb.Column("file_data", FSBlob(32)),
     rdb.Column("file_name", rdb.String(127)),
     rdb.Column("file_mimetype", rdb.String(127)),
     # Workflow State
