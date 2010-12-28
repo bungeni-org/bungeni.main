@@ -242,9 +242,11 @@ Members have a title in their groups
   >>> mt1 = model.MemberRoleTitle()
   >>> mt1.membership_id = mp4.membership_id
   >>> mt1.title_name_id = 1
+  >>> mt1.language = "en"
   >>> mt1.start_date = datetime.datetime.now()
   >>> mt1.title_name_id = mrt1.user_role_type_id
   >>> session.add(mt1)
+  >>> session.flush()
       
   
 Sittings
@@ -253,15 +255,15 @@ Sittings
 any group can schedule a sitting, a sitting is treated as a physical
 meeting of the group by the system. 
 
- >>> st = model.SittingType()
- >>> st.sitting_type = u"morning"
+ >>> st = model.GroupSittingType()
+ >>> st.group_sitting_type = u"morning"
  >>> st.start_time = datetime.time(8,30)
  >>> st.end_time = datetime.time(12,30)
  >>> st.language = "en"
  >>> session.add(st)
  >>> session.flush()
  
- >>> st.sitting_type_id
+ >>> st.group_sitting_type_id
  1L
  
 
@@ -269,7 +271,6 @@ meeting of the group by the system.
  >>> sit.group_id = committee_a.group_id
  >>> sit.start_date = datetime.datetime.now()
  >>> sit.end_date = datetime.datetime.now()
- >>> sit.sitting_type_id = st.sitting_type_id
  >>> sit.language = "en"
  >>> session.add(sit)
  >>> session.flush() 
@@ -286,7 +287,7 @@ the attendance of a member at a sitting.
  >>> session.flush()
  
  >>> gsa = model.GroupSittingAttendance()
- >>> gsa.sitting_id = sit.sitting_id
+ >>> gsa.group_sitting_id = sit.group_sitting_id
  >>> gsa.member_id = mp_1.user_id
  >>> gsa.attendance_id = at.attendance_id
  >>> session.add(gsa)
@@ -315,7 +316,7 @@ Sitting in this session
  >>> ssit.group_id = parliament.parliament_id
  >>> ssit.start_date = datetime.datetime.now()
  >>> ssit.end_date = datetime.datetime.now()
- >>> ssit.sitting_type = st
+ >>> ssit.group_sitting_type = st
  >>> ssit.language = "en"
  >>> session.add(ssit)
  >>> session.flush() 
@@ -323,7 +324,7 @@ Sitting in this session
 Attendance
 
  >>> sgsa = model.GroupSittingAttendance()
- >>> sgsa.sitting_id = ssit.sitting_id
+ >>> sgsa.group_sitting_id = ssit.group_sitting_id
  >>> sgsa.member_id = mp_1.user_id
  >>> sgsa.attendance_id = at.attendance_id
  >>> session.add(sgsa)
@@ -389,7 +390,7 @@ we may either add the id only:
 
   >>> item_schedule = model.ItemSchedule()
   >>> item_schedule.item_id = bill.bill_id
-  >>> item_schedule.sitting_id = sit.sitting_id
+  >>> item_schedule.group_sitting_id = sit.group_sitting_id
   >>> session.add(item_schedule)
   >>> session.flush()
   >>> item_schedule.item
@@ -404,7 +405,7 @@ or we can add an object:
   >>> item_schedule.item
   
   >>> item_schedule.item = question
-  >>> item_schedule.sitting_id = sit.sitting_id
+  >>> item_schedule.group_sitting_id = sit.group_sitting_id
   >>> session.add(item_schedule)
   >>> session.flush()
   >>> item_schedule.item
