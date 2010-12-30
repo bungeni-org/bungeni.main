@@ -1,13 +1,16 @@
 from hashlib import md5
-from sqlalchemy.types import TypeDecorator, String
+from sqlalchemy.types import TypeDecorator, Binary, String
 from sqlalchemy.util import buffer
 from zope.component import getUtility
 
 
-class FSBlob(TypeDecorator):
+class FSBlob(TypeDecorator, Binary):
     """ Sqlalchemy's type to store
         blob data in IFSUtility and the
-        file name in the database
+        file name in the database.
+        Deriving also from Binary class, for
+        ore.alchemist to be able to translate it
+        to zope.schema's field.
     """
 
     impl = String
