@@ -483,10 +483,8 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         nativeeditor_status = schema.TextLine( title = u'editor status',
                                     required=False,
                                     description = u'Editor Status'
-                        ) 
-                        
+                        )            
     form_fields = form.Fields(DhtmlxCalendarSittingsEditForm)
-
     def setUpWidgets(self, ignore_request=False):
         class context:
             ids = None
@@ -530,8 +528,12 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         session = Session()
         trusted = removeSecurityProxy(ISchedulingContext(self.context))
         if ("rec_type" in data.keys()) and (data["rec_type"] is not None):
-            recurrence_start_date = data["start_date"]
-            recurrence_end_date = data["end_date"]
+            # !+ DATETIME(miano, dec-2010) the datetime widget above returns
+            # aware datetime objects while the current database setup only 
+            # supports naive objects. The lines below(and in subsequent actions)
+            # convert them to naive datetimes
+            recurrence_start_date = data["start_date"].replace(tzinfo=None)
+            recurrence_end_date = data["end_date"].replace(tzinfo=None)
             length = data["event_length"]
             sitting_length = timedelta(seconds=int(length))
             # 
@@ -552,6 +554,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                 recurrence_end_date = end 
             dates = utils.generate_recurrence_dates(recurrence_start_date, 
                                             recurrence_end_date, data["rec_type"])
+            recurrent_sittings = []
             for date in dates:
                 sitting = domain.GroupSitting()
                 sitting.group_id = trusted.group_id
@@ -560,21 +563,19 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                 sitting.language = data["language"]
                 sitting.venue_id = data["venue"]
                 session.add(sitting)
-                # commiting after adding a sitting is incredibly inefficient
-                # but thats the only way to get the sitting id immediately
-                # Adding recurrring sittings is not a recurrent activity (see,
-                # what I did there :)) so we can live with it.
-                session.commit()
-                notify(ObjectCreatedEvent(sitting))
-                self.template_data.append({"group_sitting_id": sitting.group_sitting_id, 
+                recurrent_sittings.append(sitting)
+            session.commit()
+            for s in recurrent_sittings:    
+                notify(ObjectCreatedEvent(s))
+                self.template_data.append({"group_sitting_id": s.group_sitting_id, 
                                            "action": "inserted",
                                            "ids": data["ids"]})
             self.request.response.setHeader('Content-type', 'text/xml')
             return self.xml_template()
         else:
             sitting = domain.GroupSitting()
-            sitting.start_date = data["start_date"]
-            sitting.end_date = data["end_date"]
+            sitting.start_date = data["start_date"].replace(tzinfo=None)
+            sitting.end_date = data["end_date"].replace(tzinfo=None)
             sitting.group_id = trusted.group_id
             sitting.language = data["language"]
             sitting.venue_id = data["venue"]
@@ -601,8 +602,8 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         session = Session()
         sitting = domain.GroupSitting()
         sitting = session.query(domain.GroupSitting).get(data["ids"])
-        sitting.start_date = data["start_date"]
-        sitting.end_date = data["end_date"]
+        sitting.start_date = data["start_date"].replace(tzinfo=None)
+        sitting.end_date = data["end_date"].replace(tzinfo=None)
         if "language" in data.keys():
             sitting.language = data["language"]
         if "venue" in data.keys():
