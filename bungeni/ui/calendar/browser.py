@@ -449,27 +449,28 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
             elif request.form["!nativeeditor_status"] == "deleted":
                 request.form["actions.delete"] = "delete"
         super(DhtmlxCalendarSittingsEdit, self).__init__(context, request)
-    
+         
     class DhtmlxCalendarSittingsEditForm(interface.Interface):
         ids = schema.TextLine(title=u'ID',
-                                required=False,
-                                description=u'Sitting ID'
+                                description=u'Sitting ID',
+                                required=False
                         )
-        start_date = schema.TextLine(title=_(u"Start Date"),
+        start_date = schema.Datetime(title=_(u"Start Date and Time"),
                             description=_(u"Choose a start date and time"),
-                            required=False)
-        end_date = schema.TextLine(title=_(u"End Date"),
+                            required=True)
+        end_date = schema.Datetime(title=_(u"End Date and Time"),
                             description=_(u"Choose an end date and time"),
-                            required=False)
+                            required=True)
         venue = schema.Choice(title=_(u"Venue"),
                               source="bungeni.vocabulary.Venues",
                               description=_(u"Venues"),
-                             required=False)
+                             required=True)
         language = schema.Choice(title=_(u"Language"),
                     default=get_default_language(),
                     vocabulary="language_vocabulary",
-                    description=_(u'Language')
-        )
+                    description=_(u'Language'),
+                    required = True
+                            )
         rec_type = schema.TextLine( title = u'Recurrence Type',
                                     required=False,
                                     description = u"A string that contains the \
@@ -510,26 +511,30 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
     def validate(self, action, data):
         errors = super(DhtmlxCalendarSittingsEdit, self).validate(action, data)
         return errors         
-        
-    @form.action(u"insert")
+    
+    # The form action strings below do not need to be translated because they are 
+    # not visible in the UI. 
+    
+    def insert_sitting_failure_handler(self, action, data, errors):
+        error_message = _(u"The following errors occured while adding a sitting")
+        error_string = u""
+        for error in errors:
+            if error.message not in ('', None): 
+                error_string += error.message + "\n"
+            else:
+                error_string += error.__str__() + "\n"  
+        return "%s \n%s" % (error_message, error_string)
+         
+    @form.action(u"insert", failure='insert_sitting_failure_handler')
     def handle_insert(self, action, data):
         session = Session()
         trusted = removeSecurityProxy(ISchedulingContext(self.context))
         if ("rec_type" in data.keys()) and (data["rec_type"] is not None):
-            try:
-                recurrence_start_date = datetime.datetime \
-                        .strptime(data["start_date"], '%Y-%m-%d %H:%M')
-            except:
-                log.error("The start date of the recurrence  \
-                                    is not in the correct format")
-            try:
-                recurrence_end_date = datetime.datetime.strptime(
-                                            data["end_date"], '%Y-%m-%d %H:%M')
-            except:
-                log.error("The start date of the recurrence is not in \
-                                                        the correct format")   
+            recurrence_start_date = data["start_date"]
+            recurrence_end_date = data["end_date"]
             length = data["event_length"]
             sitting_length = timedelta(seconds=int(length))
+            # 
             # Check the end date of the recurrence
             # The end date is set to be the end date of the current group 
             # or one year from the present date whichever is sooner.   
@@ -552,14 +557,8 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                 sitting.group_id = trusted.group_id
                 sitting.start_date = date
                 sitting.end_date = date + sitting_length
-                sitting.status = None
-                if "language" in data.keys():
-                    sitting.language = data["language"]
-                if "venue" in data.keys():
-                    sitting.venue_id = data["venue"]
-                # set extra data needed by template
-                sitting.ids = data["ids"]
-                sitting.action = 'inserted'
+                sitting.language = data["language"]
+                sitting.venue_id = data["venue"]
                 session.add(sitting)
                 # commiting after adding a sitting is incredibly inefficient
                 # but thats the only way to get the sitting id immediately
@@ -574,38 +573,30 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
             return self.xml_template()
         else:
             sitting = domain.GroupSitting()
-            try:
-                sitting.start_date = datetime.datetime.strptime(
-                                            data["start_date"], '%Y-%m-%d %H:%M')
-            except:
-                log.error("The start date of the sitting \
-                                    is not in the correct format")
-            try:
-                sitting.end_date = datetime.datetime.strptime(data["end_date"], 
-                                                                '%Y-%m-%d %H:%M')
-            except:
-                log.error("The end date of the sitting is not in the correct format")
-                
+            sitting.start_date = data["start_date"]
+            sitting.end_date = data["end_date"]
             sitting.group_id = trusted.group_id
-            if "language" in data.keys():
-                sitting.language = data["language"]
-            if "venue" in data.keys():
-                sitting.venue_id = data["venue"]
-            
-            # set extra data needed by template
-            sitting.ids = data["ids"]
-            sitting.action = 'inserted'
+            sitting.language = data["language"]
+            sitting.venue_id = data["venue"]
             session.add(sitting)
             session.commit()
             notify(ObjectCreatedEvent(sitting))
             self.template_data.append({"group_sitting_id": sitting.group_sitting_id, 
                                        "action": "inserted",
                                        "ids": data["ids"]})
-            
             self.request.response.setHeader('Content-type', 'text/xml')
             return self.xml_template()
-               
-    @form.action(u"update")
+          
+    def update_sitting_failure_handler(self, action, data, errors):
+        error_string = u""
+        for error in errors:
+            if error.message not in ('', None): 
+                error_string += error.message + "\n"
+            else:
+                error_string += error.__str__() + "\n"  
+        return "%s \n%s" % (error_message, error_string)   
+        
+    @form.action(u"update", failure='update_sitting_failure_handler')
     def handle_update(self, action, data):
         session = Session()
         sitting = domain.GroupSitting()
@@ -626,8 +617,16 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         self.request.response.setHeader('Content-type', 'text/xml')
         return self.xml_template()
         
+    def delete_sitting_failure_handler(self, action, data, errors):
+        error_string = u""
+        for error in errors:
+            if error.message not in ('', None): 
+                error_string += error.message + "\n"
+            else:
+                error_string += error.__str__() + "\n"  
+        return "%s \n%s" % (error_message, error_string)  
         
-    @form.action(u"delete")
+    @form.action(u"delete", failure='delete_sitting_failure_handler')
     def handle_delete(self, action, data):
         session = Session()
         sitting = session.query(domain.GroupSitting).get(data["ids"])

@@ -193,7 +193,7 @@ class Venues(object):
         for ob in results:
             terms.append(vocabulary.SimpleTerm(
                     value = ob.venue_id, 
-                    token = ob.short_name,
+                    token = ob.venue_id,
                     title = "%s" % (
                         ob.short_name
                 )))

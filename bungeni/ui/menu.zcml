@@ -292,7 +292,7 @@
     <browser:menuItem menu="group_sitting_additems"
         for="bungeni.models.interfaces.IGroupSittingContainer"
         title="Add Sitting..."
-        action="./dhtmlxcalendaredit"
+        action="./add"
         permission="bungeni.sitting.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="40"
