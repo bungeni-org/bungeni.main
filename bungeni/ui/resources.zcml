@@ -237,6 +237,18 @@
      <browser:resource 
         name="locale_sw.js" 
         file="js/dhtmlxScheduler/sources/locale_sw.js" />
+     <browser:resource 
+        name="locale_recurring_fr.js" 
+        file="js/dhtmlxScheduler/sources/locale_recurring_fr.js" />
+    <browser:resource 
+        name="locale_recurring_it.js" 
+        file="js/dhtmlxScheduler/sources/locale_recurring_it.js" />
+    <browser:resource 
+        name="locale_recurring_pt.js" 
+        file="js/dhtmlxScheduler/sources/locale_recurring_pt.js" />
+     <browser:resource 
+        name="locale_recurring_es.js" 
+        file="js/dhtmlxScheduler/sources/locale_recurring_es.js" />
    <!-- <browser:resource 
         name="dhtmlxscheduler.js" 
         file="js/dhtmlxScheduler/codebase/dhtmlxscheduler_debug.js" />

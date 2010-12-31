@@ -483,7 +483,9 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         nativeeditor_status = schema.TextLine( title = u'editor status',
                                     required=False,
                                     description = u'Editor Status'
-                        )            
+                        ) 
+            
+                  
     form_fields = form.Fields(DhtmlxCalendarSittingsEditForm)
     def setUpWidgets(self, ignore_request=False):
         class context:
@@ -501,18 +503,8 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
             }
         self.widgets = form.setUpEditWidgets(
             self.form_fields, "", self.context, self.request,
-                    adapters=self.adapters, ignore_request=ignore_request)
-
-
-    
-                
-    def validate(self, action, data):
-        errors = super(DhtmlxCalendarSittingsEdit, self).validate(action, data)
-        return errors         
-    
-    # The form action strings below do not need to be translated because they are 
-    # not visible in the UI. 
-    
+                    adapters=self.adapters, ignore_request=ignore_request) 
+        
     def insert_sitting_failure_handler(self, action, data, errors):
         error_message = _(u"The following errors occured while adding a sitting")
         error_string = u""
@@ -522,7 +514,8 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
             else:
                 error_string += error.__str__() + "\n"  
         return "%s \n%s" % (error_message, error_string)
-         
+    # The form action strings below do not need to be translated because they are 
+    # not visible in the UI.      
     @form.action(u"insert", failure='insert_sitting_failure_handler')
     def handle_insert(self, action, data):
         session = Session()
