@@ -519,6 +519,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
     @form.action(u"insert", failure='insert_sitting_failure_handler')
     def handle_insert(self, action, data):
         session = Session()
+        self.template_data = []
         trusted = removeSecurityProxy(ISchedulingContext(self.context))
         if ("rec_type" in data.keys()) and (data["rec_type"] is not None):
             # !+ DATETIME(miano, dec-2010) the datetime widget above returns
@@ -593,6 +594,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
     @form.action(u"update", failure='update_sitting_failure_handler')
     def handle_update(self, action, data):
         session = Session()
+        self.template_data = []
         sitting = domain.GroupSitting()
         sitting = session.query(domain.GroupSitting).get(data["ids"])
         sitting.start_date = data["start_date"].replace(tzinfo=None)
@@ -623,6 +625,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
     @form.action(u"delete", failure='delete_sitting_failure_handler')
     def handle_delete(self, action, data):
         session = Session()
+        self.template_data = []
         sitting = session.query(domain.GroupSitting).get(data["ids"])
         # set extra data needed by template
         self.template_data = []
