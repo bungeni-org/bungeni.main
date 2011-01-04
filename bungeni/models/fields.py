@@ -1,4 +1,4 @@
-from hashlib import md5
+from md5 import md5
 from sqlalchemy.types import TypeDecorator, Binary, String
 from sqlalchemy.util import buffer
 from zope.component import getUtility
