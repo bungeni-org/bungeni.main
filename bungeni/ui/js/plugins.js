@@ -226,7 +226,7 @@
 	    var btn = new YAHOO.widget.Button(id_button, {type:"link"});
 	    btn.on("click", dlg.show, dlg, true);
 	});
-	
+	/*
 	var selects = calendar.find('#scheduling-table select.workflow-status');
 	$.each(selects, function(i, o) {
 		var select = $(o);
@@ -274,7 +274,7 @@
 			});
 		});
 	});
-	
+	*/
     
     // create and insert category rows
     var current = null;
