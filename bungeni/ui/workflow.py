@@ -13,6 +13,7 @@ from zc.table import column
 
 from sqlalchemy import orm
 import sqlalchemy as rdb
+from sqlalchemy import desc
 
 from ore.workflow import interfaces
 from ore.workflow.interfaces import IWorkflowInfo
@@ -29,6 +30,8 @@ from bungeni.ui.menu import get_actions
 from bungeni.ui.utils import date, common
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
+from zope.dublincore.interfaces import IDCDescriptiveProperties
+from bungeni.alchemist import Session
 #from zope.app.pagetemplate import ViewPageTemplateFile
 
 from bungeni.ui.i18n import _
@@ -74,11 +77,11 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
         # as a string -- gives correct results (for all locales).
         self.columns = [
             column.GetterColumn(title=_(u"date"), 
-                getter=lambda i,f:formatter.format(i["date_active"])),
+                getter=lambda i,f:formatter.format(i.date_active)),
             column.GetterColumn(title=_(u"user"), 
-                getter=lambda i,f:i["user_id"]),
+                getter=lambda i,f:IDCDescriptiveProperties(i.user).title),
             column.GetterColumn(title=_(u"description"), 
-                getter=lambda i,f:i["description"]),
+                getter=lambda i,f:i.description),
         ]
         
     def update(self):
@@ -98,7 +101,7 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
         # min_date_active
         if len(self.entries):
             # then use the "date_active" of the most recent entry
-            min_date_active = self.entries[0]["date_active"]
+            min_date_active = self.entries[0].date_active
         else:
             # then use the current parliament's atart_date
             min_date_active = globalsettings.get_current_parliament().start_date
@@ -119,27 +122,22 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
         return formatter()
     
     @property
-    def _log_table(self):
+    def _change_object(self):
         auditor = audit.getAuditor(self.context)
-        if auditor is not None:
-            return auditor.change_table
+        return auditor.change_object
 
     def getFeedEntries(self):
         instance = removeSecurityProxy(self.context)
+        session = Session()
         mapper = orm.object_mapper(instance)
-        
-        table = self._log_table
-        if table is None:
-            return ()
-        
-        query = table.select().where(
-            rdb.and_(table.c.content_id==rdb.bindparam("content_id"),
-            rdb.and_(table.c.action=="workflow"))
-            ).order_by(table.c.change_id.desc())
-        
-        content_id = mapper.primary_key_from_instance(instance)[0] 
-        content_changes = query.execute(content_id=content_id)
-        return map(dict, content_changes)
+        content_id = mapper.primary_key_from_instance(instance)[0]
+        changes = session.query(self._change_object) \
+                         .filter(
+                            rdb.and_(self._change_object.content_id==content_id,
+                            self._change_object.action=="workflow")) \
+                         .order_by(desc(self._change_object.change_id)) \
+                         .all()
+        return changes
 
 
 class WorkflowActionViewlet(browser.BungeniBrowserView, 

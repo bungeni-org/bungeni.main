@@ -5,12 +5,7 @@
     i18n_domain="bungeni.ui">
     
     <browser:page name="audit-log"
-        for="bungeni.models.interfaces.IBungeniContent"
-        class=".audit.ChangeLog"
-        permission="bungeni.auditlog.View"
-    />
-    <browser:page name="audit-log"
-        for="bungeni.models.interfaces.IAttachedFile"
+        for="bungeni.core.interfaces.IAuditable"
         class=".audit.ChangeLog"
         permission="bungeni.auditlog.View"
     />

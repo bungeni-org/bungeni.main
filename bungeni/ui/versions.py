@@ -27,7 +27,7 @@ from bungeni.ui import forms
 from bungeni.core.interfaces import IVersioned
 
 from zc.table import column
-
+from zope.dublincore.interfaces import IDCDescriptiveProperties
 '''
 from zope.publisher.browser import BrowserView
 class VersionsView(BrowserView):
@@ -96,7 +96,7 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
             column.GetterColumn(title=_(u"modified"), 
                     getter=lambda i,f:formatter.format(i.change.date_active)),
             column.GetterColumn(title=_(u"by"), 
-                    getter=lambda i,f:i.change.user_id),
+                    getter=lambda i,f:IDCDescriptiveProperties(i.change.user).title),
             column.GetterColumn(title=_(u"message"), 
                     getter=lambda i,f:i.change.description),
         ]

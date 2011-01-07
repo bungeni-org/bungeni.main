@@ -12,6 +12,17 @@ def changes_relation(change_class):
         cascade="all, delete-orphan",
         passive_deletes=False
     )
+
+def changes_properties(change_table):
+    return {
+        "user": relation(domain.User,
+            primaryjoin=(
+                change_table.c.user_id == schema.users.c.user_id
+            ),
+            uselist=False,
+            lazy=True,
+        ),
+    }
 def versions_properties(item_class, change_class, versions_table):
     return {
         "change": relation(change_class, uselist=False),
@@ -283,13 +294,7 @@ mapper(domain.GroupSitting, schema.group_sittings,
 )
 
 mapper(domain.GroupSittingChange, schema.group_sitting_changes,
-         properties={
-        "user": relation(domain.User,
-            primaryjoin=schema.group_sitting_changes.c.user_id == schema.users.c.user_id,
-            uselist=False,
-            lazy=True
-        ),
-     }
+         properties=changes_properties(schema.group_sitting_changes)
 )
 
 mapper(domain.ResourceType, schema.resource_types)
@@ -332,7 +337,9 @@ mapper(domain.Question, schema.questions,
     }
 )
 
-mapper(domain.QuestionChange, schema.question_changes)
+mapper(domain.QuestionChange, schema.question_changes,
+    properties=changes_properties(schema.question_changes)        
+)
 mapper(domain.QuestionVersion, schema.question_versions,
     properties=versions_properties(domain.Question, domain.QuestionChange,
         schema.question_versions)
@@ -347,7 +354,9 @@ mapper(domain.Motion, schema.motions,
     }
 )
 
-mapper(domain.MotionChange, schema.motion_changes)
+mapper(domain.MotionChange, schema.motion_changes,
+    properties=changes_properties(schema.motion_changes)
+)
 mapper(domain.MotionVersion, schema.motion_versions,
     properties=versions_properties(domain.Motion, domain.MotionChange,
         schema.motion_versions)
@@ -361,7 +370,9 @@ mapper(domain.Bill, schema.bills,
         "changes": changes_relation(domain.BillChange),
     }
 )
-mapper(domain.BillChange, schema.bill_changes)
+mapper(domain.BillChange, schema.bill_changes,
+    properties=changes_properties(schema.bill_changes)
+)
 mapper(domain.BillVersion, schema.bill_versions,
     properties=versions_properties(domain.Bill, domain.BillChange,
         schema.bill_versions)
@@ -392,7 +403,9 @@ mapper(domain.AgendaItem, schema.agenda_items,
         )
     }
 )
-mapper(domain.AgendaItemChange, schema.agenda_item_changes)
+mapper(domain.AgendaItemChange, schema.agenda_item_changes,
+    properties=changes_properties(schema.agenda_item_changes)
+)
 mapper(domain.AgendaItemVersion, schema.agenda_item_versions,
     properties=versions_properties(domain.AgendaItem, domain.AgendaItemChange,
         schema.agenda_item_versions)
@@ -407,7 +420,9 @@ mapper(domain.TabledDocument, schema.tabled_documents,
     }
 )
 
-mapper(domain.TabledDocumentChange, schema.tabled_document_changes)
+mapper(domain.TabledDocumentChange, schema.tabled_document_changes,
+    properties=changes_properties(schema.tabled_document_changes)
+)
 mapper(domain.TabledDocumentVersion, schema.tabled_document_versions,
     properties=versions_properties(domain.TabledDocument,
         domain.TabledDocumentChange, schema.tabled_document_versions)
@@ -421,7 +436,9 @@ mapper(domain.AttachedFile, schema.attached_files,
         "type": relation(domain.AttachedFileType, uselist=False)
     }
 )
-mapper(domain.AttachedFileChange, schema.attached_file_changes)
+mapper(domain.AttachedFileChange, schema.attached_file_changes,
+    properties=changes_properties(schema.attached_file_changes)
+)
 mapper(domain.AttachedFileVersion, schema.attached_file_versions,
     properties={
         "change": relation(domain.AttachedFileChange, uselist=False),
