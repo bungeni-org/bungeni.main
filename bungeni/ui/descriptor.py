@@ -1729,7 +1729,7 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
     fields = deepcopy(ParliamentaryItemDescriptor.fields)
     fields.extend([
         Field(name="question_number",
-            modes="edit view listing",
+            modes="view listing",
             property=schema.Int(title=_(u"Question Number"), required=False),
         ),
         #Field(name="supplement_parent_id",
@@ -1808,7 +1808,7 @@ class TabledDocumentDescriptor(ParliamentaryItemDescriptor):
     fields = deepcopy(ParliamentaryItemDescriptor.fields)
     fields.extend([
         Field(name="tabled_document_number",
-            modes="edit view",
+            modes="view listing",
             property=schema.Int(title=_(u"Tabled document Number")),
         ),
         AdmissibleDateField(),

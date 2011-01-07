@@ -90,7 +90,6 @@
   <!--meta:redefinePermission from="bungeni.bill.View" to="zope.View" /-->
   
   <permission id="bungeni.user.AdminRecord" title="Admin User Record" />
-  <permission id="bungeni.historical.Edit" title="Edit historical data" />
   
   <permission id="bungeni.party.Add" title="Add party" />
   <permission id="bungeni.party.Edit" title="Edit party" />

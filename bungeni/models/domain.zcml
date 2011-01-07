@@ -23,13 +23,6 @@
                 note
                 receive_notification"
         />
-        <require permission="bungeni.historical.Edit"
-            set_attributes="
-                parliament_id
-                status
-                registry_number
-                status_date"
-        />
     </class>
     
     <class class=".domain.Bill">
@@ -65,15 +58,6 @@
                 receive_notification
                 owner_id
                 note"
-        />
-        <require permission="bungeni.historical.Edit"
-            set_attributes="
-                parliament_id
-                status
-                status_date
-                identifier
-                registry_number
-                publication_date"
         />
     </class>
     
@@ -111,22 +95,16 @@
                 owner_id
                 note"
         />
+        <!-- +!QUESTIONAPPROVE(ah, jan-2011) to be reviewed for now we use the permission used for running transition  -->
+        <require permission="bungeni.question.speaker.Review"
+            set_attributes="question_number"
+        />
         <require permission="bungeni.response.View"
             attributes="response_text"
         />
         <require permission="bungeni.response.Edit"
             set_attributes="response_text" 
         />
-        <require permission="bungeni.historical.Edit"
-            set_attributes="parliament_id
-                status
-                status_date
-                supplement_parent_id
-                sitting_time
-                question_number
-                registry_number
-                ministry_submit_date" 
-        />         
     </class>
     
     <class class=".domain.Motion">
@@ -149,9 +127,11 @@
                 entered_by_id
                 party_id"
         />
+
         <require permission="bungeni.motion.Edit"
             attributes="note"
         />
+
         <require permission="bungeni.motion.Edit"
             set_attributes="
                 parliamentary_item_id 
@@ -167,19 +147,13 @@
                 seconder_id
                 party_id"
         />
-        <require permission="bungeni.historical.Edit"
-            attributes="
-                parliament_id" 
+
+        <!-- +!MOTIONAPPROVE(ah, jan-2011) was bungeni.historical.Edit we use instead the permission used in the transition -->
+        <require permission="bungeni.motion.speaker.Review"
+            set_attributes="motion_number"
         />
-        <require permission="bungeni.historical.Edit"
-            set_attributes="
-                parliament_id
-                status
-                status_date
-                motion_number
-                entered_by_id
-                registry_number"
-        />
+
+
     </class>
     
     <class class=".domain.ItemSchedule">
@@ -266,17 +240,6 @@
                 receive_notification
                 group_id"
         />
-        <require permission="bungeni.historical.Edit"
-            attributes="
-                parliament_id"
-        />
-        <require permission="bungeni.historical.Edit"
-            set_attributes="
-                parliament_id
-                registry_number
-                status
-                status_date"
-        />
     </class>
     <class class=".domain.TabledDocument">
         <require permission="zope.View"
@@ -309,18 +272,14 @@
                 receive_notification
                 link"
         />
-        <require permission="bungeni.historical.Edit"
-            attributes="
-                parliament_id"
+
+
+        <!-- +!TABLEDDOCUMENTAPPROVE(ah, jan-2011) was bungeni.historical.Edit we use instead the permission used in the transition -->
+        <require permission="bungeni.tableddocument.speaker.Review"
+            set_attributes="tabled_document_number"
         />
-        <require permission="bungeni.historical.Edit"
-            set_attributes="
-                parliament_id
-                registry_number
-                tabled_document_number
-                status
-                status_date"
-        />
+                
+
     </class>
     
     <class class=".domain.Office">
@@ -348,13 +307,6 @@
                 start_date
                 end_date"
         />
-        <require permission="bungeni.historical.Edit"
-            attributes="parent_group_id"
-        />
-        <require permission="bungeni.historical.Edit"
-            set_attributes="parent_group_id
-                status" 
-        />
     </class>
     
     <class class=".domain.Parliament">
@@ -379,14 +331,6 @@
                 start_date
                 end_date
                 election_date"
-        />
-        <require permission="bungeni.historical.Edit"
-            attributes="parent_group_id"
-        />
-        <require permission="bungeni.historical.Edit"
-            set_attributes="
-                parent_group_id
-                status"
         />
     </class>
     <class class=".domain.Committee">
@@ -427,14 +371,6 @@
                 default_chairperson
                 reinstatement_date"
         />
-        <require permission="bungeni.historical.Edit"
-            attributes="parent_group_id"
-        />
-        <require permission="bungeni.historical.Edit"
-            set_attributes="
-                parent_group_id
-                status"
-        />
     </class>
     
     <class class=".domain.PoliticalParty">
@@ -466,14 +402,6 @@
         <require permission="zope.View" 
             attributes="addresses" 
         />
-        <require permission="bungeni.historical.Edit"
-            attributes="parent_group_id"
-        />
-        <require permission="bungeni.historical.Edit"
-            set_attributes="
-                parent_group_id
-                status"
-        />
     </class>
     
     <class class=".domain.Government">
@@ -496,14 +424,6 @@
                 start_date
                 end_date"
         />
-        <require permission="bungeni.historical.Edit"
-            attributes="parent_group_id"
-        />
-        <require permission="bungeni.historical.Edit"
-            set_attributes="
-                parent_group_id
-                status"
-        />
     </class>
     
     <class class=".domain.Ministry">
@@ -525,14 +445,6 @@
                 description
                 start_date
                 end_date"
-        />
-        <require permission="bungeni.historical.Edit"
-            attributes="parent_group_id"
-        />
-        <require permission="bungeni.historical.Edit"
-            set_attributes="
-                parent_group_id
-                status"
         />
     </class>
     <class class=".domain.Cosignatory">
@@ -680,11 +592,6 @@
                 file_data
                 file_name
                 file_mimetype"
-        />
-        <require permission="bungeni.historical.Edit"
-            set_attributes="
-                status_date
-                status" 
         />
     </class>
 	
