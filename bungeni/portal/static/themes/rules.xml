@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ruleset>
 
+    <!--!!!DO NOT DELETE THE BELOW COMMENT - Required by deliverance proxy!!!-->
+
 	<!-- deliverance-proxy -->
 
     <match path="regex:.*/(emptypage)$"
