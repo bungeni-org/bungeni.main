@@ -406,8 +406,9 @@ class DownloadODT(DownloadDocument):
                                         "application/vnd.oasis.opendocument.text")
         self.request.response.setHeader("Content-disposition",
                                         'inline;filename="' +
-                                        removeSecurityProxy(self.report.short_name) + "_" +
-                                        removeSecurityProxy(self.report.start_date).strftime("%Y-%m-%d") + '.odt"')
+                                        removeSecurityProxy(self.report.short_name) 
+                                        + "_" + removeSecurityProxy(self.report.start_date) \
+                                        .strftime("%Y-%m-%d") + '.odt"')
         session = Session()
         report = session.query(domain.Report).get(self.report.report_id)
         d = dict([(f.file_title, f.file_data) for f in report.attached_files])
@@ -420,10 +421,20 @@ class DownloadODT(DownloadDocument):
             doc = f.read()
             f.close()
             os.remove(self.tempFileName)
+            file_type = session.query(domain.AttachedFileType) \
+                               .filter(domain.AttachedFileType \
+                                                .attached_file_type_name 
+                                            == "annex") \
+                               .first()
+            if file_type is None:
+                file_type = domain.AttachedFileType
+                file_type.attached_file_type_name = "annex"
+                file_type.language = report.language
             attached_file = domain.AttachedFile()
             attached_file.file_title = "odt"
             attached_file.file_data = doc
             attached_file.language = report.language
+            attached_file.type = file_type
             report.attached_files.append(attached_file)
             notify(ObjectCreatedEvent(attached_file))
             session.add(report)
@@ -451,16 +462,26 @@ class  DownloadPDF(DownloadDocument):
             params = {}
             params["body_text"] = self.cleanupText()
             openofficepath = getUtility(IOpenOfficeConfig).getPath()
-            renderer = Renderer(self.odt_file, params, self.tempFileName, pythonWithUnoPath=openofficepath)
+            renderer = Renderer(self.odt_file, params, self.tempFileName, 
+                                            pythonWithUnoPath=openofficepath)
             renderer.run()
             f = open(self.tempFileName, "rb")
             doc = f.read()
             f.close()
             os.remove(self.tempFileName)
+            file_type = session.query(domain.AttachedFileType)\
+                               .filter(domain.AttachedFileType.attached_file_type_name 
+                                            == "annex")\
+                               .first()
+            if file_type is None:
+                file_type = domain.AttachedFileType
+                file_type.attached_file_type_name = "annex"
+                file_type.language = report.language
             attached_file = domain.AttachedFile()
             attached_file.file_title = "pdf"
             attached_file.file_data = doc
             attached_file.language = report.language
+            attached_file.type = file_type
             report.attached_files.append(attached_file)
             notify(ObjectCreatedEvent(attached_file))
             session.add(report)
