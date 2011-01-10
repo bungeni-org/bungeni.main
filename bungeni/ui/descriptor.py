@@ -85,8 +85,8 @@ def localized_datetime_column(name, title, default="",
     return column.GetterColumn(title, getter)
 def day_column(name, title, default=""):
     return localized_datetime_column(name, title, default, "date", "long")
-#def datetime_column(name, title, default=""):
-#    return localized_datetime_column(name, title, default, "dateTime", "long")
+def datetime_column(name, title, default=""):
+    return localized_datetime_column(name, title, default, "dateTime", "long")
 #def time_column(name, title, default=""):
 #    return localized_datetime_column(name, title, default, "time", "long")
 
@@ -2219,16 +2219,19 @@ class ReportDescriptor(ParliamentaryItemDescriptor):
             modes="edit add listing",
         ),
         Field(name="start_date",
-            label=_(u"Report Start Date"),
+            label=_(u"Sitting Date"),
             modes="edit add listing",
-            listing_column=day_column("start_date", _(u"Start Date")),
+            listing_column=datetime_column("start_date", _(u"Sitting Date")),
             edit_widget=DateWidget,
             add_widget=DateWidget,
         ),
-        Field(name="end_date",
-            label=_(u"Report End Date"),
+        # reports do not go through the workflow so the status date
+        # is the published date ie. they are created and immediately
+        # published
+        Field(name="status_date",
+            label=_(u"Published Date"),
             modes="edit add listing",
-            listing_column=day_column("end_date", _(u"End Date")),
+            listing_column=datetime_column("status_date", _(u"Published Date")),
             edit_widget=DateWidget,
             add_widget=DateWidget,
         ),
