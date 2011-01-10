@@ -1040,8 +1040,8 @@ class AddressDescriptor(ModelDescriptor):
             modes="view edit add listing",
             property=schema.Choice(title=_(u"Address Type"),
                 source=vocabulary.DatabaseSource(domain.AddressType,
-                    title_field="address_type_name",
                     token_field="address_type_id",
+                    title_field="address_type_name",
                     value_field="address_type_id"
                 ),
             ),
@@ -1070,8 +1070,8 @@ class AddressDescriptor(ModelDescriptor):
         Field(name="country",
             property=schema.Choice(title=_(u"Country"),
                 source=vocabulary.DatabaseSource(domain.Country,
-                    title_field="country_name",
                     token_field="country_id",
+                    title_field="country_name",
                     value_field="country_id"
                 ),
                 required=True
@@ -1372,8 +1372,8 @@ class ItemGroupItemAssignmentDescriptor(GroupItemAssignmentDescriptor):
             modes="view edit add listing",
             property=schema.Choice(title=_(u"Bill"),
                 source=vocabulary.BillSource(
-                    title_field="short_name",
                     token_field="parliamentary_item_id",
+                    title_field="short_name",
                     value_field="parliamentary_item_id"
                 ),
             ),
@@ -1393,8 +1393,8 @@ class GroupGroupItemAssignmentDescriptor(GroupItemAssignmentDescriptor):
             modes="view edit add listing",
             property=schema.Choice(title=_(u"Committee"),
                 source=vocabulary.CommitteeSource(
-                    title_field="short_name",
                     token_field="group_id",
+                    title_field="short_name",
                     value_field="group_id"
                 ),
             ),
@@ -1431,8 +1431,8 @@ class AttachedFileDescriptor(ModelDescriptor):
         Field(name="attached_file_type_id",
             property=schema.Choice(title=_(u"File type"),
                 source=vocabulary.DatabaseSource(domain.AttachedFileType,
-                    title_field="attached_file_type_name",
                     token_field="attached_file_type_id",
+                    title_field="attached_file_type_name",
                     value_field="attached_file_type_id"
                 ),
             ),
@@ -1534,8 +1534,8 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
             add_widget=RichTextEditor,
         ),
         Field(name="submission_date",
-            modes="listing",
-            localizable=[ show("listing"), ],
+            modes="view listing",
+            localizable=[ show("view listing"), ],
             property=schema.Date(title=_(u"Submission Date"), required=False),
             listing_column=day_column("submission_date", _(u"Submission Date")),
         ),
@@ -1659,8 +1659,8 @@ class MotionDescriptor(ParliamentaryItemDescriptor):
         #Field(name="party_id", modes="",
         #    #property = schema.Choice(title=_(u"Political Party"), 
         #    #   source=vocabulary.MotionPartySource(
-        #    #     title_field="short_name", 
         #    #     token_field="party_id", 
+        #    #     title_field="short_name", 
         #    #     value_field = "party_id"), 
         #    #   required=False),
         #),
@@ -1687,8 +1687,8 @@ class BillDescriptor(ParliamentaryItemDescriptor):
         Field(name="bill_type_id",
             property=schema.Choice(title=_(u"Bill Type"),
                 source=vocabulary.DatabaseSource(domain.BillType,
-                    title_field="bill_type_name",
                     token_field="bill_type_id",
+                    title_field="bill_type_name",
                     value_field="bill_type_id"
                 ),
             ),
@@ -1840,8 +1840,8 @@ class SittingDescriptor(ModelDescriptor):
         #    ),
         #    property=schema.Choice(title=_(u"Sitting Type"),
         #        source=vocabulary.SittingTypes(
-        #            title_field="sitting_type",
         #            token_field="sitting_type_id",
+        #            title_field="sitting_type",
         #            value_field="sitting_type_id"
         #        ),
         #    ),
@@ -1876,8 +1876,8 @@ class SittingDescriptor(ModelDescriptor):
         Field(name="venue_id",
             property=schema.Choice(title=_(u"Venue"),
                 source=vocabulary.DatabaseSource(domain.Venue,
-                    title_field="short_name",
                     token_field="venue_id",
+                    title_field="short_name",
                     value_field="venue_id"
                 ),
                 required=False
@@ -1962,8 +1962,8 @@ class AttendanceDescriptor(ModelDescriptor):
             modes="view edit add listing",
             property=schema.Choice(title=_(u"Attendance"),
                 source=vocabulary.SittingAttendanceSource(
-                    title_field="fullname",
                     token_field="user_id",
+                    title_field="fullname",
                     value_field="member_id"
                 )
             ),

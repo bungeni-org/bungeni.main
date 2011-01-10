@@ -237,7 +237,7 @@ constituency_details = rdb.Table("constituency_details", metadata,
 
 groups = rdb.Table("groups", metadata,
     rdb.Column("group_id", rdb.Integer, PrincipalSequence, primary_key=True),
-    rdb.Column("short_name", rdb.Unicode(256), nullable=False),
+    rdb.Column("short_name", rdb.Unicode(36), nullable=False), #!+ACRONYM
     rdb.Column("full_name", rdb.Unicode(256)),
     rdb.Column("description", rdb.UnicodeText),
     rdb.Column("status", rdb.Unicode(32)), # workflow for groups
@@ -484,7 +484,7 @@ parliament_sessions = rdb.Table("sessions", metadata,
         rdb.ForeignKey("parliaments.parliament_id"),
         nullable=False
     ),
-    rdb.Column("short_name", rdb.Unicode(32), nullable=False),
+    rdb.Column("short_name", rdb.Unicode(32), nullable=False), #!+ACRONYM
     rdb.Column("full_name", rdb.Unicode(256), nullable=False),
     rdb.Column("start_date", rdb.Date, nullable=False),
     rdb.Column("end_date", rdb.Date),
@@ -498,7 +498,7 @@ group_sittings = rdb.Table("group_sittings", metadata,
         rdb.ForeignKey("groups.group_id"),
         nullable=False
     ),
-    rdb.Column("short_name", rdb.Unicode(32)),
+    rdb.Column("short_name", rdb.Unicode(32)), #!+ACRONYM
     rdb.Column("start_date", rdb.DateTime(timezone=False), nullable=False),
     rdb.Column("end_date", rdb.DateTime(timezone=False), nullable=False),
     rdb.Column("group_sitting_type_id", rdb.Integer,
@@ -556,7 +556,7 @@ attendance_types = rdb.Table("attendance_types", metadata,
 
 venues = rdb.Table("venues", metadata,
     rdb.Column("venue_id", rdb.Integer, primary_key=True),
-    rdb.Column("short_name", rdb.Unicode(255), nullable=False),
+    rdb.Column("short_name", rdb.Unicode(128), nullable=False),
     rdb.Column("description", rdb.UnicodeText),
     rdb.Column("language", rdb.String(5), nullable=False),
 )
@@ -566,7 +566,7 @@ venues = rdb.Table("venues", metadata,
 
 resource_types = rdb.Table("resource_types", metadata,
     rdb.Column("resource_type_id", rdb.Integer, primary_key=True),
-    rdb.Column("short_name", rdb.Unicode(40), nullable=False),
+    rdb.Column("short_name", rdb.Unicode(36), nullable=False), #!+ACRONYM
     rdb.Column("language", rdb.String(5), nullable=False),
 )
 
@@ -576,7 +576,7 @@ resources = rdb.Table("resources", metadata,
         rdb.ForeignKey("resource_types.resource_type_id"),
         nullable=False
     ),
-    rdb.Column("short_name", rdb.Unicode(255), nullable=False),
+    rdb.Column("short_name", rdb.Unicode(128), nullable=False),
     rdb.Column("description", rdb.UnicodeText),
     rdb.Column("language", rdb.String(5), nullable=False),
 )
@@ -745,7 +745,7 @@ parliamentary_items = rdb.Table("parliamentary_items", metadata,
         nullable=False
     ),
     rdb.Column("language", rdb.String(5), nullable=False),
-    rdb.Column("short_name", rdb.Unicode(255), nullable=False),
+    rdb.Column("short_name", rdb.Unicode(128), nullable=False),
     rdb.Column("full_name", rdb.Unicode(1024), nullable=True),
     rdb.Column("body_text", rdb.UnicodeText),
     # Workflow State
