@@ -237,7 +237,7 @@ constituency_details = rdb.Table("constituency_details", metadata,
 
 groups = rdb.Table("groups", metadata,
     rdb.Column("group_id", rdb.Integer, PrincipalSequence, primary_key=True),
-    rdb.Column("short_name", rdb.Unicode(36), nullable=False), #!+ACRONYM
+    rdb.Column("short_name", rdb.Unicode(32), nullable=False), #!+ACRONYM
     rdb.Column("full_name", rdb.Unicode(256)),
     rdb.Column("description", rdb.UnicodeText),
     rdb.Column("status", rdb.Unicode(32)), # workflow for groups
@@ -566,7 +566,7 @@ venues = rdb.Table("venues", metadata,
 
 resource_types = rdb.Table("resource_types", metadata,
     rdb.Column("resource_type_id", rdb.Integer, primary_key=True),
-    rdb.Column("short_name", rdb.Unicode(36), nullable=False), #!+ACRONYM
+    rdb.Column("short_name", rdb.Unicode(32), nullable=False), #!+ACRONYM
     rdb.Column("language", rdb.String(5), nullable=False),
 )
 

@@ -930,7 +930,7 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
         #creation of a sitting but is left here because it may be used in the
         #future related to r7243
         #for sit_type in type_results:
-        #    sit_types[sit_type.sitting_type_id] = sit_type.sitting_type
+        #    sit_types[sit_type.group_sitting_type_id] = sit_type.group_sitting_type
         data_list = []
         path = "/calendar/group/sittings/"
         formatter = self.get_date_formatter("time", "short")
@@ -950,7 +950,7 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
             data["url"] = (path + "obj-" + str(result.group_sitting_id))
             data["did"] = ("dlid_" +
                 datetime.datetime.strftime(result.start_date, "%Y-%m-%d")
-                # +"_stid_" + str(result.sitting_type)
+                # +"_stid_" + str(result.group_sitting_type)
             )
             data_list.append(data)
         return data_list

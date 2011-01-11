@@ -368,7 +368,7 @@ Question conditions
 
   >>> scheduling = add_content(
   ...     domain.ItemSchedule,
-  ...     sitting_id=sitting.sitting_id,
+  ...     sitting_id=sitting.group_sitting_id,
   ...     item_id=question.parliamentary_item_id)
   
   >>> conditions.is_scheduled(info, question)
@@ -408,7 +408,7 @@ Set up a user.
   ...     first_name=u"John",
   ...     last_name=u"Doe",
   ...     language="en",
-  ...     email = "john.doe@localhost")
+  ...     email="john.doe@localhost")
 
   >>> _minister_1 = add_content(
   ...     domain.Minister,

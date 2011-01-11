@@ -116,7 +116,7 @@ def name_column(name, title, default=""):
     return _column(name, title, renderer, default)
 
 def combined_name_column(name, title, default=""):
-    """A extended name, combining full_name (localized) and short_name columns.
+    """An extended name, combining full_name (localized) and short_name columns.
     
     For types that have both a full_name and a short_name attribute:
     Group, ParliamentaryItem, ParliamentarySession

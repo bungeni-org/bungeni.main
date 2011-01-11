@@ -202,9 +202,9 @@ class Venues(object):
 venues_factory = Venues()
 
 class SittingTypes(SpecializedSource):
-    #domain.SittingType, 'sitting_type', 'sitting_type_id',
+    #domain.SittingType, "group_sitting_type", "group_sitting_type_id",
     #title_getter=lambda ob: "%s (%s-%s)" % (
-    #    ob.sitting_type.capitalize(), ob.start_time, ob.end_time))
+    #    ob.group_sitting_type.capitalize(), ob.start_time, ob.end_time))
 
     def constructQuery(self, context):
         session= Session()
@@ -218,10 +218,10 @@ class SittingTypes(SpecializedSource):
         for ob in results:
             obj = translate_obj(ob)
             terms.append(vocabulary.SimpleTerm(
-                    value = obj.sitting_type_id, 
-                    token = obj.sitting_type,
+                    value = obj.group_sitting_type_id, 
+                    token = obj.group_sitting_type,
                     title = "%s (%s-%s)" % (
-                        obj.sitting_type, 
+                        obj.group_sitting_type, 
                         obj.start_time, 
                         obj.end_time),
                 ))
@@ -231,9 +231,9 @@ class SittingTypes(SpecializedSource):
 #XXX
 #SittingTypeOnly = DatabaseSource(
 #    domain.SittingType, 
-#    title_field='sitting_type',
-#    token_field='sitting_type_id',
-#    value_field='sitting_type_id')
+#    title_field="group_sitting_type",
+#    token_field="group_sitting_type_id",
+#    value_field="group_sitting_type_id")
 
 
 

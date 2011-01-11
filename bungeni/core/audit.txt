@@ -106,18 +106,20 @@ setting up the event subscribers/adapters:
   
   >>> auditor = bungeni.core.interfaces.IAuditable(user, UserAuditor)
 
-#  <subscriber
-#     for=".interfaces.IAuditable
-#          zope.lifecycleevent.IObjectModifiedEvent"
+# <subscriber
+#     for="
+#           .interfaces.IAuditable 
+#           zope.lifecycleevent.IObjectModifiedEvent
+#         "
 #     handler=".audit.objectModified"
 #     trusted="True"
-#     />
+# />
 
-  >>> zope.component.provideHandler( audit.objectAdded,
-  ...  [bungeni.core.interfaces.IAuditable , zope.lifecycleevent.IObjectCreatedEvent])
+  >>> zope.component.provideHandler(audit.objectAdded,
+  ...  [bungeni.core.interfaces.IAuditable, zope.lifecycleevent.IObjectCreatedEvent])
 
-  >>> zope.component.provideHandler( audit.objectModified,
-  ...  [bungeni.core.interfaces.IAuditable , zope.lifecycleevent.IObjectModifiedEvent])
+  >>> zope.component.provideHandler(audit.objectModified,
+  ...  [bungeni.core.interfaces.IAuditable, zope.lifecycleevent.IObjectModifiedEvent])
 
 broadcast an event:
 
