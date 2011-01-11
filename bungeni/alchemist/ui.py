@@ -15,8 +15,6 @@ log = __import__("logging").getLogger("bungeni.alchemist")
 
 #
 
-from alchemist.ui import widgets
-
 from alchemist.ui.core import DynamicFields
 from alchemist.ui.core import getSelected
 from alchemist.ui.core import handle_edit_action

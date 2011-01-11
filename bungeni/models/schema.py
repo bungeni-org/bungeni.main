@@ -238,7 +238,7 @@ constituency_details = rdb.Table("constituency_details", metadata,
 groups = rdb.Table("groups", metadata,
     rdb.Column("group_id", rdb.Integer, PrincipalSequence, primary_key=True),
     rdb.Column("short_name", rdb.Unicode(32), nullable=False), #!+ACRONYM
-    rdb.Column("full_name", rdb.Unicode(256)),
+    rdb.Column("full_name", rdb.Unicode(256)), #!+NAME
     rdb.Column("description", rdb.UnicodeText),
     rdb.Column("status", rdb.Unicode(32)), # workflow for groups
     rdb.Column("status_date", rdb.DateTime(timezone=False),
@@ -485,7 +485,7 @@ parliament_sessions = rdb.Table("sessions", metadata,
         nullable=False
     ),
     rdb.Column("short_name", rdb.Unicode(32), nullable=False), #!+ACRONYM
-    rdb.Column("full_name", rdb.Unicode(256), nullable=False),
+    rdb.Column("full_name", rdb.Unicode(256), nullable=False), #!+NAME
     rdb.Column("start_date", rdb.Date, nullable=False),
     rdb.Column("end_date", rdb.Date),
     rdb.Column("notes", rdb.UnicodeText),
@@ -745,7 +745,10 @@ parliamentary_items = rdb.Table("parliamentary_items", metadata,
         nullable=False
     ),
     rdb.Column("language", rdb.String(5), nullable=False),
-    rdb.Column("short_name", rdb.Unicode(128), nullable=False),
+    # !+ACRONYM(mr, jan-2011) also add an acronym/label (e.g. for link text)?
+    rdb.Column("short_name", rdb.Unicode(128), nullable=False), # dc:title - 
+    # The name given to the resource. Typically, a Title will be a name
+    # by which the resource is formally known.
     rdb.Column("full_name", rdb.Unicode(1024), nullable=True),
     rdb.Column("body_text", rdb.UnicodeText),
     # Workflow State

@@ -6,12 +6,11 @@ from zope.datetime import parseDatetimetz
 from zope.datetime import DateTimeError
 from zope.security.proxy import removeSecurityProxy
 from zope.app.form.interfaces import ConversionError, InputErrors
-from zope.app.form.browser.widget import SimpleInputWidget
 from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from zope.interface.common import idatetime
 import zope.app.form.browser.widget
-from zope.app.form.browser.textwidgets import TextAreaWidget, FileWidget, \
-    TextWidget 
+import zope.app.form.browser.textwidgets
+from zope.app.form.browser.textwidgets import TextAreaWidget, FileWidget
 from zope.app.form.browser.itemswidgets import RadioWidget, \
     SingleDataHelper, ItemsWidgetBase
 
@@ -26,6 +25,13 @@ from bungeni.core.i18n import _
 
 
 path = os.path.split(os.path.abspath(__file__))[0]
+
+
+class TextWidget(zope.app.form.browser.textwidgets.TextWidget):
+    displayWidth = 60
+class LongTextWidget(TextWidget):
+    displayWidth = 90
+
 
 class MultiDateTextAreaWidget(TextAreaWidget):
     def _toFieldValue(self, value):
@@ -285,7 +291,7 @@ class SupplementaryQuestionDisplay(zope.app.form.browser.widget.DisplayWidget):
             return _(u"Initial Question")
 '''
 
-class SelectDateWidget(SimpleInputWidget):
+class SelectDateWidget(zope.app.form.browser.widget.SimpleInputWidget):
     """A more user freindly date input.
     """
     __call__ = ViewPageTemplateFile("templates/selectdatewidget.pt")
@@ -593,8 +599,10 @@ class TextDateWidget(SelectDateWidget):
         else:
             value = self._data
         return self._toFormValue(value)
-
         
+DateWidget = TextDateWidget
+
+
 class TextDateTimeWidget(TextDateWidget): 
 
     __call__ = ViewPageTemplateFile("templates/textdatetimewidget.pt")
@@ -649,7 +657,10 @@ class TextDateTimeWidget(TextDateWidget):
                     day=d.day, hour=t.hour, minute=t.minute,) 
             except ValueError, e:
                 raise ConversionError(_(u"Incorrect string data for date and time"), e)
-             
+
+DateTimeWidget = TextDateTimeWidget
+
+
 class SelectDateTimeWidget(SelectDateWidget):
 
     __call__ = ViewPageTemplateFile("templates/selectdatetimewidget.pt")
@@ -724,7 +735,7 @@ class SelectDateTimeWidget(SelectDateWidget):
                 raise ConversionError(
                     _(u"Incorrect string data for date and time"), e)
 
-
+'''
 class AutocompleteWidget(SingleDataHelper, ItemsWidgetBase):
     """Render a single selection autocomplete widget using YUI Autocomplete.
     """
@@ -744,7 +755,7 @@ class AutocompleteWidget(SingleDataHelper, ItemsWidgetBase):
     
     def value(self):
         return self._getFormValue()
-
+'''
 
 class MemberURLDisplayWidget(zope.app.form.browser.widget.DisplayWidget):
     """Display the linked name of a Member of Parliament, using as URL the 
