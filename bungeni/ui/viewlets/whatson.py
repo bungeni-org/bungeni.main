@@ -52,8 +52,11 @@ class WhatsOnBrowserView(BrowserView):
         
     def get_sitting_items(self, sitting):
         s_list = []
-        for schedule in sitting.item_schedule:
-            s_list.append({
+        if sitting.status in get_states('groupsitting',tagged=['agendaprivate']):
+            return s_list
+        else:
+            for schedule in sitting.item_schedule:
+                s_list.append({
                     'name': schedule.item.short_name,
                     'status' : misc.get_wf_state(schedule.item),
                     'url' : url.set_url_context(('/business/' +
@@ -61,7 +64,7 @@ class WhatsOnBrowserView(BrowserView):
                         str(schedule.item.parliamentary_item_id))),
                     'item_type' : schedule.item.type,
                      })
-        return s_list
+            return s_list
         
     def get_sittings(self):
         formatter = self.request.locale.dates.getFormatter('date', 'full') 

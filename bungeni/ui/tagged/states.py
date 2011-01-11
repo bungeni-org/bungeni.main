@@ -24,6 +24,9 @@ ACTIVE_TAGS = [
     "draft", # groupsitting
     "published", # groupsitting
     "workspace",
+    "agendaprivate", # groupsitting - if a sitting is in a state tagged 
+                     # "agendaprivate" its agenda should not be 
+                     # publicly available
 ] 
 
 # Tags for Workflow States, per Parliamentary Item
@@ -138,9 +141,9 @@ TAG_MAPPINGS["tableddocument"] = {
     "withdrawn": ["terminal", "fail",],
 }
 TAG_MAPPINGS["groupsitting"] = {
-    "sitting":["private", "draft"],                            
-    "draft_agenda": ["private", "draft","workspace"],
-    "published_agenda": ["public", "published","workspace"],
+    "sitting":["public", "draft", "agendaprivate"],                            
+    "draft_agenda": ["public", "draft","workspace", "agendaprivate"],
+    "published_agenda": ["public", "published","workspace", "agendaprivate"],
     "draft_minutes": ["public", "draft","workspace"],
     "published_minutes": ["public", "published"],
 }
