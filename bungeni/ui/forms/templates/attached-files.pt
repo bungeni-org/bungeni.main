@@ -17,9 +17,16 @@
         	<tal:block content="data/title"    />
 			<div class="attachedFilesMenu">
 				<tal:loop repeat="item data/menu">
-					<a tal:attributes="title item/title; href item/url">
-						<tal:block content="item/title"    />
-					</a>
+					<tal:if condition="item/active">
+						<a tal:attributes="title item/title; href item/url">
+							<tal:block content="item/title"    />
+						</a>
+					</tal:if>
+					<tal:if condition="not:item/active">
+						<span style="border-bottom: 1px solid #CCC; color: #CCC; cursor: pointer;">
+							<tal:block content="item/title"    />
+						</span>
+					</tal:if>
 				</tal:loop>
 			</div>
         </td>

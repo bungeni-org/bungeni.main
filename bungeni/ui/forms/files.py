@@ -56,28 +56,32 @@ class LibraryViewlet (viewlet.ViewletBase):
         permission_name = 'bungeni.fileattachment.View'
         if self.interaction.checkPermission(permission_name, context):
             return {'title': _(u'VIEW'),
-                    'url': './files/obj-%i' % context.attached_file_id}
+                    'url': './files/obj-%i' % context.attached_file_id,
+                    'active': True}
         return None
 
     def create_edit_menu_item(self, context):
         permission_name = 'bungeni.fileattachment.Edit'
         if self.interaction.checkPermission(permission_name, context):
             return {'title': _(u'EDIT'),
-                    'url': './files/obj-%i/edit' % context.attached_file_id}
+                    'url': './files/obj-%i/edit' % context.attached_file_id,
+                    'active': True}
         return None
 
     def create_delete_menu_item(self, context):
         permission_name = 'bungeni.fileattachment.Deactivate'
         if self.interaction.checkPermission(permission_name, context):
             return {'title': _(u'DELETE'),
-                    'url': './files/obj-%i/deactivate' % context.attached_file_id}
+                    'url': './files/obj-%i/deactivate' % context.attached_file_id,
+                    'active': context.status != u'inactive'}
         return None
 
     def create_download_menu_item(self, context):
         permission_name = 'bungeni.fileattachment.View'
         if self.interaction.checkPermission(permission_name, context):
             return {'title': _(u'DOWNLOAD'),
-                    'url': './files/obj-%i/download' % context.attached_file_id}
+                    'url': './files/obj-%i/download' % context.attached_file_id,
+                    'active': True}
         return None
 
 
@@ -116,19 +120,11 @@ class VersionLibraryViewlet(LibraryViewlet):
         return None
 
     def create_edit_menu_item(self, context):
-        permission_name = 'bungeni.fileattachment.Edit'
-        if self.interaction.checkPermission(permission_name, context):
-            return {'title': _(u'EDIT'),
-                    'url': '%s/files/obj-%i/versions/obj-%i/edit' % \
-                            (self.base_url, context.content_id, context.version_id)}
+        # Edit menu item should not be provided for versions
         return None
 
     def create_delete_menu_item(self, context):
-        permission_name = 'bungeni.fileattachment.Deactivate'
-        if self.interaction.checkPermission(permission_name, context):
-            return {'title': _(u'DELETE'),
-                    'url': '%s/files/obj-%i/versions/obj-%i/deactivate' % \
-                            (self.base_url, context.content_id, context.version_id)}
+        # Delete menu item should not be provided for versions
         return None
 
     def create_download_menu_item(self, context):

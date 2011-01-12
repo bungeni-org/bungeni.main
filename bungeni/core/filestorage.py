@@ -13,7 +13,7 @@ class FileStorageUtility(object):
     implements(IFSUtility)
 
     def __init__(self, fs_path):
-        # Cobstructing path from the buildout directory
+        # Constructing path from the buildout directory
         cur_dir_path = os.path.dirname(__file__)
         base_path = os.path.join(cur_dir_path, '../../../../')
         self.fs_path = os.path.join(base_path, fs_path)
