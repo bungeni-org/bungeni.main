@@ -142,7 +142,6 @@
         order="20"
         layer=".interfaces.IWorkspaceSchedulingSectionLayer"
     />
-    
     <!-- add menus for content -->
 
     <browser:menu id="party_additems"
@@ -1001,7 +1000,14 @@
         action="votes-and-proceedings"
         permission="bungeni.reports.Edit"
     />
-    
+    <!-- committee agenda items -->
+    <browser:menuItem menu="plone_contentmenu"
+        for="bungeni.core.schedule.CommitteeSchedulingContext"
+        title="Add Agenda item..."
+        action="./../agendaitems/add"
+        permission="bungeni.agendaitem.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+    />
     <!-- submenu adapters -->
     
     <adapter name="plone.contentmenu.workflow"
