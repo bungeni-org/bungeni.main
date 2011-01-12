@@ -1478,6 +1478,7 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
             add_widget=widgets.TextWidget,
         ),
         Field(name="full_name",
+            modes="view edit add",
             localizable=[ show(), ],
             property=schema.TextLine(title=_(u"Summary"), required=False),
             edit_widget=widgets.LongTextWidget,
@@ -1502,6 +1503,7 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
         ),
         #LanguageField("language"),
         Field(name="language",
+            modes="view edit add",
             localizable=[ show("view"), ],
             property=schema.Choice(title=_(u"Language"),
                 default=get_default_language(),
@@ -1509,8 +1511,9 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
             ),
         ),
         Field(name="body_text",
+            modes="view edit add",
             localizable=[ show("view"), ],
-            property=schema.Text(title=_(u"Text"), required=False),
+            property=schema.Text(title=_(u"Text")),
             view_widget=widgets.HTMLDisplay,
             edit_widget=widgets.RichTextEditor,
             add_widget=widgets.RichTextEditor,
@@ -1547,6 +1550,7 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
             edit_widget=widgets.OneTimeEditWidget,
         ),
         Field(name="receive_notification",
+            modes="view edit add",
             localizable=[ show("view"), ],
             property=schema.Choice(title=_(u"Receive notification"),
                 description=_("Select this option to receive notifications "
@@ -1636,8 +1640,6 @@ class MotionDescriptor(ParliamentaryItemDescriptor):
             localizable=[ show("view listing"), ],
             property=schema.Int(title=_(u"Identifier"), required=False),
         ),
-        # TODO omit for now
-        #Field(name="entered_by", label=_(u"Entered By"), modes=""),
         #Field(name="party_id", modes="",
         #    #property = schema.Choice(title=_(u"Political Party"), 
         #    #   source=vocabulary.MotionPartySource(

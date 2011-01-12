@@ -124,7 +124,6 @@
                 public
                 registry_number
                 seconder_id
-                entered_by_id
                 party_id"
         />
 
