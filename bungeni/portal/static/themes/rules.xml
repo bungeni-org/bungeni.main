@@ -18,8 +18,6 @@
         class="load-bungeni-navigation" />
     <match path="regex:^/(workspace)/?"
         class="load-workspace-navigation" />
-    <match path="regex:^/(members/current)/obj-([0-9])+(/)?(view)?$"
-        class="load-member-content" />
     <match path="exact:/cynin/login_form"
         class="login" />
     <match path="exact:/"
