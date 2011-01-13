@@ -71,5 +71,5 @@ def get_states(pi_type, tagged=[], not_tagged=[], keys=[], conjunction="OR"):
     if conjunction=="OR":
         return list(_tagged.union(_not_tagged).union(_keys))
     elif conjunction=="AND":
-        return list(_tagged.intersection(_not_tagged).intersection(_keys))
+        return list(_tagged.intersection(_not_tagged).union(_keys))
 
