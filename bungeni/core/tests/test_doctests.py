@@ -47,9 +47,10 @@ def test_suite():
     #
     #       $ bin/test -s bungeni.core -t file.txt
     #
-    doctests = ('audit.txt',
+    doctests = (
+                #'audit.txt',
                 'version.txt',
-                'odf.txt',
+                #'odf.txt',
                 'workflows/question.txt',
                 'workflows/motion.txt',
                 'workflows/bill.txt',

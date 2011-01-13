@@ -368,7 +368,7 @@ Question conditions
 
   >>> scheduling = add_content(
   ...     domain.ItemSchedule,
-  ...     sitting_id=sitting.group_sitting_id,
+  ...     group_sitting_id=sitting.group_sitting_id,
   ...     item_id=question.parliamentary_item_id)
   
   >>> conditions.is_scheduled(info, question)
