@@ -32,6 +32,7 @@ from bungeni.ui import browser
 from bungeni.ui import z3evoque
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from bungeni.alchemist import Session
+from bungeni.core.interfaces import IAuditable
 #from zope.app.pagetemplate import ViewPageTemplateFile
 
 from bungeni.ui.i18n import _
@@ -254,14 +255,15 @@ class WorkflowView(browser.BungeniBrowserView):
     _page_title = "Workflow"
     
     def update(self, transition=None):
-        # set up viewlets; the view is rendered from viewlets for
-        # historic reasons; this may be refactored anytime.
-        self.history_viewlet = WorkflowHistoryViewlet(
-            self.context, self.request, self, None)
+        if IAuditable.providedBy(self.context):
+            # set up viewlets; the view is rendered from viewlets for
+            # historic reasons; this may be refactored anytime.
+            self.history_viewlet = WorkflowHistoryViewlet(
+                self.context, self.request, self, None)
+            self.history_viewlet.update()
         self.action_viewlet = WorkflowActionViewlet(
             self.context, self.request, self, None)
         # update viewlets
-        self.history_viewlet.update()
         self.action_viewlet.update(transition=transition)
     
     def __call__(self):
