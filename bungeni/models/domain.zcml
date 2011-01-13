@@ -483,6 +483,12 @@
                 notes"
         />
     </class>
+    <class class=".domain.GroupGroupItemAssignment">
+        <require like_class=".domain.GroupItemAssignment" />
+    </class>
+    <class class=".domain.ItemGroupItemAssignment">
+        <require like_class=".domain.GroupItemAssignment" />
+    </class>
     
     <class class=".domain.GroupMembership">
         <require permission="zope.View"

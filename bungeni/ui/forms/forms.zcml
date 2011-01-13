@@ -609,6 +609,13 @@ Unauthorized: (<zope.app.publisher.browser.viewmeta.AddForm object at ...>, 'bro
      layer="bungeni.ui.interfaces.IBungeniSkin"
      />
     
+    <browser:page name="edit" 
+        for="bungeni.models.interfaces.IGroupGroupItemAssignment"
+        class=".common.EditForm"
+        permission="bungeni.groupitemassignment.Edit"
+        layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer"
+    />
+
     <!-- event items -->
     <browser:page name="add"
         for="bungeni.models.domain.EventItemContainer"

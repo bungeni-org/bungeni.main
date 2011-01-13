@@ -511,7 +511,16 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="50"
     />
-
+    
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IGroupGroupItemAssignment"
+        title="Edit"
+        action="./edit"
+        permission="bungeni.groupitemassignment.Edit"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="10"
+    />
+    
     <!-- Question 'Add...' menu -->
     <browser:menu id="question_additems"
         title="The 'Add...' menu - for question"
