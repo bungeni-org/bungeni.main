@@ -38,9 +38,10 @@ from bungeni.ui import widgets
 from bungeni.ui import constraints
 from bungeni.ui.forms import validations
 from bungeni.ui.i18n import _
-from bungeni.ui.utils import date, misc
+from bungeni.ui.utils import common, date, misc
 from bungeni.ui import vocabulary
 from bungeni.ui.tagged import get_states
+from bungeni.ui.interfaces import IBusinessSectionLayer
 
 ###
 # Listing Columns 
@@ -152,33 +153,77 @@ def linked_mp_name_column(name, title, attr):
         )
     return column.GetterColumn(title, getter)
 
-''' !+AssignedItemsListing(mr, nov-2010) this is meant to replace the 
-    "item_name_column" getter, to intercept and customize the default 
-    alchemist behaviour -- in this case the item would be default be
-    an ItemGroupItemAssignment instance, and the link would point to the 
-    association view of that assigned item and the group it is assigned to.
-    However, it is not activated as the behavior is probably incorrect in some
-    cases e.g. under /admin -- as that association also allows to modify the
-    "assignemnt" properties, a "feature" that would be lost if this was to be 
-    activated (do we need different behaviour for differeent layers?).
-
-def linked_item_name_column(name, title):
-    """To customize the default URL generated as part of the container listing. 
-    
-    E.g. instead of the URL to the association view between a committee and
-    an assigned bill:
-        /business/committees/obj-46/assigneditems/obj-1/
-    the direct URL for the MP's "home" view is used instead:
-        /business/bills/obj-37/
-    """
+''' !+ replaced with linked_assignment_column()
+def item_name_column(name, title, default=u""):
     def getter(item, formatter):
-        bill = item.item
-        return zope.app.form.browser.widget.renderElement("a", 
-            contents="%s %s" % (bill.type, bill.short_name),
-            href="/business/bills/obj-%s/" % (bill.parliamentary_item_id)
-        )
+        return u"%s %s" % (item.item.type, item.item.short_name)
+    return column.GetterColumn(title, getter)
+def group_name_column(name, title, default=u""):
+    def getter(item, formatter):
+        obj = translation.translate_obj(item)
+        #TODO: translate group.type
+        return u"%s %s" % (item.group.type, obj.group.short_name)
     return column.GetterColumn(title, getter)
 '''
+def linked_assignment_column(title, assigned_kind="item"):
+    """To customize the default URL generated as part of the container listing. 
+    
+    E.g. instead of the URL to the association view between a committee and an 
+    assigned bill or between a bill and a committe it is assigned to:
+        /business/committees/obj-46/assigneditems/obj-1/
+        /business/bills/obj-70/assignedgroups/obj-2/
+    the direct URL for the bill's or committee's "home" view is used instead:
+        /business/bills/obj-37/
+        /business/committees/obj-15/
+    """
+    assert assigned_kind in ("item", "group")
+    assigned_id_attr_name = {
+        "item": "parliamentary_item_id", "group": "group_id" 
+    }[assigned_kind]
+    acn = assigned_container_name = "assigned%ss" % (assigned_kind)
+    acn_len = len(acn)
+    def getter(assignment, formatter):
+        """(assignment:either(ItemGroupItemAssignment, GroupGroupItemAssignment), 
+            formatter:? ) -> str
+        """
+        r = common.get_request()
+        assigned = getattr(assignment, assigned_kind)
+        assigned = translation.translate_obj(assigned)
+        link_label = "[%s] %s" % (assigned.type, assigned.short_name)
+        if IBusinessSectionLayer.providedBy(r):
+            # Within the business/ section use a direct and absolute link to 
+            # the related PI's public "home view".
+            # The absolute URL path is of the form: 
+            # /business/{ASSIGNED.TYPE}s/obj-{ASSIGNED.ID}/
+            return zope.app.form.browser.widget.renderElement("a",
+                contents=link_label,
+                href="/business/%ss/obj-%s/" % (
+                    assigned.type, getattr(assigned, assigned_id_attr_name))
+            )
+        else:
+            # All other sections use a *relative* link to association view of 
+            # the assigned item and the group it is assigned to (thus following
+            # the link will keep the user within the same section). This is 
+            # because under other sections, e.g. /admin or /workspace, this
+            # association view makes it possible for an appropriately-privileged
+            # user to modify properties of the assignment of the item to this 
+            # group. The relative URL path is of the form: 
+            # .../{ASSIGNED_CONTAINER_NAME}/obj-{ASSIGNMENT.ID}/
+            #
+            # We explicitly determine the absolute url path because 
+            # concatenating to a relative path gives different results in 
+            # different contexts e.g. when this is loaded as a json_listing of 
+            # a *page view* or as a json_listing within a viewlet tab.
+            url_path = acn
+            if r:
+                url = r.getURL()
+                url_path = url[0: url.index(acn) + acn_len]
+            return zope.app.form.browser.widget.renderElement("a",
+                contents=link_label,
+                href="%s/obj-%s/" % (url_path, assignment.assignment_id)
+            )
+    return column.GetterColumn(title, getter)
+
 
 def member_title_column(name, title, default=u""):
     def getter(item, formatter):
@@ -213,16 +258,6 @@ def inActiveDead_Column(name, title, default):
     renderer = lambda x: aid[x]
     return _column(name, title, renderer, default)
 
-def item_name_column(name, title, default=u""):
-    def getter(item, formatter):
-        return u"%s %s" % (item.item.type, item.item.short_name)
-    return column.GetterColumn(title, getter)
-def group_name_column(name, title, default=u""):
-    def getter(item, formatter):
-        obj = translation.translate_obj(item)
-        #TODO: translate group.type
-        return u"%s %s" % (item.group.type, obj.group.short_name)
-    return column.GetterColumn(title, getter)
 
 
 def workflow_column(name, title, default=u""):
@@ -1347,8 +1382,9 @@ class GroupItemAssignmentDescriptor(ModelDescriptor):
         LanguageField("language"),
     ]
 
-
 class ItemGroupItemAssignmentDescriptor(GroupItemAssignmentDescriptor):
+    """The Bills assigned to a Committee.
+    """
     display_name = _(u"Assigned bill")
     container_name = _(u"Assigned bills")
     fields = [
@@ -1361,17 +1397,16 @@ class ItemGroupItemAssignmentDescriptor(GroupItemAssignmentDescriptor):
                     value_field="parliamentary_item_id"
                 ),
             ),
-            # !+AssignedItemsListing(mr, nov-2010)
-            listing_column=item_name_column(#=linked_item_name_column(
-                "parliamentary_item_id", _(u"Item")),
+            listing_column=linked_assignment_column(_(u"Bill"), "item"),
         ),
     ]
     fields.extend(deepcopy(GroupItemAssignmentDescriptor.fields))
 
-
 class GroupGroupItemAssignmentDescriptor(GroupItemAssignmentDescriptor):
-    display_name = _(u"Assigned group")
-    container_name = _(u"Assigned groups")
+    """The Committees a Bill is assigned to.
+    """
+    display_name = _(u"Assigned committee")
+    container_name = _(u"Assigned committees")
     fields = [
         Field(name="group_id",
             modes="view edit add listing",
@@ -1382,7 +1417,7 @@ class GroupGroupItemAssignmentDescriptor(GroupItemAssignmentDescriptor):
                     value_field="group_id"
                 ),
             ),
-            listing_column=group_name_column("group_id", _(u"Group")),
+            listing_column=linked_assignment_column(_(u"Committee"), "group"),
         ),
     ]
     fields.extend(deepcopy(GroupItemAssignmentDescriptor.fields))

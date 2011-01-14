@@ -100,26 +100,29 @@
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
         <deny permission="bungeni.groupitemassignment.Add" role="bungeni.Clerk" />
+        <deny permission="bungeni.groupitemassignment.Edit" role="bungeni.Clerk" />
     </state>
     <state id="approved" title="Approved Bill">
         <deny permission="bungeni.bill.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
-        <deny permission="bungeni.groupitemassignment.Add" role="bungeni.Clerk" />
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
+        <deny permission="bungeni.groupitemassignment.Add" role="bungeni.Clerk" />
+        <deny permission="bungeni.groupitemassignment.Edit" role="bungeni.Clerk" />
     </state>
     <state id="rejected" title="Rejected Bill">
         <deny permission="bungeni.bill.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
-        <deny permission="bungeni.groupitemassignment.Add" role="bungeni.Clerk" /> 
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
+        <deny permission="bungeni.groupitemassignment.Add" role="bungeni.Clerk" /> 
+        <deny permission="bungeni.groupitemassignment.Edit" role="bungeni.Clerk" /> 
     </state>
     
     <transition id="create_bill"
