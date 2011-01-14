@@ -33,7 +33,7 @@
   
   <state id="dissolved" title="Committee is Dissolved">
     <deny permission="bungeni.agendaitem.Add" role="bungeni.CommitteeMember" />
-    <denty permission="bungeni.groupitemassignment.Add" role="bungeni.Clerk" />
+    <deny permission="bungeni.groupitemassignment.Add" role="bungeni.Clerk" />
   </state>
 
   <transition 
