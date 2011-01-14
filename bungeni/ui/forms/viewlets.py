@@ -36,7 +36,7 @@ from bungeni.ui import browser
 from bungeni.ui import z3evoque
 from bungeni.ui import table
 from bungeni.ui.utils import queries, statements, url, misc, debug, date
-
+from bungeni.ui.browser import BungeniViewlet
 from fields import BungeniAttributeDisplay
 from interfaces import ISubFormViewletManager, ISubformRssSubscriptionViewletManager
 
@@ -409,7 +409,24 @@ class ResponseViewlet(BungeniAttributeDisplay):
 '''
 
 
+class WrittenQuestionResponseViewlet(BungeniViewlet):
 
+    mode = "view"
+    for_display = True
+    form_name = _(u"Response")
+    render = ViewPageTemplateFile("templates/written_question_response.pt")
+    def __init__(self, context, request, view, manager):
+        self.request = request
+        self.context = context
+        self.manager = manager
+        self.question = removeSecurityProxy(context)
+        # Check type of question. Only written questions get this viewlet
+        if self.question.response_type == 'O':
+            self.for_display = False
+        else:
+            if self.question.response_text in (None,""):
+                self.for_display = False
+        
 class GroupMembersViewlet(browser.BungeniItemsViewlet):
 
     # evoque

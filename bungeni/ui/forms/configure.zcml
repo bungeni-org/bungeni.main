@@ -265,7 +265,14 @@
      permission="zope.View"
      weight="10"
      />
-
+    <browser:viewlet
+     name="bungeni.viewlet.writtenquestionresponse"
+     manager=".interfaces.ISubFormViewletManager"
+     class=".viewlets.WrittenQuestionResponseViewlet"
+     for="bungeni.models.interfaces.IQuestion"
+     permission="zope.View"
+     weight="10"
+     />
   <browser:viewlet
      name="bungeni.viewlet.mp-personal-info"
      manager=".interfaces.ISubFormViewletManager"

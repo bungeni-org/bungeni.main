@@ -1606,7 +1606,43 @@ class VersionDescriptor(ModelDescriptor):
 class HeadingDescriptor(ParliamentaryItemDescriptor):
     display_name = _(u"Heading")
     container_name = _(u"Headings")
-    fields = deepcopy(ParliamentaryItemDescriptor.fields)
+    fields = [
+        Field(name="short_name",
+            modes="view edit add listing",
+            localizable=[ show("view listing"), ],
+            property=schema.TextLine(title=_(u"Title")),
+            edit_widget=widgets.TextWidget,
+            add_widget=widgets.TextWidget,
+        ),
+        Field(name="owner_id",
+            modes="view edit add",
+            localizable=[
+                hide("view", "bungeni.Anybody"),
+            ],
+            property=schema.Choice(title=_(u"Moved by"),
+                description=_(u"Select the user who moved the document"),
+                source=vocabulary.MemberOfParliamentDelegationSource("owner_id"),
+            ),
+            view_widget=widgets.MemberURLDisplayWidget
+        ),
+        #LanguageField("language"),
+        Field(name="language",
+            modes="view edit add",
+            localizable=[ show("view"), ],
+            property=schema.Choice(title=_(u"Language"),
+                default=get_default_language(),
+                vocabulary="language_vocabulary",
+            ),
+        ),
+        Field(name="body_text",
+            modes="view edit add",
+            localizable=[ show("view"), ],
+            property=schema.Text(title=_(u"Text")),
+            view_widget=widgets.HTMLDisplay,
+            edit_widget=widgets.RichTextEditor,
+            add_widget=widgets.RichTextEditor,
+        )
+    ]
     public_wfstates = [heading_wf_state[u"public"].id]
 
 
@@ -1751,7 +1787,7 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
             ),
         ),
         Field(name="response_text",
-            modes="edit view",
+            modes="edit",
             property=schema.TextLine(title=_(u"Response"),
                 description=_(u"Response to the Question"),
                 required=False
