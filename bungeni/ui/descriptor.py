@@ -1654,11 +1654,12 @@ class HeadingDescriptor(ParliamentaryItemDescriptor):
             localizable=[
                 hide("view", "bungeni.Anybody"),
             ],
-            property=schema.Choice(title=_(u"Moved by"),
-                description=_(u"Select the user who moved the document"),
-                source=vocabulary.MemberOfParliamentDelegationSource("owner_id"),
+            property=schema.Choice(title=_(u"Owner"),
+                source=vocabulary.DatabaseSource(domain.User,
+                    token_field="user_id",
+                    title_field="fullname",
+                    value_field="user_id")
             ),
-            view_widget=widgets.MemberURLDisplayWidget
         ),
         #LanguageField("language"),
         Field(name="language",
@@ -1843,9 +1844,43 @@ class QuestionVersionDescriptor(VersionDescriptor):
 class EventItemDescriptor(ParliamentaryItemDescriptor):
     display_name = _(u"Event")
     container_name = _(u"Events")
-
-    fields = deepcopy(ParliamentaryItemDescriptor.fields)
-    fields.extend([
+    fields = [
+        Field(name="short_name",
+            modes="view edit add listing",
+            localizable=[ show("view listing"), ],
+            property=schema.TextLine(title=_(u"Title")),
+            edit_widget=widgets.TextWidget,
+            add_widget=widgets.TextWidget,
+        ),
+        Field(name="owner_id",
+            modes="view edit add",
+            localizable=[
+                hide("view", "bungeni.Anybody"),
+            ],
+            property=schema.Choice(title=_(u"Owner"),
+                source=vocabulary.DatabaseSource(domain.User,
+                    token_field="user_id",
+                    title_field="fullname",
+                    value_field="user_id")
+            ),
+         ),
+        #LanguageField("language"),
+        Field(name="language",
+            modes="view edit add",
+            localizable=[ show("view"), ],
+            property=schema.Choice(title=_(u"Language"),
+                default=get_default_language(),
+                vocabulary="language_vocabulary",
+            ),
+        ),
+        Field(name="body_text",
+            modes="view edit add",
+            localizable=[ show("view"), ],
+            property=schema.Text(title=_(u"Text")),
+            view_widget=widgets.HTMLDisplay,
+            edit_widget=widgets.RichTextEditor,
+            add_widget=widgets.RichTextEditor,
+        ),
         Field(name="event_date",
             modes="view edit add listing",
             property=schema.Datetime(title=_(u"Date")),
@@ -1853,7 +1888,7 @@ class EventItemDescriptor(ParliamentaryItemDescriptor):
             edit_widget=widgets.DateTimeWidget,
             add_widget=widgets.DateTimeWidget,
         ),
-    ])
+    ]
     public_wfstates = [event_wf_state[u"public"].id]
 
 
