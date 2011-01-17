@@ -32,7 +32,7 @@ class FSBlob(TypeDecorator, Binary):
         def process(value):
             if not value:
                 return None
-            return buffer(self.fs.get(value))
+            return buffer(self.fs.get(value) or '')
         return process
 
     def copy(self):
