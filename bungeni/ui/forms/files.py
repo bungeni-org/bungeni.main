@@ -54,7 +54,7 @@ class LibraryViewlet (viewlet.ViewletBase):
 
     def create_view_menu_item(self, context):
         permission_name = 'bungeni.fileattachment.View'
-        if self.interaction.checkPermission(permission_name, context):
+        if self.interaction.checkPermission(permission_name, self.__parent__):
             return {'title': _(u'VIEW'),
                     'url': './files/obj-%i' % context.attached_file_id,
                     'active': True}
@@ -62,15 +62,15 @@ class LibraryViewlet (viewlet.ViewletBase):
 
     def create_edit_menu_item(self, context):
         permission_name = 'bungeni.fileattachment.Edit'
-        if self.interaction.checkPermission(permission_name, context):
+        if self.interaction.checkPermission(permission_name, self.__parent__):
             return {'title': _(u'EDIT'),
                     'url': './files/obj-%i/edit' % context.attached_file_id,
                     'active': True}
         return None
 
     def create_delete_menu_item(self, context):
-        permission_name = 'bungeni.fileattachment.Deactivate'
-        if self.interaction.checkPermission(permission_name, context):
+        permission_name = 'bungeni.fileattachment.Delete'
+        if self.interaction.checkPermission(permission_name, self.__parent__):
             return {'title': _(u'DELETE'),
                     'url': './files/obj-%i/deactivate' % context.attached_file_id,
                     'active': context.status != u'inactive'}
@@ -78,7 +78,7 @@ class LibraryViewlet (viewlet.ViewletBase):
 
     def create_download_menu_item(self, context):
         permission_name = 'bungeni.fileattachment.View'
-        if self.interaction.checkPermission(permission_name, context):
+        if self.interaction.checkPermission(permission_name, self.__parent__):
             return {'title': _(u'DOWNLOAD'),
                     'url': './files/obj-%i/download' % context.attached_file_id,
                     'active': True}
@@ -113,7 +113,7 @@ class VersionLibraryViewlet(LibraryViewlet):
 
     def create_view_menu_item(self, context):
         permission_name = 'bungeni.fileattachment.View'
-        if self.interaction.checkPermission(permission_name, context):
+        if self.interaction.checkPermission(permission_name, self.__parent__):
             return {'title': _(u'VIEW'),
                     'url': '%s/files/obj-%i/versions/obj-%i' % \
                             (self.base_url, context.content_id, context.version_id)}
@@ -129,7 +129,7 @@ class VersionLibraryViewlet(LibraryViewlet):
 
     def create_download_menu_item(self, context):
         permission_name = 'bungeni.fileattachment.View'
-        if self.interaction.checkPermission(permission_name, context):
+        if self.interaction.checkPermission(permission_name, self.__parent__):
             return {'title': _(u'DOWNLOAD'),
                     'url': '%s/files/obj-%i/versions/obj-%i/download' % \
                             (self.base_url, context.content_id, context.version_id)}
