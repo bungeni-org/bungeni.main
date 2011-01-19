@@ -1104,13 +1104,13 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.agendaitem.Schedule"
      />
-    <browser:menuItem menu="scheduling_actions"
+    <!-- browser:menuItem menu="scheduling_actions"
         for="bungeni.models.interfaces.IItemSchedule"
         title="Edit Scheduling"
         action="./edit?next_url=..."
         order="40"
         permission="bungeni.itemschedule.Edit"
-    />
+    /-->
     <browser:menuItem menu="scheduling_actions"
         for="bungeni.models.interfaces.IItemSchedule"
         title="Delete Scheduling"
