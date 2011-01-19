@@ -331,9 +331,6 @@ class ItemScheduleDiscussionDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        time = context.sitting_time
-        if time is not None:
-            return "%s (%s)" % (_(u"Discussion"), context.sitting_time)
         return _(u"Discussion")
 
 
