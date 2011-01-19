@@ -82,11 +82,13 @@
                 <td class="item"
                     tal:define="discussion_action item/discussion_action;
                                 body_text item/discussion/body_text">
-                    <span tal:content="item/type" />:
-                    <a rel="item"
-                     tal:attributes="name item/name;
+                    <span tal:condition="python:item.t!='heading'" tal:content="item/type" />
+                    <tal:block tal:condition="python:item.t!='heading'">:</tal:block>
+                    <a rel="item" tal:attributes="name item/name;
                                      href item/url"
-                     tal:content="item/title" />
+                                  tal:condition="python:item.t!='heading'"
+                                  tal:content="item/title" />
+                     <span tal:condition="python:item.t=='heading'" tal:content="item/title"/>
                      <div style="float:right;" tal:condition="python:item.t!='heading'">
                         <a tabindex="0" style="float:right;" class="showDlg-button" tal:condition="discussion_action" tal:define="id repeat/item/number"
                                 tal:attributes="id string:discussion-link-$id">Minutes</a> </div>

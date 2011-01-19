@@ -46,8 +46,8 @@
 
 		$(this).sortable({
 	    	helper: helperfn,
-	    	update: updatefn
-		});
+	    	axis: 'y'
+		}).bind( "sortupdate",updatefn);
 	}
 	
 	
@@ -398,20 +398,12 @@
                 switch (direction) {
                 case "move-scheduling-up":
                   var next = row.next();
-                  if (row.prev().is('.category') && (next.is('.category') || next.length === 0))
-                  {
-                    row.prev().remove();
-                  }
-                  var element = row.prev('not:(.category)');
+                  var element = row.prev();
                   if (!element) {return false;}
                   element.insertAfter(row);
                   break;
                 case "move-scheduling-down":
-                  if (row.next().is('.category') && row.prev().is('.category'))
-                  {
-                    row.prev('.category').remove();
-                  }
-                  element = row.next('not:(.category)');
+                  element = row.next();
                   if (!element) {return false;}
                   element.insertBefore(row);
                   break;
