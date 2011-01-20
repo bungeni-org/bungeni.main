@@ -575,8 +575,8 @@ class SittingAttendanceSource(SpecializedSource):
                     sql.and_(
                         schema.user_group_memberships.c.group_id == group_id,
                         schema.user_group_memberships.c.active_p == True))
-            attended_ids = sql.select([schema.sitting_attendance.c.member_id],
-                     schema.sitting_attendance.c.group_sitting_id == group_sitting_id)
+            attended_ids = sql.select([schema.group_sitting_attendance.c.member_id],
+                     schema.group_sitting_attendance.c.group_sitting_id == group_sitting_id)
             query = session.query(domain.User).filter(
                 sql.and_(domain.User.user_id.in_(all_member_ids),
                     ~ domain.User.user_id.in_(attended_ids))).order_by(
