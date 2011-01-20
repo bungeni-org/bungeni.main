@@ -366,7 +366,7 @@ def unescape(text):
 class DownloadDocument(BrowserView):
 
     #path to the odt template
-    odt_file = os.path.dirname(__file__) + "/calendar/agenda.odt"
+    odt_file = os.path.dirname(__file__) + "/templates/agenda.odt"
     def __init__(self, context, request):
         self.report = removeSecurityProxy(context)
         super(DownloadDocument, self).__init__(context, request)
@@ -436,8 +436,8 @@ class DownloadODT(DownloadDocument):
             attached_file.language = report.language
             attached_file.type = file_type
             report.attached_files.append(attached_file)
-            notify(ObjectCreatedEvent(attached_file))
             session.add(report)
+            notify(ObjectCreatedEvent(attached_file))
             session.commit()
             return doc
         else:
@@ -483,8 +483,8 @@ class  DownloadPDF(DownloadDocument):
             attached_file.language = report.language
             attached_file.type = file_type
             report.attached_files.append(attached_file)
-            notify(ObjectCreatedEvent(attached_file))
             session.add(report)
+            notify(ObjectCreatedEvent(attached_file))
             session.commit()
             return doc
         else:
@@ -564,6 +564,7 @@ class SaveReportView(form.PageForm):
         report.created_date = datetime.datetime.now()
         report.group_id = self.context.group_id
         session.add(report)
+        session.flush()
         notify(ObjectCreatedEvent(report))
         # !+INVALIDATE(mr, sep-2010)
         container.invalidate_caches_for("Report", "add")
@@ -577,6 +578,7 @@ class SaveReportView(form.PageForm):
                     sr.report = report
                     sr.sitting = sitting
                     session.add(sr)
+                    notify(ObjectCreatedEvent(report))
                     # !+INVALIDATE(mr, sep-2010) via an event...
                     container.invalidate_caches_for("SittingReport", "add")
             except:
@@ -651,12 +653,13 @@ def default_reports(sitting, event):
             drc = DefaultReportContent(sittings, report.short_name, True)
             report.body_text = DefaultReportView(drc, TestRequest())()
         session.add(report)
+        session.flush()
         notify(ObjectCreatedEvent(report))
         sr = domain.SittingReport()
         sr.report = report
         sr.sitting = sitting
         session.add(sr)
-        notify(ObjectCreatedEvent(sr))
         session.commit()
+        notify(ObjectCreatedEvent(sr))
         container.invalidate_caches_for("Report", "add")
         container.invalidate_caches_for("SittingReport", "add")

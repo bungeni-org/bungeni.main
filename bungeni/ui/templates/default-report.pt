@@ -17,12 +17,13 @@
         </h2>
         <!-- Loop thorugh the items in a sitting -->
         <tal:loop tal:repeat="scheduled item/item_schedule">
+                <!-- Headings -->
+                <span tal:condition="python:scheduled.item.type == 'heading'">
+                    <h1 tal:content="scheduled/item/short_name" class="reportheading"/> 
+                </span>
                 <!-- Formatting for motions -->
                 <span tal:condition="python:scheduled.item.type == 'motion'" >
-                    <span>
-                        <h1 tal:condition="scheduled/category  | nothing"
-                            tal:attributes="name scheduled/category_id"
-                            tal:replace="scheduled/category/short_name" class="reportheading"/> 
+                    <span> 
                          <span tal:condition="scheduled/category  | nothing"><hr/></span>
                          <h2 class="reporttitle">
                             <span tal:replace="python:scheduled.item.type.capitalize()" /> <span  tal:replace="scheduled/item/motion_number" />
@@ -59,10 +60,7 @@
                         
                 <!-- Formatting for bills -->       
                 <span tal:condition="python:scheduled.item.type == 'bill'">
-                    <span>
-                        <h1 tal:condition="scheduled/category  | nothing"
-                            tal:attributes="name scheduled/category_id"
-                            tal:content="scheduled/category/short_name" class="reportheading"/> 
+                    <span> 
                         <span tal:condition="scheduled/category  | nothing"><hr/></span>
                         <span>
                             <h2 class="reporttitle"> 
@@ -110,9 +108,6 @@
                                 tal:replace="structure scheduled/discussion/body_text"/>
                 <span tal:condition="python:scheduled.item.type == 'question'">
                     <span>
-                        <h1 tal:condition="scheduled/category  | nothing"
-                            tal:attributes="name scheduled/category_id"
-                            tal:content="scheduled/category/short_name" class="reportheading"/> 
                         <span tal:condition="scheduled/category  | nothing"><hr/></span>
                         <h2 class="reporttitle">
                             <span tal:replace="python:scheduled.item.type.capitalize()" />
@@ -144,9 +139,6 @@
                     
                 <span tal:condition="python:scheduled.item.type == 'agendaitem'">
                     <span>
-                          <h1 tal:condition="scheduled/category  | nothing"
-                              tal:attributes="name scheduled/category_id"
-                              tal:content="scheduled/category/short_name" class="reportheading"/> 
                           <span tal:condition="scheduled/category  | nothing"><hr/></span>
                           <h2 class="reporttitle"> Agenda Item : <span tal:replace="scheduled/item/short_name" /></h2>
                           <span tal:condition="scheduled/item/owner/first_name | nothing">
@@ -169,9 +161,6 @@
                     
                 <span tal:condition="python:scheduled.item.type == 'tableddocument'"> 
                     <span>
-                        <h1 tal:condition="scheduled/category  | nothing"
-                            tal:attributes="name scheduled/category_id"
-                            tal:content="scheduled/category/short_name" class="reportheading"/> 
                         <span tal:condition="scheduled/category  | nothing"><hr/></span>
                         <h2 class="reporttitle"> Tabled Document
                             <span> : 

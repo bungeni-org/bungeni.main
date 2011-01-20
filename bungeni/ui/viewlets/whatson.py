@@ -120,7 +120,6 @@ class WhatsOnBrowserView(BrowserView):
 
     def get_items(self):
         session = Session()
-        print "XXXXXXXXXXXXX", get_states("groupsitting", tagged=["public"], not_tagged=["agendaprivate"], conjunction="AND")
         where_clause = sql.and_(
                 schema.group_sittings.c.status.in_(get_states(
                                     "groupsitting", tagged=["public"], 
