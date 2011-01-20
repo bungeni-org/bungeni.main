@@ -1,3 +1,5 @@
+log = __import__("logging").getLogger("bungeni.core.workflows")
+
 import os
 import events
 import xmlimport
@@ -31,6 +33,12 @@ def load_workflow(module, kls):
     events.register_workflow_transitions(wf, kls)
     module.wf = wf
     module.states = wf.states
+    _log = log.debug
+    _log("WORKFLOW: %s %s" % (name, wf))
+    for state_key, state in wf.states.items():
+        _log("   STATE: %s %s" % (state_key, state))
+        for p in state.permissions:
+            _log("          %s" % (p,))
     return wf
 
 QuestionWorkflowAdapter = workflow.AdaptedWorkflow(

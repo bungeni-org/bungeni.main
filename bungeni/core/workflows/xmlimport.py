@@ -14,6 +14,8 @@ from bungeni.core.workflows.states import StateWorkflow
 
 from ore.workflow import interfaces
 
+ASSIGNMENTS = (GRANT, DENY)
+
 trigger_value_map = {
     'manual': interfaces.MANUAL,
     'automatic': interfaces.AUTOMATIC,
@@ -28,21 +30,48 @@ def load(file_path):
 def _load(workflow):
     transitions = []
     states = []
-    domain = workflow.get('domain')
-
-    for s in workflow.iterchildren('state'):
-        permissions = []
-        for g in s.iterchildren('grant'):
-            permissions.append(
-                (GRANT, g.get('permission'), g.get('role')))
-        for d in s.iterchildren('deny'):
-            permissions.append(
-                (DENY, d.get('permission'), d.get('role')))
-        state_id = s.get('id')
+    domain = workflow.get("domain")
+    
+    def get_like_state(state_id):
+        if state_id is None:
+            return
+        for state in states:
+            if state.id == state_id:
+                return state
+        assert False, 'Invalid value: like_state="%s"' % (state_id)
+        
+    def remove_redefined_permission(like_permissions, permission, role):
+        for p in [(GRANT, permission, role), (DENY, permission, role)]:
+            if p in like_permissions:
+                like_permissions.remove(p)
+    
+    for s in workflow.iterchildren("state"):
+        state_id = s.get("id")
+        assert state_id, "Workflow State must define @id"
+        permissions = [] # tuple(bool:int, permission:str, role:str) 
+        # state.@like_state : to reduce repetition and enhance maintainibility
+        # of workflow XML files, a state may specify a @like_state attribute to 
+        # inherit all permissions defined by the specified like_state; further
+        # permissions specific to this state may be added, but as these may 
+        # also override inherited permissions we streamline those out so that 
+        # downstream execution (a permission should be granted or denied only 
+        # once per transition to a state).
+        like_permissions = []
+        like_state = get_like_state(s.get("like_state"))
+        if like_state:
+            like_permissions.extend(like_state.permissions)
+        # (within same state) a deny is *always* executed after a *grant*
+        for i, assign in enumerate(["grant", "deny"]):
+            for p in s.iterchildren(assign):
+                permission, role = p.get("permission"), p.get("role")
+                remove_redefined_permission(like_permissions, permission, role)
+                permissions.append((ASSIGNMENTS[i], permission, role))
+        # splice any remaining like_permissions at beginning of permissions
+        if like_state:
+            permissions[0:0] = like_permissions
         states.append(
-            State(state_id,
-                  Message(s.get('title', domain)),
-                  permissions))
+            State(state_id, Message(s.get("title", domain)), permissions) 
+        )
 
     for t in workflow.iterchildren('transition'):
 
