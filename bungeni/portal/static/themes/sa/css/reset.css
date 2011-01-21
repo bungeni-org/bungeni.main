@@ -92,6 +92,7 @@
 }
 #top-layer ul#portal-languageselector li {
 	line-height: 22px;
+	display: inline;
 }
 #top-layer ul#portal-languageselector li a {
     color: #e07900;
@@ -211,16 +212,16 @@ div.main-column {
 	width: auto;
 }
 div.main-column h1 {
-    font-size: 200%;
-    font-weight: bold;
-    line-height: 20px;
-    text-transform: uppercase !important;
-	text-align: left;
-    color: #b19659;
-    text-shadow: 0px 0px 1px #fff;
-    display: block;
-    margin: .25em auto 0;
-    padding: 0;
+    color: #C8631B !important;
+display: block;
+font-size: 200%;
+font-weight: bold;
+line-height: 20px;
+margin: 5px auto;
+padding: 0px;
+text-align: center !important;
+text-shadow: white 0px 0px 1px;
+width: 95% !important;
 }
 .template-workspace div.main-column h1 {
 	width: 95%;
@@ -265,6 +266,10 @@ div.main-column h2 {
     display: block;
     margin: .25em auto;
     padding: 0;
+}
+
+div.main-column h2 a {
+	text-align:left !important;
 }
 .template-workspace div.main-column h2 {
 	width: 95%;
@@ -437,6 +442,13 @@ div.main-column p {
 	padding: 0 !important;
 }
 
+.section-bungeni-admin #portal-column-content .documentContent {
+    float: left;
+    width: 80%;
+    padding: 0 !important;
+	margin-left: 5px;
+   
+}
 
 input.inputLabelActive {
     color: transparent;
@@ -995,6 +1007,19 @@ div#portal-globalnav ul.level0 li a {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 }
+
+.template-portal div#portal-globalnav ul.level0 li#portaltab-business-whats-on a  {
+    color:#FFFFFF;
+}
+
+.section-bungeni-business div#portal-globalnav ul.level0 li#portaltab-business-whats-on a {
+    color:gold;
+ }
+
+.template-workspace div#portal-globalnav ul.level0 li.selected a {
+    color:#000000 !important;
+}
+
 .template-portal div#portal-globalnav ul.level0 li a {
     float: left;
     display: block;
@@ -1772,12 +1797,15 @@ span.yui-button.yui-link-button span a {
     margin: 0;
     text-align: center;
     background: #fff url(../images/sidefade.gif) bottom repeat-x;
+	background-attachment:fixed !important;
+	font-size:10px !important;
     /* 
     * Sticky Footer.
     * more information: http://www.cssstickyfooter.com/
     * these are requried to make the footer stick to the 
     * bottom of the page
     */
+	
     height: 100%;
 }
 .template-workspace.section-bungeni-archive a,
@@ -1989,4 +2017,222 @@ h4.tabberHeading {
 .zc-table-batching-pager-prev:hover {
 
     text-decoration:underline;
+}
+
+/*
+ * cynin customizations
+ */
+.addnewbuttonholder {
+	margin-left: 1em;
+}
+#portal-titlebar {
+	background:#fff !important;
+	border-bottom: 1px solid #ccc;
+}
+
+#col1_content {
+	width:225px;
+	background: #E5E5E5;
+	border-right: 1px solid #afafaf;
+}
+
+#col1_content #sidenavigationlogoholder {
+	border: 0 none;
+	border-radius: 0;
+	-moz-border-radius: 0;
+	border-bottom: 1px solid #ccc;
+	background: transparent;
+	height: 35px;
+	min-height: 35px;
+	width: 220px;
+	margin:0 .5em .5em;
+}
+.portletWrapper, #comcynapsecyninmyareablock {
+	margin-bottom: 0;
+}
+#col1_content .verticalnavigationholder {
+	border-top: 1px solid #ccc !important;
+	margin: 0;
+	width: 220px;
+	padding-top: 0;
+}
+#col1_content dd.portletItem {
+	border: 0 none;
+}
+#col1_content #portal-languageselector select {
+	font-size: 90%;
+	padding: .1em;
+	border: 1px solid #ccc;
+}
+div.navTreeCurrentNode, .portletNavigationTree div.navTreeCurrentNode.hover, .navTreeHome.navTreeCurrentNode, .navTreeHome.navTreeCurrentNode.hover {
+	border: 1px solid #fff;
+}
+#main {
+	margin-top: 0;
+}
+#col3 {
+	margin-left: 230px !important;
+	border:0 none;
+	background: transparent;
+}
+#col3_content {
+	width: 100% !important;
+}
+.template-login_form #portal-columns {
+    margin-bottom: -15em;
+}
+
+/*
+ * frontpage
+ */
+
+.section-bungeni-\@\@index #portal-column-one {
+    display: none;
+}
+
+div.main-column #collage h2 {
+    display: block;
+    text-align: justify;
+    text-shadow: 0px 0px 1px #fff;
+    line-height: 20px;
+    font-size: 120%;
+    padding: 0;
+    font-weight: bold !important;
+    color: #C8631B !important;
+    margin: 0em 0 .5em;
+}
+
+#collage .three-columns-equal .block_1 ul li.2ndlevel{
+    margin-left: 12em;
+}
+
+#collage .three-columns-equal .block_1{
+    width:15% !important;
+    margin-left: 0em;
+    margin-right: 0.5em;  
+}
+
+#collage .three-columns-equal .block_2 {
+    width:50% !important;
+	
+    
+}
+
+#collage .three-columns-equal .block_3 {
+    width:30% !important;
+	float: right;
+}
+
+#collage .three-columns-equal .block_1 ul {
+    list-style-type:none; 
+}
+
+#collage .three-columns-equal .block_1 ul {
+#    list-style-image:none;  
+#    list-style-type:square;
+}
+
+#collage .three-columns-equal .block_1 ul li {
+    margin-bottom: 1px;
+}
+
+#collage .three-columns-equal .block_1 ul li.navigation,
+#collage .three-columns-equal .block_1 ul li.plain{
+    margin-left: 1em;
+    list-style-image:none;  
+    list-style-type:none;
+}
+
+#collage .three-columns-equal .block_1 ul li a{
+    border-bottom: 0px;
+    text-align: left;  
+}
+
+#collage .three-columns-equal .block_1 ul li a:visited {
+    color:#436976;
+}
+
+#collage .tileImage {
+    border:1px solid black;
+    float:right;
+    margin:2em 0 0.5em 0.5em;
+}
+
+.template-newsitem_view div#portal-globalnav ul.level0 ul.level1 li{
+    display: none;
+}
+
+#collage > h1:first-child {
+    display: none;
+}
+
+.section-bungeni-\@\@index #content div{
+    margin:0;
+}
+
+.section-bungeni-\@\@index #portal-columns {
+    margin-top: -2.5em;
+}
+
+#collage .documentActions {
+    display: none;
+}
+
+.template-document_view #content h1.documentFirstHeading {
+    font-size:160% !important;
+}
+
+.template-document_view #content p.documentDescription {
+    font-size:115% !important;
+}
+
+.template-document_view #content h2 {
+    font-size: 125% !important;
+    font-weight: bold !important;  
+}
+
+.template-document_view #content h3,
+#bodyContent h3{
+   font-size:125% !important;
+   font-weight:bold !important;
+}
+
+#document-toc legend,
+#document-toc .portletItem li {
+   font-size:110% !important;
+}
+
+#document-toc .portletItem {
+    border-left: 1px solid #8CACBB;
+    border-right: 1px solid #8CACBB;
+    border-bottom: 0px solid #8CACBB;
+    margin:0;
+    padding:1em;
+}
+
+#tabber-block .tabberlive .tabbertab {
+    padding:0 0 0 1em;
+}
+
+.hide{
+    display: none;
+}
+
+.section-bungeni-\@\@index #content h1.documentFirstHeading {
+    font-size:140% !important;
+}
+
+#portal-languageselector li.selected a {
+    background:#FFFD6E none repeat scroll 0 0;
+    border:1px solid #CCCCCC;
+    padding-left:4px;
+    text-decoration:none;
+}
+
+.template-login_form .level0 {
+	display: none !important;
+}
+
+.summary a {
+	text-align:left !important;
 }

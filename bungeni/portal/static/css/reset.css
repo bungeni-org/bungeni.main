@@ -76,6 +76,7 @@ b, strong {
 }
 .template-workspace #top-layer ul#portal-languageselector {
     margin: 0 1.5em 0 0;
+    height: 20px;
 }
 #top-layer ul#portal-languageselector li {
     line-height: 20px;
@@ -201,8 +202,10 @@ div.main-column h1 {
     color: #C8631B !important;
     text-shadow: 0 0 1px #fff;
     display: block;
-    margin: 1em 0 .5em;
+    margin: 5px auto;
     padding: 0;
+	width: 95% !important;
+	text-align:center;
 }
 .template-workspace.section-bungeni-admin div.main-column h1,
 .template-workspace.section-bungeni-workspace div.main-column h1 {
@@ -277,6 +280,7 @@ div.main-column h3 {
  * portal-columns-* styles
  */
 .template-workspace #portal-columns {
+	
     padding: 0 .5em;
 }
 #portal-column-two .visualPadding {
@@ -308,6 +312,8 @@ div.main-column h3 {
 #portal-column-content h1.title {
     font-size: 135%;
     line-height: 30px;
+	width: 95%;
+	margin: 5px auto;
 }
 
 .section-bungeni-\@\@index .newsImage {
@@ -417,9 +423,15 @@ div.main-column h3 {
     float: left;
     width: 99%;
     padding: 0 !important;
-    margin-top: 2em !important;
+   
 }
 
+.section-bungeni-admin #portal-column-content .documentContent {
+    float: left;
+    width: 85%;
+    padding: 0 !important;
+   
+}
 #portal-searchbox input.searchButton {
     height: 17px;
 }
