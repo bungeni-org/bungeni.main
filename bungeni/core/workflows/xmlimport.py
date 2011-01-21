@@ -17,10 +17,19 @@ from ore.workflow import interfaces
 ASSIGNMENTS = (GRANT, DENY)
 
 trigger_value_map = {
-    'manual': interfaces.MANUAL,
-    'automatic': interfaces.AUTOMATIC,
-    'system': interfaces.SYSTEM}
+    "manual": interfaces.MANUAL,
+    "automatic": interfaces.AUTOMATIC,
+    "system": interfaces.SYSTEM
+}
 
+
+''' !+NOT_WORKING... see: zope.secuirity.permission
+from zope.app.security.interfaces import IPermission
+from zope.app import zapi
+def assertRegisteredPermission(permission_id):
+    assert zapi.queryUtility(IPermission, unicode(permission_id)), \
+        'Permission "%s" has not been registered.' % (permission_id)
+'''
 
 def load(file_path):
     doc = etree.fromstring(open(file_path).read())
@@ -40,10 +49,14 @@ def _load(workflow):
                 return state
         assert False, 'Invalid value: like_state="%s"' % (state_id)
         
-    def remove_redefined_permission(like_permissions, permission, role):
-        for p in [(GRANT, permission, role), (DENY, permission, role)]:
-            if p in like_permissions:
-                like_permissions.remove(p)
+    def check_add_permission(permissions, like_permissions, assignment, p, r):
+        for perm in [(GRANT, p, r), (DENY, p, r)]:
+            assert perm not in permissions, "Workflow [%s] state [%s] " \
+                "conflicting state permission: (%s, %s, %s)" % (
+                    workflow.get("id"), state_id, assignment, p, r)
+            if perm in like_permissions:
+                like_permissions.remove(perm)
+        permissions.append((assignment, p, r))
     
     for s in workflow.iterchildren("state"):
         state_id = s.get("id")
@@ -64,8 +77,9 @@ def _load(workflow):
         for i, assign in enumerate(["grant", "deny"]):
             for p in s.iterchildren(assign):
                 permission, role = p.get("permission"), p.get("role")
-                remove_redefined_permission(like_permissions, permission, role)
-                permissions.append((ASSIGNMENTS[i], permission, role))
+                #+!assertRegisteredPermission(permission)
+                check_add_permission(permissions, like_permissions, 
+                    ASSIGNMENTS[i], permission, role)
         # splice any remaining like_permissions at beginning of permissions
         if like_state:
             permissions[0:0] = like_permissions
