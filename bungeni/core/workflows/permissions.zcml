@@ -2,6 +2,7 @@
 <configure xmlns="http://namespaces.zope.org/zope"
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni.core">
+    
   <!-- Question Workflow permissions -->
   <!-- Permissions that are not related to workflow transitions (add, edit, delete,...) 
     are to be defined in bungeni.core.roles/permissions -->
@@ -20,14 +21,20 @@
   <permission id="bungeni.response.Complete" title="Complete a Response" />
   <permission id="bungeni.response.RevertTransitions" 
         title="Revert a question response transition back to an earlier stage" />
-  <!-- Motion Workflow permissions -->
-  <permission id="bungeni.motion.Submit" title="Submit a motion" />
-  <permission id="bungeni.motion.Receive" title="Receive a motion" />
-  <permission id="bungeni.motion.clerk.Review" title="Review a motion" />
-  <permission id="bungeni.motion.speaker.Review"  title="Speaker review a motion" />
-  <permission id="bungeni.motion.Schedule" title="Schedule a motion" />
-  <permission id="bungeni.motion.Debate" title="Mark a motion as debated" />
-  <permission id="bungeni.motion.Withdraw" title="Withdraw a motion" />
+    
+    <!-- Motion Workflow permissions -->
+    <permission id="bungeni.motion.wf.submit" title="Submit a motion" />
+    <grant permission="bungeni.motion.wf.submit" role="bungeni.Owner"/>
+    
+    <permission id="bungeni.motion.wf.receive" title="Receive a motion" />
+    <grant permission="bungeni.motion.wf.receive" role="bungeni.Clerk"/>
+
+    <permission id="bungeni.motion.clerk.Review" title="Review a motion" />
+    <permission id="bungeni.motion.speaker.Review"  title="Speaker review a motion" />
+    <permission id="bungeni.motion.Schedule" title="Schedule a motion" />
+    <permission id="bungeni.motion.Debate" title="Mark a motion as debated" />
+    <permission id="bungeni.motion.Withdraw" title="Withdraw a motion" />
+    
   <!-- Bill Workflow permissions -->
   <permission id="bungeni.bill.Submit" title="Submit a bill" />
   <permission id="bungeni.bill.Schedule" title="Schedule a bill" />

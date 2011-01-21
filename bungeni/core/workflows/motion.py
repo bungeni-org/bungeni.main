@@ -32,7 +32,7 @@ class actions:
     #    rpm.denyPermissionToRole( 'bungeni.motion.delete', u'bungeni.MP' )
 
     @staticmethod
-    def create( info, context ):
+    def create(info, context):
         utils.setParliamentId(info, context)
         utils.setBungeniOwner(context)
     
@@ -44,11 +44,11 @@ class actions:
 
 
     @staticmethod
-    def received_by_clerk( info, context ):
+    def receive(info, context):
         utils.createVersion(info, context)
 
     @staticmethod
-    def require_edit_by_mp( info, context ):
+    def require_edit_by_mp(info, context):
         utils.createVersion(info,context)
 
 

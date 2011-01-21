@@ -138,7 +138,7 @@ this way do not create the expected auditlog.
 
 "Received by clerk". A new version is created.
 
-  >>> actions.received_by_clerk(info, motion)
+  >>> actions.receive(info, motion)
 
   >>> from bungeni.core.interfaces import IVersioned
   >>> versions = IVersioned(motion)
