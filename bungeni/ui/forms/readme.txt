@@ -226,6 +226,7 @@ titles
     >>> mt1.title_name_id = mrt1.user_role_type_id
     >>> mt1.start_date = today
     >>> mt1.title_name_id = mrt1.user_role_type_id
+    >>> mt1.language = "en"
     >>> session.add(mt1)
     >>> session.flush()
 
@@ -248,6 +249,7 @@ Some titles must be unique inside a group
     >>> mt2.membership_id = mp1.membership_id
     >>> mt2.title_name_id = mrt2.user_role_type_id
     >>> mt2.start_date = today
+    >>> mt2.language = "en"
     >>> session.add(mt2)
     >>> session.flush()
    

@@ -21,16 +21,13 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 from zope import schema
 from bungeni.ui.widgets import SelectDateWidget
 from bungeni.ui.calendar import utils
-from bungeni.ui.tagged import get_states
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import misc, url, queries, debug
-from bungeni.ui.menu import get_actions
 from bungeni.ui.forms.common import set_widget_errors
 from bungeni.ui import vocabulary
 from bungeni.core.location import location_wrapped
 from bungeni.core.interfaces import ISchedulingContext
 import zope.securitypolicy.interfaces
-from bungeni.core.odf import OpenDocument
 from zope.schema.vocabulary import SimpleVocabulary
 from zope.app.form.browser import MultiCheckBoxWidget as _MultiCheckBoxWidget
 from sqlalchemy.orm import eagerload
@@ -46,6 +43,7 @@ from bungeni.ui import container
 from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent
 from bungeni.core.translation import get_default_language
+import tidy
 class TIME_SPAN:
     daily = _(u"Daily")
     weekly = _(u"Weekly")
@@ -270,11 +268,8 @@ class ReportView(form.PageForm):
                         eagerload("item_schedule.discussion"))
             items = query.all()
             for item in items:
-                if self.display_minutes:
-                    item.item_schedule.sort(key=operator.attrgetter("real_order"))
-                else:
-                    item.item_schedule.sort(key=operator.attrgetter("planned_order"))
-                    #item.sitting_type.sitting_type = item.sitting_type.sitting_type.capitalize()
+                item.item_schedule.sort(key=operator.attrgetter("planned_order"))
+                #item.sitting_type.sitting_type = item.sitting_type.sitting_type.capitalize()
             return items
 
     def process_form(self, data):
@@ -372,11 +367,7 @@ class DownloadDocument(BrowserView):
         super(DownloadDocument, self).__init__(context, request)
 
     def cleanupText(self):
-        """This function generates an ODT document from the text of a report"""
-        #This should really be at the top of this file.
-        #Leaving it here for the time being so that having 
-        #libtidy is not a requirement to run bungeni
-        import tidy
+        """This method cleans up the text of the report using libtidy"""
         body_text = self.report.body_text
         #utidylib options
         options = dict(output_xhtml=1,
@@ -401,22 +392,19 @@ class DownloadDocument(BrowserView):
 class DownloadODT(DownloadDocument):
     #appy.Renderer expects a file name of a file that does not exist.
     tempFileName = os.path.dirname(__file__) + "/tmp/%f.odt" % (time.time())
+    error_template = ViewPageTemplateFile("templates/report_error.pt")
     def __call__(self):
-        self.request.response.setHeader("Content-type",
-                                        "application/vnd.oasis.opendocument.text")
-        self.request.response.setHeader("Content-disposition",
-                                        'inline;filename="' +
-                                        removeSecurityProxy(self.report.short_name) 
-                                        + "_" + removeSecurityProxy(self.report.start_date) \
-                                        .strftime("%Y-%m-%d") + '.odt"')
+        
         session = Session()
-        report = session.query(domain.Report).get(self.report.report_id)
-        d = dict([(f.file_title, f.file_data) for f in report.attached_files])
+        d = dict([(f.file_title, f.file_data) for f in self.report.attached_files])
         if "odt" not in d.keys():
             params = {}
             params["body_text"] = self.cleanupText()
             renderer = Renderer(self.odt_file, params, self.tempFileName)
-            renderer.run()
+            try:
+                renderer.run()
+            except:
+                return self.error_template()
             f = open(self.tempFileName, "rb")
             doc = f.read()
             f.close()
@@ -427,44 +415,56 @@ class DownloadODT(DownloadDocument):
                                             == "annex") \
                                .first()
             if file_type is None:
-                file_type = domain.AttachedFileType
+                file_type = domain.AttachedFileType()
                 file_type.attached_file_type_name = "annex"
-                file_type.language = report.language
+                file_type.language = self.report.language
+                session.add(file_type)
+                session.flush()
             attached_file = domain.AttachedFile()
             attached_file.file_title = "odt"
             attached_file.file_data = doc
-            attached_file.language = report.language
+            attached_file.language = self.report.language
             attached_file.type = file_type
-            report.attached_files.append(attached_file)
-            session.add(report)
-            notify(ObjectCreatedEvent(attached_file))
+            self.report.attached_files.append(attached_file)
+            session.add(self.report)
             session.commit()
+            notify(ObjectCreatedEvent(attached_file))
+            self.request.response.setHeader("Content-type",
+                                        "application/vnd.oasis.opendocument.text")
+            self.request.response.setHeader("Content-disposition",
+                                        'inline;filename="' +
+                                        removeSecurityProxy(self.report.short_name) 
+                                        + "_" + removeSecurityProxy(self.report.start_date) \
+                                        .strftime("%Y-%m-%d") + '.odt"')
             return doc
         else:
+            self.request.response.setHeader("Content-type",
+                                        "application/vnd.oasis.opendocument.text")
+            self.request.response.setHeader("Content-disposition",
+                                        'inline;filename="' +
+                                        removeSecurityProxy(self.report.short_name) 
+                                        + "_" + removeSecurityProxy(self.report.start_date) \
+                                        .strftime("%Y-%m-%d") + '.odt"')
             return d["odt"].__str__()
 
 
 class  DownloadPDF(DownloadDocument):
     #appy.Renderer expects a file name of a file that does not exist.
     tempFileName = os.path.dirname(__file__) + "/tmp/%f.pdf" % (time.time())
-
+    error_template = ViewPageTemplateFile("templates/report_error.pt")
     def __call__(self):
-        self.request.response.setHeader("Content-type", "application/pdf")
-        self.request.response.setHeader("Content-disposition", 'inline;filename="'
-                            + removeSecurityProxy(self.report.short_name) + "_"
-                            + removeSecurityProxy(self.report.start_date).strftime("%Y-%m-%d") + '.pdf"')
-        
-        
         session = Session()
-        report = session.query(domain.Report).get(self.report.report_id)
-        d = dict([(f.file_title, f.file_data) for f in report.attached_files])
+        d = dict([(f.file_title, f.file_data) for f in self.report.attached_files])
         if "pdf" not in d.keys():
             params = {}
             params["body_text"] = self.cleanupText()
             openofficepath = getUtility(IOpenOfficeConfig).getPath()
             renderer = Renderer(self.odt_file, params, self.tempFileName, 
                                             pythonWithUnoPath=openofficepath)
-            renderer.run()
+            try:
+                renderer.run()
+            except:
+                return self.error_template()
             f = open(self.tempFileName, "rb")
             doc = f.read()
             f.close()
@@ -474,20 +474,30 @@ class  DownloadPDF(DownloadDocument):
                                             == "annex")\
                                .first()
             if file_type is None:
-                file_type = domain.AttachedFileType
+                file_type = domain.AttachedFileType()
                 file_type.attached_file_type_name = "annex"
-                file_type.language = report.language
+                file_type.language = self.report.language
+                session.add(file_type)
+                session.flush()
             attached_file = domain.AttachedFile()
             attached_file.file_title = "pdf"
             attached_file.file_data = doc
-            attached_file.language = report.language
+            attached_file.language = self.report.language
             attached_file.type = file_type
-            report.attached_files.append(attached_file)
-            session.add(report)
-            notify(ObjectCreatedEvent(attached_file))
+            self.report.attached_files.append(attached_file)
+            session.add(self.report)
             session.commit()
+            notify(ObjectCreatedEvent(attached_file))
+            self.request.response.setHeader("Content-type", "application/pdf")
+            self.request.response.setHeader("Content-disposition", 'inline;filename="'
+                            + removeSecurityProxy(self.report.short_name) + "_"
+                            + removeSecurityProxy(self.report.start_date).strftime("%Y-%m-%d") + '.pdf"')
             return doc
         else:
+            self.request.response.setHeader("Content-type", "application/pdf")
+            self.request.response.setHeader("Content-disposition", 'inline;filename="'
+                            + removeSecurityProxy(self.report.short_name) + "_"
+                            + removeSecurityProxy(self.report.start_date).strftime("%Y-%m-%d") + '.pdf"')
             return d["pdf"].__str__()
 
 class SaveReportView(form.PageForm):
@@ -547,7 +557,7 @@ class SaveReportView(form.PageForm):
         report.start_date = data["start_date"]
         report.end_date = data["end_date"]
         report.note = data["note"]
-        report.short_name = report.short_name = data["short_name"]
+        report.short_name = data["short_name"]
         owner_id = get_db_user_id()
         '''!+TODO(Miano, 18/08/2010) The admin user is currently not a db user
             thus the line above returns None when the admin publishes a report.
@@ -559,8 +569,7 @@ class SaveReportView(form.PageForm):
             query = session.query(domain.User)
             results = query.all()
             report.owner_id = results[0].user_id
-        # TODO get language from config
-        report.language = "en"
+        report.language = get_default_language()
         report.created_date = datetime.datetime.now()
         report.group_id = self.context.group_id
         session.add(report)

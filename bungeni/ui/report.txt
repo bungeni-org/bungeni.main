@@ -1,0 +1,68 @@
+Setup
+-----
+Setting up Database Connection and Utilities:
+
+   >>> from bungeni import models as model
+   >>> import datetime
+   >>> import bungeni.models.testing
+   >>> db = bungeni.models.testing.setup_db()
+   >>> from bungeni.alchemist import Session
+   >>> session = Session()
+
+Initialise User
+---------------
+   >>> mp_1 = model.User(u"mp_1", 
+   ...        first_name=u"a", 
+   ...        last_name=u'ab', 
+   ...        email=u"mp1@example.com", 
+   ...        date_of_birth=datetime.datetime.now(),
+   ...        language="en",
+   ...        gender='M')
+
+Initialise Group
+----------------
+
+  >>> parliament = model.Parliament(short_name=u"p_1",
+  ...                               start_date=datetime.datetime.now(), 
+  ...                               election_date=datetime.datetime.now())
+  >>> parliament.language = "en"
+  >>> session.add( parliament )
+  >>> session.flush()
+
+Initialise a report
+-------------------
+   >>> from bungeni.models import domain
+   >>> report = domain.Report()
+   >>> report.body_text = '<div class=reporttitle>THIS IS A TEST</div>'
+   >>> report.start_date = datetime.datetime.now()
+   >>> report.end_date = datetime.datetime.now()
+   >>> report.note = "This is a test"
+   >>> report.short_name = "Sitting Agenda"
+   >>> report.owner = mp_1
+   >>> report.language = "en"
+   >>> report.created_date = datetime.datetime.now()
+   >>> report.group = parliament
+   >>> session.add(report)
+   >>> session.flush()
+   
+Generate ODT
+------------
+   >>> from bungeni.ui.reports import DownloadODT
+   >>> from zope.publisher.browser import TestRequest
+   >>> downloadODT = DownloadODT(report, TestRequest())
+   >>> print len(downloadODT())
+   67701
+
+Generate PDF
+------------
+   >>> from bungeni.ui.reports import DownloadPDF
+   >>> from zope.publisher.browser import TestRequest
+   >>> downloadPDF = DownloadPDF(report, TestRequest())
+   >>> print len(downloadPDF())
+   135228
+
+Cleanup
+--------
+   >>> session.flush()
+   >>> session.close()
+

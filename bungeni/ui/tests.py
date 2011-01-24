@@ -18,11 +18,12 @@ import forms.test_dates
 
 zcml_slug = """
 <configure xmlns="http://namespaces.zope.org/zope"
-           xmlns:db="http://namespaces.objectrealms.net/rdb">
+           xmlns:db="http://namespaces.objectrealms.net/rdb"
+           xmlns:bungeni="http://namespaces.bungeni.org/zope">
 
   <include package="bungeni.alchemist" file="meta.zcml"/>
   <include package="alchemist.catalyst" file="meta.zcml"/>
-
+  
   <!-- Setup Database Connection -->
   <db:engine
      name="bungeni-db"
@@ -39,7 +40,9 @@ zcml_slug = """
 
   <!-- Setup Core Model --> 
   <include package="bungeni.ui" file="catalyst.zcml"/>
- 
+  <include file="../../openoffice.zcml" />
+  <include package="bungeni.core" file="meta.zcml"/>
+  <bungeni:fs fs_path="fs"/>
 </configure>
 """
 
@@ -53,10 +56,11 @@ def tearDown( test ):
     metadata.drop_all( checkfirst=True )
 
 def test_suite():
-    doctests = ('forms/readme.txt',)
+    doctests = ('forms/readme.txt',
+                'report.txt',
+                )
 
-    docfiles = ("bungeni.ui.calendar.utils",
-                "bungeni.ui.forms.forms")
+    docfiles = ("bungeni.ui.forms.forms",)
     
     globs = dict(
         interface=interface,
