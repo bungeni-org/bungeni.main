@@ -460,10 +460,16 @@ class JSLCache(object):
         self.invalidating_class_names = invalidating_class_names
         # dynamically build the incoming (request querystring) filter 
         # parameter names lists from the domain class descriptor
-        self.filter_params = [
-            "filter_%s" % (field_name)
-            for field_name in self.descriptor.listing_columns
-        ]
+        
+        #!+CACHE_INVALIDATION(miano, jan-2010) model.queryModelDescriptor above 
+        # returns None during unittests when it obviously shouldn't, causing 
+        # them to fail.
+        # Added the check below to ensure that self.descriptor is not None.
+        if self.descriptor is not None:
+            self.filter_params = [
+                "filter_%s" % (field_name)
+                for field_name in self.descriptor.listing_columns
+            ]
     
     def clear(self):
         # !+ self.cache.clear()
@@ -498,10 +504,6 @@ JSLCaches = {
         JSLCache(99, mfaces.IAgendaItem, ["AgendaItem"]),
     "preports": 
         JSLCache(49, mfaces.IReport, ["Report"]),
-    "sreports": 
-        # !+NAMING(mr, sep-2010) models.interfaces - no IReport4Sitting class
-        # !+NAMING(mr, sep-2010) descriptor name: Report4SittingDescriptor
-        JSLCache(49, mfaces.IReport4Sitting, ["SittingReport"]),
     "attendance": 
         # !+NAMING(mr, sep-2010) descriptor name: AttendanceDescriptor
         JSLCache(99, mfaces.IGroupSittingAttendance, ["GroupSittingAttendance"]),
