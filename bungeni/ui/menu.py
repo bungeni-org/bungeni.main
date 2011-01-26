@@ -28,6 +28,7 @@ from bungeni.ui.i18n import  _
 from bungeni.ui.utils import url, debug
 from bungeni.ui import interfaces
 from bungeni.ui.tagged import get_states
+from bungeni.ui import interfaces
 # r5327 - following added inorder to fix issue 319. needs review
 
 ''' !+ add mechanism for a better overview/control of menu order
@@ -255,11 +256,8 @@ class WorkflowSubMenuItem(BrowserSubMenuItem):
 class WorkflowMenu(BrowserMenu):
     def getMenuItems(self, context, request):
         """Return menu item entries in a TAL-friendly form."""
-        if interfaces.IBusinessWhatsOnSectionLayer.providedBy(request):
+        if not interfaces.IWorkspaceOrAdminSectionLayer.providedBy(request):
             return ()
-        else:
-            if IBungeniApplication.providedBy(context.__parent__):
-                return ()
         wf = IWorkflow(context, None)
         if wf is None:
             return ()

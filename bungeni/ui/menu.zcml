@@ -1239,7 +1239,6 @@
         action="context_actions"
         order="1"
         permission="zope.View"
-        layer=".interfaces.IBungeniAuthenticatedSkin"
         submenu="context_actions"
     /><!-- NOTE: action value on a subMenuItem becomes the id of the HTML
            element for the sub-menu --> 
