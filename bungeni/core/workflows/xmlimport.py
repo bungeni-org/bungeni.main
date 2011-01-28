@@ -92,13 +92,8 @@ def _load(workflow):
         for key in ('source', 'destination', 'id', 'title'):
             if t.get(key) is None:
                 raise SyntaxError("%s not in %s"%(key, etree.tostring(t)))
-
-        # XXX: There must be a better way to do this:
-        source = t.get('source')
-        while '  ' in source:
-            source = source.replace('  ', ' ')
-        sources = [s or None for s in source.split(' ')]
-
+        
+        sources = t.get("source").split() or [None]
         for source in sources:
             if len(sources) > 1:
                 tid = "%s-%s" % (t.get('id'), source)
