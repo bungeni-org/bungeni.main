@@ -95,6 +95,8 @@ class AlchemistWhoPlugin(object):
         groups = None
         if user is not None:
             groups = tuple( self.getGroups(userid))
+            if user.is_admin:
+                groups = groups + ('zope.manager',)
             identity.update({
                 'email': user.email,
                 'title': u"%s, %s" % (user.last_name, user.first_name),
