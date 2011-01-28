@@ -1240,7 +1240,18 @@
         order="1"
         permission="zope.View"
         submenu="context_actions"
-    /><!-- NOTE: action value on a subMenuItem becomes the id of the HTML
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+    />
+    <browser:subMenuItem menu="plone_contentmenu"
+        for="bungeni.models.domain.Report"
+        title="Actions..."
+        action="context_actions"
+        order="1"
+        permission="zope.View"
+        submenu="context_actions"
+    />
+    
+    <!-- NOTE: action value on a subMenuItem becomes the id of the HTML
            element for the sub-menu --> 
     
     <!-- CONTEXT ACTIONS -->
