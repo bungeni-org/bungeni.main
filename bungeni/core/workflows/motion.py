@@ -48,7 +48,7 @@ class actions:
         utils.createVersion(info, context)
 
     @staticmethod
-    def require_edit_by_mp(info, context):
+    def require_clarification(info, context):
         utils.createVersion(info,context)
 
 
@@ -66,12 +66,14 @@ class actions:
     @staticmethod
     def adopt(info, context):
         utils.createVersion(info,context)
+    adopt_amendments = adopt
+    
     @staticmethod
     def reject(info, context):
         pass
 
     @staticmethod
-    def require_amendment( info, context ):
+    def require_recomplete(info, context):
         utils.createVersion(info,context)
 
 
@@ -81,33 +83,35 @@ class actions:
 
 
     @staticmethod
-    def mp_clarify( info, context ):
+    def require_recomplete_clarification(info, context):
         utils.createVersion(info,context)
-
+    
 
     @staticmethod
-    def schedule( info, context ):
+    def schedule(info, context):
         pass
     
     @staticmethod
-    def reschedule( info, context ):
+    def reschedule(info, context):
+        pass
+    
+    @staticmethod
+    def defer(info, context):
         pass
 
     @staticmethod
-    def defer( info, context):
+    def elapse(info, context):
         pass
 
     @staticmethod
-    def elapse( info, context ):
+    def revert_to_admissible(info, context):
         pass
 
     @staticmethod
-    def revert_to_admissible( info, context ):
+    def withdraw(info, context):
         pass
-
-    @staticmethod
-    def withdraw( info, context ):
-        pass
+    withdraw_public = withdraw
+    
 
 class SendNotificationToMemberUponReceipt(Notification):
     component.adapts(interfaces.IMotionReceivedEvent)

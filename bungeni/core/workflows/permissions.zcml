@@ -22,18 +22,81 @@
   <permission id="bungeni.response.RevertTransitions" 
         title="Revert a question response transition back to an earlier stage" />
     
-    <!-- Motion Workflow permissions -->
-    <permission id="bungeni.motion.wf.submit" title="Submit a motion" />
-    <grant permission="bungeni.motion.wf.submit" role="bungeni.Owner"/>
     
-    <permission id="bungeni.motion.wf.receive" title="Receive a motion" />
-    <grant permission="bungeni.motion.wf.receive" role="bungeni.Clerk"/>
+    <!-- Motion Workflow permissions -->
+    
+    <permission id="bungeni.motion.wf.submit" title="Submit a motion" />
+    <grant permission="bungeni.motion.wf.submit" role="bungeni.Owner" />
+    
+    <permission id="bungeni.motion.wf.resubmit" title="Re-submit a motion" />
+    <grant permission="bungeni.motion.wf.resubmit" role="bungeni.Owner" />
 
-    <permission id="bungeni.motion.clerk.Review" title="Review a motion" />
-    <permission id="bungeni.motion.speaker.Review"  title="Speaker review a motion" />
-    <permission id="bungeni.motion.Schedule" title="Schedule a motion" />
-    <permission id="bungeni.motion.Debate" title="Mark a motion as debated" />
-    <permission id="bungeni.motion.Withdraw" title="Withdraw a motion" />
+    <permission id="bungeni.motion.wf.receive" title="Receive a motion" />
+    <grant permission="bungeni.motion.wf.receive" role="bungeni.Clerk" />
+    
+    <permission id="bungeni.motion.wf.require_clarification" 
+        title="Require clarification of a motion" />
+    <grant permission="bungeni.motion.wf.require_clarification" 
+        role="bungeni.Clerk" />
+    
+    <permission id="bungeni.motion.wf.complete" 
+        title="Submit to Speaker Office" />
+    <grant permission="bungeni.motion.wf.complete" role="bungeni.Clerk" />
+    
+    <permission id="bungeni.motion.wf.approve" 
+        title="Submit to Speaker Office" />
+    <grant permission="bungeni.motion.wf.approve" role="bungeni.Speaker" />
+    
+    <permission id="bungeni.motion.wf.allow_schedule" 
+        title="Make a motion available for scheduling" />
+    <grant permission="bungeni.motion.wf.allow_schedule" 
+        role="bungeni.Speaker" />
+    
+    <permission id="bungeni.motion.wf.reject" title="Reject a scheduled motion" />
+    <grant permission="bungeni.motion.wf.reject" role="bungeni.Speaker" />
+    
+    <permission id="bungeni.motion.wf.require_recomplete" 
+        title="Require clarification for motion to be complete" />
+    <grant permission="bungeni.motion.wf.require_recomplete" 
+        role="bungeni.Speaker" />
+    
+    <permission id="bungeni.motion.wf.defer" title="Defer a motion" />
+    <grant permission="bungeni.motion.wf.defer" role="bungeni.Speaker" />
+    
+    <permission id="bungeni.motion.wf.elapse" title="Elapse a motion" />
+    <grant permission="bungeni.motion.wf.elapse" role="bungeni.Speaker" />
+    
+    <permission id="bungeni.motion.wf.schedule" title="Schedule a motion" />
+    <grant permission="bungeni.motion.wf.schedule" role="bungeni.Clerk" />
+    
+    <permission id="bungeni.motion.wf.reschedule" title="Reschedule a motion" />
+    <grant permission="bungeni.motion.wf.reschedule" role="bungeni.Clerk" />
+    
+    <permission id="bungeni.motion.wf.revert_to_admissible" 
+        title="Revert to admissable" />
+    <grant permission="bungeni.motion.wf.revert_to_admissible"
+        role="bungeni.Speaker" />
+    
+    <permission id="bungeni.motion.wf.drop" title="Drop a motion" />
+    <grant permission="bungeni.motion.wf.drop" role="bungeni.Clerk" />
+    
+    <permission id="bungeni.motion.wf.adjourn" title="Adjourn motion debate" />
+    <grant permission="bungeni.motion.wf.adjourn" role="bungeni.Clerk" />
+    
+    <permission id="bungeni.motion.wf.withdraw" title="Withdraw a motion" />
+    <grant permission="bungeni.motion.wf.withdraw" role="bungeni.Owner" />
+    <grant permission="bungeni.motion.wf.withdraw" role="bungeni.Clerk" />
+    
+    <permission id="bungeni.motion.wf.withdraw_public" title="Withdraw a motion" />
+    <grant permission="bungeni.motion.wf.withdraw_public" role="bungeni.Owner" />
+    <grant permission="bungeni.motion.wf.withdraw_public" role="bungeni.Clerk" />
+    
+    <permission id="bungeni.motion.wf.adopt" title="Adopt a motion" />
+    <grant permission="bungeni.motion.wf.adopt" role="bungeni.Clerk" />
+
+    <permission id="bungeni.motion.wf.adopt_amendments" title="Adopt with amendments" />
+    <grant permission="bungeni.motion.wf.adopt_amendments" role="bungeni.Clerk" />
+    
     
   <!-- Bill Workflow permissions -->
   <permission id="bungeni.bill.Submit" title="Submit a bill" />

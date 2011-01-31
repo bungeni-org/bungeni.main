@@ -20,15 +20,6 @@
   <grant permission="bungeni.response.Complete" role="bungeni.Clerk"/>
     <grant permission="bungeni.response.RevertTransitions" role="bungeni.Clerk" />
 
-  <!--TODO motion workflow permissions -->    
-  <grant permission="bungeni.motion.clerk.Review" role="bungeni.Clerk"/>
-  <grant permission="bungeni.motion.speaker.Review"  role="bungeni.Speaker"/>
-  <grant permission="bungeni.motion.Schedule" role="bungeni.Clerk"/>
-  <grant permission="bungeni.motion.Debate" role="bungeni.Clerk"/>
-  <grant permission="bungeni.motion.Debate" role="bungeni.Speaker"/>
-    <grant permission="bungeni.motion.Withdraw" role="bungeni.Owner"/>
-    <grant permission="bungeni.motion.Withdraw" role="bungeni.Clerk"/>
-  
   <!-- Agenda Items -->
   <grant permission="bungeni.agendaitem.Submit" role="bungeni.Owner"/>
   <grant permission="bungeni.agendaitem.Receive" role="bungeni.Clerk"/>

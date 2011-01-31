@@ -147,8 +147,8 @@
                 party_id"
         />
 
-        <!-- +!MOTIONAPPROVE(ah, jan-2011) was bungeni.historical.Edit we use instead the permission used in the transition -->
-        <require permission="bungeni.motion.speaker.Review"
+        <!-- +!MOTIONAPPROVE(ah, jan-2011) was bungeni.historical.Edit we use instead the permission used in the "approve" transition -->
+        <require permission="bungeni.motion.wf.approve"
             set_attributes="motion_number"
         />
 

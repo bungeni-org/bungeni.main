@@ -147,7 +147,7 @@ this way do not create the expected auditlog.
 
 "Require edit by MP".
 
-  >>> actions.require_edit_by_mp(info, motion)
+  >>> actions.require_clarification(info, motion)
   >>> len(versions)
   3
 
@@ -169,13 +169,13 @@ this way do not create the expected auditlog.
 
 "Require amendment".
 
-  >>> actions.require_amendment(info, motion)
+  >>> actions.require_recomplete(info, motion)
   >>> len(versions)
   6
 
 "MP clarify".
 
-  >>> actions.mp_clarify(info, motion)
+  >>> actions.require_recomplete_clarification(info, motion)
   >>> len(versions)
   7
 

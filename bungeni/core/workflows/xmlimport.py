@@ -37,6 +37,8 @@ def load(file_path):
 
 
 def _load(workflow):
+    """ (workflow:etree_doc) -> StateWorkflow
+    """
     transitions = []
     states = []
     domain = workflow.get("domain")
@@ -48,7 +50,7 @@ def _load(workflow):
             if state.id == state_id:
                 return state
         assert False, 'Invalid value: like_state="%s"' % (state_id)
-        
+    
     def check_add_permission(permissions, like_permissions, assignment, p, r):
         for perm in [(GRANT, p, r), (DENY, p, r)]:
             assert perm not in permissions, "Workflow [%s] state [%s] " \
@@ -86,47 +88,47 @@ def _load(workflow):
         states.append(
             State(state_id, Message(s.get("title", domain)), permissions) 
         )
-
-    for t in workflow.iterchildren('transition'):
-
-        for key in ('source', 'destination', 'id', 'title'):
+    
+    for t in workflow.iterchildren("transition"):
+    
+        for key in ("source", "destination", "id", "title"):
             if t.get(key) is None:
                 raise SyntaxError("%s not in %s"%(key, etree.tostring(t)))
-        
+        # source="" (empty string implies the None source
         sources = t.get("source").split() or [None]
         for source in sources:
             if len(sources) > 1:
-                tid = "%s-%s" % (t.get('id'), source)
+                tid = "%s-%s" % (t.get("id"), source)
             else:
-                tid = t.get('id')
-            args = (tid, Message(t.get('title'), domain),
-                    source, t.get('destination'))
+                tid = t.get("id")
+            args = (tid, Message(t.get("title"), domain),
+                    source, t.get("destination"))
             kw = {}
-
+            
             # optionals
-            for i in ('trigger', 'order', 'permission'):
+            for i in ("trigger", "order", "permission"):
                 val = t.get(i)
                 if not val:
                     continue
                 kw[i] = val
-
-            require_confirmation = getattr(t, 'require_confirmation', '')
-            if require_confirmation.lower() == 'true':
-                kw['require_confirmation'] = True
-
-            if 'trigger' in kw:
-                k = kw['trigger']
+            
+            require_confirmation = getattr(t, "require_confirmation", "")
+            if require_confirmation.lower() == "true":
+                kw["require_confirmation"] = True
+            
+            if "trigger" in kw:
+                k = kw["trigger"]
                 v = trigger_value_map[k]
-                kw['trigger'] = v
-
+                kw["trigger"] = v
+            
             # optional python resolvables
-            for i in('condition', 'action', 'event'):
+            for i in("condition", "action", "event"):
                 val = t.get(i)
                 if not val:
                     continue
                 # raises importerror/nameerror
-                val = resolve(val, 'bungeni.core.workflows')
+                val = resolve(val, "bungeni.core.workflows")
                 kw[i] = val
             transitions.append(StateTransition(*args, **kw))
-
+    
     return StateWorkflow(transitions, states)
