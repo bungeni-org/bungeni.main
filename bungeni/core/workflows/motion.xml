@@ -138,7 +138,7 @@
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
     </state>
     
-    <state id="submitted" title="Submitted" like_state="draft">
+    <state id="submitted" like_state="draft" title="Submitted">
         <!-- motion -->
         <grant permission="zope.View" role="bungeni.Clerk" />
         <grant permission="zope.View" role="bungeni.Speaker" />
@@ -229,8 +229,7 @@
     <state id="elapsed" like_state="admissible" title="Elapsed" />
     
     <!--a motion was debated and the debate adjourned  -->
-    <state id="debate_adjourned" like_state="admissible" 
-        title="Debate adjourned" />
+    <state id="adjourned" like_state="admissible" title="Debate adjourned" />
     
     <state id="withdrawn_public" like_state="admissible" 
         title="Withdrawn" />
@@ -328,7 +327,7 @@
     
     <transition id="allow_schedule"
         title="Make available for scheduling" 
-        source="admissible deferred debate_adjourned"
+        source="admissible deferred adjourned"
         destination="schedule_pending"
         action=""
         trigger="manual"
@@ -457,7 +456,7 @@
     <transition id="adjourn"
         title="Adjourn debate"
         source="scheduled"
-        destination="debate_adjourned"
+        destination="adjourned"
         condition=""
         trigger="manual"
         permission="bungeni.motion.wf.adjourn" 
@@ -483,7 +482,7 @@
         source="admissible
                 scheduled
                 deferred
-                debate_adjourned
+                adjourned
                 schedule_pending"
         destination="withdrawn_public"
         condition=""

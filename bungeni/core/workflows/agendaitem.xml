@@ -101,7 +101,7 @@
     <!-- admissible agenda_item that cannot be debated -->
     <state id="deferred" title="Deferred">
     </state>
-    <!--defered agenda_item that were not debated -->
+    <!-- defered agenda_item that were not debated -->
     <state id="elapsed" title="Elapsed">
         <deny permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
@@ -110,13 +110,13 @@
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
     </state>
-    <!--a agenda_item was debated  -->
+    <!-- an agenda_item was debated -->
     <state id="debated" title="Debated">
         <deny permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
     </state>
-    <!--a agenda_item was debated and the debate adjourned  -->
-    <state id="debate_adjourned" title="Debate adjourned">
+    <!-- an agenda_item was debated and the debate was adjourned -->
+    <state id="adjourned" title="Debate adjourned">
     </state>
     <state id="dropped" title="Dropped">
         <deny permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
@@ -283,7 +283,7 @@
     <transition id="schedule"
          title="Schedule"
          trigger="system"
-         source="schedule_pending debate_adjourned"
+         source="schedule_pending adjourned"
          destination="scheduled"
          permission="bungeni.agendaitem.Schedule"
          action="bungeni.core.workflows.agendaitem.actions.schedule"
@@ -301,7 +301,7 @@
     <transition id="defer"
          title="Defer"
          trigger="manual"
-         source="admissible schedule_pending debate_adjourned"
+         source="admissible schedule_pending adjourned"
          destination="deferred"
          permission="bungeni.agendaitem.Schedule"
          action="bungeni.core.workflows.agendaitem.actions.defer"
@@ -345,7 +345,7 @@
          title="Debate adjourned"
          trigger="manual"
          source="scheduled"
-         destination="debate_adjourned"
+         destination="adjourned"
          permission="bungeni.agendaitem.Schedule"
          condition=""
          event=""
@@ -364,7 +364,7 @@
          title="Withdraw"
          trigger="manual"
          source="admissible scheduled deferred 
-                    debate_adjourned schedule_pending"
+                    adjourned schedule_pending"
          destination="withdrawn_public"
          permission="bungeni.agendaitem.Withdraw"
          action="bungeni.core.workflows.agendaitem.actions.withdraw"

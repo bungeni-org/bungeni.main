@@ -107,7 +107,7 @@
         <grant permission="bungeni.response.Add" role="bungeni.Clerk" />
         <grant permission="bungeni.response.View" role="bungeni.Clerk" />
     </state>
-    <state id="debate_adjourned" title="Debate adjourned">
+    <state id="adjourned" title="Debate adjourned">
     </state>
     <state id="response_pending" title="Pending response">
         <deny permission="bungeni.question.Edit" role="bungeni.Speaker" />
@@ -347,7 +347,7 @@
     <transition id="allow_schedule"
         title="Make available for scheduling"
         trigger="manual"
-        source="admissible deferred debate_adjourned"
+        source="admissible deferred adjourned"
         destination="schedule_pending"
         permission="bungeni.question.Schedule"
         action=""
@@ -445,7 +445,7 @@
     <transition id="defer"
         title="Defer"
         trigger="manual"
-        source="admissible schedule_pending debate_adjourned"
+        source="admissible schedule_pending adjourned"
         destination="deferred"
         permission="bungeni.question.Schedule"
         action="bungeni.core.workflows.question.actions.defer"
@@ -486,7 +486,7 @@
         title="Debate adjourned"
         trigger="manual"
         source="scheduled"
-        destination="debate_adjourned"
+        destination="adjourned"
         permission="bungeni.question.Schedule"
         condition=""
         event=""
@@ -525,7 +525,7 @@
         title="Withdraw"
         trigger="manual"
         source="admissible schedule_pending scheduled deferred
-             debate_adjourned schedule_pending"
+             adjourned schedule_pending"
         destination="withdrawn_public"
         permission="bungeni.question.Withdraw"
         action="bungeni.core.workflows.question.actions.withdraw"
