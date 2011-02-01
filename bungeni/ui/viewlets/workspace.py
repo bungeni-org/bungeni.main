@@ -444,10 +444,10 @@ class ItemsCompleteViewlet(AllItemsInStageViewlet):
     view_id = "items-action-required"
     view_title = _("to review")
     states = \
-        get_states("agendaitem", keys=["complete"]) + \
-        get_states("motion", keys=["complete"]) + \
-        get_states("question", keys=["complete"]) + \
-        get_states("tableddocument", keys=["complete"])
+        get_states("agendaitem", keys=["completed"]) + \
+        get_states("motion", keys=["completed"]) + \
+        get_states("question", keys=["completed"]) + \
+        get_states("tableddocument", keys=["completed"])
 
 class ItemsApprovedViewlet(AllItemsInStageViewlet):
     view_id = "items-approved"

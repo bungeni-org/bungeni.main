@@ -81,7 +81,7 @@ not at all do not create the expected auditlog.
   >>> question3 = add_content(
   ...     domain.Question,
   ...     #approval_date=yesterday,
-  ...     status=u"complete",
+  ...     status=u"completed",
   ...     language="en",
   ...     owner_id=mp_1.user_id,
   ...     short_name="question 3")
@@ -93,7 +93,7 @@ Get the questions that are in the workflow state:
   0
   
   >>> len(cron._getQuestionsApprovedBefore(
-  ...     today, "complete")) #!+FIRETRANSITION(mr, dec-2010) should be 1
+  ...     today, "completed")) #!+FIRETRANSITION(mr, dec-2010) should be 1
   0
     
 Defer admissible question older than today.
@@ -116,7 +116,7 @@ Defer admissible question older than today.
   0
   
   >>> len(cron._getQuestionsApprovedBefore(
-  ...     today, "complete")) #!+FIRETRANSITION(mr, dec-2010) should be 1
+  ...     today, "completed")) #!+FIRETRANSITION(mr, dec-2010) should be 1
   0
 
   >>> len(cron._getQuestionsApprovedBefore(

@@ -241,7 +241,7 @@
      weight="10"
      />
 -->
-    <browser:viewlet name="bungeni.workspace.items-complete"
+    <browser:viewlet name="bungeni.workspace.items-completed"
         for="*"
         manager=".interfaces.IWorkspaceManager"
         class=".workspace.ItemsCompleteViewlet"

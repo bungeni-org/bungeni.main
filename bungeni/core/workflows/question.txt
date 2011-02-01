@@ -305,7 +305,7 @@ Exception raised:
   >>> actions.complete(info, question)
   >>> #info.fireTransition("complete-%s" % question.status)
   >>> #question.status
-  #'complete'
+  #'completed'
   >>> len(versions)
   4
 
@@ -447,7 +447,7 @@ Send notification to Clerk's office upon submit.
   To: clerks.office@parliament.go.tld ...
   Subject: Question submitted: My subject ...
 
-the question is marked as “complete” and is made available / forwarded
+the question is marked as “completed” and is made available / forwarded
 to the Speaker's Office for reviewing and to make it “admissible”.
 
   >>> notification.SendNotificationToMemberUponComplete(ObjectEvent(question))

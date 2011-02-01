@@ -53,7 +53,7 @@
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
     </state>
-    <state id="complete" title="Submitted to the Speaker">
+    <state id="completed" title="Submitted to the Speaker">
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Speaker" /> 
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
@@ -199,7 +199,7 @@
          title="Submit to the Speaker Office"
          trigger="manual"
          source="received"
-         destination="complete"
+         destination="completed"
          permission="bungeni.agendaitem.clerk.Review"
          action="bungeni.core.workflows.agendaitem.actions.complete"
          condition=""
@@ -207,7 +207,7 @@
     <transition id="approve"
          title="Approve"
          trigger="manual"
-         source="complete"
+         source="completed"
          destination="admissible"
          permission="bungeni.agendaitem.speaker.Review"
          action="bungeni.core.workflows.agendaitem.actions.approve"
@@ -216,7 +216,7 @@
     <transition id="reject"
          title="Reject"
          trigger="manual"
-         source="complete"
+         source="completed"
          destination="inadmissible"
          permission="bungeni.agendaitem.speaker.Review"
          action="bungeni.core.workflows.agendaitem.actions.reject"
@@ -227,7 +227,7 @@
     <transition id="require_amendment"
          title="Needs Clarification"
          trigger="manual"
-         source="complete"
+         source="completed"
          destination="clarify_clerk"
          permission="bungeni.agendaitem.speaker.Review"
          action="bungeni.core.workflows.agendaitem.actions.require_amendment"
@@ -238,7 +238,7 @@
          title="Complete"
          trigger="manual"
          source="clarify_clerk"
-         destination="complete"
+         destination="completed"
          permission="bungeni.agendaitem.clerk.Review"
          action=""
          condition=""
@@ -353,7 +353,7 @@
     <transition id="withdraw"
          title="Withdraw"
          trigger="manual"
-         source="submitted received complete clarification_required"
+         source="submitted received completed clarification_required"
          destination="withdrawn"
          permission="bungeni.agendaitem.Withdraw"
          action="bungeni.core.workflows.agendaitem.actions.withdraw"

@@ -62,7 +62,7 @@
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
     </state>
-    <state id="complete" title="Submitted to the Speaker">
+    <state id="completed" title="Submitted to the Speaker">
         <deny permission="bungeni.question.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.question.Edit" role="bungeni.Speaker" />
         <grant permission="zope.View" role="bungeni.Speaker" />
@@ -128,7 +128,7 @@
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Clerk" /> 
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
     </state>
-    <state id="response_complete" title="Response completed">
+    <state id="response_completed" title="Response completed">
         <grant permission="zope.View" role="bungeni.Everybody" />
         <grant permission="zope.View" role="bungeni.Anybody" />
         <grant permission="bungeni.response.View" role="bungeni.Everybody" />
@@ -243,7 +243,7 @@
     <!--
     After the Clerk's Office is through with the Notices reviews and there 
     are satisfied that the Questions have all the formal requirements – the 
-    question is marked as “complete” and is made available / forwarded to the 
+    question is marked as “completed” and is made available / forwarded to the 
     Speaker's Office for reviewing and to make it “admissible”. At the same 
     time the question is also forwarded to the ministry. While the ministry 
     can preview the question the ministry cannot respond until the state of the
@@ -254,11 +254,11 @@
         title="Submit to the Speaker Office"
         trigger="manual"
         source="received"
-        destination="complete"
+        destination="completed"
         permission="bungeni.question.clerk.Review"
         action="bungeni.core.workflows.question.actions.complete"
         condition=""
-        event=".interfaces.IQuestionCompleteEvent"
+        event=".interfaces.IQuestionCompletedEvent"
         order="4"
     />
     <!--
@@ -273,7 +273,7 @@
     <transition id="approve"
         title="Approve"
         trigger="manual"
-        source="complete"
+        source="completed"
         destination="admissible"
         permission="bungeni.question.speaker.Review"
         action="bungeni.core.workflows.question.actions.approve"
@@ -284,7 +284,7 @@
     <transition id="reject"
         title="Reject"
         trigger="manual"
-        source="complete"
+        source="completed"
         destination="inadmissible"
         permission="bungeni.question.speaker.Review"
         action="bungeni.core.workflows.question.actions.reject"
@@ -296,7 +296,7 @@
     <transition id="require_amendment"
         title="Needs Clarification"
         trigger="manual"
-        source="complete"
+        source="completed"
         destination="clarify_clerk"
         permission="bungeni.question.speaker.Review"
         action="bungeni.core.workflows.question.actions.require_amendment"
@@ -313,7 +313,7 @@
         title="Complete"
         trigger="manual"
         source="clarify_clerk"
-        destination="complete"
+        destination="completed"
         permission="bungeni.question.clerk.Review"
         action="bungeni.core.workflows.question.actions.complete_clarify"
         condition=""
@@ -420,7 +420,7 @@
         title="Complete Response"
         trigger="manual"
         source="response_submitted"
-        destination="response_complete"
+        destination="response_completed"
         permission="bungeni.response.Complete" 
         event="bungeni.core.workflows.interfaces.IResponseCompletedEvent"
         order="17"
@@ -512,7 +512,7 @@
     <transition id="withdraw"
         title="Withdraw"
         trigger="manual"
-        source="submitted received complete clarification_required"
+        source="submitted received completed clarification_required"
         destination="withdrawn"
         permission="bungeni.question.Withdraw"
         action="bungeni.core.workflows.question.actions.withdraw"

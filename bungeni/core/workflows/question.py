@@ -123,11 +123,11 @@ class actions(object):
     
     @staticmethod
     def complete(info, context):
-        """A question is marked as complete by the clerks office, 
+        """A question is marked as completed by the clerks office, 
         it is available to the speakers office for review.
         """
         utils.createVersion(info, context,
-            message="New version on workflow transition to: complete")
+            message="New version on workflow transition to: completed")
     
     @staticmethod
     def schedule(info, context):
@@ -323,11 +323,11 @@ class SendNotificationToMemberUponPostponed(Notification):
 '''
 
 class SendNotificationToMemberUponComplete(Notification):
-    """The question is marked as “complete” and is made available /
+    """The question is marked as “completed” and is made available /
     forwarded to the Speaker's Office for reviewing and to make it
     “admissible”."""
     
-    component.adapts(interfaces.IQuestionCompleteEvent)
+    component.adapts(interfaces.IQuestionCompletedEvent)
 
     body = _('notification_email_to_member_upon_complete_of_question',
              default="Question completed for review at the speakers office")
@@ -348,7 +348,7 @@ class SendNotificationToMinistryUponComplete(Notification):
     """At the same time the question is also forwarded to the
     ministry."""
 
-    component.adapts(interfaces.IQuestionCompleteEvent)
+    component.adapts(interfaces.IQuestionCompletedEvent)
     
     body = _('notification_email_to_ministry_upon_complete_question',
              default=u"Question assigned to ministry")

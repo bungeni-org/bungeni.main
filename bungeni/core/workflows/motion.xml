@@ -176,7 +176,7 @@
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
     </state>
     
-    <state id="complete" like_state="submitted"
+    <state id="completed" like_state="submitted"
         title="Submitted to the Speaker">
         <!-- motion -->
         <grant permission="bungeni.motion.Edit" role="bungeni.Speaker" />
@@ -305,7 +305,7 @@
     <transition id="complete" 
         title="Submit to the Speaker Office"
         source="received" 
-        destination="complete" 
+        destination="completed" 
         condition=""
         action="bungeni.core.workflows.motion.actions.complete"
         trigger="manual"
@@ -314,7 +314,7 @@
     
     <transition id="approve"
         title="Approve" 
-        source="complete"
+        source="completed"
         destination="admissible" 
         condition=""
         action="bungeni.core.workflows.motion.actions.approve" 
@@ -334,7 +334,7 @@
     
     <transition id="reject" 
         title="Reject"
-        source="complete"
+        source="completed"
         destination="inadmissible"
         condition=""
         action="bungeni.core.workflows.motion.actions.reject"
@@ -346,7 +346,7 @@
     
     <transition id="require_recomplete"
         title="Needs Clarification to Complete"
-        source="complete" 
+        source="completed" 
         destination="clarify_clerk" 
         condition=""
         action="bungeni.core.workflows.motion.actions.require_recomplete" 
@@ -358,7 +358,7 @@
     <transition id="recomplete"
         title="Re-complete"
         source="clarify_clerk"
-        destination="complete"
+        destination="completed"
         condition=""
         action="" 
         trigger="manual"
@@ -464,7 +464,7 @@
         title="Withdraw" 
         source="submitted
                 received
-                complete
+                completed
                 clarification_required"
         destination="withdrawn" 
         condition=""

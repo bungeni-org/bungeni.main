@@ -12,7 +12,7 @@ class IQuestionSubmittedEvent(IWorkflowTransitionEvent):
 class IQuestionReceivedEvent(IWorkflowTransitionEvent):
     """Issued when a question was received by Clerk's office."""
 
-class IQuestionCompleteEvent(IWorkflowTransitionEvent):
+class IQuestionCompletedEvent(IWorkflowTransitionEvent):
     """Issued when a question was reviewed by Clerk's office."""
 
 class IQuestionRejectedEvent(IWorkflowTransitionEvent):

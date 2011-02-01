@@ -47,7 +47,7 @@ class actions:
     @staticmethod
     def complete(info, context):
         utils.createVersion(info, context,
-            message="New version on workflow transition to: complete")
+            message="New version on workflow transition to: completed")
     
     @staticmethod
     def approve(info, context):

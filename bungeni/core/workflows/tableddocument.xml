@@ -56,7 +56,7 @@
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
         <grant permission="zope.View" role="bungeni.Speaker" />
     </state>
-    <state id="complete" title="Submitted to the Speaker">
+    <state id="completed" title="Submitted to the Speaker">
         <deny permission="bungeni.tableddocument.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.tableddocument.Edit" role="bungeni.Speaker" />
         <grant permission="zope.View" role="bungeni.Speaker" />
@@ -175,7 +175,7 @@
         title="Submit to the Speaker Office"
         trigger="manual"
         source="received"
-        destination="complete"
+        destination="completed"
         permission="bungeni.tableddocument.clerk.Review"
         action="bungeni.core.workflows.tableddocument.actions.complete"
         condition=""
@@ -183,7 +183,7 @@
     <transition id="approve"
         title="Approve"
         trigger="manual"
-        source="complete"
+        source="completed"
         destination="admissible"
         permission="bungeni.tableddocument.speaker.Review"
         action="bungeni.core.workflows.tableddocument.actions.approve"
@@ -203,7 +203,7 @@
     <transition id="reject"
         title="Reject"
         trigger="manual"
-        source="complete scheduled"
+        source="completed scheduled"
         destination="inadmissible"
         permission="bungeni.tableddocument.speaker.Review"
         action="bungeni.core.workflows.tableddocument.actions.reject"
@@ -214,7 +214,7 @@
     <transition id="require_amendment"
         title="Needs Clarification"
         trigger="manual"
-        source="complete"
+        source="completed"
         destination="clarify_clerk"
         permission="bungeni.tableddocument.speaker.Review"
         action="bungeni.core.workflows.tableddocument.actions.require_amendment"
@@ -225,7 +225,7 @@
         title="Complete"
         trigger="manual"
         source="clarify_clerk"
-        destination="complete"
+        destination="completed"
         permission="bungeni.tableddocument.clerk.Review"
         action=""
         condition=""
@@ -304,7 +304,7 @@
         trigger="manual"
         source="submitted
                 received
-                complete
+                completed
                 clarification_required
                 admissible
                 scheduled
