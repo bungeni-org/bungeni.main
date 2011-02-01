@@ -46,6 +46,9 @@
     <permission id="bungeni.motion.wf.approve" 
         title="Submit to Speaker Office" />
     <grant permission="bungeni.motion.wf.approve" role="bungeni.Speaker" />
+
+    <permission id="bungeni.motion.wf.disapprove" title="Reject a completed motion" />
+    <grant permission="bungeni.motion.wf.disapprove" role="bungeni.Speaker" />
     
     <permission id="bungeni.motion.wf.allow_schedule" 
         title="Make a motion available for scheduling" />
@@ -107,8 +110,25 @@
   <permission id="bungeni.bill.RevertTransitions" title="Revert a transition back to an earlier stage" />
   <!-- Group Workflow Permissions -->
   <permission id="bungeni.group.Manage" title="Manage Bungeni groups" />
-  <!-- Address Workflow Permissions -->
-  <permission id="bungeni.address.Manage" title="Manage User Adresses" />
+    
+    
+    <!-- Address Workflow Permissions -->
+    
+    <permission id="bungeni.address.wf.publish_internal" 
+        title="Publish an address internally" />
+    <grant permission="bungeni.address.wf.publish_internal" role="bungeni.Clerk" />
+    <grant permission="bungeni.address.wf.publish_internal" role="bungeni.Owner" />
+    
+    <permission id="bungeni.address.wf.publish" title="Publish an address" />
+    <grant permission="bungeni.address.wf.publish" role="bungeni.Clerk" />
+    <grant permission="bungeni.address.wf.publish" role="bungeni.Owner" />
+    
+    <permission id="bungeni.address.wf.make_private" 
+        title="Make an address private" />
+    <grant permission="bungeni.address.wf.make_private" role="bungeni.Clerk" />
+    <grant permission="bungeni.address.wf.make_private" role="bungeni.Owner" />
+    
+    
   <!-- agendaitem Workflow permissions -->
   <permission id="bungeni.agendaitem.Submit" title="Submit an agenda item" />
   <permission id="bungeni.agendaitem.Receive" title="Receive an agenda item" />

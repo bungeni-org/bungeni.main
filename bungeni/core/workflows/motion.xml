@@ -36,21 +36,6 @@
     
     - the root element id should not contain "-" (use "_" as separator).
     
-    Transitions
-    
-    - the order of attributes should respect:
-        id 
-        title
-        source
-        destination
-        condition=NullCondition
-        action=NullAction
-        trigger=MANUAL
-        permission=CheckerPublic
-        order=0
-        event=None
-        require_confirmation=False
-    
     NOTE: to easily see the the evaluated result of all permission assigments 
     for each workflow state definition (that uses like_state) set the 
     logging level to DEBUG.
@@ -237,7 +222,9 @@
     
     <!--
     
-    transitions: order of attributes:
+    Transitions
+    
+    - the order of attributes should respect:
         id 
         title
         source
@@ -252,7 +239,7 @@
     
     !+ACTION remove this out of the XML, function of transition
     -->
-    
+R    
     <transition id="create"
         title="Create Motion"
         source=""
@@ -294,7 +281,7 @@
     />
     
     <transition id="require_clarification"
-        title="Needs Clarification"
+        title="Needs Clarification to Complete"
         source="received" 
         destination="clarification_required"
         condition=""
@@ -335,20 +322,20 @@
         event="bungeni.core.workflows.interfaces.IMotionPendingEvent"
     />
     
-    <transition id="reject" 
-        title="Reject"
+    <transition id="disapprove" 
+        title="Disapprove"
         source="completed"
         destination="inadmissible"
         condition=""
-        action="bungeni.core.workflows.motion.actions.reject"
+        action="bungeni.core.workflows.motion.actions.disapprove"
         trigger="manual"
-        permission="bungeni.motion.wf.reject"
+        permission="bungeni.motion.wf.disapprove"
         event="bungeni.core.workflows.interfaces.IMotionRejectedEvent"
         require_confirmation="true"
     />
     
     <transition id="require_recomplete"
-        title="Needs Clarification to Complete"
+        title="Needs Clarification to Approve"
         source="completed" 
         destination="incomplete" 
         condition=""
@@ -369,7 +356,7 @@
     />
     
     <transition id="require_recomplete_clarification" 
-        title="Needs Clarification"
+        title="Needs Clarification to Complete"
         source="incomplete"
         destination="clarification_required"
         condition=""

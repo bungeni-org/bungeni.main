@@ -62,7 +62,7 @@ class actions:
         utils.createVersion(info, context,
             message="New Version on approval by speakers office")
         dbutils.setMotionSerialNumber(context)
-
+    
     @staticmethod
     def adopt(info, context):
         utils.createVersion(info,context)
@@ -71,7 +71,8 @@ class actions:
     @staticmethod
     def reject(info, context):
         pass
-
+    disapprove = reject
+    
     @staticmethod
     def require_recomplete(info, context):
         utils.createVersion(info,context)

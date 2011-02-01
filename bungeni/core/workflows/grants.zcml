@@ -56,10 +56,6 @@
   <grant permission="bungeni.group.Manage" role="bungeni.Clerk" />
   <grant permission="bungeni.group.Manage" role="bungeni.Speaker" />
   
-    <!-- User addresses -->
-    <grant permission="bungeni.address.Manage" role="bungeni.Clerk" />
-    <grant permission="bungeni.address.Manage" role="bungeni.Owner" />
-        
   <grant permission="bungeni.sitting.ChangeStatus" role="bungeni.Clerk"/>
   <grant permission="bungeni.sitting.ChangeStatus" role="bungeni.Speaker"/>
   
