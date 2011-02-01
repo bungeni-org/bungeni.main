@@ -91,7 +91,7 @@
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
     </state>
-    <state id="clarify_clerk" title="Needs clerks clarification">
+    <state id="incomplete" title="Needs clerks clarification">
         <deny permission="bungeni.question.Edit" role="bungeni.Speaker" />
         <grant permission="bungeni.question.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
@@ -223,7 +223,7 @@
     a notification to the MP to access the question and review it according 
     to Speaker/Clerk's office remarks. 
 
-    Or send to the mp for clarification from clarify_clerk state.
+    Or send to the mp for clarification from incomplete state.
     
     A new version of the question will be created, once the question is 
     modified and saved.
@@ -231,7 +231,7 @@
     <transition id="to_clarify_mp"
         title="Needs Clarification by MP"
         trigger="manual"
-        source="received clarify_clerk"
+        source="received incomplete"
         destination="clarification_required"
         permission="bungeni.question.clerk.Review"
         action="bungeni.core.workflows.question.actions.mp_clarify"
@@ -297,7 +297,7 @@
         title="Needs Clarification"
         trigger="manual"
         source="completed"
-        destination="clarify_clerk"
+        destination="incomplete"
         permission="bungeni.question.speaker.Review"
         action="bungeni.core.workflows.question.actions.require_amendment"
         condition=""
@@ -312,7 +312,7 @@
     <transition id="complete_clarify"
         title="Complete"
         trigger="manual"
-        source="clarify_clerk"
+        source="incomplete"
         destination="completed"
         permission="bungeni.question.clerk.Review"
         action="bungeni.core.workflows.question.actions.complete_clarify"

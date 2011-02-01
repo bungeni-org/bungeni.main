@@ -75,7 +75,7 @@
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" /> 
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
     </state>
-    <state id="clarify_clerk" title="Needs Clarification by Clerks Office">
+    <state id="incomplete" title="Needs Clarification by Clerks Office">
         <deny permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
@@ -228,7 +228,7 @@
          title="Needs Clarification"
          trigger="manual"
          source="completed"
-         destination="clarify_clerk"
+         destination="incomplete"
          permission="bungeni.agendaitem.speaker.Review"
          action="bungeni.core.workflows.agendaitem.actions.require_amendment"
          condition=""
@@ -237,7 +237,7 @@
     <transition id="complete_clarify"
          title="Complete"
          trigger="manual"
-         source="clarify_clerk"
+         source="incomplete"
          destination="completed"
          permission="bungeni.agendaitem.clerk.Review"
          action=""
@@ -246,7 +246,7 @@
     <transition id="mp_clarify"
          title="Needs Clarification by MP"
          trigger="manual"
-         source="clarify_clerk"
+         source="incomplete"
          destination="clarification_required"
          permission="bungeni.agendaitem.clerk.Review"
          action="bungeni.core.workflows.agendaitem.actions.mp_clarify"

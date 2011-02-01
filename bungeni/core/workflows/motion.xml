@@ -176,6 +176,10 @@
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
     </state>
     
+    <!-- Here the "concept" is that the PI is *formally admissible* and so 
+    ready to be considered by the "speaker's office" for the rules/political 
+    admissibility. 
+    -->
     <state id="completed" like_state="submitted"
         title="Submitted to the Speaker">
         <!-- motion -->
@@ -188,7 +192,7 @@
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
     </state>
     
-    <state id="clarify_clerk" like_state="received"
+    <state id="incomplete" like_state="received"
         title="Needs Clarification by Clerks Office" />
     
     <state id="withdrawn" like_state="submitted" title="Withdrawn" />
@@ -347,7 +351,7 @@
     <transition id="require_recomplete"
         title="Needs Clarification to Complete"
         source="completed" 
-        destination="clarify_clerk" 
+        destination="incomplete" 
         condition=""
         action="bungeni.core.workflows.motion.actions.require_recomplete" 
         trigger="manual"
@@ -357,7 +361,7 @@
     
     <transition id="recomplete"
         title="Re-complete"
-        source="clarify_clerk"
+        source="incomplete"
         destination="completed"
         condition=""
         action="" 
@@ -367,7 +371,7 @@
     
     <transition id="require_recomplete_clarification" 
         title="Needs Clarification"
-        source="clarify_clerk"
+        source="incomplete"
         destination="clarification_required"
         condition=""
         action="bungeni.core.workflows.motion.actions.require_recomplete_clarification"
