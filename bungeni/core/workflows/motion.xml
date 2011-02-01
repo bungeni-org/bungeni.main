@@ -164,7 +164,7 @@
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
     </state>
     
-    <state id="clarify_mp" like_state="submitted"
+    <state id="clarification_required" like_state="submitted"
         title="Needs Clarification by MP">
         <!-- motion -->
         <grant permission="bungeni.motion.Edit" role="bungeni.Owner" />
@@ -293,7 +293,7 @@
     <transition id="require_clarification"
         title="Needs Clarification"
         source="received" 
-        destination="clarify_mp"
+        destination="clarification_required"
         condition=""
         action="bungeni.core.workflows.motion.actions.require_clarification" 
         trigger="manual"
@@ -368,7 +368,7 @@
     <transition id="require_recomplete_clarification" 
         title="Needs Clarification"
         source="clarify_clerk"
-        destination="clarify_mp"
+        destination="clarification_required"
         condition=""
         action="bungeni.core.workflows.motion.actions.require_recomplete_clarification"
         trigger="manual"
@@ -379,7 +379,7 @@
     
     <transition id="resubmit"
         title="Resubmit to Clerk"
-        source="clarify_mp"
+        source="clarification_required"
         destination="submitted"
         condition=""
         action="bungeni.core.workflows.motion.actions.submit"
@@ -465,7 +465,7 @@
         source="submitted
                 received
                 complete
-                clarify_mp"
+                clarification_required"
         destination="withdrawn" 
         condition=""
         action="bungeni.core.workflows.motion.actions.withdraw"

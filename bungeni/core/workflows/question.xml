@@ -82,7 +82,7 @@
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" /> 
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
     </state>
-    <state id="clarify_mp" title="Needs MPs clarification">
+    <state id="clarification_required" title="Needs MPs clarification">
         <grant permission="zope.View" role="bungeni.Owner" />
         <deny permission="bungeni.question.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.question.Edit" role="bungeni.Owner" />
@@ -232,7 +232,7 @@
         title="Needs Clarification by MP"
         trigger="manual"
         source="received clarify_clerk"
-        destination="clarify_mp"
+        destination="clarification_required"
         permission="bungeni.question.clerk.Review"
         action="bungeni.core.workflows.question.actions.mp_clarify"
         condition=""
@@ -326,7 +326,7 @@
     <transition id="resubmit_clerk"
         title="Resubmit to Clerk"
         trigger="manual"
-        source="clarify_mp"
+        source="clarification_required"
         destination="submitted"
         permission="bungeni.question.Submit"
         action="bungeni.core.workflows.question.actions.submit_to_clerk"
@@ -512,7 +512,7 @@
     <transition id="withdraw"
         title="Withdraw"
         trigger="manual"
-        source="submitted received complete clarify_mp"
+        source="submitted received complete clarification_required"
         destination="withdrawn"
         permission="bungeni.question.Withdraw"
         action="bungeni.core.workflows.question.actions.withdraw"

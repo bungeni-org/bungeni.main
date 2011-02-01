@@ -346,10 +346,10 @@ class MPItemActionRequiredViewlet(OwnedItemsInStageViewlet):
     view_id = "items-action-required"
     view_title = _("to review")
     states = \
-        get_states("agendaitem", keys=["clarify_mp"]) + \
-        get_states("motion", keys=["clarify_mp"]) + \
-        get_states("question", keys=["clarify_mp"]) + \
-        get_states("tableddocument", keys=["clarify_mp"])
+        get_states("agendaitem", keys=["clarification_required"]) + \
+        get_states("motion", keys=["clarification_required"]) + \
+        get_states("question", keys=["clarification_required"]) + \
+        get_states("tableddocument", keys=["clarification_required"])
 
 
 class MPItemInProgressViewlet(OwnedItemsInStageViewlet):

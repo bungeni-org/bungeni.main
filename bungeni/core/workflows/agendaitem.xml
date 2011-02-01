@@ -81,7 +81,7 @@
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
         <grant permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
     </state>
-    <state id="clarify_mp" title="Needs Clarification by MP">
+    <state id="clarification_required" title="Needs Clarification by MP">
         <deny permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" /> 
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
@@ -188,7 +188,7 @@
         title="Needs Clarification by MP"
         trigger="manual"
         source="received"
-        destination="clarify_mp"
+        destination="clarification_required"
         permission="bungeni.agendaitem.clerk.Review"
         action="bungeni.core.workflows.agendaitem.actions.require_edit_by_mp"
         condition=""
@@ -247,7 +247,7 @@
          title="Needs Clarification by MP"
          trigger="manual"
          source="clarify_clerk"
-         destination="clarify_mp"
+         destination="clarification_required"
          permission="bungeni.agendaitem.clerk.Review"
          action="bungeni.core.workflows.agendaitem.actions.mp_clarify"
          condition=""
@@ -257,7 +257,7 @@
     <transition id="resubmit_clerk"
          title="Resubmit to Clerk"
          trigger="manual"
-         source="clarify_mp"
+         source="clarification_required"
          destination="submitted"
          permission="bungeni.agendaitem.Submit"
          action="bungeni.core.workflows.agendaitem.actions.submit"
@@ -353,7 +353,7 @@
     <transition id="withdraw"
          title="Withdraw"
          trigger="manual"
-         source="submitted received complete clarify_mp"
+         source="submitted received complete clarification_required"
          destination="withdrawn"
          permission="bungeni.agendaitem.Withdraw"
          action="bungeni.core.workflows.agendaitem.actions.withdraw"

@@ -89,7 +89,7 @@
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
     </state>
-    <state id="clarify_mp" title="Needs Clarification by MP">
+    <state id="clarification_required" title="Needs Clarification by MP">
         <grant permission="zope.View" role="bungeni.Owner" />
         <deny permission="bungeni.tableddocument.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.tableddocument.Edit" role="bungeni.Owner" />
@@ -164,7 +164,7 @@
         title="Needs Clarification"
         trigger="manual"
         source="received"
-        destination="clarify_mp"
+        destination="clarification_required"
         permission="bungeni.tableddocument.clerk.Review"
         action="bungeni.core.workflows.tableddocument.actions.require_edit_by_mp"
         condition=""
@@ -234,7 +234,7 @@
         title="Needs Clarification by MP"
         trigger="manual"
         source="clarify_clerk"
-        destination="clarify_mp"
+        destination="clarification_required"
         permission="bungeni.tableddocument.clerk.Review"
         action="bungeni.core.workflows.tableddocument.actions.mp_clarify"
         condition=""
@@ -244,7 +244,7 @@
     <transition id="resubmit_clerk"
         title="Resubmit to Clerk"
         trigger="manual"
-        source="clarify_mp"
+        source="clarification_required"
         destination="submitted"
         permission="bungeni.tableddocument.Submit"
         action="bungeni.core.workflows.tableddocument.actions.submit"
@@ -305,7 +305,7 @@
         source="submitted
                 received
                 complete
-                clarify_mp
+                clarification_required
                 admissible
                 scheduled
                 adjourned
