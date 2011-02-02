@@ -39,6 +39,11 @@
     NOTE: to easily see the the evaluated result of all permission assigments 
     for each workflow state definition (that uses like_state) set the 
     logging level to DEBUG.
+    
+    !+ <state ... manual_date="true">
+        transition to a "politicocratic" destination states need to allow 
+        freedom to manually set the transition date_active, but transition 
+        to a "bureaucratic" destination states should not.
     -->
     
     <state id="working_draft" title="Working Draft">
@@ -115,12 +120,12 @@
         <deny permission="bungeni.cosignatory.Delete" role="bungeni.Speaker" />
         <grant permission="bungeni.cosignatory.Delete" role="bungeni.Owner" />
         <!-- fileattachment -->
-        <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
-        <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
-        <grant permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Speaker" />
         <grant permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
+        <grant permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
     </state>
     
     <state id="submitted" like_state="draft" title="Submitted">
@@ -133,8 +138,8 @@
         <deny permission="bungeni.cosignatory.Add" role="bungeni.Owner" />
         <deny permission="bungeni.cosignatory.Delete" role="bungeni.Owner" />
         <!-- fileattachment -->
-        <deny permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
         <deny permission="bungeni.fileattachment.Edit" role="bungeni.Owner" />
+        <deny permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
     </state>
     
     <state id="received" like_state="submitted"
@@ -239,7 +244,7 @@
     
     !+ACTION remove this out of the XML, function of transition
     -->
-R    
+    
     <transition id="create"
         title="Create Motion"
         source=""
@@ -372,7 +377,7 @@ R
         source="clarification_required"
         destination="submitted"
         condition=""
-        action="bungeni.core.workflows.motion.actions.submit"
+        action="bungeni.core.workflows.motion.actions.resubmit"
         trigger="manual"
         permission="bungeni.motion.wf.resubmit"
     />

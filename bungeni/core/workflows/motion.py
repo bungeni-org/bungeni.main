@@ -41,7 +41,7 @@ class actions:
         utils.createVersion(info, context,
             message="New version on workflow transition to: submit")
         utils.setRegistryNumber(info, context)
-
+    resubmit = submit
 
     @staticmethod
     def receive(info, context):
