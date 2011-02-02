@@ -1,10 +1,9 @@
 <?xml version="1.0"?>
-<workflow
-   id="event-workflow"
-   title="event workflow"
-   description="Workflow for attached files"
-   domain="bungeni.ui"
-   initial_state="">
+<workflow id="event_workflow"
+    title="event workflow"
+    description="Workflow for attached files"
+    domain="bungeni.ui"
+    initial_state="">
 
   <state id="inactive" title="Inactive event">
     <deny permission="zope.View" role="bungeni.Owner" />

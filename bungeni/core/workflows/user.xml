@@ -1,10 +1,9 @@
 <?xml version="1.0"?>
-<workflow
-   id="event-workflow"
-   title="event workflow"
-   description="Workflow for attached files"
-   domain="bungeni.ui"
-   initial_state="">
+<workflow id="user_workflow"
+    title="user workflow"
+    description=""
+    domain="bungeni.ui"
+    initial_state="">
 
   <state id="I" title="Inactive User">
     <deny permission="bungeni.delegation.Add" role="bungeni.Owner" />

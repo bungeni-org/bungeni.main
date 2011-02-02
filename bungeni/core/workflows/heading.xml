@@ -1,10 +1,9 @@
 <?xml version="1.0"?>
-<workflow
-   id="heading-workflow"
-   title="heading workflow"
-   description="Workflow for headings"
-   domain="bungeni.ui"
-   initial_state="">
+<workflow id="heading_workflow"
+    title="heading workflow"
+    description="Workflow for headings"
+    domain="bungeni.ui"
+    initial_state="">
 
   <state id="inactive" title="Inactive heading obsolete">
     <deny permission="zope.View" role="bungeni.Owner" />

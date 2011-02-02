@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <workflow
-   id="version-workflow"
+   id="version_workflow"
    title="Version workflow"
    description="Workflow for a versioned content item."
    domain="bungeni.ui"

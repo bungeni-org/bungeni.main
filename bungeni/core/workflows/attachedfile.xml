@@ -1,10 +1,9 @@
 <?xml version="1.0"?>
-<workflow
-   id="attachedfile-workflow"
-   title="attached file workflow"
-   description="Workflow for attached files"
-   domain="bungeni.ui"
-   initial_state="">
+<workflow id="attachedfile_workflow"
+    title="attached file workflow"
+    description="Workflow for attached files"
+    domain="bungeni.ui"
+    initial_state="">
 
   <state id="inactive" title="Inactive file obsolete">
     <deny permission="zope.View" role="bungeni.Owner" />

@@ -47,9 +47,8 @@ def _load(workflow):
     transitions = []
     states = []
     domain = workflow.get("domain")
-    wid = workflow.get("id")
     _uids = set()
-    _uids.add(wid)
+    wid = workflow.get("id")
     
     def validate_id(id, tag):
         """Assumption: id is not None."""
@@ -57,7 +56,9 @@ def _load(workflow):
         assert ID_RE.match(id), '%s -- only letters, numbers, "_" allowed' % (m)
         assert id not in _uids, "%s -- id not unique in workflow document" % (m)
         _uids.add(id)
-
+    # ID values should be unique within the same scope (the XML document)
+    validate_id(wid, "workflow")
+    
     def get_like_state(state_id):
         if state_id is None:
             return
@@ -111,7 +112,7 @@ def _load(workflow):
             if t.get(key) is None:
                 raise SyntaxError("%s not in %s"%(key, etree.tostring(t)))
         validate_id(t.get("id"), "transition")
-        # source="" (empty string implies the None source
+        # source = "" (empty string implies the None source)
         sources = t.get("source").split() or [None]
         for source in sources:
             if len(sources) > 1:

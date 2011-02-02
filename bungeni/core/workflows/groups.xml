@@ -1,10 +1,9 @@
 <?xml version="1.0"?>
-<workflow
-   id="group-workflow"
-   title="Group Workflow"
-   description="Workflow for Parliamentary Groups"
-   domain="bungeni.ui"
-   initial_state="">
+<workflow id="group_workflow"
+    title="Group Workflow"
+    description="Workflow for Parliamentary Groups"
+    domain="bungeni.ui"
+    initial_state="">
 
   <state id="draft" title="Draft - Group not yet Active">
     <grant permission="bungeni.group.Delete" role="bungeni.Owner" />

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<workflow id="address-workflow"
+<workflow id="address_workflow"
     title="Address Workflow"
     description="Workflow for user addresss"
     domain="bungeni.ui"

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<workflow id="question-workflow"
+<workflow id="question_workflow"
     title="Question Workflow"
     description="A question"
     domain="bungeni.ui"
