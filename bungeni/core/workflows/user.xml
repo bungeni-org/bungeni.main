@@ -70,7 +70,7 @@
      />
 
   <transition 
-     id="auto-inhume"
+     id="auto_inhume"
      title="called when date of death is set"
      trigger="automatic"
      source="A

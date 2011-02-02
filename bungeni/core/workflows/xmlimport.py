@@ -2,6 +2,8 @@
 Support for xml defined workflows, and security manipulations by state.
 """
 
+import re
+
 from lxml import etree
 from zope.dottedname.resolve import resolve
 from zope.i18nmessageid import Message
@@ -22,8 +24,11 @@ trigger_value_map = {
     "system": interfaces.SYSTEM
 }
 
+# only letters, numbers and "_" char i.e. no whitespace or "-"
+ID_RE = re.compile("^[\w\d_]+$")
 
-''' !+NOT_WORKING... see: zope.secuirity.permission
+
+''' !+NOT_WORKING... see: zope.security.permission
 from zope.app.security.interfaces import IPermission
 from zope.app import zapi
 def assertRegisteredPermission(permission_id):
@@ -42,7 +47,17 @@ def _load(workflow):
     transitions = []
     states = []
     domain = workflow.get("domain")
+    wid = workflow.get("id")
+    _uids = set()
+    _uids.add(wid)
     
+    def validate_id(id, tag):
+        """Assumption: id is not None."""
+        m = 'Invalid <%s> id="%s" in workflow [%s]' % (tag, id, wid)
+        assert ID_RE.match(id), '%s -- only letters, numbers, "_" allowed' % (m)
+        assert id not in _uids, "%s -- id not unique in workflow document" % (m)
+        _uids.add(id)
+
     def get_like_state(state_id):
         if state_id is None:
             return
@@ -55,7 +70,7 @@ def _load(workflow):
         for perm in [(GRANT, p, r), (DENY, p, r)]:
             assert perm not in permissions, "Workflow [%s] state [%s] " \
                 "conflicting state permission: (%s, %s, %s)" % (
-                    workflow.get("id"), state_id, assignment, p, r)
+                    wid, state_id, assignment, p, r)
             if perm in like_permissions:
                 like_permissions.remove(perm)
         permissions.append((assignment, p, r))
@@ -63,6 +78,7 @@ def _load(workflow):
     for s in workflow.iterchildren("state"):
         state_id = s.get("id")
         assert state_id, "Workflow State must define @id"
+        validate_id(state_id, "state")
         permissions = [] # tuple(bool:int, permission:str, role:str) 
         # state.@like_state : to reduce repetition and enhance maintainibility
         # of workflow XML files, a state may specify a @like_state attribute to 
@@ -94,6 +110,7 @@ def _load(workflow):
         for key in ("source", "destination", "id", "title"):
             if t.get(key) is None:
                 raise SyntaxError("%s not in %s"%(key, etree.tostring(t)))
+        validate_id(t.get("id"), "transition")
         # source="" (empty string implies the None source
         sources = t.get("source").split() or [None]
         for source in sources:

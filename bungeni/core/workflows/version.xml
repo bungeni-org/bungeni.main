@@ -6,7 +6,7 @@
    domain="bungeni.ui"
    initial_state="">
 
-  <state id="draft-translation" title="Draft Translation">
+  <state id="draft_translation" title="Draft Translation">
     <grant permission="zope.ManageContent" role="bungeni.Owner" />
   </state>
   
@@ -27,11 +27,11 @@
      />
   
   <transition
-     id="create-translation"
+     id="create_translation"
      title="Create Translation"
      trigger="manual"
      source=""
-     destination="draft-translation"
+     destination="draft_translation"
      action=""
      condition=""
      />

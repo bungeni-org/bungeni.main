@@ -178,5 +178,5 @@ def get_available_translations(context):
 
 def is_translation(context):
     return IVersion.providedBy(context) and \
-           context.status in (u"draft-translation",)
+           context.status in (u"draft_translation",)
                       
