@@ -98,8 +98,15 @@
     <permission id="bungeni.agendaitem.wf.withdraw_public" title="Withdraw an agendaitem" />
     <grant permission="bungeni.agendaitem.wf.withdraw_public" role="bungeni.Owner" />
     <grant permission="bungeni.agendaitem.wf.withdraw_public" role="bungeni.Clerk" />
-
-
+    
+    
+    <!-- attachedfile workflow permissions -->
+    
+    <permission id="bungeni.attachedfile.wf.deactivate" title="Deactivate a file" /> 
+    <grant permission="bungeni.attachedfile.wf.deactivate" role="bungeni.Clerk" />
+    <grant permission="bungeni.attachedfile.wf.deactivate" role="bungeni.Speaker "/>
+    
+    
   <!-- Question Workflow permissions -->
   <!-- Permissions that are not related to workflow transitions (add, edit, delete,...) 
     are to be defined in bungeni.core.roles/permissions -->
@@ -230,7 +237,6 @@
   
   <permission id="bungeni.sitting.ChangeStatus" title="Change Sitting Status" />
 
-  <permission id="bungeni.fileattachment.Deactivate" title="Deactivate a file" /> 
   <permission id="bungeni.event.Deactivate" title="Deactivate an event" /> 
   <permission id="bungeni.heading.Deactivate" title="Deactivate a heading" /> 
   <permission id="bungeni.user.Manage" title="Manage user" />

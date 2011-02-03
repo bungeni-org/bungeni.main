@@ -57,10 +57,6 @@
   <grant permission="bungeni.heading.Deactivate" role="bungeni.Clerk"/>
   <grant permission="bungeni.heading.Deactivate" role="bungeni.Speaker"/>
           
-  <!-- file attachments -->
-  <grant permission="bungeni.fileattachment.Deactivate" role="bungeni.Clerk"/>
-  <grant permission="bungeni.fileattachment.Deactivate" role="bungeni.Speaker"/>
-  
   <!-- users -->
   <grant permission="bungeni.user.Manage" role="bungeni.Speaker"/>
           
