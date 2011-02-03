@@ -43,13 +43,14 @@ class actions(object):
         utils.createVersion(info, context,
             message="New version on workflow transition to: submit")
         utils.setRegistryNumber(info, context)
+    resubmit = submit
     
     @staticmethod
-    def received_by_clerk(info, context):
+    def receive(info, context):
         utils.createVersion(info, context)
     
     @staticmethod
-    def require_edit_by_mp(info, context):
+    def require_clarification(info, context):
         utils.createVersion(info, context)
     
     @staticmethod
@@ -63,11 +64,11 @@ class actions(object):
             message="New Version on approval by speakers office")
     
     @staticmethod
-    def reject(info, context):
+    def disapprove(info, context):
         pass
     
     @staticmethod
-    def require_amendment(info, context):
+    def require_recomplete(info, context):
         utils.createVersion(info, context)
     
     @staticmethod
@@ -75,7 +76,7 @@ class actions(object):
         utils.createVersion(info, context)
     
     @staticmethod
-    def mp_clarify(info, context):
+    def require_recomplete_clarification(info, context):
         utils.createVersion(info, context)
     
     @staticmethod

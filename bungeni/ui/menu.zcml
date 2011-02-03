@@ -1102,7 +1102,7 @@
         title="Schedule"
         order="41"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.agendaitem.Schedule"
+        permission="bungeni.agendaitem.wf.schedule"
      />
     <!-- browser:menuItem menu="scheduling_actions"
         for="bungeni.models.interfaces.IItemSchedule"

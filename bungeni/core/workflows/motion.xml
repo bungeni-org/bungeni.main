@@ -202,24 +202,24 @@
     
     <state id="scheduled" like_state="admissible" title="Scheduled" />
     
-    <!-- admissable motion that cannot be debated -->
-    <state id="deferred" like_state="admissible" title="Deferred" />
-    
-    <!--motion was scheduled for but droped, becuase no show of MP etc -->
-    <state id="dropped" like_state="admissible" title="Dropped" />
-    
     <state id="adopted" like_state="admissible" title="Adopted" />
     
     <state id="adopted_amendments" like_state="admissible"
         title="Adopted with amendments" />
     
-    <state id="rejected" like_state="admissible" title="Rejected"/>
+    <!-- a motion was debated and the debate adjourned  -->
+    <state id="adjourned" like_state="admissible" title="Debate adjourned" />
     
-    <!--defered motion that was not debated -->
+    <!-- admissable motion that cannot be debated -->
+    <state id="deferred" like_state="admissible" title="Deferred" />
+    
+    <!-- defered motion that was not debated -->
     <state id="elapsed" like_state="admissible" title="Elapsed" />
     
-    <!--a motion was debated and the debate adjourned  -->
-    <state id="adjourned" like_state="admissible" title="Debate adjourned" />
+    <!-- motion was scheduled for but droped, becuase no show of MP etc -->
+    <state id="dropped" like_state="admissible" title="Dropped" />
+    
+    <state id="rejected" like_state="admissible" title="Rejected"/>
     
     <state id="withdrawn_public" like_state="admissible" 
         title="Withdrawn" />
@@ -317,16 +317,6 @@
         permission="bungeni.motion.wf.approve"
     />
     
-    <transition id="allow_schedule"
-        title="Make available for scheduling" 
-        source="admissible deferred adjourned"
-        destination="schedule_pending"
-        action=""
-        trigger="manual"
-        permission="bungeni.motion.wf.allow_schedule" 
-        event="bungeni.core.workflows.interfaces.IMotionPendingEvent"
-    />
-    
     <transition id="disapprove" 
         title="Disapprove"
         source="completed"
@@ -337,6 +327,16 @@
         permission="bungeni.motion.wf.disapprove"
         event="bungeni.core.workflows.interfaces.IMotionRejectedEvent"
         require_confirmation="true"
+    />
+    
+    <transition id="allow_schedule"
+        title="Make available for scheduling" 
+        source="admissible deferred adjourned"
+        destination="schedule_pending"
+        action=""
+        trigger="manual"
+        permission="bungeni.motion.wf.allow_schedule" 
+        event="bungeni.core.workflows.interfaces.IMotionPendingEvent"
     />
     
     <transition id="require_recomplete"
@@ -455,35 +455,6 @@
         event=""
     />
     
-    <transition id="withdraw" 
-        title="Withdraw" 
-        source="submitted
-                received
-                completed
-                clarification_required"
-        destination="withdrawn" 
-        condition=""
-        action="bungeni.core.workflows.motion.actions.withdraw"
-        trigger="manual"
-        permission="bungeni.motion.wf.withdraw"
-        require_confirmation="true" 
-    />
-    
-    <transition id="withdraw_public" 
-        title="Withdraw"
-        source="admissible
-                scheduled
-                deferred
-                adjourned
-                schedule_pending"
-        destination="withdrawn_public"
-        condition=""
-        action="bungeni.core.workflows.motion.actions.withdraw_public"
-        trigger="manual"
-        permission="bungeni.motion.wf.withdraw_public"
-        require_confirmation="true"
-    />
-    
     <transition id="adopt"
         title="Adopt"
         source="scheduled" 
@@ -517,6 +488,28 @@
         trigger="manual"
         permission="bungeni.motion.wf.reject"
         event="bungeni.core.workflows.interfaces.IMotionRejectedEvent"
+        require_confirmation="true"
+    />
+    
+    <transition id="withdraw" 
+        title="Withdraw" 
+        source="submitted received completed clarification_required"
+        destination="withdrawn" 
+        condition=""
+        action="bungeni.core.workflows.motion.actions.withdraw"
+        trigger="manual"
+        permission="bungeni.motion.wf.withdraw"
+        require_confirmation="true" 
+    />
+    
+    <transition id="withdraw_public" 
+        title="Withdraw"
+        source="admissible scheduled deferred adjourned schedule_pending"
+        destination="withdrawn_public"
+        condition=""
+        action="bungeni.core.workflows.motion.actions.withdraw_public"
+        trigger="manual"
+        permission="bungeni.motion.wf.withdraw_public"
         require_confirmation="true"
     />
 

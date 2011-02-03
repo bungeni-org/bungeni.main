@@ -3,6 +3,103 @@
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni.core">
     
+    <!-- address workflow permissions -->
+    
+    <permission id="bungeni.address.wf.publish_internal" 
+        title="Publish an address internally" />
+    <grant permission="bungeni.address.wf.publish_internal" role="bungeni.Clerk" />
+    <grant permission="bungeni.address.wf.publish_internal" role="bungeni.Owner" />
+    
+    <permission id="bungeni.address.wf.publish" title="Publish an address" />
+    <grant permission="bungeni.address.wf.publish" role="bungeni.Clerk" />
+    <grant permission="bungeni.address.wf.publish" role="bungeni.Owner" />
+    
+    <permission id="bungeni.address.wf.make_private" 
+        title="Make an address private" />
+    <grant permission="bungeni.address.wf.make_private" role="bungeni.Clerk" />
+    <grant permission="bungeni.address.wf.make_private" role="bungeni.Owner" />
+    
+    
+    <!-- agendaitem workflow permissions -->
+    
+    <permission id="bungeni.agendaitem.wf.submit" title="Submit an agendaitem" />
+    <grant permission="bungeni.agendaitem.wf.submit" role="bungeni.Owner" />
+
+    <permission id="bungeni.agendaitem.wf.resubmit" title="Submit an agendaitem" />
+    <grant permission="bungeni.agendaitem.wf.resubmit" role="bungeni.Owner" />
+    
+    <permission id="bungeni.agendaitem.wf.receive" title="Receive an agendaitem" />
+    <grant permission="bungeni.agendaitem.wf.receive" role="bungeni.Clerk" />
+    
+    <permission id="bungeni.agendaitem.wf.require_clarification" 
+        title="Require clarification of an agendaitem" />
+    <grant permission="bungeni.agendaitem.wf.require_clarification" 
+        role="bungeni.Clerk" />
+    
+    <permission id="bungeni.agendaitem.wf.complete" 
+        title="Submit to Speaker Office" />
+    <grant permission="bungeni.agendaitem.wf.complete" role="bungeni.Clerk" />
+    
+    <permission id="bungeni.agendaitem.wf.recomplete" 
+        title="Re-submit to Speaker Office" />
+    <grant permission="bungeni.agendaitem.wf.recomplete" role="bungeni.Clerk" />
+
+    <permission id="bungeni.agendaitem.wf.approve" title="Approve" />
+    <grant permission="bungeni.agendaitem.wf.approve" role="bungeni.Speaker" />
+
+    <permission id="bungeni.agendaitem.wf.disapprove" title="Reject a completed agendaitem" />
+    <grant permission="bungeni.agendaitem.wf.disapprove" role="bungeni.Speaker" />
+    
+    <permission id="bungeni.agendaitem.wf.allow_schedule" 
+        title="Make an agendaitem available for scheduling" />
+    <grant permission="bungeni.agendaitem.wf.allow_schedule" 
+        role="bungeni.Speaker" />
+    
+    <permission id="bungeni.agendaitem.wf.schedule" title="Schedule an agendaitem" />
+    <grant permission="bungeni.agendaitem.wf.schedule" role="bungeni.Clerk" />
+    
+    <permission id="bungeni.agendaitem.wf.reschedule" title="Reschedule an agendaitem" />
+    <grant permission="bungeni.agendaitem.wf.reschedule" role="bungeni.Clerk" />
+
+    <permission id="bungeni.agendaitem.wf.require_recomplete" 
+        title="Require clarification for agendaitem to be complete" />
+    <grant permission="bungeni.agendaitem.wf.require_recomplete" 
+        role="bungeni.Speaker" />
+
+    <permission id="bungeni.agendaitem.wf.require_recomplete_clarification" 
+        title="Require clarification from MP for agendaitem to be complete" />
+    <grant permission="bungeni.agendaitem.wf.require_recomplete_clarification" 
+        role="bungeni.Clerk" />
+    
+    <permission id="bungeni.agendaitem.wf.defer" title="Defer an agendaitem" />
+    <grant permission="bungeni.agendaitem.wf.defer" role="bungeni.Speaker" />
+    
+    <permission id="bungeni.agendaitem.wf.elapse" title="Elapse a motion" />
+    <grant permission="bungeni.agendaitem.wf.elapse" role="bungeni.Speaker" />
+    
+    <permission id="bungeni.agendaitem.wf.revert_to_admissible"
+        title="Revert to admissable" />
+    <grant permission="bungeni.agendaitem.wf.revert_to_admissible"
+        role="bungeni.Speaker" />
+    
+    <permission id="bungeni.agendaitem.wf.drop" title="Drop a motion" />
+    <grant permission="bungeni.agendaitem.wf.drop" role="bungeni.Clerk" />
+    
+    <permission id="bungeni.agendaitem.wf.debate" title="Drop an agendaitem" />
+    <grant permission="bungeni.agendaitem.wf.debate" role="bungeni.Clerk" />
+
+    <permission id="bungeni.agendaitem.wf.adjourn" title="Adjourn agendaitem debate" />
+    <grant permission="bungeni.agendaitem.wf.adjourn" role="bungeni.Clerk" />
+    
+    <permission id="bungeni.agendaitem.wf.withdraw" title="Withdraw an agendaitem" />
+    <grant permission="bungeni.agendaitem.wf.withdraw" role="bungeni.Owner" />
+    <grant permission="bungeni.agendaitem.wf.withdraw" role="bungeni.Clerk" />
+    
+    <permission id="bungeni.agendaitem.wf.withdraw_public" title="Withdraw an agendaitem" />
+    <grant permission="bungeni.agendaitem.wf.withdraw_public" role="bungeni.Owner" />
+    <grant permission="bungeni.agendaitem.wf.withdraw_public" role="bungeni.Clerk" />
+
+
   <!-- Question Workflow permissions -->
   <!-- Permissions that are not related to workflow transitions (add, edit, delete,...) 
     are to be defined in bungeni.core.roles/permissions -->
@@ -39,15 +136,24 @@
     <grant permission="bungeni.motion.wf.require_clarification" 
         role="bungeni.Clerk" />
     
+    <permission id="bungeni.motion.wf.require_recomplete_clarification" 
+        title="Require clarification from MP for motion to be complete" />
+    <grant permission="bungeni.motion.wf.require_recomplete_clarification" 
+        role="bungeni.Clerk" />
+    
     <permission id="bungeni.motion.wf.complete" 
         title="Submit to Speaker Office" />
     <grant permission="bungeni.motion.wf.complete" role="bungeni.Clerk" />
+
+    <permission id="bungeni.motion.wf.recomplete" 
+        title="Re-submit to Speaker Office" />
+    <grant permission="bungeni.motion.wf.recomplete" role="bungeni.Clerk" />
     
-    <permission id="bungeni.motion.wf.approve" 
-        title="Submit to Speaker Office" />
+    <permission id="bungeni.motion.wf.approve" title="Approve" />
     <grant permission="bungeni.motion.wf.approve" role="bungeni.Speaker" />
 
-    <permission id="bungeni.motion.wf.disapprove" title="Reject a completed motion" />
+    <permission id="bungeni.motion.wf.disapprove" 
+        title="Reject a completed motion" />
     <grant permission="bungeni.motion.wf.disapprove" role="bungeni.Speaker" />
     
     <permission id="bungeni.motion.wf.allow_schedule" 
@@ -97,7 +203,8 @@
     <permission id="bungeni.motion.wf.adopt" title="Adopt a motion" />
     <grant permission="bungeni.motion.wf.adopt" role="bungeni.Clerk" />
 
-    <permission id="bungeni.motion.wf.adopt_amendments" title="Adopt with amendments" />
+    <permission id="bungeni.motion.wf.adopt_amendments" 
+        title="Adopt with amendments" />
     <grant permission="bungeni.motion.wf.adopt_amendments" role="bungeni.Clerk" />
     
     
@@ -112,31 +219,6 @@
   <permission id="bungeni.group.Manage" title="Manage Bungeni groups" />
     
     
-    <!-- Address Workflow Permissions -->
-    
-    <permission id="bungeni.address.wf.publish_internal" 
-        title="Publish an address internally" />
-    <grant permission="bungeni.address.wf.publish_internal" role="bungeni.Clerk" />
-    <grant permission="bungeni.address.wf.publish_internal" role="bungeni.Owner" />
-    
-    <permission id="bungeni.address.wf.publish" title="Publish an address" />
-    <grant permission="bungeni.address.wf.publish" role="bungeni.Clerk" />
-    <grant permission="bungeni.address.wf.publish" role="bungeni.Owner" />
-    
-    <permission id="bungeni.address.wf.make_private" 
-        title="Make an address private" />
-    <grant permission="bungeni.address.wf.make_private" role="bungeni.Clerk" />
-    <grant permission="bungeni.address.wf.make_private" role="bungeni.Owner" />
-    
-    
-  <!-- agendaitem Workflow permissions -->
-  <permission id="bungeni.agendaitem.Submit" title="Submit an agenda item" />
-  <permission id="bungeni.agendaitem.Receive" title="Receive an agenda item" />
-  <permission id="bungeni.agendaitem.clerk.Review" title="Review an agenda item" />
-  <permission id="bungeni.agendaitem.speaker.Review"  title="Speaker review a agenda item" />
-  <permission id="bungeni.agendaitem.Schedule" title="Schedule an agenda item" />
-  <permission id="bungeni.agendaitem.Debate" title="Mark an agenda item as debated" />
-  <permission id="bungeni.agendaitem.Withdraw" title="Withdraw an agenda item" />
   <!-- tableddocument Workflow permissions -->
   <permission id="bungeni.tableddocument.Submit" title="Submit a tabled document" />
   <permission id="bungeni.tableddocument.Receive" title="Receive a tabled document" />
