@@ -1,151 +1,111 @@
-Audit:
+Audit
+----------------
+The test below creates a bill and checks that changes to it are audit
+logged properly
+TODO:expand to test all bungeni content types
 
-in terms of a test plan, its a doc test, that creates a class, which
-implements the auditable interface, 
-see http://wiki.zope.org/zope3/events.html hoew to test events
-Note: zope.app.event. was replaced with zope.lifecycleevent
-see audit.zcml
-
-setting up participation:
+Setup a participation
+---------------------
 
   >>> from bungeni.core.testing import create_participation
   >>> import zope.security.management
   >>> zope.security.management.endInteraction()
-  >>> zope.security.management.newInteraction(create_participation())
 
-database imports:
+Database imports
+----------------
   
-  >>> import sqlalchemy as rdb
-  >>> from datetime import datetime
-  >>> metadata = rdb.MetaData()
+  >>> from bungeni.models import domain
+  >>> import datetime
+  >>> import bungeni.models.testing
+  >>> db = bungeni.models.testing.setup_db()
   >>> from bungeni.alchemist import Session
-  >>> from bungeni.models.schema import make_changes_table
-  >>> from sqlalchemy.orm import mapper
-  >>> import bungeni.core.audit as audit
-  >>> import bungeni.core.interfaces
-  >>> import zope.interface
-  >>> import bungeni.models.domain as domain
-  
-Note that the Primary key must be user_id (tablename -'s' + '_id')
-otherwise bungeni.models.schema.make_changes_table will fail
-
-  >>> users_table = rdb.Table('users', metadata,
-  ...     rdb.Column('user_id', rdb.Integer, primary_key=True),
-  ...     rdb.Column('name', rdb.String(20)),
-  ...     rdb.Column('fullname', rdb.String(20)),
-  ...     rdb.Column('password', rdb.String(20))
-  ... )
-
-  >>> class User(object):
-  ...     zope.interface.implements(
-  ...        bungeni.models.interfaces.IBungeniContent,
-  ...        bungeni.core.interfaces.IAuditable)
-  
-  >>> mapper(User, users_table)
-  <Mapper at ... User>
-  
-  >>> users_changes = make_changes_table(users_table, metadata)
-  
-  >>> class UserChange(object):
-  ...     pass
-  
-  >>> mapper(UserChange, users_changes)
-  <Mapper at ... UserChange>
-
-  >>> UserAuditor = audit.UserAuditor = audit.AuditorFactory(users_changes,UserChange)
-
-
-test setup is creating a sqlite db:
-
-  >>> metadata.bind = rdb.create_engine('sqlite://')
-  >>> metadata.create_all()
-
   >>> session = Session()
+  
+Initialise User
+---------------
+   >>> user = domain.User(
+   ...        login=u"jdoe", 
+   ...        first_name=u"a", 
+   ...        last_name=u'ab', 
+   ...        email=u"mp1@example.com", 
+   ...        date_of_birth=datetime.datetime.now(),
+   ...        language="en",
+   ...        gender='M')
+   >>> session.add(user)
+   >>> session.flush()
 
+Initialise Group
+----------------
 
-
-create an instance of the class:
-  >>> user = User()
-  >>> user.name="jdoe"
-  >>> user.fullname ="John Doe"
-  >>> user.password ="passwd"
-  >>> session.add(user)
+  >>> parliament = domain.Parliament(short_name=u"p_1",
+  ...                               start_date=datetime.datetime.now(), 
+  ...                               election_date=datetime.datetime.now())
+  >>> parliament.language = "en"
+  >>> session.add( parliament )
   >>> session.flush()
+
+Initialise Bill
+-------------------
+   >>> bill_type = domain.BillType()
+   >>> bill_type.bill_type_name = u"test"
+   >>> session.add(bill_type)
+   >>> session.flush()
+   >>> bill = domain.Bill()
+   >>> bill.body_text = 'THIS IS A TEST'
+   >>> bill.start_date = datetime.datetime.now()
+   >>> bill.end_date = datetime.datetime.now()
+   >>> bill.note = "This is a test"
+   >>> bill.short_name = "Sitting Agenda"
+   >>> bill.owner = user
+   >>> bill.language = "en"
+   >>> bill.created_date = datetime.datetime.now()
+   >>> bill.group = parliament
+   >>> bill.bill_type_id = bill_type.bill_type_id
+   >>> session.add(bill)
+   >>> session.flush()
+
+Create a participation with the user we just created as the principal
+--------------------------------------
   
-  >>> user.user_id
-  1
-  
-  
-check that our changes table acts as expected
+  >>> principal = zope.security.testing.Principal('jdoe', 'manager', ())
+  >>> zope.security.management.newInteraction(create_participation(principal))
+  >>> principal.id
+  'jdoe'
 
-  >>> len(list(session.query(UserChange)))
-  0
-
-  >>> change = UserChange()
-  >>> change.user_id = 1
-  >>> session.add(change)
-  >>> session.flush()
-  
-
-  >>> len(list(session.query(UserChange)))
-  1
-  
-
-setting up the event subscribers/adapters:
-
-  >>> component.provideAdapter(
-  ...    audit.AuditorFactory,
-  ...    (bungeni.core.interfaces.IAuditable,),
-  ...    bungeni.models.interfaces.IBungeniContent )
-
-  >>> #domain.ItemLog.makeLogFactory( "UserChange")
-
-
-  >>> import zope.lifecycleevent
-  >>> import zope.event
-  
-  >>> auditor = bungeni.core.interfaces.IAuditable(user, UserAuditor)
-
-# <subscriber
-#     for="
-#           .interfaces.IAuditable 
-#           zope.lifecycleevent.IObjectModifiedEvent
-#         "
-#     handler=".audit.objectModified"
-#     trusted="True"
-# />
-
-  >>> zope.component.provideHandler(audit.objectAdded,
-  ...  [bungeni.core.interfaces.IAuditable, zope.lifecycleevent.IObjectCreatedEvent])
-
-  >>> zope.component.provideHandler(audit.objectModified,
-  ...  [bungeni.core.interfaces.IAuditable, zope.lifecycleevent.IObjectModifiedEvent])
-
-broadcast an event:
-
-  >>> event = zope.lifecycleevent.ObjectCreatedEvent(user)
+Broadcast an object created event
+---------------------------------
+  >>> event = zope.lifecycleevent.ObjectCreatedEvent(bill)
   >>> zope.component.event.objectEventNotify(event)
   
 check the audit table: 
 
-  >>> len(list(session.query(UserChange)))
+  >>> len(list(session.query(domain.BillChange)))
+  1
+  
+Select last modification
+------------------------
+  >>> bill.changes[0].user.login
+  u'jdoe'
+
+Broadcase an object modified event
+----------------------------------
+  >>> event = zope.lifecycleevent.ObjectModifiedEvent(bill)
+  >>> zope.component.event.objectEventNotify(event)
+
+check the audit table: 
+
+  >>> len(list(session.query(domain.BillChange)))
   2
 
-broadcast an event:
+Select last modification
+------------------------
+  >>> bill.changes[1].user.login
+  u'jdoe'
 
-  >>> event = zope.lifecycleevent.ObjectModifiedEvent(user)
-  >>> zope.component.event.objectEventNotify(event)
-
-check the audit table: 
-
-  >>> len(list(session.query(UserChange)))
-  3
-
-Clean up:
-
+Clean up
+--------
   >>> session.flush()
   >>> session.commit()
   >>> session.close()
-  
   >>> zope.security.management.endInteraction()
 

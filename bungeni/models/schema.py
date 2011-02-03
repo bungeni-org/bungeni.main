@@ -122,7 +122,13 @@ users = rdb.Table("users", metadata,
     # comment out for now - will be used for user preferences
     rdb.Column("receive_notification", rdb.Boolean, default=True),
     rdb.Column("language", rdb.String(5), nullable=False),
-    rdb.Column("is_admin", rdb.Boolean, default=False, nullable=False)
+)
+
+admin_users = rdb.Table("admin_users", metadata,
+    rdb.Column("user_id", rdb.Integer,
+        rdb.ForeignKey("users.user_id"),
+        primary_key=True,
+    )
 )
 
 # associations table for many-to-many relation between user and 

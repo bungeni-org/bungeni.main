@@ -61,7 +61,11 @@
   
   <include package="ore.xapian" />
   <include package="z3c.pt" />
-
+  <include file="audit.zcml"/>
+  <class class="bungeni.models.domain.Bill">
+    <implements interface=".interfaces.IVersionable
+                            .interfaces.IAuditable" />
+  </class>
   <!-- DB setup -->
   
   <db:engine

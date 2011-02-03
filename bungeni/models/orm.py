@@ -53,6 +53,12 @@ mapper(domain.User, schema.users,
     }
 )
 
+mapper(domain.AdminUser, schema.admin_users,
+    properties = {
+        "user":relation(domain.User)
+    }
+)
+
 # Groups
 
 mapper(domain.Group, schema.groups,

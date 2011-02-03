@@ -95,7 +95,12 @@ class AlchemistWhoPlugin(object):
         groups = None
         if user is not None:
             groups = tuple( self.getGroups(userid))
-            if user.is_admin:
+            try:
+                session = Session()
+            except UnboundExecutionError, e:
+                log.warn(e)
+            admin_user = session.query(domain.AdminUser).get(user.user_id)
+            if admin_user:
                 groups = groups + ('zope.manager',)
             identity.update({
                 'email': user.email,

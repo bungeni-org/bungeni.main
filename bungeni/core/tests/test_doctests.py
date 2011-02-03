@@ -48,16 +48,15 @@ def test_suite():
     #       $ bin/test -s bungeni.core -t file.txt
     #
     doctests = (
-                #'audit.txt',
+                'audit.txt',
                 'version.txt',
-                #'odf.txt',
                 'workflows/question.txt',
                 'workflows/motion.txt',
                 'workflows/bill.txt',
                 'workflows/transitioncron.txt',
                 )
 
-    docfiles = ("bungeni.core.transformation",)
+    docfiles = ()
     
     # set up global symbols for doctests
     today = datetime.date.today()

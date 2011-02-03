@@ -155,6 +155,9 @@ class User(Entity):
     tableddocuments = one2many("tableddocuments",
         "bungeni.models.domain.TabledDocumentContainer", "owner_id")
 
+class AdminUser(Entity):
+    """An admin user"""
+
 class UserDelegation(Entity):
     """ Delgate rights to act on behalf of a user 
     to another user """
