@@ -3,7 +3,13 @@
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni.core">
     
-    <!-- address workflow permissions -->
+    <!-- 
+        There is a DEDICATED permission per workflow TRANSITION.
+        See the Bungeni Source Code Style Guide.
+    -->
+    
+    
+    <!-- address -->
     
     <permission id="bungeni.address.wf.publish_internal" 
         title="Publish an address internally" />
@@ -20,7 +26,7 @@
     <grant permission="bungeni.address.wf.make_private" role="bungeni.Owner" />
     
     
-    <!-- agendaitem workflow permissions -->
+    <!-- agendaitem -->
     
     <permission id="bungeni.agendaitem.wf.submit" title="Submit an agendaitem" />
     <grant permission="bungeni.agendaitem.wf.submit" role="bungeni.Owner" />
@@ -100,11 +106,145 @@
     <grant permission="bungeni.agendaitem.wf.withdraw_public" role="bungeni.Clerk" />
     
     
-    <!-- attachedfile workflow permissions -->
+    <!-- attachedfile -->
     
     <permission id="bungeni.attachedfile.wf.deactivate" title="Deactivate a file" /> 
     <grant permission="bungeni.attachedfile.wf.deactivate" role="bungeni.Clerk" />
     <grant permission="bungeni.attachedfile.wf.deactivate" role="bungeni.Speaker "/>
+    
+    
+    <!-- bill -->
+    
+    <permission id="bungeni.bill.wf.submit" title="Submit a bill" />
+    <grant permission="bungeni.bill.wf.submit" role="bungeni.Clerk" />
+    
+    <permission id="bungeni.bill.wf.reject" title="Rejected" />
+    <grant permission="bungeni.bill.wf.reject" role="bungeni.Clerk" />
+    
+    <permission id="bungeni.bill.wf.approve" title="Approved" />
+    <grant permission="bungeni.bill.wf.approve" role="bungeni.Clerk" />
+    
+    <permission id="bungeni.bill.wf.withdraw" title="Withdraw" />
+    <grant permission="bungeni.bill.wf.withdraw" role="bungeni.Clerk" />
+    
+    <!-- bill.wf.schedule -->
+    
+    <permission id="bungeni.bill.wf.allow_schedule_first"
+        title="Allow scheduling of First Reading" />
+    <grant permission="bungeni.bill.wf.allow_schedule_first" role="bungeni.Clerk" />
+    
+    <permission id="bungeni.bill.wf.schedule_first" 
+        title="Schedule First Reading" />
+    <grant permission="bungeni.bill.wf.schedule_first" role="bungeni.Clerk" />
+    
+    <permission id="bungeni.bill.wf.reschedule_first" 
+        title="Re-schedule First Reading" />
+    <grant permission="bungeni.bill.wf.reschedule_first" role="bungeni.Clerk" />
+    
+    <permission id="bungeni.bill.wf.adjourn_first" 
+        title="Adjourn First Reading" />
+    <grant permission="bungeni.bill.wf.adjourn_first" role="bungeni.Clerk" />
+        
+    <permission id="bungeni.bill.wf.schedule_first_report_reading"
+        title="Schedule First Report Reading" />
+    <grant permission="bungeni.bill.wf.schedule_first_report_reading" 
+        role="bungeni.Clerk" />
+    
+    <permission id="bungeni.bill.wf.reschedule_first_report_reading"
+        title="Reschedule First Report Reading" />
+    <grant permission="bungeni.bill.wf.reschedule_first_report_reading" 
+        role="bungeni.Clerk" />
+    
+    <permission id="bungeni.bill.wf.allow_schedule_second_reading"
+        title="Allow scheduling of Second Reading" />
+    <grant permission="bungeni.bill.wf.allow_schedule_second_reading"
+        role="bungeni.Clerk" />
+    
+    <permission id="bungeni.bill.wf.schedule_second_reading"
+        title="Schedule Second Reading" />
+    <grant permission="bungeni.bill.wf.schedule_second_reading"
+        role="bungeni.Clerk" />
+    
+    <permission id="bungeni.bill.wf.reschedule_second_reading"
+        title="Reschedule Second Reading" />
+    <grant permission="bungeni.bill.wf.reschedule_second_reading"
+        role="bungeni.Clerk" />
+
+    <permission id="bungeni.bill.wf.adjourn_first_report_reading"
+        title="Adjourn First Report Reading" />
+    <grant permission="bungeni.bill.wf.adjourn_first_report_reading"
+        role="bungeni.Clerk" />
+
+    <permission id="bungeni.bill.wf.allow_schedule_first_report_reading"
+        title="Allow scheduling of First Report Reading" />
+    <grant permission="bungeni.bill.wf.allow_schedule_first_report_reading"
+        role="bungeni.Clerk" />
+
+    <permission id="bungeni.bill.wf.adjourn_second" title="Adjourn Second Reading" />
+    <grant permission="bungeni.bill.wf.adjourn_second" role="bungeni.Clerk" />
+    
+    <permission id="bungeni.bill.wf.allow_schedule_whole_house"
+        title="Allow scheduling of Whole House Committee" />
+    <grant permission="bungeni.bill.wf.allow_schedule_whole_house" 
+        role="bungeni.Clerk" />
+    
+    <permission id="bungeni.bill.wf.allow_reschedule_whole_house"
+        title="Allow scheduling/rescheduling of Whole House Committee" />
+    <grant permission="bungeni.bill.wf.allow_reschedule_whole_house" 
+        role="bungeni.Clerk" />
+    
+    <permission id="bungeni.bill.wf.schedule_whole_house"
+        title="Schedule Whole House Committee" />
+    <grant permission="bungeni.bill.wf.schedule_whole_house" 
+        role="bungeni.Clerk" />
+    
+    <permission id="bungeni.bill.wf.reschedule_whole_house"
+        title="Reschedule Whole House Committee" />
+    <grant permission="bungeni.bill.wf.reschedule_whole_house" 
+        role="bungeni.Clerk" />
+    
+    <permission id="bungeni.bill.wf.adjourn_whole_house"
+        title="Adjourn Whole House Committee" />
+    <grant permission="bungeni.bill.wf.adjourn_whole_house"
+        role="bungeni.Clerk" />
+    
+    <permission id="bungeni.bill.wf.select_second_committee"
+        title="Send to Select Committee (II)" />
+    <grant permission="bungeni.bill.wf.select_second_committee"
+        role="bungeni.Clerk" />
+    
+    <permission id="bungeni.bill.wf.allow_schedule_third_reading"
+        title="Allow scheduling of Third Reading" />
+    <grant permission="bungeni.bill.wf.allow_schedule_third_reading"
+        role="bungeni.Clerk" />
+    
+    <permission id="bungeni.bill.wf.schedule_third_reading"
+        title="Schedule Third Reading" />
+    <grant permission="bungeni.bill.wf.schedule_third_reading"
+        role="bungeni.Clerk" />
+    
+    <permission id="bungeni.bill.wf.reschedule_third_reading"
+        title="Reschedule Third Reading" />
+    <grant permission="bungeni.bill.wf.reschedule_third_reading"
+        role="bungeni.Clerk" />
+    
+    <permission id="bungeni.bill.wf.adjourn_third_reading" 
+        title="Adjourn Third Reading" />
+    <grant permission="bungeni.bill.wf.adjourn_third_reading"
+        role="bungeni.Clerk" />
+    
+    <!-- bungeni.bill.select_committe -->
+    
+    <permission id="bungeni.bill.wf.select_first_committee" 
+        title="Send to Select Committee (I)" />
+    <grant permission="bungeni.bill.wf.select_first_committee" 
+        role="bungeni.Clerk" />
+    
+    <permission id="bungeni.bill.wf.select_second_committee_via_whole_house"
+        title="Send/Resend to Select Committee (II)" />
+    <grant permission="bungeni.bill.wf.select_second_committee_via_whole_house"
+        role="bungeni.Clerk" />
+
     
     
   <!-- Question Workflow permissions -->
@@ -215,13 +355,6 @@
     <grant permission="bungeni.motion.wf.adopt_amendments" role="bungeni.Clerk" />
     
     
-  <!-- Bill Workflow permissions -->
-  <permission id="bungeni.bill.Submit" title="Submit a bill" />
-  <permission id="bungeni.bill.Schedule" title="Schedule a bill" />
-  <permission id="bungeni.bill.SelectCommittee" title="Assign a bill to a committee" />
-  <permission id="bungeni.bill.ChangeStatus" title="Reject/Approve a bill" />
-  <permission id="bungeni.bill.Withdraw" title="Withdraw a bill" />
-  <permission id="bungeni.bill.RevertTransitions" title="Revert a transition back to an earlier stage" />
   <!-- Group Workflow Permissions -->
   <permission id="bungeni.group.Manage" title="Manage Bungeni groups" />
     

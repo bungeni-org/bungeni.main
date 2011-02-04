@@ -22,7 +22,7 @@ class actions(object):
         if owner_id and (owner_id!=user_id):
             zope.securitypolicy.interfaces.IPrincipalRoleMap(context 
                 ).assignRoleToPrincipal(u'bungeni.Owner', owner_id)
-
+    
     @staticmethod
     def submit(info, context):
         utils.setBillPublicationDate(info, context)
@@ -33,11 +33,11 @@ class actions(object):
     @staticmethod
     def withdraw(info, context):
         pass
-
+    
     @staticmethod
     def schedule_first(info, context):
         pass
-        
+    
     @staticmethod
     def reschedule_first(info, context):
         pass
@@ -51,5 +51,5 @@ class actions(object):
     def create_version(info, context):
         utils.createVersion(info, context)
 
-
-
+    schedule_first_report_reading = create_version
+    schedule_second_reading = create_version

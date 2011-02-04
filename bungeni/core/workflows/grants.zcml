@@ -34,14 +34,6 @@
     <grant permission="bungeni.tableddocument.Withdraw" role="bungeni.Owner"/>
     <grant permission="bungeni.tableddocument.Withdraw" role="bungeni.Clerk"/>
   
-  <!-- Bill Workflow permissions -->
-  <grant permission="bungeni.bill.Submit" role="bungeni.Clerk" />
-  <grant permission="bungeni.bill.Schedule" role="bungeni.Clerk" />
-  <grant permission="bungeni.bill.SelectCommittee" role="bungeni.Clerk" />
-  <grant permission="bungeni.bill.ChangeStatus" role="bungeni.Clerk" />
-  <grant permission="bungeni.bill.Withdraw" role="bungeni.Clerk" />
-  <grant permission="bungeni.bill.RevertTransitions" role="bungeni.Clerk" />
-
   <!-- Group workflow permissions -->
   <grant permission="bungeni.group.Manage" role="bungeni.Clerk" />
   <grant permission="bungeni.group.Manage" role="bungeni.Speaker" />
