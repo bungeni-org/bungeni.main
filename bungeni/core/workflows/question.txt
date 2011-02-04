@@ -274,7 +274,7 @@ in "submitted" state:
 -------------------------------------
 Transition: "receive_by_clerk"
 
-  >>> actions.received_by_clerk(info, question)
+  >>> actions.receive(info, question)
   >>> #info.fireTransition("receive_by_clerk-%s" % question.status)
   >>> #question.status
   #'received'
@@ -293,7 +293,7 @@ Exception raised:
 
 "Require edit by MP"
 
-  >>> actions.mp_clarify(info, question)
+  >>> actions.require_clarification(info, question)
   >>> #info.fireTransition("mp-clarify-%s" % question.status)
   >>> #question.status
   #'clarify_mp'
@@ -339,7 +339,7 @@ this way do not create the expected auditlog.
 
 "MP clarify".
 
-  >>> actions.mp_clarify(info, question)
+  >>> actions.require_clarification(info, question)
   >>> len(versions)
   8
 

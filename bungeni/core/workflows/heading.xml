@@ -27,7 +27,6 @@
      trigger="automatic"
      source=""
      destination="public"
-     action="bungeni.core.workflows.heading.actions.create"
      />
 
                    

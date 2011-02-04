@@ -27,7 +27,6 @@
         trigger="automatic"
         source=""
         destination="published"
-        action="bungeni.core.workflows.report.actions.create"
         order="0"
     />
 </workflow>

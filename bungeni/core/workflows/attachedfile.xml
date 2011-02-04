@@ -23,7 +23,6 @@
         title="Create"
         source=""
         destination="public"
-        action="bungeni.core.workflows.attachedfile.actions.create"
         trigger="automatic"
     />
     

@@ -37,6 +37,7 @@ class actions(object):
     def create(info, context):
         utils.setParliamentId(info, context)
         utils.setBungeniOwner(context)
+    create_on_behalf_of = create
     
     @staticmethod
     def submit(info, context):
@@ -106,7 +107,8 @@ class actions(object):
     @staticmethod
     def withdraw(info, context):
         pass
-
+    withdraw_public = withdraw
+    
 class SendNotificationToMemberUponReceipt(Notification):
     component.adapts(interfaces.IAgendaItemReceivedEvent)
     

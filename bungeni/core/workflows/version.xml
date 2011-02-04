@@ -22,7 +22,6 @@
      trigger="automatic"
      source=""
      destination="archived"
-     action=""
      condition=""
      />
   
@@ -32,7 +31,6 @@
      trigger="manual"
      source=""
      destination="draft_translation"
-     action=""
      condition=""
      />
 

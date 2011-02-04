@@ -25,13 +25,8 @@
                     Destination
                 </th>
                 <th>
-                    Action
-                </th>
-                
-                <th>
                     Permission
                 </th>
-                
             </thead>
             <tbody>
             <xsl:apply-templates></xsl:apply-templates>
@@ -47,7 +42,6 @@
             <td><xsl:value-of select="@id" /></td>
             <td><xsl:value-of select="@source" /></td>
             <td><xsl:value-of select="@destination" /></td>
-            <td><xsl:value-of select="@action" /></td>
             <td><xsl:value-of select="@permission" /></td>
         </tr>
     </xsl:template>

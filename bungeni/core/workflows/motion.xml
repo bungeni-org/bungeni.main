@@ -235,14 +235,12 @@
         source
         destination
         condition=NullCondition
-        action=NullAction
         trigger=MANUAL
         permission=CheckerPublic
         order=0
         event=None
         require_confirmation=False
     
-    !+ACTION remove this out of the XML, function of transition
     -->
     
     <transition id="create"
@@ -250,7 +248,6 @@
         source=""
         destination="draft"
         condition="bungeni.core.workflows.utils.conditions.user_is_context_owner"
-        action="bungeni.core.workflows.motion.actions.create"
         trigger="automatic"
     />
     
@@ -259,7 +256,6 @@
         source=""
         destination="working_draft"
         condition="bungeni.core.workflows.utils.conditions.user_is_not_context_owner"
-        action="bungeni.core.workflows.motion.actions.create"
         trigger="automatic"
     />
     
@@ -268,7 +264,6 @@
         source="working_draft draft"
         destination="submitted"
         condition=""
-        action="bungeni.core.workflows.motion.actions.submit"
         trigger="manual"
         permission="bungeni.motion.wf.submit"
         event="bungeni.core.workflows.interfaces.IMotionSubmittedEvent"
@@ -279,7 +274,6 @@
         source="submitted"
         destination="received" 
         condition=""
-        action="bungeni.core.workflows.motion.actions.receive" 
         trigger="manual" 
         permission="bungeni.motion.wf.receive"
         event="bungeni.core.workflows.interfaces.IMotionReceivedEvent"
@@ -290,7 +284,6 @@
         source="received" 
         destination="clarification_required"
         condition=""
-        action="bungeni.core.workflows.motion.actions.require_clarification" 
         trigger="manual"
         permission="bungeni.motion.wf.require_clarification"
         event="bungeni.core.workflows.interfaces.IMotionClarifyEvent" 
@@ -302,7 +295,6 @@
         source="received" 
         destination="completed" 
         condition=""
-        action="bungeni.core.workflows.motion.actions.complete"
         trigger="manual"
         permission="bungeni.motion.wf.complete"
     />
@@ -312,7 +304,6 @@
         source="completed"
         destination="admissible" 
         condition=""
-        action="bungeni.core.workflows.motion.actions.approve" 
         trigger="manual"
         permission="bungeni.motion.wf.approve"
     />
@@ -322,7 +313,6 @@
         source="completed"
         destination="inadmissible"
         condition=""
-        action="bungeni.core.workflows.motion.actions.disapprove"
         trigger="manual"
         permission="bungeni.motion.wf.disapprove"
         event="bungeni.core.workflows.interfaces.IMotionRejectedEvent"
@@ -333,7 +323,6 @@
         title="Make available for scheduling" 
         source="admissible deferred adjourned"
         destination="schedule_pending"
-        action=""
         trigger="manual"
         permission="bungeni.motion.wf.allow_schedule" 
         event="bungeni.core.workflows.interfaces.IMotionPendingEvent"
@@ -344,7 +333,6 @@
         source="completed" 
         destination="incomplete" 
         condition=""
-        action="bungeni.core.workflows.motion.actions.require_recomplete" 
         trigger="manual"
         permission="bungeni.motion.wf.require_recomplete"
         require_confirmation="true"
@@ -355,7 +343,6 @@
         source="incomplete"
         destination="completed"
         condition=""
-        action="" 
         trigger="manual"
         permission="bungeni.motion.wf.recomplete" 
     />
@@ -365,7 +352,6 @@
         source="incomplete"
         destination="clarification_required"
         condition=""
-        action="bungeni.core.workflows.motion.actions.require_recomplete_clarification"
         trigger="manual"
         permission="bungeni.motion.wf.require_recomplete_clarification"
         event="bungeni.core.workflows.interfaces.IMotionClarifyEvent"
@@ -377,7 +363,6 @@
         source="clarification_required"
         destination="submitted"
         condition=""
-        action="bungeni.core.workflows.motion.actions.resubmit"
         trigger="manual"
         permission="bungeni.motion.wf.resubmit"
     />
@@ -387,7 +372,6 @@
         source="admissible"
         destination="deferred"
         condition=""
-        action="bungeni.core.workflows.motion.actions.defer"
         trigger="manual"
         permission="bungeni.motion.wf.defer"
         event="bungeni.core.workflows.interfaces.IMotionDeferredEvent"
@@ -398,7 +382,6 @@
         source="deferred"
         destination="elapsed"
         condition=""
-        action="bungeni.core.workflows.motion.actions.elapse"
         trigger="manual"
         permission="bungeni.motion.wf.elapse"
         require_confirmation="true"
@@ -409,7 +392,6 @@
         source="schedule_pending"
         destination="scheduled" 
         condition="bungeni.core.workflows.motion.conditions.is_scheduled"
-        action="bungeni.core.workflows.motion.actions.schedule"
         trigger="system" 
         permission="bungeni.motion.wf.schedule"
         event="bungeni.core.workflows.interfaces.IMotionScheduledEvent"
@@ -429,7 +411,6 @@
         source="schedule_pending"
         destination="admissible"
         condition=""
-        action="bungeni.core.workflows.motion.actions.revert_to_admissible" 
         trigger="manual"
         permission="bungeni.motion.wf.revert_to_admissible"
     />
@@ -439,7 +420,6 @@
         source="scheduled"
         destination="dropped"
         condition=""
-        action="" 
         trigger="manual"
         permission="bungeni.motion.wf.drop" 
         event="bungeni.core.workflows.interfaces.IMotionDroppedEvent"
@@ -460,7 +440,6 @@
         source="scheduled" 
         destination="adopted"
         condition=""
-        action="bungeni.core.workflows.motion.actions.adopt"
         trigger="manual"
         permission="bungeni.motion.wf.adopt"
         event="bungeni.core.workflows.interfaces.IMotionAdoptedEvent"
@@ -472,7 +451,6 @@
         source="scheduled"
         destination="adopted_amendments"
         condition=""
-        action="bungeni.core.workflows.motion.actions.adopt_amendments"
         trigger="manual"
         permission="bungeni.motion.wf.adopt_amendments"
         event="bungeni.core.workflows.interfaces.IMotionAdoptedEvent"
@@ -484,7 +462,6 @@
         source="scheduled"
         destination="rejected"
         condition=""
-        action="bungeni.core.workflows.motion.actions.reject"
         trigger="manual"
         permission="bungeni.motion.wf.reject"
         event="bungeni.core.workflows.interfaces.IMotionRejectedEvent"
@@ -496,7 +473,6 @@
         source="submitted received completed clarification_required"
         destination="withdrawn" 
         condition=""
-        action="bungeni.core.workflows.motion.actions.withdraw"
         trigger="manual"
         permission="bungeni.motion.wf.withdraw"
         require_confirmation="true" 
@@ -507,7 +483,6 @@
         source="admissible scheduled deferred adjourned schedule_pending"
         destination="withdrawn_public"
         condition=""
-        action="bungeni.core.workflows.motion.actions.withdraw_public"
         trigger="manual"
         permission="bungeni.motion.wf.withdraw_public"
         require_confirmation="true"

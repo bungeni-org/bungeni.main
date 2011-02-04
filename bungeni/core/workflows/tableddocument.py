@@ -28,19 +28,21 @@ class actions:
     def create(info, context):
         utils.setParliamentId(info, context)
         utils.setBungeniOwner(context)
+    create_on_behalf_of = create
     
     @staticmethod
     def submit(info, context):
         utils.createVersion(info, context,
             message="New version on workflow transition to: submit")
         utils.setRegistryNumber(info, context)
+    resubmit = submit
     
     @staticmethod
-    def received_by_clerk(info, context):
+    def receive(info, context):
         utils.createVersion(info, context)
 
     @staticmethod
-    def require_edit_by_mp(info, context):
+    def require_clarification(info, context):
         utils.createVersion(info,context)
 
 

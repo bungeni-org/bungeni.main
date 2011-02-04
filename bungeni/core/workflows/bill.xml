@@ -138,7 +138,6 @@
         title="Create Bill"
         source=""
         destination="working_draft"
-        action="bungeni.core.workflows.bill.actions.create"
         condition=""
         trigger="automatic"
     />
@@ -148,7 +147,6 @@
         source="working_draft"
         destination="gazetted"
         condition=""
-        action="bungeni.core.workflows.bill.actions.submit"
         trigger="manual"
         permission="bungeni.bill.wf.submit"
     />
@@ -158,7 +156,6 @@
         source="gazetted first_reading_adjourned"
         destination="first_reading_pending"
         condition=""
-        action=""
         trigger="manual"
         permission="bungeni.bill.wf.allow_schedule_first"
     />
@@ -168,7 +165,6 @@
         source="first_reading_pending"
         destination="first_reading"
         condition="bungeni.core.workflows.bill.conditions.is_scheduled"
-        action="bungeni.core.workflows.bill.actions.schedule_first"
         trigger="system"
         permission="bungeni.bill.wf.schedule_first"
     />
@@ -178,7 +174,6 @@
         source="first_reading"
         destination="first_reading_pending"
         condition=""
-        action=""
         trigger="system"
         permission="bungeni.bill.wf.reschedule_first"
     />
@@ -188,7 +183,6 @@
         source="first_reading"
         destination="first_reading_adjourned"
         condition=""
-        action="bungeni.core.workflows.bill.actions.adjourn_first"
         trigger="manual"
         permission="bungeni.bill.wf.adjourn_first"
     />
@@ -198,7 +192,6 @@
         source="first_reading"
         destination="first_committee"
         condition=""
-        action=""
         trigger="manual"
         permission="bungeni.bill.wf.select_first_committee"
     />
@@ -208,7 +201,6 @@
         source="first_report_reading_pending"
         destination="first_report_reading"
         condition="bungeni.core.workflows.bill.conditions.is_scheduled"
-        action="bungeni.core.workflows.bill.actions.schedule_first_report_reading"
         trigger="system"
         permission="bungeni.bill.wf.schedule_first_report_reading"
     />
@@ -227,7 +219,6 @@
         source="first_reading first_report_reading second_reading_adjourned"
         destination="second_reading_pending"
         condition=""
-        action=""
         trigger="manual"
         permission="bungeni.bill.wf.allow_schedule_second_reading"
     />
@@ -237,7 +228,6 @@
         source="second_reading_pending"
         destination="second_reading"
         condition="bungeni.core.workflows.bill.conditions.is_scheduled"
-        action="bungeni.core.workflows.bill.actions.schedule_second_reading"
         trigger="system"
         permission="bungeni.bill.wf.schedule_second_reading"
     />
@@ -256,7 +246,6 @@
         source="first_report_reading"
         destination="first_report_reading_adjourned"
         condition=""
-        action=""
         trigger="manual"
         permission="bungeni.bill.wf.adjourn_first_report_reading"
     />
@@ -266,7 +255,6 @@
         source="first_committee first_report_reading_adjourned"
         destination="first_report_reading_pending"
         condition=""
-        action=""
         trigger="manual"
         permission="bungeni.bill.wf.allow_schedule_first_report_reading"
     />
@@ -276,7 +264,6 @@
         source="second_reading"
         destination="second_reading_adjourned"
         condition=""
-        action=""
         trigger="manual"
         permission="bungeni.bill.wf.adjourn_second"
     />
@@ -286,7 +273,6 @@
         source="second_reading whole_house_adjourned"
         destination="whole_house_pending"
         condition=""
-        action=""
         trigger="manual"
         permission="bungeni.bill.wf.allow_schedule_whole_house"
     />
@@ -296,7 +282,6 @@
         source="second_committee"
         destination="whole_house_pending"
         condition=""
-        action=""
         trigger="manual"
         permission="bungeni.bill.wf.allow_reschedule_whole_house"
     />
@@ -306,7 +291,6 @@
         source="whole_house_pending"
         destination="whole_house"
         condition="bungeni.core.workflows.bill.conditions.is_scheduled"
-        action=""
         trigger="system"
         permission="bungeni.bill.wf.schedule_whole_house"
     />
@@ -316,7 +300,6 @@
         source="whole_house"
         destination="whole_house_pending"
         condition=""
-        action=""
         trigger="system"
         permission="bungeni.bill.wf.reschedule_whole_house"
     />
@@ -326,7 +309,6 @@
         source="whole_house"
         destination="whole_house_adjourned"
         condition=""
-        action=""
         trigger="manual"
         permission="bungeni.bill.wf.adjourn_whole_house"
     />
@@ -336,7 +318,6 @@
         source="second_reading"
         destination="second_committee"
         condition=""
-        action=""
         trigger="manual"
         permission="bungeni.bill.wf.select_second_committee"
     />
@@ -346,7 +327,6 @@
         source="whole_house"
         destination="second_committee"
         condition=""
-        action=""
         trigger="manual"
         permission="bungeni.bill.wf.select_second_committee_via_whole_house"
     />
@@ -356,7 +336,6 @@
         source="whole_house third_reading_adjourned"
         destination="third_reading_pending"
         condition=""
-        action=""
         trigger="manual"
         permission="bungeni.bill.wf.allow_schedule_third_reading"
     />
@@ -365,8 +344,7 @@
         title="Schedule Third Reading"
         source="third_reading_pending"
         destination="third_reading"
-        condition="bungeni.core.workflows.bill.conditions.is_scheduled"
-        action=""
+        condition=".bill.conditions.is_scheduled"
         trigger="system"
         permission="bungeni.bill.wf.schedule_third_reading"
     />
@@ -375,7 +353,6 @@
         title="Reschedule Third Reading"
         source="third_reading"
         destination="third_reading_pending"
-        action=""
         condition=""
         trigger="system"
         permission="bungeni.bill.wf.reschedule_third_reading"
@@ -386,7 +363,6 @@
         source="third_reading"
         destination="third_reading_adjourned"
         condition=""
-        action=""
         trigger="manual"
         permission="bungeni.bill.wf.adjourn_third_reading"
     />
@@ -396,7 +372,6 @@
         source="second_reading third_reading"
         destination="rejected"
         condition=""
-        action=""
         trigger="manual"
         permission="bungeni.bill.wf.reject"
     />
@@ -406,7 +381,6 @@
         source="third_reading"
         destination="approved"
         condition=""
-        action=""
         trigger="manual"
         permission="bungeni.bill.wf.approve"
     />
@@ -423,7 +397,6 @@
                 third_reading"
         destination="withdrawn_public"
         condition=""
-        action="bungeni.core.workflows.bill.actions.withdraw"
         trigger="manual"
         permission="bungeni.bill.wf.withdraw"
         require_confirmation="true"

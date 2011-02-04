@@ -3,6 +3,7 @@ Support for xml defined workflows, and security manipulations by state.
 """
 
 import re
+import os
 
 from lxml import etree
 from zope.dottedname.resolve import resolve
@@ -38,17 +39,22 @@ def assertRegisteredPermission(permission_id):
 
 def load(file_path):
     doc = etree.fromstring(open(file_path).read())
-    return _load(doc)
+    module_name = os.path.splitext(os.path.basename(file_path))[0]
+    module = resolve(".%s" % module_name, "bungeni.core.workflows")
+    actions = getattr(module, "actions")
+    return _load(doc, actions)
 
 
-def _load(workflow):
-    """ (workflow:etree_doc) -> StateWorkflow
+def _load(workflow, actions):
+    """ (workflow:etree_doc, actions:cls) -> StateWorkflow
     """
     transitions = []
     states = []
     domain = workflow.get("domain")
     _uids = set()
     wid = workflow.get("id")
+    # bookkeeping of all (permission, role) pairs assigned in this workflow
+    _all_prs = set()
     
     def validate_id(id, tag):
         """Assumption: id is not None."""
@@ -68,6 +74,7 @@ def _load(workflow):
         assert False, 'Invalid value: like_state="%s"' % (state_id)
     
     def check_add_permission(permissions, like_permissions, assignment, p, r):
+        _all_prs.add((p, r))
         for perm in [(GRANT, p, r), (DENY, p, r)]:
             assert perm not in permissions, "Workflow [%s] state [%s] " \
                 "conflicting state permission: (%s, %s, %s)" % (
@@ -106,47 +113,60 @@ def _load(workflow):
             State(state_id, Message(s.get("title", domain)), permissions) 
         )
     
+    transition_requireds = ("id", "title", "source", "destination")
+    transition_optionals = ("condition", "trigger", "permission", "order", 
+        "event", "require_confirmation")
+    transition_all_attrs = transition_requireds + transition_optionals
     for t in workflow.iterchildren("transition"):
-    
-        for key in ("source", "destination", "id", "title"):
+        for key in t.keys():
+            assert key in transition_all_attrs, \
+                "Unknown attribute %s in %s" % (key, etree.tostring(t))
+        for key in transition_requireds:
             if t.get(key) is None:
-                raise SyntaxError("%s not in %s"%(key, etree.tostring(t)))
-        validate_id(t.get("id"), "transition")
+                raise SyntaxError("%s not in %s" % (key, etree.tostring(t)))
+        tid = t.get("id")
+        validate_id(tid, "transition")
         # source = "" (empty string implies the None source)
         sources = t.get("source").split() or [None]
         for source in sources:
             if len(sources) > 1:
-                tid = "%s-%s" % (t.get("id"), source)
+                disambiguated_tid = "%s-%s" % (tid, source)
             else:
-                tid = t.get("id")
-            args = (tid, Message(t.get("title"), domain),
-                    source, t.get("destination"))
+                disambiguated_tid = tid
+            args = (disambiguated_tid, 
+                Message(t.get("title"), domain),
+                source, 
+                t.get("destination")
+            )
             kw = {}
             
             # optionals
-            for i in ("trigger", "order", "permission"):
+            for i in transition_optionals:
                 val = t.get(i)
                 if not val:
+                    # we let setting of defaults be handled upstream
                     continue
                 kw[i] = val
+            # action - if this workflow's "actions" defines an action for
+            # this transition (with same name as tranistion), then use it.
+            if hasattr(actions, tid):
+                kw["action"] = getattr(actions, tid)
             
-            require_confirmation = getattr(t, "require_confirmation", "")
-            if require_confirmation.lower() == "true":
-                kw["require_confirmation"] = True
-            
+            # data up-typing 
             if "trigger" in kw:
-                k = kw["trigger"]
-                v = trigger_value_map[k]
-                kw["trigger"] = v
+                kw["trigger"] = trigger_value_map[kw["trigger"]]
+            # python resolvables
+            for i in ("condition", "event"):
+                if i in kw:
+                    # raises importerror/nameerror
+                    kw[i] = resolve(kw[i], "bungeni.core.workflows")
+            # bool
+            if "require_confirmation" in kw:
+                if kw["require_confirmation"].lower() == "true":
+                    kw["require_confirmation"] = True
             
-            # optional python resolvables
-            for i in("condition", "action", "event"):
-                val = t.get(i)
-                if not val:
-                    continue
-                # raises importerror/nameerror
-                val = resolve(val, "bungeni.core.workflows")
-                kw[i] = val
             transitions.append(StateTransition(*args, **kw))
     
     return StateWorkflow(transitions, states)
+
+

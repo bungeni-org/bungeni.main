@@ -34,7 +34,6 @@
         title="Create"
         source=""
         destination="private"
-        action="bungeni.core.workflows.address.actions.create"
         trigger="automatic"
     />
     

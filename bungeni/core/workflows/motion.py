@@ -35,6 +35,7 @@ class actions:
     def create(info, context):
         utils.setParliamentId(info, context)
         utils.setBungeniOwner(context)
+    create_on_behalf_of = create
     
     @staticmethod
     def submit(info, context):

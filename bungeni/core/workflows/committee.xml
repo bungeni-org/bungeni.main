@@ -41,7 +41,6 @@
      trigger="automatic"
      source=""
      destination="draft"
-     action="bungeni.core.workflows.groups.actions.create"
      />
 
   <transition 
@@ -51,7 +50,6 @@
      source="draft
             dissolved"
      destination="active"
-     action="bungeni.core.workflows.groups.actions.activate"
      permission="bungeni.group.Manage"
      require_confirmation="true"
      />
@@ -62,7 +60,6 @@
      trigger="manual"
      source="active"
      destination="dissolved"
-     action="bungeni.core.workflows.groups.actions.dissolve"
      condition="bungeni.core.workflows.groups.conditions.has_end_date"
      permission="bungeni.group.Manage"
      require_confirmation="true"
@@ -75,7 +72,6 @@
      source="active 
             dissolved"
      destination="draft"
-     action="bungeni.core.workflows.groups.actions.deactivate"
      permission="bungeni.group.Manage"
      require_confirmation="true"
      />

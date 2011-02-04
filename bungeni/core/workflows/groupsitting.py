@@ -15,9 +15,12 @@ class actions:
         # GroupSitting-related classes (descriptor, ...) is not yet complete
         from bungeni.ui import container
         container.invalidate_caches_for("GroupSitting", "transition")
+    redraft_agenda = invalidate_caches
+    publish_minutes = invalidate_caches
+    redraft_minutes = invalidate_caches
     
     @staticmethod
-    def draft_minutes(info, context):
+    def to_draft_minutes(info, context):
         dbutils.set_real_order(removeSecurityProxy(context))
         actions.invalidate_caches(info, context)
         

@@ -49,6 +49,7 @@ class actions(object):
         log.debug("[QUESTION CREATE] [%s] [%s]" % (info, q))
         utils.setQuestionDefaults(info, q) # !+
         utils.setBungeniOwner(q)
+    create_on_behalf_of = create
     
     @staticmethod
     def submit_to_clerk(info, context):
@@ -58,9 +59,10 @@ class actions(object):
         utils.createVersion(info, context,
             message="New version on workflow transition to: submit")
         utils.setRegistryNumber(info, context)
+    resubmit = submit_to_clerk
     
     @staticmethod
-    def received_by_clerk(info, context):
+    def receive(info, context):
         """The question is received by the clerks office, 
         the clerk can edit the question.
         """
@@ -72,6 +74,7 @@ class actions(object):
         and cannot be edited by anyone.
         """
         utils.setQuestionScheduleHistory(info, context)
+    withdraw_public = withdraw
     
     @staticmethod
     def elapse(info, context):
@@ -93,15 +96,16 @@ class actions(object):
         it cannot be edited, the ministry can add a written response.
         """
         utils.setMinistrySubmissionDate(info, context)
+    defer_ministry = send_to_ministry
     
     @staticmethod
-    def respondWriting(info, context):
+    def submit_response(info, context):
         """A written response from a ministry.
         """
         pass
     
     @staticmethod
-    def mp_clarify(info, context):
+    def require_clarification(info, context):
         """Send from the clerks office to the mp for clarification 
         the MP can edit it the clerk cannot.
         """
@@ -151,7 +155,7 @@ class actions(object):
         utils.createVersion(info, context)
     
     @staticmethod
-    def respondSitting(info, context):
+    def debate(info, context):
         """A question was debated, the question cannot be edited, 
         the clerks office can add a response.
         """

@@ -29,7 +29,6 @@
      trigger="automatic"
      source=""
      destination="A"
-     action="bungeni.core.workflows.user.actions.create"
      />
 
                    
@@ -87,7 +86,6 @@
      destination="A"
      permission="bungeni.user.Manage"
      require_confirmation="true"
-     action="bungeni.core.workflows.user.actions.resurrect"
      />
 
 
