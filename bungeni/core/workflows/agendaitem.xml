@@ -125,7 +125,7 @@
         title="Create Agenda Item"
         source=""
         destination="draft"
-        condition="bungeni.core.workflows.utils.conditions.user_is_context_owner"
+        condition=".utils.conditions.user_is_context_owner"
         trigger="automatic"
     />
     
@@ -133,7 +133,7 @@
         title="Create Agenda Item (On behalf of)"
         source=""
         destination="working_draft"
-        condition="bungeni.core.workflows.utils.conditions.user_is_not_context_owner"
+        condition=".utils.conditions.user_is_not_context_owner"
         trigger="automatic"
     />
     
@@ -144,7 +144,7 @@
         condition=""
         trigger="manual"
         permission="bungeni.agendaitem.wf.submit"
-        event="bungeni.core.workflows.interfaces.IAgendaItemSubmittedEvent"
+        event=".interfaces.IAgendaItemSubmittedEvent"
     />
     
     <transition id="receive"
@@ -154,7 +154,7 @@
         condition=""
         trigger="manual"
         permission="bungeni.agendaitem.wf.receive"
-        event="bungeni.core.workflows.interfaces.IAgendaItemReceivedEvent"
+        event=".interfaces.IAgendaItemReceivedEvent"
     />
     
     <transition id="require_clarification"
@@ -164,7 +164,7 @@
         condition=""
         trigger="manual"
         permission="bungeni.agendaitem.wf.require_clarification"
-        event="bungeni.core.workflows.interfaces.IAgendaItemClarifyEvent"
+        event=".interfaces.IAgendaItemClarifyEvent"
         require_confirmation="true"
     />
     
@@ -193,7 +193,7 @@
         condition=""
         trigger="manual"
         permission="bungeni.agendaitem.wf.disapprove"
-        event="bungeni.core.workflows.interfaces.IAgendaItemRejectedEvent"
+        event=".interfaces.IAgendaItemRejectedEvent"
         require_confirmation="true"
     />
     
@@ -232,7 +232,7 @@
         condition=""
         trigger="manual"
         permission="bungeni.agendaitem.wf.require_recomplete_clarification"
-        event="bungeni.core.workflows.interfaces.IAgendaItemClarifyEvent"
+        event=".interfaces.IAgendaItemClarifyEvent"
         require_confirmation="true"
     />
     
@@ -257,10 +257,10 @@
         title="Schedule"
         source="schedule_pending adjourned"
         destination="scheduled"
-        condition="bungeni.core.workflows.agendaitem.conditions.is_scheduled"
+        condition=".agendaitem.conditions.is_scheduled"
         trigger="system"
         permission="bungeni.agendaitem.wf.schedule" 
-        event="bungeni.core.workflows.interfaces.IAgendaItemScheduledEvent"
+        event=".interfaces.IAgendaItemScheduledEvent"
     />
     
     <transition id="revert_to_admissible"
@@ -292,7 +292,7 @@
         condition=""
         trigger="manual"
         permission="bungeni.agendaitem.wf.debate"
-        event="bungeni.core.workflows.interfaces.IAgendaItemDebatedEvent"
+        event=".interfaces.IAgendaItemDebatedEvent"
     />
     
     <transition id="adjourn"
@@ -312,7 +312,7 @@
         condition=""
         trigger="manual"
         permission="bungeni.agendaitem.wf.defer"
-        event="bungeni.core.workflows.interfaces.IAgendaItemDeferredEvent"
+        event=".interfaces.IAgendaItemDeferredEvent"
     />
     
     <transition id="elapse"

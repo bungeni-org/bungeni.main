@@ -130,7 +130,7 @@
         trigger="manual"
         source="draft_agenda"
         destination="published_agenda"
-        condition="bungeni.core.workflows.groupsitting.conditions.has_venue"
+        condition=".groupsitting.conditions.has_venue"
         require_confirmation="false"
         permission="bungeni.sitting.ChangeStatus"
     />

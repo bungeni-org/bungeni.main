@@ -19,6 +19,8 @@ from ore.workflow import interfaces
 
 ASSIGNMENTS = (GRANT, DENY)
 
+RESOLVE_BASEPATH = "bungeni.core.workflows"
+
 trigger_value_map = {
     "manual": interfaces.MANUAL,
     "automatic": interfaces.AUTOMATIC,
@@ -40,7 +42,7 @@ def assertRegisteredPermission(permission_id):
 def load(file_path):
     doc = etree.fromstring(open(file_path).read())
     module_name = os.path.splitext(os.path.basename(file_path))[0]
-    module = resolve(".%s" % module_name, "bungeni.core.workflows")
+    module = resolve(".%s" % module_name, RESOLVE_BASEPATH)
     actions = getattr(module, "actions")
     return _load(doc, actions)
 
@@ -159,7 +161,7 @@ def _load(workflow, actions):
             for i in ("condition", "event"):
                 if i in kw:
                     # raises importerror/nameerror
-                    kw[i] = resolve(kw[i], "bungeni.core.workflows")
+                    kw[i] = resolve(kw[i], RESOLVE_BASEPATH)
             # bool
             if "require_confirmation" in kw:
                 if kw["require_confirmation"].lower() == "true":

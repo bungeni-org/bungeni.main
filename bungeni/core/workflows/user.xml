@@ -40,7 +40,7 @@
      destination="I"
      permission="bungeni.user.Manage"
      require_confirmation="true"
-     condition="bungeni.core.workflows.user.conditions.not_has_date_of_death"
+     condition=".user.conditions.not_has_date_of_death"
      />
 
 
@@ -64,7 +64,7 @@
      destination="D"
      permission="bungeni.user.Manage"
      require_confirmation="true"
-     condition="bungeni.core.workflows.user.conditions.has_date_of_death"
+     condition=".user.conditions.has_date_of_death"
      />
 
   <transition 
@@ -74,7 +74,7 @@
      source="A
             I"
      destination="D"
-     condition="bungeni.core.workflows.user.conditions.has_date_of_death"
+     condition=".user.conditions.has_date_of_death"
      />
 
 

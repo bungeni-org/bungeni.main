@@ -129,14 +129,14 @@
         trigger="automatic"
         source=""
         destination="draft"
-        condition="bungeni.core.workflows.utils.conditions.user_is_context_owner"
+        condition=".utils.conditions.user_is_context_owner"
     />
     <transition id="create_on_behalf_of"
         title="Create Tabled Document (On behalf of)"
         trigger="automatic"
         source=""
         destination="working_draft"
-        condition="bungeni.core.workflows.utils.conditions.user_is_not_context_owner"
+        condition=".utils.conditions.user_is_not_context_owner"
     />
     <transition id="submit"
         title="Submit to Clerk"
@@ -145,7 +145,7 @@
         destination="submitted"
         permission="bungeni.tableddocument.Submit"
         condition=""
-        event="bungeni.core.workflows.interfaces.ITabledDocumentSubmittedEvent"
+        event=".interfaces.ITabledDocumentSubmittedEvent"
     />
     <transition id="receive"
         title="Receive"
@@ -154,7 +154,7 @@
         destination="received"
         permission="bungeni.tableddocument.Receive"
         condition=""
-        event="bungeni.core.workflows.interfaces.ITabledDocumentReceivedEvent"
+        event=".interfaces.ITabledDocumentReceivedEvent"
     />
     <transition id="require_clarification"
         title="Needs Clarification"
@@ -163,7 +163,7 @@
         destination="clarification_required"
         permission="bungeni.tableddocument.clerk.Review"
         condition=""
-        event="bungeni.core.workflows.interfaces.ITabledDocumentClarifyEvent"
+        event=".interfaces.ITabledDocumentClarifyEvent"
         require_confirmation="true"
     />
     <transition id="complete"
@@ -188,7 +188,7 @@
         source="admissible adjourned"
         destination="schedule_pending"
         permission="bungeni.tableddocument.Schedule"
-        event="bungeni.core.workflows.interfaces.ITabledDocumentPendingEvent"
+        event=".interfaces.ITabledDocumentPendingEvent"
     />
     
     
@@ -199,7 +199,7 @@
         destination="inadmissible"
         permission="bungeni.tableddocument.speaker.Review"
         condition=""
-        event="bungeni.core.workflows.interfaces.ITabledDocumentRejectedEvent"
+        event=".interfaces.ITabledDocumentRejectedEvent"
         require_confirmation="true"
     />
     <transition id="require_amendment"
@@ -226,7 +226,7 @@
         destination="clarification_required"
         permission="bungeni.tableddocument.clerk.Review"
         condition=""
-        event="bungeni.core.workflows.interfaces.ITabledDocumentClarifyEvent"
+        event=".interfaces.ITabledDocumentClarifyEvent"
         require_confirmation="true"
     />
     <transition id="resubmit"
@@ -252,8 +252,8 @@
         source="schedule_pending"
         destination="scheduled"
         permission="bungeni.tableddocument.Schedule"
-        event="bungeni.core.workflows.interfaces.ITabledDocumentScheduledEvent"
-        condition="bungeni.core.workflows.tableddocument.conditions.is_scheduled"
+        event=".interfaces.ITabledDocumentScheduledEvent"
+        condition=".tableddocument.conditions.is_scheduled"
     />
     
     <transition id="reschedule"
@@ -271,7 +271,7 @@
         destination="adjourned"
         permission="bungeni.tableddocument.Schedule"
         condition=""
-        event="bungeni.core.workflows.interfaces.ITabledDocumentAdjournedEvent"
+        event=".interfaces.ITabledDocumentAdjournedEvent"
     />
     <transition id="table"
         title="Table"
@@ -280,7 +280,7 @@
         destination="tabled"
         permission="bungeni.tableddocument.Table"
         condition=""
-        event="bungeni.core.workflows.interfaces.ITabledDocumentTabledEvent"
+        event=".interfaces.ITabledDocumentTabledEvent"
     />
     <transition id="withdraw"
         title="Withdraw"

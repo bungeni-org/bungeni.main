@@ -247,7 +247,7 @@
         title="Create Motion"
         source=""
         destination="draft"
-        condition="bungeni.core.workflows.utils.conditions.user_is_context_owner"
+        condition=".utils.conditions.user_is_context_owner"
         trigger="automatic"
     />
     
@@ -255,7 +255,7 @@
         title="Create Motion (On behalf of)"
         source=""
         destination="working_draft"
-        condition="bungeni.core.workflows.utils.conditions.user_is_not_context_owner"
+        condition=".utils.conditions.user_is_not_context_owner"
         trigger="automatic"
     />
     
@@ -266,7 +266,7 @@
         condition=""
         trigger="manual"
         permission="bungeni.motion.wf.submit"
-        event="bungeni.core.workflows.interfaces.IMotionSubmittedEvent"
+        event=".interfaces.IMotionSubmittedEvent"
     />
     
     <transition id="receive" 
@@ -276,7 +276,7 @@
         condition=""
         trigger="manual" 
         permission="bungeni.motion.wf.receive"
-        event="bungeni.core.workflows.interfaces.IMotionReceivedEvent"
+        event=".interfaces.IMotionReceivedEvent"
     />
     
     <transition id="require_clarification"
@@ -286,7 +286,7 @@
         condition=""
         trigger="manual"
         permission="bungeni.motion.wf.require_clarification"
-        event="bungeni.core.workflows.interfaces.IMotionClarifyEvent" 
+        event=".interfaces.IMotionClarifyEvent" 
         require_confirmation="true"
     />
     
@@ -315,7 +315,7 @@
         condition=""
         trigger="manual"
         permission="bungeni.motion.wf.disapprove"
-        event="bungeni.core.workflows.interfaces.IMotionRejectedEvent"
+        event=".interfaces.IMotionRejectedEvent"
         require_confirmation="true"
     />
     
@@ -325,7 +325,7 @@
         destination="schedule_pending"
         trigger="manual"
         permission="bungeni.motion.wf.allow_schedule" 
-        event="bungeni.core.workflows.interfaces.IMotionPendingEvent"
+        event=".interfaces.IMotionPendingEvent"
     />
     
     <transition id="require_recomplete"
@@ -354,7 +354,7 @@
         condition=""
         trigger="manual"
         permission="bungeni.motion.wf.require_recomplete_clarification"
-        event="bungeni.core.workflows.interfaces.IMotionClarifyEvent"
+        event=".interfaces.IMotionClarifyEvent"
         require_confirmation="true"
     />
     
@@ -374,7 +374,7 @@
         condition=""
         trigger="manual"
         permission="bungeni.motion.wf.defer"
-        event="bungeni.core.workflows.interfaces.IMotionDeferredEvent"
+        event=".interfaces.IMotionDeferredEvent"
     />
     
     <transition id="elapse"
@@ -391,10 +391,10 @@
         title="Schedule"
         source="schedule_pending"
         destination="scheduled" 
-        condition="bungeni.core.workflows.motion.conditions.is_scheduled"
+        condition=".motion.conditions.is_scheduled"
         trigger="system" 
         permission="bungeni.motion.wf.schedule"
-        event="bungeni.core.workflows.interfaces.IMotionScheduledEvent"
+        event=".interfaces.IMotionScheduledEvent"
     />
     
     <transition id="reschedule" 
@@ -422,7 +422,7 @@
         condition=""
         trigger="manual"
         permission="bungeni.motion.wf.drop" 
-        event="bungeni.core.workflows.interfaces.IMotionDroppedEvent"
+        event=".interfaces.IMotionDroppedEvent"
     />
     
     <transition id="adjourn"
@@ -442,7 +442,7 @@
         condition=""
         trigger="manual"
         permission="bungeni.motion.wf.adopt"
-        event="bungeni.core.workflows.interfaces.IMotionAdoptedEvent"
+        event=".interfaces.IMotionAdoptedEvent"
         require_confirmation="true"
     />
     
@@ -453,7 +453,7 @@
         condition=""
         trigger="manual"
         permission="bungeni.motion.wf.adopt_amendments"
-        event="bungeni.core.workflows.interfaces.IMotionAdoptedEvent"
+        event=".interfaces.IMotionAdoptedEvent"
         require_confirmation="true"
     />
     
@@ -464,7 +464,7 @@
         condition=""
         trigger="manual"
         permission="bungeni.motion.wf.reject"
-        event="bungeni.core.workflows.interfaces.IMotionRejectedEvent"
+        event=".interfaces.IMotionRejectedEvent"
         require_confirmation="true"
     />
     

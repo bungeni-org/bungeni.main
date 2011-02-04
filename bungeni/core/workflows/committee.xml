@@ -60,7 +60,7 @@
      trigger="manual"
      source="active"
      destination="dissolved"
-     condition="bungeni.core.workflows.groups.conditions.has_end_date"
+     condition=".groups.conditions.has_end_date"
      permission="bungeni.group.Manage"
      require_confirmation="true"
      />

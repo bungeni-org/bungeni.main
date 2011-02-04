@@ -164,7 +164,7 @@
         title="Schedule First Reading"
         source="first_reading_pending"
         destination="first_reading"
-        condition="bungeni.core.workflows.bill.conditions.is_scheduled"
+        condition=".bill.conditions.is_scheduled"
         trigger="system"
         permission="bungeni.bill.wf.schedule_first"
     />
@@ -200,7 +200,7 @@
         title="Schedule First Report Reading"
         source="first_report_reading_pending"
         destination="first_report_reading"
-        condition="bungeni.core.workflows.bill.conditions.is_scheduled"
+        condition=".bill.conditions.is_scheduled"
         trigger="system"
         permission="bungeni.bill.wf.schedule_first_report_reading"
     />
@@ -227,7 +227,7 @@
         title="Schedule Second Reading"
         source="second_reading_pending"
         destination="second_reading"
-        condition="bungeni.core.workflows.bill.conditions.is_scheduled"
+        condition=".bill.conditions.is_scheduled"
         trigger="system"
         permission="bungeni.bill.wf.schedule_second_reading"
     />
@@ -290,7 +290,7 @@
         title="Schedule Whole House Committee"
         source="whole_house_pending"
         destination="whole_house"
-        condition="bungeni.core.workflows.bill.conditions.is_scheduled"
+        condition=".bill.conditions.is_scheduled"
         trigger="system"
         permission="bungeni.bill.wf.schedule_whole_house"
     />

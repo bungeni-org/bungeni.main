@@ -182,7 +182,7 @@
         trigger="automatic"
         source=""
         destination="draft"
-        condition="bungeni.core.workflows.utils.conditions.user_is_context_owner"
+        condition=".utils.conditions.user_is_context_owner"
         order="0"
     />
     <transition id="create_on_behalf_of"
@@ -190,7 +190,7 @@
         trigger="automatic"
         source=""
         destination="working_draft"
-        condition="bungeni.core.workflows.utils.conditions.user_is_not_context_owner"
+        condition=".utils.conditions.user_is_not_context_owner"
         order="0"
     />
     <transition id="submit_to_clerk"
@@ -339,7 +339,7 @@
         source="admissible deferred adjourned"
         destination="schedule_pending"
         permission="bungeni.question.Schedule"
-        condition="bungeni.core.workflows.question.conditions.is_oral_response"
+        condition=".question.conditions.is_oral_response"
         event=".interfaces.IQuestionSchedulePendingEvent"
         order="11"
     />
@@ -360,7 +360,7 @@
         permission="bungeni.question.Schedule"
         event=".interfaces.IQuestionScheduledEvent"
         order="12"
-        condition="bungeni.core.workflows.question.conditions.is_scheduled"
+        condition=".question.conditions.is_scheduled"
     />
     <!--
     Questions which are flagged as “requiring written response” are never 
@@ -372,7 +372,7 @@
         source="admissible"
         destination="response_pending"
         permission="bungeni.question.Schedule"
-        condition="bungeni.core.workflows.question.conditions.is_written_response"
+        condition=".question.conditions.is_written_response"
         event=".interfaces.IQuestionSentToMinistryEvent"
         order="13"
     />
@@ -382,8 +382,8 @@
         source="response_pending"
         destination="response_submitted"
         permission="bungeni.response.Submit"
-        condition="bungeni.core.workflows.utils.response_allow_submit"
-        event="bungeni.core.workflows.interfaces.IResponseSubmittedEvent"
+        condition=".utils.response_allow_submit"
+        event=".interfaces.IResponseSubmittedEvent"
         order="15"
     />
     <transition id="redraft_response"
@@ -405,7 +405,7 @@
         source="response_submitted"
         destination="response_completed"
         permission="bungeni.response.Complete" 
-        event="bungeni.core.workflows.interfaces.IResponseCompletedEvent"
+        event=".interfaces.IResponseCompletedEvent"
         order="17"
     />
     <transition id="elapse"
@@ -443,7 +443,7 @@
         source="deferred"
         destination="response_pending"
         permission="bungeni.question.Schedule"
-        condition="bungeni.core.workflows.question.conditions.is_ministry_set"
+        condition=".question.conditions.is_ministry_set"
         event=".interfaces.IQuestionSentToMinistryEvent"
         order="20"
     />
