@@ -217,7 +217,7 @@ class RichTextEditor(TextAreaWidget):
         jsid = self.name.replace(".","_")
         
         # attach behavior to default input widget, disable titlebar
-        input_widget += u"""
+        input_widget_js = u"""
         <script language="javascript">
             options={ height:'300px', 
                       width:'100%%', 
@@ -262,7 +262,8 @@ class RichTextEditor(TextAreaWidget):
             %(jsid)s_editor.render();
         </script>
         """
-        return input_widget % {"jsid": jsid, "js_name": self.name}
+        return input_widget + \
+            input_widget_js % {"jsid": jsid, "js_name": self.name}
         
 class OneTimeEditWidget(TextAreaWidget):
     """
