@@ -558,17 +558,7 @@ class SaveReportView(form.PageForm):
         report.end_date = data["end_date"]
         report.note = data["note"]
         report.short_name = data["short_name"]
-        owner_id = get_db_user_id()
-        '''!+TODO(Miano, 18/08/2010) The admin user is currently not a db user
-            thus the line above returns None when the admin publishes a report.
-            to go around this if it returns None, just query the db for users
-            and set the owner id to be the first result'''
-        if owner_id is not None:
-            report.owner_id = owner_id
-        else:
-            query = session.query(domain.User)
-            results = query.all()
-            report.owner_id = results[0].user_id
+        report.owner_id = get_db_user_id()
         report.language = get_default_language()
         report.created_date = datetime.datetime.now()
         report.group_id = self.context.group_id

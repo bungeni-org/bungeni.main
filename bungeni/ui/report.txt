@@ -49,18 +49,30 @@ Generate ODT
 ------------
    >>> from bungeni.ui.reports import DownloadODT
    >>> from zope.publisher.browser import TestRequest
-   >>> downloadODT = DownloadODT(report, TestRequest())
-   >>> print len(downloadODT())
-   67701
+   >>> request = TestRequest()
+   >>> downloadODT = DownloadODT(report, request)
+   
+To check if ODT is properly generated, we check if the content type of the
+response is set
+
+   >>> output = downloadODT()
+   >>> request.response.getHeader('Content-type')
+   'application/vnd.oasis.opendocument.text'
 
 Generate PDF
 ------------
    >>> from bungeni.ui.reports import DownloadPDF
    >>> from zope.publisher.browser import TestRequest
-   >>> downloadPDF = DownloadPDF(report, TestRequest())
-   >>> print len(downloadPDF())
-   135228
+   >>> request = TestRequest()
+   
+To check if PDF is properly generated, we check if the content type of the
+response is set
 
+   >>> downloadPDF = DownloadPDF(report, request)
+   >>> output = downloadPDF()
+   >>> request.response.getHeader('Content-type')
+   'application/pdf'
+   
 Cleanup
 --------
    >>> session.flush()
