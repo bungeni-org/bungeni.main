@@ -27,7 +27,7 @@
       //Drag and drop within the schedule
       // $("#scheduling-table tbody tr").bungeniDragAndDropScheduling();
       
-      $("#scheduling-table tbody").dragRearrange();
+      $("#scheduling-table tbody.reorder").dragRearrange();
       // Set up calendar item scheduling (by clicking)
       //$("#items-for-scheduling-bill tbody tr input").clickScheduling();
       //$("#items-for-scheduling-motion tbody tr input").clickScheduling();

@@ -6,7 +6,7 @@ from zope import interface
 from zope import schema
 from zope import formlib
 
-#from zope.app.pagetemplate import ViewPageTemplateFile
+from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.security.proxy import removeSecurityProxy
 from zope.security import canWrite
 from zope.security.interfaces import ForbiddenAttribute
@@ -71,9 +71,9 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
     formatter_factory = TableFormatter
     
     # evoque
-    render = z3evoque.PageViewTemplateFile("version.html")
+    #render = z3evoque.PageViewTemplateFile("version.html")
     # zpt
-    #render = ViewPageTemplateFile("templates/version.pt")
+    render = ViewPageTemplateFile("templates/version.pt")
     
     diff_view = None
     

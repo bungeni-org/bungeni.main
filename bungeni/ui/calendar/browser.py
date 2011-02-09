@@ -373,7 +373,9 @@ class GroupSittingScheduleView(BrowserView):
         
 
         site_url = url.absoluteURL(getSite(), self.request)
-
+        reorder = "reorder" if self.context.status in \
+                                ["draft_agenda", "draft_minutes"] \
+                            else "dont-reorder"
         return template(
             display="sitting",
             #title=_(u"$A $e, $B $Y", mapping=start_date),
@@ -391,6 +393,7 @@ class GroupSittingScheduleView(BrowserView):
             #categories=vocabulary.ItemScheduleCategories(self.context),
             new_category_url="%s/admin/content/categories/add?next_url=..." % site_url,
             status=self.context.status,
+            reorder=reorder,
             )
             
     @property
@@ -401,17 +404,15 @@ class ItemScheduleOrder(BrowserView):
     "Stores new order of schedule items"
     def __call__(self):
         obj = self.request.form['obj[]']
-        '''container = self.context
-        schedulings = container.item_schedule
-        
-        for s in schedulings:
-            print "s=>", s, s.planned_order
-        for order, id_number in enumerate(obj):
-            print "asdfasdf", order, id_number'''
         session = Session()
-        for i in range(0,len(obj)):
-            sch = session.query(domain.ItemSchedule).get(obj[i])
-            setattr(sch, 'planned_order', i+1)
+        if self.context.status == "draft_agenda":
+            for i in range(0,len(obj)):
+                sch = session.query(domain.ItemSchedule).get(obj[i])
+                setattr(sch, 'planned_order', i+1)
+        elif self.context.status == "draft_minutes":
+            for i in range(0,len(obj)):
+                sch = session.query(domain.ItemSchedule).get(obj[i])
+                setattr(sch, 'real_order', i+1)
         session.commit()
 
 

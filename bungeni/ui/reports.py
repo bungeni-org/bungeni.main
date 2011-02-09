@@ -267,8 +267,10 @@ class ReportView(form.PageForm):
                         eagerload("item_schedule.item"),
                         eagerload("item_schedule.discussion"))
             items = query.all()
+            order = "real_order" if self.display_minutes else "planned_order"
             for item in items:
-                item.item_schedule.sort(key=operator.attrgetter("planned_order"))
+                item.item_schedule.sort(
+                                key=operator.attrgetter(order))
                 #item.sitting_type.sitting_type = item.sitting_type.sitting_type.capitalize()
             return items
 
@@ -283,17 +285,16 @@ class ReportView(form.PageForm):
         self.sittings = []
 
         if IGroupSitting.providedBy(self.context):
-            session = Session()
-            st = self.context.group_sitting_id
-            sitting = session.query(domain.GroupSitting).get(st)
-            self.sittings.append(sitting)
+            trusted = removeSecurityProxy(self.context)
+            order = "real_order" if self.display_minutes else "planned_order"
+            trusted.item_schedule.sort(key=operator.attrgetter(order))
+            self.sittings.append(trusted)
             back_link = url.absoluteURL(self.context, self.request) + "/schedule"
         elif ISchedulingContext.providedBy(self.context):
             self.sittings = self.get_sittings(self.start_date, self.end_date)
             back_link = url.absoluteURL(self.context, self.request)
         else:
             raise NotImplementedError
-        count = 0
         self.ids = ""
         for s in self.sittings:
             self.ids = self.ids + str(s.group_sitting_id) + ","

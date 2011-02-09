@@ -84,7 +84,7 @@ table.items-for-scheduling .helper {
 	border: 1px solid #8cacbb;
 }
  
-table.items-for-scheduling tbody {
+table.items-for-scheduling tbody.reorder {
 	cursor: move;
 }
 table.items-for-scheduling tbody tr:hover {

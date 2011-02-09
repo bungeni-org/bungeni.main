@@ -77,7 +77,7 @@
                 <th i18n:translate="">Actions</th>
               </tr>
             </thead>
-            <tbody tal:condition="options/items">
+            <tbody tal:condition="options/items" tal:attributes="class options/reorder">
               <tr tal:repeat="item options/items" tal:attributes="id item/name">
                 <td class="item"
                     tal:define="discussion_action item/discussion_action;
