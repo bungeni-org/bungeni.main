@@ -266,7 +266,7 @@
     
   <browser:page
      for="bungeni.models.interfaces.IGroupSitting"
-     permission="zope.View"
+     permission="bungeni.sittingschedule.View"
      name="schedule"
      class=".calendar.browser.GroupSittingScheduleView"
     />
@@ -275,7 +275,7 @@
      name="schedule_order"
      for="bungeni.models.interfaces.IGroupSitting"
      class=".calendar.browser.ItemScheduleOrder"
-     permission="bungeni.sitting.Reorder"
+     permission="bungeni.sittingschedule.Edit"
      />
   <!-- Similar Content -->
   

@@ -57,13 +57,13 @@
     <browser:page name="reorder"
         for="bungeni.models.domain.ItemScheduleContainer"
         class=".forms.ItemScheduleContainerReorderForm"
-        permission="bungeni.sitting.Reorder"
+        permission="bungeni.sittingschedule.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="reorder"
         for="bungeni.models.domain.ItemSchedule"
         class=".forms.ItemScheduleReorderForm"
-        permission="bungeni.sitting.Reorder"
+        permission="bungeni.sittingschedule.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
 
@@ -71,7 +71,7 @@
      name="delete"
      for="bungeni.models.domain.ItemSchedule"
      class=".forms.ItemScheduleDeleteForm"
-     permission="bungeni.itemschedule.Delete"
+     permission="bungeni.sittingschedule.item.Delete"
      layer="bungeni.ui.interfaces.IBungeniSkin"
      />
   
@@ -79,7 +79,7 @@
      name="add"
      for="bungeni.models.interfaces.IItemScheduleContainer"
      class=".common.AddForm"
-     permission="bungeni.itemschedule.Add"
+     permission="bungeni.sittingschedule.item.Add"
      layer="bungeni.ui.interfaces.IBungeniSkin"
      />
 
@@ -87,7 +87,7 @@
      name="delete"
      for="bungeni.models.interfaces.IItemScheduleContainer"
      class=".forms.ItemScheduleContainerDeleteForm"
-     permission="bungeni.itemschedule.Add"
+     permission="bungeni.sittingschedule.item.Delete"
      layer="bungeni.ui.interfaces.IBungeniSkin"
      />  
   
@@ -96,7 +96,7 @@
      name="edit"
      for="bungeni.models.domain.ItemSchedule"
      class=".common.EditForm"
-     permission="bungeni.itemschedule.Edit"
+     permission="bungeni.sittingschedule.Edit"
      layer="bungeni.ui.interfaces.IBungeniSkin"
      />
      
@@ -104,7 +104,7 @@
      name="edit"
      for="bungeni.models.domain.ItemScheduleDiscussion"
      class=".common.EditForm"
-     permission="bungeni.itemschedule.Edit"
+     permission="bungeni.sittingschedule.itemdiscussion.Edit"
      layer="bungeni.ui.interfaces.IBungeniSkin"
      />
   

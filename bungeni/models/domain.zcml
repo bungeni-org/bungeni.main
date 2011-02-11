@@ -171,7 +171,7 @@
                 getDiscussion
                 item_status"
         />
-        <require permission="bungeni.itemschedule.Edit"
+        <require permission="bungeni.sittingschedule.Edit"
             set_attributes="
                 item_id
                 group_sitting_id
@@ -188,7 +188,7 @@
                 schedule_id
                 body_text sitting_time"
         />
-        <require permission="bungeni.itemschedule.Edit"
+        <require permission="bungeni.sittingschedule.itemdiscussion.Edit"
             set_attributes="
                 item_id
                 body_text 

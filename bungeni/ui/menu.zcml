@@ -1069,7 +1069,7 @@
      for="bungeni.models.domain.ItemScheduleDiscussion"
      title="Edit Discussion"
      action="./edit"
-     permission="bungeni.itemschedulediscussion.Edit"
+     permission="bungeni.sittingschedule.itemdiscussion.Edit"
      />
 
   <browser:menuItem
@@ -1077,7 +1077,7 @@
      for="bungeni.models.interfaces.IGroupSitting"
      title="Schedule Item"
      action="./items/add"
-     permission="bungeni.itemschedule.Add"
+     permission="bungeni.sittingschedule.item.Add"
      />
 
   <browser:menuItem
@@ -1085,7 +1085,7 @@
      for="bungeni.models.interfaces.IGroupSitting"
      title="Remove Scheduled Item"
      action="./items/delete"
-     permission="bungeni.itemschedule.Add"
+     permission="bungeni.sittingschedule.item.Delete"
      />
 
   <browser:menuItem
@@ -1093,7 +1093,7 @@
      for="bungeni.models.interfaces.IGroupSitting"
      title="Reorder Schedulings"
      action="./items/reorder"
-     permission="bungeni.sitting.Reorder"
+     permission="bungeni.sittingschedule.Edit"
      />
 
     <browser:menuItem menu="context_actions"
@@ -1102,7 +1102,7 @@
         title="Schedule"
         order="41"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.agendaitem.wf.schedule"
+        permission="bungeni.sittingschedule.View"
      /><!-- !+WORKFLOW_TRANSITION(mr, feb-2011) -->
     <!-- browser:menuItem menu="scheduling_actions"
         for="bungeni.models.interfaces.IItemSchedule"
@@ -1116,7 +1116,7 @@
         title="Delete Scheduling"
         action="./delete?next_url=..."
         order="41"
-        permission="bungeni.itemschedule.Delete"
+        permission="bungeni.sittingschedule.item.Delete"
     />
 
   <browser:menuItem
@@ -1124,7 +1124,7 @@
      for="bungeni.models.interfaces.IItemSchedule"
      title="Move Scheduling up"
      action="../reorder"
-     permission="bungeni.sitting.Reorder"
+     permission="bungeni.sittingschedule.Edit"
      order="10"
      />
 
@@ -1133,7 +1133,7 @@
      for="bungeni.models.interfaces.IItemSchedule"
      title="Move Scheduling down"
      action="../reorder"
-     permission="bungeni.sitting.Reorder"
+     permission="bungeni.sittingschedule.Edit"
      order="11"
      />
 
