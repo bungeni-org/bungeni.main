@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: Fri Oct  8 14:33:04 2010\n"
+"POT-Creation-Date: Thu Feb 10 22:05:42 2011\n"
 "PO-Revision-Date: 2010-06-09 19:48+0200\n"
 "Last-Translator: Flavio <flavio.zeni@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "X-Generator: Pootle 2.0.3\n"
 
 #: src/bungeni.main/bungeni/core/app.py:102
-#: src/bungeni.main/bungeni/core/app.py:177
+#: src/bungeni.main/bungeni/core/app.py:183
 msgid "Sittings"
 msgstr "جلسات"
 
@@ -44,7 +44,7 @@ msgid "Records on members of parliament"
 msgstr "السجلات على أعضاء البرلمان"
 
 #: src/bungeni.main/bungeni/core/app.py:117
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:183
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:190
 msgid "Archive"
 msgstr "الأرشيف"
 
@@ -52,119 +52,119 @@ msgstr "الأرشيف"
 msgid "Parliament records and documents"
 msgstr "البرلمان السجلات والوثائق"
 
-#: src/bungeni.main/bungeni/core/app.py:121
+#: src/bungeni.main/bungeni/core/app.py:127
 msgid "Administration"
 msgstr "إدارة"
 
-#: src/bungeni.main/bungeni/core/app.py:122
+#: src/bungeni.main/bungeni/core/app.py:128
 msgid "Administer bungeni settings"
 msgstr "إدارة إعدادات bungeni"
 
-#: src/bungeni.main/bungeni/core/app.py:128
+#: src/bungeni.main/bungeni/core/app.py:134
 msgid "What's on"
 msgstr "ما على"
 
-#: src/bungeni.main/bungeni/core/app.py:136
+#: src/bungeni.main/bungeni/core/app.py:142
 msgid "View committees created by the current parliament"
 msgstr "اللجان التي أنشأتها رأي البرلمان الحالي"
 
-#: src/bungeni.main/bungeni/core/app.py:140
+#: src/bungeni.main/bungeni/core/app.py:146
 msgid "Bills"
 msgstr "فواتير"
 
-#: src/bungeni.main/bungeni/core/app.py:142
+#: src/bungeni.main/bungeni/core/app.py:148
 msgid "View bills issued by the current parliament"
 msgstr "عرض مشاريع القوانين الصادرة عن البرلمان الحالي"
 
-#: src/bungeni.main/bungeni/core/app.py:146
+#: src/bungeni.main/bungeni/core/app.py:152
 msgid "Questions"
 msgstr "الأسئلة"
 
-#: src/bungeni.main/bungeni/core/app.py:148
+#: src/bungeni.main/bungeni/core/app.py:154
 msgid "View questions issued by the current parliament"
 msgstr "أسئلة رأي صادر عن البرلمان الحالي"
 
-#: src/bungeni.main/bungeni/core/app.py:152
+#: src/bungeni.main/bungeni/core/app.py:158
 msgid "Motions"
 msgstr "الاقتراحات"
 
-#: src/bungeni.main/bungeni/core/app.py:154
+#: src/bungeni.main/bungeni/core/app.py:160
 msgid "View motions issued by the current parliament"
 msgstr "عرض الاقتراحات الصادرة عن البرلمان الحالي."
 
-#: src/bungeni.main/bungeni/core/app.py:159
+#: src/bungeni.main/bungeni/core/app.py:165
 msgid "Tabled documents"
 msgstr "قدمت وثائق"
 
-#: src/bungeni.main/bungeni/core/app.py:161
+#: src/bungeni.main/bungeni/core/app.py:167
 msgid "View the tabled documents of the current parliament"
 msgstr "عرض وثائق قدمت للبرلمان الحالي"
 
-#: src/bungeni.main/bungeni/core/app.py:165
+#: src/bungeni.main/bungeni/core/app.py:171
 msgid "Agenda items"
 msgstr "بنود جدول الأعمال"
 
-#: src/bungeni.main/bungeni/core/app.py:167
+#: src/bungeni.main/bungeni/core/app.py:173
 msgid "View the agenda items of the current parliament"
 msgstr "عرض بنود جدول أعمال مجلس النواب الحالي"
 
-#: src/bungeni.main/bungeni/core/app.py:178
+#: src/bungeni.main/bungeni/core/app.py:184
 msgid "View the sittings of the current parliament"
 msgstr "عرض جلسات البرلمان الحالي"
 
-#: src/bungeni.main/bungeni/core/app.py:183
+#: src/bungeni.main/bungeni/core/app.py:189
 msgid "Publications"
 msgstr "المنشورات"
 
-#: src/bungeni.main/bungeni/core/app.py:185
+#: src/bungeni.main/bungeni/core/app.py:191
 msgid "View Agenda and Minutes reports of the current parliament"
 msgstr "عرض جدول الأعمال ومحاضر البرلمان الحالي"
 
-#: src/bungeni.main/bungeni/core/app.py:191
+#: src/bungeni.main/bungeni/core/app.py:197
 msgid "Current"
 msgstr "الحالية"
 
-#: src/bungeni.main/bungeni/core/app.py:192
+#: src/bungeni.main/bungeni/core/app.py:198
 msgid "View current parliament members (MPs)"
 msgstr "أعضاء العرض الحالي للبرلمان"
 
-#: src/bungeni.main/bungeni/core/app.py:196
+#: src/bungeni.main/bungeni/core/app.py:202
 msgid "Political groups"
 msgstr "المجموعات السياسية"
 
-#: src/bungeni.main/bungeni/core/app.py:197
+#: src/bungeni.main/bungeni/core/app.py:203
 msgid "View current political groups"
 msgstr "عرض المجموعات السياسية الحالية"
 
-#: src/bungeni.main/bungeni/core/app.py:201
+#: src/bungeni.main/bungeni/core/app.py:207
 msgid "Browse"
 msgstr "تصفح"
 
-#: src/bungeni.main/bungeni/core/app.py:202
+#: src/bungeni.main/bungeni/core/app.py:208
 msgid "Current and historical records"
 msgstr "السجلات الحالية والتاريخية"
 
-#: src/bungeni.main/bungeni/core/app.py:206
+#: src/bungeni.main/bungeni/core/app.py:212
 msgid "Documents"
 msgstr "وثائق"
 
-#: src/bungeni.main/bungeni/core/app.py:207
+#: src/bungeni.main/bungeni/core/app.py:213
 msgid "Visit the digital document repository"
 msgstr "زيارة مستودع الوثيقة الرقمية"
 
-#: src/bungeni.main/bungeni/core/app.py:257
+#: src/bungeni.main/bungeni/core/app.py:263
 msgid "Content"
 msgstr "محتوى"
 
-#: src/bungeni.main/bungeni/core/app.py:258
+#: src/bungeni.main/bungeni/core/app.py:264
 msgid "browse the content"
 msgstr "تصفح محتوى"
 
-#: src/bungeni.main/bungeni/core/app.py:262
+#: src/bungeni.main/bungeni/core/app.py:269
 msgid "Settings"
 msgstr "إعدادات"
 
-#: src/bungeni.main/bungeni/core/app.py:263
+#: src/bungeni.main/bungeni/core/app.py:270
 msgid "settings"
 msgstr "إعدادات"
 
@@ -173,7 +173,7 @@ msgid "Workspace"
 msgstr "مساحة العمل"
 
 #: src/bungeni.main/bungeni/core/app.py:85
-#: src/bungeni.main/bungeni/core/app.py:129
+#: src/bungeni.main/bungeni/core/app.py:135
 msgid "Current parliamentary activity"
 msgstr "النشاط الحالي البرلمانية"
 
@@ -183,7 +183,7 @@ msgid "Scheduling"
 msgstr "جدول"
 
 #: src/bungeni.main/bungeni/core/app.py:97
-#: src/bungeni.main/bungeni/core/app.py:134
+#: src/bungeni.main/bungeni/core/app.py:140
 msgid "Committees"
 msgstr "اللجان"
 
@@ -192,7 +192,7 @@ msgstr "اللجان"
 msgid "Committee schedules"
 msgstr "اللجان"
 
-#: src/bungeni.main/bungeni/core/audit.py:233
+#: src/bungeni.main/bungeni/core/audit.py:247
 msgid "No IRequest in interaction"
 msgstr "لا irequest في التفاعل"
 
@@ -244,8 +244,7 @@ msgstr "الأسئلة"
 msgid "Last modified"
 msgstr "آخر تعديل ل$date"
 
-#: src/bungeni.main/bungeni/core/dc.py:336
-#: src/bungeni.main/bungeni/core/dc.py:337
+#: src/bungeni.main/bungeni/core/dc.py:334
 msgid "Discussion"
 msgstr "مناقشة"
 
@@ -258,7 +257,7 @@ msgstr "المقدمة"
 
 #: src/bungeni.main/bungeni/core/dc.py:87
 #, fuzzy
-msgid "approved on"
+msgid "Approved on"
 msgstr "وافق"
 
 #. Default: ""
@@ -281,313 +280,631 @@ msgid "Reverted to previous version $version"
 msgstr "عادت إلى الإصدار السابق $version"
 
 #. Default: "Agenda Item received"
-#: src/bungeni.main/bungeni/core/workflows/agendaitem.py:109
+#: src/bungeni.main/bungeni/core/workflows/agendaitem.py:115
 msgid "notification_email_to_member_upon_receipt_of_agenda_item"
 msgstr "تلقى البند من جدول الأعمال"
 
 #. Default: "Agenda Item submitted"
-#: src/bungeni.main/bungeni/core/workflows/agendaitem.py:132
+#: src/bungeni.main/bungeni/core/workflows/agendaitem.py:138
 msgid "notification_email_to_clerk_upon_submit_of_agenda_item"
 msgstr "قدم البند من جدول الأعمال"
 
 #. Default: "Agenda Item rejected"
-#: src/bungeni.main/bungeni/core/workflows/agendaitem.py:153
+#: src/bungeni.main/bungeni/core/workflows/agendaitem.py:159
 msgid "notification_email_to_member_upon_rejection_of_agenda_item"
 msgstr "رفض البند من جدول الأعمال"
 
 #. Default: "Your agenda_item needs to be clarified"
-#: src/bungeni.main/bungeni/core/workflows/agendaitem.py:174
+#: src/bungeni.main/bungeni/core/workflows/agendaitem.py:180
 msgid "notification_email_to_member_upon_need_clarification_of_agenda_item"
 msgstr "البند من جدول الأعمال الخاص يحتاج إلى توضيح"
 
 #. Default: "Agenda Item deferred"
-#: src/bungeni.main/bungeni/core/workflows/agendaitem.py:194
+#: src/bungeni.main/bungeni/core/workflows/agendaitem.py:200
 msgid "notification_email_to_member_upon_defer_of_agenda_item"
 msgstr "البند المؤجل"
 
 #. Default: "Agenda Item scheduled"
-#: src/bungeni.main/bungeni/core/workflows/agendaitem.py:215
+#: src/bungeni.main/bungeni/core/workflows/agendaitem.py:221
 msgid "notification_email_to_member_upon_schedule_of_agenda_item"
 msgstr "البند من جدول الأعمال المقرر"
 
 #. Default: "Agenda Item was debated"
-#: src/bungeni.main/bungeni/core/workflows/agendaitem.py:258
+#: src/bungeni.main/bungeni/core/workflows/agendaitem.py:264
 msgid "notification_email_to_member_upon_debate_of_agenda_item"
 msgstr "وكان البند من جدول الأعمال مناقشة"
 
 #. Default: "Motion received"
-#: src/bungeni.main/bungeni/core/workflows/motion.py:112
+#: src/bungeni.main/bungeni/core/workflows/motion.py:121
 msgid "notification_email_to_member_upon_receipt_of_motion"
 msgstr "وردت الحركة"
 
 #. Default: "Motion submitted"
-#: src/bungeni.main/bungeni/core/workflows/motion.py:136
+#: src/bungeni.main/bungeni/core/workflows/motion.py:145
 msgid "notification_email_to_clerk_upon_submit_of_motion"
 msgstr "قدم اقتراح"
 
 #. Default: "Motion rejected"
-#: src/bungeni.main/bungeni/core/workflows/motion.py:157
+#: src/bungeni.main/bungeni/core/workflows/motion.py:166
 msgid "notification_email_to_member_upon_rejection_of_motion"
 msgstr "رفضت اقتراح"
 
 #. Default: "Your motion needs to be clarified"
-#: src/bungeni.main/bungeni/core/workflows/motion.py:178
+#: src/bungeni.main/bungeni/core/workflows/motion.py:187
 msgid "notification_email_to_member_upon_need_clarification_of_motion"
 msgstr "الاقتراح الخاص يحتاج إلى توضيح"
 
 #. Default: "Motion deferred"
-#: src/bungeni.main/bungeni/core/workflows/motion.py:198
+#: src/bungeni.main/bungeni/core/workflows/motion.py:207
 msgid "notification_email_to_member_upon_defer_of_motion"
 msgstr "اقتراح تأجيل"
 
 #. Default: "Motion scheduled"
-#: src/bungeni.main/bungeni/core/workflows/motion.py:219
+#: src/bungeni.main/bungeni/core/workflows/motion.py:228
 msgid "notification_email_to_member_upon_schedule_of_motion"
 msgstr "اقتراح المقرر"
 
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:10
-msgid "Review a question"
-msgstr "استعراض مسألة"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:11
-msgid "Speaker review a question"
-msgstr "منزل استعراض الأعمال السؤال"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:12
-msgid "Schedule a question"
-msgstr "مسألة الجدول الزمني"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:13
-msgid "Respond to a question"
-msgstr "الرد على السؤال"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:14
-msgid "Answer a question"
-msgstr "الإجابة على السؤال"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:15
-msgid "Withdraw a question"
-msgstr "سحب السؤال"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:16
-msgid "Elapse a question"
-msgstr "السؤال مرور"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:17
-msgid "Answer a question in writing"
-msgstr "سؤال الإجابة خطيا"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:19
-msgid "Submit a Response"
-msgstr "يقدم استجابة"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:20
-msgid "Complete a Response"
-msgstr "استجابة كاملة"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:21
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:100
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:104
 #, fuzzy
-msgid "Revert a question response transition back to an earlier stage"
-msgstr "العودة الانتقال إلى مرحلة سابقة"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:24
-msgid "Submit a motion"
-msgstr "تقديم اقتراح"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:25
-msgid "Receive a motion"
-msgstr "تلقي الحركة"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:26
-msgid "Review a motion"
-msgstr "استعراض الاقتراح"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:27
-msgid "Speaker review a motion"
-msgstr "اقتراح منزل استعراض الأعمال"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:28
-msgid "Schedule a motion"
-msgstr "اقتراح جدول زمني"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:29
-msgid "Mark a motion as debated"
-msgstr "كما ناقشت اقتراح علامة"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:30
-msgid "Withdraw a motion"
-msgstr "سحب الاقتراح"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:32
-msgid "Submit a bill"
-msgstr "يقدم مشروع قانون"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:33
-msgid "Schedule a bill"
-msgstr "الجدول الزمني لمشروع قانون"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:34
-msgid "Assign a bill to a committee"
-msgstr "مشروع قانون لتعيين لجنة"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:35
-msgid "Reject/Approve a bill"
-msgstr "رفض / الموافقة على مشروع قانون"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:36
-msgid "Withdraw a bill"
-msgstr "سحب مشروع قانون"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:37
-msgid "Revert a transition back to an earlier stage"
-msgstr "العودة الانتقال إلى مرحلة سابقة"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:39
-msgid "Manage Bungeni groups"
-msgstr "إدارة مجموعات bungeni"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:41
-msgid "Manage User Adresses"
-msgstr "إدارة عناوين المستخدم"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:43
-msgid "Submit an agenda item"
-msgstr "يقدم البند من جدول الأعمال"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:44
-msgid "Receive an agenda item"
-msgstr "تلقي البند من جدول الأعمال"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:45
-msgid "Review an agenda item"
-msgstr "استعراض جدول الأعمال"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:46
-msgid "Speaker review a agenda item"
-msgstr "البند من جدول الأعمال استعراض اللغة"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:47
-msgid "Schedule an agenda item"
-msgstr "الجدول الزمني لجدول الأعمال"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:48
-msgid "Mark an agenda item as debated"
-msgstr "علامة البند من جدول الأعمال ومناقشة"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:49
-msgid "Withdraw an agenda item"
+msgid "Withdraw an agendaitem"
 msgstr "سحب البند من جدول الأعمال"
 
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:51
-msgid "Submit a tabled document"
-msgstr "تقديم وثيقة قدمت"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:52
-msgid "Receive a tabled document"
-msgstr "الحصول على وثيقة قدمت"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:53
-msgid "Review a tabled document"
-msgstr "قدم استعراض الوثيقة"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:54
-msgid "Speaker review a tabled document"
-msgstr "قدمت وثيقة المنزل استعراض الأعمال"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:55
-msgid "Schedule a tabled document"
-msgstr "طرح جدول الوثيقة"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:56
-#, fuzzy
-msgid "Table a tabled document"
-msgstr "طرح جدول الوثيقة"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:57
-msgid "Withdraw a tabled document"
-msgstr "سحب وثيقة قدمت"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:59
-msgid "Change Sitting Status"
-msgstr "تغيير وضع الجلوس"
-
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:61
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:111
 msgid "Deactivate a file"
 msgstr "تنشيط ملف"
 
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:62
-msgid "Deactivate an event"
-msgstr "تنشيط الحدث"
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:118
+msgid "Submit a bill"
+msgstr "يقدم مشروع قانون"
 
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:63
-msgid "Deactivate a heading"
-msgstr "إلغاء البند"
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:121
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:32
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:41
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:135
+msgid "Rejected"
+msgstr "رفض"
 
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:64
-msgid "Manage user"
-msgstr "إدارة المستخدم"
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:124
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:70
+#, fuzzy
+msgid "Approved"
+msgstr "الموافقة"
 
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:8
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:127
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:30
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:39
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:42
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:47
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:50
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:51
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:54
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:65
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:98
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:100
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:106
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:110
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:115
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:119
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:124
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:128
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:129
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:157
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:168
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:173
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:176
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:178
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:179
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:183
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:184
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:185
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:235
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:237
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:238
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:249
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:254
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:259
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:262
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:263
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:288
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:298
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:301
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:303
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:306
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:309
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:314
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:315
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:316
+msgid "Withdraw"
+msgstr "سحب"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:132
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:40
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:66
+#, fuzzy
+msgid "Allow scheduling of First Reading"
+msgstr "إعادة جدولة القراءة الأولى"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:136
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:67
+msgid "Schedule First Reading"
+msgstr "قراءة الجدول الأول"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:14
+#, fuzzy
+msgid "Publish an address internally"
+msgstr "نشر الداخلية"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:140
+#, fuzzy
+msgid "Re-schedule First Reading"
+msgstr "قراءة الجدول الأول"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:144
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:61
+#, fuzzy
+msgid "Adjourn First Reading"
+msgstr "القرأة الأولى"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:148
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:55
+#, fuzzy
+msgid "Schedule First Report Reading"
+msgstr "تقرير جدول القراءة"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:153
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:33
+#, fuzzy
+msgid "Reschedule First Report Reading"
+msgstr "تقرير جدول القراءة"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:158
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:38
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:45
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:60
+#, fuzzy
+msgid "Allow scheduling of Second Reading"
+msgstr "إعادة جدولة القراءة الثانية"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:163
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:64
+msgid "Schedule Second Reading"
+msgstr "قراءة الجدول الثاني"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:168
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:68
+#, fuzzy
+msgid "Reschedule Second Reading"
+msgstr "قراءة الجدول الثاني"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:173
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:52
+#, fuzzy
+msgid "Adjourn First Report Reading"
+msgstr "تأجيل قراءة تقرير"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:178
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:48
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:56
+#, fuzzy
+msgid "Allow scheduling of First Report Reading"
+msgstr "إعادة جدولة قراءة التقرير"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:183
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:29
+#, fuzzy
+msgid "Adjourn Second Reading"
+msgstr "القراءة الثانية"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:186
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:34
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:37
+#, fuzzy
+msgid "Allow scheduling of Whole House Committee"
+msgstr "إعادة جدولة كامل جنة مجلس النواب"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:19
+#, fuzzy
+msgid "Publish an address"
+msgstr "نشر في الجريدة الرسمية"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:191
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:49
+#, fuzzy
+msgid "Allow scheduling/rescheduling of Whole House Committee"
+msgstr "إعادة جدولة كامل جنة مجلس النواب"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:196
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:36
+msgid "Schedule Whole House Committee"
+msgstr "الجدول الزمني لجنة البيت كله"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:201
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:44
+#, fuzzy
+msgid "Reschedule Whole House Committee"
+msgstr "الجدول الزمني لجنة البيت كله"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:206
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:69
+#, fuzzy
+msgid "Adjourn Whole House Committee"
+msgstr "الجدول الزمني لجنة البيت كله"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:211
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:62
+#, fuzzy
+msgid "Send to Select Committee (II)"
+msgstr "إرسال لجنة"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:216
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:28
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:58
+#, fuzzy
+msgid "Allow scheduling of Third Reading"
+msgstr "قراءة الجدول الثالث"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:221
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:31
+msgid "Schedule Third Reading"
+msgstr "قراءة الجدول الثالث"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:226
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:57
+#, fuzzy
+msgid "Reschedule Third Reading"
+msgstr "قراءة الجدول الثالث"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:23
+#, fuzzy
+msgid "Make an address private"
+msgstr "جعل القطاع الخاص"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:231
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:35
+#, fuzzy
+msgid "Adjourn Third Reading"
+msgstr "القراءة الثالثة"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:238
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:63
+#, fuzzy
+msgid "Send to Select Committee (I)"
+msgstr "إرسال لجنة"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:243
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:59
+#, fuzzy
+msgid "Send/Resend to Select Committee (II)"
+msgstr "إرسال لجنة"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:253
 #, fuzzy
 msgid "Submit a question to Clerk Office"
 msgstr "يقدم إلى منزل المكاتب التجارية"
 
-#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:9
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:254
 msgid "Receive a question"
 msgstr "تلقي السؤال"
 
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:255
+msgid "Review a question"
+msgstr "استعراض مسألة"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:256
+msgid "Speaker review a question"
+msgstr "منزل استعراض الأعمال السؤال"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:257
+msgid "Schedule a question"
+msgstr "مسألة الجدول الزمني"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:258
+msgid "Respond to a question"
+msgstr "الرد على السؤال"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:259
+msgid "Answer a question"
+msgstr "الإجابة على السؤال"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:260
+msgid "Withdraw a question"
+msgstr "سحب السؤال"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:261
+msgid "Elapse a question"
+msgstr "السؤال مرور"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:262
+msgid "Answer a question in writing"
+msgstr "سؤال الإجابة خطيا"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:264
+msgid "Submit a Response"
+msgstr "يقدم استجابة"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:265
+msgid "Complete a Response"
+msgstr "استجابة كاملة"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:266
+#, fuzzy
+msgid "Revert a question response transition back to an earlier stage"
+msgstr "العودة الانتقال إلى مرحلة سابقة"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:272
+msgid "Submit a motion"
+msgstr "تقديم اقتراح"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:275
+#, fuzzy
+msgid "Re-submit a motion"
+msgstr "تقديم اقتراح"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:278
+msgid "Receive a motion"
+msgstr "تلقي الحركة"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:281
+msgid "Require clarification of a motion"
+msgstr ""
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:286
+msgid "Require clarification from MP for motion to be complete"
+msgstr ""
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:302
+#, fuzzy
+msgid "Reject a completed motion"
+msgstr "أكملت استجابة"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:306
+#, fuzzy
+msgid "Make a motion available for scheduling"
+msgstr "تتيح لجدولة"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:31
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:34
+#, fuzzy
+msgid "Submit an agendaitem"
+msgstr "يقدم البند من جدول الأعمال"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:311
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:166
+#, fuzzy
+msgid "Reject a scheduled motion"
+msgstr "اقتراح جدول زمني"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:314
+msgid "Require clarification for motion to be complete"
+msgstr ""
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:319
+#, fuzzy
+msgid "Defer a motion"
+msgstr "استعراض الاقتراح"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:325
+msgid "Schedule a motion"
+msgstr "اقتراح جدول زمني"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:328
+#, fuzzy
+msgid "Reschedule a motion"
+msgstr "اقتراح جدول زمني"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:339
+#, fuzzy
+msgid "Adjourn motion debate"
+msgstr "كما ناقشت اقتراح علامة"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:342
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:346
+msgid "Withdraw a motion"
+msgstr "سحب الاقتراح"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:350
+#, fuzzy
+msgid "Adopt a motion"
+msgstr "تقديم اقتراح"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:353
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:162
+msgid "Adopt with amendments"
+msgstr ""
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:359
+msgid "Manage Bungeni groups"
+msgstr "إدارة مجموعات bungeni"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:363
+msgid "Submit a tabled document"
+msgstr "تقديم وثيقة قدمت"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:364
+msgid "Receive a tabled document"
+msgstr "الحصول على وثيقة قدمت"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:365
+msgid "Review a tabled document"
+msgstr "قدم استعراض الوثيقة"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:366
+msgid "Speaker review a tabled document"
+msgstr "قدمت وثيقة المنزل استعراض الأعمال"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:367
+msgid "Schedule a tabled document"
+msgstr "طرح جدول الوثيقة"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:368
+#, fuzzy
+msgid "Table a tabled document"
+msgstr "طرح جدول الوثيقة"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:369
+msgid "Withdraw a tabled document"
+msgstr "سحب وثيقة قدمت"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:37
+#, fuzzy
+msgid "Receive an agendaitem"
+msgstr "تلقي البند من جدول الأعمال"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:371
+msgid "Change Sitting Status"
+msgstr "تغيير وضع الجلوس"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:373
+msgid "Deactivate an event"
+msgstr "تنشيط الحدث"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:374
+msgid "Deactivate a heading"
+msgstr "إلغاء البند"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:375
+msgid "Manage user"
+msgstr "إدارة المستخدم"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:40
+#, fuzzy
+msgid "Require clarification of an agendaitem"
+msgstr "استعراض جدول الأعمال"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:45
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:291
+#, fuzzy
+msgid "Submit to Speaker Office"
+msgstr "يقدم إلى منزل المكاتب التجارية"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:49
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:295
+#, fuzzy
+msgid "Re-submit to Speaker Office"
+msgstr "يقدم إلى منزل المكاتب التجارية"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:53
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:299
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:131
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:186
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:264
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:317
+msgid "Approve"
+msgstr "الموافقة"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:56
+#, fuzzy
+msgid "Reject a completed agendaitem"
+msgstr "استعراض جدول الأعمال"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:59
+#, fuzzy
+msgid "Make an agendaitem available for scheduling"
+msgstr "تتيح لجدولة"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:64
+#, fuzzy
+msgid "Schedule an agendaitem"
+msgstr "الجدول الزمني لجدول الأعمال"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:67
+#, fuzzy
+msgid "Reschedule an agendaitem"
+msgstr "الجدول الزمني لجدول الأعمال"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:70
+msgid "Require clarification for agendaitem to be complete"
+msgstr ""
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:75
+msgid "Require clarification from MP for agendaitem to be complete"
+msgstr ""
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:80
+#, fuzzy
+msgid "Defer an agendaitem"
+msgstr "استعراض جدول الأعمال"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:83
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:322
+#, fuzzy
+msgid "Elapse a motion"
+msgstr "السؤال مرور"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:86
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:331
+msgid "Revert to admissable"
+msgstr ""
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:91
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:336
+#, fuzzy
+msgid "Drop a motion"
+msgstr "سحب الاقتراح"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:94
+#, fuzzy
+msgid "Drop an agendaitem"
+msgstr "سحب البند من جدول الأعمال"
+
+#: src/bungeni.main/bungeni/core/workflows/permissions.zcml:97
+#, fuzzy
+msgid "Adjourn agendaitem debate"
+msgstr "علامة البند من جدول الأعمال ومناقشة"
+
 #. Default: "Question received"
-#: src/bungeni.main/bungeni/core/workflows/question.py:177
+#: src/bungeni.main/bungeni/core/workflows/question.py:184
 msgid "notification_email_to_member_upon_receipt_of_question"
 msgstr "تلقى السؤال"
 
 #. Default: "Question submitted"
-#: src/bungeni.main/bungeni/core/workflows/question.py:201
+#: src/bungeni.main/bungeni/core/workflows/question.py:208
 msgid "notification_email_to_clerk_upon_submit_of_question"
 msgstr "قدم السؤال"
 
 #. Default: "Question rejected"
-#: src/bungeni.main/bungeni/core/workflows/question.py:222
+#: src/bungeni.main/bungeni/core/workflows/question.py:229
 msgid "notification_email_to_member_upon_rejection_of_question"
 msgstr "رفض السؤال"
 
 #. Default: "Your question needs to be clarified"
-#: src/bungeni.main/bungeni/core/workflows/question.py:243
+#: src/bungeni.main/bungeni/core/workflows/question.py:250
 msgid "notification_email_to_member_upon_need_clarification_of_question"
 msgstr "السؤال يحتاج إلى توضيح"
 
 #. Default: "Question deferred"
-#: src/bungeni.main/bungeni/core/workflows/question.py:263
+#: src/bungeni.main/bungeni/core/workflows/question.py:270
 msgid "notification_email_to_member_upon_defer_of_question"
 msgstr "سؤال مؤجل"
 
 #. Default: "Question scheduled"
-#: src/bungeni.main/bungeni/core/workflows/question.py:284
+#: src/bungeni.main/bungeni/core/workflows/question.py:291
 msgid "notification_email_to_member_upon_schedule_of_question"
 msgstr "السؤال المقرر"
 
 #. Default: "Question completed for review at the speakers office"
-#: src/bungeni.main/bungeni/core/workflows/question.py:329
+#: src/bungeni.main/bungeni/core/workflows/question.py:336
 msgid "notification_email_to_member_upon_complete_of_question"
 msgstr "مسألة استكمال لاستعراضها في مكتب العمل في المنزل"
 
 #. Default: "Question assigned to ministry"
-#: src/bungeni.main/bungeni/core/workflows/question.py:350
+#: src/bungeni.main/bungeni/core/workflows/question.py:357
 msgid "notification_email_to_ministry_upon_complete_question"
 msgstr "مسألة تعيين وزارة"
 
 #. Default: "Question sent to ministry for a written answer"
-#: src/bungeni.main/bungeni/core/workflows/question.py:379
+#: src/bungeni.main/bungeni/core/workflows/question.py:386
 msgid "notification_email_to_member_upon_sent_to_ministry_of_question"
 msgstr "أرسلت السؤال على وزارة للإجابة مكتوبة"
 
 #. Default: "Question answered"
-#: src/bungeni.main/bungeni/core/workflows/question.py:402
+#: src/bungeni.main/bungeni/core/workflows/question.py:409
 msgid "notification_email_to_member_upon_answer_of_question"
 msgstr "سؤال أجاب"
 
 #. Default: "Question debated"
-#: src/bungeni.main/bungeni/core/workflows/question.py:425
+#: src/bungeni.main/bungeni/core/workflows/question.py:432
 msgid "notification_email_to_member_upon_debate_question"
 msgstr "السؤال مناقشة"
 
@@ -604,91 +921,86 @@ msgid "scheduled"
 msgstr "من المقرر"
 
 #: src/bungeni.main/bungeni/core/workflows/simple.py:30
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:100
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:114
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:159
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:168
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:236
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:247
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:284
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:294
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:103
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:117
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:160
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:169
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:242
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:248
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:292
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:299
 msgid "Submit to Clerk"
 msgstr "يقدم إلى كاتب"
 
 #: src/bungeni.main/bungeni/core/workflows/simple.py:37
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:109
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:154
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:240
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:273
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:299
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:112
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:171
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:251
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:284
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:307
 msgid "Schedule"
 msgstr "جدول"
 
+#. Default: "Tabled document received"
+#: src/bungeni.main/bungeni/core/workflows/tableddocument.py:101
+msgid "notification_email_to_member_upon_receipt_of_tabled_document"
+msgstr "تلقى وثيقة قدمت"
+
 #. Default: "Tabled document submitted"
-#: src/bungeni.main/bungeni/core/workflows/tableddocument.py:119
+#: src/bungeni.main/bungeni/core/workflows/tableddocument.py:125
 msgid "notification_email_to_clerk_upon_submit_of_tabled_document"
 msgstr "قدمت الوثيقة المقدمة"
 
 #. Default: "Tabled document rejected"
-#: src/bungeni.main/bungeni/core/workflows/tableddocument.py:140
+#: src/bungeni.main/bungeni/core/workflows/tableddocument.py:146
 msgid "notification_email_to_member_upon_rejection_of_tabled_document"
 msgstr "ورفض وثيقة قدمت"
 
 #. Default: "Your tabled document needs to be clarified"
-#: src/bungeni.main/bungeni/core/workflows/tableddocument.py:161
+#: src/bungeni.main/bungeni/core/workflows/tableddocument.py:167
 msgid "notification_email_to_member_upon_need_clarification_of_tabled_document"
 msgstr "المستند المقدم يحتاج إلى توضيح"
 
 #. Default: "Tabled document scheduled"
-#: src/bungeni.main/bungeni/core/workflows/tableddocument.py:182
+#: src/bungeni.main/bungeni/core/workflows/tableddocument.py:188
 msgid "notification_email_to_member_upon_schedule_of_tabled_document"
 msgstr "قدمت وثيقة من المقرر"
 
 #. Default: "Tabled document adjourned"
-#: src/bungeni.main/bungeni/core/workflows/tableddocument.py:203
+#: src/bungeni.main/bungeni/core/workflows/tableddocument.py:209
 msgid "notification_email_to_member_upon_postpone_of_tabled_document"
 msgstr "تأجيل طرح وثيقة"
-
-#. Default: "Tabled document received"
-#: src/bungeni.main/bungeni/core/workflows/tableddocument.py:95
-msgid "notification_email_to_member_upon_receipt_of_tabled_document"
-msgstr "تلقى وثيقة قدمت"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:10
 msgid "Whole House Adjourned"
 msgstr "تأجيل البيت كله"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:101
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:119
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:141
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:162
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:171
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:223
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:249
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:267
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:288
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:296
-msgid "Needs Clarification by MP"
-msgstr "يحتاج الى توضيح من قبل النائب"
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:102
+#, fuzzy
+msgid "Create Question"
+msgstr "إنشاء ترجمة"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:103
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:150
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:160
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:233
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:243
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:286
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:104
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:165
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:245
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:296
+msgid "Resubmit to Clerk"
+msgstr "لإعادة كاتب"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:105
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:246
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:253
 msgid "Reject"
 msgstr "رفض"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:105
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:108
 msgid "Complete Response"
 msgstr "استجابة كاملة"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:106
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:163
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:230
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:237
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:289
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:109
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:241
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:247
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:295
 msgid "Needs Clarification"
 msgstr "يحتاج الى توضيح"
 
@@ -696,88 +1008,75 @@ msgstr "يحتاج الى توضيح"
 msgid "Third Reading"
 msgstr "القراءة الثالثة"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:110
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:165
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:241
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:291
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:111
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:170
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:250
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:300
 msgid "Submit to the Speaker Office"
 msgstr "يقدم إلى منزل المكاتب التجارية"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:111
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:176
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:244
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:302
-msgid "Receive"
-msgstr "تلقى"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:115
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:169
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:248
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:295
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:118
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:257
 msgid "Complete"
 msgstr "كامل"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:118
-msgid "Create Question (On behalf of)"
-msgstr ""
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:12
 #, fuzzy
 msgid "Second Reading Pending"
 msgstr "القراءة الثانية"
 
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:121
+msgid "Create Question (On behalf of)"
+msgstr ""
+
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:122
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:181
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:261
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:312
+msgid "Receive"
+msgstr "تلقى"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:123
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:182
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:313
+msgid "Drop"
+msgstr ""
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:125
 msgid "Redraft Response"
 msgstr "إعادة صياغة استجابة"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:123
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:126
 msgid "Submit Response"
 msgstr "يقدم استجابة"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:126
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:179
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:253
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:305
-msgid "Approve"
-msgstr "الموافقة"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:128
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:213
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:255
-msgid "Received by Clerks Office"
-msgstr "التي تلقاها مكتب للكاتب"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:13
 msgid "Bill Withdrawn"
 msgstr "سحب مشروع قانون"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:133
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:217
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:259
-msgid "Needs Clarification by Clerks Office"
-msgstr "يحتاج الى توضيح من مكتب لكاتب"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:134
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:218
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:260
-#, fuzzy
-msgid "Submitted"
-msgstr "المقدمة"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:139
-msgid "Adopted with amendments"
-msgstr ""
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:222
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:266
+msgid "Received by Clerks Office"
+msgstr "التي تلقاها مكتب للكاتب"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:14
 msgid "Draft Bill"
 msgstr "مشروع قانون"
 
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:141
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:227
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:272
+#, fuzzy
+msgid "Submitted"
+msgstr "المقدمة"
+
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:145
 msgid "Adopted"
 msgstr ""
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:148
-msgid "Adopt"
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:146
+msgid "Adopted with amendments"
 msgstr ""
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:15
@@ -785,30 +1084,70 @@ msgstr ""
 msgid "Third Reading Pending"
 msgstr "القراءة الثالثة"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:151
-msgid "Resubmit to clerk"
-msgstr "لإعادة كاتب"
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:150
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:233
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:281
+msgid "Needs Clarification by Clerks Office"
+msgstr "يحتاج الى توضيح من مكتب لكاتب"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:156
-msgid "Adopt with amendments"
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:153
+msgid "Adopt"
 msgstr ""
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:157
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:155
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:286
 #, fuzzy
-msgid "Create Motion"
-msgstr "إنشاء ترجمة"
+msgid "Disapprove"
+msgstr "الموافقة"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:156
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:287
+#, fuzzy
+msgid "Re-schedule"
+msgstr "من المقرر"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:158
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:240
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:290
+#, fuzzy
+msgid "Revert to admissible"
+msgstr "غير مقبول"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:159
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:174
+#, fuzzy
+msgid "Needs Clarification to Complete"
+msgstr "يحتاج الى توضيح"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:16
 msgid "Second Reading Adjourned"
 msgstr "تأجيل القراءة الثانية"
 
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:163
+#, fuzzy
+msgid "Create Motion"
+msgstr "إنشاء ترجمة"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:164
+#, fuzzy
+msgid "Needs Clarification to Approve"
+msgstr "يحتاج الى توضيح"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:167
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:297
+#, fuzzy
+msgid "Re-complete"
+msgstr "كامل"
+
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:17
 msgid "Rejected Bill"
 msgstr "رفض مشروع قانون"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:173
-msgid "Create Motion (On behalf of)"
-msgstr ""
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:175
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:305
+#, fuzzy
+msgid "Adjourn debate"
+msgstr "القراءة الثالثة"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:18
 #, fuzzy
@@ -816,95 +1155,60 @@ msgid "First Report Reading Pending"
 msgstr "قراءة التقرير"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:180
+msgid "Create Motion (On behalf of)"
+msgstr ""
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:187
 msgid "Archived"
 msgstr "أرشفة"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:181
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:188
 msgid "Draft Translation"
 msgstr "مشروع الترجمة"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:182
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:189
 msgid "Create Translation"
 msgstr "إنشاء ترجمة"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:184
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:190
-msgid "Draft Minutes"
-msgstr "مشروع دقائق"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:185
-msgid "Draft Agenda"
-msgstr "مشروع جدول الأعمال"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:186
-msgid "Published Minutes"
-msgstr "نشرت دقائق"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:187
-#, fuzzy
-msgid "Published Agenda"
-msgstr "نشر جدول الأعمال"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:188
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:198
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:207
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:309
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:318
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:327
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:331
-msgid "Create"
-msgstr "خلق"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:189
-msgid "Finalize Agenda"
-msgstr "الانتهاء من جدول الأعمال"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:19
 msgid "Select Committee (after 1st reading)"
 msgstr ""
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:191
-msgid "Redraft Agenda"
-msgstr "إعادة صياغة جدول الأعمال"
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:200
+msgid "Draft Agenda"
+msgstr "مشروع جدول الأعمال"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:192
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:198
+msgid "Draft Minutes"
+msgstr "مشروع دقائق"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:193
+msgid "Published Minutes"
+msgstr "نشرت دقائق"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:194
+#, fuzzy
+msgid "Published Agenda"
+msgstr "نشر جدول الأعمال"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:195
+#, fuzzy
+msgid "Sitting"
+msgstr "جلسات"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:196
 msgid "Finalize Minutes"
 msgstr "وضع اللمسات الأخيرة دقائق"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:193
-msgid "Redraft Minutes"
-msgstr "إعادة صياغة دقيقة"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:194
-msgid "Active Group"
-msgstr "مجموعة نشطة"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:195
-msgid "Group is Dissolved"
-msgstr "تم حل جماعة"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:196
-msgid "Draft - Group not yet Active"
-msgstr "مشروع : مجموعة غير نشط بعد"
-
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:197
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:311
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:312
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:320
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:321
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:326
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:330
-msgid "Deactivate"
-msgstr "إلغاء"
+msgid "Redraft Agenda"
+msgstr "إعادة صياغة جدول الأعمال"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:199
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:200
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:310
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:313
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:319
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:322
-msgid "Activate"
-msgstr "تفعيل"
+msgid "Redraft Minutes"
+msgstr "إعادة صياغة دقيقة"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:20
 #, fuzzy
@@ -912,399 +1216,268 @@ msgid "First Reading Pending"
 msgstr "القرأة الأولى"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:201
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:314
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:323
-msgid "Dissolve"
-msgstr "حل"
+msgid "Finalize Agenda"
+msgstr "الانتهاء من جدول الأعمال"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:202
-msgid "Internal - visible to bungeni users"
-msgstr "الداخلية : مرئية للمستخدمين bungeni"
+#, fuzzy
+msgid "Create Sitting"
+msgstr "إنشاء ترجمة"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:203
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:325
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:329
-msgid "Public"
-msgstr "جمهور"
+msgid "Active Group"
+msgstr "مجموعة نشطة"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:204
-msgid "Private"
-msgstr "خاص"
+msgid "Group is Dissolved"
+msgstr "تم حل جماعة"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:205
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:208
-msgid "Publish internal"
-msgstr "نشر الداخلية"
+msgid "Draft - Group not yet Active"
+msgstr "مشروع : مجموعة غير نشط بعد"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:206
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:210
-msgid "Publish"
-msgstr "نشر"
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:323
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:324
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:332
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:333
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:338
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:342
+msgid "Deactivate"
+msgstr "إلغاء"
 
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:207
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:216
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:321
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:330
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:339
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:343
+msgid "Create"
+msgstr "خلق"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:208
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:209
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:211
-msgid "Make private"
-msgstr "جعل القطاع الخاص"
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:322
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:325
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:331
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:334
+msgid "Activate"
+msgstr "تفعيل"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:21
 msgid "Approved Bill"
 msgstr "أقر مشروع قانون"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:210
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:326
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:335
+msgid "Dissolve"
+msgstr "حل"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:211
+msgid "Internal - visible to bungeni users"
+msgstr "الداخلية : مرئية للمستخدمين bungeni"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:212
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:337
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:341
+msgid "Public"
+msgstr "جمهور"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:213
+msgid "Private"
+msgstr "خاص"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:214
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:218
+msgid "Publish"
+msgstr "نشر"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:215
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:219
+msgid "Publish internal"
+msgstr "نشر الداخلية"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:217
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:220
+msgid "Make private"
+msgstr "جعل القطاع الخاص"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:22
 #, fuzzy
 msgid "Whole House Pending"
 msgstr "كل منزل"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:221
-msgid "Tabled"
-msgstr ""
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:225
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:245
-msgid "Adjourn"
-msgstr ""
-
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:23
 #, fuzzy
 msgid "First Report Reading Adjourned"
 msgstr "تأجيل قراءة تقرير"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:232
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:246
-msgid "Table"
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:230
+msgid "Tabled"
 msgstr ""
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:235
-#, fuzzy
-msgid "Create Tabled Document"
-msgstr "قدمت وثائق"
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:234
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:255
+msgid "Adjourn"
+msgstr ""
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:239
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:256
+msgid "Table"
+msgstr ""
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:24
 msgid "Select Committee (after 2nd reading)"
 msgstr ""
 
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:244
+#, fuzzy
+msgid "Create Tabled Document"
+msgstr "قدمت وثائق"
+
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:25
 msgid "Second Reading"
 msgstr "القراءة الثانية"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:250
-msgid "Create Tabled Document (On behalf of)"
-msgstr ""
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:26
 msgid "First Reading"
 msgstr "القرأة الأولى"
 
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:260
+msgid "Create Tabled Document (On behalf of)"
+msgstr ""
+
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:27
 msgid "Bill Published in Gazette"
 msgstr "مشروع قانون نشر في الجريدة الرسمية"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:275
-#, fuzzy
-msgid "Re-schedule"
-msgstr "من المقرر"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:279
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:289
 msgid "Debate"
 msgstr "مناقشة"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:28
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:54
-#, fuzzy
-msgid "Allow scheduling of Third Reading"
-msgstr "قراءة الجدول الثالث"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:282
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:294
 #, fuzzy
 msgid "Create Agenda Item"
 msgstr "بنود جدول الأعمال"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:29
-#, fuzzy
-msgid "Adjourn Second Reading"
-msgstr "القراءة الثانية"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:298
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:311
 msgid "Create Agenda Item (On behalf of)"
 msgstr ""
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:30
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:38
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:40
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:44
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:47
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:48
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:51
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:62
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:93
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:94
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:96
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:104
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:107
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:108
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:112
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:121
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:124
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:152
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:153
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:161
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:164
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:166
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:167
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:172
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:175
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:177
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:226
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:227
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:229
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:231
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:238
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:239
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:251
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:252
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:277
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:278
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:280
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:287
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:290
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:292
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:293
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:301
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:303
-msgid "Withdraw"
-msgstr "سحب"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:306
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:318
 msgid "Active Committee"
 msgstr "نشط لجنة"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:307
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:319
 msgid "Committee is Dissolved"
 msgstr "تم حل اللجنة"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:308
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:320
 msgid "Draft - Committee not yet Active"
 msgstr "مشروع : اللجنة لم تنشط بعد"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:31
-msgid "Schedule Third Reading"
-msgstr "قراءة الجدول الثالث"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:315
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:327
 msgid "Active Parliament"
 msgstr "نشط البرلمان"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:316
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:328
 msgid "Parliament is Dissolved"
 msgstr "تم حل البرلمان"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:317
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:329
 msgid "Draft - Parliament not yet Active"
 msgstr "مشروع : البرلمان لم تنشط بعد"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:32
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:39
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:130
-msgid "Rejected"
-msgstr "رفض"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:324
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:336
 msgid "Inactive file obsolete"
 msgstr "نشط الملف عفا عليها الزمن"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:328
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:340
 msgid "Inactive event"
 msgstr "الحدث غير نشط"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:33
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:344
+#, fuzzy
+msgid "Published"
+msgstr "نشر"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:345
+#, fuzzy
+msgid "Create Report"
+msgstr "إنشاء ترجمة"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:43
 #, fuzzy
 msgid "Create Bill"
 msgstr "مشروع قانون"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:34
-msgid "Schedule Whole House Committee"
-msgstr "الجدول الزمني لجنة البيت كله"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:35
-#, fuzzy
-msgid "Adjourn Third Reading"
-msgstr "القراءة الثالثة"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:36
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:43
-#, fuzzy
-msgid "Allow scheduling of Whole House Committee"
-msgstr "إعادة جدولة كامل جنة مجلس النواب"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:37
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:42
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:56
-#, fuzzy
-msgid "Allow scheduling of Second Reading"
-msgstr "إعادة جدولة القراءة الثانية"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:41
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:58
-#, fuzzy
-msgid "Allow scheduling of First Reading"
-msgstr "إعادة جدولة القراءة الأولى"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:45
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:53
-#, fuzzy
-msgid "Allow scheduling of First Report Reading"
-msgstr "إعادة جدولة قراءة التقرير"
-
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:46
-#, fuzzy
-msgid "Allow scheduling/rescheduling of Whole House Committee"
-msgstr "إعادة جدولة كامل جنة مجلس النواب"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:49
-#, fuzzy
-msgid "Adjourn First Report Reading"
-msgstr "تأجيل قراءة تقرير"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:50
-#, fuzzy
-msgid "Adjourn First Reading"
-msgstr "القرأة الأولى"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:52
-#, fuzzy
-msgid "Schedule First Report Reading"
-msgstr "تقرير جدول القراءة"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:55
-#, fuzzy
-msgid "Send/Resend to Select Committee (II)"
-msgstr "إرسال لجنة"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:57
 msgid "Publish in Gazette"
 msgstr "نشر في الجريدة الرسمية"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:59
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:53
 #, fuzzy
-msgid "Send to Select Committee (II)"
-msgstr "إرسال لجنة"
+msgid "Reschedule First Reading"
+msgstr "قراءة الجدول الأول"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:6
 msgid "First Reading Adjourned"
 msgstr "تأجيل القراءة الأولى"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:60
-#, fuzzy
-msgid "Send to Select Committee (I)"
-msgstr "إرسال لجنة"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:61
-msgid "Schedule Second Reading"
-msgstr "قراءة الجدول الثاني"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:63
-msgid "Schedule First Reading"
-msgstr "قراءة الجدول الأول"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:64
-#, fuzzy
-msgid "Adjourn Whole House Committee"
-msgstr "الجدول الزمني لجنة البيت كله"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:65
-#, fuzzy
-msgid "Approved"
-msgstr "الموافقة"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:66
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:127
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:212
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:254
-msgid "Working Draft"
-msgstr ""
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:67
-msgid "Received by clerk"
-msgstr "التي تلقاها كاتب"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:68
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:129
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:214
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:256
-msgid "Schedule pending"
-msgstr "في انتظار الجدول الزمني"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:69
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:131
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:215
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:257
-msgid "Submitted to the Speaker"
-msgstr "قدم إلى منزل الأعمال"
-
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:7
 msgid "Whole House"
 msgstr "كل منزل"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:70
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:71
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:132
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:216
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:258
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:221
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:265
+msgid "Working Draft"
+msgstr ""
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:72
+msgid "Received by clerk"
+msgstr "التي تلقاها كاتب"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:73
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:134
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:223
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:267
+msgid "Schedule pending"
+msgstr "في انتظار الجدول الزمني"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:74
+msgid "Needs MPs clarification"
+msgstr "توضيح احتياجات النواب"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:75
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:136
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:225
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:268
 msgid "Inadmissible"
 msgstr "غير مقبول"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:71
-msgid "Needs clerks clarification"
-msgstr "توضيح الاحتياجات كتبة"
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:76
+msgid "Response completed"
+msgstr "أكملت استجابة"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:72
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:138
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:271
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:77
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:139
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:277
 msgid "Dropped"
 msgstr ""
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:73
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:78
 msgid "Pending response"
 msgstr "في انتظار الرد"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:74
-msgid "Submitted to clerk"
-msgstr "المقدم إلى كاتب"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:75
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:135
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:261
-msgid "Deferred"
-msgstr "مؤجل"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:76
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:136
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:219
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:262
-msgid "Admissible"
-msgstr "مقبولة"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:77
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:95
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:263
-msgid "Debated"
-msgstr "ناقش"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:78
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:85
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:143
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:144
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:224
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:269
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:270
-msgid "Withdrawn"
-msgstr "سحب"
-
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:79
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:137
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:220
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:264
-msgid "Draft"
-msgstr "مسودة"
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:140
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:226
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:271
+msgid "Submitted to the Speaker"
+msgstr "قدم إلى منزل الأعمال"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:8
 #, fuzzy
@@ -1312,95 +1485,155 @@ msgid "First Report Reading"
 msgstr "قراءة التقرير"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:80
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:125
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:146
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:178
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:265
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:304
-msgid "Debate adjourned"
-msgstr "تأجيل المناقشة"
+msgid "Submitted to clerk"
+msgstr "المقدم إلى كاتب"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:81
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:140
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:222
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:266
-msgid "Scheduled"
-msgstr "من المقرر"
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:138
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:270
+msgid "Deferred"
+msgstr "مؤجل"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:82
-msgid "Needs MPs clarification"
-msgstr "توضيح احتياجات النواب"
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:143
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:228
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:274
+msgid "Admissible"
+msgstr "مقبولة"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:83
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:142
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:268
-msgid "Elapsed"
-msgstr "انقضى"
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:99
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:275
+msgid "Debated"
+msgstr "ناقش"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:84
-msgid "Response completed"
-msgstr "أكملت استجابة"
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:144
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:229
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:276
+msgid "Draft"
+msgstr "مسودة"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:86
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:85
 msgid "Response submitted"
 msgstr "قدمت استجابة"
 
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:86
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:147
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:231
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:278
+msgid "Scheduled"
+msgstr "من المقرر"
+
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:87
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:174
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:300
-msgid "Drop"
-msgstr ""
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:142
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:273
+msgid "Elapsed"
+msgstr "انقضى"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:88
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:120
-msgid "Send to Ministry"
-msgstr "أرسل الى وزارة"
-
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:89
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:97
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:98
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:116
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:148
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:149
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:155
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:170
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:234
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:242
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:272
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:281
-msgid "Make available for scheduling"
-msgstr "تتيح لجدولة"
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:232
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:279
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:280
+msgid "Withdrawn"
+msgstr "سحب"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:9
 msgid "Third Reading Adjourned"
 msgstr "تأجيل القراءة الثالثة"
 
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:90
+msgid "Needs clerks clarification"
+msgstr "توضيح الاحتياجات كتبة"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:91
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:130
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:151
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:282
+msgid "Debate adjourned"
+msgstr "تأجيل المناقشة"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:92
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:127
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:137
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:224
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:258
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:269
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:291
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:304
+msgid "Needs Clarification by MP"
+msgstr "يحتاج الى توضيح من قبل النائب"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:93
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:107
+msgid "Send to Ministry"
+msgstr "أرسل الى وزارة"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:94
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:101
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:113
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:158
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:154
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:161
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:172
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:243
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:252
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:283
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:293
+msgid "Make available for scheduling"
+msgstr "تتيح لجدولة"
+
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:95
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:116
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:177
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:308
 msgid "Elapse"
 msgstr "ينقضي"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:91
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:102
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:117
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:147
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:274
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:96
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:114
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:120
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:152
 #: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:285
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:297
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:302
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:310
 msgid "Defer"
 msgstr "إرجاء"
 
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:92
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:228
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:276
-msgid "Resubmit to Clerk"
-msgstr "لإعادة كاتب"
-
-#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:99
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:97
+#: src/bungeni.main/bungeni/core/workflows/wfi18n.pt:236
 #, fuzzy
-msgid "Create Question"
-msgstr "إنشاء ترجمة"
+msgid "Reschedule"
+msgstr "من المقرر"
+
+#~ msgid "Speaker review a motion"
+#~ msgstr "اقتراح منزل استعراض الأعمال"
+
+#~ msgid "Schedule a bill"
+#~ msgstr "الجدول الزمني لمشروع قانون"
+
+#~ msgid "Assign a bill to a committee"
+#~ msgstr "مشروع قانون لتعيين لجنة"
+
+#~ msgid "Reject/Approve a bill"
+#~ msgstr "رفض / الموافقة على مشروع قانون"
+
+#~ msgid "Withdraw a bill"
+#~ msgstr "سحب مشروع قانون"
+
+#~ msgid "Revert a transition back to an earlier stage"
+#~ msgstr "العودة الانتقال إلى مرحلة سابقة"
+
+#~ msgid "Manage User Adresses"
+#~ msgstr "إدارة عناوين المستخدم"
+
+#~ msgid "Speaker review a agenda item"
+#~ msgstr "البند من جدول الأعمال استعراض اللغة"
+
+#~ msgid "Resubmit to clerk"
+#~ msgstr "لإعادة كاتب"
 
 #~ msgid ""
 #~ "%(transition)s : %(comment)s [ transition from %(source)s to %"

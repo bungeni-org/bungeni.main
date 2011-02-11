@@ -902,7 +902,7 @@
     />
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.domain.CosignatoryContainer"
-        title="Add Cosignatory..."
+        title="Add cosignatory..."
         action="./add"
         permission="bungeni.cosignatory.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
