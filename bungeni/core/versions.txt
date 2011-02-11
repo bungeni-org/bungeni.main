@@ -1,0 +1,72 @@
+Versions
+========
+
+  >>> import bungeni.core.version
+  >>> import datetime
+
+Set up the versions factory.
+  
+  >>> component.provideAdapter(
+  ...    bungeni.core.version.ContextVersioned,
+  ...    (bungeni.core.interfaces.IVersionable,),
+  ...    bungeni.core.interfaces.IVersioned)
+
+Adding a question.
+
+  >>> from bungeni.models.testing import add_content
+  >>> from bungeni.models import domain
+  >>> from bungeni.alchemist import Session
+  >>> session = Session()
+
+
+
+  >>> country = domain.Country()
+  >>> country.country_id = 'KE'
+  >>> country.country_name = u"Kenya"
+  >>> country.iso_name = u"KENYA"
+  >>> country.language = "en"
+  >>> session.add(country)
+  >>> session.flush() 
+
+  >>> mp_1 = domain.User(u"mp_1", 
+  ...        first_name=u"a", 
+  ...        last_name=u'ab', 
+  ...        birth_country="KE",
+  ...        email=u"mp1@example.com", 
+  ...        date_of_birth=datetime.datetime.now(),
+  ...        language="en",
+  ...        gender='M') 
+  >>> session.add(mp_1)
+  >>> session.flush()
+
+
+  >>> question = add_content(
+  ...     domain.Question,
+  ...     short_name="A question",
+  ...     type="question",
+  ...     owner_id = mp_1.user_id ,
+  ...     language="en")
+
+The ``question`` object needs to provide the versionable interface.
+  
+  >>> from zope.interface import alsoProvides
+  >>> alsoProvides(question, bungeni.core.interfaces.IVersionable)
+
+Verify that no versions exist yet:
+
+  >>> versions =  bungeni.core.interfaces.IVersioned(question)
+  >>> len(tuple(versions.values()))
+  0
+
+After creating a version, verify availability:
+  
+  >>> version = versions.create('New version created ...')
+  >>> len(tuple(versions.values()))
+  1
+
+Cleanup
+-------
+  
+  >>> session.flush()
+  >>> session.commit()
+  >>> session.close()

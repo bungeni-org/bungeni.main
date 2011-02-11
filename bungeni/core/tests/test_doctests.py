@@ -49,7 +49,7 @@ def test_suite():
     #
     doctests = (
                 'audit.txt',
-                'version.txt',
+                'versions.txt',
                 'workflows/question.txt',
                 'workflows/motion.txt',
                 'workflows/bill.txt',
