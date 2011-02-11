@@ -80,7 +80,7 @@ class actions:
 
 
     @staticmethod
-    def complete_clarify( info, context ):
+    def recomplete(info, context):
         utils.createVersion(info,context)
 
 

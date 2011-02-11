@@ -20,7 +20,7 @@ class actions:
     redraft_minutes = invalidate_caches
     
     @staticmethod
-    def to_draft_minutes(info, context):
+    def allow_draft_minutes(info, context):
         dbutils.set_real_order(removeSecurityProxy(context))
         actions.invalidate_caches(info, context)
         

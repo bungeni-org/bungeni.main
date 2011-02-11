@@ -2,375 +2,523 @@
 <configure xmlns="http://namespaces.zope.org/zope"
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni.core">
-    
-    <!-- 
-        There is a DEDICATED permission per workflow TRANSITION.
-        See the Bungeni Source Code Style Guide.
-    -->
-    
-    
-    <!-- address -->
-    
-    <permission id="bungeni.address.wf.publish_internal" 
-        title="Publish an address internally" />
-    <grant permission="bungeni.address.wf.publish_internal" role="bungeni.Clerk" />
-    <grant permission="bungeni.address.wf.publish_internal" role="bungeni.Owner" />
-    
-    <permission id="bungeni.address.wf.publish" title="Publish an address" />
-    <grant permission="bungeni.address.wf.publish" role="bungeni.Clerk" />
-    <grant permission="bungeni.address.wf.publish" role="bungeni.Owner" />
-    
-    <permission id="bungeni.address.wf.make_private" 
-        title="Make an address private" />
-    <grant permission="bungeni.address.wf.make_private" role="bungeni.Clerk" />
-    <grant permission="bungeni.address.wf.make_private" role="bungeni.Owner" />
-    
-    
-    <!-- agendaitem -->
-    
-    <permission id="bungeni.agendaitem.wf.submit" title="Submit an agendaitem" />
-    <grant permission="bungeni.agendaitem.wf.submit" role="bungeni.Owner" />
+<!-- 
 
-    <permission id="bungeni.agendaitem.wf.resubmit" title="Submit an agendaitem" />
-    <grant permission="bungeni.agendaitem.wf.resubmit" role="bungeni.Owner" />
-    
-    <permission id="bungeni.agendaitem.wf.receive" title="Receive an agendaitem" />
-    <grant permission="bungeni.agendaitem.wf.receive" role="bungeni.Clerk" />
-    
-    <permission id="bungeni.agendaitem.wf.require_clarification" 
-        title="Require clarification of an agendaitem" />
-    <grant permission="bungeni.agendaitem.wf.require_clarification" 
-        role="bungeni.Clerk" />
-    
-    <permission id="bungeni.agendaitem.wf.complete" 
-        title="Submit to Speaker Office" />
-    <grant permission="bungeni.agendaitem.wf.complete" role="bungeni.Clerk" />
-    
-    <permission id="bungeni.agendaitem.wf.recomplete" 
-        title="Re-submit to Speaker Office" />
-    <grant permission="bungeni.agendaitem.wf.recomplete" role="bungeni.Clerk" />
+!! AUTO-GENERATED !! DO NOT MODIFY !!
 
-    <permission id="bungeni.agendaitem.wf.approve" title="Approve" />
-    <grant permission="bungeni.agendaitem.wf.approve" role="bungeni.Speaker" />
+This file is automatically [re-]generated on startup, after all the 
+workflow XML files have been loaded, see: 
+bungeni.core.workflows.xmlimport.zcml_check_regenerate()
 
-    <permission id="bungeni.agendaitem.wf.disapprove" title="Reject a completed agendaitem" />
-    <grant permission="bungeni.agendaitem.wf.disapprove" role="bungeni.Speaker" />
-    
-    <permission id="bungeni.agendaitem.wf.allow_schedule" 
-        title="Make an agendaitem available for scheduling" />
-    <grant permission="bungeni.agendaitem.wf.allow_schedule" 
-        role="bungeni.Speaker" />
-    
-    <permission id="bungeni.agendaitem.wf.schedule" title="Schedule an agendaitem" />
-    <grant permission="bungeni.agendaitem.wf.schedule" role="bungeni.Clerk" />
-    
-    <permission id="bungeni.agendaitem.wf.reschedule" title="Reschedule an agendaitem" />
-    <grant permission="bungeni.agendaitem.wf.reschedule" role="bungeni.Clerk" />
+It would need to be regenerated when any workflow transition is modified 
+or added, a condition that is checked for and flagged automatically.
 
-    <permission id="bungeni.agendaitem.wf.require_recomplete" 
-        title="Require clarification for agendaitem to be complete" />
-    <grant permission="bungeni.agendaitem.wf.require_recomplete" 
-        role="bungeni.Speaker" />
+Defines a DEDICATED permission per workflow TRANSITION, and grants it to
+the various Roles, as specified by each transition.
 
-    <permission id="bungeni.agendaitem.wf.require_recomplete_clarification" 
-        title="Require clarification from MP for agendaitem to be complete" />
-    <grant permission="bungeni.agendaitem.wf.require_recomplete_clarification" 
-        role="bungeni.Clerk" />
-    
-    <permission id="bungeni.agendaitem.wf.defer" title="Defer an agendaitem" />
-    <grant permission="bungeni.agendaitem.wf.defer" role="bungeni.Speaker" />
-    
-    <permission id="bungeni.agendaitem.wf.elapse" title="Elapse a motion" />
-    <grant permission="bungeni.agendaitem.wf.elapse" role="bungeni.Speaker" />
-    
-    <permission id="bungeni.agendaitem.wf.revert_to_admissible"
-        title="Revert to admissable" />
-    <grant permission="bungeni.agendaitem.wf.revert_to_admissible"
-        role="bungeni.Speaker" />
-    
-    <permission id="bungeni.agendaitem.wf.drop" title="Drop a motion" />
-    <grant permission="bungeni.agendaitem.wf.drop" role="bungeni.Clerk" />
-    
-    <permission id="bungeni.agendaitem.wf.debate" title="Drop an agendaitem" />
-    <grant permission="bungeni.agendaitem.wf.debate" role="bungeni.Clerk" />
+See the Bungeni Source Code Style Guide for further details. 
 
-    <permission id="bungeni.agendaitem.wf.adjourn" title="Adjourn agendaitem debate" />
-    <grant permission="bungeni.agendaitem.wf.adjourn" role="bungeni.Clerk" />
-    
-    <permission id="bungeni.agendaitem.wf.withdraw" title="Withdraw an agendaitem" />
-    <grant permission="bungeni.agendaitem.wf.withdraw" role="bungeni.Owner" />
-    <grant permission="bungeni.agendaitem.wf.withdraw" role="bungeni.Clerk" />
-    
-    <permission id="bungeni.agendaitem.wf.withdraw_public" title="Withdraw an agendaitem" />
-    <grant permission="bungeni.agendaitem.wf.withdraw_public" role="bungeni.Owner" />
-    <grant permission="bungeni.agendaitem.wf.withdraw_public" role="bungeni.Clerk" />
-    
-    
-    <!-- attachedfile -->
-    
-    <permission id="bungeni.attachedfile.wf.deactivate" title="Deactivate a file" /> 
-    <grant permission="bungeni.attachedfile.wf.deactivate" role="bungeni.Clerk" />
-    <grant permission="bungeni.attachedfile.wf.deactivate" role="bungeni.Speaker "/>
-    
-    
-    <!-- bill -->
-    
-    <permission id="bungeni.bill.wf.submit" title="Submit a bill" />
-    <grant permission="bungeni.bill.wf.submit" role="bungeni.Clerk" />
-    
-    <permission id="bungeni.bill.wf.reject" title="Rejected" />
-    <grant permission="bungeni.bill.wf.reject" role="bungeni.Clerk" />
-    
-    <permission id="bungeni.bill.wf.approve" title="Approved" />
-    <grant permission="bungeni.bill.wf.approve" role="bungeni.Clerk" />
-    
-    <permission id="bungeni.bill.wf.withdraw" title="Withdraw" />
-    <grant permission="bungeni.bill.wf.withdraw" role="bungeni.Clerk" />
-    
-    <!-- bill.wf.schedule -->
-    
-    <permission id="bungeni.bill.wf.allow_schedule_first"
-        title="Allow scheduling of First Reading" />
-    <grant permission="bungeni.bill.wf.allow_schedule_first" role="bungeni.Clerk" />
-    
-    <permission id="bungeni.bill.wf.schedule_first" 
-        title="Schedule First Reading" />
-    <grant permission="bungeni.bill.wf.schedule_first" role="bungeni.Clerk" />
-    
-    <permission id="bungeni.bill.wf.reschedule_first" 
-        title="Re-schedule First Reading" />
-    <grant permission="bungeni.bill.wf.reschedule_first" role="bungeni.Clerk" />
-    
-    <permission id="bungeni.bill.wf.adjourn_first" 
-        title="Adjourn First Reading" />
-    <grant permission="bungeni.bill.wf.adjourn_first" role="bungeni.Clerk" />
-        
-    <permission id="bungeni.bill.wf.schedule_first_report_reading"
-        title="Schedule First Report Reading" />
-    <grant permission="bungeni.bill.wf.schedule_first_report_reading" 
-        role="bungeni.Clerk" />
-    
-    <permission id="bungeni.bill.wf.reschedule_first_report_reading"
-        title="Reschedule First Report Reading" />
-    <grant permission="bungeni.bill.wf.reschedule_first_report_reading" 
-        role="bungeni.Clerk" />
-    
-    <permission id="bungeni.bill.wf.allow_schedule_second_reading"
-        title="Allow scheduling of Second Reading" />
-    <grant permission="bungeni.bill.wf.allow_schedule_second_reading"
-        role="bungeni.Clerk" />
-    
-    <permission id="bungeni.bill.wf.schedule_second_reading"
-        title="Schedule Second Reading" />
-    <grant permission="bungeni.bill.wf.schedule_second_reading"
-        role="bungeni.Clerk" />
-    
-    <permission id="bungeni.bill.wf.reschedule_second_reading"
-        title="Reschedule Second Reading" />
-    <grant permission="bungeni.bill.wf.reschedule_second_reading"
-        role="bungeni.Clerk" />
+-->
 
-    <permission id="bungeni.bill.wf.adjourn_first_report_reading"
-        title="Adjourn First Report Reading" />
-    <grant permission="bungeni.bill.wf.adjourn_first_report_reading"
-        role="bungeni.Clerk" />
 
-    <permission id="bungeni.bill.wf.allow_schedule_first_report_reading"
-        title="Allow scheduling of First Report Reading" />
-    <grant permission="bungeni.bill.wf.allow_schedule_first_report_reading"
-        role="bungeni.Clerk" />
+<!-- address -->
 
-    <permission id="bungeni.bill.wf.adjourn_second" title="Adjourn Second Reading" />
-    <grant permission="bungeni.bill.wf.adjourn_second" role="bungeni.Clerk" />
-    
-    <permission id="bungeni.bill.wf.allow_schedule_whole_house"
-        title="Allow scheduling of Whole House Committee" />
-    <grant permission="bungeni.bill.wf.allow_schedule_whole_house" 
-        role="bungeni.Clerk" />
-    
-    <permission id="bungeni.bill.wf.allow_reschedule_whole_house"
-        title="Allow scheduling/rescheduling of Whole House Committee" />
-    <grant permission="bungeni.bill.wf.allow_reschedule_whole_house" 
-        role="bungeni.Clerk" />
-    
-    <permission id="bungeni.bill.wf.schedule_whole_house"
-        title="Schedule Whole House Committee" />
-    <grant permission="bungeni.bill.wf.schedule_whole_house" 
-        role="bungeni.Clerk" />
-    
-    <permission id="bungeni.bill.wf.reschedule_whole_house"
-        title="Reschedule Whole House Committee" />
-    <grant permission="bungeni.bill.wf.reschedule_whole_house" 
-        role="bungeni.Clerk" />
-    
-    <permission id="bungeni.bill.wf.adjourn_whole_house"
-        title="Adjourn Whole House Committee" />
-    <grant permission="bungeni.bill.wf.adjourn_whole_house"
-        role="bungeni.Clerk" />
-    
-    <permission id="bungeni.bill.wf.select_second_committee"
-        title="Send to Select Committee (II)" />
-    <grant permission="bungeni.bill.wf.select_second_committee"
-        role="bungeni.Clerk" />
-    
-    <permission id="bungeni.bill.wf.allow_schedule_third_reading"
-        title="Allow scheduling of Third Reading" />
-    <grant permission="bungeni.bill.wf.allow_schedule_third_reading"
-        role="bungeni.Clerk" />
-    
-    <permission id="bungeni.bill.wf.schedule_third_reading"
-        title="Schedule Third Reading" />
-    <grant permission="bungeni.bill.wf.schedule_third_reading"
-        role="bungeni.Clerk" />
-    
-    <permission id="bungeni.bill.wf.reschedule_third_reading"
-        title="Reschedule Third Reading" />
-    <grant permission="bungeni.bill.wf.reschedule_third_reading"
-        role="bungeni.Clerk" />
-    
-    <permission id="bungeni.bill.wf.adjourn_third_reading" 
-        title="Adjourn Third Reading" />
-    <grant permission="bungeni.bill.wf.adjourn_third_reading"
-        role="bungeni.Clerk" />
-    
-    <!-- bungeni.bill.select_committe -->
-    
-    <permission id="bungeni.bill.wf.select_first_committee" 
-        title="Send to Select Committee (I)" />
-    <grant permission="bungeni.bill.wf.select_first_committee" 
-        role="bungeni.Clerk" />
-    
-    <permission id="bungeni.bill.wf.select_second_committee_via_whole_house"
-        title="Send/Resend to Select Committee (II)" />
-    <grant permission="bungeni.bill.wf.select_second_committee_via_whole_house"
-        role="bungeni.Clerk" />
+<permission id="bungeni.address.wf.publish_internal" title="Publish internal" />
+<grant permission="bungeni.address.wf.publish_internal" role="bungeni.Clerk" />
+<grant permission="bungeni.address.wf.publish_internal" role="bungeni.Owner" />
 
-    
-    
-  <!-- Question Workflow permissions -->
-  <!-- Permissions that are not related to workflow transitions (add, edit, delete,...) 
-    are to be defined in bungeni.core.roles/permissions -->
-    <permission id="bungeni.question.Submit" title="Submit a question to Clerk Office" />
-  <permission id="bungeni.question.Receive" title="Receive a question" />
-  <permission id="bungeni.question.clerk.Review" title="Review a question" />
-  <permission id="bungeni.question.speaker.Review"  title="Speaker review a question" />
-  <permission id="bungeni.question.Schedule" title="Schedule a question" />
-  <permission id="bungeni.question.Respond" title="Respond to a question" />
-  <permission id="bungeni.question.Answer" title="Answer a question" />
-  <permission id="bungeni.question.Withdraw" title="Withdraw a question" />
-  <permission id="bungeni.question.Elapse" title="Elapse a question" />
-  <permission id="bungeni.question.Write_answer" title="Answer a question in writing" />
-  <!-- Response Workflow permissions -->
-  <permission id="bungeni.response.Submit" title="Submit a Response" />
-  <permission id="bungeni.response.Complete" title="Complete a Response" />
-  <permission id="bungeni.response.RevertTransitions" 
-        title="Revert a question response transition back to an earlier stage" />
-    
-    
-    <!-- Motion Workflow permissions -->
-    
-    <permission id="bungeni.motion.wf.submit" title="Submit a motion" />
-    <grant permission="bungeni.motion.wf.submit" role="bungeni.Owner" />
-    
-    <permission id="bungeni.motion.wf.resubmit" title="Re-submit a motion" />
-    <grant permission="bungeni.motion.wf.resubmit" role="bungeni.Owner" />
+<permission id="bungeni.address.wf.publish" title="Publish" />
+<grant permission="bungeni.address.wf.publish" role="bungeni.Clerk" />
+<grant permission="bungeni.address.wf.publish" role="bungeni.Owner" />
 
-    <permission id="bungeni.motion.wf.receive" title="Receive a motion" />
-    <grant permission="bungeni.motion.wf.receive" role="bungeni.Clerk" />
-    
-    <permission id="bungeni.motion.wf.require_clarification" 
-        title="Require clarification of a motion" />
-    <grant permission="bungeni.motion.wf.require_clarification" 
-        role="bungeni.Clerk" />
-    
-    <permission id="bungeni.motion.wf.require_recomplete_clarification" 
-        title="Require clarification from MP for motion to be complete" />
-    <grant permission="bungeni.motion.wf.require_recomplete_clarification" 
-        role="bungeni.Clerk" />
-    
-    <permission id="bungeni.motion.wf.complete" 
-        title="Submit to Speaker Office" />
-    <grant permission="bungeni.motion.wf.complete" role="bungeni.Clerk" />
+<permission id="bungeni.address.wf.make_private" title="Make private" />
+<grant permission="bungeni.address.wf.make_private" role="bungeni.Clerk" />
+<grant permission="bungeni.address.wf.make_private" role="bungeni.Owner" />
 
-    <permission id="bungeni.motion.wf.recomplete" 
-        title="Re-submit to Speaker Office" />
-    <grant permission="bungeni.motion.wf.recomplete" role="bungeni.Clerk" />
-    
-    <permission id="bungeni.motion.wf.approve" title="Approve" />
-    <grant permission="bungeni.motion.wf.approve" role="bungeni.Speaker" />
 
-    <permission id="bungeni.motion.wf.disapprove" 
-        title="Reject a completed motion" />
-    <grant permission="bungeni.motion.wf.disapprove" role="bungeni.Speaker" />
-    
-    <permission id="bungeni.motion.wf.allow_schedule" 
-        title="Make a motion available for scheduling" />
-    <grant permission="bungeni.motion.wf.allow_schedule" 
-        role="bungeni.Speaker" />
-    
-    <permission id="bungeni.motion.wf.reject" title="Reject a scheduled motion" />
-    <grant permission="bungeni.motion.wf.reject" role="bungeni.Speaker" />
-    
-    <permission id="bungeni.motion.wf.require_recomplete" 
-        title="Require clarification for motion to be complete" />
-    <grant permission="bungeni.motion.wf.require_recomplete" 
-        role="bungeni.Speaker" />
-    
-    <permission id="bungeni.motion.wf.defer" title="Defer a motion" />
-    <grant permission="bungeni.motion.wf.defer" role="bungeni.Speaker" />
-    
-    <permission id="bungeni.motion.wf.elapse" title="Elapse a motion" />
-    <grant permission="bungeni.motion.wf.elapse" role="bungeni.Speaker" />
-    
-    <permission id="bungeni.motion.wf.schedule" title="Schedule a motion" />
-    <grant permission="bungeni.motion.wf.schedule" role="bungeni.Clerk" />
-    
-    <permission id="bungeni.motion.wf.reschedule" title="Reschedule a motion" />
-    <grant permission="bungeni.motion.wf.reschedule" role="bungeni.Clerk" />
-    
-    <permission id="bungeni.motion.wf.revert_to_admissible" 
-        title="Revert to admissable" />
-    <grant permission="bungeni.motion.wf.revert_to_admissible"
-        role="bungeni.Speaker" />
-    
-    <permission id="bungeni.motion.wf.drop" title="Drop a motion" />
-    <grant permission="bungeni.motion.wf.drop" role="bungeni.Clerk" />
-    
-    <permission id="bungeni.motion.wf.adjourn" title="Adjourn motion debate" />
-    <grant permission="bungeni.motion.wf.adjourn" role="bungeni.Clerk" />
-    
-    <permission id="bungeni.motion.wf.withdraw" title="Withdraw a motion" />
-    <grant permission="bungeni.motion.wf.withdraw" role="bungeni.Owner" />
-    <grant permission="bungeni.motion.wf.withdraw" role="bungeni.Clerk" />
-    
-    <permission id="bungeni.motion.wf.withdraw_public" title="Withdraw a motion" />
-    <grant permission="bungeni.motion.wf.withdraw_public" role="bungeni.Owner" />
-    <grant permission="bungeni.motion.wf.withdraw_public" role="bungeni.Clerk" />
-    
-    <permission id="bungeni.motion.wf.adopt" title="Adopt a motion" />
-    <grant permission="bungeni.motion.wf.adopt" role="bungeni.Clerk" />
+<!-- agendaitem -->
 
-    <permission id="bungeni.motion.wf.adopt_amendments" 
-        title="Adopt with amendments" />
-    <grant permission="bungeni.motion.wf.adopt_amendments" role="bungeni.Clerk" />
-    
-    
-  <!-- Group Workflow Permissions -->
-  <permission id="bungeni.group.Manage" title="Manage Bungeni groups" />
-    
-    
-  <!-- tableddocument Workflow permissions -->
-  <permission id="bungeni.tableddocument.Submit" title="Submit a tabled document" />
-  <permission id="bungeni.tableddocument.Receive" title="Receive a tabled document" />
-  <permission id="bungeni.tableddocument.clerk.Review" title="Review a tabled document" />
-  <permission id="bungeni.tableddocument.speaker.Review"  title="Speaker review a tabled document" />
-  <permission id="bungeni.tableddocument.Schedule" title="Schedule a tabled document" />
-    <permission id="bungeni.tableddocument.Table" title="Table a tabled document" />
-  <permission id="bungeni.tableddocument.Withdraw" title="Withdraw a tabled document" />
-  
-  <permission id="bungeni.sitting.ChangeStatus" title="Change Sitting Status" />
+<permission id="bungeni.agendaitem.wf.submit" title="Submit to Clerk" />
+<grant permission="bungeni.agendaitem.wf.submit" role="bungeni.Owner" />
 
-  <permission id="bungeni.event.Deactivate" title="Deactivate an event" /> 
-  <permission id="bungeni.heading.Deactivate" title="Deactivate a heading" /> 
-  <permission id="bungeni.user.Manage" title="Manage user" />
+<permission id="bungeni.agendaitem.wf.receive" title="Receive" />
+<grant permission="bungeni.agendaitem.wf.receive" role="bungeni.Clerk" />
+
+<permission id="bungeni.agendaitem.wf.require_clarification" title="Needs Clarification by MP" />
+<grant permission="bungeni.agendaitem.wf.require_clarification" role="bungeni.Clerk" />
+
+<permission id="bungeni.agendaitem.wf.complete" title="Submit to the Speaker Office" />
+<grant permission="bungeni.agendaitem.wf.complete" role="bungeni.Clerk" />
+
+<permission id="bungeni.agendaitem.wf.approve" title="Approve" />
+<grant permission="bungeni.agendaitem.wf.approve" role="bungeni.Speaker" />
+
+<permission id="bungeni.agendaitem.wf.disapprove" title="Disapprove" />
+<grant permission="bungeni.agendaitem.wf.disapprove" role="bungeni.Speaker" />
+
+<permission id="bungeni.agendaitem.wf.allow_schedule" title="Make available for scheduling" />
+<grant permission="bungeni.agendaitem.wf.allow_schedule" role="bungeni.Speaker" />
+
+<permission id="bungeni.agendaitem.wf.require_recomplete" title="Needs Clarification" />
+<grant permission="bungeni.agendaitem.wf.require_recomplete" role="bungeni.Speaker" />
+
+<permission id="bungeni.agendaitem.wf.recomplete" title="Re-complete" />
+<grant permission="bungeni.agendaitem.wf.recomplete" role="bungeni.Clerk" />
+
+<permission id="bungeni.agendaitem.wf.require_recomplete_clarification" title="Needs Clarification by MP" />
+<grant permission="bungeni.agendaitem.wf.require_recomplete_clarification" role="bungeni.Clerk" />
+
+<permission id="bungeni.agendaitem.wf.resubmit" title="Resubmit to Clerk" />
+<grant permission="bungeni.agendaitem.wf.resubmit" role="bungeni.Owner" />
+
+<permission id="bungeni.agendaitem.wf.reschedule" title="Re-schedule" />
+<grant permission="bungeni.agendaitem.wf.reschedule" role="bungeni.Clerk" />
+
+<permission id="bungeni.agendaitem.wf.schedule" title="Schedule" />
+<grant permission="bungeni.agendaitem.wf.schedule" role="bungeni.Clerk" />
+
+<permission id="bungeni.agendaitem.wf.revert_to_admissible" title="Revert to admissible" />
+<grant permission="bungeni.agendaitem.wf.revert_to_admissible" role="bungeni.Speaker" />
+
+<permission id="bungeni.agendaitem.wf.drop" title="Drop" />
+<grant permission="bungeni.agendaitem.wf.drop" role="bungeni.Clerk" />
+
+<permission id="bungeni.agendaitem.wf.debate" title="Debate" />
+<grant permission="bungeni.agendaitem.wf.debate" role="bungeni.Clerk" />
+
+<permission id="bungeni.agendaitem.wf.adjourn" title="Adjourn debate" />
+<grant permission="bungeni.agendaitem.wf.adjourn" role="bungeni.Clerk" />
+
+<permission id="bungeni.agendaitem.wf.defer" title="Defer" />
+<grant permission="bungeni.agendaitem.wf.defer" role="bungeni.Speaker" />
+
+<permission id="bungeni.agendaitem.wf.elapse" title="Elapse" />
+<grant permission="bungeni.agendaitem.wf.elapse" role="bungeni.Speaker" />
+
+<permission id="bungeni.agendaitem.wf.withdraw" title="Withdraw" />
+<grant permission="bungeni.agendaitem.wf.withdraw" role="bungeni.Clerk" />
+<grant permission="bungeni.agendaitem.wf.withdraw" role="bungeni.Owner" />
+
+<permission id="bungeni.agendaitem.wf.withdraw_public" title="Withdraw" />
+<grant permission="bungeni.agendaitem.wf.withdraw_public" role="bungeni.Clerk" />
+<grant permission="bungeni.agendaitem.wf.withdraw_public" role="bungeni.Owner" />
+
+
+<!-- attachedfile -->
+
+<permission id="bungeni.attachedfile.wf.deactivate" title="Deactivate" />
+<grant permission="bungeni.attachedfile.wf.deactivate" role="bungeni.Clerk" />
+<grant permission="bungeni.attachedfile.wf.deactivate" role="bungeni.Speaker" />
+
+
+<!-- bill -->
+
+<permission id="bungeni.bill.wf.submit" title="Publish in Gazette" />
+<grant permission="bungeni.bill.wf.submit" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.allow_schedule_first" title="Allow scheduling of First Reading" />
+<grant permission="bungeni.bill.wf.allow_schedule_first" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.schedule_first" title="Schedule First Reading" />
+<grant permission="bungeni.bill.wf.schedule_first" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.reschedule_first" title="Reschedule First Reading" />
+<grant permission="bungeni.bill.wf.reschedule_first" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.adjourn_first" title="Adjourn First Reading" />
+<grant permission="bungeni.bill.wf.adjourn_first" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.select_first_committee" title="Send to Select Committee (I)" />
+<grant permission="bungeni.bill.wf.select_first_committee" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.schedule_first_report_reading" title="Schedule First Report Reading" />
+<grant permission="bungeni.bill.wf.schedule_first_report_reading" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.reschedule_first_report_reading" title="Reschedule First Report Reading" />
+<grant permission="bungeni.bill.wf.reschedule_first_report_reading" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.allow_schedule_second_reading" title="Allow scheduling of Second Reading" />
+<grant permission="bungeni.bill.wf.allow_schedule_second_reading" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.schedule_second_reading" title="Schedule Second Reading" />
+<grant permission="bungeni.bill.wf.schedule_second_reading" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.reschedule_second_reading" title="Reschedule Second Reading" />
+<grant permission="bungeni.bill.wf.reschedule_second_reading" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.adjourn_first_report_reading" title="Adjourn First Report Reading" />
+<grant permission="bungeni.bill.wf.adjourn_first_report_reading" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.allow_schedule_first_report_reading" title="Allow scheduling of First Report Reading" />
+<grant permission="bungeni.bill.wf.allow_schedule_first_report_reading" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.adjourn_second" title="Adjourn Second Reading" />
+<grant permission="bungeni.bill.wf.adjourn_second" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.allow_schedule_whole_house" title="Allow scheduling of Whole House Committee" />
+<grant permission="bungeni.bill.wf.allow_schedule_whole_house" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.allow_reschedule_whole_house" title="Allow scheduling/rescheduling of Whole House Committee" />
+<grant permission="bungeni.bill.wf.allow_reschedule_whole_house" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.schedule_whole_house" title="Schedule Whole House Committee" />
+<grant permission="bungeni.bill.wf.schedule_whole_house" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.reschedule_whole_house" title="Reschedule Whole House Committee" />
+<grant permission="bungeni.bill.wf.reschedule_whole_house" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.adjourn_whole_house" title="Adjourn Whole House Committee" />
+<grant permission="bungeni.bill.wf.adjourn_whole_house" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.select_second_committee" title="Send to Select Committee (II)" />
+<grant permission="bungeni.bill.wf.select_second_committee" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.select_second_committee_via_whole_house" title="Send/Resend to Select Committee (II)" />
+<grant permission="bungeni.bill.wf.select_second_committee_via_whole_house" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.allow_schedule_third_reading" title="Allow scheduling of Third Reading" />
+<grant permission="bungeni.bill.wf.allow_schedule_third_reading" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.schedule_third_reading" title="Schedule Third Reading" />
+<grant permission="bungeni.bill.wf.schedule_third_reading" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.reschedule_third_reading" title="Reschedule Third Reading" />
+<grant permission="bungeni.bill.wf.reschedule_third_reading" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.adjourn_third_reading" title="Adjourn Third Reading" />
+<grant permission="bungeni.bill.wf.adjourn_third_reading" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.reject" title="Rejected" />
+<grant permission="bungeni.bill.wf.reject" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.approve" title="Approved" />
+<grant permission="bungeni.bill.wf.approve" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.withdraw" title="Withdraw" />
+<grant permission="bungeni.bill.wf.withdraw" role="bungeni.Clerk" />
+
+
+<!-- committee -->
+
+<permission id="bungeni.committee.wf.activate" title="Activate" />
+<grant permission="bungeni.committee.wf.activate" role="bungeni.Clerk" />
+<grant permission="bungeni.committee.wf.activate" role="bungeni.Speaker" />
+
+<permission id="bungeni.committee.wf.dissolve" title="Dissolve" />
+<grant permission="bungeni.committee.wf.dissolve" role="bungeni.Clerk" />
+<grant permission="bungeni.committee.wf.dissolve" role="bungeni.Speaker" />
+
+<permission id="bungeni.committee.wf.deactivate" title="Deactivate" />
+<grant permission="bungeni.committee.wf.deactivate" role="bungeni.Clerk" />
+<grant permission="bungeni.committee.wf.deactivate" role="bungeni.Speaker" />
+
+
+<!-- event -->
+
+<permission id="bungeni.event.wf.deactivate" title="Deactivate" />
+<grant permission="bungeni.event.wf.deactivate" role="bungeni.Clerk" />
+<grant permission="bungeni.event.wf.deactivate" role="bungeni.Speaker" />
+
+
+<!-- groups -->
+
+<permission id="bungeni.groups.wf.activate" title="Activate" />
+<grant permission="bungeni.groups.wf.activate" role="bungeni.Clerk" />
+<grant permission="bungeni.groups.wf.activate" role="bungeni.Speaker" />
+
+<permission id="bungeni.groups.wf.dissolve" title="Dissolve" />
+<grant permission="bungeni.groups.wf.dissolve" role="bungeni.Clerk" />
+<grant permission="bungeni.groups.wf.dissolve" role="bungeni.Speaker" />
+
+<permission id="bungeni.groups.wf.deactivate" title="Deactivate" />
+<grant permission="bungeni.groups.wf.deactivate" role="bungeni.Clerk" />
+<grant permission="bungeni.groups.wf.deactivate" role="bungeni.Speaker" />
+
+
+<!-- groupsitting -->
+
+<permission id="bungeni.groupsitting.wf.allow_drafting_agenda" title="Draft Agenda" />
+<grant permission="bungeni.groupsitting.wf.allow_drafting_agenda" role="bungeni.Clerk" />
+<grant permission="bungeni.groupsitting.wf.allow_drafting_agenda" role="bungeni.Speaker" />
+
+<permission id="bungeni.groupsitting.wf.publish_agenda" title="Finalize Agenda" />
+<grant permission="bungeni.groupsitting.wf.publish_agenda" role="bungeni.Clerk" />
+<grant permission="bungeni.groupsitting.wf.publish_agenda" role="bungeni.Speaker" />
+
+<permission id="bungeni.groupsitting.wf.redraft_agenda" title="Redraft Agenda" />
+<grant permission="bungeni.groupsitting.wf.redraft_agenda" role="bungeni.Clerk" />
+<grant permission="bungeni.groupsitting.wf.redraft_agenda" role="bungeni.Speaker" />
+
+<permission id="bungeni.groupsitting.wf.allow_draft_minutes" title="Draft Minutes" />
+<grant permission="bungeni.groupsitting.wf.allow_draft_minutes" role="bungeni.Clerk" />
+<grant permission="bungeni.groupsitting.wf.allow_draft_minutes" role="bungeni.Speaker" />
+
+<permission id="bungeni.groupsitting.wf.publish_minutes" title="Finalize Minutes" />
+<grant permission="bungeni.groupsitting.wf.publish_minutes" role="bungeni.Clerk" />
+<grant permission="bungeni.groupsitting.wf.publish_minutes" role="bungeni.Speaker" />
+
+<permission id="bungeni.groupsitting.wf.redraft_minutes" title="Redraft Minutes" />
+<grant permission="bungeni.groupsitting.wf.redraft_minutes" role="bungeni.Clerk" />
+<grant permission="bungeni.groupsitting.wf.redraft_minutes" role="bungeni.Speaker" />
+
+
+<!-- heading -->
+
+<permission id="bungeni.heading.wf.deactivate" title="Deactivate" />
+<grant permission="bungeni.heading.wf.deactivate" role="bungeni.Clerk" />
+<grant permission="bungeni.heading.wf.deactivate" role="bungeni.Speaker" />
+
+<permission id="bungeni.heading.wf.reactivate" title="Re activate" />
+<grant permission="bungeni.heading.wf.reactivate" role="bungeni.Clerk" />
+<grant permission="bungeni.heading.wf.reactivate" role="bungeni.Speaker" />
+
+
+<!-- motion -->
+
+<permission id="bungeni.motion.wf.submit" title="Submit to Clerk" />
+<grant permission="bungeni.motion.wf.submit" role="bungeni.Owner" />
+
+<permission id="bungeni.motion.wf.receive" title="Receive" />
+<grant permission="bungeni.motion.wf.receive" role="bungeni.Clerk" />
+
+<permission id="bungeni.motion.wf.require_clarification" title="Needs Clarification to Complete" />
+<grant permission="bungeni.motion.wf.require_clarification" role="bungeni.Clerk" />
+
+<permission id="bungeni.motion.wf.complete" title="Submit to the Speaker Office" />
+<grant permission="bungeni.motion.wf.complete" role="bungeni.Clerk" />
+
+<permission id="bungeni.motion.wf.approve" title="Approve" />
+<grant permission="bungeni.motion.wf.approve" role="bungeni.Speaker" />
+
+<permission id="bungeni.motion.wf.disapprove" title="Disapprove" />
+<grant permission="bungeni.motion.wf.disapprove" role="bungeni.Speaker" />
+
+<permission id="bungeni.motion.wf.allow_schedule" title="Make available for scheduling" />
+<grant permission="bungeni.motion.wf.allow_schedule" role="bungeni.Speaker" />
+
+<permission id="bungeni.motion.wf.require_recomplete" title="Needs Clarification to Approve" />
+<grant permission="bungeni.motion.wf.require_recomplete" role="bungeni.Speaker" />
+
+<permission id="bungeni.motion.wf.recomplete" title="Re-complete" />
+<grant permission="bungeni.motion.wf.recomplete" role="bungeni.Clerk" />
+
+<permission id="bungeni.motion.wf.require_recomplete_clarification" title="Needs Clarification to Complete" />
+<grant permission="bungeni.motion.wf.require_recomplete_clarification" role="bungeni.Clerk" />
+
+<permission id="bungeni.motion.wf.resubmit" title="Resubmit to Clerk" />
+<grant permission="bungeni.motion.wf.resubmit" role="bungeni.Owner" />
+
+<permission id="bungeni.motion.wf.defer" title="Defer" />
+<grant permission="bungeni.motion.wf.defer" role="bungeni.Speaker" />
+
+<permission id="bungeni.motion.wf.elapse" title="Elapse" />
+<grant permission="bungeni.motion.wf.elapse" role="bungeni.Speaker" />
+
+<permission id="bungeni.motion.wf.schedule" title="Schedule" />
+<grant permission="bungeni.motion.wf.schedule" role="bungeni.Clerk" />
+
+<permission id="bungeni.motion.wf.reschedule" title="Re-schedule" />
+<grant permission="bungeni.motion.wf.reschedule" role="bungeni.Clerk" />
+
+<permission id="bungeni.motion.wf.revert_to_admissible" title="Revert to admissible" />
+<grant permission="bungeni.motion.wf.revert_to_admissible" role="bungeni.Speaker" />
+
+<permission id="bungeni.motion.wf.drop" title="Drop" />
+<grant permission="bungeni.motion.wf.drop" role="bungeni.Clerk" />
+
+<permission id="bungeni.motion.wf.adjourn" title="Adjourn debate" />
+<grant permission="bungeni.motion.wf.adjourn" role="bungeni.Clerk" />
+
+<permission id="bungeni.motion.wf.adopt" title="Adopt" />
+<grant permission="bungeni.motion.wf.adopt" role="bungeni.Clerk" />
+
+<permission id="bungeni.motion.wf.adopt_amendments" title="Adopt with amendments" />
+<grant permission="bungeni.motion.wf.adopt_amendments" role="bungeni.Clerk" />
+
+<permission id="bungeni.motion.wf.reject" title="Reject a scheduled motion" />
+<grant permission="bungeni.motion.wf.reject" role="bungeni.Speaker" />
+
+<permission id="bungeni.motion.wf.withdraw" title="Withdraw" />
+<grant permission="bungeni.motion.wf.withdraw" role="bungeni.Clerk" />
+<grant permission="bungeni.motion.wf.withdraw" role="bungeni.Owner" />
+
+<permission id="bungeni.motion.wf.withdraw_public" title="Withdraw" />
+<grant permission="bungeni.motion.wf.withdraw_public" role="bungeni.Clerk" />
+<grant permission="bungeni.motion.wf.withdraw_public" role="bungeni.Owner" />
+
+
+<!-- parliament -->
+
+<permission id="bungeni.parliament.wf.activate" title="Activate" />
+<grant permission="bungeni.parliament.wf.activate" role="bungeni.Clerk" />
+<grant permission="bungeni.parliament.wf.activate" role="bungeni.Speaker" />
+
+<permission id="bungeni.parliament.wf.dissolve" title="Dissolve" />
+<grant permission="bungeni.parliament.wf.dissolve" role="bungeni.Clerk" />
+<grant permission="bungeni.parliament.wf.dissolve" role="bungeni.Speaker" />
+
+<permission id="bungeni.parliament.wf.deactivate" title="Deactivate" />
+<grant permission="bungeni.parliament.wf.deactivate" role="bungeni.Clerk" />
+<grant permission="bungeni.parliament.wf.deactivate" role="bungeni.Speaker" />
+
+
+<!-- question -->
+
+<permission id="bungeni.question.wf.submit" title="Submit to Clerk" />
+<grant permission="bungeni.question.wf.submit" role="bungeni.Owner" />
+
+<permission id="bungeni.question.wf.receive" title="Receive" />
+<grant permission="bungeni.question.wf.receive" role="bungeni.Clerk" />
+
+<permission id="bungeni.question.wf.require_clarification" title="Needs Clarification by MP" />
+<grant permission="bungeni.question.wf.require_clarification" role="bungeni.Clerk" />
+
+<permission id="bungeni.question.wf.complete" title="Submit to the Speaker Office" />
+<grant permission="bungeni.question.wf.complete" role="bungeni.Clerk" />
+
+<permission id="bungeni.question.wf.approve" title="Approve" />
+<grant permission="bungeni.question.wf.approve" role="bungeni.Speaker" />
+
+<permission id="bungeni.question.wf.disapprove" title="Disapprove" />
+<grant permission="bungeni.question.wf.disapprove" role="bungeni.Speaker" />
+
+<permission id="bungeni.question.wf.require_recomplete" title="Needs Clarification" />
+<grant permission="bungeni.question.wf.require_recomplete" role="bungeni.Speaker" />
+
+<permission id="bungeni.question.wf.recomplete" title="Complete" />
+<grant permission="bungeni.question.wf.recomplete" role="bungeni.Clerk" />
+
+<permission id="bungeni.question.wf.resubmit" title="Resubmit to Clerk" />
+<grant permission="bungeni.question.wf.resubmit" role="bungeni.Owner" />
+
+<permission id="bungeni.question.wf.allow_schedule" title="Make available for scheduling" />
+<grant permission="bungeni.question.wf.allow_schedule" role="bungeni.Clerk" />
+
+<permission id="bungeni.question.wf.reschedule" title="Reschedule" />
+<grant permission="bungeni.question.wf.reschedule" role="bungeni.Clerk" />
+
+<permission id="bungeni.question.wf.schedule" title="Schedule" />
+<grant permission="bungeni.question.wf.schedule" role="bungeni.Clerk" />
+
+<permission id="bungeni.question.wf.allow_response" title="Send to Ministry" />
+<grant permission="bungeni.question.wf.allow_response" role="bungeni.Clerk" />
+
+<permission id="bungeni.question.wf.submit_response" title="Submit Response" />
+<grant permission="bungeni.question.wf.submit_response" role="bungeni.Minister" />
+
+<permission id="bungeni.question.wf.redraft_response" title="Redraft Response" />
+<grant permission="bungeni.question.wf.redraft_response" role="bungeni.Clerk" />
+
+<permission id="bungeni.question.wf.complete_response" title="Complete Response" />
+<grant permission="bungeni.question.wf.complete_response" role="bungeni.Clerk" />
+
+<permission id="bungeni.question.wf.elapse" title="Elapse" />
+<grant permission="bungeni.question.wf.elapse" role="bungeni.Clerk" />
+<grant permission="bungeni.question.wf.elapse" role="bungeni.Speaker" />
+
+<permission id="bungeni.question.wf.defer" title="Defer" />
+<grant permission="bungeni.question.wf.defer" role="bungeni.Clerk" />
+
+<permission id="bungeni.question.wf.deferred_allow_response" title="Send to Ministry" />
+<grant permission="bungeni.question.wf.deferred_allow_response" role="bungeni.Clerk" />
+
+<permission id="bungeni.question.wf.drop" title="Drop" />
+<grant permission="bungeni.question.wf.drop" role="bungeni.Clerk" />
+
+<permission id="bungeni.question.wf.adjourn" title="Debate adjourned" />
+<grant permission="bungeni.question.wf.adjourn" role="bungeni.Clerk" />
+
+<permission id="bungeni.question.wf.debate" title="Debated" />
+<grant permission="bungeni.question.wf.debate" role="bungeni.Clerk" />
+
+<permission id="bungeni.question.wf.withdraw" title="Withdraw" />
+<grant permission="bungeni.question.wf.withdraw" role="bungeni.Clerk" />
+<grant permission="bungeni.question.wf.withdraw" role="bungeni.Owner" />
+
+<permission id="bungeni.question.wf.withdraw_public" title="Withdraw" />
+<grant permission="bungeni.question.wf.withdraw_public" role="bungeni.Clerk" />
+<grant permission="bungeni.question.wf.withdraw_public" role="bungeni.Owner" />
+
+
+<!-- report -->
+
+
+<!-- tableddocument -->
+
+<permission id="bungeni.tableddocument.wf.submit" title="Submit to Clerk" />
+<grant permission="bungeni.tableddocument.wf.submit" role="bungeni.Owner" />
+
+<permission id="bungeni.tableddocument.wf.receive" title="Receive" />
+<grant permission="bungeni.tableddocument.wf.receive" role="bungeni.Clerk" />
+
+<permission id="bungeni.tableddocument.wf.require_clarification" title="Needs Clarification" />
+<grant permission="bungeni.tableddocument.wf.require_clarification" role="bungeni.Clerk" />
+
+<permission id="bungeni.tableddocument.wf.complete" title="Submit to the Speaker Office" />
+<grant permission="bungeni.tableddocument.wf.complete" role="bungeni.Clerk" />
+
+<permission id="bungeni.tableddocument.wf.approve" title="Approve" />
+<grant permission="bungeni.tableddocument.wf.approve" role="bungeni.Speaker" />
+
+<permission id="bungeni.tableddocument.wf.allow_schedule" title="Make available for scheduling" />
+<grant permission="bungeni.tableddocument.wf.allow_schedule" role="bungeni.Clerk" />
+
+<permission id="bungeni.tableddocument.wf.disapprove" title="Disapprove" />
+<grant permission="bungeni.tableddocument.wf.disapprove" role="bungeni.Speaker" />
+
+<permission id="bungeni.tableddocument.wf.require_recomplete" title="Needs Clarification" />
+<grant permission="bungeni.tableddocument.wf.require_recomplete" role="bungeni.Speaker" />
+
+<permission id="bungeni.tableddocument.wf.recomplete" title="Complete" />
+<grant permission="bungeni.tableddocument.wf.recomplete" role="bungeni.Clerk" />
+
+<permission id="bungeni.tableddocument.wf.mp_clarify" title="Needs Clarification by MP" />
+<grant permission="bungeni.tableddocument.wf.mp_clarify" role="bungeni.Clerk" />
+
+<permission id="bungeni.tableddocument.wf.resubmit" title="Resubmit to Clerk" />
+<grant permission="bungeni.tableddocument.wf.resubmit" role="bungeni.Owner" />
+
+<permission id="bungeni.tableddocument.wf.revert_to_admissible" title="Revert to admissible" />
+<grant permission="bungeni.tableddocument.wf.revert_to_admissible" role="bungeni.Clerk" />
+
+<permission id="bungeni.tableddocument.wf.schedule" title="Schedule" />
+<grant permission="bungeni.tableddocument.wf.schedule" role="bungeni.Clerk" />
+
+<permission id="bungeni.tableddocument.wf.reschedule" title="Reschedule" />
+<grant permission="bungeni.tableddocument.wf.reschedule" role="bungeni.Clerk" />
+
+<permission id="bungeni.tableddocument.wf.adjourn" title="Adjourn" />
+<grant permission="bungeni.tableddocument.wf.adjourn" role="bungeni.Clerk" />
+
+<permission id="bungeni.tableddocument.wf.table" title="Table" />
+<grant permission="bungeni.tableddocument.wf.table" role="bungeni.Clerk" />
+<grant permission="bungeni.tableddocument.wf.table" role="bungeni.Speaker" />
+<grant permission="bungeni.tableddocument.wf.table" role="bungeni.MP" />
+<grant permission="bungeni.tableddocument.wf.table" role="bungeni.Minister" />
+
+<permission id="bungeni.tableddocument.wf.withdraw" title="Withdraw" />
+<grant permission="bungeni.tableddocument.wf.withdraw" role="bungeni.Clerk" />
+<grant permission="bungeni.tableddocument.wf.withdraw" role="bungeni.Owner" />
+
+
+<!-- user -->
+
+<permission id="bungeni.user.wf.deactivate" title="Deactivate" />
+<grant permission="bungeni.user.wf.deactivate" role="bungeni.Speaker" />
+
+<permission id="bungeni.user.wf.activate" title="activate" />
+<grant permission="bungeni.user.wf.activate" role="bungeni.Speaker" />
+
+<permission id="bungeni.user.wf.inhume" title="Inhume" />
+<grant permission="bungeni.user.wf.inhume" role="bungeni.Speaker" />
+
+<permission id="bungeni.user.wf.auto_inhume" title="called when date of death is set" />
+<grant permission="bungeni.user.wf.auto_inhume" role="bungeni.Speaker" />
+
+<permission id="bungeni.user.wf.resurrect" title="Resurrect" />
+<grant permission="bungeni.user.wf.resurrect" role="bungeni.Speaker" />
+
+
+<!-- version -->
+
 </configure>

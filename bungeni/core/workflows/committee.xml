@@ -5,76 +5,74 @@
     domain="bungeni.ui"
     initial_state="">
 
-  <state id="draft" title="Draft - Committee not yet Active">
-    <grant permission="bungeni.group.Delete" role="bungeni.Owner" />
-    <grant permission="zope.View" role="bungeni.Clerk" />
-    <grant permission="zope.View" role="bungeni.Speaker" />
-    <deny permission="zope.View" role="bungeni.MP" />
-    <deny permission="zope.View" role="bungeni.Minister" />
-    <deny permission="zope.View" role="bungeni.Everybody" /> 
-    <deny permission="zope.View" role="bungeni.Anybody" /> 
-    <deny permission="bungeni.agendaitem.Add" role="bungeni.MP" />
-    <deny permission="bungeni.groupitemassignment.Add" role="bungeni.Clerk" />
-  </state>
+    <state id="draft" title="Draft - Committee not yet Active">
+        <!-- committee -->
+        <grant permission="zope.View" role="bungeni.Clerk" />
+        <grant permission="zope.View" role="bungeni.Speaker" />
+        <deny permission="zope.View" role="bungeni.MP" />
+        <deny permission="zope.View" role="bungeni.Minister" />
+        <deny permission="zope.View" role="bungeni.Everybody" /> 
+        <deny permission="zope.View" role="bungeni.Anybody" /> 
+        <grant permission="bungeni.group.Delete" role="bungeni.Owner" />
+        <!-- agendaitem -->
+        <deny permission="bungeni.agendaitem.Add" role="bungeni.CommitteeMember" />
+        <!-- groupitemassignment -->
+        <deny permission="bungeni.groupitemassignment.Add" role="bungeni.Clerk" />
+    </state>
 
-  <state id="active" title="Active Committee">
-    <deny permission="bungeni.group.Delete" role="bungeni.Owner" />
-    <grant permission="zope.View" role="bungeni.MP" />
-    <grant permission="zope.View" role="bungeni.Clerk" />
-    <grant permission="zope.View" role="bungeni.Speaker" />
-    <grant permission="zope.View" role="bungeni.Minister" />
-    <grant permission="zope.View" role="bungeni.Everybody" /> 
-    <grant permission="zope.View" role="bungeni.Anybody" />
-    <grant permission="bungeni.groupitemassignment.Add" role="bungeni.Clerk" />
-    <grant permission="bungeni.agendaitem.Add" role="bungeni.CommitteeMember" />
-    <deny permission="bungeni.agendaitem.Add" role="bungeni.MP" />
-  </state>
+    <state id="active" like_state="draft" title="Active Committee">
+        <!-- committee -->
+        <grant permission="zope.View" role="bungeni.MP" />
+        <grant permission="zope.View" role="bungeni.Minister" />
+        <grant permission="zope.View" role="bungeni.Everybody" /> 
+        <grant permission="zope.View" role="bungeni.Anybody" />
+        <deny permission="bungeni.group.Delete" role="bungeni.Owner" />
+        <!-- agendaitem -->
+        <grant permission="bungeni.agendaitem.Add" role="bungeni.CommitteeMember" />
+        <!-- groupitemassignment -->
+        <grant permission="bungeni.groupitemassignment.Add" role="bungeni.Clerk" />
+    </state>
   
-  <state id="dissolved" title="Committee is Dissolved">
-    <deny permission="bungeni.agendaitem.Add" role="bungeni.CommitteeMember" />
-    <deny permission="bungeni.groupitemassignment.Add" role="bungeni.Clerk" />
-  </state>
+    <state id="dissolved" like_state="active" title="Committee is Dissolved">
+        <!-- agendaitem -->
+        <deny permission="bungeni.agendaitem.Add" role="bungeni.CommitteeMember" />
+        <!-- groupitemassignment -->
+        <deny permission="bungeni.groupitemassignment.Add" role="bungeni.Clerk" />
+    </state>
 
-  <transition 
-     id="create"
-     title="Create"
-     trigger="automatic"
-     source=""
-     destination="draft"
-     />
-
-  <transition 
-     id="activate"
-     title="Activate"
-     trigger="manual"
-     source="draft
-            dissolved"
-     destination="active"
-     permission="bungeni.group.Manage"
-     require_confirmation="true"
-     />
-
-  <transition 
-     id="dissolve"
-     title="Dissolve"
-     trigger="manual"
-     source="active"
-     destination="dissolved"
-     condition=".groups.conditions.has_end_date"
-     permission="bungeni.group.Manage"
-     require_confirmation="true"
-     />
-                   
-  <transition 
-     id="deactivate"
-     title="Deactivate"
-     trigger="manual"
-     source="active 
-            dissolved"
-     destination="draft"
-     permission="bungeni.group.Manage"
-     require_confirmation="true"
-     />
-
+    <transition id="create"
+        title="Create"
+        source=""
+        destination="draft"
+        trigger="automatic"
+    />
+    
+    <transition id="activate"
+        title="Activate"
+        source="draft dissolved"
+        destination="active"
+        trigger="manual"
+        roles="bungeni.Clerk bungeni.Speaker"
+        require_confirmation="true"
+    />
+    
+    <transition id="dissolve"
+        title="Dissolve"
+        source="active"
+        destination="dissolved"
+        condition=".groups.conditions.has_end_date"
+        trigger="manual"
+        roles="bungeni.Clerk bungeni.Speaker"
+        require_confirmation="true"
+    />
+    
+    <transition id="deactivate"
+        title="Deactivate"
+        source="active dissolved"
+        destination="draft"
+        trigger="manual"
+        roles="bungeni.Clerk bungeni.Speaker"
+        require_confirmation="true"
+    />
 
 </workflow>

@@ -52,14 +52,14 @@ class actions(object):
     create_on_behalf_of = create
     
     @staticmethod
-    def submit_to_clerk(info, context):
+    def submit(info, context):
         """A question submitted to the clerks office, the owner cannot edit it 
         anymore the clerk has no edit rights until it is received.
         """
         utils.createVersion(info, context,
             message="New version on workflow transition to: submit")
         utils.setRegistryNumber(info, context)
-    resubmit = submit_to_clerk
+    resubmit = submit
     
     @staticmethod
     def receive(info, context):
@@ -91,12 +91,12 @@ class actions(object):
         pass
     
     @staticmethod
-    def send_to_ministry(info, context):
+    def allow_response(info, context):
         """A question sent to a ministry for a written answer, 
         it cannot be edited, the ministry can add a written response.
         """
         utils.setMinistrySubmissionDate(info, context)
-    defer_ministry = send_to_ministry
+    deferred_allow_response = allow_response
     
     @staticmethod
     def submit_response(info, context):
@@ -112,7 +112,7 @@ class actions(object):
         utils.createVersion(info, context)
     
     @staticmethod
-    def require_amendment(info, context):
+    def require_recomplete(info, context):
         """A question is send back from the speakers office 
         the clerks office for clarification.
         """
@@ -148,7 +148,7 @@ class actions(object):
         pass
 
     @staticmethod
-    def complete_clarify(info, context):
+    def recomplete(info, context):
         """A question that requires clarification/amendmends,
         is resubmitted by the clerks office to the speakers office.
         """

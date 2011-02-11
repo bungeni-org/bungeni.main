@@ -31,7 +31,7 @@
         source="public"
         destination="inactive"
         trigger="manual"
-        permission="bungeni.attachedfile.wf.deactivate"
+        roles="bungeni.Clerk bungeni.Speaker"
         require_confirmation="true"
     />
 

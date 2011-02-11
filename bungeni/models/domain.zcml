@@ -95,8 +95,9 @@
                 owner_id
                 note"
         />
-        <!-- +!QUESTIONAPPROVE(ah, jan-2011) to be reviewed for now we use the permission used for running transition  -->
-        <require permission="bungeni.question.speaker.Review"
+        <!-- !+WORKFLOW_TRANSITION(ah, jan-2011) to be reviewed for now we 
+            use the permission used for running transition  -->
+        <require permission="bungeni.question.wf.approve"
             set_attributes="question_number"
         />
         <require permission="bungeni.response.View"
@@ -147,7 +148,8 @@
                 party_id"
         />
 
-        <!-- +!MOTIONAPPROVE(ah, jan-2011) was bungeni.historical.Edit we use instead the permission used in the "approve" transition -->
+        <!-- !+WORKFLOW_TRANSITION(ah, jan-2011) was bungeni.historical.Edit 
+            we use instead the permission used in the "approve" transition -->
         <require permission="bungeni.motion.wf.approve"
             set_attributes="motion_number"
         />
@@ -273,8 +275,9 @@
         />
 
 
-        <!-- +!TABLEDDOCUMENTAPPROVE(ah, jan-2011) was bungeni.historical.Edit we use instead the permission used in the transition -->
-        <require permission="bungeni.tableddocument.speaker.Review"
+        <!-- !+WORKFLOW_TRANSITION(ah, jan-2011) was bungeni.historical.Edit 
+            we use instead the permission used in the transition -->
+        <require permission="bungeni.tableddocument.wf.approve"
             set_attributes="tabled_document_number"
         />
                 

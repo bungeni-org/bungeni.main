@@ -73,7 +73,7 @@ class actions(object):
         utils.createVersion(info, context)
     
     @staticmethod
-    def complete_clarify(info, context):
+    def recomplete(info, context):
         utils.createVersion(info, context)
     
     @staticmethod

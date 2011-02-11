@@ -143,7 +143,7 @@
         destination="submitted"
         condition=""
         trigger="manual"
-        permission="bungeni.agendaitem.wf.submit"
+        roles="bungeni.Owner"
         event=".interfaces.IAgendaItemSubmittedEvent"
     />
     
@@ -153,7 +153,7 @@
         destination="received"
         condition=""
         trigger="manual"
-        permission="bungeni.agendaitem.wf.receive"
+        roles="bungeni.Clerk"
         event=".interfaces.IAgendaItemReceivedEvent"
     />
     
@@ -163,7 +163,7 @@
         destination="clarification_required"
         condition=""
         trigger="manual"
-        permission="bungeni.agendaitem.wf.require_clarification"
+        roles="bungeni.Clerk"
         event=".interfaces.IAgendaItemClarifyEvent"
         require_confirmation="true"
     />
@@ -174,7 +174,7 @@
         destination="completed"
         condition=""
         trigger="manual"
-        permission="bungeni.agendaitem.wf.complete"
+        roles="bungeni.Clerk"
     />
     
     <transition id="approve"
@@ -183,7 +183,7 @@
         destination="admissible"
         condition=""
         trigger="manual"
-        permission="bungeni.agendaitem.wf.approve"
+        roles="bungeni.Speaker"
     />
     
     <transition id="disapprove" 
@@ -192,7 +192,7 @@
         destination="inadmissible"
         condition=""
         trigger="manual"
-        permission="bungeni.agendaitem.wf.disapprove"
+        roles="bungeni.Speaker"
         event=".interfaces.IAgendaItemRejectedEvent"
         require_confirmation="true"
     />
@@ -202,7 +202,7 @@
         source="admissible deferred"
         destination="schedule_pending"
         trigger="manual"
-        permission="bungeni.agendaitem.wf.allow_schedule" 
+        roles="bungeni.Speaker"
         event=".interfaces.IAgendaItemPendingEvent"
     />
     
@@ -212,7 +212,7 @@
         destination="incomplete"
         condition=""
         trigger="manual"
-        permission="bungeni.agendaitem.wf.require_recomplete"
+        roles="bungeni.Speaker"
         require_confirmation="true"
     />
     
@@ -222,7 +222,7 @@
         destination="completed"
         condition=""
         trigger="manual"
-        permission="bungeni.agendaitem.wf.recomplete"
+        roles="bungeni.Clerk"
     />
     
     <transition id="require_recomplete_clarification"
@@ -231,7 +231,7 @@
         destination="clarification_required"
         condition=""
         trigger="manual"
-        permission="bungeni.agendaitem.wf.require_recomplete_clarification"
+        roles="bungeni.Clerk"
         event=".interfaces.IAgendaItemClarifyEvent"
         require_confirmation="true"
     />
@@ -242,7 +242,7 @@
         destination="submitted"
         condition=""
         trigger="manual"
-        permission="bungeni.agendaitem.wf.resubmit"
+        roles="bungeni.Owner"
     />
     
     <transition id="reschedule"
@@ -250,7 +250,7 @@
         source="scheduled"
         destination="schedule_pending"
         trigger="system"
-        permission="bungeni.agendaitem.wf.reschedule" 
+        roles="bungeni.Clerk"
     />
     
     <transition id="schedule"
@@ -259,7 +259,7 @@
         destination="scheduled"
         condition=".agendaitem.conditions.is_scheduled"
         trigger="system"
-        permission="bungeni.agendaitem.wf.schedule" 
+        roles="bungeni.Clerk"
         event=".interfaces.IAgendaItemScheduledEvent"
     />
     
@@ -268,7 +268,7 @@
         source="schedule_pending"
         destination="admissible"
         trigger="manual"
-        permission="bungeni.agendaitem.wf.revert_to_admissable" 
+        roles="bungeni.Speaker"
     />
     
     <!--
@@ -281,7 +281,7 @@
         destination="dropped"
         condition=""
         trigger="manual"
-        permission="bungeni.agendaitem.wf.drop"
+        roles="bungeni.Clerk"
         event=".interfaces.IAgendaItemDroppedEvent"
     />
     
@@ -291,7 +291,7 @@
         destination="debated"
         condition=""
         trigger="manual"
-        permission="bungeni.agendaitem.wf.debate"
+        roles="bungeni.Clerk"
         event=".interfaces.IAgendaItemDebatedEvent"
     />
     
@@ -301,7 +301,7 @@
         destination="adjourned"
         condition=""
         trigger="manual"
-        permission="bungeni.agendaitem.wf.adjourn"
+        roles="bungeni.Clerk"
         event=""
     />
     
@@ -311,7 +311,7 @@
         destination="deferred"
         condition=""
         trigger="manual"
-        permission="bungeni.agendaitem.wf.defer"
+        roles="bungeni.Speaker"
         event=".interfaces.IAgendaItemDeferredEvent"
     />
     
@@ -321,7 +321,7 @@
         destination="elapsed"
         condition=""
         trigger="manual"
-        permission="bungeni.agendaitem.wf.elapse"
+        roles="bungeni.Speaker"
     />
     
     <transition id="withdraw"
@@ -330,7 +330,7 @@
         destination="withdrawn"
         condition=""
         trigger="manual"
-        permission="bungeni.agendaitem.wf.withdraw"
+        roles="bungeni.Clerk bungeni.Owner"
         require_confirmation="true"
     />
     
@@ -340,7 +340,7 @@
         destination="withdrawn_public"
         condition=""
         trigger="manual"
-        permission="bungeni.agendaitem.wf.withdraw_public"
+        roles="bungeni.Clerk bungeni.Owner"
         require_confirmation="true"
     />
 

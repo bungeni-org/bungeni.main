@@ -1,38 +1,36 @@
 <?xml version="1.0"?>
-<workflow
-   id="version_workflow"
-   title="Version workflow"
-   description="Workflow for a versioned content item."
-   domain="bungeni.ui"
-   initial_state="">
+<workflow id="version_workflow"
+    title="Version workflow"
+    description="Workflow for a versioned content item."
+    domain="bungeni.ui"
+    initial_state="">
+    
+    <state id="archived" title="Archived">
+        <deny permission="zope.ManageContent" role="bungeni.Owner" />
+        <grant permission="zope.View" role="bungeni.Everybody" />
+        <grant permission="zope.View" role="bungeni.Anybody" />
+    </state>
 
-  <state id="draft_translation" title="Draft Translation">
-    <grant permission="zope.ManageContent" role="bungeni.Owner" />
-  </state>
-  
-  <state id="archived" title="Archived">
-    <deny permission="zope.ManageContent" role="bungeni.Owner" />
-    <grant permission="zope.View" role="bungeni.Everybody" />
-    <grant permission="zope.View" role="bungeni.Anybody" />
-  </state>
-
-  <transition
-     id="archive"
-     title="Archive"
-     trigger="automatic"
-     source=""
-     destination="archived"
-     condition=""
-     />
-  
-  <transition
-     id="create_translation"
-     title="Create Translation"
-     trigger="manual"
-     source=""
-     destination="draft_translation"
-     condition=""
-     />
+    <state id="draft_translation" like_state="archived" title="Draft Translation">
+        <grant permission="zope.ManageContent" role="bungeni.Owner" />
+    </state>
+    
+    
+    <transition id="archive"
+        title="Archive"
+        source=""
+        destination="archived"
+        condition=""
+        trigger="automatic"
+    />
+     
+    <transition id="create_translation"
+        title="Create Translation"
+        source=""
+        destination="draft_translation"
+        condition=""
+        trigger="manual"
+    />
 
 </workflow>
 

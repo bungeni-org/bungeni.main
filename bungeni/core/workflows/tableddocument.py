@@ -62,11 +62,11 @@ class actions:
         pass
 
     @staticmethod
-    def require_amendment(info, context):
+    def require_recomplete(info, context):
         utils.createVersion(info,context)
     
     @staticmethod
-    def complete_clarify(info, context):
+    def recomplete(info, context):
         utils.createVersion(info,context)
 
 

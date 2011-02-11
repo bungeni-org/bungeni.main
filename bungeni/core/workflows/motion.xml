@@ -236,7 +236,8 @@
         destination
         condition=NullCondition
         trigger=MANUAL
-        permission=CheckerPublic
+        roles=bungeni.Clerk
+        permission=CheckerPublic !+ bungeni.{module}.wf.{transition_id}
         order=0
         event=None
         require_confirmation=False
@@ -265,7 +266,7 @@
         destination="submitted"
         condition=""
         trigger="manual"
-        permission="bungeni.motion.wf.submit"
+        roles="bungeni.Owner"
         event=".interfaces.IMotionSubmittedEvent"
     />
     
@@ -275,7 +276,7 @@
         destination="received" 
         condition=""
         trigger="manual" 
-        permission="bungeni.motion.wf.receive"
+        roles="bungeni.Clerk"
         event=".interfaces.IMotionReceivedEvent"
     />
     
@@ -285,7 +286,7 @@
         destination="clarification_required"
         condition=""
         trigger="manual"
-        permission="bungeni.motion.wf.require_clarification"
+        roles="bungeni.Clerk"
         event=".interfaces.IMotionClarifyEvent" 
         require_confirmation="true"
     />
@@ -296,7 +297,7 @@
         destination="completed" 
         condition=""
         trigger="manual"
-        permission="bungeni.motion.wf.complete"
+        roles="bungeni.Clerk"
     />
     
     <transition id="approve"
@@ -305,16 +306,16 @@
         destination="admissible" 
         condition=""
         trigger="manual"
-        permission="bungeni.motion.wf.approve"
+        roles="bungeni.Speaker"
     />
     
-    <transition id="disapprove" 
+    <transition id="disapprove"
         title="Disapprove"
         source="completed"
         destination="inadmissible"
         condition=""
         trigger="manual"
-        permission="bungeni.motion.wf.disapprove"
+        roles="bungeni.Speaker"
         event=".interfaces.IMotionRejectedEvent"
         require_confirmation="true"
     />
@@ -324,7 +325,7 @@
         source="admissible deferred adjourned"
         destination="schedule_pending"
         trigger="manual"
-        permission="bungeni.motion.wf.allow_schedule" 
+        roles="bungeni.Speaker"
         event=".interfaces.IMotionPendingEvent"
     />
     
@@ -334,7 +335,7 @@
         destination="incomplete" 
         condition=""
         trigger="manual"
-        permission="bungeni.motion.wf.require_recomplete"
+        roles="bungeni.Speaker"
         require_confirmation="true"
     />
     
@@ -344,7 +345,7 @@
         destination="completed"
         condition=""
         trigger="manual"
-        permission="bungeni.motion.wf.recomplete" 
+        roles="bungeni.Clerk"
     />
     
     <transition id="require_recomplete_clarification" 
@@ -353,7 +354,7 @@
         destination="clarification_required"
         condition=""
         trigger="manual"
-        permission="bungeni.motion.wf.require_recomplete_clarification"
+        roles="bungeni.Clerk"
         event=".interfaces.IMotionClarifyEvent"
         require_confirmation="true"
     />
@@ -364,7 +365,7 @@
         destination="submitted"
         condition=""
         trigger="manual"
-        permission="bungeni.motion.wf.resubmit"
+        roles="bungeni.Owner"
     />
     
     <transition id="defer"
@@ -373,7 +374,7 @@
         destination="deferred"
         condition=""
         trigger="manual"
-        permission="bungeni.motion.wf.defer"
+        roles="bungeni.Speaker"
         event=".interfaces.IMotionDeferredEvent"
     />
     
@@ -383,7 +384,7 @@
         destination="elapsed"
         condition=""
         trigger="manual"
-        permission="bungeni.motion.wf.elapse"
+        roles="bungeni.Speaker"
         require_confirmation="true"
     />
     
@@ -393,7 +394,7 @@
         destination="scheduled" 
         condition=".motion.conditions.is_scheduled"
         trigger="system" 
-        permission="bungeni.motion.wf.schedule"
+        roles="bungeni.Clerk"
         event=".interfaces.IMotionScheduledEvent"
     />
     
@@ -403,7 +404,7 @@
         destination="schedule_pending"
         condition=""
         trigger="system"
-        permission="bungeni.motion.wf.reschedule"
+        roles="bungeni.Clerk"
     />
     
     <transition id="revert_to_admissible" 
@@ -412,7 +413,7 @@
         destination="admissible"
         condition=""
         trigger="manual"
-        permission="bungeni.motion.wf.revert_to_admissible"
+        roles="bungeni.Speaker"
     />
     
     <transition id="drop" 
@@ -421,7 +422,7 @@
         destination="dropped"
         condition=""
         trigger="manual"
-        permission="bungeni.motion.wf.drop" 
+        roles="bungeni.Clerk"
         event=".interfaces.IMotionDroppedEvent"
     />
     
@@ -431,7 +432,7 @@
         destination="adjourned"
         condition=""
         trigger="manual"
-        permission="bungeni.motion.wf.adjourn" 
+        roles="bungeni.Clerk"
         event=""
     />
     
@@ -441,7 +442,7 @@
         destination="adopted"
         condition=""
         trigger="manual"
-        permission="bungeni.motion.wf.adopt"
+        roles="bungeni.Clerk"
         event=".interfaces.IMotionAdoptedEvent"
         require_confirmation="true"
     />
@@ -452,7 +453,7 @@
         destination="adopted_amendments"
         condition=""
         trigger="manual"
-        permission="bungeni.motion.wf.adopt_amendments"
+        roles="bungeni.Clerk"
         event=".interfaces.IMotionAdoptedEvent"
         require_confirmation="true"
     />
@@ -463,7 +464,7 @@
         destination="rejected"
         condition=""
         trigger="manual"
-        permission="bungeni.motion.wf.reject"
+        roles="bungeni.Speaker"
         event=".interfaces.IMotionRejectedEvent"
         require_confirmation="true"
     />
@@ -474,7 +475,7 @@
         destination="withdrawn" 
         condition=""
         trigger="manual"
-        permission="bungeni.motion.wf.withdraw"
+        roles="bungeni.Clerk bungeni.Owner"
         require_confirmation="true" 
     />
     
@@ -484,7 +485,7 @@
         destination="withdrawn_public"
         condition=""
         trigger="manual"
-        permission="bungeni.motion.wf.withdraw_public"
+        roles="bungeni.Clerk bungeni.Owner"
         require_confirmation="true"
     />
 

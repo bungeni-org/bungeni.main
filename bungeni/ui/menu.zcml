@@ -1103,7 +1103,7 @@
         order="41"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.agendaitem.wf.schedule"
-     />
+     /><!-- !+WORKFLOW_TRANSITION(mr, feb-2011) -->
     <!-- browser:menuItem menu="scheduling_actions"
         for="bungeni.models.interfaces.IItemSchedule"
         title="Edit Scheduling"

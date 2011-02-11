@@ -243,9 +243,6 @@
   <permission id="bungeni.comment.Edit" title="Add and edit comments" />
   <permission id="bungeni.comment.View" title="View comments" />
 
-  <permission id="bungeni.agenda.View" title="View Agenda" />
-  <permission id="bungeni.minutes.View" title="View 'Votes and Proceedings'" />
-
   <permission id="bungeni.cosignatory.Add" title="Add Cosignatory" />
   <permission id="bungeni.cosignatory.Delete" title="Delete Cosignatory" />
   <permission id="bungeni.cosignatory.Edit" title="Edit Cosignatory" />

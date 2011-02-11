@@ -41,38 +41,43 @@ def load_workflow(module, kls):
             _log("          %s" % (p,))
     return wf
 
-QuestionWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(question, domain.Question))
-MotionWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(motion, domain.Motion))
-BillWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(bill, domain.Bill))
-VersionWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(version, IVersion))
-GroupSittingWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(groupsitting, domain.GroupSitting))
 UserAddressWorkflowAdapter = workflow.AdaptedWorkflow(
     load_workflow(address, domain.UserAddress))
 GroupAddressWorkflowAdapter = workflow.AdaptedWorkflow(
     load_workflow(address, domain.GroupAddress))
-TabledDocumentWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(tableddocument, domain.TabledDocument))
 AgendaItemWorkflowAdapter = workflow.AdaptedWorkflow(
     load_workflow(agendaitem, domain.AgendaItem))
-ParliamentWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(parliament, domain.Parliament))
-CommitteeWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(committee, domain.Committee))
-GroupWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(groups, domain.Group))
 AttachedFileWorkflowAdapter = workflow.AdaptedWorkflow(
     load_workflow(attachedfile, domain.AttachedFile))
+BillWorkflowAdapter = workflow.AdaptedWorkflow(
+    load_workflow(bill, domain.Bill))
+CommitteeWorkflowAdapter = workflow.AdaptedWorkflow(
+    load_workflow(committee, domain.Committee))
 EventWorkflowAdapter = workflow.AdaptedWorkflow(
     load_workflow(event, domain.EventItem))
+GroupWorkflowAdapter = workflow.AdaptedWorkflow(
+    load_workflow(groups, domain.Group))
+GroupSittingWorkflowAdapter = workflow.AdaptedWorkflow(
+    load_workflow(groupsitting, domain.GroupSitting))
 HeadingWorkflowAdapter = workflow.AdaptedWorkflow(
     load_workflow(heading, domain.Heading))
-UserWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(user, domain.User))
+MotionWorkflowAdapter = workflow.AdaptedWorkflow(
+    load_workflow(motion, domain.Motion))
+ParliamentWorkflowAdapter = workflow.AdaptedWorkflow(
+    load_workflow(parliament, domain.Parliament))
+QuestionWorkflowAdapter = workflow.AdaptedWorkflow(
+    load_workflow(question, domain.Question))
 ReportWorkflowAdapter = workflow.AdaptedWorkflow(
     load_workflow(report, domain.Report))
+TabledDocumentWorkflowAdapter = workflow.AdaptedWorkflow(
+    load_workflow(tableddocument, domain.TabledDocument))
+UserWorkflowAdapter = workflow.AdaptedWorkflow(
+    load_workflow(user, domain.User))
+VersionWorkflowAdapter = workflow.AdaptedWorkflow(
+    load_workflow(version, IVersion))
+
+
+# check/regenerate zcml directives for workflows
+xmlimport.zcml_check_regenerate()
+    
 

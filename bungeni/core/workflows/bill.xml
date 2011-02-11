@@ -16,6 +16,8 @@
         <deny permission="zope.View" role="bungeni.Anybody" />
         <grant permission="bungeni.bill.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.bill.Edit" role="bungeni.Owner" />
+        <grant permission="bungeni.bill.Delete" role="bungeni.Clerk" />
+        <grant permission="bungeni.bill.Delete" role="bungeni.Speaker" />
         <grant permission="bungeni.bill.Delete" role="bungeni.Owner" />
         <!-- cosignatory -->
         <grant permission="bungeni.cosignatory.Add" role="bungeni.Clerk" />
@@ -148,7 +150,7 @@
         destination="gazetted"
         condition=""
         trigger="manual"
-        permission="bungeni.bill.wf.submit"
+        roles="bungeni.Clerk"
     />
     
     <transition id="allow_schedule_first"
@@ -157,7 +159,7 @@
         destination="first_reading_pending"
         condition=""
         trigger="manual"
-        permission="bungeni.bill.wf.allow_schedule_first"
+        roles="bungeni.Clerk"
     />
     
     <transition id="schedule_first"
@@ -166,7 +168,7 @@
         destination="first_reading"
         condition=".bill.conditions.is_scheduled"
         trigger="system"
-        permission="bungeni.bill.wf.schedule_first"
+        roles="bungeni.Clerk"
     />
     
     <transition id="reschedule_first"
@@ -175,7 +177,7 @@
         destination="first_reading_pending"
         condition=""
         trigger="system"
-        permission="bungeni.bill.wf.reschedule_first"
+        roles="bungeni.Clerk"
     />
     
     <transition id="adjourn_first"
@@ -184,7 +186,7 @@
         destination="first_reading_adjourned"
         condition=""
         trigger="manual"
-        permission="bungeni.bill.wf.adjourn_first"
+        roles="bungeni.Clerk"
     />
     
     <transition id="select_first_committee"
@@ -193,7 +195,7 @@
         destination="first_committee"
         condition=""
         trigger="manual"
-        permission="bungeni.bill.wf.select_first_committee"
+        roles="bungeni.Clerk"
     />
     
     <transition id="schedule_first_report_reading"
@@ -202,7 +204,7 @@
         destination="first_report_reading"
         condition=".bill.conditions.is_scheduled"
         trigger="system"
-        permission="bungeni.bill.wf.schedule_first_report_reading"
+        roles="bungeni.Clerk"
     />
     
     <transition id="reschedule_first_report_reading"
@@ -211,7 +213,7 @@
         destination="first_report_reading_pending"
         condition=""
         trigger="system"
-        permission="bungeni.bill.wf.reschedule_first_report_reading"
+        roles="bungeni.Clerk"
     />
     
     <transition id="allow_schedule_second_reading"
@@ -220,7 +222,7 @@
         destination="second_reading_pending"
         condition=""
         trigger="manual"
-        permission="bungeni.bill.wf.allow_schedule_second_reading"
+        roles="bungeni.Clerk"
     />
     
     <transition id="schedule_second_reading"
@@ -229,7 +231,7 @@
         destination="second_reading"
         condition=".bill.conditions.is_scheduled"
         trigger="system"
-        permission="bungeni.bill.wf.schedule_second_reading"
+        roles="bungeni.Clerk"
     />
     
     <transition id="reschedule_second_reading"
@@ -238,7 +240,7 @@
         destination="second_reading_pending"
         condition=""
         trigger="system"
-        permission="bungeni.bill.wf.reschedule_second_reading"
+        roles="bungeni.Clerk"
     />
     
     <transition id="adjourn_first_report_reading"
@@ -247,7 +249,7 @@
         destination="first_report_reading_adjourned"
         condition=""
         trigger="manual"
-        permission="bungeni.bill.wf.adjourn_first_report_reading"
+        roles="bungeni.Clerk"
     />
     
     <transition id="allow_schedule_first_report_reading"
@@ -256,7 +258,7 @@
         destination="first_report_reading_pending"
         condition=""
         trigger="manual"
-        permission="bungeni.bill.wf.allow_schedule_first_report_reading"
+        roles="bungeni.Clerk"
     />
     
     <transition id="adjourn_second"
@@ -265,7 +267,7 @@
         destination="second_reading_adjourned"
         condition=""
         trigger="manual"
-        permission="bungeni.bill.wf.adjourn_second"
+        roles="bungeni.Clerk"
     />
     
     <transition id="allow_schedule_whole_house"
@@ -274,7 +276,7 @@
         destination="whole_house_pending"
         condition=""
         trigger="manual"
-        permission="bungeni.bill.wf.allow_schedule_whole_house"
+        roles="bungeni.Clerk"
     />
     
     <transition id="allow_reschedule_whole_house"
@@ -283,7 +285,7 @@
         destination="whole_house_pending"
         condition=""
         trigger="manual"
-        permission="bungeni.bill.wf.allow_reschedule_whole_house"
+        roles="bungeni.Clerk"
     />
     
     <transition id="schedule_whole_house"
@@ -292,7 +294,7 @@
         destination="whole_house"
         condition=".bill.conditions.is_scheduled"
         trigger="system"
-        permission="bungeni.bill.wf.schedule_whole_house"
+        roles="bungeni.Clerk"
     />
     
     <transition id="reschedule_whole_house"
@@ -301,7 +303,7 @@
         destination="whole_house_pending"
         condition=""
         trigger="system"
-        permission="bungeni.bill.wf.reschedule_whole_house"
+        roles="bungeni.Clerk"
     />
     
     <transition id="adjourn_whole_house"
@@ -310,7 +312,7 @@
         destination="whole_house_adjourned"
         condition=""
         trigger="manual"
-        permission="bungeni.bill.wf.adjourn_whole_house"
+        roles="bungeni.Clerk"
     />
     
     <transition id="select_second_committee"
@@ -319,7 +321,7 @@
         destination="second_committee"
         condition=""
         trigger="manual"
-        permission="bungeni.bill.wf.select_second_committee"
+        roles="bungeni.Clerk"
     />
     
     <transition id="select_second_committee_via_whole_house"
@@ -328,7 +330,7 @@
         destination="second_committee"
         condition=""
         trigger="manual"
-        permission="bungeni.bill.wf.select_second_committee_via_whole_house"
+        roles="bungeni.Clerk"
     />
     
     <transition id="allow_schedule_third_reading"
@@ -337,7 +339,7 @@
         destination="third_reading_pending"
         condition=""
         trigger="manual"
-        permission="bungeni.bill.wf.allow_schedule_third_reading"
+        roles="bungeni.Clerk"
     />
     
     <transition id="schedule_third_reading"
@@ -346,7 +348,7 @@
         destination="third_reading"
         condition=".bill.conditions.is_scheduled"
         trigger="system"
-        permission="bungeni.bill.wf.schedule_third_reading"
+        roles="bungeni.Clerk"
     />
     
     <transition id="reschedule_third_reading"
@@ -355,7 +357,7 @@
         destination="third_reading_pending"
         condition=""
         trigger="system"
-        permission="bungeni.bill.wf.reschedule_third_reading"
+        roles="bungeni.Clerk"
     />
     
     <transition id="adjourn_third_reading"
@@ -364,7 +366,7 @@
         destination="third_reading_adjourned"
         condition=""
         trigger="manual"
-        permission="bungeni.bill.wf.adjourn_third_reading"
+        roles="bungeni.Clerk"
     />
     
     <transition id="reject"
@@ -373,7 +375,7 @@
         destination="rejected"
         condition=""
         trigger="manual"
-        permission="bungeni.bill.wf.reject"
+        roles="bungeni.Clerk"
     />
     
     <transition id="approve"
@@ -382,7 +384,7 @@
         destination="approved"
         condition=""
         trigger="manual"
-        permission="bungeni.bill.wf.approve"
+        roles="bungeni.Clerk"
     />
     
     <transition id="withdraw"
@@ -398,7 +400,7 @@
         destination="withdrawn_public"
         condition=""
         trigger="manual"
-        permission="bungeni.bill.wf.withdraw"
+        roles="bungeni.Clerk"
         require_confirmation="true"
     />
 

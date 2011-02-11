@@ -4,89 +4,72 @@
     description=""
     domain="bungeni.ui"
     initial_state="">
+    
+    <state id="A" title="Active User">
+        <grant permission="bungeni.delegation.Edit" role="bungeni.Owner" />
+        <grant permission="bungeni.delegation.Add" role="bungeni.Owner" />
+    </state>
 
-  <state id="I" title="Inactive User">
-    <deny permission="bungeni.delegation.Add" role="bungeni.Owner" />
-    <deny permission="bungeni.delegation.Edit" role="bungeni.Owner" />
-  </state>
+    <state id="I" like_state="A" title="Inactive User">
+        <deny permission="bungeni.delegation.Edit" role="bungeni.Owner" />
+        <deny permission="bungeni.delegation.Add" role="bungeni.Owner" />
+    </state>
+    
+    <state id="D" like_state="I" title="Deceased User" />
+    
+    
+    <transition id="create"
+        title="Create"
+        source=""
+        destination="A"
+        trigger="automatic"
+    />
+    
+    <transition id="deactivate"
+        title="Deactivate"
+        source="A"
+        destination="I"
+        condition=".user.conditions.not_has_date_of_death"
+        trigger="manual"
+        roles="bungeni.Speaker"
+        require_confirmation="true"
+    />
+    
+    <transition id="activate"
+        title="activate"
+        source="I"
+        destination="A"
+        trigger="manual"
+        roles="bungeni.Speaker"
+        require_confirmation="true"
+    />
+    
+    <transition id="inhume"
+        title="Inhume"
+        source="A I"
+        destination="D"
+        condition=".user.conditions.has_date_of_death"
+        trigger="manual"
+        roles="bungeni.Speaker"
+        require_confirmation="true"
+    />
 
-  
-  <state id="A" title="Active User">
-    <grant permission="bungeni.delegation.Add" role="bungeni.Owner" />
-    <grant permission="bungeni.delegation.Edit" role="bungeni.Owner" />
-  </state>
-
-  <state id="D" title="Deceased User">
-    <deny permission="bungeni.delegation.Add" role="bungeni.Owner" />
-    <deny permission="bungeni.delegation.Edit" role="bungeni.Owner" />
-  </state>
-
-
-
-  <transition 
-     id="create"
-     title="Create"
-     trigger="automatic"
-     source=""
-     destination="A"
-     />
-
-                   
-  <transition 
-     id="deactivate"
-     title="Deactivate"
-     trigger="manual"
-     source="A"
-     destination="I"
-     permission="bungeni.user.Manage"
-     require_confirmation="true"
-     condition=".user.conditions.not_has_date_of_death"
-     />
-
-
-  <transition 
-     id="activate"
-     title="activate"
-     trigger="manual"
-     source="I"
-     destination="A"
-     permission="bungeni.user.Manage"
-     require_confirmation="true"
-     />
-
-
-  <transition 
-     id="inhume"
-     title="Inhume"
-     trigger="manual"
-     source="A
-            I"
-     destination="D"
-     permission="bungeni.user.Manage"
-     require_confirmation="true"
-     condition=".user.conditions.has_date_of_death"
-     />
-
-  <transition 
-     id="auto_inhume"
-     title="called when date of death is set"
-     trigger="automatic"
-     source="A
-            I"
-     destination="D"
-     condition=".user.conditions.has_date_of_death"
-     />
-
-
-  <transition 
-     id="resurrect"
-     title="Resurrect"
-     trigger="manual"
-     source="D"
-     destination="A"
-     permission="bungeni.user.Manage"
-     require_confirmation="true"
-     />
-
+    <transition id="auto_inhume"
+        title="called when date of death is set"
+        source="A I"
+        destination="D"
+        condition=".user.conditions.has_date_of_death"
+        trigger="automatic"
+        roles="bungeni.Speaker"
+    />
+    
+    <transition id="resurrect"
+        title="Resurrect"
+        source="D"
+        destination="A"
+        trigger="manual"
+        roles="bungeni.Speaker"
+        require_confirmation="true"
+    />
 
 </workflow>

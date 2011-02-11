@@ -5,29 +5,19 @@
     domain="bungeni.ui"
     initial_state="">
     
-    <!-- Workflow state/transition names:
-    
-    State names should be lowercase "adjectives". !+ note, not all are...
-    Transition names should be lowercase "verbs".
-    
-    Note that given that all names are specified as XML @id attributes,
-    state and transition names must be unique for the XML document.
-    
-    All multiple word names are joined using an "_" (underscore) character.
-    -->
-    
     <state id="published" title="Published">
-        <deny permission="bungeni.report.Edit" role="bungeni.Everybody" />
         <grant permission="zope.View" role="bungeni.Everybody" /> 
         <grant permission="zope.View" role="bungeni.Anybody" />
+        <deny permission="bungeni.report.Edit" role="bungeni.Everybody" />
     </state>
     
     <transition id="create"
         title="Create Report"
-        trigger="automatic"
         source=""
         destination="published"
+        trigger="automatic"
         order="0"
     />
+
 </workflow>
 

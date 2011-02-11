@@ -125,7 +125,7 @@
         permission="bungeni.attachedfile.wf.deactivate"
         name="deactivate"
         class=".file.FileDeactivate"
-    />
+    /><!-- !+WORKFLOW_TRANSITION(mr, feb-2011) -->
 
   <!-- Login UI -->
   

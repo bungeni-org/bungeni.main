@@ -238,10 +238,10 @@ Setup mock delivery component.
   >>> len(versions)
   0
 
-Transition: "submit_to_clerk"
+Transition: "submit"
 
-  >>> #actions.submit_to_clerk(info, question)
-  >>> info.fireTransition("submit_to_clerk-%s" % question.status)
+  >>> #actions.submit(info, question)
+  >>> info.fireTransition("submit-%s" % question.status)
   >>> question.status
   'submitted'
   >>> len(versions)
@@ -327,13 +327,13 @@ this way do not create the expected auditlog.
 
 "Require amendment".
 
-  >>> actions.require_amendment(info, question)
+  >>> actions.require_recomplete(info, question)
   >>> len(versions)
   6
 
 "Complete clarify".
 
-  >>> actions.complete_clarify(info, question)
+  >>> actions.recomplete(info, question)
   >>> len(versions)
   7
 
@@ -345,7 +345,7 @@ this way do not create the expected auditlog.
 
 "Send to ministry".
 
-  >>> actions.send_to_ministry(info, question)
+  >>> actions.allow_response(info, question)
   >>> question.ministry_submit_date == today
   True
 

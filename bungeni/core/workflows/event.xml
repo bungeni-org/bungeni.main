@@ -4,41 +4,36 @@
     description="Workflow for attached files"
     domain="bungeni.ui"
     initial_state="">
+    
+    <state id="public" title="Public">
+        <!-- event -->
+        <grant permission="zope.View" role="bungeni.Clerk" />
+        <grant permission="zope.View" role="bungeni.Speaker" />
+        <grant permission="zope.View" role="bungeni.Everybody" /> 
+        <grant permission="zope.View" role="bungeni.Anybody" />
+    </state>
 
-  <state id="inactive" title="Inactive event">
-    <deny permission="zope.View" role="bungeni.Owner" />
-    <grant permission="zope.View" role="bungeni.Clerk" />
-    <grant permission="zope.View" role="bungeni.Speaker" />
-    <deny permission="zope.View" role="bungeni.MP" />
-    <deny permission="zope.View" role="bungeni.Minister" />
-    <deny permission="zope.View" role="bungeni.Everybody" /> 
-    <deny permission="zope.View" role="bungeni.Anybody" /> 
-  </state>
-
-  
-  <state id="public" title="Public">
-    <grant permission="zope.View" role="bungeni.Everybody" /> 
-    <grant permission="zope.View" role="bungeni.Anybody" />
-  </state>
-
-  <transition 
-     id="create"
-     title="Create"
-     trigger="automatic"
-     source=""
-     destination="public"
-     />
-
-                   
-  <transition 
-     id="deactivate"
-     title="Deactivate"
-     trigger="manual"
-     source="public"
-     destination="inactive"
-     permission="bungeni.event.Deactivate"
-     require_confirmation="true"
-     />
-
+    <state id="inactive" like_state="public" title="Inactive event">
+        <!-- event -->
+        <deny permission="zope.View" role="bungeni.Everybody" /> 
+        <deny permission="zope.View" role="bungeni.Anybody" /> 
+    </state>
+    
+    
+    <transition id="create"
+        title="Create"
+        source=""
+        destination="public"
+        trigger="automatic"
+    />
+    
+    <transition id="deactivate"
+        title="Deactivate"
+        source="public"
+        destination="inactive"
+        trigger="manual"
+        roles="bungeni.Clerk bungeni.Speaker"
+        require_confirmation="true"
+    />
 
 </workflow>

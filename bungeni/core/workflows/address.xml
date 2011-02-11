@@ -42,7 +42,7 @@
         source="private public"
         destination="internal"
         trigger="manual"
-        permission="bungeni.address.wf.publish_internal"
+        roles="bungeni.Clerk bungeni.Owner"
         require_confirmation="false"
     />
     
@@ -51,7 +51,7 @@
         source="private internal"
         destination="public"
         trigger="manual"
-        permission="bungeni.address.wf.publish"
+        roles="bungeni.Clerk bungeni.Owner"
         require_confirmation="true"
     />
     
@@ -60,7 +60,7 @@
         trigger="manual"
         source="public internal"
         destination="private"
-        permission="bungeni.address.wf.make_private"
+        roles="bungeni.Clerk bungeni.Owner"
         require_confirmation="false"
     />
 
