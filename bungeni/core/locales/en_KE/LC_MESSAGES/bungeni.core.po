@@ -3,13 +3,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: Thu Feb 10 22:05:42 2011\n"
-"PO-Revision-Date: 2010-07-10 22:28+0300\n"
+"PO-Revision-Date: 2011-02-14 15:17+0300\n"
 "Last-Translator: Administrator <admin@apkn.org>\n"
 "Language-Team: LANGUAGE <bungeni.translator@gmail.org>\n"
+"Language: en_KE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en_KE\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.0.4\n"
 "Language-Code: en_KE\n"
@@ -189,7 +189,6 @@ msgid "Committees"
 msgstr "committees"
 
 #: src/bungeni.main/bungeni/core/app.py:99
-#, fuzzy
 msgid "Committee schedules"
 msgstr "committees"
 
