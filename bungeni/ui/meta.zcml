@@ -1,19 +1,12 @@
-<configure xmlns="http://namespaces.zope.org/zope"
-           xmlns:meta="http://namespaces.zope.org/meta"
-           xmlns:files="http://sample.namespaces.zope.org/files"
-           >
-
+<configure xmlns:meta="http://namespaces.zope.org/meta">
   <meta:directive
-      name="openofficepath"
-      namespace="http://sample.namespaces.zope.org/files"
+      name="openoffice"
+      namespace="http://namespaces.bungeni.org"
       schema="bungeni.ui.interfaces.IOpenOfficePath"
       handler="bungeni.ui.zcml.registerOpenOfficePath"
       >
-
       Path to OpenOffice Python that will be used to generate PDF reports
-
   </meta:directive>
-
 </configure>
 
   
