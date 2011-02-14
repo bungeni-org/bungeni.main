@@ -18,17 +18,47 @@ Setting up database connection and utilities:
   
   >>> from bungeni.alchemist import Session
   >>> session = Session()
+
+Setup a participation
+---------------------
+
+  >>> from bungeni.core.testing import create_participation
+  >>> import zope.security.management
+  >>> zope.security.management.endInteraction()
   
-Imports.
+Imports
+-------
 
   >>> from bungeni.models import domain
   >>> from bungeni.models import schema
 
 Bills are versionable.
-  
+----------------------  
   >>> from zope.interface import classImplements
   >>> from bungeni.core.interfaces import IVersionable
   >>> classImplements(domain.Bill, IVersionable)
+
+  
+Initialise User
+---------------
+   >>> user = domain.User(
+   ...        login=u"jdoe", 
+   ...        first_name=u"a", 
+   ...        last_name=u'ab', 
+   ...        email=u"mp1@example.com", 
+   ...        date_of_birth=datetime.datetime.now(),
+   ...        language="en",
+   ...        gender='M')
+   >>> session.add(user)
+   >>> session.flush()
+   
+Create Participation
+--------------------------------------
+Create a participation with the user we just created as the principal  
+  >>> principal = zope.security.testing.Principal('jdoe', 'manager', ())
+  >>> zope.security.management.newInteraction(create_participation(principal))
+  >>> principal.id
+  'jdoe'
 
 Content creation
 ----------------
