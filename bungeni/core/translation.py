@@ -27,7 +27,17 @@ from zope.publisher.browser import BrowserLanguages
 from sqlalchemy import orm, sql
 
 from plone.i18n.locales.interfaces import ILanguageAvailability
+
+# !+zope_i18n_allowed_languages(mr, feb-2011) the python used to execute 
+# this should have previiously set up os.environ["zope_i18n_allowed_languages",
+# the value of which is parliament-specific and set in:
+#   bungeni_custom.zope_i18n_allowed_languages
+# !+ should have a standardized accessor API to bungeni_custom items.
+# Similar for: bungeni_custom.zope_i18n_compile_mo_files
+# See zope.i18n.config for how these values are consumed.
+# 
 from zope.i18n.config import ALLOWED_LANGUAGES
+
 
 from bungeni.alchemist import Session
 from bungeni.core.interfaces import IVersionable
@@ -79,7 +89,7 @@ def get_default_language():
 def get_language(translatable):
     return translatable.language
 
-def get_all_languages(filter=tuple(ALLOWED_LANGUAGES)):
+def get_all_languages(filter=None):
     """Build a list of all languages.
 
     To-do: the result of this method should be cached indefinitely.
@@ -87,6 +97,9 @@ def get_all_languages(filter=tuple(ALLOWED_LANGUAGES)):
     availability = component.getUtility(ILanguageAvailability)
     languages = {}
     _languages = availability.getLanguages(combined=True)
+    if filter is None:
+        # throw TypeError if ALLOWED_LANGUAGES is None
+        filter = tuple(ALLOWED_LANGUAGES)
     for name in filter:
         languages[name] = _languages[name]
     return languages
