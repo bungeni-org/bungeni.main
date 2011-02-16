@@ -76,6 +76,13 @@ class interned(object):
            cls._tuples[key] = tuple(seq)
         return cls._tuples[key]
 
+def norm_sorted(seq, normalized_ordering, difference=False):
+    if not difference:
+        return [ s for s in normalized_ordering if s in seq ]
+    else:
+        return [ s for s in normalized_ordering if s not in seq ]
+        
+
 def validated_set(key, allowed_values, str_or_seq, nullable=False):
     """ (key:str, # the kind of values e.g. "modes" or "roles"
          allowed_values:sequence(str), # full list of valid values
@@ -102,12 +109,13 @@ def validated_set(key, allowed_values, str_or_seq, nullable=False):
     else: 
         # assume we already have a sequence
         seq = str_or_seq
-    # remove duplicates, and ensure a standard ordering
-    seq = sorted(set(seq))
     for value in seq:
         assert value in allowed_values, \
             """Invalid "%s" item: %s. Must be one of: %s.""" % (
                 key, value, tuple(allowed_values))
+    # remove duplicates, and ensure a standard ordering -- 
+    # as "normalized ordering" we take the order defined by allowed_values
+    seq = norm_sorted(seq, allowed_values)
     return interned.tuple(seq)
 
 def get_user_context_roles():
@@ -149,18 +157,21 @@ class show(object):
         self.modes = Field.validated_modes(modes, nullable=True)
         self.roles = Field.validated_roles(roles, nullable=False)
         self._from_hide = False
-    def __str__(self):
+    def _repr_map(self):
         if not self._from_hide:
-            return "<show(modes=%s, roles=%s)>" % (self.modes, self.roles)
+            return dict(tag="show", modes=self.modes, roles=self.roles)
         else:
-            return "<hide(modes=%s, roles=%s)>" % (self.modes, 
-                tuple(Field._roles.difference(self.roles)))
+            return dict(tag="hide", modes=self.modes, 
+                roles=norm_sorted(self.roles, Field._roles, difference=True))
+    def __str__(self):
+        return "<%(tag)s(modes=%(modes)s, roles=%(roles)s)>" % (
+            self._repr_map())
 
 def hide(modes=None, roles=None):
     """Syntactic sugar, shorthand for show() when negating is easier to state.
     """
     roles = Field.validated_roles(roles, nullable=False)
-    s = show(modes, list(Field._roles.difference(roles)))
+    s = show(modes, norm_sorted(roles, Field._roles, difference=True))
     s._from_hide = True
     return s
 
@@ -220,21 +231,22 @@ class Field(object):
     interface.implements(IModelDescriptorField)
     
     # A field in a descriptor must be displayable in at least one of these modes
-    _modes = set(["view", "edit", "add", "listing", "search"])
+    _modes = ["view", "edit", "add", "listing", "search"]
     @classmethod 
     def validated_modes(cls, modes, nullable=False):
         return validated_set("modes", cls._modes, modes, nullable=nullable)
     
-    # The set of roles exposed to localization
-    _roles = set([
-        "bungeni.Admin", # parliament, has all privileges
-        "bungeni.Clerk", "bungeni.Speaker", "bungeni.MP", # parliament 
-        "bungeni.Minister", # ministry 
+    # The list of roles exposed to localization
+    _roles = [
+        #"bungeni.Admin", # parliament, has all privileges
+        "bungeni.Clerk", "bungeni.Speaker", 
         #"bungeni.Owner", # instance
+        "bungeni.MP", # parliament 
+        "bungeni.Minister", # ministry 
         #"bungeni.Translator", # parliament
         #"bungeni.Everybody", # all authenticated users, all above roles
         "bungeni.Anybody" # unauthenticated user, anonymous
-    ])
+    ]
     @classmethod 
     def validated_roles(cls, roles, nullable=False):
         return validated_set("roles", cls._roles, roles, nullable=nullable)
