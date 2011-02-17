@@ -45,7 +45,8 @@ zcml_slug = """
   <include package="zope.i18n" file="meta.zcml" />
   <!-- Setup Core Model --> 
   <include package="bungeni.ui" file="catalyst.zcml"/>
-  <include file="../../openoffice.zcml" />
+  <include package="bungeni.ui" file="meta.zcml"/>
+  <include package="bungeni_custom" file="openoffice.zcml" />
   <include package="bungeni.core" file="meta.zcml"/>
   <bungeni:fs fs_path="fs"/>
 </configure>
