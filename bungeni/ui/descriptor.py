@@ -468,7 +468,8 @@ def AdmissibleDateField(name="admissible_date"):
 class UserDescriptor(ModelDescriptor):
     display_name = _(u"User")
     container_name = _(u"Users")
-
+    localizable = True
+    
     fields = [
         Field(name="user_id",
             label="Name",
@@ -576,6 +577,8 @@ class UserDelegationDescriptor(ModelDescriptor):
     """Delegate rights to act on behalf of that user."""
     display_name = _(u"Delegate to user")
     container_name = _(u"Delegations")
+    localizable = True
+    
     fields = [
         Field(name="delegation_id",
             modes="view edit add listing",
@@ -593,7 +596,8 @@ class UserDelegationDescriptor(ModelDescriptor):
 
 
 class GroupMembershipDescriptor(ModelDescriptor):
-
+    localizable = False
+    
     SubstitutionSource = vocabulary.SubstitutionSource(
         token_field="user_id",
         title_field="fullname",
@@ -658,7 +662,8 @@ class GroupMembershipDescriptor(ModelDescriptor):
 class MpDescriptor(GroupMembershipDescriptor):
     display_name = _(u"Member of parliament")
     container_name = _(u"Members of parliament")
-
+    localizable = True
+    
     fields = [
         Field(name="user_id",
             modes="view edit add listing",
@@ -689,7 +694,7 @@ class MpDescriptor(GroupMembershipDescriptor):
         ),
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
-
+    
     constituencySource = vocabulary.DatabaseSource(domain.Constituency,
         token_field="constituency_id",
         title_field="name",
@@ -710,7 +715,7 @@ class MpDescriptor(GroupMembershipDescriptor):
         title_field="full_name",
         value_field="party_id"
     )
-
+    
     fields.extend([
         Field(name="constituency_id",
             modes="view edit add listing",
@@ -764,7 +769,8 @@ class PartyMemberDescriptor(GroupMembershipDescriptor):
     """Membership of a user in a party."""
     display_name = _(u"member")
     container_name = _(u"members")
-
+    localizable = True
+    
     fields = [
         Field(name="user_id",
             modes="view edit add listing",
@@ -836,7 +842,10 @@ class MemberOfPartyDescriptor(ModelDescriptor):
 '''
 
 class GroupDescriptor(ModelDescriptor):
-
+    localizable = True
+    display_name = _(u"Group")
+    container_name = _(u"Groups")
+    
     _combined_name_title = "%s [%s]" % (_(u"Name"), _(u"Acronym"))
     fields = [
         Field(name="full_name",
@@ -886,10 +895,11 @@ class GroupDescriptor(ModelDescriptor):
 
 
 class ParliamentDescriptor(GroupDescriptor):
+    localizable = True
     display_name = _(u"Parliament")
     container_name = _(u"Parliaments")
     custom_validators = validations.validate_parliament_dates,
-
+    
     fields = [
         Field(name="full_name",
             description=_(u"Parliament name"),
@@ -949,10 +959,11 @@ class ParliamentDescriptor(GroupDescriptor):
 
 
 class CommitteeDescriptor(GroupDescriptor):
+    localizable = True
     display_name = _(u"Profile")
     container_name = _(u"Committees")
     custom_validators = [validations.validate_date_range_within_parent, ]
-
+    
     fields = deepcopy(GroupDescriptor.fields)
     fields.extend([
         Field(name="committee_type_id",
@@ -1015,6 +1026,8 @@ class CommitteeDescriptor(GroupDescriptor):
 class CommitteeMemberDescriptor(GroupMembershipDescriptor):
     display_name = _(u"Member")
     container_name = _(u"Members")
+    localizable = True
+    
     fields = [
         Field(name="user_id",
             modes="view edit add listing",
@@ -1038,7 +1051,8 @@ class CommitteeMemberDescriptor(GroupMembershipDescriptor):
 class AddressTypeDescriptor(ModelDescriptor):
     display_name = _(u"Address type")
     container_name = _(u"Address types")
-
+    localizable = True
+    
     fields = [
         Field(name="address_type_name",
             property=schema.TextLine(title=_(u"Address Type"))
@@ -1047,9 +1061,10 @@ class AddressTypeDescriptor(ModelDescriptor):
 
 
 class AddressDescriptor(ModelDescriptor):
+    localizable = False
     display_name = _(u"Address")
     container_name = _(u"Addresses")
-
+    
     fields = [
         Field(name="address_type_id",
             modes="view edit add listing",
@@ -1127,15 +1142,18 @@ class AddressDescriptor(ModelDescriptor):
     public_wfstates = [address_wf_state[u"public"].id]
 
 class GroupAddressDescriptor(AddressDescriptor):
+    localizable = True
     fields = deepcopy(AddressDescriptor.fields)
 class UserAddressDescriptor(AddressDescriptor):
+    localizable = True
     fields = deepcopy(AddressDescriptor.fields)
 
 
 class MemberRoleTitleDescriptor(ModelDescriptor):
+    localizable = True
     display_name = _(u"Title")
     container_name = _(u"Titles")
-
+    
     fields = [
         Field(name="title_name_id", label=_(u"Title"),
             modes="view edit add listing",
@@ -1173,8 +1191,10 @@ class MemberRoleTitleDescriptor(ModelDescriptor):
 
 
 class CommitteeStaffDescriptor(GroupMembershipDescriptor):
+    localizable = True
     display_name = _(u"Staff")
     container_name = _(u"Staff")
+    
     fields = [
         Field(name="user_id",
             modes="view edit add listing",
@@ -1200,6 +1220,7 @@ class CommitteeStaffDescriptor(GroupMembershipDescriptor):
 
 
 class PoliticalPartyDescriptor(GroupDescriptor):
+    localizable = False
     display_name = _(u"political party")
     container_name = _(u"political parties")
     custom_validators = [validations.validate_date_range_within_parent, ]
@@ -1216,6 +1237,7 @@ class PoliticalPartyDescriptor(GroupDescriptor):
 
 
 class PoliticalGroupDescriptor(PoliticalPartyDescriptor):
+    localizable = True
     display_name = _(u"political group")
     container_name = _(u"political groups")
 
@@ -1223,6 +1245,7 @@ class PoliticalGroupDescriptor(PoliticalPartyDescriptor):
 
 
 class OfficeDescriptor(GroupDescriptor):
+    localizable = True
     display_name = _(u"Office")
     container_name = _(u"Offices")
 
@@ -1239,6 +1262,7 @@ class OfficeDescriptor(GroupDescriptor):
 
 
 class OfficeMemberDescriptor(GroupMembershipDescriptor):
+    localizable = True
     display_name = _(u"Office Member")
     container_name = _(u"Office Members")
     fields = [
@@ -1266,6 +1290,7 @@ class OfficeMemberDescriptor(GroupMembershipDescriptor):
 
 
 class MinistryDescriptor(GroupDescriptor):
+    localizable = True
     display_name = _(u"Ministry")
     container_name = _(u"Ministries")
 
@@ -1275,6 +1300,7 @@ class MinistryDescriptor(GroupDescriptor):
 
 
 class MinisterDescriptor(GroupMembershipDescriptor):
+    localizable = True
     display_name = _(u"Minister")
     container_name = _(u"Ministers")
 
@@ -1303,6 +1329,7 @@ class MinisterDescriptor(GroupMembershipDescriptor):
 
 
 class GovernmentDescriptor(GroupDescriptor):
+    localizable = True
     display_name = _(u"Government")
     container_name = _(u"Governments")
 
@@ -1342,6 +1369,7 @@ class GovernmentDescriptor(GroupDescriptor):
 
 
 class GroupItemAssignmentDescriptor(ModelDescriptor):
+    localizable = False
     fields = [
         Field(name="start_date",
             modes="view edit add listing",
@@ -1381,6 +1409,7 @@ class GroupItemAssignmentDescriptor(ModelDescriptor):
 class ItemGroupItemAssignmentDescriptor(GroupItemAssignmentDescriptor):
     """The Bills assigned to a Committee.
     """
+    localizable = True
     display_name = _(u"Assigned bill")
     container_name = _(u"Assigned bills")
     fields = [
@@ -1401,6 +1430,7 @@ class ItemGroupItemAssignmentDescriptor(GroupItemAssignmentDescriptor):
 class GroupGroupItemAssignmentDescriptor(GroupItemAssignmentDescriptor):
     """The Committees a Bill is assigned to.
     """
+    localizable = True
     display_name = _(u"Assigned committee")
     container_name = _(u"Assigned committees")
     fields = [
@@ -1420,6 +1450,7 @@ class GroupGroupItemAssignmentDescriptor(GroupItemAssignmentDescriptor):
 
 
 class AttachedFileDescriptor(ModelDescriptor):
+    localizable = True
     display_name = _(u"File")
     container_name = _(u"Files")
     fields = [
@@ -1482,13 +1513,15 @@ class AttachedFileDescriptor(ModelDescriptor):
 
 
 class AttachedFileVersionDescriptor(ModelDescriptor):
+    localizable = True
     display_name = _(u"Attached file version")
     container_name = _(u"Versions")
     fields = deepcopy(AttachedFileDescriptor.fields)
 
 
 class ParliamentaryItemDescriptor(ModelDescriptor):
-
+    localizable = False
+    
     fields = [
         Field(name="parliament_id",
             modes="view edit",
@@ -1595,6 +1628,8 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
 
 
 class VersionDescriptor(ModelDescriptor):
+    localizable = False
+    
     fields = [
         Field(name="short_name",
             modes="view edit add listing",
@@ -1635,6 +1670,7 @@ class VersionDescriptor(ModelDescriptor):
 
 
 class HeadingDescriptor(ParliamentaryItemDescriptor):
+    localizable = True
     display_name = _(u"Heading")
     container_name = _(u"Headings")
     fields = [
@@ -1679,6 +1715,7 @@ class HeadingDescriptor(ParliamentaryItemDescriptor):
 
 
 class AgendaItemDescriptor(ParliamentaryItemDescriptor):
+    localizable = True
     display_name = _(u"Agenda item")
     container_name = _(u"Agenda items")
     fields = deepcopy(ParliamentaryItemDescriptor.fields)
@@ -1687,12 +1724,14 @@ class AgendaItemDescriptor(ParliamentaryItemDescriptor):
 
 
 class AgendaItemVersionDescriptor(VersionDescriptor):
+    localizable = True
     display_name = _(u"Agenda Item version")
     container_name = _(u"Versions")
     fields = deepcopy(VersionDescriptor.fields)
 
 
 class MotionDescriptor(ParliamentaryItemDescriptor):
+    localizable = True
     display_name = _(u"Motion")
     container_name = _(u"Motions")
     fields = deepcopy(ParliamentaryItemDescriptor.fields)
@@ -1721,14 +1760,17 @@ class MotionDescriptor(ParliamentaryItemDescriptor):
 
 
 class MotionVersionDescriptor(VersionDescriptor):
+    localizable = True
     display_name = _(u"Motion version")
     container_name = _(u"Versions")
     fields = deepcopy(VersionDescriptor.fields)
 
 
 class BillDescriptor(ParliamentaryItemDescriptor):
+    localizable = True
     display_name = _(u"Bill")
     container_name = _(u"Bills")
+    
     fields = deepcopy(ParliamentaryItemDescriptor.fields)
     _bt = misc.get_keyed_item(fields, "body_text", key="name") # !+
     _bt.label = _(u"Statement of Purpose")
@@ -1768,16 +1810,18 @@ class BillDescriptor(ParliamentaryItemDescriptor):
     public_wfstates = get_states("bill", not_tagged=["private"])
 
 class BillVersionDescriptor(VersionDescriptor):
+    localizable = True
     display_name = _(u"Bill version")
     container_name = _(u"Versions")
     fields = deepcopy(VersionDescriptor.fields)
 
 
 class QuestionDescriptor(ParliamentaryItemDescriptor):
+    localizable = True
     display_name = _(u"Question")
     container_name = _(u"Questions")
     custom_validators = ()
-
+    
     fields = deepcopy(ParliamentaryItemDescriptor.fields)
     fields.extend([
         Field(name="question_number",
@@ -1832,12 +1876,14 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
 
 
 class QuestionVersionDescriptor(VersionDescriptor):
+    localizable = True
     display_name = _(u"Question version")
     container_name = _(u"Versions")
     fields = deepcopy(VersionDescriptor.fields)
 
 
 class EventItemDescriptor(ParliamentaryItemDescriptor):
+    localizable = True
     display_name = _(u"Event")
     container_name = _(u"Events")
     fields = [
@@ -1889,6 +1935,7 @@ class EventItemDescriptor(ParliamentaryItemDescriptor):
 
 
 class TabledDocumentDescriptor(ParliamentaryItemDescriptor):
+    localizable = True
     display_name = _(u"Tabled document")
     container_name = _(u"Tabled documents")
     fields = deepcopy(ParliamentaryItemDescriptor.fields)
@@ -1903,15 +1950,16 @@ class TabledDocumentDescriptor(ParliamentaryItemDescriptor):
 
 
 class TabledDocumentVersionDescriptor(VersionDescriptor):
+    localizable = True
     display_name = _(u"Tabled Document version")
     container_name = _(u"Versions")
     fields = deepcopy(VersionDescriptor.fields)
 
 
 class SittingDescriptor(ModelDescriptor):
+    localizable = True
     display_name = _(u"Sitting")
     container_name = _(u"Sittings")
-
     fields = [
         LanguageField("language"),
         #Sitting type is commented out below because it is not set during
@@ -1981,11 +2029,13 @@ class SittingDescriptor(ModelDescriptor):
 
 
 class GroupSittingTypeDescriptor(ModelDescriptor):
+    localizable = False
     display_name = _(u"Type")
     container_name = _(u"Types")
 
 
 class SessionDescriptor(ModelDescriptor):
+    localizable = True
     display_name = _(u"Parliamentary session")
     container_name = _(u"Parliamentary sessions")
 
@@ -2040,9 +2090,9 @@ class SessionDescriptor(ModelDescriptor):
 
 
 class AttendanceDescriptor(ModelDescriptor):
+    localizable = True
     display_name = _(u"Sitting attendance")
     container_name = _(u"Sitting attendances")
-
     fields = [
         Field(name="member_id",
             modes="view edit add listing",
@@ -2074,9 +2124,9 @@ class AttendanceDescriptor(ModelDescriptor):
 
 
 class AttendanceTypeDescriptor(ModelDescriptor):
+    localizable = True
     display_name = _(u"Sitting attendance")
     container_name = _(u"Sitting attendances")
-
     fields = [
         Field(name="attendance_type",
             property=schema.TextLine(title=_(u"Attendance type"))
@@ -2086,9 +2136,9 @@ class AttendanceTypeDescriptor(ModelDescriptor):
 
 
 class CosignatoryDescriptor(ModelDescriptor):
+    localizable = True
     display_name = _(u"Cosignatory")
     container_name = _(u"Cosignatories")
-
     fields = [
         Field(name="user_id",
             modes="view edit add listing",
@@ -2105,9 +2155,9 @@ class CosignatoryDescriptor(ModelDescriptor):
 
 
 class ConstituencyDescriptor(ModelDescriptor):
+    localizable = True
     display_name = _(u"Constituency")
     container_name = _(u"Constituencies")
-
     fields = [
         LanguageField("language"),
         Field(name="name",
@@ -2135,6 +2185,7 @@ class ConstituencyDescriptor(ModelDescriptor):
 
 
 class ProvinceDescriptor(ModelDescriptor):
+    localizable = True
     display_name = _(u"Province")
     container_name = _(u"Provinces")
     fields = [
@@ -2149,6 +2200,7 @@ class ProvinceDescriptor(ModelDescriptor):
 
 
 class RegionDescriptor(ModelDescriptor):
+    localizable = True
     display_name = _(u"Region")
     container_name = _(u"Regions")
     fields = [
@@ -2163,6 +2215,9 @@ class RegionDescriptor(ModelDescriptor):
 
 
 class CountryDescriptor(ModelDescriptor):
+    localizable = True
+    display_name = _(u"Country")
+    container_name = _(u"Countries")
     fields = [
         LanguageField("language"),
         Field(name="country_id",
@@ -2180,6 +2235,7 @@ class CountryDescriptor(ModelDescriptor):
 
 
 class ConstituencyDetailDescriptor(ModelDescriptor):
+    localizable = True
     display_name = _(u"Constituency details")
     container_name = _(u"Details")
     fields = [
@@ -2214,6 +2270,7 @@ class ConstituencyDetailDescriptor(ModelDescriptor):
 # Hansard
 ################
 
+''' !+UNUSED_Rota(mr, feb-2011)
 class RotaDescriptor(ModelDescriptor):
     fields = [
         # !+ Field(name="reporter_id") ??
@@ -2236,8 +2293,9 @@ class RotaDescriptor(ModelDescriptor):
         ),
     ]
     schema_invariants = [EndAfterStart]
+'''
 
-
+''' !+UNUSED_DocumentSource(mr, feb-2011)
 class DocumentSourceDescriptor(ModelDescriptor):
     display_name = _(u"Document source")
     container_name = _(u"Document sources")
@@ -2245,12 +2303,13 @@ class DocumentSourceDescriptor(ModelDescriptor):
     fields = [
         Field(name="document_source", label=_(u"Document Source")),
     ]
-
+'''
 
 class ItemScheduleDescriptor(ModelDescriptor):
+    localizable = True
     display_name = _(u"Scheduling")
     container_name = _(u"Schedulings")
-
+    
     fields = [
         Field(name="item_id",
             property=schema.Choice(title=_(u"Item"),
@@ -2266,9 +2325,10 @@ class ItemScheduleDescriptor(ModelDescriptor):
 
 
 class ItemScheduleDiscussionDescriptor(ModelDescriptor):
+    localizable = True
     display_name = _(u"Discussion")
     container_name = _(u"Discussions")
-
+    localizable = True
     fields = [
         LanguageField("language"),
         Field(name="body_text",
@@ -2287,9 +2347,10 @@ class ItemScheduleDiscussionDescriptor(ModelDescriptor):
 
 
 class ReportDescriptor(ParliamentaryItemDescriptor):
+    localizable = True
     display_name = _(u"Report")
     container_name = _(u"Reports")
-
+    localizable = True
     fields = [
         #LanguageField("language"),
         Field(name="language",
@@ -2336,5 +2397,6 @@ class ReportDescriptor(ParliamentaryItemDescriptor):
 
 
 class Report4SittingDescriptor(ReportDescriptor):
+    localizable = True
     fields = deepcopy(ReportDescriptor.fields)
 

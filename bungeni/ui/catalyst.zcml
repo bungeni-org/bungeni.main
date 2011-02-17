@@ -44,12 +44,14 @@
         ui_module="bungeni.ui.content"
         echo="False"
     />
-    <!--db:catalyst class="bungeni.models.domain.GroupItemAssignment"
+    <!-- Descriptor.localizable = False
+    <db:catalyst class="bungeni.models.domain.GroupItemAssignment"
         descriptor=".descriptor.GroupItemAssignmentDescriptor"
         interface_module="bungeni.models.interfaces"
         ui_module="bungeni.ui.content"
         echo="False"
-    /-->
+    />
+    -->
     <db:catalyst class="bungeni.models.domain.GroupGroupItemAssignment"
         descriptor=".descriptor.GroupGroupItemAssignmentDescriptor"
         interface_module="bungeni.models.interfaces"
@@ -104,12 +106,14 @@
         ui_module="bungeni.ui.content"
         echo="False"
     />
+    <!-- Descriptor.localizable = False
     <db:catalyst class="bungeni.models.domain.GroupMembership"
         descriptor=".descriptor.GroupMembershipDescriptor"
         interface_module="bungeni.models.interfaces"
         ui_module="bungeni.ui.content"
         echo="False"
     />
+    -->
     <db:catalyst class="bungeni.models.domain.GroupSitting"
         descriptor=".descriptor.SittingDescriptor"
         interface_module="bungeni.models.interfaces"
@@ -131,12 +135,14 @@
         ui_module="bungeni.ui.content"
         echo="False"
     />
+    <!-- Descriptor.localizable = False
     <db:catalyst class="bungeni.models.domain.ParliamentaryItem"
         descriptor=".descriptor.ParliamentaryItemDescriptor"
         interface_module="bungeni.models.interfaces"
         ui_module="bungeni.ui.content"
         echo="False"
     />
+    -->
     <db:catalyst class="bungeni.models.domain.Bill"
         descriptor=".descriptor.BillDescriptor"
         interface_module="bungeni.models.interfaces"

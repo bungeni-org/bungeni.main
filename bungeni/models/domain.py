@@ -731,10 +731,11 @@ class TabledDocument(ParliamentaryItem, _AdmissibleMixin):
 TabledDocumentChange = ItemLog.makeLogFactory("TabledDocumentChange")
 TabledDocumentVersion = ItemVersions.makeVersionFactory("TabledDocumentVersion")
 
-
+''' !+UNUSED_DocumentSource(mr, feb-2011)
 class DocumentSource(object):
     """Document source for a tabled document.
     """
+'''
 
 class EventItem(ParliamentaryItem):
     """Bill events with dates and possiblity to upload files.
