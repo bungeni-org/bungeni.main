@@ -10,13 +10,16 @@ from lxml import etree
 from zope.dottedname.resolve import resolve
 from zope.i18nmessageid import Message
 
+from ore.workflow import interfaces
+
 from bungeni.core.workflows.states import GRANT
 from bungeni.core.workflows.states import DENY
 from bungeni.core.workflows.states import State
 from bungeni.core.workflows.states import StateTransition
 from bungeni.core.workflows.states import StateWorkflow
+from bungeni.ui.utils import debug
 
-from ore.workflow import interfaces
+#
 
 ASSIGNMENTS = (GRANT, DENY)
 
@@ -83,13 +86,12 @@ def zcml_check_regenerate():
     """
     __path__ = os.path.dirname(__file__)
     filepath = os.path.join(__path__, ZCML_FILENAME)
-    persisted = open(filepath, "r").read()
+    persisted = open(filepath, "r").read().decode("utf-8")
     regenerated = ZCML_BOILERPLATE % ("\n".join(ZCML_LINES))
     if persisted != regenerated:
-        log.warn("Stale workflows/%s file -- REWRITING: \n"
-            "========== OLD CONTENTS:\n%s\n==========" % (
-                ZCML_FILENAME, persisted))
-        open(filepath, "w").write(regenerated)
+        print "CHANGES to workflows/%s file:" % (ZCML_FILENAME)
+        print debug.unified_diff(persisted, regenerated, filepath, "NEW")
+        open(filepath, "w").write(regenerated.encode("utf-8"))
         class ChangedWorkflowsPermissionsZCML(Exception): pass
         raise ChangedWorkflowsPermissionsZCML(
             "Must restart system with updated workflows/%s file" % (
