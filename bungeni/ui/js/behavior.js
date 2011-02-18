@@ -1,5 +1,4 @@
-(function($) {
-  $(document).ready(function() {
+$(document).ready(function() {
       // wire workflow dropdown menu to use POST actions
       var menu_links = $('#plone-contentmenu-workflow dd.actionMenuContent a');
       menu_links.bungeniPostWorkflowActionMenuItem();
@@ -14,34 +13,13 @@
 
       // set up calendar resizing
       $("#calendar-table").bungeniSafeResize();
-     /*
-      // set up calendar item scheduling (drag and drop)
-      $("#items-for-scheduling-bill tbody tr").bungeniDragAndDropScheduling();
-      $("#items-for-scheduling-motion tbody tr").bungeniDragAndDropScheduling();
-      $("#items-for-scheduling-question tbody tr").bungeniDragAndDropScheduling();
-      $("#items-for-scheduling-agendaitem tbody tr").bungeniDragAndDropScheduling();
-      $("#items-for-scheduling-tableddocument tbody tr").bungeniDragAndDropScheduling();
-      $("#items-for-scheduling-heading tbody tr").bungeniDragAndDropScheduling();
-      */       
-      
-      //Drag and drop within the schedule
-      // $("#scheduling-table tbody tr").bungeniDragAndDropScheduling();
-      
       $("#scheduling-table tbody.reorder").dragRearrange();
-      // Set up calendar item scheduling (by clicking)
-      //$("#items-for-scheduling-bill tbody tr input").clickScheduling();
-      //$("#items-for-scheduling-motion tbody tr input").clickScheduling();
-      //$("#items-for-scheduling-question tbody tr input").clickScheduling();
-      //$("#items-for-scheduling-agendaitem tbody tr input").clickScheduling();
-      //$("#items-for-scheduling-tableddocument tbody tr input").clickScheduling();
-      //$("#items-for-scheduling-heading tbody tr input").clickScheduling();
-      
       $(".scheduling-checkbox").clickScheduling();
                              
       // set up calendar ajax
       $('#weekly-calendar').bungeniCalendarInteractivity(true);
       $('#daily-calendar').bungeniCalendarInteractivity(false);
-     //$('#scheduling-calendar').bungeniSchedulingCalendar();
+      
       $('#scheduling-calendar').bungeniInteractiveSchedule();
       
       // sort workspace tables
@@ -76,4 +54,3 @@
       $('#workspace-table-questions-pending-response').columnFilters({alternateRowClassNames:['odd','even']});
       $('#workspace-table-items-pending-schedule').columnFilters({alternateRowClassNames:['odd','even']});      
     });
- })(jQuery);

@@ -67,7 +67,19 @@
               </a>
             </li>
           </ul>
-          
+           
+          <div id="dialog-div">
+            <div class="hd">Minutes</div>
+            <div class="bd">
+                <form id="discussion-form"
+                      method="post"
+                      action="">
+                    <input type="hidden" name="headless" value="true" />
+                    <textarea class="discussion" name="body_text" lines="5"
+                                                      id="editor-textarea"></textarea>
+                 </form>
+            </div>
+          </div>
           <table tal:define="images nocall: context/++resource++ui-images"
                  id="scheduling-table" class="grid listing items-for-scheduling">
             <thead tal:condition="options/items">
@@ -97,36 +109,15 @@
                                 tal:attributes="id string:discussion-span-$id"></span>  -->
                   
                   <span tal:condition="python:item.t!='heading'">
-                  <div class="discussion" tal:condition="discussion_action" tal:define="id repeat/item/number"
-                                tal:attributes="id string:dialog-$id">
-                        
-                        <div class="hd">Minutes</div>
-                        <div class="bd">
-
-                       
-                                <form class="expandable"
-                                        method="post"
-                                        tal:condition="discussion_action"
-                                        tal:define="id repeat/item/number"
-                                        tal:attributes="action discussion_action/url; 
-                                        id string:discussion-form-$id">
-
-                                        <input type="hidden" name="headless" value="true" />
-
-                                        <label for="body_text">Minutes</label><textarea class="discussion" name="body_text" lines="5"
-                                                                            tal:define="id repeat/item/number"
-                                                                            tal:attributes="id string:discussion-textarea-$id"
-                                                                            tal:content="python: body_text or u''">
-                                                                            </textarea>
-
-                                            <!-- <input type="submit" name="submit" value="Save"
-                                                    i18n:attributes="value" id="submitDialog"/> -->
-                                    </form> 
-                        </div>
-                  
+                  <div class="discussion" tal:condition="discussion_action" tal:define="id repeat/item/number" style="display:none">
+                                <div class="full-discussion"
+                                    tal:attributes="id string:discussion-full-text-$id"
+                                    tal:content="structure python:body_text or u''"/>
+                                <a tal:attributes="href discussion_action/url; 
+                                        id string:discussion-action-url-$id"></a> 
                      </div>
                     </span>
-                     <p tal:define="id repeat/item/number" tal:attributes="id string:discussion_$id">
+                     <p tal:define="id repeat/item/number" tal:attributes="id string:truncated-discussion-$id">
                         <span tal:replace="structure item/truncated_discussion" />
                     </p>
                 </td>

@@ -1,56 +1,42 @@
 (function($) {
-	$('.workflow-status').css('border','1px solid black');
+    $('.workflow-status').css('border','1px solid black');
   
-	var re_time_range = /(.*) \((\d+):(\d+):\d+-(\d+):(\d+):\d+\)/;
-	var re_date_range = /(.*) \((?:(\d+)\/(\d+)\/(\d+)|\?)-(?:(\d+)\/(\d+)\/(\d+)|\?)\)/;
+    var re_time_range = /(.*) \((\d+):(\d+):\d+-(\d+):(\d+):\d+\)/;
+    var re_date_range = /(.*) \((?:(\d+)\/(\d+)\/(\d+)|\?)-(?:(\d+)\/(\d+)\/(\d+)|\?)\)/;
 
-	function _update_tables(selector, data) {
-		var calendar = $(selector);
-		var old_tables = calendar.find("table");
-		var new_tables = $(data).find(selector).find("table");
-		
-		old_tables.eq(0).replaceWith(new_tables.eq(0));
-		old_tables.eq(1).replaceWith(new_tables.eq(1));
-	}
+    function _update_tables(selector, data) {
+        var calendar = $(selector);
+        var old_tables = calendar.find("table");
+        var new_tables = $(data).find(selector).find("table");
+        
+        old_tables.eq(0).replaceWith(new_tables.eq(0));
+        old_tables.eq(1).replaceWith(new_tables.eq(1));
+    }
+    
+    $.fn.dragRearrange= function(){
+        var helperfn = function(event, ui) {
+            //var title = ui[0].childNodes[1].childNodes[1].textContent +": "+ ui[0].childNodes[1].childNodes[3].text;
+            // jquery substitute
+            var title = ui.children('td.item').children('span:first').text() + ': ' + ui.children('td.item').children('a').text();
+            var helper = $('<div class="helper" />');
+            helper.text(title);
+            return helper;
+        };
+        var updatefn = function(event, ui) {
+            var ar = $(this).sortable('serialize');
+            $("#kss-spinner").show();
+            $.post('schedule_order', ar ,function(data, status) {
+                $("#kss-spinner").hide();
+            });
+        };
 
-	$.fn.bungeniDragAndDropScheduling = function() {
-		$(this).draggable({
-			cursor: 'move',
-            cursorAt: { left: 5 },
-            helper: function() {
-	            var title = $(this).children().eq(1).children().eq(1).text();
-	            var helper = $('<div class="helper" />');
-	            helper.text(title);
-	            return helper;
-			}
-		});
-		return this;
-	};
-	
-	$.fn.dragRearrange= function(){
-		var helperfn = function(event, ui) {
-			//var title = ui[0].childNodes[1].childNodes[1].textContent +": "+ ui[0].childNodes[1].childNodes[3].text;
-			// jquery substitute
-			var title = ui.children('td.item').children('span:first').text() + ': ' + ui.children('td.item').children('a').text();
-	        var helper = $('<div class="helper" />');
-	        helper.text(title);
-	        return helper;
-	    };
-		var updatefn = function(event, ui) {
-	        var ar = $(this).sortable('serialize');
-	        $("#kss-spinner").show();
-	        $.post('schedule_order', ar ,function(data, status) {
-				$("#kss-spinner").hide();
-			});
-		};
-
-		$(this).sortable({
-	    	helper: helperfn,
-	    	axis: 'y'
-		}).bind( "sortupdate",updatefn);
-	}
-	
-	
+        $(this).sortable({
+            helper: helperfn,
+            axis: 'y'
+        }).bind( "sortupdate",updatefn);
+    };
+    
+    
   $.fn.clickScheduling = function() {
     var calendar = $('#scheduling-calendar')
     var selector = '#'+calendar.attr('id');
@@ -58,12 +44,13 @@
     $(this).click(function() {
         var target = $('#scheduling-calendar').find("fieldset");
         var id = $(this).attr('id');
+        var next_url = $("a[rel=calendar]").attr('href') + "headless=true";
         if ($(this).is(':checked'))
         {
             var link = target.find("a[rel=schedule-item]");
             var url = link.attr('href');
             // ask for a redirect to the current (updated) calendar
-            var next_url = $("a[rel=calendar]").attr('href');
+            
             var t =  $(this).parent().parent();                   
             $("#kss-spinner").show();
             $.post(url, {
@@ -81,18 +68,9 @@
         }            
         else
         {   
-            //var id = $(this).attr('id');
-            //var selector2 = "#obj-"+id;
-            //var url = $(selector2);
-            //var url2= url.find("a[rel=delete-scheduling]").attr("href");
-            // ask for a redirect to the current (updated) calendar
-            
             var link = target.find("a[rel=remove-scheduled-item]");
             var url = link.attr('href');
-            var next_url = $("a[rel=calendar]").attr('href');
             var t =  $(this).parent().parent();     
-            
-                          
             $("#kss-spinner").show();
             $.post(url, {
                     headless: "true",
@@ -110,261 +88,137 @@
         
       });
       return this;
-  }
+  };
   
   
   $.fn.bungeniInteractiveSchedule = function() {
-    var calendar = $(this);
-    var selector = '#'+calendar.attr('id');
-    calendar.find("a[rel=edit-scheduling]").hide();
-    /*
-    var editors = {};
-    calendar.find("a.expandable").click(function() {
-        var expandable = $(this).siblings(".expandable");
-        var form = $(this).siblings("form");
-        var textarea = form.find("textarea");
-        var id = textarea.attr('id');
-          
-        if ($(this).hasClass('enabled')) {
-          expandable.hide();
-          $(this).removeClass('enabled');
-          var editor = editors[id];
-          if (editor) {
-            editor.destroy();
-          }
-        } else {
-          $(this).addClass('enabled');
-          expandable.show();
-          var editor2 = new YAHOO.widget.SimpleEditor(id);
-          editor2.render();
-          editors[id] = editor2;
-        }
-      });
-      */
-    var discussion = calendar.find("div.discussion")
-    $.each(discussion, function(i, o){
-        var form = $(this).find("form");
-        var dialog = $(this);
-        var textarea = form.find("textarea");
-        var a = new Array();
-        a = $(this).attr('id').split("-");
-        
-        var id = a[1];
-	    //var editor = new YAHOO.widget.Editor(id);
-        var editor = new YAHOO.widget.Editor(textarea.attr('id'), { 
-	        width: '702px', 
-	        height: '200px' 
-	    }); 
-	    editor.on('afterRender', editor.hide);
+        $.each($(this), function(i, o) {
+            var calendar = $(this);
+            var selector = '#'+calendar.attr('id');
+            calendar.find("a[rel=edit-scheduling]").hide();
+            var editor = new YAHOO.widget.Editor('editor-textarea', { 
+                                                    width: '702px', 
+                                                    height: '200px', 
+                    }); 
+            editor.on('afterRender', editor.hide);
+            editor.render();
+            var form = calendar.find("editor-form")
+            var dlg = new YAHOO.widget.Dialog('dialog-div', {
+                            width:"725px",
+                            fixedcenter:true,
+                            modal:true,
+                            visible:false
+            });
 
-	    editor.render();
-	
-	    var dlg = new YAHOO.widget.Dialog(dialog.attr('id'), {
-		    width:"725px",
-		    fixedcenter:true,
-		    modal:true,
-		    visible:false
-	    });
-
-	    function handleSave() {
-		    editor.saveHTML();
-		    this.submit();
-	    }
-	
-	    function handleCancel() {
-		    this.cancel();
-	    }
-	    var myButtons = [ { text:"Save", 
-						handler:handleSave },
-					  { text:"Cancel", 
-						handler:handleCancel,
-						isDefault:true } ];
-	    dlg.cfg.queueProperty("buttons", myButtons);
-
-	
-	    var onSuccess = function(o) {
-	            var discussion_id = "discussion_"+id;
+            function handleSave() {
+                editor.saveHTML();
+                this.submit();
+            }
+    
+            function handleCancel() {
+                this.cancel();
+            }
+            var myButtons = [ { text:"Save", 
+                        handler:handleSave },
+                      { text:"Cancel", 
+                        handler:handleCancel,
+                        isDefault:true } ];
+            dlg.cfg.queueProperty("buttons", myButtons);
+            var onSuccess = function(o) {
+                var discussion_id = "discussion_"+id;
                 var minutes = textarea.val().substring(0,100);
                 var minutes2 = minutes.indexOf("<br>");
                 var display_minutes = "";
-                if (minutes2 == -1)
-                {
+                if (minutes2 == -1){
                     display_minutes = minutes+"...";
                 }
-                else
-                {
+                else{
                     var minutes3 = minutes.indexOf("<br>", minutes2+4);
-                    if (minutes3 == -1)
-                    {
+                    if (minutes3 == -1){
                         display_minutes = minutes + "...";
                     }
-                    else
-                    {
+                    else{
                         display_minutes = minutes.substring(0, minutes3)+"...";
                     }
                 }    
-
-                //$('#'+discussion_id).html("<div>"+html2+"</div>");
                 var d = document.getElementById(discussion_id);
                 d.innerHTML = "<div>"+display_minutes+"</div>";
-                /*
-                var html2 = textarea.val();
-                id2 = "#discussion_" + id;
-                $(id2).html("<div>"+html2+"</div>"); */
-	    }
-	    var onFailure = function(o) {
-		    //in the event of a failure, we can log the problem:
-		    //YAHOO.log("Dialog reported a communication failure; connection object: " + YAHOO.lang.dump(o, 5));
-		    alert("An error occured when connecting to server.");
-	    }
-	    dlg.callback.success = onSuccess;
-	    dlg.callback.failure = onFailure;
-	    dlg.render();
-	    dlg.showEvent.subscribe(editor.show, editor, true);
-	    dlg.hideEvent.subscribe(editor.hide, editor, true);
-	    var id_button = "discussion-link-"+id;
-	    var btn = new YAHOO.widget.Button(id_button, {type:"link"});
-	    btn.on("click", dlg.show, dlg, true);
-	});
-	
-	var selects = calendar.find('#scheduling-table select.workflow-status');
-	$.each(selects, function(i, o) {
-		var select = $(o);
-		var label = select.siblings(".state-title");
-		var form = select.parents("form").eq(0);
-		
-		select.change(function(event) {
-			var selected = select.children().eq(o.selectedIndex);
-			$("#kss-spinner").show();
-            
-			form.ajaxSubmit({
-				dataType: "html",
-				complete: function(xmlHttp){
-					$("#kss-spinner").hide();
-					o.selectedIndex = 0;
-					select.blur();
-
-					if (xmlHttp.status != 200) {
-                    	select.attr('disabled', 'disabled');
-                    	label.text("");
-                    	var tid = selected.attr('value');
-                    	top.location.href = form.attr('action') + '?next_url=...&transition=' + tid;
-					}
-					else {
-						var data = xmlHttp.responseXML;
-                    	var html = $(data.documentElement);
-                    	var title = html.children().eq(0);
-                    	var options = html.find("option");
-                    
-                    	select.children().remove();
-                    	$.each(options, function(j, p) {
-                        	var option = $("<option />");
-                        	option.text($(p).text());
-                        	option.attr('value', $(p).attr('value'));
-                        	select.append(option);
-                    	});
-
-						label.text(title.text());
-
-						if (options.length == 1){
-							select.hide();
-						}
-					}
-				}
-			});
-		});
-	});
-	
+            }
+            var onFailure = function(o) {
+                alert('An error occured when connecting to server.');
+            }
+            dlg.callback.success = onSuccess;
+            dlg.callback.failure = onFailure;
+            dlg.render();
+            dlg.showEvent.subscribe(editor.show, editor, true);
+            dlg.hideEvent.subscribe(editor.hide, editor, true);
+            var discussion = calendar.find('div.full-discussion');
+        $.each(discussion, function(i, o){
+            var a = new Array();
+            a = $(this).attr('id').split("-");
+            var id = a[3];
+            var button_id = "discussion-link-"+id;
+            var btn = new YAHOO.widget.Button(button_id, {type:"link"});
+            //btn.on("click", dlg.show, dlg, true);
+            var onButtonClick = function (e) {
+                var action = calendar.find('#discussion-action-url-'+id).attr('href');
+                var dialog_form = dlg.form;
+                dialog_form.action = action;
+                var html = calendar.find('#discussion-full-text-'+id).html();
+                editor.setEditorHTML(html);
+                dlg.show();
+            };
+            btn.on("click", onButtonClick);
+        });
     
-    // create and insert category rows
-    var current = null;
-    $.each(calendar.find("a[rel=category]"), function(i, o) {
-        var id = $(this).attr('name');
-        if (id == current) {return;}
-        current = id;
+        var selects = calendar.find('#scheduling-table select.workflow-status');
+        $.each(selects, function(i, o) {
+            var select = $(o);
+            var label = select.siblings(".state-title");
+            var form = select.parents("form").eq(0);
         
-        var row = $(this).parents("tr").eq(0);
-        var cols = row.children().length;
-        
-        category_row =
-          $('<tr class="category"><td colspan="'+cols+'"></td></tr>');
-        var column = category_row.find("td");
-        column.text($(this).text());
-        $(o).appendTo(column);
-
-        category_row.insertBefore(row);
-      });
-
-    $.each(calendar.find("select.select-heading"), function(i, o) {
-        var dropdown = $(o);
-        var row = dropdown.parents("tr").eq(0);
-
-        dropdown.change(function(event) {
-            var index = o.selectedIndex;
-            o.selectedIndex = 0;
-
-            var options = dropdown.children();
-            var option = options.eq(index);
-            var value = option.attr('value');
-            if (!parseInt(value, 10)) {
-              window.location = value;
-              return true;
-            }
+            select.change(function(event) {
+                var selected = select.children().eq(o.selectedIndex);
+                $("#kss-spinner").show();
             
-            // add/update category bar (vertical table row)
-            var cols = row.children().length;
+                form.ajaxSubmit({
+                    dataType: "html",
+                    complete: function(xmlHttp){
+                        $("#kss-spinner").hide();
+                        o.selectedIndex = 0;
+                        select.blur();
 
-            // remove an immediate previous category row
-            row.prev(".category").remove();
-            
-            // find a previous category rows that match this one
-            var category_row = row.
-              prevAll('.category').
-              eq(0).
-              find('a[name='+value+']').
-              parents('tr').
-              eq(0);
+                        if (xmlHttp.status != 200) {
+                            select.attr('disabled', 'disabled');
+                            label.text("");
+                            var tid = selected.attr('value');
+                            top.location.href = form.attr('action') + '?next_url=...&transition=' + tid;
+                        }
+                        else {
+                            var data = xmlHttp.responseXML;
+                            var html = $(data.documentElement);
+                            var title = html.children().eq(0);
+                            var options = html.find("option");
+                    
+                            select.children().remove();
+                            $.each(options, function(j, p) {
+                                var option = $("<option />");
+                                option.text($(p).text());
+                                option.attr('value', $(p).attr('value'));
+                                select.append(option);
+                            });
 
-            // if there is a matching category row use it, else create
-            // and insert a new row
-            if (category_row.length === 0) {
-              category_row =
-                $('<tr class="category"><td colspan="'+cols+'"></td></tr>');
-              category_row.insertBefore(row);
-            }
+                            label.text(title.text());
 
-            var column = category_row.find("td");
-            column.text(option.text());
-            column.find("a").remove();
-            $('<a name="'+value+'"></a>').appendTo(column);
-            
-            // remove matching following category
-            row.
-              nextAll(".category").
-              eq(0).
-              find('a[name='+value+']').
-              parents('tr').
-              eq(0).
-              remove();
-
-            // save category assignment
-            var url = row.find("a[rel=edit-scheduling]").attr('href');
-            
-            data = {
-              'headless': "true",
-              'category_id': value };
-
-            $("#kss-spinner").show();
-            $.post(url, data, function(data, status) {
-                $("#kss-spinner").hide();
-                if (status == 'success') {
-                  // throw away result
-                }
-              });
-            dropdown.blur();
-          });
-      });
-
+                            if (options.length == 1){
+                                select.hide();
+                            }
+                        }
+                    }
+                });
+            });
+        });
+   
     $("#scheduling-table tbody td.actions a").click(function() {
         var link = $(this);
         link.blur();
@@ -382,7 +236,7 @@
                 mode = 'down';
                 break;            
             }
-        var next_url = $("a[rel=calendar]").attr('href');
+        var next_url = $("a[rel=calendar]").attr('href') + 'headless=true';
         var data = {
           "headless": "true",
           "mode": mode,
@@ -430,42 +284,8 @@
 
         return false;
       });
+    });
   };
-  
-  $.fn.bungeniSchedulingCalendar = function() {
-    var calendar = $(this);
-    var selector = '#'+calendar.attr('id');
-
-    $.each(calendar.find("fieldset"), function(i, o) {
-        $(o)
-          .bind('drop', function(event, draggable) {
-              var target = $(o);
-              var element = draggable.draggable;
-              var id = $(element).find("a[rel=id]").attr('name');
-              var link = target.find("a[rel=schedule-item]");
-              var url = link.attr('href');
-              
-              // ask for a redirect to the current (updated) calendar
-              var next_url = $("a[rel=calendar]").attr('href');
-                            
-              $("#kss-spinner").show();
-              $.post(url, {
-                headless: "true",
-                    next_url: next_url,
-                    item_id: id}, function(data, status) {
-                  $("#kss-spinner").hide();
-                  if (status == 'success') {
-                    _update_tables(selector, data);
-                    calendar.bungeniInteractiveSchedule();
-                    element.addClass("dd-disable");
-                  }
-                });
-            });
-      });
-      return this;
-
-  };
-
   $.fn.bungeniCalendarInteractivity = function(ajax_navigation) {
     var calendar = $(this);
     var selector = '#'+calendar.attr('id');
@@ -508,16 +328,6 @@
               table.css("height", height+"px");
             });
         }
-      });
-      return this;
-
-  };
-  
-  $.fn.bungeniCalendarSittingsDragAndDrop = function(sittings) {
-    $.each($(this), function(i, o) {
-        var id = $(o).attr('id');
-        var dd = new YAHOO.util.DDProxy(id);
-
       });
       return this;
 

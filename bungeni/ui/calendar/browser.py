@@ -327,10 +327,11 @@ class GroupSittingScheduleView(BrowserView):
                 raise TypeError(
                     "Timestamp must be floating-point (got %s)" % timestamp)
             date = utils.datetimedict.fromtimestamp(timestamp)
-
-        if misc.is_ajax_request(self.request):
+        #if misc.is_ajax_request(self.request):
+        if self.request.get('headless') == 'true':
             rendered = self.render(date, template=self.ajax)
-        rendered = self.render(date)
+        else:    
+            rendered = self.render(date)
         session.close()
         return rendered
         
