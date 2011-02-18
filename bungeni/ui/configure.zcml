@@ -101,20 +101,28 @@
    <browser:resourceDirectory
       name="ui-images"
       directory="images" />
-   <!-- vocabularies -->
-   
+    
+    
+    <!-- vocabularies -->
+    
+    <utility name="bungeni.vocabulary.workflow"
+        component=".workflow.workflow_vocabulary_factory"
+    />
+    
+    <utility name="bungeni.vocabulary.Venues"
+        component=".vocabulary.venues_factory"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+    
+    <!--
    <utility
       name="bungeni.vocabulary.weekdays"
       component=".vocabulary.WeekdaysVocabularyFactory" />
-
+    
    <utility
       name="bungeni.vocabulary.monthly_recurrence"
       component=".vocabulary.MonthlyRecurrenceVocabularyFactory" />
 
-   <utility
-      component=".workflow.workflow_vocabulary_factory"
-      name="bungeni.vocabulary.workflow" />
-   
    <utility
             component=".reports.availableItems"
             name="Available Items"
@@ -145,17 +153,13 @@
             name="Tabled Document Options"
             provides="zope.schema.interfaces.IVocabularyFactory"
             />
-
-
   <utility
      name="bungeni.vocabulary.ParliamentSource"
      provides="zope.schema.interfaces.IVocabularyFactory"
      component=".vocabulary.ParliamentSource" />
-    <utility
-        component=".vocabulary.venues_factory"
-        name="bungeni.vocabulary.Venues"
-        provides="zope.schema.interfaces.IVocabularyFactory"
-            />	 
+    -->
+    
+    
      <!-- Adapters to provide values for RSS views -->
 	 
 	 <adapter
