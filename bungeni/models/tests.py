@@ -38,7 +38,7 @@ zcml_slug = """
      metadata="bungeni.alchemist.security.metadata" />
 
   <!-- Setup Core Model --> 
-  <include package="bungeni.ui" file="catalyst.zcml"/>
+  <include package="bungeni.ui.descriptor" file="catalyst.zcml"/>
  
 </configure>
 """
