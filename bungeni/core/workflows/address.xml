@@ -11,8 +11,8 @@
         <grant permission="zope.View" role="bungeni.Owner" />
         <deny permission="zope.View" role="bungeni.MP" />
         <deny permission="zope.View" role="bungeni.Minister" />
-        <deny permission="zope.View" role="bungeni.Everybody" /> 
-        <deny permission="zope.View" role="bungeni.Anybody" />
+        <deny permission="zope.View" role="bungeni.Authenticated" /> 
+        <deny permission="zope.View" role="bungeni.Anonymous" />
         <grant permission="bungeni.address.Delete" role="bungeni.Owner" />
     </state>
     
@@ -25,8 +25,8 @@
     </state>
     
     <state id="public" like_state="internal" title="Public">
-        <grant permission="zope.View" role="bungeni.Everybody" /> 
-        <grant permission="zope.View" role="bungeni.Anybody" />
+        <grant permission="zope.View" role="bungeni.Authenticated" /> 
+        <grant permission="zope.View" role="bungeni.Anonymous" />
     </state>
     
     

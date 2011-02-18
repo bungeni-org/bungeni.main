@@ -9,14 +9,14 @@
         <!-- heading -->
         <grant permission="zope.View" role="bungeni.Clerk" />
         <grant permission="zope.View" role="bungeni.Speaker" />
-        <deny permission="zope.View" role="bungeni.Everybody" /> 
-        <deny permission="zope.View" role="bungeni.Anybody" /> 
+        <deny permission="zope.View" role="bungeni.Authenticated" /> 
+        <deny permission="zope.View" role="bungeni.Anonymous" /> 
     </state>
     
     <state id="public" like_state="inactive" title="Public">
         <!-- heading -->
-        <grant permission="zope.View" role="bungeni.Everybody" /> 
-        <grant permission="zope.View" role="bungeni.Anybody" />
+        <grant permission="zope.View" role="bungeni.Authenticated" /> 
+        <grant permission="zope.View" role="bungeni.Anonymous" />
     </state>
     
     

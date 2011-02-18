@@ -6,9 +6,9 @@
     initial_state="">
     
     <state id="published" title="Published">
-        <grant permission="zope.View" role="bungeni.Everybody" /> 
-        <grant permission="zope.View" role="bungeni.Anybody" />
-        <deny permission="bungeni.report.Edit" role="bungeni.Everybody" />
+        <grant permission="zope.View" role="bungeni.Authenticated" /> 
+        <grant permission="zope.View" role="bungeni.Anonymous" />
+        <deny permission="bungeni.report.Edit" role="bungeni.Authenticated" />
     </state>
     
     <transition id="create"

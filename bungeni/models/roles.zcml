@@ -13,7 +13,7 @@
     <role id="bungeni.MP" title="Member of parliament" />
     <role id="bungeni.Minister" title="Minister" />
     <role id="bungeni.Translator" title="Translators Office" />
-    <role id="bungeni.Everybody" title="All authenticated users" />
-    <role id="bungeni.Anybody" title="Bungeni Visitor" />
+    <role id="bungeni.Authenticated" title="All authenticated users" />
+    <role id="bungeni.Anonymous" title="Bungeni Visitor" />
     
 </configure>

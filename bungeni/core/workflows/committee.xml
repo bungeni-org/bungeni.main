@@ -11,8 +11,8 @@
         <grant permission="zope.View" role="bungeni.Speaker" />
         <deny permission="zope.View" role="bungeni.MP" />
         <deny permission="zope.View" role="bungeni.Minister" />
-        <deny permission="zope.View" role="bungeni.Everybody" /> 
-        <deny permission="zope.View" role="bungeni.Anybody" /> 
+        <deny permission="zope.View" role="bungeni.Authenticated" /> 
+        <deny permission="zope.View" role="bungeni.Anonymous" /> 
         <grant permission="bungeni.group.Delete" role="bungeni.Owner" />
         <!-- agendaitem -->
         <deny permission="bungeni.agendaitem.Add" role="bungeni.CommitteeMember" />
@@ -24,8 +24,8 @@
         <!-- committee -->
         <grant permission="zope.View" role="bungeni.MP" />
         <grant permission="zope.View" role="bungeni.Minister" />
-        <grant permission="zope.View" role="bungeni.Everybody" /> 
-        <grant permission="zope.View" role="bungeni.Anybody" />
+        <grant permission="zope.View" role="bungeni.Authenticated" /> 
+        <grant permission="zope.View" role="bungeni.Anonymous" />
         <deny permission="bungeni.group.Delete" role="bungeni.Owner" />
         <!-- agendaitem -->
         <grant permission="bungeni.agendaitem.Add" role="bungeni.CommitteeMember" />

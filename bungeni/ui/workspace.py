@@ -52,8 +52,8 @@ def prepare_user_workspaces(event):
         "implied" role (by being a member of a ministry group) 
         gets a ministry-level workspace (for each ministry)
     
-    "zope.Manager", "bungeni.Admin", "bungeni.Owner", "bungeni.Everybody", 
-    "bungeni.Anybody"
+    "zope.Manager", "bungeni.Admin", "bungeni.Owner", "bungeni.Authenticated", 
+    "bungeni.Anonymous"
         not relevant for user workspaces, no workspaces
         !+ should these get an owner-level (user) workspace?
     

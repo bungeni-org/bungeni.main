@@ -11,43 +11,43 @@
         <grant permission="bungeni.sitting.View" role="bungeni.Speaker" />
         <deny permission="bungeni.sitting.View" role="bungeni.MP" />
         <deny permission="bungeni.sitting.View" role="bungeni.Minister" />
-        <deny permission="bungeni.sitting.View" role="bungeni.Everybody" />
-        <deny permission="bungeni.sitting.View" role="bungeni.Anybody" />
+        <deny permission="bungeni.sitting.View" role="bungeni.Authenticated" />
+        <deny permission="bungeni.sitting.View" role="bungeni.Anonymous" />
         <grant permission="bungeni.sitting.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.sitting.Edit" role="bungeni.Speaker" />
-        <deny permission="bungeni.sitting.Edit" role="bungeni.Everybody" />
-        <deny permission="bungeni.sitting.Edit" role="bungeni.Anybody" />
+        <deny permission="bungeni.sitting.Edit" role="bungeni.Authenticated" />
+        <deny permission="bungeni.sitting.Edit" role="bungeni.Anonymous" />
         <grant permission="bungeni.sitting.Delete" role="bungeni.Clerk" />
         <grant permission="bungeni.sitting.Delete" role="bungeni.Speaker" />
-        <deny permission="bungeni.sitting.Delete" role="bungeni.Everybody" />
-        <deny permission="bungeni.sitting.Delete" role="bungeni.Anybody" />
+        <deny permission="bungeni.sitting.Delete" role="bungeni.Authenticated" />
+        <deny permission="bungeni.sitting.Delete" role="bungeni.Anonymous" />
         <!-- sittingschedule -->
         <grant permission="bungeni.sittingschedule.View" role="bungeni.Clerk" />
         <grant permission="bungeni.sittingschedule.View" role="bungeni.Speaker" />
-        <deny permission="bungeni.sittingschedule.View" role="bungeni.Everybody" />
-        <deny permission="bungeni.sittingschedule.View" role="bungeni.Anybody" />
+        <deny permission="bungeni.sittingschedule.View" role="bungeni.Authenticated" />
+        <deny permission="bungeni.sittingschedule.View" role="bungeni.Anonymous" />
         <deny permission="bungeni.sittingschedule.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.sittingschedule.Edit" role="bungeni.Speaker" />
-        <deny permission="bungeni.sittingschedule.Edit" role="bungeni.Everybody" />
-        <deny permission="bungeni.sittingschedule.Edit" role="bungeni.Anybody" />
+        <deny permission="bungeni.sittingschedule.Edit" role="bungeni.Authenticated" />
+        <deny permission="bungeni.sittingschedule.Edit" role="bungeni.Anonymous" />
         <!-- sittingschedule.item -->
         <deny permission="bungeni.sittingschedule.item.Add" role="bungeni.Clerk" />
         <deny permission="bungeni.sittingschedule.item.Add" role="bungeni.Speaker" />
-        <deny permission="bungeni.sittingschedule.item.Add" role="bungeni.Everybody" />
-        <deny permission="bungeni.sittingschedule.item.Add" role="bungeni.Anybody" />
+        <deny permission="bungeni.sittingschedule.item.Add" role="bungeni.Authenticated" />
+        <deny permission="bungeni.sittingschedule.item.Add" role="bungeni.Anonymous" />
         <deny permission="bungeni.sittingschedule.item.Delete" role="bungeni.Clerk" />
         <deny permission="bungeni.sittingschedule.item.Delete" role="bungeni.Speaker" />
-        <deny permission="bungeni.sittingschedule.item.Delete" role="bungeni.Everybody" />
-        <deny permission="bungeni.sittingschedule.item.Delete" role="bungeni.Anybody" />
+        <deny permission="bungeni.sittingschedule.item.Delete" role="bungeni.Authenticated" />
+        <deny permission="bungeni.sittingschedule.item.Delete" role="bungeni.Anonymous" />
         <!-- sittingschedule.itemdiscussion -->
         <grant permission="bungeni.sittingschedule.itemdiscussion.View" role="bungeni.Clerk" />
         <grant permission="bungeni.sittingschedule.itemdiscussion.View" role="bungeni.Speaker" />
-        <deny permission="bungeni.sittingschedule.itemdiscussion.View" role="bungeni.Everybody" />
-        <deny permission="bungeni.sittingschedule.itemdiscussion.View" role="bungeni.Anybody" />
+        <deny permission="bungeni.sittingschedule.itemdiscussion.View" role="bungeni.Authenticated" />
+        <deny permission="bungeni.sittingschedule.itemdiscussion.View" role="bungeni.Anonymous" />
         <deny permission="bungeni.sittingschedule.itemdiscussion.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.sittingschedule.itemdiscussion.Edit" role="bungeni.Speaker" />
-        <deny permission="bungeni.sittingschedule.itemdiscussion.Edit" role="bungeni.Everybody" />
-        <deny permission="bungeni.sittingschedule.itemdiscussion.Edit" role="bungeni.Anybody" />
+        <deny permission="bungeni.sittingschedule.itemdiscussion.Edit" role="bungeni.Authenticated" />
+        <deny permission="bungeni.sittingschedule.itemdiscussion.Edit" role="bungeni.Anonymous" />
     </state>
     
     <state id="draft_agenda" like_state="sitting" title="Draft Agenda">
@@ -66,15 +66,15 @@
     
     <state id="published_agenda" like_state="draft_agenda" title="Published Agenda">
         <!-- sitting -->
-        <grant permission="bungeni.sitting.View" role="bungeni.Everybody" />
-        <grant permission="bungeni.sitting.View" role="bungeni.Anybody" />
+        <grant permission="bungeni.sitting.View" role="bungeni.Authenticated" />
+        <grant permission="bungeni.sitting.View" role="bungeni.Anonymous" />
         <deny permission="bungeni.sitting.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.sitting.Edit" role="bungeni.Speaker" />
         <deny permission="bungeni.sitting.Delete" role="bungeni.Clerk" />
         <deny permission="bungeni.sitting.Delete" role="bungeni.Speaker" />
         <!-- sittingschedule -->
-        <grant permission="bungeni.sittingschedule.View" role="bungeni.Everybody" />
-        <grant permission="bungeni.sittingschedule.View" role="bungeni.Anybody" />
+        <grant permission="bungeni.sittingschedule.View" role="bungeni.Authenticated" />
+        <grant permission="bungeni.sittingschedule.View" role="bungeni.Anonymous" />
         <deny permission="bungeni.sittingschedule.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.sittingschedule.Edit" role="bungeni.Speaker" />
     </state>
@@ -84,8 +84,8 @@
         <grant permission="bungeni.sitting.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.sitting.Edit" role="bungeni.Speaker" />
         <!-- sittingschedule -->
-        <deny permission="bungeni.sittingschedule.View" role="bungeni.Everybody" />
-        <deny permission="bungeni.sittingschedule.View" role="bungeni.Anybody" />
+        <deny permission="bungeni.sittingschedule.View" role="bungeni.Authenticated" />
+        <deny permission="bungeni.sittingschedule.View" role="bungeni.Anonymous" />
         <grant permission="bungeni.sittingschedule.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.sittingschedule.Edit" role="bungeni.Speaker" />
         <!-- sittingschedule.itemdiscussion -->
@@ -95,13 +95,13 @@
     
     <state id="published_minutes" like_state="draft_minutes" title="Published Minutes">
         <!-- sitting -->
-        <grant permission="bungeni.sitting.View" role="bungeni.Everybody" />
-        <grant permission="bungeni.sitting.View" role="bungeni.Anybody" />
+        <grant permission="bungeni.sitting.View" role="bungeni.Authenticated" />
+        <grant permission="bungeni.sitting.View" role="bungeni.Anonymous" />
         <deny permission="bungeni.sitting.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.sitting.Edit" role="bungeni.Speaker" />
         <!-- sittingschedule -->
-        <grant permission="bungeni.sittingschedule.View" role="bungeni.Everybody" />
-        <grant permission="bungeni.sittingschedule.View" role="bungeni.Anybody" />
+        <grant permission="bungeni.sittingschedule.View" role="bungeni.Authenticated" />
+        <grant permission="bungeni.sittingschedule.View" role="bungeni.Anonymous" />
         <deny permission="bungeni.sittingschedule.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.sittingschedule.Edit" role="bungeni.Speaker" />
         <!-- sittingschedule.item -->
@@ -110,8 +110,8 @@
         <deny permission="bungeni.sittingschedule.item.Delete" role="bungeni.Clerk" />
         <deny permission="bungeni.sittingschedule.item.Delete" role="bungeni.Speaker" />
         <!-- sittingschedule.itemdiscussion -->
-        <grant permission="bungeni.sittingschedule.itemdiscussion.View" role="bungeni.Everybody" />
-        <grant permission="bungeni.sittingschedule.itemdiscussion.View" role="bungeni.Anybody" />
+        <grant permission="bungeni.sittingschedule.itemdiscussion.View" role="bungeni.Authenticated" />
+        <grant permission="bungeni.sittingschedule.itemdiscussion.View" role="bungeni.Anonymous" />
         <deny permission="bungeni.sittingschedule.itemdiscussion.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.sittingschedule.itemdiscussion.Edit" role="bungeni.Speaker" />
     </state>

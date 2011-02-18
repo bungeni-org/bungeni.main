@@ -161,11 +161,11 @@
 (<zope.app.publisher.browser.viewmeta.DisplayForm object at 0xb717c8c>, 'browserDefault', 'zope.View')
 
     For some reason, this is not needed for any other object -:- this should
-    be removed when it is understood why bungeni.Anybody does not get 
+    be removed when it is understood why bungeni.Anonymous does not get 
     zope.View on domain.Constituency type, as for other anonymously visible 
     domain types.
     -->
-    <grant permission="bungeni.constituency.View" role="bungeni.Anybody" />
+    <grant permission="bungeni.constituency.View" role="bungeni.Anonymous" />
     <!-- /!+CONSTITUENCY-Issue666 -->
 
   <permission id="bungeni.minister.Add" title="Add minister" />

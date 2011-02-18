@@ -209,8 +209,8 @@ TODO: also check permissions for other roles, i.e.
     <deny permission="zope.View" role="bungeni.Clerk" />
     <deny permission="zope.View" role="bungeni.Speaker" />
     <deny permission="zope.View" role="bungeni.Minister" />
-    <deny permission="zope.View" role="bungeni.Everybody" /> 
-    <deny permission="zope.View" role="bungeni.Anybody" />
+    <deny permission="zope.View" role="bungeni.Authenticated" /> 
+    <deny permission="zope.View" role="bungeni.Anonymous" />
 this would require to run with an interaction, one with a participation that 
 consists of a principal with the specific role.
 

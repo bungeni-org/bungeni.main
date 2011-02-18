@@ -136,7 +136,7 @@ def get_user_context_roles():
         context = common.get_traversed_context(request)
         principal = request.principal
     if IUnauthenticatedPrincipal.providedBy(principal):
-        roles = ["bungeni.Anybody"]
+        roles = ["bungeni.Anonymous"]
     else: 
         roles = common.get_context_roles(context)
         if common.is_admin(context):
@@ -244,8 +244,8 @@ class Field(object):
         "bungeni.MP", # parliament 
         "bungeni.Minister", # ministry 
         #"bungeni.Translator", # parliament
-        #"bungeni.Everybody", # all authenticated users, all above roles
-        "bungeni.Anybody" # unauthenticated user, anonymous
+        #"bungeni.Authenticated", # all authenticated users, all above roles
+        "bungeni.Anonymous" # unauthenticated user, anonymous
     ]
     @classmethod 
     def validated_roles(cls, roles, nullable=False):

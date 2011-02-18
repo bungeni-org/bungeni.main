@@ -12,8 +12,8 @@
         <deny permission="zope.View" role="bungeni.Owner" />
         <deny permission="zope.View" role="bungeni.MP" />
         <deny permission="zope.View" role="bungeni.Minister" />
-        <deny permission="zope.View" role="bungeni.Everybody" /> 
-        <deny permission="zope.View" role="bungeni.Anybody" />
+        <deny permission="zope.View" role="bungeni.Authenticated" /> 
+        <deny permission="zope.View" role="bungeni.Anonymous" />
         <grant permission="bungeni.agendaitem.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.agendaitem.Edit" role="bungeni.Speaker" />
         <deny permission="bungeni.agendaitem.Edit" role="bungeni.Owner" />
@@ -99,8 +99,8 @@
     
     <state id="admissible" like_state="submitted" title="Admissible">
         <!-- agendaitem -->
-        <grant permission="zope.View" role="bungeni.Everybody" />
-        <grant permission="zope.View" role="bungeni.Anybody" />
+        <grant permission="zope.View" role="bungeni.Authenticated" />
+        <grant permission="zope.View" role="bungeni.Anonymous" />
     </state>
     
     <state id="schedule_pending" like_state="admissible" 

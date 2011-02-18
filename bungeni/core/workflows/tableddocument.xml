@@ -12,8 +12,8 @@
         <deny permission="zope.View" role="bungeni.Owner" />
         <deny permission="zope.View" role="bungeni.MP" />
         <deny permission="zope.View" role="bungeni.Minister" />
-        <deny permission="zope.View" role="bungeni.Everybody" /> 
-        <deny permission="zope.View" role="bungeni.Anybody" />
+        <deny permission="zope.View" role="bungeni.Authenticated" /> 
+        <deny permission="zope.View" role="bungeni.Anonymous" />
         <grant permission="bungeni.tableddocument.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.tableddocument.Edit" role="bungeni.Speaker" />
         <deny permission="bungeni.tableddocument.Edit" role="bungeni.Owner" />
@@ -105,8 +105,8 @@
     <!-- only after it has been tabled does a tableddocument become public -->
     <state id="tabled" like_state="admissible" title="Tabled">
         <!-- tableddocument -->
-        <grant permission="zope.View" role="bungeni.Everybody" />
-        <grant permission="zope.View" role="bungeni.Anybody" />
+        <grant permission="zope.View" role="bungeni.Authenticated" />
+        <grant permission="zope.View" role="bungeni.Anonymous" />
     </state>
     
     <state id="withdrawn" like_state="submitted" title="Withdrawn"/>

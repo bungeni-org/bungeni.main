@@ -1556,7 +1556,7 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
         Field(name="owner_id",
             modes="view edit add listing",
             localizable=[
-                hide("view listing", "bungeni.Anybody"),
+                hide("view listing", "bungeni.Anonymous"),
             ],
             property=schema.Choice(title=_(u"Moved by"),
                 description=_(u"Select the user who moved the document"),
@@ -1684,7 +1684,7 @@ class HeadingDescriptor(ParliamentaryItemDescriptor):
         Field(name="owner_id",
             modes="view edit add",
             localizable=[
-                hide("view", "bungeni.Anybody"),
+                hide("view", "bungeni.Anonymous"),
             ],
             property=schema.Choice(title=_(u"Owner"),
                 source=vocabulary.DatabaseSource(domain.User,
@@ -1897,7 +1897,7 @@ class EventItemDescriptor(ParliamentaryItemDescriptor):
         Field(name="owner_id",
             modes="view edit add",
             localizable=[
-                hide("view", "bungeni.Anybody"),
+                hide("view", "bungeni.Anonymous"),
             ],
             property=schema.Choice(title=_(u"Owner"),
                 source=vocabulary.DatabaseSource(domain.User,
