@@ -8,10 +8,9 @@ $begin{main}
         <h1>${ i18n(view.page_title) }</h1>
         #[ i18n:name="state" ]#
         <p>${ i18n("Current state:") } <em>${ view.get_wf_state() }</em></p>
+        
+        $if{ hasattr(view, 'history_viewlet') }
         <h2>${ i18n("History") }</h2>
-        $if{ not view.history_viewlet.entries }
-        <p>${ i18n("No history available for this item") }</p>
-        $else
         ${ xml(view.history_viewlet.render()) }
         $fi
         ${ xml(view.action_viewlet.render()) }
