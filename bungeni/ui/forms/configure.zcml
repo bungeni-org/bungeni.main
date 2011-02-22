@@ -4,20 +4,24 @@
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni.ui">
 
+  <!-- Settings for specific widgets -->
+
+  <include file="widgets.zcml" />
+
   <!-- Expose form for use as macro -->
-  
+
   <include file="files.zcml" />
-  
+
   <!-- /++apidoc++/... but does not work:
-  
+
     xmlns:apidoc="http://namespaces.zope.org/apidoc"
     xmlns:zcml="http://namespaces.zope.org/zcml"
     zcml:condition="have apidoc"
-    
+
   <apidoc:rootModule module="bungeni" />
   <apidoc:moduleImport allow="true" />
   -->
-  
+
   <browser:page
      for="*"
      name="alchemist-form"
@@ -25,7 +29,7 @@
      template="templates/form.pt"
      layer="bungeni.ui.interfaces.IBungeniSkin"
      />
-     
+
 
   <!-- Generic forms -->
 
@@ -74,7 +78,7 @@
      permission="bungeni.sittingschedule.item.Delete"
      layer="bungeni.ui.interfaces.IBungeniSkin"
      />
-  
+
    <browser:page
      name="add"
      for="bungeni.models.interfaces.IItemScheduleContainer"
@@ -89,8 +93,8 @@
      class=".forms.ItemScheduleContainerDeleteForm"
      permission="bungeni.sittingschedule.item.Delete"
      layer="bungeni.ui.interfaces.IBungeniSkin"
-     />  
-  
+     />
+
 
   <browser:page
      name="edit"
@@ -99,7 +103,7 @@
      permission="bungeni.sittingschedule.Edit"
      layer="bungeni.ui.interfaces.IBungeniSkin"
      />
-     
+
   <browser:page
      name="edit"
      for="bungeni.models.domain.ItemScheduleDiscussion"
@@ -107,7 +111,7 @@
      permission="bungeni.sittingschedule.itemdiscussion.Edit"
      layer="bungeni.ui.interfaces.IBungeniSkin"
      />
-  
+
   <browser:page
      name="translate"
         for="bungeni.alchemist.interfaces.IAlchemistContent"
@@ -116,11 +120,11 @@
      />
 
   <!-- content specific add, edit, delete and display forms -->
-  
+
   <include file="forms.zcml" />
 
   <!-- content display viewlets -->
-  
+
     <browser:viewlet name="alchemist.attributes.view"
         manager="bungeni.alchemist.interfaces.IContentViewManager"
         class=".fields.BungeniAttributeDisplay"
@@ -131,22 +135,22 @@
     />
 
  <!-- Viewlet manager for subforms -->
-  
+
   <browser:viewletManager
      name="bungeni.subform.manager"
      provides=".interfaces.ISubFormViewletManager"
      class=".viewlets.SubFormViewletManager"
      permission="zope.View"
      />
-	 
+
   <!-- Viewlet manager for rss subscription mark -->
-  
+
   <browser:viewletManager
      name="bungeni.content.rss"
-	 provides=".interfaces.ISubformRssSubscriptionViewletManager"
-	 class=".viewlets.SubformRssSubscriptionViewletManager"
-	 permission="zope.View"
-	 />
+   provides=".interfaces.ISubformRssSubscriptionViewletManager"
+   class=".viewlets.SubformRssSubscriptionViewletManager"
+   permission="zope.View"
+   />
 
 
   <!--browser:viewlet
@@ -156,7 +160,7 @@
      for="bungeni.models.interfaces.IUser"
      permission="zope.View"
      weight="100"
-     /--> 
+     /-->
 
 <!-- XXX-INFO-FOR-PLONE - MR - 2010-05-03
   <browser:viewlet
@@ -177,7 +181,7 @@
      weight="10"
      />
 -->
-     
+
   <!--browser:viewlet
      name="bungeni.viewlet.ws-user_id"
      manager="ploned.ui.interfaces.IAboveContentManager"
@@ -185,9 +189,9 @@
      for="bungeni.ui.workspace.WorkspaceView"
      permission="zope.View"
      weight="10"
-     /--> 
-     
-     
+     /-->
+
+
   <!--browser:viewlet
      name="bungeni.viewlet.user_id"
      manager="ploned.ui.interfaces.IAboveContentManager"
@@ -209,18 +213,18 @@
 -->
 
   <!-- Rss subscription marks -->
-  
+
   <browser:viewlet
      name="bungeni.viewlet.rsslink"
-	 manager=".interfaces.ISubformRssSubscriptionViewletManager"
-	 class=".viewlets.RssLinkViewlet"
-	 for="bungeni.models.interfaces.IBungeniContent"
-	 permission="zope.View"
+   manager=".interfaces.ISubformRssSubscriptionViewletManager"
+   class=".viewlets.RssLinkViewlet"
+   for="bungeni.models.interfaces.IBungeniContent"
+   permission="zope.View"
      layer="bungeni.ui.interfaces.IBungeniAuthenticatedSkin"
-	 />
-  
+   />
+
   <!-- GroupSitting -->
-  
+
   <browser:viewlet
      name="bungeni.viewlet.sittingattendance"
      manager=".interfaces.ISubFormViewletManager"
@@ -246,7 +250,7 @@
      permission="zope.View"
      weight="10"
      />
-          
+
     <!--browser:viewlet
      name="bungeni.viewlet.sittingreportdisplay"
      manager="bungeni.alchemist.interfaces.IContentViewManager"
@@ -254,7 +258,7 @@
      for="bungeni.models.interfaces.IReport"
      permission="zope.View"
      weight="10"
-     /--> 
+     /-->
 
 
   <browser:viewlet
@@ -312,7 +316,7 @@
         permission="zope.View"
         weight="10"
     />
-    
+
   <browser:viewlet
      name="bungeni.viewlet.committee-staff"
      manager=".interfaces.ISubFormViewletManager"
@@ -321,7 +325,7 @@
      permission="zope.View"
      weight="60"
      />
-    
+
     <browser:viewlet name="bungeni.viewlet.assigned-items"
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.AssignedItemsViewlet"
@@ -329,7 +333,7 @@
         permission="zope.View"
         weight="30"
     />
-      
+
     <browser:viewlet name="bungeni.viewlet.committee-sittings"
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.GroupSittingsViewlet"
@@ -337,7 +341,7 @@
         permission="zope.View"
         weight="50"
     />
-    
+
     <browser:viewlet name="bungeni.viewlet.committee-member-titles"
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.OfficesHeldViewlet"
@@ -389,8 +393,8 @@
      weight="10"
      />
 
-  
-  
+
+
   <browser:viewlet
      name="bungeni.viewlet.minsters"
      manager=".interfaces.ISubFormViewletManager"
@@ -399,7 +403,7 @@
      permission="zope.View"
      weight="20"
      />
-  
+
   <browser:viewlet
      name="bungeni.viewlet.minstery-bills"
      manager=".interfaces.ISubFormViewletManager"
@@ -434,7 +438,7 @@
      permission="zope.View"
      weight="20"
      />
-  
+
 
   <!--
   <browser:viewlet
@@ -509,9 +513,9 @@
         permission="zope.View"
         weight="20"
     />
-  
+
     <!-- Member Role Title -->
-  
+
   <!--browser:viewlet
      name="bungeni.viewlet.title-addresses"
      manager="bungeni.alchemist.interfaces.IContentViewManager"
@@ -520,7 +524,7 @@
      permission="zope.View"
      weight="10"
      /-->
-    
+
     <browser:viewlet name="bungeni.viewlet.party-members"
         manager="bungeni.alchemist.interfaces.IContentViewManager"
         class=".viewlets.PartyMemberViewlet"
@@ -528,7 +532,7 @@
         permission="zope.View"
         weight="10"
     />
-    
+
     <!-- !+PartyMemberViewlet(mr, oct-2010)
     This viewlet is replaced with the other viewlet below it, with:
         for="bungeni.models.interfaces.IPoliticalGroup"
@@ -536,11 +540,11 @@
     But:
     - how to determine whether this view was indeed the ONLY one matching,
     to know whether we can just thus simply replace it ???
-    - disabling this viewlet will also "obsolete" the URL 
+    - disabling this viewlet will also "obsolete" the URL
         ${url}/partymembers/*
-    but, that URL still continues to work... 
+    but, that URL still continues to work...
     Should explicitly block it from anonymous or any given user?
-    
+
     <browser:viewlet name="bungeni.viewlet.political-group-members"
         manager="bungeni.alchemist.interfaces.IContentViewManager"
         class=".viewlets.PartyMemberViewlet"
@@ -579,7 +583,7 @@
         permission="zope.View"
         weight="30"
     />
-    
+
     <!-- Motion -->
     <browser:viewlet name="bungeni.viewlet.motion-cosignatory"
         manager=".interfaces.ISubFormViewletManager"
@@ -595,7 +599,7 @@
         permission="zope.View"
         weight="20"
     />
-    
+
     <!-- AgendaItem -->
     <browser:viewlet name="bungeni.viewlet.agendaitem-timeline"
         manager=".interfaces.ISubFormViewletManager"
@@ -604,14 +608,14 @@
         permission="zope.View"
         weight="20"
     />
-    
+
   <!--browser:page
      name="event-rss.xml"
      for="bungeni.models.interfaces.IBill"
      class=".forms.BungeniRSSEventView"
      permission="zope.View"
      /-->
-     
+
   <!-- Partymembership -->
-  
+
 </configure>
