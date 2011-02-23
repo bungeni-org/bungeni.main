@@ -242,7 +242,7 @@ def validate_group_membership_dates(action, data, context, container):
     """ A User must be member of a group only once at a time """
     errors =[]
     group_id = container.__parent__.group_id
-    if interfaces.IGroupMembership.providedBy(context):
+    if interfaces.IBungeniGroupMembership.providedBy(context):
         group_membership = context
     else:
         group_membership = None
