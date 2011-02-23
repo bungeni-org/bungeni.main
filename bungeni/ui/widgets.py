@@ -7,12 +7,12 @@ from zope.datetime import DateTimeError
 from zope.security.proxy import removeSecurityProxy
 from zope.app.form.interfaces import ConversionError, InputErrors
 from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
-from zope.interface.common import idatetime
+from zope.interface.common iItemsEditWidgetBasemport idatetime
 import zope.app.form.browser.widget
 import zope.app.form.browser.textwidgets
 from zope.app.form.browser.textwidgets import TextAreaWidget, FileWidget
 from zope.app.form.browser.itemswidgets import RadioWidget, \
-    SingleDataHelper, ItemsWidgetBase
+    SingleDataHelper, ItemsWidgetBase, ItemsEditWidgetBase
 
 from zope.i18n import translate
 
@@ -47,7 +47,7 @@ class MultiDateTextAreaWidget(TextAreaWidget):
             except (DateTimeError, ValueError, IndexError), v:
                 raise ConversionError(
                     _("Invalid date: $value",
-                      mapping={"value": token}), v)
+                      mapping = {"value": token}), v)
 
         return dates
 
@@ -68,37 +68,37 @@ class ImageInputWidget(FileWidget):
     leave the current image as is.
     """
     _missing = u""
-    
-    
+
+
     __call__ = ViewPageTemplateFile("templates/imagewidget.pt")
-    
+
     @property
     def update_action_name(self):
         return self.name + ".up_action"
-        
+
     @property
     def upload_name(self):
         return self.name.replace(".", "_") + "_file"
-        
+
     @property
     def imageURL(self):
         return "./file-image/%s" % self.context.__name__
-        
+
     def empty_field(self):
         return self._data is None
 
     def _getFieldInput(self, name):
         return self.request.form.get(name, self._missing)
-                
+
     def _getFormInput(self):
         """extract the input value from the submitted form """
         return (self._getFieldInput(self.update_action_name),
                 self._getFieldInput(self.upload_name))
-        
+
 
     def _toFieldValue(self, (update_action, upload)):
         """convert the input value to an value suitable for the field.
-        Check the update_action if we should leave the data alone, 
+        Check the update_action if we should leave the data alone,
         delete or replace it.
         """
         if update_action == u"update":
@@ -143,7 +143,7 @@ class ImageInputWidget(FileWidget):
         else:
             raise NotImplementedError
             return
-                
+
     def hasInput(self):
         """
         determins if the widget widget has changed
@@ -151,17 +151,17 @@ class ImageInputWidget(FileWidget):
 
         if self.update_action_name in self.request.form:
             action = self.request.form.get(
-                self.update_action_name, self._missing) 
+                self.update_action_name, self._missing)
             if action == u"keep":
                 return False
             elif action == u"delete":
                 return True
             else:
                 return self.upload_name  in self.request.form
- 
+
 
 class FileInputWidget(ImageInputWidget):
-    fileURL="./download"
+    fileURL = "./download"
     def _toFieldValue(self, (update_action, upload)):
         value = super(FileInputWidget, self
             )._toFieldValue((update_action, upload))
@@ -193,7 +193,7 @@ class ImageDisplayWidget(zope.app.form.browser.widget.DisplayWidget):
         return '<img src="./file-image/%s" />' % self.context.__name__
 
 class HTMLDisplay(zope.app.form.browser.widget.UnicodeDisplayWidget):
-    
+
     def __call__(self):
         if self._renderedValueSet():
             value = self._data
@@ -204,7 +204,7 @@ class HTMLDisplay(zope.app.form.browser.widget.UnicodeDisplayWidget):
         return unicode(value)
 
 class RichTextEditor(TextAreaWidget):
-    
+
     def __call__(self):
         # require yahoo rich text editor and dependencies
         need("yui-rte")
@@ -212,65 +212,65 @@ class RichTextEditor(TextAreaWidget):
         need("yui-button")
         # render default input widget for text
         input_widget = super(RichTextEditor, self).__call__()
-        
+
         # use "_" instead of "." for js identifiers
-        jsid = self.name.replace(".","_")
-        
+        jsid = self.name.replace(".", "_")
+
         # attach behavior to default input widget, disable titlebar
         input_widget_js = u"""
         <script language="javascript">
-            options={ height:'300px', 
-                      width:'100%%', 
-                      dompath:true, 
+            options={ height:'300px',
+                      width:'100%%',
+                      dompath:true,
                       animate:true,
                       focusAtStart:false,
                       markup:'xhtml'};
-            var %(jsid)s_editor = new YAHOO.widget.Editor('%(js_name)s', options); 
+            var %(jsid)s_editor = new YAHOO.widget.Editor('%(js_name)s', options);
             YAHOO.util.Event.on(
-                %(jsid)s_editor.get('element').form, 
-                'submit', 
+                %(jsid)s_editor.get('element').form,
+                'submit',
                 function(ev) {
-                    %(jsid)s_editor.saveHTML(); 
+                    %(jsid)s_editor.saveHTML();
                 }
             );
             %(jsid)s_editor._defaultToolbar.titlebar = false;
-            %(jsid)s_editor.on('editorContentLoaded', function() { 
-	            resize = new YAHOO.util.Resize(%(jsid)s_editor.get('element_cont').get('element'), { 
-	                handles: ['br'], 
-	                autoRatio: true, 
-	                status: true, 
-	                proxy: true, 
-	                setSize: false //This is where the magic happens 
-	            }); 
-	            resize.on('startResize', function() { 
-	                this.hide(); 
-	                this.set('disabled', true); 
-	            },  %(jsid)s_editor, true); 
-	            resize.on('resize', function(args) { 
-	                var h = args.height; 
-	                var th = (this.toolbar.get('element').clientHeight + 2); //It has a 1px border.. 
-	                var dh = (this.dompath.clientHeight + 1); //It has a 1px top border.. 
-	                var newH = (h - th - dh); 
-	                this.set('width', args.width + 'px'); 
-	                this.set('height', newH + 'px'); 
-	                this.set('disabled', false); 
-	                this.show(); 
-	            },  %(jsid)s_editor, true); 
-	        }); 
-            
-            
+            %(jsid)s_editor.on('editorContentLoaded', function() {
+              resize = new YAHOO.util.Resize(%(jsid)s_editor.get('element_cont').get('element'), {
+                  handles: ['br'],
+                  autoRatio: true,
+                  status: true,
+                  proxy: true,
+                  setSize: false //This is where the magic happens
+              });
+              resize.on('startResize', function() {
+                  this.hide();
+                  this.set('disabled', true);
+              },  %(jsid)s_editor, true);
+              resize.on('resize', function(args) {
+                  var h = args.height;
+                  var th = (this.toolbar.get('element').clientHeight + 2); //It has a 1px border..
+                  var dh = (this.dompath.clientHeight + 1); //It has a 1px top border..
+                  var newH = (h - th - dh);
+                  this.set('width', args.width + 'px');
+                  this.set('height', newH + 'px');
+                  this.set('disabled', false);
+                  this.show();
+              },  %(jsid)s_editor, true);
+          });
+
+
             %(jsid)s_editor.render();
         </script>
         """
         return input_widget + \
             input_widget_js % {"jsid": jsid, "js_name": self.name}
-        
+
 class OneTimeEditWidget(TextAreaWidget):
     """
     a text area that is meant to be used once in between edit.
     when you open an edit form it displays the last entry that
     was made and an empty texarea input that will get stored.
-    
+
     """
     __call__ = ViewPageTemplateFile("templates/one-time-textinput-widget.pt")
 
@@ -296,18 +296,18 @@ class SelectDateWidget(zope.app.form.browser.widget.SimpleInputWidget):
     """A more user freindly date input.
     """
     __call__ = ViewPageTemplateFile("templates/selectdatewidget.pt")
-    
+
     _missing = u""
     minYear = None
     maxYear = None
-    
+
     minYearDelta = 100
     maxYearDelta = 5
-    
+
     js_file = open(path + "/templates/yui-calwidget.js", "r")
     js_template = js_file.read()
     js_file.close()
-    
+
     def __init__(self, *args):
         super(SelectDateWidget, self).__init__(*args)
         need("yui-core")
@@ -316,25 +316,25 @@ class SelectDateWidget(zope.app.form.browser.widget.SimpleInputWidget):
         need("yui-element")
         need("yui-button")
         self.minDate = datetime.date.today() - datetime.timedelta(
-            self.minYearDelta*365)
+            self.minYearDelta * 365)
         self.maxDate = datetime.date.today() + datetime.timedelta(
-            self.maxYearDelta*365)
-    
+            self.maxYearDelta * 365)
+
     @property
     def time_zone(self):
-        """Returns something like: 
-            tzinfo=<DstTzInfo 'Africa/Nairobi' LMT+2:27:00 STD> 
+        """Returns something like:
+            tzinfo=<DstTzInfo 'Africa/Nairobi' LMT+2:27:00 STD>
         """
         try:
             time_zone = idatetime.ITZInfo(self.request)
         except TypeError:
             time_zone = pytz.UTC
         return time_zone
-    
+
     @property
     def field_name(self):
-        return self.name.replace(".","__")
-    
+        return self.name.replace(".", "__")
+
     def set_min_date(self, date):
         if date:
             if type(date) == datetime.date:
@@ -343,10 +343,10 @@ class SelectDateWidget(zope.app.form.browser.widget.SimpleInputWidget):
                 self.minDate = date.date()
             else:
                 self.minDate = (datetime.date.today() - 
-                            datetime.timedelta(self.minYearDelta*365))
+                            datetime.timedelta(self.minYearDelta * 365))
         else:
             self.minDate = (datetime.date.today() - 
-                    datetime.timedelta(self.minYearDelta*365))
+                    datetime.timedelta(self.minYearDelta * 365))
     def set_max_date(self, date):
         if date:
             if type(date) == datetime.date:
@@ -355,19 +355,19 @@ class SelectDateWidget(zope.app.form.browser.widget.SimpleInputWidget):
                 self.maxDate = date.date()
             else:
                 self.maxDate = (datetime.date.today() + 
-                        datetime.timedelta(self.maxYearDelta*365))
+                        datetime.timedelta(self.maxYearDelta * 365))
         else:
             self.maxDate = (datetime.date.today() + 
-                    datetime.timedelta(self.maxYearDelta*365))
-    
+                    datetime.timedelta(self.maxYearDelta * 365))
+
     def jstr(self, alist):
         return u'["' + u'", "'.join(alist) + u'"]'
-    
+
     def get_js(self):
         pagedate = datetime.date.today()
         if self.maxDate < pagedate:
             pagedate = self.maxDate
-        if ((type(self._data) == datetime.date) or 
+        if ((type(self._data) == datetime.date) or
             (type(self._data) == datetime.datetime)
         ):
             pagedate = self._data
@@ -378,13 +378,13 @@ class SelectDateWidget(zope.app.form.browser.widget.SimpleInputWidget):
         cancel = _(u"Cancel")
         invalidYear = _(u"Please enter a valid year")
         months_short = self.jstr(calendar.getMonthAbbreviations())
-        months_long = self.jstr(calendar.getMonthNames()) 
+        months_long = self.jstr(calendar.getMonthNames())
         w_day_1char = self.jstr(
-            [dn[:1] for dn in calendar.getDayAbbreviations()]) 
+            [dn[:1] for dn in calendar.getDayAbbreviations()])
         w_day_short = self.jstr(
-            [dn[:2] for dn in calendar.getDayAbbreviations()]) 
+            [dn[:2] for dn in calendar.getDayAbbreviations()])
         w_day_medium = self.jstr(calendar.getDayAbbreviations())
-        w_day_long =  self.jstr(calendar.getDayNames())
+        w_day_long = self.jstr(calendar.getDayNames())
         return self.js_template % {
             "name": self.field_name,
             "sel_day": self._day_name,
@@ -392,7 +392,7 @@ class SelectDateWidget(zope.app.form.browser.widget.SimpleInputWidget):
             "sel_year": self._year_name,
             "txt_date": self.date_name,
             "mindate": self.minDate.strftime("%m/%d/%Y"),
-            "maxdate": self.maxDate.strftime("%m/%d/%Y"), 
+            "maxdate": self.maxDate.strftime("%m/%d/%Y"),
             "pagedate": pagedate.strftime("%m/%Y"),
             "months_short": months_short,
             "months_long": months_long,
@@ -401,23 +401,23 @@ class SelectDateWidget(zope.app.form.browser.widget.SimpleInputWidget):
             "w_day_medium": w_day_medium,
             "w_day_long": w_day_long,
             "month": translate(
-                str(month), domain="bungeni.ui", context=self.request),
+                str(month), domain = "bungeni.ui", context = self.request),
             "year": translate(
-                str(year), domain="bungeni.ui", context=self.request),
+                str(year), domain = "bungeni.ui", context = self.request),
             "submit": translate(
-                str(submit), domain="bungeni.ui", context=self.request),
+                str(submit), domain = "bungeni.ui", context = self.request),
             "cancel": translate(
-                str(cancel), domain="bungeni.ui", context=self.request),
+                str(cancel), domain = "bungeni.ui", context = self.request),
             "invalidYear": translate(
-                str(invalidYear), domain="bungeni.ui", context=self.request)
+                str(invalidYear), domain = "bungeni.ui", context = self.request)
         }
-    
+
     def _days(self):
         dl = []
         for i in range(1, 32):
             dl.append("%02d" % (i))
         return dl
-    
+
     def _months(self):
         """ return a dict of month values and names"""
         calendar = self.request.locale.dates.calendars["gregorian"]
@@ -427,7 +427,7 @@ class SelectDateWidget(zope.app.form.browser.widget.SimpleInputWidget):
             i = i + 1
             months.append({"num": "%02d" % i, "name": month})
         return months
-        
+
     @property
     def _years(self):
         minYear = self.minYear
@@ -440,8 +440,8 @@ class SelectDateWidget(zope.app.form.browser.widget.SimpleInputWidget):
             maxYear = self.maxDate.year
         if maxYear is None:
             maxYear = datetime.date.today().year + int(self.maxYearDelta)
-        return range(maxYear, minYear-1, -1)
-    
+        return range(maxYear, minYear - 1, -1)
+
     @property
     def _day_name(self):
         return self.name.replace(".", "__") + "__day"
@@ -453,35 +453,35 @@ class SelectDateWidget(zope.app.form.browser.widget.SimpleInputWidget):
     @property
     def _year_name(self):
         return self.name.replace(".", "__") + "__year"
-        
+
     @property
     def date_name(self):
         return self.name.replace(".", "__") + "__date"
- 
+
     def hasInput(self):
         """Widgets need to determine whether the request contains an input
         value for them """
-        return (self._day_name in self.request.form and 
-                self._month_name in self.request.form and 
+        return (self._day_name in self.request.form and
+                self._month_name in self.request.form and
                 self._year_name in self.request.form)
 
     def _hasPartialInput(self):
-        return (self._day_name in self.request.form or 
-               self._month_name in self.request.form or 
+        return (self._day_name in self.request.form or
+               self._month_name in self.request.form or
                self._year_name in self.request.form)
-     
-    
-        
+
+
+
     def _getFormInput(self):
         """extract the input value from the submitted form """
         return (self._getFieldInput(self._day_name),
                 self._getFieldInput(self._month_name),
                 self._getFieldInput(self._year_name))
 
-                
+
     def _getFieldInput(self, name):
         return self.request.form.get(name, self._missing)
-    
+
     def _toFieldValue(self, (day, month, year)):
         """convert the input value to an value suitable for the field."""
         if day == self._missing or month == self._missing or year == self._missing:
@@ -496,11 +496,11 @@ class SelectDateWidget(zope.app.form.browser.widget.SimpleInputWidget):
             try:
                 time_zone = self.time_zone
                 return datetime.date(
-                    year=int(year), month=int(month), day=int(day)
+                    year = int(year), month = int(month), day = int(day)
                 ) #tzinfo=time_zone)
             except ValueError, e:
                 raise ConversionError(_(u"Incorrect string data for date"), e)
-    
+
     def _toFormValue(self, value):
         """convert a field value to a string that can be inserted into the form"""
         if (value == self.context.missing_value) and self.required:
@@ -511,9 +511,9 @@ class SelectDateWidget(zope.app.form.browser.widget.SimpleInputWidget):
                 return (value.day, value.month, value.year)
             except:
                 return("0", "0", "0")
-    
+
     def _getFormValue(self):
-        """Returns a field value to a string that can be inserted into the form. 
+        """Returns a field value to a string that can be inserted into the form.
         The difference to _toFormValue is that it takes into account when a form
         has already been submitted but needs to be re-rendered (input error).
         """
@@ -540,45 +540,45 @@ class TextDateWidget(SelectDateWidget):
     """Simple date widget input in a text field.
     """
     __call__ = ViewPageTemplateFile("templates/textdatewidget.pt")
-        
+
     def hasInput(self):
         """Widgets need to determine whether the request contains an input
         value for them """
         return (self.date_name in self.request.form)
-        
+
     def _getFormInput(self):
         """extract the input value from the submitted form """
         return (self._getFieldInput(self.date_name))
-        
+
     def _getFieldInput(self, name):
         return self.request.form.get(name, self._missing)
-    
+
     def _toFieldValue(self, date):
         """convert the input value to an value suitable for the field."""
         if (date == self.context.missing_value) and self.required:
             return self.context.missing_value
         else:
             try:
-                return  datetime.datetime.strptime(date,"%Y-%m-%d").date()
+                return  datetime.datetime.strptime(date, "%Y-%m-%d").date()
             except ValueError, e:
-                if date=="":
+                if date == "":
                     return
                 raise ConversionError(_(u"Incorrect string data for date"), e)
-    
+
     def _toFormValue(self, value):
         """Convert a field value to a string that can be inserted into the form.
         """
         if (value == self.context.missing_value) and self.required:
             d = datetime.date.today()
-            return  datetime.datetime.strftime(d,"%Y-%m-%d")
+            return  datetime.datetime.strftime(d, "%Y-%m-%d")
         else:
             try:
-                return datetime.datetime.strftime(value,"%Y-%m-%d")
+                return datetime.datetime.strftime(value, "%Y-%m-%d")
             except:
                 return("")
-    
+
     def _getFormValue(self):
-        """Returns a field value to a string that can be inserted into the form. 
+        """Returns a field value to a string that can be inserted into the form.
         The difference to _toFormValue is that it takes into account when a form
         has already been submitted but needs to be re-rendered (input error).
         """
@@ -600,25 +600,25 @@ class TextDateWidget(SelectDateWidget):
         else:
             value = self._data
         return self._toFormValue(value)
-        
+
 DateWidget = TextDateWidget
 
 
-class TextDateTimeWidget(TextDateWidget): 
+class TextDateTimeWidget(TextDateWidget):
 
     __call__ = ViewPageTemplateFile("templates/textdatetimewidget.pt")
-    
+
 
     @property
     def time_name(self):
         return self.name.replace(".", "__") + "__time"
-        
+
     def hasInput(self):
-        return (self.date_name in self.request.form and 
+        return (self.date_name in self.request.form and
                 self.time_name in self.request.form)
-                    
+
     def _hasPartialInput(self):
-        return (self.date_name in self.request.form or 
+        return (self.date_name in self.request.form or
                 self.time_name in self.request.form)
 
     def _getFormInput(self):
@@ -632,15 +632,15 @@ class TextDateTimeWidget(TextDateWidget):
         """
         if (value == self.context.missing_value) and self.required:
             d = datetime.datetime.now()
-            return  (datetime.datetime.strftime(d,"%Y-%m-%d"),
-                datetime.datetime.strftime(d,"%H:%M"))
+            return  (datetime.datetime.strftime(d, "%Y-%m-%d"),
+                datetime.datetime.strftime(d, "%H:%M"))
         else:
             try:
-                return (datetime.datetime.strftime(value,"%Y-%m-%d"),
-                    datetime.datetime.strftime(value,"%H:%M"))
+                return (datetime.datetime.strftime(value, "%Y-%m-%d"),
+                    datetime.datetime.strftime(value, "%H:%M"))
             except:
                 return("", "")
-                        
+
     def _toFieldValue(self, (date, time)):
         if (date == self._missing or time == self._missing):
             if self.required:
@@ -652,10 +652,10 @@ class TextDateTimeWidget(TextDateWidget):
                     return self.context.missing_value
         else:
             try:
-                d = datetime.datetime.strptime(date,"%Y-%m-%d")
-                t = datetime.datetime.strptime(time,"%H:%M") 
-                return datetime.datetime(year=d.year, month=d.month, 
-                    day=d.day, hour=t.hour, minute=t.minute,) 
+                d = datetime.datetime.strptime(date, "%Y-%m-%d")
+                t = datetime.datetime.strptime(time, "%H:%M")
+                return datetime.datetime(year = d.year, month = d.month,
+                    day = d.day, hour = t.hour, minute = t.minute,)
             except ValueError, e:
                 raise ConversionError(_(u"Incorrect string data for date and time"), e)
 
@@ -665,7 +665,7 @@ DateTimeWidget = TextDateTimeWidget
 class SelectDateTimeWidget(SelectDateWidget):
 
     __call__ = ViewPageTemplateFile("templates/selectdatetimewidget.pt")
-    
+
     @property
     def _hour_name(self):
         return self.name.replace(".", "__") + "__hour"
@@ -677,16 +677,16 @@ class SelectDateTimeWidget(SelectDateWidget):
 
 
     def hasInput(self):
-        return (super(SelectDateTimeWidget, self).hasInput() and 
-                    self._hour_name in self.request.form and 
+        return (super(SelectDateTimeWidget, self).hasInput() and
+                    self._hour_name in self.request.form and
                     self._minute_name in self.request.form)
     def _hasPartialInput(self):
-        return (super(SelectDateTimeWidget, self)._hasPartialInput() or 
-            self._hour_name in self.request.form or 
-            self._minute_name in self.request.form) 
+        return (super(SelectDateTimeWidget, self)._hasPartialInput() or
+            self._hour_name in self.request.form or
+            self._minute_name in self.request.form)
 
     def _getFormInput(self):
-        return (super(SelectDateTimeWidget, self)._getFormInput() +
+        return (super(SelectDateTimeWidget, self)._getFormInput() + 
                     (self._getFieldInput(self._hour_name),
                     self._getFieldInput(self._minute_name)))
 
@@ -708,16 +708,16 @@ class SelectDateTimeWidget(SelectDateWidget):
             return (d.day, d.month, d.year, d.hour, d.minute)
         else:
             try:
-                return (value.day, value.month, value.year, 
+                return (value.day, value.month, value.year,
                     value.hour, value.minute)
             except:
                 return ("0", "0", "0", "0", "0")
-                
+
     def _toFieldValue(self, (day, month, year, hour, minute)):
-        if (day == self._missing or 
-            month == self._missing or 
-            year == self._missing or 
-            hour == self._missing or 
+        if (day == self._missing or
+            month == self._missing or
+            year == self._missing or
+            hour == self._missing or
             minute == self._missing
         ):
             if self.required:
@@ -730,8 +730,8 @@ class SelectDateTimeWidget(SelectDateWidget):
         else:
             try:
                 time_zone = self.time_zone
-                return datetime.datetime(year=int(year), month=int(month), 
-                    day=int(day), hour=int(hour), minute=int(minute),) 
+                return datetime.datetime(year = int(year), month = int(month),
+                    day = int(day), hour = int(hour), minute = int(minute),)
             except ValueError, e:
                 raise ConversionError(
                     _(u"Incorrect string data for date and time"), e)
@@ -741,42 +741,188 @@ class AutocompleteWidget(SingleDataHelper, ItemsWidgetBase):
     """Render a single selection autocomplete widget using YUI Autocomplete.
     """
     __call__ = ViewPageTemplateFile("templates/autocompletewidget.pt")
-    
+
     def __init__(self, field, request):
         vocabulary = field.vocabulary
         super(AutocompleteWidget, self).__init__(field, vocabulary, request)
-        # !+AUTOCOMPLETE(mr, oct-2010) super class ItemsWidgetBase requires 
+        # !+AUTOCOMPLETE(mr, oct-2010) super class ItemsWidgetBase requires
         # the additional vocabulary parameter, but passing it the one defined
         # by the field does not work
-        
+
         #need("yui-autocomplete")
-        # !+AUTOCOMPLETE(mr, oct-2010) get the hardwired absolute ref to the 
-        # public (across network) YUI js resource files out of the template, 
-        # and configured to pick up the file from the deployment instance. 
-    
+        # !+AUTOCOMPLETE(mr, oct-2010) get the hardwired absolute ref to the
+        # public (across network) YUI js resource files out of the template,
+        # and configured to pick up the file from the deployment instance.
+
     def value(self):
         return self._getFormValue()
 '''
 
 class MemberURLDisplayWidget(zope.app.form.browser.widget.DisplayWidget):
-    """Display the linked name of a Member of Parliament, using as URL the 
+    """Display the linked name of a Member of Parliament, using as URL the
     MP's "home" view.
-    
+
     For use by forms in "view" mode.
     """
-    
+
     def get_member_of_parliament(self, user_id):
         """Get the MemberOfParliament instance for user_id.
         """
         return Session().query(domain.MemberOfParliament).filter(
             domain.MemberOfParliament.user_id == user_id).one()
-    
+
     def __call__(self):
         # this (user_id) attribute's value IS self._data
         mp = self.get_member_of_parliament(self._data)
-        return zope.app.form.browser.widget.renderElement("a", 
-            contents=mp.user.fullname,
-            href="/members/current/obj-%s/" % (mp.membership_id)
+        return zope.app.form.browser.widget.renderElement("a",
+            contents = mp.user.fullname,
+            href = "/members/current/obj-%s/" % (mp.membership_id)
         )
 
 
+template = """
+    %(html)s
+    %(javascript)s
+    """
+
+OPT_PREFIX = 'yui_'
+LEN_OPT_PREFIX = len(OPT_PREFIX)
+
+class AutoCompleteWidget(ItemsEditWidgetBase):
+    """Zope3 Implementation of YUI autocomplete widget.
+    Can be used with common ChoiceProperty"""
+
+    @property
+    def options(self):
+        _options = {
+            "autoHighlight": True,
+            "forceSelection": True,
+            "allowBrowserAutocomplete": False
+
+        }
+
+        for k in dir(self):
+            if k.startswith(OPT_PREFIX):
+                _options[k[LEN_OPT_PREFIX:]] = getattr(self, k)
+
+        items = []
+
+        for k, v in _options.items():
+            if isinstance(v, bool):
+                v = str(v).lower()
+            elif isinstance(v, (str, unicode)):
+                try:
+                    v = int(v)
+                except ValueError:
+                    v = "\"%s\"" % v
+            items.append("oAC.%s = %s;" % (k, v))
+
+        return "\n".join(items)
+
+
+    @property
+    def dataSource(self):
+        items = map(lambda x: """{name: "%(name)s", id: "%(id)s" }""" \
+            % {'id': x.token, 'name': self.textForValue(x)},
+            self.vocabulary)
+
+        return "[%s]" % ",\n".join(items)
+
+    @property
+    def javascript(self):
+        kw = {"id": self.name,
+              "dsname": self.name.replace('.', '_'),
+              "data": self.dataSource,
+              "options": self.options
+              }
+
+        return """
+            <script type="text/javascript">
+                YAHOO.namespace('oa.autocomplete');
+                YAHOO.oa.autocomplete.%(dsname)s_func = new function() {
+                    var %(dsname)s_data = %(data)s;
+
+                    var %(dsname)s_filter = function(sQuery) {
+                        var query = unescape(sQuery).toLowerCase(),
+                            item,
+                            items,
+                            i=0,
+                            j=0,
+                            ll,
+                            l=%(dsname)s_data.length,
+                            matches = [];
+
+                        for(; i<l; i++) {
+                            item = %(dsname)s_data[i];
+                            items = item.name.split(" ");
+                            items[items.length] = item.name;
+                            ll = items.length;
+                            for(j=0; j<items.length; j++) {
+                                if (items[j].toLowerCase().indexOf(query) == 0) {
+                                    matches[matches.length] = item;
+                                    break;
+                                }
+                            }
+                        }
+
+                        return matches;
+                    };
+
+                    var oDS = new YAHOO.util.FunctionDataSource(%(dsname)s_filter);
+
+                    oDS.responseSchema = {fields : ["name", "id"]};
+                    var oAC = new YAHOO.widget.AutoComplete("%(id)s",
+                        "%(id)s.container", oDS);
+                    %(options)s
+                    oAC.resultTypeList = false;
+                    var myHiddenField = YAHOO.util.Dom.get("%(id)s.hidden");
+                    var myHandler = function(sType, aArgs) {
+                        var myAC = aArgs[0];
+                        var elLI = aArgs[1];
+                        var oData = aArgs[2];
+                        myHiddenField.value = oData.id;
+                    };
+                    oAC.itemSelectEvent.subscribe(myHandler);
+                    return {
+                        oDS: oDS,
+                        oAC: oAC
+                    };
+                }();
+            </script>
+            """ % kw
+
+    @property
+    def html(self):
+        kw = {"id": self.name}
+
+        if self._data is not None and self._data is not self._data_marker:
+            term = self.vocabulary.getTerm(self._data)
+            kw["value"] = term.token
+            kw["text"] = self.textForValue(term)
+        else:
+            kw["text"] = kw["value"] = ""
+
+        return """
+            <div id="%(id)s.autocomplete" class="yui-skin-sam">
+              <input id="%(id)s" type="text" value="%(text)s">
+              <div id="%(id)s.container"></div>
+              <input id="%(id)s.hidden" name="%(id)s" value="%(value)s"
+                  type="hidden">
+            </div>
+            """ % kw
+
+    def __call__(self):
+        need("yui-core")
+        need("yui-datasource")
+        need("yui-get")
+        need("yui-connection")
+        need("yui-animation")
+        need("yui-json")
+        need("yui-autocomplete")
+
+        contents = []
+        contents.append(template % {"html": self.html,
+            "javascript": self.javascript})
+        contents.append(self._emptyMarker())
+
+        return self._div(self.cssClass, "\n".join(contents))
