@@ -18,6 +18,8 @@ from bungeni.models.interfaces import ITranslatable
 from zope.schema.interfaces import IVocabularyFactory
 from zope.i18n import translate
 
+from zope.component import getUtilitiesFor
+from zope.securitypolicy.interfaces import IRole
 from i18n import _
 
 import datetime
@@ -25,6 +27,7 @@ from bungeni.core.translation import translate_obj
 from bungeni.ui.calendar.utils import first_nth_weekday_of_month
 from bungeni.ui.calendar.utils import nth_day_of_month
 from bungeni.ui.calendar.utils import nth_day_of_week
+from bungeni.ui.utils import common
 
 days = [ _('day_%d' % index, default=default) for (index, default) in 
          enumerate((u"Mon", u"Tue", u"Wed", u"Thu", u"Fri", u"Sat", u"Sun")) ]
@@ -97,16 +100,6 @@ ISResponse = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm('I', _(u"initial"), _(u"initial")),
     vocabulary.SimpleTerm('S', _(u"subsequent"), _(u"subsequent"))
 ])
-OfficeType = vocabulary.SimpleVocabulary([
-    vocabulary.SimpleTerm('S', _(u"House Business Office"), 
-        _(u"House Business Office")), 
-    vocabulary.SimpleTerm('C', _(u"Clerks Office"), _(u"Clerks Office")), 
-    vocabulary.SimpleTerm('T', _(u"Translators Office"), 
-        _(u"Translators Office")), 
-    vocabulary.SimpleTerm('L', _(u"Library Office"), _(u"Library Office")),
-    vocabulary.SimpleTerm('R', _(u"Researcher Office"), 
-        _(u"Researcher Office")),
-])
 YesNoSource = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm(True, _(u"Yes"), _(u"Yes")), 
     vocabulary.SimpleTerm(False, _(u"No"), _(u"No"))])
@@ -118,7 +111,29 @@ AddressPostalType = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm("U", _(u"Undefined / Unknown"), 
         _(u"Undefined / Unknown")),
 ])
+    
+class OfficeRoles(object):
+    interface.implements(IVocabularyFactory)
+    def __call__(self, context=None):
+        app = common.get_application()
+        terms = []
+        roles = getUtilitiesFor(IRole, app)
+        for name, role in roles:
+            #Roles that must not be assigned to users in an office
+            if name not in ['bungeni.Anonymous',
+                            'bungeni.Authenticated',
+                            'bungeni.Owner',
+                            'zope.Manager',
+                            'zope.Member',
+                            'bungeni.MP',
+                            'bungeni.Minister',
+                            'bungeni.Admin',
+                            ]:
+                terms.append(vocabulary.SimpleTerm(name, name, name))
+        return vocabulary.SimpleVocabulary(terms)
 
+office_roles = OfficeRoles()
+        
 class DatabaseSource(bungeni.alchemist.vocabulary.DatabaseSource):
     
     def __call__(self, context=None):

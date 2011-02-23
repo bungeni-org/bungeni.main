@@ -265,12 +265,10 @@ offices = rdb.Table("offices", metadata,
     rdb.Column("office_id", rdb.Integer,
         rdb.ForeignKey("groups.group_id"),
         primary_key=True),
-    # Speakers office or Clerks office, the members of members of
-    # this group will get local roles in the parliament accordingly
-    rdb.Column("office_type", rdb.String(1),
-        # legend: S:Speaker, C:Clerk, T:Translator, L:Library, R:Reseach
-        rdb.CheckConstraint("""office_type in ('S','C','T','L','R')"""),
-        nullable=False
+    #The role that members of this office will get
+    rdb.Column("office_role", rdb.Unicode(256),
+        nullable=False,
+        unique=True
     ),
 )
 

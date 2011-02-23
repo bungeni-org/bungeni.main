@@ -1250,10 +1250,10 @@ class OfficeDescriptor(GroupDescriptor):
     container_name = _(u"Offices")
 
     fields = [
-        Field(name="office_type",
-            property=schema.Choice(title=_(u"Type"),
-                description=_(u"Type of Office"),
-                source=vocabulary.OfficeType
+        Field(name="office_role",
+            property=schema.Choice(title=_(u"Role"),
+                description=_(u"Role given to members of this office"),
+                vocabulary="bungeni.vocabulary.office_roles"
             ),
         )
     ]

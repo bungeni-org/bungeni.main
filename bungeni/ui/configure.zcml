@@ -103,17 +103,20 @@
       name="ui-images"
       directory="images" />
     
-    
     <!-- vocabularies -->
     
     <utility name="bungeni.vocabulary.workflow"
         component=".workflow.workflow_vocabulary_factory"
+    />
+    <utility name="bungeni.vocabulary.office_roles"
+        component=".vocabulary.office_roles"
     />
     
     <utility name="bungeni.vocabulary.Venues"
         component=".vocabulary.venues_factory"
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
+    
     
     <!--
    <utility
