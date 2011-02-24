@@ -111,13 +111,38 @@
     <utility name="bungeni.vocabulary.office_roles"
         component=".vocabulary.office_roles"
     />
-    
     <utility name="bungeni.vocabulary.Venues"
         component=".vocabulary.venues_factory"
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
-    
-    
+    <utility name="bungeni.vocabulary.AvailableItems"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+        component=".reports.availableItems"
+    />
+    <utility name="bungeni.vocabulary.BillOptions"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+        component=".reports.billOptions"
+    />
+    <utility name="bungeni.vocabulary.MotionOptions"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+        component=".reports.motionOptions"
+    />
+    <utility name="bungeni.vocabulary.AgendaOptions"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+        component=".reports.agendaOptions"
+    />
+    <utility name="bungeni.vocabulary.QuestionOptions"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+        component=".reports.questionOptions"
+    />
+    <utility name="bungeni.vocabulary.TabledDocumentOptions"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+        component=".reports.tabledDocumentOptions"
+    />
+    <utility name="bungeni.vocabulary.ParliamentSource"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+        component=".vocabulary.ParliamentSource"
+    />
     <!--
    <utility
       name="bungeni.vocabulary.weekdays"
@@ -127,43 +152,8 @@
       name="bungeni.vocabulary.monthly_recurrence"
       component=".vocabulary.MonthlyRecurrenceVocabularyFactory" />
 
-   <utility
-            component=".reports.availableItems"
-            name="Available Items"
-            provides="zope.schema.interfaces.IVocabularyFactory"
-            />
-   <utility
-            component=".reports.billOptions"
-            name="Bill Options"
-            provides="zope.schema.interfaces.IVocabularyFactory"
-            />
-   <utility
-            component=".reports.motionOptions"
-            name="Motion Options"
-            provides="zope.schema.interfaces.IVocabularyFactory"
-            />
-    <utility
-            component=".reports.agendaOptions"
-            name="Agenda Options"
-            provides="zope.schema.interfaces.IVocabularyFactory"
-            />
-    <utility
-            component=".reports.questionOptions"
-            name="Question Options"
-            provides="zope.schema.interfaces.IVocabularyFactory"
-            />
-    <utility
-            component=".reports.tabledDocumentOptions"
-            name="Tabled Document Options"
-            provides="zope.schema.interfaces.IVocabularyFactory"
-            />
-  <utility
-     name="bungeni.vocabulary.ParliamentSource"
-     provides="zope.schema.interfaces.IVocabularyFactory"
-     component=".vocabulary.ParliamentSource" />
     -->
-    
-    
+
      <!-- Adapters to provide values for RSS views -->
 	 
 	 <adapter

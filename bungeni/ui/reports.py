@@ -136,35 +136,32 @@ class ReportView(form.PageForm):
             description=_(u"Choose a starting date for this report"),
             required=True)
         item_types = schema.List(title=u"Items to include",
-                   required=False,
-                   value_type=schema.Choice(
-                    vocabulary="Available Items"),
-                   )
+            required=False,
+            value_type=schema.Choice(
+                vocabulary="bungeni.vocabulary.AvailableItems"))
         bills_options = schema.List(title=u"Bill options",
-                       required=False,
-                       value_type=schema.Choice(
-                       vocabulary="Bill Options"),
-                         )
+            required=False,
+            value_type=schema.Choice(
+                vocabulary="bungeni.vocabulary.BillOptions"))
         agenda_items_options = schema.List(title=u"Agenda options",
-                                        required=False,
-                                        value_type=schema.Choice(
-                                        vocabulary="Agenda Options"),)
+            required=False,
+            value_type=schema.Choice(
+                vocabulary="bungeni.vocabulary.AgendaOptions"))
         motions_options = schema.List(title=u"Motion options",
-                                        required=False,
-                                        value_type=schema.Choice(
-                                        vocabulary="Motion Options"),)
+            required=False,
+            value_type=schema.Choice(
+                vocabulary="bungeni.vocabulary.MotionOptions"))
         questions_options = schema.List(title=u"Question options",
-                                          required=False,
-                                          value_type=schema.Choice(
-                                          vocabulary="Question Options"),)
+            required=False,
+            value_type=schema.Choice(
+                vocabulary="bungeni.vocabulary.QuestionOptions"))
         tabled_documents_options = schema.List(title=u"Tabled Document options",
-                                          required=False,
-                                          value_type=schema.Choice(
-                                          vocabulary="Tabled Document Options"),)
+            required=False,
+            value_type=schema.Choice(
+                vocabulary="bungeni.vocabulary.TabledDocumentOptions"))
         note = schema.TextLine(title=u"Note",
-                                required=False,
-                                description=u"Optional note regarding this report"
-                        )
+            required=False,
+            description=u"Optional note regarding this report")
 
     template = namedtemplate.NamedTemplate("alchemist.form")
     form_fields = form.Fields(IReportForm)
