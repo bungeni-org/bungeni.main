@@ -44,7 +44,7 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.agendaitem.wf.receive" title="Receive" />
 <grant permission="bungeni.agendaitem.wf.receive" role="bungeni.Clerk" />
 
-<permission id="bungeni.agendaitem.wf.require_clarification" title="Needs Clarification by MP" />
+<permission id="bungeni.agendaitem.wf.require_clarification" title="Needs Clarification to Receive" />
 <grant permission="bungeni.agendaitem.wf.require_clarification" role="bungeni.Clerk" />
 
 <permission id="bungeni.agendaitem.wf.complete" title="Submit to the Speaker Office" />
@@ -59,7 +59,7 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.agendaitem.wf.allow_schedule" title="Make available for scheduling" />
 <grant permission="bungeni.agendaitem.wf.allow_schedule" role="bungeni.Speaker" />
 
-<permission id="bungeni.agendaitem.wf.require_recomplete" title="Needs Clarification" />
+<permission id="bungeni.agendaitem.wf.require_recomplete" title="Needs Clarification to Approve" />
 <grant permission="bungeni.agendaitem.wf.require_recomplete" role="bungeni.Speaker" />
 
 <permission id="bungeni.agendaitem.wf.recomplete" title="Re-complete" />
@@ -281,7 +281,7 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.motion.wf.receive" title="Receive" />
 <grant permission="bungeni.motion.wf.receive" role="bungeni.Clerk" />
 
-<permission id="bungeni.motion.wf.require_clarification" title="Needs Clarification to Complete" />
+<permission id="bungeni.motion.wf.require_clarification" title="Needs Clarification to Receive" />
 <grant permission="bungeni.motion.wf.require_clarification" role="bungeni.Clerk" />
 
 <permission id="bungeni.motion.wf.complete" title="Submit to the Speaker Office" />
@@ -293,8 +293,8 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.motion.wf.disapprove" title="Disapprove" />
 <grant permission="bungeni.motion.wf.disapprove" role="bungeni.Speaker" />
 
-<permission id="bungeni.motion.wf.allow_schedule" title="Make available for scheduling" />
-<grant permission="bungeni.motion.wf.allow_schedule" role="bungeni.Speaker" />
+<permission id="bungeni.motion.wf.allow_schedule" title="Make available for cheduling" />
+<grant permission="bungeni.motion.wf.allow_schedule" role="bungeni.Clerk" />
 
 <permission id="bungeni.motion.wf.require_recomplete" title="Needs Clarification to Approve" />
 <grant permission="bungeni.motion.wf.require_recomplete" role="bungeni.Speaker" />
@@ -370,7 +370,7 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.question.wf.receive" title="Receive" />
 <grant permission="bungeni.question.wf.receive" role="bungeni.Clerk" />
 
-<permission id="bungeni.question.wf.require_clarification" title="Needs Clarification by MP" />
+<permission id="bungeni.question.wf.require_clarification" title="Needs Clarification to Receive" />
 <grant permission="bungeni.question.wf.require_clarification" role="bungeni.Clerk" />
 
 <permission id="bungeni.question.wf.complete" title="Submit to the Speaker Office" />
@@ -382,7 +382,7 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.question.wf.disapprove" title="Disapprove" />
 <grant permission="bungeni.question.wf.disapprove" role="bungeni.Speaker" />
 
-<permission id="bungeni.question.wf.require_recomplete" title="Needs Clarification" />
+<permission id="bungeni.question.wf.require_recomplete" title="Needs Clarification to Approve" />
 <grant permission="bungeni.question.wf.require_recomplete" role="bungeni.Speaker" />
 
 <permission id="bungeni.question.wf.recomplete" title="Complete" />
@@ -451,7 +451,7 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.tableddocument.wf.receive" title="Receive" />
 <grant permission="bungeni.tableddocument.wf.receive" role="bungeni.Clerk" />
 
-<permission id="bungeni.tableddocument.wf.require_clarification" title="Needs Clarification" />
+<permission id="bungeni.tableddocument.wf.require_clarification" title="Needs Clarification to Receive" />
 <grant permission="bungeni.tableddocument.wf.require_clarification" role="bungeni.Clerk" />
 
 <permission id="bungeni.tableddocument.wf.complete" title="Submit to the Speaker Office" />
@@ -466,7 +466,7 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.tableddocument.wf.disapprove" title="Disapprove" />
 <grant permission="bungeni.tableddocument.wf.disapprove" role="bungeni.Speaker" />
 
-<permission id="bungeni.tableddocument.wf.require_recomplete" title="Needs Clarification" />
+<permission id="bungeni.tableddocument.wf.require_recomplete" title="Needs Clarification to Approve" />
 <grant permission="bungeni.tableddocument.wf.require_recomplete" role="bungeni.Speaker" />
 
 <permission id="bungeni.tableddocument.wf.recomplete" title="Complete" />

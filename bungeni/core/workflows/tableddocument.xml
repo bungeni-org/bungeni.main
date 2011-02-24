@@ -149,7 +149,7 @@
     />
     
     <transition id="require_clarification"
-        title="Needs Clarification"
+        title="Needs Clarification to Receive"
         source="received"
         destination="clarification_required"
         condition=""
@@ -198,7 +198,7 @@
     />
     
     <transition id="require_recomplete"
-        title="Needs Clarification"
+        title="Needs Clarification to Approve"
         source="completed"
         destination="incomplete"
         condition=""

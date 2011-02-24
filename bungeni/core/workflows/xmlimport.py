@@ -271,8 +271,11 @@ def _load(workflow, module_name, actions):
         if "require_confirmation" in kw:
             if kw["require_confirmation"].lower() == "true":
                 kw["require_confirmation"] = True
-            else:
+            elif kw["require_confirmation"].lower() == "false":
                 kw["require_confirmation"] = False
+            else:
+                raise ValueError("Invalid transition value "
+                    '[require_confirmation="%s"]' % kw["require_confirmation"])
         # multiple-source transitions are really multiple "transition paths"
         for source in sources:
             if source is not None:

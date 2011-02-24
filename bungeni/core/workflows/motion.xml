@@ -281,7 +281,7 @@
     />
     
     <transition id="require_clarification"
-        title="Needs Clarification to Complete"
+        title="Needs Clarification to Receive"
         source="received" 
         destination="clarification_required"
         condition=""
@@ -321,11 +321,11 @@
     />
     
     <transition id="allow_schedule"
-        title="Make available for scheduling" 
+        title="Make available for cheduling" 
         source="admissible deferred adjourned"
         destination="schedule_pending"
         trigger="manual"
-        roles="bungeni.Speaker"
+        roles="bungeni.Clerk"
         event=".interfaces.IMotionPendingEvent"
     />
     
