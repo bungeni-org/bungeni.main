@@ -1506,6 +1506,7 @@ class AttachedFileDescriptor(ModelDescriptor):
         Field(name="status_date",
             label=_(u"Status date"),
             modes="view listing",
+            property=schema.Date(title=_(u"Status Date"), required=False),
             listing_column=day_column("status_date", _(u"Status date")),
         ),
     ]
@@ -1600,6 +1601,7 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
             label=_(u"Status date"),
             modes="view listing",
             localizable=[ show("view listing"), ],
+            property=schema.Date(title=_(u"Status Date"), required=False),
             listing_column=day_column("status_date", _(u"Status date")),
         ),
         Field(name="note",
