@@ -389,6 +389,8 @@ class Field(object):
             return False
         if mode not in self._localizable_modes:
             return True
+        if "bungeni.Admin" in user_roles:
+            return True
         for loc in self.localizable:
             for role in user_roles:
                 if role in loc.roles:
