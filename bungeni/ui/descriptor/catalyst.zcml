@@ -136,13 +136,15 @@
         echo="False"
     />
     <!-- Descriptor.localizable = False
+    !+FILES(mr, feb-2011) not having this NON-UI type descripor catalyzed will
+    break the /files view of a parliamentary item...
+    -->
     <db:catalyst class="bungeni.models.domain.ParliamentaryItem"
         descriptor=".descriptor.ParliamentaryItemDescriptor"
         interface_module="bungeni.models.interfaces"
         ui_module="bungeni.ui.content"
         echo="False"
     />
-    -->
     <db:catalyst class="bungeni.models.domain.Bill"
         descriptor=".descriptor.BillDescriptor"
         interface_module="bungeni.models.interfaces"
