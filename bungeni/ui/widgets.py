@@ -7,7 +7,7 @@ from zope.datetime import DateTimeError
 from zope.security.proxy import removeSecurityProxy
 from zope.app.form.interfaces import ConversionError, InputErrors
 from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
-from zope.interface.common iItemsEditWidgetBasemport idatetime
+from zope.interface.common import idatetime
 import zope.app.form.browser.widget
 import zope.app.form.browser.textwidgets
 from zope.app.form.browser.textwidgets import TextAreaWidget, FileWidget
