@@ -321,7 +321,7 @@
     />
     
     <transition id="allow_schedule"
-        title="Make available for cheduling" 
+        title="Make available for scheduling" 
         source="admissible deferred adjourned"
         destination="schedule_pending"
         trigger="manual"

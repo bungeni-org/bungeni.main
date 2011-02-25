@@ -290,7 +290,7 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.motion.wf.disapprove" title="Disapprove" />
 <grant permission="bungeni.motion.wf.disapprove" role="bungeni.Speaker" />
 
-<permission id="bungeni.motion.wf.allow_schedule" title="Make available for cheduling" />
+<permission id="bungeni.motion.wf.allow_schedule" title="Make available for scheduling" />
 <grant permission="bungeni.motion.wf.allow_schedule" role="bungeni.Clerk" />
 
 <permission id="bungeni.motion.wf.require_recomplete" title="Needs Clarification to Approve" />
