@@ -60,15 +60,18 @@ Questions
   ...     short_name="question 1")
 
 
-!+FIRETRANSITION(mr, dec-2010) workflow transitions executed only partly on 
-not at all do not create the expected auditlog. 
-
   >>> from ore.workflow.interfaces import IWorkflowInfo
   >>> info = IWorkflowInfo(question)
-  >>> #info.fireTransition("create", check_security=False)
-  >>> #question.status
-  #'draft'
+  >>> info.fireTransition("-working_draft", check_security=False)
+  >>> question.status
+  'working_draft'
   
+!+FIRETRANSITION(mr, dec-2010) workflow transitions executed only partly on 
+not at all do not create the expected auditlog. 
+!+FIRETRANSITION(mr, feb-2011) since the change to adopt internal transition ids
+made up of "%s-%s"%(source_state, destination_state), should review above
+comment (dec-2010) and update/evolve tests below.
+
   
   >>> question2 = add_content(
   ...     domain.Question,

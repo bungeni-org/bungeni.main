@@ -72,13 +72,28 @@ class State(object):
 
 class StateTransition(Transition):
     """A state transition.
+    
+    A transition from a *single* source state to a *single* destination state,
+    irrespective of how it may be defined e.g. in XML from multiple possible 
+    sources to a single destination (this is simply a shorthand for defining
+    multiple transition). 
+    
+    Each Transition ID is automatically determined from the source and 
+    destination states (therefore it is not passed in as a constructor 
+    parameter) in the following predicatbale way:
+    
+        transition_id = "%s-%s" % (source or "", destination)
+    
+    This is the id to be used when calling WorkfloInfo.FireTransition(id), 
+    as well as being the HTML id used in generated menu items, etc. 
     """
     
-    def __init__(self, transition_id, title, source, destination,
+    def __init__(self, title, source, destination,
                  condition=NullCondition, action=NullAction,
                  trigger=MANUAL, permission=CheckerPublic,
                  order=0, event=None, require_confirmation=False,
                  **user_data):
+        transition_id = "%s-%s" % (source or "", destination)
         super(StateTransition, self).__init__(
             transition_id, title, source, destination, condition,
             action, trigger, permission, order=0, **user_data)

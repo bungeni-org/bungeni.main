@@ -174,7 +174,7 @@ PRINCIPAL: member
 Transition: "create" - assigns the role of "Owner" and sets the parliament id.
 
   #>>> actions.create(info, question)
-  >>> info.fireTransition("create")
+  >>> info.fireTransition("-draft")
   >>> question.status
   'draft'
 
@@ -241,22 +241,18 @@ Setup mock delivery component.
 Transition: "submit"
 
   >>> #actions.submit(info, question)
-  >>> info.fireTransition("submit-%s" % question.status)
+  >>> info.fireTransition("%s-submitted" % question.status)
   >>> question.status
   'submitted'
   >>> len(versions)
   1
 
 
-!+FIRETRANSITION(mr, dec-2010) the above fireTransition works, but subsequent 
-calls below do NOT work. This issue was claimed resolved, see this discussion:
-http://groups.google.com/group/bungeni-dev/browse_thread/thread/11ed33aac12bd94e/d9c0c20967099cfd  
-
-
   >>> tuple(qprm.getRolesForPrincipal("member"))
   ((u'bungeni.Owner', PermissionSetting: Allow),)
 
-  >>> #tuple(qprm.getRolesForPrincipal("clerk"))
+  >>> tuple(qprm.getRolesForPrincipal("clerk"))
+  ()
   >>> #tuple(qrpm.getRolesAndPermissions())
   >>> #tuple(qrpm.getPermissionsForRole(u"bungeni.Owner"))
   >>> #tuple(qrpm.getRolesForPermission(u"bungeni.question.Edit"))
@@ -274,12 +270,21 @@ in "submitted" state:
 -------------------------------------
 Transition: "receive_by_clerk"
 
-  >>> actions.receive(info, question)
-  >>> #info.fireTransition("receive_by_clerk-%s" % question.status)
-  >>> #question.status
-  #'received'
+  >>> #actions.receive(info, question)
+  >>> info.fireTransition("%s-received" % question.status) # submitted
+  >>> question.status
+  'received'
   >>> len(versions)
   2
+
+
+!+FIRETRANSITION(mr, dec-2010) the above fireTransition works, but subsequent 
+calls below do NOT work. This issue was claimed resolved, see this discussion:
+http://groups.google.com/group/bungeni-dev/browse_thread/thread/11ed33aac12bd94e/d9c0c20967099cfd  
+!+FIRETRANSITION(mr, feb-2011) since the change to adopt internal transition ids
+made up of "%s-%s"%(source_state, destination_state), should review above
+comment (dec-2010) and update/evolve tests below.
+
 
 # XXX-5 failing:
 trying to execute the *transition* --as the clerk or as the member-- gives:

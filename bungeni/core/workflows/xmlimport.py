@@ -230,6 +230,7 @@ def _load(workflow, module_name, actions):
         
         # source = "" (empty string -> None source)
         sources = t.get("source").split() or [None]
+        # destination must be a valid state
         destination = t.get("destination")
         assert destination in STATE_IDS, \
             "Unknown transition destination state [%s]" % (destination)
@@ -281,21 +282,10 @@ def _load(workflow, module_name, actions):
             if source is not None:
                 assert source in STATE_IDS, \
                     "Unknown transition source state [%s]" % (source)
-            # !+TRANSITION_ID(mr, feb-2010) always use normalized transition ID, 
-            # "%s-%s" % (tid, source), even for single-source transitions?
-            # !+TRANSITION_ID(mr, feb-2010) adopt more predictable scheme, 
-            # "%s-%s" % (source, destination), but leaving pid scheme unchanged?
-            if len(sources) > 1:
-                disambiguated_tid = "%s-%s" % (tid, source)
-            else:
-                disambiguated_tid = tid
-            
-            args = (disambiguated_tid, 
-                Message(t.get("title"), domain),
-                source, 
-                destination
-            )
+            args = (Message(t.get("title"), domain), source, destination)
             transitions.append(StateTransition(*args, **kw))
+            log.warn("[%s] adding transition [%s-%s] [%s]" % (
+                wid, source or "", destination, kw))
     
     return StateWorkflow(transitions, states)
 

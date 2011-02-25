@@ -462,10 +462,10 @@ Add to question.txt tests, equivalent set of tests running as the clerk:
 
   >>> info = IWorkflowInfo(question)
 
-Transition to "create-on-behalf-of". 
+Transition "create_on_behalf_of". 
 Assigns the role of "Owner" and sets the parliament id.
   
-  >>> info.fireTransition("create-on-behalf-of")
+  >>> info.fireTransition("-create_on_behalf_of")
   >>> question.status
   'working_draft'
   >>> question.parliament_id == parliament.parliament_id

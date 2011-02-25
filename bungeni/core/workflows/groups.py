@@ -31,7 +31,7 @@ class actions:
         False"""
         dbutils.deactivateGroupMembers(context)
         groups = dbutils.endChildGroups(context)
-        utils.dissolveChildGroups(groups,context)
+        utils.dissolveChildGroups(groups, context)
         utils.unset_group_local_role(context)
         
     @staticmethod

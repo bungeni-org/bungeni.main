@@ -78,7 +78,7 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
             column.GetterColumn(title=_(u"description"), 
                 getter=lambda i,f:i.description),
         ]
-        
+    
     def update(self):
         has_wfstate = False
         try:
@@ -93,7 +93,6 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
         self.wf_status = wf_state
         self.has_status = has_wfstate
         self.entries = self.getFeedEntries()
-        
     
     def render(self):
         columns = self.columns
@@ -112,7 +111,7 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
     def _change_object(self):
         auditor = audit.getAuditor(self.context)
         return auditor.change_object
-
+    
     def getFeedEntries(self):
         instance = removeSecurityProxy(self.context)
         return [ change for change in instance.changes 
@@ -132,8 +131,8 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
     class IWorkflowForm(zope.interface.Interface):
         note = zope.schema.Text(
             title=_("Comment on workflow change"), required=False)
-        date_active = zope.schema.Datetime(title=_("Active Date"), 
-                                           required=True,)
+        date_active = zope.schema.Datetime(
+            title=_("Active Date"), required=True)
     form_name = "Workflow"
     form_fields = form.Fields(IWorkflowForm)
     note_widget = TextAreaWidget
@@ -199,7 +198,7 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
         elif not IAuditable.providedBy(self.context):
             self.form_fields = self.form_fields.omit("note", "date_active")
         super(WorkflowActionViewlet, self).update()
-        
+    
     def setupActions(self, transition):
         self.wf = interfaces.IWorkflowInfo(self.context)
         if transition is None:
@@ -208,9 +207,8 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
             transitions = (transition,)
         self.actions = bindTransitions(
             self, transitions, None, interfaces.IWorkflow(self.context))
-    
-    
-    
+
+
 class WorkflowView(browser.BungeniBrowserView):
     """This view is linked to by the "workflow" context action and dislays the 
     workflow history and the action viewlet with all possible transitions
@@ -238,7 +236,8 @@ class WorkflowView(browser.BungeniBrowserView):
         self.update()
         template = self.template()
         return template
-        
+
+
 class WorkflowChangeStateView(WorkflowView):
     """This gets called on selection of a transition from the menu i.e. NOT
     when clicking on one of the trasition buttons in the workflow form.

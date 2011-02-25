@@ -204,7 +204,8 @@ def response_allow_submit(info, context):
             
 def dissolveChildGroups(groups, context):
     for group in groups:
-        IWorkflowInfo(group).fireTransition('dissolve', check_security=False)
+        IWorkflowInfo(group).fireTransition("active-dissolved", 
+            check_security=False)
         
           
 def schedule_sitting_items(info, context):
