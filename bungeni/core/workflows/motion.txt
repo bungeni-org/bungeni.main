@@ -175,7 +175,7 @@ this way do not create the expected auditlog.
 
 "MP clarify".
 
-  >>> actions.require_recomplete_clarification(info, motion)
+  >>> actions.require_clarification(info, motion)
   >>> len(versions)
   7
 

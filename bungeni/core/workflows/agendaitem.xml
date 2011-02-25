@@ -159,7 +159,7 @@
     
     <transition id="require_clarification"
         title="Needs Clarification to Receive"
-        source="received"
+        source="received incomplete"
         destination="clarification_required"
         condition=""
         trigger="manual"
@@ -202,7 +202,7 @@
         source="admissible deferred"
         destination="schedule_pending"
         trigger="manual"
-        roles="bungeni.Speaker"
+        roles="bungeni.Clerk"
         event=".interfaces.IAgendaItemPendingEvent"
     />
     
@@ -223,17 +223,6 @@
         condition=""
         trigger="manual"
         roles="bungeni.Clerk"
-    />
-    
-    <transition id="require_recomplete_clarification"
-        title="Needs Clarification by MP"
-        source="incomplete"
-        destination="clarification_required"
-        condition=""
-        trigger="manual"
-        roles="bungeni.Clerk"
-        event=".interfaces.IAgendaItemClarifyEvent"
-        require_confirmation="true"
     />
     
     <transition id="resubmit"
@@ -268,7 +257,7 @@
         source="schedule_pending"
         destination="admissible"
         trigger="manual"
-        roles="bungeni.Speaker"
+        roles="bungeni.Clerk"
     />
     
     <!--
@@ -311,7 +300,7 @@
         destination="deferred"
         condition=""
         trigger="manual"
-        roles="bungeni.Speaker"
+        roles="bungeni.Clerk"
         event=".interfaces.IAgendaItemDeferredEvent"
     />
     
@@ -321,7 +310,7 @@
         destination="elapsed"
         condition=""
         trigger="manual"
-        roles="bungeni.Speaker"
+        roles="bungeni.Clerk"
     />
     
     <transition id="withdraw"

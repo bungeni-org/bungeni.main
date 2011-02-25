@@ -282,7 +282,7 @@
     
     <transition id="require_clarification"
         title="Needs Clarification to Receive"
-        source="received" 
+        source="received incomplete" 
         destination="clarification_required"
         condition=""
         trigger="manual"
@@ -348,17 +348,6 @@
         roles="bungeni.Clerk"
     />
     
-    <transition id="require_recomplete_clarification" 
-        title="Needs Clarification to Complete"
-        source="incomplete"
-        destination="clarification_required"
-        condition=""
-        trigger="manual"
-        roles="bungeni.Clerk"
-        event=".interfaces.IMotionClarifyEvent"
-        require_confirmation="true"
-    />
-    
     <transition id="resubmit"
         title="Resubmit to Clerk"
         source="clarification_required"
@@ -374,7 +363,7 @@
         destination="deferred"
         condition=""
         trigger="manual"
-        roles="bungeni.Speaker"
+        roles="bungeni.Clerk"
         event=".interfaces.IMotionDeferredEvent"
     />
     
@@ -384,7 +373,7 @@
         destination="elapsed"
         condition=""
         trigger="manual"
-        roles="bungeni.Speaker"
+        roles="bungeni.Clerk"
         require_confirmation="true"
     />
     
@@ -413,7 +402,7 @@
         destination="admissible"
         condition=""
         trigger="manual"
-        roles="bungeni.Speaker"
+        roles="bungeni.Clerk"
     />
     
     <transition id="drop" 

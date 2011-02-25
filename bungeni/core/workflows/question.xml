@@ -390,7 +390,7 @@
         destination="elapsed"
         condition=""
         trigger="manual"
-        roles="bungeni.Clerk bungeni.Speaker"
+        roles="bungeni.Clerk"
         order="18"
         event=""
         require_confirmation="true"

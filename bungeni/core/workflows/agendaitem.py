@@ -77,10 +77,6 @@ class actions(object):
         utils.createVersion(info, context)
     
     @staticmethod
-    def require_recomplete_clarification(info, context):
-        utils.createVersion(info, context)
-    
-    @staticmethod
     def schedule(info, context):
         pass
     

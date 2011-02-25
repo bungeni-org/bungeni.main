@@ -89,8 +89,8 @@ def zcml_check_regenerate():
     persisted = open(filepath, "r").read().decode("utf-8")
     regenerated = ZCML_BOILERPLATE % ("\n".join(ZCML_LINES))
     if persisted != regenerated:
-        print "CHANGES to workflows/%s file:" % (ZCML_FILENAME)
-        print debug.unified_diff(persisted, regenerated, filepath, "NEW")
+        log.warn("CHANGES to workflows/%s file:\n%s" % (ZCML_FILENAME,
+            debug.unified_diff(persisted, regenerated, filepath, "NEW")))
         open(filepath, "w").write(regenerated.encode("utf-8"))
         class ChangedWorkflowsPermissionsZCML(Exception): pass
         raise ChangedWorkflowsPermissionsZCML(
