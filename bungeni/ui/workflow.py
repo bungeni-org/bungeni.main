@@ -4,16 +4,11 @@ from datetime import datetime, timedelta
 from zope.formlib import form
 from zope.viewlet import viewlet
 import zope.interface
-from zope.annotation.interfaces import IAnnotations
 from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
 from zope.security.proxy import removeSecurityProxy
 from zope.app.schema.vocabulary import IVocabularyFactory
 from zope.app.form.browser.textwidgets import TextAreaWidget
 from zc.table import column
-
-from sqlalchemy import orm
-import sqlalchemy as rdb
-from sqlalchemy import desc
 
 from ore.workflow import interfaces
 from ore.workflow.interfaces import IWorkflowInfo
@@ -24,15 +19,13 @@ from bungeni.core import audit
 from bungeni.core import globalsettings
 from bungeni.ui.forms.workflow import bindTransitions
 from bungeni.ui.forms.common import BaseForm
-from bungeni.ui.forms.common import set_widget_errors
 from bungeni.ui.widgets import TextDateTimeWidget
 from bungeni.ui.table import TableFormatter
 from bungeni.ui.menu import get_actions
-from bungeni.ui.utils import date, common
+from bungeni.ui.utils import date
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
 from zope.dublincore.interfaces import IDCDescriptiveProperties
-from bungeni.alchemist import Session
 from bungeni.core.interfaces import IAuditable
 #from zope.app.pagetemplate import ViewPageTemplateFile
 
@@ -122,7 +115,8 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
 
     def getFeedEntries(self):
         instance = removeSecurityProxy(self.context)
-        return [change for change in instance.changes if change.action=='workflow']
+        return [ change for change in instance.changes 
+                if change.action == "workflow" ]
         
 
 class WorkflowActionViewlet(browser.BungeniBrowserView, 
@@ -148,24 +142,39 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
     form_fields["date_active"].custom_widget = TextDateTimeWidget
     actions = ()
     
-    def validate(self, action, data):
+    def get_min_date_active(self):
+        """Determine the min_date_active to validate against.
+        """
         min_date_active = None
-        errors = super(WorkflowActionViewlet, self).validate(action,data)
-        if 'date_active' in data.keys():
-            if IAuditable.providedBy(self.context):
-                instance = removeSecurityProxy(self.context)
-                changes = [change for change in instance.changes 
-                                                   if change.action=='workflow']
-                if changes:
-                    min_date_active = changes[-1].date_active
-                else:
-                    min_date_active = None
-            if min_date_active and (data.get('date_active') < min_date_active):
-                errors.append(zope.interface.Invalid(_(u"Active Date is too old.")))
-            elif min_date_active and (data.get('date_active') > datetime.now()):
-                errors.append(zope.interface.Invalid(_(u"Active Date is in the future.")))                
+        if IAuditable.providedBy(self.context):
+            instance = removeSecurityProxy(self.context)
+            changes = [ change for change in instance.changes 
+                        if change.action == "workflow" ]
+            if changes:
+ 	            # then use the "date_active" of the most recent entry
+                min_date_active = changes[-1].date_active
+        if not min_date_active: 
+            # then fallback to the current parliament's atart_date
+            min_date_active = globalsettings.get_current_parliament().start_date
+        # As the precision of the UI-submitted datetime is only to the minute, 
+        # we adjust min_date_time by a margin of 59 secs earlier to avoid 
+        # issues of doing 2 transitions in quick succession (within same minute) 
+        # the 2nd of which could be taken to be too old...
+        return min_date_active - timedelta(seconds=59)
+    
+    def validate(self, action, data):
+        # submitted data is actually updated in following call to super.validate
+        errors = super(WorkflowActionViewlet, self).validate(action, data)
+        if "date_active" in data.keys():
+            min_date_active = self.get_min_date_active()
+            if data.get("date_active") < min_date_active:
+                errors.append(zope.interface.Invalid(
+                    _("Active Date is too old.")))
+            elif data.get("date_active") > datetime.now():
+                errors.append(zope.interface.Invalid(
+                    _("Active Date is in the future.")))
         return errors
-        
+    
     def setUpWidgets(self, ignore_request=False):
         class WorkflowForm:
             note = None
@@ -175,8 +184,7 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
         }
         self.widgets = form.setUpDataWidgets(
             self.form_fields, self.prefix, self.context, self.request,
-            ignore_request = ignore_request)     
-        
+            ignore_request = ignore_request)
     
     def update(self, transition=None):
         wf = interfaces.IWorkflow(self.context) 
@@ -253,14 +261,14 @@ class WorkflowChangeStateView(WorkflowView):
         else:
             self.update()
         
-        if transition and require_confirmation is False and method=="POST":
+        if transition and require_confirmation is False and method == "POST":
             actions = bindTransitions(
                 self.action_viewlet, (transition,), None, 
                 interfaces.IWorkflow(self.context))
-            assert len(actions)==1
+            assert len(actions) == 1
             # execute action
             # !+ should pass self.request.form as data? e.g. value is:
-            # {u'next_url': u'...', u'transition': u'submit_response'}
+            # {u"next_url": u"...", u"transition": u"submit_response"}
             result = actions[0].success({})
         
         if headless is True:
