@@ -305,15 +305,23 @@ class AddForm(BaseForm, catalyst.AddForm):
 
     def update(self):
         super(AddForm, self).update()
-        # set default values for required choice fields
+        # set humanized default value for choice fields with no defaults
         for widget in self.widgets:
             field = widget.context
-            if (IChoice.providedBy(field) and field.required and
-                field.default is None
-                ):
-                for term in field.vocabulary:
-                    field.default = term.value
-
+            try:
+                if (IChoice.providedBy(field) and
+                                              field.default is None):
+                    widget._messageNoValue = _("bungeni_widget_no_value", 
+                                                'choose ${fld_title} ...',
+                                                mapping = {'fld_title':
+                                                            field.title
+                                                          }
+                                                )
+            except Exception, e:
+                logging.error("Failed to set default value for widget %s\
+                               for field %s: @@ %s",
+                               widget, field, e )
+                
     @property
     def domain_model(self):
         return removeSecurityProxy(self.context).domain_model
