@@ -1,4 +1,16 @@
-import logging
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""Common forms for Bungeni user interface
+
+$Id$
+"""
+
+log = __import__("logging").getLogger("bungeni.ui.forms")
+
 #import transaction
 from copy import copy
 from zope.publisher.interfaces import BadRequest
@@ -309,19 +321,17 @@ class AddForm(BaseForm, catalyst.AddForm):
         for widget in self.widgets:
             field = widget.context
             try:
-                if (IChoice.providedBy(field) and
-                                              field.default is None):
+                if IChoice.providedBy(field) and field.default is None:
+                    
                     widget._messageNoValue = _("bungeni_widget_no_value", 
-                                                'choose ${fld_title} ...',
-                                                mapping = {'fld_title':
-                                                            field.title
-                                                          }
-                                                )
+                                               "choose ${title} ...",
+                                               mapping = {"title": field.title}
+                                              )
             except Exception, e:
-                logging.error("Failed to set default value for widget %s\
-                               for field %s: @@ %s",
-                               widget, field, e )
-                
+                log.error("Failed to set default value for widget %s"
+                        " for field %s: @@ %s",
+                    widget, field, e )
+
     @property
     def domain_model(self):
         return removeSecurityProxy(self.context).domain_model
@@ -841,7 +851,7 @@ class DeleteForm(PageForm):
             # error, because the transaction might have failed in the
             # second phase of the commit
             session.rollback()
-            logging.critical(e)
+            log.critical(e)
 
             self.status = _(u"Could not delete item due to "
                             "database integrity error")
