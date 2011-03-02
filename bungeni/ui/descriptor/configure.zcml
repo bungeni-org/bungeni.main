@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope">
+    
+    <!-- Catalyze Domain Models -->
+    <include file="catalyst.zcml"/>
+    
+    <!-- Localize descriptors -->
+    <include package=".localize"/>
+
+</configure>
+

@@ -5,16 +5,17 @@
            i18n_domain="bungeni.ui">
   <i18n:registerTranslations directory="locales" />
     
-    <!-- Catalyze Domain Models -->
-    <include package="bungeni.ui.descriptor" file="catalyst.zcml"/>
-    
   <!-- Alchemist UI overrides -->
   <include package="alchemist.ui" />
   <includeOverrides package=".forms" file="overrides.zcml" />
   
   <include package="bungeni.models" file="domain.zcml" />
   <include package="bungeni.portal" />
+
+
   
+    <include package=".descriptor" />
+    
   <!-- Site Menus Definition -->
   <include file="menu.zcml"/>
     

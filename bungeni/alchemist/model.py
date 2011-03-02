@@ -268,7 +268,7 @@ class Field(object):
     
     # the default list of show/hide localization directives -- by default
     # a field is NOT localizable in any mode and for any role.
-    localizable = []
+    localizable = None # list
     _localizable_modes = None # to cache the set of localizable modes
     
     property = None # zope.schema.interfaces.IField
@@ -286,7 +286,6 @@ class Field(object):
     # alchemist.catalyst.domain.ApplySecurity accesses them directly (even if
     # resulting permission is anyway what is specified in domain.zcml).
     
-    
     # OTHER Attributes (and Defaults)
     
     # required flag can only be used if the field is not required by database
@@ -295,7 +294,7 @@ class Field(object):
     # generated forms -- whether a field, in the UI, is handled as required 
     # or not depends entirely on the value of Field.property.required and/or 
     # whether the corresponding column is nullable or not.
-
+    
     #fieldset = "default"
     # !+FIELDSET(mr, oct-2010) not used - determine intention, remove.
     
@@ -358,9 +357,12 @@ class Field(object):
             assert "listing" in self.modes, \
                 "Field [%s] sets listing_column but no listing mode" % (
                     self.name)
+        # the default list of show/hide localization directives
+        if self.localizable is None:
+            self.localizable = []
         self.validate_localizable()
     
-    def validate_localizable(self):
+    def validate_localizable(self, reference_localizable_modes=None):
         self._localizable_modes = set() # reset cache of localizable modes
         for loc in self.localizable:
             # if modes is still None, we now default to this field's modes
@@ -378,6 +380,11 @@ class Field(object):
                 "Field [%s] duplicates mode in localizable directive: %s" % (
                     self.name, loc)
         for mode in self._localizable_modes:
+            if reference_localizable_modes is not None:
+                assert mode in reference_localizable_modes, \
+                    "Field [%s] may only localize mode [%s] if mode is " \
+                    "localizable i.e. one of: %s." % (
+                        self.name, mode, reference_localizable_modes)
             assert mode in self.modes, \
                 "Field [%s] may only localize mode [%s] if mode is " \
                 "displayable i.e. one of: %s." % (self.name, mode, self.modes)

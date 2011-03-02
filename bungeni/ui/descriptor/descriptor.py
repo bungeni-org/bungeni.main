@@ -7,7 +7,6 @@
 $Id$
 """
 
-import datetime
 from copy import deepcopy
 from zope import schema, interface
 
@@ -22,7 +21,10 @@ from bungeni.alchemist.model import ModelDescriptor, Field, show, hide
 
 from bungeni.models import domain
 
-from bungeni.core.translation import get_default_language
+# We import bungeni.core.workflows.adapters to ensure that the "states" 
+# attribute on each "workflow" module is setup... this is to avoid an error 
+# when importing bungeni.ui.descriptor.descriptor from standalone scripts:
+import bungeni.core.workflows.adapters # needed by standalone scripts
 from bungeni.core.workflows.groups import states as group_wf_state
 from bungeni.core.workflows.attachedfile import states as af_wf_state
 from bungeni.core.workflows.address import states as address_wf_state
@@ -42,6 +44,8 @@ from bungeni.ui.utils import common, date, misc
 from bungeni.ui import vocabulary
 from bungeni.ui.tagged import get_states
 from bungeni.ui.interfaces import IBusinessSectionLayer
+
+
 
 ###
 # Listing Columns 
@@ -180,7 +184,7 @@ def linked_assignment_column(title, assigned_kind="item"):
     assigned_id_attr_name = {
         "item": "parliamentary_item_id", "group": "group_id" 
     }[assigned_kind]
-    acn = assigned_container_name = "assigned%ss" % (assigned_kind)
+    acn = "assigned%ss" % (assigned_kind) # assigned_container_name
     acn_len = len(acn)
     def getter(assignment, formatter):
         """(assignment:either(ItemGroupItemAssignment, GroupGroupItemAssignment), 
@@ -446,7 +450,7 @@ def LanguageField(name="language"):
         label=_(u"Language"),
         modes="edit add",
         property=schema.Choice(title=_(u"Language"),
-            default=get_default_language(),
+            default=translation.get_default_language(),
             vocabulary="language_vocabulary"
         ),
     )
@@ -1571,7 +1575,7 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
             modes="view edit add",
             localizable=[ show("view"), ],
             property=schema.Choice(title=_(u"Language"),
-                default=get_default_language(),
+                default=translation.get_default_language(),
                 vocabulary="language_vocabulary",
             ),
         ),
@@ -1648,7 +1652,7 @@ class VersionDescriptor(ModelDescriptor):
         Field(name="language",
             modes="view add listing",
             property=schema.Choice(title=_(u"Language"),
-                default=get_default_language(),
+                default=translation.get_default_language(),
                 vocabulary="language_vocabulary",
             ),
         ),
@@ -1700,7 +1704,7 @@ class HeadingDescriptor(ParliamentaryItemDescriptor):
             modes="view edit add",
             localizable=[ show("view"), ],
             property=schema.Choice(title=_(u"Language"),
-                default=get_default_language(),
+                default=translation.get_default_language(),
                 vocabulary="language_vocabulary",
             ),
         ),
@@ -1913,7 +1917,7 @@ class EventItemDescriptor(ParliamentaryItemDescriptor):
             modes="view edit add",
             localizable=[ show("view"), ],
             property=schema.Choice(title=_(u"Language"),
-                default=get_default_language(),
+                default=translation.get_default_language(),
                 vocabulary="language_vocabulary",
             ),
         ),
@@ -2359,7 +2363,7 @@ class ReportDescriptor(ParliamentaryItemDescriptor):
             label=_(u"Language"),
             modes="edit add",
             property=schema.Choice(title=_(u"Language"),
-                default=get_default_language(),
+                default=translation.get_default_language(),
                 vocabulary="language_vocabulary",
             ),
         ),
@@ -2401,4 +2405,5 @@ class ReportDescriptor(ParliamentaryItemDescriptor):
 class Report4SittingDescriptor(ReportDescriptor):
     localizable = True
     fields = deepcopy(ReportDescriptor.fields)
+
 
