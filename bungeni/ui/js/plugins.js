@@ -15,9 +15,8 @@
     
     $.fn.dragRearrange= function(){
         var helperfn = function(event, ui) {
-            //var title = ui[0].childNodes[1].childNodes[1].textContent +": "+ ui[0].childNodes[1].childNodes[3].text;
-            // jquery substitute
-            var title = ui.children('td.item').children('span:first').text() + ': ' + ui.children('td.item').children('a').text();
+            var title = ui.children('td.item').children('span:first').text() + 
+                             ': ' + ui.children('td.item').children('a').text();
             var helper = $('<div class="helper" />');
             helper.text(title);
             return helper;
@@ -112,6 +111,9 @@
 
             function handleSave() {
                 editor.saveHTML();
+                var d = document.getElementById('discussion-full-text-'
+                                                            +editor.element_id);
+                d.innerHTML = editor.getEditorHTML();
                 this.submit();
             }
     
@@ -125,24 +127,31 @@
                         isDefault:true } ];
             dlg.cfg.queueProperty("buttons", myButtons);
             var onSuccess = function(o) {
-                var discussion_id = "discussion_"+id;
-                var minutes = textarea.val().substring(0,100);
-                var minutes2 = minutes.indexOf("<br>");
+                var d = document.getElementById('discussion-full-text-'
+                                                            +editor.element_id);
+                //Only show first 100 characters
+                var short_minutes = d.innerHTML.substring(0,100);
                 var display_minutes = "";
-                if (minutes2 == -1){
-                    display_minutes = minutes+"...";
+                //Check for newlines
+                var position_of_br = short_minutes.indexOf("<br>");
+                //if there are no newlines, just add dots
+                if (position_of_br == -1){
+                    display_minutes = short_minutes+"...";
                 }
                 else{
-                    var minutes3 = minutes.indexOf("<br>", minutes2+4);
-                    if (minutes3 == -1){
-                        display_minutes = minutes + "...";
+                    //check for a second newline
+                    var second_position_of_br = short_minutes.indexOf("<br>", position_of_br+4);
+                    if (second_position_of_br == -1){
+                        display_minutes = short_minutes + "...";
                     }
                     else{
-                        display_minutes = minutes.substring(0, minutes3)+"...";
+                        display_minutes = short_minutes.substring(0, second_position_of_br)+"...";
                     }
                 }    
-                var d = document.getElementById(discussion_id);
-                d.innerHTML = "<div>"+display_minutes+"</div>";
+                var d = document.getElementById("truncated-discussion-"
+                                                            +editor.element_id);
+                d.innerHTML = display_minutes;
+                
             }
             var onFailure = function(o) {
                 alert('An error occured when connecting to server.');
@@ -153,23 +162,24 @@
             dlg.showEvent.subscribe(editor.show, editor, true);
             dlg.hideEvent.subscribe(editor.hide, editor, true);
             var discussion = calendar.find('div.full-discussion');
-        $.each(discussion, function(i, o){
-            var a = new Array();
-            a = $(this).attr('id').split("-");
-            var id = a[3];
-            var button_id = "discussion-link-"+id;
-            var btn = new YAHOO.widget.Button(button_id, {type:"link"});
-            //btn.on("click", dlg.show, dlg, true);
-            var onButtonClick = function (e) {
-                var action = calendar.find('#discussion-action-url-'+id).attr('href');
-                var dialog_form = dlg.form;
-                dialog_form.action = action;
-                var html = calendar.find('#discussion-full-text-'+id).html();
-                editor.setEditorHTML(html);
-                dlg.show();
-            };
-            btn.on("click", onButtonClick);
-        });
+            $.each(discussion, function(i, o){
+                var a = new Array();
+                a = $(this).attr('id').split("-");
+                var id = a[3];
+                var button_id = "discussion-link-"+id;
+                var btn = new YAHOO.widget.Button(button_id, {type:"link"});
+                //btn.on("click", dlg.show, dlg, true);
+                var onButtonClick = function (e) {
+                    var action = calendar.find('#discussion-action-url-'+id).attr('href');
+                    var dialog_form = dlg.form;
+                    dialog_form.action = action;
+                    var html = calendar.find('#discussion-full-text-'+id).html();
+                    editor.setEditorHTML(html);
+                    editor.element_id = id;
+                    dlg.show();
+                };
+                btn.on("click", onButtonClick);
+            });
     
         var selects = calendar.find('#scheduling-table select.workflow-status');
         $.each(selects, function(i, o) {
