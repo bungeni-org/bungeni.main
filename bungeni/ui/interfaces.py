@@ -6,7 +6,7 @@ from ore.yui.interfaces import IYUILayer
 from bungeni.rest.interfaces import IRESTLayer
 
 from zope.configuration import fields
-
+from zope.viewlet.interfaces import IViewletManager
 class IBungeniSkin(IPlonedSkin, IYUILayer):
     """Bungeni application skin."""
 class IBungeniAuthenticatedSkin(IBungeniSkin):
@@ -80,6 +80,8 @@ class IOpenOfficeConfig(interface.Interface):
     def getPath():
         "Path to the Openoffice Python binary"
 
+class IFeedViewletManager(IViewletManager):
+    """Viewlet manager for feed links"""
 
 class IOpenOfficePath(interface.Interface):
     path = fields.Path(
