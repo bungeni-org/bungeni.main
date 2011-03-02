@@ -161,9 +161,9 @@
      />
 
   <browser:viewlet
-     name="jquery-form-tabbing-cookie"
+     name="jquery-cookie-plugin"
      for="*"
-     class=".js.TabbingCookie"
+     class=".js.CookiePlugin"
      manager="ploned.ui.interfaces.IJavaScriptManager"
      permission="zope.Public"
      layer="ploned.ui.interfaces.IPlonedSkin"

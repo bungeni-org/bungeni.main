@@ -30,7 +30,8 @@ ploneFormTabbing._toggleFactory = function(container, tab_ids, panel_ids) {
         var id = orig_id.replace(/^#fieldsetlegend-/, "#fieldset-");
         jQuery(orig_id).addClass('selected');
         jQuery(id).removeClass('hidden');
-        jQuery.cookie(BN_TAB_COOKIE, orig_id)
+        options = { path: window.location.pathname, expires: null }
+        jQuery.cookie(BN_TAB_COOKIE, orig_id, options);
         jQuery(container).find("input[name=fieldset.current]").val(orig_id);
         return false;
     };
