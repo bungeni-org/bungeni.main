@@ -15,10 +15,8 @@
 	 />
   
   <!-- Setup Database Connection -->
-  <db:engine
-     name="bungeni-db"
-     url="postgres://localhost/bungeni"
-     />
+  <!-- load from bungeni_custom -->
+  <include package="bungeni_custom" file="db.zcml" />
 
   <!-- Bind Application Model to Database -->
   <db:bind
