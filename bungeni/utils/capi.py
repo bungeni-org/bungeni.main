@@ -43,8 +43,15 @@ class CAPI(object):
     # utility methods
     
     def get_root_path(self):
+        """Get absolute physical path location for currently active 
+        bungeni_custom package folder.
+        """
         return os.path.dirname(os.path.abspath(bc.__file__)) 
-
+    
+    def get_path_for(self, *path_components):
+        """Get absolute path, under bungeni_custom, for path_components.
+        """
+        return os.path.join(*(self.get_root_path(),)+path_components)
 
 # we access all via the singleton instance
 capi = CAPI()

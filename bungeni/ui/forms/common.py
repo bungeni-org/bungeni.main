@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 # Bungeni Parliamentary Information System - http://www.bungeni.org/
 # Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
 # Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
@@ -322,15 +320,14 @@ class AddForm(BaseForm, catalyst.AddForm):
             field = widget.context
             try:
                 if IChoice.providedBy(field) and field.default is None:
-                    
                     widget._messageNoValue = _("bungeni_widget_no_value", 
-                                               "choose ${title} ...",
-                                               mapping = {"title": field.title}
-                                              )
+                            "choose ${title} ...",
+                        mapping = {"title": field.title}
+                    )
             except Exception, e:
                 log.error("Failed to set default value for widget %s"
                         " for field %s: @@ %s",
-                    widget, field, e )
+                    widget, field, e)
 
     @property
     def domain_model(self):

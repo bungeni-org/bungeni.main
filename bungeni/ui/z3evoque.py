@@ -159,26 +159,25 @@ def set_get_gettext():
     get_gettext itself should have the parameters (i18n_domain, language).
     """
     # localedirs for i18n domains
-    import bungeni.ui
-    import bungeni.core
+    from bungeni.utils.capi import capi
     _i18n_domain_localedirs = {
-        "bungeni.ui": os.path.join(os.path.dirname(os.path.abspath(
-            bungeni.ui.__file__)), "locales"),
-        "bungeni.core": os.path.join(os.path.dirname(os.path.abspath(
-            bungeni.core.__file__)), "locales"), 
+        "bungeni.ui": capi.get_path_for(
+            "translations", "bungeni.ui", "locales"),
+        "bungeni.core": capi.get_path_for(
+            "translations", "bungeni.core", "locales")
     }
     _untranslated = []
     def _get_gettext(i18n_domain, language):
         """Get a _() i18n gettext function bound to domain and language.
         !+ There is probably a better way to do this; the following "obvious"
            way does not work:
-                zope.i18nmessageid.MessageFactory(self.i18n_domain)
+                zope.i18nmessageid.MessageFactory(i18n_domain)
         """
         import gettext
         try:
             t = gettext.translation(i18n_domain,
                     localedir=_i18n_domain_localedirs[i18n_domain],
-                    languages=[language])
+                    languages=[language]).install(True)
         except (IOError,):
             cls, exc, tb = sys.exc_info()
             if language != "en":
