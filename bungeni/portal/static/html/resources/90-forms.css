@@ -191,7 +191,11 @@ dl.enableFormTabbing dd {
     border: 1px solid #8cacbb;
 }
 
-
+.actionButtons input.ac_button_disabled{
+    background-color: #ccc;
+    border:1px solid #444;
+    color:#666;
+}
 
 input.searchButton {
     margin-bottom: 1px ! important;
