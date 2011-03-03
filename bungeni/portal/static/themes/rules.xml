@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ruleset>
 
-    <!--!!!DO NOT DELETE THE BELOW COMMENT - Required by deliverance proxy!!!-->
-
+    <!--The comment below is required by deliverance proxy.-->
 	<!-- deliverance-proxy -->
 
     <match path="regex:.*/(emptypage)$"
         abort="1" />
+    <match environ="QUERY_STRING: wildcard:headless=*" abort="1" />    
     <match path="regex:.*/(addcontentselector)$"
         abort="1" />   
     <match path="regex:.*/(fullviewmindmap)$"
@@ -49,14 +49,14 @@
 
     <rule class="load-workspace-navigation">    
         <pyquery pyref=
-            "bungeni.portal/static/themes/rules:add_member_workspace_links"
+            "bungeni.portal.static.themes.rules:add_member_workspace_links"
         />
     </rule>  
 
     
     <rule class="load-member-content">    
         <pyquery pyref=
-            "bungeni.portal/static/themes/rules:add_member_public_links"
+            "bungeni.portal.static.themes.rules:add_member_public_links"
         />  
     </rule>                         
 
@@ -98,7 +98,7 @@
             theme="children:#portal-column-one"
         />    
         <pyquery pyref=
-                 "bungeni.portal/static/themes/rules:switch_links_to_cynin"
+                 "bungeni.portal.static.themes.rules:switch_links_to_cynin"
         />
         
 
@@ -116,7 +116,7 @@
         <append href="/plone" content="#portal-globalnav > li:not(:first-child)"
             theme="children:#portal-globalnav > ul" /> 
         <pyquery pyref=
-                 "bungeni.portal/static/themes/rules:switch_links_to_cynin"
+                 "bungeni.portal.static.themes.rules:switch_links_to_cynin"
         /> 
     </rule>
     
@@ -178,10 +178,10 @@
             theme="#portal-column-content" />
 
         <pyquery pyref=
-            "bungeni.portal/static/themes/rules:add_menu_items"
+            "bungeni.portal.static.themes.rules:add_menu_items"
         />
         <pyquery pyref=
-            "bungeni.portal/static/themes/rules:add_rss_feeds"
+            "bungeni.portal.static.themes.rules:add_rss_feeds"
         />
         <drop content="#portal-column-content" /> 
     </rule>  
@@ -202,13 +202,13 @@
         <replace content="children:#portal-personaltools :not(.navigation)"
             theme="children:#portal-personaltools"
         />
-        <pyquery pyref="bungeni.portal/static/themes/rules:image_links" />
+        <pyquery pyref="bungeni.portal.static.themes.rules:image_links" />
         
         <!-- language selector -->
         <replace content="#portal-languageselector"
             theme="#portal-languageselector"
         />
-        <pyquery pyref="bungeni.portal/static/themes/rules:replace_login_link"/>
+        <pyquery pyref="bungeni.portal.static.themes.rules:replace_login_link"/>
         
         <!-- breadcrumbs -->
         <append content="children:#portal-breadcrumbs"
@@ -222,7 +222,7 @@
         <!-- body attributes -->
         <append content="attributes:body" theme="attributes:body" />
         <pyquery pyref=
-            "bungeni.portal/static/themes/rules:add_section_links"
+            "bungeni.portal.static.themes.rules:add_section_links"
         />
     </rule>
 </ruleset>
