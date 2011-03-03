@@ -2,9 +2,9 @@
  * Also applies css class to submit buttons to submit inputs
  * as interfaces hints for users.
  * 
- * Original here http://henrik.nyh.se/2008/07/jquery-double-submission
+ * Example from http://henrik.nyh.se/2008/07/jquery-double-submission
  * 
- * $Id:$
+ * $Id$
  */
 jQuery.fn.preventDuplicateSubmission = function(){
     jQuery(this).submit(function(){
