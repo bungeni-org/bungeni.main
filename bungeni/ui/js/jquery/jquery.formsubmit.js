@@ -1,4 +1,4 @@
-/* Prevents double submission of forms.
+/* Prevents double submission of forms and action items.
  * Also applies css class to submit buttons to submit inputs
  * as interfaces hints for users.
  * 
@@ -13,11 +13,25 @@ jQuery.fn.preventDuplicateSubmission = function(){
         }else{
             this.isSubmitted = true;
             jQuery("input:submit", this).addClass("ac_button_disabled");
+            jQuery.blockUI({ message: jQuery("#processing_indicatron") });
             return true;
+        }
+        });
+}
+
+jQuery.fn.preventDuplicateMenuAction = function(){
+    jQuery(this).click(function(event){
+        parent_dl = jQuery(this).parents("dl");
+        if(typeof(parent_dl.isPushed) != "undefined"){
+            event.preventDefault();
+        }else{
+            parent_dl.isPushed = true;
+            jQuery.blockUI({ message: jQuery("#processing_indicatron") });
         }
         });
 }
 
 jQuery(document).ready(function(){
         jQuery('form').preventDuplicateSubmission();
+        jQuery("dd.actionMenuContent  a").preventDuplicateMenuAction();
     });

@@ -362,4 +362,16 @@ form#alchemist-form #field\.form\.language {
 #field\.form\.receive_notification div.value br {
 	display: none;
 }
+/* form processing and action enhancements */
+div.processing_indicatron{
+    padding:0.5em;
+    background: white url(spinner.gif) no-repeat 0.1em center;
+    width:auto;
+}
+div.blockOverlay {
+    background-color: black;
+    cursor: wait;
+    position: fixed;
+    opacity: 0.6;
+}
 }

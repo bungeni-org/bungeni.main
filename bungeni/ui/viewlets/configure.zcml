@@ -118,6 +118,13 @@
      manager="ploned.ui.interfaces.IPortalHeaderManager"     
      class=".language.LanguageViewlet"
      />
+
+  <browser:viewlet
+     name="bungeni.activity_indicator"
+     for="*"
+     permission="zope.Public"
+     manager="ploned.ui.interfaces.IPortalHeaderManager"     
+     class=".enhance.ProcessingViewlet"
+     />
      
-  
 </configure>

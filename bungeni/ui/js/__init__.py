@@ -19,6 +19,7 @@ QueryColumnFilters = JSViewlet('bungeni-js/jquery/jquery.columnfilters.js')
 TableSorter = JSViewlet('bungeni-js/jquery/jquery.tablesorter.js')
 CookiePlugin = JSViewlet('bungeni-js/jquery/jquery.cookie.js')
 FormSubmit = JSViewlet('bungeni-js/jquery/jquery.formsubmit.js')
+BlockUI = JSViewlet('bungeni-js/jquery/jquery.uiblock.js')
 #Slider = JSViewlet('bungeni-js/jquery/ui.slider.js')
 
 ClockPick = JSViewlet('bungeni-js/jquery/jquery.clockpick.1.2.5.js')
