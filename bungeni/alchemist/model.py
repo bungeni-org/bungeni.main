@@ -115,8 +115,10 @@ def validated_set(key, allowed_values, str_or_seq, nullable=False):
                 key, value, tuple(allowed_values))
     # remove duplicates, and ensure a standard ordering -- 
     # as "normalized ordering" we take the order defined by allowed_values
-    seq = norm_sorted(seq, allowed_values)
-    return interned.tuple(seq)
+    seq_no_dups = norm_sorted(seq, allowed_values)
+    assert len(seq) == len(seq_no_dups), \
+        "No duplicates allowed [%s]: %s" % (key, seq)
+    return interned.tuple(seq_no_dups)
 
 def get_user_context_roles():
     """Get the list of user's roles (including whether admin or not)--this 
@@ -381,13 +383,24 @@ class Field(object):
                     self.name, loc)
         for mode in self._localizable_modes:
             if reference_localizable_modes is not None:
+                # only modes listed here may be localized
                 assert mode in reference_localizable_modes, \
                     "Field [%s] may only localize mode [%s] if mode is " \
                     "localizable i.e. one of: %s." % (
                         self.name, mode, reference_localizable_modes)
-            assert mode in self.modes, \
-                "Field [%s] may only localize mode [%s] if mode is " \
-                "displayable i.e. one of: %s." % (self.name, mode, self.modes)
+                # must localize all localizable modes
+                assert len(reference_localizable_modes) == \
+                    len(self._localizable_modes), \
+                        "Field [%s] localizable modes mismatch:" \
+                        "\nB: %s\nC: %s" % (
+                            self.name, reference_localizable_modes, 
+                            list(self._localizable_modes))
+            else:
+                # only displayable modes
+                assert mode in self.modes, \
+                    "Field [%s] may only localize mode [%s] if mode is " \
+                    "displayable i.e. one of: %s." % (
+                        self.name, mode, self.modes)
     
     def is_displayable(self, mode, user_roles):
         """Does this field pass localization directives for this mode?
@@ -399,9 +412,10 @@ class Field(object):
         if "bungeni.Admin" in user_roles:
             return True
         for loc in self.localizable:
-            for role in user_roles:
-                if role in loc.roles:
-                    return True
+            if mode in loc.modes:
+                for role in user_roles:
+                    if role in loc.roles:
+                        return True
         return False
     
     def get(self, k, default=None):

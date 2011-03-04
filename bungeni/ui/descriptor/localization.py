@@ -18,12 +18,12 @@ from bungeni.alchemist.model import (
     show, hide,
     norm_sorted, 
 )
-import bungeni.ui.descriptor.descriptor
-from bungeni.utils.capi import capi
-from bungeni.ui.utils import debug
+from bungeni.utils.capi import capi, bungeni_custom_errors
 
 
 # constants 
+
+from bungeni.ui.descriptor import descriptor as DESCRIPTOR_MODULE
 
 CUSTOM_PATH = capi.get_path_for("forms", "ui.xml")
 DESCRIPTOR_CLASSNAME_POSTFIX = "Descriptor"
@@ -55,9 +55,8 @@ def is_descriptor(cls):
         return False
     '''
 
-def localizable_model_descriptor_classes(module):
-    """(module:bungeni.ui.descriptor.descriptor) -> 
-        generator[ localizable descriptor class ]
+def localizable_descriptor_classes(module):
+    """A generator of localizable descriptor classes conatined in module.
     """
     for key in dir(module):
         cls = getattr(module, key)
@@ -81,7 +80,7 @@ def get_localizable_descriptor_class(module, name):
             descriptor_cls_name)
     return cls
 
-def reorder_field(cls, ordered_field_names, field_by_name):
+def reorder_fields(cls, ordered_field_names, field_by_name):
     """Reorder descriptor class fields.
     """
     log.debug("reorder_fields [%s] %s" % (cls.__name__, ordered_field_names))
@@ -94,42 +93,27 @@ def reorder_field(cls, ordered_field_names, field_by_name):
             "Localization of [%s]: Unspecified order for field [%s]" % (
                 cls.__name__, f.name)
         field_by_name[f.name] = f
-    # reorder (retaining same class atribute list instance)
+    # reorder (retaining same list instance as class attribute)
     cls.fields[:] = [ field_by_name[name] for name in ordered_field_names ]
 
 
-def localization_errorable(f):
-    """Intercept all errors raised by function f and raise all
-    as LocalizationErrors.
-    """
-    class LocalizationError(Exception):
-        """A Localization Error.
-        """
-    def _errorable(*args, **kw):
-        try: 
-            return f(*args, **kw)
-        except Exception, e: 
-            raise LocalizationError("%s" % (e))
-    return _errorable
-
-@localization_errorable
+@bungeni_custom_errors
 def localize_descriptors():
     """Localizes descriptors from {bungeni_custom}/forms/ui.xml.
     Called when .localize is imported.
     """
-    import descriptor as descriptor_module
-    #for d in localizable_model_descriptor_classes(descriptor_module): ...
+    #for d in localizable_descriptor_classes(descriptor_module): ...
     xml = elementtree.ElementTree.fromstring(read_custom())
     for descriptor_elem in xml.findall("descriptor"):
         dname = descriptor_elem.get("name")
-        cls = get_localizable_descriptor_class(descriptor_module, dname)
+        cls = get_localizable_descriptor_class(DESCRIPTOR_MODULE, dname)
         field_elems = descriptor_elem.findall("field")
         field_by_name = {}
-        reorder_field(cls, [f.get("name") for f in field_elems], field_by_name)
+        reorder_fields(cls, [f.get("name") for f in field_elems], field_by_name)
         for f_elem in field_elems:
             fname = f_elem.get("name")
             f = field_by_name[fname]
-            reference_localizable_modes = [ bm for bm in f._localizable_modes ]
+            bungeni_localizable_modes = [ rlm for rlm in f._localizable_modes ]
             clocs = []
             for cloc_elem in f_elem.getchildren():
                 modes = cloc_elem.get("modes", None)
@@ -144,13 +128,13 @@ def localize_descriptors():
             if clocs:
                 f.localizable[:] = clocs
                 f.validate_localizable(
-                    reference_localizable_modes=reference_localizable_modes)
+                    reference_localizable_modes=bungeni_localizable_modes)
 
 
 #####
 # Generation of the default localization file
 
-def process_loc(loc, depth=3, localizable_modes=[]):
+def serialize_loc(loc, depth=3, localizable_modes=[]):
     """(loc:show/hide directive) -> [str]
     """
     map = loc._repr_map()
@@ -168,13 +152,13 @@ def process_loc(loc, depth=3, localizable_modes=[]):
             ind, tag, modes, roles))
     return acc
 
-def process_field(f, depth=2):
+def serialize_field(f, depth=2):
     """(f:Field) -> [str]
     """
     _acc = []
     field_localizable_modes = []
     for loc in f.localizable:
-        _acc.extend(process_loc(loc, depth+1, field_localizable_modes))
+        _acc.extend(serialize_loc(loc, depth+1, field_localizable_modes))
     localizable_modes = " ".join(
         norm_sorted(field_localizable_modes, Field._modes))
     display_modes = " ".join(f.modes)
@@ -199,7 +183,7 @@ def process_field(f, depth=2):
                 ind, f.name, display_modes))
     return acc
 
-def process_cls(cls, depth=1):
+def serialize_cls(cls, depth=1):
     """(cls:ModelDescriptor) -> [str]
     
     Assumption: cls (subclass of ModelDescriptor) is localizable.
@@ -209,7 +193,7 @@ def process_cls(cls, depth=1):
     
     _acc = []
     for f in cls.fields:
-        _acc.extend(process_field(f, depth+1))
+        _acc.extend(serialize_field(f, depth+1))
     
     acc = []
     ind = INDENT * depth
@@ -222,12 +206,13 @@ def process_cls(cls, depth=1):
         acc.append('%s<descriptor name="%s" />' % (ind, name))
     return acc
 
-def process_module(module, depth=0):
-    """(module:bungeni.ui.descriptor.descriptor) -> [str]
+def serialize_module(module, depth=0):
+    """Return a list of serialization strings, for localizable descriptor 
+    classes in module.
     """
     _acc = []
-    for dcls in localizable_model_descriptor_classes(module):
-        _acc.extend(process_cls(dcls, depth=1))
+    for dcls in localizable_descriptor_classes(module):
+        _acc.extend(serialize_cls(dcls, depth=1))
     
     acc = []
     ind = INDENT * depth
@@ -243,9 +228,10 @@ def process_module(module, depth=0):
 
 if __name__ == "__main__":
     
+    from bungeni.ui.utils import debug
     print "Processing localization file: %s" % (CUSTOM_PATH)
     persisted = read_custom()
-    regenerated = "\n".join(process_module(bungeni.ui.descriptor.descriptor))
+    regenerated = "\n".join(serialize_module(DESCRIPTOR_MODULE))
     if persisted != regenerated:
         print "*** OVERWRITING:"
         print debug.unified_diff(persisted, regenerated, CUSTOM_PATH, "NEW")

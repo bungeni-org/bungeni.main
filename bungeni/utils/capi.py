@@ -15,12 +15,28 @@ from bungeni.utils.capi import capi
 
 $Id$
 """
-__all__ = ["capi"]
+__all__ = ["capi", "bungeni_custom_errors"]
 
 log = __import__("logging").getLogger("bungeni.utils.capi")
 
 import os
 import bungeni_custom as bc
+
+
+def bungeni_custom_errors(f):
+    """Decorator to intercept any error raised by function f and re-raise it
+    as a BungeniCustomError. To be used to decorate any function involved 
+    in reading/validating/processing any bungeni_custom parameters. 
+    """
+    class BungeniCustomError(Exception):
+        """A Localization Error.
+        """
+    def _errorable(*args, **kw):
+        try: 
+            return f(*args, **kw)
+        except Exception, e: 
+            raise BungeniCustomError("%s" % (e))
+    return _errorable
 
 
 class CAPI(object):
@@ -55,4 +71,5 @@ class CAPI(object):
 
 # we access all via the singleton instance
 capi = CAPI()
+
 
