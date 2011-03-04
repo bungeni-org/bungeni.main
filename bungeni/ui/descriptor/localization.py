@@ -223,6 +223,8 @@ def serialize_module(module, depth=0):
         acc.append("%s</ui>" % (ind))
     else:
         acc.append('%s<ui roles="%s" />' % (ind, ROLES_DEFAULT))
+    acc.append("") # blank line at end of file
+    acc.append("")
     return acc
 
 

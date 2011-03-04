@@ -46,10 +46,12 @@ class CAPI(object):
     # bungeni_custom parameter properties
     
     @property
+    @bungeni_custom_errors
     def zope_i18n_allowed_languages(self):
         return tuple(bc.zope_i18n_allowed_languages.split())
     
     @property
+    @bungeni_custom_errors
     def zope_i18n_compile_mo_files(self):
         return bool(
             bc.zope_i18n_compile_mo_files is True or 
