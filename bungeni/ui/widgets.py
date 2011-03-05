@@ -792,6 +792,10 @@ class AutoCompleteWidget(ItemsEditWidgetBase):
     """Zope3 Implementation of YUI autocomplete widget.
     Can be used with common ChoiceProperty"""
 
+    def __init__(self, field, request):
+        super(AutoCompleteWidget, self).__init__(field,
+            field.vocabulary, request)
+
     @property
     def options(self):
         _options = {
@@ -910,6 +914,14 @@ class AutoCompleteWidget(ItemsEditWidgetBase):
                   type="hidden">
             </div>
             """ % kw
+    @property
+    def style(self):
+        return """
+        <style type="text/css">
+          .yui-skin-sam .yui-ac-input { position:static;width:20em; vertical-align:middle;}
+          .yui-skin-sam .yui-ac-container { width:20em;left:0px;}
+        </style>
+        """
 
     def __call__(self):
         need("yui-core")
@@ -921,8 +933,8 @@ class AutoCompleteWidget(ItemsEditWidgetBase):
         need("yui-autocomplete")
 
         contents = []
+        contents.append(self.style)
         contents.append(template % {"html": self.html,
             "javascript": self.javascript})
-        contents.append(self._emptyMarker())
 
-        return self._div(self.cssClass, "\n".join(contents))
+        return "\n".join(contents)
