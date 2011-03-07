@@ -465,6 +465,7 @@ class JSLCache(object):
         # returns None during unittests when it obviously shouldn't, causing 
         # them to fail.
         # Added the check below to ensure that self.descriptor is not None.
+        self.filter_params = []
         if self.descriptor is not None:
             self.filter_params = [
                 "filter_%s" % (field_name)
