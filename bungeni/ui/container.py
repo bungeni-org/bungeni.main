@@ -448,11 +448,30 @@ class JSLCache(object):
             invalidating_class_names:[str] - names of domain classes that 
                 when modified will invalidate this cache
             
-            descriptor: descriptor instance for domain model for this listing
-            filter_params: [name:str] - query string filter parameter names
+            @descriptor: descriptor instance for domain model for this listing
+            @filter_params: [name:str] - query string filter parameter names
         """
         self.cache = evoque.collection.Cache(max_size)
-        self.descriptor = model.queryModelDescriptor(model_interface)
+        print "JSLCache queryModelDescriptor(%s) -> %s" % (
+            model_interface.__name__,
+            model.queryModelDescriptor(model_interface))
+        '''
+        !+queryModelDescriptor(mr, mar-2011) because of the discrepancy between 
+        test and application ZCML code, when running bungeni.ui unittests 
+        the call to queryModelDescriptor here (i.e. when importing this module) 
+        returns None. To reduce this timing issue, the setting up of the 
+        JSLCache attributes descriptor and filter_params is being postponed 
+        to when it is needed i.e. when they are actually being called
+        and used--which is why they are implemented as properties. They are 
+        themselves cached to minimize the overhead of repeated lookups at 
+        runtime.
+        
+        !+queryModelDescriptor(mr, mar-2011) should be renamed, and behaviour 
+        changed accordingly (raise an error when None) to getModelDescriptor().
+        '''
+        self.model_interface = model_interface
+        self._descriptor = None
+        self._filter_params = None
         # !+CACHE_INVALIDATION(mr, sep-2010) this should be left open-ended?
         # sanity check -- ensure every specified (domain) class_name exists
         for icn in invalidating_class_names:
@@ -460,17 +479,23 @@ class JSLCache(object):
         self.invalidating_class_names = invalidating_class_names
         # dynamically build the incoming (request querystring) filter 
         # parameter names lists from the domain class descriptor
-        
-        #!+CACHE_INVALIDATION(miano, jan-2010) model.queryModelDescriptor above 
-        # returns None during unittests when it obviously shouldn't, causing 
-        # them to fail.
-        # Added the check below to ensure that self.descriptor is not None.
-        self.filter_params = []
-        if self.descriptor is not None:
-            self.filter_params = [
-                "filter_%s" % (field_name)
-                for field_name in self.descriptor.listing_columns
-            ]
+    
+    @property
+    def descriptor(self):
+        """Get (cached) descriptor instance for self.model_interface.
+        """
+        if self._descriptor is None:
+            self._descriptor = model.queryModelDescriptor(self.model_interface)
+        return self._descriptor
+    
+    @property
+    def filter_params(self):
+        """Get (cached) list of filter params for this model's listing columns.
+        """
+        if self._filter_params is None:
+            self._filter_params = [ "filter_%s" % (field_name)
+                for field_name in self.descriptor.listing_columns ]
+        return self._filter_params
     
     def clear(self):
         # !+ self.cache.clear()

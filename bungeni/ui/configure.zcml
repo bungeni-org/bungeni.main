@@ -5,17 +5,21 @@
            i18n_domain="bungeni.ui">
   <i18n:registerTranslations directory="locales" />
     
+    
   <!-- Alchemist UI overrides -->
   <include package="alchemist.ui" />
+    
+    <!-- Must be included before executing .forms.overrides.zcml otherwise 
+    calling queryModelDescriptor(model_interface) will return None.
+    -->
+    <include package=".descriptor" />
+    
   <includeOverrides package=".forms" file="overrides.zcml" />
   
   <include package="bungeni.models" file="domain.zcml" />
   <include package="bungeni.portal" />
 
 
-  
-    <include package=".descriptor" />
-    
   <!-- Site Menus Definition -->
   <include file="menu.zcml"/>
     
