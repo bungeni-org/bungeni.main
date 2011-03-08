@@ -688,13 +688,13 @@ class DhtmlxCalendarSittings(BrowserView):
             if checkPermission("zope.View", sitting):
                 trusted = removeSecurityProxy(sitting)
                 if trusted.venue:
-                    trusted.text = '<![CDATA[<b>Venue:</b></br>' \
-                                + trusted.venue.short_name + '</br>' \
-                                + '<b>Status:</b>' + '</br>' \
-                                + trusted.status + ']]>'
+                    trusted.text = "<![CDATA[" \
+                        "<b>Venue:</b></br>%s</br><b>Status:</b></br>%s" \
+                        "]]>" % (trusted.venue.short_name, trusted.status)
                 else:
-                    trusted.text = '<![CDATA[<b>Status:</b>' + '</br>' \
-                                + trusted.status + ']]>'
+                    trusted.text = "<![CDATA[<b>Status:</b></br>%s]]>" % (
+                        trusted.status)
+                # !+PRESENTATION_CODE(mr, mar-2011) should be in templates.
                 self.sittings.append(trusted)
         self.request.response.setHeader('Content-type', 'text/xml')
         return self.render()
