@@ -365,8 +365,9 @@ form#alchemist-form #field\.form\.language {
 /* form processing and action enhancements */
 div.processing_indicatron{
     padding:0.5em;
-    background: white url(spinner.gif) no-repeat 0.1em center;
+    background: white url('processing.gif') no-repeat center center;
     width:auto;
+    height:3em;
 }
 div.blockOverlay {
     background-color: black;

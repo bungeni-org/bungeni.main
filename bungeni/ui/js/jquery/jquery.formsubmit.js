@@ -14,6 +14,7 @@ jQuery.fn.preventDuplicateSubmission = function(){
             this.isSubmitted = true;
             jQuery("input:submit", this).addClass("ac_button_disabled");
             jQuery.blockUI({ message: jQuery("#processing_indicatron") });
+            setTimeout('jQuery.unblockUI()', 10000);
             return true;
         }
         });
@@ -26,7 +27,8 @@ jQuery.fn.preventDuplicateMenuAction = function(){
             event.preventDefault();
         }else{
             parent_dl.isPushed = true;
-            jQuery.blockUI({ message: jQuery("#processing_indicatron") });
+            jQuery.blockUI({ message:jQuery("#processing_indicatron") });
+            setTimeout('jQuery.unblockUI()', 10000);
         }
         });
 }

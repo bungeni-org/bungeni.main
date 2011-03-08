@@ -1,7 +1,7 @@
 <html xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       i18n_domain="bungeni.ui" tal:omit-tag="">
-  <div id="processing_indicatron" class="processing_indicatron" style="display:none" i18n:translate="">
-    Working...please wait
+  <div id="processing_indicatron" class="processing_indicatron" style="display:none">
+    &nbsp;
   </div>
 </html>
