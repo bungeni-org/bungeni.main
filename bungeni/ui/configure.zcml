@@ -14,6 +14,16 @@
     -->
     <include package=".descriptor" />
     
+    <!-- Handler for JSON Listing Cache invalidation -->
+    <subscriber handler=".container.on_invalidate_cache_event"
+        for="bungeni.alchemist.interfaces.IAlchemistContent
+            zope.component.interfaces.IObjectEvent"
+    /><!-- 
+        currently overzealous... this should catch all event types (and then 
+        some) tagged with zope.lifecycleevent.IObject*Event as all events 
+        types there inherit from zope.component.interfaces.IObjectEvent
+    -->
+    
   <includeOverrides package=".forms" file="overrides.zcml" />
   
   <include package="bungeni.models" file="domain.zcml" />

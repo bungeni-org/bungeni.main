@@ -367,14 +367,6 @@ class AddForm(BaseForm, catalyst.AddForm):
 
     def createAndAdd(self, data):
         added_obj = super(AddForm, self).createAndAdd(data)
-        # invalidate caches for this domain object type
-        invalidate_caches_for(added_obj.__class__.__name__, "add")
-        # !+ADD_invalidate_CACHE(mr, sep-2010) should not be necessary as 
-        # all domain items are created into a "draft" workflow state that 
-        # is NOT public, so in theory any existing cache of listings of public 
-        # items are NOT affected. Plus, the required subsequent modification 
-        # of the item (to transit the item into a public state) will anyway
-        # invalidate the cache.
         return added_obj
 
     @formlib.form.action(
@@ -518,12 +510,13 @@ class EditForm(BaseForm, catalyst.EditForm):
 
                 # attach widget as ``render_original``
                 widget.render_original = display_widget
-
+    
     def _do_save(self, data):
         for key in data.keys():
             if isinstance(data[key], str):
                 data[key] = unescape(data[key])
         formlib.form.applyChanges(self.context, self.form_fields, data)
+        # !+EVENT_DRIVEN_CACHE_INVALIDATION(mr, mar-2011) no modify event
         # invalidate caches for this domain object type
         invalidate_caches_for(self.context.__class__.__name__, "edit")
 
@@ -724,8 +717,10 @@ class TranslateForm(AddForm):
         session.flush()
         session.commit()
         session.close()
-
+        
+        # !+EVENT_DRIVEN_CACHE_INVALIDATION(mr, mar-2011) no translate event
         # invalidate caches for this domain object type
+        print "TRANSTRANSTRANSTRANSTRANSTRANS", vars()
         invalidate_caches_for(trusted.__class__.__name__, "translate")
 
         #versions = IVersioned(self.context)
@@ -855,9 +850,7 @@ class DeleteForm(PageForm):
 
             return self.render()
         session.close()
-        # invalidate caches for this domain object type
-        invalidate_caches_for(self.context.__class__.__name__, "delete")
-
+        
         #TODO: check that it is removed from the index!
         notify(ObjectRemovedEvent(
             self.context, oldParent=container, oldName=self.context.__name__))

@@ -23,7 +23,7 @@ from bungeni.ui.widgets import SelectDateWidget
 from bungeni.ui.calendar import utils
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import misc, url, queries, debug
-from bungeni.ui.forms.common import set_widget_errors
+from bungeni.ui import forms
 from bungeni.ui import vocabulary
 from bungeni.core.location import location_wrapped
 from bungeni.core.interfaces import ISchedulingContext
@@ -38,8 +38,6 @@ from bungeni.models.utils import get_db_user_id
 from bungeni.models.utils import get_current_parliament
 from bungeni.models.interfaces import IGroupSitting
 from bungeni.server.interfaces import ISettings
-from bungeni.ui.forms.common import AddForm
-from bungeni.ui import container
 from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent
 from bungeni.core.translation import get_default_language
@@ -193,7 +191,7 @@ class ReportView(form.PageForm):
                     adapters=self.adapters, ignore_request=ignore_request)
     def update(self):
         super(ReportView, self).update()
-        set_widget_errors(self.widgets, self.errors)
+        forms.common.set_widget_errors(self.widgets, self.errors)
 
     def validate(self, action, data):
         errors = super(ReportView, self).validate(action, data)
@@ -446,7 +444,7 @@ class DownloadODT(DownloadDocument):
             return d["odt"].__str__()
 
 
-class  DownloadPDF(DownloadDocument):
+class DownloadPDF(DownloadDocument):
     #appy.Renderer expects a file name of a file that does not exist.
     tempFileName = os.path.dirname(__file__) + "/tmp/%f.pdf" % (time.time())
     error_template = ViewPageTemplateFile("templates/report_error.pt")
@@ -563,8 +561,6 @@ class SaveReportView(form.PageForm):
         session.add(report)
         session.flush()
         notify(ObjectCreatedEvent(report))
-        # !+INVALIDATE(mr, sep-2010)
-        container.invalidate_caches_for("Report", "add")
         if "sittings" in data.keys():
             try:
                 ids = data["sittings"].split(",")
@@ -576,8 +572,6 @@ class SaveReportView(form.PageForm):
                     sr.sitting = sitting
                     session.add(sr)
                     notify(ObjectCreatedEvent(report))
-                    # !+INVALIDATE(mr, sep-2010) via an event...
-                    container.invalidate_caches_for("SittingReport", "add")
             except:
                 #if no sittings are present in report or some other error occurs
                 pass
@@ -658,5 +652,4 @@ def default_reports(sitting, event):
         session.add(sr)
         session.commit()
         notify(ObjectCreatedEvent(sr))
-        container.invalidate_caches_for("Report", "add")
-        container.invalidate_caches_for("SittingReport", "add")
+

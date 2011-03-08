@@ -577,6 +577,43 @@ def get_CacheByClassName():
     return CacheByClassName
 CacheByClassName = get_CacheByClassName()
 
+# keys should be names of event classes, such as those defined in 
+# zope.lifecycleevent or subclasses thereof. 
+EVENT_TYPE_TO_ACTION_MAP = {
+    "ObjectCreatedEvent": "add",
+    "ObjectAddedEvent": "add",
+    "ObjectRemovedEvent": "delete",
+    "ObjectModifiedEvent": "edit",
+    "WorkflowTransitionEvent": "transition",
+}
+def on_invalidate_cache_event(instance, event):
+    """Invalidate caches affected by creation of this instance.
+    See similar handler: core.workflows.initializeWorkflow
+    """
+    log.warn("[invalidate_cache_event] %s / %s" % (instance, event))
+    class_name = event.object.__class__.__name__
+    event_name = event.__class__.__name__ # !+DRAFT_CACHE_INVALIDATION
+    try:
+        invalidate_caches_for(class_name, EVENT_TYPE_TO_ACTION_MAP[event_name])
+    except KeyError:
+        log.error("[invalidate_cache_event] No action declared for [%s]" % (
+            event_name))
+
+# !+DRAFT_CACHE_INVALIDATION(mr, mar-2010) only JSON Listings that are 
+# publically viewable are cached. Most bungeni domain types are created into 
+# a "draft" workflow state that is NOT public, so in theory any existing cache 
+# of listings of public items is NOT affected. Plus, the required subsequent 
+# modification of the item (to transit the item into a public state) will 
+# anyway invalidate the cache. Should refine the cache invalidation logic 
+# to also consider (type, status, action).
+
+# !+EVENT_DRIVEN_CACHE_INVALIDATION(mr, mar-2011) invalidation of JSON Listing 
+# caches should be event driven--all actions which should result in the 
+# invalidation of one or more caches should fire an appropriate, and the 
+# on_invalidate_cache_event() handler adjusted to take it into account.
+# 
+# There should be no direct calls to invalidate_caches_for() anywhere 
+# throughout bungeni code.
 
 def invalidate_caches_for(class_name, action):
     """Invalidate caches items in which may be made stale by modificatoin 

@@ -19,11 +19,11 @@
           ore.workflow.interfaces.IWorkflowTransitionEvent"
      />
 
-  <subscriber
-     handler=".events.initializeWorkflow"
-     for="bungeni.alchemist.interfaces.IAlchemistContent
-          zope.lifecycleevent.IObjectCreatedEvent"
-     />
+    <subscriber handler=".events.initializeWorkflow"
+        for="bungeni.alchemist.interfaces.IAlchemistContent
+            zope.lifecycleevent.IObjectCreatedEvent"
+    />
+
 
   <!-- silly versioning thingy for wf runtime-->
   
@@ -58,10 +58,10 @@
      provides="ore.workflow.interfaces.IWorkflow"
      factory=".adapters.VersionWorkflowAdapter" />
      
-  <subscriber
-     handler=".events.initializeWorkflow"
-     for="bungeni.models.interfaces.IVersion
-          zope.lifecycleevent.IObjectCreatedEvent" />
+    <subscriber handler=".events.initializeWorkflow"
+        for="bungeni.models.interfaces.IVersion
+            zope.lifecycleevent.IObjectCreatedEvent"
+    />
 
 
   <!-- group workflow -->
