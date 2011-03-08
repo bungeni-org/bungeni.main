@@ -1,0 +1,235 @@
+Setup
+-----
+Setting up Database Connection and Utilities:
+   >>> from zope.component import getMultiAdapter
+   >>> from bungeni import models as model
+   >>> import datetime
+   >>> import bungeni.models.testing
+   >>> db = bungeni.models.testing.setup_db()
+   >>> from bungeni.alchemist import Session
+   >>> session = Session()
+
+Initialise User
+---------------
+   >>> mp_1 = model.User(u"mp_1", 
+   ...        first_name=u"a", 
+   ...        last_name=u'ab', 
+   ...        email=u"mp1@example.com", 
+   ...        date_of_birth=datetime.datetime.now(),
+   ...        language="en",
+   ...        gender='M')
+
+Initialise Group
+----------------
+
+  >>> parliament = model.Parliament(short_name=u"p_1",
+  ...                               start_date=datetime.datetime.now(), 
+  ...                               election_date=datetime.datetime.now())
+  >>> parliament.language = "en"
+  >>> session.add( parliament )
+  >>> session.flush()
+
+Initialise a report
+-------------------
+   >>> from bungeni.models import domain
+   >>> report = domain.Report()
+   >>> report.body_text = '<div class=reporttitle>THIS IS A TEST</div>'
+   >>> report.start_date = datetime.datetime.now()
+   >>> report.end_date = datetime.datetime.now()
+   >>> report.note = "This is a test"
+   >>> report.short_name = "Sitting Agenda"
+   >>> report.owner = mp_1
+   >>> report.language = "en"
+   >>> report.created_date = datetime.datetime.now()
+   >>> report.group = parliament
+   >>> session.add(report)
+   >>> session.flush()
+   
+Generate ODT
+------------
+   >>> from bungeni.ui.downloaddocument import ReportODT
+   >>> from zope.publisher.browser import TestRequest
+   >>> request = TestRequest()
+   >>> reportODT = ReportODT(report, request)
+   
+To check if ODT is properly generated, we check if the content type of the
+response is set
+   >>> output = reportODT()
+   >>> request.response.getHeader('Content-type')
+   'application/vnd.oasis.opendocument.text'
+
+Generate PDF
+------------
+   >>> from bungeni.ui.downloaddocument import ReportPDF
+   >>> from zope.publisher.browser import TestRequest
+   >>> request = TestRequest()
+   
+To check if PDF is properly generated, we check if the content type of the
+response is set
+
+   >>> reportPDF = ReportPDF(report, request)
+   >>> output = reportPDF()
+   >>> request.response.getHeader('Content-type')
+   'application/pdf'
+
+Initialise Bill Type
+--------------------
+   >>> bill_type = domain.BillType()
+   >>> bill_type.bill_type_name = u"Public Bill"
+   >>> session.add(bill_type)
+   >>> session.flush()
+   >>> bill_type.bill_type_id
+   1L
+  
+Initialise a Bill
+-----------------
+   >>> bill = domain.Bill()
+   >>> bill.body_text = '<div class=reporttitle>THIS IS A TEST</div>'
+   >>> bill.short_name = "Test Bill"
+   >>> bill.owner = mp_1
+   >>> bill.bill_type_id = bill_type.bill_type_id
+   >>> bill.language = "en"
+   >>> bill.created_date = datetime.datetime.now()
+   >>> bill.group = parliament
+   >>> session.add(bill)
+   >>> session.flush()
+
+Bill ODT
+--------
+   >>> from bungeni.ui.downloaddocument import BungeniContentODT
+   >>> from zope.publisher.browser import TestRequest
+   >>> request = TestRequest()   
+   >>> documentODT = BungeniContentODT(bill, request)
+   >>> output = documentODT()
+   >>> request.response.getHeader('Content-type')
+   'application/vnd.oasis.opendocument.text'
+   
+Bill PDF
+--------
+   >>> from bungeni.ui.downloaddocument import BungeniContentPDF
+   >>> request = TestRequest()
+   >>> documentPDF = BungeniContentPDF(bill, request)
+   >>> output = documentPDF()
+   >>> request.response.getHeader('Content-type')
+   'application/pdf'
+
+Initialise a Motion
+-------------------
+   >>> motion = domain.Motion()
+   >>> motion.body_text = '<div class=reporttitle>THIS IS A TEST</div>'
+   >>> motion.short_name = "Test motion"
+   >>> motion.owner = mp_1
+   >>> motion.language = "en"
+   >>> motion.created_date = datetime.datetime.now()
+   >>> motion.group = parliament
+   >>> session.add(motion)
+   >>> session.flush()
+
+Motion ODT
+----------
+   >>> request = TestRequest()
+   >>> documentODT = BungeniContentODT(motion, request)
+   >>> output = documentODT()
+   >>> request.response.getHeader('Content-type')
+   'application/vnd.oasis.opendocument.text'
+   
+Motion PDF
+----------
+   >>> request = TestRequest()
+   >>> documentPDF = BungeniContentPDF(motion, request)
+   >>> output = documentPDF()
+   >>> request.response.getHeader('Content-type')
+   'application/pdf'
+
+Initialise a Tabled Document
+----------------------------
+   >>> tableddocument = domain.TabledDocument()
+   >>> tableddocument.body_text = '<div class=reporttitle>THIS IS A TEST</div>'
+   >>> tableddocument.short_name = "Test Tabled Document"
+   >>> tableddocument.owner = mp_1
+   >>> tableddocument.language = "en"
+   >>> tableddocument.created_date = datetime.datetime.now()
+   >>> tableddocument.group = parliament
+   >>> session.add(tableddocument)
+   >>> session.flush()
+
+Tabled Document ODT
+-------------------
+   >>> request = TestRequest()
+   >>> documentODT = BungeniContentODT(tableddocument, request)
+   >>> output = documentODT()
+   >>> request.response.getHeader('Content-type')
+   'application/vnd.oasis.opendocument.text'
+   
+Tabled Document PDF
+-------------------
+   >>> request = TestRequest()
+   >>> documentPDF = BungeniContentPDF(tableddocument, request)
+   >>> output = documentPDF()
+   >>> request.response.getHeader('Content-type')
+   'application/pdf'
+
+Initialise an Agenda Item
+-------------------------
+   >>> agendaitem = domain.AgendaItem()
+   >>> agendaitem.body_text = '<div class=reporttitle>THIS IS A TEST</div>'
+   >>> agendaitem.short_name = "Sitting Agenda"
+   >>> agendaitem.owner = mp_1
+   >>> agendaitem.language = "en"
+   >>> agendaitem.created_date = datetime.datetime.now()
+   >>> agendaitem.group = parliament
+   >>> session.add(agendaitem)
+   >>> session.flush()
+
+Agenda Item ODT
+---------------
+   >>> from zope.publisher.browser import TestRequest
+   >>> request = TestRequest()
+   >>> documentODT = BungeniContentODT(agendaitem, request)
+   >>> output = documentODT()
+   >>> request.response.getHeader('Content-type')
+   'application/vnd.oasis.opendocument.text'
+   
+Agenda Item PDF
+---------------
+   >>> from zope.publisher.browser import TestRequest
+   >>> request = TestRequest()
+   >>> documentPDF = BungeniContentPDF(agendaitem, request)
+   >>> output = documentPDF()
+   >>> request.response.getHeader('Content-type')
+   'application/pdf'   
+
+Initialise a Question
+-------------------------
+   >>> question = domain.Question()
+   >>> agendaitem.body_text = '<div class=reporttitle>THIS IS A TEST</div>'
+   >>> question.short_name = "Sitting Agenda"
+   >>> question.owner = mp_1
+   >>> question.language = "en"
+   >>> question.created_date = datetime.datetime.now()
+   >>> question.group = parliament
+   >>> session.add(question)
+   >>> session.flush()
+
+Question ODT
+------------
+   >>> from zope.publisher.browser import TestRequest
+   >>> request = TestRequest()
+   >>> documentODT = BungeniContentODT(question, request)
+   >>> output = documentODT()
+   >>> request.response.getHeader('Content-type')
+   'application/vnd.oasis.opendocument.text'
+   
+Question PDF
+------------
+   >>> from zope.publisher.browser import TestRequest
+   >>> request = TestRequest()
+   >>> documentPDF = BungeniContentPDF(question, request)
+   >>> output = documentPDF()
+   >>> request.response.getHeader('Content-type')
+   'application/pdf'      
+      
+Cleanup
+--------
+   >>> session.flush()
+   >>> session.close()

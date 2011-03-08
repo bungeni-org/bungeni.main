@@ -16,37 +16,8 @@ from bungeni.core.workflows import adapters
 
 import forms.test_dates
 
-zcml_slug = """
-<configure xmlns="http://namespaces.zope.org/zope"
-    xmlns:db="http://namespaces.objectrealms.net/rdb"
-    xmlns:bungeni="http://namespaces.bungeni.org/zope"
-    xmlns:i18n="http://namespaces.zope.org/i18n"
-    xmlns:browser="http://namespaces.zope.org/browser"
-    i18n_domain="bungeni">
-    
-    <include package="bungeni.alchemist" file="meta.zcml"/>
-    <include package="alchemist.catalyst" file="meta.zcml"/>
-    <include package="zope.component" file="meta.zcml" />
-    <include package="zope.app.component" file="meta.zcml" />
-    <include package="zope.app.publisher" file="meta.zcml" />
-    <!-- Setup Database Connection -->
-    <db:engine name="bungeni-db"
-        url="postgres://localhost/bungeni-test"
-    />
-    <db:bind engine="bungeni-db"
-        metadata="bungeni.models.metadata"
-    />
-    
-    <db:bind engine="bungeni-db"
-        metadata="bungeni.alchemist.security.metadata"
-    />
-    <include package="zope.i18n" file="meta.zcml" />
-    <!-- Setup Core Model --> 
-    <include package="bungeni.ui.descriptor" />
-    <include package="bungeni.ui" file="meta.zcml" />
-    <include package="bungeni_custom" file="openoffice.zcml" />
-    <include package="bungeni.core" file="meta.zcml" />
-    <bungeni:fs fs_path="fs" />
+zcml_slug = """<configure xmlns="http://namespaces.zope.org/zope">
+    <include package="bungeni.ui" file="ftesting.zcml"/>
 </configure>
 """
 
@@ -61,10 +32,9 @@ def tearDown(test):
 
 def test_suite():
     doctests = (
-        "forms/readme.txt",
-        "report.txt",
-    )
-
+                'forms/readme.txt',
+                'downloaddocument.txt',
+                )
     docfiles = (
         "bungeni.ui.forms.forms",
     )

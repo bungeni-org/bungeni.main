@@ -1,33 +1,34 @@
-import re
 import os
-from appy.pod.renderer import Renderer
-from zope.publisher.browser import BrowserView
 import time
+import operator
 import datetime
 timedelta = datetime.timedelta
 import tempfile
-from zope.security.proxy import removeSecurityProxy
-import htmlentitydefs
-from xml.dom.minidom import parseString
-from bungeni.ui import zcml
-from interfaces import IOpenOfficeConfig
-from zope.component import getUtility
 from bungeni.alchemist import Session
 from bungeni.models import domain
-from zope import interface
-from zope.formlib import form
-from zope.formlib import namedtemplate
-from zope.app.pagetemplate import ViewPageTemplateFile
-from zope import schema
+from bungeni.models.utils import get_db_user_id
+from bungeni.models.utils import get_current_parliament
+from bungeni.models.interfaces import IGroupSitting
+from bungeni.server.interfaces import ISettings
+from bungeni.ui import zcml
 from bungeni.ui.widgets import SelectDateWidget
 from bungeni.ui.calendar import utils
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import misc, url, queries, debug
 from bungeni.ui import forms
 from bungeni.ui import vocabulary
+from bungeni.ui.forms.common import AddForm
+from bungeni.ui import container
 from bungeni.core.location import location_wrapped
 from bungeni.core.interfaces import ISchedulingContext
-import zope.securitypolicy.interfaces
+from bungeni.core.translation import get_default_language
+from zope.security.proxy import removeSecurityProxy
+from zope.publisher.browser import BrowserView
+from zope import interface
+from zope.formlib import form
+from zope.formlib import namedtemplate
+from zope.app.pagetemplate import ViewPageTemplateFile
+from zope import schema
 from zope.schema.vocabulary import SimpleVocabulary
 from zope.app.form.browser import MultiCheckBoxWidget as _MultiCheckBoxWidget
 from sqlalchemy.orm import eagerload
@@ -40,8 +41,9 @@ from bungeni.models.interfaces import IGroupSitting
 from bungeni.server.interfaces import ISettings
 from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent
-from bungeni.core.translation import get_default_language
-import tidy
+from sqlalchemy.orm import eagerload
+from sqlalchemy.sql import expression as sql
+
 class TIME_SPAN:
     daily = _(u"Daily")
     weekly = _(u"Weekly")
@@ -116,7 +118,7 @@ class ReportView(form.PageForm):
 
     main_result_template = ViewPageTemplateFile("templates/main_reports.pt")
     result_template = ViewPageTemplateFile("templates/reports.pt")
-
+    display_minutes = None
     def __init__(self, context, request):
         super(ReportView, self).__init__(context, request)
 
@@ -333,169 +335,6 @@ class SchedulingContextMinutesReportView(ReportView):
     display_minutes = True
     note = ""
 
-def unescape(text):
-    def fixup(m):
-        text = m.group(0)
-        if text[:2] == "&#":
-            # character reference
-            try:
-                if text[:3] == "&#x":
-                    return unichr(int(text[3:-1], 16))
-                else:
-                    return unichr(int(text[2:-1]))
-            except ValueError:
-                pass
-        else:
-            # named entity
-            try:
-                text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
-            except KeyError:
-                pass
-        return text # leave as is
-    return re.sub("&#?\w+;", fixup, text)
-
-class DownloadDocument(BrowserView):
-
-    #path to the odt template
-    odt_file = os.path.dirname(__file__) + "/templates/agenda.odt"
-    def __init__(self, context, request):
-        self.report = removeSecurityProxy(context)
-        super(DownloadDocument, self).__init__(context, request)
-
-    def cleanupText(self):
-        """This method cleans up the text of the report using libtidy"""
-        body_text = self.report.body_text
-        #utidylib options
-        options = dict(output_xhtml=1,
-                    add_xml_decl=1,
-                    indent=1,
-                    tidy_mark=0,
-                    char_encoding="utf8",
-                    quote_nbsp=0)
-        #remove html entities from the text
-        ubody_text = unescape(body_text)
-        #clean up xhtml using tidy
-        aftertidy = tidy.parseString(ubody_text.encode("utf8"), **options)
-        #tidy returns a <tidy.lib._Document object>
-        dom = parseString(str(aftertidy))
-        nodeList = dom.getElementsByTagName("body")
-        text = ""
-        for childNode in nodeList[0].childNodes:
-            text += childNode.toxml()
-        dom.unlink()
-        return text
-
-class DownloadODT(DownloadDocument):
-    #appy.Renderer expects a file name of a file that does not exist.
-    tempFileName = os.path.dirname(__file__) + "/tmp/%f.odt" % (time.time())
-    error_template = ViewPageTemplateFile("templates/report_error.pt")
-    def __call__(self):
-        
-        session = Session()
-        d = dict([(f.file_title, f.file_data) for f in self.report.attached_files])
-        if "odt" not in d.keys():
-            params = {}
-            params["body_text"] = self.cleanupText()
-            renderer = Renderer(self.odt_file, params, self.tempFileName)
-            try:
-                renderer.run()
-            except:
-                return self.error_template()
-            f = open(self.tempFileName, "rb")
-            doc = f.read()
-            f.close()
-            os.remove(self.tempFileName)
-            file_type = session.query(domain.AttachedFileType) \
-                               .filter(domain.AttachedFileType \
-                                                .attached_file_type_name 
-                                            == "annex") \
-                               .first()
-            if file_type is None:
-                file_type = domain.AttachedFileType()
-                file_type.attached_file_type_name = "annex"
-                file_type.language = self.report.language
-                session.add(file_type)
-                session.flush()
-            attached_file = domain.AttachedFile()
-            attached_file.file_title = "odt"
-            attached_file.file_data = doc
-            attached_file.language = self.report.language
-            attached_file.type = file_type
-            self.report.attached_files.append(attached_file)
-            session.add(self.report)
-            session.commit()
-            notify(ObjectCreatedEvent(attached_file))
-            self.request.response.setHeader("Content-type",
-                                        "application/vnd.oasis.opendocument.text")
-            self.request.response.setHeader("Content-disposition",
-                                        'inline;filename="' +
-                                        removeSecurityProxy(self.report.short_name) 
-                                        + "_" + removeSecurityProxy(self.report.start_date) \
-                                        .strftime("%Y-%m-%d") + '.odt"')
-            return doc
-        else:
-            self.request.response.setHeader("Content-type",
-                                        "application/vnd.oasis.opendocument.text")
-            self.request.response.setHeader("Content-disposition",
-                                        'inline;filename="' +
-                                        removeSecurityProxy(self.report.short_name) 
-                                        + "_" + removeSecurityProxy(self.report.start_date) \
-                                        .strftime("%Y-%m-%d") + '.odt"')
-            return d["odt"].__str__()
-
-
-class DownloadPDF(DownloadDocument):
-    #appy.Renderer expects a file name of a file that does not exist.
-    tempFileName = os.path.dirname(__file__) + "/tmp/%f.pdf" % (time.time())
-    error_template = ViewPageTemplateFile("templates/report_error.pt")
-    def __call__(self):
-        session = Session()
-        d = dict([(f.file_title, f.file_data) for f in self.report.attached_files])
-        if "pdf" not in d.keys():
-            params = {}
-            params["body_text"] = self.cleanupText()
-            openofficepath = getUtility(IOpenOfficeConfig).getPath()
-            renderer = Renderer(self.odt_file, params, self.tempFileName, 
-                                            pythonWithUnoPath=openofficepath)
-            try:
-                renderer.run()
-            except:
-                return self.error_template()
-            f = open(self.tempFileName, "rb")
-            doc = f.read()
-            f.close()
-            os.remove(self.tempFileName)
-            file_type = session.query(domain.AttachedFileType)\
-                               .filter(domain.AttachedFileType.attached_file_type_name 
-                                            == "annex")\
-                               .first()
-            if file_type is None:
-                file_type = domain.AttachedFileType()
-                file_type.attached_file_type_name = "annex"
-                file_type.language = self.report.language
-                session.add(file_type)
-                session.flush()
-            attached_file = domain.AttachedFile()
-            attached_file.file_title = "pdf"
-            attached_file.file_data = doc
-            attached_file.language = self.report.language
-            attached_file.type = file_type
-            self.report.attached_files.append(attached_file)
-            session.add(self.report)
-            session.commit()
-            notify(ObjectCreatedEvent(attached_file))
-            self.request.response.setHeader("Content-type", "application/pdf")
-            self.request.response.setHeader("Content-disposition", 'inline;filename="'
-                            + removeSecurityProxy(self.report.short_name) + "_"
-                            + removeSecurityProxy(self.report.start_date).strftime("%Y-%m-%d") + '.pdf"')
-            return doc
-        else:
-            self.request.response.setHeader("Content-type", "application/pdf")
-            self.request.response.setHeader("Content-disposition", 'inline;filename="'
-                            + removeSecurityProxy(self.report.short_name) + "_"
-                            + removeSecurityProxy(self.report.start_date).strftime("%Y-%m-%d") + '.pdf"')
-            return d["pdf"].__str__()
-
 class SaveReportView(form.PageForm):
 
     def __init__(self, context, request):
@@ -652,4 +491,3 @@ def default_reports(sitting, event):
         session.add(sr)
         session.commit()
         notify(ObjectCreatedEvent(sr))
-

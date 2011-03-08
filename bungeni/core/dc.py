@@ -83,6 +83,8 @@ class QuestionDescriptiveProperties(DescriptiveProperties):
         context = session.merge(removeSecurityProxy(self.context))
         text = "%s %s %s" % (_("Submitted by"),
                             context.owner.first_name, context.owner.last_name)
+        if context.ministry:
+            text += " to %s" % IDCDescriptiveProperties(context.ministry).title
         if context.admissible_date:
             text += " (%s %s)" % (_(u"Approved on"),
                 self.formatDate(context.admissible_date))

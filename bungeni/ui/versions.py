@@ -71,9 +71,9 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
     formatter_factory = TableFormatter
     
     # evoque
-    #render = z3evoque.PageViewTemplateFile("version.html")
+    render = z3evoque.PageViewTemplateFile("version.html")
     # zpt
-    render = ViewPageTemplateFile("templates/version.pt")
+    #render = ViewPageTemplateFile("templates/version.pt")
     
     diff_view = None
     

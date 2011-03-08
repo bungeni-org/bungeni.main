@@ -120,19 +120,21 @@ class OfficeRoles(object):
         roles = getUtilitiesFor(IRole, app)
         for name, role in roles:
             #Roles that must not be assigned to users in an office
-            if name not in ['bungeni.Anonymous',
-                            'bungeni.Authenticated',
-                            'bungeni.Owner',
-                            'zope.Manager',
-                            'zope.Member',
-                            'bungeni.MP',
-                            'bungeni.Minister',
-                            'bungeni.Admin',
+            if name not in ["bungeni.Anonymous",
+                            "bungeni.Authenticated",
+                            "bungeni.Owner",
+                            "zope.Manager",
+                            "zope.Member",
+                            "bungeni.MP",
+                            "bungeni.Minister",
+                            "bungeni.Admin",
                             ]:
                 terms.append(vocabulary.SimpleTerm(name, name, name))
         return vocabulary.SimpleVocabulary(terms)
 
 office_roles = OfficeRoles()
+
+
         
 class DatabaseSource(bungeni.alchemist.vocabulary.DatabaseSource):
     
@@ -158,6 +160,7 @@ ParliamentSource = DatabaseSource(
         ob.full_name,
         ob.start_date and ob.start_date.strftime("%Y/%m/%d") or "?",
         ob.end_date and ob.end_date.strftime("%Y/%m/%d") or "?"))
+
 
 
 class SpecializedSource(object):
@@ -241,6 +244,42 @@ class SittingTypes(SpecializedSource):
                         obj.end_time),
                 ))
         return vocabulary.SimpleVocabulary(terms)
+
+class AttachedFileTypeSource(SpecializedSource):
+    """Returns a vocabulary of attached file types"""
+    def __init__(self): 
+        pass
+        
+    def constructQuery(self, context):
+        session= Session()
+        return session.query(domain.AttachedFileType)
+        
+    def __call__(self, context=None):
+        query = self.constructQuery(context)
+        results = query.all()
+        trusted=removeSecurityProxy(context)
+        type_id = getattr(trusted, "attached_file_type_id", None)
+        terms = []
+        if type_id:
+            session = Session()
+            attached_file_type = session.query(domain.AttachedFileType).get(type_id)
+            terms.append( 
+                        vocabulary.SimpleTerm( 
+                            value = getattr(attached_file_type,"attached_file_type_id"), 
+                            token = getattr(attached_file_type,"attached_file_type_id"),
+                            title = getattr(attached_file_type,"attached_file_type_name"))
+                         )       
+            return vocabulary.SimpleVocabulary( terms )
+        else:
+            for ob in results:
+                if ob.attached_file_type_name not in ["system"]:
+                    terms.append( 
+                        vocabulary.SimpleTerm( 
+                            value = getattr(ob,"attached_file_type_id"), 
+                            token = getattr(ob,"attached_file_type_id"),
+                            title = getattr(ob,"attached_file_type_name"),
+                        ))        
+            return vocabulary.SimpleVocabulary( terms )
 
         
 #XXX

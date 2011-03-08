@@ -1478,11 +1478,8 @@ class AttachedFileDescriptor(ModelDescriptor):
         ),
         Field(name="attached_file_type_id",
             property=schema.Choice(title=_(u"File type"),
-                source=vocabulary.DatabaseSource(domain.AttachedFileType,
-                    token_field="attached_file_type_id",
-                    title_field="attached_file_type_name",
-                    value_field="attached_file_type_id"
-                ),
+                description=_(u"Type of attachment"),
+                source=vocabulary.AttachedFileTypeSource(),
             ),
         ),
         Field(name="file_name",

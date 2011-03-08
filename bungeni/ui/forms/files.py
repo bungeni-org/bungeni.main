@@ -9,7 +9,7 @@ from zope.viewlet import viewlet
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.security.management import getInteraction
 import bungeni.ui.utils as ui_utils
-
+from zope.security.proxy import removeSecurityProxy
 
 class LibraryViewlet (viewlet.ViewletBase):
 
@@ -19,7 +19,11 @@ class LibraryViewlet (viewlet.ViewletBase):
     for_display = True
 
     def __init__(self, context, request, view, manager):
-        self.context = context.attached_files
+        self.context = []
+        trusted = removeSecurityProxy(context)
+        for f in trusted.attached_files:
+            if f.type.attached_file_type_name != "system":
+                self.context.append(f)
         self.request = request
         self.__parent__ = context
         self.manager = manager

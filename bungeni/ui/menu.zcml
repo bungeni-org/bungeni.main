@@ -1504,6 +1504,41 @@
         order="42"
     />
     <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IBill"
+        action="pdf"
+        title="download pdf"
+        permission="zope.View"
+        order="42"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.ITabledDocument"
+        action="pdf"
+        title="download pdf"
+        permission="zope.View"
+        order="42"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IAgendaItem"
+        action="pdf"
+        title="download pdf"
+        permission="zope.View"
+        order="42"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IQuestion"
+        action="pdf"
+        title="download pdf"
+        permission="zope.View"
+        order="42"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IMotion"
+        action="pdf"
+        title="download pdf"
+        permission="zope.View"
+        order="42"
+    />
+    <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IReport"
         action="odt"
         title="download odt"
@@ -1512,18 +1547,48 @@
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IReport4Sitting"
-        action="pdf"
-        title="download pdf"
-        permission="zope.View"
-        order="42"
-    />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IReport4Sitting"
         action="odt"
         title="download odt"
         permission="zope.View"
         order="43"
     />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IMotion"
+        action="odt"
+        title="download odt"
+        permission="zope.View"
+        order="43"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IBill"
+        action="odt"
+        title="download odt"
+        permission="zope.View"
+        order="43"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.ITabledDocument"
+        action="odt"
+        title="download odt"
+        permission="zope.View"
+        order="43"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IQuestion"
+        action="odt"
+        title="download odt"
+        permission="zope.View"
+        order="43"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IAgendaItem"
+        action="odt"
+        title="download odt"
+        permission="zope.View"
+        order="43"
+    />
+    
+    
     
    <!--browser:menuItem
      menu="context_actions"

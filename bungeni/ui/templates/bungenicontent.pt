@@ -1,0 +1,24 @@
+<!-- This template is used to generate both the ODT and PDF of bungeni content -->
+<span i18n:domain="bungeni.ui">
+    <p class="documentmaintitle">
+        <span tal:replace="view/document/group/dc:title | nothing"/>
+    </p>
+    <p class="documenttype">
+        <span i18n:translate="" tal:replace="view/document/type"/>
+    </p>
+    <p class="documenttitle" tal:condition="view/document/dc:title">
+        <span tal:replace="view/document/dc:title"/>
+    </p>
+    <p class="documentdescription" tal:condition="view/document/dc:description">
+        <span tal:replace="view/document/dc:description" /> 
+    </p>
+    <p class="documentregistrynumber" tal:condition="view/document/registry_number">
+        <span i18n:translate="">Registry Number</span>:
+        <span tal:replace="view/document/registry_number"/>
+    </p>
+    <p class="documentlanguage" tal:condition="view/document/language">
+        <span i18n:translate="">Language</span>:
+        <span tal:replace="view/document/language | nothing"/>
+    </p>
+    <span tal:replace="view/document/body_text | nothing"/>
+</span>
