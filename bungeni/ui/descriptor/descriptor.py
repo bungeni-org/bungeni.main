@@ -1622,8 +1622,8 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
                     "for this item"),
                 source=vocabulary.YesNoSource
             ),
-            edit_widget=widgets.CustomRadioWidget,
-            add_widget=widgets.CustomRadioWidget,
+            edit_widget=widgets.CheckBoxWidget,
+            add_widget=widgets.CheckBoxWidget,
         ),
     ]
 

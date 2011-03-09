@@ -13,6 +13,7 @@ import zope.app.form.browser.textwidgets
 from zope.app.form.browser.textwidgets import TextAreaWidget, FileWidget
 from zope.app.form.browser.itemswidgets import RadioWidget, \
     SingleDataHelper, ItemsWidgetBase, ItemsEditWidgetBase
+from zope.app.form.browser.boolwidgets import CheckBoxWidget
 
 from zope.i18n import translate
 
