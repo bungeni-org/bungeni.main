@@ -13,7 +13,7 @@ $URL$
   </dt>
   
   <dd class="portletItem lastItem"
-      tal:define="images nocall: context/++resource++ui-images">
+      tal:define="images nocall: context/++resource++portal/images">
     
     <tal:ignore condition="False">
       <metal:subtree define-macro="subtree">

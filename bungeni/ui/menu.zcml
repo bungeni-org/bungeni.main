@@ -709,13 +709,6 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="99"
     />
-    <!-- !+ ??: 
-    should be using:
-        @@/ui-images/ 
-    notation, instead of:
-        ++resource++ui-images/
-    replace everywhere here...
-    -->
     
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.domain.ParliamentContainer"

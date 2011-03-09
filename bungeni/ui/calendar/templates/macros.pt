@@ -80,8 +80,7 @@
                  </form>
             </div>
           </div>
-          <table tal:define="images nocall: context/++resource++ui-images"
-                 id="scheduling-table" class="grid listing items-for-scheduling">
+          <table id="scheduling-table" class="grid listing items-for-scheduling">
             <thead tal:condition="options/items">
               <tr>
                 <th i18n:translate="">Item</th>

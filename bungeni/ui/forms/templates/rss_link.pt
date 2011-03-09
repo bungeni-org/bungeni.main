@@ -1,12 +1,12 @@
 <tal:block i18n:domain="bungeni.core" tal:define="subscribed view/already_subscribed">
 	<tal:if condition="not:subscribed">
 	    <a class="rss_subscribe" href="subscribe" i18n:attributes="title Subscribe">
-	    	<img tal:attributes="src context/++resource++ui-images/icon_rss.gif" alt="rss" />
+	    	<img tal:attributes="src context/++resource++portal/images/subscribe.png" alt="rss" />
 	    </a>
 	</tal:if>
 	<tal:if condition="subscribed">
 		<a href="unsubscribe" i18n:attributes="title Unsubscribe">
-			<img tal:attributes="src context/++resource++ui-images/icon_unsubscribe.png" alt="unsubscribe" />
+			<img tal:attributes="src context/++resource++portal/images/unsubscribe.png" alt="unsubscribe" />
 		</a>
 	</tal:if>
 </tal:block>

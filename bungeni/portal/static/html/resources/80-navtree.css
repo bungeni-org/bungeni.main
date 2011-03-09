@@ -47,11 +47,6 @@ li.navTreeItem {
     padding: 0 0 0 0;
     margin: 0;
     text-indent: -0em;
-    /* !+ move icon image from html to css:
-    background-image: url(/@@/ui-images/icon_container.gif);
-    background-repeat: no-repeat;
-    background-position: 0 .5em;
-    */
 }
 .navTreeItem a,
 dd.portletItem .navTreeItem a {
