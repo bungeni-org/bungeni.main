@@ -3,10 +3,8 @@ from bungeni.core.workflows import utils
 from bungeni.core.workflows import dbutils
 from bungeni.models.utils import get_principal_id
 
-class conditions(object):
-    @staticmethod
-    def is_scheduled(info, context):
-        return dbutils.isItemScheduled(context.bill_id)
+class conditions(utils.conditions):
+    pass
 
 class actions(object):
     @staticmethod
@@ -14,20 +12,18 @@ class actions(object):
         utils.setParliamentId(info, context)
         user_id = get_principal_id()
         if not user_id:
-            user_id ='-'
+            user_id = "-"
         zope.securitypolicy.interfaces.IPrincipalRoleMap(context
-                        ).assignRoleToPrincipal(u'bungeni.Owner', user_id)
-        utils.setParliamentId(info, context)
+                        ).assignRoleToPrincipal("bungeni.Owner", user_id)
         owner_id = utils.getOwnerId(context)
-        if owner_id and (owner_id!=user_id):
+        if owner_id and (owner_id != user_id):
             zope.securitypolicy.interfaces.IPrincipalRoleMap(context 
-                ).assignRoleToPrincipal(u'bungeni.Owner', owner_id)
+                ).assignRoleToPrincipal("bungeni.Owner", owner_id)
     
     @staticmethod
     def submit(info, context):
         utils.setBillPublicationDate(info, context)
-        utils.createVersion(info, context,
-            message="New version on workflow transition to: submit")
+        utils.createVersion(info, context)
         utils.setRegistryNumber(info, context)
     
     @staticmethod

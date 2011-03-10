@@ -5,15 +5,14 @@ from bungeni.core.workflows.notification import Notification
 from bungeni.core.workflows import interfaces
 from bungeni.core import globalsettings as prefs
 from bungeni.core.i18n import _
-import zope.securitypolicy.interfaces
-from bungeni.core.workflows import dbutils, utils
+#import zope.securitypolicy.interfaces
+from bungeni.core.workflows import utils
 
-class conditions(object):
-    
-    @staticmethod
-    def is_scheduled(info, context):
-        return dbutils.isItemScheduled(context.agenda_item_id)
-    
+
+class conditions(utils.conditions):
+    pass
+
+
 class actions(object):
     @staticmethod
     def denyAllWrites(agenda_item):
@@ -41,8 +40,7 @@ class actions(object):
     
     @staticmethod
     def submit(info, context):
-        utils.createVersion(info, context,
-            message="New version on workflow transition to: submit")
+        utils.createVersion(info, context)
         utils.setRegistryNumber(info, context)
     resubmit = submit
     
@@ -56,13 +54,11 @@ class actions(object):
     
     @staticmethod
     def complete(info, context):
-        utils.createVersion(info, context,
-            message="New version on workflow transition to: completed")
+        utils.createVersion(info, context)
     
     @staticmethod
     def approve(info, context):
-        utils.createVersion(info, context,
-            message="New Version on approval by speakers office")
+        utils.createVersion(info, context)
     
     @staticmethod
     def disapprove(info, context):

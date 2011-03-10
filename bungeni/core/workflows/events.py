@@ -44,8 +44,8 @@ def workflowTransitionEventDispatcher(event):
         interface.alsoProvides(transition_event, iface)
         notify(transition_event)
 
-def initializeWorkflow( object, event):
-    """ in response to object created events """
+def initializeWorkflow(object, event):
+    """In response to object created events."""
 
     if IWorkflow(object, None) is None:
         return
@@ -54,7 +54,7 @@ def initializeWorkflow( object, event):
     if workflow is not None:
         workflow.fireAutomatic()
 
-def fireAutomaticTransitions( object, event ):
+def fireAutomaticTransitions(object, event):
     """ fire automatic transitions for a new state """
     
     if IWorkflow(object, None) is None:

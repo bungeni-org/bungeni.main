@@ -116,7 +116,7 @@
         title="Create Tabled Document"
         source=""
         destination="draft"
-        condition=".utils.conditions.user_is_context_owner"
+        condition=".tableddocument.conditions.user_is_context_owner"
         trigger="automatic"
     />
     
@@ -124,7 +124,7 @@
         title="Create Tabled Document (On behalf of)"
         source=""
         destination="working_draft"
-        condition=".utils.conditions.user_is_not_context_owner"
+        condition=".tableddocument.conditions.user_is_not_context_owner"
         trigger="automatic"
     />
     

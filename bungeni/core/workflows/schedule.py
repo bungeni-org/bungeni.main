@@ -3,17 +3,18 @@ from zope.security.proxy import removeSecurityProxy
 from bungeni.models import domain
 from bungeni.ui.tagged import get_states
 from ore.workflow.interfaces import IWorkflowInfo
-from sqlalchemy.orm import eagerload, object_mapper
-from bungeni.core import audit
-import sqlalchemy as rdb
-def handleSchedule( object, event):
-    """ move scheduled items from to be scheduled state to schedule when draft agenda is finalised and vice versa"""
+from sqlalchemy.orm import eagerload
+
+def handleSchedule(object, event):
+    """ move scheduled items from to be scheduled state to schedule when draft 
+    agenda is finalised and vice versa
+    """
     session = Session()
     s = removeSecurityProxy(object)
-    sitting = session.query(domain.GroupSitting).options(
-                        eagerload('group_sitting_type'),
-                        eagerload('item_schedule')).get(s.group_sitting_id)
-    schedulings = map( removeSecurityProxy, sitting.item_schedule)
+    sitting = session.query(domain.GroupSitting
+        ).options(eagerload("group_sitting_type"), eagerload("item_schedule")
+        ).get(s.group_sitting_id)
+    schedulings = map(removeSecurityProxy, sitting.item_schedule)
     if sitting.status == "draft_agenda":
         for sch in schedulings:
             if sch.item.type != "heading":
@@ -29,7 +30,6 @@ def handleSchedule( object, event):
                         #when the user has requisite permissions
                         wf_info.fireTransition(transition_id, check_security=False)
                         break
-                        
     elif sitting.status == "published_agenda":
         for sch in schedulings:
             if sch.item.type != "heading":
@@ -43,3 +43,4 @@ def handleSchedule( object, event):
                     if t.destination in next_state:
                         wf_info.fireTransition(transition_id, check_security=False)
                         break
+

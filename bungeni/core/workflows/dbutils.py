@@ -20,14 +20,8 @@ def get_user_login(user_id):
 def setQuestionParliamentId(question):
     if not question.parliament_id:
         question.parliament_id = prefs.getCurrentParliamentId()
-        
-def getQuestion(question_id):
-    """
-    gets the question with id 
-    """
-    session = Session()
-    return session.query(domain.Question).get(question_id)
 
+''' !+UNUSED(mr, mar-2011)
 def getQuestionWorkflowTrail(question):
     """Return tha trail of workflow states traversed by the question.
     
@@ -53,13 +47,7 @@ def getQuestionWorkflowTrail(question):
             for xtra in xtras:
                 states.append(xtra.get("destination"))
     return states
-
-
-def setQuestionMinistryId(question):
-    if question.supplement_parent_id:
-        sq = getQuestion(question.supplement_parent_id)
-        question.ministry_id = sq.ministry_id
-        
+'''
 
 def removeQuestionFromItemSchedule(question_id):
     """
@@ -102,7 +90,7 @@ def setQuestionSerialNumber(question):
     question.question_number = connection.execute(sequence)
 
 def isItemScheduled(parliamentary_item_id):
-    return (len(getActiveItemSchedule(parliamentary_item_id))>=1)
+    return len(getActiveItemSchedule(parliamentary_item_id)) >= 1
     
 def getActiveItemSchedule(parliamentary_item_id):
     """Get active itemSchedule instances for parliamentary item.
@@ -136,19 +124,17 @@ def setMotionSerialNumber(motion):
     sequence = rdb.Sequence('motion_number_sequence')
     motion.motion_number = connection.execute(sequence)
 
-
+#
 
 class _Minister(object):
     pass
 
 ministers = rdb.join(schema.groups,schema.user_group_memberships, 
-                         schema.groups.c.group_id == schema.user_group_memberships.c.group_id
-                        ).join(
-                          schema.users,
-                          schema.user_group_memberships.c.user_id == schema.users.c.user_id)
-
+        schema.groups.c.group_id == schema.user_group_memberships.c.group_id
+    ).join(schema.users,
+        schema.user_group_memberships.c.user_id == schema.users.c.user_id)
 mapper(_Minister, ministers)
-        
+
 def getMinsiteryEmails(ministry):
     """
     returns the emails of all persons who are members of that ministry
@@ -162,23 +148,8 @@ def getMinsiteryEmails(ministry):
         addresses.append(address)
     return ' ,'.join(addresses)
 
-def deactivateGroupMemberTitles(group):
-    session = Session()
-    group_id = group.group_id
-    end_date = group.end_date
-    assert(end_date != None)
-    connection = session.connection(domain.Group)
-    group_members = rdb.select([schema.user_group_memberships.c.user_id],
-             schema.user_group_memberships.c.group_id == group_id)
-    connection.execute(schema.role_titles.update(
-                ).where(rdb.and_( 
-                    schema.role_titles.c.membership_id.in_(group_members),
-                    schema.role_titles.c.end_date == None) 
-                    ).values(end_date=end_date)
-                )
-        
+#
 
-        
 def deactivateGroupMembers(group):
     """ upon dissolution of a group all group members
     are deactivated and get the end date of the group"""
@@ -187,20 +158,36 @@ def deactivateGroupMembers(group):
     end_date = group.end_date
     assert(end_date != None)
     connection = session.connection(domain.Group)
-    connection.execute(schema.user_group_memberships.update().where(
-        rdb.and_(
-            schema.user_group_memberships.c.group_id == group_id,
-            schema.user_group_memberships.c.active_p == True)
-            ).values(active_p = False)
-        )
-    connection.execute(schema.user_group_memberships.update().where(
-        rdb.and_(
-            schema.user_group_memberships.c.group_id == group_id,
-            schema.user_group_memberships.c.end_date == None)
-            ).values(end_date = end_date)
+    connection.execute(
+        schema.user_group_memberships.update().where(
+            rdb.and_(
+                schema.user_group_memberships.c.group_id == group_id,
+                schema.user_group_memberships.c.active_p == True
+            )
+        ).values(active_p=False)
+    )
+    connection.execute(
+        schema.user_group_memberships.update().where(
+            rdb.and_(
+                schema.user_group_memberships.c.group_id == group_id,
+                schema.user_group_memberships.c.end_date == None
+            )
+        ).values(end_date=end_date)
+    )
+    def deactivateGroupMemberTitles(group):
+        group_members = rdb.select([schema.user_group_memberships.c.user_id],
+                 schema.user_group_memberships.c.group_id == group_id)
+        connection.execute(
+            schema.role_titles.update().where(
+                rdb.and_( 
+                    schema.role_titles.c.membership_id.in_(group_members),
+                    schema.role_titles.c.end_date == None
+                ) 
+            ).values(end_date=end_date)
         )
     deactivateGroupMemberTitles(group)
-    
+
+
 def endChildGroups(group):
     """ upon dissolution of a parliament for all committees,
     offices and political groups of this parliament the end date is 
@@ -247,7 +234,7 @@ def endChildGroups(group):
             if ministry.end_date == None:
                 ministry.end_date = end_date
             yield ministry
-            
+
 def set_real_order(sitting):
     """ set planned order = real order """
     for item in sitting.item_schedule:

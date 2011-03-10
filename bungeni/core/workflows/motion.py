@@ -5,14 +5,11 @@ from bungeni.core.workflows.notification import Notification
 from bungeni.core.workflows import interfaces
 from bungeni.core import globalsettings as prefs
 from bungeni.core.i18n import _
-import zope.securitypolicy.interfaces
+#import zope.securitypolicy.interfaces
 from bungeni.core.workflows import dbutils, utils
 
-class conditions:
-    
-    @staticmethod
-    def is_scheduled(info, context):
-        return dbutils.isItemScheduled(context.motion_id)
+class conditions(utils.conditions):
+    pass
     
 
 class actions:
@@ -39,8 +36,7 @@ class actions:
     
     @staticmethod
     def submit(info, context):
-        utils.createVersion(info, context,
-            message="New version on workflow transition to: submit")
+        utils.createVersion(info, context)
         utils.setRegistryNumber(info, context)
     resubmit = submit
 
@@ -55,18 +51,16 @@ class actions:
 
     @staticmethod
     def complete(info, context):
-        utils.createVersion(info, context,
-            message="New version on workflow transition to: complete")
+        utils.createVersion(info, context)
     
     @staticmethod
     def approve(info, context):
-        utils.createVersion(info, context,
-            message="New Version on approval by speakers office")
+        utils.createVersion(info, context)
         dbutils.setMotionSerialNumber(context)
     
     @staticmethod
     def adopt(info, context):
-        utils.createVersion(info,context)
+        utils.createVersion(info, context)
     adopt_amendments = adopt
     
     @staticmethod
@@ -76,11 +70,11 @@ class actions:
     
     @staticmethod
     def require_recomplete(info, context):
-        utils.createVersion(info,context)
+        utils.createVersion(info, context)
     
     @staticmethod
     def recomplete(info, context):
-        utils.createVersion(info,context)
+        utils.createVersion(info, context)
     
     @staticmethod
     def schedule(info, context):

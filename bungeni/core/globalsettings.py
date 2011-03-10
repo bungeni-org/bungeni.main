@@ -12,12 +12,10 @@ import datetime
 import sqlalchemy.sql.expression as sql
 
 from bungeni.alchemist import Session
-from bungeni.core.i18n import _
 from bungeni.core.app import BungeniApp
 
 from bungeni.models import domain
 from bungeni.models import schema
-from bungeni.models import settings
 from bungeni.models.interfaces import IBungeniSettings
 from bungeni.models.settings import GlobalSettingFactory
 
@@ -26,7 +24,7 @@ app = BungeniApp()
 # !+ rename to globals.py
 # !+ move the "global common" utils in models.utils to here
 # !+ switch to bungeni naming standard (underscore-spearated words)
-
+# !+CUSTOM(mr, mar-2011) migrate all "global parameters" here to bungeni_custom
 
 def get_current_parliament(date=None):
     """Return the parliament for a given date (or the current for no date)
@@ -105,10 +103,12 @@ def getDaysToNotifyMinistriesQuestionsPendingResponse():
     """
     
     return datetime.timedelta(BungeniSettings(app).days_to_notify_ministry_unanswered)
-  
+
+''' !+UNUSED(mr, mar-2011)
 def getQuestionSubmissionAllowed():
     return BungeniSettings(app).question_submission_allowed
-    
+'''
+
 def getMaxQuestionsPerSitting():
     return BungeniSettings(app).max_questions_sitting
         

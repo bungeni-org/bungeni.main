@@ -3,22 +3,19 @@
 log = __import__("logging").getLogger("bungeni.core")
 
 from zope import component
-import zope.securitypolicy.interfaces
+from zope.security.proxy import removeSecurityProxy
 from bungeni.core.workflows.notification import Notification
 from bungeni.core.workflows import interfaces
 from bungeni.core import globalsettings as prefs
 from bungeni.core.workflows import dbutils, utils
 from bungeni.core.i18n import _
 from bungeni.models import domain
-from bungeni.models.utils import get_principal_id
 from bungeni.alchemist import Session
+from bungeni.ui.utils import common
+from bungeni.ui.interfaces import IFormEditLayer
 
 
-class conditions(object):
-    
-    @staticmethod 
-    def is_scheduled(info, context):
-        return dbutils.isItemScheduled(context.question_id)
+class conditions(utils.conditions):
     
     @staticmethod
     def is_ministry_set(info, context):
@@ -28,6 +25,20 @@ class conditions(object):
     def is_written_response(info, context):
         return (context.ministry_id is not None) and (
             context.response_type == u"W")
+
+    @staticmethod
+    def response_allow_submit(info, context):
+        instance = removeSecurityProxy(context)
+        # The "submit_response" workflow transition should NOT be displayed when 
+        # the UI is displaying the question in "edit" mode (as this transition
+        # will cause deny of bungeni.Question.Edit to the Minister).
+        request = common.get_request()
+        if IFormEditLayer.providedBy(request):
+            return False
+        if instance.response_text is None:
+            return False
+        else:
+            return True
 
     @staticmethod
     def is_oral_response(info, context):
@@ -47,7 +58,7 @@ class actions(object):
         """
         q = context # context is the newly created question
         log.debug("[QUESTION CREATE] [%s] [%s]" % (info, q))
-        utils.setQuestionDefaults(info, q) # !+
+        utils.setQuestionDefaults(info, q) # !+setQuestionDefaults
         utils.setBungeniOwner(q)
     create_on_behalf_of = create
     
@@ -56,8 +67,7 @@ class actions(object):
         """A question submitted to the clerks office, the owner cannot edit it 
         anymore the clerk has no edit rights until it is received.
         """
-        utils.createVersion(info, context,
-            message="New version on workflow transition to: submit")
+        utils.createVersion(info, context)
         utils.setRegistryNumber(info, context)
     resubmit = submit
     
@@ -130,8 +140,7 @@ class actions(object):
         """A question is marked as completed by the clerks office, 
         it is available to the speakers office for review.
         """
-        utils.createVersion(info, context,
-            message="New version on workflow transition to: completed")
+        utils.createVersion(info, context)
     
     @staticmethod
     def schedule(info, context):
@@ -174,8 +183,7 @@ class actions(object):
         """The question is admissible and can be send to ministry,
         or is available for scheduling in a sitting.
         """
-        utils.createVersion(info, context,
-            message="New Version on approval by speakers office")
+        utils.createVersion(info, context)
         dbutils.setQuestionSerialNumber(context)
 
 class SendNotificationToMemberUponReceipt(Notification):

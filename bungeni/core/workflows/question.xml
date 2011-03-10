@@ -151,7 +151,7 @@
         title="Create Question"
         source=""
         destination="draft"
-        condition=".utils.conditions.user_is_context_owner"
+        condition=".question.conditions.user_is_context_owner"
         trigger="automatic"
         order="0"
     />
@@ -160,7 +160,7 @@
         title="Create Question (On behalf of)"
         source=""
         destination="working_draft"
-        condition=".utils.conditions.user_is_not_context_owner"
+        condition=".question.conditions.user_is_not_context_owner"
         trigger="automatic"
         order="0"
     />
@@ -356,7 +356,7 @@
         title="Submit Response"
         source="response_pending"
         destination="response_submitted"
-        condition=".utils.response_allow_submit"
+        condition=".question.conditions.response_allow_submit"
         trigger="manual"
         roles="bungeni.Minister"
         order="15"

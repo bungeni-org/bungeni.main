@@ -125,7 +125,7 @@
         title="Create Agenda Item"
         source=""
         destination="draft"
-        condition=".utils.conditions.user_is_context_owner"
+        condition=".agendaitem.conditions.user_is_context_owner"
         trigger="automatic"
     />
     
@@ -133,7 +133,7 @@
         title="Create Agenda Item (On behalf of)"
         source=""
         destination="working_draft"
-        condition=".utils.conditions.user_is_not_context_owner"
+        condition=".agendaitem.conditions.user_is_not_context_owner"
         trigger="automatic"
     />
     
