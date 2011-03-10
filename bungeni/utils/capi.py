@@ -57,7 +57,12 @@ class CAPI(object):
             bc.zope_i18n_compile_mo_files is True or 
             bc.zope_i18n_compile_mo_files == "1"
         )
-    
+
+    @property
+    @bungeni_custom_errors
+    def application_language(self):
+        return bc.default_language
+
     # utility methods
     
     def get_root_path(self):

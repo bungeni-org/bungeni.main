@@ -292,13 +292,9 @@
 
   <adapter factory=".location.get_location_from_parent" />
 
-  <!-- translation -->
-  
-  <utility
-     component=".translation.language_vocabulary_factory"
-     name="language_vocabulary" />
-  
-
+  <!-- translation and language components -->
+    <include file="language.zcml"/>
+    
   <view
      for=".interfaces.INavigationProxy"
      factory=".vhost.ProxyAwareAbsoluteURL"

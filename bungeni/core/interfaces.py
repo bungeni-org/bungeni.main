@@ -254,3 +254,10 @@ class IFSUtility(IFSUtilitySchema):
         """ Returns data by filename.
             If no files found returns None.
         """
+
+class ILanguageProvider(interface.Interface):
+    """ Provides a language
+    """
+    def getLanguage():
+        """Return a language code
+        """
