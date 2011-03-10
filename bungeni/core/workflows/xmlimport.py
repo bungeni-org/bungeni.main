@@ -230,6 +230,8 @@ def _load(workflow, module_name, actions):
         
         # source = "" (empty string -> None source)
         sources = t.get("source").split() or [None]
+        assert len(sources) == len(set(sources)), \
+            "Transition contains duplicate sources [%s]" % (sources)
         # destination must be a valid state
         destination = t.get("destination")
         assert destination in STATE_IDS, \

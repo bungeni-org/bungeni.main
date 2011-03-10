@@ -482,8 +482,7 @@
     
     <transition id="withdraw_public"
         title="Withdraw"
-        source="admissible schedule_pending scheduled deferred
-             adjourned schedule_pending"
+        source="admissible schedule_pending scheduled deferred adjourned"
         destination="withdrawn_public"
         trigger="manual"
         condition=""
