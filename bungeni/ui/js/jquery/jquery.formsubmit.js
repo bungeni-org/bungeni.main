@@ -6,6 +6,8 @@
  * 
  * $Id$
  */
+var UNBLOCK_TIMEOUT = 10000;
+
 jQuery.fn.preventDuplicateSubmission = function(){
     jQuery(this).submit(function(){
         if(typeof(this.isSubmitted) != "undefined"){
@@ -13,8 +15,9 @@ jQuery.fn.preventDuplicateSubmission = function(){
         }else{
             this.isSubmitted = true;
             jQuery("input:submit", this).addClass("ac_button_disabled");
-            jQuery.blockUI({ message: jQuery("#processing_indicatron") });
-            setTimeout('jQuery.unblockUI()', 10000);
+            jQuery.blockUI({ message: jQuery("#processing_indicatron"),
+                             timeout: UNBLOCK_TIMEOUT
+                         });
             return true;
         }
         });
@@ -27,13 +30,14 @@ jQuery.fn.preventDuplicateMenuAction = function(){
             event.preventDefault();
         }else{
             parent_dl.isPushed = true;
-            jQuery.blockUI({ message:jQuery("#processing_indicatron") });
-            setTimeout('jQuery.unblockUI()', 10000);
+            jQuery.blockUI({ message:jQuery("#processing_indicatron"),
+                             timeout: UNBLOCK_TIMEOUT
+                            });
         }
         });
 }
 
 jQuery(document).ready(function(){
         jQuery('form').preventDuplicateSubmission();
-        jQuery("dd.actionMenuContent  a").preventDuplicateMenuAction();
+        jQuery("dd.actionMenuContent  a:not([id='odt'],[id='pdf'])").preventDuplicateMenuAction();
     });

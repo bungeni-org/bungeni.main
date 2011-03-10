@@ -26,6 +26,7 @@ from bungeni.models import domain
 from bungeni.core.i18n import _
 from bungeni.ui.interfaces import IGenenerateVocabularyDefault
 from bungeni.models.utils import get_db_user_id
+from bungeni.core.language import get_default_language
 
 
 path = os.path.split(os.path.abspath(__file__))[0]
@@ -953,4 +954,13 @@ class MemberDropDownWidget(DropdownWidget):
             field.vocabulary, request)
 
     def getDefaultVocabularyValue(self):
-        return get_db_user_id()
+        user_id = get_db_user_id()
+        try:
+            self.context.vocabulary.getTerm(user_id)
+        except LookupError:
+            return None
+        return user_id
+
+class LanguageLookupWidget(MemberDropDownWidget):
+    def getDefaultVocabularyValue(self):
+        return get_default_language()
