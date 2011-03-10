@@ -1478,8 +1478,11 @@ class AttachedFileDescriptor(ModelDescriptor):
         ),
         Field(name="attached_file_type_id",
             property=schema.Choice(title=_(u"File type"),
-                description=_(u"Type of attachment"),
-                source=vocabulary.AttachedFileTypeSource(),
+                source=vocabulary.DatabaseSource(domain.AttachedFileType,
+                    token_field="attached_file_type_id",
+                    title_field="attached_file_type_name",
+                    value_field="attached_file_type_id"
+                ),
             ),
         ),
         Field(name="file_name",
@@ -1563,7 +1566,8 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
                 source=vocabulary.MemberOfParliamentDelegationSource("owner_id"),
             ),
             listing_column=linked_mp_name_column("owner_id", _(u"Name"), "owner"),
-            view_widget=widgets.MemberURLDisplayWidget
+            add_widget=widgets.MemberDropDownWidget,
+            view_widget=widgets.MemberURLDisplayWidget,
         ),
         #LanguageField("language"),
         Field(name="language",

@@ -52,7 +52,7 @@ from bungeni.core.translation import CurrentLanguageVocabulary
 from bungeni.models.interfaces import IVersion, IBungeniContent
 from bungeni.models import domain
 from bungeni.ui.forms.fields import filterFields
-from bungeni.ui.interfaces import IFormEditLayer
+from bungeni.ui.interfaces import IFormEditLayer, IGenenerateVocabularyDefault
 from bungeni.ui.i18n import _
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
@@ -318,16 +318,14 @@ class AddForm(BaseForm, catalyst.AddForm):
         # set humanized default value for choice fields with no defaults
         for widget in self.widgets:
             field = widget.context
-            try:
-                if IChoice.providedBy(field) and field.default is None:
+            if IChoice.providedBy(field):
+                if IGenenerateVocabularyDefault.providedBy(widget):
+                    field.default = widget.getDefaultVocabularyValue()
+            if IChoice.providedBy(field) and field.default is None:
                     widget._messageNoValue = _("bungeni_widget_no_value", 
                             "choose ${title} ...",
                         mapping = {"title": field.title}
                     )
-            except Exception, e:
-                log.error("Failed to set default value for widget %s"
-                        " for field %s: @@ %s",
-                    widget, field, e)
 
     @property
     def domain_model(self):

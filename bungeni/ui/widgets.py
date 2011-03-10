@@ -2,6 +2,7 @@
 import datetime, pytz
 import itertools
 import os
+from zope import interface
 from zope.datetime import parseDatetimetz
 from zope.datetime import DateTimeError
 from zope.security.proxy import removeSecurityProxy
@@ -12,7 +13,7 @@ import zope.app.form.browser.widget
 import zope.app.form.browser.textwidgets
 from zope.app.form.browser.textwidgets import TextAreaWidget, FileWidget
 from zope.app.form.browser.itemswidgets import RadioWidget, \
-    SingleDataHelper, ItemsWidgetBase, ItemsEditWidgetBase
+    SingleDataHelper, ItemsWidgetBase, ItemsEditWidgetBase, DropdownWidget
 from zope.app.form.browser.boolwidgets import CheckBoxWidget
 
 from zope.i18n import translate
@@ -23,6 +24,8 @@ from zc.resourcelibrary import need
 from bungeni.alchemist import Session
 from bungeni.models import domain
 from bungeni.core.i18n import _
+from bungeni.ui.interfaces import IGenenerateVocabularyDefault
+from bungeni.models.utils import get_db_user_id
 
 
 path = os.path.split(os.path.abspath(__file__))[0]
@@ -939,3 +942,15 @@ class AutoCompleteWidget(ItemsEditWidgetBase):
             "javascript": self.javascript})
 
         return "\n".join(contents)
+
+
+class MemberDropDownWidget(DropdownWidget):
+    
+    interface.implements(IGenenerateVocabularyDefault)
+
+    def __init__(self, field, request):
+        super(MemberDropDownWidget, self).__init__(field,
+            field.vocabulary, request)
+
+    def getDefaultVocabularyValue(self):
+        return get_db_user_id()

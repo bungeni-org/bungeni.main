@@ -89,3 +89,9 @@ class IOpenOfficePath(interface.Interface):
         description=u"This is the path name of the openoffice to be used to generate pdf reports",
         required=True
         )
+
+class IGenenerateVocabularyDefault(interface.Interface):
+    """Generate default value for vocabulary"""
+    
+    def getDefaultVocabularyValue():
+        "Get the default value in vocabulary"
