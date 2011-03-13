@@ -7,6 +7,7 @@ from zope.datetime import parseDatetimetz
 from zope.datetime import DateTimeError
 from zope.security.proxy import removeSecurityProxy
 from zope.app.form.interfaces import ConversionError, InputErrors
+from zope.app.form import CustomWidgetFactory
 from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from zope.interface.common import idatetime
 import zope.app.form.browser.widget
@@ -52,7 +53,7 @@ class MultiDateTextAreaWidget(TextAreaWidget):
             except (DateTimeError, ValueError, IndexError), v:
                 raise ConversionError(
                     _("Invalid date: $value",
-                      mapping = {"value": token}), v)
+                      mapping={"value": token}), v)
 
         return dates
 
@@ -406,15 +407,15 @@ class SelectDateWidget(zope.app.form.browser.widget.SimpleInputWidget):
             "w_day_medium": w_day_medium,
             "w_day_long": w_day_long,
             "month": translate(
-                str(month), domain = "bungeni.ui", context = self.request),
+                str(month), domain="bungeni.ui", context=self.request),
             "year": translate(
-                str(year), domain = "bungeni.ui", context = self.request),
+                str(year), domain="bungeni.ui", context=self.request),
             "submit": translate(
-                str(submit), domain = "bungeni.ui", context = self.request),
+                str(submit), domain="bungeni.ui", context=self.request),
             "cancel": translate(
-                str(cancel), domain = "bungeni.ui", context = self.request),
+                str(cancel), domain="bungeni.ui", context=self.request),
             "invalidYear": translate(
-                str(invalidYear), domain = "bungeni.ui", context = self.request)
+                str(invalidYear), domain="bungeni.ui", context=self.request)
         }
 
     def _days(self):
@@ -501,7 +502,7 @@ class SelectDateWidget(zope.app.form.browser.widget.SimpleInputWidget):
             try:
                 time_zone = self.time_zone
                 return datetime.date(
-                    year = int(year), month = int(month), day = int(day)
+                    year=int(year), month=int(month), day=int(day)
                 ) #tzinfo=time_zone)
             except ValueError, e:
                 raise ConversionError(_(u"Incorrect string data for date"), e)
@@ -659,8 +660,8 @@ class TextDateTimeWidget(TextDateWidget):
             try:
                 d = datetime.datetime.strptime(date, "%Y-%m-%d")
                 t = datetime.datetime.strptime(time, "%H:%M")
-                return datetime.datetime(year = d.year, month = d.month,
-                    day = d.day, hour = t.hour, minute = t.minute,)
+                return datetime.datetime(year=d.year, month=d.month,
+                    day=d.day, hour=t.hour, minute=t.minute,)
             except ValueError, e:
                 raise ConversionError(_(u"Incorrect string data for date and time"), e)
 
@@ -735,8 +736,8 @@ class SelectDateTimeWidget(SelectDateWidget):
         else:
             try:
                 time_zone = self.time_zone
-                return datetime.datetime(year = int(year), month = int(month),
-                    day = int(day), hour = int(hour), minute = int(minute),)
+                return datetime.datetime(year=int(year), month=int(month),
+                    day=int(day), hour=int(hour), minute=int(minute),)
             except ValueError, e:
                 raise ConversionError(
                     _(u"Incorrect string data for date and time"), e)
@@ -780,8 +781,8 @@ class MemberURLDisplayWidget(zope.app.form.browser.widget.DisplayWidget):
         # this (user_id) attribute's value IS self._data
         mp = self.get_member_of_parliament(self._data)
         return zope.app.form.browser.widget.renderElement("a",
-            contents = mp.user.fullname,
-            href = "/members/current/obj-%s/" % (mp.membership_id)
+            contents=mp.user.fullname,
+            href="/members/current/obj-%s/" % (mp.membership_id)
         )
 
 
@@ -793,13 +794,11 @@ template = """
 OPT_PREFIX = 'yui_'
 LEN_OPT_PREFIX = len(OPT_PREFIX)
 
-class AutoCompleteWidget(ItemsEditWidgetBase):
+class _AutoCompleteWidget(ItemsEditWidgetBase):
     """Zope3 Implementation of YUI autocomplete widget.
-    Can be used with common ChoiceProperty"""
-
-    def __init__(self, field, request):
-        super(AutoCompleteWidget, self).__init__(field,
-            field.vocabulary, request)
+    Can be used with common ChoiceProperty. Can be configured by setting
+    widget attributes with prefix %s. List of attributes you can find
+    in http://developer.yahoo.com/yui/autocomplete""" % OPT_PREFIX
 
     @property
     def options(self):
@@ -945,8 +944,11 @@ class AutoCompleteWidget(ItemsEditWidgetBase):
         return "\n".join(contents)
 
 
+def AutoCompleteWidget(*kv, **kw):
+  return CustomWidgetFactory(_AutoCompleteWidget, *kv, **kw)
+
 class MemberDropDownWidget(DropdownWidget):
-    
+
     interface.implements(IGenenerateVocabularyDefault)
 
     def __init__(self, field, request):

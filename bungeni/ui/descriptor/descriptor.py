@@ -21,8 +21,8 @@ from bungeni.alchemist.model import ModelDescriptor, Field, show, hide
 
 from bungeni.models import domain
 
-# We import bungeni.core.workflows.adapters to ensure that the "states" 
-# attribute on each "workflow" module is setup... this is to avoid an error 
+# We import bungeni.core.workflows.adapters to ensure that the "states"
+# attribute on each "workflow" module is setup... this is to avoid an error
 # when importing bungeni.ui.descriptor.descriptor from standalone scripts:
 import bungeni.core.workflows.adapters # needed by standalone scripts
 from bungeni.core.workflows.groups import states as group_wf_state
@@ -48,7 +48,7 @@ from bungeni.ui.interfaces import IBusinessSectionLayer
 
 
 ###
-# Listing Columns 
+# Listing Columns
 #
 
 def _column(name, title, renderer, default=""):
@@ -106,7 +106,7 @@ def name_column(name, title, default=""):
 
 def combined_name_column(name, title, default=""):
     """An extended name, combining full_name (localized) and short_name columns.
-    
+
     For types that have both a full_name and a short_name attribute:
     Group, ParliamentaryItem, ParliamentarySession
     """
@@ -116,8 +116,8 @@ def combined_name_column(name, title, default=""):
 
 
 def _get_related_user(item_user, attr):
-    """Get trhe user instance that is related to this item via <attr>, 
-    or if <attr> is None, return the item_user itself. 
+    """Get trhe user instance that is related to this item via <attr>,
+    or if <attr> is None, return the item_user itself.
     """
     if attr:
         item_user = getattr(item_user, attr, None)
@@ -131,14 +131,14 @@ def _get_related_user(item_user, attr):
 def user_name_column(name, title, attr):
     def getter(item_user, formatter):
         item_user = _get_related_user(item_user, attr)
-        return item_user.fullname # User.fullname property 
+        return item_user.fullname # User.fullname property
     return column.GetterColumn(title, getter)
 
 def linked_mp_name_column(name, title, attr):
-    """This may be used to customize the default URL generated as part of the 
-    container listing. 
-    
-    E.g. instead of the URL to the association view between a cosignatory (MP) 
+    """This may be used to customize the default URL generated as part of the
+    container listing.
+
+    E.g. instead of the URL to the association view between a cosignatory (MP)
     and a bill:
         /business/bills/obj-169/cosignatory/obj-169-61/
     the direct URL for the MP's "home" view is used instead:
@@ -152,7 +152,7 @@ def linked_mp_name_column(name, title, attr):
         item_user = _get_related_user(item_user, attr)
         mp = get_member_of_parliament(item_user.user_id)
         return zope.app.form.browser.widget.renderElement("a",
-            contents=item_user.fullname, # User.fullname derived property 
+            contents=item_user.fullname, # User.fullname derived property
             href="/members/current/obj-%s/" % (mp.membership_id)
         )
     return column.GetterColumn(title, getter)
@@ -170,9 +170,9 @@ def group_name_column(name, title, default=u""):
     return column.GetterColumn(title, getter)
 '''
 def linked_assignment_column(title, assigned_kind="item"):
-    """To customize the default URL generated as part of the container listing. 
-    
-    E.g. instead of the URL to the association view between a committee and an 
+    """To customize the default URL generated as part of the container listing.
+
+    E.g. instead of the URL to the association view between a committee and an
     assigned bill or between a bill and a committe it is assigned to:
         /business/committees/obj-46/assigneditems/obj-1/
         /business/bills/obj-70/assignedgroups/obj-2/
@@ -182,12 +182,12 @@ def linked_assignment_column(title, assigned_kind="item"):
     """
     assert assigned_kind in ("item", "group")
     assigned_id_attr_name = {
-        "item": "parliamentary_item_id", "group": "group_id" 
+        "item": "parliamentary_item_id", "group": "group_id"
     }[assigned_kind]
     acn = "assigned%ss" % (assigned_kind) # assigned_container_name
     acn_len = len(acn)
     def getter(assignment, formatter):
-        """(assignment:either(ItemGroupItemAssignment, GroupGroupItemAssignment), 
+        """(assignment:either(ItemGroupItemAssignment, GroupGroupItemAssignment),
             formatter:? ) -> str
         """
         r = common.get_request()
@@ -195,9 +195,9 @@ def linked_assignment_column(title, assigned_kind="item"):
         assigned = translation.translate_obj(assigned)
         link_label = "[%s] %s" % (assigned.type, assigned.short_name)
         if IBusinessSectionLayer.providedBy(r):
-            # Within the business/ section use a direct and absolute link to 
+            # Within the business/ section use a direct and absolute link to
             # the related PI's public "home view".
-            # The absolute URL path is of the form: 
+            # The absolute URL path is of the form:
             # /business/{ASSIGNED.TYPE}s/obj-{ASSIGNED.ID}/
             return zope.app.form.browser.widget.renderElement("a",
                 contents=link_label,
@@ -205,18 +205,18 @@ def linked_assignment_column(title, assigned_kind="item"):
                     assigned.type, getattr(assigned, assigned_id_attr_name))
             )
         else:
-            # All other sections use a *relative* link to association view of 
+            # All other sections use a *relative* link to association view of
             # the assigned item and the group it is assigned to (thus following
-            # the link will keep the user within the same section). This is 
+            # the link will keep the user within the same section). This is
             # because under other sections, e.g. /admin or /workspace, this
             # association view makes it possible for an appropriately-privileged
-            # user to modify properties of the assignment of the item to this 
-            # group. The relative URL path is of the form: 
+            # user to modify properties of the assignment of the item to this
+            # group. The relative URL path is of the form:
             # .../{ASSIGNED_CONTAINER_NAME}/obj-{ASSIGNMENT.ID}/
             #
-            # We explicitly determine the absolute url path because 
-            # concatenating to a relative path gives different results in 
-            # different contexts e.g. when this is loaded as a json_listing of 
+            # We explicitly determine the absolute url path because
+            # concatenating to a relative path gives different results in
+            # different contexts e.g. when this is loaded as a json_listing of
             # a *page view* or as a json_listing within a viewlet tab.
             url_path = acn
             if r:
@@ -317,7 +317,7 @@ def ministry_column(name, title, default=u""):
     return column.GetterColumn(title, getter)
 
 def enumeration_column(name, title,
-    item_reference_attr=None, # parent item attribute, for enum 
+    item_reference_attr=None, # parent item attribute, for enum
     enum_value_attr=None, # enum attribute, for desired value
     ):
     """Get getter for the enum-value of an enumerated column.
@@ -419,17 +419,17 @@ def DeathBeforeLife(User):
 # Notes:
 #
 # Field parameters, if specified, should be in the following order:
-#   name, label, description, modes, property, listing_column, 
+#   name, label, description, modes, property, listing_column,
 #   view_widget, edit_widget, add_widget, search_widget
-#   
-#   !+FIELD_PERMISSIONS(mr, nov-2010) view_permission/edit_permission params 
-#   are deprecated -- when applied to any field (that corresponds to an 
-#   attribute of the domain's class), the domain.zcml setting for that same 
+#
+#   !+FIELD_PERMISSIONS(mr, nov-2010) view_permission/edit_permission params
+#   are deprecated -- when applied to any field (that corresponds to an
+#   attribute of the domain's class), the domain.zcml setting for that same
 #   class attribute will anyway take precedence.
 #
 # modes:
 # - default: "view edit add"
-# - all individual bool params {view, edit, add, listing, search} for each 
+# - all individual bool params {view, edit, add, listing, search} for each
 #   supported mode are now obsolete
 # - to specify a non-default mode, must redefine entire modes parameter
 #   e.g. to add "listing" mode must state modes="view edit add listing"
@@ -437,11 +437,11 @@ def DeathBeforeLife(User):
 #
 # property
 # default values for schema.Field init parameters
-#   title=u'', description=u'', __name__='', 
+#   title=u'', description=u'', __name__='',
 #   required=True, readonly=False, constraint=None, default=None
 #
 # required
-# - Field.property.required: by default required=True for all schema.Field 
+# - Field.property.required: by default required=True for all schema.Field
 # - !+Field.required(mr, oct-2010) OBSOLETED.
 
 
@@ -465,15 +465,15 @@ def AdmissibleDateField(name="admissible_date"):
 ####
 # Descriptors
 
-# !+ID_NAME_LABEL_TITLE(mr, oct-2010) use of "id", "name", "label", "title", 
-# should be conistent -- the (localized) {display, container}_name attributes 
+# !+ID_NAME_LABEL_TITLE(mr, oct-2010) use of "id", "name", "label", "title",
+# should be conistent -- the (localized) {display, container}_name attributes
 # here should really all be {display, container}_label.
 
 class UserDescriptor(ModelDescriptor):
     display_name = _(u"User")
     container_name = _(u"Users")
     localizable = True
-    
+
     fields = [
         Field(name="user_id",
             label="Name",
@@ -582,7 +582,7 @@ class UserDelegationDescriptor(ModelDescriptor):
     display_name = _(u"Delegate to user")
     container_name = _(u"Delegations")
     localizable = True
-    
+
     fields = [
         Field(name="delegation_id",
             modes="view edit add listing",
@@ -601,7 +601,7 @@ class UserDelegationDescriptor(ModelDescriptor):
 
 class GroupMembershipDescriptor(ModelDescriptor):
     localizable = False
-    
+
     SubstitutionSource = vocabulary.SubstitutionSource(
         token_field="user_id",
         title_field="fullname",
@@ -643,10 +643,10 @@ class GroupMembershipDescriptor(ModelDescriptor):
                 required=False
             ),
         ),
-        #Field(name="membership_id", 
+        #Field(name="membership_id",
         #    label=_(u"Roles/Titles"),
         #    modes="",
-        #    listing_column=current_titles_in_group_column("membership_id", 
+        #    listing_column=current_titles_in_group_column("membership_id",
         #        _(u"Roles/Titles")
         #    )
         #),
@@ -667,7 +667,7 @@ class MpDescriptor(GroupMembershipDescriptor):
     display_name = _(u"Member of parliament")
     container_name = _(u"Members of parliament")
     localizable = True
-    
+
     fields = [
         Field(name="user_id",
             modes="view edit add listing",
@@ -679,8 +679,8 @@ class MpDescriptor(GroupMembershipDescriptor):
                 )
             ),
             listing_column=user_name_column("user_id", _(u"Name"), "user"),
-            edit_widget=widgets.AutoCompleteWidget,
-            add_widget=widgets.AutoCompleteWidget
+            edit_widget=widgets.AutoCompleteWidget(yui_maxResultsDisplayed=5),
+            add_widget=widgets.AutoCompleteWidget()
         ),
         Field(name="elected_nominated",
             modes="view edit add listing",
@@ -696,7 +696,7 @@ class MpDescriptor(GroupMembershipDescriptor):
         ),
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
-    
+
     constituencySource = vocabulary.DatabaseSource(domain.Constituency,
         token_field="constituency_id",
         title_field="name",
@@ -717,7 +717,7 @@ class MpDescriptor(GroupMembershipDescriptor):
         title_field="full_name",
         value_field="party_id"
     )
-    
+
     fields.extend([
         Field(name="constituency_id",
             modes="view edit add listing",
@@ -772,7 +772,7 @@ class PartyMemberDescriptor(GroupMembershipDescriptor):
     display_name = _(u"member")
     container_name = _(u"members")
     localizable = True
-    
+
     fields = [
         Field(name="user_id",
             modes="view edit add listing",
@@ -797,10 +797,10 @@ class PartyMemberDescriptor(GroupMembershipDescriptor):
 ''' !+UNUSED(mr, oct-2010)
 class MemberOfPartyDescriptor(ModelDescriptor):
     """Partymemberships of a member of a user."""
-    
+
     display_name = _(u"Party membership")
     container_name = _(u"Party memberships")
-    
+
     fields = [
         Field(name="user_id", modes=""),
         Field(name="short_name",
@@ -847,7 +847,7 @@ class GroupDescriptor(ModelDescriptor):
     localizable = True
     display_name = _(u"Group")
     container_name = _(u"Groups")
-    
+
     _combined_name_title = "%s [%s]" % (_(u"Name"), _(u"Acronym"))
     fields = [
         Field(name="full_name",
@@ -901,7 +901,7 @@ class ParliamentDescriptor(GroupDescriptor):
     display_name = _(u"Parliament")
     container_name = _(u"Parliaments")
     custom_validators = validations.validate_parliament_dates,
-    
+
     fields = [
         Field(name="full_name",
             description=_(u"Parliament name"),
@@ -965,7 +965,7 @@ class CommitteeDescriptor(GroupDescriptor):
     display_name = _(u"Profile")
     container_name = _(u"Committees")
     custom_validators = [validations.validate_date_range_within_parent, ]
-    
+
     fields = deepcopy(GroupDescriptor.fields)
     fields.extend([
         Field(name="committee_type_id",
@@ -1029,7 +1029,7 @@ class CommitteeMemberDescriptor(GroupMembershipDescriptor):
     display_name = _(u"Member")
     container_name = _(u"Members")
     localizable = True
-    
+
     fields = [
         Field(name="user_id",
             modes="view edit add listing",
@@ -1054,7 +1054,7 @@ class AddressTypeDescriptor(ModelDescriptor):
     display_name = _(u"Address type")
     container_name = _(u"Address types")
     localizable = True
-    
+
     fields = [
         Field(name="address_type_name",
             property=schema.TextLine(title=_(u"Address Type"))
@@ -1066,7 +1066,7 @@ class AddressDescriptor(ModelDescriptor):
     localizable = False
     display_name = _(u"Address")
     container_name = _(u"Addresses")
-    
+
     fields = [
         Field(name="address_type_id",
             modes="view edit add listing",
@@ -1136,7 +1136,7 @@ class AddressDescriptor(ModelDescriptor):
         ),
         #Field(name="im_id",
         #    property=schema.TextLine(title=_(u"Instant Messenger Id"),
-        #        description=_(u"ICQ, AOL IM, GoogleTalk..."), 
+        #        description=_(u"ICQ, AOL IM, GoogleTalk..."),
         #        required=False
         #    )
         #), !+IM(mr, oct-2010) morph to some "extra_info" on User
@@ -1155,7 +1155,7 @@ class MemberRoleTitleDescriptor(ModelDescriptor):
     localizable = True
     display_name = _(u"Title")
     container_name = _(u"Titles")
-    
+
     fields = [
         Field(name="title_name_id", label=_(u"Title"),
             modes="view edit add listing",
@@ -1180,7 +1180,7 @@ class MemberRoleTitleDescriptor(ModelDescriptor):
         ),
         LanguageField("language"),
     ]
-    #] + [ deepcopy(f) for f in AddressDescriptor.fields 
+    #] + [ deepcopy(f) for f in AddressDescriptor.fields
     #      if f["name"] not in ("role_title_id",) ]
 
     schema_invariants = [
@@ -1196,7 +1196,7 @@ class CommitteeStaffDescriptor(GroupMembershipDescriptor):
     localizable = True
     display_name = _(u"Staff")
     container_name = _(u"Staff")
-    
+
     fields = [
         Field(name="user_id",
             modes="view edit add listing",
@@ -1394,7 +1394,7 @@ class GroupItemAssignmentDescriptor(ModelDescriptor):
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget
         ),
-        #Field(name="status_date", 
+        #Field(name="status_date",
         #    label=_(u"Status date"),
         #    modes="",
         #    listing_column=day_column("status_date", _(u"Status date")),
@@ -1524,7 +1524,7 @@ class AttachedFileVersionDescriptor(ModelDescriptor):
 
 class ParliamentaryItemDescriptor(ModelDescriptor):
     localizable = False
-    
+
     fields = [
         Field(name="parliament_id",
             modes="view edit",
@@ -1634,7 +1634,7 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
 
 class VersionDescriptor(ModelDescriptor):
     localizable = False
-    
+
     fields = [
         Field(name="short_name",
             modes="view edit add listing",
@@ -1753,11 +1753,11 @@ class MotionDescriptor(ParliamentaryItemDescriptor):
             property=schema.Int(title=_(u"Identifier"), required=False),
         ),
         #Field(name="party_id", modes="",
-        #    #property = schema.Choice(title=_(u"Political Party"), 
+        #    #property = schema.Choice(title=_(u"Political Party"),
         #    #   source=vocabulary.MotionPartySource(
-        #    #     token_field="party_id", 
-        #    #     title_field="short_name", 
-        #    #     value_field = "party_id"), 
+        #    #     token_field="party_id",
+        #    #     title_field="short_name",
+        #    #     value_field = "party_id"),
         #    #   required=False),
         #),
     ])
@@ -1775,7 +1775,7 @@ class BillDescriptor(ParliamentaryItemDescriptor):
     localizable = True
     display_name = _(u"Bill")
     container_name = _(u"Bills")
-    
+
     fields = deepcopy(ParliamentaryItemDescriptor.fields)
     _bt = misc.get_keyed_item(fields, "body_text", key="name") # !+
     _bt.label = _(u"Statement of Purpose")
@@ -1826,7 +1826,7 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
     display_name = _(u"Question")
     container_name = _(u"Questions")
     custom_validators = ()
-    
+
     fields = deepcopy(ParliamentaryItemDescriptor.fields)
     fields.extend([
         Field(name="question_number",
@@ -1989,14 +1989,14 @@ class SittingDescriptor(ModelDescriptor):
             modes="add view listing",
             property=schema.Datetime(title=_(u"Date")),
             listing_column=date_from_to_column("start_date", _(u"Start")),
-            # !+CustomListingURL(mr, oct-2010) the listing of this type has 
-            # been replaced by the custom GroupSittingsViewlet -- but it 
+            # !+CustomListingURL(mr, oct-2010) the listing of this type has
+            # been replaced by the custom GroupSittingsViewlet -- but it
             # should still be possible use the generic container listing in
             # combination with a further customized listing_column -- for an
-            # example of this see how the listing of the column "owner_id" 
+            # example of this see how the listing of the column "owner_id"
             # is configured in: descriptor.ParliamentaryItemDescriptor
 
-            # !+CustomListingURL(miano, nov-2010) 
+            # !+CustomListingURL(miano, nov-2010)
             # Since the custom listing column function was missing
             # the sitting listing was broken in archive.
             # Reverted to fix the issue.
@@ -2078,17 +2078,17 @@ class SessionDescriptor(ModelDescriptor):
 #    container_name = _(u"Debate")
 
 #    fields = [
-#        Field(name="sitting_id", modes=""), 
+#        Field(name="sitting_id", modes=""),
 #        Field(name="debate_id", modes=""),
-#        Field(name="short_name", 
-#                label=_(u"Short Name"), 
+#        Field(name="short_name",
+#                label=_(u"Short Name"),
 #                modes="view edit add listing",
-#                listing_column=name_column("short_name", 
-#                    _(u"Name"))), 
+#                listing_column=name_column("short_name",
+#                    _(u"Name"))),
 #        Field(name="body_text", label=_(u"Transcript"),
 #              property = schema.Text(title=u"Transcript"),
 #              view_widget=widgets.HTMLDisplay,
-#              edit_widget=widgets.RichTextEditor, 
+#              edit_widget=widgets.RichTextEditor,
 #              add_widget=widgets.RichTextEditor,
 #             ),
 #        ]
@@ -2281,7 +2281,7 @@ class RotaDescriptor(ModelDescriptor):
         # !+ Field(name="reporter_id") ??
         Field(name="identifier",
             modes="view edit add listing",
-        ), # !+ title=_("Rota Identifier"), 
+        ), # !+ title=_("Rota Identifier"),
         Field(name="start_date",
             modes="view edit add listing",
             label=_(u"Start Date"),
@@ -2314,7 +2314,7 @@ class ItemScheduleDescriptor(ModelDescriptor):
     localizable = True
     display_name = _(u"Scheduling")
     container_name = _(u"Schedulings")
-    
+
     fields = [
         Field(name="item_id",
             property=schema.Choice(title=_(u"Item"),
@@ -2343,9 +2343,9 @@ class ItemScheduleDiscussionDescriptor(ModelDescriptor):
             edit_widget=widgets.RichTextEditor,
             add_widget=widgets.RichTextEditor,
         ),
-        #Field(name="sitting_time", 
-        #    label=_(u"Sitting time"), 
-        #    description=_(u"The time at which the discussion took place."), 
+        #Field(name="sitting_time",
+        #    label=_(u"Sitting time"),
+        #    description=_(u"The time at which the discussion took place."),
         #    modes="view edit add listing",
         #),
     ]
