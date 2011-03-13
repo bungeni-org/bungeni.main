@@ -38,7 +38,7 @@ Supported xapian query operators
  |
 """
 
-import time, simplejson
+import time, simplejson, urllib
 from bungeni.ui import forms
 from ore.xapian import interfaces
 
@@ -52,45 +52,45 @@ from bungeni.core.i18n import _
 
 
 class ISearch(interface.Interface):
-    
+
     full_text = schema.TextLine(title=_("Query"), required=False)
 
 
 class ResultListing(object):
 
     formatter_factory = table.StandaloneFullFormatter
-    
-    results = None 
+
+    results = None
     spelling_suggestion = None
     search_time = None
     doc_count = None
-    
+
     columns = [
-        column.GetterColumn(title=_(u"rank"), 
-            getter=lambda i,f:i.rank),
-        column.GetterColumn(title=_(u"type"), 
-            getter=lambda i,f: i.data.get('object_type',('',))[0]),
-        column.GetterColumn(title=_(u"title"), 
-            getter=lambda i,f:i.data.get('title',('',))[0]),
-        column.GetterColumn(title=_(u"status"), 
-            getter=lambda i,f:i.data.get('status',('',))[0]),
-        column.GetterColumn(title=_(u"weight"), 
-            getter=lambda i,f:i.weight),
-        column.GetterColumn(title=_(u"percent"), 
-            getter=lambda i,f:i.percent),
+        column.GetterColumn(title=_(u"rank"),
+            getter=lambda i, f:i.rank),
+        column.GetterColumn(title=_(u"type"),
+            getter=lambda i, f: i.data.get('object_type', ('',))[0]),
+        column.GetterColumn(title=_(u"title"),
+            getter=lambda i, f:i.data.get('title', ('',))[0]),
+        column.GetterColumn(title=_(u"status"),
+            getter=lambda i, f:i.data.get('status', ('',))[0]),
+        column.GetterColumn(title=_(u"weight"),
+            getter=lambda i, f:i.weight),
+        column.GetterColumn(title=_(u"percent"),
+            getter=lambda i, f:i.percent),
     ]
-    
+
     @property
     def search_status(self):
         return "Found %s Results in %s Documents in %0.5f Seconds" % (
             len(self.results), self.doc_count, self.search_time)
-    
+
     def listing(self):
         columns = self.columns
         formatter = self.formatter_factory(self.context, self.request,
                             self.results or (),
                             prefix="results",
-                            visible_column_names = [c.name for c in columns],
+                            visible_column_names=[c.name for c in columns],
                             #sort_on = (('name', False)
                             columns=columns
         )
@@ -104,34 +104,69 @@ class Search(forms.common.BaseForm, ResultListing):
     template = ViewPageTemplateFile('templates/search.pt')
     form_fields = form.Fields(ISearch)
     #selection_column = columns[0]
-    
+
     def setUpWidgets(self, ignore_request=False):
         # setup widgets in data entry mode not bound to context
         self.adapters = {}
         self.widgets = form.setUpDataWidgets(self.form_fields, self.prefix,
-             self.context, self.request, ignore_request = ignore_request)
-    
+             self.context, self.request, ignore_request=ignore_request)
+
+
+    def do_search(self, searcher, query):
+      return searcher.search(query, 0, self.doc_count)
+
     @form.action(label=_(u"Search"))
     def handle_search(self, action, data):
         searcher = component.getUtility(interfaces.IIndexSearch)()
         search_term = data[ 'full_text' ]
-        
+
         if not search_term:
             self.status = _(u"Invalid Query")
             return
-        
+
         # compose query
         t = time.time()
         query = searcher.query_parse(search_term)
-        self.results = searcher.search(query, 0, 30)
-        self.search_time = time.time()-t
-        
+        self.doc_count = searcher.get_doccount()
+        self.results = self.do_search(searcher, query)
+        self.search_time = time.time() - t
+
         # spelling suggestions
         suggestion = searcher.spell_correct(search_term)
         self.spelling_suggestion = (
             search_term != suggestion and suggestion or None)
-        self.doc_count = searcher.get_doccount()
 
+
+class Pager(object):
+  '''pager for search result page'''
+  action_method = 'get'
+  items_count = 1
+
+  def do_search(self, searcher, query):
+    try:
+        page = int(self.request.form.get('page', 1))
+    except ValueError:
+        page = 1
+
+    if self.doc_count > self.items_count:
+        page_count = self.doc_count / self.items_count + \
+          int(bool(self.doc_count % self.items_count))
+
+        def generate_url(x):
+            args = dict(self.request.form)
+            args.pop('page', None)
+
+            return str(self.request.URL) + '?' + \
+                urllib.urlencode(args) + '&page=%d' % x
+
+        self.pages = map(lambda x: {'number':x,
+            'url': generate_url(x)}, range(1, page_count + 1))
+
+    return searcher.search(query, self.items_count * (page - 1),
+        self.items_count * page)
+
+class PagedSearch(Pager, Search):
+  template = ViewPageTemplateFile('templates/pagedsearch.pt')
 
 class ConstraintQueryJSON(BrowserView):
     """ Full Text Search w/ Constraint """
@@ -142,41 +177,41 @@ class ConstraintQueryJSON(BrowserView):
         self.searcher = component.getUtility(interfaces.IIndexSearch)()
         results = self.query(search_term)
         return simplejson.dumps(results)
-    
+
     def query(self, search_term, spell_correct=False):
         # result
         d = {}
-        
+
         # compose and execute query
         t = time.time()
         start, limit = self.getOffsets()
         query = self.composeQuery(search_term)
         sort_key, sort_dir = self.getSort()
         if sort_dir == 'desc':
-            sort_key = '-'+sort_key
-        
+            sort_key = '-' + sort_key
+
         results = self.searcher.search(
-            query, start, start+limit, sortby=sort_key)
-        
+            query, start, start + limit, sortby=sort_key)
+
         # prepare results
         d['results'] = self.formatResults(results)
-        d['SearchTime'] = time.time()-t
+        d['SearchTime'] = time.time() - t
         d['length'] = results.matches_estimated
-        d["recordsReturned"]=len(results)
+        d["recordsReturned"] = len(results)
         d['sort'] = sort_key
         d['dir'] = sort_dir
         d['start'] = start
         return d
-    
+
     def composeQuery(self, search_term):
 
         if search_term:
             query = self.searcher.query_parse(search_term)
         else:
             query = None
-        
+
         constraint = self.getConstraintQuery()
-        
+
         if constraint and query:
             query = self.searcher.query_multweight(query, 3.0)
             if isinstance(constraint, list):
@@ -192,14 +227,14 @@ class ConstraintQueryJSON(BrowserView):
             return query
         else:
             raise SyntaxError("invalid constraint query")
-        
+
         return query
-    
+
     def getConstraintQuery(self):
         raise NotImplemented
-    
+
     def getOffsets(self, limit_default=30):
-        start = self.request.get('start',0)
+        start = self.request.get('start', 0)
         limit = self.request.get('limit', 25)
         try:
             limit_default = int(limit_default)
@@ -210,12 +245,12 @@ class ConstraintQueryJSON(BrowserView):
             start, limit = 0, 30
         # xapian end range is not inclusive
         return start, limit + 1
-    
+
     def getSort(self):
         sort_key = self.request.get('sort', 'title')
         sort_dir = self.request.get('dir', 'asc')
         return sort_key, sort_dir
-    
+
     def formatResults(self, results):
         r = []
         for i in results:
@@ -223,33 +258,33 @@ class ConstraintQueryJSON(BrowserView):
                 dict(rank=i.rank,
                       object_type=i.data.get('object_type'),
                       title=i.data.get('title'),
-                      weight = i.weight,
-                      percent = i.percent
+                      weight=i.weight,
+                      percent=i.percent
                 )
             )
         return r
-                      
+
 
 class Similar(BrowserView, ResultListing):
     template = ViewPageTemplateFile('templates/similar.pt')
-    
+
     def update(self):
         resolver = component.getUtility(interfaces.IResolver)
-        
+
         doc_id = resolver.id(removeSecurityProxy(self.context))
-        
+
         t = time.time()
         searcher = component.getUtility(interfaces.IIndexSearch)()
         query = searcher.query_similar(doc_id)
         # similarity includes original doc
         # grab first fifteen matching
         self.results = searcher.search(query, 0, 15)
-        self.search_time = time.time()-t
+        self.search_time = time.time() - t
         self.doc_count = searcher.get_doccount()
-        
+
     def render(self):
         return self.template()
-    
+
     def __call__(self):
         self.update()
         return self.render()

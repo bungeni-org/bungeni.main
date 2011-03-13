@@ -1,30 +1,30 @@
 <?xml version="1.0"?>
 <configure xmlns="http://namespaces.zope.org/zope"
-    xmlns:browser="http://namespaces.zope.org/browser" 
+    xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni.ui">
 
 <!-- Naming convention for Page Views / Templates / Class Handlers:
-  
+
 - PageView.name is the same as template file name, without the extension.
 - The "index" view is always postfixed with "-index".
-- The name of all children of a section always start with the same base 
+- The name of all children of a section always start with the same base
   (as a prefix) as for the "index" view of the containing section.
 - The word separator in names for Views or Template Files is the "-" character,
   i.e. not underscore or dot.
 
 -->
-  
+
     <!-- Application UI -->
-  
-    <!-- !+app-index(mr) -:- the names of these two IBungeniApplication views 
+
+    <!-- !+app-index(mr) -:- the names of these two IBungeniApplication views
        should both be "app-index" -->
     <browser:page name="index"
         for="bungeni.models.interfaces.IBungeniApplication"
         permission="zope.Public"
         template="templates/app-index.pt"
     />
-    <!-- when logged in, requests to "/" are redirected to the index view of  
+    <!-- when logged in, requests to "/" are redirected to the index view of
     the user's first workspace OR (if no workspaces) to "/workspace" -->
     <browser:page name="index"
         for="bungeni.models.interfaces.IBungeniApplication"
@@ -32,20 +32,20 @@
         layer=".interfaces.IBungeniAuthenticatedSkin"
         class=".redirect.WorkspaceRootRedirect"
     />
-  
+
     <!-- Workspace -->
 
-    <!-- !+NotAuthenticated(mr, 08-2010), not-logged-in gives NotFound? 
+    <!-- !+NotAuthenticated(mr, 08-2010), not-logged-in gives NotFound?
         adopt a standard handling of (the numerous) such situations e.g.
-        - redirect to login? 
+        - redirect to login?
         - standard error page, with suggestion that may need to log in?
-    --> 
+    -->
     <browser:page name="workspace-index"
         for="bungeni.core.interfaces.ISection"
         permission="zope.View"
         layer=".interfaces.IBungeniAuthenticatedSkin"
         template="templates/app-index.pt"
-    /><!-- class=".redirect.WorkspaceRootRedirect" 
+    /><!-- class=".redirect.WorkspaceRootRedirect"
     <browser:page
         name="no-workspace-index"
         for="bungeni.core.interfaces.ISection"
@@ -58,7 +58,7 @@
         class=".redirect.WorkspaceContainerIndexRedirect"
         permission="zope.View"
         layer=".interfaces.IWorkspaceSectionLayer"
-    /><!-- why does name must be "view"? e.g. "workspace-container-index" will 
+    /><!-- why does name must be "view"? e.g. "workspace-container-index" will
            not match -->
 
     <adapter factory=".workspace.WorkspaceContainerTraverser"
@@ -71,7 +71,7 @@
         class=".workspace.WorkspacePIView"
         permission="zope.View"
     />
-	<browser:page name="workspace-mi"
+  <browser:page name="workspace-mi"
         for=".interfaces.IWorkspaceMIContext"
         layer=".interfaces.IBungeniAuthenticatedSkin"
         class=".workspace.WorkspaceMIView"
@@ -84,9 +84,9 @@
         permission="zope.View"
     />
     <!-- bungeni.models.interfaces.IGroupSittingContainer -->
-    
+
     <!-- Setup Access to Browser Resources on the Application -->
-    
+
     <browser:page name=""
         for="bungeni.models.interfaces.IBungeniApplication"
         class="zope.app.publisher.browser.resources.Resources"
@@ -95,7 +95,7 @@
     />
 
     <!-- redirects -->
-    
+
     <browser:page name="current"
         for="bungeni.models.interfaces.IBungeniApplication"
         permission="zope.Public"
@@ -113,14 +113,14 @@
      name="download"
      class=".file.FileDownload"
      />
-	 
+
   <browser:view
      for="bungeni.models.interfaces.IAttachedFileVersion"
      permission="zope.View"
      name="download"
      class=".file.FileDownload"
      />
-	 
+
     <browser:view for="bungeni.models.interfaces.IAttachedFile"
         permission="bungeni.attachedfile.wf.deactivate"
         name="deactivate"
@@ -128,14 +128,14 @@
     /><!-- !+WORKFLOW_TRANSITION(mr, feb-2011) -->
 
   <!-- Login UI -->
-  
+
   <browser:page
      for="bungeni.models.interfaces.IBungeniApplication"
      permission="zope.Public"
      name="login"
      class=".login.Login"
      />
-     
+
   <browser:page
      for="bungeni.models.interfaces.IBungeniApplication"
      permission="zope.Public"
@@ -144,13 +144,13 @@
      />
 
     <!-- Content Search Form -->
-    
+
     <browser:page name="search"
         for="bungeni.models.interfaces.IBungeniApplication"
         permission="zope.View"
-        class=".search.Search"
+        class=".search.PagedSearch"
     />
-    
+
   <!-- Reporting -->
 
   <browser:page
@@ -159,40 +159,40 @@
      permission="bungeni.reports.Edit"
      class=".reports.GroupSittingContextAgendaReportView"
      />
-     
-	<browser:page
+
+  <browser:page
      name="agenda"
      for="bungeni.core.interfaces.ISchedulingContext"
      permission="bungeni.reports.Edit"
      class=".reports.SchedulingContextAgendaReportView"
      />
-     
+
    <browser:page
      name="votes-and-proceedings"
      for="bungeni.models.interfaces.IGroupSitting"
      permission="bungeni.reports.Edit"
      class=".reports.GroupSittingContextMinutesReportView"
      />
-     
-  	<browser:page
+
+    <browser:page
      name="votes-and-proceedings"
      for="bungeni.core.interfaces.ISchedulingContext"
      permission="bungeni.reports.Edit"
      class=".reports.SchedulingContextMinutesReportView"
      />
-	<browser:page
+  <browser:page
      name="save-report"
      for="bungeni.models.interfaces.IGroupSitting"
      permission="bungeni.reports.Edit"
      class=".reports.SaveReportView"
      />
-  	<browser:page
+    <browser:page
      name="save-report"
      for="bungeni.core.interfaces.ISchedulingContext"
      permission="bungeni.reports.Edit"
      class=".reports.SaveReportView"
      />
-  
+
   <!-- Calendar -->
 
   <browser:page
@@ -215,7 +215,7 @@
      name="odt"
      class=".downloaddocument.ReportODT"
     />
-    
+
     <browser:page
      for="bungeni.models.interfaces.IReport"
      permission="zope.Public"
@@ -300,14 +300,14 @@
      name="dhtmlxcalendar"
      class=".calendar.browser.DhtmlxCalendarSittings"
     />
-    
+
     <browser:page
      for="*"
      permission="bungeni.sitting.Edit"
      name="dhtmlxcalendaredit"
      class=".calendar.browser.DhtmlxCalendarSittingsEdit"
     />
-    
+
   <browser:page
      for="bungeni.models.interfaces.ICommittee"
      permission="zope.View"
@@ -334,14 +334,14 @@
         class=".calendar.browser.CalendarView"
         permission="zope.View"
     />
-    
+
   <browser:page
      for="bungeni.models.interfaces.IGroupSitting"
      permission="bungeni.sittingschedule.View"
      name="schedule"
      class=".calendar.browser.GroupSittingScheduleView"
     />
-    
+
       <browser:page
      name="schedule_order"
      for="bungeni.models.interfaces.IGroupSitting"
@@ -349,16 +349,16 @@
      permission="bungeni.sittingschedule.Edit"
      />
   <!-- Similar Content -->
-  
+
   <browser:page
     for="bungeni.models.interfaces.IBungeniContent"
     permission="zope.View"
     name="similar"
     class=".search.Similar"
     />
-    
+
     <!-- workflow view -->
-    
+
     <browser:page name="workflow"
         for="bungeni.models.interfaces.IBungeniContent"
         class=".workflow.WorkflowView"
@@ -369,7 +369,7 @@
         class=".workflow.WorkflowChangeStateView"
         permission="zope.View"
     />
-    
+
     <!-- versions -->
     <browser:page name="index"
         for="bungeni.models.interfaces.IVersionContainer"
@@ -379,7 +379,7 @@
     />
 
   <!-- business -->
-    
+
     <browser:page name="business-index"
         for="*"
         layer="bungeni.ui.interfaces.IBungeniSkin"
@@ -408,9 +408,9 @@
         class=".redirect.MembersIndexRedirect"
         permission="zope.Public"
     />
-  
+
   <!-- archive -->
-    
+
     <browser:page
         name="archive-index"
         for="*"
@@ -439,7 +439,7 @@
         class=".archive.AdminBrowseContentView"
         permission="zope.ManageSite"
     />
-    
+
     <!-- json view of containers-->
     <browser:page name="jsonlisting"
         for="bungeni.alchemist.interfaces.IAlchemistContainer"
@@ -479,117 +479,117 @@
         class=".table.AjaxContainerListing"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-	
-	<!-- RSS/XML views -->
-	
-	<!-- RSS views for html content -->
 
-	<browser:page
-	    name="feed.rss"
-	    for="bungeni.models.interfaces.IBillContainer"
-	    class=".rss.BillRSSView"
-	    permission="zope.View"
-		layer=".interfaces.IRSSRepresentationLayer"
-	 />
-	 
-	 <browser:page
+  <!-- RSS/XML views -->
+
+  <!-- RSS views for html content -->
+
+  <browser:page
+      name="feed.rss"
+      for="bungeni.models.interfaces.IBillContainer"
+      class=".rss.BillRSSView"
+      permission="zope.View"
+    layer=".interfaces.IRSSRepresentationLayer"
+   />
+
+   <browser:page
         name="feed.rss"
         for="bungeni.models.interfaces.ICommitteeContainer"
         class=".rss.CommitteeRSSView"
         permission="zope.View"
-		layer=".interfaces.IRSSRepresentationLayer"
+    layer=".interfaces.IRSSRepresentationLayer"
      />
-	 
-	 <browser:page
+
+   <browser:page
         name="feed.rss"
         for="bungeni.models.interfaces.IQuestionContainer"
         class=".rss.QuestionRSSView"
         permission="zope.View"
-		layer=".interfaces.IRSSRepresentationLayer"
+    layer=".interfaces.IRSSRepresentationLayer"
      />
-	 
-	 <browser:page
+
+   <browser:page
         name="feed.rss"
         for="bungeni.models.interfaces.IMotionContainer"
         class=".rss.MotionRSSView"
         permission="zope.View"
-		layer=".interfaces.IRSSRepresentationLayer"
+    layer=".interfaces.IRSSRepresentationLayer"
      />
-	 
-	 <browser:page
+
+   <browser:page
         name="feed.rss"
         for="bungeni.models.interfaces.ITabledDocumentContainer"
         class=".rss.TabledDocumentRSSView"
         permission="zope.View"
-		layer=".interfaces.IRSSRepresentationLayer"
+    layer=".interfaces.IRSSRepresentationLayer"
      />
-	 
-	 <browser:page
+
+   <browser:page
         name="feed.rss"
         for="bungeni.models.interfaces.IAgendaItemContainer"
         class=".rss.AgendaItemRSSView"
         permission="zope.View"
-		layer=".interfaces.IRSSRepresentationLayer"
+    layer=".interfaces.IRSSRepresentationLayer"
      />
-	 
-	 <browser:page
+
+   <browser:page
         name="feed.rss"
         for="bungeni.models.interfaces.IGroupSittingContainer"
         class=".rss.SittingRSSView"
         permission="zope.View"
-		layer=".interfaces.IRSSRepresentationLayer"
+    layer=".interfaces.IRSSRepresentationLayer"
      />
-	 
-	 <browser:page
+
+   <browser:page
         name="feed.rss"
         for="bungeni.models.interfaces.IReportContainer"
         class=".rss.ReportRSSView"
         permission="zope.View"
-		layer=".interfaces.IRSSRepresentationLayer"
+    layer=".interfaces.IRSSRepresentationLayer"
      />
-	 
-	 <browser:page
-	    name="feed.rss"
-		for="bungeni.models.interfaces.IBill"
-		class=".rss.BillTimelineRSSView"
-		permission="zope.View"
-		layer=".interfaces.IRSSRepresentationLayer"
-	 />
-	 
-	 <browser:page
+
+   <browser:page
+      name="feed.rss"
+    for="bungeni.models.interfaces.IBill"
+    class=".rss.BillTimelineRSSView"
+    permission="zope.View"
+    layer=".interfaces.IRSSRepresentationLayer"
+   />
+
+   <browser:page
         name="feed.rss"
         for="bungeni.models.interfaces.IQuestion"
         class=".rss.QuestionTimelineRSSView"
         permission="zope.View"
-		layer=".interfaces.IRSSRepresentationLayer"
+    layer=".interfaces.IRSSRepresentationLayer"
      />
-	 
-	 <browser:page
+
+   <browser:page
         name="feed.rss"
         for="bungeni.models.interfaces.IMotion"
         class=".rss.MotionTimelineRSSView"
         permission="zope.View"
-		layer=".interfaces.IRSSRepresentationLayer"
+    layer=".interfaces.IRSSRepresentationLayer"
      />
-	 
-	 <browser:page
+
+   <browser:page
         name="feed.rss"
         for="bungeni.models.interfaces.ITabledDocument"
         class=".rss.TabledDocumentTimelineRSSView"
         permission="zope.View"
-		layer=".interfaces.IRSSRepresentationLayer"
+    layer=".interfaces.IRSSRepresentationLayer"
      />
-	 
-	 <browser:page
+
+   <browser:page
         name="feed.rss"
         for="bungeni.models.interfaces.IAgendaItem"
         class=".rss.AgendaItemTimelineRSSView"
         permission="zope.View"
-		layer=".interfaces.IRSSRepresentationLayer"
+    layer=".interfaces.IRSSRepresentationLayer"
      />
-	 
-	 <!-- RSS views for akomantoso xml content -->
-	 
+
+   <!-- RSS views for akomantoso xml content -->
+
      <browser:page
         name="akomantosofeed.rss"
         for="bungeni.models.interfaces.IBillContainer"
@@ -597,23 +597,23 @@
         permission="zope.View"
         layer=".interfaces.IRSSRepresentationLayer"
      />
-	 
-	 <browser:page
+
+   <browser:page
         name="akomantosofeed.rss"
         for="bungeni.models.interfaces.IQuestionContainer"
         class=".rss.AkomantosoQuestionRSSView"
         permission="zope.View"
         layer=".interfaces.IRSSRepresentationLayer"
      />
-	 
-	 <browser:page
+
+   <browser:page
         name="akomantosofeed.rss"
         for="bungeni.models.interfaces.IMotionContainer"
         class=".rss.AkomantosoMotionRSSView"
         permission="zope.View"
         layer=".interfaces.IRSSRepresentationLayer"
      />
-     
+
      <browser:page
         name="akomantosofeed.rss"
         for="bungeni.models.interfaces.ITabledDocumentContainer"
@@ -621,24 +621,24 @@
         permission="zope.View"
         layer=".interfaces.IRSSRepresentationLayer"
      />
-     
+
      <browser:page
         name="akomantosofeed.rss"
         for="bungeni.models.interfaces.IAgendaItemContainer"
         class=".rss.AkomantosoAgendaItemRSSView"
         permission="zope.View"
         layer=".interfaces.IRSSRepresentationLayer"
-     />	 
-	 <!-- Akomantoso XML views -->
-	 
-	 <browser:page
-	    name="akomantoso.xml"
-		for="bungeni.models.interfaces.IBill"
-		class=".rss.AkomantosoBillXMLView"
-		permission="zope.View"
-		layer=".interfaces.IRSSRepresentationLayer"
-	 />
-	 <browser:page
+     />
+   <!-- Akomantoso XML views -->
+
+   <browser:page
+      name="akomantoso.xml"
+    for="bungeni.models.interfaces.IBill"
+    class=".rss.AkomantosoBillXMLView"
+    permission="zope.View"
+    layer=".interfaces.IRSSRepresentationLayer"
+   />
+   <browser:page
         name="akomantoso.xml"
         for="bungeni.models.interfaces.IQuestion"
         class=".rss.AkomantosoQuestionXMLView"
@@ -646,43 +646,43 @@
         layer=".interfaces.IRSSRepresentationLayer"
      />
 
-	 <browser:page
+   <browser:page
         name="akomantoso.xml"
         for="bungeni.models.interfaces.IMotion"
         class=".rss.AkomantosoMotionXMLView"
         permission="zope.View"
         layer=".interfaces.IRSSRepresentationLayer"
      />
-	 
-	 <browser:page
+
+   <browser:page
         name="akomantoso.xml"
         for="bungeni.models.interfaces.ITabledDocument"
         class=".rss.AkomantosoTabledDocumentXMLView"
         permission="zope.View"
         layer=".interfaces.IRSSRepresentationLayer"
      />
-	 
-	 <browser:page
+
+   <browser:page
         name="akomantoso.xml"
         for="bungeni.models.interfaces.IAgendaItem"
         class=".rss.AkomantosoAgendaItemXMLView"
         permission="zope.View"
         layer=".interfaces.IRSSRepresentationLayer"
      />
-	 
-	 <browser:pages
-	    for="bungeni.models.interfaces.IBungeniContent"
+
+   <browser:pages
+      for="bungeni.models.interfaces.IBungeniContent"
         class=".rss.SubscriptionView"
         permission="zope.View"
         layer="bungeni.ui.interfaces.IBungeniAuthenticatedSkin">
-        	<browser:page
-			   name="subscribe"
-			   attribute="subscribe"
-			/>
-			<browser:page
+          <browser:page
+         name="subscribe"
+         attribute="subscribe"
+      />
+      <browser:page
                name="unsubscribe"
                attribute="unsubscribe"
             />
      </browser:pages>
-	 
+
 </configure>
