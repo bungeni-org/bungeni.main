@@ -30,6 +30,8 @@ from bungeni.core.interfaces import IAuditable
 #from zope.app.pagetemplate import ViewPageTemplateFile
 
 from bungeni.ui.i18n import _
+from bungeni.core.i18n import _ as _bc
+from zope.i18n import translate
 
 
 class WorkflowVocabulary(object):
@@ -189,9 +191,13 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
         wf = interfaces.IWorkflow(self.context) 
         if transition is not None:
             state_transition = wf.getTransitionById(transition)
-            self.status = _(
+            # !- workflow state title translations are in bungeni.core
+            # use the right factory here to get translation
+            state_title = translate(_bc(state_transition.title),
+                                context=self.request)
+            self.status = translate(_(
                 u"Confirmation required for workflow transition: '${title}'",
-                mapping={"title": _(state_transition.title)})
+                mapping={"title": state_title}), context = self.request)
         self.setupActions(transition)
         if not self.actions: 
             self.form_fields = self.form_fields.omit("note", "date_active")
