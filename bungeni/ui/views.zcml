@@ -671,7 +671,7 @@
      />
 
    <browser:pages
-      for="bungeni.models.interfaces.IBungeniContent"
+      for="bungeni.models.interfaces.IAgendaItem"
         class=".rss.SubscriptionView"
         permission="zope.View"
         layer="bungeni.ui.interfaces.IBungeniAuthenticatedSkin">
@@ -684,5 +684,60 @@
                attribute="unsubscribe"
             />
      </browser:pages>
-
+    <browser:pages
+      for="bungeni.models.interfaces.ITabledDocument"
+        class=".rss.SubscriptionView"
+        permission="zope.View"
+        layer="bungeni.ui.interfaces.IBungeniAuthenticatedSkin">
+          <browser:page
+         name="subscribe"
+         attribute="subscribe"
+      />
+      <browser:page
+               name="unsubscribe"
+               attribute="unsubscribe"
+            />
+     </browser:pages>
+     <browser:pages
+      for="bungeni.models.interfaces.IMotion"
+        class=".rss.SubscriptionView"
+        permission="zope.View"
+        layer="bungeni.ui.interfaces.IBungeniAuthenticatedSkin">
+          <browser:page
+         name="subscribe"
+         attribute="subscribe"
+      />
+      <browser:page
+               name="unsubscribe"
+               attribute="unsubscribe"
+            />
+     </browser:pages>
+     <browser:pages
+      for="bungeni.models.interfaces.IQuestion"
+        class=".rss.SubscriptionView"
+        permission="zope.View"
+        layer="bungeni.ui.interfaces.IBungeniAuthenticatedSkin">
+          <browser:page
+         name="subscribe"
+         attribute="subscribe"
+      />
+      <browser:page
+               name="unsubscribe"
+               attribute="unsubscribe"
+            />
+     </browser:pages>
+     <browser:pages
+      for="bungeni.models.interfaces.IBill"
+        class=".rss.SubscriptionView"
+        permission="zope.View"
+        layer="bungeni.ui.interfaces.IBungeniAuthenticatedSkin">
+          <browser:page
+         name="subscribe"
+         attribute="subscribe"
+      />
+      <browser:page
+               name="unsubscribe"
+               attribute="unsubscribe"
+            />
+     </browser:pages>
 </configure>
