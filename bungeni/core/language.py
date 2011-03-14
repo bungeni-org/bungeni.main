@@ -76,10 +76,10 @@ def get_default_language():
     sorted_providers = sorted(provider_list, key=lambda p: p[1].WEIGHT)
     for name, provider in sorted_providers:
         _language = provider()
-        log.error("Looking for language in %s found %s", name, _language)
+        log.debug("Looking for language in %s found %s", name, _language)
         if _language and (_language in capi.zope_i18n_allowed_languages):
             default_language = _language
-            log.error("Got default language as %s from provider %s",
+            log.debug("Got default language as %s from provider %s",
                         _language, name)
             break
     return default_language

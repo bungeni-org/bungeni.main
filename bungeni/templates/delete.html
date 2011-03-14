@@ -23,8 +23,8 @@ $begin{ content }
             <li>
                 <a href="${ 
                     absoluteURL(view.context, view.request)
-                        }">${ i18n(view.page_title) }</a>
-            <p class="discreet">${ i18n(view.page_description) }</a>
+                        }">${ view.page_title }</a>
+                <p class="discreet">${ view.page_description }</a>
           </li>
         </ul>
         $end{ pre_fieldset }
