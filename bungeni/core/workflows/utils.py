@@ -19,32 +19,6 @@ from bungeni.ui.utils import debug
 
 import dbutils
 
-class conditions(object):
-    """Commonly used transition conditions.
-    """
-    
-    # the condition for the transition from "" (None) to either "draft" or to 
-    # "working_draft" seems to need the explicit condition (and negation of 
-    # condition) on each of the two transition options 
-    @staticmethod
-    def user_is_not_context_owner(info, context):
-        return not conditions.user_is_context_owner(info, context)
-    @staticmethod
-    def user_is_context_owner(info, context):
-        def user_is_context_owner(context):
-            """Test if current user is the context owner e.g. to check if someone 
-            manipulating the context object is other than the owner of the object.
-            """
-            user_id = get_principal_id()
-            owner_id = getOwnerId(context)
-            return user_id==owner_id
-        return user_is_context_owner(context)
-    
-    @staticmethod
-    def is_scheduled(info, context):
-        return dbutils.isItemScheduled(context.parliamentary_item_id)
-
-#
 
 ''' !+UNUSED(mr, mar-2011)
 def get_parliament(context):

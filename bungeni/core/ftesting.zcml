@@ -47,7 +47,7 @@
   <!-- replacing grants.zcml/permissions.zcml these with the more inclusive 
             bungeni.core.workflows configure.zcml 
        as an attempt to get the class
-            bungeni.core.workflows.states.StateWorkflowInfo 
+            bungeni.core.workflow.states.StateWorkflowInfo 
        to kick-in as the factory provider for
             ore.workflow.interfaces.IWorkflowInfo
   <include package="bungeni.core.workflows" file="grants.zcml" />

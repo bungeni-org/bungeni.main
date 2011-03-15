@@ -29,7 +29,7 @@
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Owner" /> 
     </state>
     
-    <state id="draft" like_state="working_draft" title="Draft">
+    <state id="draft"  title="Draft" like_state="working_draft">
         <!-- tableddocument -->
         <deny permission="zope.View" role="bungeni.Clerk" />
         <deny permission="zope.View" role="bungeni.Speaker" />
@@ -49,7 +49,9 @@
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Owner" /> 
     </state>
     
-    <state id="submitted" like_state="draft" title="Submitted">
+    <state id="submitted" title="Submitted" 
+        version="true"
+        like_state="draft">
         <!-- tableddocument -->
         <grant permission="zope.View" role="bungeni.Clerk" />
         <grant permission="zope.View" role="bungeni.Speaker" />
@@ -60,7 +62,9 @@
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
     </state>
     
-    <state id="received" like_state="submitted" title="Received by Clerks Office">
+    <state id="received" title="Received by Clerks Office"
+        version="true"
+        like_state="submitted">
         <!-- tableddocument -->
         <grant permission="bungeni.tableddocument.Edit" role="bungeni.Clerk" />
         <!-- fileattachment -->
@@ -68,7 +72,9 @@
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Clerk" /> 
     </state>
     
-    <state id="completed" like_state="submitted" title="Submitted to the Speaker">
+    <state id="completed" title="Submitted to the Speaker"
+        version="true"
+        like_state="submitted">
         <!-- tableddocument -->
         <grant permission="bungeni.tableddocument.Edit" role="bungeni.Speaker" />
         <!-- fileattachment -->
@@ -76,21 +82,26 @@
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Speaker" /> 
     </state>
     
-    <state id="admissible" like_state="submitted" title="Admissible">
+    <state id="admissible" title="Admissible" 
+        version="true"
+        like_state="submitted">
         <!-- tableddocument -->
         <grant permission="zope.View" role="bungeni.MP" />
         <grant permission="zope.View" role="bungeni.Minister" />
     </state>
     
-    <state id="schedule_pending" like_state="admissible" title="Schedule pending" />
+    <state id="schedule_pending" title="Schedule pending" like_state="admissible" />
     
-    <state id="inadmissible" like_state="submitted" title="Inadmissible" />
+    <state id="inadmissible" title="Inadmissible" like_state="submitted" />
     
-    <state id="incomplete" like_state="received" 
-        title="Needs Clarification by Clerks Office" />
+    <state id="incomplete" title="Needs Clarification by Clerks Office"
+        version="true"
+        like_state="received" 
+    />
     
-    <state id="clarification_required" like_state="submitted" 
-        title="Needs Clarification by MP">
+    <state id="clarification_required" title="Needs Clarification by MP"
+        version="true"
+        like_state="submitted">
         <!-- question -->
         <grant permission="bungeni.tableddocument.Edit" role="bungeni.Owner" />
         <!-- fileattachment -->
@@ -98,25 +109,25 @@
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
     </state>
     
-    <state id="scheduled" like_state="admissible" title="Scheduled" />
+    <state id="scheduled" title="Scheduled" like_state="admissible" />
     
-    <state id="adjourned" like_state="admissible" title="Adjourn" />
+    <state id="adjourned" title="Adjourn" like_state="admissible" />
     
     <!-- only after it has been tabled does a tableddocument become public -->
-    <state id="tabled" like_state="admissible" title="Tabled">
+    <state id="tabled" title="Tabled" like_state="admissible">
         <!-- tableddocument -->
         <grant permission="zope.View" role="bungeni.Authenticated" />
         <grant permission="zope.View" role="bungeni.Anonymous" />
     </state>
     
-    <state id="withdrawn" like_state="submitted" title="Withdrawn"/>
+    <state id="withdrawn" title="Withdrawn" like_state="submitted" />
     
     
     <transition id="create"
         title="Create Tabled Document"
         source=""
         destination="draft"
-        condition=".tableddocument.conditions.user_is_context_owner"
+        condition="user_is_context_owner"
         trigger="automatic"
     />
     
@@ -124,7 +135,7 @@
         title="Create Tabled Document (On behalf of)"
         source=""
         destination="working_draft"
-        condition=".tableddocument.conditions.user_is_not_context_owner"
+        condition="user_is_not_context_owner"
         trigger="automatic"
     />
     
@@ -150,7 +161,7 @@
     
     <transition id="require_clarification"
         title="Needs Clarification to Receive"
-        source="received"
+        source="received incomplete"
         destination="clarification_required"
         condition=""
         trigger="manual"
@@ -216,17 +227,6 @@
         roles="bungeni.Clerk"
     />
     
-    <transition id="mp_clarify"
-        title="Needs Clarification by MP"
-        source="incomplete"
-        destination="clarification_required"
-        condition=""
-        trigger="manual"
-        roles="bungeni.Clerk"
-        event=".interfaces.ITabledDocumentClarifyEvent"
-        require_confirmation="true"
-    />
-    
     <transition id="resubmit"
         title="Resubmit to Clerk"
         source="clarification_required"
@@ -248,7 +248,7 @@
         title="Schedule"
         source="schedule_pending"
         destination="scheduled"
-        condition=".tableddocument.conditions.is_scheduled"
+        condition="is_scheduled"
         trigger="system"
         roles="bungeni.Clerk"
         event=".interfaces.ITabledDocumentScheduledEvent"

@@ -13,7 +13,7 @@
         <deny permission="zope.View" role="bungeni.Anonymous" /> 
     </state>
     
-    <state id="public" like_state="inactive" title="Public">
+    <state id="public" title="Public" like_state="inactive">
         <!-- heading -->
         <grant permission="zope.View" role="bungeni.Authenticated" /> 
         <grant permission="zope.View" role="bungeni.Anonymous" />

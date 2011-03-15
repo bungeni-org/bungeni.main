@@ -13,7 +13,7 @@
         <grant permission="zope.View" role="bungeni.Anonymous" />
     </state>
 
-    <state id="inactive" like_state="public" title="Inactive event">
+    <state id="inactive" title="Inactive event" like_state="public" >
         <!-- event -->
         <deny permission="zope.View" role="bungeni.Authenticated" /> 
         <deny permission="zope.View" role="bungeni.Anonymous" /> 

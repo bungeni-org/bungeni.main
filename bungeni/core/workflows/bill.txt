@@ -120,7 +120,7 @@ Actions
   >>> from bungeni.core.workflows.bill import actions 
   >>> info = IWorkflowInfo(bill)
   >>> info
-  <bungeni.core.workflows.states.StateWorkflowInfo object at ...>
+  <bungeni.core.workflow.states.StateWorkflowInfo object at ...>
 
 "Create". This action sets the submission date and parliament id.
 
@@ -159,7 +159,9 @@ this way do not create the expected auditlog.
 Conditions
 ----------
 
-  >>> from bungeni.core.workflows.bill import conditions
+!+CUSTOM(mr, mar-2011) update to test with bungeni_custom
+
+  >>> from bungeni.core.workflows import _conditions as conditions
   
 "Is scheduled".
 

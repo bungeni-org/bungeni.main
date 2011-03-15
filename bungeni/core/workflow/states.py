@@ -51,18 +51,24 @@ class NullVersions(WorkflowVersions):
 
 
 class State(object):
-    def __init__(self, id, title, permissions):
+    
+    def __init__(self, id, title, version_action, permissions):
         self.id = id
         self.title = title
+        self.version_action = version_action # either(None, callable)
         self.permissions = permissions
     
-    def initialize(self, context):
+    def initialize(self, workflow_info, context):
         """Initialize content now in this state.
         """
         session = Session()
-        _context = removeSecurityProxy(context)
-        session.merge(_context)
-        rpm = zope.securitypolicy.interfaces.IRolePermissionMap(_context)
+        instance = removeSecurityProxy(context)
+        session.merge(instance)
+        # version
+        if self.version_action:
+            self.version_action(workflow_info, instance)
+        # permissions
+        rpm = zope.securitypolicy.interfaces.IRolePermissionMap(instance)
         for action, permission, role in self.permissions:
             if action==GRANT:
                rpm.grantPermissionToRole(permission, role)
@@ -133,5 +139,5 @@ class StateWorkflowInfo(WorkflowInfo):
         state = wf.workflow.states.get(state_id)
         if state is None:
             return
-        state.initialize(self.context)
+        state.initialize(wf, self.context)
 

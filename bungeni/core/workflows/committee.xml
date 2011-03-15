@@ -20,7 +20,7 @@
         <deny permission="bungeni.groupitemassignment.Add" role="bungeni.Clerk" />
     </state>
 
-    <state id="active" like_state="draft" title="Active Committee">
+    <state id="active" title="Active Committee" like_state="draft">
         <!-- committee -->
         <grant permission="zope.View" role="bungeni.MP" />
         <grant permission="zope.View" role="bungeni.Minister" />
@@ -33,13 +33,14 @@
         <grant permission="bungeni.groupitemassignment.Add" role="bungeni.Clerk" />
     </state>
   
-    <state id="dissolved" like_state="active" title="Committee is Dissolved">
+    <state id="dissolved" title="Committee is Dissolved" like_state="active">
         <!-- agendaitem -->
         <deny permission="bungeni.agendaitem.Add" role="bungeni.CommitteeMember" />
         <!-- groupitemassignment -->
         <deny permission="bungeni.groupitemassignment.Add" role="bungeni.Clerk" />
     </state>
-
+    
+    
     <transition id="create"
         title="Create"
         source=""
@@ -60,7 +61,7 @@
         title="Dissolve"
         source="active"
         destination="dissolved"
-        condition=".groups.conditions.has_end_date"
+        condition="has_end_date"
         trigger="manual"
         roles="bungeni.Clerk bungeni.Speaker"
         require_confirmation="true"

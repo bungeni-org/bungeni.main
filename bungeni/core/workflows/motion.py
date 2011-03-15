@@ -1,105 +1,15 @@
-# encoding: utf-8
+
+# setup in adapters.py
+wf = None
+states = None
+
+#
 
 from zope import component
 from bungeni.core.workflows.notification import Notification
 from bungeni.core.workflows import interfaces
 from bungeni.core import globalsettings as prefs
 from bungeni.core.i18n import _
-#import zope.securitypolicy.interfaces
-from bungeni.core.workflows import dbutils, utils
-
-class conditions(utils.conditions):
-    pass
-    
-
-class actions:
-    @staticmethod
-    def denyAllWrites(motion):
-        """
-        remove all rights to change the question from all involved roles
-        """
-    #    rpm = zope.securitypolicy.interfaces.IRolePermissionMap( motion )
-    #    rpm.denyPermissionToRole( 'bungeni.motion.edit', u'bungeni.Owner' )
-    #    rpm.denyPermissionToRole( 'bungeni.motion.edit', u'bungeni.Clerk' )
-    #    rpm.denyPermissionToRole( 'bungeni.motion.edit', u'bungeni.Speaker' )
-    #    rpm.denyPermissionToRole( 'bungeni.motion.edit', u'bungeni.MP' )
-    #    rpm.denyPermissionToRole( 'bungeni.motion.delete', u'bungeni.Owner' )
-    #    rpm.denyPermissionToRole( 'bungeni.motion.delete', u'bungeni.Clerk' )
-    #    rpm.denyPermissionToRole( 'bungeni.motion.delete', u'bungeni.Speaker' )
-    #    rpm.denyPermissionToRole( 'bungeni.motion.delete', u'bungeni.MP' )
-
-    @staticmethod
-    def create(info, context):
-        utils.setParliamentId(info, context)
-        utils.setBungeniOwner(context)
-    create_on_behalf_of = create
-    
-    @staticmethod
-    def submit(info, context):
-        utils.createVersion(info, context)
-        utils.setRegistryNumber(info, context)
-    resubmit = submit
-
-    @staticmethod
-    def receive(info, context):
-        utils.createVersion(info, context)
-
-    @staticmethod
-    def require_clarification(info, context):
-        utils.createVersion(info,context)
-
-
-    @staticmethod
-    def complete(info, context):
-        utils.createVersion(info, context)
-    
-    @staticmethod
-    def approve(info, context):
-        utils.createVersion(info, context)
-        dbutils.setMotionSerialNumber(context)
-    
-    @staticmethod
-    def adopt(info, context):
-        utils.createVersion(info, context)
-    adopt_amendments = adopt
-    
-    @staticmethod
-    def reject(info, context):
-        pass
-    disapprove = reject
-    
-    @staticmethod
-    def require_recomplete(info, context):
-        utils.createVersion(info, context)
-    
-    @staticmethod
-    def recomplete(info, context):
-        utils.createVersion(info, context)
-    
-    @staticmethod
-    def schedule(info, context):
-        pass
-    
-    @staticmethod
-    def reschedule(info, context):
-        pass
-    
-    @staticmethod
-    def defer(info, context):
-        pass
-
-    @staticmethod
-    def elapse(info, context):
-        pass
-
-    @staticmethod
-    def revert_to_admissible(info, context):
-        pass
-
-    @staticmethod
-    def withdraw(info, context):
-        pass
-    withdraw_public = withdraw
     
 
 class SendNotificationToMemberUponReceipt(Notification):

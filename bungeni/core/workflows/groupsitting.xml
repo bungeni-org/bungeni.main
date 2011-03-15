@@ -50,7 +50,7 @@
         <deny permission="bungeni.sittingschedule.itemdiscussion.Edit" role="bungeni.Anonymous" />
     </state>
     
-    <state id="draft_agenda" like_state="sitting" title="Draft Agenda">
+    <state id="draft_agenda" title="Draft Agenda" like_state="sitting">
         <!-- sitting -->
         <grant permission="bungeni.sitting.View" role="bungeni.MP" />
         <grant permission="bungeni.sitting.View" role="bungeni.Minister" />
@@ -64,7 +64,7 @@
         <grant permission="bungeni.sittingschedule.item.Delete" role="bungeni.Speaker" />
     </state>
     
-    <state id="published_agenda" like_state="draft_agenda" title="Published Agenda">
+    <state id="published_agenda" title="Published Agenda" like_state="draft_agenda">
         <!-- sitting -->
         <grant permission="bungeni.sitting.View" role="bungeni.Authenticated" />
         <grant permission="bungeni.sitting.View" role="bungeni.Anonymous" />
@@ -79,7 +79,7 @@
         <deny permission="bungeni.sittingschedule.Edit" role="bungeni.Speaker" />
     </state>
     
-    <state id="draft_minutes" like_state="published_agenda" title="Draft Minutes">
+    <state id="draft_minutes" title="Draft Minutes" like_state="published_agenda">
         <!-- sitting -->
         <grant permission="bungeni.sitting.Edit" role="bungeni.Clerk" />
         <grant permission="bungeni.sitting.Edit" role="bungeni.Speaker" />
@@ -93,7 +93,7 @@
         <grant permission="bungeni.sittingschedule.itemdiscussion.Edit" role="bungeni.Speaker" />
     </state>
     
-    <state id="published_minutes" like_state="draft_minutes" title="Published Minutes">
+    <state id="published_minutes" title="Published Minutes" like_state="draft_minutes">
         <!-- sitting -->
         <grant permission="bungeni.sitting.View" role="bungeni.Authenticated" />
         <grant permission="bungeni.sitting.View" role="bungeni.Anonymous" />
@@ -110,10 +110,14 @@
         <deny permission="bungeni.sittingschedule.item.Delete" role="bungeni.Clerk" />
         <deny permission="bungeni.sittingschedule.item.Delete" role="bungeni.Speaker" />
         <!-- sittingschedule.itemdiscussion -->
-        <grant permission="bungeni.sittingschedule.itemdiscussion.View" role="bungeni.Authenticated" />
-        <grant permission="bungeni.sittingschedule.itemdiscussion.View" role="bungeni.Anonymous" />
-        <deny permission="bungeni.sittingschedule.itemdiscussion.Edit" role="bungeni.Clerk" />
-        <deny permission="bungeni.sittingschedule.itemdiscussion.Edit" role="bungeni.Speaker" />
+        <grant permission="bungeni.sittingschedule.itemdiscussion.View" 
+            role="bungeni.Authenticated" />
+        <grant permission="bungeni.sittingschedule.itemdiscussion.View" 
+            role="bungeni.Anonymous" />
+        <deny permission="bungeni.sittingschedule.itemdiscussion.Edit" 
+            role="bungeni.Clerk" />
+        <deny permission="bungeni.sittingschedule.itemdiscussion.Edit" 
+            role="bungeni.Speaker" />
     </state>
     
     
@@ -138,7 +142,7 @@
         title="Finalize Agenda"
         source="draft_agenda"
         destination="published_agenda"
-        condition=".groupsitting.conditions.has_venue"
+        condition="has_venue"
         trigger="manual"
         roles="bungeni.Clerk bungeni.Speaker"
         require_confirmation="false"

@@ -2,7 +2,7 @@ log = __import__("logging").getLogger("bungeni.core.workflows")
 
 import os
 import events
-import xmlimport
+from bungeni.core.workflow import xmlimport
 
 import bill
 import question

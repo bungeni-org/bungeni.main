@@ -158,10 +158,9 @@ Questions transitions
 -------------------------------------
 
   >>> from ore.workflow.interfaces import IWorkflowInfo
-  >>> from bungeni.core.workflows.question import actions 
   >>> info = IWorkflowInfo(question)
   >>> info
-  <bungeni.core.workflows.states.StateWorkflowInfo object at ...>
+  <bungeni.core.workflow.states.StateWorkflowInfo object at ...>
 
 PRINCIPAL: member
 
@@ -173,7 +172,6 @@ PRINCIPAL: member
 -------------------------------------
 Transition: "create" - assigns the role of "Owner" and sets the parliament id.
 
-  #>>> actions.create(info, question)
   >>> info.fireTransition("-draft")
   >>> question.status
   'draft'
@@ -240,7 +238,6 @@ Setup mock delivery component.
 
 Transition: "submit"
 
-  >>> #actions.submit(info, question)
   >>> info.fireTransition("%s-submitted" % question.status)
   >>> question.status
   'submitted'
@@ -268,100 +265,157 @@ in "submitted" state:
   'clerk'
 
 -------------------------------------
-Transition: "receive_by_clerk"
+Transition: "receive" (from "submit")
 
-  >>> #actions.receive(info, question)
-  >>> info.fireTransition("%s-received" % question.status) # submitted
+  >>> info.fireTransition("%s-received" % question.status)
   >>> question.status
   'received'
   >>> len(versions)
   2
 
 
-!+FIRETRANSITION(mr, dec-2010) the above fireTransition works, but subsequent 
-calls below do NOT work. This issue was claimed resolved, see this discussion:
-http://groups.google.com/group/bungeni-dev/browse_thread/thread/11ed33aac12bd94e/d9c0c20967099cfd  
-!+FIRETRANSITION(mr, feb-2011) since the change to adopt internal transition ids
-made up of "%s-%s"%(source_state, destination_state), should review above
-comment (dec-2010) and update/evolve tests below.
+"Needs Clarification to Receive" (from "received" or "incomplete")
 
-
-# XXX-5 failing:
-trying to execute the *transition* --as the clerk or as the member-- gives:
-Failed example:
-    info.fireTransition("received-by-clerk")
-Exception raised:
-      File "/home/undesa/bungeni/cap_installs/bungeni_install/bungeni/releases/20100305100101/eggs/ore.workflow-1.0.4-py2.5.egg/ore/workflow/workflow.py", line 97, in getTransition
-        transition = self._id_transitions[transition_id]
-    KeyError: 'received-by-clerk'
-
-
-"Require edit by MP"
-
-  >>> actions.require_clarification(info, question)
-  >>> #info.fireTransition("mp-clarify-%s" % question.status)
-  >>> #question.status
-  #'clarify_mp'
+  >>> info.fireTransition("%s-clarification_required" % question.status)
+  >>> question.status
+  'clarification_required'
   >>> len(versions)
   3
 
-"Complete".
 
-  >>> actions.complete(info, question)
-  >>> #info.fireTransition("complete-%s" % question.status)
-  >>> #question.status
-  #'completed'
+PRINCIPAL: member
+
+Must re-submit:
+
+  >>> zope.security.management.endInteraction()
+  >>> zope.security.management.newInteraction(create_participation(member))
+  >>> get_principal_id()
+  'member'
+  >>> info.fireTransition("%s-submitted" % question.status)
+  >>> question.status
+  'submitted'
   >>> len(versions)
   4
+  
 
-"Approve".
+PRINCIPAL: clerk
 
-!+FIRETRANSITION(mr, dec-2010) workflow transitions (only partly) executed in 
-this way do not create the expected auditlog. 
+And re-receive:
 
-  >>> actions.approve(info, question)
+  >>> zope.security.management.endInteraction()
+  >>> zope.security.management.newInteraction(create_participation(clerk))
+  >>> get_principal_id()
+  'clerk'
+  >>> info.fireTransition("%s-received" % question.status)
+  >>> question.status
+  'received'
   >>> len(versions)
   5
 
-  >>> #question.admissible_date == today
-  #True
 
-"Reject".
+"Complete" (from "received" or "incomplete")
 
-  >>> actions.reject(info, question)
-
-"Require amendment".
-
-  >>> actions.require_recomplete(info, question)
+  >>> info.fireTransition("%s-completed" % question.status)
+  >>> question.status
+  'completed'
   >>> len(versions)
   6
 
-"Complete clarify".
 
-  >>> actions.recomplete(info, question)
+PRINCIPAL: speaker
+
+  >>> zope.security.management.endInteraction()
+  >>> zope.security.management.newInteraction(create_participation(speaker))
+  >>> get_principal_id()
+  'speaker'
+
+"Require recomplete" (from "completed")
+
+  >>> info.fireTransition("%s-incomplete" % question.status)
+  >>> question.status
+  'incomplete'
   >>> len(versions)
   7
 
-"MP clarify".
 
-  >>> actions.require_clarification(info, question)
+PRINCIPAL: clerk
+
+"Re-complete" (from "incomplete")
+
+  >>> zope.security.management.endInteraction()
+  >>> zope.security.management.newInteraction(create_participation(clerk))
+  >>> get_principal_id()
+  'clerk'
+
+  >>> info.fireTransition("%s-completed" % question.status)
+  >>> question.status
+  'completed'
   >>> len(versions)
   8
 
-"Send to ministry".
 
-  >>> actions.allow_response(info, question)
-  >>> question.ministry_submit_date == today
+PRINCIPAL: speaker
+
+"Approve" (from "completed")
+
+  >>> zope.security.management.endInteraction()
+  >>> zope.security.management.newInteraction(create_participation(speaker))
+  >>> get_principal_id()
+  'speaker'
+
+
+  >>> info.fireTransition("%s-admissible" % question.status)
+  >>> question.status
+  'admissible'
+  >>> len(versions)
+  9
+  
+!+FIRETRANSITION(mr, dec-2010) workflow transitions (only partly) executed in 
+this way do not create the expected auditlog. 
+
+  >>> #question.admissible_date == today
   True
 
-"Answer".
 
-  >>> actions.answer(info, question)
+PRINCIPAL: clerk
+
+"Allow response" (send to ministry)
+
+  >>> zope.security.management.endInteraction()
+  >>> zope.security.management.newInteraction(create_participation(clerk))
+  >>> get_principal_id()
+  'clerk'
+
+!+FIRETRANSITION(mr, feb-2011) should review/update/evolve tests below to use 
+fireTransition() (instead of directly executing actions), and to use the new
+convention adopted for internal transition ids composed of:
+    "%s-%s" % (source_state, destination_state)
+
+!+FIRETRANSITION(mr, mar-2011) now that fireTransition is being used instead of 
+simply executing actions indpendetly, the following fails (correctly) as the
+needed condition (written querstion) is not satisfied 
+
+  >>> #info.fireTransition("%s-response_pending" % question.status)
+  >>> #question.status
+  #'response_pending'
+  >>> #len(versions)
+  #10
+  >>> #question.ministry_submit_date == today
+  #True
+
+
+"Repond"
+
+!+FIRETRANSITION(mr, mar-2011) complete response tests
+
+  >>> #actions.answer(info, question)
+
 
 Question conditions
 -------------------
+!+CUSTOM(mr, mar-2011) update to test with bungeni_custom
 
-  >>> from bungeni.core.workflows.question import conditions
+  >>> from bungeni.core.workflows import _conditions as conditions
   
 "Is scheduled".
 

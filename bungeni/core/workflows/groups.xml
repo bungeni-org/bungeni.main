@@ -22,7 +22,7 @@
         <grant permission="bungeni.office.ChangeType" role="bungeni.Clerk" /> 
     </state>
     
-    <state id="active" like_state="draft" title="Active Group">
+    <state id="active" title="Active Group" like_state="draft">
         <!-- group -->
         <grant permission="zope.View" role="bungeni.MP" />
         <grant permission="zope.View" role="bungeni.Minister" />
@@ -37,7 +37,7 @@
         <deny permission="bungeni.office.ChangeType" role="bungeni.Clerk" />
     </state>
     
-    <state id="dissolved" like_state="active" title="Group is Dissolved">
+    <state id="dissolved" title="Group is Dissolved" like_state="active">
         <!-- groupmember -->
         <deny permission="bungeni.groupmember.Edit" role="bungeni.Clerk" />
         <deny permission="bungeni.groupmember.Add" role="bungeni.Clerk" />
@@ -64,7 +64,7 @@
         title="Dissolve"
         source="active"
         destination="dissolved"
-        condition=".groups.conditions.has_end_date"
+        condition="has_end_date"
         trigger="manual"
         roles="bungeni.Clerk bungeni.Speaker"
         require_confirmation="true"

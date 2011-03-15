@@ -79,7 +79,7 @@ def main(argv=None):
     model.metadata.bind = db
     session = Session()
     component.provideAdapter(
-      bungeni.core.workflows.states.WorkflowState,
+      bungeni.core.workflow.states.WorkflowState,
       (bungeni.core.interfaces.IBungeniContent,))
 
     component.provideAdapter(
@@ -87,7 +87,7 @@ def main(argv=None):
       (domain.Question,))
 
     component.provideAdapter(
-      bungeni.core.workflows.states.StateWorkflowInfo,
+      bungeni.core.workflow.states.StateWorkflowInfo,
       (domain.Question,))
 
     component.provideHandler(

@@ -13,6 +13,12 @@
       for a target type being indicated within a comment to marke the start 
       of each such section.
     
+    - the order of attributes should respect:
+        id 
+        title
+        version=False
+        like_state
+    
     - within each target-section, the order of appearance of permission actions 
       (for appropriate actions) is:
         View
@@ -101,7 +107,7 @@
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Anonymous" />
     </state>
     
-    <state id="draft" like_state="working_draft" title="Draft">
+    <state id="draft" title="Draft" like_state="working_draft">
         <!-- motion -->
         <deny permission="zope.View" role="bungeni.Clerk" />
         <deny permission="zope.View" role="bungeni.Speaker" />
@@ -128,7 +134,9 @@
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
     </state>
     
-    <state id="submitted" like_state="draft" title="Submitted">
+    <state id="submitted" title="Submitted" 
+        version="true"
+        like_state="draft">
         <!-- motion -->
         <grant permission="zope.View" role="bungeni.Clerk" />
         <grant permission="zope.View" role="bungeni.Speaker" />
@@ -142,8 +150,9 @@
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
     </state>
     
-    <state id="received" like_state="submitted"
-        title="Received by Clerks Office">
+    <state id="received" title="Received by Clerks Office" 
+        version="true"
+        like_state="submitted">
         <!-- motion -->
         <grant permission="bungeni.motion.Edit" role="bungeni.Clerk" />
         <!-- cosignatory -->
@@ -154,8 +163,9 @@
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
     </state>
     
-    <state id="clarification_required" like_state="submitted"
-        title="Needs Clarification by MP">
+    <state id="clarification_required" title="Needs Clarification by MP"
+        version="true"
+        like_state="submitted">
         <!-- motion -->
         <grant permission="bungeni.motion.Edit" role="bungeni.Owner" />
         <!-- cosignatory -->
@@ -170,8 +180,9 @@
     ready to be considered by the "speaker's office" for the rules/political 
     admissibility. 
     -->
-    <state id="completed" like_state="submitted"
-        title="Submitted to the Speaker">
+    <state id="completed" title="Submitted to the Speaker"
+        version="true"
+        like_state="submitted">
         <!-- motion -->
         <grant permission="bungeni.motion.Edit" role="bungeni.Speaker" />
         <!-- cosignatory -->
@@ -182,14 +193,18 @@
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Speaker" />
     </state>
     
-    <state id="incomplete" like_state="received"
-        title="Needs Clarification by Clerks Office" />
+    <state id="incomplete" title="Needs Clarification by Clerks Office"
+        version="true"
+        like_state="received"
+    />
     
-    <state id="withdrawn" like_state="submitted" title="Withdrawn" />
+    <state id="withdrawn" title="Withdrawn" like_state="submitted" />
     
-    <state id="inadmissible" like_state="submitted" title="Inadmissible" />
+    <state id="inadmissible" title="Inadmissible" like_state="submitted" />
     
-    <state id="admissible" like_state="submitted" title="Admissible">
+    <state id="admissible" title="Admissible" 
+        version="true"
+        like_state="submitted">
         <!-- motion -->
         <grant permission="zope.View" role="bungeni.MP" />
         <grant permission="zope.View" role="bungeni.Minister" />
@@ -197,32 +212,37 @@
         <grant permission="zope.View" role="bungeni.Anonymous" />
     </state>
     
-    <state id="schedule_pending" like_state="admissible" 
-        title="Schedule pending" />
+    <state id="schedule_pending" title="Schedule pending"
+        like_state="admissible"
+    />
     
-    <state id="scheduled" like_state="admissible" title="Scheduled" />
+    <state id="scheduled" title="Scheduled" like_state="admissible" />
     
-    <state id="adopted" like_state="admissible" title="Adopted" />
+    <state id="adopted" title="Adopted"
+        version="true"
+        like_state="admissible" 
+    />
     
-    <state id="adopted_amendments" like_state="admissible"
-        title="Adopted with amendments" />
+    <state id="adopted_amendments" title="Adopted with amendments"
+        version="true"
+        like_state="admissible"
+    />
     
     <!-- a motion was debated and the debate adjourned  -->
-    <state id="adjourned" like_state="admissible" title="Debate adjourned" />
+    <state id="adjourned" title="Debate adjourned" like_state="admissible" />
     
     <!-- admissable motion that cannot be debated -->
-    <state id="deferred" like_state="admissible" title="Deferred" />
+    <state id="deferred" title="Deferred" like_state="admissible" />
     
     <!-- defered motion that was not debated -->
-    <state id="elapsed" like_state="admissible" title="Elapsed" />
+    <state id="elapsed" title="Elapsed" like_state="admissible" />
     
     <!-- motion was scheduled for but droped, becuase no show of MP etc -->
-    <state id="dropped" like_state="admissible" title="Dropped" />
+    <state id="dropped" title="Dropped" like_state="admissible" />
     
-    <state id="rejected" like_state="admissible" title="Rejected"/>
+    <state id="rejected" title="Rejected" like_state="admissible" />
     
-    <state id="withdrawn_public" like_state="admissible" 
-        title="Withdrawn" />
+    <state id="withdrawn_public" title="Withdrawn" like_state="admissible" />
     
     
     <!--
@@ -248,7 +268,7 @@
         title="Create Motion"
         source=""
         destination="draft"
-        condition=".motion.conditions.user_is_context_owner"
+        condition="user_is_context_owner"
         trigger="automatic"
     />
     
@@ -256,7 +276,7 @@
         title="Create Motion (On behalf of)"
         source=""
         destination="working_draft"
-        condition=".motion.conditions.user_is_not_context_owner"
+        condition="user_is_not_context_owner"
         trigger="automatic"
     />
     
@@ -381,7 +401,7 @@
         title="Schedule"
         source="schedule_pending"
         destination="scheduled" 
-        condition=".motion.conditions.is_scheduled"
+        condition="is_scheduled"
         trigger="system" 
         roles="bungeni.Clerk"
         event=".interfaces.IMotionScheduledEvent"

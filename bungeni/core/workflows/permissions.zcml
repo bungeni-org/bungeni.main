@@ -8,7 +8,7 @@
 
 This file is automatically [re-]generated on startup, after all the 
 workflow XML files have been loaded, see: 
-bungeni.core.workflows.xmlimport.zcml_check_regenerate()
+bungeni.core.workflow.xmlimport.zcml_check_regenerate()
 
 It would need to be regenerated when any workflow transition is modified 
 or added, a condition that is checked for and flagged automatically.
@@ -464,9 +464,6 @@ See the Bungeni Source Code Style Guide for further details.
 
 <permission id="bungeni.tableddocument.wf.recomplete" title="Complete" />
 <grant permission="bungeni.tableddocument.wf.recomplete" role="bungeni.Clerk" />
-
-<permission id="bungeni.tableddocument.wf.mp_clarify" title="Needs Clarification by MP" />
-<grant permission="bungeni.tableddocument.wf.mp_clarify" role="bungeni.Clerk" />
 
 <permission id="bungeni.tableddocument.wf.resubmit" title="Resubmit to Clerk" />
 <grant permission="bungeni.tableddocument.wf.resubmit" role="bungeni.Owner" />

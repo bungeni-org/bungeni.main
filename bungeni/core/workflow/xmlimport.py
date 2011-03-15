@@ -1,5 +1,10 @@
-"""
-Support for xml defined workflows, and security manipulations by state.
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""Support for xml defined workflows, and security manipulations by state.
+
+$Id$
 """
 log = __import__("logging").getLogger("bungeni.core.workflows.xmlimport")
 
@@ -12,11 +17,11 @@ from zope.i18nmessageid import Message
 
 from ore.workflow import interfaces
 
-from bungeni.core.workflows.states import GRANT
-from bungeni.core.workflows.states import DENY
-from bungeni.core.workflows.states import State
-from bungeni.core.workflows.states import StateTransition
-from bungeni.core.workflows.states import StateWorkflow
+from bungeni.core.workflow.states import GRANT
+from bungeni.core.workflow.states import DENY
+from bungeni.core.workflow.states import State
+from bungeni.core.workflow.states import StateTransition
+from bungeni.core.workflow.states import StateWorkflow
 from bungeni.ui.utils import debug
 
 #
@@ -65,7 +70,7 @@ ZCML_BOILERPLATE = """<?xml version="1.0"?>
 
 This file is automatically [re-]generated on startup, after all the 
 workflow XML files have been loaded, see: 
-bungeni.core.workflows.xmlimport.zcml_check_regenerate()
+bungeni.core.workflow.xmlimport.zcml_check_regenerate()
 
 It would need to be regenerated when any workflow transition is modified 
 or added, a condition that is checked for and flagged automatically.
@@ -84,22 +89,23 @@ See the Bungeni Source Code Style Guide for further details.
 def zcml_check_regenerate():
     """Called after all XML workflows have been loaded (see adapers.py). 
     """
-    __path__ = os.path.dirname(__file__)
+    # !+ bungeni_custom/sys/workflows
+    import bungeni.core.workflows
+    __path__ = os.path.dirname(bungeni.core.workflows.__file__)
     filepath = os.path.join(__path__, ZCML_FILENAME)
     persisted = open(filepath, "r").read().decode("utf-8")
     regenerated = ZCML_BOILERPLATE % ("\n".join(ZCML_LINES))
     if persisted != regenerated:
-        log.warn("CHANGES to workflows/%s file:\n%s" % (ZCML_FILENAME,
+        log.warn("CHANGES to file:\n%s" % (
             debug.unified_diff(persisted, regenerated, filepath, "NEW")))
         open(filepath, "w").write(regenerated.encode("utf-8"))
         class ChangedWorkflowsPermissionsZCML(Exception): pass
         raise ChangedWorkflowsPermissionsZCML(
-            "Must restart system with updated workflows/%s file" % (
-                ZCML_FILENAME))
+            "Must restart system with updated file: %s" % (filepath))
 
 def is_zcml_permissionable(trans):
     # The "create" transitions should NOT have any permission assigned to them,
-    # as the action of cretaing this object is controlled via an application
+    # as the action of creating this object is controlled via an application
     # level bungeni.{type}.Add permission granted to the user in question. 
     #
     # The assumption here is that a "create" transition has a NULL source,
@@ -119,10 +125,13 @@ def zcml_transition_permission(pid, title, roles):
 def load(file_path):
     doc = etree.fromstring(open(file_path).read())
     module_name = os.path.splitext(os.path.basename(file_path))[0]
-    module = resolve(".%s" % module_name, RESOLVE_BASEPATH)
-    actions = getattr(module, "actions")
+    #module = resolve(".%s" % module_name, RESOLVE_BASEPATH)
+    #actions = getattr(module, "actions")
+    actions = resolve("._actions", RESOLVE_BASEPATH)
     return _load(doc, module_name, actions)
 
+# add version to state
+# mv transition implied action to explicit state "atomic" actions
 
 def _load(workflow, module_name, actions):
     """ (workflow:etree_doc, actions:cls) -> StateWorkflow
@@ -152,6 +161,14 @@ def _load(workflow, module_name, actions):
     # ID values should be unique within the same scope (the XML document)
     validate_id(wid, "workflow")
     
+    def as_bool(s):
+        """ (s:str) -> bool
+        """
+        if s.lower() == "true":
+            return True
+        elif s.lower() == "false":
+            return False
+    
     def get_like_state(state_id):
         if state_id is None:
             return
@@ -171,9 +188,20 @@ def _load(workflow, module_name, actions):
         permissions.append((assignment, p, r))
     
     for s in workflow.iterchildren("state"):
+        # @id
         state_id = s.get("id")
         assert state_id, "Workflow State must define @id"
         validate_id(state_id, "state")
+        # @version action
+        version_action = None
+        if s.get("version") is not None:
+            make_version = as_bool(s.get("version"))
+            if make_version is None:
+                raise ValueError("Invalid state value "
+                    '[version="%s"]' % s.get("version"))
+            if make_version:
+                version_action = actions.create_version
+        # @like_state, permissions
         permissions = [] # tuple(bool:int, permission:str, role:str) 
         # state.@like_state : to reduce repetition and enhance maintainibility
         # of workflow XML files, a state may specify a @like_state attribute to 
@@ -196,8 +224,10 @@ def _load(workflow, module_name, actions):
         if like_state:
             # splice any remaining like_permissions at beginning of permissions
             permissions[0:0] = like_permissions
+        # states
         states.append(
-            State(state_id, Message(s.get("title", domain)), permissions) 
+            State(state_id, Message(s.get("title", domain)), version_action, 
+                permissions) 
         )
     
     for s in states:
@@ -238,7 +268,7 @@ def _load(workflow, module_name, actions):
             "Unknown transition destination state [%s]" % (destination)
         
         kw = {}
-        # optionals
+        # optionals -- only set on kw IFF explicitly defined
         for i in TRANS_ATTRS_OPTIONALS:
             val = t.get(i)
             if not val:
@@ -250,8 +280,10 @@ def _load(workflow, module_name, actions):
         #
         # action - if this workflow's "actions" defines an action for
         # this transition (with same name as tranistion), then use it.
-        if hasattr(actions, tid):
-            kw["action"] = getattr(actions, tid)
+        # !+ tmp, until actions are transplanted to <state>
+        _action_name = "_%s_%s" % (module_name, tid)
+        if hasattr(actions, _action_name):
+            kw["action"] = getattr(actions, _action_name)
         # trigger
         if "trigger" in kw:
             kw["trigger"] = trigger_value_map[kw["trigger"]]
@@ -266,19 +298,24 @@ def _load(workflow, module_name, actions):
             assert kw.get("permission") is None, "Not allowed to set a " \
                 "permission on (creation) transition: %s" % (tid)
         # python resolvables
-        for i in ("condition", "event"):
-            if i in kw:
-                # raises importerror/nameerror
-                kw[i] = resolve(kw[i], RESOLVE_BASEPATH)
+        if "condition" in kw:
+            # raises importerror/nameerror
+            kw["condition"] = resolve(
+                ".%s" % (kw["condition"]),
+                "%s._conditions" % (RESOLVE_BASEPATH)
+            )
+        if "event" in kw:
+            # raises importerror/nameerror
+            kw["event"] = resolve(kw["event"], RESOLVE_BASEPATH)
         # bool
         if "require_confirmation" in kw:
-            if kw["require_confirmation"].lower() == "true":
-                kw["require_confirmation"] = True
-            elif kw["require_confirmation"].lower() == "false":
-                kw["require_confirmation"] = False
-            else:
+            try:
+                kw["require_confirmation"] = as_bool(kw["require_confirmation"])
+                assert kw["require_confirmation"] is not None
+            except:
                 raise ValueError("Invalid transition value "
-                    '[require_confirmation="%s"]' % kw["require_confirmation"])
+                    '[require_confirmation="%s"]' % (
+                        t.get("require_confirmation")))
         # multiple-source transitions are really multiple "transition paths"
         for source in sources:
             if source is not None:

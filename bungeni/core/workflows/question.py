@@ -1,190 +1,22 @@
 # encoding: utf-8
 
+# setup in adapters.py
+wf = None
+states = None
+
+#
+
 log = __import__("logging").getLogger("bungeni.core")
 
 from zope import component
-from zope.security.proxy import removeSecurityProxy
 from bungeni.core.workflows.notification import Notification
 from bungeni.core.workflows import interfaces
 from bungeni.core import globalsettings as prefs
-from bungeni.core.workflows import dbutils, utils
+from bungeni.core.workflows import dbutils
 from bungeni.core.i18n import _
 from bungeni.models import domain
 from bungeni.alchemist import Session
-from bungeni.ui.utils import common
-from bungeni.ui.interfaces import IFormEditLayer
 
-
-class conditions(utils.conditions):
-    
-    @staticmethod
-    def is_ministry_set(info, context):
-        return context.ministry_id is not None
-        
-    @staticmethod
-    def is_written_response(info, context):
-        return (context.ministry_id is not None) and (
-            context.response_type == u"W")
-
-    @staticmethod
-    def response_allow_submit(info, context):
-        instance = removeSecurityProxy(context)
-        # The "submit_response" workflow transition should NOT be displayed when 
-        # the UI is displaying the question in "edit" mode (as this transition
-        # will cause deny of bungeni.Question.Edit to the Minister).
-        request = common.get_request()
-        if IFormEditLayer.providedBy(request):
-            return False
-        if instance.response_text is None:
-            return False
-        else:
-            return True
-
-    @staticmethod
-    def is_oral_response(info, context):
-        return context.response_type == u"O"
-
-class actions(object):
-    @staticmethod
-    def denyAllWrites(question):
-        """Remove all rights to change the question from all involved roles.
-        """
-        pass
-    
-    @staticmethod
-    def create(info, context):
-        """Create a question -> state.draft, grant all rights to owner
-        deny right to add supplementary questions.
-        """
-        q = context # context is the newly created question
-        log.debug("[QUESTION CREATE] [%s] [%s]" % (info, q))
-        utils.setQuestionDefaults(info, q) # !+setQuestionDefaults
-        utils.setBungeniOwner(q)
-    create_on_behalf_of = create
-    
-    @staticmethod
-    def submit(info, context):
-        """A question submitted to the clerks office, the owner cannot edit it 
-        anymore the clerk has no edit rights until it is received.
-        """
-        utils.createVersion(info, context)
-        utils.setRegistryNumber(info, context)
-    resubmit = submit
-    
-    @staticmethod
-    def receive(info, context):
-        """The question is received by the clerks office, 
-        the clerk can edit the question.
-        """
-        utils.createVersion(info, context)
-    
-    @staticmethod
-    def withdraw(info, context):
-        """A question can be withdrawn by the owner, it is visible to ...
-        and cannot be edited by anyone.
-        """
-        utils.setQuestionScheduleHistory(info, context)
-    withdraw_public = withdraw
-    
-    @staticmethod
-    def elapse(info, context):
-        """A question that could not be answered or debated, 
-        it is visible to ... and cannot be edited.
-        """
-        pass
-    
-    @staticmethod
-    def defer(info, context):
-        """A question that cannot be debated it is available for scheduling
-        but cannot be edited.
-        """
-        pass
-    
-    @staticmethod
-    def allow_response(info, context):
-        """A question sent to a ministry for a written answer, 
-        it cannot be edited, the ministry can add a written response.
-        """
-        utils.setMinistrySubmissionDate(info, context)
-    deferred_allow_response = allow_response
-    
-    @staticmethod
-    def submit_response(info, context):
-        """A written response from a ministry.
-        """
-        pass
-    
-    @staticmethod
-    def require_clarification(info, context):
-        """Send from the clerks office to the mp for clarification 
-        the MP can edit it the clerk cannot.
-        """
-        utils.createVersion(info, context)
-    
-    @staticmethod
-    def require_recomplete(info, context):
-        """A question is send back from the speakers office 
-        the clerks office for clarification.
-        """
-        utils.createVersion(info, context)
-    
-    @staticmethod
-    def reject(info, context):
-        """A question that is not admissible, 
-        Nobody is allowed to edit it.
-        """
-        pass
-    
-    @staticmethod
-    def complete(info, context):
-        """A question is marked as completed by the clerks office, 
-        it is available to the speakers office for review.
-        """
-        utils.createVersion(info, context)
-    
-    @staticmethod
-    def schedule(info, context):
-        """The question gets scheduled no one can edit the question,
-        a response may be added.
-        """
-        pass
-    
-    @staticmethod
-    def drop(info, context):
-        """A question that was scheduled but could not be debated and has to be 
-        dropped, due to no-show by the MP, etc. 
-        """
-        pass
-
-    @staticmethod
-    def recomplete(info, context):
-        """A question that requires clarification/amendmends,
-        is resubmitted by the clerks office to the speakers office.
-        """
-        utils.createVersion(info, context)
-    
-    @staticmethod
-    def debate(info, context):
-        """A question was debated, the question cannot be edited, 
-        the clerks office can add a response.
-        """
-        pass
-    
-    @staticmethod
-    def answer(info, context):
-        """The response was reviewed by the clerks office, 
-        the question is visible, if the question was a written question
-        supplementary question now can be asked. 
-        """
-        pass
-    
-    @staticmethod
-    def approve(info, context):
-        """The question is admissible and can be send to ministry,
-        or is available for scheduling in a sitting.
-        """
-        utils.createVersion(info, context)
-        dbutils.setQuestionSerialNumber(context)
 
 class SendNotificationToMemberUponReceipt(Notification):
     component.adapts(interfaces.IQuestionReceivedEvent)
@@ -335,7 +167,7 @@ class SendNotificationToMemberUponPostponed(Notification):
 '''
 
 class SendNotificationToMemberUponComplete(Notification):
-    """The question is marked as “completed” and is made available /
+    """The question is marked as “completed” and is made available
     forwarded to the Speaker's Office for reviewing and to make it
     “admissible”."""
     

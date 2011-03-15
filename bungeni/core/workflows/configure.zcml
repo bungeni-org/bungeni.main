@@ -29,7 +29,7 @@
   
   <utility
      provides="ore.workflow.interfaces.IWorkflowVersions"
-     factory=".states.NullVersions"
+     factory="bungeni.core.workflow.states.NullVersions"
      />
 
   <!-- generic workflow adapters -->
@@ -37,12 +37,12 @@
   <adapter
      for="bungeni.alchemist.interfaces.IAlchemistContent"
      provides="ore.workflow.interfaces.IWorkflowInfo"
-     factory="bungeni.core.workflows.states.StateWorkflowInfo"/>
+     factory="bungeni.core.workflow.states.StateWorkflowInfo"/>
 
   <adapter
      for="bungeni.alchemist.interfaces.IAlchemistContent"
      provides="ore.workflow.interfaces.IWorkflowState"
-     factory=".states.WorkflowState" />
+     factory="bungeni.core.workflow.states.WorkflowState" />
 
   <!-- content workflow -->
   
@@ -112,7 +112,7 @@
   <adapter
      for="bungeni.models.interfaces.IBill"
      provides="ore.workflow.interfaces.IWorkflowState"
-     factory=".states.WorkflowState" />
+     factory="bungeni.core.workflow.states.WorkflowState" />
 
   <adapter
      for="bungeni.models.interfaces.IBill"
@@ -126,7 +126,7 @@
   <adapter
      for="bungeni.models.interfaces.IQuestion"
      provides="ore.workflow.interfaces.IWorkflowState"
-     factory=".states.WorkflowState" />
+     factory="bungeni.core.workflow.states.WorkflowState" />
   
   <adapter
      for="bungeni.models.interfaces.IQuestion"
@@ -154,7 +154,7 @@
   <adapter
      for="bungeni.models.interfaces.IMotion"
      provides="ore.workflow.interfaces.IWorkflowState"
-     factory=".states.WorkflowState" />
+     factory="bungeni.core.workflow.states.WorkflowState" />
   
   <adapter
      for="bungeni.models.interfaces.IMotion"
@@ -177,7 +177,7 @@
   <adapter
      for="bungeni.models.interfaces.IAgendaItem"
      provides="ore.workflow.interfaces.IWorkflowState"
-     factory=".states.WorkflowState" />
+     factory="bungeni.core.workflow.states.WorkflowState" />
   
   <adapter
      for="bungeni.models.interfaces.IAgendaItem"
@@ -189,7 +189,7 @@
   <adapter
      for="bungeni.models.interfaces.ITabledDocument"
      provides="ore.workflow.interfaces.IWorkflowState"
-     factory=".states.WorkflowState" />
+     factory="bungeni.core.workflow.states.WorkflowState" />
   
   <adapter
      for="bungeni.models.interfaces.ITabledDocument"
@@ -200,7 +200,7 @@
   <adapter
      for="bungeni.models.interfaces.IAttachedFile"
      provides="ore.workflow.interfaces.IWorkflowState"
-     factory=".states.WorkflowState" />
+     factory="bungeni.core.workflow.states.WorkflowState" />
   
   <adapter
      for="bungeni.models.interfaces.IAttachedFile"
@@ -211,7 +211,7 @@
   <adapter
      for="bungeni.models.interfaces.IEventItem"
      provides="ore.workflow.interfaces.IWorkflowState"
-     factory=".states.WorkflowState" />
+     factory="bungeni.core.workflow.states.WorkflowState" />
   
   <adapter
      for="bungeni.models.interfaces.IEventItem"
@@ -222,7 +222,7 @@
   <adapter
      for="bungeni.models.interfaces.IHeading"
      provides="ore.workflow.interfaces.IWorkflowState"
-     factory=".states.WorkflowState" />
+     factory="bungeni.core.workflow.states.WorkflowState" />
   
   <adapter
      for="bungeni.models.interfaces.IHeading"
@@ -233,7 +233,7 @@
   <adapter
      for="bungeni.models.interfaces.IBungeniUser"
      provides="ore.workflow.interfaces.IWorkflowState"
-     factory=".states.WorkflowState" />
+     factory="bungeni.core.workflow.states.WorkflowState" />
   
   <adapter
      for="bungeni.models.interfaces.IBungeniUser"
@@ -244,7 +244,7 @@
   <adapter
      for="bungeni.models.interfaces.IReport"
      provides="ore.workflow.interfaces.IWorkflowState"
-     factory=".states.WorkflowState" />
+     factory="bungeni.core.workflow.states.WorkflowState" />
   
   <adapter
      for="bungeni.models.interfaces.IReport"

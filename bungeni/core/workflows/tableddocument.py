@@ -1,93 +1,16 @@
-# encoding: utf-8
+
+# setup in adapters.py
+wf = None
+states = None
+
+#
 
 from zope import component
 from bungeni.core.workflows.notification import Notification
 from bungeni.core.workflows import interfaces
 from bungeni.core import globalsettings as prefs
 from bungeni.core.i18n import _
-from bungeni.core.workflows import dbutils, utils
 
-class conditions(utils.conditions):
-    pass
-    
-class actions:
-    @staticmethod
-    def denyAllWrites(tabled_document):
-        """
-        remove all rights to change the question from all involved roles
-        """
-    
-    @staticmethod
-    def adjourn(info,context):
-        utils.setTabledDocumentHistory(info, context)
-
-    @staticmethod
-    def create(info, context):
-        utils.setParliamentId(info, context)
-        utils.setBungeniOwner(context)
-    create_on_behalf_of = create
-    
-    @staticmethod
-    def submit(info, context):
-        utils.createVersion(info, context)
-        utils.setRegistryNumber(info, context)
-    resubmit = submit
-    
-    @staticmethod
-    def receive(info, context):
-        utils.createVersion(info, context)
-
-    @staticmethod
-    def require_clarification(info, context):
-        utils.createVersion(info,context)
-
-
-    @staticmethod
-    def complete(info, context):
-        utils.createVersion(info, context)
-    
-    @staticmethod
-    def approve(info, context):
-        utils.createVersion(info, context)
-        dbutils.setTabledDocumentSerialNumber(context)
-    
-    @staticmethod
-    def reject(info, context):
-        pass
-
-    @staticmethod
-    def require_recomplete(info, context):
-        utils.createVersion(info,context)
-    
-    @staticmethod
-    def recomplete(info, context):
-        utils.createVersion(info,context)
-
-
-    @staticmethod
-    def mp_clarify(info, context):
-        utils.createVersion(info,context)
-
-
-    @staticmethod
-    def schedule(info, context):
-        pass
-        
-    @staticmethod
-    def reschedule(info, context):
-        pass
-    
-    @staticmethod
-    def revert_to_admissible(info, context):
-        pass
-
-    @staticmethod
-    def table(info, context):
-        pass
-
-    @staticmethod
-    def withdraw(info, context):
-        pass
 
 class SendNotificationToMemberUponReceipt(Notification):
     component.adapts(interfaces.ITabledDocumentReceivedEvent)

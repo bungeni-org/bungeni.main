@@ -11,7 +11,7 @@
         <grant permission="zope.View" role="bungeni.Anonymous" />
     </state>
 
-    <state id="draft_translation" like_state="archived" title="Draft Translation">
+    <state id="draft_translation" title="Draft Translation" like_state="archived">
         <grant permission="zope.ManageContent" role="bungeni.Owner" />
     </state>
     

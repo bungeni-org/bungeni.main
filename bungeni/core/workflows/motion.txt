@@ -89,14 +89,20 @@ Actions
 -------
 
   >>> from ore.workflow.interfaces import IWorkflowInfo
-  >>> from bungeni.core.workflows.motion import actions 
+  
+!+FIRETRANSITION(mr, feb-2011) should review/update/evolve tests below to use 
+fireTransition() (instead of directly executing actions), and to use the new
+convention adopted for internal transition ids composed of:
+    "%s-%s" % (source_state, destination_state)
+
+  >>> #from bungeni.core.workflows.motion import actions 
   >>> info = IWorkflowInfo(motion)
   >>> info
-  <bungeni.core.workflows.states.StateWorkflowInfo object at ...>
+  <bungeni.core.workflow.states.StateWorkflowInfo object at ...>
 
 "Create". This action assigns the role of "Owner" and sets the
 parliament id.
-
+  
   >>> actions.create(info, motion)
   >>> motion.parliament_id == parliament.parliament_id
   True
@@ -107,8 +113,9 @@ parliament id.
 
 Conditions
 ----------
+!+CUSTOM(mr, mar-2011) update to test with bungeni_custom
 
-  >>> from bungeni.core.workflows.motion import conditions
+  >>> from bungeni.core.workflows import _conditions as conditions
   
 "Is scheduled".
 

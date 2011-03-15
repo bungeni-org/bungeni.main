@@ -1,10 +1,5 @@
 
-class conditions:
-    pass
+# setup in adapters.py
+wf = None
+states = None
 
-    
-class actions:
-    @staticmethod
-    def create(info, context):
-       pass
-                

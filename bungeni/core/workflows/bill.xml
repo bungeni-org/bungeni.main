@@ -38,8 +38,9 @@
         <deny permission="bungeni.groupitemassignment.Add" role="bungeni.Clerk" />
     </state>
     
-    <state id="gazetted" like_state="working_draft" 
-        title="Bill Published in Gazette">
+    <state id="gazetted" title="Bill Published in Gazette"
+        version="true"
+        like_state="working_draft">
         <!-- bill -->
         <grant permission="zope.View" role="bungeni.Speaker" />
         <grant permission="zope.View" role="bungeni.MP" />
@@ -58,16 +59,18 @@
         <grant permission="bungeni.groupitemassignment.Add" role="bungeni.Clerk" />
     </state>
     
-    <state id="first_reading_pending" like_state="gazetted"
-        title="First Reading Pending" />
+    <state id="first_reading_pending" title="First Reading Pending" 
+        like_state="gazetted"
+    />
     
-    <state id="first_reading" like_state="gazetted" title="First Reading" />
+    <state id="first_reading" title="First Reading" like_state="gazetted" />
     
-    <state id="first_reading_adjourned" like_state="gazetted" 
-        title="First Reading Adjourned" />
+    <state id="first_reading_adjourned" title="First Reading Adjourned" 
+        like_state="gazetted" 
+    />
     
-    <state id="first_committee" like_state="gazetted" 
-        title="Select Committee (after 1st reading)">
+    <state id="first_committee" title="Select Committee (after 1st reading)"
+        like_state="gazetted" >
         <!-- cosignatory -->
         <deny permission="bungeni.cosignatory.Add" role="bungeni.Clerk" />
         <deny permission="bungeni.cosignatory.Add" role="bungeni.Speaker" />
@@ -77,46 +80,62 @@
         <deny permission="bungeni.cosignatory.Delete" role="bungeni.Owner" />
     </state>
     
-    <state id="first_report_reading_pending" like_state="first_committee"  
-        title="First Report Reading Pending" />
+    <state id="first_report_reading_pending" 
+        title="First Report Reading Pending" 
+        like_state="first_committee"  
+    />
     
-    <state id="first_report_reading" like_state="first_committee" 
-        title="First Report Reading" />
-
-    <state id="first_report_reading_adjourned" like_state="first_committee"
-        title="First Report Reading Adjourned" />
+    <state id="first_report_reading" title="First Report Reading"
+        version="true"
+        like_state="first_committee" 
+    />
     
-    <state id="second_reading_pending" like_state="first_committee"
-        title="Second Reading Pending" />
+    <state id="first_report_reading_adjourned" 
+        title="First Report Reading Adjourned" 
+        like_state="first_committee"
+    />
     
-    <state id="second_reading" like_state="first_committee" 
-        title="Second Reading" />
+    <state id="second_reading_pending" title="Second Reading Pending"
+        like_state="first_committee"
+    />
     
-    <state id="second_reading_adjourned" like_state="first_committee"
-        title="Second Reading Adjourned" />
+    <state id="second_reading" title="Second Reading"
+        version="true"
+        like_state="first_committee" 
+    />
     
-    <state id="whole_house_pending" like_state="first_committee"
-        title="Whole House Pending" />
+    <state id="second_reading_adjourned" title="Second Reading Adjourned"
+        like_state="first_committee"
+    />
     
-    <state id="whole_house" like_state="first_committee"
-        title="Whole House" />
+    <state id="whole_house_pending" title="Whole House Pending" 
+        like_state="first_committee"
+    />
     
-    <state id="whole_house_adjourned" like_state="first_committee"
-        title="Whole House Adjourned" />
+    <state id="whole_house" title="Whole House"
+        like_state="first_committee"
+    />
+    
+    <state id="whole_house_adjourned" title="Whole House Adjourned" 
+        like_state="first_committee"
+    />
         
-    <state id="second_committee" like_state="first_committee"
-        title="Select Committee (after 2nd reading)" />
+    <state id="second_committee" title="Select Committee (after 2nd reading)"
+        like_state="first_committee"
+    />
     
-    <state id="third_reading_pending" like_state="first_committee"
-        title="Third Reading Pending" />
+    <state id="third_reading_pending" title="Third Reading Pending"
+        like_state="first_committee"
+    />
     
-    <state id="third_reading" like_state="first_committee"
-        title="Third Reading" />
+    <state id="third_reading" title="Third Reading"
+        like_state="first_committee"
+    />
     
     <state id="third_reading_adjourned" like_state="first_committee"
         title="Third Reading Adjourned" />
     
-    <state id="approved" like_state="first_committee" title="Approved Bill">
+    <state id="approved" title="Approved Bill" like_state="first_committee">
         <!-- bill -->
         <deny permission="bungeni.bill.Edit" role="bungeni.Clerk" />
         <!-- attachedfile -->
@@ -131,9 +150,9 @@
         <deny permission="bungeni.groupitemassignment.Add" role="bungeni.Clerk" />
     </state>
     
-    <state id="rejected" like_state="approved" title="Rejected Bill" />
+    <state id="rejected" title="Rejected Bill" like_state="approved" />
     
-    <state id="withdrawn_public" like_state="approved" title="Bill Withdrawn" />
+    <state id="withdrawn_public" title="Bill Withdrawn" like_state="approved" />
     
     
     <transition id="create"
@@ -166,7 +185,7 @@
         title="Schedule First Reading"
         source="first_reading_pending"
         destination="first_reading"
-        condition=".bill.conditions.is_scheduled"
+        condition="is_scheduled"
         trigger="system"
         roles="bungeni.Clerk"
     />
@@ -202,7 +221,7 @@
         title="Schedule First Report Reading"
         source="first_report_reading_pending"
         destination="first_report_reading"
-        condition=".bill.conditions.is_scheduled"
+        condition="is_scheduled"
         trigger="system"
         roles="bungeni.Clerk"
     />
@@ -229,7 +248,7 @@
         title="Schedule Second Reading"
         source="second_reading_pending"
         destination="second_reading"
-        condition=".bill.conditions.is_scheduled"
+        condition="is_scheduled"
         trigger="system"
         roles="bungeni.Clerk"
     />
@@ -292,7 +311,7 @@
         title="Schedule Whole House Committee"
         source="whole_house_pending"
         destination="whole_house"
-        condition=".bill.conditions.is_scheduled"
+        condition="is_scheduled"
         trigger="system"
         roles="bungeni.Clerk"
     />
@@ -346,7 +365,7 @@
         title="Schedule Third Reading"
         source="third_reading_pending"
         destination="third_reading"
-        condition=".bill.conditions.is_scheduled"
+        condition="is_scheduled"
         trigger="system"
         roles="bungeni.Clerk"
     />

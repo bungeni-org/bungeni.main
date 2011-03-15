@@ -1,1 +1,5 @@
-from groups import conditions, actions
+
+# setup in adapters.py
+wf = None
+states = None
+

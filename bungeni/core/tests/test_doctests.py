@@ -23,22 +23,21 @@ from bungeni.core.interfaces import IVersionedFileRepository
 
 zcml_slug = """
 <configure xmlns="http://namespaces.zope.org/zope"
-           xmlns:db="http://namespaces.objectrealms.net/rdb">
-
-  <include package="bungeni.core" file="ftesting.zcml" />
-  
+    xmlns:db="http://namespaces.objectrealms.net/rdb">
+    
+    <include package="bungeni.core" file="ftesting.zcml" />
+    
 </configure>
 """
 
 def setUp(test):
     placelesssetup.setUp()
-    xmlconfig.string( zcml_slug )
-    metadata.create_all( checkfirst=True )
-    
-def tearDown( test ):
+    xmlconfig.string(zcml_slug)
+    metadata.create_all(checkfirst=True)
+
+def tearDown(test):
     placelesssetup.tearDown()
     metadata.drop_all( checkfirst=True )
-
 
 def test_suite():
     from bungeni.core.app import BungeniApp
@@ -48,14 +47,13 @@ def test_suite():
     #       $ bin/test -s bungeni.core -t file.txt
     #
     doctests = (
-                'audit.txt',
-                'versions.txt',
-                'workflows/question.txt',
-                'workflows/motion.txt',
-                'workflows/bill.txt',
-                'workflows/transitioncron.txt',
-                )
-
+        "audit.txt",
+        "versions.txt",
+        "workflows/question.txt",
+        #"workflows/motion.txt", #!+FIRETRANSITION
+        #"workflows/bill.txt", #!+FIRETRANSITION
+        "workflows/transitioncron.txt",
+    )
     docfiles = ()
     
     # set up global symbols for doctests
@@ -73,31 +71,29 @@ def test_suite():
         tomorrow=today+datetime.timedelta(1),
         dayat=today+datetime.timedelta(2),
         path=os.path.dirname(__file__),
-        )
-
+    )
+    
     test_suites = []
     for filename in doctests:
         test_suite = doctestunit.DocFileSuite(
             os.path.join(os.path.pardir, filename),
-            setUp = setUp,
-            tearDown = tearDown,
-            globs = globs,
-            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
-        
+            setUp=setUp,
+            tearDown=tearDown,
+            globs=globs,
+            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS
+        )
         test_suites.append(test_suite)
-
     for filename in docfiles:
         test_suite = doctestunit.DocTestSuite(
             filename,
             setUp=setUp,
             tearDown=tearDown,
-            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS
+        )
         test_suites.append(test_suite)
+    return unittest.TestSuite(test_suites)
 
-
-    return unittest.TestSuite( test_suites )
-
-if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+if __name__ == "__main__":
+    unittest.main(defaultTest="test_suite")
 
 

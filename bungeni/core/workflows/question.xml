@@ -37,7 +37,8 @@
         <deny permission="bungeni.response.Edit" role="bungeni.Minister" />
     </state>
     
-    <state id="draft" like_state="working_draft" title="Draft">
+    <state id="draft" title="Draft" 
+        like_state="working_draft">
         <!-- question -->
         <deny permission="zope.View" role="bungeni.Clerk" />
         <deny permission="zope.View" role="bungeni.Speaker" />
@@ -57,7 +58,9 @@
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
     </state>
     
-    <state id="submitted" like_state="draft" title="Submitted to clerk">
+    <state id="submitted" title="Submitted to clerk" 
+        version="true"
+        like_state="draft">
         <!-- question -->
         <grant permission="zope.View" role="bungeni.Clerk" />
         <grant permission="zope.View" role="bungeni.Speaker" />
@@ -68,7 +71,9 @@
         <deny permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
     </state>
     
-    <state id="received" like_state="submitted" title="Received by clerk">
+    <state id="received" title="Received by clerk"
+        version="true"
+        like_state="submitted">
         <!-- question -->
         <grant permission="bungeni.question.Edit" role="bungeni.Clerk" />
         <!-- fileattachment -->
@@ -76,7 +81,9 @@
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Clerk" />
     </state>
     
-    <state id="completed" like_state="submitted" title="Submitted to the Speaker">
+    <state id="completed" title="Submitted to the Speaker"
+        version="true" 
+        like_state="submitted">
         <!-- question -->
         <grant permission="bungeni.question.Edit" role="bungeni.Speaker" />
         <!-- fileattachment -->
@@ -84,7 +91,9 @@
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Speaker" /> 
     </state>
     
-    <state id="admissible" like_state="submitted" title="Admissible">
+    <state id="admissible" title="Admissible"
+        version="true" 
+        like_state="submitted">
         <!-- question -->
         <grant permission="zope.View" role="bungeni.MP" />
         <grant permission="zope.View" role="bungeni.Minister" />
@@ -92,10 +101,11 @@
         <grant permission="zope.View" role="bungeni.Anonymous" />
     </state>
     
-    <state id="inadmissible" like_state="submitted" title="Inadmissible" />
+    <state id="inadmissible" title="Inadmissible" like_state="submitted" />
     
-    <state id="clarification_required" like_state="submitted" 
-        title="Needs MPs clarification">
+    <state id="clarification_required" title="Needs MPs clarification"
+        version="true"
+        like_state="submitted">
         <!-- question -->
         <grant permission="bungeni.question.Edit" role="bungeni.Owner" />
         <!-- fileattachment -->
@@ -103,55 +113,58 @@
         <grant permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
     </state>
     
-    <state id="incomplete" like_state="received"
-        title="Needs clerks clarification" />
+    <state id="incomplete" title="Needs clerks clarification"
+        version="true"
+        like_state="received" 
+    />
     
-    <state id="schedule_pending" like_state="admissible" 
-        title="Schedule pending" />
+    <state id="schedule_pending" title="Schedule pending" 
+        like_state="admissible" 
+    />
     
-    <state id="scheduled" like_state="admissible" title="Scheduled" />
+    <state id="scheduled" title="Scheduled" like_state="admissible" />
 
-    <state id="adjourned" like_state="admissible" title="Debate adjourned" />
+    <state id="adjourned" title="Debate adjourned" like_state="admissible" />
     
-    <state id="response_pending" like_state="admissible" 
-        title="Pending response">
+    <state id="response_pending" title="Pending response" 
+        like_state="admissible">
         <!-- response -->
         <grant permission="bungeni.response.View" role="bungeni.Minister" />
         <grant permission="bungeni.response.Edit" role="bungeni.Minister" />
     </state>
     
-    <state id="response_submitted" like_state="received"
-        title="Response submitted">
+    <state id="response_submitted" title="Response submitted" 
+        like_state="received">
         <!-- response -->
         <grant permission="bungeni.response.View" role="bungeni.Clerk" />
         <grant permission="bungeni.response.View" role="bungeni.Speaker" />
     </state>
     
-    <state id="response_completed" like_state="admissible" 
-        title="Response completed">
+    <state id="response_completed" title="Response completed" 
+        like_state="admissible">
         <!-- response -->
         <grant permission="bungeni.response.View" role="bungeni.Authenticated" />
         <grant permission="bungeni.response.View" role="bungeni.Anonymous" />
     </state>
     
-    <state id="deferred" like_state="admissible" title="Deferred" />
+    <state id="deferred" title="Deferred" like_state="admissible" />
     
-    <state id="elapsed" like_state="admissible" title="Elapsed" />
+    <state id="elapsed" title="Elapsed" like_state="admissible" />
     
-    <state id="debated" like_state="admissible" title="Debated" />
+    <state id="debated" title="Debated" like_state="admissible" />
     
-    <state id="dropped" like_state="admissible" title="Dropped" />
+    <state id="dropped" title="Dropped" like_state="admissible" />
     
-    <state id="withdrawn" like_state="submitted" title="Withdrawn" />
+    <state id="withdrawn" title="Withdrawn" like_state="submitted" />
     
-    <state id="withdrawn_public" like_state="admissible" title="Withdrawn" />
+    <state id="withdrawn_public" title="Withdrawn" like_state="admissible" />
     
     
     <transition id="create"
         title="Create Question"
         source=""
         destination="draft"
-        condition=".question.conditions.user_is_context_owner"
+        condition="user_is_context_owner"
         trigger="automatic"
         order="0"
     />
@@ -160,7 +173,7 @@
         title="Create Question (On behalf of)"
         source=""
         destination="working_draft"
-        condition=".question.conditions.user_is_not_context_owner"
+        condition="user_is_not_context_owner"
         trigger="automatic"
         order="0"
     />
@@ -311,7 +324,7 @@
         title="Make available for scheduling"
         source="admissible deferred adjourned"
         destination="schedule_pending"
-        condition=".question.conditions.is_oral_response"
+        condition="is_oral_response"
         trigger="manual"
         roles="bungeni.Clerk"
         order="11"
@@ -330,7 +343,7 @@
         title="Schedule"
         source="schedule_pending"
         destination="scheduled"
-        condition=".question.conditions.is_scheduled"
+        condition="is_scheduled"
         trigger="system"
         roles="bungeni.Clerk"
         order="12"
@@ -345,7 +358,7 @@
         title="Send to Ministry"
         source="admissible"
         destination="response_pending"
-        condition=".question.conditions.is_written_response"
+        condition="is_written_response"
         trigger="manual"
         roles="bungeni.Clerk"
         order="13"
@@ -356,7 +369,7 @@
         title="Submit Response"
         source="response_pending"
         destination="response_submitted"
-        condition=".question.conditions.response_allow_submit"
+        condition="response_allow_submit"
         trigger="manual"
         roles="bungeni.Minister"
         order="15"
@@ -417,7 +430,7 @@
     <transition id="deferred_allow_response"
         title="Send to Ministry"
         source="deferred"
-        condition=".question.conditions.is_ministry_set"
+        condition="is_ministry_set"
         destination="response_pending"
         trigger="manual"
         roles="bungeni.Clerk"
