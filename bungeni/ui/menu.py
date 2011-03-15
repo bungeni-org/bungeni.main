@@ -256,7 +256,8 @@ class WorkflowSubMenuItem(BrowserSubMenuItem):
 class WorkflowMenu(BrowserMenu):
     def getMenuItems(self, context, request):
         """Return menu item entries in a TAL-friendly form."""
-        if not interfaces.IWorkspaceOrAdminSectionLayer.providedBy(request):
+        if (not interfaces.IWorkspaceOrAdminSectionLayer.providedBy(request)) \
+                            or interfaces.IFormEditLayer.providedBy(request):
             return ()
         wf = IWorkflow(context, None)
         if wf is None:
