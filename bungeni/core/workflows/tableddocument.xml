@@ -88,6 +88,7 @@
         <!-- tableddocument -->
         <grant permission="zope.View" role="bungeni.MP" />
         <grant permission="zope.View" role="bungeni.Minister" />
+        <grant permission="zope.View" role="bungeni.Anonymous" />
     </state>
     
     <state id="schedule_pending" title="Schedule pending" like_state="admissible" />

@@ -599,7 +599,7 @@ def on_invalidate_cache_event(instance, event):
         log.error("[invalidate_cache_event] No action declared for [%s]" % (
             event_name))
 
-# !+DRAFT_CACHE_INVALIDATION(mr, mar-2010) only JSON Listings that are 
+# !+DRAFT_CACHE_INVALIDATION(mr, mar-2011) only JSON Listings that are 
 # publically viewable are cached. Most bungeni domain types are created into 
 # a "draft" workflow state that is NOT public, so in theory any existing cache 
 # of listings of public items is NOT affected. Plus, the required subsequent 

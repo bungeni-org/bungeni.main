@@ -718,7 +718,6 @@ class TranslateForm(AddForm):
         
         # !+EVENT_DRIVEN_CACHE_INVALIDATION(mr, mar-2011) no translate event
         # invalidate caches for this domain object type
-        print "TRANSTRANSTRANSTRANSTRANSTRANS", vars()
         invalidate_caches_for(trusted.__class__.__name__, "translate")
 
         #versions = IVersioned(self.context)
