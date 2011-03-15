@@ -2101,7 +2101,7 @@ class AttendanceDescriptor(ModelDescriptor):
     fields = [
         Field(name="member_id",
             modes="view edit add listing",
-            property=schema.Choice(title=_(u"Attendance"),
+            property=schema.Choice(title=_(u"Member of Parliament"),
                 source=vocabulary.SittingAttendanceSource(
                     token_field="user_id",
                     title_field="fullname",
@@ -2110,17 +2110,17 @@ class AttendanceDescriptor(ModelDescriptor):
             ),
             listing_column=user_name_column("member_id", _(u"Name"), "user")
         ),
-        Field(name="attendance_id",
+        Field(name="attendance_type_id",
             modes="view edit add listing",
             property=schema.Choice(title=_(u"Attendance"),
                 source=vocabulary.DatabaseSource(
                     domain.AttendanceType,
-                    token_field="attendance_id",
+                    token_field="attendance_type_id",
                     title_field="attendance_type",
-                    value_field="attendance_id"
+                    value_field="attendance_type_id"
                 )
             ),
-            listing_column=enumeration_column("attendance_id",
+            listing_column=enumeration_column("attendance_type_id",
                 _(u"Attendance"),
                 item_reference_attr="attendance_type"
             ),
