@@ -133,6 +133,8 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
             try:
                 if canWrite(self.context, column.name):
                     return True
+                else:
+                    return False
             except ForbiddenAttribute:
                 pass
         else:
@@ -211,9 +213,7 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
         if not self.has_write_permission(self.context):
             self.form_fields = self.form_fields.omit("commit_message")
         self.adapters = {}
-        self.widgets = formlib.form.setUpDataWidgets(
-            self.form_fields, self.prefix, self.context, self.request,
-            ignore_request = ignore_request)
+        return super(VersionLogView, self).setUpWidgets(self)
         
     @property
     def _versions(self):
