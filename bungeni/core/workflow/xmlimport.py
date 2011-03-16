@@ -6,7 +6,7 @@
 
 $Id$
 """
-log = __import__("logging").getLogger("bungeni.core.workflows.xmlimport")
+log = __import__("logging").getLogger("bungeni.core.workflow.xmlimport")
 
 import re
 import os
@@ -28,7 +28,7 @@ from bungeni.ui.utils import debug
 
 ASSIGNMENTS = (GRANT, DENY)
 
-RESOLVE_BASEPATH = "bungeni.core.workflows"
+BUNGENI_BASEPATH = "bungeni.core.workflows"
 
 trigger_value_map = {
     "manual": interfaces.MANUAL,
@@ -125,9 +125,9 @@ def zcml_transition_permission(pid, title, roles):
 def load(file_path):
     doc = etree.fromstring(open(file_path).read())
     module_name = os.path.splitext(os.path.basename(file_path))[0]
-    #module = resolve(".%s" % module_name, RESOLVE_BASEPATH)
+    #module = resolve(".%s" % module_name, BUNGENI_BASEPATH)
     #actions = getattr(module, "actions")
-    actions = resolve("._actions", RESOLVE_BASEPATH)
+    actions = resolve("._actions", BUNGENI_BASEPATH)
     return _load(doc, module_name, actions)
 
 # add version to state
@@ -187,6 +187,7 @@ def _load(workflow, module_name, actions):
                 like_permissions.remove(perm)
         permissions.append((assignment, p, r))
     
+    # states
     for s in workflow.iterchildren("state"):
         # @id
         state_id = s.get("id")
@@ -241,6 +242,7 @@ def _load(workflow, module_name, actions):
     
     STATE_IDS = [ s.id for s in states ]
     
+    # transitions
     for t in workflow.iterchildren("transition"):
         for key in t.keys():
             assert key in TRANS_ATTRS, \
@@ -302,11 +304,11 @@ def _load(workflow, module_name, actions):
             # raises importerror/nameerror
             kw["condition"] = resolve(
                 ".%s" % (kw["condition"]),
-                "%s._conditions" % (RESOLVE_BASEPATH)
+                "%s._conditions" % (BUNGENI_BASEPATH)
             )
         if "event" in kw:
             # raises importerror/nameerror
-            kw["event"] = resolve(kw["event"], RESOLVE_BASEPATH)
+            kw["event"] = resolve(kw["event"], BUNGENI_BASEPATH)
         # bool
         if "require_confirmation" in kw:
             try:

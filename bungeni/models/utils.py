@@ -23,7 +23,7 @@ import domain, schema
 # !+ move "contextual" utils to ui.utils.contextual
 
 def get_principal():
-    """ () -> either(IPrincipal, None)
+    """ () -> either(zope.security.interfaces.IGroupAwarePrincipal, None)
     """
     interaction = getInteraction()
     for participation in interaction.participations:
@@ -31,7 +31,7 @@ def get_principal():
             return participation.principal
 
 def get_principal_id():
-    """ () -> either(str, None)
+    """ () -> either(str, None), login name of current principal, or None.
     """
     principal = get_principal()
     if principal is not None:

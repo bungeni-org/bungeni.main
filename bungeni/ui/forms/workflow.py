@@ -19,6 +19,7 @@ from bungeni.ui.i18n import _
 from ore.workflow import interfaces
 from bungeni.alchemist.ui import handle_edit_action
 
+''' !+UNUSED(mr, mar-2011)
 def createVersion(context, comment=""):
     """Create a new version of an object and return it.
     """
@@ -28,6 +29,7 @@ def createVersion(context, comment=""):
     if comment:
        _comment = u"%s %s" % (_comment, comment)
     versions.create(_comment.strip())
+'''
 
 def bindTransitions(form_instance, transitions, wf_name=None, wf=None):
     """Bind workflow transitions into formlib actions.

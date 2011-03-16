@@ -1,4 +1,3 @@
-#enconding utf-8
 
 # db specific utilities to retrive values, restriction etc
 # from the db implementation
@@ -10,16 +9,13 @@ import bungeni.models.schema as schema
 import bungeni.models.interfaces as interfaces
 import bungeni.core.globalsettings as prefs
 
+
 def get_user_login(user_id):
-    if user_id:
-        session=Session()
-        user = session.query(domain.User).get(user_id)
-        return user.login
+    assert user_id, "Must have valid user_id"
+    session=Session()
+    user = session.query(domain.User).get(user_id)
+    return user.login
 
-
-def setQuestionParliamentId(question):
-    if not question.parliament_id:
-        question.parliament_id = prefs.getCurrentParliamentId()
 
 ''' !+UNUSED(mr, mar-2011)
 def getQuestionWorkflowTrail(question):
@@ -65,16 +61,16 @@ def removeQuestionFromItemSchedule(question_id):
     if (len(results)==1):
         results[0].active = False
     
-def setRegistryNumber(item):
+def set_pi_registry_number(item):
     session = Session()
     connection = session.connection(domain.ParliamentaryItem)
-    sequence = rdb.Sequence('registry_number_sequence')
+    sequence = rdb.Sequence("registry_number_sequence")
     item.registry_number = connection.execute(sequence)
 
 def setTabledDocumentSerialNumber(tabled_document):
     session = Session()
     connection = session.connection(domain.TabledDocument)
-    sequence = rdb.Sequence('tabled_document_number_sequence')
+    sequence = rdb.Sequence("tabled_document_number_sequence")
     tabled_document.tabled_document_number = connection.execute(sequence)
     
 def setQuestionSerialNumber(question):
@@ -121,7 +117,7 @@ def setMotionSerialNumber(motion):
     """
     session = Session()
     connection = session.connection(domain.Motion)
-    sequence = rdb.Sequence('motion_number_sequence')
+    sequence = rdb.Sequence("motion_number_sequence")
     motion.motion_number = connection.execute(sequence)
 
 #
@@ -146,7 +142,7 @@ def getMinsiteryEmails(ministry):
     for result in results:
         address = '"%s %s" <%s>' % (result.first_name, result.last_name, result.email)
         addresses.append(address)
-    return ' ,'.join(addresses)
+    return " ,".join(addresses)
 
 #
 
@@ -197,7 +193,7 @@ def endChildGroups(group):
     (in order to be able to dissolve those groups)"""
     def _end_parliament_group(group_class, parent_id, end_date):
         groups = session.query(group_class).filter(
-            rdb.and_(group_class.status == 'active',
+            rdb.and_(group_class.status == "active",
                 group_class.parent_group_id == parliament_id)).all()
         for group in groups:
             if group.end_date == None:
@@ -227,7 +223,7 @@ def endChildGroups(group):
     elif interfaces.IGovernment.providedBy(group):
         government_id = group.group_id
         ministries = session.query(domain.Ministry).filter(
-            rdb.and_(domain.Ministry.status == 'active',
+            rdb.and_(domain.Ministry.status == "active",
                 domain.Ministry.parent_group_id == government_id)
                 ).all()
         for ministry in ministries:

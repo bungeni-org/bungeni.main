@@ -20,16 +20,26 @@ Signature of all action utilities here:
 
 $Id$
 """
-log = __import__("logging").getLogger("bungeni.core.workflow._actions")
+log = __import__("logging").getLogger("bungeni.core.workflows._actions")
 
-import zope.securitypolicy.interfaces
 from bungeni.core.workflows import utils
 from bungeni.core.workflows import dbutils
 from bungeni.models import utils as model_utils
 
+#
 
-def create_version(info, context):
-    utils.createVersion(info, context)
+create_version = utils.create_version
+
+#
+
+def _pi_create(info, context):
+    utils.setParliamentId(info, context)
+    # !+setParliamentId(mr, mar-2011) creating a question via UI does not 
+    # seem to need this, but... a question unit test fails without it!
+    utils.assign_owner_role_pi(context)
+
+def _pi_submit(info, context):
+    utils.set_pi_registry_number(info, context)
 
 
 # address
@@ -37,53 +47,38 @@ def create_version(info, context):
 def _address_create(info, context):
     # !+OWNER_ADDRESS(mr, mov-2010) is this logic correct, also for admin?
     try:
-        user_id = dbutils.get_user_login(context.user_id)
+        user_login = dbutils.get_user_login(context.user_id)
     except AttributeError:
         # 'GroupAddress' object has no attribute 'user_id'
-        user_id = model_utils.get_principal_id()
+        user_login = model_utils.get_principal_id()
     if user_id:
-        zope.securitypolicy.interfaces.IPrincipalRoleMap(
-            context).assignRoleToPrincipal(u"bungeni.Owner", user_id) 
+        utils.assign_owner_role(context, user_login)
 
 
 # agendaitem
 
-def _agendaitem_create(info, context):
-    utils.setParliamentId(info, context)
-    utils.setBungeniOwner(context)
-_agendaitem_create_on_behalf_of = _agendaitem_create
+_agendaitem_create = _pi_create
+_agendaitem_create_on_behalf_of = _pi_create
 
-def _agendaitem_submit(info, context):
-    utils.setRegistryNumber(info, context)
-_agendaitem_resubmit = _agendaitem_submit
+_agendaitem_submit = _pi_submit
+_agendaitem_resubmit = _pi_submit
 
 
 # bill
 
-def _bill_create(info, context):
-    utils.setParliamentId(info, context)
-    user_id = model_utils.get_principal_id()
-    if not user_id:
-        user_id = "-"
-    zope.securitypolicy.interfaces.IPrincipalRoleMap(context
-                    ).assignRoleToPrincipal("bungeni.Owner", user_id)
-    owner_id = utils.getOwnerId(context)
-    if owner_id and (owner_id != user_id):
-        zope.securitypolicy.interfaces.IPrincipalRoleMap(context 
-            ).assignRoleToPrincipal("bungeni.Owner", owner_id)
+_bill_create = _pi_create
 
 def _bill_submit(info, context):
     utils.setBillPublicationDate(info, context)
-    utils.setRegistryNumber(info, context)
+    utils.set_pi_registry_number(info, context)
 
 
 # group
 
 def _group_create(info, context):
-    user_id = model_utils.get_principal_id()
-    if user_id:
-        zope.securitypolicy.interfaces.IPrincipalRoleMap( context 
-            ).assignRoleToPrincipal( u'bungeni.Owner', user_id) 
+    user_login = model_utils.get_principal_id()
+    if user_login:
+        utils.assign_owner_role(context, user_login)
 
 def _group_activate(info, context):
     utils.set_group_local_role(context)
@@ -129,14 +124,11 @@ def _groupsitting_publish_agenda(info, context):
 
 # motion
 
-def _motion_create(info, context):
-    utils.setParliamentId(info, context)
-    utils.setBungeniOwner(context)
-_motion_create_on_behalf_of = _motion_create
+_motion_create = _pi_create
+_motion_create_on_behalf_of = _pi_create
 
-def _motion_submit(info, context):
-    utils.setRegistryNumber(info, context)
-_motion_resubmit = _motion_submit
+_motion_submit = _pi_submit
+_motion_resubmit = _pi_submit
 
 def _motion_approve(info, context):
     dbutils.setMotionSerialNumber(context)
@@ -144,22 +136,11 @@ def _motion_approve(info, context):
 
 # question
 
-def _question_create(info, context):
-    """Create a question -> state.draft, grant all rights to owner
-    deny right to add supplementary questions.
-    """
-    q = context # context is the newly created question
-    log.debug("[QUESTION CREATE] [%s] [%s]" % (info, q))
-    utils.setQuestionDefaults(info, q) # !+setQuestionDefaults
-    utils.setBungeniOwner(q)
-_question_create_on_behalf_of = _question_create
+_question_create = _pi_create
+_question_create_on_behalf_of = _pi_create
 
-def _question_submit(info, context):
-    """A question submitted to the clerks office, the owner cannot edit it 
-    anymore the clerk has no edit rights until it is received.
-    """
-    utils.setRegistryNumber(info, context)
-_question_resubmit = _question_submit
+_question_submit = _pi_submit
+_question_resubmit = _pi_submit
 
 def _question_withdraw(info, context):
     """A question can be withdrawn by the owner, it is visible to ...
@@ -187,14 +168,11 @@ def _question_approve(info, context):
 def _tableddocument_adjourn(info,context):
     utils.setTabledDocumentHistory(info, context)
 
-def _tableddocument_create(info, context):
-    utils.setParliamentId(info, context)
-    utils.setBungeniOwner(context)
-_tableddocument_create_on_behalf_of = _tableddocument_create
+_tableddocument_create = _pi_create
+_tableddocument_create_on_behalf_of = _pi_create
 
-def _tableddocument_submit(info, context):
-    utils.setRegistryNumber(info, context)
-_tableddocument_resubmit = _tableddocument_submit
+_tableddocument_submit = _pi_submit
+_tableddocument_resubmit = _pi_submit
 
 def _tableddocument_approve(info, context):
     dbutils.setTabledDocumentSerialNumber(context)
@@ -203,8 +181,7 @@ def _tableddocument_approve(info, context):
 # user
 
 def _user_create(info, context):
-    zope.securitypolicy.interfaces.IPrincipalRoleMap(context
-        ).assignRoleToPrincipal("bungeni.Owner", context.login)
+    utils.assign_owner_role(context, context.login)
 
 def _user_resurrect(info, context):
     context.date_of_death = None

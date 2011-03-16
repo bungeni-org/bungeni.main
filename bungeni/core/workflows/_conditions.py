@@ -10,7 +10,7 @@ Signature of all utilities here:
 
 $Id:  $
 """
-log = __import__("logging").getLogger("bungeni.core.workflow._conditions")
+log = __import__("logging").getLogger("bungeni.core.workflows._conditions")
 
 from zope.security.proxy import removeSecurityProxy
 from bungeni.models.utils import get_principal_id
@@ -34,9 +34,9 @@ def user_is_context_owner(info, context):
         """Test if current user is the context owner e.g. to check if someone 
         manipulating the context object is other than the owner of the object.
         """
-        user_id = get_principal_id()
-        owner_id = utils.getOwnerId(context)
-        return user_id==owner_id
+        user_login = get_principal_id()
+        owner_login = utils.get_owner_login_pi(context)
+        return user_login == owner_login
     return user_is_context_owner(context)
 
 

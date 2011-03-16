@@ -1,4 +1,4 @@
-log = __import__("logging").getLogger("bungeni.core.workflow.utils")
+log = __import__("logging").getLogger("bungeni.core.workflows.utils")
 
 import sys
 import datetime
@@ -39,27 +39,36 @@ def get_parliament(context):
         return parliament
 '''
 
-# common
-def getOwnerId(context):
-    if context:
-        owner_id = getattr(context, "owner_id", None)
-        return dbutils.get_user_login(owner_id)
+# !+WorkflowInfo(mr, mar-2011) drop passing "info" (unused) param everywhere,
+# here and in actions, conditions?
 
-def setBungeniOwner(context):
-    user_id = get_principal_id()
-    if not user_id: 
-        user_id = "-"
-    owner_id = getOwnerId(context)
-    log.debug("setBungeniOwner [%s] user_id:%s owner_id:%s" % (
-                                                context, user_id, owner_id))
-    if user_id:
-        IPrincipalRoleMap(context).assignRoleToPrincipal(u'bungeni.Owner', user_id)
-    if owner_id and (owner_id!=user_id):
-        IPrincipalRoleMap(context).assignRoleToPrincipal(u'bungeni.Owner', owner_id)
+# parliamentary item
 
-# !+WorkflowInfo(mr, mar-2011) drop passing this (unused) param everywhere here?
+def get_owner_login_pi(context):
+    """Get the login of the user who has been previously set as the owner of 
+    this ParliamentaryItem.
+    """
+    assert interfaces.IBungeniContent.providedBy(context), \
+        "Not a Parliamentary Item: %s" % (context)
+    return dbutils.get_user_login(context.owner_id)
 
-def createVersion(info, context):
+def assign_owner_role(context, login):
+    # throws IntegrityError when login is None
+    IPrincipalRoleMap(context).assignRoleToPrincipal("bungeni.Owner", login)
+
+def assign_owner_role_pi(context):
+    """Assign bungeni.Owner role to the ParliamentaryItem.
+    """
+    current_user_login = get_principal_id()
+    owner_login = get_owner_login_pi(context)
+    log.debug("assign_owner_role_pi [%s] user:%s owner:%s" % (
+        context, current_user_login, owner_login))
+    if current_user_login:
+        assign_owner_role(context, current_user_login)
+    if owner_login and (owner_login != current_user_login):
+        assign_owner_role(context, owner_login)
+
+def create_version(info, context):
     """Create a new version of an object and return it."""
     instance = removeSecurityProxy(context)
     # capi.template_message_version_transition
@@ -68,24 +77,17 @@ def createVersion(info, context):
     versions = bungeni.core.interfaces.IVersioned(instance)
     versions.create(message)
 
-def setRegistryNumber(info, context):
+
+def set_pi_registry_number(info, context):
     """A parliamentary_item's registry_number should be set on the item being 
     submitted to parliament.
     """
     instance = removeSecurityProxy(context)
     if instance.registry_number == None:
-        dbutils.setRegistryNumber(instance)
+        dbutils.set_pi_registry_number(instance)
+
 
 # question
-def setQuestionDefaults(info, context):
-    """get the default values for a question. current parliament, ... 
-    
-    !+setQuestionDefaults(mr, mar-2011) creating a question via UI does not 
-    seem to need this, but... a unit test fails without it!
-    """ 
-    instance = removeSecurityProxy(context)
-    dbutils.setQuestionParliamentId(instance)
-
 def setMinistrySubmissionDate(info, context):
     instance = removeSecurityProxy(context)
     if instance.ministry_submit_date == None:
@@ -112,21 +114,19 @@ def getQuestionSubmissionAllowed(info, context):
 '''
 
 # bill
-def setBillPublicationDate( info, context ):
+def setBillPublicationDate(info, context):
     instance = removeSecurityProxy(context)
     if instance.publication_date == None:
         instance.publication_date = datetime.date.today()
 
-# motion, bill, agendaitem, tableddocument
+# question, motion, bill, agendaitem, tableddocument
 # !+ParliamentID(mr, mar-2011) this is used in "create" transitions... 
-# why is this needed here (as part fo transition logic... should be part of 
-# the object creation logic, and then why is it not used for all types 
-# e.g. not used for question?
+# why is this needed here (as part fo transition logic... 
+# should be part of the object creation logic?
 def setParliamentId(info, context):
     instance = removeSecurityProxy(context)
     if not instance.parliament_id:
-        parliamentId = prefs.getCurrentParliamentId()
-        instance.parliament_id = parliamentId
+         instance.parliament_id = prefs.getCurrentParliamentId()
 
 # tableddocument
 def setTabledDocumentHistory(info, context):
