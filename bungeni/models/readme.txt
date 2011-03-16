@@ -289,7 +289,7 @@ the attendance of a member at a sitting.
  >>> gsa = model.GroupSittingAttendance()
  >>> gsa.group_sitting_id = sit.group_sitting_id
  >>> gsa.member_id = mp_1.user_id
- >>> gsa.attendance_id = at.attendance_id
+ >>> gsa.attendance_type_id = at.attendance_type_id
  >>> session.add(gsa)
  >>> session.flush() 
  
@@ -326,7 +326,7 @@ Attendance
  >>> sgsa = model.GroupSittingAttendance()
  >>> sgsa.group_sitting_id = ssit.group_sitting_id
  >>> sgsa.member_id = mp_1.user_id
- >>> sgsa.attendance_id = at.attendance_id
+ >>> sgsa.attendance_type_id = at.attendance_type_id
  >>> session.add(sgsa)
  >>> session.flush() 
 

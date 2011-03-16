@@ -201,13 +201,13 @@
             attributes="
                 group_sitting_id
                 member_id
-                attendance_id"
+                attendance_type_id"
         />
         <require permission="bungeni.sittingattendance.Edit"
             set_attributes="
                 group_sitting_id
                 member_id
-                attendance_id"
+                attendance_type_id"
         />
     </class>
     
