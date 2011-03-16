@@ -39,5 +39,5 @@ jQuery.fn.preventDuplicateMenuAction = function(){
 
 jQuery(document).ready(function(){
         jQuery('form').preventDuplicateSubmission();
-        jQuery("dd.actionMenuContent  a:not([id='odt'],[id='pdf'])").preventDuplicateMenuAction();
+        jQuery("dd.actionMenuContent  a:not([id='odt'],[id='pdf'],[id='download'])").preventDuplicateMenuAction();
     });

@@ -267,7 +267,8 @@ dl#context_actions.actionMenu .actionMenuContent ul li a#pdf,
 dl#context_actions.actionMenu .actionMenuContent ul li a#delete,
 dl#context_actions.actionMenu .actionMenuContent ul li a#respond,
 dl#context_actions.actionMenu .actionMenuContent ul li a#feedrss,
-dl#context_actions.actionMenu .actionMenuContent ul li a#files  {
+dl#context_actions.actionMenu .actionMenuContent ul li a#files,
+dl#context_actions.actionMenu .actionMenuContent ul li a#download {
 	padding: 0 .5em;
 	margin: 0;
 	float: left;
@@ -310,6 +311,9 @@ dl#context_actions.actionMenu .actionMenuContent ul li a#respond {
 }
 dl#context_actions.actionMenu .actionMenuContent ul li a#feedrss {
 	background-image: url(images/rss.png);
+}
+dl#context_actions.actionMenu .actionMenuContent ul li a#download {
+	background-image: url(images/download.png);
 }
 dl#context_actions.actionMenu .actionMenuContent ul li a#files {
 	background-image: url(images/database.png) ;

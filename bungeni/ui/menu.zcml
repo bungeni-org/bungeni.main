@@ -1266,8 +1266,8 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         >
         <browser:menuItem action="workflow" title="Workflow" order="20" />
-        <browser:menuItem action="files" title="Files" order="30"
-            permission="bungeni.fileattachment.Edit"
+        <browser:menuItem action="files" title="attachments" order="30"
+            permission="zope.View"
         />
     </browser:menuItems>
     <browser:menuItem menu="context_actions"
@@ -1307,7 +1307,21 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="zope.ManageContent"
     />
-    
+
+    <browser:menuItems menu="context_actions"
+        for="bungeni.models.interfaces.IAttachedFile"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer">
+        <browser:menuItem action="edit" title="Edit" order="20"
+            permission="bungeni.fileattachment.Edit"
+        />
+        <browser:menuItem action="delete" title="Delete" order="30"
+            permission="bungeni.fileattachment.Delete"
+        />
+        <browser:menuItem action="download" title="Download" order="40"
+            permission="zope.View"
+        />
+    </browser:menuItems>
+
     <!-- question context actions -->
     <browser:menuItems menu="context_actions"
         for="bungeni.models.interfaces.IQuestion"
