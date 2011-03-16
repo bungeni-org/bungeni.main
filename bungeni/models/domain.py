@@ -297,8 +297,6 @@ class Parliament(Group):
         "bungeni.models.domain.MotionContainer", "parliament_id")
     sittings = one2many("group_sittings",
         "bungeni.models.domain.GroupSittingContainer", "group_id")
-    offices = one2many("offices",
-        "bungeni.models.domain.OfficeContainer", "parent_group_id")
     agendaitems = one2many("agendaitems",
         "bungeni.models.domain.AgendaItemContainer", "group_id")
     tableddocuments = one2many("tableddocuments",
