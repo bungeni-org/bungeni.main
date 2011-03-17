@@ -340,6 +340,12 @@ ul#portal-globalnav {
 }
 ul#portal-globalnav li {
     display: inline;
+    /* new */
+	position: relative;
+	border-radius: 0;
+	float: left;
+	height: 25px;
+    display: block !important;
 }
 ul#portal-globalnav li a {
     /* The normal, unselected tabs. They are all links */
@@ -367,6 +373,39 @@ ul#portal-globalnav li a:hover {
     border-bottom-color: #dee7ec;
     color: #436976;
 }
+
+/* new */
+#portal-globalnav #secondary {
+	position: absolute;
+	top: 14px;
+	z-index: 10;
+	width: 150px;
+	height: auto !important;
+	clear: left;
+	float: none;
+	display: block;
+}
+#portal-globalnav #secondary li
+{
+	width: 150px;
+	float: none !important;
+	margin: 0;
+	padding: 0;
+	height: auto;
+	display: block;
+    background:#d8d8d9 /*url(/static/images/w-globalnav-level1-bg.png) bottom left repeat-x !important*/;
+}
+
+#portal-globalnav #secondary li a {
+	display: block;
+	float: none;
+	border-radius: 0;
+	text-align: left;
+	padding: 0 .25em;
+	margin: 0 !important;
+}
+/* end of new */
+
 #portal-personaltools {
     /* Bar with personalized menu (user preferences, favorites etc) */
     background-color: #dee7ec;
