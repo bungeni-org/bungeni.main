@@ -39,7 +39,7 @@ from bungeni.ui.utils import queries, statements, url, misc, debug, date
 from bungeni.ui.browser import BungeniViewlet
 from fields import BungeniAttributeDisplay
 from interfaces import ISubFormViewletManager, ISubformRssSubscriptionViewletManager
-
+from bungeni.ui.interfaces import IAdminSectionLayer
 
 ''' XXX-INFO-FOR-PLONE - MR - 2010-05-03
 class GroupIdViewlet(browser.BungeniViewlet):
@@ -432,57 +432,57 @@ class GroupMembersViewlet(browser.BungeniItemsViewlet):
     # evoque
     render = z3evoque.ViewTemplateFile("workspace_viewlets.html#group_members")
 
-    view_title = "Members"
+    view_title = _("Members")
     view_id = "group-members"
 
     def _get_members(self):
         """Get the list of members of the context group.
         """
-        raise NotImplemented
+        raise NotImplementedError("Must be implemented by subclass.")
+
+    @property
+    def members_container_url(self):
+        # !+traversal(murithi, mar-2010) ideally no urls should be
+        # hardcoded here. absoluteURL should work for memberships or
+        # members of groups [ to improve on getting urls of children ]
+        if IAdminSectionLayer.providedBy(self.request):
+            trusted = removeSecurityProxy(self.context)
+            m_container = trusted.__parent__.__parent__.parliamentmembers
+            return url.absoluteURL(m_container, self.request)
+        return "/members/current"
 
     def update(self):
         session = Session()
-        members = self._get_members()
-        user_mp_id_map = dict([
-            (m.user_id, session.query(domain.MemberOfParliament).filter(
-                    domain.MemberOfParliament.user_id == m.user_id
-                ).one().membership_id)
-            for m in members
-        ])
+        group_members = self._get_members()
+        mpkls = domain.MemberOfParliament
         formatter = self.get_date_formatter("date", "long")
         self.items = [{
                 "fullname": m.user.fullname,
                 "url":
-                    "/members/current/obj-%s/" % (user_mp_id_map[m.user_id]),
+                    "%s/obj-%d/" % (self.members_container_url, 
+                        session.query(mpkls).filter(
+                                mpkls.user_id == m.user_id).one(
+                            ).membership_id
+                            ),
                 "start_date":
                     m.start_date and formatter.format(m.start_date) or None,
                 "end_date":
                     m.end_date and formatter.format(m.end_date) or None
             }
-            for m in members
+            for m in group_members
         ]
 
 class CommitteeMembersViewlet(GroupMembersViewlet):
 
     def _get_members(self):
-        session = Session()
-        return [ m for m in
-            session.query(domain.CommitteeMember).filter(
-                domain.CommitteeMember.group_id == self.context.committee_id
-            ).all()
-        ]
+        trusted = removeSecurityProxy(self.context)
+        return list(trusted.committeemembers.values())
 
 class PoliticalGroupMembersViewlet(GroupMembersViewlet):
 
     def _get_members(self):
-        pg = removeSecurityProxy(self.context)
-        session = Session()
-        dkls = domain.PartyMember # !+domain.PoliticalGroupMember
-        return [ m for m in
-            session.query(dkls).filter(dkls.group_id == pg.group_id).all()
-        ]
-    # !+domain.PoliticalGroupMember(mr, oct-2010) is not defined
-
+        trusted = removeSecurityProxy(self.context)
+        return list(trusted.partymembers.values())
 
 class GroupSittingsViewlet(browser.BungeniItemsViewlet):
     """Display the sittings of a group. 
