@@ -51,7 +51,7 @@ def _address_create(info, context):
     except AttributeError:
         # 'GroupAddress' object has no attribute 'user_id'
         user_login = model_utils.get_principal_id()
-    if user_id:
+    if user_login:
         utils.assign_owner_role(context, user_login)
 
 
