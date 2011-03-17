@@ -212,8 +212,7 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
                 self.actions.append(action)
         if not self.has_write_permission(self.context):
             self.form_fields = self.form_fields.omit("commit_message")
-        self.adapters = {}
-        return super(VersionLogView, self).setUpWidgets(self)
+        super(VersionLogView, self).setUpWidgets(self)
         
     @property
     def _versions(self):
