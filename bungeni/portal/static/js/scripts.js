@@ -1,8 +1,7 @@
 function listTogglr(){
-
   var viewletDateToggle = $('#whats-on-overview .whats-on-viewlet dd ul li h2');
   viewletDateToggle.css({
-    background: '#fff url(/static/images/minus.png) 1px 4px no-repeat',
+    background: 'url(/static/images/minus.png) 2px 4px no-repeat',
     paddingLeft: '20px',
     cursor: 'pointer'
     });
@@ -17,7 +16,7 @@ function listTogglr(){
         $(this).siblings('ul').slideUp('fast');
       }
     });
-  /*
+  
   var viewlet = $('#fieldset-upcoming-sittings ul li ul li');
   // check if the link was clicked - if it was don't animate, just follow the link.
   var viewletLink = viewlet.children('a');
@@ -49,7 +48,6 @@ function listTogglr(){
   $('#fieldset-upcoming-sittings ul li ul li ul li').click(function(){
       $(this).css('background','#fff');
     });
-    */
 }
 function searchTogglr(){
   var portletHeader = $('#portletArchiveDates .portletHeader');
@@ -125,16 +123,4 @@ $(document).ready(function(){
         $(this).parent().hide();
       }
     });
-
-	var li = $('#portal-globalnav ul.level0 li');
-	li.each(function(){
-		var ul = $(this).children('ul');
-		ul.hide();
-		$(this).hover(function(){
-			ul.show();
-		},
-		function(){
-			ul.hide();
-		});
-	});
 });

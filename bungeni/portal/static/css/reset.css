@@ -32,7 +32,6 @@ b, strong {
     height: 20px;
     border-bottom: 1px solid #fb9c14;
 }
-
 #top-layer ul#portal-personaltools {
     padding: 0;
     background: transparent;
@@ -242,13 +241,13 @@ div.main-column h2 {
     font-weight: normal !important;
     color: #C8631B !important;
     margin: 1.25em 0 .5em;
-    text-align: center;
 }
 .template-workspace.section-bungeni-workspace div.main-column h2,
 .template-workspace.section-bungeni-admin div.main-column h2 {
     font-weight: bold !important;
     color: #222 !important;
     margin-top: 1em;
+    text-align: center;
 }
 div.main-column h2 span {
     font-size: 75%;
@@ -281,7 +280,7 @@ div.main-column h3 {
  * portal-columns-* styles
  */
 .template-workspace #portal-columns {
-    overflow: visible;
+	
     padding: 0 .5em;
 }
 #portal-column-two .visualPadding {
@@ -299,8 +298,6 @@ div.main-column h3 {
 .section-bungeni-admin #portal-column-content {
     padding: 0;
     overflow: visible;
-    float:right;
-    width:79%;
 }
 .section-bungeni-archive #portal-column-content {
     float: none;
@@ -343,7 +340,6 @@ div.main-column h3 {
     width: 16em;
     float: left;
     position: relative;
-    height: 100%;
 }
 #portal-column-one .visualPadding {
     padding: 0;
@@ -360,9 +356,6 @@ div.main-column h3 {
     float: none;
     margin: 0 auto;
     border-color: #FB9C14;
-}
-.section-bungeni-admin #portal-column-one{
-    width: 19%;
 }
 
 /* footer  */
@@ -435,7 +428,7 @@ div.main-column h3 {
 
 .section-bungeni-admin #portal-column-content .documentContent {
     float: left;
-    width: 98%;
+    width: 85%;
     padding: 0 !important;
    
 }
@@ -531,6 +524,7 @@ input.inputLabelActive {
 }
 /* end of .template-workspace styles*/
 
+
 /*
  * whats-on styles are shared by both template-portal and template-workspace.
  */
@@ -572,7 +566,7 @@ input.inputLabelActive {
     border: 0 none;
     margin: 0 auto .25em !important;
     padding: 0;
-    width: 100%;
+    width: 95%;
     border-top: 4px solid #f9ac32;
     border-bottom: 1px solid #fcc373;
 }
@@ -580,7 +574,7 @@ input.inputLabelActive {
     background: #fff;
     list-style: none;
     list-style-type: none;
-    padding: .25em;
+    padding: 0;
     margin: 0;
     border: 1px solid #ccc;
     border-bottom-color: #aaa;
@@ -593,12 +587,11 @@ input.inputLabelActive {
     font-weight: normal;
     font-size: 100%;
     margin: 0;
-    color: #555 !important;
-    background: #fff;
+    color: #222;
+    border-bottom: 1px solid #aaa;
+    background: #eee;
     text-align: left;
     text-shadow: 0px 1px 1px #fff;
-    line-height: 20px;
-    height: 20px;
 }
 #portal-column-content #whats-on-overview .whats-on-viewlet dd ul li ul {
     margin: 0;
@@ -611,9 +604,7 @@ input.inputLabelActive {
 #portal-column-content #whats-on-overview .whats-on-viewlet dd ul li ul li a {
     margin: 0;
     padding: 0;
-    color: #888;
-    font-size: 90%;
-    font-style: italic;
+    border: 0 none;
 }
 #portal-column-content #whats-on-overview .whats-on-viewlet dd ul li ul li ul {
     padding-left: 0px !important;
@@ -622,28 +613,15 @@ input.inputLabelActive {
     border: 0 none;
     line-height: 18px;
 }
-#portal-column-content #whats-on-overview .whats-on-viewlet dd ul li ul li dl {
-    border-bottom: 1px dotted #ccc;
-}
-#portal-column-content #whats-on-overview .whats-on-viewlet dd ul li ul li dl h3 {
-    font-weight: bold !important;
+#portal-column-content #whats-on-overview .whats-on-viewlet dd ul li ul li ul li h3 {
     font-size: 100%;
+    font-weight: bold;
     margin: 0;
     padding: 0;
     display: inline;
 }
-#portal-column-content #whats-on-overview .whats-on-viewlet dd ul li ul li dl a {
-    color: #F9AC32;
-    font-style: normal;
-    border-bottom: 0 none;
-}
-#portal-column-content #whats-on-overview .whats-on-viewlet dd ul li ul li dd {
-    border: 0 none;
-    font-size: 95%;
-}
 #portal-column-content #whats-on-overview .whats-on-viewlet dd.formPanel ul ul li ul li a {
     background: #fff !important;
-    border: 0 none;
 }
 #portal-column-content #whats-on-overview .whats-on-viewlet dd.formPanel ul li {
     background: #eee;
@@ -847,10 +825,6 @@ input.inputLabelActive {
 /* whats-on-overview portlets */
 #whats-on-overview .portlet dt {
     padding: 0 2px 0 5px;
-    padding: 0;
-    background: transparent;
-    height: auto;
-    line-height: 1em;
     font-weight: normal;
 }
 #whats-on-overview .portlet dd {
@@ -879,9 +853,6 @@ input.inputLabelActive {
     border: 0 none;
     height: 1.8em;
     padding: 0;
-}
-.template-portal .contentActions {
-    background: #dedede;
 }
 .template-workspace.section-bungeni-archive .contentActions,
 .template-workspace.section-bungeni-business .contentActions,
@@ -994,9 +965,7 @@ div#portal-globalnav {
     height: 4em;
     position: relative;
     background: #fff;
-    padding:0; 
-    /* new */
-	height: 30px;
+    padding:0;  
 }
 .template-workspace div#portal-globalnav {
     background: #4d4d4d;
@@ -1013,25 +982,15 @@ div#portal-globalnav ul.level0 {
     white-space: nowrap;
     border-bottom: 1px solid #fb9c14;
     background: #fff;
-    /* new */
-	border-bottom: 3px solid #F9AC32;
-	height: 24px;
-    line-height: 24px;
 }
 
 .section-bungeni-\@\@index div#portal-globalnav ul.level0 {
     height: 1.85em;  
 }
 
+div#portal-globalnav ul.level0 li,
 #portal-languageselector li {
     display: inline;
-}
-div#portal-globalnav ul.level0 li {
-	position: relative;
-	border-radius: 0;
-	float: left;
-	height: 25px;
-    display: block !important;
 }
 
 .template-workspace div#portal-globalnav ul.level0 {
@@ -1040,7 +999,7 @@ div#portal-globalnav ul.level0 li {
 }
 div#portal-globalnav ul.level0 li a { 
     text-shadow: 0px 1px 1px #fff;
-    padding: 0 1em;
+    padding: 0 1.25em;
     margin: 0 .25em 0 0;
     color: #222;
     background: #eee;
@@ -1052,9 +1011,8 @@ div#portal-globalnav ul.level0 li a {
     -moz-border-radius-topright: 5px;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    font-family: tahoma,verdana,sans-serif;
+    font-family:tahoma,verdana,sans-serif;
     font-size: 12px;
-    height: 22px;
 }
 
 .template-portal div#portal-globalnav ul.level0 li#portaltab-business-whats-on a  {
@@ -1070,10 +1028,6 @@ div#portal-globalnav ul.level0 li a {
     margin:0 0.25em 0 0;
     padding:0 1.25em;
     text-shadow:0 1px 1px #FFFFFF;
-}
-.template-portal div#portal-globalnav ul.level0 li#portaltab-business-whats-on ul a {
-    -moz-border-radius-topleft:0px;
-    -moz-border-radius-topright:0px;
 }
 
 .section-bungeni-business div#portal-globalnav ul.level0 li#portaltab-business-whats-on a{
@@ -1128,9 +1082,7 @@ div#portal-globalnav ul.level0 li a:hover,
  *   <ul class="level0">...</ul>
  *   <ul class="level1">...</ul>
  */
-/*div#portal-globalnav ul.level0 ul.level1*/
-div#portal-globalnav ul.level0 #secondary {
-    /*
+div#portal-globalnav ul.level0 ul.level1 {
     position: absolute;
     top: 1.95em;
     left: 0;
@@ -1140,56 +1092,14 @@ div#portal-globalnav ul.level0 #secondary {
     border-top: 0 none;
     width: 99.9%;
     background: #f9ac32 url(/static/images/globalnav-level1-bg.png) bottom left repeat-x;
-     new */
-	position: absolute;
-	top: 25px;
-	z-index: 10;
-	width: 150px;
-	height: auto !important;
-	clear: left;
-	float: none;
-	display: block;
-}
-div#portal-globalnav ul.level0 li #secondary li
-{
-	width: 150px;
-	float: none !important;
-	margin: 0;
-	padding: 0;
-	height: auto;
-	display: block;
-    background:#d8d8d9 /*url(/static/images/w-globalnav-level1-bg.png) bottom left repeat-x*/ !important;
-    line-height: 25px;
-}
-
-div#portal-globalnav ul.level0 li #secondary li a {
-	display: block;
-	float: none;
-	border-radius: 0 !important;
-	text-align: left;
-	padding: 0 .25em;
-	margin: 0 !important;
-    border: 1px solid transparent !important;
-}
-div#portal-globalnav ul.level0 li #secondary li a:hover {
-    text-decoration: underline;
 }
 .template-workspace div#portal-globalnav ul.level0 ul.level1 {
     width: 100%;
     border: 1px solid #aaf;
     border-right: 0 none;
-    border-top: 0 none !important;
+    border-top: 0 none;
     border-bottom:1px solid #d8d8d9;
     background:#d8d8d9 url(/static/images/w-globalnav-level1-bg.png) bottom left repeat-x !important;
-}
-div#portal-globalnav ul.level0 ul.level1 li {
-	width: 150px;
-	float: none !important;
-	margin: 0;
-	padding: 0;
-	height: auto;
-	display: block;
-	background: #F9AC32 url(http://test.bungeni.org/static/images/globalnav-level0-a.png) repeat-x scroll left top;
 }
 div#portal-globalnav ul.level0 ul.level1 a {
     background: transparent;
@@ -1305,8 +1215,6 @@ div#portal-globalnav-bottom {
     padding: 0;
 }
 #portletArchiveDates .portletItem form label {
-
-
     height: 23px;
     line-height: 25px;
     float: left;
@@ -1656,8 +1564,7 @@ body.template-workspace.section-bungeni-workspace #portal-column-content div#wha
     float: left;
     width: 100%;
 }
-.formPanel .field,
-#version-history .diff {
+.formPanel .field {
     margin: 0 auto !important;
     padding: 0;
     clear: both;
@@ -1668,32 +1575,24 @@ body.template-workspace.section-bungeni-workspace #portal-column-content div#wha
     display: inline-block;
     background: #eee;
 }
-#version-history .diff {
-    background: #fff;
-    display: block;
-    width: 100%;
-}
-.section-bungeni-admin .formPanel .field {
-    width: 100%;
-}
 dl.portalMessage {
-    width: 100%;
+    width: 95%;
     margin: 0 auto;
-    padding: 0 .5em;
+    padding: 0;
     height: 25px;
-    line-height: 25px;
     margin-bottom:5px;
-    border: 1px solid #800;
-    color: #333;
 }
 dl.portalMessage dt {
+    float: left;
+    height: 25px;
+    line-height: 25px;
+    padding: 0 .5em;
 }
 dl.portalMessage dd {
+    float: left;
     padding: 0;
+    line-height: 25px;
     border: 0 none;
-    display: inline;
-    color: #a00;
-    font-style: italic;
 }
 #display_form_spacer {
     width: 95%;
@@ -1705,19 +1604,14 @@ dl.portalMessage dd {
 .template-workspace.section-bungeni-workspace .formPanel #display_form_spacer {
     background: url(/static/images/w-globalnav-level1-bg.png) bottom left repeat-x;
 }
-.template-workspace.section-bungeni-admin .formPanel #display_form_spacer {
-    width: 100%;
-}
-.formPanel .field:after,
-#version-history .diff:after{
+.formPanel .field:after {
     content: ".";
     display: block;
     height: 0;
     clear: both;
     visibility: hidden;
 }
-.formPanel .field .content-left-column,
-#version-history .diff h4 {
+.formPanel .field .content-left-column {
     float: left;
     width: 19%;
     text-align: right;
@@ -1730,14 +1624,6 @@ dl.portalMessage dd {
     line-height: 20px;
     background: #eee;
 }
-#version-history .diff h4 {
-    margin-right: 1em;
-    min-height: 100%;
-    height: auto;
-}
-.template-workspace.section-bungeni-admin .formPanel .field .content-left-column {
-    width: 18%;
-}
 .formPanel .field .content-right-column {
     width: 79%;
     float: right;
@@ -1749,9 +1635,6 @@ dl.portalMessage dd {
     line-height: 20px;
     margin: 0;
     background: #fff;
-}
-.template-workspace.section-bungeni-admin .formPanel .field .content-right-column {
-    width: 78%;
 }
 .formPanel .field .content-right-column div,
 .formPanel .field .content-right-column.widget {
@@ -2054,6 +1937,7 @@ h4.tabberHeading {
 }
 .contentViews {
     border-color: transparent;
+    border: 1px solid black;
 }
 .odd {
     background: transparent;
@@ -2312,25 +2196,3 @@ div.main-column #collage h2 {
     padding-left:4px;
     text-decoration:none;
 }
-
-/* modifies the dhx_cal object */
-.template-workspace.section-bungeni-business .dhx_cal_event[style] {
-    display: none;
-}
-.template-workspace.section-bungeni-business .dhx_scale_holder .dhx_cal_event[style],
-.template-workspace.section-bungeni-business .dhx_scale_holder_now .dhx_cal_event[style] {
-    width: 98% !important;
-    left: 1px !important;
-    display: block;
-}
-.template-workspace.section-bungeni-business .dhx_scale_holder .dhx_cal_event .dhx_header[style],
-.template-workspace.section-bungeni-business .dhx_scale_holder_now .dhx_cal_event .dhx_header[style],
-.template-workspace.section-bungeni-business .dhx_scale_holder .dhx_cal_event .dhx_footer[style],
-.template-workspace.section-bungeni-business .dhx_scale_holder_now .dhx_cal_event .dhx_footer[style]{
-    width: 99% !important;
-}
-.template-workspace.section-bungeni-business .dhx_scale_holder .dhx_cal_event .dhx_body[style],
-.template-workspace.section-bungeni-business .dhx_scale_holder_now .dhx_cal_event .dhx_body[style] {
-    width: 94% !important;
-}
-
