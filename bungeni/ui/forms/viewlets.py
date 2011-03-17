@@ -557,13 +557,15 @@ class OfficesHeldViewlet(browser.BungeniItemsViewlet):
         formatter = self.get_date_formatter("date", "long")
         trusted = removeSecurityProxy(self.context)
         user_id = trusted.user_id
+        office_list = []
         if interfaces.IMemberOfParliament.providedBy(self.context):
             parliament_id = trusted.group_id
         else:
             parliament = get_parliament_for_group_id(trusted.group_id)
             if parliament:
                 parliament_id = parliament.parliament_id
-        office_list = []
+            else:
+                return office_list
         for oh in get_offices_held_for_user_in_parliament(
             user_id, parliament_id
         ):
