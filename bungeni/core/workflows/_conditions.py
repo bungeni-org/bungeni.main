@@ -8,7 +8,7 @@ Signature of all utilities here:
 
     (info:WorkflowInfo, context:Object) -> bool
 
-$Id:  $
+$Id$
 """
 log = __import__("logging").getLogger("bungeni.core.workflows._conditions")
 
@@ -48,7 +48,7 @@ def is_scheduled(info, context):
     return dbutils.isItemScheduled(context.parliamentary_item_id)
 
 
-# groups
+# group
 
 def has_end_date(info, context):
     """A group can only be dissolved if an end date is set.

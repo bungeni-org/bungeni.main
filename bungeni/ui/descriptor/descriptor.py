@@ -25,7 +25,7 @@ from bungeni.models import domain
 # attribute on each "workflow" module is setup... this is to avoid an error
 # when importing bungeni.ui.descriptor.descriptor from standalone scripts:
 import bungeni.core.workflows.adapters # needed by standalone scripts
-from bungeni.core.workflows.groups import states as group_wf_state
+from bungeni.core.workflows.group import states as group_wf_state
 from bungeni.core.workflows.attachedfile import states as af_wf_state
 from bungeni.core.workflows.address import states as address_wf_state
 from bungeni.core.workflows.event import states as event_wf_state

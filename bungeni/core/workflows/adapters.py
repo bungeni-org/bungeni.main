@@ -9,7 +9,7 @@ import question
 import motion
 import version
 import groupsitting
-import groups
+import group
 import address
 import tableddocument
 import agendaitem
@@ -56,7 +56,7 @@ CommitteeWorkflowAdapter = workflow.AdaptedWorkflow(
 EventWorkflowAdapter = workflow.AdaptedWorkflow(
     load_workflow(event, domain.EventItem))
 GroupWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(groups, domain.Group))
+    load_workflow(group, domain.Group))
 GroupSittingWorkflowAdapter = workflow.AdaptedWorkflow(
     load_workflow(groupsitting, domain.GroupSitting))
 HeadingWorkflowAdapter = workflow.AdaptedWorkflow(

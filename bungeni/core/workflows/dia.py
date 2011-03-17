@@ -7,7 +7,7 @@ from bungeni.core.workflows import question
 from bungeni.core.workflows import motion
 from bungeni.core.workflows import version
 from bungeni.core.workflows import groupsitting
-from bungeni.core.workflows import groups
+from bungeni.core.workflows import group
 from bungeni.core.workflows import address
 from bungeni.core.workflows import tableddocument
 from bungeni.core.workflows import agendaitem
@@ -33,7 +33,7 @@ def main(argv):
     write_file(output_folder, 'motion.dot', motion.wf.dot())
     write_file(output_folder, 'version.dot', version.wf.dot())
     write_file(output_folder, 'groupsitting.dot', groupsitting.wf.dot())
-    write_file(output_folder, 'groups.dot', groups.wf.dot())
+    write_file(output_folder, 'group.dot', group.wf.dot())
     write_file(output_folder, 'question.dot', question.wf.dot())
     write_file(output_folder, 'address.dot', address.wf.dot())
     write_file(output_folder, 'tableddocument.dot', tableddocument.wf.dot())

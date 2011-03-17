@@ -217,19 +217,19 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.event.wf.deactivate" role="bungeni.Speaker" />
 
 
-<!-- groups -->
+<!-- group -->
 
-<permission id="bungeni.groups.wf.activate" title="Activate" />
-<grant permission="bungeni.groups.wf.activate" role="bungeni.Clerk" />
-<grant permission="bungeni.groups.wf.activate" role="bungeni.Speaker" />
+<permission id="bungeni.group.wf.activate" title="Activate" />
+<grant permission="bungeni.group.wf.activate" role="bungeni.Clerk" />
+<grant permission="bungeni.group.wf.activate" role="bungeni.Speaker" />
 
-<permission id="bungeni.groups.wf.dissolve" title="Dissolve" />
-<grant permission="bungeni.groups.wf.dissolve" role="bungeni.Clerk" />
-<grant permission="bungeni.groups.wf.dissolve" role="bungeni.Speaker" />
+<permission id="bungeni.group.wf.dissolve" title="Dissolve" />
+<grant permission="bungeni.group.wf.dissolve" role="bungeni.Clerk" />
+<grant permission="bungeni.group.wf.dissolve" role="bungeni.Speaker" />
 
-<permission id="bungeni.groups.wf.deactivate" title="Deactivate" />
-<grant permission="bungeni.groups.wf.deactivate" role="bungeni.Clerk" />
-<grant permission="bungeni.groups.wf.deactivate" role="bungeni.Speaker" />
+<permission id="bungeni.group.wf.deactivate" title="Deactivate" />
+<grant permission="bungeni.group.wf.deactivate" role="bungeni.Clerk" />
+<grant permission="bungeni.group.wf.deactivate" role="bungeni.Speaker" />
 
 
 <!-- groupsitting -->

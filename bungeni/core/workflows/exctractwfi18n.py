@@ -9,7 +9,7 @@ from bungeni.core.workflows import question
 from bungeni.core.workflows import motion
 from bungeni.core.workflows import version
 from bungeni.core.workflows import groupsitting
-from bungeni.core.workflows import groups
+from bungeni.core.workflows import group
 from bungeni.core.workflows import address
 from bungeni.core.workflows import tableddocument
 from bungeni.core.workflows import agendaitem
@@ -34,7 +34,7 @@ f.write(
       i18n:domain="bungeni.core"> <body>
       """)
 
-for wf in [bill, question, motion, version, groupsitting, groups,
+for wf in [bill, question, motion, version, groupsitting, group,
     address, tableddocument, agendaitem, committee, parliament,
     attachedfile, event, report]:
     name = wf.__name__.split('.')[-1]
