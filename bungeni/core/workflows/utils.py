@@ -14,7 +14,7 @@ import bungeni.models.interfaces as interfaces
 from bungeni.models.utils import get_principal_id
 from bungeni.core.app import BungeniApp
 import bungeni.core.interfaces
-import bungeni.core.globalsettings as prefs
+#import bungeni.core.globalsettings as prefs
 from bungeni.ui.utils import debug
 
 import dbutils
@@ -68,11 +68,13 @@ def assign_owner_role_pi(context):
     if owner_login and (owner_login != current_user_login):
         assign_owner_role(context, owner_login)
 
-def create_version(info, context):
-    """Create a new version of an object and return it."""
+def create_version(context):
+    """Create a new version of an object and return it.
+    Note: context.status is already updated to destination state.
+    """
     instance = removeSecurityProxy(context)
     # capi.template_message_version_transition
-    message_template = "New version on workflow transition from: %(status)s"
+    message_template = "New version on workflow transition to: %(status)s"
     message = message_template % instance.__dict__
     versions = bungeni.core.interfaces.IVersioned(instance)
     versions.create(message)
@@ -119,14 +121,14 @@ def setBillPublicationDate(info, context):
     if instance.publication_date == None:
         instance.publication_date = datetime.date.today()
 
+'''
 # question, motion, bill, agendaitem, tableddocument
-# !+ParliamentID(mr, mar-2011) this is used in "create" transitions... 
-# why is this needed here (as part fo transition logic... 
-# should be part of the object creation logic?
+# !+setParliamentId(mr, mar-2011) this is used in "create" transitions... 
 def setParliamentId(info, context):
     instance = removeSecurityProxy(context)
     if not instance.parliament_id:
          instance.parliament_id = prefs.getCurrentParliamentId()
+'''
 
 # tableddocument
 def setTabledDocumentHistory(info, context):

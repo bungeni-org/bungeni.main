@@ -33,9 +33,7 @@ create_version = utils.create_version
 #
 
 def _pi_create(info, context):
-    utils.setParliamentId(info, context)
-    # !+setParliamentId(mr, mar-2011) creating a question via UI does not 
-    # seem to need this, but... a question unit test fails without it!
+    #!+utils.setParliamentId(info, context)
     utils.assign_owner_role_pi(context)
 
 def _pi_submit(info, context):

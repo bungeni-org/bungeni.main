@@ -22,7 +22,7 @@ DENY  = 0
 class WorkflowState(object):
     zope.interface.implements(IWorkflowState)
     
-    __slots__ = 'context',
+    __slots__ = "context",
     
     def __init__(self, context):
         self.context = context
@@ -30,6 +30,7 @@ class WorkflowState(object):
     def initialize(self):
         return
     
+    #!+STATE(mr, mar-2011) rename to "status"
     def setState(self, state):
         if state!=self.getState():
             context = removeSecurityProxy(self.context)
@@ -58,15 +59,18 @@ class State(object):
         self.version_action = version_action # either(None, callable)
         self.permissions = permissions
     
-    def initialize(self, workflow_info, context):
+    def initialize(self, context):
         """Initialize content now in this state.
         """
+        assert context.status == self.id, \
+            "Context [%s] status [%s] has not been updated to [%s]" % (
+                context, context.status, self.id)
         session = Session()
         instance = removeSecurityProxy(context)
         session.merge(instance)
         # version
         if self.version_action:
-            self.version_action(workflow_info, instance)
+            self.version_action(instance)
         # permissions
         rpm = zope.securitypolicy.interfaces.IRolePermissionMap(instance)
         for action, permission, role in self.permissions:
@@ -90,7 +94,7 @@ class StateTransition(Transition):
     
         transition_id = "%s-%s" % (source or "", destination)
     
-    This is the id to be used when calling WorkfloInfo.FireTransition(id), 
+    This is the id to be used when calling WorkflowInfo.fireTransition(id), 
     as well as being the HTML id used in generated menu items, etc. 
     """
     
@@ -129,15 +133,21 @@ class StateWorkflow(Workflow):
 
 
 class StateWorkflowInfo(WorkflowInfo):
-
+    
     #interface.implements(interfaces.IWorkflowInfo)
-
+    
     def _setState(self, state_id):
-        wf = self.workflow()
-        if not isinstance(wf.workflow, StateWorkflow):
-            return
-        state = wf.workflow.states.get(state_id)
-        if state is None:
-            return
-        state.initialize(wf, self.context)
+        # note: this is called *after* WorkflowState.setState(status) i.e. the 
+        # value of self.context.status is already updated to the destination 
+        # state.
+        awf = self.workflow() # AdaptedWorkflow
+        # taking defensive stance, asserting on awf.workflow and state
+        # !+ZCA(mr, mar-2011) requiring that awf.workflow is an instance of
+        # StateWorkflow undermines the whole point of using ZCA in the first 
+        # place? No gain, just more convoluted code.
+        assert isinstance(awf.workflow, StateWorkflow), \
+            "Workflow must be an instance of StateWorkflow: %s" % (awf.workflow)
+        state = awf.workflow.states.get(state_id)
+        assert state is not None, "May not have a None state" 
+        state.initialize(self.context)
 

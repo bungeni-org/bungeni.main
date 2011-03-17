@@ -64,7 +64,7 @@ Content creation
   ...    language="en",
   ...    start_date=yesterday,
   ...    election_date=yesterday)
-
+  
   >>> gov = add_content(
   ...    domain.Government,
   ...    short_name=u"gov_1",
@@ -78,7 +78,6 @@ Content creation
   ...    language="en",
   ...    start_date=yesterday,
   ...    parent_group_id=gov.group_id)
- 
 
 We need a parliament, government ministry and ministers to whom we can
 send the question notifications.
@@ -122,13 +121,20 @@ send the question notifications.
   ...    email=u"mp3@example.com", 
   ...    language="en",
   ...    gender="F")
-  
+
+!+setParliamentId(mr, mar-2011) we manually set the parliament_id here and 
+remove the call to setParliamentId() when creating the question -- the 
+parliament_id is automatically set on a question (when saved to the db) 
+that is created via the UI form. 
+
   >>> question = add_content(
   ...     domain.Question,
   ...     short_name=u"My subject",
   ...     body_text=u"The question",
   ...     owner_id = mp_3.user_id,
-  ...     language="en")
+  ...     language="en",
+  ...     parliament_id=parliament.parliament_id)
+  
   >>> question.__parent__ = app
   
   >>> from bungeni.models.testing import create_sitting
