@@ -208,6 +208,12 @@
         <replace content="#portal-languageselector"
             theme="#portal-languageselector"
         />
+        
+        <!-- ui processing indicator -->
+        <replace content="#processing_indicatron"
+            theme="#processing_indicatron"
+        />
+        
         <pyquery pyref="bungeni.portal.static.themes.rules:replace_login_link"/>
         
         <!-- breadcrumbs -->
