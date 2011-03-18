@@ -1508,7 +1508,7 @@ class AttachedFileDescriptor(ModelDescriptor):
         Field(name="status_date",
             label=_(u"Status date"),
             modes="view listing",
-            property=schema.Date(title=_(u"Status Date"), required=False),
+            property=schema.Date(title=_(u"Status date"), required=False),
             listing_column=day_column("status_date", _(u"Status date")),
         ),
     ]

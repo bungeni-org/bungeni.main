@@ -25,6 +25,7 @@ from zc.resourcelibrary import need
 from bungeni.alchemist import Session
 from bungeni.models import domain
 from bungeni.core.i18n import _
+from bungeni.ui.i18n import _ as _ui
 from bungeni.ui.interfaces import IGenenerateVocabularyDefault
 from bungeni.models.utils import get_db_user_id
 from bungeni.core.language import get_default_language
@@ -190,7 +191,8 @@ class FileEditWidget(FileInputWidget):
 
 class FileDisplayWidget(zope.app.form.browser.widget.DisplayWidget):
     def __call__(self):
-        return u'<a href="./download"> download </a>'
+        return u'<a href="./download"> %s </a>' \
+            % translate(_ui("download"), context = self.request)
 
 
 class ImageDisplayWidget(zope.app.form.browser.widget.DisplayWidget):
