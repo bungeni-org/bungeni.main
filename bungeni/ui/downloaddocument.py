@@ -18,7 +18,7 @@ from zope.lifecycleevent import ObjectCreatedEvent
 from zope.event import notify
 from xml.dom import minidom
 from appy.pod.renderer import Renderer
-
+from zope.component.interfaces import ComponentLookupError
 def unescape(text):
     def fixup(m):
         text = m.group(0)
@@ -100,11 +100,15 @@ class DownloadDocument(BrowserView):
             renderer.run()
         except:
             log.exception("An error occured during ODT/PDF generation")
-            return self.error_template()
+            try:
+                return self.error_template()
+            except ComponentLookupError:
+                return u"An error occured during ODT/PDF generation."
         f = open(tempFileName, "rb")
         doc = f.read()
         f.close()
         os.remove(tempFileName)    
+        self.setHeader(self.document_type)
         return doc
         
     def documentData(self, cached=False):
@@ -144,9 +148,11 @@ class DownloadDocument(BrowserView):
                     self.setHeader(self.document_type)
                     return f.file_data.__str__()
             #If file is not found
-            return self.error_template()
+            try:
+                return self.error_template()
+            except ComponentLookupError:
+                return u"An error occured during ODT/PDF generation."
         else:
-            self.setHeader(self.document_type)
             return self.generateDoc()
         
 class ReportODT(DownloadDocument):
