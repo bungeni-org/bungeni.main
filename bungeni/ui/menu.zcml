@@ -477,7 +477,14 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.heading.Delete"
     />
-
+     <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IMemberRoleTitle"
+        title="Delete"
+        action="delete"
+        order="99"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        permission="zope.ManageContent"
+    />
     <browser:menuItem menu="bill_additems"
         for="bungeni.models.interfaces.IBill"
         title="Add event..."
