@@ -12,8 +12,6 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.core.workflows._conditions")
 
-from zope.security.proxy import removeSecurityProxy
-from bungeni.models.utils import get_principal_id
 from bungeni.ui.interfaces import IFormEditLayer
 from bungeni.ui.utils import common
 
@@ -34,7 +32,7 @@ def user_is_context_owner(info, context):
         """Test if current user is the context owner e.g. to check if someone 
         manipulating the context object is other than the owner of the object.
         """
-        user_login = get_principal_id()
+        user_login = utils.get_principal_id()
         owner_login = utils.get_owner_login_pi(context)
         return user_login == owner_login
     return user_is_context_owner(context)
@@ -59,7 +57,7 @@ def has_end_date(info, context):
 # groupsitting
 
 def has_venue(info, context):
-    return removeSecurityProxy(context).venue is not None
+    return context.venue is not None
 
 
 # question
@@ -71,14 +69,13 @@ def is_oral_response(info, context):
     return context.response_type == u"O"
 
 def response_allow_submit(info, context):
-    instance = removeSecurityProxy(context)
     # The "submit_response" workflow transition should NOT be displayed when 
     # the UI is displaying the question in "edit" mode (as this transition
     # will cause deny of bungeni.Question.Edit to the Minister).
     request = common.get_request()
     if IFormEditLayer.providedBy(request):
         return False
-    if instance.response_text is None:
+    if context.response_text is None:
         return False
     else:
         return True

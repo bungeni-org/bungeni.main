@@ -17,18 +17,18 @@ from zope.i18nmessageid import Message
 
 from ore.workflow import interfaces
 
+from bungeni.core.workflow.states import BUNGENI_BASEPATH
+from bungeni.core.workflow.states import ACTIONS_MODULE
 from bungeni.core.workflow.states import GRANT
 from bungeni.core.workflow.states import DENY
 from bungeni.core.workflow.states import State
-from bungeni.core.workflow.states import StateTransition
+from bungeni.core.workflow.states import Transition
 from bungeni.core.workflow.states import StateWorkflow
 from bungeni.ui.utils import debug
 
 #
 
 ASSIGNMENTS = (GRANT, DENY)
-
-BUNGENI_BASEPATH = "bungeni.core.workflows"
 
 trigger_value_map = {
     "manual": interfaces.MANUAL,
@@ -127,14 +127,13 @@ def load(file_path):
     module_name = os.path.splitext(os.path.basename(file_path))[0]
     #module = resolve(".%s" % module_name, BUNGENI_BASEPATH)
     #actions = getattr(module, "actions")
-    actions = resolve("._actions", BUNGENI_BASEPATH)
-    return _load(doc, module_name, actions)
+    return _load(doc, module_name)
 
 # add version to state
 # mv transition implied action to explicit state "atomic" actions
 
-def _load(workflow, module_name, actions):
-    """ (workflow:etree_doc, actions:cls) -> StateWorkflow
+def _load(workflow, module_name):
+    """ (workflow:etree_doc, module_name:str) -> StateWorkflow
     """
     transitions = []
     states = []
@@ -193,15 +192,23 @@ def _load(workflow, module_name, actions):
         state_id = s.get("id")
         assert state_id, "Workflow State must define @id"
         validate_id(state_id, "state")
-        # @version action
-        version_action = None
+        # actions
+        action_names = []
+        # version
         if s.get("version") is not None:
             make_version = as_bool(s.get("version"))
             if make_version is None:
                 raise ValueError("Invalid state value "
                     '[version="%s"]' % s.get("version"))
             if make_version:
-                version_action = actions.create_version
+                action_names.append(ACTIONS_MODULE.create_version.__name__)
+        
+        # state-id-inferred action - if "actions" module defines an action for
+        # this state (associated via a naming convention), then use it.
+        # !+ tmp, until actions are user-exposed as part of <state>
+        action_name = "_%s_%s" % (module_name, state_id)
+        if hasattr(ACTIONS_MODULE, action_name):
+            action_names.append(action_name)
         # @like_state, permissions
         permissions = [] # tuple(bool:int, permission:str, role:str) 
         # state.@like_state : to reduce repetition and enhance maintainibility
@@ -227,8 +234,8 @@ def _load(workflow, module_name, actions):
             permissions[0:0] = like_permissions
         # states
         states.append(
-            State(state_id, Message(s.get("title", domain)), version_action, 
-                permissions) 
+            State(state_id, Message(s.get("title", domain)), 
+                action_names, permissions)
         )
     
     for s in states:
@@ -280,12 +287,6 @@ def _load(workflow, module_name, actions):
         
         # data up-typing
         #
-        # action - if this workflow's "actions" defines an action for
-        # this transition (with same name as tranistion), then use it.
-        # !+ tmp, until actions are transplanted to <state>
-        _action_name = "_%s_%s" % (module_name, tid)
-        if hasattr(actions, _action_name):
-            kw["action"] = getattr(actions, _action_name)
         # trigger
         if "trigger" in kw:
             kw["trigger"] = trigger_value_map[kw["trigger"]]
@@ -324,7 +325,7 @@ def _load(workflow, module_name, actions):
                 assert source in STATE_IDS, \
                     "Unknown transition source state [%s]" % (source)
             args = (Message(t.get("title"), domain), source, destination)
-            transitions.append(StateTransition(*args, **kw))
+            transitions.append(Transition(*args, **kw))
             log.warn("[%s] adding transition [%s-%s] [%s]" % (
                 wid, source or "", destination, kw))
     

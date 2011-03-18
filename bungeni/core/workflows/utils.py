@@ -3,7 +3,6 @@ log = __import__("logging").getLogger("bungeni.core.workflows.utils")
 import sys
 import datetime
 
-from zope.security.proxy import removeSecurityProxy
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 
 from ore.workflow.interfaces import IWorkflowInfo
@@ -11,7 +10,7 @@ from ore.workflow.interfaces import NoTransitionAvailableError
 
 import bungeni.models.interfaces as interfaces
 #import bungeni.models.domain as domain
-from bungeni.models.utils import get_principal_id
+import bungeni.models.utils
 from bungeni.core.app import BungeniApp
 import bungeni.core.interfaces
 #import bungeni.core.globalsettings as prefs
@@ -38,6 +37,10 @@ def get_parliament(context):
         parliament = session.query(domain.Parliament).get(parliament_id)
         return parliament
 '''
+
+
+get_principal_id = bungeni.models.utils.get_principal_id
+
 
 # !+WorkflowInfo(mr, mar-2011) drop passing "info" (unused) param everywhere,
 # here and in actions, conditions?
@@ -68,15 +71,14 @@ def assign_owner_role_pi(context):
     if owner_login and (owner_login != current_user_login):
         assign_owner_role(context, owner_login)
 
-def create_version(context):
+def create_version(info, context):
     """Create a new version of an object and return it.
     Note: context.status is already updated to destination state.
     """
-    instance = removeSecurityProxy(context)
     # capi.template_message_version_transition
     message_template = "New version on workflow transition to: %(status)s"
-    message = message_template % instance.__dict__
-    versions = bungeni.core.interfaces.IVersioned(instance)
+    message = message_template % context.__dict__
+    versions = bungeni.core.interfaces.IVersioned(context)
     versions.create(message)
 
 
@@ -84,16 +86,14 @@ def set_pi_registry_number(info, context):
     """A parliamentary_item's registry_number should be set on the item being 
     submitted to parliament.
     """
-    instance = removeSecurityProxy(context)
-    if instance.registry_number == None:
-        dbutils.set_pi_registry_number(instance)
+    if context.registry_number == None:
+        dbutils.set_pi_registry_number(context)
 
 
 # question
 def setMinistrySubmissionDate(info, context):
-    instance = removeSecurityProxy(context)
-    if instance.ministry_submit_date == None:
-        instance.ministry_submit_date = datetime.date.today()
+    if context.ministry_submit_date == None:
+        context.ministry_submit_date = datetime.date.today()
 
 # !+QuestionScheduleHistory(mr, mar-2011) rename appropriately e.g. "unschedule"
 # !+QuestionScheduleHistory(mr, mar-2011) only pertinent if question is 
@@ -117,17 +117,15 @@ def getQuestionSubmissionAllowed(info, context):
 
 # bill
 def setBillPublicationDate(info, context):
-    instance = removeSecurityProxy(context)
-    if instance.publication_date == None:
-        instance.publication_date = datetime.date.today()
+    if context.publication_date == None:
+        context.publication_date = datetime.date.today()
 
 '''
 # question, motion, bill, agendaitem, tableddocument
 # !+setParliamentId(mr, mar-2011) this is used in "create" transitions... 
 def setParliamentId(info, context):
-    instance = removeSecurityProxy(context)
-    if not instance.parliament_id:
-         instance.parliament_id = prefs.getCurrentParliamentId()
+    if not context.parliament_id:
+         context.parliament_id = prefs.getCurrentParliamentId()
 '''
 
 # tableddocument
@@ -155,16 +153,15 @@ def _set_group_local_role(context, unset=False):
         if interfaces.IOffice.providedBy(context):
             return BungeniApp() #get_parliament(context)
         else:
-            return removeSecurityProxy(context)
-    role = get_group_local_role(context)
-    group = removeSecurityProxy(context)
-    ctx = get_group_context(context)
-    prm = IPrincipalRoleMap(ctx)
+            return context
+    group = context
+    role = get_group_local_role(group)
+    prm = IPrincipalRoleMap(get_group_context(group))
     if not unset:
         prm.assignRoleToPrincipal(role, group.group_principal_id)
     else:
         prm.unsetRoleForPrincipal(role, group.group_principal_id)
-        
+    
 def set_group_local_role(context):
     _set_group_local_role(context, unset=False)
             
@@ -197,7 +194,7 @@ def schedule_sitting_items(info, context):
         except (NoTransitionAvailableError, RuntimeWarning):
             debug.log_exc_info(sys.exc_info(), log.error)
     
-    for schedule in removeSecurityProxy(context).item_schedule:
+    for schedule in context.item_schedule:
         item = schedule.item
         if interfaces.IQuestion.providedBy(item):
             fireTransitionScheduled(item)

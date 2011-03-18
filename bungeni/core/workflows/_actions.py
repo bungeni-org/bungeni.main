@@ -4,19 +4,20 @@
 
 """Workflow transition actions.
 
-The name of all internal actions (bungeni private) here must follow:
+All actions with names starting with a "_" may NOT be referenced from the 
+workflow XML definitions i.e. they are internal actions, private to bungeni.
+They are AUTOMATICALLY associated with the name of a workflow state, via the
+following simple naming convention:
 
-    _{workflow_name}_{transition_name}
-    
-The name of all external actions (exposed to bungeni_custom for use per
-site deployments) here must simply be:
+    _{workflow_name}_{state_name}
 
-    {transition_name}
-    
-
-Signature of all action utilities here: 
+Signature of all (both private and public) action callables: !+WFINFO
 
     (info:WorkflowInfo, context:Object) -> None
+
+!+ All actions with names that start with a letter are actions that may be 
+liberally used from within workflow XML definitions.
+
 
 $Id$
 """
@@ -24,64 +25,65 @@ log = __import__("logging").getLogger("bungeni.core.workflows._actions")
 
 from bungeni.core.workflows import utils
 from bungeni.core.workflows import dbutils
-from bungeni.models import utils as model_utils
 
-#
 
+# special handled action to make a new version of a ParliamentaryItem, that is 
+# not tied to a state name, but to <state> @version bool attribute
 create_version = utils.create_version
 
-#
 
-def _pi_create(info, context):
+# parliamentary item, utils
+
+def __pi_create(info, context):
     #!+utils.setParliamentId(info, context)
     utils.assign_owner_role_pi(context)
 
-def _pi_submit(info, context):
+def __pi_submit(info, context):
     utils.set_pi_registry_number(info, context)
 
 
 # address
 
-def _address_create(info, context):
+def _address_private(info, context):
     # !+OWNER_ADDRESS(mr, mov-2010) is this logic correct, also for admin?
     try:
         user_login = dbutils.get_user_login(context.user_id)
     except AttributeError:
         # 'GroupAddress' object has no attribute 'user_id'
-        user_login = model_utils.get_principal_id()
+        user_login = utils.get_principal_id()
     if user_login:
         utils.assign_owner_role(context, user_login)
 
 
 # agendaitem
 
-_agendaitem_create = _pi_create
-_agendaitem_create_on_behalf_of = _pi_create
-
-_agendaitem_submit = _pi_submit
-_agendaitem_resubmit = _pi_submit
+_agendaitem_draft = _agendaitem_working_draft = __pi_create
+_agendaitem_submitted = __pi_submit
 
 
 # bill
 
-_bill_create = _pi_create
+_bill_working_draft = __pi_create
 
-def _bill_submit(info, context):
+def _bill_gazetted(info, context):
     utils.setBillPublicationDate(info, context)
     utils.set_pi_registry_number(info, context)
 
 
 # group
 
-def _group_create(info, context):
-    user_login = model_utils.get_principal_id()
+def _group_draft(info, context):
+    user_login = utils.get_principal_id()
     if user_login:
         utils.assign_owner_role(context, user_login)
+    def _deactivate(info, context):
+        utils.unset_group_local_role(context)
+    _deactivate(info, context)
 
-def _group_activate(info, context):
+def _group_active(info, context):
     utils.set_group_local_role(context)
 
-def _group_dissolve(info, context):
+def _group_dissolved(info, context):
     """ when a group is dissolved all members of this 
     group get the end date of the group (if they do not
     have one yet) and there active_p status gets set to
@@ -91,70 +93,59 @@ def _group_dissolve(info, context):
     utils.dissolveChildGroups(groups, context)
     utils.unset_group_local_role(context)
 
-def _group_deactivate(info, context):
-    utils.unset_group_local_role(context)
 
 
 # committee
 
-_committee_create = _group_create
-_committee_activate = _group_activate
-_committee_dissolve = _group_dissolve
-_committee_deactivate = _group_deactivate
+_committee_create = _group_draft
+_committee_activate = _group_active
+_committee_dissolve = _group_dissolved
 
 
 # parliament
 
-_parliament_create = _group_create
-_parliament_activate = _group_activate
-_parliament_dissolve = _group_dissolve
-_parliament_deactivate = _group_deactivate
+_parliament_create = _group_draft
+_parliament_activate = _group_active
+_parliament_dissolve = _group_dissolved
 
 
 # groupsitting
 
-def _groupsitting_allow_draft_minutes(info, context):
-    dbutils.set_real_order(removeSecurityProxy(context))
+def _groupsitting_draft_agenda(info, context):
+    dbutils.set_real_order(context)
         
-def _groupsitting_publish_agenda(info, context):
+def _groupsitting_published_agenda(info, context):
     utils.schedule_sitting_items(info, context)
 
 
 # motion
 
-_motion_create = _pi_create
-_motion_create_on_behalf_of = _pi_create
+_motion_draft = _motion_working_draft = __pi_create
+_motion_submitted = __pi_submit
 
-_motion_submit = _pi_submit
-_motion_resubmit = _pi_submit
-
-def _motion_approve(info, context):
+def _motion_admissible(info, context):
     dbutils.setMotionSerialNumber(context)
 
 
 # question
 
-_question_create = _pi_create
-_question_create_on_behalf_of = _pi_create
+_question_draft = _question_working_draft = __pi_create
+_question_submitted = __pi_submit
 
-_question_submit = _pi_submit
-_question_resubmit = _pi_submit
-
-def _question_withdraw(info, context):
+def _question_withdrawn(info, context):
     """A question can be withdrawn by the owner, it is visible to ...
     and cannot be edited by anyone.
     """
     utils.setQuestionScheduleHistory(info, context)
-_question_withdraw_public = _question_withdraw
+_question_withdrawn_public = _question_withdrawn
 
-def _question_allow_response(info, context):
+def _question_response_pending(info, context):
     """A question sent to a ministry for a written answer, 
     it cannot be edited, the ministry can add a written response.
     """
     utils.setMinistrySubmissionDate(info, context)
-_question_deferred_allow_response = _question_allow_response
 
-def _question_approve(info, context):
+def _question_admissible(info, context):
     """The question is admissible and can be send to ministry,
     or is available for scheduling in a sitting.
     """
@@ -163,27 +154,21 @@ def _question_approve(info, context):
 
 # tableddocument
 
-def _tableddocument_adjourn(info,context):
+_tableddocument_draft = _tableddocument_working_draft = __pi_create
+_tableddocument_submitted = __pi_submit
+
+def _tableddocument_adjourned(info,context):
     utils.setTabledDocumentHistory(info, context)
 
-_tableddocument_create = _pi_create
-_tableddocument_create_on_behalf_of = _pi_create
-
-_tableddocument_submit = _pi_submit
-_tableddocument_resubmit = _pi_submit
-
-def _tableddocument_approve(info, context):
+def _tableddocument_admissible(info, context):
     dbutils.setTabledDocumentSerialNumber(context)
 
 
 # user
 
-def _user_create(info, context):
+def _user_A(info, context):
     utils.assign_owner_role(context, context.login)
-
-def _user_resurrect(info, context):
     context.date_of_death = None
-
 
 #
 
