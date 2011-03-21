@@ -22,7 +22,7 @@ from zope.annotation.interfaces import IAnnotations
 from sqlalchemy import sql
 
 from bungeni.core.i18n import _ # !+(mr, sep-2010) shound't this be ui.i18n ?
-from bungeni.ui.i18n import _ as _bc # !+i18n(murithi, mar-2011) for some msgs
+from bungeni.ui.i18n import _ as _bu # !+i18n(murithi, mar-2011) for some msgs
 from bungeni.core.content import Section, QueryContent
 from bungeni.core.interfaces import ISchedulingContext
 from bungeni.core.schedule import PrincipalGroupSchedulingContext
@@ -218,8 +218,8 @@ ARCHIVED = ("debated", "withdrawn", "response_completed", "elapsed", "dropped")
 def getWorkSpaceMISection(workspace):
     """ /workspace/obj-id/pi -> non-ARCHIVED parliamentary items
     """
-    s = Section(title=_bc(u"My interests"),
-            description=_bc(u"Your current interests"),
+    s = Section(title=_bu(u"My interests"),
+            description=_bu(u"Your current interests"),
             default_name="workspace-mi")
     interface.alsoProvides(s, interfaces.IWorkspaceMIContext)
     s.__parent__ = workspace
@@ -259,8 +259,8 @@ def getWorkSpaceMISection(workspace):
 def getWorkSpacePISection(workspace):
     """ /workspace/obj-id/pi -> non-ARCHIVED parliamentary items
     """
-    s = Section(title=_bc(u"Parliamentary items"),
-            description=_bc(u"Current parliamentary activity"),
+    s = Section(title=_bu(u"Parliamentary items"),
+            description=_bu(u"Current parliamentary activity"),
             default_name="workspace-pi")
     interface.alsoProvides(s, interfaces.IWorkspacePIContext)
     s.__parent__ = workspace
@@ -289,7 +289,7 @@ def getWorkSpacePISection(workspace):
             container_getter(workspace, 'agendaitems',
                 query_modifier=sql.not_(domain.AgendaItem.status.in_(ARCHIVED))),
             #title=_(u"Agenda items"),
-            description=_bc(u" items"))
+            description=_bu(u" items"))
     s["committees"] = QueryContent(
             container_getter(workspace, 'committees'),
             #title=_(u"Committees"),
@@ -300,8 +300,8 @@ def getWorkSpacePISection(workspace):
 def getWorkSpaceArchiveSection(workspace):
     """ /workspace/obj-id/my-archive/ -> ARCHIVED parliamentary items 
     """
-    s = Section(title=_bc(u"My archive"),
-            description=_bc(u"My archive personal items"),
+    s = Section(title=_bu(u"My archive"),
+            description=_bu(u"My archive personal items"),
             default_name="workspace-archive")
     interface.alsoProvides(s, interfaces.IWorkspaceArchiveContext)
     s.__parent__ = workspace
