@@ -19,9 +19,6 @@ from zope.security.management import getInteraction
 import bungeni.ui.utils as ui_utils
 from zope.security.proxy import removeSecurityProxy
 
-# !+File_Viewlets(murithi, mar-2010). These viewlets
-#
-
 class LibraryViewlet (viewlet.ViewletBase):
 
     render = ViewPageTemplateFile ('templates/attached-files.pt')
