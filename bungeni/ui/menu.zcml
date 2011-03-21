@@ -1680,6 +1680,7 @@
         permission="zope.View"
         order="44"
         for="bungeni.models.interfaces.ICommitteeContainer"
+        layer=".interfaces.IRSSRepresentationLayer"
      />
 	 <browser:menuItem menu="context_actions"
 	    action="feed.rss"
@@ -1727,6 +1728,7 @@
         permission="zope.View"
         order="44"
         for="bungeni.models.interfaces.IReportContainer"
+        layer=".interfaces.IRSSRepresentationLayer"
      />
 	 <browser:menuItem menu="context_actions"
 	    action="feed.rss"
@@ -1750,6 +1752,7 @@
         permission="zope.View"
         order="44"
         for="bungeni.models.interfaces.IMotion"
+        layer=".interfaces.IRSSRepresentationLayer"
      />
 	 <browser:menuItem menu="context_actions"
 	    action="feed.rss"
