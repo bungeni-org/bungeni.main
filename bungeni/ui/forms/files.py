@@ -1,8 +1,16 @@
-#!/usr/bin/env python
-# encoding: utf-8
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""Attached file viewlets
+
+$Id$
+$URL$
+"""
 
 from bungeni.alchemist import Session
 from bungeni.models.domain import AttachedFileType
+from bungeni.models.interfaces import IAttachedFileVersion
 from bungeni.core.translation import translate_obj
 from bungeni.ui.i18n import _
 from zope.viewlet import viewlet
@@ -10,6 +18,9 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.security.management import getInteraction
 import bungeni.ui.utils as ui_utils
 from zope.security.proxy import removeSecurityProxy
+
+# !+File_Viewlets(murithi, mar-2010). These viewlets
+#
 
 class LibraryViewlet (viewlet.ViewletBase):
 
@@ -21,9 +32,17 @@ class LibraryViewlet (viewlet.ViewletBase):
     def __init__(self, context, request, view, manager):
         self.context = []
         trusted = removeSecurityProxy(context)
-        for f in trusted.attached_files:
-            if f.type.attached_file_type_name != "system":
-                self.context.append(f)
+        # !+(murithi, mar-2010 )Attached file versions implement IVersion 
+        # but have no attached files - an adapter on all content
+        # might make sense to fetch attachments. 
+        # here we conditionaly skip attachment versions
+        if not IAttachedFileVersion.providedBy(trusted):
+            for f in trusted.attached_files:
+                if IAttachedFileVersion.providedBy(f):
+                    self.context.append(f)
+                else:
+                    if f.type.attached_file_type_name != "system":
+                        self.context.append(f)
         self.request = request
         self.__parent__ = context
         self.manager = manager
@@ -112,11 +131,14 @@ class VersionLibraryViewlet(LibraryViewlet):
                 file_type_name = ' - '
             else:
                 file_type_name = translate_obj(file_type).attached_file_type_name
+            if file_type_name == "system":
+                continue
             yield {'title': data.file_title,
                    'url': self.base_url + '/files/obj-%i/versions/obj-%i' \
                           % (data.content_id, data.version_id),
                    'name': data.file_name,
                    'type': file_type_name,
+                   'status_date': self.formatter.format(data.status_date),
                    'menu': self.generate_file_manipulation_menu(data)}
 
     def create_view_menu_item(self, context):
