@@ -86,6 +86,8 @@ def set_pi_registry_number(context):
     if context.registry_number == None:
         dbutils.set_pi_registry_number(context)
 
+is_pi_scheduled = dbutils.is_pi_scheduled
+
 
 # question
 def setMinistrySubmissionDate(context):
@@ -102,11 +104,11 @@ def setQuestionScheduleHistory(context):
 ''' !+UNUSUED (and incorrect) :
 def getQuestionSchedule(context):
     question_id = context.question_id
-    return dbutils.isItemScheduled(question_id)
+    return dbutils.is_pi_scheduled(question_id)
 
 def getMotionSchedule(context):
     motion_id = context.motion_id
-    return dbutils.isItemScheduled(motion_id)
+    return dbutils.is_pi_scheduled(motion_id)
 
 def getQuestionSubmissionAllowed(context):
     return prefs.getQuestionSubmissionAllowed()

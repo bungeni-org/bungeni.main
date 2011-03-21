@@ -2,21 +2,20 @@
 # Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
 # Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
-"""Workflow transition conditions.
+"""Workflow transition (bungeni) conditions.
 
 Signature of all utilities here: 
 
     (context:Object) -> bool
 
-$Id$
+$Id: _conditions.py -1   $
 """
 log = __import__("logging").getLogger("bungeni.core.workflows._conditions")
 
 from bungeni.ui.interfaces import IFormEditLayer
 from bungeni.ui.utils import common
 
-import dbutils
-import utils
+from bungeni.core.workflows import utils
 
 
 # common
@@ -43,7 +42,7 @@ def user_is_context_owner(context):
 def is_scheduled(context):
     """Is Parliamentary Item scheduled.
     """
-    return dbutils.isItemScheduled(context.parliamentary_item_id)
+    return utils.is_pi_scheduled(context.parliamentary_item_id)
 
 
 # group

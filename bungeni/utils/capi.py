@@ -20,6 +20,7 @@ __all__ = ["capi", "bungeni_custom_errors"]
 log = __import__("logging").getLogger("bungeni.utils.capi")
 
 import os
+from zope.dottedname.resolve import resolve
 import bungeni_custom as bc
 
 
@@ -57,12 +58,20 @@ class CAPI(object):
             bc.zope_i18n_compile_mo_files is True or 
             bc.zope_i18n_compile_mo_files == "1"
         )
-
+    
     @property
     @bungeni_custom_errors
     def application_language(self):
         return bc.default_language
-
+    
+    @bungeni_custom_errors
+    def get_workflow_condition(self, condition):
+        conds_module = resolve("._conditions", "bungeni_custom.workflows")
+        assert hasattr(conds_module, condition), \
+            "No such custom condition: %s" % (condition)
+        return getattr(conds_module, condition)
+    
+    
     # utility methods
     
     def get_root_path(self):

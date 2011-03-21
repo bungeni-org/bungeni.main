@@ -161,11 +161,11 @@ Conditions
 
 !+CUSTOM(mr, mar-2011) update to test with bungeni_custom
 
-  >>> from bungeni.core.workflows import _conditions as conditions
+  >>> from bungeni.core.workflows import _conditions
   
 "Is scheduled".
 
-  >>> conditions.is_scheduled(bill)
+  >>> _conditions.is_scheduled(bill)
   False
 
   >>> from bungeni.models.testing import create_sitting
@@ -176,7 +176,7 @@ Conditions
   ...     group_sitting_id=sitting.group_sitting_id,
   ...     item_id=bill.parliamentary_item_id)
   
-  >>> conditions.is_scheduled(bill)
+  >>> _conditions.is_scheduled(bill)
   True
 
 Cleanup

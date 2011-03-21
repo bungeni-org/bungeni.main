@@ -25,11 +25,12 @@ from bungeni.models.interfaces import IVersion
 
 from ore.workflow import workflow
 
-path = os.path.split(os.path.abspath(__file__))[0]
+from bungeni.utils.capi import capi
+PATH_CUSTOM_WORKLFOWS = capi.get_path_for("workflows")
 
 def load_workflow(module, kls):
     name = module.__name__.rsplit('.')[-1]
-    wf = xmlimport.load("%s/%s.xml" % (path, name))
+    wf = xmlimport.load("%s/%s.xml" % (PATH_CUSTOM_WORKLFOWS, name))
     events.register_workflow_transitions(wf, kls)
     module.wf = wf
     module.states = wf.states

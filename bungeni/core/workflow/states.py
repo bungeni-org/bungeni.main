@@ -89,7 +89,7 @@ class Transition(ore.workflow.workflow.Transition):
     
     def __init__(self, title, source, destination,
         condition=NullCondition,
-        trigger=ore.workflow.workflow.MANUAL, 
+        trigger=ore.workflow.interfaces.MANUAL, 
         permission=ore.workflow.workflow.CheckerPublic,
         order=0, 
         event=None, 
@@ -234,13 +234,15 @@ class WorkflowController(ore.workflow.workflow.WorkflowInfo):
     def getManualTransitionIds(self):
         checkPermission = self._get_checkPermission()
         return [ transition.transition_id 
-            for transition in sorted(self._getTransitions(MANUAL)) 
+            for transition in sorted(
+                self._getTransitions(ore.workflow.interfaces.MANUAL)) 
             if transition.condition(self.context) and 
                 checkPermission(transition.permission, self.context) ]
     
     def getSystemTransitionIds(self):
         # ignore permission checks
         return [ transition.transition_id 
-            for transition in sorted(self._getTransitions(SYSTEM)) 
+            for transition in sorted(
+                self._getTransitions(ore.workflow.interfaces.SYSTEM)) 
             if transition.condition(self.context) ]
 

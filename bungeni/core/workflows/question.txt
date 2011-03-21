@@ -416,11 +416,11 @@ Question conditions
 -------------------
 !+CUSTOM(mr, mar-2011) update to test with bungeni_custom
 
-  >>> from bungeni.core.workflows import _conditions as conditions
+  >>> from bungeni_custom.workflows import _conditions
   
 "Is scheduled".
 
-  >>> conditions.is_scheduled(question)
+  >>> _conditions.is_scheduled(question)
   False
 
   >>> from bungeni.models.testing import create_sitting
@@ -431,16 +431,16 @@ Question conditions
   ...     group_sitting_id=sitting.group_sitting_id,
   ...     item_id=question.parliamentary_item_id)
   
-  >>> conditions.is_scheduled(question)
+  >>> _conditions.is_scheduled(question)
   True
 
 "Is ministry set".
 
-  >>> conditions.is_ministry_set(question)
+  >>> _conditions.is_ministry_set(question)
   False
 
   >>> question.ministry_id = ministry.group_id
-  >>> conditions.is_ministry_set(question)
+  >>> _conditions.is_ministry_set(question)
   True
 
 Notifications

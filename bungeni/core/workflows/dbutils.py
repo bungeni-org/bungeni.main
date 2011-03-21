@@ -85,7 +85,7 @@ def setQuestionSerialNumber(question):
     sequence = rdb.Sequence("question_number_sequence")
     question.question_number = connection.execute(sequence)
 
-def isItemScheduled(parliamentary_item_id):
+def is_pi_scheduled(parliamentary_item_id):
     return len(getActiveItemSchedule(parliamentary_item_id)) >= 1
     
 def getActiveItemSchedule(parliamentary_item_id):

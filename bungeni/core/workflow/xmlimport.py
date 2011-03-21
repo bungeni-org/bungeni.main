@@ -24,6 +24,7 @@ from bungeni.core.workflow.states import DENY
 from bungeni.core.workflow.states import State
 from bungeni.core.workflow.states import Transition
 from bungeni.core.workflow.states import Workflow
+from bungeni.utils.capi import capi
 from bungeni.ui.utils import debug
 
 #
@@ -302,14 +303,10 @@ def _load(workflow, module_name):
                 "permission on (creation) transition: %s" % (tid)
         # python resolvables
         if "condition" in kw:
-            # raises importerror/nameerror
-            kw["condition"] = resolve(
-                ".%s" % (kw["condition"]),
-                "%s._conditions" % (BUNGENI_BASEPATH)
-            )
+            kw["condition"] = capi.get_workflow_condition(kw["condition"])
         if "event" in kw:
             # raises importerror/nameerror
-            kw["event"] = resolve(kw["event"], BUNGENI_BASEPATH)
+            kw["event"] = resolve(kw["event"], BUNGENI_BASEPATH) # !+
         # bool
         if "require_confirmation" in kw:
             try:
