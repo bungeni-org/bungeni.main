@@ -451,6 +451,15 @@ class GroupMembersViewlet(browser.BungeniItemsViewlet):
             return url.absoluteURL(m_container, self.request)
         return "/members/current"
 
+    def build_member_url(self, member):
+        session = Session()
+        mpkls = domain.MemberOfParliament
+        member_url = "%s/obj-%d/" % (self.members_container_url, 
+            session.query(mpkls).filter(mpkls.user_id == member.user_id).one(
+            ).membership_id
+        )
+        return member_url
+
     def update(self):
         session = Session()
         group_members = self._get_members()
@@ -458,12 +467,7 @@ class GroupMembersViewlet(browser.BungeniItemsViewlet):
         formatter = self.get_date_formatter("date", "long")
         self.items = [{
                 "fullname": m.user.fullname,
-                "url":
-                    "%s/obj-%d/" % (self.members_container_url, 
-                        session.query(mpkls).filter(
-                                mpkls.user_id == m.user_id).one(
-                            ).membership_id
-                            ),
+                "url": self.build_member_url(m),
                 "start_date":
                     m.start_date and formatter.format(m.start_date) or None,
                 "end_date":
@@ -473,6 +477,14 @@ class GroupMembersViewlet(browser.BungeniItemsViewlet):
         ]
 
 class CommitteeMembersViewlet(GroupMembersViewlet):
+    
+    @property
+    def members_container_url(self):
+        trusted = removeSecurityProxy(self.context)
+        return url.absoluteURL(trusted.committeemembers, self.request)
+    
+    def build_member_url(self, member):
+        return url.absoluteURL(member, self.request)
 
     def _get_members(self):
         trusted = removeSecurityProxy(self.context)
