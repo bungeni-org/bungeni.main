@@ -44,8 +44,13 @@ $if{ view.visible }
                         $if{item['class']}checked="checked"$fi />
                 </td>
                 <td>
-                    <a rel="id" name="${item['id']}" href="${item['url']}"
-                        name="${item['description']}">${item["title"]}</a>
+                    $if{item['type'] != "heading"}
+                        <a rel="id" name="${item['id']}" href="${item['url']}"
+                        title="${item['description']}">${item["title"]}</a>
+                    $else
+                        <p rel="id"
+                        name="${item['description']}">${item["title"]}</p>
+                    $fi
                 </td>
                 <td>${item["date"]}</td>
             </tr>

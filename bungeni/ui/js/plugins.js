@@ -246,7 +246,7 @@
                 mode = 'down';
                 break;            
             }
-        var next_url = $("a[rel=calendar]").attr('href') + 'headless=true';
+        var next_url = $("a[rel=calendar]").attr('href') + 'headless=false';
         var data = {
           "headless": "true",
           "mode": mode,
@@ -282,6 +282,7 @@
                     $("form.enableFormTabbing,div.enableFormTabbing").each(ploneFormTabbing.initializeForm);
                     $("dl.enableFormTabbing").each(ploneFormTabbing.initializeDL);
                     $(".scheduling-checkbox").clickScheduling();
+                    $('#scheduling-calendar').bungeniInteractiveSchedule();
                     break;                  
                 default:
                     return true;

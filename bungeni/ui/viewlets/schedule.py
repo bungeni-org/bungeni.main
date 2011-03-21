@@ -143,7 +143,8 @@ class SchedulableItemsViewlet(browser.BungeniItemsViewlet):
                     (item.parliamentary_item_id in scheduled_item_ids and
                         "dd-disable") or 
                     ""),
-                "url": self._item_url(item)
+                "url": self._item_url(item),
+                "type": item.type
             } for item, properties in [
                 (item, (IDCDescriptiveProperties.providedBy(item) and item or
                         IDCDescriptiveProperties(item))) 
@@ -158,7 +159,7 @@ class SchedulableHeadingsViewlet(SchedulableItemsViewlet):
     model = domain.Heading
     
     def _item_url(self, item):
-        return url.set_url_context(url.absoluteURL(item, self.request))
+        return ""
 
 class SchedulableBillsViewlet(SchedulableItemsViewlet):
     view_name = "bill"
