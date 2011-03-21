@@ -435,30 +435,13 @@ class GroupMembersViewlet(browser.BungeniItemsViewlet):
     view_title = _("Members")
     view_id = "group-members"
 
+    def build_member_url(self, member):
+        return url.absoluteURL(member, self.request)
+
     def _get_members(self):
         """Get the list of members of the context group.
         """
         raise NotImplementedError("Must be implemented by subclass.")
-
-    @property
-    def members_container_url(self):
-        # !+traversal(murithi, mar-2010) ideally no urls should be
-        # hardcoded here. absoluteURL should work for memberships or
-        # members of groups [ to improve on getting urls of children ]
-        if IAdminSectionLayer.providedBy(self.request):
-            trusted = removeSecurityProxy(self.context)
-            m_container = trusted.__parent__.__parent__.parliamentmembers
-            return url.absoluteURL(m_container, self.request)
-        return "/members/current"
-
-    def build_member_url(self, member):
-        session = Session()
-        mpkls = domain.MemberOfParliament
-        member_url = "%s/obj-%d/" % (self.members_container_url, 
-            session.query(mpkls).filter(mpkls.user_id == member.user_id).one(
-            ).membership_id
-        )
-        return member_url
 
     def update(self):
         session = Session()
@@ -477,20 +460,36 @@ class GroupMembersViewlet(browser.BungeniItemsViewlet):
         ]
 
 class CommitteeMembersViewlet(GroupMembersViewlet):
-    
-    @property
-    def members_container_url(self):
-        trusted = removeSecurityProxy(self.context)
-        return url.absoluteURL(trusted.committeemembers, self.request)
-    
-    def build_member_url(self, member):
-        return url.absoluteURL(member, self.request)
-
+        
     def _get_members(self):
         trusted = removeSecurityProxy(self.context)
         return list(trusted.committeemembers.values())
 
 class PoliticalGroupMembersViewlet(GroupMembersViewlet):
+
+    @property
+    def members_container_url(self):
+        # !+traversal(murithi, mar-2010) ideally no urls should be
+        # hardcoded here. absoluteURL should work for memberships or
+        # members of groups [ to improve on getting urls of children ]
+        if IAdminSectionLayer.providedBy(self.request):
+            trusted = removeSecurityProxy(self.context)
+            m_container = trusted.__parent__.__parent__.parliamentmembers
+            return url.absoluteURL(m_container, self.request)
+        return "/members/current"
+
+    def build_member_url(self, member):
+        if IAdminSectionLayer.providedBy(self.request):
+            return super(PoliticalGroupMembersViewlet, self).build_member_url(
+                member
+            )
+        session = Session()
+        mpkls = domain.MemberOfParliament
+        member_url = "%s/obj-%d/" % (self.members_container_url, 
+            session.query(mpkls).filter(mpkls.user_id == member.user_id).one(
+            ).membership_id
+        )
+        return member_url
 
     def _get_members(self):
         trusted = removeSecurityProxy(self.context)

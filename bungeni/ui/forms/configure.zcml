@@ -386,6 +386,15 @@
      weight="20"
      />
 
+  <browser:viewlet
+     name="bungeni.viewlet.party-member-personal-info"
+     manager=".interfaces.ISubFormViewletManager"
+     class=".viewlets.PersonInfo"
+     for="bungeni.models.interfaces.IPartyMember"
+     permission="zope.View"
+     weight="20"
+     />
+
     <browser:viewlet name="bungeni.viewlet.committee-staff-titles"
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.OfficesHeldViewlet"
