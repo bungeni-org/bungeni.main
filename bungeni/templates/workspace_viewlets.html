@@ -9,7 +9,7 @@
 #[ was: ui/viewlets/templates/workspace_item_viewlet.pt ]#
 $begin{items}
 <dt class="portletHeader" id="fieldsetlegend-${view.view_id}">
-    <span>${view.view_title}</span>
+    <span>${i18n(view.view_title)}</span>
 </dt>
 <dd id="fieldset-${view.view_id}" class="portletItem">
     $if{view.items}
@@ -44,7 +44,7 @@ $end{items}
 #[ was: ui/viewlets/templates/workspace_group_viewlet.pt ]#
 $begin{groups}
 <dt class="portletHeader" id="fieldsetlegend-${view.view_id}">
-    <span>${view.view_title}</span>
+    <span>${i18n(view.view_title)}</span>
 </dt>
 <dd id="fieldset-${view.view_id}" class="portletItem">
     $if{view.items}
@@ -105,7 +105,7 @@ $end{mp_items}
 #[ was: ui/viewlets/templates/workspace_sitting_viewlet.pt ]#
 $begin{sittings}
 <dt class="portletHeader" id="fieldsetlegend-${view.view_id}">
-    <span>${view.view_title}</span>
+    <span>${i18n(view.view_title)}</span>
 </dt>
 <dd id="fieldset-${view.view_id}" class="portletItem">
     $if{view.items}
@@ -171,7 +171,7 @@ $end{group_sittings}
 
 $begin{scheduled}
 <dt class="portletHeader" id="fieldsetlegend-${view.view_id}">
-    <span>${view.view_title}</span>
+    <span>${i18n(view.view_title)}</span>
 </dt>
 <dd id="fieldset-${view.view_id}" class="portletItem">
     $if{view.items}
