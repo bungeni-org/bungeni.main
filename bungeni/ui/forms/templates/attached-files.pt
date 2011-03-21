@@ -9,7 +9,7 @@
           <tr>
             <th i18n:translate=""> Title </th>
             <th i18n:translate=""> Type </th>
-            <th i18n:translate=""> Updated </th>
+            <th i18n:translate=""> Status date </th>
           </tr>
         </thead>
         <tbody>

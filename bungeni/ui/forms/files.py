@@ -30,14 +30,18 @@ class LibraryViewlet (viewlet.ViewletBase):
         self.query = None
         self.for_display = len(self.context) > 0
         self.interaction = getInteraction()
+        self.formatter = ui_utils.date.getLocaleFormatter(self.request, "date",
+            "long"
+        )
 
     def results(self):
         for data in self.context:
             translated_type = translate_obj(data.type)
             yield {'title': data.file_title,
-                   'url': './files/obj-%i/download' % data.attached_file_id,
+                   'url': './files/obj-%i' % data.attached_file_id,
                    'name': data.file_name,
                    'type': translated_type.attached_file_type_name,
+                   'status_date': self.formatter.format(data.status_date),
                    'menu': self.generate_file_manipulation_menu(data)}
 
     def generate_file_manipulation_menu(self, context):
