@@ -21,8 +21,10 @@ from zope.annotation.interfaces import IAnnotations
 
 from sqlalchemy import sql
 
-from bungeni.core.i18n import _ # !+(mr, sep-2010) shound't this be ui.i18n ?
-from bungeni.ui.i18n import _ as _bu # !+i18n(murithi, mar-2011) for some msgs
+ # !+i18n(murithi, mar-2011) for bungeni.ui package messages
+from bungeni.ui.i18n import _
+# !+(mr, sep-2010) shound't this be ui.i18n ?
+from bungeni.core.i18n import _ as _bc 
 from bungeni.core.content import Section, QueryContent
 from bungeni.core.interfaces import ISchedulingContext
 from bungeni.core.schedule import PrincipalGroupSchedulingContext
@@ -218,8 +220,8 @@ ARCHIVED = ("debated", "withdrawn", "response_completed", "elapsed", "dropped")
 def getWorkSpaceMISection(workspace):
     """ /workspace/obj-id/pi -> non-ARCHIVED parliamentary items
     """
-    s = Section(title=_bu(u"My interests"),
-            description=_bu(u"Your current interests"),
+    s = Section(title=_(u"My interests"),
+            description=_(u"Your current interests"),
             default_name="workspace-mi")
     interface.alsoProvides(s, interfaces.IWorkspaceMIContext)
     s.__parent__ = workspace
@@ -228,22 +230,22 @@ def getWorkSpaceMISection(workspace):
             container_getter(workspace, 'questions',
             query_modifier=sql.not_(domain.Question.status.in_(ARCHIVED))),
             #title=_(u"Questions"),
-            description=_(u"Questions"))
+            description=_bc(u"Questions"))
     s["motions"] = QueryContent(
             container_getter(workspace, 'motions',
                 query_modifier=sql.not_(domain.Motion.status.in_(ARCHIVED))),
             #title=_(u"Motions"),
-            description=_(u"Motions"))
+            description=_bc(u"Motions"))
     s["tableddocuments"] = QueryContent(
             container_getter(workspace, 'tableddocuments',
                 query_modifier=sql.not_(domain.TabledDocument.status.in_(ARCHIVED))),
             #title=_(u"Tabled documents"),
-            description=_(u"Tabled documents"))
+            description=_bc(u"Tabled documents"))
     s["bills"] = QueryContent(
             container_getter(workspace, 'bills',
                 query_modifier=sql.not_(domain.Bill.status.in_(ARCHIVED))),
             #title=_(u"Bills"),
-            description=_(u"Bills"))
+            description=_bc(u"Bills"))
     s["agendaitems"] = QueryContent(
             container_getter(workspace, 'agendaitems',
                 query_modifier=sql.not_(domain.AgendaItem.status.in_(ARCHIVED))),
@@ -252,15 +254,15 @@ def getWorkSpaceMISection(workspace):
     s["committees"] = QueryContent(
             container_getter(workspace, 'committees'),
             #title=_(u"Committees"),
-            description=_(u"Committees"))
+            description=_bc(u"Committees"))
     log.debug("WorkspaceMISection %s" % debug.interfaces(s))
     return s
 
 def getWorkSpacePISection(workspace):
     """ /workspace/obj-id/pi -> non-ARCHIVED parliamentary items
     """
-    s = Section(title=_bu(u"Parliamentary items"),
-            description=_bu(u"Current parliamentary activity"),
+    s = Section(title=_(u"Parliamentary items"),
+            description=_(u"Current parliamentary activity"),
             default_name="workspace-pi")
     interface.alsoProvides(s, interfaces.IWorkspacePIContext)
     s.__parent__ = workspace
@@ -269,39 +271,39 @@ def getWorkSpacePISection(workspace):
             container_getter(workspace, 'questions',
             query_modifier=sql.not_(domain.Question.status.in_(ARCHIVED))),
             #title=_(u"Questions"),
-            description=_(u"Questions"))
+            description=_bc(u"Questions"))
     s["motions"] = QueryContent(
             container_getter(workspace, 'motions',
                 query_modifier=sql.not_(domain.Motion.status.in_(ARCHIVED))),
             #title=_(u"Motions"),
-            description=_(u"Motions"))
+            description=_bc(u"Motions"))
     s["tableddocuments"] = QueryContent(
             container_getter(workspace, 'tableddocuments',
                 query_modifier=sql.not_(domain.TabledDocument.status.in_(ARCHIVED))),
             #title=_(u"Tabled documents"),
-            description=_(u"Tabled documents"))
+            description=_bc(u"Tabled documents"))
     s["bills"] = QueryContent(
             container_getter(workspace, 'bills',
                 query_modifier=sql.not_(domain.Bill.status.in_(ARCHIVED))),
             #title=_(u"Bills"),
-            description=_(u"Bills"))
+            description=_bc(u"Bills"))
     s["agendaitems"] = QueryContent(
             container_getter(workspace, 'agendaitems',
                 query_modifier=sql.not_(domain.AgendaItem.status.in_(ARCHIVED))),
             #title=_(u"Agenda items"),
-            description=_bu(u" items"))
+            description=_(u" items"))
     s["committees"] = QueryContent(
             container_getter(workspace, 'committees'),
             #title=_(u"Committees"),
-            description=_(u"Committees"))
+            description=_bc(u"Committees"))
     log.debug("WorkspacePISection %s" % debug.interfaces(s))
     return s
 
 def getWorkSpaceArchiveSection(workspace):
     """ /workspace/obj-id/my-archive/ -> ARCHIVED parliamentary items 
     """
-    s = Section(title=_bu(u"My archive"),
-            description=_bu(u"My archive personal items"),
+    s = Section(title=_(u"My archive"),
+            description=_(u"My archive personal items"),
             default_name="workspace-archive")
     interface.alsoProvides(s, interfaces.IWorkspaceArchiveContext)
     s.__parent__ = workspace
@@ -310,22 +312,22 @@ def getWorkSpaceArchiveSection(workspace):
             container_getter(workspace, 'questions',
                 query_modifier=domain.Question.status.in_(ARCHIVED)),
             #title=_(u"Questions"),
-            description=_(u"Questions"))
+            description=_bc(u"Questions"))
     s["motions"] = QueryContent(
             container_getter(workspace, 'motions',
                 query_modifier=domain.Motion.status.in_(ARCHIVED)),
             #title=_(u"Motions"),
-            description=_(u"Motions"))
+            description=_bc(u"Motions"))
     s["tableddocuments"] = QueryContent(
             container_getter(workspace, 'tableddocuments',
                 query_modifier=domain.TabledDocument.status.in_(ARCHIVED)),
             #title=_(u"Tabled documents"),
-            description=_(u"Tabled documents"))
+            description=_bc(u"Tabled documents"))
     s["bills"] = QueryContent(
             container_getter(workspace, 'bills',
                 query_modifier=domain.Bill.status.in_(ARCHIVED)),
             #title=_(u"Bills"),
-            description=_(u"Bills"))
+            description=_bc(u"Bills"))
     s["agendaitems"] = QueryContent(
             container_getter(workspace, 'agendaitems',
                 query_modifier=domain.AgendaItem.status.in_(ARCHIVED)),
