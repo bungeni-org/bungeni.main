@@ -409,7 +409,7 @@ needed condition (written querstion) is not satisfied
 
 !+FIRETRANSITION(mr, mar-2011) complete response tests
 
-  >>> #actions.answer(info, question)
+  >>> #actions.answer(question)
 
 
 Question conditions
@@ -420,7 +420,7 @@ Question conditions
   
 "Is scheduled".
 
-  >>> conditions.is_scheduled(info, question)
+  >>> conditions.is_scheduled(question)
   False
 
   >>> from bungeni.models.testing import create_sitting
@@ -431,16 +431,16 @@ Question conditions
   ...     group_sitting_id=sitting.group_sitting_id,
   ...     item_id=question.parliamentary_item_id)
   
-  >>> conditions.is_scheduled(info, question)
+  >>> conditions.is_scheduled(question)
   True
 
 "Is ministry set".
 
-  >>> conditions.is_ministry_set(info, question)
+  >>> conditions.is_ministry_set(question)
   False
 
   >>> question.ministry_id = ministry.group_id
-  >>> conditions.is_ministry_set(info, question)
+  >>> conditions.is_ministry_set(question)
   True
 
 Notifications

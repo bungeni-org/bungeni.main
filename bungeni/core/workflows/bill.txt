@@ -124,7 +124,7 @@ Actions
 
 "Create". This action sets the submission date and parliament id.
 
-  >>> actions.create(info, bill)
+  >>> actions.create(bill)
   >>> bill.parliament_id == parliament.parliament_id
   True
 
@@ -136,7 +136,7 @@ this way do not create the expected auditlog.
 
 "Submit".
 
-  >>> actions.submit(info, bill)
+  >>> actions.submit(bill)
 
   >>> bill.publication_date == today
   True
@@ -146,15 +146,15 @@ this way do not create the expected auditlog.
   
 "Schedule first reading".
 
-  >>> actions.schedule_first(info, bill)
+  >>> actions.schedule_first(bill)
 
 "Adjourn first reading".
 
-  >>> actions.adjourn_first(info, bill)
+  >>> actions.adjourn_first(bill)
 
 "Withdraw".
 
-  >>> actions.withdraw(info, bill)
+  >>> actions.withdraw(bill)
 
 Conditions
 ----------
@@ -165,7 +165,7 @@ Conditions
   
 "Is scheduled".
 
-  >>> conditions.is_scheduled(info, bill)
+  >>> conditions.is_scheduled(bill)
   False
 
   >>> from bungeni.models.testing import create_sitting
@@ -176,7 +176,7 @@ Conditions
   ...     group_sitting_id=sitting.group_sitting_id,
   ...     item_id=bill.parliamentary_item_id)
   
-  >>> conditions.is_scheduled(info, bill)
+  >>> conditions.is_scheduled(bill)
   True
 
 Cleanup

@@ -10,7 +10,8 @@ log = __import__("logging").getLogger("bungeni.core.workflow.state")
 
 import zope.interface
 import zope.securitypolicy.interfaces
-
+import zope.security.management
+import zope.security.interfaces
 from zope.security.proxy import removeSecurityProxy
 import zope.event
 import zope.lifecycleevent
@@ -31,6 +32,11 @@ DENY  = 0
 
 #
 
+def NullCondition(context): return True
+def NullAction(context): pass
+
+#
+
 class State(object):
     
     def __init__(self, id, title, action_names, permissions):
@@ -39,7 +45,7 @@ class State(object):
         self.action_names = action_names # [str]
         self.permissions = permissions
     
-    def execute_actions(self, info, context):
+    def execute_actions(self, context):
         """Execute the actions and permissions associated with this state.
         """
         assert context.status == self.id, \
@@ -50,7 +56,7 @@ class State(object):
         for action_name in self.action_names:
             action = getattr(ACTIONS_MODULE, action_name)
             try:
-                action(info, context)
+                action(context)
             except Exception, e:
                 class WorkflowStateActionError(Exception): pass
                 raise WorkflowStateActionError("%s" % (e))
@@ -82,7 +88,7 @@ class Transition(ore.workflow.workflow.Transition):
     """
     
     def __init__(self, title, source, destination,
-        condition=ore.workflow.workflow.NullCondition,
+        condition=NullCondition,
         trigger=ore.workflow.workflow.MANUAL, 
         permission=ore.workflow.workflow.CheckerPublic,
         order=0, 
@@ -93,7 +99,7 @@ class Transition(ore.workflow.workflow.Transition):
         transition_id = "%s-%s" % (source or "", destination)
         super(Transition, self).__init__(
             transition_id, title, source, destination, condition,
-            ore.workflow.workflow.NullAction, 
+            NullAction, 
             trigger, permission, order=0, **user_data)
         self.event = event
         self.require_confirmation = require_confirmation
@@ -123,8 +129,8 @@ class StateController(object):
     def on_state_change(self, source, destination):
         # note: called *after* StateController.setState(status) 
         # i.e. self.context.status is already set to destination state
-        wfi = ore.workflow.interfaces.IWorkflowInfo(self.context) # WorkflowController
-        workflow = wfi.workflow().workflow # AdaptedWorkflow.workflow
+        wfc = ore.workflow.interfaces.IWorkflowInfo(self.context) # WorkflowController
+        workflow = wfc.workflow().workflow # AdaptedWorkflow.workflow
         # taking defensive stance, asserting on workflow and state
         # !+ZCA(mr, mar-2011) requiring that workflow is an instance of
         # bungeni.core.workflow.states.Workflow undermines the whole point of
@@ -133,7 +139,7 @@ class StateController(object):
             "Workflow must be an instance of Workflow: %s" % (workflow)
         state = workflow.states.get(destination)
         assert state is not None, "May not have a None state" 
-        state.execute_actions(wfi, self.context)
+        state.execute_actions(self.context)
     
     def getId(self):
         return "1"
@@ -176,6 +182,27 @@ class WorkflowController(ore.workflow.workflow.WorkflowInfo):
         # and unlitter all actions/conditions of calls to removeSecurityProxy
         self.context = removeSecurityProxy(context)
     
+    def _get_checkPermission(self):
+        try:
+            return zope.security.management.getInteraction().checkPermission
+        except zope.security.interfaces.NoInteraction:
+            return ore.workflow.workflow.nullCheckPermission
+            
+    def _check(self, transition, check_security):
+        """Check whether we may execute this workflow transition.
+        """
+        if check_security:
+            checkPermission = self._get_checkPermission()
+        else:
+            checkPermission = ore.workflow.workflow.nullCheckPermission
+        if not checkPermission(transition.permission, self.context):
+            raise Unauthorized(self.context,
+                "transition: %s" % transition.transition_id,
+                transition.permission)
+        # now make sure transition can still work in this context
+        if not transition.condition(self.context):
+            raise ore.workflow.interfaces.ConditionFailedError
+    
     def fireTransition(self, transition_id, 
         comment=None, side_effect=None, check_security=True
     ):
@@ -191,7 +218,7 @@ class WorkflowController(ore.workflow.workflow.WorkflowInfo):
         # this raises InvalidTransitionError if id is invalid for current state
         transition = wf.getTransition(state.getState(), transition_id)
         self._check(transition, check_security)
-        transition.action(self, self.context)
+        transition.action(self.context)
         # !+ore.workflow.workflow.WorkflowState.initialize !+side_effect
         # change state of context or new object
         state.setState(transition.destination)
@@ -201,4 +228,19 @@ class WorkflowController(ore.workflow.workflow.WorkflowInfo):
         zope.event.notify(event)
         # send modified event for original or new object
         zope.event.notify(zope.lifecycleevent.ObjectModifiedEvent(self.context))
+    
+    # !+CONDITION_SIGNATURE(mr, mar-2011) overridden because of change in 
+    # the condition API, but are seemingly never called.
+    def getManualTransitionIds(self):
+        checkPermission = self._get_checkPermission()
+        return [ transition.transition_id 
+            for transition in sorted(self._getTransitions(MANUAL)) 
+            if transition.condition(self.context) and 
+                checkPermission(transition.permission, self.context) ]
+    
+    def getSystemTransitionIds(self):
+        # ignore permission checks
+        return [ transition.transition_id 
+            for transition in sorted(self._getTransitions(SYSTEM)) 
+            if transition.condition(self.context) ]
 

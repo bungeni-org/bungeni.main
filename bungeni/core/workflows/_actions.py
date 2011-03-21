@@ -13,7 +13,7 @@ following simple naming convention:
 
 Signature of all (both private and public) action callables: !+WFINFO
 
-    (info:WorkflowInfo, context:Object) -> None
+    (context:Object) -> None
 
 !+ All actions with names that start with a letter are actions that may be 
 liberally used from within workflow XML definitions.
@@ -34,17 +34,17 @@ create_version = utils.create_version
 
 # parliamentary item, utils
 
-def __pi_create(info, context):
-    #!+utils.setParliamentId(info, context)
+def __pi_create(context):
+    #!+utils.setParliamentId(context)
     utils.assign_owner_role_pi(context)
 
-def __pi_submit(info, context):
-    utils.set_pi_registry_number(info, context)
+def __pi_submit(context):
+    utils.set_pi_registry_number(context)
 
 
 # address
 
-def _address_private(info, context):
+def _address_private(context):
     # !+OWNER_ADDRESS(mr, mov-2010) is this logic correct, also for admin?
     try:
         user_login = dbutils.get_user_login(context.user_id)
@@ -65,25 +65,25 @@ _agendaitem_submitted = __pi_submit
 
 _bill_working_draft = __pi_create
 
-def _bill_gazetted(info, context):
-    utils.setBillPublicationDate(info, context)
-    utils.set_pi_registry_number(info, context)
+def _bill_gazetted(context):
+    utils.setBillPublicationDate(context)
+    utils.set_pi_registry_number(context)
 
 
 # group
 
-def _group_draft(info, context):
+def _group_draft(context):
     user_login = utils.get_principal_id()
     if user_login:
         utils.assign_owner_role(context, user_login)
-    def _deactivate(info, context):
+    def _deactivate(context):
         utils.unset_group_local_role(context)
-    _deactivate(info, context)
+    _deactivate(context)
 
-def _group_active(info, context):
+def _group_active(context):
     utils.set_group_local_role(context)
 
-def _group_dissolved(info, context):
+def _group_dissolved(context):
     """ when a group is dissolved all members of this 
     group get the end date of the group (if they do not
     have one yet) and there active_p status gets set to
@@ -111,11 +111,11 @@ _parliament_dissolve = _group_dissolved
 
 # groupsitting
 
-def _groupsitting_draft_agenda(info, context):
+def _groupsitting_draft_agenda(context):
     dbutils.set_real_order(context)
         
-def _groupsitting_published_agenda(info, context):
-    utils.schedule_sitting_items(info, context)
+def _groupsitting_published_agenda(context):
+    utils.schedule_sitting_items(context)
 
 
 # motion
@@ -123,7 +123,7 @@ def _groupsitting_published_agenda(info, context):
 _motion_draft = _motion_working_draft = __pi_create
 _motion_submitted = __pi_submit
 
-def _motion_admissible(info, context):
+def _motion_admissible(context):
     dbutils.setMotionSerialNumber(context)
 
 
@@ -132,20 +132,20 @@ def _motion_admissible(info, context):
 _question_draft = _question_working_draft = __pi_create
 _question_submitted = __pi_submit
 
-def _question_withdrawn(info, context):
+def _question_withdrawn(context):
     """A question can be withdrawn by the owner, it is visible to ...
     and cannot be edited by anyone.
     """
-    utils.setQuestionScheduleHistory(info, context)
+    utils.setQuestionScheduleHistory(context)
 _question_withdrawn_public = _question_withdrawn
 
-def _question_response_pending(info, context):
+def _question_response_pending(context):
     """A question sent to a ministry for a written answer, 
     it cannot be edited, the ministry can add a written response.
     """
-    utils.setMinistrySubmissionDate(info, context)
+    utils.setMinistrySubmissionDate(context)
 
-def _question_admissible(info, context):
+def _question_admissible(context):
     """The question is admissible and can be send to ministry,
     or is available for scheduling in a sitting.
     """
@@ -157,16 +157,16 @@ def _question_admissible(info, context):
 _tableddocument_draft = _tableddocument_working_draft = __pi_create
 _tableddocument_submitted = __pi_submit
 
-def _tableddocument_adjourned(info,context):
-    utils.setTabledDocumentHistory(info, context)
+def _tableddocument_adjourned(context):
+    utils.setTabledDocumentHistory(context)
 
-def _tableddocument_admissible(info, context):
+def _tableddocument_admissible(context):
     dbutils.setTabledDocumentSerialNumber(context)
 
 
 # user
 
-def _user_A(info, context):
+def _user_A(context):
     utils.assign_owner_role(context, context.login)
     context.date_of_death = None
 

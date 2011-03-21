@@ -42,9 +42,6 @@ def get_parliament(context):
 get_principal_id = bungeni.models.utils.get_principal_id
 
 
-# !+WorkflowInfo(mr, mar-2011) drop passing "info" (unused) param everywhere,
-# here and in actions, conditions?
-
 # parliamentary item
 
 def get_owner_login_pi(context):
@@ -71,7 +68,7 @@ def assign_owner_role_pi(context):
     if owner_login and (owner_login != current_user_login):
         assign_owner_role(context, owner_login)
 
-def create_version(info, context):
+def create_version(context):
     """Create a new version of an object and return it.
     Note: context.status is already updated to destination state.
     """
@@ -82,7 +79,7 @@ def create_version(info, context):
     versions.create(message)
 
 
-def set_pi_registry_number(info, context):
+def set_pi_registry_number(context):
     """A parliamentary_item's registry_number should be set on the item being 
     submitted to parliament.
     """
@@ -91,45 +88,45 @@ def set_pi_registry_number(info, context):
 
 
 # question
-def setMinistrySubmissionDate(info, context):
+def setMinistrySubmissionDate(context):
     if context.ministry_submit_date == None:
         context.ministry_submit_date = datetime.date.today()
 
 # !+QuestionScheduleHistory(mr, mar-2011) rename appropriately e.g. "unschedule"
 # !+QuestionScheduleHistory(mr, mar-2011) only pertinent if question is 
 # transiting from a shceduled state... is this needed anyway?
-def setQuestionScheduleHistory(info, context):
+def setQuestionScheduleHistory(context):
     question_id = context.question_id
     dbutils.removeQuestionFromItemSchedule(question_id)
 
 ''' !+UNUSUED (and incorrect) :
-def getQuestionSchedule(info, context):
+def getQuestionSchedule(context):
     question_id = context.question_id
     return dbutils.isItemScheduled(question_id)
 
-def getMotionSchedule(info, context):
+def getMotionSchedule(context):
     motion_id = context.motion_id
     return dbutils.isItemScheduled(motion_id)
 
-def getQuestionSubmissionAllowed(info, context):
+def getQuestionSubmissionAllowed(context):
     return prefs.getQuestionSubmissionAllowed()
 '''
 
 # bill
-def setBillPublicationDate(info, context):
+def setBillPublicationDate(context):
     if context.publication_date == None:
         context.publication_date = datetime.date.today()
 
 '''
 # question, motion, bill, agendaitem, tableddocument
 # !+setParliamentId(mr, mar-2011) this is used in "create" transitions... 
-def setParliamentId(info, context):
+def setParliamentId(context):
     if not context.parliament_id:
          context.parliament_id = prefs.getCurrentParliamentId()
 '''
 
 # tableddocument
-def setTabledDocumentHistory(info, context):
+def setTabledDocumentHistory(context):
     pass
 
 # groups
@@ -174,7 +171,7 @@ def dissolveChildGroups(groups, context):
             check_security=False)
         
 # groupsitting
-def schedule_sitting_items(info, context):
+def schedule_sitting_items(context):
     
     # !+fireTransitionToward(mr, dec-2010) sequence of fireTransitionToward 
     # calls was introduced in r5818, 28-jan-2010 -- here the code is reworked

@@ -6,7 +6,7 @@
 
 Signature of all utilities here: 
 
-    (info:WorkflowInfo, context:Object) -> bool
+    (context:Object) -> bool
 
 $Id$
 """
@@ -24,10 +24,10 @@ import utils
 # the condition for the transition from "" (None) to either "draft" or to 
 # "working_draft" seems to need the explicit condition (and negation of 
 # condition) on each of the two transition options 
-def user_is_not_context_owner(info, context):
-    return not user_is_context_owner(info, context)
+def user_is_not_context_owner(context):
+    return not user_is_context_owner(context)
 
-def user_is_context_owner(info, context):
+def user_is_context_owner(context):
     def user_is_context_owner(context):
         """Test if current user is the context owner e.g. to check if someone 
         manipulating the context object is other than the owner of the object.
@@ -40,7 +40,7 @@ def user_is_context_owner(info, context):
 
 # parliamentary items
 
-def is_scheduled(info, context):
+def is_scheduled(context):
     """Is Parliamentary Item scheduled.
     """
     return dbutils.isItemScheduled(context.parliamentary_item_id)
@@ -48,7 +48,7 @@ def is_scheduled(info, context):
 
 # group
 
-def has_end_date(info, context):
+def has_end_date(context):
     """A group can only be dissolved if an end date is set.
     """
     return context.end_date != None
@@ -56,19 +56,19 @@ def has_end_date(info, context):
 
 # groupsitting
 
-def has_venue(info, context):
+def has_venue(context):
     return context.venue is not None
 
 
 # question
 
-def is_written_response(info, context):
+def is_written_response(context):
     return context.ministry_id is not None and context.response_type == u"W"
 
-def is_oral_response(info, context):
+def is_oral_response(context):
     return context.response_type == u"O"
 
-def response_allow_submit(info, context):
+def response_allow_submit(context):
     # The "submit_response" workflow transition should NOT be displayed when 
     # the UI is displaying the question in "edit" mode (as this transition
     # will cause deny of bungeni.Question.Edit to the Minister).
@@ -80,16 +80,16 @@ def response_allow_submit(info, context):
     else:
         return True
 
-def is_ministry_set(info, context):
+def is_ministry_set(context):
     return context.ministry_id is not None
 
 
 # user
 
-def has_date_of_death(info, context):
+def has_date_of_death(context):
     return context.date_of_death is not None
 
-def not_has_date_of_death(info, context):
+def not_has_date_of_death(context):
     return context.date_of_death is None
 
 
