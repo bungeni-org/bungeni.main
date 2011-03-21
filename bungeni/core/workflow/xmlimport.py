@@ -23,7 +23,7 @@ from bungeni.core.workflow.states import GRANT
 from bungeni.core.workflow.states import DENY
 from bungeni.core.workflow.states import State
 from bungeni.core.workflow.states import Transition
-from bungeni.core.workflow.states import StateWorkflow
+from bungeni.core.workflow.states import Workflow
 from bungeni.ui.utils import debug
 
 #
@@ -133,7 +133,7 @@ def load(file_path):
 # mv transition implied action to explicit state "atomic" actions
 
 def _load(workflow, module_name):
-    """ (workflow:etree_doc, module_name:str) -> StateWorkflow
+    """ (workflow:etree_doc, module_name:str) -> Workflow
     """
     transitions = []
     states = []
@@ -329,7 +329,7 @@ def _load(workflow, module_name):
             log.warn("[%s] adding transition [%s-%s] [%s]" % (
                 wid, source or "", destination, kw))
     
-    return StateWorkflow(transitions, states)
+    return Workflow(transitions, states)
 
 
 

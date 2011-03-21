@@ -120,7 +120,7 @@ Actions
   >>> from bungeni.core.workflows.bill import actions 
   >>> info = IWorkflowInfo(bill)
   >>> info
-  <bungeni.core.workflow.states.StateWorkflowInfo object at ...>
+  <bungeni.core.workflow.states.WorkflowController object at ...>
 
 "Create". This action sets the submission date and parliament id.
 

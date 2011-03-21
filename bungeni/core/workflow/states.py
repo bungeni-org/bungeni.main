@@ -1,3 +1,13 @@
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""Bungeni Workflow Library
+
+$Id$
+"""
+log = __import__("logging").getLogger("bungeni.core.workflow.state")
+
 import zope.interface
 import zope.securitypolicy.interfaces
 
@@ -73,7 +83,6 @@ class Transition(ore.workflow.workflow.Transition):
     
     def __init__(self, title, source, destination,
         condition=ore.workflow.workflow.NullCondition,
-        action=ore.workflow.workflow.NullAction, # !+
         trigger=ore.workflow.workflow.MANUAL, 
         permission=ore.workflow.workflow.CheckerPublic,
         order=0, 
@@ -84,14 +93,15 @@ class Transition(ore.workflow.workflow.Transition):
         transition_id = "%s-%s" % (source or "", destination)
         super(Transition, self).__init__(
             transition_id, title, source, destination, condition,
-            action, trigger, permission, order=0, **user_data)
+            ore.workflow.workflow.NullAction, 
+            trigger, permission, order=0, **user_data)
         self.event = event
         self.require_confirmation = require_confirmation
 
 #
 
 # replaces ore.workflow.workflow.WorkflowState
-class WorkflowState(object):
+class StateController(object):
     zope.interface.implements(ore.workflow.interfaces.IWorkflowState)
     
     __slots__ = "context",
@@ -108,19 +118,19 @@ class WorkflowState(object):
         if source_state_id != state_id:
             self.context.status = state_id
         # additional actions related to change of worklfow status
-        self._state_change(source_state_id, state_id)
+        self.on_state_change(source_state_id, state_id)
     
-    def _state_change(self, source, destination):
-        # note: called *after* WorkflowState.setState(status) 
+    def on_state_change(self, source, destination):
+        # note: called *after* StateController.setState(status) 
         # i.e. self.context.status is already set to destination state
-        wfi = ore.workflow.interfaces.IWorkflowInfo(self.context) # StateWorkflowInfo
+        wfi = ore.workflow.interfaces.IWorkflowInfo(self.context) # WorkflowController
         workflow = wfi.workflow().workflow # AdaptedWorkflow.workflow
         # taking defensive stance, asserting on workflow and state
         # !+ZCA(mr, mar-2011) requiring that workflow is an instance of
-        # StateWorkflow undermines the whole point of using ZCA in the first 
-        # place? No gain, just more convoluted code.
-        assert isinstance(workflow, StateWorkflow), \
-            "Workflow must be an instance of StateWorkflow: %s" % (workflow)
+        # bungeni.core.workflow.states.Workflow undermines the whole point of
+        # using ZCA in the first place? No gain, just more convoluted code.
+        assert isinstance(workflow, Workflow), \
+            "Workflow must be an instance of Workflow: %s" % (workflow)
         state = workflow.states.get(destination)
         assert state is not None, "May not have a None state" 
         state.execute_actions(wfi, self.context)
@@ -130,19 +140,19 @@ class WorkflowState(object):
     def setId(self, id):
         pass # print "setting id", id
 
-
+# <!-- silly versioning thingy for wf runtime -->
 class NullVersions(ore.workflow.workflow.WorkflowVersions):
     def hasVersionId(self, id): 
         return False
 
 
-class StateWorkflow(ore.workflow.workflow.Workflow):
+class Workflow(ore.workflow.workflow.Workflow):
     
     def __init__(self, transitions, states):
         self.refresh(transitions, states)
     
     def refresh(self, transitions, states=None):
-        super(StateWorkflow, self).refresh(transitions)
+        super(Workflow, self).refresh(transitions)
         self.states = {}
         state_names = set()
         for s in states:
@@ -157,7 +167,7 @@ class StateWorkflow(ore.workflow.workflow.Workflow):
                     unreachable_states))
 
 
-class StateWorkflowInfo(ore.workflow.workflow.WorkflowInfo):
+class WorkflowController(ore.workflow.workflow.WorkflowInfo):
     
     #interface.implements(ore.workflow.interfaces.IWorkflowInfo)
     
@@ -169,13 +179,20 @@ class StateWorkflowInfo(ore.workflow.workflow.WorkflowInfo):
     def fireTransition(self, transition_id, 
         comment=None, side_effect=None, check_security=True
     ):
-        state = self.state() # WorkflowState
+        # !+fireTransitionParams(mr, mar-2011) needed?
+        if not (comment is None and side_effect is None and 
+            check_security is True
+        ):
+            log.warn("%s.fireTransition(%s, comment=%s, side_effect=%s, "
+                "check_security=%s" % (self, transition_id, 
+                    comment, side_effect, check_security)) 
+        state = self.state() # StateController
         wf = self.workflow() # Workflow
         # this raises InvalidTransitionError if id is invalid for current state
         transition = wf.getTransition(state.getState(), transition_id)
         self._check(transition, check_security)
         transition.action(self, self.context)
-        # !+WorkflowState.initialize !+side_effect
+        # !+ore.workflow.workflow.WorkflowState.initialize !+side_effect
         # change state of context or new object
         state.setState(transition.destination)
         # notify wf event observers

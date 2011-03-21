@@ -56,24 +56,24 @@ def setup_adapters():
     # generic workflow adapters
     
     # this is an attempt (that does not give the desired result) to get
-    #   bungeni.core.workflow.states.StateWorkflowInfo 
+    #   bungeni.core.workflow.states.WorkflowController 
     # to be used as the factory provider for
     #   ore.workflow.interfaces.IWorkflowInfo
     
     zope.component.provideAdapter(
         adapts=[bungeni.alchemist.interfaces.IAlchemistContent], 
         provides=ore.workflow.interfaces.IWorkflowInfo,
-        factory=bungeni.core.workflow.states.StateWorkflowInfo)
+        factory=bungeni.core.workflow.states.WorkflowController)
     
     zope.component.provideAdapter(
         adapts=[bungeni.alchemist.interfaces.IAlchemistContent], 
         provides=ore.workflow.interfaces.IWorkflowState,
-        factory=bungeni.core.workflow.states.WorkflowState) 
+        factory=bungeni.core.workflow.states.StateController) 
     
     # content workflow
     
     zope.component.provideAdapter(
-        bungeni.core.workflow.states.WorkflowState,
+        bungeni.core.workflow.states.StateController,
         (bungeni.models.interfaces.IBungeniContent,))
 
     zope.component.provideAdapter(
@@ -81,7 +81,7 @@ def setup_adapters():
         (domain.Question,))
 
     zope.component.provideAdapter(
-        bungeni.core.workflow.states.StateWorkflowInfo,
+        bungeni.core.workflow.states.WorkflowController,
         (domain.Question,))
 
     zope.component.provideAdapter(
@@ -89,7 +89,7 @@ def setup_adapters():
         (domain.Bill,))
 
     zope.component.provideAdapter(
-        bungeni.core.workflow.states.StateWorkflowInfo,
+        bungeni.core.workflow.states.WorkflowController,
         (domain.Bill,))
 
     zope.component.provideAdapter(
@@ -97,7 +97,7 @@ def setup_adapters():
         (domain.Motion,))
 
     zope.component.provideAdapter(
-        bungeni.core.workflow.states.StateWorkflowInfo,
+        bungeni.core.workflow.states.WorkflowController,
         (domain.Motion,))
 
     zope.component.provideHandler(
@@ -113,7 +113,7 @@ def setup_adapters():
         (domain.GroupSitting,))
 
     zope.component.provideAdapter(
-        bungeni.core.workflow.states.StateWorkflowInfo,
+        bungeni.core.workflow.states.WorkflowController,
         (domain.GroupSitting,))
     
     zope.component.provideAdapter(
@@ -124,7 +124,7 @@ def setup_adapters():
         (domain.GroupAddress,))
     
     zope.component.provideAdapter(
-        bungeni.core.workflow.states.StateWorkflowInfo,
+        bungeni.core.workflow.states.WorkflowController,
         (domain.UserAddress,))
         
     zope.component.provideAdapter(
@@ -132,7 +132,7 @@ def setup_adapters():
         (domain.TabledDocument,))
 
     zope.component.provideAdapter(
-        bungeni.core.workflow.states.StateWorkflowInfo,
+        bungeni.core.workflow.states.WorkflowController,
         (domain.TabledDocument,))
     
     zope.component.provideAdapter(
@@ -140,7 +140,7 @@ def setup_adapters():
         (domain.AgendaItem,))
 
     zope.component.provideAdapter(
-        bungeni.core.workflow.states.StateWorkflowInfo,
+        bungeni.core.workflow.states.WorkflowController,
         (domain.AgendaItem,))
 
 

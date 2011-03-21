@@ -98,7 +98,7 @@ convention adopted for internal transition ids composed of:
   >>> #from bungeni.core.workflows.motion import actions 
   >>> info = IWorkflowInfo(motion)
   >>> info
-  <bungeni.core.workflow.states.StateWorkflowInfo object at ...>
+  <bungeni.core.workflow.states.WorkflowController object at ...>
 
 "Create". This action assigns the role of "Owner" and sets the
 parliament id.

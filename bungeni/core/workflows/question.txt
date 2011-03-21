@@ -166,7 +166,7 @@ Questions transitions
   >>> from ore.workflow.interfaces import IWorkflowInfo
   >>> info = IWorkflowInfo(question)
   >>> info
-  <bungeni.core.workflow.states.StateWorkflowInfo object at ...>
+  <bungeni.core.workflow.states.WorkflowController object at ...>
 
 PRINCIPAL: member
 
