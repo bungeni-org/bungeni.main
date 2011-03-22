@@ -70,7 +70,7 @@ Integrity
 Verify that all states are reachable.
 
   >>> from bungeni.core.workflows.testing import verify_workflow
-  >>> from ore.workflow.interfaces import IWorkflow
+  >>> from bungeni.core.workflow.interfaces import IWorkflow
 
   >>> wf = IWorkflow(motion)
   >>> verify_workflow(wf)
@@ -88,7 +88,7 @@ Principals
 Actions
 -------
 
-  >>> from ore.workflow.interfaces import IWorkflowInfo
+  >>> from bungeni.core.workflow.interfaces import IWorkflowController
   
 !+FIRETRANSITION(mr, feb-2011) should review/update/evolve tests below to use 
 fireTransition() (instead of directly executing actions), and to use the new
@@ -96,7 +96,7 @@ convention adopted for internal transition ids composed of:
     "%s-%s" % (source_state, destination_state)
 
   >>> #from bungeni.core.workflows.motion import actions 
-  >>> info = IWorkflowInfo(motion)
+  >>> info = IWorkflowController(motion)
   >>> info
   <bungeni.core.workflow.states.WorkflowController object at ...>
 

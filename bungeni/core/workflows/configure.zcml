@@ -16,7 +16,7 @@
   <subscriber
      handler=".events.fireAutomaticTransitions"
      for="bungeni.alchemist.interfaces.IAlchemistContent
-          ore.workflow.interfaces.IWorkflowTransitionEvent"
+          bungeni.core.workflow.interfaces.IWorkflowTransitionEvent"
      />
 
     <subscriber handler=".events.initializeWorkflow"
@@ -26,34 +26,36 @@
 
 
     <!-- silly versioning thingy for wf runtime -->
-    <utility provides="ore.workflow.interfaces.IWorkflowVersions"
+    <!--
+    <utility provides="bungeni.core.workflow.interfaces.IWorkflowVersions"
         factory="bungeni.core.workflow.states.NullVersions"
     />
-
-  <!-- generic workflow adapters -->
-
-  <adapter
-     for="bungeni.alchemist.interfaces.IAlchemistContent"
-     provides="ore.workflow.interfaces.IWorkflowInfo"
-     factory="bungeni.core.workflow.states.WorkflowController"/>
-
-  <adapter
-     for="bungeni.alchemist.interfaces.IAlchemistContent"
-     provides="ore.workflow.interfaces.IWorkflowState"
-     factory="bungeni.core.workflow.states.StateController" />
-
+    -->
+    
+    <!-- generic workflow adapters -->
+    
+    <adapter for="bungeni.alchemist.interfaces.IAlchemistContent"
+        provides="bungeni.core.workflow.interfaces.IWorkflowController"
+        factory="bungeni.core.workflow.states.WorkflowController"
+    />
+    
+    <adapter for="bungeni.alchemist.interfaces.IAlchemistContent"
+        provides="bungeni.core.workflow.interfaces.IStateController"
+        factory="bungeni.core.workflow.states.StateController"
+    />
+    
   <!-- content workflow -->
   
   <adapter
      for="bungeni.models.interfaces.IBungeniContent"
-     provides="ore.workflow.interfaces.IWorkflow"
+     provides="bungeni.core.workflow.interfaces.IWorkflow"
      factory=".simple.SimpleWorkflowAdapter" />
 
   <!-- content workflow -->
   
   <adapter
      for="bungeni.models.interfaces.IVersion"
-     provides="ore.workflow.interfaces.IWorkflow"
+     provides="bungeni.core.workflow.interfaces.IWorkflow"
      factory=".adapters.VersionWorkflowAdapter" />
      
     <subscriber handler=".events.initializeWorkflow"
@@ -66,19 +68,19 @@
 
   <adapter
      for="bungeni.models.interfaces.IBungeniGroup"
-     provides="ore.workflow.interfaces.IWorkflow"
+     provides="bungeni.core.workflow.interfaces.IWorkflow"
      factory=".adapters.GroupWorkflowAdapter" />
 
 
 
   <adapter
      for="bungeni.models.interfaces.IParliament"
-     provides="ore.workflow.interfaces.IWorkflow"
+     provides="bungeni.core.workflow.interfaces.IWorkflow"
      factory=".adapters.ParliamentWorkflowAdapter" />
 
   <adapter
      for="bungeni.models.interfaces.ICommittee"
-     provides="ore.workflow.interfaces.IWorkflow"
+     provides="bungeni.core.workflow.interfaces.IWorkflow"
      factory=".adapters.CommitteeWorkflowAdapter" />
 
 
@@ -87,7 +89,7 @@
 
   <adapter
      for="bungeni.models.interfaces.IGroupSitting"
-     provides="ore.workflow.interfaces.IWorkflow"
+     provides="bungeni.core.workflow.interfaces.IWorkflow"
      factory=".adapters.GroupSittingWorkflowAdapter" />
      
   <subscriber
@@ -97,11 +99,11 @@
 
     <!-- addresses -->
     <adapter for="bungeni.models.interfaces.IUserAddress"
-        provides="ore.workflow.interfaces.IWorkflow"
+        provides="bungeni.core.workflow.interfaces.IWorkflow"
         factory=".adapters.UserAddressWorkflowAdapter"
     />
     <adapter for="bungeni.models.interfaces.IGroupAddress"
-        provides="ore.workflow.interfaces.IWorkflow"
+        provides="bungeni.core.workflow.interfaces.IWorkflow"
         factory=".adapters.GroupAddressWorkflowAdapter"
     />
 
@@ -109,12 +111,12 @@
   
   <adapter
      for="bungeni.models.interfaces.IBill"
-     provides="ore.workflow.interfaces.IWorkflowState"
+     provides="bungeni.core.workflow.interfaces.IStateController"
      factory="bungeni.core.workflow.states.StateController" />
 
   <adapter
      for="bungeni.models.interfaces.IBill"
-     provides="ore.workflow.interfaces.IWorkflow"
+     provides="bungeni.core.workflow.interfaces.IWorkflow"
      factory=".adapters.BillWorkflowAdapter" />
 
 
@@ -123,12 +125,12 @@
 
   <adapter
      for="bungeni.models.interfaces.IQuestion"
-     provides="ore.workflow.interfaces.IWorkflowState"
+     provides="bungeni.core.workflow.interfaces.IStateController"
      factory="bungeni.core.workflow.states.StateController" />
   
   <adapter
      for="bungeni.models.interfaces.IQuestion"
-     provides="ore.workflow.interfaces.IWorkflow"
+     provides="bungeni.core.workflow.interfaces.IWorkflow"
      factory=".adapters.QuestionWorkflowAdapter" />
 
 
@@ -151,12 +153,12 @@
   <!-- motion workflow -->
   <adapter
      for="bungeni.models.interfaces.IMotion"
-     provides="ore.workflow.interfaces.IWorkflowState"
+     provides="bungeni.core.workflow.interfaces.IStateController"
      factory="bungeni.core.workflow.states.StateController" />
   
   <adapter
      for="bungeni.models.interfaces.IMotion"
-     provides="ore.workflow.interfaces.IWorkflow"
+     provides="bungeni.core.workflow.interfaces.IWorkflow"
      factory=".adapters.MotionWorkflowAdapter" />
      
  
@@ -174,78 +176,78 @@
   <!-- agenda item workflow -->
   <adapter
      for="bungeni.models.interfaces.IAgendaItem"
-     provides="ore.workflow.interfaces.IWorkflowState"
+     provides="bungeni.core.workflow.interfaces.IStateController"
      factory="bungeni.core.workflow.states.StateController" />
   
   <adapter
      for="bungeni.models.interfaces.IAgendaItem"
-     provides="ore.workflow.interfaces.IWorkflow"
+     provides="bungeni.core.workflow.interfaces.IWorkflow"
      factory=".adapters.AgendaItemWorkflowAdapter" />
      
        
   <!-- tabled document workflow -->
   <adapter
      for="bungeni.models.interfaces.ITabledDocument"
-     provides="ore.workflow.interfaces.IWorkflowState"
+     provides="bungeni.core.workflow.interfaces.IStateController"
      factory="bungeni.core.workflow.states.StateController" />
   
   <adapter
      for="bungeni.models.interfaces.ITabledDocument"
-     provides="ore.workflow.interfaces.IWorkflow"
+     provides="bungeni.core.workflow.interfaces.IWorkflow"
      factory=".adapters.TabledDocumentWorkflowAdapter" />
 
   <!-- attached files workflow -->
   <adapter
      for="bungeni.models.interfaces.IAttachedFile"
-     provides="ore.workflow.interfaces.IWorkflowState"
+     provides="bungeni.core.workflow.interfaces.IStateController"
      factory="bungeni.core.workflow.states.StateController" />
   
   <adapter
      for="bungeni.models.interfaces.IAttachedFile"
-     provides="ore.workflow.interfaces.IWorkflow"
+     provides="bungeni.core.workflow.interfaces.IWorkflow"
      factory=".adapters.AttachedFileWorkflowAdapter" />
 
   <!-- Event workflow -->
   <adapter
      for="bungeni.models.interfaces.IEventItem"
-     provides="ore.workflow.interfaces.IWorkflowState"
+     provides="bungeni.core.workflow.interfaces.IStateController"
      factory="bungeni.core.workflow.states.StateController" />
   
   <adapter
      for="bungeni.models.interfaces.IEventItem"
-     provides="ore.workflow.interfaces.IWorkflow"
+     provides="bungeni.core.workflow.interfaces.IWorkflow"
      factory=".adapters.EventWorkflowAdapter" />
 
   <!-- Heading workflow -->
   <adapter
      for="bungeni.models.interfaces.IHeading"
-     provides="ore.workflow.interfaces.IWorkflowState"
+     provides="bungeni.core.workflow.interfaces.IStateController"
      factory="bungeni.core.workflow.states.StateController" />
   
   <adapter
      for="bungeni.models.interfaces.IHeading"
-     provides="ore.workflow.interfaces.IWorkflow"
+     provides="bungeni.core.workflow.interfaces.IWorkflow"
      factory=".adapters.HeadingWorkflowAdapter" />
 
   <!-- User workflow -->
   <adapter
      for="bungeni.models.interfaces.IBungeniUser"
-     provides="ore.workflow.interfaces.IWorkflowState"
+     provides="bungeni.core.workflow.interfaces.IStateController"
      factory="bungeni.core.workflow.states.StateController" />
   
   <adapter
      for="bungeni.models.interfaces.IBungeniUser"
-     provides="ore.workflow.interfaces.IWorkflow"
+     provides="bungeni.core.workflow.interfaces.IWorkflow"
      factory=".adapters.UserWorkflowAdapter" />
      
     <!-- report item workflow -->
   <adapter
      for="bungeni.models.interfaces.IReport"
-     provides="ore.workflow.interfaces.IWorkflowState"
+     provides="bungeni.core.workflow.interfaces.IStateController"
      factory="bungeni.core.workflow.states.StateController" />
   
   <adapter
      for="bungeni.models.interfaces.IReport"
-     provides="ore.workflow.interfaces.IWorkflow"
+     provides="bungeni.core.workflow.interfaces.IWorkflow"
      factory=".adapters.ReportWorkflowAdapter" />
 </configure>

@@ -8,7 +8,7 @@ Signature of all utilities here:
 
     (context:Object) -> bool
 
-$Id: _conditions.py -1   $
+$Id$
 """
 log = __import__("logging").getLogger("bungeni.core.workflows._conditions")
 

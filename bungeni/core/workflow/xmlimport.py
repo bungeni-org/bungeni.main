@@ -15,7 +15,7 @@ from lxml import etree
 from zope.dottedname.resolve import resolve
 from zope.i18nmessageid import Message
 
-from ore.workflow import interfaces
+from bungeni.core.workflow import interfaces
 
 from bungeni.core.workflow.states import BUNGENI_BASEPATH
 from bungeni.core.workflow.states import ACTIONS_MODULE

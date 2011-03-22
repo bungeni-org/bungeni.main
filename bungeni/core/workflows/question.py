@@ -300,7 +300,7 @@ Add to question.txt tests, equivalent set of tests running as the clerk:
   >>> wf = IWorkflow(question)
   >>> verify_workflow(wf)
 
-  >>> info = IWorkflowInfo(question)
+  >>> info = IWorkflowController(question)
 
 Transition "create_on_behalf_of". 
 Assigns the role of "Owner" and sets the parliament id.

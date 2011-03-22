@@ -60,8 +60,8 @@ Questions
   ...     short_name="question 1")
 
 
-  >>> from ore.workflow.interfaces import IWorkflowInfo
-  >>> info = IWorkflowInfo(question)
+  >>> from bungeni.core.workflow.interfaces import IWorkflowController
+  >>> info = IWorkflowController(question)
   >>> info.fireTransition("-working_draft", check_security=False)
   >>> question.status
   'working_draft'

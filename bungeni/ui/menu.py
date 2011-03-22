@@ -12,7 +12,7 @@ from zope.i18n import translate
 from bungeni.models.utils import get_current_parliament_committees
 import z3c.menu.ready2go.item
 
-from ore.workflow.interfaces import IWorkflow, IWorkflowInfo
+from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowController
 
 from bungeni.models.utils import get_db_user_id
 from bungeni.models.interfaces import IBungeniApplication, IBungeniContent
@@ -228,7 +228,7 @@ class WorkflowSubMenuItem(BrowserSubMenuItem):
         
     @property
     def extra(self):
-        info = IWorkflowInfo(self.context, None)
+        info = IWorkflowController(self.context, None)
         if info is None:
             return {"id": "plone-contentmenu-workflow"}
         state = info.state().getState()
@@ -262,8 +262,8 @@ class WorkflowMenu(BrowserMenu):
         wf = IWorkflow(context, None)
         if wf is None:
             return ()
-        #state = IWorkflowInfo(context).state().getState()
-        wf_info = IWorkflowInfo(context)
+        #state = IWorkflowController(context).state().getState()
+        wf_info = IWorkflowController(context)
         transitions = wf_info.getManualTransitionIds()
         
         # !+ context_workflow menu: the order of transitions is alphabetic, but 

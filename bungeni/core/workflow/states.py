@@ -13,12 +13,18 @@ import zope.securitypolicy.interfaces
 import zope.security.management
 import zope.security.interfaces
 from zope.security.proxy import removeSecurityProxy
+from zope.security.checker import CheckerPublic
 import zope.event
 import zope.lifecycleevent
 from zope.dottedname.resolve import resolve
 from bungeni.alchemist import Session
-import ore.workflow.interfaces
-import ore.workflow.workflow
+from bungeni.core.workflow import interfaces
+import ore.workflow.workflow # ...
+# Workflow (subbed)
+# WorkflowInfo (subbed by WorkflowController), 
+# nullCheckPermission (used)
+from ore.workflow.workflow import WorkflowTransitionEvent
+# unusued: WorkflowState, WorkflowVersions
 
 #
 
@@ -29,11 +35,6 @@ ACTIONS_MODULE = resolve("._actions", BUNGENI_BASEPATH)
 
 GRANT = 1
 DENY  = 0
-
-#
-
-def NullCondition(context): return True
-def NullAction(context): pass
 
 #
 
@@ -69,7 +70,7 @@ class State(object):
                rpm.denyPermissionToRole(permission, role)
 
 
-class Transition(ore.workflow.workflow.Transition):
+class Transition(object):
     """A workflow transition from source status to destination.
     
     A transition from a *single* source state to a *single* destination state,
@@ -83,32 +84,53 @@ class Transition(ore.workflow.workflow.Transition):
     
         transition_id = "%s-%s" % (source or "", destination)
     
-    This is the id to be used when calling WorkflowInfo.fireTransition(id), 
+    This is the id to use when calling WorkflowController.fireTransition(id),
     as well as being the HTML id used in generated menu items, etc. 
     """
     
     def __init__(self, title, source, destination,
-        condition=NullCondition,
-        trigger=ore.workflow.interfaces.MANUAL, 
-        permission=ore.workflow.workflow.CheckerPublic,
+        condition=None,
+        trigger=interfaces.MANUAL, 
+        permission=CheckerPublic,
         order=0, 
         event=None, 
         require_confirmation=False,
         **user_data
     ):
-        transition_id = "%s-%s" % (source or "", destination)
-        super(Transition, self).__init__(
-            transition_id, title, source, destination, condition,
-            NullAction, 
-            trigger, permission, order=0, **user_data)
+        self.title = title
+        self.source = source
+        self.destination = destination
+        self.condition = self._wrapped_condition(condition)
+        self.trigger = trigger
+        self.permission = permission
+        self.order = order
         self.event = event
         self.require_confirmation = require_confirmation
+        self.user_data = user_data
+   
+    @property
+    def transition_id(self):
+        return "%s-%s" % (self.source or "", self.destination)
+    
+    def _wrapped_condition(self, condition):
+        class WorkflowTransitionConditionError(Exception): pass
+        def test(context):
+            if condition is None:
+                return True
+            try:
+                return condition(context)
+            except Exception, e:
+                raise WorkflowTransitionConditionError("%s" % (e))
+        return test
+    
+    def __cmp__(self, other):
+        return cmp(self.order, other.order)
 
 #
 
-# replaces ore.workflow.workflow.WorkflowState
 class StateController(object):
-    zope.interface.implements(ore.workflow.interfaces.IWorkflowState)
+    
+    zope.interface.implements(interfaces.IStateController)
     
     __slots__ = "context",
     
@@ -123,13 +145,13 @@ class StateController(object):
         source_state_id = self.getState()
         if source_state_id != state_id:
             self.context.status = state_id
-        # additional actions related to change of worklfow status
-        self.on_state_change(source_state_id, state_id)
+            # additional actions related to change of worklfow status
+            self.on_state_change(source_state_id, state_id)
     
     def on_state_change(self, source, destination):
         # note: called *after* StateController.setState(status) 
         # i.e. self.context.status is already set to destination state
-        wfc = ore.workflow.interfaces.IWorkflowInfo(self.context) # WorkflowController
+        wfc = interfaces.IWorkflowController(self.context) # WorkflowController
         workflow = wfc.workflow().workflow # AdaptedWorkflow.workflow
         # taking defensive stance, asserting on workflow and state
         # !+ZCA(mr, mar-2011) requiring that workflow is an instance of
@@ -141,16 +163,19 @@ class StateController(object):
         assert state is not None, "May not have a None state" 
         state.execute_actions(self.context)
     
+    ''' !+UNUSED(mr, mar-2011)
     def getId(self):
         return "1"
     def setId(self, id):
         pass # print "setting id", id
+    '''
 
+''' !+UNUSED(mr, mar-2011)
 # <!-- silly versioning thingy for wf runtime -->
 class NullVersions(ore.workflow.workflow.WorkflowVersions):
     def hasVersionId(self, id): 
         return False
-
+'''
 
 class Workflow(ore.workflow.workflow.Workflow):
     
@@ -175,13 +200,23 @@ class Workflow(ore.workflow.workflow.Workflow):
 
 class WorkflowController(ore.workflow.workflow.WorkflowInfo):
     
-    #interface.implements(ore.workflow.interfaces.IWorkflowInfo)
-    
+    zope.interface.implements(interfaces.IWorkflowController)
+        
     def __init__(self, context):
         # assume context is trusted... 
         # and unlitter all actions/conditions of calls to removeSecurityProxy
         self.context = removeSecurityProxy(context)
     
+    #def info(self, context=None):
+    #    if context is None:
+    #        return IWorkflowController(self.context)
+    #    return IWorkflowController(context)
+    
+    def state(self, context=None):
+        if context is None:
+            return interfaces.IStateController(self.context)
+        return interfaces.IStateController(context)
+
     def _get_checkPermission(self):
         try:
             return zope.security.management.getInteraction().checkPermission
@@ -201,7 +236,7 @@ class WorkflowController(ore.workflow.workflow.WorkflowInfo):
                 transition.permission)
         # now make sure transition can still work in this context
         if not transition.condition(self.context):
-            raise ore.workflow.interfaces.ConditionFailedError
+            raise interfaces.ConditionFailedError
     
     def fireTransition(self, transition_id, 
         comment=None, side_effect=None, check_security=True
@@ -218,7 +253,6 @@ class WorkflowController(ore.workflow.workflow.WorkflowInfo):
         # this raises InvalidTransitionError if id is invalid for current state
         transition = wf.getTransition(state.getState(), transition_id)
         self._check(transition, check_security)
-        transition.action(self.context)
         # !+ore.workflow.workflow.WorkflowState.initialize !+side_effect
         # change state of context or new object
         state.setState(transition.destination)
@@ -235,7 +269,7 @@ class WorkflowController(ore.workflow.workflow.WorkflowInfo):
         checkPermission = self._get_checkPermission()
         return [ transition.transition_id 
             for transition in sorted(
-                self._getTransitions(ore.workflow.interfaces.MANUAL)) 
+                self._getTransitions(interfaces.MANUAL)) 
             if transition.condition(self.context) and 
                 checkPermission(transition.permission, self.context) ]
     
@@ -243,6 +277,6 @@ class WorkflowController(ore.workflow.workflow.WorkflowInfo):
         # ignore permission checks
         return [ transition.transition_id 
             for transition in sorted(
-                self._getTransitions(ore.workflow.interfaces.SYSTEM)) 
+                self._getTransitions(interfaces.SYSTEM)) 
             if transition.condition(self.context) ]
 

@@ -14,7 +14,7 @@ from zope.annotation.interfaces import IAnnotations
 from zope.security.proxy import removeSecurityProxy
 from zope import lifecycleevent
 
-from ore.workflow.interfaces import IWorkflowInfo
+from bungeni.core.workflow.interfaces import IWorkflowController
 from bungeni.alchemist.interfaces import IRelationChange
 from bungeni.alchemist import Session
 from sqlalchemy import orm
@@ -130,7 +130,7 @@ class AuditorFactory(object):
     def objectStateChanged(self, object, event):
         """
         object: origin domain workflowed object 
-        event: ore.workflow.workflow.WorkflowTransitionEvent
+        event: bungeni.core.workflow.states.WorkflowTransitionEvent
             .object # origin domain workflowed object 
             .source # souirce state
             .destination # destination state
@@ -146,7 +146,7 @@ class AuditorFactory(object):
         if hasattr(object, "status_date"):
             object.status_date = change_data["date_active"] or datetime.now()
         # as a "base" description, use human readable workflow state title
-        wf = IWorkflowInfo(object).workflow().workflow
+        wf = IWorkflowController(object).workflow().workflow
         description = wf.states[event.destination].title
         # extras, that may be used e.g. to elaborate description at runtime
         extras = {

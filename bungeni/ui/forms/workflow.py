@@ -16,7 +16,7 @@ from zope.annotation.interfaces import IAnnotations
 from bungeni.core.interfaces import IVersioned
 from bungeni.models.utils import get_principal_id
 from bungeni.ui.i18n import _
-from ore.workflow import interfaces
+from bungeni.core.workflow import interfaces
 from bungeni.alchemist.ui import handle_edit_action
 
 ''' !+UNUSED(mr, mar-2011)
@@ -71,9 +71,9 @@ class TransitionHandler(object):
         context = getattr(form.context, "_object", form.context)
         if self.wf_name:
             info = component.getAdapter(
-                context, interfaces.IWorkflowInfo, self.wf_name)
+                context, interfaces.IWorkflowController, self.wf_name)
         else:
-            info = interfaces.IWorkflowInfo(context)
+            info = interfaces.IWorkflowController(context)
         result = handle_edit_action(form, action, data)
         #
         if form.errors: 
@@ -96,7 +96,7 @@ class TransitionHandler(object):
             # dress-up transition data object
             data.setdefault("note", data.get("note", ""))
             data.setdefault("date_active", data.get("data_active", None))
-            # and because WorkflowInfo API e.g. fireTransition(), ONLY 
+            # and because WorkflowController API e.g. fireTransition(), ONLY 
             # foresees for a comment attribute as additional data, we bypass 
             # using that altogether, and pass it along downstream by stuffing 
             # onto the request

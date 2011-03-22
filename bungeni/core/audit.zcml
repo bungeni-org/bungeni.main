@@ -24,11 +24,10 @@
      trusted="True"
      />
      
-  <subscriber
-      for="bungeni.core.interfaces.IAuditable
-           ore.workflow.interfaces.IWorkflowTransitionEvent"
-      handler=".audit.objectStateChange"
-      />
+    <subscriber for="bungeni.core.interfaces.IAuditable
+            bungeni.core.workflow.interfaces.IWorkflowTransitionEvent"
+        handler=".audit.objectStateChange"
+    />
 
   <subscriber
      for="bungeni.core.interfaces.IAuditable

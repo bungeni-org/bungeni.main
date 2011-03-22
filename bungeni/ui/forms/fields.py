@@ -7,7 +7,7 @@ from zope import interface
 from zope.formlib import form
 from zope.i18n import translate
 
-from ore.workflow import interfaces
+from bungeni.core.workflow import interfaces
 from bungeni.alchemist.ui import DynamicFields
 
 from bungeni.alchemist.model import queryModelDescriptor
@@ -75,7 +75,7 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
 
     def setupActions(self):
         return # !+ ??
-        self.wf = interfaces.IWorkflowInfo(self.context, None)
+        self.wf = interfaces.IWorkflowController(self.context, None)
         if self.wf is not None:
             transitions = self.wf.getManualTransitionIds()
             self.actions = tuple(bindTransitions(
@@ -130,7 +130,7 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
         DynamicFields.update(self)
         self.setupActions()  # after we transition we have different actions
         try:
-            wf_state = interfaces.IWorkflowState(
+            wf_state = interfaces.IStateController(
                 removeSecurityProxy(self.context)).getState()
             self.wf_status = wf_state
         except:

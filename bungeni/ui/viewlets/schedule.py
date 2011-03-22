@@ -20,7 +20,7 @@ from bungeni.core.interfaces import ISchedulingContext
 from bungeni.alchemist import Session
 from bungeni.alchemist.container import contained
 from bungeni.alchemist.model import queryModelDescriptor
-from ore.workflow.interfaces import IWorkflow
+from bungeni.core.workflow.interfaces import IWorkflow
 
 from bungeni.ui import browser
 from bungeni.ui import z3evoque

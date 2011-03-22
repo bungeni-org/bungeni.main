@@ -29,7 +29,7 @@ from zope.container.contained import ObjectRemovedEvent
 #from zope.app.pagetemplate import ViewPageTemplateFile
 import sqlalchemy as rdb
 #from bungeni.alchemist.container import stringKey
-#from ore.workflow.interfaces import IWorkflowInfo
+#from bungeni.core.workflow.interfaces import IWorkflowController
 #from bungeni.alchemist.ui import handle_edit_action
 from zope.app.form.interfaces import IDisplayWidget
 
@@ -725,7 +725,7 @@ class TranslateForm(AddForm):
 
         # reset workflow state
         #version.status = None
-        #IWorkflowInfo(version).fireTransition("-draft_translation")
+        #IWorkflowController(version).fireTransition("-draft_translation")
         # redefine form context and proceed with edit action
         #self.setUpAdapters(version)
         #handle_edit_action(self, action, data)

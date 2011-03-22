@@ -14,7 +14,7 @@ log = __import__("logging").getLogger("bungeni.ui.utils.misc")
 from bungeni.ui.i18n import _
 from types import StringTypes, ListType
 
-from ore.workflow import interfaces
+from bungeni.core.workflow import interfaces
 
 import os
 
@@ -45,7 +45,7 @@ def get_wf_state(context, wf_state_id=None):
     # !+ rename to: workflow_state_title
     wf = interfaces.IWorkflow(context)
     if wf_state_id is None:
-        wf_state_id = interfaces.IWorkflowState(context).getState()
+        wf_state_id = interfaces.IStateController(context).getState()
     return wf.workflow.states[wf_state_id].title
     # wf.workflow.getTransitionById("transition_id").title
 

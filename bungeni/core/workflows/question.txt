@@ -155,7 +155,7 @@ Integrity
 Verify that all states are reachable.
 
   >>> from bungeni.core.workflows.testing import verify_workflow
-  >>> from ore.workflow.interfaces import IWorkflow
+  >>> from bungeni.core.workflow.interfaces import IWorkflow
   
   >>> wf = IWorkflow(question)
   >>> verify_workflow(wf)
@@ -163,8 +163,8 @@ Verify that all states are reachable.
 Questions transitions 
 -------------------------------------
 
-  >>> from ore.workflow.interfaces import IWorkflowInfo
-  >>> info = IWorkflowInfo(question)
+  >>> from bungeni.core.workflow.interfaces import IWorkflowController
+  >>> info = IWorkflowController(question)
   >>> info
   <bungeni.core.workflow.states.WorkflowController object at ...>
 

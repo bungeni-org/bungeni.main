@@ -8,7 +8,7 @@ $Id$
 $URL$
 """
 
-from ore.workflow.interfaces import IWorkflowState
+from bungeni.core.workflow.interfaces import IStateController
 from tempfile import TemporaryFile
 from zope.interface import implements
 from zope.publisher.interfaces import IPublishTraverse
@@ -73,7 +73,7 @@ class FileDeactivate(BrowserView):
 
     def __call__(self):
         trusted = removeSecurityProxy(self.context)
-        wf_state_adapter = IWorkflowState(trusted)
+        wf_state_adapter = IStateController(trusted)
         wf_state_adapter.setState('inactive')
         redirect_url = self.request.getURL().replace('/deactivate', '')
         return self.request.response.redirect(redirect_url)

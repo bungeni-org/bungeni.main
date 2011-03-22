@@ -4,9 +4,7 @@ from zope import interface
 from zope import component
 from zope.event import notify
 from zope.component.interfaces import ObjectEvent
-from ore.workflow import interfaces
-from ore.workflow.interfaces import IWorkflow
-from ore.workflow.interfaces import IWorkflowInfo
+from bungeni.core.workflow import interfaces
 
 
 # global workflow transition event map
@@ -47,20 +45,20 @@ def workflowTransitionEventDispatcher(event):
 def initializeWorkflow(object, event):
     """In response to object created events."""
 
-    if IWorkflow(object, None) is None:
+    if interfaces.IWorkflow(object, None) is None:
         return
     
-    workflow = IWorkflowInfo(object, None)
+    workflow = interfaces.IWorkflowController(object, None)
     if workflow is not None:
         workflow.fireAutomatic()
 
 def fireAutomaticTransitions(object, event):
     """ fire automatic transitions for a new state """
     
-    if IWorkflow(object, None) is None:
+    if interfaces.IWorkflow(object, None) is None:
         return
     
-    workflow = IWorkflowInfo(object, None)
+    workflow = interfaces.IWorkflowController(object, None)
     if workflow is not None:
         workflow.fireAutomatic()
 

@@ -5,8 +5,8 @@ import datetime
 
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 
-from ore.workflow.interfaces import IWorkflowInfo
-from ore.workflow.interfaces import NoTransitionAvailableError
+from bungeni.core.workflow.interfaces import IWorkflowController
+from bungeni.core.workflow.interfaces import NoTransitionAvailableError
 
 import bungeni.models.interfaces as interfaces
 #import bungeni.models.domain as domain
@@ -169,7 +169,7 @@ def unset_group_local_role(context):
 
 def dissolveChildGroups(groups, context):
     for group in groups:
-        IWorkflowInfo(group).fireTransition("active-dissolved", 
+        IWorkflowController(group).fireTransition("active-dissolved", 
             check_security=False)
         
 # groupsitting
@@ -186,7 +186,7 @@ def schedule_sitting_items(context):
     
     def fireTransitionScheduled(item, check_security=False):
         try:
-            IWorkflowInfo(item).fireTransitionToward("scheduled", 
+            IWorkflowController(item).fireTransitionToward("scheduled", 
                     check_security=False)
             raise RuntimeWarning(
                 """It has WORKED !!! fireTransitionToward("scheduled")""")

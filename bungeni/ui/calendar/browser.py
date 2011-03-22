@@ -41,7 +41,7 @@ from bungeni.models.interfaces import IGroupSitting
 from ploned.ui.interfaces import IStructuralView
 from bungeni.alchemist.container import stringKey
 from bungeni.alchemist import Session
-from ore.workflow.interfaces import IWorkflowInfo
+from bungeni.core.workflow.interfaces import IWorkflowController
 from zope.formlib import form
 from zope import schema
 from zope.formlib import namedtemplate
@@ -98,7 +98,7 @@ def get_sitting_items(sitting, request, include_actions=False):
                 truncated_discussion = t_discussion[0:index2] + "..."
             except ValueError:
                 truncated_discussion = t_discussion + "..."
-        info = IWorkflowInfo(item, None)
+        info = IWorkflowController(item, None)
         state_title = info.workflow().workflow.states[item.status].title
         
         record = {

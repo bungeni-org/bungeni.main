@@ -19,13 +19,12 @@ import bungeni.core.audit as audit
 import bungeni.core.globalsettings as prefs
 import bungeni.core.workflows.dbutils as dbutils
 
-from ore.workflow.interfaces import IWorkflowInfo
+#from bungeni.core.workflow.interfaces import IWorkflowController
 
 ##############################
 # imports for main
 from zope import component
 from sqlalchemy import create_engine
-import ore.workflow.workflow
 from bungeni.alchemist.interfaces import IDatabaseEngine
 import bungeni.core.interfaces
 import bungeni.core.workflows.question
@@ -55,7 +54,7 @@ def _deferAdmissibleQuestionsBefore(date):
     status = u"admissible"
     admissibleQuestions = _getQuestionsApprovedBefore(date, status)
     for question in admissibleQuestions:
-        IWorkflowInfo(question).fireTransitionToward(u'deferred', 
+        IWorkflowController(question).fireTransitionToward(u'deferred', 
                 check_security=False)
 
 

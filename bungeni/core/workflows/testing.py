@@ -1,13 +1,12 @@
 import zope.component
 import zope.securitypolicy.interfaces
 
-from ore.workflow.interfaces import IWorkflow, IWorkflowInfo
+from bungeni.core.workflow import interfaces
 from bungeni.models import domain
 
-import ore.workflow.workflow
 import bungeni.core.version
 import bungeni.models.interfaces
-import bungeni.core.workflows.adapters
+from bungeni.core.workflows import adapters
 import bungeni.core.workflows.events
 import bungeni.alchemist.security
 
@@ -38,18 +37,27 @@ def verify_workflow(wf):
                 [d.title for d in destinations]))
 
 def list_transitions(item):
-    wf = IWorkflow(item)
-    info = IWorkflowInfo(item)
+    wf = interfaces.IWorkflow(item)
+    info = interfaces.IWorkflowController(item)
     state = info.state().getState()
     return tuple(transition.transition_id 
                for transition in wf.getTransitions(state))
 
 def list_permissions(item):
-    wf = IWorkflow(item)
-    info = IWorkflowInfo(item)
+    wf = interfaces.IWorkflow(item)
+    info = interfaces.IWorkflowController(item)
     state = info.state().getState()
     return tuple(transition.permission 
                 for transition in wf.getTransitions(state))
+
+def provideAdapterWorkflowController(adapts_kls):
+    zope.component.provideAdapter(
+        bungeni.core.workflow.states.WorkflowController,
+        (adapts_kls,),
+        bungeni.core.workflow.interfaces.IWorkflowController)
+def provideAdapterWorkflow(factory, adapts_kls):
+    zope.component.provideAdapter(factory, (adapts_kls,),
+        bungeni.core.workflow.interfaces.IWorkflow)
 
 def setup_adapters():
     
@@ -58,48 +66,35 @@ def setup_adapters():
     # this is an attempt (that does not give the desired result) to get
     #   bungeni.core.workflow.states.WorkflowController 
     # to be used as the factory provider for
-    #   ore.workflow.interfaces.IWorkflowInfo
+    #   interfaces.IWorkflowController
     
     zope.component.provideAdapter(
+        factory=bungeni.core.workflow.states.WorkflowController,
         adapts=[bungeni.alchemist.interfaces.IAlchemistContent], 
-        provides=ore.workflow.interfaces.IWorkflowInfo,
-        factory=bungeni.core.workflow.states.WorkflowController)
-    
+        provides=interfaces.IWorkflowController
+    )
     zope.component.provideAdapter(
+        factory=bungeni.core.workflow.states.StateController,
         adapts=[bungeni.alchemist.interfaces.IAlchemistContent], 
-        provides=ore.workflow.interfaces.IWorkflowState,
-        factory=bungeni.core.workflow.states.StateController) 
+        provides=bungeni.core.workflow.interfaces.IStateController
+    )
     
     # content workflow
+    # provideAdapter(factory, adapts=None, provides=None, name='')
     
     zope.component.provideAdapter(
         bungeni.core.workflow.states.StateController,
         (bungeni.models.interfaces.IBungeniContent,))
-
-    zope.component.provideAdapter(
-        bungeni.core.workflows.adapters.QuestionWorkflowAdapter,
-        (domain.Question,))
-
-    zope.component.provideAdapter(
-        bungeni.core.workflow.states.WorkflowController,
-        (domain.Question,))
-
-    zope.component.provideAdapter(
-        bungeni.core.workflows.adapters.BillWorkflowAdapter,
-        (domain.Bill,))
-
-    zope.component.provideAdapter(
-        bungeni.core.workflow.states.WorkflowController,
-        (domain.Bill,))
-
-    zope.component.provideAdapter(
-        bungeni.core.workflows.adapters.MotionWorkflowAdapter,
-        (domain.Motion,))
-
-    zope.component.provideAdapter(
-        bungeni.core.workflow.states.WorkflowController,
-        (domain.Motion,))
-
+        
+    provideAdapterWorkflow(adapters.QuestionWorkflowAdapter, domain.Question)
+    provideAdapterWorkflowController(domain.Question)
+    
+    provideAdapterWorkflow(adapters.BillWorkflowAdapter, domain.Bill)
+    provideAdapterWorkflowController(domain.Bill)
+    
+    provideAdapterWorkflow(adapters.MotionWorkflowAdapter, domain.Motion)
+    provideAdapterWorkflowController(domain.Motion)
+    
     zope.component.provideHandler(
         bungeni.core.workflows.events.workflowTransitionEventDispatcher)
 
@@ -108,40 +103,18 @@ def setup_adapters():
         (bungeni.core.interfaces.IVersionable,),
         bungeni.core.interfaces.IVersioned)
 
-    zope.component.provideAdapter(
-        bungeni.core.workflows.adapters.GroupSittingWorkflowAdapter,
-        (domain.GroupSitting,))
-
-    zope.component.provideAdapter(
-        bungeni.core.workflow.states.WorkflowController,
-        (domain.GroupSitting,))
+    provideAdapterWorkflow(adapters.GroupSittingWorkflowAdapter, domain.GroupSitting)
+    provideAdapterWorkflowController(domain.GroupSitting)
     
-    zope.component.provideAdapter(
-        bungeni.core.workflows.adapters.UserAddressWorkflowAdapter,
-        (domain.UserAddress,))
-    zope.component.provideAdapter(
-        bungeni.core.workflows.adapters.GroupAddressWorkflowAdapter,
-        (domain.GroupAddress,))
+    provideAdapterWorkflow(adapters.UserAddressWorkflowAdapter, domain.UserAddress)
+    provideAdapterWorkflow(adapters.GroupAddressWorkflowAdapter, domain.GroupAddress)
+    provideAdapterWorkflowController(domain.UserAddress)
     
-    zope.component.provideAdapter(
-        bungeni.core.workflow.states.WorkflowController,
-        (domain.UserAddress,))
-        
-    zope.component.provideAdapter(
-        bungeni.core.workflows.adapters.TabledDocumentWorkflowAdapter,
-        (domain.TabledDocument,))
+    provideAdapterWorkflow(adapters.TabledDocumentWorkflowAdapter, domain.TabledDocument)
+    provideAdapterWorkflowController(domain.TabledDocument)
 
-    zope.component.provideAdapter(
-        bungeni.core.workflow.states.WorkflowController,
-        (domain.TabledDocument,))
-    
-    zope.component.provideAdapter(
-        bungeni.core.workflows.adapters.AgendaItemWorkflowAdapter,
-        (domain.AgendaItem,))
-
-    zope.component.provideAdapter(
-        bungeni.core.workflow.states.WorkflowController,
-        (domain.AgendaItem,))
+    provideAdapterWorkflow(adapters.AgendaItemWorkflowAdapter, domain.AgendaItem)
+    provideAdapterWorkflowController(domain.AgendaItem)
 
 
 def setup_security_adapters():

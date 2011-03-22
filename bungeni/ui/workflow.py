@@ -10,8 +10,7 @@ from zope.app.schema.vocabulary import IVocabularyFactory
 from zope.app.form.browser.textwidgets import TextAreaWidget
 from zc.table import column
 
-from ore.workflow import interfaces
-from ore.workflow.interfaces import IWorkflowInfo
+from bungeni.core.workflow import interfaces
 
 from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.alchemist.interfaces import IAlchemistContent
@@ -84,8 +83,8 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
     def update(self):
         has_wfstate = False
         try:
-            wf_state = interfaces.IWorkflowState(
-                                removeSecurityProxy(self.context)).getState()
+            wf_state = interfaces.IStateController(
+                removeSecurityProxy(self.context)).getState()
             has_wfstate = True
         except:
             wf_state = u"undefined"
@@ -206,7 +205,7 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
         super(WorkflowActionViewlet, self).update()
     
     def setupActions(self, transition):
-        self.wf = interfaces.IWorkflowInfo(self.context)
+        self.wf = interfaces.IWorkflowController(self.context)
         if transition is None:
             transitions = self.wf.getManualTransitionIds()
         else:
@@ -278,8 +277,8 @@ class WorkflowChangeStateView(WorkflowView):
         
         if headless is True:
             actions = get_actions("context_workflow", self.context, self.request)
-            state_title = IWorkflowInfo(self.context).workflow().workflow.states[
-                self.context.status].title
+            state_title = interfaces.IWorkflowController(self.context
+                ).workflow().workflow.states[self.context.status].title
             result = self.ajax_template(actions=actions, state_title=state_title)
             
             if require_confirmation is True:

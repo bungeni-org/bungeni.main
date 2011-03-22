@@ -49,7 +49,7 @@
        as an attempt to get the class
             bungeni.core.workflow.states.WorkflowController 
        to kick-in as the factory provider for
-            ore.workflow.interfaces.IWorkflowInfo
+            bungeni.core.workflow.interfaces.IWorkflowController
   <include package="bungeni.core.workflows" file="grants.zcml" />
   <include package="bungeni.core.workflows" file="permissions.zcml" />
   -->
