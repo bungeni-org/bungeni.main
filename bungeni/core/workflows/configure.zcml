@@ -6,25 +6,20 @@
     <!-- workflow permissions and grants -->
     <include file="permissions.zcml" />
     
-  <!-- general transition event dispatcher -->
-  
-  <subscriber
-     handler=".events.workflowTransitionEventDispatcher" />
-
-  <!-- workflow events -->
-  
-  <subscriber
-     handler=".events.fireAutomaticTransitions"
-     for="bungeni.alchemist.interfaces.IAlchemistContent
-          bungeni.core.workflow.interfaces.IWorkflowTransitionEvent"
-     />
-
+    <!-- general transition event dispatcher -->
+    
+    <subscriber handler=".events.workflowTransitionEventDispatcher" />
+    
+    <!-- workflow events -->
+    <subscriber handler=".events.fireAutomaticTransitions"
+        for="bungeni.alchemist.interfaces.IAlchemistContent
+            bungeni.core.workflow.interfaces.IWorkflowTransitionEvent"
+    />
     <subscriber handler=".events.initializeWorkflow"
         for="bungeni.alchemist.interfaces.IAlchemistContent
             zope.lifecycleevent.IObjectCreatedEvent"
     />
-
-
+    
     <!-- silly versioning thingy for wf runtime -->
     <!--
     <utility provides="bungeni.core.workflow.interfaces.IWorkflowVersions"
@@ -119,19 +114,17 @@
      provides="bungeni.core.workflow.interfaces.IWorkflow"
      factory=".adapters.BillWorkflowAdapter" />
 
-
-
-  <!-- questions workflow -->
-
-  <adapter
-     for="bungeni.models.interfaces.IQuestion"
-     provides="bungeni.core.workflow.interfaces.IStateController"
-     factory="bungeni.core.workflow.states.StateController" />
-  
-  <adapter
-     for="bungeni.models.interfaces.IQuestion"
-     provides="bungeni.core.workflow.interfaces.IWorkflow"
-     factory=".adapters.QuestionWorkflowAdapter" />
+    
+    <!-- questions workflow -->
+    
+    <adapter for="bungeni.models.interfaces.IQuestion"
+        provides="bungeni.core.workflow.interfaces.IStateController"
+        factory="bungeni.core.workflow.states.StateController"
+    />
+    <adapter for="bungeni.models.interfaces.IQuestion"
+        provides="bungeni.core.workflow.interfaces.IWorkflow"
+        factory=".adapters.QuestionWorkflowAdapter"
+    />
 
 
 
@@ -150,18 +143,15 @@
   <subscriber handler=".question.SendNotificationToMemberUponComplete" /> 
 
 
-  <!-- motion workflow -->
-  <adapter
-     for="bungeni.models.interfaces.IMotion"
-     provides="bungeni.core.workflow.interfaces.IStateController"
-     factory="bungeni.core.workflow.states.StateController" />
-  
-  <adapter
-     for="bungeni.models.interfaces.IMotion"
-     provides="bungeni.core.workflow.interfaces.IWorkflow"
-     factory=".adapters.MotionWorkflowAdapter" />
-     
- 
+    <!-- motion workflow -->
+    <adapter for="bungeni.models.interfaces.IMotion"
+        provides="bungeni.core.workflow.interfaces.IStateController"
+        factory="bungeni.core.workflow.states.StateController"
+    />
+    <adapter for="bungeni.models.interfaces.IMotion"
+        provides="bungeni.core.workflow.interfaces.IWorkflow"
+        factory=".adapters.MotionWorkflowAdapter"
+    />
 
   <subscriber handler=".motion.SendNotificationToMemberUponReceipt" /> 
   <subscriber handler=".motion.SendNotificationToClerkUponSubmit" />

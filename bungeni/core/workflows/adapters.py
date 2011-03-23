@@ -23,14 +23,14 @@ import report
 from bungeni.models import domain
 from bungeni.models.interfaces import IVersion
 
-from ore.workflow import workflow
-
 from bungeni.utils.capi import capi
 PATH_CUSTOM_WORKLFOWS = capi.get_path_for("workflows")
 
 def load_workflow(module, kls):
+    """Get the Workflow instance, from XML definition, for module and kls.
+    """
     name = module.__name__.rsplit('.')[-1]
-    wf = xmlimport.load("%s/%s.xml" % (PATH_CUSTOM_WORKLFOWS, name))
+    wf = xmlimport.load("%s/%s.xml" % (PATH_CUSTOM_WORKLFOWS, name), name)
     events.register_workflow_transitions(wf, kls)
     module.wf = wf
     module.states = wf.states
@@ -42,43 +42,26 @@ def load_workflow(module, kls):
             _log("          %s" % (p,))
     return wf
 
-UserAddressWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(address, domain.UserAddress))
-GroupAddressWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(address, domain.GroupAddress))
-AgendaItemWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(agendaitem, domain.AgendaItem))
-AttachedFileWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(attachedfile, domain.AttachedFile))
-BillWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(bill, domain.Bill))
-CommitteeWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(committee, domain.Committee))
-EventWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(event, domain.EventItem))
-GroupWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(group, domain.Group))
-GroupSittingWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(groupsitting, domain.GroupSitting))
-HeadingWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(heading, domain.Heading))
-MotionWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(motion, domain.Motion))
-ParliamentWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(parliament, domain.Parliament))
-QuestionWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(question, domain.Question))
-ReportWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(report, domain.Report))
-TabledDocumentWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(tableddocument, domain.TabledDocument))
-UserWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(user, domain.User))
-VersionWorkflowAdapter = workflow.AdaptedWorkflow(
-    load_workflow(version, IVersion))
-
+# WorkflowAdapter *factories* -- 
+# a Workflow instance is itself the factory of own AdaptedWorkflows.
+UserAddressWorkflowAdapter = load_workflow(address, domain.UserAddress)
+GroupAddressWorkflowAdapter = load_workflow(address, domain.GroupAddress)
+AgendaItemWorkflowAdapter = load_workflow(agendaitem, domain.AgendaItem)
+AttachedFileWorkflowAdapter = load_workflow(attachedfile, domain.AttachedFile)
+BillWorkflowAdapter = load_workflow(bill, domain.Bill)
+CommitteeWorkflowAdapter = load_workflow(committee, domain.Committee)
+EventWorkflowAdapter = load_workflow(event, domain.EventItem)
+GroupWorkflowAdapter = load_workflow(group, domain.Group)
+GroupSittingWorkflowAdapter = load_workflow(groupsitting, domain.GroupSitting)
+HeadingWorkflowAdapter = load_workflow(heading, domain.Heading)
+MotionWorkflowAdapter = load_workflow(motion, domain.Motion)
+ParliamentWorkflowAdapter = load_workflow(parliament, domain.Parliament)
+QuestionWorkflowAdapter = load_workflow(question, domain.Question)
+ReportWorkflowAdapter = load_workflow(report, domain.Report)
+TabledDocumentWorkflowAdapter = load_workflow(tableddocument, domain.TabledDocument)
+UserWorkflowAdapter = load_workflow(user, domain.User)
+VersionWorkflowAdapter = load_workflow(version, IVersion)
 
 # check/regenerate zcml directives for workflows
 xmlimport.zcml_check_regenerate()
-    
 

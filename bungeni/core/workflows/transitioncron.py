@@ -68,6 +68,8 @@ def deferAdmissibleQuestions():
     _deferAdmissibleQuestionsBefore(deferDate)
 '''
 
+
+''' !+NOTWORKING(mr, mar-2011)
 def main(argv=None):
     """
     run this as a cron job and execute all
@@ -104,5 +106,5 @@ def main(argv=None):
     
 if __name__ == "__main__":
     sys.exit(main())
-
+'''
 

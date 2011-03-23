@@ -90,11 +90,13 @@ See the Bungeni Source Code Style Guide for further details.
 def zcml_check_regenerate():
     """Called after all XML workflows have been loaded (see adapers.py). 
     """
-    # !+ bungeni_custom/sys/workflows
+    # ZCML_FILENAME is under bungeni.core.workflows
     import bungeni.core.workflows
     __path__ = os.path.dirname(bungeni.core.workflows.__file__)
     filepath = os.path.join(__path__, ZCML_FILENAME)
+    # read current file
     persisted = open(filepath, "r").read().decode("utf-8")
+    # regenerate, compare, and re-write if needed
     regenerated = ZCML_BOILERPLATE % ("\n".join(ZCML_LINES))
     if persisted != regenerated:
         log.warn("CHANGES to file:\n%s" % (
@@ -123,15 +125,13 @@ def zcml_transition_permission(pid, title, roles):
 
 #
 
-def load(file_path):
-    doc = etree.fromstring(open(file_path).read())
-    module_name = os.path.splitext(os.path.basename(file_path))[0]
-    #module = resolve(".%s" % module_name, BUNGENI_BASEPATH)
-    #actions = getattr(module, "actions")
-    return _load(doc, module_name)
-
-# add version to state
-# mv transition implied action to explicit state "atomic" actions
+def load(file_path, module_name):
+    """ (file_path:str, module_name:str) -> Workflow
+    
+    Loads the workflow XML definition file, returning the correspondingly setup 
+    Workflow instance. Called by workflows.adapters.load_workflow.
+    """
+    return _load(etree.fromstring(open(file_path).read()), module_name)
 
 def _load(workflow, module_name):
     """ (workflow:etree_doc, module_name:str) -> Workflow
@@ -326,7 +326,5 @@ def _load(workflow, module_name):
             log.warn("[%s] adding transition [%s-%s] [%s]" % (
                 wid, source or "", destination, kw))
     
-    return Workflow(transitions, states)
-
-
+    return Workflow(states, transitions)
 

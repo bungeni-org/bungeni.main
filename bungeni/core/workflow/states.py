@@ -156,7 +156,8 @@ class StateController(object):
         # taking defensive stance, asserting on workflow and state
         # !+ZCA(mr, mar-2011) requiring that workflow is an instance of
         # bungeni.core.workflow.states.Workflow undermines the whole point of
-        # using ZCA in the first place? No gain, just more convoluted code.
+        # using ZCA in the first place? Any possible gain made categorically 
+        # impossible... and just with more convoluted code.
         assert isinstance(workflow, Workflow), \
             "Workflow must be an instance of Workflow: %s" % (workflow)
         state = workflow.states.get(destination)
@@ -179,10 +180,10 @@ class NullVersions(ore.workflow.workflow.WorkflowVersions):
 
 class Workflow(ore.workflow.workflow.Workflow):
     
-    def __init__(self, transitions, states):
-        self.refresh(transitions, states)
+    def __init__(self, states, transitions):
+        self.refresh(states, transitions)
     
-    def refresh(self, transitions, states=None):
+    def refresh(self, states, transitions):
         super(Workflow, self).refresh(transitions)
         self.states = {}
         state_names = set()
@@ -196,6 +197,23 @@ class Workflow(ore.workflow.workflow.Workflow):
         if unreachable_states:
             raise SyntaxError("Workflow Contains Unreachable States %s" % (
                     unreachable_states))
+    
+    def __call__(self, context):
+        """A Workflow instance is itself the factory of own AdaptedWorkflows.
+        """
+        # self is the workflow instance
+        class AdaptedWorkflow(object):
+            """An workflow adapted on context.
+            """
+            def __init__(awf, context):
+                awf.context = context
+                awf.workflow = self
+            def __getattribute__(awf, name):
+                try:
+                    return object.__getattribute__(awf, name)
+                except AttributeError:
+                    return object.__getattribute__(self, name)
+        return AdaptedWorkflow(context)
 
 
 class WorkflowController(ore.workflow.workflow.WorkflowInfo):
@@ -206,6 +224,7 @@ class WorkflowController(ore.workflow.workflow.WorkflowInfo):
         # assume context is trusted... 
         # and unlitter all actions/conditions of calls to removeSecurityProxy
         self.context = removeSecurityProxy(context)
+        self._workflow = None # cache for workflow instance
     
     #def info(self, context=None):
     #    if context is None:
@@ -216,7 +235,12 @@ class WorkflowController(ore.workflow.workflow.WorkflowInfo):
         if context is None:
             return interfaces.IStateController(self.context)
         return interfaces.IStateController(context)
-
+    
+    def workflow(self):
+        if self._workflow is None:
+            self._workflow = interfaces.IWorkflow(self.context)
+        return self._workflow
+    
     def _get_checkPermission(self):
         try:
             return zope.security.management.getInteraction().checkPermission
@@ -246,14 +270,15 @@ class WorkflowController(ore.workflow.workflow.WorkflowInfo):
             check_security is True
         ):
             log.warn("%s.fireTransition(%s, comment=%s, side_effect=%s, "
-                "check_security=%s" % (self, transition_id, 
+                "check_security=%s)" % (self, transition_id, 
                     comment, side_effect, check_security)) 
         state = self.state() # StateController
         wf = self.workflow() # Workflow
-        # this raises InvalidTransitionError if id is invalid for current state
+        # raises InvalidTransitionError if id is invalid for current state
         transition = wf.getTransition(state.getState(), transition_id)
         self._check(transition, check_security)
-        # !+ore.workflow.workflow.WorkflowState.initialize !+side_effect
+        # !+ore.workflow.workflow.WorkflowState.initialize 
+        # !+side_effect
         # change state of context or new object
         state.setState(transition.destination)
         # notify wf event observers
@@ -268,15 +293,17 @@ class WorkflowController(ore.workflow.workflow.WorkflowInfo):
     def getManualTransitionIds(self):
         checkPermission = self._get_checkPermission()
         return [ transition.transition_id 
-            for transition in sorted(
-                self._getTransitions(interfaces.MANUAL)) 
-            if transition.condition(self.context) and 
-                checkPermission(transition.permission, self.context) ]
+            for transition in self._get_possible_transitions(interfaces.MANUAL)
+            if checkPermission(transition.permission, self.context) ]
     
     def getSystemTransitionIds(self):
         # ignore permission checks
         return [ transition.transition_id 
-            for transition in sorted(
-                self._getTransitions(interfaces.SYSTEM)) 
+            for transition in self._get_possible_transitions(interfaces.SYSTEM) ]
+    
+    def _get_possible_transitions(self, trigger_ifilter):
+        return [ transition 
+            for transition in sorted(self._getTransitions(trigger_ifilter)) 
             if transition.condition(self.context) ]
+
 
