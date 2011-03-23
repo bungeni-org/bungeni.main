@@ -3,9 +3,10 @@
 log = __import__("logging").getLogger("bungeni.ui")
 import re
 import os
-import tidy
 import time
 import htmlentitydefs
+import random
+from tidylib import tidy_fragment
 from interfaces import IOpenOfficeConfig
 from bungeni.alchemist import Session
 from bungeni.models import domain
@@ -16,9 +17,9 @@ from zope.security.proxy import removeSecurityProxy
 from zope.component import getUtility
 from zope.lifecycleevent import ObjectCreatedEvent
 from zope.event import notify
-from xml.dom import minidom
 from appy.pod.renderer import Renderer
 from zope.component.interfaces import ComponentLookupError
+from threading import BoundedSemaphore
 def unescape(text):
     def fixup(m):
         text = m.group(0)
@@ -42,7 +43,7 @@ def unescape(text):
 
 def cleanupText(text):
     """This method cleans up the text of the report using libtidy"""
-    #utidylib options
+    #tidylib options
     options = dict(output_xhtml=1,
                     add_xml_decl=1,
                     indent=1,
@@ -52,16 +53,12 @@ def cleanupText(text):
     #remove html entities from the text
     ubody_text = unescape(text)
     #clean up xhtml using tidy
-    aftertidy = tidy.parseString(ubody_text.encode("utf8"), **options)
-    #tidy returns a <tidy.lib._Document object>
-    dom = minidom.parseString(str(aftertidy))
-    nodeList = dom.getElementsByTagName("body")
-    text = ""
-    for childNode in nodeList[0].childNodes:
-        text += childNode.toxml()
-    dom.unlink()
-    return text
+    aftertidy, errors = tidy_fragment(ubody_text.encode("utf8"), options, keep_doc=False)
+    #tidylib returns a <tidy.lib._Document object>
+    return str(aftertidy)
 
+
+    
 class DownloadDocument(BrowserView):
     """Abstact base class for ODT and PDF views"""
     #path to the odt template. Must be set by sub-class
@@ -90,18 +87,32 @@ class DownloadDocument(BrowserView):
     
     def generateDoc(self):
         """Generates ODT/PDF doc"""
-        tempFileName = os.path.dirname(__file__) + "/tmp/%f.%s" % (time.time(),self.document_type)
+        tempFileName = os.path.dirname(__file__) + "/tmp/%f-%f.%s" % (
+                            time.time(),random.random(),self.document_type)
         params = {}
         params["body_text"] = cleanupText(self.bodyText())
         openofficepath = getUtility(IOpenOfficeConfig).getPath()
+        ooport = getUtility(IOpenOfficeConfig).getPort()
         renderer = Renderer(self.oo_template_file, params, tempFileName,
-                                               pythonWithUnoPath=openofficepath)
+                                               pythonWithUnoPath=openofficepath,
+                                               ooPort=ooport)
+        from globalSemaphore import globalOpenOfficeSemaphore
         try:
-            renderer.run()
+            # appy.pod only connects with openoffice when converting to
+            # PDF. We need to restrict number of connections to the
+            # max connections option set in openoffice.zcml
+            if self.document_type == "pdf":
+                if globalOpenOfficeSemaphore.acquire(blocking=True):
+                    renderer.run()
+                    globalOpenOfficeSemaphore.release()
+            else:
+                renderer.run()
         except:
             log.exception("An error occured during ODT/PDF generation")
             try:
                 return self.error_template()
+            # This should only happen in unit tests because the site config
+            # has not been read in
             except ComponentLookupError:
                 return u"An error occured during ODT/PDF generation."
         f = open(tempFileName, "rb")
@@ -117,6 +128,7 @@ class DownloadDocument(BrowserView):
         are immutable eg. reports."""
         #TODO : Either generate a hash of a mutable content item and store it 
         # with the odt/pdf doc or track changes to a doc
+        # Add caching by state. items in terminal states do not change
         tempFileName = os.path.dirname(__file__) + "/tmp/%f.%s" % (
                                                 time.time(),self.document_type)
         if cached:
@@ -141,7 +153,7 @@ class DownloadDocument(BrowserView):
                 attached_file.type = file_type
                 self.document.attached_files.append(attached_file)
                 session.add(self.document)
-                session.commit()
+                session.flush()
                 notify(ObjectCreatedEvent(attached_file))
             for f in self.document.attached_files:
                 if f.file_title == self.document_type: 
@@ -188,6 +200,7 @@ class BungeniContentODT(DownloadDocument):
         if not hasattr(self.document,"group"):
             session = Session()
             self.document.group = session.query(domain.Group).get(self.document.parliament_id)
+            session.close()
         return self.template()
     
     def __call__(self):
@@ -202,6 +215,7 @@ class BungeniContentPDF(DownloadDocument):
         if not hasattr(self.document,"group"):
             session = Session()
             self.document.group = session.query(domain.Group).get(self.document.parliament_id)
+            session.close()
         return self.template()
     
     def __call__(self):

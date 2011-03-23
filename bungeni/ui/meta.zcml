@@ -2,10 +2,10 @@
   <meta:directive
       name="openoffice"
       namespace="http://namespaces.bungeni.org"
-      schema="bungeni.ui.interfaces.IOpenOfficePath"
-      handler="bungeni.ui.zcml.registerOpenOfficePath"
+      schema="bungeni.ui.interfaces.IOpenOfficeConfigSchema"
+      handler="bungeni.ui.zcml.registerOpenOfficeConfig"
       >
-      Path to OpenOffice Python that will be used to generate PDF reports
+      OpenOffice Configuration
   </meta:directive>
 </configure>
 
