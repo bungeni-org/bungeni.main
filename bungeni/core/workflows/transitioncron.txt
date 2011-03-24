@@ -25,7 +25,6 @@ Imports.
   >>> import bungeni.core.workflows.question as question_workflow
   >>> import bungeni.core.workflows.transitioncron as cron
   >>> import bungeni.core.workflows.question
-  >>> import ore.workflow
       
 Questions
 ---------

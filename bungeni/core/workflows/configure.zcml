@@ -20,13 +20,6 @@
             zope.lifecycleevent.IObjectCreatedEvent"
     />
     
-    <!-- silly versioning thingy for wf runtime -->
-    <!--
-    <utility provides="bungeni.core.workflow.interfaces.IWorkflowVersions"
-        factory="bungeni.core.workflow.states.NullVersions"
-    />
-    -->
-    
     <!-- generic workflow adapters -->
     
     <adapter for="bungeni.alchemist.interfaces.IAlchemistContent"
@@ -39,12 +32,12 @@
         factory="bungeni.core.workflow.states.StateController"
     />
     
-  <!-- content workflow -->
-  
-  <adapter
-     for="bungeni.models.interfaces.IBungeniContent"
-     provides="bungeni.core.workflow.interfaces.IWorkflow"
-     factory=".simple.SimpleWorkflowAdapter" />
+    <!-- content workflow -->
+    
+    <adapter for="bungeni.models.interfaces.IBungeniContent"
+        provides="bungeni.core.workflow.interfaces.IWorkflow"
+        factory=".simple.simple_workflow"
+    />
 
   <!-- content workflow -->
   

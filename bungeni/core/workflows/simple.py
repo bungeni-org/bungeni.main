@@ -1,57 +1,53 @@
 """
 
-# !+WHAT(mr, mae-2011) what was the idea behind this?
+# !+WHAT(mr, mar-2011) what was the idea behind this?
 
 """
 
-from ore.workflow import interfaces as iworkflow
-from ore.workflow import workflow
+from bungeni.core.workflow import interfaces as iworkflow
+from bungeni.core.workflow import states as workflow
 
 from bungeni.core.i18n import _
 
-class states:
-    new = _(u"visible")
-    pending = _(u"pending")
-    scheduled = _(u"scheduled")
+def states():
+    return [
+        workflow.State("new", _(u"visible"), [], []),
+        workflow.State("pending", _(u"pending"), [], []),
+        workflow.State("scheduled", _(u"scheduled"), [], []),
+    ]
 
-def create_simple_workflow( ):
-    transitions = []
-    add = transitions.append
-    
-    add( workflow.Transition(
-        transition_id = 'create',
-        title='Create',
-        trigger = iworkflow.AUTOMATIC,
-        source = None,
-        destination = states.new
-        ) )
+def transitions():
+    return [
+        workflow.Transition(
+            transition_id="create",
+            title="Create",
+            trigger=iworkflow.AUTOMATIC,
+            source=None,
+            destination="new"
+        ),
+        workflow.Transition(
+            transition_id="submit-clerk",
+            title=_(u"Submit to Clerk"),
+            source="new",
+            destination="pending"
+        ),
+        workflow.Transition(
+            transition_id="Schedule",
+            title=_(u"Schedule"),
+            source="pending",
+            destination="scheduled"
+        )
+    ]
 
-    add( workflow.Transition(
-        transition_id = 'submit-clerk',
-        title=_(u'Submit to Clerk'),
-        source = states.new,
-        destination = states.pending
-        ) )
+class SimpleWorkflow(workflow.Workflow):
+    def __init__(self):
+        super(SimpleWorkflow, self).__init__(states(), transitions())
 
-    add( workflow.Transition(
-        transition_id = 'Schedule',
-        title=_(u'Schedule'),
-        source = states.pending,
-        destination = states.scheduled
-        ) )
-
-    return transitions
-
-class SimpleWorkflow( workflow.Workflow ):
-
-    def __init__( self ):
-        super( SimpleWorkflow, self).__init__( create_simple_workflow() )
-
-SimpleWorkflowAdapter = workflow.AdaptedWorkflow( SimpleWorkflow() )
-
-if __name__ == '__main__':
-    wf = SimpleWorkflow()
-    print wf.toDot()
+simple_workflow = SimpleWorkflow()
 
 
+if __name__ == "__main__":
+
+    from bungeni.core.workflow import dot
+    print dot.toDot(simple_workflow)
     

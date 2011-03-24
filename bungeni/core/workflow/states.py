@@ -8,6 +8,7 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.core.workflow.state")
 
+import zope.component
 import zope.interface
 import zope.securitypolicy.interfaces
 import zope.security.management
@@ -19,22 +20,18 @@ import zope.lifecycleevent
 from zope.dottedname.resolve import resolve
 from bungeni.alchemist import Session
 from bungeni.core.workflow import interfaces
-import ore.workflow.workflow # ...
-# Workflow (subbed)
-# WorkflowInfo (subbed by WorkflowController), 
-# nullCheckPermission (used)
-from ore.workflow.workflow import WorkflowTransitionEvent
-# unusued: WorkflowState, WorkflowVersions
 
 #
 
 BUNGENI_BASEPATH = "bungeni.core.workflows"
 ACTIONS_MODULE = resolve("._actions", BUNGENI_BASEPATH)
 
-#
-
 GRANT = 1
 DENY  = 0
+
+# !+ needed to make the tests pass in the absence of interactions
+def nullCheckPermission(permission, principal_id):
+    return True
 
 #
 
@@ -100,6 +97,7 @@ class Transition(object):
         self.title = title
         self.source = source
         self.destination = destination
+        self._raw_condition = condition # remember unwrapped condition
         self.condition = self._wrapped_condition(condition)
         self.trigger = trigger
         self.permission = permission
@@ -164,27 +162,22 @@ class StateController(object):
         assert state is not None, "May not have a None state" 
         state.execute_actions(self.context)
     
-    ''' !+UNUSED(mr, mar-2011)
-    def getId(self):
-        return "1"
-    def setId(self, id):
-        pass # print "setting id", id
-    '''
 
-''' !+UNUSED(mr, mar-2011)
-# <!-- silly versioning thingy for wf runtime -->
-class NullVersions(ore.workflow.workflow.WorkflowVersions):
-    def hasVersionId(self, id): 
-        return False
-'''
-
-class Workflow(ore.workflow.workflow.Workflow):
+class Workflow(object):
+    zope.interface.implements(interfaces.IWorkflow)
     
     def __init__(self, states, transitions):
         self.refresh(states, transitions)
     
     def refresh(self, states, transitions):
-        super(Workflow, self).refresh(transitions)
+        self._sources = {}
+        self._id_transitions = {}
+        def _register(t):
+            transitions = self._sources.setdefault(t.source, {})
+            transitions[t.transition_id] = t
+            self._id_transitions[t.transition_id] = t
+        for transition in transitions:
+            _register(transition)
         self.states = {}
         state_names = set()
         for s in states:
@@ -198,12 +191,27 @@ class Workflow(ore.workflow.workflow.Workflow):
             raise SyntaxError("Workflow Contains Unreachable States %s" % (
                     unreachable_states))
     
+    def getTransitions(self, source):
+        try:
+            return self._sources[source].values()
+        except KeyError:
+            return []
+    
+    def getTransition(self, source, transition_id):
+        transition = self._id_transitions[transition_id]
+        if transition.source != source:
+            raise interfaces.InvalidTransitionError
+        return transition
+    
+    def getTransitionById(self, transition_id):
+        return self._id_transitions[transition_id]
+    
     def __call__(self, context):
         """A Workflow instance is itself the factory of own AdaptedWorkflows.
         """
         # self is the workflow instance
         class AdaptedWorkflow(object):
-            """An workflow adapted on context.
+            """A workflow adapted on context.
             """
             def __init__(awf, context):
                 awf.context = context
@@ -216,7 +224,7 @@ class Workflow(ore.workflow.workflow.Workflow):
         return AdaptedWorkflow(context)
 
 
-class WorkflowController(ore.workflow.workflow.WorkflowInfo):
+class WorkflowController(object):
     
     zope.interface.implements(interfaces.IWorkflowController)
         
@@ -225,16 +233,12 @@ class WorkflowController(ore.workflow.workflow.WorkflowInfo):
         # and unlitter all actions/conditions of calls to removeSecurityProxy
         self.context = removeSecurityProxy(context)
         self._workflow = None # cache for workflow instance
+        self._state_controller = None # cache for state_controller instance
     
-    #def info(self, context=None):
-    #    if context is None:
-    #        return IWorkflowController(self.context)
-    #    return IWorkflowController(context)
-    
-    def state(self, context=None):
-        if context is None:
-            return interfaces.IStateController(self.context)
-        return interfaces.IStateController(context)
+    def state(self):
+        if self._state_controller is None:
+            self._state_controller = interfaces.IStateController(self.context)
+        return self._state_controller
     
     def workflow(self):
         if self._workflow is None:
@@ -245,65 +249,108 @@ class WorkflowController(ore.workflow.workflow.WorkflowInfo):
         try:
             return zope.security.management.getInteraction().checkPermission
         except zope.security.interfaces.NoInteraction:
-            return ore.workflow.workflow.nullCheckPermission
-            
+            return nullCheckPermission
+    
     def _check(self, transition, check_security):
         """Check whether we may execute this workflow transition.
         """
         if check_security:
             checkPermission = self._get_checkPermission()
         else:
-            checkPermission = ore.workflow.workflow.nullCheckPermission
+            checkPermission = nullCheckPermission
         if not checkPermission(transition.permission, self.context):
-            raise Unauthorized(self.context,
+            raise zope.security.interfaces.Unauthorized(self.context,
                 "transition: %s" % transition.transition_id,
                 transition.permission)
         # now make sure transition can still work in this context
         if not transition.condition(self.context):
             raise interfaces.ConditionFailedError
     
-    def fireTransition(self, transition_id, 
-        comment=None, side_effect=None, check_security=True
-    ):
+    def fireTransition(self, transition_id, comment=None, check_security=True):
         # !+fireTransitionParams(mr, mar-2011) needed?
-        if not (comment is None and side_effect is None and 
-            check_security is True
-        ):
-            log.warn("%s.fireTransition(%s, comment=%s, side_effect=%s, "
-                "check_security=%s)" % (self, transition_id, 
-                    comment, side_effect, check_security)) 
+        if not (comment is None and check_security is True):
+            log.warn("%s.fireTransition(%s, comment=%s, check_security=%s)" % (
+                self, transition_id, comment, check_security))
         state = self.state() # StateController
         wf = self.workflow() # Workflow
         # raises InvalidTransitionError if id is invalid for current state
         transition = wf.getTransition(state.getState(), transition_id)
         self._check(transition, check_security)
-        # !+ore.workflow.workflow.WorkflowState.initialize 
-        # !+side_effect
         # change state of context or new object
         state.setState(transition.destination)
         # notify wf event observers
-        event = ore.workflow.workflow.WorkflowTransitionEvent(self.context, 
+        event = WorkflowTransitionEvent(self.context, 
             transition.source, transition.destination, transition, comment)
         zope.event.notify(event)
         # send modified event for original or new object
         zope.event.notify(zope.lifecycleevent.ObjectModifiedEvent(self.context))
     
-    # !+CONDITION_SIGNATURE(mr, mar-2011) overridden because of change in 
-    # the condition API, but are seemingly never called.
+    def fireTransitionToward(self, state, comment=None, check_security=True):
+        transition_ids = self.getFireableTransitionIdsToward(state)
+        if not transition_ids:
+            raise interfaces.NoTransitionAvailableError
+        if len(transition_ids) != 1:
+            raise interfaces.AmbiguousTransitionError
+        return self.fireTransition(transition_ids[0], comment, check_security)
+    
+    def fireAutomatic(self):
+        for transition in self._get_transitions(interfaces.AUTOMATIC):
+            try:
+                self.fireTransition(transition.transition_id)
+            except interfaces.ConditionFailedError:
+                # fine, then we weren't ready to fire the transition as yet
+                pass
+            else:
+                # if we actually managed to fire a transition, we're done
+                return
+    
+    def getFireableTransitionIdsToward(self, state):
+        wf = self.workflow()
+        result = []
+        for transition_id in self.getFireableTransitionIds():
+            transition = wf.getTransitionById(transition_id)
+            if transition.destination == state:
+                result.append(transition_id)
+        return result
+    
+    def getFireableTransitionIds(self):
+        return self.getManualTransitionIds() + self.getSystemTransitionIds()
+    
     def getManualTransitionIds(self):
         checkPermission = self._get_checkPermission()
         return [ transition.transition_id 
-            for transition in self._get_possible_transitions(interfaces.MANUAL)
+            for transition in self._get_transitions(interfaces.MANUAL, True)
             if checkPermission(transition.permission, self.context) ]
     
     def getSystemTransitionIds(self):
         # ignore permission checks
         return [ transition.transition_id 
-            for transition in self._get_possible_transitions(interfaces.SYSTEM) ]
+            for transition in self._get_transitions(interfaces.SYSTEM, False) ]
     
-    def _get_possible_transitions(self, trigger_ifilter):
-        return [ transition 
-            for transition in sorted(self._getTransitions(trigger_ifilter)) 
-            if transition.condition(self.context) ]
+    def _get_transitions(self, trigger_ifilter=None, conditional=False):
+        """Retrieve all possible transitions from current status.
+        If trigger_ifilter is not None, filter on trigger interface.
+        If conditional, then only transitions that pass the condition.
+        """
+        transitions = self.workflow().getTransitions(self.state().getState())
+        # now filter these transitions to retrieve all possible
+        # transitions in this context, and return their ids
+        return [ transition for transition in transitions
+            if ((trigger_ifilter is None or 
+                    transition.trigger == trigger_ifilter) and
+                (not conditional or transition.condition(self.context))) ]
 
+
+class WorkflowTransitionEvent(zope.component.interfaces.ObjectEvent):
+    """The generic transition event, systematically fired at end of EVERY
+    transition.
+    """
+    zope.interface.implements(interfaces.IWorkflowTransitionEvent)
+    
+    def __init__(self, object, source, destination, transition, comment):
+        super(WorkflowTransitionEvent, self).__init__(object)
+        self.source = source
+        self.destination = destination
+        self.transition = transition
+        self.comment = comment
 

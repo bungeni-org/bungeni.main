@@ -65,7 +65,6 @@ setup(name='bungeni',
 			# The following are used by bungeni.core
 			#
                         'ore.xapian',
-                        'ore.workflow',
                         'z3c.dav',
                         'plone.i18n',
                         'plone.transforms',
