@@ -1,5 +1,5 @@
 # encoding: utf-8
-
+from __future__ import with_statement
 log = __import__("logging").getLogger("bungeni.ui")
 import re
 import os
@@ -97,14 +97,14 @@ class DownloadDocument(BrowserView):
                                                pythonWithUnoPath=openofficepath,
                                                ooPort=ooport)
         from globalSemaphore import globalOpenOfficeSemaphore
+        
         try:
             # appy.pod only connects with openoffice when converting to
             # PDF. We need to restrict number of connections to the
             # max connections option set in openoffice.zcml
             if self.document_type == "pdf":
-                if globalOpenOfficeSemaphore.acquire(blocking=True):
+                with globalOpenOfficeSemaphore:
                     renderer.run()
-                    globalOpenOfficeSemaphore.release()
             else:
                 renderer.run()
         except:
