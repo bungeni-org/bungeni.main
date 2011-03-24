@@ -1,8 +1,14 @@
-"""
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
-We model settings as zope3 interfaces and schemas
+"""Bungeni Settings
+We model settings as zope3 interfaces and schemas.
+We can define a property sheet for an arbitrary database object, 
+or for the application itself.
 
-We can define a property sheet for an arbitrary database object, or for the i application itself
+$Id$
+$URL$
 """
 
 from zope import schema
@@ -90,17 +96,19 @@ class SettingsBase( object ):
                      name = k,
                      value = svalue,
                      type = fs.__class__.__name__ )
-        
         if k not in self._storedattrs:
             statement = settings.insert(values=values)
             self._storedattrs.add( k )
         else:
             statement = settings.update(
-                whereclause=rdb.and_( settings.c.propertysheet == self.settings_schema.__name__,
-                          settings.c.object_type == otype,
-                          settings.c.object_id == oid ),
+                whereclause=rdb.and_( settings.c.name == k,
+                    settings.c.propertysheet == \
+                        self.settings_schema.__name__,
+                    settings.c.object_type == otype,
+                    settings.c.object_id == oid,
+                ),
                 values=values,
-                )
+            )
         statement.execute()
 
     # mapping interface
@@ -150,7 +158,7 @@ def UserSettingFactory( iface ):
             return value
         def set( self, value, field_name=fs.__name__):
             self[field_name]=value
-            
+
         fields[ fs.__name__ ] = property( get, set )
         
     return type( "UserSettings%s"%( iface.__name__),
@@ -167,7 +175,7 @@ def GlobalSettingFactory( iface ):
             return value
         def set( self, value, field_name=fs.__name__):
             self[field_name]=value
-            
+
         fields[ fs.__name__ ] = property( get, set )
         klass = type( "GlobalSettings%s"%( iface.__name__),
                       ( GlobalSettingsBase, ), fields )
