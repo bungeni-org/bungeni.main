@@ -24,7 +24,7 @@ def dot(workflow):
     ]
     while states:
         state = states.pop()
-        for transition in workflow.getTransitions(state):
+        for transition in workflow.get_transitions_from(state):
             num_transitions += 1
             dest = transition.destination
             if dest not in visited:
@@ -51,12 +51,12 @@ def toDot(workflow):
     states = set()
     end_states = set()
     print >> io, "digraph workflow {"
-    for state, transitions in workflow._sources.items():
+    for state, transitions in workflow._transitions_by_source.items():
         states.add( state )
         for tid, t in transitions.items():
             option = []
             states.add(t.destination)
-            if t.destination not in workflow._sources:
+            if t.destination not in workflow._transitions_by_source:
                 end_states.add(t.destination)
             if t.trigger is interfaces.AUTOMATIC:
                 option.append("color=green")

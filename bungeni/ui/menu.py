@@ -233,7 +233,7 @@ class WorkflowSubMenuItem(BrowserSubMenuItem):
             return {"id": "plone-contentmenu-workflow"}
         state = info.state().getState()
         stateTitle = translate(
-            str(info.workflow().workflow.states[state].title), 
+            str(info.workflow().workflow._states_by_id[state].title), 
             domain="bungeni.core",
             context=self.request)
         
@@ -275,7 +275,7 @@ class WorkflowMenu(BrowserMenu):
         results = []
         for transition in transitions:
             tid = transition
-            state_transition = wf.getTransitionById(transition)
+            state_transition = wf.get_transition_by_id(transition)
             #Compares the current url to homepage to determine whether we are on workspace or not.
             #Fix for bug 319
             #Someone should probably review this.

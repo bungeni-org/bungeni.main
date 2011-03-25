@@ -30,9 +30,15 @@ GRANT = 1
 DENY  = 0
 
 # !+ needed to make the tests pass in the absence of interactions
+# !+nullCheckPermission(mr, mar-2011) shouldn't the tests ensure there is 
+# always an interaction?
 def nullCheckPermission(permission, principal_id):
     return True
 
+def exception_as(exc, exc_kls):
+    return exc_kls("%s: %s" % (exc.__class__.__name__, exc))
+
+    
 #
 
 class State(object):
@@ -56,8 +62,7 @@ class State(object):
             try:
                 action(context)
             except Exception, e:
-                class WorkflowStateActionError(Exception): pass
-                raise WorkflowStateActionError("%s" % (e))
+                raise exception_as(e, interfaces.WorkflowStateActionError)
         # permissions
         rpm = zope.securitypolicy.interfaces.IRolePermissionMap(context)
         for action, permission, role in self.permissions:
@@ -111,14 +116,13 @@ class Transition(object):
         return "%s-%s" % (self.source or "", self.destination)
     
     def _wrapped_condition(self, condition):
-        class WorkflowTransitionConditionError(Exception): pass
         def test(context):
             if condition is None:
                 return True
             try:
                 return condition(context)
             except Exception, e:
-                raise WorkflowTransitionConditionError("%s" % (e))
+                raise exception_as(e, interfaces.WorkflowTransitionConditionError)
         return test
     
     def __cmp__(self, other):
@@ -147,19 +151,9 @@ class StateController(object):
             self.on_state_change(source_state_id, state_id)
     
     def on_state_change(self, source, destination):
-        # note: called *after* StateController.setState(status) 
-        # i.e. self.context.status is already set to destination state
-        wfc = interfaces.IWorkflowController(self.context) # WorkflowController
-        workflow = wfc.workflow().workflow # AdaptedWorkflow.workflow
-        # taking defensive stance, asserting on workflow and state
-        # !+ZCA(mr, mar-2011) requiring that workflow is an instance of
-        # bungeni.core.workflow.states.Workflow undermines the whole point of
-        # using ZCA in the first place? Any possible gain made categorically 
-        # impossible... and just with more convoluted code.
-        assert isinstance(workflow, Workflow), \
-            "Workflow must be an instance of Workflow: %s" % (workflow)
-        state = workflow.states.get(destination)
-        assert state is not None, "May not have a None state" 
+        workflow = interfaces.IWorkflow(self.context) 
+        state = workflow._states_by_id.get(destination)
+        assert state is not None, "May not have a None state" # !+NEEDED?
         state.execute_actions(self.context)
     
 
@@ -170,18 +164,20 @@ class Workflow(object):
         self.refresh(states, transitions)
     
     def refresh(self, states, transitions):
-        self._sources = {}
-        self._id_transitions = {}
+        self._transitions_by_source = {} # {source: {id: Transition}}
+        self._transitions_by_id = {} # {id:str : Transition}
+        self._states_by_id = {} # {id: State}
+        # transitions
         def _register(t):
-            transitions = self._sources.setdefault(t.source, {})
+            transitions = self._transitions_by_source.setdefault(t.source, {})
             transitions[t.transition_id] = t
-            self._id_transitions[t.transition_id] = t
+            self._transitions_by_id[t.transition_id] = t
         for transition in transitions:
             _register(transition)
-        self.states = {}
+        # states
         state_names = set()
         for s in states:
-            self.states[s.id] = s
+            self._states_by_id[s.id] = s
             state_names.add(s.id)
         # find any states given that don't match a transition state
         t_state_names = set([ t.destination for t in transitions ])
@@ -191,20 +187,21 @@ class Workflow(object):
             raise SyntaxError("Workflow Contains Unreachable States %s" % (
                     unreachable_states))
     
-    def getTransitions(self, source):
+    def get_transitions_from(self, source):
         try:
-            return self._sources[source].values()
+            return self._transitions_by_source[source].values()
         except KeyError:
             return []
     
-    def getTransition(self, source, transition_id):
-        transition = self._id_transitions[transition_id]
+    # !+GET_TRANSITION(mr, mar-2011) change params to (source, dest) + combine? 
+    def get_transition(self, source, transition_id):
+        transition = self._transitions_by_id[transition_id]
         if transition.source != source:
             raise interfaces.InvalidTransitionError
         return transition
     
-    def getTransitionById(self, transition_id):
-        return self._id_transitions[transition_id]
+    def get_transition_by_id(self, transition_id):
+        return self._transitions_by_id[transition_id]
     
     def __call__(self, context):
         """A Workflow instance is itself the factory of own AdaptedWorkflows.
@@ -235,11 +232,13 @@ class WorkflowController(object):
         self._workflow = None # cache for workflow instance
         self._state_controller = None # cache for state_controller instance
     
+    # !+ rename to state_controller
     def state(self):
         if self._state_controller is None:
             self._state_controller = interfaces.IStateController(self.context)
         return self._state_controller
     
+    # !+ rename to adapted_workflow
     def workflow(self):
         if self._workflow is None:
             self._workflow = interfaces.IWorkflow(self.context)
@@ -274,7 +273,7 @@ class WorkflowController(object):
         state = self.state() # StateController
         wf = self.workflow() # Workflow
         # raises InvalidTransitionError if id is invalid for current state
-        transition = wf.getTransition(state.getState(), transition_id)
+        transition = wf.get_transition(state.getState(), transition_id)
         self._check(transition, check_security)
         # change state of context or new object
         state.setState(transition.destination)
@@ -308,7 +307,7 @@ class WorkflowController(object):
         wf = self.workflow()
         result = []
         for transition_id in self.getFireableTransitionIds():
-            transition = wf.getTransitionById(transition_id)
+            transition = wf.get_transition_by_id(transition_id)
             if transition.destination == state:
                 result.append(transition_id)
         return result
@@ -332,7 +331,8 @@ class WorkflowController(object):
         If trigger_ifilter is not None, filter on trigger interface.
         If conditional, then only transitions that pass the condition.
         """
-        transitions = self.workflow().getTransitions(self.state().getState())
+        transitions = self.workflow().get_transitions_from(
+            self.state().getState())
         # now filter these transitions to retrieve all possible
         # transitions in this context, and return their ids
         return [ transition for transition in transitions

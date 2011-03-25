@@ -11,7 +11,7 @@ from bungeni.core.workflow import interfaces
 workflow_transition_event_map = {}
 
 def get_workflow_transitions(wf):
-    return wf._id_transitions.values()
+    return wf._transitions_by_id.values()
     
 def register_workflow_transitions(wf, kls):
     """Use this method to register workflow transitions, such that

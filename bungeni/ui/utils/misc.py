@@ -42,12 +42,12 @@ def pathjoin(basefilepath, filepath):
 def get_wf_state(context, wf_state_id=None):
     """Get the human readable title for the context's workflow state
     """
-    # !+ rename to: workflow_state_title
+    # !+ rename to: get_workflow_state_title
     wf = interfaces.IWorkflow(context)
     if wf_state_id is None:
         wf_state_id = interfaces.IStateController(context).getState()
-    return wf.workflow.states[wf_state_id].title
-    # wf.workflow.getTransitionById("transition_id").title
+    return wf.workflow._states_by_id[wf_state_id].title
+    # wf.workflow.get_transition_by_id("transition_id").title
 
 
 # request 

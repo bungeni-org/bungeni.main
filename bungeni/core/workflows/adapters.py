@@ -33,10 +33,10 @@ def load_workflow(module, kls):
     wf = xmlimport.load("%s/%s.xml" % (PATH_CUSTOM_WORKLFOWS, name), name)
     events.register_workflow_transitions(wf, kls)
     module.wf = wf
-    module.states = wf.states
+    module.states = wf._states_by_id
     _log = log.debug
     _log("WORKFLOW: %s %s" % (name, wf))
-    for state_key, state in wf.states.items():
+    for state_key, state in wf._states_by_id.items():
         _log("   STATE: %s %s" % (state_key, state))
         for p in state.permissions:
             _log("          %s" % (p,))

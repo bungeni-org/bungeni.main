@@ -10,10 +10,10 @@ from bungeni.core.workflows import adapters
 import bungeni.core.workflows.events
 import bungeni.alchemist.security
 
-def verify_workflow(wf):
-    states = wf.workflow.states
-    sources = set((states.get(wf.context.status),))
-    destinations = set(wf.workflow.states.values())
+def verify_workflow(awf):
+    states = awf.workflow._states_by_id
+    sources = set((states.get(awf.context.status),))
+    destinations = set(states.values())
 
     while sources and destinations:
         source = sources.pop()
@@ -21,7 +21,7 @@ def verify_workflow(wf):
         if source is not None:
             source = source.id
     
-        for transition in wf.getTransitions(source):
+        for transition in awf.get_transitions_from(source):
             destination = states[transition.destination]
             if destination not in destinations:
                 continue
@@ -41,14 +41,14 @@ def list_transitions(item):
     info = interfaces.IWorkflowController(item)
     state = info.state().getState()
     return tuple(transition.transition_id 
-               for transition in wf.getTransitions(state))
+               for transition in wf.get_transitions_from(state))
 
 def list_permissions(item):
     wf = interfaces.IWorkflow(item)
     info = interfaces.IWorkflowController(item)
     state = info.state().getState()
     return tuple(transition.permission 
-                for transition in wf.getTransitions(state))
+                for transition in wf.get_transitions_from(state))
 
 def provideAdapterWorkflowController(adapts_kls):
     zope.component.provideAdapter(

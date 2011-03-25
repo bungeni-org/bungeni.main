@@ -34,17 +34,18 @@ f.write(
       i18n:domain="bungeni.core"> <body>
       """)
 
-for wf in [bill, question, motion, version, groupsitting, group,
-    address, tableddocument, agendaitem, committee, parliament,
-    attachedfile, event, report]:
+for wf in [bill, question, motion, version, groupsitting, group, address, 
+    tableddocument, agendaitem, committee, parliament, attachedfile, 
+    event, report
+]:
     name = wf.__name__.split('.')[-1]
     for state in wf.states:
         #f.write( '<b i18n:translate="%s_wf_state_%s" >' % ( name, state))
         f.write('<b i18n:translate="" >' + wf.states[state].title + '</b>')
         f.write('\n')
-    for t in wf.wf._id_transitions:
+    for t in wf.wf._transitions_by_id:
         #f.write( '<b i18n:translate="%s_wf_transition_%s" >' %( name, t))
-        f.write('<b i18n:translate="" >' + wf.wf.getTransitionById(t).title + '</b>')
+        f.write('<b i18n:translate="" >' + wf.wf.get_transition_by_id(t).title + '</b>')
         f.write('\n')
 f.write('</body></html>')
 f.close()

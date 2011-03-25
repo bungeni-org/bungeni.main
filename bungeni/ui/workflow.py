@@ -43,11 +43,11 @@ class WorkflowVocabulary(object):
             domain_model = removeSecurityProxy(context.domain_model)
             ctx = domain_model()
         wf = interfaces.IWorkflow(ctx)
+        states = wf.workflow._states_by_id
         items = []
-        for state in wf.workflow.states.keys():
-            items.append(SimpleTerm(wf.workflow.states[state].id,
-                        wf.workflow.states[state].id,
-                        _(wf.workflow.states[state].title)))
+        for state in states.keys():
+            items.append(SimpleTerm(states[state].id, states[state].id, 
+                    _(states[state].title)))
         return SimpleVocabulary(items)
 workflow_vocabulary_factory = WorkflowVocabulary()
 
@@ -189,7 +189,7 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
     def update(self, transition=None):
         wf = interfaces.IWorkflow(self.context) 
         if transition is not None:
-            state_transition = wf.getTransitionById(transition)
+            state_transition = wf.get_transition_by_id(transition)
             # !- workflow state title translations are in bungeni.core
             # use the right factory here to get translation
             state_title = translate(_bc(state_transition.title),
@@ -258,7 +258,7 @@ class WorkflowChangeStateView(WorkflowView):
         method = self.request["REQUEST_METHOD"]
         if transition:
             wf = interfaces.IWorkflow(self.context) 
-            state_transition = wf.getTransitionById(transition)
+            state_transition = wf.get_transition_by_id(transition)
             require_confirmation = getattr(
                 state_transition, "require_confirmation", False)
             self.update(transition)
@@ -278,7 +278,7 @@ class WorkflowChangeStateView(WorkflowView):
         if headless is True:
             actions = get_actions("context_workflow", self.context, self.request)
             state_title = interfaces.IWorkflowController(self.context
-                ).workflow().workflow.states[self.context.status].title
+                ).workflow().workflow._states_by_id[self.context.status].title
             result = self.ajax_template(actions=actions, state_title=state_title)
             
             if require_confirmation is True:

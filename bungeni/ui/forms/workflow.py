@@ -44,7 +44,7 @@ def bindTransitions(form_instance, transitions, wf_name=None, wf=None):
         if success_factory:
             d["success"] = success_factory(tid)
         if wf is not None:
-            title = _(unicode(wf.getTransitionById(tid).title))
+            title = _(unicode(wf.get_transition_by_id(tid).title))
             action = form.Action(title, **d)
         else:
             action = form.Action(tid, **d)

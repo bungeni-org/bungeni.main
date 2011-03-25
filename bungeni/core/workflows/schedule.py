@@ -24,7 +24,7 @@ def handleSchedule(object, event):
                 wf = wf_info.workflow()
                 next_state = get_states(sch.item.type, tagged=["tobescheduled"])
                 for transition_id in transitions:
-                    t = wf.getTransition(state.getState(), transition_id)
+                    t = wf.get_transition(state.getState(), transition_id)
                     if t.destination in next_state:
                         #TODO find out why firetransition fails for reschedule even 
                         #when the user has requisite permissions
@@ -39,7 +39,7 @@ def handleSchedule(object, event):
                 wf = wf_info.workflow()
                 next_state = get_states(sch.item.type, tagged=["scheduled"])
                 for transition_id in transitions:
-                    t = wf.getTransition(state.getState(), transition_id)
+                    t = wf.get_transition(state.getState(), transition_id)
                     if t.destination in next_state:
                         wf_info.fireTransition(transition_id, check_security=False)
                         break

@@ -20,6 +20,11 @@ class NoTransitionAvailableError(InvalidTransitionError): pass
 class AmbiguousTransitionError(InvalidTransitionError): pass
 class ConditionFailedError(Exception): pass
 
+class WorkflowStateActionError(Exception): 
+    """Error while executing a workflow state action""" 
+class WorkflowTransitionConditionError(Exception):
+    """Error while executing a workflow transition condition""" 
+
 
 class IWorkflow(zope.interface.Interface):
     """Defines workflow in the form of transition objects. Defined as a utility.
@@ -27,16 +32,16 @@ class IWorkflow(zope.interface.Interface):
     def refresh(states, transitions):
         """Refresh workflow completely with new transitions.
         """
-    def getTransitions(source):
+    def get_transitions_from(source):
         """Get all transitions from source.
         """
-    def getTransition(source, transition_id):
+    def get_transition(source, transition_id):
         """Get transition with transition_id given source state.
 
         If the transition is invalid from this source state,
         an InvalidTransitionError is raised.
         """
-    def getTransitionById(transition_id):
+    def get_transition_by_id(transition_id):
         """Get transition with transition_id.
         """
 
