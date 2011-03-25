@@ -98,15 +98,15 @@ def _group_dissolved(context):
 # committee
 
 _committee_create = _group_draft
-_committee_activate = _group_active
-_committee_dissolve = _group_dissolved
+_committee_active = _group_active
+_committee_dissolved = _group_dissolved
 
 
 # parliament
 
 _parliament_create = _group_draft
-_parliament_activate = _group_active
-_parliament_dissolve = _group_dissolved
+_parliament_active = _group_active
+_parliament_dissolved = _group_dissolved
 
 
 # groupsitting
