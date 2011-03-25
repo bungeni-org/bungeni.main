@@ -224,13 +224,13 @@ class IBungeniSettings(interface.Interface):
         title=_(u"Speaker's Office Notification"),
         description=_(u"true if the Speakers office wants to be alerted by "
             "mail whenever a bill, motion, question is submitted"),
-        default=True
+        default=False
     )
     clerks_office_notification = schema.Bool(
         title=_("Clerk's Office Notification"),
         description=_(u"true if the clerks office wants to be alerted by mail"
             u"whenever a bill, motion, question is submitted"),
-        default=True
+        default=False
     )
     clerks_office_email = schema.TextLine(
         title=_(u"Clerks's Office Email"),
