@@ -22,9 +22,10 @@ from email.mime.text import MIMEText
 import sqlalchemy.sql.expression as sql
 
 from bungeni.alchemist import Session
-import bungeni.core.workflow.dbutils as dbutils
-import bungeni.core.domain as domain
-import bungeni.core.schema as schema
+from bungeni.core.workflows import  dbutils
+from bungeni.models import domain
+from bungeni.models import schema
+from bungeni.models import metadata
 import bungeni.core.globalsettings as prefs
 #from bungeni.core.workflows.question import states as q_state
 from bungeni.server.smtp import dispatch
@@ -35,7 +36,6 @@ from zope import component
 from sqlalchemy import create_engine
 from bungeni.alchemist.interfaces import IDatabaseEngine
 #import bungeni.core.interfaces
-from bungeni import core as model
 
 def _getQuestionsPendingResponse(date, ministry):
     """
@@ -46,9 +46,9 @@ def _getQuestionsPendingResponse(date, ministry):
     status = u"Question pending response" #q_state.response_pending
     session = Session()
     qfilter=sql.and_(
-                (domain.Question.c.ministry_submit_date < date ),
-                (domain.Question.c.status == status),
-                (domain.Question.c.ministry_id == ministry.ministry_id)
+                (domain.Question.ministry_submit_date < date ),
+                (domain.Question.status == status),
+                (domain.Question.ministry_id == ministry.group_id)
                 )
     query = session.query(domain.Question).filter(qfilter)
     return query.all()
@@ -91,8 +91,8 @@ def sendNotificationToMP(date):
                      default="Questions pending responses.")
     session = Session()
     qfilter=sql.and_(
-                (domain.Question.c.ministry_submit_date < date ),
-                (domain.Question.c.status == status),
+                (domain.Question.ministry_submit_date < date ),
+                (domain.Question.status == status),
                 )
     questions = session.query(domain.Question).filter(qfilter).all()
     for question in questions:
@@ -104,7 +104,9 @@ def sendNotificationToMP(date):
             msg['To'] =  mailto
             text = text + '\n' + question.subject + '\n'
             print msg
-            #dispatch(msg)
+            # !+SENDMAIL(ah,18-03-2010)
+            #Mail sending is commented out below
+            dispatch(msg)
     
 def sendNotificationToClerksOffice(date):
     """
@@ -130,7 +132,9 @@ def sendNotificationToClerksOffice(date):
     msg['From'] = prefs.getAdministratorsEmail()
     msg['To'] = prefs.getClerksOfficeEmail()
     print msg
-    #dispatch(msg)
+    # !+SENDMAIL(ah,18-03-2010)
+    #Mail sending is commented out below
+    dispatch(msg)
 
 
 def sendNotificationToMinistry(date):
@@ -160,7 +164,9 @@ def sendNotificationToMinistry(date):
             msg['From'] = prefs.getClerksOfficeEmail()
             msg['To'] = emails
             print msg
-            #dispatch(msg)
+            # !+SENDMAIL(ah,18-03-2010)
+            #Mail sending is commented out 
+            dispatch(msg)
         
 def sendAllNotifications():
     """
@@ -177,9 +183,11 @@ def main(argv=None):
     run this as a cron job and execute all
     time based transitions
     """
+    # !+HARDCODED_DB_SETTING(ah, 18-03-2011) 
+    #This needs to be factored out
     db = create_engine('postgres://localhost/bungeni', echo=False)
     component.provideUtility( db, IDatabaseEngine, 'bungeni-db' )
-    model.metadata.bind = db
+    metadata.bind = db
     session = Session()
      
     sendAllNotifications()
