@@ -502,6 +502,16 @@ is dispatched.
   
 Send notification to Clerk's office upon submit.
 
+!+BUNGENISETTINGS(mr, mar-2011) since r7987 changes the default of  
+clerks_office_notification to False, the subsequent notification test will
+not notify, so it fails... so, we hard-reset clerks_office_notification to True:
+
+  >>> from bungeni.core import globalsettings as prefs
+  >>> if prefs.getClerksOfficeReceiveNotification() is False:
+  ...     prefs.BungeniSettings(prefs.app).clerks_office_notification = True
+  
+!+BUNGENISETTINGS(mr, mar-2011) generalize and apply to all notification tests
+
   >>> notification.SendNotificationToClerkUponSubmit(ObjectEvent(question))
   From: "John Doe" <john.doe@localhost>
   To: clerks.office@parliament.go.tld ...
