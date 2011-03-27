@@ -12,6 +12,8 @@ from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from zope.interface.common import idatetime
 import zope.app.form.browser.widget
 import zope.app.form.browser.textwidgets
+import zope.security.proxy
+import zope.traversing
 from zope.app.form.browser.textwidgets import TextAreaWidget, FileWidget
 from zope.app.form.browser.itemswidgets import RadioWidget, \
     SingleDataHelper, ItemsWidgetBase, ItemsEditWidgetBase, DropdownWidget
@@ -192,7 +194,7 @@ class FileEditWidget(FileInputWidget):
 class FileDisplayWidget(zope.app.form.browser.widget.DisplayWidget):
     def __call__(self):
         return u'<a href="./download"> %s </a>' \
-            % translate(_ui("download"), context = self.request)
+            % translate(_ui("download"), context=self.request)
 
 
 class ImageDisplayWidget(zope.app.form.browser.widget.DisplayWidget):
@@ -790,19 +792,64 @@ class MemberURLDisplayWidget(zope.app.form.browser.widget.DisplayWidget):
         )
 
 
+class widget(object):
+
+    """Traverce adapter for getting widget by name from form views
+    """
+
+    interface.implements(zope.traversing.interfaces.ITraversable)
+
+    def __init__(self, context, request):
+        self.context = zope.security.proxy.removeSecurityProxy(context)
+        self.request = request
+
+    def traverse(self, name, remaining):
+        form = self.context
+        form.update()
+
+        if hasattr(form, 'widgets'):
+            widget = form.widgets.get(name)
+
+            if widget:
+                return widget
+
+        raise zope.traversing.namespace.LocationError(form, name)
+
+
+class AutoCompleteAjax(object):
+
+    """Remote Data Sourcse ajax view for autocomplete widget
+    """
+
+    def __call__(self, *args, **kw):
+        context = zope.security.proxy.removeSecurityProxy(self.context)
+        query = self.request.get("q")
+        return """{"ResultSet": %s}""" % context.filter(query, True)
+
+
 template = """
     %(html)s
     %(javascript)s
     """
 
+
 OPT_PREFIX = 'yui_'
 LEN_OPT_PREFIX = len(OPT_PREFIX)
+
+
+class IAutoCompleteWidget(interface.Interface):
+    """Markup interface for autocomplete widget
+    """
 
 class _AutoCompleteWidget(ItemsEditWidgetBase):
     """Zope3 Implementation of YUI autocomplete widget.
     Can be used with common ChoiceProperty. Can be configured by setting
     widget attributes with prefix %s. List of attributes you can find
     in http://developer.yahoo.com/yui/autocomplete""" % OPT_PREFIX
+
+    interface.implements(IAutoCompleteWidget)
+
+    remote_data = False
 
     @property
     def options(self):
@@ -827,6 +874,7 @@ class _AutoCompleteWidget(ItemsEditWidgetBase):
                     v = int(v)
                 except ValueError:
                     v = "\"%s\"" % v
+
             items.append("oAC.%s = %s;" % (k, v))
 
         return "\n".join(items)
@@ -834,16 +882,78 @@ class _AutoCompleteWidget(ItemsEditWidgetBase):
 
     @property
     def dataSource(self):
-        items = map(lambda x: """{name: "%(name)s", id: "%(id)s" }""" \
-            % {'id': x.token, 'name': self.textForValue(x)},
-            self.vocabulary)
+        return self.filter()
+
+    def filter(self, query=None, ajax=False):
+        s = """{name: "%(name)s", id: "%(id)s" }""" if not ajax else \
+            """{"name": "%(name)s", "id": "%(id)s" }"""
+
+        def check_item(item):
+            s = [self.textForValue(item).lower(), ]
+            s += s[0].split(" ")
+            return any(map(lambda x: x.startswith(query.lower()), s))
+
+        items = filter(check_item, list(self.vocabulary)) if query else \
+            list(self.vocabulary)
+        items = map(lambda x: s % {'id': x.token, 'name': self.textForValue(x)},
+            items)
 
         return "[%s]" % ",\n".join(items)
+
+    @property
+    def oDS(self):
+        if self.remote_data:
+            url = "%s/++widget++%s/filter" % \
+                (str(self.request.URL), self.name.split('.')[-1])
+            return """
+                var oDS = new YAHOO.util.XHRDataSource("%s");
+                oDS.responseType = YAHOO.util.XHRDataSource.TYPE_JSON;
+                oDS.scriptQueryParam = "q";
+                oDS.responseSchema = {
+                  resultsList : "ResultSet",
+                  fields : ["name", "id"]
+                };
+            """ % url
+        kw = {"dsname": self.name.replace('.', '_'),
+              "data": self.dataSource,
+              }
+        return """
+            var %(dsname)s_data = %(data)s;
+            var %(dsname)s_filter = function(sQuery) {
+                var query = unescape(sQuery).toLowerCase(),
+                    item,
+                    items,
+                    i=0,
+                    j=0,
+                    ll,
+                    l=%(dsname)s_data.length,
+                    matches = [];
+
+                for(; i<l; i++) {
+                    item = %(dsname)s_data[i];
+                    items = item.name.split(" ");
+                    items[items.length] = item.name;
+                    ll = items.length;
+                    for(j=0; j<items.length; j++) {
+                        if (items[j].toLowerCase().indexOf(query) == 0) {
+                            matches[matches.length] = item;
+                            break;
+                        }
+                    }
+                }
+
+                return matches;
+            };
+
+            var oDS = new YAHOO.util.FunctionDataSource(%(dsname)s_filter);
+            oDS.responseSchema = {fields : ["name", "id"]};
+        """ % kw
 
     @property
     def javascript(self):
         kw = {"id": self.name,
               "dsname": self.name.replace('.', '_'),
+              "oDS": self.oDS,
               "data": self.dataSource,
               "options": self.options
               }
@@ -852,37 +962,9 @@ class _AutoCompleteWidget(ItemsEditWidgetBase):
             <script type="text/javascript">
                 YAHOO.namespace('oa.autocomplete');
                 YAHOO.oa.autocomplete.%(dsname)s_func = new function() {
-                    var %(dsname)s_data = %(data)s;
 
-                    var %(dsname)s_filter = function(sQuery) {
-                        var query = unescape(sQuery).toLowerCase(),
-                            item,
-                            items,
-                            i=0,
-                            j=0,
-                            ll,
-                            l=%(dsname)s_data.length,
-                            matches = [];
+                    %(oDS)s
 
-                        for(; i<l; i++) {
-                            item = %(dsname)s_data[i];
-                            items = item.name.split(" ");
-                            items[items.length] = item.name;
-                            ll = items.length;
-                            for(j=0; j<items.length; j++) {
-                                if (items[j].toLowerCase().indexOf(query) == 0) {
-                                    matches[matches.length] = item;
-                                    break;
-                                }
-                            }
-                        }
-
-                        return matches;
-                    };
-
-                    var oDS = new YAHOO.util.FunctionDataSource(%(dsname)s_filter);
-
-                    oDS.responseSchema = {fields : ["name", "id"]};
                     var oAC = new YAHOO.widget.AutoComplete("%(id)s",
                         "%(id)s.container", oDS);
                     %(options)s
@@ -922,6 +1004,7 @@ class _AutoCompleteWidget(ItemsEditWidgetBase):
                   type="hidden">
             </div>
             """ % kw
+
     @property
     def style(self):
         return """
@@ -948,8 +1031,9 @@ class _AutoCompleteWidget(ItemsEditWidgetBase):
         return "\n".join(contents)
 
 
-def AutoCompleteWidget(*kv, **kw):
-  return CustomWidgetFactory(_AutoCompleteWidget, *kv, **kw)
+def AutoCompleteWidget(*attrs, **kw):
+  return CustomWidgetFactory(_AutoCompleteWidget, *attrs, **kw)
+
 
 class MemberDropDownWidget(DropdownWidget):
 

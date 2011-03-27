@@ -377,7 +377,7 @@
         layer="bungeni.ui.interfaces.IBungeniSkin"
         permission="zope.Public"
     />
-    
+
     <!-- Attachments viewer -->
     <browser:page name="index"
         for="bungeni.models.domain.AttachedFileContainer"
@@ -385,7 +385,7 @@
         permission="zope.Public"
         template="templates/attachments.pt"
     />
-    
+
   <!-- business -->
 
     <browser:page name="business-index"
@@ -748,4 +748,12 @@
                attribute="unsubscribe"
             />
      </browser:pages>
+
+     <browser:page
+        name="filter"
+        for=".widgets.IAutoCompleteWidget"
+        class=".widgets.AutoCompleteAjax"
+        permission="zope.View"
+     />
+
 </configure>

@@ -679,7 +679,8 @@ class MpDescriptor(GroupMembershipDescriptor):
                 )
             ),
             listing_column=user_name_column("user_id", _(u"Name"), "user"),
-            edit_widget=widgets.AutoCompleteWidget(yui_maxResultsDisplayed=5),
+            edit_widget=widgets.AutoCompleteWidget(remote_data=True,
+                yui_maxResultsDisplayed=5),
             add_widget=widgets.AutoCompleteWidget()
         ),
         Field(name="elected_nominated",
