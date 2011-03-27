@@ -843,9 +843,11 @@ class IAutoCompleteWidget(interface.Interface):
 
 class _AutoCompleteWidget(ItemsEditWidgetBase):
     """Zope3 Implementation of YUI autocomplete widget.
-    Can be used with common ChoiceProperty. Can be configured by setting
-    widget attributes with prefix %s. List of attributes you can find
-    in http://developer.yahoo.com/yui/autocomplete""" % OPT_PREFIX
+    Can be used with common ChoiceProperty. remote_data - parameter to choose
+    type of datasourse, if False (by default, when local) else True when remote
+    Can be configured by setting widget attributes with prefix %s.
+    List of attributes you can find in
+    http://developer.yahoo.com/yui/autocomplete""" % OPT_PREFIX
 
     interface.implements(IAutoCompleteWidget)
 
