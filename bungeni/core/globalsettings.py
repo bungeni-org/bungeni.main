@@ -80,7 +80,14 @@ def getClerksOfficeReceiveNotification():
     whenever a bill, motion, question is submitted 
     """
     return BungeniSettings(app).clerks_office_notification
-    
+
+def getMinistriesReceiveNotification():
+    """
+    returns true if the ministries want to be alerted by mail 
+    wheneve a bill, motion, question is submitted.
+    """    
+
+    return BungeniSettings(app).ministries_notification
     
 def getAdministratorsEmail():
     """

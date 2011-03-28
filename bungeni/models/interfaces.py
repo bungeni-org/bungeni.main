@@ -227,48 +227,59 @@ class IBungeniSettings(interface.Interface):
         default=False
     )
     clerks_office_notification = schema.Bool(
-        title=_("Clerk's Office Notification"),
+        title=_(u"Clerk's Office Notification"),
         description=_(u"true if the clerks office wants to be alerted by mail"
             u"whenever a bill, motion, question is submitted"),
         default=False
     )
     clerks_office_email = schema.TextLine(
-        title=_(u"Clerks's Office Email"),
-        default=u"clerks.office@parliament.go.tld"
+        title = _(u"Clerks's Office Email"),
+        default = u"clerks.office@parliament.go.tld"
     )
-    administrators_email = schema.TextLine(title=_(u"Administrator's Email"))
+    ministries_notification = schema.Bool(
+        title = _(u"Ministries Notification"),
+        description = _(u"true if the Ministries want to be notified by email"
+              u" of submitted questions"),
+        default = False
+    )
+    administrators_email = schema.TextLine(
+            title=_(u"Administrator's Email"),
+            default = u"admin@parliament.go.tld"
+            )
     question_submission_allowed = schema.Bool(
         title=_(u"Allow Question Submission"),
-        default=True
+        default = True
     )
     days_to_defer_question = schema.Int(
         title=_(u"Days to Defer Question"),
         description=_(u"Time after which admissible questions are "
             "automatically deferred"),
-        default=10
+        default = 10
     )
     days_to_notify_ministry_unanswered = schema.Int(
         title=_(u"Days to Notify Ministry of Pending Response"),
         description=_(u"Timeframe after which the clerksoffice and the "
             "ministry is alerted that questions that are pending response "
-            "are not yet answered")
+            "are not yet answered"),
+        default = 5
     )
     days_before_question_schedule = schema.Int(
         title=_(u"Days before question scheduled"),
-        default=3
+        default = 3
     )
     days_before_bill_schedule = schema.Int(
         title=_(u"Days before bill scheduled"),
-        default=3
+        default = 3
     )
     max_questions_sitting = schema.Int(
         title=_(u"Max Questions Per Sitting"),
-        default=15
+        default = 15
     )
     max_mp_questions_sitting = schema.Int(
         title=_(u"Max Questions Per Sitting Per MP"),
-        default=1
+        default = 1
     )
+
 
 class IBungeniUserSettings(interface.Interface):
 

@@ -203,7 +203,19 @@ class SendNotificationToMinistryUponComplete(Notification):
 
     @property
     def condition(self):
-        return self.context.ministry_id
+        """
+        First check if the ministries notification receive system parameter
+        is set to true. if its set to true, check if there is a valid ministry
+        id - and return true if there is a valid ministry id
+        """
+
+        notif_param = pref.getMinistriesReceiveNotification()
+        if notif_param == True:
+            # if the ministry id is set then notif_param will still evaluate to true
+            # if its not set it will evaluate to false
+            notif_param = self.context.ministry_id
+        return notif_param
+
     
     @property
     def from_address(self):
