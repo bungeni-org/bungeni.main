@@ -278,6 +278,32 @@ class IBungeniUserSettings(interface.Interface):
         default=True
     )
 
+class IBungeniEmailSettings(interface.Interface):
+    hostname = schema.TextLine(
+        title = _("Email server hostname or IP address"),
+        default = u"localhost",
+    )
+    port = schema.Int(
+        title = _("Email server port"),
+        default = 25,
+    )
+    username = schema.TextLine(
+        title = _("Email server login name"),
+        default = u"",
+    )
+    password = schema.Password(
+        title = _("Email server password"),
+        default = u"",
+    )
+    default_sender = schema.TextLine(
+        title = _("Default sender address"),
+        default = u"",
+    )
+    use_tls = schema.Bool(
+        title = _("Use TLS to connect"),
+        default = False,
+    )
+
 
 class IAssignment(IAlchemistContent):
 

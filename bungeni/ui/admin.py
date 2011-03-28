@@ -105,7 +105,16 @@ class Settings(catalyst.EditForm):
 ##             widget.setRenderedValue(self.get(item))
 ##         return widget()
 
+class EmailSettings(catalyst.EditForm):
     
+    form_fields = form.Fields(interfaces.IBungeniEmailSettings)
+    
+    def update(self):
+        settings = \
+            component.getUtility(interfaces.IBungeniEmailSettings)()
+        self.adapters = {interfaces.IBungeniEmailSettings : settings}
+        super(EmailSettings, self).update()
+
 class UserGroups(BrowserView):
     
     def table(self):

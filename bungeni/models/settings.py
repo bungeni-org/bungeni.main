@@ -183,6 +183,8 @@ def GlobalSettingFactory( iface ):
     return klass
 
 BungeniSettings = GlobalSettingFactory( interfaces.IBungeniSettings )
+UserSettings = UserSettingFactory( interfaces.IBungeniUserSettings )
+EmailSettings = GlobalSettingFactory( interfaces.IBungeniEmailSettings )
 
 class SettingsUtility( object ):
     """ allow for lookup of settings in a context less fashion.. ie
@@ -191,5 +193,9 @@ class SettingsUtility( object ):
     def __call__( self ):
         return BungeniSettings( None )
 
-UserSettings = UserSettingFactory( interfaces.IBungeniUserSettings )
+class EmailSettingsUtility( object ):
+    #!-EMAIL(murithi, mar-2011) to register utility after app starts
+    def __call__( self ):
+        return EmailSettings( None )
+
 

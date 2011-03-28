@@ -18,6 +18,12 @@
         layer="bungeni.ui.interfaces.IBungeniSkin"
         permission="zope.ManageSite"
     />
+    <browser:page name="email-settings"
+        for="bungeni.models.interfaces.IBungeniAdmin"
+        class=".admin.EmailSettings"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+        permission="zope.ManageSite"
+    />
     
     <!-- only visible to currently authenticated users -->
     <browser:page name="user-settings"

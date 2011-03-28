@@ -691,6 +691,13 @@
         layer=".interfaces.IAdministratorWorkspace"
         permission="zope.ManageSite"
     />
+    <browser:menuItem menu="admin_navigation"
+        for="bungeni.models.interfaces.IBungeniApplication"
+        title="email settings"
+        action="email-settings"
+        layer=".interfaces.IAdministratorWorkspace"
+        permission="zope.ManageSite"
+    />
 
 
     <browser:subMenuItem menu="plone_contentmenu"
