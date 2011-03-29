@@ -52,7 +52,7 @@ def toDot(workflow):
     end_states = set()
     print >> io, "digraph workflow {"
     for state, transitions in workflow._transitions_by_source.items():
-        states.add( state )
+        states.add(state)
         for tid, t in transitions.items():
             option = []
             states.add(t.destination)
@@ -73,7 +73,7 @@ def toDot(workflow):
         if state in end_states:
             print >> io, " %s [color=red];" % state
         else:
-            print >> io, " %s [shape=box ];" % state
+            print >> io, " %s [shape=box];" % state
     print >> io, "}"
     return io.getvalue()
 

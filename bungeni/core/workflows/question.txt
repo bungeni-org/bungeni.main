@@ -528,6 +528,10 @@ to the Speaker's Office for reviewing and to make it “admissible”.
 
 At the same time the question is also forwarded to the ministry.
 
+!+BUNGENISETTINGS(mr, mar-2011)
+  >>> if prefs.getMinistriesReceiveNotification() is False:
+  ...     prefs.BungeniSettings(prefs.app).ministries_notification = True
+  
   >>> question.ministry_id = ministry.group_id
   >>> notification.SendNotificationToMinistryUponComplete(ObjectEvent(question))
   From: clerks.office@parliament.go.tld
