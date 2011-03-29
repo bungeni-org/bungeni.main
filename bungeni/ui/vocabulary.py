@@ -903,7 +903,7 @@ def dict_to_dynatree(input_dict, selected):
         new_item['children'] = children
         new_item['select'] = key in selected
         new_item['isFolder'] = bool(children)
-        new_item['hideCheckbox'] = bool(children) and leafsOnly
+        new_item['hideCheckbox'] = bool(children)
         new_item['expand'] = bool(selected) and (key in selected or \
             child_selected(children, selected))
         retval.append(new_item)
