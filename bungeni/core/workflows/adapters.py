@@ -1,7 +1,5 @@
 log = __import__("logging").getLogger("bungeni.core.workflows")
 
-import os
-import events
 from bungeni.core.workflow import xmlimport
 
 import bill
@@ -31,7 +29,6 @@ def load_workflow(module, kls):
     """
     name = module.__name__.rsplit('.')[-1]
     wf = xmlimport.load("%s/%s.xml" % (PATH_CUSTOM_WORKLFOWS, name), name)
-    events.register_workflow_transitions(wf, kls)
     module.wf = wf
     module.states = wf._states_by_id
     _log = log.debug

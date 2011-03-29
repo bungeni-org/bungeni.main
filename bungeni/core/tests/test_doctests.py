@@ -52,7 +52,7 @@ def test_suite():
         "workflows/question.txt",
         #"workflows/motion.txt", #!+FIRETRANSITION
         #"workflows/bill.txt", #!+FIRETRANSITION
-        "workflows/transitioncron.txt",
+        "workflows/transitioncron.txt", #!+NOTIFICATIONS
     )
     docfiles = ()
     

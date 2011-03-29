@@ -94,8 +94,7 @@ class Transition(object):
         condition=None,
         trigger=interfaces.MANUAL, 
         permission=CheckerPublic,
-        order=0, 
-        event=None, 
+        order=0,
         require_confirmation=False,
         **user_data
     ):
@@ -107,7 +106,6 @@ class Transition(object):
         self.trigger = trigger
         self.permission = permission
         self.order = order
-        self.event = event
         self.require_confirmation = require_confirmation
         self.user_data = user_data
    

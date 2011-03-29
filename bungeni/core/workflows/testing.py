@@ -95,9 +95,6 @@ def setup_adapters():
     provideAdapterWorkflow(adapters.MotionWorkflowAdapter, domain.Motion)
     provideAdapterWorkflowController(domain.Motion)
     
-    zope.component.provideHandler(
-        bungeni.core.workflows.events.workflowTransitionEventDispatcher)
-
     zope.component.provideAdapter(
         bungeni.core.version.ContextVersioned,
         (bungeni.core.interfaces.IVersionable,),

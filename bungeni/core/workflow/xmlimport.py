@@ -42,7 +42,7 @@ ID_RE = re.compile("^[\w\d_]+$")
 
 TRANS_ATTRS_REQUIREDS = ("id", "title", "source", "destination")
 TRANS_ATTRS_OPTIONALS = ("condition", "trigger", "roles", "permission", 
-    "order", "event", "require_confirmation")
+    "order", "require_confirmation")
 TRANS_ATTRS = TRANS_ATTRS_REQUIREDS + TRANS_ATTRS_OPTIONALS
 
 
@@ -304,9 +304,6 @@ def _load(workflow, module_name):
         # python resolvables
         if "condition" in kw:
             kw["condition"] = capi.get_workflow_condition(kw["condition"])
-        if "event" in kw:
-            # raises importerror/nameerror
-            kw["event"] = resolve(kw["event"], BUNGENI_BASEPATH) # !+
         # bool
         if "require_confirmation" in kw:
             try:

@@ -1,50 +1,27 @@
 # encoding: utf-8
 
-from zope import interface
 from zope import component
-from zope.event import notify
-from zope.component.interfaces import ObjectEvent
-from bungeni.core.workflow import interfaces
+from bungeni.core.workflow import states, interfaces
+from bungeni.core.workflows import notification
 
-
-# global workflow transition event map
-workflow_transition_event_map = {}
-
-def get_workflow_transitions(wf):
-    return wf._transitions_by_id.values()
-    
-def register_workflow_transitions(wf, kls):
-    """Use this method to register workflow transitions, such that
-    events will be fired after a transition."""
-    
-    for t in get_workflow_transitions(wf):
-        if t.event:
-            workflow_transition_event_map[
-                (kls, t.source, t.destination)] = t.event
 
 @component.adapter(interfaces.IWorkflowTransitionEvent)
-def workflowTransitionEventDispatcher(event):
-    source = event.source
-    destination = event.destination
+def workflowTransitionNotifier(event):
+    type_name, status = type(event.object).__name__, event.destination
+    try:
+        for notifier in notification.NOTIFIER_REGISTRY[type_name][status]:
+            try:
+                notifier(event) #!+adapter, event.object
+            except Exception, e:
+                states.exception_as(e, interfaces.WorkflowNotificationError)
+    except KeyError, e:
+        pass # no notifiers registered for (type, status)
 
-    iface = workflow_transition_event_map.get(
-        (type(event.object), source, destination))
-
-    if iface is None:
-        for specification in interface.providedBy(event.object):
-            iface = workflow_transition_event_map.get(
-                (specification, source, destination))
-            if iface is not None:
-                break
-
-    if iface is not None:
-        transition_event = ObjectEvent(event.object)
-        interface.alsoProvides(transition_event, iface)
-        notify(transition_event)
 
 def initializeWorkflow(object, event):
-    """In response to object created events."""
-
+    """In response to object created events.
+    event:zope.lifecycleevent.ObjectCreatedEvent
+    """
     if interfaces.IWorkflow(object, None) is None:
         return
     
@@ -52,9 +29,11 @@ def initializeWorkflow(object, event):
     if workflow is not None:
         workflow.fireAutomatic()
 
+
 def fireAutomaticTransitions(object, event):
-    """ fire automatic transitions for a new state """
-    
+    """Fire automatic transitions for a new state.
+    event:bungeni.core.workflow.interfaces.IWorkflowTransitionEvent
+    """
     if interfaces.IWorkflow(object, None) is None:
         return
     

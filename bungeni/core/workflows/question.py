@@ -9,8 +9,7 @@ states = None
 log = __import__("logging").getLogger("bungeni.core")
 
 from zope import component
-from bungeni.core.workflows.notification import Notification
-from bungeni.core.workflows import interfaces
+from bungeni.core.workflows.notification import Notification, notifier
 from bungeni.core import globalsettings as prefs
 from bungeni.core.workflows import dbutils
 from bungeni.core.i18n import _
@@ -18,33 +17,13 @@ from bungeni.models import domain
 from bungeni.alchemist import Session
 
 
-class SendNotificationToMemberUponReceipt(Notification):
-    component.adapts(interfaces.IQuestionReceivedEvent)
-
-    body = _('notification_email_to_member_upon_receipt_of_question',
-             default="Question received")
-    
-    @property
-    def subject(self):
-        return u'Question received: %s' % self.context.short_name
-    
-    @property
-    def condition(self):
-        return self.context.receive_notification
-    
-    @property
-    def from_address(self):
-        return prefs.getClerksOfficeEmail()
-    
+@notifier("Question", "submitted")
 class SendNotificationToClerkUponSubmit(Notification):
     """Send notification to Clerk's office upon submit.
 
     We need to settings from a global registry to determine whether to
     send this notification and where to send it to.
     """
-    
-    component.adapts(interfaces.IQuestionSubmittedEvent)
-    
     body = _('notification_email_to_clerk_upon_submit_of_question',
              default="Question submitted")
     
@@ -60,12 +39,31 @@ class SendNotificationToClerkUponSubmit(Notification):
     def recipient_address(self):
         return prefs.getClerksOfficeEmail()
 
+
+@notifier("Question", "received")
+class SendNotificationToMemberUponReceipt(Notification):
+    
+    body = _('notification_email_to_member_upon_receipt_of_question',
+             default="Question received")
+    
+    @property
+    def subject(self):
+        return u'Question received: %s' % self.context.short_name
+    
+    @property
+    def condition(self):
+        return self.context.receive_notification
+    
+    @property
+    def from_address(self):
+        return prefs.getClerksOfficeEmail()
+
+
+@notifier("Question", "inadmissible")
 class SendNotificationToMemberUponReject(Notification):
     """Issued when a question was rejected by the speakers office.
-    Sends a notice that the Question was rejected"""
-    
-    component.adapts(interfaces.IQuestionRejectedEvent)
-    
+    Sends a notice that the Question was rejected
+    """
     body = _('notification_email_to_member_upon_rejection_of_question',
              default="Question rejected")
     
@@ -81,12 +79,12 @@ class SendNotificationToMemberUponReject(Notification):
     def from_address(self):
         return prefs.getSpeakersOfficeEmail()
 
+
+@notifier("Question", "clarification_required")
 class SendNotificationToMemberUponNeedsClarification(Notification):
     """Issued when a question needs clarification by the MP
-    sends a notice that the question needs clarification"""
-    
-    component.adapts(interfaces.IQuestionClarifyEvent)
-    
+    sends a notice that the question needs clarification
+    """
     body = _('notification_email_to_member_upon_need_clarification_of_question',
              default="Your question needs to be clarified")
     
@@ -102,14 +100,14 @@ class SendNotificationToMemberUponNeedsClarification(Notification):
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 
+
+@notifier("Question", "scheduled")
 class SendNotificationToMemberUponDeferred(Notification):
-    """Issued when a question was deferred by Clerk's office."""
-
-    component.adapts(interfaces.IQuestionDeferredEvent)
-
+    """Issued when a question was deferred by Clerk's office.
+    """
     body = _('notification_email_to_member_upon_defer_of_question',
              default="Question deferred")
-
+    
     @property
     def subject(self):
         return u'Question deferred: %s' % self.context.short_name
@@ -122,12 +120,12 @@ class SendNotificationToMemberUponDeferred(Notification):
     def from_address(self):
         return prefs.getSpeakersOfficeEmail()
 
+
+# !+NOT_WIRED_BUT_TESTED!(mr, mar-2011)
 class SendNotificationToMemberUponSchedule(Notification):
     """Issued when a question was scheduled by Speakers office.
-    Sends a Notice that the question is scheduled for ... """
-
-    component.adapts(interfaces.IQuestionScheduledEvent)
-
+    Sends a Notice that the question is scheduled for ... 
+    """
     body = _('notification_email_to_member_upon_schedule_of_question',
              default="Question scheduled")
 
@@ -166,13 +164,12 @@ class SendNotificationToMemberUponPostponed(Notification):
         return prefs.getClerksOfficeEmail()
 '''
 
-class SendNotificationToMemberUponComplete(Notification):
-    """The question is marked as “completed” and is made available
-    forwarded to the Speaker's Office for reviewing and to make it
-    “admissible”."""
-    
-    component.adapts(interfaces.IQuestionCompletedEvent)
 
+@notifier("Question", "completed")
+class SendNotificationToMemberUponComplete(Notification):
+    """The question is marked as “completed” and is made available forwarded 
+    to the Speaker's Office for reviewing and to make it "admissible".
+    """
     body = _('notification_email_to_member_upon_complete_of_question',
              default="Question completed for review at the speakers office")
     
@@ -188,12 +185,13 @@ class SendNotificationToMemberUponComplete(Notification):
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 
+
+@notifier("Question", "completed")
 class SendNotificationToMinistryUponComplete(Notification):
     """At the same time the question is also forwarded to the
-    ministry."""
+    ministry.
+    """
 
-    component.adapts(interfaces.IQuestionCompletedEvent)
-    
     body = _('notification_email_to_ministry_upon_complete_question',
              default=u"Question assigned to ministry")
 
@@ -210,7 +208,7 @@ class SendNotificationToMinistryUponComplete(Notification):
         """
         notif_param = prefs.getMinistriesReceiveNotification()
         if notif_param == True:
-            # if ministry id is set then notif_param will still evaluate to true
+            # if the ministry id is set then notif_param will still evaluate to true
             # if its not set it will evaluate to false
             notif_param = self.context.ministry_id
         return notif_param
@@ -226,13 +224,13 @@ class SendNotificationToMinistryUponComplete(Notification):
             self.context.ministry_id)
         return dbutils.getMinsiteryEmails(ministry)
 
+
+@notifier("Question", "response_pending")
 class SendNotificationToMemberUponSentToMinistry(Notification):
     """Issued when a question was sent to a ministry for written
     response.  sends a notice that the question was sent to the
-    ministry ... for a written response"""
-    
-    component.adapts(interfaces.IQuestionSentToMinistryEvent)
-
+    ministry ... for a written response
+    """
     body = _('notification_email_to_member_upon_sent_to_ministry_of_question',
              default="Question sent to ministry for a written answer")
     
@@ -248,14 +246,13 @@ class SendNotificationToMemberUponSentToMinistry(Notification):
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 
+
+# !+NOT_WIRED_BUT_TESTED!(mr, mar-2011)
 class SendNotificationToMemberUponAnswer(Notification):
     """Issued when a questions answer was reviewed by Clerk's office.
     sends a notice that the question was either debated or received a
     written answer by the ministry and that the answer is available
-    ..."""
-    
-    component.adapts(interfaces.IQuestionAnsweredEvent)
-
+    """
     body = _('notification_email_to_member_upon_answer_of_question',
              default="Question answered")
     
@@ -271,14 +268,13 @@ class SendNotificationToMemberUponAnswer(Notification):
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 
+
+@notifier("Question", "debated")
 class SendNotificationToMemberUponDebate(Notification):
     """Issued when a questions answer was reviewed by Clerk's office.
     sends a notice that the question was either debated or received a
     written answer by the ministry and that the answer is available
-    ..."""
-    
-    component.adapts(interfaces.IQuestionDebatedEvent)
-
+    """
     body = _('notification_email_to_member_upon_debate_question',
              default="Question debated")
     
@@ -293,7 +289,8 @@ class SendNotificationToMemberUponDebate(Notification):
     @property
     def from_address(self):
         return prefs.getClerksOfficeEmail()
-        
+
+
 ''' 
 Add to question.txt tests, equivalent set of tests running as the clerk:
 

@@ -5,16 +5,13 @@ states = None
 
 #
 
-from zope import component
-from bungeni.core.workflows.notification import Notification
-from bungeni.core.workflows import interfaces
+from bungeni.core.workflows.notification import Notification, notifier
 from bungeni.core import globalsettings as prefs
 from bungeni.core.i18n import _
-    
 
+
+@notifier("Motion", "received")
 class SendNotificationToMemberUponReceipt(Notification):
-    component.adapts(interfaces.IMotionReceivedEvent)
-
     body = _('notification_email_to_member_upon_receipt_of_motion',
              default="Motion received")
     
@@ -29,16 +26,15 @@ class SendNotificationToMemberUponReceipt(Notification):
     @property
     def from_address(self):
         return prefs.getClerksOfficeEmail()
-    
+
+
+@notifier("Motion", "submitted")
 class SendNotificationToClerkUponSubmit(Notification):
     """Send notification to Clerk's office upon submit.
 
     We need to settings from a global registry to determine whether to
     send this notification and where to send it to.
     """
-
-    component.adapts(interfaces.IMotionSubmittedEvent)
-
     body = _('notification_email_to_clerk_upon_submit_of_motion',
              default="Motion submitted")
 
@@ -54,12 +50,12 @@ class SendNotificationToClerkUponSubmit(Notification):
     def recipient_address(self):
         return prefs.getClerksOfficeEmail()
 
+
+@notifier("Motion", "inadmissible")
+@notifier("Motion", "rejected")
 class SendNotificationToMemberUponReject(Notification):
     """Issued when a motion was rejected by the speakers office.
     Sends a notice that the Motion was rejected"""
-
-    component.adapts(interfaces.IMotionRejectedEvent)
-
     body = _('notification_email_to_member_upon_rejection_of_motion',
              default="Motion rejected")
 
@@ -75,12 +71,12 @@ class SendNotificationToMemberUponReject(Notification):
     def from_address(self):
         return prefs.getSpeakersOfficeEmail()
 
+
+@notifier("Motion", "clarification_required")
 class SendNotificationToMemberUponNeedsClarification(Notification):
     """Issued when a motion needs clarification by the MP
-    sends a notice that the motion needs clarification"""
-
-    component.adapts(interfaces.IMotionClarifyEvent)
-
+    sends a notice that the motion needs clarification
+    """
     body = _('notification_email_to_member_upon_need_clarification_of_motion',
              default="Your motion needs to be clarified")
 
@@ -96,11 +92,11 @@ class SendNotificationToMemberUponNeedsClarification(Notification):
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 
+
+@notifier("Motion", "deferred")
 class SendNotificationToMemberUponDeferred(Notification):
-    """Issued when a motion was deferred by Clerk's office."""
-
-    component.adapts(interfaces.IMotionDeferredEvent)
-
+    """Issued when a motion was deferred by Clerk's office.
+    """
     body = _('notification_email_to_member_upon_defer_of_motion',
              default="Motion deferred")
 
@@ -116,12 +112,12 @@ class SendNotificationToMemberUponDeferred(Notification):
     def from_address(self):
         return prefs.getSpeakersOfficeEmail()
 
+
+@notifier("Motion", "scheduled")
 class SendNotificationToMemberUponSchedule(Notification):
     """Issued when a motion was scheduled by Speakers office.
-    Sends a Notice that the motion is scheduled for ... """
-
-    component.adapts(interfaces.IMotionScheduledEvent)
-
+    Sends a Notice that the motion is scheduled for ... 
+    """
     body = _('notification_email_to_member_upon_schedule_of_motion',
              default="Motion scheduled")
 

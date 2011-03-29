@@ -8,7 +8,7 @@
     
     <!-- general transition event dispatcher -->
     
-    <subscriber handler=".events.workflowTransitionEventDispatcher" />
+    <subscriber handler=".events.workflowTransitionNotifier" />
     
     <!-- workflow events -->
     <subscriber handler=".events.fireAutomaticTransitions"
@@ -109,7 +109,6 @@
 
     
     <!-- questions workflow -->
-    
     <adapter for="bungeni.models.interfaces.IQuestion"
         provides="bungeni.core.workflow.interfaces.IStateController"
         factory="bungeni.core.workflow.states.StateController"
@@ -118,23 +117,6 @@
         provides="bungeni.core.workflow.interfaces.IWorkflow"
         factory=".adapters.QuestionWorkflowAdapter"
     />
-
-
-
-  <subscriber handler=".question.SendNotificationToMemberUponReceipt" /> 
-  <subscriber handler=".question.SendNotificationToClerkUponSubmit" />
-  <subscriber handler=".question.SendNotificationToMemberUponReject" />
-  <subscriber handler=".question.SendNotificationToMemberUponNeedsClarification" />
-  <subscriber handler=".question.SendNotificationToMemberUponDeferred" />
-  <subscriber handler=".question.SendNotificationToMemberUponSchedule" />
-  <!-- !+ remove, grep for: SendNotificationToMemberUponPostponed IQuestionPostponedEvent
-    subscriber handler=".question.SendNotificationToMemberUponPostponed" / 
-  -->
-  <subscriber handler=".question.SendNotificationToMemberUponSentToMinistry" />
-  <subscriber handler=".question.SendNotificationToMemberUponAnswer" />
-  <subscriber handler=".question.SendNotificationToMinistryUponComplete" />
-  <subscriber handler=".question.SendNotificationToMemberUponComplete" /> 
-
 
     <!-- motion workflow -->
     <adapter for="bungeni.models.interfaces.IMotion"
@@ -145,17 +127,7 @@
         provides="bungeni.core.workflow.interfaces.IWorkflow"
         factory=".adapters.MotionWorkflowAdapter"
     />
-
-  <subscriber handler=".motion.SendNotificationToMemberUponReceipt" /> 
-  <subscriber handler=".motion.SendNotificationToClerkUponSubmit" />
-  <subscriber handler=".motion.SendNotificationToMemberUponReject" />
-  <subscriber handler=".motion.SendNotificationToMemberUponNeedsClarification" />
-  <subscriber handler=".motion.SendNotificationToMemberUponDeferred" />
-  <subscriber handler=".motion.SendNotificationToMemberUponSchedule" />
-  <!-- !+ remove, grep for: SendNotificationToMemberUponPostponed IMotionPostponedEvent
-  <subscriber handler=".motion.SendNotificationToMemberUponPostponed" />
-  -->
-  
+    
   <!-- agenda item workflow -->
   <adapter
      for="bungeni.models.interfaces.IAgendaItem"
