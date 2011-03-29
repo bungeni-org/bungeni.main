@@ -10,7 +10,6 @@ jQuery(document).ready(function(){
                 {children: window[id_attr], 
                  selectMode:2,
                  checkbox:true,
-                 persist:true,
                  onSelect: function(flag, node) {
                                 var selected_nodes = jQuery(node.tree.$tree).dynatree('getSelectedNodes');
                                 var field_value = '';

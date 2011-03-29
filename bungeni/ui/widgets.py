@@ -1082,7 +1082,10 @@ class TreeVocabularyWidget(DropdownWidget):
 
 
     def _toFieldValue(self, value):
-        return "\n".join(value.rstrip("|").split("|"))
+        if value:
+            return "\n".join(value.rstrip("|").split("|"))
+        else:
+            return ""
 
     @property
     def dataSource(self):
