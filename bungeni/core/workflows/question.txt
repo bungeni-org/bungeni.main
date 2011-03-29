@@ -447,7 +447,6 @@ Notifications
 -------------
 
   >>> from bungeni.core.workflows import question as notification
-  >>> from zope.component.interfaces import ObjectEvent
 
 Setup mock delivery component.
 
@@ -487,13 +486,13 @@ Set up a user.
   
 Question received.
   
-  >>> notification.SendNotificationToMemberUponReceipt(ObjectEvent(question))
+  >>> notification.SendNotificationToMemberUponReceipt(question)
 
 Let's change our setting for receive notification so an email message
 is dispatched.
 
   >>> question.receive_notification = True
-  >>> notification.SendNotificationToMemberUponReceipt(ObjectEvent(question))
+  >>> notification.SendNotificationToMemberUponReceipt(question)
   From: clerks.office@parliament.go.tld
   To: "John Doe" <john.doe@localhost> 
   ...
@@ -512,7 +511,7 @@ not notify, so it fails... so, we hard-reset clerks_office_notification to True:
   
 !+BUNGENISETTINGS(mr, mar-2011) generalize and apply to all notification tests
 
-  >>> notification.SendNotificationToClerkUponSubmit(ObjectEvent(question))
+  >>> notification.SendNotificationToClerkUponSubmit(question)
   From: "John Doe" <john.doe@localhost>
   To: clerks.office@parliament.go.tld ...
   Subject: Question submitted: My subject ...
@@ -520,7 +519,7 @@ not notify, so it fails... so, we hard-reset clerks_office_notification to True:
 the question is marked as “completed” and is made available / forwarded
 to the Speaker's Office for reviewing and to make it “admissible”.
 
-  >>> notification.SendNotificationToMemberUponComplete(ObjectEvent(question))
+  >>> notification.SendNotificationToMemberUponComplete(question)
   From: clerks.office@parliament.go.tld
   To: "John Doe" <john.doe@localhost> 
   ...
@@ -533,7 +532,7 @@ At the same time the question is also forwarded to the ministry.
   ...     prefs.BungeniSettings(prefs.app).ministries_notification = True
   
   >>> question.ministry_id = ministry.group_id
-  >>> notification.SendNotificationToMinistryUponComplete(ObjectEvent(question))
+  >>> notification.SendNotificationToMinistryUponComplete(question)
   From: clerks.office@parliament.go.tld
   To: "a ab" <mp1@example.com> ,"b bc" <mp2@example.com> 
   ...
@@ -541,42 +540,42 @@ At the same time the question is also forwarded to the ministry.
   
 A question was rejected by the speakers office.
 
-  >>> notification.SendNotificationToMemberUponReject(ObjectEvent(question))
+  >>> notification.SendNotificationToMemberUponReject(question)
   From: speakers.office@parliament.go.tld
   To: "John Doe" <john.doe@localhost> ...
   Subject: Question rejected: My subject ... 
 
 A question needs clarification by the MP
 
-  >>> notification.SendNotificationToMemberUponNeedsClarification(ObjectEvent(question))
+  >>> notification.SendNotificationToMemberUponNeedsClarification(question)
   From: clerks.office@parliament.go.tld
   To: "John Doe" <john.doe@localhost> ...
   Subject: Question needs clarification: My subject ...
 
 A question was deferred by Clerk's office.
 
-  >>> notification.SendNotificationToMemberUponDeferred(ObjectEvent(question))
+  >>> notification.SendNotificationToMemberUponDeferred(question)
   From: speakers.office@parliament.go.tld
   To: "John Doe" <john.doe@localhost> ...
   Subject: Question deferred: My subject ...
 
 A question was scheduled by Speakers office.
 
-  >>> notification.SendNotificationToMemberUponSchedule(ObjectEvent(question))
+  >>> notification.SendNotificationToMemberUponSchedule(question)
   From: clerks.office@parliament.go.tld
   To: "John Doe" <john.doe@localhost> ...
   Subject: Question scheduled: My subject ...
 
 A question was sent to a ministry for written response.
 
-  >>> notification.SendNotificationToMemberUponSentToMinistry(ObjectEvent(question))
+  >>> notification.SendNotificationToMemberUponSentToMinistry(question)
   From: clerks.office@parliament.go.tld
   To: "John Doe" <john.doe@localhost> ...
   Subject: Question sent to ministry: My subject ...
 
 A questions answer was reviewed by Clerk's office.
 
-  >>> notification.SendNotificationToMemberUponAnswer(ObjectEvent(question))
+  >>> notification.SendNotificationToMemberUponAnswer(question)
   From: clerks.office@parliament.go.tld
   To: "John Doe" <john.doe@localhost> ...
   Subject: Question answered: My subject ...

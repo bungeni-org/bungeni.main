@@ -23,24 +23,23 @@ def get_owner_email(context):
     return  '"%s %s" <%s>' % (owner.first_name, owner.last_name, owner.email)
 
 class Notification(object):
-    def __new__(cls, event):
+    
+    def __new__(cls, context):
         notification = object.__new__(cls)
-        notification.__init__(event.object)
-
+        notification.__init__(context)
         if notification.condition:
+            # call to send notification
             notification()
-        
+    
     def __init__(self, context):
         self.context = context
-
+    
     def __call__(self):
         text = translate(self.body)
         msg = MIMEText(text)
-
         msg['Subject'] = self.subject
         msg['From'] = self.from_address
         msg['To'] = self.recipient_address
-
         dispatch(msg)
     
     @property

@@ -51,9 +51,6 @@
   <!-- Setup WebDAV -->
   <!--include file="webdav.zcml" /-->
                  
-  <!-- Notifications -->
-  <!--include file="workflowsnotification.zcml" /-->
-
   <!-- Settings for the Portal-->
   <adapter
      for="bungeni.models.interfaces.IBungeniApplication"

@@ -11,7 +11,8 @@ def workflowTransitionNotifier(event):
     try:
         for notifier in notification.NOTIFIER_REGISTRY[type_name][status]:
             try:
-                notifier(event) #!+adapter, event.object
+                # execute: create notifier, and if condition, send notification
+                notifier(event.object)
             except Exception, e:
                 states.exception_as(e, interfaces.WorkflowNotificationError)
     except KeyError, e:

@@ -203,7 +203,6 @@ Notifications
 -------------
 
   >>> from bungeni.core.workflows import motion as notification
-  >>> from zope.component.interfaces import ObjectEvent
 
 Setup mock delivery component.
 
@@ -234,54 +233,54 @@ Set up a user.
   
 Motion received.
   
-  >>> notification.SendNotificationToMemberUponReceipt(ObjectEvent(motion))
+  >>> notification.SendNotificationToMemberUponReceipt(motion)
 
 Let's change our setting for receive notification so an email message
 is dispatched.
 
   >>> motion.receive_notification = True
-  >>> notification.SendNotificationToMemberUponReceipt(ObjectEvent(motion))
+  >>> notification.SendNotificationToMemberUponReceipt(motion)
   From: clerks.office@parliament.go.tld
   To: "John Doe" <john.doe@localhost>...
   Subject: Motion received: My subject...
   
 Send notification to Clerk's office upon submit.
 
-  >>> notification.SendNotificationToClerkUponSubmit(ObjectEvent(motion))
+  >>> notification.SendNotificationToClerkUponSubmit(motion)
   From: "John Doe" <john.doe@localhost>
   To: clerks.office@parliament.go.tld ...
   Subject: Motion submitted: My subject ...
 
 
 A motion was rejected by the speakers office.
-  >>> notification.SendNotificationToMemberUponReject(ObjectEvent(motion))
+  >>> notification.SendNotificationToMemberUponReject(motion)
   From: speakers.office@parliament.go.tld
   To: "John Doe" <john.doe@localhost> ...
   Subject: Motion rejected: My subject ...
 
 
 A motion needs clarification by the MP
-  >>> notification.SendNotificationToMemberUponNeedsClarification(ObjectEvent(motion))
+  >>> notification.SendNotificationToMemberUponNeedsClarification(motion)
   From: clerks.office@parliament.go.tld
   To: "John Doe" <john.doe@localhost> ...
   Subject: Motion needs clarification: My subject ...
 
 
 A motion was deferred by Clerk's office.
-  >>> notification.SendNotificationToMemberUponDeferred(ObjectEvent(motion))
+  >>> notification.SendNotificationToMemberUponDeferred(motion)
   From: speakers.office@parliament.go.tld
   To: "John Doe" <john.doe@localhost> ...
   Subject: Motion deferred: My subject ...
 
 A motion was scheduled by Speakers office.
-  >>> notification.SendNotificationToMemberUponSchedule(ObjectEvent(motion))
+  >>> notification.SendNotificationToMemberUponSchedule(motion)
   From: clerks.office@parliament.go.tld
   To: "John Doe" <john.doe@localhost> ...
   Subject: Motion scheduled: My subject ...
 
 A motion was postponed by the speakers office.
 !+ remove, grep for: SendNotificationToMemberUponPostponed IMotionPostponedEvent
-  >>> #notification.SendNotificationToMemberUponPostponed(ObjectEvent(motion))
+  >>> #notification.SendNotificationToMemberUponPostponed(motion)
   #From: clerks.office@parliament.go.tld
   #To: "John Doe" <john.doe@localhost> ...
   #Subject: Motion postponed: My subject ...
