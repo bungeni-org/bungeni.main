@@ -10,8 +10,14 @@
 
   <resourceLibrary name="jquery">
     <directory
+      zcml:condition="not-have devmode"
       source="jquery"
-      include="jquery.min.js"
+      include="jquery-1.4.4.min.js"
+    />
+    <directory
+      zcml:condition="have devmode"
+      source="jquery"
+      include="jquery-1.4.4.js"
     />
   </resourceLibrary>
 
