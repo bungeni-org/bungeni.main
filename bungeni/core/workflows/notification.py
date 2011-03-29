@@ -27,26 +27,27 @@ class Notification(object):
     def __new__(cls, context):
         notification = object.__new__(cls)
         notification.__init__(context)
-        if notification.condition:
+        if notification.condition():
             # call to send notification
             notification()
     
     def __init__(self, context):
         self.context = context
     
+    def condition(self):
+        raise NotImplemented
+    
     def __call__(self):
         text = translate(self.body)
         msg = MIMEText(text)
-        msg['Subject'] = self.subject
-        msg['From'] = self.from_address
-        msg['To'] = self.recipient_address
+        msg["Subject"] = self.subject()
+        msg["From"] = self.from_address()
+        msg["To"] = self.recipient_address()
         dispatch(msg)
     
-    @property
     def from_address(self):
         return get_owner_email(self.context)
-
-    @property
+    
     def recipient_address(self):
         return get_owner_email(self.context)
 

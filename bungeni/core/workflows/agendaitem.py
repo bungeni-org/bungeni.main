@@ -12,18 +12,15 @@ from bungeni.core.i18n import _
 
 @notifier("AgendaItem", "received")
 class SendNotificationToMemberUponReceipt(Notification):
-    body = _('notification_email_to_member_upon_receipt_of_agenda_item',
+    body = _("notification_email_to_member_upon_receipt_of_agenda_item",
              default="Agenda Item received")
     
-    @property
     def subject(self):
-        return u'Agenda Item received: %s' % self.context.short_name
+        return "Agenda Item received: %s" % self.context.short_name
     
-    @property
     def condition(self):
         return self.context.receive_notification
     
-    @property
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 
@@ -35,18 +32,15 @@ class SendNotificationToClerkUponSubmit(Notification):
     We need to settings from a global registry to determine whether to
     send this notification and where to send it to.
     """
-    body = _('notification_email_to_clerk_upon_submit_of_agenda_item',
+    body = _("notification_email_to_clerk_upon_submit_of_agenda_item",
              default="Agenda Item submitted")
     
-    @property
     def subject(self):
-        return u'Agenda Item submitted: %s' % self.context.short_name
+        return "Agenda Item submitted: %s" % self.context.short_name
     
-    @property
     def condition(self):
         return prefs.getClerksOfficeReceiveNotification()
     
-    @property
     def recipient_address(self):
         return prefs.getClerksOfficeEmail()
 
@@ -56,18 +50,15 @@ class SendNotificationToMemberUponReject(Notification):
     """Issued when a agenda_item was rejected by the speakers office.
     Sends a notice that the Agenda Item was rejected.
     """
-    body = _('notification_email_to_member_upon_rejection_of_agenda_item',
+    body = _("notification_email_to_member_upon_rejection_of_agenda_item",
              default="Agenda Item rejected")
     
-    @property
     def subject(self):
-        return u'Agenda Item rejected: %s' % self.context.short_name
+        return "Agenda Item rejected: %s" % self.context.short_name
     
-    @property
     def condition(self):
         return self.context.receive_notification
     
-    @property
     def from_address(self):
         return prefs.getSpeakersOfficeEmail()
 
@@ -77,18 +68,15 @@ class SendNotificationToMemberUponNeedsClarification(Notification):
     """Issued when a agenda_item needs clarification by the MP
     sends a notice that the agenda_item needs clarification.
     """
-    body = _('notification_email_to_member_upon_need_clarification_of_agenda_item',
+    body = _("notification_email_to_member_upon_need_clarification_of_agenda_item",
              default="Your agenda_item needs to be clarified")
     
-    @property
     def subject(self):
-        return u'Agenda Item needs clarification: %s' % self.context.short_name
+        return "Agenda Item needs clarification: %s" % self.context.short_name
     
-    @property
     def condition(self):
         return self.context.receive_notification
     
-    @property
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 
@@ -97,18 +85,15 @@ class SendNotificationToMemberUponNeedsClarification(Notification):
 class SendNotificationToMemberUponDeferred(Notification):
     """Issued when a agenda_item was deferred by Clerk's office.
     """
-    body = _('notification_email_to_member_upon_defer_of_agenda_item',
+    body = _("notification_email_to_member_upon_defer_of_agenda_item",
              default="Agenda Item deferred")
     
-    @property
     def subject(self):
-        return u'Agenda Item deferred: %s' % self.context.short_name
+        return "Agenda Item deferred: %s" % self.context.short_name
     
-    @property
     def condition(self):
         return self.context.receive_notification
     
-    @property
     def from_address(self):
         return prefs.getSpeakersOfficeEmail()
 
@@ -118,18 +103,15 @@ class SendNotificationToMemberUponSchedule(Notification):
     """Issued when a agenda_item was scheduled by Speakers office.
     Sends a Notice that the agenda_item is scheduled for ... 
     """
-    body = _('notification_email_to_member_upon_schedule_of_agenda_item',
+    body = _("notification_email_to_member_upon_schedule_of_agenda_item",
              default="Agenda Item scheduled")
     
-    @property
     def subject(self):
-        return u'Agenda Item scheduled: %s' % self.context.short_name
+        return "Agenda Item scheduled: %s" % self.context.short_name
     
-    @property
     def condition(self):
         return self.context.receive_notification
     
-    @property
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 
@@ -141,18 +123,15 @@ class SendNotificationToMemberUponPostponed(Notification):
     """
     component.adapts(interfaces.IAgendaItemPostponedEvent)
     
-    body = _('notification_email_to_member_upon_postpone_of_agenda_item',
+    body = _("notification_email_to_member_upon_postpone_of_agenda_item",
              default="Agenda Item postponed")
     
-    @property
     def subject(self):
-        return u'Agenda Item postponed: %s' % self.context.short_name
+        return "Agenda Item postponed: %s" % self.context.short_name
     
-    @property
     def condition(self):
         return self.context.receive_notification
     
-    @property
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 '''
@@ -161,17 +140,15 @@ class SendNotificationToMemberUponPostponed(Notification):
 class SendNotificationToMemberUponDebated(Notification):
     """Issued when a agenda_item was debated.
     """
-    body = _('notification_email_to_member_upon_debate_of_agenda_item',
-             default=u"Agenda Item was debated")
-    @property
-    def subject(self):
-        return u'Agenda Item was debated: %s' % self.context.short_name
+    body = _("notification_email_to_member_upon_debate_of_agenda_item",
+             default="Agenda Item was debated")
     
-    @property
+    def subject(self):
+        return "Agenda Item was debated: %s" % self.context.short_name
+    
     def condition(self):
         return self.context.receive_notification
     
-    @property
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 

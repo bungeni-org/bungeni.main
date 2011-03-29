@@ -24,18 +24,15 @@ class SendNotificationToClerkUponSubmit(Notification):
     We need to settings from a global registry to determine whether to
     send this notification and where to send it to.
     """
-    body = _('notification_email_to_clerk_upon_submit_of_question',
+    body = _("notification_email_to_clerk_upon_submit_of_question",
              default="Question submitted")
     
-    @property
     def subject(self):
-        return u'Question submitted: %s' % self.context.short_name
+        return "Question submitted: %s" % self.context.short_name
     
-    @property
     def condition(self):
         return prefs.getClerksOfficeReceiveNotification()
     
-    @property
     def recipient_address(self):
         return prefs.getClerksOfficeEmail()
 
@@ -43,18 +40,15 @@ class SendNotificationToClerkUponSubmit(Notification):
 @notifier("Question", "received")
 class SendNotificationToMemberUponReceipt(Notification):
     
-    body = _('notification_email_to_member_upon_receipt_of_question',
+    body = _("notification_email_to_member_upon_receipt_of_question",
              default="Question received")
     
-    @property
     def subject(self):
-        return u'Question received: %s' % self.context.short_name
+        return "Question received: %s" % self.context.short_name
     
-    @property
     def condition(self):
         return self.context.receive_notification
     
-    @property
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 
@@ -64,18 +58,15 @@ class SendNotificationToMemberUponReject(Notification):
     """Issued when a question was rejected by the speakers office.
     Sends a notice that the Question was rejected
     """
-    body = _('notification_email_to_member_upon_rejection_of_question',
+    body = _("notification_email_to_member_upon_rejection_of_question",
              default="Question rejected")
     
-    @property
     def subject(self):
-        return u'Question rejected: %s' % self.context.short_name
+        return "Question rejected: %s" % self.context.short_name
     
-    @property
     def condition(self):
         return self.context.receive_notification
     
-    @property
     def from_address(self):
         return prefs.getSpeakersOfficeEmail()
 
@@ -85,18 +76,15 @@ class SendNotificationToMemberUponNeedsClarification(Notification):
     """Issued when a question needs clarification by the MP
     sends a notice that the question needs clarification
     """
-    body = _('notification_email_to_member_upon_need_clarification_of_question',
+    body = _("notification_email_to_member_upon_need_clarification_of_question",
              default="Your question needs to be clarified")
     
-    @property
     def subject(self):
-        return u'Question needs clarification: %s' % self.context.short_name
+        return "Question needs clarification: %s" % self.context.short_name
     
-    @property
     def condition(self):
         return self.context.receive_notification
     
-    @property
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 
@@ -105,18 +93,15 @@ class SendNotificationToMemberUponNeedsClarification(Notification):
 class SendNotificationToMemberUponDeferred(Notification):
     """Issued when a question was deferred by Clerk's office.
     """
-    body = _('notification_email_to_member_upon_defer_of_question',
+    body = _("notification_email_to_member_upon_defer_of_question",
              default="Question deferred")
     
-    @property
     def subject(self):
-        return u'Question deferred: %s' % self.context.short_name
-
-    @property
+        return "Question deferred: %s" % self.context.short_name
+    
     def condition(self):
         return self.context.receive_notification
     
-    @property
     def from_address(self):
         return prefs.getSpeakersOfficeEmail()
 
@@ -126,18 +111,15 @@ class SendNotificationToMemberUponSchedule(Notification):
     """Issued when a question was scheduled by Speakers office.
     Sends a Notice that the question is scheduled for ... 
     """
-    body = _('notification_email_to_member_upon_schedule_of_question',
+    body = _("notification_email_to_member_upon_schedule_of_question",
              default="Question scheduled")
-
-    @property
+    
     def subject(self):
-        return u'Question scheduled: %s' % self.context.short_name
-
-    @property
+        return "Question scheduled: %s" % self.context.short_name
+    
     def condition(self):
         return self.context.receive_notification
     
-    @property
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 
@@ -148,18 +130,15 @@ class SendNotificationToMemberUponPostponed(Notification):
 
     component.adapts(interfaces.IQuestionPostponedEvent)
 
-    body = _('notification_email_to_member_upon_postpone_of_question',
+    body = _("notification_email_to_member_upon_postpone_of_question",
              default="Question postponed")
-
-    @property
+    
     def subject(self):
-        return u'Question postponed: %s' % self.context.short_name
-
-    @property
+        return "Question postponed: %s" % self.context.short_name
+    
     def condition(self):
         return self.context.receive_notification
     
-    @property
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 '''
@@ -170,18 +149,15 @@ class SendNotificationToMemberUponComplete(Notification):
     """The question is marked as “completed” and is made available forwarded 
     to the Speaker's Office for reviewing and to make it "admissible".
     """
-    body = _('notification_email_to_member_upon_complete_of_question',
+    body = _("notification_email_to_member_upon_complete_of_question",
              default="Question completed for review at the speakers office")
     
-    @property
     def subject(self):
-        return u"Question forwarded to Speaker's Office: %s" % self.context.short_name
-
-    @property
+        return "Question forwarded to Speaker's Office: %s" % self.context.short_name
+    
     def condition(self):
         return self.context.receive_notification
     
-    @property
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 
@@ -191,15 +167,12 @@ class SendNotificationToMinistryUponComplete(Notification):
     """At the same time the question is also forwarded to the
     ministry.
     """
-
-    body = _('notification_email_to_ministry_upon_complete_question',
-             default=u"Question assigned to ministry")
-
-    @property
+    body = _("notification_email_to_ministry_upon_complete_question",
+             default="Question assigned to ministry")
+    
     def subject(self):
-        return u'Question asked to ministry: %s' % self.context.short_name
-
-    @property
+        return "Question asked to ministry: %s" % self.context.short_name
+    
     def condition(self):
         """
         First check if the ministries notification receive system parameter
@@ -213,11 +186,9 @@ class SendNotificationToMinistryUponComplete(Notification):
             notif_param = self.context.ministry_id
         return notif_param
     
-    @property
     def from_address(self):
         return prefs.getClerksOfficeEmail()
-
-    @property
+    
     def recipient_address(self):
         session = Session()
         ministry = session.query(domain.Ministry).get(
@@ -231,18 +202,15 @@ class SendNotificationToMemberUponSentToMinistry(Notification):
     response.  sends a notice that the question was sent to the
     ministry ... for a written response
     """
-    body = _('notification_email_to_member_upon_sent_to_ministry_of_question',
+    body = _("notification_email_to_member_upon_sent_to_ministry_of_question",
              default="Question sent to ministry for a written answer")
     
-    @property
     def subject(self):
-        return u"Question sent to ministry: %s" % self.context.short_name
-
-    @property
+        return "Question sent to ministry: %s" % self.context.short_name
+    
     def condition(self):
         return self.context.receive_notification
     
-    @property
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 
@@ -253,18 +221,15 @@ class SendNotificationToMemberUponAnswer(Notification):
     sends a notice that the question was either debated or received a
     written answer by the ministry and that the answer is available
     """
-    body = _('notification_email_to_member_upon_answer_of_question',
+    body = _("notification_email_to_member_upon_answer_of_question",
              default="Question answered")
     
-    @property
     def subject(self):
-        return u"Question answered: %s" % self.context.short_name
-
-    @property
+        return "Question answered: %s" % self.context.short_name
+    
     def condition(self):
         return self.context.receive_notification
     
-    @property
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 
@@ -275,18 +240,15 @@ class SendNotificationToMemberUponDebate(Notification):
     sends a notice that the question was either debated or received a
     written answer by the ministry and that the answer is available
     """
-    body = _('notification_email_to_member_upon_debate_question',
+    body = _("notification_email_to_member_upon_debate_question",
              default="Question debated")
     
-    @property
     def subject(self):
-        return u"Question debated: %s" % self.context.short_name
-
-    @property
+        return "Question debated: %s" % self.context.short_name
+    
     def condition(self):
         return self.context.receive_notification
     
-    @property
     def from_address(self):
         return prefs.getClerksOfficeEmail()
 
@@ -298,9 +260,9 @@ Add to question.txt tests, equivalent set of tests running as the clerk:
 
   >>> question = add_content(
   ...     domain.Question,
-  ...     short_name=u"My subject - clerk",
-  ...     body_text=u"The question - clerk on behalf of an MP",
-  ...     owner_id = mp_1.user_id,
+  ...     short_name="My subject - clerk",
+  ...     body_text="The question - clerk on behalf of an MP",
+  ...     owner_id=mp_1.user_id,
   ...     language="en")
   >>> question.__parent__ = app
   
