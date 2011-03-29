@@ -1,11 +1,13 @@
 import datetime
 from zope import interface
-from zope.schema.interfaces import IContextSourceBinder
+from zope.schema.interfaces import IContextSourceBinder, IVocabulary,\
+    IVocabularyTokenized
 from zope.schema import vocabulary
 from zope.security.proxy import removeSecurityProxy
 from zope.security import checkPermission
 
 import bungeni.alchemist.vocabulary
+from bungeni.utils.capi import capi
 from bungeni.alchemist import Session
 from bungeni.alchemist.container import valueKey
 
@@ -28,6 +30,16 @@ from bungeni.ui.calendar.utils import first_nth_weekday_of_month
 from bungeni.ui.calendar.utils import nth_day_of_month
 from bungeni.ui.calendar.utils import nth_day_of_week
 from bungeni.ui.utils import common
+from bungeni.ui.interfaces import ITreeVocabulary
+
+#tree vocabulary
+from bungeni.core.language import get_default_language
+try:
+    import json
+except ImportError:
+    import simplejson as json
+import imsvdex.vdex
+
 
 days = [ _('day_%d' % index, default=default) for (index, default) in 
          enumerate((u"Mon", u"Tue", u"Wed", u"Thu", u"Fri", u"Sat", u"Sun")) ]
@@ -864,3 +876,80 @@ class QuerySource(object):
             ))
         return vocabulary.SimpleVocabulary(terms)
 
+def child_selected(children, selected):
+    return bool(set([_['key'] for _ in children]).intersection(selected)
+        ) \
+        or bool([_ for _ in children
+                if _['children'] and child_selected(_['children'], 
+                    selected
+                )
+            ]
+        )
+
+def dict_to_dynatree(input_dict, selected):
+    """
+    Adapted from collective.dynatree
+    """
+    if not input_dict:
+        return []
+    retval = []
+    for key in input_dict.keys():
+        title, children = input_dict[key]
+        children = dict_to_dynatree(children, selected)
+
+        new_item = {}
+        new_item['title'] = title
+        new_item['key'] = key
+        new_item['children'] = children
+        new_item['select'] = key in selected
+        new_item['isFolder'] = bool(children)
+        new_item['hideCheckbox'] = bool(children) and leafsOnly
+        new_item['expand'] = bool(selected) and (key in selected or \
+            child_selected(children, selected))
+        retval.append(new_item)
+    return retval
+
+
+class BaseVDEXVocabulary(object):
+    """
+    Base class to generate vdex vocabularies
+    
+    vocabulary = BaseVDEXVocabulary(file_name)
+    Register utility for easier reuse
+    """
+    interface.implements(ITreeVocabulary)
+
+    def __init__(self, file_name):
+        self.file_name = file_name
+
+    @property
+    def file_path(self):
+        return "/".join(
+            (capi.get_root_path(), "vocabularies", self.file_name)
+        )
+    
+    @property
+    def vdex(self):
+        ofile = open(self.file_path)
+        vdex = imsvdex.vdex.VDEXManager(
+            file=ofile, 
+            lang = get_default_language()
+        )
+        vdex.fallback_to_default_language = True
+        ofile.close()
+        return vdex
+
+    def generateJSON(self, selected = []):
+        vdict = self.vdex.getVocabularyDict()
+        dynatree_dict = dict_to_dynatree(vdict, selected)
+        return json.dumps(dynatree_dict)
+
+    def getTermById(self, value):
+        return self.vdex.getTermById(value)
+
+    def validateTerms(self, value_list):
+        for value in value_list:
+            if self.getTermById(value) is None:
+                raise LookupError
+
+subject_terms_vocabulary = BaseVDEXVocabulary("subject-terms.vdex")

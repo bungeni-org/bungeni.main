@@ -112,3 +112,22 @@ class IGenenerateVocabularyDefault(interface.Interface):
     
     def getDefaultVocabularyValue():
         "Get the default value in vocabulary"
+
+
+class ITreeVocabulary(interface.Interface):
+    """ Generate tree vocabulary as JSON data.
+        Also provides a validation of values
+    """
+
+    def generateJSON():
+        "Generate JSON data from vocabulary "
+
+    def getTermById(value):
+        "Gets the vocabulary term or None"
+
+    def validateTerms(value_list):
+        "validate a list of vocabulary terms"
+
+class IVocabularyTextField(schema.interfaces.IText):
+    """Text field supporting vocabulary """
+    vocabulary = interface.Attribute("A vocabulary")

@@ -8,8 +8,10 @@
 
   <!-- Alchemist UI overrides -->
   <include package="alchemist.ui" />
-
-    <!-- Must be included before executing .forms.overrides.zcml otherwise
+    
+    <!-- pakage for resource registration -->
+    <include package=".resources" />
+    <!-- Must be included before executing .forms.overrides.zcml otherwise 
     calling queryModelDescriptor(model_interface) will return None.
     -->
     <include package=".descriptor" />
@@ -154,6 +156,10 @@
     <utility name="bungeni.vocabulary.ParliamentSource"
         provides="zope.schema.interfaces.IVocabularyFactory"
         component=".vocabulary.ParliamentSource"
+    />
+    <utility name="bungeni.vocabulary.SubjectTerms"
+        provides="bungeni.ui.interfaces.ITreeVocabulary"
+        component=".vocabulary.subject_terms_vocabulary"
     />
     <!--
    <utility

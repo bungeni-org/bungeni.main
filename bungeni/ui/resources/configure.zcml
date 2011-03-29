@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<configure
+   xmlns="http://namespaces.zope.org/zope"
+   xmlns:browser="http://namespaces.zope.org/browser"
+   xmlns:zcml="http://namespaces.zope.org/zcml"
+   >
+
+  <include package="zc.resourcelibrary" file="meta.zcml"/>
+  <include package="zc.resourcelibrary" />
+
+  <resourceLibrary name="jquery">
+    <directory
+      source="jquery"
+      include="jquery.min.js"
+    />
+  </resourceLibrary>
+
+  <resourceLibrary name="jqueryui" require="jquery">
+    <directory
+      source="jqueryui"
+      include="jquery.ui.core.js
+               jquery.ui.widget.js"
+    />
+  </resourceLibrary>
+
+  <resourceLibrary name="jqueryuiblock" require="jquery">
+    <directory
+      source="jquery"
+      include="jquery.formsubmit.js
+               jquery.uiblock.js"
+    />
+  </resourceLibrary>
+
+  <resourceLibrary name="dynatree" require="jqueryui">
+    <directory
+       zcml:condition="not-have devmode"
+       source="dynatree"
+       include="js/jquery.dynatree.min.js
+                js/init.js
+                css/ui.dynatree.css"
+       />
+    <directory
+       zcml:condition="have devmode"
+       source="dynatree"
+       include="js/jquery.dynatree.js
+                js/init.js
+                css/ui.dynatree.css"               
+       />
+  </resourceLibrary>     
+
+</configure>

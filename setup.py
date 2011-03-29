@@ -20,8 +20,8 @@ setup(name='bungeni',
       include_package_data=True,
       zip_safe=False,
       install_requires=['setuptools',
-			# Following packages are required by :
-			# bungeni.server
+            # Following packages are required by :
+            # bungeni.server
                         'ZODB3',
                         'ZConfig',
                         'zdaemon',
@@ -48,8 +48,8 @@ setup(name='bungeni',
                         'zope.app.securitypolicy',
                         'zope.sendmail',
                         'ore.wsgiapp',
-			#
-			# The following are required by bungeni.models
+            #
+            # The following are required by bungeni.models
                         'SQLAlchemy',
                         'zope.schema',
                         'zope.interface',
@@ -58,17 +58,17 @@ setup(name='bungeni',
                         'alchemist.security',
                         'ore.alchemist',
                         # The following are required by bungeni.portal
-			#
-		        'pyquery>=0.3.1',
-		        'Deliverance',
-		        'chameleon.html',
-			# The following are used by bungeni.core
-			#
+            #
+                'pyquery>=0.3.1',
+                'Deliverance',
+                'chameleon.html',
+            # The following are used by bungeni.core
+            #
                         'ore.xapian',
                         'z3c.dav',
                         'plone.i18n',
                         'plone.transforms',
-			# The followning are used by bungeni.ui
+            # The followning are used by bungeni.ui
                         'zope.app.cache',
                         'plone.memoize',
                         'alchemist.ui',
@@ -77,24 +77,25 @@ setup(name='bungeni',
                         'z3c.menu.ready2go',
                         'zc.displayname',
                         'zope.formlib',
-			# The followning packages are used by:
-			# bungeni.ui & bungeni.rest                        
+                        'imsvdex',
+            # The followning packages are used by:
+            # bungeni.ui & bungeni.rest                        
                         'simplejson',                                                
-			],
+            ],
       entry_points =
-	{
-	'console_scripts' : [
-		'bungeni-reset-db = bungeni.core.schema:reset_database',
+    {
+    'console_scripts' : [
+        'bungeni-reset-db = bungeni.core.schema:reset_database',
                 'bungeni-sync-index = bungeni.core.index:reset_index',
-		],
-	'paste.app_factory' : [
-		'main = bungeni.server.startup:application_factory',
-		'static = bungeni.portal.app:make_static_serving_app'
-		],
-	'paste.filter_app_factory' : [
-		'deliverance = bungeni.portal.middleware:make_deliverance_middleware'
-		]
-	}
+        ],
+    'paste.app_factory' : [
+        'main = bungeni.server.startup:application_factory',
+        'static = bungeni.portal.app:make_static_serving_app'
+        ],
+    'paste.filter_app_factory' : [
+        'deliverance = bungeni.portal.middleware:make_deliverance_middleware'
+        ]
+    }
  )
 
 

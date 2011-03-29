@@ -36,6 +36,7 @@ from bungeni.core.workflows.version import states as version_wf_state
 from bungeni.core import translation
 
 from bungeni.ui import widgets
+from bungeni.ui.fields import VocabularyTextField
 
 from bungeni.ui import constraints
 from bungeni.ui.forms import validations
@@ -1876,6 +1877,17 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
             ),
             view_widget=widgets.HTMLDisplay,
             edit_widget=widgets.RichTextEditor,
+        ),
+        Field(name="subject",
+            modes="add edit view",
+            property=VocabularyTextField(title=_("Subject Terms"),
+                description=_("Select Subjects"),
+                vocabulary="bungeni.vocabulary.SubjectTerms",
+                required = False,
+            ),
+            edit_widget=widgets.TreeVocabularyWidget,
+            add_widget=widgets.TreeVocabularyWidget,
+            view_widget=widgets.TermsDisplayWidget,
         ),
     ])
     public_wfstates = get_states("question", tagged=["public"])

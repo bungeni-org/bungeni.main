@@ -11,6 +11,7 @@ $URL:$
 """
 
 from zope.app.pagetemplate import ViewPageTemplateFile
+from zc.resourcelibrary import need
 
 
 class ProcessingViewlet(object):
@@ -19,4 +20,4 @@ class ProcessingViewlet(object):
     render = ViewPageTemplateFile("templates/processing.pt")
 
     def update(self):
-        pass
+        need("jqueryuiblock")

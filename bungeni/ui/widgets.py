@@ -1056,3 +1056,86 @@ class MemberDropDownWidget(DropdownWidget):
 class LanguageLookupWidget(MemberDropDownWidget):
     def getDefaultVocabularyValue(self):
         return get_default_language()
+
+
+
+class TreeVocabularyWidget(DropdownWidget):
+    """
+    This widget renders a tree widget based on terms in an xml
+    vocabulary - Each vocabulary utility must implement a json
+    generation function see vocabulary.py and interfaces.py
+    It can be used with standard Choice fields to render a tree
+    vocab
+    """
+    def __init__(self, field, request):
+        super(TreeVocabularyWidget, self).__init__(field,
+            field.vocabulary, request)
+
+
+    def __call__(self):
+        need("dynatree")
+        contents = []
+        contents.append(template % {"html": self.html,
+            "javascript": self.javascript})
+
+        return "\n".join(contents)
+
+
+    def _toFieldValue(self, value):
+        return "\n".join(value.rstrip("|").split("|"))
+
+    @property
+    def dataSource(self):
+        if self._data is not None and self._data\
+            is not self._data_marker:
+            return self.context.lookupVocabulary().generateJSON(
+                selected = self._data.split("\n")
+            )
+        return self.context.lookupVocabulary().generateJSON(selected=[])
+
+    @property
+    def treeId(self):
+        normalized_name = self.name .replace(".", "_")
+        return "%s_tree" % normalized_name
+    
+    @property
+    def html(self):
+        kw = {"id": self.name,
+              "tree_id": self.treeId
+              }
+
+        if self._data is not None and self._data is not self._data_marker:
+            kw["value"] = "|".join(self._data.split("\n"))
+        else:
+            kw["value"] = ""
+
+        return """
+            <div id="dynatree">
+              <div id="%(tree_id)s"></div>
+              <input id="%(id)s" name="%(id)s" value="%(value)s"
+                  type="hidden">
+            </div>
+            """ % kw
+        
+    @property
+    def javascript(self):
+        kw = {"id": self.name,
+              "data": self.dataSource,
+              "tree_id": self.treeId
+             }
+        return """
+            <script type="text/javascript">
+                %(tree_id)s = %(data)s;
+             </script>
+        """ % kw 
+
+
+class TermsDisplayWidget(
+    zope.app.form.browser.widget.UnicodeDisplayWidget
+):
+
+    def __call__(self):
+        term_text = u""
+        for data_value in self._data.split('\n'):
+            term_text = term_text + u"<li>%s</li>" % unicode(data_value)
+        return  u"<ul>%s</ul>" % term_text
