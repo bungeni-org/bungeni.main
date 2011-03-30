@@ -38,7 +38,16 @@ def nullCheckPermission(permission, principal_id):
 def exception_as(exc, exc_kls):
     return exc_kls("%s: %s" % (exc.__class__.__name__, exc))
 
-    
+def wrapped_condition(condition):
+    def test(context):
+        if condition is None:
+            return True
+        try:
+            return condition(context)
+        except Exception, e:
+            raise exception_as(e, interfaces.WorkflowConditionError)
+    return test
+
 #
 
 class State(object):
@@ -71,7 +80,6 @@ class State(object):
             if action==DENY:
                rpm.denyPermissionToRole(permission, role)
 
-
 class Transition(object):
     """A workflow transition from source status to destination.
     
@@ -102,7 +110,7 @@ class Transition(object):
         self.source = source
         self.destination = destination
         self._raw_condition = condition # remember unwrapped condition
-        self.condition = self._wrapped_condition(condition)
+        self.condition = wrapped_condition(condition)
         self.trigger = trigger
         self.permission = permission
         self.order = order
@@ -112,16 +120,6 @@ class Transition(object):
     @property
     def transition_id(self):
         return "%s-%s" % (self.source or "", self.destination)
-    
-    def _wrapped_condition(self, condition):
-        def test(context):
-            if condition is None:
-                return True
-            try:
-                return condition(context)
-            except Exception, e:
-                raise exception_as(e, interfaces.WorkflowTransitionConditionError)
-        return test
     
     def __cmp__(self, other):
         return cmp(self.order, other.order)

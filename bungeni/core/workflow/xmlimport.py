@@ -14,16 +14,11 @@ import os
 from lxml import etree
 from zope.dottedname.resolve import resolve
 from zope.i18nmessageid import Message
-
 from bungeni.core.workflow import interfaces
-
 from bungeni.core.workflow.states import BUNGENI_BASEPATH
 from bungeni.core.workflow.states import ACTIONS_MODULE
-from bungeni.core.workflow.states import GRANT
-from bungeni.core.workflow.states import DENY
-from bungeni.core.workflow.states import State
-from bungeni.core.workflow.states import Transition
-from bungeni.core.workflow.states import Workflow
+from bungeni.core.workflow.states import GRANT, DENY
+from bungeni.core.workflow.states import State, Transition, Workflow
 from bungeni.utils.capi import capi
 from bungeni.ui.utils import debug
 
@@ -87,6 +82,12 @@ See the Bungeni Source Code Style Guide for further details.
 </configure>
 """
 
+def strip_none(s):
+    """Ensure non-empty whitespace-stripped string, else None."""
+    if s is not None:
+        return s.strip() or None
+    return None
+
 def zcml_check_regenerate():
     """Called after all XML workflows have been loaded (see adapers.py). 
     """
@@ -106,14 +107,14 @@ def zcml_check_regenerate():
         raise ChangedWorkflowsPermissionsZCML(
             "Must restart system with updated file: %s" % (filepath))
 
-def is_zcml_permissionable(trans):
+def is_zcml_permissionable(trans_elem):
     # The "create" transitions should NOT have any permission assigned to them,
     # as the action of creating this object is controlled via an application
     # level bungeni.{type}.Add permission granted to the user in question. 
     #
     # The assumption here is that a "create" transition has a NULL source,
     # (by convention "" i.e. the empty string).
-    return bool(trans.get("source"))
+    return bool(strip_none(trans_elem.get("source")))
 
 def zcml_transition_permission(pid, title, roles):
     ZCML_LINES.append(ZCML_INDENT)
@@ -138,9 +139,9 @@ def _load(workflow, module_name):
     """
     transitions = []
     states = []
-    domain = workflow.get("domain")
+    domain = strip_none(workflow.get("domain"))
     wuids = set() # unique IDs in this XML workflow file
-    wid = workflow.get("id") # workflow XML id
+    wid = strip_none(workflow.get("id")) # workflow XML id
     # accumulation of ALL (permission, role) pairs assigned in ANY of the 
     # states within this workflow (for consistency checking)
     states_permissions_roles = set()
@@ -190,14 +191,14 @@ def _load(workflow, module_name):
     # states
     for s in workflow.iterchildren("state"):
         # @id
-        state_id = s.get("id")
+        state_id = strip_none(s.get("id"))
         assert state_id, "Workflow State must define @id"
         validate_id(state_id, "state")
         # actions
         action_names = []
         # version
-        if s.get("version") is not None:
-            make_version = as_bool(s.get("version"))
+        if strip_none(s.get("version")) is not None:
+            make_version = as_bool(strip_none(s.get("version")))
             if make_version is None:
                 raise ValueError("Invalid state value "
                     '[version="%s"]' % s.get("version"))
@@ -211,7 +212,7 @@ def _load(workflow, module_name):
         if hasattr(ACTIONS_MODULE, action_name):
             action_names.append(action_name)
         # @like_state, permissions
-        permissions = [] # tuple(bool:int, permission:str, role:str) 
+        permissions = [] # [ tuple(bool:int, permission:str, role:str) ]
         # state.@like_state : to reduce repetition and enhance maintainibility
         # of workflow XML files, a state may specify a @like_state attribute to 
         # inherit all permissions defined by the specified like_state; further
@@ -220,13 +221,14 @@ def _load(workflow, module_name):
         # downstream execution (a permission should be granted or denied only 
         # once per transition to a state).
         like_permissions = []
-        like_state = get_like_state(s.get("like_state"))
+        like_state = get_like_state(strip_none(s.get("like_state")))
         if like_state:
             like_permissions.extend(like_state.permissions)
         # (within same state) a deny is *always* executed after a *grant*
         for i, assign in enumerate(["grant", "deny"]):
             for p in s.iterchildren(assign):
-                permission, role = p.get("permission"), p.get("role")
+                permission = strip_none(p.get("permission"))
+                role = strip_none(p.get("role"))
                 #+!assertRegisteredPermission(permission)
                 check_add_permission(permissions, like_permissions, 
                     ASSIGNMENTS[i], permission, role)

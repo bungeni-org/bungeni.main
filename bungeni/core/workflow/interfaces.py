@@ -24,8 +24,8 @@ class WorkflowRuntimeError(Exception):
     """Error while executing a workflow action""" 
 class WorkflowStateActionError(WorkflowRuntimeError): 
     """Error while executing a workflow state action""" 
-class WorkflowTransitionConditionError(WorkflowRuntimeError):
-    """Error while executing a workflow transition condition""" 
+class WorkflowConditionError(WorkflowRuntimeError):
+    """Error while executing a workflow condition""" 
 class WorkflowNotificationError(WorkflowRuntimeError):
     """Error while executing a workflow notification""" 
 

@@ -36,7 +36,7 @@ def bungeni_custom_errors(f):
         try: 
             return f(*args, **kw)
         except Exception, e: 
-            raise BungeniCustomError("%s: %s" % (e.__class__.name, e))
+            raise BungeniCustomError("%s: %s" % (e.__class__.__name__, e))
     return _errorable
 
 

@@ -227,18 +227,16 @@ def set_get_gettext():
 #
 domain = None
 
-def set_domain(evoque_domain):
-    """Set the evoque domain onto global domain attribute. 
-    Also (even if not really necessary) register it as a ZC utility.
+def zca_register_domain(evoque_domain):
+    """ZCA register the domain as a utility (not really necessary).
     """
     # tag with IEvoqueDomain
     zope.interface.alsoProvides(evoque_domain, IEvoqueDomain)
     # register as utility
     zope.component.getGlobalSiteManager(
             ).registerUtility(evoque_domain, IEvoqueDomain)
-    # set utility onto z3evoque.domain
-    global domain
-    domain = zope.component.getUtility(IEvoqueDomain)
+    # retrieve the utility set on IEvoqueDomain
+    return zope.component.getUtility(IEvoqueDomain)
 
 class IEvoqueDomain(zope.interface.Interface):
     """Marker for an Evoque Domain instance."""
@@ -303,8 +301,10 @@ def setup_evoque(abs_base=None):
         filters=[]
     )
     
-    # set the evoque_domain singleton utility
-    set_domain(evoque_domain)
+    # ZCA register the evoque domain as a utility (not really necessary)
+    # set it onto global domain attribute
+    global domain
+    domain = zca_register_domain(evoque_domain)
     
     # from here on, use newly set global domain
     

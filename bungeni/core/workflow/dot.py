@@ -67,7 +67,7 @@ def toDot(workflow):
                     option.append("color=blue")
             elif not t._raw_condition is None:
                 option.append("color=red")
-            print >> io, ' %s -> %s [label="%s", %s];' %(
+            print >> io, ' %s -> %s [label="%s", %s];' % (
                 t.source, t.destination, t.transition_id, ", ".join(option))
     for state in states:
         if state in end_states:
