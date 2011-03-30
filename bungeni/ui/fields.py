@@ -36,9 +36,10 @@ class VocabularyTextField(Text):
     
     def _validate(self, values):
         super(VocabularyTextField, self)._validate(values)
-        try:
-            self.lookupVocabulary().validateTerms(values.split('\n'))
-        except LookupError:
-            raise InvalidVocabularySelection(i_value, ())
+        if values:
+            try:
+                self.lookupVocabulary().validateTerms(values.split('\n'))
+            except LookupError:
+                raise InvalidVocabularySelection(values, ())
                 
 

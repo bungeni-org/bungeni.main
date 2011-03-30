@@ -93,7 +93,8 @@
                 question_type
                 receive_notification
                 owner_id
-                note"
+                note
+                subject"
         />
         <!-- !+WORKFLOW_TRANSITION(ah, jan-2011) to be reviewed for now we 
             use the permission used for running transition  -->

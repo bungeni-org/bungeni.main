@@ -11,12 +11,18 @@ jQuery(document).ready(function(){
                  selectMode:2,
                  checkbox:true,
                  onSelect: function(flag, node) {
-                                var selected_nodes = jQuery(node.tree.$tree).dynatree('getSelectedNodes');
-                                var field_value = '';
+                                var selected_nodes = jQuery(
+                                    node.tree.$tree
+                                ).dynatree('getSelectedNodes');
+                                var field_values = [];
                                 for (var idx=0; idx<selected_nodes.length; idx++) { 
-                                    field_value = field_value + selected_nodes[idx].data.key + '|';
+                                    field_values.push(
+                                        selected_nodes[idx].data.key
+                                    );
                                 };  
-                                jQuery(input_el).val(field_value);
+                                jQuery(input_el).val(
+                                    field_values.join("|")
+                                );
                             },
                 }
             )

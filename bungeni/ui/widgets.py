@@ -1,3 +1,15 @@
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""UI Widgets
+
+$Id$
+$URL$
+"""
+
+log = __import__("logging").getLogger("bungeni.ui.widgets")
+
 
 import datetime, pytz
 import itertools
@@ -1076,7 +1088,7 @@ class TreeVocabularyWidget(DropdownWidget):
         need("dynatree")
         contents = []
         contents.append(template % {"html": self.html,
-            "javascript": self.javascript})
+            "javascript": self.javascript()})
 
         return "\n".join(contents)
 
@@ -1087,14 +1099,17 @@ class TreeVocabularyWidget(DropdownWidget):
         else:
             return ""
 
-    @property
     def dataSource(self):
-        if self._data is not None and self._data\
+        selected = []
+        if self.hasInput() and self.hasValidInput():
+            selected = self.getInputValue().split("\n")
+        elif self._data is not None and self._data\
             is not self._data_marker:
-            return self.context.lookupVocabulary().generateJSON(
-                selected = self._data.split("\n")
-            )
-        return self.context.lookupVocabulary().generateJSON(selected=[])
+            selected = self._data.split("\n")
+
+        return self.context.lookupVocabulary().generateJSON(
+            selected=selected
+        )
 
     @property
     def treeId(self):
@@ -1109,6 +1124,8 @@ class TreeVocabularyWidget(DropdownWidget):
 
         if self._data is not None and self._data is not self._data_marker:
             kw["value"] = "|".join(self._data.split("\n"))
+        elif self.hasInput() and self.hasValidInput():
+            kw["value"] = "|".join(self.getInputValue().split("\n"))
         else:
             kw["value"] = ""
 
@@ -1120,10 +1137,9 @@ class TreeVocabularyWidget(DropdownWidget):
             </div>
             """ % kw
         
-    @property
     def javascript(self):
         kw = {"id": self.name,
-              "data": self.dataSource,
+              "data": self.dataSource(),
               "tree_id": self.treeId
              }
         return """
