@@ -11,9 +11,9 @@ from bungeni.core.i18n import _
 
 def states():
     return [
-        workflow.State("new", _(u"visible"), [], []),
-        workflow.State("pending", _(u"pending"), [], []),
-        workflow.State("scheduled", _(u"scheduled"), [], []),
+        workflow.State("new", _(u"visible"), [], [], []),
+        workflow.State("pending", _(u"pending"), [], [], []),
+        workflow.State("scheduled", _(u"scheduled"), [], [], []),
     ]
 
 def transitions():

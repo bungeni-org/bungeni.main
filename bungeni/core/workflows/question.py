@@ -17,6 +17,7 @@ from bungeni.models import domain
 from bungeni.alchemist import Session
 
 
+''' !+XMLNOTIFICATIONS replaced...
 @notifier("Question", "submitted")
 class SendNotificationToClerkUponSubmit(Notification):
     """Send notification to Clerk's office upon submit.
@@ -35,7 +36,7 @@ class SendNotificationToClerkUponSubmit(Notification):
     
     def recipient_address(self):
         return prefs.getClerksOfficeEmail()
-
+'''
 
 @notifier("Question", "received")
 class SendNotificationToMemberUponReceipt(Notification):

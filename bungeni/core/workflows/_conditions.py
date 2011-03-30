@@ -14,7 +14,7 @@ log = __import__("logging").getLogger("bungeni.core.workflows._conditions")
 
 from bungeni.ui.interfaces import IFormEditLayer
 from bungeni.ui.utils import common
-
+from bungeni.core import globalsettings as prefs
 from bungeni.core.workflows import utils
 
 
@@ -35,6 +35,9 @@ def user_is_context_owner(context):
         owner_login = utils.get_owner_login_pi(context)
         return user_login == owner_login
     return user_is_context_owner(context)
+
+def clerk_receive_notification(context):
+    return prefs.getClerksOfficeReceiveNotification()
 
 
 # parliamentary items

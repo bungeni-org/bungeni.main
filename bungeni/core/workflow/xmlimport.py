@@ -19,6 +19,7 @@ from bungeni.core.workflow.states import BUNGENI_BASEPATH
 from bungeni.core.workflow.states import ACTIONS_MODULE
 from bungeni.core.workflow.states import GRANT, DENY
 from bungeni.core.workflow.states import State, Transition, Workflow
+from bungeni.core.workflow.notification import Notification
 from bungeni.utils.capi import capi
 from bungeni.ui.utils import debug
 
@@ -235,10 +236,22 @@ def _load(workflow, module_name):
         if like_state:
             # splice any remaining like_permissions at beginning of permissions
             permissions[0:0] = like_permissions
+        # notifications
+        notifications = [] # [ notification.Notification ]
+        for n in s.iterchildren("notification"):
+            notifications.append(
+                Notification(
+                    strip_none(n.get("condition")), # python resolvable
+                    strip_none(n.get("subject")), # template source, i18n
+                    strip_none(n.get("from")), # template source
+                    strip_none(n.get("to")), # template source
+                    strip_none(n.get("body")), # template source, i18n
+                )
+            )
         # states
         states.append(
             State(state_id, Message(s.get("title", domain)), 
-                action_names, permissions)
+                action_names, permissions, notifications)
         )
     
     for s in states:

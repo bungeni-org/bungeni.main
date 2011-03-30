@@ -52,11 +52,12 @@ def wrapped_condition(condition):
 
 class State(object):
     
-    def __init__(self, id, title, action_names, permissions):
+    def __init__(self, id, title, action_names, permissions, notifications):
         self.id = id
         self.title = title
         self.action_names = action_names # [str]
         self.permissions = permissions
+        self.notifications = notifications
     
     def execute_actions(self, context):
         """Execute the actions and permissions associated with this state.
@@ -79,6 +80,10 @@ class State(object):
                rpm.grantPermissionToRole(permission, role)
             if action==DENY:
                rpm.denyPermissionToRole(permission, role)
+        # notifications
+        for notification in self.notifications:
+            # call notification to execute
+            notification(context)
 
 class Transition(object):
     """A workflow transition from source status to destination.
