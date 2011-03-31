@@ -265,7 +265,7 @@ def setup_evoque(abs_base=None):
         # int 0 to 4, for: [silent, zero, name, render, raise]
         errors = int(evoque_ini.get("evoque.errors", 3)),
         
-        # evoque logger; additional setings should be specified via the app's 
+        # evoque logger; additional settings should be specified via the app's 
         # config ini file, just as for any other logger in the application e.g:
         # [logger_evoque]
         # level = DEBUG

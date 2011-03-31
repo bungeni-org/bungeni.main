@@ -17,18 +17,18 @@ def main(argv):
 	    if (output_folder.endswith("/") == False):
 		output_folder = output_folder + "/"
     
-    write_file(output_folder, "bill.dot", dot(wf("bill"))
-    write_file(output_folder, "question.dot", dot(wf("question"))
-    write_file(output_folder, "motion.dot", dot(wf("motion"))
-    write_file(output_folder, "version.dot", dot(wf("version"))
-    write_file(output_folder, "groupsitting.dot", dot(wf("groupsitting"))
-    write_file(output_folder, "group.dot", dot(wf("group"))
-    write_file(output_folder, "question.dot", dot(wf("question"))
-    write_file(output_folder, "address.dot", dot(wf("address"))
-    write_file(output_folder, "tableddocument.dot", dot(wf("tableddocument"))
-    write_file(output_folder, "agendaitem.dot", dot(wf("agendaitem"))
-    write_file(output_folder, "committee.dot", dot(wf("committee"))
-    write_file(output_folder, "parliament.dot", dot(wf("parliament"))
+    write_file(output_folder, "bill.dot", dot(wf("bill")))
+    write_file(output_folder, "question.dot", dot(wf("question")))
+    write_file(output_folder, "motion.dot", dot(wf("motion")))
+    write_file(output_folder, "version.dot", dot(wf("version")))
+    write_file(output_folder, "groupsitting.dot", dot(wf("groupsitting")))
+    write_file(output_folder, "group.dot", dot(wf("group")))
+    write_file(output_folder, "question.dot", dot(wf("question")))
+    write_file(output_folder, "address.dot", dot(wf("address")))
+    write_file(output_folder, "tableddocument.dot", dot(wf("tableddocument")))
+    write_file(output_folder, "agendaitem.dot", dot(wf("agendaitem")))
+    write_file(output_folder, "committee.dot", dot(wf("committee")))
+    write_file(output_folder, "parliament.dot", dot(wf("parliament")))
 
 
 if __name__ == "__main__":

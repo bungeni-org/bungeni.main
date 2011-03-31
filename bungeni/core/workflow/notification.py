@@ -33,23 +33,31 @@ class TemplateNamespaceSite(object):
 class TemplateNamespaceItem(object):
     """Adapts context for convenient usage from within a template.
     For passing down to template evaluation on *locals* as "item".
+    
+    All translatable values are returned translated into target_lang.
     """
     def __init__(self, context, target_lang):
         self.context = context # IBungeniContent
+        self.target_lang = target_lang
         self.translated_context = translation.translate_obj(
             context, lang=target_lang) # domain.ObjectTranslation
 
     def __getattribute__(self, name):
-        """Anything not defined on self, pick off self.context.
+        """Anything not defined on self, pick off self.translated_context, 
+        and, failing that, pick off self.context.
         """
         try:
             return object.__getattribute__(self, name)
         except AttributeError:
-            return object.__getattribute__(self.context, name)
+            try:
+                return object.__getattribute__(self.translated_context, name)
+            except AttributeError:
+                return object.__getattribute__(self.context, name)
     
     @property
     def class_name(self):
-        return self.context.__class__.__name__
+        return translate(self.context.__class__.__name__, 
+            target_language=self.target_lang)
     
     @property
     def owner(self):
@@ -74,7 +82,7 @@ def setup_domain():
         # how should any evaluation errors be rendered
         # int 0 to 4, for: [silent, zero, name, render, raise]
         errors = 3, 
-        # domain logger; additional setings should be specified via the 
+        # domain logger; additional settings should be specified via the 
         # app's config ini file, just as for any other logger. E.g:
         # [logger_notifications]
         # level = DEBUG
@@ -114,8 +122,9 @@ TEMPLATES = setup_domain()
 # utility to set/retrieve a template from string source
 
 def st(src):
-    """Set/retrieve the (cached) mini String Template from src, 
-    using the src also as the the template's name.
+    """Set/Retrieve the previously cached instance of the String Template from 
+    the domain's default collection, using the src also as the the template's 
+    name.
     """
     try:
         TEMPLATES.set_template(src, src=src, from_string=True)
@@ -158,14 +167,16 @@ class Notification(object):
         if not self.condition(context):
             return # do not notify
         # lang, translated subject/body 
-        lang = capi.application_language
+        lang = capi.default_language
         subject = translate(self.subject, target_language=lang)
         body = translate(self.body, target_language=lang)
         # evaluation locals namespace
         locals = {
             "item": TemplateNamespaceItem(context, lang)
         }
-        # all template sources are translated prior to setting/retrieving 
+        # set/retrieve the template for each templated value, and evoque --
+        # all translatable template sources are translated **prior** to 
+        # setting/retrieving
         msg = MIMEText(st(body).evoque(locals))
         msg["Subject"] = st(subject).evoque(locals)
         msg["From"] = st(self.from_).evoque(locals)
