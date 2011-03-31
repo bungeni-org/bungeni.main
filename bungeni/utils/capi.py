@@ -61,7 +61,7 @@ class CAPI(object):
     
     @property
     @bungeni_custom_errors
-    def application_language(self):
+    def default_language(self):
         return bc.default_language
     
     @bungeni_custom_errors

@@ -45,7 +45,7 @@ class ApplicationLanguage(BaseLanguageProvider):
     WEIGHT = 9
 
     def getLanguage(self):
-        return capi.application_language
+        return capi.default_language
 
 class BrowserLanguage(BaseLanguageProvider):
     WEIGHT = 8
