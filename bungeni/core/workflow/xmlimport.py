@@ -54,7 +54,7 @@ def assertRegisteredPermission(permission_id):
 #
 
 ZCML_FILENAME = "permissions.zcml"
-ZCML_MODULES_PROCESSED = set() # Process workflow modules once only
+ZCML_WORKFLOWS_PROCESSED = set() # Process workflows once only
 ZCML_LINES = [] # Accumulation of ZCML content
 ZCML_INDENT = ""
 ZCML_BOILERPLATE = """<?xml version="1.0"?>
@@ -127,16 +127,16 @@ def zcml_transition_permission(pid, title, roles):
 
 #
 
-def load(file_path, module_name):
-    """ (file_path:str, module_name:str) -> Workflow
+def load(file_path, name):
+    """ (file_path:str, name:str) -> Workflow
     
     Loads the workflow XML definition file, returning the correspondingly setup 
     Workflow instance. Called by workflows.adapters.load_workflow.
     """
-    return _load(etree.fromstring(open(file_path).read()), module_name)
+    return _load(etree.fromstring(open(file_path).read()), name)
 
-def _load(workflow, module_name):
-    """ (workflow:etree_doc, module_name:str) -> Workflow
+def _load(workflow, name):
+    """ (workflow:etree_doc, name:str) -> Workflow
     """
     transitions = []
     states = []
@@ -147,12 +147,12 @@ def _load(workflow, module_name):
     # states within this workflow (for consistency checking)
     states_permissions_roles = set()
     
-    ZCML_PROCESSED = bool(module_name in ZCML_MODULES_PROCESSED)
+    ZCML_PROCESSED = bool(name in ZCML_WORKFLOWS_PROCESSED)
     if not ZCML_PROCESSED:
-        ZCML_MODULES_PROCESSED.add(module_name)
+        ZCML_WORKFLOWS_PROCESSED.add(name)
         ZCML_LINES.append(ZCML_INDENT)
         ZCML_LINES.append(ZCML_INDENT)
-        ZCML_LINES.append("%s<!-- %s -->" % (ZCML_INDENT, module_name))
+        ZCML_LINES.append("%s<!-- %s -->" % (ZCML_INDENT, name))
     
     def validate_id(id, tag):
         """Assumption: id is not None."""
@@ -209,7 +209,7 @@ def _load(workflow, module_name):
         # state-id-inferred action - if "actions" module defines an action for
         # this state (associated via a naming convention), then use it.
         # !+ tmp, until actions are user-exposed as part of <state>
-        action_name = "_%s_%s" % (module_name, state_id)
+        action_name = "_%s_%s" % (name, state_id)
         if hasattr(ACTIONS_MODULE, action_name):
             action_names.append(action_name)
         # @like_state, permissions
@@ -277,7 +277,7 @@ def _load(workflow, module_name):
         validate_id(tid, "transition")
         
         # update ZCML for dedicated permission
-        pid = "bungeni.%s.wf.%s" % (module_name, tid)
+        pid = "bungeni.%s.wf.%s" % (name, tid)
         if not ZCML_PROCESSED:
             if is_zcml_permissionable(t):
                 zcml_transition_permission(pid, t.get("title"), 
@@ -335,7 +335,7 @@ def _load(workflow, module_name):
                     "Unknown transition source state [%s]" % (source)
             args = (Message(t.get("title"), domain), source, destination)
             transitions.append(Transition(*args, **kw))
-            log.warn("[%s] adding transition [%s-%s] [%s]" % (
+            log.debug("[%s] adding transition [%s-%s] [%s]" % (
                 wid, source or "", destination, kw))
     
     return Workflow(states, transitions)

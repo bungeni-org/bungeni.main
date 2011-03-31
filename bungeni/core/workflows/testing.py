@@ -11,7 +11,7 @@ import bungeni.core.workflows.events
 import bungeni.alchemist.security
 
 def verify_workflow(awf):
-    states = awf.workflow._states_by_id
+    states = awf.workflow.states
     sources = set((states.get(awf.context.status),))
     destinations = set(states.values())
 

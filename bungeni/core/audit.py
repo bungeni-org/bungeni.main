@@ -147,7 +147,7 @@ class AuditorFactory(object):
             object.status_date = change_data["date_active"] or datetime.now()
         # as a "base" description, use human readable workflow state title
         wf = IWorkflowController(object).workflow().workflow
-        description = wf._states_by_id[event.destination].title
+        description = wf.states[event.destination].title
         # extras, that may be used e.g. to elaborate description at runtime
         extras = {
             "source": event.source, 

@@ -1,19 +1,6 @@
 #
 import sys
-from bungeni.core.workflows import adapters
-
-from bungeni.core.workflows import bill
-from bungeni.core.workflows import question
-from bungeni.core.workflows import motion
-from bungeni.core.workflows import version
-from bungeni.core.workflows import groupsitting
-from bungeni.core.workflows import group
-from bungeni.core.workflows import address
-from bungeni.core.workflows import tableddocument
-from bungeni.core.workflows import agendaitem
-from bungeni.core.workflows import committee
-from bungeni.core.workflows import parliament
-
+from bungeni.core.workflows.adapters import wf
 from bungeni.core.workflow.dot import dot
 
 
@@ -30,18 +17,18 @@ def main(argv):
 	    if (output_folder.endswith("/") == False):
 		output_folder = output_folder + "/"
     
-    write_file(output_folder, "bill.dot", dot(bill.wf))
-    write_file(output_folder, "question.dot", dot(question.wf))
-    write_file(output_folder, "motion.dot", dot(motion.wf))
-    write_file(output_folder, "version.dot", dot(version.wf))
-    write_file(output_folder, "groupsitting.dot", dot(groupsitting.wf))
-    write_file(output_folder, "group.dot", dot(group.wf))
-    write_file(output_folder, "question.dot", dot(question.wf))
-    write_file(output_folder, "address.dot", dot(address.wf))
-    write_file(output_folder, "tableddocument.dot", dot(tableddocument.wf))
-    write_file(output_folder, "agendaitem.dot", dot(agendaitem.wf))
-    write_file(output_folder, "committee.dot", dot(committee.wf))
-    write_file(output_folder, "parliament.dot", dot(parliament.wf))
+    write_file(output_folder, "bill.dot", dot(wf("bill"))
+    write_file(output_folder, "question.dot", dot(wf("question"))
+    write_file(output_folder, "motion.dot", dot(wf("motion"))
+    write_file(output_folder, "version.dot", dot(wf("version"))
+    write_file(output_folder, "groupsitting.dot", dot(wf("groupsitting"))
+    write_file(output_folder, "group.dot", dot(wf("group"))
+    write_file(output_folder, "question.dot", dot(wf("question"))
+    write_file(output_folder, "address.dot", dot(wf("address"))
+    write_file(output_folder, "tableddocument.dot", dot(wf("tableddocument"))
+    write_file(output_folder, "agendaitem.dot", dot(wf("agendaitem"))
+    write_file(output_folder, "committee.dot", dot(wf("committee"))
+    write_file(output_folder, "parliament.dot", dot(wf("parliament"))
 
 
 if __name__ == "__main__":

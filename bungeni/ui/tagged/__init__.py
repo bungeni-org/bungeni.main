@@ -8,14 +8,14 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.ui.tagged")
 
-from bungeni.core import workflows
+from bungeni.core.workflows.adapters import wf
 STATES_MAPPING = {
-    "agendaitem": workflows.agendaitem.states,
-    "bill": workflows.bill.states,
-    "motion": workflows.motion.states,
-    "question": workflows.question.states,
-    "tableddocument": workflows.tableddocument.states,
-    "groupsitting": workflows.groupsitting.states,
+    "agendaitem": wf("agendaitem").states,
+    "bill": wf("bill").states,
+    "motion": wf("motion").states,
+    "question": wf("question").states,
+    "tableddocument": wf("tableddocument").states,
+    "groupsitting": wf("groupsitting").states,
 }
 
 from states import ACTIVE_TAGS, TAG_MAPPINGS

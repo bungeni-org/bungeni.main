@@ -512,7 +512,7 @@ not notify, so it fails... so, we hard-reset clerks_office_notification to True:
 
   >>> #!+XMLNOTIFICATIONS
   >>> #notification.SendNotificationToClerkUponSubmit(question)
-  >>> NotifyClerkOnQuestionSubmit = wf._states_by_id["submitted"].notifications[0]
+  >>> NotifyClerkOnQuestionSubmit = wf.states["submitted"].notifications[0]
   >>> NotifyClerkOnQuestionSubmit(question)
   From: "John Doe" <john.doe@localhost>
   To: clerks.office@parliament.go.tld ...

@@ -43,7 +43,7 @@ class WorkflowVocabulary(object):
             domain_model = removeSecurityProxy(context.domain_model)
             ctx = domain_model()
         wf = interfaces.IWorkflow(ctx)
-        states = wf.workflow._states_by_id
+        states = wf.workflow.states
         items = []
         for state in states.keys():
             items.append(SimpleTerm(states[state].id, states[state].id, 
@@ -205,9 +205,9 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
         super(WorkflowActionViewlet, self).update()
     
     def setupActions(self, transition):
-        self.wf = interfaces.IWorkflowController(self.context)
+        wfc = interfaces.IWorkflowController(self.context)
         if transition is None:
-            transitions = self.wf.getManualTransitionIds()
+            transitions = wfc.getManualTransitionIds()
         else:
             transitions = (transition,)
         self.actions = bindTransitions(
@@ -278,7 +278,7 @@ class WorkflowChangeStateView(WorkflowView):
         if headless is True:
             actions = get_actions("context_workflow", self.context, self.request)
             state_title = interfaces.IWorkflowController(self.context
-                ).workflow().workflow._states_by_id[self.context.status].title
+                ).workflow().workflow.states[self.context.status].title
             result = self.ajax_template(actions=actions, state_title=state_title)
             
             if require_confirmation is True:

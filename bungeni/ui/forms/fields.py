@@ -75,9 +75,9 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
 
     def setupActions(self):
         return # !+ ??
-        self.wf = interfaces.IWorkflowController(self.context, None)
-        if self.wf is not None:
-            transitions = self.wf.getManualTransitionIds()
+        wfc = interfaces.IWorkflowController(self.context, None)
+        if wfc is not None:
+            transitions = wfc.getManualTransitionIds()
             self.actions = tuple(bindTransitions(
                 self, transitions, None, interfaces.IWorkflow(self.context)))
 

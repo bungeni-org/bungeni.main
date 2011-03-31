@@ -233,7 +233,7 @@ class WorkflowSubMenuItem(BrowserSubMenuItem):
             return {"id": "plone-contentmenu-workflow"}
         state = info.state().getState()
         stateTitle = translate(
-            str(info.workflow().workflow._states_by_id[state].title), 
+            str(info.workflow().workflow.states[state].title), 
             domain="bungeni.core",
             context=self.request)
         

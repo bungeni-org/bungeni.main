@@ -153,7 +153,7 @@ class StateController(object):
     
     def on_state_change(self, source, destination):
         workflow = interfaces.IWorkflow(self.context) 
-        state = workflow._states_by_id.get(destination)
+        state = workflow.states.get(destination)
         assert state is not None, "May not have a None state" # !+NEEDED?
         state.execute_actions(self.context)
     
@@ -162,12 +162,15 @@ class Workflow(object):
     zope.interface.implements(interfaces.IWorkflow)
     
     def __init__(self, states, transitions):
-        self.refresh(states, transitions)
-    
-    def refresh(self, states, transitions):
         self._transitions_by_source = {} # {source: {id: Transition}}
         self._transitions_by_id = {} # {id:str : Transition}
         self._states_by_id = {} # {id: State}
+        self.refresh(states, transitions)
+    
+    def refresh(self, states, transitions):
+        self._transitions_by_source.clear()
+        self._transitions_by_id.clear()
+        self._states_by_id.clear()
         # transitions
         def _register(t):
             transitions = self._transitions_by_source.setdefault(t.source, {})
@@ -188,6 +191,11 @@ class Workflow(object):
             raise SyntaxError("Workflow Contains Unreachable States %s" % (
                     unreachable_states))
     
+    @property
+    def states(self):
+        """ () -> { status: State } """
+        return self._states_by_id # !+COPY? 
+        
     def get_transitions_from(self, source):
         try:
             return self._transitions_by_source[source].values()

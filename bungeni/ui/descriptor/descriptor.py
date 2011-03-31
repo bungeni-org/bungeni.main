@@ -25,14 +25,7 @@ from bungeni.models import domain
 # attribute on each "workflow" module is setup... this is to avoid an error
 # when importing bungeni.ui.descriptor.descriptor from standalone scripts:
 import bungeni.core.workflows.adapters # needed by standalone scripts
-from bungeni.core.workflows.group import states as group_wf_state
-from bungeni.core.workflows.attachedfile import states as af_wf_state
-from bungeni.core.workflows.address import states as address_wf_state
-from bungeni.core.workflows.event import states as event_wf_state
-from bungeni.core.workflows.heading import states as heading_wf_state
-from bungeni.core.workflows.committee import states as committee_wf_state
-from bungeni.core.workflows.parliament import states as parliament_wf_state
-from bungeni.core.workflows.version import states as version_wf_state
+
 from bungeni.core import translation
 
 from bungeni.ui import widgets
@@ -46,7 +39,15 @@ from bungeni.ui import vocabulary
 from bungeni.ui.tagged import get_states
 from bungeni.ui.interfaces import IBusinessSectionLayer
 
-
+from bungeni.core.workflows.adapters import wf
+group_wf_states = wf("group").states
+attachedfile_wf_states = wf("attachedfile").states
+address_wf_states = wf("address").states
+event_wf_states = wf("event").states
+heading_wf_states = wf("heading").states
+committee_wf_states = wf("committee").states
+parliament_wf_states = wf("parliament").states
+version_wf_states = wf("version").states
 
 ###
 # Listing Columns
@@ -893,8 +894,8 @@ class GroupDescriptor(ModelDescriptor):
     schema_invariants = [EndAfterStart]
     custom_validators = [validations.validate_date_range_within_parent]
     public_wfstates = [
-        group_wf_state[u"active"].id,
-        group_wf_state[u"dissolved"].id
+        group_wf_states["active"].id,
+        group_wf_states["dissolved"].id
     ]
 
 
@@ -957,8 +958,8 @@ class ParliamentDescriptor(GroupDescriptor):
         ElectionAfterStart
     ]
     public_wfstates = [
-        parliament_wf_state[u"active"].id,
-        parliament_wf_state[u"dissolved"].id
+        parliament_wf_states["active"].id,
+        parliament_wf_states["dissolved"].id
     ]
 
 
@@ -1022,8 +1023,8 @@ class CommitteeDescriptor(GroupDescriptor):
         #DissolutionAfterReinstatement
     ]
     public_wfstates = [
-        committee_wf_state[u"active"].id,
-        committee_wf_state[u"dissolved"].id
+        committee_wf_states["active"].id,
+        committee_wf_states["dissolved"].id
     ]
 
 
@@ -1143,7 +1144,7 @@ class AddressDescriptor(ModelDescriptor):
         #    )
         #), !+IM(mr, oct-2010) morph to some "extra_info" on User
     ]
-    public_wfstates = [address_wf_state[u"public"].id]
+    public_wfstates = [address_wf_states["public"].id]
 
 class GroupAddressDescriptor(AddressDescriptor):
     localizable = True
@@ -1514,7 +1515,7 @@ class AttachedFileDescriptor(ModelDescriptor):
             listing_column=day_column("status_date", _(u"Status date")),
         ),
     ]
-    public_wfstates = [af_wf_state[u"public"].id]
+    public_wfstates = [attachedfile_wf_states["public"].id]
 
 
 class AttachedFileVersionDescriptor(ModelDescriptor):
@@ -1673,7 +1674,7 @@ class VersionDescriptor(ModelDescriptor):
             edit_widget=widgets.OneTimeEditWidget,
         ),
     ]
-    public_wfstates = [version_wf_state[u"archived"].id]
+    public_wfstates = [version_wf_states["archived"].id]
 
 
 class HeadingDescriptor(ParliamentaryItemDescriptor):
@@ -1718,7 +1719,7 @@ class HeadingDescriptor(ParliamentaryItemDescriptor):
             add_widget=widgets.RichTextEditor,
         )
     ]
-    public_wfstates = [heading_wf_state[u"public"].id]
+    public_wfstates = [heading_wf_states["public"].id]
 
 
 class AgendaItemDescriptor(ParliamentaryItemDescriptor):
@@ -1949,7 +1950,7 @@ class EventItemDescriptor(ParliamentaryItemDescriptor):
             add_widget=widgets.DateTimeWidget,
         ),
     ]
-    public_wfstates = [event_wf_state[u"public"].id]
+    public_wfstates = [event_wf_states["public"].id]
 
 
 class TabledDocumentDescriptor(ParliamentaryItemDescriptor):

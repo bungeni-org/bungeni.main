@@ -12,7 +12,7 @@ from zope.app.component.hooks import getSite
 
 import sqlalchemy.sql.expression as sql
 
-from bungeni.core.workflows.heading import states as heading_wf_state
+from bungeni.core.workflows.adapters import wf
 from bungeni.models import domain
 from bungeni.models.interfaces import IBungeniApplication, IBungeniGroup, ICommittee
 from bungeni.core.interfaces import ISchedulingContext
@@ -137,7 +137,7 @@ class SchedulableItemsViewlet(browser.BungeniItemsViewlet):
                 # not every item has a auditlog (headings) 
                 # use last status change instead.
                 "date": date_formatter.format(self._item_date(item)),
-                "state": IWorkflow(item).workflow._states_by_id[item.status].title,
+                "state": IWorkflow(item).workflow.states[item.status].title,
                 "id": item.parliamentary_item_id,
                 "class": (
                     (item.parliamentary_item_id in scheduled_item_ids and
@@ -155,7 +155,7 @@ class SchedulableItemsViewlet(browser.BungeniItemsViewlet):
 class SchedulableHeadingsViewlet(SchedulableItemsViewlet):
     view_name = "heading"
     view_title = _("Headings")
-    states = (heading_wf_state[u"public"].id,)
+    states = (wf("heading").states["public"].id,)
     model = domain.Heading
     
     def _item_url(self, item):
