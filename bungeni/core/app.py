@@ -268,6 +268,12 @@ class AppSetup(object):
             description=_(u"settings"),
             marker=model_interfaces.IBungeniAdmin,
             default_name="settings")
+
+        admin["email-settings"] = Section(
+            title=_(u"email settings"),
+            description=_(u"email settings"),
+            marker=model_interfaces.IBungeniAdmin,
+            default_name="email-settings")
         
         content[u"parliaments"] = domain.ParliamentContainer()
         to_locatable_container(domain.Parliament, content[u"parliaments"])
