@@ -268,7 +268,8 @@ dl#context_actions.actionMenu .actionMenuContent ul li a#delete,
 dl#context_actions.actionMenu .actionMenuContent ul li a#respond,
 dl#context_actions.actionMenu .actionMenuContent ul li a#feedrss,
 dl#context_actions.actionMenu .actionMenuContent ul li a#files,
-dl#context_actions.actionMenu .actionMenuContent ul li a#download {
+dl#context_actions.actionMenu .actionMenuContent ul li a#download,
+dl#context_actions.actionMenu .actionMenuContent ul li a#st-attendance {
 	padding: 0 .5em;
 	margin: 0;
 	float: left;
@@ -317,6 +318,9 @@ dl#context_actions.actionMenu .actionMenuContent ul li a#download {
 }
 dl#context_actions.actionMenu .actionMenuContent ul li a#files {
 	background-image: url(images/database.png) ;
+}
+dl#context_actions.actionMenu .actionMenuContent ul li a#st-attendance {
+	background-image: url(images/page_white_edit.png) ;
 }
 #templateMenu li a {
     padding-left: 16px;

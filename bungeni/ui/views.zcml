@@ -348,6 +348,13 @@
      class=".calendar.browser.ItemScheduleOrder"
      permission="bungeni.sittingschedule.Edit"
      />
+     <browser:page
+     name="st-attendance"
+     for="bungeni.models.interfaces.IGroupSitting"
+     class=".attendance.AttendanceEditor"
+     permission="bungeni.sittingattendance.Edit"
+     />
+     
   <!-- Similar Content -->
 
   <browser:page

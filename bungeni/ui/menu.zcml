@@ -392,14 +392,6 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         submenu="sitting_additems"
     />
-    <browser:menuItem menu="sitting_additems"
-        for="bungeni.models.interfaces.IGroupSitting"
-        title="Add Attendance..."
-        action="./attendance/add"
-        permission="bungeni.sittingattendance.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="42"
-    />
 
  <!-- browser:menuItem
      menu="sitting_additems"
@@ -715,6 +707,14 @@
     />
 
     
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IGroupSitting"
+        title="edit attendance"
+        action="./st-attendance"
+        permission="bungeni.sittingattendance.Edit"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="98"
+    />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IGroupSitting"
         title="Delete Sitting"
