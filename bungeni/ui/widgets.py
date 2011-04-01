@@ -1097,7 +1097,7 @@ class TreeVocabularyWidget(DropdownWidget):
         if value:
             return "\n".join(value.rstrip("|").split("|"))
         else:
-            return ""
+            return None
 
     def dataSource(self):
         selected = []
