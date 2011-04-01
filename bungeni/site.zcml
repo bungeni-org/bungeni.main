@@ -115,6 +115,6 @@
   <browser:defaultSkin name="bungeni" />
   
   <!-- App Security -->
-  <include file="security.zcml" package="bungeni" />
+  <include file="security.zcml"/>
   <includeOverrides file="overrides.zcml" package="bungeni.core"/>
 </configure>
