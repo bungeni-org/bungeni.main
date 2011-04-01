@@ -68,23 +68,18 @@
   <include package="ore.library" />
     -->
 
-  <!-- AppServer Security Settings -->
-  <include package="zope.app.securitypolicy" file="meta.zcml" />
-  <include package="zope.app.securitypolicy" />
-  <securityPolicy 
-      component="zope.securitypolicy.zopepolicy.ZopeSecurityPolicy" />
-
-  <unauthenticatedPrincipal id="zope.anybody"
-                            title="Unauthenticated User" />
-  <unauthenticatedGroup id="zope.Anybody"
-                        title="Unauthenticated Users" />
-  <authenticatedGroup id="zope.Authenticated"
-                      title="Authenticated Users" />
-  <everybodyGroup id="zope.Everybody"
-                  title="All Users" />
-
-  <role id="zope.Manager" title="Site Manager" />
-  <role id="zope.Member" title="Site Member" />
+    <!-- AppServer Security Settings -->
+    <include package="zope.securitypolicy" file="meta.zcml" />
+    <include package="zope.securitypolicy" />
+    <securityPolicy component="zope.securitypolicy.zopepolicy.ZopeSecurityPolicy" />
+    
+    <unauthenticatedPrincipal id="zope.anybody" title="Unauthenticated User" />
+    <unauthenticatedGroup id="zope.Anybody" title="Unauthenticated Users" />
+    <authenticatedGroup id="zope.Authenticated" title="Authenticated Users" />
+    <everybodyGroup id="zope.Everybody" title="All Users" />
+    
+    <role id="zope.Manager" title="Site Manager" />
+    <role id="zope.Member" title="Site Member" />
   
   <!-- Application Configuration -->
   <include package="bungeni.core" />

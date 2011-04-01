@@ -11,11 +11,11 @@
   <exclude package="zope.componentvocabulary" />
   <include package="zope.app.zcmlfiles" />
   <include package="zope.app.form.browser" file="meta.zcml"/>
-  <!-- Setup Security Policy --> 
-  <include package="zope.app.securitypolicy" file="meta.zcml" />
-  <include package="zope.app.securitypolicy" />
-  <securityPolicy 
-      component="zope.app.securitypolicy.zopepolicy.ZopeSecurityPolicy" />
+
+    <!-- Setup Security Policy --> 
+    <include package="zope.securitypolicy" file="meta.zcml" />
+    <include package="zope.securitypolicy" />
+    <securityPolicy component="zope.securitypolicy.zopepolicy.ZopeSecurityPolicy" />
   <include package="bungeni.alchemist" file="meta.zcml"/>
   <include package="alchemist.catalyst" file="meta.zcml"/>
   <include package="alchemist.catalyst" />

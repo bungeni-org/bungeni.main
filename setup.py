@@ -45,7 +45,7 @@ setup(name='bungeni',
                         # tests only
                         'zope.testing',
                         'zope.app.testing',
-                        'zope.app.securitypolicy',
+                        'zope.securitypolicy',
                         'zope.sendmail',
                         'ore.wsgiapp',
             #
