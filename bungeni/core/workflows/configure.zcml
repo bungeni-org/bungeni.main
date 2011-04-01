@@ -6,9 +6,9 @@
     <!-- workflow permissions and grants -->
     <include file="permissions.zcml" />
     
-    <!-- general transition event dispatcher -->
+    <!-- worklfow transition events handler -->
     
-    <subscriber handler=".events.workflowTransitionNotifier" />
+    <subscriber handler=".events.workflowTransitionEventHandler" />
     
     <!-- workflow events -->
     <subscriber handler=".events.fireAutomaticTransitions"

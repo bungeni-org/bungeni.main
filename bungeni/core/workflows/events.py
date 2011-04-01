@@ -1,22 +1,26 @@
-# encoding: utf-8
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""Bungeni Workflows
+
+$Id$
+"""
+log = __import__("logging").getLogger("bungeni.core.workflows.events")
 
 from zope import component
-from bungeni.core.workflow import states, interfaces
-from bungeni.core.workflows import notification
+from bungeni.core.workflow import interfaces
 
 
 @component.adapter(interfaces.IWorkflowTransitionEvent)
-def workflowTransitionNotifier(event):
-    type_name, status = type(event.object).__name__, event.destination
-    try:
-        for notifier in notification.NOTIFIER_REGISTRY[type_name][status]:
-            try:
-                # execute: create notifier, and if condition, send notification
-                notifier(event.object)
-            except Exception, e:
-                states.exception_as(e, interfaces.WorkflowNotificationError)
-    except KeyError, e:
-        pass # no notifiers registered for (type, status)
+def workflowTransitionEventHandler(event):
+    log.debug(" ".join(["<%s",
+        "source=%s",
+        "destination=%s",
+        "object=%s",
+        "comment=%s",
+        ">"]) % (event.__class__.__name__, 
+                event.source, event.destination, event.object, event.comment))
 
 
 def initializeWorkflow(object, event):
