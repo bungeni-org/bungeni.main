@@ -28,7 +28,8 @@ import zope.security.proxy
 import zope.traversing
 from zope.app.form.browser.textwidgets import TextAreaWidget, FileWidget
 from zope.app.form.browser.itemswidgets import RadioWidget, \
-    SingleDataHelper, ItemsWidgetBase, ItemsEditWidgetBase, DropdownWidget
+    SingleDataHelper, ItemsWidgetBase, ItemsEditWidgetBase, \
+    DropdownWidget, ItemDisplayWidget
 from zope.app.form.browser.boolwidgets import CheckBoxWidget
 
 from zope.i18n import translate
@@ -1158,3 +1159,14 @@ class TermsDisplayWidget(
         for data_value in self._data.split('\n'):
             term_text = term_text + u"<li>%s</li>" % unicode(data_value)
         return  u"<ul>%s</ul>" % term_text
+
+
+class YesNoDisplayWidgetBase(ItemDisplayWidget):
+
+    def __call__(self):
+        value = self._getFormValue()
+        term = self.vocabulary.getTerm(value)
+        return self.textForValue(term)
+
+def YesNoDisplayWidget(*attrs, **kw):
+  return CustomWidgetFactory(YesNoDisplayWidgetBase, *attrs, **kw)

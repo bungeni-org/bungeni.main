@@ -1631,6 +1631,7 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
             ),
             edit_widget=widgets.CheckBoxWidget,
             add_widget=widgets.CheckBoxWidget,
+            view_widget=widgets.YesNoDisplayWidget(),
         ),
     ]
 
