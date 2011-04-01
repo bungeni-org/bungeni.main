@@ -65,6 +65,7 @@
   <!-- Javascript -->
   <include package="ore.yui"/>
   <include package="ore.yuiwidget"/>
+  <include package="bungeni.dhtmlxscheduler"/>
   <!-- Transcripts -->
   <!--include package="bungeni.transcripts"/ -->
   <browser:defaultView

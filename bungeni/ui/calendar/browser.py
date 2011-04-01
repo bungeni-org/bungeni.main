@@ -227,6 +227,8 @@ class CalendarView(BungeniBrowserView):
         return traverser.publishTraverse(request, name)
     
     def render(self, template=None):
+        need("dhtmlxscheduler")
+        need("dhtmlxscheduler-recurring")
         if template is None:
             template = self.template
         if (not checkPermission(u"bungeni.sitting.Add", self.context)) or \

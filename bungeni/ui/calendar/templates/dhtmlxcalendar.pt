@@ -1,38 +1,7 @@
 <html xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       metal:use-macro="context/@@standard_macros/page">
-     <!-- <script type="text/javascript" src="dhtmlxscheduler_debug.js"        
-            tal:attributes="src context/++resource++dhtmlxscheduler.js"></script>
-      <link rel="stylesheet" type="text/css" media="all" href="dhtmlxscheduler.css"
-        tal:attributes="href context/++resource++dhtmlxscheduler.css" /> 
-      <script type="text/javascript" src="dhtmlxschedulerinit.js"        
-            tal:attributes="src context/++resource++dhtmlxcalendarinit.js"></script> -->
       <tal:block metal:fill-slot="header">
-        <script type="text/javascript" charset="utf-8" tal:condition="python:view.display_language == 'fr'" src="locale_fr.js"        
-            tal:attributes="src context/++resource++locale_fr.js">
-        </script>
-        <script type="text/javascript" charset="utf-8" tal:condition="python:view.display_language == 'es'" src="locale_es.js"        
-            tal:attributes="src context/++resource++locale_es.js">
-        </script>
-        <script type="text/javascript" charset="utf-8" tal:condition="python:view.display_language == 'it'" src="locale_it.js"        
-            tal:attributes="src context/++resource++locale_it.js">
-        </script>
-        <script type="text/javascript" charset="utf-8" tal:condition="python:view.display_language == 'sw'" src="locale_sw.js"        
-            tal:attributes="src context/++resource++locale_sw.js">
-        </script>
-        <script type="text/javascript" charset="utf-8" tal:condition="python:view.display_language == 'pt'" src="locale_pt.js"        
-            tal:attributes="src context/++resource++locale_recurring_pt.js">
-        </script>
-        <script type="text/javascript" charset="utf-8" tal:condition="python:view.display_language == 'fr'" src="locale_pt.js"        
-            tal:attributes="src context/++resource++locale_recurring_fr.js">
-        </script>
-        <script type="text/javascript" charset="utf-8" tal:condition="python:view.display_language == 'es'" src="locale_pt.js"        
-            tal:attributes="src context/++resource++locale_recurring_es.js">
-        </script>
-        <script type="text/javascript" charset="utf-8" tal:condition="python:view.display_language == 'it'" src="locale_pt.js"        
-            tal:attributes="src context/++resource++locale_recurring_it.js">
-        </script>
-        
         <script type="text/javascript">
             function init() {
                 scheduler.config.xml_date="%Y-%m-%d %H:%i";

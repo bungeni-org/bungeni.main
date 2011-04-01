@@ -210,33 +210,6 @@
      layer="ploned.ui.interfaces.IPlonedSkin"
      weight="25"
      />
-  <browser:viewlet
-     name="dhtmlx-calendar"
-     for="*"
-     class=".js.DhtmlxCalendar"
-     manager="ploned.ui.interfaces.IJavaScriptManager"
-     permission="zope.Public"
-     layer="ploned.ui.interfaces.IPlonedSkin"
-     weight="25"
-     />
-     <!-- browser:viewlet
-     name="dhtmlx-calendarlist"
-     for="*"
-     class=".js.DhtmlxCalendarList"
-     manager="ploned.ui.interfaces.IJavaScriptManager"
-     permission="zope.Public"
-     layer="ploned.ui.interfaces.IPlonedSkin"
-     weight="30"
-     /--> 
-     <browser:viewlet
-     name="dhtmlx-calendarrecurring"
-     for="*"
-     class=".js.DhtmlxCalendarRecurring"
-     manager="ploned.ui.interfaces.IJavaScriptManager"
-     permission="zope.Public"
-     layer="ploned.ui.interfaces.IPlonedSkin"
-     weight="30"
-     />
      <browser:viewlet
      name="reports-js"
      for="*"
@@ -361,40 +334,23 @@
      weight="5"
      layer=".interfaces.IRSSRepresentationLayer"
      />
-    <!--browser:resource 
-        name="dhtmlxscheduler.css" 
-        file="js/dhtmlxScheduler/codebase/dhtmlxscheduler.css" /-->
-    <browser:resource 
-        name="locale_fr.js" 
-        file="js/dhtmlxScheduler/sources/locale_fr.js" />
-    <browser:resource 
-        name="locale_it.js" 
-        file="js/dhtmlxScheduler/sources/locale_it.js" />
-    <browser:resource 
-        name="locale_pt.js" 
-        file="js/dhtmlxScheduler/sources/locale_pt.js" />
-     <browser:resource 
-        name="locale_es.js" 
-        file="js/dhtmlxScheduler/sources/locale_es.js" />
-     <browser:resource 
-        name="locale_sw.js" 
-        file="js/dhtmlxScheduler/sources/locale_sw.js" />
-     <browser:resource 
-        name="locale_recurring_fr.js" 
-        file="js/dhtmlxScheduler/sources/locale_recurring_fr.js" />
-    <browser:resource 
-        name="locale_recurring_it.js" 
-        file="js/dhtmlxScheduler/sources/locale_recurring_it.js" />
-    <browser:resource 
-        name="locale_recurring_pt.js" 
-        file="js/dhtmlxScheduler/sources/locale_recurring_pt.js" />
-     <browser:resource 
-        name="locale_recurring_es.js" 
-        file="js/dhtmlxScheduler/sources/locale_recurring_es.js" />
-   <!-- <browser:resource 
-        name="dhtmlxscheduler.js" 
-        file="js/dhtmlxScheduler/codebase/dhtmlxscheduler_debug.js" />
-    <browser:resource 
-        name="dhtmlxcalendarinit.js" 
-        file="js/dhtmlxcalendarinit.js" /> -->
+     <!-- Loads the appropriate Dhtmlxscheduler language translation -->
+     <browser:viewlet
+     name="dhtmlxscheduler-main-language-js"
+     for="bungeni.core.interfaces.ISchedulingContext"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     class=".js.dhtmlxscheduler.DhtmlxSchedulerMainLanguage"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="50"
+     />
+     <browser:viewlet
+     name="dhtmlscheduler-recurring-language-js"
+     for="bungeni.core.interfaces.ISchedulingContext"
+     manager="ploned.ui.interfaces.IJavaScriptManager"
+     class=".js.dhtmlxscheduler.DhtmlxSchedulerRecurringLanguage"
+     permission="zope.Public"
+     layer="ploned.ui.interfaces.IPlonedSkin"
+     weight="55"
+     />
 </configure>
