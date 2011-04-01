@@ -27,7 +27,7 @@ from zope import component
 from sqlalchemy import create_engine
 from bungeni.alchemist.interfaces import IDatabaseEngine
 import bungeni.core.interfaces
-import bungeni.core.workflows.question
+#import bungeni.core.workflows.question
 import bungeni.core.workflows.adapters
 from bungeni import core as model
 

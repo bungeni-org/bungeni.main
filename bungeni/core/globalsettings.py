@@ -57,8 +57,7 @@ def getSpeakersOfficeEmail():
     return the official email address 
     of the speakers office
     """
-    email = BungeniSettings(app).speakers_office_email
-    return email
+    return BungeniSettings(app).speakers_office_email
     
 def getSpeakersOfficeReceiveNotification():
     """
@@ -85,8 +84,7 @@ def getMinistriesReceiveNotification():
     """
     returns true if the ministries want to be alerted by mail 
     wheneve a bill, motion, question is submitted.
-    """    
-
+    """
     return BungeniSettings(app).ministries_notification
     
 def getAdministratorsEmail():

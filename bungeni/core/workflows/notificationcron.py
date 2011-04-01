@@ -157,7 +157,7 @@ def sendNotificationToMinistry(date):
             text = text + '\n' + ministry.full_name +': \n'
             for question in questions:
                  text = text + question.subject + '\n'
-            emails = dbutils.getMinsiteryEmails(ministry)
+            emails = dbutils.getMinistryEmails(ministry)
             msg = MIMEText(text)
             
             msg['Subject'] = u'Questions pending response'

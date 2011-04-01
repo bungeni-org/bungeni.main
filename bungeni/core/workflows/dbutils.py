@@ -131,12 +131,12 @@ ministers = rdb.join(schema.groups,schema.user_group_memberships,
         schema.user_group_memberships.c.user_id == schema.users.c.user_id)
 mapper(_Minister, ministers)
 
-def getMinsiteryEmails(ministry):
+def getMinistryEmails(ministry):
+    """Get comma-seperated list of emails of all persons who are 
+    ministry members.
     """
-    returns the emails of all persons who are members of that ministry
-    """
-    session = Session()
-    query = session.query(_Minister).filter(_Minister.group_id == ministry.group_id)
+    query = Session().query(_Minister).filter(
+        _Minister.group_id == ministry.group_id)
     results = query.all()
     addresses = []
     for result in results:

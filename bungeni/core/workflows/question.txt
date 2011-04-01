@@ -446,8 +446,6 @@ Question conditions
 Notifications
 -------------
 
-  >>> from bungeni.core.workflows import question as notification
-
 Setup mock delivery component.
 
   >>> import zope.sendmail.interfaces
@@ -486,13 +484,13 @@ Set up a user.
   
 Question received.
   
-  >>> notification.SendNotificationToMemberUponReceipt(question)
+  >>> wf.states["received"].notifications[0](question)
 
 Let's change our setting for receive notification so an email message
 is dispatched.
 
   >>> question.receive_notification = True
-  >>> notification.SendNotificationToMemberUponReceipt(question)
+  >>> wf.states["received"].notifications[0](question)
   From: clerks.office@parliament.go.tld
   To: "John Doe" <john.doe@localhost> 
   ...
@@ -510,10 +508,7 @@ not notify, so it fails... so, we hard-reset clerks_office_notification to True:
   >>> if prefs.getClerksOfficeReceiveNotification() is False:
   ...     prefs.BungeniSettings(prefs.app).clerks_office_notification = True
 
-  >>> #!+XMLNOTIFICATIONS
-  >>> #notification.SendNotificationToClerkUponSubmit(question)
-  >>> NotifyClerkOnQuestionSubmit = wf.states["submitted"].notifications[0]
-  >>> NotifyClerkOnQuestionSubmit(question)
+  >>> wf.states["submitted"].notifications[0](question)
   From: "John Doe" <john.doe@localhost>
   To: clerks.office@parliament.go.tld ...
   Subject: Question submitted: My subject ...
@@ -521,11 +516,10 @@ not notify, so it fails... so, we hard-reset clerks_office_notification to True:
 the question is marked as “completed” and is made available / forwarded
 to the Speaker's Office for reviewing and to make it “admissible”.
 
-  >>> notification.SendNotificationToMemberUponComplete(question)
+  >>> wf.states["completed"].notifications[0](question)
   From: clerks.office@parliament.go.tld
-  To: "John Doe" <john.doe@localhost> 
-  ...
-  Question completed for review at the speakers office...
+  To: "John Doe" <john.doe@localhost> ...
+  Subject: Question forwarded to Speaker's Office: My subject ...
 
 At the same time the question is also forwarded to the ministry.
 
@@ -534,50 +528,49 @@ At the same time the question is also forwarded to the ministry.
   ...     prefs.BungeniSettings(prefs.app).ministries_notification = True
   
   >>> question.ministry_id = ministry.group_id
-  >>> notification.SendNotificationToMinistryUponComplete(question)
+  >>> wf.states["completed"].notifications[1](question)
   From: clerks.office@parliament.go.tld
-  To: "a ab" <mp1@example.com> ,"b bc" <mp2@example.com> 
-  ...
-  Question assigned to ministry...
+  To: "a ab" <mp1@example.com> ,"b bc" <mp2@example.com> ...
+  Subject: Question asked to ministry: ...
   
 A question was rejected by the speakers office.
 
-  >>> notification.SendNotificationToMemberUponReject(question)
+  >>> wf.states["inadmissible"].notifications[0](question)
   From: speakers.office@parliament.go.tld
   To: "John Doe" <john.doe@localhost> ...
   Subject: Question rejected: My subject ... 
 
 A question needs clarification by the MP
 
-  >>> notification.SendNotificationToMemberUponNeedsClarification(question)
+  >>> wf.states["clarification_required"].notifications[0](question)
   From: clerks.office@parliament.go.tld
   To: "John Doe" <john.doe@localhost> ...
   Subject: Question needs clarification: My subject ...
 
 A question was deferred by Clerk's office.
 
-  >>> notification.SendNotificationToMemberUponDeferred(question)
+  >>> wf.states["deferred"].notifications[0](question)
   From: speakers.office@parliament.go.tld
   To: "John Doe" <john.doe@localhost> ...
   Subject: Question deferred: My subject ...
 
 A question was scheduled by Speakers office.
 
-  >>> notification.SendNotificationToMemberUponSchedule(question)
+  >>> wf.states["scheduled"].notifications[0](question)
   From: clerks.office@parliament.go.tld
   To: "John Doe" <john.doe@localhost> ...
   Subject: Question scheduled: My subject ...
 
 A question was sent to a ministry for written response.
 
-  >>> notification.SendNotificationToMemberUponSentToMinistry(question)
+  >>> wf.states["response_pending"].notifications[0](question)
   From: clerks.office@parliament.go.tld
   To: "John Doe" <john.doe@localhost> ...
   Subject: Question sent to ministry: My subject ...
 
 A questions answer was reviewed by Clerk's office.
 
-  >>> notification.SendNotificationToMemberUponAnswer(question)
+  >>> wf.states["response_submitted"].notifications[0](question)
   From: clerks.office@parliament.go.tld
   To: "John Doe" <john.doe@localhost> ...
   Subject: Question answered: My subject ...

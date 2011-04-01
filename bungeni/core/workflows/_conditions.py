@@ -39,6 +39,12 @@ def user_is_context_owner(context):
 def clerk_receive_notification(context):
     return prefs.getClerksOfficeReceiveNotification()
 
+def owner_receive_notification(context):
+    return context.receive_notification
+
+def ministry_receive_notification(context):
+    return prefs.getMinistriesReceiveNotification() and context.ministry_id
+
 
 # parliamentary items
 

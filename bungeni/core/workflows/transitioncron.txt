@@ -21,10 +21,8 @@ Imports.
 
   >>> from bungeni.models import domain
   >>> from bungeni.models import schema
-
-  >>> import bungeni.core.workflows.question as question_workflow
+  
   >>> import bungeni.core.workflows.transitioncron as cron
-  >>> import bungeni.core.workflows.question
       
 Questions
 ---------
