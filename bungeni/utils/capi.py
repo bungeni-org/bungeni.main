@@ -62,14 +62,15 @@ class CAPI(object):
     @property
     @bungeni_custom_errors
     def default_language(self):
+        assert bc.default_language in self.zope_i18n_allowed_languages, \
+            "Default language [%s] not in allowed languages [%s]" % (
+                self.zope_i18n_allowed_languages,)
         return bc.default_language
     
     @bungeni_custom_errors
     def get_workflow_condition(self, condition):
         conds_module = resolve("._conditions", "bungeni_custom.workflows")
-        assert hasattr(conds_module, condition), \
-            "No such custom condition: %s" % (condition)
-        return getattr(conds_module, condition)
+        return getattr(conds_module, condition) # raises AttributeError
     
     
     # utility methods
@@ -84,8 +85,27 @@ class CAPI(object):
         """Get absolute path, under bungeni_custom, for path_components.
         """
         return os.path.join(*(self.get_root_path(),)+path_components)
+    
+    def put_env(self, key):
+        """Set capi value for {key} as the environment variable {key}
+        i.e. use to set os.environ[key].
+        
+        Wrapper on os.put_env(key, string_value) -- to take care of
+        the value string-casting required by os.put_env while still 
+        allowing the liberty of data-typing values of capi attributes 
+        as needed.
+        """
+        try:
+            os.environ[key] = getattr(self, key)
+            # OK, value is a string... done.
+        except TypeError:
+            # putenv() argument 2 must be string, not ... 
+            # i.e. value is NOT a string... then try repr'ing it to a string:
+            os.environ[key] = repr(getattr(self, key))
+            # ensure that the original object value defines a __repr__ 
+            # that can correctly re-instantiate the original object
+            assert eval(os.environ[key]) == getattr(self, key)
 
 # we access all via the singleton instance
 capi = CAPI()
-
 

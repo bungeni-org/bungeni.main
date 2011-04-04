@@ -35,8 +35,9 @@ from plone.i18n.locales.interfaces import ILanguageAvailability
 # Similar for: bungeni_custom.zope_i18n_compile_mo_files
 # See zope.i18n.config for how these values are consumed.
 # 
-from zope.i18n.config import ALLOWED_LANGUAGES
-
+#from zope.i18n.config import ALLOWED_LANGUAGES
+from bungeni.utils.capi import capi
+ALLOWED_LANGUAGES = capi.zope_i18n_allowed_languages
 
 from bungeni.alchemist import Session
 from bungeni.core.interfaces import IVersionable
@@ -94,14 +95,11 @@ def get_all_languages(filter=None):
     To-do: the result of this method should be cached indefinitely.
     """
     availability = component.getUtility(ILanguageAvailability)
-    languages = {}
     _languages = availability.getLanguages(combined=True)
     if filter is None:
-        # throw TypeError if ALLOWED_LANGUAGES is None
-        filter = tuple(ALLOWED_LANGUAGES)
-    for name in filter:
-        languages[name] = _languages[name]
-    return languages
+        filter = ALLOWED_LANGUAGES
+    # TypeError if filter is not iterable
+    return dict([ (name, _languages[name]) for name in filter ])
 
 def get_request_language():
     return common.get_request().locale.getLocaleID() # !+ get_browser_language()
