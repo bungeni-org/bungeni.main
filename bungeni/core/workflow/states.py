@@ -195,10 +195,10 @@ class Workflow(object):
     def states(self):
         """ () -> { status: State } """
         return self._states_by_id # !+COPY? 
-        
+    
     def get_transitions_from(self, source):
         try:
-            return self._transitions_by_source[source].values()
+            return sorted(self._transitions_by_source[source].values())
         except KeyError:
             return []
     

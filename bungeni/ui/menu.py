@@ -256,8 +256,9 @@ class WorkflowSubMenuItem(BrowserSubMenuItem):
 class WorkflowMenu(BrowserMenu):
     def getMenuItems(self, context, request):
         """Return menu item entries in a TAL-friendly form."""
-        if (not interfaces.IWorkspaceOrAdminSectionLayer.providedBy(request)) \
-                            or interfaces.IFormEditLayer.providedBy(request):
+        if (not interfaces.IWorkspaceOrAdminSectionLayer.providedBy(request) or
+            interfaces.IFormEditLayer.providedBy(request)
+        ):
             return ()
         wf = IWorkflow(context, None)
         if wf is None:
@@ -266,10 +267,7 @@ class WorkflowMenu(BrowserMenu):
         wf_info = IWorkflowController(context)
         transitions = wf_info.getManualTransitionIds()
         
-        # !+ context_workflow menu: the order of transitions is alphabetic, but 
-        # should really be order of definition.
         parliament_id = getCurrentParliamentId()
-        
         _url = url.absoluteURL(context, request)
         site_url2 = url.absoluteURL(getSite(), request)
         results = []

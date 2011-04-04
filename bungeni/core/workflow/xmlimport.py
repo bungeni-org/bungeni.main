@@ -319,6 +319,9 @@ def _load(workflow, name):
         # python resolvables
         if "condition" in kw:
             kw["condition"] = capi.get_workflow_condition(kw["condition"])
+        # numeric
+        if "order" in kw:
+            kw["order"] = float(kw["order"]) # ValueError if not numeric
         # bool
         if "require_confirmation" in kw:
             try:
