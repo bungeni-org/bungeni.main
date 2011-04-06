@@ -1,35 +1,30 @@
-# encoding: utf-8
-#Automatically transition Questions 
-#The system needs to provide a settable time-frame beyond which “Admissible” 
-#questions which are available for scheduling - change status to “Deferred”
-import sys
-import datetime
 
-import zope.lifecycleevent
+#Automatically transition Questions 
+#The system needs to provide a settable time-frame beyond which "Admissible"
+#questions which are available for scheduling - change status to "Deferred"
+
+#import zope.lifecycleevent
 
 import sqlalchemy.sql.expression as sql
 
 from bungeni.alchemist import Session
 
 import bungeni.models.domain as domain
-import bungeni.models.schema as schema
-import bungeni.core.audit as audit
+#import bungeni.models.schema as schema
+#import bungeni.core.audit as audit
 
-#import bungeni.core.workflows.question as question_workflow
-import bungeni.core.globalsettings as prefs
-import bungeni.core.workflows.dbutils as dbutils
+#import bungeni.core.globalsettings as prefs
 
 #from bungeni.core.workflow.interfaces import IWorkflowController
 
 ##############################
 # imports for main
-from zope import component
-from sqlalchemy import create_engine
-from bungeni.alchemist.interfaces import IDatabaseEngine
-import bungeni.core.interfaces
+#from zope import component
+#from sqlalchemy import create_engine
+#from bungeni.alchemist.interfaces import IDatabaseEngine
+#import bungeni.core.interfaces
 #import bungeni.core.workflows.question
-import bungeni.core.workflows.adapters
-from bungeni import core as model
+#from bungeni import core as model
 
 #import pdb
 

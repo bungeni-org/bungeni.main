@@ -45,6 +45,10 @@ class SimpleWorkflow(workflow.Workflow):
 
 simple_workflow = SimpleWorkflow()
 
+import bungeni.models.interfaces
+from bungeni.core.workflows.adapters import provideAdapterWorkflow
+provideAdapterWorkflow(simple_workflow, 
+    bungeni.models.interfaces.IBungeniContent)
 
 if __name__ == "__main__":
 

@@ -9,9 +9,7 @@ Setting up database connection and utilities:
   >>> from bungeni.core.testing import setup_db
   >>> engine = setup_db()
   
-  >>> from bungeni.core.workflows.testing import setup_adapters
   >>> from bungeni.core.workflows.testing import setup_security_adapters
-  >>> setup_adapters()
   >>> setup_security_adapters()
   
   >>> from bungeni.alchemist import Session

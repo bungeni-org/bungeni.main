@@ -2,15 +2,12 @@
 <configure xmlns="http://namespaces.zope.org/zope"
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni.core">
-
+    
     <!-- workflow permissions and grants -->
     <include file="permissions.zcml" />
     
-    <!-- worklfow transition events handler -->
-    
+    <!-- event handlers -->
     <subscriber handler=".events.workflowTransitionEventHandler" />
-    
-    <!-- workflow events -->
     <subscriber handler=".events.fireAutomaticTransitions"
         for="bungeni.alchemist.interfaces.IAlchemistContent
             bungeni.core.workflow.interfaces.IWorkflowTransitionEvent"
@@ -19,190 +16,13 @@
         for="bungeni.alchemist.interfaces.IAlchemistContent
             zope.lifecycleevent.IObjectCreatedEvent"
     />
-    
-    <!-- generic workflow adapters -->
-    
-    <adapter for="bungeni.alchemist.interfaces.IAlchemistContent"
-        provides="bungeni.core.workflow.interfaces.IWorkflowController"
-        factory="bungeni.core.workflow.states.WorkflowController"
-    />
-    
-    <adapter for="bungeni.alchemist.interfaces.IAlchemistContent"
-        provides="bungeni.core.workflow.interfaces.IStateController"
-        factory="bungeni.core.workflow.states.StateController"
-    />
-    
-    <!-- content workflow -->
-    
-    <adapter for="bungeni.models.interfaces.IBungeniContent"
-        provides="bungeni.core.workflow.interfaces.IWorkflow"
-        factory=".simple.simple_workflow"
-    />
-
-  <!-- content workflow -->
-  
-  <adapter
-     for="bungeni.models.interfaces.IVersion"
-     provides="bungeni.core.workflow.interfaces.IWorkflow"
-     factory=".adapters.VersionWorkflowAdapter" />
-     
     <subscriber handler=".events.initializeWorkflow"
         for="bungeni.models.interfaces.IVersion
             zope.lifecycleevent.IObjectCreatedEvent"
     />
-
-
-  <!-- group workflow -->
-
-  <adapter
-     for="bungeni.models.interfaces.IBungeniGroup"
-     provides="bungeni.core.workflow.interfaces.IWorkflow"
-     factory=".adapters.GroupWorkflowAdapter" />
-
-
-
-  <adapter
-     for="bungeni.models.interfaces.IParliament"
-     provides="bungeni.core.workflow.interfaces.IWorkflow"
-     factory=".adapters.ParliamentWorkflowAdapter" />
-
-  <adapter
-     for="bungeni.models.interfaces.ICommittee"
-     provides="bungeni.core.workflow.interfaces.IWorkflow"
-     factory=".adapters.CommitteeWorkflowAdapter" />
-
-
-
-  <!-- group-sitting workflow -->
-
-  <adapter
-     for="bungeni.models.interfaces.IGroupSitting"
-     provides="bungeni.core.workflow.interfaces.IWorkflow"
-     factory=".adapters.GroupSittingWorkflowAdapter" />
-     
-  <subscriber
-     handler=".schedule.handleSchedule"
-     for="bungeni.models.interfaces.IGroupSitting
-          zope.lifecycleevent.IObjectModifiedEvent" />
-
-    <!-- addresses -->
-    <adapter for="bungeni.models.interfaces.IUserAddress"
-        provides="bungeni.core.workflow.interfaces.IWorkflow"
-        factory=".adapters.UserAddressWorkflowAdapter"
-    />
-    <adapter for="bungeni.models.interfaces.IGroupAddress"
-        provides="bungeni.core.workflow.interfaces.IWorkflow"
-        factory=".adapters.GroupAddressWorkflowAdapter"
+    <subscriber handler=".schedule.handleSchedule"
+        for="bungeni.models.interfaces.IGroupSitting
+            zope.lifecycleevent.IObjectModifiedEvent" 
     />
 
-  <!-- bill workflow -->
-  
-  <adapter
-     for="bungeni.models.interfaces.IBill"
-     provides="bungeni.core.workflow.interfaces.IStateController"
-     factory="bungeni.core.workflow.states.StateController" />
-
-  <adapter
-     for="bungeni.models.interfaces.IBill"
-     provides="bungeni.core.workflow.interfaces.IWorkflow"
-     factory=".adapters.BillWorkflowAdapter" />
-
-    
-    <!-- questions workflow -->
-    <adapter for="bungeni.models.interfaces.IQuestion"
-        provides="bungeni.core.workflow.interfaces.IStateController"
-        factory="bungeni.core.workflow.states.StateController"
-    />
-    <adapter for="bungeni.models.interfaces.IQuestion"
-        provides="bungeni.core.workflow.interfaces.IWorkflow"
-        factory=".adapters.QuestionWorkflowAdapter"
-    />
-
-    <!-- motion workflow -->
-    <adapter for="bungeni.models.interfaces.IMotion"
-        provides="bungeni.core.workflow.interfaces.IStateController"
-        factory="bungeni.core.workflow.states.StateController"
-    />
-    <adapter for="bungeni.models.interfaces.IMotion"
-        provides="bungeni.core.workflow.interfaces.IWorkflow"
-        factory=".adapters.MotionWorkflowAdapter"
-    />
-    
-  <!-- agenda item workflow -->
-  <adapter
-     for="bungeni.models.interfaces.IAgendaItem"
-     provides="bungeni.core.workflow.interfaces.IStateController"
-     factory="bungeni.core.workflow.states.StateController" />
-  
-  <adapter
-     for="bungeni.models.interfaces.IAgendaItem"
-     provides="bungeni.core.workflow.interfaces.IWorkflow"
-     factory=".adapters.AgendaItemWorkflowAdapter" />
-     
-       
-  <!-- tabled document workflow -->
-  <adapter
-     for="bungeni.models.interfaces.ITabledDocument"
-     provides="bungeni.core.workflow.interfaces.IStateController"
-     factory="bungeni.core.workflow.states.StateController" />
-  
-  <adapter
-     for="bungeni.models.interfaces.ITabledDocument"
-     provides="bungeni.core.workflow.interfaces.IWorkflow"
-     factory=".adapters.TabledDocumentWorkflowAdapter" />
-
-  <!-- attached files workflow -->
-  <adapter
-     for="bungeni.models.interfaces.IAttachedFile"
-     provides="bungeni.core.workflow.interfaces.IStateController"
-     factory="bungeni.core.workflow.states.StateController" />
-  
-  <adapter
-     for="bungeni.models.interfaces.IAttachedFile"
-     provides="bungeni.core.workflow.interfaces.IWorkflow"
-     factory=".adapters.AttachedFileWorkflowAdapter" />
-
-  <!-- Event workflow -->
-  <adapter
-     for="bungeni.models.interfaces.IEventItem"
-     provides="bungeni.core.workflow.interfaces.IStateController"
-     factory="bungeni.core.workflow.states.StateController" />
-  
-  <adapter
-     for="bungeni.models.interfaces.IEventItem"
-     provides="bungeni.core.workflow.interfaces.IWorkflow"
-     factory=".adapters.EventWorkflowAdapter" />
-
-  <!-- Heading workflow -->
-  <adapter
-     for="bungeni.models.interfaces.IHeading"
-     provides="bungeni.core.workflow.interfaces.IStateController"
-     factory="bungeni.core.workflow.states.StateController" />
-  
-  <adapter
-     for="bungeni.models.interfaces.IHeading"
-     provides="bungeni.core.workflow.interfaces.IWorkflow"
-     factory=".adapters.HeadingWorkflowAdapter" />
-
-  <!-- User workflow -->
-  <adapter
-     for="bungeni.models.interfaces.IBungeniUser"
-     provides="bungeni.core.workflow.interfaces.IStateController"
-     factory="bungeni.core.workflow.states.StateController" />
-  
-  <adapter
-     for="bungeni.models.interfaces.IBungeniUser"
-     provides="bungeni.core.workflow.interfaces.IWorkflow"
-     factory=".adapters.UserWorkflowAdapter" />
-     
-    <!-- report item workflow -->
-  <adapter
-     for="bungeni.models.interfaces.IReport"
-     provides="bungeni.core.workflow.interfaces.IStateController"
-     factory="bungeni.core.workflow.states.StateController" />
-  
-  <adapter
-     for="bungeni.models.interfaces.IReport"
-     provides="bungeni.core.workflow.interfaces.IWorkflow"
-     factory=".adapters.ReportWorkflowAdapter" />
 </configure>

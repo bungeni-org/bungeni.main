@@ -1,6 +1,16 @@
 Question and response workflow
 ==============================
 
+!+ZCA_TESTS(mr, apr-2011) without following reloading of the adapters module,
+running this doctest file alone works just fine, but when it is run as part of 
+a doctest suite (e.g test -s bungeni.core) then strangely the adapter lookups
+fails, as if the ZCA registry has gotten corrupted.
+
+    >>> from bungeni.core.workflows import adapters
+    >>> reload(adapters)
+    <module 'bungeni.core.workflows.adapters' from ...>
+
+
 Setup
 -----
 
@@ -9,9 +19,7 @@ Setting up database connection and utilities:
   >>> from bungeni.core.testing import setup_db
   >>> engine = setup_db()
   
-  >>> from bungeni.core.workflows.testing import setup_adapters
   >>> from bungeni.core.workflows.testing import setup_security_adapters
-  >>> setup_adapters()
   >>> setup_security_adapters()
   
   >>> from bungeni.alchemist import Session
