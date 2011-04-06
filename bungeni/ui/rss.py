@@ -460,7 +460,7 @@ class AkomantosoRSSView(object):
         view name for item
     """
 
-    view_name = u"/akomantoso.xml"
+    view_name = u"/feed.akomantoso"
 
     def __call__(self):
         self.request.response.setHeader('Content-Type', 'application/rss+xml')

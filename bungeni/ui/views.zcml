@@ -616,7 +616,7 @@
    <!-- RSS views for akomantoso xml content -->
 
      <browser:page
-        name="akomantosofeed.rss"
+        name="feed.akomantoso"
         for="bungeni.models.interfaces.IBillContainer"
         class=".rss.AkomantosoBillRSSView"
         permission="zope.View"
@@ -624,7 +624,7 @@
      />
 
    <browser:page
-        name="akomantosofeed.rss"
+        name="feed.akomantoso"
         for="bungeni.models.interfaces.IQuestionContainer"
         class=".rss.AkomantosoQuestionRSSView"
         permission="zope.View"
@@ -632,7 +632,7 @@
      />
 
    <browser:page
-        name="akomantosofeed.rss"
+        name="feed.akomantoso"
         for="bungeni.models.interfaces.IMotionContainer"
         class=".rss.AkomantosoMotionRSSView"
         permission="zope.View"
@@ -640,7 +640,7 @@
      />
 
      <browser:page
-        name="akomantosofeed.rss"
+        name="feed.akomantoso"
         for="bungeni.models.interfaces.ITabledDocumentContainer"
         class=".rss.AkomantosoTabledDocumentRSSView"
         permission="zope.View"
@@ -648,7 +648,7 @@
      />
 
      <browser:page
-        name="akomantosofeed.rss"
+        name="feed.akomantoso"
         for="bungeni.models.interfaces.IAgendaItemContainer"
         class=".rss.AkomantosoAgendaItemRSSView"
         permission="zope.View"
@@ -657,14 +657,14 @@
    <!-- Akomantoso XML views -->
 
    <browser:page
-      name="akomantoso.xml"
+      name="feed.akomantoso"
     for="bungeni.models.interfaces.IBill"
     class=".rss.AkomantosoBillXMLView"
     permission="zope.View"
     layer=".interfaces.IRSSRepresentationLayer"
    />
    <browser:page
-        name="akomantoso.xml"
+        name="feed.akomantoso"
         for="bungeni.models.interfaces.IQuestion"
         class=".rss.AkomantosoQuestionXMLView"
         permission="zope.View"
@@ -672,7 +672,7 @@
      />
 
    <browser:page
-        name="akomantoso.xml"
+        name="feed.akomantoso"
         for="bungeni.models.interfaces.IMotion"
         class=".rss.AkomantosoMotionXMLView"
         permission="zope.View"
@@ -680,7 +680,7 @@
      />
 
    <browser:page
-        name="akomantoso.xml"
+        name="feed.akomantoso"
         for="bungeni.models.interfaces.ITabledDocument"
         class=".rss.AkomantosoTabledDocumentXMLView"
         permission="zope.View"
@@ -688,7 +688,7 @@
      />
 
    <browser:page
-        name="akomantoso.xml"
+        name="feed.akomantoso"
         for="bungeni.models.interfaces.IAgendaItem"
         class=".rss.AkomantosoAgendaItemXMLView"
         permission="zope.View"
