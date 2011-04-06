@@ -405,12 +405,19 @@ class Field(object):
     def is_displayable(self, mode, user_roles):
         """Does this field pass localization directives for this mode?
         """
+        # not displayable
         if mode not in self.modes:
             return False
+        # OK, displayable, and not localizable
         if mode not in self._localizable_modes:
             return True
-        if "bungeni.Admin" in user_roles:
-            return True
+        # special handling for "bungeni.Admin" -- as the Admin role may not 
+        # necessarily be a localizable role we still want that to display 
+        # everything that is displayable in this mode
+        if "bungeni.Admin" not in self.__class__._roles:
+            if "bungeni.Admin" in user_roles:
+                return True
+        # displayable and localizable, process localizable (show) declarations
         for loc in self.localizable:
             if mode in loc.modes:
                 for role in user_roles:
