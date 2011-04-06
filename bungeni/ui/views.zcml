@@ -162,11 +162,16 @@
 
   <browser:page
      name="agenda"
-     for="bungeni.core.interfaces.ISchedulingContext"
+     for="bungeni.models.interfaces.ICommittee"
      permission="bungeni.reports.Edit"
      class=".reports.SchedulingContextAgendaReportView"
      />
-
+    <browser:page
+     name="agenda"
+     for="bungeni.core.interfaces.IWorkspaceScheduling"
+     permission="bungeni.reports.Edit"
+     class=".reports.SchedulingContextAgendaReportView"
+     />
    <browser:page
      name="votes-and-proceedings"
      for="bungeni.models.interfaces.IGroupSitting"
@@ -176,9 +181,15 @@
 
     <browser:page
      name="votes-and-proceedings"
-     for="bungeni.core.interfaces.ISchedulingContext"
+     for="bungeni.models.interfaces.ICommittee"
      permission="bungeni.reports.Edit"
-     class=".reports.SchedulingContextMinutesReportView"
+     class=".reports.SchedulingContextAgendaReportView"
+     />
+    <browser:page
+     name="votes-and-proceedings"
+     for="bungeni.core.interfaces.IWorkspaceScheduling"
+     permission="bungeni.reports.Edit"
+     class=".reports.SchedulingContextAgendaReportView"
      />
   <browser:page
      name="save-report"
@@ -328,13 +339,12 @@
      layer=".interfaces.IBusinessSectionLayer"
     />
     <browser:page
-        name="scheduling"
-        for="bungeni.core.interfaces.ISection"
+        name="index"
+        for="bungeni.core.interfaces.IWorkspaceScheduling"
         layer=".interfaces.IWorkspaceSchedulingSectionLayer"
         class=".calendar.browser.CalendarView"
         permission="zope.View"
     />
-
   <browser:page
      for="bungeni.models.interfaces.IGroupSitting"
      permission="bungeni.sittingschedule.View"

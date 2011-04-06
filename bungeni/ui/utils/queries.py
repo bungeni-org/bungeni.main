@@ -125,7 +125,7 @@ def validate_open_membership(obj, domain_model, user_id,
                 yield result
 
 
-def get_parliament_by_date_range(context, start_date, end_date):
+def get_parliament_by_date_range(start_date, end_date):
     session = Session()
     parliament = session.query(domain.Parliament).filter(
         (domain.Parliament.start_date < start_date) & \
@@ -135,7 +135,7 @@ def get_parliament_by_date_range(context, start_date, end_date):
     #session.close()
     return parliament
 
-def get_session_by_date_range(context, start_date, end_date):
+def get_session_by_date_range(start_date, end_date):
     session = Session()
     ps = session.query(domain.ParliamentSession).filter(
         (domain.ParliamentSession.start_date < start_date) & \

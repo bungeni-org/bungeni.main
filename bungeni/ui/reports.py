@@ -115,7 +115,6 @@ def questionOptions(context):
 
 
 class ReportView(form.PageForm):
-
     main_result_template = ViewPageTemplateFile("templates/main_reports.pt")
     result_template = ViewPageTemplateFile("templates/reports.pt")
     display_minutes = None
@@ -172,8 +171,6 @@ class ReportView(form.PageForm):
     form_fields["questions_options"].custom_widget = verticalMultiCheckBoxWidget
     form_fields["tabled_documents_options"].custom_widget = verticalMultiCheckBoxWidget
     form_fields["date"].custom_widget = SelectDateWidget
-
-
     def setUpWidgets(self, ignore_request=False):
         class context:
             item_types = "Bills"
@@ -194,44 +191,55 @@ class ReportView(form.PageForm):
     def update(self):
         super(ReportView, self).update()
         forms.common.set_widget_errors(self.widgets, self.errors)
-
-    def validate(self, action, data):
-        errors = super(ReportView, self).validate(action, data)
-        self.time_span = TIME_SPAN.daily
+        
+    def get_end_date(self, start_date, time_span):
+        if time_span is TIME_SPAN.daily:
+            return start_date + timedelta(days=1)
+        elif time_span is TIME_SPAN.weekly:
+            return start_date + timedelta(weeks=1)
+        raise RuntimeError("Unknown time span: %s" % time_span)
+        
+    def time_span(self,data):
         if "short_name" in data:
             if data["short_name"] == "Order of the day":
-                self.time_span = TIME_SPAN.daily
+                return TIME_SPAN.daily
             elif data["short_name"] == "Proceedings of the day":
-                self.time_span = TIME_SPAN.daily
+                return TIME_SPAN.daily
             elif data["short_name"] == "Weekly Business":
-                self.time_span = TIME_SPAN.weekly
+                return TIME_SPAN.weekly
             elif data["short_name"] == "Questions of the week":
-                self.time_span = TIME_SPAN.weekly
-
-        if IGroupSitting.providedBy(self.context):
-            self.start_date = datetime.date(
-                self.context.start_date.year,
-                self.context.start_date.month,
-                self.context.start_date.day)
-        elif ISchedulingContext.providedBy(self.context):
-            if "date" in data:
-                self.start_date = data["date"]
+                return TIME_SPAN.weekly
         else:
-            self.start_date = datetime.today().date()
-
-        self.end_date = self.get_end_date(self.start_date, self.time_span)
-        if ISchedulingContext.providedBy(self.context):
-            self.sittings = self.get_sittings(self.start_date, self.end_date)
-            if len(self.sittings) == 0:
+            return TIME_SPAN.daily
+    
+    def validate(self, action, data):
+        errors = super(ReportView, self).validate(action, data)
+        time_span = self.time_span(data)
+        if IGroupSitting.providedBy(self.context):
+            if not self.context.items:
                 errors.append(interface.Invalid(
-                _(u"The period selected has no sittings"),
-                "date"))
-        parliament = queries.get_parliament_by_date_range(self, self.start_date, self.end_date)
-        #session = queries.get_session_by_date_range(self, start_date, end_date)
-        if parliament is None:
-            errors.append(interface.Invalid(
-                _(u"A parliament must be active in the period"),
-                "date"))
+                _(u"The sitting has no scheduled items")))
+        else:
+            start_date = data["date"] if "date" in data else \
+                                                datetime.datetime.today().date()
+            end_date = self.get_end_date(start_date, time_span)
+            try:
+                ctx = ISchedulingContext(self.context)
+            except:
+                errors.append(interface.Invalid(
+                                         _(u"Not a scheduling context")))
+            sittings = ctx.get_sittings(start_date, end_date).values()
+            if not sittings:
+                errors.append(interface.Invalid(
+                        _(u"The period selected has no sittings"),
+                                "date"))
+            
+            parliament = queries.get_parliament_by_date_range(
+                                                           start_date, end_date)
+            if parliament is None:
+                errors.append(interface.Invalid(
+                    _(u"A parliament must be active in the period"),
+                        "date"))
         return errors
     
     @form.action(_(u"Preview"))
@@ -240,80 +248,50 @@ class ReportView(form.PageForm):
         self.save_link = url.absoluteURL(self.context, self.request) + "/save-report"
         self.body_text = self.result_template()
         return self.main_result_template()
-    
-    def get_end_date(self, start_date, time_span):
-        if time_span is TIME_SPAN.daily:
-            return start_date + timedelta(days=1)
-        elif time_span is TIME_SPAN.weekly:
-            return start_date + timedelta(weeks=1)
-
-        raise RuntimeError("Unknown time span: %s" % time_span)
-
-    def get_sittings(self, start, end):
-            """ return the sittings with scheduled items for 
-                the given daterange"""
-            session = Session()
-            query = session.query(domain.GroupSitting).filter(
-                sql.and_(
-                    domain.GroupSitting.start_date.between(start, end),
-                    domain.GroupSitting.group_id == self.context.group_id)
-                    ).order_by(domain.GroupSitting.start_date
-                    ).options(
-                        #eagerload("sitting_type"),
-                        eagerload("item_schedule"),
-                        eagerload("item_schedule.item"),
-                        eagerload("item_schedule.discussion"))
-            items = query.all()
-            order = "real_order" if self.display_minutes else "planned_order"
-            for item in items:
-                item.item_schedule.sort(
-                                key=operator.attrgetter(order))
-                #item.sitting_type.sitting_type = item.sitting_type.sitting_type.capitalize()
-            return items
 
     def process_form(self, data):
         class optionsobj(object):
             """Object that holds all the options."""
-            pass
         self.options = optionsobj()
         if not hasattr(self, "short_name"):
             if "short_name" in data:
                 self.short_name = data["short_name"]
         self.sittings = []
-
         if IGroupSitting.providedBy(self.context):
             trusted = removeSecurityProxy(self.context)
             order = "real_order" if self.display_minutes else "planned_order"
             trusted.item_schedule.sort(key=operator.attrgetter(order))
             self.sittings.append(trusted)
-            back_link = url.absoluteURL(self.context, self.request) + "/schedule"
-        elif ISchedulingContext.providedBy(self.context):
-            self.sittings = self.get_sittings(self.start_date, self.end_date)
-            back_link = url.absoluteURL(self.context, self.request)
+            self.start_date = self.context.start_date
+            self.end_date = self.get_end_date(self.start_date,
+                                                           self.time_span(data))
         else:
-            raise NotImplementedError
+            self.start_date = data["date"] if "date" in data else \
+                                                datetime.datetime.today().date()
+            self.end_date = self.get_end_date(self.start_date, 
+                                                           self.time_span(data))
+            sittings = ISchedulingContext(self.context).get_sittings(
+                                        self.start_date, self.end_date).values()
+            self.sittings = map(removeSecurityProxy,sittings)
         self.ids = ""
         for s in self.sittings:
-            self.ids = self.ids + str(s.group_sitting_id) + ","
+            self.ids += str(s.group_sitting_id) + ","
         def cleanup(string):
             return string.lower().replace(" ", "_")
-
         for item_type in data["item_types"]:
             itemtype = cleanup(item_type)
             setattr(self.options, itemtype, True)
             for option in data[itemtype + "_options"]:
                 setattr(self.options, cleanup(itemtype + "_" + option), True)
-
         if self.display_minutes:
-            self.link = url.absoluteURL(self.context, self.request) + "/votes-and-proceedings"
+            self.link = url.absoluteURL(self.context, self.request) \
+                                                + "/votes-and-proceedings"
         else :
             self.link = url.absoluteURL(self.context, self.request) + "/agenda"
-
         try:
-            self.group = self.context.get_group()
+            self.group = self.context.group
         except:
-            session = Session()
-            self.group = session.query(domain.Group).get(self.context.group_id)
+            self.group = ISchedulingContext(self.context).get_group()
 
 class GroupSittingContextAgendaReportView(ReportView):
     display_minutes = False

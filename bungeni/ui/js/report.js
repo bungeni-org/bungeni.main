@@ -83,7 +83,7 @@
                 $('input[name="form.tabled_documents_options"]').attr('disabled', true);
             }
         });
-        $("#form\\.report_type").change(function() {
+        $("#form\\.short_name").change(function() {
             var choice = $("option:selected", this).val();
             if (choice == "Order of the day")
             {

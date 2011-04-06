@@ -11,7 +11,6 @@ from zope.publisher.interfaces.browser import IHTTPRequest
 from zope.publisher.interfaces import IPublishTraverse
 from zope.location.interfaces import ILocation
 from zope.app.publication.traversers import SimpleComponentTraverser
-
 from bungeni.models.interfaces import IBungeniApplication
 from bungeni.models.interfaces import ICommittee
 from bungeni.models.interfaces import IGroupSittingContainer
@@ -21,14 +20,13 @@ from bungeni.models import domain
 from bungeni.core.interfaces import ISchedulingContext
 from bungeni.core.interfaces import IWorkspaceScheduling
 from bungeni.core.interfaces import IDailySchedulingContext
-from bungeni.core.interfaces import ISection
 from bungeni.core.globalsettings import getCurrentParliamentId
+from bungeni.core.globalsettings import get_current_parliament
 from bungeni.core.i18n import _
 from bungeni.core.proxy import LocationProxy
 from bungeni.ui.calendar import utils
 from bungeni.alchemist import Session
 from sqlalchemy import sql
-
 
 def format_date(date):
     return time.strftime("%Y-%m-%d %H:%M:%S", date.timetuple())
@@ -129,7 +127,6 @@ class CommitteeSchedulingContext(PrincipalGroupSchedulingContext):
     @property
     def group_id(self):
         """Return committee's group id."""
-
         return self.__parent__.group_id
 
     def get_group(self, name=None):
@@ -150,13 +147,15 @@ class SittingContainerSchedulingContext(PrincipalGroupSchedulingContext):
         return self.__parent__.__parent__
 
 class WorkspaceSchedulingContext(PrincipalGroupSchedulingContext):
-    component.adapts(ISection)
-
+    component.adapts(IWorkspaceScheduling)
     @property
     def group_id(self):
         return getCurrentParliamentId()
-
-
+        
+    def get_group(self, name=None):
+        assert name is None
+        return get_current_parliament()
+    
 class DailySchedulingContext(object):
     interface.implements(IDailySchedulingContext, IDCDescriptiveProperties)
 

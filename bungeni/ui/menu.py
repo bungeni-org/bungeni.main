@@ -347,6 +347,7 @@ class CalendarMenu(BrowserMenu):
         - plenary
 
         """
+        
         contexts = []
         app = getSite()
         today = datetime.date.today()

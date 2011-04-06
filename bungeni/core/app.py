@@ -87,7 +87,7 @@ class AppSetup(object):
         workspace["scheduling"] = Section(
             title=_(u"Scheduling"),
             description=_(u"Scheduling"),
-            default_name="scheduling",
+            default_name="index",
             marker = interfaces.IWorkspaceScheduling,
         )
         workspace["scheduling"]["committees"] = QueryContent(

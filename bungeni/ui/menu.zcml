@@ -997,19 +997,31 @@
     <!-- scheduling context reporting actions -->
     
     <browser:menuItem menu="reporting_actions"
-        for="bungeni.core.interfaces.ISchedulingContext"
+        for="bungeni.core.schedule.WorkspaceSchedulingContext"
         title="Agenda..."
         action="agenda"
         permission="bungeni.reports.Edit"
     />
     <browser:menuItem
         menu="reporting_actions"
-        for="bungeni.core.interfaces.ISchedulingContext"
+        for="bungeni.core.schedule.WorkspaceSchedulingContext"
         title="Votes and proceedings..."
         action="votes-and-proceedings"
         permission="bungeni.reports.Edit"
     />
-    
+    <browser:menuItem menu="reporting_actions"
+        for="bungeni.core.schedule.CommitteeSchedulingContext"
+        title="Agenda..."
+        action="../../agenda"
+        permission="bungeni.reports.Edit"
+    />
+    <browser:menuItem
+        menu="reporting_actions"
+        for="bungeni.core.schedule.CommitteeSchedulingContext"
+        title="Votes and proceedings..."
+        action="../../votes-and-proceedings"
+        permission="bungeni.reports.Edit"
+    />
     <!-- group-sitting scheduling view reporting actions -->
     
     <browser:menuItem menu="reporting_actions"
