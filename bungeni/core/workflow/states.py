@@ -163,7 +163,7 @@ class Workflow(object):
     
     def __init__(self, states, transitions):
         self._transitions_by_source = {} # {source: {id: Transition}}
-        self._transitions_by_id = {} # {id:str : Transition}
+        self._transitions_by_id = {} # {id: Transition}
         self._states_by_id = {} # {id: State}
         self.refresh(states, transitions)
     
@@ -194,7 +194,7 @@ class Workflow(object):
     @property
     def states(self):
         """ () -> { status: State } """
-        return self._states_by_id # !+COPY? 
+        return self._states_by_id # !+COPY?
     
     def get_transitions_from(self, source):
         try:
@@ -219,6 +219,7 @@ class Workflow(object):
         class AdaptedWorkflow(object):
             """A workflow adapted on context.
             """
+            zope.interface.implements(interfaces.IAdaptedWorkflow)
             def __init__(awf, context):
                 awf.context = context
                 awf.workflow = self

@@ -7,14 +7,11 @@ from bungeni.alchemist import Session
 import bungeni.models.domain as domain
 import bungeni.models.schema as schema
 import bungeni.models.interfaces as interfaces
-import bungeni.core.globalsettings as prefs
 
 
-def get_user_login(user_id):
+def get_user(user_id):
     assert user_id, "Must have valid user_id"
-    session=Session()
-    user = session.query(domain.User).get(user_id)
-    return user.login
+    return Session().query(domain.User).get(user_id)
 
 
 ''' !+UNUSED(mr, mar-2011)
@@ -122,6 +119,9 @@ def setMotionSerialNumber(motion):
 
 #
 
+def get_ministry(ministry_id):
+    return Session().query(domain.Ministry).get(ministry_id)
+
 class _Minister(object):
     pass
 
@@ -131,18 +131,13 @@ ministers = rdb.join(schema.groups,schema.user_group_memberships,
         schema.user_group_memberships.c.user_id == schema.users.c.user_id)
 mapper(_Minister, ministers)
 
-def getMinistryEmails(ministry):
+def get_ministers(ministry):
     """Get comma-seperated list of emails of all persons who are 
     ministry members.
     """
     query = Session().query(_Minister).filter(
         _Minister.group_id == ministry.group_id)
-    results = query.all()
-    addresses = []
-    for result in results:
-        address = '"%s %s" <%s>' % (result.first_name, result.last_name, result.email)
-        addresses.append(address)
-    return " ,".join(addresses)
+    return [ minister for minister in query.all() ]
 
 #
 

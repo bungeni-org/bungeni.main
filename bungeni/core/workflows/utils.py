@@ -41,6 +41,8 @@ def get_parliament(context):
 
 get_principal_id = bungeni.models.utils.get_principal_id
 
+def formatted_user_email(user):
+    return '"%s %s" <%s>' % (user.first_name, user.last_name, user.email)
 
 # parliamentary item
 
@@ -50,7 +52,7 @@ def get_owner_login_pi(context):
     """
     assert interfaces.IBungeniContent.providedBy(context), \
         "Not a Parliamentary Item: %s" % (context)
-    return dbutils.get_user_login(context.owner_id)
+    return dbutils.get_user(context.owner_id).login
 
 def assign_owner_role(context, login):
     # throws IntegrityError when login is None

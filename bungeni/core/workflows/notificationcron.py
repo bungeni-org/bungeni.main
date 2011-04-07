@@ -13,7 +13,6 @@
 import sys
 import datetime
 
-import zope.lifecycleevent
 from zope.i18n import translate
 
 from email.mime.text import MIMEText
@@ -22,7 +21,7 @@ from email.mime.text import MIMEText
 import sqlalchemy.sql.expression as sql
 
 from bungeni.alchemist import Session
-from bungeni.core.workflows import  dbutils
+from bungeni.core.workflows import  dbutils, utils
 from bungeni.models import domain
 from bungeni.models import schema
 from bungeni.models import metadata
@@ -142,27 +141,26 @@ def sendNotificationToMinistry(date):
     send a notification to the ministry stating
     all questions that are approaching the deadline
     """
-    text = translate('notification_email_to_ministry_question_pending_response',
-                     target_language='en',
-                     domain='bungeni.core',
+    text = translate("notification_email_to_ministry_question_pending_response",
+                     target_language="en",
+                     domain="bungeni.core",
                      default="Questions pending responses.")
     ministries = _getAllMinistries(date)
     for ministry in ministries:
         questions = _getQuestionsPendingResponse(date, ministry)
-        text = translate('notification_email_to_ministry_question_pending_response',
-                     target_language='en',
-                     domain='bungeni.core',
+        text = translate("notification_email_to_ministry_question_pending_response",
+                     target_language="en",
+                     domain="bungeni.core",
                      default="Questions assigned to the ministry pending responses.")
         if questions: 
-            text = text + '\n' + ministry.full_name +': \n'
-            for question in questions:
-                 text = text + question.subject + '\n'
-            emails = dbutils.getMinistryEmails(ministry)
+            text = "%s\n%s: \n" % (text, ministry.full_name) + \
+                "\n".join([ question.subject for question in questions ])
+            emails = [ utils.formatted_user_email(minister)
+                for minister in dbutils.get_ministers(ministry) ]
             msg = MIMEText(text)
-            
-            msg['Subject'] = u'Questions pending response'
-            msg['From'] = prefs.getClerksOfficeEmail()
-            msg['To'] = emails
+            msg["Subject"] = "Questions pending response"
+            msg["From"] = prefs.getClerksOfficeEmail()
+            msg["To"] = " ,".join(emails)
             print msg
             # !+SENDMAIL(ah,18-03-2010)
             #Mail sending is commented out 
@@ -189,12 +187,12 @@ def main(argv=None):
     component.provideUtility( db, IDatabaseEngine, 'bungeni-db' )
     metadata.bind = db
     session = Session()
-     
+    
     sendAllNotifications()
-        
+    
     #session.flush()
     #session.commit()
-    
+
 if __name__ == "__main__":
     sys.exit(main())
 

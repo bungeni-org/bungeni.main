@@ -47,7 +47,7 @@ def __pi_submit(context):
 def _address_private(context):
     # !+OWNER_ADDRESS(mr, mov-2010) is this logic correct, also for admin?
     try:
-        user_login = dbutils.get_user_login(context.user_id)
+        user_login = dbutils.get_user(context.user_id).login
     except AttributeError:
         # 'GroupAddress' object has no attribute 'user_id'
         user_login = utils.get_principal_id()

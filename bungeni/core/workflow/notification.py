@@ -11,13 +11,11 @@ log = __import__("logging").getLogger("bungeni.core.workflow.notification")
 from zope.i18n import translate
 from email.mime.text import MIMEText
 from evoque.domain import Domain
-from bungeni.alchemist import Session
 from bungeni.server.smtp import dispatch
-from bungeni.models import domain
 from bungeni.core.workflow.states import wrapped_condition
 from bungeni.core import globalsettings
 from bungeni.core import translation
-from bungeni.core.workflows import dbutils
+from bungeni.core.workflows import dbutils, utils
 from bungeni.utils.capi import capi
 
 
@@ -25,7 +23,8 @@ from bungeni.utils.capi import capi
 
 class TemplateNamespaceSite(object):
     """Exposes selected global site settings for convenient usage from within 
-    a template. For passing down to template evaluation on *globals* as "site".
+    a template. For passing down to template evaluation on *globals* as 
+    (recommended) "site".
     """
     @property
     def clerk_email(self):
@@ -37,7 +36,7 @@ class TemplateNamespaceSite(object):
 
 class TemplateNamespaceItem(object):
     """Adapts context for convenient usage from within a template.
-    For passing down to template evaluation on *locals* as "item".
+    For passing down to template evaluation on *locals* as (recommended) "item".
     
     All translatable values are returned translated into target_lang.
     """
@@ -66,25 +65,28 @@ class TemplateNamespaceItem(object):
     
     @property
     def owner(self):
-        return Session().query(domain.User).get(self.context.owner_id)
+        return dbutils.get_user(self.context.owner_id)
     
     @property
     def owner_email(self):
-        owner = self.owner
-        return  '"%s %s" <%s>' % (
-            owner.first_name, owner.last_name, owner.email)
-
+        return utils.formatted_user_email(self.owner)
+    
     @property
     def ministry_emails(self):
-        ministry = Session().query(domain.Ministry).get(self.context.ministry_id)
-        return dbutils.getMinistryEmails(ministry)
+        ministry = dbutils.get_ministry(self.context.ministry_id)
+        ministers = dbutils.get_ministers(ministry)
+        return " ,".join([ 
+                utils.formatted_user_email(minister) 
+                for minister in ministers 
+        ])
+
 
 # setup evoque template domain
 
 def setup_domain():
     import logging
     domain = Domain(
-        # root folder for the default template collection, must be abspath;
+        # root folder for the default template collection, must be abspath
         "/tmp",
         # whether evaluation namespace is restricted or not 
         restricted=True,
@@ -128,12 +130,11 @@ def setup_domain():
 TEMPLATES = setup_domain()
 
 
-# utility to set/retrieve a template from string source
+# utility to set/retrieve a string template
 
 def st(src):
     """Set/Retrieve the previously cached instance of the String Template from 
-    the domain's default collection, using the src also as the the template's 
-    name.
+    the domain's default collection, using the src both as src and as name.
     """
     if not TEMPLATES.has_template(src):
         TEMPLATES.set_template(src, src=src, from_string=True)
