@@ -49,6 +49,8 @@ class CAPI(object):
     @property
     @bungeni_custom_errors
     def zope_i18n_allowed_languages(self):
+        # NOTE: zope.i18n.config.ALLOWED_LANGUAGES expects the value of the 
+        # env variable for this to be a COMMA or SPACE separated STRING
         return tuple(bc.zope_i18n_allowed_languages.split())
     
     @property
@@ -95,16 +97,25 @@ class CAPI(object):
         allowing the liberty of data-typing values of capi attributes 
         as needed.
         """
+        value = getattr(self, key)
         try:
-            os.environ[key] = getattr(self, key)
+            os.environ[key] = value
             # OK, value is a string... done.
         except TypeError:
             # putenv() argument 2 must be string, not ... 
             # i.e. value is NOT a string... then try repr'ing it to a string:
-            os.environ[key] = repr(getattr(self, key))
-            # ensure that the original object value defines a __repr__ 
-            # that can correctly re-instantiate the original object
-            assert eval(os.environ[key]) == getattr(self, key)
+            try:
+                # some zope code expects sequences to be specified as a 
+                # COMMA or SPACE separated STRING, so we first try the value 
+                # as a sequence, and serialize it to an environment variable 
+                # value as expected by zope
+                os.environ[key] = " ".join(value)
+            except TypeError:
+                # not a sequnce, just fallback on repr(value)
+                os.environ[key] = repr(value)
+                # ensure that the original object value defines a __repr__ 
+                # that can correctly re-instantiate the original object
+                assert eval(os.environ[key]) == value
 
 # we access all via the singleton instance
 capi = CAPI()
