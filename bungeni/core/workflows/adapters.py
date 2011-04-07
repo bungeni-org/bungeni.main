@@ -1,9 +1,9 @@
 log = __import__("logging").getLogger("bungeni.core.workflows")
 
 from zope.component import provideAdapter
-from bungeni.models import domain
-from bungeni.models import interfaces as model_interfaces
-from bungeni.core.workflow import xmlimport, states, interfaces
+from bungeni.models import interfaces
+from bungeni.core import workflow
+from bungeni.core.workflow import xmlimport
 import bungeni.core.version
 import bungeni.core.interfaces
 
@@ -13,7 +13,7 @@ PATH_CUSTOM_WORKLFOWS = capi.get_path_for("workflows")
 __all__ = ["WORKFLOWS", "wf"]
 
 # a global container to easily retrieve workflow instances
-WORKFLOWS = {} # { name: bungeni.core.workflow.states.Workflow }
+WORKFLOWS = {} # { name: workflow.states.Workflow }
 
 def wf(name):
     """Get the named workflow."""
@@ -22,17 +22,17 @@ def wf(name):
 # provideAdapter(factory, adapts=None, provides=None, name="")
 
 def provideAdapterWorkflow(factory, adapts_kls):
-    provideAdapter(factory, (adapts_kls,), interfaces.IWorkflow)
+    provideAdapter(factory, (adapts_kls,), workflow.interfaces.IWorkflow)
 
 def provideAdapterStateController(adapts_kls):
-    provideAdapter(states.StateController, (adapts_kls,), 
-        interfaces.IStateController)
+    provideAdapter(workflow.states.StateController, (adapts_kls,), 
+        workflow.interfaces.IStateController)
 
 def provideAdapterWorkflowController(adapts_kls):
-    provideAdapter(states.WorkflowController, (adapts_kls,), 
-        interfaces.IWorkflowController)
+    provideAdapter(workflow.states.WorkflowController, (adapts_kls,), 
+        workflow.interfaces.IWorkflowController)
 
-def load_workflow(name, kls):
+def load_workflow(name, iface):
     """Get the Workflow instance, from XML definition, for named workflow.
     """
     _log = log.debug
@@ -49,10 +49,10 @@ def load_workflow(name, kls):
         w = WORKFLOWS[name]
         _log("Already Loaded WORKFLOW : %s %s" % (name, w))
     # a Workflow instance is itself the factory of own AdaptedWorkflows
-    provideAdapterWorkflow(w, kls)
-    provideAdapterStateController(kls)
-    if name != "version":
-        provideAdapterWorkflowController(kls)
+    provideAdapterWorkflow(w, iface)
+    provideAdapterStateController(iface)
+    if name != "version": # !+VERSION_WORKFLOW(mr, apr-2011)
+        provideAdapterWorkflowController(iface)
     else:
         provideAdapter(bungeni.core.version.ContextVersioned,
             (bungeni.core.interfaces.IVersionable,),
@@ -61,23 +61,23 @@ def load_workflow(name, kls):
 #
 
 # workflow instances (+ adapter *factories*)
-load_workflow("address", domain.UserAddress)
-load_workflow("address", domain.GroupAddress)
-load_workflow("agendaitem", domain.AgendaItem)
-load_workflow("attachedfile", domain.AttachedFile)
-load_workflow("bill", domain.Bill)
-load_workflow("committee", domain.Committee)
-load_workflow("event", domain.EventItem)
-load_workflow("group", domain.Group)
-load_workflow("groupsitting", domain.GroupSitting)
-load_workflow("heading", domain.Heading)
-load_workflow("motion", domain.Motion)
-load_workflow("parliament", domain.Parliament)
-load_workflow("question", domain.Question)
-load_workflow("report", domain.Report)
-load_workflow("tableddocument", domain.TabledDocument)
-load_workflow("user", domain.User)
-load_workflow("version", model_interfaces.IVersion)
+load_workflow("address", interfaces.IUserAddress)
+load_workflow("address", interfaces.IGroupAddress)
+load_workflow("agendaitem", interfaces.IAgendaItem)
+load_workflow("attachedfile", interfaces.IAttachedFile)
+load_workflow("bill", interfaces.IBill)
+load_workflow("committee", interfaces.ICommittee)
+load_workflow("event", interfaces.IEventItem)
+load_workflow("group", interfaces.IBungeniGroup)
+load_workflow("groupsitting", interfaces.IGroupSitting)
+load_workflow("heading", interfaces.IHeading)
+load_workflow("motion", interfaces.IMotion)
+load_workflow("parliament", interfaces.IParliament)
+load_workflow("question", interfaces.IQuestion)
+load_workflow("report", interfaces.IReport)
+load_workflow("tableddocument", interfaces.ITabledDocument)
+load_workflow("user", interfaces.IBungeniUser)
+load_workflow("version", interfaces.IVersion) # !+VERSION_WORKFLOW(mr, apr-2011)
 
 # check/regenerate zcml directives for workflows
 xmlimport.zcml_check_regenerate()

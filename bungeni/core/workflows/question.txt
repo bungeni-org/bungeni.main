@@ -33,6 +33,8 @@ Imports.
 Questions are versionable.
   
   >>> from zope.interface import classImplements
+  >>> from bungeni.models import interfaces
+  >>> classImplements(domain.Question, interfaces.IQuestion)
   >>> from bungeni.core.interfaces import IVersionable
   >>> classImplements(domain.Question, IVersionable)
 

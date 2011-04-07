@@ -42,10 +42,12 @@ class IGroupAdmin(interface.Interface):
     admin views.
     """
 
+# !+NAMING(mr, apr-2011) rename, inconsistent with domain
 class IBungeniUser(interface.Interface):
     """A user in bungeni.
     """
 
+# !+NAMING(mr, apr-2011) rename, inconsistent with domain
 class IBungeniGroup(interface.Interface):
     """A group in bungeni.
     """
