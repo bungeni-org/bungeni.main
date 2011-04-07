@@ -102,8 +102,8 @@ class CAPI(object):
             os.environ[key] = value
             # OK, value is a string... done.
         except TypeError:
-            # putenv() argument 2 must be string, not ... 
-            # i.e. value is NOT a string... then try repr'ing it to a string:
+            # putenv() argument 2 must be string, not <...>
+            # i.e. value is NOT a string... try string-casting:
             try:
                 # some zope code expects sequences to be specified as a 
                 # COMMA or SPACE separated STRING, so we first try the value 
@@ -111,7 +111,7 @@ class CAPI(object):
                 # value as expected by zope
                 os.environ[key] = " ".join(value)
             except TypeError:
-                # not a sequnce, just fallback on repr(value)
+                # not a sequence, just fallback on repr(value)
                 os.environ[key] = repr(value)
                 # ensure that the original object value defines a __repr__ 
                 # that can correctly re-instantiate the original object

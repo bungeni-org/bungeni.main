@@ -2,24 +2,16 @@
 $Id$
 """
 
-from zope import interface
-from zope import component
-
 import os
 import copy
-import shutil
 import unittest
 import datetime
-
+from zope import interface
+from zope import component
 from zope.testing import doctest, doctestunit
-from zope.app.testing import placelesssetup, ztapi
+from zope.app.testing import placelesssetup
 from zope.configuration import xmlconfig
-
 from bungeni.models import metadata
-from bungeni.models.interfaces import IBungeniContent
-from bungeni.models.interfaces import IDirectoryLocation
-from bungeni.core.interfaces import IFilePathChooser
-from bungeni.core.interfaces import IVersionedFileRepository
 
 zcml_slug = """
 <configure xmlns="http://namespaces.zope.org/zope"
@@ -37,7 +29,7 @@ def setUp(test):
 
 def tearDown(test):
     placelesssetup.tearDown()
-    metadata.drop_all( checkfirst=True )
+    metadata.drop_all(checkfirst=True)
 
 def test_suite():
     from bungeni.core.app import BungeniApp

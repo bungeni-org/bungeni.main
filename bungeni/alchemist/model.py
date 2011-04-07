@@ -28,7 +28,9 @@ from bungeni.ui.utils import common
 
 
 def queryModelInterface(cls):
-    """We can passed in a class or an interface.
+    """This queries the domain model class for the exclusively alchemist
+    IIModelInterface interface. If cls is already such an interface it itself 
+    is returned.
     """
     if not IInterface.providedBy(cls):
         candidates = list(interface.implementedBy(cls))
@@ -39,14 +41,14 @@ def queryModelInterface(cls):
                 if issubclass(i, IAlchemistContent):
                     ifaces.append(i)
         if not ifaces:
-            raise SyntaxError("No Model Interface on Domain Object")
+            raise SyntaxError("No Model Interface on Domain Object [%s]" % (cls))
         if ifaces:
             assert len(ifaces)==1, "Multiple Model Interfaces on Domain Object"
         #import pdb; pdb.set_trace()
-        cls = ifaces[0]
+        return ifaces[0]
     else:
         assert IIModelInterface.providedBy(cls), "Invalid Interface"
-    return cls
+        return cls
 
 
 def queryModelDescriptor(ob):
