@@ -116,8 +116,8 @@ Actions
 
   >>> from bungeni.core.workflow.interfaces import IWorkflowController
   >>> from bungeni.core.workflows.bill import actions 
-  >>> info = IWorkflowController(bill)
-  >>> info
+  >>> wfc = IWorkflowController(bill)
+  >>> wfc
   <bungeni.core.workflow.states.WorkflowController object at ...>
 
 "Create". This action sets the submission date and parliament id.

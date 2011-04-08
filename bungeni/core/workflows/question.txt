@@ -174,8 +174,8 @@ Questions transitions
 -------------------------------------
 
   >>> from bungeni.core.workflow.interfaces import IWorkflowController
-  >>> info = IWorkflowController(question)
-  >>> info
+  >>> wfc = IWorkflowController(question)
+  >>> wfc
   <bungeni.core.workflow.states.WorkflowController object at ...>
 
 PRINCIPAL: member
@@ -190,7 +190,7 @@ Transition: "create" - assigns the role of "Owner" and sets the parliament id.
 
 !+ generalize these tests to not assume predefined transition names / sequence!
 
-  >>> info.fireTransition("-draft")
+  >>> wfc.fireTransition("-draft")
   >>> question.status
   'draft'
 
@@ -256,7 +256,7 @@ Setup mock delivery component.
 
 Transition: "submit"
 
-  >>> info.fireTransition("%s-submitted" % question.status)
+  >>> wfc.fireTransition("%s-submitted" % question.status)
   >>> question.status
   'submitted'
   >>> len(versions)
@@ -284,7 +284,7 @@ in "submitted" state:
 -------------------------------------
 Transition: "receive" (from "submit")
 
-  >>> info.fireTransition("%s-received" % question.status)
+  >>> wfc.fireTransition("%s-received" % question.status)
   >>> question.status
   'received'
   >>> len(versions)
@@ -293,7 +293,7 @@ Transition: "receive" (from "submit")
 
 "Needs Clarification to Receive" (from "received" or "incomplete")
 
-  >>> info.fireTransition("%s-clarification_required" % question.status)
+  >>> wfc.fireTransition("%s-clarification_required" % question.status)
   >>> question.status
   'clarification_required'
   >>> len(versions)
@@ -307,7 +307,7 @@ Must re-submit:
   >>> set_interaction(member)
   >>> get_principal_id()
   'member'
-  >>> info.fireTransition("%s-submitted" % question.status)
+  >>> wfc.fireTransition("%s-submitted" % question.status)
   >>> question.status
   'submitted'
   >>> len(versions)
@@ -321,7 +321,7 @@ And re-receive:
   >>> set_interaction(clerk)
   >>> get_principal_id()
   'clerk'
-  >>> info.fireTransition("%s-received" % question.status)
+  >>> wfc.fireTransition("%s-received" % question.status)
   >>> question.status
   'received'
   >>> len(versions)
@@ -330,7 +330,7 @@ And re-receive:
 
 "Complete" (from "received" or "incomplete")
 
-  >>> info.fireTransition("%s-completed" % question.status)
+  >>> wfc.fireTransition("%s-completed" % question.status)
   >>> question.status
   'completed'
   >>> len(versions)
@@ -345,7 +345,7 @@ PRINCIPAL: speaker
 
 "Require recomplete" (from "completed")
 
-  >>> info.fireTransition("%s-incomplete" % question.status)
+  >>> wfc.fireTransition("%s-incomplete" % question.status)
   >>> question.status
   'incomplete'
   >>> len(versions)
@@ -360,7 +360,7 @@ PRINCIPAL: clerk
   >>> get_principal_id()
   'clerk'
 
-  >>> info.fireTransition("%s-completed" % question.status)
+  >>> wfc.fireTransition("%s-completed" % question.status)
   >>> question.status
   'completed'
   >>> len(versions)
@@ -376,7 +376,7 @@ PRINCIPAL: speaker
   'speaker'
 
 
-  >>> info.fireTransition("%s-admissible" % question.status)
+  >>> wfc.fireTransition("%s-admissible" % question.status)
   >>> question.status
   'admissible'
   >>> len(versions)
@@ -406,7 +406,7 @@ convention adopted for internal transition ids composed of:
 simply executing actions indpendetly, the following fails (correctly) as the
 needed condition (written querstion) is not satisfied 
 
-  >>> #info.fireTransition("%s-response_pending" % question.status)
+  >>> #wfc.fireTransition("%s-response_pending" % question.status)
   >>> #question.status
   #'response_pending'
   >>> #len(versions)

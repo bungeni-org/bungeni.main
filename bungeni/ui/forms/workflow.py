@@ -70,10 +70,10 @@ class TransitionHandler(object):
         """
         context = getattr(form.context, "_object", form.context)
         if self.wf_name:
-            info = component.getAdapter(
+            wfc = component.getAdapter(
                 context, interfaces.IWorkflowController, self.wf_name)
         else:
-            info = interfaces.IWorkflowController(context)
+            wfc = interfaces.IWorkflowController(context)
         result = handle_edit_action(form, action, data)
         #
         if form.errors: 
@@ -101,7 +101,7 @@ class TransitionHandler(object):
             # using that altogether, and pass it along downstream by stuffing 
             # onto the request
             IAnnotations(form.request)["change_data"] = data
-            info.fireTransition(self.transition_id)
+            wfc.fireTransition(self.transition_id)
             next_url = form.next_url
             if next_url is None:
                 next_url = form.request["HTTP_REFERER"]

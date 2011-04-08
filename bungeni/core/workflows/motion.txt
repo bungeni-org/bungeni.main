@@ -94,14 +94,14 @@ convention adopted for internal transition ids composed of:
     "%s-%s" % (source_state, destination_state)
 
   >>> #from bungeni.core.workflows.motion import actions 
-  >>> info = IWorkflowController(motion)
-  >>> info
+  >>> wfc = IWorkflowController(motion)
+  >>> wfc
   <bungeni.core.workflow.states.WorkflowController object at ...>
 
 "Create". This action assigns the role of "Owner" and sets the
 parliament id.
   
-  >>> actions.create(info, motion)
+  >>> actions.create(motion)
   >>> motion.parliament_id == parliament.parliament_id
   True
 
@@ -117,7 +117,7 @@ Conditions
   
 "Is scheduled".
 
-  >>> _conditions.is_scheduled(info, motion)
+  >>> _conditions.is_scheduled(motion)
   False
 
   >>> from bungeni.models.testing import create_sitting
@@ -128,7 +128,7 @@ Conditions
   ...     group_sitting_id=sitting.group_sitting_id,
   ...     item_id=motion.parliamentary_item_id)
   
-  >>> _conditions.is_scheduled(info, motion)
+  >>> _conditions.is_scheduled(motion)
   True
 
 "Submit".
@@ -136,14 +136,14 @@ Conditions
 !+FIRETRANSITION(mr, dec-2010) workflow transitions (only partly) executed in 
 this way do not create the expected auditlog. 
 
-  >>> actions.submit(info, motion)
+  >>> actions.submit(motion)
   
   #>>> motion.submission_date == today
   #True
 
 "Received by clerk". A new version is created.
 
-  >>> actions.receive(info, motion)
+  >>> actions.receive(motion)
 
   >>> from bungeni.core.interfaces import IVersioned
   >>> versions = IVersioned(motion)
@@ -152,49 +152,49 @@ this way do not create the expected auditlog.
 
 "Require edit by MP".
 
-  >>> actions.require_clarification(info, motion)
+  >>> actions.require_clarification(motion)
   >>> len(versions)
   3
 
 "Complete".
 
-  >>> actions.complete(info, motion)
+  >>> actions.complete(motion)
   >>> len(versions)
   4
 
 "Approve".
 
-  >>> actions.approve(info, motion)
+  >>> actions.approve(motion)
   >>> len(versions)
   5
 
 "Reject".
 
-  >>> actions.reject(info, motion)
+  >>> actions.reject(motion)
 
 "Require amendment".
 
-  >>> actions.require_recomplete(info, motion)
+  >>> actions.require_recomplete(motion)
   >>> len(versions)
   6
 
 "MP clarify".
 
-  >>> actions.require_clarification(info, motion)
+  >>> actions.require_clarification(motion)
   >>> len(versions)
   7
 
 "Schedule".
 
-  >>> actions.schedule(info, motion)
+  >>> actions.schedule(motion)
 
 "Defer".
 
-  >>> actions.defer(info, motion)
+  >>> actions.defer(motion)
 
 "Elapse".
 
-  >>> actions.elapse(info, motion)
+  >>> actions.elapse(motion)
 
 
 Notifications

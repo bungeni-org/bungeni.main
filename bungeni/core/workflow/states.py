@@ -250,6 +250,7 @@ class WorkflowController(object):
     
     # !+ rename to adapted_workflow
     def workflow(self):
+        """ () -> bungeni.core.workflow.states.AdaptedWorkflow """
         if self._workflow is None:
             self._workflow = interfaces.IWorkflow(self.context)
         return self._workflow

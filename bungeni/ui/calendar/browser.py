@@ -98,8 +98,8 @@ def get_sitting_items(sitting, request, include_actions=False):
                 truncated_discussion = t_discussion[0:index2] + "..."
             except ValueError:
                 truncated_discussion = t_discussion + "..."
-        info = IWorkflowController(item, None)
-        state_title = info.workflow().workflow.states[item.status].title
+        wfc = IWorkflowController(item, None)
+        state_title = wfc.workflow().workflow.states[item.status].title
         
         record = {
             'title': props.title,

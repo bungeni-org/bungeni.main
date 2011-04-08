@@ -66,8 +66,8 @@ Questions
 
 
   >>> from bungeni.core.workflow.interfaces import IWorkflowController
-  >>> info = IWorkflowController(question)
-  >>> info.fireTransition("-working_draft", check_security=False)
+  >>> wfc = IWorkflowController(question)
+  >>> wfc.fireTransition("-working_draft", check_security=False)
   >>> question.status
   'working_draft'
   
