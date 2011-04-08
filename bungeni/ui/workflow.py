@@ -186,7 +186,7 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
             ignore_request = ignore_request)
     
     def update(self, transition=None):
-        wf = interfaces.IWorkflow(self.context) 
+        wf = interfaces.IWorkflow(self.context).workflow
         if transition is not None:
             state_transition = wf.get_transition_by_id(transition)
             # !- workflow state title translations are in bungeni.core
@@ -210,7 +210,7 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
         else:
             transitions = (transition,)
         self.actions = bindTransitions(
-            self, transitions, None, interfaces.IWorkflow(self.context))
+            self, transitions, None, interfaces.IWorkflow(self.context).workflow)
 
 
 class WorkflowView(browser.BungeniBrowserView):
@@ -256,7 +256,7 @@ class WorkflowChangeStateView(WorkflowView):
     def __call__(self, headless=False, transition=None):
         method = self.request["REQUEST_METHOD"]
         if transition:
-            wf = interfaces.IWorkflow(self.context) 
+            wf = interfaces.IWorkflow(self.context).workflow
             state_transition = wf.get_transition_by_id(transition)
             require_confirmation = getattr(
                 state_transition, "require_confirmation", False)
@@ -267,7 +267,7 @@ class WorkflowChangeStateView(WorkflowView):
         if transition and require_confirmation is False and method == "POST":
             actions = bindTransitions(
                 self.action_viewlet, (transition,), None, 
-                interfaces.IWorkflow(self.context))
+                interfaces.IWorkflow(self.context).workflow)
             assert len(actions) == 1
             # execute action
             # !+ should pass self.request.form as data? e.g. value is:

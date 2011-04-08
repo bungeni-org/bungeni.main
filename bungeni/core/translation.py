@@ -83,9 +83,6 @@ class CurrentLanguageVocabulary(LanguageVocabulary):
 def get_language_by_name(name):
     return dict(get_all_languages())[name]
 
-def get_default_language():
-    return "en"
-
 def get_language(translatable):
     return translatable.language
 

@@ -79,7 +79,8 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
         if wfc is not None:
             transitions = wfc.getManualTransitionIds()
             self.actions = tuple(bindTransitions(
-                self, transitions, None, interfaces.IWorkflow(self.context)))
+                self, transitions, None, 
+                interfaces.IWorkflow(self.context).workflow))
 
     def setUpWidgets(self, ignore_request=False):
         languages = get_all_languages()

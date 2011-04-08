@@ -260,11 +260,13 @@ class WorkflowMenu(BrowserMenu):
             interfaces.IFormEditLayer.providedBy(request)
         ):
             return ()
+        #!+wfc.workflow
         wf = IWorkflow(context, None)
         if wf is None:
             return ()
         #state = IWorkflowController(context).state_controller.getState()
         wfc = IWorkflowController(context)
+        wf = wfc.workflow #!+wfc.workflow
         transitions = wfc.getManualTransitionIds()
         
         parliament_id = getCurrentParliamentId()

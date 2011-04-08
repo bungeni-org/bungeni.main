@@ -21,7 +21,7 @@ from bungeni.ui.forms.common import AddForm
 from bungeni.ui import container
 from bungeni.core.location import location_wrapped
 from bungeni.core.interfaces import ISchedulingContext
-from bungeni.core.translation import get_default_language
+from bungeni.core.language import get_default_language
 from zope.security.proxy import removeSecurityProxy
 from zope.publisher.browser import BrowserView
 from zope import interface

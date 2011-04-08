@@ -281,7 +281,7 @@ class WorkflowController(object):
         # !+fireTransitionParams(mr, mar-2011) needed?
         if not (comment is None and check_security is True):
             log.warn("%s.fireTransition(%s, comment=%s, check_security=%s)" % (
-                self.name, transition_id, comment, check_security))
+                self, transition_id, comment, check_security))
         sc = self.state_controller
         # raises InvalidTransitionError if id is invalid for current state
         transition = self.workflow.get_transition(sc.getState(), transition_id)

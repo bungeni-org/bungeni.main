@@ -48,7 +48,7 @@ from zope.formlib import namedtemplate
 from zc.resourcelibrary import need
 from sqlalchemy.orm import eagerload
 from bungeni.ui import vocabulary
-from bungeni.core.translation import get_default_language
+from bungeni.core.language import get_default_language
 class TIME_SPAN:
     daily = _(u"Daily")
     weekly = _(u"Weekly")

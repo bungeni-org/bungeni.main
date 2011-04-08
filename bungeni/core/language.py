@@ -70,6 +70,9 @@ class UILanguage(BaseLanguageProvider):
 def get_default_language():
     # !+LANGUAGE(murithi, mar2011) need to integrate weights in registration
     # of utilities but overriding/new classes can also reorder negotiation
+    # !+LANGUAGE(mr, apr-2011) what is the relation of this with:
+    #   a) capi.default_language ?
+    #   b) self.request.get("language") ?
     default_language = None
     language_providers = getUtilitiesFor(ILanguageProvider)
     provider_list = [(p[0], p[1]) for p in language_providers]
@@ -83,3 +86,4 @@ def get_default_language():
                         _language, name)
             break
     return default_language
+

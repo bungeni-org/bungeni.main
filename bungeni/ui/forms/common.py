@@ -44,7 +44,7 @@ from bungeni.alchemist import catalyst
 from bungeni.alchemist import ui
 from bungeni.alchemist.model import queryModelDescriptor
 from bungeni.core.translation import get_language_by_name
-from bungeni.core.translation import get_default_language
+from bungeni.core.language import get_default_language
 from bungeni.core.translation import is_translation
 from bungeni.core.translation import get_translation_for
 from bungeni.core.translation import CurrentLanguageVocabulary
