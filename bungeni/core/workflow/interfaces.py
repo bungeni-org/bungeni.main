@@ -30,9 +30,8 @@ class WorkflowNotificationError(WorkflowRuntimeError):
     """Error while executing a workflow notification""" 
 
 
-class IAdaptedWorkflow(zope.interface.Interface):
-    """Marker for a Workflow instance that has been adapted onto a context.
-    Has same API as IWorkflow with the difference of not being callable.
+class IWorkflow(zope.interface.Interface):
+    """Defines workflow in the form of transition objects. 
     """
     def refresh(states, transitions):
         """Refresh workflow completely with new transitions.
@@ -49,9 +48,6 @@ class IAdaptedWorkflow(zope.interface.Interface):
     def get_transition_by_id(transition_id):
         """Get transition with transition_id.
         """
-class IWorkflow(IAdaptedWorkflow):
-    """Defines workflow in the form of transition objects. 
-    """
     def __call__(context):
         """A Workflow instance is itself the factory of own AdaptedWorkflows.
         """

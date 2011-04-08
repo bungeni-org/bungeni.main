@@ -42,8 +42,7 @@ class WorkflowVocabulary(object):
         elif  IAlchemistContainer.providedBy(context):
             domain_model = removeSecurityProxy(context.domain_model)
             ctx = domain_model()
-        wf = interfaces.IWorkflow(ctx)
-        states = wf.workflow.states
+        states = interfaces.IWorkflow(ctx).workflow.states
         items = []
         for state in states.keys():
             items.append(SimpleTerm(states[state].id, states[state].id, 
@@ -83,15 +82,15 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
     def update(self):
         has_wfstate = False
         try:
-            wf_state = interfaces.IStateController(
+            sc = interfaces.IStateController(
                 removeSecurityProxy(self.context)).getState()
             has_wfstate = True
         except:
-            wf_state = u"undefined"
-        if wf_state is None:
-            wf_state = u"undefined"
+            sc = "undefined"
+        if sc is None:
+            sc = "undefined"
             has_wfstate = False
-        self.wf_status = wf_state
+        self.wf_status = sc
         self.has_status = has_wfstate
         self.entries = self.getFeedEntries()
     
@@ -278,7 +277,7 @@ class WorkflowChangeStateView(WorkflowView):
         if headless is True:
             actions = get_actions("context_workflow", self.context, self.request)
             state_title = interfaces.IWorkflowController(self.context
-                ).workflow().workflow.states[self.context.status].title
+                ).workflow.states[self.context.status].title
             result = self.ajax_template(actions=actions, state_title=state_title)
             
             if require_confirmation is True:

@@ -159,16 +159,6 @@ Set up a security mapping.
   >>> from bungeni.alchemist.security import LocalRolePermissionMap
   >>> qrpm = LocalRolePermissionMap(question)
   
-Integrity
----------
-
-Verify that all states are reachable.
-
-  >>> from bungeni.core.workflows.testing import verify_workflow
-  >>> from bungeni.core.workflow.interfaces import IWorkflow
-  
-  >>> wf = IWorkflow(question)
-  >>> verify_workflow(wf)
 
 Questions transitions 
 -------------------------------------
@@ -177,7 +167,8 @@ Questions transitions
   >>> wfc = IWorkflowController(question)
   >>> wfc
   <bungeni.core.workflow.states.WorkflowController object at ...>
-
+  >>> wf = wfc.workflow
+  
 PRINCIPAL: member
 
   >>> set_interaction(member)

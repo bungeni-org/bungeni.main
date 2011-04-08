@@ -73,9 +73,9 @@ class FileDeactivate(BrowserView):
 
     def __call__(self):
         trusted = removeSecurityProxy(self.context)
-        wf_state_adapter = IStateController(trusted)
-        wf_state_adapter.setState('inactive')
-        redirect_url = self.request.getURL().replace('/deactivate', '')
+        sc = IStateController(trusted)
+        sc.setState("inactive")
+        redirect_url = self.request.getURL().replace("/deactivate", "")
         return self.request.response.redirect(redirect_url)
 
 class FileListingView(BungeniBrowserView):

@@ -231,9 +231,9 @@ class WorkflowSubMenuItem(BrowserSubMenuItem):
         wfc = IWorkflowController(self.context, None)
         if wfc is None:
             return {"id": "plone-contentmenu-workflow"}
-        state = wfc.state().getState()
+        state = wfc.state_controller.getState()
         stateTitle = translate(
-            str(wfc.workflow().workflow.states[state].title), 
+            str(wfc.workflow.states[state].title), 
             domain="bungeni.core",
             context=self.request)
         
@@ -263,7 +263,7 @@ class WorkflowMenu(BrowserMenu):
         wf = IWorkflow(context, None)
         if wf is None:
             return ()
-        #state = IWorkflowController(context).state().getState()
+        #state = IWorkflowController(context).state_controller.getState()
         wfc = IWorkflowController(context)
         transitions = wfc.getManualTransitionIds()
         

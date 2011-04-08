@@ -152,7 +152,7 @@ class StateController(object):
             self.on_state_change(source_state_id, state_id)
     
     def on_state_change(self, source, destination):
-        workflow = interfaces.IWorkflow(self.context) 
+        workflow = interfaces.IWorkflow(self.context).workflow
         state = workflow.states.get(destination)
         assert state is not None, "May not have a None state" # !+NEEDED?
         state.execute_actions(self.context)
@@ -161,7 +161,8 @@ class StateController(object):
 class Workflow(object):
     zope.interface.implements(interfaces.IWorkflow)
     
-    def __init__(self, states, transitions):
+    def __init__(self, name, states, transitions):
+        self.name = name
         self._transitions_by_source = {} # {source: {id: Transition}}
         self._transitions_by_id = {} # {id: Transition}
         self._states_by_id = {} # {id: State}
@@ -179,17 +180,24 @@ class Workflow(object):
         for transition in transitions:
             _register(transition)
         # states
-        state_names = set()
         for s in states:
             self._states_by_id[s.id] = s
-            state_names.add(s.id)
-        # find any states given that don't match a transition state
-        t_state_names = set([ t.destination for t in transitions ])
-        t_state_names.update(set([ t.source for t in transitions ]))
-        unreachable_states = state_names - t_state_names
-        if unreachable_states:
-            raise SyntaxError("Workflow Contains Unreachable States %s" % (
-                    unreachable_states))
+        # integrity
+        self.validate_workflow()
+    
+    def validate_workflow(self):
+        from_tos = {} # {destination: [source]}
+        for status in self._states_by_id:
+            from_tos[status] = []
+        for t in self._transitions_by_id.values():
+            source, destination = t.source, t.destination
+            from_tos[destination].append(source)
+        for destination, sources in from_tos.items():
+            log.debug("Workflow [%s] sources %s -> destination [%s]" % (
+                self.name, sources, destination))
+            if not sources:
+                raise SyntaxError("Unreachable state [%s] in Workflow [%s]" % (
+                    destination, self.name))
     
     @property
     def states(self):
@@ -215,19 +223,12 @@ class Workflow(object):
     def __call__(self, context):
         """A Workflow instance is itself the factory of own AdaptedWorkflows.
         """
-        # self is the workflow instance
         class AdaptedWorkflow(object):
             """A workflow adapted on context.
             """
-            zope.interface.implements(interfaces.IAdaptedWorkflow)
             def __init__(awf, context):
                 awf.context = context
-                awf.workflow = self
-            def __getattribute__(awf, name):
-                try:
-                    return object.__getattribute__(awf, name)
-                except AttributeError:
-                    return object.__getattribute__(self, name)
+                awf.workflow = self # workflow instance being called
         return AdaptedWorkflow(context)
 
 
@@ -239,21 +240,21 @@ class WorkflowController(object):
         # assume context is trusted... 
         # and unlitter all actions/conditions of calls to removeSecurityProxy
         self.context = removeSecurityProxy(context)
-        self._workflow = None # cache for workflow instance
+        self._adapted_workflow = None # cache for adapted_workflow instance
         self._state_controller = None # cache for state_controller instance
     
-    # !+ rename to state_controller
-    def state(self):
+    @property
+    def state_controller(self):
         if self._state_controller is None:
             self._state_controller = interfaces.IStateController(self.context)
         return self._state_controller
     
-    # !+ rename to adapted_workflow
+    @property
     def workflow(self):
         """ () -> bungeni.core.workflow.states.AdaptedWorkflow """
-        if self._workflow is None:
-            self._workflow = interfaces.IWorkflow(self.context)
-        return self._workflow
+        if self._adapted_workflow is None:
+            self._adapted_workflow = interfaces.IWorkflow(self.context)
+        return self._adapted_workflow.workflow
     
     def _get_checkPermission(self):
         try:
@@ -280,14 +281,13 @@ class WorkflowController(object):
         # !+fireTransitionParams(mr, mar-2011) needed?
         if not (comment is None and check_security is True):
             log.warn("%s.fireTransition(%s, comment=%s, check_security=%s)" % (
-                self, transition_id, comment, check_security))
-        state = self.state() # StateController
-        wf = self.workflow() # Workflow
+                self.name, transition_id, comment, check_security))
+        sc = self.state_controller
         # raises InvalidTransitionError if id is invalid for current state
-        transition = wf.get_transition(state.getState(), transition_id)
+        transition = self.workflow.get_transition(sc.getState(), transition_id)
         self._check(transition, check_security)
         # change state of context or new object
-        state.setState(transition.destination)
+        sc.setState(transition.destination)
         # notify wf event observers
         event = WorkflowTransitionEvent(self.context, 
             transition.source, transition.destination, transition, comment)
@@ -315,10 +315,10 @@ class WorkflowController(object):
                 return
     
     def getFireableTransitionIdsToward(self, state):
-        wf = self.workflow()
+        workflow = self.workflow
         result = []
         for transition_id in self.getFireableTransitionIds():
-            transition = wf.get_transition_by_id(transition_id)
+            transition = workflow.get_transition_by_id(transition_id)
             if transition.destination == state:
                 result.append(transition_id)
         return result
@@ -342,8 +342,8 @@ class WorkflowController(object):
         If trigger_ifilter is not None, filter on trigger interface.
         If conditional, then only transitions that pass the condition.
         """
-        transitions = self.workflow().get_transitions_from(
-            self.state().getState())
+        transitions = self.workflow.get_transitions_from(
+            self.state_controller.getState())
         # now filter these transitions to retrieve all possible
         # transitions in this context, and return their ids
         return [ transition for transition in transitions

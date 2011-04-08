@@ -130,9 +130,8 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
         DynamicFields.update(self)
         self.setupActions()  # after we transition we have different actions
         try:
-            wf_state = interfaces.IStateController(
+            self.wf_status = interfaces.IStateController(
                 removeSecurityProxy(self.context)).getState()
-            self.wf_status = wf_state
         except:
             pass
 

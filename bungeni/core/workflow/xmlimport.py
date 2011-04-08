@@ -138,6 +138,7 @@ def load(file_path, name):
 def _load(workflow, name):
     """ (workflow:etree_doc, name:str) -> Workflow
     """
+    #!+initial_state
     transitions = []
     states = []
     domain = strip_none(workflow.get("domain"))
@@ -341,5 +342,5 @@ def _load(workflow, name):
             log.debug("[%s] adding transition [%s-%s] [%s]" % (
                 wid, source or "", destination, kw))
     
-    return Workflow(states, transitions)
+    return Workflow(name, states, transitions)
 

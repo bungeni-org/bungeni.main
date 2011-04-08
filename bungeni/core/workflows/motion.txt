@@ -62,17 +62,6 @@ Content creation
   ...     owner_id = mp_1.user_id,
   ...     language="en")
 
-Integrity
----------
-
-Verify that all states are reachable.
-
-  >>> from bungeni.core.workflows.testing import verify_workflow
-  >>> from bungeni.core.workflow.interfaces import IWorkflow
-
-  >>> wf = IWorkflow(motion)
-  >>> verify_workflow(wf)
-
 Principals
 ----------
   
@@ -97,7 +86,8 @@ convention adopted for internal transition ids composed of:
   >>> wfc = IWorkflowController(motion)
   >>> wfc
   <bungeni.core.workflow.states.WorkflowController object at ...>
-
+  >>> wf = wfc.workflow
+  
 "Create". This action assigns the role of "Owner" and sets the
 parliament id.
   

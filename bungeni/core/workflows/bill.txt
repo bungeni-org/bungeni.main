@@ -100,17 +100,6 @@ Content creation
   ...     short_name=u"New Bill",
   ...     language="en")
 
-Integrity
----------
-
-Verify that all states are reachable.
-
-  >>> from bungeni.core.workflows.testing import verify_workflow
-  >>> from bungeni.core.workflow.interfaces import IWorkflow
-
-  >>> wf = IWorkflow(bill)
-  >>> verify_workflow(wf)
-
 Actions
 -------
 
@@ -119,7 +108,8 @@ Actions
   >>> wfc = IWorkflowController(bill)
   >>> wfc
   <bungeni.core.workflow.states.WorkflowController object at ...>
-
+  >>> wf = wfc.workflow
+  
 "Create". This action sets the submission date and parliament id.
 
   >>> actions.create(bill)

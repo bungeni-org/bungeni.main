@@ -41,7 +41,7 @@ def transitions():
 
 class SimpleWorkflow(workflow.Workflow):
     def __init__(self):
-        super(SimpleWorkflow, self).__init__(states(), transitions())
+        super(SimpleWorkflow, self).__init__("simple", states(), transitions())
 
 simple_workflow = SimpleWorkflow()
 
