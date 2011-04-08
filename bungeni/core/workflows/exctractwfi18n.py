@@ -10,7 +10,7 @@ $ bin/python src/bungeni.main/bungeni/core/workflows/exctractwfi18n.py
 """
 
 import os
-from bungeni.core.workflows.adapters import wf
+from bungeni.core.workflows.adapters import get_workflow
 
 path = os.path.split(os.path.abspath(__file__))[0]
 
@@ -39,7 +39,7 @@ for name in [
     "event", 
     "report"
 ]:
-    workflow = wf(name)
+    workflow = get_workflow(name)
     for status, state in workflow.states.items():
         f.write("""<b i18n:translate="">%s</b>""" % (state.title))
         f.write("\n")

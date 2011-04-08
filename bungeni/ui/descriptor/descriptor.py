@@ -39,15 +39,15 @@ from bungeni.ui import vocabulary
 from bungeni.ui.tagged import get_states
 from bungeni.ui.interfaces import IBusinessSectionLayer
 
-from bungeni.core.workflows.adapters import wf
-group_wf_states = wf("group").states
-attachedfile_wf_states = wf("attachedfile").states
-address_wf_states = wf("address").states
-event_wf_states = wf("event").states
-heading_wf_states = wf("heading").states
-committee_wf_states = wf("committee").states
-parliament_wf_states = wf("parliament").states
-version_wf_states = wf("version").states
+from bungeni.core.workflows.adapters import get_workflow
+group_wf_states = get_workflow("group").states
+attachedfile_wf_states = get_workflow("attachedfile").states
+address_wf_states = get_workflow("address").states
+event_wf_states = get_workflow("event").states
+heading_wf_states = get_workflow("heading").states
+committee_wf_states = get_workflow("committee").states
+parliament_wf_states = get_workflow("parliament").states
+version_wf_states = get_workflow("version").states
 
 ###
 # Listing Columns

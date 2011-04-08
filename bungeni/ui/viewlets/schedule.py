@@ -12,7 +12,7 @@ from zope.app.component.hooks import getSite
 
 import sqlalchemy.sql.expression as sql
 
-from bungeni.core.workflows.adapters import wf
+from bungeni.core.workflows.adapters import get_workflow
 from bungeni.models import domain
 from bungeni.models.interfaces import IBungeniApplication, IBungeniGroup, ICommittee
 from bungeni.core.interfaces import ISchedulingContext
@@ -155,7 +155,7 @@ class SchedulableItemsViewlet(browser.BungeniItemsViewlet):
 class SchedulableHeadingsViewlet(SchedulableItemsViewlet):
     view_name = "heading"
     view_title = _("Headings")
-    states = (wf("heading").states["public"].id,)
+    states = (get_workflow("heading").states["public"].id,)
     model = domain.Heading
     
     def _item_url(self, item):
