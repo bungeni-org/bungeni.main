@@ -21,13 +21,10 @@ class AmbiguousTransitionError(InvalidTransitionError): pass
 class ConditionFailedError(Exception): pass
 
 class WorkflowRuntimeError(Exception): 
-    """Error while executing a workflow action""" 
-class WorkflowStateActionError(WorkflowRuntimeError): 
-    """Error while executing a workflow state action""" 
-class WorkflowConditionError(WorkflowRuntimeError):
-    """Error while executing a workflow condition""" 
-class WorkflowNotificationError(WorkflowRuntimeError):
-    """Error while executing a workflow notification""" 
+    """Internal error while executing a workflow action""" 
+class WorkflowStateActionError(WorkflowRuntimeError): pass
+class WorkflowConditionError(WorkflowRuntimeError): pass
+class WorkflowNotificationError(WorkflowRuntimeError): pass
 
 
 class IWorkflow(zope.interface.Interface):

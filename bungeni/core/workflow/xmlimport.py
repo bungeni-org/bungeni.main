@@ -89,6 +89,16 @@ def strip_none(s):
         return s.strip() or None
     return None
 
+def as_bool(s):
+    """ (s:str) -> bool
+    """
+    if s.lower() == "true":
+        return True
+    elif s.lower() == "false":
+        return False
+
+#
+
 def zcml_check_regenerate():
     """Called after all XML workflows have been loaded (see adapers.py). 
     """
@@ -138,15 +148,12 @@ def load(file_path, name):
 def _load(workflow, name):
     """ (workflow:etree_doc, name:str) -> Workflow
     """
-    #!+initial_state
     transitions = []
     states = []
     domain = strip_none(workflow.get("domain"))
     wuids = set() # unique IDs in this XML workflow file
     wid = strip_none(workflow.get("id")) # workflow XML id
-    # accumulation of ALL (permission, role) pairs assigned in ANY of the 
-    # states within this workflow (for consistency checking)
-    states_permissions_roles = set()
+    initial_state = strip_none(workflow.get("initial_state"))
     
     ZCML_PROCESSED = bool(name in ZCML_WORKFLOWS_PROCESSED)
     if not ZCML_PROCESSED:
@@ -164,14 +171,6 @@ def _load(workflow, name):
     # ID values should be unique within the same scope (the XML document)
     validate_id(wid, "workflow")
     
-    def as_bool(s):
-        """ (s:str) -> bool
-        """
-        if s.lower() == "true":
-            return True
-        elif s.lower() == "false":
-            return False
-    
     def get_like_state(state_id):
         if state_id is None:
             return
@@ -181,7 +180,6 @@ def _load(workflow, name):
         assert False, 'Invalid value: like_state="%s"' % (state_id)
     
     def check_add_permission(permissions, like_permissions, assignment, p, r):
-        states_permissions_roles.add((p, r))
         for perm in [(GRANT, p, r), (DENY, p, r)]:
             assert perm not in permissions, "Workflow [%s] state [%s] " \
                 "conflicting state permission: (%s, %s, %s)" % (
@@ -255,15 +253,6 @@ def _load(workflow, name):
                 action_names, permissions, notifications)
         )
     
-    for s in states:
-        # check that every state explictly sets the same set of permissions 
-        assert len(s.permissions) == len(states_permissions_roles), \
-            "Workflow state [%s -> %s] does not explictly set all permissions " \
-            "used across other states... accumulated set is:\n  %s" % (
-                wid, s.id, 
-                "\n  ".join([str(p) for p in states_permissions_roles]) 
-            )
-    
     STATE_IDS = [ s.id for s in states ]
     
     # transitions
@@ -272,8 +261,10 @@ def _load(workflow, name):
             assert key in TRANS_ATTRS, \
                 "Unknown attribute %s in %s" % (key, etree.tostring(t))
         for key in TRANS_ATTRS_REQUIREDS:
+            #!+SOURCE(mr, apr-2011) may be None, {initial_state}, ...
             if t.get(key) is None:
-                raise SyntaxError("%s not in %s" % (key, etree.tostring(t)))
+                raise SyntaxError('No required "%s" attribute in %s' % (
+                    key, etree.tostring(t)))
         tid = t.get("id")
         validate_id(tid, "transition")
         
@@ -284,14 +275,18 @@ def _load(workflow, name):
                 zcml_transition_permission(pid, t.get("title"), 
                     t.get("roles", "bungeni.Clerk").split())
         
-        # source = "" (empty string -> None source)
-        sources = t.get("source").split() or [None]
+        # empty source -> initial_state
+        sources = t.get("source").split() or [initial_state]
         assert len(sources) == len(set(sources)), \
             "Transition contains duplicate sources [%s]" % (sources)
         # destination must be a valid state
         destination = t.get("destination")
         assert destination in STATE_IDS, \
             "Unknown transition destination state [%s]" % (destination)
+        for source in sources:
+            if source is not initial_state:
+                assert source in STATE_IDS, \
+                    "Unknown transition source state [%s]" % (source)
         
         kw = {}
         # optionals -- only set on kw IFF explicitly defined
@@ -334,9 +329,6 @@ def _load(workflow, name):
                         t.get("require_confirmation")))
         # multiple-source transitions are really multiple "transition paths"
         for source in sources:
-            if source is not None:
-                assert source in STATE_IDS, \
-                    "Unknown transition source state [%s]" % (source)
             args = (Message(t.get("title"), domain), source, destination)
             transitions.append(Transition(*args, **kw))
             log.debug("[%s] adding transition [%s-%s] [%s]" % (

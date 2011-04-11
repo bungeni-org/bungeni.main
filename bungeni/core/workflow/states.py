@@ -131,6 +131,10 @@ class Transition(object):
 
 #
 
+def get_workflow_state(context):
+    """Get the workflow.states.State instance for the context's status."""
+    return interfaces.IWorkflow(context).states.get(context.status)
+
 class StateController(object):
     
     zope.interface.implements(interfaces.IStateController)
@@ -152,8 +156,7 @@ class StateController(object):
             self.on_state_change(source_state_id, state_id)
     
     def on_state_change(self, source, destination):
-        workflow = interfaces.IWorkflow(self.context)
-        state = workflow.states.get(destination)
+        state = get_workflow_state(self.context)
         assert state is not None, "May not have a None state" # !+NEEDED?
         state.execute_actions(self.context)
     
@@ -163,50 +166,73 @@ class Workflow(object):
     
     def __init__(self, name, states, transitions):
         self.name = name
-        self._transitions_by_source = {} # {source: {id: Transition}}
-        self._transitions_by_id = {} # {id: Transition}
         self._states_by_id = {} # {id: State}
+        self._transitions_by_id = {} # {id: Transition}
+        self._transitions_by_source = {} # {source: [Transition]}
+        self._transitions_by_destination = {} # {destination: [Transition]}
         self.refresh(states, transitions)
     
     def refresh(self, states, transitions):
-        self._transitions_by_source.clear()
-        self._transitions_by_id.clear()
-        self._states_by_id.clear()
-        # transitions
-        def _register(t):
-            transitions = self._transitions_by_source.setdefault(t.source, {})
-            transitions[t.transition_id] = t
-            self._transitions_by_id[t.transition_id] = t
-        for transition in transitions:
-            _register(transition)
+        sbyid = self._states_by_id
+        sbyid.clear()
+        tbyid = self._transitions_by_id
+        tbyid.clear()
+        tbys = self._transitions_by_source
+        tbys.clear()
+        tbyd = self._transitions_by_destination
+        tbyd.clear()
         # states
+        tbys[None] = [] # initial (source) state
         for s in states:
-            self._states_by_id[s.id] = s
+            sbyid[s.id] = s
+            tbys[s.id] = []
+            tbyd[s.id] = []
+        # transitions
+        for t in transitions:
+            tbyid[t.transition_id] = t
+            tbys[t.source].append(t)
+            tbyd[t.destination].append(t)
         # integrity
-        self.validate_workflow()
+        self.validate()
     
-    def validate_workflow(self):
-        from_tos = {} # {destination: [source]}
-        for status in self._states_by_id:
-            from_tos[status] = []
-        for t in self._transitions_by_id.values():
-            source, destination = t.source, t.destination
-            from_tos[destination].append(source)
-        for destination, sources in from_tos.items():
+    def validate(self):
+        states = self._states_by_id.values()
+        # at least one state
+        assert len(states), "Workflow [%s] defines no states" % (self.name)
+        # every state must explictly sets the same set of permissions
+        # pr: set of all (permission, role) pairs assigned in a state
+        pr = set([ (p[1], p[2]) for p in states[0].permissions ])
+        num_pr = len(pr)
+        for s in states:
+            assert len(s.permissions) == num_pr, \
+                "Workflow state [%s -> %s] does not explictly set same " \
+                "permissions used across other states... " \
+                "\nTHIS:\n  %s\nOTHER:\n  %s" % (self.name, s.id, 
+                    "\n  ".join([str(p) for p in s.permissions]),
+                    "\n  ".join([str(p) for p in states[0].permissions])
+                )
+            for p in s.permissions:
+                assert (p[1], p[2]) in pr, \
+                    "Workflow state [%s -> %s] defines an unexpected " \
+                    "permission: %s" % (self.name, s.id, p)
+        # every state is reachable
+        tbyd = self._transitions_by_destination
+        for dest_id, sources in tbyd.items():
             log.debug("Workflow [%s] sources %s -> destination [%s]" % (
-                self.name, sources, destination))
+                self.name, [t.source for t in sources], dest_id))
             if not sources:
                 raise SyntaxError("Unreachable state [%s] in Workflow [%s]" % (
-                    destination, self.name))
+                    dest_id, self.name))
     
     @property
     def states(self):
         """ () -> { status: State } """
         return self._states_by_id # !+COPY?
     
+    # !+ get_transitions_to(destination) ? 
     def get_transitions_from(self, source):
         try:
-            return sorted(self._transitions_by_source[source].values())
+            return sorted(self._transitions_by_source[source])
         except KeyError:
             return []
     
