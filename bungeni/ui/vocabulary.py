@@ -123,7 +123,11 @@ AddressPostalType = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm("U", _(u"Undefined / Unknown"), 
         _(u"Undefined / Unknown")),
 ])
-    
+CommitteStatusVocabulary = vocabulary.SimpleVocabulary([
+    vocabulary.SimpleTerm("P", _("permanent"), _("permanent")),
+    vocabulary.SimpleTerm("T", _("temporary"), _("temporary")),
+])
+
 class OfficeRoles(object):
     interface.implements(IVocabularyFactory)
     def __call__(self, context=None):

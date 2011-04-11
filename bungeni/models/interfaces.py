@@ -449,3 +449,15 @@ class ITranslatable(interface.Interface):
     language = interface.Attribute("The language of the values of the "
         "translatable attributes of the instance")
 
+
+class IAddressType(interface.Interface):
+    pass
+
+class IBillType(interface.Interface):
+    pass
+
+class ICommitteeType(interface.Interface):
+    pass
+
+class IAttendanceType(interface.Interface):
+    pass

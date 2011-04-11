@@ -251,10 +251,12 @@ class GroupSittingAttendance(object):
     sort_on = ["last_name", "first_name", "middle_name"]
     sort_replace = {"member_id": ["last_name", "first_name", ]}
 
-class AttendanceType(object):
+class AttendanceType(Entity):
     """Lookup for attendance type.
     """
-    interface.implements(interfaces.ITranslatable)
+    interface.implements(interfaces.ITranslatable,
+        interfaces.IAttendanceType
+    )
 
 
 class GroupItemAssignment(object):
@@ -390,10 +392,12 @@ class CommitteeMember(GroupMembership):
         "bungeni.models.domain.MemberRoleTitleContainer", "membership_id")
 
 
-class CommitteeType(object):
+class CommitteeType(Entity):
     """Type of Committee.
     """
-    interface.implements(interfaces.ITranslatable)
+    interface.implements(interfaces.ITranslatable,
+        interfaces.ICommitteeType
+    )
 
 class Office(Group):
     """Parliamentary Office like speakers office, clerks office etc. 
@@ -415,10 +419,12 @@ class OfficeMember(GroupMembership):
 #    Debates
 #    """
 
-class AddressType(object):
+class AddressType(Entity):
     """Address Types.
     """
-    interface.implements(interfaces.ITranslatable)
+    interface.implements(interfaces.ITranslatable, 
+        interfaces.IAddressType
+    )
 
 class _Address(Entity):
     """Address base class
@@ -557,9 +563,10 @@ MotionChange = ItemLog.makeLogFactory("MotionChange")
 MotionVersion = ItemVersions.makeVersionFactory("MotionVersion")
 
 
-class BillType(object):
+class BillType(Entity):
     """Type of bill: public/ private, ....
     """
+    interface.implements(interfaces.IBillType)
 
 class Bill(ParliamentaryItem):
     cosignatory = one2many("cosignatory",

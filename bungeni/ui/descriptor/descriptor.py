@@ -1035,6 +1035,38 @@ class ParliamentDescriptor(GroupDescriptor):
         parliament_wf_states["dissolved"].id
     ]
 
+class CommitteeTypeDescriptor(ModelDescriptor):
+    display_name = _("Committee type")
+    container_name = _("Committee types")
+    localizable = False
+
+    fields = [
+        Field(name="committee_type",
+            modes="view edit add listing",
+            property=schema.TextLine(title=_("Commitee Type"))
+        ),
+        Field(name="description",
+            modes="view edit add",
+            property=schema.Text(title=_("description"))
+        ),
+        Field(name="life_span",
+            modes="view edit add listing",
+            property = schema.TextLine(title=_("life span"))
+        ),
+        Field(name="status",
+            modes="view edit add listing",
+            property=schema.Choice(title=_("status"),
+                vocabulary=vocabulary.CommitteStatusVocabulary
+            )
+        ),
+        Field(name="language",
+            modes="view edit add",
+            property=schema.Choice(title=_("Language"),
+                vocabulary="language_vocabulary",
+            ),
+            add_widget=widgets.LanguageLookupWidget,
+        ),
+    ]
 
 class CommitteeDescriptor(GroupDescriptor):
     localizable = True
@@ -1129,11 +1161,19 @@ class CommitteeMemberDescriptor(GroupMembershipDescriptor):
 class AddressTypeDescriptor(ModelDescriptor):
     display_name = _("Address type")
     container_name = _("Address types")
-    localizable = True
+    localizable = False
 
     fields = [
         Field(name="address_type_name",
+            modes="view edit add listing",
             property=schema.TextLine(title=_("Address Type"))
+        ),
+        Field(name="language",
+            modes="view edit add",
+            property=schema.Choice(title=_("Language"),
+                vocabulary="language_vocabulary",
+            ),
+            add_widget=widgets.LanguageLookupWidget,
         ),
     ]
 
@@ -1847,6 +1887,17 @@ class MotionVersionDescriptor(VersionDescriptor):
     container_name = _("Versions")
     fields = deepcopy(VersionDescriptor.fields)
 
+class BillTypeDescriptor(ModelDescriptor):
+    display_name = _("Bill Type")
+    container_name = _("Bill types")
+    localizable = False
+
+    fields = [
+        Field(name="bill_type_name",
+            modes="view edit add listing",
+            property=schema.TextLine(title=_("Bill Type"))
+        ),
+    ]
 
 class BillDescriptor(ParliamentaryItemDescriptor):
     localizable = True
@@ -2217,14 +2268,21 @@ class AttendanceDescriptor(ModelDescriptor):
 
 
 class AttendanceTypeDescriptor(ModelDescriptor):
-    localizable = True
-    display_name = _("Sitting attendance")
-    container_name = _("Sitting attendances")
+    localizable = False
+    display_name = _("Attendance types")
+    container_name = _("Attendance types")
     fields = [
         Field(name="attendance_type",
+            modes="view edit add listing",
             property=schema.TextLine(title=_("Attendance type"))
         ),
-        LanguageField("language"),
+        Field(name="language",
+            modes="view edit add",
+            property=schema.Choice(title=_("Language"),
+                vocabulary="language_vocabulary",
+            ),
+            add_widget=widgets.LanguageLookupWidget,
+        ),
     ]
 
 
@@ -2314,6 +2372,7 @@ class CountryDescriptor(ModelDescriptor):
     fields = [
         LanguageField("language"),
         Field(name="country_id",
+            modes="view edit add",
             property=schema.TextLine(title=_("Country Code"),
                 description=_("ISO Code of the  country")
             )

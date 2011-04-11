@@ -508,3 +508,38 @@ class HeadingDescriptiveProperties(DescriptiveProperties):
     def description(self):
         return ""
 
+class AddressTypeDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.IAddressType)
+    
+    @property
+    def title(self):
+        session = Session()
+        context = session.merge(removeSecurityProxy(self.context))
+        return context.address_type_name
+
+class BillTypeDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.IBillType)
+    
+    @property
+    def title(self):
+        session = Session()
+        context = session.merge(removeSecurityProxy(self.context))
+        return context.bill_type_name
+
+class CommitteeTypeDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.ICommitteeType)
+    
+    @property
+    def title(self):
+        session = Session()
+        context = session.merge(removeSecurityProxy(self.context))
+        return context.committee_type
+
+class AttendanceTypeDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.IAttendanceType)
+    
+    @property
+    def title(self):
+        session = Session()
+        context = session.merge(removeSecurityProxy(self.context))
+        return context.attendance_type

@@ -10,8 +10,7 @@ from zope.formlib import form
 from bungeni.alchemist import Session
 from bungeni.alchemist import catalyst
 from bungeni.models import domain, interfaces, utils
-from bungeni.ui import container
-from bungeni.ui import search
+from bungeni.ui import container, search, browser
 
 
 ''' !+UNUSED(mr, oct-2010)
@@ -143,3 +142,12 @@ class UserSettings(catalyst.EditForm):
         super(UserSettings, self).update()
 
 
+class VocabulariesIndex(browser.BungeniBrowserView):
+    
+    render = ViewPageTemplateFile("templates/vocabularies.pt")
+    
+    def __init__(self,  context, request):
+        return super(VocabulariesIndex, self).__init__(context, request)
+    
+    def __call__(self):
+        return self.render()

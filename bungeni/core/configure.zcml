@@ -257,6 +257,10 @@
   <adapter factory=".dc.AttachedFileVersionDescriptiveProperties" />
   <adapter factory=".dc.EventItemProperties" />
   <adapter factory=".dc.HeadingDescriptiveProperties" />
+  <adapter factory=".dc.AddressTypeDescriptiveProperties" />
+  <adapter factory=".dc.BillTypeDescriptiveProperties" />
+  <adapter factory=".dc.AttendanceTypeDescriptiveProperties" />
+  <adapter factory=".dc.CommitteeTypeDescriptiveProperties" />
   <adapter
      name="dc"
      for="*"

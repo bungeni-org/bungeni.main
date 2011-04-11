@@ -691,7 +691,6 @@
         permission="zope.ManageSite"
     />
 
-
     <browser:subMenuItem menu="plone_contentmenu"
         for="bungeni.core.interfaces.ISchedulingContext"
         title="Add ..."
@@ -993,6 +992,7 @@
         permission="bungeni.fileattachment.Add"
         layer=".interfaces.IAdminSectionLayer"
     /> 
+    
     
     <!-- scheduling context reporting actions -->
     
@@ -1869,5 +1869,7 @@
         for="bungeni.models.interfaces.IAgendaItem"
 		layer=".interfaces.IRSSRepresentationLayer"
      />
+     
+     <include file="menu-vocabularies.zcml"/>
 </configure>
 

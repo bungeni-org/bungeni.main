@@ -1,0 +1,14 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      metal:use-macro="context/@@standard_macros/page">
+  
+  <div metal:fill-slot="body" i18n:domain="bungeni.ui">
+    <h1 i18n:translate="">Vocabularies Manager</h1>
+    
+    <div id="vocabularies-editor">
+      <div i18n:translate="">
+        Vocabularies Manager
+      </div>
+    </div>
+  </div>
+</html>
