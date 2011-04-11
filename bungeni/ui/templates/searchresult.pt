@@ -1,0 +1,7 @@
+<div class="search-result-item">
+  <div class="title">
+    <a href="#"
+      tal:attributes="href context/@@get_url" tal:content="string: ${view/language} - ${view/item/title}" />
+  </div>
+  <div class="annotation" tal:content="structure view/item/annotation" />
+</div>

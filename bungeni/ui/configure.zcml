@@ -44,6 +44,9 @@
   <!-- Site Skin Definition -->
   <include file="skin.zcml"/>
 
+  <!-- search -->
+  <include file="search.zcml" />
+
   <!-- Resources -->
   <include file="resources.zcml"/>
 
@@ -58,6 +61,9 @@
 
   <!-- Admin UI -->
   <include file="admin.zcml"/>
+
+  <!-- Custom absolute_url -->
+  <include file="absoluteurl.zcml" />
 
   <!-- Custom forms -->
   <include package=".forms"/>

@@ -24,6 +24,8 @@ $Id$
 from zope import interface, schema
 from zope.dottedname import resolve
 from zope.security.proxy import removeSecurityProxy
+from zope.component import getUtility
+from zope.app.schema.vocabulary import IVocabularyFactory
 
 import xappy, os, os.path as path
 import logging
@@ -37,8 +39,15 @@ from ore.xapian import search, queue, interfaces as iindex
 from bungeni.models.schema import metadata
 from bungeni.models import interfaces
 from bungeni.models import domain
+from bungeni.models.interfaces import ITranslatable
+from bungeni.core import translation
+import bungeni
 
-log = logging.getLogger('bungeni.index')
+
+log = logging.getLogger('ore.xapian')
+
+def languages():
+    return getUtility(IVocabularyFactory, "language_vocabulary")(None)
 
 def date_value(s):
     " date encode a value 20071131"
@@ -69,15 +78,17 @@ class ContentResolver(object):
     interface.implements(iindex.IResolver)
     scheme = '' # u'pft'
     
-    def id(self, object): 
+    def id(self, object, language="en"): 
         """ defines the xapian 'primary key' """
         #TODO Add the language to the index!
-        return "%s.%s-%s"%(object.__class__.__module__,
+        return "%s.%s-%s:%s"%(object.__class__.__module__,
                             object.__class__.__name__,
-                            container.stringKey(object))
+                            container.stringKey(object),
+                            language)
 
     def resolve(self, id): 
         class_path, oid = id.split('-', 1)
+        oid, lang = oid.split(":", 1)
         domain_class = resolve.resolve(class_path)
         session = Session()
         value_key = container.valueKey(oid)
@@ -124,9 +135,33 @@ class ContentIndexer(object):
         doc.fields.append(
             xappy.Field("object_kind", domain.object_hierarchy_type(self.context)))
         
+        # object language
+        doc.fields.append(
+            xappy.Field("language", self.context.language))
+        
+        doc.fields.append(xappy.Field("status", getattr(self.context, "status", "")))
+        
+        try:
+            status_date = getattr(self.context, "status_date")
+            if status_date:
+                status_date = date_value(status_date)
+                
+            doc.fields.append(xappy.Field("status_date", status_date))
+        except Exception:
+            pass    
+        
+        title = ""
+        try:
+            title = bungeni.ui.search.ISearchResult(self.context).title
+        except Exception:
+            pass
+        
+        doc.fields.append(xappy.Field("title", title))
+            
         try:
             #TODO: loop thru all available languages and index the translations
             self.index(doc)
+            
         except exceptions.OperationalError, exceptions.InvalidRequestError:
             # detatch the dbapi connection from the pool, and close it
             # and retry the index operation (once)
@@ -207,16 +242,26 @@ class ContentIndexer(object):
         log.warning("Bulk Indexing %r"%klass)
         count = 0
         for i in instances:
-            count += 1
-            doc_id = resolver.id(i)
-            indexer = klass(i)
-            create = False
-            doc = indexer.document(connection)
-            doc.id = doc_id
-            doc.fields.append(xappy.Field('resolver', resolver.scheme))
-            connection.replace(doc)
-            if count % flush_threshold == 0:
-                log.warning("Flushing %s %s Records"%(flush_threshold, klass))
+            for lang in languages():
+                count += 1
+                doc_id = resolver.id(i, language=lang.value)
+                translated = translation.translate_obj(i, lang.value)
+                translated.language = lang.value
+                indexer = klass(translated)
+                create = False
+                doc = indexer.document(connection)
+                doc.id = doc_id
+                doc.fields.append(xappy.Field('resolver', resolver.scheme))
+                #print "*****************"
+                #print doc.id
+                #print translated.__class__.__name__
+                #for field in doc.fields:
+                #    print field.name, "=", field.value
+                connection.replace(doc)
+    
+                if count % flush_threshold == 0:
+                    log.warning("Flushing %s %s Records"%(flush_threshold, klass))
+
         # flush the remainder
         connection.flush()
 
@@ -268,6 +313,9 @@ class UserIndexer(ContentIndexer):
         indexer.add_field_action('core.person-email', xappy.FieldActions.SORTABLE)
         super(UserIndexer, klass).defineIndexes(indexer)
         
+class MemberOfParliament(ContentIndexer):
+    domain_model = domain.MemberOfParliament
+
 class BillIndexer(ContentIndexer):
     domain_model = domain.Bill
     
@@ -275,7 +323,7 @@ class MotionIndexer(ContentIndexer):
     domain_model = domain.Motion
 
 class QuestionIndexer(ContentIndexer):
-    domain_model = domain.Motion
+    domain_model = domain.Question
 
 class GroupIndexer(ContentIndexer):
     domain_model = domain.Group
@@ -285,6 +333,31 @@ class CommitteeIndexer(ContentIndexer):
 
 class ParliamentIndexer(ContentIndexer):
     domain_model = domain.Parliament
+    
+class AttachedFileIndexer(ContentIndexer):
+    domain_model = domain.AttachedFile
+    
+    @classmethod
+    def reindexAll(klass, connection, flush_threshold=500):
+        instances = Session().query(klass.domain_model).all()
+        resolver = ContentResolver()
+        log.warning("Bulk Indexing %r"%klass)
+        count = 0
+        for i in instances:
+            count += 1
+            doc_id = resolver.id(i)
+            indexer = klass(i)
+            create = False
+            doc = indexer.document(connection)
+            doc.id = doc_id
+            doc.fields.append(xappy.Field('resolver', resolver.scheme))
+            connection.replace(doc)
+
+            if count % flush_threshold == 0:
+                log.warning("Flushing %s %s Records"%(flush_threshold, klass))
+
+        # flush the remainder
+        connection.flush()
 
 
     
@@ -316,6 +389,9 @@ def setupFieldDefinitions(indexer):
     indexer.add_field_action('status', xappy.FieldActions.INDEX_EXACT)
     indexer.add_field_action('status', xappy.FieldActions.STORE_CONTENT)
     #indexer.add_field_action('status', xappy.FieldActions.FACET, type='string')
+    
+    indexer.add_field_action('status_date', xappy.FieldActions.INDEX_EXACT)
+    indexer.add_field_action('status_date', xappy.FieldActions.STORE_CONTENT)
 
     # deleted 
     indexer.add_field_action('deleted', xappy.FieldActions.INDEX_EXACT)
@@ -328,13 +404,19 @@ def setupFieldDefinitions(indexer):
     indexer.add_field_action('title', xappy.FieldActions.STORE_CONTENT)
     indexer.add_field_action('title', xappy.FieldActions.SORTABLE)
     
+    #indexer.add_field_action('language', xappy.FieldActions.INDEX_FREETEXT)
+    indexer.add_field_action('language', xappy.FieldActions.INDEX_EXACT)
+    indexer.add_field_action('language', xappy.FieldActions.STORE_CONTENT)
+    
     UserIndexer.defineIndexes(indexer)
     BillIndexer.defineIndexes(indexer)
+    MemberOfParliament.defineIndexes(indexer)
     MotionIndexer.defineIndexes(indexer)
     QuestionIndexer.defineIndexes(indexer)
     GroupIndexer.defineIndexes(indexer)
     CommitteeIndexer.defineIndexes(indexer)
     ParliamentIndexer.defineIndexes(indexer)
+    AttachedFileIndexer.defineIndexes(indexer)
 
     if interfaces.ENABLE_LOGGING:
         log.debug("Indexer Fields Defined")
@@ -386,15 +468,15 @@ if interfaces.DEBUG:
 else:
     searcher.hub.auto_refresh_delta = 10
 
-''' !+WTF(mr, oct-2010) what is this? To start, there is no bungeni.core.util module !
+''' !+WTF(mr, oct-2010) what is this? To start, there is no bungeni.core.util module !'''
 def main():
     import logging
     logging.basicConfig()
 
     # setup database connection
-    from bungeni.core import util
-    util.cli_setup()
-    util.zcml_setup()
+    #from bungeni.core import util
+    #util.cli_setup()
+    #util.zcml_setup()
     
     # field definitions
     setupFieldDefinitions(indexer)
@@ -403,12 +485,14 @@ def main():
     for content_indexer in [
         UserIndexer,
         BillIndexer,
+        MemberOfParliament,
         MotionIndexer,
         QuestionIndexer,
         GroupIndexer,
         CommitteeIndexer,
-        ParliamentMemberIndexer,
+        #ParliamentMemberIndexer,
         ParliamentIndexer,
+        AttachedFileIndexer,
         #HansardReporterIndexer,
         ]:
         content_indexer.reindexAll(indexer)
@@ -420,5 +504,4 @@ def reset_index():
        import pdb, traceback, sys
        traceback.print_exc()
        pdb.post_mortem(sys.exc_info()[-1]) 
-'''
-
+''' '''

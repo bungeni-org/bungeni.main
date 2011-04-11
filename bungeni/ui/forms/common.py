@@ -20,6 +20,7 @@ from zope import formlib
 from zope.i18n import translate
 from zope.security.proxy import removeSecurityProxy
 from zope.event import notify
+from zope.lifecycleevent import ObjectModifiedEvent
 from zope.schema.interfaces import IChoice
 
 from zope.location.interfaces import ILocation
@@ -516,6 +517,7 @@ class EditForm(BaseForm, catalyst.EditForm):
         formlib.form.applyChanges(self.context, self.form_fields, data)
         # !+EVENT_DRIVEN_CACHE_INVALIDATION(mr, mar-2011) no modify event
         # invalidate caches for this domain object type
+        notify(ObjectModifiedEvent(self.context))
         invalidate_caches_for(self.context.__class__.__name__, "edit")
 
     @formlib.form.action(_(u"Save"), condition=formlib.form.haveInputWidgets)

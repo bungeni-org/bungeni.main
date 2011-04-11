@@ -353,4 +353,12 @@
      layer="ploned.ui.interfaces.IPlonedSkin"
      weight="55"
      />
+     
+	 <!-- Hihglight resources -->
+	 <resourceLibrary name="highlight">
+	 	 <directory
+			 source="js/highlight"
+			 include="jquery-highlight-min.js highlight.css"
+		 />
+	 </resourceLibrary>
 </configure>

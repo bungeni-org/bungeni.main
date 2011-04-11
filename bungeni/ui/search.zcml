@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:i18n="http://namespaces.zope.org/i18n"
+           i18n_domain="bungeni.core">
+
+  <!-- SearchResult adapters for IIndexable objects -->
+  <adapter
+      for="bungeni.models.interfaces.IBungeniUser"
+      factory=".search.UserToSearchResult"
+      trusted="True"
+      permission="zope.Public"
+      provides=".search.ISearchResult"
+  />
+
+  <adapter
+      for="bungeni.models.interfaces.IQuestion"
+      factory=".search.ParliamentaryItemToSearchResult"
+      trusted="True"
+      permission="zope.Public"
+      provides=".search.ISearchResult"
+  />
+
+  <adapter
+      for="bungeni.models.interfaces.IMotion"
+      factory=".search.ParliamentaryItemToSearchResult"
+      trusted="True"
+      permission="zope.Public"
+      provides=".search.ISearchResult"
+  />
+
+  <adapter
+      for="bungeni.models.interfaces.IBill"
+      factory=".search.ParliamentaryItemToSearchResult"
+      trusted="True"
+      permission="zope.Public"
+      provides=".search.ISearchResult"
+  />
+
+  <adapter
+      for="bungeni.models.interfaces.IAgendaItem"
+      factory=".search.ParliamentaryItemToSearchResult"
+      trusted="True"
+      permission="zope.Public"
+      provides=".search.ISearchResult"
+  />
+
+  <adapter
+      for="bungeni.models.interfaces.ITabledDocument"
+      factory=".search.ParliamentaryItemToSearchResult"
+      trusted="True"
+      permission="zope.Public"
+      provides=".search.ISearchResult"
+  />
+
+  <adapter
+      for="bungeni.models.interfaces.IReport"
+      factory=".search.ParliamentaryItemToSearchResult"
+      trusted="True"
+      permission="zope.Public"
+      provides=".search.ISearchResult"
+  />
+
+  <adapter
+      for="bungeni.models.interfaces.IAttachedFile"
+      factory=".search.AttachedFileToSearchResult"
+      trusted="True"
+      permission="zope.Public"
+      provides=".search.ISearchResult"
+  />
+  
+  <adapter
+      for="bungeni.models.interfaces.IParliament"
+      factory=".search.GroupToSearchResult"
+      trusted="True"
+      permission="zope.Public"
+      provides=".search.ISearchResult"
+  />
+  
+  <adapter
+      for="bungeni.models.interfaces.IBungeniGroup"
+      factory=".search.GroupToSearchResult"
+      trusted="True"
+      permission="zope.Public"
+      provides=".search.ISearchResult"
+  />
+  
+  <adapter
+      for="bungeni.models.interfaces.ICommittee"
+      factory=".search.GroupToSearchResult"
+      trusted="True"
+      permission="zope.Public"
+      provides=".search.ISearchResult"
+  />
+ 
+   <adapter
+      for="bungeni.models.interfaces.IMemberOfParliament"
+      factory=".search.MemberToSearchResult"
+      trusted="True"
+      permission="zope.Public"
+      provides=".search.ISearchResult"
+  />
+
+</configure>

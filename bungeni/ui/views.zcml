@@ -146,9 +146,38 @@
     <!-- Content Search Form -->
 
     <browser:page name="search"
-        for="bungeni.models.interfaces.IBungeniApplication"
+        for="bungeni.core.interfaces.ISection"
         permission="zope.View"
         class=".search.PagedSearch"
+    />
+
+
+    <!-- Advanced search form -->
+    <browser:page name="advanced-search"
+        for="bungeni.core.interfaces.ISection"
+        permission="zope.View"
+        class=".search.AdvancedPagedSearch"
+    />
+
+    <browser:page
+     for="*"
+     name="ajax_get_class_statuses"
+     permission="zope.View"
+     class=".search.AjaxGetClassStatuses"
+    />
+    
+    <browser:page
+     for="*"
+     name="ajax_get_class_fields"
+     permission="zope.View"
+     class=".search.AjaxGetClassFields"
+    />
+
+    <!-- View for item in search results -->
+    <browser:page name="searchresult"
+        for="ore.xapian.interfaces.IIndexable"
+        permission="zope.View"
+        class=".search.SearchResultItem"
     />
 
   <!-- Reporting -->

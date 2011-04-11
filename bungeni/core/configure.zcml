@@ -77,6 +77,12 @@
       for="bungeni.models.interfaces.IBungeniGroup"
       factory=".index.ContentIndexer"/>
       
+  <adapter
+     for="bungeni.models.interfaces.IBungeniContent"
+     provides="ore.xapian.interfaces.IOperationFactory"
+     factory=".operation.OperationFactory"
+     />
+      
   <utility factory=".index.ContentResolver" />
 
   <xapian:queue
@@ -88,11 +94,31 @@
   <class class="bungeni.models.domain.User">
     <implements interface="ore.xapian.interfaces.IIndexable" />
   </class>
+  
+  <class class="bungeni.models.domain.MemberOfParliament">
+    <implements interface="ore.xapian.interfaces.IIndexable" />
+  </class>
 
   <class class="bungeni.models.domain.Group">
     <implements interface="ore.xapian.interfaces.IIndexable" />
   </class>
+  
+  <class class="bungeni.models.domain.PoliticalGroup">
+    <implements interface="ore.xapian.interfaces.IIndexable" />
+  </class>
+  
+  <class class="bungeni.models.domain.Parliament">
+    <implements interface="ore.xapian.interfaces.IIndexable" />
+  </class>
 
+  <class class="bungeni.models.domain.Government">
+    <implements interface="ore.xapian.interfaces.IIndexable" />
+  </class>
+  
+  <class class="bungeni.models.domain.Committee">
+    <implements interface="ore.xapian.interfaces.IIndexable" />
+  </class>
+    
   <class class=".content.Section">
     <allow interface="zope.publisher.interfaces.browser.IBrowserPublisher" />
   </class>
