@@ -43,10 +43,10 @@ def get_wf_state(context, wf_state_id=None):
     """Get the human readable title for the context's workflow state
     """
     # !+RENAME(mr, mar-2011) to get_workflow_state_title, status
-    awf = interfaces.IWorkflow(context)
+    workflow = interfaces.IWorkflow(context)
     if wf_state_id is None:
         wf_state_id = interfaces.IStateController(context).getState()
-    return awf.workflow.states[wf_state_id].title
+    return workflow.states[wf_state_id].title
     # awf.workflow.get_transition_by_id("transition_id").title
 
 

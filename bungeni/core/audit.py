@@ -14,7 +14,7 @@ from zope.annotation.interfaces import IAnnotations
 from zope.security.proxy import removeSecurityProxy
 from zope import lifecycleevent
 
-from bungeni.core.workflow.interfaces import IWorkflowController
+from bungeni.core import workflow
 from bungeni.alchemist.interfaces import IRelationChange
 from bungeni.alchemist import Session
 from sqlalchemy import orm
@@ -146,7 +146,7 @@ class AuditorFactory(object):
         if hasattr(object, "status_date"):
             object.status_date = change_data["date_active"] or datetime.now()
         # as a "base" description, use human readable workflow state title
-        wf = IWorkflowController(object).workflow
+        wf = workflow.interfaces.IWorkflow(object) # !+ adapters.get_workflow(object)
         description = wf.states[event.destination].title
         # extras, that may be used e.g. to elaborate description at runtime
         extras = {

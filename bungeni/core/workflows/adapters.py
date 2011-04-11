@@ -13,17 +13,20 @@ from bungeni.utils.capi import capi
 __all__ = ["get_workflow"]
 
 def get_workflow(name):
-    """Get the named workflow utility."""
+    """Get the named workflow utility.
+    """
     #return component.getUtility(IWorkflow, name) !+BREAKS_DOCTESTS(mr, apr-2011)
     return _WORKFLOWS[name]
 
-# a global container to easily retrieve workflow instances
+# a global container with a named reference to each workflow instances
+# as a supplementary register (by name) of instantiated workflows
 _WORKFLOWS = {} # { name: workflow.states.Workflow }
 
-# component.provideAdapter(factory, adapts=None, provides=None, name="")
+# component.provideUtility(component, provides=None, name=u''):
 def provideUtilityWorkflow(utility, name):
     #component.provideUtility(utility, IWorkflow, name) !+BREAKS_DOCTESTS
     _WORKFLOWS[name] = utility
+# component.provideAdapter(factory, adapts=None, provides=None, name="")
 def provideAdapterWorkflow(factory, adapts_kls):
     component.provideAdapter(factory, (adapts_kls,), IWorkflow)
 def provideAdapterStateController(adapts_kls):
@@ -35,7 +38,7 @@ def provideAdapterWorkflowController(adapts_kls):
 PATH_CUSTOM_WORKLFOWS = capi.get_path_for("workflows")
 
 def load_workflow(name, iface):
-    """Get the Workflow instance, from XML definition, for named workflow.
+    """Setup the Workflow instance, from XML definition, for named workflow.
     """
     #
     # load / register as utility / retrieve

@@ -42,7 +42,7 @@ class WorkflowVocabulary(object):
         elif  IAlchemistContainer.providedBy(context):
             domain_model = removeSecurityProxy(context.domain_model)
             ctx = domain_model()
-        states = interfaces.IWorkflow(ctx).workflow.states
+        states = interfaces.IWorkflow(ctx).states
         items = []
         for state in states.keys():
             items.append(SimpleTerm(states[state].id, states[state].id, 
@@ -183,12 +183,12 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
         }
         self.widgets = form.setUpDataWidgets(
             self.form_fields, self.prefix, self.context, self.request,
-            ignore_request = ignore_request)
+            ignore_request=ignore_request)
     
     def update(self, transition=None):
-        wf = interfaces.IWorkflow(self.context).workflow
+        workflow = interfaces.IWorkflow(self.context)
         if transition is not None:
-            state_transition = wf.get_transition_by_id(transition)
+            state_transition = workflow.get_transition_by_id(transition)
             # !- workflow state title translations are in bungeni.core
             # use the right factory here to get translation
             state_title = translate(_bc(state_transition.title),
@@ -209,8 +209,7 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
             transitions = wfc.getManualTransitionIds()
         else:
             transitions = (transition,)
-        self.actions = bindTransitions(
-            self, transitions, None, interfaces.IWorkflow(self.context).workflow)
+        self.actions = bindTransitions(self, transitions, None, wfc.workflow)
 
 
 class WorkflowView(browser.BungeniBrowserView):
@@ -255,9 +254,9 @@ class WorkflowChangeStateView(WorkflowView):
     
     def __call__(self, headless=False, transition=None):
         method = self.request["REQUEST_METHOD"]
+        workflow = interfaces.IWorkflow(self.context)
         if transition:
-            wf = interfaces.IWorkflow(self.context).workflow
-            state_transition = wf.get_transition_by_id(transition)
+            state_transition = workflow.get_transition_by_id(transition)
             require_confirmation = getattr(
                 state_transition, "require_confirmation", False)
             self.update(transition)
@@ -266,8 +265,7 @@ class WorkflowChangeStateView(WorkflowView):
         
         if transition and require_confirmation is False and method == "POST":
             actions = bindTransitions(
-                self.action_viewlet, (transition,), None, 
-                interfaces.IWorkflow(self.context).workflow)
+                self.action_viewlet, (transition,), None, workflow)
             assert len(actions) == 1
             # execute action
             # !+ should pass self.request.form as data? e.g. value is:
@@ -276,8 +274,7 @@ class WorkflowChangeStateView(WorkflowView):
         
         if headless is True:
             actions = get_actions("context_workflow", self.context, self.request)
-            state_title = interfaces.IWorkflowController(self.context
-                ).workflow.states[self.context.status].title
+            state_title = workflow.states[self.context.status].title
             result = self.ajax_template(actions=actions, state_title=state_title)
             
             if require_confirmation is True:

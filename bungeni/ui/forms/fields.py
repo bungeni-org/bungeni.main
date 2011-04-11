@@ -72,16 +72,15 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
         context = removeSecurityProxy(self.context)
         if getattr(context, "note", False):
             return context.note
-
+    
     def setupActions(self):
         return # !+ ??
         wfc = interfaces.IWorkflowController(self.context, None)
         if wfc is not None:
             transitions = wfc.getManualTransitionIds()
             self.actions = tuple(bindTransitions(
-                self, transitions, None, 
-                interfaces.IWorkflow(self.context).workflow))
-
+                self, transitions, None, wfc.workflow))
+    
     def setUpWidgets(self, ignore_request=False):
         languages = get_all_languages()
         self.form_fields = filterFields(self.context, self.form_fields)

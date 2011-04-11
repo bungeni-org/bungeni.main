@@ -152,7 +152,7 @@ class StateController(object):
             self.on_state_change(source_state_id, state_id)
     
     def on_state_change(self, source, destination):
-        workflow = interfaces.IWorkflow(self.context).workflow
+        workflow = interfaces.IWorkflow(self.context)
         state = workflow.states.get(destination)
         assert state is not None, "May not have a None state" # !+NEEDED?
         state.execute_actions(self.context)
@@ -221,15 +221,12 @@ class Workflow(object):
         return self._transitions_by_id[transition_id]
     
     def __call__(self, context):
-        """A Workflow instance is itself the factory of own AdaptedWorkflows.
+        """A Workflow instance is itself the "singleton factory" of itself.
+        Called to adapt IWorkflow(context) -- the "adaptation" concept implied
+        by this is simply a lookup, on the context's class/interface, for the 
+        workflow instance that was registered for that class/interface.
         """
-        class AdaptedWorkflow(object):
-            """A workflow adapted on context.
-            """
-            def __init__(awf, context):
-                awf.context = context
-                awf.workflow = self # workflow instance being called
-        return AdaptedWorkflow(context)
+        return self
 
 
 class WorkflowController(object):
@@ -240,7 +237,6 @@ class WorkflowController(object):
         # assume context is trusted... 
         # and unlitter all actions/conditions of calls to removeSecurityProxy
         self.context = removeSecurityProxy(context)
-        self._adapted_workflow = None # cache for adapted_workflow instance
         self._state_controller = None # cache for state_controller instance
     
     @property
@@ -251,10 +247,8 @@ class WorkflowController(object):
     
     @property
     def workflow(self):
-        """ () -> bungeni.core.workflow.states.AdaptedWorkflow """
-        if self._adapted_workflow is None:
-            self._adapted_workflow = interfaces.IWorkflow(self.context)
-        return self._adapted_workflow.workflow
+        """ () -> bungeni.core.workflow.states.Workflow """
+        return interfaces.IWorkflow(self.context)
     
     def _get_checkPermission(self):
         try:

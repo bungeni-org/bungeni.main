@@ -137,7 +137,7 @@ class SchedulableItemsViewlet(browser.BungeniItemsViewlet):
                 # not every item has a auditlog (headings) 
                 # use last status change instead.
                 "date": date_formatter.format(self._item_date(item)),
-                "state": IWorkflow(item).workflow.states[item.status].title,
+                "state": IWorkflow(item).states[item.status].title,
                 "id": item.parliamentary_item_id,
                 "class": (
                     (item.parliamentary_item_id in scheduled_item_ids and

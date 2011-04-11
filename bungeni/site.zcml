@@ -71,7 +71,7 @@
     <!-- AppServer Security Settings -->
     <include package="zope.securitypolicy" file="meta.zcml" />
     <include package="zope.securitypolicy" />
-    <securityPolicy component="zope.securitypolicy.zopepolicy.ZopeSecurityPolicy" />
+    <securityPolicy component="bungeni.BungeniSecurityPolicy" />
     
     <unauthenticatedPrincipal id="zope.anybody" title="Unauthenticated User" />
     <unauthenticatedGroup id="zope.Anybody" title="Unauthenticated Users" />
