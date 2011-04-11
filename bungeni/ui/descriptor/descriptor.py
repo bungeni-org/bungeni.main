@@ -40,14 +40,14 @@ from bungeni.ui.tagged import get_states
 from bungeni.ui.interfaces import IBusinessSectionLayer
 
 from bungeni.core.workflows.adapters import get_workflow
-group_wf_states = get_workflow("group").states
-attachedfile_wf_states = get_workflow("attachedfile").states
-address_wf_states = get_workflow("address").states
-event_wf_states = get_workflow("event").states
-heading_wf_states = get_workflow("heading").states
-committee_wf_states = get_workflow("committee").states
-parliament_wf_states = get_workflow("parliament").states
-version_wf_states = get_workflow("version").states
+group_wf_get_state = get_workflow("group").get_state
+attachedfile_wf_get_state = get_workflow("attachedfile").get_state
+address_wf_get_state = get_workflow("address").get_state
+event_wf_get_state = get_workflow("event").get_state
+heading_wf_get_state = get_workflow("heading").get_state
+committee_wf_get_state = get_workflow("committee").get_state
+parliament_wf_get_state = get_workflow("parliament").get_state
+version_wf_get_state = get_workflow("version").get_state
 
 ###
 # Listing Columns
@@ -967,8 +967,8 @@ class GroupDescriptor(ModelDescriptor):
     schema_invariants = [EndAfterStart]
     custom_validators = [validations.validate_date_range_within_parent]
     public_wfstates = [
-        group_wf_states["active"].id,
-        group_wf_states["dissolved"].id
+        group_wf_get_state("active").id,
+        group_wf_get_state("dissolved").id
     ]
 
 
@@ -1031,8 +1031,8 @@ class ParliamentDescriptor(GroupDescriptor):
         ElectionAfterStart
     ]
     public_wfstates = [
-        parliament_wf_states["active"].id,
-        parliament_wf_states["dissolved"].id
+        parliament_wf_get_state("active").id,
+        parliament_wf_get_state("dissolved").id
     ]
 
 class CommitteeTypeDescriptor(ModelDescriptor):
@@ -1128,8 +1128,8 @@ class CommitteeDescriptor(GroupDescriptor):
         #DissolutionAfterReinstatement
     ]
     public_wfstates = [
-        committee_wf_states["active"].id,
-        committee_wf_states["dissolved"].id
+        committee_wf_get_state("active").id,
+        committee_wf_get_state("dissolved").id
     ]
 
 
@@ -1257,7 +1257,7 @@ class AddressDescriptor(ModelDescriptor):
         #    )
         #), !+IM(mr, oct-2010) morph to some "extra_info" on User
     ]
-    public_wfstates = [address_wf_states["public"].id]
+    public_wfstates = [address_wf_get_state("public").id]
 
 class GroupAddressDescriptor(AddressDescriptor):
     localizable = True
@@ -1628,7 +1628,7 @@ class AttachedFileDescriptor(ModelDescriptor):
             listing_column=day_column("status_date", _("Status date")),
         ),
     ]
-    public_wfstates = [attachedfile_wf_states["public"].id]
+    public_wfstates = [attachedfile_wf_get_state("public").id]
 
 
 class AttachedFileVersionDescriptor(ModelDescriptor):
@@ -1788,7 +1788,7 @@ class VersionDescriptor(ModelDescriptor):
             edit_widget=widgets.OneTimeEditWidget,
         ),
     ]
-    public_wfstates = [version_wf_states["archived"].id]
+    public_wfstates = [version_wf_get_state("archived").id]
 
 
 class HeadingDescriptor(ParliamentaryItemDescriptor):
@@ -1833,7 +1833,7 @@ class HeadingDescriptor(ParliamentaryItemDescriptor):
             add_widget=widgets.RichTextEditor,
         )
     ]
-    public_wfstates = [heading_wf_states["public"].id]
+    public_wfstates = [heading_wf_get_state("public").id]
 
 
 class AgendaItemDescriptor(ParliamentaryItemDescriptor):
@@ -2075,7 +2075,7 @@ class EventItemDescriptor(ParliamentaryItemDescriptor):
             add_widget=widgets.DateTimeWidget,
         ),
     ]
-    public_wfstates = [event_wf_states["public"].id]
+    public_wfstates = [event_wf_get_state("public").id]
 
 
 class TabledDocumentDescriptor(ParliamentaryItemDescriptor):

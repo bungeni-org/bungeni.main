@@ -74,7 +74,7 @@ class FileDeactivate(BrowserView):
     def __call__(self):
         trusted = removeSecurityProxy(self.context)
         sc = IStateController(trusted)
-        sc.setState("inactive")
+        sc.set_status("inactive")
         redirect_url = self.request.getURL().replace("/deactivate", "")
         return self.request.response.redirect(redirect_url)
 

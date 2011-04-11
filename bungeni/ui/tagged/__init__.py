@@ -9,13 +9,13 @@ $Id$
 log = __import__("logging").getLogger("bungeni.ui.tagged")
 
 from bungeni.core.workflows.adapters import get_workflow
-STATES_MAPPING = {
-    "agendaitem": get_workflow("agendaitem").states,
-    "bill": get_workflow("bill").states,
-    "motion": get_workflow("motion").states,
-    "question": get_workflow("question").states,
-    "tableddocument": get_workflow("tableddocument").states,
-    "groupsitting": get_workflow("groupsitting").states,
+STATE_GETTERS = {
+    "agendaitem": get_workflow("agendaitem").get_state,
+    "bill": get_workflow("bill").get_state,
+    "motion": get_workflow("motion").get_state,
+    "question": get_workflow("question").get_state,
+    "tableddocument": get_workflow("tableddocument").get_state,
+    "groupsitting": get_workflow("groupsitting").get_state,
 }
 
 from states import ACTIVE_TAGS, TAG_MAPPINGS
@@ -46,27 +46,27 @@ def get_states(pi_type, tagged=[], not_tagged=[], keys=[], conjunction="OR"):
         assert keys==[ k for k in keys if k in tag_mapping ]
     assert conjunction in ("OR", "AND"), "Not supported."
     # process
-    if pi_type not in STATES_MAPPING:
+    if pi_type not in STATE_GETTERS:
         return list()
-    states = STATES_MAPPING[pi_type]
+    gs = STATE_GETTERS[pi_type]
     _tagged = _not_tagged = _keys = EMPTY_SET
     if tagged:
         _tagged = set()
         for state_id, state_tags in tag_mapping.items():
             for t in tagged:
                 if t in state_tags:
-                    _tagged.add(states[state_id].id)
+                    _tagged.add(gs(state_id).id)
                     break
     if not_tagged:
         _not_tagged = set()
         for state_id, state_tags in tag_mapping.items():
-            _not_tagged.add(states[state_id].id)
+            _not_tagged.add(gs(state_id).id)
             for t in not_tagged:
                 if t in state_tags:
-                    _not_tagged.remove(states[state_id].id)
+                    _not_tagged.remove(gs(state_id).id)
                     break
     if keys:
-        _keys = set([ states[key].id for key in keys ])
+        _keys = set([ gs(key).id for key in keys ])
     # combine
     if conjunction=="OR":
         return list(_tagged.union(_not_tagged).union(_keys))

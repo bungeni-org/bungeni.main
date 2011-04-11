@@ -131,10 +131,6 @@ class Transition(object):
 
 #
 
-def get_workflow_state(context):
-    """Get the workflow.states.State instance for the context's status."""
-    return interfaces.IWorkflow(context).states.get(context.status)
-
 class StateController(object):
     
     zope.interface.implements(interfaces.IStateController)
@@ -144,19 +140,22 @@ class StateController(object):
     def __init__(self, context):
         self.context = context
     
-    def getState(self):
+    def get_state(self):
+        """Get the workflow.states.State instance for the context's status."""
+        return interfaces.IWorkflow(self.context).get_state(self.context.status)
+    
+    def get_status(self):
         return self.context.status
     
-    #!+STATE(mr, mar-2011) rename to "status"
-    def setState(self, state_id):
-        source_state_id = self.getState()
-        if source_state_id != state_id:
-            self.context.status = state_id
+    def set_status(self, status):
+        source_status = self.get_status()
+        if source_status != status:
+            self.context.status = status
             # additional actions related to change of worklfow status
-            self.on_state_change(source_state_id, state_id)
+            self.on_status_change(source_status, status)
     
-    def on_state_change(self, source, destination):
-        state = get_workflow_state(self.context)
+    def on_status_change(self, source, destination):
+        state = self.get_state()
         assert state is not None, "May not have a None state" # !+NEEDED?
         state.execute_actions(self.context)
     
@@ -227,7 +226,21 @@ class Workflow(object):
     @property
     def states(self):
         """ () -> { status: State } """
-        return self._states_by_id # !+COPY?
+        #log.warn("DEPRECATED [%s] Workflow.states, " \
+        #    "use Workflow.get_state(status) instead" % (self.name))
+        return self._states_by_id
+    
+    def get_state(self, state_id):
+        try:
+            return self._states_by_id[state_id]
+        except KeyError, e:
+            raise exception_as(e, interfaces.InvalidStateError)
+
+    def get_transition(self, transition_id):
+        try:
+            return self._transitions_by_id[transition_id]
+        except KeyError, e:
+            raise exception_as(e, interfaces.InvalidTransitionError)
     
     # !+ get_transitions_to(destination) ? 
     def get_transitions_from(self, source):
@@ -235,16 +248,6 @@ class Workflow(object):
             return sorted(self._transitions_by_source[source])
         except KeyError:
             return []
-    
-    # !+GET_TRANSITION(mr, mar-2011) change params to (source, dest) + combine? 
-    def get_transition(self, source, transition_id):
-        transition = self._transitions_by_id[transition_id]
-        if transition.source != source:
-            raise interfaces.InvalidTransitionError
-        return transition
-    
-    def get_transition_by_id(self, transition_id):
-        return self._transitions_by_id[transition_id]
     
     def __call__(self, context):
         """A Workflow instance is itself the "singleton factory" of itself.
@@ -302,12 +305,11 @@ class WorkflowController(object):
         if not (comment is None and check_security is True):
             log.warn("%s.fireTransition(%s, comment=%s, check_security=%s)" % (
                 self, transition_id, comment, check_security))
-        sc = self.state_controller
         # raises InvalidTransitionError if id is invalid for current state
-        transition = self.workflow.get_transition(sc.getState(), transition_id)
+        transition = self.workflow.get_transition(transition_id)
         self._check(transition, check_security)
-        # change state of context or new object
-        sc.setState(transition.destination)
+        # change status of context or new object
+        self.state_controller.set_status(transition.destination)
         # notify wf event observers
         event = WorkflowTransitionEvent(self.context, 
             transition.source, transition.destination, transition, comment)
@@ -338,7 +340,7 @@ class WorkflowController(object):
         workflow = self.workflow
         result = []
         for transition_id in self.getFireableTransitionIds():
-            transition = workflow.get_transition_by_id(transition_id)
+            transition = workflow.get_transition(transition_id)
             if transition.destination == state:
                 result.append(transition_id)
         return result
@@ -363,7 +365,7 @@ class WorkflowController(object):
         If conditional, then only transitions that pass the condition.
         """
         transitions = self.workflow.get_transitions_from(
-            self.state_controller.getState())
+            self.state_controller.get_status())
         # now filter these transitions to retrieve all possible
         # transitions in this context, and return their ids
         return [ transition for transition in transitions

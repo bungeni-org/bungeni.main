@@ -14,10 +14,12 @@ MANUAL = 0
 AUTOMATIC = 1
 SYSTEM = 2
 
-
-class InvalidTransitionError(Exception): pass
+class InvalidWorkflow(Exception): pass
+class InvalidStateError(InvalidWorkflow): pass
+class InvalidTransitionError(InvalidWorkflow): pass
 class NoTransitionAvailableError(InvalidTransitionError): pass
 class AmbiguousTransitionError(InvalidTransitionError): pass
+
 class ConditionFailedError(Exception): pass
 
 class WorkflowRuntimeError(Exception): 
@@ -33,17 +35,16 @@ class IWorkflow(zope.interface.Interface):
     def refresh(states, transitions):
         """Refresh workflow completely with new transitions.
         """
+    def get_state(state_id):
+        """Get state with state_id.
+        If no such state, raises InvalidStateError.
+        """
+    def get_transition(transition_id):
+        """Get transition with transition_id.
+        If no such transition, raises InvalidTransitionError.
+        """
     def get_transitions_from(source):
         """Get all transitions from source.
-        """
-    def get_transition(source, transition_id):
-        """Get transition with transition_id given source state.
-
-        If the transition is invalid from this source state,
-        an InvalidTransitionError is raised.
-        """
-    def get_transition_by_id(transition_id):
-        """Get transition with transition_id.
         """
     def __call__(context):
         """A Workflow instance is itself the factory of own AdaptedWorkflows.
@@ -52,11 +53,14 @@ class IWorkflow(zope.interface.Interface):
 class IStateController(zope.interface.Interface):
     """Store state on workflowed objects. Defined as an adapter.
     """
-    def getState():
-        """Return workflow state of this object.
+    def get_state():
+        """Get the workflow.states.State instance for this context's status.
         """
-    def setState(state):
-        """Set workflow state for this object.
+    def get_status():
+        """Return workflow status (state id) of this object.
+        """
+    def set_status(state):
+        """Set workflow status (state id ) for this object.
         """
 
 

@@ -43,9 +43,8 @@ for name in [
     for status, state in workflow.states.items():
         f.write("""<b i18n:translate="">%s</b>""" % (state.title))
         f.write("\n")
-    for t in workflow._transitions_by_id:
-        f.write("""<b i18n:translate="">%s</b>""" % (
-            workflow.get_transition_by_id(t).title))
+    for transition in workflow._transitions_by_id.values():
+        f.write("""<b i18n:translate="">%s</b>""" % (transition.title))
         f.write("\n")
 
 f.write("</body></html>")

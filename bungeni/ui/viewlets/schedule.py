@@ -137,7 +137,7 @@ class SchedulableItemsViewlet(browser.BungeniItemsViewlet):
                 # not every item has a auditlog (headings) 
                 # use last status change instead.
                 "date": date_formatter.format(self._item_date(item)),
-                "state": IWorkflow(item).states[item.status].title,
+                "state": IWorkflow(item).get_state(item.status).title,
                 "id": item.parliamentary_item_id,
                 "class": (
                     (item.parliamentary_item_id in scheduled_item_ids and
@@ -155,7 +155,7 @@ class SchedulableItemsViewlet(browser.BungeniItemsViewlet):
 class SchedulableHeadingsViewlet(SchedulableItemsViewlet):
     view_name = "heading"
     view_title = _("Headings")
-    states = (get_workflow("heading").states["public"].id,)
+    states = (get_workflow("heading").get_state("public").id,)
     model = domain.Heading
     
     def _item_url(self, item):
