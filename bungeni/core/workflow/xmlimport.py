@@ -38,7 +38,7 @@ ID_RE = re.compile("^[\w\d_]+$")
 
 TRANS_ATTRS_REQUIREDS = ("id", "title", "source", "destination")
 TRANS_ATTRS_OPTIONALS = ("condition", "trigger", "roles", "permission", 
-    "order", "require_confirmation")
+    "order", "require_confirmation", "note")
 TRANS_ATTRS = TRANS_ATTRS_REQUIREDS + TRANS_ATTRS_OPTIONALS
 
 

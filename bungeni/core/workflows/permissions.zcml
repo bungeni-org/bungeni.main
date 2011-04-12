@@ -38,16 +38,16 @@ See the Bungeni Source Code Style Guide for further details.
 
 <!-- agendaitem -->
 
-<permission id="bungeni.agendaitem.wf.submit" title="Submit to Clerk" />
+<permission id="bungeni.agendaitem.wf.submit" title="Submit" />
 <grant permission="bungeni.agendaitem.wf.submit" role="bungeni.Owner" />
 
 <permission id="bungeni.agendaitem.wf.receive" title="Receive" />
 <grant permission="bungeni.agendaitem.wf.receive" role="bungeni.Clerk" />
 
-<permission id="bungeni.agendaitem.wf.require_clarification" title="Needs Clarification to Receive" />
+<permission id="bungeni.agendaitem.wf.require_clarification" title="Require Clarification to Receive" />
 <grant permission="bungeni.agendaitem.wf.require_clarification" role="bungeni.Clerk" />
 
-<permission id="bungeni.agendaitem.wf.complete" title="Submit to the Speaker Office" />
+<permission id="bungeni.agendaitem.wf.complete" title="Complete" />
 <grant permission="bungeni.agendaitem.wf.complete" role="bungeni.Clerk" />
 
 <permission id="bungeni.agendaitem.wf.approve" title="Approve" />
@@ -56,19 +56,19 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.agendaitem.wf.disapprove" title="Disapprove" />
 <grant permission="bungeni.agendaitem.wf.disapprove" role="bungeni.Speaker" />
 
-<permission id="bungeni.agendaitem.wf.allow_schedule" title="Make available for scheduling" />
+<permission id="bungeni.agendaitem.wf.allow_schedule" title="Allow scheduling" />
 <grant permission="bungeni.agendaitem.wf.allow_schedule" role="bungeni.Clerk" />
 
-<permission id="bungeni.agendaitem.wf.require_recomplete" title="Needs Clarification to Approve" />
+<permission id="bungeni.agendaitem.wf.require_recomplete" title="Require Recomplete to Approve" />
 <grant permission="bungeni.agendaitem.wf.require_recomplete" role="bungeni.Speaker" />
 
-<permission id="bungeni.agendaitem.wf.recomplete" title="Re-complete" />
+<permission id="bungeni.agendaitem.wf.recomplete" title="Recomplete" />
 <grant permission="bungeni.agendaitem.wf.recomplete" role="bungeni.Clerk" />
 
-<permission id="bungeni.agendaitem.wf.resubmit" title="Resubmit to Clerk" />
+<permission id="bungeni.agendaitem.wf.resubmit" title="Resubmit" />
 <grant permission="bungeni.agendaitem.wf.resubmit" role="bungeni.Owner" />
 
-<permission id="bungeni.agendaitem.wf.reschedule" title="Re-schedule" />
+<permission id="bungeni.agendaitem.wf.reschedule" title="Reschedule" />
 <grant permission="bungeni.agendaitem.wf.reschedule" role="bungeni.Clerk" />
 
 <permission id="bungeni.agendaitem.wf.schedule" title="Schedule" />
@@ -250,7 +250,7 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.groupsitting.wf.allow_draft_minutes" role="bungeni.Clerk" />
 <grant permission="bungeni.groupsitting.wf.allow_draft_minutes" role="bungeni.Speaker" />
 
-<permission id="bungeni.groupsitting.wf.publish_minutes" title="Finalize Minutes" />
+<permission id="bungeni.groupsitting.wf.publish_minutes" title="Publish Minutes" />
 <grant permission="bungeni.groupsitting.wf.publish_minutes" role="bungeni.Clerk" />
 <grant permission="bungeni.groupsitting.wf.publish_minutes" role="bungeni.Speaker" />
 
@@ -265,23 +265,23 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.heading.wf.deactivate" role="bungeni.Clerk" />
 <grant permission="bungeni.heading.wf.deactivate" role="bungeni.Speaker" />
 
-<permission id="bungeni.heading.wf.reactivate" title="Re activate" />
+<permission id="bungeni.heading.wf.reactivate" title="Reactivate" />
 <grant permission="bungeni.heading.wf.reactivate" role="bungeni.Clerk" />
 <grant permission="bungeni.heading.wf.reactivate" role="bungeni.Speaker" />
 
 
 <!-- motion -->
 
-<permission id="bungeni.motion.wf.submit" title="Submit to Clerk" />
+<permission id="bungeni.motion.wf.submit" title="Submit" />
 <grant permission="bungeni.motion.wf.submit" role="bungeni.Owner" />
 
 <permission id="bungeni.motion.wf.receive" title="Receive" />
 <grant permission="bungeni.motion.wf.receive" role="bungeni.Clerk" />
 
-<permission id="bungeni.motion.wf.require_clarification" title="Needs Clarification to Receive" />
+<permission id="bungeni.motion.wf.require_clarification" title="Require Clarification to Receive" />
 <grant permission="bungeni.motion.wf.require_clarification" role="bungeni.Clerk" />
 
-<permission id="bungeni.motion.wf.complete" title="Submit to the Speaker Office" />
+<permission id="bungeni.motion.wf.complete" title="Complete" />
 <grant permission="bungeni.motion.wf.complete" role="bungeni.Clerk" />
 
 <permission id="bungeni.motion.wf.approve" title="Approve" />
@@ -293,13 +293,13 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.motion.wf.allow_schedule" title="Make available for scheduling" />
 <grant permission="bungeni.motion.wf.allow_schedule" role="bungeni.Clerk" />
 
-<permission id="bungeni.motion.wf.require_recomplete" title="Needs Clarification to Approve" />
+<permission id="bungeni.motion.wf.require_recomplete" title="Require Recomplete to Approve" />
 <grant permission="bungeni.motion.wf.require_recomplete" role="bungeni.Speaker" />
 
-<permission id="bungeni.motion.wf.recomplete" title="Re-complete" />
+<permission id="bungeni.motion.wf.recomplete" title="Recomplete" />
 <grant permission="bungeni.motion.wf.recomplete" role="bungeni.Clerk" />
 
-<permission id="bungeni.motion.wf.resubmit" title="Resubmit to Clerk" />
+<permission id="bungeni.motion.wf.resubmit" title="Resubmit" />
 <grant permission="bungeni.motion.wf.resubmit" role="bungeni.Owner" />
 
 <permission id="bungeni.motion.wf.defer" title="Defer" />
@@ -358,16 +358,16 @@ See the Bungeni Source Code Style Guide for further details.
 
 <!-- question -->
 
-<permission id="bungeni.question.wf.submit" title="Submit to Clerk" />
+<permission id="bungeni.question.wf.submit" title="Submit" />
 <grant permission="bungeni.question.wf.submit" role="bungeni.Owner" />
 
 <permission id="bungeni.question.wf.receive" title="Receive" />
 <grant permission="bungeni.question.wf.receive" role="bungeni.Clerk" />
 
-<permission id="bungeni.question.wf.require_clarification" title="Needs Clarification to Receive" />
+<permission id="bungeni.question.wf.require_clarification" title="Require Clarification to Receive" />
 <grant permission="bungeni.question.wf.require_clarification" role="bungeni.Clerk" />
 
-<permission id="bungeni.question.wf.complete" title="Submit to the Speaker Office" />
+<permission id="bungeni.question.wf.complete" title="Complete" />
 <grant permission="bungeni.question.wf.complete" role="bungeni.Clerk" />
 
 <permission id="bungeni.question.wf.approve" title="Approve" />
@@ -376,13 +376,13 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.question.wf.disapprove" title="Disapprove" />
 <grant permission="bungeni.question.wf.disapprove" role="bungeni.Speaker" />
 
-<permission id="bungeni.question.wf.require_recomplete" title="Needs Clarification to Approve" />
+<permission id="bungeni.question.wf.require_recomplete" title="Require Recomplete to Approve" />
 <grant permission="bungeni.question.wf.require_recomplete" role="bungeni.Speaker" />
 
-<permission id="bungeni.question.wf.recomplete" title="Complete" />
+<permission id="bungeni.question.wf.recomplete" title="Recomplete" />
 <grant permission="bungeni.question.wf.recomplete" role="bungeni.Clerk" />
 
-<permission id="bungeni.question.wf.resubmit" title="Resubmit to Clerk" />
+<permission id="bungeni.question.wf.resubmit" title="Resubmit" />
 <grant permission="bungeni.question.wf.resubmit" role="bungeni.Owner" />
 
 <permission id="bungeni.question.wf.allow_schedule" title="Make available for scheduling" />
@@ -412,9 +412,6 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.question.wf.defer" title="Defer" />
 <grant permission="bungeni.question.wf.defer" role="bungeni.Clerk" />
 
-<permission id="bungeni.question.wf.deferred_allow_response" title="Send to Ministry" />
-<grant permission="bungeni.question.wf.deferred_allow_response" role="bungeni.Clerk" />
-
 <permission id="bungeni.question.wf.drop" title="Drop" />
 <grant permission="bungeni.question.wf.drop" role="bungeni.Clerk" />
 
@@ -438,16 +435,16 @@ See the Bungeni Source Code Style Guide for further details.
 
 <!-- tableddocument -->
 
-<permission id="bungeni.tableddocument.wf.submit" title="Submit to Clerk" />
+<permission id="bungeni.tableddocument.wf.submit" title="Submit" />
 <grant permission="bungeni.tableddocument.wf.submit" role="bungeni.Owner" />
 
 <permission id="bungeni.tableddocument.wf.receive" title="Receive" />
 <grant permission="bungeni.tableddocument.wf.receive" role="bungeni.Clerk" />
 
-<permission id="bungeni.tableddocument.wf.require_clarification" title="Needs Clarification to Receive" />
+<permission id="bungeni.tableddocument.wf.require_clarification" title="Require Clarification to Receive" />
 <grant permission="bungeni.tableddocument.wf.require_clarification" role="bungeni.Clerk" />
 
-<permission id="bungeni.tableddocument.wf.complete" title="Submit to the Speaker Office" />
+<permission id="bungeni.tableddocument.wf.complete" title="Complete" />
 <grant permission="bungeni.tableddocument.wf.complete" role="bungeni.Clerk" />
 
 <permission id="bungeni.tableddocument.wf.approve" title="Approve" />
@@ -459,13 +456,13 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.tableddocument.wf.disapprove" title="Disapprove" />
 <grant permission="bungeni.tableddocument.wf.disapprove" role="bungeni.Speaker" />
 
-<permission id="bungeni.tableddocument.wf.require_recomplete" title="Needs Clarification to Approve" />
+<permission id="bungeni.tableddocument.wf.require_recomplete" title="Needs Recomplete to Approve" />
 <grant permission="bungeni.tableddocument.wf.require_recomplete" role="bungeni.Speaker" />
 
-<permission id="bungeni.tableddocument.wf.recomplete" title="Complete" />
+<permission id="bungeni.tableddocument.wf.recomplete" title="Recomplete" />
 <grant permission="bungeni.tableddocument.wf.recomplete" role="bungeni.Clerk" />
 
-<permission id="bungeni.tableddocument.wf.resubmit" title="Resubmit to Clerk" />
+<permission id="bungeni.tableddocument.wf.resubmit" title="Resubmit" />
 <grant permission="bungeni.tableddocument.wf.resubmit" role="bungeni.Owner" />
 
 <permission id="bungeni.tableddocument.wf.revert_to_admissible" title="Revert to admissible" />

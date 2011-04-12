@@ -142,8 +142,9 @@ that is created via the UI form.
   ...     domain.Question,
   ...     short_name=u"My subject",
   ...     body_text=u"The question",
-  ...     owner_id = mp_3.user_id,
+  ...     owner_id=mp_3.user_id,
   ...     language="en",
+  ...     response_type=u"W",
   ...     parliament_id=parliament.parliament_id)
   
   >>> question.__parent__ = app
@@ -435,13 +436,13 @@ Question conditions
   >>> _conditions.is_scheduled(question)
   True
 
-"Is ministry set".
+"Is written response / ministry set".
 
-  >>> _conditions.is_ministry_set(question)
+  >>> _conditions.is_written_response(question)
   False
 
   >>> question.ministry_id = ministry.group_id
-  >>> _conditions.is_ministry_set(question)
+  >>> _conditions.is_written_response(question)
   True
 
 Notifications

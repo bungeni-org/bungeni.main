@@ -52,8 +52,8 @@ TAG_MAPPINGS["agendaitem"] = {
     "elapsed": ["public", "terminal", "fail",],
     "debated": ["public", "terminal", "succeed",],
     "dropped": ["public","terminal", "fail",],
-    "withdrawn": ["terminal", "fail",],
-    "withdrawn_public": ["public", "terminal", "fail",],
+    "withdrawn_internal": ["terminal", "fail",],
+    "withdrawn": ["public", "terminal", "fail",],
 }
 TAG_MAPPINGS["bill"] = {
     "working_draft": ["private",],
@@ -75,7 +75,7 @@ TAG_MAPPINGS["bill"] = {
     "third_reading_pending": ["tobescheduled",],
     "third_reading": ["scheduled",],
     "third_reading_adjourned": ["approved",],
-    "withdrawn_public": ["terminal", "fail",],
+    "withdrawn": ["terminal", "fail",],
     "approved": ["terminal", "succeed", "approved",],
     "rejected": ["terminal", "fail",],
 }
@@ -98,8 +98,8 @@ TAG_MAPPINGS["motion"] = {
     "rejected": ["public", "terminal", "fail",],
     "elapsed": ["public", "terminal", "fail",],
     "adjourned": ["public", "approved",],
-    "withdrawn": ["terminal", "fail",],
-    "withdrawn_public": ["public", "terminal", "fail",],
+    "withdrawn_internal": ["terminal", "fail",],
+    "withdrawn": ["public", "terminal", "fail",],
 }
 TAG_MAPPINGS["question"] = {
     "working_draft": ["private",],
@@ -121,8 +121,8 @@ TAG_MAPPINGS["question"] = {
     "elapsed": ["public", "terminal", "fail",],
     "debated": ["public", "terminal", "succeed",],
     "dropped": ["public","terminal", "fail",],
-    "withdrawn": ["terminal", "fail",],
-    "withdrawn_public": ["public", "terminal", "fail",],
+    "withdrawn_internal": ["terminal", "fail",],
+    "withdrawn": ["public", "terminal", "fail",],
 }
 TAG_MAPPINGS["tableddocument"] = {
     "working_draft": ["private",],

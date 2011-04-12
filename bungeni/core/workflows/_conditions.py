@@ -88,10 +88,6 @@ def response_allow_submit(context):
     else:
         return True
 
-def is_ministry_set(context):
-    return context.ministry_id is not None
-
-
 # user
 
 def has_date_of_death(context):
