@@ -1059,13 +1059,7 @@ class CommitteeTypeDescriptor(ModelDescriptor):
                 vocabulary=vocabulary.CommitteStatusVocabulary
             )
         ),
-        Field(name="language",
-            modes="view edit add",
-            property=schema.Choice(title=_("Language"),
-                vocabulary="language_vocabulary",
-            ),
-            add_widget=widgets.LanguageLookupWidget,
-        ),
+        LanguageField("language"),
     ]
 
 class CommitteeDescriptor(GroupDescriptor):
@@ -1168,13 +1162,7 @@ class AddressTypeDescriptor(ModelDescriptor):
             modes="view edit add listing",
             property=schema.TextLine(title=_("Address Type"))
         ),
-        Field(name="language",
-            modes="view edit add",
-            property=schema.Choice(title=_("Language"),
-                vocabulary="language_vocabulary",
-            ),
-            add_widget=widgets.LanguageLookupWidget,
-        ),
+        LanguageField("language"),
     ]
 
 
@@ -2113,13 +2101,7 @@ class VenueDescriptor(ModelDescriptor):
             modes="add edit view",
             property=schema.Text(title=_("description"))
         ),
-        Field(name="language",
-            modes="add edit view",
-            property=schema.Choice(title=_("Language"),
-                vocabulary="language_vocabulary"
-            ),
-            add_widget=widgets.LanguageLookupWidget
-        ),
+        LanguageField("language"),
     ]
 
 class SittingDescriptor(ModelDescriptor):
@@ -2298,13 +2280,7 @@ class AttendanceTypeDescriptor(ModelDescriptor):
             modes="view edit add listing",
             property=schema.TextLine(title=_("Attendance type"))
         ),
-        Field(name="language",
-            modes="view edit add",
-            property=schema.Choice(title=_("Language"),
-                vocabulary="language_vocabulary",
-            ),
-            add_widget=widgets.LanguageLookupWidget,
-        ),
+       LanguageField("language"),
     ]
 
 
@@ -2526,15 +2502,7 @@ class ReportDescriptor(ParliamentaryItemDescriptor):
     container_name = _("Reports")
     
     fields = [
-        #LanguageField("language"),
-        Field(name="language",
-            label=_("Language"),
-            modes="edit add",
-            property=schema.Choice(title=_("Language"),
-                vocabulary="language_vocabulary",
-            ),
-            add_widget=widgets.LanguageLookupWidget,
-        ),
+        LanguageField("language"),
         Field(name="short_name",
             label=_("Publications type"),
             modes="edit add listing",
