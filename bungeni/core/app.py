@@ -11,6 +11,7 @@ log = __import__("logging").getLogger("bungeni.core.app")
 from zope.interface import implements
 from zope.interface import implementedBy
 from zope.component import provideAdapter
+from zope.interface.declarations import alsoProvides 
 
 from zope.app.component import site
 from zope.app.container.sample import SampleContainer
@@ -60,6 +61,8 @@ class AppSetup(object):
         # ensure indexing facilities are setup(lazy)
         index.setupFieldDefinitions(index.indexer)
         
+
+        
         sm = site.LocalSiteManager(self.context)
         self.context.setSiteManager(sm)
         
@@ -84,6 +87,9 @@ class AppSetup(object):
             default_name="workspace-index",
             publishTraverseResolver=workspace_resolver
         )
+        
+        alsoProvides(workspace, interfaces.ISearchableSection)
+        
         workspace["scheduling"] = Section(
             title=_(u"Scheduling"),
             description=_(u"Scheduling"),
@@ -115,6 +121,8 @@ class AppSetup(object):
             title=_(u"Archive"),
             description=_(u"Parliament records and documents"),
             default_name="archive-index")
+        
+        alsoProvides(archive, interfaces.ISearchableSection)
             
         #!+SECURITY(miano. nov-2010) Admin section now uses AdminSection
         # container that is identical to Section, only difference is that
@@ -127,11 +135,15 @@ class AppSetup(object):
             default_name="admin-index",
             marker=model_interfaces.IBungeniAdmin)
         
+        alsoProvides(admin, interfaces.ISearchableSection)
+        
         # business section
         business["whats-on"] = Section(
             title=_(u"What's on"),
             description=_(u"Current parliamentary activity"),
             default_name="whats-on")
+        
+        alsoProvides(business, interfaces.ISearchableSection)
 
         business[u"committees"] = QueryContent(
             container_getter(get_current_parliament, 'committees'),
@@ -194,6 +206,8 @@ class AppSetup(object):
             container_getter(get_current_parliament, 'parliamentmembers'),
             title=_(u"Current"),
             description=_(u"View current parliament members (MPs)"))
+        
+        alsoProvides(members, interfaces.ISearchableSection)
 
         members[u"political-groups"] = QueryContent(
             container_getter(get_current_parliament, 'politicalgroups'),

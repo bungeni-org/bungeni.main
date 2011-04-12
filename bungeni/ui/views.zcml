@@ -145,8 +145,14 @@
 
     <!-- Content Search Form -->
 
-    <browser:page name="search"
+    <!--<browser:page name="search"
         for="bungeni.core.interfaces.ISection"
+        permission="zope.View"
+        class=".search.PagedSearch"
+    />-->
+    
+    <browser:page name="search"
+        for="bungeni.core.interfaces.ISearchableSection"
         permission="zope.View"
         class=".search.PagedSearch"
     />

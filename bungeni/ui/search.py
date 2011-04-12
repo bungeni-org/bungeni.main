@@ -71,17 +71,18 @@ from zope.security.checker import ProxyFactory
 from zope.app.publisher.browser import getDefaultViewName
 from bungeni.core.interfaces import ISection
 from bungeni.ui.viewlets.navigation import _get_context_chain
+from bungeni.ui.utils.url import get_section_name
 
 ALLOWED_TYPES = {'business': ('Question', 'Motion', 'Committee', 'Bill', \
                               'TabledDocument', 'AgendaItem'),
                  'archive': ('Question', 'Motion', 'Committee', \
                              'Bill', 'TabledDocument', 'AgendaItem', \
-                             'Parliament', 'PoliticalGroup'),
-                 'members': ('MemberOfParliament',),
+                             'Parliament', 'PoliticalGroup',
+                             'MemberOfParliament'),
+                 'members': ('MemberOfParliament', 'PoliticalGroup'),
                  'admin': ('Question', 'Motion', 'Committee', 'Bill', \
                            'TabledDocument', 'AgendaItem', 'Parliament', \
-                           'PoliticalGroup', 'User'),
-                 'test': ('Motion', 'Question'), }
+                           'PoliticalGroup', 'User', 'MemberOfParliament'),}
 
 def get_statuses_vocabulary(klass):
     try:
@@ -283,18 +284,6 @@ class Search(forms.common.BaseForm, ResultListing, HighlightMixin):
     form_fields = form.Fields(ISearch, IHighLight)
     #selection_column = columns[0]
 
-    def get_current_section(self):
-        chain = _get_context_chain(self.context)
-        i = len(chain) - 1
-        ob = chain[i]
-        while not ISection.providedBy(ob):
-            i -= 1
-            if i < 0:
-                ob = None
-                break
-            ob = chain[i]
-        return ob
-
     def setUpWidgets(self, ignore_request=False):
         # setup widgets in data entry mode not bound to context
         self.adapters = {}
@@ -318,11 +307,11 @@ class Search(forms.common.BaseForm, ResultListing, HighlightMixin):
     @CachedProperty
     def _searchresults(self):
         #Filter items allowed in current section
-        section = self.get_current_section()
+        section = get_section_name()
 
         subqueries = []
 
-        for tq in ALLOWED_TYPES[section.__name__]:
+        for tq in ALLOWED_TYPES[section]:
             subqueries.append(self.searcher.query_field('object_type', tq))
 
         type_query = self.searcher.query_composite(self.searcher.OP_OR, subqueries)

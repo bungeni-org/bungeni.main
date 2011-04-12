@@ -68,10 +68,18 @@ class AgendaItemBusinessAbsoluteURLView(BusinessAbsoluteURLView):
 """ Members section
 """
 class MembersAbsoluteURLView(CustomAbsoluteURL):
-    """ Custom absolute url for members in members section
+    """ Custom absolute url for members of parliament in members section
     """
     section = "members"
     subsection = "current"
+    
+class PoliticalGroupMembersAbsoluteURLView(CustomAbsoluteURL):
+    """ Custom absolute url for political group in members section
+    """    
+    section = "members"
+    subsection = "political-groups"
+
+
 
 """ Archives section
 """
@@ -104,6 +112,89 @@ class CommitteesArchiveAbsoluteURLView(ArchiveAbsoluteURLView):
     """ Custom absolute url for committees in archive section
     """
     subsection = "committees"
+    
+    
+class ArchiveSectionParliamentItem(AbsoluteURL):
+    """ Custom absolute url for parliament items in archive section
+    """
+    subsection = ""
+    
+    def __str__(self):
+        base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
+        return '%s/archive/browse/parliaments/obj-%s/%s/%s' % \
+               (base_url, self.context.parliament_id, self.subsection, stringKey(self.context))
+
+    __call__ = __str__
+
+
+class QuestionArchiveAbsoluteURLView(ArchiveSectionParliamentItem):
+    """ Custom absolute url for questions in archive section
+    """
+    subsection = "questions"
+    
+    
+class ReportArchiveAbsoluteURLView(AbsoluteURL):
+    """ Custom absolute url for reports in archive section
+    """
+    subsection = "preports"
+    
+    def __str__(self):
+        base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
+        return '%s/archive/browse/parliaments/obj-%s/%s/%s' % \
+               (base_url, self.context.group_id, self.subsection, stringKey(self.context))
+
+    __call__ = __str__
+
+
+class TabledDocumentArchiveAbsoluteURLView(ArchiveSectionParliamentItem):
+    """ Custom absolute url for tabled documents in archive section
+    """
+    subsection = "tableddocuments"
+    
+
+class MotionArchiveAbsoluteURLView(ArchiveSectionParliamentItem):
+    """ Custom absolute url for motions in archive section
+    """
+    subsection = "motions"
+    
+
+class BillArchiveAbsoluteURLView():
+    """ Custom absolute url for bills in archive section
+    """
+    subsection = "bills"
+
+    
+class MemberOfParliamentArchiveAbsoluteURLView(AbsoluteURL):
+    """ Custom absolute url for parliament members in archive section
+    """
+    subsection = "parliamentmembers"
+    
+    def __str__(self):
+        base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
+        return '%s/archive/browse/parliaments/obj-%s/%s/%s' % \
+               (base_url, self.context.group_id, self.subsection, stringKey(self.context))
+
+    __call__ = __str__
+
+
+class OfficeArchiveAbsoluteURLView(AbsoluteURL):
+    """ Custom absolute url for offices in archive section
+    """
+    subsection = "offices"
+    
+    def __str__(self):
+        base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
+        return '%s/archive/browse/parliaments/obj-%s/%s/%s' % \
+               (base_url, self.context.parent_group_id, self.subsection, stringKey(self.context))
+
+    __call__ = __str__
+
+
+class AgendaItemArchiveAbsoluteURLView(ArchiveSectionParliamentItem):
+    """ Custom absolute url for agenda items in archive section
+    """
+    subsection = "agendaitems"
+
     
     
 """ Admin section

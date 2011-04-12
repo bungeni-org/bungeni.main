@@ -315,6 +315,9 @@ class UserIndexer(ContentIndexer):
         
 class MemberOfParliament(ContentIndexer):
     domain_model = domain.MemberOfParliament
+    
+class PoliticalGroupIndexer(ContentIndexer):
+    domain_model = domain.PoliticalGroup
 
 class BillIndexer(ContentIndexer):
     domain_model = domain.Bill
@@ -410,6 +413,7 @@ def setupFieldDefinitions(indexer):
     
     UserIndexer.defineIndexes(indexer)
     BillIndexer.defineIndexes(indexer)
+    PoliticalGroupIndexer.defineIndexes(indexer)
     MemberOfParliament.defineIndexes(indexer)
     MotionIndexer.defineIndexes(indexer)
     QuestionIndexer.defineIndexes(indexer)
@@ -485,6 +489,7 @@ def main():
     for content_indexer in [
         UserIndexer,
         BillIndexer,
+        PoliticalGroupIndexer,
         MemberOfParliament,
         MotionIndexer,
         QuestionIndexer,

@@ -16,6 +16,9 @@ class INavigationProxy(IReadContainer):
 class ISection(IContentContainer, IDCDescriptiveProperties):
     """Represents a section in the site, e.g. /business."""
 
+class ISearchableSection(interface.Interface):
+    """Marker interface for searchable sections"""
+
 class IQueryContent(interface.Interface):
     query = interface.Attribute(
         """Query-method which returns a content-item.""")
