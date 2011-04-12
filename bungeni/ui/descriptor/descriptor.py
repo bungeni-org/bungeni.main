@@ -473,9 +473,9 @@ def AdmissibleDateField(name="admissible_date"):
 # here should really all be {display, container}_label.
 
 class UserDescriptor(ModelDescriptor):
+    localizable = True
     display_name = _("User")
     container_name = _("Users")
-    localizable = True
     
     fields = [
         Field(name="user_id", # for linking item in listing
@@ -654,9 +654,9 @@ class UserDescriptor(ModelDescriptor):
 
 class UserDelegationDescriptor(ModelDescriptor):
     """Delegate rights to act on behalf of that user."""
+    localizable = True
     display_name = _("Delegate to user")
     container_name = _("Delegations")
-    localizable = True
     
     fields = [
         Field(name="delegation_id",
@@ -739,9 +739,9 @@ class GroupMembershipDescriptor(ModelDescriptor):
 
 
 class MpDescriptor(GroupMembershipDescriptor):
+    localizable = True
     display_name = _("Member of parliament")
     container_name = _("Members of parliament")
-    localizable = True
 
     fields = [
         Field(name="user_id",
@@ -845,9 +845,9 @@ class MpDescriptor(GroupMembershipDescriptor):
 
 class PartyMemberDescriptor(GroupMembershipDescriptor):
     """Membership of a user in a party."""
+    localizable = True
     display_name = _("member")
     container_name = _("members")
-    localizable = True
 
     fields = [
         Field(name="user_id",
@@ -976,8 +976,7 @@ class ParliamentDescriptor(GroupDescriptor):
     localizable = True
     display_name = _("Parliament")
     container_name = _("Parliaments")
-    custom_validators = validations.validate_parliament_dates,
-
+    
     fields = [
         Field(name="full_name",
             description=_("Parliament name"),
@@ -1030,16 +1029,17 @@ class ParliamentDescriptor(GroupDescriptor):
         EndAfterStart,
         ElectionAfterStart
     ]
+    custom_validators = [validations.validate_parliament_dates]
     public_wfstates = [
         parliament_wf_get_state("active").id,
         parliament_wf_get_state("dissolved").id
     ]
 
 class CommitteeTypeDescriptor(ModelDescriptor):
+    localizable = False
     display_name = _("Committee type")
     container_name = _("Committee types")
-    localizable = False
-
+    
     fields = [
         Field(name="committee_type",
             modes="view edit add listing",
@@ -1072,8 +1072,7 @@ class CommitteeDescriptor(GroupDescriptor):
     localizable = True
     display_name = _("Profile")
     container_name = _("Committees")
-    custom_validators = [validations.validate_date_range_within_parent, ]
-
+    
     fields = deepcopy(GroupDescriptor.fields)
     fields.extend([
         Field(name="committee_type_id",
@@ -1127,6 +1126,7 @@ class CommitteeDescriptor(GroupDescriptor):
         EndAfterStart,
         #DissolutionAfterReinstatement
     ]
+    custom_validators = [validations.validate_date_range_within_parent]
     public_wfstates = [
         committee_wf_get_state("active").id,
         committee_wf_get_state("dissolved").id
@@ -1134,9 +1134,9 @@ class CommitteeDescriptor(GroupDescriptor):
 
 
 class CommitteeMemberDescriptor(GroupMembershipDescriptor):
+    localizable = True
     display_name = _("Member")
     container_name = _("Members")
-    localizable = True
 
     fields = [
         Field(name="user_id",
@@ -1159,9 +1159,9 @@ class CommitteeMemberDescriptor(GroupMembershipDescriptor):
 
 
 class AddressTypeDescriptor(ModelDescriptor):
+    localizable = False
     display_name = _("Address type")
     container_name = _("Address types")
-    localizable = False
 
     fields = [
         Field(name="address_type_name",
@@ -1341,7 +1341,6 @@ class PoliticalPartyDescriptor(GroupDescriptor):
     localizable = False
     display_name = _("political party")
     container_name = _("political parties")
-    custom_validators = [validations.validate_date_range_within_parent, ]
 
     fields = deepcopy(GroupDescriptor.fields)
     fields.extend([
@@ -1352,6 +1351,7 @@ class PoliticalPartyDescriptor(GroupDescriptor):
         ),
     ])
     schema_invariants = [EndAfterStart]
+    custom_validators = [validations.validate_date_range_within_parent]
 
 
 class PoliticalGroupDescriptor(PoliticalPartyDescriptor):
@@ -1366,7 +1366,7 @@ class OfficeDescriptor(GroupDescriptor):
     localizable = True
     display_name = _("Office")
     container_name = _("Offices")
-
+    
     fields = [
         Field(name="office_role",
             property=schema.Choice(title=_("Role"),
@@ -1383,6 +1383,7 @@ class OfficeMemberDescriptor(GroupMembershipDescriptor):
     localizable = True
     display_name = _("Office Member")
     container_name = _("Office Members")
+    
     fields = [
         Field(name="user_id",
             modes="view edit add listing",
@@ -1795,6 +1796,7 @@ class HeadingDescriptor(ParliamentaryItemDescriptor):
     localizable = True
     display_name = _("Heading")
     container_name = _("Headings")
+    
     fields = [
         Field(name="short_name",
             modes="view edit add listing",
@@ -1888,9 +1890,9 @@ class MotionVersionDescriptor(VersionDescriptor):
     fields = deepcopy(VersionDescriptor.fields)
 
 class BillTypeDescriptor(ModelDescriptor):
+    localizable = False
     display_name = _("Bill Type")
     container_name = _("Bill types")
-    localizable = False
 
     fields = [
         Field(name="bill_type_name",
@@ -1953,8 +1955,7 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
     localizable = True
     display_name = _("Question")
     container_name = _("Questions")
-    custom_validators = ()
-
+    
     fields = deepcopy(ParliamentaryItemDescriptor.fields)
     fields.extend([
         Field(name="question_number",
@@ -2016,8 +2017,8 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
             view_widget=widgets.TermsDisplayWidget,
         ),
     ])
+    custom_validators = ()
     public_wfstates = get_states("question", tagged=["public"])
-
 
 class QuestionVersionDescriptor(VersionDescriptor):
     localizable = True
@@ -2501,7 +2502,7 @@ class ItemScheduleDiscussionDescriptor(ModelDescriptor):
     localizable = True
     display_name = _("Discussion")
     container_name = _("Discussions")
-    localizable = True
+    
     fields = [
         LanguageField("language"),
         Field(name="body_text",
@@ -2523,7 +2524,7 @@ class ReportDescriptor(ParliamentaryItemDescriptor):
     localizable = True
     display_name = _("Report")
     container_name = _("Reports")
-    localizable = True
+    
     fields = [
         #LanguageField("language"),
         Field(name="language",

@@ -46,7 +46,7 @@ def write_custom(content):
 def is_descriptor(cls):
     try:
         return IModelDescriptor.implementedBy(cls)
-    except TypeError:
+    except (TypeError, AttributeError):
         return False
     '''
     try:

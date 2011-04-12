@@ -226,8 +226,8 @@ class Workflow(object):
     @property
     def states(self):
         """ () -> { status: State } """
-        #log.warn("DEPRECATED [%s] Workflow.states, " \
-        #    "use Workflow.get_state(status) instead" % (self.name))
+        log.warn("DEPRECATED [%s] Workflow.states, " \
+            "use Workflow.get_state(status) instead" % (self.name))
         return self._states_by_id
     
     def get_state(self, state_id):
