@@ -25,13 +25,20 @@
         action="./add"
         permission="zope.ManageContent"
         layer=".interfaces.IAdminSectionLayer"
-    />     
+    />
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.domain.CommitteeTypeContainer"
         title="Add committee type..."
         action="./add"
         permission="zope.ManageContent"
         layer=".interfaces.IAdminSectionLayer"
-    />     
+    />
+    <browser:menuItem menu="plone_contentmenu"
+        for="bungeni.models.domain.VenueContainer"
+        title="Add venue..."
+        action="./add"
+        permission="zope.ManageContent"
+        layer=".interfaces.IAdminSectionLayer"
+    />
 </configure>
 

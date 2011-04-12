@@ -543,3 +543,12 @@ class AttendanceTypeDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         return context.attendance_type
+
+class VenueDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.IVenue)
+    
+    @property
+    def title(self):
+        session = Session()
+        context = session.merge(removeSecurityProxy(self.context))
+        return context.short_name

@@ -60,9 +60,6 @@ class AppSetup(object):
         # ensure indexing facilities are setup(lazy)
         index.setupFieldDefinitions(index.indexer)
         
-        #Uncomment to reset index
-        #index.reset_index()
-        
         sm = site.LocalSiteManager(self.context)
         self.context.setSiteManager(sm)
         
@@ -302,7 +299,7 @@ class AppSetup(object):
         content[u"parties"] = domain.PoliticalPartyContainer()
         to_locatable_container(domain.PoliticalParty, content[u"parties"])
 
-        vocabularies = content["vocabularies"] = Section(
+        vocabularies = admin["vocabularies"] = Section(
             title=_(u"vocabularies"),
             description=_(u"manage vocabularies"),
             marker=model_interfaces.IBungeniAdmin,
@@ -324,3 +321,5 @@ class AppSetup(object):
         to_locatable_container(domain.CommitteeType, 
             vocabularies[u"committeetypes"]
         )
+        vocabularies[u"venues"] = domain.VenueContainer()
+        to_locatable_container(domain.Venue, vocabularies[u"venues"])

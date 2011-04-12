@@ -461,3 +461,6 @@ class ICommitteeType(interface.Interface):
 
 class IAttendanceType(interface.Interface):
     pass
+
+class IVenue(interface.Interface):
+    pass

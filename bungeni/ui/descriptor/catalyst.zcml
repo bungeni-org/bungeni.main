@@ -312,6 +312,12 @@
         ui_module="bungeni.ui.content"
         echo="False"
     />
+    <db:catalyst class="bungeni.models.domain.Venue"
+        descriptor=".descriptor.VenueDescriptor"
+        interface_module="bungeni.models.interfaces"
+        ui_module="bungeni.ui.content"
+        echo="False"
+    />
     <db:catalyst class="bungeni.models.domain.GroupAddress"
         descriptor=".descriptor.GroupAddressDescriptor"
         interface_module="bungeni.models.interfaces"

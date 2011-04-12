@@ -2099,6 +2099,27 @@ class TabledDocumentVersionDescriptor(VersionDescriptor):
     container_name = _("Versions")
     fields = deepcopy(VersionDescriptor.fields)
 
+class VenueDescriptor(ModelDescriptor):
+    localizable = False
+    display_name = _("Venue")
+    container_name = _("Venues")
+    fields = [
+        Field(name="short_name",
+            modes="view edit add listing",
+            property=schema.TextLine(title=_("Title")),
+        ),
+        Field(name="description",
+            modes="add edit view",
+            property=schema.Text(title=_("description"))
+        ),
+        Field(name="language",
+            modes="add edit view",
+            property=schema.Choice(title=_("Language"),
+                vocabulary="language_vocabulary"
+            ),
+            add_widget=widgets.LanguageLookupWidget
+        ),
+    ]
 
 class SittingDescriptor(ModelDescriptor):
     localizable = True

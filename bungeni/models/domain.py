@@ -783,9 +783,10 @@ class ResourceType(object):
     """A Type of resource.
     """
 
-class Venue(object):
+class Venue(Entity):
     """A venue for a sitting.
     """
+    interface.implements(interfaces.ITranslatable, interfaces.IVenue)
 
 class Report(ParliamentaryItem):
     """Agendas and minutes.
