@@ -1887,6 +1887,7 @@ class BillTypeDescriptor(ModelDescriptor):
             modes="view edit add listing",
             property=schema.TextLine(title=_("Bill Type"))
         ),
+        LanguageField(name="language"),
     ]
 
 class BillDescriptor(ParliamentaryItemDescriptor):

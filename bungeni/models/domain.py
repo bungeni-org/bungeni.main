@@ -566,7 +566,7 @@ MotionVersion = ItemVersions.makeVersionFactory("MotionVersion")
 class BillType(Entity):
     """Type of bill: public/ private, ....
     """
-    interface.implements(interfaces.IBillType)
+    interface.implements(interfaces.ITranslatable, interfaces.IBillType)
 
 class Bill(ParliamentaryItem):
     cosignatory = one2many("cosignatory",

@@ -917,7 +917,7 @@ bill_types = rdb.Table("bill_types", metadata,
         nullable=False,
         unique=True
     ),
-    # language?
+    rdb.Column("language", rdb.String(5), nullable=False),
 )
 
 bills = rdb.Table("bills", metadata,
