@@ -368,7 +368,7 @@ Bill Type:
 -----------
   >>> bt = model.BillType()
   >>> bt.bill_type_name = u"private"
-  >>> #bt.language = "en"
+  >>> bt.language = "en"
   >>> session.add(bt)
   >>> session.flush()
 

@@ -76,6 +76,7 @@ Initialise Bill Type
 --------------------
    >>> bill_type = domain.BillType()
    >>> bill_type.bill_type_name = u"Public Bill"
+   >>> bill_type.language = u"en"
    >>> session.add(bill_type)
    >>> session.flush()
    >>> bill_type.bill_type_id
