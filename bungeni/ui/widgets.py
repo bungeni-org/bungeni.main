@@ -1102,7 +1102,8 @@ class TreeVocabularyWidget(DropdownWidget):
 
     def dataSource(self):
         selected = []
-        if self.hasInput() and self.hasValidInput():
+        if self.hasInput() and self.hasValidInput() and \
+        self._data is not None:
             selected = self.getInputValue().split("\n")
         elif self._data is not None and self._data\
             is not self._data_marker:
@@ -1125,7 +1126,8 @@ class TreeVocabularyWidget(DropdownWidget):
 
         if self._data is not None and self._data is not self._data_marker:
             kw["value"] = "|".join(self._data.split("\n"))
-        elif self.hasInput() and self.hasValidInput():
+        elif self.hasInput() and self.hasValidInput() \
+            and self._data is not None:
             kw["value"] = "|".join(self.getInputValue().split("\n"))
         else:
             kw["value"] = ""
