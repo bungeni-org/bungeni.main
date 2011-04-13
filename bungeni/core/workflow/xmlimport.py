@@ -152,7 +152,6 @@ def _load(workflow, name):
     states = []
     domain = strip_none(workflow.get("domain"))
     wuids = set() # unique IDs in this XML workflow file
-    wid = strip_none(workflow.get("id")) # workflow XML id
     initial_state = strip_none(workflow.get("initial_state"))
     
     ZCML_PROCESSED = bool(name in ZCML_WORKFLOWS_PROCESSED)
@@ -163,13 +162,13 @@ def _load(workflow, name):
         ZCML_LINES.append("%s<!-- %s -->" % (ZCML_INDENT, name))
     
     def validate_id(id, tag):
-        """Assumption: id is not None."""
-        m = 'Invalid <%s> id="%s" in workflow [%s]' % (tag, id, wid)
+        """Ensure that ID values are unique within the same scope (the XML doc).
+        Assumption: id is not None.
+        """
+        m = 'Invalid <%s> id="%s" in workflow [%s]' % (tag, id, name)
         assert ID_RE.match(id), '%s -- only letters, numbers, "_" allowed' % (m)
         assert id not in wuids, "%s -- id not unique in workflow document" % (m)
         wuids.add(id)
-    # ID values should be unique within the same scope (the XML document)
-    validate_id(wid, "workflow")
     
     def get_like_state(state_id):
         if state_id is None:
@@ -183,7 +182,7 @@ def _load(workflow, name):
         for perm in [(GRANT, p, r), (DENY, p, r)]:
             assert perm not in permissions, "Workflow [%s] state [%s] " \
                 "conflicting state permission: (%s, %s, %s)" % (
-                    wid, state_id, assignment, p, r)
+                    name, state_id, assignment, p, r)
             if perm in like_permissions:
                 like_permissions.remove(perm)
         permissions.append((assignment, p, r))
@@ -332,7 +331,7 @@ def _load(workflow, name):
             args = (Message(t.get("title"), domain), source, destination)
             transitions.append(Transition(*args, **kw))
             log.debug("[%s] adding transition [%s-%s] [%s]" % (
-                wid, source or "", destination, kw))
+                name, source or "", destination, kw))
     
     return Workflow(name, states, transitions)
 
