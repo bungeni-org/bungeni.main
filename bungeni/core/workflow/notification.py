@@ -169,23 +169,26 @@ class Notification(object):
 
     """
     def __init__(self,
-        # resolvable python callable
-        condition="owner_receive_notification",
-        # i18n, template source
-        subject="${item.class_name} ${item.status}: ${item.short_name}", 
-        # template source 
-        from_="${site.clerk_email}",
-        # template source 
-        to="${item.owner_email}",
-        # i18n, template source
-        body="${item.class_name} ${item.status}: ${item.short_name}"
-    ):
+            # resolvable python callable
+            condition="owner_receive_notification",
+            # i18n, template source
+            subject="${item.class_name} ${item.status}: ${item.short_name}", 
+            # template source 
+            from_="${site.clerk_email}",
+            # template source 
+            to="${item.owner_email}",
+            # i18n, template source
+            body="${item.class_name} ${item.status}: ${item.short_name}",
+            # documentational note
+            note=None
+        ):
         self.condition = wrapped_condition(
             capi.get_workflow_condition(condition))
         self.subject = subject 
         self.from_ = from_
         self.to = to
         self.body = body
+        self.note = note
             
     # !+ message language, should be a recipient preference
     # !+ for now, set/retrieve *translated* templates, using app default lang

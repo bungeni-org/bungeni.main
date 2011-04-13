@@ -52,9 +52,12 @@ def wrapped_condition(condition):
 
 class State(object):
     
-    def __init__(self, id, title, action_names, permissions, notifications):
+    def __init__(self, id, title, note, action_names,
+            permissions, notifications
+        ):
         self.id = id
         self.title = title
+        self.note = note
         self.action_names = action_names # [str]
         self.permissions = permissions
         self.notifications = notifications
@@ -104,13 +107,14 @@ class Transition(object):
     """
     
     def __init__(self, title, source, destination,
-        condition=None,
-        trigger=interfaces.MANUAL, 
-        permission=CheckerPublic,
-        order=0,
-        require_confirmation=False,
-        **user_data
-    ):
+            condition=None,
+            trigger=interfaces.MANUAL, 
+            permission=CheckerPublic,
+            order=0,
+            require_confirmation=False,
+            note=None,
+            **user_data
+        ):
         self.title = title
         self.source = source
         self.destination = destination
@@ -120,6 +124,7 @@ class Transition(object):
         self.permission = permission
         self.order = order
         self.require_confirmation = require_confirmation
+        self.note = note
         self.user_data = user_data
    
     @property
@@ -163,8 +168,9 @@ class StateController(object):
 class Workflow(object):
     zope.interface.implements(interfaces.IWorkflow)
     
-    def __init__(self, name, states, transitions):
+    def __init__(self, name, states, transitions, note=None):
         self.name = name
+        self.note = note
         self._states_by_id = {} # {id: State}
         self._transitions_by_id = {} # {id: Transition}
         self._transitions_by_source = {} # {source: [Transition]}

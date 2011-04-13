@@ -153,6 +153,7 @@ def _load(workflow, name):
     domain = strip_none(workflow.get("domain"))
     wuids = set() # unique IDs in this XML workflow file
     initial_state = strip_none(workflow.get("initial_state"))
+    note = strip_none(workflow.get("note"))
     
     ZCML_PROCESSED = bool(name in ZCML_WORKFLOWS_PROCESSED)
     if not ZCML_PROCESSED:
@@ -244,11 +245,13 @@ def _load(workflow, name):
                     strip_none(n.get("from")), # template source
                     strip_none(n.get("to")), # template source
                     strip_none(n.get("body")), # template source, i18n
+                    strip_none(n.get("note")), # documentational note
                 )
             )
         # states
         states.append(
             State(state_id, Message(s.get("title", domain)), 
+                strip_none(s.get("note")),
                 action_names, permissions, notifications)
         )
     
@@ -333,5 +336,5 @@ def _load(workflow, name):
             log.debug("[%s] adding transition [%s-%s] [%s]" % (
                 name, source or "", destination, kw))
     
-    return Workflow(name, states, transitions)
+    return Workflow(name, states, transitions, note)
 
