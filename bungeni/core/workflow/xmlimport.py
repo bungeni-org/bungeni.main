@@ -36,7 +36,7 @@ trigger_value_map = {
 # only letters, numbers and "_" char i.e. no whitespace or "-"
 ID_RE = re.compile("^[\w\d_]+$")
 
-TRANS_ATTRS_REQUIREDS = ("id", "title", "source", "destination")
+TRANS_ATTRS_REQUIREDS = ("title", "source", "destination")
 TRANS_ATTRS_OPTIONALS = ("condition", "trigger", "roles", "permission", 
     "order", "require_confirmation", "note")
 TRANS_ATTRS = TRANS_ATTRS_REQUIREDS + TRANS_ATTRS_OPTIONALS
@@ -152,8 +152,12 @@ def _load(workflow, name):
     states = []
     domain = strip_none(workflow.get("domain"))
     wuids = set() # unique IDs in this XML workflow file
-    initial_state = strip_none(workflow.get("initial_state"))
     note = strip_none(workflow.get("note"))
+    # initial_state
+    initial_state = workflow.get("initial_state")
+    assert initial_state == "", "Workflow [%s] initial_state attribute " \
+        "must be empty string, not [%s]" % (name, initial_state)
+    initial_state = None
     
     ZCML_PROCESSED = bool(name in ZCML_WORKFLOWS_PROCESSED)
     if not ZCML_PROCESSED:
@@ -261,21 +265,15 @@ def _load(workflow, name):
     for t in workflow.iterchildren("transition"):
         for key in t.keys():
             assert key in TRANS_ATTRS, \
-                "Unknown attribute %s in %s" % (key, etree.tostring(t))
+                "Workflow [%s]: unknown attribute %s in %s" % (
+                    name, key, etree.tostring(t))
         for key in TRANS_ATTRS_REQUIREDS:
-            #!+SOURCE(mr, apr-2011) may be None, {initial_state}, ...
-            if t.get(key) is None:
+            if key == "source" and t.get(key) == "":
+                # initial_state, an explicit empty string
+                continue
+            elif strip_none(t.get(key)) is None:
                 raise SyntaxError('No required "%s" attribute in %s' % (
                     key, etree.tostring(t)))
-        tid = t.get("id")
-        validate_id(tid, "transition")
-        
-        # update ZCML for dedicated permission
-        pid = "bungeni.%s.wf.%s" % (name, tid)
-        if not ZCML_PROCESSED:
-            if is_zcml_permissionable(t):
-                zcml_transition_permission(pid, t.get("title"), 
-                    t.get("roles", "bungeni.Clerk").split())
         
         # empty source -> initial_state
         sources = t.get("source").split() or [initial_state]
@@ -285,6 +283,16 @@ def _load(workflow, name):
         destination = t.get("destination")
         assert destination in STATE_IDS, \
             "Unknown transition destination state [%s]" % (destination)
+        # update ZCML for dedicated permission for (XML multi-source) transition
+        tid = "%s.%s" % (
+            ".".join([ source or "" for source in sources ]),
+            destination)
+        pid = "bungeni.%s.wf.%s" % (name, tid)
+        if not ZCML_PROCESSED:
+            if is_zcml_permissionable(t):
+                zcml_transition_permission(pid, t.get("title"), 
+                    t.get("roles", "bungeni.Clerk").split())
+        # validate sources
         for source in sources:
             if source is not initial_state:
                 assert source in STATE_IDS, \

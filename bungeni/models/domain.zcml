@@ -98,7 +98,7 @@
         />
         <!-- !+WORKFLOW_TRANSITION(ah, jan-2011) to be reviewed for now we 
             use the permission used for running transition  -->
-        <require permission="bungeni.question.wf.approve"
+        <require permission="bungeni.question.wf.completed.admissible"
             set_attributes="question_number"
         />
         <require permission="bungeni.response.View"
@@ -151,7 +151,7 @@
 
         <!-- !+WORKFLOW_TRANSITION(ah, jan-2011) was bungeni.historical.Edit 
             we use instead the permission used in the "approve" transition -->
-        <require permission="bungeni.motion.wf.approve"
+        <require permission="bungeni.motion.wf.completed.admissible"
             set_attributes="motion_number"
         />
 
@@ -278,7 +278,7 @@
 
         <!-- !+WORKFLOW_TRANSITION(ah, jan-2011) was bungeni.historical.Edit 
             we use instead the permission used in the transition -->
-        <require permission="bungeni.tableddocument.wf.approve"
+        <require permission="bungeni.tableddocument.wf.completed.admissible"
             set_attributes="tabled_document_number"
         />
                 

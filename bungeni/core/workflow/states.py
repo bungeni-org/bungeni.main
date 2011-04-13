@@ -166,7 +166,13 @@ class StateController(object):
     
 
 class Workflow(object):
+    """A Workflow instance for a specific document type, defining the possible 
+    states a document may have and the allowed transitions between them.
+    The initial state of the workflowed document is always None.
+    """
     zope.interface.implements(interfaces.IWorkflow)
+    
+    initial_state = None
     
     def __init__(self, name, states, transitions, note=None):
         self.name = name
@@ -187,14 +193,17 @@ class Workflow(object):
         tbyd = self._transitions_by_destination
         tbyd.clear()
         # states
-        tbys[None] = [] # initial (source) state
+        tbys[self.initial_state] = [] # special case source: initial state
         for s in states:
             sbyid[s.id] = s
             tbys[s.id] = []
             tbyd[s.id] = []
         # transitions
         for t in transitions:
-            tbyid[t.transition_id] = t
+            tid = t.transition_id
+            assert tid not in tbyid, \
+                "Workflow [%s] duplicates transition [%s]" % (self.name, tid)
+            tbyid[tid] = t
             tbys[t.source].append(t)
             tbyd[t.destination].append(t)
         # integrity
