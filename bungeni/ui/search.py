@@ -38,7 +38,7 @@ Supported xapian query operators
  |
 """
 
-import time, simplejson, urllib
+import time, simplejson, urllib, urlparse
 from bungeni.ui import forms
 from ore.xapian import interfaces
 
@@ -62,11 +62,12 @@ from bungeni.alchemist import ui
 
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
+from zope.security.checker import canAccess
 from zope import formlib
 from ore.xapian.interfaces import IIndexer
 from bungeni.ui.utils.common import get_application
 from zope.app.component import site
-from zope.component import queryMultiAdapter
+from zope.component import queryMultiAdapter, getMultiAdapter
 from zope.security.checker import ProxyFactory
 from zope.app.publisher.browser import getDefaultViewName
 from bungeni.core.interfaces import ISection
@@ -296,13 +297,9 @@ class Search(forms.common.BaseForm, ResultListing, HighlightMixin):
 
     def authorized(self, result):
         obj = result.object()
-
         defaultview = getDefaultViewName(obj, self.request)
-        try:
-            view = queryMultiAdapter((ProxyFactory(obj), self.request), name=defaultview)
-            return True
-        except Unauthorized:
-            print False
+        view = queryMultiAdapter((ProxyFactory(obj), self.request), name=defaultview)
+        return canAccess(view, "__call__")
 
     @CachedProperty
     def _searchresults(self):
