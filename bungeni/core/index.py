@@ -26,6 +26,7 @@ from zope.dottedname import resolve
 from zope.security.proxy import removeSecurityProxy
 from zope.component import getUtility
 from zope.app.schema.vocabulary import IVocabularyFactory
+import threading, time
 
 import xappy, os, os.path as path
 import logging
@@ -42,7 +43,6 @@ from bungeni.models import domain
 from bungeni.models.interfaces import ITranslatable
 from bungeni.core import translation
 import bungeni
-
 
 log = logging.getLogger('ore.xapian')
 
@@ -510,3 +510,9 @@ def reset_index():
        traceback.print_exc()
        pdb.post_mortem(sys.exc_info()[-1]) 
 ''' '''
+
+class IndexReset(threading.Thread):
+    
+    def run(self):
+        reset_index()
+        

@@ -59,8 +59,7 @@ class AppSetup(object):
         
         import index
         # ensure indexing facilities are setup(lazy)
-        index.setupFieldDefinitions(index.indexer)
-        
+        index.setupFieldDefinitions(index.indexer)    
 
         
         sm = site.LocalSiteManager(self.context)
@@ -288,6 +287,12 @@ class AppSetup(object):
             description=_(u"email settings"),
             marker=model_interfaces.IBungeniAdmin,
             default_name="email-settings")
+
+        admin["xapian-settings"] = Section(
+            title=_(u"xapian settings"),
+            description=_(u"xapian settings"),
+            marker=model_interfaces.IBungeniAdmin,
+            default_name="xapian-settings")
         
         content[u"parliaments"] = domain.ParliamentContainer()
         to_locatable_container(domain.Parliament, content[u"parliaments"])

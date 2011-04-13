@@ -24,6 +24,14 @@
         layer="bungeni.ui.interfaces.IBungeniSkin"
         permission="zope.ManageSite"
     />
+    
+    <browser:page name="xapian-settings"
+        for="bungeni.models.interfaces.IBungeniAdmin"
+        class=".admin.XapianSettings"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+        permission="zope.ManageSite"
+    />
+    
     <browser:page name="vocabularies"
         for="bungeni.models.interfaces.IBungeniAdmin"
         class=".admin.VocabulariesIndex"

@@ -11,6 +11,7 @@ from bungeni.alchemist import Session
 from bungeni.alchemist import catalyst
 from bungeni.models import domain, interfaces, utils
 from bungeni.ui import container, search, browser
+from bungeni.core.index import IndexReset
 
 
 ''' !+UNUSED(mr, oct-2010)
@@ -150,4 +151,17 @@ class VocabulariesIndex(browser.BungeniBrowserView):
         return super(VocabulariesIndex, self).__init__(context, request)
     
     def __call__(self):
+        return self.render()
+    
+
+class XapianSettings(browser.BungeniBrowserView):
+    
+    render = ViewPageTemplateFile("templates/xapian-settings.pt")
+    
+    def __init__(self, context, request):
+        return super(XapianSettings, self).__init__(context, request)
+    
+    def __call__(self):
+        if self.request.method == 'POST':
+            IndexReset().start()
         return self.render()
