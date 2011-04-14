@@ -15,8 +15,6 @@ from lxml import etree
 from zope.dottedname.resolve import resolve
 from zope.i18nmessageid import Message
 from bungeni.core.workflow import interfaces
-from bungeni.core.workflow.states import BUNGENI_BASEPATH
-from bungeni.core.workflow.states import ACTIONS_MODULE
 from bungeni.core.workflow.states import GRANT, DENY
 from bungeni.core.workflow.states import State, Transition, Workflow
 from bungeni.core.workflow.notification import Notification
@@ -26,6 +24,8 @@ from bungeni.ui.utils import debug
 #
 
 ASSIGNMENTS = (GRANT, DENY)
+
+ACTIONS_MODULE = resolve("._actions", "bungeni.core.workflows")
 
 trigger_value_map = {
     "manual": interfaces.MANUAL,
@@ -37,10 +37,9 @@ trigger_value_map = {
 ID_RE = re.compile("^[\w\d_]+$")
 
 TRANS_ATTRS_REQUIREDS = ("title", "source", "destination")
-TRANS_ATTRS_OPTIONALS = ("condition", "trigger", "roles", "permission", 
-    "order", "require_confirmation", "note")
+TRANS_ATTRS_OPTIONALS = ("condition", "trigger", "roles", "order", 
+    "require_confirmation", "note")
 TRANS_ATTRS = TRANS_ATTRS_REQUIREDS + TRANS_ATTRS_OPTIONALS
-
 
 
 ''' !+NOT_WORKING... see: zope.security.permission
@@ -137,12 +136,13 @@ def zcml_transition_permission(pid, title, roles):
 
 #
 
-def load(file_path, name):
-    """ (file_path:str, name:str) -> Workflow
+def load(path_custom_workflows, name):
+    """ (path_custom_workflows:str, name:str) -> Workflow
     
     Loads the workflow XML definition file, returning the correspondingly setup 
     Workflow instance. Called by workflows.adapters.load_workflow.
     """
+    file_path = os.path.join(path_custom_workflows, "%s.xml" % (name))
     return _load(etree.fromstring(open(file_path).read()), name)
 
 def _load(workflow, name):
@@ -153,10 +153,10 @@ def _load(workflow, name):
     domain = strip_none(workflow.get("domain"))
     wuids = set() # unique IDs in this XML workflow file
     note = strip_none(workflow.get("note"))
-    # initial_state
-    initial_state = workflow.get("initial_state")
-    assert initial_state == "", "Workflow [%s] initial_state attribute " \
-        "must be empty string, not [%s]" % (name, initial_state)
+    # initial_state, must be ""
+    assert workflow.get("initial_state") == "", "Workflow [%s] initial_state " \
+        "attribute must be empty string, not [%s]" % (
+            name, workflow.get("initial_state"))
     initial_state = None
     
     ZCML_PROCESSED = bool(name in ZCML_WORKFLOWS_PROCESSED)
@@ -167,10 +167,10 @@ def _load(workflow, name):
         ZCML_LINES.append("%s<!-- %s -->" % (ZCML_INDENT, name))
     
     def validate_id(id, tag):
-        """Ensure that ID values are unique within the same scope (the XML doc).
-        Assumption: id is not None.
+        """Ensure that ID values are unique within the same XML doc scope.
         """
         m = 'Invalid <%s> id="%s" in workflow [%s]' % (tag, id, name)
+        assert id is not None, "%s -- id may not be None" % (m)
         assert ID_RE.match(id), '%s -- only letters, numbers, "_" allowed' % (m)
         assert id not in wuids, "%s -- id not unique in workflow document" % (m)
         wuids.add(id)
@@ -199,7 +199,7 @@ def _load(workflow, name):
         assert state_id, "Workflow State must define @id"
         validate_id(state_id, "state")
         # actions
-        action_names = []
+        actions = []
         # version
         if strip_none(s.get("version")) is not None:
             make_version = as_bool(strip_none(s.get("version")))
@@ -207,14 +207,14 @@ def _load(workflow, name):
                 raise ValueError("Invalid state value "
                     '[version="%s"]' % s.get("version"))
             if make_version:
-                action_names.append(ACTIONS_MODULE.create_version.__name__)
+                actions.append(ACTIONS_MODULE.create_version)
         
         # state-id-inferred action - if "actions" module defines an action for
         # this state (associated via a naming convention), then use it.
         # !+ tmp, until actions are user-exposed as part of <state>
         action_name = "_%s_%s" % (name, state_id)
         if hasattr(ACTIONS_MODULE, action_name):
-            action_names.append(action_name)
+            actions.append(getattr(ACTIONS_MODULE, action_name))
         # @like_state, permissions
         permissions = [] # [ tuple(bool:int, permission:str, role:str) ]
         # state.@like_state : to reduce repetition and enhance maintainibility
@@ -256,7 +256,7 @@ def _load(workflow, name):
         states.append(
             State(state_id, Message(s.get("title", domain)), 
                 strip_none(s.get("note")),
-                action_names, permissions, notifications)
+                actions, permissions, notifications)
         )
     
     STATE_IDS = [ s.id for s in states ]
@@ -275,10 +275,14 @@ def _load(workflow, name):
                 raise SyntaxError('No required "%s" attribute in %s' % (
                     key, etree.tostring(t)))
         
-        # empty source -> initial_state
+        # sources, empty string -> initial_state
         sources = t.get("source").split() or [initial_state]
         assert len(sources) == len(set(sources)), \
             "Transition contains duplicate sources [%s]" % (sources)
+        for source in sources:
+            if source is not initial_state:
+                assert source in STATE_IDS, \
+                    "Unknown transition source state [%s]" % (source)
         # destination must be a valid state
         destination = t.get("destination")
         assert destination in STATE_IDS, \
@@ -292,11 +296,6 @@ def _load(workflow, name):
             if is_zcml_permissionable(t):
                 zcml_transition_permission(pid, t.get("title"), 
                     t.get("roles", "bungeni.Clerk").split())
-        # validate sources
-        for source in sources:
-            if source is not initial_state:
-                assert source in STATE_IDS, \
-                    "Unknown transition source state [%s]" % (source)
         
         kw = {}
         # optionals -- only set on kw IFF explicitly defined
@@ -312,13 +311,9 @@ def _load(workflow, name):
         # trigger
         if "trigger" in kw:
             kw["trigger"] = trigger_value_map[kw["trigger"]]
-        # permission - one-to-one per transition, if set may only be {pid}
+        # permission - one-to-one per transition, may only be {pid} or None
         if is_zcml_permissionable(t):
-            if "permission" in kw:
-                assert kw["permission"] == pid, \
-                    "Inconsistent transition permission: %s -> %s" % (tid, pid)
-            else:
-                kw["permission"] = pid
+            kw["permission"] = pid
         else:
             assert kw.get("permission") is None, "Not allowed to set a " \
                 "permission on (creation) transition: %s" % (tid)

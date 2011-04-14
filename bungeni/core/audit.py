@@ -152,7 +152,7 @@ class AuditorFactory(object):
         extras = {
             "source": event.source, 
             "destination": event.destination,
-            "transition": event.transition.transition_id,
+            "transition": event.transition.id,
             "comment": change_data["note"]
         }
         return self._objectChanged("workflow", object, 

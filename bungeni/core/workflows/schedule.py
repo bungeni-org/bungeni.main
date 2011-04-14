@@ -19,10 +19,9 @@ def handleSchedule(object, event):
         for sch in schedulings:
             if sch.item.type != "heading":
                 wfc = IWorkflowController(sch.item)
-                transitions = wfc.getSystemTransitionIds()
                 wf = wfc.workflow
                 next_state = get_states(sch.item.type, tagged=["tobescheduled"])
-                for transition_id in transitions:
+                for transition_id in wfc.getSystemTransitionIds():
                     t = wf.get_transition(transition_id)
                     if t.destination in next_state:
                         #TODO find out why firetransition fails for reschedule even 
@@ -33,10 +32,9 @@ def handleSchedule(object, event):
         for sch in schedulings:
             if sch.item.type != "heading":
                 wfc = IWorkflowController(sch.item)
-                transitions = wfc.getSystemTransitionIds()
                 wf = wfc.workflow
                 next_state = get_states(sch.item.type, tagged=["scheduled"])
-                for transition_id in transitions:
+                for transition_id in wfc.getSystemTransitionIds():
                     t = wf.get_transition(transition_id)
                     if t.destination in next_state:
                         wfc.fireTransition(transition_id, check_security=False)

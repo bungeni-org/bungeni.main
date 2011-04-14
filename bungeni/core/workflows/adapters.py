@@ -35,17 +35,18 @@ def provideAdapterWorkflowController(adapts_kls):
     component.provideAdapter(WorkflowController, (adapts_kls,), 
         IWorkflowController)
 
-PATH_CUSTOM_WORKLFOWS = capi.get_path_for("workflows")
 
-def load_workflow(name, iface):
+def load_workflow(name, iface, 
+        path_custom_workflows=capi.get_path_for("workflows")
+    ):
     """Setup the Workflow instance, from XML definition, for named workflow.
     """
     #
     # load / register as utility / retrieve
     #
     #if not component.queryUtility(IWorkflow, name): !+BREAKS_DOCTESTS
-    if not _WORKFLOWS.has_key(name): 
-        wf = xmlimport.load("%s/%s.xml" % (PATH_CUSTOM_WORKLFOWS, name), name)
+    if not _WORKFLOWS.has_key(name):
+        wf = xmlimport.load(path_custom_workflows, name)
         provideUtilityWorkflow(wf, name)
         log.debug("Loading WORKFLOW: %s %s" % (name, wf))
         for state_key, state in wf.states.items():

@@ -17,17 +17,12 @@ from zope.security.proxy import removeSecurityProxy
 from zope.security.checker import CheckerPublic
 import zope.event
 import zope.lifecycleevent
-from zope.dottedname.resolve import resolve
 from bungeni.alchemist import Session
 from bungeni.core.workflow import interfaces
 
 #
 
-BUNGENI_BASEPATH = "bungeni.core.workflows"
-ACTIONS_MODULE = resolve("._actions", BUNGENI_BASEPATH)
-
-GRANT = 1
-DENY  = 0
+GRANT, DENY = 1, 0
 
 # !+ needed to make the tests pass in the absence of interactions
 # !+nullCheckPermission(mr, mar-2011) shouldn't the tests ensure there is 
@@ -52,13 +47,11 @@ def wrapped_condition(condition):
 
 class State(object):
     
-    def __init__(self, id, title, note, action_names,
-            permissions, notifications
-        ):
-        self.id = id
+    def __init__(self, id, title, note, actions, permissions, notifications):
+        self.id = id # status
         self.title = title
         self.note = note
-        self.action_names = action_names # [str]
+        self.actions = actions # [callable]
         self.permissions = permissions
         self.notifications = notifications
     
@@ -69,19 +62,18 @@ class State(object):
             "Context [%s] status [%s] has not been updated to [%s]" % (
                 context, context.status, self.id)
         Session().merge(context)
-        # actions -- resolve each action from current ACTIONS_MODULE and execute
-        for action_name in self.action_names:
-            action = getattr(ACTIONS_MODULE, action_name)
+        # actions
+        for action in self.actions:
             try:
                 action(context)
             except Exception, e:
                 raise exception_as(e, interfaces.WorkflowStateActionError)
         # permissions
         rpm = zope.securitypolicy.interfaces.IRolePermissionMap(context)
-        for action, permission, role in self.permissions:
-            if action==GRANT:
+        for assign, permission, role in self.permissions:
+            if assign == GRANT:
                rpm.grantPermissionToRole(permission, role)
-            if action==DENY:
+            if assign == DENY:
                rpm.denyPermissionToRole(permission, role)
         # notifications
         for notification in self.notifications:
@@ -100,7 +92,7 @@ class Transition(object):
     destination states (therefore it is not passed in as a constructor 
     parameter) in the following predictable way:
     
-        transition_id = "%s-%s" % (source or "", destination)
+        id = "%s-%s" % (source or "", destination)
     
     This is the id to use when calling WorkflowController.fireTransition(id),
     as well as being the HTML id used in generated menu items, etc. 
@@ -128,7 +120,7 @@ class Transition(object):
         self.user_data = user_data
    
     @property
-    def transition_id(self):
+    def id(self):
         return "%s-%s" % (self.source or "", self.destination)
     
     def __cmp__(self, other):
@@ -156,8 +148,11 @@ class StateController(object):
         source_status = self.get_status()
         if source_status != status:
             self.context.status = status
-            # additional actions related to change of worklfow status
+            # additional actions related to change of workflow status
             self.on_status_change(source_status, status)
+        else:
+            log.warn("Attempt to reset unchanged status [%s] on item [%s]" % (
+                status, self.context))
     
     def on_status_change(self, source, destination):
         state = self.get_state()
@@ -200,7 +195,7 @@ class Workflow(object):
             tbyd[s.id] = []
         # transitions
         for t in transitions:
-            tid = t.transition_id
+            tid = t.id
             assert tid not in tbyid, \
                 "Workflow [%s] duplicates transition [%s]" % (self.name, tid)
             tbyid[tid] = t
@@ -213,12 +208,12 @@ class Workflow(object):
         states = self._states_by_id.values()
         # at least one state
         assert len(states), "Workflow [%s] defines no states" % (self.name)
-        # every state must explictly sets the same set of permissions
-        # pr: set of all (permission, role) pairs assigned in a state
-        pr = set([ (p[1], p[2]) for p in states[0].permissions ])
-        num_pr = len(pr)
+        # every state must explicitly set the same set of permissions
+        # prs: set of all (permission, role) pairs assigned in a state
+        prs = set([ (p[1], p[2]) for p in states[0].permissions ])
+        num_prs = len(prs)
         for s in states:
-            assert len(s.permissions) == num_pr, \
+            assert len(s.permissions) == num_prs, \
                 "Workflow state [%s -> %s] does not explictly set same " \
                 "permissions used across other states... " \
                 "\nTHIS:\n  %s\nOTHER:\n  %s" % (self.name, s.id, 
@@ -226,7 +221,7 @@ class Workflow(object):
                     "\n  ".join([str(p) for p in states[0].permissions])
                 )
             for p in s.permissions:
-                assert (p[1], p[2]) in pr, \
+                assert (p[1], p[2]) in prs, \
                     "Workflow state [%s -> %s] defines an unexpected " \
                     "permission: %s" % (self.name, s.id, p)
         # every state is reachable
@@ -309,12 +304,13 @@ class WorkflowController(object):
             checkPermission = nullCheckPermission
         if not checkPermission(transition.permission, self.context):
             raise zope.security.interfaces.Unauthorized(self.context,
-                "transition: %s" % transition.transition_id,
+                "transition: %s" % transition.id,
                 transition.permission)
         # now make sure transition can still work in this context
         if not transition.condition(self.context):
             raise interfaces.ConditionFailedError
     
+    # !+ RENAME
     def fireTransition(self, transition_id, comment=None, check_security=True):
         # !+fireTransitionParams(mr, mar-2011) needed?
         if not (comment is None and check_security is True):
@@ -343,7 +339,7 @@ class WorkflowController(object):
     def fireAutomatic(self):
         for transition in self._get_transitions(interfaces.AUTOMATIC):
             try:
-                self.fireTransition(transition.transition_id)
+                self.fireTransition(transition.id)
             except interfaces.ConditionFailedError:
                 # fine, then we weren't ready to fire the transition as yet
                 pass
@@ -365,14 +361,15 @@ class WorkflowController(object):
     
     def getManualTransitionIds(self):
         checkPermission = self._get_checkPermission()
-        return [ transition.transition_id 
+        return [ transition.id 
             for transition in self._get_transitions(interfaces.MANUAL, True)
             if checkPermission(transition.permission, self.context) ]
     
     def getSystemTransitionIds(self):
         # ignore permission checks
-        return [ transition.transition_id 
+        return [ transition.id 
             for transition in self._get_transitions(interfaces.SYSTEM, False) ]
+    # !+ /RENAME
     
     def _get_transitions(self, trigger_ifilter=None, conditional=False):
         """Retrieve all possible transitions from current status.
