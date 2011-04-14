@@ -37,6 +37,11 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- agendaitem -->
+<grant permission="bungeni.agendaitem.View" role="bungeni.Owner" />
+<grant permission="bungeni.agendaitem.Edit" role="bungeni.Owner" />
+<grant permission="bungeni.agendaitem.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.agendaitem.Add" role="bungeni.Speaker" />
+<grant permission="bungeni.agendaitem.Delete" role="bungeni.Owner" />
 
 <permission id="bungeni.agendaitem.wf.working_draft.draft.submitted" title="Submit" />
 <grant permission="bungeni.agendaitem.wf.working_draft.draft.submitted" role="bungeni.Owner" />
@@ -102,6 +107,7 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- attachedfile -->
+<grant permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
 
 <permission id="bungeni.attachedfile.wf.public.inactive" title="Deactivate" />
 <grant permission="bungeni.attachedfile.wf.public.inactive" role="bungeni.Clerk" />
@@ -109,6 +115,14 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- bill -->
+<grant permission="bungeni.bill.View" role="bungeni.Clerk" />
+<grant permission="bungeni.bill.View" role="bungeni.Speaker" />
+<grant permission="bungeni.bill.View" role="bungeni.Owner" />
+<grant permission="bungeni.bill.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.bill.Edit" role="bungeni.Speaker" />
+<grant permission="bungeni.bill.Edit" role="bungeni.Owner" />
+<grant permission="bungeni.bill.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.bill.Delete" role="bungeni.Owner" />
 
 <permission id="bungeni.bill.wf.working_draft.gazetted" title="Publish in Gazette" />
 <grant permission="bungeni.bill.wf.working_draft.gazetted" role="bungeni.Clerk" />
@@ -196,6 +210,9 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- committee -->
+<grant permission="bungeni.committee.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.committee.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.committee.Delete" role="bungeni.Clerk" />
 
 <permission id="bungeni.committee.wf.draft.dissolved.active" title="Activate" />
 <grant permission="bungeni.committee.wf.draft.dissolved.active" role="bungeni.Clerk" />
@@ -211,6 +228,12 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- event -->
+<grant permission="bungeni.event.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.event.Edit" role="bungeni.Speaker" />
+<grant permission="bungeni.event.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.event.Add" role="bungeni.Speaker" />
+<grant permission="bungeni.event.Delete" role="bungeni.Clerk" />
+<grant permission="bungeni.event.Delete" role="bungeni.Speaker" />
 
 <permission id="bungeni.event.wf.public.inactive" title="Deactivate" />
 <grant permission="bungeni.event.wf.public.inactive" role="bungeni.Clerk" />
@@ -233,6 +256,16 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- groupsitting -->
+<grant permission="bungeni.sitting.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting.Edit" role="bungeni.Speaker" />
+<grant permission="bungeni.sitting.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting.Add" role="bungeni.Speaker" />
+<grant permission="bungeni.sittingattendance.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.sittingattendance.Edit" role="bungeni.Speaker" />
+<grant permission="bungeni.sittingattendance.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.sittingattendance.Add" role="bungeni.Speaker" />
+<grant permission="bungeni.sittingattendance.Delete" role="bungeni.Clerk" />
+<grant permission="bungeni.sittingattendance.Delete" role="bungeni.Speaker" />
 
 <permission id="bungeni.groupsitting.wf.sitting.draft_agenda" title="Draft Agenda" />
 <grant permission="bungeni.groupsitting.wf.sitting.draft_agenda" role="bungeni.Clerk" />
@@ -260,6 +293,10 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- heading -->
+<grant permission="bungeni.heading.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.heading.Edit" role="bungeni.Speaker" />
+<grant permission="bungeni.heading.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.heading.Add" role="bungeni.Speaker" />
 
 <permission id="bungeni.heading.wf.public.inactive" title="Deactivate" />
 <grant permission="bungeni.heading.wf.public.inactive" role="bungeni.Clerk" />
@@ -271,6 +308,12 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- motion -->
+<grant permission="bungeni.motion.View" role="bungeni.Owner" />
+<grant permission="bungeni.motion.Edit" role="bungeni.Owner" />
+<grant permission="bungeni.motion.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.motion.Add" role="bungeni.Speaker" />
+<grant permission="bungeni.motion.Add" role="bungeni.MP" />
+<grant permission="bungeni.motion.Delete" role="bungeni.Owner" />
 
 <permission id="bungeni.motion.wf.working_draft.draft.submitted" title="Submit" />
 <grant permission="bungeni.motion.wf.working_draft.draft.submitted" role="bungeni.Owner" />
@@ -342,6 +385,9 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- parliament -->
+<grant permission="bungeni.parliament.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.parliament.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.parliament.Delete" role="bungeni.Clerk" />
 
 <permission id="bungeni.parliament.wf.draft.dissolved.active" title="Activate" />
 <grant permission="bungeni.parliament.wf.draft.dissolved.active" role="bungeni.Clerk" />
@@ -357,6 +403,12 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- question -->
+<grant permission="bungeni.question.View" role="bungeni.Owner" />
+<grant permission="bungeni.question.Edit" role="bungeni.Owner" />
+<grant permission="bungeni.question.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.question.Add" role="bungeni.Speaker" />
+<grant permission="bungeni.question.Add" role="bungeni.MP" />
+<grant permission="bungeni.question.Delete" role="bungeni.Owner" />
 
 <permission id="bungeni.question.wf.working_draft.draft.submitted" title="Submit" />
 <grant permission="bungeni.question.wf.working_draft.draft.submitted" role="bungeni.Owner" />
@@ -431,9 +483,17 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- report -->
+<grant permission="bungeni.reports.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.reports.Edit" role="bungeni.Speaker" />
 
 
 <!-- tableddocument -->
+<grant permission="bungeni.tableddocument.View" role="bungeni.Owner" />
+<grant permission="bungeni.tableddocument.Edit" role="bungeni.Owner" />
+<grant permission="bungeni.tableddocument.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.tableddocument.Add" role="bungeni.Speaker" />
+<grant permission="bungeni.tableddocument.Add" role="bungeni.MP" />
+<grant permission="bungeni.tableddocument.Delete" role="bungeni.Owner" />
 
 <permission id="bungeni.tableddocument.wf.working_draft.draft.submitted" title="Submit" />
 <grant permission="bungeni.tableddocument.wf.working_draft.draft.submitted" role="bungeni.Owner" />

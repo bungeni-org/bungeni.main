@@ -1,34 +1,16 @@
 Question and response workflow
 ==============================
 
-!+ZCA_TESTS(mr, apr-2011) without following reloading of the adapters module,
-running this doctest file alone works just fine, but when it is run as part of 
-a doctest suite (e.g test -s bungeni.core) then strangely the adapter lookups
-fails, as if the ZCA registry has gotten corrupted.
-
-    >>> from bungeni.core.workflows import adapters
-    >>> reload(adapters)
-    <module 'bungeni.core.workflows.adapters' from ...>
-
 
 Setup
 -----
 
-Setting up database connection and utilities:
-
-  >>> from bungeni.core.testing import setup_db
-  >>> engine = setup_db()
-  
-  >>> from bungeni.core.workflows.testing import setup_security_adapters
-  >>> setup_security_adapters()
-  
-  >>> from bungeni.alchemist import Session
-  >>> session = Session()
-  
 Imports.
 
   >>> from bungeni.models import domain
   >>> from bungeni.models import schema
+  >>> from bungeni.core.workflows import adapters
+
 
 Questions are versionable.
   
@@ -37,6 +19,25 @@ Questions are versionable.
   >>> classImplements(domain.Question, interfaces.IQuestion)
   >>> from bungeni.core.interfaces import IVersionable
   >>> classImplements(domain.Question, IVersionable)
+
+Setting up database connection and utilities:
+
+  >>> from bungeni.core.testing import setup_db
+  >>> engine = setup_db()
+  
+  >>> from bungeni.alchemist import Session
+  >>> session = Session()
+
+!+ZCA_TESTS(mr, apr-2011) without following reloading of the adapters module,
+running this doctest file alone works just fine, but when it is run as part of 
+a doctest suite (e.g test -s bungeni.core) then strangely the adapter lookups
+fails, as if the ZCA registry has gotten corrupted.
+
+    >>> adapters.load_workflows()
+
+  >>> from bungeni.core.workflows.testing import setup_security_adapters
+  >>> setup_security_adapters()
+  
 
 Principals
 ----------
@@ -202,16 +203,18 @@ Transition: "create" - assigns the role of "Owner" and sets the parliament id.
 
 
 PERMISSIONS for member principal for "draft" question.status
-
+    
   >>> from zope.security import checkPermission
   >>> [ checkPermission("bungeni.question.Edit", question), 
-  ...   checkPermission("bungeni.question.Add", question),
+  ...   # !+ at r8092, checkPermission of bungeni.question.Add below used
+  ...   #    to return False! What should it be?
+  ...   checkPermission("bungeni.question.Add", question), 
   ...   checkPermission("zope.View", question), 
   ...   checkPermission("bungeni.question.Delete", question), 
   ...   checkPermission("bungeni.fileattachment.Add", question), 
   ...   checkPermission("bungeni.fileattachment.Edit", question),
   ... ]
-  [True, False, True, True, True, True]
+  [True, True, True, True, True, True]
 
 TODO: also check permissions for other roles, i.e.
     <deny permission="zope.View" role="bungeni.Clerk" />

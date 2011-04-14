@@ -15,10 +15,11 @@ from lxml import etree
 from zope.dottedname.resolve import resolve
 from zope.i18nmessageid import Message
 from bungeni.core.workflow import interfaces
+from bungeni.core.workflow.states import exception_as
 from bungeni.core.workflow.states import GRANT, DENY
 from bungeni.core.workflow.states import State, Transition, Workflow
 from bungeni.core.workflow.notification import Notification
-from bungeni.utils.capi import capi
+from bungeni.utils.capi import capi, bungeni_custom_errors
 from bungeni.ui.utils import debug
 
 #
@@ -136,6 +137,7 @@ def zcml_transition_permission(pid, title, roles):
 
 #
 
+@bungeni_custom_errors
 def load(path_custom_workflows, name):
     """ (path_custom_workflows:str, name:str) -> Workflow
     
@@ -191,6 +193,26 @@ def _load(workflow, name):
             if perm in like_permissions:
                 like_permissions.remove(perm)
         permissions.append((assignment, p, r))
+    
+    # top-level child ordering
+    grouping, allowed_child_ordering = 0, ("grant", "state", "transition")
+    for child in workflow.iterchildren():
+        if not isinstance(child.tag, basestring):
+            # ignore comments
+            continue
+        while child.tag != allowed_child_ordering[grouping]:
+            grouping += 1
+            assert grouping < 3, "Workflow [%s] element <%s> %s not allowed " \
+                "here -- element order must respect: %s" % (
+                    name, child.tag, child.items(), allowed_child_ordering)
+    
+    # global grants
+    for p in workflow.iterchildren("grant"):
+        pid = strip_none(p.get("permission"))
+        role = strip_none(p.get("role"))
+        #+!assertRegisteredPermission(permission)
+        ZCML_LINES.append(
+            '%s<grant permission="%s" role="%s" />' % (ZCML_INDENT, pid, role))
     
     # states
     for s in workflow.iterchildren("state"):

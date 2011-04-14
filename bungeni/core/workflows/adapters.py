@@ -47,7 +47,6 @@ def load_workflow(name, iface,
     #if not component.queryUtility(IWorkflow, name): !+BREAKS_DOCTESTS
     if not _WORKFLOWS.has_key(name):
         wf = xmlimport.load(path_custom_workflows, name)
-        provideUtilityWorkflow(wf, name)
         log.debug("Loading WORKFLOW: %s %s" % (name, wf))
         for state_key, state in wf.states.items():
             log.debug("   STATE: %s %s" % (state_key, state))
@@ -59,6 +58,8 @@ def load_workflow(name, iface,
     #
     # register related adapters
     #
+    # Workflow instances as utilities
+    provideUtilityWorkflow(wf, name)
     # Workflows are also the factory of own AdaptedWorkflows
     provideAdapterWorkflow(wf, iface)
     # StateController adapts all workflow context models
@@ -72,26 +73,30 @@ def load_workflow(name, iface,
             bungeni.core.interfaces.IVersioned)
 
 
-# workflow instances (+ adapter *factories*)
-load_workflow("address", interfaces.IUserAddress)
-load_workflow("address", interfaces.IGroupAddress)
-load_workflow("agendaitem", interfaces.IAgendaItem)
-load_workflow("attachedfile", interfaces.IAttachedFile)
-load_workflow("bill", interfaces.IBill)
-load_workflow("committee", interfaces.ICommittee)
-load_workflow("event", interfaces.IEventItem)
-load_workflow("group", interfaces.IBungeniGroup)
-load_workflow("groupsitting", interfaces.IGroupSitting)
-load_workflow("heading", interfaces.IHeading)
-load_workflow("motion", interfaces.IMotion)
-load_workflow("parliament", interfaces.IParliament)
-load_workflow("question", interfaces.IQuestion)
-load_workflow("report", interfaces.IReport)
-load_workflow("tableddocument", interfaces.ITabledDocument)
-load_workflow("user", interfaces.IBungeniUser)
-load_workflow("version", interfaces.IVersion) # !+VERSION_WORKFLOW(mr, apr-2011)
+def load_workflows():
+    # workflow instances (+ adapter *factories*)
+    load_workflow("address", interfaces.IUserAddress)
+    load_workflow("address", interfaces.IGroupAddress)
+    load_workflow("agendaitem", interfaces.IAgendaItem)
+    load_workflow("attachedfile", interfaces.IAttachedFile)
+    load_workflow("bill", interfaces.IBill)
+    load_workflow("committee", interfaces.ICommittee)
+    load_workflow("event", interfaces.IEventItem)
+    load_workflow("group", interfaces.IBungeniGroup)
+    load_workflow("groupsitting", interfaces.IGroupSitting)
+    load_workflow("heading", interfaces.IHeading)
+    load_workflow("motion", interfaces.IMotion)
+    load_workflow("parliament", interfaces.IParliament)
+    load_workflow("question", interfaces.IQuestion)
+    load_workflow("report", interfaces.IReport)
+    load_workflow("tableddocument", interfaces.ITabledDocument)
+    load_workflow("user", interfaces.IBungeniUser)
+    load_workflow("version", interfaces.IVersion) # !+VERSION_WORKFLOW(mr, apr-2011)
 
+# load workflows
+load_workflows()
 
 # check/regenerate zcml directives for workflows
 xmlimport.zcml_check_regenerate()
+
 
