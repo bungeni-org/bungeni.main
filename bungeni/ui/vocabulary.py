@@ -5,6 +5,7 @@ from zope.schema.interfaces import IContextSourceBinder, IVocabulary,\
 from zope.schema import vocabulary
 from zope.security.proxy import removeSecurityProxy
 from zope.security import checkPermission
+from zope.app.container.interfaces import IContainer
 
 import bungeni.alchemist.vocabulary
 from bungeni.utils.capi import capi
@@ -15,7 +16,7 @@ from sqlalchemy.orm import mapper,  column_property
 import sqlalchemy as rdb
 import sqlalchemy.sql.expression as sql
 from bungeni.models import schema, domain, utils, delegation
-from bungeni.models.interfaces import ITranslatable
+from bungeni.models.interfaces import ITranslatable, ICosignatory
 
 from zope.schema.interfaces import IVocabularyFactory
 from zope.i18n import translate
@@ -452,6 +453,30 @@ class MemberOfParliamentDelegationSource(MemberOfParliamentSource):
                 return query
         return mp_query
                        
+class MemberOfParliamentCosignatorySource(MemberOfParliamentSource):
+    """Vocabulary for selection of cosignatories - Other MPs
+       excluding pre-selected cosignatories and item owner
+    """
+    def constructQuery(self, context):
+        mp_query = super(MemberOfParliamentCosignatorySource, 
+                self).constructQuery(context)
+        trusted = removeSecurityProxy(context)
+        if ICosignatory.providedBy(context):
+            trusted = removeSecurityProxy(trusted.__parent__)
+        if IContainer.providedBy(trusted):
+            exclude_ids = set(
+                [ member.user_id for member in trusted.values() ]
+            )
+            if trusted.__parent__ is not None:
+                trusted_parent = removeSecurityProxy(trusted.__parent__)
+                exclude_ids.add(trusted_parent.owner_id)
+            return mp_query.filter(
+                sql.not_(domain.MemberOfParliament.user_id.in_(
+                        list(exclude_ids)
+                    )
+                )
+            )
+        return mp_query
 
 class MinistrySource(SpecializedSource):
     """ Ministries in the current parliament """

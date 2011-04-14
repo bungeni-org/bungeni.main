@@ -448,10 +448,11 @@ def DeathBeforeLife(User):
 # - !+Field.required(mr, oct-2010) OBSOLETED.
 
 
-def LanguageField(name="language"):
+def LanguageField(name="language", modes="edit add", localizable=None):
     return Field(name=name,
         label=_("Language"),
-        modes="edit add",
+        modes=modes,
+        localizable=localizable,
         property=schema.Choice(title=_("Language"),
             vocabulary="language_vocabulary"
         ),
@@ -2293,7 +2294,9 @@ class CosignatoryDescriptor(ModelDescriptor):
         Field(name="user_id",
             modes="view edit add listing",
             property=schema.Choice(title=_("Cosignatory"),
-                source=vocabulary.MemberOfParliamentDelegationSource("user_id"),
+                source=vocabulary.MemberOfParliamentCosignatorySource(
+                    "user_id"
+                ),
             ),
             listing_column=linked_mp_name_column("user_id",
                 _("Cosignatory"),
