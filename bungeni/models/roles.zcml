@@ -15,5 +15,8 @@
     <role id="bungeni.Translator" title="Translators Office" />
     <role id="bungeni.Authenticated" title="All authenticated users" />
     <role id="bungeni.Anonymous" title="Bungeni Visitor" />
+
+    <!-- load custom roles defined in bungeni_custom -->
+    <include package="bungeni_custom.sys.acl" file="roles.zcml" />
     
 </configure>

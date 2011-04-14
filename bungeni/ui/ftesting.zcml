@@ -35,7 +35,7 @@
   <include package="bungeni.ui.descriptor" file="catalyst.zcml"/>
   <include package="bungeni.ui" file="meta.zcml"/>
   <include package="bungeni.models"/>
-  <include package="bungeni_custom" file="openoffice.zcml" />
+  <include package="bungeni_custom.sys" file="openoffice.zcml" />
   <include package="bungeni.core" file="meta.zcml"/>
   <include package="zope.traversing" />
   <bungeni:fs fs_path="fs"/>

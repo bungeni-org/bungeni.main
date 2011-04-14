@@ -94,7 +94,7 @@
   
   <!-- Open office configuration for PDF generation -->
   <include package="bungeni.ui" file="meta.zcml" />
-  <include package="bungeni_custom" file="openoffice.zcml" />
+  <include package="bungeni_custom.sys" file="openoffice.zcml" />
   
   <!-- Alchemist UI -->
   <include package="alchemist.ui" />

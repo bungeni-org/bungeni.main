@@ -49,130 +49,15 @@ unfortunatly this has many side effects - including clerk and speaker users bein
 items created by other users, so this hack has been removed -->
 
   <!-- translation -->
-  
-  <grant permission="bungeni.TranslateContent" role="bungeni.Admin" />
-    
-  <!-- content roles -->
-
-  <grant permission="bungeni.session.Add" role="bungeni.Clerk" />
-  <grant permission="bungeni.sitting.Add" role="bungeni.Clerk" />  
-  <grant permission="bungeni.sitting.Edit" role="bungeni.Clerk" />   
-    <grant permission="bungeni.groupitemassignment.Edit" role="bungeni.Clerk" />
-
-  <grant permission="bungeni.session.Add" role="bungeni.Speaker" />
-  <grant permission="bungeni.sitting.Add" role="bungeni.Speaker" />  
-  <grant permission="bungeni.sitting.Edit" role="bungeni.Speaker" /> 
-  <grant permission="bungeni.sittingattendance.Add" role="bungeni.Clerk" />
-  <grant permission="bungeni.sittingattendance.Edit" role="bungeni.Clerk" />
-  <grant permission="bungeni.sittingattendance.Delete" role="bungeni.Clerk" />
-  <grant permission="bungeni.sittingattendance.Add" role="bungeni.Speaker" />
-  <grant permission="bungeni.sittingattendance.Edit" role="bungeni.Speaker" />
-  <grant permission="bungeni.sittingattendance.Delete" role="bungeni.Speaker" />
-  
-  <!-- parliamentary items permissions:
-       note that the workflow sets these permissions 
-       on a workflow state change -->  
-  
-  <grant permission="bungeni.question.Add" role="bungeni.MP" />
-  <grant permission="bungeni.question.Add" role="bungeni.Clerk" />
-  <grant permission="bungeni.question.Add" role="bungeni.Speaker" />
-  <grant permission="bungeni.question.Edit" role="bungeni.Owner" />
-  <grant permission="bungeni.question.Delete" role="bungeni.Owner" />
-  <grant permission="bungeni.question.View" role="bungeni.Owner" />
-
-  <grant permission="bungeni.motion.Add" role="bungeni.MP" />
-  <grant permission="bungeni.motion.Add" role="bungeni.Clerk" />  
-  <grant permission="bungeni.motion.Add" role="bungeni.Speaker" />    
-  <grant permission="bungeni.motion.Edit" role="bungeni.Owner" />
-  <grant permission="bungeni.motion.Delete" role="bungeni.Owner" />
-  <grant permission="bungeni.motion.View" role="bungeni.Owner" />
-
-  <grant permission="bungeni.tableddocument.Add" role="bungeni.MP" />
-  <grant permission="bungeni.tableddocument.Add" role="bungeni.Clerk" />
-  <grant permission="bungeni.tableddocument.Add" role="bungeni.Speaker" />
-  <grant permission="bungeni.tableddocument.Edit" role="bungeni.Owner" />
-  <grant permission="bungeni.tableddocument.Delete" role="bungeni.Owner" />
-  <grant permission="bungeni.tableddocument.View" role="bungeni.Owner" />
-  
-  <grant permission="bungeni.agendaitem.Add" role="bungeni.Clerk" />
-  <grant permission="bungeni.agendaitem.Add" role="bungeni.Speaker" />
-  <!--grant permission="bungeni.agendaitem.Add" role="bungeni.MP" /-->
-  <grant permission="bungeni.agendaitem.Edit" role="bungeni.Owner" />
-  <grant permission="bungeni.agendaitem.Delete" role="bungeni.Owner" />
-  <grant permission="bungeni.agendaitem.View" role="bungeni.Owner" />
-  
-  <grant permission="bungeni.parliament.Add" role="bungeni.Clerk" />
-  <grant permission="bungeni.parliament.Edit" role="bungeni.Clerk" />
-  <grant permission="bungeni.parliament.Delete" role="bungeni.Clerk" />
-
-  <grant permission="bungeni.committee.Add" role="bungeni.Clerk" />
-  <grant permission="bungeni.committee.Edit" role="bungeni.Clerk" />
-  <grant permission="bungeni.committee.Delete" role="bungeni.Clerk" />
-  
-  <grant permission="bungeni.office.Add" role="bungeni.Clerk" />
-  <grant permission="bungeni.office.Edit" role="bungeni.Clerk" />
-  <grant permission="bungeni.office.Delete" role="bungeni.Clerk" />  
-
-  <grant permission="bungeni.party.Add" role="bungeni.Clerk" />
-  <grant permission="bungeni.party.Edit" role="bungeni.Clerk" />
-  <grant permission="bungeni.party.Delete" role="bungeni.Clerk" />  
-  
-  <grant permission="bungeni.government.Add" role="bungeni.Clerk" />
-  <grant permission="bungeni.government.Edit" role="bungeni.Clerk" />
-  <grant permission="bungeni.government.Delete" role="bungeni.Clerk" />  
-
-  <grant permission="bungeni.ministry.Add" role="bungeni.Clerk" />
-  <grant permission="bungeni.ministry.Edit" role="bungeni.Clerk" />
-  <grant permission="bungeni.ministry.Delete" role="bungeni.Clerk" />  
-
-  <!--grant permission="bungeni.bill.Add" role="bungeni.MP" /-->
-  <grant permission="bungeni.bill.Edit" role="bungeni.Owner" />
-  <grant permission="bungeni.bill.Delete" role="bungeni.Owner" />
-  <grant permission="bungeni.bill.Delete" role="zope.Manager" />
-  <grant permission="bungeni.bill.View" role="bungeni.Owner" />  
-  
-  <grant permission="bungeni.bill.Add" role="bungeni.Clerk" />
-  <grant permission="bungeni.bill.Edit" role="bungeni.Clerk" />    
-  <grant permission="bungeni.bill.View" role="bungeni.Clerk" />  
-    
-  <grant permission="bungeni.bill.Edit" role="bungeni.Speaker" /> 
-  <grant permission="bungeni.bill.View" role="bungeni.Speaker" /> 
-
-  <grant permission="bungeni.heading.Add" role="bungeni.Clerk" />
-  <grant permission="bungeni.heading.Edit" role="bungeni.Clerk" />        
-  <grant permission="bungeni.heading.Add" role="bungeni.Speaker" />
-  <grant permission="bungeni.heading.Edit" role="bungeni.Speaker" /> 
       
   <grant permission="bungeni.auditlog.View" role="bungeni.Authenticated" />
-  
-<!-- XXX the permissions to add/edit/view amendments and annotatios should 
-be defined by workflow not static here !
+   
+    
+  <!-- content roles -->
+  <include package="bungeni_custom.sys.acl" file="parliamentary_meta.zcml" />
 
-  <grant permission="bungeni.amendment.Edit" role="bungeni.Authenticated" />
-  <grant permission="bungeni.amendment.View" role="bungeni.Authenticated" />
-  
-  <grant permission="bungeni.comment.Edit" role="bungeni.Authenticated" />
-  <grant permission="bungeni.comment.View" role="bungeni.Authenticated" />  
--->  
+  <include package="bungeni_custom.sys.acl" file="parliamentary_content.zcml" />
 
-  
-  <grant permission="bungeni.event.Add" role="bungeni.Speaker" />
-  <grant permission="bungeni.event.Edit" role="bungeni.Speaker" />
-  <grant permission="bungeni.event.Delete" role="bungeni.Speaker" />
-  
-  <grant permission="bungeni.event.Add" role="bungeni.Clerk" />
-  <grant permission="bungeni.event.Edit" role="bungeni.Clerk" />
-  <grant permission="bungeni.event.Delete" role="bungeni.Clerk" />
-  
-  <grant permission="bungeni.cosignatory.Add" role="bungeni.Owner" />
-  <grant permission="bungeni.cosignatory.Edit" role="bungeni.Owner" />
-  <grant permission="bungeni.cosignatory.Delete" role="bungeni.Owner" />
-  
-  <grant permission="bungeni.reports.Edit" role="bungeni.Clerk" />
-  <grant permission="bungeni.reports.Edit" role="bungeni.Speaker" /> 
-  
-  <grant permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
-  
-  <grant permission="bungeni.translation.Add" role="bungeni.Translator" />
+  <include package="bungeni_custom.sys.acl" file="translation.zcml" /> 
   
 </configure>

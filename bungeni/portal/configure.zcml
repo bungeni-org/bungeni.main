@@ -16,7 +16,7 @@
   
   <!-- Setup Database Connection -->
   <!-- load from bungeni_custom -->
-  <include package="bungeni_custom" file="db.zcml" />
+  <include package="bungeni_custom.sys" file="db.zcml" />
 
   <!-- Bind Application Model to Database -->
   <db:bind

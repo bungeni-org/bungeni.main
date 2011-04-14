@@ -265,4 +265,6 @@
    
   <permission id="bungeni.translation.Add" title="add translation" />
    
+  <include package="bungeni_custom.sys.acl" file="permissions.zcml" />
+   
 </configure>

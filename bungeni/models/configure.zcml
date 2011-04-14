@@ -16,7 +16,7 @@
     <include file="auth.zcml"/>
     <include file="roles.zcml"/>
     <include file="permissions.zcml"/>
-  
+    
     <!-- Assignment Infrastructure -->
     <include file="assignment.zcml"/>
     
