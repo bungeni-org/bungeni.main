@@ -597,7 +597,24 @@ class UserSource(SpecializedSource):
         users = session.query(domain.User).order_by(
                 domain.User.last_name, domain.User.first_name)
         return users
-    
+
+class MembershipUserSource(UserSource):
+    """Filter out users already added to a membership container
+    """
+    def constructQuery(self, context):
+        session = Session()
+        users = super(FilteredUserSource, self).constructQuery(
+            context
+        )
+        trusted = removeSecurityProxy(context)
+        exclude_ids = set()
+        if IContainer.providedBy(trusted):
+            for member in trusted.values():
+                exclude_ids.add(member.user_id)
+            users = users.filter(
+                sql.not_(domain.User.user_id.in_(list(exclude_ids)))
+            )
+        return users
 
 class UserNotMPSource(SpecializedSource):
     """ All users that are NOT a MP """
