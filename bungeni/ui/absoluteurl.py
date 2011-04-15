@@ -288,12 +288,11 @@ class MemberOfParliamentAdminAbsoluteURLView(AbsoluteURL):
 class OfficeAdminAbsoluteURLView(AbsoluteURL):
     """ Custom absolute url for offices in admin section
     """
-    subsection = "offices"
     
     def __str__(self):
         base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
-        return '%s/admin/content/parliaments/obj-%s/%s/%s' % \
-               (base_url, self.context.parent_group_id, self.subsection, stringKey(self.context))
+        return '%s/admin/content/offices/%s' % \
+               (base_url, stringKey(self.context))
 
     __call__ = __str__
 
