@@ -30,7 +30,7 @@ GRANT, DENY = 1, 0
 def nullCheckPermission(permission, principal_id):
     return True
 
-def exceptions_as(exc_kls):
+def exceptions_as(exc_kls, include_name=True):
     def _exceptions_as(f):
         """Decorator to intercept any error raised by function f and 
         re-raise it as a exc_kls. 
@@ -38,8 +38,11 @@ def exceptions_as(exc_kls):
         def _errorable_f(*args, **kw):
             try: 
                 return f(*args, **kw)
-            except Exception, e: 
-                raise exc_kls("%s: %s" % (e.__class__.__name__, e))
+            except Exception, e:
+                if include_name:
+                    raise exc_kls("%s: %s" % (e.__class__.__name__, e))
+                else:
+                    raise exc_kls("%s" % (e))
         return _errorable_f
     return _exceptions_as
 
@@ -216,7 +219,7 @@ class Workflow(object):
         # integrity
         self.validate()
     
-    # @exceptions_as(interfaces.InvalidWorkflow)
+    @exceptions_as(interfaces.InvalidWorkflow, False)
     def validate(self):
         states = self._states_by_id.values()
         # at least one state
