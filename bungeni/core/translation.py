@@ -21,6 +21,7 @@ from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 from zope.security.management import getInteraction
 from zope.publisher.interfaces import IRequest
+from zope.publisher.interfaces.http import IHTTPRequest
 
 from zope.publisher.browser import BrowserLanguages
 
@@ -99,7 +100,12 @@ def get_all_languages(filter=None):
     return dict([ (name, _languages[name]) for name in filter ])
 
 def get_request_language():
-    return common.get_request().locale.getLocaleID() # !+ get_browser_language()
+    request = common.get_request()
+    if IHTTPRequest.providedBy(request):
+        lang = request.locale.getLocaleID()
+    else:
+        lang = capi.default_language
+    return lang
 
 
 def get_translation_for(context, lang):
