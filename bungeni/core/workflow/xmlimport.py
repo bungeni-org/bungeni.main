@@ -15,7 +15,6 @@ from lxml import etree
 from zope.dottedname.resolve import resolve
 from zope.i18nmessageid import Message
 from bungeni.core.workflow import interfaces
-from bungeni.core.workflow.states import exception_as
 from bungeni.core.workflow.states import GRANT, DENY
 from bungeni.core.workflow.states import State, Transition, Workflow
 from bungeni.core.workflow.notification import Notification
@@ -36,6 +35,8 @@ trigger_value_map = {
 
 # only letters, numbers and "_" char i.e. no whitespace or "-"
 ID_RE = re.compile("^[\w\d_]+$")
+
+STATE_ATTRS = ("id", "title", "version", "like_state", "note", "obsolete")
 
 TRANS_ATTRS_REQUIREDS = ("title", "source", "destination")
 TRANS_ATTRS_OPTIONALS = ("condition", "trigger", "roles", "order", 
@@ -92,10 +93,12 @@ def strip_none(s):
 def as_bool(s):
     """ (s:str) -> bool
     """
-    if s.lower() == "true":
+    _s = s.lower()
+    if _s == "true":
         return True
-    elif s.lower() == "false":
+    elif _s == "false":
         return False
+    raise TypeError("Invalid bool: %s" % s)
 
 #
 
@@ -194,6 +197,12 @@ def _load(workflow, name):
                 like_permissions.remove(perm)
         permissions.append((assignment, p, r))
     
+    def assert_valid_attr_names(e, allowed_attr_names):
+        for key in e.keys():
+            assert key in allowed_attr_names, \
+                "Workflow [%s]: unknown attribute %s in %s" % (
+                    name, key, etree.tostring(e))
+    
     # top-level child ordering
     grouping, allowed_child_ordering = 0, ("grant", "state", "transition")
     for child in workflow.iterchildren():
@@ -216,6 +225,7 @@ def _load(workflow, name):
     
     # states
     for s in workflow.iterchildren("state"):
+        assert_valid_attr_names(s, STATE_ATTRS)
         # @id
         state_id = strip_none(s.get("id"))
         assert state_id, "Workflow State must define @id"
@@ -278,17 +288,15 @@ def _load(workflow, name):
         states.append(
             State(state_id, Message(s.get("title", domain)), 
                 strip_none(s.get("note")),
-                actions, permissions, notifications)
+                actions, permissions, notifications,
+                as_bool(strip_none(s.get("obsolete") or "false")))
         )
     
     STATE_IDS = [ s.id for s in states ]
     
     # transitions
     for t in workflow.iterchildren("transition"):
-        for key in t.keys():
-            assert key in TRANS_ATTRS, \
-                "Workflow [%s]: unknown attribute %s in %s" % (
-                    name, key, etree.tostring(t))
+        assert_valid_attr_names(t, TRANS_ATTRS)
         for key in TRANS_ATTRS_REQUIREDS:
             if key == "source" and t.get(key) == "":
                 # initial_state, an explicit empty string

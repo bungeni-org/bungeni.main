@@ -30,8 +30,18 @@ GRANT, DENY = 1, 0
 def nullCheckPermission(permission, principal_id):
     return True
 
-def exception_as(exc, exc_kls):
-    return exc_kls("%s: %s" % (exc.__class__.__name__, exc))
+def exceptions_as(exc_kls):
+    def _exceptions_as(f):
+        """Decorator to intercept any error raised by function f and 
+        re-raise it as a exc_kls. 
+        """
+        def _errorable_f(*args, **kw):
+            try: 
+                return f(*args, **kw)
+            except Exception, e: 
+                raise exc_kls("%s: %s" % (e.__class__.__name__, e))
+        return _errorable_f
+    return _exceptions_as
 
 def wrapped_condition(condition):
     def test(context):
@@ -40,21 +50,26 @@ def wrapped_condition(condition):
         try:
             return condition(context)
         except Exception, e:
-            raise exception_as(e, interfaces.WorkflowConditionError)
+            raise interfaces.WorkflowConditionError("%s: %s" % (
+                e.__class__.__name__, e))
     return test
 
 #
 
 class State(object):
     
-    def __init__(self, id, title, note, actions, permissions, notifications):
+    def __init__(self, id, title, note, actions, permissions, notifications,
+            obsolete=False
+        ):
         self.id = id # status
         self.title = title
         self.note = note
         self.actions = actions # [callable]
         self.permissions = permissions
         self.notifications = notifications
+        self.obsolete = obsolete
     
+    @exceptions_as(interfaces.WorkflowStateActionError)
     def execute_actions(self, context):
         """Execute the actions and permissions associated with this state.
         """
@@ -64,10 +79,7 @@ class State(object):
         Session().merge(context)
         # actions
         for action in self.actions:
-            try:
-                action(context)
-            except Exception, e:
-                raise exception_as(e, interfaces.WorkflowStateActionError)
+            action(context)
         # permissions
         rpm = zope.securitypolicy.interfaces.IRolePermissionMap(context)
         for assign, permission, role in self.permissions:
@@ -204,6 +216,7 @@ class Workflow(object):
         # integrity
         self.validate()
     
+    # @exceptions_as(interfaces.InvalidWorkflow)
     def validate(self):
         states = self._states_by_id.values()
         # at least one state
@@ -224,14 +237,20 @@ class Workflow(object):
                 assert (p[1], p[2]) in prs, \
                     "Workflow state [%s -> %s] defines an unexpected " \
                     "permission: %s" % (self.name, s.id, p)
-        # every state is reachable
+        # ensure that every active state is reachable, 
+        # and that every obsolete state is NOT reachable
         tbyd = self._transitions_by_destination
         for dest_id, sources in tbyd.items():
             log.debug("Workflow [%s] sources %s -> destination [%s]" % (
                 self.name, [t.source for t in sources], dest_id))
-            if not sources:
-                raise SyntaxError("Unreachable state [%s] in Workflow [%s]" % (
-                    dest_id, self.name))
+            if self.get_state(dest_id).obsolete:
+                assert not sources, \
+                    "Reachable obsolete state [%s] in Workflow [%s]" % (
+                        dest_id, self.name)
+            else:
+                assert sources, \
+                    "Unreachable state [%s] in Workflow [%s]" % (
+                        dest_id, self.name)
     
     @property
     def states(self):
@@ -240,17 +259,13 @@ class Workflow(object):
             "use Workflow.get_state(status) instead" % (self.name))
         return self._states_by_id
     
+    @exceptions_as(interfaces.InvalidStateError)
     def get_state(self, state_id):
-        try:
-            return self._states_by_id[state_id]
-        except KeyError, e:
-            raise exception_as(e, interfaces.InvalidStateError)
-
+        return self._states_by_id[state_id]
+    
+    @exceptions_as(interfaces.InvalidTransitionError)
     def get_transition(self, transition_id):
-        try:
-            return self._transitions_by_id[transition_id]
-        except KeyError, e:
-            raise exception_as(e, interfaces.InvalidTransitionError)
+        return self._transitions_by_id[transition_id]
     
     # !+ get_transitions_to(destination) ? 
     def get_transitions_from(self, source):
