@@ -246,7 +246,10 @@ def validate_group_membership_dates(action, data, context, container):
         group_membership = context
     else:
         group_membership = None
-    user_id = data['user_id']
+    #!(murithi, apr-2011) VALIDATION - this may be improved
+    user_id = data.get('user_id', None)
+    if user_id is None:
+        return errors
     session = Session()
     if data['start_date']:
         for r in queries.validate_membership_in_interval(group_membership, 

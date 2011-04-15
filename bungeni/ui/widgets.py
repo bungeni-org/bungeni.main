@@ -1009,7 +1009,10 @@ class _AutoCompleteWidget(ItemsEditWidgetBase):
             kw["value"] = term.token
             kw["text"] = self.textForValue(term)
         elif self.hasInput() and self.hasValidInput():
-            term = self.vocabulary.getTerm(self._data)
+            token = self._data
+            if self._data is self._data_marker:
+                token = self.getInputValue()
+            term = self.vocabulary.getTerm(token)
             kw["value"] = term .token
             kw["text"] = self.textForValue(term)
         else:

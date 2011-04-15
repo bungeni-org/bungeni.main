@@ -603,7 +603,7 @@ class MembershipUserSource(UserSource):
     """
     def constructQuery(self, context):
         session = Session()
-        users = super(FilteredUserSource, self).constructQuery(
+        users = super(MembershipUserSource, self).constructQuery(
             context
         )
         trusted = removeSecurityProxy(context)
