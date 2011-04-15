@@ -10,9 +10,12 @@ from bungeni.alchemist.model import queryModelDescriptor
 
 from bungeni.models import interfaces
 from bungeni.models import domain
+from bungeni.core.i18n import _
 from bungeni.core.translation import is_translation
 from bungeni.core.translation import get_language_by_name
-from bungeni.core.i18n import _
+from bungeni.core.translation import get_request_language
+from bungeni.core.translation import get_translation_for
+
 from bungeni.ui.utils import date
 
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
@@ -39,9 +42,7 @@ class DublinCoreMetadataAdapter(object):
                 adapter = self.adapters.get(iface)
                 if adapter is None:
                     adapter = self.adapters[iface] = iface(self.context)
-
                 return getattr(adapter, attribute)
-
         raise AttributeError(attribute)
 
 
@@ -63,6 +64,20 @@ class DescriptiveProperties(object):
     def formatDate(self, date_, category="date", length="medium"):
         return date.getLocaleFormatter(None, category, length).format(date_)
 
+    def translate(self, context, name):
+        lang = get_request_language()
+        if not lang:
+            return getattr(context, name)
+        if interfaces.ITranslatable.providedBy(context):
+            if context.language != lang:
+                translation = get_translation_for(context, lang)
+                translation = filter(lambda tr:tr.field_name==name, 
+                    translation
+                )
+                if translation:
+                    return translation[0].field_text
+        return getattr(context, name)
+
 
 class QuestionDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IQuestion)
@@ -72,10 +87,10 @@ class QuestionDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         if context.question_number is None:
-            return context.short_name
+            return self.translate(context, "short_name")
         return "#%d: %s" % (
             context.question_number,
-            context.short_name)
+            self.translate(context,"short_name"))
 
     @property
     def description(self):
@@ -99,8 +114,10 @@ class BillDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         if context.identifier is None:
-            return context.short_name
-        return "#%d: %s" % (context.identifier, context.short_name)
+            return self.translate(context, "short_name")
+        return "#%d: %s" % (context.identifier, 
+            self.translate(context, "short_name")
+        )
 
     @property
     def description(self):
@@ -122,10 +139,10 @@ class MotionDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         if context.motion_number is None:
-            return context.short_name
+            return self.translate(context, "short_name")
         return "#%d: %s" % (
             context.motion_number,
-            context.short_name)
+            self.translate(context, "short_name"))
 
     @property
     def description(self):
@@ -147,7 +164,7 @@ class SittingDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         return "%s %s, %s %s %s" % (_(u"Sitting:"), 
-                context.group.short_name, 
+                self.translate(context.group, "short_name"), 
                 context.start_date.strftime('%Y-%m-%d, %H:%M'), 
                 _(u"to"), 
                 context.end_date.strftime('%H:%M'))
@@ -204,8 +221,8 @@ class GroupDescriptiveProperties(DescriptiveProperties):
         context = session.merge(removeSecurityProxy(self.context))
         return "%s - %s" % (
             #self.context.type.capitalize(),
-            context.short_name,
-            context.full_name)
+            self.translate(context, "short_name"),
+            self.translate(context, "full_name"))
 
 
 class ContainerDescriptiveProperties(DescriptiveProperties):
@@ -224,7 +241,7 @@ class UserDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return "%s %s %s" % (context.titles,
+        return "%s %s %s" % (self.translate(context,"titles"),
                 context.first_name,
                 context.last_name)
 
@@ -237,7 +254,7 @@ class GroupMembershipDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         if context.user:
-            return "%s %s %s" % (context.user.titles,
+            return "%s %s %s" % (self.translate(context.user, "titles"),
                 context.user.first_name,
                 context.user.last_name)
         else:
@@ -252,7 +269,7 @@ class GroupSittingAttendanceDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         if context.user:
-            return "%s %s %s" % (context.user.titles,
+            return "%s %s %s" % (self.translate(context.user, "titles"),
                 context.user.first_name,
                 context.user.last_name)
         else:
@@ -262,7 +279,9 @@ class GroupSittingAttendanceDescriptiveProperties(DescriptiveProperties):
     def description(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return context.attendance_type.attendance_type
+        return self.translate(context.attendance_type, 
+            "attendance_type"
+        )
 
 
 class CosignatoryDescriptiveProperties(DescriptiveProperties):
@@ -273,7 +292,7 @@ class CosignatoryDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         if context.user:
-            return "%s %s %s" % (context.user.titles,
+            return "%s %s %s" % (self.translate(context.user, "titles"),
                 context.user.first_name,
                 context.user.last_name)
         else:
@@ -287,13 +306,13 @@ class ParliamentSessionDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return context.short_name
+        return self.translate(context, "short_name")
     
     @property
     def description(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return context.full_name
+        return self.translate(context, "full_name")
 
 
 class ConstituencyDescriptiveProperties(DescriptiveProperties):
@@ -303,7 +322,7 @@ class ConstituencyDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return context.name
+        return self.translate(context, "name")
 
 
 class ProvinceDescriptiveProperties(DescriptiveProperties):
@@ -313,7 +332,7 @@ class ProvinceDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return context.province
+        return self.translate(context, "province")
 
 
 class RegionDescriptiveProperties(DescriptiveProperties):
@@ -323,7 +342,7 @@ class RegionDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return context.region
+        return self.translate(context, "region")
 
 
 class ItemScheduleDiscussionDescriptiveProperties(DescriptiveProperties):
@@ -331,8 +350,6 @@ class ItemScheduleDiscussionDescriptiveProperties(DescriptiveProperties):
     
     @property
     def title(self):
-        session = Session()
-        context = session.merge(removeSecurityProxy(self.context))
         return _(u"Discussion")
 
 
@@ -341,7 +358,7 @@ class SittingTypeDescriptiveProperties(DescriptiveProperties):
 
     @property
     def title(self):
-        return self.context.group_sitting_type
+        return self.translate(self.context, "group_sitting_type")
 
 
 class ChangeDescriptiveProperties(DescriptiveProperties):
@@ -357,7 +374,7 @@ class UserAddressDescriptiveProperties(DescriptiveProperties):
     
     @property
     def title(self):
-        return u"Address"
+        return _(u"Address")
 
 
 class AgendaItemDescriptiveProperties(DescriptiveProperties):
@@ -367,7 +384,9 @@ class AgendaItemDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return u"%s - %s" % (context.short_name, context.group.short_name)
+        return u"%s - %s" % (self.translate(context, "short_name"),
+            self.translate(context.group, "short_name")
+        )
 
 
 class TabledDocumentDescriptiveProperties(DescriptiveProperties):
@@ -377,7 +396,7 @@ class TabledDocumentDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return context.short_name
+        return self.translate(context, "short_name")
 
 
 class ConstituencyDetailsDescriptiveProperties(DescriptiveProperties):
@@ -387,8 +406,10 @@ class ConstituencyDetailsDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return '%s - %i' % (context.constituency.name,
-            context.date.year)
+        return '%s - %i' % (
+            self.translate(context.constituency, "name"),
+            context.date.year
+        )
 
 
 class GroupItemAssignmentDescriptiveProperties(DescriptiveProperties):
@@ -398,7 +419,10 @@ class GroupItemAssignmentDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return '%s - %s ' % (context.item.short_name, context.group.short_name)
+        return '%s - %s ' % (
+                self.translate(context.item, "short_name"), 
+                self.translate(context.group, "short_name")
+        )
 
 
 class MemberRoleTitleDescriptiveProperties(DescriptiveProperties):
@@ -408,7 +432,7 @@ class MemberRoleTitleDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return context.title_name.user_role_name
+        return self.translate(context.title_name, "user_role_name")
 
 
 
@@ -419,7 +443,7 @@ class ReportDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return u'%s: %s - %s' % (context.short_name,
+        return u'%s: %s - %s' % (self.translate(context, "short_name"),
             context.start_date, context.end_date)
 
     @property
@@ -436,7 +460,7 @@ class ItemScheduleCategoryDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return context.short_name
+        return self.translate(context, "short_name")
 
 
 class UserDelegationDescriptiveProperties(DescriptiveProperties):
@@ -460,7 +484,7 @@ class EventItemProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return context.short_name
+        return self.translate(context, "short_name")
 
 
 class AttachedFileDescriptiveProperties(DescriptiveProperties):
@@ -502,7 +526,7 @@ class HeadingDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return context.short_name
+        return self.translate(context, "short_name")
 
     @property
     def description(self):
@@ -515,7 +539,7 @@ class AddressTypeDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return context.address_type_name
+        return self.translate(context, "address_type_name")
 
 class BillTypeDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IBillType)
@@ -524,7 +548,7 @@ class BillTypeDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return context.bill_type_name
+        return self.translate(context, "bill_type_name")
 
 class CommitteeTypeDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.ICommitteeType)
@@ -533,7 +557,7 @@ class CommitteeTypeDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return context.committee_type
+        return self.translate(context, "committee_type")
 
 class AttendanceTypeDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IAttendanceType)
@@ -542,7 +566,7 @@ class AttendanceTypeDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return context.attendance_type
+        return self.translate(context, "attendance_type")
 
 class VenueDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IVenue)
@@ -551,4 +575,4 @@ class VenueDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return context.short_name
+        return self.translate(context, "short_name")
