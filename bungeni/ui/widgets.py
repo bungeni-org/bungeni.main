@@ -1163,10 +1163,22 @@ class TermsDisplayWidget(
     zope.app.form.browser.widget.UnicodeDisplayWidget
 ):
 
+    hint = _(u"selected subject terms")
+
+    @property
+    def has_value(self):
+        return (self._data is not None and
+            self._data is not self._data_marker
+        )
+
     def __call__(self):
         term_text = u""
-        for data_value in self._data.split('\n'):
-            term_text = term_text + u"<li>%s</li>" % unicode(data_value)
+        if self.has_value:
+            for data_value in self._data.split('\n'):
+                term_text = term_text + u"<li>%s</li>" \
+                    % unicode(data_value)
+        else:
+            return "<span>%s</span>" %(_(u"no subjects"))
         return  u"<ul>%s</ul>" % term_text
 
 
