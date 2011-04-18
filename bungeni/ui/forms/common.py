@@ -60,8 +60,6 @@ from bungeni.ui import z3evoque
 from bungeni.ui.utils import url, debug
 from bungeni.ui.container import invalidate_caches_for
 
-import re
-import htmlentitydefs
 TRUE_VALS = "true", "1"
 
 
@@ -72,34 +70,6 @@ def set_widget_errors(widgets, errors):
             if isinstance(error, interface.Invalid) and name in error.args[1:]:
                 if widget._error is None:
                     widget._error = error
-
-
-def unescape(text):
-    """Removes HTML or XML character references 
-        entities from a text string.
-        keep &amp;, &gt;, &lt; in the source code.
-        from Fredrik Lundh
-        http://effbot.org/zone/re-sub.htm#unescape-html"""
-    def fixup(m):
-        text = m.group(0)
-        if text[:2] == "&#":
-            # character reference
-            try:
-                if text[:3] == "&#x":
-                    return unichr(int(text[3:-1], 16))
-                else:
-                    return unichr(int(text[2:-1]))
-            except ValueError:
-                pass
-        else:
-            # named entity
-            try:
-                text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
-            except KeyError:
-                pass
-        return text # leave as is
-    return re.sub("&#?\w+;", fixup, text)
-
 
 class NoPrefix(unicode):
     """The ``formlib`` library insists on concatenating the form
@@ -372,10 +342,7 @@ class AddForm(BaseForm, catalyst.AddForm):
         _(u"Save and view"),
         condition=formlib.form.haveInputWidgets)
     def handle_add_save(self, action, data):
-        for key in data.keys():
-            print "[handle_add_save] KEY:%s VALUE:%s" % (key, data[key])
-            if isinstance(data[key], str):
-                data[key] = unescape(data[key])
+        print "[handle_add_save] KEY:%s VALUE:%s" % (key, data[key])
         ob = self.createAndAdd(data)
         name = self.context.domain_model.__name__
         if not self._next_url:
@@ -393,9 +360,6 @@ class AddForm(BaseForm, catalyst.AddForm):
 
     @formlib.form.action(_(u"Save"), condition=formlib.form.haveInputWidgets)
     def handle_add_edit(self, action, data):
-        for key in data.keys():
-            if isinstance(data[key], str):
-                data[key] = unescape(data[key])
         ob = self.createAndAdd(data)
         name = self.context.domain_model.__name__
         if not self._next_url:
@@ -405,9 +369,6 @@ class AddForm(BaseForm, catalyst.AddForm):
     @formlib.form.action(
         _(u"Save and add another"), condition=formlib.form.haveInputWidgets)
     def handle_add_and_another(self, action, data):
-        for key in data.keys():
-            if isinstance(data[key], str):
-                data[key] = unescape(data[key])
         self.createAndAdd(data)
         name = self.context.domain_model.__name__
 
@@ -511,9 +472,6 @@ class EditForm(BaseForm, catalyst.EditForm):
                 widget.render_original = display_widget
     
     def _do_save(self, data):
-        for key in data.keys():
-            if isinstance(data[key], str):
-                data[key] = unescape(data[key])
         formlib.form.applyChanges(self.context, self.form_fields, data)
         # !+EVENT_DRIVEN_CACHE_INVALIDATION(mr, mar-2011) no modify event
         # invalidate caches for this domain object type
@@ -538,9 +496,6 @@ class EditForm(BaseForm, catalyst.EditForm):
     @formlib.form.action(_(u"Cancel"), validator=ui.null_validator)
     def handle_edit_cancel(self, action, data):
         """Cancelling redirects to the listing."""
-        for key in data.keys():
-            if isinstance(data[key], str):
-                data[key] = unescape(data[key])
         session = Session()
         if not self._next_url:
             self._next_url = url.absoluteURL(self.context, self.request)
@@ -689,9 +644,6 @@ class TranslateForm(AddForm):
     def handle_add_save(self, action, data):
         """After succesful creation of translation, redirect to the
         view."""
-        for key in data.keys():
-            if isinstance(data[key], str):
-                data[key] = unescape(data[key])
         #url = url.absoluteURL(self.context, self.request)
         #language = get_language_by_name(data["language"])["name"]
         session = Session()
