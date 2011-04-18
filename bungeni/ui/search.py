@@ -73,8 +73,16 @@ from zope.app.publisher.browser import getDefaultViewName
 from bungeni.core.interfaces import ISection
 from bungeni.ui.viewlets.navigation import _get_context_chain
 from bungeni.ui.utils.url import get_section_name
+from bungeni.models import domain
+from zope.traversing.browser import absoluteURL
+from bungeni.core.translation import translate_obj
+from zope.app.component.hooks import getSite
 
-ALLOWED_TYPES = {'business': ('Question', 'Motion', 'Committee', 'Bill', \
+from workspace import ARCHIVED
+
+ALLOWED_TYPES = {'workspace': ('Question', 'Motion', 'TabledDocument',\
+                               'Bill', 'AgendaItem', 'Committee'),\
+                 'business': ('Question', 'Motion', 'Committee', 'Bill', \
                               'TabledDocument', 'AgendaItem'),
                  'archive': ('Question', 'Motion', 'Committee', \
                              'Bill', 'TabledDocument', 'AgendaItem', \
@@ -300,10 +308,31 @@ class Search(forms.common.BaseForm, ResultListing, HighlightMixin):
         defaultview = getDefaultViewName(obj, self.request)
         view = queryMultiAdapter((ProxyFactory(obj), self.request), name=defaultview)
         return canAccess(view, "__call__")
+    
+    def get_description(self, item):
+        return item.description
+
+    def get_title(self, item):
+        return "%s %s" % (translate_obj(item.origin, self.request.locale.id.language).short_name,
+                             _(u"changes from"))
+
+    def get_url(self, item):
+        site = getSite()
+        base_url = absoluteURL(site, self.request)
+        return base_url + "/business/%ss/obj-%s" % (item.origin.type,
+                                                    item.origin.parliamentary_item_id)
+
+    def get_user_subscriptions(self):
+        """ Getting user subscribed items
+        """
+        session = Session()
+        user = session.query(domain.User).filter(domain.User.login == self.request.principal.id).first()
+        return user.subscriptions
 
     @CachedProperty
     def _searchresults(self):
         #Filter items allowed in current section
+        
         section = get_section_name()
 
         subqueries = []
@@ -321,7 +350,9 @@ class Search(forms.common.BaseForm, ResultListing, HighlightMixin):
                 self.searcher.get_doccount())
         except:
             results = []
+
         return filter(self.authorized, results)
+        
 
     @property
     def _results(self):

@@ -18,6 +18,21 @@ class CustomAbsoluteURL(AbsoluteURL):
                stringKey(self.context))
 
     __call__ = __str__
+    
+
+""" Workspace section
+"""
+
+class WorkspaceAbsoluteURLView(AbsoluteURL):
+    
+    subsection = ''
+    
+    def __str__(self):
+        base_url = ui_utils.url.absoluteURL(getSite(), self.request)
+        return '%s/business/%ss/%s/' % (base_url, self.context.type,\
+                                                   stringKey(self.context))
+    
+    __call__ = __str__
 
 
 """ Business section
@@ -26,7 +41,6 @@ class BusinessAbsoluteURLView(CustomAbsoluteURL):
     """ Custom absolute url for business section
     """
     section = "business"
-    subsection = ""
 
 
 class CommitteeBusinessAbsoluteURLView(BusinessAbsoluteURLView):
