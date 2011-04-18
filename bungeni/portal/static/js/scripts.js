@@ -123,4 +123,12 @@ $(document).ready(function(){
         $(this).parent().hide();
       }
     });
+    
+    // adjust the styles for the first column in this table
+    $('table.listing[name="attendance"] th:first').css('text-align', 'left');
+    $('table.listing[name="attendance"] tr').each(function(){
+        // select the first td in this row
+        var firstTD = $(this).children('td:first');
+        firstTD.css('text-align', 'left');
+    });
 });
