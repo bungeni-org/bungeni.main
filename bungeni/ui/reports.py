@@ -374,7 +374,10 @@ class SaveReportView(form.PageForm):
         report.owner_id = get_db_user_id()
         report.language = get_default_language()
         report.created_date = datetime.datetime.now()
-        report.group_id = self.context.group_id
+        if not hasattr(self.context, "group_id"):
+            report.group_id = ISchedulingContext(self.context).group_id
+        else:
+            report.group_id = self.context.group_id
         session.add(report)
         session.flush()
         notify(ObjectCreatedEvent(report))
@@ -396,10 +399,8 @@ class SaveReportView(form.PageForm):
         
         if IGroupSitting.providedBy(self.context):
             back_link = "./schedule"
-        elif ISchedulingContext.providedBy(self.context):
-            back_link = "./"
         else:
-            raise NotImplementedError
+            back_link = "./"
         self.request.response.redirect(back_link)
 
 class DefaultReportView(BrowserView):

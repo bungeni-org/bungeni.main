@@ -154,7 +154,14 @@ class DownloadDocument(BrowserView):
                 self.document.attached_files.append(attached_file)
                 session.add(self.document)
                 session.flush()
-                notify(ObjectCreatedEvent(attached_file))
+                #!+ REPORTS(miano, apr-2011) Anonymous users may prompt 
+                #the storage of a report if it hasn't been stored before.
+                #Actions that are executed when an objectcreatedevent
+                #is triggered may require a principal in the 
+                #request eg. auditing. Report attachments are not displayed in 
+                #listings or any other place so not triggering the event 
+                #shouldn't do any harm.
+                #notify(ObjectCreatedEvent(attached_file))
             for f in self.document.attached_files:
                 if f.file_title == self.document_type: 
                     self.setHeader(self.document_type)

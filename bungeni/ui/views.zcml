@@ -234,7 +234,7 @@
      />
     <browser:page
      name="save-report"
-     for="bungeni.core.interfaces.ISchedulingContext"
+     for="bungeni.core.interfaces.ISection"
      permission="bungeni.reports.Edit"
      class=".reports.SaveReportView"
      />
