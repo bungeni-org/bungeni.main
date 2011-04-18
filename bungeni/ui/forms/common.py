@@ -342,7 +342,6 @@ class AddForm(BaseForm, catalyst.AddForm):
         _(u"Save and view"),
         condition=formlib.form.haveInputWidgets)
     def handle_add_save(self, action, data):
-        print "[handle_add_save] KEY:%s VALUE:%s" % (key, data[key])
         ob = self.createAndAdd(data)
         name = self.context.domain_model.__name__
         if not self._next_url:
