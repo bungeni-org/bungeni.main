@@ -1988,7 +1988,7 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
         ),
         Field(name="response_text",
             modes="edit",
-            property=schema.TextLine(title=_("Response"),
+            property=schema.Text(title=_("Response"),
                 description=_("Response to the Question"),
                 required=False
             ),

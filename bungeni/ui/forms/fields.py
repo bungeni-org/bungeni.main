@@ -17,6 +17,7 @@ from bungeni.ui.forms.workflow import bindTransitions
 from bungeni.ui.i18n import _
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
+from bungeni.models.interfaces import ITranslatable
 from bungeni.core.translation import get_translation_for, get_all_languages
 from copy import copy
 
@@ -92,31 +93,33 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
             if val is None:
                 omit_names.append(f.__name__)
         self.form_fields = self.form_fields.omit(*omit_names)
-
-        lang = self.request.locale.getLocaleID()
-        try:
-            translation = get_translation_for(self.context, lang)
-        except:
-            translation = []
-        if (not translation and
-            getattr(self.context, "language", None) and
-            getattr(self.context, "language", None) != lang
-        ):
-            supported_lang = languages.get(lang)
-            if supported_lang:
-                langname = supported_lang.get("native", None)
-                if langname == None:
-                    langname = supported_lang.get("name")
-                self.status = translate(
-                    _(u"This content is not yet translated into $language",
-                        mapping={"language": langname}),
-                    domain="bungeni.ui",
-                    context=self.request
-                )
-        context = copy(removeSecurityProxy(self.context))
-        for field_translation in translation:
-            setattr(context, field_translation.field_name,
-                    field_translation.field_text)
+        context = self.context
+        if ITranslatable.providedBy(self.context):
+            lang = self.request.locale.getLocaleID()
+            try:
+                translation = get_translation_for(self.context, lang)
+            except:
+                translation = []
+            if (not translation and
+                getattr(self.context, "language", None) and
+                getattr(self.context, "language", None) != lang
+            ):
+                supported_lang = languages.get(lang)
+                if supported_lang:
+                    langname = supported_lang.get("native", None)
+                    if langname == None:
+                        langname = supported_lang.get("name")
+                    self.status = translate(
+                        _(u"This content is not yet translated into" +\
+                            " $language",
+                            mapping={"language": langname}),
+                        domain="bungeni.ui",
+                        context=self.request
+                    )
+            context = copy(removeSecurityProxy(self.context))
+            for field_translation in translation:
+                setattr(context, field_translation.field_name,
+                        field_translation.field_text)
         self.widgets = form.setUpEditWidgets(
             self.form_fields, self.prefix, context, self.request,
             adapters=self.adapters,
