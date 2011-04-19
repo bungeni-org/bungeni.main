@@ -22,6 +22,12 @@ from bungeni.core.workflow import interfaces
 
 #
 
+# we only have 1 or 0 i.e. only Allow or Deny, no Unset.
+IntAsSetting = { 
+    1: zope.securitypolicy.interfaces.Allow,
+    0: zope.securitypolicy.interfaces.Deny
+}
+
 GRANT, DENY = 1, 0
 
 # !+ needed to make the tests pass in the absence of interactions
@@ -83,6 +89,7 @@ class State(object):
         # actions
         for action in self.actions:
             action(context)
+        '''
         # permissions
         rpm = zope.securitypolicy.interfaces.IRolePermissionMap(context)
         for assign, permission, role in self.permissions:
@@ -90,10 +97,20 @@ class State(object):
                rpm.grantPermissionToRole(permission, role)
             if assign == DENY:
                rpm.denyPermissionToRole(permission, role)
+        '''
         # notifications
         for notification in self.notifications:
             # call notification to execute
             notification(context)
+
+    def getRolesForPermission(self, permission):
+        """Generator of (role, setting) for permission, as per 
+        zope.securitypolicy.interfaces.IRolePermissionMap.
+        """
+        for setting, p, role in self.permissions:
+            if p == permission:
+                yield role, IntAsSetting[setting]
+
 
 class Transition(object):
     """A workflow transition from source status to destination.
@@ -191,6 +208,7 @@ class Workflow(object):
         self._transitions_by_id = {} # {id: Transition}
         self._transitions_by_source = {} # {source: [Transition]}
         self._transitions_by_destination = {} # {destination: [Transition]}
+        self._permission_role_pairs = None # set([ (permission, role) ])
         self.refresh(states, transitions)
     
     def refresh(self, states, transitions):
@@ -226,7 +244,8 @@ class Workflow(object):
         assert len(states), "Workflow [%s] defines no states" % (self.name)
         # every state must explicitly set the same set of permissions
         # prs: set of all (permission, role) pairs assigned in a state
-        prs = set([ (p[1], p[2]) for p in states[0].permissions ])
+        self._permission_role_pairs = prs = set([ 
+            (p[1], p[2]) for p in states[0].permissions ])
         num_prs = len(prs)
         for s in states:
             assert len(s.permissions) == num_prs, \

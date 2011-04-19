@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <configure xmlns="http://namespaces.zope.org/zope"
            xmlns:db="http://namespaces.objectrealms.net/rdb"
            xmlns:bungeni="http://namespaces.bungeni.org/zope"
@@ -15,7 +16,7 @@
     <!-- Setup Security Policy --> 
     <include package="zope.securitypolicy" file="meta.zcml" />
     <include package="zope.securitypolicy" />
-    <securityPolicy component="zope.securitypolicy.zopepolicy.ZopeSecurityPolicy" />
+    <securityPolicy component="bungeni.BungeniSecurityPolicy" />
   <include package="bungeni.alchemist" file="meta.zcml"/>
   <include package="alchemist.catalyst" file="meta.zcml"/>
   <include package="alchemist.catalyst" />
