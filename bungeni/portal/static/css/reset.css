@@ -1167,9 +1167,9 @@ div#portal-globalnav ul.level0 ul.level1 {
     background: #f9ac32 url(/static/images/globalnav-level1-bg.png) bottom left repeat-x;
     display: block;
 }
-.section-bungeni-business div#portal-globalnav ul.level0 ul.level1 {
+/*.section-bungeni-business div#portal-globalnav ul.level0 ul.level1 {
     display: none;
-}
+}*/
 .template-workspace div#portal-globalnav ul.level0 ul.level1 {
     width: 100%;
     border: 1px solid #aaf;
@@ -1221,7 +1221,7 @@ div#portal-globalnav ul.level0 ul.level1 li {
 	padding: 0;
 	height: auto;
 	display: block;
-	background: #F9AC32 url(http://test.bungeni.org/static/images/globalnav-level0-a.png) repeat-x scroll left top;
+	background: #F9AC32 url(/static/images/globalnav-level0-a.png) repeat-x scroll left top;
 	background: transparent;
 }
 div#portal-globalnav ul.level0 ul.level1 a {
@@ -1268,9 +1268,9 @@ div#portal-globalnav ul.level0 ul.level1 li.selected a {
  * To restore it to every page, remove this next style and leave the last one.
  *
  */
-.section-bungeni-business div#portal-globalnav-bottom {
+/*.section-bungeni-business div#portal-globalnav-bottom {
     display: none;
-}
+}*/
 div#portal-globalnav-bottom {
     display: block;
     height: 15px;
