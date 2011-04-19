@@ -746,7 +746,7 @@ class MpDescriptor(GroupMembershipDescriptor):
 
     fields = [
         Field(name="user_id",
-            modes="view edit add listing",
+            modes="view add listing",
             property=schema.Choice(title=_("Name"),
                 source=vocabulary.MembershipUserSource(
                     token_field="user_id",
