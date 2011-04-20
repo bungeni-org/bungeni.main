@@ -158,21 +158,23 @@ def set_get_gettext():
     This function is to be defined and called by the application - 
     get_gettext itself should have the parameters (i18n_domain, language).
     """
-    # localedirs for i18n domains
-    ''' !+CAPI(mr, mar-2011) zope-i18n uses symlinked paths under the 
-        respective package folders, so will use the same.
+    # !+zope_i18n(mr, apr-2011) this old way of setting localedir entries 
+    # conforms to what zope expects as i18n locale location. But, note the 
+    # double-dirname to sidestep the breakage of __file__ caused by namespace 
+    # packages. 
+    #
+    #import bungeni.core
+    #_i18n_domain_localedirs = {
+    #    "bungeni": os.path.join(os.path.dirname(os.path.dirname(
+    #            os.path.abspath(bungeni.core.__file__))), "locales"),
+    #}
+    # 
+    # Instead of requiring tricks like symlinking folders into bungeni_custom,
+    # we go direct while still staying perfectly decoupled from the physical 
+    # location:
     from bungeni.utils.capi import capi
     _i18n_domain_localedirs = {
-        "bungeni.ui": capi.get_path_for(
-            "translations", "bungeni.ui", "locales"),
-        "bungeni.core": capi.get_path_for(
-            "translations", "bungeni.core", "locales")
-    }
-    '''
-    import bungeni
-    _i18n_domain_localedirs = {
-        "bungeni": os.path.join(
-            os.path.dirname(os.path.abspath(bungeni.__file__)), "locales"),
+        "bungeni": capi.get_path_for("translations", "bungeni"),
     }
     _untranslated = []
     def _get_gettext(i18n_domain, language):

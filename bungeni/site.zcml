@@ -12,16 +12,9 @@
   <includeOverrides package="repoze.whooze" file="overrides.zcml" />
   <include package="zope.app.security" />
 
-  <include package="zope.i18n" file="meta.zcml" />
-  <!-- !+LOCALES(ashok,03-mar-2011)
-  This folder perhaps needs to be removed from the buildout
-  root. Remove after testing - create if required for 
-  locale message extraction in a buildout recipe.
-  Commenting out the registerTranslations for now -->
-  <!--
-  <i18n:registerTranslations
-     directory="locales" />
-   -->
+    <include package="zope.i18n" file="meta.zcml" />
+    <i18n:registerTranslations directory="locales" />
+    
   <!-- Exclude ZCML Directives -->
   <include package="zc.configuration" file="meta.zcml" />
   
@@ -111,6 +104,5 @@
   
   <!-- App Security -->
   <include file="security.zcml"/>
-  <include file="translations.zcml"/>
   <includeOverrides file="overrides.zcml" package="bungeni.core"/>
 </configure>
