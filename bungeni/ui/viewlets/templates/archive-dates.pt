@@ -4,7 +4,7 @@ $Id$
 $URL$
 -->
   
-  <dt class="portletHeader" i18n:domain="bungeni.ui" >
+  <dt class="portletHeader" i18n:domain="bungeni" >
     <span class="portletTopLeft"></span>
     <!-- !+ARCHIVE_FILTER_TITLE(mr, sep-2010) parematrize,
         use view.is_in_parliament() 

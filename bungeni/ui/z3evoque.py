@@ -111,7 +111,7 @@ evoque_ini = {
     "evoque.quoting": "xml",
     "evoque.input_encoding": "utf-8",
     # i18n defaults
-    "evoque.i18n_domain": "bungeni.ui",
+    "evoque.i18n_domain": "bungeni",
     "evoque.i18n_lang": "en",
 }
 
@@ -172,10 +172,10 @@ def set_get_gettext():
     import bungeni.ui
     import bungeni.core
     _i18n_domain_localedirs = {
-        "bungeni.ui": os.path.join(os.path.dirname(os.path.abspath(
-            bungeni.ui.__file__)), "locales"),
-        "bungeni.core": os.path.join(os.path.dirname(os.path.abspath(
-            bungeni.core.__file__)), "locales"), 
+        "bungeni": os.path.join(os.path.dirname(
+                os.path.dirname(os.path.abspath(
+                    bungeni.core.__file__
+                ))), "locales"), 
     }
     _untranslated = []
     def _get_gettext(i18n_domain, language):

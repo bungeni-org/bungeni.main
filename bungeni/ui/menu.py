@@ -234,7 +234,7 @@ class WorkflowSubMenuItem(BrowserSubMenuItem):
         state = wfc.state_controller.get_status()
         stateTitle = translate(
             str(wfc.workflow.get_state(state).title), 
-            domain="bungeni.core",
+            domain="bungeni",
             context=self.request)
         
         return {"id"         : "plone-contentmenu-workflow",
@@ -292,7 +292,7 @@ class WorkflowMenu(BrowserMenu):
                      "class": ""}
             
             state_title = translate(str(state_transition.title), 
-                    domain="bungeni.core", 
+                    domain="bungeni", 
                     context=request)
             results.append(
                 dict(title=state_title,

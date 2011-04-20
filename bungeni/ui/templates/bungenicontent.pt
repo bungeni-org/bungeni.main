@@ -1,5 +1,5 @@
 <!-- This template is used to generate both the ODT and PDF of bungeni content -->
-<span i18n:domain="bungeni.ui">
+<span i18n:domain="bungeni">
     <p class="documentmaintitle">
         <span tal:replace="view/document/group/dc:title | nothing"/>
     </p>

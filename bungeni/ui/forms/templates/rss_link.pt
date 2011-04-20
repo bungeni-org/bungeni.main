@@ -1,4 +1,4 @@
-<tal:block i18n:domain="bungeni.core" tal:define="subscribed view/already_subscribed">
+<tal:block i18n:domain="bungeni" tal:define="subscribed view/already_subscribed">
 	<tal:if condition="not:subscribed">
 	    <a class="rss_subscribe" href="subscribe" i18n:attributes="title Subscribe">
 	    	<img tal:attributes="src context/++resource++portal/images/subscribe.png" alt="rss" />

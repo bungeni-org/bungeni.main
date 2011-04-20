@@ -6,7 +6,7 @@ $Id$
 $URL$
 -->
         <a tal:attributes="href item/url" 
-            i18n:domain="bungeni.core"
+            i18n:domain="bungeni"
             i18n:translate="" 
             tal:content="item/title" 
         />

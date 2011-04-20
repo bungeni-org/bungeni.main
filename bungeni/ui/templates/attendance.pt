@@ -2,7 +2,7 @@
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       metal:use-macro="context/@@standard_macros/page">
   
-  <div metal:fill-slot="body" i18n:domain="bungeni.ui">
+  <div metal:fill-slot="body" i18n:domain="bungeni">
     <h1 i18n:translate="">Sitting attendance record</h1>
     
     <div id="attendance-record">

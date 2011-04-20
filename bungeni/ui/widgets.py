@@ -428,15 +428,15 @@ class SelectDateWidget(zope.app.form.browser.widget.SimpleInputWidget):
             "w_day_medium": w_day_medium,
             "w_day_long": w_day_long,
             "month": translate(
-                str(month), domain="bungeni.ui", context=self.request),
+                str(month), domain="bungeni", context=self.request),
             "year": translate(
-                str(year), domain="bungeni.ui", context=self.request),
+                str(year), domain="bungeni", context=self.request),
             "submit": translate(
-                str(submit), domain="bungeni.ui", context=self.request),
+                str(submit), domain="bungeni", context=self.request),
             "cancel": translate(
-                str(cancel), domain="bungeni.ui", context=self.request),
+                str(cancel), domain="bungeni", context=self.request),
             "invalidYear": translate(
-                str(invalidYear), domain="bungeni.ui", context=self.request)
+                str(invalidYear), domain="bungeni", context=self.request)
         }
 
     def _days(self):

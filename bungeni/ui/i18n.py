@@ -1,3 +1,3 @@
 from zope.i18nmessageid import MessageFactory
 
-_ = MessageFactory = MessageFactory('bungeni.ui') 
+_ = MessageFactory = MessageFactory('bungeni') 

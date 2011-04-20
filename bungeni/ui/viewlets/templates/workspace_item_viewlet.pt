@@ -1,6 +1,6 @@
 <html xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
-      i18n:domain="bungeni.ui"
+      i18n:domain="bungeni"
       tal:omit-tag="">
 <!--
 $Id$
@@ -35,8 +35,8 @@ $URL$
         <tbody>
           <tr tal:repeat="result results">
             <td>  <a tal:content="result/subject" tal:attributes="href result/url" />  </td>
-            <td i18n:domain="bungeni.models"  i18n:translate="" tal:content="result/type" />
-            <td i18n:domain="bungeni.models" i18n:translate="" tal:content="result/status" />
+            <td i18n:domain="bungeni"  i18n:translate="" tal:content="result/type" />
+            <td i18n:domain="bungeni" i18n:translate="" tal:content="result/status" />
             <td tal:content="result/status_date" />
             <td tal:content="result/owner" />
             <td tal:content="result/to" />

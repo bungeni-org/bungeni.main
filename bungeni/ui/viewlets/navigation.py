@@ -86,7 +86,7 @@ class SecondaryNavigationViewlet(browser.BungeniViewlet):
     
     # evoque
     render = z3evoque.ViewTemplateFile("navigation.html#secondary",
-        i18n_domain="bungeni.core")
+        i18n_domain="bungeni")
     # zpt
     #render = ViewPageTemplateFile("templates/secondary-navigation.pt")
     

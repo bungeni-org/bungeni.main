@@ -94,7 +94,7 @@
         </script>
         
       </tal:block>
-      <div metal:fill-slot="body" i18n:domain="bungeni.ui" class="dhtmlx_calendar_main">
+      <div metal:fill-slot="body" i18n:domain="bungeni" class="dhtmlx_calendar_main">
           <div class="dhtmlx_calendar_title">
             <span i18n:translate="">Calendar of </span>
             <span tal:replace="view/title"></span>

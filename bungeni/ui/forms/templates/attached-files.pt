@@ -1,4 +1,4 @@
-<div i18n:domain="bungeni.ui" tal:omit-tag="">
+<div i18n:domain="bungeni" tal:omit-tag="">
     <dt id="fieldsetlegend-attached-files" i18n:translate="">
       attached files
     </dt>

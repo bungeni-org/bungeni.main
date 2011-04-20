@@ -2,7 +2,7 @@
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       metal:use-macro="context/@@standard_macros/page"
-      i18n:domain="bungeni.ui">
+      i18n:domain="bungeni">
 
   <tal:macros condition="python: False">
     <metal:field-header define-macro="header">

@@ -2,7 +2,7 @@
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       metal:use-macro="context/@@standard_macros/page">
   
-  <div metal:fill-slot="body" i18n:domain="bungeni.ui">
+  <div metal:fill-slot="body" i18n:domain="bungeni">
     <h1 i18n:translate="">Versions</h1>
     
     <div id="version-history">
@@ -10,7 +10,7 @@
         <div metal:fill-slot="pre-fieldset">
         <label class="discreet"
                    for="form.actions.diff"
-                   i18n:domain="bungeni.ui"
+                   i18n:domain="bungeni"
                    i18n:translate="">
               Select a version to compare to the current working copy, or make two selections to compare historic versions
          </label>

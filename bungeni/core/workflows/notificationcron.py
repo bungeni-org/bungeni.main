@@ -143,14 +143,14 @@ def sendNotificationToMinistry(date):
     """
     text = translate("notification_email_to_ministry_question_pending_response",
                      target_language="en",
-                     domain="bungeni.core",
+                     domain="bungeni",
                      default="Questions pending responses.")
     ministries = _getAllMinistries(date)
     for ministry in ministries:
         questions = _getQuestionsPendingResponse(date, ministry)
         text = translate("notification_email_to_ministry_question_pending_response",
                      target_language="en",
-                     domain="bungeni.core",
+                     domain="bungeni",
                      default="Questions assigned to the ministry pending responses.")
         if questions: 
             text = "%s\n%s: \n" % (text, ministry.full_name) + \

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <configure xmlns="http://namespaces.zope.org/zope"
     xmlns:i18n="http://namespaces.zope.org/i18n"
-    i18n_domain="bungeni.models">
+    i18n_domain="bungeni">
     
     <include package="zope.component" file="meta.zcml" />
     <include package="zope.app.authentication" />

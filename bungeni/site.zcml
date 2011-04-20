@@ -111,5 +111,6 @@
   
   <!-- App Security -->
   <include file="security.zcml"/>
+  <include file="translations.zcml"/>
   <includeOverrides file="overrides.zcml" package="bungeni.core"/>
 </configure>

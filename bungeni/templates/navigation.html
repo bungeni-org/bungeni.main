@@ -34,7 +34,7 @@ $for{ tab in view.portal_tabs }
     <li id="portaltab-${tab['id'].replace('/', '-')}" class="${ 
             view.selected_portal_tab==tab['id'] and 'selected' or 'plain' }">
         <a href="${tab['url']}" title="${tab['description']}">#[
-            !+ i18n:domain="bungeni.core" 
+            !+ i18n:domain="bungeni" 
             ]#${ i18n(tab["name"]) }</a>
     </li>
 $rof

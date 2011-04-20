@@ -4,7 +4,7 @@
     xmlns:db="http://namespaces.objectrealms.net/rdb"
     xmlns:xapian="http://namespaces.objectrealms.net/xapian"
     xmlns:i18n="http://namespaces.zope.org/i18n"
-    i18n_domain="bungeni.core">
+    i18n_domain="bungeni">
     
     <exclude package="zope.componentvocabulary" />
     <include package="zope.app.zcmlfiles" />

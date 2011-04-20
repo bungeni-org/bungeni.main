@@ -1,5 +1,5 @@
 <metal:block metal:define-macro="form"
-             i18n:domain="bungeni.ui">
+             i18n:domain="bungeni">
 <!-- !+DEFINE-MACRO-FORM(mr, jul-2010) ui/forms/templates/display_form.pt line3 -->
 
   <dt id="fieldsetlegend-display-form"

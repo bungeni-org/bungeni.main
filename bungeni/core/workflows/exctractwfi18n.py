@@ -20,7 +20,7 @@ f.write("""
 <html xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-      i18n:domain="bungeni.core"> <body>
+      i18n:domain="bungeni"> <body>
 """)
 
 for name in [

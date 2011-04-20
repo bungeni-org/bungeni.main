@@ -2,7 +2,7 @@
    xmlns="http://namespaces.zope.org/zope"
    xmlns:mail="http://namespaces.zope.org/mail"
    xmlns:zcml="http://namespaces.zope.org/zcml"
-   i18n_domain="bungeni.messaging">
+   i18n_domain="bungeni">
 
   <!-- ``zope.sendmail`` is a dependency for sending mail -->
   <include package="zope.sendmail" file="meta.zcml" />

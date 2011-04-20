@@ -113,7 +113,7 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
                         _(u"This content is not yet translated into" +\
                             " $language",
                             mapping={"language": langname}),
-                        domain="bungeni.ui",
+                        domain="bungeni",
                         context=self.request
                     )
             context = copy(removeSecurityProxy(self.context))

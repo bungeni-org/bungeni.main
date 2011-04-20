@@ -6,7 +6,7 @@ $Id$
 $URL$
 -->
   
-  <div metal:fill-slot="body" i18n:domain="bungeni.ui">
+  <div metal:fill-slot="body" i18n:domain="bungeni">
   <div id="whats-on-overview" >
     <h1> <a href="/business" i18n:translate="">What's on</a></h1>
     <p i18n:translate="" class="documentDescription">
@@ -21,7 +21,7 @@ $URL$
     <dl class="portlet whats-on-viewlet enableFormTabbing" >
         <dt i18n:translate=""  id="fieldsetlegend-upcoming-sittings"> Sittings </dt>
         <dd tal:define="days view/get_sittings" id="fieldset-upcoming-sittings">
-            <span i18n:domain="bungeni.ui" i18n:translate="" tal:condition="not:days" >
+            <span i18n:domain="bungeni" i18n:translate="" tal:condition="not:days" >
                 Period selected has no Sittings
             </span>
             <tal:block tal:condition="days">
@@ -42,14 +42,14 @@ $URL$
 		                <tal:block tal:condition="python:item.item_type !='heading'">
 		                <dd>
                         <a tal:attributes="href item/url">
-                          <span i18n:domain="bungeni.models" i18n:translate="" tal:content="item/item_type" />: 
+                          <span i18n:domain="bungeni" i18n:translate="" tal:content="item/item_type" />: 
                           <span tal:content="item/name" />
-                          (<span i18n:domain="bungeni.core" i18n:translate="" tal:content="item/status" />)
+                          (<span i18n:domain="bungeni" i18n:translate="" tal:content="item/status" />)
                         </a>
                         </dd>
 		                </tal:block>
 			            <tal:block tal:condition="python:item.item_type == 'heading'">
-                          <dt><h3><span i18n:domain="bungeni.models" i18n:translate="" tal:content="item/item_type" />: 
+                          <dt><h3><span i18n:domain="bungeni" i18n:translate="" tal:content="item/item_type" />: 
                           <span tal:content="item/name" /></h3></dt>
 			            </tal:block>
                     </tal:block>
@@ -63,7 +63,7 @@ $URL$
 
         <dt i18n:translate="" id="fieldsetlegend-upcoming-bills"> Bills </dt>
         <dd tal:define="days view/get_bills" id="fieldset-upcoming-bills">
-            <span i18n:domain="bungeni.ui" i18n:translate="" tal:condition="not:days" >
+            <span i18n:domain="bungeni" i18n:translate="" tal:condition="not:days" >
                 Period selected has no Bills
             </span>
             <tal:block tal:condition="days">
@@ -75,9 +75,9 @@ $URL$
                             <li tal:repeat="item items">
                                 <a tal:attributes="href item/url">
                                     <span tal:content="item/name" />
-                                    (<span i18n:domain="bungeni.core" i18n:translate="" tal:content="item/status" />)
+                                    (<span i18n:domain="bungeni" i18n:translate="" tal:content="item/status" />)
                                 </a>
-                                <span i18n:domain="bungeni.models" i18n:translate="" tal:content="item/group_type" />
+                                <span i18n:domain="bungeni" i18n:translate="" tal:content="item/group_type" />
                                 <span tal:content="item/group_name" />
                                 <!-- span tal:content="item/sitting_type" /-->
                             </li>
@@ -90,7 +90,7 @@ $URL$
 
         <dt i18n:translate="" id="fieldsetlegend-upcoming-motions"> Motions </dt>
         <dd tal:define="days view/get_motions" id="fieldset-upcoming-motions">
-            <span i18n:domain="bungeni.ui" i18n:translate="" tal:condition="not:days" >
+            <span i18n:domain="bungeni" i18n:translate="" tal:condition="not:days" >
                 Period selected has no Motions
             </span>
             <tal:block tal:condition="days">
@@ -102,9 +102,9 @@ $URL$
                             <li tal:repeat="item items">
                                 <a tal:attributes="href item/url">
                                     <span tal:content="item/name" />
-                                    (<span i18n:domain="bungeni.core" i18n:translate="" tal:content="item/status" />)
+                                    (<span i18n:domain="bungeni" i18n:translate="" tal:content="item/status" />)
                                 </a>
-                                <span i18n:domain="bungeni.models" i18n:translate="" tal:content="item/group_type" />
+                                <span i18n:domain="bungeni" i18n:translate="" tal:content="item/group_type" />
                                 <span tal:content="item/group_name" />
                                 <!-- span tal:content="item/sitting_type" / -->
                             </li>
@@ -117,7 +117,7 @@ $URL$
         <dt i18n:translate="" id="fieldsetlegend-upcoming-questions"> Questions </dt>
         
         <dd tal:define="days view/get_questions" id="fieldset-upcoming-questions">
-            <span i18n:domain="bungeni.ui" i18n:translate="" tal:condition="not:days" >
+            <span i18n:domain="bungeni" i18n:translate="" tal:condition="not:days" >
                 Period selected has no Questions
             </span>
             <tal:block tal:condition="days" >
@@ -129,9 +129,9 @@ $URL$
                             <li tal:repeat="item items">
                                 <a tal:attributes="href item/url">
                                     <span tal:content="item/name" />
-                                    (<span i18n:domain="bungeni.models" i18n:translate="" tal:content="item/status" />)
+                                    (<span i18n:domain="bungeni" i18n:translate="" tal:content="item/status" />)
                                 </a>
-                                <span i18n:domain="bungeni.core" i18n:translate="" tal:content="item/group_type" />
+                                <span i18n:domain="bungeni" i18n:translate="" tal:content="item/group_type" />
                                 <span tal:content="item/group_name" />
                                 <!-- span tal:content="item/sitting_type" / -->
                             </li>
@@ -143,7 +143,7 @@ $URL$
 
         <dt i18n:translate="" id="fieldsetlegend-upcoming-tableddocuments"> Tabled documents </dt>
         <dd tal:define="days view/get_tableddocuments" id="fieldset-upcoming-tableddocuments">
-            <span i18n:domain="bungeni.ui" i18n:translate="" tal:condition="not:days" >
+            <span i18n:domain="bungeni" i18n:translate="" tal:condition="not:days" >
                 Period selected has no Tabled Documents
             </span>
             <tal:block tal:condition="days">
@@ -155,9 +155,9 @@ $URL$
                                 <li tal:repeat="item items">
                                     <a tal:attributes="href item/url">
                                         <span tal:content="item/name" />
-                                        (<span i18n:domain="bungeni.core" i18n:translate="" tal:content="item/status" />)
+                                        (<span i18n:domain="bungeni" i18n:translate="" tal:content="item/status" />)
                                     </a>
-                                    <span i18n:domain="bungeni.models" i18n:translate="" tal:content="item/group_type" />
+                                    <span i18n:domain="bungeni" i18n:translate="" tal:content="item/group_type" />
                                     <span tal:content="item/group_name" />
                                     <!-- span tal:content="item/sitting_type" /-->
                                 </li>
@@ -169,7 +169,7 @@ $URL$
 
         <dt i18n:translate="" id="fieldsetlegend-upcoming-agendaitems"> Agenda items </dt>
         <dd tal:define="days view/get_agendaitems" id="fieldset-upcoming-agendaitems">
-            <span i18n:domain="bungeni.ui" i18n:translate="" tal:condition="not:days" >
+            <span i18n:domain="bungeni" i18n:translate="" tal:condition="not:days" >
                 Period selected has no Agenda Items
             </span>
             <tal:block tal:condition="days">
@@ -181,9 +181,9 @@ $URL$
                             <li tal:repeat="item items">
                                 <a tal:attributes="href item/url">
                                     <span tal:content="item/name" />
-                                    (<span i18n:domain="bungeni.core" i18n:translate="" tal:content="item/status" />)
+                                    (<span i18n:domain="bungeni" i18n:translate="" tal:content="item/status" />)
                                 </a>
-                                <span i18n:domain="bungeni.models" i18n:translate="" tal:content="item/group_type" />
+                                <span i18n:domain="bungeni" i18n:translate="" tal:content="item/group_type" />
                                 <span tal:content="item/group_name" />
                                 <!-- span tal:content="item/sitting_type" / -->
                             </li>

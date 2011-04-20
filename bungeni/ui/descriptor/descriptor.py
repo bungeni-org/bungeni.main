@@ -275,7 +275,7 @@ def workflow_column(name, title, default=""):
                 request = participation
         return translate(
             str(state_title),
-            domain="bungeni.core",
+            domain="bungeni",
             context=request)
     return column.GetterColumn(title, getter)
 
