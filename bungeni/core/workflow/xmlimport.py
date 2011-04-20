@@ -61,7 +61,7 @@ ZCML_INDENT = ""
 ZCML_BOILERPLATE = """<?xml version="1.0"?>
 <configure xmlns="http://namespaces.zope.org/zope"
     xmlns:i18n="http://namespaces.zope.org/i18n"
-    i18n_domain="bungeni.core">
+    i18n_domain="bungeni">
 <!-- 
 
 !! AUTO-GENERATED !! DO NOT MODIFY !!
