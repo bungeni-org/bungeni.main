@@ -155,13 +155,13 @@ def get_ministry_ids_for_user_in_government(user_id, government_id):
     '''
 
 
-def get_offices_held_for_user_in_parliament(user_id):
+def get_groups_held_for_user_in_parliament(user_id):
     """ get the Offices (functions/titles) held by a user """
     session = Session()
     connection = session.connection(domain.Group)
     all_offices = session.query(domain.Office).all()
-    #group_ids = get_all_group_ids_in_parliament(parliament_id)
-    group_ids = [office.group_id for office in all_offices]
+    group_ids = get_all_group_ids_in_parliament(parliament_id)
+    #group_ids = [office.group_id for office in all_offices]
     #!+MODELS(miano, 16 march 2011) Why are these queries hardcorded?
     #TODO:Fix this
     offices_held = rdb.select([schema.groups.c.short_name,
