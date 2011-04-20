@@ -169,13 +169,10 @@ def set_get_gettext():
             "translations", "bungeni.core", "locales")
     }
     '''
-    import bungeni.ui
-    import bungeni.core
+    import bungeni
     _i18n_domain_localedirs = {
-        "bungeni": os.path.join(os.path.dirname(
-                os.path.dirname(os.path.abspath(
-                    bungeni.core.__file__
-                ))), "locales"), 
+        "bungeni": os.path.join(
+            os.path.dirname(os.path.abspath(bungeni.__file__)), "locales"),
     }
     _untranslated = []
     def _get_gettext(i18n_domain, language):
