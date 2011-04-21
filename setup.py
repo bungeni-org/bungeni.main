@@ -78,7 +78,7 @@ setup(name='bungeni',
                         'zc.displayname',
                         'zope.formlib',
                         'imsvdex',
-                        'bungeni.dhtmlxscheduler',
+                        'zdhtmlxscheduler',
             # The followning packages are used by:
             # bungeni.ui & bungeni.rest                        
                         'simplejson',                                                
