@@ -42,6 +42,7 @@ def onWSGIApplicationCreatedEvent(application, event):
 
 class BungeniApp(Application):
     implements(model_interfaces.IBungeniApplication)
+
 #!CRUFT (miano, nov-2010) possible cruft
 #class BungeniAdmin(SampleContainer):
 #    implements(model_interfaces.IBungeniAdmin )
@@ -58,10 +59,23 @@ class AppSetup(object):
     def setUp(self):
         
         # register translations
-        import zope.i18n.zcml
         from bungeni.utils.capi import capi
-        zope.i18n.zcml.registerTranslations(getConfigContext(),
-            capi.get_path_for("translations", "bungeni"))
+        #import zope.i18n.zcml
+        #zope.i18n.zcml.registerTranslations(getConfigContext(),
+        #    capi.get_path_for("translations", "bungeni"))
+        # 
+        # !+ZCML_PYTHON(mr, apr-2011) above registerTranslations() in python 
+        # does not work, as subsequent utility lookup fails. We workaround it 
+        # by executing the following parametrized bit of ZCML:
+        #
+        from zope.configuration import xmlconfig
+        xmlconfig.string("""
+            <configure xmlns="http://namespaces.zope.org/zope"
+                xmlns:i18n="http://namespaces.zope.org/i18n">
+                <include package="zope.i18n" file="meta.zcml" />
+                <i18n:registerTranslations directory="%s" />
+            </configure>
+            """ % (capi.get_path_for("translations", "bungeni")))
         
         import index
         # ensure indexing facilities are setup(lazy)
