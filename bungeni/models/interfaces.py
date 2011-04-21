@@ -449,18 +449,20 @@ class ITranslatable(interface.Interface):
     language = interface.Attribute("The language of the values of the "
         "translatable attributes of the instance")
 
+class IBungeniVocabulary(interface.Interface):
+    """Marker interface for vocabularies managed in admin UI."""
 
-class IAddressType(interface.Interface):
-    pass
+class IAddressType(IBungeniVocabulary):
+    """Marker interface for address types vocabulary"""
 
-class IBillType(interface.Interface):
-    pass
+class IBillType(IBungeniVocabulary):
+    """Marker interface for bill types vocabulary"""
 
-class ICommitteeType(interface.Interface):
-    pass
+class ICommitteeType(IBungeniVocabulary):
+    """Marker interface for committee types vocabulary"""
 
-class IAttendanceType(interface.Interface):
-    pass
+class IAttendanceType(IBungeniVocabulary):
+    """Marker interface for attendance types vocabulary"""
 
-class IVenue(interface.Interface):
-    pass
+class IVenue(IBungeniVocabulary):
+    """Marker interface for venues vocabulary"""

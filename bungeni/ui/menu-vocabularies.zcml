@@ -40,5 +40,13 @@
         permission="zope.ManageContent"
         layer=".interfaces.IAdminSectionLayer"
     />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IBungeniVocabulary"
+        action="delete"
+        title="Delete"
+        order="99"
+        layer=".interfaces.IAdminSectionLayer"
+        permission="zope.ManageContent"
+    />
 </configure>
 
