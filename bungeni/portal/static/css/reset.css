@@ -354,6 +354,8 @@ div.main-column h3 {
     position: absolute;
     z-index: 10051;
     border-color: #FB9C14;
+    height:auto;
+    
 }
 .section-bungeni-archive #portal-column-one {
     width: 95%;
