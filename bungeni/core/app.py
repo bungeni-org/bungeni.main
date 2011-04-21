@@ -13,6 +13,7 @@ from zope.interface import implementedBy
 from zope.component import provideAdapter
 from zope.interface.declarations import alsoProvides 
 
+from zope.app.appsetup.appsetup import getConfigContext
 from zope.app.component import site
 from zope.app.container.sample import SampleContainer
 from zope.location.interfaces import ILocation
@@ -36,7 +37,6 @@ def onWSGIApplicationCreatedEvent(application, event):
     """Subscriber to the ore.wsgiapp.interfaces.IWSGIApplicationCreatedEvent."""
     initializer = model_interfaces.IBungeniSetup(application)
     initializer.setUp()
-    from zope.app.appsetup.appsetup import getConfigContext
     log.debug("onWSGIApplicationCreatedEvent: _features: %s" % (
                                         getConfigContext()._features))
 
@@ -57,9 +57,15 @@ class AppSetup(object):
     
     def setUp(self):
         
+        # register translations
+        import zope.i18n.zcml
+        from bungeni.utils.capi import capi
+        zope.i18n.zcml.registerTranslations(getConfigContext(),
+            capi.get_path_for("translations", "bungeni"))
+        
         import index
         # ensure indexing facilities are setup(lazy)
-        index.setupFieldDefinitions(index.indexer)    
+        index.setupFieldDefinitions(index.indexer)
 
         
         sm = site.LocalSiteManager(self.context)

@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <configure xmlns="http://namespaces.zope.org/zope"
            xmlns:browser="http://namespaces.zope.org/browser"
-           xmlns:i18n="http://namespaces.zope.org/i18n"
            i18n_domain="bungeni">
 
   <include package="z3c.pt" />
@@ -12,9 +11,6 @@
   <includeOverrides package="repoze.whooze" file="overrides.zcml" />
   <include package="zope.app.security" />
 
-    <include package="zope.i18n" file="meta.zcml" />
-    <i18n:registerTranslations directory="locales" />
-    
   <!-- Exclude ZCML Directives -->
   <include package="zc.configuration" file="meta.zcml" />
   
