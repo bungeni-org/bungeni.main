@@ -577,7 +577,7 @@ class OfficesHeldViewlet(browser.BungeniItemsViewlet):
                 parliament_id = parliament.parliament_id
             else:
                 return office_list
-        for oh in get_groups_held_for_user_in_parliament(user_id):
+        for oh in get_groups_held_for_user_in_parliament(user_id, parliament_id):
             title = {}
             # !+FULL_NAME(mr, oct-2010) this should probably make use of 
             # the GroupDescriptor (combined) listing Field full_name

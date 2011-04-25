@@ -155,7 +155,7 @@ def get_ministry_ids_for_user_in_government(user_id, government_id):
     '''
 
 
-def get_groups_held_for_user_in_parliament(user_id):
+def get_groups_held_for_user_in_parliament(user_id, parliament_id):
     """ get the Offices (functions/titles) held by a user """
     session = Session()
     connection = session.connection(domain.Group)
