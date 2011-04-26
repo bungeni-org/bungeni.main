@@ -19,9 +19,8 @@ from zope.securitypolicy.principalrole import principalRoleManager
 globalRolesForPrincipal = principalRoleManager.getRolesForPrincipal
 
 from zope.security.proxy import removeSecurityProxy
-from zope.securitypolicy.interfaces import Allow, Deny, Unset
+from zope.securitypolicy.interfaces import Allow #, Deny, Unset
 from zope.securitypolicy.interfaces import IRolePermissionMap
-#SettingAsBoolean = {Allow: True, Deny: False, Unset: None, None: None}
 
 from bungeni.core.workflow.interfaces import IWorkflow
 
@@ -44,14 +43,6 @@ class BungeniSecurityPolicy(zope.securitypolicy.zopepolicy.ZopeSecurityPolicy):
     declarations of each workflow state.
     """
     zope.interface.classProvides(ISecurityPolicy)
-    
-    def _workflow(self, object):
-        """Get the workflow instance (or None if not workflowed) for object.
-        """
-        try:
-            return IWorkflow(object)
-        except TypeError: 
-            return None # could not adapt
     
     #def checkPermission(self, permission, object):
     #    return super(BungeniSecurityPolicy, self
@@ -76,7 +67,7 @@ class BungeniSecurityPolicy(zope.securitypolicy.zopepolicy.ZopeSecurityPolicy):
         except KeyError:
             return cache_item(cache_decision_prin, permission,
                 self._get_decision(object, principal, groups, permission))
-        
+    
     def _get_decision(self, object, principal, groups, permission):
         """Get the decision for a principal and a permission on object.
         """
@@ -137,18 +128,25 @@ class BungeniSecurityPolicy(zope.securitypolicy.zopepolicy.ZopeSecurityPolicy):
         getRolesForPermission = None
         # ASSUMPTION: if an object is workflowed, then ALL local role 
         # permissions are specified by its current workflow state.
-        workflow = self._workflow(object)
-        if workflow is not None:
+        try:
+            # get the workflow instance for object
+            workflow = IWorkflow(object)
             # !+status = StateController.get_status(object)
             getRolesForPermission = workflow.get_state(object.status
                 ).getRolesForPermission
-        else:
+        except TypeError, e: # could not adapt
             # None is default value for when IRolePermissionMap(object) fails
             roleper = IRolePermissionMap(object, None)
+            # !+RolePermissionMap(mr, apr-2011) should categorically always be
+            # None? if so, clean-out all ZCA regs on IRolePermissionMap, and 
+            # rpm-related code). (Temporary) Assertion of this:
+            assert roleper is None, \
+                "[%s] !+RolePermissionMap [%s] for OBJECT [%s] not None" % (
+                    e, roleper, object)
             log.warn("BungeniSecurityPolicy: object [%s] is NOT workflowed. "
                 "Temporarily trying anyway to determine local role permissions "
                 "via IRolePermissionMap(object) [%s] i.e. via "
-                "zope_role_permission_map--that in future will BE EMPTY)." % (
+                "zope_role_permission_map--that in future will be EMPTY)." % (
                     object, roleper))
             if roleper is not None:
                 getRolesForPermission = roleper.getRolesForPermission
@@ -165,17 +163,4 @@ class BungeniSecurityPolicy(zope.securitypolicy.zopepolicy.ZopeSecurityPolicy):
                     #if workflow: assert (0, permission, role) in state.permissions
         return cache_item(cache_roles, permission, roles)
 
-
-
-''' !+
-
-SECURITY_POLICY_CACHE_INVALIDATION ... on transition event?
-interaction = zope.security.management.getInteraction()
-interaction.invalidate_cache()
-
-zope_role_permission_map - there are still some superfluous (non-workflow) 
-permission grants being written to this table on object creation; these be
-be cleaned out.. removed or turned into gloabl grants.
-
-'''
 

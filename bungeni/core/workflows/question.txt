@@ -170,6 +170,12 @@ Questions transitions
   >>> wfc
   <bungeni.core.workflow.states.WorkflowController object at ...>
   >>> wf = wfc.workflow
+  >>> wf
+  <bungeni.core.workflow.states.Workflow object at ...>
+  >>> from bungeni.core.workflow.interfaces import IWorkflow
+  >>> wf is IWorkflow(question)
+  True
+
   
 PRINCIPAL: member
 
@@ -203,7 +209,7 @@ Transition: "create" - assigns the role of "Owner" and sets the parliament id.
 
 
 PERMISSIONS for member principal for "draft" question.status
-    
+  
   >>> from zope.security import checkPermission
   >>> [ checkPermission("bungeni.question.Edit", question), 
   ...   # !+ at r8092, checkPermission of bungeni.question.Add below used

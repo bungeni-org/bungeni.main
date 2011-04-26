@@ -13,18 +13,20 @@ def setup_security_adapters():
          (bungeni.models.interfaces.IBungeniApplication,),
          zope.securitypolicy.interfaces.IPrincipalRoleMap)
     
-    gsm.registerAdapter(
-        bungeni.alchemist.security.GlobalRolePermissionMap,
-         (bungeni.models.interfaces.IBungeniApplication,),
-         zope.securitypolicy.interfaces.IRolePermissionMap)
+    # !+RolePermissionMap
+    #gsm.registerAdapter(
+    #    bungeni.alchemist.security.GlobalRolePermissionMap,
+    #     (bungeni.models.interfaces.IBungeniApplication,),
+    #     zope.securitypolicy.interfaces.IRolePermissionMap)
     
     gsm.registerAdapter(
         bungeni.alchemist.security.LocalPrincipalRoleMap,
          (bungeni.models.interfaces.IBungeniContent,),
          zope.securitypolicy.interfaces.IPrincipalRoleMap)
     
-    gsm.registerAdapter(
-        bungeni.alchemist.security.LocalRolePermissionMap,
-         (bungeni.models.interfaces.IBungeniContent,),
-         zope.securitypolicy.interfaces.IRolePermissionMap) 
+    # !+RolePermissionMap
+    #gsm.registerAdapter(
+    #    bungeni.alchemist.security.LocalRolePermissionMap,
+    #     (bungeni.models.interfaces.IBungeniContent,),
+    #     zope.securitypolicy.interfaces.IRolePermissionMap) 
 
