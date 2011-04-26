@@ -5,11 +5,13 @@ from zope.publisher.browser import BrowserView
 from zope.app.pagetemplate import ViewPageTemplateFile
 
 from bungeni.alchemist import Session
+from bungeni.alchemist.model import queryModelDescriptor
 from sqlalchemy.orm import eagerload, lazyload
 import sqlalchemy.sql.expression as sql
 
 from bungeni.models import domain, schema
 from bungeni.core.globalsettings import getCurrentParliamentId
+from bungeni.core.language import TranslateUtility
 
 from bungeni.ui.utils import misc, url, debug
 from bungeni.ui.cookies import get_date_range
@@ -39,6 +41,7 @@ class WhatsOnBrowserView(BrowserView):
         else:
             self.end_date = datetime.datetime(end_date.year, end_date.month, 
                 end_date.day, 23, 59)
+        self._translate = TranslateUtility(context=self.request)
         self.get_items()
     
     def get_end_date(self): 
@@ -55,15 +58,23 @@ class WhatsOnBrowserView(BrowserView):
         if sitting.status in get_states('groupsitting',tagged=['agendaprivate']):
             return s_list
         else:
+        # !+DCPROPERTIES(murithi, april-2011) Factor out properties+i18n to DC
             for schedule in sitting.item_schedule:
+                descriptor = queryModelDescriptor(schedule.item.__class__)
                 s_list.append({
                     'name': schedule.item.short_name,
-                    'status' : misc.get_wf_state(schedule.item),
+                    'status' : self._translate(
+                        str(misc.get_wf_state(schedule.item))
+                    ),
                     'url' : url.set_url_context(('/business/' +
                             schedule.item.type + 's/obj-' + 
                         str(schedule.item.parliamentary_item_id))),
-                    'item_type' : schedule.item.type,
-                     })
+                    'item_type' : self._translate((
+                        descriptor.display_name if descriptor else
+                            schedule.item.type
+                        )
+                    ),
+                })
             return s_list
         
     def get_sittings(self):
@@ -71,7 +82,9 @@ class WhatsOnBrowserView(BrowserView):
         session = Session()
         query = session.query(domain.GroupSitting).filter(
             sql.and_(
-                schema.group_sittings.c.status.in_(get_states('groupsitting',tagged=['public'])),
+                schema.group_sittings.c.status.in_(get_states('groupsitting',
+                    tagged=['public'])
+                ),
                 sql.between(
                     schema.group_sittings.c.start_date,
                     self.start_date,
@@ -155,7 +168,9 @@ class WhatsOnBrowserView(BrowserView):
                     s_dict = {}
                 s_list.append({
                     'name': schedule.item.short_name,
-                    'status' : misc.get_wf_state(schedule.item),
+                    'status' : self._translate(
+                        str(misc.get_wf_state(schedule.item))
+                    ),
                     'url' : url.set_url_context("/business/%ss/obj-%s" % (
                                         schedule.item.type,
                                         schedule.item.parliamentary_item_id)),

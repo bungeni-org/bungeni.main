@@ -523,7 +523,7 @@ class GroupSittingsViewlet(browser.BungeniItemsViewlet):
     # evoque
     render = z3evoque.ViewTemplateFile("workspace_viewlets.html#group_sittings")
 
-    view_title = "Sittings"
+    view_title = _("Sittings")
     view_id = "sittings"
 
     def _get_items(self):
@@ -561,7 +561,7 @@ class OfficesHeldViewlet(browser.BungeniItemsViewlet):
     # zpt
     #render = ViewPageTemplateFile("templates/offices_held_viewlet.pt")
 
-    view_title = "Offices held"
+    view_title = _("Offices held")
     view_id = "offices-held"
 
     def _get_items(self):
@@ -625,7 +625,7 @@ class TimeLineViewlet(browser.BungeniItemsViewlet):
     add_action = form.Actions(
         form.Action(_(u"add event"), success="handle_event_add_action"),
     )
-    view_title = "Timeline"
+    view_title = _("Timeline")
     view_id = "unknown-timeline"
 
     def __init__(self, context, request, view, manager):
@@ -741,7 +741,7 @@ class MemberItemsViewlet(browser.BungeniItemsViewlet):
         get_states("question", tagged=["public"]) + \
         get_states("tableddocument", tagged=["public"])
 
-    view_title = "Parliamentary activities"
+    view_title = _("Parliamentary activities")
     view_id = "mp-items"
 
     # evoque

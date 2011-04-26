@@ -13,6 +13,7 @@ from zope import interface
 from zope.app.zapi import getUtilitiesFor
 from zope.publisher.browser import BrowserLanguages
 from zope.i18n.negotiator import normalize_lang
+from zope.i18n import translate
 
 from locale import getdefaultlocale
 
@@ -20,6 +21,24 @@ from bungeni.core.interfaces import ILanguageProvider
 from bungeni.utils.capi import capi
 from bungeni.core.translation import get_request_language
 from bungeni.ui.utils.common import get_request
+
+
+class TranslateUtility(object):
+    """
+    Factory for translation utilities
+    Wraps around `zope.i18n.translate` tied to context(request)
+    """
+    context = None
+    domain = None
+
+    def __init__(self, context, domain="bungeni"):
+        self.context = context
+        self.domain = domain
+
+    def __call__(self, source_string):
+        return translate(source_string, domain=self.domain,
+            context=self.context
+        )
 
 
 class BaseLanguageProvider(object):
