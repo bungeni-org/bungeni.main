@@ -11,7 +11,7 @@ import sqlalchemy.sql.expression as sql
 
 from bungeni.models import domain, schema
 from bungeni.core.globalsettings import getCurrentParliamentId
-from bungeni.core.language import TranslateUtility
+from bungeni.core.dc import IDCDescriptiveProperties
 
 from bungeni.ui.utils import misc, url, debug
 from bungeni.ui.cookies import get_date_range
@@ -41,7 +41,6 @@ class WhatsOnBrowserView(BrowserView):
         else:
             self.end_date = datetime.datetime(end_date.year, end_date.month, 
                 end_date.day, 23, 59)
-        self._translate = TranslateUtility(context=self.request)
         self.get_items()
     
     def get_end_date(self): 
@@ -62,17 +61,15 @@ class WhatsOnBrowserView(BrowserView):
             for schedule in sitting.item_schedule:
                 descriptor = queryModelDescriptor(schedule.item.__class__)
                 s_list.append({
-                    'name': schedule.item.short_name,
-                    'status' : self._translate(
-                        str(misc.get_wf_state(schedule.item))
-                    ),
+                    'name': IDCDescriptiveProperties(schedule.item).title,
+                    'status' : str(misc.get_wf_state(schedule.item))
+                    ,
                     'url' : url.set_url_context(('/business/' +
                             schedule.item.type + 's/obj-' + 
                         str(schedule.item.parliamentary_item_id))),
-                    'item_type' : self._translate((
+                    'item_type' : (
                         descriptor.display_name if descriptor else
                             schedule.item.type
-                        )
                     ),
                 })
             return s_list
@@ -167,10 +164,8 @@ class WhatsOnBrowserView(BrowserView):
                         day_list.append(s_dict)
                     s_dict = {}
                 s_list.append({
-                    'name': schedule.item.short_name,
-                    'status' : self._translate(
-                        str(misc.get_wf_state(schedule.item))
-                    ),
+                    'name': IDCDescriptiveProperties(schedule.item).title,
+                    'status' : str(misc.get_wf_state(schedule.item)),
                     'url' : url.set_url_context("/business/%ss/obj-%s" % (
                                         schedule.item.type,
                                         schedule.item.parliamentary_item_id)),

@@ -22,7 +22,7 @@ $URL$
     <dl class="portlet whats-on-viewlet enableFormTabbing" >
         <dt i18n:translate=""  id="fieldsetlegend-upcoming-sittings"> Sittings </dt>
         <dd tal:define="days view/get_sittings" id="fieldset-upcoming-sittings">
-            <span i18n:translate="" tal:condition="not:days" >
+            <span  i18n:translate="" tal:condition="not:days" >
                 Period selected has no Sittings
             </span>
             <tal:block tal:condition="days">
@@ -43,15 +43,15 @@ $URL$
 		                <tal:block tal:condition="python:item.item_type !='heading'">
 		                <dd>
                         <a tal:attributes="href item/url">
-                          <span tal:content="item/item_type" />: 
+                          <span  i18n:translate="" tal:content="item/item_type" />: 
                           <span tal:content="item/name" />
-                          (<span tal:content="item/status" />)
+                          (<span  i18n:translate="" tal:content="item/status" />)
                         </a>
                         </dd>
 		                </tal:block>
 			            <tal:block tal:condition="python:item.item_type == 'heading'">
-                          <dt><h3><span tal:content="item/item_type" />: 
-                          <span tal:content="item/name" /></h3></dt>
+                          <dt><h3><span  i18n:translate="" tal:content="item/item_type" />: 
+                          <span tal:content="item/name"/></h3></dt>
 			            </tal:block>
                     </tal:block>
                   </dl>
@@ -64,11 +64,11 @@ $URL$
 
         <dt i18n:translate="" id="fieldsetlegend-upcoming-bills"> Bills </dt>
         <dd tal:define="days view/get_bills" id="fieldset-upcoming-bills">
-            <span i18n:translate="" tal:condition="not:days" >
+            <span  i18n:translate="" tal:condition="not:days" >
                 Period selected has no Bills
             </span>
             <tal:block tal:condition="days">
-        	    <h2 class="whats_on_print_heading">Bills</h2>
+        	    <h2 class="whats_on_print_heading" i18n:translate="">Bills</h2>
                 <ul >
                     <tal:block tal:repeat="day days">
                     <li><h2 class="whats_on_upcoming_bill_date" tal:content="day/day" /> 
@@ -76,9 +76,9 @@ $URL$
                             <li tal:repeat="item items">
                                 <a tal:attributes="href item/url">
                                     <span tal:content="item/name" />
-                                    (<span tal:content="item/status" />)
+                                    (<span  i18n:translate="" tal:content="item/status" />)
                                 </a>
-                                <span tal:content="item/group_type" />
+                                <span  i18n:translate="" tal:content="item/group_type" />
                                 <span tal:content="item/group_name" />
                                 <!-- span tal:content="item/sitting_type" /-->
                             </li>
@@ -91,11 +91,11 @@ $URL$
 
         <dt i18n:translate="" id="fieldsetlegend-upcoming-motions"> Motions </dt>
         <dd tal:define="days view/get_motions" id="fieldset-upcoming-motions">
-            <span i18n:translate="" tal:condition="not:days" >
+            <span  i18n:translate="" tal:condition="not:days" >
                 Period selected has no Motions
             </span>
             <tal:block tal:condition="days">
-                <h2 class="whats_on_print_heading">Motions</h2>
+                <h2 class="whats_on_print_heading" i18n:translate="">Motions</h2>
                 <ul>
                     <tal:block tal:repeat="day days">
                         <li><h2 class="whats_on_upcoming_motion_date" tal:content="day/day" /> 
@@ -103,9 +103,9 @@ $URL$
                             <li tal:repeat="item items">
                                 <a tal:attributes="href item/url">
                                     <span tal:content="item/name" />
-                                    (<span tal:content="item/status" />)
+                                    (<span  i18n:translate="" tal:content="item/status" />)
                                 </a>
-                                <span tal:content="item/group_type" />
+                                <span  i18n:translate="" tal:content="item/group_type" />
                                 <span tal:content="item/group_name" />
                                 <!-- span tal:content="item/sitting_type" / -->
                             </li>
@@ -118,11 +118,11 @@ $URL$
         <dt i18n:translate="" id="fieldsetlegend-upcoming-questions"> Questions </dt>
         
         <dd tal:define="days view/get_questions" id="fieldset-upcoming-questions">
-            <span i18n:translate="" tal:condition="not:days" >
+            <span  i18n:translate="" tal:condition="not:days" >
                 Period selected has no Questions
             </span>
             <tal:block tal:condition="days" >
-                <h2 class="whats_on_print_heading">Questions</h2>
+                <h2 class="whats_on_print_heading" i18n:translate="">Questions</h2>
                 <ul >
                     <tal:block tal:repeat="day days">
                         <li><h2 class="whats_on_upcoming_question_date" tal:content="day/day" /> 
@@ -130,9 +130,9 @@ $URL$
                             <li tal:repeat="item items">
                                 <a tal:attributes="href item/url">
                                     <span tal:content="item/name" />
-                                    (<span tal:content="item/status" />)
+                                    (<span  i18n:translate="" tal:content="item/status" />)
                                 </a>
-                                <span tal:content="item/group_type" />
+                                <span  i18n:translate="" tal:content="item/group_type" />
                                 <span tal:content="item/group_name" />
                                 <!-- span tal:content="item/sitting_type" / -->
                             </li>
@@ -144,11 +144,11 @@ $URL$
 
         <dt i18n:translate="" id="fieldsetlegend-upcoming-tableddocuments"> Tabled documents </dt>
         <dd tal:define="days view/get_tableddocuments" id="fieldset-upcoming-tableddocuments">
-            <span i18n:translate="" tal:condition="not:days" >
+            <span  i18n:translate="" tal:condition="not:days" >
                 Period selected has no Tabled Documents
             </span>
             <tal:block tal:condition="days">
-                <h2 class="whats_on_print_heading">Tabled documents</h2>
+                <h2 class="whats_on_print_heading" i18n:translate="">Tabled documents</h2>
                 <ul >
                     <tal:block tal:repeat="day days">
                         <li><h2 class="whats_on_upcoming_tableddocument_date" tal:content="day/day" /> 
@@ -156,9 +156,9 @@ $URL$
                                 <li tal:repeat="item items">
                                     <a tal:attributes="href item/url">
                                         <span tal:content="item/name" />
-                                        (<span tal:content="item/status" />)
+                                        (<span  i18n:translate="" tal:content="item/status" />)
                                     </a>
-                                    <span tal:content="item/group_type" />
+                                    <span  i18n:translate="" tal:content="item/group_type" />
                                     <span tal:content="item/group_name" />
                                     <!-- span tal:content="item/sitting_type" /-->
                                 </li>
@@ -170,11 +170,11 @@ $URL$
 
         <dt i18n:translate="" id="fieldsetlegend-upcoming-agendaitems"> Agenda items </dt>
         <dd tal:define="days view/get_agendaitems" id="fieldset-upcoming-agendaitems">
-            <span i18n:translate="" tal:condition="not:days" >
+            <span  i18n:translate="" tal:condition="not:days" >
                 Period selected has no Agenda Items
             </span>
             <tal:block tal:condition="days">
-                <h2 class="whats_on_print_heading">Agenda items</h2>
+                <h2 class="whats_on_print_heading" i18n:translate="">Agenda items</h2>
                 <ul >
                 <tal:block tal:repeat="day days">
                     <li><h2 class="whats_on_upcoming_agendaitem_date" tal:content="day/day" /> 
@@ -182,9 +182,9 @@ $URL$
                             <li tal:repeat="item items">
                                 <a tal:attributes="href item/url">
                                     <span tal:content="item/name" />
-                                    (<span i18n:translate="" tal:content="item/status" />)
+                                    (<span  i18n:translate="" tal:content="item/status" />)
                                 </a>
-                                <span tal:content="item/group_type" />
+                                <span  i18n:translate="" tal:content="item/group_type" />
                                 <span tal:content="item/group_name" />
                                 <!-- span tal:content="item/sitting_type" / -->
                             </li>
