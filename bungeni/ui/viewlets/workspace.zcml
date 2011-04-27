@@ -249,14 +249,6 @@
         permission="zope.View"
         weight="10"
     />
-    <browser:viewlet name="bungeni.workspace.working-draft.speaker"
-        for="*"
-        manager=".interfaces.IWorkspaceManager"
-        class=".workspace.SpeakerItemsWorkingDraftViewlet"
-        view="bungeni.ui.interfaces.ISpeakerWorkspace"
-        permission="zope.View"
-        weight="15"
-    />
     <browser:viewlet name="bungeni.workspace.items-approved.speaker"
         for="*"
         manager=".interfaces.IWorkspaceManager"

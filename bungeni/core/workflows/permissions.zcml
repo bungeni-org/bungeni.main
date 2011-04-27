@@ -40,7 +40,6 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.agendaitem.View" role="bungeni.Owner" />
 <grant permission="bungeni.agendaitem.Edit" role="bungeni.Owner" />
 <grant permission="bungeni.agendaitem.Add" role="bungeni.Clerk" />
-<grant permission="bungeni.agendaitem.Add" role="bungeni.Speaker" />
 <grant permission="bungeni.agendaitem.Delete" role="bungeni.Owner" />
 
 <permission id="bungeni.agendaitem.wf.working_draft.draft.submitted" title="Submit" />
@@ -306,7 +305,6 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.motion.View" role="bungeni.Owner" />
 <grant permission="bungeni.motion.Edit" role="bungeni.Owner" />
 <grant permission="bungeni.motion.Add" role="bungeni.Clerk" />
-<grant permission="bungeni.motion.Add" role="bungeni.Speaker" />
 <grant permission="bungeni.motion.Add" role="bungeni.MP" />
 <grant permission="bungeni.motion.Delete" role="bungeni.Owner" />
 

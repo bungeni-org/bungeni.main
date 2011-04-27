@@ -413,8 +413,6 @@ class ClerkItemsWorkingDraftViewlet(AllItemsInStageViewlet):
         get_states("motion", keys=["working_draft"]) + \
         get_states("question", keys=["working_draft"]) + \
         get_states("tableddocument", keys=["working_draft"])
-class SpeakerItemsWorkingDraftViewlet(ClerkItemsWorkingDraftViewlet):
-    view_id = "speaker-items-working-draft"
 
 class SpeakersClerkItemActionRequiredViewlet(ClerkItemActionRequiredViewlet):
     view_id = "clerks-items-action-required"
