@@ -3,12 +3,12 @@
 <!-- !+DEFINE-MACRO-FORM(mr, jul-2010) ui/forms/templates/display_form.pt line3 -->
 
   <dt id="fieldsetlegend-display-form"
-      tal:attributes="id string:${default}-${python: id(view)}"
+      tal:attributes="id string:${default}-${view/get_view_id}"
       i18n:translate=""
       tal:content="view/form_name" />
 
   <dd id="fieldset-display-form"
-      tal:attributes="id string:${default}-${python: id(view)};
+      tal:attributes="id string:${default}-${view/get_view_id};
                     class view/getObjectClass">
     <div id="display_form_spacer"></div>
     <form action="."

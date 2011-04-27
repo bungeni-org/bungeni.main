@@ -64,6 +64,7 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
 
     mode = "view"
     form_name = _(u"General")
+    view_id = "display-item"
     has_data = True
     adapters = None
 

@@ -118,6 +118,8 @@ class BungeniViewlet(zope.viewlet.viewlet.ViewletBase):
     # !+ID/NAME/TITLE/LABEL(mr, oct-2010) standardize usage & naming: view_*
     # !+form_*(mr, oct-2010) rename to view_* e.g. form_name to view_name
 
+    def get_view_id(self):
+        return self.view_id or id(self)
 
 class BungeniItemsViewlet(BungeniViewlet):
     """A viewlet listing items (a common case).

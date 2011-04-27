@@ -225,8 +225,8 @@ $end{ form }
 
 #[ was: ui/forms/templates/display_form.pt ]#
 $begin{ display }
-    <dt id="fieldsetlegend-display-form-${id(view)}">${i18n(view.form_name)}</dt>
-    <dd id="fieldset-display-form-${id(view)}" class="${view.getObjectClass()}">
+    <dt id="fieldsetlegend-display-form-${view.get_view_id()}">${i18n(view.form_name)}</dt>
+    <dd id="fieldset-display-form-${view.get_view_id()}" class="${view.getObjectClass()}">
         <div id="display_form_spacer"></div>
         <form action="${ getattr(view, 'action_url', request.URL) }"
             method="post"

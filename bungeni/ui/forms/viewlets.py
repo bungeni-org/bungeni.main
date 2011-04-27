@@ -238,6 +238,7 @@ class PersonInfo(BungeniAttributeDisplay):
     mode = "view"
 
     form_name = _(u"Personal Info")
+    view_id = "personal-info"
 
     def __init__(self, context, request, view, manager):
         self.context = context
@@ -304,6 +305,7 @@ class ParliamentaryItemMinutesViewlet(BungeniAttributeDisplay):
     for_display = True
 
     form_name = _(u"Minutes")
+    view_id = "minutes"
 
     def __init__(self, context, request, view, manager):
         self.request = request
@@ -338,7 +340,9 @@ class ParliamentaryItemMinutesViewlet(BungeniAttributeDisplay):
 
 
 class InitialQuestionsViewlet(BungeniAttributeDisplay):
+
     form_name = (u"Initial Questions")
+    view_id = "initial-questions"
 
     @property
     def for_display(self):
@@ -795,7 +799,6 @@ class DisplayViewlet(BungeniAttributeDisplay):
     def __init__(self, context, request, view, manager):
         super(DisplayViewlet, self).__init__(
             context, request, view, manager)
-
         # set add url before we change context
         self.add_url = self.get_add_url()
 
@@ -844,6 +847,7 @@ class DisplayViewlet(BungeniAttributeDisplay):
 
 class SchedulingMinutesViewlet(DisplayViewlet):
     factory = domain.ItemScheduleDiscussion
+    view_id = "scheduling-minutes"
 
     def get_target(self):
         return self.context.discussion
