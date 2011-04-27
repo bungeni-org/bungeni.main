@@ -257,15 +257,10 @@ See the Bungeni Source Code Style Guide for further details.
 
 <!-- groupsitting -->
 <grant permission="bungeni.sitting.Edit" role="bungeni.Clerk" />
-<grant permission="bungeni.sitting.Edit" role="bungeni.Speaker" />
 <grant permission="bungeni.sitting.Add" role="bungeni.Clerk" />
-<grant permission="bungeni.sitting.Add" role="bungeni.Speaker" />
 <grant permission="bungeni.sittingattendance.Edit" role="bungeni.Clerk" />
-<grant permission="bungeni.sittingattendance.Edit" role="bungeni.Speaker" />
 <grant permission="bungeni.sittingattendance.Add" role="bungeni.Clerk" />
-<grant permission="bungeni.sittingattendance.Add" role="bungeni.Speaker" />
 <grant permission="bungeni.sittingattendance.Delete" role="bungeni.Clerk" />
-<grant permission="bungeni.sittingattendance.Delete" role="bungeni.Speaker" />
 
 <permission id="bungeni.groupsitting.wf.sitting.draft_agenda" title="Draft Agenda" />
 <grant permission="bungeni.groupsitting.wf.sitting.draft_agenda" role="bungeni.Clerk" />
@@ -406,7 +401,6 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.question.View" role="bungeni.Owner" />
 <grant permission="bungeni.question.Edit" role="bungeni.Owner" />
 <grant permission="bungeni.question.Add" role="bungeni.Clerk" />
-<grant permission="bungeni.question.Add" role="bungeni.Speaker" />
 <grant permission="bungeni.question.Add" role="bungeni.MP" />
 <grant permission="bungeni.question.Delete" role="bungeni.Owner" />
 
@@ -491,7 +485,6 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.tableddocument.View" role="bungeni.Owner" />
 <grant permission="bungeni.tableddocument.Edit" role="bungeni.Owner" />
 <grant permission="bungeni.tableddocument.Add" role="bungeni.Clerk" />
-<grant permission="bungeni.tableddocument.Add" role="bungeni.Speaker" />
 <grant permission="bungeni.tableddocument.Add" role="bungeni.MP" />
 <grant permission="bungeni.tableddocument.Delete" role="bungeni.Owner" />
 
