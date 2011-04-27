@@ -17,7 +17,7 @@ import md5, random, string
 from zope import interface, location, component
 from bungeni.alchemist import Session
 from bungeni.alchemist import model
-from bungeni.alchemist.traversal import one2many
+from bungeni.alchemist.traversal import one2many, one2manyindirect
 from zope.location.interfaces import ILocation
 import sqlalchemy.sql.expression as sql
 
@@ -316,6 +316,8 @@ class MemberOfParliament(GroupMembership):
         "region_id":["name"], "party_id":["name"]}
     titles = one2many("titles",
         "bungeni.models.domain.MemberRoleTitleContainer", "membership_id")
+    addresses = one2manyindirect("addresses", 
+        "bungeni.models.domain.UserAddressContainer", "user_id")
 
 class PoliticalEntity(Group):
     """Base class for political parties and political groups.

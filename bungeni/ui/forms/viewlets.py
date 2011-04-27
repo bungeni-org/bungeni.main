@@ -217,6 +217,10 @@ class CommitteeStaffViewlet(SubformViewlet):
 
 class AddressesViewlet(SubformViewlet):
     sub_attr_name = "addresses"
+    
+    @property
+    def form_name(self):
+        return _(u"Contacts")
 
 class PoliticalGroupsViewlet(SubformViewlet):
     sub_attr_name = "politicalgroups"
