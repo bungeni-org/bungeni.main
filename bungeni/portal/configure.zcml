@@ -31,12 +31,7 @@
   <!-- The ``bungeni.portal`` package is shared between Bungeni (z3)
        and Plone; part of the configuration is platform-dependent -->
   
-  <configure zcml:condition="installed plone.maintemplate">
-
-    <utility
-       name="Bungeni"
-       provides="plone.maintemplate.interfaces.ILayout"
-       component=".layout.bungeni" />
+  <configure zcml:condition="installed bungeni.plonepas">
 
     <browser:resourceDirectory 	
        name="portal"
@@ -46,7 +41,7 @@
 
   </configure>
 
-  <configure zcml:condition="not-installed plone.maintemplate">
+  <configure zcml:condition="not-installed bungeni.plonepas">
     
     <browser:resourceDirectory 	
        name="portal"
