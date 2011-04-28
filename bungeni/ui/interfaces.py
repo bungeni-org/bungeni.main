@@ -58,15 +58,20 @@ class IRSSRepresentationLayer(IDefaultBrowserLayer):
         some objects
     """
 
-class IArchiveSectionLayer(IDefaultBrowserLayer):
+class IAnonymousSectionLayer(IDefaultBrowserLayer):
+    """Requests within a section that should return always same public-only 
+    information irrespective of who is logged in (or not). 
+    """
+
+class IArchiveSectionLayer(IAnonymousSectionLayer):
     """Requests for an object within the archive."""
 
-class IBusinessSectionLayer(IRSSRepresentationLayer):
+class IBusinessSectionLayer(IAnonymousSectionLayer, IRSSRepresentationLayer):
     """Requests for an object within the business section."""
-class IBusinessWhatsOnSectionLayer(IDefaultBrowserLayer):
+class IBusinessWhatsOnSectionLayer(IAnonymousSectionLayer):
     """Requests for an object within the whats on page of the business section."""
 
-class IMembersSectionLayer(IDefaultBrowserLayer):
+class IMembersSectionLayer(IAnonymousSectionLayer):
     """Requests for an object within the members section."""
 
 class IWorkspaceOrAdminSectionLayer(IDefaultBrowserLayer):

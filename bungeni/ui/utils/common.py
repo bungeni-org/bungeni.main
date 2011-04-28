@@ -155,16 +155,7 @@ def get_request_context_roles(request):
 def is_public_layer(request):
     """Is this request within one of the "public" sections?
     """
-    if request is not None:
-        for iface in is_public_layer.PUBLIC_LAYERS:
-            if iface.providedBy(request):
-                return True
-    return False
-is_public_layer.PUBLIC_LAYERS = (
-    bungeni.ui.interfaces.IBusinessSectionLayer,
-    bungeni.ui.interfaces.IMembersSectionLayer,
-    bungeni.ui.interfaces.IArchiveSectionLayer
-)
+    return bungeni.ui.interfaces.IAnonymousSectionLayer.providedBy(request)
 
     
 def is_admin(context):
