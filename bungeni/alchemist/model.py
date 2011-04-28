@@ -12,7 +12,6 @@ log = __import__("logging").getLogger("bungeni.alchemist")
 
 from zope import component, interface, schema
 from zope.interface.interfaces import IInterface
-from zope.app.security.interfaces import IUnauthenticatedPrincipal
 
 from bungeni.alchemist.interfaces import (
     IAlchemistContent,
@@ -121,36 +120,6 @@ def validated_set(key, allowed_values, str_or_seq, nullable=False):
     assert len(seq) == len(seq_no_dups), \
         "No duplicates allowed [%s]: %s" % (key, seq)
     return interned.tuple(seq_no_dups)
-
-def get_user_context_roles():
-    """Get the list of user's roles (including whether admin or not)--this 
-    is the info needed (in addition to the field's modes) to further 
-    filter whether a field is visible or not for a given (user, mode).
-    
-    Wraps common.get_context_roles(context), with the following differcnes: 
-    - auto retrieves the context, needed param by common.get_context_roles()
-    - handles case when user is not authenticated
-    - handles case for when user is "admin"
-    """
-    request = common.get_request()
-    if request is None:
-        context = None
-        principal = None
-    else:
-        context = common.get_traversed_context(request)
-        principal = request.principal
-    if IUnauthenticatedPrincipal.providedBy(principal):
-        roles = ["bungeni.Anonymous"]
-    else: 
-        roles = common.get_context_roles(context)
-        if common.is_admin(context):
-            roles.append("bungeni.Admin")
-    log.debug(""" [get_user_context_roles]
-    PRINCIPAL: %s
-    CONTEXT: %s
-    ROLES: %s
-    """ % (principal, context, roles))
-    return roles
 
 
 # show/hide directives
@@ -512,9 +481,10 @@ class ModelDescriptor(object):
         return name in self._fields_by_name
     
     def _mode_columns(self, mode):
-        user_context_roles = get_user_context_roles()
+        # request-relevant roles to determine displayabe fields in this mode
+        request_context_roles = common.get_request_context_roles(None)
         return [ field for field in self.__class__.fields 
-            if field.is_displayable(mode, user_context_roles) ]
+            if field.is_displayable(mode, request_context_roles) ]
     
     @property
     def listing_columns(self): # !+listing_column_NAMES(mr, nov-2010) !

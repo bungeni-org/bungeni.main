@@ -13,9 +13,11 @@ log = __import__("logging").getLogger("bungeni.ui.utils.common")
 
 import zope
 from zope.annotation.interfaces import IAnnotations
+from zope.app.security.interfaces import IUnauthenticatedPrincipal
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 
-import bungeni
+import bungeni.models
+import bungeni.ui.interfaces
 
 from ore.wsgiapp.interfaces import IApplication
 def get_application():
@@ -72,9 +74,7 @@ def get_context_roles(context):
     Assumption: current principal is authenticated i.e. 
     zope.app.security.interfaces.IAuthenticatedPrincipal.providedBy(principal)
     """
-    if context is None:
-        log.warn(" [get_context_roles] CANNOT DETERMINE CONTEXT")
-        return []
+    assert context is not None, "Context may not be None."
     
     prms = []
     def _build_principal_role_maps(ctx):
@@ -117,6 +117,56 @@ def get_context_roles(context):
             principal.id, str(pg), "\n".join(message), roles))
     return roles
 
+def get_request_context_roles(request):
+    """Get the list of user's roles (including whether admin or not) relevant 
+    for this request layer.
+    
+    Wraps get_context_roles(context), with the following differences:
+    - auto determines the context, a needed param for get_context_roles()
+    - when within a public layer, always returns ["bungeni.Anonymous"]
+    - handles case when user is not authenticated
+    - handles case for when user is "admin"
+    """
+    request = request or get_request()
+    if request is None:
+        context = None
+        principal = None
+    else:
+        context = get_traversed_context(request)
+        principal = request.principal
+    # within a public layer, just proceed as "bungeni.Anonymous"
+    if is_public_layer(request):
+        return ["bungeni.Anonymous"]
+    # other layers
+    if IUnauthenticatedPrincipal.providedBy(principal):
+        roles = ["bungeni.Anonymous"]
+    else: 
+        roles = get_context_roles(context)
+        if is_admin(context):
+            roles.append("bungeni.Admin")
+    log.debug(""" [get_request_context_roles]
+    PRINCIPAL: %s
+    CONTEXT: %s
+    ROLES: %s
+    """ % (principal, context, roles))
+    return roles
+
+
+def is_public_layer(request):
+    """Is this request within one of the "public" sections?
+    """
+    if request is not None:
+        for iface in is_public_layer.PUBLIC_LAYERS:
+            if iface.providedBy(request):
+                return True
+    return False
+is_public_layer.PUBLIC_LAYERS = (
+    bungeni.ui.interfaces.IBusinessSectionLayer,
+    bungeni.ui.interfaces.IMembersSectionLayer,
+    bungeni.ui.interfaces.IArchiveSectionLayer
+)
+
+    
 def is_admin(context):
     """Check if current interaction has admin privileges on specified context
     """
