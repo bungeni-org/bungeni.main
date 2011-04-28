@@ -26,9 +26,6 @@ from bungeni.ui.i18n import _
 # !+(mr, sep-2010) shound't this be ui.i18n ?
 from bungeni.core.i18n import _ as _bc 
 from bungeni.core.content import Section, QueryContent
-from bungeni.core.interfaces import ISchedulingContext
-from bungeni.core.schedule import PrincipalGroupSchedulingContext
-from zope.app.component.hooks import getSite
 from bungeni.models import interfaces as model_interfaces
 from bungeni.models import domain
 from bungeni.models.utils import container_getter
@@ -37,12 +34,10 @@ from bungeni.models.utils import get_group_ids_for_user_in_parliament
 from bungeni.models.utils import get_ministries_for_user_in_government
 from bungeni.models.utils import get_current_parliament
 from bungeni.models.utils import get_current_parliament_governments
-from bungeni.models.utils import get_current_parliament_committees
 from bungeni.ui import browser
 from bungeni.ui import interfaces
 from bungeni.ui.utils import url, misc, debug, common
-from zope.app.container.sample import SampleContainer
-from zope.interface import implements
+
 
 def prepare_user_workspaces(event):
     """Determine the current principal's workspaces, depending on roles and
@@ -103,6 +98,11 @@ def prepare_user_workspaces(event):
     )
 
     LD.user_id = get_db_user_id()
+    # !+USER_GROUPS(mr, apr-2011) consider refactoring the following 
+    # determination of "workspace contexts", with a somewhat inverse approach
+    # basing on a common get_user_groups() utility and then filtering down to
+    # the relevant workspace-container-groups. This may also be a way to address 
+    # the factoring out of the role-hardwiring in the code below.
     try:
         parliament = get_current_parliament(None)
         assert parliament is not None # force exception
@@ -143,6 +143,7 @@ def prepare_user_workspaces(event):
             LD.workspaces.append(ministry)
     except (Exception,):
         debug.log_exc_info(sys.exc_info(), log_handler=log.info)
+
 
     # ensure unique workspaces, preserving order, retaining same list obj ref
     LD.workspaces[:] = [ workspace for i, workspace in enumerate(LD.workspaces)

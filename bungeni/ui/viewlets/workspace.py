@@ -150,7 +150,15 @@ class MyGroupsViewlet(WorkspaceViewlet):
     render = z3evoque.ViewTemplateFile("workspace_viewlets.html#groups")
     # ZPT
     #render = ViewPageTemplateFile("templates/workspace_group_viewlet.pt")
-
+    
+    # !+USER_GROUPS(mr, apr-2011) refactor, base on a resuable utility to get 
+    # all the groups for a given user (maybe support for filtering on a parent 
+    # group e.g. models.utils.get_user_groups(user=None, parent_group=None).
+    # As sample, see: models.utils.get_all_group_ids_in_parliament(parliament_id)
+    #
+    # !+USER_GROUPS(mr, apr-2011) consider adding a "my groups" tab also to 
+    # other roles e.g. minister. 
+    
     def _get_items(self):
         formatter = self.get_date_formatter("date", "long")
         data_list = []

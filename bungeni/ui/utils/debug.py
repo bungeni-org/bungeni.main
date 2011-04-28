@@ -88,6 +88,17 @@ def log_exc(exc_info, log_handler=log.error):
     cls, exc, tb = exc_info
     log_handler(""" [%s] %s""" % (cls.__name__, exc))
 
+def log_io(f):
+    """Debugging decorator utility, print out all input parameters and the 
+    return value of the decorated.
+    """
+    name = f.__name__
+    def _f(*args, **kw):
+        ret = f(*args, **kw)
+        print " ** %s: %s, %s -->> %s" % (name, args, kw, ret)
+        return ret
+    return _f
+
 # events 
 
 #from ore.wsgiapp.interfaces import WSGIApplicationCreatedEvent
