@@ -125,6 +125,13 @@ class BungeniSecurityPolicy(zope.securitypolicy.zopepolicy.ZopeSecurityPolicy):
             removeSecurityProxy(getattr(object, '__parent__', None)),
             permission)
         
+        # !+IRolePermissionMap_State(mr, apr-2011) an alternative approach 
+        # for the following could be to make workflow State objects provide 
+        # IRolePermissionMap, and then auto register each state instance as
+        # a ZCA adapter, on (object/interface, status), and then simply 
+        # proceed with "roleper = IRolePermissionMap(object)" (as is done in
+        # the ZopeSecurityPolicy, so may not need to override this method)
+        
         getRolesForPermission = None
         # ASSUMPTION: if an object is workflowed, then ALL local role 
         # permissions are specified by its current workflow state.
@@ -134,15 +141,16 @@ class BungeniSecurityPolicy(zope.securitypolicy.zopepolicy.ZopeSecurityPolicy):
             # !+status = StateController.get_status(object)
             getRolesForPermission = workflow.get_state(object.status
                 ).getRolesForPermission
-        except TypeError, e: # could not adapt
+        except TypeError: # could not adapt
             # None is default value for when IRolePermissionMap(object) fails
             roleper = IRolePermissionMap(object, None)
             # !+RolePermissionMap(mr, apr-2011) should categorically always be
-            # None? if so, clean-out all ZCA regs on IRolePermissionMap, and 
-            # rpm-related code). (Temporary) Assertion of this:
+            # None? 9Temporary) assertion of this (replacing code that would 
+            # handle a contrary sitiation):
             assert roleper is None, \
-                "[%s] !+RolePermissionMap [%s] for OBJECT [%s] not None" % (
-                    e, roleper, object)
+                "!+RolePermissionMap [%s] for OBJECT [%s] not None" % (
+                    roleper, object)
+            '''
             log.warn("BungeniSecurityPolicy: object [%s] is NOT workflowed. "
                 "Temporarily trying anyway to determine local role permissions "
                 "via IRolePermissionMap(object) [%s] i.e. via "
@@ -150,6 +158,7 @@ class BungeniSecurityPolicy(zope.securitypolicy.zopepolicy.ZopeSecurityPolicy):
                     object, roleper))
             if roleper is not None:
                 getRolesForPermission = roleper.getRolesForPermission
+            '''
         
         if getRolesForPermission is not None:
             roles = roles.copy()
