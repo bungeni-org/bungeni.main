@@ -16,7 +16,8 @@ from zope.annotation.interfaces import IAnnotations
 from zope.app.security.interfaces import IUnauthenticatedPrincipal
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 
-import bungeni.models
+# !+bungeni.models(mr, apr-2011) gives error when executing localization.py
+import bungeni
 import bungeni.ui.interfaces
 
 from ore.wsgiapp.interfaces import IApplication

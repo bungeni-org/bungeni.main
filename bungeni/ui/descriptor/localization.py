@@ -56,9 +56,9 @@ def is_descriptor(cls):
     '''
 
 def localizable_descriptor_classes(module):
-    """A generator of localizable descriptor classes conatined in module.
+    """A generator of localizable descriptor classes contained in module.
     """
-    for key in dir(module):
+    for key in dir(module): # alphabetic key order
         cls = getattr(module, key)
         if is_descriptor(cls):
             if cls.localizable:
