@@ -104,6 +104,8 @@ def localize_descriptors():
     """
     #for d in localizable_descriptor_classes(descriptor_module): ...
     xml = elementtree.ElementTree.fromstring(read_custom())
+    # make the value of <ui.@roles> as *the* bungeni default list of roles
+    Field._roles[:] = xml.get("roles", ROLES_DEFAULT).split()
     for descriptor_elem in xml.findall("descriptor"):
         dname = descriptor_elem.get("name")
         cls = get_localizable_descriptor_class(DESCRIPTOR_MODULE, dname)
@@ -113,7 +115,16 @@ def localize_descriptors():
         for f_elem in field_elems:
             fname = f_elem.get("name")
             f = field_by_name[fname]
-            bungeni_localizable_modes = [ rlm for rlm in f._localizable_modes ]
+            # assert that info-only field attributes have not been changed:
+            cval = f_elem.get("modes").split()
+            assert set(f.modes) == set(cval), (
+                "Field [%s] modifies information-only attribute [modes]: "
+                "\n B: %s\n C: %s" % (fname, f.modes, cval))
+            cval = set(f_elem.get("localizable", "").split())
+            assert f._localizable_modes == cval, (
+                "Field [%s] modifies information-only attribute [localizable]: "
+                "\n B: %s\n C: %s" % (fname, f._localizable_modes, cval))
+            bungeni_localizable_modes = [ blm for blm in f._localizable_modes ]
             clocs = []
             for cloc_elem in f_elem.getchildren():
                 modes = cloc_elem.get("modes", None)
