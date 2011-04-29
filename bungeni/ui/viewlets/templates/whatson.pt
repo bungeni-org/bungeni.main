@@ -40,19 +40,19 @@ $URL$
                   </a> 
                   <dl tal:define="items sitting/items">
                     <tal:block tal:repeat="item items">
-		                <tal:block tal:condition="python:item.item_type !='heading'">
-		                <dd>
+                        <tal:block tal:condition="python:item.item_type !='heading'">
+                        <dd>
                         <a tal:attributes="href item/url">
-                          <span  i18n:translate="" tal:content="item/item_type" />: 
+                          <span  i18n:translate="" tal:content="item/item_type_title" />: 
                           <span tal:content="item/name" />
                           (<span  i18n:translate="" tal:content="item/status" />)
                         </a>
                         </dd>
-		                </tal:block>
-			            <tal:block tal:condition="python:item.item_type == 'heading'">
-                          <dt><h3><span  i18n:translate="" tal:content="item/item_type" />: 
+                        </tal:block>
+                        <tal:block tal:condition="python:item.item_type == 'heading'">
+                          <dt><h3><span  i18n:translate="" tal:content="item/item_type_title" />: 
                           <span tal:content="item/name"/></h3></dt>
-			            </tal:block>
+                        </tal:block>
                     </tal:block>
                   </dl>
                 </li>
@@ -68,7 +68,7 @@ $URL$
                 Period selected has no Bills
             </span>
             <tal:block tal:condition="days">
-        	    <h2 class="whats_on_print_heading" i18n:translate="">Bills</h2>
+                <h2 class="whats_on_print_heading" i18n:translate="">Bills</h2>
                 <ul >
                     <tal:block tal:repeat="day days">
                     <li><h2 class="whats_on_upcoming_bill_date" tal:content="day/day" /> 

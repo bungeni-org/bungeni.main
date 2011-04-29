@@ -67,7 +67,8 @@ class WhatsOnBrowserView(BrowserView):
                     'url' : url.set_url_context(('/business/' +
                             schedule.item.type + 's/obj-' + 
                         str(schedule.item.parliamentary_item_id))),
-                    'item_type' : (
+                    'item_type': schedule.item.type,
+                    'item_type_title' : (
                         descriptor.display_name if descriptor else
                             schedule.item.type
                     ),
