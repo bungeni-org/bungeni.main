@@ -10,5 +10,9 @@ class SearchViewlet(object):
     render = ViewPageTemplateFile("templates/search.pt")
 
     def update(self):
+        section = get_section_name()
         base_url = abs_url(getSite(), self.request)
-        self.action = urljoin(base_url, get_section_name()) + '/search'
+        if not section:
+            section = 'business'
+        self.action = urljoin(base_url, section) + '/search'
+            

@@ -38,7 +38,7 @@ Supported xapian query operators
  |
 """
 
-import time, simplejson, urllib, urlparse
+import time, simplejson, urllib, urlparse, re
 from bungeni.ui import forms
 from ore.xapian import interfaces
 
@@ -77,6 +77,9 @@ from bungeni.models import domain
 from zope.traversing.browser import absoluteURL
 from bungeni.core.translation import translate_obj
 from zope.app.component.hooks import getSite
+from zope.schema import vocabulary
+    
+
 
 from workspace import ARCHIVED
 
@@ -127,8 +130,6 @@ class IAdvancedSearch(ISearch):
                                                                   "Bill",
                                                                   "GroupSitting",
                                                                   "PoliticalGroup"), required=False)
-
-    #status = schema.Choice(title=_("Status"), vocabulary=SimpleVocabulary([]), required=False)
 
     status_date = schema.Date(title=_("Status date"), required=False)
 
@@ -423,6 +424,27 @@ class PagedSearch(Pager, Search):
   template = ViewPageTemplateFile('templates/pagedsearch.pt')
 
 
+def get_users_vocabulary():
+    session= Session()
+    query = session.query(domain.User
+                ).order_by(
+                    domain.User.last_name,
+                    domain.User.first_name,
+                    domain.User.middle_name
+                )
+    results = query.all()
+    terms = []
+    for ob in results:
+        terms.append(
+            vocabulary.SimpleTerm(
+                value = getattr(ob, 'user_id'), 
+                token = getattr(ob, 'user_id'),
+                title = "%s %s" % (getattr(ob, 'first_name') ,
+                        getattr(ob, 'last_name'))
+            ))
+    return vocabulary.SimpleVocabulary(terms)
+
+
 class AdvancedPagedSearch(PagedSearch):
     template = ViewPageTemplateFile('templates/advanced-pagedsearch.pt')
     form_fields = form.Fields(IAdvancedSearch)
@@ -442,6 +464,8 @@ class AdvancedPagedSearch(PagedSearch):
 
         self.form_fields += \
             form.Fields(
+                schema.Choice(__name__='owner', title=_("Owner"),
+                    vocabulary=get_users_vocabulary(), required=False),
                 schema.Choice(__name__='status', title=_("Status"),
                     vocabulary=statuses, required=False),
                 schema.Choice(__name__='field', title=_('Field'),
@@ -458,6 +482,7 @@ class AdvancedPagedSearch(PagedSearch):
         indexed_field = data.get('field', '')
         status = data.get('status', '')
         status_date = data['status_date']
+        owner = data.get('owner', '')
 
         if not lang:
             lang = 'en'
@@ -494,6 +519,11 @@ class AdvancedPagedSearch(PagedSearch):
             status_date_query = self.searcher.query_field('status_date', index.date_value(status_date))
             self.query = self.searcher.query_composite(self.searcher.OP_AND, \
                                                        (self.query, status_date_query,))
+            
+        if owner:
+            owner_query = self.searcher.query_field('owner', str(owner))
+            self.query = self.searcher.query_composite(self.searcher.OP_AND, \
+                                                       (self.query, owner_query,))
 
         self.results = self._results
         self.search_time = time.time() - t

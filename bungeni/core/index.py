@@ -141,6 +141,8 @@ class ContentIndexer(object):
         
         doc.fields.append(xappy.Field("status", getattr(self.context, "status", "")))
         
+        doc.fields.append(xappy.Field("owner", str(getattr(self.context, "owner_id", ""))))
+        
         try:
             status_date = getattr(self.context, "status_date")
             if status_date:
@@ -395,13 +397,17 @@ def setupFieldDefinitions(indexer):
     indexer.add_field_action('status', xappy.FieldActions.INDEX_EXACT)
     indexer.add_field_action('status', xappy.FieldActions.STORE_CONTENT)
     #indexer.add_field_action('status', xappy.FieldActions.FACET, type='string')
-    
+        
     indexer.add_field_action('status_date', xappy.FieldActions.INDEX_EXACT)
     indexer.add_field_action('status_date', xappy.FieldActions.STORE_CONTENT)
 
     # deleted 
     indexer.add_field_action('deleted', xappy.FieldActions.INDEX_EXACT)
     indexer.add_field_action('deleted', xappy.FieldActions.STORE_CONTENT)
+    
+    #owner of the object
+    indexer.add_field_action('owner', xappy.FieldActions.INDEX_EXACT)
+    indexer.add_field_action('owner', xappy.FieldActions.STORE_CONTENT)
     
     # site relative path
     indexer.add_field_action('path', xappy.FieldActions.STORE_CONTENT)
