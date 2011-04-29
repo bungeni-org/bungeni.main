@@ -165,6 +165,14 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="60"
     />
+    <browser:menuItem menu="party_additems"
+        for="bungeni.models.interfaces.IPoliticalParty"
+        title="Add Party Address..."
+        action="./addresses/add"
+        permission="bungeni.address.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="61"
+    />
     <browser:subMenuItem menu="plone_contentmenu"
         for="bungeni.models.interfaces.IPoliticalGroup"
         title="Add..."
@@ -377,6 +385,14 @@
         permission="bungeni.function.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="30"
+    />
+    <browser:menuItem menu="member_additems"
+        for="bungeni.models.interfaces.IMemberOfParliament"
+        title="Add Member Address..."
+        action="./addresses/add"
+        permission="bungeni.address.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="40"
     />
     
     <browser:menu id="sitting_additems"

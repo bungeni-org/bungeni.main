@@ -155,7 +155,15 @@
      class=".viewlets.AddressesViewlet"
      for="bungeni.models.interfaces.IMemberOfParliament"
      permission="zope.View"
-     weight="100"
+     weight="99"
+     />
+  <browser:viewlet
+     name="bungeni.viewlet.group-addresses"
+     manager=".interfaces.ISubFormViewletManager"
+     class=".viewlets.AddressesViewlet"
+     for="bungeni.models.interfaces.IBungeniGroup"
+     permission="zope.View"
+     weight="99"
      />
 
 <!-- XXX-INFO-FOR-PLONE - MR - 2010-05-03

@@ -387,7 +387,8 @@
                 start_date
                 end_date
                 type
-                logo_data"
+                logo_data
+                addresses"
         />
         <require permission="bungeni.party.Edit"
              set_attributes="
@@ -402,9 +403,6 @@
     
     <class class=".domain.PoliticalGroup">
         <require like_class=".domain.PoliticalParty" />
-        <require permission="zope.View" 
-            attributes="addresses" 
-        />
     </class>
     
     <class class=".domain.Government">
