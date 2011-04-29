@@ -200,6 +200,15 @@
 <b i18n:translate="">Redraft Agenda</b>
 <b i18n:translate="">Finalize Agenda</b>
 <b i18n:translate="">Publish Minutes</b>
+<b i18n:translate="">Active User</b>
+<b i18n:translate="">Inactive User</b>
+<b i18n:translate="">Deceased User</b>
+<b i18n:translate="">Deactivate</b>
+<b i18n:translate="">Activate</b>
+<b i18n:translate="">Create</b>
+<b i18n:translate="">Inhume</b>
+<b i18n:translate="">Resurrect</b>
+<b i18n:translate="">Inhume</b>
 <b i18n:translate="">Active Group</b>
 <b i18n:translate="">Group is Dissolved</b>
 <b i18n:translate="">Draft - Group not yet Active</b>

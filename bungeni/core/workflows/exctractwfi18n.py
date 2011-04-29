@@ -29,6 +29,7 @@ for name in [
     "motion", 
     "version", 
     "groupsitting", 
+    "user", 
     "group", 
     "address", 
     "tableddocument", 
