@@ -446,6 +446,16 @@ def DeathBeforeLife(User):
 # required
 # - Field.property.required: by default required=True for all schema.Field
 # - !+Field.required(mr, oct-2010) OBSOLETED.
+#
+# localization -- guidelines
+# - [all] fields should be, as a minimum, displayable/localizable in 
+#   "view listing" -- but, whenever possible, fields should be 
+#   displayable/localizable in all modes.
+# - [required user-set] fields (e.g. primary keys) should NOT be localizable 
+#   in "edit add"
+# - [system-set] fields should NOT be *displayable* in "add edit", but may be 
+#   displayable/localizable in "view listing" as per [all]
+# - [rtf] fields should not be *displayable* in "listing"
 
 
 def LanguageField(name="language", modes="edit add", localizable=None):
@@ -482,6 +492,9 @@ class UserDescriptor(ModelDescriptor):
         Field(name="user_id", # for linking item in listing
             label="Name",
             modes="listing",
+            localizable=[
+                show("listing"), 
+            ],
             listing_column=user_name_column("user_id", _("Name"), None),
         ),
         Field(name="titles",
@@ -1633,7 +1646,7 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
 
     fields = [
         Field(name="parliament_id",
-            modes="view edit",
+            modes="view",
             localizable=[ hide("view"), ],
             property=schema.Choice(title=_("Parliament"),
                 source=vocabulary.DatabaseSource(domain.Parliament,
@@ -1933,6 +1946,7 @@ class BillDescriptor(ParliamentaryItemDescriptor):
         ),
     ])
     public_wfstates = get_states("bill", not_tagged=["private"])
+
 
 class BillVersionDescriptor(VersionDescriptor):
     localizable = True
