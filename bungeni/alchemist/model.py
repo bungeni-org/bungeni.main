@@ -224,9 +224,9 @@ class Field(object):
     def validated_roles(cls, roles, nullable=False):
         return validated_set("roles", cls._roles, roles, nullable=nullable)
     
-    # INIT Parameter (and Defaults)
-    
-    # CONVENTION: the default value for each init parameter is the value 
+    # INIT Parameter Defaults: 
+    # 
+    # convention: the default value for each init parameter is the value 
     # assigned to the corresponding class attribute - reasons for this are:
     # a) makes it easier to override init param default values by trivial 
     # subclassing.
@@ -237,7 +237,7 @@ class Field(object):
     label = ""       # str: title for field
     description = "" # str : description for field
     
-    modes = validated_set("modes", _modes, "view edit add")
+    modes = validated_set("modes", _modes, "view edit add listing")
     
     # the default list of show/hide localization directives -- by default
     # a field is NOT localizable in any mode and for any role.
@@ -252,6 +252,8 @@ class Field(object):
     edit_widget = None      # zope.app.form.interfaces.IInputWidget
     add_widget = None       # zope.app.form.interfaces.IInputWidget
     search_widget = None    # zope.app.form.interfaces.IInputWidget
+    
+    # /INIT Parameter Defaults
     
     view_permission = "zope.Public"         # str
     edit_permission = "zope.ManageContent"  # str
