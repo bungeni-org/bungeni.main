@@ -244,6 +244,9 @@ div.main-column h2 {
     margin: 1.25em 0 .5em;
     text-align: center;
 }
+.template-portal div.main-column h2 {
+    margin: -4em 0 0.5em;
+}
 .template-workspace.section-bungeni-workspace div.main-column h2,
 .template-workspace.section-bungeni-admin div.main-column h2 {
     font-weight: bold !important;
@@ -887,7 +890,9 @@ input.inputLabelActive {
     padding: 0;
 }
 .template-portal .contentActions {
-    background: #dedede;
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #FB9C14 !important;
+    margin-top: 5em;
 }
 .template-workspace.section-bungeni-archive .contentActions,
 .template-workspace.section-bungeni-business .contentActions,
@@ -1741,6 +1746,9 @@ dl.portalMessage {
     border: 1px solid #800;
     color: #333;
 }
+.template-portal dl.portalMessage {
+    margin: -14.5em 0 12em 0;
+}
 dl.portalMessage dt {
 }
 dl.portalMessage dd {
@@ -2101,6 +2109,9 @@ h4.tabberHeading {
     font-weight: normal;
 /*    text-align: center;*/
 }
+.template-portal .documentDescription {
+    margin: 3em 0 1em 0.5em;
+} 
 .documentEditable {
     margin: 0;
     padding: 0 !important;
