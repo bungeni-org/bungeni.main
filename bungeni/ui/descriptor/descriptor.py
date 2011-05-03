@@ -1168,7 +1168,7 @@ class CommitteeTypeDescriptor(ModelDescriptor):
         Field(name="status", # [user-req]
             modes="view edit add listing",
             property=schema.Choice(title=_("status"),
-                vocabulary=vocabulary.CommitteStatusVocabulary
+                vocabulary=vocabulary.CommitteeStatusVocabulary
             )
         ),
         LanguageField("language"),

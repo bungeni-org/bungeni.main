@@ -124,7 +124,7 @@ AddressPostalType = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm("U", _(u"Undefined / Unknown"), 
         _(u"Undefined / Unknown")),
 ])
-CommitteStatusVocabulary = vocabulary.SimpleVocabulary([
+CommitteeStatusVocabulary = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm("P", _("permanent"), _("permanent")),
     vocabulary.SimpleTerm("T", _("temporary"), _("temporary")),
 ])
