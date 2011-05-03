@@ -585,3 +585,12 @@ class QuestionTypeDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         return self.translate(context, "question_type_name")
+
+class ResponseTypeDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.IResponseType)
+    
+    @property
+    def title(self):
+        session = Session()
+        context = session.merge(removeSecurityProxy(self.context))
+        return self.translate(context, "response_type_name")

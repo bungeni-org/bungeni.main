@@ -816,3 +816,8 @@ class QuestionType(Entity):
     """Question types
     """
     interface.implements(interfaces.ITranslatable, interfaces.IQuestionType)
+
+class ResponseType(Entity):
+    """Response types
+    """
+    interface.implements(interfaces.ITranslatable, interfaces.IResponseType)

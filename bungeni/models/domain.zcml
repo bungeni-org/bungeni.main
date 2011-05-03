@@ -71,7 +71,7 @@
                 supplement_parent_id
                 ministry_submit_date
                 ministry_id
-                response_type
+                response_type_id
                 full_name
                 question_type
                 question_number
@@ -88,7 +88,7 @@
                 language
                 body_text
                 ministry_id
-                response_type
+                response_type_id
                 full_name
                 question_type
                 receive_notification

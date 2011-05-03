@@ -71,10 +71,12 @@ def has_venue(context):
 # question
 
 def is_written_response(context):
-    return context.ministry_id is not None and context.response_type == u"W"
+    return (context.ministry_id is not None and 
+        context.response_type.response_type_name == u"Written"
+    )
 
 def is_oral_response(context):
-    return context.response_type == u"O"
+    return context.response_type.response_type_name == u"Oral"
 
 def response_allow_submit(context):
     # The "submit_response" workflow transition should NOT be displayed when 

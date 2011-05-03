@@ -360,6 +360,10 @@ class AppSetup(object):
         to_locatable_container(domain.QuestionType, 
             vocabularies[u"questiontypes"]
         )
+        vocabularies[u"responsetypes"] = domain.ResponseTypeContainer()
+        to_locatable_container(domain.ResponseType, 
+            vocabularies[u"responsetypes"]
+        )
         vocabularies[u"committeetypes"] = domain.CommitteeTypeContainer()
         to_locatable_container(domain.CommitteeType, 
             vocabularies[u"committeetypes"]

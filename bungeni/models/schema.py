@@ -867,6 +867,7 @@ QuestionSequence = rdb.Sequence("question_number_sequence", metadata)
 # a first come first served policy in placing the questions on the order
 # paper. The serial number is re-initialized at the start of each session
 question_types = make_vocabulary_table("question", metadata)
+response_types = make_vocabulary_table("response", metadata)
 
 questions = rdb.Table("questions", metadata,
     rdb.Column("question_id", rdb.Integer,
@@ -878,9 +879,8 @@ questions = rdb.Table("questions", metadata,
     rdb.Column("question_type_id", rdb.Integer,
         rdb.ForeignKey("question_types.question_type_id")
     ),
-    rdb.Column("response_type", rdb.String(1),
-        rdb.CheckConstraint("""response_type in ('O', 'W')"""), # (O)ral (W)ritten
-        default=u"O"
+    rdb.Column("response_type_id", rdb.Integer,
+        rdb.ForeignKey("response_types.response_type_id")
     ),
     # if supplementary question, this is the original/previous question
     rdb.Column("supplement_parent_id", rdb.Integer,

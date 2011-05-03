@@ -469,3 +469,6 @@ class IVenue(IBungeniVocabulary):
 
 class IQuestionType(IBungeniVocabulary):
     """Marker interface for question types"""
+
+class IResponseType(IBungeniVocabulary):
+    """Marker interface for response types"""

@@ -147,6 +147,13 @@ Create a question type
   >>> qtype.question_type_id
   1L
   
+  >>> rtype = add_content(
+  ...   domain.ResponseType,
+  ...   response_type_name=u"Written",
+  ...   language="en")
+  >>> rtype.response_type_id
+  1L
+  
   >>> question = add_content(
   ...     domain.Question,
   ...     short_name=u"My subject",
@@ -154,7 +161,7 @@ Create a question type
   ...     owner_id=mp_3.user_id,
   ...     language="en",
   ...     question_type_id=qtype.question_type_id,
-  ...     response_type=u"W",
+  ...     response_type=rtype,
   ...     parliament_id=parliament.parliament_id)
   
   >>> question.__parent__ = app

@@ -2293,6 +2293,19 @@ class QuestionTypeDescriptor(ModelDescriptor):
         LanguageField("language"),
     ]
 
+class ResponseTypeDescriptor(ModelDescriptor):
+    localizable = False
+    display_name = _("Response type")
+    container_name = _("Response types")
+
+    fields = [
+        Field(name="response_type_name",
+            modes="view edit add listing",
+            property=schema.TextLine(title=_("Response Type"))
+        ),
+        LanguageField("language"),
+    ]
+
 
 class QuestionDescriptor(ParliamentaryItemDescriptor):
     localizable = True
@@ -2349,15 +2362,18 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
                 "question_type", _("None")
             )
         ),
-        Field(name="response_type", # [user-req]
+        Field(name="response_type_id", # [user-req]
             modes="view edit add listing",
             localizable=[ 
                 show("view edit listing"),
             ],
             property=schema.Choice(title=_("Response Type"),
                 description=_("Oral or Written"),
-                vocabulary=vocabulary.ResponseType
+                source=vocabulary.ResponseType
             ),
+            listing_column = dc_getter("response_type_id", _("Response Type"), 
+                "response_type", _("None")
+            )
         ),
         Field(name="response_text", # [user-req]
             modes="edit",

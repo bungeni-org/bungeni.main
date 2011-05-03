@@ -11,12 +11,16 @@ import orm
 from schema import metadata
 
 from domain import User, Minister
-from domain import GroupMembership, Group, Government, Parliament, \
+from domain import (GroupMembership, Group, Government, Parliament,
     PoliticalParty, Ministry, Committee
-from domain import GroupSitting, GroupSittingType, \
-    GroupSittingAttendance, AttendanceType
+)
+from domain import (GroupSitting, GroupSittingType, GroupSittingAttendance,
+    AttendanceType
+)
 from domain import ParliamentSession, PoliticalGroup
-from domain import Question, QuestionVersion, QuestionChange, QuestionType
+from domain import (Question, QuestionVersion, QuestionChange, QuestionType, 
+    ResponseType
+)
 from domain import Motion, MotionVersion, MotionChange
 from domain import Bill, BillVersion, BillChange, BillType
 from domain import Constituency, Parliament

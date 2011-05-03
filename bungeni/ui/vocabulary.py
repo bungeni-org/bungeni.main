@@ -92,10 +92,10 @@ MonthlyRecurrenceVocabularyFactory = MonthlyRecurrenceVocabulary()
 #    vocabulary.SimpleTerm('O', _(u"Ordinary"), _(u"Ordinary")), 
 #    vocabulary.SimpleTerm('P', _(u"Private Notice"), _(u"Private Notice"))
 #])
-ResponseType = vocabulary.SimpleVocabulary([
-    vocabulary.SimpleTerm('O', _("Oral"), _("Oral")), 
-    vocabulary.SimpleTerm('W', _(u"Written"), _(u"Written"))
-])
+#ResponseType = vocabulary.SimpleVocabulary([
+#    vocabulary.SimpleTerm('O', _("Oral"), _("Oral")), 
+#    vocabulary.SimpleTerm('W', _(u"Written"), _(u"Written"))
+#])
 Gender = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm('M', _(u"Male"), _(u"Male")), 
     vocabulary.SimpleTerm('F', _(u"Female"), _(u"Female"))
@@ -822,6 +822,10 @@ QuestionType = DatabaseSource(domain.QuestionType, token_field="question_type_id
     value_field="question_type_id", title_field="question_type_name"
 )
 
+ResponseType = DatabaseSource(domain.ResponseType, 
+    token_field="response_type_id",
+    value_field="response_type_id", title_field="response_type_name"
+)
 
 class CommitteeSource(SpecializedSource):
 

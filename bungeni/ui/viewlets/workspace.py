@@ -516,10 +516,25 @@ class MinistryItemsViewlet(WorkspaceViewlet):
     view_id = "ministry-items"
     view_title = _("questions to the ministry")
     states = None
-    response_types = ["O", "W"]
+    response_types = []
+    response_types_filter = []
+
+    @property
+    def all_response_types(self):
+        session = Session()
+        return [ response.response_type_name for response in
+            session.query(domain.ResponseType).all()
+        ]
 
     def _get_ministry_items(self, ministry):
         session = Session()
+        self.response_types = [ response.response_type_id for response in
+                session.query(domain.ResponseType).filter(
+                domain.ResponseType.response_type_name.in_(
+                    self.response_types_filter or self.all_response_types
+                )
+            ).all()
+        ]
         date_formatter = self.get_date_formatter("date", "long")
         def _q_data_item(q):
             item = {}
@@ -545,7 +560,7 @@ class MinistryItemsViewlet(WorkspaceViewlet):
         mq_query = session.query(domain.Question).filter(sql.and_(
                 domain.Question.ministry_id == ministry.group_id,
                 domain.Question.status.in_(self.states),
-                domain.Question.response_type.in_(self.response_types)
+                domain.Question.response_type_id.in_(self.response_types)
                 ))
         return [ _q_data_item(question) for question in mq_query.all() ]
 
@@ -574,13 +589,13 @@ class OralMinistryQuestionsViewlet(MinistryItemsViewlet):
     view_id = "ministry-oral-questions"
     view_title = _("oral questions")
     states = get_states("question", tagged=["oral"])
-    response_types = ["O"]
+    response_types_filter = [u"Oral"]
 
 class WrittenMinistryQuestionsViewlet(MinistryItemsViewlet):
     view_id = "ministry-written-questions"
     view_title = _("written questions")
     states = get_states("question", tagged=["written"])
-    response_types = ["W"]
+    response_types_filter = [u"Written"]
 
 class InProgressMinistryItemsViewlet(MinistryItemsViewlet):
     """

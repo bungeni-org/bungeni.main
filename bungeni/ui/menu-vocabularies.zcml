@@ -27,6 +27,13 @@
         layer=".interfaces.IAdminSectionLayer"
     />     
     <browser:menuItem menu="plone_contentmenu"
+        for="bungeni.models.domain.ResponseTypeContainer"
+        title="Add response type..."
+        action="./add"
+        permission="zope.ManageContent"
+        layer=".interfaces.IAdminSectionLayer"
+    />     
+    <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.domain.AttendanceTypeContainer"
         title="Add attendance type..."
         action="./add"
