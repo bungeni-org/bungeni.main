@@ -740,12 +740,10 @@ class GroupMembershipDescriptor(ModelDescriptor):
             property=schema.Bool(title=_("Active"), default=True),
         ),
         LanguageField("language"), # [user-req]
-        # !+substitution(mr, apr-2011)  what are the fileds "substitution_type",
-        # "replaced_id" for? Seem unused...
         Field(name="substitution_type", # [user]
-            modes="view edit add listing",
+            modes="view edit listing",
             localizable=[
-                hide("view edit add listing"),
+                hide("view edit listing"),
             ],
             property=schema.TextLine(
                 title=_("Type of Substitution"),
@@ -753,9 +751,9 @@ class GroupMembershipDescriptor(ModelDescriptor):
             ),
         ),
         Field(name="replaced_id", # [user]
-            modes="view edit add listing",
+            modes="view edit listing",
             localizable=[
-                hide("view edit add listing"),
+                hide("view edit listing"),
             ],
             property=schema.Choice(
                 title=_("Substituted by"),
