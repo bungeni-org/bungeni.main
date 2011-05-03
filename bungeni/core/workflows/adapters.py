@@ -1,11 +1,13 @@
 log = __import__("logging").getLogger("bungeni.core.workflows")
 
 from zope import component
+import zope.securitypolicy.interfaces
 from bungeni.models import interfaces
 from bungeni.core.workflow import xmlimport
 from bungeni.core.workflow.interfaces import IWorkflow, \
     IStateController, IWorkflowController
-from bungeni.core.workflow.states import StateController, WorkflowController
+from bungeni.core.workflow.states import StateController, WorkflowController, \
+    get_object_state
 import bungeni.core.version
 import bungeni.core.interfaces
 from bungeni.utils.capi import capi
@@ -34,7 +36,6 @@ def provideAdapterStateController(adapts_kls):
 def provideAdapterWorkflowController(adapts_kls):
     component.provideAdapter(WorkflowController, (adapts_kls,), 
         IWorkflowController)
-
 
 def load_workflow(name, iface, 
         path_custom_workflows=capi.get_path_for("workflows")
@@ -92,9 +93,16 @@ def load_workflows():
     load_workflow("tableddocument", interfaces.ITabledDocument)
     load_workflow("user", interfaces.IBungeniUser)
     load_workflow("version", interfaces.IVersion) # !+VERSION_WORKFLOW(mr, apr-2011)
+    
+    # IRolePermissionMap adapter for workflowed objects
+    component.provideAdapter(get_object_state, (interfaces.IBungeniContent,), 
+        zope.securitypolicy.interfaces.IRolePermissionMap)
+    # !+RolePermissionMap(mr, may-2011) executing this adapter registration at 
+    # module top level (i.e. not within this def) does not work for the tests 
 
 # load workflows
 load_workflows()
+
 
 # check/regenerate zcml directives for workflows
 xmlimport.zcml_check_regenerate()

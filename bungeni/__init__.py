@@ -12,18 +12,6 @@ import zope.interface
 from zope.security.interfaces import ISecurityPolicy
 import zope.securitypolicy.zopepolicy
 
-from zope.securitypolicy.rolepermission import rolePermissionManager
-globalRolesForPermission = rolePermissionManager.getRolesForPermission
-
-from zope.securitypolicy.principalrole import principalRoleManager
-globalRolesForPrincipal = principalRoleManager.getRolesForPrincipal
-
-from zope.security.proxy import removeSecurityProxy
-from zope.securitypolicy.interfaces import Allow #, Deny, Unset
-from zope.securitypolicy.interfaces import IRolePermissionMap
-
-from bungeni.core.workflow.interfaces import IWorkflow
-
 
 def cache_item(mapping, key, value):
     """Utility to set (key, value) item on mapping, and return the value.
@@ -38,9 +26,6 @@ class BungeniSecurityPolicy(zope.securitypolicy.zopepolicy.ZopeSecurityPolicy):
     Given the Bungeni convention that permissions are only assigned to roles,
     we optimize security checking by never checking permission directly on
     a principal or on a group. 
-    
-    For workflowed objects, we infer the permission setting from the permission
-    declarations of each workflow state.
     """
     zope.interface.classProvides(ISecurityPolicy)
     
@@ -97,79 +82,6 @@ class BungeniSecurityPolicy(zope.securitypolicy.zopepolicy.ZopeSecurityPolicy):
                 if setting and (role in roles):
                     return True
         return False
-    
-    def cached_roles(self, object, permission):
-        """Get roles for permission on object.
-        
-        If object is workflowed get from the workflow state definition,
-        else from zope_role_permission_map.
-        """
-        cache = self.cache(object)
-        try:
-            cache_roles = cache.roles
-        except AttributeError:
-            cache_roles = cache.roles = {}
-        try:
-            return cache_roles[permission]
-        except KeyError:
-            pass
-        
-        if object is None:
-            roles = dict([ (role, 1)
-                    for (role, setting) in globalRolesForPermission(permission)
-                    if setting is Allow ])
-            return cache_item(cache_roles, permission, roles)
-        
-        # recurse on parent
-        roles = self.cached_roles(
-            removeSecurityProxy(getattr(object, '__parent__', None)),
-            permission)
-        
-        # !+IRolePermissionMap_State(mr, apr-2011) an alternative approach 
-        # for the following could be to make workflow State objects provide 
-        # IRolePermissionMap, and then auto register each state instance as
-        # a ZCA adapter, on (object/interface, status), and then simply 
-        # proceed with "roleper = IRolePermissionMap(object)" (as is done in
-        # the ZopeSecurityPolicy, so may not need to override this method)
-        
-        getRolesForPermission = None
-        # ASSUMPTION: if an object is workflowed, then ALL local role 
-        # permissions are specified by its current workflow state.
-        try:
-            # get the workflow instance for object
-            workflow = IWorkflow(object)
-            # !+status = StateController.get_status(object)
-            getRolesForPermission = workflow.get_state(object.status
-                ).getRolesForPermission
-        except TypeError: # could not adapt
-            # None is default value for when IRolePermissionMap(object) fails
-            roleper = IRolePermissionMap(object, None)
-            # !+RolePermissionMap(mr, apr-2011) should categorically always be
-            # None? 9Temporary) assertion of this (replacing code that would 
-            # handle a contrary sitiation):
-            assert roleper is None, \
-                "!+RolePermissionMap [%s] for OBJECT [%s] not None" % (
-                    roleper, object)
-            '''
-            log.warn("BungeniSecurityPolicy: object [%s] is NOT workflowed. "
-                "Temporarily trying anyway to determine local role permissions "
-                "via IRolePermissionMap(object) [%s] i.e. via "
-                "zope_role_permission_map--that in future will be EMPTY)." % (
-                    object, roleper))
-            if roleper is not None:
-                getRolesForPermission = roleper.getRolesForPermission
-            '''
-        
-        if getRolesForPermission is not None:
-            roles = roles.copy()
-            for role, setting in getRolesForPermission(permission):
-                #if workflow: assert (permission, role) in workflow._permission_role_pairs
-                if setting is Allow:
-                    roles[role] = 1
-                    #if workflow: assert (1, permission, role) in state.permissions
-                elif role in roles:
-                    del roles[role]
-                    #if workflow: assert (0, permission, role) in state.permissions
-        return cache_item(cache_roles, permission, roles)
+
 
 

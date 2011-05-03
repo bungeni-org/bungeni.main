@@ -66,6 +66,12 @@ def wrapped_condition(condition):
 #
 
 class State(object):
+    """A workflow state instance. 
+    
+    For workflowed objects, we infer the permission setting from the permission
+    declarations of each workflow state.
+    """
+    zope.interface.implements(zope.securitypolicy.interfaces.IRolePermissionMap)
     
     def __init__(self, id, title, note, actions, permissions, notifications,
             obsolete=False
@@ -102,14 +108,18 @@ class State(object):
         for notification in self.notifications:
             # call notification to execute
             notification(context)
-
+    
+    # IRolePermissionMap
+    #def getPermissionsForRole(self, role_id):
     def getRolesForPermission(self, permission):
-        """Generator of (role, setting) for permission, as per 
-        zope.securitypolicy.interfaces.IRolePermissionMap.
+        """Generator of (role, setting) tuples for the roles having the 
+        permission, as per zope.securitypolicy.interfaces.IRolePermissionMap.
         """
         for setting, p, role in self.permissions:
             if p == permission:
                 yield role, IntAsSetting[setting]
+    #def getSetting(self, permission_id, role_id):
+    #def getRolesAndPermissions(self):
 
 
 class Transition(object):
@@ -171,7 +181,7 @@ class StateController(object):
     
     def get_state(self):
         """Get the workflow.states.State instance for the context's status."""
-        return interfaces.IWorkflow(self.context).get_state(self.context.status)
+        return get_object_state(self.context)
     
     def get_status(self):
         return self.context.status
@@ -191,6 +201,19 @@ class StateController(object):
         assert state is not None, "May not have a None state" # !+NEEDED?
         state.execute_actions(self.context)
     
+
+def get_object_state(context):
+    """Lookup the workflow.states.State instance for the context's status.
+    
+    Serves also as the IRolePermissionMap(context) adapter factory.
+    
+    May need to be called numerous times per request, so is a lightweight 
+    and performance-aware adapter -- there is no creation of any adapter 
+    instance, just lookup of the object's Workflow instance off which to 
+    retrieve existing State instances.
+    """
+    return interfaces.IWorkflow(context).get_state(context.status)
+
 
 class Workflow(object):
     """A Workflow instance for a specific document type, defining the possible 
