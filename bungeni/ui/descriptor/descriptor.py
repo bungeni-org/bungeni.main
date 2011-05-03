@@ -15,6 +15,7 @@ from zope.publisher.interfaces import IRequest
 import zope.app.form.browser
 from zope.i18n import translate
 from zc.table import column
+from zope.dublincore.interfaces import IDCDescriptiveProperties
 
 from bungeni.alchemist import Session
 from bungeni.alchemist.model import ModelDescriptor, Field, show, hide
@@ -335,6 +336,12 @@ def enumeration_column(name, title,
         return getattr(enum_obj, enum_value_attr)
     return column.GetterColumn(title, getter)
 
+def dc_getter(name, title, item_attribute, default=""):
+    def getter(item, formatter):
+        obj = getattr(item, item_attribute)
+        return IDCDescriptiveProperties(obj).title
+    return column.GetterColumn(title, getter)
+        
 ####
 #  Constraints / Invariants
 #
@@ -2273,6 +2280,19 @@ class BillVersionDescriptor(VersionDescriptor):
     container_name = _("Versions")
     fields = deepcopy(VersionDescriptor.fields)
 
+class QuestionTypeDescriptor(ModelDescriptor):
+    localizable = False
+    display_name = _("Question type")
+    container_name = _("Question types")
+
+    fields = [
+        Field(name="question_type_name",
+            modes="view edit add listing",
+            property=schema.TextLine(title=_("Question Type"))
+        ),
+        LanguageField("language"),
+    ]
+
 
 class QuestionDescriptor(ParliamentaryItemDescriptor):
     localizable = True
@@ -2316,15 +2336,18 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
         ),
-        Field(name="question_type", # [user-req]
+        Field(name="question_type_id", # [user-req]
             modes="view edit add listing",
             localizable=[ 
                 show("view edit listing"),
             ],
             property=schema.Choice(title=_("Question Type"),
                 description=_("Ordinary or Private Notice"),
-                vocabulary=vocabulary.QuestionType
+                source=vocabulary.QuestionType
             ),
+            listing_column = dc_getter("question_type_id", _("Question Type"), 
+                "question_type", _("None")
+            )
         ),
         Field(name="response_type", # [user-req]
             modes="view edit add listing",

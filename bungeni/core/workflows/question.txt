@@ -138,13 +138,22 @@ send the question notifications.
 remove the call to setParliamentId() when creating the question -- the 
 parliament_id is automatically set on a question (when saved to the db) 
 that is created via the UI form. 
-
+  
+Create a question type
+  >>> qtype = add_content(
+  ...   domain.QuestionType,
+  ...   question_type_name=u"Ordinary",
+  ...   language="en")
+  >>> qtype.question_type_id
+  1L
+  
   >>> question = add_content(
   ...     domain.Question,
   ...     short_name=u"My subject",
   ...     body_text=u"The question",
   ...     owner_id=mp_3.user_id,
   ...     language="en",
+  ...     question_type_id=qtype.question_type_id,
   ...     response_type=u"W",
   ...     parliament_id=parliament.parliament_id)
   

@@ -87,10 +87,11 @@ MonthlyRecurrenceVocabularyFactory = MonthlyRecurrenceVocabulary()
 
 # you have to add title_field to the vocabulary as only this gets 
 # translated, the token_field will NOT get translated
-QuestionType = vocabulary.SimpleVocabulary([
-    vocabulary.SimpleTerm('O', _(u"Ordinary"), _(u"Ordinary")), 
-    vocabulary.SimpleTerm('P', _(u"Private Notice"), _(u"Private Notice"))
-])
+# !+VOCABULARIES (murithi, may-2011) This is now a db persisted vocabulary
+#QuestionType = vocabulary.SimpleVocabulary([
+#    vocabulary.SimpleTerm('O', _(u"Ordinary"), _(u"Ordinary")), 
+#    vocabulary.SimpleTerm('P', _(u"Private Notice"), _(u"Private Notice"))
+#])
 ResponseType = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm('O', _("Oral"), _("Oral")), 
     vocabulary.SimpleTerm('W', _(u"Written"), _(u"Written"))
@@ -790,7 +791,6 @@ class PartyMembership(object):
 
 
 
-
 party_membership = sql.join(schema.political_parties, schema.groups,
                 schema.political_parties.c.party_id == schema.groups.c.group_id).join(
                    schema.user_group_memberships,
@@ -817,6 +817,12 @@ class BillSource(SpecializedSource):
                 domain.Bill.parliament_id == parliament_id))
         return query
                 
+
+QuestionType = DatabaseSource(domain.QuestionType, token_field="question_type_id",
+    value_field="question_type_id", title_field="question_type_name"
+)
+
+
 class CommitteeSource(SpecializedSource):
 
     def constructQuery(self, context):

@@ -332,7 +332,7 @@ mapper(domain.Heading,
     polymorphic_on=schema.parliamentary_items.c.type,
     polymorphic_identity="heading"
 )
-
+mapper(domain.QuestionType, schema.question_types)
 mapper(domain.Question, schema.questions,
     inherits=domain.ParliamentaryItem,
     polymorphic_on=schema.parliamentary_items.c.type,
@@ -340,6 +340,9 @@ mapper(domain.Question, schema.questions,
     properties={
         "changes": changes_relation(domain.QuestionChange),
         "ministry": relation(domain.Ministry, lazy=False, join_depth=2),
+        "question_type": relation(domain.QuestionType, uselist=False,
+            lazy=False
+        ),
     }
 )
 

@@ -576,3 +576,12 @@ class VenueDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         return self.translate(context, "short_name")
+
+class QuestionTypeDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.IQuestionType)
+    
+    @property
+    def title(self):
+        session = Session()
+        context = session.merge(removeSecurityProxy(self.context))
+        return self.translate(context, "question_type_name")

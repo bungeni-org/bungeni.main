@@ -466,3 +466,6 @@ class IAttendanceType(IBungeniVocabulary):
 
 class IVenue(IBungeniVocabulary):
     """Marker interface for venues vocabulary"""
+
+class IQuestionType(IBungeniVocabulary):
+    """Marker interface for question types"""

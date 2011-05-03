@@ -356,6 +356,10 @@ class AppSetup(object):
         to_locatable_container(domain.BillType, 
             vocabularies[u"billtypes"]
         )
+        vocabularies[u"questiontypes"] = domain.QuestionTypeContainer()
+        to_locatable_container(domain.QuestionType, 
+            vocabularies[u"questiontypes"]
+        )
         vocabularies[u"committeetypes"] = domain.CommitteeTypeContainer()
         to_locatable_container(domain.CommitteeType, 
             vocabularies[u"committeetypes"]

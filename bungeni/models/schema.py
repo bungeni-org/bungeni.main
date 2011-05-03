@@ -78,6 +78,19 @@ def make_versions_table(table, metadata, secondarytable=None):
     versions_table = rdb.Table(versions_name, metadata, *columns)
     return versions_table
 
+def make_vocabulary_table(vocabulary_prefix, metadata):
+    table_name = "%s_types" % vocabulary_prefix
+    column_key = "%s_type_id" % vocabulary_prefix
+    column_name = "%s_type_name" % vocabulary_prefix 
+    return rdb.Table(table_name, metadata,
+        rdb.Column(column_key, rdb.Integer, primary_key=True),
+        rdb.Column(column_name, rdb.Unicode(256),
+            nullable=False,
+            unique=True
+        ),
+        rdb.Column("language", rdb.String(5), nullable=False),
+    )
+
 
 #######################
 # Users 
@@ -853,6 +866,7 @@ QuestionSequence = rdb.Sequence("question_number_sequence", metadata)
 # to record the order in which questions are received and hence enforce 
 # a first come first served policy in placing the questions on the order
 # paper. The serial number is re-initialized at the start of each session
+question_types = make_vocabulary_table("question", metadata)
 
 questions = rdb.Table("questions", metadata,
     rdb.Column("question_id", rdb.Integer,
@@ -861,10 +875,8 @@ questions = rdb.Table("questions", metadata,
     ),
     rdb.Column("question_number", rdb.Integer),
     rdb.Column("ministry_submit_date", rdb.Date,),
-    rdb.Column("question_type", rdb.String(1),
-        rdb.CheckConstraint("""question_type in ('O', 'P')"""),
-        # (O)rdinary (P)rivate Notice
-        default=u"O"
+    rdb.Column("question_type_id", rdb.Integer,
+        rdb.ForeignKey("question_types.question_type_id")
     ),
     rdb.Column("response_type", rdb.String(1),
         rdb.CheckConstraint("""response_type in ('O', 'W')"""), # (O)ral (W)ritten

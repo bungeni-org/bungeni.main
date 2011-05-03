@@ -16,7 +16,7 @@ from domain import GroupMembership, Group, Government, Parliament, \
 from domain import GroupSitting, GroupSittingType, \
     GroupSittingAttendance, AttendanceType
 from domain import ParliamentSession, PoliticalGroup
-from domain import Question, QuestionVersion, QuestionChange
+from domain import Question, QuestionVersion, QuestionChange, QuestionType
 from domain import Motion, MotionVersion, MotionChange
 from domain import Bill, BillVersion, BillChange, BillType
 from domain import Constituency, Parliament

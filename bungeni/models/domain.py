@@ -809,3 +809,10 @@ class ObjectTranslation(object):
     """
 
 
+#####################
+# Unbound vocabularies
+######################
+class QuestionType(Entity):
+    """Question types
+    """
+    interface.implements(interfaces.ITranslatable, interfaces.IQuestionType)
