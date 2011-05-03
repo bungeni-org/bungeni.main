@@ -6,7 +6,9 @@ from bungeni.core.workflow.dot import dot
 
 def write_file(in_folder, file_name, contents):
     f = open(in_folder + file_name, "w")
-    f.write(contents)
+    # !+UNICODETEXT(AH,2011-05-03) without the utf-8 encoding
+    # the write fails for text with accents e.g. portoguese.
+    f.write(contents.encode('UTF-8'))
     f.close()
 
 
