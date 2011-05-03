@@ -24,9 +24,9 @@ def getUserGroups(login_id, groups):
     a) the groups defined by his user_group_memberships
     b) the users who have him assigned as a delegation
     c) the groups of the delegation user.
+    Arguments are a login_id and a set. Returns a set.
     """
-    if login_id not in groups:
-        groups.append(login_id)
+    groups.add(login_id)
     session = Session()
     db_user = session.query(domain.User).filter(
                 domain.User.login==login_id).all()
@@ -39,16 +39,17 @@ def getUserGroups(login_id, groups):
                         user_id,
                         domain.GroupMembership.active_p == 
                         True)).options(
-                    eagerload('group'), lazyload('user')
+                    eagerload("group"), lazyload("user")
                     )
         results = query.all()
         for result in results:
-            if (result.group.group_principal_id not in groups):
-                groups.append(result.group.group_principal_id)
+            groups.add(result.group.group_principal_id)
         results = delegation.get_user_delegations(user_id)
+        
         for result in results:
-            if (result.login not in groups):
-                groups = groups + getUserGroups(result.login, groups)
+            if result.login not in groups:
+                for x in getUserGroups(result.login, groups):
+                    groups.add(x)
     return groups
                 
 
@@ -58,9 +59,10 @@ class AlchemistWhoPlugin(object):
     interface.implements(IAuthenticator, IMetadataProvider)
     
     def getGroups(self, id ):
-        groups = getUserGroups(id, [])
-        return groups + ['zope.Authenticated', 'zope.anybody']
-
+        groups = getUserGroups(id, set())
+        groups.add("zope.Authenticated")
+        groups.add("zope.anybody")
+        return groups
             
     def authenticate(self, environ, identity):
         if not ('login' in identity and 'password' in identity):
