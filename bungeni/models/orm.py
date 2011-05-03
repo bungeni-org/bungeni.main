@@ -207,6 +207,8 @@ mapper(domain.GroupMembership, schema.user_group_memberships,
     polymorphic_identity="member",
 )
 
+mapper(domain.MemberElectionType, schema.member_election_types)
+
 mapper(domain.MemberOfParliament, schema.parliament_memberships,
     inherits=domain.GroupMembership,
     primary_key=[schema.user_group_memberships.c.membership_id],
@@ -239,6 +241,9 @@ mapper(domain.MemberOfParliament, schema.parliament_memberships,
             schema.user_group_memberships.c.start_date.label("start_date")),
         "end_date": column_property(
             schema.user_group_memberships.c.end_date.label("end_date")),
+        "member_election_type": relation(domain.MemberElectionType, uselist=False,
+            lazy=False
+        ),
     },
     polymorphic_on=schema.user_group_memberships.c.membership_type,
     polymorphic_identity="parliamentmember",

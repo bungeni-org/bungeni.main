@@ -472,3 +472,6 @@ class IQuestionType(IBungeniVocabulary):
 
 class IResponseType(IBungeniVocabulary):
     """Marker interface for response types"""
+
+class IMemberElectionType(IBungeniVocabulary):
+    """Marker interface for member election types"""

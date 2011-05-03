@@ -212,13 +212,21 @@ Role title names
   >>> mrt1.language = "en"
   >>> session.add(mrt1)
   >>> session.flush()
-    
- 
+
+
 Members of parliament
 ----------------------
 Members of parliament are defined by their membership in
 the parliaments group and additional attributes.
 
+Construct member election type
+  >>> met1 = model.MemberElectionType()
+  >>> met1.member_election_type_name = u"Elected"
+  >>> met1.language = u"en"
+  >>> session.add(met1)
+  >>> session.flush()
+  >>> met1.member_election_type_id
+  1L
 
   >>> mp4 = model.MemberOfParliament()
   >>> mp4.group_id = parliament.group_id
@@ -228,7 +236,7 @@ the parliaments group and additional attributes.
   >>> mp4.constituency = constituency
   >>> mp4.province_id = province.province_id
   >>> mp4.region_id = region.region_id
-  >>> mp4.elected_nominated = 'E'
+  >>> mp4.member_election_type = met1
   >>> mp4.language = "en"
   >>> session.add(mp4)
   >>> session.flush()

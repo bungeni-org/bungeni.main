@@ -810,14 +810,21 @@ class ObjectTranslation(object):
 
 
 #####################
-# Unbound vocabularies
+# DB vocabularies
 ######################
 class QuestionType(Entity):
-    """Question types
+    """Question type
     """
     interface.implements(interfaces.ITranslatable, interfaces.IQuestionType)
 
 class ResponseType(Entity):
-    """Response types
+    """Response type
     """
     interface.implements(interfaces.ITranslatable, interfaces.IResponseType)
+
+class MemberElectionType(Entity):
+    """Member election type
+    """
+    interface.implements(interfaces.ITranslatable, 
+        interfaces.IMemberElectionType
+    )

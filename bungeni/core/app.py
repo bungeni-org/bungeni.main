@@ -193,7 +193,9 @@ class AppSetup(object):
             container_getter(get_current_parliament, 'tableddocuments'),
             title=_(u"Tabled documents"),
             marker=interfaces.ITabledDocumentAddContext,
-            description=_(u"View the tabled documents of the current parliament"))
+            description=\
+                _(u"View the tabled documents of the current parliament")
+        )
 
         business[u"agendaitems"] = QueryContent(
             container_getter(get_current_parliament, 'agendaitems'),
@@ -217,7 +219,9 @@ class AppSetup(object):
             container_getter(get_current_parliament, 'preports'),
             title=_(u"Publications"),
             marker=interfaces.IReportAddContext,
-            description=_(u"View Agenda and Minutes reports of the current parliament"))
+            description=\
+                _(u"View Agenda and Minutes reports of the current parliament")
+        )
         
         
         # members section
@@ -263,7 +267,9 @@ class AppSetup(object):
         to_locatable_container(domain.AgendaItem, documents[u"agendaitems"])
 
         documents[u"tableddocuments"] = domain.TabledDocumentContainer()
-        to_locatable_container(domain.TabledDocument, documents[u"tableddocuments"])
+        to_locatable_container(domain.TabledDocument, 
+            documents[u"tableddocuments"]
+        )
         
         documents[u"reports"] = domain.ReportContainer()
         to_locatable_container(domain.Report, documents[u"reports"])
@@ -274,7 +280,9 @@ class AppSetup(object):
         to_locatable_container(domain.Parliament, records[u"parliaments"])
         
         records[u"politicalgroups"] = domain.PoliticalGroupContainer()
-        to_locatable_container(domain.PoliticalGroup, records[u"politicalgroups"])
+        to_locatable_container(domain.PoliticalGroup, 
+            records[u"politicalgroups"]
+        )
         
         records[u"constituencies"] = domain.ConstituencyContainer()
         to_locatable_container(domain.Constituency, records[u"constituencies"])
@@ -344,29 +352,34 @@ class AppSetup(object):
             marker=model_interfaces.IBungeniAdmin,
             default_name="vocabularies")
 
-        vocabularies[u"addresstypes"] = domain.AddressTypeContainer()
+        vocabularies[u"address-types"] = domain.AddressTypeContainer()
         to_locatable_container(domain.AddressType, 
-            vocabularies[u"addresstypes"]
+            vocabularies[u"address-types"]
         )
-        vocabularies[u"attendancetypes"] = domain.AttendanceTypeContainer()
+        vocabularies[u"attendance-types"] = domain.AttendanceTypeContainer()
         to_locatable_container(domain.AttendanceType, 
-            vocabularies[u"attendancetypes"]
+            vocabularies[u"attendance-types"]
         )
-        vocabularies[u"billtypes"] = domain.BillTypeContainer()
+        vocabularies[u"bill-types"] = domain.BillTypeContainer()
         to_locatable_container(domain.BillType, 
-            vocabularies[u"billtypes"]
+            vocabularies[u"bill-types"]
         )
-        vocabularies[u"questiontypes"] = domain.QuestionTypeContainer()
+        vocabularies[u"question-types"] = domain.QuestionTypeContainer()
         to_locatable_container(domain.QuestionType, 
-            vocabularies[u"questiontypes"]
+            vocabularies[u"question-types"]
         )
-        vocabularies[u"responsetypes"] = domain.ResponseTypeContainer()
+        vocabularies[u"response-types"] = domain.ResponseTypeContainer()
         to_locatable_container(domain.ResponseType, 
-            vocabularies[u"responsetypes"]
+            vocabularies[u"response-types"]
         )
-        vocabularies[u"committeetypes"] = domain.CommitteeTypeContainer()
+        vocabularies[u"committee-types"] = domain.CommitteeTypeContainer()
         to_locatable_container(domain.CommitteeType, 
-            vocabularies[u"committeetypes"]
+            vocabularies[u"committee-types"]
         )
         vocabularies[u"venues"] = domain.VenueContainer()
         to_locatable_container(domain.Venue, vocabularies[u"venues"])
+        
+        vocabularies[u"m-election-types"] = domain.MemberElectionTypeContainer()
+        to_locatable_container(domain.MemberElectionType, 
+            vocabularies[u"m-election-types"]
+        )

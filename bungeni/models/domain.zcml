@@ -535,7 +535,7 @@
                 constituency_id
                 province_id
                 region_id
-                elected_nominated
+                member_election_type_id
                 election_nomination_date
                 leave_reason"
         />
@@ -554,7 +554,7 @@
                 constituency_id
                 province_id
                 region_id
-                elected_nominated
+                member_election_type_id
                 election_nomination_date
                 leave_reason"
         />

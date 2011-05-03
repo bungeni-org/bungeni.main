@@ -336,7 +336,7 @@ def enumeration_column(name, title,
         return getattr(enum_obj, enum_value_attr)
     return column.GetterColumn(title, getter)
 
-def dc_getter(name, title, item_attribute, default=""):
+def dc_getter(name, title, item_attribute, default=_(u"None")):
     def getter(item, formatter):
         obj = getattr(item, item_attribute)
         return IDCDescriptiveProperties(obj).title
@@ -780,6 +780,19 @@ class GroupMembershipDescriptor(ModelDescriptor):
         validations.validate_group_membership_dates
     ]
 
+class MemberElectionTypeDescriptor(ModelDescriptor):
+    localizable = False
+    display_name = _("Member election type")
+    container_name = _("Member election types")
+
+    fields = [
+        Field(name="member_election_type_name",
+            modes="view edit add listing",
+            property=schema.TextLine(title=_("Election Type"))
+        ),
+        LanguageField("language"),
+    ]
+
 
 class MpDescriptor(GroupMembershipDescriptor):
     localizable = True
@@ -805,14 +818,17 @@ class MpDescriptor(GroupMembershipDescriptor):
                 yui_maxResultsDisplayed=5),
             add_widget=widgets.AutoCompleteWidget()
         ),
-        Field(name="elected_nominated", # [user-req]
+        Field(name="member_election_type_id", # [user-req]
             modes="view edit add listing",
             localizable=[
                 show("view edit listing"),
             ],
             property=schema.Choice(title=_("elected/nominated"),
-                source=vocabulary.ElectedNominated
+                source=vocabulary.MemberElectionType
             ),
+            listing_column = dc_getter("member_election_type_id", 
+                _("Election Type"), "member_election_type"
+            )
         ),
         Field(name="election_nomination_date", # [user-req]
             modes="view edit add listing",
@@ -2357,7 +2373,7 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
                 source=vocabulary.QuestionType
             ),
             listing_column = dc_getter("question_type_id", _("Question Type"), 
-                "question_type", _("None")
+                "question_type"
             )
         ),
         Field(name="response_type_id", # [user-req]
@@ -2370,7 +2386,7 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
                 source=vocabulary.ResponseType
             ),
             listing_column = dc_getter("response_type_id", _("Response Type"), 
-                "response_type", _("None")
+                "response_type"
             )
         ),
         Field(name="response_text", # [user-req]

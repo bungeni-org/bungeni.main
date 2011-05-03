@@ -289,6 +289,7 @@
   <adapter factory=".dc.VenueDescriptiveProperties" />
   <adapter factory=".dc.QuestionTypeDescriptiveProperties" />
   <adapter factory=".dc.ResponseTypeDescriptiveProperties" />
+  <adapter factory=".dc.MemberElectionTypeDescriptiveProperties" />
   <adapter
      name="dc"
      for="*"

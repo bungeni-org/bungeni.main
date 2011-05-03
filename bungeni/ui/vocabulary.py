@@ -100,11 +100,11 @@ Gender = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm('M', _(u"Male"), _(u"Male")), 
     vocabulary.SimpleTerm('F', _(u"Female"), _(u"Female"))
 ])
-ElectedNominated = vocabulary.SimpleVocabulary([
-    vocabulary.SimpleTerm('E', _(u"elected"), _(u"elected")),
-    vocabulary.SimpleTerm('N', _(u"nominated"), _(u"nominated")), 
-    vocabulary.SimpleTerm('O', _(u"ex officio"), _(u"ex officio"))
-])
+#ElectedNominated = vocabulary.SimpleVocabulary([
+#    vocabulary.SimpleTerm('E', _(u"elected"), _(u"elected")),
+#    vocabulary.SimpleTerm('N', _(u"nominated"), _(u"nominated")), 
+#    vocabulary.SimpleTerm('O', _(u"ex officio"), _(u"ex officio"))
+#])
 InActiveDead = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm('A', _(u"active"), _(u"active")),
     vocabulary.SimpleTerm('I', _(u"inactive"), _(u"inactive")),
@@ -307,7 +307,11 @@ class AttachedFileTypeSource(SpecializedSource):
 #    token_field="group_sitting_type_id",
 #    value_field="group_sitting_type_id")
 
-
+MemberElectionType = DatabaseSource(domain.MemberElectionType, 
+    token_field="member_election_type_id",
+    value_field="member_election_type_id", 
+    title_field="member_election_type_name"
+)
 
 class MemberOfParliament(object):
     """ Member of Parliament = user join group membership join parliament"""

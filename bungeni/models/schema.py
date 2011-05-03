@@ -169,6 +169,8 @@ user_delegations = rdb.Table("user_delegations", metadata,
 
 # user subscriptions table
 
+member_election_types = make_vocabulary_table("member_election", metadata)
+
 # specific user classes
 parliament_memberships = rdb.Table("parliament_memberships", metadata,
     rdb.Column("membership_id", rdb.Integer,
@@ -190,8 +192,8 @@ parliament_memberships = rdb.Table("parliament_memberships", metadata,
         rdb.ForeignKey("political_parties.party_id")
     ),
     # is the MP elected, nominated, ex officio member, ...
-    rdb.Column("elected_nominated", rdb.String(1),
-        rdb.CheckConstraint("""elected_nominated in ('E','O','N')"""),
+    rdb.Column("member_election_type_id", rdb.Integer,
+        rdb.ForeignKey("member_election_types.member_election_type_id"),
         nullable=False
     ),
     rdb.Column("election_nomination_date", rdb.Date), # nullable=False),
