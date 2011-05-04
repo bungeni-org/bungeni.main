@@ -828,3 +828,10 @@ class MemberElectionType(Entity):
     interface.implements(interfaces.ITranslatable, 
         interfaces.IMemberElectionType
     )
+
+class PostalAddressType(Entity):
+    """Postal address type
+    """
+    interface.implements(interfaces.ITranslatable, 
+        interfaces.IPostalAddressType
+    )

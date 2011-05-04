@@ -414,4 +414,10 @@
         ui_module="bungeni.ui.content"
         echo="False"
     />
+    <db:catalyst class="bungeni.models.domain.PostalAddressType"
+        descriptor=".descriptor.PostalAddressTypeDescriptor"
+        interface_module="bungeni.models.interfaces"
+        ui_module="bungeni.ui.content"
+        echo="False"
+    />
 </configure>

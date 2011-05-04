@@ -145,6 +145,55 @@ Check that we can access the membership through the containment object
   >>> len( list( parliament.members ) )
   3
 
+Group and user addresses
+-------------------------
+  >>> address_type_1 = model.AddressType()
+  >>> address_type_1.address_type_name = u"Personal"
+  >>> address_type_1.language = "en"
+  >>> session.add(address_type_1)
+  >>> session.flush()
+  >>> address_type_1.address_type_id
+  1L
+
+Add a postal address type
+  >>> postal_address_type_1 = model.PostalAddressType()
+  >>> postal_address_type_1.postal_address_type_name = u"P.O. Box"
+  >>> postal_address_type_1.language = "en"
+  >>> session.add(postal_address_type_1)
+  >>> session.flush()
+  >>> postal_address_type_1.postal_address_type_id
+  1L
+
+Add a user address
+  >>> user_address_1 = model.UserAddress()
+  >>> user_address_1.user_id = mp_1.user_id
+  >>> user_address_1.address_type = address_type_1
+  >>> user_address_1.postal_address_type = postal_address_type_1
+  >>> user_address_1.street = u"MP1 Avenue"
+  >>> user_address_1.city = u"Megapolis"
+  >>> user_address_1.country = country
+  >>> session.add(user_address_1)
+  >>> session.flush()
+  >>> user_address_1.address_id
+  1L
+  >>> len(list(mp_1.addresses))
+  1
+
+Add a group address
+  >>> group_address_1 = model.GroupAddress()
+  >>> group_address_1.group_id = parliament.group_id
+  >>> group_address_1.address_type = address_type_1
+  >>> group_address_1.postal_address_type = postal_address_type_1
+  >>> group_address_1.street = u"Parliament Road"
+  >>> group_address_1.city = u"Loliondo"
+  >>> group_address_1.country = country
+  >>> session.add(group_address_1)
+  >>> session.flush()
+  >>> group_address_1.address_id
+  1L
+  >>> len(list(parliament.addresses))
+  1
+
 Government
 ----------
   >>> gov = model.Government(short_name=u"gov_1", start_date=datetime.datetime.now())

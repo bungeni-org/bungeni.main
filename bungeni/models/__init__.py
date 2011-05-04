@@ -29,3 +29,4 @@ from domain import MemberOfParliament, MemberElectionType
 from domain import MemberTitle, MemberRoleTitle
 from domain import ItemSchedule
 
+from domain import AddressType, GroupAddress, UserAddress, PostalAddressType

@@ -383,3 +383,7 @@ class AppSetup(object):
         to_locatable_container(domain.MemberElectionType, 
             vocabularies[u"m-election-types"]
         )
+        vocabularies[u"p-address-types"] = domain.PostalAddressTypeContainer()
+        to_locatable_container(domain.PostalAddressType, 
+            vocabularies[u"p-address-types"]
+        )

@@ -290,6 +290,7 @@
   <adapter factory=".dc.QuestionTypeDescriptiveProperties" />
   <adapter factory=".dc.ResponseTypeDescriptiveProperties" />
   <adapter factory=".dc.MemberElectionTypeDescriptiveProperties" />
+  <adapter factory=".dc.PostalAddressTypeDescriptiveProperties" />
   <adapter
      name="dc"
      for="*"

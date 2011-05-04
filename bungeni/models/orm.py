@@ -41,6 +41,8 @@ def versions_properties(item_class, change_class, versions_table):
         ),
     }
 
+#user address types
+mapper(domain.PostalAddressType, schema.postal_address_types)
 
 # Users
 # general representation of a person
@@ -49,7 +51,7 @@ mapper(domain.User, schema.users,
         "user_addresses": relation(domain.UserAddress),
         "subscriptions": relation(domain.ParliamentaryItem,
             secondary=schema.users_parliamentary_items
-        )
+        ),
     }
 )
 
@@ -540,11 +542,19 @@ mapper(domain.AddressType, schema.address_types)
 mapper(domain.UserAddress, schema.user_addresses,
     properties={
         "address_type": relation(domain.AddressType, uselist=False, lazy=False),
+        "postal_address_type": relation(domain.PostalAddressType, uselist=False,
+            lazy=False
+        ),
+        "country": relation(domain.Country, uselist=False, lazy=False),
     },
 )
 mapper(domain.GroupAddress, schema.group_addresses,
     properties={
         "address_type": relation(domain.AddressType, uselist=False, lazy=False),
+        "postal_address_type": relation(domain.PostalAddressType, 
+            uselist=False, lazy=False
+        ),
+        "country": relation(domain.Country, uselist=False, lazy=False),
     },
 )
 

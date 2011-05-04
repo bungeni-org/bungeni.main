@@ -603,3 +603,12 @@ class MemberElectionTypeDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         return self.translate(context, "member_election_type_name")
+
+class PostalAddressTypeDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.IPostalAddressType)
+    
+    @property
+    def title(self):
+        session = Session()
+        context = session.merge(removeSecurityProxy(self.context))
+        return self.translate(context, "postal_address_type_name")

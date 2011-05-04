@@ -117,14 +117,14 @@ ISResponse = vocabulary.SimpleVocabulary([
 YesNoSource = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm(True, _(u"Yes"), _(u"Yes")), 
     vocabulary.SimpleTerm(False, _(u"No"), _(u"No"))])
-AddressPostalType = vocabulary.SimpleVocabulary([
-    vocabulary.SimpleTerm("P", _(u"P.O. Box"), _(u"P.O. Box")),
-    vocabulary.SimpleTerm("S", _(u"Street / Physical"), 
-        _(u"Street / Physical")),
-    vocabulary.SimpleTerm("M", _(u"Military"), _(u"Military")),
-    vocabulary.SimpleTerm("U", _(u"Undefined / Unknown"), 
-        _(u"Undefined / Unknown")),
-])
+#AddressPostalType = vocabulary.SimpleVocabulary([
+#    vocabulary.SimpleTerm("P", _(u"P.O. Box"), _(u"P.O. Box")),
+#    vocabulary.SimpleTerm("S", _(u"Street / Physical"), 
+#        _(u"Street / Physical")),
+#    vocabulary.SimpleTerm("M", _(u"Military"), _(u"Military")),
+#    vocabulary.SimpleTerm("U", _(u"Undefined / Unknown"), 
+#        _(u"Undefined / Unknown")),
+#])
 CommitteeStatusVocabulary = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm("P", _("permanent"), _("permanent")),
     vocabulary.SimpleTerm("T", _("temporary"), _("temporary")),
@@ -306,6 +306,12 @@ class AttachedFileTypeSource(SpecializedSource):
 #    title_field="group_sitting_type",
 #    token_field="group_sitting_type_id",
 #    value_field="group_sitting_type_id")
+
+PostalAddressType = DatabaseSource(domain.PostalAddressType,
+    token_field="postal_address_type_id",
+    value_field="postal_address_type_id",
+    title_field="postal_address_type_name"
+)
 
 MemberElectionType = DatabaseSource(domain.MemberElectionType, 
     token_field="member_election_type_id",

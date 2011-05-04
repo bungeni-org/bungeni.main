@@ -475,3 +475,6 @@ class IResponseType(IBungeniVocabulary):
 
 class IMemberElectionType(IBungeniVocabulary):
     """Marker interface for member election types"""
+
+class IPostalAddressType(IBungeniVocabulary):
+    """Marker interface for address postal types"""

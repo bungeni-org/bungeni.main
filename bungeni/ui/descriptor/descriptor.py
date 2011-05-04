@@ -1336,6 +1336,18 @@ class AddressTypeDescriptor(ModelDescriptor):
         LanguageField("language"),
     ]
 
+class PostalAddressTypeDescriptor(ModelDescriptor):
+    localizable = False
+    display_name = _("Postal address type")
+    container_name = _("Postal address types")
+
+    fields = [
+        Field(name="postal_address_type_name",
+            modes="view edit add listing",
+            property=schema.TextLine(title=_("Postal address type name"))
+        ),
+        LanguageField("language"),
+    ]
 
 class AddressDescriptor(ModelDescriptor):
     localizable = False
@@ -1361,14 +1373,17 @@ class AddressDescriptor(ModelDescriptor):
                 enum_value_attr="address_type_name"
             ),
         ),
-        Field(name="postal_type", # [user-req]
+        Field(name="postal_address_type_id", # [user-req]
             modes="view edit add listing",
             localizable=[
                 show("view edit listing"),
             ],
             property=schema.Choice(title=_("Postal Type"),
-                source=vocabulary.AddressPostalType,
+                source=vocabulary.PostalAddressType,
                 required=True
+            ),
+            listing_column = dc_getter("postal_address_type_id",
+                _("Postal Type"), "postal_address_type"
             ),
         ),
         Field(name="street", # [user-req]
@@ -1395,7 +1410,7 @@ class AddressDescriptor(ModelDescriptor):
                 show("view edit listing"),
             ],
         ),
-        Field(name="country", # [user-req]
+        Field(name="country_id", # [user-req]
             modes="view edit add listing",
             localizable=[
                 show("view edit listing"),

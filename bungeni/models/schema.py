@@ -451,6 +451,8 @@ address_types = rdb.Table("address_types", metadata,
     rdb.Column("language", rdb.String(5), nullable=False),
 )
 
+postal_address_types = make_vocabulary_table("postal_address", metadata)
+
 def _make_address_table(metadata, fk_key="user"):
     assert fk_key in ("user", "group")
     table_name = "%s_addresses" % (fk_key) # e.g. user_addresses
@@ -467,16 +469,14 @@ def _make_address_table(metadata, fk_key="user"):
             rdb.ForeignKey("address_types.address_type_id"),
             nullable=False
         ),
-        rdb.Column("postal_type", rdb.String(1),
-            # po box | street, physical | military | undefined, unknown
-            rdb.CheckConstraint("""postal_type in ('P', 'S', 'M', 'U')"""),
-            default="S",
+        rdb.Column("postal_address_type_id", rdb.Integer,
+            rdb.ForeignKey("postal_address_types.postal_address_type_id"),
             nullable=False
         ),
         rdb.Column("street", rdb.Unicode(256), nullable=False),
         rdb.Column("city", rdb.Unicode(256), nullable=False),
         rdb.Column("zipcode", rdb.Unicode(20)),
-        rdb.Column("country", rdb.String(2),
+        rdb.Column("country_id", rdb.String(2),
             rdb.ForeignKey("countries.country_id"),
             nullable=False
         ),
