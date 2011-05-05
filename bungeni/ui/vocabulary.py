@@ -1007,14 +1007,14 @@ class BaseVDEXVocabulary(object):
         ofile = open(self.file_path)
         vdex = imsvdex.vdex.VDEXManager(
             file=ofile, 
-            lang = get_default_language()
+            lang = capi.default_language
         )
         vdex.fallback_to_default_language = True
         ofile.close()
         return vdex
 
     def generateJSON(self, selected = []):
-        vdict = self.vdex.getVocabularyDict()
+        vdict = self.vdex.getVocabularyDict(lang=get_default_language())
         dynatree_dict = dict_to_dynatree(vdict, selected)
         return json.dumps(dynatree_dict)
 
