@@ -19,7 +19,7 @@ from bungeni.alchemist.model import (
     norm_sorted, 
 )
 from bungeni.utils.capi import capi, bungeni_custom_errors
-
+from bungeni.ui.utils import debug
 
 # constants 
 
@@ -31,7 +31,6 @@ DESCRIPTOR_CLASSNAME_POSTFIX = "Descriptor"
 ROLES_DEFAULT = " ".join(Field._roles)
 INDENT = " " * 4
 
-
 # utils
 
 def read_custom():
@@ -40,7 +39,9 @@ def read_custom():
     except IOError:
         return '<NO-SUCH-FILE path="%s" />' % (CUSTOM_PATH)
 
-def write_custom(content):
+def write_custom(old_content, content):
+    print "*** OVERWRITING localization file: %s" % (CUSTOM_PATH)
+    print debug.unified_diff(old_content, content, CUSTOM_PATH, "NEW")
     open(CUSTOM_PATH, "w").write(content.encode("utf-8"))
 
 def is_descriptor(cls):
@@ -96,6 +97,11 @@ def reorder_fields(cls, ordered_field_names, field_by_name):
     # reorder (retaining same list instance as class attribute)
     cls.fields[:] = [ field_by_name[name] for name in ordered_field_names ]
 
+def is_stale_info(bval, cval, message):
+    if not bval == cval:
+        log.warn(message)
+        return True
+    return False
 
 @bungeni_custom_errors
 def localize_descriptors():
@@ -105,27 +111,40 @@ def localize_descriptors():
     #for d in localizable_descriptor_classes(descriptor_module): ...
     xml = elementtree.ElementTree.fromstring(read_custom())
     # make the value of <ui.@roles> as *the* bungeni default list of roles
+    global ROLES_DEFAULT
     Field._roles[:] = xml.get("roles", ROLES_DEFAULT).split()
+    # and reset global "constant"
+    ROLES_DEFAULT = " ".join(Field._roles)
+    
+    STALE_INFO = False
     for descriptor_elem in xml.findall("descriptor"):
         dname = descriptor_elem.get("name")
         cls = get_localizable_descriptor_class(DESCRIPTOR_MODULE, dname)
         field_elems = descriptor_elem.findall("field")
         field_by_name = {}
-        reorder_fields(cls, [f.get("name") for f in field_elems], field_by_name)
+        reorder_fields(cls, 
+            [fe.get("name") for fe in field_elems], field_by_name)
         for f_elem in field_elems:
             fname = f_elem.get("name")
             f = field_by_name[fname]
-            # assert that info-only field attributes have not been changed:
-            cval = f_elem.get("modes").split()
-            assert set(f.modes) == set(cval), (
-                "Field [%s] modifies information-only attribute [modes]: "
-                "\n B: %s\n C: %s" % (fname, f.modes, cval))
-            cval = set(f_elem.get("localizable", "").split())
-            assert f._localizable_modes == cval, (
-                "Field [%s] modifies information-only attribute [localizable]: "
-                "\n B: %s\n C: %s" % (fname, f._localizable_modes, cval))
-            bungeni_localizable_modes = [ blm for blm in f._localizable_modes ]
-            clocs = []
+            
+            # check if info-only field attributes are out of sync with bungeni
+            # @modes, from f.modes:tuple
+            c_modes = f_elem.get("modes").split()
+            if is_stale_info(set(f.modes), set(c_modes),
+                "STALE INFO ATTR [%s.%s.modes]\n B: %s\n C: %s" % (
+                    dname, fname, f.modes, c_modes)):
+                f._SERIALIZE_modes = f.modes[:]
+                STALE_INFO = True
+            # @localizable, from f._localizable_modes:set
+            c_localizable_modes = set(f_elem.get("localizable", "").split())
+            if is_stale_info(f._localizable_modes, c_localizable_modes,
+                "STALE INFO ATTR [%s.%s.localizable]\n B: %s\n C: %s" % (
+                    dname, fname, f._localizable_modes, c_localizable_modes)):
+                f._SERIALIZE_localizable_modes = list(f._localizable_modes)
+                STALE_INFO = True
+            
+            clocs = [] # custom_localizable_directives
             for cloc_elem in f_elem.getchildren():
                 modes = cloc_elem.get("modes", None)
                 roles = cloc_elem.get("roles", None) # ROLES_DEFAULT
@@ -138,8 +157,20 @@ def localize_descriptors():
                         dname, fname, cloc_elem.tag)
             if clocs:
                 f.localizable[:] = clocs
-                f.validate_localizable(
-                    reference_localizable_modes=bungeni_localizable_modes)
+                try: 
+                    f.validate_localizable(
+                        reference_localizable_modes=list(c_localizable_modes))
+                except Exception, e:
+                    # make error message more useful
+                    raise e.__class__("Descriptor [%s] %s" % (dname, e.message))
+    
+    if STALE_INFO:
+        # Re-sync info-only attributes, by re-serializing AFTER that all 
+        # descriptor classes have been localized
+        write_custom(read_custom(),
+            "\n".join(serialize_module(DESCRIPTOR_MODULE)))
+        # re-localize, to ensure consistency
+        localize_descriptors()
 
 
 #####
@@ -168,11 +199,22 @@ def serialize_field(f, depth=2):
     """
     _acc = []
     field_localizable_modes = []
+    
+    # @modes
+    display_modes = " ".join(f.modes)
+    if hasattr(f, "_SERIALIZE_modes"):
+        display_modes = " ".join(f._SERIALIZE_modes)
+        del f._SERIALIZE_modes
+    
+    # @localizable
     for loc in f.localizable:
         _acc.extend(serialize_loc(loc, depth+1, field_localizable_modes))
     localizable_modes = " ".join(
         norm_sorted(field_localizable_modes, Field._modes))
-    display_modes = " ".join(f.modes)
+    if hasattr(f, "_SERIALIZE_localizable_modes"):
+        localizable_modes = " ".join(
+            norm_sorted(f._SERIALIZE_localizable_modes, Field._modes))
+        del f._SERIALIZE_localizable_modes
     
     acc = []
     ind = INDENT * depth
@@ -241,13 +283,10 @@ def serialize_module(module, depth=0):
 
 if __name__ == "__main__":
     
-    from bungeni.ui.utils import debug
     print "Processing localization file: %s" % (CUSTOM_PATH)
     persisted = read_custom()
     regenerated = "\n".join(serialize_module(DESCRIPTOR_MODULE))
     if persisted != regenerated:
-        print "*** OVERWRITING:"
-        print debug.unified_diff(persisted, regenerated, CUSTOM_PATH, "NEW")
-        write_custom(regenerated)
+        write_custom(persisted, regenerated)
     
 
