@@ -234,14 +234,15 @@ class Field(object):
     # not set, simply let the lookup pick the (default) value off the class.
     
     name = None      # str : field name
-    label = ""       # str: title for field
+    label = ""       # str : title for field
     description = "" # str : description for field
     
+    # displayable modes
     modes = validated_set("modes", _modes, "view edit add listing")
     
     # the default list of show/hide localization directives -- by default
     # a field is NOT localizable in any mode and for any role.
-    localizable = None # list
+    localizable = None # [ either(show, hide) ]
     _localizable_modes = None # to cache the set of localizable modes
     
     property = None # zope.schema.interfaces.IField

@@ -129,11 +129,11 @@ def localize_descriptors():
             f = field_by_name[fname]
             
             # check if info-only field attributes are out of sync with bungeni
-            # @modes, from f.modes:tuple
-            c_modes = f_elem.get("modes").split()
-            if is_stale_info(set(f.modes), set(c_modes),
+            # @displayable, from f.modes:tuple
+            c_displayable_modes = f_elem.get("displayable").split()
+            if is_stale_info(set(f.modes), set(c_displayable_modes),
                 "STALE INFO ATTR [%s.%s.modes]\n B: %s\n C: %s" % (
-                    dname, fname, f.modes, c_modes)):
+                    dname, fname, f.modes, c_displayable_modes)):
                 f._SERIALIZE_modes = f.modes[:]
                 STALE_INFO = True
             # @localizable, from f._localizable_modes:set
@@ -220,19 +220,19 @@ def serialize_field(f, depth=2):
     ind = INDENT * depth
     if _acc:
         if localizable_modes:
-            acc.append('%s<field name="%s" modes="%s" localizable="%s">' % (
+            acc.append('%s<field name="%s" displayable="%s" localizable="%s">' % (
                 ind, f.name, display_modes, localizable_modes))
         else:
-            acc.append('%s<field name="%s" modes="%s">' % (
+            acc.append('%s<field name="%s" displayable="%s">' % (
                 ind, f.name, display_modes))
         acc.extend(_acc)
         acc.append('%s</field>' % (ind))
     else:
         if localizable_modes:
-            acc.append('%s<field name="%s" modes="%s" localizable="%s" />' % (
+            acc.append('%s<field name="%s" displayable="%s" localizable="%s" />' % (
                 ind, f.name, display_modes, localizable_modes))
         else:
-            acc.append('%s<field name="%s" modes="%s" />' % (
+            acc.append('%s<field name="%s" displayable="%s" />' % (
                 ind, f.name, display_modes))
     return acc
 
