@@ -286,16 +286,17 @@ class Field(object):
     
     
     def __init__(self, 
-        name=None, label=None, description=None, 
-        modes=None, localizable=None, property=None, listing_column=None, 
-        view_widget=None, edit_widget=None, add_widget=None, search_widget=None,
-        #view_permission=None, edit_permission=None
-        # !+FIELD_PERMISSIONS(mr, nov-2010) deprecated -- permission on any 
-        # domain class attribute (and so, descriptor field) are declared in
-        # domain.zcml. There is however still the possibility that these may 
-        # be useful for when a descriptor field does not correspond directly 
-        # to a domain class attribute (to be determined). 
-    ):
+            name=None, label=None, description=None, 
+            modes=None, localizable=None, property=None, listing_column=None, 
+            view_widget=None, edit_widget=None, add_widget=None, 
+            search_widget=None,
+            #view_permission=None, edit_permission=None
+            # !+FIELD_PERMISSIONS(mr, nov-2010) deprecated -- permission on any 
+            # domain class attribute (and so, descriptor field) are declared in
+            # domain.zcml. There is however still the possibility that these may 
+            # be useful for when a descriptor field does not correspond directly 
+            # to a domain class attribute (to be determined). 
+        ):
         """The defaults of each init parameter is set as a class attribute --
         if not explicitly specified, then an attribute on the instance is
         NOT set (falling back on the value held in the class attribute).
@@ -306,12 +307,12 @@ class Field(object):
         # set attribute values
         kw = vars()
         for p in (
-            "name", "label", "description", "modes", 
-            "localizable", "property", "listing_column", 
-            "view_widget", "edit_widget", "add_widget", "search_widget", 
-            #"view_permission", "edit_permission"
-            # !+FIELD_PERMISSIONS(mr, nov-2010) deprecated
-        ):
+                "name", "label", "description", "modes", 
+                "localizable", "property", "listing_column", 
+                "view_widget", "edit_widget", "add_widget", "search_widget", 
+                #"view_permission", "edit_permission"
+                # !+FIELD_PERMISSIONS(mr, nov-2010) deprecated
+            ):
             v = kw[p]
             if v is not None:
                 setattr(self, p, v)
@@ -385,9 +386,10 @@ class Field(object):
         # OK, displayable, and not localizable
         if mode not in self._localizable_modes:
             return True
-        # special handling for "bungeni.Admin" -- as the Admin role may not 
-        # necessarily be a localizable role we still want that to display 
-        # everything that is displayable in this mode
+        # special handling for "bungeni.Admin" -- for when the Admin role is 
+        # not a localizable role we display everything that is displayable;
+        # on the other hand, when Adnis is a loclaizable role, we treat it 
+        # just like any other role.
         if "bungeni.Admin" not in self.__class__._roles:
             if "bungeni.Admin" in user_roles:
                 return True

@@ -1,28 +1,28 @@
 <?xml version="1.0"?>
 <configure xmlns="http://namespaces.zope.org/zope"
-           xmlns:browser="http://namespaces.zope.org/browser"
-           xmlns:db="http://namespaces.objectrealms.net/rdb"
-           xmlns:xapian="http://namespaces.objectrealms.net/xapian"
-           xmlns:plone="http://namespaces.plone.org/plone"
-           xmlns:i18n="http://namespaces.zope.org/i18n"
-           i18n_domain="bungeni.core">
-  <include package="alchemist.catalyst" />
-  
-  <include package="ore.xapian" />
-  <include package="ore.xapian" file="meta.zcml" />
-  <include package="plone.i18n" />
-  
-  <include package="plone.transforms" file="meta.zcml" />
-  <include package="plone.transforms" />
-  
-  <include package="bungeni.models" />
-  <include package="bungeni.portal" />
-
-  <!-- Application to publish -->
-  <utility
-     provides="ore.wsgiapp.interfaces.IApplication"
-     factory=".app.BungeniApp"
-     />
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:db="http://namespaces.objectrealms.net/rdb"
+    xmlns:xapian="http://namespaces.objectrealms.net/xapian"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="bungeni.core">
+    
+    <include package="alchemist.catalyst" />
+    
+    <include package="ore.xapian" />
+    <include package="ore.xapian" file="meta.zcml" />
+    <include package="plone.i18n" />
+    
+    <include package="plone.transforms" file="meta.zcml" />
+    <include package="plone.transforms" />
+    
+    <include package="bungeni.models" />
+    <include package="bungeni.portal" />
+    
+    <!-- Application to publish -->
+    <utility provides="ore.wsgiapp.interfaces.IApplication"
+        factory=".app.BungeniApp"
+    />
     
     <!-- ErrorReportingUtility
     
@@ -35,304 +35,295 @@
         provides="zope.error.interfaces.IErrorReportingUtility"
     />
     
-  <!-- Setup Domain Model Audit/ObjectLog Feature-->
-  <include file="audit.zcml"/>
-  
-  <!-- Setup Domain Model Versioning Feature-->
-  <include file="version.zcml"/>
-
-  <!-- events -->
-  <include file="events.zcml" />
-
-  <!-- attached files -->
-  <include file="files.zcml" />
-
-  <!-- Setup WebDAV -->
-  <!--include file="webdav.zcml" /-->
-                 
-  <!-- Settings for the Portal-->
-  <adapter
-     for="bungeni.models.interfaces.IBungeniApplication"
-     provides="bungeni.models.interfaces.IBungeniSettings"
-     factory=".globalsettings.BungeniSettings"
-     />
-
-  <!-- Assignment Infrastructure moved to bungeni.model -->
-  <!--include file="assignment.zcml"/-->
-
-
-  <!-- Searching -->
-  <utility component=".index.searcher" />
-  
-  <adapter 
-      for="bungeni.models.interfaces.IBungeniContent"
-      factory=".index.ContentIndexer"/>
-
-  <adapter 
-      for="bungeni.models.interfaces.IBungeniUser"
-      factory=".index.ContentIndexer"/>
-
-  <adapter 
-      for="bungeni.models.interfaces.IBungeniGroup"
-      factory=".index.ContentIndexer"/>
-      
-  <adapter
-     for="bungeni.models.interfaces.IBungeniContent"
-     provides="ore.xapian.interfaces.IOperationFactory"
-     factory=".operation.OperationFactory"
-     />
-      
-  <utility factory=".index.ContentResolver" />
-
-  <xapian:queue
-     indexer=".index.indexer"
-     />
-
-  <!-- Marker interfaces -->
-
-  <class class="bungeni.models.domain.User">
-    <implements interface="ore.xapian.interfaces.IIndexable" />
-  </class>
-  
-  <class class="bungeni.models.domain.MemberOfParliament">
-    <implements interface="ore.xapian.interfaces.IIndexable" />
-  </class>
-
-  <class class="bungeni.models.domain.Group">
-    <implements interface="ore.xapian.interfaces.IIndexable" />
-  </class>
-  
-  <class class="bungeni.models.domain.PoliticalGroup">
-    <implements interface="ore.xapian.interfaces.IIndexable" />
-  </class>
-  
-  <class class="bungeni.models.domain.Parliament">
-    <implements interface="ore.xapian.interfaces.IIndexable" />
-  </class>
-
-  <class class="bungeni.models.domain.Government">
-    <implements interface="ore.xapian.interfaces.IIndexable" />
-  </class>
-  
-  <class class="bungeni.models.domain.Committee">
-    <implements interface="ore.xapian.interfaces.IIndexable" />
-  </class>
+    <!-- Setup Domain Model Audit/ObjectLog Feature-->
+    <include file="audit.zcml"/>
     
-  <class class=".content.Section">
-    <allow interface="zope.publisher.interfaces.browser.IBrowserPublisher" />
-  </class>
-  
-  <!-- interface="zope.publisher.interfaces.browser.IBrowserPublisher" -->
-  <!--class class="bungeni.models.domain.ParliamentaryItem">
-    <implements interface="ore.xapian.interfaces.IIndexable" />
-  </class>
+    <!-- Setup Domain Model Versioning Feature-->
+    <include file="version.zcml"/>
+    
+    <!-- events -->
+    <include file="events.zcml" />
+    
+    <!-- attached files -->
+    <include file="files.zcml" />
+    
+    <!-- Setup WebDAV -->
+    <!--include file="webdav.zcml" /-->
+    
+    <!-- Settings for the Portal-->
+    <adapter for="bungeni.models.interfaces.IBungeniApplication"
+        provides="bungeni.models.interfaces.IBungeniSettings"
+        factory=".globalsettings.BungeniSettings"
+    />
+    
+    <!-- Assignment Infrastructure moved to bungeni.model -->
+    <!--include file="assignment.zcml"/-->
+    
+    
+    <!-- Searching -->
+    <utility component=".index.searcher" />
+    
+    <adapter for="bungeni.models.interfaces.IBungeniContent"
+        factory=".index.ContentIndexer"
+    />
+    <adapter for="bungeni.models.interfaces.IBungeniUser"
+        factory=".index.ContentIndexer"
+    />
+    <adapter for="bungeni.models.interfaces.IBungeniGroup"
+        factory=".index.ContentIndexer"
+    />
+    <adapter for="bungeni.models.interfaces.IBungeniContent"
+        provides="ore.xapian.interfaces.IOperationFactory"
+        factory=".operation.OperationFactory"
+    />
+    <utility factory=".index.ContentResolver" />
+    
+    <xapian:queue indexer=".index.indexer" />
+    
+    <!-- Marker interfaces -->
 
-  <class class="bungeni.models.domain.ParliamentaryItem">
-    <implements interface=".interfaces.IAuditable" />
-  </class>
-
-  <class class="bungeni.models.domain.ParliamentaryItem">
-    <implements interface=".interfaces.IVersionable" />
-  </class-->
-
-  <class class="bungeni.models.domain.Question">
-    <implements interface=".interfaces.IVersionable
-                            ore.xapian.interfaces.IIndexable
-                            .interfaces.IAuditable" />
-  </class>
+    <class class="bungeni.models.domain.User">
+        <implements interface="ore.xapian.interfaces.IIndexable" />
+    </class>
+    
+    <class class="bungeni.models.domain.MemberOfParliament">
+        <implements interface="ore.xapian.interfaces.IIndexable" />
+    </class>
+    
+    <class class="bungeni.models.domain.Group">
+        <implements interface="ore.xapian.interfaces.IIndexable" />
+    </class>
+    
+    <class class="bungeni.models.domain.PoliticalGroup">
+        <implements interface="ore.xapian.interfaces.IIndexable" />
+    </class>
+    <class class="bungeni.models.domain.Parliament">
+        <implements interface="ore.xapian.interfaces.IIndexable" />
+    </class>
+    
+    <class class="bungeni.models.domain.Government">
+        <implements interface="ore.xapian.interfaces.IIndexable" />
+    </class>
+    
+    <class class="bungeni.models.domain.Committee">
+        <implements interface="ore.xapian.interfaces.IIndexable" />
+    </class>
+    
+    <class class=".content.Section">
+        <allow interface="zope.publisher.interfaces.browser.IBrowserPublisher" />
+    </class>
+    
+    <!-- interface="zope.publisher.interfaces.browser.IBrowserPublisher" -->
+    <!--class class="bungeni.models.domain.ParliamentaryItem">
+        <implements interface="ore.xapian.interfaces.IIndexable" />
+    </class>
+    
+    <class class="bungeni.models.domain.ParliamentaryItem">
+        <implements interface=".interfaces.IAuditable" />
+    </class>
+    
+    <class class="bungeni.models.domain.ParliamentaryItem">
+        <implements interface=".interfaces.IVersionable" />
+    </class-->
+    
+    <class class="bungeni.models.domain.Question">
+        <implements interface="
+                .interfaces.IVersionable
+                ore.xapian.interfaces.IIndexable 
+                .interfaces.IAuditable
+            " />
+    </class>
+    
     <class class="bungeni.models.domain.Motion">
-    <implements interface=".interfaces.IVersionable
-                            ore.xapian.interfaces.IIndexable
-                            .interfaces.IAuditable" />
-  </class>
-  <class class="bungeni.models.domain.Bill">
-    <implements interface=".interfaces.IVersionable
-                            ore.xapian.interfaces.IIndexable
-                            .interfaces.IAuditable" />
-  </class>
+        <implements interface="
+                .interfaces.IVersionable
+                ore.xapian.interfaces.IIndexable 
+                .interfaces.IAuditable
+            " />
+    </class>
+    
+    <class class="bungeni.models.domain.Bill">
+        <implements interface="
+                .interfaces.IVersionable
+                ore.xapian.interfaces.IIndexable
+                .interfaces.IAuditable
+            " />
+    </class>
+    
+    <class class="bungeni.models.domain.AgendaItem">
+        <implements interface="
+                .interfaces.IVersionable
+                ore.xapian.interfaces.IIndexable
+                .interfaces.IAuditable
+            " />
+    </class>
+    <class class="bungeni.models.domain.TabledDocument">
+        <implements interface="
+                .interfaces.IVersionable
+                ore.xapian.interfaces.IIndexable
+                .interfaces.IAuditable
+            " />
+    </class>
+    <class class="bungeni.models.domain.AttachedFile">
+        <implements interface="
+                .interfaces.IVersionable
+                ore.xapian.interfaces.IIndexable
+                .interfaces.IAuditable
+            " />
+    </class>
+    <class class="bungeni.models.domain.GroupSitting">
+        <implements interface=".interfaces.IAuditable" />
+    </class>
+    <class class="bungeni.models.domain.Report">
+        <implements interface="ore.xapian.interfaces.IIndexable" />
+    </class>
+    
+    <!-- Workflow -->
+    <include package=".workflows" />
+    
+    <!-- Pluggable Traversal for Parliamentary Content -->
+    <adapter for="bungeni.models.interfaces.IBungeniContent
+            zope.publisher.interfaces.IPublisherRequest"
+        factory="z3c.traverser.traverser.PluggableTraverser"
+        provides="zope.publisher.interfaces.IPublishTraverse"
+    />
+    
+    <!-- Application Setup Event Dispatcher -->
+    <subscriber for="bungeni.models.interfaces.IBungeniApplication
+            ore.wsgiapp.interfaces.IWSGIApplicationCreatedEvent"
+        handler=".app.onWSGIApplicationCreatedEvent"
+    />
+    
+    <!-- Application Setup -->
+    <adapter for="bungeni.models.interfaces.IBungeniApplication"
+        factory=".app.AppSetup"
+    />
+    
+    <class class=".app.BungeniApp">
+        <allow interface="zope.app.container.interfaces.IReadContainer" />
+    </class>
+    <!-- !+CRUFT (miano, nov-2010) possible cruft-->
+    <!--class 
+        class=".app.BungeniAdmin">
+            <allow interface="zope.app.container.interfaces.IReadContainer" />
+    </class-->
+    
+    <class class=".content.Section">
+        <allow attributes="title description"
+            interface="zope.container.interfaces.IContentContainer" />
+    </class>
+    <class class=".content.AdminSection">
+        <require permission="zope.ManageSite"
+            interface="zope.publisher.interfaces.browser.IBrowserPublisher" />
+    </class>
+    
+    <!-- scheduling -->
+    <adapter factory=".schedule.PlenarySchedulingContext" />
+    <adapter factory=".schedule.CommitteeSchedulingContext" />
+    <adapter factory=".schedule.SchedulingContextTraverser" />
+    <adapter factory=".schedule.SittingContainerSchedulingContext" />
+    <adapter factory=".schedule.WorkspaceSchedulingContext" />
+    
+    <!-- principal roles -->
+    <subscriber handler=".roles.handle_authenticated_principal_created_event"
+        for="repoze.whooze.interfaces.IPrincipalCreated"
+    />
+    
+    <class class=".schedule.PlenarySchedulingContext">
+        <require permission="zope.Public"
+            interface=".interfaces.ISchedulingContext"
+            set_schema=".interfaces.ISchedulingContext" 
+        />
+        <allow interface="zope.publisher.interfaces.IPublishTraverse" />
+    </class>
 
-  <class class="bungeni.models.domain.AgendaItem">
-    <implements interface=".interfaces.IVersionable
-                            ore.xapian.interfaces.IIndexable
-                            .interfaces.IAuditable" />
-  </class>
-  <class class="bungeni.models.domain.TabledDocument">
-    <implements interface=".interfaces.IVersionable
-                            ore.xapian.interfaces.IIndexable
-                            .interfaces.IAuditable" />
-  </class>
-  <class class="bungeni.models.domain.AttachedFile">
-    <implements interface=".interfaces.IVersionable
-                            ore.xapian.interfaces.IIndexable
-                            .interfaces.IAuditable" />
-  </class>
-  <class class="bungeni.models.domain.GroupSitting">
-    <implements interface=".interfaces.IAuditable" />
-  </class>
-  <class class="bungeni.models.domain.Report">
-    <implements interface="ore.xapian.interfaces.IIndexable" />
-  </class>       
-  
-  <!-- Workflow -->
-  <include package=".workflows" />
-  
-      
-  <!-- Pluggable Traversal for Parliamentary Content -->
-  <adapter
-      for="bungeni.models.interfaces.IBungeniContent
-           zope.publisher.interfaces.IPublisherRequest"
-      factory="z3c.traverser.traverser.PluggableTraverser"
-      provides="zope.publisher.interfaces.IPublishTraverse"/>
+    <class class=".schedule.DailySchedulingContext">
+        <require permission="zope.Public"
+            interface=".interfaces.IDailySchedulingContext"
+            set_schema=".interfaces.IDailySchedulingContext"
+        />
+        <allow interface="zope.publisher.interfaces.IPublishTraverse" />
+    </class>
+    
+    <!-- dublin core adapters -->
+    <adapter factory=".dc.BillDescriptiveProperties" />
+    <adapter factory=".dc.QuestionDescriptiveProperties" />
+    <adapter factory=".dc.MotionDescriptiveProperties" />
+    <adapter factory=".dc.SittingDescriptiveProperties" />
+    <adapter factory=".dc.ItemScheduleDescriptiveProperties" />
+    <adapter factory=".dc.VersionDescriptiveProperties" />
+    <adapter factory=".dc.GroupDescriptiveProperties" />
+    <adapter factory=".dc.UserDescriptiveProperties" />
+    <adapter factory=".dc.GroupMembershipDescriptiveProperties" />
+    <adapter factory=".dc.GroupSittingAttendanceDescriptiveProperties" />
+    <adapter factory=".dc.ParliamentSessionDescriptiveProperties" />
+    <adapter factory=".dc.ContainerDescriptiveProperties" />
+    <adapter factory=".dc.ItemScheduleDiscussionDescriptiveProperties" />
+    <adapter factory=".dc.CosignatoryDescriptiveProperties" />
+    <adapter factory=".dc.SittingTypeDescriptiveProperties" />
+    <adapter factory=".dc.ConstituencyDescriptiveProperties" />
+    <adapter factory=".dc.ChangeDescriptiveProperties" />
+    <adapter factory=".dc.UserAddressDescriptiveProperties" />
+    <adapter factory=".dc.AgendaItemDescriptiveProperties" />
+    <adapter factory=".dc.TabledDocumentDescriptiveProperties" />
+    <adapter factory=".dc.ConstituencyDetailsDescriptiveProperties" />
+    <adapter factory=".dc.GroupItemAssignmentDescriptiveProperties" />
+    <adapter factory=".dc.MemberRoleTitleDescriptiveProperties" />
+    <adapter factory=".dc.ReportDescriptiveProperties" />
+    <adapter factory=".dc.ItemScheduleCategoryDescriptiveProperties" />
+    <adapter factory=".dc.UserDelegationDescriptiveProperties" />
+    <adapter factory=".dc.ProvinceDescriptiveProperties" />
+    <adapter factory=".dc.RegionDescriptiveProperties" />
+    <adapter factory=".dc.AttachedFileDescriptiveProperties" />
+    <adapter factory=".dc.AttachedFileVersionDescriptiveProperties" />
+    <adapter factory=".dc.EventItemProperties" />
+    <adapter factory=".dc.HeadingDescriptiveProperties" />
+    <adapter factory=".dc.AddressTypeDescriptiveProperties" />
+    <adapter factory=".dc.BillTypeDescriptiveProperties" />
+    <adapter factory=".dc.AttendanceTypeDescriptiveProperties" />
+    <adapter factory=".dc.CommitteeTypeDescriptiveProperties" />
+    <adapter factory=".dc.VenueDescriptiveProperties" />
+    <adapter factory=".dc.QuestionTypeDescriptiveProperties" />
+    <adapter factory=".dc.ResponseTypeDescriptiveProperties" />
+    <adapter factory=".dc.MemberElectionTypeDescriptiveProperties" />
+    <adapter factory=".dc.PostalAddressTypeDescriptiveProperties" />
+    <adapter factory=".dc.CommitteeTypeStatusDescriptiveProperties" />
+    <adapter name="dc"
+        for="*"
+        factory=".dc.DublinCoreMetadataAdapter"
+        provides="zope.traversing.interfaces.IPathAdapter"
+    />
+    
+    <!-- browser resource adapters -->
+    
+    <view name="rh" 
+        type="*"
+        provides="zope.traversing.interfaces.ITraversable" for="*"
+        factory=".resources.rh"
+    />
+    
+    <adapter name="resource" factory=".resources.ResourceSiteAbsoluteURL" />
+    
+    <!-- transformation -->
+    <plone:transform factory=".transformation.HtmlFragmentOpenDocumentTransform" />
+    
+    <adapter name="transform"
+        for="*"
+        factory=".transformation.TransformationAdapter"
+        provides="zope.traversing.interfaces.IPathAdapter"
+    />
 
-  
-          
-  <!-- Application Setup Event Dispatcher -->
-  <subscriber
-     for="bungeni.models.interfaces.IBungeniApplication
-          ore.wsgiapp.interfaces.IWSGIApplicationCreatedEvent"
-     handler=".app.onWSGIApplicationCreatedEvent"
-     />
-
-  <!-- Application Setup -->
-  
-  <adapter
-     for="bungeni.models.interfaces.IBungeniApplication"
-     factory=".app.AppSetup"
-     />
-
-  <class 
-     class=".app.BungeniApp">
-     <allow interface="zope.app.container.interfaces.IReadContainer" />
-  </class>
-  <!--#!CRUFT (miano, nov-2010) possible cruft-->
-  <!--class 
-     class=".app.BungeniAdmin">
-     <allow interface="zope.app.container.interfaces.IReadContainer" />
-  </class-->
-
-  <class class=".content.Section">
-    <allow attributes="title description"
-           interface="zope.container.interfaces.IContentContainer" />
-  </class>
-  <class class=".content.AdminSection">
-    <require 
-            permission="zope.ManageSite"
-           interface="zope.publisher.interfaces.browser.IBrowserPublisher" />
-  </class> 
-  <!-- scheduling -->
-
-  <adapter factory=".schedule.PlenarySchedulingContext" />
-  <adapter factory=".schedule.CommitteeSchedulingContext" />
-  <adapter factory=".schedule.SchedulingContextTraverser" />
-  <adapter factory=".schedule.SittingContainerSchedulingContext" />
-  <adapter factory=".schedule.WorkspaceSchedulingContext" />
-  <!-- principal roles -->
-  
-  <subscriber
-     handler=".roles.handle_authenticated_principal_created_event"
-     for="repoze.whooze.interfaces.IPrincipalCreated" />
-
-  <class
-     class=".schedule.PlenarySchedulingContext">
-    <require permission="zope.Public"
-             interface=".interfaces.ISchedulingContext"
-             set_schema=".interfaces.ISchedulingContext" />
-    <allow interface="zope.publisher.interfaces.IPublishTraverse" />
-  </class>
-
-  <class
-     class=".schedule.DailySchedulingContext">
-    <require permission="zope.Public"
-             interface=".interfaces.IDailySchedulingContext"
-             set_schema=".interfaces.IDailySchedulingContext" />
-    <allow interface="zope.publisher.interfaces.IPublishTraverse" />
-  </class>
-
-  <!-- dublin core adapters -->
-
-  <adapter factory=".dc.BillDescriptiveProperties" />
-  <adapter factory=".dc.QuestionDescriptiveProperties" />
-  <adapter factory=".dc.MotionDescriptiveProperties" />
-  <adapter factory=".dc.SittingDescriptiveProperties" />
-  <adapter factory=".dc.ItemScheduleDescriptiveProperties" />
-  <adapter factory=".dc.VersionDescriptiveProperties" />
-  <adapter factory=".dc.GroupDescriptiveProperties" />
-  <adapter factory=".dc.UserDescriptiveProperties" />
-  <adapter factory=".dc.GroupMembershipDescriptiveProperties" />
-  <adapter factory=".dc.GroupSittingAttendanceDescriptiveProperties" />
-  <adapter factory=".dc.ParliamentSessionDescriptiveProperties" />
-  <adapter factory=".dc.ContainerDescriptiveProperties" />
-  <adapter factory=".dc.ItemScheduleDiscussionDescriptiveProperties" />
-  <adapter factory=".dc.CosignatoryDescriptiveProperties" />
-  <adapter factory=".dc.SittingTypeDescriptiveProperties" />
-  <adapter factory=".dc.ConstituencyDescriptiveProperties" />
-  <adapter factory=".dc.ChangeDescriptiveProperties" />
-  <adapter factory=".dc.UserAddressDescriptiveProperties" />
-  <adapter factory=".dc.AgendaItemDescriptiveProperties" />
-  <adapter factory=".dc.TabledDocumentDescriptiveProperties" />
-  <adapter factory=".dc.ConstituencyDetailsDescriptiveProperties" />
-  <adapter factory=".dc.GroupItemAssignmentDescriptiveProperties" />
-  <adapter factory=".dc.MemberRoleTitleDescriptiveProperties" />
-  <adapter factory=".dc.ReportDescriptiveProperties" />
-  <adapter factory=".dc.ItemScheduleCategoryDescriptiveProperties" />
-  <adapter factory=".dc.UserDelegationDescriptiveProperties" />
-  <adapter factory=".dc.ProvinceDescriptiveProperties" />
-  <adapter factory=".dc.RegionDescriptiveProperties" />
-  <adapter factory=".dc.AttachedFileDescriptiveProperties" />
-  <adapter factory=".dc.AttachedFileVersionDescriptiveProperties" />
-  <adapter factory=".dc.EventItemProperties" />
-  <adapter factory=".dc.HeadingDescriptiveProperties" />
-  <adapter factory=".dc.AddressTypeDescriptiveProperties" />
-  <adapter factory=".dc.BillTypeDescriptiveProperties" />
-  <adapter factory=".dc.AttendanceTypeDescriptiveProperties" />
-  <adapter factory=".dc.CommitteeTypeDescriptiveProperties" />
-  <adapter factory=".dc.VenueDescriptiveProperties" />
-  <adapter factory=".dc.QuestionTypeDescriptiveProperties" />
-  <adapter factory=".dc.ResponseTypeDescriptiveProperties" />
-  <adapter factory=".dc.MemberElectionTypeDescriptiveProperties" />
-  <adapter factory=".dc.PostalAddressTypeDescriptiveProperties" />
-  <adapter factory=".dc.CommitteeTypeStatusDescriptiveProperties" />
-  <adapter
-     name="dc"
-     for="*"
-     factory=".dc.DublinCoreMetadataAdapter"
-     provides="zope.traversing.interfaces.IPathAdapter" />
-
-  <!-- browser resource adapters -->
-  
-  <view
-     name="rh" type="*"
-     provides="zope.traversing.interfaces.ITraversable" for="*"
-     factory=".resources.rh"
-     />
-
-  <adapter
-     name="resource"
-     factory=".resources.ResourceSiteAbsoluteURL" />
-  
-  <!-- transformation -->
-
-  <plone:transform factory=".transformation.HtmlFragmentOpenDocumentTransform" />
-  
-  <adapter
-     name="transform"
-     for="*"
-     factory=".transformation.TransformationAdapter"
-     provides="zope.traversing.interfaces.IPathAdapter" />
-
-  <!-- location -->
-
-  <adapter factory=".location.get_location_from_parent" />
-
-  <!-- translation and language components -->
+    <!-- location -->
+    <adapter factory=".location.get_location_from_parent" />
+    
+    <!-- translation and language components -->
     <include file="language.zcml"/>
     
-  <view
-     for=".interfaces.INavigationProxy"
-     factory=".vhost.ProxyAwareAbsoluteURL"
-     type="zope.publisher.interfaces.http.IHTTPRequest"
-     permission="zope.Public"
-     provides="zope.traversing.browser.interfaces.IAbsoluteURL"
-     />
-  
+    <view for=".interfaces.INavigationProxy"
+        factory=".vhost.ProxyAwareAbsoluteURL"
+        type="zope.publisher.interfaces.http.IHTTPRequest"
+        permission="zope.Public"
+        provides="zope.traversing.browser.interfaces.IAbsoluteURL"
+    />
+
 </configure>

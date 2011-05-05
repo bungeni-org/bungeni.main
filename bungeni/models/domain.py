@@ -494,7 +494,8 @@ class AttachedFileType(object):
 class AttachedFile(Entity):
     """Files attached to a parliamentary item.
     """
-
+    #interface.implements(bungeni.core.interfaces.IVersionable)
+    
     versions = one2many("versions",
         "bungeni.models.domain.AttachedFileVersionContainer", "content_id")
 
@@ -519,6 +520,8 @@ class _AdmissibleMixin(object):
 class AgendaItem(ParliamentaryItem, _AdmissibleMixin):
     """Generic Agenda Item that can be scheduled on a sitting.
     """
+    #interface.implements(bungeni.core.interfaces.IVersionable)
+    
     versions = one2many("versions",
         "bungeni.models.domain.AgendaItemVersionContainer", "content_id")
 
@@ -527,6 +530,8 @@ AgendaItemVersion = ItemVersions.makeVersionFactory("AgendaItemVersion")
 
 
 class Question(ParliamentaryItem, _AdmissibleMixin):
+    #interface.implements(bungeni.core.interfaces.IVersionable)
+
     #supplementaryquestions = one2many("supplementaryquestions", 
     #"bungeni.models.domain.QuestionContainer", "supplement_parent_id")
     event = one2many("event",
@@ -548,6 +553,8 @@ QuestionVersion = ItemVersions.makeVersionFactory("QuestionVersion")
 
 
 class Motion(ParliamentaryItem, _AdmissibleMixin):
+    #interface.implements(bungeni.core.interfaces.IVersionable)
+    
     cosignatory = one2many("cosignatory",
         "bungeni.models.domain.CosignatoryContainer", "item_id")
     event = one2many("event",
@@ -571,6 +578,8 @@ class BillType(Entity):
     interface.implements(interfaces.ITranslatable, interfaces.IBillType)
 
 class Bill(ParliamentaryItem):
+    #interface.implements(bungeni.core.interfaces.IVersionable)
+    
     cosignatory = one2many("cosignatory",
         "bungeni.models.domain.CosignatoryContainer", "item_id")
     event = one2many("event",
@@ -728,6 +737,8 @@ class TabledDocument(ParliamentaryItem, _AdmissibleMixin):
 
     It must be possible to schedule a tabled document for a sitting.
     """
+    #interface.implements(bungeni.core.interfaces.IVersionable)
+    
     cosignatory = one2many("cosignatory",
         "bungeni.models.domain.CosignatoryContainer", "item_id")
     event = one2many("event",
