@@ -1,4 +1,134 @@
 @import url(/static/css/global-styles.css);
+
+
+/*
+ * QUICK ACCESS
+ * BEGIN EDIT SECTION
+ * .template-portal styles.
+ */
+.template-portal {
+    margin: 0;
+    text-align: center;
+    background: #f79f10 !important;
+    /* 
+    * Sticky Footer.
+    * more information: http://www.cssstickyfooter.com/
+    * these are requried to make the fotter stick to the 
+    * bottom of the page
+    */
+    height: 100%;
+}
+
+.template-portal #header-wrapper {
+    margin: 0 auto;
+    width:100%;
+    text-align:center;
+    background: #434343;
+    height:133px;
+    border-bottom: 15px solid #c1c1c0;
+}
+
+.template-portal #header-in-left {
+    margin: 0;
+    width:20%;
+    background: #434343;
+    height:133px;
+    float:left;
+}
+
+.template-portal #header-in-right {
+    margin: 0;
+    width:20%;
+    background: #434343;
+    height:133px;
+    float:right;
+}
+
+.template-portal #top-layer {
+    width:960px;
+    margin-left:auto;
+    margin-right:auto;    
+}
+
+.template-portal #top-layer div {
+    top:0;
+    position:absolute;
+    margin-left:auto;
+    margin-right:auto;
+    background-color:#434343;
+    padding-bottom:10px;
+}
+
+.template-portal #top-layer #demoWarning {
+    width: 150px;
+    height: 18px;
+    line-height: 18px;
+    margin-left:auto;
+    margin-right:auto;
+    position:relative;
+}
+
+.template-portal #visual-table-wrapper {
+    background: url(/static/images/shadow_3.png) repeat-y top center;
+    width: 960px;
+    text-align: left;
+    margin: 0 auto !important;   
+    padding: 0;
+    border: 0 none;
+    /* 
+    * Sticky Footer.
+    * more information: http://www.cssstickyfooter.com/
+    * - these are requried to make the footer stick to the 
+    *   bottom of the page.
+    */
+    height: auto;
+    min-height: 100%;
+}
+.template-portal #portal-logo-wrapper {
+    background:#434343 url(/static/images/portal_img.png) no-repeat bottom right;
+    margin-left:auto;
+    margin-right:auto;
+    width:960px;    
+    height:106px;
+    position:relative;
+}
+.template-portal #portal-logo {
+    display: block;
+    margin: .5em 0 0 1.0em;
+    width:662px;
+    height: 96px;
+    background: url(/static/images/portal_banner.png) top left no-repeat;
+}
+/* 
+ * if display is set to block it will display the logo used on the workspace
+ */
+.template-portal #portal-logo img {
+    display: none;
+}
+.template-portal #main-body-table {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    /* 
+    * Sticky Footer.
+    * more information: http://www.cssstickyfooter.com/
+    * - these are requried to make the footer stick to the 
+    *   bottom of the page.
+    * - padding bottom must have the same value as the 
+    *   height of the footer.
+    */
+    padding-top:3px;
+    padding-bottom: 30px;
+    position: relative;
+}
+/* end of .template-portal styles*/
+
+/*
+ *
+ * END EDIT SECTION
+ *
+ */
+
 b, strong {
     font-weight:bolder;
 }
@@ -11,26 +141,65 @@ b, strong {
     height: 20px;
     text-align:center;
     border: 1px solid transparent;
-    background: #4B4A4A;
+    background: #434343;
 }
+
+.template-workspace #header-wrapper {
+    margin: 0 auto;
+    width:98%;
+    text-align:center;
+    height:100px;
+    background: #434343 url(/static/images/workspace-border-right.png) top right repeat-y;
+    padding-right:10px;
+    margin-right:0px;
+}
+
 .template-workspace #top-layer {
     border: 0 none;
     border-bottom: 1px solid #4d4d4d;
     margin: 0;
+    top:0;
+    margin-top:0px;
+    position:absolute;
     padding: 10px 0 0;
     background: #4d4d4d url(/static/images/workspace-border-top.png) top center repeat-x;
+    width:98%;
 }
+
+.template-workspace .ws-left {
+    float:left;
+    width:245px;
+    height:50px;
+} 
+
+.template-workspace .ws-right {
+    float:left;
+    width:230px;
+    height:50px;
+} 
+
+.template-workspace .documentDescription {
+    font-weight: normal;
+    margin-left: auto;
+    margin-right: auto;
+    width:480px;
+/*    text-align: center;*/
+}
+
 #top-layer div {
     padding: 0;
     margin: 0 auto;
     border: 0 none;
     height: 25px;
     background: transparent;
+    padding-right:0;
+    margin-top:0px;
 }
+
 .template-portal #top-layer div {
     width: 960px;
     height: 20px;
-    border-bottom: 1px solid #fb9c14;
+    border-bottom: 1px solid transparent;
 }
 
 #top-layer ul#portal-personaltools {
@@ -111,6 +280,8 @@ b, strong {
     height: 18px;
     line-height: 18px;
     margin: 0 auto;
+    margin-left:auto;
+    margin-right:auto;
     padding: 0;
     color: #fff;
     background: #900;
@@ -128,7 +299,6 @@ b, strong {
     border-bottom-right-radius: 5px;
     border-top: 0 none;
 }
-
 
 /*
  * Breadcrumbs
@@ -163,8 +333,7 @@ b, strong {
 /*
  * portal-searchbox
  */
-#portal-searchbox {
-    background-color:transparent;
+#portal-search {
     float: right;
     margin: 0;
     padding: 2px 1em 0 0;
@@ -172,10 +341,6 @@ b, strong {
     text-transform: none;
     white-space: nowrap;
     z-index: 2;
-    display: none;
-}
-#portal-searchbox input.searchButton {
-    height: 17px;
 }
 
 
@@ -205,11 +370,15 @@ div.main-column h1 {
     display: block;
     margin: 5px auto;
     padding: 0;
-	width: 95% !important;
-	text-align:center;
+    width: 95% !important;
+    text-align:center;
 }
 .template-workspace.section-bungeni-admin div.main-column h1,
 .template-workspace.section-bungeni-workspace div.main-column h1 {
+
+
+
+
     color: #222;
 }
 div.main-column h1.title {
@@ -224,14 +393,49 @@ div.main-column h1.title {
     line-height: 20px;
     text-shadow: 0 0 1px #fff;
     text-align: center;
+    color:#c8631b !important;
 }
 .template-workspace.section-bungeni-admin div.main-column h1.title,
 .template-workspace.section-bungeni-workspace div.main-column h1.title {
-    color: #222;
+    color: #222 !important;
 }
 div.main-column h1.reportmaintitle,
 div.main-column h1.reportdoctype {
-    font-size: 125%;
+    font-size: 180%;
+    color:#c8631b !important;
+}
+div.main-column h2.reportdate {
+    margin:-0.4em 0 0.4em;
+    font-size: 180%;
+    color:#c8631b !important;
+    font-weight: bold !important;
+}
+
+div.main-column h1.reportheading {
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    padding:0.1em 10% 0.1em 10% !important;
+    width:50% !important;
+    margin:1em auto 2em auto;
+    font-size: 130%;
+    font-weight: bold !important;
+    border:1px solid #f79f10;
+    color:#000 !important;
+    
+}
+.documentContent div h2:first-child {
+    font-size:1.1em;
+    font-weight:normal !important;
+    color:#c8631b !important;
+}
+div.main-column h2.reporttitle {
+    margin-left:0em;
+    margin-right:auto;
+    text-align:left;
+    color:#c8631b !important;
+    font-size:1.1em;    
+    font-weight:normal !important;
 }
 div.main-column h2 {
     display: block;
@@ -244,8 +448,9 @@ div.main-column h2 {
     margin: 1.25em 0 .5em;
     text-align: center;
 }
-.template-portal div.main-column h2 {
-    margin: -4em 0 0.5em;
+
+.template-portal div.main-column h2 {        
+    /*margin: -4em 0 0.5em;    */
 }
 .template-workspace.section-bungeni-workspace div.main-column h2,
 .template-workspace.section-bungeni-admin div.main-column h2 {
@@ -317,9 +522,9 @@ div.main-column h3 {
 #portal-column-content h1.title {
     font-size: 135%;
     line-height: 30px;
-	width: 95%;
-	margin: 5px auto;
-	clear: none;
+    width: 95%;
+    margin: 5px auto;
+    clear: none;
 }
 
 .section-bungeni-\@\@index .newsImage {
@@ -372,6 +577,8 @@ div.main-column h3 {
     position: relative;
     color: #444;
     text-align: center;
+
+
     padding: 0;
     border: 0 none;
     border-top: 1px solid #D4E2EF;
@@ -548,7 +755,7 @@ input.inputLabelActive {
 #portal-column-content #whats-on-overview {
     clear: both;
     margin: 0;
-	
+    
 }
 #whats-on-overview h1 {
     font-size:135%;
@@ -569,6 +776,9 @@ input.inputLabelActive {
 #whats-on-overview p.documentDescription {
     font-weight: normal;
     text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    width:480px;
 }
 #portal-column-content #whats-on-overview .whats-on-viewlet {
     border-bottom: 1px solid #ccc;
@@ -601,7 +811,8 @@ input.inputLabelActive {
     font-weight: normal;
     font-size: 100%;
     margin: 0;
-    color: #555 !important;
+    color: #000 !important; /**/
+    font-weight:bold !important; /**/
     background: #fff;
     text-align: left;
     text-shadow: 0px 1px 1px #fff;
@@ -619,8 +830,9 @@ input.inputLabelActive {
 #portal-column-content #whats-on-overview .whats-on-viewlet dd ul li ul li a {
     margin: 0;
     padding: 0;
-    color: #888;
-    font-size: 90%;
+    color: #434343; /**/
+    font-weight:bold !important; /**/
+    font-size: 94%; /**/
     font-style: italic;
 }
 #portal-column-content #whats-on-overview .whats-on-viewlet dd ul li ul li ul {
@@ -635,14 +847,17 @@ input.inputLabelActive {
     width: 98%;
 }
 #portal-column-content #whats-on-overview .whats-on-viewlet dd ul li ul li dl h3 {
-    font-weight: bold !important;
+    font-weight: normal !important; /**/
+    color:#f79f10 !important; /**/
     font-size: 100%;
     margin: 0;
     padding: 0;
     display: inline;
 }
 #portal-column-content #whats-on-overview .whats-on-viewlet dd ul li ul li dl a {
-    color: #F9AC32;
+    color: #000; /**/
+    font-size:1.1em;
+    font-weight:normal !important;
     font-style: normal;
     border-bottom: 0 none;
 }
@@ -775,6 +990,7 @@ input.inputLabelActive {
 }
 .section-bungeni-archive #portal-column-one .portletNavigationTree {
     width: auto;
+    margin-top: 4em;
 }
 /* hides the portlet header. */
 #portal-column-one .portletHeader {
@@ -891,8 +1107,10 @@ input.inputLabelActive {
 }
 .template-portal .contentActions {
     background: none repeat scroll 0 0 #FFFFFF;
-    border: 1px solid #FB9C14 !important;
     margin-top: 5em;
+}
+.template-workspace .contentActions {
+    margin: 3.15em 0 1em !important;
 }
 .template-workspace.section-bungeni-archive .contentActions,
 .template-workspace.section-bungeni-business .contentActions,
@@ -908,13 +1126,12 @@ input.inputLabelActive {
     padding: 0 .5em;
 }
 .contentActions li {
-    border-left:1px solid #000;
     float: right;
     z-index: 4;
     height: 1.8em;
     line-height: 1.8em;
     border: 0 none;
-    border-left: 1px solid #aaa;
+
 }
 .contentActions ul {
     margin: 0;
@@ -949,6 +1166,7 @@ input.inputLabelActive {
     border-bottom: 0 none;
     border-top: 0 none;
 }
+
 .actionMenu .actionMenuContent ul li {
     margin: 0;
     border: 0 none;
@@ -993,6 +1211,10 @@ dl#context_actions.actionMenu .actionMenuContent ul li a {
     padding: 0;
     margin: 0 .25em;
 }
+/*
+.actionMenuContent ul li {
+    border-right:3px solid white !important;
+}*/
 .template-workspace dl#context_actions.actionMenu .actionMenuContent ul li a.selected,
 .template-workspace dl#context_actions.actionMenu .actionMenuContent ul li a:hover {
     border-right: 1px solid #aaf;
@@ -1013,7 +1235,7 @@ div#portal-globalnav {
     background: #fff;
     padding:0; 
     /* new */
-	height: 28px;
+    height: 28px;
 }
 .template-workspace div#portal-globalnav {
     background: #4d4d4d;
@@ -1031,12 +1253,12 @@ div#portal-globalnav ul.level0 {
     border-bottom: 1px solid #fb9c14;
     background: #fff;
     /* new */
-	border-bottom: 3px solid #F9AC32 !important;
-	height: 24px;
+    border-bottom: 3px solid #F9AC32 !important;
+    height: 24px;
     line-height: 24px;
 }
 .template-workspace div#portal-globalnav ul.level0 {
-	border-bottom: 3px solid #d8d8d9 !important;
+    border-bottom: 3px solid #d8d8d9 !important;
 }
 
 /*
@@ -1049,10 +1271,10 @@ div#portal-globalnav ul.level0 {
     display: inline;
 }
 div#portal-globalnav ul.level0 li {
-	position: relative;
-	border-radius: 0;
-	float: left;
-	height: 25px;
+    position: relative;
+    border-radius: 0;
+    float: left;
+    height: 25px;
     display: block !important;
 }
 
@@ -1188,48 +1410,48 @@ div#portal-globalnav ul.level0 ul.level1 {
 }
 /* new */
 div#portal-globalnav ul.level0 #secondary {
-	position: absolute;
-	top: 22px;
-	z-index: 10;
-	width: 150px;
-	height: auto !important;
-	clear: left;
-	float: none;
-	display: block;
+    position: absolute;
+    top: 22px;
+    z-index: 10;
+    width: 150px;
+    height: auto !important;
+    clear: left;
+    float: none;
+    display: block;
 }
 div#portal-globalnav ul.level0 li #secondary li
 {
-	width: 150px;
-	float: none !important;
-	margin: 0;
-	padding: 0;
-	height: auto;
-	display: block;
+    width: 150px;
+    float: none !important;
+    margin: 0;
+    padding: 0;
+    height: auto;
+    display: block;
     background:#d8d8d9 /*url(/static/images/w-globalnav-level1-bg.png) bottom left repeat-x*/ !important;
     line-height: 25px;
 }
 
 div#portal-globalnav ul.level0 li #secondary li a {
-	display: block;
-	float: none;
-	border-radius: 0 !important;
-	text-align: left;
-	padding: 0 .25em;
-	margin: 0 !important;
+    display: block;
+    float: none;
+    border-radius: 0 !important;
+    text-align: left;
+    padding: 0 .25em;
+    margin: 0 !important;
     border: 1px solid transparent !important;
 }
 div#portal-globalnav ul.level0 li #secondary li a:hover {
     text-decoration: underline;
 }
 div#portal-globalnav ul.level0 ul.level1 li {
-	width: auto;
-	float: left !important;
-	margin: 0;
-	padding: 0;
-	height: auto;
-	display: block;
-	background: #F9AC32 url(/static/images/globalnav-level0-a.png) repeat-x scroll left top;
-	background: transparent;
+    width: auto;
+    float: left !important;
+    margin: 0;
+    padding: 0;
+    height: auto;
+    display: block;
+    background: #F9AC32 url(/static/images/globalnav-level0-a.png) repeat-x scroll left top;
+    background: transparent;
 }
 div#portal-globalnav ul.level0 ul.level1 a {
     background: transparent;
@@ -1548,6 +1770,12 @@ table.listingdescription td,
  * formTabs
  * Default styles.
  */
+.template-workspace ul.formTabs {
+    margin-left: auto;
+    margin-right: auto;
+    width:1100px;
+}
+
 dd#items-to-be-scheduled-dl ul.formTabs,
 ul.formTabs {
     margin: 0;
@@ -1557,8 +1785,11 @@ ul.formTabs {
     text-align: center;
     position: static;
     float: none;
-    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+    width: 880px;
 }
+
 dd#items-to-be-scheduled-dl ul.formTabs {
     margin: .7em 0 0;
     border: 0 none;
@@ -1566,7 +1797,6 @@ dd#items-to-be-scheduled-dl ul.formTabs {
 .template-workspace.section-bungeni-workspace ul.formTabs {
     border-bottom: 1px dotted #ccc;
     margin: .5em auto;
-    width: 95%;
     height: 30px;
 }
 dd#items-to-be-scheduled-dl ul.formTabs li.formTab {
@@ -1737,7 +1967,6 @@ body.template-workspace.section-bungeni-workspace #portal-column-content div#wha
     width: 100%;
 }
 dl.portalMessage {
-    width: 100%;
     margin: 0 auto;
     padding: 0 .5em;
     height: 25px;
@@ -1745,11 +1974,13 @@ dl.portalMessage {
     margin-bottom:5px;
     border: 1px solid #800;
     color: #333;
+    width: 94%;
 }
 .template-portal dl.portalMessage {
     margin: -14.5em 0 12em 0;
 }
 dl.portalMessage dt {
+    font-size:1.1em;
 }
 dl.portalMessage dd {
     padding: 0;
@@ -1757,6 +1988,8 @@ dl.portalMessage dd {
     display: inline;
     color: #a00;
     font-style: italic;
+    font-size:1.2em;
+    text-shadow: 0.1em #f79f10;
 }
 #display_form_spacer {
     width: 95%;
@@ -1891,7 +2124,7 @@ span.yui-button.yui-link-button span a {
     line-height: 1.5em;
     height: 1.5em;
     min-height: 1.5em;
-    font-size: 90%;	
+    font-size: 90%;    
 }
 
 
@@ -1931,69 +2164,6 @@ span.yui-button.yui-link-button span a {
 }
 
 /*
- * .template-portal styles.
- */
-.template-portal {
-    margin: 0;
-    text-align: center;
-    background: #4b4a4a !important;
-    /* 
-    * Sticky Footer.
-    * more information: http://www.cssstickyfooter.com/
-    * these are requried to make the fotter stick to the 
-    * bottom of the page
-    */
-    height: 100%;
-}
-.template-portal #visual-table-wrapper {
-    background: url(/static/images/shadow_3.png) repeat-y top center;
-    width: 960px;
-    text-align: left;
-    margin: 0 auto !important;    
-    padding: 0;
-    border: 0 none;
-    /* 
-    * Sticky Footer.
-    * more information: http://www.cssstickyfooter.com/
-    * - these are requried to make the footer stick to the 
-    *   bottom of the page.
-    */
-    height: auto;
-    min-height: 100%;
-}
-.template-portal #portal-logo-wrapper {
-    background: url(/static/images/portalimg.png) no-repeat bottom right;
-}
-.template-portal #portal-logo {
-    display: block;
-    margin: .5em 0;
-    height: 100px;
-    background: url(/static/images/_bungeni-logo.png) top left no-repeat;
-}
-/* 
- * if display is set to block it will display the logo used on the workspace
- */
-.template-portal #portal-logo img {
-    display: none;
-}
-.template-portal #main-body-table {
-    margin: 0;
-    padding: 0;
-	width: 100%;
-    /* 
-    * Sticky Footer.
-    * more information: http://www.cssstickyfooter.com/
-    * - these are requried to make the footer stick to the 
-    *   bottom of the page.
-    * - padding bottom must have the same value as the 
-    *   height of the footer.
-    */
-    padding-bottom: 30px;
-    position: relative;
-}
-/* end of .template-portal styles*/
-
-/*
  * .template-workspace styles.
  */
 .template-workspace {
@@ -2002,6 +2172,7 @@ span.yui-button.yui-link-button span a {
     background: #4d4d4d url(/static/images/workspace-border-left.png) repeat-y top left;
     /* 
      * Sticky Footer
+
      * more information: http://www.cssstickyfooter.com/
      * - required for sticky footer to work.
      */
@@ -2062,8 +2233,8 @@ span.yui-button.yui-link-button span a {
     border: 0 none;
     margin: 0;
     padding:0;
+    float:left !important;
 }
-
 
 /*
  * random styles
@@ -2105,13 +2276,12 @@ h4.tabberHeading {
 .section-bungeni-archive .documentContent {
     padding: 0 0 2em !important;
 }
-.documentDescription {
+.template-portal .documentDescription {
     font-weight: normal;
+    width:480px;
+    margin: 3em auto 1em auto;
 /*    text-align: center;*/
 }
-.template-portal .documentDescription {
-    margin: 3em 0 1em 0.5em;
-} 
 .documentEditable {
     margin: 0;
     padding: 0 !important;
@@ -2176,60 +2346,60 @@ h4.tabberHeading {
  * cynin customizations
  */
 .addnewbuttonholder {
-	margin-left: 1em;
+    margin-left: 1em;
 }
 #portal-titlebar {
-	background:#fff !important;
-	border-bottom: 1px solid #ccc;
+    background:#fff !important;
+    border-bottom: 1px solid #ccc;
 }
 
 #col1_content {
-	width:225px;
-	background: #E5E5E5;
-	border-right: 1px solid #afafaf;
+    width:225px;
+    background: #E5E5E5;
+    border-right: 1px solid #afafaf;
 }
 
 #col1_content #sidenavigationlogoholder {
-	border: 0 none;
-	border-radius: 0;
-	-moz-border-radius: 0;
-	border-bottom: 1px solid #ccc;
-	background: transparent;
-	height: 35px;
-	min-height: 35px;
-	width: 220px;
-	margin:0 .5em .5em;
+    border: 0 none;
+    border-radius: 0;
+    -moz-border-radius: 0;
+    border-bottom: 1px solid #ccc;
+    background: transparent;
+    height: 35px;
+    min-height: 35px;
+    width: 220px;
+    margin:0 .5em .5em;
 }
 .portletWrapper, #comcynapsecyninmyareablock {
-	margin-bottom: 0;
+    margin-bottom: 0;
 }
 #col1_content .verticalnavigationholder {
-	border-top: 1px solid #ccc !important;
-	margin: 0;
-	width: 220px;
-	padding-top: 0;
+    border-top: 1px solid #ccc !important;
+    margin: 0;
+    width: 220px;
+    padding-top: 0;
 }
 #col1_content dd.portletItem {
-	border: 0 none;
+    border: 0 none;
 }
 #col1_content #portal-languageselector select {
-	font-size: 90%;
-	padding: .1em;
-	border: 1px solid #ccc;
+    font-size: 90%;
+    padding: .1em;
+    border: 1px solid #ccc;
 }
 div.navTreeCurrentNode, .portletNavigationTree div.navTreeCurrentNode.hover, .navTreeHome.navTreeCurrentNode, .navTreeHome.navTreeCurrentNode.hover {
-	border: 1px solid #fff;
+    border: 1px solid #fff;
 }
 #main {
-	margin-top: 0;
+    margin-top: 0;
 }
 #col3 {
-	margin-left: 230px !important;
-	border:0 none;
-	background: transparent;
+    margin-left: 230px !important;
+    border:0 none;
+    background: transparent;
 }
 #col3_content {
-	width: 100% !important;
+    width: 100% !important;
 }
 .template-login_form #portal-columns {
     margin-bottom: -15em;
@@ -2404,4 +2574,17 @@ div.main-column #collage h2 {
 .section-bungeni-business .dhx_scale_holder .dhx_cal_event .dhx_body[style],
 .section-bungeni-business .dhx_scale_holder_now .dhx_cal_event .dhx_body[style] {
     cursor: pointer !important;
+}
+
+/* SEARCh RESULT */
+.search-result-item {
+    padding:1.5em 0 0 0;
+}
+.search-result-item div.title {
+    padding-bottom:.5em;
+    font-size:1.8em !important;
+}
+.search-result-item div.title a {
+    color:#f79f10 !important;
+    font-weight:bold;    
 }

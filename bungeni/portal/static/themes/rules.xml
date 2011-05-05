@@ -214,12 +214,18 @@
             theme="#processing_indicatron"
         />
         
-        <pyquery pyref="bungeni.portal.static.themes.rules:replace_login_link"/>
+    <!-- <pyquery pyref="bungeni.portal.static.themes.rules:replace_login_link"/> -->
         
         <!-- breadcrumbs -->
         <append content="children:#portal-breadcrumbs"
             theme="children:#portal-breadcrumbs"
         />
+
+        <!-- search -->
+        <append content="children:#portal-search"
+            theme="children:#portal-search"
+        />
+
         <!-- content -->
         <append content="children:#portal-column-content"
             theme="children:#portal-column-content"
@@ -230,6 +236,8 @@
         <pyquery pyref=
             "bungeni.portal.static.themes.rules:add_section_links"
         />
-    </rule>
+ <pyquery pyref="bungeni.portal.static.themes.rules:enable_text_editor"/>
+
+</rule>
 </ruleset>
 
