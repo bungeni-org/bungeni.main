@@ -387,3 +387,8 @@ class AppSetup(object):
         to_locatable_container(domain.PostalAddressType, 
             vocabularies[u"p-address-types"]
         )
+        vocabularies[u"committee-types-statuses"] = \
+            domain.CommitteeTypeStatusContainer()
+        to_locatable_container(domain.CommitteeTypeStatus, 
+            vocabularies[u"committee-types-statuses"]
+        )

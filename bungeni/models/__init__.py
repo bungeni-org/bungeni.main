@@ -12,7 +12,7 @@ from schema import metadata
 
 from domain import User, Minister
 from domain import (GroupMembership, Group, Government, Parliament,
-    PoliticalParty, Ministry, Committee
+    PoliticalParty, Ministry, Committee, CommitteeType, CommitteeTypeStatus
 )
 from domain import (GroupSitting, GroupSittingType, GroupSittingAttendance,
     AttendanceType

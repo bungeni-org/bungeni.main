@@ -1168,6 +1168,20 @@ class ParliamentDescriptor(GroupDescriptor):
         parliament_wf_get_state("dissolved").id
     ]
 
+class CommitteeTypeStatusDescriptor(ModelDescriptor):
+    localizable = False
+    display_name = _("Committee type status")
+    container_name = _("Committee type statuses")
+
+    fields = [
+        Field(name="committee_type_status_name",
+            modes="view edit add listing",
+            property=schema.TextLine(title=_("Committee type status"))
+        ),
+        LanguageField("language"),
+    ]
+
+
 class CommitteeTypeDescriptor(ModelDescriptor):
     localizable = False
     display_name = _("Committee type")
@@ -1176,7 +1190,7 @@ class CommitteeTypeDescriptor(ModelDescriptor):
     fields = [
         Field(name="committee_type", # [user-req]
             modes="view edit add listing",
-            property=schema.TextLine(title=_("Commitee Type"))
+            property=schema.TextLine(title=_("Committee Type"))
         ),
         Field(name="description", # [user-req]
             modes="view edit add listing",
@@ -1186,10 +1200,13 @@ class CommitteeTypeDescriptor(ModelDescriptor):
             modes="view edit add listing",
             property = schema.TextLine(title=_("life span"))
         ),
-        Field(name="status", # [user-req]
+        Field(name="committee_type_status_id", # [user-req]
             modes="view edit add listing",
-            property=schema.Choice(title=_("status"),
-                vocabulary=vocabulary.CommitteeStatusVocabulary
+            property=schema.Choice(title=_("Status"),
+                source=vocabulary.CommitteeTypeStatus
+            ),
+            listing_column = dc_getter("committee_type_status_id",
+                _("Status"), "committee_type_status"
             )
         ),
         LanguageField("language"),

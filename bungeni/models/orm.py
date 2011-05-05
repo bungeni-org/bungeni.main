@@ -162,6 +162,14 @@ mapper(domain.Ministry,
     polymorphic_identity="ministry"
 )
 
+mapper(domain.CommitteeTypeStatus, schema.committee_type_status)
+mapper(domain.CommitteeType, schema.committee_type,
+    properties={
+        "committee_type_status": relation(domain.CommitteeTypeStatus,
+            uselist=False, lazy=False
+        )
+    }
+)
 mapper(domain.Committee, schema.committees,
     inherits=domain.Group,
     polymorphic_on=schema.groups.c.type,
@@ -517,7 +525,6 @@ mapper(domain.ConstituencyDetail, schema.constituency_details,
         ),
     }
 )
-mapper(domain.CommitteeType, schema.committee_type)
 mapper(domain.GroupSittingType, schema.group_sitting_types)
 
 mapper(domain.GroupSittingAttendance, schema.group_sitting_attendance,

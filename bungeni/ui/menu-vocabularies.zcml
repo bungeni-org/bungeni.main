@@ -55,6 +55,13 @@
         layer=".interfaces.IAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
+        for="bungeni.models.domain.CommitteeTypeStatusContainer"
+        title="Add committee type status..."
+        action="./add"
+        permission="zope.ManageContent"
+        layer=".interfaces.IAdminSectionLayer"
+    />
+    <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.domain.PostalAddressTypeContainer"
         title="Add postal type..."
         action="./add"

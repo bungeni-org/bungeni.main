@@ -386,7 +386,7 @@
     />
 
   <browser:viewlet
-     name="bungeni.viewlet.comittee-member-personal-info"
+     name="bungeni.viewlet.committee-member-personal-info"
      manager=".interfaces.ISubFormViewletManager"
      class=".viewlets.PersonInfo"
      for="bungeni.models.interfaces.ICommitteeMember"

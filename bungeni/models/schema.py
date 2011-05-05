@@ -78,10 +78,12 @@ def make_versions_table(table, metadata, secondarytable=None):
     versions_table = rdb.Table(versions_name, metadata, *columns)
     return versions_table
 
-def make_vocabulary_table(vocabulary_prefix, metadata):
-    table_name = "%s_types" % vocabulary_prefix
-    column_key = "%s_type_id" % vocabulary_prefix
-    column_name = "%s_type_name" % vocabulary_prefix 
+def make_vocabulary_table(vocabulary_prefix, metadata, table_suffix="_types",
+        column_suffix="_type"
+    ):
+    table_name = "%s%s" % (vocabulary_prefix, table_suffix)
+    column_key = "%s%s_id" % (vocabulary_prefix, column_suffix)
+    column_name = "%s%s_name" % (vocabulary_prefix , column_suffix)
     return rdb.Table(table_name, metadata,
         rdb.Column(column_key, rdb.Integer, primary_key=True),
         rdb.Column(column_name, rdb.Unicode(256),
@@ -295,6 +297,21 @@ parliaments = rdb.Table("parliaments", metadata,
    rdb.Column("election_date", rdb.Date, nullable=False),
 )
 
+committee_type_status = make_vocabulary_table("committee_type_status", metadata,
+    table_suffix="", column_suffix="")
+
+committee_type = rdb.Table("committee_types", metadata,
+    rdb.Column("committee_type_id", rdb.Integer, primary_key=True),
+    rdb.Column("committee_type", rdb.Unicode(256), nullable=False),
+    rdb.Column("description", rdb.UnicodeText),
+    rdb.Column("life_span", rdb.Unicode(16)),
+    rdb.Column("committee_type_status_id", rdb.Integer,
+        rdb.ForeignKey("committee_type_status.committee_type_status_id"),
+        nullable=False
+    ),
+    rdb.Column("language", rdb.String(5), nullable=False),
+)
+
 committees = rdb.Table("committees", metadata,
     rdb.Column("committee_id", rdb.Integer,
         rdb.ForeignKey("groups.group_id"),
@@ -311,20 +328,6 @@ committees = rdb.Table("committees", metadata,
     rdb.Column("proportional_representation", rdb.Boolean),
     rdb.Column("default_chairperson", rdb.Boolean),
     rdb.Column("reinstatement_date", rdb.Date),
-)
-
-committee_type = rdb.Table("committee_types", metadata,
-    rdb.Column("committee_type_id", rdb.Integer, primary_key=True),
-    rdb.Column("committee_type", rdb.Unicode(256), nullable=False),
-    rdb.Column("description", rdb.UnicodeText),
-    rdb.Column("life_span", rdb.Unicode(16)),
-    # Indicate whether this type of committees are: 
-    # P:Permanent, T:Temporary
-    rdb.Column("status", rdb.String(1),
-        rdb.CheckConstraint("""status in ('P','T')"""),
-        nullable=False
-    ),
-    rdb.Column("language", rdb.String(5), nullable=False),
 )
 
 # political parties (outside the parliament) and 

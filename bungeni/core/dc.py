@@ -612,3 +612,12 @@ class PostalAddressTypeDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         return self.translate(context, "postal_address_type_name")
+
+class CommitteeTypeStatusDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.ICommitteeTypeStatus)
+    
+    @property
+    def title(self):
+        session = Session()
+        context = session.merge(removeSecurityProxy(self.context))
+        return self.translate(context, "committee_type_status_name")

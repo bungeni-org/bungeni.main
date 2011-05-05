@@ -125,10 +125,10 @@ YesNoSource = vocabulary.SimpleVocabulary([
 #    vocabulary.SimpleTerm("U", _(u"Undefined / Unknown"), 
 #        _(u"Undefined / Unknown")),
 #])
-CommitteeStatusVocabulary = vocabulary.SimpleVocabulary([
-    vocabulary.SimpleTerm("P", _("permanent"), _("permanent")),
-    vocabulary.SimpleTerm("T", _("temporary"), _("temporary")),
-])
+#CommitteeStatusVocabulary = vocabulary.SimpleVocabulary([
+#    vocabulary.SimpleTerm("P", _("permanent"), _("permanent")),
+#    vocabulary.SimpleTerm("T", _("temporary"), _("temporary")),
+#])
 
 class OfficeRoles(object):
     interface.implements(IVocabularyFactory)
@@ -834,8 +834,16 @@ QuestionType = DatabaseSource(domain.QuestionType, token_field="question_type_id
 
 ResponseType = DatabaseSource(domain.ResponseType, 
     token_field="response_type_id",
-    value_field="response_type_id", title_field="response_type_name"
+    value_field="response_type_id", 
+    title_field="response_type_name"
 )
+
+CommitteeTypeStatus = DatabaseSource(domain.CommitteeTypeStatus,
+    token_field="committee_type_status_id",
+    value_field="committee_type_status_id",
+    title_field="committee_type_status_name"
+)
+
 
 class CommitteeSource(SpecializedSource):
 

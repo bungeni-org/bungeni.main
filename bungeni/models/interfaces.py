@@ -478,3 +478,6 @@ class IMemberElectionType(IBungeniVocabulary):
 
 class IPostalAddressType(IBungeniVocabulary):
     """Marker interface for address postal types"""
+
+class ICommitteeTypeStatus(IBungeniVocabulary):
+    """Marker interface for committe type statuses"""

@@ -111,9 +111,30 @@ they work.
   >>> session.add(mp_2)
   >>> session.add(mp_3)
   >>> session.flush()
-  
-  >>> committee_a = model.Committee(short_name=u"commitee_1", start_date=datetime.datetime.now())
+
+Committee types and status
+  >>> committee_type_status_1 = model.CommitteeTypeStatus()
+  >>> committee_type_status_1.committee_type_status_name = u"Permanent"
+  >>> committee_type_status_1.language="en"
+  >>> session.add(committee_type_status_1)
+  >>> session.flush()
+  >>> committee_type_status_1.committee_type_status_id
+  1L
+  >>> committee_type_1 = model.CommitteeType()
+  >>> committee_type_1.committee_type = u"Monitoring Committee"
+  >>> committee_type_1.committee_type_status = committee_type_status_1
+  >>> committee_type_1.description = u"Monitoring and Oversight committee"
+  >>> committee_type_1.life_span = u"parliament"
+  >>> committee_type_1.language = "en"
+  >>> session.add(committee_type_1)
+  >>> session.flush()
+  >>> committee_type_1.committee_type_id
+  1L
+
+Now the actual committee
+  >>> committee_a = model.Committee(short_name=u"committee_1", start_date=datetime.datetime.now())
   >>> committee_a.parent_group_id = parliament.parliament_id
+  >>> committee_a.committee_type = committee_type_1
   >>> committee_a.language = "en"
   >>> session.add(committee_a)
   >>> session.flush()

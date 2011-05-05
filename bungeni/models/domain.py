@@ -218,7 +218,7 @@ class OfficesHeld(Entity):
     """
 
 class CommitteeStaff(GroupMembership):
-    """Comittee Staff.
+    """Committee Staff.
     """
     titles = one2many("titles",
         "bungeni.models.domain.MemberRoleTitleContainer", "membership_id")
@@ -834,4 +834,11 @@ class PostalAddressType(Entity):
     """
     interface.implements(interfaces.ITranslatable, 
         interfaces.IPostalAddressType
+    )
+    
+class CommitteeTypeStatus(Entity):
+    """Committee type status
+    """
+    interface.implements(interfaces.ITranslatable,
+        interfaces.ICommitteeTypeStatus
     )

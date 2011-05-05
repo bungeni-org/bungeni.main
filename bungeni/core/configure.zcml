@@ -291,6 +291,7 @@
   <adapter factory=".dc.ResponseTypeDescriptiveProperties" />
   <adapter factory=".dc.MemberElectionTypeDescriptiveProperties" />
   <adapter factory=".dc.PostalAddressTypeDescriptiveProperties" />
+  <adapter factory=".dc.CommitteeTypeStatusDescriptiveProperties" />
   <adapter
      name="dc"
      for="*"
