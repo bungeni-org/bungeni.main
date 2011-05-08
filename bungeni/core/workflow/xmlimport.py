@@ -20,7 +20,9 @@ from bungeni.core.workflow.states import State, Transition, Workflow
 from bungeni.core.workflow.notification import Notification
 from bungeni.utils.capi import capi, bungeni_custom_errors
 from bungeni.ui.utils import debug
-
+from bungeni.models.interfaces import ISubRoleAnnotations
+from zope.component import getUtility
+from zope.securitypolicy.interfaces import IRole
 #
 
 ASSIGNMENTS = (GRANT, DENY)

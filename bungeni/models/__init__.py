@@ -26,7 +26,7 @@ from domain import Bill, BillVersion, BillChange, BillType
 from domain import Constituency, Parliament
 from domain import Country, Region, Province
 from domain import MemberOfParliament, MemberElectionType
-from domain import MemberTitle, MemberRoleTitle
+from domain import TitleType, MemberTitle
 from domain import ItemSchedule
 
 from domain import AddressType, GroupAddress, UserAddress, PostalAddressType

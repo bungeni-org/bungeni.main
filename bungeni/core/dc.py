@@ -425,14 +425,14 @@ class GroupItemAssignmentDescriptiveProperties(DescriptiveProperties):
         )
 
 
-class MemberRoleTitleDescriptiveProperties(DescriptiveProperties):
-    component.adapts(interfaces.IMemberRoleTitle)
+class MemberTitleDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.IMemberTitle)
 
     @property
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return self.translate(context.title_name, "user_role_name")
+        return self.translate(context.title_type, "title_name")
 
 
 

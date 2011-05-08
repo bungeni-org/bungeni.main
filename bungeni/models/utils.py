@@ -167,7 +167,7 @@ def get_groups_held_for_user_in_parliament(user_id, parliament_id):
     offices_held = rdb.select([schema.groups.c.short_name,
         schema.groups.c.full_name,
         schema.groups.c.type,
-        schema.user_role_types.c.user_role_name,
+        schema.title_types.c.title_name,
         schema.role_titles.c.start_date,
         schema.role_titles.c.end_date,
         schema.user_group_memberships.c.start_date,
@@ -179,9 +179,9 @@ def get_groups_held_for_user_in_parliament(user_id, parliament_id):
             ).outerjoin(
             schema.role_titles, schema.user_group_memberships.c.membership_id ==
             schema.role_titles.c.membership_id).outerjoin(
-                schema.user_role_types,
+                schema.title_types,
                 schema.role_titles.c.title_name_id ==
-                    schema.user_role_types.c.user_role_type_id)],
+                    schema.title_types.c.title_type_id)],
             whereclause=rdb.and_(
                 schema.groups.c.group_id.in_(group_ids),
                 schema.user_group_memberships.c.user_id == user_id),

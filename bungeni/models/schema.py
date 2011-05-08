@@ -345,10 +345,12 @@ political_parties = rdb.Table("political_parties", metadata,
 #  The personal roles a person may have varies with the context. In a party
 #  one may have the role spokesperson, member, ...
 
-user_role_types = rdb.Table("user_role_types", metadata,
-    rdb.Column("user_role_type_id", rdb.Integer, primary_key=True),
-    rdb.Column("user_type", rdb.String(30), nullable=False),
-    rdb.Column("user_role_name", rdb.Unicode(40), nullable=False),
+title_types = rdb.Table("title_types", metadata,
+    rdb.Column("title_type_id", rdb.Integer, primary_key=True),
+    rdb.Column("group_id", rdb.Integer, 
+                rdb.ForeignKey("groups.group_id"), nullable=False),
+    rdb.Column("role_id", rdb.Unicode(256), nullable=True, unique=True),
+    rdb.Column("title_name", rdb.Unicode(40), nullable=False),
     rdb.Column("user_unique", rdb.Boolean, default=False,), # nullable=False),
     rdb.Column("sort_order", rdb.Integer(2), nullable=False),
     rdb.Column("language", rdb.String(5), nullable=False),
@@ -425,15 +427,15 @@ group_item_assignments = rdb.Table("group_assignments", metadata,
 # To indicate the role a persons has in a specific context (Ministry, 
 # Committee, Parliament, ...) and for what period (from - to)
 
-role_titles = rdb.Table("role_titles", metadata,
-    rdb.Column("role_title_id", rdb.Integer, primary_key=True),
+member_titles = rdb.Table("member_titles", metadata,
+    rdb.Column("member_title_id", rdb.Integer, primary_key=True),
     rdb.Column("membership_id", rdb.Integer,
         rdb.ForeignKey("user_group_memberships.membership_id"),
         nullable=False
     ),
     # title of user"s group role
-    rdb.Column("title_name_id", rdb.Integer,
-        rdb.ForeignKey("user_role_types.user_role_type_id"),
+    rdb.Column("title_type_id", rdb.Integer,
+        rdb.ForeignKey("title_types.title_type_id"),
         nullable=False
     ),
     rdb.Column("start_date", rdb.Date, default=datetime.now, nullable=False),
@@ -1057,34 +1059,6 @@ holidays = rdb.Table("holidays", metadata,
     rdb.Column("language", rdb.String(5), nullable=False),
 )
 
-#######################
-# Hansard
-#######################
-
-rotas = rdb.Table("rotas", metadata,
-    rdb.Column("rota_id", rdb.Integer, primary_key=True),
-    rdb.Column("reporter_id", rdb.Integer, rdb.ForeignKey("users.user_id")),
-    rdb.Column("identifier", rdb.Unicode(60)),
-    rdb.Column("start_date", rdb.Date),
-    rdb.Column("end_date", rdb.Date)
-)
-
-takes = rdb.Table("takes", metadata,
-    rdb.Column("take_id", rdb.Integer, primary_key=True),
-    rdb.Column("rota_id", rdb.Integer, rdb.ForeignKey("rotas.rota_id")),
-    rdb.Column("identifier", rdb.Unicode(1)),
-)
-
-take_media = rdb.Table("take_media", metadata,
-    rdb.Column("media_id", rdb.Integer, primary_key=True),
-    rdb.Column("take_id", rdb.Integer, rdb.ForeignKey("takes.take_id")),
-)
-
-transcripts = rdb.Table("transcripts", metadata,
-    rdb.Column("transcript_id", rdb.Integer, primary_key=True),
-    rdb.Column("take_id", rdb.Integer, rdb.ForeignKey("takes.take_id")),
-    rdb.Column("reporter_id", rdb.Integer, rdb.ForeignKey("users.user_id")),
-)
 
 translations = rdb.Table("translations", metadata,
     rdb.Column("object_id", rdb.Integer, primary_key=True, nullable=False),

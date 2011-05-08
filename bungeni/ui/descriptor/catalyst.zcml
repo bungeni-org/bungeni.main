@@ -330,8 +330,14 @@
         ui_module="bungeni.ui.content"
         echo="False"
     />
-    <db:catalyst class="bungeni.models.domain.MemberRoleTitle"
-        descriptor=".descriptor.MemberRoleTitleDescriptor"
+    <db:catalyst class="bungeni.models.domain.TitleType"
+        descriptor=".descriptor.TitleTypeDescriptor"
+        interface_module="bungeni.models.interfaces"
+        ui_module="bungeni.ui.content"
+        echo="False"
+    />
+    <db:catalyst class="bungeni.models.domain.MemberTitle"
+        descriptor=".descriptor.MemberTitleDescriptor"
         interface_module="bungeni.models.interfaces"
         ui_module="bungeni.ui.content"
         echo="False"

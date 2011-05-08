@@ -6,8 +6,8 @@ from bungeni.alchemist.interfaces import IAlchemistContent
 from bungeni.alchemist.interfaces import IAlchemistContainer
 from ore.wsgiapp.interfaces import IApplication
 from i18n import _
-
-
+from zope.configuration.fields import MessageID
+import zope.schema
 DEBUG = True
 ENABLE_LOGGING = False
 ENABLE_EVENT_LOGGING = False
@@ -407,8 +407,8 @@ class IChange(interface.Interface):
     """Marker for Change (log table).
     """
 
-class IMemberRoleTitle(interface.Interface):
-    pass
+class IMemberTitle(interface.Interface):
+    """Marker for member titles"""
 
 
 class _IAddress(interface.Interface):
@@ -466,7 +466,27 @@ class IAttendanceType(IBungeniVocabulary):
 
 class IVenue(IBungeniVocabulary):
     """Marker interface for venues vocabulary"""
+class ISubRoleDirective(interface.Interface):
+    """Define a new sub role."""
+    id = zope.schema.Id(
+        title=u"Id",
+        description=u"Id as which this object will be known and used.",
+        required=True)
 
+    title = MessageID(
+        title=u"Title",
+        description=u"Provides a title for the object.",
+        required=True)
+
+    description = MessageID(
+        title=u"Description",
+        description=u"Provides a description for the object.",
+        required=False)
+        
+    role = zope.schema.Id(
+        title=u"Parent Role ID",
+        description=u"Role ID for role which this subrole extends",
+        required=True)
 class IQuestionType(IBungeniVocabulary):
     """Marker interface for question types"""
 
@@ -475,6 +495,9 @@ class IResponseType(IBungeniVocabulary):
 
 class IMemberElectionType(IBungeniVocabulary):
     """Marker interface for member election types"""
+class ISubRoleAnnotations(interface.Interface):
+    sub_roles = interface.Attribute('Sub_Roles')
+    is_sub_role = interface.Attribute('Sub_Roles')
 
 class IPostalAddressType(IBungeniVocabulary):
     """Marker interface for address postal types"""

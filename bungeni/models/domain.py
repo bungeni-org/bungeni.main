@@ -183,7 +183,6 @@ class Group(Entity):
 
     addresses = one2many("addresses",
         "bungeni.models.domain.GroupAddressContainer", "group_id")
-
     def active_membership(self, user_id):
         session = Session()
         query = session.query(GroupMembership).filter(
@@ -221,7 +220,7 @@ class CommitteeStaff(GroupMembership):
     """Committee Staff.
     """
     titles = one2many("titles",
-        "bungeni.models.domain.MemberRoleTitleContainer", "membership_id")
+        "bungeni.models.domain.MemberTitleContainer", "membership_id")
 
 class GroupSitting(Entity):
     """Scheduled meeting for a group (parliament, committee, etc).
@@ -315,7 +314,7 @@ class MemberOfParliament(GroupMembership):
         "constituency_id":["name"], "province_id":["name"],
         "region_id":["name"], "party_id":["name"]}
     titles = one2many("titles",
-        "bungeni.models.domain.MemberRoleTitleContainer", "membership_id")
+        "bungeni.models.domain.MemberTitleContainer", "membership_id")
     addresses = one2manyindirect("addresses", 
         "bungeni.models.domain.UserAddressContainer", "user_id")
 
@@ -340,7 +339,7 @@ class PartyMember(GroupMembership):
     """Member of a political party or group, defined by its group membership.
     """
     titles = one2many("titles",
-        "bungeni.models.domain.MemberRoleTitleContainer", "membership_id")
+        "bungeni.models.domain.MemberTitleContainer", "membership_id")
 
 class Government(Group):
     """A government.
@@ -363,7 +362,7 @@ class Minister(GroupMembership):
     """A Minister defined by its user_group_membership in a ministry (group).
     """
     titles = one2many("titles",
-        "bungeni.models.domain.MemberRoleTitleContainer", "membership_id")
+        "bungeni.models.domain.MemberTitleContainer", "membership_id")
 
 
 class Committee(Group):
@@ -386,12 +385,11 @@ class Committee(Group):
         "bungeni.models.domain.ItemGroupItemAssignmentContainer", "group_id")
     sort_replace = {"committee_type_id": ["committee_type"]}
 
-
 class CommitteeMember(GroupMembership):
     """A Member of a committee defined by its membership to a committee (group).
     """
     titles = one2many("titles",
-        "bungeni.models.domain.MemberRoleTitleContainer", "membership_id")
+        "bungeni.models.domain.MemberTitleContainer", "membership_id")
 
 
 class CommitteeType(Entity):
@@ -407,13 +405,14 @@ class Office(Group):
     """
     officemembers = one2many("officemembers",
         "bungeni.models.domain.OfficeMemberContainer", "group_id")
-
+    titles = one2many("titles",
+        "bungeni.models.domain.TitleTypeContainer", "group_id")
 
 class OfficeMember(GroupMembership):
     """Clerks, .... 
     """
     titles = one2many("titles",
-        "bungeni.models.domain.MemberRoleTitleContainer", "membership_id")
+        "bungeni.models.domain.MemberTitleContainer", "membership_id")
 
 
 #class Debate(Entity):
@@ -675,13 +674,13 @@ class ConstituencyDetail(object):
 # ##########
 
 
-class MemberTitle(object):
-    """Titles for members in groups.
+class TitleType(object):
+    """Types of titles in groups
     """
     interface.implements(interfaces.ITranslatable)
 
 
-class MemberRoleTitle(Entity):
+class MemberTitle(Entity):
     """The role title a member has in a specific context and one 
     official address for a official role.
     """

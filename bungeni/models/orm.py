@@ -211,7 +211,7 @@ mapper(domain.GroupMembership, schema.user_group_memberships,
                 schema.user_group_memberships.c.membership_id),
             uselist=False,
             lazy=True),
-        "member_titles":relation(domain.MemberRoleTitle)
+        "member_titles":relation(domain.MemberTitle)
     },
     polymorphic_on=schema.user_group_memberships.c.membership_type,
     polymorphic_identity="member",
@@ -538,10 +538,13 @@ mapper(domain.GroupSittingAttendance, schema.group_sitting_attendance,
     }
 )
 mapper(domain.AttendanceType, schema.attendance_types)
-mapper(domain.MemberTitle, schema.user_role_types)
-mapper(domain.MemberRoleTitle, schema.role_titles,
+mapper(domain.TitleType, schema.title_types,
+    properties={ "group": relation(domain.Group, uselist=False, lazy=False) }
+)
+mapper(domain.MemberTitle, schema.member_titles,
     properties={
-        "title_name": relation(domain.MemberTitle, uselist=False, lazy=False),
+        "title_type": relation(domain.TitleType, uselist=False, lazy=False),
+        "member": relation(domain.GroupMembership, uselist=False, lazy=False),
     }
 )
 

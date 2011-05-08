@@ -269,20 +269,53 @@ check the pk if it was saved and pk sequence is working
  >>> constituency.constituency_id
  1L
  
+Offices
+--------------------------------
+Test office and office role and sub role creation
 
- 
+  >>> speaker_office = domain.Office()
+  >>> speaker_office.short_name = u"Speakers office"
+  >>> speaker_office.start_date = datetime.datetime.now()
+  >>> speaker_office.office_role = "bungeni.Speaker"
+  >>> speaker_office.language = "en"
+  >>> session.add(speaker_office)
+  >>> session.flush()
+  
+Speaker's Office Sub Role
 
-Role title names
-
-  >>> mrt1 = model.MemberTitle()
-  >>> mrt1.user_type = 'memberofparliament'
-  >>> mrt1.user_role_name = u"President"
-  >>> mrt1.user_unique = True
-  >>> mrt1.sort_order = 10
-  >>> mrt1.language = "en"
-  >>> session.add(mrt1)
+  >>> title_type = domain.TitleType()
+  >>> title_type.group = speaker_office
+  >>> title_type.title_name = u"Speaker's Assistant"
+  >>> title_type.role_id = "bungeni.Speaker.Assistant"
+  >>> title_type.user_unique = True
+  >>> title_type.sort_order = 10
+  >>> title_type.language = "en"
+  >>> session.add(title_type)
   >>> session.flush()
 
+Speaker's Office User
+
+  >>> office_user = domain.User()
+  >>> office_user.login = "speaker.P1_01"
+  >>> office_user.first_name = "First"
+  >>> office_user.last_name = "Last"
+  >>> office_user.email = "speaker@bungeni.org"
+  >>> office_user.gender = "M"
+  >>> office_user.language = "en"
+  
+Speaker's Office membership 
+ 
+  >>> office_membership = domain.OfficeMember()
+  >>> office_membership.user_id = office_user.user_id
+  >>> office_membership.group_id = speaker_office.group_id
+  >>> office_membership.start_date = datetime.datetime.now()
+  
+Speaker's Office Title with Sub role  
+  
+  >>> office_title = domain.MemberTitle()
+  >>> office_title.membership_id = office_membership.membership_id
+  >>> office_title.title_type_id = title_type.title_type_id
+  >>> office_title.start_date = datetime.datetime.now()
 
 Members of parliament
 ----------------------
@@ -312,19 +345,6 @@ Construct member election type
   >>> session.flush()
   >>> mp4.membership_id
   7L
-
-Titles of Members
-------------------
-Members have a title in their groups
-
-  >>> mt1 = model.MemberRoleTitle()
-  >>> mt1.membership_id = mp4.membership_id
-  >>> mt1.title_name_id = 1
-  >>> mt1.language = "en"
-  >>> mt1.start_date = datetime.datetime.now()
-  >>> mt1.title_name_id = mrt1.user_role_type_id
-  >>> session.add(mt1)
-  >>> session.flush()
       
   
 Sittings

@@ -1493,22 +1493,55 @@ class UserAddressDescriptor(AddressDescriptor):
     localizable = True
     fields = deepcopy(AddressDescriptor.fields)
 
-
-class MemberRoleTitleDescriptor(ModelDescriptor):
+class TitleTypeDescriptor(ModelDescriptor):
+    localizable = True
+    display_name = _("Title")
+    container_name = _("Titles")
+    fields = [
+        Field(name="role_id", label=_("Role associated with title"),
+            modes="view edit add listing",
+            property=schema.Choice(title=_("Role"),
+                description=_("Role associated with this title"),
+                vocabulary="bungeni.vocabulary.office_sub_roles",
+                required=True,
+            ),
+        ),
+        Field(name="title_name",
+            modes="view edit add listing",
+            property=schema.TextLine(title=_("Name"),
+                description=_("Name"),
+                required=True,
+            ),
+        ),
+        Field(name="user_unique",
+            modes="view edit add listing",
+            property=schema.Bool(title=_("User Unique"), default=True),
+        ),
+        Field(name="sort_order",
+            modes="view edit add listing",
+            property=schema.Int(title=_("Sort Order"), required=True),
+        ),
+        LanguageField("language"),
+    ]
+class MemberTitleDescriptor(ModelDescriptor):
     localizable = True
     display_name = _("Title")
     container_name = _("Titles")
 
     fields = [
-        Field(name="title_name_id", label=_("Title"), # [user-req]
+        Field(name="title_type_id", label=_("Title"),
             modes="view edit add listing",
             localizable=[
                 show("view edit listing"),
             ],
             property=schema.Choice(title=_("Title"),
-                source=vocabulary.MemberTitleSource("title_name_id"),
+                source=vocabulary.DatabaseSource(domain.TitleType,
+                    token_field="title_type_id",
+                    title_field="title_name",
+                    value_field="title_type_id"
+                ),
             ),
-            listing_column=member_title_column("title_name_id", _("Title")),
+            #listing_column=member_title_column("title_type_id", _("Title")),
         ),
         Field(name="start_date", # [user-req]
             modes="view edit add listing",

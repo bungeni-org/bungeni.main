@@ -486,7 +486,7 @@
         permission="bungeni.heading.Delete"
     />
      <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IMemberRoleTitle"
+        for="bungeni.models.interfaces.IMemberTitle"
         title="Delete"
         action="delete"
         order="99"
@@ -679,6 +679,14 @@
         title="Add Office Address..."
         action="./addresses/add"
         permission="bungeni.address.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="80"
+    />
+    <browser:menuItem menu="office_additems"
+        for="bungeni.models.interfaces.IOffice"
+        title="Add Title..."
+        action="./titles/add"
+        permission="bungeni.officetitle.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="80"
     />
@@ -916,7 +924,7 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.MemberRoleTitleContainer"
+        for="bungeni.models.domain.MemberTitleContainer"
         title="Add Title/Function..."
         action="./add"
         permission="bungeni.function.Add"

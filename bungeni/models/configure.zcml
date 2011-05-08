@@ -10,10 +10,13 @@
     <!-- !+CONSTITUENCY-Issue666(mr, 23-Jul-2010) 
     why is the include="domain.zcml" above commented? 
     -->
-    
     <!-- Security Components -->
     <include file="auth.zcml"/>
+    <include file="meta.zcml"/>
     <include file="roles.zcml"/>
+    <!-- load custom roles defined in bungeni_custom -->
+    <include package="bungeni_custom.sys.acl" file="roles.zcml" />
+    
     <include file="permissions.zcml"/>
     
     <!-- Assignment Infrastructure -->

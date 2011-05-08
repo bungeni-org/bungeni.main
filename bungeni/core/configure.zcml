@@ -17,6 +17,9 @@
     <include package="plone.transforms" />
     
     <include package="bungeni.models" />
+    <include package="bungeni.models" file="roles.zcml"/>
+    <!-- load custom roles defined in bungeni_custom -->
+    <include package="bungeni_custom.sys.acl" file="roles.zcml" />
     <include package="bungeni.portal" />
     
     <!-- Application to publish -->
@@ -268,7 +271,7 @@
     <adapter factory=".dc.TabledDocumentDescriptiveProperties" />
     <adapter factory=".dc.ConstituencyDetailsDescriptiveProperties" />
     <adapter factory=".dc.GroupItemAssignmentDescriptiveProperties" />
-    <adapter factory=".dc.MemberRoleTitleDescriptiveProperties" />
+    <adapter factory=".dc.MemberTitleDescriptiveProperties" />
     <adapter factory=".dc.ReportDescriptiveProperties" />
     <adapter factory=".dc.ItemScheduleCategoryDescriptiveProperties" />
     <adapter factory=".dc.UserDelegationDescriptiveProperties" />

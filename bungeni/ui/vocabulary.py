@@ -19,6 +19,7 @@ from bungeni.models import schema, domain, utils, delegation
 from bungeni.models.interfaces import ITranslatable, ICosignatory
 
 from zope.schema.interfaces import IVocabularyFactory
+from zope.component import getUtility
 from zope.i18n import translate
 
 from zope.component import getUtilitiesFor
@@ -33,6 +34,8 @@ from bungeni.ui.calendar.utils import nth_day_of_week
 from bungeni.ui.utils import common
 from bungeni.ui.interfaces import ITreeVocabulary
 
+from bungeni.models.interfaces import ISubRoleAnnotations
+from bungeni.models.interfaces import IOffice
 #tree vocabulary
 from bungeni.core.language import get_default_language
 try:
@@ -152,7 +155,22 @@ class OfficeRoles(object):
 
 office_roles = OfficeRoles()
 
+class OfficeSubRoles(object):
+    interface.implements(IVocabularyFactory)
+    def __call__(self, context):
+        terms = []
+        while not IOffice.providedBy(context):
+            context = context.__parent__
+            if not context:
+                raise NotImplementedError("Context does not implement IOffice")
+        trusted = removeSecurityProxy(context)
+        role=getUtility(IRole, trusted.office_role)
+        for sub_role in ISubRoleAnnotations(role).sub_roles:
+            print sub_role
+            terms.append(vocabulary.SimpleTerm(sub_role, sub_role, sub_role))
+        return vocabulary.SimpleVocabulary(terms)
 
+office_sub_roles = OfficeSubRoles()
         
 class DatabaseSource(bungeni.alchemist.vocabulary.DatabaseSource):
     
@@ -564,7 +582,7 @@ class MinistrySource(SpecializedSource):
                 ))            
         return vocabulary.SimpleVocabulary(terms)
 
-class MemberTitleSource(SpecializedSource):
+'''class MemberTitleSource(SpecializedSource):
     """ get titles (i.e. roles/functions) in the current context """
     
     def __init__(self, value_field):
@@ -597,7 +615,7 @@ class MemberTitleSource(SpecializedSource):
                     token = getattr(obj, 'user_role_type_id'),
                     title = getattr(obj, 'user_role_name'),
                    ))
-        return vocabulary.SimpleVocabulary(terms)
+        return vocabulary.SimpleVocabulary(terms)'''
 
                     
 class UserSource(SpecializedSource):

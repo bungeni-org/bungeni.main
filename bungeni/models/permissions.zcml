@@ -209,7 +209,13 @@
   <permission id="bungeni.address.Delete" title="Delete address" />
   <permission id="bungeni.address.View" title="View address" />
   <meta:redefinePermission from="bungeni.address.View" to="zope.View" />
-
+  
+  <permission id="bungeni.officetitle.Add" title="Add address" />
+  <permission id="bungeni.officetitle.Edit" title="Edit address" />
+  <permission id="bungeni.officetitle.Delete" title="Delete address" />
+  <permission id="bungeni.officetitle.View" title="View address" />
+  <meta:redefinePermission from="bungeni.officetitle.View" to="zope.View" />
+    
   <permission id="bungeni.delegation.Add" title="Add delegation" />
   <permission id="bungeni.delegation.Edit" title="Edit delegation" />
   <permission id="bungeni.delegation.Delete" title="Delete delegation" />

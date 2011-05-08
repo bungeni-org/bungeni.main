@@ -284,8 +284,8 @@ class GroupMemberTitle(object):
     group at the same time"""
 
 group_member_title = rdb.join(schema.user_group_memberships, 
-        schema.role_titles).join(
-            schema.user_role_types)
+        schema.member_titles).join(
+            schema.title_types)
             
                         
 rdb.orm.mapper( GroupMemberTitle, group_member_title )
@@ -303,13 +303,13 @@ def validate_member_titles(action, data, context, container):
                 rdb.and_(
                     schema.user_group_memberships.c.group_id == group_id,
                     schema.user_group_memberships.c.membership_id == membership_id,
-                    schema.role_titles.c.title_name_id == title_name_id,
+                    schema.member_titles.c.title_type_id == title_type_id,
                     rdb.or_(
                         rdb.between(
                             date, 
-                            schema.role_titles.c.start_date,
-                            schema.role_titles.c.end_date),
-                        schema.role_titles.c.end_date == None
+                            schema.member_titles.c.start_date,
+                            schema.member_titles.c.end_date),
+                        schema.member_titles.c.end_date == None
                         )
                     )
                 )
@@ -317,14 +317,14 @@ def validate_member_titles(action, data, context, container):
         return session.query(GroupMemberTitle).filter(
             rdb.and_(
                 schema.user_group_memberships.c.group_id == group_id,
-                schema.user_role_types.c.user_unique == True,
-                schema.role_titles.c.title_name_id == title_name_id,
+                schema.title_types.c.user_unique == True,
+                schema.member_titles.c.title_type_id == title_type_id,
                 rdb.or_(
                     rdb.between(
                         date, 
-                        schema.role_titles.c.start_date,
-                        schema.role_titles.c.end_date),
-                    schema.role_titles.c.end_date == None
+                        schema.member_titles.c.start_date,
+                        schema.member_titles.c.end_date),
+                    schema.member_titles.c.end_date == None
                     )
                 )
             )
@@ -333,20 +333,20 @@ def validate_member_titles(action, data, context, container):
     user_id = container.__parent__.user_id
     membership_id = container.__parent__.membership_id
     session = Session()
-    title_name_id = data['title_name_id']
-    if interfaces.IMemberRoleTitle.providedBy(context):
-        roletitle = context
+    title_type_id = data['title_type_id']
+    if interfaces.IMemberTitle.providedBy(context):
+        title = context
     else:
-        roletitle = None
+        title = None
     date = datetime.date.today()
     if  data.get( 'start_date', None):
         date = data['start_date']
         q = get_q_user(date)
         results = q.all()
         for result in results:
-            overlaps = result.user_role_name
-            if roletitle:
-                if roletitle.role_title_id == result.role_title_id:
+            overlaps = result.title_name
+            if title:
+                if title.member_title_id == result.member_title_id:
                     continue
                 else:
                     errors.append( interface.Invalid(
@@ -363,9 +363,9 @@ def validate_member_titles(action, data, context, container):
         q = get_q_user(date)
         results = q.all()
         for result in results:
-            overlaps = result.user_role_name
-            if roletitle:
-                if roletitle.role_title_id == result.role_title_id:
+            overlaps = result.title_name
+            if title:
+                if title.member_title_id == result.member_title_id:
                     continue
                 else:
                     errors.append( interface.Invalid(
@@ -382,9 +382,9 @@ def validate_member_titles(action, data, context, container):
         q = get_q_unique(date)
         results = q.all()
         for result in results:
-            overlaps = result.user_role_name
-            if roletitle:
-                if roletitle.role_title_id == result.role_title_id:
+            overlaps = result.title_name
+            if title:
+                if title.member_title_id == result.member_title_id:
                     continue
                 else:
                     errors.append( interface.Invalid(
@@ -402,9 +402,9 @@ def validate_member_titles(action, data, context, container):
         q = get_q_unique(date)
         results = q.all()
         for result in results:
-            overlaps = result.user_role_name
-            if roletitle:
-                if roletitle.role_title_id == result.role_title_id:
+            overlaps = result.title_name
+            if title:
+                if title.member_title_id == result.member_title_id:
                     continue
                 else:
                     errors.append( interface.Invalid(

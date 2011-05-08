@@ -130,6 +130,9 @@
     <utility name="bungeni.vocabulary.office_roles"
         component=".vocabulary.office_roles"
     />
+    <utility name="bungeni.vocabulary.office_sub_roles"
+        component=".vocabulary.office_sub_roles"
+    />
     <utility name="bungeni.vocabulary.Venues"
         component=".vocabulary.venues_factory"
         provides="zope.schema.interfaces.IVocabularyFactory"

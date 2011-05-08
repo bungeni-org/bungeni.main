@@ -1,10 +1,14 @@
 <?xml version="1.0"?>
 <configure xmlns="http://namespaces.zope.org/zope"
     xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:bungeni="http://namespaces.bungeni.org/zope"
     i18n_domain="bungeni">
-    
+    <class class="zope.securitypolicy.role.Role">
+        <implements interface="zope.annotation.interfaces.IAttributeAnnotatable"/>
+    </class>
+    <adapter factory="bungeni.models.roles.SubRoleAnnotations"/>
     <!-- custom roles -->
-    
+    <include file="meta.zcml"/>
     <role id="zope.Manager" title="Site Manager" />
     <role id="bungeni.Admin" title="Bungeni Admin" />
     <role id="bungeni.Clerk" title="Clerks Office" />
@@ -15,8 +19,4 @@
     <role id="bungeni.Translator" title="Translators Office" />
     <role id="bungeni.Authenticated" title="All authenticated users" />
     <role id="bungeni.Anonymous" title="Bungeni Visitor" />
-
-    <!-- load custom roles defined in bungeni_custom -->
-    <include package="bungeni_custom.sys.acl" file="roles.zcml" />
-    
 </configure>
