@@ -231,6 +231,10 @@
             theme="children:#portal-column-content"
         />
         
+        <pyquery pyref=
+            "bungeni.portal.static.themes.rules:reposition_contentActions"
+        />      
+        
         <!-- body attributes -->
         <append content="attributes:body" theme="attributes:body" />
         <pyquery pyref=

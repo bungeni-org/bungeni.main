@@ -154,6 +154,23 @@ def add_rss_feeds(content, theme, resource_fetcher, log):
         except:
             pass
 
+def reposition_contentActions(content, theme, resource_fetcher, log):
+    """
+    Move '.contentActions below '.documentDescription'
+    !+ Some pages have 2 document descriptions whilst others have none,
+    hence the explicit check. Should be revised immediately each document has 
+    one top level description.
+    """
+    element_length = len(theme(".documentDescription"))
+    if element_length == 1:
+        ca = theme(".contentActions")
+        theme.remove(".contentActions")            
+        ca.insertAfter(theme(".documentDescription")) 
+    elif element_length == 2:
+        ca = theme(".contentActions")
+        theme.remove(".contentActions")            
+        ca.insertAfter(theme(".documentDescription:nth-child(2)"))             
+ 
 
 def enable_text_editor(content, theme, resource_fetcher, log):
     """
