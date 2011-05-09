@@ -5,8 +5,10 @@ $begin{generic}
     $overlay{bungeni.html}
     $begin{content}
     <div>
+        #[ !+SITE_NORMALIZED_TITLE_DESCRIPTION ]#
         #[ !+form_name(mr, sep-2010) shouldn't this just be view.page_title? ]#
         <h1 class="title">${ i18n(getattr(view, "form_name", " ")) }</h1>
+        <p class="documentDescription">${ i18n(view.page_description or " ") }</p>
         <form action="${ request.URL }" 
             method="post"
             class="edit-form" 
