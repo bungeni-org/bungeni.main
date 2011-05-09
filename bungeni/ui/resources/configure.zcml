@@ -37,7 +37,13 @@
     />
   </resourceLibrary>
 
-  <resourceLibrary name="dynatree" require="jqueryui">
+  <resourceLibrary name="jquerycookie" require="jquery">
+    <directory source="jquery"
+        include="plugins/jquery.cookie.js"
+    />
+  </resourceLibrary>
+
+  <resourceLibrary name="dynatree" require="jqueryui jquerycookie">
     <directory
        zcml:condition="not-have devmode"
        source="dynatree"

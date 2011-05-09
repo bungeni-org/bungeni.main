@@ -18,7 +18,6 @@
  */
 
 var ploneFormTabbing = {};
-var BN_TAB_COOKIE = 'BN_TAB_COOKIE'
 
 ploneFormTabbing._toggleFactory = function(container, tab_ids, panel_ids) {
     return function(e) {
@@ -30,8 +29,7 @@ ploneFormTabbing._toggleFactory = function(container, tab_ids, panel_ids) {
         var id = orig_id.replace(/^#fieldsetlegend-/, "#fieldset-");
         jQuery(orig_id).addClass('selected');
         jQuery(id).removeClass('hidden');
-        options = { path: window.location.pathname, expires: null }
-        jQuery.cookie(BN_TAB_COOKIE, orig_id, options);
+
         jQuery(container).find("input[name=fieldset.current]").val(orig_id);
         return false;
     };
@@ -111,17 +109,8 @@ ploneFormTabbing.initializeDL = function() {
     jQuery(this).children('dd').addClass('formPanel');
 
     tabs = tabs.find('li.formTab a,option.formTab');
-    tabFilter = ':first'
-    targetPane = window.location.hash || jQuery.cookie(BN_TAB_COOKIE);
-    if (targetPane)
-        tabFilter = unescape(targetPane)
     if (tabs.length)
-        target_el = tabs.filter(tabFilter)
-        if (target_el.length){
-            ploneFormTabbing.select(tabs.filter(tabFilter));
-        }else{
-            ploneFormTabbing.select(tabs.filter(':first'))
-        }
+        ploneFormTabbing.select(tabs.filter(':first'));
 };
 
 ploneFormTabbing.initializeForm = function() {
