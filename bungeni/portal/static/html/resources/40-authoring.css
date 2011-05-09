@@ -133,6 +133,12 @@
 .actionMenu .actionMenuHeader a {
     display: block;
 }
+
+.actionMenu .actionMenuHeader a:first-child {
+    display: block;
+	z-index:99999 !important;
+}
+
 .arrowDownAlternative {
     font-size: 0.85em;
 }
@@ -219,6 +225,10 @@ dl#plone-contentmenu-translation dt a {
 dl#plone-contentmenu-calendar dt a {
 	padding-left: 22px;
 	background: transparent url(images/calendar_2.png) 2px 2px no-repeat;
+}
+
+dl#plone-contentmenu-workflow dt a {
+	border-left:1px solid #fff !important; /**/
 }
 
 dl#context_actions.actionMenu .actionMenuHeader {
@@ -325,6 +335,12 @@ dl#context_actions.actionMenu .actionMenuContent ul li a#files {
 }
 dl#context_actions.actionMenu .actionMenuContent ul li a#st-attendance {
 	background-image: url(images/page_white_edit.png) ;
+}
+dl#context_actions.actionMenu .actionMenuContent ul li a {
+	border-right:0px solid #fff !important; /**/
+}
+ul#contentActionMenus li {
+	border-left:0px solid #fff !important; /**/
 }
 #templateMenu li a {
     padding-left: 16px;

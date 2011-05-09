@@ -89,7 +89,7 @@
     margin-left:auto;
     margin-right:auto;
     width:960px;    
-    height:106px;
+    height:100px;
     position:relative;
 }
 .template-portal #portal-logo {
@@ -98,6 +98,20 @@
     width:662px;
     height: 96px;
     background: url(/static/images/portal_banner.png) top left no-repeat;
+}
+.template-workspace #portal-logo {
+    display: block;
+    height: 50px;
+    margin: 0;
+    padding: .5em 0;
+    background:#4d4d4d url(/static/images/empowered.png) center right no-repeat;
+	margin-right:7px;
+}
+.template-workspace #portal-logo img {
+    border: 0 none;
+    margin: 0;
+    padding:0;
+    float:left !important;
 }
 /* 
  * if display is set to block it will display the logo used on the workspace
@@ -149,7 +163,7 @@ b, strong {
     width:98%;
     text-align:center;
     height:100px;
-    background: #434343 url(/static/images/workspace-border-right.png) top right repeat-y;
+    background: #4d4d4d url(/static/images/workspace-border-right.png) top right repeat-y;
     padding-right:10px;
     margin-right:0px;
 }
@@ -209,6 +223,9 @@ b, strong {
     border: 0 none;
     margin: 0;
     line-height: 0.7em;
+}
+.template-workspace #top-layer ul#portal-personaltools {
+	margin-right:6px;
 }
 #top-layer ul#portal-personaltools li {
     margin: 0;
@@ -341,6 +358,11 @@ b, strong {
     text-transform: none;
     white-space: nowrap;
     z-index: 2;
+	clear:both;
+}
+
+section-bungeni-login #portal-search form {
+    padding-right:20px;
 }
 
 
@@ -503,6 +525,14 @@ div.main-column h3 {
     padding: 0;
     margin: 0;
 }
+
+/*#portal-column-content div ul#contentActionMenus {
+	clear:both;
+	margin-top:100px;
+	width:100%;
+	position:absolute;
+	border:1px solid red;
+}*/
 
 .section-bungeni-admin #portal-column-content {
     padding: 0;
@@ -1361,15 +1391,32 @@ div#portal-globalnav ul.level0 li a:hover,
 }
 .template-workspace div#portal-globalnav ul.level0 li.selected a,
 .template-workspace div#portal-globalnav ul.level0 li a:hover {
-    border-top: 2px solid #1763aa;
+    border-top: 2px solid #c8631b;
     border-bottom: 1px solid #d8d8d9;
     background: #d8d8d9 url(/static/images/w-globalnav-level0-a.png) top left repeat-x;
 }
 .template-workspace.section-bungeni-business div#portal-globalnav ul.level0 li#portaltab-business-whats-on a {
-    border-top: 2px solid #1763aa;
+    border-top: 2px solid #c8631b;
     border-bottom: 1px solid #d8d8d9;
-    background: #d8d8d9 url(/static/images/w-globalnav-level0-a.png) top left repeat-x;
+    background: #f9ac32 url(/static/images/w-globalnav-level0-a.png) top left repeat-x;
 }
+.template-workspace div#portal-globalnav ul.level0 li#portaltab-:first-child a,
+.template-workspace div#portal-globalnav ul.level0 li#portaltab-:first-child a:hover {
+	border-top:2px solid #1763aa;
+    background: url(/static/images/w-globalnav-level0-a-first.png) top left repeat-x !important;
+	color:#fff !important;
+	text-shadow:0 0 0 #fff;
+}
+
+.template-workspace div#portal-globalnav ul.level0 li#portaltab-admin-content a:hover,
+.section-bungeni-admin div#portal-globalnav ul.level0 li#portaltab-admin-content a,
+.section-bungeni-admin div#portal-globalnav ul.level0 li#portaltab-admin-content a:hover {
+	border-top:2px solid #666;
+    background: url(/static/images/w-globalnav-level0-a-last.png) top left repeat-x !important;
+	color:#fff !important;
+	text-shadow:0 0 0 #fff;
+}
+
 /*
  * Notes:
  * - this has been positioned absolutely because of it's location in the
@@ -1390,7 +1437,8 @@ div#portal-globalnav ul.level0 ul.level1 {
     left: 0;
     height: 2em;
     margin: 0 0 0 0;
-    border: 1px solid #fb9c14;
+    border: 0px solid #fb9c14;
+	border-right:1px solid #fb9c14;
     border-top: 0 none;
     width: 99.9%;
     background: #f9ac32 url(/static/images/globalnav-level1-bg.png) bottom left repeat-x;
@@ -1402,10 +1450,29 @@ div#portal-globalnav ul.level0 ul.level1 {
 .template-workspace div#portal-globalnav ul.level0 ul.level1 {
     width: 100%;
     border: 1px solid #aaf;
-    border-right: 0 none;
+    border-right: 0 !important;
     border-top: 0 none !important;
     border-bottom:1px solid #d8d8d9;
-    background:#d8d8d9 url(/static/images/w-globalnav-level1-bg.png) bottom left repeat-x !important;
+    background:#f9ac32 url(/static/images/w-globalnav-level1-bg.png) bottom left repeat-x !important;
+    display: block;
+	width: 99.9%;
+}
+.section-bungeni-workspace div#portal-globalnav ul.level0 ul.level1 {
+    width: 99.97%;
+    border: 1px solid #aaf;
+    border-right: 0 none;
+    border-top: 0 none !important;
+    border-bottom:1px solid #1763aa;
+    background:#21a1ba url(/static/images/w-globalnav-level1-bg-first.png) bottom left repeat-x !important;
+    display: block;
+}
+.section-bungeni-admin div#portal-globalnav ul.level0 ul.level1 {
+    width: 99.97%;
+    border: 1px solid #aaf;
+    border-right: 0 none;
+    border-top: 0 none !important;
+    border-bottom:1px solid #1763aa;
+    background:#888888 url(/static/images/w-globalnav-level1-bg-last.png) bottom left repeat-x !important;
     display: block;
 }
 /* new */
@@ -1478,7 +1545,9 @@ div#portal-globalnav ul.level0 ul.level1 li.selected a {
 .template-workspace div#portal-globalnav ul.level0 ul.level1 li.selected a {
     color: #1763aa !important;
 }
-
+.section-bungeni-workspace div#portal-globalnav ul.level0 ul.level1 li.selected a {
+    color:#333 !important;
+}
 .template-login_form div#portal-globalnav {
     display: none;
 }
@@ -2222,19 +2291,7 @@ span.yui-button.yui-link-button span a {
     padding-bottom: 25px;
     position: relative;
 }
-.template-workspace #portal-logo {
-    display: block;
-    height: 50px;
-    margin: 0;
-    padding: .5em 0;
-    background:#4d4d4d url(/static/images/empowered.png) center right no-repeat;
-}
-.template-workspace #portal-logo img {
-    border: 0 none;
-    margin: 0;
-    padding:0;
-    float:left !important;
-}
+
 
 /*
  * random styles
@@ -2299,7 +2356,7 @@ h4.tabberHeading {
     background: #F3F3F3;
 }
 
-.section-bungeni-login #alchemist-form{
+.section-bungeni-login form#alchemist-form.bungeniapp-form {
     width: 190px;
     margin: 0 auto;
     border-top: 1px solid #ddd;
@@ -2587,4 +2644,8 @@ div.main-column #collage h2 {
 .search-result-item div.title a {
     color:#f79f10 !important;
     font-weight:bold;    
+}
+
+#secondary {
+	display:none !important;
 }
