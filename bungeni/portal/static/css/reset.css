@@ -376,7 +376,7 @@ b, strong {
 }
 .section-bungeni-workspace #portal-search {
     float: right;
-    margin-top: 20px;
+    margin-top: 0px;
 	margin-right:10px;
 	margin-bottom:0px;
     padding: 2px 0.1em 0em 0;
@@ -2381,8 +2381,11 @@ h4.tabberHeading {
 .section-bungeni-archive .documentContent {
     padding: 0 0 2em !important;
 }
-.template-workspace .contentActions, .template-portal .contentActions { /*toughie*/
+.template-portal .contentActions { /*toughie*/
 	margin-top:0px !important;
+	padding-top:-20px !important;
+}
+.template-workspace.section-bungeni-workspace .contentActions, .template-portal .contentActions { /*toughie*/
 	padding-top:-20px !important;
 }
 
