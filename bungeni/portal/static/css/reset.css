@@ -502,12 +502,19 @@ div.main-column h2 {
 .template-portal div.main-column h2 {        
     /*margin: -4em 0 0.5em;    */
 }
-.template-workspace.section-bungeni-workspace div.main-column h2,
-.template-workspace.section-bungeni-admin div.main-column h2 {
+.template-workspace.section-bungeni-workspace div.main-column h2 {
     font-weight: bold !important;
     color: #222 !important;
     margin-top: 1em;
 }
+
+.template-workspace.section-bungeni-admin div.main-column h2,
+.template-workspace.section-bungeni-admin div.main-column h1 {
+    font-weight: bold !important;
+    color: #222 !important;
+    margin-top: 2.5em !important;
+}
+
 div.main-column h2 span {
     font-size: 75%;
     font-weight: normal;
