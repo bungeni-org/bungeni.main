@@ -168,8 +168,8 @@ def get_groups_held_for_user_in_parliament(user_id, parliament_id):
         schema.groups.c.full_name,
         schema.groups.c.type,
         schema.title_types.c.title_name,
-        schema.role_titles.c.start_date,
-        schema.role_titles.c.end_date,
+        schema.member_titles.c.start_date,
+        schema.member_titles.c.end_date,
         schema.user_group_memberships.c.start_date,
         schema.user_group_memberships.c.end_date,
         ],
@@ -177,18 +177,18 @@ def get_groups_held_for_user_in_parliament(user_id, parliament_id):
         rdb.join(schema.groups, schema.user_group_memberships,
         schema.groups.c.group_id == schema.user_group_memberships.c.group_id
             ).outerjoin(
-            schema.role_titles, schema.user_group_memberships.c.membership_id ==
-            schema.role_titles.c.membership_id).outerjoin(
+            schema.member_titles, schema.user_group_memberships.c.membership_id ==
+            schema.member_titles.c.membership_id).outerjoin(
                 schema.title_types,
-                schema.role_titles.c.title_name_id ==
+                schema.member_titles.c.title_type_id ==
                     schema.title_types.c.title_type_id)],
             whereclause=rdb.and_(
                 schema.groups.c.group_id.in_(group_ids),
                 schema.user_group_memberships.c.user_id == user_id),
             order_by=[schema.user_group_memberships.c.start_date,
                         schema.user_group_memberships.c.end_date,
-                        schema.role_titles.c.start_date,
-                        schema.role_titles.c.end_date]
+                        schema.member_titles.c.start_date,
+                        schema.member_titles.c.end_date]
             )
     o_held = connection.execute(offices_held)
     return o_held

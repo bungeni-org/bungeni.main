@@ -169,10 +169,10 @@ def deactivateGroupMembers(group):
         group_members = rdb.select([schema.user_group_memberships.c.user_id],
                  schema.user_group_memberships.c.group_id == group_id)
         connection.execute(
-            schema.role_titles.update().where(
+            schema.member_titles.update().where(
                 rdb.and_( 
-                    schema.role_titles.c.membership_id.in_(group_members),
-                    schema.role_titles.c.end_date == None
+                    schema.member_titles.c.membership_id.in_(group_members),
+                    schema.member_titles.c.end_date == None
                 ) 
             ).values(end_date=end_date)
         )
