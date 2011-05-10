@@ -380,13 +380,12 @@
         class=".calendar.browser.CalendarView"
         permission="zope.View"
     />
-  <browser:page
-     for="bungeni.models.interfaces.IGroupSitting"
-     permission="bungeni.sittingschedule.View"
-     name="schedule"
-     class=".calendar.browser.GroupSittingScheduleView"
+    <browser:page name="schedule"
+        for="bungeni.models.interfaces.IGroupSitting"
+        permission="bungeni.sittingschedule.View"
+        class=".calendar.browser.GroupSittingScheduleView"
     />
-
+    
       <browser:page
      name="schedule_order"
      for="bungeni.models.interfaces.IGroupSitting"
