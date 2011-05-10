@@ -1,6 +1,6 @@
 $(document).ready(function() {
       // wire workflow dropdown menu to use POST actions
-      var menu_links = $('#plone-contentmenu-workflow dd.actionMenuContent a');
+      var menu_links = $('#context_workflow dd.actionMenuContent a');
       menu_links.bungeniPostWorkflowActionMenuItem();
 
       // set up parliament date range selection

@@ -2365,8 +2365,8 @@ h4.tabberHeading {
 .template-private_folder ul.contentViews,
 .template-web_pages #plone-contentmenu-actions,
 .template-private_folder #plone-contentmenu-actions,
-.template-web_pages #plone-contentmenu-workflow,
-.template-privateshell_folder #plone-contentmenu-workflow {
+.template-web_pages #context_workflow,
+.template-privateshell_folder #context_workflow {
     display: none;
 }
 .indItem {

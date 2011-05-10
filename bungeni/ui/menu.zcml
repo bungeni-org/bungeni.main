@@ -142,8 +142,8 @@
         order="20"
         layer=".interfaces.IWorkspaceSchedulingSectionLayer"
     />
+    
     <!-- add menus for content -->
-
     <browser:menu id="party_additems"
         title="The 'Add...' menu - for political parties"
         class="ploned.ui.menu.PloneBrowserMenu"

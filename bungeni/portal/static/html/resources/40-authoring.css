@@ -214,20 +214,20 @@ dl#reports dt a {
 	padding-left: 22px;
 	background: transparent url(images/clipboard.png) 2px 2px no-repeat;
 }
-dl#plone-contentmenu-workflow dt a {
+dl#context_workflow dt a {
 	padding-left: 22px;
 	background: transparent url(images/clock_16.png) 2px 2px no-repeat;
 }
-dl#plone-contentmenu-translation dt a {
+dl#context_translate dt a {
 	padding-left: 22px;
 	background: transparent url(images/flag_grey.png) 2px 2px no-repeat;
 }
-dl#plone-contentmenu-calendar dt a {
+dl#context_calendar dt a {
 	padding-left: 22px;
 	background: transparent url(images/calendar_2.png) 2px 2px no-repeat;
 }
 
-dl#plone-contentmenu-workflow dt a {
+dl#context_workflow dt a {
 	border-left:1px solid #fff !important; /**/
 }
 

@@ -5,40 +5,34 @@ from zope import component
 from zope.app.component.hooks import getSite
 from zope.app.security.interfaces import IUnauthenticatedPrincipal
 from zope.app.publisher.interfaces.browser import IBrowserMenu
-from zope.app.publisher.browser.menu import BrowserMenu
-from zope.app.publisher.browser.menu import BrowserSubMenuItem
+import zope.app.publisher.browser.menu
 from zope.security import checkPermission
 from zope.i18n import translate
-from bungeni.models.utils import get_current_parliament_committees
 import z3c.menu.ready2go.item
 
 from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowController
 
 from bungeni.models.utils import get_db_user_id
-from bungeni.models.interfaces import IBungeniApplication, IBungeniContent
 
 from bungeni.core.translation import get_language
 from bungeni.core.translation import get_all_languages
 from bungeni.core.translation import get_available_translations
 from bungeni.core import schedule
 from bungeni.core.globalsettings import getCurrentParliamentId
-from bungeni.core.schedule import ISchedulingContext
 
 from bungeni.ui.i18n import  _
 from bungeni.ui.utils import url, debug
 from bungeni.ui import interfaces
-from bungeni.ui.tagged import get_states
-from bungeni.ui import interfaces
-# r5327 - following added inorder to fix issue 319. needs review
 
-''' !+ add mechanism for a better overview/control of menu order
-MENU_ORDER = [
-    None,
-    "CalendarSubMenuItem", # 10
-    "WorkflowSubMenuItem", # 40 
-    "TranslationSubMenuItem", # 50
-]
-'''
+
+class BrowserMenu(zope.app.publisher.browser.menu.BrowserMenu):
+    pass
+
+class BrowserSubMenuItem(zope.app.publisher.browser.menu.BrowserSubMenuItem):
+    @property
+    def id(self):
+        return self.submenuId
+
 
 def get_actions(name, context, request):
     menu = component.getUtility(IBrowserMenu, name)
@@ -130,7 +124,7 @@ class AdminAction(GlobalMenuItem):
 #         viewlets = component.getAdapters(
 #             (self.context, self.request, self.__parent__, self),
 #             interfaces.IViewlet)
-        
+
 
 class TranslationSubMenuItem(BrowserSubMenuItem):
     # Note: 
@@ -147,11 +141,11 @@ class TranslationSubMenuItem(BrowserSubMenuItem):
     def extra(self):
         language = get_language(self.context)
         return {
-            "id"         : "plone-contentmenu-translation",
-            "class"      : "language-%s" % language,
-            "state"      : language,
-            "stateTitle" : language
-            }
+            "id": self.id,
+            "class": "language-%s" % language,
+            "state": language,
+            "stateTitle": language
+        }
     
     @property
     def description(self):
@@ -225,22 +219,23 @@ class WorkflowSubMenuItem(BrowserSubMenuItem):
         self.context = context
         self.url = url.absoluteURL(context, request)
         self.request = request
-        
+    
     @property
     def extra(self):
         wfc = IWorkflowController(self.context, None)
         if wfc is None:
-            return {"id": "plone-contentmenu-workflow"}
-        state = wfc.state_controller.get_status()
+            return {"id": self.id}
+        status = wfc.state_controller.get_status()
         stateTitle = translate(
-            str(wfc.workflow.get_state(state).title), 
+            str(wfc.workflow.get_state(status).title), 
             domain="bungeni",
             context=self.request)
-        
-        return {"id"         : "plone-contentmenu-workflow",
-                "class"      : "state-%s" % state,
-                "state"      : state,
-                "stateTitle" : stateTitle,} # TODO: should be translated
+        return {
+            "id": self.id,
+            "class": "state-%s" % status,
+            "state": status,
+            "stateTitle" : stateTitle
+        } 
 
     @property
     def description(self):
@@ -322,8 +317,10 @@ class CalendarSubMenuItem(BrowserSubMenuItem):
         
     @property
     def extra(self):
-        return {"id": "plone-contentmenu-calendar",
-                "stateTitle": self.context.label}
+        return {
+            "id": self.id,
+            "stateTitle": self.context.label
+        }
 
     @property
     def description(self):
@@ -391,6 +388,9 @@ class CalendarMenu(BrowserMenu):
                 continue
             _url = url.absoluteURL(context, request)
             extra = {
+                # !+HTML_ID(mario, may-2011) what is the use of making the 
+                # (presumably HTML, used for styling... ) id be derived from 
+                # an sql surrogate pk ?!
                 "id": "calendar-link-%s" % group.group_id,
                 "separator": None,
                 "class": ""
