@@ -342,6 +342,9 @@ dl#context_actions.actionMenu .actionMenuContent ul li a {
 ul#contentActionMenus li {
 	border-left:0px solid #fff !important; /**/
 }
+.contentActions ul#contentActionMenus a {
+	border-bottom:0px solid #fff !important; /**/
+}
 #templateMenu li a {
     padding-left: 16px;
 }
