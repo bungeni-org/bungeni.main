@@ -78,13 +78,18 @@ from zope.traversing.browser import absoluteURL
 from bungeni.core.translation import translate_obj
 from zope.app.component.hooks import getSite
 from zope.schema import vocabulary
-    
+
+from bungeni.ui.utils import common
+from bungeni.ui.viewlets import workspace
+from bungeni.models.utils import get_current_parliament, get_db_user_id
+from bungeni.models.utils import get_current_parliament_governments
+from bungeni.models.utils import get_ministries_for_user_in_government
 
 
 from workspace import ARCHIVED
 
 ALLOWED_TYPES = {'workspace': ('Question', 'Motion', 'TabledDocument',\
-                               'Bill', 'AgendaItem', 'Committee'),\
+                               'Bill', 'AgendaItem'),\
                  'business': ('Question', 'Motion', 'Committee', 'Bill', \
                               'TabledDocument', 'AgendaItem'),
                  'archive': ('Question', 'Motion', 'Committee', \
@@ -330,14 +335,125 @@ class Search(forms.common.BaseForm, ResultListing, HighlightMixin):
         user = session.query(domain.User).filter(domain.User.login == self.request.principal.id).first()
         return user.subscriptions
 
+    def workspace_search(self):
+        """ Search in workspace section, based on views from bungeni.ui.viewlets.workspace
+        """
+        application = common.get_application()
+        parliament = get_current_parliament(None)
+        parliament.__parent__ = application
+        roles = common.get_context_roles(parliament)
+
+        # minister role, filtering by states and object_type and ministry_id
+        if not roles:
+            user_id = get_db_user_id()
+            government_id = get_current_parliament_governments(parliament)[0].group_id
+            ministries = get_ministries_for_user_in_government(user_id, government_id)
+            if ministries:
+                states = workspace.MinistryArchiveViewlet.states + \
+                         workspace.OralMinistryQuestionsViewlet.states + \
+                         workspace.WrittenMinistryQuestionsViewlet.states + \
+                         workspace.InProgressMinistryItemsViewlet.states
+                states = set(states)
+                
+                ministry_ids = [m.group_id for m in ministries]
+                
+                # filter by object_type (questions only)
+                type_query = self.searcher.query_field('object_type', "Question")
+                query = self.searcher.query_composite(self.searcher.OP_AND, \
+                                                       (self.query, type_query,))
+                
+                subqueries = []
+
+                for state in states:
+                    subqueries.append(self.searcher.query_field('status', state))
+                    
+                state_query = self.searcher.query_composite(self.searcher.OP_OR, subqueries)
+                query = self.searcher.query_composite(self.searcher.OP_AND, \
+                                                           (query, state_query,))
+                
+                #filter for ministries
+                ministries_queries = []
+                
+                for mid in ministry_ids:
+                    ministries_queries.append(self.searcher.query_field('ministry_id', str(mid)))
+                    
+                m_query = self.searcher.query_composite(self.searcher.OP_OR, ministries_queries)
+                query = self.searcher.query_composite(self.searcher.OP_AND, \
+                                                           (query, m_query,))
+                
+                try:
+                    results = self.searcher.search(query, 0, self.searcher.get_doccount())
+                except:
+                    results = []
+                
+                return list(results)
+        
+        # filtering by states and owner
+        if 'bungeni.MP' in roles:
+            states = workspace.MPItemActionRequiredViewlet.states + \
+                     workspace.MPItemDraftViewlet.states + \
+                     workspace.MPItemInProgressViewlet.states + \
+                     workspace.ItemArchiveViewlet.states
+            states = set(states)
+            # filter by owner of PI
+            owner_query = self.searcher.query_field('owner', str(get_db_user_id()))
+            query = self.searcher.query_composite(self.searcher.OP_AND, \
+                                                       (self.query, owner_query,))
+            
+            subqueries = []
+
+            for state in states:
+                subqueries.append(self.searcher.query_field('status', state))
+                
+            state_query = self.searcher.query_composite(self.searcher.OP_OR, subqueries)
+            query = self.searcher.query_composite(self.searcher.OP_AND, \
+                                                       (query, state_query,))
+            
+            try:
+                results = self.searcher.search(query, 0,
+                self.searcher.get_doccount())
+            except:
+                results = []
+                
+            return list(results)
+            
+        # filtering by states
+        if 'bungeni.Clerk' in roles:
+            states = workspace.ClerkItemActionRequiredViewlet.states + \
+                     workspace.ClerkItemsWorkingDraftViewlet.states + \
+                     workspace.ClerkReviewedItemViewlet.states + \
+                     workspace.ItemsApprovedViewlet.states + \
+                     workspace.ItemsPendingScheduleViewlet.states + \
+                     workspace.ItemsScheduledViewlet.states + \
+                     workspace.AllItemArchiveViewlet.states
+                     
+            states = set(states)
+            
+            subqueries = []
+
+            for state in states:
+                subqueries.append(self.searcher.query_field('status', state))
+                
+            state_query = self.searcher.query_composite(self.searcher.OP_OR, subqueries)
+            query = self.searcher.query_composite(self.searcher.OP_AND, \
+                                                       (self.query, state_query,))
+            
+            try:
+                results = self.searcher.search(query, 0,
+                self.searcher.get_doccount())
+            except:
+                results = []
+                
+            return list(results)
+        # no results
+        return False
+            
     @CachedProperty
     def _searchresults(self):
-        #Filter items allowed in current section
-        
         section = get_section_name()
-
         subqueries = []
 
+        # Filter items allowed in current section
         for tq in ALLOWED_TYPES[section]:
             subqueries.append(self.searcher.query_field('object_type', tq))
 
@@ -345,15 +461,23 @@ class Search(forms.common.BaseForm, ResultListing, HighlightMixin):
 
         self.query = self.searcher.query_composite(self.searcher.OP_AND, \
                                                        (self.query, type_query,))
-
+      
         try:
             results = self.searcher.search(self.query, 0,
                 self.searcher.get_doccount())
         except:
             results = []
 
-        return filter(self.authorized, results)
+        results = filter(self.authorized, results)
         
+        # in workspace section we are using different search filters based on states   
+        if section == 'workspace':
+            extra = self.workspace_search()
+            # if no results - use common search
+            if extra:
+                return extra
+
+        return results
 
     @property
     def _results(self):
@@ -532,8 +656,6 @@ class AdvancedPagedSearch(PagedSearch):
         suggestion = self.searcher.spell_correct(search_term)
         self.spelling_suggestion = (
             search_term != suggestion and suggestion or None)
-
-        print self.query
 
 
 class AjaxGetClassStatuses(BrowserView):

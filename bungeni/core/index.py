@@ -254,11 +254,6 @@ class ContentIndexer(object):
                 doc = indexer.document(connection)
                 doc.id = doc_id
                 doc.fields.append(xappy.Field('resolver', resolver.scheme))
-                #print "*****************"
-                #print doc.id
-                #print translated.__class__.__name__
-                #for field in doc.fields:
-                #    print field.name, "=", field.value
                 connection.replace(doc)
     
                 if count % flush_threshold == 0:
@@ -332,6 +327,18 @@ class MotionIndexer(ContentIndexer):
 
 class QuestionIndexer(ContentIndexer):
     domain_model = domain.Question
+    
+    def index(self, doc):    
+        # index schema fields
+        super(QuestionIndexer, self).index(doc)
+        if self.context.ministry_id:
+            doc.fields.append(xappy.Field('ministry_id', str(self.context.ministry_id)))
+    
+    @classmethod
+    def defineIndexes(self, indexer):
+        indexer.add_field_action('ministry_id', xappy.FieldActions.INDEX_EXACT)
+        indexer.add_field_action('ministry_id', xappy.FieldActions.STORE_CONTENT)
+        super(QuestionIndexer, self).defineIndexes(indexer)
 
 class GroupIndexer(ContentIndexer):
     domain_model = domain.Group
@@ -342,6 +349,9 @@ class CommitteeIndexer(ContentIndexer):
 class ParliamentIndexer(ContentIndexer):
     domain_model = domain.Parliament
     
+class TabledDocumentIndexer(ContentIndexer):
+    domain_model = domain.TabledDocument
+
 class AttachedFileIndexer(ContentIndexer):
     domain_model = domain.AttachedFile
     
@@ -431,6 +441,7 @@ def setupFieldDefinitions(indexer):
     CommitteeIndexer.defineIndexes(indexer)
     ParliamentIndexer.defineIndexes(indexer)
     AttachedFileIndexer.defineIndexes(indexer)
+    TabledDocumentIndexer.defineIndexes(indexer)
 
     if interfaces.ENABLE_LOGGING:
         log.debug("Indexer Fields Defined")
@@ -508,6 +519,7 @@ def main():
         CommitteeIndexer,
         #ParliamentMemberIndexer,
         ParliamentIndexer,
+        TabledDocumentIndexer,
         AttachedFileIndexer,
         #HansardReporterIndexer,
         ]:
