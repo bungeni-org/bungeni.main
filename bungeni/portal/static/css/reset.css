@@ -1892,7 +1892,7 @@ ul.formTabs {
     float: none;
     margin-left: auto;
     margin-right: auto;
-    width: 880px;
+    width: 870px !important;
 }
 
 dd#items-to-be-scheduled-dl ul.formTabs {
@@ -2153,6 +2153,31 @@ body.template-workspace.section-bungeni-workspace #portal-column-content div#wha
     border: 1px solid #800;
     color: #333;
     width: 94%;
+}
+.template-portal.section-bungeni-business dd.AgendaItem dl.portalMessage,
+.template-portal.section-bungeni-business dd.TabledDocument dl.portalMessage,
+.template-portal dd.Committee dl.portalMessage {
+	margin-top:-135px !important;
+    width: 98.5%;
+}
+.template-workspace.section-bungeni-business dd.TabledDocument dl.portalMessage,
+.template-workspace.section-bungeni-business dd.AgendaItem dl.portalMessage,
+.template-workspace.section-bungeni-workspace dd.TabledDocument dl.portalMessage {
+	margin-top:-172px !important;
+    width: 94%;
+}
+.template-workspace dd.Committee dl.portalMessage {
+	margin-top:-166px !important;
+    width: 94%;
+}
+.template-workspace dd.MemberOfParliament dl.portalMessage {
+	margin-top:-190px !important;
+    width: 98% !important;
+}
+.template-workspace.section-bungeni-workspace dd.Question dl.portalMessage,
+.template-workspace.section-bungeni-workspace dd.Motion dl.portalMessage {
+	margin-top:-237px !important;
+    width: 98%;
 }
 .template-portal dl.portalMessage {
     margin: -14.5em 0 12em 0;
