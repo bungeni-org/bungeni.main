@@ -72,6 +72,9 @@ def load_workflow(name, iface,
         component.provideAdapter(bungeni.core.version.ContextVersioned,
             (bungeni.core.interfaces.IVersionable,),
             bungeni.core.interfaces.IVersioned)
+    #!+IWorkflowed(mr, may-2010)
+    component.provideAdapter(get_object_state, (iface,), 
+        zope.securitypolicy.interfaces.IRolePermissionMap)
 
 
 def load_workflows():
@@ -95,8 +98,9 @@ def load_workflows():
     load_workflow("version", interfaces.IVersion) # !+VERSION_WORKFLOW(mr, apr-2011)
     
     # IRolePermissionMap adapter for workflowed objects
-    component.provideAdapter(get_object_state, (interfaces.IBungeniContent,), 
-        zope.securitypolicy.interfaces.IRolePermissionMap)
+    #!+IWorkflowed(mr, may-2010)
+    #component.provideAdapter(get_object_state, (interfaces.IBungeniContent,), 
+    #    zope.securitypolicy.interfaces.IRolePermissionMap)
     # !+RolePermissionMap(mr, may-2011) executing this adapter registration at 
     # module top level (i.e. not within this def) does not work for the tests 
 
