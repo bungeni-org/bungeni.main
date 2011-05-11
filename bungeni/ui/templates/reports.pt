@@ -82,14 +82,14 @@
                             </h3>
                         </span>
                                   
-                        <span tal:condition="view/options/bills_cosignatories | nothing">
-                            <h3 class="reportcosignatories">
-                                <span tal:condition="cosignatory/item/cosignatories | nothing"> Cosignatories :
-                                    <tal:loop tal:repeat="cosignatory scheduled/item/cosignatories"> 
-                                        <span tal:replace="cosignatory/first_name" 
-                                              tal:condition="cosignatory/first_name | nothing"/> 
-                                        <span tal:replace="cosignatory/last_name" 
-                                              tal:condition="cosignatory/last_name | nothing" />, 
+                        <span tal:condition="view/options/bills_signatories | nothing">
+                            <h3 class="reportsignatories">
+                                <span tal:condition="signatory/item/signatories | nothing"> Signatories :
+                                    <tal:loop tal:repeat="signatory scheduled/item/signatories"> 
+                                        <span tal:replace="signatory/first_name" 
+                                              tal:condition="signatory/first_name | nothing"/> 
+                                        <span tal:replace="signatory/last_name" 
+                                              tal:condition="signatory/last_name | nothing" />, 
                                     </tal:loop>
                                 </span>
                             </h3>

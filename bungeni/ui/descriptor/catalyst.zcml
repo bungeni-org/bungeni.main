@@ -157,8 +157,8 @@
         ui_module="bungeni.ui.content" 
         echo="False"
     />
-    <db:catalyst class="bungeni.models.domain.Cosignatory"
-        descriptor=".descriptor.CosignatoryDescriptor"
+    <db:catalyst class="bungeni.models.domain.Signatory"
+        descriptor=".descriptor.SignatoryDescriptor"
         interface_module="bungeni.models.interfaces"
         ui_module="bungeni.ui.content"
         echo="False"

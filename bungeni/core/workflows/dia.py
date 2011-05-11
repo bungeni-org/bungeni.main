@@ -36,6 +36,8 @@ def main(argv):
         dot(get_workflow("committee")))
     write_file(output_folder, "parliament.dot", 
         dot(get_workflow("parliament")))
+    write_file(output_folder, "signatory.dot", 
+        dot(get_workflow("signatory")))
 
 
 if __name__ == "__main__":

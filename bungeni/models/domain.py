@@ -447,7 +447,10 @@ class ItemVotes(object):
 class ParliamentaryItem(Entity):
     """
     """
-    interface.implements(interfaces.IBungeniContent, interfaces.ITranslatable)
+    interface.implements(interfaces.IBungeniContent, 
+        interfaces.IBungeniParliamentaryContent,
+        interfaces.ITranslatable
+    )
     #     interfaces.IHeadFileAttachments)
 
     sort_on = ["parliamentary_items.status_date"]
@@ -535,8 +538,8 @@ class Question(ParliamentaryItem, _AdmissibleMixin):
     #"bungeni.models.domain.QuestionContainer", "supplement_parent_id")
     event = one2many("event",
         "bungeni.models.domain.EventItemContainer", "item_id")
-    cosignatory = one2many("cosignatory",
-        "bungeni.models.domain.CosignatoryContainer", "item_id")
+    signatories = one2many("signatories",
+        "bungeni.models.domain.SignatoryContainer", "item_id")
     versions = one2many("versions",
         "bungeni.models.domain.QuestionVersionContainer", "content_id")
     sort_on = ParliamentaryItem.sort_on + ["question_number"]
@@ -554,8 +557,8 @@ QuestionVersion = ItemVersions.makeVersionFactory("QuestionVersion")
 class Motion(ParliamentaryItem, _AdmissibleMixin):
     #interface.implements(bungeni.core.interfaces.IVersionable)
     
-    cosignatory = one2many("cosignatory",
-        "bungeni.models.domain.CosignatoryContainer", "item_id")
+    signatories = one2many("signatories",
+        "bungeni.models.domain.SignatoryContainer", "item_id")
     event = one2many("event",
         "bungeni.models.domain.EventItemContainer", "item_id")
     versions = one2many("versions",
@@ -579,8 +582,8 @@ class BillType(Entity):
 class Bill(ParliamentaryItem):
     #interface.implements(bungeni.core.interfaces.IVersionable)
     
-    cosignatory = one2many("cosignatory",
-        "bungeni.models.domain.CosignatoryContainer", "item_id")
+    signatories = one2many("signatories",
+        "bungeni.models.domain.SignatoryContainer", "item_id")
     event = one2many("event",
         "bungeni.models.domain.EventItemContainer", "item_id")
     assignedgroups = one2many("assignedgroups",
@@ -595,11 +598,20 @@ class Bill(ParliamentaryItem):
 BillChange = ItemLog.makeLogFactory("BillChange")
 BillVersion = ItemVersions.makeVersionFactory("BillVersion")
 
-class Cosignatory(Entity):
-    """Cosignatories for a Bill or Motion.
+class Signatory(Entity):
+    """Signatories for a Bill or Motion.
     """
+    interface.implements(interfaces.IBungeniContent)
 
+    @property
+    def owner_id(self):
+        return self.user_id
+    
+    @property
+    def owner(self):
+        return self.user
 
+SignatoryChange = ItemLog.makeLogFactory("SignatoryChange")
 #############
 
 class ParliamentSession(Entity):
@@ -738,8 +750,8 @@ class TabledDocument(ParliamentaryItem, _AdmissibleMixin):
     """
     #interface.implements(bungeni.core.interfaces.IVersionable)
     
-    cosignatory = one2many("cosignatory",
-        "bungeni.models.domain.CosignatoryContainer", "item_id")
+    signatories = one2many("signatories",
+        "bungeni.models.domain.SignatoryContainer", "item_id")
     event = one2many("event",
         "bungeni.models.domain.EventItemContainer", "item_id")
     versions = one2many("versions",

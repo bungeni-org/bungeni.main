@@ -70,6 +70,19 @@ def assign_owner_role_pi(context):
     if owner_login and (owner_login != current_user_login):
         assign_owner_role(context, owner_login)
 
+def assign_signatory_role(context, owner_login, unset=False):
+    log.debug("assign signatory role [%s] user: [%s]",
+        context, owner_login
+    )
+    if unset:
+        IPrincipalRoleMap(context).unsetRoleForPrincipal(
+            u"bungeni.Signatory", owner_login
+        )
+    else:
+        IPrincipalRoleMap(context).assignRoleToPrincipal(u"bungeni.Signatory", 
+            owner_login
+        )
+
 def create_version(context):
     """Create a new version of an object and return it.
     Note: context.status is already updated to destination state.

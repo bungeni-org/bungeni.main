@@ -12,7 +12,7 @@ from bungeni.core import audit
 
 
 
-def cosignatory_added(ob, event): 
+def signatory_added(ob, event): 
     session = Session()
     ob = removeSecurityProxy(ob)
     if ob.user:
@@ -29,7 +29,7 @@ def cosignatory_added(ob, event):
         audit.objectContained( ob.item, event)
 
     
-def cosignatory_modified(ob, event):
+def signatory_modified(ob, event):
     session = Session()
     ob = removeSecurityProxy(ob)
     if ob.user:

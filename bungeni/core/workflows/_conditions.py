@@ -16,6 +16,7 @@ from bungeni.ui.interfaces import IFormEditLayer
 from bungeni.ui.utils import common
 from bungeni.core import globalsettings as prefs
 from bungeni.core.workflows import utils
+from bungeni.models.interfaces import ISignatoriesValidator
 
 
 # common
@@ -99,5 +100,15 @@ def not_has_date_of_death(context):
     return context.date_of_death is None
 
 
-#
+# signatory conditions
+def pi_has_signatories(context):
+    validator = ISignatoriesValidator(context)
+    return validator.validateSignatories()
 
+def pi_signatories_check(context):
+    validator = ISignatoriesValidator(context)
+    return validator.validateConsentedSignatories()
+
+def pi_allow_signature(context):
+    validator = ISignatoriesValidator(context.item)
+    return user_is_context_owner(context) and validator.allowSignature()

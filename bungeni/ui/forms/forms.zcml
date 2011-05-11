@@ -584,11 +584,11 @@ Unauthorized: (<zope.app.publisher.browser.viewmeta.AddForm object at ...>, 'bro
 
 
 
-    <!-- cosignatories for bills and motions-->
+    <!-- signatories for bills and motions-->
     <browser:page name="add"
-        for="bungeni.models.domain.CosignatoryContainer"
+        for="bungeni.models.domain.SignatoryContainer"
         class=".common.AddForm"
-        permission="bungeni.cosignatory.Add"
+        permission="bungeni.signatory.Add"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
 

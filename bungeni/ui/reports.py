@@ -76,7 +76,7 @@ def billOptions(context):
              _(u"Summary"),
              _(u"Text"),
              _(u"Owner"),
-             _(u"Cosignatories"),
+             _(u"Signatories"),
             )
     return SimpleVocabulary.fromValues(items)
 

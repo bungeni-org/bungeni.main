@@ -518,8 +518,10 @@ JSLCaches = {
         JSLCache(49, mfaces.IGroupGroupItemAssignment,
             ["GroupGroupItemAssignment"], 
         ),
-    "cosignatory": 
-        JSLCache(49, mfaces.ICosignatory, ["Cosignatory"]),
+    "signatories": 
+        JSLCache(49, mfaces.ISignatory, 
+            ["Signatory", "Bill", "Motion", "Question"]
+        ),
     "questions": 
         JSLCache(199, mfaces.IQuestion, ["Question", "Ministry"]),
     "motions": 

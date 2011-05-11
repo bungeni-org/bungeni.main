@@ -95,6 +95,7 @@ def load_workflows():
     load_workflow("report", interfaces.IReport)
     load_workflow("tableddocument", interfaces.ITabledDocument)
     load_workflow("user", interfaces.IBungeniUser)
+    load_workflow("signatory", interfaces.ISignatory)
     load_workflow("version", interfaces.IVersion) # !+VERSION_WORKFLOW(mr, apr-2011)
     
     # IRolePermissionMap adapter for workflowed objects

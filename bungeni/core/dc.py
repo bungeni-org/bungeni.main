@@ -284,8 +284,8 @@ class GroupSittingAttendanceDescriptiveProperties(DescriptiveProperties):
         )
 
 
-class CosignatoryDescriptiveProperties(DescriptiveProperties):
-    component.adapts(interfaces.ICosignatory)
+class SignatoryDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.ISignatory)
     
     @property
     def title(self):

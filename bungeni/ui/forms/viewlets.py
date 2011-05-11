@@ -172,8 +172,8 @@ class RssLinkViewlet(viewlet.ViewletBase):
 class SessionViewlet(SubformViewlet):
     sub_attr_name = "sessions"
 
-class CosignatoryViewlet(SubformViewlet):
-    sub_attr_name = "cosignatory"
+class SignatoriesViewlet(SubformViewlet):
+    sub_attr_name = "signatories"
 
 class GovernmentViewlet(SubformViewlet):
     sub_attr_name = "governments"

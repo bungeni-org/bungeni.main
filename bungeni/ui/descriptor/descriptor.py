@@ -141,9 +141,9 @@ def linked_mp_name_column(name, title, attr):
     """This may be used to customize the default URL generated as part of the
     container listing.
 
-    E.g. instead of the URL to the association view between a cosignatory (MP)
+    E.g. instead of the URL to the association view between a signatory (MP)
     and a bill:
-        /business/bills/obj-169/cosignatory/obj-169-61/
+        /business/bills/obj-169/signatories/obj-1/
     the direct URL for the MP's "home" view is used instead:
         /members/current/obj-55/
     """
@@ -2815,26 +2815,39 @@ class AttendanceTypeDescriptor(ModelDescriptor):
     ]
 
 
-class CosignatoryDescriptor(ModelDescriptor):
+class SignatoryDescriptor(ModelDescriptor):
     localizable = True
-    display_name = _("Cosignatory")
-    container_name = _("Cosignatories")
+    display_name = _("Signatory")
+    container_name = _("Signatories")
     fields = [
+        Field(name="signatory_id",
+            modes="listing",
+            property = schema.TextLine(title=_("View"))
+        ),
         Field(name="user_id", # [user-req]
             modes="view edit add listing",
             localizable=[
                 show("view edit listing"),
             ],
-            property=schema.Choice(title=_("Cosignatory"),
-                source=vocabulary.MemberOfParliamentCosignatorySource(
+            property=schema.Choice(title=_("Signatory"),
+                source=vocabulary.MemberOfParliamentSignatorySource(
                     "user_id"
                 ),
             ),
             listing_column=linked_mp_name_column("user_id",
-                _("Cosignatory"),
+                _("Signatory"),
                 "user"
             ),
             view_widget=widgets.MemberURLDisplayWidget
+        ),
+        Field(name="status",
+            modes="view listing",
+            localizable=[ show("view listing") ],
+            property=schema.Choice(title=_("Signature status"), 
+                vocabulary="bungeni.vocabulary.workflow",
+                required=True
+            ),
+            listing_column = workflow_column("status", "Signature Status"),
         ),
     ]
 

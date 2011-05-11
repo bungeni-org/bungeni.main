@@ -916,7 +916,7 @@ motions = rdb.Table("motions", metadata,
     # !+USAGE(mr, jan-2011) determine usage, document or remove
     rdb.Column("public", rdb.Boolean),
     # !+USAGE(mr, jan-2011) determine usage, document or remove 
-    # - overlap with parliamentary_items.cosignatories ?
+    # - overlap with parliamentary_items.signatories ?
     rdb.Column("seconder_id", rdb.Integer,
         rdb.ForeignKey("users.user_id")
     ),
@@ -957,17 +957,20 @@ bill_versions = make_versions_table(bills, metadata, parliamentary_items)
 
 committee_reports = ()
 
-cosignatories = rdb.Table("cosignatories", metadata,
+signatories = rdb.Table("signatories", metadata,
+    rdb.Column("signatory_id", rdb.Integer,
+        primary_key=True
+    ),
     rdb.Column("item_id", rdb.Integer,
         rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
         nullable=False,
-        primary_key=True
     ),
     rdb.Column("user_id", rdb.Integer,
         rdb.ForeignKey("users.user_id"),
         nullable=False,
-        primary_key=True
     ),
+    rdb.Column("status", rdb.Unicode(32)),
+    rdb.UniqueConstraint("item_id", "user_id")
 )
 
 # Tabled documents:

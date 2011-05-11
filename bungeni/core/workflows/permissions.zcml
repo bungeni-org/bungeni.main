@@ -117,14 +117,18 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.bill.View" role="bungeni.Clerk" />
 <grant permission="bungeni.bill.View" role="bungeni.Speaker" />
 <grant permission="bungeni.bill.View" role="bungeni.Owner" />
+<grant permission="bungeni.bill.View" role="bungeni.Signatory" />
 <grant permission="bungeni.bill.Edit" role="bungeni.Clerk" />
 <grant permission="bungeni.bill.Edit" role="bungeni.Speaker" />
 <grant permission="bungeni.bill.Edit" role="bungeni.Owner" />
 <grant permission="bungeni.bill.Add" role="bungeni.Clerk" />
 <grant permission="bungeni.bill.Delete" role="bungeni.Owner" />
 
-<permission id="bungeni.bill.wf.working_draft.gazetted" title="Publish in Gazette" />
-<grant permission="bungeni.bill.wf.working_draft.gazetted" role="bungeni.Clerk" />
+<permission id="bungeni.bill.wf.working_draft.submitted_signatories" title="Submit to Signatories" />
+<grant permission="bungeni.bill.wf.working_draft.submitted_signatories" role="bungeni.Owner" />
+
+<permission id="bungeni.bill.wf.working_draft.submitted_signatories.gazetted" title="Publish in Gazette" />
+<grant permission="bungeni.bill.wf.working_draft.submitted_signatories.gazetted" role="bungeni.Clerk" />
 
 <permission id="bungeni.bill.wf.gazetted.first_reading_adjourned.first_reading_pending" title="Allow scheduling of First Reading" />
 <grant permission="bungeni.bill.wf.gazetted.first_reading_adjourned.first_reading_pending" role="bungeni.Clerk" />
@@ -304,13 +308,17 @@ See the Bungeni Source Code Style Guide for further details.
 
 <!-- motion -->
 <grant permission="bungeni.motion.View" role="bungeni.Owner" />
+<grant permission="bungeni.motion.View" role="bungeni.Signatory" />
 <grant permission="bungeni.motion.Edit" role="bungeni.Owner" />
 <grant permission="bungeni.motion.Add" role="bungeni.Clerk" />
 <grant permission="bungeni.motion.Add" role="bungeni.MP" />
 <grant permission="bungeni.motion.Delete" role="bungeni.Owner" />
 
-<permission id="bungeni.motion.wf.working_draft.draft.submitted" title="Submit" />
-<grant permission="bungeni.motion.wf.working_draft.draft.submitted" role="bungeni.Owner" />
+<permission id="bungeni.motion.wf.draft.working_draft.submitted_signatories" title="Submit to Signatories" />
+<grant permission="bungeni.motion.wf.draft.working_draft.submitted_signatories" role="bungeni.Owner" />
+
+<permission id="bungeni.motion.wf.working_draft.draft.submitted_signatories.submitted" title="Submit" />
+<grant permission="bungeni.motion.wf.working_draft.draft.submitted_signatories.submitted" role="bungeni.Owner" />
 
 <permission id="bungeni.motion.wf.submitted.received" title="Receive" />
 <grant permission="bungeni.motion.wf.submitted.received" role="bungeni.Clerk" />
@@ -398,13 +406,17 @@ See the Bungeni Source Code Style Guide for further details.
 
 <!-- question -->
 <grant permission="bungeni.question.View" role="bungeni.Owner" />
+<grant permission="bungeni.question.View" role="bungeni.Signatory" />
 <grant permission="bungeni.question.Edit" role="bungeni.Owner" />
 <grant permission="bungeni.question.Add" role="bungeni.Clerk" />
 <grant permission="bungeni.question.Add" role="bungeni.MP" />
 <grant permission="bungeni.question.Delete" role="bungeni.Owner" />
 
-<permission id="bungeni.question.wf.working_draft.draft.submitted" title="Submit" />
-<grant permission="bungeni.question.wf.working_draft.draft.submitted" role="bungeni.Owner" />
+<permission id="bungeni.question.wf.working_draft.draft.submitted_signatories" title="Submit to Signatories" />
+<grant permission="bungeni.question.wf.working_draft.draft.submitted_signatories" role="bungeni.Owner" />
+
+<permission id="bungeni.question.wf.working_draft.draft.submitted_signatories.submitted" title="Submit" />
+<grant permission="bungeni.question.wf.working_draft.draft.submitted_signatories.submitted" role="bungeni.Owner" />
 
 <permission id="bungeni.question.wf.submitted.received" title="Receive" />
 <grant permission="bungeni.question.wf.submitted.received" role="bungeni.Clerk" />
@@ -553,6 +565,15 @@ See the Bungeni Source Code Style Guide for further details.
 
 <permission id="bungeni.user.wf.D.A" title="Resurrect" />
 <grant permission="bungeni.user.wf.D.A" role="bungeni.Speaker" />
+
+
+<!-- signatory -->
+
+<permission id="bungeni.signatory.wf.awaiting_consent.consented" title="consent" />
+<grant permission="bungeni.signatory.wf.awaiting_consent.consented" role="bungeni.Owner" />
+
+<permission id="bungeni.signatory.wf.awaiting_consent.rejected" title="reject" />
+<grant permission="bungeni.signatory.wf.awaiting_consent.rejected" role="bungeni.Owner" />
 
 
 <!-- version -->

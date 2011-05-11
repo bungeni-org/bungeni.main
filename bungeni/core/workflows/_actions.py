@@ -38,6 +38,7 @@ def __pi_create(context):
     #!+utils.setParliamentId(context)
     utils.assign_owner_role_pi(context)
 
+
 def __pi_submit(context):
     utils.set_pi_registry_number(context)
 
@@ -172,3 +173,26 @@ def _user_A(context):
 
 #
 
+
+#signatories
+def __pi_assign_signatory_roles(context):
+    for signatory in context.signatories.values():
+        owner_login = utils.get_owner_login_pi(signatory)
+        utils.assign_owner_role(signatory, owner_login)
+        utils.assign_signatory_role(context, owner_login)
+
+_question_submitted_signatories = _motion_submitted_signatories = \
+    _bill_submitted_signatories = __pi_assign_signatory_roles
+
+def _signatory_awaiting_consent(context):
+    """
+    This is done when parent object is already in submitted_signatories stage.
+    Otherwise roles assignment is handled by `__pi_assign_signatory_roles`
+    """
+    if context.item.status == u"submitted_signatories":
+        owner_login = utils.get_owner_login_pi(context)
+        utils.assign_owner_role(context, owner_login)
+        utils.assign_signatory_role(context.item, owner_login)
+
+def _signatory_reject(context):
+    utils.assign_signatory_role(context.item, owner_login, unset=True)

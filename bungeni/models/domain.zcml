@@ -448,13 +448,13 @@
                 end_date"
         />
     </class>
-    <class class=".domain.Cosignatory">
+    <class class=".domain.Signatory">
         <require permission="zope.View"
             attributes="
                 user_id
                 item_id"
         />
-        <require permission="bungeni.cosignatory.Edit"
+        <require permission="bungeni.signatory.Edit"
              set_attributes="
                 user_id
                 item_id" 

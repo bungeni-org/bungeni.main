@@ -113,6 +113,8 @@ class IBungeniContent(interface.Interface):
     # status: rdb.Unicode(48)
     # status_date: rdb.DateTime(timezone=False)
 
+class IBungeniParliamentaryContent(interface.Interface):
+    """Marker interface for true bungeni parliamentary content"""
 
 class IBungeniContainer(IAlchemistContainer):
     """Parliamentary container.
@@ -281,7 +283,24 @@ class IBungeniSettings(interface.Interface):
         title=_(u"Max Questions Per Sitting Per MP"),
         default = 1
     )
-
+    bill_signatories_min = schema.Int(
+        title=_(u"Minimum consented signatories for a bill"), default=0
+    )
+    bill_signatories_max = schema.Int(
+        title=_(u"Maximum consented signatories for a bill"), default=0
+    )
+    question_signatories_min = schema.Int(
+        title=_(u"Minimum consented signatories for a question"), default=0
+    )
+    question_signatories_max = schema.Int(
+        title=_(u"Maximum consented signatories for a question"), default=0
+    )
+    motion_signatories_min = schema.Int(
+        title=_(u"Minimum consented signatories for a motion"), default=0
+    )
+    motion_signatories_max = schema.Int(
+        title=_(u"Maximum consented signatories for a motion"), default=0
+    )
 
 class IBungeniUserSettings(interface.Interface):
 
@@ -356,9 +375,34 @@ class IAttachedFile(interface.Interface):
 class IAttachedFileVersionContainer(IVersionContainer):
     pass
 
-class ICosignatory(interface.Interface):
-    """Cosignatories for bills, motions, ...
+class ISignatory(interface.Interface):
+    """Signatories for bills, motions, ...
     """
+
+class ISignatoriesValidator(interface.Interface):
+    """Validation machinery for iterms with signatories"""
+
+    signatories = interface.Attribute("""signatories iteratable""")
+    
+    min_signatories = interface.Attribute("""minimum consented signatories""")
+
+    max_signatories = interface.Attribute("""maximum consented signatories""")
+
+    signatories_count = interface.Attribute("""number of signatories""")
+    
+    consented_signatories = interface.Attribute("""number of consented """)
+
+    def validateSignatories():
+        """Validate signatories count on parliamentary item i.e. number added
+        """
+
+    def validateConsentedSignatories():
+        """Validate number of consented signatories against min and max
+        """
+
+    def allowSignature():
+        """Determine if a member can consent
+        """
 
 class IConstituency(interface.Interface):
     """Constituencies.

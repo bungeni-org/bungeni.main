@@ -16,7 +16,7 @@ from sqlalchemy.orm import mapper,  column_property
 import sqlalchemy as rdb
 import sqlalchemy.sql.expression as sql
 from bungeni.models import schema, domain, utils, delegation
-from bungeni.models.interfaces import ITranslatable, ICosignatory
+from bungeni.models.interfaces import ITranslatable, ISignatory
 
 from zope.schema.interfaces import IVocabularyFactory
 from zope.component import getUtility
@@ -482,23 +482,20 @@ class MemberOfParliamentDelegationSource(MemberOfParliamentSource):
                 return query
         return mp_query
                        
-class MemberOfParliamentCosignatorySource(MemberOfParliamentSource):
-    """Vocabulary for selection of cosignatories - Other MPs
-       excluding pre-selected cosignatories and item owner
+class MemberOfParliamentSignatorySource(MemberOfParliamentSource):
+    """Vocabulary for selection of signatories - Other MPs
+       excluding pre-selected signatories and item owner
     """
     def constructQuery(self, context):
-        mp_query = super(MemberOfParliamentCosignatorySource, 
+        mp_query = super(MemberOfParliamentSignatorySource, 
                 self).constructQuery(context)
         trusted = removeSecurityProxy(context)
-        if ICosignatory.providedBy(context):
+        if ISignatory.providedBy(context):
             trusted = removeSecurityProxy(trusted.__parent__)
         if IContainer.providedBy(trusted):
             exclude_ids = set(
                 [ member.user_id for member in trusted.values() ]
             )
-            if trusted.__parent__ is not None:
-                trusted_parent = removeSecurityProxy(trusted.__parent__)
-                exclude_ids.add(trusted_parent.owner_id)
             return mp_query.filter(
                 sql.not_(domain.MemberOfParliament.user_id.in_(
                         list(exclude_ids)

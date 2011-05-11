@@ -19,7 +19,7 @@
     { committee, bill, motion, question, schedule, sitting, agendaitem, 
       party, government, ministry, member, office }_additems menus:
     
-        file=20, event=21, cosignatory=22
+        file=20, event=21, signatory=22
         title=30
         sitting=40, agendaitem=41, attendance=42
         (assign-)bill=50
@@ -433,9 +433,9 @@
     />
     <browser:menuItem menu="motion_additems"
         for="bungeni.models.interfaces.IMotion"
-        title="Add cosignatory..."
-        action="./cosignatory/add"
-        permission="bungeni.cosignatory.Add"
+        title="Add signatory..."
+        action="./signatories/add"
+        permission="bungeni.signatory.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="22"
     />
@@ -463,9 +463,9 @@
     />
     <browser:menuItem menu="bill_additems"
         for="bungeni.models.interfaces.IBill"
-        title="Add cosignatory..."
-        action="./cosignatory/add"
-        permission="bungeni.cosignatory.Add"
+        title="Add signatory..."
+        action="./signatories/add"
+        permission="bungeni.signatory.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="22"
     />
@@ -567,9 +567,9 @@
     />
     <browser:menuItem menu="question_additems"
         for="bungeni.models.interfaces.IQuestion"
-        title="Add cosignatory..."
-        action="./cosignatory/add"
-        permission="bungeni.cosignatory.Add"
+        title="Add signatory..."
+        action="./signatories/add"
+        permission="bungeni.signatory.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="22"
     />
@@ -616,9 +616,9 @@
     />
     <browser:menuItem menu="tableddocument_additems"
         for="bungeni.models.interfaces.ITabledDocument"
-        title="Add cosignatory..."
-        action="./cosignatory/add"
-        permission="bungeni.cosignatory.Add"
+        title="Add signatory..."
+        action="./signatories/add"
+        permission="bungeni.signatory.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="22"
     />
@@ -931,18 +931,18 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.CosignatoryContainer"
-        title="Add cosignatory..."
+        for="bungeni.models.domain.SignatoryContainer"
+        title="Add signatory..."
         action="./add"
-        permission="bungeni.cosignatory.Add"
+        permission="bungeni.signatory.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.ICosignatory"
+        for="bungeni.models.interfaces.ISignatory"
         title="Delete"
         action="./delete"
         order="99"
-        permission="bungeni.cosignatory.Delete"
+        permission="bungeni.signatory.Delete"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
@@ -1316,10 +1316,15 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         >
         <browser:menuItem action="workflow" title="Workflow" order="20" />
-        <browser:menuItem action="files" title="attachments" order="30"
-            permission="zope.View"
-        />
     </browser:menuItems>
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IBungeniParliamentaryContent"
+        action="files" 
+        title="attachments"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        permission="zope.View"
+        order="30"
+    />
     <browser:menuItem menu="context_actions"
         for="bungeni.core.interfaces.IAuditable"
         action="audit-log"

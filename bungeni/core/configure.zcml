@@ -262,7 +262,7 @@
     <adapter factory=".dc.ParliamentSessionDescriptiveProperties" />
     <adapter factory=".dc.ContainerDescriptiveProperties" />
     <adapter factory=".dc.ItemScheduleDiscussionDescriptiveProperties" />
-    <adapter factory=".dc.CosignatoryDescriptiveProperties" />
+    <adapter factory=".dc.SignatoryDescriptiveProperties" />
     <adapter factory=".dc.SittingTypeDescriptiveProperties" />
     <adapter factory=".dc.ConstituencyDescriptiveProperties" />
     <adapter factory=".dc.ChangeDescriptiveProperties" />
