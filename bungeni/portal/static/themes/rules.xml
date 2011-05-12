@@ -121,10 +121,6 @@
     </rule>
     
     <rule class="frontpage">
-        <append href="/plone"
-                theme="//head"
-                content="//head"
-                nocontent="ignore" />
         <append href="/business/whats-on"
                 theme="children:#portal-column-one"
                 content="#portal-personaltools .navigation"/>
