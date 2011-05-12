@@ -50,6 +50,12 @@ class IWorkflow(zope.interface.Interface):
         """A Workflow instance is itself the factory of own AdaptedWorkflows.
         """
 
+class IWorkflowed(zope.interface.Interface):
+    """A workflowed object. 
+    """
+    status = zope.interface.Attribute("Workflow status, as state ID.")
+
+
 class IStateController(zope.interface.Interface):
     """Store state on workflowed objects. Defined as an adapter.
     """

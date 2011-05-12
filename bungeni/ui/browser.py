@@ -14,7 +14,7 @@ import zope.publisher.browser
 import zope.viewlet.viewlet
 
 from bungeni.core.dc import IDCDescriptiveProperties
-from bungeni.core.workflow.interfaces import IWorkflow
+from bungeni.core.workflow.interfaces import IWorkflowed
 from bungeni.ui import z3evoque
 from bungeni.ui.utils import date, debug, misc
 from bungeni.ui.i18n import _
@@ -91,11 +91,7 @@ class BungeniBrowserView(zope.publisher.browser.BrowserView):
     def is_workflowed(self):
         """() -> bool : is this view's context a workflowed object?
         """
-        try:
-            IWorkflow(self.context)
-            return True
-        except TypeError:
-            return False
+        return IWorkflowed.providedBy(self.context)
     
     def get_wf_state(self):
         """Get the human readable, and localized, workflow state title.

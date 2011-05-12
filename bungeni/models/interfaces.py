@@ -105,9 +105,7 @@ class IOfficeMember(IBungeniGroupMembership):
 
 
 class IBungeniContent(interface.Interface):
-    """Parliamentary content 
-    !+ is this equivalent IWorkflowable ? see:
-       ui.browser.BungeniBrowserView.is_workflowed()
+    """Parliamentary content
     """
     # !+ schema attributes ?
     # status: rdb.Unicode(48)
