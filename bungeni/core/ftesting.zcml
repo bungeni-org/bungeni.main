@@ -24,12 +24,18 @@
     <role id="zope.Member" title="Member" />
     
     <!-- App configuration -->
+    <include package="bungeni.models" file="auth.zcml" />
     <include package="bungeni.models" file="roles.zcml" />
     <include package="bungeni.models" file="permissions.zcml" />
     <include package="bungeni.core.workflows" file="configure.zcml" />
     
+    <adapter factory="bungeni.models.signatories.BillSignatoryValidator"/>
+    <adapter factory="bungeni.models.signatories.MotionSignatoryValidator"/>
+    <adapter factory="bungeni.models.signatories.QuestionSignatoryValidator"/>
+    
     <include package="bungeni.alchemist" file="meta.zcml"/>
     <include package="alchemist.catalyst" file="meta.zcml"/>
+    <include package="bungeni.ui.descriptor" file="catalyst.zcml"/>
     <include package="ore.xapian" file="meta.zcml" />
     <include package="ore.xapian" />
     <include package="z3c.pt" />

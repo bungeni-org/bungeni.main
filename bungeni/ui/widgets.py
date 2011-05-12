@@ -807,13 +807,6 @@ class MemberURLDisplayWidget(zope.app.form.browser.widget.DisplayWidget):
         )
 
 
-class SignatoryURLDisplayWidget(zope.app.form.browser.widget.DisplayWidget):
-    def __call__(self):
-        return zope.app.form.browser.widget.renderElement("a",
-            contents = self._data,
-            href = absoluteURL(self.__parent__.context, self.request)
-        )
-
 class widget(object):
 
     """Traverce adapter for getting widget by name from form views

@@ -84,7 +84,7 @@
                                   
                         <span tal:condition="view/options/bills_signatories | nothing">
                             <h3 class="reportsignatories">
-                                <span tal:condition="signatory/item/signatories | nothing"> Signatories :
+                                <span tal:condition="scheduled/item/signatories | nothing"> Signatories :
                                     <tal:loop tal:repeat="signatory scheduled/item/signatories"> 
                                         <span tal:replace="signatory/first_name" 
                                               tal:condition="signatory/first_name | nothing"/> 

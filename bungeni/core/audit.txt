@@ -43,6 +43,8 @@ Initialise Group
   >>> parliament.language = "en"
   >>> session.add( parliament )
   >>> session.flush()
+  >>> len(list(session.query(domain.BillChange)))
+  0
 
 Initialise Bill
 -------------------
@@ -78,11 +80,17 @@ Broadcast an object created event
   >>> event = zope.lifecycleevent.ObjectCreatedEvent(bill)
   >>> zope.component.event.objectEventNotify(event)
   
-check the audit table: 
+check the audit table for changes: 
+!+AUDIT(murithi, may-2011) - With workflow events firing => more changes
+TODO: cater for workflow related changes in changes table
 
-  >>> len(list(session.query(domain.BillChange)))
+check audit table for "added" change
+  >>> len(list(session.query(domain.BillChange).filter(
+  ...   domain.BillChange.action=="added")))
   1
-  
+
+  >>> changes_table_count = len(list(session.query(domain.BillChange)))
+
 Select last modification
 ------------------------
   >>> bill.changes[0].user.login
@@ -95,8 +103,8 @@ Broadcase an object modified event
 
 check the audit table: 
 
-  >>> len(list(session.query(domain.BillChange)))
-  2
+  >>> len(list(session.query(domain.BillChange))) == changes_table_count + 1 
+  True
 
 Select last modification
 ------------------------
