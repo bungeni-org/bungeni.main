@@ -467,8 +467,14 @@ def DeathBeforeLife(User):
 # !+EDIT_AS_VIEW fields in "edit" mode on which user has no Edit permission? 
 
 
-def LanguageField(name="language", modes="edit add", localizable=None):
-    # [user-req] !+ modes="view edit add listing" ?
+def LanguageField(name="language", modes="view edit add listing", 
+        localizable=[ 
+            show("view edit"), 
+            hide("listing"), 
+        ]
+    ):
+    # if a different modes param is specified, the localizable param should 
+    # also be specified accordingly
     return Field(name=name,
         label=_("Language"),
         modes=modes,
@@ -478,6 +484,7 @@ def LanguageField(name="language", modes="edit add", localizable=None):
         ),
         add_widget=widgets.LanguageLookupWidget,
     )
+
 
 def AdmissibleDateField(name="admissible_date"):
     # [sys]
@@ -790,7 +797,7 @@ class MemberElectionTypeDescriptor(ModelDescriptor):
             modes="view edit add listing",
             property=schema.TextLine(title=_("Election Type"))
         ),
-        LanguageField("language"),
+        LanguageField("language"), # [user-req]
     ]
 
 
@@ -1178,7 +1185,7 @@ class CommitteeTypeStatusDescriptor(ModelDescriptor):
             modes="view edit add listing",
             property=schema.TextLine(title=_("Committee type status"))
         ),
-        LanguageField("language"),
+        LanguageField("language"), # [user-req]
     ]
 
 
@@ -1209,7 +1216,7 @@ class CommitteeTypeDescriptor(ModelDescriptor):
                 _("Status"), "committee_type_status"
             )
         ),
-        LanguageField("language"),
+        LanguageField("language"), # [user-req]
     ]
 
 class CommitteeDescriptor(GroupDescriptor):
@@ -1350,7 +1357,7 @@ class AddressTypeDescriptor(ModelDescriptor):
             modes="view edit add listing",
             property=schema.TextLine(title=_("Address Type"))
         ),
-        LanguageField("language"),
+        LanguageField("language"), # [user-req]
     ]
 
 class PostalAddressTypeDescriptor(ModelDescriptor):
@@ -1363,7 +1370,7 @@ class PostalAddressTypeDescriptor(ModelDescriptor):
             modes="view edit add listing",
             property=schema.TextLine(title=_("Postal address type name"))
         ),
-        LanguageField("language"),
+        LanguageField("language"), # [user-req]
     ]
 
 class AddressDescriptor(ModelDescriptor):
@@ -1526,7 +1533,7 @@ class TitleTypeDescriptor(ModelDescriptor):
                                 description=_("The order in which members with this title will appear relative to other members"),
                                 required=True),
         ),
-        LanguageField("language"),
+        LanguageField("language"), # [user-req]
     ]
     #custom_validators = [ validations.validate_sub_role_unique ]
 class MemberTitleDescriptor(ModelDescriptor):
@@ -1565,7 +1572,7 @@ class MemberTitleDescriptor(ModelDescriptor):
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget
         ),
-        LanguageField("language"),
+        LanguageField("language"), # [user-req]
     ]
     #] + [ deepcopy(f) for f in AddressDescriptor.fields
     #      if f["name"] not in ("role_title_id",) ]
@@ -2047,15 +2054,7 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
             add_widget=widgets.MemberDropDownWidget,
             view_widget=widgets.MemberURLDisplayWidget,
         ),
-        #LanguageField("language"),
-        Field(name="language", # [user-req]
-            modes="view edit add",
-            localizable=[ show("view"), ],
-            property=schema.Choice(title=_("Language"),
-                vocabulary="language_vocabulary",
-            ),
-            add_widget=widgets.LanguageLookupWidget,
-        ),
+        LanguageField("language"), # [user-req]
         Field(name="body_text", # [rtf]
             modes="view edit add",
             localizable=[ show("view"), ],
@@ -2142,14 +2141,7 @@ class VersionDescriptor(ModelDescriptor):
             edit_widget=widgets.LongTextWidget,
             add_widget=widgets.LongTextWidget,
         ),
-        #LanguageField("language"),
-        Field(name="language", # [user-req]
-            modes="view add listing",
-            property=schema.Choice(title=_("Language"),
-                vocabulary="language_vocabulary",
-            ),
-            add_widget=widgets.LanguageLookupWidget,
-        ),
+        LanguageField("language"), # [user-req]
         Field(name="body_text", # [rtf]
             modes="view edit add",
             localizable=[
@@ -2202,15 +2194,7 @@ class HeadingDescriptor(ParliamentaryItemDescriptor):
                     value_field="user_id")
             ),
         ),
-        #LanguageField("language"),
-        Field(name="language", # [user-req]
-            modes="view edit add",
-            localizable=[ show("view"), ],
-            property=schema.Choice(title=_("Language"),
-                vocabulary="language_vocabulary",
-            ),
-            add_widget=widgets.LanguageLookupWidget,
-        ),
+        LanguageField("language"), # [user-req]
         Field(name="body_text", # [rtf]
             modes="view edit add",
             localizable=[ 
@@ -2518,16 +2502,8 @@ class EventItemDescriptor(ParliamentaryItemDescriptor):
                     title_field="fullname",
                     value_field="user_id")
             ),
-         ),
-        #LanguageField("language"),
-        Field(name="language",
-            modes="view edit add",
-            localizable=[ show("view"), ],
-            property=schema.Choice(title=_("Language"),
-                vocabulary="language_vocabulary",
-            ),
-            add_widget=widgets.LanguageLookupWidget,
         ),
+        LanguageField("language"),
         Field(name="body_text", # [rtf]
             modes="view edit add",
             localizable=[ 
