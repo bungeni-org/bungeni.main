@@ -287,7 +287,8 @@ dl#context_actions.actionMenu .actionMenuContent ul li a#feedrss,
 dl#context_actions.actionMenu .actionMenuContent ul li a#feedakomantoso,
 dl#context_actions.actionMenu .actionMenuContent ul li a#files,
 dl#context_actions.actionMenu .actionMenuContent ul li a#download,
-dl#context_actions.actionMenu .actionMenuContent ul li a#st-attendance {
+dl#context_actions.actionMenu .actionMenuContent ul li a#st-attendance,
+dl#context_actions.actionMenu .actionMenuContent ul li a#signatory-review {
 	padding: 0 .5em;
 	margin: 0;
 	float: left;
@@ -342,6 +343,9 @@ dl#context_actions.actionMenu .actionMenuContent ul li a#files {
 }
 dl#context_actions.actionMenu .actionMenuContent ul li a#st-attendance {
 	background-image: url(images/page_white_edit.png) ;
+}
+dl#context_actions.actionMenu .actionMenuContent ul li a#signatory-review {
+	background-image: url(images/consent.png) ;
 }
 dl#context_actions.actionMenu .actionMenuContent ul li a {
 	border-right:0px solid #fff !important; /**/

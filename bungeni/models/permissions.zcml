@@ -251,6 +251,7 @@
   <permission id="bungeni.comment.View" title="View comments" />
 
   <permission id="bungeni.signatory.Add" title="Add Signatory" />
+  <permission id="bungeni.signatory.Act" title="Consent or Reject" />
   <permission id="bungeni.signatory.Delete" title="Delete Signatory" />
   <permission id="bungeni.signatory.Edit" title="Edit Signatory" />
 

@@ -318,8 +318,21 @@ class OwnedItemsInStageViewlet(WorkspaceViewlet):
                         domain.ParliamentaryItem.owner_id == user_id,
                         domain.ParliamentaryItem.status.in_(self.states),
                         domain.ParliamentaryItem.type.in_(self.types))
-        self.query = session.query(domain.ParliamentaryItem).filter(qfilter
-            ).order_by(domain.ParliamentaryItem.parliamentary_item_id.desc())
+        self.query = session.query(domain.ParliamentaryItem).filter(qfilter)
+        # get all items for which the member is a signatory
+        signature_ids = [ signature.item_id for signature in
+            session.query(domain.Signatory).filter(
+                domain.Signatory.user_id==user_id
+            ).all()
+        ]
+        qfilter_signatories = sql.and_(
+            domain.ParliamentaryItem.parliamentary_item_id.in_(signature_ids),
+            domain.ParliamentaryItem.type.in_(self.types),
+            domain.ParliamentaryItem.status.in_(self.states)
+        )
+        self.query = self.query.union(
+            session.query(domain.ParliamentaryItem).filter(qfilter_signatories)
+        )
         self.items = self._get_items()
 
 class AllItemsInStageViewlet(OwnedItemsInStageViewlet):
@@ -355,8 +368,15 @@ class MPItemActionRequiredViewlet(OwnedItemsInStageViewlet):
     view_title = _("to review")
     states = \
         get_states("agendaitem", keys=["clarification_required"]) + \
-        get_states("motion", keys=["clarification_required"]) + \
-        get_states("question", keys=["clarification_required"]) + \
+        get_states("motion", 
+            keys=["clarification_required", "submitted_signatories"]
+        ) + \
+        get_states("question", 
+            keys=["clarification_required", "submitted_signatories"]
+        ) + \
+        get_states("bill", 
+            keys=["submitted_signatories"]
+        ) + \
         get_states("tableddocument", keys=["clarification_required"])
 
 

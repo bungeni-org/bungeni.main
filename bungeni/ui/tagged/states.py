@@ -57,6 +57,7 @@ TAG_MAPPINGS["agendaitem"] = {
 }
 TAG_MAPPINGS["bill"] = {
     "working_draft": ["private",],
+    "submitted_signatories": ["actionmp",],
     "gazetted": [],
     "first_reading_pending": ["tobescheduled",],
     "first_reading": ["scheduled",],
@@ -82,6 +83,7 @@ TAG_MAPPINGS["bill"] = {
 TAG_MAPPINGS["motion"] = {
     "working_draft": ["private",],
     "draft": ["private",],
+    "submitted_signatories": ["actionmp",],
     "submitted": ["actionclerk",],
     "received": ["actionclerk",],
     "completed": [],
@@ -104,6 +106,7 @@ TAG_MAPPINGS["motion"] = {
 TAG_MAPPINGS["question"] = {
     "working_draft": ["private",],
     "draft": ["private",],
+    "submitted_signatories": ["actionmp",],
     "submitted": ["actionclerk",],
     "received": ["actionclerk",],
     "completed": [],

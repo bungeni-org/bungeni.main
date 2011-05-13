@@ -10,6 +10,7 @@ from zope.annotation.interfaces import IAnnotations
 
 import bungeni.core.globalsettings as prefs
 from bungeni.ui.utils import url
+from bungeni.models.utils import get_db_user_id
 
 
 class RedirectToCurrent(BrowserView):
@@ -100,4 +101,24 @@ class ArchiveIndexRedirect(_IndexRedirect):
 class AdminIndexRedirect(_IndexRedirect):
     index_name = "content"
 
+class SignatoryReview(BrowserView):
+    """Redirect to signatory document workflow page
+    """
+    def __call__(self):
+        request = self.request
+        context = self.context
+        item_id = context.parliamentary_item_id
+        user_id = get_db_user_id()
+        signatories = context.signatories
+        _filters = {"user_id": user_id}
+        _signatories = signatories.query(**_filters)
+        if len(_signatories) == 1:
+            signatory = _signatories[0]
+            _signatory = signatories.get(signatory.signatory_id)
+            review_url = "/".join(
+                (url.absoluteURL(_signatory, request), u"workflow")
+            )
+            return request.response.redirect(review_url)
+        
+        
 

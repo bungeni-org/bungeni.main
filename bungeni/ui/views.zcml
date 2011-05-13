@@ -171,7 +171,14 @@
      permission="zope.View"
      class=".search.AjaxGetClassStatuses"
     />
-    
+
+    <!-- signatories -->
+    <browser:page name="signatory-review"
+        for="bungeni.models.interfaces.IBungeniParliamentaryContent"
+        permission="zope.View"
+        class=".redirect.SignatoryReview"
+    />
+
     <browser:page
      for="*"
      name="ajax_get_class_fields"

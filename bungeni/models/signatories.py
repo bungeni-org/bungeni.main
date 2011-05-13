@@ -64,7 +64,9 @@ class SignatoryValidator(object):
         )
     
     def allowSignature(self):
-        return self.consented_signatories < self.max_signatories
+        return (not self.max_signatories or 
+            (self.consented_signatories < self.max_signatories)
+        )
 
 class BillSignatoryValidator(SignatoryValidator):
     zope.component.adapts(IBill)

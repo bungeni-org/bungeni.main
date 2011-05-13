@@ -568,6 +568,11 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- signatory -->
+<grant permission="bungeni.signatory.Add" role="bungeni.Owner" />
+<grant permission="bungeni.signatory.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.signatory.Edit" role="bungeni.Owner" />
+<grant permission="bungeni.signatory.Delete" role="bungeni.Clerk" />
+<grant permission="bungeni.signatory.Act" role="bungeni.Signatory" />
 
 <permission id="bungeni.signatory.wf.awaiting_consent.consented" title="consent" />
 <grant permission="bungeni.signatory.wf.awaiting_consent.consented" role="bungeni.Owner" />
