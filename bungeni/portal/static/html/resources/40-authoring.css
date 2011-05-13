@@ -231,6 +231,13 @@ dl#context_workflow dt a {
 	border-left:1px solid #fff !important; /**/
 }
 
+/* !+CSS_ID(mr, may-2011) see description in ploned.ui/ui/menu.py
+    as mentioned there, styling should use class not id... all css here 
+    should be reworked. 
+    besides, even if continue to use id, the following 
+    "dl#context_actions.actionMenu" selector is the equivalent of simply
+    "#context_actions". 
+*/
 dl#context_actions.actionMenu .actionMenuHeader {
 	display: none;
 }

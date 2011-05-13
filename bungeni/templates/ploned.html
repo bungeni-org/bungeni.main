@@ -36,7 +36,7 @@ $begin{action_menus} #[ plond/ui/templates/contentmenu.pt ]#
     $if{ view.available() }
 <ul id="contentActionMenus">
         $for{ menu_item in view.menu() }
-    <li>
+    <li class="${ menu_item['extra']['id'] }">
         $evoque{ #menu_item,
             submenu=menu_item["submenu"] or [],
             state=menu_item["extra"].get("state", None),
