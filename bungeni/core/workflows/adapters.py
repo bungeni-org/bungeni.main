@@ -46,16 +46,6 @@ def load_workflow(name, iface,
         wf = xmlimport.load(path_custom_workflows, name)
         log.debug("Loading WORKFLOW: %s %s" % (name, wf))
         
-        # Workflow loaded, so we "mark" the supplied iface with IWorkflowed, as 
-        # a means to mark type the iface is applied (that, at this point, may 
-        # not be unambiguously determined). This has the advantage of then 
-        # being able to register/lookup adapters on only this single interface.
-        #
-        # A simple way to "mark" the supplied iface with IWorkflowed is to 
-        # "add" IWorkflowed as an inheritance ancestor to iface:
-        if (IWorkflowed not in iface.__bases__):
-            iface.__bases__ = (IWorkflowed,) + iface.__bases__
-        
         # debug info
         for state_key, state in wf.states.items():
             log.debug("   STATE: %s %s" % (state_key, state))
@@ -65,8 +55,18 @@ def load_workflow(name, iface,
         wf = get_workflow(name)
         log.debug("Already Loaded WORKFLOW : %s %s" % (name, wf))
     
-    # register related adapters
+    # We "mark" the supplied iface with IWorkflowed, as a means to mark type 
+    # the iface is applied (that, at this point, may not be unambiguously 
+    # determined). This has the advantage of then being able to 
+    # register/lookup adapters on only this single interface.
     #
+    # A simple way to "mark" the supplied iface with IWorkflowed is to 
+    # "add" IWorkflowed as an inheritance ancestor to iface:
+    if (IWorkflowed not in iface.__bases__):
+        iface.__bases__ = (IWorkflowed,) + iface.__bases__
+    
+    # register related adapters
+    
     # Workflow instances as utilities
     provideUtilityWorkflow(wf, name)
     # Workflows are also the factory of own AdaptedWorkflows
