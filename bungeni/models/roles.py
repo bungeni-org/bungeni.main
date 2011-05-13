@@ -1,6 +1,5 @@
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from bungeni.models import interfaces
-from bungeni.core.app import BungeniApp
 import zope.configuration.config as config
 from zope.securitypolicy.interfaces import IRole 
 from zope.securitypolicy.role import Role 
@@ -15,10 +14,9 @@ from zope import component
 class SubRoleAnnotations(object):
     interface.implements(interfaces.ISubRoleAnnotations)
     component.adapts(IRole)
-    sub_roles = []
-    is_sub_role = False
-    def __init__(self, context):
-        pass
+    def __init__(self):
+        self.sub_roles = []
+        self.is_sub_role = False
     
 def sub_role_configure(context, id, title, description, role):
     role_annt = interfaces.ISubRoleAnnotations(getUtility(IRole, role))

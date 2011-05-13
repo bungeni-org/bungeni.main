@@ -451,7 +451,9 @@ class IChange(interface.Interface):
 
 class IMemberTitle(interface.Interface):
     """Marker for member titles"""
-
+    
+class ITitleType(interface.Interface):
+    """Title types"""
 
 class _IAddress(interface.Interface):
     """Base marker interface for an Address

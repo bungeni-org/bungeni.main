@@ -33,9 +33,9 @@ from bungeni.ui.calendar.utils import nth_day_of_month
 from bungeni.ui.calendar.utils import nth_day_of_week
 from bungeni.ui.utils import common
 from bungeni.ui.interfaces import ITreeVocabulary
-
+from bungeni.core.workflows.utils import get_group_local_role
 from bungeni.models.interfaces import ISubRoleAnnotations
-from bungeni.models.interfaces import IOffice
+from bungeni.models.interfaces import IBungeniGroup
 #tree vocabulary
 from bungeni.core.language import get_default_language
 try:
@@ -155,22 +155,22 @@ class OfficeRoles(object):
 
 office_roles = OfficeRoles()
 
-class OfficeSubRoles(object):
+class GroupSubRoles(object):
     interface.implements(IVocabularyFactory)
     def __call__(self, context):
         terms = []
-        while not IOffice.providedBy(context):
+        while not IBungeniGroup.providedBy(context):
             context = context.__parent__
             if not context:
-                raise NotImplementedError("Context does not implement IOffice")
+                raise NotImplementedError("Context does not implement IBungeniGroup")
         trusted = removeSecurityProxy(context)
-        role=getUtility(IRole, trusted.office_role)
+        role=getUtility(IRole, get_group_local_role(trusted))
         for sub_role in ISubRoleAnnotations(role).sub_roles:
             print sub_role
             terms.append(vocabulary.SimpleTerm(sub_role, sub_role, sub_role))
         return vocabulary.SimpleVocabulary(terms)
 
-office_sub_roles = OfficeSubRoles()
+group_sub_roles = GroupSubRoles()
         
 class DatabaseSource(bungeni.alchemist.vocabulary.DatabaseSource):
     
@@ -278,6 +278,33 @@ class SittingTypes(SpecializedSource):
                         obj.group_sitting_type, 
                         obj.start_time, 
                         obj.end_time),
+                ))
+        return vocabulary.SimpleVocabulary(terms)
+
+class TitleTypes(SpecializedSource):
+    def __init__(self):
+        pass
+        
+    def constructQuery(self, context):
+        session= Session()
+        return session.query(domain.TitleType) \
+                .filter(schema.title_types.c.group_id == context.group_id)
+        
+            
+    def __call__(self, context=None):
+        while not IBungeniGroup.providedBy(context):
+            context = context.__parent__
+            if not context:
+                raise NotImplementedError("Context does not implement IBungeniGroup")
+        query = self.constructQuery(context)
+        results = query.all()
+        terms = []
+        for ob in results:
+            obj = translate_obj(ob)
+            terms.append(vocabulary.SimpleTerm(
+                    value = obj.title_type_id, 
+                    token = obj.title_type_id,
+                    title = obj.title_name,
                 ))
         return vocabulary.SimpleVocabulary(terms)
 

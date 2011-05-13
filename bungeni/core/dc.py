@@ -621,3 +621,12 @@ class CommitteeTypeStatusDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         return self.translate(context, "committee_type_status_name")
+
+class TitleTypeDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.ITitleType)
+    
+    @property
+    def title(self):
+        session = Session()
+        context = session.merge(removeSecurityProxy(self.context))
+        return self.translate(context, "title_name")

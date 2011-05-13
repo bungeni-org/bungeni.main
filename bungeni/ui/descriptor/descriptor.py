@@ -234,7 +234,7 @@ def linked_assignment_column(title, assigned_kind="item"):
 
 def member_title_column(name, title, default=""):
     def getter(item, formatter):
-        return item.title_name.user_role_name
+        return item.title_type.title_name
     return column.GetterColumn(title, getter)
 
 '''
@@ -1495,17 +1495,9 @@ class UserAddressDescriptor(AddressDescriptor):
 
 class TitleTypeDescriptor(ModelDescriptor):
     localizable = True
-    display_name = _("Title")
-    container_name = _("Titles")
+    display_name = _("Title types")
+    container_name = _("Title types")
     fields = [
-        Field(name="role_id", label=_("Role associated with title"),
-            modes="view edit add listing",
-            property=schema.Choice(title=_("Role"),
-                description=_("Role associated with this title"),
-                vocabulary="bungeni.vocabulary.office_sub_roles",
-                required=True,
-            ),
-        ),
         Field(name="title_name",
             modes="view edit add listing",
             property=schema.TextLine(title=_("Name"),
@@ -1513,16 +1505,30 @@ class TitleTypeDescriptor(ModelDescriptor):
                 required=True,
             ),
         ),
+        Field(name="role_id", label=_("Role associated with title"),
+            modes="view edit add listing",
+            property=schema.Choice(title=_("Role"),
+                description=_("Role associated with this title"),
+                vocabulary="bungeni.vocabulary.group_sub_roles",
+                required=False,
+            ),
+        ),
         Field(name="user_unique",
             modes="view edit add listing",
-            property=schema.Bool(title=_("User Unique"), default=True),
+            property=schema.Choice(title=_("User Unique"), 
+                                 description=_("Whether or not only one person at a time is allowed to have this title"),
+                                 default=False,
+                                 source=vocabulary.YesNoSource),
         ),
         Field(name="sort_order",
             modes="view edit add listing",
-            property=schema.Int(title=_("Sort Order"), required=True),
+            property=schema.Int(title=_("Sort Order"), 
+                                description=_("The order in which members with this title will appear relative to other members"),
+                                required=True),
         ),
         LanguageField("language"),
     ]
+    #custom_validators = [ validations.validate_sub_role_unique ]
 class MemberTitleDescriptor(ModelDescriptor):
     localizable = True
     display_name = _("Title")
@@ -1535,13 +1541,9 @@ class MemberTitleDescriptor(ModelDescriptor):
                 show("view edit listing"),
             ],
             property=schema.Choice(title=_("Title"),
-                source=vocabulary.DatabaseSource(domain.TitleType,
-                    token_field="title_type_id",
-                    title_field="title_name",
-                    value_field="title_type_id"
+                source=vocabulary.TitleTypes(),
                 ),
-            ),
-            #listing_column=member_title_column("title_type_id", _("Title")),
+            listing_column=member_title_column("title_name", _("Title")),
         ),
         Field(name="start_date", # [user-req]
             modes="view edit add listing",

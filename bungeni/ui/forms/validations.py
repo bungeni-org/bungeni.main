@@ -20,7 +20,7 @@ from bungeni.models import domain
 from bungeni.ui.utils import queries, date as ui_date
 from bungeni.ui.calendar.utils import generate_dates
 from bungeni.ui.calendar.utils import datetimedict
-
+from zope.security.proxy import removeSecurityProxy
 def null_validator(*args, **kwargs):
     return []
 
@@ -566,3 +566,16 @@ def generate_recurring_sitting_dates(start_date, repeat, repeat_until,
         if repeat_until and date.date() > repeat_until:
             break
         yield date.date()
+
+def validate_sub_role_unique(action, data, context, container):
+    errors = []
+    sub_role_id = data["role_id"]
+    if sub_role_id:
+        group_id = container.__parent__.group_id
+        session = Session()
+        title_types = session.query(domain.TitleType).filter(schema.title_types.c.group_id==group_id).all()
+        if sub_role_id in [title_type.role_id for title_type in title_types]:
+            errors.append(interface.Invalid(
+                        _(u"A title with %s sub role already exists") % 
+                        sub_role_id))
+    return errors

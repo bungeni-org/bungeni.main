@@ -304,7 +304,8 @@ class Parliament(Group):
         "bungeni.models.domain.TabledDocumentContainer", "parliament_id")
     preports = one2many("preports",
         "bungeni.models.domain.ReportContainer", "group_id")
-
+    title_types = one2many("title_types",
+        "bungeni.models.domain.TitleTypeContainer", "group_id")
 
 class MemberOfParliament(GroupMembership):
     """Defined by groupmembership and additional data.
@@ -322,6 +323,8 @@ class PoliticalEntity(Group):
     """Base class for political parties and political groups.
     """
     interface.implements(interfaces.ITranslatable)
+    title_types = one2many("title_types",
+        "bungeni.models.domain.TitleTypeContainer", "group_id")
 
 class PoliticalParty(PoliticalEntity):
     """A political party (ouside the parliament).
@@ -357,7 +360,8 @@ class Ministry(Group):
         "bungeni.models.domain.QuestionContainer", "ministry_id")
     bills = one2many("bills",
         "bungeni.models.domain.BillContainer", "ministry_id")
-
+    title_types = one2many("title_types",
+        "bungeni.models.domain.TitleTypeContainer", "group_id")
 class Minister(GroupMembership):
     """A Minister defined by its user_group_membership in a ministry (group).
     """
@@ -384,7 +388,8 @@ class Committee(Group):
     assigneditems = one2many("assigneditems",
         "bungeni.models.domain.ItemGroupItemAssignmentContainer", "group_id")
     sort_replace = {"committee_type_id": ["committee_type"]}
-
+    title_types = one2many("title_types",
+        "bungeni.models.domain.TitleTypeContainer", "group_id")
 class CommitteeMember(GroupMembership):
     """A Member of a committee defined by its membership to a committee (group).
     """
@@ -405,7 +410,7 @@ class Office(Group):
     """
     officemembers = one2many("officemembers",
         "bungeni.models.domain.OfficeMemberContainer", "group_id")
-    titles = one2many("titles",
+    title_types = one2many("title_types",
         "bungeni.models.domain.TitleTypeContainer", "group_id")
 
 class OfficeMember(GroupMembership):
@@ -689,7 +694,7 @@ class ConstituencyDetail(object):
 class TitleType(object):
     """Types of titles in groups
     """
-    interface.implements(interfaces.ITranslatable)
+    interface.implements(interfaces.ITitleType, interfaces.ITranslatable)
 
 
 class MemberTitle(Entity):

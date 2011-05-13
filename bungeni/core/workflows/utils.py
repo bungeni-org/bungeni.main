@@ -146,23 +146,24 @@ def setParliamentId(context):
 def setTabledDocumentHistory(context):
     pass
 
+def get_group_local_role(group):
+    if interfaces.IParliament.providedBy(group):
+        return "bungeni.MP"
+    elif interfaces.IMinistry.providedBy(group):
+        return "bungeni.Minister"
+    elif interfaces.ICommittee.providedBy(group): 
+        return "bungeni.CommitteeMember"
+    elif interfaces.IPoliticalGroup.providedBy(group):
+        return "bungeni.PartyMember"
+    elif interfaces.IGovernment.providedBy(group):
+        return "bungeni.Government"
+    elif interfaces.IOffice.providedBy(group):
+        return group.office_role
+    else:
+        return "bungeni.GroupMember"
+
 # groups
 def _set_group_local_role(context, unset=False):
-    def get_group_local_role(group):
-        if interfaces.IParliament.providedBy(group):
-            return "bungeni.MP"
-        elif interfaces.IMinistry.providedBy(group):
-            return "bungeni.Minister"
-        elif interfaces.ICommittee.providedBy(group): 
-            return "bungeni.CommitteeMember"
-        elif interfaces.IPoliticalGroup.providedBy(group):
-            return "bungeni.PartyMember"
-        elif interfaces.IGovernment.providedBy(group):
-            return "bungeni.Government"
-        elif interfaces.IOffice.providedBy(group):
-            return group.office_role
-        else:
-            return "bungeni.GroupMember"
     def get_group_context(context):
         if interfaces.IOffice.providedBy(context):
             return BungeniApp() #get_parliament(context)

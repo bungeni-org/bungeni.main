@@ -30,3 +30,8 @@ from domain import TitleType, MemberTitle
 from domain import ItemSchedule
 
 from domain import AddressType, GroupAddress, UserAddress, PostalAddressType
+
+from zope.annotation import factory
+from zope import component
+from roles import SubRoleAnnotations
+component.provideAdapter(factory(SubRoleAnnotations))
