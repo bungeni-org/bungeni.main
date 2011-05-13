@@ -543,7 +543,14 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="10"
     />
-    
+    <!--Title types menus-->
+    <browser:menuItem menu="plone_contentmenu"
+        for="bungeni.models.domain.TitleTypeContainer"
+        title="Add Title Type..."
+        action="./add"
+        permission="zope.ManageContent"
+        layer=".interfaces.IAdminSectionLayer"
+    />
     <!-- Question 'Add...' menu -->
     <browser:menu id="question_additems"
         title="The 'Add...' menu - for question"
@@ -685,7 +692,7 @@
     <browser:menuItem menu="office_additems"
         for="bungeni.models.interfaces.IOffice"
         title="Add Title..."
-        action="./titles/add"
+        action="./title_types/add"
         permission="bungeni.officetitle.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="80"
