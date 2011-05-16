@@ -523,6 +523,9 @@ class MemberOfParliamentSignatorySource(MemberOfParliamentSource):
             exclude_ids = set(
                 [ member.user_id for member in trusted.values() ]
             )
+            if trusted.__parent__ is not None:
+                trusted_parent = removeSecurityProxy(trusted.__parent__)
+                exclude_ids.add(trusted_parent.owner_id)
             return mp_query.filter(
                 sql.not_(domain.MemberOfParliament.user_id.in_(
                         list(exclude_ids)

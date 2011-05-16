@@ -23,7 +23,7 @@ from bungeni.alchemist import Session
 import bungeni.models.utils  as model_utils
 import bungeni.models.domain as domain
 from bungeni.ui.interfaces import IWorkspaceContainer, IWorkspaceSectionContext
-from bungeni.ui.tagged import get_states
+from bungeni.ui.tagged import get_states, SIGNATORY_ITEMS_STATE
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
 from bungeni.ui.utils import misc, debug, url
@@ -163,7 +163,6 @@ class MyGroupsViewlet(WorkspaceViewlet):
         formatter = self.get_date_formatter("date", "long")
         data_list = []
         results = self.query.all()
-
         # if no current parliament, no data
         try:
             parliament_id = model_utils.get_current_parliament().parliament_id
@@ -325,13 +324,17 @@ class OwnedItemsInStageViewlet(WorkspaceViewlet):
                 domain.Signatory.user_id==user_id
             ).all()
         ]
-        qfilter_signatories = sql.and_(
-            domain.ParliamentaryItem.parliamentary_item_id.in_(signature_ids),
-            domain.ParliamentaryItem.type.in_(self.types),
-            domain.ParliamentaryItem.status.in_(self.states)
-        )
-        self.query = self.query.union(
-            session.query(domain.ParliamentaryItem).filter(qfilter_signatories)
+        if SIGNATORY_ITEMS_STATE in self.states:
+            qfilter_signatories = sql.and_(
+                domain.ParliamentaryItem.parliamentary_item_id.in_(signature_ids),
+                domain.ParliamentaryItem.type.in_(self.types),
+                domain.ParliamentaryItem.status == SIGNATORY_ITEMS_STATE
+            )
+            self.query = self.query.union(
+                session.query(domain.ParliamentaryItem).filter(qfilter_signatories)
+            )
+        self.query = self.query.order_by(
+            domain.ParliamentaryItem.parliamentary_item_id.desc()
         )
         self.items = self._get_items()
 

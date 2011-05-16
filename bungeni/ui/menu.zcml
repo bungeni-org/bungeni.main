@@ -1341,15 +1341,6 @@
         order="30"
     />
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.ISignatory"
-        action="../../../view" 
-        icon="/@@/portal/images/back.png"
-        title="back to document"
-        layer=".interfaces.IWorkspaceSectionLayer"
-        permission="zope.View"
-        order="9"
-    />
-    <browser:menuItem menu="context_actions"
         for="bungeni.core.interfaces.IAuditable"
         action="audit-log"
         title="Audit Log"

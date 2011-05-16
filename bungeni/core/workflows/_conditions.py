@@ -101,6 +101,11 @@ def not_has_date_of_death(context):
 
 
 # signatory conditions
+def user_is_parent_document_owner(context):
+    return (
+        utils.get_owner_login_pi(context) ==
+        utils.get_owner_login_pi(context.item)
+    )
 def pi_has_signatories(context):
     validator = ISignatoriesValidator(context)
     return validator.validateSignatories()

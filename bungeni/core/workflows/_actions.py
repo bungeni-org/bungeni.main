@@ -26,6 +26,9 @@ log = __import__("logging").getLogger("bungeni.core.workflows._actions")
 from bungeni.core.workflows import utils
 from bungeni.core.workflows import dbutils
 
+from ore.alchemist import Session
+import zope.event
+import zope.lifecycleevent
 
 # special handled action to make a new version of a ParliamentaryItem, that is 
 # not tied to a state name, but to <state> @version bool attribute
@@ -175,7 +178,23 @@ def _user_A(context):
 
 
 #signatories
+def __make_owner_signatory(context):
+    """
+    make document owner a default signatory when document is submited to
+    signatories for consent
+    """
+    signatories = context.signatories
+    if context.owner_id not in [sgn.user_id for sgn in signatories._query]:
+        session = Session()
+        signatory = signatories._class()
+        signatory.user_id=context.owner_id,
+        signatory.item_id=context.parliamentary_item_id
+        session.add(signatory)
+        session.flush()
+        zope.event.notify(zope.lifecycleevent.ObjectCreatedEvent(signatory))
+
 def __pi_assign_signatory_roles(context):
+    __make_owner_signatory(context)
     for signatory in context.signatories.values():
         owner_login = utils.get_owner_login_pi(signatory)
         utils.assign_owner_role(signatory, owner_login)

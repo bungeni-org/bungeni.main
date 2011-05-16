@@ -160,6 +160,12 @@ def linked_mp_name_column(name, title, attr):
         )
     return column.GetterColumn(title, getter)
 
+def simple_view_column(name, title, default_value=_(u"view")):
+    """Replace primary key with meaningful title"""
+    def getter(item, formatter):
+        return default_value
+    return column.GetterColumn(title, getter)
+
 ''' !+ replaced with linked_assignment_column()
 def item_name_column(name, title, default=""):
     def getter(item, formatter):
@@ -2800,7 +2806,10 @@ class SignatoryDescriptor(ModelDescriptor):
     fields = [
         Field(name="signatory_id",
             modes="listing",
-            property = schema.TextLine(title=_("View"))
+            property = schema.TextLine(title=_("View")),
+            listing_column = simple_view_column("signatory_id", 
+                _(u"Review"), _("Review")
+            ),
         ),
         Field(name="user_id", # [user-req]
             modes="view edit add listing",

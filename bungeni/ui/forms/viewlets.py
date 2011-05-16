@@ -31,7 +31,7 @@ from bungeni.models.utils import get_principal_id
 from bungeni.ui.i18n import _
 import bungeni.core.globalsettings as prefs
 
-from bungeni.ui.tagged import get_states
+from bungeni.ui.tagged import get_states, SIGNATORY_ITEMS_CONSENTED_STATES
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
 from bungeni.ui import table
@@ -744,7 +744,7 @@ class MemberItemsViewlet(browser.BungeniItemsViewlet):
     """
     states = \
         get_states("agendaitem", tagged=["public"]) + \
-        get_states("bill", not_tagged=["private"]) + \
+        get_states("bill", not_tagged=["private", "actionmp"]) + \
         get_states("motion", tagged=["public"]) + \
         get_states("question", tagged=["public"]) + \
         get_states("tableddocument", tagged=["public"])
@@ -768,9 +768,39 @@ class MemberItemsViewlet(browser.BungeniItemsViewlet):
                 domain.ParliamentaryItem.owner_id == user_id,
                 domain.ParliamentaryItem.parliament_id == parliament_id,
                 domain.ParliamentaryItem.status.in_(self.states),
-            )).order_by(domain.ParliamentaryItem.parliamentary_item_id.desc())
+            ))
         #self.for_display = (self.query.count() > 0)
         self.formatter = self.get_date_formatter("date", "medium")
+
+    def update(self):
+        user_id = self.context.user_id
+        parliament_id = self.context.group_id
+        session = Session()
+        # add cosigned items
+        signed_pi_ids = [sgn.item_id for sgn in
+            session.query(domain.Signatory).filter(
+                sql.and_(domain.Signatory.user_id == user_id,
+                    domain.Signatory.status.in_(
+                            SIGNATORY_ITEMS_CONSENTED_STATES
+                        ),
+                )
+            ).all()
+        ]
+        if len(signed_pi_ids) > 0:
+            self.query = self.query.union(
+                session.query(domain.ParliamentaryItem).filter(
+                    sql.and_(
+                        domain.ParliamentaryItem.parliament_id == parliament_id,
+                        domain.ParliamentaryItem.status.in_(self.states),
+                        domain.ParliamentaryItem.parliamentary_item_id.in_(
+                            signed_pi_ids
+                        )
+                    )
+                )
+            )
+        self.query = self.query.order_by(
+            domain.ParliamentaryItem.parliamentary_item_id.desc()
+        )
 
     @property
     def items(self):
