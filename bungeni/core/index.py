@@ -30,6 +30,7 @@ import threading, time
 
 import xappy, os, os.path as path
 import logging
+import cStringIO, os, subprocess
 
 from sqlalchemy import exceptions
 from bungeni.alchemist import Session
@@ -43,8 +44,26 @@ from bungeni.models import domain
 from bungeni.models.interfaces import ITranslatable
 from bungeni.core import translation
 import bungeni
+ 
+from bungeni.ui.utils.odt2txt import OpenDocumentTextFile
 
 log = logging.getLogger('ore.xapian')
+
+def readODT(buffer):                
+    mf = cStringIO.StringIO()
+    mf.write(buffer)
+    odt = OpenDocumentTextFile(mf)
+    return odt.toString()
+
+def readPDF(buffer):
+    tf = os.tmpfile()
+    tf.write(buffer)
+    tf.seek(0)
+    out, err = subprocess.Popen(["pdftotext", "-layout", "-", "-"],\
+                                stdin = tf, stdout=subprocess.PIPE ).communicate()
+    if not err:
+        return out
+    return ''
 
 def languages():
     return getUtility(IVocabularyFactory, "language_vocabulary")(None)
@@ -190,6 +209,7 @@ class ContentIndexer(object):
     def index(self, doc):
         " populate a xapian document with fields to be indexed from context "
         # create index of all text fields for the document
+        print "doing generic indexer"
         for field_index_name, field in self.fields():
             if not isinstance(field, (schema.Text, schema.ASCII)):
                 continue
@@ -354,6 +374,28 @@ class TabledDocumentIndexer(ContentIndexer):
 
 class AttachedFileIndexer(ContentIndexer):
     domain_model = domain.AttachedFile
+    
+    @classmethod
+    def defineIndexes(self, indexer):
+        indexer.add_field_action('doc_text', xappy.FieldActions.INDEX_FREETEXT, weight=5, language='en', spell=True)
+        indexer.add_field_action('doc_text', xappy.FieldActions.SORTABLE)
+        super(AttachedFileIndexer, self).defineIndexes(indexer)
+    
+    def index(self, doc):    
+        # index schema fields
+        super(AttachedFileIndexer, self).index(doc)
+        if self.context.type.attached_file_type_name == 'document':
+            
+            if self.context.file_mimetype == 'application/vnd.oasis.opendocument.text':
+                doc.fields.append(xappy.Field('doc_text', readODT(self.context.file_data)))
+            
+            if self.context.file_mimetype == 'application/pdf':
+                doc.fields.append(xappy.Field('doc_text', readPDF(self.context.file_data)))
+            
+            if self.context.file_mimetype == 'text/plain':
+                doc.fields.append(xappy.Field('doc_text', self.context.file_data))
+                
+            print "doing attached file indexer"
     
     @classmethod
     def reindexAll(klass, connection, flush_threshold=500):

@@ -6,7 +6,8 @@ from zope.app.component.hooks import getSite
 import bungeni.ui.utils as ui_utils
 from zope.security.proxy import removeSecurityProxy
 from zope.interface import providedBy
-
+from bungeni.alchemist import Session
+from bungeni.models.domain import ParliamentaryItem
 
 class CustomAbsoluteURL(AbsoluteURL):
     section = ""
@@ -42,7 +43,19 @@ class BusinessAbsoluteURLView(CustomAbsoluteURL):
     """
     section = "business"
 
+class AttachedFileBusinessAbsoluteURLView(BusinessAbsoluteURLView):
+    
+    def __str__(self):
+        item_id = self.context.item_id
+        base_url = ui_utils.url.absoluteURL(getSite(), self.request)
+        session = Session()
+        item = session.query(ParliamentaryItem).filter(ParliamentaryItem.parliamentary_item_id==item_id).first()
+        return '%s/business/%ss/obj-%s/files/%s/' % (base_url, item.type,\
+                                                   item_id, stringKey(self.context))
+    
+    __call__ = __str__
 
+    
 class CommitteeBusinessAbsoluteURLView(BusinessAbsoluteURLView):
     """ Custom absolute url for committees in business section
     """

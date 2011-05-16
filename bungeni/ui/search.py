@@ -91,11 +91,11 @@ from workspace import ARCHIVED
 ALLOWED_TYPES = {'workspace': ('Question', 'Motion', 'TabledDocument',\
                                'Bill', 'AgendaItem'),\
                  'business': ('Question', 'Motion', 'Committee', 'Bill', \
-                              'TabledDocument', 'AgendaItem'),
+                              'TabledDocument', 'AgendaItem', 'AttachedFile'),
                  'archive': ('Question', 'Motion', 'Committee', \
                              'Bill', 'TabledDocument', 'AgendaItem', \
                              'Parliament', 'PoliticalGroup',
-                             'MemberOfParliament'),
+                             'MemberOfParliament', "AttachedFile"),
                  'members': ('MemberOfParliament', 'PoliticalGroup'),
                  'admin': ('Question', 'Motion', 'Committee', 'Bill', \
                            'TabledDocument', 'AgendaItem', 'Parliament', \

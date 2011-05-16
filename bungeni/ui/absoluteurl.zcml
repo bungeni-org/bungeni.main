@@ -58,6 +58,14 @@
 
 
     <!-- Business section -->
+    
+    <browser:view
+        for="bungeni.models.interfaces.IAttachedFile"
+        name="get_url"
+        class=".absoluteurl.AttachedFileBusinessAbsoluteURLView"
+        layer="bungeni.ui.interfaces.IBusinessSectionLayer"
+        permission="zope.Public"
+        />
         
     <browser:view
         for="bungeni.models.interfaces.ICommittee"
@@ -129,7 +137,7 @@
  
  
      <!-- Archive section -->
-    
+   
     <browser:view
         for="bungeni.models.interfaces.IParliament"
         name="get_url"
