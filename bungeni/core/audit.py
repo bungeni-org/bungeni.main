@@ -244,7 +244,7 @@ class AuditorFactory(object):
         """
         oid, otype = self._getKey(object)
         user_id = get_db_user_id()
-        assert user_id is not None, _("Participation has no principal")
+        assert user_id is not None, _("Audit error. No user logged in.")
         session = Session()
         change = self.change_object()
         change.action = change_kind
