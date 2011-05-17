@@ -17,8 +17,9 @@ from bungeni.ui.utils import common
 from bungeni.core import globalsettings as prefs
 from bungeni.core.workflows import utils
 from bungeni.models.interfaces import ISignatoriesValidator
-
-
+from bungeni.models import domain
+from bungeni.alchemist import Session
+from bungeni.models import utils as model_utils
 # common
 
 # the condition for the transition from "" (None) to either "draft" or to 
@@ -28,14 +29,22 @@ def user_is_not_context_owner(context):
     return not user_is_context_owner(context)
 
 def user_is_context_owner(context):
-    def user_is_context_owner(context):
-        """Test if current user is the context owner e.g. to check if someone 
+    """Test if current user is the context owner e.g. to check if someone 
         manipulating the context object is other than the owner of the object.
-        """
-        user_login = utils.get_principal_id()
-        owner_login = utils.get_owner_login_pi(context)
-        return user_login == owner_login
-    return user_is_context_owner(context)
+        
+        A delegate is considered to be an owner of the object
+    """
+    user = model_utils.get_db_user()
+    owner_login = utils.get_owner_login_pi(context)
+    session = Session()
+    delegations = session.query(domain.User) \
+                    .join((domain.UserDelegation, domain.User.user_id
+                                        ==domain.UserDelegation.user_id)) \
+                    .filter(domain.UserDelegation.delegation_id == user.user_id) \
+                    .all()
+    users = [delegate.login for delegate in delegations]
+    users.append(user.login) 
+    return user.login in users
 
 def clerk_receive_notification(context):
     return prefs.getClerksOfficeReceiveNotification()

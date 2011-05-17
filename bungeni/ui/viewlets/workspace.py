@@ -309,12 +309,20 @@ class OwnedItemsInStageViewlet(WorkspaceViewlet):
         """Refresh the query.
         """
         session = Session()
+        user_ids = []
         try:
             user_id = self.__parent__.user_id
         except:
             user_id = None
+        if user_id:
+            user_ids.append(user_id)
+            #Check if user is a delegate
+            delegations = session.query(domain.UserDelegation).filter(
+                           domain.UserDelegation.delegation_id == user_id).all()
+            for delegation in delegations:
+                user_ids.append(delegation.user_id)
         qfilter = sql.and_(
-                        domain.ParliamentaryItem.owner_id == user_id,
+                        domain.ParliamentaryItem.owner_id.in_(user_ids),
                         domain.ParliamentaryItem.status.in_(self.states),
                         domain.ParliamentaryItem.type.in_(self.types))
         self.query = session.query(domain.ParliamentaryItem).filter(qfilter)
