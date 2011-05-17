@@ -18,9 +18,7 @@ STATE_GETTERS = {
     "groupsitting": get_workflow("groupsitting").get_state,
 }
 
-from states import (ACTIVE_TAGS, TAG_MAPPINGS, SIGNATORY_ITEMS_STATE,
-    SIGNATORY_ITEMS_CONSENTED_STATES
-)
+from states import ACTIVE_TAGS, TAG_MAPPINGS, SIGNATORY_ITEMS_CONSENTED_STATES
 
 
 # Utilities

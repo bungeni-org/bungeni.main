@@ -298,5 +298,7 @@ AttachedFileAuditor =  AuditorFactory(
                 schema.attached_file_changes, domain.AttachedFileChange)
 GroupSittingAuditor = AuditorFactory(
                 schema.group_sitting_changes, domain.GroupSittingChange)
+SignatoryAuditor = AuditorFactory(
+    schema.signatory_changes, domain.SignatoryChange)
 #
 

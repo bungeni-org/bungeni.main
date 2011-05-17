@@ -500,8 +500,12 @@ mapper(domain.ItemScheduleDiscussion, schema.item_schedule_discussions)
 mapper(domain.Signatory, schema.signatories,
     properties={
         "item": relation(domain.ParliamentaryItem, uselist=False),
-        "user": relation(domain.User, uselist=False)
+        "user": relation(domain.User, uselist=False),
+        "changes": changes_relation(domain.SignatoryChange),
     }
+)
+mapper(domain.SignatoryChange, schema.signatory_changes,
+    properties = changes_properties(schema.signatory_changes)
 )
 
 mapper(domain.BillType, schema.bill_types)

@@ -8,8 +8,7 @@ $Id$
 
 # Declaration of active tags (it is an error to specify an undeclared tag)
 
-# SIGNATORY TAG STATE - document may be viewed
-SIGNATORY_ITEMS_STATE = u"submitted_signatories"
+# SIGNATORY document status to filter member activity
 SIGNATORY_ITEMS_CONSENTED_STATES = [u"consented",]
 
 ACTIVE_TAGS = [

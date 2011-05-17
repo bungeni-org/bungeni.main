@@ -23,7 +23,7 @@ from bungeni.alchemist import Session
 import bungeni.models.utils  as model_utils
 import bungeni.models.domain as domain
 from bungeni.ui.interfaces import IWorkspaceContainer, IWorkspaceSectionContext
-from bungeni.ui.tagged import get_states, SIGNATORY_ITEMS_STATE
+from bungeni.ui.tagged import get_states
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
 from bungeni.ui.utils import misc, debug, url
@@ -140,7 +140,6 @@ class QuestionInStateViewlet(WorkspaceViewlet):
         self.query = questions
         self.items = self._get_items()
 '''
-
 
 class MyGroupsViewlet(WorkspaceViewlet):
     view_id = "my_groups"
@@ -266,6 +265,7 @@ class OwnedItemsInStageViewlet(WorkspaceViewlet):
     view_id = "items-in-stage"
     view_title = _("Items in Stage")
     states = []
+    include_signed_items = False
     types = [
         "motion",
         "question",
@@ -324,11 +324,11 @@ class OwnedItemsInStageViewlet(WorkspaceViewlet):
                 domain.Signatory.user_id==user_id
             ).all()
         ]
-        if SIGNATORY_ITEMS_STATE in self.states:
+        if self.include_signed_items:
             qfilter_signatories = sql.and_(
                 domain.ParliamentaryItem.parliamentary_item_id.in_(signature_ids),
                 domain.ParliamentaryItem.type.in_(self.types),
-                domain.ParliamentaryItem.status == SIGNATORY_ITEMS_STATE
+                domain.ParliamentaryItem.status.in_(self.states)
             )
             self.query = self.query.union(
                 session.query(domain.ParliamentaryItem).filter(qfilter_signatories)
@@ -368,6 +368,7 @@ class MPItemActionRequiredViewlet(OwnedItemsInStageViewlet):
     (e.g. draft, clarification required)
     """
     view_id = "items-action-required"
+    include_signed_items = True
     view_title = _("to review")
     states = \
         get_states("agendaitem", keys=["clarification_required"]) + \
@@ -388,9 +389,10 @@ class MPItemInProgressViewlet(OwnedItemsInStageViewlet):
     """
     view_id = "items-in-progress"
     view_title = _("in progress")
+    include_signed_items = True
     states = \
         get_states("agendaitem", not_tagged=["private", "terminal", "actionmp"]) + \
-        get_states("bill", not_tagged=["private", "terminal"]) + \
+        get_states("bill", not_tagged=["private", "terminal", "actionmp"]) + \
         get_states("motion", not_tagged=["private", "terminal", "actionmp"]) + \
         get_states("question", not_tagged=["private", "terminal", "actionmp"]) + \
         get_states("tableddocument", not_tagged=["private", "terminal", "actionmp"])
@@ -407,6 +409,7 @@ def get_archived_states():
 class ItemArchiveViewlet(OwnedItemsInStageViewlet):
     view_id = "items-archived"
     view_title = _("archived items")
+    include_signed_items = True
     states = get_archived_states()
 
 class AllItemArchiveViewlet(AllItemsInStageViewlet):

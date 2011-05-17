@@ -185,7 +185,9 @@
     <class class="bungeni.models.domain.Report">
         <implements interface="ore.xapian.interfaces.IIndexable" />
     </class>
-    
+    <class class="bungeni.models.domain.Signatory">
+        <implements interface=".interfaces.IAuditable"/>
+    </class>
     <!-- Workflow -->
     <include package=".workflows" />
     
