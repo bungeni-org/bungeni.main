@@ -565,17 +565,6 @@
         weight="20"
     />
 
-    <!-- Member Role Title -->
-
-  <!--browser:viewlet
-     name="bungeni.viewlet.title-addresses"
-     manager="bungeni.alchemist.interfaces.IContentViewManager"
-     class=".viewlets.AddressesViewlet"
-     for="bungeni.models.interfaces.IMemberRoleTitle"
-     permission="zope.View"
-     weight="10"
-     /-->
-
     <browser:viewlet name="bungeni.viewlet.party-members"
         manager="bungeni.alchemist.interfaces.IContentViewManager"
         class=".viewlets.PartyMemberViewlet"

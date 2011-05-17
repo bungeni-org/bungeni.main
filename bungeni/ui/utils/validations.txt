@@ -308,7 +308,7 @@ We reuse the partymemberships to test the titles:
 
   >>> member_role_container = MockContainer()
   >>> member_role_container.__parent__ = party_membership1
-  >>> member_role1 = domain.MemberRoleTitle()
+  >>> member_role1 = domain.MemberTitle()
   >>> member_role1.start_date = today
   >>> member_role1.title_name_id = user_role_type_chair.user_role_type_id
   >>> member_role1.membership_id = party_membership1.membership_id
@@ -333,7 +333,7 @@ end his term as a chairperson
   >>> session.flush()
 
 and try to give him the role again:
-  >>> member_role2 = domain.MemberRoleTitle()
+  >>> member_role2 = domain.MemberTitle()
   >>> member_role2.start_date = tomorrow
   >>> member_role2.end_date = dayat
   >>> member_role2.title_name_id = user_role_type_chair.user_role_type_id
@@ -347,7 +347,7 @@ and try to give him the role again:
   >>> session.flush()
     
 now we give him the additional role 'member':
-  >>> member_role2 = domain.MemberRoleTitle()
+  >>> member_role2 = domain.MemberTitle()
   >>> member_role2.start_date = yesterday
   >>> member_role2.end_date = dayat
   >>> member_role2.title_name_id = user_role_type_member.user_role_type_id
@@ -366,7 +366,7 @@ now we give him the additional role 'member':
   
 he may be chairman in another group:
   >>> member_role_container.__parent__ = party_membership2
-  >>> member_role3 = domain.MemberRoleTitle()
+  >>> member_role3 = domain.MemberTitle()
   >>> member_role3.start_date = yesterday
   >>> member_role3.end_date = dayat
   >>> member_role3.title_name_id = user_role_type_chair.user_role_type_id
@@ -384,7 +384,7 @@ he may be chairman in another group:
 try to give a second user the chairman role
   
   >>> member_role_container.__parent__ = party_membership3
-  >>> member_role3 = domain.MemberRoleTitle()
+  >>> member_role3 = domain.MemberTitle()
   >>> member_role3.start_date = yesterday
   >>> member_role3.title_name_id = user_role_type_chair.user_role_type_id
   >>> member_role3.membership_id = party_membership3.membership_id
