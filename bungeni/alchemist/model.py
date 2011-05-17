@@ -213,8 +213,9 @@ class Field(object):
     _roles = [
         #"bungeni.Admin", # parliament, has all privileges
         "bungeni.Clerk", "bungeni.Speaker", 
-        #"bungeni.Owner", # instance
+        "bungeni.Owner", # instance + special objects with no mp context
         "bungeni.MP", # parliament 
+        "bungeni.Signatory", #signatory
         "bungeni.Minister", # ministry 
         #"bungeni.Translator", # parliament
         #"bungeni.Authenticated", # all authenticated users, all above roles

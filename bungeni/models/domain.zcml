@@ -451,13 +451,17 @@
     <class class=".domain.Signatory">
         <require permission="zope.View"
             attributes="
+                signatory_id
                 user_id
-                item_id"
+                item_id
+                status"
         />
         <require permission="bungeni.signatory.Edit"
              set_attributes="
+                signatory_id
                 user_id
-                item_id" 
+                item_id
+                status" 
         />
     </class>
     

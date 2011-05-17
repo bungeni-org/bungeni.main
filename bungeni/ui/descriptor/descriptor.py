@@ -21,6 +21,7 @@ from bungeni.alchemist import Session
 from bungeni.alchemist.model import ModelDescriptor, Field, show, hide
 
 from bungeni.models import domain
+from bungeni.models.utils import get_db_user_id
 
 # We import bungeni.core.workflows.adapters to ensure that the "states"
 # attribute on each "workflow" module is setup... this is to avoid an error
@@ -160,10 +161,29 @@ def linked_mp_name_column(name, title, attr):
         )
     return column.GetterColumn(title, getter)
 
-def simple_view_column(name, title, default_value=_(u"view")):
-    """Replace primary key with meaningful title"""
+def user_party_column(name, title, default="-"):
     def getter(item, formatter):
-        return default_value
+        session = Session()
+        mp_obj = session.query(domain.MemberOfParliament).filter(
+            domain.MemberOfParliament.user_id==item.user_id
+        ).one()
+        if mp_obj is not None:
+            if mp_obj.party is not None:
+                return translation.translate_obj(mp_obj.party).full_name
+        return default
+    return column.GetterColumn(title, getter)
+
+
+def simple_view_column(name, title, default=_(u"view"), 
+        owner_msg=_(u"view")
+    ):
+    """Replace primary key with meaningful title - tests for owner"""
+    def getter(item, formatter):
+        render_value = default
+        if hasattr(item, "owner_id"):
+            if item.owner_id == get_db_user_id():
+                render_value = owner_msg
+        return render_value
     return column.GetterColumn(title, getter)
 
 ''' !+ replaced with linked_assignment_column()
@@ -2806,9 +2826,10 @@ class SignatoryDescriptor(ModelDescriptor):
     fields = [
         Field(name="signatory_id",
             modes="listing",
+            localizable = [show("listing", "bungeni.Signatory bungeni.Owner")],
             property = schema.TextLine(title=_("View")),
             listing_column = simple_view_column("signatory_id", 
-                _(u"Review"), _("Review")
+                _(u"review"), _(u"view"), _(u"review")
             ),
         ),
         Field(name="user_id", # [user-req]
@@ -2827,9 +2848,18 @@ class SignatoryDescriptor(ModelDescriptor):
             ),
             view_widget=widgets.MemberURLDisplayWidget
         ),
+        Field(name="political_party",
+            modes="listing",
+            property=schema.TextLine(title=_(u"political party")),
+            listing_column=user_party_column("political_party",
+                _(u"political party"), _(u"no party")
+            )
+        ),
         Field(name="status",
             modes="view listing",
-            localizable=[ show("view listing") ],
+            localizable = [show("view listing", 
+                "bungeni.Signatory bungeni.Owner bungeni.Clerk"
+            )],
             property=schema.Choice(title=_("Signature status"), 
                 vocabulary="bungeni.vocabulary.workflow",
                 required=True
