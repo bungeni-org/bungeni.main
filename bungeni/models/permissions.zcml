@@ -254,6 +254,8 @@
   <permission id="bungeni.signatory.Act" title="Consent or Reject" />
   <permission id="bungeni.signatory.Delete" title="Delete Signatory" />
   <permission id="bungeni.signatory.Edit" title="Edit Signatory" />
+  <permission id="bungeni.signatory.View" title="View Signatory" />
+  <meta:redefinePermission from="bungeni.signatory.View" to="zope.View" />
 
   <permission id="bungeni.groupitemassignment.View" title="Add Group Item Assignment" />
   <permission id="bungeni.groupitemassignment.Add" title="Add Group Item Assignment" />

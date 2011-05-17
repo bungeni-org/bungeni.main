@@ -10,7 +10,7 @@ $Id$
 
 # SIGNATORY TAG STATE - document may be viewed
 SIGNATORY_ITEMS_STATE = u"submitted_signatories"
-SIGNATORY_ITEMS_CONSENTED_STATES = [u"consented", u"rejected"]
+SIGNATORY_ITEMS_CONSENTED_STATES = [u"consented",]
 
 ACTIVE_TAGS = [
     "private", 
