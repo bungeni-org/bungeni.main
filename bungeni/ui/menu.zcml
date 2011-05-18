@@ -1599,6 +1599,23 @@
         permission="zope.ManageContent"
     />
     <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.ITitleType"
+        action="delete"
+        title="Delete"
+        order="99"
+        layer=".interfaces.IAdminSectionLayer"
+        permission="zope.ManageContent"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IUserDelegation"
+        action="delete"
+        title="Delete"
+        order="99"
+        layer=".interfaces.IAdminSectionLayer"
+        permission="zope.ManageContent"
+    />
+    
+    <browser:menuItem menu="context_actions"
         layer=".interfaces.IBusinessSectionLayer"
         for="bungeni.models.interfaces.ICommittee"
         action="./schedule"

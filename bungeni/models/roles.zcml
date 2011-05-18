@@ -19,7 +19,9 @@
     <role id="bungeni.Authenticated" title="All authenticated users" />
     <role id="bungeni.Anonymous" title="Bungeni Visitor" />
     <role id="bungeni.Signatory" title="Document Signatory" />
-
+    <role id="bungeni.PartyMember" title="Party Member"/>
+    <role id="bungeni.Government" title="Member of Government"/>
+    <role id="bungeni.CommitteeMember" title="Committee Member"/>
     <!-- load custom roles defined in bungeni_custom -->
     <include package="bungeni_custom.sys.acl" file="roles.zcml" />
     

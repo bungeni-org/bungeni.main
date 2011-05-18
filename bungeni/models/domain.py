@@ -323,21 +323,21 @@ class PoliticalEntity(Group):
     """Base class for political parties and political groups.
     """
     interface.implements(interfaces.ITranslatable)
-    title_types = one2many("title_types",
-        "bungeni.models.domain.TitleTypeContainer", "group_id")
-
+    
 class PoliticalParty(PoliticalEntity):
     """A political party (ouside the parliament).
     """
     partymembers = one2many("partymembers",
         "bungeni.models.domain.PartyMemberContainer", "group_id")
-
+    title_types = one2many("title_types",
+        "bungeni.models.domain.TitleTypeContainer", "group_id")
 class PoliticalGroup(PoliticalEntity):
     """A political group in a parliament.
     """
     partymembers = one2many("partymembers",
         "bungeni.models.domain.PartyMemberContainer", "group_id")
-
+    title_types = one2many("title_types",
+        "bungeni.models.domain.TitleTypeContainer", "group_id")
 class PartyMember(GroupMembership):
     """Member of a political party or group, defined by its group membership.
     """
