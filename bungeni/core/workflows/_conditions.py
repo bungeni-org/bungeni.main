@@ -43,7 +43,7 @@ def user_is_context_owner(context):
                     .filter(domain.UserDelegation.delegation_id == user.user_id) \
                     .all()
     users = [delegate.login for delegate in delegations]
-    users.append(user.login) 
+    users.append(owner_login) 
     return user.login in users
 
 def clerk_receive_notification(context):
