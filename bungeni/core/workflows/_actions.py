@@ -44,6 +44,7 @@ def __pi_create(context):
 
 def __pi_submit(context):
     utils.set_pi_registry_number(context)
+    utils.pi_update_signatories(context)
 
 
 # address
@@ -72,6 +73,7 @@ _bill_working_draft = __pi_create
 def _bill_gazetted(context):
     utils.setBillPublicationDate(context)
     utils.set_pi_registry_number(context)
+    utils.pi_update_signatories(context)
 
 
 # group
@@ -213,5 +215,8 @@ def _signatory_awaiting_consent(context):
         utils.assign_owner_role(context, owner_login)
         utils.assign_signatory_role(context.item, owner_login)
 
-def _signatory_reject(context):
+def _signatory_rejected(context):
+    owner_login = utils.get_owner_login_pi(context)
     utils.assign_signatory_role(context.item, owner_login, unset=True)
+
+_signatory_withdrawn = _signatory_rejected

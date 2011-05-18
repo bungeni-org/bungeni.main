@@ -376,6 +376,11 @@ class WorkflowController(object):
                 self, transition_id, comment, check_security))
         # raises InvalidTransitionError if id is invalid for current state
         transition = self.workflow.get_transition(transition_id)
+        # skip security check for transitions
+        # !+CHECK_SECURITY(murithi, may-2011) some auto transitions have
+        # sources - to either, fix zcml_regenerate or directive in xml
+        if transition.trigger == interfaces.AUTOMATIC:
+            check_security = False
         self._check(transition, check_security)
         # change status of context or new object
         self.state_controller.set_status(transition.destination)

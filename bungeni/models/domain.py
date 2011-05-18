@@ -491,7 +491,7 @@ class ParliamentaryItem(Entity):
         # As base meaning of "submission_date" we take the most recent date
         # of workflow transition to "submit" to clerk. Subclasses may need
         # to overload as appropriate for their respective workflows.
-        return self._get_workflow_date("submitted")
+        return self._get_workflow_date("submitted", "gazetted")
 
 class AttachedFileType(object):
     """Type of attachment: image/annex/... 

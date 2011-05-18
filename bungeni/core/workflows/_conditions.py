@@ -123,6 +123,17 @@ def pi_signatories_check(context):
     validator = ISignatoriesValidator(context)
     return validator.validateConsentedSignatories()
 
+def pi_signature_period_expired(context):
+    """The document has been submitted"""
+    validator = ISignatoriesValidator(context.item)
+    return validator.expireSignatures()
+
 def pi_allow_signature(context):
     validator = ISignatoriesValidator(context.item)
     return user_is_context_owner(context) and validator.allowSignature()
+
+def pi_allow_signature_actions(context):
+    """Control other signature actions => such as withdraw and reject
+    """
+    validator = ISignatoriesValidator(context.item)
+    return user_is_context_owner(context) and validator.documentSubmitted()

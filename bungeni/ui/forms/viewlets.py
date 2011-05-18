@@ -31,7 +31,7 @@ from bungeni.models.utils import get_principal_id
 from bungeni.ui.i18n import _
 import bungeni.core.globalsettings as prefs
 
-from bungeni.ui.tagged import get_states, SIGNATORY_ITEMS_CONSENTED_STATES
+from bungeni.ui.tagged import get_states
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
 from bungeni.ui import table
@@ -781,7 +781,7 @@ class MemberItemsViewlet(browser.BungeniItemsViewlet):
             session.query(domain.Signatory).filter(
                 sql.and_(domain.Signatory.user_id == user_id,
                     domain.Signatory.status.in_(
-                            SIGNATORY_ITEMS_CONSENTED_STATES
+                            get_states("signatory", tagged=["public"])
                         ),
                 )
             ).all()

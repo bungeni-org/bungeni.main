@@ -16,6 +16,7 @@ import bungeni.core.interfaces
 #import bungeni.core.globalsettings as prefs
 from bungeni.ui.utils import debug
 
+
 import dbutils
 
 
@@ -69,19 +70,6 @@ def assign_owner_role_pi(context):
         assign_owner_role(context, current_user_login)
     if owner_login and (owner_login != current_user_login):
         assign_owner_role(context, owner_login)
-
-def assign_signatory_role(context, owner_login, unset=False):
-    log.debug("assign signatory role [%s] user: [%s]",
-        context, owner_login
-    )
-    if unset:
-        IPrincipalRoleMap(context).unsetRoleForPrincipal(
-            u"bungeni.Signatory", owner_login
-        )
-    else:
-        IPrincipalRoleMap(context).assignRoleToPrincipal(u"bungeni.Signatory", 
-            owner_login
-        )
 
 def create_version(context):
     """Create a new version of an object and return it.
@@ -221,3 +209,25 @@ def schedule_sitting_items(context):
             fireTransitionScheduled(item)
 
 
+
+#signatories
+def assign_signatory_role(context, owner_login, unset=False):
+    log.debug("assign signatory role [%s] user: [%s]",
+        context, owner_login
+    )
+    if unset:
+        IPrincipalRoleMap(context).unsetRoleForPrincipal(
+            u"bungeni.Signatory", owner_login
+        )
+    else:
+        IPrincipalRoleMap(context).assignRoleToPrincipal(u"bungeni.Signatory", 
+            owner_login
+        )
+
+def pi_update_signatories(context):
+    """fire automatic transitions on submission of document"""
+    #first commit all pending db transactions
+    for signatory in context.signatories.values():
+        wfc = IWorkflowController(signatory, None)
+        if wfc is not None:
+            wfc.fireAutomatic()

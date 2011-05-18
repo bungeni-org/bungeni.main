@@ -62,14 +62,26 @@ class SignatoryValidator(object):
                 (self.consented_signatories <= self.max_signatories)
             )
         )
-    
+
     def allowSignature(self):
         return (not self.max_signatories or 
             (self.consented_signatories < self.max_signatories)
-        )
+        ) and self.documentSubmitted()
+
+    def documentSubmitted(self):
+        return unicode(self.pi_instance.status) == u"submitted_signatories"
+
+    def expireSignatures(self):
+        return unicode(self.pi_instance.status) == u"submitted"
+
+
 
 class BillSignatoryValidator(SignatoryValidator):
     zope.component.adapts(IBill)
+
+    def expireSignatures(self):
+        return unicode(self.pi_instance.status) == u"gazetted"
+
 
 class MotionSignatoryValidator(SignatoryValidator):
     zope.component.adapts(IMotion)

@@ -326,13 +326,16 @@ class OwnedItemsInStageViewlet(WorkspaceViewlet):
                         domain.ParliamentaryItem.status.in_(self.states),
                         domain.ParliamentaryItem.type.in_(self.types))
         self.query = session.query(domain.ParliamentaryItem).filter(qfilter)
-        # get all items for which the member is a signatory
-        signature_ids = [ signature.item_id for signature in
-            session.query(domain.Signatory).filter(
-                domain.Signatory.user_id==user_id
-            ).all()
-        ]
         if self.include_signed_items:
+            # get all items for which the member is a signatory
+            signature_ids = [ signature.item_id for signature in
+                session.query(domain.Signatory).filter(sql.and_(
+                    domain.Signatory.user_id==user_id,
+                    domain.Signatory.status.in_(
+                        get_states("signatory", tagged=["workspace"])
+                    )
+                )).all()
+            ]
             qfilter_signatories = sql.and_(
                 domain.ParliamentaryItem.parliamentary_item_id.in_(signature_ids),
                 domain.ParliamentaryItem.type.in_(self.types),

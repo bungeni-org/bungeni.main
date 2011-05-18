@@ -8,9 +8,6 @@ $Id$
 
 # Declaration of active tags (it is an error to specify an undeclared tag)
 
-# SIGNATORY document status to filter member activity
-SIGNATORY_ITEMS_CONSENTED_STATES = [u"consented",]
-
 ACTIVE_TAGS = [
     "private", 
     "public",
@@ -152,4 +149,11 @@ TAG_MAPPINGS["groupsitting"] = {
     "published_agenda": ["public", "published","workspace", ],
     "draft_minutes": ["public", "draft","workspace"],
     "published_minutes": ["public", "published"],
+}
+
+TAG_MAPPINGS["signatory"] = {
+    "awaiting_consent": ["workspace"],
+    "consented": ["workspace", "public"],
+    "rejected": ["terminal"],
+    "withdrawn": ["terminal"],
 }

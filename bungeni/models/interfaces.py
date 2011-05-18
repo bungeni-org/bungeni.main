@@ -399,7 +399,15 @@ class ISignatoriesValidator(interface.Interface):
         """
 
     def allowSignature():
-        """Determine if a member can consent
+        """Determine if a member can consent.
+        """
+    
+    def documentSubmitted():
+        """Determine if document has been submitted to signatories
+        """
+    
+    def expireSignatures():
+        """Should pending signatures be archived
         """
 
 class IConstituency(interface.Interface):
