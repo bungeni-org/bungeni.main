@@ -4,7 +4,7 @@
 
 """Bungeni Browser Views
 
-$Id:$
+$Id$
 """
 log = __import__("logging").getLogger("bungeni.ui.errors")
 
