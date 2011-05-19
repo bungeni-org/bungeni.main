@@ -814,4 +814,19 @@
         permission="zope.View"
      />
 
+    <!-- error pages -->
+  <browser:page
+      for="zope.security.interfaces.IUnauthorized"
+      name="index"
+      permission="zope.Public"
+      class=".errors.Unauthorized"
+      template="templates/errorpage.pt"
+      />
+    <browser:defaultView
+        for="zope.security.interfaces.IUnauthorized"
+        layer="zope.publisher.interfaces.http.IHTTPRequest"
+        name="index"
+        />
+
+
 </configure>
