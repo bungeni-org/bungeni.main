@@ -574,6 +574,7 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.signatory.View" role="bungeni.MP" />
 <grant permission="bungeni.signatory.View" role="bungeni.Minister" />
 <grant permission="bungeni.signatory.View" role="bungeni.Authenticated" />
+<grant permission="bungeni.signatory.View" role="bungeni.Anonymous" />
 <grant permission="bungeni.signatory.Edit" role="bungeni.Clerk" />
 <grant permission="bungeni.signatory.Edit" role="bungeni.Owner" />
 <grant permission="bungeni.signatory.Add" role="bungeni.Owner" />

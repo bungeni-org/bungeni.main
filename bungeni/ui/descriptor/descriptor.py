@@ -2867,6 +2867,7 @@ class SignatoryDescriptor(ModelDescriptor):
             listing_column = workflow_column("status", "Signature Status"),
         ),
     ]
+    public_wfstates = get_states("signatory", tagged=["public"])
 
 
 class ConstituencyDescriptor(ModelDescriptor):
