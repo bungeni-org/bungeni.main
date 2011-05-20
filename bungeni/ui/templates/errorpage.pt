@@ -5,11 +5,11 @@
 
   <div metal:fill-slot="body" i18n:domain="bungeni">
     <h1 i18n:translate="" tal:content="view/page_title"></h1>
-    <p>
         <div align="center" class="bungeni-error">
-            <strong tal:content="view/error_message"></strong>
+            <p>
+                <strong tal:content="view/error_message"></strong>
+            </p>
         </div>
-    </p>
   </div>
 
 </html>
