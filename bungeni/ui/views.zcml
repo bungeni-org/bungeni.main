@@ -816,6 +816,13 @@
 
     <!-- error pages -->
   <browser:page
+      for="zope.security.interfaces.IException"
+      name="index"
+      permission="zope.Public"
+      class=".errors.SystemError"
+      template="templates/errorpage.pt"
+      />
+  <browser:page
       for="zope.security.interfaces.IUnauthorized"
       name="index"
       permission="zope.Public"
@@ -827,6 +834,9 @@
         layer="zope.publisher.interfaces.http.IHTTPRequest"
         name="index"
         />
-
-
+    <browser:defaultView
+        for="zope.interface.common.interfaces.IException"
+        layer="zope.publisher.interfaces.http.IHTTPRequest"
+        name="index"
+        />
 </configure>

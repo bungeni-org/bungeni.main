@@ -11,20 +11,42 @@ log = __import__("logging").getLogger("bungeni.ui.errors")
 import zope.publisher.browser
 from bungeni.ui.i18n import _
 
-
-
 class BaseErrorView(zope.publisher.browser.BrowserView):
     
+    http_status_code = 500
+    additional_headers = {}
+
+    @property
+    def error_message(self):
+        return _(u"An error occurred in Bungeni.")
+
     @property
     def page_title(self):
         return _(u"Bungeni - [Error]")
-    
+
+    def set_extra_headers(self):
+        for header_name, header_value in self.additional_headers.iteritems():
+            self.request.response.setHeader(header_name, header_value)
+
+    def __call__(self):
+        self.set_extra_headers()
+        self.request.response.setStatus(self.http_status_code)
+        return super(BaseErrorView, self).__call__()
+
+class SystemError(BaseErrorView):
+
     @property
     def error_message(self):
-        return _(u"An error occured in Bungeni")
-
+        return _(u"A system error occurred.")
 
 class Unauthorized(BaseErrorView):
+
+    http_status_code = 403
+    additional_headers = {
+        "Expires": "Thu, 01 Dec 1994 16:00:00 GMT",
+        "Cache-Control": "no-store, no-cache, must-revalidate",
+        "Pragma": "no-cache"
+    }
 
     @property
     def error_message(self):
