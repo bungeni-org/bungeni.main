@@ -115,25 +115,36 @@ def user_is_parent_document_owner(context):
         utils.get_owner_login_pi(context) ==
         utils.get_owner_login_pi(context.item)
     )
+
 def pi_has_signatories(context):
-    validator = ISignatoriesValidator(context)
-    return validator.validateSignatories()
+    validator = ISignatoriesValidator(context, None)
+    if validator is not None:
+        return validator.validateSignatories()
+    return False
 
 def pi_signatories_check(context):
-    validator = ISignatoriesValidator(context)
-    return validator.validateConsentedSignatories()
+    validator = ISignatoriesValidator(context, None)
+    if validator is not None:
+        return validator.validateConsentedSignatories()
+    return False
 
 def pi_signature_period_expired(context):
     """The document has been submitted"""
-    validator = ISignatoriesValidator(context.item)
-    return validator.expireSignatures()
+    validator = ISignatoriesValidator(context.item, None)
+    if validator is not None:
+        return validator.expireSignatures()
+    return False
 
 def pi_allow_signature(context):
-    validator = ISignatoriesValidator(context.item)
-    return user_is_context_owner(context) and validator.allowSignature()
+    validator = ISignatoriesValidator(context.item, None)
+    if validator is not None:
+        return user_is_context_owner(context) and validator.allowSignature()
+    return False
 
 def pi_allow_signature_actions(context):
     """Control other signature actions => such as withdraw and reject
     """
-    validator = ISignatoriesValidator(context.item)
-    return user_is_context_owner(context) and validator.documentSubmitted()
+    validator = ISignatoriesValidator(context.item, None)
+    if validator is  not None:
+        return user_is_context_owner(context) and validator.documentSubmitted()
+    return False

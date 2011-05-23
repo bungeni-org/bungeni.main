@@ -299,6 +299,20 @@ class IBungeniSettings(interface.Interface):
     motion_signatories_max = schema.Int(
         title=_(u"Maximum consented signatories for a motion"), default=0
     )
+    agendaitem_signatories_min = schema.Int(
+        title=_(u"Minimum consented signatories for an agenda item"), default=0
+    )
+    agendaitem_signatories_max = schema.Int(
+        title=_(u"Maximum consented signatories for an agenda item"), default=0
+    )
+    tableddocument_signatories_min = schema.Int(
+        title=_(u"Minimum consented signatories for a tabled document"), 
+        default=0
+    )
+    tableddocument_signatories_max = schema.Int(
+        title=_(u"Maximum consented signatories for a tabled document"), 
+        default=0
+    )
 
 class IBungeniUserSettings(interface.Interface):
 

@@ -8,7 +8,7 @@ import zope.component
 import zope.interface
 
 from bungeni.models.interfaces import (IBill, IMotion, IQuestion,
-    ISignatoriesValidator
+    IAgendaItem, ITabledDocument, ISignatoriesValidator
 )
 from bungeni.models.settings import BungeniSettings
 from bungeni.core.app import BungeniApp
@@ -88,3 +88,9 @@ class MotionSignatoryValidator(SignatoryValidator):
 
 class QuestionSignatoryValidator(SignatoryValidator):
     zope.component.adapts(IQuestion)
+
+class AgendaItemSignatoryValidator(SignatoryValidator):
+    zope.component.adapts(IAgendaItem)
+
+class TabledDocumentSignatoryValidator(SignatoryValidator):
+    zope.component.adapts(ITabledDocument)

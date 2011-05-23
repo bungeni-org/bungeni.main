@@ -43,6 +43,8 @@
     <adapter factory=".signatories.BillSignatoryValidator"/>
     <adapter factory=".signatories.MotionSignatoryValidator"/>
     <adapter factory=".signatories.QuestionSignatoryValidator"/>
+    <adapter factory=".signatories.AgendaItemSignatoryValidator"/>
+    <adapter factory=".signatories.TabledDocumentSignatoryValidator"/>
     
     <!-- date range adapters -->
     <!-- !+DATERANGEFILTER(mr, dec-2010)

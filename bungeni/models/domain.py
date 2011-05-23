@@ -464,6 +464,8 @@ class ParliamentaryItem(Entity):
     sort_replace = {"owner_id": ["last_name", "first_name"]}
     files = one2many("files",
         "bungeni.models.domain.AttachedFileContainer", "item_id")
+    signatories = one2many("signatories",
+        "bungeni.models.domain.SignatoryContainer", "item_id")
     # votes
     # schedule
     # object log
@@ -543,8 +545,6 @@ class Question(ParliamentaryItem, _AdmissibleMixin):
     #"bungeni.models.domain.QuestionContainer", "supplement_parent_id")
     event = one2many("event",
         "bungeni.models.domain.EventItemContainer", "item_id")
-    signatories = one2many("signatories",
-        "bungeni.models.domain.SignatoryContainer", "item_id")
     versions = one2many("versions",
         "bungeni.models.domain.QuestionVersionContainer", "content_id")
     sort_on = ParliamentaryItem.sort_on + ["question_number"]
@@ -562,8 +562,6 @@ QuestionVersion = ItemVersions.makeVersionFactory("QuestionVersion")
 class Motion(ParliamentaryItem, _AdmissibleMixin):
     #interface.implements(bungeni.core.interfaces.IVersionable)
     
-    signatories = one2many("signatories",
-        "bungeni.models.domain.SignatoryContainer", "item_id")
     event = one2many("event",
         "bungeni.models.domain.EventItemContainer", "item_id")
     versions = one2many("versions",
@@ -587,8 +585,6 @@ class BillType(Entity):
 class Bill(ParliamentaryItem):
     #interface.implements(bungeni.core.interfaces.IVersionable)
     
-    signatories = one2many("signatories",
-        "bungeni.models.domain.SignatoryContainer", "item_id")
     event = one2many("event",
         "bungeni.models.domain.EventItemContainer", "item_id")
     assignedgroups = one2many("assignedgroups",
@@ -755,8 +751,6 @@ class TabledDocument(ParliamentaryItem, _AdmissibleMixin):
     """
     #interface.implements(bungeni.core.interfaces.IVersionable)
     
-    signatories = one2many("signatories",
-        "bungeni.models.domain.SignatoryContainer", "item_id")
     event = one2many("event",
         "bungeni.models.domain.EventItemContainer", "item_id")
     versions = one2many("versions",
