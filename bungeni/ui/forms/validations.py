@@ -333,7 +333,7 @@ def validate_member_titles(action, data, context, container):
     user_id = container.__parent__.user_id
     membership_id = container.__parent__.membership_id
     session = Session()
-    title_type_id = data['title_type_id']
+    title_type_id = data.get('title_type_id', None)
     if interfaces.IMemberTitle.providedBy(context):
         title = context
     else:
@@ -454,8 +454,8 @@ def validate_recurring_sittings(action, data, context, container):
     confirms the validity of them.
     """
 
-    start = data['start_date']
-    end = data['end_date']
+    start = data.get('start_date')
+    end = data.get('end_date')
     weekdays = data.get('weekdays')
     monthly = data.get('monthly')
     repeat = data.get('repeat')
