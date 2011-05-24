@@ -68,7 +68,7 @@ _agendaitem_submitted = __pi_submit
 
 # bill
 
-_bill_working_draft = __pi_create
+_bill_draft = _bill_working_draft = __pi_create
 
 def _bill_gazetted(context):
     utils.setBillPublicationDate(context)
