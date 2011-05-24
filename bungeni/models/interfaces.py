@@ -413,11 +413,15 @@ class ISignatoriesValidator(interface.Interface):
         """
 
     def allowSignature():
-        """Determine if a member can consent.
+        """Check that the current user has the right to consent on document 
         """
     
     def documentSubmitted():
-        """Determine if document has been submitted to signatories
+        """Check that the document has been submitted
+        """
+    
+    def documentInDraft():
+        """Check that the document is in draft stage
         """
     
     def expireSignatures():

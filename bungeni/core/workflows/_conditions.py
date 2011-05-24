@@ -16,6 +16,7 @@ from bungeni.ui.interfaces import IFormEditLayer
 from bungeni.ui.utils import common
 from bungeni.core import globalsettings as prefs
 from bungeni.core.workflows import utils
+from bungeni.core.interfaces import IAuditable
 from bungeni.models.interfaces import ISignatoriesValidator
 from bungeni.models import domain
 from bungeni.alchemist import Session
@@ -116,6 +117,9 @@ def user_is_parent_document_owner(context):
         utils.get_owner_login_pi(context.item)
     )
 
+def user_is_not_parent_document_owner(context):
+    return not user_is_parent_document_owner(context)
+
 def pi_has_signatories(context):
     validator = ISignatoriesValidator(context, None)
     if validator is not None:
@@ -135,6 +139,16 @@ def pi_signature_period_expired(context):
         return validator.expireSignatures()
     return False
 
+def pi_document_redrafted(context):
+    """Parent document has been redrafted"""
+    validator = ISignatoriesValidator(context.item, None)
+    return validator and validator.documentInDraft()
+
+def pi_unsign_signature(context):
+    return (pi_document_redrafted(context) and 
+        user_is_not_parent_document_owner(context)
+    )
+
 def pi_allow_signature(context):
     validator = ISignatoriesValidator(context.item, None)
     if validator is not None:
@@ -142,9 +156,33 @@ def pi_allow_signature(context):
     return False
 
 def pi_allow_signature_actions(context):
-    """Control other signature actions => such as withdraw and reject
+    """allow/disallow other signature actions => such as withdraw and reject
     """
     validator = ISignatoriesValidator(context.item, None)
-    if validator is  not None:
-        return user_is_context_owner(context) and validator.documentSubmitted()
-    return False
+    return (validator and user_is_context_owner(context) 
+        and validator.documentSubmitted()
+        and user_is_not_parent_document_owner(context)
+    )
+
+#auditables
+def user_is_state_creator(context):
+    """Did the current user create current state - based on workflow log?
+    """
+    is_state_creator = False
+    if IAuditable.providedBy(context):
+        current_user = model_utils.get_db_user()
+        if current_user:
+            for _object_change in reversed(context.changes):
+                if _object_change.action == "workflow":
+                    extras = _object_change.extras
+                    if extras and (extras.get("destination") == context.status):
+                        if _object_change.user.login == current_user.login:
+                            is_state_creator = True
+                    break
+    return is_state_creator
+
+def user_is_state_creator_and_owner(context):
+    return user_is_state_creator(context) and user_is_context_owner(context)
+
+def user_is_state_creator_not_owner(context):
+    return user_is_state_creator(context) and user_is_not_context_owner(context)

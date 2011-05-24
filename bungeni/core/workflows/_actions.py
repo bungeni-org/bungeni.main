@@ -40,6 +40,7 @@ create_version = utils.create_version
 def __pi_create(context):
     #!+utils.setParliamentId(context)
     utils.assign_owner_role_pi(context)
+    utils.pi_update_signatories(context)
 
 
 def __pi_submit(context):
@@ -195,15 +196,20 @@ def __make_owner_signatory(context):
         session.flush()
         zope.event.notify(zope.lifecycleevent.ObjectCreatedEvent(signatory))
 
-def __pi_assign_signatory_roles(context):
+def __pi_submitted_signatories(context):
     __make_owner_signatory(context)
     for signatory in context.signatories.values():
         owner_login = utils.get_owner_login_pi(signatory)
         utils.assign_owner_role(signatory, owner_login)
         utils.assign_signatory_role(context, owner_login)
+    utils.pi_update_signatories(context)
 
-_question_submitted_signatories = _motion_submitted_signatories = \
-    _bill_submitted_signatories = __pi_assign_signatory_roles
+
+_question_submitted_signatories = __pi_submitted_signatories
+_motion_submitted_signatories = __pi_submitted_signatories
+_bill_submitted_signatories = __pi_submitted_signatories
+_agendaitem_submitted_signatories = __pi_submitted_signatories
+_tableddocument_submitted_signatories = __pi_submitted_signatories
 
 def _signatory_awaiting_consent(context):
     """

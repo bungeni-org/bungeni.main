@@ -304,10 +304,10 @@
      permission="zope.View"
      weight="10"
      />
-    <browser:viewlet name="bungeni.viewlet.question-signatories"
+    <browser:viewlet name="bungeni.viewlet.pi-signatories"
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.SignatoriesViewlet"
-        for="bungeni.models.interfaces.IQuestion"
+        for="bungeni.models.interfaces.IBungeniParliamentaryContent"
         permission="zope.View"
         weight="10"
     />
@@ -602,13 +602,6 @@
     />
 
     <!-- bills -->
-    <browser:viewlet name="bungeni.viewlet.bill-signatories"
-        manager=".interfaces.ISubFormViewletManager"
-        class=".viewlets.SignatoriesViewlet"
-        for="bungeni.models.interfaces.IBill"
-        permission="zope.View"
-        weight="10"
-    />
     <browser:viewlet name="bungeni.viewlet.bill-timeline"
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.BillTimeLineViewlet"
@@ -625,13 +618,6 @@
     />
 
     <!-- Motion -->
-    <browser:viewlet name="bungeni.viewlet.motion-signatories"
-        manager=".interfaces.ISubFormViewletManager"
-        class=".viewlets.SignatoriesViewlet"
-        for="bungeni.models.interfaces.IMotion"
-        permission="zope.View"
-        weight="10"
-    />
     <browser:viewlet name="bungeni.viewlet.motion-timeline"
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.MotionTimeLineViewlet"

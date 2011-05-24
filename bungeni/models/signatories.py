@@ -12,6 +12,7 @@ from bungeni.models.interfaces import (IBill, IMotion, IQuestion,
 )
 from bungeni.models.settings import BungeniSettings
 from bungeni.core.app import BungeniApp
+from bungeni.core.workflow.interfaces import IWorkflow
 
 app = BungeniApp()
 
@@ -68,13 +69,21 @@ class SignatoryValidator(object):
             (self.consented_signatories < self.max_signatories)
         ) and self.documentSubmitted()
 
-    def documentSubmitted(self):
-        return unicode(self.pi_instance.status) == u"submitted_signatories"
-
     def expireSignatures(self):
         return unicode(self.pi_instance.status) == u"submitted"
 
+    def documentSubmitted(self):
+        return unicode(self.pi_instance.status) == u"submitted_signatories"
 
+    def documentInDraft(self):
+        """Assume destinations of transitions with no sources are draft
+        """
+        wf = IWorkflow(self.pi_instance, None)
+        if wf:
+            return (self.pi_instance.status in 
+                [tr.destination for tr in wf.get_transitions_from(None)]
+            )
+        return False
 
 class BillSignatoryValidator(SignatoryValidator):
     zope.component.adapts(IBill)
