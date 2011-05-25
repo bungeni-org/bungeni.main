@@ -97,17 +97,15 @@ class ContentResolver(object):
     interface.implements(iindex.IResolver)
     scheme = '' # u'pft'
     
-    def id(self, object, language="en"): 
+    def id(self, object): 
         """ defines the xapian 'primary key' """
         #TODO Add the language to the index!
-        return "%s.%s-%s:%s"%(object.__class__.__module__,
+        return "%s.%s-%s"%(object.__class__.__module__,
                             object.__class__.__name__,
-                            container.stringKey(object),
-                            language)
+                            container.stringKey(object))
 
     def resolve(self, id): 
         class_path, oid = id.split('-', 1)
-        oid, lang = oid.split(":", 1)
         domain_class = resolve.resolve(class_path)
         session = Session()
         value_key = container.valueKey(oid)
@@ -209,7 +207,6 @@ class ContentIndexer(object):
     def index(self, doc):
         " populate a xapian document with fields to be indexed from context "
         # create index of all text fields for the document
-        print "doing generic indexer"
         for field_index_name, field in self.fields():
             if not isinstance(field, (schema.Text, schema.ASCII)):
                 continue
@@ -263,21 +260,19 @@ class ContentIndexer(object):
         resolver = ContentResolver()
         log.warning("Bulk Indexing %r"%klass)
         count = 0
+        
         for i in instances:
-            for lang in languages():
-                count += 1
-                doc_id = resolver.id(i, language=lang.value)
-                translated = translation.translate_obj(i, lang.value)
-                translated.language = lang.value
-                indexer = klass(translated)
-                create = False
-                doc = indexer.document(connection)
-                doc.id = doc_id
-                doc.fields.append(xappy.Field('resolver', resolver.scheme))
-                connection.replace(doc)
+            count += 1
+            doc_id = resolver.id(i)
+            indexer = klass(i)
+            create = False
+            doc = indexer.document(connection)
+            doc.id = doc_id
+            doc.fields.append(xappy.Field('resolver', resolver.scheme))
+            connection.replace(doc)
     
-                if count % flush_threshold == 0:
-                    log.warning("Flushing %s %s Records"%(flush_threshold, klass))
+            if count % flush_threshold == 0:
+                log.warning("Flushing %s %s Records"%(flush_threshold, klass))
 
         # flush the remainder
         connection.flush()
@@ -394,8 +389,6 @@ class AttachedFileIndexer(ContentIndexer):
             
             if self.context.file_mimetype == 'text/plain':
                 doc.fields.append(xappy.Field('doc_text', self.context.file_data))
-                
-            print "doing attached file indexer"
     
     @classmethod
     def reindexAll(klass, connection, flush_threshold=500):

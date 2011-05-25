@@ -85,6 +85,8 @@ from bungeni.models.utils import get_current_parliament, get_db_user_id
 from bungeni.models.utils import get_current_parliament_governments
 from bungeni.models.utils import get_ministries_for_user_in_government
 
+from zope.app.schema.vocabulary import IVocabularyFactory
+from zope.i18n import translate
 
 from workspace import ARCHIVED
 
@@ -104,9 +106,18 @@ ALLOWED_TYPES = {'workspace': ('Question', 'Motion', 'TabledDocument',\
 def get_statuses_vocabulary(klass):
     try:
         obj = klass()
-        return workflow_vocabulary_factory(obj)
+        return component.getUtility(IVocabularyFactory, name="bungeni.vocabulary.workflow")(obj)
     except Exception:
         return None
+    
+def translated_vocabulary(voc, context):
+    terms = []
+    for term in voc:
+        title = translate(term.title, domain="bungeni", context=context)
+        nt = SimpleTerm(term.value, term.token, title)
+        terms.append(nt)
+    nv = SimpleVocabulary(terms)
+    return nv
 
 
 class ISearch(interface.Interface):
@@ -576,6 +587,8 @@ class AdvancedPagedSearch(PagedSearch):
 
     def __init__(self, *args):
         super(AdvancedPagedSearch, self).__init__(*args)
+        
+        #print "Language:", translate("Language", domain="bungeni", context=self.request)
         statuses = SimpleVocabulary([])
         indexed_fields = ['all', ]
         content_type = self.request.get('form.content_type', '')
@@ -665,8 +678,13 @@ class AjaxGetClassStatuses(BrowserView):
         tmp = '<option value="%s">%s</option>'
         try:
             domain_class = resolve.resolve(dotted_name)
-            states = get_statuses_vocabulary(domain_class)
-            response = [tmp % (state.value, state.title) for state in states]
+            states = translated_vocabulary(get_statuses_vocabulary(domain_class),self.request)
+            response = [tmp % (state.value, _(state.title)) for state in states]
+            no_value = translate(u"vocabulary-missing-single-value-for-edit",
+                                 domain="zope", context=self.request)
+            if no_value == u"vocabulary-missing-single-value-for-edit":
+                no_value = "(no value)"
+            response.insert(0,tmp % ('', no_value))
             return '\n'.join(response)
         except Exception:
             return "ERROR"

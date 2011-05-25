@@ -65,20 +65,11 @@ class AddOperation( IndexOperation ):
         instance = self.resolve()
 #        if not instance or instance == interfaces.OP_REQUEUE:
 #            return instance
-        if ITranslatable.providedBy(instance):
-            for lang in languages():
-                translated_instance = translation.translate_obj(instance, lang=lang.value)
-                translated_instance.language = lang.value
-                doc = interfaces.IIndexer( translated_instance ).document( connection )
-                doc.id = self.get_resolver().id(instance, language=lang.value)
-                doc.fields.append( xappy.Field('resolver', self.resolver_id or '' ) )
-                print doc.id
-                connection.add( doc )
-        else:
-            doc = interfaces.IIndexer( instance ).document( connection )
-            doc.id = self.document_id
-            doc.fields.append( xappy.Field('resolver', self.resolver_id or '' ) )
-            connection.add( doc )
+
+        doc = interfaces.IIndexer( instance ).document( connection )
+        doc.id = self.document_id
+        doc.fields.append( xappy.Field('resolver', self.resolver_id or '' ) )
+        connection.add( doc )
         
 class ModifyOperation( IndexOperation ):
 
@@ -89,20 +80,11 @@ class ModifyOperation( IndexOperation ):
         instance = self.resolve()
 #        if not instance or instance == interfaces.OP_REQUEUE:
 #            return instance        
-        if ITranslatable.providedBy(instance):
-            for lang in languages():
-                translated_instance = translation.translate_obj(instance, lang=lang.value)
-                translated_instance.language = lang.value
-                doc = interfaces.IIndexer( translated_instance ).document( connection )
-                doc.id = self.get_resolver().id(instance, language=lang.value)       
-                doc.fields.append( xappy.Field('resolver', self.resolver_id ) )
-                print doc.id
-                connection.replace(doc)
-        else:
-            doc = interfaces.IIndexer( instance ).document( connection )
-            doc.id = self.document_id        
-            doc.fields.append( xappy.Field('resolver', self.resolver_id ) )
-            connection.replace(doc)
+
+        doc = interfaces.IIndexer( instance ).document( connection )
+        doc.id = self.document_id        
+        doc.fields.append( xappy.Field('resolver', self.resolver_id ) )
+        connection.replace(doc)
     
             
         
@@ -134,15 +116,12 @@ class OperationFactory( object ):
         self.context = context
     
     def add( self ):
-        print "***Custom ADD***"
         return self._store( AddOperation( *self._id() ) )
 
     def modify( self ):
-        print "***Custom MODIFY***"
         return self._store( ModifyOperation( *self._id() ) )
 
     def remove( self ):
-        print "***Custom REMOVE***"
         return self._store( DeleteOperation( *self._id() ) )
         
     def _store( self, op ):
