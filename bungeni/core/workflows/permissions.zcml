@@ -55,6 +55,9 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.agendaitem.wf.submitted_signatories.working_draft" title="Redraft" />
 <grant permission="bungeni.agendaitem.wf.submitted_signatories.working_draft" role="bungeni.Clerk" />
 
+<permission id="bungeni.agendaitem.wf.draft.working_draft.submitted_signatories.withdrawn_external" title="Drop" />
+<grant permission="bungeni.agendaitem.wf.draft.working_draft.submitted_signatories.withdrawn_external" role="bungeni.Owner" />
+
 <permission id="bungeni.agendaitem.wf.submitted.received" title="Receive" />
 <grant permission="bungeni.agendaitem.wf.submitted.received" role="bungeni.Clerk" />
 
@@ -135,6 +138,9 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.bill.Add" role="bungeni.MP" />
 <grant permission="bungeni.bill.Delete" role="bungeni.Owner" />
 
+<permission id="bungeni.bill.wf.working_draft.draft.submitted_signatories.submitted" title="Submit" />
+<grant permission="bungeni.bill.wf.working_draft.draft.submitted_signatories.submitted" role="bungeni.Owner" />
+
 <permission id="bungeni.bill.wf.draft.working_draft.submitted_signatories" title="Submit to Signatories" />
 <grant permission="bungeni.bill.wf.draft.working_draft.submitted_signatories" role="bungeni.Owner" />
 
@@ -144,8 +150,8 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.bill.wf.submitted_signatories.working_draft" title="Redraft" />
 <grant permission="bungeni.bill.wf.submitted_signatories.working_draft" role="bungeni.Clerk" />
 
-<permission id="bungeni.bill.wf.working_draft.draft.submitted_signatories.submitted" title="Submit" />
-<grant permission="bungeni.bill.wf.working_draft.draft.submitted_signatories.submitted" role="bungeni.Owner" />
+<permission id="bungeni.bill.wf.draft.working_draft.submitted_signatories.withdrawn_external" title="Drop" />
+<grant permission="bungeni.bill.wf.draft.working_draft.submitted_signatories.withdrawn_external" role="bungeni.Owner" />
 
 <permission id="bungeni.bill.wf.submitted.gazetted" title="Publish in Gazette" />
 <grant permission="bungeni.bill.wf.submitted.gazetted" role="bungeni.Clerk" />
@@ -334,6 +340,9 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.motion.Add" role="bungeni.MP" />
 <grant permission="bungeni.motion.Delete" role="bungeni.Owner" />
 
+<permission id="bungeni.motion.wf.working_draft.draft.submitted_signatories.submitted" title="Submit" />
+<grant permission="bungeni.motion.wf.working_draft.draft.submitted_signatories.submitted" role="bungeni.Owner" />
+
 <permission id="bungeni.motion.wf.draft.working_draft.submitted_signatories" title="Submit to Signatories" />
 <grant permission="bungeni.motion.wf.draft.working_draft.submitted_signatories" role="bungeni.Owner" />
 
@@ -343,8 +352,8 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.motion.wf.submitted_signatories.working_draft" title="Redraft" />
 <grant permission="bungeni.motion.wf.submitted_signatories.working_draft" role="bungeni.Clerk" />
 
-<permission id="bungeni.motion.wf.working_draft.draft.submitted_signatories.submitted" title="Submit" />
-<grant permission="bungeni.motion.wf.working_draft.draft.submitted_signatories.submitted" role="bungeni.Owner" />
+<permission id="bungeni.motion.wf.draft.working_draft.submitted_signatories.withdrawn_external" title="Drop" />
+<grant permission="bungeni.motion.wf.draft.working_draft.submitted_signatories.withdrawn_external" role="bungeni.Owner" />
 
 <permission id="bungeni.motion.wf.submitted.received" title="Receive" />
 <grant permission="bungeni.motion.wf.submitted.received" role="bungeni.Clerk" />
@@ -438,17 +447,20 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.question.Add" role="bungeni.MP" />
 <grant permission="bungeni.question.Delete" role="bungeni.Owner" />
 
+<permission id="bungeni.question.wf.working_draft.draft.submitted_signatories.submitted" title="Submit" />
+<grant permission="bungeni.question.wf.working_draft.draft.submitted_signatories.submitted" role="bungeni.Owner" />
+
 <permission id="bungeni.question.wf.working_draft.draft.submitted_signatories" title="Submit to Signatories" />
 <grant permission="bungeni.question.wf.working_draft.draft.submitted_signatories" role="bungeni.Owner" />
 
 <permission id="bungeni.question.wf.submitted_signatories.draft" title="Redraft" />
 <grant permission="bungeni.question.wf.submitted_signatories.draft" role="bungeni.Owner" />
 
+<permission id="bungeni.question.wf.draft.working_draft.submitted_signatories.withdrawn_external" title="Drop" />
+<grant permission="bungeni.question.wf.draft.working_draft.submitted_signatories.withdrawn_external" role="bungeni.Owner" />
+
 <permission id="bungeni.question.wf.submitted_signatories.working_draft" title="Redraft" />
 <grant permission="bungeni.question.wf.submitted_signatories.working_draft" role="bungeni.Clerk" />
-
-<permission id="bungeni.question.wf.working_draft.draft.submitted_signatories.submitted" title="Submit" />
-<grant permission="bungeni.question.wf.working_draft.draft.submitted_signatories.submitted" role="bungeni.Owner" />
 
 <permission id="bungeni.question.wf.submitted.received" title="Receive" />
 <grant permission="bungeni.question.wf.submitted.received" role="bungeni.Clerk" />
@@ -543,6 +555,9 @@ See the Bungeni Source Code Style Guide for further details.
 
 <permission id="bungeni.tableddocument.wf.submitted_signatories.working_draft" title="Redraft" />
 <grant permission="bungeni.tableddocument.wf.submitted_signatories.working_draft" role="bungeni.Clerk" />
+
+<permission id="bungeni.tableddocument.wf.draft.working_draft.submitted_signatories.withdrawn_external" title="Drop" />
+<grant permission="bungeni.tableddocument.wf.draft.working_draft.submitted_signatories.withdrawn_external" role="bungeni.Owner" />
 
 <permission id="bungeni.tableddocument.wf.submitted.received" title="Receive" />
 <grant permission="bungeni.tableddocument.wf.submitted.received" role="bungeni.Clerk" />

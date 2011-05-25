@@ -466,6 +466,8 @@ class ParliamentaryItem(Entity):
         "bungeni.models.domain.AttachedFileContainer", "item_id")
     signatories = one2many("signatories",
         "bungeni.models.domain.SignatoryContainer", "item_id")
+    event = one2many("event",
+        "bungeni.models.domain.EventItemContainer", "item_id")
     # votes
     # schedule
     # object log
@@ -543,8 +545,6 @@ class Question(ParliamentaryItem, _AdmissibleMixin):
 
     #supplementaryquestions = one2many("supplementaryquestions", 
     #"bungeni.models.domain.QuestionContainer", "supplement_parent_id")
-    event = one2many("event",
-        "bungeni.models.domain.EventItemContainer", "item_id")
     versions = one2many("versions",
         "bungeni.models.domain.QuestionVersionContainer", "content_id")
     sort_on = ParliamentaryItem.sort_on + ["question_number"]
@@ -562,8 +562,6 @@ QuestionVersion = ItemVersions.makeVersionFactory("QuestionVersion")
 class Motion(ParliamentaryItem, _AdmissibleMixin):
     #interface.implements(bungeni.core.interfaces.IVersionable)
     
-    event = one2many("event",
-        "bungeni.models.domain.EventItemContainer", "item_id")
     versions = one2many("versions",
         "bungeni.models.domain.MotionVersionContainer", "content_id")
     sort_on = ParliamentaryItem.sort_on + ["motion_number"]
@@ -584,9 +582,7 @@ class BillType(Entity):
 
 class Bill(ParliamentaryItem):
     #interface.implements(bungeni.core.interfaces.IVersionable)
-    
-    event = one2many("event",
-        "bungeni.models.domain.EventItemContainer", "item_id")
+
     assignedgroups = one2many("assignedgroups",
         "bungeni.models.domain.GroupGroupItemAssignmentContainer", "item_id")
     versions = one2many("versions",
@@ -751,8 +747,6 @@ class TabledDocument(ParliamentaryItem, _AdmissibleMixin):
     """
     #interface.implements(bungeni.core.interfaces.IVersionable)
     
-    event = one2many("event",
-        "bungeni.models.domain.EventItemContainer", "item_id")
     versions = one2many("versions",
         "bungeni.models.domain.TabledDocumentVersionContainer", "content_id")
 
