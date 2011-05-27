@@ -221,6 +221,11 @@
         <append content="children:#portal-search"
             theme="children:#portal-search"
         />
+        
+        <!-- Message info -->
+        <replace content=".portalMessage"
+            theme=".portalMessage"
+        />     
 
         <!-- content -->
         <append content="children:#portal-column-content"
