@@ -1044,9 +1044,7 @@ a.link-parent {
     color: red;
 }
 
-/* Handling external/internal links, we first set the icon on all links, then 
-   remove it from the ones that are local - for both http and https */
-#content a[href ^="http:"],
+/* Handling external/internal links, for both http and https */
 #content a.link-external {
     background: transparent url(link_icon.gif) 0px 1px no-repeat;
     padding: 1px 0px 1px 16px;
@@ -1055,10 +1053,6 @@ a.link-parent {
 #content a.link-https {
     background: transparent url(lock_icon.gif) 0px 1px no-repeat;
     padding: 1px 0px 1px 16px;
-}
-#content a[href ^="http://localhost:8082/site1"] {
-    background: none;
-    padding: 0;
 }
 
 
