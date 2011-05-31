@@ -12,12 +12,16 @@
     <match path="regex:.*/(fullviewmindmap)$"
         abort="1" />
     <match path="/plone/" class="load-plone-navigation" />
-    <match path="/cynin/logged_out/" class="load-plone-navigation" />    
-    <match path="/cynin/" class="load-cynin-navigation" />   
     <match path="regex:^/(workspace|business|members|archive|admin)/?"
         class="load-bungeni-navigation" />
     <match path="regex:^/(workspace)/?"
         class="load-workspace-navigation" />
+    <match path="regex:^/(members/current)/obj-([0-9])+(/)?(view)?$"
+        class="load-member-tab" />  
+    <match path="regex:^/(business/committees)/obj-([0-9])+(/)?(view)?$"
+        class="load-committee-tab" />
+    <match path="regex:^/(members/political-groups)/obj-([0-9])+(/)?(view)?$"
+        class="load-political-group-tab" />                                    
     <match path="exact:/cynin/login_form"
         class="login" />
     <match path="exact:/"
@@ -27,15 +31,18 @@
     <match path="/" class="primary" />
 
     
-    <rule class="load-plone-navigation">
-        <append href="/plone"
-                theme="//head"
-                content="//head"
-                nocontent="ignore" />
+    <rule class="load-plone-navigation">        
         <!-- language selector -->
         <replace href="/bungeni/business/whats-on"
             content="#portal-languageselector"
-            theme="#portal-languageselector"/>        
+            theme="#portal-languageselector"/>  
+        <drop content="#portal-personaltools"/>          
+        <replace href="/bungeni/business/whats-on"
+            content="children:#portal-personaltools"
+            theme="children:#portal-personaltools"/> 
+        <drop theme="children:#portal-personaltools li.navigation" />            
+        
+                        
         <!-- navigation -->
         <prepend href="/bungeni/business/whats-on"
             content="#portal-globalnav > li"
@@ -44,6 +51,7 @@
             theme="children:#portal-globalnav > ul" />
         <prepend content="ul#portal-subnavbar li"
             theme="children:#portal-globalnav ul.level1" /> 
+        <drop theme="#processing_indicatron" />          
     </rule>
 
 
@@ -51,6 +59,9 @@
         <pyquery pyref=
             "bungeni.portal.static.themes.rules:add_member_workspace_links"
         />
+        <pyquery pyref=
+            "bungeni.portal.static.themes.rules:add_group_workspace_links"
+        />              
     </rule>  
 
     
@@ -103,13 +114,33 @@
         
 
     </rule>
+    
+    <rule class="load-member-tab">
+        <pyquery pyref=
+                 "bungeni.portal.static.themes.rules:add_space_tab"
+                 pyarg-space_type="member"
+        /> 
+    </rule>
+    
+    <rule class="load-committee-tab">
+        <pyquery pyref=
+                 "bungeni.portal.static.themes.rules:add_space_tab"
+                 pyarg-space_type="committee"
+        /> 
+    </rule>
+    
+    <rule class="load-political-group-tab">
+        <pyquery pyref=
+                 "bungeni.portal.static.themes.rules:add_space_tab"
+                 pyarg-space_type="political-group"
+        /> 
+    </rule>         
 
     <rule class="login">
         <!-- content -->
         <append content="#login_form"
                 theme="children:#portal-column-content"/>        
-    </rule>
-    
+    </rule>  
 
     <rule class="load-bungeni-navigation">
         <!-- navigation -->
@@ -176,9 +207,9 @@
         <pyquery pyref=
             "bungeni.portal.static.themes.rules:add_menu_items"
         />
-        <pyquery pyref=
+        <!--<pyquery pyref=
             "bungeni.portal.static.themes.rules:add_rss_feeds"
-        />
+        />-->
         <drop content="#portal-column-content" /> 
     </rule>  
 
@@ -195,7 +226,7 @@
             if-content=".navigation"
         />
         
-        <replace content="children:#portal-personaltools :not(.navigation)"
+        <append content="children:#portal-personaltools :not(.navigation)"
             theme="children:#portal-personaltools"
         />
         <pyquery pyref="bungeni.portal.static.themes.rules:image_links" />
@@ -210,7 +241,7 @@
             theme="#processing_indicatron"
         />
         
-    <!-- <pyquery pyref="bungeni.portal.static.themes.rules:replace_login_link"/> -->
+        <pyquery pyref="bungeni.portal.static.themes.rules:replace_login_link"/>
         
         <!-- breadcrumbs -->
         <append content="children:#portal-breadcrumbs"
