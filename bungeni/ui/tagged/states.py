@@ -57,6 +57,8 @@ TAG_MAPPINGS["agendaitem"] = {
 }
 TAG_MAPPINGS["bill"] = {
     "working_draft": ["private",],
+    "submitted": ["actionclerk",],
+    "received": ["actionclerk",],
     "submitted_signatories": ["actionmp",],
     "gazetted": [],
     "first_reading_pending": ["tobescheduled",],

@@ -441,11 +441,13 @@ class ClerkItemActionRequiredViewlet(AllItemsInStageViewlet):
         get_states("agendaitem", tagged=["actionclerk"]) + \
         get_states("motion", tagged=["actionclerk"]) + \
         get_states("question", tagged=["actionclerk"]) + \
+        get_states("bill", tagged=["actionclerk"]) + \
         get_states("tableddocument", tagged=["actionclerk"])
     types = [
         "motion",
         "question",
         "agendaitem",
+        "bill",
         "tableddocument"
     ]
 
@@ -470,7 +472,7 @@ class ClerkReviewedItemViewlet(AllItemsInStageViewlet):
                 "private", "terminal", "actionclerk", "scheduled", "approved",
         ]) +
         get_states("bill", not_tagged=[
-                "private", "terminal", "scheduled", "approved",
+                "private", "terminal", "scheduled", "approved", "actionclerk",
         ]) +
         get_states("motion", not_tagged=[
                 "private", "terminal", "actionclerk", "scheduled", "approved",

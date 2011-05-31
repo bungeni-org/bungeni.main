@@ -153,8 +153,11 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.bill.wf.draft.working_draft.submitted_signatories.withdrawn_external" title="Drop" />
 <grant permission="bungeni.bill.wf.draft.working_draft.submitted_signatories.withdrawn_external" role="bungeni.Owner" />
 
-<permission id="bungeni.bill.wf.submitted.gazetted" title="Publish in Gazette" />
-<grant permission="bungeni.bill.wf.submitted.gazetted" role="bungeni.Clerk" />
+<permission id="bungeni.bill.wf.submitted.received" title="Receive" />
+<grant permission="bungeni.bill.wf.submitted.received" role="bungeni.Clerk" />
+
+<permission id="bungeni.bill.wf.received.gazetted" title="Publish in Gazette" />
+<grant permission="bungeni.bill.wf.received.gazetted" role="bungeni.Clerk" />
 
 <permission id="bungeni.bill.wf.gazetted.first_reading_adjourned.first_reading_pending" title="Allow scheduling of First Reading" />
 <grant permission="bungeni.bill.wf.gazetted.first_reading_adjourned.first_reading_pending" role="bungeni.Clerk" />
