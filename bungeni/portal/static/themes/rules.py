@@ -98,8 +98,8 @@ def add_space_tab(content, theme, resource_fetcher, log, space_type):
     """
     theme_host = get_theme_host(log)
     theme_url = "http://" + theme_host
-    if len(theme_url.split(":")) > 1:
-        theme_port = theme_url.split(":")[1]
+    if len(theme_host.split(":")) > 1:
+        theme_port = ":" + theme_host.split(":")[1]
         
     # !+HACK(mn, may-2011) - the plone port is hardcoded. 
     plone_port = ":8082"    
@@ -126,8 +126,8 @@ def add_space_tab(content, theme, resource_fetcher, log, space_type):
             head_content = html_content("head").html().replace(
                             plone_port, theme_port)
             space_tab = html_content("#content-core").html().replace(
-                        plone_port, theme_port)
-            content("head").prepend(head_content)
+                        plone_port, theme_port)                    
+            content("head").append(head_content)
             content(".enableFormTabbing").append(
             "<dt id='fieldsetlegend-web_space'>web space</dt>\
             <dd id='fieldset-web_space'>" + space_tab + "</dd>")
