@@ -2475,23 +2475,23 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
             view_widget=widgets.HTMLDisplay,
             edit_widget=widgets.RichTextEditor,
         ),
-        Field(name="subject", # [user]
-            modes="view edit add listing",
-            localizable=[ 
-                show("view edit add"),
-                hide("listing"),
-            ],
-            property=VocabularyTextField(title=_("Subject Terms"),
-                description=_("Select Subjects"),
-                vocabulary="bungeni.vocabulary.SubjectTerms",
-                required = False,
-            ),
-            edit_widget=widgets.TreeVocabularyWidget,
-            add_widget=widgets.TreeVocabularyWidget,
-            view_widget=widgets.TermsDisplayWidget,
-        ),
+        #Field(name="subject", # [user]
+        #    modes="view edit add listing",
+        #    localizable=[ 
+        #        show("view edit add"),
+        #        hide("listing"),
+        #    ],
+        #    property=VocabularyTextField(title=_("Subject Terms"),
+        #        description=_("Select Subjects"),
+        #        vocabulary="bungeni.vocabulary.SubjectTerms",
+        #        required = False,
+        #    ),
+        #    edit_widget=widgets.TreeVocabularyWidget,
+        #    add_widget=widgets.TreeVocabularyWidget,
+        #    view_widget=widgets.TermsDisplayWidget,
+        #),
     ])
-    custom_validators = ()
+    custom_validators = []
     public_wfstates = get_states("question", tagged=["public"])
 
 class QuestionVersionDescriptor(VersionDescriptor):

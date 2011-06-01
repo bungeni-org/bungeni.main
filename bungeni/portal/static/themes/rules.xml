@@ -275,7 +275,7 @@
         <pyquery pyref=
             "bungeni.portal.static.themes.rules:add_section_links"
         />
- <pyquery pyref="bungeni.portal.static.themes.rules:enable_text_editor"/>
+ <!-- <pyquery pyref="bungeni.portal.static.themes.rules:enable_text_editor"/> -->
 
 </rule>
 </ruleset>
