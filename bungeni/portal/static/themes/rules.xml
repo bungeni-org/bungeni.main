@@ -173,7 +173,10 @@
         
         <replace content="#portal-logo" theme="#portal-logo" />
         <replace content="#portal-siteactions" theme="#portal-siteactions" />
-        <replace content="#portal-searchbox" theme="#portal-searchbox" />
+        <drop href="/plone"
+            content="#portal-breadcrumbs" />
+        <drop content="#portal-search" />              
+        
 
     <!-- menu -->
         <drop href="/plone"
