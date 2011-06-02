@@ -1099,7 +1099,6 @@ class TreeVocabularyWidget(DropdownWidget):
         contents = []
         contents.append(template % {"html": self.html,
             "javascript": self.javascript()})
-
         return "\n".join(contents)
 
 
@@ -1111,16 +1110,23 @@ class TreeVocabularyWidget(DropdownWidget):
 
     def dataSource(self):
         selected = []
-        if self.hasInput() and self.hasValidInput() and \
-        self._data is not None:
+        if self.has_input:
             selected = self.getInputValue().split("\n")
-        elif self._data is not None and self._data\
-            is not self._data_marker:
+        elif self.has_data:
             selected = self._data.split("\n")
-
         return self.context.lookupVocabulary().generateJSON(
             selected=selected
         )
+
+    @property
+    def has_input(self):
+        return (self.hasInput() and self.hasValidInput()
+            and self.getInputValue() is not None
+        )
+
+    @property
+    def has_data(self):
+        return self._data is not None and self._data is not self._data_marker
 
     @property
     def treeId(self):
@@ -1133,10 +1139,9 @@ class TreeVocabularyWidget(DropdownWidget):
               "tree_id": self.treeId
               }
 
-        if self._data is not None and self._data is not self._data_marker:
+        if self.has_data:
             kw["value"] = "|".join(self._data.split("\n"))
-        elif self.hasInput() and self.hasValidInput() \
-            and self._data is not None:
+        elif self.has_input:
             kw["value"] = "|".join(self.getInputValue().split("\n"))
         else:
             kw["value"] = ""
