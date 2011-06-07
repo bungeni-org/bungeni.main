@@ -1202,14 +1202,14 @@ div.main-column #collage h2 {
     margin-left:auto;
     margin-right:auto;
     width:960px;    
-    height:100px;
+    height:115px;
     position:relative;
 }
 .template-portal #portal-logo {
     display: block;
-    margin: .5em 0 0 1.0em;
+    margin: .5em 0 0 0;
     width:960px;
-    height: 96px;
+    height: 115px;
 }
 .template-portal a#portal-logo img.ws-left,.template-portal a#portal-logo img.ws-right {
 	display:none;
@@ -1385,7 +1385,9 @@ div.main-column #collage h2 {
 .template-workspace #alchemist-form {
 	margin-right:0px !important;
 }
- 
+.template-workspace.section-bungeni-admin #alchemist-form {
+	margin-bottom:5px;
+}
 .template-workspace.section-bungeni-business div#viewlet-above-content {
 	z-index:99 !important;
 	margin-top:35px;
