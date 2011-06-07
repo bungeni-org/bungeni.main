@@ -318,6 +318,7 @@ def setup_evoque(abs_base=None):
 # !+ z3evoque.browser
 # !+ z3evoque/z3evoque.txt 
 
+import threading
 class _ViewTemplateBase(object):
     """Evoque template used as method of a view defined as a Python class.
     Should be overridden by subslasses, not meant to be instantiated directly.
@@ -342,6 +343,7 @@ class _ViewTemplateBase(object):
         _descriptor_type = None
         log.debug("%s [%s][%s] %s" % (
             self.__class__.__name__, collection, name, self))
+        self.lock = threading.RLock()
     
     def __get__(self, view, type_):
         """Non-data descriptor to grab a reference to the caller view.
@@ -356,23 +358,29 @@ class _ViewTemplateBase(object):
     @property
     def template(self):
         """The evoque template instance."""
-        return domain.get_template(
-                            self.name, self.src, collection=self.collection)
+        return domain.get_template(self.name, self.src, 
+            collection=self.collection)
     
     # !+ support other evoque() params: raw=None, quoting=None
     def __call__(self, *args, **kwds):
-        """Wrapper on template.evoque()."""
-        namespace = self._get_context()
-        t = self.template
-        log.debug(" __call__ [%s][%s] %s %s %s" % (
-                        (t.collection and t.collection.name), t.name, 
-                        self, namespace, kwds))
-        if args:
-            log.warn(" __call__ IGNORING args: %s" % str(args))
-        # !+ bungeni+html specific
-        if t.collection.domain.globals.get("devmode"):
-            return self._devmode_call__(t.evoque(namespace, **kwds))
-        return t.evoque(namespace, **kwds)
+        """Wrapper on template.evoque(), to load/evoke a template instance.
+        Requests to load/evoke a template instance may be concurrent.
+        """
+        self.lock.acquire()
+        try:
+            namespace = self._get_context()
+            t = self.template
+            log.debug(" __call__ [%s][%s] %s %s %s" % (
+                            (t.collection and t.collection.name), t.name, 
+                            self, namespace, kwds))
+            if args:
+                log.warn(" __call__ IGNORING args: %s" % str(args))
+            # !+ bungeni+html specific
+            if t.collection.domain.globals.get("devmode"):
+                return self._devmode_call__(t.evoque(namespace, **kwds))
+            return t.evoque(namespace, **kwds)
+        finally:
+            self.lock.release()
     
     def _devmode_call__(self, s):
         """delineates the generated output between debug-friendly XML comments.
