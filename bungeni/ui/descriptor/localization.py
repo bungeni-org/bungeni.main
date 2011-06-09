@@ -44,6 +44,10 @@ def write_custom(old_content, content):
     print debug.unified_diff(old_content, content, CUSTOM_PATH, "NEW")
     open(CUSTOM_PATH, "w").write(content.encode("utf-8"))
 
+def check_reload_localization(event):
+    if capi.is_modified_since(CUSTOM_PATH):
+        localize_descriptors()
+
 def is_descriptor(cls):
     try:
         return IModelDescriptor.implementedBy(cls)
