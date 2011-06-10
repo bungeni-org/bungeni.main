@@ -4,8 +4,5 @@
     <!-- Catalyze Domain Models -->
     <include file="catalyst.zcml"/>
     
-    <!-- Localize descriptors -->
-    <include package=".localize"/>
-
 </configure>
 

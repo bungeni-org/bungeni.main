@@ -8,6 +8,7 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.ui.descriptor.localization")
 
+from time import time
 import elementtree.ElementTree
 
 from bungeni.alchemist.model import (
@@ -110,8 +111,8 @@ def is_stale_info(bval, cval, message):
 @bungeni_custom_errors
 def localize_descriptors():
     """Localizes descriptors from {bungeni_custom}/forms/ui.xml.
-    Called when .localize is imported.
     """
+    start_time = time()
     #for d in localizable_descriptor_classes(descriptor_module): ...
     xml = elementtree.ElementTree.fromstring(read_custom())
     # make the value of <ui.@roles> as *the* bungeni default list of roles
@@ -175,6 +176,9 @@ def localize_descriptors():
             "\n".join(serialize_module(DESCRIPTOR_MODULE)))
         # re-localize, to ensure consistency
         localize_descriptors()
+    
+    log.warn("LOCALIZING DESCRIPTORS...\n           ...DONE [in %s seconds]" % (
+        time()-start_time))
 
 
 #####

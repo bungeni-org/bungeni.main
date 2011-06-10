@@ -129,23 +129,27 @@ class CAPI(object):
                 assert eval(os.environ[key]) == value
     
     _is_modified_since_last_times = {} # {path: (last_checked, last_modified)}
-    def is_modified_since(self, path):
-        """ (abspath:str) -> bool 
+    def is_modified_since(self, abspath, modified_on_first_check=True):
+        """ (abspath:str, modified_on_first_check:bool) -> bool
         Checks file path st_mtime to see if file has been modified since last 
         check. Updates entry per path, with last (check, modified) times.
         """
         check_auto_reload_localization = self.check_auto_reload_localization
-        if not check_auto_reload_localization: 
-            # 0 =>> never check
-            return False
         now = time.time()
         last_checked, old_last_modified = \
-            self._is_modified_since_last_times.get(path) or (0, 0)
+            self._is_modified_since_last_times.get(abspath) or (0, 0)
+        if not check_auto_reload_localization:
+            # 0 =>> never check (unless this is the first check...)
+            if last_checked or not modified_on_first_check:
+                return False
         if not now-last_checked > check_auto_reload_localization:
             # last check too recent, avoid doing os.stat
             return False
-        last_modified = os.stat(path).st_mtime
-        self._is_modified_since_last_times[path] = (now, last_modified)
+        last_modified = os.stat(abspath).st_mtime
+        self._is_modified_since_last_times[abspath] = (now, last_modified)
+        if not last_checked:
+            # last_checked==0, this is the first check
+            return modified_on_first_check
         return (old_last_modified < last_modified)
 
 
