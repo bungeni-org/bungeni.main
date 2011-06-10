@@ -411,6 +411,25 @@ class Field(object):
 
 # Model
 
+class MDType(type):
+    """Meta class for ModelDescriptor"""
+    
+    def __init__(self, name, bases, attrs):
+        super(MDType, self).__init__(name, bases, attrs)
+        self.update_default_field_order()
+    
+    def update_default_field_order(self):
+        """Apply default_field_order to class's fields list, any unmentioned 
+        fields preserve their current order but will follow the specified fields.
+        """
+        fields_by_name = dict([ (f.name, f) for f in self.fields ])
+        ordered_fields = [ fields_by_name[name] 
+            for name in self.default_field_order ]
+        other_fields = [ f for f in self.fields 
+            if f not in ordered_fields ]
+        # update class's field list instance
+        self.fields[:] = ordered_fields + other_fields
+
 class ModelDescriptor(object):
     """Model type descriptor for table/mapped objects. 
     
@@ -423,6 +442,7 @@ class ModelDescriptor(object):
     Always retrieve the *same* descriptor *instance* for a model class via:
         queryModelDescriptor(model_interface)
     """
+    __metaclass__ = MDType
     interface.implements(IModelDescriptor)
     
     # Is this descriptor exposed for localization? 
@@ -432,7 +452,12 @@ class ModelDescriptor(object):
     #edit_grid = True 
     
     # for subclasses to reset
-    fields = () # [Field]
+    fields = [] # [Field] - may be explicit, defined in place, constructed via 
+    # copying plus extending, etc.
+    default_field_order = () # [field.name] - explicit default ordering 
+    # (before Descriptor is localized) by field name, for all fields in 
+    # this ModelDescriptor.
+    
     properties = () # !+USED?
     schema_order = () # !+USED?
     schema_invariants = ()

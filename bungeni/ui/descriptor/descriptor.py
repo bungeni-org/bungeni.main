@@ -831,7 +831,7 @@ class MpDescriptor(GroupMembershipDescriptor):
     localizable = True
     display_name = _("Member of parliament")
     container_name = _("Members of parliament")
-
+    
     fields = [
         Field(name="user_id", # [user-req]
             modes="view edit add listing",
@@ -2491,6 +2491,28 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
             view_widget=widgets.TermsDisplayWidget,
         ),
     ])
+    default_field_order = [
+        "parliament_id",
+        "short_name", 
+        "full_name", 
+        "registry_number", 
+        "owner_id", 
+        "language",
+        "body_text",
+        "question_number",
+        "ministry_id",
+        "admissible_date", 
+        "ministry_submit_date", 
+        "question_type_id",
+        "response_type_id",
+        "response_text",
+        "subject",
+        "submission_date",
+        "status",
+        "status_date",
+        "note",
+        "receive_notification",
+    ]
     custom_validators = []
     public_wfstates = get_states("question", tagged=["public"])
 
