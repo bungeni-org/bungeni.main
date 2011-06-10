@@ -27,9 +27,7 @@ from workspace import prepare_user_workspaces
 # !+IStartRequestEvent(mr, jun-2011) the once_per_request() below is a 
 # workaround to simulate the above event, gthat was introduced in. 
 # zope.app.publication 3.12.0. This utility and code using it should be
-# cleaned out after updating after updating to that package.
-
-# to get above 
+# cleaned out after updating to that package.
 
 def once_per_request(event_handler):
     """Wrap event_handler to limit execution of it to once per request."""

@@ -92,14 +92,8 @@
   <!-- rest views -->
   <include file="rest.zcml"/>
 
-  <subscriber
-    handler=".publication.on_before_traverse"
-    trusted="True"
-  />
-  <subscriber
-    handler=".publication.on_end_request"
-    trusted="True"
-  />
+    <subscriber handler=".publication.on_before_traverse" trusted="True" />
+    <subscriber handler=".publication.on_end_request" trusted="True" />
 
   <!-- Marginalia Settings for bungeni types -->
 
