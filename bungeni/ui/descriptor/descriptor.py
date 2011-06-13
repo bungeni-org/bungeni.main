@@ -866,7 +866,8 @@ class MpDescriptor(GroupMembershipDescriptor):
         Field(name="election_nomination_date", # [user-req]
             modes="view edit add listing",
             localizable=[
-                show("view edit listing"),
+                show("view edit"),
+                hide("listing")
             ],
             property=schema.Date(title=_("Election/Nomination Date")),
             edit_widget=widgets.DateWidget,
@@ -913,7 +914,8 @@ class MpDescriptor(GroupMembershipDescriptor):
         Field(name="province_id", # [user]
             modes="view edit add listing",
             localizable=[
-                show("view edit add listing"),
+                show("view edit add"),
+                hide("listing")
             ],
             property=schema.Choice(title=_("Province"),
                 source=provinceSource,
@@ -924,7 +926,8 @@ class MpDescriptor(GroupMembershipDescriptor):
         Field(name="region_id", # [user]
             modes="view edit add listing",
             localizable=[
-                show("view edit add listing"),
+                show("view edit add"),
+                hide("listing")
             ],
             property=schema.Choice(title=_("region"),
                 source=regionSource,
@@ -946,7 +949,8 @@ class MpDescriptor(GroupMembershipDescriptor):
         Field(name="leave_reason", # [user]
             modes="view edit add listing",
             localizable=[
-                show("view edit add listing"),
+                show("view edit add"),
+                hide("listing")
             ],
             property=schema.Text(title=_("Leave Reason"), required=False)
         ),
@@ -961,6 +965,7 @@ class MpDescriptor(GroupMembershipDescriptor):
             add_widget=widgets.RichTextEditor
         ),
     ])
+
     schema_invariants = GroupMembershipDescriptor.schema_invariants + [
         MpStartBeforeElection]
 
@@ -1251,6 +1256,19 @@ class CommitteeDescriptor(GroupDescriptor):
     container_name = _("Committees")
     
     fields = deepcopy(GroupDescriptor.fields)
+
+    _start_date = misc.get_keyed_item(fields, "start_date", key="name")
+    _start_date.localizable = [
+                      show("view edit"),
+                      hide("listing")
+                      ]
+
+    _end_date = misc.get_keyed_item(fields, "end_date", key="name")
+    _end_date.localizable = [
+                      show("view edit add"),
+                      hide("listing")
+                      ]
+
     fields.extend([
         Field(name="committee_type_id", # [user-req]
             modes="view edit add listing",
@@ -1272,14 +1290,16 @@ class CommitteeDescriptor(GroupDescriptor):
         Field(name="num_members", # [user]
             modes="view edit add listing",
             localizable=[
-                show("view edit add listing"),
+                show("view edit add"),
+                hide("listing")
             ],
             property=schema.Int(title=_("Number of members"), required=False),
         ),
         Field(name="min_num_members", # [user]
             modes="view edit add listing",
             localizable=[
-                show("view edit add listing"),
+                show("view edit add"),
+                hide("listing")
             ],
             property=schema.Int(title=_("Minimum Number of Members"),
                 required=False
@@ -1288,21 +1308,24 @@ class CommitteeDescriptor(GroupDescriptor):
         Field(name="quorum", # [user]
             modes="view edit add listing",
             localizable=[
-                show("view edit add listing"),
+                show("view edit add"),
+                hide("listing")
             ],
             property=schema.Int(title=_("Quorum"), required=False)
         ),
         Field(name="num_clerks", # [user]
             modes="view edit add listing",
             localizable=[
-                show("view edit add listing"),
+                show("view edit add"),
+                hide("listing")
             ],
             property=schema.Int(title=_("Number of clerks"), required=False)
         ),
         Field(name="num_researchers", # [user]
             modes="view edit add listing",
             localizable=[
-                show("view edit add listing"),
+                show("view edit add"),
+                hide("listing")
             ],
             property=schema.Int(title=_("Number of researchers"),
                 required=False
@@ -1311,7 +1334,8 @@ class CommitteeDescriptor(GroupDescriptor):
         Field(name="proportional_representation", # [user]
             modes="view edit add listing",
             localizable=[
-                show("view edit add listing"),
+                show("view edit add"),
+                hide("listing")
             ],
             property=schema.Bool(title=_("Proportional representation"),
                 default=True,
@@ -1321,7 +1345,8 @@ class CommitteeDescriptor(GroupDescriptor):
         Field(name="reinstatement_date", # [user]
             modes="view edit add listing",
             localizable=[
-                show("view edit add listing"),
+                show("view edit add"),
+                hide("listing")
             ],
             property=schema.Date(title=_("Reinstatement Date"),
                 required=False
@@ -2241,6 +2266,35 @@ class AgendaItemDescriptor(ParliamentaryItemDescriptor):
     container_name = _("Agenda items")
     fields = deepcopy(ParliamentaryItemDescriptor.fields)
     fields.append(AdmissibleDateField()) # [sys]
+    _owner_id = misc.get_keyed_item(fields, "owner_id", key="name")
+    _owner_id.localizable = [
+                      show("view listing")
+                      ]
+    _submission_date = misc.get_keyed_item(fields, "submission_date", key="name")
+    _submission_date.localizable = [
+                      show("view"),
+                      hide("listing")
+                      ]
+    _admissible_date = misc.get_keyed_item(fields, "admissible_date", key="name")
+    _admissible_date.localizable = [
+                      show("view"),
+                      hide("listing"),
+                      ]
+    default_field_order = [
+        "parliament_id",
+        "short_name",
+        "full_name",
+        "registry_number",
+        "owner_id",
+        "status",
+        "status_date",
+        "language",
+        "body_text",
+        "submission_date",
+        "note",
+        "receive_notification",
+        "admissible_date"
+        ]
     public_wfstates = get_states("agendaitem", tagged=["public"])
 
 
@@ -2268,7 +2322,8 @@ class MotionDescriptor(ParliamentaryItemDescriptor):
         Field(name="motion_number", # [sys]
             modes="view listing",
             localizable=[ 
-                show("view listing"), 
+                show("view"),
+                hide("listing") 
             ],
             property=schema.Int(title=_("Identifier"), required=False),
         ),
@@ -2281,6 +2336,41 @@ class MotionDescriptor(ParliamentaryItemDescriptor):
         #    #   required=False),
         #),
     ])
+
+    _owner_id = misc.get_keyed_item(fields, "owner_id", key="name")
+    _owner_id.localizable = [
+                      show("view listing")
+                      ]
+
+    _admissible_date = misc.get_keyed_item(fields, "admissible_date", key="name")
+    _admissible_date.localizable = [
+                      show("view"),
+                      hide("listing"),
+                      ]    
+
+    _submission_date = misc.get_keyed_item(fields, "submission_date", key="name")
+    _submission_date.localizable = [
+                      show("view"),
+                      hide("listing")
+                      ]
+
+    default_field_order = [
+			"parliament_id",
+			"short_name",
+			"full_name",
+			"motion_number",
+			"owner_id",
+			"status",
+			"status_date",
+			"language",
+			"body_text",
+			"submission_date",
+			"note",
+			"receive_notification",
+			"admissible_date",
+			"notice_date",
+			"registry_number",
+                        ]
     public_wfstates = get_states("motion", tagged=["public"])
 
 
@@ -2317,6 +2407,16 @@ class BillDescriptor(ParliamentaryItemDescriptor):
     _bt.property = schema.Text(
         title=_("Statement of Purpose"), required=False)
 
+    _owner_id = misc.get_keyed_item(fields, "owner_id", key="name")
+    _owner_id.localizable = [
+                      show("view listing")
+                      ]
+    _submission_date = misc.get_keyed_item(fields, "submission_date", key="name")
+    _submission_date.localizable = [
+                      show("view"),
+                      hide("listing")
+                      ]
+
     fields.extend([
         Field(name="bill_type_id", # [user-req]
             modes="view edit add listing",
@@ -2334,7 +2434,8 @@ class BillDescriptor(ParliamentaryItemDescriptor):
         Field(name="ministry_id", # [user]
             modes="view edit add listing",
             localizable=[ 
-                show("view edit add listing"), 
+                show("view edit add"),
+                hide("listing") 
             ],
             property=schema.Choice(title=_("Ministry"),
                 source=vocabulary.MinistrySource("ministry_id"),
@@ -2362,6 +2463,26 @@ class BillDescriptor(ParliamentaryItemDescriptor):
             ),
         ),
     ])
+
+    default_field_order = [
+        "parliament_id",
+        "short_name",
+        "full_name",
+        "owner_id",
+        "status",
+        "status_date",
+        "language",
+        "body_text",
+        "submission_date",
+        "note",
+        "receive_notification",
+        "bill_type_id",
+        "ministry_id",
+        "identifier",
+        "publication_date",
+        "registry_number",
+        ]
+
     public_wfstates = get_states("bill", not_tagged=["private"])
 
 
@@ -2456,7 +2577,8 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
         Field(name="response_type_id", # [user-req]
             modes="view edit add listing",
             localizable=[ 
-                show("view edit listing"),
+                show("view edit"),
+                hide("listing")
             ],
             property=schema.Choice(title=_("Response Type"),
                 description=_("Oral or Written"),
@@ -2491,27 +2613,39 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
             view_widget=widgets.TermsDisplayWidget,
         ),
     ])
+
+    _owner_id = misc.get_keyed_item(fields, "owner_id", key="name")
+    _owner_id.localizable = [
+                      show("view listing")
+                      ]
+
+    _admissible_date = misc.get_keyed_item(fields, "admissible_date", key="name")
+    _admissible_date.localizable = [
+                      show("view"),
+                      hide("listing"),
+                      ]
+    
     default_field_order = [
+        "response_text",        
         "parliament_id",
-        "short_name", 
-        "full_name", 
-        "registry_number", 
-        "owner_id", 
-        "language",
-        "body_text",
+        "short_name",
+        "full_name",
         "question_number",
-        "ministry_id",
-        "admissible_date", 
-        "ministry_submit_date", 
-        "question_type_id",
-        "response_type_id",
-        "response_text",
-        "subject",
-        "submission_date",
+        "owner_id",
         "status",
         "status_date",
+        "question_type_id",
+        "response_type_id",
+        "language",
+        "body_text",
+        "submission_date",
         "note",
         "receive_notification",
+        "ministry_id",
+        "admissible_date",
+        "ministry_submit_date",
+        "subject",
+        "registry_number",
     ]
     custom_validators = []
     public_wfstates = get_states("question", tagged=["public"])
@@ -2591,6 +2725,39 @@ class TabledDocumentDescriptor(ParliamentaryItemDescriptor):
         ),
         AdmissibleDateField(), # [sys]
     ])
+
+    _owner_id = misc.get_keyed_item(fields, "owner_id", key="name")
+    _owner_id.localizable = [
+                      show("view listing")
+                      ]
+    _submission_date = misc.get_keyed_item(fields, "submission_date", key="name")
+    _submission_date.localizable = [
+                      show("view"),
+                      hide("listing")
+                      ]
+    _admissible_date = misc.get_keyed_item(fields, "admissible_date", key="name")
+    _admissible_date.localizable = [
+                      show("view"),
+                      hide("listing"),
+                      ]
+
+    default_field_order = [
+        "parliament_id",
+        "short_name",
+        "full_name",
+        "tabled_document_number",
+        "owner_id",
+        "status",
+        "status_date",
+        "language",
+        "body_text",
+        "submission_date",
+        "note",
+        "receive_notification",
+        "admissible_date",
+        "registry_number",
+        ]
+
     public_wfstates = get_states("tableddocument", tagged=["public"])
 
 
