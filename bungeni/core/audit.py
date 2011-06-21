@@ -50,10 +50,12 @@ def objectStateChange(ob, event):
 
 def objectNewVersion(ob, event):
     auditor = getAuditor(ob)
-    if not getattr(event, "change_id", None):
-        change_id = auditor.objectNewVersion(removeSecurityProxy(ob), event)
-    else:
-        change_id = event.change_id
+    # !+NewVersion_CHANGE_ID(mr, jun-2011) when does an IVersionCreated 
+    # event for an IAuditable object ever have a "change_id" attribute ?
+    #if not getattr(event, "change_id", None):
+    change_id = auditor.objectNewVersion(removeSecurityProxy(ob), event)
+    #else:
+    #    change_id = event.change_id
     event.version.change_id = change_id
 
 def objectRevertedVersion(ob, event):
@@ -83,7 +85,7 @@ def getAuditableParent(obj):
             parent = getattr(parent, "__parent__", None)
 
 def getAuditor(ob):
-    return globals().get("%sAuditor" %(ob.__class__.__name__))
+    return globals().get("%sAuditor" % (ob.__class__.__name__))
 
 
 class AuditorFactory(object):
@@ -284,21 +286,20 @@ class AuditorFactory(object):
 
 # dedicated auditor instances
 
-BillAuditor = AuditorFactory(
-                schema.bill_changes, domain.BillChange)
-MotionAuditor = AuditorFactory(
-                schema.motion_changes, domain.MotionChange)
-QuestionAuditor = AuditorFactory(
-                schema.question_changes, domain.QuestionChange)
-AgendaItemAuditor =  AuditorFactory(
-                schema.agenda_item_changes, domain.AgendaItemChange)
-TabledDocumentAuditor =  AuditorFactory(
-                schema.tabled_document_changes, domain.TabledDocumentChange)
-AttachedFileAuditor =  AuditorFactory(
-                schema.attached_file_changes, domain.AttachedFileChange)
-GroupSittingAuditor = AuditorFactory(
-                schema.group_sitting_changes, domain.GroupSittingChange)
-SignatoryAuditor = AuditorFactory(
-    schema.signatory_changes, domain.SignatoryChange)
+BillAuditor = AuditorFactory(schema.bill_changes, domain.BillChange)
+MotionAuditor = AuditorFactory(schema.motion_changes, domain.MotionChange)
+QuestionAuditor = AuditorFactory(schema.question_changes, 
+    domain.QuestionChange)
+AgendaItemAuditor =  AuditorFactory(schema.agenda_item_changes,
+    domain.AgendaItemChange)
+TabledDocumentAuditor =  AuditorFactory(schema.tabled_document_changes,
+    domain.TabledDocumentChange)
+AttachedFileAuditor = AuditorFactory(schema.attached_file_changes,
+    domain.AttachedFileChange)
+GroupSittingAuditor = AuditorFactory(schema.group_sitting_changes,
+    domain.GroupSittingChange)
+SignatoryAuditor = AuditorFactory(schema.signatory_changes,
+    domain.SignatoryChange)
+
 #
 

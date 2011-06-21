@@ -36,6 +36,8 @@ def fileEditedSubscriber(ob, event):
                 ob.file_name)
         notify(audit.objectAttachment(obj, event))
 
+# !+objectNewVersion_FILE(mr, jun-2011) rename, to reduce interference with 
+# same named handler in audit.py
 def objectNewVersion(ob, event):
     """ when an object is versioned we copy the attachments 
     to the version"""

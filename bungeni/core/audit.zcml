@@ -2,54 +2,41 @@
 <configure xmlns="http://namespaces.zope.org/zope"
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni">
-  
-  <subscriber
-     for="bungeni.core.interfaces.IAuditable
-          zope.lifecycleevent.IObjectModifiedEvent"
-     handler=".audit.objectModified"
-     trusted="True"
-     />
-     
-  <subscriber
-     for="bungeni.core.interfaces.IAuditable
-          zope.lifecycleevent.IObjectCreatedEvent"
-     handler=".audit.objectAdded"
-     trusted="True"
-     />
-     
-  <subscriber
-     for="bungeni.core.interfaces.IAuditable
-          zope.app.container.interfaces.IObjectRemovedEvent"
-     handler=".audit.objectDeleted"
-     trusted="True"
-     />
-     
-    <subscriber for="bungeni.core.interfaces.IAuditable
+    
+    <subscriber handler=".audit.objectModified"
+        for="bungeni.core.interfaces.IAuditable
+            zope.lifecycleevent.IObjectModifiedEvent"
+        trusted="True"
+    />
+    <subscriber handler=".audit.objectAdded"
+        for="bungeni.core.interfaces.IAuditable
+            zope.lifecycleevent.IObjectCreatedEvent"
+        trusted="True"
+    />
+    <subscriber handler=".audit.objectDeleted"
+        for="bungeni.core.interfaces.IAuditable
+            zope.app.container.interfaces.IObjectRemovedEvent"
+        trusted="True"
+    />
+    <subscriber handler=".audit.objectStateChange"
+        for="bungeni.core.interfaces.IAuditable
             bungeni.core.workflow.interfaces.IWorkflowTransitionEvent"
-        handler=".audit.objectStateChange"
+    />
+    
+    <subscriber handler=".audit.objectNewVersion"
+        for="bungeni.core.interfaces.IAuditable .interfaces.IVersionCreated"
+    />
+    <subscriber handler=".audit.objectRevertedVersion"
+        for="bungeni.core.interfaces.IAuditable .interfaces.IVersionReverted"
+    />
+    
+    <subscriber handler=".events.signatory_added"
+        for="bungeni.models.interfaces.ISignatory
+            zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+    />
+    <subscriber handler=".events.signatory_modified"
+        for="bungeni.models.interfaces.ISignatory
+            zope.lifecycleevent.interfaces.IObjectModifiedEvent"
     />
 
-  <subscriber
-     for="bungeni.core.interfaces.IAuditable
-          .interfaces.IVersionCreated"
-     handler=".audit.objectNewVersion" />
-     
-  <subscriber
-     for="bungeni.core.interfaces.IAuditable
-          .interfaces.IVersionReverted"
-     handler=".audit.objectRevertedVersion" />
-  
-  <subscriber
-     for="bungeni.models.interfaces.ISignatory
-          zope.lifecycleevent.interfaces.IObjectCreatedEvent"
-     handler=".events.signatory_added"
-     />
-
-  <subscriber
-     for="bungeni.models.interfaces.ISignatory
-          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-     handler=".events.signatory_modified"
-     />
-  
-  
 </configure>

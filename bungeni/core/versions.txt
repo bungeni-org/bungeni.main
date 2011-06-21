@@ -21,7 +21,7 @@ Adding a question.
 
 
   >>> country = domain.Country()
-  >>> country.country_id = 'KE'
+  >>> country.country_id = "KE"
   >>> country.country_name = u"Kenya"
   >>> country.iso_name = u"KENYA"
   >>> country.language = "en"
@@ -30,12 +30,12 @@ Adding a question.
 
   >>> mp_1 = domain.User(u"mp_1", 
   ...        first_name=u"a", 
-  ...        last_name=u'ab', 
+  ...        last_name=u"ab", 
   ...        birth_country="KE",
   ...        email=u"mp1@example.com", 
   ...        date_of_birth=datetime.datetime.now(),
   ...        language="en",
-  ...        gender='M') 
+  ...        gender="M") 
   >>> session.add(mp_1)
   >>> session.flush()
 
@@ -44,8 +44,9 @@ Adding a question.
   ...     domain.Question,
   ...     short_name="A question",
   ...     type="question",
-  ...     owner_id = mp_1.user_id ,
+  ...     owner_id=mp_1.user_id,
   ...     language="en")
+
 
 The ``question`` object needs to provide the versionable interface.
   
@@ -54,13 +55,27 @@ The ``question`` object needs to provide the versionable interface.
 
 Verify that no versions exist yet:
 
-  >>> versions =  bungeni.core.interfaces.IVersioned(question)
+  >>> versions = bungeni.core.interfaces.IVersioned(question)
   >>> len(tuple(versions.values()))
   0
 
-After creating a version, verify availability:
+To be versioned, a question should be in a valid state:
+
+  >>> #from bungeni.core.workflow.interfaces import IWorkflowController
+  >>> #wfc = IWorkflowController(question)
+  >>> #wfc
+  #<bungeni.core.workflow.states.WorkflowController object at ...>
+  >>> #wfc.fireTransition("-draft") 
+  >>> #question.status
+  #'draft'
+  # FAILS, needs an interaction, etc, so we just hard-set a status instead
+  >>> question.status = 'draft'
   
-  >>> version = versions.create('New version created ...')
+
+After creating a version, verify availability:
+
+  >>> version = versions.create("New version created ...")
+  
   >>> len(tuple(versions.values()))
   1
 

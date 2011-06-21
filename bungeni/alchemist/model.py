@@ -468,6 +468,9 @@ class ModelDescriptor(object):
         return self
     
     def __init__(self):
+        # !+NO_NEED_TO_INSTANTIATE(mr, jun-2011) there is really no longer 
+        # any need to singleton-instantiate each ModelDescriptor class, 
+        # just use the class definition directly!
         log.info("Initializing ModelDescriptor: %s" % self)
         self._fields_by_name = {}
         self.sanity_check_fields()
