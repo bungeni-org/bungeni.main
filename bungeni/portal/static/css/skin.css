@@ -635,7 +635,7 @@ table.listing th,
 table.listingdescription th,
 .stx table th,
 .yui-skin-sam .yui-dt-first th {
-    background:#d8d8d9 url(/static/images/w-globalnav-level1-bg.png) bottom left repeat-x !important;
+    background:#21a1ba !important;
     border: 0 none;
     border-left: 1px solid #bbf;
     border-right: 1px solid #88f;
@@ -662,7 +662,7 @@ table.listing th a,
 table.listingdescription th a,
 .stx table th a,
 .yui-skin-sam .yui-dt-first th a {
-    color: #222;
+    color: #fff;
     border: 0 none;
 }
 table.listing td,
@@ -1006,7 +1006,7 @@ div.main-column #collage h2 {
 
 .template-portal #header-wrapper {
     background: #434343;
-    border-bottom: 15px solid #c1c1c0;
+    border-bottom: 10px solid #c1c1c0;
 }
 
 .template-portal #header-in-left {
@@ -1029,7 +1029,7 @@ div.main-column #collage h2 {
     background:#434343 url(/static/images/portal_img.png) no-repeat bottom right;
 }
 .template-portal #portal-logo {
-    background: url(/static/images/portal_banner.png) top left no-repeat;
+    background:#434343 url(/static/images/portal_banner.png) top left no-repeat;
 }
 /* 
  * if display is set to block it will display the logo used on the workspace
@@ -1429,8 +1429,11 @@ div.main-column #collage h2 {
 .template-workspace div#portal-globalnav ul.level0 ul.level1 li.selected a {
     color: #1763aa !important;
 }
+.section-bungeni-workspace div#portal-globalnav ul.level0 ul.level1 a {
+    color:#fff !important;
+}
 .section-bungeni-workspace div#portal-globalnav ul.level0 ul.level1 li.selected a {
-    color:#333 !important;
+    color:#eed793 !important;
 }
 /*
  * Table styles
@@ -1504,7 +1507,7 @@ div.main-column #collage h2 {
 .template-workspace.section-bungeni-workspace ul.formTabs li.formTab a:active,
 .template-workspace.section-bungeni-workspace ul.formTabs li.formTab a.selected {
     background: #21a1ba url(/static/images/w-globalnav-level0-a-first.png) top left repeat-x;
-    color: #000;
+    color: #fff;
 	text-shadow:0 0 0 #fff;
 }
 
@@ -1514,7 +1517,7 @@ div.main-column #collage h2 {
 .template-workspace.section-bungeni-workspace .yui-skin-sam .yui-dt-first th {
     background:#21a1ba url(/static/images/w-globalnav-level1-bg-first.png) bottom left repeat-x !important;
     text-shadow: 0 0 0  #fff;
-    color: #000;
+    color: #fff !important;
 }
 .template-workspace.section-bungeni-admin ul.formTabs li.formTab a:hover,
 .template-workspace.section-bungeni-admin ul.formTabs li.formTab a:active,
