@@ -3,26 +3,23 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni">
-
-  <!-- Skin Definition -->
-  <interface
-     interface=".interfaces.IBungeniSkin"
-     type="zope.publisher.interfaces.browser.IBrowserSkinType"
-     name="bungeni"
-     />
-
-  <!-- Standard Macros Definition (access to layout/form) -->
-  <browser:view
-     for="*"
-     name="standard_macros"
-     class=".macros.StandardMacros"
-     permission="zope.View"
-     allowed_interface="zope.interface.common.mapping.IItemMapping"
-     layer=".interfaces.IBungeniSkin"
-     />
-
-  <subscriber
-     handler=".skin.handle_authenticated_principal_created_event"
-     for="repoze.whooze.interfaces.IPrincipalCreated" />
+    
+    <!-- Skin Definition -->
+    <interface interface=".interfaces.IBungeniSkin"
+        type="zope.publisher.interfaces.browser.IBrowserSkinType"
+        name="bungeni"
+    />
+    
+    <!-- Standard Macros Definition (access to layout/form) -->
+    <browser:view name="standard_macros" for="*"
+        class=".macros.StandardMacros"
+        permission="zope.View"
+        allowed_interface="zope.interface.common.mapping.IItemMapping"
+        layer=".interfaces.IBungeniSkin"
+    />
+    
+    <subscriber handler=".skin.handle_authenticated_principal_created_event"
+        for="repoze.whooze.interfaces.IPrincipalCreated"
+    />
 
 </configure>

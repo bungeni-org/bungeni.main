@@ -39,8 +39,8 @@
   <!-- TimeZone Definition -->
   <adapter factory=".tz.tzinfo" />
 
-  <!-- Site Skin Definition -->
-  <include file="skin.zcml"/>
+    <!-- Site Skin Definition -->
+    <include file="skin.zcml"/>
 
   <!-- search -->
   <include file="search.zcml" />
