@@ -16,6 +16,13 @@ class INavigationProxy(IReadContainer):
 class ISection(IContentContainer, IDCDescriptiveProperties):
     """Represents a section in the site, e.g. /business."""
 
+class IAkomaNtosoSection(ISection):
+    """Akoma Ntoso section with special traverser"""
+    lang = interface.Attribute("Object language")
+    type = interface.Attribute("Object type")
+    id = interface.Attribute("Object id")
+    date = interface.Attribute("Date") 
+
 class ISearchableSection(interface.Interface):
     """Marker interface for searchable sections"""
 

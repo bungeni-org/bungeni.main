@@ -71,6 +71,9 @@ class IBusinessSectionLayer(IAnonymousSectionLayer, IRSSRepresentationLayer):
 class IBusinessWhatsOnSectionLayer(IAnonymousSectionLayer):
     """Requests for an object within the whats on page of the business section."""
 
+class IPermalinkSectionLayer(IBusinessSectionLayer):
+    """Requests for an object within the bungeni section."""
+
 class IMembersSectionLayer(IAnonymousSectionLayer):
     """Requests for an object within the members section."""
 

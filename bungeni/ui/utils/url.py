@@ -15,7 +15,6 @@ import zope
 
 from bungeni.ui.utils import common
 
-
 def get_destination_url_path(request=None):
     """Get the (effective, sans any "traversal namespace notation" components
     and other such "traversal processing instruction" url components) target 
@@ -72,7 +71,10 @@ def absoluteURL(context, request):
     used instead of zope.traversing.browser.absoluteURL.
     
     """
-    url = zope.traversing.browser.absoluteURL(context, request).split("/")
+    try:
+        url = zope.traversing.browser.absoluteURL(context, request).split("/")
+    except:
+        return ''
     while url[-1] in indexNames:
         log.warning(" POPPING: %s -> %s" % ('/'.join(url), url[-1]))
         url.pop()

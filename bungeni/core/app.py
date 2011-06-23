@@ -25,7 +25,7 @@ from bungeni.models import interfaces as model_interfaces
 
 from bungeni.core import interfaces
 from bungeni.core import location
-from bungeni.core.content import Section, AdminSection
+from bungeni.core.content import Section, AdminSection, AkomaNtosoSection
 from bungeni.core.content import QueryContent
 from bungeni.core.i18n import _
 from bungeni.models.utils import get_current_parliament
@@ -98,6 +98,12 @@ class AppSetup(object):
         # directly the primary sub-section (the INDEX) that it contains.
         # EXCEPTION: the "/", when logged in, is redirected to "/workspace/pi"
         
+        self.context["bungeni"] = AkomaNtosoSection(
+            title=_(u"Bungenis"),
+            description=_(u"Current parliamentary activity"),
+            default_name="bung",
+        )
+        
         # top-level sections
         from bungeni.ui.workspace import workspace_resolver
         workspace = self.context["workspace"] = Section(
@@ -108,6 +114,7 @@ class AppSetup(object):
         )
         
         alsoProvides(workspace, interfaces.ISearchableSection)
+        
         
         workspace["scheduling"] = Section(
             title=_(u"Scheduling"),

@@ -121,6 +121,11 @@
         <allow interface="zope.publisher.interfaces.browser.IBrowserPublisher" />
     </class>
     
+    <class class=".content.AkomaNtosoSection">
+        <allow interface="zope.publisher.interfaces.browser.IBrowserPublisher" />
+        <allow attributes="id type lang date"/>
+    </class>
+    
     <!-- interface="zope.publisher.interfaces.browser.IBrowserPublisher" -->
     <!--class class="bungeni.models.domain.ParliamentaryItem">
         <implements interface="ore.xapian.interfaces.IIndexable" />
@@ -222,6 +227,12 @@
         <allow attributes="title description"
             interface="zope.container.interfaces.IContentContainer" />
     </class>
+    
+    <class class=".content.AkomaNtosoSection">
+        <allow attributes="title description"
+            interface="zope.container.interfaces.IContentContainer" />
+    </class>
+    
     <class class=".content.AdminSection">
         <require permission="zope.ManageSite"
             interface="zope.publisher.interfaces.browser.IBrowserPublisher" />
@@ -336,5 +347,7 @@
         permission="zope.Public"
         provides="zope.traversing.browser.interfaces.IAbsoluteURL"
     />
+    
+    <include file="uri.zcml"/>
 
 </configure>

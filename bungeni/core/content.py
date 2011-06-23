@@ -14,7 +14,7 @@ from bungeni.core.proxy import NavigationProxy
 from bungeni.core.proxy import DublinCoreDescriptivePropertiesProxy
 from bungeni.ui.utils import debug
 
-from interfaces import ISection
+from interfaces import ISection, IAkomaNtosoSection
 from interfaces import IQueryContent
 
 class Section(OrderedContainer):
@@ -126,6 +126,84 @@ class Section(OrderedContainer):
         traverser = ItemTraverser(self, request)
         return traverser.publishTraverse(request, name)
 
+
+class AkomaNtosoSection(OrderedContainer):
+    interface.implements(IAkomaNtosoSection, IDCDescriptiveProperties)
+    
+    # NOTE: __parent__ here is turned into a property for debug/monitoring 
+    # purpose -- Section.__parent__ is being set multiple times but, once set, 
+    # always to the same value
+    def _get_parent(self):
+        return self._parent
+    def _set_parent(self, obj):
+        if self._parent is not None and obj is not None:
+            # __parent__ is nullified when deleting a Section from parent container
+            assert self._parent is obj, \
+                "Section parent may not be changed! %s -> %s" % (self._parent, obj)
+            log.warn(" [Section:%s] IGNORING reset of __parent__ to same " \
+                    "value: %s" % (self.title, obj))
+            return
+        self._parent = obj
+    __parent__ = property(_get_parent, _set_parent)
+    
+    
+    def __init__(self, title=None, description=None, default_name=None, 
+            marker=None, 
+            publishTraverseResolver=None):
+        self._parent = None
+        super(AkomaNtosoSection, self).__init__()
+        self.title = title
+        self.description = description
+        self.default_name = default_name
+        if marker is not None:
+            interface.alsoProvides(self, marker)
+        # publishTraverseResolver: callable(context, request, name)
+        # returns domain container object
+        # raises zope.publisher.interfaces.NotFound
+        # !+ we add this as a callback because subclassing Section and 
+        # overriding publishTraverse() insists on giving ForbiddenAttribute 
+        # erros. 
+        self.publishTraverseResolver = publishTraverseResolver
+        log.debug(" __init__ %s (title:%s, default_name:%s)" % (self, title, default_name))
+        
+        
+    # !+ section.title is duplicated in ZCML menuItem definitions
+    # Section should be modified to just get its title from the associated
+    # view descriptor (via default_name)
+    
+    
+    def __getitem__(self, key):
+        item = super(AkomaNtosoSection, self).__getitem__(key)
+        if IQueryContent.providedBy(item):
+            obj = item.query(self)
+            obj.__name__ = item.__name__
+            obj.__parent__ = DublinCoreDescriptivePropertiesProxy(
+                NavigationProxy(obj.__parent__, item.__parent__),
+                title=self.title, description=self.description)
+            return obj
+        return item
+    
+    def __setitem__(self, key, value):
+        super(AkomaNtosoSection, self).__setitem__(key, value)
+        value.__parent__ = self
+        value.__name__ = key
+    
+    def browserDefault(self, request):
+        """See zope.container.traversal.ContainerTraverser.
+            -> context, (view_uri,)
+        """
+        default_name = self.default_name
+        if default_name is None:
+            default_name = getDefaultViewName(self, request)
+        return self, (default_name,)
+   
+    
+    lang = u""
+    type = u""
+    id = u""
+    date = u""
+    
+    
 class AdminSection(Section):
     pass
 

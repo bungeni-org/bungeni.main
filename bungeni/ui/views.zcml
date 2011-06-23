@@ -839,4 +839,42 @@
         layer="zope.publisher.interfaces.http.IHTTPRequest"
         name="index"
         />
+
+
+    <!--Traversers -->
+   	<view
+       for="bungeni.core.interfaces.IAkomaNtosoSection"
+       type="bungeni.ui.interfaces.IBungeniSkin"
+       provides="zope.publisher.interfaces.browser.IBrowserPublisher"
+       factory=".traversal.SiteTraverser"
+       permission="zope.Public"
+       allowed_interface="zope.publisher.interfaces.browser.IBrowserPublisher"
+       />
+    
+    <!-- Redefining AbsoluteURL for permalink traversal section-->   
+  	<view
+       for="bungeni.models.interfaces.IBungeniParliamentaryContent"
+       name="absolute_url"
+       factory=".traversal.Permalink"
+       type="bungeni.ui.interfaces.IPermalinkSectionLayer"
+       permission="zope.Public"
+       allowed_interface="zope.traversing.browser.interfaces.IAbsoluteURL"
+       />
+       
+    <view
+       for="bungeni.models.interfaces.IBungeniParliamentaryContent"
+       factory=".traversal.Permalink"
+       type="bungeni.ui.interfaces.IPermalinkSectionLayer"
+       permission="zope.Public"
+       provides="zope.traversing.browser.interfaces.IAbsoluteURL"
+       />
+    
+    <!-- premalink view for parliamentary items -->
+    <browser:view
+        for="bungeni.models.interfaces.IBungeniParliamentaryContent"
+        name="permalink"
+        class=".traversal.Permalink"
+        permission="zope.Public"
+        />
+       
 </configure>

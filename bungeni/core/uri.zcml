@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           xmlns:i18n="http://namespaces.zope.org/i18n"
+           i18n_domain="bungeni.ui">
+
+     <subscriber
+        for="bungeni.models.interfaces.IBungeniContent
+          zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+        handler=".uri.generate_uri"
+     />
+
+     <subscriber
+        for="bungeni.models.interfaces.IBungeniContent
+          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+        handler=".uri.generate_uri"
+     />
+
+</configure>
