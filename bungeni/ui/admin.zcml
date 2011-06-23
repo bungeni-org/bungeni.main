@@ -6,7 +6,7 @@
     i18n_domain="bungeni">
     
     <!-- Reset Container UI on Users back to default-->
-    <browser:page name="index.html"
+    <browser:page name="index.html" 
         for="bungeni.models.interfaces.IBungeniAdmin"
         template="templates/admin-index.pt"
         layer="bungeni.ui.interfaces.IBungeniSkin"
@@ -25,7 +25,7 @@
         permission="zope.ManageSite"
     />
     
-    <browser:page name="xapian-settings"
+    <browser:page name="xapian-settings" 
         for="bungeni.models.interfaces.IBungeniAdmin"
         class=".admin.XapianSettings"
         layer="bungeni.ui.interfaces.IBungeniSkin"
@@ -46,14 +46,14 @@
         permission="zope.Public"
     />
     
-  <!--browser:page
+    <!--browser:page
      for="bungeni.models.interfaces.IBungeniAdmin"
      permission="zope.ManageSite"
      name="users"
      class=".admin.UserListing"
      template="templates/admin-users.pt"
      layer="bungeni.ui.interfaces.IBungeniSkin"
-     /-->
+    /-->
     
     <browser:page name="query-users"
         for="bungeni.models.interfaces.IBungeniAdmin"
@@ -67,14 +67,15 @@
         class=".admin.GroupListing"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-  <!--browser:viewlet
+    <!--browser:viewlet
       name="bungeni.admin"
       manager="ploned.ui.interfaces.ILeftColumnManager"
       for="*"
       layer=".interfaces.IAdminSectionLayer"
       class=".admin.Menu"
       permission="zope.ManageSite"
-      allowed_interface="zope.contentprovider.interfaces.IContentProvider"/-->
+      allowed_interface="zope.contentprovider.interfaces.IContentProvider"
+    /-->
 
 </configure>
 

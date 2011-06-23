@@ -94,6 +94,7 @@ class ItemVersions(Entity):
     def makeVersionFactory(klass, name):
         factory = type(name, (klass,), {})
         interface.classImplements(factory, interfaces.IVersion)
+        interface.classImplements(factory, getattr(interfaces, "I%s" % (name)))
         return factory
 
     #files = one2many("files", "bungeni.models.domain.AttachedFileContainer", "file_version_id")
