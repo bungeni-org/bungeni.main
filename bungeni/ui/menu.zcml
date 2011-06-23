@@ -238,7 +238,7 @@
     />
     <browser:menuItem menu="committee_additems"
         for="bungeni.models.interfaces.ICommittee"
-        title="Assign a bill..."
+        title="Assign an item..."
         action="./assigneditems/add"
         permission="bungeni.groupitemassignment.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
@@ -447,7 +447,14 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="20"
     />
-    
+    <browser:menuItem menu="motion_additems"
+        for="bungeni.models.interfaces.IMotion"
+        title="Assign motion to a group..."
+        action="./assignedgroups/add"
+        permission="bungeni.groupitemassignment.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="50"
+    />
     <browser:menu id="bill_additems"
         title="The 'Add...' menu - for bill"
         class="ploned.ui.menu.PloneBrowserMenu"
@@ -520,7 +527,7 @@
     />
     <browser:menuItem menu="bill_additems"
         for="bungeni.models.interfaces.IBill"
-        title="Assign bill to a group..."
+        title="Assign bill to a committee..."
         action="./assignedgroups/add"
         permission="bungeni.groupitemassignment.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
@@ -580,6 +587,14 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="22"
     />
+    <browser:menuItem menu="question_additems"
+        for="bungeni.models.interfaces.IQuestion"
+        title="Assign question to a group..."
+        action="./assignedgroups/add"
+        permission="bungeni.groupitemassignment.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="50"
+    />
     <browser:subMenuItem menu="plone_contentmenu"
         for="bungeni.models.interfaces.IQuestion"
         title="Add..."
@@ -629,6 +644,14 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="22"
     />
+    <browser:menuItem menu="tableddocument_additems"
+        for="bungeni.models.interfaces.ITabledDocument"
+        title="Assign this document to a group..."
+        action="./assignedgroups/add"
+        permission="bungeni.groupitemassignment.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="50"
+    />
     <browser:subMenuItem menu="plone_contentmenu"
         for="bungeni.models.interfaces.ITabledDocument"
         title="Add..."
@@ -659,7 +682,15 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         submenu="agendaitem_additems"
     />
-    
+    <browser:menuItem menu="agendaitem_additems"
+        for="bungeni.models.interfaces.IAgendaItem"
+        title="Assign agenda item to a group..."
+        action="./assignedgroups/add"
+        permission="bungeni.groupitemassignment.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="50"
+    />
+
     <browser:menu id="office_additems"
         title="The 'Add...' menu - for offices"
         class="ploned.ui.menu.PloneBrowserMenu"

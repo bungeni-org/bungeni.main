@@ -43,10 +43,24 @@ try:
 except ImportError:
     import simplejson as json
 import imsvdex.vdex
-
+from bungeni.ui.tagged import get_states, TAG_MAPPINGS
+import itertools
 
 days = [ _('day_%d' % index, default=default) for (index, default) in 
          enumerate((u"Mon", u"Tue", u"Wed", u"Thu", u"Fri", u"Sat", u"Sun")) ]
+
+
+def assignable_tags():
+    return [state for state in itertools.chain(
+        *[
+            get_states(
+                pi_type, 
+                not_tagged=["private", "fail", "terminal"]
+            )
+            for pi_type in TAG_MAPPINGS.keys()
+        ]
+    )]
+_assignable_tags = assignable_tags()
 
 class WeekdaysVocabulary(object):
     interface.implements(IVocabularyFactory)
@@ -853,25 +867,36 @@ party_membership = sql.join(schema.political_parties, schema.groups,
 
 mapper(PartyMembership,party_membership)
 
-class BillSource(SpecializedSource):
+
+class PIAssignmentSource(SpecializedSource):
     
     def constructQuery(self, context):
         session= Session()
         trusted=removeSecurityProxy(context)
         parliament_id = self._get_parliament_id(context)
-        bill_id = getattr(context, self.value_field, None) 
-        if bill_id:
-            query = session.query(domain.Bill).filter(
-                domain.Bill.parliamentary_item_id ==
-                bill_id)
+        item_id = getattr(context, self.value_field, None)
+        trusted = removeSecurityProxy(context)
+        existing_item_ids = [assn.item_id for assn in trusted.values()]
+        if item_id:
+            query = session.query(domain.ParliamentaryItem).filter(
+                domain.ParliamentaryItem.parliamentary_item_id ==
+                item_id)
         else:
-            query = session.query(domain.Bill).filter(
-                sql.and_(
-                sql.not_(domain.Bill.status.in_(
-                    ['draft','withdrawn','approved','rejected'])),
-                domain.Bill.parliament_id == parliament_id))
+            query = session.query(domain.ParliamentaryItem).filter(
+                    sql.and_(
+                        sql.not_(domain.ParliamentaryItem.status.in_(
+                                _assignable_tags
+                            )
+                        ),
+                        sql.not_(
+                            domain.ParliamentaryItem.parliamentary_item_id.in_(
+                                existing_item_ids
+                            )
+                        ),
+                        domain.ParliamentaryItem.parliament_id == parliament_id
+                    )
+                )
         return query
-                
 
 QuestionType = DatabaseSource(domain.QuestionType, token_field="question_type_id",
     value_field="question_type_id", title_field="question_type_name"
@@ -902,7 +927,24 @@ class CommitteeSource(SpecializedSource):
             domain.Committee.parent_group_id == parliament_id))
         return query
 
+class CommitteeAssignmentSource(SpecializedSource):
 
+    def constructQuery(self, context):
+        session= Session()
+        trusted=removeSecurityProxy(context)
+        parliament_id = self._get_parliament_id(context)
+        trusted = removeSecurityProxy(context)
+        existing_committee_ids = [ comm.group_id for comm in trusted.values() ]
+        query = session.query(domain.Committee).filter(
+            sql.and_(
+                domain.Committee.status == 'active',
+                domain.Committee.parent_group_id == parliament_id,
+                sql.not_(
+                    domain.Committee.group_id.in_(existing_committee_ids)
+                )
+            )
+        )
+        return query
 
 class MotionPartySource(SpecializedSource):
 

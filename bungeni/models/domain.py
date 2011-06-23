@@ -468,6 +468,9 @@ class ParliamentaryItem(Entity):
         "bungeni.models.domain.SignatoryContainer", "item_id")
     event = one2many("event",
         "bungeni.models.domain.EventItemContainer", "item_id")
+    assignedgroups = one2many("assignedgroups",
+        "bungeni.models.domain.GroupGroupItemAssignmentContainer", "item_id")
+
     # votes
     # schedule
     # object log
@@ -583,8 +586,6 @@ class BillType(Entity):
 class Bill(ParliamentaryItem):
     #interface.implements(bungeni.core.interfaces.IVersionable)
 
-    assignedgroups = one2many("assignedgroups",
-        "bungeni.models.domain.GroupGroupItemAssignmentContainer", "item_id")
     versions = one2many("versions",
         "bungeni.models.domain.BillVersionContainer", "content_id")
 

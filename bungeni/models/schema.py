@@ -126,10 +126,10 @@ users = rdb.Table("users", metadata,
     rdb.Column("current_nationality", rdb.String(2),
         rdb.ForeignKey("countries.country_id")
     ),
-    rdb.Column("uri", rdb.String(120), unique=True),
+    rdb.Column("uri", rdb.Unicode(1024), unique=True),
     rdb.Column("date_of_death", rdb.Date),
     rdb.Column("type_of_id", rdb.String(1)),
-    rdb.Column("national_id", rdb.Unicode(32)),
+    rdb.Column("national_id", rdb.Unicode(256)),
     rdb.Column("password", rdb.String(36)
         # we store salted md5 hash hexdigests
     ),
@@ -281,7 +281,13 @@ groups = rdb.Table("groups", metadata,
     rdb.Column("parent_group_id", rdb.Integer,
         rdb.ForeignKey("groups.group_id")
      ),
-    rdb.Column("language", rdb.String(5), nullable=False),
+     rdb.Column("language", rdb.String(5), nullable=False),
+    
+    #custom fields
+    rdb.Column("custom1", rdb.UnicodeText, nullable=True),
+    rdb.Column("custom2", rdb.UnicodeText, nullable=True),
+    rdb.Column("custom3", rdb.UnicodeText, nullable=True),
+    rdb.Column("custom4", rdb.UnicodeText, nullable=True),
 )
 
 offices = rdb.Table("offices", metadata,
@@ -745,7 +751,7 @@ attached_files = rdb.Table("attached_files", metadata,
     rdb.Column("file_title", rdb.Unicode(255), nullable=False),
     rdb.Column("file_description", rdb.UnicodeText),
     rdb.Column("file_data", FSBlob(32)),
-    rdb.Column("file_name", rdb.String(127)),
+    rdb.Column("file_name", rdb.String(200)),
     rdb.Column("file_mimetype", rdb.String(127)),
     # Workflow State
     rdb.Column("status", rdb.Unicode(48)),
@@ -834,7 +840,7 @@ parliamentary_items = rdb.Table("parliamentary_items", metadata,
     # A Reference to a resource from which the present resource is derived. 
     # The present resource may be derived from the Source resource in whole or 
     # part.
-    rdb.Column("uri", rdb.Unicode(128), nullable=True), 
+    rdb.Column("uri", rdb.Unicode(1024), nullable=True), 
     # the reviewer may add a recommendation note
     rdb.Column("note", rdb.UnicodeText),
     # Receive  Notifications -> triggers notification on workflow change
@@ -843,6 +849,7 @@ parliamentary_items = rdb.Table("parliamentary_items", metadata,
     ),
     # type, for polymorphic_identity <=> dc:Type
     rdb.Column("type", rdb.String(30), nullable=False),
+    rdb.Column("geolocation", rdb.UnicodeText, nullable=True),
     # !+DC(mr, jan-2011) consider addition of:
     # - Creator/Author
     # - Contributor
@@ -852,6 +859,11 @@ parliamentary_items = rdb.Table("parliamentary_items", metadata,
     # - Reference, citations of other resources, implied from body content? 
     # - Relation, e.g. assigned to a Committee
     
+    # custom fields
+    rdb.Column("custom1", rdb.UnicodeText, nullable=True),
+    rdb.Column("custom2", rdb.UnicodeText, nullable=True),
+    rdb.Column("custom3", rdb.UnicodeText, nullable=True),
+    rdb.Column("custom4", rdb.UnicodeText, nullable=True),
 )
 
 # Agenda Items:
@@ -1011,7 +1023,7 @@ tabled_documents = rdb.Table("tabled_documents", metadata,
         rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
         primary_key=True
     ),
-    rdb.Column("link", rdb.String(256)),
+    rdb.Column("link", rdb.String(2000)),
     rdb.Column("tabled_document_number", rdb.Integer),
 )
 
@@ -1067,7 +1079,7 @@ settings = rdb.Table("settings", metadata,
 holidays = rdb.Table("holidays", metadata,
     rdb.Column("holiday_id", rdb.Integer, primary_key=True),
     rdb.Column("holiday_date", rdb.Date, nullable=False),
-    rdb.Column("holiday_name", rdb.Unicode(32)),
+    rdb.Column("holiday_name", rdb.Unicode(1024)),
     rdb.Column("language", rdb.String(5), nullable=False),
 )
 

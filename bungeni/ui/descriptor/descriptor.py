@@ -1915,43 +1915,43 @@ class GroupItemAssignmentDescriptor(ModelDescriptor):
     ]
 
 class ItemGroupItemAssignmentDescriptor(GroupItemAssignmentDescriptor):
-    """The Bills assigned to a Committee.
+    """The items assigned to a committee (or other group)
     """
     localizable = True
-    display_name = _("Assigned bill")
-    container_name = _("Assigned bills")
+    display_name = _("Assigned item")
+    container_name = _("Assigned items")
     fields = [
         Field(name="item_id", # [user-req]
-            modes="view edit add listing",
+            modes="view add listing",
             localizable=[
-                show("view edit listing"),
+                show("view listing"),
             ],
-            property=schema.Choice(title=_("Bill"),
-                source=vocabulary.BillSource(
+            property=schema.Choice(title=_("Item"),
+                source=vocabulary.PIAssignmentSource(
                     token_field="parliamentary_item_id",
                     title_field="short_name",
                     value_field="parliamentary_item_id"
                 ),
             ),
-            listing_column=linked_assignment_column(_("Bill"), "item"),
+            listing_column=linked_assignment_column(_("Item"), "item"),
         ),
     ]
     fields.extend(deepcopy(GroupItemAssignmentDescriptor.fields))
 
 class GroupGroupItemAssignmentDescriptor(GroupItemAssignmentDescriptor):
-    """The Committees a Bill is assigned to.
+    """The groups a parliamentary item is assigned to
     """
     localizable = True
-    display_name = _("Assigned committee")
-    container_name = _("Assigned committees")
+    display_name = _("Assigned group")
+    container_name = _("Assigned groups")
     fields = [
         Field(name="group_id", # [user-req]
-            modes="view edit add listing",
+            modes="view add listing",
             localizable=[
-                show("view edit listing"),
+                show("view listing"),
             ],
             property=schema.Choice(title=_("Committee"),
-                source=vocabulary.CommitteeSource(
+                source=vocabulary.CommitteeAssignmentSource(
                     token_field="group_id",
                     title_field="short_name",
                     value_field="group_id"

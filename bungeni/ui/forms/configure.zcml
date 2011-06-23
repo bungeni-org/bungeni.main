@@ -609,10 +609,10 @@
         permission="zope.View"
         weight="20"
     />
-    <browser:viewlet name="bungeni.viewlet.bill-assignments"
+    <browser:viewlet name="bungeni.viewlet.item-assignments"
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.AssignedGroupsViewlet"
-        for="bungeni.models.interfaces.IBill"
+        for="bungeni.models.interfaces.IBungeniParliamentaryContent"
         permission="zope.View"
         weight="30"
     />
