@@ -41,6 +41,12 @@
         permission="zope.Public"
         class=".redirect.RedirectToCurrent"
     />
+    <browser:page name="index"
+        for="bungeni.models.interfaces.IBungeniApplication"
+        permission="zope.View"
+        layer=".interfaces.IBungeniAuthenticatedSkin"
+        class=".redirect.WorkspaceRootRedirect"
+    />
     <browser:view for="bungeni.alchemist.interfaces.IAlchemistContent"
         permission="zope.View"
         name="file-image"

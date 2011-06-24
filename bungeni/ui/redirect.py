@@ -58,28 +58,11 @@ class RedirectToCurrent(BrowserView):
 
 
 class WorkspaceRootRedirect(BrowserView):
-    """Redirect to the the "pi" view of the user's *first* workspace OR for the 
-    case on no workspaces, to "/workspace".
-    """
+    """Redirect logged in users to workspace"""
     def __call__(self):
         request = self.request
-        try: 
-            first_workspace = IAnnotations(request)["layer_data"].workspaces[0]
-            to_url = "/workspace/obj-%s/pi" % first_workspace.group_id
-        except:
-            to_url = "/workspace"
-        # !+TRAILING_SLASH(mr, sep-2010) this is still needed?
-        to_url = url.set_url_context(to_url)
-        if url.get_destination_url_path(request) != to_url:
-            # never redirect to same destination!
-            log.warn("WorkspaceRootRedirect %s -> %s" % (request.getURL(), to_url))
-            request.response.redirect(to_url)
-        else:
-            # !+
-            # user has no workspaces and is requesting /workspace view
-            # return the "no workspace" *rendered* view for /workspace
-            return component.getMultiAdapter(
-                        (self.context, request), name="no-workspace-index")()
+        to_url = "/workspace"
+        request.response.redirect(to_url)
 
 class _IndexRedirect(BrowserView):
     """Redirect to the named "index" view."""
