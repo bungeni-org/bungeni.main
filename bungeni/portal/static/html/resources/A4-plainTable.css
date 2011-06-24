@@ -32,13 +32,13 @@ background-image:none !important;
 background-image:none !important;
     color:#000;
 }
-.yui-skin-sam th.yui-dt-asc .yui-dt-liner {
+#alchemist\.container\.listing th.yui-dt-asc .yui-dt-liner {
     background:url(sort_up.gif) no-repeat right !important; /* sorted header gradient */
 }
-.yui-skin-sam th.yui-dt-desc .yui-dt-liner {
+#alchemist\.container\.listing th.yui-dt-desc .yui-dt-liner {
     background:url(sort_down.gif) no-repeat right !important; /* sorted header gradient */
 }
-.yui-skin-sam th .yui-dt-liner {
+#alchemist\.container\.listing th .yui-dt-liner {
     background:url(sort_none.gif) no-repeat right !important; /* sorted header gradient */
 }
 

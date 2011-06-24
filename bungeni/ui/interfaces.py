@@ -139,3 +139,7 @@ class ITreeVocabulary(interface.Interface):
 class IVocabularyTextField(schema.interfaces.IText):
     """Text field supporting vocabulary """
     vocabulary = interface.Attribute("A vocabulary")
+
+class IWorkspaceAdapter(interface.Interface):
+    """Provides workspace item fields
+    """

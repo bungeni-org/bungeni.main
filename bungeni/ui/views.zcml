@@ -24,66 +24,6 @@
         permission="zope.Public"
         template="templates/app-index.pt"
     />
-    <!-- when logged in, requests to "/" are redirected to the index view of
-    the user's first workspace OR (if no workspaces) to "/workspace" -->
-    <browser:page name="index"
-        for="bungeni.models.interfaces.IBungeniApplication"
-        permission="zope.View"
-        layer=".interfaces.IBungeniAuthenticatedSkin"
-        class=".redirect.WorkspaceRootRedirect"
-    />
-
-    <!-- Workspace -->
-
-    <!-- !+NotAuthenticated(mr, 08-2010), not-logged-in gives NotFound?
-        adopt a standard handling of (the numerous) such situations e.g.
-        - redirect to login?
-        - standard error page, with suggestion that may need to log in?
-    -->
-    <browser:page name="workspace-index"
-        for="bungeni.core.interfaces.ISection"
-        permission="zope.View"
-        layer=".interfaces.IBungeniAuthenticatedSkin"
-        template="templates/app-index.pt"
-    /><!-- class=".redirect.WorkspaceRootRedirect"
-    <browser:page
-        name="no-workspace-index"
-        for="bungeni.core.interfaces.ISection"
-        permission="zope.View"
-        layer=".interfaces.IBungeniAuthenticatedSkin"
-        template="templates/app-index.pt"
-    /> !+ ??? -->
-    <browser:page name="view"
-        for=".interfaces.IWorkspaceContainer"
-        class=".redirect.WorkspaceContainerIndexRedirect"
-        permission="zope.View"
-        layer=".interfaces.IWorkspaceSectionLayer"
-    /><!-- why does name must be "view"? e.g. "workspace-container-index" will
-           not match -->
-
-    <adapter factory=".workspace.WorkspaceContainerTraverser"
-        permission="zope.Public"
-        trusted="true"
-    />
-    <browser:page name="workspace-pi"
-        for=".interfaces.IWorkspacePIContext"
-        layer=".interfaces.IBungeniAuthenticatedSkin"
-        class=".workspace.WorkspacePIView"
-        permission="zope.View"
-    />
-  <browser:page name="workspace-mi"
-        for=".interfaces.IWorkspaceMIContext"
-        layer=".interfaces.IBungeniAuthenticatedSkin"
-        class=".workspace.WorkspaceMIView"
-        permission="zope.View"
-    />
-    <browser:page name="workspace-archive"
-        for=".interfaces.IWorkspaceArchiveContext"
-        layer=".interfaces.IBungeniAuthenticatedSkin"
-        class=".workspace.WorkspaceArchiveView"
-        permission="zope.View"
-    />
-    <!-- bungeni.models.interfaces.IGroupSittingContainer -->
 
     <!-- Setup Access to Browser Resources on the Application -->
 
@@ -535,7 +475,12 @@
         permission="zope.Public"
         class=".container.ContainerJSONTableHeaders"
     />
-
+    <browser:page name="jsonlisting"
+        for="bungeni.models.interfaces.IWorkspaceContainer"
+        permission="zope.Public"
+        class=".workspace.WorkspaceContainerJSONListing"
+    />
+   
     <!-- container UI -->
     <browser:page name="index"
         for="bungeni.alchemist.interfaces.IAlchemistContainer"
@@ -545,7 +490,12 @@
         class=".table.AjaxContainerListing"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-
+    <browser:page name="index"
+        for="bungeni.models.interfaces.IWorkspaceContainer"
+        class=".workspace.WorkspaceContainerListing"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+        permission="zope.Public"
+    />
   <!-- RSS/XML views -->
 
   <!-- RSS views for html content -->

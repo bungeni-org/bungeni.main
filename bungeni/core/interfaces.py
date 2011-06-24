@@ -69,6 +69,16 @@ class IReportAddContext(IAddContext):
 
 class IWorkspaceScheduling(interface.Interface):
     """Marker inteface for workspace scheduling"""
+class IWorkspaceInbox(interface.Interface):
+    """Marker inteface for workspace inbox"""
+class IWorkspaceDraft(interface.Interface):
+    """Marker inteface for workspace draft"""
+class IWorkspaceSent(interface.Interface):
+    """Marker inteface for workspace sent"""
+class IWorkspaceArchive(interface.Interface):
+    """Marker inteface for workspace archive"""
+class IWorkspaceDocuments(interface.Interface):
+    """Marker inteface for workspace archive"""
 ####################
 # Feature - Marker Interfaces 
 # 
@@ -270,4 +280,22 @@ class ILanguageProvider(interface.Interface):
     """
     def getLanguage():
         """Return a language code
+        """
+
+class IWorkspaceTabsUtility(interface.Interface):
+    def getDomainAndStatuses(role, tab):
+        """Returns a dictionary with the interfaces as keys. The value for each 
+        key is a dictionary of applicable statuses"""
+                
+    def setContent(role, tab, workflow_name, status):
+        """Set workspace info
+        """
+    def registerItemType(domain_class, item_type):
+        """Set the domain class and type info that is used to generate URLS
+        """
+    
+    def getDomainOrType(key):
+        """
+        Given a domain_class or type, returns the type or domain_class
+        respectively
         """

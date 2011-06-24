@@ -223,5 +223,8 @@
         factory=".widgets.widget"
         name="widget"
       />
-
+    
+   <!-- Workspace Adapters -->
+   <adapter factory=".workspace-adapters.WorkspaceAdapter" /> 
+    
 </configure>

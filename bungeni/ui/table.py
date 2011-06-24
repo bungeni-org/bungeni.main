@@ -13,7 +13,7 @@ from zc.table import batching
 from z3c.pt.texttemplate import ViewTextTemplateFile
 #from bungeni.ui import z3evoque
 from bungeni.ui.utils import url
-
+from zope.app.pagetemplate import ViewPageTemplateFile
 
 class TableFormatter(batching.Formatter):
     """The out-of-box table formatter does not let us specify a custom

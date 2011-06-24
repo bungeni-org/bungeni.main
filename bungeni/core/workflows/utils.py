@@ -4,14 +4,13 @@ import sys
 import datetime
 
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
-
+from zope.app.component.hooks import getSite
 from bungeni.core.workflow.interfaces import IWorkflowController
 from bungeni.core.workflow.interfaces import NoTransitionAvailableError
 
 import bungeni.models.interfaces as interfaces
 #import bungeni.models.domain as domain
 import bungeni.models.utils
-from bungeni.core.app import BungeniApp
 import bungeni.core.interfaces
 #import bungeni.core.globalsettings as prefs
 from bungeni.ui.utils import debug
@@ -150,13 +149,14 @@ def get_group_local_role(group):
     else:
         return "bungeni.GroupMember"
 
+def get_group_context(context):
+    if interfaces.IOffice.providedBy(context):
+        return getSite() #get_parliament(context)
+    else:
+        return context
+
 # groups
 def _set_group_local_role(context, unset=False):
-    def get_group_context(context):
-        if interfaces.IOffice.providedBy(context):
-            return BungeniApp() #get_parliament(context)
-        else:
-            return context
     group = context
     role = get_group_local_role(group)
     prm = IPrincipalRoleMap(get_group_context(group))

@@ -31,7 +31,7 @@ from bungeni.core.i18n import _
 from bungeni.models.utils import get_current_parliament
 from bungeni.models.utils import container_getter
 from bungeni.ui.utils import url, common
-
+from bungeni.models.workspace import WorkspaceContainer
 
 def onWSGIApplicationCreatedEvent(application, event):
     """Subscriber to the ore.wsgiapp.interfaces.IWSGIApplicationCreatedEvent."""
@@ -105,16 +105,39 @@ class AppSetup(object):
         )
         
         # top-level sections
-        from bungeni.ui.workspace import workspace_resolver
         workspace = self.context["workspace"] = Section(
             title=_(u"Workspace"),
             description=_(u"Current parliamentary activity"),
-            default_name="workspace-index",
-            publishTraverseResolver=workspace_resolver
+            default_name="documents",
         )
         
         alsoProvides(workspace, interfaces.ISearchableSection)
-        
+        workspace["documents"] = Section(
+            title=_(u"documents"),
+            description=_(u"documents"),
+            default_name="inbox",
+            marker = interfaces.IWorkspaceDocuments,
+        )
+        workspace["documents"]["draft"] = WorkspaceContainer(
+                                            parent = workspace["documents"], 
+                                            tab_type = "draft",
+                                            title = _("draft"),
+                                            description = _("draft documents"))
+        workspace["documents"]["inbox"] = WorkspaceContainer(
+                                            parent = workspace["documents"], 
+                                            tab_type = "inbox",
+                                            title = _("inbox"),
+                                            description = _("incoming documents"))
+        workspace["documents"]["sent"] = WorkspaceContainer(
+                                            workspace["documents"], 
+                                            tab_type = "sent",
+                                            title = _("sent"),
+                                            description = _("sent documents"))
+        workspace["documents"]["archive"] = WorkspaceContainer(
+                                                workspace["documents"], 
+                                                tab_type = "archive",
+                                                title = _("archive"),
+                                                description = _("archived documents"))
         
         workspace["scheduling"] = Section(
             title=_(u"Scheduling"),

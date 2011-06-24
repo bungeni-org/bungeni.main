@@ -22,8 +22,6 @@ from bungeni.ui import interfaces
 from bungeni.ui.utils import url
 from bungeni.ui.descriptor.localization import check_reload_localization
 
-from workspace import prepare_user_workspaces
-
 # !+IStartRequestEvent(mr, jun-2011) the once_per_request() below is a 
 # workaround to simulate the above event, gthat was introduced in. 
 # zope.app.publication 3.12.0. This utility and code using it should be
@@ -42,7 +40,6 @@ def once_per_request(event_handler):
 
 
 # guard event handlers to be called only ONCE per request
-prepare_user_workspaces = once_per_request(prepare_user_workspaces)
 check_reload_localization = once_per_request(check_reload_localization)
 
 
@@ -58,7 +55,6 @@ def on_before_traverse(event):
         id(event.request), event.request.getURL(), event.object))
     apply_request_layer_by_url(event)
     remember_traversed_context(event)
-    prepare_user_workspaces(event)
     check_reload_localization(event)
 
 @component.adapter(IEndRequestEvent)

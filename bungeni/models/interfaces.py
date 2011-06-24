@@ -178,7 +178,9 @@ class IGroupSitting(interface.Interface):
 
 class IGroupSittingAttendance(interface.Interface):
     pass
-
+    
+class IGroupSittingType(interface.Interface):
+    pass
 
 class IItemSchedule(interface.Interface):
     pass
@@ -503,7 +505,8 @@ class IItemGroupItemAssignment(IGroupItemAssignment):
 
 class IReport(IBungeniContent):
     pass
-
+class IReport4Sitting(IBungeniContent):
+    pass
 class IUserDelegation(interface.Interface):
     pass
 
@@ -574,3 +577,9 @@ class IPostalAddressType(IBungeniVocabulary):
 
 class ICommitteeTypeStatus(IBungeniVocabulary):
     """Marker interface for committe type statuses"""
+
+class ICountry(interface.Interface):
+    """Marker interface for Country"""
+
+class IWorkspaceContainer(interface.Interface):
+    pass

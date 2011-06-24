@@ -1,0 +1,19 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      metal:use-macro="context/@@standard_macros/page">
+    <body>
+        <div metal:fill-slot="body">
+             <h1 class="title" i18n:domain="bungeni" i18n:translate=""
+                tal:content="context/title">Workspace Listing</h1>
+            <p class="documentDescription" tal:content="context/description">
+                Description</p>
+            <form tal:attributes="action request/URL" method="post"
+                  class="edit-form" enctype="multipart/form-data"
+                  id="workspace.listing">
+                <div tal:content="structure view/listing">
+                    contents 
+                </div>
+            </form>
+        </div>
+    </body>
+</html>

@@ -710,4 +710,68 @@
 
   };
   
+  $.fn.yuiWorkspaceDataTable = function(context_name, link_url, data_url, fields, columns, table_id) {
+    if (!YAHOO.widget.DataTable) {
+      return console.log("Warning: YAHOO.widget.DataTable module not loaded.");
+    }
+
+    var datasource, config;
+    
+    var formatter = function(elCell, oRecord, oColumn, oData) {
+      var object_id = oRecord.getData("object_id");
+      elCell.innerHTML = "<a href=\"" +  link_url + '/' + object_id + "\">" + oData + "</a>";
+    return this;
+
+    };
+    
+    YAHOO.widget.DataTable.Formatter[context_name+"Custom"] = formatter;
+
+    // Setup Datasource for Container Viewlet
+    fields.push({key:"object_id"});
+    datasource = new YAHOO.util.DataSource(data_url);
+    datasource.responseType   = YAHOO.util.DataSource.TYPE_JSON;
+    datasource.responseSchema = {
+        resultsList: "nodes",
+        fields: fields,
+        metaFields: { totalRecords: "length", paginationRecordOffset:"start"}
+    };
+    
+    // A custom function to translate the js paging request into a datasource query    
+    var RequestBuilder = function(oState, oSelf) {
+      // Get states or use defaults
+      oState = oState || {pagination:null};
+      var startIndex = (oState.pagination) ? oState.pagination.recordOffset : 0;
+      var results = (oState.pagination) ? oState.pagination.rowsPerPage : 100;  
+       
+      // Build custom request
+      return "&start=" + startIndex + "&limit=" +  results;
+    };
+    
+    config = {
+        paginator: new YAHOO.widget.Paginator({
+            rowsPerPage: 25,
+            template: YAHOO.widget.Paginator.TEMPLATE_ROWS_PER_PAGE,
+            rowsPerPageOptions: [10,25,50,100],
+            firstPageLinkLabel : "<<", 
+            lastPageLinkLabel : ">>", 
+            previousPageLinkLabel : "<", 
+            nextPageLinkLabel : ">"
+            //,pageLinks: 5
+          }),
+        initialRequest : 'start=0&limit=25',
+        generateRequest : RequestBuilder, 
+        dynamicData: true, // Enables dynamic server-driven data  
+    };
+
+    table = new YAHOO.widget.DataTable(YAHOO.util.Dom.get(table_id), columns, datasource, config  );    
+    
+    // Update totalRecords on the fly with value from server
+    table.handleDataReturnPayload = function(oRequest, oResponse, oPayload) {
+        oPayload = oPayload || {pagination:null, totalRecords:null};
+        oPayload.totalRecords = oResponse.meta.totalRecords;
+        oPayload.pagination = oPayload.pagination || {};
+        oPayload.pagination.recordOffset = oResponse.meta.paginationRecordOffset;
+        return oPayload;
+        };
+    };
  })(jQuery);

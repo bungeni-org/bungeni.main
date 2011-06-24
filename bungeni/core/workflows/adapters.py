@@ -54,9 +54,6 @@ def load_workflow(name, iface,
     else:
         wf = get_workflow(name)
         log.debug("Already Loaded WORKFLOW : %s %s" % (name, wf))
-    #workspace
-    workspace_utility = component.queryUtility(IWorkspaceTabsUtility)
-    workspace_utility.setClassInterface(name, iface)
     # We "mark" the supplied iface with IWorkflowed, as a means to mark type 
     # the iface is applied (that, at this point, may not be unambiguously 
     # determined). This has the advantage of then being able to 

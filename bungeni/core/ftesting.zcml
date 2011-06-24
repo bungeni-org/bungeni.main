@@ -22,8 +22,9 @@
     
     <!-- Roles -->
     <role id="zope.Member" title="Member" />
-    
+    <include package="zope.annotation"/>
     <!-- App configuration -->
+    <include package="bungeni.models" />
     <include package="bungeni.models" file="auth.zcml" />
     <include package="bungeni.models" file="roles.zcml" />
     <include package="bungeni.models" file="permissions.zcml" />

@@ -84,11 +84,9 @@ from bungeni.ui.viewlets import workspace
 from bungeni.models.utils import get_current_parliament, get_db_user_id
 from bungeni.models.utils import get_current_parliament_governments
 from bungeni.models.utils import get_ministries_for_user_in_government
-
+from bungeni.models.utils import get_principal
 from zope.app.schema.vocabulary import IVocabularyFactory
 from zope.i18n import translate
-
-from workspace import ARCHIVED
 
 ALLOWED_TYPES = {'workspace': ('Question', 'Motion', 'TabledDocument',\
                                'Bill', 'AgendaItem'),\
@@ -352,7 +350,8 @@ class Search(forms.common.BaseForm, ResultListing, HighlightMixin):
         application = common.get_application()
         parliament = get_current_parliament(None)
         parliament.__parent__ = application
-        roles = common.get_context_roles(parliament)
+        principal = get_principal()
+        roles = common.get_context_roles(parliament, principal)
 
         # minister role, filtering by states and object_type and ministry_id
         if not roles:

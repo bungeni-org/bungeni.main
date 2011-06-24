@@ -1,0 +1,12 @@
+<script type="text/javascript">
+  (function($) {
+  $(document).ready(function() {
+    $(this).yuiWorkspaceDataTable('${options/context_name}',
+                         '${options/link_url}',
+                         '${options/data_url}',
+                         [${options/fields}],
+                         [${options/columns}],
+                         '${options/table_id}');
+  });
+  })(jQuery);
+</script>
