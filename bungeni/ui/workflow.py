@@ -1,5 +1,5 @@
 
-from datetime import datetime, timedelta
+import datetime
 
 from zope.formlib import form
 from zope.viewlet import viewlet
@@ -16,11 +16,13 @@ from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.alchemist.interfaces import IAlchemistContent
 from bungeni.core import audit
 from bungeni.core import globalsettings
+from bungeni.core.workflow.interfaces import IWorkflowed
 from bungeni.ui.forms.workflow import bindTransitions
 from bungeni.ui.forms.common import BaseForm
 from bungeni.ui.widgets import TextDateTimeWidget
 from bungeni.ui.table import TableFormatter
 from bungeni.ui.menu import get_actions
+from bungeni.ui.tagged import get_states
 from bungeni.ui.utils import date
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
@@ -31,7 +33,6 @@ from bungeni.core.interfaces import IAuditable
 from bungeni.ui.i18n import _
 from bungeni.core.i18n import _ as _bc
 from zope.i18n import translate
-
 
 class WorkflowVocabulary(object):
     zope.interface.implements(IVocabularyFactory)
@@ -144,22 +145,40 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
     def get_min_date_active(self):
         """Determine the min_date_active to validate against.
         """
+        def is_workflowed_and_draft(instance):
+            """is item workflowed, and is so is it in a logical draft state?
+            """
+            if IWorkflowed.providedBy(instance):
+                tagged_key = instance.__class__.__name__.lower()
+                draft_states = get_states(tagged_key, tagged=["draft"])
+                return instance.status in draft_states
+            return False
         min_date_active = None
         if IAuditable.providedBy(self.context):
             instance = removeSecurityProxy(self.context)
-            changes = [ change for change in instance.changes 
-                        if change.action == "workflow" ]
-            if changes:
- 	            # then use the "date_active" of the most recent entry
-                min_date_active = changes[-1].date_active
-        if not min_date_active: 
-            # then fallback to the current parliament's atart_date
-            min_date_active = globalsettings.get_current_parliament().start_date
+            # !+PASTDATAENTRY(mr, jun-2011) offers a way to enter past data 
+            # for workflowed items via the UI -- note, ideally we should be 
+            # able to also control the item's creation active_date.
+            #
+            # If a workflowed item is in draft state, we do NOT take the 
+            # date_active of its last change as the min_date_active, but
+            # let that min fallback to parliament's creation date...
+            if not is_workflowed_and_draft(instance):
+                changes = [ change for change in instance.changes 
+                    if change.action == "workflow" ]
+                if changes:
+     	            # then use the "date_active" of the most recent entry
+                    min_date_active = changes[-1].date_active
+        if not min_date_active:
+            # fallback to current parliament's start_date (cast to a datetime)
+            min_date_active = datetime.datetime.combine(
+                globalsettings.get_current_parliament().start_date,
+                datetime.time())
         # As the precision of the UI-submitted datetime is only to the minute, 
         # we adjust min_date_time by a margin of 59 secs earlier to avoid 
         # issues of doing 2 transitions in quick succession (within same minute) 
         # the 2nd of which could be taken to be too old...
-        return min_date_active - timedelta(seconds=59)
+        return min_date_active - datetime.timedelta(seconds=59)
     
     def validate(self, action, data):
         # submitted data is actually updated in following call to super.validate
@@ -169,7 +188,7 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
             if data.get("date_active") < min_date_active:
                 errors.append(zope.interface.Invalid(
                     _("Active Date is too old.")))
-            elif data.get("date_active") > datetime.now():
+            elif data.get("date_active") > datetime.datetime.now():
                 errors.append(zope.interface.Invalid(
                     _("Active Date is in the future.")))
         return errors
@@ -186,6 +205,7 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
             ignore_request=ignore_request)
     
     def update(self, transition=None):
+        # !+RENAME(mr, apr-2011) should be transition_id
         workflow = interfaces.IWorkflow(self.context)
         if transition is not None:
             state_transition = workflow.get_transition(transition)
@@ -204,6 +224,7 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
         super(WorkflowActionViewlet, self).update()
     
     def setupActions(self, transition):
+        # !+RENAME(mr, apr-2011) should be transition_id
         wfc = interfaces.IWorkflowController(self.context)
         if transition is None:
             transitions = wfc.getManualTransitionIds()
@@ -225,6 +246,8 @@ class WorkflowView(browser.BungeniBrowserView):
     _page_title = "Workflow"
     
     def update(self, transition=None):
+        # !+RENAME(mr, apr-2011) should be transition_id
+        #
         # set up viewlets; the view is rendered from viewlets for
         # historic reasons; this may be refactored anytime.
         if IAuditable.providedBy(self.context):
@@ -242,8 +265,9 @@ class WorkflowView(browser.BungeniBrowserView):
 
 
 class WorkflowChangeStateView(WorkflowView):
-    """This gets called on selection of a transition from the menu i.e. NOT
-    when clicking on one of the trasition buttons in the workflow form.
+    """This gets called on selection of a transition from the menu i.e. NOT:
+    a) when clicking on one of the trasition buttons in the workflow form.
+    b) when clicking Add of an object (automatic transitions).
     """
     
     # evoque
@@ -256,6 +280,8 @@ class WorkflowChangeStateView(WorkflowView):
         # !+RENAME(mr, apr-2011) should be transition_id
         method = self.request["REQUEST_METHOD"]
         workflow = interfaces.IWorkflow(self.context)
+        
+        # !+REWITE(mr, jun-2011) the following needs to be rewritten!
         if transition:
             state_transition = workflow.get_transition(transition)
             require_confirmation = getattr(
@@ -271,13 +297,16 @@ class WorkflowChangeStateView(WorkflowView):
             # execute action
             # !+ should pass self.request.form as data? e.g. value is:
             # {u"next_url": u"...", u"transition": u"submit_response"}
-            result = actions[0].success({})
+            result = actions[0].success({}) 
+            # !+REWITE(mr, jun-2011) this result is never used!
         
         if headless is True:
             actions = get_actions("context_workflow", self.context, self.request)
             state_title = workflow.get_state(self.context.status).title
             result = self.ajax_template(actions=actions, state_title=state_title)
             
+            # !+REWITE(mr, jun-2011) require_confirmation only defined when 
+            # transition is True!
             if require_confirmation is True:
                 self.request.response.setStatus(403)
             else:

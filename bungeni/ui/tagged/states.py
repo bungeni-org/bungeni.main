@@ -9,6 +9,7 @@ $Id$
 # Declaration of active tags (it is an error to specify an undeclared tag)
 
 ACTIVE_TAGS = [
+    "draft",
     "private", 
     "public",
     "tobescheduled",
@@ -21,7 +22,6 @@ ACTIVE_TAGS = [
     "fail", # terminal
     "oral", # oral questions
     "written", # written questions
-    "draft", # groupsitting
     "published", # groupsitting
     "workspace",
     "agendaprivate", # groupsitting - if a sitting is in a state tagged 
@@ -36,8 +36,8 @@ TAG_MAPPINGS = {}
 # !+ fgrep -ir "_wf_state" --include="*.p?" .
 
 TAG_MAPPINGS["agendaitem"] = {
-    "working_draft": ["private",],
-    "draft": ["private",],
+    "working_draft": ["draft", "private",],
+    "draft": ["draft", "private",],
     "submitted": ["actionclerk",],
     "received": ["actionclerk",],
     "completed": [],
@@ -56,7 +56,7 @@ TAG_MAPPINGS["agendaitem"] = {
     "withdrawn": ["public", "terminal", "fail",],
 }
 TAG_MAPPINGS["bill"] = {
-    "working_draft": ["private",],
+    "working_draft": ["draft", "private",],
     "submitted": ["actionclerk",],
     "received": ["actionclerk",],
     "submitted_signatories": ["actionmp",],
@@ -83,8 +83,8 @@ TAG_MAPPINGS["bill"] = {
     "rejected": ["terminal", "fail",],
 }
 TAG_MAPPINGS["motion"] = {
-    "working_draft": ["private",],
-    "draft": ["private",],
+    "working_draft": ["draft", "private",],
+    "draft": ["draft", "private",],
     "submitted_signatories": ["actionmp",],
     "submitted": ["actionclerk",],
     "received": ["actionclerk",],
@@ -106,8 +106,8 @@ TAG_MAPPINGS["motion"] = {
     "withdrawn": ["public", "terminal", "fail",],
 }
 TAG_MAPPINGS["question"] = {
-    "working_draft": ["private",],
-    "draft": ["private",],
+    "working_draft": ["draft", "private",],
+    "draft": ["draft", "private",],
     "submitted_signatories": ["actionmp",],
     "submitted": ["actionclerk",],
     "received": ["actionclerk",],
@@ -130,8 +130,8 @@ TAG_MAPPINGS["question"] = {
     "withdrawn": ["public", "terminal", "fail",],
 }
 TAG_MAPPINGS["tableddocument"] = {
-    "working_draft": ["private",],
-    "draft": ["private",],
+    "working_draft": ["draft", "private",],
+    "draft": ["draft", "private",],
     "submitted": ["actionclerk",],
     "received": ["actionclerk",],
     "completed": [],
@@ -146,10 +146,10 @@ TAG_MAPPINGS["tableddocument"] = {
     "withdrawn": ["terminal", "fail",],
 }
 TAG_MAPPINGS["groupsitting"] = {
-    "sitting":["public", "draft", "agendaprivate"],                            
-    "draft_agenda": ["public", "draft","workspace", "agendaprivate"],
-    "published_agenda": ["public", "published","workspace", ],
-    "draft_minutes": ["public", "draft","workspace"],
+    "sitting":["draft", "public", "agendaprivate",],
+    "draft_agenda": ["draft", "public", "workspace", "agendaprivate",],
+    "published_agenda": ["public", "published","workspace",],
+    "draft_minutes": ["draft", "public", "workspace",],
     "published_minutes": ["public", "published"],
 }
 
