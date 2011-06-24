@@ -361,5 +361,6 @@
     />
     
     <include file="uri.zcml"/>
-
+    <utility factory="bungeni.core.workspace.WorkspaceTabsUtility"
+    />
 </configure>

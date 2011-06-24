@@ -11,7 +11,7 @@ from zope.publisher.interfaces import NotFound
 from zope.component import queryMultiAdapter
 from bungeni.utils.capi import capi
 from bungeni.models.workspace import stringKey
-from bungeni.core.workflow import interfaces
+from bungeni.core.interfaces import IWorkspaceTabsUtility
 from bungeni.models import domain
 
 
@@ -43,7 +43,7 @@ class WorkspaceContainerTraverser(SimpleComponentTraverser):
 class WorkspaceTabsUtility():
     """This is utility stores the workflow configuration
     """
-    implements(interfaces.IWorkspaceTabsUtility)
+    implements(IWorkspaceTabsUtility)
     
     workspaces = {}
     domain_type = {}
@@ -87,7 +87,7 @@ class WorkspaceTabsUtility():
         
 def load_workspace(file_name, domain_class):
     """Loads the workspace configuration for each documemnt"""
-    workspace_tabs = getUtility(interfaces.IWorkspaceTabsUtility)
+    workspace_tabs = getUtility(IWorkspaceTabsUtility)
     path = capi.get_path_for("workspace")
     file_path = os.path.join(path, file_name)
     item_type = file_name.split(".")[0]

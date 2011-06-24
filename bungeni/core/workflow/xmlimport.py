@@ -23,7 +23,6 @@ from bungeni.ui.utils import debug
 from bungeni.models.interfaces import ISubRoleAnnotations
 from zope.component import getUtility
 from zope.securitypolicy.interfaces import IRole
-from bungeni.core.workflow.workspace import TABS
 #
 
 ASSIGNMENTS = (GRANT, DENY)

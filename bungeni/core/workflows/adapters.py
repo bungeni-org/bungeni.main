@@ -5,13 +5,12 @@ import zope.securitypolicy.interfaces
 from bungeni.models import interfaces
 from bungeni.core.workflow import xmlimport
 from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowed, \
-    IStateController, IWorkflowController, IWorkspaceTabsUtility
+    IStateController, IWorkflowController
 from bungeni.core.workflow.states import StateController, WorkflowController, \
     get_object_state
 import bungeni.core.version
 import bungeni.core.interfaces
 from bungeni.utils.capi import capi
-from bungeni.core.workflow import workspace
 __all__ = ["get_workflow"]
 
 def get_workflow(name):
@@ -78,7 +77,6 @@ def load_workflow(name, iface,
 
 
 def load_workflows():
-    component.provideUtility(workspace.WorkspaceTabsUtility())
     # workflow instances (+ adapter *factories*)
     load_workflow("address", interfaces.IUserAddress)
     load_workflow("address", interfaces.IGroupAddress)

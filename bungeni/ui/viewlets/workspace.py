@@ -2,7 +2,7 @@ from zope.app.component.hooks import getSite
 from ploned.ui.viewlet import StructureAwareViewlet
 from zope.app.pagetemplate import ViewPageTemplateFile
 from bungeni.ui.utils import url
-from bungeni.core.workflow.interfaces import IWorkspaceTabsUtility
+
 class WorkspaceContextNavigation(StructureAwareViewlet):
 
     render = ViewPageTemplateFile("templates/workspace.pt")

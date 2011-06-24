@@ -1,6 +1,6 @@
 from ore.alchemist.container import AlchemistContainer, contained
 from bungeni.models.utils import get_principal
-from bungeni.core.workflow.interfaces import IWorkspaceTabsUtility
+from bungeni.core.interfaces import IWorkspaceTabsUtility
 from zope import component
 from bungeni.models import domain
 from zope.security.proxy import removeSecurityProxy

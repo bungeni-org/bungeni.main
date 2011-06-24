@@ -121,16 +121,3 @@ class IWorkflowTransitionEvent(zope.component.interfaces.IObjectEvent):
     comment = zope.interface.Attribute("Comment that went with state transition")
 
 
-class IWorkspaceTabsUtility(zope.interface.Interface):
-    def getDomainAndStatuses(role, tab):
-        """Returns a dictionary with the interfaces as keys. The value for each 
-        key is a dictionary of applicable statuses"""
-            
-    def setClassInterface(workflow_name, class_interface):
-        """Renames workflow names to applicable interface classes
-        """    
-                
-    def setContent(role, tab, workflow_name, status):
-        """Set workspace info
-        """
-
