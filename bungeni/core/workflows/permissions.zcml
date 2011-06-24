@@ -260,16 +260,24 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- event -->
-<grant permission="bungeni.event.Edit" role="bungeni.Clerk" />
-<grant permission="bungeni.event.Edit" role="bungeni.Speaker" />
 <grant permission="bungeni.event.Add" role="bungeni.Clerk" />
 <grant permission="bungeni.event.Add" role="bungeni.Speaker" />
+<grant permission="bungeni.event.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.event.Edit" role="bungeni.Speaker" />
 <grant permission="bungeni.event.Delete" role="bungeni.Clerk" />
 <grant permission="bungeni.event.Delete" role="bungeni.Speaker" />
 
-<permission id="bungeni.event.wf.public.inactive" title="Deactivate" />
-<grant permission="bungeni.event.wf.public.inactive" role="bungeni.Clerk" />
-<grant permission="bungeni.event.wf.public.inactive" role="bungeni.Speaker" />
+<permission id="bungeni.event.wf.private.internal.public" title="Publish to Public" />
+<grant permission="bungeni.event.wf.private.internal.public" role="bungeni.Clerk" />
+<grant permission="bungeni.event.wf.private.internal.public" role="bungeni.Speaker" />
+
+<permission id="bungeni.event.wf.private.public.internal" title="Publish Internal" />
+<grant permission="bungeni.event.wf.private.public.internal" role="bungeni.Clerk" />
+<grant permission="bungeni.event.wf.private.public.internal" role="bungeni.Speaker" />
+
+<permission id="bungeni.event.wf.public.internal.private.inactive" title="Deactivate" />
+<grant permission="bungeni.event.wf.public.internal.private.inactive" role="bungeni.Clerk" />
+<grant permission="bungeni.event.wf.public.internal.private.inactive" role="bungeni.Speaker" />
 
 
 <!-- group -->

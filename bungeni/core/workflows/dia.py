@@ -38,6 +38,8 @@ def main(argv):
         dot(get_workflow("parliament")))
     write_file(output_folder, "signatory.dot", 
         dot(get_workflow("signatory")))
+    write_file(output_folder, "event.dot", 
+        dot(get_workflow("event")))
 
 
 if __name__ == "__main__":

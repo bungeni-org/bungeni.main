@@ -226,3 +226,12 @@ def _signatory_rejected(context):
     utils.assign_signatory_role(context.item, owner_login, unset=True)
 
 _signatory_withdrawn = _signatory_rejected
+
+# events
+def _event_private(context):
+    """
+    Assigns owner role to event creator - Limit viewing to owner
+    """
+    login = utils.get_principal_id()
+    if login is not None:
+        utils.assign_owner_role(context, login)
