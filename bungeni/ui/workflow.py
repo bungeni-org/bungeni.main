@@ -26,10 +26,11 @@ from bungeni.ui.tagged import get_states
 from bungeni.ui.utils import date
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
+from bungeni.ui.utils.url import absoluteURL
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from bungeni.core.interfaces import IAuditable
 #from zope.app.pagetemplate import ViewPageTemplateFile
-
+from bungeni.models.interfaces import IWorkspaceContainer
 from bungeni.ui.i18n import _
 from bungeni.core.i18n import _ as _bc
 from zope.i18n import translate
@@ -209,8 +210,6 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
         workflow = interfaces.IWorkflow(self.context)
         if transition is not None:
             state_transition = workflow.get_transition(transition)
-            # !- workflow state title translations are in bungeni.core
-            # use the right factory here to get translation
             state_title = translate(_bc(state_transition.title),
                                 context=self.request)
             self.status = translate(_(
@@ -231,7 +230,8 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
         else:
             transitions = (transition,)
         self.actions = bindTransitions(self, transitions, None, wfc.workflow)
-
+        if IWorkspaceContainer.providedBy(self.context.__parent__):
+            self._next_url = absoluteURL(self.context.__parent__, self.request)
 
 class WorkflowView(browser.BungeniBrowserView):
     """This view is linked to by the "workflow" context action and dislays the 
