@@ -121,9 +121,18 @@ See the Bungeni Source Code Style Guide for further details.
 <!-- attachedfile -->
 <grant permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
 
-<permission id="bungeni.attachedfile.wf.public.inactive" title="Deactivate" />
-<grant permission="bungeni.attachedfile.wf.public.inactive" role="bungeni.Clerk" />
-<grant permission="bungeni.attachedfile.wf.public.inactive" role="bungeni.Speaker" />
+<permission id="bungeni.attachedfile.wf.private.internal" title="Publish Internal" />
+<grant permission="bungeni.attachedfile.wf.private.internal" role="bungeni.Owner" />
+
+<permission id="bungeni.attachedfile.wf.private.internal.public" title="Publish to Public" />
+<grant permission="bungeni.attachedfile.wf.private.internal.public" role="bungeni.Owner" />
+
+<permission id="bungeni.attachedfile.wf.private.inactive" title="Drop" />
+<grant permission="bungeni.attachedfile.wf.private.inactive" role="bungeni.Owner" />
+
+<permission id="bungeni.attachedfile.wf.public.internal.inactive" title="Deactivate" />
+<grant permission="bungeni.attachedfile.wf.public.internal.inactive" role="bungeni.Clerk" />
+<grant permission="bungeni.attachedfile.wf.public.internal.inactive" role="bungeni.Speaker" />
 
 
 <!-- bill -->
