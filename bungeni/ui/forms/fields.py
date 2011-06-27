@@ -142,10 +142,12 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
     @property
     def form_name(self):
         parent = self.context.__parent__
-        if IAlchemistContainer.providedBy(parent):
-            descriptor = queryModelDescriptor(parent.domain_model)
-        elif IAlchemistContent.providedBy(self.context):
+        #DESCRIPTOR(miano, June 2011) This originally first checked the parent's 
+        #descriptor then the item's descriptor. Why???
+        if IAlchemistContent.providedBy(self.context):
             descriptor = queryModelDescriptor(self.context.__class__)
+        elif IAlchemistContainer.providedBy(parent):
+            descriptor = queryModelDescriptor(parent.domain_model)
         else:
             raise RuntimeError("Unsupported object: %s." % repr(self.context))
 
