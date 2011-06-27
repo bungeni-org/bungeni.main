@@ -5,6 +5,7 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.security.proxy import removeSecurityProxy
 from zope.formlib import form
 from zope.security.proxy import removeSecurityProxy
+from zope.i18n import translate
 from z3c.pt.texttemplate import ViewTextTemplateFile
 from ore import yuiwidget
 from ore.alchemist import container
@@ -18,16 +19,17 @@ from bungeni.ui.container import ContainerJSONListing
 from bungeni.ui import table
 from bungeni.ui.interfaces import IWorkspaceAdapter
 class WorkspaceField(object):
-    def __init__(self, name):
+    def __init__(self, name, title):
         self.name = name
+        self.title = title
     def query(item):
         return getattr(IWorkspaceAdapter(item), name, None)
 
 # These are the columns to be displayed in the workspace
-workspace_fields = [WorkspaceField("title"), 
-                    WorkspaceField("itemtype"), 
-                    WorkspaceField("status"),
-                    WorkspaceField("status_date")]
+workspace_fields = [WorkspaceField("title", _("title")), 
+                    WorkspaceField("item_type", _("item type")), 
+                    WorkspaceField("status", _("status")),
+                    WorkspaceField("status_date", _("status date"))]
 
 class WorkspaceContainerJSONListing(BrowserView):
     """Paging, batching, json contents of a workspace container.
@@ -107,7 +109,7 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
         field_model  = []
         
         for field in workspace_fields:
-            coldef = {"key": field.name, "label": field.name, "formatter": self.context.__name__ 
+            coldef = {"key": field.name, "label": translate(_(field.title), context=self.request), "formatter": self.context.__name__ 
             }
             if column_model == []:
                 column_model.append(

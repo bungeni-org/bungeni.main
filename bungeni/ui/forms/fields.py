@@ -144,6 +144,9 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
         parent = self.context.__parent__
         #DESCRIPTOR(miano, June 2011) This originally first checked the parent's 
         #descriptor then the item's descriptor. Why???
+        #This was causing an error in the display pages of items in the 
+        #workspace since the workspace containers have no descriptor
+        #defined for them.
         if IAlchemistContent.providedBy(self.context):
             descriptor = queryModelDescriptor(self.context.__class__)
         elif IAlchemistContainer.providedBy(parent):
