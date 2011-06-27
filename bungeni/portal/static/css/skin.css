@@ -1354,6 +1354,9 @@ div.main-column #collage h2 {
 .template-workspace div.contentActions dt.label-state-active a {
     color:#000 !important;
 }
+.template-workspace div.contentActions dd.actionMenuContent ul li > a:hover span {
+    color:#000 !important;
+}
 /*
  * portal-globalnav
  */
@@ -1433,7 +1436,7 @@ div.main-column #collage h2 {
     color:#fff !important;
 }
 .section-bungeni-workspace div#portal-globalnav ul.level0 ul.level1 li.selected a {
-    color:#eed793 !important;
+    color:#3f3f3f !important;
 }
 /*
  * Table styles
