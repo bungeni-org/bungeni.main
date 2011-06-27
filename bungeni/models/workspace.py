@@ -61,6 +61,8 @@ class WorkspaceContainer(AlchemistContainer):
     def _query( self ):
         principal = get_principal()
         roles = self.get_principal_roles(principal)
+        #Add bungeni.Owner to the roles
+        roles.append("bungeni.Owner")
         workspace_tabs = component.getUtility(IWorkspaceTabsUtility)
         domain_status = {}
         for role in roles:
