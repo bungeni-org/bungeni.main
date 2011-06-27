@@ -211,7 +211,7 @@ class Field(object):
     
     # The list of roles exposed to localization
     _roles = [
-        #"bungeni.Admin", # parliament, has all privileges
+        "bungeni.Admin", # parliament, has all privileges
         "bungeni.Clerk", "bungeni.Speaker", 
         "bungeni.Owner", # instance + special objects with no mp context
         "bungeni.MP", # parliament 
