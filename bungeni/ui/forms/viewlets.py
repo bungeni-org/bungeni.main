@@ -438,7 +438,7 @@ class WrittenQuestionResponseViewlet(BungeniViewlet):
 class GroupMembersViewlet(browser.BungeniItemsViewlet):
 
     # evoque
-    render = z3evoque.ViewTemplateFile("workspace_viewlets.html#group_members")
+    render = z3evoque.ViewTemplateFile("viewlets.html#group_members")
 
     view_title = _("Members")
     view_id = "group-members"
@@ -529,7 +529,7 @@ class GroupSittingsViewlet(browser.BungeniItemsViewlet):
     """
 
     # evoque
-    render = z3evoque.ViewTemplateFile("workspace_viewlets.html#group_sittings")
+    render = z3evoque.ViewTemplateFile("viewlets.html#group_sittings")
 
     view_title = _("Sittings")
     view_id = "sittings"
@@ -564,7 +564,7 @@ class GroupSittingsViewlet(browser.BungeniItemsViewlet):
 class OfficesHeldViewlet(browser.BungeniItemsViewlet):
 
     # evoque
-    render = z3evoque.ViewTemplateFile("workspace_viewlets.html#offices_held")
+    render = z3evoque.ViewTemplateFile("viewlets.html#offices_held")
 
     # zpt
     #render = ViewPageTemplateFile("templates/offices_held_viewlet.pt")
@@ -621,7 +621,7 @@ class TimeLineViewlet(browser.BungeniItemsViewlet):
     audit, bill scheduling and bill event records. 
     """
     # evoque
-    render = z3evoque.ViewTemplateFile("workspace_viewlets.html#timeline")
+    render = z3evoque.ViewTemplateFile("viewlets.html#timeline")
 
     # zpt
     #render = ViewPageTemplateFile("templates/timeline_viewlet.pt")
@@ -753,7 +753,7 @@ class MemberItemsViewlet(browser.BungeniItemsViewlet):
     view_id = "mp-items"
 
     # evoque
-    render = z3evoque.ViewTemplateFile("workspace_viewlets.html#mp_items")
+    render = z3evoque.ViewTemplateFile("viewlets.html#mp_items")
 
     # zpt
     #render = ViewPageTemplateFile("templates/mp_item_viewlet.pt")
