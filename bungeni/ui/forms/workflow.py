@@ -19,17 +19,6 @@ from bungeni.ui.i18n import _
 from bungeni.core.workflow import interfaces
 from bungeni.alchemist.ui import handle_edit_action
 
-''' !+UNUSED(mr, mar-2011)
-def createVersion(context, comment=""):
-    """Create a new version of an object and return it.
-    """
-    instance = removeSecurityProxy(context)
-    versions = IVersioned(instance)
-    _comment = u"New version created upon edit."
-    if comment:
-       _comment = u"%s %s" % (_comment, comment)
-    versions.create(_comment.strip())
-'''
 
 def bindTransitions(form_instance, transitions, wf_name=None, wf=None):
     """Bind workflow transitions into formlib actions.
@@ -60,8 +49,6 @@ class TransitionHandler(object):
     def __init__(self, transition_id, wf_name=None):
         self.transition_id = transition_id
         self.wf_name = wf_name
-        # !+ seems that on each manual transition selection in the UI,  
-        # there are 3 instances of TransitionHandler initialized
     
     def __call__(self, form, action, data):
         """Save data, make version and fire transition.
@@ -95,7 +82,7 @@ class TransitionHandler(object):
                 result, form.next_url, form.request.getURL()))
             # dress-up transition data object
             data.setdefault("note", data.get("note", ""))
-            data.setdefault("date_active", data.get("data_active", None))
+            data.setdefault("date_active", data.get("date_active", None))
             # and because WorkflowController API e.g. fireTransition(), ONLY 
             # foresees for a comment attribute as additional data, we bypass 
             # using that altogether, and pass it along downstream by stuffing 

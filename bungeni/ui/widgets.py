@@ -10,7 +10,7 @@ $URL$
 
 log = __import__("logging").getLogger("bungeni.ui.widgets")
 
-
+import sys
 import datetime, pytz
 import itertools
 import os
@@ -41,7 +41,7 @@ from bungeni.alchemist import Session
 from bungeni.models import domain
 from bungeni.core.i18n import _
 from bungeni.ui.i18n import _ as _ui
-from bungeni.ui.utils.url import absoluteURL
+from bungeni.ui.utils import url, debug
 from bungeni.ui.interfaces import IGenenerateVocabularyDefault
 from bungeni.models.utils import get_db_user_id
 from bungeni.core.language import get_default_language
@@ -208,7 +208,7 @@ class FileEditWidget(FileInputWidget):
 class FileDisplayWidget(zope.app.form.browser.widget.DisplayWidget):
     def __call__(self):
         return u'<a href="%s/download"> %s </a>' \
-            % (absoluteURL(self.__parent__.context, self.request),
+            % (url.absoluteURL(self.__parent__.context, self.request),
                 translate(_ui("download"), context=self.request),
             )
 
@@ -632,10 +632,9 @@ DateWidget = TextDateWidget
 
 
 class TextDateTimeWidget(TextDateWidget):
-
+    
     __call__ = ViewPageTemplateFile("templates/textdatetimewidget.pt")
-
-
+    
     @property
     def time_name(self):
         return self.name.replace(".", "__") + "__time"
@@ -647,27 +646,25 @@ class TextDateTimeWidget(TextDateWidget):
     def _hasPartialInput(self):
         return (self.date_name in self.request.form or
                 self.time_name in self.request.form)
-
+    
     def _getFormInput(self):
         """extract the input value from the submitted form """
         return (self._getFieldInput(self.date_name),
                 self._getFieldInput(self.time_name))
-
-
+    
     def _toFormValue(self, value):
         """Convert a field value to a string that can be inserted into the form.
         """
         if (value == self.context.missing_value) and self.required:
-            d = datetime.datetime.now()
-            return  (datetime.datetime.strftime(d, "%Y-%m-%d"),
-                datetime.datetime.strftime(d, "%H:%M"))
-        else:
-            try:
-                return (datetime.datetime.strftime(value, "%Y-%m-%d"),
-                    datetime.datetime.strftime(value, "%H:%M"))
-            except:
-                return("", "")
-
+            value = datetime.datetime.now()
+        try:
+            return (datetime.datetime.strftime(value, "%Y-%m-%d"),
+                datetime.datetime.strftime(value, "%H:%M"))
+        except:
+            #log.error("TextDateTimeWidget._toFormValue(%s) FAILED" % (value))
+            #debug.log_exc(sys.exc_info(), log_handler=log.error)
+            return("", "12:00")
+    
     def _toFieldValue(self, (date, time)):
         if (date == self._missing or time == self._missing):
             if self.required:
@@ -684,7 +681,8 @@ class TextDateTimeWidget(TextDateWidget):
                 return datetime.datetime(year=d.year, month=d.month,
                     day=d.day, hour=t.hour, minute=t.minute,)
             except ValueError, e:
-                raise ConversionError(_(u"Incorrect string data for date and time"), e)
+                raise ConversionError(
+                    _("Incorrect string data for date and time"), e)
 
 DateTimeWidget = TextDateTimeWidget
 

@@ -183,6 +183,9 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
     
     def validate(self, action, data):
         # submitted data is actually updated in following call to super.validate
+        # !+PASTDATAENTRY(mr, jun-2011) enhancement, see Issue 612 Comment 6.
+        # allow active_date=None, unrequire,
+        # get_effective_active_date -> last workflow non-None active_date
         errors = super(WorkflowActionViewlet, self).validate(action, data)
         if "date_active" in data.keys():
             min_date_active = self.get_min_date_active()
