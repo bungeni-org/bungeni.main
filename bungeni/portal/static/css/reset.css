@@ -308,7 +308,10 @@ div#portal-globalnav-bottom {
  * content
  */
 div#region-content div#content > div:first-child {
-    margin-top:-10px;
+    margin-top:-5px;
+}
+.section-bungeni-archive div#region-content div#content > div:first-child  {
+   margin-top:15px;
 }
 /*
  * documentContent
@@ -1202,14 +1205,14 @@ div.main-column #collage h2 {
     margin-left:auto;
     margin-right:auto;
     width:960px;    
-    height:115px;
+    height:105px;
     position:relative;
 }
 .template-portal #portal-logo {
     display: block;
     margin: .5em 0 0 0;
     width:960px;
-    height: 115px;
+    height: 105px;
 }
 .template-portal a#portal-logo img.ws-left,.template-portal a#portal-logo img.ws-right {
 	display:none;
