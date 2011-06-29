@@ -79,11 +79,16 @@ class IWorkspaceArchive(interface.Interface):
     """Marker inteface for workspace archive"""
 class IWorkspaceDocuments(interface.Interface):
     """Marker inteface for workspace archive"""
+
 ####################
 # Feature - Marker Interfaces 
 # 
 # declare implemented to apply feature to a domain model
 
+#!+MODEL(mr, jun-2011) the nature of auditable is part of the model (needs db
+# schema changes, etc.), so should be part of the model. If a model type is
+# *parametrizable* as auditable, then this should be declared as a localization 
+# parameter anyway.
 class IAuditable(interface.Interface):
     """
     marker interface to apply auditing/object log feature
@@ -92,11 +97,6 @@ class IAuditable(interface.Interface):
 class ISubscribable(interface.Interface):
     """
     marker interface to add a subscription to an object
-    """
-
-class IVersionable(interface.Interface):
-    """
-    marker interface to apply versioning feature ( requires iauditable / object log)
     """
 
 #####################

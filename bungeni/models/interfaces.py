@@ -452,6 +452,9 @@ class IProxiedDirectory(interface.Interface):
     to that point back to our parent.
     """
 
+class IVersionable(interface.Interface):
+    """Marker to apply versioning feature (requires IAuditable/objectlog)
+    """
 class IVersion(interface.Interface):
     """A version of an object is identical in attributes to the actual 
     object, based on that object's domain schema.

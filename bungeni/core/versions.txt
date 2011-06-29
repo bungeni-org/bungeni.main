@@ -8,7 +8,7 @@ Set up the versions factory.
   
   >>> component.provideAdapter(
   ...    bungeni.core.version.ContextVersioned,
-  ...    (bungeni.core.interfaces.IVersionable,),
+  ...    (bungeni.models.interfaces.IVersionable,),
   ...    bungeni.core.interfaces.IVersioned)
 
 Adding a question.
@@ -51,7 +51,7 @@ Adding a question.
 The ``question`` object needs to provide the versionable interface.
   
   >>> from zope.interface import alsoProvides
-  >>> alsoProvides(question, bungeni.core.interfaces.IVersionable)
+  >>> alsoProvides(question, bungeni.models.interfaces.IVersionable)
 
 Verify that no versions exist yet:
 

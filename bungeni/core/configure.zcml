@@ -136,12 +136,10 @@
     </class>
     
     <class class="bungeni.models.domain.ParliamentaryItem">
-        <implements interface=".interfaces.IVersionable" />
     </class-->
     
     <class class="bungeni.models.domain.Question">
         <implements interface="
-                .interfaces.IVersionable
                 ore.xapian.interfaces.IIndexable 
                 .interfaces.IAuditable
             " />
@@ -149,7 +147,6 @@
     
     <class class="bungeni.models.domain.Motion">
         <implements interface="
-                .interfaces.IVersionable
                 ore.xapian.interfaces.IIndexable 
                 .interfaces.IAuditable
             " />
@@ -157,7 +154,6 @@
     
     <class class="bungeni.models.domain.Bill">
         <implements interface="
-                .interfaces.IVersionable
                 ore.xapian.interfaces.IIndexable
                 .interfaces.IAuditable
             " />
@@ -165,21 +161,18 @@
     
     <class class="bungeni.models.domain.AgendaItem">
         <implements interface="
-                .interfaces.IVersionable
                 ore.xapian.interfaces.IIndexable
                 .interfaces.IAuditable
             " />
     </class>
     <class class="bungeni.models.domain.TabledDocument">
         <implements interface="
-                .interfaces.IVersionable
                 ore.xapian.interfaces.IIndexable
                 .interfaces.IAuditable
             " />
     </class>
     <class class="bungeni.models.domain.AttachedFile">
         <implements interface="
-                .interfaces.IVersionable
                 ore.xapian.interfaces.IIndexable
                 .interfaces.IAuditable
             " />

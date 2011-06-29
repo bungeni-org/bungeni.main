@@ -1123,7 +1123,7 @@
     />
 
   <!--adapter
-     for="bungeni.core.interfaces.IVersionable *"
+     for="bungeni.models.interfaces.IVersionable *"
      name="plone.contentmenu.translation"
      factory=".menu.TranslationSubMenuItem"
      provides="ploned.ui.interfaces.IContentMenuItem" /-->
@@ -1416,7 +1416,7 @@
         order="22"
     />
     <browser:menuItem menu="context_actions"
-        for="bungeni.core.interfaces.IVersionable"
+        for="bungeni.models.interfaces.IVersionable"
         action="versions"
         title="Versions"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"

@@ -41,7 +41,6 @@ from bungeni.utils.capi import capi
 ALLOWED_LANGUAGES = capi.zope_i18n_allowed_languages
 
 from bungeni.alchemist import Session
-from bungeni.core.interfaces import IVersionable
 from bungeni.models.interfaces import IVersion, ITranslatable
 from bungeni.models import domain
 from bungeni.core.i18n import _

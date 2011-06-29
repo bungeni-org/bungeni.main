@@ -42,8 +42,7 @@
     <include package="z3c.pt" />
     <include file="audit.zcml"/>
     <class class="bungeni.models.domain.Bill">
-        <implements interface=".interfaces.IVersionable
-                            .interfaces.IAuditable" />
+        <implements interface=".interfaces.IAuditable" />
     </class>
     
     <!-- DB setup -->

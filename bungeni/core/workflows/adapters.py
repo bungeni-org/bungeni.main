@@ -72,7 +72,7 @@ def load_workflow(name, iface,
     # !+VERSION_WORKFLOW(mr, apr-2011)
     if name == "version":
         component.provideAdapter(bungeni.core.version.ContextVersioned,
-            (bungeni.core.interfaces.IVersionable,),
+            (interfaces.IVersionable,),
             bungeni.core.interfaces.IVersioned)
 
 

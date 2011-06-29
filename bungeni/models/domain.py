@@ -25,6 +25,8 @@ import interfaces
 
 #
 
+# svn st 
+
 def object_hierarchy_type(object):
     if isinstance(object, User):
         return "user"
@@ -34,20 +36,35 @@ def object_hierarchy_type(object):
         return "item"
     return ""
 
+#
+
+def versionable(kls):
+    """Decorator for versionable domain types, to collect in one place all
+    that is needed for a domain type to be versionable.
+    
+    !+PARAMETRIZABLE_DOCUMENT_TYPES(mr, jun-2011) the quality of a domain type 
+    to be versionable could be externalized as a localization parameter.
+    """
+    interface.classImplements(kls, interfaces.IVersionable)
+    kls.versions = one2many("versions",
+        "bungeni.models.domain.%sVersionContainer" % (kls.__name__), 
+        "content_id")
+    return kls
+
+#
 
 class Entity(object):
     interface.implements(location.ILocation)
-
     __name__ = None
     __parent__ = None
-
+    
     def __init__(self, **kw):
         try:
             domain_schema = model.queryModelInterface(self.__class__)
             known_names = [k for k, d in domain_schema.namesAndDescriptions(1)]
         except:
             known_names = None
-
+        
         for k, v in kw.items():
             if known_names is None or k in known_names:
                 setattr(self, k, v)
@@ -506,14 +523,10 @@ class AttachedFileType(object):
     """
     interface.implements(interfaces.ITranslatable)
 
+@versionable
 class AttachedFile(Entity):
     """Files attached to a parliamentary item.
     """
-    #interface.implements(bungeni.core.interfaces.IVersionable)
-    
-    versions = one2many("versions",
-        "bungeni.models.domain.AttachedFileVersionContainer", "content_id")
-
 AttachedFileChange = ItemLog.makeLogFactory("AttachedFileChange")
 AttachedFileVersion = ItemVersions.makeVersionFactory("AttachedFileVersion")
 
@@ -532,49 +545,34 @@ class _AdmissibleMixin(object):
         return self._get_workflow_date("admissible")
 
 
+@versionable
 class AgendaItem(ParliamentaryItem, _AdmissibleMixin):
     """Generic Agenda Item that can be scheduled on a sitting.
     """
-    #interface.implements(bungeni.core.interfaces.IVersionable)
-    
-    versions = one2many("versions",
-        "bungeni.models.domain.AgendaItemVersionContainer", "content_id")
-
 AgendaItemChange = ItemLog.makeLogFactory("AgendaItemChange")
 AgendaItemVersion = ItemVersions.makeVersionFactory("AgendaItemVersion")
 
 
+@versionable
 class Question(ParliamentaryItem, _AdmissibleMixin):
-    #interface.implements(bungeni.core.interfaces.IVersionable)
-
     #supplementaryquestions = one2many("supplementaryquestions", 
     #"bungeni.models.domain.QuestionContainer", "supplement_parent_id")
-    versions = one2many("versions",
-        "bungeni.models.domain.QuestionVersionContainer", "content_id")
     sort_on = ParliamentaryItem.sort_on + ["question_number"]
-
     def getParentQuestion(self):
         if self.supplement_parent_id:
             session = Session()
             parent = session.query(Question).get(self.supplement_parent_id)
             return parent.short_name
-
 QuestionChange = ItemLog.makeLogFactory("QuestionChange")
 QuestionVersion = ItemVersions.makeVersionFactory("QuestionVersion")
 
 
+@versionable
 class Motion(ParliamentaryItem, _AdmissibleMixin):
-    #interface.implements(bungeni.core.interfaces.IVersionable)
-    
-    versions = one2many("versions",
-        "bungeni.models.domain.MotionVersionContainer", "content_id")
     sort_on = ParliamentaryItem.sort_on + ["motion_number"]
-
     @property
     def notice_date(self):
         return self._get_workflow_date("scheduled")
-
-
 MotionChange = ItemLog.makeLogFactory("MotionChange")
 MotionVersion = ItemVersions.makeVersionFactory("MotionVersion")
 
@@ -584,18 +582,14 @@ class BillType(Entity):
     """
     interface.implements(interfaces.ITranslatable, interfaces.IBillType)
 
+@versionable
 class Bill(ParliamentaryItem):
-    #interface.implements(bungeni.core.interfaces.IVersionable)
-
-    versions = one2many("versions",
-        "bungeni.models.domain.BillVersionContainer", "content_id")
-
     @property
     def submission_date(self):
         return self._get_workflow_date("working_draft")
-
 BillChange = ItemLog.makeLogFactory("BillChange")
 BillVersion = ItemVersions.makeVersionFactory("BillVersion")
+
 
 class Signatory(Entity):
     """Signatories for a Bill or Motion.
@@ -611,6 +605,7 @@ class Signatory(Entity):
         return self.user
 
 SignatoryChange = ItemLog.makeLogFactory("SignatoryChange")
+
 #############
 
 class ParliamentSession(Entity):
@@ -728,7 +723,7 @@ class ItemScheduleDiscussion(Entity):
     """
     interface.implements(interfaces.ITranslatable)
 
-
+@versionable
 class TabledDocument(ParliamentaryItem, _AdmissibleMixin):
     """Tabled documents:
     a tabled document captures metadata about the document 
@@ -747,11 +742,6 @@ class TabledDocument(ParliamentaryItem, _AdmissibleMixin):
 
     It must be possible to schedule a tabled document for a sitting.
     """
-    #interface.implements(bungeni.core.interfaces.IVersionable)
-    
-    versions = one2many("versions",
-        "bungeni.models.domain.TabledDocumentVersionContainer", "content_id")
-
 TabledDocumentChange = ItemLog.makeLogFactory("TabledDocumentChange")
 TabledDocumentVersion = ItemVersions.makeVersionFactory("TabledDocumentVersion")
 
