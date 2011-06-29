@@ -343,7 +343,7 @@ class AddForm(BaseForm, catalyst.AddForm):
         condition=formlib.form.haveInputWidgets)
     def handle_add_save(self, action, data):
         ob = self.createAndAdd(data)
-        name = self.context.domain_model.__name__
+        name = self.domain_model.__name__
         if not self._next_url:
             self._next_url = url.absoluteURL(ob, self.request) + \
                 "?portal_status_message=%s added" % name
@@ -360,7 +360,7 @@ class AddForm(BaseForm, catalyst.AddForm):
     @formlib.form.action(_(u"Save"), condition=formlib.form.haveInputWidgets)
     def handle_add_edit(self, action, data):
         ob = self.createAndAdd(data)
-        name = self.context.domain_model.__name__
+        name = self.domain_model.__name__
         if not self._next_url:
             self._next_url = url.absoluteURL(ob, self.request) + \
                              "/edit?portal_status_message=%s Added" % name
@@ -369,7 +369,7 @@ class AddForm(BaseForm, catalyst.AddForm):
         _(u"Save and add another"), condition=formlib.form.haveInputWidgets)
     def handle_add_and_another(self, action, data):
         self.createAndAdd(data)
-        name = self.context.domain_model.__name__
+        name = self.domain_model.__name__
 
         if not self._next_url:
             self._next_url = url.absoluteURL(self.context, self.request) + \
