@@ -122,22 +122,26 @@ class AppSetup(object):
                                             parent = workspace["documents"], 
                                             tab_type = "draft",
                                             title = _("draft"),
-                                            description = _("draft documents"))
+                                            description = _("draft documents"),
+                                            marker = interfaces.IWorkspaceDraft)
         workspace["documents"]["inbox"] = WorkspaceContainer(
                                             parent = workspace["documents"], 
                                             tab_type = "inbox",
                                             title = _("inbox"),
-                                            description = _("incoming documents"))
+                                            description = _("incoming documents"),
+                                            marker = interfaces.IWorkspaceInbox)
         workspace["documents"]["sent"] = WorkspaceContainer(
                                             workspace["documents"], 
                                             tab_type = "sent",
                                             title = _("sent"),
-                                            description = _("sent documents"))
+                                            description = _("sent documents"),
+                                            marker = interfaces.IWorkspaceSent)
         workspace["documents"]["archive"] = WorkspaceContainer(
                                                 workspace["documents"], 
                                                 tab_type = "archive",
                                                 title = _("archive"),
-                                                description = _("archived documents"))
+                                                description = _("archived documents"),
+                                                marker = interfaces.IWorkspaceArchive)
         
         workspace["scheduling"] = Section(
             title=_(u"Scheduling"),

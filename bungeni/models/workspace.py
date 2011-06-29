@@ -37,11 +37,13 @@ class WorkspaceContainer(AlchemistContainer):
     __name__ = __parent__ = None
     interface.implements(interfaces.IWorkspaceContainer)
     
-    def __init__(self, parent, tab_type, title, description):
+    def __init__(self, parent, tab_type, title, description, marker=None):
         self.__parent__ = parent
         self.__name__ = tab_type
         self.title = title
         self.description = description
+        if marker is not None:
+            interface.alsoProvides(self, marker)
         super(WorkspaceContainer, self).__init__()
     
     def get_principal_roles(self, principal):
@@ -68,7 +70,11 @@ class WorkspaceContainer(AlchemistContainer):
         for role in roles:
             dom_stat = workspace_tabs.getDomainAndStatuses(role, self.__name__)
             if dom_stat:
-                domain_status.update(dom_stat)
+                for key in dom_stat.keys():
+                    if key in domain_status.keys():
+                        domain_status[key].extend(dom_stat[key])
+                    else:
+                        domain_status[key] = dom_stat[key]    
         session = Session()
         results = []
         for domain_class in domain_status.keys():
