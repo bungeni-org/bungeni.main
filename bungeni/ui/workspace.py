@@ -1,10 +1,10 @@
 import datetime
 import simplejson
+from zope import component
 from zope.publisher.browser import BrowserView
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.security.proxy import removeSecurityProxy
 from zope.formlib import form
-from zope.security.proxy import removeSecurityProxy
 from zope.i18n import translate
 from z3c.pt.texttemplate import ViewTextTemplateFile
 from ore import yuiwidget
@@ -12,12 +12,19 @@ from ore.alchemist import container
 from bungeni.models import workspace
 from bungeni.core import translation
 from bungeni.core.i18n import _
+from bungeni.core.interfaces import IWorkspaceTabsUtility
 from bungeni.ui.container import query_iterator
 from bungeni.ui.utils import url
 from bungeni.ui.container import query_iterator
 from bungeni.ui.container import ContainerJSONListing
 from bungeni.ui import table
 from bungeni.ui.interfaces import IWorkspaceAdapter
+from bungeni.ui.forms.common import AddForm
+from bungeni.alchemist import Session
+from alchemist.ui import generic
+from zope.formlib import form
+from zope.event import notify
+from zope.lifecycleevent import ObjectCreatedEvent
 class WorkspaceField(object):
     def __init__(self, name, title):
         self.name = name
@@ -177,3 +184,35 @@ class WorkspaceContainerListing(BrowserView):
         formatter.cssClasses["table"] = "listing"
         formatter.table_id = "datacontents"
         return formatter
+        
+class WorkspaceAddForm(AddForm):
+
+    #from alchemist.ui.content
+    def createAndAdd( self, data ):
+        domain_model = removeSecurityProxy( self.domain_model )
+        # create the object, inspect data for constructor args      
+        try:  
+            ob = generic.createInstance( domain_model, data )
+        except TypeError:
+            ob = domain_model()
+        # apply any context values
+        self.finishConstruction( ob )
+        # apply extra form values
+        form.applyChanges( ob, self.form_fields, data, self.adapters )
+        # fire an object created event
+        notify(ObjectCreatedEvent(ob))
+        # signal to add form machinery to go to next url
+        self._finished_add = True
+        name = workspace.stringKey(ob)
+        return self.context.get(name)
+        
+    @property
+    def domain_model(self):
+        item_type = self.__name__.split("_")[1]
+        workspace_config = component.getUtility(IWorkspaceTabsUtility)
+        domain = workspace_config.getDomainOrType(item_type)
+        return domain
+        
+    def getDomainModel(self):
+        return getattr(self, "domain_model", self.context.__class__)        
+    

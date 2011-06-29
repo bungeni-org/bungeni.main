@@ -79,6 +79,10 @@
         title="The 'Translate' menu - allows user to translate content"
         class=".menu.TranslateMenu"
     />
+    <browser:menu id="workspace_add_parliamentary_content"
+        title="The 'Add' menu - allows user to add content while in workspace"
+        class="ploned.ui.menu.PloneBrowserMenu"
+    />
     <!-- 
     Translation language options are dynamic, so we define an adapter to 
     determine these at runtime, for all views of ITranslatable objects.
@@ -108,13 +112,12 @@
     
     
     <!-- CONTENT SUBMENUS -->
-    
     <browser:subMenuItem menu="plone_contentmenu"
-        for=".interfaces.IWorkspacePIContext"
+        for="bungeni.models.interfaces.IWorkspaceContainer"
         title="Add Parliamentary Content..."
-        action="add_content"
+        action="workspace_add_content"
         permission="zope.View"
-        submenu="context_add_parliamentary_content"
+        submenu="workspace_add_parliamentary_content"
     />
     <browser:subMenuItem menu="plone_contentmenu"
         for="bungeni.models.interfaces.IParliament"
@@ -1251,6 +1254,39 @@
         action="tableddocuments/add"
         permission="bungeni.tableddocument.Add"
     />
+    
+    <!-- Workspace add menu items -->
+    <browser:menuItem menu="workspace_add_parliamentary_content"
+        for="*"
+        title="Bill"
+        action="../../draft/add_bill"
+        permission="bungeni.bill.Add"
+    />
+    <browser:menuItem menu="workspace_add_parliamentary_content"
+        for="*"
+        title="Motion"
+        action="../../draft/add_motion"
+        permission="bungeni.motion.Add"
+    />
+    <browser:menuItem menu="workspace_add_parliamentary_content"
+        for="*"
+        title="Question"
+        action="../../draft/add_question"
+        permission="bungeni.question.Add"
+    /><!-- this is the one appearing in /workspace/pi -->
+    <browser:menuItem menu="workspace_add_parliamentary_content"
+        for="*"
+        title="Agenda item"
+        action="../../draft/add_agendaitem"
+        permission="bungeni.agendaitem.Add"
+    />
+    <browser:menuItem menu="workspace_add_parliamentary_content"
+        for="*"
+        title="Tabled document"
+        action="../../draft/add_tableddocument"
+        permission="bungeni.tableddocument.Add"
+    />
+    
     <!--browser:menuItem
      for="bungeni.alchemist.interfaces.IAlchemistContainer"
      menu="context_actions"

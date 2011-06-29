@@ -83,7 +83,9 @@ class WorkspaceTabsUtility():
     def getDomainOrType(self, key):
         """Passed either a domain_class or an item type, returns an item_type
         or domain_class respectively"""
-        return self.domain_type[key]
+        if key in self.domain_type:
+            return self.domain_type[key]
+        return None
         
 def load_workspace(file_name, domain_class):
     """Loads the workspace configuration for each documemnt"""

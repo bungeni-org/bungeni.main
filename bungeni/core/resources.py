@@ -1,7 +1,5 @@
 log = __import__("logging").getLogger("bungeni.core.resources")
 
-import urllib
-
 from zope import interface
 from zope import component
 from zope.component import queryMultiAdapter
