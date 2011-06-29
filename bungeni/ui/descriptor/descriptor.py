@@ -593,7 +593,16 @@ class UserDescriptor(ModelDescriptor):
                 show("view"),
                 hide("listing"),
             ],
-            property=schema.TextLine(title=_("Login")),
+            property=schema.TextLine(title=_("Login"),
+                description=_(u"Must contain only letters,"
+                    u" numbers, a period(.) and underscore (_). "
+                    "Should start with a letter and be between 3 and 20 "
+                    "characters long"
+                ),
+                min_length=3,
+                max_length=20,
+                constraint=constraints.check_login,
+            ),
         ),
         Field(name="_password", # [user-req]
             modes="add",
