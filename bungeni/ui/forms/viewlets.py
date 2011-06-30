@@ -744,7 +744,7 @@ class MemberItemsViewlet(browser.BungeniItemsViewlet):
     """
     states = \
         get_states("agendaitem", tagged=["public"]) + \
-        get_states("bill", not_tagged=["private", "actionmp"]) + \
+        get_states("bill", tagged=["public"]) + \
         get_states("motion", tagged=["public"]) + \
         get_states("question", tagged=["public"]) + \
         get_states("tableddocument", tagged=["public"])
