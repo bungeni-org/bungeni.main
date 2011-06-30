@@ -31,7 +31,6 @@ ploneFormTabbing._toggleFactory = function(container, tab_ids, panel_ids) {
         jQuery(id).removeClass('hidden');
 
         jQuery(container).find("input[name=fieldset.current]").val(orig_id);
-        return false;
     };
 };
 
@@ -103,6 +102,12 @@ ploneFormTabbing.select = function($which) {
     return false;
 };
 
+ploneFormTabbing.initSelection = function(){
+    var tabId = window.location.hash;
+    tabId = tabId.replace("'", "").replace(/^#fieldset-/, "#fieldsetlegend-") || ":first";
+    return tabId
+}
+
 ploneFormTabbing.initializeDL = function() {
     var tabs = jQuery(ploneFormTabbing._buildTabs(this, jQuery(this).children('dt')));
     jQuery(this).before(tabs);
@@ -110,7 +115,7 @@ ploneFormTabbing.initializeDL = function() {
 
     tabs = tabs.find('li.formTab a,option.formTab');
     if (tabs.length)
-        ploneFormTabbing.select(tabs.filter(':first'));
+        ploneFormTabbing.select(tabs.filter(ploneFormTabbing.initSelection()));
 };
 
 ploneFormTabbing.initializeForm = function() {
@@ -148,13 +153,18 @@ ploneFormTabbing.initializeForm = function() {
         });
     }
 
+    var targetTabHash = window.location.hash;
+    targetTabHash = targetTabHash.replace("'", "").replace(/^#fieldset-/, 
+        "#fieldsetlegend-"
+    ) || ":first";
+
     if (!tab_inited) {
         var tabs = jQuery("form.enableFormTabbing li.formTab a,"+
                      "form.enableFormTabbing option.formTab,"+
                      "div.enableFormTabbing li.formTab a,"+
                      "div.enableFormTabbing option.formTab");
         if (tabs.length)
-            ploneFormTabbing.select(tabs.filter(':first'));
+            ploneFormTabbing.select(tabs.filter(ploneFormTabbing.initSelection()));
     }
 
     jQuery("#archetypes-schemata-links").addClass('hiddenStructure');
