@@ -4,11 +4,7 @@
     </dt>
 
     <dd id="fieldset-written-question-response">
-        <div class="documentDescription" i18n:translate="">
-            Written response to question by 
-            <span i18n:name="respondent" 
-                tal:replace="view/question/ministry/dc:title"/>
-        </div>
+        <div class="documentDescription" i18n:translate="">Written response to question by <span i18n:name="respondent" tal:replace="view/question/ministry/dc:title"/></div>
         <div tal:content="structure view/question/response_text"/> 
     </dd>
 </div>
