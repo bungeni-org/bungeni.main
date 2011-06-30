@@ -153,11 +153,6 @@ ploneFormTabbing.initializeForm = function() {
         });
     }
 
-    var targetTabHash = window.location.hash;
-    targetTabHash = targetTabHash.replace("'", "").replace(/^#fieldset-/, 
-        "#fieldsetlegend-"
-    ) || ":first";
-
     if (!tab_inited) {
         var tabs = jQuery("form.enableFormTabbing li.formTab a,"+
                      "form.enableFormTabbing option.formTab,"+
