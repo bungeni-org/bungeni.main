@@ -16,8 +16,7 @@ from bungeni.ui.interfaces import IFormEditLayer
 from bungeni.ui.utils import common
 from bungeni.core import globalsettings as prefs
 from bungeni.core.workflows import utils
-from bungeni.core.interfaces import IAuditable
-from bungeni.models.interfaces import ISignatoriesValidator
+from bungeni.models.interfaces import IAuditable, ISignatoriesValidator
 from bungeni.models import domain
 from bungeni.alchemist import Session
 from bungeni.models import utils as model_utils

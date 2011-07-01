@@ -8,23 +8,18 @@ Setup
 Imports.
 
   >>> from bungeni.models import domain
-  >>> from bungeni.models import schema
   >>> from bungeni.core.workflows import adapters
-
 
 Questions are versionable.
   
   >>> from zope.interface import classImplements
   >>> from bungeni.models import interfaces
   >>> classImplements(domain.Question, interfaces.IQuestion)
-  >>> from bungeni.models.interfaces import IVersionable
-  >>> classImplements(domain.Question, IVersionable)
 
 Setting up database connection and utilities:
 
   >>> from bungeni.core.testing import setup_db
   >>> engine = setup_db()
-  
   >>> from bungeni.alchemist import Session
   >>> session = Session()
 
@@ -133,6 +128,28 @@ send the question notifications.
   ...    email=u"mp3@example.com", 
   ...    language="en",
   ...    gender="F")
+
+    >>> c1 = add_content(
+    ...    domain.User,
+    ...    "clerk",
+    ...    first_name="d", 
+    ...    birth_country="KE",
+    ...    last_name="de",
+    ...    date_of_birth=today,
+    ...    email="c1@example.com", 
+    ...    language="en",
+    ...    gender="M")
+    
+    >>> s1 = add_content(
+    ...    domain.User,
+    ...    "speaker",
+    ...    first_name="e", 
+    ...    birth_country="KE",
+    ...    last_name="ef",
+    ...    date_of_birth=today,
+    ...    email="s1@example.com", 
+    ...    language="en",
+    ...    gender="F")
 
 !+setParliamentId(mr, mar-2011) we manually set the parliament_id here and 
 remove the call to setParliamentId() when creating the question -- the 

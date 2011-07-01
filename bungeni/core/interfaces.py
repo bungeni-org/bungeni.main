@@ -85,15 +85,7 @@ class IWorkspaceDocuments(interface.Interface):
 # 
 # declare implemented to apply feature to a domain model
 
-#!+MODEL(mr, jun-2011) the nature of auditable is part of the model (needs db
-# schema changes, etc.), so should be part of the model. If a model type is
-# *parametrizable* as auditable, then this should be declared as a localization 
-# parameter anyway.
-class IAuditable(interface.Interface):
-    """
-    marker interface to apply auditing/object log feature
-    """
-
+#!+MODEL(mr, jun-2011) as for IAuditable, IVersionable
 class ISubscribable(interface.Interface):
     """
     marker interface to add a subscription to an object

@@ -28,7 +28,7 @@ from bungeni.ui import browser
 from bungeni.ui import z3evoque
 from bungeni.ui.utils.url import absoluteURL
 from zope.dublincore.interfaces import IDCDescriptiveProperties
-from bungeni.core.interfaces import IAuditable
+from bungeni.models.interfaces import IAuditable
 #from zope.app.pagetemplate import ViewPageTemplateFile
 from bungeni.models.interfaces import IWorkspaceContainer
 from bungeni.ui.i18n import _

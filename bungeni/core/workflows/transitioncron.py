@@ -90,10 +90,10 @@ def main(argv=None):
       bungeni.core.workflows.question.workflowTransitionEventDispatcher)
     # add autitor for time based transitions
     #component.provideAdapter(
-    #    (bungeni.core.interfaces.IAuditable, bungeni.core.interfaces.IQuestion, ),
+    #    (bungeni.models.interfaces.IAuditable, bungeni.core.interfaces.IQuestion, ),
     #    (domain.Question, ))
     #component.provideAdapter( audit.objectModified, 
-    #(domain.Question, bungeni.core.interfaces.IAuditable, ))
+    #(domain.Question, bungeni.models.interfaces.IAuditable, ))
     
     deferAdmissibleQuestions() 
     session.flush()

@@ -4,30 +4,30 @@
     i18n_domain="bungeni">
     
     <subscriber handler=".audit.objectModified"
-        for="bungeni.core.interfaces.IAuditable
+        for="bungeni.models.interfaces.IAuditable
             zope.lifecycleevent.IObjectModifiedEvent"
         trusted="True"
     />
     <subscriber handler=".audit.objectAdded"
-        for="bungeni.core.interfaces.IAuditable
+        for="bungeni.models.interfaces.IAuditable
             zope.lifecycleevent.IObjectCreatedEvent"
         trusted="True"
     />
     <subscriber handler=".audit.objectDeleted"
-        for="bungeni.core.interfaces.IAuditable
+        for="bungeni.models.interfaces.IAuditable
             zope.app.container.interfaces.IObjectRemovedEvent"
         trusted="True"
     />
     <subscriber handler=".audit.objectStateChange"
-        for="bungeni.core.interfaces.IAuditable
+        for="bungeni.models.interfaces.IAuditable
             bungeni.core.workflow.interfaces.IWorkflowTransitionEvent"
     />
     
     <subscriber handler=".audit.objectNewVersion"
-        for="bungeni.core.interfaces.IAuditable .interfaces.IVersionCreated"
+        for="bungeni.models.interfaces.IAuditable .interfaces.IVersionCreated"
     />
     <subscriber handler=".audit.objectRevertedVersion"
-        for="bungeni.core.interfaces.IAuditable .interfaces.IVersionReverted"
+        for="bungeni.models.interfaces.IAuditable .interfaces.IVersionReverted"
     />
     
     <subscriber handler=".events.signatory_added"

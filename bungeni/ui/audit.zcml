@@ -4,7 +4,7 @@
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni">
     
-    <browser:page name="audit-log" for="bungeni.core.interfaces.IAuditable"
+    <browser:page name="audit-log" for="bungeni.models.interfaces.IAuditable"
         class=".audit.ChangeLog"
         permission="bungeni.auditlog.View"
     />

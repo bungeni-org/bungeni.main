@@ -41,9 +41,6 @@
     <include package="ore.xapian" />
     <include package="z3c.pt" />
     <include file="audit.zcml"/>
-    <class class="bungeni.models.domain.Bill">
-        <implements interface=".interfaces.IAuditable" />
-    </class>
     
     <!-- DB setup -->
     <db:engine name="bungeni-db" url="postgres://localhost/bungeni-test" />

@@ -21,7 +21,7 @@ from sqlalchemy import orm
 
 from bungeni.models import schema, domain
 from bungeni.models.utils import get_db_user_id
-from bungeni.core import interfaces
+from bungeni.models import interfaces
 from bungeni.ui.utils import common
 
 from i18n import _ 
@@ -219,7 +219,7 @@ class AuditorFactory(object):
             a python dict, containing "extra" information about the log item, 
             with the "key/value" entries depending on the change "action"; 
 
-            Specific examples, for acttions: 
+            Specific examples, for actions: 
                 workflow: self.objectStateChanged()
                     source
                     destination

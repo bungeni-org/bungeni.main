@@ -451,7 +451,10 @@ class IProxiedDirectory(interface.Interface):
     """An interface for a contained directory we can attach menu links
     to that point back to our parent.
     """
-
+# svn st models/ core/interfaces.py core/workflows/transitioncron.py core/workflows/_conditions.py core/audit.zcml core/ftesting.zcml core/audit.py core/configure.zcml core/interfaces.py ui/workflow.py ui/menu.zcml ui/audit.zcml
+class IAuditable(interface.Interface):
+    """Marker interface to apply auditing/object log feature.
+    """
 class IVersionable(interface.Interface):
     """Marker to apply versioning feature (requires IAuditable/objectlog)
     """

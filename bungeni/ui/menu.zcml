@@ -1408,7 +1408,7 @@
         order="30"
     />
     <browser:menuItem menu="context_actions"
-        for="bungeni.core.interfaces.IAuditable"
+        for="bungeni.models.interfaces.IAuditable"
         action="audit-log"
         title="Audit Log"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"

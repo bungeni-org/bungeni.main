@@ -38,21 +38,6 @@ def object_hierarchy_type(object):
 
 #
 
-def versionable(kls):
-    """Decorator for versionable domain types, to collect in one place all
-    that is needed for a domain type to be versionable.
-    
-    !+PARAMETRIZABLE_DOCUMENT_TYPES(mr, jun-2011) the quality of a domain type 
-    to be versionable could be externalized as a localization parameter.
-    """
-    interface.classImplements(kls, interfaces.IVersionable)
-    kls.versions = one2many("versions",
-        "bungeni.models.domain.%sVersionContainer" % (kls.__name__), 
-        "content_id")
-    return kls
-
-#
-
 class Entity(object):
     interface.implements(location.ILocation)
     __name__ = None
@@ -87,11 +72,11 @@ class Entity(object):
 
 #############
 
-class ItemLog(object):
-    """An audit log of events in the lifecycle of a parliamentary content.
+class ItemChanges(object):
+    """An audit changelog of events in the lifecycle of a parliamentary content.
     """
     @classmethod
-    def makeLogFactory(klass, name):
+    def makeChangeFactory(klass, name):
         factory = type(name, (klass,), {})
         interface.classImplements(factory, interfaces.IChange)
         return factory
@@ -115,6 +100,43 @@ class ItemVersions(Entity):
         return factory
 
     #files = one2many("files", "bungeni.models.domain.AttachedFileContainer", "file_version_id")
+
+
+# !+PARAMETRIZABLE_DOCUMENT_TYPES(mr, jun-2011) the quality of a domain type to
+# be auditable or versionable could be externalized as a localization parameter.
+
+def auditable(kls):
+    """Decorator for auditable domain types, to collect in one place all
+    that is needed for a domain type to be auditale.
+    """
+    # assign interface
+    name = kls.__name__
+    interface.classImplements(kls, interfaces.IAuditable)
+    # define TYPEChange class
+    change_name = "%sChange" % (name)
+    globals()[change_name] = ItemChanges.makeChangeFactory(change_name)
+    return kls
+
+def versionable(kls):
+    """Decorator for versionable domain types, to collect in one place all
+    that is needed for a domain type to be versionable.
+    
+    Note: @versionable implies @auditable, here made explicit
+    """
+    # if @versionable must also be @auditable:
+    kls = auditable(kls)
+    # assign interface, add versions attribute
+    name = kls.__name__
+    interface.classImplements(kls, interfaces.IVersionable)
+    kls.versions = one2many("versions",
+        "bungeni.models.domain.%sVersionContainer" % (name),
+        "content_id")
+    # define TYPEVersion class
+    version_name = "%sVersion" % (name)
+    globals()[version_name] = ItemVersions.makeVersionFactory(version_name)
+    return kls
+
+#
 
 class User(Entity):
     """Domain Object For A User. General representation of a person.
@@ -240,6 +262,8 @@ class CommitteeStaff(GroupMembership):
     titles = one2many("titles",
         "bungeni.models.domain.MemberTitleContainer", "membership_id")
 
+
+@auditable
 class GroupSitting(Entity):
     """Scheduled meeting for a group (parliament, committee, etc).
     """
@@ -254,8 +278,6 @@ class GroupSitting(Entity):
     @property
     def short_name(self):
         return self.start_date.strftime("%d %b %y %H:%M")
-
-GroupSittingChange = ItemLog.makeLogFactory("GroupSittingChange")
 
 class GroupSittingType(object):
     """Type of sitting: morning/afternoon/... 
@@ -470,7 +492,8 @@ class ItemVotes(object):
 class ParliamentaryItem(Entity):
     """
     """
-    interface.implements(interfaces.IBungeniContent, 
+    interface.implements(
+        interfaces.IBungeniContent, 
         interfaces.IBungeniParliamentaryContent,
         interfaces.ITranslatable
     )
@@ -527,8 +550,6 @@ class AttachedFileType(object):
 class AttachedFile(Entity):
     """Files attached to a parliamentary item.
     """
-AttachedFileChange = ItemLog.makeLogFactory("AttachedFileChange")
-AttachedFileVersion = ItemVersions.makeVersionFactory("AttachedFileVersion")
 
 
 class Heading(ParliamentaryItem):
@@ -549,8 +570,6 @@ class _AdmissibleMixin(object):
 class AgendaItem(ParliamentaryItem, _AdmissibleMixin):
     """Generic Agenda Item that can be scheduled on a sitting.
     """
-AgendaItemChange = ItemLog.makeLogFactory("AgendaItemChange")
-AgendaItemVersion = ItemVersions.makeVersionFactory("AgendaItemVersion")
 
 
 @versionable
@@ -563,8 +582,6 @@ class Question(ParliamentaryItem, _AdmissibleMixin):
             session = Session()
             parent = session.query(Question).get(self.supplement_parent_id)
             return parent.short_name
-QuestionChange = ItemLog.makeLogFactory("QuestionChange")
-QuestionVersion = ItemVersions.makeVersionFactory("QuestionVersion")
 
 
 @versionable
@@ -573,8 +590,6 @@ class Motion(ParliamentaryItem, _AdmissibleMixin):
     @property
     def notice_date(self):
         return self._get_workflow_date("scheduled")
-MotionChange = ItemLog.makeLogFactory("MotionChange")
-MotionVersion = ItemVersions.makeVersionFactory("MotionVersion")
 
 
 class BillType(Entity):
@@ -587,10 +602,8 @@ class Bill(ParliamentaryItem):
     @property
     def submission_date(self):
         return self._get_workflow_date("working_draft")
-BillChange = ItemLog.makeLogFactory("BillChange")
-BillVersion = ItemVersions.makeVersionFactory("BillVersion")
 
-
+@auditable
 class Signatory(Entity):
     """Signatories for a Bill or Motion.
     """
@@ -604,7 +617,6 @@ class Signatory(Entity):
     def owner(self):
         return self.user
 
-SignatoryChange = ItemLog.makeLogFactory("SignatoryChange")
 
 #############
 
@@ -638,6 +650,7 @@ class ObjectSubscriptions(object):
 
 # ###############
 
+# @versionable
 class Constituency(Entity):
     """A locality region, which elects an MP.
     """
@@ -648,8 +661,6 @@ class Constituency(Entity):
     #sort_replace = {"province_id": ["province"], "region_id": ["region"]}
     interface.implements(interfaces.ITranslatable)
 
-#ConstituencyChange = ItemLog.makeLogFactory("ConstituencyChange")
-#ConstituencyVersion = ItemVersions.makeVersionFactory("ConstituencyVersion")
 
 class Region(Entity):
     """Region of the constituency.
@@ -742,8 +753,7 @@ class TabledDocument(ParliamentaryItem, _AdmissibleMixin):
 
     It must be possible to schedule a tabled document for a sitting.
     """
-TabledDocumentChange = ItemLog.makeLogFactory("TabledDocumentChange")
-TabledDocumentVersion = ItemVersions.makeVersionFactory("TabledDocumentVersion")
+
 
 ''' !+UNUSED_DocumentSource(mr, feb-2011)
 class DocumentSource(object):
