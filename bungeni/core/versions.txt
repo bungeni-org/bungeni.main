@@ -18,8 +18,6 @@ Adding a question.
   >>> from bungeni.alchemist import Session
   >>> session = Session()
 
-
-
   >>> country = domain.Country()
   >>> country.country_id = "KE"
   >>> country.country_name = u"Kenya"
@@ -47,19 +45,33 @@ Adding a question.
   ...     owner_id=mp_1.user_id,
   ...     language="en")
 
+In order to create a participation, we need a principal:
 
-The ``question`` object needs to provide the versionable interface.
-  
-  >>> from zope.interface import alsoProvides
-  >>> alsoProvides(question, bungeni.models.interfaces.IVersionable)
+  >>> from bungeni.core.testing import set_interaction
+  >>> set_interaction(None)
 
-Verify that no versions exist yet:
+  >>> from bungeni.core.testing import create_principal
+  >>> member = create_principal("mp_1", "Member", ())
+
+  >>> set_interaction(member)
+  >>> from bungeni.models.utils import get_principal_id
+  >>> get_principal_id()
+  'mp_1'
+
+
+Verify that no versions exist yet (assuming questions are IVersionable):
 
   >>> versions = bungeni.core.interfaces.IVersioned(question)
   >>> len(tuple(versions.values()))
   0
 
 To be versioned, a question should be in a valid state:
+
+!+INTERACTION(mr, jul-2011) remaining tests need to be upgraded to take into 
+account richer testing possibilities given the above newly added principal 
+interaction
+
+!+DRAFT_VERSION(mr, jul-2011) creating a draft should NOT also create a version.
 
   >>> #from bungeni.core.workflow.interfaces import IWorkflowController
   >>> #wfc = IWorkflowController(question)
@@ -68,14 +80,15 @@ To be versioned, a question should be in a valid state:
   >>> #wfc.fireTransition("-draft") 
   >>> #question.status
   #'draft'
+  #'draft'
   # FAILS, needs an interaction, etc, so we just hard-set a status instead
   >>> question.status = 'draft'
   
-
 After creating a version, verify availability:
 
   >>> version = versions.create("New version created ...")
-  
+
+
   >>> len(tuple(versions.values()))
   1
 
@@ -85,3 +98,5 @@ Cleanup
   >>> session.flush()
   >>> session.commit()
   >>> session.close()
+  >>> set_interaction(None)
+
