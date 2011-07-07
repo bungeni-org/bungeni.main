@@ -1,9 +1,21 @@
-#!/usr/bin/env python
-# encoding: utf-8
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""The Bungeni relational schema
+
+$Id$
+"""
+log = __import__("logging").getLogger("bungeni.models.schema")
+
+import re
 import sqlalchemy as rdb
 from fields import FSBlob
 from sqlalchemy.sql import text, functions
 from datetime import datetime
+
+import domain
+import interfaces
 
 metadata = rdb.MetaData()
 
@@ -13,20 +25,62 @@ ItemSequence = rdb.Sequence("item_sequence")
 # users and groups because of the zope users and groups
 PrincipalSequence = rdb.Sequence("principal_sequence")
 
+# !+PARAMETRIZABLE_DOCTYPES
 
-def make_changes_table(table, metadata, custom_name=None, custom_fk=None):
+def un_camel(name):
+    """Convert a CamelCase name to lowercase underscore-separated.
+    """
+    s1 = un_camel.first_cap_re.sub(r"\1_\2", name)
+    return un_camel.all_cap_re.sub(r"\1_\2", s1).lower()
+un_camel.first_cap_re = re.compile("(.)([A-Z][a-z]+)")
+un_camel.all_cap_re = re.compile("([a-z0-9])([A-Z])")
+
+def singular(pname):
+    """Get the english singular of (plural) name.
+    """
+    if pname.endswith("s"):
+        for sname in plural.custom:
+            if plural.custom[sname] == pname:
+                return sname
+        return pname[:-1]
+    return pname
+
+def plural(sname):
+    """Get the english plural of (singular) name.
+    """
+    return plural.custom.get(sname, None) or "%ss" % (sname)
+plural.custom = {
+    "signatory": "signatories",
+}
+
+
+def configurable_schema(kls):
+    """Add tables, as per configured features for a domain type.
+    """
+    # assign interface (changes property added downstream)
+    entity_name = un_camel(kls.__name__)
+    tbl = globals()[plural(entity_name)]
+    # auditable
+    if interfaces.IAuditable.implementedBy(kls):
+        change_tbl_name = "%s_changes" % (entity_name)
+        globals()[change_tbl_name] = make_changes_table(tbl, metadata)
+    # versionable
+    if interfaces.IVersionable.implementedBy(kls):
+        assert change_tbl_name, "May not be IVersionable and not IAuditable"
+        version_tbl_name = "%s_versions" % (entity_name)
+        secondary_table = None
+        if interfaces.IBungeniParliamentaryContent.implementedBy(kls):
+            secondary_table = parliamentary_items
+        globals()[version_tbl_name] = make_versions_table(
+            tbl, metadata, secondary_table)
+
+def make_changes_table(table, metadata):
     """Create an object log table for an object.
     """
     table_name = table.name
-    entity_name = table_name.endswith("s") and table_name[:-1] or table_name
-    if custom_name is None:
-        changes_name = "%s_changes" % (entity_name)
-    else:
-        changes_name = custom_name
-    if custom_fk is None:
-        fk_id = "%s_id" % (entity_name)
-    else:
-        fk_id = custom_fk
+    entity_name = singular(table_name)
+    changes_name = "%s_changes" % (entity_name)
+    fk_id = "%s_id" % (entity_name)
     changes_table = rdb.Table(changes_name, metadata,
         rdb.Column("change_id", rdb.Integer, primary_key=True),
         rdb.Column("content_id", rdb.Integer, rdb.ForeignKey(table.c[fk_id])),
@@ -49,18 +103,17 @@ def make_changes_table(table, metadata, custom_name=None, custom_fk=None):
     )
     return changes_table
 
-
-def make_versions_table(table, metadata, secondarytable=None):
+def make_versions_table(table, metadata, secondary_table=None):
     """Create a versions table, requires change log table for which
     some version metadata information will be stored.
     
     A secondary table may be defined if the object mapped to this
     table consists of a join between two tables.
     
-    Assumption: table and secondarytable both have only a single surrogate pk.
+    Assumption: table and secondary_table both have only a single surrogate pk.
     """
     table_name = table.name
-    entity_name = table_name.endswith("s") and table_name[:-1] or table_name
+    entity_name = singular(table_name)
     versions_name = "%s_versions" % (entity_name)
     fk_id = "%s_id" % (entity_name)
     columns = [
@@ -79,10 +132,13 @@ def make_versions_table(table, metadata, secondarytable=None):
                 names.append(c.name)
                 cols.append(c.copy())
     extend_cols(columns, table.columns)
-    if secondarytable:
-        extend_cols(columns, secondarytable.columns)
+    if secondary_table:
+        extend_cols(columns, secondary_table.columns)
     versions_table = rdb.Table(versions_name, metadata, *columns)
     return versions_table
+
+# !+/PARAMETRIZABLE_DOCTYPES
+
 
 def make_vocabulary_table(vocabulary_prefix, metadata, table_suffix="_types",
         column_suffix="_type"
@@ -555,8 +611,7 @@ group_sittings = rdb.Table("group_sittings", metadata,
     rdb.Column("venue_id", rdb.Integer, rdb.ForeignKey("venues.venue_id")),
     rdb.Column("language", rdb.String(5), nullable=False),
 )
-
-group_sitting_changes = make_changes_table(group_sittings, metadata)
+configurable_schema(domain.GroupSitting)
 
 # Currently not used
 group_sitting_types = rdb.Table("group_sitting_types", metadata,
@@ -735,9 +790,6 @@ attached_file_types = rdb.Table("attached_file_types", metadata,
     rdb.Column("attached_file_type_name", rdb.Unicode(40)),
     rdb.Column("language", rdb.String(5), nullable=False),
 )
-
-# parliamentary items contains the common fields for motions, questions,
-# bills and agenda items.
 attached_files = rdb.Table("attached_files", metadata,
     rdb.Column("attached_file_id", rdb.Integer, primary_key=True),
     rdb.Column("item_id", rdb.Integer,
@@ -761,12 +813,12 @@ attached_files = rdb.Table("attached_files", metadata,
     ),
     rdb.Column("language", rdb.String(5), nullable=False),
 )
-
-attached_file_changes = make_changes_table(attached_files, metadata)
-attached_file_versions = make_versions_table(attached_files, metadata)
+configurable_schema(domain.AttachedFile)
 
 registrySequence = rdb.Sequence("registry_number_sequence", metadata)
 
+# Parliamentary Items:
+# contains the common fields for motions, questions, bills and agenda items.
 parliamentary_items = rdb.Table("parliamentary_items", metadata,
     rdb.Column("parliamentary_item_id", rdb.Integer,
         ItemSequence,
@@ -869,7 +921,6 @@ parliamentary_items = rdb.Table("parliamentary_items", metadata,
 # Agenda Items:
 # generic items to be put on the agenda for a certain group
 # they can be scheduled for a sitting
-
 agenda_items = rdb.Table("agenda_items", metadata,
     rdb.Column("agenda_item_id", rdb.Integer,
         rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
@@ -880,11 +931,8 @@ agenda_items = rdb.Table("agenda_items", metadata,
         nullable=False
     ),
 )
+configurable_schema(domain.AgendaItem)
 
-agenda_item_changes = make_changes_table(agenda_items, metadata)
-agenda_item_versions = make_versions_table(agenda_items, metadata,
-    parliamentary_items
-)
 
 QuestionSequence = rdb.Sequence("question_number_sequence", metadata)
 # Approved questions are given a serial number enabling the clerks office
@@ -893,7 +941,7 @@ QuestionSequence = rdb.Sequence("question_number_sequence", metadata)
 # paper. The serial number is re-initialized at the start of each session
 question_types = make_vocabulary_table("question", metadata)
 response_types = make_vocabulary_table("response", metadata)
-
+#
 questions = rdb.Table("questions", metadata,
     rdb.Column("question_id", rdb.Integer,
         rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
@@ -915,16 +963,13 @@ questions = rdb.Table("questions", metadata,
     rdb.Column("ministry_id", rdb.Integer, rdb.ForeignKey("groups.group_id")),
     rdb.Column("response_text", rdb.UnicodeText),
 )
-question_changes = make_changes_table(questions, metadata)
-question_versions = make_versions_table(questions, metadata,
-    parliamentary_items
-)
+configurable_schema(domain.Question)
 
 MotionSequence = rdb.Sequence("motion_number_sequence", metadata)
 # Number that indicate the order in which motions have been approved 
 # by the Speaker. The Number is reset at the start of each new session
 # with the first motion assigned the number 1
-
+#
 motions = rdb.Table("motions", metadata,
     rdb.Column("motion_id", rdb.Integer,
         rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
@@ -945,8 +990,8 @@ motions = rdb.Table("motions", metadata,
         rdb.ForeignKey("political_parties.party_id")
     ),
 )
-motion_changes = make_changes_table(motions, metadata)
-motion_versions = make_versions_table(motions, metadata, parliamentary_items)
+configurable_schema(domain.Motion)
+
 
 bill_types = rdb.Table("bill_types", metadata,
     rdb.Column("bill_type_id", rdb.Integer, primary_key=True),
@@ -956,7 +1001,6 @@ bill_types = rdb.Table("bill_types", metadata,
     ),
     rdb.Column("language", rdb.String(5), nullable=False),
 )
-
 bills = rdb.Table("bills", metadata,
     rdb.Column("bill_id", rdb.Integer,
         rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
@@ -970,8 +1014,8 @@ bills = rdb.Table("bills", metadata,
     rdb.Column("identifier", rdb.Integer),
     rdb.Column("publication_date", rdb.Date),
 )
-bill_changes = make_changes_table(bills, metadata)
-bill_versions = make_versions_table(bills, metadata, parliamentary_items)
+configurable_schema(domain.Bill)
+
 
 committee_reports = ()
 
@@ -990,9 +1034,7 @@ signatories = rdb.Table("signatories", metadata,
     rdb.Column("status", rdb.Unicode(32)),
     rdb.UniqueConstraint("item_id", "user_id")
 )
-signatory_changes = make_changes_table(signatories, metadata, 
-    "signatory_changes", "signatory_id"
-)
+configurable_schema(domain.Signatory)
 
 # Tabled documents:
 # a tabled document captures metadata about the document (owner, date, title, 
@@ -1017,7 +1059,6 @@ signatory_changes = make_changes_table(signatories, metadata,
 tabled_documentSequence = rdb.Sequence("tabled_document_number_sequence",
     metadata
 )
-
 tabled_documents = rdb.Table("tabled_documents", metadata,
     rdb.Column("tabled_document_id", rdb.Integer,
         rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
@@ -1026,11 +1067,8 @@ tabled_documents = rdb.Table("tabled_documents", metadata,
     rdb.Column("link", rdb.String(2000)),
     rdb.Column("tabled_document_number", rdb.Integer),
 )
+configurable_schema(domain.TabledDocument)
 
-tabled_document_changes = make_changes_table(tabled_documents, metadata)
-tabled_document_versions = make_versions_table(tabled_documents, metadata,
-    parliamentary_items
-)
 
 # Events with dates and possibility to upload files.
 #

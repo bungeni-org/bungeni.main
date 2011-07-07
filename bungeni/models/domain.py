@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 # Bungeni Parliamentary Information System - http://www.bungeni.org/
 # Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
 # Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
@@ -14,16 +12,14 @@ log = __import__("logging").getLogger("bungeni.models.domain")
 
 import md5, random, string
 
-from zope import interface, location, component
+from zope import interface, location
 from bungeni.alchemist import Session
 from bungeni.alchemist import model
 from bungeni.alchemist.traversal import one2many, one2manyindirect
-from zope.location.interfaces import ILocation
 import sqlalchemy.sql.expression as sql
 
 import interfaces
 
-#
 
 # svn st 
 
@@ -54,16 +50,16 @@ class Entity(object):
             if known_names is None or k in known_names:
                 setattr(self, k, v)
             else:
-                log.warn(
+                log.error(
                     "Invalid attribute on %s %s" % (
                         self.__class__.__name__, k))
-
+    
     # sort_on: the list of column names the query is sorted on by default
     sort_on = None
-
+    
     # sort_dir = desc | asc
     #sort_dir = "desc"
-
+    
     # sort_replace: a dictionary that maps one column to another
     # so when the key is requested in a sort the value gets sorted
     # eg: {"user_id":"sort_name"} when the sort on user_id is requested the 
@@ -80,7 +76,7 @@ class ItemChanges(object):
         factory = type(name, (klass,), {})
         interface.classImplements(factory, interfaces.IChange)
         return factory
-
+    
     # !+CHANGE_EXTRAS(mr, dec-2010)
     def _get_extras(self):
         if self.notes is not None:
@@ -102,19 +98,26 @@ class ItemVersions(Entity):
     #files = one2many("files", "bungeni.models.domain.AttachedFileContainer", "file_version_id")
 
 
-# !+PARAMETRIZABLE_DOCUMENT_TYPES(mr, jun-2011) the quality of a domain type to
-# be auditable or versionable could be externalized as a localization parameter.
+# !+PARAMETRIZABLE_DOCTYPES(mr, jun-2011) the quality of a domain type to
+# be auditable or versionable is externalized as a localization parameter, and
+# its implementation must thus be completely isolated, depending only on that
+# one declaration.
+
+# Handling of dynamic features (as per a deployment's configuration)
+# Note: in a simplified one-generic-document-type world, these can be 
+# simplified even further. 
 
 def auditable(kls):
     """Decorator for auditable domain types, to collect in one place all
     that is needed for a domain type to be auditale.
     """
-    # assign interface
+    # assign interface (changes property added downstream)
     name = kls.__name__
     interface.classImplements(kls, interfaces.IAuditable)
     # define TYPEChange class
     change_name = "%sChange" % (name)
-    globals()[change_name] = ItemChanges.makeChangeFactory(change_name)
+    change_kls = ItemChanges.makeChangeFactory(change_name)
+    globals()[change_name] = change_kls
     return kls
 
 def versionable(kls):
@@ -125,18 +128,15 @@ def versionable(kls):
     """
     # if @versionable must also be @auditable:
     kls = auditable(kls)
-    # assign interface, add versions attribute
+    # assign interface (versions property added downstream)
     name = kls.__name__
     interface.classImplements(kls, interfaces.IVersionable)
-    kls.versions = one2many("versions",
-        "bungeni.models.domain.%sVersionContainer" % (name),
-        "content_id")
     # define TYPEVersion class
     version_name = "%sVersion" % (name)
     globals()[version_name] = ItemVersions.makeVersionFactory(version_name)
     return kls
 
-#
+# !+/PARAMETRIZABLE_DOCTYPES
 
 class User(Entity):
     """Domain Object For A User. General representation of a person.
@@ -263,7 +263,7 @@ class CommitteeStaff(GroupMembership):
         "bungeni.models.domain.MemberTitleContainer", "membership_id")
 
 
-@auditable
+@auditable # Note: Not a ParliamentaryItem
 class GroupSitting(Entity):
     """Scheduled meeting for a group (parliament, committee, etc).
     """
@@ -274,10 +274,11 @@ class GroupSitting(Entity):
         "bungeni.models.domain.ItemScheduleContainer", "group_sitting_id")
     sreports = one2many("sreports",
         "bungeni.models.domain.Report4SittingContainer", "group_sitting_id")
-
+    
     @property
     def short_name(self):
         return self.start_date.strftime("%d %b %y %H:%M")
+
 
 class GroupSittingType(object):
     """Type of sitting: morning/afternoon/... 
@@ -430,6 +431,7 @@ class Committee(Group):
     sort_replace = {"committee_type_id": ["committee_type"]}
     title_types = one2many("title_types",
         "bungeni.models.domain.TitleTypeContainer", "group_id")
+
 class CommitteeMember(GroupMembership):
     """A Member of a committee defined by its membership to a committee (group).
     """
@@ -493,7 +495,7 @@ class ParliamentaryItem(Entity):
     """
     """
     interface.implements(
-        interfaces.IBungeniContent, 
+        interfaces.IBungeniContent,
         interfaces.IBungeniParliamentaryContent,
         interfaces.ITranslatable
     )
@@ -511,11 +513,13 @@ class ParliamentaryItem(Entity):
         "bungeni.models.domain.EventItemContainer", "item_id")
     assignedgroups = one2many("assignedgroups",
         "bungeni.models.domain.GroupGroupItemAssignmentContainer", "item_id")
-
+    
     # votes
     # schedule
     # object log
-    # versions
+    
+    # changes - @auditable, set as a property
+    # versions - @versionable, set as a property
 
     def _get_workflow_date(self, *states):
         """ (states:seq(str) -> date
@@ -546,7 +550,7 @@ class AttachedFileType(object):
     """
     interface.implements(interfaces.ITranslatable)
 
-@versionable
+@versionable # Note: Not a ParliamentaryItem
 class AttachedFile(Entity):
     """Files attached to a parliamentary item.
     """
@@ -603,7 +607,7 @@ class Bill(ParliamentaryItem):
     def submission_date(self):
         return self._get_workflow_date("working_draft")
 
-@auditable
+@auditable # Note: Not a ParliamentaryItem
 class Signatory(Entity):
     """Signatories for a Bill or Motion.
     """
@@ -650,7 +654,6 @@ class ObjectSubscriptions(object):
 
 # ###############
 
-# @versionable
 class Constituency(Entity):
     """A locality region, which elects an MP.
     """
@@ -716,14 +719,12 @@ class ItemSchedule(Entity):
 
     @property
     def getItem(self):
-        session = Session()
         s_item = self.item
         s_item.__parent__ = self
         return s_item
 
     @property
     def getDiscussion(self):
-        session = Session()
         s_discussion = self.discussion
         s_discussion.__parent__ = self
         return s_discussion

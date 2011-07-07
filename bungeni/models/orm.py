@@ -1,45 +1,98 @@
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""The Bungeni object domain mappings
+
+$Id$
+"""
+log = __import__("logging").getLogger("bungeni.models.orm")
 
 import sqlalchemy as rdb
 from sqlalchemy.orm import mapper, relation, column_property, backref
+from bungeni.alchemist.traversal import one2many
 
 import schema
 import domain
+import interfaces
 
-def changes_relation(change_class):
-    return relation(change_class,
-        backref="origin",
-        lazy=False,
-        cascade="all, delete-orphan",
-        passive_deletes=False
-    )
 
-def changes_properties(change_table):
-    return {
-        "user": relation(domain.User,
-            primaryjoin=(
-                change_table.c.user_id == schema.users.c.user_id
-            ),
-            uselist=False,
-            lazy=True,
-        ),
-    }
-def versions_properties(item_class, change_class, versions_table):
-    return {
-        "change": relation(change_class, uselist=False),
-        "head": relation(item_class, uselist=False),
-        "attached_files": relation(domain.AttachedFileVersion,
-            primaryjoin=rdb.and_(
-                versions_table.c.content_id ==
-                    schema.attached_file_versions.c.item_id,
-                versions_table.c.version_id ==
-                    schema.attached_file_versions.c.file_version_id
-            ),
-            foreign_keys=[
-                schema.attached_file_versions.c.item_id,
-                schema.attached_file_versions.c.file_version_id
-            ]
-        ),
-    }
+# !+PARAMETRIZABLE_DOCTYPES
+
+def configurable_properties(kls, mapper_properties):
+    """Add properties, as per configured features for a domain type.
+    """
+    name = kls.__name__
+    # auditable
+    if interfaces.IAuditable.implementedBy(kls):
+        change_kls = getattr(domain, "%sChange" % (name))
+        mapper_properties["changes"] = relation(change_kls,
+            backref="origin", 
+            lazy=False,
+            cascade="all, delete-orphan",
+            passive_deletes=False
+        )
+    # versionable
+    if interfaces.IVersionable.implementedBy(kls):
+        kls.versions = one2many("versions",
+            "bungeni.models.domain.%sVersionContainer" % (name),
+            "content_id")
+    return mapper_properties
+
+def configurable_mappings(kls):
+    """Add mappings, as per configured features for a domain type.
+    """
+    name = kls.__name__
+    # auditable
+    if interfaces.IAuditable.implementedBy(kls):
+        change_kls = getattr(domain, "%sChange" % (name))
+        change_tbl = getattr(schema, "%s_changes" % (schema.un_camel(name)))
+        def changes_properties(change_tbl):
+            return {"user": relation(domain.User,
+                    primaryjoin=(change_tbl.c.user_id == schema.users.c.user_id),
+                    uselist=False,
+                    lazy=True
+                ),
+            }
+        mapper(change_kls, change_tbl, 
+            properties=changes_properties(change_tbl)
+        )
+    # versionable
+    if interfaces.IVersionable.implementedBy(kls):
+        assert change_kls, "May not be IVersionable and not IAuditable"
+        version_kls = getattr(domain, "%sVersion" % (name))
+        version_tbl = getattr(schema, "%s_versions" % (schema.un_camel(name)))
+        def versions_properties(item_class, change_class, versions_table):
+            props = {
+                "change": relation(change_class, uselist=False),
+                "head": relation(item_class, uselist=False)
+            }
+            # Notes:
+            # - domain.AttachedFile is the only versionable type that is 
+            # not a ParliamentaryItem.
+            # - !+IVersionable(mr, jul-2011) an AttachedFile does not have 
+            # attached_files; but, this violates the meaning of IVersionable? 
+            # Or, the ability to have attached_files should be independent of
+            # being versionable? IMayAttachFiles
+            if item_class is not domain.AttachedFile:
+                props["attached_files"] = relation(domain.AttachedFileVersion,
+                    primaryjoin=rdb.and_(
+                        versions_table.c.content_id ==
+                            schema.attached_file_versions.c.item_id,
+                        versions_table.c.version_id ==
+                            schema.attached_file_versions.c.file_version_id
+                    ),
+                    foreign_keys=[
+                        schema.attached_file_versions.c.item_id,
+                        schema.attached_file_versions.c.file_version_id
+                    ]
+                )
+            return props
+        mapper(version_kls, version_tbl,
+            properties=versions_properties(kls, change_kls, version_tbl)
+        )
+
+# !+/PARAMETRIZABLE_DOCTYPES
 
 #user address types
 mapper(domain.PostalAddressType, schema.postal_address_types)
@@ -292,8 +345,9 @@ mapper(domain.CommitteeStaff,
 )
 
 mapper(domain.ParliamentSession, schema.parliament_sessions)
+
 mapper(domain.GroupSitting, schema.group_sittings,
-    properties={
+    properties=configurable_properties(domain.GroupSitting, {
         "group_sitting_type": relation(domain.GroupSittingType, uselist=False),
         "group": relation(domain.Group,
             primaryjoin=schema.group_sittings.c.group_id == schema.groups.c.group_id,
@@ -310,13 +364,9 @@ mapper(domain.GroupSitting, schema.group_sittings,
             order_by=schema.item_schedules.c.planned_order
         ),
         "venue": relation(domain.Venue),
-        "changes": changes_relation(domain.GroupSittingChange),
-    }
+    })
 )
-
-mapper(domain.GroupSittingChange, schema.group_sitting_changes,
-         properties=changes_properties(schema.group_sitting_changes)
-)
+configurable_mappings(domain.GroupSitting)
 
 mapper(domain.ResourceType, schema.resource_types)
 mapper(domain.Resource, schema.resources)
@@ -347,14 +397,14 @@ mapper(domain.Heading,
     polymorphic_on=schema.parliamentary_items.c.type,
     polymorphic_identity="heading"
 )
+
 mapper(domain.QuestionType, schema.question_types)
 mapper(domain.ResponseType, schema.response_types)
 mapper(domain.Question, schema.questions,
     inherits=domain.ParliamentaryItem,
     polymorphic_on=schema.parliamentary_items.c.type,
     polymorphic_identity="question",
-    properties={
-        "changes": changes_relation(domain.QuestionChange),
+    properties=configurable_properties(domain.Question, {
         "ministry": relation(domain.Ministry, lazy=False, join_depth=2),
         "question_type": relation(domain.QuestionType, uselist=False,
             lazy=False
@@ -362,49 +412,25 @@ mapper(domain.Question, schema.questions,
         "response_type": relation(domain.ResponseType, uselist=False,
             lazy=False
         ),
-    }
+    })
 )
-
-mapper(domain.QuestionChange, schema.question_changes,
-    properties=changes_properties(schema.question_changes)        
-)
-mapper(domain.QuestionVersion, schema.question_versions,
-    properties=versions_properties(domain.Question, domain.QuestionChange,
-        schema.question_versions)
-)
+configurable_mappings(domain.Question)
 
 mapper(domain.Motion, schema.motions,
     inherits=domain.ParliamentaryItem,
     polymorphic_on=schema.parliamentary_items.c.type,
     polymorphic_identity="motion",
-    properties={
-        "changes": changes_relation(domain.MotionChange),
-    }
+    properties=configurable_properties(domain.Motion, {})
 )
-
-mapper(domain.MotionChange, schema.motion_changes,
-    properties=changes_properties(schema.motion_changes)
-)
-mapper(domain.MotionVersion, schema.motion_versions,
-    properties=versions_properties(domain.Motion, domain.MotionChange,
-        schema.motion_versions)
-)
+configurable_mappings(domain.Motion)
 
 mapper(domain.Bill, schema.bills,
     inherits=domain.ParliamentaryItem,
     polymorphic_on=schema.parliamentary_items.c.type,
     polymorphic_identity="bill",
-    properties={
-        "changes": changes_relation(domain.BillChange),
-    }
+    properties=configurable_properties(domain.Bill, {})
 )
-mapper(domain.BillChange, schema.bill_changes,
-    properties=changes_properties(schema.bill_changes)
-)
-mapper(domain.BillVersion, schema.bill_versions,
-    properties=versions_properties(domain.Bill, domain.BillChange,
-        schema.bill_versions)
-)
+configurable_mappings(domain.Bill)
 
 mapper(domain.EventItem, schema.event_items,
     inherits=domain.ParliamentaryItem,
@@ -420,8 +446,7 @@ mapper(domain.AgendaItem, schema.agenda_items,
     inherits=domain.ParliamentaryItem,
     polymorphic_on=schema.parliamentary_items.c.type,
     polymorphic_identity="agendaitem",
-    properties={
-        "changes": changes_relation(domain.AgendaItemChange),
+    properties=configurable_properties(domain.AgendaItem, {
         "group": relation(domain.Group,
             primaryjoin=(
                 schema.agenda_items.c.group_id == schema.groups.c.group_id),
@@ -429,50 +454,25 @@ mapper(domain.AgendaItem, schema.agenda_items,
             lazy=False,
             uselist=False
         )
-    }
+    })
 )
-mapper(domain.AgendaItemChange, schema.agenda_item_changes,
-    properties=changes_properties(schema.agenda_item_changes)
-)
-mapper(domain.AgendaItemVersion, schema.agenda_item_versions,
-    properties=versions_properties(domain.AgendaItem, domain.AgendaItemChange,
-        schema.agenda_item_versions)
-)
+configurable_mappings(domain.AgendaItem)
 
 mapper(domain.TabledDocument, schema.tabled_documents,
     inherits=domain.ParliamentaryItem,
     polymorphic_on=schema.parliamentary_items.c.type,
     polymorphic_identity="tableddocument",
-    properties={
-        "changes": changes_relation(domain.TabledDocumentChange),
-    }
+    properties=configurable_properties(domain.TabledDocument, {})
 )
-
-mapper(domain.TabledDocumentChange, schema.tabled_document_changes,
-    properties=changes_properties(schema.tabled_document_changes)
-)
-mapper(domain.TabledDocumentVersion, schema.tabled_document_versions,
-    properties=versions_properties(domain.TabledDocument,
-        domain.TabledDocumentChange, schema.tabled_document_versions)
-)
+configurable_mappings(domain.TabledDocument)
 
 mapper(domain.AttachedFileType, schema.attached_file_types)
-
 mapper(domain.AttachedFile, schema.attached_files,
-    properties={
-        "changes": changes_relation(domain.AttachedFileChange),
+    properties=configurable_properties(domain.AttachedFile, {
         "type": relation(domain.AttachedFileType, uselist=False)
-    }
+    })
 )
-mapper(domain.AttachedFileChange, schema.attached_file_changes,
-    properties=changes_properties(schema.attached_file_changes)
-)
-mapper(domain.AttachedFileVersion, schema.attached_file_versions,
-    properties={
-        "change": relation(domain.AttachedFileChange, uselist=False),
-        "head": relation(domain.AttachedFile, uselist=False),
-    }
-)
+configurable_mappings(domain.AttachedFile)
 
 #Items scheduled for a sitting expressed as a relation
 # to their item schedule
@@ -498,15 +498,12 @@ mapper(domain.ItemScheduleDiscussion, schema.item_schedule_discussions)
 # expressed as a join between item and schedule
 
 mapper(domain.Signatory, schema.signatories,
-    properties={
+    properties=configurable_properties(domain.Signatory, {
         "item": relation(domain.ParliamentaryItem, uselist=False),
         "user": relation(domain.User, uselist=False),
-        "changes": changes_relation(domain.SignatoryChange),
-    }
+    })
 )
-mapper(domain.SignatoryChange, schema.signatory_changes,
-    properties = changes_properties(schema.signatory_changes)
-)
+configurable_mappings(domain.Signatory)
 
 mapper(domain.BillType, schema.bill_types)
 #mapper(domain.DocumentSource, schema.document_sources)
