@@ -11,6 +11,9 @@ from bungeni.models import interfaces
 from bungeni.alchemist import Session, model
 from bungeni.ui.utils.common import get_context_roles
 from bungeni.core.workflows.utils import get_group_context
+from zope.securitypolicy.interfaces import IPrincipalRoleMap
+from bungeni.models.utils import get_current_parliament
+from bungeni.alchemist.security import LocalPrincipalRoleMap
 
 def stringKey( instance ):
     unproxied = removeSecurityProxy( instance )
@@ -106,4 +109,16 @@ class WorkspaceContainer(AlchemistContainer):
             return value
         else:
             return default
-        
+            
+# (SECURITY, miano, july 2011) This factory adapts the workspaces to 
+# zope.securitypolicy.interface.IPrincipalRoleMap and is equivalent to the 
+# principalrolemap of the current parliament.
+# If/when Bungeni is modified to support bicameral houses this should be
+# modified so that the oid is set to the group_id of the house the current
+# principal in the interaction is a member of.
+class WorkspacePrincipalRoleMap(LocalPrincipalRoleMap):
+    def __init__( self, context ):
+        self.context = context
+        current_parliament = get_current_parliament()
+        self.object_type = current_parliament.type
+        self.oid = current_parliament.group_id

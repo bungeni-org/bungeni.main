@@ -21,6 +21,11 @@
         provides="zope.securitypolicy.interfaces.IPrincipalRoleMap"
         factory="bungeni.alchemist.security.LocalPrincipalRoleMap"
     />
+    <adapter for="bungeni.models.interfaces.IWorkspaceContainer"
+        provides="zope.securitypolicy.interfaces.IPrincipalRoleMap"
+        factory="bungeni.models.workspace.WorkspacePrincipalRoleMap"
+    />
+    
     <!-- !+RolePermissionMap
     <adapter for="bungeni.alchemist.interfaces.IAlchemistContent"
         provides="zope.securitypolicy.interfaces.IRolePermissionMap"
