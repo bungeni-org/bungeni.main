@@ -273,6 +273,9 @@
   <meta:redefinePermission from="bungeni.fileattachment.View" to="zope.View" />
    
   <permission id="bungeni.translation.Add" title="add translation" />
+  
+  <!-- Permission to get a workspace -->
+  <permission id="bungeni.workspace.View" title="View workspace"/>
    
   <include package="bungeni_custom.sys.acl" file="permissions.zcml" />
    

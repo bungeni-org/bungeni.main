@@ -42,16 +42,13 @@
   <grant permission="zope.View" role="bungeni.Owner" />
   <grant permission="zope.View" role="bungeni.Authenticated" />
 
-  <!-- admin section -->
-  <!-- managesite permission had been given to clerk and speaker users to enable such 
-users to have a administration tab - and also to allow such users to have content translation access 
-unfortunatly this has many side effects - including clerk and speaker users being able to see draft
-items created by other users, so this hack has been removed -->
-
   <!-- translation -->
       
   <grant permission="bungeni.auditlog.View" role="bungeni.Authenticated" />
-   
+  
+  <!-- Workspace -->
+  <!-- Only logged in users get a workspace -->
+  <grant permission="bungeni.workspace.View" role="bungeni.Authenticated"/> 
     
   <!-- content roles -->
   <include package="bungeni_custom.sys.acl" file="parliamentary_meta.zcml" />
@@ -59,5 +56,7 @@ items created by other users, so this hack has been removed -->
   <include package="bungeni_custom.sys.acl" file="parliamentary_content.zcml" />
 
   <include package="bungeni_custom.sys.acl" file="translation.zcml" /> 
+  
+  
   
 </configure>
