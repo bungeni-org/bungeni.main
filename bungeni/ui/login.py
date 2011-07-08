@@ -1,10 +1,11 @@
 from zope import interface
 from zope import schema
 from zope.formlib import form
-
+from zope.formlib.namedtemplate import NamedTemplate
 from zope.app.component.hooks import getSite
 from zope.publisher.browser import BrowserView
 from zope.app.security.interfaces import IUnauthenticatedPrincipal
+from zope.app.component.hooks import getSite
 
 import bungeni.ui.utils as ui_utils
 from bungeni.core.i18n import _
@@ -14,8 +15,6 @@ class ILoginForm(interface.Interface):
     login = schema.TextLine(title=_(u"Username"))
     password = schema.Password(title=_(u"Password"))
 
-
-from zope.formlib.namedtemplate import NamedTemplate
 class Login(form.FormBase):
     form_fields = form.Fields(ILoginForm)
     prefix = ""
@@ -23,7 +22,15 @@ class Login(form.FormBase):
     
     # !+ only used here [ bungeni.ui.login.Login ] ?
     template = NamedTemplate("alchemist.form")
-
+    
+    def __call__(self):
+        if not IUnauthenticatedPrincipal.providedBy(self.request.principal):
+            app = getSite()
+            workspace = app["workspace"]
+            self.request.response.redirect(
+                        ui_utils.url.absoluteURL(workspace, self.request))
+        return super(Login, self).__call__()
+            
     @form.action(_(u"Login"))
     def handle_login(self, action, data):
         if IUnauthenticatedPrincipal.providedBy(self.request.principal):
