@@ -7,6 +7,13 @@
      for="bungeni.models.interfaces.IBungeniGroupMembership
           zope.lifecycleevent.interfaces.IObjectModifiedEvent"
      handler=".events.group_member_modified"
+     />
+     
+     <!-- Generate timestamp of last modification -->
+     <subscriber
+        for="bungeni.models.interfaces.IBungeniParliamentaryContent
+          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+        handler=".events.timestamp"
      /> 
   
 </configure>

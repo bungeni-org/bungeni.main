@@ -59,8 +59,6 @@ def group_member_modified(ob, event):
         for title in titles.all():
             if title.end_date == None:
                 title.end_date = ob.end_date
-        
-
-
-
-            
+                
+def timestamp(object, event):
+        object.timestamp = datetime.datetime.now()

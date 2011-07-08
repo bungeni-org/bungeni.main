@@ -4,6 +4,7 @@
 import copy
 import datetime
 
+from zc.resourcelibrary import need
 from zope.event import notify
 from zope.formlib import form, namedtemplate
 from zope.lifecycleevent import ObjectCreatedEvent
@@ -25,6 +26,14 @@ from bungeni.ui.forms.common import PageForm
 from bungeni.ui.forms.common import AddForm
 from bungeni.ui.forms.common import EditForm
 from bungeni.ui.forms.common import DeleteForm
+from zope.app.form.browser.textwidgets import PasswordWidget
+
+from interfaces import Modified
+from zope import component
+from zope.app.form.interfaces import IDisplayWidget
+from zope.schema.interfaces import IText, ITextLine
+from bungeni.ui.widgets import IDiffDisplayWidget
+from bungeni.ui.diff import textDiff
 
 
 FormTemplate = namedtemplate.NamedTemplateImplementation(
@@ -213,3 +222,66 @@ class ItemScheduleContainerDeleteForm(DeleteForm):
             session.delete(i)
         self.request.response.redirect(self.next_url)
 
+
+class DiffEditForm(EditForm):
+    """ Form to display diff view if timestamp was changes.
+    """
+    CustomValidation = validations.diff_validator
+    template = ViewPageTemplateFile("templates/diff-form.pt")
+    
+    def __init__(self, context, request):
+        self.diff_widgets = []
+        self.diff = False
+        self.last_timestamp = None
+        super(DiffEditForm, self).__init__(context, request)
+        need("diff-form")
+        
+    
+    def update(self):
+        """ Checks if we have Modified errors and renders split view 
+            with display widgets for db values and normal for input 
+        """
+        super(DiffEditForm, self).update()
+        for error in self.errors:
+            if error.__class__ == Modified:
+                # Set flag that form is in diff mode
+                if not self.diff:
+                    self.diff=True
+                
+        if self.diff:
+            # Set last timestamp which we store in hidden field because
+            # document may be modified during diff and from.timestamp field
+            # contains old value
+            self.last_timestamp = self.context.timestamp
+            for widget in self.widgets:
+                try:
+                    value = widget.getInputValue()
+                except:
+                    value = ""
+                
+                # Get widget's field    
+                form_field = self.form_fields.get(widget.context.__name__)                    
+                field = form_field.field.bind(self.context)
+                
+                # Form display widget for our field 
+                if form_field.custom_widget is not None:
+                    display_widget = form_field.custom_widget(
+                        field, self.request)                 
+                else:
+                    display_widget = component.getMultiAdapter(
+                        (field, self.request), IDisplayWidget)
+                
+                # If field is Text or TextLine we display HTML diff
+                if IText.providedBy(field) or ITextLine.providedBy(field):
+                    if value:
+                        diff_val = textDiff(field.get(self.context), value)
+                    else:
+                        diff_val = ""
+                    display_widget = component.getMultiAdapter(
+                        (field, self.request), IDiffDisplayWidget)
+                    display_widget.setRenderedValue(diff_val)
+                else:
+                    display_widget.setRenderedValue(field.get(self.context))
+                display_widget.name = widget.name + ".diff.display"
+                # Add display - input widgets pair to list of diff widgets
+                self.diff_widgets.append((widget, display_widget))

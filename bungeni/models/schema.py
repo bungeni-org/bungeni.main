@@ -231,7 +231,17 @@ user_delegations = rdb.Table("user_delegations", metadata,
     )
 )
 
-# user subscriptions table
+# document that user is being currently editing
+currently_editing_document = rdb.Table("currently_editing_document", metadata,
+    rdb.Column("user_id", rdb.Integer,
+        rdb.ForeignKey("users.user_id"),
+        primary_key=True
+    ),
+    rdb.Column("currently_editing_id", rdb.Integer,
+        rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
+    ),
+    rdb.Column("editing_date", rdb.DateTime(timezone=False)) 
+) 
 
 member_election_types = make_vocabulary_table("member_election", metadata)
 
@@ -916,6 +926,12 @@ parliamentary_items = rdb.Table("parliamentary_items", metadata,
     rdb.Column("custom2", rdb.UnicodeText, nullable=True),
     rdb.Column("custom3", rdb.UnicodeText, nullable=True),
     rdb.Column("custom4", rdb.UnicodeText, nullable=True),
+    
+    # Timestamp of last modification
+    rdb.Column("timestamp", rdb.DateTime(timezone=False),
+        server_default=(text("now()")),
+        nullable=False
+    ),
 )
 
 # Agenda Items:

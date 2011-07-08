@@ -16,7 +16,7 @@
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="edit" for="bungeni.models.interfaces.IBill"
-        class=".common.EditForm"
+        class=".forms.DiffEditForm"
         permission="bungeni.bill.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
@@ -38,7 +38,7 @@
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="edit" for="bungeni.models.interfaces.IMotion"
-        class=".common.EditForm"
+        class=".forms.DiffEditForm"
         permission="bungeni.motion.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
@@ -64,7 +64,7 @@ for non-{speaker, clerk}: /workspace/pi -> Add Question...
 Unauthorized: (<zope.app.publisher.browser.viewmeta.AddForm object at ...>, 'browserDefault', 'bungeni.question.Add')
     -->
     <browser:page name="edit" for="bungeni.models.interfaces.IQuestion"
-        class=".common.EditForm"
+        class=".forms.DiffEditForm"
         permission="bungeni.question.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
@@ -92,7 +92,7 @@ Unauthorized: (<zope.app.publisher.browser.viewmeta.AddForm object at ...>, 'bro
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="edit" for="bungeni.models.interfaces.ITabledDocument"
-        class=".common.EditForm"
+        class=".forms.DiffEditForm"
         permission="bungeni.tableddocument.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
@@ -114,7 +114,7 @@ Unauthorized: (<zope.app.publisher.browser.viewmeta.AddForm object at ...>, 'bro
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="edit" for="bungeni.models.interfaces.IAgendaItem"
-        class=".common.EditForm"
+        class=".forms.DiffEditForm"
         permission="bungeni.agendaitem.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />

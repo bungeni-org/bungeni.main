@@ -2129,6 +2129,12 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
             property=schema.Date(title=_("Submission Date"), required=False),
             listing_column=day_column("submission_date", _("Submission Date")),
         ),
+        Field(name="timestamp", # [derived]
+            modes="edit",
+            localizable=[ show("edit"), ],
+            property=schema.Datetime(title=_(""), required=False),
+            edit_widget=widgets.HiddenTimestampWidget,
+        ),
         Field(name="status", label=_("Status"), # [sys]
             modes="view listing",
             localizable=[

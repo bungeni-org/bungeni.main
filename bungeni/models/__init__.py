@@ -25,6 +25,7 @@ from domain import Motion, MotionVersion, MotionChange
 from domain import Bill, BillVersion, BillChange, BillType
 from domain import Constituency, Parliament
 from domain import Country, Region, Province
+from domain import CurrentlyEditingDocument
 from domain import MemberOfParliament, MemberElectionType
 from domain import TitleType, MemberTitle
 from domain import ItemSchedule

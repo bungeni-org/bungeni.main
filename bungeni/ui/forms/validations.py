@@ -21,6 +21,9 @@ from bungeni.ui.utils import queries, date as ui_date
 from bungeni.ui.calendar.utils import generate_dates
 from bungeni.ui.calendar.utils import datetimedict
 from zope.security.proxy import removeSecurityProxy
+from interfaces import Modified
+
+
 def null_validator(*args, **kwargs):
     return []
 
@@ -578,4 +581,23 @@ def validate_sub_role_unique(action, data, context, container):
             errors.append(interface.Invalid(
                         _(u"A title with %s sub role already exists") % 
                         sub_role_id))
+    return errors
+
+def diff_validator(form, context, data):
+    """ Custom validator that checks if form timestamp differs from timestamp in db.
+        Returns list of Modified errors for fields which differs from db values.
+    """
+    diff = form.request.form.get("diff","")
+    errors = []
+    last_timestamp = form.request.form.get("last_timestamp","")
+    context = removeSecurityProxy(context)    
+    current_timestamp = str(data.get('timestamp', ''))
+    db_timestamp = str(context.timestamp)
+    
+    # if we're in diff mode we don't care if form.timestamp equals db timestamp    
+    if (current_timestamp != db_timestamp and diff!="True") or\
+       (last_timestamp!=db_timestamp and last_timestamp):
+            for name, value in data.items():
+                if context.__dict__[name] != value:
+                    errors.append(Modified(_(u"Value was changed!"),name))
     return errors

@@ -58,6 +58,12 @@
                 js/init.js
                 css/ui.dynatree.css"               
        />
-  </resourceLibrary>     
+  </resourceLibrary>
+  
+  <resourceLibrary name="diff-form" require="jquery">
+  	<directory source="difform"
+  		include="js/nowediting.js"
+  	/>
+  </resourceLibrary> 
 
 </configure>

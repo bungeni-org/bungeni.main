@@ -41,19 +41,37 @@ from bungeni.alchemist import Session
 from bungeni.models import domain
 from bungeni.core.i18n import _
 from bungeni.ui.i18n import _ as _ui
-from bungeni.ui.utils import url, debug
+from bungeni.ui.utils import url, debug, date
 from bungeni.ui.interfaces import IGenenerateVocabularyDefault
 from bungeni.models.utils import get_db_user_id
 from bungeni.core.language import get_default_language
 
+from zope.app.form.interfaces import IInputWidget, IDisplayWidget
+from zope import component
+
 
 path = os.path.split(os.path.abspath(__file__))[0]
 
+class IDiffDisplayWidget(zope.app.form.interfaces.IDisplayWidget):
+    """ Marker interface for diff text widgets
+    """
+    pass
 
 class TextWidget(zope.app.form.browser.textwidgets.TextWidget):
     displayWidth = 60
 class LongTextWidget(TextWidget):
     displayWidth = 90
+
+
+class HiddenTimestampWidget(zope.app.form.browser.textwidgets.TextWidget):
+    def __call__(self):
+        return self.hidden()
+    
+    def _toFieldValue(self, value):
+        return date.parseDateTime(value)
+    
+    def _toFormValue(self, value):
+        return str(value)        
 
 
 class MultiDateTextAreaWidget(TextAreaWidget):

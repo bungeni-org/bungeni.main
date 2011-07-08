@@ -114,6 +114,14 @@ mapper(domain.AdminUser, schema.admin_users,
     }
 )
 
+# The document that the user is being currently editing
+mapper(domain.CurrentlyEditingDocument, schema.currently_editing_document,
+    properties = {
+        "user": relation(domain.User, uselist=False),
+        "document": relation(domain.ParliamentaryItem, uselist=False)
+    }
+)
+
 # Groups
 
 mapper(domain.Group, schema.groups,

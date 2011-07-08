@@ -201,6 +201,10 @@ class AdminUser(Entity):
 class UserDelegation(Entity):
     """ Delgate rights to act on behalf of a user 
     to another user """
+    
+class CurrentlyEditingDocument(object):
+    """The document (parliamentary item) 
+    that the user is currently being editing"""
 
 #class HansardReporter(User):
 #    """ a reporter who reports on parliamentary procedings
