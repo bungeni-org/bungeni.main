@@ -2692,23 +2692,21 @@ class EventItemDescriptor(ParliamentaryItemDescriptor):
             edit_widget=widgets.TextWidget,
             add_widget=widgets.TextWidget,
         ),
-        #!+SCHEMA(murithi, 06-2011) events table has no owner_id field
-        # Assume owner is creator and assign role at creation
-        # See bungeni.main/bungeni/core/workflows/_actions.py:_event_private
-        #Field(name="owner_id", # [user-req]
-        #    modes="view edit add listing",
-        #    localizable=[ 
-        #        show("edit"),
-        #        hide("listing"),
-        #        hide("view", "bungeni.Anonymous"),
-        #    ],
-        #    property=schema.Choice(title=_("Owner"),
-        #        source=vocabulary.DatabaseSource(domain.User,
-        #            token_field="user_id",
-        #            title_field="fullname",
-        #            value_field="user_id")
-        #    ),
-        #),
+        #!+SCHEMA(murithi, 06-2011) should event items should inherit owner?
+        Field(name="owner_id", # [user-req]
+            modes="view edit add listing",
+            localizable=[ 
+                show("edit"),
+                hide("listing"),
+                hide("view", "bungeni.Anonymous"),
+            ],
+            property=schema.Choice(title=_("Owner"),
+                source=vocabulary.DatabaseSource(domain.User,
+                    token_field="user_id",
+                    title_field="fullname",
+                    value_field="user_id")
+            ),
+        ),
         LanguageField("language"),
         Field(name="body_text", # [rtf]
             modes="view edit add",
@@ -3170,7 +3168,7 @@ class CountryDescriptor(ModelDescriptor):
                 show("view edit"),
             ],
             property=schema.TextLine(title=_("Country Code"),
-                description=_("Two digit ISO Code for this country e.g. DZ "
+                description=_("Two letter ISO Code for this country e.g. DZ "
                     "for Algeria"
                 )
             )
