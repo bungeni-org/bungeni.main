@@ -1,10 +1,12 @@
-# this is not a namespace package
-# encoding: utf-8
-"""
-__init__.py
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
-Created by Kapil Thangavelu on 2007-11-22.
+"""Models init
+
+$Id$
 """
+log = __import__("logging").getLogger("bungeni.models")
 
 import orm
 
@@ -18,11 +20,9 @@ from domain import (GroupSitting, GroupSittingType, GroupSittingAttendance,
     AttendanceType
 )
 from domain import ParliamentSession, PoliticalGroup
-from domain import (Question, QuestionVersion, QuestionChange, QuestionType, 
-    ResponseType
-)
-from domain import Motion, MotionVersion, MotionChange
-from domain import Bill, BillVersion, BillChange, BillType
+from domain import Question, QuestionType, ResponseType
+from domain import Motion 
+from domain import Bill, BillType
 from domain import Constituency, Parliament
 from domain import Country, Region, Province
 from domain import CurrentlyEditingDocument

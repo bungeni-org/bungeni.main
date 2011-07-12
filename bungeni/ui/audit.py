@@ -51,7 +51,7 @@ class ChangeBaseView(browser.BungeniBrowserView):
         return formatter()
     @property
     def _change_object(self):
-        auditor = audit.getAuditor(self.context)
+        auditor = audit.get_auditor(self.context)
         return auditor.change_object
         
     def getFeedEntries(self):

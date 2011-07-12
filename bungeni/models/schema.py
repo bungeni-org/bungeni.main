@@ -38,10 +38,10 @@ un_camel.all_cap_re = re.compile("([a-z0-9])([A-Z])")
 def singular(pname):
     """Get the english singular of (plural) name.
     """
+    for sname in plural.custom:
+        if plural.custom[sname] == pname:
+            return sname
     if pname.endswith("s"):
-        for sname in plural.custom:
-            if plural.custom[sname] == pname:
-                return sname
         return pname[:-1]
     return pname
 
@@ -52,7 +52,6 @@ def plural(sname):
 plural.custom = {
     "signatory": "signatories",
 }
-
 
 def configurable_schema(kls):
     """Add tables, as per configured features for a domain type.

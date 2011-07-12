@@ -6,6 +6,7 @@
 
 $Id$
 """
+log = __import__("logging").getLogger("bungeni.core.audit")
 
 from datetime import datetime
 from types import StringTypes
@@ -30,26 +31,26 @@ from i18n import _
 # public handlers
 
 def objectAdded(ob, event):
-    auditor = getAuditor(ob)
+    auditor = get_auditor(ob)
     auditor.objectAdded(removeSecurityProxy(ob), event)
 
 def objectModified(ob, event):
-    auditor = getAuditor(ob)
+    auditor = get_auditor(ob)
     if getattr(event, "change_id", None):
         return
     auditor.objectModified(removeSecurityProxy(ob), event)
 
 def objectDeleted(ob, event):
-    auditor = getAuditor(ob)
+    auditor = get_auditor(ob)
     auditor.objectDeleted(removeSecurityProxy(ob), event)
 
 def objectStateChange(ob, event):
-    auditor = getAuditor(ob)
+    auditor = get_auditor(ob)
     change_id = auditor.objectStateChanged(removeSecurityProxy(ob), event)
     event.change_id = change_id
 
 def objectNewVersion(ob, event):
-    auditor = getAuditor(ob)
+    auditor = get_auditor(ob)
     # !+NewVersion_CHANGE_ID(mr, jun-2011) when does an IVersionCreated 
     # event for an IAuditable object ever have a "change_id" attribute ?
     #if not getattr(event, "change_id", None):
@@ -61,16 +62,16 @@ def objectNewVersion(ob, event):
 def objectRevertedVersion(ob, event):
     # slightly obnoxious hand off between event handlers (objectnewV, objectrevertedV),
     # stuffing onto the event for value passing
-    auditor = getAuditor(ob)
+    auditor = get_auditor(ob)
     change_id = auditor.objectRevertedVersion(removeSecurityProxy(ob), event)
     event.change_id = change_id
 
 def objectAttachment(ob, event):
-    auditor = getAuditor(ob) 
+    auditor = get_auditor(ob) 
     auditor.objectAttachment(removeSecurityProxy(ob), event)
 
 def objectContained(ob, event):
-    auditor = getAuditor(ob) 
+    auditor = get_auditor(ob) 
     auditor.objectContained(removeSecurityProxy(ob), event)
 
 
@@ -83,10 +84,6 @@ def getAuditableParent(obj):
             return parent
         else:
             parent = getattr(parent, "__parent__", None)
-
-def getAuditor(ob):
-    return globals().get("%sAuditor" % (ob.__class__.__name__))
-
 
 class AuditorFactory(object):
     
@@ -284,22 +281,27 @@ class AuditorFactory(object):
         return cd
 
 
-# dedicated auditor instances
+# module-level dedicated auditor singleton instance per auditable class
 
-BillAuditor = AuditorFactory(schema.bill_changes, domain.BillChange)
-MotionAuditor = AuditorFactory(schema.motion_changes, domain.MotionChange)
-QuestionAuditor = AuditorFactory(schema.question_changes, 
-    domain.QuestionChange)
-AgendaItemAuditor =  AuditorFactory(schema.agenda_item_changes,
-    domain.AgendaItemChange)
-TabledDocumentAuditor =  AuditorFactory(schema.tabled_document_changes,
-    domain.TabledDocumentChange)
-AttachedFileAuditor = AuditorFactory(schema.attached_file_changes,
-    domain.AttachedFileChange)
-GroupSittingAuditor = AuditorFactory(schema.group_sitting_changes,
-    domain.GroupSittingChange)
-SignatoryAuditor = AuditorFactory(schema.signatory_changes,
-    domain.SignatoryChange)
+def get_auditor(ob):
+    """Get the module-level dedicated auditor singleton instance for the 
+    auditable ob.__class__ -- raise KeyError if no such auditor singleton.
+    """
+    return globals()["%sAuditor" % (ob.__class__.__name__)]
 
+def set_auditor(kls):
+    """Set the module-level dedicated auditor singleton instance for the 
+    auditable kls.
+    """
+    name = kls.__name__
+    auditor_name = "%sAuditor" % (name)
+    log.debug("Setting AUDITOR %s [for type %s]" % (auditor_name, name))
+    change_kls = getattr(domain, "%sChange" % (name))
+    change_tbl = getattr(schema, "%s_changes" % (schema.un_camel(name)))
+    globals()[auditor_name] = AuditorFactory(change_tbl, change_kls)
+
+for kls in domain.CUSTOM_DECORATED["auditable"]:
+    set_auditor(kls)
+    
 #
 

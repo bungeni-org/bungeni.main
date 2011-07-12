@@ -107,6 +107,12 @@ class ItemVersions(Entity):
 # Note: in a simplified one-generic-document-type world, these can be 
 # simplified even further. 
 
+# convenience, per decorator name, remember decorated types
+CUSTOM_DECORATED = {
+    "auditable": set(), # [kls]
+    "versionable": set(), # [kls]
+}
+
 def auditable(kls):
     """Decorator for auditable domain types, to collect in one place all
     that is needed for a domain type to be auditale.
@@ -114,6 +120,7 @@ def auditable(kls):
     # assign interface (changes property added downstream)
     name = kls.__name__
     interface.classImplements(kls, interfaces.IAuditable)
+    CUSTOM_DECORATED["auditable"].add(kls)
     # define TYPEChange class
     change_name = "%sChange" % (name)
     change_kls = ItemChanges.makeChangeFactory(change_name)
@@ -131,6 +138,7 @@ def versionable(kls):
     # assign interface (versions property added downstream)
     name = kls.__name__
     interface.classImplements(kls, interfaces.IVersionable)
+    CUSTOM_DECORATED["versionable"].add(kls)
     # define TYPEVersion class
     version_name = "%sVersion" % (name)
     globals()[version_name] = ItemVersions.makeVersionFactory(version_name)
@@ -834,6 +842,7 @@ class ObjectTranslation(object):
 #####################
 # DB vocabularies
 ######################
+
 class QuestionType(Entity):
     """Question type
     """
