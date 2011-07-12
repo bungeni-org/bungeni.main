@@ -276,7 +276,7 @@ class AddForm(BaseForm, catalyst.AddForm):
                 widget = self.widgets[ key ]
                 error = formlib.form.WidgetInputError(
                     widget.name, widget.label,
-                    _(u"Duplicate Value for Unique Field"))
+                    _(u"A record with this value already exists"))
                 widget._error = error
                 errors.append(error)
         return errors
@@ -407,7 +407,7 @@ class EditForm(BaseForm, catalyst.EditForm):
         if self.is_translation:
             language = get_language_by_name(self.context.language)["name"]
             return _(u"edit_translation_legend",
-                     default=u'Editing $language translation of "$title"',
+                     default=u"Editing $language translation of '$title'",
                      mapping={"title": translate(props.title, context=self.request),
                               "language": language})
 

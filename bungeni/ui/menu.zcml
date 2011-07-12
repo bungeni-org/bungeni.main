@@ -55,7 +55,7 @@
         title="Actions for Calendar Sittings"
     />
     <browser:menu id="discussion_actions"
-        title="Actions for Scheduling Discussions"
+        title="Discussions in scheduling"
     />
     <browser:menu id="scheduling_actions"
         title="Actions for Calendar Schedulings"
@@ -287,7 +287,7 @@
     />
     
     <browser:menu id="group_sitting_additems"
-        title="The 'Add...' menu - for a Parliament's GroupSittingContainer"
+        title="The 'Add...' menu - for a parliament's sittings"
         class="ploned.ui.menu.PloneBrowserMenu"
     />
     <browser:subMenuItem menu="plone_contentmenu"

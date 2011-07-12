@@ -5,14 +5,12 @@
   <metal:navigation define-macro="navigation">
     <a class="navigation previous-link"
        tal:condition="options/links/previous|nothing"
-       tal:attributes="href options/links/previous"
-       i18n:translate="">
+       tal:attributes="href options/links/previous">
       &larr;
     </a>
     <a class="navigation next-link"
        tal:condition="options/links/next|nothing"
-       tal:attributes="href options/links/next"
-       i18n:translate="">
+       tal:attributes="href options/links/next">
       &rarr;
     </a>
     <span i18n:translate=""

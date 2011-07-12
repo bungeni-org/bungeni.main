@@ -180,7 +180,7 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.bill.wf.first_reading.first_reading_adjourned" title="Adjourn First Reading" />
 <grant permission="bungeni.bill.wf.first_reading.first_reading_adjourned" role="bungeni.Clerk" />
 
-<permission id="bungeni.bill.wf.first_reading.first_committee" title="Send to Select Committee (I)" />
+<permission id="bungeni.bill.wf.first_reading.first_committee" title="Submit Bill to Select Committee (I)" />
 <grant permission="bungeni.bill.wf.first_reading.first_committee" role="bungeni.Clerk" />
 
 <permission id="bungeni.bill.wf.first_report_reading_pending.first_report_reading" title="Schedule First Report Reading" />
@@ -222,10 +222,10 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.bill.wf.whole_house.whole_house_adjourned" title="Adjourn Whole House Committee" />
 <grant permission="bungeni.bill.wf.whole_house.whole_house_adjourned" role="bungeni.Clerk" />
 
-<permission id="bungeni.bill.wf.second_reading.second_committee" title="Send to Select Committee (II)" />
+<permission id="bungeni.bill.wf.second_reading.second_committee" title="Submit Bill to Select Committee (II)" />
 <grant permission="bungeni.bill.wf.second_reading.second_committee" role="bungeni.Clerk" />
 
-<permission id="bungeni.bill.wf.whole_house.second_committee" title="Send/Resend to Select Committee (II)" />
+<permission id="bungeni.bill.wf.whole_house.second_committee" title="Submit/Resubmit Bill to Select Committee (II)" />
 <grant permission="bungeni.bill.wf.whole_house.second_committee" role="bungeni.Clerk" />
 
 <permission id="bungeni.bill.wf.whole_house.third_reading_adjourned.third_reading_pending" title="Allow scheduling of Third Reading" />
@@ -637,10 +637,10 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.user.wf.I.A" title="Activate" />
 <grant permission="bungeni.user.wf.I.A" role="bungeni.Speaker" />
 
-<permission id="bungeni.user.wf.A.I.D" title="Inhume" />
+<permission id="bungeni.user.wf.A.I.D" title="Move to Deceased" />
 <grant permission="bungeni.user.wf.A.I.D" role="bungeni.Speaker" />
 
-<permission id="bungeni.user.wf.D.A" title="Resurrect" />
+<permission id="bungeni.user.wf.D.A" title="Move from Deceased" />
 <grant permission="bungeni.user.wf.D.A" role="bungeni.Speaker" />
 
 

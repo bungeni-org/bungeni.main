@@ -32,7 +32,6 @@ from bungeni.models.interfaces import IAuditable
 #from zope.app.pagetemplate import ViewPageTemplateFile
 from bungeni.models.interfaces import IWorkspaceContainer
 from bungeni.ui.i18n import _
-from bungeni.core.i18n import _ as _bc
 from zope.i18n import translate
 
 class WorkflowVocabulary(object):
@@ -191,7 +190,7 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
             min_date_active = self.get_min_date_active()
             if data.get("date_active") < min_date_active:
                 errors.append(zope.interface.Invalid(
-                    _("Active Date is too old.")))
+                    _("Active Date is in the past.")))
             elif data.get("date_active") > datetime.datetime.now():
                 errors.append(zope.interface.Invalid(
                     _("Active Date is in the future.")))
@@ -213,7 +212,7 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
         workflow = interfaces.IWorkflow(self.context)
         if transition is not None:
             state_transition = workflow.get_transition(transition)
-            state_title = translate(_bc(state_transition.title),
+            state_title = translate(_(state_transition.title),
                                 context=self.request)
             self.status = translate(_(
                 u"Confirmation required for workflow transition: '${title}'",

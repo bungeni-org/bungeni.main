@@ -250,17 +250,17 @@
   <permission id="bungeni.comment.Edit" title="Add and edit comments" />
   <permission id="bungeni.comment.View" title="View comments" />
 
-  <permission id="bungeni.signatory.Add" title="Add Signatory" />
-  <permission id="bungeni.signatory.Act" title="Consent or Reject" />
-  <permission id="bungeni.signatory.Delete" title="Delete Signatory" />
-  <permission id="bungeni.signatory.Edit" title="Edit Signatory" />
-  <permission id="bungeni.signatory.View" title="View Signatory" />
+  <permission id="bungeni.signatory.Add" title="Add a signatory" />
+  <permission id="bungeni.signatory.Act" title="Consent or reject signature request" />
+  <permission id="bungeni.signatory.Delete" title="Delete a signatory" />
+  <permission id="bungeni.signatory.Edit" title="Edit a signatory" />
+  <permission id="bungeni.signatory.View" title="View a signatory" />
   <meta:redefinePermission from="bungeni.signatory.View" to="zope.View" />
 
-  <permission id="bungeni.groupitemassignment.View" title="Add Group Item Assignment" />
-  <permission id="bungeni.groupitemassignment.Add" title="Add Group Item Assignment" />
-  <permission id="bungeni.groupitemassignment.Delete" title="Delete Group Item Assignment" />
-  <permission id="bungeni.groupitemassignment.Edit" title="Edit Group Item Assignment" />
+  <permission id="bungeni.groupitemassignment.View" title="View document assigned to a group or committee" />
+  <permission id="bungeni.groupitemassignment.Add" title="Assign a document to a group or committee" />
+  <permission id="bungeni.groupitemassignment.Delete" title="Delete document assignment to a group or committee" />
+  <permission id="bungeni.groupitemassignment.Edit" title="Edit document assignment to a group or committee" />
   <meta:redefinePermission from="bungeni.groupitemassignment.View" to="zope.View" />
   
   <!--Permission to generate report -->

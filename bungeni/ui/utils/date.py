@@ -23,7 +23,7 @@ def get_date(date):
     elif type(date) == datetime.date:
         return date
     else:
-        raise TypeError (_("date must be of type datetime or date"))
+        raise TypeError (_("invalid date. choose or type correct date"))
 
 
 def getDisplayDate(request):

@@ -124,7 +124,7 @@ class ReportView(form.PageForm):
     class IReportForm(interface.Interface):
         short_name = schema.Choice(
                     title=_(u"Document Type"),
-                    description=_(u"Type of document to be produced"),
+                    description=_(u"Type of report to be produced"),
                     values=["Order of the day",
                              "Weekly Business",
                              "Questions of the week"],
@@ -227,7 +227,10 @@ class ReportView(form.PageForm):
                 ctx = ISchedulingContext(self.context)
             except:
                 errors.append(interface.Invalid(
-                                         _(u"Not a scheduling context")))
+                        _(u"You are trying to generate a report "
+                            "outside scheduling")
+                    )
+                )
             sittings = ctx.get_sittings(start_date, end_date).values()
             if not sittings:
                 errors.append(interface.Invalid(

@@ -376,7 +376,7 @@ def ElectionAfterStart(obj):
     """Start Date must be after Election Date."""
     if obj.election_date >= obj.start_date:
         raise interface.Invalid(
-            _("A parliament has to be elected before it can be sworn in"),
+            _("The life of a parliament must start after its election"),
             "election_date",
             "start_date"
         )
@@ -443,7 +443,7 @@ def DeathBeforeLife(User):
     """Check if date of death is after date of birth."""
     if User.date_of_death is None: return
     if User.date_of_death < User.date_of_birth:
-        raise interface.Invalid(_("One cannot die before being born"),
+        raise interface.Invalid(_("Check dates: death must follow birth"),
             "date_of_death",
             "date_of_birth"
         )
@@ -1582,15 +1582,20 @@ class TitleTypeDescriptor(ModelDescriptor):
         ),
         Field(name="user_unique",
             modes="view edit add listing",
-            property=schema.Choice(title=_("User Unique"), 
-                                 description=_("Whether or not only one person at a time is allowed to have this title"),
+            property=schema.Choice(title=_("Only one user may have this title"), 
+                                 description=_("Limits persons with this title"
+                                    " to one"
+                                 ),
                                  default=False,
                                  source=vocabulary.YesNoSource),
         ),
         Field(name="sort_order",
             modes="view edit add listing",
             property=schema.Int(title=_("Sort Order"), 
-                                description=_("The order in which members with this title will appear relative to other members"),
+                                description=_("The order in which members with" 
+                                    " this title will appear relative to other"
+                                    " members"
+                                ),
                                 required=True),
         ),
         LanguageField("language"), # [user-req]
@@ -2582,7 +2587,7 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
                 show("view edit listing"),
             ],
             property=schema.Choice(title=_("Question Type"),
-                description=_("Ordinary or Private Notice"),
+                description=_("Choose the type of question"),
                 source=vocabulary.QuestionType
             ),
             listing_column = dc_getter("question_type_id", _("Question Type"), 
@@ -2596,7 +2601,8 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
                 hide("listing")
             ],
             property=schema.Choice(title=_("Response Type"),
-                description=_("Oral or Written"),
+                description=_("Choose the type of response expected for this "
+                "question"),
                 source=vocabulary.ResponseType
             ),
             listing_column = dc_getter("response_type_id", _("Response Type"), 
@@ -3164,7 +3170,9 @@ class CountryDescriptor(ModelDescriptor):
                 show("view edit"),
             ],
             property=schema.TextLine(title=_("Country Code"),
-                description=_("ISO Code of the  country")
+                description=_("Two digit ISO Code for this country e.g. DZ "
+                    "for Algeria"
+                )
             )
         ),
         Field(name="country_name", # [user-req]
@@ -3212,7 +3220,7 @@ class ConstituencyDetailDescriptor(ModelDescriptor):
             localizable=[
                 show("view edit listing"),
             ],
-            property=schema.Int(title=_("Voters"),
+            property=schema.Int(title=_("Registered Voters"),
                 description=_("Number of Voters registered in this "
                     "Constituency"),
             ),

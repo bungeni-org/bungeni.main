@@ -77,7 +77,7 @@ class PrincipalGroupSchedulingContext(object):
         group = self.get_group()
         if group is not None:
             return u"%s (%s)" % (group.short_name, group.full_name)
-        return _(u"Unknown principal group")
+        return _(u"Unknown user group")
     
     def get_group(self, name="group"):
         if self.group_id is None:
