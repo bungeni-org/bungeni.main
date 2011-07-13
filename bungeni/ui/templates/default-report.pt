@@ -51,7 +51,7 @@
                 </span>
                 <span class="reporttext" 
                       tal:replace="structure scheduled/item/body_text"
-                      tal:condition="python:(scheduled.item.type == 'motion')"/>
+                      tal:condition="python:(scheduled.item.type == 'motion') and view.include_text"/>
                 
                 <h3 class="reportminutes" 
                     tal:condition="python:(scheduled.item.type == 'motion' and context.display_minutes == True and scheduled.discussion.body_text != None)">Minutes</h3>   
@@ -100,7 +100,7 @@
                 
                 <span class="reporttext" 
                                 tal:replace="structure scheduled/item/body_text"
-                                tal:condition="python:(scheduled.item.type == 'bill')"/>
+                                tal:condition="python:(scheduled.item.type == 'bill') and view.include_text"/>
                 
                           <h3 class="reportminutes" 
                                 tal:condition="python:(scheduled.item.type == 'bill' and context.display_minutes == True and scheduled.discussion.body_text != None)">Minutes</h3>   
@@ -130,7 +130,7 @@
                 
                 <span class="reporttext" 
                       tal:replace="structure scheduled/item/body_text"
-                      tal:condition="python:(scheduled.item.type == 'question')"/>
+                      tal:condition="python:(scheduled.item.type == 'question') and view.include_text"/>
                 
                 <h3 class="reportminutes" 
                     tal:condition="python:(scheduled.item.type == 'question' and context.display_minutes == True and scheduled.discussion.body_text != None)">Minutes</h3>   
@@ -151,7 +151,7 @@
                 </span>
                           <span class="reporttext" 
                                 tal:replace="structure scheduled/item/body_text"
-                                tal:condition="python:(scheduled.item.type == 'agendaitem')"/>
+                                tal:condition="python:(scheduled.item.type == 'agendaitem') and view.include_text"/>
                 
                           <h3 class="reportminutes" 
                                 tal:condition="python:(scheduled.item.type == 'agendaitem' and context.display_minutes == True and scheduled.discussion.body_text != None)">Minutes</h3>   
@@ -179,7 +179,7 @@
                 </span>
                         <span class="reporttext" 
                       tal:replace="structure scheduled/item/body_text"
-                      tal:condition="python:(scheduled.item.type == 'tableddocument')"/>
+                      tal:condition="python:(scheduled.item.type == 'tableddocument') and view.include_text"/>
                 
                 <h3 class="reportminutes" 
                     tal:condition="python:(scheduled.item.type == 'tableddocument' and context.display_minutes == True and scheduled.discussion.body_text != None)">Minutes</h3>   

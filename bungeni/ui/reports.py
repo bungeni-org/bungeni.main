@@ -410,9 +410,10 @@ class DefaultReportView(BrowserView):
 
     template = ViewPageTemplateFile("templates/default-report.pt")
 
-    def __init__(self, context, request):
+    def __init__(self, context, request, include_text=True):
         self.context = context
         self.request = request
+        self.include_text = include_text
         
     def __call__(self):
         return self.template() 
@@ -463,7 +464,7 @@ def default_reports(sitting, event):
         elif sitting.status == 'published_minutes':
             report.short_name = "Sitting Votes and Proceedings"
             drc = DefaultReportContent(sittings, report.short_name, True)
-            report.body_text = DefaultReportView(drc, TestRequest())()
+            report.body_text = DefaultReportView(drc, TestRequest(), False)()
         session.add(report)
         session.flush()
         notify(ObjectCreatedEvent(report))
