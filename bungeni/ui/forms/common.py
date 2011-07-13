@@ -355,7 +355,10 @@ class AddForm(BaseForm, catalyst.AddForm):
         if not self._next_url:
             self._next_url = url.absoluteURL(self.__parent__, self.request)
         self.request.response.redirect(self._next_url)
-        session.close()
+        # !+SESSION_CLOSE(taras.sterch, july-2011) there is no need to close the 
+        # session. Transaction manager will take care of this. Hope it does not 
+        # brake anything.
+        #session.close()
 
     @formlib.form.action(_(u"Save"), condition=formlib.form.haveInputWidgets)
     def handle_add_edit(self, action, data):
@@ -499,7 +502,10 @@ class EditForm(BaseForm, catalyst.EditForm):
         if not self._next_url:
             self._next_url = url.absoluteURL(self.context, self.request)
         self.request.response.redirect(self._next_url)
-        session.close()
+        # !+SESSION_CLOSE(taras.sterch, july-2011) there is no need to close the 
+        # session. Transaction manager will take care of this. Hope it does not 
+        # brake anything.
+        #session.close()
 
 
 class TranslateForm(AddForm):
@@ -666,8 +672,11 @@ class TranslateForm(AddForm):
             translation.field_text = data[form_field]
             session.add(translation)
         session.flush()
-        session.commit()
-        session.close()
+        # !+SESSION_CLOSE(taras.sterch, july-2011) there is no need to close the 
+        # session. Transaction manager will take care of this. Hope it does not 
+        # brake anything.
+        #session.commit()
+        #session.close()
         
         # !+EVENT_DRIVEN_CACHE_INVALIDATION(mr, mar-2011) no translate event
         # invalidate caches for this domain object type
@@ -799,7 +808,10 @@ class DeleteForm(PageForm):
                             "database integrity error")
 
             return self.render()
-        session.close()
+        # !+SESSION_CLOSE(taras.sterch, july-2011) there is no need to close the 
+        # session. Transaction manager will take care of this. Hope it does not 
+        # brake anything.
+        #session.close()
         
         #TODO: check that it is removed from the index!
         notify(ObjectRemovedEvent(

@@ -53,7 +53,7 @@ Now we can adapt these contexts to the settings and set and retrieve values
   >>> app_settings.frequency
   10
   >>> app_settings.email
-  'Slashdot'
+  u'Slashdot'
   >>> app_settings.filter
   False
 

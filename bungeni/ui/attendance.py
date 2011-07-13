@@ -148,7 +148,10 @@ class AttendanceEditor(BungeniBrowserView, forms.common.BaseForm):
         session = Session()
         next_url = url.absoluteURL(self.__parent__, self.request)
         self.request.response.redirect(next_url)
-        session.close()
+        # !+SESSION_CLOSE(taras.sterch, july-2011) there is no need to close the 
+        # session. Transaction manager will take care of this. Hope it does not 
+        # brake anything.
+        #session.close()
 
     def setUpWidgets(self, ignore_request=False):
         actions = self.actions

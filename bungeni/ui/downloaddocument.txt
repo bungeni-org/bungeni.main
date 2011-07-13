@@ -79,8 +79,8 @@ Initialise Bill Type
    >>> bill_type.language = u"en"
    >>> session.add(bill_type)
    >>> session.flush()
-   >>> bill_type.bill_type_id
-   1L
+   >>> int(bill_type.bill_type_id)
+   1
   
 Initialise a Bill
 -----------------
@@ -206,8 +206,8 @@ Create a question Type
    >>> qtype.language = "en"
    >>> session.add(qtype)
    >>> session.flush()
-   >>> qtype.question_type_id
-   1L
+   >>> int(qtype.question_type_id)
+   1
 
 Initialise a Question
 -------------------------

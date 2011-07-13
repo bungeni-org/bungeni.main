@@ -23,8 +23,8 @@ Parliaments
    >>> session.add( parliament)
    >>> session.flush()
    
-   >>> parliament.parliament_id 
-   1L
+   >>> int(parliament.parliament_id) 
+   1
    
    >>> from bungeni.ui.forms import validations
 
@@ -84,8 +84,8 @@ A parliamentary Session
    >>> session.add(sess)
    >>> session.flush() 
  
-   >>> sess.session_id
-   1L
+   >>> int(sess.session_id)
+   1
  
 
  
@@ -165,15 +165,15 @@ add member election types:
     >>> met1.language = u"en"
     >>> session.add(met1)
     >>> session.flush()
-    >>> met1.member_election_type_id
-    1L
+    >>> int(met1.member_election_type_id)
+    1
     >>> met2 = model.MemberElectionType()
     >>> met2.member_election_type_name = u"Nominated"
     >>> met2.language = u"en"
     >>> session.add(met2)
     >>> session.flush()
-    >>> met2.member_election_type_id
-    2L
+    >>> int(met2.member_election_type_id)
+    2
 
 add some users:
     >>> mp_1 = model.User(u"mp_1", 

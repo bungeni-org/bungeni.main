@@ -131,7 +131,7 @@ def make_versions_table(table, metadata, secondary_table=None):
                 names.append(c.name)
                 cols.append(c.copy())
     extend_cols(columns, table.columns)
-    if secondary_table:
+    if secondary_table is not None:
         extend_cols(columns, secondary_table.columns)
     versions_table = rdb.Table(versions_name, metadata, *columns)
     return versions_table
@@ -736,7 +736,7 @@ item_schedules = rdb.Table("item_schedules", metadata,
         nullable=False
     ),
     rdb.Column("planned_order", rdb.Integer,
-        rdb.Sequence("planned_order", 0, 1)
+        rdb.Sequence("planned_order", 1, 1)
     ),
     rdb.Column("real_order", rdb.Integer),
     # item was discussed on this sitting sitting
@@ -824,7 +824,7 @@ attached_files = rdb.Table("attached_files", metadata,
 )
 configurable_schema(domain.AttachedFile)
 
-registrySequence = rdb.Sequence("registry_number_sequence", metadata)
+registrySequence = rdb.Sequence("registry_number_sequence", metadata = metadata)
 
 # Parliamentary Items:
 # contains the common fields for motions, questions, bills and agenda items.
@@ -949,7 +949,7 @@ agenda_items = rdb.Table("agenda_items", metadata,
 configurable_schema(domain.AgendaItem)
 
 
-QuestionSequence = rdb.Sequence("question_number_sequence", metadata)
+QuestionSequence = rdb.Sequence("question_number_sequence", metadata = metadata)
 # Approved questions are given a serial number enabling the clerks office
 # to record the order in which questions are received and hence enforce 
 # a first come first served policy in placing the questions on the order
@@ -980,7 +980,7 @@ questions = rdb.Table("questions", metadata,
 )
 configurable_schema(domain.Question)
 
-MotionSequence = rdb.Sequence("motion_number_sequence", metadata)
+MotionSequence = rdb.Sequence("motion_number_sequence", metadata = metadata)
 # Number that indicate the order in which motions have been approved 
 # by the Speaker. The Number is reset at the start of each new session
 # with the first motion assigned the number 1
@@ -1072,7 +1072,7 @@ configurable_schema(domain.Signatory)
 #)
 
 tabled_documentSequence = rdb.Sequence("tabled_document_number_sequence",
-    metadata
+    metadata = metadata
 )
 tabled_documents = rdb.Table("tabled_documents", metadata,
     rdb.Column("tabled_document_id", rdb.Integer,

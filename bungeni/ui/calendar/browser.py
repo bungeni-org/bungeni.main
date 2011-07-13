@@ -239,7 +239,10 @@ class CalendarView(BungeniBrowserView):
         session = Session()
         venues = session.query(domain.Venue).all()
         languages = get_all_languages()
-        session.close()
+        # !+SESSION_CLOSE(taras.sterch, july-2011) there is no need to close the 
+        # session. Transaction manager will take care of this. Hope it does not 
+        # brake anything.
+        #session.close()
         self.display_language = get_default_language()
         if self.request.get("I18N_LANGUAGE"):
             self.display_language = self.request.get("I18N_LANGUAGE")
@@ -334,7 +337,10 @@ class GroupSittingScheduleView(BrowserView):
             rendered = self.render(date, template=self.ajax)
         else:    
             rendered = self.render(date)
-        session.close()
+        # !+SESSION_CLOSE(taras.sterch, july-2011) there is no need to close the 
+        # session. Transaction manager will take care of this. Hope it does not 
+        # brake anything.
+        #session.close()
         return rendered
         
     def reorder_field(self):

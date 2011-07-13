@@ -39,15 +39,15 @@ Regions and provinces get their primary key with a db sequence:
  >>> region.language = "en" 
  >>> session.add(region)
  >>> session.flush() 
- >>> region.region_id
- 1L
+ >>> int(region.region_id)
+ 1
  >>> province = model.Province()
  >>> province.province= u"Central"
  >>> province.language = "en" 
  >>> session.add(province)
  >>> session.flush()
- >>> province.province_id
- 1L
+ >>> int(province.province_id)
+ 1
 
 Users
 -----
@@ -118,8 +118,8 @@ Committee types and status
   >>> committee_type_status_1.language="en"
   >>> session.add(committee_type_status_1)
   >>> session.flush()
-  >>> committee_type_status_1.committee_type_status_id
-  1L
+  >>> int(committee_type_status_1.committee_type_status_id)
+  1
   >>> committee_type_1 = model.CommitteeType()
   >>> committee_type_1.committee_type = u"Monitoring Committee"
   >>> committee_type_1.committee_type_status = committee_type_status_1
@@ -128,8 +128,8 @@ Committee types and status
   >>> committee_type_1.language = "en"
   >>> session.add(committee_type_1)
   >>> session.flush()
-  >>> committee_type_1.committee_type_id
-  1L
+  >>> int(committee_type_1.committee_type_id)
+  1
 
 Now the actual committee
   >>> committee_a = model.Committee(short_name=u"committee_1", start_date=datetime.datetime.now())
@@ -173,8 +173,8 @@ Group and user addresses
   >>> address_type_1.language = "en"
   >>> session.add(address_type_1)
   >>> session.flush()
-  >>> address_type_1.address_type_id
-  1L
+  >>> int(address_type_1.address_type_id)
+  1
 
 Add a postal address type
   >>> postal_address_type_1 = model.PostalAddressType()
@@ -182,8 +182,8 @@ Add a postal address type
   >>> postal_address_type_1.language = "en"
   >>> session.add(postal_address_type_1)
   >>> session.flush()
-  >>> postal_address_type_1.postal_address_type_id
-  1L
+  >>> int(postal_address_type_1.postal_address_type_id)
+  1
 
 Add a user address
   >>> user_address_1 = model.UserAddress()
@@ -195,8 +195,8 @@ Add a user address
   >>> user_address_1.country = country
   >>> session.add(user_address_1)
   >>> session.flush()
-  >>> user_address_1.address_id
-  1L
+  >>> int(user_address_1.address_id)
+  1
   >>> len(list(mp_1.addresses))
   1
 
@@ -210,8 +210,8 @@ Add a group address
   >>> group_address_1.country = country
   >>> session.add(group_address_1)
   >>> session.flush()
-  >>> group_address_1.address_id
-  1L
+  >>> int(group_address_1.address_id)
+  1
   >>> len(list(parliament.addresses))
   1
 
@@ -266,8 +266,8 @@ Constituencies have a fk on regions and provinces:
  
 check the pk if it was saved and pk sequence is working
 
- >>> constituency.constituency_id
- 1L
+ >>> int(constituency.constituency_id)
+ 1
  
 Offices
 --------------------------------
@@ -328,8 +328,8 @@ Construct member election type
   >>> met1.language = u"en"
   >>> session.add(met1)
   >>> session.flush()
-  >>> met1.member_election_type_id
-  1L
+  >>> int(met1.member_election_type_id)
+  1
 
   >>> mp4 = model.MemberOfParliament()
   >>> mp4.group_id = parliament.group_id
@@ -343,8 +343,8 @@ Construct member election type
   >>> mp4.language = "en"
   >>> session.add(mp4)
   >>> session.flush()
-  >>> mp4.membership_id
-  7L
+  >>> int(mp4.membership_id)
+  7
       
   
 Sittings
@@ -361,8 +361,8 @@ meeting of the group by the system.
  >>> session.add(st)
  >>> session.flush()
  
- >>> st.group_sitting_type_id
- 1L
+ >>> int(st.group_sitting_type_id)
+ 1
  
 
  >>> sit = model.GroupSitting()
@@ -405,8 +405,8 @@ A parliamentary Session
  >>> session.add(sess)
  >>> session.flush() 
  
- >>> sess.session_id
- 1L
+ >>> int(sess.session_id)
+ 1
  
 Sitting in this session 
  
@@ -449,8 +449,8 @@ Note that the questions workflow is tested separated (see workflows/question.txt
   >>> qtype.language = "en"
   >>> session.add(qtype)
   >>> session.flush()
-  >>> qtype.question_type_id
-  1L
+  >>> int(qtype.question_type_id)
+  1
 
   >>> question = model.Question()
   >>> question.short_name = u"question"
@@ -460,8 +460,8 @@ Note that the questions workflow is tested separated (see workflows/question.txt
   >>> session.add(question)
   >>> session.flush()
   
-  >>> question.question_id
-  2L
+  >>> int(question.question_id)
+  2
   
 
 

@@ -14,6 +14,9 @@ First some setup code..
   >>> import transaction
 
 To demonstrate let's create some groups and a content object.
+!+ALCHEMIST(taras@sterch, july-2011) - We abort transaction to avoid problems 
+									   with transaction manager.
+  >>> transaction.abort()
   >>> session = Session()
   >>> parliament = domain.Parliament( short_name=u"p_1", start_date=datetime.now(), election_date=datetime.now())
   >>> parliament.language = "en"

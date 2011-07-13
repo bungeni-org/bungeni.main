@@ -66,7 +66,10 @@ def on_end_request(event):
     log.info("""IEndRequestEvent:%s:%s
         closing SqlAlchemy session: %s""" % (
                                     id(event.request), event.object, session))
-    session.close()
+    # !+SESSION_CLOSE(taras.sterch, july-2011) there is no need to close the 
+    # session. Transaction manager will take care of this. Hope it does not 
+    # brake anything.
+    #session.close()
 
 
 # some actual handlers

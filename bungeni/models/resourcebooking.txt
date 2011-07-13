@@ -26,8 +26,8 @@ meeting of the group by the system.
   >>> session.add(st)
   >>> session.flush()
 
-  >>> st.group_sitting_type_id
-  1L
+  >>> int(st.group_sitting_type_id)
+  1
   >>> parliament = domain.Parliament( short_name=u"p_1", start_date=datetime.datetime.now(), election_date=datetime.datetime.now())
   >>> parliament.language = "en"
   >>> session.add(parliament)

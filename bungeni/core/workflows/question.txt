@@ -161,15 +161,15 @@ Create a question type
   ...   domain.QuestionType,
   ...   question_type_name=u"Ordinary",
   ...   language="en")
-  >>> qtype.question_type_id
-  1L
+  >>> int(qtype.question_type_id)
+  1
   
   >>> rtype = add_content(
   ...   domain.ResponseType,
   ...   response_type_name=u"Written",
   ...   language="en")
-  >>> rtype.response_type_id
-  1L
+  >>> int(rtype.response_type_id)
+  1
   
   >>> question = add_content(
   ...     domain.Question,

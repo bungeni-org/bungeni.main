@@ -3,7 +3,6 @@ from sqlalchemy.types import TypeDecorator, Binary, String
 from sqlalchemy.util import buffer
 from zope.component import getUtility
 
-
 class FSBlob(TypeDecorator, Binary):
     """ Sqlalchemy's type to store
         blob data in IFSUtility and the
@@ -28,7 +27,7 @@ class FSBlob(TypeDecorator, Binary):
                 return fname
         return process
 
-    def result_processor(self, dialect):
+    def result_processor(self, dialect, coltype=None):
         def process(value):
             if not value:
                 return None
