@@ -19,6 +19,7 @@
     <include package="bungeni.models" />
     <include package="bungeni.portal" />
     
+    
     <!-- Application to publish -->
     <utility provides="ore.wsgiapp.interfaces.IApplication"
         factory=".app.BungeniApp"
@@ -292,13 +293,11 @@
     />
     
     <!-- browser resource adapters -->
-    
     <view name="rh" 
         type="*"
         provides="zope.traversing.interfaces.ITraversable" for="*"
         factory=".resources.rh"
     />
-    
     <adapter name="resource" factory=".resources.ResourceSiteAbsoluteURL" />
     
     <!-- transformation -->
@@ -309,7 +308,7 @@
         factory=".transformation.TransformationAdapter"
         provides="zope.traversing.interfaces.IPathAdapter"
     />
-
+    
     <!-- location -->
     <adapter factory=".location.get_location_from_parent" />
     
@@ -323,7 +322,8 @@
         provides="zope.traversing.browser.interfaces.IAbsoluteURL"
     />
     
-    <include file="uri.zcml"/>
-    <utility factory="bungeni.core.workspace.WorkspaceTabsUtility"
-    />
+    <include file="uri.zcml" />
+    <utility factory="bungeni.core.workspace.WorkspaceTabsUtility" />
+    
 </configure>
+

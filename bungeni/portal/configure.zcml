@@ -1,91 +1,69 @@
 <?xml version="1.0"?>
 <configure xmlns="http://namespaces.zope.org/zope"
-           xmlns:zcml="http://namespaces.zope.org/zcml"
-		   xmlns:bungeni="http://namespaces.bungeni.org/zope"
-           xmlns:browser="http://namespaces.zope.org/browser"
-           xmlns:db="http://namespaces.objectrealms.net/rdb"
-           i18n_domain="bungeni">
-
-  <include package="bungeni.alchemist" file="meta.zcml" />
-  <include package="bungeni.core" file="meta.zcml"  />
-  
-  <!-- Setup file storage -->
-  <bungeni:fs
-     fs_path="fs"
-	 />
-  
-  <!-- Setup Database Connection -->
-  <!-- load from bungeni_custom -->
-  <include package="bungeni_custom.sys" file="db.zcml" />
-
-  <!-- Bind Application Model to Database -->
-  <db:bind
-     engine="bungeni-db"
-     metadata="bungeni.models.schema.metadata" />
-  
-  <!-- Bind Security Model to Database (role, permission maps) -->
-  <db:bind
-     engine="bungeni-db"
-     metadata="bungeni.alchemist.security.metadata" />
-
-  <!-- The ``bungeni.portal`` package is shared between Bungeni (z3)
-       and Plone; part of the configuration is platform-dependent -->
-  
-  <configure zcml:condition="installed bungeni.plonepas">
-
-    <browser:resourceDirectory 	
-       name="portal"
-       directory="static/html/resources"
-       permission="zope2.Public"
-       />
-
-  </configure>
-
-  <configure zcml:condition="not-installed bungeni.plonepas">
+    xmlns:zcml="http://namespaces.zope.org/zcml"
+    xmlns:bungeni="http://namespaces.bungeni.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:db="http://namespaces.objectrealms.net/rdb"
+    i18n_domain="bungeni">
     
-    <browser:resourceDirectory 	
-       name="portal"
-       directory="static/html/resources"
-       permission="zope.Public"
-       />
+    <include package="bungeni.alchemist" file="meta.zcml" />
+    <include package="bungeni.core" file="meta.zcml"  />
+    
+    <!-- Setup file storage -->
+    <bungeni:fs fs_path="fs" />
+    
+    <!-- Setup Database Connection -->
+    <!-- load from bungeni_custom -->
+    <include package="bungeni_custom.sys" file="db.zcml" />
+    <!-- Bind Application Model to Database -->
+    <db:bind engine="bungeni-db" metadata="bungeni.models.schema.metadata" />
+    <!-- Bind Security Model to Database (role, permission maps) -->
+    <db:bind engine="bungeni-db" 
+        metadata="bungeni.alchemist.security.metadata" 
+    />
+    
+    <!-- The ``bungeni.portal`` package is shared between Bungeni (z3)
+        and Plone; part of the configuration is platform-dependent -->
+    
+    <configure zcml:condition="installed bungeni.plonepas">
+        <browser:resourceDirectory name="portal"
+            directory="static/html/resources"
+            permission="zope2.Public"
+        />
+    </configure>
 
-    <browser:view
-       for="*"
-       name="ploned-layout"
-       class=".ploned.PlonedLayout"
-       layer="ploned.ui.interfaces.IPlonedSkin"
-       permission="zope.View"
-       />
-
-
-    <!--Skin Images-->
-    <browser:resourceDirectory
-       name="images"
-       directory="static/html/resources"
-       layer="ploned.ui.interfaces.IPlonedSkin"
-       />
-
-    <!--Skin css-->
-    <browser:resourceDirectory
-       name="css"
-       directory="static/html/resources"
-       layer="ploned.ui.interfaces.IPlonedSkin"
-       />
-
-    <adapter
-       zcml:condition="have devmode"
-       for="* zope.publisher.interfaces.browser.IHTTPRequest str"
-       provides="chameleon.html.interfaces.IResourceLocation"
-       factory=".layout.get_url_dev" />
-
-    <adapter
-       zcml:condition="not-have devmode"
-       for="* zope.publisher.interfaces.browser.IHTTPRequest str"
-       provides="chameleon.html.interfaces.IResourceLocation"
-       factory=".layout.get_url" />
-
-    <include package="ploned.ui" file="skin.zcml" />
-   
-  </configure> 
-
+    <configure zcml:condition="not-installed bungeni.plonepas">
+        <browser:resourceDirectory name="portal"
+            directory="static/html/resources"
+            permission="zope.Public"
+        />
+        <browser:view name="ploned-layout"
+            for="*"
+            class=".ploned.PlonedLayout"
+            layer="ploned.ui.interfaces.IPlonedSkin"
+            permission="zope.View"
+        />
+        <!--Skin Images-->
+        <browser:resourceDirectory name="images"
+            directory="static/html/resources"
+            layer="ploned.ui.interfaces.IPlonedSkin"
+        />
+        <!--Skin css-->
+        <browser:resourceDirectory name="css"
+            directory="static/html/resources"
+            layer="ploned.ui.interfaces.IPlonedSkin"
+        />
+        <adapter zcml:condition="have devmode"
+            for="* zope.publisher.interfaces.browser.IHTTPRequest str"
+            provides="chameleon.html.interfaces.IResourceLocation"
+            factory=".layout.get_url_dev" 
+        />
+        <adapter zcml:condition="not-have devmode"
+            for="* zope.publisher.interfaces.browser.IHTTPRequest str"
+            provides="chameleon.html.interfaces.IResourceLocation"
+            factory=".layout.get_url"
+        />
+        <include package="ploned.ui" file="skin.zcml" />
+    </configure> 
+    
 </configure>
