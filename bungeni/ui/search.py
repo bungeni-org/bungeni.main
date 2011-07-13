@@ -344,120 +344,6 @@ class Search(forms.common.BaseForm, ResultListing, HighlightMixin):
         user = session.query(domain.User).filter(domain.User.login == self.request.principal.id).first()
         return user.subscriptions
 
-    def workspace_search(self):
-        """ Search in workspace section, based on views from bungeni.ui.viewlets.workspace
-        """
-        application = common.get_application()
-        parliament = get_current_parliament(None)
-        parliament.__parent__ = application
-        principal = get_principal()
-        roles = common.get_context_roles(parliament, principal)
-
-        # minister role, filtering by states and object_type and ministry_id
-        if not roles:
-            user_id = get_db_user_id()
-            government_id = get_current_parliament_governments(parliament)[0].group_id
-            ministries = get_ministries_for_user_in_government(user_id, government_id)
-            if ministries:
-                states = workspace.MinistryArchiveViewlet.states + \
-                         workspace.OralMinistryQuestionsViewlet.states + \
-                         workspace.WrittenMinistryQuestionsViewlet.states + \
-                         workspace.InProgressMinistryItemsViewlet.states
-                states = set(states)
-                
-                ministry_ids = [m.group_id for m in ministries]
-                
-                # filter by object_type (questions only)
-                type_query = self.searcher.query_field('object_type', "Question")
-                query = self.searcher.query_composite(self.searcher.OP_AND, \
-                                                       (self.query, type_query,))
-                
-                subqueries = []
-
-                for state in states:
-                    subqueries.append(self.searcher.query_field('status', state))
-                    
-                state_query = self.searcher.query_composite(self.searcher.OP_OR, subqueries)
-                query = self.searcher.query_composite(self.searcher.OP_AND, \
-                                                           (query, state_query,))
-                
-                #filter for ministries
-                ministries_queries = []
-                
-                for mid in ministry_ids:
-                    ministries_queries.append(self.searcher.query_field('ministry_id', str(mid)))
-                    
-                m_query = self.searcher.query_composite(self.searcher.OP_OR, ministries_queries)
-                query = self.searcher.query_composite(self.searcher.OP_AND, \
-                                                           (query, m_query,))
-                
-                try:
-                    results = self.searcher.search(query, 0, self.searcher.get_doccount())
-                except:
-                    results = []
-                
-                return list(results)
-        
-        # filtering by states and owner
-        if 'bungeni.MP' in roles:
-            states = workspace.MPItemActionRequiredViewlet.states + \
-                     workspace.MPItemDraftViewlet.states + \
-                     workspace.MPItemInProgressViewlet.states + \
-                     workspace.ItemArchiveViewlet.states
-            states = set(states)
-            # filter by owner of PI
-            owner_query = self.searcher.query_field('owner', str(get_db_user_id()))
-            query = self.searcher.query_composite(self.searcher.OP_AND, \
-                                                       (self.query, owner_query,))
-            
-            subqueries = []
-
-            for state in states:
-                subqueries.append(self.searcher.query_field('status', state))
-                
-            state_query = self.searcher.query_composite(self.searcher.OP_OR, subqueries)
-            query = self.searcher.query_composite(self.searcher.OP_AND, \
-                                                       (query, state_query,))
-            
-            try:
-                results = self.searcher.search(query, 0,
-                self.searcher.get_doccount())
-            except:
-                results = []
-                
-            return list(results)
-            
-        # filtering by states
-        if 'bungeni.Clerk' in roles:
-            states = workspace.ClerkItemActionRequiredViewlet.states + \
-                     workspace.ClerkItemsWorkingDraftViewlet.states + \
-                     workspace.ClerkReviewedItemViewlet.states + \
-                     workspace.ItemsApprovedViewlet.states + \
-                     workspace.ItemsPendingScheduleViewlet.states + \
-                     workspace.ItemsScheduledViewlet.states + \
-                     workspace.AllItemArchiveViewlet.states
-                     
-            states = set(states)
-            
-            subqueries = []
-
-            for state in states:
-                subqueries.append(self.searcher.query_field('status', state))
-                
-            state_query = self.searcher.query_composite(self.searcher.OP_OR, subqueries)
-            query = self.searcher.query_composite(self.searcher.OP_AND, \
-                                                       (self.query, state_query,))
-            
-            try:
-                results = self.searcher.search(query, 0,
-                self.searcher.get_doccount())
-            except:
-                results = []
-                
-            return list(results)
-        # no results
-        return False
-            
     @CachedProperty
     def _searchresults(self):
         section = get_section_name()
@@ -477,15 +363,8 @@ class Search(forms.common.BaseForm, ResultListing, HighlightMixin):
                 self.searcher.get_doccount())
         except:
             results = []
-
-        results = filter(self.authorized, results)
         
-        # in workspace section we are using different search filters based on states   
-        if section == 'workspace':
-            extra = self.workspace_search()
-            # if no results - use common search
-            if extra:
-                return extra
+        results = filter(self.authorized, results)
 
         return results
 

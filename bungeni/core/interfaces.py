@@ -278,16 +278,15 @@ class IWorkspaceTabsUtility(interface.Interface):
     def getDomainAndStatuses(role, tab):
         """Returns a dictionary with the interfaces as keys. The value for each 
         key is a dictionary of applicable statuses"""
-                
     def setContent(role, tab, workflow_name, status):
         """Set workspace info
         """
     def registerItemType(domain_class, item_type):
         """Set the domain class and type info that is used to generate URLS
         """
-    
-    def getDomainOrType(key):
+    def getDomain(key):
+        """Given a type, returns the domain_class
         """
-        Given a domain_class or type, returns the type or domain_class
-        respectively
+    def getType(key):
+        """Given a domain_class, returns the item type
         """

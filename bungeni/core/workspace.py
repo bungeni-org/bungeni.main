@@ -80,13 +80,28 @@ class WorkspaceTabsUtility():
         self.domain_type[item_type] = domain_class
         self.domain_type[domain_class] = item_type 
     
-    def getDomainOrType(self, key):
-        """Passed either a domain_class or an item type, returns an item_type
-        or domain_class respectively"""
+    def getDomain(self, key):
+        """Passed a type string returns the domain class"""
         if key in self.domain_type:
             return self.domain_type[key]
         return None
         
+    def getType(self, key):
+        """Passed a domain class returns a string"""
+        if key in self.domain_type:
+            return self.domain_type[key]
+        return None
+        
+    def getTab(self, role, domain_class, status):
+        """Returns the tab an object should be in, given its domain class, status
+        and role"""
+        if role in self.workspaces:
+            for tab in self.workspaces[role]:
+                if domain_class in self.workspaces[role][tab] and \
+                    status in self.workspaces[role][tab][domain_class]:
+                        return tab
+        return None
+       
 def load_workspace(file_name, domain_class):
     """Loads the workspace configuration for each documemnt"""
     workspace_tabs = getUtility(IWorkspaceTabsUtility)

@@ -1,14 +1,18 @@
-
+from sqlalchemy import orm
 from zope.traversing.browser import absoluteURL
 from zope.traversing.browser.absoluteurl import AbsoluteURL
-from bungeni.alchemist.container import stringKey
 from zope.app.component.hooks import getSite
-import bungeni.ui.utils as ui_utils
 from zope.security.proxy import removeSecurityProxy
 from zope.interface import providedBy
+from zope.component import getUtility
+import bungeni.ui.utils as ui_utils
+from bungeni.alchemist.container import stringKey
 from bungeni.alchemist import Session
 from bungeni.models.domain import ParliamentaryItem
-
+from bungeni.models import workspace
+from bungeni.models.utils import get_principal
+from bungeni.ui.utils.common import get_principal_roles
+from bungeni.core.interfaces import IWorkspaceTabsUtility
 class CustomAbsoluteURL(AbsoluteURL):
     section = ""
     subsection = ""
@@ -29,10 +33,22 @@ class WorkspaceAbsoluteURLView(AbsoluteURL):
     subsection = ''
     
     def __str__(self):
-        base_url = ui_utils.url.absoluteURL(getSite(), self.request)
-        return '%s/business/%ss/%s/' % (base_url, self.context.type,\
-                                                   stringKey(self.context))
-    
+        tabs_utility = getUtility(IWorkspaceTabsUtility)
+        domain_class = self.context.__class__
+        status = self.context.status
+        principal = get_principal()
+        roles = get_principal_roles(principal)
+        for role in roles:
+            tab = tabs_utility.getTab(role, domain_class, status)
+            if tab:
+                break
+        if tab:
+            base_url = ui_utils.url.absoluteURL(getSite(), self.request)
+            key = workspace.stringKey(self.context)
+            return '%s/workspace/documents/%s/%s' % (base_url, tab, key)
+        else:
+            return None
+            
     __call__ = __str__
 
 

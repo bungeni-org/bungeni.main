@@ -118,6 +118,19 @@ def get_context_roles(context, principal):
             principal.id, str(pg), "\n".join(message), roles))
     return roles
 
+def get_principal_roles(principal):
+        """Returns roles associated with groups.
+        """
+        session = bungeni.alchemist.Session()
+        roles = []
+        for group_id in principal.groups.keys():
+            result = session.query(bungeni.models.domain.Group).filter(
+                            bungeni.models.domain.Group.group_principal_id == group_id).first()
+            if result:
+                roles.extend(get_context_roles(
+                                          bungeni.core.workflows.utils.get_group_context(result), principal))
+        return roles
+
 def get_request_context_roles(request):
     """Get the list of user's roles (including whether admin or not) relevant 
     for this request layer.

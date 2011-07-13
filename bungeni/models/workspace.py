@@ -9,7 +9,7 @@ from zope import interface
 from zope.location.interfaces import ILocation
 from bungeni.models import interfaces
 from bungeni.alchemist import Session, model
-from bungeni.ui.utils.common import get_context_roles
+from bungeni.ui.utils.common import get_context_roles, get_principal_roles
 from bungeni.core.workflows.utils import get_group_context
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from bungeni.models.utils import get_current_parliament
@@ -21,7 +21,7 @@ def stringKey( instance ):
     primary_key = mapper.primary_key_from_instance( unproxied )
     domain_class = instance.__class__
     workspace_tabs = component.getUtility(IWorkspaceTabsUtility)
-    item_type = workspace_tabs.getDomainOrType(domain_class)
+    item_type = workspace_tabs.getType(domain_class)
     return "%s-%s" % (item_type, str(primary_key[0]))
 
 def valueKey( identity_key ):
@@ -32,10 +32,10 @@ def valueKey( identity_key ):
     if len(properties) != 2:
         raise ValueError
     workspace_tabs = component.getUtility(IWorkspaceTabsUtility)
-    domain_class = workspace_tabs.getDomainOrType(properties[0])
+    domain_class = workspace_tabs.getDomain(properties[0])
     primary_key = properties[1]
     return domain_class, primary_key
-
+    
 class WorkspaceContainer(AlchemistContainer):
     __name__ = __parent__ = None
     interface.implements(interfaces.IWorkspaceContainer)
@@ -49,23 +49,10 @@ class WorkspaceContainer(AlchemistContainer):
             interface.alsoProvides(self, marker)
         super(WorkspaceContainer, self).__init__()
     
-    def get_principal_roles(self, principal):
-        """Returns roles associated with groups.
-        """
-        session = Session()
-        roles = []
-        for group_id in principal.groups.keys():
-            result = session.query(domain.Group).filter(
-                            domain.Group.group_principal_id == group_id).first()
-            if result:
-                roles.extend(get_context_roles(
-                                          get_group_context(result), principal))
-        return roles
-            
     @property
     def _query( self ):
         principal = get_principal()
-        roles = self.get_principal_roles(principal)
+        roles = get_principal_roles(principal)
         #Add bungeni.Owner to the roles
         roles.append("bungeni.Owner")
         workspace_tabs = component.getUtility(IWorkspaceTabsUtility)

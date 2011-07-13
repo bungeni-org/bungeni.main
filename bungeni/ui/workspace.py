@@ -210,7 +210,7 @@ class WorkspaceAddForm(AddForm):
     def domain_model(self):
         item_type = self.__name__.split("_")[1]
         workspace_config = component.getUtility(IWorkspaceTabsUtility)
-        domain = workspace_config.getDomainOrType(item_type)
+        domain = workspace_config.getDomain(item_type)
         return domain
         
     def getDomainModel(self):
