@@ -99,7 +99,7 @@ class AppSetup(object):
         # EXCEPTION: the "/", when logged in, is redirected to "/workspace/pi"
         
         self.context["bungeni"] = AkomaNtosoSection(
-            title=_(u"Bungenis"),
+            title=_(u"Bungeni"),
             description=_(u"Current parliamentary activity"),
             default_name="bung",
         )
