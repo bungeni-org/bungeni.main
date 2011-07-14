@@ -16,34 +16,18 @@ import schema
 import domain
 import interfaces
 
-
 # !+PARAMETRIZABLE_DOCTYPES
-
-def configurable_properties(kls, mapper_properties):
-    """Add properties, as per configured features for a domain type.
-    """
-    name = kls.__name__
-    # auditable
-    if interfaces.IAuditable.implementedBy(kls):
-        change_kls = getattr(domain, "%sChange" % (name))
-        mapper_properties["changes"] = relation(change_kls,
-            backref="origin", 
-            lazy=False,
-            cascade="all, delete-orphan",
-            passive_deletes=False
-        )
-    # versionable
-    if interfaces.IVersionable.implementedBy(kls):
-        kls.versions = one2many("versions",
-            "bungeni.models.domain.%sVersionContainer" % (name),
-            "content_id")
-    return mapper_properties
-
-def configurable_mappings(kls):
+def configurable_mappings(kls, kls_mapper=None):
     """Add mappings, as per configured features for a domain type.
+
+    !+kls_mapper(mr, jul-2011) when called at time of loading this module i.e.
+    mappers are in the process of being defined, cannot seem to retrieve 
+    the mapper with class_mapper(kls), so as workaround am passing the newly 
+    created mapper instance; calling this downstream does not require to 
+    specify the mapper instance as it is retrievable with class_mapper(kls).
     """
-    name = kls.__name__
-    # auditable
+    name = kls.__name__    
+    # auditable, determine properties and set mapper for change class/table
     if interfaces.IAuditable.implementedBy(kls):
         change_kls = getattr(domain, "%sChange" % (name))
         change_tbl = getattr(schema, "%s_changes" % (schema.un_camel(name)))
@@ -57,7 +41,7 @@ def configurable_mappings(kls):
         mapper(change_kls, change_tbl, 
             properties=changes_properties(change_tbl)
         )
-    # versionable
+    # versionable,determine properties and set mapper for change class/table
     if interfaces.IVersionable.implementedBy(kls):
         assert change_kls, "May not be IVersionable and not IAuditable"
         version_kls = getattr(domain, "%sVersion" % (name))
@@ -91,7 +75,33 @@ def configurable_mappings(kls):
         mapper(version_kls, version_tbl,
             properties=versions_properties(kls, change_kls, version_tbl)
         )
-
+    # finally, add any properties to the master kls itself
+    def mapper_add_configurable_properties(kls, kls_mapper):
+        def configurable_properties(kls, mapper_properties):
+            """Add properties, as per configured features for a domain type.
+            """
+            # auditable
+            if interfaces.IAuditable.implementedBy(kls):
+                change_kls = getattr(domain, "%sChange" % (name))
+                mapper_properties["changes"] = relation(change_kls,
+                    backref="origin", 
+                    lazy=False,
+                    cascade="all, delete-orphan",
+                    passive_deletes=False
+                )
+            # versionable
+            if interfaces.IVersionable.implementedBy(kls):
+                kls.versions = one2many("versions",
+                    "bungeni.models.domain.%sVersionContainer" % (name),
+                    "content_id")
+            return mapper_properties
+        for key, prop in configurable_properties(kls, {}).items():
+            kls_mapper.add_property(key, prop)
+    # !+kls_mapper
+    if kls_mapper is None:
+        from sqlalchemy.orm import class_mapper
+        kls_mapper = class_mapper(kls)
+    mapper_add_configurable_properties(kls, kls_mapper)
 # !+/PARAMETRIZABLE_DOCTYPES
 
 #user address types
@@ -354,8 +364,9 @@ mapper(domain.CommitteeStaff,
 
 mapper(domain.ParliamentSession, schema.parliament_sessions)
 
+configurable_mappings(domain.GroupSitting,
 mapper(domain.GroupSitting, schema.group_sittings,
-    properties=configurable_properties(domain.GroupSitting, {
+    properties={
         "group_sitting_type": relation(domain.GroupSittingType, uselist=False),
         "group": relation(domain.Group,
             primaryjoin=schema.group_sittings.c.group_id == schema.groups.c.group_id,
@@ -372,9 +383,8 @@ mapper(domain.GroupSitting, schema.group_sittings,
             order_by=schema.item_schedules.c.planned_order
         ),
         "venue": relation(domain.Venue),
-    })
-)
-configurable_mappings(domain.GroupSitting)
+    }
+))
 
 mapper(domain.ResourceType, schema.resource_types)
 mapper(domain.Resource, schema.resources)
@@ -408,11 +418,13 @@ mapper(domain.Heading,
 
 mapper(domain.QuestionType, schema.question_types)
 mapper(domain.ResponseType, schema.response_types)
+
+configurable_mappings(domain.Question,
 mapper(domain.Question, schema.questions,
     inherits=domain.ParliamentaryItem,
     polymorphic_on=schema.parliamentary_items.c.type,
     polymorphic_identity="question",
-    properties=configurable_properties(domain.Question, {
+    properties={
         "ministry": relation(domain.Ministry, lazy=False, join_depth=2),
         "question_type": relation(domain.QuestionType, uselist=False,
             lazy=False
@@ -420,25 +432,24 @@ mapper(domain.Question, schema.questions,
         "response_type": relation(domain.ResponseType, uselist=False,
             lazy=False
         ),
-    })
-)
-configurable_mappings(domain.Question)
+    }
+))
 
+configurable_mappings(domain.Motion,
 mapper(domain.Motion, schema.motions,
     inherits=domain.ParliamentaryItem,
     polymorphic_on=schema.parliamentary_items.c.type,
     polymorphic_identity="motion",
-    properties=configurable_properties(domain.Motion, {})
-)
-configurable_mappings(domain.Motion)
+    properties={}
+))
 
+configurable_mappings(domain.Bill,
 mapper(domain.Bill, schema.bills,
     inherits=domain.ParliamentaryItem,
     polymorphic_on=schema.parliamentary_items.c.type,
     polymorphic_identity="bill",
-    properties=configurable_properties(domain.Bill, {})
-)
-configurable_mappings(domain.Bill)
+    properties={}
+))
 
 mapper(domain.EventItem, schema.event_items,
     inherits=domain.ParliamentaryItem,
@@ -450,11 +461,12 @@ mapper(domain.EventItem, schema.event_items,
     polymorphic_identity="event"
 )
 
+configurable_mappings(domain.AgendaItem,
 mapper(domain.AgendaItem, schema.agenda_items,
     inherits=domain.ParliamentaryItem,
     polymorphic_on=schema.parliamentary_items.c.type,
     polymorphic_identity="agendaitem",
-    properties=configurable_properties(domain.AgendaItem, {
+    properties={
         "group": relation(domain.Group,
             primaryjoin=(
                 schema.agenda_items.c.group_id == schema.groups.c.group_id),
@@ -462,25 +474,24 @@ mapper(domain.AgendaItem, schema.agenda_items,
             lazy=False,
             uselist=False
         )
-    })
-)
-configurable_mappings(domain.AgendaItem)
+    }
+))
 
+configurable_mappings(domain.TabledDocument,
 mapper(domain.TabledDocument, schema.tabled_documents,
     inherits=domain.ParliamentaryItem,
     polymorphic_on=schema.parliamentary_items.c.type,
     polymorphic_identity="tableddocument",
-    properties=configurable_properties(domain.TabledDocument, {})
-)
-configurable_mappings(domain.TabledDocument)
+    properties={}
+))
 
 mapper(domain.AttachedFileType, schema.attached_file_types)
+configurable_mappings(domain.AttachedFile,
 mapper(domain.AttachedFile, schema.attached_files,
-    properties=configurable_properties(domain.AttachedFile, {
+    properties={
         "type": relation(domain.AttachedFileType, uselist=False)
-    })
-)
-configurable_mappings(domain.AttachedFile)
+    }
+))
 
 #Items scheduled for a sitting expressed as a relation
 # to their item schedule
@@ -505,13 +516,13 @@ mapper(domain.ItemScheduleDiscussion, schema.item_schedule_discussions)
 # items scheduled for a sitting
 # expressed as a join between item and schedule
 
+configurable_mappings(domain.Signatory,
 mapper(domain.Signatory, schema.signatories,
-    properties=configurable_properties(domain.Signatory, {
+    properties={
         "item": relation(domain.ParliamentaryItem, uselist=False),
         "user": relation(domain.User, uselist=False),
-    })
-)
-configurable_mappings(domain.Signatory)
+    }
+))
 
 mapper(domain.BillType, schema.bill_types)
 #mapper(domain.DocumentSource, schema.document_sources)
