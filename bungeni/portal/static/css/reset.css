@@ -53,6 +53,11 @@
     height: 20px;
     line-height: 20px;
 }
+.template-portal #top-layer ul#portal-personaltools li:last-child {
+    margin-right:0px;
+    float:right;
+    clear:both;
+}
 #top-layer #demoWarning {
     width: 150px;
     height: 18px;
@@ -1320,6 +1325,36 @@ div.main-column #collage h2 {
 }
  dl.portalMessage {
     margin-top:.3em;
+}
+
+/*
+ * login-form
+ */
+.template-portal #login-form,
+.template-portal #login-forgotten-password {
+    margin-left:auto;
+    margin-right:auto;
+    width:330px;
+}
+.template-portal #login-form .field {
+    margin-bottom:5px;
+    clear:both;
+}
+.template-portal #login-form .formControls {
+    margin-top:10px;
+    clear:both;
+}
+.template-portal #login-form .formControls input {
+    border:1px solid #f79f10 !important;
+}
+.template-portal #login-form .field input {
+    float:right;
+}
+.template-portal #login-form .field label {
+    padding-top:10px !important;
+    text-align:left;
+    vertical-align:bottom;
+    float:left;
 }
 
 /*********************************************************************************************************/

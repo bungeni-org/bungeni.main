@@ -33,7 +33,7 @@
     color: #fff;
 }
 #top-layer ul#portal-personaltools li a:hover {
-    color: #888;
+    color: #fffd6e !important;
 }
 #top-layer ul#portal-languageselector {
     font-size: 100%;
@@ -42,11 +42,19 @@
     color: #fff;
 }
 #top-layer ul#portal-languageselector li a:hover {
-    color: #888;
+    color: #fffd6e !important;
+    background:transparent !important;
 }
 #top-layer ul#portal-languageselector li.selected a {
-    color: #000000;
+    color: #000000 !important;
 }
+/*#top-layer ul#portal-personaltools li a.link-overlay {
+    margin-right:-60px;
+    float:right;
+    clear:both;
+}
+*/
+
 /*
  * Notes:
  * - set text-decoration to 'none' to remove blinking effect.
@@ -773,7 +781,7 @@ dl.portalMessage dd {
     background: #f9ac32 url(/static/images/globalnav-level1-bg.png) bottom left repeat-x;
 }
 .template-portal dd#fieldset-written-question-response div.documentDescription {
-    background:#013394 !important;
+    background: #f9ac32 url(/static/images/globalnav-level1-bg.png) bottom left repeat-x;
     color:#000;
     font-weight:normal;
 }
@@ -1162,6 +1170,15 @@ div.main-column #collage h2 {
 }
 .template-workspace #portal-logo img {
     border: 0 none;
+}
+.template-workspace #top-layer ul#portal-personaltools li a:hover {
+    color: #fffd6e !important;
+}
+.template-workspace #top-layer ul#portal-languageselector li a:hover {
+    color: #fffd6e !important;
+}
+.template-workspace #top-layer ul#portal-languageselector li.selected a:hover {
+    color: #000000;
 }
 
 /*
@@ -1609,4 +1626,35 @@ div.main-column #collage h2 {
 }
 .template-portal div#content div dl.enableFormTabbing form div.widget h3.reportmover:first-child span {
     font-weight:bold;
+}
+
+/*Workspace overrides*/
+.template-workspace.section-bungeni-workspace table.listing th,
+.template-workspace.section-bungeni-workspace table.listingdescription th,
+.template-workspace.section-bungeni-workspace .stx table th,
+.template-workspace.section-bungeni-workspace .yui-skin-sam .yui-dt-first th,
+.section-bungeni-workspace tr.yui-dt-first th {
+    background:#aaa !important;
+    text-shadow: 0 0 0  #fff;
+    color: #000 !important;
+}
+.template-workspace.section-bungeni-workspace #display_form_spacer {
+    background:#aaa !important;
+}
+
+/*MailBox*/
+.template-workspace .portlet ul.contentViewsLeftPort li {
+    border:0 none !important;
+}
+.template-workspace .portlet ul.contentViewsLeftPort li a {
+    border:1px solid #888 !important;
+    -moz-border-radius: 3px; 
+    -webkit-border-radius: 3px; 
+    border-radius: 3px;
+    background-color:#f9f9f9 !important;
+}
+.template-workspace .portlet ul.contentViewsLeftPort li.selected,
+.template-workspace .portlet ul.contentViewsLeftPort li a:hover {
+    background-color:#21a1ba !important;
+    color:#fff !important;
 }
