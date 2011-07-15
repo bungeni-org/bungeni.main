@@ -8,6 +8,7 @@ from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowed, \
     IStateController, IWorkflowController
 from bungeni.core.workflow.states import StateController, WorkflowController, \
     get_object_state
+import bungeni.core.audit
 import bungeni.core.version
 import bungeni.core.interfaces
 from bungeni.utils.capi import capi
@@ -57,16 +58,54 @@ def load_workflow(name, iface,
     # the iface is applied (that, at this point, may not be unambiguously 
     # determined). This has the advantage of then being able to 
     # register/lookup adapters on only this single interface.
-    #
-    # A simple way to "mark" the supplied iface with IWorkflowed is to 
-    # "add" IWorkflowed as an inheritance ancestor to iface:
+    # 
+    # Normally this is done by applying the iface to the target type, but
+    # at this point may may not be unambiguously determined--so, we instead 
+    # "mark" the interface itself... by simply adding IWorkflowed as an 
+    # inheritance ancestor to iface (if it is not already):
     if (IWorkflowed not in iface.__bases__):
         iface.__bases__ = (IWorkflowed,) + iface.__bases__
+    
+    # apply customizations, features as per configuration of the document type 
+    def camel(name):
+        """Convert an underscore-separated word to CamelCase."""
+        return "".join([ s.capitalize() for s in name.split("_") ])
+    from bungeni.models import domain, schema, orm
+    def get_domain_kls(workflow_name):
+        """Infer a workflow's target domain kls from the workflow file name, 
+        following underscore naming to camel case convention; names that do 
+        not follow the convention are custom handled, as per mapping below.
+        """
+        # !+ should state it explicitly as a param?
+        # !+ problem with multiple types sharing same workflow e.g. 
+        #    UserAddress, GroupAddress
+        kls_name = camel(
+            get_domain_kls.non_conventional.get(workflow_name, workflow_name))
+        return getattr(domain, kls_name)
+    get_domain_kls.non_conventional = {
+        "address": "user_address", # "group_address"?
+        "agendaitem": "agenda_item",
+        "attachedfile": "attached_file",
+        "event": "event_item",
+        "groupsitting": "group_sitting",
+        "tableddocument": "tabled_document",
+    }
+    if wf.auditable or wf.versionable:
+        kls = get_domain_kls(name)
+        if wf.versionable:
+            kls = domain.versionable(kls)
+        elif wf.auditable:
+            kls = domain.auditable(kls)
+        schema.configurable_schema(kls)
+        orm.configurable_mappings(kls)
+        bungeni.core.audit.set_auditor(kls)
+        kn = kls.__name__
     
     # register related adapters
     
     # Workflow instances as utilities
     provideUtilityWorkflow(wf, name)
+    
     # Workflows are also the factory of own AdaptedWorkflows
     provideAdapterWorkflow(wf, iface)
     # !+VERSION_WORKFLOW(mr, apr-2011)

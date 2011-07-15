@@ -157,10 +157,15 @@ def _load(workflow, name):
     """
     transitions = []
     states = []
-    domain = strip_none(workflow.get("domain"))
+    domain = strip_none(workflow.get("domain")) 
+    # !+domain(mr, jul-2011) drop? only used as state/transition title default
     wuids = set() # unique IDs in this XML workflow file
+    auditable = as_bool(strip_none(workflow.get("auditable")) or "false")
+    versionable = as_bool(strip_none(workflow.get("versionable")) or "false")
+    if versionable:
+        assert auditable, "Workflow [%s] is versionable but not auditable" % (
+            name)
     note = strip_none(workflow.get("note"))
-    
         
     # initial_state, must be ""
     assert workflow.get("initial_state") == "", "Workflow [%s] initial_state " \
@@ -293,7 +298,7 @@ def _load(workflow, name):
             State(state_id, Message(s.get("title", domain)), 
                 strip_none(s.get("note")),
                 actions, permissions, notifications,
-                as_bool(strip_none(s.get("obsolete") or "false")))
+                as_bool(strip_none(s.get("obsolete")) or "false"))
         )
         
                     
@@ -374,5 +379,5 @@ def _load(workflow, name):
             log.debug("[%s] adding transition [%s-%s] [%s]" % (
                 name, source or "", destination, kw))
     
-    return Workflow(name, states, transitions, note)
+    return Workflow(name, states, transitions, auditable, versionable, note)
 

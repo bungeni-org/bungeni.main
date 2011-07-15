@@ -59,8 +59,8 @@ def wrapped_condition(condition):
         try:
             return condition(context)
         except Exception, e:
-            raise interfaces.WorkflowConditionError("%s: %s" % (
-                e.__class__.__name__, e))
+            raise interfaces.WorkflowConditionError("%s: %s [%s/%s]" % (
+                e.__class__.__name__, e, context, condition))
     return test
 
 #
@@ -224,8 +224,12 @@ class Workflow(object):
     
     initial_state = None
     
-    def __init__(self, name, states, transitions, note=None):
+    def __init__(self, name, states, transitions, 
+            auditable=False, versionable=False, note=None
+        ):
         self.name = name
+        self.auditable = auditable # must be True if versionable
+        self.versionable = versionable
         self.note = note
         self._states_by_id = {} # {id: State}
         self._transitions_by_id = {} # {id: Transition}

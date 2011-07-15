@@ -77,6 +77,8 @@
                 question_number
                 receive_notification
                 registry_number
+                signatories
+                assignedgroups
                 parliament_id
                 owner_id"
         />

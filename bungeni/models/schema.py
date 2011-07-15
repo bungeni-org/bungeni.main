@@ -99,6 +99,7 @@ def make_changes_table(table, metadata):
         rdb.Column("description", rdb.UnicodeText),
         rdb.Column("notes", rdb.UnicodeText),
         rdb.Column("user_id", rdb.Integer, rdb.ForeignKey("users.user_id")),
+        useexisting=True # !+ZCA_TESTS(mr, jul-2011) tests break without this
     )
     return changes_table
 
@@ -133,7 +134,9 @@ def make_versions_table(table, metadata, secondary_table=None):
     extend_cols(columns, table.columns)
     if secondary_table is not None:
         extend_cols(columns, secondary_table.columns)
-    versions_table = rdb.Table(versions_name, metadata, *columns)
+    versions_table = rdb.Table(versions_name, metadata, *columns,
+        useexisting=True # !+ZCA_TESTS(mr, jul-2011) tests break without this
+    )
     return versions_table
 
 # !+/PARAMETRIZABLE_DOCTYPES

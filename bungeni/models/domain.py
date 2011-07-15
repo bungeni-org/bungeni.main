@@ -275,7 +275,7 @@ class CommitteeStaff(GroupMembership):
         "bungeni.models.domain.MemberTitleContainer", "membership_id")
 
 
-@auditable # Note: Not a ParliamentaryItem
+# auditable (by default), but not a ParliamentaryItem
 class GroupSitting(Entity):
     """Scheduled meeting for a group (parliament, committee, etc).
     """
@@ -562,7 +562,7 @@ class AttachedFileType(object):
     """
     interface.implements(interfaces.ITranslatable)
 
-@versionable # Note: Not a ParliamentaryItem
+# versionable (by default), but not a ParliamentaryItem
 class AttachedFile(Entity):
     """Files attached to a parliamentary item.
     """
@@ -582,13 +582,13 @@ class _AdmissibleMixin(object):
         return self._get_workflow_date("admissible")
 
 
-@versionable
+# versionable (by default)
 class AgendaItem(ParliamentaryItem, _AdmissibleMixin):
     """Generic Agenda Item that can be scheduled on a sitting.
     """
 
 
-@versionable
+# versionable (by default)
 class Question(ParliamentaryItem, _AdmissibleMixin):
     #supplementaryquestions = one2many("supplementaryquestions", 
     #"bungeni.models.domain.QuestionContainer", "supplement_parent_id")
@@ -600,7 +600,7 @@ class Question(ParliamentaryItem, _AdmissibleMixin):
             return parent.short_name
 
 
-@versionable
+# versionable (by default)
 class Motion(ParliamentaryItem, _AdmissibleMixin):
     sort_on = ParliamentaryItem.sort_on + ["motion_number"]
     @property
@@ -613,13 +613,13 @@ class BillType(Entity):
     """
     interface.implements(interfaces.ITranslatable, interfaces.IBillType)
 
-@versionable
+# versionable (by default)
 class Bill(ParliamentaryItem):
     @property
     def submission_date(self):
         return self._get_workflow_date("working_draft")
 
-@auditable # Note: Not a ParliamentaryItem
+# auditable (by default), but not a ParliamentaryItem
 class Signatory(Entity):
     """Signatories for a Bill or Motion.
     """
@@ -747,7 +747,7 @@ class ItemScheduleDiscussion(Entity):
     """
     interface.implements(interfaces.ITranslatable)
 
-@versionable
+# versionable (by default)
 class TabledDocument(ParliamentaryItem, _AdmissibleMixin):
     """Tabled documents:
     a tabled document captures metadata about the document 
