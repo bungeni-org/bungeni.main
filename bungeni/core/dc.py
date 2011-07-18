@@ -38,11 +38,12 @@ class DublinCoreMetadataAdapter(object):
 
     def __getattr__(self, attribute):
         for iface in self.interfaces:
-            if attribute in iface.names():
-                adapter = self.adapters.get(iface)
-                if adapter is None:
-                    adapter = self.adapters[iface] = iface(self.context)
-                return getattr(adapter, attribute)
+            adapter = self.adapters.get(iface)
+            if adapter is None:
+                adapter = self.adapters[iface] = iface(self.context)
+            if adapter is None:
+                break
+            return getattr(adapter, attribute)                
         raise AttributeError(attribute)
 
 
@@ -242,9 +243,26 @@ class UserDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         return "%s %s %s" % (self.translate(context,"titles"),
-                context.first_name,
-                context.last_name)
+            context.first_name, context.last_name
+        )
 
+    @property
+    def title_member(self):
+        session = Session()
+        context = session.merge(removeSecurityProxy(self.context))
+        mp_user = session.query(domain.MemberOfParliament).filter(
+            domain.MemberOfParliament.user_id == context.user_id
+        ).one()
+        if mp_user is None:
+            return self.title
+        dc_constituency = IDCDescriptiveProperties(mp_user.constituency)
+        return _("member_title_with_constituency",
+                default=u"Member of Parliament for ${constituency} (${member})",
+                mapping = {
+                    "constituency": dc_constituency.title,
+                    "member": self.title
+                }
+        )
 
 class GroupMembershipDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IBungeniGroupMembership)
@@ -323,7 +341,6 @@ class ConstituencyDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         return self.translate(context, "name")
-
 
 class ProvinceDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IProvince)

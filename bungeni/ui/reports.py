@@ -181,7 +181,7 @@ class ReportView(form.PageForm):
             tabled_documents_options = "Title"
             note = None
             date = None
-            short_name = "Order of the day"
+            short_name = _(u"Order of the day")
         self.adapters = {
             self.IReportForm: context
             }
@@ -201,13 +201,13 @@ class ReportView(form.PageForm):
         
     def time_span(self,data):
         if "short_name" in data:
-            if data["short_name"] == "Order of the day":
+            if data["short_name"] == u"Order of the day":
                 return TIME_SPAN.daily
-            elif data["short_name"] == "Proceedings of the day":
+            elif data["short_name"] == u"Proceedings of the day":
                 return TIME_SPAN.daily
-            elif data["short_name"] == "Weekly Business":
+            elif data["short_name"] == u"Weekly Business":
                 return TIME_SPAN.weekly
-            elif data["short_name"] == "Questions of the week":
+            elif data["short_name"] == u"Questions of the week":
                 return TIME_SPAN.weekly
         else:
             return TIME_SPAN.daily
@@ -245,6 +245,15 @@ class ReportView(form.PageForm):
                         "date"))
         return errors
     
+    def l10n_dates(self, date_time="", dt_format="dateTime"):
+        if date_time:
+            try:
+                formatter = self.request.locale.dates.getFormatter(dt_format)
+                return formatter.format(date_time)
+            except AttributeError:
+                return date_time
+        return date_time
+    
     @form.action(_(u"Preview"))
     def handle_preview(self, action, data):
         self.process_form(data)
@@ -277,8 +286,8 @@ class ReportView(form.PageForm):
                                         self.start_date, self.end_date).values()
             self.sittings = map(removeSecurityProxy,sittings)
         self.ids = ""
-        for s in self.sittings:
-            self.ids += str(s.group_sitting_id) + ","
+        for sitting in self.sittings:
+            self.ids += str(sitting.group_sitting_id) + ","
         def cleanup(string):
             return string.lower().replace(" ", "_")
         for item_type in data["item_types"]:
@@ -298,7 +307,7 @@ class ReportView(form.PageForm):
 
 class GroupSittingContextAgendaReportView(ReportView):
     display_minutes = False
-    short_name = "Sitting Agenda"
+    short_name = _(u"Sitting Agenda")
     note = ""
     form_fields = ReportView.form_fields.omit("short_name", "date")
 
@@ -458,11 +467,11 @@ def default_reports(sitting, event):
         report.created_date = datetime.datetime.now()
         report.group_id = sitting.group_id
         if sitting.status == 'published_agenda':
-            report.short_name = "Sitting Agenda"
+            report.short_name = _(u"Sitting Agenda")
             drc = DefaultReportContent(sittings, report.short_name, False)
             report.body_text = DefaultReportView(drc, TestRequest())()
         elif sitting.status == 'published_minutes':
-            report.short_name = "Sitting Votes and Proceedings"
+            report.short_name = _(u"Sitting Votes and Proceedings")
             drc = DefaultReportContent(sittings, report.short_name, True)
             report.body_text = DefaultReportView(drc, TestRequest(), False)()
         session.add(report)
