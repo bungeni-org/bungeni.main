@@ -404,8 +404,8 @@ mapper(domain.ParliamentaryItem, schema.parliamentary_items,
                 schema.users.c.user_id),
             uselist=False,
             lazy=False),
-        "itemsignatories": relation(domain.User,
-            secondary=schema.signatories),
+        # !+NAMING(mr, jul-2011)
+        "itemsignatories": relation(domain.User, secondary=schema.signatories),
         "attached_files": relation(domain.AttachedFile)
     }
 )

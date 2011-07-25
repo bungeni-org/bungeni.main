@@ -20,12 +20,24 @@
                 status
                 status_date
                 registry_number
+                signatories
+                assignedgroups
                 note
                 receive_notification"
         />
+        <require permission="zope.View"
+            set_attributes="timestamp"
+        /><!-- !+TIMESTAMP(mr, jul-2011) granting edit on timestamp to anyone 
+        with view privilege, as an item, while not essentuially being editable 
+        may still be affected by the user's action e.g transited to another 
+        state without "any modifications". Previous to circa r8460, this was 
+        not an issue, and the user was being allowed to set timestamp even if
+        no edit permission on the item.
+        -->
     </class>
     
     <class class=".domain.Bill">
+        <require like_class=".domain.ParliamentaryItem" />
         <require permission="zope.View"
             attributes="
                 status
@@ -39,9 +51,7 @@
                 full_name
                 publication_date
                 receive_notification
-                registry_number
-                owner_id
-                parliament_id" 
+                registry_number" 
         />
         <require permission="bungeni.bill.Edit"
             attributes="note" 
@@ -62,6 +72,7 @@
     </class>
     
     <class class=".domain.Question">
+        <require like_class=".domain.ParliamentaryItem" />
         <require permission="zope.View"
             attributes="
                 status
@@ -76,11 +87,7 @@
                 question_type
                 question_number
                 receive_notification
-                registry_number
-                signatories
-                assignedgroups
-                parliament_id
-                owner_id"
+                registry_number"
         />
         <require permission="bungeni.question.Edit"
             attributes="note" 
@@ -112,11 +119,10 @@
     </class>
     
     <class class=".domain.Motion">
+        <require like_class=".domain.ParliamentaryItem" />
         <require permission="zope.View"
             attributes="
-                parliamentary_item_id
                 motion_id
-                owner_id
                 language
                 short_name
                 full_name
@@ -215,10 +221,9 @@
     </class>
     
     <class class=".domain.AgendaItem">
+        <require like_class=".domain.ParliamentaryItem" />
         <require permission="zope.View"
             attributes="
-                parliamentary_item_id
-                owner_id
                 language
                 short_name
                 full_name
@@ -246,10 +251,9 @@
         />
     </class>
     <class class=".domain.TabledDocument">
+        <require like_class=".domain.ParliamentaryItem" />
         <require permission="zope.View"
             attributes="
-                parliamentary_item_id
-                owner_id
                 language
                 short_name
                 full_name
