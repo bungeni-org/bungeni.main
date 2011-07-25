@@ -8,6 +8,7 @@ from zope import component
 
 from bungeni.alchemist.interfaces import IDatabaseEngine
 from bungeni import models as model
+from bungeni.ui import descriptor
 from bungeni.models.testing import setup_db
 
 

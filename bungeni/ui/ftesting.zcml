@@ -33,7 +33,6 @@
   <db:bind
      engine="bungeni-db"
      metadata="bungeni.alchemist.security.metadata" />
-  <include package="bungeni.ui.descriptor" file="catalyst.zcml"/>
   <include package="bungeni.ui" file="meta.zcml"/>
   <include package="bungeni.models"/>
   <include package="bungeni_custom.sys" file="openoffice.zcml" />

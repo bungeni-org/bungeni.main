@@ -14,7 +14,7 @@ from zope.configuration import xmlconfig
 from bungeni.models import metadata, interfaces
 from interfaces import IAssignmentFactory, IContentAssignments, IContextAssignments
 from bungeni.core.workflows import adapters
-    
+from bungeni.ui import descriptor
 
 zcml_slug = """
 <configure xmlns="http://namespaces.zope.org/zope"
@@ -37,9 +37,6 @@ zcml_slug = """
      engine="bungeni-db"
      metadata="bungeni.alchemist.security.metadata" />
 
-  <!-- Setup Core Model --> 
-  <include package="bungeni.ui.descriptor" file="catalyst.zcml"/>
- 
 </configure>
 """
 

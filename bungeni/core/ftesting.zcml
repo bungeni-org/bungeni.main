@@ -36,7 +36,6 @@
     
     <include package="bungeni.alchemist" file="meta.zcml"/>
     <include package="alchemist.catalyst" file="meta.zcml"/>
-    <include package="bungeni.ui.descriptor" file="catalyst.zcml"/>
     <include package="ore.xapian" file="meta.zcml" />
     <include package="ore.xapian" />
     <include package="z3c.pt" />

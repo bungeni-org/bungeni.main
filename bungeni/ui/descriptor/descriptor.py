@@ -6,6 +6,7 @@
 
 $Id$
 """
+log = __import__("logging").getLogger("bungeni.ui.descriptor")
 
 from copy import deepcopy
 from zope import schema, interface
@@ -36,7 +37,7 @@ from bungeni.ui.fields import VocabularyTextField
 from bungeni.ui import constraints
 from bungeni.ui.forms import validations
 from bungeni.ui.i18n import _
-from bungeni.ui.utils import common, date, misc
+from bungeni.ui.utils import common, date, misc, debug
 from bungeni.ui import vocabulary
 from bungeni.ui.tagged import get_states
 from bungeni.ui.interfaces import IBusinessSectionLayer
@@ -49,6 +50,7 @@ event_wf_get_state = get_workflow("event").get_state
 heading_wf_get_state = get_workflow("heading").get_state
 committee_wf_get_state = get_workflow("committee").get_state
 parliament_wf_get_state = get_workflow("parliament").get_state
+#!+VERSION_WORKFLOW
 version_wf_get_state = get_workflow("version").get_state
 
 ###
@@ -2233,6 +2235,7 @@ class VersionDescriptor(ModelDescriptor):
             edit_widget=widgets.OneTimeEditWidget,
         ),
     ]
+    #!+VERSION_WORKFLOW
     public_wfstates = [version_wf_get_state("archived").id]
 
 
@@ -2505,12 +2508,12 @@ class BillDescriptor(ParliamentaryItemDescriptor):
 
     public_wfstates = get_states("bill", not_tagged=["private"])
 
-
 class BillVersionDescriptor(VersionDescriptor):
     localizable = True
     display_name = _("Bill version")
     container_name = _("Versions")
     fields = deepcopy(VersionDescriptor.fields)
+
 
 class QuestionTypeDescriptor(ModelDescriptor):
     localizable = False
@@ -2537,7 +2540,6 @@ class ResponseTypeDescriptor(ModelDescriptor):
         ),
         LanguageField("language"),
     ]
-
 
 class QuestionDescriptor(ParliamentaryItemDescriptor):
     localizable = True
@@ -3371,3 +3373,52 @@ class Report4SittingDescriptor(ReportDescriptor):
     fields = deepcopy(ReportDescriptor.fields)
 
 
+# catalyze above descriptors
+def catalyse_descriptors():
+    """Catalyze descriptors above. 
+    Relate each descriptor to a domain type via naming convention:
+    - if no domain type exists with that name, ignore
+    !+ this is probably catalyzing some descriptors unnecessarily... 
+    !+ if there is a need to be finer grained or for an explicit declaration
+    of what descriptors should be catalyzed, a flag may be added e.g. a 
+    catalyze:bool attribute could be added on Descriptor class.
+    """
+    import sys
+    # mapping of unconventional descriptor prefixes to domain type names
+    # !+RENAME_TO_CONVENTION
+    non_conventional = {
+        "Attendance": "GroupSittingAttendance",
+        "Mp": "MemberOfParliament",
+        "Sitting": "GroupSitting",
+        "Session": "ParliamentSession",
+    }
+    def descriptor_classes():
+        """A generator of descriptor classes in this module.
+        """
+        from bungeni.alchemist.model import IModelDescriptor
+        module = sys.modules[__name__]
+        for key in dir(module):
+            cls = getattr(module, key)
+            try:
+                assert IModelDescriptor.implementedBy(cls)
+                yield cls
+            except (TypeError, AttributeError, AssertionError):
+                debug.log_exc(sys.exc_info(), log_handler=log.debug)
+    from bungeni.alchemist.catalyst import catalyst
+    for descriptor in descriptor_classes():
+        descriptor_name = descriptor.__name__
+        assert descriptor_name.endswith("Descriptor")
+        desc_prefix = descriptor_name[0:-len("Descriptor")]
+        kls_name = non_conventional.get(desc_prefix, desc_prefix)
+        try:
+            kls = getattr(domain, kls_name)
+            catalyst(None, kls, descriptor, echo=True)
+        except (Exception,):
+            # no corresponding domain class, ignore 
+            # e.g. Address, Model, Version
+            debug.log_exc(sys.exc_info(), log_handler=log.warn)
+
+# !+catalyse_descriptors(mr, jul-2011), fails when this is called here 
+#catalyse_descriptors()
+
+#
