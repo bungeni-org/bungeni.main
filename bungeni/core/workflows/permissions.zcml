@@ -36,6 +36,23 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.address.wf.public.internal.private" role="bungeni.Owner" />
 
 
+<!-- attachedfile -->
+<grant permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
+
+<permission id="bungeni.attachedfile.wf.private.internal" title="Publish Internal" />
+<grant permission="bungeni.attachedfile.wf.private.internal" role="bungeni.Owner" />
+
+<permission id="bungeni.attachedfile.wf.private.internal.public" title="Publish to Public" />
+<grant permission="bungeni.attachedfile.wf.private.internal.public" role="bungeni.Owner" />
+
+<permission id="bungeni.attachedfile.wf.private.inactive" title="Drop" />
+<grant permission="bungeni.attachedfile.wf.private.inactive" role="bungeni.Owner" />
+
+<permission id="bungeni.attachedfile.wf.public.internal.inactive" title="Deactivate" />
+<grant permission="bungeni.attachedfile.wf.public.internal.inactive" role="bungeni.Clerk" />
+<grant permission="bungeni.attachedfile.wf.public.internal.inactive" role="bungeni.Speaker" />
+
+
 <!-- agendaitem -->
 <grant permission="bungeni.agendaitem.View" role="bungeni.Owner" />
 <grant permission="bungeni.agendaitem.View" role="bungeni.Signatory" />
@@ -116,23 +133,6 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.agendaitem.wf.admissible.scheduled.deferred.adjourned.schedule_pending.withdrawn" title="Withdraw" />
 <grant permission="bungeni.agendaitem.wf.admissible.scheduled.deferred.adjourned.schedule_pending.withdrawn" role="bungeni.Clerk" />
 <grant permission="bungeni.agendaitem.wf.admissible.scheduled.deferred.adjourned.schedule_pending.withdrawn" role="bungeni.Owner" />
-
-
-<!-- attachedfile -->
-<grant permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
-
-<permission id="bungeni.attachedfile.wf.private.internal" title="Publish Internal" />
-<grant permission="bungeni.attachedfile.wf.private.internal" role="bungeni.Owner" />
-
-<permission id="bungeni.attachedfile.wf.private.internal.public" title="Publish to Public" />
-<grant permission="bungeni.attachedfile.wf.private.internal.public" role="bungeni.Owner" />
-
-<permission id="bungeni.attachedfile.wf.private.inactive" title="Drop" />
-<grant permission="bungeni.attachedfile.wf.private.inactive" role="bungeni.Owner" />
-
-<permission id="bungeni.attachedfile.wf.public.internal.inactive" title="Deactivate" />
-<grant permission="bungeni.attachedfile.wf.public.internal.inactive" role="bungeni.Clerk" />
-<grant permission="bungeni.attachedfile.wf.public.internal.inactive" role="bungeni.Speaker" />
 
 
 <!-- bill -->

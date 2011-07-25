@@ -119,8 +119,11 @@ def load_workflows():
     # workflow instances (+ adapter *factories*)
     load_workflow("address", interfaces.IUserAddress)
     load_workflow("address", interfaces.IGroupAddress)
-    load_workflow("agendaitem", interfaces.IAgendaItem)
+    # !+AttachedFile (mr, jul-2011) 
+    # a) must be loaded before any other type that *may* support attachments!
+    # b) MUST support versions
     load_workflow("attachedfile", interfaces.IAttachedFile)
+    load_workflow("agendaitem", interfaces.IAgendaItem)
     load_workflow("bill", interfaces.IBill)
     load_workflow("committee", interfaces.ICommittee)
     load_workflow("event", interfaces.IEventItem)
