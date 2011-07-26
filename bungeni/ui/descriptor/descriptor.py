@@ -3384,6 +3384,7 @@ def catalyse_descriptors():
     catalyze:bool attribute could be added on Descriptor class.
     """
     import sys
+    import inspect
     # mapping of unconventional descriptor prefixes to domain type names
     # !+RENAME_TO_CONVENTION
     non_conventional = {
@@ -3393,17 +3394,25 @@ def catalyse_descriptors():
         "Session": "ParliamentSession",
     }
     def descriptor_classes():
-        """A generator of descriptor classes in this module.
+        """A generator of descriptor classes in this module, preserving the
+        order of definition.
         """
         from bungeni.alchemist.model import IModelDescriptor
         module = sys.modules[__name__]
+        # dir() returns names in alphabetical order
+        decorated = []
         for key in dir(module):
             cls = getattr(module, key)
             try:
                 assert IModelDescriptor.implementedBy(cls)
-                yield cls
+                # we decorate with the the source code line number for the cls
+                decorated.append((inspect.getsourcelines(cls)[1], cls))
             except (TypeError, AttributeError, AssertionError):
                 debug.log_exc(sys.exc_info(), log_handler=log.debug)
+        # we yield each cls in order of definition
+        for cls in [ cls for (line_num, cls) in sorted(decorated) ]:
+            yield cls
+    
     from bungeni.alchemist.catalyst import catalyst
     for descriptor in descriptor_classes():
         descriptor_name = descriptor.__name__
