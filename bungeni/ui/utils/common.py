@@ -118,17 +118,34 @@ def get_context_roles(context, principal):
             principal.id, str(pg), "\n".join(message), roles))
     return roles
 
-def get_principal_roles(principal):
-        """Returns roles associated with groups.
+def get_workspace_roles(principal):
+        """Returns all the roles that a user has that are relevant to the
+           workspace configuration.
         """
+        
+        #!WORKSPACE(miano, jul 2011)
+        #Roles can be divided into two, roles that a principal gets by virtue 
+        #of his membership to a group and roles that are defined on objects 
+        #eg. bungeni.Owner.
+        #When generating the query for items to be included in the workspace
+        #we do not know whether or not the user has any roles defined on any 
+        #of the objects so we have to query all object states defined for this
+        #type of roles.
+        #There is no way of differentiating between the roles as described 
+        #above except the unpleasant declaration below.
+        #This should be fixed while fixing the role definitions in 
+        #bungeni.alchemist.model
+        object_roles = ["bungeni.Owner", "bungeni.Signatory"]
         session = bungeni.alchemist.Session()
         roles = []
         for group_id in principal.groups.keys():
-            result = session.query(bungeni.models.domain.Group).filter(
-                            bungeni.models.domain.Group.group_principal_id == group_id).first()
+            result = session.query(bungeni.models.domain.Group) \
+                            .filter(bungeni.models.domain.Group. \
+                                        group_principal_id == group_id).first()
             if result:
-                roles.extend(get_context_roles(
-                                          bungeni.core.workflows.utils.get_group_context(result), principal))
+                roles.extend(get_context_roles(bungeni.core.workflows.utils. \
+                                        get_group_context(result), principal))
+        roles.extend(object_roles)
         return roles
 
 def get_request_context_roles(request):

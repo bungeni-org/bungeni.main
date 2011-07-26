@@ -11,7 +11,7 @@ from bungeni.alchemist import Session
 from bungeni.models.domain import ParliamentaryItem
 from bungeni.models import workspace
 from bungeni.models.utils import get_principal
-from bungeni.ui.utils.common import get_principal_roles
+from bungeni.ui.utils.common import get_workspace_roles
 from bungeni.core.interfaces import IWorkspaceTabsUtility
 class CustomAbsoluteURL(AbsoluteURL):
     section = ""
@@ -37,15 +37,14 @@ class WorkspaceAbsoluteURLView(AbsoluteURL):
         domain_class = self.context.__class__
         status = self.context.status
         principal = get_principal()
-        roles = get_principal_roles(principal)
+        roles = get_workspace_roles(principal)
+        tab = None
         for role in roles:
             tab = tabs_utility.getTab(role, domain_class, status)
             if tab:
-                break
-        if tab:
-            base_url = ui_utils.url.absoluteURL(getSite(), self.request)
-            key = workspace.stringKey(self.context)
-            return '%s/workspace/documents/%s/%s' % (base_url, tab, key)
+                base_url = ui_utils.url.absoluteURL(getSite(), self.request)
+                key = workspace.stringKey(self.context)
+                return '%s/workspace/documents/%s/%s' % (base_url, tab, key)
         else:
             return None
             

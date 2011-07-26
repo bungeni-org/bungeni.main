@@ -9,7 +9,7 @@ from zope import interface
 from zope.location.interfaces import ILocation
 from bungeni.models import interfaces
 from bungeni.alchemist import Session, model
-from bungeni.ui.utils.common import get_context_roles, get_principal_roles
+from bungeni.ui.utils.common import get_context_roles, get_workspace_roles
 from bungeni.core.workflows.utils import get_group_context
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from bungeni.models.utils import get_current_parliament
@@ -52,9 +52,7 @@ class WorkspaceContainer(AlchemistContainer):
     @property
     def _query( self ):
         principal = get_principal()
-        roles = get_principal_roles(principal)
-        #Add bungeni.Owner to the roles
-        roles.append("bungeni.Owner")
+        roles = get_workspace_roles(principal)
         workspace_tabs = component.getUtility(IWorkspaceTabsUtility)
         domain_status = {}
         for role in roles:
