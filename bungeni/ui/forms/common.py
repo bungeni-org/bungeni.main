@@ -121,9 +121,9 @@ class BaseForm(formlib.form.FormBase):
 
     status = None
 
-    def __init__(self, *args):
-        super(BaseForm, self).__init__(*args)
-
+    def __init__(self, context, request):
+        super(BaseForm, self).__init__(context, request)
+        
         if str(self.request.get("headless", "")).lower() in TRUE_VALS:
             self.setPrefix(NO_PREFIX)
 
@@ -234,7 +234,7 @@ class AddForm(BaseForm, catalyst.AddForm):
 
     interface.implements(ILocation, IDCDescriptiveProperties)
     description = None
-
+    
     def getDomainModel(self):
         return getattr(self.context, "domain_model", self.context.__class__)
 
@@ -383,8 +383,8 @@ class EditForm(BaseForm, catalyst.EditForm):
     """Custom edit-form for Bungeni content.
     """
 
-    def __init__(self, *args):
-        super(EditForm, self).__init__(*args)
+    def __init__(self, context, request):
+        super(EditForm, self).__init__(context, request)
         # For bungeni content, mark the request that we are in edit mode e.g. 
         # useful for when editing a question's response, but not wanting to 
         # offer option to submit the response while in response edit mode. 
@@ -517,8 +517,8 @@ class TranslateForm(AddForm):
     def side_by_side(self):
         return True
 
-    def __init__(self, *args):
-        super(TranslateForm, self).__init__(*args)
+    def __init__(self, context, request):
+        super(TranslateForm, self).__init__(context, request)
         self.language = self.request.get("language", get_default_language())
 
     def translatable_field_names(self):
