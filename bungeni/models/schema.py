@@ -254,6 +254,8 @@ parliament_memberships = rdb.Table("parliament_memberships", metadata,
         primary_key=True
     ),
     # the constituency/province/region of the MP as of the time he was elected
+    # !+constituency_id/province_id/region_id/party_id(mr, jul-2011) are also 
+    # defined as mapper properties!
     rdb.Column("constituency_id", rdb.Integer,
         rdb.ForeignKey("constituencies.constituency_id")
     ),

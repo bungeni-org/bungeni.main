@@ -114,7 +114,6 @@
   <permission id="bungeni.office.Edit" title="Edit office" />
   <permission id="bungeni.office.Delete" title="Delete office" />
   <permission id="bungeni.office.View" title="View office" />
-  <permission id="bungeni.office.ChangeType" title="Change office type" />
   <meta:redefinePermission from="bungeni.office.View" to="zope.View" />
 
   <permission id="bungeni.officemember.Add" title="Add office member" />

@@ -21,7 +21,7 @@ import sqlalchemy.sql.expression as sql
 import interfaces
 
 
-# svn st 
+#
 
 def object_hierarchy_type(object):
     if isinstance(object, User):
@@ -521,8 +521,10 @@ class ParliamentaryItem(Entity):
         "bungeni.models.domain.AttachedFileContainer", "item_id")
     signatories = one2many("signatories",
         "bungeni.models.domain.SignatoryContainer", "item_id")
+    # !+NAMING(mr, jul-2011) plural!
     event = one2many("event",
         "bungeni.models.domain.EventItemContainer", "item_id")
+    # !+NAMING(mr, jul-2011) inconsistent... should be assigned_groups
     assignedgroups = one2many("assignedgroups",
         "bungeni.models.domain.GroupGroupItemAssignmentContainer", "item_id")
     
