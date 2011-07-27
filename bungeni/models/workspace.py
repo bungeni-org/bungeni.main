@@ -95,6 +95,15 @@ class WorkspaceContainer(AlchemistContainer):
         else:
             return default
             
+    @property
+    def parliament_id(self):
+        """Vocabularies in the forms get the parliament id from the context,
+        this property returns the id of the current parliament because
+        the workspace is meant only for adding current documents
+        """
+        return get_current_parliament().group_id
+        
+                  
 # (SECURITY, miano, july 2011) This factory adapts the workspaces to 
 # zope.securitypolicy.interface.IPrincipalRoleMap and is equivalent to the 
 # principalrolemap of the current parliament.
