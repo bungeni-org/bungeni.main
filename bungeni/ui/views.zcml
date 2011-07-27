@@ -525,12 +525,6 @@
         layer="bungeni.ui.interfaces.IBungeniSkin"
         permission="bungeni.tableddocument.Add"
     />
-    <browser:page name="add_agendaitem"
-        for="bungeni.core.interfaces.IWorkspaceDraft"
-        class=".workspace.WorkspaceAddForm"
-        layer="bungeni.ui.interfaces.IBungeniSkin"
-        permission="bungeni.agendaitem.Add"
-    />
     <browser:page name="add_bill"
         for="bungeni.core.interfaces.IWorkspaceDraft"
         class=".workspace.WorkspaceAddForm"
