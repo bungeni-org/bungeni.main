@@ -437,10 +437,38 @@
         />
     </class>
     
+    <class class=".domain.PoliticalParty">
+        <require like_class=".domain.Group" />
+        <require permission="zope.View"
+            attributes="
+                partmembers 
+                
+                party_id
+                logo_data
+                logo_name
+                logo_mimetype
+            "
+        />
+        <require permission="bungeni.party.Edit"
+            set_attributes="
+                short_name
+                full_name
+                description
+                start_date
+                end_date
+                logo_data
+            "
+        />
+    </class>
     <class class=".domain.PoliticalGroup">
         <require like_class=".domain.PoliticalParty" />
     </class>
-    
+    <!-- !+POLITICAL(mr, jul-2011) clarify usage/implementations of the two 
+    groups PoliticalGroup, PoliticalParty; currently one is a 
+    hacked-and-particlayy-copypasted version of the other i.e. a PoliticalGroup
+    does not have a dedicated political_groups db table (as political_parties)
+    but it has an attribute called partymembers!
+    -->
     
     <!-- group memberships -->
     
@@ -529,33 +557,6 @@
     
     
     <!-- other -->
-    
-    <class class=".domain.PoliticalParty">
-        <require permission="zope.View"
-            attributes="
-                group_id
-                short_name
-                full_name
-                description
-                status
-                start_date
-                end_date
-                type
-                logo_data
-                addresses
-            "
-        />
-        <require permission="bungeni.party.Edit"
-            set_attributes="
-                short_name
-                full_name
-                description
-                start_date
-                end_date
-                logo_data
-            "
-        />
-    </class>
     
     <class class=".domain.GroupSittingAttendance">
         <require permission="zope.View"
