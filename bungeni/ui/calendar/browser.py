@@ -422,7 +422,7 @@ class ItemScheduleOrder(BrowserView):
             for i in range(0,len(obj)):
                 sch = session.query(domain.ItemSchedule).get(obj[i])
                 setattr(sch, 'real_order', i+1)
-        session.commit()
+        session.flush()
 
 
 class SittingCalendarView(CalendarView):
@@ -568,7 +568,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                 sitting.venue_id = data["venue"]
                 session.add(sitting)
                 recurrent_sittings.append(sitting)
-            session.commit()
+            session.flush()
             for s in recurrent_sittings:    
                 notify(ObjectCreatedEvent(s))
                 self.template_data.append({"group_sitting_id": s.group_sitting_id, 
@@ -584,7 +584,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
             sitting.language = data["language"]
             sitting.venue_id = data["venue"]
             session.add(sitting)
-            session.commit()
+            session.flush()
             notify(ObjectCreatedEvent(sitting))
             self.template_data.append({"group_sitting_id": sitting.group_sitting_id, 
                                        "action": "inserted",
@@ -619,7 +619,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         self.template_data.append({"group_sitting_id": sitting.group_sitting_id, 
                                     "action": "inserted",
                                     "ids": data["ids"]})
-        session.commit()
+        session.flush()
         self.request.response.setHeader('Content-type', 'text/xml')
         return self.xml_template()
         
@@ -645,7 +645,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                                        "action": "deleted",
                                        "ids": data["ids"]})
             session.delete(sitting)
-            session.commit()
+            session.flush()
             return self.xml_template()
 
                           
