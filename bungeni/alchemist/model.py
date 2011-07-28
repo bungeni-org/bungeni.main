@@ -408,6 +408,12 @@ class Field(object):
     def __getitem__(self, k):
         return self.__dict__[k]
 
+    # to allow: with field as f:
+    def __enter__(self): 
+        return self
+    def __exit__(self, type, value, traceback): 
+        pass
+
 
 # Model
 

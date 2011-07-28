@@ -52,7 +52,7 @@ def get_wf_state(context, wf_status=None):
 # request 
 
 def is_ajax_request(request):
-    return request.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+    return request.get("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest"
 
 
 # list
@@ -64,9 +64,11 @@ def makeList(itemIds):
         # only one item in this list
         return [itemIds,]
     else:
-         raise TypeError( _("Form values must be of type string or list"))
+         raise TypeError(_("Form values must be of type string or list"))
 
 def get_keyed_item(seq, value, key="name"):
+    """Get the item in the sequence that has a {key} entry set to {value}.
+    """
     for s in seq:
         if s[key] == value:
             return s
@@ -75,11 +77,11 @@ def get_keyed_item(seq, value, key="name"):
 # object
 
 class bunch(dict):
-    '''
+    """
     A dictionary-bunch of values, with convenient dotted access.
     Limitation: keys must be valid object attribute names.
     Inspiration: http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/52308
-    '''
+    """
     def __init__(self, **kwds):
         dict.__init__(self, kwds)
         self.__dict__ = self
@@ -92,13 +94,13 @@ class bunch(dict):
         self.__dict__ = self
 
     def update_from_object(self, obj, no_underscored=True):
-        ''' (obj:object) -> None
+        """ (obj:object) -> None
         Sets each key in dir(obj) as key=getattr(object, key) in self.
         If no_underscored, then exclude "private" (leading "_") and 
         "protected" (leading "__") attributes.
-        '''
+        """
         for name in dir(obj):
-            if not (no_underscored and name.startswith('_')):
+            if not (no_underscored and name.startswith("_")):
                 self[name] = getattr(obj, name)
 
 

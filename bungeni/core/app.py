@@ -101,7 +101,7 @@ class AppSetup(object):
         self.context["bungeni"] = AkomaNtosoSection(
             title=_(u"Bungeni"),
             description=_(u"Current parliamentary activity"),
-            default_name="bung",
+            default_name="bung", # !+NAMING(mr, jul-2011) bung?!?
         )
         
         # top-level sections
@@ -119,45 +119,51 @@ class AppSetup(object):
             marker = interfaces.IWorkspaceDocuments,
         )
         workspace["documents"]["draft"] = WorkspaceContainer(
-                                            parent = workspace["documents"], 
-                                            tab_type = "draft",
-                                            title = _("draft"),
-                                            description = _("draft documents"),
-                                            marker = interfaces.IWorkspaceDraft)
+            parent=workspace["documents"],
+            tab_type="draft",
+            title=_("draft"),
+            description=_("draft documents"),
+            marker=interfaces.IWorkspaceDraft
+        )
         workspace["documents"]["inbox"] = WorkspaceContainer(
-                                            parent = workspace["documents"], 
-                                            tab_type = "inbox",
-                                            title = _("inbox"),
-                                            description = _("incoming documents"),
-                                            marker = interfaces.IWorkspaceInbox)
+            parent=workspace["documents"], 
+            tab_type="inbox",
+            title=_("inbox"),
+            description=_("incoming documents"),
+            marker=interfaces.IWorkspaceInbox
+        )
         workspace["documents"]["sent"] = WorkspaceContainer(
-                                            workspace["documents"], 
-                                            tab_type = "sent",
-                                            title = _("sent"),
-                                            description = _("sent documents"),
-                                            marker = interfaces.IWorkspaceSent)
+            workspace["documents"], 
+            tab_type="sent",
+            title=_("sent"),
+            description=_("sent documents"),
+            marker=interfaces.IWorkspaceSent
+        )
         workspace["documents"]["archive"] = WorkspaceContainer(
-                                                workspace["documents"], 
-                                                tab_type = "archive",
-                                                title = _("archive"),
-                                                description = _("archived documents"),
-                                                marker = interfaces.IWorkspaceArchive)
+            workspace["documents"], 
+            tab_type="archive",
+            title=_("archive"),
+            description=_("archived documents"),
+            marker=interfaces.IWorkspaceArchive
+        )
         
         workspace["scheduling"] = Section(
             title=_(u"Scheduling"),
             description=_(u"Scheduling"),
             default_name="index",
-            marker = interfaces.IWorkspaceScheduling,
+            marker=interfaces.IWorkspaceScheduling,
         )
         workspace["scheduling"]["committees"] = QueryContent(
             container_getter(get_current_parliament, 'committees'),
             title=_(u"Committees"),
             marker=interfaces.ICommitteeAddContext,
-            description=_(u"Committee schedules"))
+            description=_(u"Committee schedules")
+        )
         workspace["scheduling"]["sittings"] = QueryContent(
             container_getter(get_current_parliament, 'sittings'),
             title=_(u"Sittings"),
-            description=_(u"Plenary Sittings"))
+            description=_(u"Plenary Sittings")
+        )
         # Proof-of-concept: support for selective inclusion in breadcrumb trail:
         # a view marked with an attribute __crumb__=False is NOT included in 
         # the breadcrumb trail (see ui/viewlets/navigation.py)
