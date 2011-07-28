@@ -20,6 +20,21 @@ from zope.event import notify
 from appy.pod.renderer import Renderer
 from zope.component.interfaces import ComponentLookupError
 from threading import BoundedSemaphore
+
+from bungeni.ui.table import LinkColumn, SimpleContainerListing
+from zc.table import column
+from bungeni.core.dc import IDCDescriptiveProperties
+from bungeni.ui.i18n import _
+from bungeni.core.translation import translate_i18n
+
+#!+ReportConfiguration(murithi, jul-2011) - Report configuration and templates
+# should eventually be loaded from bungeni_custom
+SUB_CONTAINERS = ["signatories", "files", "changes"]
+CONTAINER_TITLES = {"changes": _(u"Timeline")}
+EXTRA_COLUMNS = {"changes": ["description"],
+                 "signatories": ["status"]
+                }
+
 def unescape(text):
     def fixup(m):
         text = m.group(0)
@@ -58,7 +73,39 @@ def cleanupText(text):
     return str(aftertidy)
 
 
-    
+def get_listings(context, request, sub_container_name=""):
+    trusted = removeSecurityProxy(context)    
+    if hasattr(trusted, sub_container_name):
+        sub_container = removeSecurityProxy(
+            getattr(trusted, sub_container_name)
+        )
+        #!+DESCRIPTOR_LOOKUP(murithi, jul-2011) descriptor lookup fails in 
+        # testing - as at r8474 : use sub_container_name as title
+        #table_title = (CONTAINER_TITLES.get(sub_container_name, None) or 
+        #    IDCDescriptiveProperties(sub_container).title
+        #)
+        table_title = sub_container_name
+        columns = [
+            LinkColumn("title", lambda i,f:IDCDescriptiveProperties(i).title),
+        ]
+        for extra_col in EXTRA_COLUMNS.get(sub_container_name, []):
+            columns.append(column.GetterColumn(extra_col, 
+                    lambda i,f:getattr(IDCDescriptiveProperties(i), extra_col)
+                )
+            )
+        if hasattr(sub_container, "values"):
+            items = [ removeSecurityProxy(it) for it in sub_container.values() ]
+        else:
+            items = [ removeSecurityProxy(it) for it in sub_container ]
+        if not len(items):
+            return u""
+        formatter = SimpleContainerListing(context, request, items,
+            columns=columns
+        )
+        return formatter(translate_i18n(table_title))
+    else:
+        return u""
+
 class DownloadDocument(BrowserView):
     """Abstact base class for ODT and PDF views"""
     #path to the odt template. Must be set by sub-class
@@ -91,6 +138,11 @@ class DownloadDocument(BrowserView):
                             time.time(),random.random(),self.document_type)
         params = {}
         params["body_text"] = cleanupText(self.bodyText())
+        params["listings"] = cleanupText(
+            u"".join(get_listings(self.context, self.request, listing_id) 
+                for listing_id in SUB_CONTAINERS
+            )
+        )
         openofficepath = getUtility(IOpenOfficeConfig).getPath()
         ooport = getUtility(IOpenOfficeConfig).getPort()
         renderer = Renderer(self.oo_template_file, params, tempFileName,

@@ -22,6 +22,7 @@ from zope.schema.vocabulary import SimpleVocabulary
 from zope.security.management import getInteraction
 from zope.publisher.interfaces import IRequest
 from zope.publisher.interfaces.http import IHTTPRequest
+from zope.i18n import translate as ztranslate
 
 from zope.publisher.browser import BrowserLanguages
 
@@ -191,4 +192,11 @@ def get_available_translations(context):
 def is_translation(context):
     return IVersion.providedBy(context) and \
            context.status in (u"draft_translation",)
-                      
+
+def translate_i18n(message_id, language=None, domain="bungeni"):
+    """Get's message_ids translation from catalogs
+    """
+    #!+I18N(murithi, july-2011) should not be used if message ids exist in 
+    # translation catalogs and a locale-aware context exists.
+    to_language = language or get_request_language()
+    return ztranslate(message_id, target_language=to_language, domain=domain)

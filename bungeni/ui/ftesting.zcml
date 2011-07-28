@@ -44,6 +44,10 @@
   <adapter factory="bungeni.core.dc.MotionDescriptiveProperties" />
   <adapter factory="bungeni.core.dc.AgendaItemDescriptiveProperties" />
   <adapter factory="bungeni.core.dc.TabledDocumentDescriptiveProperties" />
+  <adapter factory="bungeni.core.dc.ChangeDescriptiveProperties" />
+  <adapter factory="bungeni.core.dc.ContainerDescriptiveProperties" />
+  <adapter factory="bungeni.core.dc.AttachedFileDescriptiveProperties" />
+  <adapter factory="bungeni.core.dc.SignatoryDescriptiveProperties" />
   <adapter
      name="dc"
      for="*"

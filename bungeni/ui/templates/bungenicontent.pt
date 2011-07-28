@@ -9,7 +9,8 @@
     <p class="documenttitle" tal:condition="view/document/dc:title">
         <span tal:replace="view/document/dc:title"/>
     </p>
-    <p class="documentdescription" tal:condition="view/document/dc:description">
+    <p class="documentdescription" tal:condition="view/document/dc:description" 
+        i18n:translate="">
         <span tal:replace="view/document/dc:description" /> 
     </p>
     <p class="documentregistrynumber" tal:condition="view/document/registry_number">

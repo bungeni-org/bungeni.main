@@ -1,3 +1,12 @@
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""Dublin core metadata adapters for various types
+"""
+
+log = __import__("logging").getLogger("bungeni.core.dc")
+
 from zope import interface
 from zope import component
 from zope.security.proxy import removeSecurityProxy
@@ -11,12 +20,11 @@ from bungeni.alchemist.model import queryModelDescriptor
 from bungeni.models import interfaces
 from bungeni.models import domain
 from bungeni.core.i18n import _
-from bungeni.core.translation import is_translation
-from bungeni.core.translation import get_language_by_name
-from bungeni.core.translation import get_request_language
-from bungeni.core.translation import get_translation_for
+from bungeni.core.translation import ( is_translation, get_language_by_name,
+    get_request_language, get_translation_for, translate_i18n
+)
 
-from bungeni.ui.utils import date
+from bungeni.ui.utils import date, misc
 
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 
@@ -66,6 +74,8 @@ class DescriptiveProperties(object):
         return date.getLocaleFormatter(None, category, length).format(date_)
 
     def translate(self, context, name):
+        """Gets translated field values
+        """
         lang = get_request_language()
         if not lang:
             return getattr(context, name)
@@ -78,7 +88,6 @@ class DescriptiveProperties(object):
                 if translation:
                     return translation[0].field_text
         return getattr(context, name)
-
 
 class QuestionDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IQuestion)
@@ -124,10 +133,10 @@ class BillDescriptiveProperties(DescriptiveProperties):
     def description(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        text = "%s %s %s" % (_("Submitted by"),
+        text = "%s %s %s" % (translate_i18n(_("Submitted by")),
                             context.owner.first_name, context.owner.last_name)
         if context.publication_date:
-            text += " (%s %s)" % (_(u"published on"),
+            text += " (%s %s)" % (translate_i18n(_(u"published on")),
                                   self.formatDate(context.publication_date))
         return text + "."
 
@@ -149,10 +158,10 @@ class MotionDescriptiveProperties(DescriptiveProperties):
     def description(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        text = "%s %s %s" % (_("Submitted by"),
+        text = "%s %s %s" % (translate_i18n(_(u"Submitted by")),
                             context.owner.first_name, context.owner.last_name)
         if context.notice_date:
-            text += " (%s %s)" % (_(u"notice given on"),
+            text += " (%s %s)" % (translate_i18n(_(u"notice given on")),
                                   self.formatDate(context.notice_date))
         return text + "."
 
@@ -164,7 +173,7 @@ class SittingDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return "%s %s, %s %s %s" % (_(u"Sitting:"), 
+        return "%s %s, %s %s %s" % (translate_i18n(_(u"Sitting:")), 
                 self.translate(context.group, "short_name"), 
                 context.start_date.strftime('%Y-%m-%d, %H:%M'), 
                 _(u"to"), 
@@ -174,7 +183,7 @@ class SittingDescriptiveProperties(DescriptiveProperties):
     def description(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return "%s %s (%s %s %s)" % (_(u"Sitting scheduled for"),
+        return "%s %s (%s %s %s)" % (translate_i18n(_(u"Sitting scheduled for")),
                 context.group.short_name,
                 context.start_date.strftime('%Y-%m-%d %H:%M'), 
                 _(u"to"),
@@ -210,7 +219,9 @@ class VersionDescriptiveProperties(DescriptiveProperties):
     
     @property
     def description(self):
-        return "%s %s" % (_(u"Last modified"), self.context.change.date)
+        return "%s %s" % (translate_i18n(_(u"Last modified")), 
+            self.context.change.date
+        )
 
 
 class GroupDescriptiveProperties(DescriptiveProperties):
@@ -315,7 +326,12 @@ class SignatoryDescriptiveProperties(DescriptiveProperties):
                 context.user.last_name)
         else:
             return u"New User"
-
+    
+    @property
+    def status(self):
+        session = Session()
+        context = session.merge(removeSecurityProxy(self.context))
+        return translate_i18n(misc.get_wf_state(context))
 
 class ParliamentSessionDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IParliamentSession)
@@ -384,7 +400,11 @@ class ChangeDescriptiveProperties(DescriptiveProperties):
     @property
     def title(self):
         return self.context.action
-
+    
+    @property
+    def description(self):
+        return "%s (%s)" %(translate_i18n(self.context.description),
+                self.formatDate(self.context.date_active))
 
 class UserAddressDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IUserAddress)
@@ -467,8 +487,10 @@ class ReportDescriptiveProperties(DescriptiveProperties):
     def description(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return u"Covers %s to %s" % (context.start_date.strftime('%Y-%m-%d'),
-            context.end_date.strftime('%Y-%m-%d'))
+        return u"%s %s to %s" % (translate_i18n(_(u"Covers")), 
+            context.start_date.strftime('%Y-%m-%d'),
+            context.end_date.strftime('%Y-%m-%d')
+        )
 
 class ItemScheduleCategoryDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IItemScheduleCategory)

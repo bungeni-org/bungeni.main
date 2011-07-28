@@ -8,12 +8,26 @@ from bungeni.ui.i18n import _
 from zope.i18n import translate
 from zope.security import proxy
 from zc.resourcelibrary import need
-from zc.table import batching
+from zc.table import batching, table, column
+import zope.app.form
 
 from z3c.pt.texttemplate import ViewTextTemplateFile
 #from bungeni.ui import z3evoque
-from bungeni.ui.utils import url
+from bungeni.ui.utils import url, common
 from zope.app.pagetemplate import ViewPageTemplateFile
+
+class LinkColumn(column.GetterColumn):
+    def renderCell(self, item, formatter):
+        abs_url = url.absoluteURL(item, common.get_request())
+        title = super(LinkColumn, self).renderCell(item, formatter)
+        if abs_url:
+            link_html = zope.app.form.browser.widget.renderElement("a",
+                contents=title, href=abs_url
+            )
+            return zope.app.form.browser.widget.renderElement("p", 
+                contents=link_html
+            )
+        return title
 
 class TableFormatter(batching.Formatter):
     """The out-of-box table formatter does not let us specify a custom
@@ -111,3 +125,10 @@ class AjaxContainerListing(container.AjaxContainerListing):
         context = proxy.removeSecurityProxy(self.context)
         return "container_contents_%s" % (context.__name__)
 
+class SimpleContainerListing(table.Formatter):
+    """Renders a simple listing of container elements using DC properties
+    """
+    def __call__(self, listing_title):
+        return '\n<h1>%s</h1><table%s>\n%s</table>\n%s' % (
+                listing_title, self._getCSSClass('table'), self.renderRows(),
+                self.renderExtra())
