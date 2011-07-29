@@ -203,9 +203,10 @@ class StateController(object):
     
 
 def get_object_state(context):
-    """Lookup the workflow.states.State instance for the context's status.
+    """IRolePermissionMap(context) adapter factory. 
     
-    Serves also as the IRolePermissionMap(context) adapter factory.
+    Looks up the workflow.states.State instance for the context's State 
+    singleton.
     
     May need to be called numerous times per request, so is a lightweight 
     and performance-aware adapter -- there is no creation of any adapter 
@@ -213,6 +214,15 @@ def get_object_state(context):
     retrieve existing State instances.
     """
     return interfaces.IWorkflow(context).get_state(context.status)
+
+def get_object_version_state(version):
+    """IRolePermissionMap(version) adapter factory.
+    
+    Lighweight and high-performance wrapper on get_object_state(context), 
+    to *lookup* (note: no creation of any instance) the workflow.states.State 
+    singleton instance for the version's context's status.
+    """
+    return get_object_state(version.context)
 
 
 class Workflow(object):

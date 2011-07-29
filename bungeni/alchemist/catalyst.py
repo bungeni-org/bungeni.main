@@ -182,13 +182,17 @@ def GenerateDomainInterface(ctx, interface_name=None):
 def GenerateCollectionTraversal(ctx):
     
     collection_names = []
-    for k,v in ctx.domain_model.__dict__.items():
+    for k, v in ctx.domain_model.__dict__.items():
         if IManagedContainer.providedBy(v):
             collection_names.append(k)
 
     if not collection_names:
         return
     
+    # Note: the templated CollectionTraverser TYPE returned by this is
+    # instantiated multiple times in case of inheritance of catalyzed 
+    # descriptors e.g. for Motion, it is instantiated once for 
+    # ParliamentaryItemDescriptor and once for MotionDescriptor.
     traverser = CollectionTraverser(*collection_names)
     
     # provideSubscriptionAdapter(factory, adapts=None, provides=None)

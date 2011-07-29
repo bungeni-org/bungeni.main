@@ -39,9 +39,6 @@
     <!-- Setup Domain Model Audit/ObjectLog Feature-->
     <include file="audit.zcml"/>
     
-    <!-- Setup Domain Model Versioning Feature-->
-    <include file="version.zcml"/>
-    
     <!-- events -->
     <include file="events.zcml" />
     

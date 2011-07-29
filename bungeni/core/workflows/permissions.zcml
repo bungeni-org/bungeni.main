@@ -673,7 +673,4 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.signatory.wf.consented.rejected.withdrawn.awaiting_consent" title="unsignauto" />
 <grant permission="bungeni.signatory.wf.consented.rejected.withdrawn.awaiting_consent" role="bungeni.Clerk" />
 
-
-<!-- version -->
-
 </configure>

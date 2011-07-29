@@ -22,7 +22,6 @@ def main(argv):
     write_file(output_folder, "bill.dot", dot(get_workflow("bill")))
     write_file(output_folder, "question.dot", dot(get_workflow("question")))
     write_file(output_folder, "motion.dot", dot(get_workflow("motion")))
-    write_file(output_folder, "version.dot", dot(get_workflow("version")))
     write_file(output_folder, "groupsitting.dot", 
         dot(get_workflow("groupsitting")))
     write_file(output_folder, "group.dot", dot(get_workflow("group")))

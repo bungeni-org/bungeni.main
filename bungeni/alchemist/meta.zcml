@@ -1,7 +1,10 @@
+<?xml version="1.0"?>
 <configure xmlns='http://namespaces.zope.org/zope'
     xmlns:meta="http://namespaces.zope.org/meta"
     i18n_domain="zalchemy">
     
+    <!-- provides namespaced directives ":engine" and ":bind" 
+    see bungeni_custom/sys/db.zcml -->
     <include package="ore.alchemist" file="meta.zcml"/>
     
     <!-- !+ gives conflict, defined in python: bungeni.alchemist.model
