@@ -16,7 +16,9 @@ from sqlalchemy.orm import mapper,  column_property
 import sqlalchemy as rdb
 import sqlalchemy.sql.expression as sql
 from bungeni.models import schema, domain, utils, delegation
-from bungeni.models.interfaces import ITranslatable, ISignatory
+from bungeni.models.interfaces import ( ITranslatable, ISignatory, 
+    IGroupGroupItemAssignment
+)
 
 from zope.schema.interfaces import IVocabularyFactory
 from zope.component import getUtility
@@ -934,7 +936,23 @@ class CommitteeAssignmentSource(SpecializedSource):
         trusted=removeSecurityProxy(context)
         parliament_id = self._get_parliament_id(context)
         trusted = removeSecurityProxy(context)
-        existing_committee_ids = [ comm.group_id for comm in trusted.values() ]
+        assigned_committee_ids = []
+        if IGroupGroupItemAssignment.providedBy(trusted):
+            committee_id = getattr(trusted, "group_id", None)
+            if committee_id:
+                query = session.query(domain.Committee).filter(
+                    sql.and_(
+                        domain.Committee.parent_group_id == parliament_id,
+                        domain.Committee.group_id == committee_id
+                    )
+                )
+                return query
+            else:
+                assigned_committee_ids = \
+                    [ comm.group_id for comm in trusted.__parent__.values() ]
+        else:
+            assigned_committee_ids = \
+                [ comm.group_id for comm in trusted.values() ]
         query = session.query(domain.Committee).filter(
             sql.and_(
                 domain.Committee.status == 'active',
