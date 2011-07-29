@@ -816,7 +816,7 @@ class DeleteForm(PageForm):
         count += 1
 
         try:
-            session.commit()
+            session.flush()
         except IntegrityError, e:
             # this should not happen in production; it's a critical
             # error, because the transaction might have failed in the

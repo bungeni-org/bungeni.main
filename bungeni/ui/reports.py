@@ -407,7 +407,7 @@ class SaveReportView(form.PageForm):
             except:
                 #if no sittings are present in report or some other error occurs
                 pass
-        session.commit()
+        session.flush()
         
         if IGroupSitting.providedBy(self.context):
             back_link = "./schedule"
@@ -481,5 +481,5 @@ def default_reports(sitting, event):
         sr.report = report
         sr.sitting = sitting
         session.add(sr)
-        session.commit()
+        session.flush()
         notify(ObjectCreatedEvent(sr))
