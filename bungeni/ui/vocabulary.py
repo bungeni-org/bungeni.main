@@ -958,7 +958,7 @@ class CommitteeAssignmentSource(SpecializedSource):
                 domain.Committee.status == 'active',
                 domain.Committee.parent_group_id == parliament_id,
                 sql.not_(
-                    domain.Committee.group_id.in_(existing_committee_ids)
+                    domain.Committee.group_id.in_(assigned_committee_ids)
                 )
             )
         )
