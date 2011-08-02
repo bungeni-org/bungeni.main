@@ -5,19 +5,17 @@
 """ Parliamentary object attachment(s) views
 
 $Id$
-$URL$
 """
 
 from bungeni.core.workflow.interfaces import IStateController
 from tempfile import TemporaryFile
 from zope.interface import implements
-from zope.publisher.interfaces import IPublishTraverse
+from zope.publisher.interfaces import IPublishTraverse, NotFound
 from zope.publisher.browser import BrowserView
 from zope.security.proxy import removeSecurityProxy
 from zope.security import proxy
 from zc.table import column
 import operator
-from bungeni.models.interfaces import IAttachedFile, IAttachedFileVersion, IAttachedFileVersionContainer
 from bungeni.ui.browser import BungeniBrowserView
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import date, url
@@ -43,9 +41,12 @@ class RawView(BrowserView):
         fname = self.traverse_subpath[0]
         tempfile = TemporaryFile()
         data = getattr(context, fname, None)
-        if type(data) == buffer:
+        if data is not None:
             tempfile.write(data)
+            tempfile.flush()
             return tempfile
+        else:
+            raise NotFound(self.context, fname, self.request)
 
 
 class FileDownload(BrowserView):
@@ -60,11 +61,14 @@ class FileDownload(BrowserView):
             filename = getattr(context, 'file_title', None)
         tempfile = TemporaryFile()
         data = getattr(context, 'file_data', None)
-        if type(data) == buffer:
+        if data is not None:
             tempfile.write(data)
+            tempfile.flush()
             self.request.response.setHeader('Content-type', mimetype)
             self.request.response.setHeader('Content-disposition', 'attachment;filename="%s"' % filename)
             return tempfile
+        else:
+            raise NotFound(context, "", self.request)
 
 
 class FileDeactivate(BrowserView):
