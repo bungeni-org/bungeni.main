@@ -40,13 +40,15 @@ create_version = utils.create_version
 def __pi_create(context):
     #!+utils.setParliamentId(context)
     utils.assign_owner_role_pi(context)
-    utils.pi_update_signatories(context)
-
 
 def __pi_submit(context):
     utils.set_pi_registry_number(context)
     utils.pi_update_signatories(context)
 
+def __pi_redraft(context):
+    """Signatory operations on redraft - Unsetting signatures e.t.c
+    """
+    utils.pi_update_signatories(context)
 
 # address
 
@@ -65,11 +67,13 @@ def _address_private(context):
 
 _agendaitem_draft = _agendaitem_working_draft = __pi_create
 _agendaitem_submitted = __pi_submit
+_agendaitem_redraft = __pi_redraft
 
 
 # bill
 
 _bill_draft = _bill_working_draft = __pi_create
+_bill_redraft = __pi_redraft
 
 def _bill_gazetted(context):
     utils.setBillPublicationDate(context)
@@ -129,6 +133,7 @@ def _groupsitting_published_agenda(context):
 
 _motion_draft = _motion_working_draft = __pi_create
 _motion_submitted = __pi_submit
+_motion_redraft = __pi_redraft
 
 def _motion_admissible(context):
     dbutils.setMotionSerialNumber(context)
@@ -138,6 +143,7 @@ def _motion_admissible(context):
 
 _question_draft = _question_working_draft = __pi_create
 _question_submitted = __pi_submit
+_question_redraft = __pi_redraft
 
 def _question_withdrawn(context):
     """A question can be withdrawn by the owner, it is visible to ...
@@ -163,6 +169,7 @@ def _question_admissible(context):
 
 _tableddocument_draft = _tableddocument_working_draft = __pi_create
 _tableddocument_submitted = __pi_submit
+_tableddocument_redraft = __pi_redraft
 
 def _tableddocument_adjourned(context):
     utils.setTabledDocumentHistory(context)
@@ -190,8 +197,8 @@ def __make_owner_signatory(context):
     if context.owner_id not in [sgn.user_id for sgn in signatories._query]:
         session = Session()
         signatory = signatories._class()
-        signatory.user_id=context.owner_id,
-        signatory.item_id=context.parliamentary_item_id
+        signatory.user_id = context.owner_id,
+        signatory.item_id = context.parliamentary_item_id
         session.add(signatory)
         session.flush()
         zope.event.notify(zope.lifecycleevent.ObjectCreatedEvent(signatory))

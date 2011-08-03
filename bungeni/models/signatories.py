@@ -1,7 +1,10 @@
-"""
-Signatories validation machinery
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
-$Id:$
+"""Signatories validation machinery for parliamentary documents
+
+$Id$
 """
 
 import zope.component
@@ -12,7 +15,8 @@ from bungeni.models.interfaces import (IBill, IMotion, IQuestion,
 )
 from bungeni.models.settings import BungeniSettings
 from bungeni.core.app import BungeniApp
-from bungeni.core.workflow.interfaces import IWorkflow
+
+log = __import__("logging").getLogger("bungeni.models.signatories")
 
 app = BungeniApp()
 
@@ -29,7 +33,16 @@ class SignatoryValidator(object):
 
     @property
     def signatories(self):
-        return self.pi_instance.signatories.values()
+        #!_VERSIONS(mb, aug-2011) automatic transitions firing for versions?
+        # as at r8488 - check whether the context actually has signatories
+        if hasattr(self.pi_instance, "signatories"):
+            return self.pi_instance.signatories.values()
+        else:
+            log.warning("The object  %s has no signatories. Returning empty"
+                " list of signatories.", 
+                self.pi_instance.__str__()
+            )
+            return []
 
     @property
     def signatories_count(self):
@@ -76,14 +89,9 @@ class SignatoryValidator(object):
         return unicode(self.pi_instance.status) == u"submitted_signatories"
 
     def documentInDraft(self):
-        """Assume destinations of transitions with no sources are draft
+        """Check that a document is being redrafted
         """
-        wf = IWorkflow(self.pi_instance, None)
-        if wf:
-            return (self.pi_instance.status in 
-                [tr.destination for tr in wf.get_transitions_from(None)]
-            )
-        return False
+        return unicode(self.pi_instance.status) == u"redraft"
 
 class BillSignatoryValidator(SignatoryValidator):
     zope.component.adapts(IBill)

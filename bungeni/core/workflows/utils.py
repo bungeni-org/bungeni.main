@@ -226,7 +226,6 @@ def assign_signatory_role(context, owner_login, unset=False):
 
 def pi_update_signatories(context):
     """fire automatic transitions on submission of document"""
-    #first commit all pending db transactions
     for signatory in context.signatories.values():
         wfc = IWorkflowController(signatory, None)
         if wfc is not None:

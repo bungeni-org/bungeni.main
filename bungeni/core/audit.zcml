@@ -38,5 +38,9 @@
         for="bungeni.models.interfaces.ISignatory
             zope.lifecycleevent.interfaces.IObjectModifiedEvent"
     />
-
+    <subscriber handler=".events.signatory_deleted"
+        for="bungeni.models.interfaces.ISignatory
+            zope.app.container.interfaces.IObjectRemovedEvent"
+        trusted="True"
+    />
 </configure>

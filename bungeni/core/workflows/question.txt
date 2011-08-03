@@ -286,7 +286,7 @@ Setup mock delivery component.
   >>> from bungeni.core.interfaces import IVersioned
   >>> versions = IVersioned(question)
   >>> len(versions)
-  1
+  0
 
 Transition: "submit"
 
@@ -294,7 +294,7 @@ Transition: "submit"
   >>> question.status
   'submitted'
   >>> len(versions)
-  2
+  1
 
 
   >>> tuple(qprm.getRolesForPrincipal("member"))
@@ -322,7 +322,7 @@ Transition: "receive" (from "submit")
   >>> question.status
   'received'
   >>> len(versions)
-  3
+  2
 
 
 "Needs Clarification to Receive" (from "received" or "incomplete")
@@ -331,7 +331,7 @@ Transition: "receive" (from "submit")
   >>> question.status
   'clarification_required'
   >>> len(versions)
-  4
+  3
 
 
 PRINCIPAL: member
@@ -345,7 +345,7 @@ Must re-submit:
   >>> question.status
   'submitted'
   >>> len(versions)
-  5
+  4
   
 
 PRINCIPAL: clerk
@@ -359,7 +359,7 @@ And re-receive:
   >>> question.status
   'received'
   >>> len(versions)
-  6
+  5
 
 
 "Complete" (from "received" or "incomplete")
@@ -368,7 +368,7 @@ And re-receive:
   >>> question.status
   'completed'
   >>> len(versions)
-  7
+  6
 
 
 PRINCIPAL: speaker
@@ -383,7 +383,7 @@ PRINCIPAL: speaker
   >>> question.status
   'incomplete'
   >>> len(versions)
-  8
+  7
 
 
 PRINCIPAL: clerk
@@ -398,7 +398,7 @@ PRINCIPAL: clerk
   >>> question.status
   'completed'
   >>> len(versions)
-  9
+  8
 
 
 PRINCIPAL: speaker
@@ -414,7 +414,7 @@ PRINCIPAL: speaker
   >>> question.status
   'admissible'
   >>> len(versions)
-  10
+  9
   
 !+FIRETRANSITION(mr, dec-2010) workflow transitions (only partly) executed in 
 this way do not create the expected auditlog. 

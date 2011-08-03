@@ -1,16 +1,27 @@
-#
-# note that other events are handled in workflows
-# audit and files!
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+""" Event handlers for various changes to objects
+
+note that other events are handled in workflows
+audit and files!
+
+$Id$
+"""
 
 import datetime
 
 from zope.security.proxy import removeSecurityProxy
 
+log = __import__("logging").getLogger("bungeni.core.events")
+
 from bungeni.alchemist import Session
 from bungeni.models import domain
 from bungeni.core import audit
-
-
+from bungeni.core.workflows.utils import (
+    assign_signatory_role, get_owner_login_pi
+)
 
 def signatory_added(ob, event): 
     session = Session()
@@ -44,6 +55,19 @@ def signatory_modified(ob, event):
             title)
     if ob.item:
         audit.objectContained( ob.item, event)
+
+def signatory_deleted(ob, event):
+    """Clear signatory role for a deleted signatory
+    """
+    session = Session()
+    ob = removeSecurityProxy(ob)
+    if ob.user:
+        owner_login = get_owner_login_pi(ob)
+        assign_signatory_role(ob.item, owner_login, unset=True)
+    else:
+        log.warning("Signatory object %s has no user set."
+            " Skipping unsetting of role", ob.__str__()
+        )
 
 def group_member_modified(ob, event):
     """when a group member gets inactivated (end date set)
