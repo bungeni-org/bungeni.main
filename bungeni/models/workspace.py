@@ -102,8 +102,28 @@ class WorkspaceContainer(AlchemistContainer):
         the workspace is meant only for adding current documents
         """
         return get_current_parliament().group_id
-        
-                  
+    
+    def __getitem__(self, name):
+        value = self.get( name )
+        if value is None:
+            raise KeyError( name )
+        return value
+    # see alchemist.traversal.managed.One2Many
+    # see alchemist.ui.content.AddFormBase -> self.context[''] = ob
+    # see bungeni.core.app.AppSetup
+    # In the managed containers, the constraint manager
+    # in One2Many sets the foreign key of an item to the
+    # primary key of the container when an item is added.
+    # This does the same for the workspace containers
+    # The add forms in the workspace are only to add documents to the
+    # current parliament. 
+    # This sets the foreign key of the doc to the current parliament.
+    def __setitem__(self, name, item):
+        session = Session()
+        current_parliament = get_current_parliament()
+        item.parliament_id = current_parliament.parliament_id
+        session.add(item)
+                                 
 # (SECURITY, miano, july 2011) This factory adapts the workspaces to 
 # zope.securitypolicy.interface.IPrincipalRoleMap and is equivalent to the 
 # principalrolemap of the current parliament.

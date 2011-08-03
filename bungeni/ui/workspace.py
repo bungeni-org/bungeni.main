@@ -6,25 +6,25 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.security.proxy import removeSecurityProxy
 from zope.formlib import form
 from zope.i18n import translate
+from zope.formlib import form
+from zope.event import notify
+from zope.lifecycleevent import ObjectCreatedEvent
 from z3c.pt.texttemplate import ViewTextTemplateFile
 from ore import yuiwidget
 from ore.alchemist import container
+from alchemist.ui import generic
 from bungeni.models import workspace
 from bungeni.core import translation
 from bungeni.core.i18n import _
 from bungeni.core.interfaces import IWorkspaceTabsUtility
 from bungeni.ui.container import query_iterator
 from bungeni.ui.utils import url
-from bungeni.ui.container import query_iterator
 from bungeni.ui.container import ContainerJSONListing
 from bungeni.ui import table
 from bungeni.ui.interfaces import IWorkspaceAdapter
 from bungeni.ui.forms.common import AddForm
 from bungeni.alchemist import Session
-from alchemist.ui import generic
-from zope.formlib import form
-from zope.event import notify
-from zope.lifecycleevent import ObjectCreatedEvent
+
 class WorkspaceField(object):
     def __init__(self, name, title):
         self.name = name
@@ -70,7 +70,8 @@ class WorkspaceContainerJSONListing(BrowserView):
         for node in nodes:
             d = {}
             for field in workspace_fields:
-                d[field.name] = getattr(IWorkspaceAdapter(node), field.name, None)
+                d[field.name] = getattr(IWorkspaceAdapter(node),
+                                                            field.name, None)
             d["object_id"] = url.set_url_context(node.__name__)
             values.append(d)
         return values
@@ -95,7 +96,8 @@ class WorkspaceContainerJSONListing(BrowserView):
     def getBatch(self, start=0, limit=20, lang=None):
         context = removeSecurityProxy(self.context)
         nodes = [container.contained(ob, self, workspace.stringKey(ob)) 
-                 for ob in query_iterator(context._query, self.context, self.permission)]
+                 for ob in query_iterator(context._query, 
+                                                self.context, self.permission)]
         self.set_size = len(nodes)
         nodes[:] = nodes[start : start + limit]
         nodes = self.translate_objects(nodes, lang)
@@ -116,13 +118,15 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
         field_model  = []
         
         for field in workspace_fields:
-            coldef = {"key": field.name, "label": translate(_(field.title), context=self.request), "formatter": self.context.__name__ 
+            coldef = {"key": field.name,
+                      "label": translate(_(field.title), context=self.request), 
+                      "formatter": self.context.__name__ 
             }
             if column_model == []:
                 column_model.append(
                     """{key:"%(key)s", label:"%(label)s", 
-                    formatter:"%(formatter)sCustom", sortable:false, minWidth:200,
-                    resizeable:true}""" % coldef
+                    formatter:"%(formatter)sCustom", sortable:false, 
+                    minWidth:200, resizeable:true}""" % coldef
                     )
             else:
                 column_model.append(
@@ -199,6 +203,8 @@ class WorkspaceAddForm(AddForm):
         self.finishConstruction( ob )
         # apply extra form values
         form.applyChanges( ob, self.form_fields, data, self.adapters )
+        # add ob to container
+        self.context[""] = ob
         # fire an object created event
         notify(ObjectCreatedEvent(ob))
         # signal to add form machinery to go to next url
