@@ -62,13 +62,16 @@ class SignatoryValidator(object):
     def consented_signatories(self):
         return self.consentedSignatories()
 
+    def requireSignatures(self):
+        return self.min_signatories > 0
+
+    def validateSignatories(self):
+        return self.signatories_count > 0
+
     def consentedSignatories(self, status=u"consented"):
         return len(filter(
                     lambda cs:cs.status==u"consented", self.signatories
         ))
-    
-    def validateSignatories(self):
-        return self.signatories_count > 0
 
     def validateConsentedSignatories(self):
         return ( (self.consented_signatories >= self.min_signatories) and

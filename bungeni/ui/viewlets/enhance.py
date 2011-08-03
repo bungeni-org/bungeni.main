@@ -6,8 +6,7 @@
 
 """Additional UI enhancement viewlets
 
-$Id:$
-$URL:$
+$Id$
 """
 
 from zope.app.pagetemplate import ViewPageTemplateFile

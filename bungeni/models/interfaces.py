@@ -414,6 +414,10 @@ class ISignatoriesValidator(interface.Interface):
         """Validate signatories count on parliamentary item i.e. number added
         """
 
+    def requireSignatures():
+        """Does the document or object require signatures
+        """
+
     def validateConsentedSignatories():
         """Validate number of consented signatories against min and max
         """
