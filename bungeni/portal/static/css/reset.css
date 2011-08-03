@@ -449,7 +449,7 @@ div#region-content div#content > div:first-child {
     float: none;
     width: auto;
     position: absolute;
-    z-index: 10051;
+    z-index: 86;
     height:auto;
 }
 .section-bungeni-archive #portal-column-one {
@@ -466,6 +466,7 @@ div#region-content div#content > div:first-child {
 #portal-column-one .portlet .portletItem.even,
 #portal-column-one .portlet .portletItem {
     overflow: hidden;
+    margin-top:-1.7em !important;
 }
 #portal-column-one .portlet .portletItem a img {
     margin: 1px 0;

@@ -1544,6 +1544,12 @@ div.main-column #collage h2 {
     color: #fff;
 	text-shadow:0 0 0 #fff;
 }
+.template-workspace.section-bungeni-workspace #content ul.formTabs li a.selected,
+.template-workspace.section-bungeni-workspace #content ul.formTabs li a:hover,
+.template-workspace.section-bungeni-workspace #content ul.formTabs li a:target {
+    background:#aaa !important;
+    color:#000 !important;
+}
 
 .template-workspace.section-bungeni-workspace table.listing th,
 .template-workspace.section-bungeni-workspace table.listingdescription th,
@@ -1643,6 +1649,9 @@ div.main-column #collage h2 {
 }
 
 /*MailBox*/
+.template-workspace .portlet ul.contentViewsLeftPort {
+    z-index:99 !important;
+}
 .template-workspace .portlet ul.contentViewsLeftPort li {
     border:0 none !important;
 }
