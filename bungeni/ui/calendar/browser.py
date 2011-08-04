@@ -614,7 +614,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         if "venue" in data.keys():
             sitting.venue_id = data["venue"]
         # set extra data needed by template
-        session.update(sitting)
+        session.flush()
         notify(ObjectModifiedEvent(sitting))
         self.template_data.append({"group_sitting_id": sitting.group_sitting_id, 
                                     "action": "inserted",
