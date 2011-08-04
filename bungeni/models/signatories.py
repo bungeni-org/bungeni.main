@@ -9,6 +9,7 @@ $Id$
 
 import zope.component
 import zope.interface
+from zope.security.proxy import removeSecurityProxy
 
 from bungeni.models.interfaces import (IBill, IMotion, IQuestion,
     IAgendaItem, ITabledDocument, ISignatoriesValidator
@@ -33,9 +34,15 @@ class SignatoryValidator(object):
 
     @property
     def signatories(self):
-        #!_VERSIONS(mb, aug-2011) automatic transitions firing for versions?
+        #!+VERSIONS(mb, aug-2011) automatic transitions firing for versions?
         # as at r8488 - check whether the context actually has signatories
+        #!+SECURITY(mb, aug-2011) remove proxy to allow access to 
+        # signature status. View permission only checked on attribute access
+        # from container `values` listing
         if hasattr(self.pi_instance, "signatories"):
+            return removeSecurityProxy(
+               self.pi_instance.signatories.values()
+            )
             return self.pi_instance.signatories.values()
         else:
             log.warning("The object  %s has no signatories. Returning empty"
