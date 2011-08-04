@@ -48,7 +48,7 @@ class SignatoriesStatus(object):
         of the form {"level": <level> , "message_text": "<i18n_message>"}
         """
         message = {"level": "info", "message_text": u""}
-        validator = ISignatoriesValidator(self.context)
+        validator = ISignatoriesValidator(self.context, None)
         if validator is None:
             return message
         if validator.requireSignatures():
