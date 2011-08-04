@@ -207,7 +207,9 @@ class AkomaNtosoSection(OrderedContainer):
 class AdminSection(Section):
     pass
 
-
+class WorkspaceSection(Section):
+    pass
+    
 #!+SECURITY (miano, nov-2010) the security checker below does not seem to be
 # used.
 # ensure public security setting for these Section attributes

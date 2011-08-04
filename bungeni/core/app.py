@@ -25,7 +25,8 @@ from bungeni.models import interfaces as model_interfaces
 
 from bungeni.core import interfaces
 from bungeni.core import location
-from bungeni.core.content import Section, AdminSection, AkomaNtosoSection
+from bungeni.core.content import Section, AdminSection, AkomaNtosoSection, \
+    WorkspaceSection
 from bungeni.core.content import QueryContent
 from bungeni.core.i18n import _
 from bungeni.models.utils import get_current_parliament
@@ -105,7 +106,7 @@ class AppSetup(object):
         )
         
         # top-level sections
-        workspace = self.context["workspace"] = Section(
+        workspace = self.context["workspace"] = WorkspaceSection(
             title=_(u"Workspace"),
             description=_(u"Current parliamentary activity"),
             default_name="documents",
@@ -119,28 +120,24 @@ class AppSetup(object):
             marker = interfaces.IWorkspaceDocuments,
         )
         workspace["documents"]["draft"] = WorkspaceContainer(
-            parent=workspace["documents"],
             tab_type="draft",
             title=_("draft"),
             description=_("draft documents"),
             marker=interfaces.IWorkspaceDraft
         )
         workspace["documents"]["inbox"] = WorkspaceContainer(
-            parent=workspace["documents"], 
             tab_type="inbox",
             title=_("inbox"),
             description=_("incoming documents"),
             marker=interfaces.IWorkspaceInbox
         )
         workspace["documents"]["sent"] = WorkspaceContainer(
-            workspace["documents"], 
             tab_type="sent",
             title=_("sent"),
             description=_("sent documents"),
             marker=interfaces.IWorkspaceSent
         )
         workspace["documents"]["archive"] = WorkspaceContainer(
-            workspace["documents"], 
             tab_type="archive",
             title=_("archive"),
             description=_("archived documents"),
