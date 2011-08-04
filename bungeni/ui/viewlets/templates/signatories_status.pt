@@ -1,0 +1,11 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      i18n_domain="bungeni" tal:omit-tag="">
+    <div tal:define="msg view/signature_status"
+        tal:condition="view/available">
+        <dl tal:attributes="class string:portalMessage ${msg/level}">
+        <dt i18n:translate="">Signatories</dt>
+        <dd tal:content="msg/message_text" i18n:translate=""></dd>
+        </dl>
+    </div>
+</html>
