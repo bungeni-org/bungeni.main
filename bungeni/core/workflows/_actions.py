@@ -140,8 +140,11 @@ def _motion_admissible(context):
 
 
 # question
-
-_question_draft = _question_working_draft = __pi_create
+def __question_create(context):
+    __pi_create(context)
+    utils.assign_question_minister_role(context)
+    
+_question_draft = _question_working_draft = __question_create
 _question_submitted = __pi_submit
 _question_redraft = __pi_redraft
 
