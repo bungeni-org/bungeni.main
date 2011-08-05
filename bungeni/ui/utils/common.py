@@ -15,6 +15,7 @@ import zope
 from zope.annotation.interfaces import IAnnotations
 from zope.app.security.interfaces import IUnauthenticatedPrincipal
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
+from zope.security import checkPermission, proxy
 
 # !+bungeni.models(mr, apr-2011) gives error when executing localization.py
 import bungeni
@@ -195,4 +196,10 @@ def is_admin(context):
     return zope.security.management.getInteraction().checkPermission(
         "zope.ManageSite", context)
 
-
+def list_container_items(container, permission="zope.View"):
+    """Generate list of container items with permission check
+    """
+    trusted = proxy.removeSecurityProxy(container)
+    for contained in trusted.values():
+        if checkPermission(permission, contained):
+            yield contained

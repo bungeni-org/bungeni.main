@@ -9,6 +9,7 @@ $Id$
 log = __import__("logging").getLogger("bungeni.ui.forms.viewlets")
 
 import sys
+import itertools
 from dateutil import relativedelta
 import datetime, calendar
 from zope import interface
@@ -28,14 +29,17 @@ from bungeni.models import domain, interfaces
 from bungeni.models.utils import get_groups_held_for_user_in_parliament
 from bungeni.models.utils import get_parliament_for_group_id
 from bungeni.models.utils import get_principal_id
-from bungeni.ui.i18n import _
+from bungeni.models.interfaces import IAlchemistContainer
 import bungeni.core.globalsettings as prefs
 
+from bungeni.ui.i18n import _
 from bungeni.ui.tagged import get_states
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
 from bungeni.ui import table
-from bungeni.ui.utils import queries, statements, url, misc, debug, date
+from bungeni.ui.utils import (common, queries, statements, url, misc, debug, 
+    date
+)
 from bungeni.ui.browser import BungeniViewlet
 from fields import BungeniAttributeDisplay
 from interfaces import ISubFormViewletManager, ISubformRssSubscriptionViewletManager
@@ -92,6 +96,27 @@ class UserIdViewlet(browser.BungeniViewlet):
     render = ViewPageTemplateFile('templates/user_id.pt')
 '''
 
+def load_formatted_container_items(container, out_format={}, extra_params={}):
+    """Load container items and return as a list of formatted dictionary
+    items.
+    params:
+    extra_params: a dictionary of extra parameters to include in dict
+    out_format: property titles and getters getters based acting on item
+    """
+    formatted_items = []
+    if IAlchemistContainer.providedBy(container):
+        item_list = common.list_container_items(container)
+    else:
+        item_list = [ removeSecurityProxy(item) for item in container ]
+    for item in item_list:
+        item_dict = {}
+        item_dict.update(extra_params)
+        map(
+            lambda fmt:item_dict.update([ ( fmt[0], fmt[1](item) ) ]), 
+            out_format.iteritems()
+        )
+        formatted_items.append(item_dict)
+    return formatted_items
 
 # !+SubformViewlet(mr, oct-2010) in this usage case this this should really
 # be made to inherit from browser.BungeniViewlet (but, note that
@@ -611,8 +636,6 @@ class OfficesHeldViewlet(browser.BungeniItemsViewlet):
     def update(self):
         self.items = self._get_items()
 
-
-
 class TimeLineViewlet(browser.BungeniItemsViewlet):
     """
     tracker/timeline view:
@@ -636,6 +659,20 @@ class TimeLineViewlet(browser.BungeniItemsViewlet):
     view_title = _("Timeline")
     view_id = "unknown-timeline"
 
+    changes_getter = {
+        "atype": lambda item: item.action,
+        "adate": lambda item: item.date_active,
+        "description": lambda item: item.description,
+        "notes": lambda item: "",
+    }
+    events_getter = {
+        "atype": lambda item: "event",
+        "adate": lambda item: item.event_date,
+        "description": lambda item: "<a href='%s'>%s</a>" \
+            %(url.absoluteURL(item, common.get_request()), item.short_name),
+        "notes": lambda item: "",
+    }
+
     def __init__(self, context, request, view, manager):
         super(TimeLineViewlet, self).__init__(context, request, view, manager)
         self.formatter = self.get_date_formatter("dateTime", "medium")
@@ -644,8 +681,25 @@ class TimeLineViewlet(browser.BungeniItemsViewlet):
         self.request.response.redirect(self.addurl)
 
     def update(self):
+        self.items = itertools.chain(
+            *[
+                load_formatted_container_items(self.context.changes, 
+                    self.changes_getter),
+                load_formatted_container_items(self.context.event,
+                    self.events_getter
+                )
+            ]
+        )
+        self.items = sorted(self.items, key=lambda item:item["adate"], 
+            reverse=True
+        )
+
+    def update_sql(self):
         """Refresh the query.
         """
+        #!+_TIMELINE(mb, aug-2011) to deprecate this function and use
+        # sub-container listings as shown above to acess timeline items
+
         # evaluate serialization of a dict, failure returns an empty dict
         def _eval_as_dict(s):
             try:
