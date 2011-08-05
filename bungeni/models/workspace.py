@@ -40,8 +40,7 @@ class WorkspaceContainer(AlchemistContainer):
     __name__ = __parent__ = None
     interface.implements(interfaces.IWorkspaceContainer)
     
-    def __init__(self, parent, tab_type, title, description, marker=None):
-        self.__parent__ = parent
+    def __init__(self, tab_type, title, description, marker=None):
         self.__name__ = tab_type
         self.title = title
         self.description = description
