@@ -13,6 +13,7 @@ import z3c.menu.ready2go.item
 from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowController
 
 from bungeni.models.utils import get_db_user_id
+from bungeni.models.interfaces import IVersion
 
 from bungeni.core.translation import get_language
 from bungeni.core.translation import get_all_languages
@@ -252,7 +253,8 @@ class WorkflowMenu(BrowserMenu):
     def getMenuItems(self, context, request):
         """Return menu item entries in a TAL-friendly form."""
         if (not interfaces.IWorkspaceOrAdminSectionLayer.providedBy(request) or
-            interfaces.IFormEditLayer.providedBy(request)
+            interfaces.IFormEditLayer.providedBy(request) or
+            IVersion.providedBy(context)
         ):
             return ()
         #!+wfc.workflow

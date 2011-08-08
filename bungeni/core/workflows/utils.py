@@ -99,10 +99,11 @@ def setMinistrySubmissionDate(context):
 def assign_question_minister_role(context):
     assert interfaces.IQuestion.providedBy(context), \
         "Not a Question: %s" % (context)
-    ministry_login_id = context.ministry.group_principal_id
-    if ministry_login_id:
-        IPrincipalRoleMap(context).assignRoleToPrincipal("bungeni.Minister", 
-            ministry_login_id)
+    if context.ministry is not None:
+        ministry_login_id = context.ministry.group_principal_id
+        if ministry_login_id:
+            IPrincipalRoleMap(context).assignRoleToPrincipal("bungeni.Minister", 
+                ministry_login_id)
 
 # !+QuestionScheduleHistory(mr, mar-2011) rename appropriately e.g. "unschedule"
 # !+QuestionScheduleHistory(mr, mar-2011) only pertinent if question is 

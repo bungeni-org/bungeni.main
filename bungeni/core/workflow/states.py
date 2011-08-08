@@ -222,7 +222,13 @@ def get_object_version_state(version):
     to *lookup* (note: no creation of any instance) the workflow.states.State 
     singleton instance for the version's context's status.
     """
-    return get_object_state(version.context)
+    #!+VERSIONS(mb, aug-2011) my understanding is that since the goal of the
+    # adapter is to get the state of the object (in this case the version),
+    # then this should do it since the parent document's state may have changed
+    # after version creation. The parent document's status at the time of
+    # versioning is captured and since the original workflow is valid, seen
+    # in `get_object_state` above, then it should suffice
+    return get_object_state(version)
 
 
 class Workflow(object):
