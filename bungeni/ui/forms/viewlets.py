@@ -144,7 +144,7 @@ def format_change_description(change):
         dc = IDCDescriptiveProperties(change.user, None)
         if dc:
             description = translate_i18n(dc.title_member)
-    return description or change.extras
+    return description
 
 # !+SubformViewlet(mr, oct-2010) in this usage case this this should really
 # be made to inherit from browser.BungeniViewlet (but, note that
