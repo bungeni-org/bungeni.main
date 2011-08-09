@@ -682,13 +682,13 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.signatory.wf.awaiting_consent.rejected" title="reject" />
 <grant permission="bungeni.signatory.wf.awaiting_consent.rejected" role="bungeni.Owner" />
 
-<permission id="bungeni.signatory.wf.consented.withdrawn" title="withdraw" />
+<permission id="bungeni.signatory.wf.consented.withdrawn" title="withdraw signature" />
 <grant permission="bungeni.signatory.wf.consented.withdrawn" role="bungeni.Owner" />
 
-<permission id="bungeni.signatory.wf.awaiting_consent.withdrawn" title="withdrawauto" />
+<permission id="bungeni.signatory.wf.awaiting_consent.withdrawn" title="withdraw signature - automatic" />
 <grant permission="bungeni.signatory.wf.awaiting_consent.withdrawn" role="bungeni.Clerk" />
 
-<permission id="bungeni.signatory.wf.consented.rejected.withdrawn.awaiting_consent" title="unsignauto" />
+<permission id="bungeni.signatory.wf.consented.rejected.withdrawn.awaiting_consent" title="unsign document - automatic" />
 <grant permission="bungeni.signatory.wf.consented.rejected.withdrawn.awaiting_consent" role="bungeni.Clerk" />
 
 </configure>

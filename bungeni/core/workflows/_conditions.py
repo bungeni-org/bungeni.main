@@ -116,6 +116,24 @@ def user_is_parent_document_owner(context):
         utils.get_owner_login_pi(context.item)
     )
 
+def signatory_auto_sign(context):
+    """ Determines whether signature is automatically signed when a signatory
+        is added.
+    
+    Whenever the signature is that of the document owner, we auto sign.
+    Also, signature is signed if parent document is created on behalf of a 
+    member. The assumption is that the user has provided a list of consented
+    signatories to the document.
+    """
+    if user_is_parent_document_owner(context):
+        return True
+    # if user adding signatory is not parent document owner, then auto sign
+    #!+SIGNATORIES(mb, aug-2011) this could be tricky versus checking if parent
+    # document is in a 'working_draft' state
+    if user_is_not_context_owner(context.item):
+        return True
+    return False
+
 def user_is_not_parent_document_owner(context):
     return not user_is_parent_document_owner(context)
 
