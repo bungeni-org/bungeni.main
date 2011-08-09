@@ -11,6 +11,7 @@ from bungeni.ui.utils.common import get_request
 from bungeni.ui.i18n import _
 from bungeni.core.workflow.states import get_object_state
 from bungeni.alchemist.model import queryModelDescriptor
+
 class WorkspaceAdapter(object):
     
     component.adapts(IBungeniContent)
@@ -29,6 +30,7 @@ class WorkspaceAdapter(object):
         item_type = descriptor.display_name if descriptor else self.context.type
         request = get_request()
         return translate(item_type, context=request)
+        
     @property
     def status(self):
         status_title = get_object_state(self.context).title
@@ -41,4 +43,4 @@ class WorkspaceAdapter(object):
         request = get_request()
         date_formatter = date.getLocaleFormatter(request, "dateTime", "medium")
         return date_formatter.format(value)
-        
+                   

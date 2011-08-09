@@ -5,7 +5,7 @@
     i18n_domain="bungeni">
     <browser:viewlet name="bungeni.workspace_context_navigation"
         layer="..interfaces.IWorkspaceSectionLayer"
-        permission="zope.Public"
+        permission="bungeni.workspace.View"
         manager="ploned.ui.interfaces.ILeftColumnManager"
         class=".workspace.WorkspaceContextNavigation"
         weight="1"

@@ -12,8 +12,19 @@ from bungeni.alchemist import Session, model
 from bungeni.ui.utils.common import get_context_roles, get_workspace_roles
 from bungeni.core.workflows.utils import get_group_context
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
+from zope.app.security.settings import Allow
 from bungeni.models.utils import get_current_parliament
 from bungeni.alchemist.security import LocalPrincipalRoleMap
+
+#!+WORKSPACE(miano, jul 2011)
+# Roles can be divided into two, roles that a principal gets by virtue 
+# of his membership to a group and roles that are defined on objects 
+# eg. bungeni.Owner and bungeni.Signatory
+# When generating the query for items to be included in the workspace
+# we do not know whether or not the user has any roles defined on any 
+# of the objects so we have to query all object states defined for this
+# type of roles.
+OBJECT_ROLES = ["bungeni.Owner", "bungeni.Signatory"]
 
 def stringKey( instance ):
     unproxied = removeSecurityProxy( instance )
@@ -35,6 +46,7 @@ def valueKey( identity_key ):
     domain_class = workspace_tabs.getDomain(properties[0])
     primary_key = properties[1]
     return domain_class, primary_key
+
     
 class WorkspaceContainer(AlchemistContainer):
     __name__ = __parent__ = None
@@ -48,26 +60,48 @@ class WorkspaceContainer(AlchemistContainer):
             interface.alsoProvides(self, marker)
         super(WorkspaceContainer, self).__init__()
     
+    def domain_status(self, roles, tab):
+        """Given a list of roles and tab returns a dictionary containing the
+           domain classes and status of items to appear for that principal in 
+           that tab. Role should be a list, tab a string
+        """
+        workspace_config = component.getUtility(IWorkspaceTabsUtility)
+        dom_stat = {}
+        for role in roles:
+            workspace_dom_stat = workspace_config.getDomainAndStatuses(role,
+                tab)
+            if workspace_dom_stat:
+                for key in workspace_dom_stat.keys():
+                    if key in dom_stat.keys():
+                        dom_stat[key].extend(workspace_dom_stat[key])
+                    else:
+                        dom_stat[key] = workspace_dom_stat[key]
+        return dom_stat
     @property
     def _query( self ):
         principal = get_principal()
         roles = get_workspace_roles(principal)
-        workspace_tabs = component.getUtility(IWorkspaceTabsUtility)
-        domain_status = {}
-        for role in roles:
-            dom_stat = workspace_tabs.getDomainAndStatuses(role, self.__name__)
-            if dom_stat:
-                for key in dom_stat.keys():
-                    if key in domain_status.keys():
-                        domain_status[key].extend(dom_stat[key])
-                    else:
-                        domain_status[key] = dom_stat[key]    
+        group_roles_domain_status = self.domain_status(roles, self.__name__)
         session = Session()
         results = []
-        for domain_class in domain_status.keys():
+        for domain_class in group_roles_domain_status.keys():
             query = session.query(domain_class).filter(
-                           domain_class.status.in_(domain_status[domain_class]))
+                            domain_class.status.in_(
+                                group_roles_domain_status[domain_class]))
             results.extend(query.all())
+        object_roles_domain_status = self.domain_status(OBJECT_ROLES, 
+            self.__name__)
+        for domain_class in object_roles_domain_status.keys():
+            query = session.query(domain_class).filter(
+                           domain_class.status.in_(
+                                object_roles_domain_status[domain_class]))
+            for obj in query.all():
+                prm = IPrincipalRoleMap(obj)
+                for obj_role in OBJECT_ROLES:
+                    if prm.getSetting(obj_role, principal.id) == Allow and \
+                        obj not in results:
+                            results.append(obj)
+                            break
         results.sort(key = lambda x: x.status_date, reverse=True)
         for result in results:
             yield result

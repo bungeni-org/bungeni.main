@@ -37,7 +37,8 @@ class WorkspaceContainerTraverser(SimpleComponentTraverser):
             return view
         ob = workspace.get(name)    
         if ob:
-            return ob 
+            return ob
+        log.error("Workspace - Object does not exist - %s", name)
         raise NotFound(workspace, name)   
                      
 class WorkspaceTabsUtility():
@@ -50,7 +51,7 @@ class WorkspaceTabsUtility():
     
     def getDomainAndStatuses(self, role, tab):
         """Returns a dictionary with the domain classes as keys. the value for 
-        each key is a dictionary of applicable statuses"""
+        each key is a list of applicable statuses"""
         if role in self.workspaces.keys():
             if tab in self.workspaces[role].keys():
                 return self.workspaces[role][tab]
@@ -74,9 +75,11 @@ class WorkspaceTabsUtility():
             a name.
         """
         if item_type in self.domain_type.keys():
-            raise ValueError("Multiple workspace declarations with same name - %s", item_type)
+            raise ValueError("Multiple workspace declarations with same name \
+                - %s") % ( item_type)
         if domain_class in self.domain_type.keys():
-            raise ValueError("Multiple workspace domain classes with same name - %s", item_type)
+            raise ValueError("Multiple workspace domain classes with same name \
+                 - %s") % (domain_class)
         self.domain_type[item_type] = domain_class
         self.domain_type[domain_class] = item_type 
     
@@ -93,8 +96,8 @@ class WorkspaceTabsUtility():
         return None
         
     def getTab(self, role, domain_class, status):
-        """Returns the tab an object should be in, given its domain class, status
-        and role"""
+        """Returns the tab an object should be in, given its domain class, 
+        status and role"""
         if role in self.workspaces:
             for tab in self.workspaces[role]:
                 if domain_class in self.workspaces[role][tab] and \
@@ -116,7 +119,9 @@ def load_workspace(file_name, domain_class):
                 if tab.get("roles"):
                     roles = tab.get("roles").split()
                     for role in roles:
-                        workspace_tabs.setContent(role, tab.get("id"), domain_class, state.get("id"))
+                        
+                        workspace_tabs.setContent(role, tab.get("id"), 
+                            domain_class, state.get("id"))
             else:
                 raise ValueError("Invalid tab - %s", tab.get("id"))
                             
