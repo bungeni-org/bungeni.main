@@ -11,6 +11,7 @@ from zope import interface
 from zope import component
 from zope.security.proxy import removeSecurityProxy
 from zope.dublincore.interfaces import IDCDescriptiveProperties
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from bungeni.alchemist import Session
 from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.alchemist.model import queryModelDescriptor
@@ -261,11 +262,20 @@ class UserDescriptiveProperties(DescriptiveProperties):
     def title_member(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        mp_user = session.query(domain.MemberOfParliament).filter(
-            domain.MemberOfParliament.user_id == context.user_id
-        ).one()
-        if mp_user is None:
-            return self.title
+        mp_user = None
+        try:
+            mp_user = session.query(domain.MemberOfParliament).filter(
+                domain.MemberOfParliament.user_id == context.user_id
+            ).one()
+        except NoResultFound:
+            #this user has no associated MP record
+            pass
+        except MultipleResultsFound:
+            # this should not happen
+            log.error("Multiple MP objects found for : %s", context.__str__())
+        finally:
+            if mp_user is None:
+                return self.title
         dc_constituency = IDCDescriptiveProperties(mp_user.constituency)
         return _("member_title_with_constituency",
                 default=u"Member of Parliament for ${constituency} (${member})",

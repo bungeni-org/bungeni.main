@@ -25,6 +25,9 @@ from bungeni.alchemist.ui import DynamicFields, EditFormViewlet
 from bungeni.alchemist import Session
 from bungeni.alchemist.model import queryModelDescriptor
 
+from bungeni.core.translation import translate_i18n
+from bungeni.core.dc import IDCDescriptiveProperties
+
 from bungeni.models import domain, interfaces
 from bungeni.models.utils import get_groups_held_for_user_in_parliament
 from bungeni.models.utils import get_parliament_for_group_id
@@ -117,6 +120,31 @@ def load_formatted_container_items(container, out_format={}, extra_params={}):
         )
         formatted_items.append(item_dict)
     return formatted_items
+
+def format_change_description(change):
+    """Format/i18n a document's change object description for timeline listing
+    """
+    description = change.description
+    if change.action == "new-version":
+        version = change.origin.versions.get(
+            int(change.extras.get("version_id"))
+        )
+        chg_url = url.absoluteURL(version, common.get_request())
+        if chg_url:
+            description = "<a href='%s'>%s</a>" % (
+                chg_url, 
+                (translate_i18n(change.description) 
+                    or translate_i18n(u"New Version")
+                )
+            )
+    elif change.action == "workflow":
+        description = translate_i18n(change.description)
+    if not description:
+        # use principal effecting the change as description as a fallback
+        dc = IDCDescriptiveProperties(change.user, None)
+        if dc:
+            description = translate_i18n(dc.title_member)
+    return description or change.extras
 
 # !+SubformViewlet(mr, oct-2010) in this usage case this this should really
 # be made to inherit from browser.BungeniViewlet (but, note that
@@ -662,7 +690,7 @@ class TimeLineViewlet(browser.BungeniItemsViewlet):
     changes_getter = {
         "atype": lambda item: item.action,
         "adate": lambda item: item.date_active,
-        "description": lambda item: item.description,
+        "description": format_change_description,
         "notes": lambda item: "",
     }
     events_getter = {
