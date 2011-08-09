@@ -12,10 +12,13 @@ def add_section_links(content, theme, resource_fetcher, log):
     (workspace and portal).
     """
     host_url = urlsplit(log.theme_url)
-    if "logout" in theme('#portal-personaltools').html():
-        theme('body').addClass('template-workspace')
-    else:
+    if theme('#portal-personaltools').html() == None:
         theme('body').addClass('template-portal')
+    else:
+        if "logout" in theme('#portal-personaltools').html():
+            theme('body').addClass('template-workspace')
+        else:
+            theme('body').addClass('template-portal')
 
 def image_links(content, theme, resource_fetcher, log):
     """
@@ -177,41 +180,6 @@ def add_menu_items(content, theme, resource_fetcher, log):
                 pq(list_item).addClass("2ndlevel")
                 theme(".row_1 .three-columns-equal .block_1 ul").append(
                     list_item)
-     
-def add_rss_feeds(content, theme, resource_fetcher, log):
-    """
-    Add rss feeds and news content.
-    """
-    news_query_value = "/plone/news"
-    language_selector = content("#portal-languageselector .selected a").attr(
-        "href")
-    if language_selector != None:
-        language = language_selector.split("=")[1]
-        if language !="en":
-            news_query_value = "/plone/news-" + language + "?set_language=" + \
-                               language
-
-    host_url = urlsplit(log.theme_url)
-    source_dest_mapping = {news_query_value:
-                           ".row_1 .three-columns-equal .block_2",
-                           "/plone/feeds/sittings":
-                           ".row_1 .three-columns-equal .block_3",                      
-                           "/plone/feeds/question-listing":
-                           ".row_1 .three-columns-equal .block_3",
-                           "/plone/feeds/motion-listing":
-                           ".row_1 .three-columns-equal .block_3",
-                           "/plone/feeds/bill-listing":
-                           ".row_1 .three-columns-equal .block_3"}
-    for item in source_dest_mapping:
-        try:
-            response = urllib2.urlopen(host_url[0] + "://" + host_url[1] +
-                                   item)
-            url_content = response.read()
-            content_data =  pq(url_content)
-            theme(source_dest_mapping[item]).append(
-                content_data("#content").html().replace("/akomantoso.xml", ""))
-        except:
-            pass
 
 def reposition_contentActions(content, theme, resource_fetcher, log):
     """

@@ -22,8 +22,6 @@
         class="load-committee-tab" />
     <match path="regex:^/(members/political-groups)/obj-([0-9])+(/)?(view)?$"
         class="load-political-group-tab" />                                    
-    <match path="exact:/cynin/login_form"
-        class="login" />
     <match path="exact:/"
         class="frontpage" />
     <match path="exact:/front-page"
@@ -33,6 +31,9 @@
     
     <rule class="load-plone-navigation">        
         <!-- language selector -->
+        <append theme="//head"
+                content="//head"
+                nocontent="ignore" />        
         <replace href="/bungeni/business/whats-on"
             content="#portal-languageselector"
             theme="#portal-languageselector"/>  
@@ -49,6 +50,8 @@
             theme="children:#portal-globalnav > ul" />
         <append content="#portal-globalnav > li:not(:first-child)"
             theme="children:#portal-globalnav > ul" />
+        <drop href="/plone"
+            content="#portal-globalnav > li:first-child"/>             
         <prepend content="ul#portal-subnavbar li"
             theme="children:#portal-globalnav ul.level1" /> 
         <drop theme="#processing_indicatron" />          
@@ -70,39 +73,6 @@
             "bungeni.portal.static.themes.rules:add_member_public_links"
         />  
     </rule>                         
-
-    
-    <rule class="load-cynin-navigation">
-        <!-- language selector -->
-        <replace href="/bungeni/business/whats-on"
-            content="#portal-languageselector"
-            theme="#portal-languageselector"/>
-
-        <!-- navigation -->
-        <prepend href="/bungeni/workspace/obj-1/pi/"
-            content="#portal-globalnav > li"
-            theme="children:#portal-globalnav > ul" />
-
-        <append href="/plone"
-            content="#portal-globalnav > li:not(:first-child)"
-            theme="children:#portal-globalnav > ul" /> 
-                
-        <prepend href="/bungeni/"
-            content="ul#portal-personaltools li.navigation"
-            theme="children:#portal-globalnav ul.level1" />
-
-        <replace href="/plone/"
-            content="#portal-personaltools"
-            theme="#portal-personaltools"/>
-        
-        <!-- content -->
-        <append href="/bungeni/"
-            content="ul.formTabs"
-            theme="#portal-columns"/>
-                
-        <append content="#main" theme="#portal-columns"/>  
-    </rule>
-    
 
     <rule class="load-bungeni-navigation">
         <append content="children:#portal-column-one"
@@ -136,11 +106,6 @@
         /> 
     </rule>         
 
-    <rule class="login">
-        <!-- content -->
-        <append content="#login_form"
-                theme="children:#portal-column-content"/>        
-    </rule>  
 
     <rule class="load-bungeni-navigation">
         <!-- navigation -->
@@ -152,6 +117,10 @@
     </rule>
     
     <rule class="frontpage">
+        <append href="/plone"
+                theme="//head"
+                content="//head"
+                nocontent="ignore" />        
         <append href="/business/whats-on"
                 theme="children:#portal-column-one"
                 content="#portal-personaltools .navigation"/>
@@ -210,9 +179,6 @@
         <pyquery pyref=
             "bungeni.portal.static.themes.rules:add_menu_items"
         />
-        <!--<pyquery pyref=
-            "bungeni.portal.static.themes.rules:add_rss_feeds"
-        />-->
         <drop content="#portal-column-content" /> 
     </rule>  
 
