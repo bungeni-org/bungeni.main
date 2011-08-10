@@ -44,11 +44,13 @@ def __pi_create(context):
 def __pi_submit(context):
     utils.set_pi_registry_number(context)
     utils.pi_update_signatories(context)
+    utils.pi_unset_signatory_roles(context)
 
 def __pi_redraft(context):
     """Signatory operations on redraft - Unsetting signatures e.t.c
     """
     utils.pi_update_signatories(context)
+    utils.pi_unset_signatory_roles(context, all=True)
 
 # address
 
@@ -232,8 +234,12 @@ def _signatory_awaiting_consent(context):
         utils.assign_signatory_role(context.item, owner_login)
 
 def _signatory_rejected(context):
-    owner_login = utils.get_owner_login_pi(context)
-    utils.assign_signatory_role(context.item, owner_login, unset=True)
+    #!+SIGNATORIES(mb, aug-2011) Unsetting of roles now handled when
+    # document is submitted or redrafted. To deprecate this action if no
+    # not needed.
+    #owner_login = utils.get_owner_login_pi(context)
+    #utils.assign_signatory_role(context.item, owner_login, unset=True)
+    return
 
 _signatory_withdrawn = _signatory_rejected
 
