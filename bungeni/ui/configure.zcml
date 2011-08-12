@@ -225,6 +225,5 @@
       />
     
    <!-- Workspace Adapters -->
-   <adapter factory=".workspace-adapters.WorkspaceAdapter" /> 
-    
+   <adapter factory=".workspace-adapters.WorkspaceContentAdapter" /> 
 </configure>

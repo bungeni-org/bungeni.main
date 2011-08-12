@@ -104,7 +104,14 @@ class WorkspaceTabsUtility():
                     status in self.workspaces[role][tab][domain_class]:
                         return tab
         return None
-       
+    def getStatus(self, role, domain_class, tab):
+        """Returns all applicable statuses given the role,
+        domain_class and tab"""
+        if role in self.workspaces:
+            if tab in self.workspaces[role]:
+                if domain_class in self.workspaces[role][tab]:
+                    return self.workspaces[role][tab][domain_class]
+
 def load_workspace(file_name, domain_class):
     """Loads the workspace configuration for each documemnt"""
     workspace_tabs = getUtility(IWorkspaceTabsUtility)
