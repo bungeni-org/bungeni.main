@@ -64,30 +64,34 @@ class WorkspaceContainer(AlchemistContainer):
            domain classes and status of items to appear for that principal in
            that tab. Role should be a list, tab a string
         """
-        dom_stat = {}
+        domain_status = {}
         for role in roles:
-            workspace_dom_stat = self.workspace_config.getDomainAndStatuses(role,
-                tab)
-            if workspace_dom_stat:
-                for key in workspace_dom_stat.keys():
-                    if key in dom_stat.keys():
-                        dom_stat[key].extend(workspace_dom_stat[key])
-                    else:
-                        dom_stat[key] = workspace_dom_stat[key]
-        return dom_stat
+            domains = self.workspace_config.getRoleDomains(
+                role, tab)
+            if domains:
+                for domain in domains:
+                    status = self.workspace_config.getStatus(role, domain, tab)
+                    if status:
+                        if domain in domain_status.keys():
+                            domain_status[domain].extend(status)
+                        else:
+                            domain_status[domain] = status
+        return domain_status
 
     def item_status_filter(self, kw, roles):
         domain_status = {}
         if kw.get("item_type_filter", None):
-            domain_class = self.workspace_config.getDomain(kw["item_type_filter"])
+            domain_class = self.workspace_config.getDomain(
+                kw["item_type_filter"])
             if domain_class:
                 domain_status[domain_class] = []
                 for role in roles:
-                    statuses = self.workspace_config.getStatus(role, domain_class,
-                                                           self.__name__)
+                    statuses = self.workspace_config.getStatus(role,
+                                                               domain_class,
+                                                               self.__name__)
                     if kw.get("status_filter", None) and \
                             kw["status_filter"] in statuses:
-                        domain_status[domain_class] = kw["status_filter"] 
+                        domain_status[domain_class].append(kw["status_filter"])
                     elif statuses:
                         domain_status[domain_class].extend(statuses)
         else:
@@ -100,7 +104,7 @@ class WorkspaceContainer(AlchemistContainer):
                     else:
                         del domain_status[domain_class]
         return domain_status
-    
+
     def title_column(self, domain_class):
         table = orm.class_mapper(domain_class).mapped_table
         utk = dict([(table.columns[k].key, k)

@@ -6,7 +6,9 @@
                          '${options/data_url}',
                          [${options/fields}],
                          [${options/columns}],
-                         '${options/table_id}');
+                         '${options/table_id}',
+			 ${options/item_types},
+			 ${options/status});
   });
   })(jQuery);
 </script>

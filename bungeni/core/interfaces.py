@@ -275,9 +275,12 @@ class ILanguageProvider(interface.Interface):
         """
 
 class IWorkspaceTabsUtility(interface.Interface):
-    def getDomainAndStatuses(role, tab):
-        """Returns a dictionary with the interfaces as keys. The value for each 
-        key is a dictionary of applicable statuses"""
+    def getRoleDomains(role, tab):
+        """Returns a list of domains that a role will since in a specific
+        tab of the workspace"""
+    def getStatus(role, domain_class, tab):
+        """Returns a list of status that are applicable for a certain
+        tab for a certain role and domain"""
     def setContent(role, tab, workflow_name, status):
         """Set workspace info
         """
@@ -290,3 +293,6 @@ class IWorkspaceTabsUtility(interface.Interface):
     def getType(key):
         """Given a domain_class, returns the item type
         """
+    def getTab(role, domain_class, status):
+        """Returns the tab an object should be in, given its domain class, 
+        status and role"""
