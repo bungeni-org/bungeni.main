@@ -710,7 +710,48 @@
 
   };
   
-  $.fn.yuiWorkspaceDataTable = function(context_name, link_url, data_url, fields, columns, table_id) {
+  $.fn.yuiWorkspaceItemTypeChange = function() {
+      $(this).change(function() {
+        var status_select = $("#input-yui-col5");
+	status_select.empty();
+        var i = 0;
+	if (status_select.val() = ""){
+	    for(var prop in global_status_var) { 
+		var s = prop.split("+");
+		if (s.length == 1) {
+		    var option = document.createElement('option');
+		    option.value = prop;
+		    option.text = global_status_var[prop];
+		    try {
+			status_select.add(option, null); // standards compliant; doesn't work in IE
+		    }
+		    catch(ex) {
+			status_select.add(option); // IE only
+		    }
+		}
+	    }
+	}
+	else {
+	    for(var prop in global_status_var) { 
+		var s = prop.split("+");
+		if (s[0] == $(this).val()) {
+		    var option = document.createElement('option');
+		    option.value = prop;
+		    option.text = global_status_var[prop];
+		    try {
+			status_select.add(option, null); // standards compliant; doesn't work in IE
+		    }
+		    catch(ex) {
+			status_select.add(option); // IE only
+		    }
+		}
+	    }
+	}
+	  });
+      return this;
+  };
+
+  $.fn.yuiWorkspaceDataTable = function(context_name, link_url, data_url, fields, columns, table_id, item_type, status) {
     if (!YAHOO.widget.DataTable) {
       return console.log("Warning: YAHOO.widget.DataTable module not loaded.");
     }
@@ -733,18 +774,36 @@
     datasource.responseSchema = {
         resultsList: "nodes",
         fields: fields,
-        metaFields: { totalRecords: "length", paginationRecordOffset:"start"}
+        metaFields: { totalRecords: "length", sortKey:"sort", sortDir:"dir", paginationRecordOffset:"start"}
     };
-    
+    global_status_var = status;
+    // filter per column  
+    var get_text_filter = function(oSelf) {      
+	var qstr = '&filter_title=' + $("#input-yui-col1").val();  
+        return qstr;
+    };
+    var get_select_filter = function(oSelf) {    
+	var item_type = $("#input-yui-col3 option:selected");
+	var qstr = '&filter_item_type=' + item_type.val();  
+	var status = $("#input-yui-col5 option:selected");
+	qstr = qstr+'&filter_status=' + status.val();  
+        return qstr;
+    };
     // A custom function to translate the js paging request into a datasource query    
     var RequestBuilder = function(oState, oSelf) {
       // Get states or use defaults
-      oState = oState || {pagination:null};
+      oState = oState || {pagination:null, sortedBy:null};
+      var sort = (oState.sortedBy) ? oState.sortedBy.key : "";
+      var dir = (oState.sortedBy && oState.sortedBy.dir === YAHOO.widget.DataTable.CLASS_DESC) ? "desc" : "asc";
       var startIndex = (oState.pagination) ? oState.pagination.recordOffset : 0;
       var results = (oState.pagination) ? oState.pagination.rowsPerPage : 100;  
        
       // Build custom request
-      return "&start=" + startIndex + "&limit=" +  results;
+      return  "sort=" + sort +
+      "&dir=" + dir +
+      "&start=" + startIndex +
+      "&limit=" +  results +
+      get_text_filter(oSelf) + get_select_filter(oSelf);
     };
     
     config = {
@@ -760,7 +819,10 @@
           }),
         initialRequest : 'start=0&limit=25',
         generateRequest : RequestBuilder, 
+        sortedBy : { dir : YAHOO.widget.DataTable.CLASS_ASC },
         dynamicData: true, // Enables dynamic server-driven data  
+        MSG_SORTASC : "Click to filter and sort ascending",
+        MSG_SORTDESC : "Click to filter and sort descending"
     };
 
     table = new YAHOO.widget.DataTable(YAHOO.util.Dom.get(table_id), columns, datasource, config  );    
@@ -773,5 +835,131 @@
         oPayload.pagination.recordOffset = oResponse.meta.paginationRecordOffset;
         return oPayload;
         };
+    
+    table.fnFilterCallback = {
+        success: function(sRequest, oResponse, oPayload){
+            var paginator = table.getState().pagination.paginator;
+            table.onDataReturnInitializeTable(sRequest, oResponse, oPayload);
+            paginator.set('totalRecords', oResponse.meta.totalRecords); 
+            table.render();            
+            paginator.setPage(1);     
+           
+        },
+        failure: function(sRequest, oResponse, oPayload) {
+            var paginator = table.getState().pagination.paginator;        
+            table.onDataReturnInitializeTable(sRequest, oResponse, oPayload);
+            table.render();
+            paginator.setPage(1);                            
+        }
+    }; 
+
+    table.fnFilterchange = function(e) {               
+        table.getDataSource().sendRequest(RequestBuilder(null,table), table.fnFilterCallback);
+        //table.getState().pagination.paginator.setPage(1);
+    };
+
+    var i=0;
+    var table_columns = table.getColumnSet();
+    
+    var name_column = table_columns.getColumn(0);
+    var input = document.createElement('input');
+    input.setAttribute('type', 'text');
+    input.setAttribute('name', 'filter_' + name_column.getKey());
+    input.setAttribute('id', 'input-' + name_column.getId());
+    var thEl = name_column.getThEl();  
+    thEl.innerHTML = "";
+    thEl.appendChild(input);
+    
+    // Set the html for the item_types
+    var type_column = table_columns.getColumn(1);
+    thEl = type_column.getThEl();  
+    var select = document.createElement('select');
+    select.setAttribute('name', 'filter_' + type_column.getKey());
+    select.setAttribute('id', 'input-' + type_column.getId());
+    var i = 0;
+    for(var prop in item_type) {
+        var option = document.createElement('option');
+        option.value = prop;
+        option.text = item_type[prop];
+        try {
+            select.add(option, null); // standards compliant; doesn't work in IE
+        }
+        catch(ex) {
+            select.add(option); // IE only
+        }
+    }
+    thEl.innerHTML = "";
+    thEl.appendChild(select);
+    
+    var status_column = table_columns.getColumn(2);
+    var status_select = document.createElement('select');
+    status_select.setAttribute('type', 'text');
+    status_select.setAttribute('name', 'filter_' + status_column.getKey());
+    status_select.setAttribute('id', 'input-' + status_column.getId());
+    var thEl = status_column.getThEl();  
+    var i = 0;
+    for(var prop in status) {
+	var s = prop.split("+");
+	if (s.length == 1) {
+	    var option = document.createElement('option');
+	    option.value = prop;
+	    option.text = status[prop];
+	    try {
+		status_select.add(option, null); // standards compliant; doesn't work in IE
+	    }
+	    catch(ex) {
+		status_select.add(option); // IE only
+	    }
+	}
+    }
+    thEl.innerHTML = "";
+    thEl.appendChild(status_select);
+    
+    var status_date_column = table_columns.getColumn(3);
+    var input = document.createElement('input');
+    input.setAttribute('type', 'text');
+    input.setAttribute('name', 'filter_' + status_date_column.getKey());
+    input.setAttribute('id', 'input-' + status_date_column.getId());
+    var thEl = status_date_column.getThEl();  
+    thEl.innerHTML = "";
+    thEl.appendChild(input);
+
+    table.sortColumn = function(oColumn, sDir) {
+      // Default ascending
+      cDir = "asc";
+      // If already sorted, sort in opposite direction
+      var sorted_by =   this.get("sortedBy");
+      sorted_by = sorted_by || {key:null, dir:null};
+      if(oColumn.key == sorted_by.key) {
+        cDir = (sorted_by.dir === YAHOO.widget.DataTable.CLASS_ASC || sorted_by.dir == "") ? "desc" : "asc";
+      }
+       
+      if (sDir == YAHOO.widget.DataTable.CLASS_ASC) {
+        cDir = "asc";
+          }
+      else if (sDir == YAHOO.widget.DataTable.CLASS_DESC) {
+        cDir = "desc";
+      }
+
+      // Pass in sort values to server request
+      var newRequest = "sort=" + oColumn.key + "&dir=" + cDir + "&start=0";
+      // Create callback for data request
+      var oCallback = {
+      success: this.onDataReturnInitializeTable,
+      failure: this.onDataReturnInitializeTable,
+      scope: this,
+      argument: {
+          // Pass in sort values so UI can be updated in callback function
+        sorting: {
+          key: oColumn.key,
+          dir: (cDir === "asc") ? YAHOO.widget.DataTable.CLASS_ASC : YAHOO.widget.DataTable.CLASS_DESC
+        }
+        }
+      };
+      newRequest = newRequest + get_text_filter(this) + get_select_filter(this);          
+      this.getDataSource().sendRequest(newRequest, oCallback);
+    };
+    
+    
     };
  })(jQuery);

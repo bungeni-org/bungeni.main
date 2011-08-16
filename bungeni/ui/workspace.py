@@ -189,11 +189,11 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
         item_types = self.getItemTypes()
         config["item_types"] = simplejson.dumps(item_types)
         all_item_status = set()
-        status = dict()
+        status = dict([("", "-")])
         for item_type in item_types:
             i_s = self.getStatus(item_type)
             for i in i_s:
-                item_status_value = "%s_%s" % (item_type, i)
+                item_status_value = "%s+%s" % (item_type, i)
                 item_status_name = translate(i, context=self.request)
                 status[item_status_value] = item_status_name
                 all_item_status.add(i)

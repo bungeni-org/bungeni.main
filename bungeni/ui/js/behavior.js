@@ -22,5 +22,6 @@ $(document).ready(function() {
       
       $('#scheduling-calendar').bungeniInteractiveSchedule();
       $('#fieldset-mp-items').tablesorter();  
-      $('#fieldset-mp-items').columnFilters({alternateRowClassNames:['odd','even']}); 
+      $('#fieldset-mp-items').columnFilters({alternateRowClassNames:['odd','even']});
+      $('#input-yui-col3').yuiWorkspaceItemTypeChange();
     });

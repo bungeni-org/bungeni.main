@@ -1,7 +1,7 @@
 <script type="text/javascript">
   (function($) {
   $(document).ready(function() {
-    $(this).yuiDataTable('${options/context_name}',
+    $(this).yuiWorkspaceDataTable('${options/context_name}',
                          '${options/link_url}',
                          '${options/data_url}',
                          [${options/fields}],
