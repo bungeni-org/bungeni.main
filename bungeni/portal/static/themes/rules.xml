@@ -41,8 +41,7 @@
         <replace href="/bungeni/business/whats-on"
             content="children:#portal-personaltools"
             theme="children:#portal-personaltools"/> 
-        <drop theme="children:#portal-personaltools li.navigation" />            
-        
+        <drop theme="children:#portal-personaltools li.navigation" />                  
                         
         <!-- navigation -->
         <prepend href="/bungeni/business/whats-on"
@@ -74,15 +73,14 @@
         />  
     </rule>                         
 
+
     <rule class="load-bungeni-navigation">
         <append content="children:#portal-column-one"
             theme="children:#portal-column-one"
-        />    
-        <pyquery pyref=
-                 "bungeni.portal.static.themes.rules:switch_links_to_cynin"
-        />
-        
-
+        />        
+        <!-- navigation -->
+        <append href="/plone" content="#portal-globalnav > li:not(:first-child)"
+            theme="children:#portal-globalnav > ul" />         
     </rule>
     
     <rule class="load-member-tab">
@@ -105,16 +103,7 @@
                  pyarg-space_type="political-group"
         /> 
     </rule>         
-
-
-    <rule class="load-bungeni-navigation">
-        <!-- navigation -->
-        <append href="/plone" content="#portal-globalnav > li:not(:first-child)"
-            theme="children:#portal-globalnav > ul" /> 
-        <pyquery pyref=
-                 "bungeni.portal.static.themes.rules:switch_links_to_cynin"
-        /> 
-    </rule>
+    
     
     <rule class="frontpage">
         <append href="/plone"
@@ -129,23 +118,12 @@
                 content="#portal-personaltools .navigation"/>
         <append href="/archive/browse"
                 theme="children:#portal-column-one"
-                content="#portal-personaltools .navigation"/>
-        <append href="/plone/have-your-say"
-                theme="children:#portal-column-one"
-                content="#portal-subnavbar"/>
-        <append href="/plone/how-we-work"
-                theme="children:#portal-column-one"
-                content="#portal-subnavbar"/>
-        <append href="/plone/reference-material"
-                theme="children:#portal-column-one"
-                content="#portal-subnavbar"/>
-        
+                content="#portal-personaltools .navigation"/>        
         <replace content="#portal-logo" theme="#portal-logo" />
         <replace content="#portal-siteactions" theme="#portal-siteactions" />
         <drop href="/plone"
             content="#portal-breadcrumbs" />
-        <drop content="#portal-search" />              
-        
+        <drop content="#portal-search" />                      
 
     <!-- menu -->
         <drop href="/plone"
@@ -162,8 +140,7 @@
             theme="children:.main-content"
         />
         <drop content="#portal-column-content" />
-
-    
+   
         <replace content="#portal-personaltools" theme="#portal-personaltools" />
         <append href="/bungeni"
             content="ul#portal-personaltools li.navigation"
@@ -241,7 +218,8 @@
         <pyquery pyref=
             "bungeni.portal.static.themes.rules:add_section_links"
         />
- <!-- <pyquery pyref="bungeni.portal.static.themes.rules:enable_text_editor"/> -->
+        <!--<pyquery pyref=
+            "bungeni.portal.static.themes.rules:enable_text_editor"/>-->
 
 </rule>
 </ruleset>
