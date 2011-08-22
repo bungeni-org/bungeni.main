@@ -461,7 +461,7 @@
         }
       }
       
-      function select_item(select, value) {
+      function selectitem(select, value) {
         var options = select.options;
         for (var index in options) {
           var option = options[index];
@@ -710,47 +710,6 @@
 
   };
   
-  $.fn.yuiWorkspaceItemTypeChange = function() {
-      $(this).change(function() {
-        var status_select = $("#input-yui-col5");
-	status_select.empty();
-        var i = 0;
-	if (status_select.val() = ""){
-	    for(var prop in global_status_var) { 
-		var s = prop.split("+");
-		if (s.length == 1) {
-		    var option = document.createElement('option');
-		    option.value = prop;
-		    option.text = global_status_var[prop];
-		    try {
-			status_select.add(option, null); // standards compliant; doesn't work in IE
-		    }
-		    catch(ex) {
-			status_select.add(option); // IE only
-		    }
-		}
-	    }
-	}
-	else {
-	    for(var prop in global_status_var) { 
-		var s = prop.split("+");
-		if (s[0] == $(this).val()) {
-		    var option = document.createElement('option');
-		    option.value = prop;
-		    option.text = global_status_var[prop];
-		    try {
-			status_select.add(option, null); // standards compliant; doesn't work in IE
-		    }
-		    catch(ex) {
-			status_select.add(option); // IE only
-		    }
-		}
-	    }
-	}
-	  });
-      return this;
-  };
-
   $.fn.yuiWorkspaceDataTable = function(context_name, link_url, data_url, fields, columns, table_id, item_type, status) {
     if (!YAHOO.widget.DataTable) {
       return console.log("Warning: YAHOO.widget.DataTable module not loaded.");
@@ -875,7 +834,8 @@
     thEl = type_column.getThEl();  
     var select = document.createElement('select');
     select.setAttribute('name', 'filter_' + type_column.getKey());
-    select.setAttribute('id', 'input-' + type_column.getId());
+    var item_type_select_id = 'input-' + type_column.getId();
+    select.setAttribute('id', item_type_select_id);
     var i = 0;
     for(var prop in item_type) {
         var option = document.createElement('option');
@@ -890,12 +850,12 @@
     }
     thEl.innerHTML = "";
     thEl.appendChild(select);
-    
     var status_column = table_columns.getColumn(2);
     var status_select = document.createElement('select');
     status_select.setAttribute('type', 'text');
     status_select.setAttribute('name', 'filter_' + status_column.getKey());
-    status_select.setAttribute('id', 'input-' + status_column.getId());
+    var status_select_id = 'input-' + status_column.getId(); 
+    status_select.setAttribute('id',status_select_id);
     var thEl = status_column.getThEl();  
     var i = 0;
     for(var prop in status) {
@@ -905,7 +865,7 @@
 	    option.value = prop;
 	    option.text = status[prop];
 	    try {
-		status_select.add(option, null); // standards compliant; doesn't work in IE
+		status_select.add(option, null);
 	    }
 	    catch(ex) {
 		status_select.add(option); // IE only
@@ -923,7 +883,39 @@
     var thEl = status_date_column.getThEl();  
     thEl.innerHTML = "";
     thEl.appendChild(input);
-
+    var item_select = $("#"+item_type_select_id);
+    item_select.change(function(event) {
+        var status_select = $("#"+status_select_id);
+	status_select.empty();
+        var i = 0;
+	var item_select_val = $(this).val();
+	if (item_select_val == ""){
+	    for(var prop in global_status_var) { 
+		var s = prop.split("+");
+		if (s.length == 1) {
+		    var option = document.createElement('option');
+		    option.value = prop;
+		    option.text = global_status_var[prop];
+		    status_select.append(option);
+		}
+	    }
+	}
+	else {
+	    var option = document.createElement('option');
+	    option.value = "";
+	    option.text = "-";
+	    status_select.append(option);
+	    for(var prop in global_status_var) { 
+		var s = prop.split("+");
+		if (s[0] == item_select_val) {
+		    option = document.createElement('option');
+		    option.value = s[1];
+		    option.text = global_status_var[prop];
+		    status_select.append(option);
+		}
+	    }
+	}
+	  });
     table.sortColumn = function(oColumn, sDir) {
       // Default ascending
       cDir = "asc";

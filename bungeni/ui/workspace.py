@@ -21,7 +21,7 @@ from bungeni.ui import table
 from bungeni.ui.interfaces import IWorkspaceContentAdapter
 from bungeni.ui.forms.common import AddForm
 from bungeni.models.utils import get_principal
-
+from bungeni.models.workspace import OBJECT_ROLES
 
 class WorkspaceField(object):
 
@@ -153,6 +153,7 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
         workspace_config = component.getUtility(IWorkspaceTabsUtility)
         principal = get_principal()
         roles = get_workspace_roles(principal)
+        roles.extend(OBJECT_ROLES)
         domains = []
         for role in roles:
             dom = workspace_config.getRoleDomains(
@@ -166,7 +167,7 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
         for domain in domains:
             value = workspace_config.getType(domain)
             if value:
-                name = translate(value, context=self.request)
+                name = translate(_(value), context=self.request)
                 result[value] = name
         return result
 
@@ -174,6 +175,7 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
         workspace_config = component.getUtility(IWorkspaceTabsUtility)
         principal = get_principal()
         roles = get_workspace_roles(principal)
+        roles.extend(OBJECT_ROLES)
         domain_class = workspace_config.getDomain(item_type)
         results = set()
         for role in roles:
@@ -194,7 +196,7 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
             i_s = self.getStatus(item_type)
             for i in i_s:
                 item_status_value = "%s+%s" % (item_type, i)
-                item_status_name = translate(i, context=self.request)
+                item_status_name = translate(_(i), context=self.request)
                 status[item_status_value] = item_status_name
                 all_item_status.add(i)
         for ais in all_item_status:
