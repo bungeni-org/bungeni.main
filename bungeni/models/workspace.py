@@ -150,6 +150,17 @@ class WorkspaceContainer(AlchemistContainer):
             name = stringKey(obj)
             yield (name, contained(obj, self, name))
 
+    def check_item(self, domain_class, status):
+        principal = get_principal()
+        roles = get_workspace_roles(principal)
+        roles.extend(OBJECT_ROLES)
+        for role in roles:
+            statuses = self.workspace_config.getStatus(role, domain_class,
+                                                       self.__name__)
+            if statuses and status in statuses:
+                return True
+        return False
+
     def get(self, name, default=None):
         try:
             domain_class, primary_key = valueKey(name)
@@ -161,8 +172,8 @@ class WorkspaceContainer(AlchemistContainer):
             return default
         # The check below is to ensure an error is raised if an object is not
         # in the tab requested eg. through an outdated url
-        if value in self._query():
-            value = contained(value, self, stringKey(value))
+        if self.check_item(domain_class, value.status):
+            value = contained(value, self, name)
             return value
         else:
             return default
