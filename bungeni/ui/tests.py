@@ -35,6 +35,7 @@ def test_suite():
     doctests = (
                 'forms/readme.txt',
                 'downloaddocument.txt',
+                'utils/misc.py',
                 )
     docfiles = (
         "bungeni.ui.forms.forms",

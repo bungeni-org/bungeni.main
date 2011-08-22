@@ -14,7 +14,7 @@ from bungeni.ui import zcml
 from bungeni.ui.widgets import SelectDateWidget
 from bungeni.ui.calendar import utils
 from bungeni.ui.i18n import _
-from bungeni.ui.utils import misc, url, queries, debug
+from bungeni.ui.utils import misc, url, queries, debug, date
 from bungeni.ui import forms
 from bungeni.ui import vocabulary
 from bungeni.ui.forms.common import AddForm
@@ -43,6 +43,8 @@ from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent
 from sqlalchemy.orm import eagerload
 from sqlalchemy.sql import expression as sql
+
+from zope.app.component.hooks import getSite
 
 class TIME_SPAN:
     daily = _(u"Daily")
@@ -92,6 +94,7 @@ def motionOptions(context):
              _(u"Number"),
              _(u"Text"),
              _(u"Owner"),
+             _(u"Signatories"),
             )
     return SimpleVocabulary.fromValues(items)
 
@@ -100,6 +103,7 @@ def tabledDocumentOptions(context):
              _(u"Number"),
              _(u"Text"),
              _(u"Owner"),
+             _(u"Signatories"),
             )
     return SimpleVocabulary.fromValues(items)
 
@@ -110,16 +114,30 @@ def questionOptions(context):
              _(u"Owner"),
              #"Response",
              _(u"Type"),
+             _(u"Signatories"),
             )
     return SimpleVocabulary.fromValues(items)
 
 
 class ReportView(form.PageForm):
     main_result_template = ViewPageTemplateFile("templates/main_reports.pt")
-    result_template = ViewPageTemplateFile("templates/reports.pt")
+    result_template = ViewPageTemplateFile(
+        "templates/default-report_sitting.pt"
+    )
     display_minutes = None
+    include_text = True
+
     def __init__(self, context, request):
+        self.site_url = url.absoluteURL(getSite(), request)
         super(ReportView, self).__init__(context, request)
+    
+    def format_date(self, date_time, category="dateTime"):
+        formatter = date.getLocaleFormatter(self.request, category=category)
+        return formatter.format(date_time)
+
+    def check_option(self, doctype, option=""):
+        opt_key = "%s_%s" %(doctype, option) if option else doctype
+        return hasattr(self.options, opt_key)
 
     class IReportForm(interface.Interface):
         short_name = schema.Choice(
@@ -238,7 +256,8 @@ class ReportView(form.PageForm):
                                 "date"))
             
             parliament = queries.get_parliament_by_date_range(
-                                                           start_date, end_date)
+                start_date, end_date
+            )
             if parliament is None:
                 errors.append(interface.Invalid(
                     _(u"A parliament must be active in the period"),
@@ -292,9 +311,14 @@ class ReportView(form.PageForm):
             return string.lower().replace(" ", "_")
         for item_type in data["item_types"]:
             itemtype = cleanup(item_type)
+            type_key = itemtype.rstrip("s").replace("_", "")
+            setattr(self.options, type_key, True)
             setattr(self.options, itemtype, True)
             for option in data[itemtype + "_options"]:
-                setattr(self.options, cleanup(itemtype + "_" + option), True)
+                opt_key = "".join((cleanup(itemtype.rstrip("s")).replace("_",""),
+                    "_", cleanup(option)
+                ))
+                setattr(self.options, opt_key, True)
         if self.display_minutes:
             self.link = url.absoluteURL(self.context, self.request) \
                                                 + "/votes-and-proceedings"
@@ -307,6 +331,7 @@ class ReportView(form.PageForm):
 
 class GroupSittingContextAgendaReportView(ReportView):
     display_minutes = False
+    include_text = False
     short_name = _(u"Sitting Agenda")
     note = ""
     form_fields = ReportView.form_fields.omit("short_name", "date")
@@ -318,7 +343,11 @@ class GroupSittingContextMinutesReportView(ReportView):
     form_fields = ReportView.form_fields.omit("short_name", "date")
 
 class SchedulingContextAgendaReportView(ReportView):
+    result_template = ViewPageTemplateFile(
+        "templates/default-report_scheduling.pt"
+    )
     display_minutes = False
+    include_text = False
     note = ""
 
 class SchedulingContextMinutesReportView(ReportView):
@@ -417,12 +446,13 @@ class SaveReportView(form.PageForm):
 
 class DefaultReportView(BrowserView):
 
-    template = ViewPageTemplateFile("templates/default-report.pt")
+    template = ViewPageTemplateFile("templates/default-report_sitting.pt")
 
     def __init__(self, context, request, include_text=True):
         self.context = context
         self.request = request
         self.include_text = include_text
+        self.site_url = url.absoluteURL(getSite(), request)
         
     def __call__(self):
         return self.template() 

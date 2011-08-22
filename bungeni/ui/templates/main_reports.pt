@@ -4,7 +4,7 @@
       <div metal:fill-slot="body" i18n:domain="bungeni" class="report_body">
             <a tal:attributes="href view/link"> Back </a>
             <a href="#" style="float:right" onclick="document.hidden_form_save.submit();"> Publish Report </a>
-                <div tal:content="structure view/body_text" ></div>
+                <div i18n:translate="" tal:content="structure view/body_text" ></div>
                 <a tal:attributes="href view/link"> Back </a>
                 <a href="#" style="float:right" onclick="document.hidden_form_save.submit();"> Publish Report </a>
         <form name="hidden_form_save" method="post" tal:attributes="action view/save_link" style="visibility:hidden">

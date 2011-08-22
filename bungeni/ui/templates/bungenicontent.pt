@@ -9,6 +9,11 @@
     <p class="documenttitle" tal:condition="view/document/dc:title">
         <span tal:replace="view/document/dc:title"/>
     </p>
+    <p tal:condition="view/document/dc:uri">
+        <a tal:attributes="href string:${view/site_url}${view/document/dc:uri}">
+            <span i18n:translate="" tal:omit-tag="">View in Bungeni</span>
+        </a>
+    </p>
     <p class="documentdescription" tal:condition="view/document/dc:description" 
         i18n:translate="">
         <span tal:replace="view/document/dc:description" /> 

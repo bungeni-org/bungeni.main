@@ -68,6 +68,12 @@ class DescriptiveProperties(object):
     def description(self):
         return u""
     
+    @property
+    def uri(self):
+        session = Session()
+        context = session.merge(removeSecurityProxy(self.context))
+        return (context.uri or "") if hasattr(context, "uri") else ""
+    
     def __init__(self, context):
         self.context = context
 

@@ -4,9 +4,12 @@ Setting up Database Connection and Utilities:
    >>> from zope.component import getMultiAdapter
    >>> from bungeni import models as model
    >>> import datetime
+   >>> import base64
    >>> import bungeni.models.testing
    >>> db = bungeni.models.testing.setup_db()
    >>> from bungeni.alchemist import Session
+   >>> download_template_enc = base64.encodestring("agenda.odt")
+   >>> download_form_data = dict(template=download_template_enc)
    >>> session = Session()
 
 Initialise User
@@ -49,7 +52,7 @@ Generate ODT
 ------------
    >>> from bungeni.ui.downloaddocument import ReportODT
    >>> from zope.publisher.browser import TestRequest
-   >>> request = TestRequest()
+   >>> request = TestRequest(form=download_form_data)
    >>> reportODT = ReportODT(report, request)
    
 To check if ODT is properly generated, we check if the content type of the
@@ -62,7 +65,7 @@ Generate PDF
 ------------
    >>> from bungeni.ui.downloaddocument import ReportPDF
    >>> from zope.publisher.browser import TestRequest
-   >>> request = TestRequest()
+   >>> request = TestRequest(form=download_form_data)
    
 To check if PDF is properly generated, we check if the content type of the
 response is set

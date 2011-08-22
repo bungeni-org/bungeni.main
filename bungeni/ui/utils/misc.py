@@ -1,3 +1,5 @@
+#!/usr/local/bin/python
+# -*- coding: utf-8 -*-
 # Bungeni Parliamentary Information System - http://www.bungeni.org/
 # Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
 # Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
@@ -17,6 +19,9 @@ from types import StringTypes, ListType
 from bungeni.core.workflow import interfaces
 
 import os
+import re
+
+REGEX_FOR_SLUGS = re.compile(u"[^\w\.]")
 
 # pick data
 
@@ -104,3 +109,26 @@ class bunch(dict):
                 self[name] = getattr(obj, name)
 
 
+def slugify(string_to_slug):
+    """Generate slugified versions of a string
+    
+    Replace all all non-alphanumeric and stops characters with underscores
+    
+    Test with various character combinations
+    >>> from bungeni.ui.utils import misc
+    >>> misc.slugify("")
+    u''
+    >>> misc.slugify("simple")
+    u'simple'
+    >>> misc.slugify("textNumber1")
+    u'textNumber1'
+    >>> misc.slugify(u"specialasciiA1^&00")
+    u'specialasciiA1__00'
+    >>> misc.slugify(u"non ascii and spaces ĆýĊĔ")
+    u'non_ascii_and_spaces_____'
+    
+    """
+    assert type(string_to_slug) in (unicode, str)
+    slug = unicode(string_to_slug)
+    slug = re.sub(REGEX_FOR_SLUGS, u'_', slug)
+    return slug
