@@ -22,6 +22,9 @@ from bungeni.ui.interfaces import IWorkspaceContentAdapter
 from bungeni.ui.forms.common import AddForm
 from bungeni.models.utils import get_principal
 from bungeni.models.workspace import OBJECT_ROLES
+from bungeni.core.workflow.interfaces import IWorkflow
+from bungeni.alchemist.model import queryModelDescriptor
+from bungeni.ui.utils import debug
 
 class WorkspaceField(object):
 
@@ -167,8 +170,9 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
         for domain in domains:
             value = workspace_config.getType(domain)
             if value:
-                name = translate(_(value), context=self.request)
-                result[value] = name
+                descriptor = queryModelDescriptor(domain)
+                name = descriptor.display_name if descriptor else value
+                result[value] = translate(name, context=self.request)
         return result
 
     def getStatus(self, item_type):
@@ -184,23 +188,27 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
             if status:
                 for s in status:
                     results.add(s)
-        return results
+        translated = dict()
+        for result in results:
+            workflow = IWorkflow(domain_class())
+            status_title = translate(str(workflow.get_state(result).title),
+                                             domain="bungeni",
+                                             context=self.request)
+            translated[result] = status_title
+        return translated
 
     def getDataTableConfig(self):
         config = super(WorkspaceDataTableFormatter, self).getDataTableConfig()
         item_types = self.getItemTypes()
         config["item_types"] = simplejson.dumps(item_types)
-        all_item_status = set()
+        all_item_status = dict()
         status = dict([("", "-")])
         for item_type in item_types:
-            i_s = self.getStatus(item_type)
-            for i in i_s:
-                item_status_value = "%s+%s" % (item_type, i)
-                item_status_name = translate(_(i), context=self.request)
-                status[item_status_value] = item_status_name
-                all_item_status.add(i)
-        for ais in all_item_status:
-            status[ais] = translate(ais, context=self.request)
+            for k, v in self.getStatus(item_type).iteritems():
+                item_status_value = "%s+%s" % (item_type, k)
+                status[item_status_value] = v
+                all_item_status[k] = v
+        status.update(all_item_status)
         config["status"] = simplejson.dumps(status)
         return config
 
