@@ -1,6 +1,16 @@
 # encoding: utf-8
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 from __future__ import with_statement
+"""Views for download of documents in formats - PDF/ODT
+
+$Id$
+"""
+
 log = __import__("logging").getLogger("bungeni.ui")
+
+
 import re
 import os
 import time
@@ -9,29 +19,29 @@ import random
 import base64
 from tidylib import tidy_fragment
 from lxml import etree
-from interfaces import IOpenOfficeConfig
-from bungeni.alchemist import Session
-from bungeni.models import domain, interfaces
-from zope import interface
+
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.publisher.browser import BrowserView
 from zope.security.proxy import removeSecurityProxy
 from zope.component import getUtility
-from zope.lifecycleevent import ObjectCreatedEvent
-from zope.event import notify
-from appy.pod.renderer import Renderer
+#from zope.lifecycleevent import ObjectCreatedEvent
+#from zope.event import notify
 from zope.component.interfaces import ComponentLookupError
-from threading import BoundedSemaphore
-
-from bungeni.ui.table import LinkColumn, SimpleContainerListing
 from zc.table import column
-from bungeni.core.dc import IDCDescriptiveProperties
-from bungeni.ui.i18n import _
-from bungeni.core.translation import translate_i18n
-
 from zope.app.component.hooks import getSite
-from bungeni.ui.utils import url, misc
+
+from interfaces import IOpenOfficeConfig
+from bungeni.alchemist import Session
+from bungeni.models import domain, interfaces
+from bungeni.ui.table import LinkColumn, SimpleContainerListing
+from appy.pod.renderer import Renderer
+
+
 from bungeni.utils.capi import capi
+from bungeni.core.dc import IDCDescriptiveProperties
+from bungeni.core.translation import translate_i18n
+from bungeni.ui.i18n import _
+from bungeni.ui.utils import url, misc
 
 #!+ReportConfiguration(murithi, jul-2011) - Report configuration and templates
 # should eventually be loaded from bungeni_custom
