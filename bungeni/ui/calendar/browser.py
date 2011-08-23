@@ -30,25 +30,22 @@ from bungeni.ui.tagged import get_states
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import misc, url, debug
 from bungeni.ui.menu import get_actions
-from bungeni.ui.forms import common
 from bungeni.core.location import location_wrapped
 from bungeni.core.interfaces import ISchedulingContext
 from bungeni.core.schedule import SittingContainerSchedulingContext
 from bungeni.ui.interfaces import IBusinessSectionLayer
 
 from bungeni.models import domain
-from bungeni.models.interfaces import IGroupSitting
 from ploned.ui.interfaces import IStructuralView
 from bungeni.alchemist.container import stringKey
 from bungeni.alchemist import Session
 from bungeni.core.workflow.interfaces import IWorkflowController
 from zope.formlib import form
 from zope import schema
-from zope.formlib import namedtemplate
 from zc.resourcelibrary import need
-from sqlalchemy.orm import eagerload
-from bungeni.ui import vocabulary
+#from bungeni.ui import vocabulary
 from bungeni.core.language import get_default_language
+
 class TIME_SPAN:
     daily = _(u"Daily")
     weekly = _(u"Weekly")
@@ -321,7 +318,7 @@ class GroupSittingScheduleView(BrowserView):
         self.__parent__ = context
 
     def __call__(self, timestamp=None):
-        session = Session()
+        #session = Session()
         if timestamp is None:
             # start the week on the first weekday (e.g. Monday)
             date = utils.datetimedict.fromdate(datetime.date.today())
@@ -696,12 +693,34 @@ class DhtmlxCalendarSittings(BrowserView):
             if checkPermission("zope.View", sitting):
                 trusted = removeSecurityProxy(sitting)
                 if trusted.venue:
-                    trusted.text = "<![CDATA[" \
-                        "<b>Venue:</b></br>%s</br><b>Status:</b></br>%s" \
-                        "]]>" % (trusted.venue.short_name, trusted.status)
+                    trusted.text = """<![CDATA[
+                        <b>%(venue_i18n)s:</b><br/>
+                        %(venue_name)s<br/>
+                        <b>%(status_i18n)s</b><br/>
+                        %(sitting_status)s
+                    ]]>
+                    """ % dict(
+                        venue_i18n = translate(_(u"Venue"), 
+                            context=self.request
+                        ),
+                        venue_name = IDCDescriptiveProperties(
+                            trusted.venue).title,
+                        status_i18n = translate(_(u"Status"), 
+                            context=self.request
+                        ),
+                        sitting_status = translate(
+                            _(misc.get_wf_state(trusted, trusted.status)),
+                            context = self.request
+                        )
+                    )
                 else:
-                    trusted.text = "<![CDATA[<b>Status:</b></br>%s]]>" % (
-                        trusted.status)
+                    trusted.text = "<![CDATA[<b>%s:</b></br>%s]]>" % (
+                        translate(_(u"Status"), self.request), 
+                        translate(
+                            _(misc.get_wf_state(trusted, trusted.status)), 
+                            context=self.request
+                        )
+                    )
                 # !+PRESENTATION_CODE(mr, mar-2011) should be in templates.
                 self.sittings.append(trusted)
         self.request.response.setHeader('Content-type', 'text/xml')
