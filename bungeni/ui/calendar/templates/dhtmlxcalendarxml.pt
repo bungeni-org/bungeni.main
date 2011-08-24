@@ -1,9 +1,17 @@
-<data>
+<data i18n:domain="bungeni">
 <tal:loop tal:repeat="s python:view.sittings">
 <event tal:attributes="id python:s.group_sitting_id">
 <start_date><span tal:replace="structure python:s.start_date.strftime('%Y-%m-%d %H:%M')"/></start_date>
 <end_date><span tal:replace="structure python:s.end_date.strftime('%Y-%m-%d %H:%M')"/></end_date>
-<text tal:content="structure s/text"></text>
+<text><span tal:replace="structure python:'&lt;![CDATA['"/>
+<tal:withevent tal:condition="s/venue|nothing">
+<b><span tal:omit-tag="" i18n:translate="">Venue</span>:</b><br/>
+<span tal:replace="s/venue/dc:title"/><br/>
+</tal:withevent>
+<b><span tal:omit-tag="" i18n:translate="">Status</span>:</b><br/>
+<span i18n:translate="" tal:replace="s/text/sitting_status"/>
+<span tal:replace="structure python:']]&gt;'"/>
+</text>
 <venue><span tal:condition="s/venue | nothing" tal:replace="structure python:str(s.venue.venue_id)"/></venue>
 <status><span tal:condition="s/status | nothing" tal:replace="structure python:s.status"/></status>
 <language><span tal:condition="s/language | nothing" tal:replace="structure python:s.language"/></language>

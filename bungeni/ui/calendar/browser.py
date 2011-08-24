@@ -3,7 +3,6 @@
 
 log = __import__("logging").getLogger("bungeni.ui.calendar")
 
-
 import time
 import datetime
 timedelta = datetime.timedelta
@@ -12,39 +11,40 @@ from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent, ObjectModifiedEvent
 from zope import interface
 from zope import component
-from zope.i18n import translate
 from zope.location.interfaces import ILocation
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.publisher.browser import BrowserView
-from bungeni.ui.browser import BungeniBrowserView
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.app.component.hooks import getSite
 from zope.security.proxy import removeSecurityProxy
 from zope.security.proxy import ProxyFactory
 from zope.security import checkPermission
-from bungeni.core.translation import get_all_languages
 from zope.publisher.interfaces import IPublishTraverse
+from zope.formlib import form
+from zope import schema
+from zc.resourcelibrary import need
 
+from bungeni.core.translation import get_all_languages
+from bungeni.core.location import location_wrapped
+from bungeni.core.interfaces import ISchedulingContext
+from bungeni.core.schedule import SittingContainerSchedulingContext
+from bungeni.core.workflow.interfaces import IWorkflowController
+from bungeni.core.language import get_default_language
+
+
+from ploned.ui.interfaces import IStructuralView
+from bungeni.ui.browser import BungeniBrowserView
 from bungeni.ui.calendar import utils
 from bungeni.ui.tagged import get_states
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import misc, url, debug
 from bungeni.ui.menu import get_actions
-from bungeni.core.location import location_wrapped
-from bungeni.core.interfaces import ISchedulingContext
-from bungeni.core.schedule import SittingContainerSchedulingContext
 from bungeni.ui.interfaces import IBusinessSectionLayer
 
 from bungeni.models import domain
-from ploned.ui.interfaces import IStructuralView
 from bungeni.alchemist.container import stringKey
 from bungeni.alchemist import Session
-from bungeni.core.workflow.interfaces import IWorkflowController
-from zope.formlib import form
-from zope import schema
-from zc.resourcelibrary import need
 #from bungeni.ui import vocabulary
-from bungeni.core.language import get_default_language
 
 class TIME_SPAN:
     daily = _(u"Daily")
@@ -692,40 +692,14 @@ class DhtmlxCalendarSittings(BrowserView):
         for sitting in sittings.values():
             if checkPermission("zope.View", sitting):
                 trusted = removeSecurityProxy(sitting)
-                if trusted.venue:
-                    trusted.text = """<![CDATA[
-                        <b>%(venue_i18n)s:</b><br/>
-                        %(venue_name)s<br/>
-                        <b>%(status_i18n)s</b><br/>
-                        %(sitting_status)s
-                    ]]>
-                    """ % dict(
-                        venue_i18n = translate(_(u"Venue"), 
-                            context=self.request
-                        ),
-                        venue_name = IDCDescriptiveProperties(
-                            trusted.venue).title,
-                        status_i18n = translate(_(u"Status"), 
-                            context=self.request
-                        ),
-                        sitting_status = translate(
-                            _(misc.get_wf_state(trusted, trusted.status)),
-                            context = self.request
-                        )
+                trusted.text = dict(
+                    sitting_status = _(
+                        misc.get_wf_state(trusted, trusted.status)
                     )
-                else:
-                    trusted.text = "<![CDATA[<b>%s:</b></br>%s]]>" % (
-                        translate(_(u"Status"), self.request), 
-                        translate(
-                            _(misc.get_wf_state(trusted, trusted.status)), 
-                            context=self.request
-                        )
-                    )
-                # !+PRESENTATION_CODE(mr, mar-2011) should be in templates.
+                )
                 self.sittings.append(trusted)
         self.request.response.setHeader('Content-type', 'text/xml')
         return self.render()
-        #return super(DhtmlxCalendarSittings, self).__call__() 
         
     def render(self, template = None):
         return self.template()
