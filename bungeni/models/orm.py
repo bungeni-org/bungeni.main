@@ -85,7 +85,7 @@ def configurable_mappings(kls, kls_mapper=None):
                 change_kls = getattr(domain, "%sChange" % (name))
                 mapper_properties["changes"] = relation(change_kls,
                     backref="origin", 
-                    lazy=False,
+                    lazy=True,
                     cascade="all, delete-orphan",
                     passive_deletes=False
                 )

@@ -543,15 +543,17 @@ class ParliamentaryItem(Entity):
         Returns None if no such workflow states has been transited to as yet.
         """
         assert states, "Must specify at least one workflow state."
+        # merge into Session to avoid sqlalchemy.orm.exc.DetachedInstanceError 
+        # when lazy loading;
         # order of self.changes is chronological--we want latest first
-        for c in reversed(self.changes):
+        for c in reversed(Session().merge(self).changes):
             if c.action != "workflow":
                 continue
             extras = c.extras
             if extras:
                 if extras.get("destination") in states:
                     return c.date_active
-
+    
     @property
     def submission_date(self):
         # As base meaning of "submission_date" we take the most recent date
