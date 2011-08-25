@@ -21,11 +21,11 @@ class WorkspaceContentAdapter(object):
         self.context = removeSecurityProxy(context)
 
     @property
-    def title(self):
-        return IDCDescriptiveProperties(self.context).title
+    def short_name(self):
+        return self.context.short_name
 
     @property
-    def item_type(self):
+    def type(self):
         descriptor = queryModelDescriptor(self.context.__class__)
         item_type = descriptor.display_name if descriptor \
             else self.context.type

@@ -741,12 +741,12 @@
 	 global_status_var = status;
 	 // filter per column  
 	 var get_text_filter = function(oSelf) {      
-	     var qstr = '&filter_title=' + $("#input-yui-col1").val();  
+	     var qstr = '&filter_short_name=' + $("#input-yui-col1").val();  
              return qstr;
 	 };
 	 var get_select_filter = function(oSelf) {    
 	     var item_type = $("#input-yui-col3 option:selected");
-	     var qstr = '&filter_item_type=' + item_type.val();  
+	     var qstr = '&filter_type=' + item_type.val();  
 	     var status = $("#input-yui-col5 option:selected");
 	     qstr = qstr+'&filter_status=' + status.val();  
              return qstr;

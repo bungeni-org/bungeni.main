@@ -80,27 +80,27 @@ class WorkspaceContainer(AlchemistContainer):
 
     def item_status_filter(self, kw, roles):
         domain_status = {}
-        if kw.get("item_type_filter", None):
+        if kw.get("filter_type", None):
             domain_class = self.workspace_config.getDomain(
-                kw["item_type_filter"])
+                kw["filter_type"])
             if domain_class:
                 domain_status[domain_class] = []
                 for role in roles:
                     statuses = self.workspace_config.getStatus(role,
                                                                domain_class,
                                                                self.__name__)
-                    if kw.get("status_filter", None) and \
-                            kw["status_filter"] in statuses:
-                        domain_status[domain_class].append(kw["status_filter"])
+                    if kw.get("filter_status", None) and \
+                            kw["filter_status"] in statuses:
+                        domain_status[domain_class].append(kw["filter_status"])
                     elif statuses:
                         domain_status[domain_class].extend(statuses)
         else:
             domain_status = self.domain_status(roles, self.__name__)
-            if kw.get("status_filter", None):
+            if kw.get("filter_status", None):
                 for domain_class in domain_status.keys():
-                    if kw["status_filter"] in \
+                    if kw["filter_status"] in \
                             domain_status[domain_class]:
-                        domain_status[domain_class] = [kw["status_filter"]]
+                        domain_status[domain_class] = [kw["filter_status"]]
                     else:
                         del domain_status[domain_class]
         return domain_status
@@ -119,22 +119,23 @@ class WorkspaceContainer(AlchemistContainer):
         group_roles_domain_status = self.item_status_filter(kw, roles)
         session = Session()
         results = []
+        queries = []
         for domain_class, status in group_roles_domain_status.iteritems():
-            query = session.query(domain_class).filter(domain_class.status.in_(
-                    status))
-            if kw.get("title_filter", None):
+            query = session.query(domain_class) \
+                .filter(domain_class.status.in_(status))
+            if kw.get("filter_short_name", None):
                 column = self.title_column(domain_class)
                 query = query.filter("(lower(%s) LIKE '%%%s%%')" %
-                                     (column, kw["title_filter"]))
+                                     (column, kw["filter_short_name"].lower()))
             results.extend(query.all())
         object_roles_domain_status = self.item_status_filter(kw, OBJECT_ROLES)
         for domain_class, status in object_roles_domain_status.iteritems():
-            query = session.query(domain_class).filter(
-                domain_class.status.in_(status))
-            if kw.get("title_filter", None):
+            query = session.query(domain_class)\
+                .filter(domain_class.status.in_(status))
+            if kw.get("filter_short_name", None):
                 column = self.title_column(domain_class)
                 query = query.filter("(lower(%s) LIKE '%%%s%%')" %
-                                     (column, kw["title_filter"]))
+                                     (column, kw["filter_short_name"]))
             for obj in query.all():
                 prm = IPrincipalRoleMap(obj)
                 for obj_role in OBJECT_ROLES:
@@ -142,11 +143,19 @@ class WorkspaceContainer(AlchemistContainer):
                             obj not in results:
                         results.append(obj)
                         break
-        for result in results:
-            yield result
+        # Sort items
+        if kw.get("sort_on", None):
+            if kw.get("sort_dir", None):
+                rev = True if (kw.get("sort_dir") == "desc") else False
+                results.sort(key=lambda x: getattr(x, str(kw.get("sort_on"))),
+                             reverse=rev)
+        return results
 
-    def items(self):
-        for obj in self._query():
+    def query(self, **kw):
+        return self._query(**kw)
+
+    def items(self, **kw):
+        for obj in self._query(kw):
             name = stringKey(obj)
             yield (name, contained(obj, self, name))
 

@@ -36,8 +36,8 @@ class WorkspaceField(object):
         return getattr(IWorkspaceContentAdapter(item), name, None)
 
 # These are the columns to be displayed in the workspace
-workspace_fields = [WorkspaceField("title", _("title")),
-                    WorkspaceField("item_type", _("item type")),
+workspace_fields = [WorkspaceField("short_name", _("title")),
+                    WorkspaceField("type", _("item type")),
                     WorkspaceField("status", _("status")),
                     WorkspaceField("status_date", _("status date"))]
 
@@ -53,7 +53,7 @@ class WorkspaceContainerJSONListing(BrowserView):
         self.defaults_sort_on = "status_date"
         if not self.request.get("sort"):
             self.request.form["sort"] = u"sort_%s" % (self.defaults_sort_on)
-        self.sort_on = self.request.get("sort")
+        self.sort_on = self.request.get("sort")[5:]
         # sort_dir: "desc" | "asc"
         # pick off request, if necessary setting it from default in
         if not self.request.get("dir"):
@@ -125,19 +125,20 @@ class WorkspaceContainerJSONListing(BrowserView):
 
     def getBatch(self, start=0, limit=25, lang=None):
         context = removeSecurityProxy(self.context)
-        filter_title = self.request.get("filter_title") if \
-            self.request.get("filter_title") else None
-        filter_item_type = self.request.get("filter_item_type") if \
-            self.request.get("filter_item_type") else None
-        filter_status = self.request.get("filter_status") if \
-            self.request.get("filter_status") else None
-        query = context._query(title_filter=filter_title,
-                              item_type_filter=filter_item_type,
-                              status_filter=filter_status)
+        filter_short_name = self.request.get("filter_short_name", None)
+        filter_type = self.request.get("filter_type", None)
+        filter_status = self.request.get("filter_status", None)
+        results = context.query(filter_short_name=filter_short_name,
+                              filter_type=filter_type,
+                              filter_status=filter_status,
+                              sort_on=self.sort_on,
+                              sort_dir=self.sort_dir)
+        # nodes = [container.contained(ob, self, workspace.stringKey(ob))
+        #         for ob in query]
+        self.set_size = len(results)
+        nodes = results[start:start + limit]
         nodes = [container.contained(ob, self, workspace.stringKey(ob))
-                 for ob in query]
-        self.set_size = len(nodes)
-        nodes[:] = nodes[start:start + limit]
+                 for ob in nodes]
         nodes = self.translate_objects(nodes, lang)
         batch = self._jsonValues(nodes)
         return batch
