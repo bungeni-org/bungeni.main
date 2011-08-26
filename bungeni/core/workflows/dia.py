@@ -8,7 +8,7 @@ def write_file(in_folder, file_name, contents):
     f = open(in_folder + file_name, "w")
     # !+UNICODETEXT(AH,2011-05-03) without the utf-8 encoding
     # the write fails for text with accents e.g. portoguese.
-    f.write(contents.encode('UTF-8'))
+    f.write(contents.encode("UTF-8"))
     f.close()
 
 
@@ -19,27 +19,28 @@ def main(argv):
         if (output_folder.endswith("/") == False):
             output_folder = output_folder + "/"
     
-    write_file(output_folder, "bill.dot", dot(get_workflow("bill")))
-    write_file(output_folder, "question.dot", dot(get_workflow("question")))
-    write_file(output_folder, "motion.dot", dot(get_workflow("motion")))
-    write_file(output_folder, "groupsitting.dot", 
-        dot(get_workflow("groupsitting")))
-    write_file(output_folder, "group.dot", dot(get_workflow("group")))
-    write_file(output_folder, "question.dot", dot(get_workflow("question")))
-    write_file(output_folder, "address.dot", dot(get_workflow("address")))
-    write_file(output_folder, "tableddocument.dot", 
-        dot(get_workflow("tableddocument")))
-    write_file(output_folder, "agendaitem.dot", 
-        dot(get_workflow("agendaitem")))
-    write_file(output_folder, "committee.dot", 
-        dot(get_workflow("committee")))
-    write_file(output_folder, "parliament.dot", 
-        dot(get_workflow("parliament")))
-    write_file(output_folder, "signatory.dot", 
-        dot(get_workflow("signatory")))
-    write_file(output_folder, "event.dot", 
-        dot(get_workflow("event")))
-
+    #!+bungeni_custom(mr, aug-2011) should be localized parameter, or 
+    # generated dynamically e.g. listing of workflow file definitions.
+    workflow_names = [
+        "address", 
+        "agendaitem", 
+        "attachedfile",
+        "bill",
+        "committee",
+        "event",
+        "groupsitting",
+        "group",
+        "heading",
+        "motion",
+        "parliament", 
+        "question",
+        "report",
+        "signatory",
+        "tableddocument",
+        "user",
+    ]
+    for name in workflow_names:
+        write_file(output_folder, "%s.dot" % name, dot(get_workflow(name)))
 
 if __name__ == "__main__":
     main(sys.argv[1:])
