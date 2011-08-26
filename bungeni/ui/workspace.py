@@ -9,6 +9,7 @@ from zope.i18n import translate
 from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent
 from z3c.pt.texttemplate import ViewTextTemplateFile
+from zc.resourcelibrary import need
 from ore.alchemist import container
 from alchemist.ui import generic
 from bungeni.models import workspace
@@ -36,10 +37,12 @@ class WorkspaceField(object):
         return getattr(IWorkspaceContentAdapter(item), name, None)
 
 # These are the columns to be displayed in the workspace
-workspace_fields = [WorkspaceField("short_name", _("title")),
-                    WorkspaceField("type", _("item type")),
-                    WorkspaceField("status", _("status")),
-                    WorkspaceField("status_date", _("status date"))]
+workspace_fields = [
+    WorkspaceField("short_name", _("title")),
+    WorkspaceField("type", _("item type")),
+    WorkspaceField("status", _("status")),
+    WorkspaceField("status_date", _("status date"))
+    ]
 
 
 class WorkspaceContainerJSONListing(BrowserView):
@@ -60,7 +63,7 @@ class WorkspaceContainerJSONListing(BrowserView):
             self.request.form["dir"] = "desc"
         self.sort_dir = self.request.get("dir")
 
-    def getOffsets(self, default_start=0, default_limit=25):
+    def get_offsets(self, default_start=0, default_limit=25):
         start = self.request.get("start", default_start)
         limit = self.request.get("limit", default_limit)
         try:
@@ -74,21 +77,23 @@ class WorkspaceContainerJSONListing(BrowserView):
         return start, limit
 
     def json_batch(self, start, limit, lang):
-        batch = self.getBatch(start, limit, lang)
+        batch = self.get_batch(start, limit, lang)
         data = dict(
             length=self.set_size,  # total result set length, set in getBatch()
             start=start,
             recordsReturned=len(batch),
-            nodes=batch)
+            nodes=batch
+            )
         return simplejson.dumps(data)
 
-    def _jsonValues(self, nodes):
+    def _json_values(self, nodes):
         values = []
         for node in nodes:
             d = {}
             for field in workspace_fields:
-                d[field.name] = getattr(IWorkspaceContentAdapter(node),
-                                                            field.name, None)
+                d[field.name] = getattr(
+                    IWorkspaceContentAdapter(node), field.name, None
+                    )
             d["object_id"] = url.set_url_context(node.__name__)
             values.append(d)
         return values
@@ -123,16 +128,18 @@ class WorkspaceContainerJSONListing(BrowserView):
                 return nodes
         return t_nodes
 
-    def getBatch(self, start=0, limit=25, lang=None):
+    def get_batch(self, start=0, limit=25, lang=None):
         context = removeSecurityProxy(self.context)
         filter_short_name = self.request.get("filter_short_name", None)
         filter_type = self.request.get("filter_type", None)
         filter_status = self.request.get("filter_status", None)
-        results = context.query(filter_short_name=filter_short_name,
-                              filter_type=filter_type,
-                              filter_status=filter_status,
-                              sort_on=self.sort_on,
-                              sort_dir=self.sort_dir)
+        results = context.query(
+            filter_short_name=filter_short_name,
+            filter_type=filter_type,
+            filter_status=filter_status,
+            sort_on=self.sort_on,
+            sort_dir=self.sort_dir
+            )
         # nodes = [container.contained(ob, self, workspace.stringKey(ob))
         #         for ob in query]
         self.set_size = len(results)
@@ -140,11 +147,11 @@ class WorkspaceContainerJSONListing(BrowserView):
         nodes = [container.contained(ob, self, workspace.stringKey(ob))
                  for ob in nodes]
         nodes = self.translate_objects(nodes, lang)
-        batch = self._jsonValues(nodes)
+        batch = self._json_values(nodes)
         return batch
 
     def __call__(self):
-        start, limit = self.getOffsets()  # ? start=0&limit=25
+        start, limit = self.get_offsets()  # ? start=0&limit=25
         lang = self.request.locale.getLocaleID()
         return self.json_batch(start, limit, lang)
 
@@ -153,38 +160,38 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
     data_view = "/jsonlisting"
     script = ViewTextTemplateFile("templates/datatable-workspace.pt")
 
-    def getItemTypes(self):
+    def get_item_types(self):
         workspace_config = component.getUtility(IWorkspaceTabsUtility)
         principal = get_principal()
         roles = get_workspace_roles(principal)
         roles.extend(OBJECT_ROLES)
         domains = []
         for role in roles:
-            dom = workspace_config.getRoleDomains(
-                role,
-                self.context.__name__)
+            dom = workspace_config.get_role_domains(
+                role, self.context.__name__
+                )
             if dom:
                 for key in dom:
                     if key not in domains:
                         domains.append(key)
         result = dict([("", "-")])
         for domain in domains:
-            value = workspace_config.getType(domain)
+            value = workspace_config.get_type(domain)
             if value:
                 descriptor = queryModelDescriptor(domain)
                 name = descriptor.display_name if descriptor else value
                 result[value] = translate(name, context=self.request)
         return result
 
-    def getStatus(self, item_type):
+    def get_status(self, item_type):
         workspace_config = component.getUtility(IWorkspaceTabsUtility)
         principal = get_principal()
         roles = get_workspace_roles(principal)
         roles.extend(OBJECT_ROLES)
-        domain_class = workspace_config.getDomain(item_type)
+        domain_class = workspace_config.get_domain(item_type)
         results = set()
         for role in roles:
-            status = workspace_config.getStatus(
+            status = workspace_config.get_status(
                 role, domain_class, self.context.__name__)
             if status:
                 for s in status:
@@ -192,20 +199,22 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
         translated = dict()
         for result in results:
             workflow = IWorkflow(domain_class())
-            status_title = translate(str(workflow.get_state(result).title),
-                                             domain="bungeni",
-                                             context=self.request)
+            status_title = translate(
+                str(workflow.get_state(result).title),
+                domain="bungeni",
+                context=self.request
+                )
             translated[result] = status_title
         return translated
 
     def getDataTableConfig(self):
         config = super(WorkspaceDataTableFormatter, self).getDataTableConfig()
-        item_types = self.getItemTypes()
+        item_types = self.get_item_types()
         config["item_types"] = simplejson.dumps(item_types)
         all_item_status = dict()
         status = dict([("", "-")])
         for item_type in item_types:
-            for k, v in self.getStatus(item_type).iteritems():
+            for k, v in self.get_status(item_type).iteritems():
                 item_status_value = "%s+%s" % (item_type, k)
                 status[item_status_value] = v
                 all_item_status[k] = v
@@ -217,20 +226,24 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
         column_model = []
         field_model = []
         for field in workspace_fields:
-            coldef = {"key": field.name,
-                      "label": translate(_(field.title), context=self.request),
-                      "formatter": self.context.__name__}
+            coldef = {
+                "key": field.name,
+                "label": translate(_(field.title), context=self.request),
+                "formatter": self.context.__name__
+                }
             if column_model == []:
                 column_model.append(
                     """{label:"%(label)s", key:"sort_%(key)s",
                     formatter:"%(formatter)sCustom", sortable:true,
                     resizeable:true ,
-                    children: [{ key:"%(key)s", sortable:false}]}""" % coldef)
+                    children: [{ key:"%(key)s", sortable:false}]}""" % coldef
+                    )
             else:
                 column_model.append(
                     """{label:"%(label)s", key:"sort_%(key)s",
                     sortable:true, resizeable:true,
-                    children: [{key:"%(key)s", sortable:false}]}""" % coldef)
+                    children: [{key:"%(key)s", sortable:false}]}""" % coldef
+                    )
             field_model.append('{key:"%s"}' % (field.name))
         return ",".join(column_model), ",".join(field_model)
 
@@ -241,6 +254,7 @@ class WorkspaceContainerListing(BrowserView):
     columns = []
 
     def __call__(self):
+        need("yui-datatable")
         self.context = removeSecurityProxy(self.context)
         return self.template()
 
@@ -295,7 +309,7 @@ class WorkspaceAddForm(AddForm):
     def domain_model(self):
         item_type = self.__name__.split("_")[1]
         workspace_config = component.getUtility(IWorkspaceTabsUtility)
-        domain = workspace_config.getDomain(item_type)
+        domain = workspace_config.get_domain(item_type)
         return domain
 
     def getDomainModel(self):

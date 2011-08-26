@@ -49,7 +49,7 @@ class WorkspaceTabsUtility():
     workspaces = {}
     domain_type = {}
 
-    def setContent(self, role, tab, domain_class, status):
+    def set_content(self, role, tab, domain_class, status):
         """ Sets the workspace info
         """
         if role not in self.workspaces:
@@ -60,54 +60,58 @@ class WorkspaceTabsUtility():
             self.workspaces[role][tab][domain_class] = []
         self.workspaces[role][tab][domain_class].append(status)
 
-    def registerItemType(self, domain_class, item_type):
+    def register_item_type(self, domain_class, item_type):
         """ Stores domain_class -> item_type and vice versa in a dictionary eg.
-            domain.Bill -> bill. Used by the Workspace Container to set the
-            contained object names and to retrieve the contained objects given
-            a name.
+        domain.Bill -> bill. Used by the Workspace Container to set the
+        contained object names and to retrieve the contained objects given
+        a name.
         """
         if item_type in self.domain_type.keys():
-            raise ValueError("Multiple workspace declarations \
-with same name - %s") % (item_type)
+            raise ValueError("Multiple workspace declarations"
+                             "with same name - %s") % (item_type)
         if domain_class in self.domain_type.keys():
-            raise ValueError("Multiple workspace domain classes \
-with same name - %s") % (domain_class)
+            raise ValueError("Multiple workspace domain classes"
+                             "with same name - %s") % (domain_class)
         self.domain_type[item_type] = domain_class
         self.domain_type[domain_class] = item_type
 
-    def getRoleDomains(self, role, tab):
+    def get_role_domains(self, role, tab):
         """Returns a list of domain classes that a role will see for a
-        certain tab"""
+        certain tab
+        """
         if role in self.workspaces.keys():
             if tab in self.workspaces[role].keys():
                 return list(self.workspaces[role][tab].keys())
         return None
 
-    def getDomain(self, key):
+    def get_domain(self, key):
         """Passed a type string returns the domain class"""
         if key in self.domain_type:
             return self.domain_type[key]
         return None
 
-    def getType(self, key):
+    def get_type(self, key):
         """Passed a domain class returns a string"""
         if key in self.domain_type:
             return self.domain_type[key]
         return None
 
-    def getTab(self, role, domain_class, status):
+    def get_tab(self, role, domain_class, status):
         """Returns the tab an object should be in, given its domain class,
-        status and role"""
+        status and role
+        """
         if role in self.workspaces:
             for tab in self.workspaces[role]:
-                if domain_class in self.workspaces[role][tab] and \
-                    status in self.workspaces[role][tab][domain_class]:
+                if (domain_class in self.workspaces[role][tab] and
+                    status in self.workspaces[role][tab][domain_class]
+                    ):
                         return tab
         return None
 
-    def getStatus(self, role, domain_class, tab):
+    def get_status(self, role, domain_class, tab):
         """Returns all applicable statuses given the role,
-        domain_class and tab"""
+        domain_class and tab
+        """
         if role in self.workspaces:
             if tab in self.workspaces[role]:
                 if domain_class in self.workspaces[role][tab]:
@@ -120,7 +124,7 @@ def load_workspace(file_name, domain_class):
     path = capi.get_path_for("workspace")
     file_path = os.path.join(path, file_name)
     item_type = file_name.split(".")[0]
-    workspace_tabs.registerItemType(domain_class, item_type)
+    workspace_tabs.register_item_type(domain_class, item_type)
     workspace = etree.fromstring(open(file_path).read())
     for state in workspace.iterchildren("state"):
         for tab in state.iterchildren():
@@ -128,8 +132,9 @@ def load_workspace(file_name, domain_class):
                 if tab.get("roles"):
                     roles = tab.get("roles").split()
                     for role in roles:
-                        workspace_tabs.setContent(role, tab.get("id"),
-                            domain_class, state.get("id"))
+                        workspace_tabs.set_content(
+                            role, tab.get("id"), domain_class, state.get("id")
+                            )
             else:
                 raise ValueError("Invalid tab - %s", tab.get("id"))
 

@@ -15,10 +15,9 @@ import datetime, calendar
 from zope import interface
 from zope.viewlet import manager, viewlet
 from zope.app.pagetemplate import ViewPageTemplateFile
-
 from zope.formlib import form
 from zope.security.proxy import removeSecurityProxy
-
+from zc.resourcelibrary import need
 import sqlalchemy.sql.expression as sql
 
 from bungeni.alchemist.ui import DynamicFields, EditFormViewlet
@@ -166,11 +165,14 @@ class SubformViewlet(table.AjaxContainerListing):
     """A container listing of the items indicated by "sub_attr_name". 
     """
     # evoque
-    render = z3evoque.ViewTemplateFile("container.html#generic_sub")
+    template = z3evoque.ViewTemplateFile("container.html#generic_sub")
 
     # zpt
-    #render = ViewPageTemplateFile("templates/generic-sub-container.pt")
-
+    #template = ViewPageTemplateFile("templates/generic-sub-container.pt")
+    def render(self):
+        need("yui-datatable")
+        return self.template()
+        
     def __init__(self, context, request, view, manager):
         # The parent for SubformViewlets is the context (not the view)
         self.__parent__ = context

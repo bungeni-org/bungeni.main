@@ -11,7 +11,7 @@ from ore import yuiwidget
 from zope.security import proxy
 from zope.security import checkPermission
 from zope.publisher.browser import BrowserView
-
+from zc.resourcelibrary import need
 from bungeni.alchemist import model
 from bungeni.alchemist import container
 
@@ -93,6 +93,7 @@ class AjaxContainerListing(
     template = z3evoque.PageViewTemplateFile("container.html#generic")
 
     def __call__(self):
+        need("yui-datatable")
         self.update()
         return self.template()
 
@@ -128,8 +129,8 @@ class ContainerJSONBrowserView(BrowserView):
 
     def __init__(self, context, request):
         super(ContainerJSONBrowserView, self).__init__(context, request)
-        self.domain_model = proxy.removeSecurityProxy(self.context) \
-            .domain_model
+        self.domain_model = proxy.removeSecurityProxy(
+            self.context).domain_model
         self.domain_interface = model.queryModelInterface(self.domain_model)
         self.domain_annotation = model.queryModelDescriptor(
             self.domain_interface)
@@ -137,8 +138,10 @@ class ContainerJSONBrowserView(BrowserView):
             self.context, self.domain_interface, self.domain_annotation))
         # table keys
         self.table = orm.class_mapper(self.domain_model).mapped_table
-        self.utk = dict([(self.table.columns[k].key, k)
-                          for k in self.table.columns.keys()])
+        self.utk = dict(
+            [(self.table.columns[k].key, k) for k in self.table.columns.keys()
+             ]
+            )
         # sort_on defaults: [str]
         self.defaults_sort_on = getattr(self.domain_model, "sort_on", None)
         # sort_on parameter name: str
@@ -407,7 +410,7 @@ class PublicStatesContainerJSONListing(ContainerJSONListing):
 
     def get_cache_key(self, context, lang, start, limit, sort_direction):
         r = self.request
-        jslc = JSLCaches[context.__name__] # raises KeyError
+        jslc = JSLCaches[context.__name__]  # raises KeyError
         filters = tuple(r.get(name) or None for name in jslc.filter_params)
         # as sort_dir param may have a (overridable) model default, we 
         # treat it differently than other params (note that sort_on may 

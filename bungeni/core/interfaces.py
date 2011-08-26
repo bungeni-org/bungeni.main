@@ -274,25 +274,25 @@ class ILanguageProvider(interface.Interface):
         """Return a language code
         """
 
+
 class IWorkspaceTabsUtility(interface.Interface):
-    def getRoleDomains(role, tab):
+    def get_role_domains(role, tab):
         """Returns a list of domains that a role will since in a specific
-        tab of the workspace"""
-    def getStatus(role, domain_class, tab):
+        tab of the workspace
+        """
+    def get_status(role, domain_class, tab):
         """Returns a list of status that are applicable for a certain
-        tab for a certain role and domain"""
-    def setContent(role, tab, workflow_name, status):
-        """Set workspace info
+        tab for a certain role and domain
         """
-    def registerItemType(domain_class, item_type):
-        """Set the domain class and type info that is used to generate URLS
+    def set_content(role, tab, workflow_name, status):
+        """Set workspace info"""
+    def register_item_type(domain_class, item_type):
+        """Set the domain class and type info that is used to generate URLS"""
+    def get_domain(key):
+        """Given a type, returns the domain_class"""
+    def get_type(key):
+        """Given a domain_class, returns the item type"""
+    def get_tab(role, domain_class, status):
+        """Returns the tab an object should be in, given its domain class,
+        status and role
         """
-    def getDomain(key):
-        """Given a type, returns the domain_class
-        """
-    def getType(key):
-        """Given a domain_class, returns the item type
-        """
-    def getTab(role, domain_class, status):
-        """Returns the tab an object should be in, given its domain class, 
-        status and role"""

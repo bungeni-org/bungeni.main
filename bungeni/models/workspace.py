@@ -29,7 +29,7 @@ def stringKey(instance):
     primary_key = mapper.primary_key_from_instance(unproxied)
     domain_class = instance.__class__
     workspace_tabs = component.getUtility(IWorkspaceTabsUtility)
-    item_type = workspace_tabs.getType(domain_class)
+    item_type = workspace_tabs.get_type(domain_class)
     return "%s-%s" % (item_type, str(primary_key[0]))
 
 
@@ -41,7 +41,7 @@ def valueKey(identity_key):
     if len(properties) != 2:
         raise ValueError
     workspace_tabs = component.getUtility(IWorkspaceTabsUtility)
-    domain_class = workspace_tabs.getDomain(properties[0])
+    domain_class = workspace_tabs.get_domain(properties[0])
     primary_key = properties[1]
     return domain_class, primary_key
 
@@ -66,11 +66,12 @@ class WorkspaceContainer(AlchemistContainer):
         """
         domain_status = {}
         for role in roles:
-            domains = self.workspace_config.getRoleDomains(
-                role, tab)
+            domains = self.workspace_config.get_role_domains(role, tab)
             if domains:
                 for domain in domains:
-                    status = self.workspace_config.getStatus(role, domain, tab)
+                    status = self.workspace_config.get_status(
+                        role, domain, tab
+                        )
                     if status:
                         if domain in domain_status.keys():
                             domain_status[domain].extend(status)
@@ -81,16 +82,15 @@ class WorkspaceContainer(AlchemistContainer):
     def item_status_filter(self, kw, roles):
         domain_status = {}
         if kw.get("filter_type", None):
-            domain_class = self.workspace_config.getDomain(
-                kw["filter_type"])
+            domain_class = self.workspace_config.get_domain(kw["filter_type"])
             if domain_class:
                 domain_status[domain_class] = []
                 for role in roles:
-                    statuses = self.workspace_config.getStatus(role,
-                                                               domain_class,
-                                                               self.__name__)
-                    if kw.get("filter_status", None) and \
-                            kw["filter_status"] in statuses:
+                    statuses = self.workspace_config.get_status(
+                        role, domain_class, self.__name__
+                        )
+                    if (kw.get("filter_status", None) and
+                        kw["filter_status"] in statuses):
                         domain_status[domain_class].append(kw["filter_status"])
                     elif statuses:
                         domain_status[domain_class].extend(statuses)
@@ -98,8 +98,7 @@ class WorkspaceContainer(AlchemistContainer):
             domain_status = self.domain_status(roles, self.__name__)
             if kw.get("filter_status", None):
                 for domain_class in domain_status.keys():
-                    if kw["filter_status"] in \
-                            domain_status[domain_class]:
+                    if kw["filter_status"] in domain_status[domain_class]:
                         domain_status[domain_class] = [kw["filter_status"]]
                     else:
                         del domain_status[domain_class]
@@ -107,8 +106,7 @@ class WorkspaceContainer(AlchemistContainer):
 
     def title_column(self, domain_class):
         table = orm.class_mapper(domain_class).mapped_table
-        utk = dict([(table.columns[k].key, k)
-                    for k in table.columns.keys()])
+        utk = dict([(table.columns[k].key, k) for k in table.columns.keys()])
         # TODO : update to support other fields
         column = table.columns[utk["short_name"]]
         return column
@@ -119,28 +117,33 @@ class WorkspaceContainer(AlchemistContainer):
         group_roles_domain_status = self.item_status_filter(kw, roles)
         session = Session()
         results = []
-        queries = []
         for domain_class, status in group_roles_domain_status.iteritems():
-            query = session.query(domain_class) \
-                .filter(domain_class.status.in_(status))
+            query = session.query(domain_class).filter(
+                domain_class.status.in_(status)
+                )
             if kw.get("filter_short_name", None):
                 column = self.title_column(domain_class)
-                query = query.filter("(lower(%s) LIKE '%%%s%%')" %
-                                     (column, kw["filter_short_name"].lower()))
+                query = query.filter(
+                    """(lower(%s) LIKE '%%%s%%')""" %
+                    (column, kw["filter_short_name"].lower())
+                    )
             results.extend(query.all())
         object_roles_domain_status = self.item_status_filter(kw, OBJECT_ROLES)
         for domain_class, status in object_roles_domain_status.iteritems():
-            query = session.query(domain_class)\
-                .filter(domain_class.status.in_(status))
+            query = session.query(domain_class).filter(
+                domain_class.status.in_(status))
             if kw.get("filter_short_name", None):
                 column = self.title_column(domain_class)
-                query = query.filter("(lower(%s) LIKE '%%%s%%')" %
-                                     (column, kw["filter_short_name"]))
+                query = query.filter(
+                    """(lower(%s) LIKE '%%%s%%')""" %
+                    (column, kw["filter_short_name"])
+                    )
             for obj in query.all():
                 prm = IPrincipalRoleMap(obj)
                 for obj_role in OBJECT_ROLES:
-                    if prm.getSetting(obj_role, principal.id) == Allow and \
-                            obj not in results:
+                    if (prm.getSetting(obj_role, principal.id) == Allow and
+                            obj not in results
+                        ):
                         results.append(obj)
                         break
         # Sort items
@@ -164,8 +167,9 @@ class WorkspaceContainer(AlchemistContainer):
         roles = get_workspace_roles(principal)
         roles.extend(OBJECT_ROLES)
         for role in roles:
-            statuses = self.workspace_config.getStatus(role, domain_class,
-                                                       self.__name__)
+            statuses = self.workspace_config.get_status(
+                role, domain_class, self.__name__
+                )
             if statuses and status in statuses:
                 return True
         return False

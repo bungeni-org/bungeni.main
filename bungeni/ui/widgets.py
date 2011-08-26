@@ -11,7 +11,8 @@ $URL$
 log = __import__("logging").getLogger("bungeni.ui.widgets")
 
 import sys
-import datetime, pytz
+import datetime
+import pytz
 import itertools
 import os
 from zope import interface
@@ -27,9 +28,9 @@ import zope.app.form.browser.textwidgets
 import zope.security.proxy
 import zope.traversing
 from zope.app.form.browser.textwidgets import TextAreaWidget, FileWidget
-from zope.app.form.browser.itemswidgets import RadioWidget, \
-    SingleDataHelper, ItemsWidgetBase, ItemsEditWidgetBase, \
-    DropdownWidget, ItemDisplayWidget
+from zope.app.form.browser.itemswidgets import (RadioWidget,
+    SingleDataHelper, ItemsWidgetBase, ItemsEditWidgetBase,
+    DropdownWidget, ItemDisplayWidget)
 from zope.app.form.browser.boolwidgets import CheckBoxWidget
 
 from zope.i18n import translate
@@ -355,7 +356,6 @@ class SelectDateWidget(zope.app.form.browser.widget.SimpleInputWidget):
 
     def __init__(self, *args):
         super(SelectDateWidget, self).__init__(*args)
-        need("yui-core")
         need("yui-calendar")
         need("yui-container")
         need("yui-element")
@@ -1055,7 +1055,6 @@ class _AutoCompleteWidget(ItemsEditWidgetBase):
         """
 
     def __call__(self):
-        need("yui-core")
         need("yui-datasource")
         need("yui-get")
         need("yui-connection")
