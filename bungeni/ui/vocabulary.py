@@ -40,6 +40,7 @@ from bungeni.models.interfaces import ISubRoleAnnotations
 from bungeni.models.interfaces import IBungeniGroup
 #tree vocabulary
 from bungeni.core.language import get_default_language
+from bungeni.core.dc import IDCDescriptiveProperties
 try:
     import json
 except ImportError:
@@ -264,9 +265,9 @@ class Venues(object):
             terms.append(vocabulary.SimpleTerm(
                     value = ob.venue_id, 
                     token = ob.venue_id,
-                    title = "%s" % (
-                        ob.short_name
-                )))
+                    title = "%s" % IDCDescriptiveProperties(ob).title
+                )
+            )
         return vocabulary.SimpleVocabulary(terms)
 
 venues_factory = Venues()
