@@ -10,7 +10,7 @@ $Id$
 
 ACTIVE_TAGS = [
     "draft",
-    "private", 
+    "private",
     "public",
     "tobescheduled",
     "approved",
@@ -18,16 +18,16 @@ ACTIVE_TAGS = [
     "actionclerk",
     "actionmp",
     "terminal",
-    "succeed", # terminal
-    "fail", # terminal
-    "oral", # oral questions
-    "written", # written questions
-    "published", # groupsitting
+    "succeed",  # terminal
+    "fail",  # terminal
+    "oral",  # oral questions
+    "written",  # written questions
+    "published",  # groupsitting
     "workspace",
-    "agendaprivate", # groupsitting - if a sitting is in a state tagged 
-                     # "agendaprivate" its agenda should not be 
+    "agendaprivate",  # groupsitting - if a sitting is in a state tagged
+                     # "agendaprivate" its agenda should not be
                      # publicly available
-] 
+]
 
 # Tags for Workflow States, per Parliamentary Item
 
@@ -60,27 +60,27 @@ TAG_MAPPINGS["bill"] = {
     "submitted": ["actionclerk",],
     "received": ["actionclerk",],
     "submitted_signatories": ["actionmp",],
-    "gazetted": [],
-    "first_reading_pending": ["tobescheduled",],
-    "first_reading": ["scheduled",],
-    "first_reading_adjourned": ["approved",],
-    "first_committee": [],
-    "first_report_reading_pending": ["tobescheduled",],
-    "first_report_reading": ["scheduled",],
-    "first_report_reading_adjourned": ["approved",],
-    "second_reading_pending": ["tobescheduled",],
-    "second_reading": ["scheduled",],
-    "second_reading_adjourned": ["approved",],
-    "whole_house_pending": ["tobescheduled",],
-    "whole_house": ["scheduled",],
-    "whole_house_adjourned": ["approved",],
-    "second_committee": [],
-    "third_reading_pending": ["tobescheduled",],
-    "third_reading": ["scheduled",],
-    "third_reading_adjourned": ["approved",],
-    "withdrawn": ["terminal", "fail",],
-    "approved": ["terminal", "succeed", "approved",],
-    "rejected": ["terminal", "fail",],
+    "gazetted": ["public",],
+    "first_reading_pending": ["public", "tobescheduled",],
+    "first_reading": ["public", "scheduled",],
+    "first_reading_adjourned": ["public", "approved",],
+    "first_committee": ["public",],
+    "first_report_reading_pending": ["public", "tobescheduled",],
+    "first_report_reading": ["public", "scheduled",],
+    "first_report_reading_adjourned": ["public", "approved",],
+    "second_reading_pending": ["public", "tobescheduled",],
+    "second_reading": ["public", "scheduled",],
+    "second_reading_adjourned": ["public", "approved",],
+    "whole_house_pending": ["public", "tobescheduled",],
+    "whole_house": ["public", "scheduled",],
+    "whole_house_adjourned": ["public", "approved",],
+    "second_committee": ["public", ],
+    "third_reading_pending": ["public", "tobescheduled",],
+    "third_reading": ["public", "scheduled",],
+    "third_reading_adjourned": ["public", "approved",],
+    "withdrawn": ["public", "terminal", "fail",],
+    "approved": ["public", "terminal", "succeed", "approved",],
+    "rejected": ["public", "terminal", "fail",],
 }
 TAG_MAPPINGS["motion"] = {
     "working_draft": ["draft", "private",],
