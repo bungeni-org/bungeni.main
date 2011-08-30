@@ -249,8 +249,11 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.bill.wf.third_reading.approved" title="Approve" />
 <grant permission="bungeni.bill.wf.third_reading.approved" role="bungeni.Clerk" />
 
-<permission id="bungeni.bill.wf.gazetted.first_reading.first_committee.first_report_reading.second_reading.whole_house.second_committee.third_reading.withdrawn" title="Withdraw" />
-<grant permission="bungeni.bill.wf.gazetted.first_reading.first_committee.first_report_reading.second_reading.whole_house.second_committee.third_reading.withdrawn" role="bungeni.Clerk" />
+<permission id="bungeni.bill.wf.submitted.withdrawn_internal" title="Withdraw" />
+<grant permission="bungeni.bill.wf.submitted.withdrawn_internal" role="bungeni.Owner" />
+
+<permission id="bungeni.bill.wf.submitted.gazetted.first_reading.first_committee.first_report_reading.second_reading.whole_house.second_committee.third_reading.withdrawn" title="Withdraw" />
+<grant permission="bungeni.bill.wf.submitted.gazetted.first_reading.first_committee.first_report_reading.second_reading.whole_house.second_committee.third_reading.withdrawn" role="bungeni.Clerk" />
 
 
 <!-- committee -->
@@ -314,6 +317,7 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.sittingattendance.Edit" role="bungeni.Clerk" />
 <grant permission="bungeni.sittingattendance.Add" role="bungeni.Clerk" />
 <grant permission="bungeni.sittingattendance.Delete" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting.View" role="bungeni.Clerk" />
 
 <permission id="bungeni.groupsitting.wf.sitting.draft_agenda" title="Draft Agenda" />
 <grant permission="bungeni.groupsitting.wf.sitting.draft_agenda" role="bungeni.Clerk" />
