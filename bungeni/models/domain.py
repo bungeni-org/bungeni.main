@@ -227,12 +227,14 @@ class Group(Entity):
     """ an abstract collection of users
     """
     interface.implements(interfaces.IBungeniGroup, interfaces.ITranslatable)
-
+    sort_on = ["short_name"]
+    sort_dir = "asc"
+    sort_replace = {"group_id": ["short_name", ]}
     #users = one2many("users", 
     #   "bungeni.models.domain.GroupMembershipContainer", "group_id")
     #sittings = one2many("sittings", 
     #   "bungeni.models.domain.GroupSittingContainer", "group_id")
-
+    
     addresses = one2many("addresses",
         "bungeni.models.domain.GroupAddressContainer", "group_id")
     def active_membership(self, user_id):
