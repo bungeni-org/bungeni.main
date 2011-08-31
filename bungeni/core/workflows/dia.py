@@ -14,16 +14,16 @@ def write_file(in_folder, file_name, contents):
 
 def main(argv):
     output_folder = ""
-    if (len(argv) > 0 ):
+    if len(argv):
         output_folder = argv[0]
-        if (output_folder.endswith("/") == False):
+        if not output_folder.endswith("/"):
             output_folder = output_folder + "/"
     
     #!+bungeni_custom(mr, aug-2011) should be localized parameter, or 
     # generated dynamically e.g. listing of workflow file definitions.
     workflow_names = [
-        "address", 
-        "agendaitem", 
+        "address",
+        "agendaitem",
         "attachedfile",
         "bill",
         "committee",
@@ -41,6 +41,7 @@ def main(argv):
     ]
     for name in workflow_names:
         write_file(output_folder, "%s.dot" % name, dot(get_workflow(name)))
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])

@@ -7,7 +7,7 @@ from bungeni.core.workflow import xmlimport
 from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowed, \
     IStateController, IWorkflowController
 from bungeni.core.workflow.states import StateController, WorkflowController, \
-    get_object_state, get_object_version_state
+    get_object_state_rpm, get_object_version_state_rpm
 import bungeni.core.audit
 import bungeni.core.version
 import bungeni.core.interfaces
@@ -144,11 +144,19 @@ def register_workflow_adapters():
     # module top level (i.e. not within this def) does not work for the tests
     
     # IRolePermissionMap adapter for IWorkflowed objects
-    component.provideAdapter(get_object_state, (IWorkflowed,),
+    component.provideAdapter(get_object_state_rpm, 
+        (IWorkflowed,),
         zope.securitypolicy.interfaces.IRolePermissionMap)
     # IRolePermissionMap adapter for a version of an IWorkflowed object
-    component.provideAdapter(get_object_version_state, (interfaces.IVersion,),
+    component.provideAdapter(get_object_version_state_rpm, 
+        (interfaces.IVersion,),
         zope.securitypolicy.interfaces.IRolePermissionMap)
+    
+    # !+IPrincipalRoleMap(mr, aug-2011) also migrate principal_role_map from 
+    # db to be dynamic and based on workflow definitions. Would need to infer
+    # the Roles of a user with respect to the context e.g.owner, or signatory
+    # and then check against the permissions required by the current object's
+    # state. 
     
     # IStateController
     component.provideAdapter(
@@ -156,12 +164,12 @@ def register_workflow_adapters():
     # IWorkflowController
     component.provideAdapter(
         WorkflowController, (IWorkflowed,), IWorkflowController)
-
+    
     # IVersioned
     component.provideAdapter(bungeni.core.version.ContextVersioned,
         (interfaces.IVersionable,),
         bungeni.core.interfaces.IVersioned)
-    
+
 # load workflows
 load_workflows()
 

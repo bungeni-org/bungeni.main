@@ -406,7 +406,10 @@ mapper(domain.ParliamentaryItem, schema.parliamentary_items,
             lazy=False),
         # !+NAMING(mr, jul-2011)
         "itemsignatories": relation(domain.User, secondary=schema.signatories),
-        "attached_files": relation(domain.AttachedFile)
+        "attached_files": relation(domain.AttachedFile,
+            backref=backref("item",
+                remote_side=schema.parliamentary_items.c.parliamentary_item_id)
+        )
     }
 )
 

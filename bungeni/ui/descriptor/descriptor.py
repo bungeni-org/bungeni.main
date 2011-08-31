@@ -2047,7 +2047,7 @@ class AttachedFileDescriptor(ModelDescriptor):
             listing_column=day_column("status_date", _("Status date")),
         ),
     ]
-    public_wfstates = [get_workflow_state("attachedfile", "public").id]
+    public_wfstates = [get_workflow_state("attachedfile", "attached").id]
 
 
 class AttachedFileVersionDescriptor(ModelDescriptor):

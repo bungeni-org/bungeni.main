@@ -38,7 +38,8 @@ trigger_value_map = {
 # only letters, numbers and "_" char i.e. no whitespace or "-"
 ID_RE = re.compile("^[\w\d_]+$")
 
-STATE_ATTRS = ("id", "title", "version", "like_state", "note", "obsolete")
+STATE_ATTRS = ("id", "title", "version", "like_state", "note",
+    "permissions_from_parent", "obsolete")
 
 TRANS_ATTRS_REQUIREDS = ("title", "source", "destination")
 TRANS_ATTRS_OPTIONALS = ("condition", "trigger", "roles", "order", 
@@ -105,8 +106,9 @@ def as_bool(s):
 #
 
 def zcml_check_regenerate():
-    """Called after all XML workflows have been loaded (see adapers.py). 
+    """Called after all XML workflows have been loaded (see adapers.py).
     """
+    #!+permissions.zcml(mr, aug-2011) bypass writing to disk?
     # ZCML_FILENAME is under bungeni.core.workflows
     import bungeni.core.workflows
     __path__ = os.path.dirname(bungeni.core.workflows.__file__)
@@ -298,10 +300,12 @@ def _load(workflow, name):
             State(state_id, Message(s.get("title", domain)), 
                 strip_none(s.get("note")),
                 actions, permissions, notifications,
-                as_bool(strip_none(s.get("obsolete")) or "false"))
+                as_bool(strip_none(s.get("permissions_from_parent")) or "false"),
+                as_bool(strip_none(s.get("obsolete")) or "false")
+            )
         )
-        
-                    
+    
+    
     STATE_IDS = [ s.id for s in states ]
     
     # transitions

@@ -39,18 +39,17 @@ See the Bungeni Source Code Style Guide for further details.
 <!-- attachedfile -->
 <grant permission="bungeni.fileattachment.Add" role="bungeni.Owner" />
 
-<permission id="bungeni.attachedfile.wf.private.internal" title="Publish Internal" />
-<grant permission="bungeni.attachedfile.wf.private.internal" role="bungeni.Owner" />
+<permission id="bungeni.attachedfile.wf.attached.internal" title="Publish Internal" />
+<grant permission="bungeni.attachedfile.wf.attached.internal" role="bungeni.Clerk" />
+<grant permission="bungeni.attachedfile.wf.attached.internal" role="bungeni.Owner" />
 
-<permission id="bungeni.attachedfile.wf.private.internal.public" title="Publish to Public" />
-<grant permission="bungeni.attachedfile.wf.private.internal.public" role="bungeni.Owner" />
+<permission id="bungeni.attachedfile.wf.internal.attached" title="Re-publish" />
+<grant permission="bungeni.attachedfile.wf.internal.attached" role="bungeni.Clerk" />
+<grant permission="bungeni.attachedfile.wf.internal.attached" role="bungeni.Owner" />
 
-<permission id="bungeni.attachedfile.wf.private.inactive" title="Drop" />
-<grant permission="bungeni.attachedfile.wf.private.inactive" role="bungeni.Owner" />
-
-<permission id="bungeni.attachedfile.wf.public.internal.inactive" title="Deactivate" />
-<grant permission="bungeni.attachedfile.wf.public.internal.inactive" role="bungeni.Clerk" />
-<grant permission="bungeni.attachedfile.wf.public.internal.inactive" role="bungeni.Speaker" />
+<permission id="bungeni.attachedfile.wf.attached.internal.inactive" title="Deactivate" />
+<grant permission="bungeni.attachedfile.wf.attached.internal.inactive" role="bungeni.Clerk" />
+<grant permission="bungeni.attachedfile.wf.attached.internal.inactive" role="bungeni.Owner" />
 
 
 <!-- agendaitem -->
@@ -317,7 +316,6 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.sittingattendance.Edit" role="bungeni.Clerk" />
 <grant permission="bungeni.sittingattendance.Add" role="bungeni.Clerk" />
 <grant permission="bungeni.sittingattendance.Delete" role="bungeni.Clerk" />
-<grant permission="bungeni.sitting.View" role="bungeni.Clerk" />
 
 <permission id="bungeni.groupsitting.wf.sitting.draft_agenda" title="Draft Agenda" />
 <grant permission="bungeni.groupsitting.wf.sitting.draft_agenda" role="bungeni.Clerk" />
