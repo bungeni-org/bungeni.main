@@ -186,6 +186,7 @@ class User(Entity):
 
     sort_on = ["last_name", "first_name", "middle_name"]
     sort_replace = {"user_id": ["last_name", "first_name"]}
+    sort_dir = "asc"
     addresses = one2many("addresses",
         "bungeni.models.domain.UserAddressContainer", "user_id")
     delegations = one2many("delegations",
@@ -260,7 +261,7 @@ class GroupMembership(Entity):
         interfaces.IBungeniGroupMembership, interfaces.ITranslatable)
     sort_on = ["last_name", "first_name", "middle_name"]
     sort_replace = {"user_id": ["last_name", "first_name"]}
-
+    sort_dir = "asc"
     @property
     def image(self):
         return self.user.image
@@ -648,22 +649,6 @@ class ParliamentSession(Entity):
     sort_on = ["start_date", ]
     sort_dir = "desc"
     interface.implements(interfaces.ITranslatable)
-
-class Rota(object):
-    """
-    """
-
-class Take(object):
-    """
-    """
-
-class TakeMedia(object):
-    """
-    """
-
-class Transcript(object):
-    """
-    """
 
 
 class ObjectSubscriptions(object):
