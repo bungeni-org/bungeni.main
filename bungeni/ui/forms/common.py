@@ -445,6 +445,7 @@ class EditForm(BaseForm, catalyst.EditForm):
     @property
     def form_description(self):
         if self.is_translation:
+            # !+HEAD_DOCUMENT_ITEM(mr, sep-2011)
             language = get_language_by_name(self.context.head.language)["name"]
             return _(u"edit_translation_help",
                      default=u"The original $language version is shown on the left",
@@ -468,6 +469,7 @@ class EditForm(BaseForm, catalyst.EditForm):
         # widget, which will render the display widget bound to the
         # original (HEAD) document
         if self.is_translation:
+            # !+HEAD_DOCUMENT_ITEM(mr, sep-2011)
             head = self.context.head
             form_fields = ui.setUpFields(self.context.__class__, "view")
             for widget in self.widgets:

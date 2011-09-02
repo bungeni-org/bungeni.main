@@ -8,7 +8,7 @@ from zope import formlib
 
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.security.proxy import removeSecurityProxy
-from zope.security import canWrite
+from zope.security import checkPermission, canWrite
 from zope.security.interfaces import ForbiddenAttribute
 
 from sqlalchemy import orm
@@ -104,7 +104,8 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
     
     def listing(self):
         # set up table
-        values = list(self._versions.values())
+        values = [ value for value in self._versions.values()
+            if checkPermission("zope.View", value) ]
         values.sort(key=operator.attrgetter("version_id"))
         values.reverse()
         formatter = self.formatter_factory(

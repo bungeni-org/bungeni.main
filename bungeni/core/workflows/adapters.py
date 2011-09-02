@@ -65,6 +65,11 @@ def load_workflow(name, iface,
     # inheritance ancestor to iface (if it is not already):
     if (IWorkflowed not in iface.__bases__):
         iface.__bases__ = (IWorkflowed,) + iface.__bases__
+    # !+IITEMVersionInheritsIITEM(mr, sep-2011) this does cause some pollution
+    # sometimes e.g. given that an IBillVersion is NOT workflowed, but it 
+    # inherits from IBill, that is wworkflowed, IBillVersion will incorrectly 
+    # gain IWorklfowed via this inheritance chain.
+
     
     # apply customizations, features as per configuration of the document type 
     def camel(name):

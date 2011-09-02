@@ -32,7 +32,8 @@ def configurable_mappings(kls, kls_mapper=None):
         change_kls = getattr(domain, "%sChange" % (name))
         change_tbl = getattr(schema, "%s_changes" % (schema.un_camel(name)))
         def changes_properties(change_tbl):
-            return {"user": relation(domain.User,
+            return {
+                "user": relation(domain.User,
                     primaryjoin=(change_tbl.c.user_id == schema.users.c.user_id),
                     uselist=False,
                     lazy=True
@@ -237,7 +238,8 @@ mapper(domain.CommitteeTypeStatus, schema.committee_type_status)
 mapper(domain.CommitteeType, schema.committee_type,
     properties={
         "committee_type_status": relation(domain.CommitteeTypeStatus,
-            uselist=False, lazy=False
+            uselist=False, 
+            lazy=False
         )
     }
 )
@@ -407,6 +409,8 @@ mapper(domain.ParliamentaryItem, schema.parliamentary_items,
         # !+NAMING(mr, jul-2011)
         "itemsignatories": relation(domain.User, secondary=schema.signatories),
         "attached_files": relation(domain.AttachedFile,
+            # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", 
+            # "document" or "item"?
             backref=backref("item",
                 remote_side=schema.parliamentary_items.c.parliamentary_item_id)
         )

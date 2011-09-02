@@ -144,6 +144,8 @@ class IQuestion(IBungeniContent):
     """Parliamentary Question.
     """
 
+# !+IITEMVersionInheritsIItem(mr, sep-2011) should IITEMVersion inherit also
+# from IITEM i.e. should a version also interchangeably match the master item?
 class IQuestionVersion(IQuestion):
     pass
 

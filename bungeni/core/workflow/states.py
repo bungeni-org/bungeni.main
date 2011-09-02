@@ -239,13 +239,12 @@ def get_object_version_state_rpm(version):
     to *lookup* (note: no creation of any instance) the workflow.states.State 
     singleton instance for the version's context's status.
     """
-    #!+VERSIONS(mb, aug-2011) my understanding is that since the goal of the
-    # adapter is to get the state of the object (in this case the version),
-    # then this should do it since the parent document's state may have changed
-    # after version creation. The parent document's status at the time of
-    # versioning is captured and since the original workflow is valid, seen
-    # in `get_object_state` above, then it should suffice
-    return get_object_state(version)
+    # !+IITEMVersionInheritsIITEM(mr, sep-2011) when this is corrected, 
+    # an attempt to adapt IWorkflowed(version) MUST fail.
+    #
+    # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", "document" 
+    # or "item"?
+    return interfaces.IWorkflow(version.head).get_state(version.status)
 
 class Workflow(object):
     """A Workflow instance for a specific document type, defining the possible 
