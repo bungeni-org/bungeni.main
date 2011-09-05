@@ -101,6 +101,9 @@ def make_changes_table(table, metadata):
         rdb.Column("user_id", rdb.Integer, rdb.ForeignKey("users.user_id")),
         useexisting=True # !+ZCA_TESTS(mr, jul-2011) tests break without this
     )
+    # create index for changes table
+    index_name = "%s_changes_cid_idx" % (entity_name)     
+    changes_table_index = rdb.Index(index_name, changes_table.c["content_id"])
     return changes_table
 
 def make_versions_table(table, metadata, secondary_table=None):
@@ -137,6 +140,9 @@ def make_versions_table(table, metadata, secondary_table=None):
     versions_table = rdb.Table(versions_name, metadata, *columns,
         useexisting=True # !+ZCA_TESTS(mr, jul-2011) tests break without this
     )
+    # create index on versions table
+    index_name = "%s_versions_cid_idx" % (entity_name)     
+    versions_table_index = rdb.Index(index_name, versions_table.c["content_id"])    
     return versions_table
 
 # !+/PARAMETRIZABLE_DOCTYPES
@@ -502,6 +508,9 @@ group_item_assignments = rdb.Table("group_assignments", metadata,
     rdb.Column("language", rdb.String(5), nullable=False),
 )
 
+group_item_assignments_index = rdb.Index("grpassign_itemid_idx", 
+                                group_item_assignments.c["item_id"]
+                               )
 
 ##############
 # Titles
@@ -827,6 +836,11 @@ attached_files = rdb.Table("attached_files", metadata,
     ),
     rdb.Column("language", rdb.String(5), nullable=False),
 )
+
+attached_files_index = rdb.Index("attfiles_itemid_idx", 
+                        attached_files.c["item_id"]
+                       )
+
 configurable_schema(domain.AttachedFile)
 
 registrySequence = rdb.Sequence("registry_number_sequence", metadata = metadata)
@@ -937,6 +951,11 @@ parliamentary_items = rdb.Table("parliamentary_items", metadata,
         nullable=False
     ),
 )
+
+# Index for parliamentary_items
+parliamentary_items_index = rdb.Index("pi_status_idx", 
+                             parliamentary_items.c["status"]
+                            )
 
 # Agenda Items:
 # generic items to be put on the agenda for a certain group
@@ -1133,6 +1152,9 @@ settings = rdb.Table("settings", metadata,
     rdb.Column("type", rdb.String(40)),
 )
 
+settings_index = rdb.Index("settings_propsheet_idx", 
+                  settings.c["propertysheet"]
+                 )
 
 holidays = rdb.Table("holidays", metadata,
     rdb.Column("holiday_id", rdb.Integer, primary_key=True),
@@ -1154,10 +1176,10 @@ translations = rdb.Table("translations", metadata,
 )
 
 translation_lookup_index = rdb.Index("translation_lookup_index",
-    translations.c.object_id,
-    translations.c.object_type,
-    translations.c.lang
-)
+                            translations.c.object_id,
+                            translations.c.object_type,
+                            translations.c.lang
+                           )
 
 ''' !+WTF(mr, oct-2010) what is this? To start, there is no .util module !
 def reset_database():
