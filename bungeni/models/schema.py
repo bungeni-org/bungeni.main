@@ -354,6 +354,8 @@ groups = rdb.Table("groups", metadata,
     rdb.Column("start_date", rdb.Date, nullable=False),
     rdb.Column("end_date", rdb.Date),
     rdb.Column("type", rdb.String(30), nullable=False),
+    # !+GROUP_PRINCIPAL_ID(ah,sep-2011) adding group principal id to schema
+    rdb.Column("group_principal_id", rdb.Unicode(50)),
     rdb.Column("parent_group_id", rdb.Integer,
         rdb.ForeignKey("groups.group_id")
      ),
@@ -365,6 +367,10 @@ groups = rdb.Table("groups", metadata,
     rdb.Column("custom3", rdb.UnicodeText, nullable=True),
     rdb.Column("custom4", rdb.UnicodeText, nullable=True),
 )
+# !+GROUP_PRINCIPAL_ID(ah,sep-2011) adding index on group_principal_id column
+groups_principal_id_index = rdb.Index("grp_grpprincipalid_idx", 
+                              groups.c["group_principal_id"]
+                            )
 
 offices = rdb.Table("offices", metadata,
     rdb.Column("office_id", rdb.Integer,

@@ -83,6 +83,31 @@ def group_member_modified(ob, event):
         for title in titles.all():
             if title.end_date == None:
                 title.end_date = ob.end_date
-                
+
+
+# !+GROUP_PRINCIPAL_ID(ah,sep-2011) adding group_modified event to set group
+# principal id
+def group_modified(ob, event):
+    """
+    When a group is added, the value in group_principal_id is computed
+    out of the group type and group id. This was a computed property in orm.py
+    but has been moved here now - so it gets cached in the groups table
+    """
+    if ob.group_principal_id is None:
+        ob.group_principal_id = "group." + ob.type + "." + str(ob.group_id)
+        log.debug("Setting group_principal_id for group %s", 
+          ob.group_principal_id
+        )
+    else:
+        log.debug("group_principal_id is already set for group %s", 
+          ob.group_principal_id
+        )
+
+
 def timestamp(object, event):
-        object.timestamp = datetime.datetime.now()
+    """
+    Set the timestamp for the item
+    """
+    object.timestamp = datetime.datetime.now()
+
+

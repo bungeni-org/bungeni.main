@@ -139,21 +139,13 @@ mapper(domain.Group, schema.groups,
     primary_key=[schema.groups.c.group_id],
     properties={
         "members": relation(domain.GroupMembership),
-        "group_principal_id": column_property(
-            #
-            # !+ ATTENTION: the following sqlalchemy str concat (on c.type) 
-            # gives some VERY strange behaviour :
-            #
-            # print "group." + schema.groups.c.type + "."
-            # >>> :type_1 || groups.type || :param_1
-            #
-            # print group.groups.type.
-            # >>> "group.%s." % (schema.groups.c.type)
-            #
-            ("group." + schema.groups.c.type + "." +
-             rdb.cast(schema.groups.c.group_id, rdb.String)
-            ).label("group_principal_id")
-        ),
+        # !+GROUP_PRINCIPAL_ID(ah,sep-2011) - removing group_principal_id as 
+        # orm property, this is now on the schema.
+        #"group_principal_id": column_property(
+        #    ("group." + schema.groups.c.type + "." +
+        #     rdb.cast(schema.groups.c.group_id, rdb.String)
+        #    ).label("group_principal_id")
+        #),
         "contained_groups": relation(domain.Group,
             backref=backref("parent_group",
                 remote_side=schema.groups.c.group_id)
