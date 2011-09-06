@@ -50,8 +50,8 @@ class WorkspaceContainer(AlchemistContainer):
     __name__ = __parent__ = None
     interface.implements(interfaces.IWorkspaceContainer)
     #!+GET_WORKSPACE_ROLES(ah,sep-2011), member variable to cache workspace
-    #roles
-    _workspace_roles = None
+    #roles, in dictionary with roles cached per principal
+    _workspace_roles = {}
 
     def __init__(self, tab_type, title, description, marker=None):
         self.__name__ = tab_type
@@ -63,12 +63,16 @@ class WorkspaceContainer(AlchemistContainer):
         super(WorkspaceContainer, self).__init__()
 
 
-    #!+GET_WORKSPACE_ROLES(ah,sep-2011) - add workspace_roles property
-    @property
-    def workspace_roles(self):
-        if self._workspace_roles is None:
-            self._workspace_roles = get_workspace_roles(get_principal())
-        return self._workspace_roles
+    #!+GET_WORKSPACE_ROLES(ah,sep-2011) - add workspace_roles_for_principal API
+    # WARNING : This will not pick up any changes to the principal - e.g. 
+    # if between login and re-login as user was added to a group. This cache
+    # needs to be invalidated in a Principal modify event.
+    def workspace_roles_for_principal(self, principal=None):
+        if principal is None:
+            principal = get_principal()
+        if self._workspace_roles.has_key(principal.id) == False:
+            self._workspace_roles[principal.id] = get_workspace_roles(principal)
+        return self._workspace_roles[principal.id]
 
 
     def domain_status(self, roles, tab):
@@ -127,7 +131,7 @@ class WorkspaceContainer(AlchemistContainer):
         principal = get_principal()
         #!+GET_WORKSPACE_ROLES(ah,sep-2011), use cached property, get_principal is 
         #used further down, so dont delete it
-        roles = self.workspace_roles
+        roles = self.workspace_roles_for_principal(principal)
         group_roles_domain_status = self.item_status_filter(kw, roles)
         session = Session()
         results = []
@@ -178,7 +182,7 @@ class WorkspaceContainer(AlchemistContainer):
 
     def check_item(self, domain_class, status):
         #!+GET_WORKSPACE_ROLES(ah,sep-2011), use cached property
-        roles = self.workspace_roles
+        roles = self.workspace_roles_for_principal()
         roles.extend(OBJECT_ROLES)
         for role in roles:
             statuses = self.workspace_config.get_status(

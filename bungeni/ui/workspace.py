@@ -160,20 +160,25 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
     data_view = "/jsonlisting"
     script = ViewTextTemplateFile("templates/datatable-workspace.pt")
     # !+GET_WORKSPACE_ROLES(ah,sep-2011) caching get_workspace_roles output
-    # in class member
-    _workspace_roles = None
+    # in class member, cache workspace roles per principal
+    _workspace_roles = {}
 
-    #!+GET_WORKSPACE_ROLES(ah,sep-2011) - add workspace_roles property
-    @property
-    def workspace_roles(self):
-        if self._workspace_roles is None:
-            self._workspace_roles = get_workspace_roles(get_principal())
-        return self._workspace_roles
+    #!+GET_WORKSPACE_ROLES(ah,sep-2011) - changed to function
+    # WARNING : This will not pick up any changes to the principal - e.g. 
+    # if between login and re-login as user was added to a group. This cache
+    # needs to be invalidated in a Principal modify event.
+    def workspace_roles_for_principal(self, principal=None):
+        if principal is None:
+            principal = get_principal()
+        if self._workspace_roles.has_key(principal.id) == False:
+            self._workspace_roles[principal.id] = get_workspace_roles(principal)
+        return self._workspace_roles[principal.id]
+
 
     def get_item_types(self):
         workspace_config = component.getUtility(IWorkspaceTabsUtility)
         #!+GET_WORKSPACE_ROLES(ah,sep-2011), use property instead
-        roles = self.workspace_roles
+        roles = self.workspace_roles_for_principal()
         roles.extend(OBJECT_ROLES)
         domains = []
         for role in roles:
@@ -196,7 +201,7 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
     def get_status(self, item_type):
         workspace_config = component.getUtility(IWorkspaceTabsUtility)
         #!+GET_WORKSPACE_ROLES(ah,sep-2011), use property instead
-        roles = self.workspace_roles
+        roles = self.workspace_roles_for_principal()
         roles.extend(OBJECT_ROLES)
         domain_class = workspace_config.get_domain(item_type)
         results = set()
