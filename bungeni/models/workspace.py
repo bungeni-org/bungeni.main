@@ -49,6 +49,9 @@ def valueKey(identity_key):
 class WorkspaceContainer(AlchemistContainer):
     __name__ = __parent__ = None
     interface.implements(interfaces.IWorkspaceContainer)
+    #!+GET_WORKSPACE_ROLES(ah,sep-2011), member variable to cache workspace
+    #roles
+    _workspace_roles = None
 
     def __init__(self, tab_type, title, description, marker=None):
         self.__name__ = tab_type
@@ -58,6 +61,15 @@ class WorkspaceContainer(AlchemistContainer):
         if marker is not None:
             interface.alsoProvides(self, marker)
         super(WorkspaceContainer, self).__init__()
+
+
+    #!+GET_WORKSPACE_ROLES(ah,sep-2011) - add workspace_roles property
+    @property
+    def workspace_roles(self):
+        if self._workspace_roles is None:
+            self._workspace_roles = get_workspace_roles(get_principal())
+        return self._workspace_roles
+
 
     def domain_status(self, roles, tab):
         """Given a list of roles and tab returns a dictionary containing the
@@ -113,7 +125,9 @@ class WorkspaceContainer(AlchemistContainer):
 
     def _query(self, **kw):
         principal = get_principal()
-        roles = get_workspace_roles(principal)
+        #!+GET_WORKSPACE_ROLES(ah,sep-2011), use cached property, get_principal is 
+        #used further down, so dont delete it
+        roles = self.workspace_roles
         group_roles_domain_status = self.item_status_filter(kw, roles)
         session = Session()
         results = []
@@ -163,8 +177,8 @@ class WorkspaceContainer(AlchemistContainer):
             yield (name, contained(obj, self, name))
 
     def check_item(self, domain_class, status):
-        principal = get_principal()
-        roles = get_workspace_roles(principal)
+        #!+GET_WORKSPACE_ROLES(ah,sep-2011), use cached property
+        roles = self.workspace_roles
         roles.extend(OBJECT_ROLES)
         for role in roles:
             statuses = self.workspace_config.get_status(

@@ -159,11 +159,21 @@ class WorkspaceContainerJSONListing(BrowserView):
 class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
     data_view = "/jsonlisting"
     script = ViewTextTemplateFile("templates/datatable-workspace.pt")
+    # !+GET_WORKSPACE_ROLES(ah,sep-2011) caching get_workspace_roles output
+    # in class member
+    _workspace_roles = None
+
+    #!+GET_WORKSPACE_ROLES(ah,sep-2011) - add workspace_roles property
+    @property
+    def workspace_roles(self):
+        if self._workspace_roles is None:
+            self._workspace_roles = get_workspace_roles(get_principal())
+        return self._workspace_roles
 
     def get_item_types(self):
         workspace_config = component.getUtility(IWorkspaceTabsUtility)
-        principal = get_principal()
-        roles = get_workspace_roles(principal)
+        #!+GET_WORKSPACE_ROLES(ah,sep-2011), use property instead
+        roles = self.workspace_roles
         roles.extend(OBJECT_ROLES)
         domains = []
         for role in roles:
@@ -185,8 +195,8 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
 
     def get_status(self, item_type):
         workspace_config = component.getUtility(IWorkspaceTabsUtility)
-        principal = get_principal()
-        roles = get_workspace_roles(principal)
+        #!+GET_WORKSPACE_ROLES(ah,sep-2011), use property instead
+        roles = self.workspace_roles
         roles.extend(OBJECT_ROLES)
         domain_class = workspace_config.get_domain(item_type)
         results = set()
