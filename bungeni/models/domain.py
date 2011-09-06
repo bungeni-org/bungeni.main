@@ -116,6 +116,8 @@ CUSTOM_DECORATED = {
 def auditable(kls):
     """Decorator for auditable domain types, to collect in one place all
     that is needed for a domain type to be auditale.
+    
+    Executed on adapters.load_workflow()
     """
     # assign interface (changes property added downstream)
     name = kls.__name__
@@ -130,6 +132,8 @@ def auditable(kls):
 def versionable(kls):
     """Decorator for versionable domain types, to collect in one place all
     that is needed for a domain type to be versionable.
+    
+    Executed on adapters.load_workflow()
     
     Note: @versionable implies @auditable, here made explicit
     """

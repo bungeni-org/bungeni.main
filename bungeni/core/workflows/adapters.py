@@ -97,13 +97,17 @@ def load_workflow(name, iface,
         "tableddocument": "tabled_document",
     }
     if wf.auditable or wf.versionable:
+        # decorate the kls
         kls = get_domain_kls(name)
+        # versionable implies auditable
         if wf.versionable:
             kls = domain.versionable(kls)
         elif wf.auditable:
             kls = domain.auditable(kls)
+        # modify schema/mapping as needed
         schema.configurable_schema(kls)
         orm.configurable_mappings(kls)
+        # create/set module-level dedicated auditor singleton for auditable kls
         bungeni.core.audit.set_auditor(kls)
         kn = kls.__name__
     
