@@ -9,7 +9,10 @@ $Id$
 log = __import__("logging").getLogger("bungeni.ui.errors")
 
 import zope.publisher.browser
+from zope.authentication.interfaces import IUnauthenticatedPrincipal
+
 from bungeni.ui.i18n import _
+from bungeni.ui.utils import url
 
 class BaseErrorView(zope.publisher.browser.BrowserView):
     
@@ -45,9 +48,18 @@ class Unauthorized(BaseErrorView):
     additional_headers = {
         "Expires": "Thu, 01 Dec 1994 16:00:00 GMT",
         "Cache-Control": "no-store, no-cache, must-revalidate",
-        "Pragma": "no-cache"
+        "Pragma": "no-cache",
     }
 
     @property
     def error_message(self):
         return _(u"Your account is not authorized to view this item.")
+
+    def __call__(self):
+        if IUnauthenticatedPrincipal.providedBy(self.request.principal):
+            self.http_status_code = 401
+            self.additional_headers.update(
+                [("WWW-Authenticate", "Basic realm=Bungeni")]
+            )
+        return super(Unauthorized, self).__call__()
+        

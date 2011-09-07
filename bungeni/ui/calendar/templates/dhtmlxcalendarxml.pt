@@ -4,15 +4,18 @@
 <start_date><span tal:replace="structure python:s.start_date.strftime('%Y-%m-%d %H:%M')"/></start_date>
 <end_date><span tal:replace="structure python:s.end_date.strftime('%Y-%m-%d %H:%M')"/></end_date>
 <text><span tal:replace="structure python:'&lt;![CDATA['"/>
-<tal:withevent tal:condition="s/venue|nothing">
-<b><span tal:omit-tag="" i18n:translate="">Venue</span>:</b><br/>
+<tal:withvenue tal:condition="s/venue|nothing">
+<b><span tal:omit-tag="" i18n:translate="">Sitting</span> : </b>
 <span tal:replace="s/venue/dc:title"/><br/>
-</tal:withevent>
-<b><span tal:omit-tag="" i18n:translate="">Status</span>:</b><br/>
-<span i18n:translate="" tal:replace="s/text/sitting_status"/>
+</tal:withvenue>
+<tal:novenue tal:condition="not:s/venue|nothing">
+<span i18n:translate="">Sitting</span>
+</tal:novenue>
 <span tal:replace="structure python:']]&gt;'"/>
 </text>
 <venue><span tal:condition="s/venue | nothing" tal:replace="structure python:str(s.venue.venue_id)"/></venue>
+<venue_name><span tal:condition="s/venue | nothing" tal:replace="s/venue/dc:title"/></venue_name>
+<group><span tal:replace="s/group/dc:title"/></group>
 <status><span tal:condition="s/status | nothing" tal:replace="structure python:s.status"/></status>
 <language><span tal:condition="s/language | nothing" tal:replace="structure python:s.language"/></language>
 </event>

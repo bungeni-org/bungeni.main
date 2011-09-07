@@ -1,11 +1,22 @@
-# encoding: utf-8
-# TODO - Cleanup!!!!
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""Calendar and Scheduling Browser and datasource Views
+
+$Id$
+"""
 
 log = __import__("logging").getLogger("bungeni.ui.calendar")
 
 import time
 import datetime
 timedelta = datetime.timedelta
+
+try:
+    import json
+except ImportError:
+    import simplejson as json
 
 from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent, ObjectModifiedEvent
@@ -34,7 +45,7 @@ from bungeni.core.language import get_default_language
 
 from ploned.ui.interfaces import IStructuralView
 from bungeni.ui.browser import BungeniBrowserView
-from bungeni.ui.calendar import utils
+from bungeni.ui.calendar import utils, config
 from bungeni.ui.tagged import get_states
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import misc, url, debug
@@ -86,6 +97,7 @@ class EventPartialForm(object):
                         mapping={'event_field_title': widget.context.title}
                     )
             yield widget
+
 
 def get_scheduling_actions(context, request):
     return get_actions("scheduling_actions", context, request)
@@ -232,13 +244,13 @@ class CalendarView(BungeniBrowserView):
     interface.implements(IStructuralView)
     template = ViewPageTemplateFile("templates/dhtmlxcalendar.pt")
     macros_view = ViewPageTemplateFile("templates/calendar-macros.pt")
-    short_name = u"Scheduling"
+    short_name = _(u"Scheduling")
     
     def __init__(self, context, request):
         log.debug("CalendarView.__init__: %s" % (context))
         super(CalendarView, self).__init__(
             ISchedulingContext(context), request)
-        
+    
     def __call__(self, timestamp=None):
         log.debug("CalendarView.__call__: %s" % (self.context))
         trusted = removeSecurityProxy(self.context)
@@ -268,9 +280,31 @@ class CalendarView(BungeniBrowserView):
         form = EventPartialForm(self.context, self.request)
         return form
 
+    @property
+    def venues_as_json(self):
+        venues_vocabulary = component.queryUtility(
+            schema.interfaces.IVocabularyFactory, "bungeni.vocabulary.Venues"
+        )
+        venue_list = [ {"key": venue.value, "label": venue.title}
+            for venue in venues_vocabulary()
+        ]
+        return json.dumps(venue_list)
+
+    @property
+    def ical_url(self):
+        return u"/".join(
+            [url.absoluteURL(self.context, self.request), "dhtmlxcalendar.ics"]
+        )
+
     def render(self, template=None):
         need("dhtmlxscheduler")
         need("dhtmlxscheduler-recurring")
+        need("dhtmlxscheduler-year-view")
+        need("dhtmlxscheduler-agenda-view")
+        need("dhtmlxscheduler-expand")
+        need("dhtmlxscheduler-timeline")
+        need("dhtmlxscheduler-tooltip")
+        need("dhtmlxscheduler-minical")
         if template is None:
             template = self.template
         if (not checkPermission(u"bungeni.sitting.Add", self.context)) or \
@@ -669,7 +703,9 @@ class DhtmlxCalendarSittings(BrowserView):
     requested in a format acceptable by DHTMLX scheduler"""
     interface.implements(IStructuralView)
     
+    content_mimetype = "text/xml"
     template = ViewPageTemplateFile('templates/dhtmlxcalendarxml.pt')
+
     def __init__(self, context, request):
         super(DhtmlxCalendarSittings, self).__init__(
             ISchedulingContext(context), request)
@@ -716,10 +752,32 @@ class DhtmlxCalendarSittings(BrowserView):
                     )
                 )
                 self.sittings.append(trusted)
-        self.request.response.setHeader('Content-type', 'text/xml')
+        self.request.response.setHeader('Content-type', self.content_mimetype)
         return self.render()
         
     def render(self, template = None):
         return self.template()
 
 
+
+class DhtmlxCalendarSittingsIcal(DhtmlxCalendarSittings):
+    """ICS rendering of events in the current calendar view
+    """
+    content_mimetype = "text/calendar"
+
+    def render(self, template=None):
+        """Render ICAL or send WWW-AUTHENTICATE Header
+        
+        See `bungeni.ui.errors.Unauthorized`
+        """
+        event_data_list = [ 
+            config.ICAL_EVENT_TEMPLATE % dict(
+                event_start=sitting.start_date.strftime("%Y%m%dT%H%M%S"),
+                event_end=sitting.end_date.strftime("%Y%m%dT%H%M%S"),
+                event_summary = IDCDescriptiveProperties(sitting).verbose_title,
+            )
+            for sitting in self.sittings
+        ]
+        return config.ICAL_DOCUMENT_TEMPLATE % dict(
+            event_data = u"\n".join(event_data_list)
+        )

@@ -231,16 +231,33 @@ white-space: normal;
     right:auto;  !important;
 }
 .dhx_cal_next_button{
-    left:310px; !important;
+    left:520px; !important;
     right:auto;  !important;
 }
 .dhx_cal_today_button
 {
-    left:350px; !important;
+    left:560px; !important;
 }
+
+.dhx_cal_navline #dhx_minical_icon{
+    left:650px;
+}
+
+.dhx_cal_navline #dhx_ical_icon{
+    width: 60px;
+    height: 18px;
+    left: 680px;
+    top: 1px;
+    cursor: pointer;
+    background: url(images/ical.png) no-repeat;
+}
+
 .dhx_cal_navline .dhx_cal_date
 {
-    left:440px; !important;
+    left:750px; !important;
+}
+.dhx_cal_navline {
+    text-transform:capitalize;
 }
 .dhx_cal_larea{
     width:620px;
@@ -270,7 +287,7 @@ white-space: normal;
 
 .dhx_cal_container {
     width:100%; 
-    height:500px;
+    height:100%;
 }
 
 .dhx_cal_navline #day_tab {
@@ -285,3 +302,18 @@ white-space: normal;
     left:240px;
 }
 
+.dhx_cal_navline #year_tab{
+    left:310px;
+}
+
+.dhx_cal_navline #agenda_tab{
+    left:380px;
+}
+
+.dhx_cal_navline #timeline_tab{
+    left:450px;
+}
+
+.dhx_cal_navline #venues_tab{
+    left:450px;
+}

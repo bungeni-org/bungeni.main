@@ -1,18 +1,75 @@
 <html xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="bungeni"
       metal:use-macro="context/@@standard_macros/page">
       <tal:block metal:fill-slot="header">
-        <script type="text/javascript">
+        <script type="text/javascript">           
+           function show_minical(){
+              if (scheduler.isCalendarVisible())
+                 scheduler.destroyCalendar();
+              else
+                 scheduler.renderCalendar({
+                    position:"dhx_minical_icon",
+                    date:scheduler._date,
+                    navigation:true,
+                    handler:function(date,calendar){
+                       scheduler.setCurrentView(date);
+                       scheduler.destroyCalendar()
+                    }
+                 });
+           }
+           
+            function load_ical(){
+                var ical_url = '<span tal:replace="view/ical_url"/>';
+                var start = new Date(scheduler._min_date);
+                var end = new Date(scheduler._max_date);
+                var s_start = new Array(
+                    start.getFullYear(), start.getMonth()+1, start.getDate()
+                );
+                var s_end = new Array(
+                    end.getFullYear(), end.getMonth()+1, end.getDate()
+                );
+                uid = scheduler.uid()
+                date_range = "&amp;start=" + s_start.join("-") + "&amp;end=" + s_end.join("-");
+                ical_url = ical_url + "?uid=" + uid + date_range
+                window.location = ical_url
+            }
+           
             function init() {
+                scheduler.locale.labels.venues_tab = '<span i18n:translate="" tal:omit-tag="">Venues</span>';
                 scheduler.config.xml_date="%Y-%m-%d %H:%i";
                 scheduler.config.show_loading=true;
                 scheduler.config.scroll_hour=8;
                 scheduler.config.details_on_create=true;
                 
-                //scheduler.locale.labels.agenda_tab = "Upcoming";
+                //create timeline view for venues
+                var venues_data = <span tal:replace="structure view/venues_as_json"/>;
+                
+                scheduler.createTimelineView({
+                    name : "venues",
+                    x_unit: "minute",
+                    x_date: "%H:%i",
+                    x_step: 30,
+                    x_size: 24,
+                    x_start: 16,
+                    x_length: 48,
+                    y_unit: venues_data,
+                    y_property: "venue",
+                    render: "bar"
+                })
+                
+                //event tooltips
+                var format=scheduler.date.date_to_str(scheduler.config.xml_date); 
+                scheduler.templates.tooltip_text = function(start, end, event){
+                    return '<b i18n:translate="">Group</b> : '+ event.group + 
+                        '<br/><b i18n:translate="">Start Date</b> : ' + format(start) + 
+                        '<br/><b i18n:translate="">End Date </b> : ' + format(end) + 
+                        '<br/><b i18n:translate="">Venue</b> : ' + event.venue_name;
+                };
+                
                 scheduler.init('scheduler_here', null, "week");
                 scheduler.setLoadMode("month");
-                
                 scheduler.load(location.href+"/dhtmlxcalendar?uid="+scheduler.uid());
                 
                 scheduler.form_blocks["my_editor"]={
@@ -38,23 +95,17 @@
                         
                         ev.language = $("#select_sitting_lang").val();
                         ev.venue = $("#select_sitting_venue").val();
-                        ev.text = '<span tal:replace="structure python:'&lt;b&gt;Venue:&lt;/b&gt;&lt;/br&gt;'"/>' + $("#select_sitting_venue option:selected").text();
+                        ev.text = '<span><b i18n:translate="">Sitting</b> : </span>' + $("#select_sitting_venue option:selected").text();
                     },
                     focus:function(node){
                     }
                 }
                 
-                
-                
-                 
                 scheduler.config.lightbox.sections=[    
                         { name:"description", height:200, type:"my_editor" },
                         {name:"recurring", height:115, type:"recurring", map_to:"rec_type", button:"recurring"},
                         { name:"time", height:72, type:"time", map_to:"auto"}
                     ]
-                
-                 
-                
             }
             
         </script>
@@ -104,11 +155,17 @@
                     <div class="dhx_cal_prev_button">&nbsp;</div>
                     <div class="dhx_cal_next_button">&nbsp;</div>
                     <div class="dhx_cal_today_button"></div>
+                    <div class="dhx_minical_icon" id="dhx_minical_icon" 
+                        onclick="javascript:show_minical()">&nbsp;</div>
+                    <div class="dhx_ical_icon" id="dhx_ical_icon"
+                        onclick="javascript:load_ical()">&nbsp;</div>
                     <div class="dhx_cal_date"></div>
                     <div class="dhx_cal_tab" name="day_tab" id="day_tab"></div>
                     <div class="dhx_cal_tab" name="week_tab" id="week_tab"></div>
                     <div class="dhx_cal_tab" name="month_tab" id="month_tab"></div>
-                    <!-- div class="dhx_cal_tab" name="agenda_tab" style="right:20px;"></div-->
+                    <div class="dhx_cal_tab" name="year_tab" id="year_tab"></div>
+                    <div class="dhx_cal_tab" name="agenda_tab" id="agenda_tab"></div>
+                    <div class="dhx_cal_tab" name="venues_tab" id="venues_tab"></div>
                 </div>
                 <div class="dhx_cal_header">
                 </div>

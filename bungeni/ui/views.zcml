@@ -299,7 +299,18 @@
      name="dhtmlxcalendar"
      class=".calendar.browser.DhtmlxCalendarSittings"
     />
-
+    <browser:page
+     for="bungeni.core.interfaces.IWorkspaceScheduling"
+     permission="zope.Public"
+     name="dhtmlxcalendar.ics"
+     class=".calendar.browser.DhtmlxCalendarSittingsIcal"
+    />
+    <browser:page
+     for="bungeni.core.interfaces.ISchedulingContext"
+     permission="zope.Public"
+     name="dhtmlxcalendar.ics"
+     class=".calendar.browser.DhtmlxCalendarSittingsIcal"
+    />
     <browser:page
      for="*"
      permission="bungeni.sitting.Edit"

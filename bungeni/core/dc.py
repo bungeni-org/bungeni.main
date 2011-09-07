@@ -16,8 +16,6 @@ from bungeni.alchemist import Session
 from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.alchemist.model import queryModelDescriptor
 
-#from marginalia.interfaces import IMarginaliaAnnotation
-
 from bungeni.models import interfaces
 from bungeni.models import domain
 from bungeni.core.i18n import _
@@ -26,9 +24,6 @@ from bungeni.core.translation import ( is_translation, get_language_by_name,
 )
 
 from bungeni.ui.utils import date, misc
-
-from zope.securitypolicy.interfaces import IPrincipalRoleMap
-
 
 class DublinCoreMetadataAdapter(object):
     """Generic dublin core metadata adapter which will retrieve
@@ -191,11 +186,23 @@ class SittingDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         return "%s %s (%s %s %s)" % (translate_i18n(_(u"Sitting scheduled for")),
-                context.group.short_name,
+                self.translate(context.group, "short_name"),
                 context.start_date.strftime('%Y-%m-%d %H:%M'), 
                 _(u"to"),
                 context.end_date.strftime('%H:%M'))
 
+    @property
+    def verbose_title(self):
+        session = Session()
+        context = session.merge(removeSecurityProxy(self.context))
+        sitting_title = _("verbose_sitting_title", 
+            default=u"Sitting of ${group_name} @ ${sitting_venue}",
+            mapping = {
+                "group_name": IDCDescriptiveProperties(context.group).title,
+                "sitting_venue": IDCDescriptiveProperties(context.venue).title
+            }
+        )
+        return translate_i18n(sitting_title)
 
 class ItemScheduleDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IItemSchedule)
