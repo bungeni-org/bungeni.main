@@ -48,6 +48,22 @@ def get_request():
             return participation
 
 
+def request_cached(f):
+    """Simple function decorator, for caching relatively expensive calls for 
+    the duration of a request. Annotates the request.
+    """
+    fkey = id(f)  # f.__name__
+    def request_cached_f(*args, **kws):
+        key = "_rc-%s-%s-%s" % (fkey, id(args), hash(repr(kws)) if kws else "")
+        aor = IAnnotations(get_request())  # annotations on request
+        if not aor.has_key(key):
+            #print "   REQUEST_CACHED...", key, f.__name__, args, kws
+            aor[key] = f(*args, **kws)
+        #print "***REQUEST_CACHED...", key, f.__name__, args, kws, "->", aor[key]
+        return aor[key]
+    return request_cached_f
+
+
 def get_traversed_context(request=None, index=-1):
     """ (request:either(IRequest, None), indix:int) -> either(IRequest, None)
     
@@ -119,20 +135,23 @@ def get_context_roles(context, principal):
             principal.id, str(pg), "\n".join(message), roles))
     return roles
 
+
+@request_cached
 def get_workspace_roles(principal):
-        """Returns all the roles that a user has that are relevant to the
-           workspace configuration.
-        """
-        session = bungeni.alchemist.Session()
-        roles = []
-        for group_id in principal.groups.keys():
-            result = session.query(bungeni.models.domain.Group) \
-                            .filter(bungeni.models.domain.Group. \
-                                        group_principal_id == group_id).first()
-            if result:
-                roles.extend(get_context_roles(bungeni.core.workflows.utils. \
-                                        get_group_context(result), principal))
-        return roles
+    """Returns all the roles that a user has that are relevant to the
+       workspace configuration.
+    """
+    session = bungeni.alchemist.Session()
+    roles = []
+    for group_id in principal.groups.keys():
+        result = session.query(bungeni.models.domain.Group).filter(
+            bungeni.models.domain.Group.group_principal_id == group_id).first()
+        if result:
+            roles.extend(get_context_roles(
+                    bungeni.core.workflows.utils.get_group_context(result), 
+                    principal))
+    return roles
+
 
 def get_request_context_roles(request):
     """Get the list of user's roles (including whether admin or not) relevant 
