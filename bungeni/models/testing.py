@@ -21,12 +21,41 @@ def add_content(kls, *args, **kwargs):
 
     return instance
 
+# !+DROP_ALL(ah,sep-2011) sqlalchemy drop_all() is insufficient, does not drop sequences
+# or when there are cyclical foreign keys   
+def drop_all(engine):
+    """
+    Drops all tables and sequences as the metadata.drop_all() is insufficient
+    to drop all tables and sequences
+    """    
+    from sqlalchemy.exceptions import SQLError
+
+    sequence_sql='''SELECT sequence_name FROM information_schema.sequences
+                    WHERE sequence_schema='public'
+                 '''
+    
+    table_sql='''SELECT table_name FROM information_schema.tables
+                 WHERE table_schema='public' AND table_type != 'VIEW' AND 
+                 table_name NOT LIKE 'pg_ts_%%'
+              '''
+    try:
+        for table in [name for (name, ) in engine.execute(str(table_sql))]:
+            engine.execute(str('DROP TABLE %s CASCADE' % table))
+        for seq in [name for (name, ) in engine.execute(str(sequence_sql))]:
+                engine.execute(str('DROP SEQUENCE %s CASCADE' % seq))
+    except SQLError, e:
+        print e
+
 def setup_db():
     db = create_engine('postgres://localhost/bungeni-test', echo=False)
     component.provideUtility( db, IDatabaseEngine, 'bungeni-db' )
-    metadata.bind = db 
-    metadata.drop_all()
+    metadata.bind = db
+    # !+DROP_ALL(ah,sep-2011) drop_all() is insufficient, does not drop sequences
+    # or when there are cyclical foreign keys   
+    #metadata.drop_all()
+    drop_all(db)    
     metadata.create_all()
+    metadata.reflect()
     schema.QuestionSequence.create(db) 
     schema.MotionSequence.create(db)
     schema.registrySequence.create(db)
