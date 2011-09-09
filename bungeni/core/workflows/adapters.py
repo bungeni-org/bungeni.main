@@ -46,22 +46,30 @@ def load_workflow(name, iface,
     ):
     """Setup the Workflow instance, from XML definition, for named workflow.
     """
-    #
+    assert not load_workflow.loaded_ifaces.has_key(iface)
+    load_workflow.loaded_ifaces[iface] = name
+    
     # load / register as utility / retrieve
     #
     #if not component.queryUtility(IWorkflow, name): !+BREAKS_DOCTESTS
     if not _WORKFLOWS.has_key(name):
         wf = xmlimport.load(path_custom_workflows, name)
-        log.debug("Loading WORKFLOW: %s %s" % (name, wf))
+        log.warn("Loading WORKFLOW: %s %s" % (name, wf))
         
         # debug info
         for state_key, state in wf.states.items():
             log.debug("   STATE: %s %s" % (state_key, state))
             for p in state.permissions:
                 log.debug("          %s" % (p,))
+        # register related adapters:
+        # Workflow instances as utilities
+        provideUtilityWorkflow(wf, name)
+        # Workflows are also the factory of own AdaptedWorkflows
+        provideAdapterWorkflow(wf, iface)
     else:
         wf = get_workflow(name)
-        log.debug("Already Loaded WORKFLOW : %s %s" % (name, wf))
+        log.warn("Already Loaded WORKFLOW : %s %s" % (name, wf))
+    
     # We "mark" the supplied iface with IWorkflowed, as a means to mark type 
     # the iface is applied (that, at this point, may not be unambiguously 
     # determined). This has the advantage of then being able to 
@@ -77,7 +85,6 @@ def load_workflow(name, iface,
     # sometimes e.g. given that an IBillVersion is NOT workflowed, but it 
     # inherits from IBill, that is wworkflowed, IBillVersion will incorrectly 
     # gain IWorklfowed via this inheritance chain.
-
     
     # apply customizations, features as per configuration of the document type 
     def camel(name):
@@ -118,21 +125,18 @@ def load_workflow(name, iface,
         # create/set module-level dedicated auditor singleton for auditable kls
         bungeni.core.audit.set_auditor(kls)
         kn = kls.__name__
-    
-    # register related adapters
-    
-    # Workflow instances as utilities
-    provideUtilityWorkflow(wf, name)
-    
-    # Workflows are also the factory of own AdaptedWorkflows
-    provideAdapterWorkflow(wf, iface)
+#
+load_workflow.loaded_ifaces = {}
 
 
 def load_workflows():
+    # !+DROP_ALL(mr, sep-2011) logically part of models.testing.setup_db()
+    load_workflow.loaded_ifaces.clear()
+    
     # workflow instances (+ adapter *factories*)
     load_workflow("address", interfaces.IUserAddress)
     load_workflow("address", interfaces.IGroupAddress)
-    # !+AttachedFile (mr, jul-2011) 
+    # !+AttachedFile (mr, jul-2011)
     # a) must be loaded before any other type that *may* support attachments!
     # b) MUST support versions
     load_workflow("attachedfile", interfaces.IAttachedFile)
@@ -150,16 +154,13 @@ def load_workflows():
     load_workflow("tableddocument", interfaces.ITabledDocument)
     load_workflow("user", interfaces.IBungeniUser)
     load_workflow("signatory", interfaces.ISignatory)
-    #    
+    #
     register_workflow_adapters()
 
+
 def register_workflow_adapters():
-    # !+ZCA_TESTS
-    
-    # adapters on IWorkflowed needing registration only once
-    # !+RolePermissionMap(mr, may-2011) executing these adapter registration at 
-    # module top level (i.e. not within this def) does not work for the tests
-    
+    """Adapters on IWorkflowed needing registration only once.
+    """
     # IRolePermissionMap adapter for IWorkflowed objects
     component.provideAdapter(get_object_state_rpm, 
         (IWorkflowed,),

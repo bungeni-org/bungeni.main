@@ -7,13 +7,12 @@ Setup
 
 Imports.
 
+  >>> from bungeni.models import interfaces
   >>> from bungeni.models import domain
-  >>> from bungeni.core.workflows import adapters
 
 Questions are versionable.
   
   >>> from zope.interface import classImplements
-  >>> from bungeni.models import interfaces
   >>> classImplements(domain.Question, interfaces.IQuestion)
 
 Setting up database connection and utilities:
@@ -23,12 +22,8 @@ Setting up database connection and utilities:
   >>> from bungeni.alchemist import Session
   >>> session = Session()
 
-!+ZCA_TESTS(mr, apr-2011) without following reloading of the adapters module,
-running this doctest file alone works just fine, but when it is run as part of 
-a doctest suite (e.g test -s bungeni.core) then strangely the adapter lookups
-fails, as if the ZCA registry has gotten corrupted.
-
-    >>> adapters.load_workflows()
+    >>> from bungeni.core.workflows import adapters # adapters.load_workflows()
+    
 
   >>> from bungeni.core.workflows.testing import setup_security_adapters
   >>> setup_security_adapters()

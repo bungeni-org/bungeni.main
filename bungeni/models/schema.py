@@ -105,7 +105,7 @@ def make_changes_table(table, metadata):
         rdb.Column("notes", rdb.UnicodeText),
         rdb.Column("user_id", rdb.Integer, rdb.ForeignKey("users.user_id")),
         #!+SA0.7 rdb.Index("%s_changes_cid_idx" % (entity_name), "content_id"),
-        useexisting=True # !+ZCA_TESTS(mr, jul-2011) tests break without this
+        useexisting=False
     )
     return changes_table
 
@@ -144,7 +144,7 @@ def make_versions_table(table, metadata, secondary_table=None):
     if secondary_table is not None:
         extend_cols(columns, secondary_table.columns)
     versions_table = rdb.Table(versions_name, metadata, *columns,
-        useexisting=True # !+ZCA_TESTS(mr, jul-2011) tests break without this
+        useexisting=False
     )
     return versions_table
 
