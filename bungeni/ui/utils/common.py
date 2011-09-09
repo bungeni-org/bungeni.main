@@ -97,8 +97,10 @@ def get_context_roles(context, principal):
     prms = []
     def _build_principal_role_maps(ctx):
         if ctx is not None:
-            if zope.component.queryAdapter(ctx, IPrincipalRoleMap):
-                prms.append(IPrincipalRoleMap(ctx))
+            prm = zope.component.queryAdapter(
+                ctx, IPrincipalRoleMap, default=None)
+            if prm:
+                prms.append(prm)
             _build_principal_role_maps(getattr(ctx, '__parent__', None))
     _build_principal_role_maps(context)
     prms.reverse()
@@ -120,6 +122,7 @@ def get_context_roles(context, principal):
                         roles.remove(role[0])
     if not principal:
         return []
+    
     pg = principal.groups.keys()
     # ensure that the actual principal.id is included
     if not principal.id in pg:
@@ -137,20 +140,34 @@ def get_context_roles(context, principal):
 
 
 @request_cached
-def get_workspace_roles(principal):
-    """Returns all the roles that a user has that are relevant to the
-       workspace configuration.
+def get_workspace_roles():
+    """Returns all the roles that the current principal has that are 
+    relevant to the workspace configuration.
     """
+    principal = bungeni.models.utils.get_principal()
     session = bungeni.alchemist.Session()
-    roles = []
-    for group_id in principal.groups.keys():
-        result = session.query(bungeni.models.domain.Group).filter(
-            bungeni.models.domain.Group.group_principal_id == group_id).first()
-        if result:
-            roles.extend(get_context_roles(
-                    bungeni.core.workflows.utils.get_group_context(result), 
-                    principal))
-    return roles
+    roles = set()
+    groups = session.query(bungeni.models.domain.Group).filter(
+        bungeni.models.domain.Group.group_principal_id.in_(
+            principal.groups.keys())).all()
+    principal_groups = [
+        delegate.login for delegate in
+        bungeni.models.delegation.get_user_delegations(
+            bungeni.models.utils.get_db_user_id())] + [principal.id]
+    pg = []
+    Allow = zope.securitypolicy.settings.Allow
+    for group in groups:
+        context = bungeni.core.workflows.utils.get_group_context(group)
+        prm = zope.component.queryAdapter(
+            context, IPrincipalRoleMap, default=None)
+        if prm:
+            pg = principal_groups + [group.group_principal_id]
+            for principal_id in pg:
+                l_roles = prm.getRolesForPrincipal(principal_id)
+                for role in l_roles:
+                    if role[1] == Allow:
+                        roles.add(role[0])
+    return list(roles)
 
 
 def get_request_context_roles(request):

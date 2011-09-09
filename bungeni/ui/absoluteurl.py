@@ -36,8 +36,7 @@ class WorkspaceAbsoluteURLView(AbsoluteURL):
         tabs_utility = getUtility(IWorkspaceTabsUtility)
         domain_class = self.context.__class__
         status = self.context.status
-        principal = get_principal()
-        roles = get_workspace_roles(principal)
+        roles = get_workspace_roles()
         tab = None
         for role in roles:
             tab = tabs_utility.getTab(role, domain_class, status)

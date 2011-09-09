@@ -113,10 +113,11 @@ class WorkspaceContainer(AlchemistContainer):
 
     def _query(self, **kw):
         principal = get_principal()
-        roles = get_workspace_roles(get_principal())
+        roles = get_workspace_roles()
         group_roles_domain_status = self.item_status_filter(kw, roles)
         session = Session()
         results = []
+        count = 0
         for domain_class, status in group_roles_domain_status.iteritems():
             query = session.query(domain_class).filter(
                 domain_class.status.in_(status)
@@ -127,6 +128,13 @@ class WorkspaceContainer(AlchemistContainer):
                     """(lower(%s) LIKE '%%%s%%')""" %
                     (column, kw["filter_short_name"].lower())
                     )
+            # The first page of the results is loaded the most number of times
+            # The limit on the query below optimises for when no filter has
+            # been applied by limiting the number of results returned.
+            if (not kw.get("start", 0) and not kw.get("sort_on", None)):
+                count = count + query.count()
+                query = query.order_by(domain_class.status_date).limit(
+                    kw.get("limit", 25))
             results.extend(query.all())
         object_roles_domain_status = self.item_status_filter(kw, OBJECT_ROLES)
         for domain_class, status in object_roles_domain_status.iteritems():
@@ -138,21 +146,25 @@ class WorkspaceContainer(AlchemistContainer):
                     """(lower(%s) LIKE '%%%s%%')""" %
                     (column, kw["filter_short_name"])
                     )
+            if (not kw.get("start", 0) and not kw.get("sort_on", None)):
+                count = count + query.count()
+                query = query.order_by(domain_class.status_date).limit(
+                    kw.get("limit", 25))
             for obj in query.all():
                 prm = IPrincipalRoleMap(obj)
                 for obj_role in OBJECT_ROLES:
                     if (prm.getSetting(obj_role, principal.id) == Allow and
-                            obj not in results
-                        ):
+                            obj not in results):
                         results.append(obj)
                         break
         # Sort items
-        if kw.get("sort_on", None):
-            if kw.get("sort_dir", None):
-                rev = True if (kw.get("sort_dir") == "desc") else False
-                results.sort(key=lambda x: getattr(x, str(kw.get("sort_on"))),
-                             reverse=rev)
-        return results
+        if (kw.get("sort_on", None) and kw.get("sort_dir", None)):
+            rev = True if (kw.get("sort_dir") == "desc") else False
+            results.sort(key=lambda x: getattr(x, str(kw.get("sort_on"))),
+                         reverse=rev)
+        if (kw.get("start", 0) and kw.get("sort_on", None)):
+            count = len(results)
+        return (results, count)
 
     def query(self, **kw):
         return self._query(**kw)
@@ -163,7 +175,7 @@ class WorkspaceContainer(AlchemistContainer):
             yield (name, contained(obj, self, name))
 
     def check_item(self, domain_class, status):
-        roles = get_workspace_roles(get_principal()) + OBJECT_ROLES
+        roles = get_workspace_roles() + OBJECT_ROLES
         for role in roles:
             statuses = self.workspace_config.get_status(
                 role, domain_class, self.__name__

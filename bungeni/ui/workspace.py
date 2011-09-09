@@ -133,16 +133,17 @@ class WorkspaceContainerJSONListing(BrowserView):
         filter_short_name = self.request.get("filter_short_name", None)
         filter_type = self.request.get("filter_type", None)
         filter_status = self.request.get("filter_status", None)
-        results = context.query(
+        results, self.set_size = context.query(
             filter_short_name=filter_short_name,
             filter_type=filter_type,
             filter_status=filter_status,
             sort_on=self.sort_on,
-            sort_dir=self.sort_dir
+            sort_dir=self.sort_dir,
+            start=start,
+            limit=limit,
             )
         # nodes = [container.contained(ob, self, workspace.stringKey(ob))
         #         for ob in query]
-        self.set_size = len(results)
         nodes = results[start:start + limit]
         nodes = [container.contained(ob, self, workspace.stringKey(ob))
                  for ob in nodes]
@@ -162,7 +163,7 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
     
     def get_item_types(self):
         workspace_config = component.getUtility(IWorkspaceTabsUtility)
-        roles = get_workspace_roles(get_principal()) + OBJECT_ROLES
+        roles = get_workspace_roles() + OBJECT_ROLES
         domains = []
         for role in roles:
             dom = workspace_config.get_role_domains(
@@ -183,7 +184,7 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
 
     def get_status(self, item_type):
         workspace_config = component.getUtility(IWorkspaceTabsUtility)
-        roles = get_workspace_roles(get_principal()) + OBJECT_ROLES
+        roles = get_workspace_roles() + OBJECT_ROLES
         domain_class = workspace_config.get_domain(item_type)
         results = set()
         for role in roles:
