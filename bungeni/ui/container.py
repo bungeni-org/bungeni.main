@@ -139,7 +139,7 @@ class ContainerJSONBrowserView(BrowserView):
         # table keys
         self.table = orm.class_mapper(self.domain_model).mapped_table
         self.utk = dict(
-            [(self.table.columns[k].key, k) for k in self.table.columns.keys()
+            [(column.key, column) for column in self.table.columns
              ]
             )
         # sort_on defaults: [str]
@@ -199,13 +199,13 @@ class ContainerJSONListing(ContainerJSONBrowserView):
     def getFilter(self):
         """ () -> str
         """
-        table, utk = self.table, self.utk
+        utk = self.utk
         fs = []  # filter string
         for field in self.fields:
             fn = field.__name__  # field name
             column, kls = None, None
             if fn in utk:
-                column = table.columns[utk[fn]]
+                column = utk[fn]
                 kls = column.type.__class__
             ff_name = "filter_%s" % (fn)  # field filter name
             ff = self.request.get(ff_name, None)  # field filter
@@ -248,7 +248,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
         @web_parameter sort - request variable for sort column
         @web_parameter dir - sort direction, only once acceptable value "desc"
         """
-        table, utk = self.table, self.utk
+        utk = self.utk
         sort_dir_func = self._sort_dir_funcs.get(self.sort_dir, sql.desc)
         sort_on_expressions = []
         sort_on_keys = []
@@ -262,7 +262,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
             if sort_replace and (sort_on in sort_replace):
                 sort_on_keys.extend(sort_replace[sort_on])
             elif sort_on in utk:
-                sort_on_keys.append(str(table.columns[utk[sort_on]]))
+                sort_on_keys.append(sort_on)
             if sort_on_keys:
                 for sort_on in sort_on_keys:
                     sort_on_expressions.append(sort_dir_func(sort_on))
@@ -351,18 +351,19 @@ class ContainerJSONListing(ContainerJSONBrowserView):
 
         # other filters
         query = self.query_add_filters(query, self.getFilter())
-
         # order_by
         order_by = self.getSort()  # [sort_on_expressions]
         if order_by:
             query = query.order_by(order_by)
+        # get total number of items before applying an offset and limit
+        self.set_size = query.count()
+        # offset and limit
+        query = query.offset(start).limit(limit)
         # ore.alchemist.container.AlchemistContainer.batch()
         # nodes: [<bungeni.models.domain.Question]
         nodes = [container.contained(ob, self, container.stringKey(ob))
                   for ob in
                   query_iterator(query, self.context, self.permission)]
-        self.set_size = len(nodes)
-        nodes[:] = nodes[start: start + limit]
         nodes = self.translate_objects(nodes, lang)
         batch = self._jsonValues(nodes, self.fields)
         return batch
