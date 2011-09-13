@@ -232,7 +232,7 @@ class Group(Entity):
     """ an abstract collection of users
     """
     interface.implements(interfaces.IBungeniGroup, interfaces.ITranslatable)
-    sort_on = ["short_name"]
+    sort_on = ["short_name", "full_name"]
     sort_dir = "asc"
     sort_replace = {"group_id": ["short_name", ]}
     #users = one2many("users", 
