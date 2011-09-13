@@ -4,12 +4,10 @@ Versions
   >>> import bungeni.core.version
   >>> import datetime
 
-Set up the versions factory.
-  
-  >>> component.provideAdapter(
-  ...    bungeni.core.version.ContextVersioned,
-  ...    (bungeni.models.interfaces.IVersionable,),
-  ...    bungeni.core.interfaces.IVersioned)
+Setting up database connection and utilities:
+
+    >>> from bungeni.core.testing import setup_db
+    >>> engine = setup_db()
 
 Adding a question.
 

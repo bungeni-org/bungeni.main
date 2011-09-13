@@ -21,39 +21,43 @@ def add_content(kls, *args, **kwargs):
 
     return instance
 
-# !+DROP_ALL(ah,sep-2011) sqlalchemy drop_all() is insufficient, does not drop sequences
-# or when there are cyclical foreign keys   
+'''
+# !+DROP_ALL(ah, sep-2011) sqlalchemy drop_all() is insufficient, does not drop 
+# sequences or when there are cyclical foreign keys. 
+# (mr, sep-2011) not sure that this should be needed at all, sqlalchemy's 
+# metadata.drop_all() drops all (and only) schema declarations via sqlalchemy,
+# without necessarily any changes to the database itself.
 def drop_all(engine):
     """
     Drops all tables and sequences as the metadata.drop_all() is insufficient
     to drop all tables and sequences
     """    
     from sqlalchemy.exceptions import SQLError
-
-    sequence_sql='''SELECT sequence_name FROM information_schema.sequences
-                    WHERE sequence_schema='public'
-                 '''
     
-    table_sql='''SELECT table_name FROM information_schema.tables
-                 WHERE table_schema='public' AND table_type != 'VIEW' AND 
-                 table_name NOT LIKE 'pg_ts_%%'
-              '''
+    sequence_sql="""SELECT sequence_name FROM information_schema.sequences
+        WHERE sequence_schema='public'
+    """
+    table_sql="""SELECT table_name FROM information_schema.tables
+        WHERE table_schema='public' AND table_type != 'VIEW' AND 
+        table_name NOT LIKE 'pg_ts_%%'
+    """
+    
     try:
         for table in [name for (name, ) in engine.execute(str(table_sql))]:
             engine.execute(str('DROP TABLE %s CASCADE' % table))
         for seq in [name for (name, ) in engine.execute(str(sequence_sql))]:
-                engine.execute(str('DROP SEQUENCE %s CASCADE' % seq))
+            engine.execute(str('DROP SEQUENCE %s CASCADE' % seq))
     except SQLError, e:
         print e
+'''
 
 def setup_db():
     db = create_engine('postgres://localhost/bungeni-test', echo=False)
     component.provideUtility( db, IDatabaseEngine, 'bungeni-db' )
     metadata.bind = db
-    # !+DROP_ALL(ah,sep-2011) drop_all() is insufficient, does not drop sequences
-    # or when there are cyclical foreign keys   
-    #metadata.drop_all()
-    drop_all(db)    
+    # !+DROP_ALL(ah,sep-2011)
+    #drop_all(db)
+    metadata.drop_all()
     metadata.create_all()
     metadata.reflect()
     schema.QuestionSequence.create(db) 

@@ -12,6 +12,7 @@ from zope.testing import doctest, doctestunit
 from zope.app.testing import placelesssetup
 from zope.configuration import xmlconfig
 from bungeni.models import metadata
+from bungeni.core.workflows import adapters
 
 zcml_slug = """
 <configure xmlns="http://namespaces.zope.org/zope"
@@ -26,6 +27,8 @@ def setUp(test):
     placelesssetup.setUp()
     xmlconfig.string(zcml_slug)
     metadata.create_all(checkfirst=True)
+    # placelesssetup.tearDown() clears the registry
+    adapters.register_workflow_adapters()
 
 def tearDown(test):
     placelesssetup.tearDown()

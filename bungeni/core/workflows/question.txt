@@ -21,10 +21,7 @@ Setting up database connection and utilities:
   >>> engine = setup_db()
   >>> from bungeni.alchemist import Session
   >>> session = Session()
-
-    >>> from bungeni.core.workflows import adapters # adapters.load_workflows()
     
-
   >>> from bungeni.core.workflows.testing import setup_security_adapters
   >>> setup_security_adapters()
   
@@ -285,6 +282,8 @@ Setup mock delivery component.
 
 Transition: "submit"
 
+  >>> question.owner is mp_3
+  True
   >>> wfc.fireTransition("%s-submitted" % question.status)
   >>> question.status
   'submitted'

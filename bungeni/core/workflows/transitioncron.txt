@@ -19,8 +19,6 @@ Setting up database connection and utilities:
   >>> from bungeni.alchemist import Session
   >>> session = Session()
 
-    >>> from bungeni.core.workflows import adapters # load_workflows()
-    
   >>> from bungeni.core.workflows.testing import setup_security_adapters
   >>> setup_security_adapters()
   
