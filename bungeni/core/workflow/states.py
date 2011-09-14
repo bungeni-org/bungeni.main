@@ -238,10 +238,9 @@ def get_object_version_state_rpm(version):
     Lighweight and high-performance wrapper on get_object_state(context), 
     to *lookup* (note: no creation of any instance) the workflow.states.State 
     singleton instance for the version's context's status.
+    
+    Note that version insatnces are NOT workflowed.
     """
-    # !+IITEMVersionInheritsIITEM(mr, sep-2011) when this is corrected, 
-    # an attempt to adapt IWorkflowed(version) MUST fail.
-    #
     # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", "document" 
     # or "item"?
     return interfaces.IWorkflow(version.head).get_state(version.status)

@@ -290,7 +290,6 @@ Transition: "submit"
   >>> len(versions)
   1
 
-
   >>> tuple(qprm.getRolesForPrincipal("member"))
   ((u'bungeni.Owner', PermissionSetting: Allow),)
 
@@ -299,6 +298,16 @@ Transition: "submit"
   >>> #tuple(qrpm.getRolesAndPermissions())
   >>> #tuple(qrpm.getPermissionsForRole(u"bungeni.Owner"))
   >>> #tuple(qrpm.getRolesForPermission(u"bungeni.question.Edit"))
+
+Version instances are not workflowed.
+
+    >>> version_1 = list(versions.values())[0]
+    >>> version_1
+    <bungeni.models.domain.QuestionVersion object at ...>
+    
+    >>> IWorkflow(version_1, None) is None
+    True
+    
 
 PRINCIPAL: clerk
 

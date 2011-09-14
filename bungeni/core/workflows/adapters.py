@@ -9,6 +9,7 @@ $Id$
 log = __import__("logging").getLogger("bungeni.core.workflows")
 
 from zope import component
+from zope.interface import classImplements
 import zope.securitypolicy.interfaces
 from bungeni.models import interfaces
 from bungeni.core.workflow import xmlimport
@@ -23,7 +24,8 @@ from bungeni.utils.capi import capi
 
 __all__ = ["get_workflow"]
 
-WORKFLOW_REG = [
+
+WORKFLOW_REG = [ # !+bungeni_custom
     # (name, iface)
     ("address", interfaces.IUserAddress),
     ("address", interfaces.IGroupAddress),
@@ -53,8 +55,8 @@ def get_workflow(name):
     """
     #return component.getUtility(IWorkflow, name) !+BREAKS_DOCTESTS(mr, apr-2011)
     return get_workflow._WORKFLOWS[name]
-# a global container with a named reference to each workflow instances
-# as a supplementary register (by name) of instantiated workflows
+# a mapping of workflow names workflow instances as a supplementary register 
+# of instantiated workflows -- not cleared when componenet registry is cleared
 get_workflow._WORKFLOWS = {} # { name: workflow.states.Workflow }
 
 
@@ -62,6 +64,7 @@ get_workflow._WORKFLOWS = {} # { name: workflow.states.Workflow }
 def provideUtilityWorkflow(utility, name):
     #component.provideUtility(utility, IWorkflow, name) !+BREAKS_DOCTESTS
     get_workflow._WORKFLOWS[name] = utility
+
 # component.provideAdapter(factory, adapts=None, provides=None, name="")
 def provideAdapterWorkflow(factory, adapts_kls):
     component.provideAdapter(factory, (adapts_kls,), IWorkflow)
@@ -94,8 +97,10 @@ def apply_customization_workflow(name):
     """Apply customizations, features as per configuration from a workflow. 
     Must (currently) be run after db setup.
     """
+    # support to infer/get the domain class from the workflow name
     def camel(name):
-        """Convert an underscore-separated word to CamelCase."""
+        """Convert an underscore-separated word to CamelCase.
+        """
         return "".join([ s.capitalize() for s in name.split("_") ])
     from bungeni.models import domain, schema, orm
     def get_domain_kls(workflow_name):
@@ -118,11 +123,18 @@ def apply_customization_workflow(name):
         "groupsitting": "group_sitting",
         "tableddocument": "tabled_document",
     }
+    # get the domain class
+    kls = get_domain_kls(name)
+    
+    # We "mark" the domain class with IWorkflowed, to be able to 
+    # register/lookup adapters generically on this single interface.
+    classImplements(kls, IWorkflowed)
+    
+    # dynamic features from workflow
     wf = get_workflow(name)
+    # note: versionable implies auditable
     if wf.auditable or wf.versionable:
         # decorate the kls
-        kls = get_domain_kls(name)
-        # versionable implies auditable
         if wf.versionable:
             kls = domain.versionable(kls)
         elif wf.auditable:
@@ -146,7 +158,7 @@ def register_workflow_adapters():
     """Register general and specific worklfow-related adapters.
     
     Note: as the registry is cleared when placelessetup.tearDown() is called,
-    this needs to be called independently on each docttest.
+    this needs to be called independently on each doctest.
     """
     # General adapters on generic IWorkflowed (once for all workflows).
     
@@ -171,46 +183,33 @@ def register_workflow_adapters():
     # IWorkflowController
     component.provideAdapter(
         WorkflowController, (IWorkflowed,), IWorkflowController)
-    
     # IVersioned
     component.provideAdapter(bungeni.core.version.ContextVersioned,
         (interfaces.IVersionable,),
         bungeni.core.interfaces.IVersioned)
     
     # Specific adapters, a specific iface per workflow.
+    
     for name, iface in WORKFLOW_REG:
         wf = get_workflow(name)
         # Workflows are also the factory of own AdaptedWorkflows
         provideAdapterWorkflow(wf, iface)
 
-        # We "mark" the supplied iface with IWorkflowed, as a means to mark type 
-        # the iface is applied (that, at this point, may not be unambiguously 
-        # determined). This has the advantage of then being able to 
-        # register/lookup adapters on only this single interface.
-        # 
-        # Normally this is done by applying the iface to the target type, but
-        # at this point may may not be unambiguously determined--so, we instead 
-        # "mark" the interface itself... by simply adding IWorkflowed as an 
-        # inheritance ancestor to iface (if it is not already):
-        if (IWorkflowed not in iface.__bases__):
-            iface.__bases__ = (IWorkflowed,) + iface.__bases__
-        # !+IITEMVersionInheritsIITEM(mr, sep-2011) this does cause some pollution
-        # sometimes e.g. given that an IBillVersion is NOT workflowed, but it 
-        # inherits from IBill, that is workflowed, IBillVersion will incorrectly 
-        # gain IWorklfowed via this monkey-patched interface inheritance.
 
-
-def setup_all():
+def _setup_all():
     """Do all workflow related setup.
     """
     load_workflows()
-    # !+ should be only done when *all* workflows are loaded i.e. first time!
+    # !+zcml_check_regenerate(mr, sep-2011) should be only done *once* and 
+    # when *all* workflows are loaded i.e. only first time (on module import).
     # check/regenerate zcml directives for workflows
     xmlimport.zcml_check_regenerate()
+    # cleared by each call to zope.app.testing.placelesssetup.tearDown()
     register_workflow_adapters()
 
-# do it...
-setup_all()
+
+# do it, when the this module is imported. 
+_setup_all()
 
 #
 

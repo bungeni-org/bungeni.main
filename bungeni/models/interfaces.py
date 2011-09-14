@@ -140,39 +140,31 @@ class IHeading(IBungeniContent):
 class IEventItem(IBungeniContent):
     pass
 
+# !+IITEMVersion(mr, sep-2011): should IITEMVersion exist at all? if so, 
+# should it inherit from IITEM, or from IVersion? Note that 
+# IITEMVersionContainer inherits from IVersionContainer (is used by alchemist).
+
 class IQuestion(IBungeniContent):
     """Parliamentary Question.
     """
-
-# !+IITEMVersionInheritsIItem(mr, sep-2011) should IITEMVersion inherit also
-# from IITEM i.e. should a version also interchangeably match the master item?
-class IQuestionVersion(IQuestion):
-    pass
-
-class IQuestionVersionContainer(IVersionContainer):
-    pass
+# !+IITEMVersion
+#class IQuestionVersion(IQuestion): pass
+class IQuestionVersionContainer(IVersionContainer): pass
 
 
 class IBill(IBungeniContent):
     """Parliamentary Bill.
     """
-
-class IBillVersion(IBill):
-    pass
-
-class IBillVersionContainer(IVersionContainer):
-    pass
+# !+IITEMVersion
+#class IBillVersion(IBill): pass
+class IBillVersionContainer(IVersionContainer): pass
 
 class IMotion(IBungeniContent):
     """Parliamentary Motion.
     """
-
-class IMotionVersion(IMotion):
-    pass
-
-class IMotionVersionContainer(IVersionContainer):
-    pass
-
+# !+IITEMVersion
+#class IMotionVersion(IMotion): pass
+class IMotionVersionContainer(IVersionContainer): pass
 
 
 class IGroupSitting(interface.Interface):
@@ -197,20 +189,14 @@ class IItemScheduleDiscussion(interface.Interface):
 class ITabledDocument(IBungeniContent):
     """Tabled document.
     """
-class ITabledDocumentVersion(ITabledDocument):
-    pass
+# !+IITEMVersion
+#class ITabledDocumentVersion(ITabledDocument): pass
+class ITabledDocumentVersionContainer(IVersionContainer): pass
 
-class ITabledDocumentVersionContainer(IVersionContainer):
-    pass
-
-class IAgendaItem(IBungeniContent):
-    pass
-
-class IAgendaItemVersion(IAgendaItem):
-    pass
-
-class IAgendaItemVersionContainer(IVersionContainer):
-    pass
+class IAgendaItem(IBungeniContent): pass
+# !+IITEMVersion
+#class IAgendaItemVersion(IAgendaItem): pass
+class IAgendaItemVersionContainer(IVersionContainer): pass
 
 class IParliamentSession(interface.Interface):
     pass

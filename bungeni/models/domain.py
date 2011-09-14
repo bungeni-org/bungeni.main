@@ -72,8 +72,8 @@ class ItemChanges(object):
     """An audit changelog of events in the lifecycle of a parliamentary content.
     """
     @classmethod
-    def makeChangeFactory(klass, name):
-        factory = type(name, (klass,), {})
+    def makeChangeFactory(cls, name):
+        factory = type(name, (cls,), {})
         interface.classImplements(factory, interfaces.IChange)
         return factory
     
@@ -89,10 +89,11 @@ class ItemVersions(Entity):
     """A collection of the versions of a parliamentary content object.
     """
     @classmethod
-    def makeVersionFactory(klass, name):
-        factory = type(name, (klass,), {})
+    def makeVersionFactory(cls, name):
+        factory = type(name, (cls,), {})
         interface.classImplements(factory, interfaces.IVersion)
-        interface.classImplements(factory, getattr(interfaces, "I%s" % (name)))
+        # !+IITEMVersion
+        #interface.classImplements(factory, getattr(interfaces, "I%s" % (name)))
         return factory
 
     #files = one2many("files", "bungeni.models.domain.AttachedFileContainer", "file_version_id")
