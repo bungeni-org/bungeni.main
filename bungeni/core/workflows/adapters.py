@@ -116,7 +116,7 @@ def apply_customization_workflow(name):
         return getattr(domain, kls_name)
     # !+RENAME_TO_CONVENTION
     get_domain_kls.non_conventional = {
-        "address": "user_address", # "group_address"?
+        "address": "address", # !+ use common base cls for User & Group addresses
         "agendaitem": "agenda_item",
         "attachedfile": "attached_file",
         "event": "event_item",

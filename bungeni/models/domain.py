@@ -494,13 +494,13 @@ class AddressType(Entity):
         interfaces.IAddressType
     )
 
-class _Address(Entity):
+class Address(Entity):
     """Address base class
     """
-class UserAddress(_Address):
+class UserAddress(Address):
     """User address (personal)
     """
-class GroupAddress(_Address):
+class GroupAddress(Address):
     """Group address (official)
     """
 
