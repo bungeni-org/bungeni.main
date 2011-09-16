@@ -23,17 +23,17 @@ See the Bungeni Source Code Style Guide for further details.
 
 <!-- address -->
 
-<permission id="bungeni.address.wf.private.public.internal" title="Publish internal" />
-<grant permission="bungeni.address.wf.private.public.internal" role="bungeni.Clerk" />
-<grant permission="bungeni.address.wf.private.public.internal" role="bungeni.Owner" />
+<permission id="bungeni.address.wf.attached.internal" title="Publish Internal" />
+<grant permission="bungeni.address.wf.attached.internal" role="bungeni.Clerk" />
+<grant permission="bungeni.address.wf.attached.internal" role="bungeni.Owner" />
 
-<permission id="bungeni.address.wf.private.internal.public" title="Publish" />
-<grant permission="bungeni.address.wf.private.internal.public" role="bungeni.Clerk" />
-<grant permission="bungeni.address.wf.private.internal.public" role="bungeni.Owner" />
+<permission id="bungeni.address.wf.internal.attached" title="Re-publish" />
+<grant permission="bungeni.address.wf.internal.attached" role="bungeni.Clerk" />
+<grant permission="bungeni.address.wf.internal.attached" role="bungeni.Owner" />
 
-<permission id="bungeni.address.wf.public.internal.private" title="Make private" />
-<grant permission="bungeni.address.wf.public.internal.private" role="bungeni.Clerk" />
-<grant permission="bungeni.address.wf.public.internal.private" role="bungeni.Owner" />
+<permission id="bungeni.address.wf.attached.internal.inactive" title="Deactivate" />
+<grant permission="bungeni.address.wf.attached.internal.inactive" role="bungeni.Clerk" />
+<grant permission="bungeni.address.wf.attached.internal.inactive" role="bungeni.Owner" />
 
 
 <!-- attachedfile -->
@@ -281,17 +281,17 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.event.Delete" role="bungeni.Clerk" />
 <grant permission="bungeni.event.Delete" role="bungeni.Speaker" />
 
-<permission id="bungeni.event.wf.private.internal.public" title="Publish to Public" />
-<grant permission="bungeni.event.wf.private.internal.public" role="bungeni.Clerk" />
-<grant permission="bungeni.event.wf.private.internal.public" role="bungeni.Speaker" />
+<permission id="bungeni.event.wf.attached.internal" title="Publish Internal" />
+<grant permission="bungeni.event.wf.attached.internal" role="bungeni.Clerk" />
+<grant permission="bungeni.event.wf.attached.internal" role="bungeni.Owner" />
 
-<permission id="bungeni.event.wf.private.public.internal" title="Publish Internal" />
-<grant permission="bungeni.event.wf.private.public.internal" role="bungeni.Clerk" />
-<grant permission="bungeni.event.wf.private.public.internal" role="bungeni.Speaker" />
+<permission id="bungeni.event.wf.internal.attached" title="Re-publish" />
+<grant permission="bungeni.event.wf.internal.attached" role="bungeni.Clerk" />
+<grant permission="bungeni.event.wf.internal.attached" role="bungeni.Owner" />
 
-<permission id="bungeni.event.wf.public.internal.private.inactive" title="Deactivate" />
-<grant permission="bungeni.event.wf.public.internal.private.inactive" role="bungeni.Clerk" />
-<grant permission="bungeni.event.wf.public.internal.private.inactive" role="bungeni.Speaker" />
+<permission id="bungeni.event.wf.attached.internal.inactive" title="Deactivate" />
+<grant permission="bungeni.event.wf.attached.internal.inactive" role="bungeni.Clerk" />
+<grant permission="bungeni.event.wf.attached.internal.inactive" role="bungeni.Owner" />
 
 
 <!-- group -->

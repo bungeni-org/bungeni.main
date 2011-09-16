@@ -105,7 +105,10 @@ mapper(domain.PostalAddressType, schema.postal_address_types)
 # general representation of a person
 mapper(domain.User, schema.users,
     properties={
-        "user_addresses": relation(domain.UserAddress),
+        "user_addresses": relation(domain.UserAddress,
+            # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name
+            backref=backref("item", remote_side=schema.users.c.user_id)
+        ),
         "subscriptions": relation(domain.ParliamentaryItem,
             secondary=schema.users_parliamentary_items
         ),
@@ -143,7 +146,10 @@ mapper(domain.Group, schema.groups,
             backref=backref("parent_group",
                 remote_side=schema.groups.c.group_id)
         ),
-        "group_addresses": relation(domain.GroupAddress),
+        "group_addresses": relation(domain.GroupAddress,
+            # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name
+            backref=backref("item", remote_side=schema.groups.c.group_id)
+        ),
         # "keywords": relation(domain.Keyword, secondary=schema.groups_keywords)
     },
     polymorphic_on=schema.groups.c.type,
@@ -394,10 +400,19 @@ mapper(domain.ParliamentaryItem, schema.parliamentary_items,
         "itemsignatories": relation(domain.User, secondary=schema.signatories),
         "attached_files": relation(domain.AttachedFile,
             # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", 
-            # "document" or "item"?
+            # "document", "item"
             backref=backref("item",
                 remote_side=schema.parliamentary_items.c.parliamentary_item_id)
-        )
+        ),
+        "event_item": relation(domain.EventItem,
+            primaryjoin=rdb.and_(
+                schema.parliamentary_items.c.parliamentary_item_id ==
+                    schema.event_items.c.item_id),
+            uselist=False,
+            # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name
+            backref=backref("item",
+                remote_side=schema.parliamentary_items.c.parliamentary_item_id),
+        ),
     }
 )
 

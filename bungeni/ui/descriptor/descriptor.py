@@ -1545,7 +1545,7 @@ class AddressDescriptor(ModelDescriptor):
         #    )
         #), !+IM(mr, oct-2010) morph to some "extra_info" on User
     ]
-    public_wfstates = [get_workflow_state("address", "public").id]
+    public_wfstates = [get_workflow_state("address", "attached").id]
 
 class GroupAddressDescriptor(AddressDescriptor):
     localizable = True
@@ -2702,7 +2702,7 @@ class EventItemDescriptor(ParliamentaryItemDescriptor):
             add_widget=widgets.DateTimeWidget,
         ),
     ]
-    public_wfstates = [get_workflow_state("event", "public").id]
+    public_wfstates = [get_workflow_state("event", "attached").id]
 
 
 class TabledDocumentDescriptor(ParliamentaryItemDescriptor):

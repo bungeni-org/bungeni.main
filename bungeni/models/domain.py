@@ -770,6 +770,7 @@ class DocumentSource(object):
     """
 '''
 
+# !+EventItem(mr, sep-2011) why is this a ParlaimentaryItem?
 class EventItem(ParliamentaryItem):
     """Bill events with dates and possiblity to upload files.
 
