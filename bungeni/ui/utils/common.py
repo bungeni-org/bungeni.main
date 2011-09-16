@@ -41,20 +41,30 @@ def has_feature(feature_name):
 
 def get_request():
     """ () -> either(IRequest, None)
+    
+    Raises zope.security.interfaces.NoInteraction if no interaction (and no 
+    request).
     """
+    # use queryInteraction() to raise 
     interaction = zope.security.management.getInteraction()
     for participation in interaction.participations:
         if zope.publisher.interfaces.IRequest.providedBy(participation):
             return participation
 
+''' !+REQUEST_CACHED(mr, sep-2011) experimetally replacing with a different 
+    implementation that does not require that the request be already 
+    initialized.
 
 def request_cached(f):
     """Simple function decorator, for caching relatively expensive calls for 
     the duration of a request. Annotates the request.
+    
+    Assumes request is not None.
     """
     fkey = id(f)  # f.__name__
     def request_cached_f(*args, **kws):
-        key = "_rc-%s-%s-%s" % (fkey, id(args), hash(repr(kws)) if kws else "")
+        key = "-rc-%s-%s-%s" % (fkey, id(args), hash(repr(kws)) if kws else "")
+        # ok, via annotated request as cache
         aor = IAnnotations(get_request())  # annotations on request
         if not aor.has_key(key):
             #print "   REQUEST_CACHED...", key, f.__name__, args, kws
@@ -62,6 +72,33 @@ def request_cached(f):
         #print "***REQUEST_CACHED...", key, f.__name__, args, kws, "->", aor[key]
         return aor[key]
     return request_cached_f
+'''
+
+thread_local = __import__("threading").local()
+def request_cached(f):
+    """Simple function decorator, for caching relatively expensive calls until 
+    *end* of the current request. May be used for calls executing prior to
+    initialization of the request instance i.e. get_request() raises error.
+    
+    Stores on a mapping on threading.local(), and so requires explicit clearing 
+    at end of request (in ui.publication).
+    """
+    fkey = id(f)  # f.__name__
+    def request_cached_f(*args, **kws):
+        key = "-rc-%s-%s-%s" % (fkey, id(args), hash(repr(kws)) if kws else "")
+        rc = getattr(thread_local, "_request_cache", None)
+        if rc is None:
+            rc = thread_local._request_cache = {}
+        if not rc.has_key(key):
+             #print "   REQUEST_CACHED...", key, f.__name__, args, kws
+             rc[key] = f(*args, **kws)
+        #print "***REQUEST_CACHED...", key, f.__name__, args, kws, "->", rc[key]
+        return rc[key]
+    return request_cached_f
+def _clear_request_cache():
+    rc = getattr(thread_local, "_request_cache", None)
+    if rc is not None:
+        rc.clear()
 
 
 def get_traversed_context(request=None, index=-1):

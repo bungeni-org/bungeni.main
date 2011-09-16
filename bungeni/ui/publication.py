@@ -19,8 +19,9 @@ from zope.annotation.interfaces import IAnnotations
 from bungeni.alchemist import Session
 
 from bungeni.ui import interfaces
-from bungeni.ui.utils import url
+from bungeni.ui.utils import url, common
 from bungeni.ui.descriptor.localization import check_reload_localization
+
 
 # !+IStartRequestEvent(mr, jun-2011) the once_per_request() below is a 
 # workaround to simulate the above event, gthat was introduced in. 
@@ -63,14 +64,12 @@ def on_end_request(event):
     tasks as needed. 
     """
     session = Session()
-    log.info("""IEndRequestEvent:%s:%s
-        closing SqlAlchemy session: %s""" % (
-                                    id(event.request), event.object, session))
-    # !+SESSION_CLOSE(taras.sterch, july-2011) there is no need to close the 
-    # session. Transaction manager will take care of this. Hope it does not 
-    # brake anything.
-    #session.close()
+    log.debug("IEndRequestEvent:%s:%s:%s\n"
+        "    closing SqlAlchemy session: %s" % (
+            id(event.request), event.request.getURL(), event.object, session))
+    common._clear_request_cache()
 
+    
 
 # some actual handlers
 

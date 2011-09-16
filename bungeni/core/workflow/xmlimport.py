@@ -168,7 +168,7 @@ def _load(workflow, name):
         assert auditable, "Workflow [%s] is versionable but not auditable" % (
             name)
     note = strip_none(workflow.get("note"))
-        
+    
     # initial_state, must be ""
     assert workflow.get("initial_state") == "", "Workflow [%s] initial_state " \
         "attribute must be empty string, not [%s]" % (

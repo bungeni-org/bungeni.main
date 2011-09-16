@@ -20,7 +20,7 @@ import zope.event
 def interfaces(obj):
     """Dump out list of interfaces for an object..."""
     return "\n".join(["",
-        #interfaces_implementedBy_class_for(obj),
+        interfaces_implementedBy_class_for(obj),
         interfaces_providedBy(obj),
         interfaces_directlyProvidedBy(obj),
     ])
