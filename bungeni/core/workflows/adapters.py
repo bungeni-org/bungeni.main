@@ -48,7 +48,9 @@ WORKFLOW_REG = [ # !+bungeni_custom
     ("user", interfaces.IBungeniUser),
     ("signatory", interfaces.ISignatory),
 ]
-
+# !+ dedicated interfaces for archetype incantations should be auto-generated, 
+# from specific workflow name/attr... e.g. via:
+# zope.interface.interface.InterfaceClass(iname, bases, __module__)
 
 def get_workflow(name):
     """Get the named workflow utility.
@@ -70,9 +72,7 @@ def provideAdapterWorkflow(factory, adapts_kls):
     component.provideAdapter(factory, (adapts_kls,), IWorkflow)
 
 
-def load_workflow(name, iface,
-        path_custom_workflows=capi.get_path_for("workflows")
-    ):
+def load_workflow(name, path_custom_workflows=capi.get_path_for("workflows")):
     """Setup the Workflow instance, from XML definition, for named workflow.
     """
     # load / register as utility / retrieve
@@ -149,7 +149,7 @@ def apply_customization_workflow(name):
 def load_workflows():
     # workflow instances (+ adapter *factories*)
     for name, iface in WORKFLOW_REG:
-        load_workflow(name, iface)
+        load_workflow(name)
         # !+ address: UserAddress, GroupAddress
         apply_customization_workflow(name)
 

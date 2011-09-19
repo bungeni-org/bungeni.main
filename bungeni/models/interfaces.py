@@ -1,13 +1,12 @@
 
-from zope import interface, schema, lifecycleevent
-from zope.component.interfaces import IObjectEvent, ObjectEvent
+from zope import interface, schema
 from zope.app.container.interfaces import IContainer
 from bungeni.alchemist.interfaces import IAlchemistContent
 from bungeni.alchemist.interfaces import IAlchemistContainer
 from ore.wsgiapp.interfaces import IApplication
 from i18n import _
 from zope.configuration.fields import MessageID
-import zope.schema
+
 DEBUG = True
 ENABLE_LOGGING = False
 ENABLE_EVENT_LOGGING = False
@@ -130,6 +129,10 @@ class ICommitteeMemberContainer(IBungeniGroupMembershipContainer):
 class ICommitteeStaffContainer(IBungeniGroupMembershipContainer):
     pass
 
+class IVersion(interface.Interface):
+    """A version of an object is identical in attributes to the actual 
+    object, based on that object's domain schema.
+    """
 class IVersionContainer(IBungeniContainer):
     pass
 
@@ -375,11 +378,9 @@ class IAssignmentFactory(interface.Interface):
         """Create a new assignment.
         """
 
-class IAttachedFile(interface.Interface):
-    pass
-
-class IAttachedFileVersionContainer(IVersionContainer):
-    pass
+class IAttachedFile(interface.Interface): pass
+class IAttachedFileVersion(IVersion): pass
+class IAttachedFileVersionContainer(IVersionContainer): pass
 
 class ISignatory(interface.Interface):
     """Signatories for bills, motions, ...
@@ -447,21 +448,17 @@ class IProxiedDirectory(interface.Interface):
     """An interface for a contained directory we can attach menu links
     to that point back to our parent.
     """
-# svn st models/ core/interfaces.py core/workflows/transitioncron.py core/workflows/_conditions.py core/audit.zcml core/ftesting.zcml core/audit.py core/configure.zcml core/interfaces.py ui/workflow.py ui/menu.zcml ui/audit.zcml
+
+# feature markers - apply to a domain model, to declare it implements feature
+
 class IAuditable(interface.Interface):
     """Marker interface to apply auditing/object log feature.
     """
 class IVersionable(interface.Interface):
     """Marker to apply versioning feature (requires IAuditable/objectlog)
     """
-class IVersion(interface.Interface):
-    """A version of an object is identical in attributes to the actual 
-    object, based on that object's domain schema.
-    """
 
-class IAttachedFileVersion(IVersion):
-    pass
-
+#
 
 ''' !+DATERANGEFILTER(mr, dec-2010) disabled until intention is understood
 class IDateRangeFilter(interface.Interface):
@@ -543,7 +540,7 @@ class IVenue(IBungeniVocabulary):
     """Marker interface for venues vocabulary"""
 class ISubRoleDirective(interface.Interface):
     """Define a new sub role."""
-    id = zope.schema.Id(
+    id = schema.Id(
         title=u"Id",
         description=u"Id as which this object will be known and used.",
         required=True)
@@ -558,7 +555,7 @@ class ISubRoleDirective(interface.Interface):
         description=u"Provides a description for the object.",
         required=False)
         
-    role = zope.schema.Id(
+    role = schema.Id(
         title=u"Parent Role ID",
         description=u"Role ID for role which this subrole extends",
         required=True)
