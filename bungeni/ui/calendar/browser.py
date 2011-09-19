@@ -402,6 +402,7 @@ class GroupSittingScheduleView(BrowserView):
             
     def render(self, date, template=None):
         #need('yui-editor')
+        need('yui-connection')
         need('yui-rte')
         need('yui-resize')
         need('yui-button')
