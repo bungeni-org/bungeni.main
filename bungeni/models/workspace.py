@@ -118,6 +118,7 @@ class WorkspaceContainer(AlchemistContainer):
         session = Session()
         results = []
         count = 0
+        first_page = not kw.get("start", 0) and not kw.get("sort_on", None)
         for domain_class, status in group_roles_domain_status.iteritems():
             query = session.query(domain_class).filter(
                 domain_class.status.in_(status)
@@ -131,7 +132,7 @@ class WorkspaceContainer(AlchemistContainer):
             # The first page of the results is loaded the most number of times
             # The limit on the query below optimises for when no filter has
             # been applied by limiting the number of results returned.
-            if (not kw.get("start", 0) and not kw.get("sort_on", None)):
+            if first_page:
                 count = count + query.count()
                 query = query.order_by(domain_class.status_date).limit(
                     kw.get("limit", 25))
@@ -146,7 +147,7 @@ class WorkspaceContainer(AlchemistContainer):
                     """(lower(%s) LIKE '%%%s%%')""" %
                     (column, kw["filter_short_name"])
                     )
-            if (not kw.get("start", 0) and not kw.get("sort_on", None)):
+            if first_page:
                 count = count + query.count()
                 query = query.order_by(domain_class.status_date).limit(
                     kw.get("limit", 25))
@@ -162,7 +163,7 @@ class WorkspaceContainer(AlchemistContainer):
             rev = True if (kw.get("sort_dir") == "desc") else False
             results.sort(key=lambda x: getattr(x, str(kw.get("sort_on"))),
                          reverse=rev)
-        if (kw.get("start", 0) and kw.get("sort_on", None)):
+        if not first_page:
             count = len(results)
         return (results, count)
 

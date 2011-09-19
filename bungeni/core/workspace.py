@@ -82,7 +82,7 @@ class WorkspaceTabsUtility():
         if role in self.workspaces.keys():
             if tab in self.workspaces[role].keys():
                 return list(self.workspaces[role][tab].keys())
-        return None
+        return []
 
     def get_domain(self, key):
         """Passed a type string returns the domain class"""
@@ -116,6 +116,7 @@ class WorkspaceTabsUtility():
             if tab in self.workspaces[role]:
                 if domain_class in self.workspaces[role][tab]:
                     return self.workspaces[role][tab][domain_class]
+        return []
 
 
 def load_workspace(file_name, domain_class):
