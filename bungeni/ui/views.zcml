@@ -147,7 +147,6 @@
      permission="bungeni.reports.Edit"
      class=".reports.GroupSittingContextAgendaReportView"
      />
-
   <browser:page
      name="agenda"
      for="bungeni.models.interfaces.ICommittee"
@@ -179,7 +178,7 @@
      permission="bungeni.reports.Edit"
      class=".reports.SchedulingContextAgendaReportView"
      />
-  <browser:page
+    <browser:page
      name="save-report"
      for="bungeni.models.interfaces.IGroupSitting"
      permission="bungeni.reports.Edit"
@@ -191,7 +190,12 @@
      permission="bungeni.reports.Edit"
      class=".reports.SaveReportView"
      />
-
+     <!-- !+Reports(mb, 09-2011) To use one interface for registration. -->
+     <browser:page name="report-builder"
+        for="*"
+        permission="bungeni.reports.Edit"
+        class=".reports.ReportBuilder"
+    />
   <!-- Calendar -->
 
   <browser:page

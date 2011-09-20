@@ -1,10 +1,20 @@
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""Vocabulary definitions
+"""
+
+log = __import__("logging").getLogger("bungeni.ui.vocabulary")
+
+import os
 import datetime
+import hashlib
+from lxml import etree
 from zope import interface
-from zope.schema.interfaces import IContextSourceBinder, IVocabulary,\
-    IVocabularyTokenized
+from zope.schema.interfaces import IContextSourceBinder
 from zope.schema import vocabulary
 from zope.security.proxy import removeSecurityProxy
-from zope.security import checkPermission
 from zope.app.container.interfaces import IContainer
 
 import bungeni.alchemist.vocabulary
@@ -12,7 +22,7 @@ from bungeni.utils.capi import capi
 from bungeni.alchemist import Session
 from bungeni.alchemist.container import valueKey
 
-from sqlalchemy.orm import mapper,  column_property 
+from sqlalchemy.orm import mapper
 import sqlalchemy as rdb
 import sqlalchemy.sql.expression as sql
 from bungeni.models import schema, domain, utils, delegation
@@ -28,7 +38,6 @@ from zope.component import getUtilitiesFor
 from zope.securitypolicy.interfaces import IRole
 from i18n import _
 
-import datetime
 from bungeni.core.translation import translate_obj
 from bungeni.ui.calendar.utils import first_nth_weekday_of_month
 from bungeni.ui.calendar.utils import nth_day_of_month
@@ -41,6 +50,7 @@ from bungeni.models.interfaces import IBungeniGroup
 #tree vocabulary
 from bungeni.core.language import get_default_language
 from bungeni.core.dc import IDCDescriptiveProperties
+
 try:
     import json
 except ImportError:
@@ -285,7 +295,6 @@ class SittingTypes(SpecializedSource):
         query = self.constructQuery(context)
         results = query.all()
         terms = []
-        title_field = self.title_field or self.token_field
         for ob in results:
             obj = translate_obj(ob)
             terms.append(vocabulary.SimpleTerm(
@@ -562,7 +571,6 @@ class MinistrySource(SpecializedSource):
         trusted=removeSecurityProxy(context)
         ministry_id = getattr(trusted, self.value_field, None)
         parliament_id = self._get_parliament_id(trusted)
-        today = datetime.date.today()
         if parliament_id:
             governments = session.query(domain.Government).filter(
                 sql.and_(
@@ -675,7 +683,6 @@ class MembershipUserSource(UserSource):
     """Filter out users already added to a membership container
     """
     def constructQuery(self, context):
-        session = Session()
         users = super(MembershipUserSource, self).constructQuery(
             context
         )
@@ -922,7 +929,6 @@ class CommitteeSource(SpecializedSource):
 
     def constructQuery(self, context):
         session= Session()
-        trusted=removeSecurityProxy(context)
         parliament_id = self._get_parliament_id(context)
         query = session.query(domain.Committee).filter(
             sql.and_(
@@ -1090,15 +1096,7 @@ def dict_to_dynatree(input_dict, selected):
     return retval
 
 
-class BaseVDEXVocabulary(object):
-    """
-    Base class to generate vdex vocabularies
-    
-    vocabulary = BaseVDEXVocabulary(file_name)
-    Register utility for easier reuse
-    """
-    interface.implements(ITreeVocabulary)
-
+class VDEXVocabularyMixin(object):
     def __init__(self, file_name):
         self.file_name = file_name
 
@@ -1119,17 +1117,98 @@ class BaseVDEXVocabulary(object):
         ofile.close()
         return vdex
 
+    def getTermById(self, value):
+        return self.vdex.getTermById(value)
+
+class BaseVDEXVocabulary(VDEXVocabularyMixin):
+    """
+    Base class to generate vdex vocabularies
+    
+    vocabulary = BaseVDEXVocabulary(file_name)
+    Register utility for easier reuse
+    """
+    interface.implements(ITreeVocabulary)
+
     def generateJSON(self, selected = []):
         vdict = self.vdex.getVocabularyDict(lang=get_default_language())
         dynatree_dict = dict_to_dynatree(vdict, selected)
         return json.dumps(dynatree_dict)
-
-    def getTermById(self, value):
-        return self.vdex.getTermById(value)
 
     def validateTerms(self, value_list):
         for value in value_list:
             if self.getTermById(value) is None:
                 raise LookupError
 
+class FlatVDEXVocabulary(VDEXVocabularyMixin):
+    def __call__(self, context=None):
+        all_terms = self.vdex.getVocabularyDict(lang=get_default_language())
+        terms = []
+        assert self.vdex.isFlat() is True
+        for (key,data) in all_terms.iteritems():
+            term = vocabulary.SimpleTerm(key, data[0], data[0])
+            terms.append(term)
+        return vocabulary.SimpleVocabulary(terms)
+
 subject_terms_vocabulary = BaseVDEXVocabulary("subject-terms.vdex")
+
+
+#
+# Vocaularies for XML configuration based report generation
+#
+
+class ReportXMLTemplates(object):
+    """XML configuration for generation of reports.
+    
+    Templates can be customized/added in:
+    `bungeni_custom/reporting/templates/xml/reports`
+    """
+    
+    terms = []
+    template_folder = "reports"
+    
+    def __init__(self):
+        self.buildTerms()
+    
+    def getTitle(self, path):
+        title = None
+        doctree = etree.fromstring(open(path).read())
+        node = doctree.find("title")
+        if node is not None:
+            title = node.text
+        return title
+    
+    def buildTerms(self):
+        template_folder = capi.get_path_for("reporting", "templates", "xml", 
+            self.template_folder
+        )
+        if not os.path.exists(template_folder):
+            log.error("Directory for XML templates does not exist: %s",
+                template_folder
+            )
+            return
+        file_list = filter(lambda fname: fname.endswith(".xml"),
+            os.listdir(template_folder)
+        )
+        for file_name in file_list:
+            file_path = "/".join([template_folder, file_name])
+            self.terms.append(
+                vocabulary.SimpleTerm(file_path,
+                    token=hashlib.md5(file_name).hexdigest(),
+                    title=self.getTitle(file_path)
+                )
+            )
+    
+    def __call__(self, context):
+        return vocabulary.SimpleVocabulary(self.terms)
+
+report_xml_templates = ReportXMLTemplates()
+
+class DocumentXMLTemplates(ReportXMLTemplates):
+    """XML Configuration for publication of documents in other formats.
+    
+    Templates can be customized/added in:
+    `bungeni_custom/reporting/templates/xml/documents`
+    """
+    template_folder = "documents"
+    
+document_xml_templates = DocumentXMLTemplates()

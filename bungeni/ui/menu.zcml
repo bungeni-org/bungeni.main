@@ -1774,8 +1774,13 @@
         permission="zope.View"
         order="43"
     />
-    
-    
+    <browser:menuItem menu="context_actions"
+        for="bungeni.core.interfaces.ISchedulingContext"
+        action="report-builder"
+        title="publish reports"
+        permission="zope.View"
+        order="40"
+    />
     
    <!--browser:menuItem
      menu="context_actions"

@@ -6,6 +6,8 @@
 $Id$
 """
 
+log = __import__("logging").getLogger("bungeni.ui.reports")
+
 import operator
 import datetime
 timedelta = datetime.timedelta
@@ -27,12 +29,15 @@ from bungeni.alchemist import Session
 from bungeni.models import domain
 from bungeni.models.utils import get_db_user_id
 from bungeni.models.interfaces import IGroupSitting
-from bungeni.ui.widgets import SelectDateWidget
+from bungeni.ui import widgets
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import url, queries, date
 from bungeni.ui import forms
 from bungeni.core.interfaces import ISchedulingContext
 from bungeni.core.language import get_default_language
+
+from bungeni.ui.interfaces import IWorkspaceReportGeneration
+from bungeni.ui.reporting import generators, renderers
 
 class TIME_SPAN:
     daily = _(u"Daily")
@@ -114,7 +119,7 @@ class DateTimeFormatMixin(object):
         formatter = date.getLocaleFormatter(self.request, category=category)
         return formatter.format(date_time)
 
-    def l10n_dates(self, date_time="", dt_format="dateTime"):
+    def l10n_dates(self, date_time, dt_format="dateTime"):
         if date_time:
             try:
                 formatter = self.request.locale.dates.getFormatter(dt_format)
@@ -123,6 +128,132 @@ class DateTimeFormatMixin(object):
                 return date_time
         return date_time
 
+class IReportBuilder(interface.Interface):
+    report_type = schema.Choice(title=_(u"Report Type"),
+        description=_(u"Choose template to use in generating Report"),
+        vocabulary="bungeni.vocabulary.ReportXMLTemplates"
+    )
+    start_date = schema.Date(title=_(u"Start Date"),
+        description=_(u"Start date for this Report")
+    )
+    publication_number = schema.TextLine(title=_(u"Publication Number"),
+        description=_(u"Optional publication number for this Report"),
+        required=False
+    )
+
+class ExpandedSitting(object):
+    """Contains list of sittings and groups of documents in the schedule
+    """
+    sitting = None
+    grouped = {}
+    
+    def __init__(self, sitting=None):
+        self.sitting = sitting
+        self.groupItems()
+    
+    def __getattr__(self, name):
+        """ Attribute lookup fallback - Sitting should have access to item
+        """
+        if name in self.grouped.keys():
+            return self.grouped.get(name)
+        if hasattr(self.sitting, name):
+            return getattr(self.sitting, name)
+        else:
+            log.error("Sitting Context %s has no such attribute: %s",
+                self.sitting.__str__(), name
+            )
+            return []
+    
+    def groupItems(self):
+        for scheduled in self.sitting.item_schedule:
+            item_group = "%ss" % scheduled.item.type
+            if item_group not in self.grouped.keys():
+                log.debug("[Reports] Setting up expanded listing with:: %s", 
+                    item_group
+                )
+                self.grouped[item_group] = []
+            self.grouped[item_group].append(scheduled.item)
+
+class ReportBuilder(form.Form, DateTimeFormatMixin):
+    template = namedtemplate.NamedTemplate("alchemist.form")
+    form_fields = form.fields(IReportBuilder)
+    form_fields["start_date"].custom_widget = widgets.SelectDateWidget
+    sittings = []
+    publication_date = datetime.datetime.today().date()
+    publication_number = ""
+    title = _(u"Report Title")
+    generated_content = None
+    show_preview = False
+
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
+        interface.declarations.alsoProvides(removeSecurityProxy(self.context), 
+            IWorkspaceReportGeneration
+        )
+        super(ReportBuilder, self).__init__(context, request)
+
+    def get_end_date(self, start_date, hours):
+        end_date = start_date + datetime.timedelta(seconds=hours*3600)
+        return end_date
+
+    def buildSittings(self, start_date, end_date):
+        if IGroupSitting.providedBy(self.context):
+            trusted = removeSecurityProxy(self.context)
+            order="real_order"
+            trusted.item_schedule.sort(key=operator.attrgetter(order))
+            self.sittings.append(trusted)
+        else:
+            sittings = ISchedulingContext(self.context).get_sittings(
+                start_date, end_date
+            ).values()
+            self.sittings = map(removeSecurityProxy,sittings)
+        self.sittings = [ ExpandedSitting(sitting) for sitting in self.sittings ]
+
+    def generateContent(self, data):
+        self.start_date = (data.get("start_date") or 
+            datetime.datetime.today().date()
+        )
+        generator = generators.ReportGeneratorXHTML(data.get("report_type"))
+        self.title = generator.title
+        self.publication_number = data.get("publication_number")
+        self.end_date = self.get_end_date(self.start_date, generator.coverage)
+        self.buildSittings(self.start_date, self.end_date)
+        generator.context = self
+        return generator.generateReport()
+
+    @form.action(_(u"Preview"))
+    def handle_preview(self, action, data):
+        """Generate preview of the report
+        """
+        self.show_preview = True
+        self.generated_content = self.generateContent(data)
+        self.status = _(u"See the preview of the report below")
+        return self.template()
+
+    @form.action(_(u"Publish"))
+    def handle_publish(self, action, data):
+        self.generated_content = self.generateContent(data)
+
+        if not hasattr(self.context, "group_id"):
+            context_group_id = ISchedulingContext(self.context).group_id
+        else:
+            context_group_id = self.context.group_id
+
+        report = domain.Report(short_name = self.title,
+            start_date = start_date,
+            end_date = end_date,
+            body_text = self.generated_content,
+            owner_id = get_db_user_id(),
+            language = generator.language,
+            group_id = context_group_id
+        )
+        session = Session()
+        session.add(report)
+        session.flush()
+        self.status = _(u"Report has been processed and saved")
+        
+        return self.template()
 
 class ReportView(form.PageForm, DateTimeFormatMixin):
     main_result_template = ViewPageTemplateFile("templates/main_reports.pt")
@@ -189,7 +320,7 @@ class ReportView(form.PageForm, DateTimeFormatMixin):
     form_fields["motions_options"].custom_widget = verticalMultiCheckBoxWidget
     form_fields["questions_options"].custom_widget = verticalMultiCheckBoxWidget
     form_fields["tabled_documents_options"].custom_widget = verticalMultiCheckBoxWidget
-    form_fields["date"].custom_widget = SelectDateWidget
+    form_fields["date"].custom_widget = widgets.SelectDateWidget
     def setUpWidgets(self, ignore_request=False):
         class context:
             item_types = "Bills"

@@ -91,7 +91,16 @@ class DescriptiveProperties(object):
                     return translation[0].field_text
         return getattr(context, name)
 
-class QuestionDescriptiveProperties(DescriptiveProperties):
+class DocumentDescriptiveProperties(DescriptiveProperties):
+    @property
+    def mover(self):
+        session = Session()
+        context = session.merge(removeSecurityProxy(self.context))
+        return translate_i18n(
+            IDCDescriptiveProperties(context.owner).title_member
+        )
+
+class QuestionDescriptiveProperties(DocumentDescriptiveProperties):
     component.adapts(interfaces.IQuestion)
 
     @property
@@ -118,7 +127,7 @@ class QuestionDescriptiveProperties(DescriptiveProperties):
         return text + "."
 
 
-class BillDescriptiveProperties(DescriptiveProperties):
+class BillDescriptiveProperties(DocumentDescriptiveProperties):
     component.adapts(interfaces.IBill)
 
     @property
@@ -143,7 +152,7 @@ class BillDescriptiveProperties(DescriptiveProperties):
         return text + "."
 
 
-class MotionDescriptiveProperties(DescriptiveProperties):
+class MotionDescriptiveProperties(DocumentDescriptiveProperties):
     component.adapts(interfaces.IMotion)
 
     @property
@@ -437,7 +446,7 @@ class UserAddressDescriptiveProperties(DescriptiveProperties):
         return _(u"Address")
 
 
-class AgendaItemDescriptiveProperties(DescriptiveProperties):
+class AgendaItemDescriptiveProperties(DocumentDescriptiveProperties):
     component.adapts(interfaces.IAgendaItem)
     
     @property
@@ -449,7 +458,7 @@ class AgendaItemDescriptiveProperties(DescriptiveProperties):
         )
 
 
-class TabledDocumentDescriptiveProperties(DescriptiveProperties):
+class TabledDocumentDescriptiveProperties(DocumentDescriptiveProperties):
     component.adapts(interfaces.ITabledDocument)
     
     @property

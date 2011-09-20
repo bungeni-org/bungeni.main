@@ -135,4 +135,12 @@
      class=".enhance.ProcessingViewlet"
      />
 
+  <browser:viewlet
+    name="bungeni.reports.preview"
+    for="bungeni.ui.interfaces.IWorkspaceReportGeneration"
+    permission="zope.View"
+    manager="ploned.ui.interfaces.IBelowContentManager"
+    class=".reports.ReportPreview"
+  />
+
 </configure>

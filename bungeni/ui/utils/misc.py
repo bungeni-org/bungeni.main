@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 # -*- coding: utf-8 -*-
 # Bungeni Parliamentary Information System - http://www.bungeni.org/
 # Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/

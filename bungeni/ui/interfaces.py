@@ -34,6 +34,10 @@ class IWorkspaceSchedulingContainer(interface.Interface):
     """Marker"""
 class IWorkspaceCommitteeSchedulingContainer(interface.Interface):
     """Marker"""
+
+class IWorkspaceReportGeneration(interface.Interface):
+    """Marker for report generation UI"""
+
 class ISpeakerWorkspace(IBrowserView):
     """Speaker's workspace."""
 class IClerkWorkspace(IBrowserView):
