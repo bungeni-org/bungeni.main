@@ -29,6 +29,7 @@ from bungeni.core.workflows import dbutils
 from ore.alchemist import Session
 import zope.event
 import zope.lifecycleevent
+from bungeni.core.serialize import publish_to_xml
 
 # special handled action to make a new version of a ParliamentaryItem, that is 
 # not tied to a state name, but to <state> @version bool attribute
@@ -70,12 +71,14 @@ def _address_private(context):
 _agendaitem_draft = _agendaitem_working_draft = __pi_create
 _agendaitem_submitted = __pi_submit
 _agendaitem_redraft = __pi_redraft
+_agendaitem_admissible = publish_to_xml
 
 
 # bill
 
 _bill_draft = _bill_working_draft = __pi_create
 _bill_redraft = __pi_redraft
+_bill_approved = publish_to_xml
 
 def _bill_gazetted(context):
     utils.setBillPublicationDate(context)
@@ -95,6 +98,7 @@ def _group_draft(context):
 
 def _group_active(context):
     utils.set_group_local_role(context)
+    publish_to_xml(context, type='group', include=[])
 
 def _group_dissolved(context):
     """ when a group is dissolved all members of this 
@@ -121,6 +125,11 @@ _parliament_create = _group_draft
 _parliament_active = _group_active
 _parliament_dissolved = _group_dissolved
 
+def _parliament_draft(context):
+    """ Publish XML on parliament deactivation
+    """
+    publish_to_xml(context, type='parliament', include=['preports', 'committees'])
+
 
 # groupsitting
 
@@ -129,6 +138,7 @@ def _groupsitting_draft_agenda(context):
         
 def _groupsitting_published_agenda(context):
     utils.schedule_sitting_items(context)
+    publish_to_xml(context, type='groupsitting',include=[])
 
 
 # motion
@@ -139,9 +149,13 @@ _motion_redraft = __pi_redraft
 
 def _motion_admissible(context):
     dbutils.setMotionSerialNumber(context)
+    publish_to_xml(context)
 
 
 # question
+
+_question_response_completed = publish_to_xml
+
 def __question_create(context):
     __pi_create(context)
     utils.assign_question_minister_role(context)
@@ -170,6 +184,15 @@ def _question_admissible(context):
     dbutils.setQuestionSerialNumber(context)
 
 
+
+
+def _heading_public(context):
+    publish_to_xml(context,type='heading',include=[])
+
+def _report_published(context):
+    publish_to_xml(context,type='report',include=[])
+
+
 # tableddocument
 
 _tableddocument_draft = _tableddocument_working_draft = __pi_create
@@ -181,6 +204,7 @@ def _tableddocument_adjourned(context):
 
 def _tableddocument_admissible(context):
     dbutils.setTabledDocumentSerialNumber(context)
+    publish_to_xml(context)
 
 
 # user
@@ -188,6 +212,7 @@ def _tableddocument_admissible(context):
 def _user_A(context):
     utils.assign_owner_role(context, context.login)
     context.date_of_death = None
+    publish_to_xml(context, type='user', include=[])
 
 #
 
