@@ -571,7 +571,12 @@
 			   sortDir:"dir", 
 			   paginationRecordOffset:"start"}
 	 };
-      
+	 var fnRequestSent = function(request , callback , tId , caller){
+	    jQuery.blockUI({ message:jQuery("#processing_indicatron"),
+                             timeout: UNBLOCK_TIMEOUT
+                            }); 
+	 };
+	 datasource.subscribe("requestEvent", fnRequestSent);
 	 // filter per column  
 	 var get_filter = function(oSelf) {
              var table_columns = oSelf.getColumnSet();
@@ -619,10 +624,16 @@
 	     sortedBy : { dir : YAHOO.widget.DataTable.CLASS_ASC },
 	     dynamicData: true, // Enables dynamic server-driven data
 	     MSG_SORTASC : "Click to filter and sort ascending",
-	     MSG_SORTDESC : "Click to filter and sort descending"    
+	     MSG_SORTDESC : "Click to filter and sort descending"
 	 }; 
 	 table = new YAHOO.widget.DataTable(YAHOO.util.Dom.get(table_id), 
 					    columns, datasource, config  ); 
+	 table = new YAHOO.widget.DataTable(YAHOO.util.Dom.get(table_id), 
+					    columns, datasource, config  ); 
+	 var fnRequestReceived = function(request, response){
+	     jQuery.unblockUI();
+	 };
+	 table.subscribe("postRenderEvent", fnRequestReceived);
 	 // Update totalRecords on the fly with value from server
 	 table.handleDataReturnPayload = function(oRequest,
 						  oResponse, oPayload) {
@@ -738,6 +749,12 @@
 			   sortDir:"dir", 
 			   paginationRecordOffset:"start"}
 	 };
+	 var fnRequestSent = function(request , callback , tId , caller){
+	    jQuery.blockUI({ message:jQuery("#processing_indicatron"),
+                             timeout: UNBLOCK_TIMEOUT
+                            }); 
+	 };
+	 datasource.subscribe("requestEvent", fnRequestSent);
 	 global_status_var = status;
 	 // filter per column  
 	 var get_text_filter = function(oSelf) {      
@@ -787,9 +804,14 @@
              dynamicData: true, // Enables dynamic server-driven data  
              MSG_SORTASC : "Click to filter and sort ascending",
              MSG_SORTDESC : "Click to filter and sort descending"
+	     
 	 };
 	 table = new YAHOO.widget.DataTable(YAHOO.util.Dom.get(table_id), 
-					    columns, datasource, config  );    
+					    columns, datasource, config  ); 
+	 var fnRequestReceived = function(request, response){
+	     jQuery.unblockUI();
+	 };
+	 table.subscribe("postRenderEvent", fnRequestReceived);
 	 // Update totalRecords on the fly with value from server
 	 table.handleDataReturnPayload = function(oRequest, oResponse, oPayload)
 	 {
