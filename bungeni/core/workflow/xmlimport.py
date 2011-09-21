@@ -16,7 +16,7 @@ from zope.dottedname.resolve import resolve
 from zope.i18nmessageid import Message
 from bungeni.core.workflow import interfaces
 from bungeni.core.workflow.states import GRANT, DENY
-from bungeni.core.workflow.states import State, Transition, Workflow
+from bungeni.core.workflow.states import Feature, State, Transition, Workflow
 from bungeni.core.workflow.notification import Notification
 from bungeni.utils.capi import capi, bungeni_custom_errors
 from bungeni.ui.utils import debug
@@ -37,6 +37,8 @@ trigger_value_map = {
 
 # only letters, numbers and "_" char i.e. no whitespace or "-"
 ID_RE = re.compile("^[\w\d_]+$")
+
+FEATURE_ATTRS = ("name", "enabled", "note")
 
 STATE_ATTRS = ("id", "title", "version", "like_state", "note",
     "permissions_from_parent", "obsolete")
@@ -162,11 +164,6 @@ def _load(workflow, name):
     domain = strip_none(workflow.get("domain")) 
     # !+domain(mr, jul-2011) drop? only used as state/transition title default
     wuids = set() # unique IDs in this XML workflow file
-    auditable = as_bool(strip_none(workflow.get("auditable")) or "false")
-    versionable = as_bool(strip_none(workflow.get("versionable")) or "false")
-    if versionable:
-        assert auditable, "Workflow [%s] is versionable but not auditable" % (
-            name)
     note = strip_none(workflow.get("note"))
     
     # initial_state, must be ""
@@ -215,16 +212,33 @@ def _load(workflow, name):
                     name, key, etree.tostring(e))
     
     # top-level child ordering
-    grouping, allowed_child_ordering = 0, ("grant", "state", "transition")
+    grouping, allowed_child_ordering = 0, (
+        "feature", "grant", "state", "transition")
     for child in workflow.iterchildren():
         if not isinstance(child.tag, basestring):
             # ignore comments
             continue
         while child.tag != allowed_child_ordering[grouping]:
             grouping += 1
-            assert grouping < 3, "Workflow [%s] element <%s> %s not allowed " \
+            assert grouping < 4, "Workflow [%s] element <%s> %s not allowed " \
                 "here -- element order must respect: %s" % (
                     name, child.tag, child.items(), allowed_child_ordering)
+    
+    # features
+    features = []
+    for f in workflow.iterchildren("feature"):
+        assert_valid_attr_names(f, FEATURE_ATTRS)
+        # @name
+        feature_name = strip_none(f.get("name"))
+        assert feature_name, "Workflow Feature must define @name"
+        # !+ archetype/feature inter-dep; should be part of feature descriptor
+        if feature_name == "version": 
+            assert "audit" in [ fe.name for fe in features ], \
+                "Workflow [%s] has version but no audit feature" % (name)
+        features.append(
+            Feature(feature_name,
+                enabled=as_bool(strip_none(f.get("enabled")) or "true"),
+                note=strip_none(f.get("note"))))
     
     # global grants
     for p in workflow.iterchildren("grant"):
@@ -383,5 +397,5 @@ def _load(workflow, name):
             log.debug("[%s] adding transition [%s-%s] [%s]" % (
                 name, source or "", destination, kw))
     
-    return Workflow(name, states, transitions, auditable, versionable, note)
+    return Workflow(name, features, states, transitions, note)
 

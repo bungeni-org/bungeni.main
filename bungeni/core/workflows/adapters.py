@@ -133,11 +133,11 @@ def apply_customization_workflow(name):
     # dynamic features from workflow
     wf = get_workflow(name)
     # note: versionable implies auditable
-    if wf.auditable or wf.versionable:
+    if wf.has_feature("audit") or wf.has_feature("version"):
         # decorate the kls
-        if wf.versionable:
+        if wf.has_feature("version"):
             kls = domain.versionable(kls)
-        elif wf.auditable:
+        elif wf.has_feature("audit"):
             kls = domain.auditable(kls)
         # modify schema/mapping as needed
         schema.configurable_schema(kls)
@@ -208,7 +208,7 @@ def _setup_all():
     register_workflow_adapters()
 
 
-# do it, when the this module is imported. 
+# do it, when this module is imported. 
 _setup_all()
 
 #

@@ -63,7 +63,16 @@ def wrapped_condition(condition):
                 e.__class__.__name__, e, context, condition))
     return test
 
-#
+
+class Feature(object):
+    """Status/settings of an optional feature on a workflowed type.
+    """
+    def __init__(self, name, enabled=True, note=None, **kws):
+        self.name = name
+        self.enabled = enabled
+        self.note = note
+        self.params = kws
+
 
 class State(object):
     """A workflow state instance. 
@@ -245,6 +254,7 @@ def get_object_version_state_rpm(version):
     # or "item"?
     return interfaces.IWorkflow(version.head).get_state(version.status)
 
+
 class Workflow(object):
     """A Workflow instance for a specific document type, defining the possible 
     states a document may have and the allowed transitions between them.
@@ -254,12 +264,9 @@ class Workflow(object):
     
     initial_state = None
     
-    def __init__(self, name, states, transitions, 
-            auditable=False, versionable=False, note=None
-        ):
+    def __init__(self, name, features, states, transitions, note=None):
         self.name = name
-        self.auditable = auditable # must be True if versionable
-        self.versionable = versionable
+        self.features = features
         self.note = note
         self._states_by_id = {} # {id: State}
         self._transitions_by_id = {} # {id: Transition}
@@ -335,6 +342,14 @@ class Workflow(object):
                 assert sources, \
                     "Unreachable state [%s] in Workflow [%s]" % (
                         dest_id, self.name)
+    
+    def has_feature(self, name):
+        """Does this workflow enable the named feature?
+        """
+        for f in self.features:
+            if f.name == name:
+                return f.enabled
+        return False
     
     @property
     def states(self):
