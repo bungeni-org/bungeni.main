@@ -89,10 +89,11 @@ class WorkspaceContainer(AlchemistContainer):
                     statuses = self.workspace_config.get_status(
                         role, domain_class, self.__name__
                         )
-                    if (kw.get("filter_status", None) and
-                        kw["filter_status"] in statuses):
-                        domain_status[domain_class].append(kw["filter_status"])
-                    elif statuses:
+                    if kw.get("filter_status", None):
+                        if kw["filter_status"] in statuses:
+                            domain_status[domain_class].append(
+                                kw["filter_status"])
+                    else:
                         domain_status[domain_class].extend(statuses)
         else:
             domain_status = self.domain_status(roles, self.__name__)
@@ -102,6 +103,12 @@ class WorkspaceContainer(AlchemistContainer):
                         domain_status[domain_class] = [kw["filter_status"]]
                     else:
                         del domain_status[domain_class]
+        # Remove domain classes not filtered by any status
+        # Filtering to an empty dict of status is inefficient in
+        # Sqlalchemy and it raises a warning, this prevents that.
+        for domain_class in domain_status.keys():
+            if not domain_status[domain_class]:
+                del domain_status[domain_class]
         return domain_status
 
     def title_column(self, domain_class):
@@ -118,7 +125,7 @@ class WorkspaceContainer(AlchemistContainer):
         session = Session()
         results = []
         count = 0
-        first_page = not kw.get("start", 0) and not kw.get("sort_on", None)
+        first_page = not kw.get("start", 0)
         for domain_class, status in group_roles_domain_status.iteritems():
             query = session.query(domain_class).filter(
                 domain_class.status.in_(status)
@@ -129,35 +136,47 @@ class WorkspaceContainer(AlchemistContainer):
                     """(lower(%s) LIKE '%%%s%%')""" %
                     (column, kw["filter_short_name"].lower())
                     )
+            # Order results
+            if (kw.get("sort_on", None) and
+                hasattr(domain_class, str(kw.get("sort_on")))
+                ):
+                query = query.order_by(
+                    getattr(domain_class, str(kw.get("sort_on"))))
             # The first page of the results is loaded the most number of times
             # The limit on the query below optimises for when no filter has
             # been applied by limiting the number of results returned.
             if first_page:
                 count = count + query.count()
-                query = query.order_by(domain_class.status_date).limit(
-                    kw.get("limit", 25))
+                query = query.limit(kw.get("limit", 25))
             results.extend(query.all())
         object_roles_domain_status = self.item_status_filter(kw, OBJECT_ROLES)
         for domain_class, status in object_roles_domain_status.iteritems():
+            object_roles_results = []
             query = session.query(domain_class).filter(
-                domain_class.status.in_(status))
+                domain_class.status.in_(status)
+                )
             if kw.get("filter_short_name", None):
                 column = self.title_column(domain_class)
                 query = query.filter(
                     """(lower(%s) LIKE '%%%s%%')""" %
                     (column, kw["filter_short_name"])
                     )
-            if first_page:
-                count = count + query.count()
-                query = query.order_by(domain_class.status_date).limit(
-                    kw.get("limit", 25))
+            # Order results
+            if (kw.get("sort_on", None) and
+                hasattr(domain_class, str(kw.get("sort_on")))
+                ):
+                query = query.order_by(
+                    getattr(domain_class, str(kw.get("sort_on"))))
             for obj in query.all():
                 prm = IPrincipalRoleMap(obj)
                 for obj_role in OBJECT_ROLES:
                     if (prm.getSetting(obj_role, principal.id) == Allow and
                             obj not in results):
-                        results.append(obj)
+                        object_roles_results.append(obj)
                         break
+            if first_page:
+                count = count + len(object_roles_results)
+            results.extend(object_roles_results)
         # Sort items
         if (kw.get("sort_on", None) and kw.get("sort_dir", None)):
             rev = True if (kw.get("sort_dir") == "desc") else False

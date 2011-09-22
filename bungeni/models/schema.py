@@ -358,7 +358,7 @@ groups = rdb.Table("groups", metadata,
     rdb.Column("end_date", rdb.Date),
     rdb.Column("type", rdb.String(30), nullable=False),
     # !+GROUP_PRINCIPAL_ID(ah,sep-2011) adding group principal id to schema
-    rdb.Column("group_principal_id", rdb.Unicode(50)),
+    rdb.Column("group_principal_id", rdb.Unicode(50), nullable=False),
     rdb.Column("parent_group_id", rdb.Integer,
         rdb.ForeignKey("groups.group_id")
      ),
