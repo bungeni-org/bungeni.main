@@ -37,7 +37,7 @@
             }
            
             function init() {
-                scheduler.locale.labels.venues_tab = '<span i18n:translate="" tal:omit-tag="">Venues</span>';
+                scheduler.locale.labels.venues_tab = '<span i18n:translate="" tal:content="string:Venues" tal:omit-tag=""/>';
                 scheduler.config.xml_date="%Y-%m-%d %H:%i";
                 scheduler.config.show_loading=true;
                 scheduler.config.scroll_hour=8;
@@ -62,10 +62,10 @@
                 //event tooltips
                 var format=scheduler.date.date_to_str(scheduler.config.xml_date); 
                 scheduler.templates.tooltip_text = function(start, end, event){
-                    return '<b i18n:translate="">Group</b> : '+ event.group + 
-                        '<br/><b i18n:translate="">Start Date</b> : ' + format(start) + 
-                        '<br/><b i18n:translate="">End Date </b> : ' + format(end) + 
-                        '<br/><b i18n:translate="">Venue</b> : ' + event.venue_name;
+                    return '<b i18n:translate="" tal:content="string:Group"/> : '+ event.group + 
+                        '<br/><b i18n:translate="" tal:content="string:Start Date"/> : ' + format(start) + 
+                        '<br/><b i18n:translate="" tal:content="string:End Date"/> : ' + format(end) + 
+                        '<br/><b i18n:translate="" tal:content="string:Venue"/> : ' + event.venue_name;
                 };
                 
                 scheduler.init('scheduler_here', null, "week");
@@ -95,7 +95,7 @@
                         
                         ev.language = $("#select_sitting_lang").val();
                         ev.venue = $("#select_sitting_venue").val();
-                        ev.text = '<span><b i18n:translate="">Sitting</b> : </span>' + $("#select_sitting_venue option:selected").text();
+                        ev.text = '<span i18n:translate="" tal:content="string:Sitting"/>' + ' : ' + $("#select_sitting_venue option:selected").text();
                     },
                     focus:function(node){
                     }

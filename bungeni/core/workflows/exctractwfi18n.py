@@ -27,7 +27,6 @@ for name in [
     "bill", 
     "question", 
     "motion", 
-    "version", 
     "groupsitting", 
     "user", 
     "group", 
