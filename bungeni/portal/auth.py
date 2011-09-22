@@ -39,7 +39,6 @@ def get_user_groups(login_id):
     a) the groups defined by his user_group_memberships
     b) the users who have him assigned as a delegation
     c) the groups of the delegation user.
-    Arguments are a login_id and a set. Returns a set.
     """
     groups = set()
     groups.add(login_id)
