@@ -15,88 +15,78 @@ from sqlalchemy.exceptions import UnboundExecutionError
 import sqlalchemy as rdb
 from sqlalchemy.orm import eagerload, lazyload
 
-from bungeni.models import domain, delegation 
+from bungeni.models import domain, delegation
 
 
+def get_user(login_id):
+    session = Session()
+    try:
+        db_user = session.query(domain.User).filter(
+            domain.User.login == login_id).one()
+    except rdb.orm.exc.NoResultFound:
+        log.error("No user with login id, %s exists" % login_id)
+        return None
+    except rdb.orm.exc.MultipleResultsFound:
+        log.error("Multiple users found with the same login id, %s" %
+                  login_id)
+        return None
+    else:
+        return db_user
 
-def getUserGroups(login_id, groups):
+
+def get_user_groups(login_id):
     """ get group for users:
     a) the groups defined by his user_group_memberships
     b) the users who have him assigned as a delegation
     c) the groups of the delegation user.
     Arguments are a login_id and a set. Returns a set.
     """
+    groups = set()
     groups.add(login_id)
-    session = Session()
-    db_user = session.query(domain.User).filter(
-                domain.User.login==login_id).all()
-    if len(db_user) == 1:
-        user_id = db_user[0].user_id
-        query = session.query( domain.GroupMembership 
-                ).filter( 
-                    rdb.and_(
-                        domain.GroupMembership.user_id ==
-                        user_id,
-                        domain.GroupMembership.active_p == 
-                        True)).options(
-                    eagerload("group"), lazyload("user")
-                    )
-        results = query.all()
-        for result in results:
-            groups.add(result.group.group_principal_id)
-        results = delegation.get_user_delegations(user_id)
-        
-        for result in results:
-            if result.login not in groups:
-                for x in getUserGroups(result.login, groups):
-                    groups.add(x)
-    return groups
-                
 
+    def get_groups(user_id):
+        principal_ids = []
+        session = Session()
+        query = session.query(domain.GroupMembership).filter(
+            rdb.and_(domain.GroupMembership.user_id == user_id,
+                     domain.GroupMembership.active_p == True)).options(
+            eagerload("group"), lazyload("user"))
+        for membership in query:
+                principal_ids.append(membership.group.group_principal_id)
+        return principal_ids
+    user_id = get_user(login_id).user_id
+    if user_id:
+        for elem in get_groups(user_id):
+            groups.add(elem)
+    user_delegations = delegation.get_user_delegations(user_id)
+    for user in user_delegations:
+        for elem in getGroups(user.user_id):
+            groups.add(elem)
+    return groups
 
 
 class AlchemistWhoPlugin(object):
     interface.implements(IAuthenticator, IMetadataProvider)
-    
-    def getGroups(self, id ):
-        groups = getUserGroups(id, set())
+
+    def get_groups(self, login_id):
+        groups = get_user_groups(login_id)
         groups.add("zope.Authenticated")
         groups.add("zope.anybody")
         return groups
-            
+
     def authenticate(self, environ, identity):
         if not ('login' in identity and 'password' in identity):
             return None
-        #log.debug("Authenticate user: %s" % identity['login'])
-        user = self.get_user(identity['login'])
-
+        user = get_user(identity['login'])
         if user and user.checkPassword(identity['password']):
             return identity['login']
-            
-    def get_user(self, login):
-        try:
-            session = Session()
-        except UnboundExecutionError, e:
-            log.warn(e)
-            return
-        
-        query = session.query(domain.User).filter(
-                rdb.and_(
-                    domain.User.login==unicode(login),
-                    domain.User.active_p=='A')
-                )
-        results = query.all()
-        if len(results) != 1:
-            return None
-
-        return results[0]
 
     def add_metadata(self, environ, identity):
         userid = identity.get('repoze.who.userid')
-        user = self.get_user(userid) 
+        user = get_user(userid)
         groups = None
         if user is not None:
-            groups = tuple( self.getGroups(userid))
+            groups = tuple(self.get_groups(userid))
             try:
                 session = Session()
             except UnboundExecutionError, e:
@@ -107,15 +97,13 @@ class AlchemistWhoPlugin(object):
             identity.update({
                 'email': user.email,
                 'title': u"%s, %s" % (user.last_name, user.first_name),
-                'groups' : groups,
+                'groups': groups,
                 })
-        #log.debug("Groups for user %s returned by db: %s" % (userid, str(groups)))
-        #log.debug("Groups stored for user %s in identity: %s" % (userid, str(identity.get('groups'))))
+
 
 class GlobalAuthWhoPlugin(object):
     interface.implements(IAuthenticator, IMetadataProvider)
 
-           
     def authenticate(self, environ, identity):
         if not ('login' in identity and 'password' in identity):
             return None
