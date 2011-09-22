@@ -39,7 +39,7 @@ class WorkspaceAbsoluteURLView(AbsoluteURL):
         roles = get_workspace_roles()
         tab = None
         for role in roles:
-            tab = tabs_utility.getTab(role, domain_class, status)
+            tab = tabs_utility.get_tab(role, domain_class, status)
             if tab:
                 base_url = ui_utils.url.absoluteURL(getSite(), self.request)
                 key = workspace.stringKey(self.context)
