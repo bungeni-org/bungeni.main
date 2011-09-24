@@ -264,5 +264,9 @@ class WorkspacePrincipalRoleMap(LocalPrincipalRoleMap):
     def __init__(self, context):
         self.context = context
         current_parliament = get_current_parliament()
-        self.object_type = current_parliament.type
-        self.oid = current_parliament.group_id
+        if current_parliament:
+            self.object_type = current_parliament.type
+            self.oid = current_parliament.group_id
+        else:
+            self.object_type = None
+            self.oid = None

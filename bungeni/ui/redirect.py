@@ -9,7 +9,7 @@ from zope.publisher.interfaces import IPublishTraverse
 from zope.annotation.interfaces import IAnnotations
 
 import bungeni.core.globalsettings as prefs
-from bungeni.ui.utils import url
+from bungeni.ui.utils import url, common
 from bungeni.models.utils import get_db_user_id
 
 
@@ -61,7 +61,10 @@ class WorkspaceRootRedirect(BrowserView):
     """Redirect logged in users to workspace"""
     def __call__(self):
         request = self.request
-        to_url = "/workspace"
+        if common.is_admin(self.context):
+            to_url = "/admin"
+        else:
+            to_url = "/workspace"
         request.response.redirect(to_url)
 
 class _IndexRedirect(BrowserView):
