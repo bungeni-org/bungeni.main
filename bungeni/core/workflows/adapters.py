@@ -132,18 +132,19 @@ def apply_customization_workflow(name):
     
     # dynamic features from workflow
     wf = get_workflow(name)
-    # note: versionable implies auditable
-    if wf.has_feature("audit") or wf.has_feature("version"):
-        # decorate the kls
-        if wf.has_feature("version"):
-            kls = domain.versionable(kls)
-        elif wf.has_feature("audit"):
-            kls = domain.auditable(kls)
-        # modify schema/mapping as needed
+    def _apply_customization_workflow(kls):
+        # decorate/modify domain/schema/mapping as needed
+        kls = domain.configurable_domain(kls, wf)
         schema.configurable_schema(kls)
         orm.configurable_mappings(kls)
-        # create/set module-level dedicated auditor singleton for auditable kls
-        bungeni.core.audit.set_auditor(kls)
+        # !+ ok to call set_auditor(kls) more than once?
+        # !+ following should be part of the domain.auditable(kls) logic
+        if wf.has_feature("audit"):
+            # create/set module-level dedicated auditor singleton for auditable kls
+            bungeni.core.audit.set_auditor(kls)
+    
+    if kls.__dynamic_features__:
+        _apply_customization_workflow(kls)
 
 
 def load_workflows():

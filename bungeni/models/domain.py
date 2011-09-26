@@ -39,6 +39,9 @@ class Entity(object):
     __name__ = None
     __parent__ = None
     
+    # !+ base archetype
+    __dynamic_features__ = False
+    
     def __init__(self, **kw):
         try:
             domain_schema = model.queryModelInterface(self.__class__)
@@ -108,10 +111,23 @@ class ItemVersions(Entity):
 # Note: in a simplified one-generic-document-type world, these can be 
 # simplified even further. 
 
+def configurable_domain(kls, workflow):
+    assert kls.__dynamic_features__, \
+        "Class [%s] does not allow dynamic features" % (kls)
+    # note: versionable implies auditable
+    for feature in workflow.features:
+        if feature.enabled:
+            kls = configurable_domain.feature_decorators[feature.name](kls)
+    return kls
+configurable_domain.feature_decorators = {}
+
+
 # convenience, per decorator name, remember decorated types
 CUSTOM_DECORATED = {
+    # decorator_name: set([kls])
     "auditable": set(), # [kls]
     "versionable": set(), # [kls]
+    "enable_attachment": set(), # [kls]
 }
 
 def auditable(kls):
@@ -129,6 +145,7 @@ def auditable(kls):
     change_kls = ItemChanges.makeChangeFactory(change_name)
     globals()[change_name] = change_kls
     return kls
+configurable_domain.feature_decorators["audit"] = auditable
 
 def versionable(kls):
     """Decorator for versionable domain types, to collect in one place all
@@ -148,15 +165,33 @@ def versionable(kls):
     version_name = "%sVersion" % (name)
     globals()[version_name] = ItemVersions.makeVersionFactory(version_name)
     return kls
+configurable_domain.feature_decorators["version"] = versionable
+
+def enable_attachment(kls):
+    """Decorator for attachment-feature of domain types.
+    Executed on adapters.load_workflow()
+    
+    !+ currently assumes that the object is versionable.
+    !+ domain.AttachedFile is the only versionable type that is not a PI.
+    """
+    # !+ domain.AttachedFile is versionable, but does not support attachments
+    assert kls is not AttachedFile
+    # assign interface (versions property added downstream)
+    name = kls.__name__
+    interface.classImplements(kls, interfaces.IAttachmentable)
+    CUSTOM_DECORATED["enable_attachment"].add(kls)
+    return kls
+configurable_domain.feature_decorators["attachment"] = enable_attachment
 
 # !+/PARAMETRIZABLE_DOCTYPES
 
 class User(Entity):
     """Domain Object For A User. General representation of a person.
     """
-
+    __dynamic_features__ = True
+    
     interface.implements(interfaces.IBungeniUser, interfaces.ITranslatable)
-
+    
     def __init__(self, login=None, **kw):
         if login:
             self.login = login
@@ -232,6 +267,7 @@ class CurrentlyEditingDocument(object):
 class Group(Entity):
     """ an abstract collection of users
     """
+    __dynamic_features__ = True # !+ False
     interface.implements(interfaces.IBungeniGroup, interfaces.ITranslatable)
     sort_on = ["short_name", "full_name"]
     sort_dir = "asc"
@@ -262,6 +298,7 @@ class GroupMembership(Entity):
     """A user's membership in a group-abstract basis for 
     ministers, committeemembers, etc.
     """
+    __dynamic_features__ = False
     interface.implements(
         interfaces.IBungeniGroupMembership, interfaces.ITranslatable)
     sort_on = ["last_name", "first_name", "middle_name"]
@@ -288,6 +325,9 @@ class GroupSitting(Entity):
     """Scheduled meeting for a group (parliament, committee, etc).
     """
     interface.implements(interfaces.ITranslatable)
+
+    __dynamic_features__ = True # !+ False
+
     attendance = one2many("attendance",
         "bungeni.models.domain.GroupSittingAttendanceContainer", "group_sitting_id")
     items = one2many("items",
@@ -497,6 +537,8 @@ class AddressType(Entity):
 class Address(Entity):
     """Address base class
     """
+    __dynamic_features__ = False
+    # !+ note corresponding tbls exist only for subclasses
 class UserAddress(Address):
     """User address (personal)
     """
@@ -514,6 +556,7 @@ class ItemVotes(object):
 class ParliamentaryItem(Entity):
     """
     """
+    __dynamic_features__ = True
     interface.implements(
         interfaces.IBungeniContent,
         interfaces.IBungeniParliamentaryContent,
@@ -578,13 +621,14 @@ class AttachedFileType(object):
 class AttachedFile(Entity):
     """Files attached to a parliamentary item.
     """
+    __dynamic_features__ = True # !+ should be False?
 
-
+# !+ why a parliamentaryItem? Review whole heading idea!
 class Heading(ParliamentaryItem):
     """A heading in a report.
     """
     interface.implements(interfaces.ITranslatable)
-
+    __dynamic_features__ = False
 
 class _AdmissibleMixin(object):
     """Assumes self._get_workflow_date()
@@ -598,7 +642,6 @@ class _AdmissibleMixin(object):
 class AgendaItem(ParliamentaryItem, _AdmissibleMixin):
     """Generic Agenda Item that can be scheduled on a sitting.
     """
-
 
 # versionable (by default)
 class Question(ParliamentaryItem, _AdmissibleMixin):
@@ -636,7 +679,9 @@ class Signatory(Entity):
     """Signatories for a Bill or Motion.
     """
     interface.implements(interfaces.IBungeniContent)
-
+    
+    __dynamic_features__ = False
+    
     @property
     def owner_id(self):
         return self.user_id

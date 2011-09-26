@@ -39,7 +39,7 @@ def configurable_mappings(kls):
         mapper(change_kls, change_tbl, 
             properties=changes_properties(change_tbl)
         )
-    # versionable,determine properties and set mapper for change class/table
+    # versionable, determine properties and set mapper for version class/table
     if interfaces.IVersionable.implementedBy(kls):
         assert change_kls, "May not be IVersionable and not IAuditable"
         version_kls = getattr(domain, "%sVersion" % (name))
@@ -49,32 +49,31 @@ def configurable_mappings(kls):
                 "change": relation(change_class, uselist=False),
                 "head": relation(item_class, uselist=False)
             }
-            # Notes:
-            # - domain.AttachedFile is the only versionable type that is 
-            # not a ParliamentaryItem.
-            # - !+IVersionable(mr, jul-2011) an AttachedFile does not have 
-            # attached_files; but, this violates the meaning of IVersionable? 
-            # Or, the ability to have attached_files should be independent of
-            # being versionable? IMayAttachFiles
-            if item_class is not domain.AttachedFile:
-                props["attached_files"] = relation(domain.AttachedFileVersion,
-                    primaryjoin=rdb.and_(
-                        versions_table.c.content_id ==
-                            schema.attached_file_versions.c.item_id,
-                        versions_table.c.version_id ==
-                            schema.attached_file_versions.c.file_version_id
-                    ),
-                    foreign_keys=[
-                        schema.attached_file_versions.c.item_id,
-                        schema.attached_file_versions.c.file_version_id
-                    ]
-                )
             return props
         mapper(version_kls, version_tbl,
             properties=versions_properties(kls, change_kls, version_tbl)
         )
+    # attachmentable, add related properties to version class/table 
+    if interfaces.IAttachmentable.implementedBy(kls):
+        # !+ current constrain
+        assert version_kls, "May not be IAttachmentable and not IVersionable"
+        class_mapper(version_kls).add_property("attached_files",
+            relation(domain.AttachedFileVersion,
+                primaryjoin=rdb.and_(
+                    version_tbl.c.content_id ==
+                        schema.attached_file_versions.c.item_id,
+                    version_tbl.c.version_id ==
+                        schema.attached_file_versions.c.file_version_id
+                ),
+                foreign_keys=[
+                    schema.attached_file_versions.c.item_id,
+                    schema.attached_file_versions.c.file_version_id
+                ]
+            )
+        )
     # finally, add any properties to the master kls itself
-    def mapper_add_configurable_properties(kls, kls_mapper):
+    def mapper_add_configurable_properties(kls):
+        kls_mapper = class_mapper(kls)
         def configurable_properties(kls, mapper_properties):
             """Add properties, as per configured features for a domain type.
             """
@@ -92,10 +91,15 @@ def configurable_mappings(kls):
                 kls.versions = one2many("versions",
                     "bungeni.models.domain.%sVersionContainer" % (name),
                     "content_id")
+            # attachmentable
+            if interfaces.IAttachmentable.implementedBy(kls):
+                pass # nothing to do
             return mapper_properties
         for key, prop in configurable_properties(kls, {}).items():
             kls_mapper.add_property(key, prop)
-    mapper_add_configurable_properties(kls, class_mapper(kls))
+    #
+    mapper_add_configurable_properties(kls)
+
 # !+/PARAMETRIZABLE_DOCTYPES
 
 #user address types

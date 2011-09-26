@@ -452,10 +452,13 @@ class IProxiedDirectory(interface.Interface):
 # feature markers - apply to a domain model, to declare it implements feature
 
 class IAuditable(interface.Interface):
-    """Marker interface to apply auditing/object log feature.
+    """Marker interface to apply audit feature.
     """
 class IVersionable(interface.Interface):
-    """Marker to apply versioning feature (requires IAuditable/objectlog)
+    """Marker to apply version feature (requires IAuditable/audit.
+    """
+class IAttachmentable(interface.Interface):
+    """Marker to apply attachment feature.
     """
 
 #

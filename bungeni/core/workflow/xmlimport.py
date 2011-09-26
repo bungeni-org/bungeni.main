@@ -232,12 +232,11 @@ def _load(workflow, name):
         feature_name = strip_none(f.get("name"))
         assert feature_name, "Workflow Feature must define @name"
         # !+ archetype/feature inter-dep; should be part of feature descriptor
-        if feature_name == "version": 
-            assert "audit" in [ fe.name for fe in features ], \
+        feature_enabled = as_bool(strip_none(f.get("enabled")) or "true")
+        if feature_enabled and feature_name == "version": 
+            assert "audit" in [ fe.name for fe in features if fe.enabled ], \
                 "Workflow [%s] has version but no audit feature" % (name)
-        features.append(
-            Feature(feature_name,
-                enabled=as_bool(strip_none(f.get("enabled")) or "true"),
+        features.append(Feature(feature_name, enabled=feature_enabled, 
                 note=strip_none(f.get("note"))))
     
     # global grants

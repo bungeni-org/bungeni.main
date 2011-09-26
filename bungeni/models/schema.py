@@ -50,6 +50,8 @@ def plural(sname):
     """
     return plural.custom.get(sname, None) or "%ss" % (sname)
 plural.custom = {
+    "user_address": "user_addresses",
+    "group_address": "group_addresses",
     "signatory": "signatories",
 }
 
@@ -74,6 +76,10 @@ def configurable_schema(kls):
             secondary_table = parliamentary_items
         globals()[version_tbl_name] = make_versions_table(
             tbl, metadata, secondary_table)
+    # attachmentable
+    if interfaces.IAttachmentable.implementedBy(kls):
+        # !+ current constrain
+        assert change_tbl_name, "May not be IAttachmentable and not IVersionable"
 
 def make_changes_table(table, metadata):
     """Create an object log table for an object.
@@ -123,11 +129,14 @@ def make_versions_table(table, metadata, secondary_table=None):
     versions_name = "%s_versions" % (entity_name)
     fk_id = "%s_id" % (entity_name)
     columns = [
+        # the id of this record
         rdb.Column("version_id", rdb.Integer, primary_key=True),
+        # the id of the "owning" item being versioned !+HEAD_DOCUMENT_ITEM
         rdb.Column("content_id", rdb.Integer, 
             rdb.ForeignKey(table.c[fk_id]), 
             index=True
         ),
+        # the id of the change record triggered by this version !+needed?
         rdb.Column("change_id", rdb.Integer,
             rdb.ForeignKey("%s_changes.change_id" % entity_name)
         ),
@@ -823,6 +832,7 @@ attached_file_types = rdb.Table("attached_file_types", metadata,
 )
 attached_files = rdb.Table("attached_files", metadata,
     rdb.Column("attached_file_id", rdb.Integer, primary_key=True),
+    # the id of the "owning" item !+HEAD_DOCUMENT_ITEM
     rdb.Column("item_id", rdb.Integer,
         rdb.ForeignKey("parliamentary_items.parliamentary_item_id")
     ),
