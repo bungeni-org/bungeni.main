@@ -231,7 +231,7 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
             transitions = wfc.getManualTransitionIds()
         else:
             transitions = (transition,)
-        self.actions = bindTransitions(self, transitions, None, wfc.workflow)
+        self.actions = bindTransitions(self, transitions, wfc.workflow)
         if IWorkspaceContainer.providedBy(self.context.__parent__):
             self._next_url = absoluteURL(self.context.__parent__, self.request)
 
@@ -294,7 +294,7 @@ class WorkflowChangeStateView(WorkflowView):
         
         if transition and require_confirmation is False and method == "POST":
             actions = bindTransitions(
-                self.action_viewlet, (transition,), None, workflow)
+                self.action_viewlet, (transition,), workflow)
             assert len(actions) == 1
             # execute action
             # !+ should pass self.request.form as data? e.g. value is:

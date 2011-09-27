@@ -10,40 +10,30 @@ log = __import__("logging").getLogger("bungeni.ui.forms.workflow")
 
 from zope import component
 from zope.formlib import form
-from zope.security.proxy import removeSecurityProxy
 from zope.annotation.interfaces import IAnnotations
 
-from bungeni.core.interfaces import IVersioned
 from bungeni.models.utils import get_principal_id
 from bungeni.ui.i18n import _
 from bungeni.core.workflow import interfaces
 from bungeni.alchemist.ui import handle_edit_action
 
 
-def bindTransitions(form_instance, transitions, wf_name=None, wf=None):
+def bindTransitions(form_instance, transitions, wf):
     """Bind workflow transitions into formlib actions.
     """
-    if wf_name:
-        success_factory = lambda tid: TransitionHandler(tid, wf_name)
-    else:
-        success_factory = TransitionHandler
     actions = []
     for tid in transitions:
-        d = {}
-        if success_factory:
-            d["success"] = success_factory(tid)
-        if wf is not None:
-            title = _(unicode(wf.get_transition(tid).title))
-            action = form.Action(title, **d)
-        else:
-            action = form.Action(tid, **d)
+        action = form.Action(
+            _(unicode(wf.get_transition(tid).title)), 
+            success=TransitionHandler(tid)
+        )
         action.form = form_instance
-        action.__name__ = "%s.%s"%(form_instance.prefix, action.__name__)
+        action.__name__ = "%s.%s" % (form_instance.prefix, action.__name__)
         actions.append(action)
     return actions
     
 class TransitionHandler(object):
-    """Workflow transition 2 formlib action bindings.
+    """Workflow transition to formlib action binding.
     """
     
     def __init__(self, transition_id, wf_name=None):
