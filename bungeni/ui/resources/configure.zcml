@@ -66,4 +66,10 @@
   	/>
   </resourceLibrary> 
 
+  <resourceLibrary name="multi-calendar-actions" 
+    require="jquery dhtmlxscheduler-multisource">
+    <directory source="jquery"
+        include="jquery.multicalendar.js"
+    />
+  </resourceLibrary>
 </configure>

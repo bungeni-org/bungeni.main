@@ -24,13 +24,14 @@ from zope import interface
 from zope import component
 from zope.location.interfaces import ILocation
 from zope.dublincore.interfaces import IDCDescriptiveProperties
+from zope.publisher.interfaces import IPublishTraverse
 from zope.publisher.browser import BrowserView
+from zope.app.publisher.interfaces.browser import IBrowserMenu
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.app.component.hooks import getSite
 from zope.security.proxy import removeSecurityProxy
 from zope.security.proxy import ProxyFactory
 from zope.security import checkPermission
-from zope.publisher.interfaces import IPublishTraverse
 from zope.formlib import form
 from zope import schema
 from zope.schema.interfaces import IChoice
@@ -296,6 +297,18 @@ class CalendarView(BungeniBrowserView):
             [url.absoluteURL(self.context, self.request), "dhtmlxcalendar.ics"]
         )
 
+    def other_calendars(self):
+        """A list of URLs to other calendars - Loaded when selected"""
+        menu = menu=component.queryUtility(IBrowserMenu,"context_calendar")
+        if menu is None:
+            return []
+        items = menu.getMenuItems(self.context, self.request)
+        colors = misc.generate_hex_colors(len(items))
+        map(lambda item:item[1].update([("color", colors[item[0]])]),
+            enumerate(items)
+        )
+        return items
+
     def render(self, template=None):
         need("dhtmlxscheduler")
         need("dhtmlxscheduler-recurring")
@@ -305,6 +318,8 @@ class CalendarView(BungeniBrowserView):
         need("dhtmlxscheduler-timeline")
         need("dhtmlxscheduler-tooltip")
         need("dhtmlxscheduler-minical")
+        need("dhtmlxscheduler-multisource")
+        need("multi-calendar-actions")
         if template is None:
             template = self.template
         if (not checkPermission(u"bungeni.sitting.Add", self.context)) or \
@@ -714,8 +729,16 @@ class DhtmlxCalendarSittings(BrowserView):
         interface.alsoProvides(self.context, ILocation)
         interface.alsoProvides(self.context, IDCDescriptiveProperties)
         self.__parent__ = context
-               
-                          
+    
+    @property
+    def event_colour(self):
+        if not hasattr(self, "event_color"):
+            rq_color = unicode(self.request.form.get("color", ""))
+            assert len(rq_color) <= 6
+            self._event_color = rq_color
+        return self._event_color
+    
+    
     def __call__(self):
         try:
             date = self.request.get('from')

@@ -4,7 +4,7 @@
       i18n:domain="bungeni"
       metal:use-macro="context/@@standard_macros/page">
       <tal:block metal:fill-slot="header">
-        <script type="text/javascript">           
+        <script type="text/javascript">
            function show_minical(){
               if (scheduler.isCalendarVisible())
                  scheduler.destroyCalendar();
@@ -35,7 +35,7 @@
                 ical_url = ical_url + "?uid=" + uid + date_range
                 window.location = ical_url
             }
-           
+                      
             function init() {
                 scheduler.locale.labels.venues_tab = '<span i18n:translate="" tal:content="string:Venues" tal:omit-tag=""/>';
                 scheduler.config.xml_date="%Y-%m-%d %H:%i";
@@ -149,6 +149,9 @@
           <div class="dhtmlx_calendar_title">
             <span i18n:translate="">Calendar of </span>
             <span tal:replace="view/title"></span>
+          </div>
+          <div id="select-calendars">
+              <span metal:use-macro="view/calendar_macros/selectcalendars"/>
           </div>
           <div id="scheduler_here" class="dhx_cal_container" >
                 <div class="dhx_cal_navline">

@@ -1,6 +1,6 @@
 <data i18n:domain="bungeni">
 <tal:loop tal:repeat="s python:view.sittings">
-<event tal:attributes="id python:s.group_sitting_id">
+<event tal:attributes="id python:s.group_sitting_id; color string:#${view/event_colour}">
 <start_date><span tal:replace="structure python:s.start_date.strftime('%Y-%m-%d %H:%M')"/></start_date>
 <end_date><span tal:replace="structure python:s.end_date.strftime('%Y-%m-%d %H:%M')"/></end_date>
 <text><span tal:replace="structure python:'&lt;![CDATA['"/>
