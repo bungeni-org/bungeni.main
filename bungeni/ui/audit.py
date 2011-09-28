@@ -42,7 +42,7 @@ class ChangeBaseView(browser.BungeniBrowserView):
     
     def listing(self):
         formatter = self.formatter_factory(self.context, self.request,
-                        self.getFeedEntries(),
+                        self.get_feed_entries(),
                         prefix="results",
                         visible_column_names=[ c.name for c in self.columns ],
                         columns=self.columns)
@@ -54,7 +54,7 @@ class ChangeBaseView(browser.BungeniBrowserView):
         auditor = audit.get_auditor(self.context)
         return auditor.change_object
         
-    def getFeedEntries(self):
+    def get_feed_entries(self):
         instance = removeSecurityProxy(self.context)
         session = Session()
         mapper = orm.object_mapper(instance)

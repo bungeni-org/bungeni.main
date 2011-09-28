@@ -36,49 +36,47 @@ class TransitionHandler(object):
     """Workflow transition to formlib action binding.
     """
     
-    def __init__(self, transition_id, wf_name=None):
+    def __init__(self, transition_id):
         self.transition_id = transition_id
-        self.wf_name = wf_name
     
     def __call__(self, form, action, data):
         """Save data, make version and fire transition.
         
         Redirects to the ``next_url`` location.
         """
-        context = getattr(form.context, "_object", form.context)
-        if self.wf_name:
-            wfc = component.getAdapter(
-                context, interfaces.IWorkflowController, self.wf_name)
-        else:
-            wfc = interfaces.IWorkflowController(context)
         result = handle_edit_action(form, action, data)
-        #
         if form.errors: 
             return result
         else:
-            # NOTE: for some reason form.next_url is (always?) None --
-            # for when it is None, we redirect to HTTP_REFERER instead.
+            context = getattr(form.context, "_object", form.context)
             log.debug(""" TransitionHandler.__call__()
-        form=%s 
-        action=(name=%s, label=%s)
-        data=%s
-        principal_id=%s
-        context=%s
-        transition_id=%s
-        result=%s
-        next_url=%s 
-        current_url=%s """ % (form, action.label, action.name, data, 
-                get_principal_id(), context, self.transition_id, 
-                result, form.next_url, form.request.getURL()))
+                form=%s 
+                action=(name=%s, label=%s)
+                data=%s
+                principal_id=%s
+                context=%s
+                transition_id=%s
+                result=%s
+                next_url=%s 
+                current_url=%s """ % (form, action.label, action.name, data, 
+                    get_principal_id(), context, self.transition_id, 
+                    result, form.next_url, form.request.getURL())
+            )
+            
             # dress-up transition data object
             data.setdefault("note", data.get("note", ""))
             data.setdefault("date_active", data.get("date_active", None))
-            # and because WorkflowController API e.g. fireTransition(), ONLY 
+            # !+ because WorkflowController API e.g. fireTransition(), ONLY 
             # foresees for a comment attribute as additional data, we bypass 
             # using that altogether, and pass it along downstream by stuffing 
             # onto the request
             IAnnotations(form.request)["change_data"] = data
-            wfc.fireTransition(self.transition_id)
+            
+            interfaces.IWorkflowController(context).fireTransition(
+                self.transition_id)
+            
+            # NOTE: for some reason form.next_url is (always?) None --
+            # in which case we redirect to HTTP_REFERER instead.
             next_url = form.next_url
             if next_url is None:
                 next_url = form.request["HTTP_REFERER"]
