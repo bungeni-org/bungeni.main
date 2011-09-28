@@ -680,7 +680,7 @@ class Signatory(Entity):
     """
     interface.implements(interfaces.IBungeniContent)
     
-    __dynamic_features__ = False
+    __dynamic_features__ = True
     
     @property
     def owner_id(self):
