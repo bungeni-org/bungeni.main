@@ -43,6 +43,7 @@ Adding a question.
   ...     owner_id=mp_1.user_id,
   ...     language="en")
 
+
 In order to create a participation, we need a principal:
 
   >>> from bungeni.core.testing import set_interaction
@@ -69,26 +70,19 @@ To be versioned, a question should be in a valid state:
 account richer testing possibilities given the above newly added principal 
 interaction
 
-!+DRAFT_VERSION(mr, jul-2011) creating a draft should NOT also create a version.
+    >>> from bungeni.core.workflow.interfaces import IWorkflowController
+    >>> wfc = IWorkflowController(question)
+    >>> wfc
+    <bungeni.core.workflow.states.WorkflowController object at ...>
+    >>> wfc.fireTransition("-draft") 
+    >>> question.status
+    'draft'
 
-  >>> #from bungeni.core.workflow.interfaces import IWorkflowController
-  >>> #wfc = IWorkflowController(question)
-  >>> #wfc
-  #<bungeni.core.workflow.states.WorkflowController object at ...>
-  >>> #wfc.fireTransition("-draft") 
-  >>> #question.status
-  #'draft'
-  #'draft'
-  # FAILS, needs an interaction, etc, so we just hard-set a status instead
-  >>> question.status = 'draft'
-  
 After creating a version, verify availability:
 
-  >>> version = versions.create("New version created ...")
-
-
-  >>> len(tuple(versions.values()))
-  1
+    >>> version = versions.create("New version created ...")
+    >>> len(tuple(versions.values()))
+    1
 
 Cleanup
 -------

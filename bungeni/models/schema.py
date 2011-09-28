@@ -90,8 +90,10 @@ def make_changes_table(table, metadata):
     fk_id = "%s_id" % (entity_name)
     changes_table = rdb.Table(changes_name, metadata,
         rdb.Column("change_id", rdb.Integer, primary_key=True),
+        # the item_id of the "owning" item being logged !+HEAD_DOCUMENT_ITEM
         rdb.Column("content_id", rdb.Integer, 
-            rdb.ForeignKey(table.c[fk_id]), 
+            rdb.ForeignKey(table.c[fk_id]),
+            nullable=False,
             index=True
         ),
         rdb.Column("action", rdb.Unicode(16)),
@@ -131,14 +133,20 @@ def make_versions_table(table, metadata, secondary_table=None):
     columns = [
         # the id of this record
         rdb.Column("version_id", rdb.Integer, primary_key=True),
-        # the id of the "owning" item being versioned !+HEAD_DOCUMENT_ITEM
+        # the item_id of the "owning" item being versioned !+HEAD_DOCUMENT_ITEM
         rdb.Column("content_id", rdb.Integer, 
             rdb.ForeignKey(table.c[fk_id]), 
+            nullable=False,
             index=True
         ),
         # the id of the change record triggered by this version !+needed?
         rdb.Column("change_id", rdb.Integer,
-            rdb.ForeignKey("%s_changes.change_id" % entity_name)
+            rdb.ForeignKey("%s_changes.change_id" % entity_name),
+            #nullable=False # !+VERSION_CHANGE_ID(mr, sep-2011) application 
+            # policy stipulates that a new version is *always* logged also as 
+            # a change, thus this should filed should not be nullable. But, 
+            # setting it so breaks the versions.txt doctest. 
+            # See also related issue: ATTACHED_FILE_VERSIONS
         ),
         rdb.Column("manual", rdb.Boolean, nullable=False, default=False),
     ]
@@ -259,6 +267,7 @@ currently_editing_document = rdb.Table("currently_editing_document", metadata,
     ),
     rdb.Column("currently_editing_id", rdb.Integer,
         rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
+        nullable=False
     ),
     rdb.Column("editing_date", rdb.DateTime(timezone=False)) 
 ) 
@@ -508,7 +517,8 @@ group_item_assignments = rdb.Table("group_assignments", metadata,
     ),
     rdb.Column("item_id", rdb.Integer,
         rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
-        nullable=False),
+        nullable=False
+    ),
     #rdb.Column("object_type", rdb.String(128), nullable=False),
     rdb.Column("group_id", rdb.Integer,
         rdb.ForeignKey("groups.group_id"),
@@ -556,8 +566,6 @@ member_titles = rdb.Table("member_titles", metadata,
 ############
 # Addresses
 ############
-# Adresses can be attached to a user or to a role title 
-# as the official address for this function
 
 address_types = rdb.Table("address_types", metadata,
     rdb.Column("address_type_id", rdb.Integer, primary_key=True),
@@ -834,13 +842,14 @@ attached_files = rdb.Table("attached_files", metadata,
     rdb.Column("attached_file_id", rdb.Integer, primary_key=True),
     # the id of the "owning" item !+HEAD_DOCUMENT_ITEM
     rdb.Column("item_id", rdb.Integer,
-        rdb.ForeignKey("parliamentary_items.parliamentary_item_id")
+        rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
+        nullable=False
     ),
     rdb.Column("attached_file_type_id", rdb.Integer,
         rdb.ForeignKey("attached_file_types.attached_file_type_id"),
         nullable=False
     ),
-    rdb.Column("file_version_id", rdb.Integer),
+    rdb.Column("file_version_id", rdb.Integer), # !+ATTACHED_FILE_VERSIONS
     rdb.Column("file_title", rdb.Unicode(255), nullable=False),
     rdb.Column("file_description", rdb.UnicodeText),
     rdb.Column("file_data", FSBlob(32)),
@@ -1073,6 +1082,7 @@ signatories = rdb.Table("signatories", metadata,
     rdb.Column("signatory_id", rdb.Integer,
         primary_key=True
     ),
+    # the id of the "owning" item !+HEAD_DOCUMENT_ITEM
     rdb.Column("item_id", rdb.Integer,
         rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
         nullable=False,
@@ -1140,7 +1150,7 @@ event_items = rdb.Table("event_items", metadata,
     ),
     rdb.Column("item_id", rdb.Integer,
         rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
-        nullable=True
+        nullable=False
     ),
     rdb.Column("event_date", rdb.DateTime(timezone=False),
         nullable=False

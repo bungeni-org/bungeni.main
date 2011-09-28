@@ -174,17 +174,18 @@ class AuditorFactory(object):
             .version # bungeni.models.domain.*Version
             .versioned # bungeni.core.version.Versioned
         """
-        # At this point, the new version instance (at event.version) is not yet 
-        # persisted to the db (or added to the session!) so its version_id is
-        # still None. We force the issue, by adding it to session and flushing.
         session = Session()
         session.add(event.version)
+
+        # !+version_id At this point, new version instance (at event.version) is not yet 
+        # persisted to the db (or added to the session!) so its version_id is
+        # still None. We force the issue, by adding it to session and flushing.
         session.flush()
         # as base description, record a the version object's title
         description = event.message
         # extras, that may be used e.g. to elaborate description at runtime        
         extras = {
-            "version_id": event.version.version_id
+            "version_id": event.version.version_id # !+version_id
         }
         return self._objectChanged("new-version", object, description, extras)
         #vkls = getattr(domain, "%sVersion" % (object.__class__.__name__))
