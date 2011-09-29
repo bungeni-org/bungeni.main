@@ -2,7 +2,7 @@
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       i18n:domain="bungeni">
 <metal:eventformhtml define-macro="eventformhtml">
-    <div class="dhl_cal_ltext" style="height:90px;">
+    <div class="dhl_cal_ltext" style="height:auto;">
         <table>
             <metal:block tal:repeat="widget view/partial_event_form/get_widgets">
                 <tr>

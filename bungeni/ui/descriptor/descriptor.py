@@ -2784,6 +2784,13 @@ class SittingDescriptor(ModelDescriptor):
     display_name = _("Sitting")
     container_name = _("Sittings")
     fields = [
+        Field(name="short_name",
+            modes="view edit add listing",
+            localizable=[
+                show("view edit listing")
+            ],
+            property=schema.TextLine(title=_(u"Name of activity")),
+        ),
         LanguageField("language"),
         #Sitting type is commented out below because it is not set during
         #creation of a sitting but is left here because it may be used in the
@@ -2849,7 +2856,40 @@ class SittingDescriptor(ModelDescriptor):
                 ),
                 required=False
             ),
-        )
+        ),
+        Field(name="activity_type",
+            modes="view edit add",
+            localizable=[
+                show("view edit add")
+            ],
+            property=schema.Choice(title=_(u"Activity Type"),
+                description=_(u"Sitting Activity Type"),
+                vocabulary="bungeni.vocabulary.SittingActivityTypes",
+                required=False
+            ),
+        ),
+        Field(name="meeting_type",
+            modes="view edit add",
+            localizable=[
+                show("view edit add")
+            ],
+            property=schema.Choice(title=_(u"Meeting Type"),
+                description=_(u"Sitting Meeting Type"),
+                vocabulary="bungeni.vocabulary.SittingMeetingTypes",
+                required=False
+            ),
+        ),
+        Field(name="convocation_type",
+            modes="view edit add",
+            localizable=[
+                show("view edit add")
+            ],
+            property=schema.Choice(title=_(u"Convocation Type"),
+                description=_(u"Sitting Convocation Type"),
+                vocabulary="bungeni.vocabulary.SittingConvocationTypes",
+                required=False
+            ),
+        ),
     ]
     schema_invariants = [EndAfterStart]
     custom_validators = [

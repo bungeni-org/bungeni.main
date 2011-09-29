@@ -334,11 +334,6 @@ class GroupSitting(Entity):
         "bungeni.models.domain.ItemScheduleContainer", "group_sitting_id")
     sreports = one2many("sreports",
         "bungeni.models.domain.Report4SittingContainer", "group_sitting_id")
-    
-    @property
-    def short_name(self):
-        return self.start_date.strftime("%d %b %y %H:%M")
-
 
 class GroupSittingType(object):
     """Type of sitting: morning/afternoon/... 

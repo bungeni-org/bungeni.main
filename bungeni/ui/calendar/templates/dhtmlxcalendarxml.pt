@@ -3,9 +3,19 @@
 <event tal:attributes="id python:s.group_sitting_id; color string:#${view/event_colour}">
 <start_date><span tal:replace="structure python:s.start_date.strftime('%Y-%m-%d %H:%M')"/></start_date>
 <end_date><span tal:replace="structure python:s.end_date.strftime('%Y-%m-%d %H:%M')"/></end_date>
+<short_name><span tal:replace="s/short_name"/></short_name>
+<activity_type><span tal:replace="s/activity_type"/></activity_type>
+<meeting_type><span tal:replace="s/meeting_type"/></meeting_type>
+<convocation_type><span tal:replace="s/convocation_type"/></convocation_type>
 <text><span tal:replace="structure python:'&lt;![CDATA['"/>
+<tal:activity tal:condition="s/short_name">
+<span tal:replace="s/short_name"/>
+</tal:activity>
+<tal:noactivity tal:condition="not:s/short_name">
+<span i18n:translate="">Sitting</span>
+</tal:noactivity>
 <tal:withvenue tal:condition="s/venue|nothing">
-<b><span tal:omit-tag="" i18n:translate="">Sitting</span> : </b>
+<b><span tal:omit-tag="">&nbsp;&ndash;&nbsp;</span></b>
 <span tal:replace="s/venue/dc:title"/><br/>
 </tal:withvenue>
 <tal:novenue tal:condition="not:s/venue|nothing">

@@ -171,6 +171,18 @@
         provides="bungeni.ui.interfaces.ITreeVocabulary"
         component=".vocabulary.subject_terms_vocabulary"
     />
+    <utility name="bungeni.vocabulary.SittingActivityTypes"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+        component=".vocabulary.sitting_activity_types"
+    />
+    <utility name="bungeni.vocabulary.SittingMeetingTypes"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+        component=".vocabulary.sitting_meeting_types"
+    />
+    <utility name="bungeni.vocabulary.SittingConvocationTypes"
+        provides="zope.schema.interfaces.IVocabularyFactory"
+        component=".vocabulary.sitting_convocation_types"
+    />
     <!--
    <utility
       name="bungeni.vocabulary.weekdays"

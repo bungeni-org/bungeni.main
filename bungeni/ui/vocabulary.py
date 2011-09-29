@@ -1145,12 +1145,18 @@ class FlatVDEXVocabulary(VDEXVocabularyMixin):
         terms = []
         assert self.vdex.isFlat() is True
         for (key,data) in all_terms.iteritems():
-            term = vocabulary.SimpleTerm(key, data[0], data[0])
+            term = vocabulary.SimpleTerm(key, key, data[0])
             terms.append(term)
         return vocabulary.SimpleVocabulary(terms)
 
 subject_terms_vocabulary = BaseVDEXVocabulary("subject-terms.vdex")
 
+#
+# Sitting flat VDEX based vocabularies
+#
+sitting_activity_types = FlatVDEXVocabulary("sitting-activity-types.vdex")
+sitting_meeting_types = FlatVDEXVocabulary("sitting-meeting-types.vdex")
+sitting_convocation_types = FlatVDEXVocabulary("sitting-convocation-types.vdex")
 
 #
 # Vocaularies for XML configuration based report generation
