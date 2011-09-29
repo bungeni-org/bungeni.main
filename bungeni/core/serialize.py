@@ -22,8 +22,6 @@ custom = {
 }
 
 def setupStorageDirectory(part_target="xml_db"):
-    # we start in buildout/src/bungeni.core/bungeni/core
-    # we end in buildout/parts/index
     # TODO: this is probably going to break with package restucturing
     store_dir = __file__
     x = 0
@@ -44,7 +42,7 @@ def publish_to_xml(context, type='', include=['event','versions']):
     """
     try:
         context = removeSecurityProxy(context)
-        data = obj2dict(context,1,parent=None,include=include,exclude=['file_data', 'image', 'logo_data'])
+        data = obj2dict(context,1,parent=None,include=include,exclude=['file_data', 'image', 'logo_data','event_item'])
         if not type:
             type = context.type
             data['permissions']= []
@@ -90,7 +88,8 @@ def singular(pname):
     return pname
 
 def serialize(data, name='object'):
-    content_elem = Element(name)
+    content_elem = Element('contenttype')
+    content_elem.attrib['name'] = name 
     _serialize(content_elem, data)
     tree = ElementTree(content_elem)
     f = StringIO()
@@ -103,6 +102,8 @@ def _serialize(parent_elem, data):
     elif isinstance(data, dict):
         _serialize_dict(parent_elem, data)
     else:
+        parent_elem.attrib['name'] = parent_elem.tag
+        parent_elem.tag = 'field'
         parent_elem.text = unicode(data)
 
 def _serialize_list(parent_elem, data_list):
@@ -126,6 +127,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[]):
         # Get additional attributes
         for name in include:
             value = getattr(obj, name)
+            if not name.endswith('s'): name += 's'
             if isinstance(value, collections.Iterable):
                 res = []
                 for item in value.values():
