@@ -16,5 +16,6 @@ END:VCALENDAR"""
 ICAL_EVENT_TEMPLATE = """BEGIN:VEVENT
 DTSTART:%(event_start)s
 DTEND:%(event_end)s
+LOCATION:%(event_venue)s
 SUMMARY:%(event_summary)s
 END:VEVENT"""

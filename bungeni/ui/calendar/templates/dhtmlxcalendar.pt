@@ -31,7 +31,7 @@
                     end.getFullYear(), end.getMonth()+1, end.getDate()
                 );
                 uid = scheduler.uid()
-                date_range = "&amp;start=" + s_start.join("-") + "&amp;end=" + s_end.join("-");
+                date_range = "&amp;from=" + s_start.join("-") + "&amp;to=" + s_end.join("-");
                 ical_url = ical_url + "?uid=" + uid + date_range
                 window.location = ical_url
             }

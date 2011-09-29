@@ -766,7 +766,10 @@ class DhtmlxCalendarSittingsIcal(DhtmlxCalendarSittings):
             config.ICAL_EVENT_TEMPLATE % dict(
                 event_start=sitting.start_date.strftime("%Y%m%dT%H%M%S"),
                 event_end=sitting.end_date.strftime("%Y%m%dT%H%M%S"),
-                event_summary = IDCDescriptiveProperties(sitting).verbose_title,
+                event_venue=(IDCDescriptiveProperties(sitting.venue).title if
+                    hasattr(sitting, "venue") else u""
+                ),
+                event_summary=IDCDescriptiveProperties(sitting).verbose_title,
             )
             for sitting in self.sittings
         ]
