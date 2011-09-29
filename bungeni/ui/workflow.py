@@ -1,3 +1,13 @@
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""Workflow UI
+
+$Id$
+"""
+log = __import__("logging").getLogger("bungeni.ui.workflow")
+
 
 import datetime
 
@@ -277,43 +287,42 @@ class WorkflowChangeStateView(WorkflowView):
     # zpt
     #ajax_template = ViewPageTemplateFile("templates/workflow_ajax.pt")
     
-    def __call__(self, headless=False, transition_id=None):
+    def __call__(self, transition_id=None, headless=False):
+        # parameters coming in via URL querystring or post vars !
         method = self.request["REQUEST_METHOD"]
+        # !+ALWAYS_POST(mr, sep-2011) requests coming from link clicks (GETs) 
+        # from the bungenu Web UI seem to always be intercepted and switched 
+        # into POSTs.
         workflow = interfaces.IWorkflow(self.context)
         
-        # !+REWITE(mr, jun-2011) the following needs to be rewritten!
-        if transition_id:
-            transition = workflow.get_transition(transition_id)
-            require_confirmation = getattr(
-                transition, "require_confirmation", False)
+        require_confirmation = True
+        if transition_id is not None: 
             self.update(transition_id)
+            require_confirmation = workflow.get_transition(transition_id
+                ).require_confirmation
         else:
             self.update()
         
-        if transition_id and require_confirmation is False and method == "POST":
+        if (not require_confirmation and method == "POST"):
             actions = bindTransitions(
                 self.action_viewlet, (transition_id,), workflow)
             assert len(actions) == 1
             # execute action
             # !+ should pass self.request.form as data? e.g. value is:
             # {u"next_url": u"...", u"transition": u"submit_response"}
-            result = actions[0].success({}) 
-            # !+REWITE(mr, jun-2011) this result is never used!
+            result = actions[0].success({})
+            # !+UNUSED(mr, jun-2011) this result is never used!
         
-        if headless is True:
+        if headless:
             actions = get_actions("context_workflow", self.context, self.request)
             state_title = workflow.get_state(self.context.status).title
             result = self.ajax_template(actions=actions, state_title=state_title)
-            
-            # !+REWITE(mr, jun-2011) require_confirmation only defined when 
-            # transition_id is True!
-            if require_confirmation is True:
+            if require_confirmation:
                 self.request.response.setStatus(403)
             else:
                 self.request.response.setStatus(200)
                 self.request.response.setResult(result)
                 self.request.response.setHeader("Content-Type", "text/xml")
-            
             return result
             
         template = self.template()

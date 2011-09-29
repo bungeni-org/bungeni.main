@@ -262,11 +262,13 @@ class WorkflowSubMenuItem(BrowserSubMenuItem):
 
 class WorkflowMenu(BrowserMenu):
     def getMenuItems(self, context, request):
-        """Return menu item entries in a TAL-friendly form."""
+        """Return menu item entries in a TAL-friendly form.
+        !+TAL-friendly(mr, sep-2011) means what?
+        """
         if (not interfaces.IWorkspaceOrAdminSectionLayer.providedBy(request) or
-            interfaces.IFormEditLayer.providedBy(request) or
-            IVersion.providedBy(context)
-        ):
+                interfaces.IFormEditLayer.providedBy(request) or
+                IVersion.providedBy(context)
+            ):
             return ()
         #!+wfc.workflow
         wf = IWorkflow(context, None)
@@ -274,12 +276,12 @@ class WorkflowMenu(BrowserMenu):
             return ()
         #state = IWorkflowController(context).state_controller.get_status()
         wfc = IWorkflowController(context)
-        wf = wfc.workflow  # !+wfc.workflow
+        wf = wfc.workflow
         tids = wfc.getManualTransitionIds()
 
         parliament_id = getCurrentParliamentId()
-        _url = url.absoluteURL(context, request)
-        site_url2 = url.absoluteURL(getSite(), request)
+        context_url = url.absoluteURL(context, request)
+        site_url = url.absoluteURL(getSite(), request)
         results = []
         for tid in tids:
             state_transition = wf.get_transition(tid)
@@ -287,16 +289,18 @@ class WorkflowMenu(BrowserMenu):
             #we are on workspace or not.
             #Fix for bug 319
             #Someone should probably review this.
-            if _url == site_url2:
-                transition_url = site_url2 + \
+            if context_url == site_url:
+                raise Warning("!+(mr, sep-2011) does this ever execute? "
+                    "YES! Please report!")
+                transition_url = site_url + \
                              "/archive/browse/parliaments/obj-" + \
                              str(parliament_id) + \
                              "/change_workflow_state?" + \
                              "transition=%s&next_url=..." % tid
             else:
-                transition_url = _url + \
-                             "/change_workflow_state?"\
-                             "transition=%s&next_url=..." % tid
+                transition_url = \
+                    "%s/change_workflow_state?transition_id=%s&next_url=..." % (
+                        context_url, tid)
             extra = {"id": "workflow-transition-%s" % tid,
                      "separator": None,
                      "class": ""}
