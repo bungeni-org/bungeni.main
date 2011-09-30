@@ -19,7 +19,6 @@ from bungeni.core.translation import get_language
 from bungeni.core.translation import get_all_languages
 from bungeni.core.translation import get_available_translations
 from bungeni.core import schedule
-from bungeni.core.globalsettings import getCurrentParliamentId
 
 from bungeni.ui.i18n import  _
 from bungeni.ui.utils import url
@@ -278,45 +277,28 @@ class WorkflowMenu(BrowserMenu):
         wfc = IWorkflowController(context)
         wf = wfc.workflow
         tids = wfc.getManualTransitionIds()
-
-        parliament_id = getCurrentParliamentId()
-        context_url = url.absoluteURL(context, request)
-        site_url = url.absoluteURL(getSite(), request)
+        
+        _url = url.absoluteURL(context, request)
         results = []
         for tid in tids:
-            state_transition = wf.get_transition(tid)
-            #Compares the current url to homepage to determine whether
-            #we are on workspace or not.
-            #Fix for bug 319
-            #Someone should probably review this.
-            if context_url == site_url:
-                raise Warning("!+(mr, sep-2011) does this ever execute? "
-                    "YES! Please report!")
-                transition_url = site_url + \
-                             "/archive/browse/parliaments/obj-" + \
-                             str(parliament_id) + \
-                             "/change_workflow_state?" + \
-                             "transition=%s&next_url=..." % tid
-            else:
-                transition_url = \
-                    "%s/change_workflow_state?transition_id=%s&next_url=..." % (
-                        context_url, tid)
+            transit_url = \
+                "%s/change_workflow_state?transition_id=%s&next_url=..." % (
+                    _url, tid)
             extra = {"id": "workflow-transition-%s" % tid,
                      "separator": None,
                      "class": ""}
-            state_title = translate(str(state_transition.title),
-                    domain="bungeni",
-                    context=request)
+            state_title = translate(str(wf.get_transition(tid).title),
+                domain="bungeni",
+                context=request)
             results.append(
                 dict(title=state_title,
                      description="",
-                     action=transition_url,
+                     action=transit_url,
                      selected=False,
                      transition_id=tid,
                      icon=None,
                      extra=extra,
                      submenu=None))
-
         return results
 
 
