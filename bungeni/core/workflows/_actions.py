@@ -114,21 +114,16 @@ def _group_dissolved(context):
 
 # committee
 
-_committee_create = _group_draft
+_committee_draft = _group_draft
 _committee_active = _group_active
 _committee_dissolved = _group_dissolved
 
 
 # parliament
 
-_parliament_create = _group_draft
+_parliament_draft = _group_draft
 _parliament_active = _group_active
 _parliament_dissolved = _group_dissolved
-
-def _parliament_draft(context):
-    """ Publish XML on parliament deactivation
-    """
-    publish_to_xml(context, type='parliament', include=['preports', 'committees'])
 
 
 # groupsitting
