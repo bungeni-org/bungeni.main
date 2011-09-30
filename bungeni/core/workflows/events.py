@@ -27,12 +27,9 @@ def initializeWorkflow(object, event):
     """In response to object created events.
     event:zope.lifecycleevent.ObjectCreatedEvent
     """
-    if interfaces.IWorkflow(object, None) is None:
-        return
-    
-    workflow = interfaces.IWorkflowController(object, None)
-    if workflow is not None:
-        workflow.fireAutomatic()
+    wfc = interfaces.IWorkflowController(object, None)
+    if wfc is not None:
+        wfc.fireAutomatic()
 
 
 def fireAutomaticTransitions(object, event):

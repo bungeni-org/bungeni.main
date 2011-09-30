@@ -16,10 +16,6 @@
         for="bungeni.alchemist.interfaces.IAlchemistContent
             zope.lifecycleevent.IObjectCreatedEvent"
     />
-    <subscriber handler=".events.initializeWorkflow"
-        for="bungeni.models.interfaces.IVersion
-            zope.lifecycleevent.IObjectCreatedEvent"
-    />
     <subscriber handler=".schedule.handleSchedule"
         for="bungeni.models.interfaces.IGroupSitting
             zope.lifecycleevent.IObjectModifiedEvent" 

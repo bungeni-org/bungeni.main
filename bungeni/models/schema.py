@@ -220,9 +220,15 @@ users = rdb.Table("users", metadata,
     rdb.Column("salt", rdb.String(24)),
     rdb.Column("description", rdb.UnicodeText),
     rdb.Column("image", rdb.Binary),
+    # !+active_p(mr, sep-2011) why is this "workflow status" column named
+    # "active_p" and not "status"? Rename...
+    # !+active_p(mr, sep-2011) why have identically named columns here and on 
+    # group_memberships, with one being a string and other a bool?
     rdb.Column("active_p", rdb.String(1),
         rdb.CheckConstraint("""active_p in ('A', 'I', 'D')"""),
-        default="A", # active/inactive/deceased
+        # !+active_p(mr, sep-2011) workflow status columns MUST not have a
+        # default value--it is up to the workflow to decide what this should be!
+        #default="A", # active/inactive/deceased
     ),
     # comment out for now - will be used for user preferences
     rdb.Column("receive_notification", rdb.Boolean, default=True),
