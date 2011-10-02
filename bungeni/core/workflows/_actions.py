@@ -65,6 +65,10 @@ def _address_private(context):
     if user_login:
         utils.assign_owner_role(context, user_login)
 
+def _address_attached(context):
+    publish_to_xml(context)
+
+
 
 # agendaitem
 
@@ -84,7 +88,7 @@ def _bill_gazetted(context):
     utils.setBillPublicationDate(context)
     utils.set_pi_registry_number(context)
     utils.pi_update_signatories(context)
-
+    publish_to_xml(context)
 
 # group
 
@@ -177,7 +181,7 @@ def _question_admissible(context):
     or is available for scheduling in a sitting.
     """
     dbutils.setQuestionSerialNumber(context)
-
+    publish_to_xml(context)
 
 
 
@@ -271,3 +275,8 @@ def _event_private(context):
     login = utils.get_principal_id()
     if login is not None:
         utils.assign_owner_role(context, login)
+
+def _event_attached(context):
+    publish_to_xml(context)
+
+
