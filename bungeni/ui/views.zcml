@@ -68,7 +68,7 @@
      />
 
     <browser:view for="bungeni.models.interfaces.IAttachedFile"
-        permission="bungeni.attachedfile.wf.attached.internal.inactive"
+        permission="bungeni.attachedfile.wf.attached.inactive"
         name="deactivate"
         class=".file.FileDeactivate"
     /><!-- !+WORKFLOW_TRANSITION(mr, feb-2011) -->

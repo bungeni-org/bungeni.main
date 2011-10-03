@@ -173,6 +173,7 @@ class Transition(object):
     
     @property
     def id(self):
+        # source may be either a valid starus_id or None
         return "%s-%s" % (self.source or "", self.destination)
     
     def __cmp__(self, other):

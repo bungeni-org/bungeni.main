@@ -78,8 +78,8 @@ bungeni.core.workflow.xmlimport.zcml_check_regenerate()
 It would need to be regenerated when any workflow transition is modified 
 or added, a condition that is checked for and flagged automatically.
 
-Defines a DEDICATED permission per workflow TRANSITION, and grants it to
-the various Roles, as specified by each transition.
+Defines a DEDICATED permission per workflow XML-TRANSITION, and grants it 
+to the various Roles, as specified in same transition definition.
 
 See the Bungeni Source Code Style Guide for further details. 
 
@@ -90,7 +90,8 @@ See the Bungeni Source Code Style Guide for further details.
 """
 
 def strip_none(s):
-    """Ensure non-empty whitespace-stripped string, else None."""
+    """Ensure non-empty whitespace-stripped string, else None.
+    """
     if s is not None:
         return s.strip() or None
     return None
@@ -111,10 +112,12 @@ def zcml_check_regenerate():
     """Called after all XML workflows have been loaded (see adapers.py).
     """
     #!+permissions.zcml(mr, aug-2011) bypass writing to disk?
-    # ZCML_FILENAME is under bungeni.core.workflows
-    import bungeni.core.workflows
-    __path__ = os.path.dirname(bungeni.core.workflows.__file__)
-    filepath = os.path.join(__path__, ZCML_FILENAME)
+    def get_filepath():
+        # ZCML_FILENAME is under bungeni.core.workflows
+        import bungeni.core.workflows
+        __path__ = os.path.dirname(bungeni.core.workflows.__file__)
+        return os.path.join(__path__, ZCML_FILENAME)
+    filepath = get_filepath()
     # read current file
     persisted = open(filepath, "r").read().decode("utf-8")
     # regenerate, compare, and re-write if needed
@@ -166,7 +169,7 @@ def _load(workflow, name):
     wuids = set() # unique IDs in this XML workflow file
     note = strip_none(workflow.get("note"))
     
-    # initial_state, must be ""
+    # initial_state, in XML this must be ""
     assert workflow.get("initial_state") == "", "Workflow [%s] initial_state " \
         "attribute must be empty string, not [%s]" % (
             name, workflow.get("initial_state"))
@@ -194,7 +197,7 @@ def _load(workflow, name):
         for state in states:
             if state.id == state_id:
                 return state
-        assert False, 'Invalid value: like_state="%s"' % (state_id)
+        raise ValueError('Invalid value: like_state="%s"' % (state_id))
     
     def check_add_permission(permissions, like_permissions, assignment, p, r):
         for perm in [(GRANT, p, r), (DENY, p, r)]:
@@ -344,9 +347,17 @@ def _load(workflow, name):
         destination = t.get("destination")
         assert destination in STATE_IDS, \
             "Unknown transition destination state [%s]" % (destination)
-        # update ZCML for dedicated permission for (XML multi-source) transition
+        # update ZCML for dedicated permission for XML multi-source transition.
+        # Given that, irrespective of how sources are grouped into multi-source 
+        # XML <transition> elements, there may be only *one* path from any 
+        # given *source* to any given *destination* state, it suffices to use
+        # only the first source element + the destination to guarantee a unique
+        # identifier for an XML transition element.
+        # !+permission_id note the "-" char is not allowed as within a 
+        # permission id (so we use "." also here).
         tid = "%s.%s" % (
-            ".".join([ source or "" for source in sources ]),
+            #".".join([ source or "" for source in sources ]),
+            sources[0] or "",
             destination)
         pid = "bungeni.%s.wf.%s" % (name, tid)
         if not ZCML_PROCESSED:
