@@ -71,8 +71,8 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.agendaitem.wf.submitted_signatories.redraft" title="Redraft" />
 <grant permission="bungeni.agendaitem.wf.submitted_signatories.redraft" role="bungeni.Owner" />
 
-<permission id="bungeni.agendaitem.wf.redraft.withdrawn_external" title="Drop" />
-<grant permission="bungeni.agendaitem.wf.redraft.withdrawn_external" role="bungeni.Owner" />
+<permission id="bungeni.agendaitem.wf.redraft.withdrawn_signatory" title="Drop" />
+<grant permission="bungeni.agendaitem.wf.redraft.withdrawn_signatory" role="bungeni.Owner" />
 
 <permission id="bungeni.agendaitem.wf.submitted.received" title="Receive" />
 <grant permission="bungeni.agendaitem.wf.submitted.received" role="bungeni.Clerk" />
@@ -161,8 +161,8 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.bill.wf.submitted_signatories.redraft" title="Redraft" />
 <grant permission="bungeni.bill.wf.submitted_signatories.redraft" role="bungeni.Owner" />
 
-<permission id="bungeni.bill.wf.redraft.withdrawn_external" title="Drop" />
-<grant permission="bungeni.bill.wf.redraft.withdrawn_external" role="bungeni.Owner" />
+<permission id="bungeni.bill.wf.redraft.withdrawn_signatory" title="Drop" />
+<grant permission="bungeni.bill.wf.redraft.withdrawn_signatory" role="bungeni.Owner" />
 
 <permission id="bungeni.bill.wf.submitted.received" title="Receive" />
 <grant permission="bungeni.bill.wf.submitted.received" role="bungeni.Clerk" />
@@ -377,8 +377,8 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.motion.wf.submitted_signatories.redraft" title="Redraft" />
 <grant permission="bungeni.motion.wf.submitted_signatories.redraft" role="bungeni.Owner" />
 
-<permission id="bungeni.motion.wf.redraft.withdrawn_external" title="Drop" />
-<grant permission="bungeni.motion.wf.redraft.withdrawn_external" role="bungeni.Owner" />
+<permission id="bungeni.motion.wf.redraft.withdrawn_signatory" title="Drop" />
+<grant permission="bungeni.motion.wf.redraft.withdrawn_signatory" role="bungeni.Owner" />
 
 <permission id="bungeni.motion.wf.submitted.received" title="Receive" />
 <grant permission="bungeni.motion.wf.submitted.received" role="bungeni.Clerk" />
@@ -487,8 +487,8 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.question.wf.submitted_signatories.redraft" title="Redraft" />
 <grant permission="bungeni.question.wf.submitted_signatories.redraft" role="bungeni.Owner" />
 
-<permission id="bungeni.question.wf.redraft.withdrawn_external" title="Drop" />
-<grant permission="bungeni.question.wf.redraft.withdrawn_external" role="bungeni.Owner" />
+<permission id="bungeni.question.wf.redraft.withdrawn_signatory" title="Drop" />
+<grant permission="bungeni.question.wf.redraft.withdrawn_signatory" role="bungeni.Owner" />
 
 <permission id="bungeni.question.wf.submitted.received" title="Receive" />
 <grant permission="bungeni.question.wf.submitted.received" role="bungeni.Clerk" />
@@ -587,8 +587,8 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.tableddocument.wf.submitted_signatories.redraft" title="Redraft" />
 <grant permission="bungeni.tableddocument.wf.submitted_signatories.redraft" role="bungeni.Owner" />
 
-<permission id="bungeni.tableddocument.wf.redraft.withdrawn_external" title="Drop" />
-<grant permission="bungeni.tableddocument.wf.redraft.withdrawn_external" role="bungeni.Owner" />
+<permission id="bungeni.tableddocument.wf.redraft.withdrawn_signatory" title="Drop" />
+<grant permission="bungeni.tableddocument.wf.redraft.withdrawn_signatory" role="bungeni.Owner" />
 
 <permission id="bungeni.tableddocument.wf.submitted.received" title="Receive" />
 <grant permission="bungeni.tableddocument.wf.submitted.received" role="bungeni.Clerk" />
