@@ -251,8 +251,8 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.bill.wf.submitted.withdrawn_internal" title="Withdraw" />
 <grant permission="bungeni.bill.wf.submitted.withdrawn_internal" role="bungeni.Owner" />
 
-<permission id="bungeni.bill.wf.submitted.withdrawn" title="Withdraw" />
-<grant permission="bungeni.bill.wf.submitted.withdrawn" role="bungeni.Clerk" />
+<permission id="bungeni.bill.wf.gazetted.withdrawn" title="Withdraw" />
+<grant permission="bungeni.bill.wf.gazetted.withdrawn" role="bungeni.Clerk" />
 
 
 <!-- committee -->

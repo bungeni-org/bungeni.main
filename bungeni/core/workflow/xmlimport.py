@@ -44,8 +44,8 @@ STATE_ATTRS = ("id", "title", "version", "like_state", "note",
     "permissions_from_parent", "obsolete")
 
 TRANS_ATTRS_REQUIREDS = ("title", "source", "destination")
-TRANS_ATTRS_OPTIONALS = ("condition", "trigger", "roles", "order", 
-    "require_confirmation", "note")
+TRANS_ATTRS_OPTIONALS = ("grouping_unique_sources", "condition", "trigger", 
+    "roles", "order", "require_confirmation", "note")
 TRANS_ATTRS = TRANS_ATTRS_REQUIREDS + TRANS_ATTRS_OPTIONALS
 
 

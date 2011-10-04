@@ -151,6 +151,7 @@ class Transition(object):
     """
     
     def __init__(self, title, source, destination,
+            grouping_unique_sources=None,
             condition=None,
             trigger=interfaces.MANUAL, 
             permission=CheckerPublic,
@@ -162,6 +163,7 @@ class Transition(object):
         self.title = title
         self.source = source
         self.destination = destination
+        self.grouping_unique_sources = grouping_unique_sources
         self._raw_condition = condition # remember unwrapped condition
         self.condition = wrapped_condition(condition)
         self.trigger = trigger
@@ -273,6 +275,7 @@ class Workflow(object):
         self._transitions_by_id = {} # {id: Transition}
         self._transitions_by_source = {} # {source: [Transition]}
         self._transitions_by_destination = {} # {destination: [Transition]}
+        self._transitions_by_grouping_unique_sources = {} # {grouping: [Transition]}
         self._permission_role_pairs = None # set([ (permission, role) ])
         self.refresh(states, transitions)
     
@@ -285,6 +288,8 @@ class Workflow(object):
         tbys.clear()
         tbyd = self._transitions_by_destination
         tbyd.clear()
+        tbygus = self._transitions_by_grouping_unique_sources
+        tbygus.clear()
         # states
         tbys[self.initial_state] = [] # special case source: initial state
         for s in states:
@@ -299,6 +304,7 @@ class Workflow(object):
             tbyid[tid] = t
             tbys[t.source].append(t)
             tbyd[t.destination].append(t)
+            tbygus.setdefault(t.grouping_unique_sources, []).append(t)
         # integrity
         self.validate()
     
@@ -343,6 +349,15 @@ class Workflow(object):
                 assert sources, \
                     "Unreachable state [%s] in Workflow [%s]" % (
                         dest_id, self.name)
+        # inter-transition validation
+        # grouping_unique_sources - used to semantically connect multiple 
+        # transitions and constrain that accumulative sources are unique
+        for grouping, ts in self._transitions_by_grouping_unique_sources.items():
+            if grouping is not None:
+                all_sources = [ t.source for t in ts ]
+                assert len(all_sources)==len(set(all_sources)), "Duplicate " \
+                    "sources in grouped transitions [%s] in workflow [%s]" % (
+                        grouping, self.name)
     
     def has_feature(self, name):
         """Does this workflow enable the named feature?
