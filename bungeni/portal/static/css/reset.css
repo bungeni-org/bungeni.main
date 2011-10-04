@@ -1650,6 +1650,23 @@ body.template-workspace.section-bungeni-workspace #portal-column-content div#wha
     clear:both;
     width:99.5%;
 }
+.template-workspace.section-bungeni-admin dl.portalMessage {
+    margin-top:-25px !important;
+    margin-bottom:25px !important;
+    float:left;
+    margin-left:0.2%;
+    height:15px;
+    clear:both;
+    width:85%;
+}
+.template-workspace.section-bungeni-workspace dl.portalMessage {
+    margin-top:-20px !important;
+    margin-bottom:25px !important;
+    margin-left:0.2%;
+    height:15px;
+    clear:both;
+    width:85%;
+}
 .template-workspace .formPanel  #display_form_spacer {
     width: 95%;
     height:20px;
