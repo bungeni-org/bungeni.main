@@ -154,9 +154,10 @@
     <class class="bungeni.models.domain.Report">
         <implements interface="ore.xapian.interfaces.IIndexable" />
     </class>
-    <!-- Workflow -->
-    <include package=".workflows" />
     
+    <!-- Workflow -->
+    <include package=".workflows" file="permissions.zcml" />
+        
     <!-- Pluggable Traversal for Parliamentary Content -->
     <adapter for="bungeni.models.interfaces.IBungeniContent
             zope.publisher.interfaces.IPublisherRequest"
