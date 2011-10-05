@@ -11,44 +11,59 @@ log = __import__("logging").getLogger("bungeni.core.audit")
 from datetime import datetime
 from types import StringTypes
 
+from zope.lifecycleevent import IObjectModifiedEvent, IObjectCreatedEvent, \
+    IObjectRemovedEvent
+    
 from zope.annotation.interfaces import IAnnotations
 from zope.security.proxy import removeSecurityProxy
 from zope import lifecycleevent
 
-from bungeni.core import workflow
-from bungeni.alchemist.interfaces import IRelationChange
-from bungeni.alchemist import Session
 from sqlalchemy import orm
+from bungeni.alchemist import Session
+from bungeni.alchemist.interfaces import IRelationChange
+
+from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowTransitionEvent
+from bungeni.core.interfaces import IVersionCreated, IVersionReverted
 
 from bungeni.models import schema, domain
 from bungeni.models.utils import get_db_user_id
-from bungeni.models import interfaces
+from bungeni.models.interfaces import IAuditable
 from bungeni.ui.utils import common
+from bungeni.utils import register
 
 from i18n import _ 
 
 
 # public handlers
 
+@register.handler(adapts=(IAuditable, IObjectCreatedEvent))
 def objectAdded(ob, event):
     auditor = get_auditor(ob)
     auditor.objectAdded(removeSecurityProxy(ob), event)
 
+
+@register.handler(adapts=(IAuditable, IObjectModifiedEvent))
 def objectModified(ob, event):
     auditor = get_auditor(ob)
     if getattr(event, "change_id", None):
         return
     auditor.objectModified(removeSecurityProxy(ob), event)
 
+
+@register.handler(adapts=(IAuditable, IObjectRemovedEvent))
 def objectDeleted(ob, event):
     auditor = get_auditor(ob)
     auditor.objectDeleted(removeSecurityProxy(ob), event)
 
+
+@register.handler(adapts=(IAuditable, IWorkflowTransitionEvent))
 def objectStateChange(ob, event):
     auditor = get_auditor(ob)
     change_id = auditor.objectStateChanged(removeSecurityProxy(ob), event)
     event.change_id = change_id
 
+
+@register.handler(adapts=(IAuditable, IVersionCreated))
 def objectNewVersion(ob, event):
     auditor = get_auditor(ob)
     # !+NewVersion_CHANGE_ID(mr, jun-2011) when does an IVersionCreated 
@@ -59,12 +74,15 @@ def objectNewVersion(ob, event):
     #    change_id = event.change_id
     event.version.change_id = change_id
 
+
+@register.handler(adapts=(IAuditable, IVersionReverted))
 def objectRevertedVersion(ob, event):
     # slightly obnoxious hand off between event handlers (objectnewV, objectrevertedV),
     # stuffing onto the event for value passing
     auditor = get_auditor(ob)
     change_id = auditor.objectRevertedVersion(removeSecurityProxy(ob), event)
     event.change_id = change_id
+
 
 def objectAttachment(ob, event):
     auditor = get_auditor(ob) 
@@ -80,7 +98,7 @@ def objectContained(ob, event):
 def getAuditableParent(obj):
     parent = obj.__parent__
     while parent:
-        if  interfaces.IAuditable.providedBy(parent):
+        if  IAuditable.providedBy(parent):
             return parent
         else:
             parent = getattr(parent, "__parent__", None)
@@ -145,7 +163,7 @@ class AuditorFactory(object):
         if hasattr(object, "status_date"):
             object.status_date = change_data["date_active"] or datetime.now()
         # as a "base" description, use human readable workflow state title
-        wf = workflow.interfaces.IWorkflow(object) # !+ adapters.get_workflow(object)
+        wf = IWorkflow(object) # !+ adapters.get_workflow(object)
         description = wf.get_state(event.destination).title
         # extras, that may be used e.g. to elaborate description at runtime
         extras = {

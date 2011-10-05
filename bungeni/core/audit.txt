@@ -21,6 +21,9 @@ Database imports
   >>> from bungeni.alchemist import Session
   >>> session = Session()
   
+    >>> from bungeni.core import audit
+    >>> audit = reload(audit)
+
 Initialise User
 ---------------
    >>> user = domain.User(

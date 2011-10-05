@@ -16,15 +16,21 @@ from zope.security.proxy import removeSecurityProxy
 
 log = __import__("logging").getLogger("bungeni.core.events")
 
+from zope.lifecycleevent import IObjectModifiedEvent, IObjectCreatedEvent, \
+    IObjectRemovedEvent
+
 from bungeni.alchemist import Session
 from bungeni.models import domain
+from bungeni.models.interfaces import ISignatory
 from bungeni.core import audit
 from bungeni.core.workflows.utils import (
     assign_signatory_role, get_owner_login_pi
 )
+from bungeni.utils import register
 
+
+@register.handler(adapts=(ISignatory, IObjectCreatedEvent))
 def signatory_added(ob, event): 
-    session = Session()
     ob = removeSecurityProxy(ob)
     if ob.user:
         title=  "%s %s %s" % (ob.user.titles,
@@ -39,12 +45,12 @@ def signatory_added(ob, event):
     if ob.item:
         audit.objectContained( ob.item, event)
 
-    
+
+@register.handler(adapts=(ISignatory, IObjectModifiedEvent))
 def signatory_modified(ob, event):
-    session = Session()
     ob = removeSecurityProxy(ob)
     if ob.user:
-        title=  "%s %s %s" % (ob.user.titles,
+        title = "%s %s %s" % (ob.user.titles,
                 ob.user.first_name,
                 ob.user.last_name)
     else:
@@ -56,10 +62,12 @@ def signatory_modified(ob, event):
     if ob.item:
         audit.objectContained( ob.item, event)
 
+
+#!+ was zope.app.container.interfaces.IObjectRemovedEvent?
+@register.handler(adapts=(ISignatory, IObjectRemovedEvent))
 def signatory_deleted(ob, event):
     """Clear signatory role for a deleted signatory
     """
-    session = Session()
     ob = removeSecurityProxy(ob)
     if ob.user:
         owner_login = get_owner_login_pi(ob)
@@ -88,25 +96,21 @@ def group_member_modified(ob, event):
 # !+GROUP_PRINCIPAL_ID(ah,sep-2011) adding group_modified event to set group
 # principal id
 def group_modified(ob, event):
-    """
-    When a group is added, the value in group_principal_id is computed
+    """When a group is added, the value in group_principal_id is computed
     out of the group type and group id. This was a computed property in orm.py
-    but has been moved here now - so it gets cached in the groups table
+    but has been moved here now - so it gets cached in the groups table.
     """
     if ob.group_principal_id is None:
-        ob.group_principal_id = "group." + ob.type + "." + str(ob.group_id)
-        log.debug("Setting group_principal_id for group %s", 
-          ob.group_principal_id
-        )
+        ob.group_principal_id = "group.%s.%s" % (ob.type, ob.group_id)
+        log.debug("Setting group_principal_id for group %s to %s", 
+            ob.group_id, ob.group_principal_id)
     else:
-        log.debug("group_principal_id is already set for group %s", 
-          ob.group_principal_id
-        )
+        log.debug("group_principal_id [%s] is already set for group %s", 
+            ob.group_principal_id, ob.group_id)
 
 
 def timestamp(object, event):
-    """
-    Set the timestamp for the item
+    """Set the timestamp for the item.
     """
     object.timestamp = datetime.datetime.now()
 

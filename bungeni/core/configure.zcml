@@ -36,9 +36,6 @@
         provides="zope.error.interfaces.IErrorReportingUtility"
     />
     
-    <!-- Setup Domain Model Audit/ObjectLog Feature-->
-    <include file="audit.zcml"/>
-    
     <!-- events -->
     <include file="events.zcml" />
     

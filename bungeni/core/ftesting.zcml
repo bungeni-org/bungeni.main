@@ -39,7 +39,6 @@
     <include package="ore.xapian" file="meta.zcml" />
     <include package="ore.xapian" />
     <include package="z3c.pt" />
-    <include file="audit.zcml"/>
     
     <!-- DB setup -->
     <db:engine name="bungeni-db" url="postgres://localhost/bungeni-test" />

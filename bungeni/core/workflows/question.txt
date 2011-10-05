@@ -237,8 +237,6 @@ PERMISSIONS for member principal for "draft" question.status
   
   >>> from zope.security import checkPermission
   >>> [ checkPermission("bungeni.question.Edit", question), 
-  ...   # !+ at r8092, checkPermission of bungeni.question.Add below used
-  ...   #    to return False! What should it be?
   ...   checkPermission("bungeni.question.Add", question), 
   ...   checkPermission("zope.View", question), 
   ...   checkPermission("bungeni.question.Delete", question), 
