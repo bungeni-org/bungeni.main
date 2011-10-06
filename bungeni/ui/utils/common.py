@@ -20,6 +20,7 @@ from zope.security import checkPermission, proxy
 # !+bungeni.models(mr, apr-2011) gives error when executing localization.py
 import bungeni
 import bungeni.ui.interfaces
+import bungeni.alchemist
 
 from ore.wsgiapp.interfaces import IApplication
 def get_application():
@@ -254,10 +255,13 @@ def is_admin(context):
     return zope.security.management.getInteraction().checkPermission(
         "zope.ManageSite", context)
 
-def list_container_items(container, permission="zope.View"):
+def list_container_items(container_instance, permission="zope.View"):
     """Generate list of container items with permission check
     """
-    trusted = proxy.removeSecurityProxy(container)
+    trusted = proxy.removeSecurityProxy(container_instance)
     for contained in trusted.values():
         if checkPermission(permission, contained):
-            yield contained
+            yield bungeni.alchemist.container.contained(contained,
+                container_instance, 
+                bungeni.alchemist.container.stringKey(contained)
+            )

@@ -10,58 +10,58 @@ log = __import__("logging").getLogger("bungeni.ui.vocabulary")
 import os
 import datetime
 import hashlib
+import itertools
 from lxml import etree
+
 from zope import interface
 from zope.schema.interfaces import IContextSourceBinder
 from zope.schema import vocabulary
 from zope.security.proxy import removeSecurityProxy
 from zope.app.container.interfaces import IContainer
+from zope.schema.interfaces import IVocabularyFactory
+from zope.component import getUtility
+from zope.i18n import translate
+from zope.component import getUtilitiesFor
+from zope.securitypolicy.interfaces import IRole
+from i18n import _
+
+from sqlalchemy.orm import mapper
+import sqlalchemy as rdb
+import sqlalchemy.sql.expression as sql
 
 import bungeni.alchemist.vocabulary
 from bungeni.utils.capi import capi
 from bungeni.alchemist import Session
 from bungeni.alchemist.container import valueKey
 
-from sqlalchemy.orm import mapper
-import sqlalchemy as rdb
-import sqlalchemy.sql.expression as sql
+from bungeni.models.interfaces import ISubRoleAnnotations
+from bungeni.models.interfaces import IBungeniGroup
 from bungeni.models import schema, domain, utils, delegation
-from bungeni.models.interfaces import ( ITranslatable, ISignatory, 
+from bungeni.models.interfaces import (ITranslatable, ISignatory,
     IGroupGroupItemAssignment
 )
 
-from zope.schema.interfaces import IVocabularyFactory
-from zope.component import getUtility
-from zope.i18n import translate
-
-from zope.component import getUtilitiesFor
-from zope.securitypolicy.interfaces import IRole
-from i18n import _
-
 from bungeni.core.translation import translate_obj
+from bungeni.core.language import get_default_language
+from bungeni.core.dc import IDCDescriptiveProperties
+from bungeni.core.workflows.utils import get_group_local_role
+
 from bungeni.ui.calendar.utils import first_nth_weekday_of_month
 from bungeni.ui.calendar.utils import nth_day_of_month
 from bungeni.ui.calendar.utils import nth_day_of_week
 from bungeni.ui.utils import common
 from bungeni.ui.interfaces import ITreeVocabulary
-from bungeni.core.workflows.utils import get_group_local_role
-from bungeni.models.interfaces import ISubRoleAnnotations
-from bungeni.models.interfaces import IBungeniGroup
-#tree vocabulary
-from bungeni.core.language import get_default_language
-from bungeni.core.dc import IDCDescriptiveProperties
+from bungeni.ui.tagged import get_states, TAG_MAPPINGS
+from bungeni.ui.reporting.generators import BUNGENI_REPORTS_NS
 
 try:
     import json
 except ImportError:
     import simplejson as json
 import imsvdex.vdex
-from bungeni.ui.tagged import get_states, TAG_MAPPINGS
-import itertools
 
-days = [ _('day_%d' % index, default=default) for (index, default) in 
+days = [ _('day_%d' % index, default=default) for (index, default) in
          enumerate((u"Mon", u"Tue", u"Wed", u"Thu", u"Fri", u"Sat", u"Sun")) ]
-
 
 def assignable_tags():
     return [state for state in itertools.chain(
@@ -224,8 +224,6 @@ ParliamentSource = DatabaseSource(
         ob.start_date and ob.start_date.strftime("%Y/%m/%d") or "?",
         ob.end_date and ob.end_date.strftime("%Y/%m/%d") or "?"))
 
-
-
 class SpecializedSource(object):
     interface.implements(IContextSourceBinder)
     
@@ -257,7 +255,7 @@ class SpecializedSource(object):
             terms.append(vocabulary.SimpleTerm(
                     value = getattr(obj, self.value_field), 
                     token = getattr(obj, self.token_field),
-                    title = getattr(obj, title_field) ,
+                    title = getattr(obj, title_field),
             ))
         return vocabulary.SimpleVocabulary(terms)
 
@@ -315,8 +313,7 @@ class TitleTypes(SpecializedSource):
         session= Session()
         return session.query(domain.TitleType) \
                 .filter(schema.title_types.c.group_id == context.group_id)
-        
-            
+
     def __call__(self, context=None):
         while not IBungeniGroup.providedBy(context):
             context = context.__parent__
@@ -354,9 +351,9 @@ class AttachedFileTypeSource(SpecializedSource):
             attached_file_type = session.query(domain.AttachedFileType).get(type_id)
             terms.append( 
                         vocabulary.SimpleTerm( 
-                            value = getattr(attached_file_type,"attached_file_type_id"), 
-                            token = getattr(attached_file_type,"attached_file_type_id"),
-                            title = getattr(attached_file_type,"attached_file_type_name"))
+                            value = getattr(attached_file_type, "attached_file_type_id"), 
+                            token = getattr(attached_file_type, "attached_file_type_id"),
+                            title = getattr(attached_file_type, "attached_file_type_name"))
                          )       
             return vocabulary.SimpleVocabulary( terms )
         else:
@@ -364,9 +361,9 @@ class AttachedFileTypeSource(SpecializedSource):
                 if ob.attached_file_type_name not in ["system"]:
                     terms.append( 
                         vocabulary.SimpleTerm( 
-                            value = getattr(ob,"attached_file_type_id"), 
-                            token = getattr(ob,"attached_file_type_id"),
-                            title = getattr(ob,"attached_file_type_name"),
+                            value = getattr(ob, "attached_file_type_id"), 
+                            token = getattr(ob, "attached_file_type_id"),
+                            title = getattr(ob, "attached_file_type_name"),
                         ))        
             return vocabulary.SimpleVocabulary( terms )
 
@@ -449,7 +446,7 @@ class MemberOfParliamentImmutableSource(SpecializedSource):
                 vocabulary.SimpleTerm(
                     value = getattr(ob, 'user_id'), 
                     token = getattr(ob, 'user_id'),
-                    title = "%s %s" % (getattr(ob, 'first_name') ,
+                    title = "%s %s" % (getattr(ob, 'first_name'),
                             getattr(ob, 'last_name'))
                 ))
         user_id = getattr(context, self.value_field, None) 
@@ -464,7 +461,7 @@ class MemberOfParliamentImmutableSource(SpecializedSource):
                 terms.append(vocabulary.SimpleTerm(
                     value = getattr(ob, 'user_id'), 
                     token = getattr(ob, 'user_id'),
-                    title = "(%s %s)" % (getattr(ob, 'first_name') ,
+                    title = "(%s %s)" % (getattr(ob, 'first_name'),
                             getattr(ob, 'last_name'))
                 ))
         return vocabulary.SimpleVocabulary(terms)
@@ -526,7 +523,7 @@ class MemberOfParliamentDelegationSource(MemberOfParliamentSource):
         #XXX clerks cannot yet choose MPs freely
         user_id = utils.get_db_user_id()
         if user_id:
-            user_ids=[user_id,]
+            user_ids = [user_id]
             for result in delegation.get_user_delegations(user_id):
                 user_ids.append(result.user_id)
             query = mp_query.filter(
@@ -617,7 +614,7 @@ class MinistrySource(SpecializedSource):
                 vocabulary.SimpleTerm(
                     value = getattr(obj, 'group_id'), 
                     token = getattr(obj, 'group_id'),
-                    title = "%s - %s" % (getattr(obj, 'short_name') ,
+                    title = "%s - %s" % (getattr(obj, 'short_name'),
                             getattr(obj, 'full_name'))
                 ))
         if ministry_id:
@@ -629,7 +626,7 @@ class MinistrySource(SpecializedSource):
                     vocabulary.SimpleTerm(
                         value = getattr(obj, 'group_id'), 
                         token = getattr(obj, 'group_id'),
-                        title = "%s - %s" % (getattr(obj, 'short_name') ,
+                        title = "%s - %s" % (getattr(obj, 'short_name'),
                                 getattr(obj, 'full_name'))
                 ))            
         return vocabulary.SimpleVocabulary(terms)
@@ -720,7 +717,7 @@ class UserNotMPSource(SpecializedSource):
                 vocabulary.SimpleTerm(
                     value = getattr(ob, 'user_id'), 
                     token = getattr(ob, 'user_id'),
-                    title = "%s %s" % (getattr(ob, 'first_name') ,
+                    title = "%s %s" % (getattr(ob, 'first_name'),
                             getattr(ob, 'last_name'))
                    ))
         user_id = getattr(context, self.value_field, None) 
@@ -736,12 +733,10 @@ class UserNotMPSource(SpecializedSource):
                 vocabulary.SimpleTerm(
                     value = getattr(ob, 'user_id'), 
                     token = getattr(ob, 'user_id'),
-                    title = "(%s %s)" % (getattr(ob, 'first_name') ,
+                    title = "(%s %s)" % (getattr(ob, 'first_name'),
                             getattr(ob, 'last_name'))
                    ))
         return vocabulary.SimpleVocabulary(terms)
-
-
 
 class UserNotStaffSource(SpecializedSource):
     """ all users that are NOT staff """
@@ -786,7 +781,7 @@ class SittingAttendanceSource(SpecializedSource):
                 vocabulary.SimpleTerm(
                     value = getattr(ob, 'user_id'), 
                     token = getattr(ob, 'user_id'),
-                    title = "%s %s" % (getattr(ob, 'first_name') ,
+                    title = "%s %s" % (getattr(ob, 'first_name'),
                             getattr(ob, 'last_name'))
                    ))
         user_id = getattr(context, self.value_field, None) 
@@ -798,30 +793,27 @@ class SittingAttendanceSource(SpecializedSource):
                 vocabulary.SimpleTerm(
                     value = getattr(ob, 'user_id'), 
                     token = getattr(ob, 'user_id'),
-                    title = "(%s %s)" % (getattr(ob, 'first_name') ,
+                    title = "(%s %s)" % (getattr(ob, 'first_name'),
                             getattr(ob, 'last_name'))
                    ))
         return vocabulary.SimpleVocabulary(terms)
 
-
-        
 class SubstitutionSource(SpecializedSource):
     """ active user of the same group """
     def _get_group_id(self, context):
         trusted = removeSecurityProxy(context)
-        group_id = getattr(trusted,'group_id', None)
+        group_id = getattr(trusted, 'group_id', None)
         if not group_id:
-             group_id = getattr(trusted.__parent__,'group_id', None)
+            group_id = getattr(trusted.__parent__, 'group_id', None)
         return group_id
 
     def _get_user_id(self, context):
         trusted = removeSecurityProxy(context)
-        user_id = getattr(trusted,'user_id', None)
+        user_id = getattr(trusted, 'user_id', None)
         if not user_id:
-             user_id = getattr(trusted.__parent__,'user_id', None)
+            user_id = getattr(trusted.__parent__, 'user_id', None)
         return user_id
 
-                     
     def constructQuery(self, context):
         session= Session()
         query = session.query(domain.GroupMembership).order_by(
@@ -829,23 +821,21 @@ class SubstitutionSource(SpecializedSource):
             domain.GroupMembership.active_p == True)
         user_id = self._get_user_id(context)
         if user_id:
-             query = query.filter(
+            query = query.filter(
                 domain.GroupMembership.user_id != user_id)
         group_id = self._get_group_id(context)
         if group_id:
             query = query.filter(
                 domain.GroupMembership.group_id == group_id)
         return query
-                    
-        
-        
+
     def __call__(self, context=None):
         query = self.constructQuery(context)
         results = query.all()
         tdict = {}
         for ob in results:
             tdict[getattr(ob.user, 'user_id')] = "%s %s" % (
-                    getattr(ob.user, 'first_name') ,
+                    getattr(ob.user, 'first_name'),
                     getattr(ob.user, 'last_name'))
         user_id = getattr(context, 'replaced_id', None) 
         if user_id:
@@ -853,7 +843,7 @@ class SubstitutionSource(SpecializedSource):
                 session = Session()
                 ob = session.query(domain.User).get(user_id)
                 tdict[getattr(ob, 'user_id')] = "%s %s" % (
-                            getattr(ob, 'first_name') ,
+                            getattr(ob, 'first_name'),
                             getattr(ob, 'last_name'))
         terms = []
         for t in tdict.keys():
@@ -868,14 +858,12 @@ class SubstitutionSource(SpecializedSource):
 class PartyMembership(object):
     pass
 
-
-
 party_membership = sql.join(schema.political_parties, schema.groups,
                 schema.political_parties.c.party_id == schema.groups.c.group_id).join(
                    schema.user_group_memberships,
                   schema.groups.c.group_id == schema.user_group_memberships.c.group_id)
 
-mapper(PartyMembership,party_membership)
+mapper(PartyMembership, party_membership)
 
 
 class PIAssignmentSource(SpecializedSource):
@@ -1011,8 +999,7 @@ class QuerySource(object):
             except:
                 value_key = self.getValueKey(context.__parent__)
         return value_key
-        
-        
+
     def __init__(self,
         domain_model, 
         token_field, 
@@ -1058,7 +1045,7 @@ class QuerySource(object):
                 vocabulary.SimpleTerm(
                     value = getattr(ob, self.value_field), 
                     token = getattr(ob, self.token_field),
-                    title = getattr(ob, title_field) ,
+                    title = getattr(ob, title_field),
             ))
         return vocabulary.SimpleVocabulary(terms)
 
@@ -1144,7 +1131,7 @@ class FlatVDEXVocabulary(VDEXVocabularyMixin):
         all_terms = self.vdex.getVocabularyDict(lang=get_default_language())
         terms = []
         assert self.vdex.isFlat() is True
-        for (key,data) in all_terms.iteritems():
+        for (key, data) in all_terms.iteritems():
             term = vocabulary.SimpleTerm(key, key, data[0])
             terms.append(term)
         return vocabulary.SimpleVocabulary(terms)
@@ -1162,15 +1149,15 @@ sitting_convocation_types = FlatVDEXVocabulary("sitting-convocation-types.vdex")
 # Vocaularies for XML configuration based report generation
 #
 
-class ReportXMLTemplates(object):
-    """XML configuration for generation of reports.
+class ReportXHTMLTemplates(object):
+    """XHTML templates for generation of reports in scheduling.
     
     Templates can be customized/added in:
-    `bungeni_custom/reporting/templates/xml/reports`
+    `bungeni_custom/reporting/templates/scheduling/`
     """
     
     terms = []
-    template_folder = "reports"
+    template_folder = "scheduling"
     
     def __init__(self):
         self.buildTerms()
@@ -1178,21 +1165,21 @@ class ReportXMLTemplates(object):
     def getTitle(self, path):
         title = None
         doctree = etree.fromstring(open(path).read())
-        node = doctree.find("title")
+        node = doctree.find("{%s}config/title" % BUNGENI_REPORTS_NS)
         if node is not None:
             title = node.text
         return title
     
     def buildTerms(self):
-        template_folder = capi.get_path_for("reporting", "templates", "xml", 
+        template_folder = capi.get_path_for("reporting", "templates", 
             self.template_folder
         )
         if not os.path.exists(template_folder):
-            log.error("Directory for XML templates does not exist: %s",
+            log.error("Directory for XHTML templates does not exist: %s",
                 template_folder
             )
             return
-        file_list = filter(lambda fname: fname.endswith(".xml"),
+        file_list = filter(lambda fname: fname.endswith(".html"),
             os.listdir(template_folder)
         )
         for file_name in file_list:
@@ -1207,14 +1194,14 @@ class ReportXMLTemplates(object):
     def __call__(self, context):
         return vocabulary.SimpleVocabulary(self.terms)
 
-report_xml_templates = ReportXMLTemplates()
+report_xhtml_templates = ReportXHTMLTemplates()
 
-class DocumentXMLTemplates(ReportXMLTemplates):
-    """XML Configuration for publication of documents in other formats.
+class DocumentXHTMLTemplates(ReportXHTMLTemplates):
+    """XHTML templates for publication of documents in other formats.
     
-    Templates can be customized/added in:
-    `bungeni_custom/reporting/templates/xml/documents`
+    Templates can be customized or added in:
+    `bungeni_custom/reporting/templates/documents`
     """
     template_folder = "documents"
     
-document_xml_templates = DocumentXMLTemplates()
+document_xhtml_templates = DocumentXHTMLTemplates()

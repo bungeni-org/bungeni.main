@@ -14,20 +14,15 @@ class IReportGenerator(Interface):
     """Specification for report generation"""
     
     context = Attribute("""Context for which report is being generated""")
-    configuration = Attribute("""Parsed report configuration""")
+    report_template_file = Attribute("""Filesystem path to report template""")
+    report_template = Attribute("""Parsed report template document tree""")
     coverage = Attribute("""Period in hours covered by the report""")
     title = Attribute("""Title of the report""")
     language = Attribute("""Language of the Report""")
 
     def loadConfiguration():
         """Load report configuration from a config file. Sets up attributes."""
-
-    def getContext(**kwargs):
-        """Get the context based on report configuration"""
-    
-    def loadStyle(target):
-        """Load a style from report configuration"""
-    
+        
     def generateReport():
         """Generates text for report"""
 
@@ -46,19 +41,6 @@ class IReportRenderer(Interface):
     
     def render():
         """Render the report content using the specified template"""
-
-class IContentrenderer(Interface):
-    """Renderer for partial report elements"""
-    context = Attribute("""Context from which to render content""")
-    context_property = Attribute("""Property of context to render""")
-    css_class = Attribute("""Optional css style to apply to generated content""")
-
-    def getRenderContent():
-        """Return display format of display attribute"""
-    
-    def render():
-        """Render the context element from"""
-
 
 class ReportException(Exception):
     """Exception raised during report processing.

@@ -12,31 +12,76 @@ $Id$
 log = __import__("logging").getLogger("bungeni.ui.reporting")
 
 import os
-import cStringIO
+from copy import deepcopy
 import zope.interface
 from lxml import etree
 
+from bungeni.alchemist.interfaces import IAlchemistContainer
+
+from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core.language import get_default_language
+from bungeni.core.translation import translate_i18n
 
 from bungeni.ui.i18n import _
-from bungeni.ui.utils import report_tools
+from bungeni.ui.utils import common, url, report_tools
 from bungeni.ui.reporting.interfaces import IReportGenerator, ReportException
-from bungeni.ui.reporting.renderers import TextRenderer, HeadingRenderer, ListingRenderer
 
-CONTAINER_TAGS = ["heading", "body", "listing"]
-TEXT_TAGS = ["text"]
+BUNGENI_REPORTS_NS="http://bungeni.org/reports"
 
-RENDERERS = {
-    "heading": HeadingRenderer,
-    "text": TextRenderer,
-    "listing": ListingRenderer 
-}
+def get_element_value(context, name, default=None):
+    if name.startswith("dc:"):
+        dc_adapter = IDCDescriptiveProperties(context, None)
+        if dc_adapter is None:
+            log.error("No dublin core adapter found for object %s", context)
+            return default
+        else:
+            try:
+                return getattr(dc_adapter, name[3:])
+            except AttributeError:
+                log.error("Dublin core adapter %s for %s has no attribute %s",
+                    dc_adapter, context, name
+                )
+                return default
+    try:
+        return getattr(context, name)
+    except AttributeError:
+        log.error("Context %s has no such attribute %s. Check report template",
+            context, name
+        )
+        return default
 
-def get_renderer(tag):
-    return RENDERERS.get(tag, TextRenderer)
+def get_config(doctree, name, default=None):
+    """Get configuration value from report template"""
+    element = doctree.find("{%s}config/%s" % (BUNGENI_REPORTS_NS, name))
+    if element is not None:
+        return element.text
+    return default
+
+def get_attr(element, name, namespace=BUNGENI_REPORTS_NS, default=None):
+    """Returns attribute of element from tree"""
+    if namespace=="":
+        return element.get(name, default)
+    return element.get("{%s}%s"  % (namespace, name), default)
+
+def clean_element(element):
+    """Clean out bungeni report namespace tags from document"""
+    REMOVE_ATTRIBUTES = ["type", "source", "url"]
+    for key in REMOVE_ATTRIBUTES:
+        _key = "{%s}%s" % (BUNGENI_REPORTS_NS, key)
+        if _key in element.keys():
+            del element.attrib[_key]
+
+def empty_element(element):
+    """Remove an element's children from document tree."""
+    map(lambda child:element.remove(child), element.getchildren())
+
+def drop_element(element):
+    """Remove an element from the document tree"""
+    element.getparent().remove(element)
+    
 
 class _BaseGenerator(object):
-    """Base generator class. Child classes implement actuall functionality"""
+    """Base generator class. Child classes implement actual functionality"""
 
     zope.interface.implements(IReportGenerator)
 
@@ -46,20 +91,13 @@ class _BaseGenerator(object):
     title = _(u"Report")
     language = None
     
-    def __init__(self, config_file, context=None):
-        self.configuration_file = config_file
+    def __init__(self, report_template_file, context=None):
+        self.report_template_file = report_template_file
         self.context = context
         self.loadConfiguration()
     
     def loadConfiguration(self):
         raise NotImplementedError("""Must be implemented by child classes""")
-    
-    def getContext(self):
-        raise NotImplementedError("""Must be implemented by child classes""")
-    
-    def loadStyle(self, target):
-        raise NotImplementedError("""Must be implemented by child classes""")
-    
     
     def generateReport(self):
         raise NotImplementedError("""Must be implemented by child classes""")
@@ -77,90 +115,94 @@ class ReportGeneratorXHTML(_BaseGenerator):
     """
     
     def loadConfiguration(self):
-        """Process XML configuration
+        """Process report template for configuration
         """
-        if os.path.exists(self.configuration_file):
-            _file = open(self.configuration_file)
-            doctree = etree.fromstring(_file.read())
-            self.configuration = doctree
-            _file.close()
-            _title = doctree.find("title")
-            self.title = self.title if (_title is None) else _title.text
-            self.language = doctree.get("language", get_default_language())
-            _period = doctree.find("length")
-            self.coverage = report_tools.compute_hours(_period.text)
+        if os.path.exists(self.report_template_file):
+            template_file = open(self.report_template_file)
+            file_string = template_file.read()
+            self.report_template = etree.fromstring(file_string)
+            template_file.close()
+            
+            self.title = get_config(self.report_template, "title", self.title)
+            self.language = get_config(self.report_template, "language",
+                get_default_language()
+            )
+            coverage_text = get_config(self.report_template, "length")
+            if coverage_text is not None:
+                self.coverage = report_tools.compute_hours(coverage_text)
+            drop_element(
+                self.report_template.find("{%s}config" % BUNGENI_REPORTS_NS)
+            )
         else:
             raise ReportException(
-                _(u"configuration_file_missing",
-                    default=u"Configuration file does not exist at ${path}",
-                    mapping={"path": self.configuration}
+                _(u"report-template-missing",
+                    default=u"Report template file does not exist at ${path}",
+                    mapping={"path": self.report_template_file}
                 )
             )
-    
-    def getContext(self, **kwargs):
-        """Get the sittings covered by period"""
-        pass
-    
-    def loadStyle(self, target):
-        """Load style element from report configuration"""
-        style = self.configuration.find("styles/style[@for='%s']" % target)
-        return style
-
+        
     def generateReport(self):
-        """Generate report content based on XML configuration
+        """Generate report content based on report template and context
         """
-        out = cStringIO.StringIO()
-        def render_element(element, context, level=1):
-            if element.tag in CONTAINER_TAGS:
-                text = element.get("title", None)
-                if text:
-                    renderer_class = get_renderer("heading")
-                    text_renderer = renderer_class(context)
-                    text_renderer.tag = "h%d" % level
-                    text_renderer.text = text
-                    out.write(text_renderer())
-                children = element.getchildren()
-                if len(children)==0:
-                    style = self.loadStyle(element.get("source"))
-                    if style is None:
-                        renderer_class = get_renderer(element.tag)
-                        list_renderer = renderer_class(context, 
-                            element.get("source")
+        def generate_tree(root, context):
+            for element in root.getiterator():
+                typ = get_attr(element, "type")
+                src = get_attr(element, "source")
+                if typ:
+                    if typ=="text":
+                        clean_element(element)
+                        element.text = get_element_value(context, src)
+                    elif typ=="link":
+                        clean_element(element)
+                        url_source = get_attr(element, "url")
+                        if url_source:
+                            link_url = get_element_value(context, url_source)
+                        else:
+                            link_url = url.absoluteURL(context, 
+                                common.get_request()
+                            )
+                        element.attrib["href"] = link_url
+                        if src:
+                            element.text = get_element_value(context, src)
+                    elif typ=="html":
+                        clean_element(element)
+                        _html = u"<div>%s</div>" % get_element_value(context, 
+                            src
                         )
-                        out.write(list_renderer())
-                    else:
-                        for item in getattr(context, element.get("source")):
-                            for child in style:
-                                render_element(child, item, level=level+1)
-                else:
-                    source = element.get("source", None)
-                    if source is not None:
-                        context = getattr(context, source)
-                        for item in context:
-                            for child in children:
-                                render_element(child, item, level=level+1)
-                    else:
-                        for child in children:
-                            render_element(child, context, level=level+1)
-            elif element.tag in TEXT_TAGS:
-                tag_type = element.get("type", element.tag)
-                renderer_class = get_renderer(tag_type)
-                if renderer_class == HeadingRenderer:
-                    renderer_class.tag = "h%d" % level
-                renderer = renderer_class(context, element.get("source"), 
-                    text=element.text
-                )
-                out.write(renderer())
-
-        content = self.configuration.find("content")
-        for element in content:
-            log.error("Rendering Element %s", element.tag)
-            render_element(element, self.context, level=2)
-
-        out.reset()
-        self._generated_content = out.read()
-        out.reset()
-        return out.read()
+                        new_html = element.insert(0, etree.fromstring(_html))
+                    elif typ=="listing":
+                        listing = get_element_value(context, src, default=[])
+                        
+                        if IAlchemistContainer.providedBy(listing):
+                            _listing = common.list_container_items(listing)
+                            listing = [ item for item in _listing ]
+                        
+                        log.debug("[LISTING] %s @@ %s", src, listing)
+                        listing_count = len(listing)
+                        new_children = [
+                            deepcopy(element.getchildren()) 
+                            for x in range(listing_count) 
+                        ]
+                        empty_element(element)
+                        clean_element(element)
+                        
+                        if listing_count == 0:
+                            parent = element.getparent()
+                            no_items_element = etree.SubElement(element, "p")
+                            no_items_element.text = translate_i18n(
+                                _(u"No items found")
+                            )
+                        else:
+                            for (index, item) in enumerate(listing):
+                                for child in new_children[index]:
+                                    generate_tree(child, item)
+                            for children in new_children:
+                                for descendant in children:
+                                    element.append(descendant)
+                        break
+            return etree.tostring(root)
+        generate_tree(self.report_template, self.context)
+        return etree.tostring(self.report_template)
 
     def publishReport(self):
         pass

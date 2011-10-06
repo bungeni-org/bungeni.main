@@ -155,13 +155,13 @@
         provides="zope.schema.interfaces.IVocabularyFactory"
         component=".reports.tabledDocumentOptions"
     />
-    <utility name="bungeni.vocabulary.ReportXMLTemplates"
+    <utility name="bungeni.vocabulary.ReportXHTMLTemplates"
         provides="zope.schema.interfaces.IVocabularyFactory"
-        component=".vocabulary.report_xml_templates"
+        component=".vocabulary.report_xhtml_templates"
     />
-    <utility name="bungeni.vocabulary.DocumentXMLTemplates"
+    <utility name="bungeni.vocabulary.DocumentXHTMLTemplates"
         provides="zope.schema.interfaces.IVocabularyFactory"
-        component=".vocabulary.document_xml_templates"
+        component=".vocabulary.document_xhtml_templates"
     />
     <utility name="bungeni.vocabulary.ParliamentSource"
         provides="zope.schema.interfaces.IVocabularyFactory"

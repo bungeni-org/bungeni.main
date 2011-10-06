@@ -29,13 +29,15 @@ from bungeni.alchemist import Session
 from bungeni.models import domain
 from bungeni.models.utils import get_db_user_id
 from bungeni.models.interfaces import IGroupSitting
+
+from bungeni.core.dc import IDCDescriptiveProperties
+from bungeni.core.interfaces import ISchedulingContext
+from bungeni.core.language import get_default_language
+
 from bungeni.ui import widgets
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import url, queries, date
 from bungeni.ui import forms
-from bungeni.core.interfaces import ISchedulingContext
-from bungeni.core.language import get_default_language
-
 from bungeni.ui.interfaces import IWorkspaceReportGeneration
 from bungeni.ui.reporting import generators, renderers
 
@@ -131,7 +133,7 @@ class DateTimeFormatMixin(object):
 class IReportBuilder(interface.Interface):
     report_type = schema.Choice(title=_(u"Report Type"),
         description=_(u"Choose template to use in generating Report"),
-        vocabulary="bungeni.vocabulary.ReportXMLTemplates"
+        vocabulary="bungeni.vocabulary.ReportXHTMLTemplates"
     )
     start_date = schema.Date(title=_(u"Start Date"),
         description=_(u"Start date for this Report")
@@ -149,7 +151,8 @@ class ExpandedSitting(object):
     
     def __init__(self, sitting=None):
         self.sitting = sitting
-        self.groupItems()
+        if len(self.grouped.keys())==0:
+            self.groupItems()
     
     def __getattr__(self, name):
         """ Attribute lookup fallback - Sitting should have access to item
@@ -158,6 +161,9 @@ class ExpandedSitting(object):
             return self.grouped.get(name)
         if hasattr(self.sitting, name):
             return getattr(self.sitting, name)
+        dc_adapter = IDCDescriptiveProperties(self.sitting)
+        if hasattr(dc_adapter, name):
+            return getattr(dc_adapter, name)
         else:
             log.error("Sitting Context %s has no such attribute: %s",
                 self.sitting.__str__(), name
