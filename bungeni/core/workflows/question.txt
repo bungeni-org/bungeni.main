@@ -214,6 +214,9 @@ Transition: "create" - assigns the role of "Owner" and sets the parliament id.
 
 !+ generalize these tests to not assume predefined transition names / sequence!
 
+!+initializeWorkflow(mr, oct-2011) should not the question workflow be made to
+auto-kick-in on question creation, as in application, via the event handlers?
+
   >>> wfc.fireTransition("-draft")
   >>> question.status
   'draft'

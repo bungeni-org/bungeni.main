@@ -207,7 +207,8 @@ def _setup_all():
     xmlimport.zcml_check_regenerate()
     # cleared by each call to zope.app.testing.placelesssetup.tearDown()
     register_workflow_adapters()
-
+    # import events module, registering handlers
+    import bungeni.core.workflows.events
 
 # do it, when this module is imported. 
 _setup_all()
