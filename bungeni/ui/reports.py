@@ -39,7 +39,7 @@ from bungeni.ui.i18n import _
 from bungeni.ui.utils import url, queries, date
 from bungeni.ui import forms
 from bungeni.ui.interfaces import IWorkspaceReportGeneration
-from bungeni.ui.reporting import generators, renderers
+from bungeni.ui.reporting import generators
 
 class TIME_SPAN:
     daily = _(u"Daily")
