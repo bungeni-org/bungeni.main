@@ -24,43 +24,42 @@ def get_user(login_id):
         db_user = session.query(domain.User).filter(
             domain.User.login == login_id).one()
     except rdb.orm.exc.NoResultFound:
-        log.error("No user with login id, %s exists" % login_id)
+        log.warn("No user with login id, %s exists" % login_id)
         return None
     except rdb.orm.exc.MultipleResultsFound:
-        log.error("Multiple users found with the same login id, %s" %
-                  login_id)
-        return None
+        # !+non_unique_login(mr, oct-2011) impossible, login column is UNIQUE!
+        log.error("Multiple users found with same login id, %s" % login_id)
+        raise
     else:
         return db_user
 
 
 def get_user_groups(login_id):
-    """ get group for users:
+    """Get group for users:
     a) the groups defined by his user_group_memberships
     b) the users who have him assigned as a delegation
     c) the groups of the delegation user.
     """
-    groups = set()
-    groups.add(login_id)
-
     def get_groups(user_id):
         principal_ids = []
         session = Session()
-        query = session.query(domain.GroupMembership).filter(
-            rdb.and_(domain.GroupMembership.user_id == user_id,
-                     domain.GroupMembership.active_p == True)).options(
-            eagerload("group"), lazyload("user"))
+        query = session.query(domain.GroupMembership).filter(rdb.and_(
+                    domain.GroupMembership.user_id == user_id,
+                    domain.GroupMembership.active_p == True)
+            ).options(eagerload("group"), lazyload("user"))
         for membership in query:
-                principal_ids.append(membership.group.group_principal_id)
+            principal_ids.append(membership.group.group_principal_id)
         return principal_ids
-    user_id = get_user(login_id).user_id
-    if user_id:
+    groups = set()
+    user = get_user(login_id) # user may be None
+    if user: 
+        groups.add(login_id)
+        user_id = user.user_id
         for elem in get_groups(user_id):
             groups.add(elem)
-    user_delegations = delegation.get_user_delegations(user_id)
-    for user in user_delegations:
-        for elem in getGroups(user.user_id):
-            groups.add(elem)
+        for user in delegation.get_user_delegations(user_id):
+            for elem in get_groups(user.user_id):
+                groups.add(elem)
     return groups
 
 
