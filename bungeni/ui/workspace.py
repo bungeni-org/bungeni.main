@@ -8,6 +8,7 @@ from zope.formlib import form
 from zope.i18n import translate
 from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent
+from zope.security import proxy, checkPermission
 from z3c.pt.texttemplate import ViewTextTemplateFile
 from zc.resourcelibrary import need
 from ore.alchemist import container
@@ -48,7 +49,6 @@ workspace_fields = [
 class WorkspaceContainerJSONListing(BrowserView):
     """Paging, batching, json contents of a workspace container.
     """
-    #results.sort(key = lambda x: x.status_date, reverse=True)
     permission = "zope.View"
 
     def __init__(self, context, request):
@@ -58,7 +58,7 @@ class WorkspaceContainerJSONListing(BrowserView):
             self.request.form["sort"] = u"sort_%s" % (self.defaults_sort_on)
         self.sort_on = self.request.get("sort")[5:]
         # sort_dir: "desc" | "asc"
-        # pick off request, if necessary setting it from default in
+        # pick off request, or set default
         if not self.request.get("dir"):
             self.request.form["dir"] = "desc"
         self.sort_dir = self.request.get("dir")
@@ -127,7 +127,14 @@ class WorkspaceContainerJSONListing(BrowserView):
                 # returning the untranslated nodes as is
                 return nodes
         return t_nodes
-
+    
+    def check_permission(self, results):
+        viewable = []
+        for item in results:
+            if checkPermission(self.permission, proxy.ProxyFactory(item)):
+                viewable.append(item)
+        return viewable
+    
     def get_batch(self, start=0, limit=25, lang=None):
         context = removeSecurityProxy(self.context)
         filter_short_name = self.request.get("filter_short_name", None)
@@ -142,8 +149,7 @@ class WorkspaceContainerJSONListing(BrowserView):
             start=start,
             limit=limit,
             )
-        # nodes = [container.contained(ob, self, workspace.stringKey(ob))
-        #         for ob in query]
+        results = self.check_permission(results)
         nodes = results[start:start + limit]
         nodes = [container.contained(ob, self, workspace.stringKey(ob))
                  for ob in nodes]
