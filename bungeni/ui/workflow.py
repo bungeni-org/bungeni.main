@@ -291,7 +291,7 @@ class WorkflowChangeStateView(WorkflowView):
         # parameters coming in via URL querystring or post vars !
         method = self.request["REQUEST_METHOD"]
         # !+ALWAYS_POST(mr, sep-2011) requests coming from link clicks (GETs) 
-        # from the bungenu Web UI seem to always be intercepted and switched 
+        # from the bungeni Web UI seem to always be intercepted and switched 
         # into POSTs.
         workflow = interfaces.IWorkflow(self.context)
         

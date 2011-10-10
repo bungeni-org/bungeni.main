@@ -188,12 +188,14 @@ def pi_allow_signature_actions(context):
     """allow/disallow other signature actions => such as withdraw and reject
     """
     validator = ISignatoriesValidator(context.item, None)
-    return (validator and user_is_context_owner(context) 
-        and validator.documentSubmitted()
-        and user_is_not_parent_document_owner(context)
-    )
+    if validator is not None:
+        return (user_is_context_owner(context) and
+            validator.documentSubmitted() and
+            user_is_not_parent_document_owner(context))
+    return False
 
-#auditables
+# auditables
+
 def user_is_state_creator(context):
     """Did the current user create current state - based on workflow log?
     """
@@ -215,3 +217,4 @@ def user_is_state_creator_and_owner(context):
 
 def user_is_state_creator_not_owner(context):
     return user_is_state_creator(context) and user_is_not_context_owner(context)
+
