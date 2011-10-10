@@ -19,6 +19,7 @@ import zope.event
 import zope.lifecycleevent
 from bungeni.alchemist import Session
 from bungeni.core.workflow import interfaces
+from bungeni.utils import error
 
 
 GRANT, DENY = 1, 0
@@ -28,23 +29,6 @@ IntAsSetting = {
     1: zope.securitypolicy.interfaces.Allow,
     0: zope.securitypolicy.interfaces.Deny
 }
-
-
-def exceptions_as(exc_kls, include_name=True):
-    def _exceptions_as(f):
-        """Decorator to intercept any error raised by function f and 
-        re-raise it as a exc_kls. 
-        """
-        def _errorable_f(*args, **kw):
-            try: 
-                return f(*args, **kw)
-            except Exception, e:
-                if include_name:
-                    raise exc_kls("%s: %s" % (e.__class__.__name__, e))
-                else:
-                    raise exc_kls("%s" % (e))
-        return _errorable_f
-    return _exceptions_as
 
 
 def wrapped_condition(condition):
@@ -89,7 +73,7 @@ class State(object):
         self.permissions_from_parent = permissions_from_parent
         self.obsolete = obsolete
     
-    @exceptions_as(interfaces.WorkflowStateActionError)
+    @error.exceptions_as(interfaces.WorkflowStateActionError)
     def execute_actions(self, context):
         """Execute the actions associated with this state.
         """
@@ -302,7 +286,7 @@ class Workflow(object):
         # integrity
         self.validate()
     
-    @exceptions_as(interfaces.InvalidWorkflow, False)
+    @error.exceptions_as(interfaces.InvalidWorkflow, False)
     def validate(self):
         states = self._states_by_id.values()
         # at least one state
@@ -368,16 +352,16 @@ class Workflow(object):
             "use Workflow.get_state(status) instead" % (self.name))
         return self._states_by_id
     
-    @exceptions_as(interfaces.InvalidStateError)
+    @error.exceptions_as(interfaces.InvalidStateError)
     def get_state(self, state_id):
         return self._states_by_id[state_id]
     
-    @exceptions_as(interfaces.InvalidTransitionError)
+    @error.exceptions_as(interfaces.InvalidTransitionError)
     def get_transition(self, transition_id):
         return self._transitions_by_id[transition_id]
     
     # !+ get_transitions_to(destination) ? 
-    @exceptions_as(interfaces.InvalidStateError)
+    @error.exceptions_as(interfaces.InvalidStateError)
     def get_transitions_from(self, source):
         return sorted(self._transitions_by_source[source])
     
