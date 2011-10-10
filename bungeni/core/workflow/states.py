@@ -136,8 +136,7 @@ class Transition(object):
     multiple transitions). 
     
     Each Transition ID is automatically determined from the source and 
-    destination states (therefore it is not passed in as a constructor 
-    parameter) in the following predictable way:
+    destination states in the following predictable way:
     
         id = "%s-%s" % (source or "", destination)
     
@@ -246,7 +245,7 @@ def get_object_version_state_rpm(version):
     to *lookup* (note: no creation of any instance) the workflow.states.State 
     singleton instance for the version's context's status.
     
-    Note that version insatnces are NOT workflowed.
+    Note that version instances are NOT workflowed.
     """
     # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", "document" 
     # or "item"?
@@ -425,8 +424,7 @@ class WorkflowController(object):
                     "transition: %s" % transition.id, 
                     transition.permission)
         # now make sure transition can still work in this context
-        if not transition.condition(self.context):
-            raise interfaces.ConditionFailedError
+        transition.condition(self.context) # raises WorkflowConditionError
     
     # !+ RENAME
     def fireTransition(self, transition_id, comment=None, check_security=True):
@@ -435,11 +433,6 @@ class WorkflowController(object):
                 self, transition_id, comment, check_security))
         # raises InvalidTransitionError if id is invalid for current state
         transition = self.workflow.get_transition(transition_id)
-        # skip security check for transitions
-        # !+CHECK_SECURITY(murithi, may-2011) some auto transitions have
-        # sources - to either, fix zcml_regenerate or directive in xml
-        if transition.trigger == interfaces.AUTOMATIC:
-            check_security = False
         self._check(transition, check_security)
         # change status of context or new object
         self.state_controller.set_status(transition.destination)
@@ -458,15 +451,21 @@ class WorkflowController(object):
         return self.fireTransition(transition_ids[0], comment, check_security)
     
     def fireAutomatic(self):
-        for transition in self._get_transitions(interfaces.AUTOMATIC):
-            try:
-                self.fireTransition(transition.id)
-            except interfaces.ConditionFailedError:
-                # fine, then we weren't ready to fire the transition as yet
-                pass
-            else:
-                # if we actually managed to fire a transition, we're done
-                return
+        # we take the first automatic transitions that passes condition (if any)
+        for transition in self._get_transitions(interfaces.AUTOMATIC, True):
+            # automatic transitions are not security-checked--assuming proviso
+            # that fireAutomatic() is never called as a user action 
+            # *directly*, but it is rather the logical consequence of handling 
+            # some other direct user action (for which the user would 
+            # presumabley have the necessary privilege) e.g. transiting an 
+            # item to draft is done automatically when the user creates the 
+            # item (assumes of course the privilege of creating the item).
+            # 
+            # Automatic transitions may still be fired manually, but then 
+            # otehr details also have to be handled manually e.g. not checking 
+            # the security and checking the condition.
+            self.fireTransition(transition.id, comment=None, 
+                check_security=False)
     
     def getFireableTransitionIdsToward(self, state):
         workflow = self.workflow

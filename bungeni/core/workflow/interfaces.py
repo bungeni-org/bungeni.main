@@ -20,8 +20,6 @@ class InvalidTransitionError(InvalidWorkflow): pass
 class NoTransitionAvailableError(InvalidTransitionError): pass
 class AmbiguousTransitionError(InvalidTransitionError): pass
 
-class ConditionFailedError(Exception): pass
-
 class WorkflowRuntimeError(Exception): 
     """Internal error while executing a workflow action""" 
 class WorkflowStateActionError(WorkflowRuntimeError): pass

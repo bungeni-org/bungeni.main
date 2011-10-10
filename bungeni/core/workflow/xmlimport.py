@@ -131,13 +131,8 @@ def zcml_check_regenerate():
             "Must restart system with updated file: %s" % (filepath))
 
 def is_zcml_permissionable(trans_elem):
-    # The "create" transitions should NOT have any permission assigned to them,
-    # as the action of creating this object is controlled via an application
-    # level bungeni.{type}.Add permission granted to the user in question. 
-    #
-    # The assumption here is that a "create" transition has a NULL source,
-    # (by convention "" i.e. the empty string).
-    return bool(strip_none(trans_elem.get("source")))
+    # Automatically triggered transitions may not be permissioned.
+    return not strip_none(trans_elem.get("trigger")) == "automatic"
 
 def zcml_transition_permission(pid, title, roles):
     ZCML_LINES.append(ZCML_INDENT)

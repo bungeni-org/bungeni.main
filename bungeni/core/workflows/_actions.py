@@ -216,11 +216,11 @@ def _user_A(context):
 #
 
 
-#signatories
+# signatories
+
 def __make_owner_signatory(context):
-    """
-    make document owner a default signatory when document is submited to
-    signatories for consent
+    """Make document owner a default signatory when document is submited to
+    signatories for consent.
     """
     signatories = context.signatories
     if context.owner_id not in [sgn.user_id for sgn in signatories._query]:
@@ -248,8 +248,7 @@ _agendaitem_submitted_signatories = __pi_submitted_signatories
 _tableddocument_submitted_signatories = __pi_submitted_signatories
 
 def _signatory_awaiting_consent(context):
-    """
-    This is done when parent object is already in submitted_signatories stage.
+    """Done when parent object is already in submitted_signatories stage.
     Otherwise roles assignment is handled by `__pi_assign_signatory_roles`
     """
     if context.item.status == u"submitted_signatories":
@@ -259,8 +258,7 @@ def _signatory_awaiting_consent(context):
 
 def _signatory_rejected(context):
     #!+SIGNATORIES(mb, aug-2011) Unsetting of roles now handled when
-    # document is submitted or redrafted. To deprecate this action if no
-    # not needed.
+    # document is submitted or redrafted. Deprecate this action if not needed.
     #owner_login = utils.get_owner_login_pi(context)
     #utils.assign_signatory_role(context.item, owner_login, unset=True)
     return

@@ -80,9 +80,6 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.agendaitem.wf.received.clarification_required" title="Require Clarification to Receive" />
 <grant permission="bungeni.agendaitem.wf.received.clarification_required" role="bungeni.Clerk" />
 
-<permission id="bungeni.agendaitem.wf.clarification_required.redraft" title="Redraft (Automatic)" />
-<grant permission="bungeni.agendaitem.wf.clarification_required.redraft" role="bungeni.Clerk" />
-
 <permission id="bungeni.agendaitem.wf.received.completed" title="Complete" />
 <grant permission="bungeni.agendaitem.wf.received.completed" role="bungeni.Clerk" />
 
@@ -386,9 +383,6 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.motion.wf.received.clarification_required" title="Require Clarification to Receive" />
 <grant permission="bungeni.motion.wf.received.clarification_required" role="bungeni.Clerk" />
 
-<permission id="bungeni.motion.wf.clarification_required.redraft" title="Redraft (Automatic)" />
-<grant permission="bungeni.motion.wf.clarification_required.redraft" role="bungeni.Clerk" />
-
 <permission id="bungeni.motion.wf.received.completed" title="Complete" />
 <grant permission="bungeni.motion.wf.received.completed" role="bungeni.Clerk" />
 
@@ -495,9 +489,6 @@ See the Bungeni Source Code Style Guide for further details.
 
 <permission id="bungeni.question.wf.received.clarification_required" title="Require Clarification to Receive" />
 <grant permission="bungeni.question.wf.received.clarification_required" role="bungeni.Clerk" />
-
-<permission id="bungeni.question.wf.clarification_required.redraft" title="Redraft (Automatic)" />
-<grant permission="bungeni.question.wf.clarification_required.redraft" role="bungeni.Clerk" />
 
 <permission id="bungeni.question.wf.received.completed" title="Complete" />
 <grant permission="bungeni.question.wf.received.completed" role="bungeni.Clerk" />
@@ -611,9 +602,6 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.tableddocument.wf.completed.incomplete" title="Needs Recomplete to Approve" />
 <grant permission="bungeni.tableddocument.wf.completed.incomplete" role="bungeni.Speaker" />
 
-<permission id="bungeni.tableddocument.wf.incomplete.redraft" title="Redraft (Automatic)" />
-<grant permission="bungeni.tableddocument.wf.incomplete.redraft" role="bungeni.Clerk" />
-
 <permission id="bungeni.tableddocument.wf.incomplete.completed" title="Recomplete" />
 <grant permission="bungeni.tableddocument.wf.incomplete.completed" role="bungeni.Clerk" />
 
@@ -686,11 +674,5 @@ See the Bungeni Source Code Style Guide for further details.
 
 <permission id="bungeni.signatory.wf.consented.withdrawn" title="withdraw signature" />
 <grant permission="bungeni.signatory.wf.consented.withdrawn" role="bungeni.Owner" />
-
-<permission id="bungeni.signatory.wf.awaiting_consent.withdrawn" title="withdraw signature - automatic" />
-<grant permission="bungeni.signatory.wf.awaiting_consent.withdrawn" role="bungeni.Clerk" />
-
-<permission id="bungeni.signatory.wf.consented.awaiting_consent" title="unsign document - automatic" />
-<grant permission="bungeni.signatory.wf.consented.awaiting_consent" role="bungeni.Clerk" />
 
 </configure>
