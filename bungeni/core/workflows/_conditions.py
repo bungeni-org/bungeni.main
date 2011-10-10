@@ -20,8 +20,7 @@ from bungeni.core.workflows import utils
 from bungeni.models.interfaces import IAuditable, ISignatoriesValidator
 from bungeni.models import domain
 from bungeni.alchemist import Session
-from bungeni.models import utils as model_utils
-
+from bungeni.models import utils as model_utils, delegation
 # common
 
 # the condition for the transition from "" (None) to either "draft" or to 
@@ -38,15 +37,11 @@ def user_is_context_owner(context):
     """
     user = model_utils.get_db_user()
     owner_login = utils.get_owner_login_pi(context)
-    session = Session()
-    delegations = session.query(domain.User) \
-                    .join((domain.UserDelegation, domain.User.user_id
-                                        ==domain.UserDelegation.user_id)) \
-                    .filter(domain.UserDelegation.delegation_id == user.user_id) \
-                    .all()
+    if user.login == owner_login:
+        return True
+    delegations = delegation.get_user_delegations(user.user_id)
     users = [delegate.login for delegate in delegations]
-    users.append(owner_login) 
-    return user.login in users
+    return owner_login in users
 
 def user_may_edit_context_parent(context):
     """Does user have edit permission on the context's parent?
