@@ -364,6 +364,19 @@ def _load(workflow, name):
             assert not roles, "Workflow [%s] - non-permissionable transition " \
                 "does not allow @roles [%s]." % (name, roles)
             kw["permission"] = None # None -> CheckerPublic
+        # !+CAN_EDIT_AS_DEFAULT_TRANSITION_PERMISSION(mr, oct-2011) this feature
+        # is functional (uncomment following elif clause) but as yet not enabled. 
+        #
+        # Advantage would be that it would be easier to keep transitions 
+        # permissions in sync with object permissions (set in state) as the 
+        # majority of transition require exactly this as privilege; for the 
+        # occassional transition needing a different privilege, the current 
+        # transition.@roles mechanism may be used to make this explicit. 
+        #
+        # Need to consider implications further; the zope_principal_role_map db 
+        # table, that caches contextual roles for principals, should probably 
+        # first be reworked to be db-less (as for zope_role_permission_map).
+        #
         #elif not roles:
         #    # then as fallback transition permission use can modify object
         #    kw["permission"] = "bungeni.%s.Edit" % (name) # fallback permission
@@ -382,8 +395,8 @@ def _load(workflow, name):
             pid = "bungeni.%s.wf.%s" % (name, tid)
             if not ZCML_PROCESSED:
                 # use "bungeni.Clerk" as default list of roles
-                zcml_transition_permission(pid, title, 
-                    (roles or "bungeni.Clerk").split())
+                roles = roles or "bungeni.Clerk"
+                zcml_transition_permission(pid, title, roles.split())
             kw["permission"] = pid
         # python resolvables
         if "condition" in kw:
