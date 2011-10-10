@@ -20,7 +20,8 @@ import zope.lifecycleevent
 from bungeni.alchemist import Session
 from bungeni.core.workflow import interfaces
 
-#
+
+GRANT, DENY = 1, 0
 
 # we only have 1 or 0 i.e. only Allow or Deny, no Unset.
 IntAsSetting = { 
@@ -28,13 +29,6 @@ IntAsSetting = {
     0: zope.securitypolicy.interfaces.Deny
 }
 
-GRANT, DENY = 1, 0
-
-# !+ needed to make the tests pass in the absence of interactions
-# !+nullCheckPermission(mr, mar-2011) shouldn't the tests ensure there is 
-# always an interaction?
-def nullCheckPermission(permission, principal_id):
-    return True
 
 def exceptions_as(exc_kls, include_name=True):
     def _exceptions_as(f):
@@ -51,6 +45,7 @@ def exceptions_as(exc_kls, include_name=True):
                     raise exc_kls("%s" % (e))
         return _errorable_f
     return _exceptions_as
+
 
 def wrapped_condition(condition):
     def test(context):
@@ -418,29 +413,23 @@ class WorkflowController(object):
         return interfaces.IWorkflow(self.context)
     
     def _get_checkPermission(self):
-        try:
-            return zope.security.management.getInteraction().checkPermission
-        except zope.security.interfaces.NoInteraction:
-            return nullCheckPermission
+        return zope.security.management.getInteraction().checkPermission
     
     def _check(self, transition, check_security):
         """Check whether we may execute this workflow transition.
         """
         if check_security:
             checkPermission = self._get_checkPermission()
-        else:
-            checkPermission = nullCheckPermission
-        if not checkPermission(transition.permission, self.context):
-            raise zope.security.interfaces.Unauthorized(self.context,
-                "transition: %s" % transition.id,
-                transition.permission)
+            if not checkPermission(transition.permission, self.context):
+                raise zope.security.interfaces.Unauthorized(self.context,
+                    "transition: %s" % transition.id, 
+                    transition.permission)
         # now make sure transition can still work in this context
         if not transition.condition(self.context):
             raise interfaces.ConditionFailedError
     
     # !+ RENAME
     def fireTransition(self, transition_id, comment=None, check_security=True):
-        # !+fireTransitionParams(mr, mar-2011) needed?
         if not (comment is None and check_security is True):
             log.warn("%s.fireTransition(%s, comment=%s, check_security=%s)" % (
                 self, transition_id, comment, check_security))
@@ -455,9 +444,8 @@ class WorkflowController(object):
         # change status of context or new object
         self.state_controller.set_status(transition.destination)
         # notify wf event observers
-        event = WorkflowTransitionEvent(self.context, 
-            transition.source, transition.destination, transition, comment)
-        zope.event.notify(event)
+        zope.event.notify(WorkflowTransitionEvent(self.context,
+                transition.source, transition.destination, transition, comment))
         # send modified event for original or new object
         zope.event.notify(zope.lifecycleevent.ObjectModifiedEvent(self.context))
     

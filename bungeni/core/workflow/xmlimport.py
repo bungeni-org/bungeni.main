@@ -347,28 +347,11 @@ def _load(workflow, name):
         destination = t.get("destination")
         assert destination in STATE_IDS, \
             "Unknown transition destination state [%s]" % (destination)
-        # update ZCML for dedicated permission for XML multi-source transition.
-        # Given that, irrespective of how sources are grouped into multi-source 
-        # XML <transition> elements, there may be only *one* path from any 
-        # given *source* to any given *destination* state, it suffices to use
-        # only the first source element + the destination to guarantee a unique
-        # identifier for an XML transition element.
-        # !+permission_id note the "-" char is not allowed as within a 
-        # permission id (so we use "." also here).
-        tid = "%s.%s" % (
-            #".".join([ source or "" for source in sources ]),
-            sources[0] or "",
-            destination)
-        pid = "bungeni.%s.wf.%s" % (name, tid)
-        if not ZCML_PROCESSED:
-            if is_zcml_permissionable(t):
-                zcml_transition_permission(pid, t.get("title"), 
-                    t.get("roles", "bungeni.Clerk").split())
         
-        kw = {}
         # optionals -- only set on kw IFF explicitly defined
+        kw = {}
         for i in TRANS_ATTRS_OPTIONALS:
-            val = t.get(i)
+            val = strip_none(t.get(i))
             if not val:
                 # we let setting of defaults be handled upstream
                 continue
@@ -379,12 +362,33 @@ def _load(workflow, name):
         # trigger
         if "trigger" in kw:
             kw["trigger"] = trigger_value_map[kw["trigger"]]
-        # permission - one-to-one per transition, may only be {pid} or None
-        if is_zcml_permissionable(t):
-            kw["permission"] = pid
+        # roles -> permission - one-to-one per transition
+        roles = kw.pop("roles", None) # space separated str
+        if not is_zcml_permissionable(t):
+            assert not roles, "Workflow [%s] - non-permissionable transition " \
+                "does not allow @roles [%s]." % (name, roles)
+            kw["permission"] = None # "create" transition -> CheckerPublic
+        #elif not roles:
+        #    # then as fallback transition permission use can modify object
+        #    kw["permission"] = "bungeni.%s.Edit" % (name) # fallback permission
         else:
-            assert kw.get("permission") is None, "Not allowed to set a " \
-                "permission on (creation) transition: %s" % (tid)
+            # Dedicated permission for XML multi-source transition.
+            # Given that, irrespective of how sources are grouped into 
+            # multi-source XML <transition> elements, there may be only *one* 
+            # path from any given *source* to any given *destination* state, 
+            # it suffices to use only the first source element + the destination 
+            # to guarantee a unique identifier for an XML transition element.
+            #
+            # Note: the "-" char is not allowed within a permission id 
+            # (so we use "." also here).
+            #
+            tid = "%s.%s" % (sources[0] or "", destination)
+            pid = "bungeni.%s.wf.%s" % (name, tid)
+            if not ZCML_PROCESSED:
+                # use "bungeni.Clerk" as default list of roles
+                zcml_transition_permission(pid, t.get("title"), 
+                    (roles or "bungeni.Clerk").split())
+            kw["permission"] = pid
         # python resolvables
         if "condition" in kw:
             kw["condition"] = capi.get_workflow_condition(kw["condition"])
