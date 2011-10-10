@@ -20,9 +20,7 @@ from bungeni.core.workflow.states import Feature, State, Transition, Workflow
 from bungeni.core.workflow.notification import Notification
 from bungeni.utils.capi import capi, bungeni_custom_errors
 from bungeni.ui.utils import debug
-from bungeni.models.interfaces import ISubRoleAnnotations
-from zope.component import getUtility
-from zope.securitypolicy.interfaces import IRole
+
 #
 
 ASSIGNMENTS = (GRANT, DENY)
@@ -160,7 +158,7 @@ def _load(workflow, name):
     transitions = []
     states = []
     domain = strip_none(workflow.get("domain")) 
-    # !+domain(mr, jul-2011) drop? only used as state/transition title default
+    # !+domain(mr, jul-2011) needed?
     wuids = set() # unique IDs in this XML workflow file
     note = strip_none(workflow.get("note"))
     
@@ -203,11 +201,11 @@ def _load(workflow, name):
                 like_permissions.remove(perm)
         permissions.append((assignment, p, r))
     
-    def assert_valid_attr_names(e, allowed_attr_names):
-        for key in e.keys():
+    def assert_valid_attr_names(elem, allowed_attr_names):
+        for key in elem.keys():
             assert key in allowed_attr_names, \
                 "Workflow [%s]: unknown attribute %s in %s" % (
-                    name, key, etree.tostring(e))
+                    name, key, etree.tostring(elem))
     
     # top-level child ordering
     grouping, allowed_child_ordering = 0, (
@@ -242,6 +240,7 @@ def _load(workflow, name):
         pid = strip_none(p.get("permission"))
         role = strip_none(p.get("role"))
         #+!assertRegisteredPermission(permission)
+        assert pid and role, "Global grant must specify valid permission/role" 
         ZCML_LINES.append(
             '%s<grant permission="%s" role="%s" />' % (ZCML_INDENT, pid, role))
     
@@ -308,7 +307,7 @@ def _load(workflow, name):
             )
         # states
         states.append(
-            State(state_id, Message(s.get("title", domain)), 
+            State(state_id, Message(strip_none(s.get("title")), domain),
                 strip_none(s.get("note")),
                 actions, permissions, notifications,
                 as_bool(strip_none(s.get("permissions_from_parent")) or "false"),
@@ -330,6 +329,8 @@ def _load(workflow, name):
                 raise SyntaxError('No required "%s" attribute in %s' % (
                     key, etree.tostring(t)))
         
+        # title
+        title = strip_none(t.get("title"))
         # sources, empty string -> initial_state
         sources = t.get("source").split() or [initial_state]
         assert len(sources) == len(set(sources)), \
@@ -362,7 +363,7 @@ def _load(workflow, name):
         if not is_zcml_permissionable(t):
             assert not roles, "Workflow [%s] - non-permissionable transition " \
                 "does not allow @roles [%s]." % (name, roles)
-            kw["permission"] = None # "create" transition -> CheckerPublic
+            kw["permission"] = None # None -> CheckerPublic
         #elif not roles:
         #    # then as fallback transition permission use can modify object
         #    kw["permission"] = "bungeni.%s.Edit" % (name) # fallback permission
@@ -381,7 +382,7 @@ def _load(workflow, name):
             pid = "bungeni.%s.wf.%s" % (name, tid)
             if not ZCML_PROCESSED:
                 # use "bungeni.Clerk" as default list of roles
-                zcml_transition_permission(pid, t.get("title"), 
+                zcml_transition_permission(pid, title, 
                     (roles or "bungeni.Clerk").split())
             kw["permission"] = pid
         # python resolvables
@@ -401,7 +402,7 @@ def _load(workflow, name):
                         t.get("require_confirmation")))
         # multiple-source transitions are really multiple "transition paths"
         for source in sources:
-            args = (Message(t.get("title"), domain), source, destination)
+            args = (Message(title, domain), source, destination)
             transitions.append(Transition(*args, **kw))
             log.debug("[%s] adding transition [%s-%s] [%s]" % (
                 name, source or "", destination, kw))

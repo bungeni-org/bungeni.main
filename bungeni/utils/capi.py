@@ -22,6 +22,7 @@ log = __import__("logging").getLogger("bungeni.utils.capi")
 import time
 import os
 from zope.dottedname.resolve import resolve
+from bungeni.utils import error
 import bungeni_custom as bc
 
 
@@ -33,12 +34,7 @@ def bungeni_custom_errors(f):
     class BungeniCustomError(Exception):
         """A Localization Error.
         """
-    def _errorable(*args, **kw):
-        try: 
-            return f(*args, **kw)
-        except Exception, e: 
-            raise BungeniCustomError("%s: %s" % (e.__class__.__name__, e))
-    return _errorable
+    return error.exceptions_as(BungeniCustomError, True)(f)
 
 
 class CAPI(object):

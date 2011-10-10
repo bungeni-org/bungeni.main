@@ -200,6 +200,7 @@ def create_sittings_map(sittings, request):
                
         proxied = ProxyFactory(sitting)
         
+        # !+ non-existant permission
         if checkPermission(u"bungeni.agendaitem.wf.schedule", proxied):
             link = "%s/schedule" % url.absoluteURL(sitting, request)
         else:

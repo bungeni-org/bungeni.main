@@ -398,7 +398,9 @@ class ISignatoriesValidator(interface.Interface):
     signatories_count = interface.Attribute("""number of signatories""")
     
     consented_signatories = interface.Attribute("""number of consented """)
-
+    
+    # !+naming(mr, oct-2011) please follow standard python naming conventions!
+    
     def validateSignatories():
         """Validate signatories count on parliamentary item i.e. number added
         """
