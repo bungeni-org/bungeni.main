@@ -1018,10 +1018,15 @@ class _AutoCompleteWidget(ItemsEditWidgetBase):
             </script>
             """ % kw
 
+    #!+AUTOCOMPLETE_WIDGET(ah, oct-2011) verify valid input by checking if the
+    # input data is not None. The default hasInput() returns true even if the 
+    # input value is none
+    def hasInput(self):
+        return self._data is not None
+
     @property
     def html(self):
         kw = {"id": self.name}
-
         if self._data is not None and self._data is not self._data_marker:
             term = self.vocabulary.getTerm(self._data)
             kw["value"] = term.token
