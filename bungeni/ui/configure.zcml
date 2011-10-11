@@ -159,10 +159,12 @@
         provides="zope.schema.interfaces.IVocabularyFactory"
         component=".vocabulary.report_xhtml_templates"
     />
+    <!--UNUSED_DocumentXHTMLTemplates(mr, oct-2011)
     <utility name="bungeni.vocabulary.DocumentXHTMLTemplates"
         provides="zope.schema.interfaces.IVocabularyFactory"
         component=".vocabulary.document_xhtml_templates"
     />
+    -->
     <utility name="bungeni.vocabulary.ParliamentSource"
         provides="zope.schema.interfaces.IVocabularyFactory"
         component=".vocabulary.ParliamentSource"

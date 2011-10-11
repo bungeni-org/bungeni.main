@@ -855,13 +855,15 @@ class SubstitutionSource(SpecializedSource):
                    ))
         return vocabulary.SimpleVocabulary(terms)
 
+
+# !+MODELS(mr, oct-2011) shouldn't this be elsewhere?
 class PartyMembership(object):
     pass
 
 party_membership = sql.join(schema.political_parties, schema.groups,
-                schema.political_parties.c.party_id == schema.groups.c.group_id).join(
-                   schema.user_group_memberships,
-                  schema.groups.c.group_id == schema.user_group_memberships.c.group_id)
+        schema.political_parties.c.party_id == schema.groups.c.group_id
+    ).join(schema.user_group_memberships,
+        schema.groups.c.group_id == schema.user_group_memberships.c.group_id)
 
 mapper(PartyMembership, party_membership)
 
@@ -972,7 +974,7 @@ class MotionPartySource(SpecializedSource):
         if user_id: 
             query = session.query(PartyMembership
                ).filter(
-                    sql.and_(PartyMembership.active_p ==True,
+                    sql.and_(PartyMembership.active_p == True,
                         PartyMembership.user_id == user_id,
                         PartyMembership.parent_group_id == parliament_id)
                        )
@@ -1086,24 +1088,19 @@ def dict_to_dynatree(input_dict, selected):
 class VDEXVocabularyMixin(object):
     def __init__(self, file_name):
         self.file_name = file_name
-
+    
     @property
     def file_path(self):
-        return "/".join(
-            (capi.get_root_path(), "vocabularies", self.file_name)
-        )
+        return capi.get_path_for("vocabularies", self.file_name)
     
     @property
     def vdex(self):
         ofile = open(self.file_path)
-        vdex = imsvdex.vdex.VDEXManager(
-            file=ofile, 
-            lang = capi.default_language
-        )
+        vdex = imsvdex.vdex.VDEXManager(file=ofile, lang=capi.default_language)
         vdex.fallback_to_default_language = True
         ofile.close()
         return vdex
-
+    
     def getTermById(self, value):
         return self.vdex.getTermById(value)
 
@@ -1146,7 +1143,7 @@ sitting_meeting_types = FlatVDEXVocabulary("sitting-meeting-types.vdex")
 sitting_convocation_types = FlatVDEXVocabulary("sitting-convocation-types.vdex")
 
 #
-# Vocaularies for XML configuration based report generation
+# Vocabularies for XML configuration based report generation
 #
 
 class ReportXHTMLTemplates(object):
@@ -1198,6 +1195,8 @@ class ReportXHTMLTemplates(object):
 
 report_xhtml_templates = ReportXHTMLTemplates()
 
+'''
+!+UNUSED_DocumentXHTMLTemplates(mr, oct-2011)
 class DocumentXHTMLTemplates(ReportXHTMLTemplates):
     """XHTML templates for publication of documents in other formats.
     
@@ -1207,3 +1206,5 @@ class DocumentXHTMLTemplates(ReportXHTMLTemplates):
     template_folder = "documents"
     
 document_xhtml_templates = DocumentXHTMLTemplates()
+'''
+
