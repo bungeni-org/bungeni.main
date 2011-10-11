@@ -131,7 +131,7 @@ class WorkspaceContainerJSONListing(BrowserView):
     def check_permission(self, results):
         viewable = []
         for item in results:
-            if checkPermission(self.permission, proxy.ProxyFactory(item)):
+            if checkPermission(self.permission, item):
                 viewable.append(item)
         return viewable
     
@@ -149,10 +149,10 @@ class WorkspaceContainerJSONListing(BrowserView):
             start=start,
             limit=limit,
             )
+        results = [container.contained(ob, self, workspace.stringKey(ob))
+                 for ob in results]
         results = self.check_permission(results)
         nodes = results[start:start + limit]
-        nodes = [container.contained(ob, self, workspace.stringKey(ob))
-                 for ob in nodes]
         nodes = self.translate_objects(nodes, lang)
         batch = self._json_values(nodes)
         return batch
