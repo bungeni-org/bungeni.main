@@ -21,7 +21,8 @@ from zope.lifecycleevent import IObjectModifiedEvent, IObjectCreatedEvent, \
 
 from bungeni.alchemist import Session
 from bungeni.models import domain
-from bungeni.models.interfaces import ISignatory
+from bungeni.models.interfaces import ISignatory, IBungeniGroup, \
+    IBungeniGroupMembership, IBungeniParliamentaryContent
 from bungeni.core import audit
 from bungeni.core.workflows.utils import (
     assign_signatory_role, get_owner_login_pi
@@ -77,6 +78,8 @@ def signatory_deleted(ob, event):
             " Skipping unsetting of role", ob.__str__()
         )
 
+
+@register.handler(adapts=(IBungeniGroupMembership, IObjectModifiedEvent))
 def group_member_modified(ob, event):
     """when a group member gets inactivated (end date set)
     all his titles get deactivated for the same date (if they
@@ -93,8 +96,8 @@ def group_member_modified(ob, event):
                 title.end_date = ob.end_date
 
 
-# !+GROUP_PRINCIPAL_ID(ah,sep-2011) adding group_modified event to set group
-# principal id
+# !+GROUP_PRINCIPAL_ID(ah, sep-2011) event to set group principal id
+@register.handler(adapts=(IBungeniGroup, IObjectModifiedEvent))
 def group_modified(ob, event):
     """When a group is added, the value in group_principal_id is computed
     out of the group type and group id. This was a computed property in orm.py
@@ -109,6 +112,7 @@ def group_modified(ob, event):
             ob.group_principal_id, ob.group_id)
 
 
+@register.handler(adapts=(IBungeniParliamentaryContent, IObjectModifiedEvent))
 def timestamp(object, event):
     """Set the timestamp for the item.
     """

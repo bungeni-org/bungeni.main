@@ -36,9 +36,6 @@
         provides="zope.error.interfaces.IErrorReportingUtility"
     />
     
-    <!-- events -->
-    <include file="events.zcml" />
-    
     <!-- attached files -->
     <include file="files.zcml" />
     
