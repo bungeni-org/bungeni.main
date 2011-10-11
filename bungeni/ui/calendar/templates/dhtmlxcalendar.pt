@@ -44,16 +44,15 @@
                 scheduler.config.details_on_create=true;
                 
                 //create timeline view for venues
-                var venues_data = <span tal:replace="structure view/venues_as_json"/>;
+                window.venues_data = <span tal:replace="structure view/venues_as_json"/>;
                 
                 scheduler.createTimelineView({
                     name : "venues",
-                    x_unit: "minute",
-                    x_date: "%H:%i",
-                    x_step: 30,
-                    x_size: 36,
-                    x_start: 14,
-                    x_length: 48,
+                    x_unit: "hour",
+                    x_date: "%d %M %h%a",
+                    x_step: 6,
+                    x_size: 20,
+                    x_start: 1,
                     y_unit: venues_data,
                     y_property: "venue",
                     render: "bar"
@@ -124,6 +123,9 @@
             function canEdit()
             {
                 init();
+                scheduler.attachEvent("onBeforeViewChange", 
+                    handle_before_change_view
+                );
                 scheduler.attachEvent("onDblClick", function (event_id, native_event_object){
                     parent.location = '<span tal:replace="structure view/url"/>' + "/sittings/obj-"+event_id+"/schedule";
                 });
@@ -149,6 +151,9 @@
                 //scheduler.config.readonly = true;
                 //scheduler.getEvent("onClick").readonly = true;
                 //scheduler.getEvent("onDblClick").readonly = true;
+                scheduler.attachEvent("onBeforeViewChange", 
+                    handle_before_change_view
+                );
                 var dp = new dataProcessor(location.href+"/dhtmlxcalendaredit");
                 dp.init(scheduler);
             }

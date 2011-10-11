@@ -1160,7 +1160,7 @@ class ReportXHTMLTemplates(object):
     template_folder = "scheduling"
     
     def __init__(self):
-        self.buildTerms()
+        self.terms = self.buildTerms()
     
     def getTitle(self, path):
         title = None
@@ -1171,6 +1171,7 @@ class ReportXHTMLTemplates(object):
         return title
     
     def buildTerms(self):
+        vocabulary_terms = []
         template_folder = capi.get_path_for("reporting", "templates", 
             self.template_folder
         )
@@ -1184,12 +1185,13 @@ class ReportXHTMLTemplates(object):
         )
         for file_name in file_list:
             file_path = "/".join([template_folder, file_name])
-            self.terms.append(
+            vocabulary_terms.append(
                 vocabulary.SimpleTerm(file_path,
                     token=hashlib.md5(file_name).hexdigest(),
                     title=self.getTitle(file_path)
                 )
             )
+        return vocabulary_terms
     
     def __call__(self, context):
         return vocabulary.SimpleVocabulary(self.terms)

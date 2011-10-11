@@ -303,6 +303,7 @@ class CalendarView(BungeniBrowserView):
         need("dhtmlxscheduler-year-view")
         need("dhtmlxscheduler-agenda-view")
         need("dhtmlxscheduler-expand")
+        need("bungeni-calendar-extensions")
         need("dhtmlxscheduler-timeline")
         need("dhtmlxscheduler-tooltip")
         need("dhtmlxscheduler-minical")
@@ -543,8 +544,9 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
             if error.message not in ('', None): 
                 error_string += error.message + "\n"
             else:
-                error_string += error.__str__() + "\n"  
+                error_string += error.__str__() + "\n"
         return "%s \n%s" % (error_message, error_string)
+
     # The form action strings below do not need to be translated because they are 
     # not visible in the UI.      
     @form.action(u"insert", failure='insert_sitting_failure_handler')

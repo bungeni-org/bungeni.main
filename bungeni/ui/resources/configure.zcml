@@ -72,4 +72,10 @@
         include="jquery.multicalendar.js"
     />
   </resourceLibrary>
+  <resourceLibrary name="bungeni-calendar-extensions" 
+    require="dhtmlxscheduler">
+    <directory source="calendar"
+        include="calendar-extensions.js"
+    />
+  </resourceLibrary>
 </configure>
