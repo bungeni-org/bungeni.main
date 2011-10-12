@@ -66,11 +66,6 @@ class TransitionHandler(object):
             # dress-up transition data object
             data.setdefault("note", data.get("note", ""))
             data.setdefault("date_active", data.get("date_active", None))
-            data.setdefault("registry_number", data.get("registry_number", ""))
-            
-            reg_number = data.get('registry_number','')
-            if reg_number:
-                context.registry_number = reg_number
             # !+ because WorkflowController API e.g. fireTransition(), ONLY 
             # foresees for a comment attribute as additional data, we bypass 
             # using that altogether, and pass it along downstream by stuffing 

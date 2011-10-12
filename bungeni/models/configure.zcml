@@ -36,10 +36,6 @@
         provides=".interfaces.IBungeniEmailSettings"
     />
     
-    <utility factory=".settings.RegistrySettingsUtility"
-        provides=".interfaces.IBungeniRegistrySettings"
-    />
-    
     <subscriber handler=".events.create_discussion_for_item_scheduling" />
     <subscriber handler=".events.set_parliament_id" />
 

@@ -31,9 +31,6 @@ import zope.event
 import zope.lifecycleevent
 from bungeni.core.serialize import publish_to_xml
 
-import sys
-import traceback
-
 # special handled action to make a new version of a ParliamentaryItem, that is 
 # not tied to a state name, but to <state> @version bool attribute
 create_version = utils.create_version
@@ -46,10 +43,7 @@ def __pi_create(context):
     utils.assign_owner_role_pi(context)
 
 def __pi_submit(context):
-    try:
-        utils.set_pi_registry_number(context)
-    except:
-        traceback.print_exception(*sys.exc_info())
+    utils.set_pi_registry_number(context)
     utils.pi_update_signatories(context)
     utils.pi_unset_signatory_roles(context)
 

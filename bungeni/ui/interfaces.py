@@ -147,5 +147,3 @@ class IVocabularyTextField(schema.interfaces.IText):
 class IWorkspaceContentAdapter(interface.Interface):
     """Provides workspace item fields
     """
-    
-
