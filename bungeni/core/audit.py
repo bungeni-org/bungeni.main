@@ -65,6 +65,8 @@ def objectStateChange(ob, event):
 
 @register.handler(adapts=(IAuditable, IVersionCreated))
 def objectNewVersion(ob, event):
+    """When an auditable object is versioned, we audit creation of new version.
+    """
     auditor = get_auditor(ob)
     # !+NewVersion_CHANGE_ID(mr, jun-2011) when does an IVersionCreated 
     # event for an IAuditable object ever have a "change_id" attribute ?

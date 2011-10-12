@@ -36,9 +36,6 @@
         provides="zope.error.interfaces.IErrorReportingUtility"
     />
     
-    <!-- attached files -->
-    <include file="files.zcml" />
-    
     <!-- Setup WebDAV -->
     <!--include file="webdav.zcml" /-->
     
@@ -229,7 +226,7 @@
         />
         <allow interface="zope.publisher.interfaces.IPublishTraverse" />
     </class>
-
+    
     <class class=".schedule.DailySchedulingContext">
         <require permission="zope.Public"
             interface=".interfaces.IDailySchedulingContext"
