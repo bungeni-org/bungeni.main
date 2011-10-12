@@ -841,7 +841,7 @@ class MpDescriptor(GroupMembershipDescriptor):
     
     fields = [
         Field(name="user_id", # [user-req]
-            modes="view add listing",
+            modes="view edit add listing",
             localizable=[
                 show("view listing"),
                 hide("edit"),
