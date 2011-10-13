@@ -43,6 +43,7 @@ from bungeni.models.interfaces import IAuditable
 from bungeni.models.interfaces import IWorkspaceContainer
 from bungeni.ui.i18n import _
 from zope.i18n import translate
+from bungeni.ui.absoluteurl import WorkspaceAbsoluteURLView
 
 class WorkflowVocabulary(object):
     zope.interface.implements(IVocabularyFactory)
@@ -133,6 +134,9 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
     ):
     """Display workflow status and actions.
     """
+    # stores old_url of object before transition change
+    # we could use HTTP_REFERER but that would mean relying on client input
+    _old_url = None
     
     # evoque
     render = z3evoque.ViewTemplateFile("form.html#form")
@@ -219,6 +223,9 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
             ignore_request=ignore_request)
     
     def update(self, transition_id=None):
+        if IWorkspaceContainer.providedBy(self.context.__parent__):
+            self._old_url = WorkspaceAbsoluteURLView(
+                self.context, self.request)()
         workflow = interfaces.IWorkflow(self.context)
         if transition_id:
             transition = workflow.get_transition(transition_id)
@@ -235,6 +242,19 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
             self.form_fields = self.form_fields.omit("note", "date_active")
         super(WorkflowActionViewlet, self).update()
     
+    @property
+    def next_url(self):
+        if IWorkspaceContainer.providedBy(self.context.__parent__):
+            # check if the object is in the same tab as before.
+            # if it is redirect to the object, if not redirect to the listing
+            if (WorkspaceAbsoluteURLView(self.context, self.request)() == 
+                self._old_url):
+                self._next_url = self._old_url
+            else:
+                self._next_url = absoluteURL(
+                    self.context.__parent__, self.request)
+        return self._next_url
+        
     def setupActions(self, transition_id):
         # !+RENAME(mr, apr-2011) should be transition_id
         wfc = interfaces.IWorkflowController(self.context)
@@ -243,9 +263,7 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
         else:
             transition_ids = (transition_id,)
         self.actions = bindTransitions(self, transition_ids, wfc.workflow)
-        if IWorkspaceContainer.providedBy(self.context.__parent__):
-            self._next_url = absoluteURL(self.context.__parent__, self.request)
-
+        
 class WorkflowView(browser.BungeniBrowserView):
     """This view is linked to by the "workflow" context action and dislays the 
     workflow history and the action viewlet with all possible transitions
