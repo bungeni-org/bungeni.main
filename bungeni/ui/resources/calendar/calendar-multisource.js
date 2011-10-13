@@ -2,10 +2,14 @@
  * of available calendars.
  */
 var loaded_calendars = Array();
+var edit_mode_turned_off = false;
 $(document).ready(function(){
     $("input", $("#select-calendars")).change(
         function(){
-            scheduler.config.readonly = true;
+            if (!scheduler.config.readonly){
+                scheduler.config.readonly = true;
+                edit_mode_turned_off = true;
+            }
             if (loaded_calendars.length==0){
                 loaded_calendars.push(scheduler._load_url);
             }
@@ -28,7 +32,9 @@ $(document).ready(function(){
                         scheduler.load(loaded_calendars[cal_id]);
                     }
                 }
-                
+                if ((loaded_calendars.length == 1) && (edit_mode_turned_off)){
+                    scheduler.config.readonly = false;
+                }
             }
         }
     );

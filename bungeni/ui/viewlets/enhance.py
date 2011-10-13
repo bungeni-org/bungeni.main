@@ -19,4 +19,4 @@ class ProcessingViewlet(object):
     render = ViewPageTemplateFile("templates/processing.pt")
 
     def update(self):
-        need("jqueryuiblock")
+        need("bungeni-form-block-ui")

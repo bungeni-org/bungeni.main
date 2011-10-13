@@ -36,6 +36,12 @@ var venues_timeline_mapping = {
     }
 }
 
+/*
+ *  Handler for scheduler's onBeforeViewChange event
+ *  
+ *  Determines the scope and render mode of venues timeline view whenever
+ *  the intent is to switch to display to venues.
+ */
 function handle_before_change_view(old_mode, old_date, new_mode , new_date){
     if ((new_mode == "venues") && (old_mode != "venues") ){
         scheduler.clear_view("venues");
@@ -64,4 +70,42 @@ function handle_before_change_view(old_mode, old_date, new_mode , new_date){
         scheduler.date.venues_start = min_date_getter;
     }
     return true;
+}
+
+/*
+ *  Handler for scheduler's onEventSave event
+ *  
+ *  Perform validation of entered data and determine if the event editor 
+ *  will be closed.
+ */
+function event_save_handler(id, data, is_new_event){
+    var error_messages = new Array();
+    //#!I18N(mb, oct-2011) Enable proper I18N of error messages
+    if ((data.venue=="") || (data.venue==undefined)){
+        error_messages.push("Venue : Select a venue");
+    }
+    if ((data.language=="") || (data.language==undefined)){
+        error_messages.push("Language : Select a language");
+    }
+    console.log(error_messages);
+    if (error_messages.length > 0){
+        html_errors = $("<ul style='text-align:justify;margin:5px;'/>");
+        html_errors.append("<h2>Make Corrections</h2>");
+        for (error_key in error_messages){
+            html_errors.append("<li>" + error_messages[error_key] + "</li>");
+        }
+        html_errors.append('<input type="button" value="Okay" onclick="javascript:$.unblockUI();"/>');
+        html_errors.wrap("<div/>");
+        $.blockUI({
+            message: html_errors.html(),
+            css: {backgroundColor: "#FFF", padding: "20px;", fontSize: "110%",
+                borderColor: "#F45E4D", color: "#F45E4D"
+            },
+            timeout: 3000,
+            showOverlay: true,
+            baseZ: 20000,
+        });
+        return false;
+    }
+    return  true;
 }

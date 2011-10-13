@@ -19,7 +19,6 @@ from bungeni.core.workflow import interfaces
 
 import os
 import re
-import random
 
 REGEX_FOR_SLUGS = re.compile(u"[^\w\.]")
 
@@ -132,11 +131,3 @@ def slugify(string_to_slug):
     slug = unicode(string_to_slug)
     slug = re.sub(REGEX_FOR_SLUGS, u'_', slug)
     return slug
-
-
-def generate_hex_colors(count=1):
-    """Return a list of safe hex color codes"""
-    web_safe = ["00", "33", "66", "99", "CC", "FF"]
-    return [ "".join([ random.choice(web_safe) 
-        for x in range(3) ]) for y in range(count) 
-    ]

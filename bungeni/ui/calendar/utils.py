@@ -253,3 +253,54 @@ def generate_recurrence_dates(recurrence_start_date,
                                 dtstart=recurrence_start_date, 
                                 until=recurrence_end_date, 
                                 interval=interval))   
+
+DEFAULT_EVENT_COLORS = ["00FF00", "FFA500", "DFA5E7", "A5B4DB", "F0A3A4", 
+    "C4C423", "C9A9DD", "CBEF85"
+]
+DEFAULT_COLOR_COUNT = len(DEFAULT_EVENT_COLORS)
+
+def combine_colors(a, b):
+    """Mix colors a and b"""
+    ac = [a[0:2], b[2:4], b[4:6]]
+    bc = [b[0:2], b[2:4], b[4:6]]
+    ac, bc = ([ int(hx, 16) for hx in ac ],[ int(hx, 16) for hx in bc ])
+    mixed = ''.join(
+        [ hex((ac[idx] + bc[idx]) % 256)[2:].zfill(2) for idx in range(3) ]
+    )
+    return mixed.upper()
+
+def generate_event_colours(count=None):
+    """Generate a deterministic set of bright colors to use for events.
+    
+    Colors are used on calendar to visually identify those loaded from the
+    same calendar. We are particularly interested in bright colors.
+    """
+    if count is None:
+        return DEFAULT_EVENT_COLORS[:1]
+    elif count <= DEFAULT_COLOR_COUNT:
+        return DEFAULT_EVENT_COLORS[:count]
+    else:
+        final_color_set = []
+        final_color_set.extend(DEFAULT_EVENT_COLORS)
+        to_generate = count - DEFAULT_COLOR_COUNT
+        colors_generated = 0
+        mix_index = 0
+        mix_with_index = 1
+        while colors_generated < to_generate:
+            # mix each color with other colors
+            if mix_with_index < DEFAULT_COLOR_COUNT:
+                mix_with = DEFAULT_EVENT_COLORS[mix_with_index]
+            else:
+                mix_with = final_color_set[mix_with_index]
+            final_color_set.append(combine_colors(
+                    DEFAULT_EVENT_COLORS[mix_index], 
+                    mix_with
+                )
+            )
+            colors_generated += 1
+            mix_with_index += 1
+            if not (colors_generated % DEFAULT_COLOR_COUNT):
+                mix_index = mix_index + 1
+                if not (mix_index < DEFAULT_COLOR_COUNT):
+                    mix_index = 0
+        return final_color_set

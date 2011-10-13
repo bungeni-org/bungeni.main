@@ -123,14 +123,15 @@
             function canEdit()
             {
                 init();
+                scheduler.config.icons_select=["icon_details","icon_delete"]
+                scheduler.config.readonly = false;
                 scheduler.attachEvent("onBeforeViewChange", 
                     handle_before_change_view
                 );
                 scheduler.attachEvent("onDblClick", function (event_id, native_event_object){
                     parent.location = '<span tal:replace="structure view/url"/>' + "/sittings/obj-"+event_id+"/schedule";
                 });
-                scheduler.config.icons_select=["icon_details","icon_delete"]
-                scheduler.config.readonly = false;
+                scheduler.attachEvent("onEventSave", event_save_handler);
                 var dp = new dataProcessor(location.href+"/dhtmlxcalendaredit");
                 dp.init(scheduler);
             }

@@ -75,7 +75,7 @@ class EventPartialForm(object):
     
     def get_widgets(self):
         widgets = form.setUpWidgets(self.form_fields, '', self.context, 
-            self.request,ignore_request=True
+            self.request, ignore_request=True
         )
         for widget in widgets:
             if IChoice.providedBy(widget.context):
@@ -291,7 +291,7 @@ class CalendarView(BungeniBrowserView):
         if menu is None:
             return []
         items = menu.getMenuItems(self.context, self.request)
-        colors = misc.generate_hex_colors(len(items))
+        colors = utils.generate_event_colours(len(items))
         map(lambda item:item[1].update([("color", colors[item[0]])]),
             enumerate(items)
         )
@@ -545,7 +545,16 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                 error_string += error.message + "\n"
             else:
                 error_string += error.__str__() + "\n"
-        return "%s \n%s" % (error_message, error_string)
+        #!+CALENDAR(mb, oct-2011) Include error messages in XML
+        #return "%s \n%s" % (error_message, error_string)
+        self.template_data.append(
+            dict(action="invalid",
+                ids=data["ids"],
+                group_sitting_id=data["ids"]
+            )
+        )
+        self.request.response.setHeader("Content-type", "text/xml")
+        return self.xml_template()
 
     # The form action strings below do not need to be translated because they are 
     # not visible in the UI.      
