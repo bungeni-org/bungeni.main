@@ -10,7 +10,7 @@ from bungeni import alchemist
 from bungeni.ui import container
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import url, common
-
+from bungeni.utils.capi import capi
 
 class LinkColumn(column.GetterColumn):
     def renderCell(self, item, formatter):
@@ -98,6 +98,7 @@ class ContextDataTableFormatter(yuiwidget.table.BaseDataTableFormatter):
         config["table_id"] = self.prefix
         config["link_url"] = url.absoluteURL(self.context, self.request)
         config["context_name"] = self.context.__name__
+        config["rows_per_page"] = capi.default_number_of_listing_items
         return config
 
     def __call__(self):

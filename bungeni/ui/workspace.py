@@ -27,6 +27,8 @@ from bungeni.models.workspace import OBJECT_ROLES
 from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.alchemist.model import queryModelDescriptor
 from bungeni.ui.utils import debug
+from bungeni.utils.capi import capi
+
 
 class WorkspaceField(object):
 
@@ -63,7 +65,8 @@ class WorkspaceContainerJSONListing(BrowserView):
             self.request.form["dir"] = "desc"
         self.sort_dir = self.request.get("dir")
 
-    def get_offsets(self, default_start=0, default_limit=25):
+    def get_offsets(self, default_start=0, 
+        default_limit=capi.default_number_of_listing_items):
         start = self.request.get("start", default_start)
         limit = self.request.get("limit", default_limit)
         try:

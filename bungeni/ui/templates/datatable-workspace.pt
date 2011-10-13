@@ -7,8 +7,9 @@
                          [${options/fields}],
                          [${options/columns}],
                          '${options/table_id}',
-			 ${options/item_types},
-			 ${options/status});
+			                   ${options/item_types},
+			                   ${options/status},
+			                   ${options/rows_per_page});
   });
   })(jQuery);
 </script>

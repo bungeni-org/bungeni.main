@@ -25,6 +25,7 @@ from bungeni.ui.utils import url, date, debug
 from bungeni.ui import cookies
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
+from bungeni.utils.capi import capi
 
 
 def query_iterator(query, parent, permission=None):
@@ -273,7 +274,8 @@ class ContainerJSONListing(ContainerJSONBrowserView):
                     sort_on_expressions.append(sort_dir_func(dso))
         return sort_on_expressions
 
-    def getOffsets(self, default_start=0, default_limit=25):
+    def getOffsets(self, default_start=0,
+        default_limit=capi.default_number_of_listing_items):
         start = self.request.get("start", default_start)
         limit = self.request.get("limit", default_limit)
         try:

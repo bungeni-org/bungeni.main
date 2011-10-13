@@ -81,6 +81,13 @@ class CAPI(object):
         conds_module = resolve("._conditions", "bungeni_custom.workflows")
         return getattr(conds_module, condition) # raises AttributeError
     
+    @property
+    @bungeni_custom_errors
+    def default_number_of_listing_items(self):
+        """This is the max number of items that are displayed in a listing by
+        default. Returns an integer
+        """
+        return int(bc.default_number_of_listing_items)
     
     # utility methods
     

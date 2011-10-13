@@ -547,7 +547,7 @@
      };
   
      $.fn.yuiDataTable = function(context_name, link_url, data_url, fields, 
-				  columns, table_id) {
+				  columns, table_id, rows_per_page) {
 	 if (!YAHOO.widget.DataTable) {
 	     return console.log("Warning: YAHOO.widget.DataTable module not loaded.");
 	 }
@@ -600,7 +600,7 @@
 	     var startIndex = (oState.pagination) ? 
 		 oState.pagination.recordOffset : 0;
 	     var results = (oState.pagination) ? 
-		 oState.pagination.rowsPerPage : 100;  
+		 oState.pagination.rowsPerPage : rows_per_page;  
 	     // Build custom request
 	     return  "sort=" + sort +
 		 "&dir=" + dir +
@@ -610,7 +610,7 @@
 	 };
 	 config = {
 	     paginator: new YAHOO.widget.Paginator(
-		 {rowsPerPage: 25,
+		 {rowsPerPage: rows_per_page,
 		  template: YAHOO.widget.Paginator.TEMPLATE_ROWS_PER_PAGE,
 		  rowsPerPageOptions: [10,25,50,100],
 		  firstPageLinkLabel : "<<", 
@@ -619,7 +619,7 @@
 		  nextPageLinkLabel : ">"
 		  //,pageLinks: 5
 		 }),
-	     initialRequest : 'start=0&limit=25',
+	     initialRequest : 'start=0&limit='+rows_per_page,
 	     generateRequest : RequestBuilder, 
 	     sortedBy : { dir : YAHOO.widget.DataTable.CLASS_ASC },
 	     dynamicData: true, // Enables dynamic server-driven data
@@ -725,7 +725,7 @@
   
      $.fn.yuiWorkspaceDataTable = function(context_name, link_url, data_url, 
 					   fields, columns, table_id, item_type,
-					   status) {
+					   status, rows_per_page) {
 	 if (!YAHOO.widget.DataTable) {
 	     return console.log("Warning: YAHOO.widget.DataTable module not loaded.");
 	 }
@@ -779,7 +779,7 @@
 	     var startIndex = (oState.pagination) 
 		 ? oState.pagination.recordOffset : 0;
 	     var results = (oState.pagination) 
-		 ? oState.pagination.rowsPerPage : 100;  
+		 ? oState.pagination.rowsPerPage : rows_per_page;  
 	     // Build custom request
 	     return  "sort=" + sort +
 		 "&dir=" + dir +
@@ -789,7 +789,7 @@
 	 }; 
 	 config = {
              paginator: new YAHOO.widget.Paginator(
-		 {rowsPerPage: 25,
+		 {rowsPerPage: rows_per_page,
 		  template: YAHOO.widget.Paginator.TEMPLATE_ROWS_PER_PAGE,
 		  rowsPerPageOptions: [10,25,50,100],
 		  firstPageLinkLabel : "<<", 
@@ -798,7 +798,7 @@
 		  nextPageLinkLabel : ">"
 		  //,pageLinks: 5
 		 }),
-             initialRequest : 'start=0&limit=25',
+             initialRequest : 'start=0&limit='+rows_per_page,
              generateRequest : RequestBuilder, 
              sortedBy : { dir : YAHOO.widget.DataTable.CLASS_ASC },
              dynamicData: true, // Enables dynamic server-driven data  
