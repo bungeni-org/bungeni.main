@@ -66,7 +66,7 @@ def _address_private(context):
         utils.assign_owner_role(context, user_login)
 
 def _address_attached(context):
-    publish_to_xml(context)
+    publish_to_xml(context, type="groupaddress", include=[])
 
 
 

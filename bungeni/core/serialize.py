@@ -9,6 +9,7 @@ from zope.security.proxy import removeSecurityProxy
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from sqlalchemy.orm import RelationshipProperty, class_mapper 
 from bungeni.models.schema import singular
+from bungeni.alchemist.container import stringKey
 
 import os
 import collections
@@ -40,23 +41,27 @@ def publish_to_xml(context, type="", include=["event","versions"]):
     context = removeSecurityProxy(context)
     data = obj2dict(context,1,parent=None,include=include,
                     exclude=["file_data", "image", "logo_data","event_item"])
-    if not type:
-        type = context.type
-        data["permissions"]= []
-        map = IPrincipalRoleMap(context)
-        for x in list(map.getPrincipalsAndRoles()):
-            data["permissions"].append({"role":x[0], "user":x[1],
-                                        "permission":x[2].getName()})
+    if type=="":
+        type = getattr(context,"type", None)
             
+    assert type, "%s has no 'type' field. Use 'type' function parameter." % context.__class__
+        
+    data["permissions"]= []
+    map = IPrincipalRoleMap(context)
+    for x in list(map.getPrincipalsAndRoles()):
+        data["permissions"].append({"role":x[0], "user":x[1],
+                                    "permission":x[2].getName()})
+                
     files = []
     path = os.path.join(setupStorageDirectory(), type)
     if not os.path.exists(path):
         os.makedirs(path)
-    file_path = os.path.join(path,context.__name__)
+        
+    file_path = os.path.join(path,stringKey(context))
     files.append(file_path+".xml") 
     with open(file_path+".xml","w") as file:
         file.write(serialize(data, name=type))
-        
+            
     attached_files = getattr(context, 'attached_files', None)
     if attached_files:
         for attachment in attached_files:
@@ -68,7 +73,7 @@ def publish_to_xml(context, type="", include=["event","versions"]):
         for file in files:
             zip.write(file, os.path.split(file)[-1])
             os.remove(file)
-        zip.close()
+        zip.close()    
 
 
 def serialize(data, name="object"):
@@ -113,7 +118,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[]):
     """
     result = {}
     obj = removeSecurityProxy(obj)
-
+    
     # Get additional attributes
     for name in include:
         value = getattr(obj, name)
@@ -125,7 +130,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[]):
             result[name] = res
         else:
             result[name] = value
-        
+            
     # Get mapped attributes
     for property in class_mapper(obj.__class__).iterate_properties:
         if property.key in exclude:
@@ -135,7 +140,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[]):
             continue
         if value is None:
             continue
-
+    
         if isinstance(property, RelationshipProperty) and depth > 0:
             if isinstance(value, collections.Iterable):
                 result[property.key] = []
