@@ -26,12 +26,38 @@ __all__ = ["handler"]
 from zope import component
 
 
+def adapter(adapts=None, provides=None, name=""):
+    """provideAdapter(factory, adapts=None, provides=None, name="")
+    """
+    def _adapter(factory):
+        component.provideAdapter(factory, adapts, provides, name)
+        return factory
+    return _adapter
+
+
+def utility(provides=None, name=""):
+    """provideUtility(ob, provides=None, name="")
+    """
+    def _utility(ob):
+        component.provideUtility(ob, provides, name)
+        return ob
+    return _utility
+
+
 def handler(adapts=None):
     """provideHandler(factory, adapts=None)
     """
-    def _d_handler(factory):
+    def _handler(factory):
         component.provideHandler(factory, adapts)
         return factory
-    return _d_handler
+    return _handler
 
+
+def subscription_adapter(adapts=None, provides=None):
+    """provideSubscriptionAdapter(factory, adapts=None, provides=None)
+    """
+    def _subscription_adapter(factory):
+        component.provideSubscriptionAdapter(factory, adapts, provides)
+        return factory
+    return _subscription_adapter
 

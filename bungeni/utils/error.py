@@ -10,9 +10,12 @@ from bungeni.utils import error
 
 $Id$
 """
+log = __import__("logging").getLogger("bungeni.utils")
 
 __all__ = ["exceptions_as"]
 
+import sys
+import traceback
 
 def exceptions_as(exc_kls, include_name=True):
     def _exceptions_as(f):
@@ -23,6 +26,9 @@ def exceptions_as(exc_kls, include_name=True):
             try: 
                 return f(*args, **kw)
             except Exception, e:
+                log.error("[exceptions_as(%s)]\n%s" % (
+                    exc_kls.__name__,
+                    traceback.format_exc(sys.exc_info()[2])))
                 if include_name:
                     raise exc_kls("%s: %s" % (e.__class__.__name__, e))
                 else:
