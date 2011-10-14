@@ -269,7 +269,9 @@
     <adapter factory=".dc.EventItemProperties" />
     <adapter factory=".dc.HeadingDescriptiveProperties" />
     <adapter factory=".dc.AddressTypeDescriptiveProperties" />
+    <!-- !+TYPES_CUSTOM
     <adapter factory=".dc.BillTypeDescriptiveProperties" />
+    -->
     <adapter factory=".dc.AttendanceTypeDescriptiveProperties" />
     <adapter factory=".dc.CommitteeTypeDescriptiveProperties" />
     <adapter factory=".dc.VenueDescriptiveProperties" />

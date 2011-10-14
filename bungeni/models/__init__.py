@@ -21,8 +21,7 @@ from domain import (GroupSitting, GroupSittingType, GroupSittingAttendance,
 )
 from domain import ParliamentSession, PoliticalGroup
 from domain import Question, QuestionType, ResponseType
-from domain import Motion 
-from domain import Bill, BillType
+from domain import Motion
 from domain import Constituency, Parliament
 from domain import Country, Region, Province
 from domain import CurrentlyEditingDocument

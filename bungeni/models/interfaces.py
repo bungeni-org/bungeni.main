@@ -532,8 +532,10 @@ class IBungeniVocabulary(interface.Interface):
 class IAddressType(IBungeniVocabulary):
     """Marker interface for address types vocabulary"""
 
+'''!+TYPES_CUSTOM
 class IBillType(IBungeniVocabulary):
     """Marker interface for bill types vocabulary"""
+'''
 
 class ICommitteeType(IBungeniVocabulary):
     """Marker interface for committee types vocabulary"""
@@ -564,6 +566,7 @@ class ISubRoleDirective(interface.Interface):
         title=u"Parent Role ID",
         description=u"Role ID for role which this subrole extends",
         required=True)
+
 class IQuestionType(IBungeniVocabulary):
     """Marker interface for question types"""
 

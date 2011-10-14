@@ -1062,7 +1062,7 @@ motions = rdb.Table("motions", metadata,
     ),
 )
 
-
+''' !+TYPES_CUSTOM
 bill_types = rdb.Table("bill_types", metadata,
     rdb.Column("bill_type_id", rdb.Integer, primary_key=True),
     rdb.Column("bill_type_name", rdb.Unicode(256),
@@ -1071,15 +1071,25 @@ bill_types = rdb.Table("bill_types", metadata,
     ),
     rdb.Column("language", rdb.String(5), nullable=False),
 )
+'''
 bills = rdb.Table("bills", metadata,
     rdb.Column("bill_id", rdb.Integer,
         rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
         primary_key=True
     ),
-    rdb.Column("bill_type_id", rdb.Integer,
-        rdb.ForeignKey("bill_types.bill_type_id"),
-        nullable=False
+    rdb.Column("doc_type",
+        # We could use rdb.Enum("government", "member", native_enum=False) but
+        # that would imply schema change whenever the enum list changes. For
+        # validation of this field, we let upstream logic e.g. UI fields using 
+        # zope.schema.Choice combined with a vocabulary, to take responsibilty 
+        # of validating this for *this* document type.
+        rdb.Unicode(128),
+        default="government",
+        nullable=False,
     ),
+    # !+BILL_MINISTRY(fz, oct-2011) the ministry field here logically means the 
+    # bill is presented by the Ministry and so... Ministry should be the author,
+    # not a "field" 
     rdb.Column("ministry_id", rdb.Integer, rdb.ForeignKey("groups.group_id")),
     rdb.Column("identifier", rdb.Integer),
     rdb.Column("publication_date", rdb.Date),

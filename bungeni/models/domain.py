@@ -657,11 +657,12 @@ class Motion(ParliamentaryItem, _AdmissibleMixin):
     def notice_date(self):
         return self._get_workflow_date("scheduled")
 
-
+''' !+TYPES_CUSTOM
 class BillType(Entity):
     """Type of bill: public/ private, ....
     """
     interface.implements(interfaces.ITranslatable, interfaces.IBillType)
+'''
 
 # versionable (by default)
 class Bill(ParliamentaryItem):

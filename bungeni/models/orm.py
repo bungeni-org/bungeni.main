@@ -527,7 +527,7 @@ mapper(domain.Signatory, schema.signatories,
     }
 )
 
-mapper(domain.BillType, schema.bill_types)
+#!+TYPES_CUSTOM mapper(domain.BillType, schema.bill_types)
 #mapper(domain.DocumentSource, schema.document_sources)
 
 mapper(domain.HoliDay, schema.holidays)

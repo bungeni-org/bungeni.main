@@ -88,14 +88,9 @@ Content creation
   ...     language="en",
   ...     gender='M')
 
-  >>> bt = add_content(
-  ...     domain.BillType,
-  ...     language="en",
-  ...     bill_type_name=u"Private Bill")
-
   >>> bill = add_content(
   ...     domain.Bill,
-  ...     bill_type_id=bt.bill_type_id,
+  ...     doc_type="member",
   ...     owner_id=mp_1.user_id,
   ...     short_name=u"New Bill",
   ...     language="en")

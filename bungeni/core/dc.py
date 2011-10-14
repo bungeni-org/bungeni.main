@@ -612,6 +612,7 @@ class AddressTypeDescriptiveProperties(DescriptiveProperties):
         context = session.merge(removeSecurityProxy(self.context))
         return self.translate(context, "address_type_name")
 
+''' !+TYPES_CUSTOM
 class BillTypeDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IBillType)
     
@@ -620,6 +621,7 @@ class BillTypeDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         return self.translate(context, "bill_type_name")
+'''
 
 class CommitteeTypeDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.ICommitteeType)

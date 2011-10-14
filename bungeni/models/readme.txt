@@ -8,7 +8,7 @@ Setup
 some setup for tests
    >>> from zope import component
    >>> from bungeni.alchemist import Session
-   >>> from bungeni import models as model
+   >>> from bungeni.models import domain as model
    >>> import datetime
    >>> from sqlalchemy.orm import mapper
    >>> from bungeni.models import domain, schema
@@ -471,19 +471,12 @@ Assignment
 
 assigning a question to a ministry
 
-Bill Type:
------------
-  >>> bt = model.BillType()
-  >>> bt.bill_type_name = u"private"
-  >>> bt.language = "en"
-  >>> session.add(bt)
-  >>> session.flush()
-
 Bill
 ----
+
   >>> bill = model.Bill()
   >>> bill.short_name = u"Bill"
-  >>> bill.bill_type_id = bt.bill_type_id
+  >>> bill.doc_type = "member"
   >>> bill.language = 'en'
   >>> bill.owner = mp_3
   >>> session.add(bill)

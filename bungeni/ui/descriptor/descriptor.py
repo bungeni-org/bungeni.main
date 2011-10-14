@@ -448,6 +448,7 @@ def DeathBeforeLife(User):
             "date_of_birth"
         )
 
+
 ####
 # Fields
 
@@ -2059,7 +2060,7 @@ class AttachedFileVersionDescriptor(ModelDescriptor):
 
 class ParliamentaryItemDescriptor(ModelDescriptor):
     localizable = False
-
+    
     fields = [
         Field(name="parliament_id", # [sys]
             modes="view listing",
@@ -2382,6 +2383,7 @@ class MotionVersionDescriptor(VersionDescriptor):
     container_name = _("Versions")
     fields = deepcopy(VersionDescriptor.fields)
 
+''' !+TYPES_CUSTOM
 class BillTypeDescriptor(ModelDescriptor):
     localizable = False
     display_name = _("Bill Type")
@@ -2397,6 +2399,7 @@ class BillTypeDescriptor(ModelDescriptor):
         ),
         LanguageField(name="language"),
     ]
+'''
 
 class BillDescriptor(ParliamentaryItemDescriptor):
     localizable = True
@@ -2416,17 +2419,13 @@ class BillDescriptor(ParliamentaryItemDescriptor):
         hide("listing")
     ]
     fields.extend([
-        Field(name="bill_type_id", # [user-req]
+        Field(name="doc_type", # [user-req]
             modes="view edit add listing",
             localizable=[ 
                 show("view edit listing"), 
             ],
             property=schema.Choice(title=_("Bill Type"),
-                source=vocabulary.DatabaseSource(domain.BillType,
-                    token_field="bill_type_id",
-                    title_field="bill_type_name",
-                    value_field="bill_type_id"
-                ),
+                source=vocabulary.bill_types,
             ),
         ),
         Field(name="ministry_id", # [user]
@@ -2461,7 +2460,7 @@ class BillDescriptor(ParliamentaryItemDescriptor):
             ),
         ),
     ])
-
+    
     default_field_order = [
         "parliament_id",
         "short_name",
@@ -2474,7 +2473,7 @@ class BillDescriptor(ParliamentaryItemDescriptor):
         "submission_date",
         "note",
         "receive_notification",
-        "bill_type_id",
+        "doc_type",
         "ministry_id",
         "identifier",
         "publication_date",

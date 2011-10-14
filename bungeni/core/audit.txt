@@ -51,11 +51,7 @@ Initialise Group
 
 Initialise Bill
 -------------------
-   >>> bill_type = domain.BillType()
-   >>> bill_type.bill_type_name = u"test"
-   >>> bill_type.language = u"en"
-   >>> session.add(bill_type)
-   >>> session.flush()
+
    >>> bill = domain.Bill()
    >>> bill.body_text = 'THIS IS A TEST'
    >>> bill.start_date = datetime.datetime.now()
@@ -66,7 +62,7 @@ Initialise Bill
    >>> bill.language = "en"
    >>> bill.created_date = datetime.datetime.now()
    >>> bill.group = parliament
-   >>> bill.bill_type_id = bill_type.bill_type_id
+   >>> bill.doc_type = "member"
    >>> session.add(bill)
    >>> session.flush()
 

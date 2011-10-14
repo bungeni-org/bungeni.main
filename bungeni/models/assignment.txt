@@ -21,11 +21,6 @@ To demonstrate let's create some groups and a content object.
   >>> parliament = domain.Parliament( short_name=u"p_1", start_date=datetime.now(), election_date=datetime.now())
   >>> parliament.language = "en"
   >>> session.add( parliament )
-  >>> billtype = domain.BillType()
-  >>> billtype.bill_type_id = 1 
-  >>> billtype.bill_type_name=u"private"
-  >>> billtype.language = "en"
-  >>> session.add(billtype)
   >>> country = domain.Country()
   >>> country.country_id = 'KE'
   >>> country.country_name = u"Kenya"
@@ -45,12 +40,12 @@ To demonstrate let's create some groups and a content object.
   >>> session.flush()
   >>> bill = domain.Bill()
   >>> bill.short_name=u"terra"
-  >>> bill.bill_type_id = 1
+  >>> bill.doc_type_id = "member"
   >>> bill.owner_id = mp_1.user_id
   >>> bill.language = "en"
   >>> bill2 = domain.Bill()
   >>> bill2.short_name=u"firma"
-  >>> bill2.bill_type_id = 1
+  >>> bill2.doc_type = "member"
   >>> bill2.owner_id = mp_1.user_id
   >>> bill2.language = "en"
   >>> committee = domain.Committee(short_name=u"Committee", start_date=datetime.now())

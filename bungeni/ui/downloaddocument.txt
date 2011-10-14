@@ -75,23 +75,13 @@ response is set
    >>> request.response.getHeader('Content-type')
    'application/pdf'
 
-Initialise Bill Type
---------------------
-   >>> bill_type = domain.BillType()
-   >>> bill_type.bill_type_name = u"Public Bill"
-   >>> bill_type.language = u"en"
-   >>> session.add(bill_type)
-   >>> session.flush()
-   >>> int(bill_type.bill_type_id)
-   1
-  
 Initialise a Bill
 -----------------
    >>> bill = domain.Bill()
    >>> bill.body_text = '<div class=reporttitle>THIS IS A TEST</div>'
    >>> bill.short_name = "Test Bill"
    >>> bill.owner = mp_1
-   >>> bill.bill_type_id = bill_type.bill_type_id
+   >>> bill.doc_type = "government"
    >>> bill.language = "en"
    >>> bill.created_date = datetime.datetime.now()
    >>> bill.group = parliament

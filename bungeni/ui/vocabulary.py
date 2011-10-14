@@ -160,6 +160,18 @@ YesNoSource = vocabulary.SimpleVocabulary([
 #    vocabulary.SimpleTerm("T", _("temporary"), _("temporary")),
 #])
 
+
+# types
+
+# !+TYPES_CUSTOM - enum sources to move out to bungeni custom
+
+bill_types = vocabulary.SimpleVocabulary([
+    vocabulary.SimpleTerm("government", title="Government Initiative"),
+    vocabulary.SimpleTerm("member", title="Member Initiative"),
+])
+
+
+
 class OfficeRoles(object):
     interface.implements(IVocabularyFactory)
     def __call__(self, context=None):
@@ -1207,4 +1219,5 @@ class DocumentXHTMLTemplates(ReportXHTMLTemplates):
     
 document_xhtml_templates = DocumentXHTMLTemplates()
 '''
+
 

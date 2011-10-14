@@ -68,7 +68,7 @@
         <require permission="zope.View"
             attributes="
                 bill_id
-                bill_type_id
+                doc_type
                 ministry_id
                 identifier
                 publication_date
@@ -82,7 +82,7 @@
                 short_name
                 language
                 body_text
-                bill_type_id
+                doc_type
                 summary
                 ministry_id
                 full_name
