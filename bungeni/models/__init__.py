@@ -6,32 +6,8 @@
 
 $Id$
 """
-log = __import__("logging").getLogger("bungeni.models")
 
-import orm
-
+# !+DEPRECATED - use direct import path as needed, easier to search and replace!
+# should be using: from bungeni.models.schema import metadata
 from schema import metadata
 
-from domain import User, Minister
-from domain import (GroupMembership, Group, Government, Parliament,
-    PoliticalParty, Ministry, Committee, CommitteeType, CommitteeTypeStatus
-)
-from domain import (GroupSitting, GroupSittingType, GroupSittingAttendance,
-    AttendanceType
-)
-from domain import ParliamentSession, PoliticalGroup
-from domain import Question, QuestionType, ResponseType
-from domain import Motion
-from domain import Constituency, Parliament
-from domain import Country, Region, Province
-from domain import CurrentlyEditingDocument
-from domain import MemberOfParliament, MemberElectionType
-from domain import TitleType, MemberTitle
-from domain import ItemSchedule
-
-from domain import AddressType, GroupAddress, UserAddress, PostalAddressType
-
-from zope.annotation import factory
-from zope import component
-from roles import SubRoleAnnotations
-component.provideAdapter(factory(SubRoleAnnotations))

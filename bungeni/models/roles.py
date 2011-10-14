@@ -1,23 +1,30 @@
-from zope.securitypolicy.interfaces import IPrincipalRoleMap
-from bungeni.models import interfaces
-import zope.configuration.config as config
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""Model Roles
+
+$Id: __init__.py 8688 2011-10-14 14:22:07Z mario.ruggier $
+"""
+log = __import__("logging").getLogger("bungeni.models.roles")
+
 from zope.securitypolicy.interfaces import IRole 
 from zope.securitypolicy.role import Role 
 from zope.component import getGlobalSiteManager
 from zope import interface    
 from bungeni.models import interfaces
 from zope.component import getUtility
-from zope.component.zcml import handler
-from zope.annotation.interfaces import IAnnotations
-from zope import component
+from bungeni.utils import register
 
+
+@register.adapter(adapts=(IRole,))
 class SubRoleAnnotations(object):
     interface.implements(interfaces.ISubRoleAnnotations)
-    component.adapts(IRole)
     def __init__(self):
         self.sub_roles = []
         self.is_sub_role = False
-    
+
+
 def sub_role_configure(context, id, title, description, role):
     role_annt = interfaces.ISubRoleAnnotations(getUtility(IRole, role))
     role_annt.sub_roles.append(id)

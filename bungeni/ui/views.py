@@ -1,5 +1,5 @@
 from bungeni.alchemist import Session
-from bungeni.models import CurrentlyEditingDocument
+from bungeni.models.domain import CurrentlyEditingDocument
 from bungeni.models.utils import get_db_user_id
 from datetime import datetime, timedelta
 from zope.publisher.browser import BrowserView

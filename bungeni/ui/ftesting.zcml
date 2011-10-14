@@ -20,19 +20,12 @@
   <include package="bungeni.alchemist" file="meta.zcml"/>
   <include package="alchemist.catalyst" file="meta.zcml"/>
   <include package="alchemist.catalyst" />
-  <!-- Setup Database Connection -->
-  <db:engine
-     name="bungeni-db"
-     url="postgres://localhost/bungeni-test"
-     />
-     
-  <db:bind
-     engine="bungeni-db"
-     metadata="bungeni.models.metadata" />
-
-  <db:bind
-     engine="bungeni-db"
-     metadata="bungeni.alchemist.security.metadata" />
+    
+    <!-- Setup Database Connection -->
+    <db:engine name="bungeni-db" url="postgres://localhost/bungeni-test" />
+    <db:bind engine="bungeni-db" metadata="bungeni.models.schema.metadata" />
+    <db:bind engine="bungeni-db" metadata="bungeni.alchemist.security.metadata" />
+    
   <include package="bungeni.ui" file="meta.zcml"/>
   <include package="bungeni.models"/>
   <include package="bungeni_custom.sys" file="openoffice.zcml" />

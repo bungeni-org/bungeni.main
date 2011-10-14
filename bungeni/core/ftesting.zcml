@@ -42,7 +42,7 @@
     
     <!-- DB setup -->
     <db:engine name="bungeni-db" url="postgres://localhost/bungeni-test" />
-    <db:bind engine="bungeni-db" metadata="bungeni.models.metadata" />
+    <db:bind engine="bungeni-db" metadata="bungeni.models.schema.metadata" />
     <db:bind engine="bungeni-db" metadata="bungeni.alchemist.security.metadata" />
     
 </configure>

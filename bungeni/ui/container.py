@@ -461,9 +461,9 @@ class JSLCache(object):
             @filter_params: [name:str] - query string filter parameter names
         """
         self.cache = evoque.collection.Cache(max_size)
-        print "JSLCache queryModelDescriptor(%s) -> %s" % (
+        log.debug("JSLCache queryModelDescriptor(%s) -> %s" % (
             model_interface.__name__,
-            model.queryModelDescriptor(model_interface))
+            model.queryModelDescriptor(model_interface)))
         '''
         !+queryModelDescriptor(mr, mar-2011) because of the discrepancy between 
         test and application ZCML code, when running bungeni.ui unittests 
@@ -601,13 +601,13 @@ def on_invalidate_cache_event(instance, event):
     """Invalidate caches affected by creation of this instance.
     See similar handler: core.workflows.initializeWorkflow
     """
-    log.warn("[invalidate_cache_event] %s / %s" % (instance, event))
+    log.debug("[invalidate_cache_event] %s / %s" % (instance, event))
     class_name = event.object.__class__.__name__
     event_name = event.__class__.__name__ # !+DRAFT_CACHE_INVALIDATION
     try:
         invalidate_caches_for(class_name, EVENT_TYPE_TO_ACTION_MAP[event_name])
     except KeyError:
-        log.error("[invalidate_cache_event] No action declared for [%s]" % (
+        log.debug("[invalidate_cache_event] No action declared for [%s]" % (
             event_name))
 
 # !+DRAFT_CACHE_INVALIDATION(mr, mar-2011) only JSON Listings that are 
