@@ -102,7 +102,7 @@ def _group_draft(context):
 
 def _group_active(context):
     utils.set_group_local_role(context)
-    publish_to_xml(context, type='group', include=[])
+    publish_to_xml(context, type="group")
 
 def _group_dissolved(context):
     """ when a group is dissolved all members of this 
@@ -137,7 +137,7 @@ def _groupsitting_draft_agenda(context):
         
 def _groupsitting_published_agenda(context):
     utils.schedule_sitting_items(context)
-    publish_to_xml(context, type='groupsitting',include=[])
+    publish_to_xml(context, type="groupsitting",include=[])
 
 
 # motion
@@ -186,10 +186,10 @@ def _question_admissible(context):
 
 
 def _heading_public(context):
-    publish_to_xml(context,type='heading',include=[])
+    publish_to_xml(context,type="heading",include=[])
 
 def _report_published(context):
-    publish_to_xml(context,type='report',include=[])
+    publish_to_xml(context,type="report",include=[])
 
 
 # tableddocument
@@ -211,7 +211,7 @@ def _tableddocument_admissible(context):
 def _user_A(context):
     utils.assign_owner_role(context, context.login)
     context.date_of_death = None
-    publish_to_xml(context, type='user', include=[])
+    publish_to_xml(context, type="user", include=[])
 
 #
 
@@ -275,6 +275,6 @@ def _event_private(context):
         utils.assign_owner_role(context, login)
 
 def _event_attached(context):
-    publish_to_xml(context)
+    publish_to_xml(context, include=[])
 
 

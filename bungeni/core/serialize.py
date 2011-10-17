@@ -10,6 +10,7 @@ from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from sqlalchemy.orm import RelationshipProperty, class_mapper 
 from bungeni.models.schema import singular
 from bungeni.alchemist.container import stringKey
+from bungeni.models.interfaces import IAuditable, IVersionable, IAttachmentable
 
 import os
 import collections
@@ -22,8 +23,8 @@ def setupStorageDirectory(part_target="xml_db"):
     """ Returns path to store xml files.
     """
     store_dir = __file__
-    x = ''
-    while x != 'src':
+    x = ""
+    while x != "src":
         store_dir, x = os.path.split(store_dir)
     store_dir = os.path.join(store_dir, "parts", part_target)
     if os.path.exists(store_dir):
@@ -34,23 +35,29 @@ def setupStorageDirectory(part_target="xml_db"):
     return store_dir
 
 
-def publish_to_xml(context, type="", include=["event","versions"]):
+def publish_to_xml(context, type="", include=[]):
     """ Generates XML for object and saves it to the file. If object contains
         attachments - XML is saved in zip archive with all attached files. 
     """
     context = removeSecurityProxy(context)
+    
+    if IVersionable.implementedBy(context.__class__):
+        include.append("versions")
+    if IAuditable.implementedBy(context.__class__):
+        include.append("event")
+    
     data = obj2dict(context,1,parent=None,include=include,
                     exclude=["file_data", "image", "logo_data","event_item"])
     if type=="":
         type = getattr(context,"type", None)
-            
+
+        data["permissions"]= []
+        map = IPrincipalRoleMap(context)
+        for x in list(map.getPrincipalsAndRoles()):
+            data["permissions"].append({"role":x[0], "user":x[1],
+                                        "permission":x[2].getName()})
+
     assert type, "%s has no 'type' field. Use 'type' function parameter." % context.__class__
-        
-    data["permissions"]= []
-    map = IPrincipalRoleMap(context)
-    for x in list(map.getPrincipalsAndRoles()):
-        data["permissions"].append({"role":x[0], "user":x[1],
-                                    "permission":x[2].getName()})
                 
     files = []
     path = os.path.join(setupStorageDirectory(), type)
@@ -61,19 +68,20 @@ def publish_to_xml(context, type="", include=["event","versions"]):
     files.append(file_path+".xml") 
     with open(file_path+".xml","w") as file:
         file.write(serialize(data, name=type))
-            
-    attached_files = getattr(context, 'attached_files', None)
-    if attached_files:
-        for attachment in attached_files:
-            attachment_path = os.path.join(path, attachment.file_name)
-            files.append(attachment_path)
-            with open(os.path.join(path, attachment.file_name), "wb") as file:
-                file.write(attachment.file_data)
-        zip = ZipFile(file_path+".zip", "w")
-        for file in files:
-            zip.write(file, os.path.split(file)[-1])
-            os.remove(file)
-        zip.close()    
+    
+    if IAttachmentable.implementedBy(context.__class__):
+        attached_files = getattr(context, "attached_files", None)
+        if attached_files:
+            for attachment in attached_files:
+                attachment_path = os.path.join(path, attachment.file_name)
+                files.append(attachment_path)
+                with open(os.path.join(path, attachment.file_name), "wb") as file:
+                    file.write(attachment.file_data)
+            zip = ZipFile(file_path+".zip", "w")
+            for file in files:
+                zip.write(file, os.path.split(file)[-1])
+                os.remove(file)
+            zip.close()    
 
 
 def serialize(data, name="object"):
@@ -121,7 +129,9 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[]):
     
     # Get additional attributes
     for name in include:
-        value = getattr(obj, name)
+        value = getattr(obj, name, None)
+        if value is None:
+            continue
         if not name.endswith("s"): name += "s"
         if isinstance(value, collections.Iterable):
             res = []
