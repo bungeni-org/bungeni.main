@@ -13,6 +13,8 @@ from bungeni.models import workspace
 from bungeni.models.utils import get_principal
 from bungeni.ui.utils.common import get_workspace_roles
 from bungeni.core.interfaces import IWorkspaceTabsUtility
+from bungeni.models.workspace import OBJECT_ROLES
+
 class CustomAbsoluteURL(AbsoluteURL):
     section = ""
     subsection = ""
@@ -36,7 +38,7 @@ class WorkspaceAbsoluteURLView(AbsoluteURL):
         tabs_utility = getUtility(IWorkspaceTabsUtility)
         domain_class = self.context.__class__
         status = self.context.status
-        roles = get_workspace_roles()
+        roles = get_workspace_roles() + OBJECT_ROLES
         tab = None
         for role in roles:
             tab = tabs_utility.get_tab(role, domain_class, status)
