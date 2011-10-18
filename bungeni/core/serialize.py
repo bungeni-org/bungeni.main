@@ -35,10 +35,14 @@ def setupStorageDirectory(part_target="xml_db"):
     return store_dir
 
 
-def publish_to_xml(context, type="", include=[]):
+def publish_to_xml(context, type="", include=None):
     """ Generates XML for object and saves it to the file. If object contains
         attachments - XML is saved in zip archive with all attached files. 
     """
+    
+    if include is None:
+        include = []
+    
     context = removeSecurityProxy(context)
     
     if IVersionable.implementedBy(context.__class__):
