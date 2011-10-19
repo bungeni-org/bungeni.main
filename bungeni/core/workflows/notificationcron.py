@@ -35,6 +35,11 @@ from sqlalchemy import create_engine
 from bungeni.alchemist.interfaces import IDatabaseEngine
 #import bungeni.core.interfaces
 
+# !+MODEL_MAPPING(mr, oct-2011) import bungeni.models.orm is needed to ensure 
+# that mappings of domain classes to schema tables is executed.
+import bungeni.models.orm
+
+
 def _getQuestionsPendingResponse(date, ministry):
     """
     returns all questions that are in the state 
