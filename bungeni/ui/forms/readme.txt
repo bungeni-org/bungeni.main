@@ -2,7 +2,7 @@ Setup
 -----
 Setting up Database Connection and Utilities:
 
-   >>> from bungeni import models as model
+   >>> import bungeni.models.domain as model
    >>> import datetime
    >>> import bungeni.models.testing
    >>> db = bungeni.models.testing.setup_db()
@@ -60,7 +60,7 @@ Add a governmemt:
    >>> session.flush() 
  
    
-      
+
 Add a second government
 
    >>> gov2 = model.Government(short_name=u"gov_2", start_date=tomorrow, end_date=dayat )

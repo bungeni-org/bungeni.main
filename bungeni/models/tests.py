@@ -18,25 +18,14 @@ from bungeni.ui import descriptor
 
 zcml_slug = """
 <configure xmlns="http://namespaces.zope.org/zope"
-           xmlns:db="http://namespaces.objectrealms.net/rdb">
-
-  <include package="bungeni.alchemist" file="meta.zcml"/>
-  <include package="alchemist.catalyst" file="meta.zcml"/>
-
-  <!-- Setup Database Connection -->
-  <db:engine
-     name="bungeni-db"
-     url="postgres://localhost/bungeni-test"
-     />
-     
-  <db:bind
-     engine="bungeni-db"
-     metadata="bungeni.models.metadata" />
-
-  <db:bind
-     engine="bungeni-db"
-     metadata="bungeni.alchemist.security.metadata" />
-
+        xmlns:db="http://namespaces.objectrealms.net/rdb"
+    >
+    <include package="bungeni.alchemist" file="meta.zcml"/>
+    <include package="alchemist.catalyst" file="meta.zcml"/>
+    <!-- Setup Database Connection -->
+    <db:engine name="bungeni-db" url="postgres://localhost/bungeni-test" />
+    <db:bind engine="bungeni-db" metadata="bungeni.models.schema.metadata" />
+    <db:bind engine="bungeni-db" metadata="bungeni.alchemist.security.metadata" />
 </configure>
 """
 

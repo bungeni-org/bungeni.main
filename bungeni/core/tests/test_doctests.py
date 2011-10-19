@@ -11,7 +11,7 @@ from zope import component
 from zope.testing import doctest, doctestunit
 from zope.app.testing import placelesssetup
 from zope.configuration import xmlconfig
-from bungeni.models import metadata
+from bungeni.models.schema import metadata
 from bungeni.core.workflows import adapters
 
 zcml_slug = """

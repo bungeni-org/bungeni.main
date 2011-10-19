@@ -2,7 +2,7 @@ Setup
 -----
 Setting up Database Connection and Utilities:
    >>> from zope.component import getMultiAdapter
-   >>> from bungeni import models as model
+   >>> import bungeni.models.domain as model
    >>> import datetime
    >>> import base64
    >>> import bungeni.models.testing

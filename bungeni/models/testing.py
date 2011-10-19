@@ -5,7 +5,6 @@ from bungeni.alchemist.security import schema as security
 from bungeni.alchemist.interfaces import IDatabaseEngine
 from sqlalchemy import create_engine
 from bungeni.models import domain
-from bungeni.models import metadata
 from bungeni.models import schema
 from bungeni.alchemist import Session
 
@@ -54,12 +53,12 @@ def drop_all(engine):
 def setup_db():
     db = create_engine('postgres://localhost/bungeni-test', echo=False)
     component.provideUtility( db, IDatabaseEngine, 'bungeni-db' )
-    metadata.bind = db
+    schema.metadata.bind = db
     # !+DROP_ALL(ah,sep-2011)
     #drop_all(db)
-    metadata.drop_all()
-    metadata.create_all()
-    metadata.reflect()
+    schema.metadata.drop_all()
+    schema.metadata.create_all()
+    schema.metadata.reflect()
     schema.QuestionSequence.create(db) 
     schema.MotionSequence.create(db)
     schema.registrySequence.create(db)

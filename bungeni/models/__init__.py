@@ -7,7 +7,3 @@
 $Id$
 """
 
-# !+DEPRECATED - use direct import path as needed, easier to search and replace!
-# should be using: from bungeni.models.schema import metadata
-from schema import metadata
-

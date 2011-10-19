@@ -4,7 +4,7 @@
 
 """Model Roles
 
-$Id: __init__.py 8688 2011-10-14 14:22:07Z mario.ruggier $
+$Id$
 """
 log = __import__("logging").getLogger("bungeni.models.roles")
 
