@@ -203,7 +203,7 @@ class GroupSubRoles(object):
             if not context:
                 raise NotImplementedError("Context does not implement IBungeniGroup")
         trusted = removeSecurityProxy(context)
-        role=getUtility(IRole, get_group_local_role(trusted))
+        role = getUtility(IRole, get_group_local_role(trusted))
         for sub_role in ISubRoleAnnotations(role).sub_roles:
             print sub_role
             terms.append(vocabulary.SimpleTerm(sub_role, sub_role, sub_role))
