@@ -45,6 +45,10 @@ from bungeni.ui.i18n import _
 from zope.i18n import translate
 from bungeni.ui.absoluteurl import WorkspaceAbsoluteURLView
 
+from bungeni.core.workflows.utils import get_mask
+from ore.alchemist import Session
+from bungeni.models.domain import ParliamentaryItem
+
 class WorkflowVocabulary(object):
     zope.interface.implements(IVocabularyFactory)
 
@@ -149,6 +153,8 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
             title=_("Comment on workflow change"), required=False)
         date_active = zope.schema.Datetime(
             title=_("Active Date"), required=True)
+        registry_number = zope.schema.TextLine(
+            title=_("Registry number"), required=False)
     form_name = "Workflow"
     form_fields = form.Fields(IWorkflowForm)
     note_widget = TextAreaWidget
@@ -209,12 +215,24 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
             elif data.get("date_active") > datetime.datetime.now():
                 errors.append(zope.interface.Invalid(
                         _("Active Date is in the future.")))
+                
+        if "registry_number" in data.keys():
+            reg_number = data.get("registry_number")
+            if reg_number:
+                session = Session()
+                num = session.query(ParliamentaryItem).filter(ParliamentaryItem.registry_number==reg_number).count()
+                if num != 0:
+                    errors.append(zope.interface.Invalid(
+                        _("This regisrty number is already taken.")))
+                
+            
         return errors
     
     def setUpWidgets(self, ignore_request=False):
         class WorkflowForm:
             note = None
             date_active = None
+            registry_number = None
         self.adapters = {
             self.IWorkflowForm: WorkflowForm,
         }
@@ -236,6 +254,11 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
                 ), 
                 context=self.request)
         self.setupActions(transition_id)
+        
+        if get_mask(self.context) == 'manual' and not self.context.registry_number:
+            self.form_fields = self.form_fields.omit("note", "date_active")
+        else:
+            self.form_fields = self.form_fields.omit("registry_number")
         if not self.actions: 
             self.form_fields = self.form_fields.omit("note", "date_active")
         elif not IAuditable.providedBy(self.context):
@@ -320,7 +343,10 @@ class WorkflowChangeStateView(WorkflowView):
                 ).require_confirmation
         else:
             self.update()
-        
+            
+        if get_mask(self.context) == 'manual' and not self.context.registry_number:
+            require_confirmation = True
+            
         if (not require_confirmation and method == "POST"):
             actions = bindTransitions(
                 self.action_viewlet, (transition_id,), workflow)
