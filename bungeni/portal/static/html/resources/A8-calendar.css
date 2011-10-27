@@ -288,6 +288,7 @@ white-space: normal;
 .dhx_cal_container {
     width:100%; 
     height:100%;
+    z-index: 1 !important;
 }
 
 .dhx_cal_navline #day_tab {
