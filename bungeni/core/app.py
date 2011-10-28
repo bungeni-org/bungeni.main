@@ -389,10 +389,12 @@ class AppSetup(object):
             marker=model_interfaces.IBungeniAdmin,
             default_name="vocabularies")
 
+        ''' !+TYPES_CUSTOM
         vocabularies[u"address-types"] = domain.AddressTypeContainer()
         to_locatable_container(domain.AddressType, 
             vocabularies[u"address-types"]
         )
+        '''
         vocabularies[u"attendance-types"] = domain.AttendanceTypeContainer()
         to_locatable_container(domain.AttendanceType, 
             vocabularies[u"attendance-types"]
@@ -429,8 +431,10 @@ class AppSetup(object):
         to_locatable_container(domain.MemberElectionType, 
             vocabularies[u"m-election-types"]
         )
+        ''' !+TYPES_CUSTOM
         vocabularies[u"p-address-types"] = domain.PostalAddressTypeContainer()
         to_locatable_container(domain.PostalAddressType, 
             vocabularies[u"p-address-types"]
         )
+        '''
 

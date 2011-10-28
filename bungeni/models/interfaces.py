@@ -529,10 +529,12 @@ class ITranslatable(interface.Interface):
 class IBungeniVocabulary(interface.Interface):
     """Marker interface for vocabularies managed in admin UI."""
 
+'''!+TYPES_CUSTOM
 class IAddressType(IBungeniVocabulary):
     """Marker interface for address types vocabulary"""
+class IPostalAddressType(IBungeniVocabulary):
+    """Marker interface for address postal types"""
 
-'''!+TYPES_CUSTOM
 class IBillType(IBungeniVocabulary):
     """Marker interface for bill types vocabulary"""
 
@@ -581,9 +583,6 @@ class IMemberElectionType(IBungeniVocabulary):
 class ISubRoleAnnotations(interface.Interface):
     sub_roles = interface.Attribute('Sub_Roles')
     is_sub_role = interface.Attribute('Sub_Roles')
-
-class IPostalAddressType(IBungeniVocabulary):
-    """Marker interface for address postal types"""
 
 class ICountry(interface.Interface):
     """Marker interface for Country"""

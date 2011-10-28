@@ -603,6 +603,7 @@ class HeadingDescriptiveProperties(DescriptiveProperties):
     def description(self):
         return ""
 
+''' !+TYPES_CUSTOM
 class AddressTypeDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IAddressType)
     
@@ -612,7 +613,15 @@ class AddressTypeDescriptiveProperties(DescriptiveProperties):
         context = session.merge(removeSecurityProxy(self.context))
         return self.translate(context, "address_type_name")
 
-''' !+TYPES_CUSTOM
+class PostalAddressTypeDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.IPostalAddressType)
+    
+    @property
+    def title(self):
+        session = Session()
+        context = session.merge(removeSecurityProxy(self.context))
+        return self.translate(context, "postal_address_type_name")
+
 class BillTypeDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IBillType)
     
@@ -639,6 +648,7 @@ class CommitteeTypeStatusDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         return self.translate(context, "committee_type_status_name")
+
 '''
 
 class AttendanceTypeDescriptiveProperties(DescriptiveProperties):
@@ -685,15 +695,6 @@ class MemberElectionTypeDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         return self.translate(context, "member_election_type_name")
-
-class PostalAddressTypeDescriptiveProperties(DescriptiveProperties):
-    component.adapts(interfaces.IPostalAddressType)
-    
-    @property
-    def title(self):
-        session = Session()
-        context = session.merge(removeSecurityProxy(self.context))
-        return self.translate(context, "postal_address_type_name")
 
 
 class TitleTypeDescriptiveProperties(DescriptiveProperties):

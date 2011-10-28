@@ -441,7 +441,7 @@ committees = rdb.Table("committees", metadata,
     ),
     rdb.Column("group_type",
         rdb.Unicode(128),
-        default="permanent",
+        default="housekeeping",
         nullable=False,
     ),
     rdb.Column("group_continuity",
@@ -585,13 +585,14 @@ member_titles = rdb.Table("member_titles", metadata,
 # Addresses
 ############
 
+''' !+TYPES_CUSTOM 
 address_types = rdb.Table("address_types", metadata,
     rdb.Column("address_type_id", rdb.Integer, primary_key=True),
     rdb.Column("address_type_name", rdb.Unicode(40)),
     rdb.Column("language", rdb.String(5), nullable=False),
 )
-
 postal_address_types = make_vocabulary_table("postal_address", metadata)
+'''
 
 def _make_address_table(metadata, fk_key="user"):
     assert fk_key in ("user", "group")
@@ -605,13 +606,15 @@ def _make_address_table(metadata, fk_key="user"):
             rdb.ForeignKey(fk_target),
             nullable=False
         ),
-        rdb.Column("address_type_id", rdb.Integer,
-            rdb.ForeignKey("address_types.address_type_id"),
-            nullable=False
+        rdb.Column("logical_address_type",
+            rdb.Unicode(128),
+            default="office",
+            nullable=False,
         ),
-        rdb.Column("postal_address_type_id", rdb.Integer,
-            rdb.ForeignKey("postal_address_types.postal_address_type_id"),
-            nullable=False
+        rdb.Column("postal_address_type",
+            rdb.Unicode(128),
+            default="street",
+            nullable=False,
         ),
         rdb.Column("street", rdb.Unicode(256), nullable=False),
         rdb.Column("city", rdb.Unicode(256), nullable=False),

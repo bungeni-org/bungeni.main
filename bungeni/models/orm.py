@@ -103,7 +103,7 @@ def configurable_mappings(kls):
 # !+/PARAMETRIZABLE_DOCTYPES
 
 #user address types
-mapper(domain.PostalAddressType, schema.postal_address_types)
+#!+TYPES_CUSTOM mapper(domain.PostalAddressType, schema.postal_address_types)
 
 # Users
 # general representation of a person
@@ -567,22 +567,14 @@ mapper(domain.MemberTitle, schema.member_titles,
     }
 )
 
-mapper(domain.AddressType, schema.address_types)
+#!+TYPES_CUSTOM mapper(domain.AddressType, schema.address_types)
 mapper(domain.UserAddress, schema.user_addresses,
     properties={
-        "address_type": relation(domain.AddressType, uselist=False, lazy=False),
-        "postal_address_type": relation(domain.PostalAddressType, uselist=False,
-            lazy=False
-        ),
         "country": relation(domain.Country, uselist=False, lazy=False),
     },
 )
 mapper(domain.GroupAddress, schema.group_addresses,
     properties={
-        "address_type": relation(domain.AddressType, uselist=False, lazy=False),
-        "postal_address_type": relation(domain.PostalAddressType, 
-            uselist=False, lazy=False
-        ),
         "country": relation(domain.Country, uselist=False, lazy=False),
     },
 )

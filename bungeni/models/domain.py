@@ -522,13 +522,6 @@ class OfficeMember(GroupMembership):
 #    Debates
 #    """
 
-class AddressType(Entity):
-    """Address Types.
-    """
-    interface.implements(interfaces.ITranslatable, 
-        interfaces.IAddressType
-    )
-
 class Address(Entity):
     """Address base class
     """
@@ -898,6 +891,13 @@ class MemberElectionType(Entity):
         interfaces.IMemberElectionType
     )
 
+''' !+TYPES_CUSTOM
+class AddressType(Entity):
+    """Address Types.
+    """
+    interface.implements(interfaces.ITranslatable, 
+        interfaces.IAddressType
+    )
 class PostalAddressType(Entity):
     """Postal address type
     """
@@ -905,7 +905,6 @@ class PostalAddressType(Entity):
         interfaces.IPostalAddressType
     )
 
-''' !+TYPES_CUSTOM
 class CommitteeTypeStatus(Entity):
     """Committee type status
     """

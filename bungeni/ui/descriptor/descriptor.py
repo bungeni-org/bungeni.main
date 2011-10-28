@@ -1403,7 +1403,7 @@ class CommitteeMemberDescriptor(GroupMembershipDescriptor):
         ),
     ])
 
-
+''' !+TYPES_CUSTOM
 class AddressTypeDescriptor(ModelDescriptor):
     localizable = False
     display_name = _("Address type")
@@ -1429,6 +1429,7 @@ class PostalAddressTypeDescriptor(ModelDescriptor):
         ),
         LanguageField("language"), # [user-req]
     ]
+'''
 
 class AddressDescriptor(ModelDescriptor):
     localizable = False
@@ -1436,35 +1437,22 @@ class AddressDescriptor(ModelDescriptor):
     container_name = _("Addresses")
 
     fields = [
-        Field(name="address_type_id", # [user-req]
+        Field(name="logical_address_type", # [user-req]
             modes="view edit add listing",
-            localizable=[
-                show("view edit listing"),
+            localizable=[ 
+                show("view edit listing"), 
             ],
             property=schema.Choice(title=_("Address Type"),
-                source=vocabulary.DatabaseSource(domain.AddressType,
-                    token_field="address_type_id",
-                    title_field="address_type_name",
-                    value_field="address_type_id"
-                ),
-            ),
-            listing_column=enumeration_column("address_type_id",
-                _("Type"),
-                item_reference_attr="address_type",
-                enum_value_attr="address_type_name"
+                source=vocabulary.logical_address_type,
             ),
         ),
-        Field(name="postal_address_type_id", # [user-req]
+        Field(name="postal_address_type", # [user-req]
             modes="view edit add listing",
-            localizable=[
-                show("view edit listing"),
+            localizable=[ 
+                show("view edit listing"), 
             ],
-            property=schema.Choice(title=_("Postal Type"),
-                source=vocabulary.PostalAddressType,
-                required=True
-            ),
-            listing_column = dc_getter("postal_address_type_id",
-                _("Postal Type"), "postal_address_type"
+            property=schema.Choice(title=_("Postal Address Type"),
+                source=vocabulary.postal_address_type,
             ),
         ),
         Field(name="street", # [user-req]

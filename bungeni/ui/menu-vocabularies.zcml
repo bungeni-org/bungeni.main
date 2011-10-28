@@ -5,6 +5,7 @@
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni">
 
+    <!-- !+TYPES_CUSTOM
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.domain.AddressTypeContainer"
         title="Add address type..."
@@ -12,7 +13,6 @@
         permission="zope.ManageContent"
         layer=".interfaces.IAdminSectionLayer"
     />
-    <!-- !+TYPES_CUSTOM
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.domain.BillTypeContainer"
         title="Add bill type..."
@@ -64,7 +64,6 @@
         permission="zope.ManageContent"
         layer=".interfaces.IAdminSectionLayer"
     />
-    -->
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.domain.PostalAddressTypeContainer"
         title="Add postal type..."
@@ -72,6 +71,7 @@
         permission="zope.ManageContent"
         layer=".interfaces.IAdminSectionLayer"
     />
+    -->
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.domain.VenueContainer"
         title="Add venue..."

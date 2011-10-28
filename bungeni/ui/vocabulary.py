@@ -180,6 +180,17 @@ committee_continuity = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm("permanent", title="Permanent"),
     vocabulary.SimpleTerm("temporary", title="Temporary"),
 ])
+logical_address_type = vocabulary.SimpleVocabulary([
+    vocabulary.SimpleTerm("office", title="Office"),
+    vocabulary.SimpleTerm("home", title="Home"),
+    vocabulary.SimpleTerm("other", title="Other"),
+])
+postal_address_type = vocabulary.SimpleVocabulary([
+    vocabulary.SimpleTerm("street", title="Street/Physical"),
+    vocabulary.SimpleTerm("pobox", title="P.O. Box"),
+    vocabulary.SimpleTerm("military", title="Military"),
+    vocabulary.SimpleTerm("unknown", title="Undefined/Unknown"),
+])
 
 
 
@@ -397,12 +408,6 @@ class AttachedFileTypeSource(SpecializedSource):
 #    title_field="group_sitting_type",
 #    token_field="group_sitting_type_id",
 #    value_field="group_sitting_type_id")
-
-PostalAddressType = DatabaseSource(domain.PostalAddressType,
-    token_field="postal_address_type_id",
-    value_field="postal_address_type_id",
-    title_field="postal_address_type_name"
-)
 
 MemberElectionType = DatabaseSource(domain.MemberElectionType, 
     token_field="member_election_type_id",

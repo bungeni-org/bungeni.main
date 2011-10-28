@@ -151,28 +151,12 @@ Check that we can access the membership through the containment object
 
 Group and user addresses
 -------------------------
-  >>> address_type_1 = model.AddressType()
-  >>> address_type_1.address_type_name = u"Personal"
-  >>> address_type_1.language = "en"
-  >>> session.add(address_type_1)
-  >>> session.flush()
-  >>> int(address_type_1.address_type_id)
-  1
-
-Add a postal address type
-  >>> postal_address_type_1 = model.PostalAddressType()
-  >>> postal_address_type_1.postal_address_type_name = u"P.O. Box"
-  >>> postal_address_type_1.language = "en"
-  >>> session.add(postal_address_type_1)
-  >>> session.flush()
-  >>> int(postal_address_type_1.postal_address_type_id)
-  1
 
 Add a user address
   >>> user_address_1 = model.UserAddress()
   >>> user_address_1.user_id = mp_1.user_id
-  >>> user_address_1.address_type = address_type_1
-  >>> user_address_1.postal_address_type = postal_address_type_1
+  >>> user_address_1.logical_address_type = "home"
+  >>> user_address_1.postal_address_type = "street"
   >>> user_address_1.street = u"MP1 Avenue"
   >>> user_address_1.city = u"Megapolis"
   >>> user_address_1.country = country
@@ -186,8 +170,8 @@ Add a user address
 Add a group address
   >>> group_address_1 = model.GroupAddress()
   >>> group_address_1.group_id = parliament.group_id
-  >>> group_address_1.address_type = address_type_1
-  >>> group_address_1.postal_address_type = postal_address_type_1
+  >>> group_address_1.logical_address_type = "home"
+  >>> group_address_1.postal_address_type = "street"
   >>> group_address_1.street = u"Parliament Road"
   >>> group_address_1.city = u"Loliondo"
   >>> group_address_1.country = country
