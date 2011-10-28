@@ -229,6 +229,7 @@ mapper(domain.Ministry,
     polymorphic_identity="ministry"
 )
 
+''' !+TYPES_CUSTOM
 mapper(domain.CommitteeTypeStatus, schema.committee_type_status)
 mapper(domain.CommitteeType, schema.committee_type,
     properties={
@@ -238,16 +239,11 @@ mapper(domain.CommitteeType, schema.committee_type,
         )
     }
 )
+'''
 mapper(domain.Committee, schema.committees,
     inherits=domain.Group,
     polymorphic_on=schema.groups.c.type,
     polymorphic_identity="committee",
-    properties={
-        "committee_type": relation(domain.CommitteeType,
-            uselist=False,
-            lazy=False
-        ),
-    },
 )
 
 mapper(domain.Office, schema.offices,

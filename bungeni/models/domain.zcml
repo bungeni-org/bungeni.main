@@ -403,10 +403,10 @@
                 assigneditems
                 title_types
                 
-                committee_type
+                group_type
+                group_continuity
                 
                 committee_id
-                committee_type_id
                 num_members
                 min_num_members
                 quorum
@@ -424,7 +424,10 @@
                 description
                 start_date
                 end_date
-                committee_type_id
+                
+                group_type
+                group_continuity
+
                 num_members
                 min_num_members
                 quorum

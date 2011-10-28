@@ -271,15 +271,15 @@
     <adapter factory=".dc.AddressTypeDescriptiveProperties" />
     <!-- !+TYPES_CUSTOM
     <adapter factory=".dc.BillTypeDescriptiveProperties" />
+    <adapter factory=".dc.CommitteeTypeDescriptiveProperties" />
+    <adapter factory=".dc.CommitteeTypeStatusDescriptiveProperties" />
     -->
     <adapter factory=".dc.AttendanceTypeDescriptiveProperties" />
-    <adapter factory=".dc.CommitteeTypeDescriptiveProperties" />
     <adapter factory=".dc.VenueDescriptiveProperties" />
     <adapter factory=".dc.QuestionTypeDescriptiveProperties" />
     <adapter factory=".dc.ResponseTypeDescriptiveProperties" />
     <adapter factory=".dc.MemberElectionTypeDescriptiveProperties" />
     <adapter factory=".dc.PostalAddressTypeDescriptiveProperties" />
-    <adapter factory=".dc.CommitteeTypeStatusDescriptiveProperties" />
     <adapter factory=".dc.TitleTypeDescriptiveProperties" />
     <adapter name="dc"
         for="*"

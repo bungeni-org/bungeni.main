@@ -568,10 +568,13 @@ class IAddressType(IBungeniVocabulary):
 '''!+TYPES_CUSTOM
 class IBillType(IBungeniVocabulary):
     """Marker interface for bill types vocabulary"""
-'''
 
 class ICommitteeType(IBungeniVocabulary):
     """Marker interface for committee types vocabulary"""
+
+class ICommitteeTypeStatus(IBungeniVocabulary):
+    """Marker interface for committe type statuses"""
+'''
 
 class IAttendanceType(IBungeniVocabulary):
     """Marker interface for attendance types vocabulary"""
@@ -614,9 +617,6 @@ class ISubRoleAnnotations(interface.Interface):
 
 class IPostalAddressType(IBungeniVocabulary):
     """Marker interface for address postal types"""
-
-class ICommitteeTypeStatus(IBungeniVocabulary):
-    """Marker interface for committe type statuses"""
 
 class ICountry(interface.Interface):
     """Marker interface for Country"""

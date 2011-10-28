@@ -426,9 +426,9 @@ parliaments = rdb.Table("parliaments", metadata,
    rdb.Column("election_date", rdb.Date, nullable=False),
 )
 
+''' !+TYPES_CUSTOM
 committee_type_status = make_vocabulary_table("committee_type_status", metadata,
     table_suffix="", column_suffix="")
-
 committee_type = rdb.Table("committee_types", metadata,
     rdb.Column("committee_type_id", rdb.Integer, primary_key=True),
     rdb.Column("committee_type", rdb.Unicode(256), nullable=False),
@@ -440,14 +440,22 @@ committee_type = rdb.Table("committee_types", metadata,
     ),
     rdb.Column("language", rdb.String(5), nullable=False),
 )
+'''
 
 committees = rdb.Table("committees", metadata,
     rdb.Column("committee_id", rdb.Integer,
         rdb.ForeignKey("groups.group_id"),
         primary_key=True
     ),
-    rdb.Column("committee_type_id", rdb.Integer,
-        rdb.ForeignKey("committee_types.committee_type_id")
+    rdb.Column("group_type",
+        rdb.Unicode(128),
+        default="permanent",
+        nullable=False,
+    ),
+    rdb.Column("group_continuity",
+        rdb.Unicode(128),
+        default="permanent",
+        nullable=False,
     ),
     rdb.Column("num_members", rdb.Integer),
     rdb.Column("min_num_members", rdb.Integer),
@@ -458,6 +466,10 @@ committees = rdb.Table("committees", metadata,
     rdb.Column("default_chairperson", rdb.Boolean),
     rdb.Column("reinstatement_date", rdb.Date),
 )
+# !+TYPES_CUSTOM_life_span(mr, oct-2011) the old and unused column "life_span" 
+# on committee_types (values: "parliament", "annual"). But, if concept will
+# still be needed, the planned and more generic "group.root_container" idea 
+# can approximately provide it, and is what should be used. 
 
 # political parties (outside the parliament) and 
 # political groups (inside the parliament)

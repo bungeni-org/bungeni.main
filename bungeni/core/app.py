@@ -417,10 +417,17 @@ class AppSetup(object):
         to_locatable_container(domain.ResponseType, 
             vocabularies[u"response-types"]
         )
+        ''' !+TYPES_CUSTOM
         vocabularies[u"committee-types"] = domain.CommitteeTypeContainer()
         to_locatable_container(domain.CommitteeType, 
             vocabularies[u"committee-types"]
         )
+        vocabularies[u"committee-types-statuses"] = \
+            domain.CommitteeTypeStatusContainer()
+        to_locatable_container(domain.CommitteeTypeStatus, 
+            vocabularies[u"committee-types-statuses"]
+        )
+        '''
         vocabularies[u"venues"] = domain.VenueContainer()
         to_locatable_container(domain.Venue, vocabularies[u"venues"])
         
@@ -432,8 +439,4 @@ class AppSetup(object):
         to_locatable_container(domain.PostalAddressType, 
             vocabularies[u"p-address-types"]
         )
-        vocabularies[u"committee-types-statuses"] = \
-            domain.CommitteeTypeStatusContainer()
-        to_locatable_container(domain.CommitteeTypeStatus, 
-            vocabularies[u"committee-types-statuses"]
-        )
+

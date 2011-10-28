@@ -483,7 +483,6 @@ class Committee(Group):
         "bungeni.models.domain.GroupSittingContainer", "group_id")
     assigneditems = one2many("assigneditems",
         "bungeni.models.domain.ItemGroupItemAssignmentContainer", "group_id")
-    sort_replace = {"committee_type_id": ["committee_type"]}
     title_types = one2many("title_types",
         "bungeni.models.domain.TitleTypeContainer", "group_id")
 
@@ -493,13 +492,14 @@ class CommitteeMember(GroupMembership):
     titles = one2many("titles",
         "bungeni.models.domain.MemberTitleContainer", "membership_id")
 
-
+''' !+TYPES_CUSTOM
 class CommitteeType(Entity):
     """Type of Committee.
     """
     interface.implements(interfaces.ITranslatable,
         interfaces.ICommitteeType
     )
+'''
 
 class Office(Group):
     """Parliamentary Office like speakers office, clerks office etc. 
@@ -904,10 +904,13 @@ class PostalAddressType(Entity):
     interface.implements(interfaces.ITranslatable, 
         interfaces.IPostalAddressType
     )
-    
+
+''' !+TYPES_CUSTOM
 class CommitteeTypeStatus(Entity):
     """Committee type status
     """
     interface.implements(interfaces.ITranslatable,
         interfaces.ICommitteeTypeStatus
     )
+'''
+

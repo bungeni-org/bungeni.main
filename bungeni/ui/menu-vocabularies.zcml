@@ -49,6 +49,7 @@
         permission="zope.ManageContent"
         layer=".interfaces.IAdminSectionLayer"
     />
+    <!-- !+TYPES_CUSTOM
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.domain.CommitteeTypeContainer"
         title="Add committee type..."
@@ -63,6 +64,7 @@
         permission="zope.ManageContent"
         layer=".interfaces.IAdminSectionLayer"
     />
+    -->
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.domain.PostalAddressTypeContainer"
         title="Add postal type..."

@@ -1214,6 +1214,7 @@ class ParliamentDescriptor(GroupDescriptor):
         get_workflow_state("parliament", "dissolved").id
     ]
 
+''' !+TYPES_CUSTOM
 class CommitteeTypeStatusDescriptor(ModelDescriptor):
     localizable = False
     display_name = _("Committee type status")
@@ -1226,7 +1227,6 @@ class CommitteeTypeStatusDescriptor(ModelDescriptor):
         ),
         LanguageField("language"), # [user-req]
     ]
-
 
 class CommitteeTypeDescriptor(ModelDescriptor):
     localizable = False
@@ -1257,6 +1257,7 @@ class CommitteeTypeDescriptor(ModelDescriptor):
         ),
         LanguageField("language"), # [user-req]
     ]
+'''
 
 class CommitteeDescriptor(GroupDescriptor):
     localizable = True
@@ -1274,21 +1275,22 @@ class CommitteeDescriptor(GroupDescriptor):
     ]
     
     fields.extend([
-        Field(name="committee_type_id", # [user-req]
+        Field(name="group_type", # [user-req]
             modes="view edit add listing",
-            localizable=[
-                show("view edit listing"),
+            localizable=[ 
+                show("view edit listing"), 
             ],
-            property=schema.Choice(title=_("Type of committee"),
-                source=vocabulary.DatabaseSource(domain.CommitteeType,
-                    token_field="committee_type_id",
-                    title_field="committee_type",
-                    value_field="committee_type_id"
-                )
+            property=schema.Choice(title=_("Committee Type"),
+                source=vocabulary.committee_type,
             ),
-            listing_column=enumeration_column("committee_type_id",
-                _("Type"),
-                item_reference_attr="committee_type"
+        ),
+        Field(name="group_continuity", # [user-req]
+            modes="view edit add listing",
+            localizable=[ 
+                show("view edit listing"), 
+            ],
+            property=schema.Choice(title=_("Committee Status Type"),
+                source=vocabulary.committee_continuity,
             ),
         ),
         Field(name="num_members", # [user]

@@ -169,6 +169,17 @@ bill_types = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm("government", title="Government Initiative"),
     vocabulary.SimpleTerm("member", title="Member Initiative"),
 ])
+committee_type = vocabulary.SimpleVocabulary([
+    vocabulary.SimpleTerm("housekeeping", title="House Keeping"),
+    vocabulary.SimpleTerm("departmental", title="Departmental"),
+    vocabulary.SimpleTerm("adhoc", title="Ad Hoc"),
+    vocabulary.SimpleTerm("watchdog", title="Watch Dog"),
+    vocabulary.SimpleTerm("liaison", title="Liaison"),
+])
+committee_continuity = vocabulary.SimpleVocabulary([
+    vocabulary.SimpleTerm("permanent", title="Permanent"),
+    vocabulary.SimpleTerm("temporary", title="Temporary"),
+])
 
 
 
@@ -920,12 +931,6 @@ ResponseType = DatabaseSource(domain.ResponseType,
     title_field="response_type_name"
 )
 
-CommitteeTypeStatus = DatabaseSource(domain.CommitteeTypeStatus,
-    token_field="committee_type_status_id",
-    value_field="committee_type_status_id",
-    title_field="committee_type_status_name"
-)
-
 
 class CommitteeSource(SpecializedSource):
 
@@ -937,6 +942,7 @@ class CommitteeSource(SpecializedSource):
             domain.Committee.status == 'active',
             domain.Committee.parent_group_id == parliament_id))
         return query
+
 
 class CommitteeAssignmentSource(SpecializedSource):
 
