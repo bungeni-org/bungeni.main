@@ -185,7 +185,6 @@ def GlobalSettingFactory( iface ):
 BungeniSettings = GlobalSettingFactory( interfaces.IBungeniSettings )
 UserSettings = UserSettingFactory( interfaces.IBungeniUserSettings )
 EmailSettings = GlobalSettingFactory( interfaces.IBungeniEmailSettings )
-RegistrySettings = GlobalSettingFactory( interfaces.IBungeniRegistrySettings )
 
 class SettingsUtility( object ):
     """ allow for lookup of settings in a context less fashion.. ie
@@ -199,7 +198,4 @@ class EmailSettingsUtility( object ):
     def __call__( self ):
         return EmailSettings( None )
 
-class RegistrySettingsUtility( object ):
-    def __call__( self ):
-        return RegistrySettings( None )
 

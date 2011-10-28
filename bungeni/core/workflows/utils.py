@@ -15,13 +15,8 @@ import bungeni.core.interfaces
 #import bungeni.core.globalsettings as prefs
 from bungeni.ui.utils import debug
 
-import re
+
 import dbutils
-
-from bungeni.utils.capi import capi
-
-from ConfigParser import ConfigParser
-import os
 
 SIGNATORIES_REJECT_STATES = [u"rejected", u"withdrawn"]
 
@@ -87,38 +82,12 @@ def create_version(context):
     versions.create(message)
 
 
-def get_mask(context):
-    path = capi.get_path_for("registry")
-    config = ConfigParser()
-    config.readfp(open(os.path.join(path,"config.ini")))
-    type = context.type
-    return config.get("types",type)
-    
-
 def set_pi_registry_number(context):
     """A parliamentary_item's registry_number should be set on the item being 
     submitted to parliament.
     """
-    
-    mask = get_mask(context)
-    if mask == "manual":
-        return
-    
-    items = re.findall(r"\{(\w+)\}",mask)
-    
-    for name in items:
-        if name == "registry_number":
-            mask = mask.replace("{%s}" % name, str(dbutils.get_next_reg()))
-            continue
-        if name == "progressive_number":
-            mask = mask.replace("{%s}" % name, 
-                                         str(dbutils.get_next_prog(context)))
-            continue
-        value = getattr(context, name)
-        mask = mask.replace("{%s}" % name, value)
-    
     if context.registry_number == None:
-        dbutils.set_pi_registry_number(context, mask)
+        dbutils.set_pi_registry_number(context)
 
 is_pi_scheduled = dbutils.is_pi_scheduled
 

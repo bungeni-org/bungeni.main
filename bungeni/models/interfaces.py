@@ -309,39 +309,6 @@ class IBungeniSettings(interface.Interface):
         default=0
     )
 
-class IBungeniRegistrySettings(interface.Interface):
-
-    global_number = schema.Bool(
-        title=_(u"Reset global registry number"),
-        default=False
-    )
-    questions_number = schema.Bool(
-        title=_(u"Reset questions registry number"),
-        default=False
-    )
-    motions_number = schema.Bool(
-        title=_(u"Reset motions registry number"),
-        default=False
-    )
-    agendaitems_number = schema.Bool(
-        title=_(u"Reset agenda items registry number"),
-        default=False
-    )
-    bills_number = schema.Bool(
-        title=_(u"Reset bills registry number"),
-        default=False
-    )
-    reports_number = schema.Bool(
-        title=_(u"Reset reports registry number"),
-        default=False
-    )
-    tableddocuments_number = schema.Bool(
-        title=_(u"Reset tabled documents registry number"),
-        default=False
-    )
-    
-    
-
 class IBungeniUserSettings(interface.Interface):
 
     # examples

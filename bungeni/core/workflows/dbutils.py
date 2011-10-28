@@ -58,29 +58,12 @@ def removeQuestionFromItemSchedule(question_id):
     if (len(results)==1):
         results[0].active = False
     
-'''def set_pi_registry_number(item):
+def set_pi_registry_number(item):
     session = Session()
     connection = session.connection(domain.ParliamentaryItem)
     sequence = rdb.Sequence("registry_number_sequence")
-    item.registry_number = connection.execute(sequence)'''
+    item.registry_number = connection.execute(sequence)
 
-def set_pi_registry_number(item, mask):
-    session = Session()
-    connection = session.connection(domain.ParliamentaryItem)
-    item.registry_number = mask
-    
-def get_next_reg():
-    session = Session()
-    sequence = rdb.Sequence("registry_number_sequence")
-    connection = session.connection(domain.ParliamentaryItem)
-    return connection.execute(sequence)
-
-def get_next_prog(context):
-    session = Session()
-    sequence = rdb.Sequence('%s_registry_sequence' % context.type)
-    connection = session.connection(context.__class__)
-    return connection.execute(sequence)
-    
 def setTabledDocumentSerialNumber(tabled_document):
     session = Session()
     connection = session.connection(domain.TabledDocument)

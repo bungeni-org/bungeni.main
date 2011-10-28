@@ -31,9 +31,6 @@ import zope.event
 import zope.lifecycleevent
 from bungeni.core.serialize import publish_to_xml
 
-import sys
-import traceback
-
 # special handled action to make a new version of a ParliamentaryItem, that is 
 # not tied to a state name, but to <state> @version bool attribute
 create_version = utils.create_version
