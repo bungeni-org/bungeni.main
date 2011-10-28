@@ -1,8 +1,19 @@
 <html xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       metal:use-macro="context/@@standard_macros/page">
       <div metal:fill-slot="body" i18n:domain="bungeni" class="report_error">
-            <div>An error occurred during generation of the document</div>
+            <div i18n:translate="">
+                An error occurred during generation of the document
+            </div>
+            <div>
+                <ul tal:condition="view/error_messages">
+                    <li tal:repeat="error_message view/error_messages"
+                        i18n:translate=""
+                        tal:content="error_message"
+                    />
+                </ul>
+            </div>
       </div>
 </html>
 

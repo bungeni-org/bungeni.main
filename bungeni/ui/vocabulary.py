@@ -1213,13 +1213,22 @@ class ReportXHTMLTemplates(object):
             )
         return vocabulary_terms
     
-    def __call__(self, context):
+    def __call__(self, context=None):
         return vocabulary.SimpleVocabulary(self.terms)
 
 report_xhtml_templates = ReportXHTMLTemplates()
 
-'''
-!+UNUSED_DocumentXHTMLTemplates(mr, oct-2011)
+def update_term_doctype(term):
+    template_file = open(term.value)
+    doctree = etree.fromstring(template_file.read())
+    node = doctree.find("{%s}config/doctypes" % BUNGENI_REPORTS_NS)
+    if node is None:
+        term.doctypes = None
+    else:
+        term.doctypes = [ dtype.strip() for dtype in node.text.split(",") ]
+    template_file.close()
+    return term
+
 class DocumentXHTMLTemplates(ReportXHTMLTemplates):
     """XHTML templates for publication of documents in other formats.
     
@@ -1228,7 +1237,14 @@ class DocumentXHTMLTemplates(ReportXHTMLTemplates):
     """
     template_folder = "documents"
     
+    def __init__(self):
+        super(DocumentXHTMLTemplates, self).__init__()
+        self.updateTermDocTypes()
+    
+    def updateTermDocTypes(self):
+        """Read configuration options and update terms with doctype property"""
+        self.terms = map(update_term_doctype, self.terms)
+    
 document_xhtml_templates = DocumentXHTMLTemplates()
-'''
 
 

@@ -38,6 +38,12 @@
         layer="bungeni.ui.interfaces.IBungeniSkin"
         permission="zope.ManageSite"
     />
+    <browser:page name="report-documentation"
+        for="bungeni.models.interfaces.IBungeniAdmin"
+        class=".admin.ReportDocumentation"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+        permission="zope.ManageSite"
+    />
     <!-- only visible to currently authenticated users -->
     <browser:page name="user-settings"
         for="*"

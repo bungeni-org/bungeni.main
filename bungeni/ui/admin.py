@@ -1,3 +1,4 @@
+from lxml import etree
 
 from ore import yuiwidget
 
@@ -8,11 +9,12 @@ from zope.formlib import form
 #from zope.viewlet import viewlet
 
 from bungeni.alchemist import Session
+from alchemist.traversal.interfaces import IManagedContainer
 from bungeni.alchemist import catalyst
-from bungeni.models import domain, interfaces, utils
-from bungeni.ui import container, search, browser
+from bungeni.models import domain, interfaces
 from bungeni.core.index import IndexReset
-
+from bungeni.ui import container, search, browser
+from bungeni.ui.calendar import utils as calendar_utils
 
 ''' !+UNUSED(mr, oct-2010)
 class Menu(viewlet.ViewletBase):
@@ -152,7 +154,81 @@ class VocabulariesIndex(browser.BungeniBrowserView):
     
     def __call__(self):
         return self.render()
+
+SIMPLE_LIST = "<ul/>"
+X_TITLE = "font-weight:bold; padding:5px; color:#fff; display:block; background-color:#%s;"
+
+def add_sub_element(parent, tag, text=None, **kw):
+    _element = etree.SubElement(parent, tag, **kw)
+    if text: 
+        _element.text = str(text)
+    return _element
+
+COLOUR_COUNT = 10
+COLOURS = calendar_utils.generate_event_colours(COLOUR_COUNT)
+GROUP_SITTING_EXTRAS = dict(questions="Question", motions="Motion", 
+    tableddocuments="TabledDocument", bills="Bill", agendaitems="AgendaItem"
+)
+def generate_doc_for(domain_class, title=None, color=0):
+    doc = etree.fromstring(SIMPLE_LIST)
+    _color = COLOURS[color]
+    if color:
+        doc.attrib["style"] = "background-color:#%s;" % _color
+    if title:
+        add_sub_element(doc, "li", title)
     
+    proxy_dict = domain_class.__dict__
+    class_dict = {}
+    class_dict.update(proxy_dict)
+    if domain_class is domain.GroupSitting:
+        class_dict.update(GROUP_SITTING_EXTRAS)
+    sort_key = lambda kv: str(IManagedContainer.providedBy(kv[1]) or kv[0] in GROUP_SITTING_EXTRAS.keys()) + "-" + kv[0]
+    class_keys = sorted([ kv for kv in class_dict.iteritems() ],
+        key = sort_key
+    )
+    for (key, value) in class_keys:
+        if (not key.startswith("_")) and (not hasattr(value, "__call__")):
+            elx = add_sub_element(doc, "li")
+            if (key in GROUP_SITTING_EXTRAS.keys() or
+                IManagedContainer.providedBy(value)
+            ):
+                _title = "%s (list)" % key
+                color = (color + 1) % COLOUR_COUNT
+                next_color = COLOURS[color]
+                elx.attrib["style"] = "border-left:1px solid #%s;" % next_color
+                add_sub_element(elx, "span", _title, 
+                    style=X_TITLE % next_color
+                )
+                if key in GROUP_SITTING_EXTRAS.keys():
+                    container_name = value
+                else:
+                    container_name = value.container
+                cls_name = container_name.split(".").pop().replace("Container", 
+                    ""
+                )
+                the_model = getattr(domain, cls_name)
+                elx.append(generate_doc_for(the_model, title, color))
+                continue
+            elx.text = key
+    return doc
+
+class ReportDocumentation(VocabulariesIndex):
+    
+    render = ViewPageTemplateFile("templates/report-documentation.pt")
+    
+    def generateDocumentation(self):
+        document = etree.fromstring(SIMPLE_LIST)
+        st_tr = add_sub_element(document, "li")
+        st_tr.attrib["style"] = "border-left:1px solid #%s;" % COLOURS[0]
+        add_sub_element(st_tr, "span", "sittings (list)", 
+            style=X_TITLE % COLOURS[0]
+        ) 
+        st_tr.append(generate_doc_for(domain.GroupSitting, 0))
+        return etree.tostring(document)
+    
+    @property
+    def documentation(self):
+        return self.generateDocumentation()
 
 class XapianSettings(browser.BungeniBrowserView):
     

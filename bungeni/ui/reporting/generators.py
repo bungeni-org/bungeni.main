@@ -144,64 +144,89 @@ class ReportGeneratorXHTML(_BaseGenerator):
     def generateReport(self):
         """Generate report content based on report template and context
         """
-        def generate_tree(root, context):
-            for element in root.getiterator():
-                typ = get_attr(element, "type")
-                src = get_attr(element, "source")
-                if typ:
-                    if typ=="text":
-                        clean_element(element)
-                        element.text = get_element_value(context, src)
-                    elif typ=="link":
-                        clean_element(element)
-                        url_source = get_attr(element, "url")
-                        if url_source:
-                            link_url = get_element_value(context, url_source)
+        request = common.get_request()
+        
+        def process_single_node(node, context, typ, src):
+            clean_element(node)
+            if typ=="text":
+                node.text = get_element_value(context, src)
+            elif typ=="html":
+                html_element = etree.fromstring("<div>%s</div>" % 
+                    get_element_value(context, src)
+                )
+                for (key, value) in node.attrib.iteritems():
+                    html_element.attrib[key] = value
+                node.addnext(html_element)
+                node.insert(0, html_element)
+            elif type=="link":
+                url_src = get_attr(node, "url")
+                if url_src:
+                    link_url = get_element_value(context, url_src)
+                else:
+                    link_url = url.absoluteURL(context, request)
+                node.attrib["href"] = link_url
+                if src:
+                    node.text = get_element_value(context, src)
+
+        def process_document_tree(root, context):
+            """Iterate and optionally update children of provided root node.
+            
+            Rendering is based on type of node. Further calls to this function
+            happen when a node with children exists - and so on.
+            
+            Only nodes with the bungeni namespace tags "br:type" are modified
+            with content from the provided context.
+            """
+            iter_children = root.getchildren() or [root]
+            if not (root in iter_children):
+                root_typ = get_attr(root, "type")
+                if root_typ:
+                    process_single_node(root, context, root_typ, 
+                        get_attr(root, "source")
+                    )
+            for child in iter_children:
+                typ = get_attr(child, "type")
+                src = get_attr(child, "source")
+                children = child.getchildren()
+                if len(children) == 0:
+                    if typ:
+                        process_single_node(child, context, typ, src)
+                else:
+                    if typ:
+                        if typ == "listing":
+                            clean_element(child)
+                            children = child.getchildren()
+                            listing = get_element_value(context, src, default=[])
+                            if IAlchemistContainer.providedBy(listing):
+                                listing = [ item for item in 
+                                    common.list_container_items(listing) 
+                                ]
+                            len_listing = len(listing)
+                            expanded_children = [ deepcopy(children) 
+                                for x in range(len_listing)
+                            ]
+                            empty_element(child)
+                            if len(listing) == 0:
+                                no_items_tag = "p"
+                                if child.tag == "tr":
+                                    no_items_tag = "td"
+                                no_items_node = etree.SubElement(child, no_items_tag)
+                                no_items_node.text = translate_i18n(
+                                    _(u"No items found")
+                                )
+                            else:
+                                for (index, item) in enumerate(listing):
+                                    for inner_element in expanded_children[index]:
+                                        iroot = process_document_tree(inner_element, 
+                                            item
+                                        )
+                                        child.append(iroot)
                         else:
-                            link_url = url.absoluteURL(context, 
-                                common.get_request()
-                            )
-                        element.attrib["href"] = link_url
-                        if src:
-                            element.text = get_element_value(context, src)
-                    elif typ=="html":
-                        clean_element(element)
-                        _html = u"<div>%s</div>" % get_element_value(context, 
-                            src
-                        )
-                        new_html = element.insert(0, etree.fromstring(_html))
-                    elif typ=="listing":
-                        listing = get_element_value(context, src, default=[])
-                        
-                        if IAlchemistContainer.providedBy(listing):
-                            _listing = common.list_container_items(listing)
-                            listing = [ item for item in _listing ]
-                        
-                        log.debug("[LISTING] %s @@ %s", src, listing)
-                        listing_count = len(listing)
-                        new_children = [
-                            deepcopy(element.getchildren()) 
-                            for x in range(listing_count) 
-                        ]
-                        empty_element(element)
-                        clean_element(element)
-                        
-                        if listing_count == 0:
-                            parent = element.getparent()
-                            no_items_element = etree.SubElement(element, "p")
-                            no_items_element.text = translate_i18n(
-                                _(u"No items found")
-                            )
-                        else:
-                            for (index, item) in enumerate(listing):
-                                for child in new_children[index]:
-                                    generate_tree(child, item)
-                            for children in new_children:
-                                for descendant in children:
-                                    element.append(descendant)
-                        break
-            return etree.tostring(root)
-        generate_tree(self.report_template, self.context)
+                            process_document_tree(child, context)
+                    else:
+                        process_document_tree(child, context)
+            return root
+        process_document_tree(self.report_template, self.context)
         return etree.tostring(self.report_template)
 
     def publishReport(self):

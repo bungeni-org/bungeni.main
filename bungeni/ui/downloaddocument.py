@@ -11,45 +11,35 @@ $Id$
 log = __import__("logging").getLogger("bungeni.ui")
 
 
-import re
 import os
 import time
+import re
 import htmlentitydefs
 import random
 import base64
 from tidylib import tidy_fragment
 from lxml import etree
 
-from zope.app.pagetemplate import ViewPageTemplateFile
-from zope.publisher.browser import BrowserView
 from zope.security.proxy import removeSecurityProxy
-from zope.component import getUtility
+from zope.component import getUtility, queryUtility
 #from zope.lifecycleevent import ObjectCreatedEvent
 #from zope.event import notify
 from zope.component.interfaces import ComponentLookupError
-from zc.table import column
+from zope.app.pagetemplate import ViewPageTemplateFile
+from zope.publisher.browser import BrowserView
+from zope.schema.interfaces import IVocabularyFactory
 from zope.app.component.hooks import getSite
 
 from interfaces import IOpenOfficeConfig
 from bungeni.alchemist import Session
 from bungeni.models import domain, interfaces
-from bungeni.ui.table import LinkColumn, SimpleContainerListing
 from appy.pod.renderer import Renderer
 
 
 from bungeni.utils.capi import capi
-from bungeni.core.dc import IDCDescriptiveProperties
-from bungeni.core.translation import translate_i18n
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import url, misc
-
-#!+ReportConfiguration(murithi, jul-2011) - Report configuration and templates
-# should eventually be loaded from bungeni_custom
-SUB_CONTAINERS = ["signatories", "files", "changes"]
-CONTAINER_TITLES = {"changes": _(u"Timeline")}
-EXTRA_COLUMNS = {"changes": ["description"],
-                 "signatories": ["status"]
-                }
+from bungeni.ui.reporting import generators
 
 def unescape(text):
     def fixup(m):
@@ -88,39 +78,8 @@ def cleanupText(text):
     #tidylib returns a <tidy.lib._Document object>
     return str(aftertidy)
 
-
-def get_listings(context, request, sub_container_name=""):
-    trusted = removeSecurityProxy(context)    
-    if hasattr(trusted, sub_container_name):
-        sub_container = removeSecurityProxy(
-            getattr(trusted, sub_container_name)
-        )
-        #!+DESCRIPTOR_LOOKUP(murithi, jul-2011) descriptor lookup fails in 
-        # testing - as at r8474 : use sub_container_name as title
-        #table_title = (CONTAINER_TITLES.get(sub_container_name, None) or 
-        #    IDCDescriptiveProperties(sub_container).title
-        #)
-        table_title = sub_container_name
-        columns = [
-            LinkColumn("title", lambda i,f:IDCDescriptiveProperties(i).title),
-        ]
-        for extra_col in EXTRA_COLUMNS.get(sub_container_name, []):
-            columns.append(column.GetterColumn(extra_col, 
-                    lambda i,f:getattr(IDCDescriptiveProperties(i), extra_col)
-                )
-            )
-        if hasattr(sub_container, "values"):
-            items = [ removeSecurityProxy(it) for it in sub_container.values() ]
-        else:
-            items = [ removeSecurityProxy(it) for it in sub_container ]
-        if not len(items):
-            return u""
-        formatter = SimpleContainerListing(context, request, items,
-            columns=columns
-        )
-        return formatter(translate_i18n(table_title))
-    else:
-        return u""
+class DocumentGenerationError(Exception):
+    """Raised when document generation fails"""
 
 class DownloadDocument(BrowserView):
     """Abstact base class for ODT and PDF views"""
@@ -137,6 +96,8 @@ class DownloadDocument(BrowserView):
     #document type to be produced
     document_type = None
     site_url = ""
+    error_messages = []
+
     def __init__(self, context, request):
         self.document = removeSecurityProxy(context)
         self.site_url = url.absoluteURL(getSite(), request)
@@ -165,17 +126,48 @@ class DownloadDocument(BrowserView):
             )
         return u"%s.%s" %(fname, self.document_type)
 
+    def generateDocumentText(self):
+        """Generate document using template from templates stored in
+        
+        src/bungeni_custom/reporting/templates/documents
+        Each template has a config parameter with the document type for
+        which it may be used.
+        """
+        template_vocabulary = queryUtility(IVocabularyFactory, 
+            "bungeni.vocabulary.DocumentXHTMLTemplates"
+        )
+        
+        doc_templates = [ term.value for term in template_vocabulary() if 
+            self.document.type in term.doctypes
+        ]
+        log.debug("Looking for templates to generate [%s] report. Found : %s",
+            self.document.type, doc_templates
+        )
+        if len(doc_templates) == 0:
+            self.error_messages.append(
+                _(u"No template for document of type: ${dtype}. Contact admin.",
+                    mapping={ "dtype": self.document.type }
+                )
+            )
+            raise DocumentGenerationError(
+                "No template found to generate this document"
+            )
+        #!+REPORTS(mrb, OCT-2011) Provide UI to select templates if more than 1
+        generator = generators.ReportGeneratorXHTML(doc_templates[0], 
+            self.document
+        )
+        #return generator.generateReport()
+        return generator.generateReport()
+
     def generateDoc(self):
         """Generates ODT/PDF doc"""
         tempFileName = os.path.dirname(__file__) + "/tmp/%f-%f.%s" % (
                             time.time(),random.random(),self.document_type)
-        params = {}
-        params["body_text"] = cleanupText(self.bodyText())
-        params["listings"] = cleanupText(
-            u"".join(get_listings(self.context, self.request, listing_id) 
-                for listing_id in SUB_CONTAINERS
-            )
-        )
+        if interfaces.IReport.providedBy(self.document):
+            document_text = self.bodyText()
+        else:
+            document_text = self.generateDocumentText()
+        params = dict(body_text=cleanupText(document_text))
         openofficepath = getUtility(IOpenOfficeConfig).getPath()
         ooport = getUtility(IOpenOfficeConfig).getPort()
         renderer = Renderer(self.oo_template_file, params, tempFileName,
@@ -213,8 +205,6 @@ class DownloadDocument(BrowserView):
         #TODO : Either generate a hash of a mutable content item and store it 
         # with the odt/pdf doc or track changes to a doc
         # Add caching by state. items in terminal states do not change
-        tempFileName = os.path.dirname(__file__) + "/tmp/%f.%s" % (
-                                                time.time(),self.document_type)
         if cached:
             session = Session()
             d = [f.file_title for f in self.document.attached_files]
@@ -256,7 +246,10 @@ class DownloadDocument(BrowserView):
             except ComponentLookupError:
                 return u"An error occured during ODT/PDF generation."
         else:
-            return self.generateDoc()
+            try:
+                return self.generateDoc()
+            except DocumentGenerationError:
+                return self.error_template()
         
     def documentTemplates(self):
         templates = []
