@@ -165,7 +165,7 @@ YesNoSource = vocabulary.SimpleVocabulary([
 
 # !+TYPES_CUSTOM - enum sources to move out to bungeni custom
 
-bill_types = vocabulary.SimpleVocabulary([
+bill_type = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm("government", title="Government Initiative"),
     vocabulary.SimpleTerm("member", title="Member Initiative"),
 ])

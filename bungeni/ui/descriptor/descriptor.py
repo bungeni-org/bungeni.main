@@ -2427,7 +2427,7 @@ class BillDescriptor(ParliamentaryItemDescriptor):
                 show("view edit listing"), 
             ],
             property=schema.Choice(title=_("Bill Type"),
-                source=vocabulary.bill_types,
+                source=vocabulary.bill_type,
             ),
         ),
         Field(name="ministry_id", # [user]
