@@ -17,6 +17,9 @@ from sqlalchemy.orm import eagerload, lazyload
 
 from bungeni.models import domain, delegation
 
+# !+MODEL_MAPPING(mn, oct-2011) import bungeni.models.orm is needed to ensure 
+# that mappings of domain classes to schema tables is executed.
+from bungeni.models import orm
 
 def get_user(login_id):
     session = Session()
