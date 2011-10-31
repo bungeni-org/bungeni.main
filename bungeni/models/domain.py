@@ -834,7 +834,7 @@ class HoliDay(object):
     if a date in in the table it is otherwise not
     """
 
-
+''' !+BookedResources
 class Resource (object):
     """A Resource that can be assigned to a sitting.
     """
@@ -845,6 +845,7 @@ class ResourceBooking (object):
 class ResourceType(object):
     """A Type of resource.
     """
+'''
 
 class Venue(Entity):
     """A venue for a sitting.

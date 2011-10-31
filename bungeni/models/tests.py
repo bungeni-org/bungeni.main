@@ -64,7 +64,7 @@ def test_suite():
 
     doctests = ('readme.txt', 
                 'settings.txt', 
-                'resourcebooking.txt',
+                #!+BookedResources 'resourcebooking.txt',
                 'venue.txt'
                 )
     

@@ -378,9 +378,11 @@ mapper(domain.GroupSitting, schema.group_sittings,
     }
 )
 
+''' !+BookedResources
 mapper(domain.ResourceType, schema.resource_types)
 mapper(domain.Resource, schema.resources)
 mapper(domain.ResourceBooking, schema.resourcebookings)
+'''
 
 mapper(domain.Venue, schema.venues)
 

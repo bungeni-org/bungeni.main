@@ -686,7 +686,7 @@ group_sittings = rdb.Table("group_sittings", metadata,
     rdb.Column("convocation_type", rdb.Unicode(1024)),
 )
 
-# Currently not used
+
 group_sitting_types = rdb.Table("group_sitting_types", metadata,
     rdb.Column("group_sitting_type_id", rdb.Integer, primary_key=True),
     rdb.Column("group_sitting_type", rdb.Unicode(40)),
@@ -727,6 +727,7 @@ venues = rdb.Table("venues", metadata,
 )
 
 
+''' !+BookedResources
 # resources for sittings like rooms ...
 
 resource_types = rdb.Table("resource_types", metadata,
@@ -756,6 +757,7 @@ resourcebookings = rdb.Table("resourcebookings", metadata,
         primary_key=True
     ),
 )
+'''
 
 #######################
 # Parliament

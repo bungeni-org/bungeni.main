@@ -18,7 +18,9 @@ from sqlalchemy.orm import mapper
 from bungeni.alchemist import Session
 from bungeni.models import domain, schema
 
-from i18n import _ 
+
+#!+BookedResources(mr, oct-2011)
+raise UserWarning("!+BookedResources(mr, oct-2011) needs conceptual+ review!")
 
 
 bookedresources = rdb.join(
@@ -28,7 +30,7 @@ bookedresources = rdb.join(
 ).join(
     schema.group_sittings, 
     schema.resourcebookings.c.group_sitting_id == 
-    schema.group_sittings.c.group_sitting_id
+        schema.group_sittings.c.group_sitting_id
 )
 class BookedResources(object):
     """Resources booked for a sitting.
