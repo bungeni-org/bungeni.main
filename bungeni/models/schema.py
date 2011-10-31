@@ -860,11 +860,13 @@ subscriptions = rdb.Table("object_subscriptions", metadata,
     # rdb.Column("delivery_type", rdb.Integer),
 )
 
+''' !+TYPES_CUSTOM 
 attached_file_types = rdb.Table("attached_file_types", metadata,
     rdb.Column("attached_file_type_id", rdb.Integer, primary_key=True),
     rdb.Column("attached_file_type_name", rdb.Unicode(40)),
     rdb.Column("language", rdb.String(5), nullable=False),
 )
+'''
 attached_files = rdb.Table("attached_files", metadata,
     rdb.Column("attached_file_id", rdb.Integer, primary_key=True),
     # the id of the "owning" item !+HEAD_DOCUMENT_ITEM
@@ -872,9 +874,11 @@ attached_files = rdb.Table("attached_files", metadata,
         rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
         nullable=False
     ),
-    rdb.Column("attached_file_type_id", rdb.Integer,
-        rdb.ForeignKey("attached_file_types.attached_file_type_id"),
-        nullable=False
+    # attached_file is NOT a parliamentary_item
+    rdb.Column("attached_file_type",
+        rdb.Unicode(128),
+        default="document",
+        nullable=False,
     ),
     rdb.Column("file_version_id", rdb.Integer), # !+ATTACHED_FILE_VERSIONS
     rdb.Column("file_title", rdb.Unicode(255), nullable=False),

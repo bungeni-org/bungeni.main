@@ -191,6 +191,16 @@ postal_address_type = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm("military", title="Military"),
     vocabulary.SimpleTerm("unknown", title="Undefined/Unknown"),
 ])
+attached_file_type = vocabulary.SimpleVocabulary([
+    vocabulary.SimpleTerm("image", title="Image"),
+    vocabulary.SimpleTerm("annex", title="Annex"),
+    vocabulary.SimpleTerm("document", title="Document"),
+    vocabulary.SimpleTerm("bill", title="Bill"),
+    # !+ATTACHED_FILE_TYPE_SYSTEM(mr, oct-2011) ui/downloaddocument and 
+    # ui/forms/files.py expects this, but should NOT be presented as an 
+    # option in the UI?
+    #vocabulary.SimpleTerm("system", title="System"),
+])
 
 
 
@@ -365,41 +375,6 @@ class TitleTypes(SpecializedSource):
                 ))
         return vocabulary.SimpleVocabulary(terms)
 
-class AttachedFileTypeSource(SpecializedSource):
-    """Returns a vocabulary of attached file types"""
-    def __init__(self): 
-        pass
-        
-    def constructQuery(self, context):
-        session= Session()
-        return session.query(domain.AttachedFileType)
-        
-    def __call__(self, context=None):
-        query = self.constructQuery(context)
-        results = query.all()
-        trusted=removeSecurityProxy(context)
-        type_id = getattr(trusted, "attached_file_type_id", None)
-        terms = []
-        if type_id:
-            session = Session()
-            attached_file_type = session.query(domain.AttachedFileType).get(type_id)
-            terms.append( 
-                        vocabulary.SimpleTerm( 
-                            value = getattr(attached_file_type, "attached_file_type_id"), 
-                            token = getattr(attached_file_type, "attached_file_type_id"),
-                            title = getattr(attached_file_type, "attached_file_type_name"))
-                         )       
-            return vocabulary.SimpleVocabulary( terms )
-        else:
-            for ob in results:
-                if ob.attached_file_type_name not in ["system"]:
-                    terms.append( 
-                        vocabulary.SimpleTerm( 
-                            value = getattr(ob, "attached_file_type_id"), 
-                            token = getattr(ob, "attached_file_type_id"),
-                            title = getattr(ob, "attached_file_type_name"),
-                        ))        
-            return vocabulary.SimpleVocabulary( terms )
 
         
 #XXX

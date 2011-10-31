@@ -379,7 +379,7 @@ class AttachedFileIndexer(ContentIndexer):
     def index(self, doc):    
         # index schema fields
         super(AttachedFileIndexer, self).index(doc)
-        if self.context.type.attached_file_type_name == 'document':
+        if self.context.attached_file_type == "document":
             
             if self.context.file_mimetype == 'application/vnd.oasis.opendocument.text':
                 doc.fields.append(xappy.Field('doc_text', readODT(self.context.file_data)))

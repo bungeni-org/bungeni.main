@@ -206,26 +206,15 @@ class DownloadDocument(BrowserView):
         # with the odt/pdf doc or track changes to a doc
         # Add caching by state. items in terminal states do not change
         if cached:
-            session = Session()
-            d = [f.file_title for f in self.document.attached_files]
+            d = [ f.file_title for f in self.document.attached_files ]
             if self.document_type not in d:
-                file_type = session.query(domain.AttachedFileType) \
-                               .filter(domain.AttachedFileType \
-                                                .attached_file_type_name 
-                                            == "system") \
-                               .first()
-                if file_type is None:
-                    file_type = domain.AttachedFileType()
-                    file_type.attached_file_type_name = "system"
-                    file_type.language = self.document.language
-                    session.add(file_type)
-                    session.flush()
                 attached_file = domain.AttachedFile()
                 attached_file.file_title = self.document_type
                 attached_file.file_data = self.generateDoc()
                 attached_file.language = self.document.language
-                attached_file.type = file_type
+                attached_file.attached_file_type = "system" # !+ATTACHED_FILE_TYPE_SYSTEM
                 self.document.attached_files.append(attached_file)
+                session = Session()
                 session.add(self.document)
                 session.flush()
                 #!+ REPORTS(miano, apr-2011) Anonymous users may prompt 

@@ -8,8 +8,6 @@ $Id$
 $URL$
 """
 
-from bungeni.alchemist import Session
-from bungeni.models.domain import AttachedFileType
 from bungeni.models.interfaces import IAttachedFileVersion
 from bungeni.core.translation import translate_obj
 from bungeni.ui.i18n import _
@@ -38,7 +36,7 @@ class LibraryViewlet (viewlet.ViewletBase):
                 if IAttachedFileVersion.providedBy(f):
                     self.context.append(f)
                 else:
-                    if f.type.attached_file_type_name != "system":
+                    if f.attached_file_type != "system":
                         self.context.append(f)
         self.request = request
         self.__parent__ = context
@@ -52,11 +50,10 @@ class LibraryViewlet (viewlet.ViewletBase):
 
     def results(self):
         for data in self.context:
-            translated_type = translate_obj(data.type)
             yield {'title': data.file_title,
                    'url': './files/obj-%i' % data.attached_file_id,
                    'name': data.file_name,
-                   'type': translated_type.attached_file_type_name,
+                   'type': _(data.attached_file_type),
                    'status_date': self.formatter.format(data.status_date),
                    'menu': self.generate_file_manipulation_menu(data)}
 
@@ -117,24 +114,21 @@ class VersionLibraryViewlet(LibraryViewlet):
         super(VersionLibraryViewlet, self).__init__(context, request, view, manager)
         self.base_url = ui_utils.url.absoluteURL(
                                 self.__parent__.__parent__.__parent__, self.request)
-
+    
     def results(self):
-        session = Session()
         for data in self.context:
-            file_type = session.query(AttachedFileType)\
-                               .filter(AttachedFileType.attached_file_type_id == data.attached_file_type_id)\
-                               .first()
-            if file_type is None:
-                file_type_name = ' - '
-            else:
-                file_type_name = translate_obj(file_type).attached_file_type_name
-            if file_type_name == "system":
+            file_type = data.attached_file_type
+            if file_type == "system":
                 continue
+            elif file_type is None:
+                file_type = " - "
+            else:
+                file_type = _(file_type)
             yield {'title': data.file_title,
                    'url': self.base_url + '/files/obj-%i/versions/obj-%i' \
                           % (data.content_id, data.version_id),
                    'name': data.file_name,
-                   'type': file_type_name,
+                   'type': file_type,
                    'status_date': self.formatter.format(data.status_date),
                    'menu': self.generate_file_manipulation_menu(data)}
 

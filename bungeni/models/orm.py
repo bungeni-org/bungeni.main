@@ -488,12 +488,8 @@ mapper(domain.TabledDocument, schema.tabled_documents,
     properties={}
 )
 
-mapper(domain.AttachedFileType, schema.attached_file_types)
-mapper(domain.AttachedFile, schema.attached_files,
-    properties={
-        "type": relation(domain.AttachedFileType, uselist=False)
-    }
-)
+#!+TYPES_CUSTOM  mapper(domain.AttachedFileType, schema.attached_file_types)
+mapper(domain.AttachedFile, schema.attached_files)
 
 #Items scheduled for a sitting expressed as a relation
 # to their item schedule

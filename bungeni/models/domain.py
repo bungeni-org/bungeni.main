@@ -600,16 +600,19 @@ class ParliamentaryItem(Entity):
         # to overload as appropriate for their respective workflows.
         return self._get_workflow_date("submitted", "gazetted")
 
+''' !+TYPES_CUSTOM
 class AttachedFileType(object):
     """Type of attachment: image/annex/... 
     """
     interface.implements(interfaces.ITranslatable)
+'''
 
 # versionable (by default), but not a ParliamentaryItem
 class AttachedFile(Entity):
     """Files attached to a parliamentary item.
     """
     __dynamic_features__ = True # !+ should be False?
+
 
 # !+ why a parliamentaryItem? Review whole heading idea!
 class Heading(ParliamentaryItem):

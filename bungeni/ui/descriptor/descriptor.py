@@ -1996,17 +1996,13 @@ class AttachedFileDescriptor(ModelDescriptor):
             add_widget=widgets.FileAddWidget,
             view_widget=widgets.FileDisplayWidget,
         ),
-        Field(name="attached_file_type_id", # [user-req]
+        Field(name="attached_file_type", # [user-req]
             modes="view edit add listing",
             localizable=[
                 show("view edit listing"),
             ],
-            property=schema.Choice(title=_("File type"),
-                source=vocabulary.DatabaseSource(domain.AttachedFileType,
-                    token_field="attached_file_type_id",
-                    title_field="attached_file_type_name",
-                    value_field="attached_file_type_id"
-                ),
+            property=schema.Choice(title=_("File Type"),
+                source=vocabulary.attached_file_type,
             ),
         ),
         Field(name="file_name", label="", # [user-req]
