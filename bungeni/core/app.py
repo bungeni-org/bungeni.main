@@ -359,6 +359,12 @@ class AppSetup(object):
             marker=model_interfaces.IBungeniAdmin,
             default_name="xapian-settings")
         
+        admin["registry-settings"] = Section(
+            title=_(u"registry settings"),
+            description=_(u"manage registry settings"),
+            marker=model_interfaces.IBungeniAdmin,
+            default_name="registry-settings")
+        
         content[u"parliaments"] = domain.ParliamentContainer()
         to_locatable_container(domain.Parliament, content[u"parliaments"])
         

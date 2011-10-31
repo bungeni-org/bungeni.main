@@ -32,6 +32,13 @@
         permission="zope.ManageSite"
     />
     
+    <browser:page name="registry-settings"
+        for="bungeni.models.interfaces.IBungeniAdmin"
+        class=".admin.RegistrySettings"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+        permission="zope.ManageSite"
+    />
+    
     <browser:page name="vocabularies"
         for="bungeni.models.interfaces.IBungeniAdmin"
         class=".admin.VocabulariesIndex"

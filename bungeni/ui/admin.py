@@ -15,6 +15,9 @@ from bungeni.models import domain, interfaces
 from bungeni.core.index import IndexReset
 from bungeni.ui import container, search, browser
 from bungeni.ui.calendar import utils as calendar_utils
+import zope
+from bungeni.ui.i18n import _
+from bungeni.ui.utils.queries import execute_sql
 
 ''' !+UNUSED(mr, oct-2010)
 class Menu(viewlet.ViewletBase):
@@ -238,6 +241,33 @@ class XapianSettings(browser.BungeniBrowserView):
         return super(XapianSettings, self).__init__(context, request)
     
     def __call__(self):
-        if self.request.method == 'POST':
+        if self.request.method == "POST":
             IndexReset().start()
         return self.render()
+    
+
+class RegistrySettings(catalyst.EditForm):
+    
+    form_fields = form.Fields(interfaces.IBungeniRegistrySettings)
+    
+    def update(self):
+        if self.request.method == "POST":
+            if self.request.get("form.questions_number") == "on":
+                execute_sql("SELECT setval('question_registry_sequence', 1);")
+            if self.request.get("form.motions_number") == "on":
+                execute_sql("SELECT setval('motion_registry_sequence', 1);")
+            if self.request.get("form.agendaitems_number") == "on":
+                execute_sql("SELECT setval('agendaitem_registry_sequence', 1);")
+            if self.request.get("form.bills_number") == "on":
+                execute_sql("SELECT setval('bill_registry_sequence', 1);")
+            if self.request.get("form.reports_number") == "on":
+                execute_sql("SELECT setval('report_registry_sequence', 1);")
+            if self.request.get("form.tableddocuments_number") == "on":
+                execute_sql("SELECT setval('tableddocument_registry_sequence', 1);")
+            if self.request.get("form.global_number") == "on":
+                execute_sql("SELECT setval('registry_number_sequence', 1);")
+
+        settings = \
+            component.getUtility(interfaces.IBungeniRegistrySettings)()
+        self.adapters = {interfaces.IBungeniRegistrySettings : settings}
+        super(RegistrySettings, self).update()

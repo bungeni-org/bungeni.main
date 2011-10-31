@@ -62,6 +62,14 @@ def setup_db():
     schema.QuestionSequence.create(db) 
     schema.MotionSequence.create(db)
     schema.registrySequence.create(db)
+    
+    schema.AgendaItemRegistrySequence.create(db)
+    schema.QuestionRegistrySequence.create(db)
+    schema.MotionRegistrySequence.create(db)
+    schema.BillRegistrySequence.create(db)
+    schema.TabledDocumentRegistrySequence.create(db)
+    schema.ReportRegistrySequence.create(db)
+    
     schema.tabled_documentSequence.create(db)
     security.metadata.bind = db
     security.metadata.drop_all()
