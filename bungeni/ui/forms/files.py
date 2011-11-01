@@ -8,22 +8,33 @@ $Id$
 $URL$
 """
 
-from bungeni.models.interfaces import IAttachedFileVersion
-from bungeni.core.translation import translate_obj
-from bungeni.ui.i18n import _
 from zope.viewlet import viewlet
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.security.management import getInteraction
-import bungeni.ui.utils as ui_utils
 from zope.security.proxy import removeSecurityProxy
 
-class LibraryViewlet (viewlet.ViewletBase):
+from bungeni.models.interfaces import IAttachedFileVersion, \
+    IQuestion, IBill, IMotion, ITabledDocument, IAgendaItem, IEventItem
+from bungeni.ui.i18n import _
+from bungeni.ui import utils
+from bungeni.ui.forms.interfaces import ISubFormViewletManager
+from bungeni.utils import register
 
+
+# for_, layer, view, manager
+@register.viewlet(IQuestion, manager=ISubFormViewletManager)
+@register.viewlet(IBill, manager=ISubFormViewletManager)
+@register.viewlet(IMotion, manager=ISubFormViewletManager)
+@register.viewlet(ITabledDocument, manager=ISubFormViewletManager)
+@register.viewlet(IAgendaItem, manager=ISubFormViewletManager)
+@register.viewlet(IEventItem, manager=ISubFormViewletManager)
+class LibraryViewlet(viewlet.ViewletBase):
+    
     render = ViewPageTemplateFile ('templates/attached-files.pt')
     form_name = _(u"attached files")
-
+    
     for_display = True
-
+    
     def __init__(self, context, request, view, manager):
         self.context = []
         trusted = removeSecurityProxy(context)
@@ -44,10 +55,10 @@ class LibraryViewlet (viewlet.ViewletBase):
         self.query = None
         self.for_display = len(self.context) > 0
         self.interaction = getInteraction()
-        self.formatter = ui_utils.date.getLocaleFormatter(self.request, "date",
+        self.formatter = utils.date.getLocaleFormatter(self.request, "date",
             "long"
         )
-
+    
     def results(self):
         for data in self.context:
             yield {'title': data.file_title,
@@ -56,7 +67,7 @@ class LibraryViewlet (viewlet.ViewletBase):
                    'type': _(data.attached_file_type),
                    'status_date': self.formatter.format(data.status_date),
                    'menu': self.generate_file_manipulation_menu(data)}
-
+    
     def generate_file_manipulation_menu(self, context):
         menu_items = []
         view_item = self.create_view_menu_item(context)
@@ -106,13 +117,16 @@ class LibraryViewlet (viewlet.ViewletBase):
         return None
 
 
-class VersionLibraryViewlet(LibraryViewlet):
 
-    render = ViewPageTemplateFile ('templates/version-attached-files.pt')
+''' !+FILE_VERSIONS_VIEWLET(mr, nov-2011) unused?
+
+from bungeni.models.interfaces import IVersion
+@register.viewlet(IVersion, manager=ISubFormViewletManager)
+class VersionLibraryViewlet(LibraryViewlet):
 
     def __init__(self, context, request, view, manager):
         super(VersionLibraryViewlet, self).__init__(context, request, view, manager)
-        self.base_url = ui_utils.url.absoluteURL(
+        self.base_url = utils.url.absoluteURL(
                                 self.__parent__.__parent__.__parent__, self.request)
     
     def results(self):
@@ -155,3 +169,5 @@ class VersionLibraryViewlet(LibraryViewlet):
                     'url': '%s/files/obj-%i/versions/obj-%i/download' % \
                             (self.base_url, context.content_id, context.version_id)}
         return None
+'''
+

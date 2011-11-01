@@ -61,3 +61,20 @@ def subscription_adapter(adapts=None, provides=None):
         return factory
     return _subscription_adapter
 
+
+# wrapper registrators
+
+def viewlet(for_, layer=None, view=None, manager=None, provides=None, name=""):
+    """Register a browser viewlet, using provideAdapter().
+    """
+    if provides is None:
+        from zope.viewlet.interfaces import IViewlet as provides
+    def _viewlet(factory):
+        component.provideAdapter(factory, 
+            adapts=(for_, layer, view, manager),
+            provides=provides, 
+            name=name)
+        return factory
+    return _viewlet
+
+
