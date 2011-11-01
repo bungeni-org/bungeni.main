@@ -8,7 +8,6 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.ui.forms.viewlets")
 
-import sys
 import itertools
 from dateutil import relativedelta
 import datetime, calendar
@@ -20,7 +19,7 @@ from zope.security.proxy import removeSecurityProxy
 from zc.resourcelibrary import need
 import sqlalchemy.sql.expression as sql
 
-from bungeni.alchemist.ui import DynamicFields, EditFormViewlet
+#from bungeni.alchemist.ui import DynamicFields, EditFormViewlet
 from bungeni.alchemist import Session
 from bungeni.alchemist.model import queryModelDescriptor
 
@@ -31,7 +30,6 @@ from bungeni.models import domain, interfaces
 from bungeni.models.utils import get_groups_held_for_user_in_parliament
 from bungeni.models.utils import get_parliament_for_group_id
 from bungeni.models.utils import get_principal_id
-from bungeni.models.interfaces import IAlchemistContainer
 import bungeni.core.globalsettings as prefs
 
 from bungeni.ui.i18n import _
@@ -39,13 +37,13 @@ from bungeni.ui.tagged import get_states
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
 from bungeni.ui import table
-from bungeni.ui.utils import (common, queries, statements, url, misc, debug, 
-    date
-)
+from bungeni.ui.utils import common, queries, statements, url, misc, date
 from bungeni.ui.browser import BungeniViewlet
 from fields import BungeniAttributeDisplay
 from interfaces import ISubFormViewletManager, ISubformRssSubscriptionViewletManager
-from bungeni.ui.interfaces import IAdminSectionLayer
+from bungeni.ui.interfaces import IBungeniAuthenticatedSkin, IAdminSectionLayer
+from bungeni.utils import register
+
 
 ''' XXX-INFO-FOR-PLONE - MR - 2010-05-03
 class GroupIdViewlet(browser.BungeniViewlet):
@@ -106,7 +104,7 @@ def load_formatted_container_items(container, out_format={}, extra_params={}):
     out_format: property titles and getters getters based acting on item
     """
     formatted_items = []
-    if IAlchemistContainer.providedBy(container):
+    if interfaces.IAlchemistContainer.providedBy(container):
         item_list = common.list_container_items(container)
     else:
         item_list = [ removeSecurityProxy(item) for item in container ]
@@ -149,11 +147,13 @@ def format_change_description(change):
 # be made to inherit from browser.BungeniViewlet (but, note that
 # table.AjaxContainerListing already inherits from BungeniBrowserView). 
 
+
+@register.viewlet_manager(name="bungeni.subform.manager")
 class SubFormViewletManager(manager.WeightOrderedViewletManager):
     """Display subforms.
     """
     interface.implements(ISubFormViewletManager)
-
+    
     def filter(self, viewlets):
         viewlets = super(SubFormViewletManager, self).filter(viewlets)
         return [ (name, viewlet)
@@ -198,31 +198,41 @@ class SubformViewlet(table.AjaxContainerListing):
         return len(self.context) > 0
 
 
+# RSS
+
+@register.viewlet_manager(name="bungeni.content.rss")
 class SubformRssSubscriptionViewletManager(manager.WeightOrderedViewletManager):
-    """ Displays rss subscription data 
-    """
+    """Displays rss subscription data."""
     interface.implements(ISubformRssSubscriptionViewletManager)
 
-
+def _register_rss_viewlet(for_):
+    """Wrap register.viewlet to fix some defaults."""
+    return register.viewlet(for_, layer=IBungeniAuthenticatedSkin, 
+        manager=ISubformRssSubscriptionViewletManager)
+@_register_rss_viewlet(interfaces.IBill)
+@_register_rss_viewlet(interfaces.IQuestion)
+@_register_rss_viewlet(interfaces.ITabledDocument)
+@_register_rss_viewlet(interfaces.IAgendaItem)
+@_register_rss_viewlet(interfaces.IMotion)
 class RssLinkViewlet(viewlet.ViewletBase):
-    """ Simply renders link for users to subscribe
-        to the current paliamentary item
+    """Simply renders link for users to subscribe to current paliamentary item.
     """
     render = ViewPageTemplateFile("templates/rss_link.pt")
 
     @property
     def already_subscribed(self):
-        """ Checks if user has already
-            subscribed to the current
-            item
+        """Checks if user has already subscribed to the current item.
         """
         session = Session()
-        user = session.query(domain.User).filter(domain.User.login == self.request.principal.id).first()
-        # If we've hot found the user we should not allow to subscribe
+        user = session.query(domain.User).filter(
+                domain.User.login == self.request.principal.id).first()
+        # If we've not found the user we should not allow to subscribe
         if user is None:
             return True
         return removeSecurityProxy(self.context) in user.subscriptions
+del _register_rss_viewlet
 
+#
 
 class SessionViewlet(SubformViewlet):
     sub_attr_name = "sessions"
@@ -270,9 +280,12 @@ class CommitteesViewlet(SubformViewlet):
 class CommitteeStaffViewlet(SubformViewlet):
     sub_attr_name = "committeestaff"
 
+
+@register.viewlet(interfaces.IMemberOfParliament, manager=ISubFormViewletManager)
+@register.viewlet(interfaces.IBungeniGroup, manager=ISubFormViewletManager)
 class AddressesViewlet(SubformViewlet):
     sub_attr_name = "addresses"
-    
+    weight = 99
     @property
     def form_name(self):
         return _(u"Contacts")

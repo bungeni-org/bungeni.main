@@ -30,10 +30,11 @@ from bungeni.utils import register
 @register.viewlet(IEventItem, manager=ISubFormViewletManager)
 class LibraryViewlet(viewlet.ViewletBase):
     
-    render = ViewPageTemplateFile ('templates/attached-files.pt')
-    form_name = _(u"attached files")
+    render = ViewPageTemplateFile ("templates/attached-files.pt")
+    form_name = _("attached files")
     
     for_display = True
+    weight = 50
     
     def __init__(self, context, request, view, manager):
         self.context = []
@@ -55,18 +56,19 @@ class LibraryViewlet(viewlet.ViewletBase):
         self.query = None
         self.for_display = len(self.context) > 0
         self.interaction = getInteraction()
-        self.formatter = utils.date.getLocaleFormatter(self.request, "date",
-            "long"
-        )
+        self.formatter = utils.date.getLocaleFormatter(
+            self.request, "date", "long")
     
     def results(self):
         for data in self.context:
-            yield {'title': data.file_title,
-                   'url': './files/obj-%i' % data.attached_file_id,
-                   'name': data.file_name,
-                   'type': _(data.attached_file_type),
-                   'status_date': self.formatter.format(data.status_date),
-                   'menu': self.generate_file_manipulation_menu(data)}
+            yield {
+                "title": data.file_title,
+                "url": "./files/obj-%i" % data.attached_file_id,
+                "name": data.file_name,
+                "type": _(data.attached_file_type),
+                "status_date": self.formatter.format(data.status_date),
+                "menu": self.generate_file_manipulation_menu(data)
+            }
     
     def generate_file_manipulation_menu(self, context):
         menu_items = []
@@ -85,35 +87,41 @@ class LibraryViewlet(viewlet.ViewletBase):
         return menu_items
 
     def create_view_menu_item(self, context):
-        permission_name = 'bungeni.fileattachment.View'
+        permission_name = "bungeni.fileattachment.View"
         if self.interaction.checkPermission(permission_name, self.__parent__):
-            return {'title': _(u'VIEW'),
-                    'url': './files/obj-%i' % context.attached_file_id,
-                    'active': True}
+            return {
+                "title": _("VIEW"),
+                "url": "./files/obj-%i" % context.attached_file_id,
+                "active": True
+            }
         return None
 
     def create_edit_menu_item(self, context):
-        permission_name = 'bungeni.fileattachment.Edit'
+        permission_name = "bungeni.fileattachment.Edit"
         if self.interaction.checkPermission(permission_name, self.__parent__):
-            return {'title': _(u'EDIT'),
-                    'url': './files/obj-%i/edit' % context.attached_file_id,
-                    'active': True}
+            return {"title": _("EDIT"),
+                    "url": "./files/obj-%i/edit" % context.attached_file_id,
+                    "active": True}
         return None
 
     def create_delete_menu_item(self, context):
-        permission_name = 'bungeni.fileattachment.Delete'
+        permission_name = "bungeni.fileattachment.Delete"
         if self.interaction.checkPermission(permission_name, self.__parent__):
-            return {'title': _(u'DELETE'),
-                    'url': './files/obj-%i/deactivate' % context.attached_file_id,
-                    'active': context.status != u'inactive'}
+            return {
+                "title": _("DELETE"),
+                "url": "./files/obj-%i/deactivate" % context.attached_file_id,
+                "active": context.status != "inactive"
+            }
         return None
 
     def create_download_menu_item(self, context):
-        permission_name = 'bungeni.fileattachment.View'
+        permission_name = "bungeni.fileattachment.View"
         if self.interaction.checkPermission(permission_name, self.__parent__):
-            return {'title': _(u'DOWNLOAD'),
-                    'url': './files/obj-%i/download' % context.attached_file_id,
-                    'active': True}
+            return {
+                "title": _("DOWNLOAD"),
+                "url": "./files/obj-%i/download" % context.attached_file_id,
+                "active": True
+            }
         return None
 
 

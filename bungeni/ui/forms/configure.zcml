@@ -20,6 +20,9 @@
     <class class=".files.LibraryViewlet">
         <require permission="zope.View" attributes="render" />
     </class>
+    <class class=".viewlets.RssLinkViewlet">
+        <require permission="zope.View" attributes="render" />
+    </class>
     
     
 
@@ -146,41 +149,6 @@
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
 
- <!-- Viewlet manager for subforms -->
-
-  <browser:viewletManager
-     name="bungeni.subform.manager"
-     provides=".interfaces.ISubFormViewletManager"
-     class=".viewlets.SubFormViewletManager"
-     permission="zope.View"
-     />
-
-  <!-- Viewlet manager for rss subscription mark -->
-
-  <browser:viewletManager
-     name="bungeni.content.rss"
-   provides=".interfaces.ISubformRssSubscriptionViewletManager"
-   class=".viewlets.SubformRssSubscriptionViewletManager"
-   permission="zope.View"
-   />
-
-
-  <browser:viewlet
-     name="bungeni.viewlet.member-addresses"
-     manager=".interfaces.ISubFormViewletManager"
-     class=".viewlets.AddressesViewlet"
-     for="bungeni.models.interfaces.IMemberOfParliament"
-     permission="zope.View"
-     weight="99"
-     />
-  <browser:viewlet
-     name="bungeni.viewlet.group-addresses"
-     manager=".interfaces.ISubFormViewletManager"
-     class=".viewlets.AddressesViewlet"
-     for="bungeni.models.interfaces.IBungeniGroup"
-     permission="zope.View"
-     weight="99"
-     />
 
 <!-- XXX-INFO-FOR-PLONE - MR - 2010-05-03
   <browser:viewlet
@@ -232,48 +200,6 @@
      />
 -->
 
-  <!-- Rss subscription marks -->
-
-  <browser:viewlet
-     name="bungeni.viewlet.rsslink"
-   manager=".interfaces.ISubformRssSubscriptionViewletManager"
-   class=".viewlets.RssLinkViewlet"
-   for="bungeni.models.interfaces.IBill"
-   permission="zope.View"
-     layer="bungeni.ui.interfaces.IBungeniAuthenticatedSkin"
-   />
-    <browser:viewlet
-     name="bungeni.viewlet.rsslink"
-   manager=".interfaces.ISubformRssSubscriptionViewletManager"
-   class=".viewlets.RssLinkViewlet"
-   for="bungeni.models.interfaces.IQuestion"
-   permission="zope.View"
-     layer="bungeni.ui.interfaces.IBungeniAuthenticatedSkin"
-   />
-   <browser:viewlet
-     name="bungeni.viewlet.rsslink"
-   manager=".interfaces.ISubformRssSubscriptionViewletManager"
-   class=".viewlets.RssLinkViewlet"
-   for="bungeni.models.interfaces.ITabledDocument"
-   permission="zope.View"
-     layer="bungeni.ui.interfaces.IBungeniAuthenticatedSkin"
-   />
-   <browser:viewlet
-     name="bungeni.viewlet.rsslink"
-   manager=".interfaces.ISubformRssSubscriptionViewletManager"
-   class=".viewlets.RssLinkViewlet"
-   for="bungeni.models.interfaces.IAgendaItem"
-   permission="zope.View"
-     layer="bungeni.ui.interfaces.IBungeniAuthenticatedSkin"
-   />
-   <browser:viewlet
-     name="bungeni.viewlet.rsslink"
-   manager=".interfaces.ISubformRssSubscriptionViewletManager"
-   class=".viewlets.RssLinkViewlet"
-   for="bungeni.models.interfaces.IMotion"
-   permission="zope.View"
-     layer="bungeni.ui.interfaces.IBungeniAuthenticatedSkin"
-   />
   <!-- GroupSitting -->
 
   <browser:viewlet
