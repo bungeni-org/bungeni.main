@@ -342,8 +342,8 @@ def ministry_column(name, title, default=""):
     return column.GetterColumn(title, getter)
 
 def enumeration_column(name, title,
-    item_reference_attr=None, # parent item attribute, for enum
-    enum_value_attr=None, # enum attribute, for desired value
+        item_reference_attr=None, # parent item attribute, for enum
+        enum_value_attr=None, # enum attribute, for desired value
     ):
     """Get getter for the enum-value of an enumerated column.
     """
@@ -357,6 +357,12 @@ def enumeration_column(name, title,
         enum_obj = translation.translate_obj(enum_obj)
         return getattr(enum_obj, enum_value_attr)
     return column.GetterColumn(title, getter)
+
+def vocabulary_column(name, title, vocabulary):
+    def getter(context, formatter):
+        return _(vocabulary.getTerm(getattr(context, name)).title)
+    return column.GetterColumn(title, getter)
+
 
 def dc_getter(name, title, item_attribute, default=_(u"None")):
     def getter(item, formatter):
@@ -1283,6 +1289,10 @@ class CommitteeDescriptor(GroupDescriptor):
             property=schema.Choice(title=_("Committee Type"),
                 source=vocabulary.committee_type,
             ),
+            listing_column=vocabulary_column("group_type",
+                "Committee Type",
+                vocabulary.committee_type
+            ),
         ),
         Field(name="group_continuity", # [user-req]
             modes="view edit add listing",
@@ -1291,6 +1301,10 @@ class CommitteeDescriptor(GroupDescriptor):
             ],
             property=schema.Choice(title=_("Committee Status Type"),
                 source=vocabulary.committee_continuity,
+            ),
+            listing_column=vocabulary_column("group_continuity",
+                "Committee Status Type",
+                vocabulary.committee_continuity
             ),
         ),
         Field(name="num_members", # [user]
@@ -1442,8 +1456,13 @@ class AddressDescriptor(ModelDescriptor):
             localizable=[ 
                 show("view edit listing"), 
             ],
+            # !+i18n(mr, nov-2011) shouldn't title be translated later?
             property=schema.Choice(title=_("Address Type"),
                 source=vocabulary.logical_address_type,
+            ),
+            listing_column=vocabulary_column("logical_address_type", 
+                "Address Type",
+                vocabulary.logical_address_type
             ),
         ),
         Field(name="postal_address_type", # [user-req]
@@ -2003,6 +2022,10 @@ class AttachedFileDescriptor(ModelDescriptor):
             ],
             property=schema.Choice(title=_("File Type"),
                 source=vocabulary.attached_file_type,
+            ),
+            listing_column=vocabulary_column("attached_file_type",
+                "File Type",
+                vocabulary.attached_file_type,
             ),
         ),
         Field(name="file_name", label="", # [user-req]
