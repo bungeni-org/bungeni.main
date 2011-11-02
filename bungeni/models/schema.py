@@ -712,18 +712,20 @@ group_sitting_attendance = rdb.Table("group_sitting_attendance", metadata,
         rdb.ForeignKey("users.user_id"),
         primary_key=True
     ),
-    rdb.Column("attendance_type_id", rdb.Integer,
-        rdb.ForeignKey("attendance_types.attendance_type_id"),
-        nullable=False
+    rdb.Column("attendance_type",
+        rdb.Unicode(128),
+        default="present",
+        nullable=False,
     ),
 )
 
+''' !+TYPES_CUSTOM
 attendance_types = rdb.Table("attendance_types", metadata,
     rdb.Column("attendance_type_id", rdb.Integer, primary_key=True),
     rdb.Column("attendance_type", rdb.Unicode(40), nullable=False),
     rdb.Column("language", rdb.String(5), nullable=False),
 )
-
+'''
 
 # venues for sittings:
 

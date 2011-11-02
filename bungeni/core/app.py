@@ -400,12 +400,10 @@ class AppSetup(object):
         to_locatable_container(domain.AddressType, 
             vocabularies[u"address-types"]
         )
-        '''
         vocabularies[u"attendance-types"] = domain.AttendanceTypeContainer()
         to_locatable_container(domain.AttendanceType, 
             vocabularies[u"attendance-types"]
         )
-        ''' !+TYPES_CUSTOM
         vocabularies[u"bill-types"] = domain.BillTypeContainer()
         to_locatable_container(domain.BillType, 
             vocabularies[u"bill-types"]

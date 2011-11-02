@@ -201,7 +201,11 @@ attached_file_type = vocabulary.SimpleVocabulary([
     # option in the UI?
     #vocabulary.SimpleTerm("system", title="System"),
 ])
-
+attendance_type = vocabulary.SimpleVocabulary([
+    vocabulary.SimpleTerm("present", title="Present"),
+    vocabulary.SimpleTerm("absence_justified", title="Absence justified"),
+    vocabulary.SimpleTerm("absent", title="Absent"),
+])
 
 
 class OfficeRoles(object):

@@ -341,6 +341,7 @@ def ministry_column(name, title, default=""):
         return obj.short_name
     return column.GetterColumn(title, getter)
 
+''' !+TYPES_CUSTOM
 def enumeration_column(name, title,
         item_reference_attr=None, # parent item attribute, for enum
         enum_value_attr=None, # enum attribute, for desired value
@@ -357,6 +358,7 @@ def enumeration_column(name, title,
         enum_obj = translation.translate_obj(enum_obj)
         return getattr(enum_obj, enum_value_attr)
     return column.GetterColumn(title, getter)
+'''
 
 def vocabulary_column(name, title, vocabulary):
     def getter(context, formatter):
@@ -3021,27 +3023,23 @@ class AttendanceDescriptor(ModelDescriptor):
             ),
             listing_column=user_name_column("member_id", _("Name"), "user")
         ),
-        Field(name="attendance_type_id", # [user-req]
+        Field(name="attendance_type", # [user-req]
             modes="view edit add listing",
             localizable=[
                 show("view edit listing"),
             ],
             property=schema.Choice(title=_("Attendance"),
-                source=vocabulary.DatabaseSource(
-                    domain.AttendanceType,
-                    token_field="attendance_type_id",
-                    title_field="attendance_type",
-                    value_field="attendance_type_id"
-                )
+                source=vocabulary.attendance_type,
             ),
-            listing_column=enumeration_column("attendance_type_id",
-                _("Attendance"),
-                item_reference_attr="attendance_type"
+            listing_column=vocabulary_column("attendance_type",
+                "Attendance",
+                vocabulary.attendance_type
             ),
         ),
     ]
 
 
+''' !+TYPES_CUSTOM
 class AttendanceTypeDescriptor(ModelDescriptor):
     localizable = False
     display_name = _("Attendance types")
@@ -3056,7 +3054,7 @@ class AttendanceTypeDescriptor(ModelDescriptor):
         ),
        LanguageField("language"),
     ]
-
+'''
 
 class SignatoryDescriptor(ModelDescriptor):
     localizable = True

@@ -274,8 +274,8 @@
     <adapter factory=".dc.BillTypeDescriptiveProperties" />
     <adapter factory=".dc.CommitteeTypeDescriptiveProperties" />
     <adapter factory=".dc.CommitteeTypeStatusDescriptiveProperties" />
-    -->
     <adapter factory=".dc.AttendanceTypeDescriptiveProperties" />
+    -->
     <adapter factory=".dc.VenueDescriptiveProperties" />
     <adapter factory=".dc.QuestionTypeDescriptiveProperties" />
     <adapter factory=".dc.ResponseTypeDescriptiveProperties" />

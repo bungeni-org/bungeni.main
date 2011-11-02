@@ -346,13 +346,14 @@ class GroupSittingAttendance(object):
     sort_on = ["last_name", "first_name", "middle_name"]
     sort_replace = {"member_id": ["last_name", "first_name", ]}
 
+''' !+TYPES_CUSTOM
 class AttendanceType(Entity):
     """Lookup for attendance type.
     """
     interface.implements(interfaces.ITranslatable,
         interfaces.IAttendanceType
     )
-
+'''
 
 class GroupItemAssignment(object):
     """The assignment of a parliamentary content object to a group.

@@ -649,8 +649,6 @@ class CommitteeTypeStatusDescriptiveProperties(DescriptiveProperties):
         context = session.merge(removeSecurityProxy(self.context))
         return self.translate(context, "committee_type_status_name")
 
-'''
-
 class AttendanceTypeDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IAttendanceType)
     
@@ -659,6 +657,7 @@ class AttendanceTypeDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         return self.translate(context, "attendance_type")
+'''
 
 class VenueDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IVenue)

@@ -547,14 +547,10 @@ mapper(domain.GroupSittingType, schema.group_sitting_types)
 mapper(domain.GroupSittingAttendance, schema.group_sitting_attendance,
     properties={
         "user": relation(domain.User, uselist=False, lazy=False),
-        "attendance_type": relation(domain.AttendanceType,
-            uselist=False,
-            lazy=False
-        ),
         "sitting": relation(domain.GroupSitting, uselist=False, lazy=False),
     }
 )
-mapper(domain.AttendanceType, schema.attendance_types)
+#!+TYPES_CUSTOM mapper(domain.AttendanceType, schema.attendance_types)
 mapper(domain.TitleType, schema.title_types,
     properties={ "group": relation(domain.Group, uselist=False, lazy=False) }
 )

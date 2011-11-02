@@ -576,10 +576,9 @@ class ICommitteeType(IBungeniVocabulary):
 
 class ICommitteeTypeStatus(IBungeniVocabulary):
     """Marker interface for committe type statuses"""
-'''
-
 class IAttendanceType(IBungeniVocabulary):
     """Marker interface for attendance types vocabulary"""
+'''
 
 class IVenue(IBungeniVocabulary):
     """Marker interface for venues vocabulary"""
