@@ -362,7 +362,16 @@ def vocabulary_column(name, title, vocabulary):
     def getter(context, formatter):
         return _(vocabulary.getTerm(getattr(context, name)).title)
     return column.GetterColumn(title, getter)
-
+''' !+TYPES_CUSTOM_TRANSLATION(mr, nov-2011) issues with how translation for 
+the how the titles of such enum values should be handled:
+- such enum string values probably be considered part of UI (po) as opposed 
+to part of the data (translatable object records in the db)?
+- there is some "overlap" in, as in some cases, parent object is translatable 
+while in others it is not. Probably should auto-detect such enum columns, and 
+have them **always & only** auto-translated via UI.
+- small issue with pre-existing msgid's e.g. "Office", translations for which 
+are not picked up with _("Office") or equivalent... why?
+'''
 
 def dc_getter(name, title, item_attribute, default=_(u"None")):
     def getter(item, formatter):
@@ -2436,6 +2445,10 @@ class BillDescriptor(ParliamentaryItemDescriptor):
             property=schema.Choice(title=_("Bill Type"),
                 source=vocabulary.bill_type,
             ),
+            listing_column=vocabulary_column("doc_type",
+                "Bill Type",
+                vocabulary.bill_type
+            ),
         ),
         Field(name="ministry_id", # [user]
             modes="view edit add listing",
@@ -2487,7 +2500,7 @@ class BillDescriptor(ParliamentaryItemDescriptor):
         "identifier",
         "publication_date",
         "registry_number",
-        ]
+    ]
 
     public_wfstates = get_states("bill", not_tagged=["private"])
 
