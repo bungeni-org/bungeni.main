@@ -20,7 +20,7 @@ import dbutils
 
 from bungeni.utils.capi import capi
 
-from ConfigParser import ConfigParser
+from ConfigParser import ConfigParser, NoOptionError
 import os
 
 SIGNATORIES_REJECT_STATES = [u"rejected", u"withdrawn"]
@@ -88,11 +88,15 @@ def create_version(context):
 
 
 def get_mask(context):
-    path = capi.get_path_for("registry")
-    config = ConfigParser()
-    config.readfp(open(os.path.join(path,"config.ini")))
-    type = context.type
-    return config.get("types",type)
+    try:
+        path = capi.get_path_for("registry")
+        config = ConfigParser()
+        config.readfp(open(os.path.join(path,"config.ini")))
+        type = context.type
+        return config.get("types",type)
+    except NoOptionError:
+        return None
+        
     
 
 def set_pi_registry_number(context):
@@ -101,7 +105,7 @@ def set_pi_registry_number(context):
     """
     
     mask = get_mask(context)
-    if mask == "manual":
+    if mask == "manual" or mask is None:
         return
     
     items = re.findall(r"\{(\w+)\}",mask)
