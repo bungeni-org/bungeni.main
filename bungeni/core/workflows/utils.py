@@ -18,7 +18,7 @@ from bungeni.ui.utils import debug
 import re
 import dbutils
 
-from bungeni.utils.capi import capi
+from bungeni.utils.capi import capi, bungeni_custom_errors
 
 from ConfigParser import ConfigParser, NoOptionError
 import os
@@ -87,28 +87,36 @@ def create_version(context):
     versions.create(message)
 
 
+@bungeni_custom_errors
 def get_mask(context):
+    # !+IBungeniParliamentaryContent(mr, nov-2011) only context typed
+    # interfaces.IBungeniParliamentaryContent should ever get here!
+    # For some reason signatory instances are also being passed in here.
+    # Remove try/except wrapper here, once that is fixed (leaving the assert).
     try:
-        path = capi.get_path_for("registry")
-        config = ConfigParser()
-        config.readfp(open(os.path.join(path,"config.ini")))
-        type = context.type
-        return config.get("types",type)
+        m = "PI context [%s] for get_mask must specify a type attr" % (context)
+        assert hasattr(context, "type"), m
+    except AssertionError:
+        log.error(m)
+        return None
+    path = capi.get_path_for("registry")
+    config = ConfigParser()
+    config.readfp(open(os.path.join(path, "config.ini")))
+    try:
+        return config.get("types", context.type)
     except NoOptionError:
         return None
-        
-    
+
 
 def set_pi_registry_number(context):
     """A parliamentary_item's registry_number should be set on the item being 
     submitted to parliament.
     """
-    
     mask = get_mask(context)
     if mask == "manual" or mask is None:
         return
     
-    items = re.findall(r"\{(\w+)\}",mask)
+    items = re.findall(r"\{(\w+)\}", mask)
     
     for name in items:
         if name == "registry_number":
@@ -298,3 +306,4 @@ def pi_unset_signatory_roles(context, all=False):
                     assign_signatory_role(context, owner_login, unset=True)
             else:
                 log.debug("Unable to get workflow controller for : %s", signatory)
+
