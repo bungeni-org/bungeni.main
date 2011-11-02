@@ -6,8 +6,9 @@
 """
 
 from zope.security.proxy import removeSecurityProxy
-from zope.securitypolicy.interfaces import IPrincipalRoleMap
-from sqlalchemy.orm import RelationshipProperty, class_mapper 
+from sqlalchemy.orm import RelationshipProperty, class_mapper
+
+from bungeni.core.workflow.states import get_object_state_rpm
 from bungeni.models.schema import singular
 from bungeni.alchemist.container import stringKey
 from bungeni.models.interfaces import IAuditable, IVersionable, IAttachmentable
@@ -56,10 +57,12 @@ def publish_to_xml(context, type="", include=None):
         type = getattr(context,"type", None)
 
         data["permissions"]= []
-        map = IPrincipalRoleMap(context)
-        for x in list(map.getPrincipalsAndRoles()):
-            data["permissions"].append({"role":x[0], "user":x[1],
-                                        "permission":x[2].getName()})
+        permissions = get_object_state_rpm(context).permissions
+        for x in permissions:
+            data["permissions"].append({"role":x[2], 
+                                    "permission":x[1], 
+                                    "setting":x[0] and "Allow" or "Deny"})
+        
 
     assert type, "%s has no 'type' field. Use 'type' function parameter." % context.__class__
                 
