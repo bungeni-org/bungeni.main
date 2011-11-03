@@ -578,6 +578,8 @@ class ICommitteeTypeStatus(IBungeniVocabulary):
     """Marker interface for committe type statuses"""
 class IAttendanceType(IBungeniVocabulary):
     """Marker interface for attendance types vocabulary"""
+class IMemberElectionType(IBungeniVocabulary):
+    """Marker interface for member election types"""
 '''
 
 class IVenue(IBungeniVocabulary):
@@ -610,8 +612,6 @@ class IQuestionType(IBungeniVocabulary):
 class IResponseType(IBungeniVocabulary):
     """Marker interface for response types"""
 
-class IMemberElectionType(IBungeniVocabulary):
-    """Marker interface for member election types"""
 class ISubRoleAnnotations(interface.Interface):
     sub_roles = interface.Attribute('Sub_Roles')
     is_sub_role = interface.Attribute('Sub_Roles')
@@ -621,3 +621,4 @@ class ICountry(interface.Interface):
 
 class IWorkspaceContainer(interface.Interface):
     pass
+

@@ -531,7 +531,6 @@
                 member_election_type
                 
                 membership_id
-                member_election_type_id
                 election_nomination_date
                 leave_reason
             "
@@ -551,7 +550,7 @@
                 constituency_id
                 province_id
                 region_id
-                member_election_type_id
+                member_election_type
                 election_nomination_date
                 leave_reason
             "

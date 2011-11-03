@@ -286,7 +286,7 @@ currently_editing_document = rdb.Table("currently_editing_document", metadata,
     rdb.Column("editing_date", rdb.DateTime(timezone=False)) 
 ) 
 
-member_election_types = make_vocabulary_table("member_election", metadata)
+#!+TYPES_CUSTOM member_election_types = make_vocabulary_table("member_election", metadata)
 
 # specific user classes
 parliament_memberships = rdb.Table("parliament_memberships", metadata,
@@ -311,9 +311,10 @@ parliament_memberships = rdb.Table("parliament_memberships", metadata,
         rdb.ForeignKey("political_parties.party_id")
     ),
     # is the MP elected, nominated, ex officio member, ...
-    rdb.Column("member_election_type_id", rdb.Integer,
-        rdb.ForeignKey("member_election_types.member_election_type_id"),
-        nullable=False
+    rdb.Column("member_election_type",
+        rdb.Unicode(128),
+        default="elected",
+        nullable=False,
     ),
     rdb.Column("election_nomination_date", rdb.Date), # nullable=False),
     rdb.Column("leave_reason", rdb.Unicode(40)),

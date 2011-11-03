@@ -206,6 +206,12 @@ attendance_type = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm("absence_justified", title="Absence justified"),
     vocabulary.SimpleTerm("absent", title="Absent"),
 ])
+member_election_type = vocabulary.SimpleVocabulary([
+    vocabulary.SimpleTerm("elected", title="Elected"),
+    vocabulary.SimpleTerm("nominated", title="Nominated"),
+    vocabulary.SimpleTerm("ex_officio", title="Ex officio"),
+])
+
 
 
 class OfficeRoles(object):
@@ -388,11 +394,6 @@ class TitleTypes(SpecializedSource):
 #    token_field="group_sitting_type_id",
 #    value_field="group_sitting_type_id")
 
-MemberElectionType = DatabaseSource(domain.MemberElectionType, 
-    token_field="member_election_type_id",
-    value_field="member_election_type_id", 
-    title_field="member_election_type_name"
-)
 
 class MemberOfParliament(object):
     """ Member of Parliament = user join group membership join parliament"""

@@ -159,22 +159,6 @@ Regions and provinces get their primary key with a db sequence:
  >>> session.add(constituency)
  >>> session.flush()
 
-add member election types:
-    >>> met1 = model.MemberElectionType()
-    >>> met1.member_election_type_name = u"Elected"
-    >>> met1.language = u"en"
-    >>> session.add(met1)
-    >>> session.flush()
-    >>> int(met1.member_election_type_id)
-    1
-    >>> met2 = model.MemberElectionType()
-    >>> met2.member_election_type_name = u"Nominated"
-    >>> met2.language = u"en"
-    >>> session.add(met2)
-    >>> session.flush()
-    >>> int(met2.member_election_type_id)
-    2
-
 add some users:
     >>> mp_1 = model.User(u"mp_1", 
     ...        first_name=u"a", 
@@ -199,7 +183,7 @@ add some users:
     >>> mp1.user_id = mp_1.user_id
     >>> mp1.start_date = today
     >>> mp1.constituency_id = 1
-    >>> mp1.member_election_type = met1
+    >>> mp1.member_election_type = "elected"
     >>> mp1.language = "en"
     >>> session.add(mp1)
     >>> session.flush()
@@ -209,12 +193,12 @@ add some users:
     >>> mp2.user_id = mp_2.user_id
     >>> mp2.start_date = today
     >>> mp2.constituency_id = 1
-    >>> mp2.member_election_type=met2
+    >>> mp2.member_election_type = "nominated"
     >>> mp2.language = "en"
     >>> session.add(mp2)
     >>> session.flush()
-      
-      
+
+
 clean up - commit open transactions
 ---------------------------------
 

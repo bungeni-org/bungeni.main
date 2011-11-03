@@ -365,16 +365,22 @@ def vocabulary_column(name, title, vocabulary):
         return _(vocabulary.getTerm(getattr(context, name)).title)
     return column.GetterColumn(title, getter)
 ''' !+TYPES_CUSTOM_TRANSLATION(mr, nov-2011) issues with how translation for 
-the how the titles of such enum values should be handled:
+the titles of such enum values should be handled:
+
 - such enum string values probably be considered part of UI (po) as opposed 
 to part of the data (translatable object records in the db)?
+
 - there is some "overlap" in, as in some cases, parent object is translatable 
 while in others it is not. Probably should auto-detect such enum columns, and 
 have them **always & only** auto-translated via UI.
+[Possible implementation may make use of view_widget/edit_widget on Field to
+autohandle how the str-values of these columns will be translated.]
+
 - small issue with pre-existing msgid's e.g. "Office", translations for which 
 are not picked up with _("Office") or equivalent... why?
 '''
 
+#!+TYPES_CUSTOM
 def dc_getter(name, title, item_attribute, default=_(u"None")):
     def getter(item, formatter):
         obj = getattr(item, item_attribute)
@@ -838,6 +844,8 @@ class GroupMembershipDescriptor(ModelDescriptor):
         validations.validate_group_membership_dates
     ]
 
+
+''' !+TYPES_CUSTOM
 class MemberElectionTypeDescriptor(ModelDescriptor):
     localizable = False
     display_name = _("Member election type")
@@ -850,7 +858,7 @@ class MemberElectionTypeDescriptor(ModelDescriptor):
         ),
         LanguageField("language"), # [user-req]
     ]
-
+'''
 
 class MpDescriptor(GroupMembershipDescriptor):
     localizable = True
@@ -876,17 +884,18 @@ class MpDescriptor(GroupMembershipDescriptor):
                 yui_maxResultsDisplayed=5),
             add_widget=widgets.AutoCompleteWidget()
         ),
-        Field(name="member_election_type_id", # [user-req]
+        Field(name="member_election_type", # [user-req]
             modes="view edit add listing",
             localizable=[
                 show("view edit listing"),
             ],
-            property=schema.Choice(title=_("elected/nominated"),
-                source=vocabulary.MemberElectionType
+            property=schema.Choice(title=_("Election Type"),
+                source=vocabulary.member_election_type
             ),
-            listing_column = dc_getter("member_election_type_id", 
-                _("Election Type"), "member_election_type"
-            )
+            listing_column=vocabulary_column("member_election_type",
+                "Election Type",
+                vocabulary.member_election_type
+            ),
         ),
         Field(name="election_nomination_date", # [user-req]
             modes="view edit add listing",
@@ -1464,7 +1473,7 @@ class AddressDescriptor(ModelDescriptor):
     fields = [
         Field(name="logical_address_type", # [user-req]
             modes="view edit add listing",
-            localizable=[ 
+            localizable=[
                 show("view edit listing"), 
             ],
             # !+i18n(mr, nov-2011) shouldn't title be translated later?
@@ -2687,7 +2696,7 @@ class EventItemDescriptor(ParliamentaryItemDescriptor):
             edit_widget=widgets.TextWidget,
             add_widget=widgets.TextWidget,
         ),
-        #!+SCHEMA(murithi, 06-2011) should event items should inherit owner?
+        #!+SCHEMA(murithi, 06-2011) should event items inherit owner?
         Field(name="owner_id", # [user-req]
             modes="view edit add listing",
             localizable=[ 

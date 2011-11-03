@@ -889,6 +889,7 @@ class ResponseType(Entity):
     """
     interface.implements(interfaces.ITranslatable, interfaces.IResponseType)
 
+''' !+TYPES_CUSTOM
 class MemberElectionType(Entity):
     """Member election type
     """
@@ -896,7 +897,6 @@ class MemberElectionType(Entity):
         interfaces.IMemberElectionType
     )
 
-''' !+TYPES_CUSTOM
 class AddressType(Entity):
     """Address Types.
     """

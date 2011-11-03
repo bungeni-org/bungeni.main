@@ -431,11 +431,11 @@ class AppSetup(object):
         vocabularies[u"venues"] = domain.VenueContainer()
         to_locatable_container(domain.Venue, vocabularies[u"venues"])
         
+        ''' !+TYPES_CUSTOM
         vocabularies[u"m-election-types"] = domain.MemberElectionTypeContainer()
         to_locatable_container(domain.MemberElectionType, 
             vocabularies[u"m-election-types"]
         )
-        ''' !+TYPES_CUSTOM
         vocabularies[u"p-address-types"] = domain.PostalAddressTypeContainer()
         to_locatable_container(domain.PostalAddressType, 
             vocabularies[u"p-address-types"]

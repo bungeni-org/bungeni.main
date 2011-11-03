@@ -35,6 +35,7 @@
         permission="zope.ManageContent"
         layer=".interfaces.IAdminSectionLayer"
     />     
+    <!-- !+TYPES_CUSTOM
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.domain.MemberElectionTypeContainer"
         title="Add member election type..."
@@ -42,7 +43,6 @@
         permission="zope.ManageContent"
         layer=".interfaces.IAdminSectionLayer"
     />     
-    <!-- !+TYPES_CUSTOM
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.domain.AttendanceTypeContainer"
         title="Add attendance type..."
