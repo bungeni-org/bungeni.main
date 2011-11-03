@@ -4,8 +4,7 @@
 
 """Sitting attendance UI
 
-$Id:$
-$URL:$
+$Id$
 """
 
 log = __import__("logging").getLogger("bungeni.ui.attendance")
@@ -59,16 +58,18 @@ class AttendanceEditor(BungeniBrowserView, forms.common.BaseForm):
             at_column = column.GetterColumn(
                 title=at_type.title,
                 getter=lambda i,f,rc=r_counter: \
-                    '<input type="radio" name="%s" value="%s" %s>' % (
+                    '<input type="radio" name="%s" value="%s"%s>' % (
                         i["records"][rc]["name"],
                         i["records"][rc]["value"],
-                        i["records"][rc]["checked"] and 'checked="true"') or "")
+                        i["records"][rc]["checked"] and ' checked="true"' or ""
+                )
+            )
             listing_columns.append(at_column)
             r_counter += 1
         return listing_columns
     
     
-    def makeId(self, value):
+    def make_id(self, value):
         return "".join(
             (self.radio_prefix, "".join(str(value).encode("base64").split()))
         )
@@ -107,7 +108,7 @@ class AttendanceEditor(BungeniBrowserView, forms.common.BaseForm):
             m_data["attendee"] = IDCDescriptiveProperties(member).title
             m_data["has_record"] = int(bool(attd))
             m_data["records"] = [ {
-                    "name" : self.makeId(member.user_id),
+                    "name" : self.make_id(member.user_id),
                     "checked" : bool(attd) and (
                         attd[0].attendance_type == at_type.value),
                     "value" : at_type.value
@@ -118,9 +119,9 @@ class AttendanceEditor(BungeniBrowserView, forms.common.BaseForm):
         )
         return sorted_list
     
-    def hasListing(self, action):
+    def has_listing(self, action):
         return bool(len(self.listing))
-
+    
     @property
     def action_url(self):
         return ""
@@ -129,10 +130,10 @@ class AttendanceEditor(BungeniBrowserView, forms.common.BaseForm):
     def action_method(self):
         return "post"
     
-    @formlib.form.action(label=_("Save"), condition=hasListing)
+    @formlib.form.action(label=_("Save"), condition=has_listing)
     def handle_save(self, action, data):
-        self.processAttendance()
-
+        self.process_attendance()
+    
     @formlib.form.action(label=_("Cancel"))
     def handle_cancel(self, action, data):
         next_url = url.absoluteURL(self.__parent__, self.request)
@@ -150,31 +151,30 @@ class AttendanceEditor(BungeniBrowserView, forms.common.BaseForm):
         super(AttendanceEditor, self).setUpWidgets(self)
 
 
-    def getSelected(self):
-        selection = [ 
-            {"user_id": k[len(self.radio_prefix):].decode("base64"),
-             "attendance_type_id": self.request.form.get(k)
-            }
-            for k in self.request.form.keys() \
-            if k.startswith( self.radio_prefix )  \
-                and self.request.form.get(k,'') != '']
-        return selection   
-
-    def processAttendance(self):
+    def get_selected(self):
+        selected = [
+            {
+                "user_id": k[len(self.radio_prefix):].decode("base64"),
+                "attendance_type": self.request.form.get(k)
+            } 
+            for k in self.request.form.keys() 
+            if k.startswith(self.radio_prefix) and self.request.form.get(k)
+        ]
+        return selected   
+    
+    def process_attendance(self):
         session = Session()
         trusted = removeSecurityProxy(self.context)
         gs_id = trusted.group_sitting_id
-        selected = self.getSelected()
-        for selection in selected:
+        for selection in self.get_selected():
             member_id = selection.get("user_id")
             if not member_id:
                 continue
-            at_id = selection.get("attendance_type_id")
-            if not at_id:
+            at = selection.get("attendance_type")
+            if not at:
                 continue
             member_id = int(member_id)
-            at_id = int(at_id)
-            #check existing attendance record
+            # check existing attendance record
             query = session.query(GroupSittingAttendance).filter(
                 sql.and_(
                     GroupSittingAttendance.member_id == member_id,
@@ -183,28 +183,24 @@ class AttendanceEditor(BungeniBrowserView, forms.common.BaseForm):
             )
             result = query.first()
             if result is not None:
-                result.attendance_type_id = at_id
+                result.attendance_type = at
                 session.flush()
                 zope.event.notify(
                     zope.lifecycleevent.ObjectModifiedEvent(result,
                         zope.lifecycleevent.Attributes(
-                            IGroupSittingAttendance, 
-                            "attendance_type_id"
-                        )
-                    )
-                )
+                            IGroupSittingAttendance, "attendance_type")))
             else:
                 m_attendance = GroupSittingAttendance()
                 m_attendance.group_sitting_id = gs_id
-                m_attendance.attendance_type_id = at_id
+                m_attendance.attendance_type = at
                 m_attendance.member_id = member_id
                 session.add(m_attendance)
                 session.flush()
                 zope.event.notify(
-                    zope.lifecycleevent.ObjectCreatedEvent(m_attendance)
-                )
-        self.status = _(u"Updated attendance record")
-
+                    zope.lifecycleevent.ObjectCreatedEvent(m_attendance))
+        self.status = _("Updated attendance record")
+    
     def __call__(self):
         self.update()
         return self.render()
+
