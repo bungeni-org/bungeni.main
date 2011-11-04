@@ -689,7 +689,7 @@ group_sittings = rdb.Table("group_sittings", metadata,
     # venues for sittings
     rdb.Column("venue_id", rdb.Integer, rdb.ForeignKey("venues.venue_id")),
     rdb.Column("language", rdb.String(5), nullable=False),
-    #other vocabularies
+    # other vocabularies
     rdb.Column("activity_type", rdb.Unicode(1024)),
     rdb.Column("meeting_type", rdb.Unicode(1024)),
     rdb.Column("convocation_type", rdb.Unicode(1024)),

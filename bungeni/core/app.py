@@ -389,13 +389,13 @@ class AppSetup(object):
         content[u"parties"] = domain.PoliticalPartyContainer()
         to_locatable_container(domain.PoliticalParty, content[u"parties"])
 
+        ''' !+TYPES_CUSTOM
         vocabularies = admin["vocabularies"] = Section(
             title=_(u"vocabularies"),
             description=_(u"manage vocabularies"),
             marker=model_interfaces.IBungeniAdmin,
             default_name="vocabularies")
-
-        ''' !+TYPES_CUSTOM
+        
         vocabularies[u"address-types"] = domain.AddressTypeContainer()
         to_locatable_container(domain.AddressType, 
             vocabularies[u"address-types"]
@@ -425,11 +425,10 @@ class AppSetup(object):
         to_locatable_container(domain.CommitteeTypeStatus, 
             vocabularies[u"committee-types-statuses"]
         )
-        '''
+        
         vocabularies[u"venues"] = domain.VenueContainer()
         to_locatable_container(domain.Venue, vocabularies[u"venues"])
         
-        ''' !+TYPES_CUSTOM
         vocabularies[u"m-election-types"] = domain.MemberElectionTypeContainer()
         to_locatable_container(domain.MemberElectionType, 
             vocabularies[u"m-election-types"]

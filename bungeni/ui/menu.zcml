@@ -1851,119 +1851,119 @@
         order="44"
 	    for="bungeni.models.interfaces.IBillContainer"
 		layer=".interfaces.IRSSRepresentationLayer"
-	 />
-	 <browser:menuItem menu="context_actions"
+    />
+    <browser:menuItem menu="context_actions"
 	    action="feed.rss"
         title="rss"
         permission="zope.View"
         order="44"
         for="bungeni.models.interfaces.ICommitteeContainer"
         layer=".interfaces.IRSSRepresentationLayer"
-     />
-	 <browser:menuItem menu="context_actions"
+    />
+    <browser:menuItem menu="context_actions"
 	    action="feed.rss"
         title="rss"
         permission="zope.View"
         order="44"
         for="bungeni.models.interfaces.IQuestionContainer"
 		layer=".interfaces.IRSSRepresentationLayer"
-     />
-	 <browser:menuItem menu="context_actions"
+    />
+    <browser:menuItem menu="context_actions"
 	    action="feed.rss"
         title="rss"
         permission="zope.View"
         order="44"
         for="bungeni.models.interfaces.IMotionContainer"
 		layer=".interfaces.IRSSRepresentationLayer"
-     />
-	 <browser:menuItem menu="context_actions"
+    />
+    <browser:menuItem menu="context_actions"
 	    action="feed.rss"
         title="rss"
         permission="zope.View"
         order="44"
         for="bungeni.models.interfaces.ITabledDocumentContainer"
 		layer=".interfaces.IRSSRepresentationLayer"
-     />
-	 <browser:menuItem menu="context_actions"
+    />
+    <browser:menuItem menu="context_actions"
 	    action="feed.rss"
         title="rss"
         permission="zope.View"
         order="44"
         for="bungeni.models.interfaces.IAgendaItemContainer"
 		layer=".interfaces.IRSSRepresentationLayer"
-     />
-	 <browser:menuItem menu="context_actions"
+    />
+    <browser:menuItem menu="context_actions"
 	    action="feed.rss"
         title="rss"
         permission="zope.View"
         order="44"
         for="bungeni.models.interfaces.IGroupSittingContainer"
 		layer=".interfaces.IRSSRepresentationLayer"
-     />
-	 <browser:menuItem menu="context_actions"
+    />
+    <browser:menuItem menu="context_actions"
 	    action="feed.rss"
         title="rss"
         permission="zope.View"
         order="44"
         for="bungeni.models.interfaces.IReportContainer"
         layer=".interfaces.IRSSRepresentationLayer"
-     />
-	 <browser:menuItem menu="context_actions"
+    />
+    <browser:menuItem menu="context_actions"
 	    action="feed.rss"
         title="rss"
         permission="zope.View"
         order="44"
 		for="bungeni.models.interfaces.IBill"
 		layer=".interfaces.IRSSRepresentationLayer"
-	 />
-	 <browser:menuItem menu="context_actions"
+    />
+    <browser:menuItem menu="context_actions"
 	    action="feed.rss"
         title="rss"
         permission="zope.View"
         order="44"
         for="bungeni.models.interfaces.IQuestion"
 		layer=".interfaces.IRSSRepresentationLayer"
-     />
-	 <browser:menuItem menu="context_actions"
+    />
+    <browser:menuItem menu="context_actions"
 	    action="feed.rss"
         title="rss"
         permission="zope.View"
         order="44"
         for="bungeni.models.interfaces.IMotion"
         layer=".interfaces.IRSSRepresentationLayer"
-     />
-	 <browser:menuItem menu="context_actions"
+    />
+    <browser:menuItem menu="context_actions"
 	    action="feed.rss"
         title="rss"
         permission="zope.View"
         order="44"
         for="bungeni.models.interfaces.ITabledDocument"
 		layer=".interfaces.IRSSRepresentationLayer"
-     />
-	 <browser:menuItem menu="context_actions"
+    />
+    <browser:menuItem menu="context_actions"
 	    action="feed.rss"
         title="rss"
         permission="zope.View"
         order="44"
         for="bungeni.models.interfaces.IAgendaItem"
 		layer=".interfaces.IRSSRepresentationLayer"
-     />
-     <browser:menuItem menu="context_actions"
+    />
+    <browser:menuItem menu="context_actions"
 	    action="feed.akomantoso"
         title="akoma ntoso"
         permission="zope.View"
         order="45"
         for="bungeni.models.interfaces.IBillContainer"
 		layer=".interfaces.IRSSRepresentationLayer"
-     />
-     <browser:menuItem menu="context_actions"
+    />
+    <browser:menuItem menu="context_actions"
 	    action="feed.akomantoso"
         title="akoma ntoso"
         permission="zope.View"
         order="45"
         for="bungeni.models.interfaces.IQuestionContainer"
 		layer=".interfaces.IRSSRepresentationLayer"
-     />
+    />
     <browser:menuItem menu="context_actions"
 	    action="feed.akomantoso"
         title="akoma ntoso"
@@ -1971,7 +1971,7 @@
         order="45"
         for="bungeni.models.interfaces.IMotionContainer"
 		layer=".interfaces.IRSSRepresentationLayer"
-     />
+    />
     <browser:menuItem menu="context_actions"
 	    action="feed.akomantoso"
         title="akoma ntoso"
@@ -1979,7 +1979,7 @@
         order="45"
         for="bungeni.models.interfaces.ITabledDocumentContainer"
 		layer=".interfaces.IRSSRepresentationLayer"
-     />
+    />
     <browser:menuItem menu="context_actions"
 	    action="feed.akomantoso"
         title="akoma ntoso"
@@ -1995,15 +1995,15 @@
         order="45"
         for="bungeni.models.interfaces.IBill"
 		layer=".interfaces.IRSSRepresentationLayer"
-     />
-     <browser:menuItem menu="context_actions"
+    />
+    <browser:menuItem menu="context_actions"
 	    action="feed.akomantoso"
         title="akoma ntoso"
         permission="zope.View"
         order="45"
         for="bungeni.models.interfaces.IQuestion"
 		layer=".interfaces.IRSSRepresentationLayer"
-     />
+    />
     <browser:menuItem menu="context_actions"
 	    action="feed.akomantoso"
         title="akoma ntoso"
@@ -2011,15 +2011,15 @@
         order="45"
         for="bungeni.models.interfaces.IMotion"
 		layer=".interfaces.IRSSRepresentationLayer"
-     />
-     <browser:menuItem menu="context_actions"
-	    action="feed.akomantoso"
+    />
+    <browser:menuItem menu="context_actions"
+        action="feed.akomantoso"
         title="akoma ntoso"
         permission="zope.View"
         order="45"
         for="bungeni.models.interfaces.ITabledDocument"
 		layer=".interfaces.IRSSRepresentationLayer"
-     />
+    />
     <browser:menuItem menu="context_actions"
 	    action="feed.akomantoso"
         title="akoma ntoso"
@@ -2027,8 +2027,11 @@
         order="45"
         for="bungeni.models.interfaces.IAgendaItem"
 		layer=".interfaces.IRSSRepresentationLayer"
-     />
+    />
      
-     <include file="menu-vocabularies.zcml"/>
+    <!-- !+TYPES_CUSTOM
+    <include file="menu-vocabularies.zcml"/>
+    -->
+    
 </configure>
 

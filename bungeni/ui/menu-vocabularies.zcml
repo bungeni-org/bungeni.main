@@ -70,6 +70,8 @@
         layer=".interfaces.IAdminSectionLayer"
     />
     -->
+    
+    <!-- !+TYPES_CUSTOM - disabling these for now, but may still be useful:
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.domain.VenueContainer"
         title="Add venue..."
@@ -85,5 +87,6 @@
         layer=".interfaces.IAdminSectionLayer"
         permission="zope.ManageContent"
     />
+    -->
 </configure>
 

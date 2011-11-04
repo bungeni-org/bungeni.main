@@ -389,7 +389,7 @@ class Field(object):
             return True
         # special handling for "bungeni.Admin" -- for when the Admin role is 
         # not a localizable role we display everything that is displayable;
-        # on the other hand, when Adnis is a loclaizable role, we treat it 
+        # on the other hand, when Admin is a localizable role, we treat it 
         # just like any other role.
         if "bungeni.Admin" not in self.__class__._roles:
             if "bungeni.Admin" in user_roles:
