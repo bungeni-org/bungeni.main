@@ -193,14 +193,6 @@ Agenda Item PDF
    >>> request.response.getHeader('Content-type')
    'application/pdf'   
 
-Create a question Type
-   >>> qtype = domain.QuestionType()
-   >>> qtype.question_type_name = u"Ordinary"
-   >>> qtype.language = "en"
-   >>> session.add(qtype)
-   >>> session.flush()
-   >>> int(qtype.question_type_id)
-   1
 
 Initialise a Question
 -------------------------
@@ -209,7 +201,7 @@ Initialise a Question
    >>> question.short_name = "Sitting Agenda"
    >>> question.owner = mp_1
    >>> question.language = "en"
-   >>> question.question_type = qtype
+   >>> question.question_type = "ordinary"
    >>> question.created_date = datetime.datetime.now()
    >>> question.group = parliament
    >>> session.add(question)

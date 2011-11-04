@@ -1044,9 +1044,10 @@ QuestionSequence = rdb.Sequence("question_number_sequence", metadata = metadata)
 # to record the order in which questions are received and hence enforce 
 # a first come first served policy in placing the questions on the order
 # paper. The serial number is re-initialized at the start of each session
-question_types = make_vocabulary_table("question", metadata)
-response_types = make_vocabulary_table("response", metadata)
-#
+
+#!+TYPES_CUSTOM question_types = make_vocabulary_table("question", metadata)
+#!+TYPES_CUSTOM response_types = make_vocabulary_table("response", metadata)
+
 questions = rdb.Table("questions", metadata,
     rdb.Column("question_id", rdb.Integer,
         rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
@@ -1054,11 +1055,15 @@ questions = rdb.Table("questions", metadata,
     ),
     rdb.Column("question_number", rdb.Integer),
     rdb.Column("ministry_submit_date", rdb.Date,),
-    rdb.Column("question_type_id", rdb.Integer,
-        rdb.ForeignKey("question_types.question_type_id")
+    rdb.Column("question_type", # !+doc_type
+        rdb.Unicode(128),
+        default="ordinary",
+        nullable=False,
     ),
-    rdb.Column("response_type_id", rdb.Integer,
-        rdb.ForeignKey("response_types.response_type_id")
+    rdb.Column("response_type",
+        rdb.Unicode(128),
+        default="oral",
+        nullable=False,
     ),
     # if supplementary question, this is the original/previous question
     rdb.Column("supplement_parent_id", rdb.Integer,

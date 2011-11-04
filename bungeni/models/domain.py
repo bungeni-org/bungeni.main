@@ -879,6 +879,7 @@ class ObjectTranslation(object):
 # DB vocabularies
 ######################
 
+''' !+TYPES_CUSTOM
 class QuestionType(Entity):
     """Question type
     """
@@ -889,7 +890,6 @@ class ResponseType(Entity):
     """
     interface.implements(interfaces.ITranslatable, interfaces.IResponseType)
 
-''' !+TYPES_CUSTOM
 class MemberElectionType(Entity):
     """Member election type
     """

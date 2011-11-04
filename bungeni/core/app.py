@@ -408,7 +408,6 @@ class AppSetup(object):
         to_locatable_container(domain.BillType, 
             vocabularies[u"bill-types"]
         )
-        '''
         vocabularies[u"question-types"] = domain.QuestionTypeContainer()
         to_locatable_container(domain.QuestionType, 
             vocabularies[u"question-types"]
@@ -417,7 +416,6 @@ class AppSetup(object):
         to_locatable_container(domain.ResponseType, 
             vocabularies[u"response-types"]
         )
-        ''' !+TYPES_CUSTOM
         vocabularies[u"committee-types"] = domain.CommitteeTypeContainer()
         to_locatable_container(domain.CommitteeType, 
             vocabularies[u"committee-types"]

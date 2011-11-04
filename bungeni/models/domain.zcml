@@ -104,8 +104,6 @@
                 question_id
                 question_number
                 ministry_submit_date
-                question_type_id
-                response_type_id
                 supplement_parent_id
                 sitting_time
                 ministry_id
@@ -123,7 +121,7 @@
                 language
                 body_text
                 ministry_id
-                response_type_id
+                response_type
                 full_name
                 question_type
                 receive_notification

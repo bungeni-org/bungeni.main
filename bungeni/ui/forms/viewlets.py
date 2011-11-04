@@ -497,7 +497,7 @@ class WrittenQuestionResponseViewlet(BungeniViewlet):
         self.manager = manager
         self.question = removeSecurityProxy(context)
         # Check type of question. Only written questions get this viewlet
-        if self.question.response_type.response_type_name == u"Oral":
+        if self.question.response_type == "oral":
             self.for_display = False
         else:
             if self.question.response_text in (None,""):

@@ -571,6 +571,11 @@ class IPostalAddressType(IBungeniVocabulary):
 class IBillType(IBungeniVocabulary):
     """Marker interface for bill types vocabulary"""
 
+class IQuestionType(IBungeniVocabulary):
+    """Marker interface for question types"""
+class IResponseType(IBungeniVocabulary):
+    """Marker interface for response types"""
+
 class ICommitteeType(IBungeniVocabulary):
     """Marker interface for committee types vocabulary"""
 
@@ -605,12 +610,6 @@ class ISubRoleDirective(interface.Interface):
         title=u"Parent Role ID",
         description=u"Role ID for role which this subrole extends",
         required=True)
-
-class IQuestionType(IBungeniVocabulary):
-    """Marker interface for question types"""
-
-class IResponseType(IBungeniVocabulary):
-    """Marker interface for response types"""
 
 class ISubRoleAnnotations(interface.Interface):
     sub_roles = interface.Attribute('Sub_Roles')

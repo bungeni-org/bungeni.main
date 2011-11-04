@@ -668,6 +668,7 @@ class VenueDescriptiveProperties(DescriptiveProperties):
         context = session.merge(removeSecurityProxy(self.context))
         return self.translate(context, "short_name")
 
+''' !+TYPES_CUSTOM
 class QuestionTypeDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IQuestionType)
     
@@ -686,7 +687,6 @@ class ResponseTypeDescriptiveProperties(DescriptiveProperties):
         context = session.merge(removeSecurityProxy(self.context))
         return self.translate(context, "response_type_name")
 
-''' !+TYPES_CUSTOM
 class MemberElectionTypeDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IMemberElectionType)
     

@@ -395,20 +395,12 @@ Questions
 ---------
 
 Note that the questions workflow is tested separated (see workflows/question.txt).
-    Add a question type
-  >>> qtype = model.QuestionType()
-  >>> qtype.question_type_name = u"Ordinary"
-  >>> qtype.language = "en"
-  >>> session.add(qtype)
-  >>> session.flush()
-  >>> int(qtype.question_type_id)
-  1
 
   >>> question = model.Question()
   >>> question.short_name = u"question"
   >>> question.language = 'en'
   >>> question.owner = mp_2
-  >>> question.question_type = qtype
+  >>> question.question_type = "ordinary"
   >>> session.add(question)
   >>> session.flush()
   

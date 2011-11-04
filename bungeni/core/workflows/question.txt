@@ -148,29 +148,14 @@ remove the call to setParliamentId() when creating the question -- the
 parliament_id is automatically set on a question (when saved to the db) 
 that is created via the UI form. 
   
-Create a question type
-  >>> qtype = add_content(
-  ...   domain.QuestionType,
-  ...   question_type_name=u"Ordinary",
-  ...   language="en")
-  >>> int(qtype.question_type_id)
-  1
-  
-  >>> rtype = add_content(
-  ...   domain.ResponseType,
-  ...   response_type_name=u"Written",
-  ...   language="en")
-  >>> int(rtype.response_type_id)
-  1
-  
   >>> question = add_content(
   ...     domain.Question,
   ...     short_name=u"My subject",
   ...     body_text=u"The question",
   ...     owner_id=mp_3.user_id,
   ...     language="en",
-  ...     question_type_id=qtype.question_type_id,
-  ...     response_type=rtype,
+  ...     question_type="ordinary",
+  ...     response_type="written",
   ...     parliament_id=parliament.parliament_id)
   
   >>> question.__parent__ = app

@@ -72,9 +72,9 @@ Venue Bookings:
 ---------------
 
     >>> import bungeni.models.venue as venue
-    >>> venue.get_unavailable_venues( datetime.datetime(2000,1,1,0,0),datetime.datetime(2000,1,1,23,59) )
+    >>> venue.get_unavailable_venues(datetime.datetime(2000,1,1,0,0), datetime.datetime(2000,1,1,23,59))
     []
-    >>> venue.get_available_venues( datetime.datetime(2000,1,1,0,0),datetime.datetime(2000,1,1,23,59) )
+    >>> venue.get_available_venues(datetime.datetime(2000,1,1,0,0), datetime.datetime(2000,1,1,23,59))
     [<bungeni.models.domain.Venue object at ...>, 
     <bungeni.models.domain.Venue object at ...>]
         

@@ -421,8 +421,8 @@ mapper(domain.Heading,
     polymorphic_identity="heading"
 )
 
-mapper(domain.QuestionType, schema.question_types)
-mapper(domain.ResponseType, schema.response_types)
+#!+TYPES_CUSTOM mapper(domain.QuestionType, schema.question_types)
+#!+TYPES_CUSTOM mapper(domain.ResponseType, schema.response_types)
 
 mapper(domain.Question, schema.questions,
     inherits=domain.ParliamentaryItem,
@@ -430,12 +430,6 @@ mapper(domain.Question, schema.questions,
     polymorphic_identity="question",
     properties={
         "ministry": relation(domain.Ministry, lazy=False, join_depth=2),
-        "question_type": relation(domain.QuestionType, uselist=False,
-            lazy=False
-        ),
-        "response_type": relation(domain.ResponseType, uselist=False,
-            lazy=False
-        ),
     }
 )
 
