@@ -875,11 +875,12 @@ class ObjectTranslation(object):
     """
 
 
+''' !+TYPES_CUSTOM
+
 #####################
 # DB vocabularies
 ######################
 
-''' !+TYPES_CUSTOM
 class QuestionType(Entity):
     """Question type
     """

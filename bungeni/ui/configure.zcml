@@ -57,8 +57,28 @@
   <!-- Include Views -->
   <include file="views.zcml" />
 
-  <!-- Admin UI -->
-  <include file="admin.zcml"/>
+    <!-- Admin UI -->
+    <class class=".admin.Settings">
+        <require permission="zope.ManageSite" 
+            attributes="__call__ browserDefault" />
+    </class>
+    <class class=".admin.EmailSettings">
+        <require permission="zope.ManageSite" 
+            attributes="__call__ browserDefault" />
+    </class>
+    <class class=".admin.XapianSettings">
+        <require permission="zope.ManageSite" 
+            attributes="__call__ browserDefault" />
+    </class>
+    <class class=".admin.RegistrySettings">
+        <require permission="zope.ManageSite" 
+            attributes="__call__ browserDefault" />
+    </class>
+    <class class=".admin.ReportDocumentation">
+        <require permission="zope.ManageSite" 
+            attributes="__call__ browserDefault" />
+    </class>
+
 
   <!-- Custom absolute_url -->
   <include file="absoluteurl.zcml" />

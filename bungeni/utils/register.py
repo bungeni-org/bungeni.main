@@ -64,6 +64,9 @@ def subscription_adapter(adapts=None, provides=None):
 
 # wrapper registrators
 
+
+# viewlet
+
 def viewlet_manager(for_=None, layer=None, view=None, provides=None, name=""):
     """Register a browser viewlet manager, using provideAdapter().
     """
@@ -91,4 +94,22 @@ def viewlet(for_, layer=None, view=None, manager=None, provides=None, name=""):
     return _viewlet
 
 
+# view
+# note: layer default is zope.publisher.interfaces.browser.IDefaultBrowserLayer
+
+def view(for_, layer=None, provides=None, name=""):
+    """Register a browser view, using provideAdapter().
+    
+    Should be used to replace both browser:view and browser:page (that is 
+    essentially just browser:view with added support for templates).
+    """
+    if provides is None:
+        from zope.publisher.interfaces.browser import IBrowserPublisher as provides
+    def _view(factory):
+        component.provideAdapter(factory, 
+            adapts=(for_, layer),
+            provides=provides, 
+            name=name)
+        return factory
+    return _view
 

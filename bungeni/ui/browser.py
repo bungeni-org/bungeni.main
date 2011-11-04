@@ -22,6 +22,8 @@ from bungeni.ui.i18n import _
 
 # browser page
 
+# !+BungeniBrowserView(mr, nov-2011) this should probably inherit from 
+# zope.publisher.browser.BrowserPage
 class BungeniBrowserView(zope.publisher.browser.BrowserView):
     
     # the instance of the ViewProvideViewletManager
