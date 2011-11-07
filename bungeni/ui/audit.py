@@ -1,18 +1,23 @@
 
-from zope.publisher.browser import BrowserView
+
+
+
+from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.security.proxy import removeSecurityProxy
-from bungeni.core import audit
 from sqlalchemy import orm
 from sqlalchemy import desc
 from zc.table import batching, column
-import sqlalchemy as rdb
 
+from bungeni.alchemist import Session
+from bungeni.models.interfaces import IAuditable
+from bungeni.core import audit
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import date
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
-from bungeni.alchemist import Session
-from zope.dublincore.interfaces import IDCDescriptiveProperties
+from bungeni.utils import register
+
+
 class ChangeBaseView(browser.BungeniBrowserView):
     """Base view for looking at changes to context.
     """
@@ -64,11 +69,11 @@ class ChangeBaseView(browser.BungeniBrowserView):
                          .order_by(desc(self._change_object.change_id)) \
                          .all()
         return changes
-class RSS2(ChangeBaseView):
-    """RSS Feed for an object
-    """
 
-class ChangeLog(ChangeBaseView):
+import zope.publisher.browser
+# !+BungeniBrowserView(mr, nov-2011) inherit from zope.publisher.browser.BrowserPage?
+@register.view(IAuditable, name="audit-log")
+class ChangeLog(ChangeBaseView, zope.publisher.browser.BrowserPage):
     """Change Log View for an object
     """
     
@@ -78,11 +83,11 @@ class ChangeLog(ChangeBaseView):
     # zpt
     #__call__ = ViewPageTemplateFile("templates/changes.pt")
     
-    _page_title = _("Change Log")
+    _page_title = "Change Log"
     
     def __init__(self, context, request):
         super(ChangeLog, self).__init__(context, request)
         if hasattr(self.context, "short_name"):
             self._page_title = "%s: %s" % (
-                                self._page_title, _(self.context.short_name))
-
+                _(self._page_title), _(self.context.short_name))
+    

@@ -50,10 +50,13 @@
 
   <!-- Site Viewlets -->
   <include package=".viewlets" />
-
-  <!-- Include Auditing UI-->
-  <include file="audit.zcml" />
-
+    
+    <!-- Audit UI-->
+    <class class=".audit.ChangeLog">
+        <require permission="bungeni.auditlog.View" 
+            attributes="__call__ browserDefault" />
+    </class>
+    
   <!-- Include Views -->
   <include file="views.zcml" />
 
