@@ -16,7 +16,7 @@ from bungeni.core.workflow import xmlimport
 from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowed, \
     IStateController, IWorkflowController
 from bungeni.core.workflow.states import StateController, WorkflowController, \
-    get_object_state_rpm, get_object_version_state_rpm
+    get_object_state_rpm , get_head_object_state_rpm
 import bungeni.core.audit
 import bungeni.core.version
 import bungeni.core.interfaces
@@ -168,8 +168,12 @@ def register_workflow_adapters():
         (IWorkflowed,),
         zope.securitypolicy.interfaces.IRolePermissionMap)
     # IRolePermissionMap adapter for a version of an IWorkflowed object
-    component.provideAdapter(get_object_version_state_rpm, 
+    component.provideAdapter(get_head_object_state_rpm, 
         (interfaces.IVersion,),
+        zope.securitypolicy.interfaces.IRolePermissionMap)
+    # IRolePermissionMap adapter for a change of an IWorkflowed object
+    component.provideAdapter(get_head_object_state_rpm, 
+        (interfaces.IChange,),
         zope.securitypolicy.interfaces.IRolePermissionMap)
     
     # !+IPrincipalRoleMap(mr, aug-2011) also migrate principal_role_map from 

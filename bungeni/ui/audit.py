@@ -1,9 +1,16 @@
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
+"""Audit UI
 
-
+$Id$
+"""
+log = __import__("logging").getLogger("bungeni.ui.audit")
 
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.security.proxy import removeSecurityProxy
+from zope.security import checkPermission
 from sqlalchemy import orm
 from sqlalchemy import desc
 from zc.table import batching, column
@@ -11,11 +18,30 @@ from zc.table import batching, column
 from bungeni.alchemist import Session
 from bungeni.models.interfaces import IAuditable
 from bungeni.core import audit
+from bungeni.core.workflows import _conditions
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import date
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
 from bungeni.utils import register
+
+
+def checkVisibleChange(change):
+    """
+    """
+    change.__parent__ = change.head
+    if change.status:
+        if checkPermission("zope.View", change):
+            return True
+    else:
+        # no status, must be a changelog for object creation--whatever it is
+        # we assume that it is visible only to the owner of *head* object
+        # !+added(mr, nov-2011) for when the Clerk creates on behalf of an MP,
+        # this assumption gives a somewhat strange that the MP can see the 
+        # added log entry, but the Clerk can not (as he is not the owner).
+        if _conditions.user_is_context_owner(change.head):
+            return True
+    return False
 
 
 class ChangeBaseView(browser.BungeniBrowserView):
@@ -54,6 +80,7 @@ class ChangeBaseView(browser.BungeniBrowserView):
         formatter.cssClasses["table"] = "listing"
         formatter.updateBatching()
         return formatter()
+    
     @property
     def _change_object(self):
         auditor = audit.get_auditor(self.context)
@@ -64,11 +91,14 @@ class ChangeBaseView(browser.BungeniBrowserView):
         session = Session()
         mapper = orm.object_mapper(instance)
         content_id = mapper.primary_key_from_instance(instance)[0]
-        changes = session.query(self._change_object) \
-                         .filter_by(content_id=content_id) \
-                         .order_by(desc(self._change_object.change_id)) \
-                         .all()
+        changes = [ c for c in 
+            session.query(self._change_object
+                ).filter_by(content_id=content_id
+                ).order_by(desc(self._change_object.change_id)
+                ).all()
+            if checkVisibleChange(c) ]
         return changes
+
 
 import zope.publisher.browser
 # !+BungeniBrowserView(mr, nov-2011) inherit from zope.publisher.browser.BrowserPage?

@@ -112,6 +112,9 @@ def make_changes_table(table, metadata):
         rdb.Column("description", rdb.UnicodeText),
         rdb.Column("notes", rdb.UnicodeText),
         rdb.Column("user_id", rdb.Integer, rdb.ForeignKey("users.user_id")),
+        # Workflow State at time of change - visibility of a change record 
+        # depends on permissions of parent object in this specific state.
+        rdb.Column("status", rdb.Unicode(48)),
         #!+SA0.7 rdb.Index("%s_changes_cid_idx" % (entity_name), "content_id"),
         useexisting=False
     )

@@ -22,16 +22,16 @@ from sqlalchemy import orm
 from bungeni.alchemist import Session
 from bungeni.alchemist.interfaces import IRelationChange
 
-from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowTransitionEvent
-from bungeni.core.interfaces import IVersionCreated, IVersionReverted
-
-from bungeni.models import schema, domain
 from bungeni.models.utils import get_db_user_id
 from bungeni.models.interfaces import IAuditable
+from bungeni.models import schema
+from bungeni.models import domain
+from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowTransitionEvent
+from bungeni.core.interfaces import IVersionCreated, IVersionReverted
 from bungeni.ui.utils import common
 from bungeni.utils import register
 
-from i18n import _ 
+from bungeni.core.i18n import _
 
 
 # public handlers
@@ -277,7 +277,8 @@ class AuditorFactory(object):
         change.description = description
         change.extras = extras
         change.content_type = otype
-        change.origin = object
+        change.origin = object # !+HEAD_DOCUMENT_ITEM(mr, nov-2011) head?
+        change.status = object.status # remember status at time of change
         session.add(change)
         session.flush()
         return change.change_id

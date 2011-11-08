@@ -107,8 +107,20 @@ class State(object):
         for setting, p, role in self.permissions:
             if p == permission:
                 yield role, IntAsSetting[setting]
-    #def getSetting(self, permission_id, role_id):
+    #def getSetting(self, permission, role):
+    #    """Return the setting for this principal_id, role_id combination.
+    #    """
+    #    for setting, p, r in self.permissions:
+    #        if p == permission and r == role:
+    #            return IntAsSetting[setting]
+    #    #return zope.securitypolicy.interfaces.Unset
     #def getRolesAndPermissions(self):
+    # /IRolePermissionMap
+    #def getSettingAsBoolean(self, permission, role):
+    #    """Return getSetting() as a boolean value.
+    #    """
+    #    return zope.securitypolicy.zopepolicy.SettingAsBoolean[
+    #        self.getSetting(permission, role)]
 
 
 class Transition(object):
@@ -222,18 +234,18 @@ def get_object_state_rpm(context):
         return get_object_state_rpm(context.item)
     return state
 
-def get_object_version_state_rpm(version):
-    """IRolePermissionMap(version) adapter factory.
+def get_head_object_state_rpm(sub_context):
+    """IRolePermissionMap(context) adapter factory.
     
     Lighweight and high-performance wrapper on get_object_state(context), 
     to *lookup* (note: no creation of any instance) the workflow.states.State 
-    singleton instance for the version's context's status.
+    singleton instance for the sub context's head's status.
     
-    Note that version instances are NOT workflowed.
+    Note that sub context is NOT workflowed.
     """
     # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", "document" 
     # or "item"?
-    return interfaces.IWorkflow(version.head).get_state(version.status)
+    return interfaces.IWorkflow(sub_context.head).get_state(sub_context.status)
 
 
 class Workflow(object):
