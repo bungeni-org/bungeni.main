@@ -8,7 +8,7 @@
 from zope.security.proxy import removeSecurityProxy
 from sqlalchemy.orm import RelationshipProperty, class_mapper
 
-from bungeni.core.workflow.states import get_object_state_rpm, get_object_version_state_rpm
+from bungeni.core.workflow.states import get_object_state_rpm, get_head_object_state_rpm
 from bungeni.models.schema import singular
 from bungeni.alchemist.container import stringKey
 from bungeni.models.interfaces import IAuditable, IVersionable, IAttachmentable
@@ -148,7 +148,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[]):
             for item in value.values():
                 i = obj2dict(item, 0)
                 if name == "versions":
-                    permissions = get_object_version_state_rpm(item).permissions
+                    permissions = get_head_object_state_rpm(item).permissions
                     i["permissions"] = get_permissions_dict(permissions)
                 res.append(i)
             result[name] = res
