@@ -35,7 +35,6 @@ def configurable_mappings(kls):
                     uselist=False,
                     lazy=True
                 ),
-                "head": relation(item_class, uselist=False)
             }
         mapper(change_kls, change_tbl, 
             properties=changes_properties(kls, change_tbl)
@@ -82,7 +81,7 @@ def configurable_mappings(kls):
             if interfaces.IAuditable.implementedBy(kls):
                 change_kls = getattr(domain, "%sChange" % (name))
                 mapper_properties["changes"] = relation(change_kls,
-                    backref="origin", # !+HEAD_DOCUMENT_ITEM(mr, nov-2011) head?
+                    backref="head", 
                     lazy=True,
                     cascade="all, delete-orphan",
                     passive_deletes=False

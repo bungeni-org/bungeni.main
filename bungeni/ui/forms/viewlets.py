@@ -122,7 +122,7 @@ def format_change_description(change):
     """
     description = change.description
     if change.action == "new-version":
-        version = change.origin.versions.get(
+        version = change.head.versions.get(
             int(change.extras.get("version_id"))
         )
         chg_url = url.absoluteURL(version, common.get_request())

@@ -328,14 +328,15 @@ class Search(forms.common.BaseForm, ResultListing, HighlightMixin):
         return item.description
 
     def get_title(self, item):
-        return "%s %s" % (translate_obj(item.origin, self.request.locale.id.language).short_name,
-                             _(u"changes from"))
+        return "%s %s" % (
+            translate_obj(item.head, self.request.locale.id.language).short_name,
+            _(u"changes from"))
 
     def get_url(self, item):
         site = getSite()
         base_url = absoluteURL(site, self.request)
-        return base_url + "/business/%ss/obj-%s" % (item.origin.type,
-                                                    item.origin.parliamentary_item_id)
+        return "%s/business/%ss/obj-%s" % (
+            base_url, item.head.type, item.head.parliamentary_item_id)
 
     def get_user_subscriptions(self):
         """ Getting user subscribed items

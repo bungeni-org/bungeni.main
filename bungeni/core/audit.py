@@ -277,7 +277,7 @@ class AuditorFactory(object):
         change.description = description
         change.extras = extras
         change.content_type = otype
-        change.origin = object # !+HEAD_DOCUMENT_ITEM(mr, nov-2011) head?
+        change.head = object # attach to parent
         change.status = object.status # remember status at time of change
         session.add(change)
         session.flush()
