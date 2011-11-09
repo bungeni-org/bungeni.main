@@ -123,9 +123,9 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
         return formatter()
     
     @property
-    def _change_object(self):
+    def _change_class(self):
         auditor = audit.get_auditor(self.context)
-        return auditor.change_object
+        return auditor.change_class
     
     def get_feed_entries(self):
         instance = removeSecurityProxy(self.context)

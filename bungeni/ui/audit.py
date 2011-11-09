@@ -82,9 +82,9 @@ class ChangeBaseView(browser.BungeniBrowserView):
         return formatter()
     
     @property
-    def _change_object(self):
+    def _change_class(self):
         auditor = audit.get_auditor(self.context)
-        return auditor.change_object
+        return auditor.change_class
         
     def get_feed_entries(self):
         instance = removeSecurityProxy(self.context)
@@ -92,9 +92,9 @@ class ChangeBaseView(browser.BungeniBrowserView):
         mapper = orm.object_mapper(instance)
         content_id = mapper.primary_key_from_instance(instance)[0]
         changes = [ c for c in 
-            session.query(self._change_object
+            session.query(self._change_class
                 ).filter_by(content_id=content_id
-                ).order_by(desc(self._change_object.change_id)
+                ).order_by(desc(self._change_class.change_id)
                 ).all()
             if checkVisibleChange(c) ]
         return changes

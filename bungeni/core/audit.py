@@ -107,9 +107,9 @@ def getAuditableParent(obj):
 
 class AuditorFactory(object):
     
-    def __init__(self, change_table, change_object):
+    def __init__(self, change_table, change_class):
         self.change_table = change_table
-        self.change_object = change_object
+        self.change_class = change_class
     
     def objectContained(self, object, event):
         self._objectChanged(event.cls, object, event.description)
@@ -266,7 +266,7 @@ class AuditorFactory(object):
         user_id = get_db_user_id()
         assert user_id is not None, _("Audit error. No user logged in.")
         session = Session()
-        change = self.change_object()
+        change = self.change_class()
         change.action = change_kind
         change.date_audit = datetime.now()
         if date_active:
