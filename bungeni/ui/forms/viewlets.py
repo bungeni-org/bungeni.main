@@ -38,7 +38,6 @@ from bungeni.ui import browser
 from bungeni.ui import z3evoque
 from bungeni.ui import table
 from bungeni.ui.utils import common, queries, statements, url, misc, date
-from bungeni.ui.browser import BungeniViewlet
 from fields import BungeniAttributeDisplay
 from interfaces import ISubFormViewletManager, ISubformRssSubscriptionViewletManager
 from bungeni.ui.interfaces import IBungeniAuthenticatedSkin, IAdminSectionLayer
@@ -301,7 +300,7 @@ class OfficeMembersViewlet(SubformViewlet):
 
 
 # BungeniAttributeDisplay
-# !+BungeniViewlet(mr) make these inherit from BungeniViewlet
+# !+BungeniViewlet(mr) make these inherit from browser.BungeniViewlet
 
 class PersonInfo(BungeniAttributeDisplay):
     """Bio Info / personal data about the MP.
@@ -485,7 +484,7 @@ class ResponseViewlet(BungeniAttributeDisplay):
 '''
 
 
-class WrittenQuestionResponseViewlet(BungeniViewlet):
+class WrittenQuestionResponseViewlet(browser.BungeniViewlet):
 
     mode = "view"
     for_display = True
@@ -520,9 +519,7 @@ class GroupMembersViewlet(browser.BungeniItemsViewlet):
         raise NotImplementedError("Must be implemented by subclass.")
 
     def update(self):
-        session = Session()
         group_members = self._get_members()
-        mpkls = domain.MemberOfParliament
         formatter = self.get_date_formatter("date", "long")
         self.items = [{
                 "fullname": m.user.fullname,

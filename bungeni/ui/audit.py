@@ -27,7 +27,7 @@ from bungeni.utils import register
 
 
 def checkVisibleChange(change):
-    """
+    """Check visibility permission for a change log entry.
     """
     change.__parent__ = change.head
     if change.status:
@@ -100,10 +100,8 @@ class ChangeBaseView(browser.BungeniBrowserView):
         return changes
 
 
-import zope.publisher.browser
-# !+BungeniBrowserView(mr, nov-2011) inherit from zope.publisher.browser.BrowserPage?
 @register.view(IAuditable, name="audit-log")
-class ChangeLog(ChangeBaseView, zope.publisher.browser.BrowserPage):
+class ChangeLog(ChangeBaseView):
     """Change Log View for an object
     """
     

@@ -79,14 +79,11 @@ class UserQueryJSON(search.ConstraintQueryJSON):
             ))
         return r
         
-
+''' !+UNUSED(mr, nov-2011)
 class GroupQueryJSON(search.ConstraintQueryJSON):
     def getConstraintQuery(self):
         return self.searcher.query_field("object_kind", domain.Group.__name__)
-
-
-class Index(BrowserView):
-    pass
+'''
 
 
 @register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="settings")
@@ -219,11 +216,9 @@ def generate_doc_for(domain_class, title=None, color=0):
     return doc
 
 
-import zope.publisher.browser 
-# !+BungeniBrowserView(mr, nov-2011) inherit from zope.publisher.browser.BrowserPage?
 #permission="zope.ManageSite"
 @register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="report-documentation")
-class ReportDocumentation(browser.BungeniBrowserView, zope.publisher.browser.BrowserPage):
+class ReportDocumentation(browser.BungeniBrowserView):
     
     render = ViewPageTemplateFile("templates/report-documentation.pt")
     
@@ -245,10 +240,8 @@ class ReportDocumentation(browser.BungeniBrowserView, zope.publisher.browser.Bro
         return self.render()
 
 
-import zope.publisher.browser 
-# !+BungeniBrowserView(mr, nov-2011) inherit from zope.publisher.browser.BrowserPage?
 @register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="xapian-settings")
-class XapianSettings(browser.BungeniBrowserView, zope.publisher.browser.BrowserPage):
+class XapianSettings(browser.BungeniBrowserView):
     
     render = ViewPageTemplateFile("templates/xapian-settings.pt")
     

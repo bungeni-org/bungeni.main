@@ -22,9 +22,23 @@ from bungeni.ui.i18n import _
 
 # browser page
 
-# !+BungeniBrowserView(mr, nov-2011) this should probably inherit from 
-# zope.publisher.browser.BrowserPage
-class BungeniBrowserView(zope.publisher.browser.BrowserView):
+class BungeniBrowserView(zope.publisher.browser.BrowserPage):
+    """A Bungeni page view. 
+    
+    We adopt the "View" as the general term for a page view i.e. not the 
+    non-page-bound base zope.publisher.browser.BrowserView. 
+    
+    In-place registration of (page) adapters do not magically up a BrowserView
+    to a BrowserPage, so one needs to be more specific about which of these is
+    intended. 
+    
+    Note that BrowserPage extends BrowserView with following features: 
+    - implements(IBrowserPage)
+    - browserDefault(self, request)
+    - publishTraverse(self, request, name),
+    - __call__(self, *args, **kw)  
+    
+    """
     
     # the instance of the ViewProvideViewletManager
     provide = z3evoque.ViewProvideViewletManager()
