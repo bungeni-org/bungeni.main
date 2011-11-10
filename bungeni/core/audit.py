@@ -44,9 +44,11 @@ def objectAdded(ob, event):
 
 @register.handler(adapts=(IAuditable, IObjectModifiedEvent))
 def objectModified(ob, event):
-    auditor = get_auditor(ob)
     if getattr(event, "change_id", None):
+        log.warn("objectModified: no change_id, IGNORING EVENT %s FOR %s" % (
+            ob, event))
         return
+    auditor = get_auditor(ob)
     auditor.objectModified(removeSecurityProxy(ob), event)
 
 
@@ -86,18 +88,25 @@ def objectRevertedVersion(ob, event):
     event.change_id = change_id
 
 
-def objectAttachment(ob, event):
-    auditor = get_auditor(ob) 
-    auditor.objectAttachment(removeSecurityProxy(ob), event)
+def object_attachment(ob, event, action):
+    """Utility to log--on the parent object--changes on one of its attachments.
+    action: "added", "modified"
+    """
+    auditable_parent = _get_auditable_ancestor(ob)
+    # !+attachment_added(mr, nov-2011) auditable_parent is always None on "added"?
+    if auditable_parent:
+        event.description = "File attachment %s %s %s" % (
+            ob.file_title, ob.file_name, action)
+        get_auditor(auditable_parent).object_attachment(auditable_parent, event)
 
 def objectContained(ob, event):
     auditor = get_auditor(ob) 
     auditor.objectContained(removeSecurityProxy(ob), event)
 
 
-# internal auditing utilities
+# utilities
 
-def getAuditableParent(obj):
+def _get_auditable_ancestor(obj):
     parent = obj.__parent__
     while parent:
         if  IAuditable.providedBy(parent):
@@ -114,7 +123,13 @@ class AuditorFactory(object):
     def objectContained(self, object, event):
         self._objectChanged(event.cls, object, event.description)
     
-    def objectAttachment(self, object, event):
+    # Called directly from attachment added/modified handlers
+    # !+CHANGELOG_DATA_DUPLICATION(mr, nov-2011) attachment added/modified are 
+    # already logged on the attachment itself--this should be removed. 
+    # Clients of chaneg information (timeline) should simply "aggregate" 
+    # changes e.g. changes on head doc + changes on atttached + etc.
+    # Besides, this makes no distinction between added/modified changes anyway?!
+    def object_attachment(self, object, event):
         self._objectChanged("attachment", object, event.description)
     
     def objectAdded(self, object, event):
@@ -125,12 +140,12 @@ class AuditorFactory(object):
         for attr in event.descriptions:
             if lifecycleevent.IAttributes.providedBy(attr):
                 attrset.extend(
-                    [ attr.interface[a].title for a in attr.attributes]
-                   )
+                    [ attr.interface[a].title for a in attr.attributes ]
+                )
             elif IRelationChange.providedBy(attr):
                 if attr.description:
                     attrset.append(attr.description)
-        attrset.append(getattr(object, "note", u""))
+        attrset.append(getattr(object, "note", ""))
         str_attrset = []
         for a in attrset:
             if type(a) in StringTypes:

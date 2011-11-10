@@ -1,8 +1,15 @@
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
+"""File/Atachments event handlers
+
+$Id$
+"""
+log = __import__("logging").getLogger("bungeni.core.files")
 
 from zope.security.proxy import removeSecurityProxy
 from zope.lifecycleevent import IObjectModifiedEvent, IObjectCreatedEvent
-from zope.event import notify
 from bungeni.alchemist import Session
 from bungeni.models.interfaces import IAttachedFile, IVersion
 from bungeni.models import domain
@@ -11,29 +18,19 @@ from bungeni.core.interfaces import IVersioned
 from bungeni.utils import register
 
 
+# !+CHANGELOG_DATA_DUPLICATION(mr, nov-2011)
 @register.handler(adapts=(IAttachedFile, IObjectCreatedEvent))
-def fileAddedSubscriber(ob, event):
-    """When a file is added notify the object it is added to.
+def file_added(ob, event):
+    """When a file is added, audit the change on the parent object.
     """
-    ob = removeSecurityProxy(ob)
-    obj = audit.getAuditableParent(ob)
-    if obj:
-        event.description = u"File %s %s added" % (
-                ob.file_title,
-                ob.file_name)
-        notify(audit.objectAttachment(obj, event))
+    audit.object_attachment(removeSecurityProxy(ob), event, "added")
 
-
+# !+CHANGELOG_DATA_DUPLICATION(mr, nov-2011)
 @register.handler(adapts=(IAttachedFile, IObjectModifiedEvent))
-def fileEditedSubscriber(ob, event):
-    """ when a file is edited notify the parent object """
-    ob = removeSecurityProxy(ob)
-    obj = audit.getAuditableParent(ob)
-    if obj:
-        event.description = u"File %s %s edited" % (
-                ob.file_title,
-                ob.file_name)
-        notify(audit.objectAttachment(obj, event))
+def file_modified(ob, event):
+    """When a file is modified, audit the change on the parent object.
+    """
+    audit.object_attachment(removeSecurityProxy(ob), event, "modified")
 
 
 @register.handler(adapts=(IVersion, IObjectCreatedEvent))
@@ -75,7 +72,7 @@ def objectNewVersion(ob, event):
     '''
     for attached_file in ob.head.attached_files:
         versions = IVersioned(attached_file)
-        version = versions.create('version created on object versioning: %s' %
-                getattr(ob.change, 'description', ''))
+        version = versions.create("version created on object versioning: %s" %
+                getattr(ob.change, "description", ""))
         version.file_version_id = ob.version_id
 
