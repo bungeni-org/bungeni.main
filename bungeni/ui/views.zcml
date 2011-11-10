@@ -397,13 +397,6 @@
         permission="zope.Public"
     />
 
-    <!-- Attachments viewer -->
-    <browser:page name="index"
-        for="bungeni.models.domain.AttachedFileContainer"
-        class=".file.FileListingView"
-        permission="zope.Public"
-        template="templates/attachments.pt"
-    />
 
   <!-- business -->
 

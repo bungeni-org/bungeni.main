@@ -30,18 +30,17 @@ from bungeni.utils.capi import capi
 
 def query_iterator(query, parent, permission=None):
     """Generator of the items in a query.
-
+    
     If a permission is specified, then checkPermission() is called.
     Note that -- in some cases -- NOT calling checkPermission() on an item
     has resulted in SQLAlchemy-related data errors downstream.
     """
     for item in query:
         item.__parent__ = parent
-        if permission is None:
+        if (permission is None or 
+                checkPermission(permission, proxy.ProxyFactory(item))
+            ):
             yield item
-        else:
-            if checkPermission(permission, proxy.ProxyFactory(item)):
-                yield item
 
 
 def query_filter_date_range(context, request, query, domain_model):
@@ -51,14 +50,15 @@ def query_filter_date_range(context, request, query, domain_model):
     - else (archive section) pick off start/end date from the request's cookies
     - else try getting a display date off request
     """
-    if ((ufaces.IBusinessSectionLayer.providedBy(request) and (
-            mfaces.ICommitteeContainer.providedBy(context) or
-            mfaces.ICommitteeMemberContainer.providedBy(context) or
-            mfaces.ICommitteeStaffContainer.providedBy(context))
-        ) or
-        (ufaces.IMembersSectionLayer.providedBy(request) and
-            mfaces.IMemberOfParliamentContainer.providedBy(context))
-    ):
+    if (
+            (ufaces.IBusinessSectionLayer.providedBy(request) and (
+                mfaces.ICommitteeContainer.providedBy(context) or
+                mfaces.ICommitteeMemberContainer.providedBy(context) or
+                mfaces.ICommitteeStaffContainer.providedBy(context))
+            ) or
+            (ufaces.IMembersSectionLayer.providedBy(request) and
+                mfaces.IMemberOfParliamentContainer.providedBy(context))
+        ):
         start_date, end_date = datetime.date.today(), None
     elif ufaces.IArchiveSectionLayer.providedBy(request):
         start_date, end_date = cookies.get_date_range(request)
@@ -83,9 +83,9 @@ def query_filter_date_range(context, request, query, domain_model):
 
 
 class AjaxContainerListing(
-    container.ContainerListing,
-    browser.BungeniBrowserView
-):
+        container.ContainerListing,
+        browser.BungeniBrowserView
+    ):
     """Container listing as an HTML Page.
     """
     formatter_factory = yuiwidget.ContainerDataTableFormatter

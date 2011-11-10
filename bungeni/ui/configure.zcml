@@ -57,6 +57,13 @@
             attributes="__call__ browserDefault" />
     </class>
     
+    <!-- Attachments UI-->
+    <class class=".file.FileListingView">
+        <require permission="zope.Public" 
+            attributes="__call__ browserDefault" />
+    </class>
+
+    
   <!-- Include Views -->
   <include file="views.zcml" />
 

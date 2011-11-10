@@ -14,12 +14,16 @@ from zope.publisher.interfaces import IPublishTraverse, NotFound
 from zope.publisher.browser import BrowserView
 from zope.security.proxy import removeSecurityProxy
 from zope.security import proxy
+from zope.app.pagetemplate import ViewPageTemplateFile
 from zc.table import column
 import operator
+from bungeni.models.domain import AttachedFileContainer
 from bungeni.ui.browser import BungeniBrowserView
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import date, url
 from bungeni.ui.table import TableFormatter
+from bungeni.utils import register
+
 
 class RawView(BrowserView):
     implements(IPublishTraverse)
@@ -82,7 +86,12 @@ class FileDeactivate(BrowserView):
         redirect_url = self.request.getURL().replace("/deactivate", "")
         return self.request.response.redirect(redirect_url)
 
+
+@register.view(AttachedFileContainer, name="index")
 class FileListingView(BungeniBrowserView):
+
+    # zpt
+    template = ViewPageTemplateFile("templates/attachments.pt")
 
     _page_title = _(u"Attachments")
 
@@ -124,3 +133,7 @@ class FileListingView(BungeniBrowserView):
         formatter.url = url.absoluteURL(self.context, self.request)
         formatter.updateBatching()
         return formatter()
+    
+    __call__ = template
+
+
