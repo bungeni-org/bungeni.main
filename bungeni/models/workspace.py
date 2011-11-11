@@ -1,4 +1,5 @@
 from sqlalchemy import orm
+from sqlalchemy.sql import expression
 from zope import interface
 from zope import component
 from zope.security.proxy import removeSecurityProxy
@@ -117,7 +118,26 @@ class WorkspaceContainer(AlchemistContainer):
         # TODO : update to support other fields
         column = table.columns[utk["short_name"]]
         return column
-
+        
+    def filter_query(self, query, domain_class, kw):
+        if kw.get("filter_short_name", None):
+            column = self.title_column(domain_class)
+            return query.filter("""(lower(%s) LIKE '%%%s%%')""" %
+                        (column, kw["filter_short_name"].lower()))
+        return query
+        
+    def order_query(self, query, domain_class, kw, reverse):
+        if (kw.get("sort_on", None) and
+            hasattr(domain_class, str(kw.get("sort_on")))
+            ):
+            if reverse:
+                return query.order_by(expression.desc(
+                    getattr(domain_class, str(kw.get("sort_on"))))) 
+            else:
+                return query.order_by(expression.asc(
+                    getattr(domain_class, str(kw.get("sort_on")))))
+        return query                 
+        
     def _query(self, **kw):
         principal = get_principal()
         roles = get_workspace_roles()
@@ -126,22 +146,15 @@ class WorkspaceContainer(AlchemistContainer):
         results = []
         count = 0
         first_page = not kw.get("start", 0)
+        reverse = True if (kw.get("sort_dir", "desc") == "desc") else False
         for domain_class, status in group_roles_domain_status.iteritems():
             query = session.query(domain_class).filter(
                 domain_class.status.in_(status)
                 )
-            if kw.get("filter_short_name", None):
-                column = self.title_column(domain_class)
-                query = query.filter(
-                    """(lower(%s) LIKE '%%%s%%')""" %
-                    (column, kw["filter_short_name"].lower())
-                    )
+            #filter on title
+            query = self.filter_query(query, domain_class, kw)
             # Order results
-            if (kw.get("sort_on", None) and
-                hasattr(domain_class, str(kw.get("sort_on")))
-                ):
-                query = query.order_by(
-                    getattr(domain_class, str(kw.get("sort_on"))))
+            query = self.order_query(query, domain_class, kw, reverse)
             # The first page of the results is loaded the most number of times
             # The limit on the query below optimises for when no filter has
             # been applied by limiting the number of results returned.
@@ -155,18 +168,10 @@ class WorkspaceContainer(AlchemistContainer):
             query = session.query(domain_class).filter(
                 domain_class.status.in_(status)
                 )
-            if kw.get("filter_short_name", None):
-                column = self.title_column(domain_class)
-                query = query.filter(
-                    """(lower(%s) LIKE '%%%s%%')""" %
-                    (column, kw["filter_short_name"])
-                    )
+            #filter on title
+            query = self.filter_query(query, domain_class, kw)
             # Order results
-            if (kw.get("sort_on", None) and
-                hasattr(domain_class, str(kw.get("sort_on")))
-                ):
-                query = query.order_by(
-                    getattr(domain_class, str(kw.get("sort_on"))))
+            query = self.order_query(query, domain_class, kw, reverse)
             for obj in query.all():
                 prm = IPrincipalRoleMap(obj)
                 for obj_role in OBJECT_ROLES:
@@ -179,9 +184,8 @@ class WorkspaceContainer(AlchemistContainer):
             results.extend(object_roles_results)
         # Sort items
         if (kw.get("sort_on", None) and kw.get("sort_dir", None)):
-            rev = True if (kw.get("sort_dir") == "desc") else False
             results.sort(key=lambda x: getattr(x, str(kw.get("sort_on"))),
-                         reverse=rev)
+                         reverse=reverse)
         if not first_page:
             count = len(results)
         return (results, count)

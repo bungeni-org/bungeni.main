@@ -775,7 +775,7 @@
 	     oState = oState || {pagination:null, sortedBy:null};
 	     var sort = (oState.sortedBy) ? oState.sortedBy.key : "";
 	     var dir = (oState.sortedBy && oState.sortedBy.dir 
-			=== YAHOO.widget.DataTable.CLASS_DESC) ? "desc" : "asc";
+			=== YAHOO.widget.DataTable.CLASS_ASC) ? "asc" : "desc";
 	     var startIndex = (oState.pagination) 
 		 ? oState.pagination.recordOffset : 0;
 	     var results = (oState.pagination) 
