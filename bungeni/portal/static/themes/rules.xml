@@ -201,7 +201,7 @@
         
         <!-- Message info -->
         <replace content=".portalMessage"
-            theme=".portalMessage"
+            theme="children:.workspace_add_parliamentary_content"
         />     
 
         <!-- content -->
