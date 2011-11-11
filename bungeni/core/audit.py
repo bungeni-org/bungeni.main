@@ -88,23 +88,37 @@ def objectRevertedVersion(ob, event):
     event.change_id = change_id
 
 
-def object_attachment(ob, event, action):
+# utilities 
+
+# !+CHANGELOG_DATA_DUPLICATION(mr, nov-2011) attachment/signatory added/modified 
+# are already logged on the items themselves--changelogging these also on the 
+# parent object is essentially data duplication. 
+#
+# Clients of change information e.g. the timeline, should simply "aggregate" 
+# changes e.g. changes on head doc + changes on atttached + etc.
+
+def object_attachment(ob, event):
     """Utility to log--on the parent object--changes on one of its attachments.
-    action: "added", "modified"
+    event.action: "added", "modified"
     """
     auditable_parent = _get_auditable_ancestor(ob)
     # !+attachment_added(mr, nov-2011) auditable_parent is always None on "added"?
     if auditable_parent:
         event.description = "File attachment %s %s %s" % (
-            ob.file_title, ob.file_name, action)
+            ob.file_title, ob.file_name, event.action)
         get_auditor(auditable_parent).object_attachment(auditable_parent, event)
 
-def objectContained(ob, event):
-    auditor = get_auditor(ob) 
-    auditor.objectContained(removeSecurityProxy(ob), event)
+def object_signatory(ob, event):
+    """Utility to log--on the parent object--changes on one of its signatories.
+    event.action: "added", "modified"
+    """
+    auditable_parent = ob.item
+    auditor = get_auditor(auditable_parent) 
+    auditor.object_signatory(auditable_parent, event)
+    print "XXXXXXXXX1", event.action, locals()
 
 
-# utilities
+# internal utilities
 
 def _get_auditable_ancestor(obj):
     parent = obj.__parent__
@@ -120,22 +134,19 @@ class AuditorFactory(object):
         self.change_table = change_table
         self.change_class = change_class
     
-    def objectContained(self, object, event):
-        self._objectChanged(event.cls, object, event.description)
+    # Called directly from signatory added/modified handlers
+    def object_signatory(self, ob, event):
+        self._objectChanged(event.action, ob, event.description)
     
     # Called directly from attachment added/modified handlers
-    # !+CHANGELOG_DATA_DUPLICATION(mr, nov-2011) attachment added/modified are 
-    # already logged on the attachment itself--this should be removed. 
-    # Clients of chaneg information (timeline) should simply "aggregate" 
-    # changes e.g. changes on head doc + changes on atttached + etc.
-    # Besides, this makes no distinction between added/modified changes anyway?!
-    def object_attachment(self, object, event):
-        self._objectChanged("attachment", object, event.description)
+    def object_attachment(self, ob, event):
+        # !+ this makes no distinction between added/modified changes anyway?!
+        self._objectChanged("attachment", ob, event.description)
     
-    def objectAdded(self, object, event):
-        return self._objectChanged("added", object)
+    def objectAdded(self, ob, event):
+        return self._objectChanged("added", ob)
     
-    def objectModified(self, object, event):
+    def objectModified(self, ob, event):
         attrset = []
         for attr in event.descriptions:
             if lifecycleevent.IAttributes.providedBy(attr):
@@ -145,7 +156,7 @@ class AuditorFactory(object):
             elif IRelationChange.providedBy(attr):
                 if attr.description:
                     attrset.append(attr.description)
-        attrset.append(getattr(object, "note", ""))
+        attrset.append(getattr(ob, "note", ""))
         str_attrset = []
         for a in attrset:
             if type(a) in StringTypes:
@@ -156,17 +167,17 @@ class AuditorFactory(object):
             extras = {"comment": change_data["note"]}
         else:
             extras = None
-        return self._objectChanged("modified", object, 
+        return self._objectChanged("modified", ob, 
                         description=description,
                         extras=extras,
                         date_active=change_data["date_active"])
     
-    def objectStateChanged(self, object, event):
+    def objectStateChanged(self, ob, event):
         """
-        object: origin domain workflowed object 
+        ob: origin domain workflowed object 
         event: bungeni.core.workflow.states.WorkflowTransitionEvent
             .object # origin domain workflowed object 
-            .source # souirce state
+            .source # source state
             .destination # destination state
             .transition # transition
             .comment #
@@ -174,13 +185,13 @@ class AuditorFactory(object):
         change_data = self._get_change_data()
         # if note, attach it on object (if object supports such an attribute)
         if change_data["note"]:
-            if hasattr(object, "note"):
-                object.note = change_data["note"]
+            if hasattr(ob, "note"):
+                ob.note = change_data["note"]
         # update object's workflow status date (if supported by object)
-        if hasattr(object, "status_date"):
-            object.status_date = change_data["date_active"] or datetime.now()
+        if hasattr(ob, "status_date"):
+            ob.status_date = change_data["date_active"] or datetime.now()
         # as a "base" description, use human readable workflow state title
-        wf = IWorkflow(object) # !+ adapters.get_workflow(object)
+        wf = IWorkflow(ob) # !+ adapters.get_workflow(ob)
         description = wf.get_state(event.destination).title
         # extras, that may be used e.g. to elaborate description at runtime
         extras = {
@@ -189,20 +200,20 @@ class AuditorFactory(object):
             "transition": event.transition.id,
             "comment": change_data["note"]
         }
-        return self._objectChanged("workflow", object, 
+        return self._objectChanged("workflow", ob, 
                         description=description,
                         extras=extras,
                         date_active=change_data["date_active"])
         # description field is a "building block" for a UI description;
         # extras/notes field becomes interpolation data
     
-    def objectDeleted(self, object, event):
-        #return self._objectChanged("deleted", object)
+    def objectDeleted(self, ob, event):
+        #return self._objectChanged("deleted", ob)
         return
 
-    def objectNewVersion(self, object, event):
+    def objectNewVersion(self, ob, event):
         """
-        object: origin domain workflowed object 
+        ob: origin domain workflowed object 
         event: bungeni.core.interfaces.VersionCreated
             .object # origin domain workflowed object 
             .message # title of the version object
@@ -222,19 +233,19 @@ class AuditorFactory(object):
         extras = {
             "version_id": event.version.version_id # !+version_id
         }
-        return self._objectChanged("new-version", object, description, extras)
-        #vkls = getattr(domain, "%sVersion" % (object.__class__.__name__))
+        return self._objectChanged("new-version", ob, description, extras)
+        #vkls = getattr(domain, "%sVersion" % (ob.__class__.__name__))
         #versions = session.query(vkls
         #            ).filter(vkls.content_id==event.version.content_id
         #            ).order_by(vkls.status_date).all()
 
-    def objectRevertedVersion(self, object, event):
-        return self._objectChanged("reverted-version", object,
+    def objectRevertedVersion(self, ob, event):
+        return self._objectChanged("reverted-version", ob,
             description=event.message)
     
     #
     
-    def _objectChanged(self, change_kind, object, 
+    def _objectChanged(self, change_kind, ob, 
             description="", extras=None, date_active=None):
         """
         description: 
@@ -277,7 +288,7 @@ class AuditorFactory(object):
             for data auditing. When not user-modified, the value should be equal 
             to date_audit. 
         """
-        oid, otype = self._getKey(object)
+        oid, otype = self._getKey(ob)
         user_id = get_db_user_id()
         assert user_id is not None, _("Audit error. No user logged in.")
         session = Session()
@@ -292,8 +303,8 @@ class AuditorFactory(object):
         change.description = description
         change.extras = extras
         change.content_type = otype
-        change.head = object # attach to parent
-        change.status = object.status # remember status at time of change
+        change.head = ob # attach change to parent object
+        change.status = ob.status # remember parent's status at time of change
         session.add(change)
         session.flush()
         return change.change_id

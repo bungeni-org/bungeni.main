@@ -34,38 +34,32 @@ from bungeni.utils import register
 def signatory_added(ob, event): 
     ob = removeSecurityProxy(ob)
     if ob.user:
-        title=  "%s %s %s" % (ob.user.titles,
-                ob.user.first_name,
-                ob.user.last_name)
+        title = "%s %s %s" % (
+            ob.user.titles, ob.user.first_name, ob.user.last_name)
     else:
         title = ""
-    event.cls =  ob.__class__.__name__
-    event.description = u" %s: %s added" % (
-            ob.__class__.__name__ , 
-            title)
-    if ob.item:
-        audit.objectContained( ob.item, event)
+    event.description = "%s: %s added" % (ob.__class__.__name__ , title)
+    event.action = "added"
+    # audit the change on the parent object
+    audit.object_signatory(ob, event)
 
 
 @register.handler(adapts=(ISignatory, IObjectModifiedEvent))
 def signatory_modified(ob, event):
     ob = removeSecurityProxy(ob)
     if ob.user:
-        title = "%s %s %s" % (ob.user.titles,
-                ob.user.first_name,
-                ob.user.last_name)
+        title = "%s %s %s" % (
+            ob.user.titles, ob.user.first_name, ob.user.last_name)
     else:
         title = ""
-    event.cls =  ob.__class__.__name__
-    event.description = u" %s: %s modified" % (
-            ob.__class__.__name__ , 
-            title)
-    if ob.item:
-        audit.objectContained( ob.item, event)
+    event.description = "%s: %s modified" % (ob.__class__.__name__ , title)
+    event.action = "modified"
+    # audit the change on the parent object
+    audit.object_signatory(ob, event)
 
 
 #!+ was zope.app.container.interfaces.IObjectRemovedEvent that is a different
-# interface than zope.lifecycleevent.IObjectModifiedEvent ?!
+# interface than zope.lifecycleevent.IObjectRemovedEvent ?!
 @register.handler(adapts=(ISignatory, IObjectRemovedEvent))
 def signatory_deleted(ob, event):
     """Clear signatory role for a deleted signatory
@@ -75,7 +69,7 @@ def signatory_deleted(ob, event):
         owner_login = get_owner_login_pi(ob)
         assign_signatory_role(ob.item, owner_login, unset=True)
     else:
-        log.warning("Signatory object %s has no user set."
+        log.warn("Signatory object %s has no user set."
             " Skipping unsetting of role", ob.__str__()
         )
 
@@ -114,9 +108,9 @@ def group_created(ob, event):
 
 
 @register.handler(adapts=(IBungeniParliamentaryContent, IObjectModifiedEvent))
-def timestamp(object, event):
+def timestamp(ob, event):
     """Set the timestamp for the item.
     """
-    object.timestamp = datetime.datetime.now()
+    ob.timestamp = datetime.datetime.now()
 
 

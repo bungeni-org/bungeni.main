@@ -23,14 +23,16 @@ from bungeni.utils import register
 def file_added(ob, event):
     """When a file is added, audit the change on the parent object.
     """
-    audit.object_attachment(removeSecurityProxy(ob), event, "added")
+    event.action = "added"
+    audit.object_attachment(removeSecurityProxy(ob), event)
 
 # !+CHANGELOG_DATA_DUPLICATION(mr, nov-2011)
 @register.handler(adapts=(IAttachedFile, IObjectModifiedEvent))
 def file_modified(ob, event):
     """When a file is modified, audit the change on the parent object.
     """
-    audit.object_attachment(removeSecurityProxy(ob), event, "modified")
+    event.action = "modified"
+    audit.object_attachment(removeSecurityProxy(ob), event)
 
 
 @register.handler(adapts=(IVersion, IObjectCreatedEvent))
