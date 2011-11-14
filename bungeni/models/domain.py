@@ -599,7 +599,7 @@ class ParliamentaryItem(Entity):
         # As base meaning of "submission_date" we take the most recent date
         # of workflow transition to "submit" to clerk. Subclasses may need
         # to overload as appropriate for their respective workflows.
-        return self._get_workflow_date("submitted", "gazetted")
+        return self._get_workflow_date("submitted")
 
 ''' !+TYPES_CUSTOM
 class AttachedFileType(object):
@@ -663,9 +663,8 @@ class BillType(Entity):
 
 # versionable (by default)
 class Bill(ParliamentaryItem):
-    @property
-    def submission_date(self):
-        return self._get_workflow_date("working_draft")
+    """Bill Domain Type
+    """
 
 # auditable (by default), but not a ParliamentaryItem
 class Signatory(Entity):
