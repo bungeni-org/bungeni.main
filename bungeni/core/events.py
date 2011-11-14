@@ -40,7 +40,7 @@ def signatory_added(ob, event):
         title = ""
     event.description = "%s: %s added" % (ob.__class__.__name__ , title)
     event.action = "added"
-    # audit the change on the parent object
+    # audit the change on the parent object !+CHANGELOG_DATA_DUPLICATION
     audit.object_signatory(ob, event)
 
 
@@ -54,7 +54,7 @@ def signatory_modified(ob, event):
         title = ""
     event.description = "%s: %s modified" % (ob.__class__.__name__ , title)
     event.action = "modified"
-    # audit the change on the parent object
+    # audit the change on the parent object !+CHANGELOG_DATA_DUPLICATION
     audit.object_signatory(ob, event)
 
 
@@ -98,13 +98,12 @@ def group_created(ob, event):
     out of the group type and group id. This was a computed property in orm.py
     but has been moved here now - so it gets cached in the groups table.
     """
-    if ob.group_principal_id is None:
-        ob.group_principal_id = "group.%s.%s" % (ob.type, ob.group_id)
-        log.debug("Setting group_principal_id for group %s to %s", 
-            ob.group_id, ob.group_principal_id)
-    else:
-        log.debug("group_principal_id [%s] is already set for group %s", 
+    assert ob.group_principal_id is None, \
+        "group_principal_id [%s] is already set for group %s" % (
             ob.group_principal_id, ob.group_id)
+    ob.group_principal_id = "group.%s.%s" % (ob.type, ob.group_id)
+    log.debug("Setting group_principal_id for group %s to %s", 
+        ob.group_id, ob.group_principal_id)
 
 
 @register.handler(adapts=(IBungeniParliamentaryContent, IObjectModifiedEvent))

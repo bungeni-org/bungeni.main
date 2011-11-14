@@ -118,4 +118,6 @@ class ChangeLog(ChangeBaseView):
         if hasattr(self.context, "short_name"):
             self._page_title = "%s: %s" % (
                 _(self._page_title), _(self.context.short_name))
-    
+        else:
+            self._page_title = _(self._page_title)
+
