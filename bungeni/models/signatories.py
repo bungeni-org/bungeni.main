@@ -106,10 +106,6 @@ class SignatoryValidator(object):
 class BillSignatoryValidator(SignatoryValidator):
     zope.component.adapts(IBill)
 
-    def expireSignatures(self):
-        return unicode(self.pi_instance.status) == u"gazetted"
-
-
 class MotionSignatoryValidator(SignatoryValidator):
     zope.component.adapts(IMotion)
 

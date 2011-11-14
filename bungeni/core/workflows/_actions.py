@@ -85,12 +85,11 @@ _agendaitem_admissible = publish_to_xml
 
 _bill_draft = _bill_working_draft = __pi_create
 _bill_redraft = __pi_redraft
+_bill_submitted = __pi_submit
 _bill_approved = publish_to_xml
 
 def _bill_gazetted(context):
     utils.setBillPublicationDate(context)
-    utils.set_pi_registry_number(context)
-    utils.pi_update_signatories(context)
     publish_to_xml(context)
 
 # group
