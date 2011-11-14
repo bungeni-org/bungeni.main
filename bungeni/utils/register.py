@@ -20,9 +20,6 @@ from bungeni.utils import register
 $Id$
 """
 
-__all__ = ["handler"]
-
-
 from zope import component
 
 

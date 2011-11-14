@@ -38,31 +38,44 @@ from bungeni.utils import register
 from bungeni.core.i18n import _
 
 
+def _trace_audit_handler(ah):
+    def _ah(ob, event):
+        log.debug("CALLING audit.%s(%s, %s)" % (ah.__name__, ob, event))
+        ah(ob, event)
+    return _ah
+
+
 # change handlers
 
 @register.handler(adapts=(IAuditable, IObjectCreatedEvent))
+@_trace_audit_handler
 def _object_added(ob, event):
     auditor = get_auditor(ob)
     auditor.object_added(removeSecurityProxy(ob), event)
 
 @register.handler(adapts=(IAuditable, IObjectModifiedEvent))
+@_trace_audit_handler
 def _object_modified(ob, event):
-    try:
-        assert getattr(event, "change_id", None) is not None, \
-            "ObjectModified -> no change_id!"
-    except AssertionError, e:
-        # !+CHANGE_ID(mr, nov-2011) change_id is sometimes not yet defined
-        log.warn(" *** %s: IGNORING EVENT %s FOR %s" % (e, ob, event))
-        return
+    # !+CHECK_CHANGE_ID(mr, nov-2011) why was this check here in the first 
+    # place? The change db record is ALWAYS yet to be created at this point?!?
+    #try:
+    #    assert getattr(event, "change_id", None) is not None, \
+    #        "ObjectModified -> no change_id!"
+    #except AssertionError, e:
+    #    # !+CHANGE_ID(mr, nov-2011) change_id is sometimes not yet defined
+    #    log.warn(" *** %s: IGNORING EVENT %s FOR %s" % (e, event, ob))
+    #    return
     auditor = get_auditor(ob)
     auditor.object_modified(removeSecurityProxy(ob), event)
 
 @register.handler(adapts=(IAuditable, IObjectRemovedEvent))
+@_trace_audit_handler
 def _object_removed(ob, event):
     auditor = get_auditor(ob)
     auditor.object_removed(removeSecurityProxy(ob), event)
 
 @register.handler(adapts=(IAuditable, IWorkflowTransitionEvent))
+@_trace_audit_handler
 def _object_transitioned(ob, event):
     auditor = get_auditor(ob)
     change_id = auditor.object_transitioned(removeSecurityProxy(ob), event)
@@ -70,20 +83,17 @@ def _object_transitioned(ob, event):
 
 # !+CHANGELOG_DATA_DUPLICATION(mr, nov-2011)
 @register.handler(adapts=(IAuditable, IVersionCreated))
+@_trace_audit_handler
 def _object_versioned(ob, event):
     """When an auditable object is versioned, we audit creation of new version.
     """
     auditor = get_auditor(ob)
-    # !+NewVersion_CHANGE_ID(mr, jun-2011) when does an IVersionCreated 
-    # event for an IAuditable object ever have a "change_id" attribute ?
-    #if not getattr(event, "change_id", None):
     change_id = auditor.object_versioned(removeSecurityProxy(ob), event)
-    #else:
-    #    change_id = event.change_id
     event.version.change_id = change_id
 
 # !+CHANGELOG_DATA_DUPLICATION(mr, nov-2011) possibly...
 @register.handler(adapts=(IAuditable, IVersionReverted))
+@_trace_audit_handler
 def _object_version_reverted(ob, event):
     auditor = get_auditor(ob)
     change_id = auditor.object_version_reverted(removeSecurityProxy(ob), event)
@@ -99,6 +109,7 @@ def _object_version_reverted(ob, event):
 # Clients of change information e.g. the timeline, should simply "aggregate" 
 # changes e.g. changes on head doc + changes on atttached + etc.
 
+@_trace_audit_handler
 def object_attachment(ob, event):
     """Utility to log--on the parent object--changes on one of its attachments.
     event.action: "added", "modified"
@@ -110,6 +121,7 @@ def object_attachment(ob, event):
             ob.file_title, ob.file_name, event.action)
         get_auditor(auditable_parent).object_attachment(auditable_parent, event)
 
+@_trace_audit_handler
 def object_signatory(ob, event):
     """Utility to log--on the parent object--changes on one of its signatories.
     event.action: "added", "modified"
@@ -135,14 +147,16 @@ class _AuditorFactory(object):
         self.change_table = change_table
         self.change_class = change_class
     
+    # handlers, return the change_id
+    
     # Called directly from signatory added/modified handlers
     def object_signatory(self, ob, event):
-        self._object_changed(event.action, ob, event.description)
+        return self._object_changed(event.action, ob, event.description)
     
     # Called directly from attachment added/modified handlers
     def object_attachment(self, ob, event):
         # !+ this makes no distinction between added/modified changes anyway?!
-        self._object_changed("attachment", ob, event.description)
+        return self._object_changed("attachment", ob, event.description)
     
     def object_added(self, ob, event):
         return self._object_changed("added", ob)
@@ -308,9 +322,11 @@ class _AuditorFactory(object):
         change.status = ob.status # remember parent's status at time of change
         session.add(change)
         session.flush()
-        log.debug("CHANGE [%s] %s" % (change_kind, change.__dict__))
+        log.debug("AUDITED CHANGE [%s] %s" % (change_kind, change.__dict__))
         return change.change_id
-        
+    
+    #
+    
     def _getKey(self, ob):
         mapper = orm.object_mapper(ob)
         primary_key = mapper.primary_key_from_instance(ob)[0]
