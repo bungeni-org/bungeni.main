@@ -39,6 +39,8 @@ def checkVisibleChange(change):
         # !+added(mr, nov-2011) for when the Clerk creates on behalf of an MP,
         # this assumption gives a somewhat strange that the MP can see the 
         # added log entry, but the Clerk can not (as he is not the owner).
+        # !+IOwned(mr, nov-2011) this assumes that the head instance has an
+        # owner.
         if _conditions.user_is_context_owner(change.head):
             return True
     return False

@@ -613,6 +613,15 @@ class AttachedFile(Entity):
     """Files attached to a parliamentary item.
     """
     __dynamic_features__ = True # !+ should be False?
+    
+    # the owner of the "owning" item !+HEAD_DOCUMENT_ITEM
+    @property
+    def owner_id(self):
+        return self.item.owner_id
+    
+    @property
+    def owner(self):
+        return self.item.owner
 
 
 # !+ why a parliamentaryItem? Review whole heading idea!

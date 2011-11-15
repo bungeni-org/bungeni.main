@@ -102,8 +102,11 @@ class ICommitteeStaff(IBungeniGroupMembership):
 class IOfficeMember(IBungeniGroupMembership):
     pass
 
-
-class IBungeniContent(interface.Interface):
+class IOwned(interface.Interface):
+    """Object supports having an "owner" i.e. owner/owner_id attributes.
+    """
+    
+class IBungeniContent(IOwned):
     """Parliamentary content
     """
     # !+ schema attributes ?
@@ -411,7 +414,7 @@ class IAssignmentFactory(interface.Interface):
         """Create a new assignment.
         """
 
-class IAttachedFile(interface.Interface): pass
+class IAttachedFile(IOwned): pass
 class IAttachedFileVersion(IVersion): pass
 class IAttachedFileVersionContainer(IVersionContainer): pass
 

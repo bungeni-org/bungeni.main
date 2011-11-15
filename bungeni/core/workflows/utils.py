@@ -54,10 +54,10 @@ def formatted_user_email(user):
 
 def get_owner_login_pi(context):
     """Get the login of the user who has been previously set as the owner of 
-    this ParliamentaryItem.
+    this item (must support IOwned i.e. ParliamentaryItem or AttachedFile).
     """
-    assert interfaces.IBungeniContent.providedBy(context), \
-        "Not a Parliamentary Item: %s" % (context)
+    assert interfaces.IOwned.providedBy(context), \
+        "Not an Owned (parliamentary) Item: %s" % (context)
     return dbutils.get_user(context.owner_id).login
 
 def assign_owner_role(context, login):
