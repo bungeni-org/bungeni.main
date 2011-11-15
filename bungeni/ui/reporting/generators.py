@@ -152,7 +152,7 @@ class ReportGeneratorXHTML(_BaseGenerator):
                 node.text = get_element_value(context, src)
             elif typ=="html":
                 html_element = etree.fromstring("<div>%s</div>" % 
-                    get_element_value(context, src)
+                    get_element_value(context, src, "")
                 )
                 for (key, value) in node.attrib.iteritems():
                     html_element.attrib[key] = value

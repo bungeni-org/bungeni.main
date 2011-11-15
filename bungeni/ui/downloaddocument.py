@@ -133,6 +133,13 @@ class DownloadDocument(BrowserView):
         Each template has a config parameter with the document type for
         which it may be used.
         """
+        def default_template(templates):
+            default_templates = filter(lambda term: "default" in term.doctypes,
+                templates
+            )
+            if default_templates:
+                return default_templates[0].value
+            return  None
         template_vocabulary = queryUtility(IVocabularyFactory, 
             "bungeni.vocabulary.DocumentXHTMLTemplates"
         )
@@ -143,7 +150,11 @@ class DownloadDocument(BrowserView):
         log.debug("Looking for templates to generate [%s] report. Found : %s",
             self.document.type, doc_templates
         )
-        if len(doc_templates) == 0:
+        if doc_templates:
+            doc_template = doc_templates[0]
+        else:
+            doc_template = default_template(template_vocabulary())
+        if doc_template is None:
             self.error_messages.append(
                 _(u"No template for document of type: ${dtype}. Contact admin.",
                     mapping={ "dtype": self.document.type }
@@ -153,7 +164,7 @@ class DownloadDocument(BrowserView):
                 "No template found to generate this document"
             )
         #!+REPORTS(mrb, OCT-2011) Provide UI to select templates if more than 1
-        generator = generators.ReportGeneratorXHTML(doc_templates[0], 
+        generator = generators.ReportGeneratorXHTML(doc_template, 
             self.document
         )
         #return generator.generateReport()
@@ -167,7 +178,7 @@ class DownloadDocument(BrowserView):
             document_text = self.bodyText()
         else:
             document_text = self.generateDocumentText()
-        params = dict(body_text=cleanupText(document_text))
+        params = dict(body_text = cleanupText(document_text))
         openofficepath = getUtility(IOpenOfficeConfig).getPath()
         ooport = getUtility(IOpenOfficeConfig).getPort()
         renderer = Renderer(self.oo_template_file, params, tempFileName,

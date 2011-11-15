@@ -36,7 +36,7 @@ Initialise a report
 -------------------
    >>> from bungeni.models import domain
    >>> report = domain.Report()
-   >>> report.body_text = '<div class=reporttitle>THIS IS A TEST</div>'
+   >>> report.body_text = "<div class='reporttitle'>THIS IS A TEST</div>"
    >>> report.start_date = datetime.datetime.now()
    >>> report.end_date = datetime.datetime.now()
    >>> report.note = "This is a test"
@@ -78,7 +78,7 @@ response is set
 Initialise a Bill
 -----------------
    >>> bill = domain.Bill()
-   >>> bill.body_text = '<div class=reporttitle>THIS IS A TEST</div>'
+   >>> bill.body_text = "<div class='reporttitle'>THIS IS A TEST</div>"
    >>> bill.short_name = "Test Bill"
    >>> bill.owner = mp_1
    >>> bill.doc_type = "government"
@@ -110,7 +110,7 @@ Bill PDF
 Initialise a Motion
 -------------------
    >>> motion = domain.Motion()
-   >>> motion.body_text = '<div class=reporttitle>THIS IS A TEST</div>'
+   >>> motion.body_text = "<div class='reporttitle'>THIS IS A TEST</div>"
    >>> motion.short_name = "Test motion"
    >>> motion.owner = mp_1
    >>> motion.language = "en"
@@ -138,7 +138,7 @@ Motion PDF
 Initialise a Tabled Document
 ----------------------------
    >>> tableddocument = domain.TabledDocument()
-   >>> tableddocument.body_text = '<div class=reporttitle>THIS IS A TEST</div>'
+   >>> tableddocument.body_text = "<div class='reporttitle'>THIS IS A TEST</div>"
    >>> tableddocument.short_name = "Test Tabled Document"
    >>> tableddocument.owner = mp_1
    >>> tableddocument.language = "en"
@@ -166,7 +166,7 @@ Tabled Document PDF
 Initialise an Agenda Item
 -------------------------
    >>> agendaitem = domain.AgendaItem()
-   >>> agendaitem.body_text = '<div class=reporttitle>THIS IS A TEST</div>'
+   >>> agendaitem.body_text = "<div class='reporttitle'>THIS IS A TEST</div>"
    >>> agendaitem.short_name = "Sitting Agenda"
    >>> agendaitem.owner = mp_1
    >>> agendaitem.language = "en"
@@ -197,7 +197,7 @@ Agenda Item PDF
 Initialise a Question
 -------------------------
    >>> question = domain.Question()
-   >>> agendaitem.body_text = '<div class=reporttitle>THIS IS A TEST</div>'
+   >>> agendaitem.body_text = "<div class='reporttitle'>THIS IS A TEST</div>"
    >>> question.short_name = "Sitting Agenda"
    >>> question.owner = mp_1
    >>> question.language = "en"
