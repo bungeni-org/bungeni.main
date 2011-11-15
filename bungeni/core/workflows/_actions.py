@@ -46,6 +46,8 @@ def __pi_create(context):
     utils.assign_owner_role_pi(context)
 
 def __pi_submit(context):
+    if len(context.signatories) > 0:
+        __make_owner_signatory(context)
     utils.set_pi_registry_number(context)
     utils.pi_update_signatories(context)
     utils.pi_unset_signatory_roles(context)

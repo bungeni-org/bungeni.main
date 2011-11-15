@@ -141,6 +141,9 @@ def signatory_auto_sign(context):
         return True
     return False
 
+def signatory_manual_sign(context):
+    return not signatory_auto_sign(context)
+
 def user_is_not_parent_document_owner(context):
     return not user_is_parent_document_owner(context)
 
