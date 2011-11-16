@@ -103,11 +103,16 @@ class IOfficeMember(IBungeniGroupMembership):
     pass
 
 class IOwned(interface.Interface):
-    """Object supports having an "owner" i.e. owner/owner_id attributes.
+    """Object supports having an "owner" i.e. an owner:user attribute.
     """
     
 class IBungeniContent(IOwned):
     """Parliamentary content
+    
+    !+IAlchemistContent(mr, nov-2011) clarify distinction, 
+    in intention and use, between the following interfaces: 
+    IBungeniParliamentaryContent -> IBungeniContent -> IAlchemistContent
+    Should standardize registration on the appropriate one (or on IWorklfowed).
     """
     # !+ schema attributes ?
     # status: rdb.Unicode(48)

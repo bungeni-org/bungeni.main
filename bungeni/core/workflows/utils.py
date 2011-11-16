@@ -89,16 +89,12 @@ def create_version(context):
 
 @bungeni_custom_errors
 def get_mask(context):
+    # assert IBungeniParliamentaryContent.providedBy(context)
     # !+IBungeniParliamentaryContent(mr, nov-2011) only context typed
     # interfaces.IBungeniParliamentaryContent should ever get here!
-    # For some reason signatory instances are also being passed in here.
-    # Remove try/except wrapper here, once that is fixed (leaving the assert).
-    try:
-        m = "PI context [%s] for get_mask must specify a type attr" % (context)
-        assert hasattr(context, "type"), m
-    except AssertionError:
-        log.error(m)
-        return None
+    # But for this case, all we need is that context defines a type:
+    m = "PI context [%s] for get_mask must specify a type attr" % (context)
+    assert hasattr(context, "type"), m
     path = capi.get_path_for("registry")
     config = ConfigParser()
     config.readfp(open(os.path.join(path, "config.ini")))

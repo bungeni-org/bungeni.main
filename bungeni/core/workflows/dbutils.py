@@ -58,16 +58,18 @@ def removeQuestionFromItemSchedule(question_id):
     if (len(results)==1):
         results[0].active = False
     
-'''def set_pi_registry_number(item):
+'''
+def set_pi_registry_number(item):
     session = Session()
     connection = session.connection(domain.ParliamentaryItem)
     sequence = rdb.Sequence("registry_number_sequence")
-    item.registry_number = connection.execute(sequence)'''
+    item.registry_number = connection.execute(sequence)
+'''
 
-def set_pi_registry_number(item, mask):
+def set_pi_registry_number(item, registry_number):
     session = Session()
     connection = session.connection(domain.ParliamentaryItem)
-    item.registry_number = mask
+    item.registry_number = registry_number
     
 def get_next_reg():
     session = Session()

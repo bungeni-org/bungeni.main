@@ -375,20 +375,8 @@
     name="similar"
     class=".search.Similar"
     />
-
-    <!-- workflow view -->
-
-    <browser:page name="workflow"
-        for="bungeni.models.interfaces.IBungeniContent"
-        class=".workflow.WorkflowView"
-        permission="zope.Public"
-    />
-    <browser:page name="change_workflow_state"
-        for="bungeni.alchemist.interfaces.IAlchemistContent"
-        class=".workflow.WorkflowChangeStateView"
-        permission="zope.View"
-    />
-
+    
+    
     <!-- versions -->
     <browser:page name="index"
         for="bungeni.models.interfaces.IVersionContainer"

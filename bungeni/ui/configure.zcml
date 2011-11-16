@@ -65,6 +65,12 @@
 
     
   <!-- Include Views -->
+    <class class=".workflow.WorkflowView">
+        <require permission="zope.Public" attributes="browserDefault __call__" />
+    </class>
+    <class class=".workflow.WorkflowChangeStateView">
+        <require permission="zope.View" attributes="browserDefault __call__" />
+    </class>
   <include file="views.zcml" />
 
     <!-- Admin UI -->

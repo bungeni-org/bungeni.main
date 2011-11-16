@@ -19,14 +19,19 @@ from zope.security.proxy import removeSecurityProxy
 from zope.app.schema.vocabulary import IVocabularyFactory
 from zope.app.form.browser.textwidgets import TextAreaWidget
 from zc.table import column
+from zope.dublincore.interfaces import IDCDescriptiveProperties
+from zope.i18n import translate
 
-from bungeni.core.workflow import interfaces
-
+from bungeni.alchemist import Session
 from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.alchemist.interfaces import IAlchemistContent
 from bungeni.core import audit
 from bungeni.core import globalsettings
-from bungeni.core.workflow.interfaces import IWorkflowed
+from bungeni.core.workflow import interfaces
+from bungeni.core.workflows.utils import get_mask
+from bungeni.models.interfaces import IAuditable, IWorkspaceContainer, \
+    IBungeniParliamentaryContent
+from bungeni.models.domain import ParliamentaryItem
 from bungeni.ui.forms.workflow import bindTransitions
 from bungeni.ui.forms.common import BaseForm
 from bungeni.ui.widgets import TextDateTimeWidget
@@ -37,17 +42,12 @@ from bungeni.ui.utils import date
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
 from bungeni.ui.utils.url import absoluteURL
-from zope.dublincore.interfaces import IDCDescriptiveProperties
-from bungeni.models.interfaces import IAuditable
 #from zope.app.pagetemplate import ViewPageTemplateFile
-from bungeni.models.interfaces import IWorkspaceContainer
 from bungeni.ui.i18n import _
-from zope.i18n import translate
 from bungeni.ui.absoluteurl import WorkspaceAbsoluteURLView
 
-from bungeni.core.workflows.utils import get_mask
-from ore.alchemist import Session
-from bungeni.models.domain import ParliamentaryItem
+from bungeni.utils import register
+
 
 class WorkflowVocabulary(object):
     zope.interface.implements(IVocabularyFactory)
@@ -169,7 +169,7 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
         def is_workflowed_and_draft(instance):
             """is item workflowed, and is so is it in a logical draft state?
             """
-            if IWorkflowed.providedBy(instance):
+            if interfaces.IWorkflowed.providedBy(instance):
                 tagged_key = instance.__class__.__name__.lower()
                 draft_states = get_states(tagged_key, tagged=["draft"])
                 return instance.status in draft_states
@@ -255,10 +255,14 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
                 context=self.request)
         self.setupActions(transition_id)
         
-        if get_mask(self.context) == 'manual' and not self.context.registry_number:
+        if (IBungeniParliamentaryContent.providedBy(self.context) and
+                get_mask(self.context) == "manual" and 
+                not self.context.registry_number
+            ):
             self.form_fields = self.form_fields.omit("note", "date_active")
         else:
             self.form_fields = self.form_fields.omit("registry_number")
+        
         if not self.actions: 
             self.form_fields = self.form_fields.omit("note", "date_active")
         elif not IAuditable.providedBy(self.context):
@@ -286,7 +290,9 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
         else:
             transition_ids = (transition_id,)
         self.actions = bindTransitions(self, transition_ids, wfc.workflow)
-        
+
+
+@register.view(interfaces.IWorkflowed, name="workflow")
 class WorkflowView(browser.BungeniBrowserView):
     """This view is linked to by the "workflow" context action and dislays the 
     workflow history and the action viewlet with all possible transitions
@@ -316,6 +322,7 @@ class WorkflowView(browser.BungeniBrowserView):
         return template
 
 
+@register.view(interfaces.IWorkflowed, name="change_workflow_state")
 class WorkflowChangeStateView(WorkflowView):
     """This gets called on selection of a transition from the menu i.e. NOT:
     a) when clicking on one of the transition buttons in the workflow form.
@@ -343,10 +350,13 @@ class WorkflowChangeStateView(WorkflowView):
                 ).require_confirmation
         else:
             self.update()
-            
-        if get_mask(self.context) == 'manual' and not self.context.registry_number:
+        
+        if (IBungeniParliamentaryContent.providedBy(self.context) and
+                get_mask(self.context) == "manual" and 
+                not self.context.registry_number
+            ):
             require_confirmation = True
-            
+        
         if (not require_confirmation and method == "POST"):
             actions = bindTransitions(
                 self.action_viewlet, (transition_id,), workflow)
