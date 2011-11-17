@@ -62,6 +62,10 @@ def get_url(context, request, path):
                 (site_url.rstrip('/'), '++resource++%s' % name, relative_path))
 
 def get_url_dev(context, request, path):
+    ''' !+REPOZE.SQUEEZE INVALIDATION(mn, nov-2011) registration via zcml 
+    disabled until errors in resolving paths for some resources e.g. favicon.ico
+    are fixed
+    '''
     path = os.path.abspath(path)
     mtime = os.path.getmtime(path)
 

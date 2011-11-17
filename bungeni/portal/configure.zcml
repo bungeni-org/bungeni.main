@@ -53,16 +53,17 @@
             directory="static/html/resources"
             layer="ploned.ui.interfaces.IPlonedSkin"
         />
-        <adapter zcml:condition="have devmode"
-            for="* zope.publisher.interfaces.browser.IHTTPRequest str"
+        <adapter for="* zope.publisher.interfaces.browser.IHTTPRequest str"
             provides="chameleon.html.interfaces.IResourceLocation"
             factory=".layout.get_url_dev" 
-        />
+        />          
+        <!-- !+ZCML(mn, nov-2011) Disabling repoze.squeeze invalidation         
         <adapter zcml:condition="not-have devmode"
             for="* zope.publisher.interfaces.browser.IHTTPRequest str"
             provides="chameleon.html.interfaces.IResourceLocation"
             factory=".layout.get_url"
         />
+        -->
         <include package="ploned.ui" file="skin.zcml" />
     </configure> 
     
