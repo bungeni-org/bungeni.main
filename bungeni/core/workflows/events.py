@@ -16,12 +16,12 @@ from zope.lifecycleevent import IObjectCreatedEvent
 
 @register.handler(adapts=(interfaces.IWorkflowTransitionEvent,))
 def workflowTransitionEventHandler(event):
-    log.debug(" ".join(["<%s",
+    log.debug(" ".join(["<%s %s",
         "source=%s",
         "destination=%s",
         "object=%s",
         "comment=%s",
-        ">"]) % (event.__class__.__name__, 
+        ">"]) % (event.__class__.__name__, hex(id(event)),
                 event.source, event.destination, event.object, event.comment))
 
 

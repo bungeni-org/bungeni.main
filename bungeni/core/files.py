@@ -13,26 +13,8 @@ from zope.lifecycleevent import IObjectModifiedEvent, IObjectCreatedEvent
 from bungeni.alchemist import Session
 from bungeni.models.interfaces import IAttachedFile, IVersion
 from bungeni.models import domain
-from bungeni.core import audit
 from bungeni.core.interfaces import IVersioned
 from bungeni.utils import register
-
-
-# !+CHANGELOG_DATA_DUPLICATION(mr, nov-2011)
-@register.handler(adapts=(IAttachedFile, IObjectCreatedEvent))
-def file_added(ob, event):
-    """When a file is added, audit the change on the parent object.
-    """
-    event.action = "added"
-    audit.object_attachment(removeSecurityProxy(ob), event)
-
-# !+CHANGELOG_DATA_DUPLICATION(mr, nov-2011)
-@register.handler(adapts=(IAttachedFile, IObjectModifiedEvent))
-def file_modified(ob, event):
-    """When a file is modified, audit the change on the parent object.
-    """
-    event.action = "modified"
-    audit.object_attachment(removeSecurityProxy(ob), event)
 
 
 @register.handler(adapts=(IVersion, IObjectCreatedEvent))

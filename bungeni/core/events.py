@@ -23,55 +23,9 @@ from bungeni.alchemist import Session
 from bungeni.models import domain
 from bungeni.models.interfaces import ISignatory, IBungeniGroup, \
     IBungeniGroupMembership, IBungeniParliamentaryContent
-from bungeni.core import audit
-from bungeni.core.workflows.utils import (
-    assign_signatory_role, get_owner_login_pi
-)
+from bungeni.core.workflows.utils import assign_signatory_role, \
+    get_owner_login_pi
 from bungeni.utils import register
-
-
-@register.handler(adapts=(ISignatory, IObjectCreatedEvent))
-def signatory_added(ob, event): 
-    ob = removeSecurityProxy(ob)
-    if ob.user:
-        title = "%s %s %s" % (
-            ob.user.titles, ob.user.first_name, ob.user.last_name)
-    else:
-        title = ""
-    event.description = "%s: %s added" % (ob.__class__.__name__ , title)
-    event.action = "added"
-    # audit the change on the parent object !+CHANGELOG_DATA_DUPLICATION
-    audit.object_signatory(ob, event)
-
-
-@register.handler(adapts=(ISignatory, IObjectModifiedEvent))
-def signatory_modified(ob, event):
-    ob = removeSecurityProxy(ob)
-    if ob.user:
-        title = "%s %s %s" % (
-            ob.user.titles, ob.user.first_name, ob.user.last_name)
-    else:
-        title = ""
-    event.description = "%s: %s modified" % (ob.__class__.__name__ , title)
-    event.action = "modified"
-    # audit the change on the parent object !+CHANGELOG_DATA_DUPLICATION
-    audit.object_signatory(ob, event)
-
-
-#!+ was zope.app.container.interfaces.IObjectRemovedEvent that is a different
-# interface than zope.lifecycleevent.IObjectRemovedEvent ?!
-@register.handler(adapts=(ISignatory, IObjectRemovedEvent))
-def signatory_deleted(ob, event):
-    """Clear signatory role for a deleted signatory
-    """
-    ob = removeSecurityProxy(ob)
-    if ob.user:
-        owner_login = get_owner_login_pi(ob)
-        assign_signatory_role(ob.item, owner_login, unset=True)
-    else:
-        log.warn("Signatory object %s has no user set."
-            " Skipping unsetting of role", ob.__str__()
-        )
 
 
 @register.handler(adapts=(IBungeniGroupMembership, IObjectModifiedEvent))

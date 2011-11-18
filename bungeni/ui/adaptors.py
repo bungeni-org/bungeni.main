@@ -1,6 +1,9 @@
-from bungeni.alchemist import model
+
 from zope.component import getMultiAdapter
 from zope.security.proxy import removeSecurityProxy
+from bungeni.alchemist import model
+from bungeni.models import domain
+
 
 class BillAnnotationAdaptor(object):
     """Annotation Adaptor for Bills."""
@@ -51,15 +54,12 @@ class RSSValues(object):
 
 
 class TimelineRSSValues(RSSValues):
-    """ Adapter for getting values
-        to form rss feed out of object's
-        changes
+    """ Adapter for getting values to form rss feed out of object's changes.
     """
-
     def __init__(self, context):
         self.context = context
-
+    
     @property
     def values(self):
-        return filter(lambda x: x.action not in [u'modified', u'added'],
-                      self.context.changes)
+        return domain.get_changes(self.context, "modify", "add")
+

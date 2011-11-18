@@ -25,6 +25,7 @@ from bungeni.alchemist.model import queryModelDescriptor
 
 from bungeni.core.translation import translate_i18n
 from bungeni.core.dc import IDCDescriptiveProperties
+from bungeni.core.audit import CHANGE_ACTIONS
 
 from bungeni.models import domain, interfaces
 from bungeni.models.utils import get_groups_held_for_user_in_parliament
@@ -121,7 +122,7 @@ def format_change_description(change):
     """Format/i18n a document's change object description for timeline listing
     """
     description = change.description
-    if change.action == "new-version":
+    if change.action == CHANGE_ACTIONS["version"]:
         version = change.head.versions.get(
             int(change.extras.get("version_id"))
         )
@@ -129,11 +130,9 @@ def format_change_description(change):
         if chg_url:
             description = "<a href='%s'>%s</a>" % (
                 chg_url, 
-                (translate_i18n(change.description) 
-                    or translate_i18n(u"New Version")
-                )
+                translate_i18n(change.description or "Version")
             )
-    elif change.action == "workflow":
+    elif change.action == CHANGE_ACTIONS["workflow"]:
         description = translate_i18n(change.description)
     if not description:
         # use principal effecting the change as description as a fallback

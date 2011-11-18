@@ -13,14 +13,17 @@ $Id$
 log = __import__("logging").getLogger("bungeni.core.workflows._conditions")
 
 from zope.security import checkPermission
-from bungeni.ui.interfaces import IFormEditLayer
-from bungeni.ui.utils import common
-from bungeni.core import globalsettings as prefs
-from bungeni.core.workflows import utils
+from bungeni.alchemist import Session
 from bungeni.models.interfaces import IAuditable, ISignatoriesValidator
 from bungeni.models import domain
-from bungeni.alchemist import Session
 from bungeni.models import utils as model_utils, delegation
+from bungeni.core import globalsettings as prefs
+from bungeni.core.workflows import utils
+from bungeni.core.audit import CHANGE_ACTIONS
+from bungeni.ui.interfaces import IFormEditLayer
+from bungeni.ui.utils import common
+
+
 # common
 
 # the condition for the transition from "" (None) to either "draft" or to 
@@ -202,7 +205,7 @@ def user_is_state_creator(context):
         current_user = model_utils.get_db_user()
         if current_user:
             for _object_change in reversed(context.changes):
-                if _object_change.action == "workflow":
+                if _object_change.action == CHANGE_ACTIONS["workflow"]:
                     extras = _object_change.extras
                     if extras and (extras.get("destination") == context.status):
                         if _object_change.user.login == current_user.login:

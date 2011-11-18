@@ -433,10 +433,13 @@ class WorkflowController(object):
         # change status of context or new object
         self.state_controller.set_status(transition.destination)
         # notify wf event observers
-        zope.event.notify(WorkflowTransitionEvent(self.context,
-                transition.source, transition.destination, transition, comment))
+        wte = WorkflowTransitionEvent(self.context, 
+            transition.source, transition.destination, transition, comment)
+        zope.event.notify(wte)
         # send modified event for original or new object
-        zope.event.notify(zope.lifecycleevent.ObjectModifiedEvent(self.context))
+        ome = zope.lifecycleevent.ObjectModifiedEvent(self.context)
+        ome.originator = wte # !+ could maybe use OME(o, *descriptions)
+        zope.event.notify(ome)
     
     def fireTransitionToward(self, state, comment=None, check_security=True):
         transition_ids = self.getFireableTransitionIdsToward(state)

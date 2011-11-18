@@ -184,6 +184,7 @@ class BaseForm(formlib.form.FormBase):
     def update(self):
         self.status = self.request.get("portal_status_message", self.status)
         self.form_fields = self.filter_fields()
+        # !+SUPERFLUOUS_ObejctModifiedEvent(mr, nov-2011)
         super(BaseForm, self).update()
         set_widget_errors(self.widgets, self.errors)
 

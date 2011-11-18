@@ -637,13 +637,12 @@ def default_reports(sitting, event):
         from zope.publisher.browser import TestRequest
         report.start_date = sitting.start_date
         report.end_date = sitting.end_date
-        # The owner ID is the ID of the user that performed the last workflow
-        # change
-        for change in reversed(sitting.changes):
-            if change.action == "workflow":
-                owner_id = change.user_id
-                break
-        assert owner_id is not None, _("No user is defined. Are you logged in as Admin?")
+        # owner ID is the ID of the user who performed last workflow change
+        for change in reversed(get_changes(sitting, "workflow")):
+            owner_id = change.user_id
+            break
+        assert owner_id is not None, \
+            "No user is defined. Are you logged in as Admin?"
         report.owner_id = owner_id
         report.language = get_default_language()
         report.created_date = datetime.datetime.now()

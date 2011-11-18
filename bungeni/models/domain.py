@@ -33,6 +33,12 @@ def object_hierarchy_type(object):
         return "item"
     return ""
 
+def get_changes(auditable, *actions):
+    """Get changelog for auditable context, filtered for action.
+    """
+    # !+ assert *actions in CHANGE_ACTIONS
+    return [ c for c in auditable.changes if c.action in actions ]
+
 #
 
 class Entity(object):
@@ -147,7 +153,7 @@ def auditable(kls):
     globals()[change_name] = change_kls
     return kls
 configurable_domain.feature_decorators["audit"] = auditable
-
+    
 def versionable(kls):
     """Decorator for versionable domain types, to collect in one place all
     that is needed for a domain type to be versionable.
@@ -594,12 +600,9 @@ class ParliamentaryItem(Entity):
         # merge into Session to avoid sqlalchemy.orm.exc.DetachedInstanceError 
         # when lazy loading;
         # order of self.changes is chronological--we want latest first
-        for c in reversed(Session().merge(self).changes):
-            if c.action != "workflow":
-                continue
-            extras = c.extras
-            if extras:
-                if extras.get("destination") in states:
+        for c in reversed(get_changes(Session().merge(self), "workflow")):
+            if c.extras:
+                if c.extras.get("destination") in states:
                     return c.date_active
     
     @property

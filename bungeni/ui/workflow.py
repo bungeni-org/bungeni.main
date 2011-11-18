@@ -29,9 +29,10 @@ from bungeni.core import audit
 from bungeni.core import globalsettings
 from bungeni.core.workflow import interfaces
 from bungeni.core.workflows.utils import get_mask
+from bungeni.core.audit import CHANGE_ACTIONS
 from bungeni.models.interfaces import IAuditable, IWorkspaceContainer, \
     IBungeniParliamentaryContent
-from bungeni.models.domain import ParliamentaryItem
+from bungeni.models.domain import ParliamentaryItem, get_changes
 from bungeni.ui.forms.workflow import bindTransitions
 from bungeni.ui.forms.common import BaseForm
 from bungeni.ui.widgets import TextDateTimeWidget
@@ -128,10 +129,8 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
         return auditor.change_class
     
     def get_feed_entries(self):
-        instance = removeSecurityProxy(self.context)
-        return [ change for change in instance.changes 
-                if change.action == "workflow" ]
-        
+        return get_changes(removeSecurityProxy(self.context), "workflow")
+
 
 class WorkflowActionViewlet(browser.BungeniBrowserView, 
         BaseForm, viewlet.ViewletBase
@@ -185,8 +184,7 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
             # date_active of its last change as the min_date_active, but
             # let that min fallback to parliament's creation date...
             if not is_workflowed_and_draft(instance):
-                changes = [ change for change in instance.changes 
-                    if change.action == "workflow" ]
+                changes = get_changes(instance, "workflow")
                 if changes:
      	            # then use the "date_active" of the most recent entry
                     min_date_active = changes[-1].date_active
@@ -215,7 +213,6 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
             elif data.get("date_active") > datetime.datetime.now():
                 errors.append(zope.interface.Invalid(
                         _("Active Date is in the future.")))
-                
         if "registry_number" in data.keys():
             reg_number = data.get("registry_number")
             if reg_number:
@@ -223,9 +220,7 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
                 num = session.query(ParliamentaryItem).filter(ParliamentaryItem.registry_number==reg_number).count()
                 if num != 0:
                     errors.append(zope.interface.Invalid(
-                        _("This regisrty number is already taken.")))
-                
-            
+                        "This registry number is already taken."))
         return errors
     
     def setUpWidgets(self, ignore_request=False):
@@ -267,6 +262,9 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
             self.form_fields = self.form_fields.omit("note", "date_active")
         elif not IAuditable.providedBy(self.context):
             self.form_fields = self.form_fields.omit("note", "date_active")
+        # !+SUPERFLUOUS_ObejctModifiedEvent(mr, nov-2011) the following update()
+        # is causing a ModifiedEvent to be fired, causing a modify change to be 
+        # logged (while this workflow change should be just that).
         super(WorkflowActionViewlet, self).update()
     
     @property

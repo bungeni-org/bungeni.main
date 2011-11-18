@@ -83,9 +83,9 @@ check the audit table for changes:
 !+AUDIT(murithi, may-2011) - With workflow events firing => more changes
 TODO: cater for workflow related changes in changes table
 
-check audit table for "added" change
+check audit table for "add" change
   >>> len(list(session.query(domain.BillChange).filter(
-  ...   domain.BillChange.action=="added")))
+  ...   domain.BillChange.action=="add")))
   1
 
   >>> changes_table_count = len(list(session.query(domain.BillChange)))
