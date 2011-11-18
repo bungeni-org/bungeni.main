@@ -88,7 +88,36 @@
      name="logout"
      class=".login.Logout"
      />
+     
+   <browser:page name="restore_login"
+     for="bungeni.models.interfaces.IBungeniApplication"
+     permission="zope.Public"
+     class=".login.RestoreLogin"
+     />
+     
+   <browser:page name="restore_password"
+     for="bungeni.models.interfaces.IBungeniApplication"
+     permission="zope.Public"
+     class=".login.RestorePassword"
+     />
 
+   <browser:page name="reset_password"
+     for="bungeni.models.interfaces.IBungeniApplication"
+     permission="zope.Public"
+     class=".login.ResetPassword"
+     />
+	
+	<!-- Profile -->
+	
+	<view
+        for="bungeni.models.interfaces.IBungeniApplication"
+        type="bungeni.ui.interfaces.IBungeniSkin"
+        provides="zope.publisher.interfaces.browser.IBrowserPublisher"
+        factory=".traversal.ProfileTraverser"
+        permission="bungeni.user.Edit"
+        allowed_interface="zope.publisher.interfaces.browser.IBrowserPublisher"
+        />
+	
     <!-- Content Search Form -->
 
     <!--<browser:page name="search"

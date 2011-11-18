@@ -133,6 +133,13 @@ mapper(domain.CurrentlyEditingDocument, schema.currently_editing_document,
     }
 )
 
+# Hash for password restore link
+mapper(domain.PasswordRestoreLink, schema.password_restore_link,
+    properties = {
+        "user": relation(domain.User, uselist=False),
+    }
+)
+
 # Groups
 
 mapper(domain.Group, schema.groups,

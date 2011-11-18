@@ -745,31 +745,50 @@
                 language
             "
         /><!-- !+ date_of_death: bungeni.user.AdminRecord? -->
-        <require permission="zope.ManageContent"
+        <require permission="bungeni.user.Edit"
             set_attributes="
-                user_id
-                status
-                login
                 titles
                 first_name
                 last_name
                 middle_name
+                password
                 email
                 gender
                 date_of_birth
-                date_of_death
                 birth_country
                 birth_nationality
                 current_nationality
-                uri
-                type_of_id
-                national_id
                 description
                 image
                 receive_notification
                 language
             "
         /><!-- !+ date_of_death: bungeni.user.AdminRecord? -->
+    </class>
+    
+    <class class=".domain.UserAddress">
+        <require permission="zope.View"
+            attributes="
+                logical_address_type
+                postal_address_type
+                street
+                city
+                country
+            "
+        />
+        <require permission="bungeni.address.Edit"
+            set_attributes="
+                logical_address_type
+                postal_address_type
+                street
+                city
+                country
+                zipcode
+                phone
+                fax
+                email
+            "
+        />
     </class>
   
 </configure>

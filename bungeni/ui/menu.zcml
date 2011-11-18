@@ -957,6 +957,67 @@
         permission="bungeni.address.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
+    
+    <browser:menuItem menu="plone_contentmenu"
+        for="bungeni.models.domain.UserAddressContainer"
+        title="Add User Address..."
+        action="./add"
+        permission="bungeni.address.Add"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    <browser:menuItem menu="plone_contentmenu"
+        for="bungeni.models.domain.User"
+        title="Add User Address..."
+        action="./addresses/add"
+        permission="bungeni.address.Add"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.domain.User"
+        title="Edit"
+        action="./edit-profile"
+        permission="bungeni.user.Edit"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+        order="10"
+    />
+    
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.domain.User"
+        title="Addresses"
+        action="./addresses"
+        permission="bungeni.user.Edit"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+        order="20"
+    />
+    
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.domain.User"
+        title="change password"
+        action="./change-password"
+        permission="bungeni.user.Edit"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+        order="30"
+    />
+    
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.domain.UserAddress"
+        title="Edit"
+        action="./edit"
+        permission="bungeni.address.Edit"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+        order="10"
+    />
+    
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.domain.UserAddress"
+        title="Delete"
+        action="./delete"
+        permission="bungeni.address.Delete"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+        order="20"
+    />
+    
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.domain.UserDelegationContainer"
         title="Add Delegation..."
@@ -1809,7 +1870,7 @@
      class=".menu.DashboardAction"
      manager="ploned.ui.interfaces.IPersonalBarMenu"
      permission="zope.Public"
-     viewName=""
+     viewName="profile"
      weight="10"
      />
      

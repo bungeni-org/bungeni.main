@@ -8,6 +8,10 @@ from bungeni.models.domain import ParliamentaryItem, Bill
 
 from sqlalchemy import extract
 
+from bungeni.models.domain import User
+from bungeni.models.utils import get_db_user_id
+from zope.publisher.interfaces import NotFound
+
 import datetime
 import traceback
 import sys
@@ -83,7 +87,27 @@ class SiteTraverser(ContainerTraverser):
                                                      filter(extract('year',ParliamentaryItem.status_date)==date.year).\
                                                      filter(extract('month',ParliamentaryItem.status_date)==date.month).\
                                                      filter(extract('day',ParliamentaryItem.status_date)==date.day)
-                                                     
+
+
+class ProfileTraverser(ContainerTraverser):
+
+    def publishTraverse(self, request, name):
+
+        # Shortcut for current user workspace
+        if name == u"profile":
+            session = Session()
+            user_id = get_db_user_id(self.context) 
+            user = session.query(User)\
+                          .filter(User.user_id==user_id).first()
+            if user is not None:
+                user.__parent__ = self.context
+                user.__name__ = "profile"
+                return user
+            else:
+                return NotFound(self.context, name, request)
+            
+        return super(ProfileTraverser, self).publishTraverse(request, name)                                                     
+
                                                     
 class Permalink(AbsoluteURL):
     """ Custom absoluteURL view for objects in bungeni section. """

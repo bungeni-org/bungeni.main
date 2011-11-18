@@ -848,4 +848,12 @@ class DeleteForm(PageForm):
                        "/?portal_status_message=%d items deleted" % count
 
         self.request.response.redirect(next_url)
+        
+    @formlib.form.action(_(u"Cancel"), validator=ui.null_validator)
+    def delete_cancel(self, action, data):
+        """Cancelling redirects to the listing."""
+        session = Session()
+        if not self._next_url:
+            self._next_url = url.absoluteURL(self.context, self.request)
+        self.request.response.redirect(self._next_url)
 

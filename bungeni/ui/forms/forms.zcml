@@ -333,6 +333,41 @@ Unauthorized: (<zope.app.publisher.browser.viewmeta.AddForm object at ...>, 'bro
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
 
+	<!-- User -->
+    <browser:page name="edit-profile" for="bungeni.models.interfaces.IUser"
+        class="bungeni.ui.login.Profile"
+        permission="bungeni.user.Edit"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    
+    <browser:page name="change-password" for="bungeni.models.interfaces.IUser"
+        class="bungeni.ui.login.ChangePasswordForm"
+        permission="bungeni.user.Edit"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    
+    <browser:page name="add" for="bungeni.models.domain.UserAddressContainer"
+        class=".common.AddForm"
+        permission="bungeni.address.Add"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    <browser:page name="edit" for="bungeni.models.domain.UserAddress"
+        class=".common.EditForm"
+        permission="bungeni.address.Edit"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    <browser:page name="delete" for="bungeni.models.domain.UserAddress"
+        class=".common.DeleteForm"
+        permission="bungeni.address.Delete"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    
+    <browser:page name="view" for="bungeni.models.domain.UserAddress"
+        class=".forms.UserAddressDisplayForm"
+        permission="zope.View"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    
     <!-- UserDelegations -->
     <browser:page name="view"
         for="bungeni.models.interfaces.IUserDelegation"

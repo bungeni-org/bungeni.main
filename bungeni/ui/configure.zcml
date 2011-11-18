@@ -95,6 +95,13 @@
             attributes="__call__ browserDefault" />
     </class>
 
+    <!-- Custom profile traverser -->    
+    <class class = ".traversal.ProfileTraverser">
+        <require permission = "bungeni.user.Edit" 
+        		 interface = "zope.publisher.interfaces.IPublishTraverse" />
+        <require permission = "bungeni.user.Edit" 
+        		 attributes = "browserDefault" />
+    </class>
 
   <!-- Custom absolute_url -->
   <include file="absoluteurl.zcml" />

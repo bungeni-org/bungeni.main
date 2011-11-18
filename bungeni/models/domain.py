@@ -11,6 +11,7 @@ $Id$
 log = __import__("logging").getLogger("bungeni.models.domain")
 
 import md5, random, string
+import datetime
 
 from zope import interface, location
 from bungeni.alchemist import Session
@@ -254,6 +255,13 @@ class UserDelegation(Entity):
 class CurrentlyEditingDocument(object):
     """The document (parliamentary item) 
     that the user is currently being editing"""
+    
+class PasswordRestoreLink(object):
+    """Object containing hash and expiration date for
+    password restoration form"""
+    
+    def expired(self):
+        return self.expiration_date < datetime.datetime.now() 
 
 #class HansardReporter(User):
 #    """ a reporter who reports on parliamentary procedings

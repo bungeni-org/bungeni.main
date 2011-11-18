@@ -64,6 +64,11 @@ class LongTextWidget(TextWidget):
     displayWidth = 90
 
 
+class HiddenTextWidget(zope.app.form.browser.textwidgets.TextWidget):
+    def __call__(self):
+        return self.hidden()
+
+
 class HiddenTimestampWidget(zope.app.form.browser.textwidgets.TextWidget):
     def __call__(self):
         return self.hidden()
