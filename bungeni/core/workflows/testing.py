@@ -30,3 +30,13 @@ def setup_security_adapters():
     #     (bungeni.models.interfaces.IBungeniContent,),
     #     zope.securitypolicy.interfaces.IRolePermissionMap) 
 
+
+from bungeni.core.workflow.states import get_object_state
+from bungeni.core.workflow.xmlimport import ACTIONS_MODULE
+def version_increment_for_state(context):
+    """Return 0 or 1, depending on whether the current workflow state 
+    defines a version="true".
+    """
+    state = get_object_state(context)
+    return int(ACTIONS_MODULE.create_version in state.actions)
+
