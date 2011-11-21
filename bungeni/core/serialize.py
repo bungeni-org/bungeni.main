@@ -19,6 +19,8 @@ from StringIO import StringIO
 from zipfile import ZipFile
 from xml.etree.cElementTree import Element, ElementTree
 
+from tempfile import NamedTemporaryFile as tmp
+
 
 def setupStorageDirectory(part_target="xml_db"):
     """ Returns path to store xml files.
@@ -60,38 +62,57 @@ def publish_to_xml(context, type="", include=None):
         include.append("event")
     
     data = obj2dict(context,1,parent=None,include=include,
-                    exclude=["file_data", "image", "logo_data","event_item"])
+                    exclude=["file_data", "image", "logo_data","event_item",
+                             "attached_files"])
     if type=="":
         type = getattr(context,"type", None)
         
         permissions = get_object_state_rpm(context).permissions
         data["permissions"]= get_permissions_dict(permissions)
 
-    assert type, "%s has no 'type' field. Use 'type' function parameter." % context.__class__
+    assert type, "%s has no 'type' field. Use 'type' function parameter." \
+                    % context.__class__
                 
+    # list of files to zip
     files = []
+    # setup path to save serialized data 
     path = os.path.join(setupStorageDirectory(), type)
     if not os.path.exists(path):
         os.makedirs(path)
-        
-    file_path = os.path.join(path,stringKey(context))
-    files.append(file_path+".xml") 
-    with open(file_path+".xml","w") as file:
-        file.write(serialize(data, name=type))
+    
+    # xml file path
+    file_path = os.path.join(path,stringKey(context)) 
     
     if IAttachmentable.implementedBy(context.__class__):
         attached_files = getattr(context, "attached_files", None)
         if attached_files:
+            # add xml file to list of files to zip
+            files.append(file_path+".xml")
+            data["attached_files"] = []
             for attachment in attached_files:
-                attachment_path = os.path.join(path, attachment.file_name)
-                files.append(attachment_path)
-                with open(os.path.join(path, attachment.file_name), "wb") as file:
+                # serializing attachment
+                attachment_dict = obj2dict(attachment,1,parent=context,
+                    exclude=["file_data", "event_item","versions","changes"])
+                # saving attachment to tmp
+                with tmp(delete=False) as file:
                     file.write(attachment.file_data)
-            zip = ZipFile(file_path+".zip", "w")
-            for file in files:
-                zip.write(file, os.path.split(file)[-1])
-                os.remove(file)
-            zip.close()    
+                    files.append(file.name)
+                    attachment_dict["saved_file"] = os.path\
+                                                       .split(file.name)[-1]  
+                data["attached_files"].append(attachment_dict)
+    
+    # saving xml file
+    with open(file_path+".xml","w") as file:
+        file.write(serialize(data, name=type))
+    
+    # zipping xml and attached files 
+    # unzipped files are removed
+    if attached_files:
+        zip = ZipFile(file_path+".zip", "w")
+        for file in files:
+            zip.write(file, os.path.split(file)[-1])
+            os.remove(file)
+        zip.close()
 
 
 def serialize(data, name="object"):
