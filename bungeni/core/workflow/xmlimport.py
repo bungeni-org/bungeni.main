@@ -38,7 +38,7 @@ ID_RE = re.compile("^[\w\d_]+$")
 
 FEATURE_ATTRS = ("name", "enabled", "note")
 
-STATE_ATTRS = ("id", "title", "version", "like_state", "note",
+STATE_ATTRS = ("id", "title", "version", "publish", "like_state", "note",
     "permissions_from_parent", "obsolete")
 
 TRANS_ATTRS_REQUIREDS = ("title", "source", "destination")
@@ -253,7 +253,7 @@ def _load(workflow, name):
         validate_id(state_id, "state")
         # actions
         actions = []
-        # version
+        # version (prior to any custom actions)
         if strip_none(s.get("version")) is not None:
             make_version = as_bool(strip_none(s.get("version")))
             if make_version is None:
@@ -261,13 +261,21 @@ def _load(workflow, name):
                     '[version="%s"]' % s.get("version"))
             if make_version:
                 actions.append(ACTIONS_MODULE.create_version)
-        
         # state-id-inferred action - if "actions" module defines an action for
         # this state (associated via a naming convention), then use it.
         # !+ tmp, until actions are user-exposed as part of <state>
         action_name = "_%s_%s" % (name, state_id)
         if hasattr(ACTIONS_MODULE, action_name):
             actions.append(getattr(ACTIONS_MODULE, action_name))
+        # publish (after any custom actions)
+        if strip_none(s.get("publish")) is not None:
+            do_pub = as_bool(strip_none(s.get("publish")))
+            if do_pub is None:
+                raise ValueError("Invalid state value "
+                    '[publish="%s"]' % s.get("publish"))
+            if do_pub:
+                actions.append(ACTIONS_MODULE.publish_to_xml)
+        
         # @like_state, permissions
         permissions = [] # [ tuple(bool:int, permission:str, role:str) ]
         # state.@like_state : to reduce repetition and enhance maintainibility

@@ -18,7 +18,6 @@ import collections
 from StringIO import StringIO
 from zipfile import ZipFile
 from xml.etree.cElementTree import Element, ElementTree
-
 from tempfile import NamedTemporaryFile as tmp
 
 
@@ -37,18 +36,25 @@ def setupStorageDirectory(part_target="xml_db"):
     
     return store_dir
 
+
 def get_permissions_dict(permissions):
     results= []
     for x in permissions:
+        # !+XML pls read the styleguide
         results.append({"role":x[2], 
                         "permission":x[1], 
                         "setting":x[0] and "Allow" or "Deny"})
     return results
 
 
+# !+XML include optional parameter here is useless
+# !+XML type should be inferred to from context either via IWorkflow(context).name
+# or via something like context.__class__.__name__.lowercase()
+# !+XML publish_to_xml should follow the generic action signature (including the 
+# return value --see workflows/_actions.py.
 def publish_to_xml(context, type="", include=None):
-    """ Generates XML for object and saves it to the file. If object contains
-        attachments - XML is saved in zip archive with all attached files. 
+    """Generates XML for object and saves it to the file. If object contains
+    attachments - XML is saved in zip archive with all attached files. 
     """
     
     if include is None:
@@ -61,18 +67,21 @@ def publish_to_xml(context, type="", include=None):
     if IAuditable.implementedBy(context.__class__):
         include.append("event")
     
-    data = obj2dict(context,1,parent=None,include=include,
-                    exclude=["file_data", "image", "logo_data","event_item",
-                             "attached_files"])
+    data = obj2dict(context, 1, 
+        parent=None,
+        include=include,
+        exclude=["file_data", "image", "logo_data", "event_item", 
+            "attached_files"]
+    )
     if type=="":
-        type = getattr(context,"type", None)
-        
+        type = getattr(context, "type", None)
+        # !+XML why is this inside this if block? 
         permissions = get_object_state_rpm(context).permissions
         data["permissions"]= get_permissions_dict(permissions)
-
-    assert type, "%s has no 'type' field. Use 'type' function parameter." \
-                    % context.__class__
-                
+    
+    assert type, "%s has no 'type' field. Use 'type' function parameter." % (
+        context.__class__)
+    
     # list of files to zip
     files = []
     # setup path to save serialized data 
@@ -81,37 +90,38 @@ def publish_to_xml(context, type="", include=None):
         os.makedirs(path)
     
     # xml file path
-    file_path = os.path.join(path,stringKey(context)) 
+    file_path = os.path.join(path, stringKey(context)) 
     
     if IAttachmentable.implementedBy(context.__class__):
         attached_files = getattr(context, "attached_files", None)
         if attached_files:
             # add xml file to list of files to zip
-            files.append(file_path+".xml")
+            files.append("%s.xml" % (file_path))
             data["attached_files"] = []
             for attachment in attached_files:
                 # serializing attachment
-                attachment_dict = obj2dict(attachment,1,parent=context,
-                    exclude=["file_data", "event_item","versions","changes"])
+                attachment_dict = obj2dict(attachment, 1,
+                    parent=context,
+                    exclude=["file_data", "event_item", "versions", "changes"])
                 # saving attachment to tmp
-                with tmp(delete=False) as file:
-                    file.write(attachment.file_data)
-                    files.append(file.name)
-                    attachment_dict["saved_file"] = os.path\
-                                                       .split(file.name)[-1]  
+                with tmp(delete=False) as f:
+                    f.write(attachment.file_data)
+                    files.append(f.name)
+                    attachment_dict["saved_file"] = \
+                        os.path.split(f.name)[-1]  
                 data["attached_files"].append(attachment_dict)
     
     # saving xml file
-    with open(file_path+".xml","w") as file:
+    with open("%s.xml" % (file_path), "w") as file:
         file.write(serialize(data, name=type))
     
     # zipping xml and attached files 
     # unzipped files are removed
     if attached_files:
-        zip = ZipFile(file_path+".zip", "w")
-        for file in files:
-            zip.write(file, os.path.split(file)[-1])
-            os.remove(file)
+        zip = ZipFile("%s.zip" % (file_path), "w")
+        for f in files:
+            zip.write(f, os.path.split(f)[-1])
+            os.remove(f)
         zip.close()
 
 
@@ -163,7 +173,8 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[]):
         value = getattr(obj, name, None)
         if value is None:
             continue
-        if not name.endswith("s"): name += "s"
+        if not name.endswith("s"):
+            name += "s"
         if isinstance(value, collections.Iterable):
             res = []
             for item in value.values():
@@ -191,13 +202,19 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[]):
                 result[property.key] = []
                 for item in value:
                     result[property.key].append(obj2dict(item, depth-1, 
-                                                         parent=obj,include=[],
-                                                         exclude=exclude+["changes",]))
+                            parent=obj,
+                            include=[],
+                            exclude=exclude + ["changes"]
+                    ))
             else:
-                result[property.key] = obj2dict(value, depth-1, parent=obj,
-                                                include=[],exclude=exclude+["changes",])
+                result[property.key] = obj2dict(value, depth-1, 
+                    parent=obj,
+                    include=[],
+                    exclude=exclude + ["changes"]
+                )
         else:
             if isinstance(property, RelationshipProperty):
                 continue
             result[property.key] = value
     return result
+

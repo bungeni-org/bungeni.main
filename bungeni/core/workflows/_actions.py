@@ -11,7 +11,7 @@ following simple naming convention:
 
     _{workflow_name}_{state_name}
 
-Signature of all (both private and public) action callables: !+WFINFO
+Signature of all (both private and public) action callables:
 
     (context:Object) -> None
 
@@ -29,14 +29,20 @@ from bungeni.core.workflows import dbutils
 from ore.alchemist import Session
 import zope.event
 import zope.lifecycleevent
-from bungeni.core.serialize import publish_to_xml
 
 import sys
 import traceback
 
-# special handled action to make a new version of a ParliamentaryItem, that is 
+
+# specially handled actions
+
+# make a new version of a document
 # not tied to a state name, but to <state> @version bool attribute
 create_version = utils.create_version
+
+# publish document to xml
+# not tied to a state name, but to <state> @publish bool attribute
+from bungeni.core.serialize import publish_to_xml
 
 
 # parliamentary item, utils
@@ -70,9 +76,11 @@ def _address_private(context):
     if user_login:
         utils.assign_owner_role(context, user_login)
 
+''' !+XML 
 def _address_attached(context):
+    # !+XML this is anyway incorrect, what about useraddress (uses same workflow)
     publish_to_xml(context, type="groupaddress", include=[])
-
+'''
 
 
 # agendaitem
@@ -80,7 +88,6 @@ def _address_attached(context):
 _agendaitem_draft = _agendaitem_working_draft = __pi_create
 _agendaitem_submitted = __pi_submit
 _agendaitem_redraft = __pi_redraft
-_agendaitem_admissible = publish_to_xml
 
 
 # bill
@@ -88,11 +95,9 @@ _agendaitem_admissible = publish_to_xml
 _bill_draft = _bill_working_draft = __pi_create
 _bill_redraft = __pi_redraft
 _bill_submitted = __pi_submit
-_bill_approved = publish_to_xml
 
 def _bill_gazetted(context):
     utils.setBillPublicationDate(context)
-    publish_to_xml(context)
 
 # group
 
@@ -106,7 +111,6 @@ def _group_draft(context):
 
 def _group_active(context):
     utils.set_group_local_role(context)
-    publish_to_xml(context, type="group")
 
 def _group_dissolved(context):
     """ when a group is dissolved all members of this 
@@ -141,7 +145,6 @@ def _groupsitting_draft_agenda(context):
         
 def _groupsitting_published_agenda(context):
     utils.schedule_sitting_items(context)
-    publish_to_xml(context, type="groupsitting",include=[])
 
 
 # motion
@@ -152,12 +155,9 @@ _motion_redraft = __pi_redraft
 
 def _motion_admissible(context):
     dbutils.setMotionSerialNumber(context)
-    publish_to_xml(context)
 
 
 # question
-
-_question_response_completed = publish_to_xml
 
 def __question_create(context):
     __pi_create(context)
@@ -185,15 +185,6 @@ def _question_admissible(context):
     or is available for scheduling in a sitting.
     """
     dbutils.setQuestionSerialNumber(context)
-    publish_to_xml(context)
-
-
-
-def _heading_public(context):
-    publish_to_xml(context,type="heading",include=[])
-
-def _report_published(context):
-    publish_to_xml(context,type="report",include=[])
 
 
 # tableddocument
@@ -207,7 +198,6 @@ def _tableddocument_adjourned(context):
 
 def _tableddocument_admissible(context):
     dbutils.setTabledDocumentSerialNumber(context)
-    publish_to_xml(context)
 
 
 # user
@@ -215,7 +205,6 @@ def _tableddocument_admissible(context):
 def _user_A(context):
     utils.assign_owner_role(context, context.login)
     context.date_of_death = None
-    publish_to_xml(context, type="user", include=[])
 
 #
 
@@ -277,8 +266,5 @@ def _event_private(context):
     login = utils.get_principal_id()
     if login is not None:
         utils.assign_owner_role(context, login)
-
-def _event_attached(context):
-    publish_to_xml(context, include=[])
 
 
