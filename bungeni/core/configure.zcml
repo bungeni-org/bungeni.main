@@ -186,11 +186,6 @@
     <class class=".app.BungeniApp">
         <allow interface="zope.app.container.interfaces.IReadContainer" />
     </class>
-    <!-- !+CRUFT (miano, nov-2010) possible cruft-->
-    <!--class 
-        class=".app.BungeniAdmin">
-            <allow interface="zope.app.container.interfaces.IReadContainer" />
-    </class-->
     
     <class class=".content.Section">
         <allow attributes="title description"

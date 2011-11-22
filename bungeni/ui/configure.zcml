@@ -52,7 +52,7 @@
   <include package=".viewlets" />
     
     <!-- Audit UI-->
-    <class class=".audit.ChangeLog">
+    <class class=".audit.AuditLog">
         <require permission="bungeni.auditlog.View" 
             attributes="__call__ browserDefault" />
     </class>
@@ -94,7 +94,7 @@
         <require permission="zope.ManageSite" 
             attributes="__call__ browserDefault" />
     </class>
-
+    
     <!-- Custom profile traverser -->    
     <class class = ".traversal.ProfileTraverser">
         <require permission = "bungeni.user.Edit" 

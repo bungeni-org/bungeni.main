@@ -34,11 +34,12 @@ def checkVisibleChange(change):
         if checkPermission("zope.View", change):
             return True
     else:
-        # no status, must be a changelog for object creation--whatever it is
+        # no status, must be a change log for object creation--whatever it is
         # we assume that it is visible only to the owner of *head* object
-        # !+added(mr, nov-2011) for when the Clerk creates on behalf of an MP,
-        # this assumption gives a somewhat strange that the MP can see the 
-        # added log entry, but the Clerk can not (as he is not the owner).
+        # !+add(mr, nov-2011) for when the Clerk creates on behalf of an MP,
+        # above assumption behaves in a somewhat strange way, in that the MP 
+        # can see the added log entry, but the Clerk can not (as he is not 
+        # the owner).
         # !+IOwned(mr, nov-2011) this assumes that the head instance has an
         # owner.
         if _conditions.user_is_context_owner(change.head):
@@ -46,14 +47,16 @@ def checkVisibleChange(change):
     return False
 
 
-class ChangeBaseView(browser.BungeniBrowserView):
-    """Base view for looking at changes to context.
+class AuditLogBase(browser.BungeniBrowserView):
+    """Base view for audit change log for a context.
     """
     
+    #!+TABLEFORMATTER(mr, nov-2011) seems to be the only palce where a 
+    # table formatter is used but is not bungeni.ui.table.TableFormatter
     formatter_factory = batching.Formatter
     
     def __init__(self, context, request):
-        super(ChangeBaseView, self).__init__(context, request)
+        super(AuditLogBase, self).__init__(context, request)
         # table to display the versions history
         formatter = date.getLocaleFormatter(self.request, "dateTime", "short")
         
@@ -62,23 +65,24 @@ class ChangeBaseView(browser.BungeniBrowserView):
         # that, when sorted as a string, gives correct results.
         self.columns = [
             column.GetterColumn(title=_(u"action"), 
-                    getter=lambda i,f:i.action),
+                    getter=lambda i,f: i.action),
             column.GetterColumn(title=_(u"date"),
-                    getter=lambda i,f:formatter.format(i.date_active)),
+                    getter=lambda i,f: formatter.format(i.date_active)),
             column.GetterColumn(title=_(u"user"), 
-                    getter=lambda i,f:IDCDescriptiveProperties(i.user).title),
+                    getter=lambda i,f: IDCDescriptiveProperties(i.user).title),
             column.GetterColumn(title=_(u"description"), 
-                    getter=lambda i,f:i.description),
+                    getter=lambda i,f: i.description),
             column.GetterColumn(title=_(u"audit date"),
-                    getter=lambda i,f:formatter.format(i.date_audit)),
+                    getter=lambda i,f: formatter.format(i.date_audit)),
         ]
     
     def listing(self):
         formatter = self.formatter_factory(self.context, self.request,
-                        self.get_feed_entries(),
-                        prefix="results",
-                        visible_column_names=[ c.name for c in self.columns ],
-                        columns=self.columns)
+            self.get_feed_entries(),
+            prefix="results",
+            visible_column_names=[ c.name for c in self.columns ],
+            columns=self.columns
+        )
         formatter.cssClasses["table"] = "listing"
         formatter.updateBatching()
         return formatter()
@@ -87,7 +91,7 @@ class ChangeBaseView(browser.BungeniBrowserView):
     def _change_class(self):
         auditor = audit.get_auditor(self.context)
         return auditor.change_class
-        
+    
     def get_feed_entries(self):
         instance = removeSecurityProxy(self.context)
         session = Session()
@@ -103,7 +107,7 @@ class ChangeBaseView(browser.BungeniBrowserView):
 
 
 @register.view(IAuditable, name="audit-log")
-class ChangeLog(ChangeBaseView):
+class AuditLog(AuditLogBase):
     """Change Log View for an object
     """
     
@@ -116,7 +120,7 @@ class ChangeLog(ChangeBaseView):
     _page_title = "Change Log"
     
     def __init__(self, context, request):
-        super(ChangeLog, self).__init__(context, request)
+        super(AuditLog, self).__init__(context, request)
         if hasattr(self.context, "short_name"):
             self._page_title = "%s: %s" % (
                 _(self._page_title), _(self.context.short_name))

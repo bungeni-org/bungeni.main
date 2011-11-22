@@ -15,7 +15,6 @@ from zope.interface.declarations import alsoProvides
 
 from zope.app.appsetup.appsetup import getConfigContext
 from zope.app.component import site
-from zope.app.container.sample import SampleContainer
 from zope.location.interfaces import ILocation
 
 from ore.wsgiapp.app import Application
@@ -34,20 +33,18 @@ from bungeni.models.utils import container_getter
 from bungeni.ui.utils import url, common
 from bungeni.models.workspace import WorkspaceContainer
 
+
 def onWSGIApplicationCreatedEvent(application, event):
-    """Subscriber to the ore.wsgiapp.interfaces.IWSGIApplicationCreatedEvent."""
+    """Subscriber to the ore.wsgiapp.interfaces.IWSGIApplicationCreatedEvent.
+    """
     initializer = model_interfaces.IBungeniSetup(application)
     initializer.setUp()
     log.debug("onWSGIApplicationCreatedEvent: _features: %s" % (
-                                        getConfigContext()._features))
+        getConfigContext()._features))
+
 
 class BungeniApp(Application):
     implements(model_interfaces.IBungeniApplication)
-
-#!CRUFT (miano, nov-2010) possible cruft
-#class BungeniAdmin(SampleContainer):
-#    implements(model_interfaces.IBungeniAdmin )
-
 
 
 class AppSetup(object):

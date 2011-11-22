@@ -39,10 +39,10 @@ class LibraryViewlet(viewlet.ViewletBase):
     def __init__(self, context, request, view, manager):
         self.context = []
         trusted = removeSecurityProxy(context)
-        # !+(murithi, mar-2010 )Attached file versions implement IVersion 
-        # but have no attached files - an adapter on all content
-        # might make sense to fetch attachments. 
-        # here we conditionaly skip attachment versions
+        # !+AttachedFileVersion(murithi, mar-2010) Attached file versions 
+        # implement IVersion but have no attached files - an adapter on all 
+        # content might make sense to fetch attachments. 
+        # here we conditionally skip attachment versions
         if not IAttachedFileVersion.providedBy(trusted):
             for f in trusted.attached_files:
                 if IAttachedFileVersion.providedBy(f):

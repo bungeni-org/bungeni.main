@@ -47,6 +47,16 @@ class UserListing(BrowserView):
     pass
 
 
+''' !+UNUSED_BROKEN(mr, nov-2011) admin/groups, with security declarations
+below, gives:
+'AdminSection' object has no attribute 'domain_model'
+> /home/undesa/cinst/bungeni/src/alchemist.ui/alchemist/ui/container.py(47)update()
+
+    <class class=".admin.GroupListing">
+        <require permission="zope.ManageSite" 
+            attributes="__call__ browserDefault" />
+    </class>
+
 #permission="zope.ManageSite"
 @register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="groups")
 class GroupListing(container.AjaxContainerListing):
@@ -59,8 +69,11 @@ class GroupListing(container.AjaxContainerListing):
             return self.fields
     
     formatter_factory = GroupFormatter
+'''
 
 
+''' !+UNUSED(mr, nov-2011) admin/query-users gives NotFound.
+ZCA registration moved to in-place in r8754.
 #permission="zope.ManageSite"
 @register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="query-users")
 class UserQueryJSON(search.ConstraintQueryJSON):
@@ -78,7 +91,8 @@ class UserQueryJSON(search.ConstraintQueryJSON):
                 object_type=i.data.get("object_type", ("",))[0]
             ))
         return r
-        
+'''
+
 ''' !+UNUSED(mr, nov-2011)
 class GroupQueryJSON(search.ConstraintQueryJSON):
     def getConstraintQuery(self):

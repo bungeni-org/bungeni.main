@@ -119,6 +119,7 @@ class AjaxContainerListing(container.AjaxContainerListing):
         return "container_contents_%s" % (context.__name__)
 
 
+''' !+UNUSED(mr, nov-2011)
 class SimpleContainerListing(table.Formatter):
     """Renders a simple listing of container elements using DC properties
     """
@@ -126,3 +127,5 @@ class SimpleContainerListing(table.Formatter):
         return '\n<h1>%s</h1><table%s>\n%s</table>\n%s' % (
                 listing_title, self._getCSSClass('table'), self.renderRows(),
                 self.renderExtra())
+'''
+
