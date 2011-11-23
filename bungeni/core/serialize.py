@@ -56,7 +56,6 @@ def publish_to_xml(context, type="", include=None):
     """Generates XML for object and saves it to the file. If object contains
     attachments - XML is saved in zip archive with all attached files. 
     """
-    
     if include is None:
         include = []
     
@@ -92,9 +91,11 @@ def publish_to_xml(context, type="", include=None):
     # xml file path
     file_path = os.path.join(path, stringKey(context)) 
     
+    has_attachments = False
     if IAttachmentable.implementedBy(context.__class__):
         attached_files = getattr(context, "attached_files", None)
         if attached_files:
+            has_attachments = True
             # add xml file to list of files to zip
             files.append("%s.xml" % (file_path))
             data["attached_files"] = []
@@ -117,7 +118,7 @@ def publish_to_xml(context, type="", include=None):
     
     # zipping xml and attached files 
     # unzipped files are removed
-    if attached_files:
+    if has_attachments:
         zip = ZipFile("%s.zip" % (file_path), "w")
         for f in files:
             zip.write(f, os.path.split(f)[-1])
