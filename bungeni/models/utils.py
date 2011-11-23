@@ -15,7 +15,7 @@ from bungeni.alchemist import Session
 import sqlalchemy as rdb
 from sqlalchemy import sql
 from sqlalchemy.orm import eagerload  #, lazyload
-import domain, schema
+import domain, schema, delegation
 
 # !+ move "contextual" utils to ui.utils.contextual
 
@@ -54,6 +54,17 @@ def get_db_user_id(context=None):
     db_user = get_db_user(context)
     if db_user is not None:
         return db_user.user_id
+
+def is_current_or_delegated_user(user):
+    """Is this user (a delegation of) the currently logged user?
+    """
+    current_user = get_db_user()
+    if current_user == user:
+        return True
+    for d in delegation.get_user_delegations(current_user.user_id):
+        if d == user:
+            return True
+
 
 # contextual
 def get_current_parliament(context=None):

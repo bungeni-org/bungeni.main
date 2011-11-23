@@ -52,13 +52,19 @@ def formatted_user_email(user):
 
 # parliamentary item
 
-def get_owner_login_pi(context):
-    """Get the login of the user who has been previously set as the owner of 
-    this item (must support IOwned i.e. ParliamentaryItem or AttachedFile).
+def get_owner_pi(context):
+    """Get the user who has been previously set as the owner of this item 
+    (must support IOwned i.e. ParliamentaryItem or AttachedFile).
     """
     assert interfaces.IOwned.providedBy(context), \
         "Not an Owned (parliamentary) Item: %s" % (context)
-    return dbutils.get_user(context.owner_id).login
+    return dbutils.get_user(context.owner_id)
+
+def get_owner_login_pi(context):
+    """Get the login of the user who is the owner of this item.
+    #!+ CLEANOUT, just use get_owner_pi(context).login directly
+    """
+    return get_owner_pi(context).login
 
 def assign_owner_role(context, login):
     # throws IntegrityError when login is None

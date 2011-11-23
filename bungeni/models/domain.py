@@ -34,7 +34,7 @@ def object_hierarchy_type(object):
     return ""
 
 def get_changes(auditable, *actions):
-    """Get changelog for auditable context, filtered for action.
+    """Get changelog for auditable context, filtered for actions.
     """
     # !+ assert *actions in CHANGE_ACTIONS
     return [ c for c in auditable.changes if c.action in actions ]

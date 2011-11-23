@@ -16,7 +16,7 @@ from zope.security import checkPermission
 from bungeni.alchemist import Session
 from bungeni.models.interfaces import IAuditable, ISignatoriesValidator
 from bungeni.models import domain
-from bungeni.models import utils as model_utils, delegation
+from bungeni.models import utils as model_utils
 from bungeni.core import globalsettings as prefs
 from bungeni.core.workflows import utils
 from bungeni.core.audit import CHANGE_ACTIONS
@@ -34,17 +34,13 @@ def user_is_not_context_owner(context):
 
 def user_is_context_owner(context):
     """Test if current user is the context owner e.g. to check if someone 
-        manipulating the context object is other than the owner of the object.
+    manipulating the context object is other than the owner of the object.
         
-        A delegate is considered to be an owner of the object
+    A delegate is considered to be an owner of the object
     """
-    user = model_utils.get_db_user()
-    owner_login = utils.get_owner_login_pi(context)
-    if user.login == owner_login:
-        return True
-    delegations = delegation.get_user_delegations(user.user_id)
-    users = [delegate.login for delegate in delegations]
-    return owner_login in users
+    owner = utils.get_owner_pi(context)
+    return model_utils.is_current_or_delegated_user(owner)
+
 
 def user_may_edit_context_parent(context):
     """Does user have edit permission on the context's parent?

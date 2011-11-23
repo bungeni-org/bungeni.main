@@ -17,8 +17,8 @@ from zc.table import batching, column
 
 from bungeni.alchemist import Session
 from bungeni.models.interfaces import IAuditable
+from bungeni.models.utils import is_current_or_delegated_user
 from bungeni.core import audit
-from bungeni.core.workflows import _conditions
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import date
 from bungeni.ui import browser
@@ -26,7 +26,7 @@ from bungeni.ui import z3evoque
 from bungeni.utils import register
 
 
-def checkVisibleChange(change):
+def check_visible_change(change):
     """Check visibility permission for a change log entry.
     """
     change.__parent__ = change.head
@@ -35,15 +35,8 @@ def checkVisibleChange(change):
             return True
     else:
         # no status, must be a change log for object creation--whatever it is
-        # we assume that it is visible only to the owner of *head* object
-        # !+add(mr, nov-2011) for when the Clerk creates on behalf of an MP,
-        # above assumption behaves in a somewhat strange way, in that the MP 
-        # can see the added log entry, but the Clerk can not (as he is not 
-        # the owner).
-        # !+IOwned(mr, nov-2011) this assumes that the head instance has an
-        # owner.
-        if _conditions.user_is_context_owner(change.head):
-            return True
+        # we assume that it is visible only to the user who affected *change*
+        return is_current_or_delegated_user(change.user)
     return False
 
 
@@ -102,7 +95,7 @@ class AuditLogBase(browser.BungeniBrowserView):
                 ).filter_by(content_id=content_id
                 ).order_by(desc(self._change_class.change_id)
                 ).all()
-            if checkVisibleChange(c) ]
+            if check_visible_change(c) ]
         return changes
 
 
