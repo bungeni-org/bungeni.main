@@ -638,7 +638,7 @@ def default_reports(sitting, event):
         report.start_date = sitting.start_date
         report.end_date = sitting.end_date
         # owner ID is the ID of the user who performed last workflow change
-        for change in reversed(get_changes(sitting, "workflow")):
+        for change in reversed(domain.get_changes(sitting, "workflow")):
             owner_id = change.user_id
             break
         assert owner_id is not None, \
