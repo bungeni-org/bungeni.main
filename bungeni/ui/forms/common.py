@@ -45,7 +45,7 @@ from bungeni.alchemist import Session
 from bungeni.alchemist import catalyst
 from bungeni.alchemist import ui
 from bungeni.alchemist.model import queryModelDescriptor
-from bungeni.alchemist.interfaces import IAlchemistContainer
+from bungeni.alchemist.interfaces import IAlchemistContainer, IAlchemistContent
 from bungeni.core.translation import get_language_by_name
 from bungeni.core.language import get_default_language
 from bungeni.core.translation import is_translation
@@ -234,7 +234,7 @@ class BaseForm(formlib.form.FormBase):
         unproxied = removeSecurityProxy(self.context)
         if IAlchemistContainer.providedBy(unproxied):
             return unproxied.domain_model
-        elif IBungeniContent.providedBy(unproxied):
+        elif IAlchemistContent.providedBy(unproxied):
             return unproxied.__class__
         else:
             raise AttributeError("Could not find domain model for context: %s",
