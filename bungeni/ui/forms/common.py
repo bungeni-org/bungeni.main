@@ -45,6 +45,7 @@ from bungeni.alchemist import Session
 from bungeni.alchemist import catalyst
 from bungeni.alchemist import ui
 from bungeni.alchemist.model import queryModelDescriptor
+from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.core.translation import get_language_by_name
 from bungeni.core.language import get_default_language
 from bungeni.core.translation import is_translation
@@ -224,6 +225,22 @@ class BaseForm(formlib.form.FormBase):
         return filter(None,
                 [ error.message for error in self.invariantErrors ])
 
+    @cached_property.cachedIn("__cached_descriptor__")
+    def model_descriptor(self):
+        return queryModelDescriptor(self.domain_model)
+
+    @cached_property.cachedIn("__cached_domain__")
+    def domain_model(self):
+        unproxied = removeSecurityProxy(self.context)
+        if IAlchemistContainer.providedBy(unproxied):
+            return unproxied.domain_model
+        elif IBungeniContent.providedBy(unproxied):
+            return unproxied.__class__
+        else:
+            raise AttributeError("Could not find domain model for context: %s",
+                unproxied
+            )
+
 # !+PageForm(mr, jul-2010) converge usage of formlib.form.PageForm to PageForm
 # !+NamedTemplate(mr, jul-2010) converge all views to not use anymore
 # !+alchemist.form(mr, jul-2010) converge all form views to not use anymore
@@ -317,14 +334,6 @@ class AddForm(BaseForm, catalyst.AddForm):
                             "choose ${title} ...",
                         mapping = {"title": field.title}
                     )
-
-    @cached_property.cachedIn("__cached_descriptor__")
-    def model_descriptor(self):
-        return queryModelDescriptor(self.domain_model)
-
-    @cached_property.cachedIn("__cached_domain__")
-    def domain_model(self):
-        return removeSecurityProxy(self.context).domain_model
 
     @property
     def context_class(self):
