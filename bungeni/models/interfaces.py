@@ -238,51 +238,58 @@ class IBungeniSettings(interface.Interface):
         default=False
     )
     clerks_office_email = schema.TextLine(
-        title = _(u"Clerks's Office Email"),
-        default = u"clerks.office@parliament.go.tld"
+        title=_(u"Clerks's Office Email"),
+        default=u"clerks.office@parliament.go.tld"
     )
     ministries_notification = schema.Bool(
-        title = _(u"Ministries Notification"),
-        description = _(u"Notify concerned ministries by e-mail when a document "
-        "is submitted"),
-        default = False
+        title=_(u"Ministries Notification"),
+        description=_(u"Notify concerned ministries by e-mail when a document "
+            "is submitted"
+        ),
+        default=False
     )
     administrators_email = schema.TextLine(
             title=_(u"Administrator's Email"),
-            default = u"admin@parliament.go.tld"
-            )
+            default=u"admin@parliament.go.tld"
+    )
     question_submission_allowed = schema.Bool(
         title=_(u"Allow Question Submission"),
-        default = True
+        default=True
     )
     days_to_defer_question = schema.Int(
         title=_(u"Days to Defer Question"),
         description=_(u"number of days after which admissible questions are "
-        "automatically deferred"),
-        default = 10
+            "automatically deferred"
+        ),
+        default=10
     )
     days_to_notify_ministry_unanswered = schema.Int(
         title=_(u"Days to Notify Ministry of Pending Response"),
         description=_(u"Days after which to notify concerned ministry and  "
             "clerk's office of questions with pending responses"
         ),
-        default = 5
+        default=5
     )
     days_before_question_schedule = schema.Int(
         title=_(u"Days before question scheduled"),
-        default = 3
+        default=3
     )
     days_before_bill_schedule = schema.Int(
         title=_(u"Days before bill scheduled"),
-        default = 3
+        default=3
     )
     max_questions_sitting = schema.Int(
         title=_(u"Maximum Questions Per Sitting"),
-        default = 15
+        default=15
     )
     max_mp_questions_sitting = schema.Int(
         title=_(u"Maximum Questions Per Sitting Per MP"),
-        default = 1
+        default=1
+    )
+    max_sittings_in_business = schema.Int(
+        title=_(u"Number of sittings to include in what's business section"),
+        default=5,
+        min=1
     )
     bill_signatories_min = schema.Int(
         title=_(u"Minimum consented signatories for a bill"), default=0

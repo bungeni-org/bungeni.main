@@ -10,10 +10,11 @@ from sqlalchemy.orm import eagerload, lazyload
 import sqlalchemy.sql.expression as sql
 
 from bungeni.models import domain, schema
+from bungeni.models.settings import BungeniSettings
 from bungeni.core.globalsettings import getCurrentParliamentId
 from bungeni.core.dc import IDCDescriptiveProperties
 
-from bungeni.ui.utils import misc, url, debug
+from bungeni.ui.utils import common, misc, url, debug
 from bungeni.ui.cookies import get_date_range
 from bungeni.ui.tagged import get_states
 
@@ -86,13 +87,19 @@ class WhatsOnBrowserView(BrowserView):
                 sql.between(
                     schema.group_sittings.c.start_date,
                     self.start_date,
-                    self.end_date))).order_by(
-                        schema.group_sittings.c.start_date).options(
-                        eagerload('group'), 
-                        #eagerload('sitting_type'),
-                        eagerload('item_schedule'), 
-                        eagerload('item_schedule.item')
+                    self.end_date
+                )
             )
+        ).order_by(
+            schema.group_sittings.c.start_date
+        ).options(
+            eagerload('group'), 
+            #eagerload('sitting_type'),
+            eagerload('item_schedule'), 
+            eagerload('item_schedule.item')
+        ).limit(
+            BungeniSettings(common.get_application()).max_sittings_in_business
+        )
         sittings = query.all()
         day = u''
         day_list = []
