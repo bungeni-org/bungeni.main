@@ -337,7 +337,7 @@ Unauthorized: (<zope.app.publisher.browser.viewmeta.AddForm object at ...>, 'bro
     <browser:page name="edit-profile" for="bungeni.models.interfaces.IUser"
         class="bungeni.ui.login.Profile"
         permission="bungeni.user.Edit"
-        layer="bungeni.ui.interfaces.IBungeniSkin"
+        layer="bungeni.ui.interfaces.IWorkspaceSectionLayer"
     />
     
     <browser:page name="change-password" for="bungeni.models.interfaces.IUser"

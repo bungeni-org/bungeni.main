@@ -978,7 +978,7 @@
         title="Edit"
         action="./edit-profile"
         permission="bungeni.user.Edit"
-        layer="bungeni.ui.interfaces.IBungeniSkin"
+        layer="bungeni.ui.interfaces.IWorkspaceSectionLayer"
         order="10"
     />
     
@@ -987,7 +987,7 @@
         title="Addresses"
         action="./addresses"
         permission="bungeni.user.Edit"
-        layer="bungeni.ui.interfaces.IBungeniSkin"
+        layer="bungeni.ui.interfaces.IWorkspaceSectionLayer"
         order="20"
     />
     
@@ -996,7 +996,7 @@
         title="change password"
         action="./change-password"
         permission="bungeni.user.Edit"
-        layer="bungeni.ui.interfaces.IBungeniSkin"
+        layer="bungeni.ui.interfaces.IWorkspaceSectionLayer"
         order="30"
     />
     

@@ -94,6 +94,9 @@ mapping_on_path = (
     (re.compile(r'^/workspace(?!/scheduling)(/.*)?$'), 
         interfaces.IWorkspaceSectionLayer
     ),
+    (re.compile(r'^/profile(/.*)?$'), 
+        interfaces.IWorkspaceSectionLayer
+    ),               
     # Matches "workspace/scheduling"
     (re.compile(r'^/workspace/scheduling(/.*)?$'),
         interfaces.IWorkspaceSchedulingSectionLayer
