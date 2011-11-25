@@ -48,7 +48,6 @@ class WhatsOnBrowserView(BrowserView):
         formatter = self.request.locale.dates.getFormatter('date', 'full') 
         return formatter.format(self.end_date)
 
-
     def get_start_date(self):
         formatter = self.request.locale.dates.getFormatter('date', 'full') 
         return formatter.format(self.start_date)
@@ -73,10 +72,9 @@ class WhatsOnBrowserView(BrowserView):
                     ),
                 })
             return s_list
-        
-    def get_sittings(self):
-        formatter = self.request.locale.dates.getFormatter('date', 'full') 
-        session = Session()
+
+    @property
+    def group_sittings_filter(self):
         if self.end_date:
             date_filter_expression = sql.between(
                 schema.group_sittings.c.start_date,
@@ -87,13 +85,20 @@ class WhatsOnBrowserView(BrowserView):
             date_filter_expression = (
                 schema.group_sittings.c.start_date >= self.start_date
             )
+        return sql.and_(
+            schema.group_sittings.c.status.in_(
+                get_states('groupsitting', not_tagged=["agendaprivate"])
+            ),
+            date_filter_expression
+        )
+
+
+    def get_sittings(self):
+        #!+QUERIES(mb, nov-2011) to review the extra queries in `get_items`
+        formatter = self.request.locale.dates.getFormatter('date', 'full') 
+        session = Session()
         query = session.query(domain.GroupSitting).filter(
-            sql.and_(
-                schema.group_sittings.c.status.in_(get_states('groupsitting',
-                    tagged=['public'])
-                ),
-                date_filter_expression
-            )
+            self.group_sittings_filter
         ).order_by(
             schema.group_sittings.c.start_date
         ).options(
@@ -144,25 +149,19 @@ class WhatsOnBrowserView(BrowserView):
 
     def get_items(self):
         session = Session()
-        where_clause = sql.and_(
-                schema.group_sittings.c.status.in_(get_states(
-                                    "groupsitting", tagged=["public"], 
-                                    not_tagged=["agendaprivate"], 
-                                    conjunction="AND")),
-                sql.between(
-                    schema.group_sittings.c.start_date,
-                    self.start_date,
-                    self.end_date))
-            
         query = session.query(domain.ItemSchedule).join(
             domain.GroupSitting
-            ).filter( 
-            where_clause).order_by(schema.group_sittings.c.start_date).options(
-                    eagerload('sitting'), eagerload('item'),
-                    #eagerload('sitting.sitting_type'),
-                    lazyload('item.owner'))
+        ).filter(
+            self.group_sittings_filter
+        ).order_by(
+            schema.group_sittings.c.start_date
+        ).options(
+            eagerload('sitting'), 
+            eagerload('item'),
+            lazyload('item.owner')
+        )
         self.itemschedules = query.all()
-                
+
     def get_items_by_type(self, item_type):
         day = u''
         day_list = []
