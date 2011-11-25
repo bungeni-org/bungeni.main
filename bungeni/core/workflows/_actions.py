@@ -54,9 +54,16 @@ def __pi_create(context):
 def __pi_submit(context):
     if len(context.signatories) > 0:
         __make_owner_signatory(context)
-    utils.set_pi_registry_number(context)
+    # !+NUMBER_GENERATION(ah,nov-2011) registry number is generated on receive, 
+    # not submit. This needs to be eventually factored into configuration
+    #utils.set_pi_registry_number(context)
     utils.pi_update_signatories(context)
     utils.pi_unset_signatory_roles(context)
+
+# !+NUMBER_GENERATION(ah,nov-2011) - used for parliamentary item transitions
+# to recieved state 
+def __pi_received(context):
+    utils.set_pi_registry_number(context)
 
 def __pi_redraft(context):
     """Signatory operations on redraft - Unsetting signatures e.t.c
@@ -81,6 +88,13 @@ def _address_attached(context):
     # !+XML this is anyway incorrect, what about useraddress (uses same workflow)
     publish_to_xml(context, type="groupaddress", include=[])
 '''
+
+# !+NUMBER_GENERATION (ah,nov-2011) - generate the number on receiving an item
+_question_received = __pi_received
+_bill_received = __pi_received
+_motion_received = __pi_received
+_agendaitem_received = __pi_received
+_tableddocument_received = __pi_received
 
 
 # agendaitem

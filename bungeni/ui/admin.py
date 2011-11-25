@@ -275,24 +275,29 @@ class RegistrySettings(catalyst.EditForm):
     
     def update(self):
         if self.request.method == "POST":
+            # !+NUMBER_GENERATION (ah, nov-2011) - Reset the number sequence here.
+            # Added the 'false' parameter at the end, otherwise setval() automatically
+            # increments the sequence when called.
+            # NOTE: this is a direct PG call, there is no SQLAlchemy way of resetting
+            # a sequence, perhaps they should be dropped and recreated in SQLALchemy
             if self.request.get("form.questions_number") == "on":
-                execute_sql("SELECT setval('question_registry_sequence', 1);")
+                execute_sql("SELECT setval('question_registry_sequence', 1, false);")
             if self.request.get("form.motions_number") == "on":
-                execute_sql("SELECT setval('motion_registry_sequence', 1);")
+                execute_sql("SELECT setval('motion_registry_sequence', 1, false);")
             if self.request.get("form.agendaitems_number") == "on":
-                execute_sql("SELECT setval('agendaitem_registry_sequence', 1);")
+                execute_sql("SELECT setval('agendaitem_registry_sequence', 1, false);")
             if self.request.get("form.bills_number") == "on":
-                execute_sql("SELECT setval('bill_registry_sequence', 1);")
+                execute_sql("SELECT setval('bill_registry_sequence', 1, false);")
             if self.request.get("form.reports_number") == "on":
-                execute_sql("SELECT setval('report_registry_sequence', 1);")
+                execute_sql("SELECT setval('report_registry_sequence', 1, false);")
             if self.request.get("form.tableddocuments_number") == "on":
-                execute_sql("SELECT setval('tableddocument_registry_sequence', 1);")
+                execute_sql("SELECT setval('tableddocument_registry_sequence', 1, false);")
             if self.request.get("form.global_number") == "on":
-                execute_sql("SELECT setval('registry_number_sequence', 1);")
+                execute_sql("SELECT setval('registry_number_sequence', 1, false);")
 
         settings = \
             component.getUtility(interfaces.IBungeniRegistrySettings)()
         self.adapters = {interfaces.IBungeniRegistrySettings : settings}
-        super(RegistrySettings, self).update()
+
 
 
