@@ -402,14 +402,17 @@ mapper(domain.ParliamentaryItem, schema.parliamentary_items,
                 schema.users.c.user_id),
             uselist=False,
             lazy=False),
-        # !+NAMING(mr, jul-2011)
+        # !+NAMING(mr, jul-2011) "itemsignatories" is inconsistent
+        # !+SIGNATORIES(mr, nov-2011) why this PLUS signatories managed container?        
         "itemsignatories": relation(domain.User, secondary=schema.signatories),
+        # !+FILES(mr, nov-2011) why this PLUS files managed container?
         "attached_files": relation(domain.AttachedFile,
             # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", 
             # "document", "item"
             backref=backref("item",
                 remote_side=schema.parliamentary_items.c.parliamentary_item_id)
         ),
+        # !+EVENT(mr, nov-2011) why this PLUS event managed container?
         "event_item": relation(domain.EventItem,
             primaryjoin=rdb.and_(
                 schema.parliamentary_items.c.parliamentary_item_id ==

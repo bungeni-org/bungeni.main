@@ -2219,6 +2219,49 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
     ]
 
 
+''' !+AuditLogView(mr, nov-2011) change listings do not respect this
+class ChangeDescriptor(ModelDescriptor):
+    localizable = False
+    fields = [
+        Field(name="change_id", # [sys]
+            modes="view listing",
+            localizable=[ hide("view listing"), ],
+        ),
+        Field(name="action",
+            modes="view edit add listing",
+            localizable=[
+                show("view listing"),
+            ],
+        ),
+        Field(name="date_audit", # [sys]
+            modes="view add listing",
+            localizable=[ 
+                hide("view listing"), 
+            ],
+            property=schema.Date(title=u"Audit Date", required=True),
+            edit_widget=widgets.DateWidget,
+            add_widget=widgets.DateWidget,
+            listing_column=datetime_column("date_audit", "Date Audit"),
+        ),
+        Field(name="date_active", # [user]
+            modes="view add edit listing",
+            localizable=[ 
+                show("view add edit listing"), 
+            ],
+            property=schema.Date(title=u"Active Date", required=True),
+            edit_widget=widgets.DateWidget,
+            add_widget=widgets.DateWidget,
+            listing_column=datetime_column("date_active", "Date Active"),
+        ),
+        Field(name="content_id"), 
+        Field(name="description"),
+        Field(name="notes"),
+        Field(name="user_id"),
+        Field(name="status"),
+    ]
+'''
+
+# !+VERSION_LISTING(mr, nov-2011) version listings do not respect this
 class VersionDescriptor(ModelDescriptor):
     localizable = False
 
@@ -2420,6 +2463,14 @@ class MotionVersionDescriptor(VersionDescriptor):
     container_name = _("Versions")
     fields = deepcopy(VersionDescriptor.fields)
 
+''' !+AuditLogView(mr, nov-2011)
+class MotionChangeDescriptor(ChangeDescriptor):
+    localizable = True
+    display_name = "Changes changes"
+    container_name = "Changes"
+    fields = deepcopy(ChangeDescriptor.fields)
+'''
+
 ''' !+TYPES_CUSTOM
 class BillTypeDescriptor(ModelDescriptor):
     localizable = False
@@ -2496,9 +2547,7 @@ class BillDescriptor(ParliamentaryItemDescriptor):
             property=schema.Date(title=_("Publication Date"), required=False),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget ,
-            listing_column=day_column("publication_date",
-                _("Publication Date")
-            ),
+            listing_column=day_column("publication_date", "Publication Date"),
         ),
     ])
     

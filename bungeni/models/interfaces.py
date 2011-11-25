@@ -28,8 +28,10 @@ class IAdminUserContainer(interface.Interface):
     admin interface markers.
     """
 
+''' !+UNUSED(mr, nov-2010)
 class IAdminGroupContainer(interface.Interface):
     pass
+'''
 
 class IUserAdmin(interface.Interface):
     """Marker interface attached to user objects viewed in the admin for 
@@ -143,6 +145,8 @@ class IVersion(interface.Interface):
     """
 class IVersionContainer(IBungeniContainer):
     pass
+# !+AuditLogView(mr, nov-2011)
+#class IChangeContainer(IBungeniContainer): pass
 
 
 class IHeading(IBungeniContent):

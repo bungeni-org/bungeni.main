@@ -52,7 +52,7 @@
   <include package=".viewlets" />
     
     <!-- Audit UI-->
-    <class class=".audit.AuditLog">
+    <class class=".audit.AuditLogView">
         <require permission="bungeni.auditlog.View" 
             attributes="__call__ browserDefault" />
     </class>

@@ -39,8 +39,9 @@ def check_visible_change(change):
         return is_current_or_delegated_user(change.user)
     return False
 
-
-class AuditLogBase(browser.BungeniBrowserView):
+# !+AuditLogView(mr, nov-2011) should inherit from forms.common.BaseForm, 
+# as for VersionLogView?
+class AuditLogViewBase(browser.BungeniBrowserView):
     """Base view for audit change log for a context.
     """
     
@@ -49,7 +50,7 @@ class AuditLogBase(browser.BungeniBrowserView):
     formatter_factory = batching.Formatter
     
     def __init__(self, context, request):
-        super(AuditLogBase, self).__init__(context, request)
+        super(AuditLogViewBase, self).__init__(context, request)
         # table to display the versions history
         formatter = date.getLocaleFormatter(self.request, "dateTime", "short")
         
@@ -96,11 +97,40 @@ class AuditLogBase(browser.BungeniBrowserView):
                 ).order_by(desc(self._change_class.change_id)
                 ).all()
             if check_visible_change(c) ]
+        
+        # !+AuditLogSubs(mr, nov-2011) extend with options to include
+        # auditing of sub-objects. In each case, would need to loop over each
+        # type of sub-object, and aggregate its auditlog...
+        
+        print "==== !+AUDITLOG add optional inclusion of auditing " \
+            "of sub-objects for:", instance
+        
+        # attached files:
+        print "---- !+ATTACHED_FILES", instance.attached_files, instance.files, [
+            f for f in instance.files ]
+        
+        # events:
+        print "---- !+EVENT", instance.event_item, instance.event, [ 
+            e for e in instance.event ]
+        # !+ why the two attrributes item.event_item, item.event:
+        #   event_item -> EventItem instance ?
+        #   event -> Managed bungeni.models.domain.EventItemContainer
+        # !+ why is event (container) singular?
+
+        # signatories:
+        print "---- !+AUDITLOG SIGNATORIES", instance.itemsignatories, \
+            instance.signatories, \
+            [ (type(s), s) for s in instance.signatories ]
+        # !+ why are items in bungeni.models.domain.SignatoryContainer strings?
+        
+        # versions:  auditing is already done in the item's changes table
+        
+        print "==== /!+AUDITLOG"
         return changes
 
 
 @register.view(IAuditable, name="audit-log")
-class AuditLog(AuditLogBase):
+class AuditLogView(AuditLogViewBase):
     """Change Log View for an object
     """
     
@@ -113,7 +143,7 @@ class AuditLog(AuditLogBase):
     _page_title = "Change Log"
     
     def __init__(self, context, request):
-        super(AuditLog, self).__init__(context, request)
+        super(AuditLogView, self).__init__(context, request)
         if hasattr(self.context, "short_name"):
             self._page_title = "%s: %s" % (
                 _(self._page_title), _(self.context.short_name))

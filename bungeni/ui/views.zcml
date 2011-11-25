@@ -412,11 +412,14 @@
         class=".versions.VersionLogView"
         layer="bungeni.ui.interfaces.IBungeniSkin"
         permission="zope.Public"
-    />
+    /><!-- 
+    !+VersionLogView(mr, nov-2011) above zcml page view directive masks the 
+    "generic" AjaxContainerListing listing view, and breaks the connection 
+    from the corresponding ui descriptor.
+    !+AuditLogView(mr, nov-2011)
+    -->
 
-
-  <!-- business -->
-
+    <!-- business -->
     <browser:page name="business-index"
         for="*"
         layer="bungeni.ui.interfaces.IBungeniSkin"
