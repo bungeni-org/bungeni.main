@@ -1,6 +1,5 @@
 #
 import datetime
-from zope import interface
 from zope.publisher.browser import BrowserView
 from zope.app.pagetemplate import ViewPageTemplateFile
 
@@ -14,7 +13,8 @@ from bungeni.models.settings import BungeniSettings
 from bungeni.core.globalsettings import getCurrentParliamentId
 from bungeni.core.dc import IDCDescriptiveProperties
 
-from bungeni.ui.utils import common, misc, url, debug
+from bungeni.ui.i18n import _
+from bungeni.ui.utils import common, misc, url
 from bungeni.ui.cookies import get_date_range
 from bungeni.ui.tagged import get_states
 
@@ -36,15 +36,15 @@ class WhatsOnBrowserView(BrowserView):
         else:
             self.start_date = start_date
         if type(end_date) != datetime.date:
-            end_date = datetime.date.today() + datetime.timedelta(10)
-            self.end_date = datetime.datetime(end_date.year, end_date.month, 
-                end_date.day, 23, 59)
+            self.end_date = None
         else:
             self.end_date = datetime.datetime(end_date.year, end_date.month, 
                 end_date.day, 23, 59)
         self.get_items()
     
-    def get_end_date(self): 
+    def get_end_date(self):
+        if not self.end_date:
+            return _(u"N/A")
         formatter = self.request.locale.dates.getFormatter('date', 'full') 
         return formatter.format(self.end_date)
 
@@ -58,7 +58,6 @@ class WhatsOnBrowserView(BrowserView):
         if sitting.status in get_states('groupsitting',tagged=['agendaprivate']):
             return s_list
         else:
-        # !+DCPROPERTIES(murithi, april-2011) Factor out properties+i18n to DC
             for schedule in sitting.item_schedule:
                 descriptor = queryModelDescriptor(schedule.item.__class__)
                 s_list.append({
@@ -69,9 +68,8 @@ class WhatsOnBrowserView(BrowserView):
                             schedule.item.type + 's/obj-' + 
                         str(schedule.item.parliamentary_item_id))),
                     'item_type': schedule.item.type,
-                    'item_type_title' : (
-                        descriptor.display_name if descriptor else
-                            schedule.item.type
+                    'item_type_title' : (descriptor.display_name if descriptor 
+                        else schedule.item.type
                     ),
                 })
             return s_list
@@ -79,16 +77,22 @@ class WhatsOnBrowserView(BrowserView):
     def get_sittings(self):
         formatter = self.request.locale.dates.getFormatter('date', 'full') 
         session = Session()
+        if self.end_date:
+            date_filter_expression = sql.between(
+                schema.group_sittings.c.start_date,
+                self.start_date,
+                self.end_date
+            )
+        else:
+            date_filter_expression = (
+                schema.group_sittings.c.start_date >= self.start_date
+            )
         query = session.query(domain.GroupSitting).filter(
             sql.and_(
                 schema.group_sittings.c.status.in_(get_states('groupsitting',
                     tagged=['public'])
                 ),
-                sql.between(
-                    schema.group_sittings.c.start_date,
-                    self.start_date,
-                    self.end_date
-                )
+                date_filter_expression
             )
         ).order_by(
             schema.group_sittings.c.start_date
@@ -97,9 +101,11 @@ class WhatsOnBrowserView(BrowserView):
             #eagerload('sitting_type'),
             eagerload('item_schedule'), 
             eagerload('item_schedule.item')
-        ).limit(
-            BungeniSettings(common.get_application()).max_sittings_in_business
         )
+        if not self.end_date:
+            query = query.limit(
+                BungeniSettings(common.get_application()).max_sittings_in_business
+            )
         sittings = query.all()
         day = u''
         day_list = []
