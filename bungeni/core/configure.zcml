@@ -32,9 +32,21 @@
     to for example report specific errors differently e.g. to email 
     critical errors to some mailing list.
     -->
+    
+   <!--
+  !+BUNGENI_UPGRADE (ah, nov-2011) - Commented out the utility registration
+  for zope.error error reporting utility, since this is being done in the 
+  zope.error package now.     
+
+  See : 
+   eggs/zope.error-3.6.0-py2.6.egg/zope/error/configure.zcml", line 32.2-35.8
+  -->
+    <!--
+  
     <utility component="zope.error.error.globalErrorReportingUtility"
         provides="zope.error.interfaces.IErrorReportingUtility"
     />
+    -->
     
     <!-- Setup WebDAV -->
     <!--include file="webdav.zcml" /-->
