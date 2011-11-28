@@ -87,7 +87,6 @@ function event_save_handler(id, data, is_new_event){
     if ((data.language=="") || (data.language==undefined)){
         error_messages.push("Language : Select a language");
     }
-    console.log(error_messages);
     if (error_messages.length > 0){
         html_errors = $("<ul style='text-align:justify;margin:5px;'/>");
         html_errors.append("<h2>Make Corrections</h2>");
@@ -108,4 +107,10 @@ function event_save_handler(id, data, is_new_event){
         return false;
     }
     return  true;
+}
+
+function event_collission_handler(ev, evs){
+    return !confirm(
+        "This timeslot already has another event.\n Do you want to continue?"
+    );
 }

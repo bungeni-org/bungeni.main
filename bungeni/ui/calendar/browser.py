@@ -134,7 +134,7 @@ def get_sitting_items(sitting, request, include_actions=False):
                 truncated_discussion = t_discussion + "..."
         wfc = IWorkflowController(item, None)
         state_title = wfc.workflow.get_state(item.status).title
-        
+        item = removeSecurityProxy(item)
         record = {
             'title': props.title,
             'description': props.description,
@@ -148,7 +148,8 @@ def get_sitting_items(sitting, request, include_actions=False):
             'discussion': discussion,
             'truncated_discussion': truncated_discussion,
             'delete_url': "%s/delete" % url.absoluteURL(scheduling, request),
-            'url': url.set_url_context(site_url+('/business/%ss/obj-%s' % (item.type, item.parliamentary_item_id)))}
+            'url': url.absoluteURL(item, request),
+        }
         
         if include_actions:
             record['actions'] = get_scheduling_actions(scheduling, request)
@@ -308,6 +309,7 @@ class CalendarView(BungeniBrowserView):
         need("dhtmlxscheduler-tooltip")
         need("dhtmlxscheduler-minical")
         need("dhtmlxscheduler-multisource")
+        need("dhtmlxscheduler-collision")
         need("multi-calendar-actions")
         if template is None:
             template = self.template

@@ -132,6 +132,9 @@
                     parent.location = '<span tal:replace="structure view/url"/>' + "/sittings/obj-"+event_id+"/schedule";
                 });
                 scheduler.attachEvent("onEventSave", event_save_handler);
+                scheduler.attachEvent("onEventCollision", 
+                    event_collission_handler
+                );
                 var dp = new dataProcessor(location.href+"/dhtmlxcalendaredit");
                 dp.init(scheduler);
             }
