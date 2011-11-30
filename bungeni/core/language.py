@@ -105,4 +105,16 @@ def get_default_language():
                         _language, name)
             break
     return default_language
+    
+def get_base_direction():
+    request = get_request()
+    ui_lang = request.getCookies().get("I18N_LANGUAGE")
+    if ui_lang is not None:
+        language = ui_lang
+    else:
+        language = capi.default_language
+    if language[:2] in capi.right_to_left_languages:
+        return "rtl"
+    else:
+        return "ltr"     
 

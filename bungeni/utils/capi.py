@@ -65,6 +65,11 @@ class CAPI(object):
             "Default language [%s] not in allowed languages [%s]" % (
                 self.zope_i18n_allowed_languages,)
         return bc.default_language
+        
+    @property
+    @bungeni_custom_errors
+    def right_to_left_languages(self):
+        return tuple(bc.right_to_left_languages.split())        
     
     @property
     @bungeni_custom_errors

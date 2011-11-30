@@ -24,6 +24,7 @@ from bungeni.models import interfaces as model_interfaces
 
 from bungeni.core import interfaces
 from bungeni.core import location
+from bungeni.core import language
 from bungeni.core.content import Section, AdminSection, AkomaNtosoSection, \
     WorkspaceSection
 from bungeni.core.content import QueryContent
@@ -89,7 +90,9 @@ class AppSetup(object):
         z3evoque.domain.set_on_globals("devmode", common.has_feature("devmode"))
         z3evoque.domain.set_on_globals("absoluteURL", url.absoluteURL)
         z3evoque.domain.set_on_globals("get_section_name", url.get_section_name)
-        
+        z3evoque.domain.set_on_globals("get_base_direction", 
+            language.get_base_direction)
+            
         # !+ where is the view name for the app root (slash) set?
         
         # CONVENTION: the action of each site top-section is made to point 

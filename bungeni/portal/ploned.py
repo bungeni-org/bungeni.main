@@ -2,6 +2,7 @@ log = __import__("logging").getLogger("bungeni.portal.ploned")
 
 from chameleon.core.template import Macro
 from z3c.pt.pagetemplate import ViewPageTemplateFile
+from bungeni.core import language
 
 import layout
 
@@ -38,6 +39,7 @@ class PlonedLayout(object):
             kwargs['attributes'] = {
                 'plone.body.attributes': {
                     'class': "section-bungeni" + section,
+                    'dir':language.get_base_direction(),
                     }
                 }
 
