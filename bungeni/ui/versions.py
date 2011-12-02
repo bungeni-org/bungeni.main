@@ -17,7 +17,6 @@ from bungeni.alchemist.interfaces import IIModelInterface
 from bungeni.alchemist.ui import getSelected
 
 from bungeni.ui.i18n import MessageFactory as _
-from bungeni.ui.table import TableFormatter
 from bungeni.ui.utils import date, url
 from bungeni.ui.diff import textDiff
 from bungeni.ui import browser
@@ -26,7 +25,7 @@ from bungeni.ui import forms
 
 from bungeni.core.interfaces import IVersioned
 
-from zc.table import column
+from zc.table import column, table
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 '''
 from zope.publisher.browser import BrowserView
@@ -68,7 +67,7 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
         commit_message = schema.Text(title=_(u"Change Message"))
     
     form_fields = formlib.form.Fields(IVersionEntry)
-    formatter_factory = TableFormatter
+    formatter_factory = table.SortingFormatter
     
     # evoque
     render = z3evoque.PageViewTemplateFile("version.html")
@@ -88,9 +87,9 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
             column.SelectionColumn(
                     lambda item:str(item.version_id), name="selection"),
             column.GetterColumn(title=_(u"version"),
-                    getter=lambda i,f:'<a href="%s">%d</a>' % (
-                            "%s/versions/obj-%d" % (f.url, i.version_id), 
-                            i.version_id)),
+                    getter=lambda i,f:'%s' % (i.version_id),
+                    cell_formatter=lambda g,i,f:'<a href="%s/versions/obj-%d">%s</a>' 
+                        % (f.url, i.version_id, g)),
             column.GetterColumn(title=_(u"manual"), 
                     getter=lambda i,f:i.manual),
             column.GetterColumn(title=_(u"modified"), 
@@ -105,21 +104,17 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
     def listing(self):
         # set up table
         values = [ value for value in self._versions.values()
-            if checkPermission("zope.View", value) ]
-        values.sort(key=operator.attrgetter("version_id"))
-        values.reverse()
+            if checkPermission("zope.View", value)]
         formatter = self.formatter_factory(
             self.context, self.request,
             values,
             prefix="results",
             visible_column_names = [c.name for c in self.columns],
-            columns = self.columns)
+            columns = self.columns, sort_on=(('version',True),))
 
         # the column getter methods expect an ``url`` attribute
         formatter.url = url.absoluteURL(self.context, self.request)
-
-        # update and render
-        formatter.updateBatching()
+        formatter.cssClasses['table'] = "listing grid"
         return formatter()
 
     def has_write_permission(self, context):

@@ -15,13 +15,12 @@ from zope.publisher.browser import BrowserView
 from zope.security.proxy import removeSecurityProxy
 from zope.security import proxy
 from zope.app.pagetemplate import ViewPageTemplateFile
-from zc.table import column
+from zc.table import column, table
 import operator
 from bungeni.models.domain import AttachedFileContainer
 from bungeni.ui.browser import BungeniBrowserView
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import date, url
-from bungeni.ui.table import TableFormatter
 from bungeni.utils import register
 
 
@@ -95,7 +94,7 @@ class FileListingView(BungeniBrowserView):
 
     _page_title = _(u"Attachments")
 
-    formatter_factory = TableFormatter
+    formatter_factory = table.SortingFormatter
 
     def __init__(self, context, request):
         super(FileListingView, self).__init__(context.__parent__, request)
@@ -103,8 +102,9 @@ class FileListingView(BungeniBrowserView):
         
         self.columns = [
             column.GetterColumn(title=_(u"file"),
-                    getter=lambda i,f:'<a href="%s/files/obj-%d">%s</a>' % (
-                            f.url, i.attached_file_id, i.file_title)),
+                    getter=lambda i,f:'%s' % (i.file_title),
+                    cell_formatter=lambda g,i,f:'<a href="%s/files/obj-%d">%s</a>' 
+                        % (f.url, i.attached_file_id, g)),
             column.GetterColumn(title=_(u"status"), 
                     getter=lambda i,f:i.status),
             column.GetterColumn(title=_(u"modified"), 
@@ -121,17 +121,14 @@ class FileListingView(BungeniBrowserView):
         return len(self.attachments) > 0
 
     def listing(self):
-        values = self.attachments
-        values.sort(key=operator.attrgetter("attached_file_id"))
-        values.reverse()
         formatter = self.formatter_factory(
             self.context, self.request,
-            values,
+            self.attachments,
             prefix="results",
             visible_column_names = [c.name for c in self.columns],
-            columns = self.columns)
+            columns = self.columns, sort_on=(('file',True),))
         formatter.url = url.absoluteURL(self.context, self.request)
-        formatter.updateBatching()
+        formatter.cssClasses['table'] = "listing grid"
         return formatter()
     
     __call__ = template
