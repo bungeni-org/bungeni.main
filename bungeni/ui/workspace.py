@@ -9,7 +9,6 @@ from zope.i18n import translate
 from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent
 from zope.security import proxy, checkPermission
-from z3c.pt.texttemplate import ViewTextTemplateFile
 from zc.resourcelibrary import need
 from ore.alchemist import container
 from alchemist.ui import generic
@@ -168,7 +167,7 @@ class WorkspaceContainerJSONListing(BrowserView):
 
 class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
     data_view = "/jsonlisting"
-    script = ViewTextTemplateFile("templates/datatable-workspace.pt")
+    script = ViewPageTemplateFile("templates/datatable-workspace.pt")
     
     def get_item_types(self):
         workspace_config = component.getUtility(IWorkspaceTabsUtility)

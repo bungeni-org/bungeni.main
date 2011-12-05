@@ -435,7 +435,8 @@ class EditForm(BaseForm, catalyst.EditForm):
     def form_name(self):
         if IVersion.providedBy(self.context):
             context = self.context.head
-
+        else:
+            context = self.context
         props = IDCDescriptiveProperties.providedBy(context) \
                 and context or IDCDescriptiveProperties(context)
 

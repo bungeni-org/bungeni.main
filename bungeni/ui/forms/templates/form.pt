@@ -4,31 +4,10 @@
       metal:use-macro="context/@@standard_macros/page"
       i18n:domain="bungeni">
 
-  <tal:macros condition="python: False">
-    <metal:field-header define-macro="header">
-      <label tal:attributes="for widget/name">
-        <span i18n:translate=""
-              tal:content="widget/label">label</span>
-      </label>
-      <span class="fieldRequired" title="Required" tal:condition="widget/required"
-            i18n:translate="label_required"
-            i18n:attributes="title title_required;">
-        (Required)
-      </span>
-      
-      <div class="formHelp"
-           i18n:translate=""
-           tal:content="description"
-           tal:condition="description"
-           >field description</div>
-    </metal:field-header>
-  </tal:macros>
-
   <body>
-    
     <div metal:fill-slot="body">
       <h1 i18n:translate="" tal:content="view/form_name|nothing" />
-
+      
       <metal:block define-macro="form"
                    i18n:domain="alchemist">
 <!-- template: bungeni/ui/forms/templates/form.pt -->
@@ -129,7 +108,20 @@
                         <div class="field"
                              tal:define="name python: widget.__class__.__name__.lower(); fieldid widget/name"
                              tal:attributes="class string:$default widget-$name;id string:field.$fieldid">
-                          <metal:header use-macro="macros/header" />
+                          <label tal:attributes="for widget/name">
+            <span i18n:translate=""
+              tal:content="widget/label">label</span>
+          </label>
+          <span class="fieldRequired" title="Required" tal:condition="widget/required"
+            i18n:translate="label_required"
+            i18n:attributes="title title_required;">
+            (Required)
+          </span>
+          <div class="formHelp"
+           i18n:translate=""
+           tal:content="description"
+           tal:condition="description"
+           >field description</div>
                         
                           <div tal:attributes="class python:'widget'+(error and ' error' or '') + (changed and ' changed' or '')">
                             <div class="widget" tal:content="structure widget"  >
@@ -145,7 +137,20 @@
                       <tal:side-by-side condition="side_by_side">
                         <tr tal:attributes="class python:'field'+(error and ' error' or '') + (odd and ' odd' or ' even')">
                           <th colspan="2">
-                            <metal:header use-macro="macros/header" />
+                            <label tal:attributes="for widget/name">
+            <span i18n:translate=""
+              tal:content="widget/label">label</span>
+          </label>
+          <span class="fieldRequired" title="Required" tal:condition="widget/required"
+            i18n:translate="label_required"
+            i18n:attributes="title title_required;">
+            (Required)
+          </span>
+          <div class="formHelp"
+           i18n:translate=""
+           tal:content="description"
+           tal:condition="description"
+           >field description</div>
                           </th>
                         </tr>
                         

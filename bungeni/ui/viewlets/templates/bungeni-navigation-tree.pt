@@ -15,7 +15,7 @@ $URL$
   <dd class="portletItem lastItem"
       tal:define="images nocall: context/++resource++portal/images">
     
-    <tal:ignore condition="False">
+    <tal:ignore condition="python:False">
       <metal:subtree define-macro="subtree">
         <tal:block define="is_folderish node/nodes">
           
@@ -29,14 +29,14 @@ $URL$
                                  class string:${selected}"
                 ><img width="16" height="16"
                      tal:define="kind node/kind"
-                     tal:attributes="src images/icon_?kind.png|images/icon_?kind.gif"
+                     tal:attributes="src string:/@@/portal/images/icon_${kind}.gif"
                 />&nbsp;<span i18n:translate="" tal:replace="node/title" /></a>
 
             <ul tal:condition="is_folderish"
                 tal:attributes="class string:navTree navTreeLevel${nesting_level} navTreeFolderish">
               <tal:nesting define="nesting_level python: nesting_level + 1">
                 <tal:children repeat="node node/nodes">
-                  <div metal:use-macro="macros/subtree" />
+                  <div metal:use-macro="template/macros/subtree" />
                 </tal:children>
               </tal:nesting>
             </ul>
@@ -48,7 +48,7 @@ $URL$
     
     <ul tal:define="global nesting_level python: 1">
       <tal:node tal:repeat="node view/nodes">
-        <li metal:use-macro="macros/subtree" />
+        <li metal:use-macro="template/macros/subtree" />
       </tal:node>
     </ul>
     

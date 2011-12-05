@@ -37,12 +37,6 @@
             directory="static/html/resources"
             permission="zope.Public"
         />
-        <browser:view name="ploned-layout"
-            for="*"
-            class=".ploned.PlonedLayout"
-            layer="ploned.ui.interfaces.IPlonedSkin"
-            permission="zope.View"
-        />
         <!--Skin Images-->
         <browser:resourceDirectory name="images"
             directory="static/html/resources"
@@ -53,17 +47,6 @@
             directory="static/html/resources"
             layer="ploned.ui.interfaces.IPlonedSkin"
         />
-        <adapter for="* zope.publisher.interfaces.browser.IHTTPRequest str"
-            provides="chameleon.html.interfaces.IResourceLocation"
-            factory=".layout.get_url_dev" 
-        />          
-        <!-- !+ZCML(mn, nov-2011) Disabling repoze.squeeze invalidation         
-        <adapter zcml:condition="not-have devmode"
-            for="* zope.publisher.interfaces.browser.IHTTPRequest str"
-            provides="chameleon.html.interfaces.IResourceLocation"
-            factory=".layout.get_url"
-        />
-        -->
         <include package="ploned.ui" file="skin.zcml" />
     </configure> 
     

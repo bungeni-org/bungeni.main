@@ -4,7 +4,7 @@ from zope.i18n import translate
 from zope.security import proxy
 from zc.resourcelibrary import need
 from zc.table import batching, table, column
-from z3c.pt.texttemplate import ViewTextTemplateFile
+from zope.app.pagetemplate import ViewPageTemplateFile
 from ore import yuiwidget
 from bungeni import alchemist
 from bungeni.ui import container
@@ -58,7 +58,7 @@ class ContextDataTableFormatter(yuiwidget.table.BaseDataTableFormatter):
     # zc.resourcelibrary.publication.Response._addDependencies
 
     # zpt
-    script = ViewTextTemplateFile("templates/datatable.pt")
+    script = ViewPageTemplateFile("templates/datatable.pt")
 
     data_view = "/jsonlisting"
     prefix = "listing"

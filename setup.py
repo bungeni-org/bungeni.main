@@ -61,7 +61,7 @@ setup(name='bungeni',
             #
                 'pyquery>=0.3.1',
                 'Deliverance',
-                'chameleon.html',
+                #'chameleon.html',
             # The following are used by bungeni.core
             #
                         'ore.xapian',

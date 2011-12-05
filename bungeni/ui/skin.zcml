@@ -9,15 +9,6 @@
         type="zope.publisher.interfaces.browser.IBrowserSkinType"
         name="bungeni"
     />
-    
-    <!-- Standard Macros Definition (access to layout/form) -->
-    <browser:view name="standard_macros" for="*"
-        class=".macros.StandardMacros"
-        permission="zope.View"
-        allowed_interface="zope.interface.common.mapping.IItemMapping"
-        layer=".interfaces.IBungeniSkin"
-    />
-    
     <subscriber handler=".skin.handle_authenticated_principal_created_event"
         for="repoze.whooze.interfaces.IPrincipalCreated"
     />

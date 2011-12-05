@@ -1,15 +1,15 @@
-<script type="text/javascript">
+<tal:tag replace='structure string:<script type="text/javascript">' /> 
   (function($) {
   $(document).ready(function() {
-    $(this).yuiWorkspaceDataTable('${options/context_name}',
-                         '${options/link_url}',
-                         '${options/data_url}',
-                         [${options/fields}],
-                         [${options/columns}],
-                         '${options/table_id}',
-			                   ${options/item_types},
-			                   ${options/status},
-			                   ${options/rows_per_page});
-  });
+    $(this).yuiWorkspaceDataTable('<span tal:replace="string:${options/context_name}"/>',
+                         '<span tal:replace="string:${options/link_url}"/>',
+                         '<span tal:replace="string:${options/data_url}"/>',
+                         [<span tal:replace="string:${options/fields}"/>],
+                         [<span tal:replace="string:${options/columns}"/>],
+                         '<span tal:replace="string:${options/table_id}"/>',
+                         <span tal:replace="string:${options/item_types}"/>,
+                         <span tal:replace="string:${options/status}"/>,
+                         <span tal:replace="string:${options/rows_per_page}"/>);
+    });
   })(jQuery);
-</script>
+<tal:tag replace="structure string:</script>"/>
