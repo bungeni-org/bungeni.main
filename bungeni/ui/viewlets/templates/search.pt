@@ -1,10 +1,10 @@
-<div id="portal-search">
+<div id="portal-search" i18n:domain="bungeni">
   <form tal:attributes="action view/action"
     method="get" id="alchemist-form" class="section-form">
       <input tal:attributes="value python: request.form.get('form.full_text', '')"
           class="textType" id="form.full_text" name="form.full_text"
           size="20" type="text" value=""/>
       <input type="submit" class="context" id="form.actions.search"
-            name="form.actions.search" value="Search"/>
+            name="form.actions.search" i18n:attributes="value" value="Search"/>
   </form>
 </div>

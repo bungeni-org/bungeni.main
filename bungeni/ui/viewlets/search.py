@@ -6,6 +6,7 @@ from bungeni.ui.utils.url import get_section_name, absoluteURL as abs_url
 from zope.app.component.hooks import getSite
 from urlparse import urljoin
 
+#!+FORMS(mb, dec-2011). Search form should be based off formlib
 class SearchViewlet(object):
     render = ViewPageTemplateFile("templates/search.pt")
 
