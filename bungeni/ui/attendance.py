@@ -56,11 +56,12 @@ class AttendanceEditor(BungeniBrowserView, forms.common.BaseForm):
         for rcount, at_type in enumerate(self.attendance_types):
             at_column = column.GetterColumn(
                 title=at_type.title,
-                getter=lambda i, f, rc=rcount: \
-                    '<input type="radio" name="%s" value="%s"%s>' % (
+                getter=lambda i, f: i,
+                cell_formatter=lambda g, i, f, rc=rcount: \
+                    '<input type="radio" name="%s" value="%s"%s/>' % (
                         i["records"][rc]["name"],
                         i["records"][rc]["value"],
-                        i["records"][rc]["checked"] and ' checked="true"' or ""
+                        i["records"][rc]["checked"] and ' checked="checked"' or ""
                 )
             )
             listing_columns.append(at_column)
