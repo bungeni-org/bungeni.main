@@ -55,11 +55,5 @@
      for="*"
      factory="bungeni.core.dc.DublinCoreMetadataAdapter"
      provides="zope.traversing.interfaces.IPathAdapter"/>
-  <browser:view
-     for="*"
-     name="standard_macros"
-     class="bungeni.ui.macros.StandardMacros"
-     permission="zope.View"
-     />
      
 </configure>
