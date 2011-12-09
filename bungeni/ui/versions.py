@@ -27,6 +27,7 @@ from bungeni.core.interfaces import IVersioned
 
 from zc.table import column, table
 from zope.dublincore.interfaces import IDCDescriptiveProperties
+
 '''
 from zope.publisher.browser import BrowserView
 class VersionsView(BrowserView):

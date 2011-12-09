@@ -17,6 +17,7 @@ from zc.table import batching, column
 
 from bungeni.alchemist import Session
 from bungeni.models.interfaces import IAuditable
+from bungeni.models import domain
 from bungeni.models.utils import is_current_or_delegated_user
 from bungeni.core import audit
 from bungeni.ui.i18n import _
@@ -45,7 +46,7 @@ class AuditLogViewBase(browser.BungeniBrowserView):
     """Base view for audit change log for a context.
     """
     
-    #!+TABLEFORMATTER(mr, nov-2011) seems to be the only palce where a 
+    #!+TABLEFORMATTER(mr, nov-2011) seems to be the only place where a 
     # table formatter is used but is not bungeni.ui.table.TableFormatter
     formatter_factory = batching.Formatter
     
@@ -59,15 +60,16 @@ class AuditLogViewBase(browser.BungeniBrowserView):
         # that, when sorted as a string, gives correct results.
         self.columns = [
             column.GetterColumn(title=_(u"action"), 
-                    getter=lambda i,f: i.action),
+                getter=lambda i,f: "%s / %s" % (
+                        i.head.__class__.__name__.lower(), i.action)),
             column.GetterColumn(title=_(u"date"),
-                    getter=lambda i,f: formatter.format(i.date_active)),
+                getter=lambda i,f: formatter.format(i.date_active)),
             column.GetterColumn(title=_(u"user"), 
-                    getter=lambda i,f: IDCDescriptiveProperties(i.user).title),
+                getter=lambda i,f: IDCDescriptiveProperties(i.user).title),
             column.GetterColumn(title=_(u"description"), 
-                    getter=lambda i,f: i.description),
+                getter=lambda i,f: i.description),
             column.GetterColumn(title=_(u"audit date"),
-                    getter=lambda i,f: formatter.format(i.date_audit)),
+                getter=lambda i,f: formatter.format(i.date_audit)),
         ]
     
     def listing(self):
@@ -91,12 +93,48 @@ class AuditLogViewBase(browser.BungeniBrowserView):
         session = Session()
         mapper = orm.object_mapper(instance)
         content_id = mapper.primary_key_from_instance(instance)[0]
+        
+        # changes direct on self.context !+ parametrize filetring on 
+        # action type i.e those defined in core.audit.CHANGE_ACTIONS
         changes = [ c for c in 
             session.query(self._change_class
                 ).filter_by(content_id=content_id
                 ).order_by(desc(self._change_class.change_id)
                 ).all()
             if check_visible_change(c) ]
+        
+        # !+AuditLogSubs(mr, dec-2011) bungeni_custom parameters
+        INCLUDE_SIGNATORY = INCLUDE_ATTACHMENT = INCLUDE_EVENT = True
+        if INCLUDE_SIGNATORY: 
+            signatories = [ s for s in 
+                session.query(domain.Signatory
+                    ).filter_by(item_id=content_id).all()
+                if checkPermission("zope.View", s) ]
+            changes += [ sc for sc in 
+                session.query(domain.SignatoryChange
+                    ).filter_by(content_id=s.signatory_id).all()
+                for s in signatories ] #if checkPermission("zope.View", sc) ]
+            # !+ checkPermission gives data error (old status values?) 
+        if INCLUDE_ATTACHMENT:
+            attachments = [ f for f in 
+                session.query(domain.AttachedFile
+                    ).filter_by(item_id=content_id).all()
+                ] #if checkPermission("zope.View", f) ]
+            # !+ checkPermission always returns False
+            changes += [ fc for fc in 
+                session.query(domain.AttachedFileChange
+                    ).filter_by(content_id=f.attached_file_id).all()
+                for f in attachments 
+                if checkPermission("zope.View", sc) ]
+        if INCLUDE_EVENT:
+            #events = [ e for e in 
+            #    session.query(domain.EventItem
+            #        ).filter_by(item_id=content_id).all() ]
+            pass # !+AuditLogSubs(mr, dec-2011) events not currently audited
+        
+        # sort by date_active
+        changes = [ dc[1] for dc in 
+            reversed(sorted([ (c.date_active, c) for c in changes ])) ]
         
         # !+AuditLogSubs(mr, nov-2011) extend with options to include
         # auditing of sub-objects. In each case, would need to loop over each
@@ -126,6 +164,7 @@ class AuditLogViewBase(browser.BungeniBrowserView):
         # versions:  auditing is already done in the item's changes table
         
         print "==== /!+AUDITLOG"
+        
         return changes
 
 
