@@ -39,6 +39,7 @@ WORKFLOW_REG = [ # !+bungeni_custom
     ("event", interfaces.IEventItem),
     ("group", interfaces.IBungeniGroup),
     ("groupsitting", interfaces.IGroupSitting),
+    ("membership", interfaces.IBungeniGroupMembership),
     ("heading", interfaces.IHeading),
     ("motion", interfaces.IMotion),
     ("parliament", interfaces.IParliament),
@@ -119,9 +120,10 @@ def apply_customization_workflow(name):
         "address": "address", # !+ use common base cls for User & Group addresses
         "agendaitem": "agenda_item",
         "attachedfile": "attached_file",
+        "tableddocument": "tabled_document",
         "event": "event_item",
         "groupsitting": "group_sitting",
-        "tableddocument": "tabled_document",
+        "membership": "group_membership",
     }
     # get the domain class
     kls = get_domain_kls(name)

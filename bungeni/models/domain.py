@@ -318,6 +318,7 @@ class GroupMembership(Entity):
     sort_on = ["last_name", "first_name", "middle_name"]
     sort_replace = {"user_id": ["last_name", "first_name"]}
     sort_dir = "asc"
+    
     @property
     def image(self):
         return self.user.image

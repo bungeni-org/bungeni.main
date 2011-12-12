@@ -339,6 +339,17 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.groupsitting.wf.published_minutes.draft_minutes" role="bungeni.Speaker" />
 
 
+<!-- membership -->
+
+<permission id="bungeni.membership.wf.attached.internal" title="Publish Internal" />
+<grant permission="bungeni.membership.wf.attached.internal" role="bungeni.Clerk" />
+<grant permission="bungeni.membership.wf.attached.internal" role="bungeni.Owner" />
+
+<permission id="bungeni.membership.wf.internal.attached" title="Re-publish" />
+<grant permission="bungeni.membership.wf.internal.attached" role="bungeni.Clerk" />
+<grant permission="bungeni.membership.wf.internal.attached" role="bungeni.Owner" />
+
+
 <!-- heading -->
 <grant permission="bungeni.heading.Edit" role="bungeni.Clerk" />
 <grant permission="bungeni.heading.Edit" role="bungeni.Speaker" />

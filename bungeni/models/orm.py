@@ -287,6 +287,8 @@ mapper(domain.GroupMembership, schema.user_group_memberships,
     polymorphic_on=schema.user_group_memberships.c.membership_type,
     polymorphic_identity="member",
 )
+# !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", "document", "item"
+domain.GroupMembership.item = domain.GroupMembership.user
 
 #!+TYPES_CUSTOM mapper(domain.MemberElectionType, schema.member_election_types)
 

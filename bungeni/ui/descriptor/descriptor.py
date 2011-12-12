@@ -833,6 +833,24 @@ class GroupMembershipDescriptor(ModelDescriptor):
                 required=False
             ),
         ),
+        Field(name="status", label=_("Status"), # [sys]
+            modes="view listing",
+            localizable=[
+                show("view listing"),
+            ],
+            property=schema.Choice(title=_("Status"),
+                vocabulary="bungeni.vocabulary.workflow",
+            ),
+            listing_column=workflow_column("status", "Workflow status"),
+        ),
+        Field(name="status_date", label=_("Status date"), # [sys]
+            modes="view listing",
+            localizable=[
+                show("view listing"),
+            ],
+            property=schema.Date(title=_("Status Date"), required=True),
+            listing_column=day_column("status_date", _("Status date")),
+        ),
         #Field(name="membership_id",
         #    label=_("Roles/Titles"),
         #    modes="",
