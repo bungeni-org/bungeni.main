@@ -105,27 +105,31 @@ class AuditLogViewBase(browser.BungeniBrowserView):
         
         # !+AuditLogSubs(mr, dec-2011) bungeni_custom parameters
         INCLUDE_SIGNATORY = INCLUDE_ATTACHMENT = INCLUDE_EVENT = True
+        
         if INCLUDE_SIGNATORY: 
             signatories = [ s for s in 
                 session.query(domain.Signatory
                     ).filter_by(item_id=content_id).all()
-                if checkPermission("zope.View", s) ]
-            changes += [ sc for sc in 
-                session.query(domain.SignatoryChange
-                    ).filter_by(content_id=s.signatory_id).all()
-                for s in signatories ] #if checkPermission("zope.View", sc) ]
-            # !+ checkPermission gives data error (old status values?) 
+                ] #if checkPermission("zope.View", s) ]
+            # !+ align checkPermission zope.View with listing of signatories
+            for s in signatories:
+                changes += [ sc for sc in 
+                    session.query(domain.SignatoryChange
+                        ).filter_by(content_id=s.signatory_id).all()
+                    if check_visible_change(sc) ]
+        
         if INCLUDE_ATTACHMENT:
             attachments = [ f for f in 
                 session.query(domain.AttachedFile
                     ).filter_by(item_id=content_id).all()
                 ] #if checkPermission("zope.View", f) ]
-            # !+ checkPermission always returns False
-            changes += [ fc for fc in 
-                session.query(domain.AttachedFileChange
-                    ).filter_by(content_id=f.attached_file_id).all()
-                for f in attachments 
-                if checkPermission("zope.View", sc) ]
+            # !+ align checkPermission zope.View with listing of attachments
+            for f in attachments:
+                changes += [ fc for fc in 
+                    session.query(domain.AttachedFileChange
+                        ).filter_by(content_id=f.attached_file_id).all()
+                    if check_visible_change(fc) ]
+        
         if INCLUDE_EVENT:
             #events = [ e for e in 
             #    session.query(domain.EventItem
@@ -157,8 +161,10 @@ class AuditLogViewBase(browser.BungeniBrowserView):
 
         # signatories:
         print "---- !+AUDITLOG SIGNATORIES", instance.itemsignatories, \
+            [ s.user_id for s in instance.itemsignatories ], \
             instance.signatories, \
             [ (type(s), s) for s in instance.signatories ]
+        # !+ why are items in instance.itemsignatories User instances?
         # !+ why are items in bungeni.models.domain.SignatoryContainer strings?
         
         # versions:  auditing is already done in the item's changes table

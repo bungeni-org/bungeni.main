@@ -675,6 +675,8 @@ class OfficesHeldViewlet(browser.BungeniItemsViewlet):
     def update(self):
         self.items = self._get_items()
 
+# !+!+AUDITLOG timeline viewlets should simply become different renditions of
+# an audit log.
 class TimeLineViewlet(browser.BungeniItemsViewlet):
     """
     tracker/timeline view:
@@ -732,7 +734,7 @@ class TimeLineViewlet(browser.BungeniItemsViewlet):
         self.items = sorted(self.items, key=lambda item:item["adate"], 
             reverse=True
         )
-
+    
     def update_sql(self):
         """Refresh the query.
         """
@@ -748,7 +750,7 @@ class TimeLineViewlet(browser.BungeniItemsViewlet):
             except (SyntaxError, TypeError, AssertionError):
                 #debug.log_exc(sys.exc_info(), log_handler=log.info)
                 return {}
-
+        
         # !+CHANGE_EXTRAS(mr, dec-2010)
         # only *Change records have an extras dict (as "notes" str attr) and the 
         # content of this depends on the value of "atype" (see core/audit.py)
@@ -757,7 +759,7 @@ class TimeLineViewlet(browser.BungeniItemsViewlet):
                               adate=date, notes=_eval_as_dict(notes))
                 for action, piid, desc, date, notes in
                 queries.execute_sql(self.sql_timeline, item_id=item_id) ]
-
+        
         # Filter out workflow draft items for anonymous users
         if get_principal_id() in ("zope.anybody",):
             _draft_states = ("draft", "working_draft")
@@ -767,8 +769,8 @@ class TimeLineViewlet(browser.BungeniItemsViewlet):
                         return False
                 return True
             self.items = [ item for item in self.items
-                             if show_timeline_item(item) ]
-
+                if show_timeline_item(item) ]
+        
         #change_cls = getattr(domain, "%sChange" % (self.context.__class__.__name__))
         for r in self.items:
             # workflow
@@ -1080,8 +1082,7 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
             datetime.date.strftime(nextdate, "%Y-%m-%d"))
 
     def _get_items(self):
-        """
-        return the data of the query
+        """Return the data of the query.
         """
         sit_types = {}
         type_results = self.type_query.all()
@@ -1142,14 +1143,12 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
         return css_class.strip()
 
     def getWeekNo(self, Date):
-        """
-        return the weeknumber for a given date
+        """Return the weeknumber for a given date.
         """
         return Date.isocalendar()[1]
 
     def getSittings4Day(self, Date):
-        """
-        return the sittings for that day
+        """Return the sittings for that day.
         """
         day_data = []
         for data in self.items:
@@ -1158,8 +1157,7 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
         return day_data
 
     def update(self):
-        """
-        refresh the query
+        """Refresh the query.
         """
         self.Date = self._getDisplayDate(self.request)
         if not self.Date:
