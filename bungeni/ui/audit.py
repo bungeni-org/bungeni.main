@@ -55,13 +55,18 @@ class AuditLogViewBase(browser.BungeniBrowserView):
         # table to display the versions history
         formatter = date.getLocaleFormatter(self.request, "dateTime", "short")
         
+        def _get_type_name(change):
+            #return change.head.type
+            cname = change.__class__.__name__
+            if cname.endswith("Change"):
+                return cname[:-6].lower()
+            return cname.lower()
         # !+ note this breaks the previous sort-dates-as-strings-hack of 
         # formatting dates, for all locales, as date.strftime("%Y-%m-%d %H:%M")
         # that, when sorted as a string, gives correct results.
         self.columns = [
             column.GetterColumn(title=_(u"action"), 
-                getter=lambda i,f: "%s / %s" % (
-                        i.head.__class__.__name__.lower(), i.action)),
+                getter=lambda i,f: "%s / %s" % (_get_type_name(i), i.action)),
             column.GetterColumn(title=_(u"date"),
                 getter=lambda i,f: formatter.format(i.date_active)),
             column.GetterColumn(title=_(u"user"), 
@@ -131,10 +136,30 @@ class AuditLogViewBase(browser.BungeniBrowserView):
                     if check_visible_change(fc) ]
         
         if INCLUDE_EVENT:
-            #events = [ e for e in 
-            #    session.query(domain.EventItem
-            #        ).filter_by(item_id=content_id).all() ]
-            pass # !+AuditLogSubs(mr, dec-2011) events not currently audited
+            events = [ e for e in 
+                session.query(domain.EventItem
+                    ).filter_by(item_id=content_id).all() 
+                ] #if checkPermission("zope.View", e) ]
+            # !+ align checkPermission zope.View with listing of events
+            if events:
+                # !+AuditLogSubs(mr, dec-2011) events not currently audited, so
+                # we temporarily simulate a singular "add" change action:
+                class EventChange(domain.ItemChanges):
+                    def __init__(self, event):
+                        self._event = event
+                        #change_id
+                        #self.content
+                        self.head = event.item
+                        self.action = "add"
+                        self.date_audit = self.date_active = event.status_date
+                        self.description = event.description or ""
+                        self.notes = None # self.extras
+                        self.user = event.owner
+                        self.status = event.status
+                for e in events:
+                    ec = EventChange(e)
+                    if check_visible_change(ec):
+                        changes.append(ec)
         
         # sort by date_active
         changes = [ dc[1] for dc in 
