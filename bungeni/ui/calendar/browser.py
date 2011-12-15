@@ -42,7 +42,7 @@ from bungeni.core.interfaces import ISchedulingContext
 from bungeni.core.schedule import SittingContainerSchedulingContext
 from bungeni.core.workflow.interfaces import IWorkflowController
 from bungeni.core.language import get_default_language
-
+from bungeni.core.translation import translate_i18n
 
 from ploned.ui.interfaces import IStructuralView
 from bungeni.ui.browser import BungeniBrowserView
@@ -271,19 +271,38 @@ class CalendarView(BungeniBrowserView):
         return form
 
     @property
-    def venues_as_json(self):
+    def venues_data(self):
         venues_vocabulary = component.queryUtility(
             schema.interfaces.IVocabularyFactory, "bungeni.vocabulary.Venues"
         )
         venue_list = [ {"key": venue.value, "label": venue.title}
             for venue in venues_vocabulary()
         ]
-        return json.dumps(venue_list)
+        return venue_list
 
     @property
     def ical_url(self):
         return u"/".join(
             [url.absoluteURL(self.context, self.request), "dhtmlxcalendar.ics"]
+        )
+
+    @property
+    def calendar_js_globals(self):
+        cal_globals = dict(
+            ical_url=self.ical_url,
+            view_url=self.url,
+            venues_view_title=translate_i18n(_(u"Venues")),
+            text_group=translate_i18n(_(u"Group")),
+            text_start_date=translate_i18n(_(u"Start Date")),
+            text_end_date=translate_i18n(_(u"End Date")),
+            text_venue=translate_i18n(_(u"Venue")),
+            text_activity_type=translate_i18n(_(u"Activity Type")),
+            text_meeting_type=translate_i18n(_(u"Meeting Type")),
+            text_convocation_type=translate_i18n(_(u"Convocation Type")),
+            text_sitting=translate_i18n(_(u"Sitting")),
+        )
+        return """var cal_globals = %s;var venues_data=%s;""" %(
+            json.dumps(cal_globals), json.dumps(self.venues_data)
         )
 
     def other_calendars(self):

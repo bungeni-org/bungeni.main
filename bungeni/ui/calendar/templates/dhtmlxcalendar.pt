@@ -4,6 +4,8 @@
       i18n:domain="bungeni"
       metal:use-macro="context/@@standard_macros/page">
       <tal:block metal:fill-slot="header">
+        <script type="text/javascript" 
+            tal:content="view/calendar_js_globals"/>
         <script type="text/javascript">
            function show_minical(){
               if (scheduler.isCalendarVisible())
@@ -21,7 +23,6 @@
            }
            
             function load_ical(){
-                var ical_url = '<span tal:replace="view/ical_url"/>';
                 var start = new Date(scheduler._min_date);
                 var end = new Date(scheduler._max_date);
                 var s_start = new Array(
@@ -32,20 +33,18 @@
                 );
                 uid = scheduler.uid()
                 date_range = "&amp;from=" + s_start.join("-") + "&amp;to=" + s_end.join("-");
-                ical_url = ical_url + "?uid=" + uid + date_range
+                ical_url = cal_globals.ical_url + "?uid=" + uid + date_range
                 window.location = ical_url
             }
                       
             function init() {
-                scheduler.locale.labels.venues_tab = '<span i18n:translate="" tal:content="string:Venues" tal:omit-tag=""/>';
+                scheduler.locale.labels.venues_tab = cal_globals.venues_view_title;
                 scheduler.config.xml_date="%Y-%m-%d %H:%i";
                 scheduler.config.show_loading=true;
                 scheduler.config.scroll_hour=8;
                 scheduler.config.details_on_create=true;
                 
                 //create timeline view for venues
-                window.venues_data = <span tal:replace="structure view/venues_as_json"/>;
-                
                 scheduler.createTimelineView({
                     name : "venues",
                     x_unit: "hour",
@@ -61,14 +60,14 @@
                 //event tooltips
                 var format=scheduler.date.date_to_str(scheduler.config.xml_date); 
                 scheduler.templates.tooltip_text = function(start, end, event){
-                    return '<b>'+ event.short_name +'</b>'+
-                        '<br/><b i18n:translate="" tal:content="string:Group"/> : '+ event.group + 
-                        '<br/><b i18n:translate="" tal:content="string:Start Date"/> : ' + format(start) + 
-                        '<br/><b i18n:translate="" tal:content="string:End Date"/> : ' + format(end) + 
-                        '<br/><b i18n:translate="" tal:content="string:Venue"/> : ' + event.venue_name +
-                        '<br/><b i18n:translate="" tal:content="string:Activity Type"/> : ' + event.activity_type +
-                        '<br/><b i18n:translate="" tal:content="string:Meeting Type"/> : ' + event.meeting_type +
-                        '<br/><b i18n:translate="" tal:content="string:Convocation Type"/> : ' + event.convocation_type;
+                    return unescape("%3Cb%3E") + event.short_name + unescape("%3C/b%3E") +
+                        '<br/>' + cal_globals.text_group + ' : ' + event.group + 
+                        '<br/>' + cal_globals.text_start_date + ' : ' + format(start) + 
+                        '<br/>' + cal_globals.text_end_date + ' : ' + format(end) + 
+                        '<br/>' + cal_globals.text_venue + ' : ' + event.venue_name +
+                        '<br/>' + cal_globals.text_activity_type + ' : ' + event.activity_type +
+                        '<br/>' + cal_globals.text_meeting_type + ' : ' + event.meeting_type +
+                        '<br/>' + cal_globals.text_convocation_type + ' : ' + event.convocation_type;
                 };
                 
                 scheduler.init('scheduler_here', null, "week");
@@ -102,7 +101,7 @@
                         ev.short_name = $("#short_name").val();
                         ev.language = $("#select_sitting_lang").val();
                         ev.venue = $("#select_sitting_venue").val();
-                        ev.text = '<span i18n:translate="" tal:content="string:Sitting"/>' + ' : ' + $("#select_sitting_venue option:selected").text();
+                        ev.text = cal_globals.text_sitting + ' : ' + $("#select_sitting_venue option:selected").text();
                         ev.activity_type = $("#activity_type").val();
                         ev.meeting_type = $("#meeting_type").val();
                         ev.convocation_type = $("#convocation_type").val();
@@ -129,7 +128,7 @@
                     handle_before_change_view
                 );
                 scheduler.attachEvent("onDblClick", function (event_id, native_event_object){
-                    parent.location = '<span tal:replace="structure view/url"/>' + "/sittings/obj-"+event_id+"/schedule";
+                    parent.location = cal_globals.view_url + "/sittings/obj-" + event_id + "/schedule";
                 });
                 scheduler.attachEvent("onEventSave", event_save_handler);
                 scheduler.attachEvent("onEventCollision", 
@@ -145,7 +144,7 @@
             {
                 init();
                 scheduler.attachEvent("onDblClick", function (event_id, native_event_object){
-                    parent.location = '<span tal:replace="structure view/url"/>' + "/sittings/obj-"+event_id+"/view";
+                    parent.location = cal_globals.view_url + "/sittings/obj-"+event_id+"/view";
                 });
                 scheduler.config.icons_select=[]
                 scheduler.config.drag_resize = false;
