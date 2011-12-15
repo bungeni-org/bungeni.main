@@ -106,8 +106,13 @@
   <!-- Custom absolute_url -->
   <include file="absoluteurl.zcml" />
 
-  <!-- Custom forms -->
-  <include package=".forms"/>
+    <!-- Custom forms -->
+    <include package=".forms"/>
+    
+    <class class=".audit.TimeLineViewlet">
+        <require permission="zope.View" attributes="render" />
+    </class>
+
 
   <!-- Javascript -->
   <include package="ore.yui"/>

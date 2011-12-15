@@ -16,15 +16,20 @@ from sqlalchemy import desc
 from zc.table import batching, column
 
 from bungeni.alchemist import Session
-from bungeni.models.interfaces import IAuditable
+from bungeni.models import interfaces
 from bungeni.models import domain
 from bungeni.models.utils import is_current_or_delegated_user
 from bungeni.core import audit
+from bungeni.ui.forms.interfaces import ISubFormViewletManager
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import date
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
 from bungeni.utils import register
+
+
+CHANGE_TYPES = ("head", "signatory", "attachedfile", "event")
+CHANGE_ACTIONS = audit.CHANGE_ACTIONS.keys()
 
 
 def check_visible_change(change):
@@ -40,6 +45,15 @@ def check_visible_change(change):
         return is_current_or_delegated_user(change.user)
     return False
 
+
+class GetterColumn(column.GetterColumn):
+    def cell_formatter(self, value, item, formatter):
+        """Override super's behaviour of XML-escaping values e.g. to allow 
+        returning snippets of generated HTML code as table cell content.
+        """
+        return unicode(value)
+
+
 # !+AuditLogView(mr, nov-2011) should inherit from forms.common.BaseForm, 
 # as for VersionLogView?
 class AuditLogViewBase(browser.BungeniBrowserView):
@@ -51,9 +65,19 @@ class AuditLogViewBase(browser.BungeniBrowserView):
     formatter_factory = batching.Formatter
     
     def __init__(self, context, request):
-        super(AuditLogViewBase, self).__init__(context, request)
+        browser.BungeniBrowserView.__init__(self, context, request)
         # table to display the versions history
         formatter = date.getLocaleFormatter(self.request, "dateTime", "short")
+        
+        # evaluate serialization of a dict, failure returns an empty dict
+        def _eval_as_dict(s):
+            try:
+                d = eval(s)
+                assert isinstance(d, dict)
+                return d
+            except (SyntaxError, TypeError, AssertionError):
+                debug.log_exc(sys.exc_info(), log_handler=log.info)
+                return {}
         
         def _get_type_name(change):
             #return change.head.type
@@ -61,27 +85,69 @@ class AuditLogViewBase(browser.BungeniBrowserView):
             if cname.endswith("Change"):
                 return cname[:-6].lower()
             return cname.lower()
+        
+        def _format_description(change):
+            change_type_name = _get_type_name(change)
+            # event
+            if change_type_name == "event":
+                return """<a href="event/obj-%s">%s</a>""" % (
+                        change.item_id, _(change.description))
+            # workflow
+            elif change.action == "workflow":
+                # description
+                # the workflow transition change log stores the (unlocalized) 
+                # human title for the transition's destination workflow state 
+                # -- here we just localize what is supplied:
+                return _(change.description)
+                # NOTE: we could elaborate an entirely custom description 
+                # e.g. using source/destination and other extras infromation
+            # version
+            elif change.action == "version":
+                # description
+                if change_type_name == "attachedfile":
+                    url_comp = "files"
+                else:
+                    url_comp = "versions"
+                try:
+                    return """<a href="%s/obj-%s">%s</a>""" % (
+                        url_comp,
+                        _eval_as_dict(change.notes)["version_id"],
+                        _(change.description))
+                except (KeyError,):
+                    # no recorded version_id, just localize what is supplied
+                    return _(change.description)
+            else:
+                return _(change.description)
+        
         # !+ note this breaks the previous sort-dates-as-strings-hack of 
         # formatting dates, for all locales, as date.strftime("%Y-%m-%d %H:%M")
         # that, when sorted as a string, gives correct results.
         self.columns = [
-            column.GetterColumn(title=_(u"action"), 
+            GetterColumn(title=_(u"action"), 
                 getter=lambda i,f: "%s / %s" % (_get_type_name(i), i.action)),
-            column.GetterColumn(title=_(u"date"),
+            GetterColumn(title=_(u"date"),
                 getter=lambda i,f: formatter.format(i.date_active)),
-            column.GetterColumn(title=_(u"user"), 
+            GetterColumn(title=_(u"user"), 
                 getter=lambda i,f: IDCDescriptiveProperties(i.user).title),
-            column.GetterColumn(title=_(u"description"), 
-                getter=lambda i,f: i.description),
-            column.GetterColumn(title=_(u"audit date"),
+            GetterColumn(title=_(u"description"), 
+                getter=lambda i,f: _format_description(i)),
+            GetterColumn(title=_(u"audit date"),
                 getter=lambda i,f: formatter.format(i.date_audit)),
         ]
+    
+    # !+listing bind to declarations in UI configuration (descriptor)
+    visible_column_names = []
+    
+    # !+ParametrizedAuditLog(mr, dec-2011) bungeni_custom parameters:
+    # change types X change actions
+    include_change_types = []
+    include_change_actions = []
     
     def listing(self):
         formatter = self.formatter_factory(self.context, self.request,
             self.get_feed_entries(),
             prefix="results",
-            visible_column_names=[ c.name for c in self.columns ],
+            visible_column_names=self.visible_column_names,
             columns=self.columns
         )
         formatter.cssClasses["table"] = "listing"
@@ -94,48 +160,55 @@ class AuditLogViewBase(browser.BungeniBrowserView):
         return auditor.change_class
     
     def get_feed_entries(self):
-        instance = removeSecurityProxy(self.context)
+        head = removeSecurityProxy(self.context)
         session = Session()
-        mapper = orm.object_mapper(instance)
-        content_id = mapper.primary_key_from_instance(instance)[0]
+        mapper = orm.object_mapper(head)
+        content_id = mapper.primary_key_from_instance(head)[0]
+        changes = []
         
-        # changes direct on self.context !+ parametrize filetring on 
-        # action type i.e those defined in core.audit.CHANGE_ACTIONS
-        changes = [ c for c in 
-            session.query(self._change_class
-                ).filter_by(content_id=content_id
-                ).order_by(desc(self._change_class.change_id)
-                ).all()
-            if check_visible_change(c) ]
+        def actions_filtered_query(query, change_class):
+            if self.include_change_actions == CHANGE_ACTIONS or \
+                    not self.include_change_actions:
+                # no filtering on actions needed, bypass altogether
+                return query
+            return query.filter(
+                change_class.action.in_(self.include_change_actions))
         
-        # !+AuditLogSubs(mr, dec-2011) bungeni_custom parameters
-        INCLUDE_SIGNATORY = INCLUDE_ATTACHMENT = INCLUDE_EVENT = True
+        # changes direct on head item
+        if "head" in self.include_change_types:
+            query = session.query(self._change_class
+                ).filter_by(content_id=content_id)
+            query = actions_filtered_query(query, self._change_class)
+            changes += [ c for c in query.all() if check_visible_change(c) ]
         
-        if INCLUDE_SIGNATORY: 
+        # changes on item signatories
+        if "signatory" in self.include_change_types:
             signatories = [ s for s in 
                 session.query(domain.Signatory
                     ).filter_by(item_id=content_id).all()
                 ] #if checkPermission("zope.View", s) ]
             # !+ align checkPermission zope.View with listing of signatories
             for s in signatories:
-                changes += [ sc for sc in 
-                    session.query(domain.SignatoryChange
-                        ).filter_by(content_id=s.signatory_id).all()
-                    if check_visible_change(sc) ]
+                query = session.query(domain.SignatoryChange
+                    ).filter_by(content_id=s.signatory_id)
+                query = actions_filtered_query(query, domain.SignatoryChange)
+                changes += [ c for c in query.all() if check_visible_change(c) ]
         
-        if INCLUDE_ATTACHMENT:
+        # changes on item attachments
+        if "attachedfile" in self.include_change_types:
             attachments = [ f for f in 
                 session.query(domain.AttachedFile
                     ).filter_by(item_id=content_id).all()
                 ] #if checkPermission("zope.View", f) ]
             # !+ align checkPermission zope.View with listing of attachments
             for f in attachments:
-                changes += [ fc for fc in 
-                    session.query(domain.AttachedFileChange
-                        ).filter_by(content_id=f.attached_file_id).all()
-                    if check_visible_change(fc) ]
+                query = session.query(domain.AttachedFileChange
+                    ).filter_by(content_id=f.attached_file_id)
+                query = actions_filtered_query(query, domain.AttachedFileChange)
+                changes += [ c for c in query.all() if check_visible_change(c) ]
         
-        if INCLUDE_EVENT:
+        # changes on item events
+        if "event" in self.include_change_types:
             events = [ e for e in 
                 session.query(domain.EventItem
                     ).filter_by(item_id=content_id).all() 
@@ -147,6 +220,7 @@ class AuditLogViewBase(browser.BungeniBrowserView):
                 class EventChange(domain.ItemChanges):
                     def __init__(self, event):
                         self._event = event
+                        self.item_id = event.event_item_id
                         #change_id
                         #self.content
                         self.head = event.item
@@ -157,49 +231,41 @@ class AuditLogViewBase(browser.BungeniBrowserView):
                         self.user = event.owner
                         self.status = event.status
                 for e in events:
-                    ec = EventChange(e)
-                    if check_visible_change(ec):
-                        changes.append(ec)
+                    c = EventChange(e)
+                    if c.action in self.include_change_actions and \
+                            check_visible_change(c):
+                        changes.append(c)
         
-        # sort by date_active
+        # sort aggregated changes by date_active
         changes = [ dc[1] for dc in 
             reversed(sorted([ (c.date_active, c) for c in changes ])) ]
         
-        # !+AuditLogSubs(mr, nov-2011) extend with options to include
-        # auditing of sub-objects. In each case, would need to loop over each
-        # type of sub-object, and aggregate its auditlog...
-        
         print "==== !+AUDITLOG add optional inclusion of auditing " \
-            "of sub-objects for:", instance
-        
+            "of sub-objects for:", head
         # attached files:
-        print "---- !+ATTACHED_FILES", instance.attached_files, instance.files, [
-            f for f in instance.files ]
-        
+        print "---- !+ATTACHED_FILES", head.attached_files, head.files, [
+            f for f in head.files ]
         # events:
-        print "---- !+EVENT", instance.event_item, instance.event, [ 
-            e for e in instance.event ]
+        print "---- !+EVENT", head.event_item, head.event, [ 
+            e for e in head.event ]
         # !+ why the two attrributes item.event_item, item.event:
         #   event_item -> EventItem instance ?
         #   event -> Managed bungeni.models.domain.EventItemContainer
         # !+ why is event (container) singular?
-
         # signatories:
-        print "---- !+AUDITLOG SIGNATORIES", instance.itemsignatories, \
-            [ s.user_id for s in instance.itemsignatories ], \
-            instance.signatories, \
-            [ (type(s), s) for s in instance.signatories ]
-        # !+ why are items in instance.itemsignatories User instances?
+        print "---- !+AUDITLOG SIGNATORIES", head.itemsignatories, \
+            [ s.user_id for s in head.itemsignatories ], \
+            head.signatories, \
+            [ (type(s), s) for s in head.signatories ]
+        # !+ why are items in head.itemsignatories User instances?
         # !+ why are items in bungeni.models.domain.SignatoryContainer strings?
-        
         # versions:  auditing is already done in the item's changes table
-        
         print "==== /!+AUDITLOG"
         
         return changes
 
 
-@register.view(IAuditable, name="audit-log")
+@register.view(interfaces.IAuditable, name="audit-log")
 class AuditLogView(AuditLogViewBase):
     """Change Log View for an object
     """
@@ -212,6 +278,11 @@ class AuditLogView(AuditLogViewBase):
     
     _page_title = "Change Log"
     
+    visible_column_names = ["action", "date", "user", "description", "audit date"]
+
+    include_change_types =  [ t for t in CHANGE_TYPES ]
+    include_change_actions = [ a for a in CHANGE_ACTIONS ]
+    
     def __init__(self, context, request):
         super(AuditLogView, self).__init__(context, request)
         if hasattr(self.context, "short_name"):
@@ -219,4 +290,32 @@ class AuditLogView(AuditLogViewBase):
                 _(self._page_title), _(self.context.short_name))
         else:
             self._page_title = _(self._page_title)
+
+
+@register.viewlet(interfaces.IQuestion, manager=ISubFormViewletManager, 
+    name="bungeni.viewlet.question-timeline")
+@register.viewlet(interfaces.ITabledDocument, manager=ISubFormViewletManager, 
+    name="bungeni.viewlet.tableddocument-timeline")
+@register.viewlet(interfaces.IBill, manager=ISubFormViewletManager, 
+    name="bungeni.viewlet.bill-timeline")
+@register.viewlet(interfaces.IAgendaItem, manager=ISubFormViewletManager, 
+    name="bungeni.viewlet.agendaitem-timeline")
+@register.viewlet(interfaces.IMotion, manager=ISubFormViewletManager, 
+    name="bungeni.viewlet.motion-timeline")
+class TimeLineViewlet(AuditLogView, browser.BungeniItemsViewlet):
+    view_title = _("Timeline")
+    view_id = "timeline"
+    weight = 20
+    
+    # evoque
+    render = z3evoque.PageViewTemplateFile("audit.html#timeline")
+    
+    visible_column_names = ["action", "date", "description"]
+    include_change_types =  [ t for t in CHANGE_TYPES ]
+    include_change_actions = [ a for a in CHANGE_ACTIONS if not a == "modify" ]
+    
+    def __init__(self,  context, request, view, manager):
+        AuditLogView.__init__(self, context, request)
+        browser.BungeniItemsViewlet.__init__(self, context, request, view, manager)
+
 

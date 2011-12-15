@@ -8,7 +8,6 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.ui.forms.viewlets")
 
-import itertools
 from dateutil import relativedelta
 import datetime, calendar
 from zope import interface
@@ -23,14 +22,9 @@ import sqlalchemy.sql.expression as sql
 from bungeni.alchemist import Session
 from bungeni.alchemist.model import queryModelDescriptor
 
-from bungeni.core.translation import translate_i18n
-from bungeni.core.dc import IDCDescriptiveProperties
-from bungeni.core.audit import CHANGE_ACTIONS
-
 from bungeni.models import domain, interfaces
 from bungeni.models.utils import get_groups_held_for_user_in_parliament
 from bungeni.models.utils import get_parliament_for_group_id
-from bungeni.models.utils import get_principal_id
 import bungeni.core.globalsettings as prefs
 
 from bungeni.ui.i18n import _
@@ -38,7 +32,7 @@ from bungeni.ui.tagged import get_states
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
 from bungeni.ui import table
-from bungeni.ui.utils import common, queries, statements, url, misc, date
+from bungeni.ui.utils import common, url, misc, date
 from fields import BungeniAttributeDisplay
 from interfaces import ISubFormViewletManager, ISubformRssSubscriptionViewletManager
 from bungeni.ui.interfaces import IBungeniAuthenticatedSkin, IAdminSectionLayer
@@ -118,28 +112,6 @@ def load_formatted_container_items(container, out_format={}, extra_params={}):
         formatted_items.append(item_dict)
     return formatted_items
 
-def format_change_description(change):
-    """Format/i18n a document's change object description for timeline listing
-    """
-    description = change.description
-    if change.action == CHANGE_ACTIONS["version"]:
-        version = change.head.versions.get(
-            int(change.extras.get("version_id"))
-        )
-        chg_url = url.absoluteURL(version, common.get_request())
-        if chg_url:
-            description = "<a href='%s'>%s</a>" % (
-                chg_url, 
-                translate_i18n(change.description or "Version")
-            )
-    elif change.action == CHANGE_ACTIONS["workflow"]:
-        description = translate_i18n(change.description)
-    if not description:
-        # use principal effecting the change as description as a fallback
-        dc = IDCDescriptiveProperties(change.user, None)
-        if dc:
-            description = translate_i18n(dc.title_member)
-    return description
 
 # !+SubformViewlet(mr, oct-2010) in this usage case this this should really
 # be made to inherit from browser.BungeniViewlet (but, note that
@@ -675,162 +647,6 @@ class OfficesHeldViewlet(browser.BungeniItemsViewlet):
     def update(self):
         self.items = self._get_items()
 
-# !+!+AUDITLOG timeline viewlets should simply become different renditions of
-# an audit log.
-class TimeLineViewlet(browser.BungeniItemsViewlet):
-    """
-    tracker/timeline view:
-    
-    Chronological changes are aggregated from : bill workflow, bill
-    audit, bill scheduling and bill event records. 
-    """
-    # evoque
-    render = z3evoque.ViewTemplateFile("viewlets.html#timeline")
-
-    # zpt
-    #render = ViewPageTemplateFile("templates/timeline_viewlet.pt")
-
-    # sqlalchemy give me a rough time sorting a union, 
-    # with hand coded sql it is much easier.
-    # !+ get rid of the hard-coded sql
-    sql_timeline = ""
-    add_action = form.Actions(
-        form.Action(_(u"add event"), success="handle_event_add_action"),
-    )
-    view_title = _("Timeline")
-    view_id = "unknown-timeline"
-
-    changes_getter = {
-        "atype": lambda item: item.action,
-        "adate": lambda item: item.date_active,
-        "description": format_change_description,
-        "notes": lambda item: "",
-    }
-    events_getter = {
-        "atype": lambda item: "event",
-        "adate": lambda item: item.event_date,
-        "description": lambda item: "<a href='%s'>%s</a>" \
-            %(url.absoluteURL(item, common.get_request()), item.short_name),
-        "notes": lambda item: "",
-    }
-
-    def __init__(self, context, request, view, manager):
-        super(TimeLineViewlet, self).__init__(context, request, view, manager)
-        self.formatter = self.get_date_formatter("dateTime", "medium")
-
-    def handle_event_add_action(self, action, data):
-        self.request.response.redirect(self.addurl)
-
-    def update(self):
-        self.items = itertools.chain(
-            *[
-                load_formatted_container_items(self.context.changes, 
-                    self.changes_getter),
-                load_formatted_container_items(self.context.event,
-                    self.events_getter
-                )
-            ]
-        )
-        self.items = sorted(self.items, key=lambda item:item["adate"], 
-            reverse=True
-        )
-    
-    def update_sql(self):
-        """Refresh the query.
-        """
-        #!+_TIMELINE(mb, aug-2011) to deprecate this function and use
-        # sub-container listings as shown above to acess timeline items
-
-        # evaluate serialization of a dict, failure returns an empty dict
-        def _eval_as_dict(s):
-            try:
-                d = eval(s)
-                assert isinstance(d, dict)
-                return d
-            except (SyntaxError, TypeError, AssertionError):
-                #debug.log_exc(sys.exc_info(), log_handler=log.info)
-                return {}
-        
-        # !+CHANGE_EXTRAS(mr, dec-2010)
-        # only *Change records have an extras dict (as "notes" str attr) and the 
-        # content of this depends on the value of "atype" (see core/audit.py)
-        item_id = self.context.parliamentary_item_id
-        self.items = [ dict(atype=action, item_id=piid, description=desc,
-                              adate=date, notes=_eval_as_dict(notes))
-                for action, piid, desc, date, notes in
-                queries.execute_sql(self.sql_timeline, item_id=item_id) ]
-        
-        # Filter out workflow draft items for anonymous users
-        if get_principal_id() in ("zope.anybody",):
-            _draft_states = ("draft", "working_draft")
-            def show_timeline_item(item):
-                if item["atype"] == "workflow":
-                    if item["notes"].get("destination") in _draft_states:
-                        return False
-                return True
-            self.items = [ item for item in self.items
-                if show_timeline_item(item) ]
-        
-        #change_cls = getattr(domain, "%sChange" % (self.context.__class__.__name__))
-        for r in self.items:
-            # workflow
-            if r["atype"] == "workflow":
-                # description
-                # the workflow transition change log stores the (unlocalized) 
-                # human title for the transition's destination workflow state 
-                # -- here we just localize what is supplied:
-                r["description"] = _(r["description"])
-                # NOTE: we could elaborate an entirely custom description 
-                # from scratch e.g via interpolation of a template string:
-                '''
-                if r["notes"].get("destination", ""):
-                    description = "%s %s" % (
-                                _("some text"),
-                                _(misc.get_wf_state(
-                                    self.context, r["notes"]["destination"])))
-                '''
-            # event
-            elif r["atype"] == "event":
-                # description 
-                r["description"] = """<a href="event/obj-%s">%s</a>""" % (
-                        r["item_id"], _(r["description"]))
-            # version
-            elif r["atype"] == "version":
-                # description 
-                try:
-                    r["description"] = """<a href="versions/obj-%s">%s</a>""" % (
-                                    r["notes"]["version_id"], _(r["description"]))
-                except (KeyError,):
-                    # no recorded version_id, just localize what is supplied
-                    r["description"] = _(r["description"])
-        #
-        path = url.absoluteURL(self.context, self.request)
-        self.addurl = "%s/event/add" % (path)
-
-
-class BillTimeLineViewlet(TimeLineViewlet):
-    sql_timeline = statements.sql_bill_timeline
-    view_id = "bill-timeline"
-
-
-class MotionTimeLineViewlet(TimeLineViewlet):
-    sql_timeline = statements.sql_motion_timeline
-    view_id = "motion-timeline"
-
-
-class QuestionTimeLineViewlet(TimeLineViewlet):
-    sql_timeline = statements.sql_question_timeline
-    view_id = "question-timeline"
-
-
-class TableddocumentTimeLineViewlet(TimeLineViewlet):
-    sql_timeline = statements.sql_tableddocument_timeline
-    view_id = "tableddocument-timeline"
-
-
-class AgendaItemTimeLineViewlet(TimeLineViewlet):
-    sql_timeline = statements.sql_agendaitem_timeline
-    view_id = "agendaitem-timeline"
 
 
 class MemberItemsViewlet(browser.BungeniItemsViewlet):

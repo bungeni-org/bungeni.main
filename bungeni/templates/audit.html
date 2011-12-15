@@ -13,3 +13,16 @@ $begin{changes}
     $end{content}
 $end{changes}
 
+
+#[ viewlet ]#
+$begin{timeline}
+<dt id="fieldsetlegend-${view.view_id}">
+    <span>${i18n(view.view_title)}</span>
+</dt>
+<dd id="fieldset-${view.view_id}">
+    <div> #[ <table class="listing"> ]#
+    ${ xml(view.listing()) }
+    </div>
+</dd>
+$end{timeline}
+
