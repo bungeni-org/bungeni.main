@@ -2110,7 +2110,15 @@ class AttachedFileVersionDescriptor(ModelDescriptor):
     localizable = True
     display_name = _("Attached file version")
     container_name = _("Versions")
+    
     fields = deepcopy(AttachedFileDescriptor.fields)
+    fields[fields.index(get_field(fields, "status"))] = Field(
+        name="status", label=_("Status"), # [user-req]
+        modes="view listing",
+        localizable=[
+            show("view listing"),
+        ],
+    )
 
 
 class ParliamentaryItemDescriptor(ModelDescriptor):

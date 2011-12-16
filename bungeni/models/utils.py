@@ -59,11 +59,13 @@ def is_current_or_delegated_user(user):
     """Is this user (a delegation of) the currently logged user?
     """
     current_user = get_db_user()
-    if current_user == user:
-        return True
-    for d in delegation.get_user_delegations(current_user.user_id):
-        if d == user:
+    # Only if there is a user logged in!
+    if current_user:
+        if current_user == user:
             return True
+        for d in delegation.get_user_delegations(current_user.user_id):
+            if d == user:
+                return True
 
 
 # contextual

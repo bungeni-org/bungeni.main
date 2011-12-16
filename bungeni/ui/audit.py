@@ -103,16 +103,17 @@ class AuditLogViewBase(browser.BungeniBrowserView):
                 # e.g. using source/destination and other extras infromation
             # version
             elif change.action == "version":
+                extras = _eval_as_dict(change.notes)
+                version_id = extras["version_id"]
                 # description
                 if change_type_name == "attachedfile":
-                    url_comp = "files"
+                    url = "files/obj-%s/versions/obj-%s" % (
+                        change.content_id, version_id)
                 else:
-                    url_comp = "versions"
+                    url = "versions/obj-%s" % (version_id)
                 try:
-                    return """<a href="%s/obj-%s">%s</a>""" % (
-                        url_comp,
-                        _eval_as_dict(change.notes)["version_id"],
-                        _(change.description))
+                    return """<a href="%s">%s</a>""" % (
+                        url, _(change.description))
                 except (KeyError,):
                     # no recorded version_id, just localize what is supplied
                     return _(change.description)
@@ -174,6 +175,9 @@ class AuditLogViewBase(browser.BungeniBrowserView):
             return query.filter(
                 change_class.action.in_(self.include_change_actions))
         
+        # !+ANONYMOUS(mr, dec-2011) may need to take into account whether 
+        # display listing is a for public (anonymous) listing or not
+        
         # changes direct on head item
         if "head" in self.include_change_types:
             query = session.query(self._change_class
@@ -186,7 +190,7 @@ class AuditLogViewBase(browser.BungeniBrowserView):
             signatories = [ s for s in 
                 session.query(domain.Signatory
                     ).filter_by(item_id=content_id).all()
-                ] #if checkPermission("zope.View", s) ]
+                if checkPermission("zope.View", s) ]
             # !+ align checkPermission zope.View with listing of signatories
             for s in signatories:
                 query = session.query(domain.SignatoryChange
@@ -199,7 +203,7 @@ class AuditLogViewBase(browser.BungeniBrowserView):
             attachments = [ f for f in 
                 session.query(domain.AttachedFile
                     ).filter_by(item_id=content_id).all()
-                ] #if checkPermission("zope.View", f) ]
+                if checkPermission("zope.View", f) ]
             # !+ align checkPermission zope.View with listing of attachments
             for f in attachments:
                 query = session.query(domain.AttachedFileChange
@@ -212,7 +216,7 @@ class AuditLogViewBase(browser.BungeniBrowserView):
             events = [ e for e in 
                 session.query(domain.EventItem
                     ).filter_by(item_id=content_id).all() 
-                ] #if checkPermission("zope.View", e) ]
+                if checkPermission("zope.View", e) ]
             # !+ align checkPermission zope.View with listing of events
             if events:
                 # !+AuditLogSubs(mr, dec-2011) events not currently audited, so
