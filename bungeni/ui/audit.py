@@ -8,11 +8,12 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.ui.audit")
 
+import sys
+
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.security.proxy import removeSecurityProxy
 from zope.security import checkPermission
 from sqlalchemy import orm
-from sqlalchemy import desc
 from zc.table import batching, column
 
 from bungeni.alchemist import Session
@@ -20,9 +21,10 @@ from bungeni.models import interfaces
 from bungeni.models import domain
 from bungeni.models.utils import is_current_or_delegated_user
 from bungeni.core import audit
+from bungeni.core.workflow.interfaces import InvalidStateError
 from bungeni.ui.forms.interfaces import ISubFormViewletManager
 from bungeni.ui.i18n import _
-from bungeni.ui.utils import date
+from bungeni.ui.utils import date, debug
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
 from bungeni.utils import register
@@ -32,18 +34,24 @@ CHANGE_TYPES = ("head", "signatory", "attachedfile", "event")
 CHANGE_ACTIONS = audit.CHANGE_ACTIONS.keys()
 
 
-def check_visible_change(change):
-    """Check visibility permission for a change log entry.
+def checkPermissionChange(permission, change):
+    """checkPermission for a change log entry.
+    
+    This is a variation of generic checkPermission that adds special handling 
+    for when the RolePermissionMap lookup for a change record fails becuase
+    change.status is not validly set e.g. on "add" change records.
+    # !+PERMISSION_CHANGE(mr, dec-2011) should be eliminated (ensure status is 
+    # always validly set) or made part of RolePermissionMap's logic.
     """
-    change.__parent__ = change.head
-    if change.status:
-        if checkPermission("zope.View", change):
-            return True
-    else:
-        # no status, must be a change log for object creation--whatever it is
-        # we assume that it is visible only to the user who affected *change*
+    try:
+        return checkPermission(permission, change)
+    except InvalidStateError:
+        # No state as RPM for change.status... and as IRolePermission(change) 
+        # uses workflow.state.get_head_object_state_rpm the RPM lookup call 
+        # fails. Whatever this may be due to, we assume that it is visible 
+        # only to the user who affected *change*.
+        # !+PERMISSION_CHANGE(mr, dec-2011) above assumption not always correct.
         return is_current_or_delegated_user(change.user)
-    return False
 
 
 class GetterColumn(column.GetterColumn):
@@ -183,7 +191,13 @@ class AuditLogViewBase(browser.BungeniBrowserView):
             query = session.query(self._change_class
                 ).filter_by(content_id=content_id)
             query = actions_filtered_query(query, self._change_class)
-            changes += [ c for c in query.all() if check_visible_change(c) ]
+            for c in query.all():
+                # !+CHANGE.__parent__(mr, dec-2011) when & where should this be
+                # set? For changes direct on parent item, if __parent__ not set
+                # then checkPermission("zope.View") returns False (almost always)
+                c.__parent__ = c.head
+                if checkPermissionChange("zope.View", c):
+                    changes.append(c)
         
         # changes on item signatories
         if "signatory" in self.include_change_types:
@@ -196,7 +210,8 @@ class AuditLogViewBase(browser.BungeniBrowserView):
                 query = session.query(domain.SignatoryChange
                     ).filter_by(content_id=s.signatory_id)
                 query = actions_filtered_query(query, domain.SignatoryChange)
-                changes += [ c for c in query.all() if check_visible_change(c) ]
+                changes += [ c for c in query.all() 
+                    if checkPermissionChange("zope.View", c) ]
         
         # changes on item attachments
         if "attachedfile" in self.include_change_types:
@@ -209,7 +224,8 @@ class AuditLogViewBase(browser.BungeniBrowserView):
                 query = session.query(domain.AttachedFileChange
                     ).filter_by(content_id=f.attached_file_id)
                 query = actions_filtered_query(query, domain.AttachedFileChange)
-                changes += [ c for c in query.all() if check_visible_change(c) ]
+                changes += [ c for c in query.all() 
+                    if checkPermissionChange("zope.View", c) ]
         
         # changes on item events
         if "event" in self.include_change_types:
@@ -237,7 +253,7 @@ class AuditLogViewBase(browser.BungeniBrowserView):
                 for e in events:
                     c = EventChange(e)
                     if c.action in self.include_change_actions and \
-                            check_visible_change(c):
+                            checkPermissionChange("zope.View", c):
                         changes.append(c)
         
         # sort aggregated changes by date_active

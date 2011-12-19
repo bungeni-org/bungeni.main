@@ -246,7 +246,7 @@ def get_head_object_state_rpm(sub_context):
     # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", "document" 
     # or "item"?
     return interfaces.IWorkflow(sub_context.head).get_state(sub_context.status)
-
+        
 
 class Workflow(object):
     """A Workflow instance for a specific document type, defining the possible 
@@ -364,9 +364,15 @@ class Workflow(object):
             "use Workflow.get_state(status) instead" % (self.name))
         return self._states_by_id
     
-    @error.exceptions_as(interfaces.InvalidStateError)
     def get_state(self, state_id):
-        return self._states_by_id[state_id]
+        """Get State instance for state_id.
+        Must raise interfaces.InvalidStateError if no such State.
+        """
+        try:
+            return self._states_by_id[state_id]
+        except KeyError:
+            raise interfaces.InvalidStateError(
+                "Workflow [%s] has no such State [%s]" % (self.name, state_id))
     
     @error.exceptions_as(interfaces.InvalidTransitionError)
     def get_transition(self, transition_id):
