@@ -246,7 +246,7 @@ class AuditLogViewBase(browser.BungeniBrowserView):
                         self.head = event.item
                         self.action = "add"
                         self.date_audit = self.date_active = event.status_date
-                        self.description = event.description or ""
+                        self.description = event.short_name
                         self.notes = None # self.extras
                         self.user = event.owner
                         self.status = event.status
