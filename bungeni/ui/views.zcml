@@ -915,5 +915,12 @@
       factory=".widgets.HTMLDisplay"
       permission="zope.Public"
       />
-       
+      
+   <browser:view
+     for="*"
+     name="bungeni-ui-calendar"
+     class=".macros.BungeniCalendarMacros"
+     layer=".interfaces.IBungeniSkin"
+     permission="zope.View"
+     />    
 </configure>

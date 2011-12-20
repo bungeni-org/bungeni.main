@@ -24,7 +24,7 @@
           <thead>
             <tr>
               <td colspan="2">
-                <metal:navigation use-macro="macros/navigation" />
+                <metal:navigation use-macro="context/@@bungeni-ui-calendar/navigation" />
               </td>
             </tr>
             <tr>
@@ -91,21 +91,21 @@
                 <td class="item"
                     tal:define="discussion_action item/discussion_action;
                                 body_text item/discussion/body_text">
-                    <span tal:condition="python:item.t!='heading'" tal:content="item/type" />
-                    <tal:block tal:condition="python:item.t!='heading'">:</tal:block>
+                    <span tal:condition="not:item/heading" tal:content="item/type" />
+                    <tal:block tal:condition="not:item/heading">:</tal:block>
                     <a rel="item" tal:attributes="name item/name;
                                      href item/url"
-                                  tal:condition="python:item.t!='heading'"
+                                  tal:condition="not:item/heading"
                                   tal:content="item/title" />
-                     <span tal:condition="python:item.t=='heading'" tal:content="item/title"/>
-                     <div style="float:right;" tal:condition="python:item.t!='heading'">
+                     <span tal:condition="item/heading" tal:content="item/title"/>
+                     <div style="float:right;" tal:condition="item/heading">
                         <a tabindex="0" style="float:right;" class="showDlg-button" tal:condition="discussion_action" tal:define="id repeat/item/number"
                                 tal:attributes="id string:discussion-link-$id">Minutes</a> </div>
                       
                              <!--  <span tal:content="python: body_text or u''" tal:define="id repeat/item/number"
                                 tal:attributes="id string:discussion-span-$id"></span>  -->
                   
-                  <span tal:condition="python:item.t!='heading'">
+                  <span tal:condition="not:item/heading">
                   <div class="discussion" tal:condition="discussion_action" tal:define="id repeat/item/number" style="display:none">
                                 <div class="full-discussion"
                                     tal:attributes="id string:discussion-full-text-$id"
@@ -118,8 +118,8 @@
                         <span tal:replace="structure item/truncated_discussion" />
                     </p>
                 </td>
-                <td tal:condition="python:item.t=='heading'"></td>
-                <td tal:define="discussion_action item/discussion_action;" tal:condition="python:item.t!='heading'">
+                <td tal:condition="item/heading"></td>
+                <td tal:define="discussion_action item/discussion_action;" tal:condition="not:item/heading">
                   <form method="POST"
                         tal:condition="discussion_action"
                         tal:attributes="action string:${item/url}/change_workflow_state">
@@ -180,7 +180,7 @@
           <thead>
             <tr>
               <td colspan="2">
-                <metal:navigation use-macro="macros/navigation" />
+                <metal:navigation use-macro="context/@@bungeni-ui-calendar/navigation" />
               </td>
             </tr>
           </thead>
@@ -276,7 +276,7 @@
           <thead>
             <tr>
               <td colspan="8">
-                <metal:navigation use-macro="macros/navigation" />
+                <metal:navigation use-macro="context/@@bungeni-ui-calendar/navigation" />
               </td>
             </tr>
           </thead>

@@ -2,7 +2,9 @@
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       tal:omit-tag="">
 
-  <div tal:define="display options/display"
-       metal:use-macro="view/macros/?display" />
+  <span tal:define="display options/display">
+    <div tal:condition="display" metal:use-macro="view/macros/?display"/>
+  </span>  
+
     
 </html>
