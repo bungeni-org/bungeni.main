@@ -40,7 +40,7 @@ $URL$
                   </a> 
                   <dl tal:define="items sitting/items">
                     <tal:block tal:repeat="item items">
-                        <tal:block tal:condition="python:item.item_type !='heading'">
+                        <tal:block tal:condition="not:item/heading">
                         <dd>
                         <a tal:attributes="href item/url">
                           <span  i18n:translate="" tal:content="item/item_type_title" />: 
@@ -49,7 +49,7 @@ $URL$
                         </a>
                         </dd>
                         </tal:block>
-                        <tal:block tal:condition="python:item.item_type == 'heading'">
+                        <tal:block tal:condition="item/heading">
                           <dt><h3><span  i18n:translate="" tal:content="item/item_type_title" />: 
                           <span tal:content="item/name"/></h3></dt>
                         </tal:block>

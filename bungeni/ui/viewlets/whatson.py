@@ -67,6 +67,7 @@ class WhatsOnBrowserView(BrowserView):
                             schedule.item.type + 's/obj-' + 
                         str(schedule.item.parliamentary_item_id))),
                     'item_type': schedule.item.type,
+                    'heading': True if schedule.item.type == 'heading' else False,
                     'item_type_title' : (descriptor.display_name if descriptor 
                         else schedule.item.type
                     ),
