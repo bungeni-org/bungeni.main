@@ -24,10 +24,12 @@ from bungeni.core import audit
 from bungeni.core.workflow.interfaces import InvalidStateError
 from bungeni.ui.forms.interfaces import ISubFormViewletManager
 from bungeni.ui.i18n import _
+from bungeni.ui.descriptor import descriptor
 from bungeni.ui.utils import date, debug
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
 from bungeni.utils import register
+from bungeni.utils.capi import capi
 
 
 CHANGE_TYPES = ("head", "signatory", "attachedfile", "event")
@@ -71,11 +73,12 @@ class AuditLogViewBase(browser.BungeniBrowserView):
     #!+TABLEFORMATTER(mr, nov-2011) seems to be the only place where a 
     # table formatter is used but is not bungeni.ui.table.TableFormatter
     formatter_factory = batching.Formatter
+    batch_size = capi.default_number_of_listing_items
     
     def __init__(self, context, request):
         browser.BungeniBrowserView.__init__(self, context, request)
         # table to display the versions history
-        formatter = date.getLocaleFormatter(self.request, "dateTime", "short")
+        date_formatter = date.getLocaleFormatter(self.request, "dateTime", "short")
         
         # evaluate serialization of a dict, failure returns an empty dict
         def _eval_as_dict(s):
@@ -132,16 +135,15 @@ class AuditLogViewBase(browser.BungeniBrowserView):
         # formatting dates, for all locales, as date.strftime("%Y-%m-%d %H:%M")
         # that, when sorted as a string, gives correct results.
         self.columns = [
-            GetterColumn(title=_(u"action"), 
+            descriptor.user_name_column("user_id", _("user"), "user"),
+            column.GetterColumn(title=_("action date"),
+                getter=lambda i,f: date_formatter.format(i.date_active)),
+            column.GetterColumn(title=_("action"), 
                 getter=lambda i,f: "%s / %s" % (_get_type_name(i), i.action)),
-            GetterColumn(title=_(u"date"),
-                getter=lambda i,f: formatter.format(i.date_active)),
-            GetterColumn(title=_(u"user"), 
-                getter=lambda i,f: IDCDescriptiveProperties(i.user).title),
             GetterColumn(title=_(u"description"), 
                 getter=lambda i,f: _format_description(i)),
-            GetterColumn(title=_(u"audit date"),
-                getter=lambda i,f: formatter.format(i.date_audit)),
+            column.GetterColumn(title=_(u"audit date"),
+                getter=lambda i,f: date_formatter.format(i.date_audit)),
         ]
     
     # !+listing bind to declarations in UI configuration (descriptor)
@@ -153,10 +155,15 @@ class AuditLogViewBase(browser.BungeniBrowserView):
     include_change_actions = []
     
     def listing(self):
+        # Formatter.__init__(self, 
+        #       context, request, items, visible_column_names=None,
+        #       batch_start=None, batch_size=unspecified, prefix=None,
+        #       columns=None, sort_on=None)
         formatter = self.formatter_factory(self.context, self.request,
             self.get_feed_entries(),
-            prefix="results",
             visible_column_names=self.visible_column_names,
+            batch_size=self.batch_size,
+            prefix="results",
             columns=self.columns
         )
         formatter.cssClasses["table"] = "listing"
@@ -298,7 +305,7 @@ class AuditLogView(AuditLogViewBase):
     
     _page_title = "Change Log"
     
-    visible_column_names = ["action", "date", "user", "description", "audit date"]
+    visible_column_names = ["user", "action date", "action", "description", "audit date"]
 
     include_change_types =  [ t for t in CHANGE_TYPES ]
     include_change_actions = [ a for a in CHANGE_ACTIONS ]
@@ -327,10 +334,15 @@ class TimeLineViewlet(AuditLogView, browser.BungeniItemsViewlet):
     view_id = "timeline"
     weight = 20
     
+    # !+BACTHING_VIEWLET(mr, dec-2011) paging within a viewlet does not work,
+    # as this reloads the page; should have a different strategy e.g. iframe,
+    # or ajax container listing, ContextDataTableFormatter.
+    batch_size = capi.default_number_of_listing_items
+    
     # evoque
     render = z3evoque.PageViewTemplateFile("audit.html#timeline")
     
-    visible_column_names = ["action", "date", "description"]
+    visible_column_names = ["action date", "description", "user"]
     include_change_types =  [ t for t in CHANGE_TYPES ]
     include_change_actions = [ a for a in CHANGE_ACTIONS if not a == "modify" ]
     
