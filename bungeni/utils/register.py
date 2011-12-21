@@ -36,7 +36,7 @@ def utility(provides=None, name=""):
     """provideUtility(ob, provides=None, name="")
     """
     def _utility(ob):
-        component.provideUtility(ob, provides, name)
+        component.provideUtility(ob(), provides, name)
         return ob
     return _utility
 
