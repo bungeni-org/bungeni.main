@@ -32,11 +32,15 @@ def adapter(adapts=None, provides=None, name=""):
     return _adapter
 
 
-def utility(provides=None, name=""):
+def utility(provides=None, name="", args=(), kwargs={}):
     """provideUtility(ob, provides=None, name="")
+    
+    Any utility instantiation parameters may be specified via decorator 
+    parameters args and kwargs.
     """
-    def _utility(ob):
-        component.provideUtility(ob(), provides, name)
+    def _utility(factory):
+        ob = factory(*args, **kwargs)
+        component.provideUtility(ob, provides, name)
         return ob
     return _utility
 
