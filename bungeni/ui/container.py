@@ -274,7 +274,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
                     sort_on_expressions.append(sort_dir_func(dso))
         return sort_on_expressions
 
-    def getOffsets(self, default_start=0,
+    def get_offsets(self, default_start=0,
         default_limit=capi.default_number_of_listing_items):
         start = self.request.get("start", default_start)
         limit = self.request.get("limit", default_limit)
@@ -305,7 +305,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
                 return nodes
         return t_nodes
 
-    def _jsonValues(self, nodes, fields):
+    def _json_values(self, nodes, fields):
         """
         filter values from the nodes to respresent in json, currently
         that means some footwork around, probably better as another
@@ -343,7 +343,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
     # replaces the combined logic in:
     #   - alchemist.ui.container.ContainerJSONListing.getBatch()
     #   - ore.alchemist.container.AlchemistContainer.batch()
-    def getBatch(self, start=0, limit=20, lang=None):
+    def get_batch(self, start=0, limit=20, lang=None):
         context = proxy.removeSecurityProxy(self.context)
         query = context._query
 
@@ -367,13 +367,13 @@ class ContainerJSONListing(ContainerJSONBrowserView):
                   for ob in
                   query_iterator(query, self.context, self.permission)]
         nodes = self.translate_objects(nodes, lang)
-        batch = self._jsonValues(nodes, self.fields)
+        batch = self._json_values(nodes, self.fields)
         return batch
 
     def json_batch(self, start, limit, lang):
-        batch = self.getBatch(start, limit, lang)
+        batch = self.get_batch(start, limit, lang)
         data = dict(
-            length=self.set_size,  # total result set length, set in getBatch()
+            length=self.set_size,  # total result set length, set in get_batch()
             start=start,
             recordsReturned=len(batch),  # batch length
             sort=self.sort_on,
@@ -384,7 +384,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
 
     def __call__(self):
         # prepare required parameters
-        start, limit = self.getOffsets()  # ? start=0&limit=25
+        start, limit = self.get_offsets()  # ? start=0&limit=25
         lang = translation.get_request_language(request=self.request)
         return self.json_batch(start, limit, lang)
 
@@ -424,7 +424,7 @@ class PublicStatesContainerJSONListing(ContainerJSONListing):
     
     def __call__(self):
         # prepare required parameters
-        start, limit = self.getOffsets()
+        start, limit = self.get_offsets()
         lang = translation.get_request_language(request=self.request)
         context = proxy.removeSecurityProxy(self.context)
         # there may not be a cache defined for this context type

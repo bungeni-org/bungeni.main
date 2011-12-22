@@ -583,6 +583,11 @@ class AjaxGetClassFields(BrowserView):
         except Exception:
             return "ERROR"
 
+''' !+UNUSED(mr, dec-2011) 
+    and why does it not inherit/comply with container.ContainerJSONListing ?
+    and, yikes, somebody should clean out this module !
+    running pyflakes could be a good start...
+    not to forget reading the source style guide 
 
 class ConstraintQueryJSON(BrowserView):
     """ Full Text Search w/ Constraint """
@@ -679,7 +684,7 @@ class ConstraintQueryJSON(BrowserView):
                 )
             )
         return r
-
+'''
 
 class Similar(BrowserView, ResultListing):
     template = ViewPageTemplateFile('templates/similar.pt')
