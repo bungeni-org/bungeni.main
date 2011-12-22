@@ -45,7 +45,7 @@ from bungeni.alchemist import Session
 from bungeni.models.interfaces import IVersion, ITranslatable
 from bungeni.models import domain
 from bungeni.core.i18n import _
-from bungeni.ui.utils import common
+from bungeni.ui.utils import common # !+CORE_UI_DEPENDENCY(mr, dec-2011)
 
 
 class BrowserFormLanguages(BrowserLanguages):
@@ -99,13 +99,17 @@ def get_all_languages(filter=None):
     # TypeError if filter is not iterable
     return dict([ (name, _languages[name]) for name in filter ])
 
-def get_request_language():
-    request = common.get_request()
+def get_request_language(request=None, default=capi.default_language):
+    """Get current request's language; if no request use specified default.
+    
+    If the request instance is handy, it may be passed in as a parameter thus
+    avoidng the need to call for it.
+    """
+    if request is None:
+        request = common.get_request()
     if IHTTPRequest.providedBy(request):
-        lang = request.locale.getLocaleID()
-    else:
-        lang = capi.default_language
-    return lang
+        return request.locale.getLocaleID()
+    return default
 
 
 def get_translation_for(context, lang):

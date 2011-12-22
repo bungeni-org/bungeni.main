@@ -292,7 +292,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
         """ (nodes:[ITranslatable]) -> [nodes]
         """
         if lang is None:
-            lang = translation.get_request_language()
+            lang = translation.get_request_language(request=self.request)
         t_nodes = []
         for node in nodes:
             try:
@@ -385,7 +385,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
     def __call__(self):
         # prepare required parameters
         start, limit = self.getOffsets()  # ? start=0&limit=25
-        lang = self.request.locale.getLocaleID()  # get_request_language()
+        lang = translation.get_request_language(request=self.request)
         return self.json_batch(start, limit, lang)
 
 
@@ -425,7 +425,7 @@ class PublicStatesContainerJSONListing(ContainerJSONListing):
     def __call__(self):
         # prepare required parameters
         start, limit = self.getOffsets()
-        lang = self.request.locale.getLocaleID() # get_request_language()
+        lang = translation.get_request_language(request=self.request)
         context = proxy.removeSecurityProxy(self.context)
         # there may not be a cache defined for this context type
         try:

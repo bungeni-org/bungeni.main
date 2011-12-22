@@ -117,7 +117,7 @@ class WorkspaceContainerJSONListing(BrowserView):
         """ (nodes:[ITranslatable]) -> [nodes]
         """
         if lang is None:
-            lang = translation.get_request_language()
+            lang = translation.get_request_language(request=self.request)
         t_nodes = []
         for node in nodes:
             try:
