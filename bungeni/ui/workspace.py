@@ -1,7 +1,7 @@
 import time
 import simplejson
 from zope import component
-from zope.publisher.browser import BrowserView
+from zope.publisher.browser import BrowserPage
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.security.proxy import removeSecurityProxy
 from zope.formlib import form
@@ -26,6 +26,7 @@ from bungeni.models.workspace import OBJECT_ROLES
 from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.alchemist.model import queryModelDescriptor
 from bungeni.ui.utils import debug
+from bungeni.utils import register
 from bungeni.utils.capi import capi
 
 
@@ -47,7 +48,9 @@ workspace_fields = [
     ]
 
 
-class WorkspaceContainerJSONListing(BrowserView):
+from bungeni.models.interfaces import IWorkspaceContainer # !+NOT_MODELS(mr, dec-2011)
+@register.view(IWorkspaceContainer, name="jsonlisting")
+class WorkspaceContainerJSONListing(BrowserPage):
     """Paging, batching, json contents of a workspace container.
     """
     permission = "zope.View"
@@ -253,7 +256,7 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
         return ",".join(column_model), ",".join(field_model)
 
 
-class WorkspaceContainerListing(BrowserView):
+class WorkspaceContainerListing(BrowserPage):
     template = ViewPageTemplateFile("templates/workspace-listing.pt")
     formatter_factory = WorkspaceDataTableFormatter
     columns = []

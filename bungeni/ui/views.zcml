@@ -480,41 +480,6 @@
         permission="zope.ManageSite"
     />
 
-    <!-- json view of containers-->
-    <browser:page name="jsonlisting"
-        for="bungeni.alchemist.interfaces.IAlchemistContainer"
-        permission="zope.Public"
-        class=".container.ContainerJSONListing"
-    />
-    <browser:page name="jsonlisting"
-        for="bungeni.alchemist.interfaces.IAlchemistContainer"
-        permission="zope.Public"
-        class=".container.PublicStatesContainerJSONListing"
-        layer=".interfaces.IBusinessSectionLayer"
-    />
-    <browser:page name="jsonlisting"
-        for="bungeni.alchemist.interfaces.IAlchemistContainer"
-        permission="zope.Public"
-        class=".container.PublicStatesContainerJSONListing"
-        layer=".interfaces.IMembersSectionLayer"
-    />
-    <browser:page name="jsonlisting"
-        for="bungeni.alchemist.interfaces.IAlchemistContainer"
-        permission="zope.Public"
-        class=".container.PublicStatesContainerJSONListing"
-        layer=".interfaces.IArchiveSectionLayer"
-    />
-    <browser:page name="jsontableheaders"
-        for="bungeni.alchemist.interfaces.IAlchemistContainer"
-        permission="zope.Public"
-        class=".container.ContainerJSONTableHeaders"
-    />
-    <browser:page name="jsonlisting"
-        for="bungeni.models.interfaces.IWorkspaceContainer"
-        permission="bungeni.workspace.View"
-        class=".workspace.WorkspaceContainerJSONListing"
-    />
-   
     <!-- container UI -->
     <browser:page name="index"
         for="bungeni.alchemist.interfaces.IAlchemistContainer"

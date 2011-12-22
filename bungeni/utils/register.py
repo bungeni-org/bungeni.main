@@ -35,8 +35,20 @@ def adapter(adapts=None, provides=None, name=""):
 def utility(provides=None, name="", args=(), kwargs={}):
     """provideUtility(ob, provides=None, name="")
     
-    Any utility instantiation parameters may be specified via decorator 
-    parameters args and kwargs.
+    An utility instance is instantiated on each call, and any desired utility 
+    instantiation parameters may be specified via decorator parameters args and 
+    kwargs.
+    
+    If for some case the behaviour here is not ideal e.g. if you already have 
+    the instance on hand, and may wish to register the *same* instance multiple
+    times, then the following non-decorator way (cannot decorate instance types) 
+    to register the instance may be prefereble:
+    
+        utility_instance = ...
+        zope.component.provideUtility(utility_instance, providesA, nameA)
+        zope.component.provideUtility(utility_instance, providesB, nameB)
+        ...
+    
     """
     def _utility(factory):
         ob = factory(*args, **kwargs)
@@ -101,8 +113,12 @@ def viewlet(for_, layer=None, view=None, manager=None, provides=None, name=""):
 def view(for_, layer=None, provides=None, name=""):
     """Register a browser view, using provideAdapter().
     
-    Should be used to replace both browser:view and browser:page (that is 
-    essentially just browser:view with added support for templates).
+    Should be used to replace both browser:view and very similar browser:page.
+    Differences between the two are: 
+    - browser:page adds support for a template attribute
+    - browser:page automagically "promotes" a zope.publisher.browser 
+    BrowserView factory to a BrowserPage. For the usage here, a BrowserPage 
+    factory needs to be supplied explicitly.
     """
     if provides is None:
         from zope.publisher.interfaces.browser import IBrowserPublisher as provides

@@ -10,10 +10,11 @@ from ore import yuiwidget
 
 from zope.security import proxy
 from zope.security import checkPermission
-from zope.publisher.browser import BrowserView
+from zope.publisher.browser import BrowserPage
 from zc.resourcelibrary import need
 from bungeni.alchemist import model
 from bungeni.alchemist import container
+from bungeni.alchemist.interfaces import IAlchemistContainer 
 
 from bungeni.models import interfaces as mfaces
 from bungeni.models import domain
@@ -25,6 +26,7 @@ from bungeni.ui.utils import url, date, debug
 from bungeni.ui import cookies
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
+from bungeni.utils import register
 from bungeni.utils.capi import capi
 
 
@@ -123,7 +125,7 @@ class AjaxContainerListing(
         return formatter
 
 
-class ContainerJSONBrowserView(BrowserView):
+class ContainerJSONBrowserView(BrowserPage):
     """Base BrowserView Container listing as a JSON AJAX callback.
     """
     permission = None
@@ -160,6 +162,7 @@ class ContainerJSONBrowserView(BrowserView):
         self.sort_dir = self.request.get("dir")
 
 
+@register.view(IAlchemistContainer, name="jsontableheaders")
 class ContainerJSONTableHeaders(ContainerJSONBrowserView):
     def __call__(self):
         return simplejson.dumps([
@@ -168,6 +171,7 @@ class ContainerJSONTableHeaders(ContainerJSONBrowserView):
         ])
 
 
+@register.view(IAlchemistContainer, name="jsonlisting")
 class ContainerJSONListing(ContainerJSONBrowserView):
     """Paging, batching, sorting, json contents of a container.
     """
@@ -389,6 +393,12 @@ class ContainerJSONListing(ContainerJSONBrowserView):
         return self.json_batch(start, limit, lang)
 
 
+#@register.view(IAlchemistContainer, 
+#    layer=ufaces.IMembersSectionLayer, name="jsonlisting") 
+#@register.view(IAlchemistContainer, 
+#    layer=ufaces.IArchiveSectionLayer, name="jsonlisting")
+@register.view(IAlchemistContainer, 
+    layer=ufaces.IBusinessSectionLayer, name="jsonlisting")
 class PublicStatesContainerJSONListing(ContainerJSONListing):
     """JSON Listing based on public workflow states.
 

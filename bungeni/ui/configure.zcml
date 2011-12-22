@@ -95,6 +95,15 @@
             attributes="__call__ browserDefault" />
     </class>
     
+    <!-- containers -->
+    <class class=".container.PublicStatesContainerJSONListing">
+        <require permission="zope.View" attributes="browserDefault __call__" />
+    </class>
+    <class class=".workspace.WorkspaceContainerJSONListing">
+        <require permission="bungeni.workspace.View" 
+            attributes="browserDefault __call__" />
+    </class>
+    
     <!-- Custom profile traverser -->    
     <class class = ".traversal.ProfileTraverser">
         <require permission = "bungeni.user.Edit" 
