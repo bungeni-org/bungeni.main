@@ -123,11 +123,6 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
         formatter.updateBatching()
         return formatter()
     
-    @property
-    def _change_class(self):
-        auditor = audit.get_auditor(self.context)
-        return auditor.change_class
-    
     def get_feed_entries(self):
         return get_changes(removeSecurityProxy(self.context), "workflow")
 
@@ -217,7 +212,9 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
             reg_number = data.get("registry_number")
             if reg_number:
                 session = Session()
-                num = session.query(ParliamentaryItem).filter(ParliamentaryItem.registry_number==reg_number).count()
+                num = session.query(ParliamentaryItem
+                    ).filter(ParliamentaryItem.registry_number==reg_number
+                    ).count()
                 if num != 0:
                     errors.append(zope.interface.Invalid(
                         "This registry number is already taken."))
