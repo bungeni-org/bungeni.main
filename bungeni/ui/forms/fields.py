@@ -122,7 +122,7 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
                 setattr(context, field_translation.field_name,
                         field_translation.field_text)
         self.widgets = form.setUpEditWidgets(
-            self.form_fields, self.prefix, context, self.request,
+            self.form_fields, "" , context, self.request,
             adapters=self.adapters,
             for_display=True,
             ignore_request=ignore_request
