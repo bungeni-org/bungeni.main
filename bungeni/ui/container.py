@@ -401,7 +401,8 @@ class ContainerJSONListing(ContainerJSONBrowserView):
 #    layer=ufaces.IMembersSectionLayer, name="jsonlisting") 
 #@register.view(IAlchemistContainer, 
 #    layer=ufaces.IArchiveSectionLayer, name="jsonlisting")
-@register.view(IAlchemistContainer, name="jsonlisting")
+@register.view(IAlchemistContainer, 
+    layer=ufaces.IBusinessSectionLayer, name="jsonlisting")
 class PublicStatesContainerJSONListing(ContainerJSONListing):
     """JSON Listing based on public workflow states.
 
