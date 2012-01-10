@@ -33,10 +33,19 @@ def object_hierarchy_type(object):
         return "item"
     return ""
 
+
+CHANGE_ACTIONS = ("add", "modify", "workflow", "remove", "version", "reversion")
+
+def assert_valid_change_action(action):
+    assert action in CHANGE_ACTIONS, \
+        "Invalid audit action: %s. Must be one of: %s" % (
+            action, CHANGE_ACTIONS)
+
 def get_changes(auditable, *actions):
     """Get changelog for auditable context, filtered for actions.
     """
-    # !+ assert *actions in CHANGE_ACTIONS
+    for action in actions:
+        assert_valid_change_action(action)
     return [ c for c in auditable.changes if c.action in actions ]
 
 #

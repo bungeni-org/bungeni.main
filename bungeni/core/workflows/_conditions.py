@@ -19,7 +19,6 @@ from bungeni.models import domain
 from bungeni.models import utils as model_utils
 from bungeni.core import globalsettings as prefs
 from bungeni.core.workflows import utils
-from bungeni.core.audit import CHANGE_ACTIONS
 from bungeni.ui.interfaces import IFormEditLayer
 from bungeni.ui.utils import common
 
@@ -200,13 +199,14 @@ def user_is_state_creator(context):
     if IAuditable.providedBy(context):
         current_user = model_utils.get_db_user()
         if current_user:
-            for _object_change in reversed(context.changes):
-                if _object_change.action == CHANGE_ACTIONS["workflow"]:
-                    extras = _object_change.extras
-                    if extras and (extras.get("destination") == context.status):
-                        if _object_change.user.login == current_user.login:
-                            is_state_creator = True
-                    break
+            for _object_change in reversed(
+                    domain.get_changes(context.changes, "workflow")
+                ):
+                extras = _object_change.extras
+                if extras and (extras.get("destination") == context.status):
+                    if _object_change.user.login == current_user.login:
+                        is_state_creator = True
+                break
     return is_state_creator
 
 def user_is_state_creator_and_owner(context):

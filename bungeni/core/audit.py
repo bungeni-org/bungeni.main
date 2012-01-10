@@ -59,10 +59,6 @@ from bungeni.utils import register
 from bungeni.core.i18n import _
 
 
-CHANGE_ACTIONS = dict([ (action, action) for action in 
-    ("add", "modify", "workflow", "remove", "version", "reversion") ])
-
-
 def _trace_audit_handler(ah):
     """Simple decorator to log.debug each call to a (specifically) an
     audit handler. 
@@ -297,7 +293,7 @@ class _AuditorFactory(object):
             for data auditing. When not user-modified, the value should be equal 
             to date_audit. 
         """
-        assert action in CHANGE_ACTIONS, "Unknown audit action: %s" % (action)
+        domain.assert_valid_change_action(action)
         oid, otype = self._getKey(ob)
         user_id = get_db_user_id()
         assert user_id is not None, "Audit error. No user logged in."

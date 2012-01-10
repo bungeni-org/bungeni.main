@@ -526,8 +526,11 @@ class ModelDescriptor(object):
         return [ field for field in self.__class__.fields 
             if field.is_displayable(mode, request_context_roles) ]
     
+    # !+_mode_fields(mr, jan-2012)
+    # !+listing_field_names(mr, jan-2012) !
+    
     @property
-    def listing_columns(self): # !+listing_column_NAMES(mr, nov-2010) !
+    def listing_columns(self):
         return [ f.name for f in self._mode_columns("listing") ]
     @property
     def search_columns(self): 

@@ -33,7 +33,7 @@ from bungeni.utils.capi import capi
 
 
 CHANGE_TYPES = ("head", "signatory", "attachedfile", "event")
-CHANGE_ACTIONS = audit.CHANGE_ACTIONS.keys()
+CHANGE_ACTIONS = domain.CHANGE_ACTIONS
 
 
 def checkPermissionChange(permission, change):

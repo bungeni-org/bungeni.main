@@ -29,7 +29,6 @@ from bungeni.core import audit
 from bungeni.core import globalsettings
 from bungeni.core.workflow import interfaces
 from bungeni.core.workflows.utils import get_mask
-from bungeni.core.audit import CHANGE_ACTIONS
 from bungeni.models.interfaces import IAuditable, IWorkspaceContainer, \
     IBungeniParliamentaryContent
 from bungeni.models.domain import ParliamentaryItem, get_changes

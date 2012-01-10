@@ -50,17 +50,17 @@ def stringKey(obj):
 from alchemist.ui.container import ContainerListing
 
 def getFields(context, interface=None, annotation=None):
-    """Generator of all fields that will be displayed in a containerlisting .
+    """Generator of all fields that will be displayed in a container listing.
     
     Redefines alchemist.ui.container.getFields, making use of the 
-    listing_columns declaration of the field's descriptor.
+    @listing_columns property of the ModelDescriptor class.
     """
-    if interface is None: 
+    if interface is None:
         domain_model = proxy.removeSecurityProxy(context.domain_model)
         interface = model.queryModelInterface(domain_model)
     if annotation is None:
         annotation = model.queryModelDescriptor(interface)
-    for column in annotation.listing_columns:
-        yield interface[column]
+    for field_name in annotation.listing_columns:
+        yield interface[field_name]
 
 
