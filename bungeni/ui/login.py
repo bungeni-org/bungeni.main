@@ -16,7 +16,7 @@ from zope.sendmail.interfaces import ISMTPMailer
 from bungeni.models.domain import User
 from bungeni.alchemist import Session
 from bungeni.models.domain import PasswordRestoreLink
-from bungeni.models.utils import get_db_user_id
+from bungeni.models.utils import get_db_user, get_db_user_id
 from bungeni.ui.widgets import HiddenTextWidget
 from bungeni.ui import vocabulary
 from bungeni.ui import widgets
@@ -26,9 +26,9 @@ from bungeni.models.settings import EmailSettings
 from bungeni.core.app import BungeniApp
 import bungeni.ui.utils as ui_utils
 from bungeni.ui.constraints import check_email
-
-MIN_AGE = 25
-MAX_AGE = 70
+from zope.interface import invariant
+from bungeni.ui.forms.common import BaseForm, EditForm
+from bungeni.alchemist import ui
 
 SECRET_KEY = "bungeni"
 
@@ -250,11 +250,7 @@ class IProfileForm(interface.Interface):
     email = schema.TextLine(title=_(u"Email"),constraint=check_email)
     description = schema.Text(title=_(u"Biographical notes"), required=False)
     gender = schema.Choice(title=_("Gender"), vocabulary=vocabulary.Gender)
-    date_of_birth = schema.Date(title=_("Date of Birth"), 
-                                min = datetime.datetime.now().date() - \
-                                        datetime.timedelta(MAX_AGE*365),
-                                max = datetime.datetime.now().date() - \
-                                        datetime.timedelta(MIN_AGE*365))
+    date_of_birth = schema.Date(title=_("Date of Birth"))
     birth_nationality = schema.Choice(title=_("Nationality at Birth"), 
                                       source=countries)
     birth_country = schema.Choice(title=_("Country of Birth"), 
@@ -262,8 +258,18 @@ class IProfileForm(interface.Interface):
     current_nationality = schema.Choice(title=_("Current Nationality"), 
                                         source=countries)
     image = schema.Bytes(title=_("Image"))
+    
+    @invariant
+    def checkEmail(self):
+        session = Session()
+        users = session.query(User).filter(User.email==self.email)
+        if users.count() > 1:
+            raise interface.Invalid(_("Email already taken!"),"email")
+        if users.count() == 1 and users.first().user_id != get_db_user().user_id:
+            raise interface.Invalid(_("Email already taken!"),"email")
+        
 
-class Profile(form.FormBase):
+class Profile(BaseForm):
     form_fields = form.Fields(IProfileForm)
     
     form_fields["gender"].custom_widget=widgets.CustomRadioWidget
@@ -279,10 +285,8 @@ class Profile(form.FormBase):
     
     def __init__(self, *args, **kwargs):
         super(Profile, self).__init__(*args, **kwargs)
-        self.session = Session()
-        user_id = get_db_user_id(self.context)
-        self.user = self.session.query(User)\
-                                .filter(User.user_id==user_id).first()
+        self.user = get_db_user(self.context)
+        self.context = self.user
             
     def __call__(self):
         if IUnauthenticatedPrincipal.providedBy(self.request.principal):
@@ -306,8 +310,7 @@ class Profile(form.FormBase):
                     self.widgets[name].setRenderedValue(
                                         self.request.get(name)[0])
         
-    @form.action(_(u"Save"))
-    def save_profile(self, action, data):
+    def _do_save(self, data):
         email = data.get("email","")
         first_name = data.get("first_name","")
         last_name = data.get("last_name","") 
@@ -321,13 +324,7 @@ class Profile(form.FormBase):
         current_nationality = data.get("current_nationality","")
                         
         if email:
-            users = self.session.query(User).filter(User.email==email)
-            if (users.count() == 1 and users.first().user_id == self.user.user_id) or\
-                users.count() == 0:
-                self.user.email = email
-            else:
-                self.status = _("Email already taken!")
-                return
+            self.user.email = email
             
         if first_name:
             self.user.first_name = first_name
@@ -361,13 +358,43 @@ class Profile(form.FormBase):
                 
         self.status = _("Profile data updated")
         
+    @form.action(_(u"Save"), condition=form.haveInputWidgets)
+    def handle_edit_save(self, action, data):
+        """Saves the document and goes back to edit page"""
+        self._do_save(data)
+
+    @form.action(
+        _(u"Save and view"), condition=form.haveInputWidgets)
+    def handle_edit_save_and_view(self, action, data):
+        """Saves the  document and redirects to its view page"""
+        self._do_save(data)
+        if not self._next_url:
+            self._next_url = ui_utils.url.absoluteURL(self.context, self.request) + \
+                "?portal_status_message= Saved"
+        self.request.response.redirect(self._next_url)
+
+    @form.action(_(u"Cancel"), validator=ui.null_validator)
+    def handle_edit_cancel(self, action, data):
+        """Cancelling redirects to the listing."""
+        if not self._next_url:
+            self._next_url = ui_utils.url.absoluteURL(self.context, self.request)
+        self.request.response.redirect(self._next_url)
+        
 
 class IChangePasswordForm(interface.Interface):
+    old_password = schema.Password(title=_(u"Old password"), required=True)
     pswd = schema.Password(title=_(u"Password"), required=True)
     confirm_password = schema.Password(title=_(u"Confirm password"),
                                        required=True)
+    
+    @invariant
+    def checkOldPassword(self):
+        if not get_db_user().checkPassword(self.old_password):
+            raise interface.Invalid(_("Old password incorrect"),
+                                      'old_password')
+    
 
-class ChangePasswordForm(form.FormBase):
+class ChangePasswordForm(BaseForm):
     form_fields = form.Fields(IChangePasswordForm)
     
     prefix = ""
@@ -379,9 +406,7 @@ class ChangePasswordForm(form.FormBase):
     def __init__(self, *args, **kwargs):
         super(ChangePasswordForm, self).__init__(*args, **kwargs)
         self.session = Session()
-        user_id = get_db_user_id(self.context)
-        self.user = self.session.query(User)\
-                                .filter(User.user_id==user_id).first()
+        self.user = get_db_user(self.context)
             
     def __call__(self):
         if IUnauthenticatedPrincipal.providedBy(self.request.principal):

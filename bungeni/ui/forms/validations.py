@@ -27,6 +27,18 @@ from interfaces import Modified
 def null_validator(*args, **kwargs):
     return []
 
+def email_validator(action, data, context, container):
+    session = Session()
+    users = session.query(domain.User)\
+                   .filter(domain.User.email==data.get("email",""))
+    if users.count() > 1:
+        return [interface.Invalid(_(u"Email already taken!"),"email"),]
+    if context:
+        if users.count() == 1 and users.first().user_id != context.user_id:
+            return [interface.Invalid(_(u"Email already taken!"),"email"),]
+    elif users.count() > 0:
+        return [interface.Invalid(_(u"Email already taken!"),"email"),]
+    return []
 
 def validate_start_date_within_parent( parent, data ):
     """ Check that the start date is inside the restrictictions.

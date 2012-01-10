@@ -201,6 +201,16 @@
      />
 -->
 
+  <!-- User -->
+  <browser:viewlet
+     name="bungeni.viewlet.addresses"
+     manager=".interfaces.ISubFormViewletManager"
+     class=".viewlets.AddressesViewlet"
+     for="bungeni.models.interfaces.IUser"
+     permission="zope.View"
+     weight="20"
+     />
+
   <!-- GroupSitting -->
 
   <browser:viewlet

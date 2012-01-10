@@ -249,6 +249,9 @@ class CommitteesViewlet(SubformViewlet):
 
 class CommitteeStaffViewlet(SubformViewlet):
     sub_attr_name = "committeestaff"
+    
+class AddressesViewlet(SubformViewlet):
+    sub_attr_name = "addresses"
 
 
 @register.viewlet(interfaces.IMemberOfParliament, manager=ISubFormViewletManager)

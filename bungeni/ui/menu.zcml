@@ -763,15 +763,6 @@
     
     <browser:menuItem menu="context_actions"
         for="bungeni.models.domain.User"
-        title="Addresses"
-        action="./addresses"
-        permission="bungeni.user.Edit"
-        layer="bungeni.ui.interfaces.IWorkspaceSectionLayer"
-        order="20"
-    />
-    
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.domain.User"
         title="change password"
         action="./change-password"
         permission="bungeni.user.Edit"

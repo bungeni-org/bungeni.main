@@ -22,7 +22,7 @@ from bungeni.alchemist import Session
 from bungeni.alchemist.model import ModelDescriptor, Field, show, hide
 
 from bungeni.models import domain
-from bungeni.models.utils import get_db_user_id
+from bungeni.models.utils import get_db_user_id, get_db_user
 
 # We import bungeni.core.workflows.adapters to ensure that the "states"
 # attribute on each "workflow" module is setup... this is to avoid an error
@@ -472,7 +472,6 @@ def DeathBeforeLife(User):
             "date_of_birth"
         )
 
-
 ####
 # Fields
 
@@ -748,7 +747,7 @@ class UserDescriptor(ModelDescriptor):
         ),
     ]
     schema_invariants = [DeathBeforeLife]
-    custom_validators = []
+    custom_validators = [validations.email_validator]
 
 
 class UserDelegationDescriptor(ModelDescriptor):
