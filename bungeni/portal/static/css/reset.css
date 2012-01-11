@@ -855,6 +855,14 @@ dl.portalMessage dd {
     line-height: 20px;
     margin: 0;
 }
+.formPanel #body_text .content-left-column {
+    display:none;
+    width:0;
+}
+.formPanel #body_text .content-right-column {
+    padding-top:5px;
+    width: 100%;
+}
 .formPanel .field .content-right-column div,
 .formPanel .field .content-right-column.widget {
     margin: 0;

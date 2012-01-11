@@ -830,6 +830,9 @@ dl.portalMessage dd {
 .formPanel.Report4Sitting .field .content-right-column h2 {
     text-align: left;
 }
+.formPanel, dd#items-to-be-scheduled-dl .formPanel div:last-child {
+    text-align: justify !important;
+}
 /*
  * Calendar
  */
