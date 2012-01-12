@@ -12,11 +12,9 @@ import sys
 
 from zope.security.proxy import removeSecurityProxy
 from zope.security import checkPermission
-from sqlalchemy import orm
 from zc.table import column
 import zc.table
 
-from bungeni.alchemist import Session
 from bungeni.models import interfaces
 from bungeni.models import domain
 from bungeni.models.utils import is_current_or_delegated_user
@@ -71,72 +69,48 @@ class ChangeDataProvider(object):
     def change_data_items(self):
         """Get change data items, reverse-sorted by date (most recent first).
         """
-        head = self.head
-        include_change_types = self.include_change_types
-        include_change_actions = self.include_change_actions
-        session = Session()
-        mapper = orm.object_mapper(head)
-        head_id = mapper.primary_key_from_instance(head)[0]
-        #!+ChangeDataProvider_VIEWLET _sa_instance_state
         changes = []
-        
-        def actions_filtered_query(query, change_class):
-            if include_change_actions == CHANGE_ACTIONS or \
-                    not include_change_actions:
-                # no filtering on actions needed, bypass altogether
-                return query
-            return query.filter(
-                change_class.action.in_(include_change_actions))
-        
-        # changes direct on head item
-        if "head" in include_change_types:
-            for c in domain.get_changes(head, *include_change_actions):
+        def append_visible_changes_on_item(item, item_as__parent__=False):
+            for c in domain.get_changes(item, *self.include_change_actions):
                 # !+CHANGE.__parent__(mr, dec-2011) when & where should this be
                 # set? For changes direct on parent item, if __parent__ not set
                 # then checkPermission("zope.View") returns False (almost always)
-                c.__parent__ = c.head
+                if item_as__parent__:
+                    c.__parent__ = item
                 if checkPermissionChange("zope.View", c):
                     changes.append(c)
         
+        # !+ align checkPermission zope.View with listings of sub item types...
+        
+        # changes direct on head item
+        if "head" in self.include_change_types:
+            append_visible_changes_on_item(self.head, item_as__parent__=True)
+        
         # changes on item signatories
-        if "signatory" in include_change_types:
-            signatories = [ s for s in 
-                session.query(domain.Signatory
-                    ).filter_by(item_id=head_id).all()
-                if checkPermission("zope.View", s) ]
-            # !+ align checkPermission zope.View with listing of signatories
-            # !+ streamline using domain.get_changes?
+        if "signatory" in self.include_change_types:
+            signatories = [ s for s in self.head.item_signatories
+                if checkPermission("zope.View", s)
+            ]
             for s in signatories:
-                query = session.query(domain.SignatoryChange
-                    ).filter_by(content_id=s.signatory_id)
-                query = actions_filtered_query(query, domain.SignatoryChange)
-                changes += [ c for c in query.all() 
-                    if checkPermissionChange("zope.View", c) ]
+                append_visible_changes_on_item(s)
         
         # changes on item attachments
-        if "attachedfile" in include_change_types:
-            attachments = [ f for f in 
-                session.query(domain.AttachedFile
-                    ).filter_by(item_id=head_id).all()
-                if checkPermission("zope.View", f) ]
-            # !+ align checkPermission zope.View with listing of attachments
-            # !+ streamline using domain.get_changes?
+        if "attachedfile" in self.include_change_types:
+            attachments = [ f for f in self.head.attached_files
+                if checkPermission("zope.View", f)
+            ]
             for f in attachments:
-                query = session.query(domain.AttachedFileChange
-                    ).filter_by(content_id=f.attached_file_id)
-                query = actions_filtered_query(query, domain.AttachedFileChange)
-                changes += [ c for c in query.all() 
-                    if checkPermissionChange("zope.View", c) ]
+                append_visible_changes_on_item(f)
         
         # changes on item events
-        if "event" in include_change_types:
-            events = [ e for e in session.query(
-                    domain.EventItem).filter_by(item_id=head_id).all() 
-                if checkPermission("zope.View", e) ]
-            # !+ align checkPermission zope.View with listing of events
+        if "event" in self.include_change_types:
+            events = [ e for e in self.head.event_items
+                if checkPermission("zope.View", e)
+            ]
             if events:
                 # !+AuditLogSubs(mr, dec-2011) events not currently audited, so
-                # we temporarily simulate a singular "add" change action:
+                # we temporarily simulate a singular "add" change action and 
+                # stuff it on an event.changes attribute.
                 class EventChange(domain.ItemChanges):
                     def __init__(self, event):
                         self._event = event
@@ -151,10 +125,8 @@ class ChangeDataProvider(object):
                         self.user = event.owner
                         self.status = event.status
                 for e in events:
-                    c = EventChange(e)
-                    if c.action in include_change_actions and \
-                            checkPermissionChange("zope.View", c):
-                        changes.append(c)
+                    e.changes = [EventChange(e)]
+                    append_visible_changes_on_item(e)
         
         # sort aggregated changes by date_active
         changes = [ dc[1] for dc in 
@@ -167,10 +139,10 @@ class ChangeDataProvider(object):
         print "---- !+ATTACHED_FILES", head.attached_files, head.files, [
             f for f in head.files ]
         # events:
-        print "---- !+EVENT", head.event_item, head.event, [ 
+        print "---- !+EVENT", head.event_items, head.event, [ 
             e for e in head.event ]
-        # !+ why the two attrributes item.event_item, item.event:
-        #   event_item -> EventItem instance ?
+        # !+ why the two attributes item.event_items, item.event:
+        #   event_items -> EventItem instances ?
         #   event -> Managed bungeni.models.domain.EventItemContainer
         # !+ why is event (container) singular?
         # signatories:
@@ -183,7 +155,12 @@ class ChangeDataProvider(object):
         # versions:  auditing is already done in the item's changes table
         print "==== /!+AUDITLOG"
         
-        return changes
+        # !+AlchemistManagedContainer(mr, jan-2012) adopt a simple naming 
+        # convention for attributes for the real data list or for attributes 
+        # to Alchemist Managed Container of string ids, e.g:
+        #   signatories:[Signatory], amc_signatories:Managed(str)
+        #   attached_files, (files->) amc_attached_files
+        #   (event_items->) events, (event->) amc_events
         '''
 
 

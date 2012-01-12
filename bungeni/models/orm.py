@@ -405,21 +405,23 @@ mapper(domain.ParliamentaryItem, schema.parliamentary_items,
             uselist=False,
             lazy=False),
         # !+NAMING(mr, jul-2011) "itemsignatories" is inconsistent
-        # !+SIGNATORIES(mr, nov-2011) why this PLUS signatories managed container?        
+        # !+ITEMSIGNATORIES(mr, jan-2011) why items here are User and not 
+        # Signatory instances? Cleanout...
         "itemsignatories": relation(domain.User, secondary=schema.signatories),
-        # !+FILES(mr, nov-2011) why this PLUS files managed container?
+        # !+ITEMSIGNATORIES(mr, jan-2011) Adding conventionally named property 
+        # that should replace "itemsignatories"...
+        "item_signatories": relation(domain.Signatory),
         "attached_files": relation(domain.AttachedFile,
             # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", 
             # "document", "item"
             backref=backref("item",
                 remote_side=schema.parliamentary_items.c.parliamentary_item_id)
         ),
-        # !+EVENT(mr, nov-2011) why this PLUS event managed container?
-        "event_item": relation(domain.EventItem,
+        "event_items": relation(domain.EventItem,
             primaryjoin=rdb.and_(
                 schema.parliamentary_items.c.parliamentary_item_id ==
                     schema.event_items.c.item_id),
-            uselist=False,
+            uselist=True,
             # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name
             backref=backref("item",
                 remote_side=schema.parliamentary_items.c.parliamentary_item_id),
