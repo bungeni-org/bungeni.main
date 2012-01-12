@@ -50,7 +50,8 @@ def stringKey(obj):
 from alchemist.ui.container import ContainerListing
 
 def getFields(context, interface=None, annotation=None):
-    """Generator of all fields that will be displayed in a container listing.
+    """Generator of all [zope.schema] fields that will be displayed in a 
+    container listing.
     
     Redefines alchemist.ui.container.getFields, making use of the 
     @listing_columns property of the ModelDescriptor class.

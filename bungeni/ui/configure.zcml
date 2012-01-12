@@ -56,6 +56,9 @@
         <require permission="bungeni.auditlog.View" 
             attributes="__call__ browserDefault" />
     </class>
+    <class class=".audit.TimeLineViewlet">
+        <require permission="zope.View" attributes="render" />
+    </class>
     
     <!-- Attachments UI-->
     <class class=".file.FileListingView">
@@ -120,11 +123,6 @@
 
     <!-- Custom forms -->
     <include package=".forms"/>
-    
-    <class class=".audit.TimeLineViewlet">
-        <require permission="zope.View" attributes="render" />
-    </class>
-
 
   <!-- Javascript -->
   <include package="ore.yui"/>

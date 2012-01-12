@@ -1,17 +1,21 @@
 # encoding: utf-8
-import zope.app.form
 from zope.i18n import translate
 from zope.security import proxy
 from zc.resourcelibrary import need
-from zc.table import batching, table, column
+from zc.table import batching
 from zope.app.pagetemplate import ViewPageTemplateFile
 from ore import yuiwidget
 from bungeni import alchemist
 from bungeni.ui import container
 from bungeni.ui.i18n import _
-from bungeni.ui.utils import url, common
+from bungeni.ui.utils import url
 from bungeni.utils.capi import capi
 
+
+'''!+UNUSED(mr, jan-2012)
+import zope.app.form
+from zc.table import column
+from bungeni.ui.utils import common
 class LinkColumn(column.GetterColumn):
     def renderCell(self, item, formatter):
         abs_url = url.absoluteURL(item, common.get_request())
@@ -24,19 +28,20 @@ class LinkColumn(column.GetterColumn):
                 contents=link_html
             )
         return title
+'''
 
 
 class TableFormatter(batching.Formatter):
-    """The out-of-box table formatter does not let us specify a custom
+    """View-level (reloads page) batching.
+    
+    The out-of-box table formatter does not let us specify a custom
     table css class.
-
-    !+ This is currently being used by the Actions workflow and versions views:
-    bungeni/ui/versions.py
-    bungeni/ui/workflow.py
+    
+    
+    !+ Currently being used by the Actions workflow, versions, attendace ui.
     """
-
     table_css_class = "listing grid"
-
+    
     def __call__(self):
         return ("""
             <div>
