@@ -86,47 +86,51 @@ class ChangeDataProvider(object):
         if "head" in self.include_change_types:
             append_visible_changes_on_item(self.head, item_as__parent__=True)
         
-        # changes on item signatories
-        if "signatory" in self.include_change_types:
-            signatories = [ s for s in self.head.item_signatories
-                if checkPermission("zope.View", s)
-            ]
-            for s in signatories:
-                append_visible_changes_on_item(s)
+        # changes on sub-items -- only Parliamentary Content may have sub-items
+        if interfaces.IBungeniParliamentaryContent.providedBy(self.head):
         
-        # changes on item attachments
-        if "attachedfile" in self.include_change_types:
-            attachments = [ f for f in self.head.attached_files
-                if checkPermission("zope.View", f)
-            ]
-            for f in attachments:
-                append_visible_changes_on_item(f)
-        
-        # changes on item events
-        if "event" in self.include_change_types:
-            events = [ e for e in self.head.event_items
-                if checkPermission("zope.View", e)
-            ]
-            if events:
-                # !+AuditLogSubs(mr, dec-2011) events not currently audited, so
-                # we temporarily simulate a singular "add" change action and 
-                # stuff it on an event.changes attribute.
-                class EventChange(domain.ItemChanges):
-                    def __init__(self, event):
-                        self._event = event
-                        self.item_id = event.event_item_id
-                        #change_id
-                        #self.content
-                        self.head = event.item
-                        self.action = "add"
-                        self.date_audit = self.date_active = event.status_date
-                        self.description = event.short_name
-                        self.notes = None # self.extras
-                        self.user = event.owner
-                        self.status = event.status
-                for e in events:
-                    e.changes = [EventChange(e)]
-                    append_visible_changes_on_item(e)
+            # changes on item signatories
+            if "signatory" in self.include_change_types:
+                signatories = [ s for s in self.head.item_signatories
+                    if checkPermission("zope.View", s)
+                ]
+                for s in signatories:
+                    append_visible_changes_on_item(s)
+            
+            # changes on item attachments
+            if "attachedfile" in self.include_change_types:
+                attachments = [ f for f in self.head.attached_files
+                    if checkPermission("zope.View", f)
+                ]
+                for f in attachments:
+                    append_visible_changes_on_item(f)
+            
+            # changes on item events
+            if "event" in self.include_change_types:
+                events = [ e for e in self.head.event_items
+                    if checkPermission("zope.View", e)
+                ]
+                if events:
+                    # !+AuditLogSubs(mr, dec-2011) events not currently audited,
+                    # so we temporarily simulate a singular "add" change action 
+                    # and stuff it on an event.changes attribute.
+                    class EventChange(domain.ItemChanges):
+                        def __init__(self, event):
+                            self._event = event
+                            self.item_id = event.event_item_id
+                            #change_id
+                            #self.content
+                            self.head = event.item
+                            self.action = "add"
+                            self.date_audit = self.date_active = \
+                                event.status_date
+                            self.description = event.short_name
+                            self.notes = None # self.extras
+                            self.user = event.owner
+                            self.status = event.status
+                    for e in events:
+                        e.changes = [EventChange(e)]
+                        append_visible_changes_on_item(e)
         
         # sort aggregated changes by date_active
         changes = [ dc[1] for dc in 
