@@ -9,6 +9,7 @@ from zope.security.proxy import removeSecurityProxy
 from sqlalchemy.orm import RelationshipProperty, class_mapper
 
 from bungeni.core.workflow.states import get_object_state_rpm, get_head_object_state_rpm
+from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.models.schema import singular
 from bungeni.alchemist.container import stringKey
 from bungeni.models.interfaces import IAuditable, IVersionable, IAttachmentable
@@ -41,23 +42,17 @@ def get_permissions_dict(permissions):
     results= []
     for x in permissions:
         # !+XML pls read the styleguide
-        results.append({"role":x[2], 
-                        "permission":x[1], 
-                        "setting":x[0] and "Allow" or "Deny"})
+        results.append({"role": x[2], 
+            "permission": x[1], 
+            "setting": x[0] and "Allow" or "Deny"})
     return results
 
 
-# !+XML include optional parameter here is useless
-# !+XML type should be inferred to from context either via IWorkflow(context).name
-# or via something like context.__class__.__name__.lowercase()
-# !+XML publish_to_xml should follow the generic action signature (including the 
-# return value --see workflows/_actions.py.
-def publish_to_xml(context, type="", include=None):
+def publish_to_xml(context):
     """Generates XML for object and saves it to the file. If object contains
     attachments - XML is saved in zip archive with all attached files. 
     """
-    if include is None:
-        include = []
+    include = []
     
     context = removeSecurityProxy(context)
     
@@ -72,14 +67,11 @@ def publish_to_xml(context, type="", include=None):
         exclude=["file_data", "image", "logo_data", "event_item", 
             "attached_files"]
     )
-    if type=="":
-        type = getattr(context, "type", None)
-        # !+XML why is this inside this if block? 
-        permissions = get_object_state_rpm(context).permissions
-        data["permissions"]= get_permissions_dict(permissions)
-    
-    assert type, "%s has no 'type' field. Use 'type' function parameter." % (
-        context.__class__)
+
+    type = IWorkflow(context).name
+     
+    permissions = get_object_state_rpm(context).permissions
+    data["permissions"]= get_permissions_dict(permissions)
     
     # list of files to zip
     files = []
