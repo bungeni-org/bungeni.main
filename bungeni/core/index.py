@@ -109,7 +109,11 @@ class ContentResolver(object):
         domain_class = resolve.resolve(class_path)
         session = Session()
         value_key = container.valueKey(oid)
-        return session.query(domain_class).get(value_key)
+        obj = session.query(domain_class).get(value_key)
+        if not obj:
+            session.commit()
+            obj = session.query(domain_class).get(value_key)
+        return obj
 
 class ContentIndexer(object):
     """
