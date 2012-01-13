@@ -109,16 +109,7 @@
         <append href="/plone"
                 theme="//head"
                 content="//head"
-                nocontent="ignore" />        
-        <append href="/business/whats-on"
-                theme="children:#portal-column-one"
-                content="#portal-personaltools .navigation"/>
-        <append href="/members/current"
-                theme="children:#portal-column-one"
-                content="#portal-personaltools .navigation"/>
-        <append href="/archive/browse"
-                theme="children:#portal-column-one"
-                content="#portal-personaltools .navigation"/>        
+                nocontent="ignore" />                
         <replace content="#portal-logo" theme="#portal-logo" />
         <replace content="#portal-siteactions" theme="#portal-siteactions" />
         <drop href="/plone"

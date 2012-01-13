@@ -1,0 +1,189 @@
+/* Style sheet for RTL (right-to-left) languages */
+
+caption, th, td {
+    text-align: right !important;
+}
+
+#portal-languageselector {
+    float: left !important;
+}
+
+#portal-personaltools li.navigation {
+    float: right !important;
+}
+
+#portal-personaltools {
+    text-align: left !important;
+} 
+
+div#portal-globalnav ul.level0 li,
+div#portal-globalnav ul.level0 ul.level1 li {
+    float: right !important;
+}
+
+#portal-breadcrumbs {
+    text-align: right !important;
+}
+
+#portal-column-one .portlet .portletItem ul li a {
+    float: right !important;
+}
+
+.contentActions li.context_translate,
+.contentActions li.context_workflow,
+.contentActions li.context_translate,
+.contentActions li.additems,
+.contentActions li.download_actions,
+.contentActions li.workspace_add_parliamentary_content {
+   float: left !important;
+}
+
+.contentActions li.context_actions,
+.contentActions li.context_actions li {
+   float: right !important;
+}
+
+dl#context_actions.actionMenu .actionMenuContent ul li a#view,
+dl#context_actions.actionMenu .actionMenuContent ul li a#schedule,
+dl#context_actions.actionMenu .actionMenuContent ul li a#edit,
+dl#context_actions.actionMenu .actionMenuContent ul li a#edit-profile,
+dl#context_actions.actionMenu .actionMenuContent ul li a#change-password,
+dl#context_actions.actionMenu .actionMenuContent ul li a#calendar,
+dl#context_actions.actionMenu .actionMenuContent ul li a#versions,
+dl#context_actions.actionMenu .actionMenuContent ul li a#workflow,
+dl#context_actions.actionMenu .actionMenuContent ul li a#audit-log,
+dl#context_actions.actionMenu .actionMenuContent ul li a#odt,
+dl#context_actions.actionMenu .actionMenuContent ul li a#pdf,
+dl#context_actions.actionMenu .actionMenuContent ul li a#delete,
+dl#context_actions.actionMenu .actionMenuContent ul li a#respond,
+dl#context_actions.actionMenu .actionMenuContent ul li a#feedrss,
+dl#context_actions.actionMenu .actionMenuContent ul li a#feedakomantoso,
+dl#context_actions.actionMenu .actionMenuContent ul li a#files,
+dl#context_actions.actionMenu .actionMenuContent ul li a#download,
+dl#context_actions.actionMenu .actionMenuContent ul li a#st-attendance,
+dl#context_actions.actionMenu .actionMenuContent ul li a#signatory-review,
+dl#context_actions.actionMenu .actionMenuContent ul li a#report-builder{
+    background-position: 95% 2px !important;
+    padding: 0 0.2em 0 8px !important;
+}
+
+dl#context_workflow dt a,
+dl#context_translate dt a {
+    background-position: 100% 2px !important;
+    padding-left: 2px !important;
+    padding-right: 20px !important;
+}
+
+.contentActions span.subMenuTitle {
+    padding-right: 15px !important;
+}
+
+.yui-dt-sortable a {
+    background-position: left center !important;
+    padding-left: 18px !important;
+}
+
+#alchemist\.container\.listing th.yui-dt-asc .yui-dt-liner {
+    background-position:left !important;
+}
+#alchemist\.container\.listing th.yui-dt-desc .yui-dt-liner {
+    background-position:left !important;
+}
+#alchemist\.container\.listing th .yui-dt-liner {
+    background-position:left !important;
+}
+
+
+.template-workspace #portal-search,
+.template-portal #portal-search {
+    text-align: left !important;
+}
+
+#portletArchiveDates {
+    float: left !important;
+}
+
+.inlinePortlet {
+    float: left !important;
+}
+
+#portletArchiveDates .portletHeader {
+    float: left !important;
+}
+
+#portletArchiveDates .portletItem {
+    float: left !important;
+}
+
+div.content-left-column {
+    float: right !important;
+}
+
+div.content-right-column {
+    float: left !important;
+}
+
+dl.portalMessage dt {
+    float: right;
+    !important;
+}
+
+#portal-column-one {
+    float: right;
+}
+
+#portal-column-content .documentContent {
+    float: right !important;
+}
+       
+#portal-column-content.sl {
+    margin-left: 0 !important;
+    margin-right: 16em;
+}
+
+.yui-dt-paginator {
+    text-align: right !important;
+}
+
+li.firstFormTab a {
+    border-right: 1px solid #8cacbb;
+}
+
+
+li.lastFormTab a {
+    border-left: 1px solid #8cacbb;
+}
+
+.formPanel .field, #version-history .diff {
+    text-align: right !important;
+}
+
+.formPanel h2, .formPanel ul {
+    text-align: right !important;
+}
+
+.template-workspace #top-layer ul#portal-languageselector,
+.template-portal #top-layer ul#portal-languageselector
+ {
+    float: right !important;
+}
+
+.template-workspace #top-layer ul#portal-personaltools,
+.template-portal #top-layer ul#portal-personaltools {
+    float: left !important;
+}
+
+
+.template-workspace #portal-logo img,
+.template-portal #portal-logo img
+ {
+    float: right !important;
+}
+
+.template-workspace #portal-logo {
+    background: url("/static/images/empowered.png") no-repeat scroll left center !important;
+}
+
+.template-workspace #visual-table-wrapper {
+    text-align: right;
+}

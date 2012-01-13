@@ -47,6 +47,11 @@ ${ xml(view.provide(provider_name="feed-manager")) }
 <link rel="stylesheet" href="/@@/portal/jquery-ui-1.8.7.custom.css" type="text/css" />
 <!-- /common -->
 
+$if{is_rtl()}
+<link rel="stylesheet" href="/@@/portal/rtl.css" type="text/css" />
+$fi
+
+
 #[
 approaching valid html: validator.w3.org:
     this view with zpt layout:      30 Errors, 32 warning(s) 

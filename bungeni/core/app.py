@@ -92,6 +92,7 @@ class AppSetup(object):
         z3evoque.domain.set_on_globals("get_section_name", url.get_section_name)
         z3evoque.domain.set_on_globals("get_base_direction", 
             language.get_base_direction)
+        z3evoque.domain.set_on_globals("is_rtl", language.is_rtl)            
             
         # !+ where is the view name for the app root (slash) set?
         

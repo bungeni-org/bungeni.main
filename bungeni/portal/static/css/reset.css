@@ -208,7 +208,7 @@ div#portal-globalnav ul.level0 ul.level1 {
 }
 div#portal-globalnav ul.level0 ul.level1 li {
     width: auto;
-    float: left !important;
+    float: left;
     margin: 0;
     padding: 0;
     height: auto;
@@ -548,9 +548,8 @@ div#region-content div#content > div:first-child {
     position: relative;
 }
 .contentActions ul li.context_actions {
-    float:left !important;
+    float:left;
     left: 0;
-    position: absolute;
 }
 .actionMenu .actionMenuContent {
     width: 100%;
@@ -1407,7 +1406,7 @@ div.main-column #collage h2 {
 .template-workspace #portal-logo img {
     margin: 0;
     padding:0;
-    float:left !important;
+    float:left;
 }
 
 .template-workspace #top-layer ul#portal-personaltools {

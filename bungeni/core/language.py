@@ -119,6 +119,13 @@ def get_base_direction():
         return "rtl"
     else:
         return "ltr"
+        
+def is_rtl():
+    if get_base_direction() == "rtl":
+        return True
+    else:
+        return False
+        
              
 @register.utility(provides=ITextDirection)
 class TextDirection(object):
