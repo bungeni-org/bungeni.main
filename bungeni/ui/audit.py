@@ -142,6 +142,7 @@ class ChangeDataProvider(object):
         # attached files:
         print "---- !+ATTACHED_FILES", head.attached_files, head.files, [
             f for f in head.files ]
+        print "---- !+ATTACHED_FILES", list(head.files.values()), head.files.values()
         # events:
         print "---- !+EVENT", head.event_items, head.event, [ 
             e for e in head.event ]
@@ -165,6 +166,7 @@ class ChangeDataProvider(object):
         #   signatories:[Signatory], amc_signatories:Managed(str)
         #   attached_files, (files->) amc_attached_files
         #   (event_items->) events, (event->) amc_events
+        # or, adopt pattern: @xxx -> amc_xxx.values()
         '''
 
 
@@ -282,14 +284,24 @@ class AuditLogViewBase(browser.BungeniBrowserView):
     
     def __init__(self, context, request):
         browser.BungeniBrowserView.__init__(self, context, request)
+        self.message_no_data = _(self.__class__._message_no_data)
+        self._change_data_items = None # cache
     
     def columns(self):
         return ChangeDataDescriptor(self.context, self.request).columns()
     
+    _message_no_data = "No Change Data"
+    @property
+    def has_data(self):
+        return bool(self.change_data_items)
+    
     def change_data_items(self):
-        return ChangeDataProvider(self.context, 
-                self.include_change_types, 
-                self.include_change_actions).change_data_items()
+        if self._change_data_items is None:
+            self._change_data_items = ChangeDataProvider(self.context, 
+                    self.include_change_types, 
+                    self.include_change_actions
+                ).change_data_items()
+        return self._change_data_items
     
     def listing(self):
         # !+FormatterFactoryAPI(mr, jan-2012) the various formatter factories 
@@ -330,7 +342,7 @@ class AuditLogView(AuditLogViewBase):
     """
     
     # evoque
-    __call__ = z3evoque.PageViewTemplateFile("audit.html#changes")
+    __call__ = z3evoque.PageViewTemplateFile("audit.html#listing_view")
     
     # zpt
     #__call__ = ViewPageTemplateFile("templates/changes.pt")
@@ -347,7 +359,7 @@ class AuditLogView(AuditLogViewBase):
             self._page_title = "%s: %s" % (
                 _(self._page_title), _(self.context.short_name))
         else:
-            self._page_title = _(self._page_title)
+            self._page_title = _(self.__class__._page_title)
 
 
 # !+ @register.view(interfaces.IAuditable, name="bungeni.viewlet.timeline")
@@ -362,12 +374,12 @@ class AuditLogView(AuditLogViewBase):
 @register.viewlet(interfaces.IMotion, manager=ISubFormViewletManager, 
     name="bungeni.viewlet.motion-timeline")
 class TimeLineViewlet(AuditLogViewBase, browser.BungeniItemsViewlet):
-    view_title = _("Timeline")
+    view_title = "Timeline"
     view_id = "timeline"
     weight = 20
     
     # evoque
-    render = z3evoque.PageViewTemplateFile("audit.html#timeline")
+    render = z3evoque.PageViewTemplateFile("audit.html#listing_viewlet")
     
     visible_column_names = ["action date", "description", "user"]
     include_change_types =  [ t for t in CHANGE_TYPES ]
@@ -376,6 +388,7 @@ class TimeLineViewlet(AuditLogViewBase, browser.BungeniItemsViewlet):
     def __init__(self,  context, request, view, manager):
         AuditLogViewBase.__init__(self, context, request)
         browser.BungeniItemsViewlet.__init__(self, context, request, view, manager)
+        self.view_title = _(self.__class__.view_title)
 
 
 

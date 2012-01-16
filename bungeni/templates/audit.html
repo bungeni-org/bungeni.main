@@ -1,28 +1,34 @@
 #[ $Id$ ]#
 
 #[ was: ui/templates/changes.pt ]#
-$begin{changes}
+$begin{listing_view}
     $overlay{bungeni.html}
     $begin{content}
-    <h2>${ i18n(view.page_title) }</h2>
-    <form action="" method="GET">
-        <div>
-        ${ xml(view.listing()) }
-        </div>
-    </form>
+    <h2>${view.page_title}</h2>
+    $evoque{#listing}
     $end{content}
-$end{changes}
+$end{listing_view}
 
 
 #[ viewlet ]#
-$begin{timeline}
+$begin{listing_viewlet}
 <dt id="fieldsetlegend-${view.view_id}">
-    <span>${i18n(view.view_title)}</span>
+    <span>${view.view_title}</span>
 </dt>
 <dd id="fieldset-${view.view_id}">
-    <div> #[ <table class="listing"> ]#
-    ${ xml(view.listing()) }
-    </div>
+$evoque{#listing}
 </dd>
-$end{timeline}
+$end{listing_viewlet}
+
+
+
+$begin{listing}
+<div>
+$if{view.has_data}
+    ${xml(view.listing())}
+$else
+    <p>${view.message_no_data}</p>
+$fi
+</div>
+$end{listing}
 
