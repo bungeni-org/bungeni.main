@@ -4,8 +4,8 @@ import datetime
 from zope import component
 from zope.app.component.hooks import getSite
 from zope.app.security.interfaces import IUnauthenticatedPrincipal
-from zope.app.publisher.interfaces.browser import IBrowserMenu
-import zope.app.publisher.browser.menu
+from zope.browsermenu.interfaces import IBrowserMenu
+import zope.browsermenu
 from zope.security import checkPermission
 from zope.i18n import translate
 import z3c.menu.ready2go.item
@@ -25,11 +25,11 @@ from bungeni.ui.utils import url
 from bungeni.ui import interfaces
 
 
-class BrowserMenu(zope.app.publisher.browser.menu.BrowserMenu):
+class BrowserMenu(zope.browsermenu.BrowserMenu):
     pass
 
 
-class BrowserSubMenuItem(zope.app.publisher.browser.menu.BrowserSubMenuItem):
+class BrowserSubMenuItem(zope.browsermenu.BrowserSubMenuItem):
     @property
     def id(self):
         return self.submenuId

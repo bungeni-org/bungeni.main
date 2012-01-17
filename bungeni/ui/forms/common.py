@@ -33,7 +33,7 @@ import sqlalchemy as rdb
 #from bungeni.alchemist.container import stringKey
 #from bungeni.core.workflow.interfaces import IWorkflowController
 #from bungeni.alchemist.ui import handle_edit_action
-from zope.app.form.interfaces import IDisplayWidget
+from zope.formlib.interfaces import IDisplayWidget
 
 # !+sqlalchemy.exc(mr, jul-2010) why this try/except ?
 try:

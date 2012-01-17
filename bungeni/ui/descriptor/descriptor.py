@@ -13,7 +13,7 @@ from zope import schema, interface
 
 from zope.security.management import getInteraction
 from zope.publisher.interfaces import IRequest
-import zope.app.form.browser
+import zope.formlib
 from zope.i18n import translate
 from zc.table import column
 from zope.dublincore.interfaces import IDCDescriptiveProperties
@@ -151,7 +151,7 @@ def linked_mp_name_column(name, title, attr):
     def getter(item_user, formatter):
         item_user = _get_related_user(item_user, attr)
         mp = get_member_of_parliament(item_user.user_id)
-        return zope.app.form.browser.widget.renderElement("a",
+        return zope.formlib.widget.renderElement("a",
             contents=item_user.fullname, # User.fullname derived property
             href="/members/current/obj-%s/" % (mp.membership_id)
         )
@@ -224,7 +224,7 @@ def linked_assignment_column(title, assigned_kind="item"):
             # the related PI's public "home view".
             # The absolute URL path is of the form:
             # /business/{ASSIGNED.TYPE}s/obj-{ASSIGNED.ID}/
-            return zope.app.form.browser.widget.renderElement("a",
+            return zope.formlib.widget.renderElement("a",
                 contents=link_label,
                 href="/business/%ss/obj-%s/" % (
                     assigned.type, getattr(assigned, assigned_id_attr_name))
@@ -247,7 +247,7 @@ def linked_assignment_column(title, assigned_kind="item"):
             if r:
                 url = r.getURL()
                 url_path = url[0: url.index(acn) + acn_len]
-            return zope.app.form.browser.widget.renderElement("a",
+            return zope.formlib.widget.renderElement("a",
                 contents=link_label,
                 href="%s/obj-%s/" % (url_path, assignment.assignment_id)
             )
@@ -1526,8 +1526,8 @@ class AddressDescriptor(ModelDescriptor):
                 hide("listing"),
             ],
             property=schema.Text(title=_("Street"), required=True),
-            edit_widget=zope.app.form.browser.TextAreaWidget,
-            add_widget=zope.app.form.browser.TextAreaWidget,
+            edit_widget=zope.formlib.widgets.TextAreaWidget,
+            add_widget=zope.formlib.widgets.TextAreaWidget,
         ),
         Field(name="city", # [user-req]
             modes="view edit add listing",
@@ -1566,9 +1566,9 @@ class AddressDescriptor(ModelDescriptor):
                 description=_("Enter one phone number per line"),
                 required=False
             ),
-            edit_widget=zope.app.form.browser.TextAreaWidget,
-            add_widget=zope.app.form.browser.TextAreaWidget,
-            #view_widget=zope.app.form.browser.ListDisplayWidget,
+            edit_widget=zope.formlib.widgets.TextAreaWidget,
+            add_widget=zope.formlib.widgets.TextAreaWidget,
+            #view_widget=zope.formlib.widgets.ListDisplayWidget,
         ),
         Field(name="fax", # [user-req]
             modes="view edit add listing",
@@ -1579,8 +1579,8 @@ class AddressDescriptor(ModelDescriptor):
                 description=_("Enter one fax number per line"),
                 required=False
             ),
-            edit_widget=zope.app.form.browser.TextAreaWidget,
-            add_widget=zope.app.form.browser.TextAreaWidget,
+            edit_widget=zope.formlib.widgets.TextAreaWidget,
+            add_widget=zope.formlib.widgets.TextAreaWidget,
         ),
         Field(name="email", # [user-req]
             modes="view edit add listing",

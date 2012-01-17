@@ -6,7 +6,7 @@
   <!-- meta:provides feature="devmode" / -->
 
   <!-- Exclude Unused Configuration, makes startup faster (0.5s atm) -->
-  <exclude package="zope.dublincore"/>
+  <!-- exclude package="zope.dublincore"/>
   <exclude package="zope.copypastemove"/>
   <exclude package="zope.app.apidoc"/>
   <exclude package="zope.app.applicationcontrol.browser" />
@@ -29,9 +29,12 @@
   <exclude package="zope.app.rotterdam" />
   <exclude package="zope.app.renderer" />
   <exclude package="zope.app.security.browser" />
-  <exclude package="zope.app.tree" />
+  <exclude package="zope.app.tree" / -->
 
   <include package="zope.security" file="meta.zcml" />
+  <include package="zope.browsermenu" file="meta.zcml" />
+  <include package="zope.browsermenu"/>
+  
   <include package="zope.app.zcmlfiles" file="meta.zcml" />
 
   <include package="zope.publisher" />

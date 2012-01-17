@@ -250,10 +250,10 @@ class Field(object):
     
     listing_column = None   # zc.table.interfaces.IColumn
     
-    view_widget = None      # zope.app.form.interaces.IDisplayWidget
-    edit_widget = None      # zope.app.form.interfaces.IInputWidget
-    add_widget = None       # zope.app.form.interfaces.IInputWidget
-    search_widget = None    # zope.app.form.interfaces.IInputWidget
+    view_widget = None      # zope.formlib.interaces.IDisplayWidget
+    edit_widget = None      # zope.formlib.interfaces.IInputWidget
+    add_widget = None       # zope.formlib.interfaces.IInputWidget
+    search_widget = None    # zope.formlib.interfaces.IInputWidget
     
     # /INIT Parameter Defaults
     

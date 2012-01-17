@@ -29,7 +29,7 @@
 
     <browser:page name=""
         for="bungeni.models.interfaces.IBungeniApplication"
-        class="zope.app.publisher.browser.resources.Resources"
+        class="zope.browserresource.resources.Resources"
         permission="zope.Public"
         allowed_interface="zope.publisher.interfaces.browser.IBrowserPublisher"
     />

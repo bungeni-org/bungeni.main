@@ -69,7 +69,7 @@ from bungeni.ui.utils.common import get_application
 from zope.app.component import site
 from zope.component import queryMultiAdapter, getMultiAdapter
 from zope.security.checker import ProxyFactory
-from zope.app.publisher.browser import getDefaultViewName
+from zope.publisher.defaultview import getDefaultViewName
 from bungeni.core.interfaces import ISection
 from bungeni.ui.viewlets.navigation import _get_context_chain
 from bungeni.ui.utils.url import get_section_name

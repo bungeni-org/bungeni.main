@@ -16,7 +16,7 @@ from zope import interface
 from zope import schema
 from zope.formlib import form
 from zope.formlib import namedtemplate
-from zope.app.form.browser import MultiCheckBoxWidget as _MultiCheckBoxWidget
+from zope.formlib.widgets import MultiCheckBoxWidget as _MultiCheckBoxWidget
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.schema.vocabulary import SimpleVocabulary
 from zope.security.proxy import removeSecurityProxy

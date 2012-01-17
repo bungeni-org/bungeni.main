@@ -7,7 +7,7 @@ from zope.container.ordered import OrderedContainer
 from zope.container.traversal import ItemTraverser
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.publisher.interfaces.browser import IBrowserPublisher
-from zope.app.publisher.browser import getDefaultViewName
+from zope.publisher.defaultview import getDefaultViewName
 from zope.publisher.interfaces import NotFound
 
 from bungeni.core.proxy import NavigationProxy

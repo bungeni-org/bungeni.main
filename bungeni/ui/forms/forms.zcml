@@ -58,11 +58,7 @@
         class=".common.AddForm"
         permission="bungeni.question.Add"
         layer="bungeni.ui.interfaces.IBungeniSkin"
-    /><!--
-for non-{speaker, clerk}: /workspace/pi -> Add Question... 
-
-Unauthorized: (<zope.app.publisher.browser.viewmeta.AddForm object at ...>, 'browserDefault', 'bungeni.question.Add')
-    -->
+    />
     <browser:page name="edit" for="bungeni.models.interfaces.IQuestion"
         class=".forms.DiffEditForm"
         permission="bungeni.question.Edit"

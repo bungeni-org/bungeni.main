@@ -17,7 +17,7 @@ import zope.interface
 from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
 from zope.security.proxy import removeSecurityProxy
 from zope.app.schema.vocabulary import IVocabularyFactory
-from zope.app.form.browser.textwidgets import TextAreaWidget
+from zope.formlib.widgets import TextAreaWidget
 from zc.table import column
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.i18n import translate

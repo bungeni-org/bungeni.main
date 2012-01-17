@@ -71,7 +71,7 @@
   
   <!-- Application Configuration -->
   <include package="bungeni.core" />
-
+  <include package="zope.browserpage"/>
   <include package="ploned.ui" file="meta.zcml" />
 
   <!-- Application Theme -->

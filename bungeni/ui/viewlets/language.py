@@ -7,7 +7,7 @@ from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.security import proxy
 from zope.viewlet import viewlet
 from zope.app.pagetemplate import ViewPageTemplateFile
-from zope.app.publisher.interfaces.browser import IBrowserMenu
+from zope.browsermenu.interfaces import IBrowserMenu
 from zope.app.component.hooks import getSite
 from zope.publisher.browser import BrowserView
 from zope.i18n.negotiator import normalize_lang

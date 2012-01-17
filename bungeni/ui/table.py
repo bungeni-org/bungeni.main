@@ -13,7 +13,7 @@ from bungeni.utils.capi import capi
 
 
 '''!+UNUSED(mr, jan-2012)
-import zope.app.form
+import zope.formlib
 from zc.table import column
 from bungeni.ui.utils import common
 class LinkColumn(column.GetterColumn):
@@ -21,10 +21,10 @@ class LinkColumn(column.GetterColumn):
         abs_url = url.absoluteURL(item, common.get_request())
         title = super(LinkColumn, self).renderCell(item, formatter)
         if abs_url:
-            link_html = zope.app.form.browser.widget.renderElement("a",
+            link_html = zope.formlib.widget.renderElement("a",
                 contents=title, href=abs_url
             )
-            return zope.app.form.browser.widget.renderElement("p",
+            return zope.formlib.widget.renderElement("p",
                 contents=link_html
             )
         return title

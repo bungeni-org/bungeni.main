@@ -7,11 +7,9 @@
            i18n_domain="bungeni">
   <include package="zope.component" file="meta.zcml" />
   <include package="zope.app.component" file="meta.zcml" />
-  <include package="zope.app.publisher" file="meta.zcml" />
   <include package="zope.i18n" file="meta.zcml" />
   <exclude package="zope.componentvocabulary" />
   <include package="zope.app.zcmlfiles" />
-  <include package="zope.app.form.browser" file="meta.zcml"/>
 
     <!-- Setup Security Policy --> 
     <include package="zope.securitypolicy" file="meta.zcml" />

@@ -19,19 +19,17 @@ from zope import interface
 from zope.datetime import parseDatetimetz
 from zope.datetime import DateTimeError
 from zope.security.proxy import removeSecurityProxy
-from zope.app.form.interfaces import ConversionError, InputErrors
-from zope.app.form import CustomWidgetFactory
+from zope.formlib.interfaces import ConversionError, InputErrors
+from zope.formlib.widget import CustomWidgetFactory
 from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from zope.interface.common import idatetime
-import zope.app.form.browser.widget
-import zope.app.form.browser.textwidgets
 import zope.security.proxy
 import zope.traversing
-from zope.app.form.browser.textwidgets import TextAreaWidget, FileWidget
-from zope.app.form.browser.itemswidgets import (RadioWidget,
-    SingleDataHelper, ItemsWidgetBase, ItemsEditWidgetBase,
-    DropdownWidget, ItemDisplayWidget)
-from zope.app.form.browser.boolwidgets import CheckBoxWidget
+from zope.formlib.widgets import (TextAreaWidget, FileWidget, RadioWidget, 
+    DropdownWidget)
+from zope.formlib.itemswidgets import (SingleDataHelper, ItemsWidgetBase, 
+    ItemsEditWidgetBase,ItemDisplayWidget)
+from zope.formlib.widgets import CheckBoxWidget
 
 from zope.i18n import translate
 
@@ -47,29 +45,29 @@ from bungeni.ui.interfaces import IGenenerateVocabularyDefault
 from bungeni.models.utils import get_db_user_id
 from bungeni.core.language import get_default_language
 
-from zope.app.form.interfaces import IInputWidget, IDisplayWidget
+from zope.formlib.interfaces import IInputWidget, IDisplayWidget
 from zope import component
 
 
 path = os.path.split(os.path.abspath(__file__))[0]
 
-class IDiffDisplayWidget(zope.app.form.interfaces.IDisplayWidget):
+class IDiffDisplayWidget(zope.formlib.interfaces.IDisplayWidget):
     """ Marker interface for diff text widgets
     """
     pass
 
-class TextWidget(zope.app.form.browser.textwidgets.TextWidget):
+class TextWidget(zope.formlib.widgets.TextWidget):
     displayWidth = 60
 class LongTextWidget(TextWidget):
     displayWidth = 90
 
 
-class HiddenTextWidget(zope.app.form.browser.textwidgets.TextWidget):
+class HiddenTextWidget(zope.formlib.widgets.TextWidget):
     def __call__(self):
         return self.hidden()
 
 
-class HiddenTimestampWidget(zope.app.form.browser.textwidgets.TextWidget):
+class HiddenTimestampWidget(zope.formlib.widgets.TextWidget):
     def __call__(self):
         return self.hidden()
     
@@ -229,21 +227,21 @@ class FileAddWidget(FileInputWidget):
 class FileEditWidget(FileInputWidget):
     __call__ = ViewPageTemplateFile("templates/editfilewidget.pt")
 
-class FileDisplayWidget(zope.app.form.browser.widget.DisplayWidget):
+class FileDisplayWidget(zope.formlib.widgets.DisplayWidget):
     def __call__(self):
         return u'<a href="%s/download"> %s </a>' \
             % (url.absoluteURL(self.__parent__.context, self.request),
                 translate(_ui("download"), context=self.request),
             )
 
-class ImageDisplayWidget(zope.app.form.browser.widget.DisplayWidget):
+class ImageDisplayWidget(zope.formlib.widgets.DisplayWidget):
     def __call__(self):
         #from bungeni.ui.utils.url import absoluteURL
         #url = absoluteURL(self.__parent__.context, self.request)
         #return '<img src="' + url + '/file-image/%s" />' % self.context.__name__
         return '<img src="./file-image/%s" />' % self.context.__name__
 
-class HTMLDisplay(zope.app.form.browser.widget.UnicodeDisplayWidget):
+class HTMLDisplay(zope.formlib.widgets.UnicodeDisplayWidget):
 
     def __call__(self):
         if self._renderedValueSet():
@@ -326,7 +324,7 @@ class OneTimeEditWidget(TextAreaWidget):
     __call__ = ViewPageTemplateFile("templates/one-time-textinput-widget.pt")
 
 '''
-class SupplementaryQuestionDisplay(zope.app.form.browser.widget.DisplayWidget):
+class SupplementaryQuestionDisplay(zope.formlib.widget.DisplayWidget):
     """
     If a question has a parent i.e it is a supplementary question
     this displays the subject of the parent, else it states that this is an
@@ -343,7 +341,7 @@ class SupplementaryQuestionDisplay(zope.app.form.browser.widget.DisplayWidget):
             return _(u"Initial Question")
 '''
 
-class SelectDateWidget(zope.app.form.browser.widget.SimpleInputWidget):
+class SelectDateWidget(zope.formlib.widget.SimpleInputWidget):
     """A more user freindly date input.
     """
     __call__ = ViewPageTemplateFile("templates/selectdatewidget.pt")
@@ -806,7 +804,7 @@ class AutocompleteWidget(SingleDataHelper, ItemsWidgetBase):
         return self._getFormValue()
 '''
 
-class MemberURLDisplayWidget(zope.app.form.browser.widget.DisplayWidget):
+class MemberURLDisplayWidget(zope.formlib.widget.DisplayWidget):
     """Display the linked name of a Member of Parliament, using as URL the
     MP's "home" view.
 
@@ -822,7 +820,7 @@ class MemberURLDisplayWidget(zope.app.form.browser.widget.DisplayWidget):
     def __call__(self):
         # this (user_id) attribute's value IS self._data
         mp = self.get_member_of_parliament(self._data)
-        return zope.app.form.browser.widget.renderElement("a",
+        return zope.formlib.widget.renderElement("a",
             contents=mp.user.fullname,
             href="/members/current/obj-%s/" % (mp.membership_id)
         )
@@ -1192,7 +1190,7 @@ class TreeVocabularyWidget(DropdownWidget):
 
 
 class TermsDisplayWidget(
-    zope.app.form.browser.widget.UnicodeDisplayWidget
+    zope.formlib.widget.UnicodeDisplayWidget
 ):
 
     hint = _(u"selected subject terms")

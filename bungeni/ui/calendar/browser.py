@@ -26,7 +26,7 @@ from zope.location.interfaces import ILocation
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.publisher.interfaces import IPublishTraverse
 from zope.publisher.browser import BrowserView
-from zope.app.publisher.interfaces.browser import IBrowserMenu
+from zope.browsermenu.interfaces import IBrowserMenu
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.app.component.hooks import getSite
 from zope.security.proxy import removeSecurityProxy

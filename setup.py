@@ -22,9 +22,6 @@ setup(name='bungeni',
       install_requires=['setuptools',
             # Following packages are required by :
             # bungeni.server
-                        'ZODB3',
-                        'ZConfig',
-                        'zdaemon',
                         'zope.publisher',
                         'zope.traversing',
                         'zope.app.wsgi>=3.4.0',
