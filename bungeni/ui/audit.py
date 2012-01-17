@@ -12,6 +12,7 @@ import sys
 
 from zope.security.proxy import removeSecurityProxy
 from zope.security import checkPermission
+from zope.security.management import getInteraction
 from zc.table import column
 import zc.table
 
@@ -33,7 +34,7 @@ CHANGE_TYPES = ("head", "signatory", "attachedfile", "event")
 CHANGE_ACTIONS = domain.CHANGE_ACTIONS
 
 
-def checkPermissionChange(permission, change):
+def checkPermissionChange(interaction, permission, change):
     """checkPermission for a change log entry.
     
     This is a variation of generic checkPermission that adds special handling 
@@ -43,7 +44,7 @@ def checkPermissionChange(permission, change):
     # always validly set) or made part of RolePermissionMap's logic.
     """
     try:
-        return checkPermission(permission, change)
+        return interaction.checkPermission(permission, change)
     except InvalidStateError:
         # No state as RPM for change.status... and as IRolePermission(change) 
         # uses workflow.state.get_head_object_state_rpm the RPM lookup call 
@@ -69,6 +70,7 @@ class ChangeDataProvider(object):
     def change_data_items(self):
         """Get change data items, reverse-sorted by date (most recent first).
         """
+        interaction = getInteraction() # slight performance optimization
         changes = []
         def append_visible_changes_on_item(item, item_as__parent__=False):
             for c in domain.get_changes(item, *self.include_change_actions):
@@ -77,7 +79,7 @@ class ChangeDataProvider(object):
                 # then checkPermission("zope.View") returns False (almost always)
                 if item_as__parent__:
                     c.__parent__ = item
-                if checkPermissionChange("zope.View", c):
+                if checkPermissionChange(interaction, "zope.View", c):
                     changes.append(c)
         
         # !+ align checkPermission zope.View with listings of sub item types...
@@ -269,7 +271,7 @@ class TableFormatter(
 
 # !+AuditLogView(mr, nov-2011) should inherit from forms.common.BaseForm, 
 # as for VersionLogView?
-class AuditLogViewBase(browser.BungeniBrowserView):
+class AuditLogMixin(object):
     """Base view for audit change log for a context.
     """
     formatter_factory = TableFormatter
@@ -282,26 +284,28 @@ class AuditLogViewBase(browser.BungeniBrowserView):
     include_change_types = []
     include_change_actions = []
     
-    def __init__(self, context, request):
-        browser.BungeniBrowserView.__init__(self, context, request)
-        self.message_no_data = _(self.__class__._message_no_data)
-        self._change_data_items = None # cache
+    def __init__(self):
+        self._data_items = None # cache
     
     def columns(self):
         return ChangeDataDescriptor(self.context, self.request).columns()
     
     _message_no_data = "No Change Data"
     @property
+    def message_no_data(self):
+        return _(self.__class__._message_no_data)
+    
+    @property
     def has_data(self):
         return bool(self.change_data_items)
     
     def change_data_items(self):
-        if self._change_data_items is None:
-            self._change_data_items = ChangeDataProvider(self.context, 
+        if self._data_items is None:
+            self._data_items = ChangeDataProvider(self.context, 
                     self.include_change_types, 
                     self.include_change_actions
                 ).change_data_items()
-        return self._change_data_items
+        return self._data_items
     
     def listing(self):
         # !+FormatterFactoryAPI(mr, jan-2012) the various formatter factories 
@@ -327,7 +331,7 @@ class AuditLogViewBase(browser.BungeniBrowserView):
             columns=self.columns()
         )
         # visible_column_names & columns -> formatter.visible_columns
-        formatter.cssClasses["table"] = "listingdescription"
+        formatter.cssClasses["table"] = "listing grid"
         return formatter()
     
     #@property
@@ -337,7 +341,7 @@ class AuditLogViewBase(browser.BungeniBrowserView):
 
 
 @register.view(interfaces.IAuditable, name="audit-log")
-class AuditLogView(AuditLogViewBase):
+class AuditLogView(AuditLogMixin, browser.BungeniBrowserView):
     """Change Log View for an object
     """
     
@@ -354,7 +358,8 @@ class AuditLogView(AuditLogViewBase):
     include_change_actions = [ a for a in CHANGE_ACTIONS ]
     
     def __init__(self, context, request):
-        AuditLogViewBase.__init__(self, context, request)
+        browser.BungeniBrowserView.__init__(self, context, request)
+        AuditLogMixin.__init__(self)
         if hasattr(self.context, "short_name"):
             self._page_title = "%s: %s" % (
                 _(self._page_title), _(self.context.short_name))
@@ -362,18 +367,8 @@ class AuditLogView(AuditLogViewBase):
             self._page_title = _(self.__class__._page_title)
 
 
-# !+ @register.view(interfaces.IAuditable, name="bungeni.viewlet.timeline")
-@register.viewlet(interfaces.IQuestion, manager=ISubFormViewletManager, 
-    name="bungeni.viewlet.question-timeline")
-@register.viewlet(interfaces.ITabledDocument, manager=ISubFormViewletManager, 
-    name="bungeni.viewlet.tableddocument-timeline")
-@register.viewlet(interfaces.IBill, manager=ISubFormViewletManager, 
-    name="bungeni.viewlet.bill-timeline")
-@register.viewlet(interfaces.IAgendaItem, manager=ISubFormViewletManager, 
-    name="bungeni.viewlet.agendaitem-timeline")
-@register.viewlet(interfaces.IMotion, manager=ISubFormViewletManager, 
-    name="bungeni.viewlet.motion-timeline")
-class TimeLineViewlet(AuditLogViewBase, browser.BungeniItemsViewlet):
+@register.viewlet(interfaces.IAuditable, manager=ISubFormViewletManager)
+class TimeLineViewlet(AuditLogMixin, browser.BungeniItemsViewlet):
     view_title = "Timeline"
     view_id = "timeline"
     weight = 20
@@ -386,8 +381,8 @@ class TimeLineViewlet(AuditLogViewBase, browser.BungeniItemsViewlet):
     include_change_actions = [ a for a in CHANGE_ACTIONS if not a == "modify" ]
     
     def __init__(self,  context, request, view, manager):
-        AuditLogViewBase.__init__(self, context, request)
         browser.BungeniItemsViewlet.__init__(self, context, request, view, manager)
+        AuditLogMixin.__init__(self)
         self.view_title = _(self.__class__.view_title)
 
 
