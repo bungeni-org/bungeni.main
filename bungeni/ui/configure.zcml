@@ -65,6 +65,9 @@
         <require permission="zope.Public" 
             attributes="__call__ browserDefault" />
     </class>
+    <class class=".file.FileListingViewlet">
+        <require permission="zope.View" attributes="render" />
+    </class>
 
     
   <!-- Include Views -->
@@ -111,11 +114,11 @@
     </class>
     
     <!-- Custom profile traverser -->    
-    <class class = ".traversal.ProfileTraverser">
-        <require permission = "bungeni.user.Edit" 
-        		 interface = "zope.publisher.interfaces.IPublishTraverse" />
-        <require permission = "bungeni.user.Edit" 
-        		 attributes = "browserDefault" />
+    <class class=".traversal.ProfileTraverser">
+        <require permission="bungeni.user.Edit" 
+            interface="zope.publisher.interfaces.IPublishTraverse" />
+        <require permission="bungeni.user.Edit" 
+            attributes="browserDefault" />
     </class>
 
   <!-- Custom absolute_url -->

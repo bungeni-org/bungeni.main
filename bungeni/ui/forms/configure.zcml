@@ -17,9 +17,6 @@
     See: http://wiki.zope.org/zope3/LocalComponentManagementSimplification
     -->
     
-    <class class=".files.LibraryViewlet">
-        <require permission="zope.View" attributes="render" />
-    </class>
     <class class=".viewlets.AddressesViewlet">
         <require permission="zope.View" attributes="render" />
     </class>
