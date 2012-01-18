@@ -25,11 +25,11 @@ from bungeni.ui.utils import url
 from bungeni.ui import interfaces
 
 
-class BrowserMenu(zope.browsermenu.BrowserMenu):
+class BrowserMenu(zope.browsermenu.menu.BrowserMenu):
     pass
 
 
-class BrowserSubMenuItem(zope.browsermenu.BrowserSubMenuItem):
+class BrowserSubMenuItem(zope.browsermenu.menu.BrowserSubMenuItem):
     @property
     def id(self):
         return self.submenuId

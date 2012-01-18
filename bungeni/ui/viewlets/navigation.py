@@ -19,7 +19,7 @@ from zope.proxy import sameProxiedObjects
 from zope.app.component.hooks import getSite
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.browsermenu.interfaces import IBrowserMenu
-from zope.publisher.defaultview import getDefaultViewName
+from zope.publisher.defaultview import getDefaultViewName, queryDefaultViewName
 from zope.annotation.interfaces import IAnnotations
 
 from ore.wsgiapp.interfaces import IApplication
