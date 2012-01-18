@@ -175,20 +175,16 @@ class SubformRssSubscriptionViewletManager(manager.WeightOrderedViewletManager):
     """Displays rss subscription data."""
     interface.implements(ISubformRssSubscriptionViewletManager)
 
-def _register_rss_viewlet(for_):
-    """Wrap register.viewlet to fix some defaults."""
-    return register.viewlet(for_, layer=IBungeniAuthenticatedSkin, 
-        manager=ISubformRssSubscriptionViewletManager)
-@_register_rss_viewlet(interfaces.IBill)
-@_register_rss_viewlet(interfaces.IQuestion)
-@_register_rss_viewlet(interfaces.ITabledDocument)
-@_register_rss_viewlet(interfaces.IAgendaItem)
-@_register_rss_viewlet(interfaces.IMotion)
+# IBill, IQuestion, ITabledDocument, IAgendaItem, IMotion, ...
+@register.viewlet(interfaces.IBungeniParliamentaryContent, 
+    layer=IBungeniAuthenticatedSkin, 
+    manager=ISubformRssSubscriptionViewletManager,
+    name="keep-zca-happy-rsslink")
 class RssLinkViewlet(viewlet.ViewletBase):
     """Simply renders link for users to subscribe to current paliamentary item.
     """
     render = ViewPageTemplateFile("templates/rss_link.pt")
-
+    
     @property
     def already_subscribed(self):
         """Checks if user has already subscribed to the current item.
@@ -200,7 +196,6 @@ class RssLinkViewlet(viewlet.ViewletBase):
         if user is None:
             return True
         return removeSecurityProxy(self.context) in user.subscriptions
-del _register_rss_viewlet
 
 #
 
@@ -250,8 +245,10 @@ class CommitteesViewlet(SubformViewlet):
 class CommitteeStaffViewlet(SubformViewlet):
     sub_attr_name = "committeestaff"
     
-@register.viewlet(interfaces.IMemberOfParliament, manager=ISubFormViewletManager)
-@register.viewlet(interfaces.IBungeniGroup, manager=ISubFormViewletManager)
+@register.viewlet(interfaces.IMemberOfParliament, 
+    manager=ISubFormViewletManager, name="keep-zca-happy-addresses")
+@register.viewlet(interfaces.IBungeniGroup, 
+    manager=ISubFormViewletManager, name="keep-zca-happy-addresses")
 class AddressesViewlet(SubformViewlet):
     sub_attr_name = "addresses"
     weight = 99

@@ -159,7 +159,8 @@ class FileListingView(FileListingMixin, browser.BungeniBrowserView):
 
 
 # for_, layer, view, manager
-@register.viewlet(IAttachmentable, manager=ISubFormViewletManager)
+@register.viewlet(IAttachmentable, manager=ISubFormViewletManager, 
+    name="keep-zca-happy-attachments")
 class FileListingViewlet(FileListingMixin, browser.BungeniItemsViewlet):
     
     render = z3evoque.PageViewTemplateFile("audit.html#listing_viewlet")
@@ -171,5 +172,5 @@ class FileListingViewlet(FileListingMixin, browser.BungeniItemsViewlet):
         browser.BungeniItemsViewlet.__init__(self, context, request, view, manager)
         FileListingMixin.__init__(self)
         self.view_title = _(self.__class__.view_title)
-        self.for_display = bool(self.file_data_items)
+        self.for_display = True # bool(self.file_data_items)
 
