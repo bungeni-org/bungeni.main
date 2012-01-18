@@ -34,17 +34,17 @@
         <append theme="//head"
                 content="//head"
                 nocontent="ignore" />        
-        <replace href="/bungeni/business/whats-on"
+        <replace href="/"
             content="#portal-languageselector"
             theme="#portal-languageselector"/>  
         <drop content="#portal-personaltools"/>          
-        <replace href="/bungeni/business/whats-on"
+        <replace href="/"
             content="children:#portal-personaltools"
             theme="children:#portal-personaltools"/> 
         <drop theme="children:#portal-personaltools li.navigation" />                  
                         
         <!-- navigation -->
-        <prepend href="/bungeni/business/whats-on"
+        <prepend href="/"
             content="#portal-globalnav > li"
             theme="children:#portal-globalnav > ul" />
         <append content="#portal-globalnav > li:not(:first-child)"
@@ -75,6 +75,14 @@
 
 
     <rule class="load-bungeni-navigation">
+        <!-- Add the plone login overlay... -->
+        <prepend href="/plone"
+            content="script[src *= 'popupforms.js']"
+            theme="children:/html/head" />           
+        <prepend href="/plone"
+            content="script[src *= 'jquerytools']"
+            theme="children:/html/head" />                 
+    
         <append content="children:#portal-column-one"
             theme="children:#portal-column-one"
         />        

@@ -126,6 +126,7 @@ def replace_login_link(content, theme, resource_fetcher, log):
             login_value = pq(login_link).attr("href").replace(
                             "login", "plone/login")
             pq(login_link).attr("href", login_value)
+            pq(login_link).attr("class", "link-overlay")
     
     logout_link = theme("a[href$='/logout']")
     if len(logout_link) > 0:

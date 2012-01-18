@@ -12,12 +12,12 @@
     <directory
       zcml:condition="not-have devmode"
       source="jquery"
-      include="jquery-1.4.4.min.js"
+      include="jquery.js"
     />
     <directory
       zcml:condition="have devmode"
       source="jquery"
-      include="jquery-1.4.4.js"
+      include="jquery.js"
     />
   </resourceLibrary>
 
