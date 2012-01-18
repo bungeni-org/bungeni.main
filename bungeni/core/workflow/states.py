@@ -300,6 +300,25 @@ class Workflow(object):
     
     @error.exceptions_as(interfaces.InvalidWorkflow, False)
     def validate(self):
+        
+        def assert_roles_mix_limitations(key, st, perm, roles):
+            """ (key:str, st:State/Transition, perm:str, roles:[str]) 
+            """
+            ROLE_MIX_LIMITATIONS = {
+                "bungeni.Authenticated": ["bungeni.Anonymous"],
+            }
+            for mix_limited_role in ROLE_MIX_LIMITATIONS:
+                if mix_limited_role in roles:
+                    _mixed_roles = roles[:]
+                    _mixed_roles.remove(mix_limited_role)
+                    for ok_role in ROLE_MIX_LIMITATIONS[mix_limited_role]:
+                        if ok_role in _mixed_roles:
+                            _mixed_roles.remove(ok_role)
+                    assert not bool(_mixed_roles), "Workflow [%s] %s [%s] " \
+                        "mixes disallowed roles %s with role [%s] for " \
+                        "permission [%s]" % (
+                            self.name, key, st.id, roles, mix_limited_role, perm)
+        
         states = self._states_by_id.values()
         # at least one state
         assert len(states), "Workflow [%s] defines no states" % (self.name)
@@ -311,7 +330,7 @@ class Workflow(object):
         for s in states:
             if s.permissions_from_parent:
                 assert not len(s.permissions), "Workflow state [%s -> %s] " \
-                    "with permissions_from_parent must not specify any own " \
+                    "with permissions_from_parent may not specify any own " \
                     "permissions" % (self.name, s.id)
                 continue
             assert len(s.permissions) == num_prs, \
@@ -321,10 +340,28 @@ class Workflow(object):
                     "\n  ".join([str(p) for p in s.permissions]),
                     "\n  ".join([str(p) for p in states[0].permissions])
                 )
+            _permission_role_mixes = {}
             for p in s.permissions:
-                assert (p[1], p[2]) in prs, \
+                perm, role = p[1], p[2]
+                # for each perm, build list of roles it is set to
+                _permission_role_mixes.setdefault(perm, []).append(role)
+                assert (perm, role) in prs, \
                     "Workflow state [%s -> %s] defines an unexpected " \
                     "permission: %s" % (self.name, s.id, p)
+            for perm, roles in _permission_role_mixes.items():
+                # ensure no duplicates (also checked when reading xml)
+                assert len(roles) == len(set(roles)), "Workflow [%s] " \
+                    "state [%s] duplicates role [%s] assignment for " \
+                    " permission [%s]" % (
+                        self.name, s.id, roles, perm)
+                # assert roles mix limitations for state permissions
+                assert_roles_mix_limitations("state", s, perm, roles)
+        
+        # assert roles mix limitations for transitions
+        for t in self._transitions_by_id.values():
+            roles = t.user_data.get("_roles", [])
+            assert_roles_mix_limitations("transition", t, t.permission, roles)
+        
         # ensure that every active state is reachable, 
         # and that every obsolete state is NOT reachable
         tbyd = self._transitions_by_destination

@@ -195,7 +195,7 @@ def _load(workflow, name):
     def check_add_permission(permissions, like_permissions, assignment, p, r):
         for perm in [(GRANT, p, r), (DENY, p, r)]:
             assert perm not in permissions, "Workflow [%s] state [%s] " \
-                "conflicting state permission: (%s, %s, %s)" % (
+                "duplicated or conflicting state permission: (%s, %s, %s)" % (
                     name, state_id, assignment, p, r)
             if perm in like_permissions:
                 like_permissions.remove(perm)
@@ -403,8 +403,10 @@ def _load(workflow, name):
             pid = "bungeni.%s.wf.%s" % (name, tid)
             if not ZCML_PROCESSED:
                 # use "bungeni.Clerk" as default list of roles
-                roles = roles or "bungeni.Clerk"
-                zcml_transition_permission(pid, title, roles.split())
+                roles = (roles or "bungeni.Clerk").split()
+                zcml_transition_permission(pid, title, roles)
+                # remember list of roles from xml
+                kw["_roles"] = roles
             kw["permission"] = pid
         # python resolvables
         if "condition" in kw:
