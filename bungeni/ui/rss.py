@@ -1,3 +1,6 @@
+# !+ CLEAN OUT THIS FILE PLEASE ! 
+# THAT INCLUDES INLINING ZCA REGISTRATIONS.
+
 from bungeni.alchemist import Session
 from bungeni.core.interfaces import IRSSValues
 from bungeni.core.translation import translate_obj
@@ -12,7 +15,7 @@ from zope.security.proxy import removeSecurityProxy
 from zope.traversing.browser import absoluteURL
 import re
 import xml.dom.minidom as xmllib
-
+import bungeni.ui.adaptors # ensure module is loaded
 
 class RSSView(BrowserView):
     """ Base class that can generate
@@ -455,6 +458,7 @@ class AgendaItemTimelineRSSView(TimelineRSSView):
 # View classes for rss feed that links to akomantoso
 # item xml representation page
 
+# !+ THIS IS A MIXIN NOT A VIEW, NAME IT ACCORDINGLY!
 class AkomantosoRSSView(object):
     """ Simple class to set necessary
         view name for item
