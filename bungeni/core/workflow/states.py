@@ -62,7 +62,7 @@ class State(object):
     zope.interface.implements(zope.securitypolicy.interfaces.IRolePermissionMap)
     
     def __init__(self, id, title, note, actions, permissions, notifications,
-            permissions_from_parent=False, obsolete=False
+            tags, permissions_from_parent=False, obsolete=False
         ):
         self.id = id # status
         self.title = title
@@ -70,8 +70,9 @@ class State(object):
         self.actions = actions # [callable]
         self.permissions = permissions
         self.notifications = notifications
-        self.permissions_from_parent = permissions_from_parent
-        self.obsolete = obsolete
+        self.tags = tags # [str]
+        self.permissions_from_parent = permissions_from_parent # bool
+        self.obsolete = obsolete # bool
     
     @error.exceptions_as(interfaces.WorkflowStateActionError)
     def execute_actions(self, context):
@@ -203,7 +204,7 @@ class StateController(object):
         state = self.get_state()
         assert state is not None, "May not have a None state" # !+NEEDED?
         state.execute_actions(self.context)
-    
+
 
 def get_object_state(context):
     """Utility to look up the workflow.states.State singleton instance that 
@@ -257,9 +258,10 @@ class Workflow(object):
     
     initial_state = None
     
-    def __init__(self, name, features, states, transitions, note=None):
+    def __init__(self, name, features, tags, states, transitions, note=None):
         self.name = name
         self.features = features
+        self.tags = tags # [str]
         self.note = note
         self._states_by_id = {} # {id: State}
         self._transitions_by_id = {} # {id: Transition}
@@ -319,6 +321,9 @@ class Workflow(object):
                         "permission [%s]" % (
                             self.name, key, st.id, roles, mix_limited_role, perm)
         
+        assert len(self.tags) == len(set(self.tags)), \
+            "Workflow [%s] duplicates tags: %s" % (self.name, self.tags)
+        
         states = self._states_by_id.values()
         # at least one state
         assert len(states), "Workflow [%s] defines no states" % (self.name)
@@ -356,6 +361,14 @@ class Workflow(object):
                         self.name, s.id, roles, perm)
                 # assert roles mix limitations for state permissions
                 assert_roles_mix_limitations("state", s, perm, roles)
+            # tags
+            _undeclared_tags = [ tag for tag in s.tags if tag not in self.tags ]
+            assert not _undeclared_tags, \
+                "Workflow [%s] State [%s] uses undeclared tags: %s" % (
+                    self.name, s.id, _undeclared_tags)
+            assert len(s.tags) == len(set(s.tags)), \
+                "Workflow [%s] State [%s] duplicates tags: %s" % (
+                    self.name, s.id, s.tags)
         
         # assert roles mix limitations for transitions
         for t in self._transitions_by_id.values():
@@ -410,6 +423,53 @@ class Workflow(object):
         except KeyError:
             raise interfaces.InvalidStateError(
                 "Workflow [%s] has no such State [%s]" % (self.name, state_id))
+    
+    def get_state_ids(self, tagged=[], not_tagged=[], keys=[], conjunction="OR",
+            _EMPTY_SET=set() # sentinel
+        ):
+        """Get the list of matching state ids in workflow.
+        
+        All states and keys specified MUST actually be used by the workflow. 
+        
+        tagged: matches all states tagged with ANY tag in in this list
+        not_tagged: matches all states tagged with NONE of these tags
+        keys: matches all states explictly named by key here 
+        conjunction:
+            "OR": matches any state that is matched by ANY criteria above
+            "AND": matches any state that is matched by ALL criteria above
+        """
+        _tagged = _not_tagged = _keys = _EMPTY_SET
+        if tagged:
+            assert tagged==[ t for t in tagged if t in self.tags ]
+            _tagged = set()
+            for state in self._states_by_id.values():
+                for t in tagged:
+                    if t in state.tags:
+                        _tagged.add(state.id)
+                        break
+        if not not_tagged:
+            if not (tagged or keys) and conjunction=="OR":
+                # make case of get_state_ids() return all state ids
+                _not_tagged = set(self._states_by_id.keys())
+        else:
+            assert not_tagged==[ t for t in not_tagged if t in self.tags ]
+            _not_tagged = set()
+            for state in self._states_by_id.values():
+                _not_tagged.add(state.id)
+                for t in not_tagged:
+                    if t in state.tags:
+                        _not_tagged.remove(state.id)
+                        break
+        if keys:
+            assert keys==[ k for k in keys if k in self._states_by_id ]
+            _keys = set(keys) # !+copy?
+        # combine
+        assert conjunction in ("OR", "AND"), "Not supported."
+        if conjunction=="OR":
+            return list(_tagged.union(_not_tagged).union(_keys))
+        elif conjunction=="AND":
+            return list(_tagged.intersection(_not_tagged).union(_keys))
+    
     
     @error.exceptions_as(interfaces.InvalidTransitionError)
     def get_transition(self, transition_id):

@@ -22,13 +22,14 @@ import sqlalchemy.sql.expression as sql
 from bungeni.alchemist import Session
 from bungeni.alchemist.model import queryModelDescriptor
 
+import bungeni.core.globalsettings as prefs
+from bungeni.core.workflows.adapters import get_workflow
+
 from bungeni.models import domain, interfaces
 from bungeni.models.utils import get_groups_held_for_user_in_parliament
 from bungeni.models.utils import get_parliament_for_group_id
-import bungeni.core.globalsettings as prefs
 
 from bungeni.ui.i18n import _
-from bungeni.ui.tagged import get_states
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
 from bungeni.ui import table
@@ -650,12 +651,12 @@ class MemberItemsViewlet(browser.BungeniItemsViewlet):
     (the "parliamentary activities" tab of of the "member" view)
     """
     states = \
-        get_states("agendaitem", tagged=["public"]) + \
-        get_states("bill", tagged=["public"]) + \
-        get_states("motion", tagged=["public"]) + \
-        get_states("question", tagged=["public"]) + \
-        get_states("tableddocument", tagged=["public"])
-
+        get_workflow("agendaitem").get_state_ids(tagged=["public"]) + \
+        get_workflow("bill").get_state_ids(tagged=["public"]) + \
+        get_workflow("motion").get_state_ids(tagged=["public"]) + \
+        get_workflow("question").get_state_ids(tagged=["public"]) + \
+        get_workflow("tableddocument").get_state_ids(tagged=["public"])
+    
     view_title = _("Parliamentary activities")
     view_id = "mp-items"
 
@@ -687,9 +688,9 @@ class MemberItemsViewlet(browser.BungeniItemsViewlet):
         signed_pi_ids = [sgn.item_id for sgn in
             session.query(domain.Signatory).filter(
                 sql.and_(domain.Signatory.user_id == user_id,
-                    domain.Signatory.status.in_(
-                            get_states("signatory", tagged=["public"])
-                        ),
+                    domain.Signatory.status.in_(get_workflow(
+                            "signatory").get_state_ids(tagged=["public"])
+                    ),
                 )
             ).all()
         ]

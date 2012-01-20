@@ -10,7 +10,6 @@ log = __import__("logging").getLogger("bungeni.ui.vocabulary")
 import os
 import datetime
 import hashlib
-import itertools
 from lxml import etree
 
 from zope import interface
@@ -45,13 +44,13 @@ from bungeni.core.translation import translate_obj
 from bungeni.core.language import get_default_language
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core.workflows.utils import get_group_local_role
+from bungeni.core.workflows import adapters
 
 from bungeni.ui.calendar.utils import first_nth_weekday_of_month
 from bungeni.ui.calendar.utils import nth_day_of_month
 from bungeni.ui.calendar.utils import nth_day_of_week
 from bungeni.ui.utils import common
 from bungeni.ui.interfaces import ITreeVocabulary
-from bungeni.ui.tagged import get_states, TAG_MAPPINGS
 from bungeni.ui.reporting.generators import BUNGENI_REPORTS_NS
 
 try:
@@ -60,20 +59,21 @@ except ImportError:
     import simplejson as json
 import imsvdex.vdex
 
+
 days = [ _('day_%d' % index, default=default) for (index, default) in
          enumerate((u"Mon", u"Tue", u"Wed", u"Thu", u"Fri", u"Sat", u"Sun")) ]
 
-def assignable_tags():
-    return [state for state in itertools.chain(
-        *[
-            get_states(
-                pi_type, 
-                not_tagged=["private", "fail", "terminal"]
-            )
-            for pi_type in TAG_MAPPINGS.keys()
-        ]
-    )]
-_assignable_tags = assignable_tags()
+
+def assignable_state_ids():
+    _sids = set()
+    for name, iface in adapters.WORKFLOW_REG:
+        wf = adapters.get_workflow(name)
+        _tags = [ t for t in ["private", "fail", "terminal"] if t in wf.tags ]
+        if _tags:
+            _sids.update(wf.get_state_ids(not_tagged=_tags))
+    return _sids
+_assignable_state_ids = set(assignable_state_ids())
+
 
 class WeekdaysVocabulary(object):
     interface.implements(IVocabularyFactory)
@@ -83,8 +83,8 @@ class WeekdaysVocabulary(object):
             vocabulary.SimpleTerm(nth_day_of_week(index), str(index), msg)
             for (index, msg) in enumerate(days)
         ])
-
 WeekdaysVocabularyFactory = WeekdaysVocabulary()
+
 
 class MonthlyRecurrenceVocabulary(object):
     """This vocabulary provides an option to choose between different
@@ -891,7 +891,7 @@ class PIAssignmentSource(SpecializedSource):
             query = session.query(domain.ParliamentaryItem).filter(
                     sql.and_(
                         sql.not_(domain.ParliamentaryItem.status.in_(
-                                _assignable_tags
+                                _assignable_state_ids
                             )
                         ),
                         sql.not_(

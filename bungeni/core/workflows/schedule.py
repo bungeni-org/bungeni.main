@@ -1,7 +1,6 @@
 from bungeni.alchemist import Session
 from zope.security.proxy import removeSecurityProxy
 from bungeni.models import domain
-from bungeni.ui.tagged import get_states
 from bungeni.core.workflow.interfaces import IWorkflowController
 from sqlalchemy.orm import eagerload
 
@@ -25,7 +24,7 @@ def handleSchedule(object, event):
             if sch.item.type != "heading":
                 wfc = IWorkflowController(sch.item)
                 wf = wfc.workflow
-                next_state = get_states(sch.item.type, tagged=["tobescheduled"])
+                next_state = wf.get_state_ids(tagged=["tobescheduled"])
                 for transition_id in wfc.getSystemTransitionIds():
                     t = wf.get_transition(transition_id)
                     if t.destination in next_state:
@@ -38,7 +37,7 @@ def handleSchedule(object, event):
             if sch.item.type != "heading":
                 wfc = IWorkflowController(sch.item)
                 wf = wfc.workflow
-                next_state = get_states(sch.item.type, tagged=["scheduled"])
+                next_state = wf.get_state_ids(tagged=["scheduled"])
                 for transition_id in wfc.getSystemTransitionIds():
                     t = wf.get_transition(transition_id)
                     if t.destination in next_state:

@@ -16,13 +16,12 @@ from zope.publisher.interfaces import IRequest
 import zope.formlib
 from zope.i18n import translate
 from zc.table import column
-from zope.dublincore.interfaces import IDCDescriptiveProperties
 
 from bungeni.alchemist import Session
 from bungeni.alchemist.model import ModelDescriptor, Field, show, hide
 
 from bungeni.models import domain
-from bungeni.models.utils import get_db_user_id, get_db_user
+from bungeni.models.utils import get_db_user_id
 
 # We import bungeni.core.workflows.adapters to ensure that the "states"
 # attribute on each "workflow" module is setup... this is to avoid an error
@@ -39,12 +38,7 @@ from bungeni.ui.forms import validations
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import common, date, misc, debug
 from bungeni.ui import vocabulary
-from bungeni.ui.tagged import get_states
 from bungeni.ui.interfaces import IBusinessSectionLayer
-
-from bungeni.core.workflows.adapters import get_workflow
-def get_workflow_state(workflow_name, status):
-    return  get_workflow(workflow_name).get_state(status)
 
 
 ###
@@ -381,6 +375,7 @@ are not picked up with _("Office") or equivalent... why?
 '''
 
 ''' !+TYPES_CUSTOM
+from zope.dublincore.interfaces import IDCDescriptiveProperties
 def dc_getter(name, title, item_attribute, default=_(u"None")):
     def getter(item, formatter):
         obj = getattr(item, item_attribute)
@@ -1180,10 +1175,6 @@ class GroupDescriptor(ModelDescriptor):
     ]
     schema_invariants = [EndAfterStart]
     custom_validators = [validations.validate_date_range_within_parent]
-    public_wfstates = [
-        get_workflow_state("group", "active").id,
-        get_workflow_state("group", "dissolved").id
-    ]
 
 
 class ParliamentDescriptor(GroupDescriptor):
@@ -1260,10 +1251,7 @@ class ParliamentDescriptor(GroupDescriptor):
         ElectionAfterStart
     ]
     custom_validators = [validations.validate_parliament_dates]
-    public_wfstates = [
-        get_workflow_state("parliament", "active").id,
-        get_workflow_state("parliament", "dissolved").id
-    ]
+
 
 ''' !+TYPES_CUSTOM
 class CommitteeTypeStatusDescriptor(ModelDescriptor):
@@ -1425,10 +1413,6 @@ class CommitteeDescriptor(GroupDescriptor):
         #DissolutionAfterReinstatement
     ]
     custom_validators = [validations.validate_date_range_within_parent]
-    public_wfstates = [
-        get_workflow_state("committee", "active").id,
-        get_workflow_state("committee", "dissolved").id
-    ]
 
 
 class CommitteeMemberDescriptor(GroupMembershipDescriptor):
@@ -1600,7 +1584,6 @@ class AddressDescriptor(ModelDescriptor):
         #    )
         #), !+IM(mr, oct-2010) morph to some "extra_info" on User
     ]
-    public_wfstates = [get_workflow_state("address", "attached").id]
 
 class GroupAddressDescriptor(AddressDescriptor):
     localizable = True
@@ -2102,7 +2085,6 @@ class AttachedFileDescriptor(ModelDescriptor):
             listing_column=day_column("status_date", _("Status date")),
         ),
     ]
-    public_wfstates = [get_workflow_state("attachedfile", "attached").id]
 
 
 class AttachedFileVersionDescriptor(ModelDescriptor):
@@ -2374,7 +2356,6 @@ class HeadingDescriptor(ParliamentaryItemDescriptor):
             add_widget=widgets.RichTextEditor,
         )
     ]
-    public_wfstates = [get_workflow_state("heading", "public").id]
 
 
 class AgendaItemDescriptor(ParliamentaryItemDescriptor):
@@ -2410,8 +2391,6 @@ class AgendaItemDescriptor(ParliamentaryItemDescriptor):
         "receive_notification",
         "admissible_date"
     ]
-    public_wfstates = get_states("agendaitem", tagged=["public"])
-
 
 class AgendaItemVersionDescriptor(VersionDescriptor):
     localizable = True
@@ -2479,8 +2458,6 @@ class MotionDescriptor(ParliamentaryItemDescriptor):
 			"notice_date",
 			"registry_number",
     ]
-    public_wfstates = get_states("motion", tagged=["public"])
-
 
 class MotionVersionDescriptor(VersionDescriptor):
     localizable = True
@@ -2594,8 +2571,6 @@ class BillDescriptor(ParliamentaryItemDescriptor):
         "publication_date",
         "registry_number",
     ]
-
-    public_wfstates = get_states("bill", not_tagged=["private"])
 
 class BillVersionDescriptor(VersionDescriptor):
     localizable = True
@@ -2758,7 +2733,6 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
         "registry_number",
     ]
     custom_validators = []
-    public_wfstates = get_states("question", tagged=["public"])
 
 class QuestionVersionDescriptor(VersionDescriptor):
     localizable = True
@@ -2819,7 +2793,6 @@ class EventItemDescriptor(ParliamentaryItemDescriptor):
             add_widget=widgets.DateTimeWidget,
         ),
     ]
-    public_wfstates = [get_workflow_state("event", "attached").id]
 
 
 class TabledDocumentDescriptor(ParliamentaryItemDescriptor):
@@ -2864,8 +2837,6 @@ class TabledDocumentDescriptor(ParliamentaryItemDescriptor):
         "admissible_date",
         "registry_number",
     ]
-    public_wfstates = get_states("tableddocument", tagged=["public"])
-
 
 class TabledDocumentVersionDescriptor(VersionDescriptor):
     localizable = True
@@ -3015,7 +2986,6 @@ class SittingDescriptor(ModelDescriptor):
         validations.validate_venues,
         #validations.validate_non_overlapping_sitting
     ]
-    public_wfstates = get_states("groupsitting", tagged=["public"])
 
 
 class GroupSittingTypeDescriptor(ModelDescriptor):
@@ -3198,7 +3168,6 @@ class SignatoryDescriptor(ModelDescriptor):
             listing_column = workflow_column("status", "Signature Status"),
         ),
     ]
-    public_wfstates = get_states("signatory", tagged=["public"])
 
 
 class ConstituencyDescriptor(ModelDescriptor):

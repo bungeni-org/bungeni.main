@@ -20,6 +20,7 @@ from bungeni.models import interfaces as mfaces
 from bungeni.models import domain
 
 from bungeni.core import translation
+from bungeni.core.workflows.adapters import get_workflow
 
 from bungeni.ui import interfaces as ufaces
 from bungeni.ui.utils import url, date, debug
@@ -416,15 +417,21 @@ class PublicStatesContainerJSONListing(ContainerJSONListing):
     permission = None
 
     def query_add_filters(self, query, *filter_strings):
-        """Add filtering on public_wfstates
+        """Add filtering on public workflow states
         """
-        public_wfstates = getattr(self.domain_annotation, "public_wfstates",
-            None)
-        if public_wfstates:
-            query = query.filter(self.domain_model.status.in_(public_wfstates))
+        try:
+            workflow = get_workflow(self.context.domain_model.__name__.lower())
+            public_wfstates = workflow.get_state_ids(tagged=["public"])
+            if public_wfstates:
+                query = query.filter(self.domain_model.status.in_(public_wfstates))
+        except KeyError, e:
+            # not workflowed...
+            log.warn("PublicStatesContainerJSONListing / get_workflow "
+                "for %s ERROR: %s: %s:" % (
+                    self.context.domain_model, e.__class__.__name__, e))
         return super(PublicStatesContainerJSONListing, self
             ).query_add_filters(query, *filter_strings)
-
+    
     def get_cache_key(self, context, lang, start, limit, sort_direction):
         r = self.request
         jslc = JSLCaches[context.__name__]  # raises KeyError

@@ -25,7 +25,6 @@ from zope.i18n import translate
 from bungeni.alchemist import Session
 from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.alchemist.interfaces import IAlchemistContent
-from bungeni.core import audit
 from bungeni.core import globalsettings
 from bungeni.core.workflow import interfaces
 from bungeni.core.workflows.utils import get_mask
@@ -37,7 +36,6 @@ from bungeni.ui.forms.common import BaseForm
 from bungeni.ui.widgets import TextDateTimeWidget
 from bungeni.ui.table import TableFormatter
 from bungeni.ui.menu import get_actions
-from bungeni.ui.tagged import get_states
 from bungeni.ui.utils import date
 from bungeni.ui import browser
 from bungeni.ui import z3evoque
@@ -163,9 +161,8 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
             """is item workflowed, and is so is it in a logical draft state?
             """
             if interfaces.IWorkflowed.providedBy(instance):
-                tagged_key = instance.__class__.__name__.lower()
-                draft_states = get_states(tagged_key, tagged=["draft"])
-                return instance.status in draft_states
+                return instance.status in \
+                    interfaces.IWorkflow.get_state_ids(tagged=["draft"])
             return False
         min_date_active = None
         if IAuditable.providedBy(self.context):

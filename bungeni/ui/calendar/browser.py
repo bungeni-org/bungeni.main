@@ -40,14 +40,13 @@ from zc.resourcelibrary import need
 from bungeni.core.location import location_wrapped
 from bungeni.core.interfaces import ISchedulingContext
 from bungeni.core.schedule import SittingContainerSchedulingContext
-from bungeni.core.workflow.interfaces import IWorkflowController
+from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.core.language import get_default_language
 from bungeni.core.translation import translate_i18n
 
 from ploned.ui.interfaces import IStructuralView
 from bungeni.ui.browser import BungeniBrowserView
 from bungeni.ui.calendar import utils, config, interfaces
-from bungeni.ui.tagged import get_states
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import misc, url, debug
 from bungeni.ui.menu import get_actions
@@ -101,13 +100,14 @@ def get_workflow_actions(context, request):
 
 def get_sitting_items(sitting, request, include_actions=False):
     items = []
-
-    if sitting.status in get_states("groupsitting", 
-                                keys=["draft_agenda", "published_agenda"]):
+    
+    if (sitting.status in IWorkflow(sitting).get_state_ids(
+            keys=["draft_agenda", "published_agenda"])
+        ):
         order = "planned_order"
     else:
         order = "real_order"
-
+    
     schedulings = map(
         removeSecurityProxy,
         sitting.items.batch(order_by=order, limit=None))
@@ -132,8 +132,7 @@ def get_sitting_items(sitting, request, include_actions=False):
                 truncated_discussion = t_discussion[0:index2] + "..."
             except ValueError:
                 truncated_discussion = t_discussion + "..."
-        wfc = IWorkflowController(item, None)
-        state_title = wfc.workflow.get_state(item.status).title
+        state_title = IWorkflow(item).get_state(item.status).title
         item = removeSecurityProxy(item)
         record = {
             'title': props.title,

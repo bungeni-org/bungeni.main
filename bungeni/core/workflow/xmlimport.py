@@ -38,8 +38,8 @@ ID_RE = re.compile("^[\w\d_]+$")
 
 FEATURE_ATTRS = ("name", "enabled", "note")
 
-STATE_ATTRS = ("id", "title", "version", "publish", "like_state", "note",
-    "permissions_from_parent", "obsolete")
+STATE_ATTRS = ("id", "title", "version", "publish", "like_state", "tags", 
+    "note", "permissions_from_parent", "obsolete")
 
 TRANS_ATTRS_REQUIREDS = ("title", "source", "destination")
 TRANS_ATTRS_OPTIONALS = ("grouping_unique_sources", "condition", "trigger", 
@@ -155,12 +155,14 @@ def load(path_custom_workflows, name):
 def _load(workflow, name):
     """ (workflow:etree_doc, name:str) -> Workflow
     """
+    # !+ @title, @description
     transitions = []
     states = []
     domain = strip_none(workflow.get("domain")) 
     # !+domain(mr, jul-2011) needed?
     wuids = set() # unique IDs in this XML workflow file
     note = strip_none(workflow.get("note"))
+    allowed_tags = (strip_none(workflow.get("tags")) or "").split()
     
     # initial_state, in XML this must be ""
     assert workflow.get("initial_state") == "", "Workflow [%s] initial_state " \
@@ -275,7 +277,8 @@ def _load(workflow, name):
                     '[publish="%s"]' % s.get("publish"))
             if do_pub:
                 actions.append(ACTIONS_MODULE.publish_to_xml)
-        
+        # @tags
+        tags = (strip_none(s.get("tags")) or "").split()
         # @like_state, permissions
         permissions = [] # [ tuple(bool:int, permission:str, role:str) ]
         # state.@like_state : to reduce repetition and enhance maintainibility
@@ -317,7 +320,7 @@ def _load(workflow, name):
         states.append(
             State(state_id, Message(strip_none(s.get("title")), domain),
                 strip_none(s.get("note")),
-                actions, permissions, notifications,
+                actions, permissions, notifications, tags,
                 as_bool(strip_none(s.get("permissions_from_parent")) or "false"),
                 as_bool(strip_none(s.get("obsolete")) or "false")
             )
@@ -430,5 +433,5 @@ def _load(workflow, name):
             log.debug("[%s] adding transition [%s-%s] [%s]" % (
                 name, source or "", destination, kw))
     
-    return Workflow(name, features, states, transitions, note)
+    return Workflow(name, features, allowed_tags, states, transitions, note)
 
