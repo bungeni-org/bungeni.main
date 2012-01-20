@@ -157,13 +157,16 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
     def get_min_date_active(self):
         """Determine the min_date_active to validate against.
         """
+        
         def is_workflowed_and_draft(instance):
-            """is item workflowed, and is so is it in a logical draft state?
+            """is item workflowed, and if so is it in a logical draft state?
             """
             if interfaces.IWorkflowed.providedBy(instance):
-                return instance.status in \
-                    interfaces.IWorkflow.get_state_ids(tagged=["draft"])
+                wf = interfaces.IWorkflow(instance)
+                if "draft" in wf.tags:
+                    return instance.status in wf.get_state_ids(tagged=["draft"])
             return False
+        
         min_date_active = None
         if IAuditable.providedBy(self.context):
             instance = removeSecurityProxy(self.context)
