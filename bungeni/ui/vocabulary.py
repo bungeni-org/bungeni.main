@@ -68,9 +68,8 @@ def assignable_state_ids():
     _sids = set()
     for name, iface in adapters.WORKFLOW_REG:
         wf = adapters.get_workflow(name)
-        _tags = [ t for t in ["private", "fail", "terminal"] if t in wf.tags ]
-        if _tags:
-            _sids.update(wf.get_state_ids(not_tagged=_tags))
+        _sids.update(wf.get_state_ids(
+                not_tagged=["private", "fail", "terminal"], restrict=False))
     return _sids
 _assignable_state_ids = set(assignable_state_ids())
 

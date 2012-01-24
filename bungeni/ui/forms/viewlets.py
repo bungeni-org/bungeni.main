@@ -650,6 +650,7 @@ class MemberItemsViewlet(browser.BungeniItemsViewlet):
     """A tab with bills, motions etc for an MP 
     (the "parliamentary activities" tab of of the "member" view)
     """
+    # !+ un-hardwire, user defined document types
     states = \
         get_workflow("agendaitem").get_state_ids(tagged=["public"]) + \
         get_workflow("bill").get_state_ids(tagged=["public"]) + \

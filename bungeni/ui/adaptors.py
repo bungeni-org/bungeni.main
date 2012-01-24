@@ -57,7 +57,8 @@ class RSSValues(object):
     @property
     def values(self):
         workflow = get_workflow(self.context.domain_model.__name__.lower())
-        public_wfstates = workflow.get_state_ids(tagged=["public"])
+        public_wfstates = workflow.get_state_ids(tagged=["public"], 
+            restrict=False)
         return [ x for x in self.context.values() if x.status in public_wfstates ]
 
 

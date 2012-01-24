@@ -425,44 +425,54 @@ class Workflow(object):
                 "Workflow [%s] has no such State [%s]" % (self.name, state_id))
     
     def get_state_ids(self, tagged=[], not_tagged=[], keys=[], conjunction="OR",
-            _EMPTY_SET=set() # sentinel
+            restrict=True, # workflow must define all specified tags/keys
+            _EMPTY_SET=set() # re-usable empty set value
         ):
         """Get the list of matching state ids in workflow.
         
-        All states and keys specified MUST actually be used by the workflow. 
-        
         tagged: matches all states tagged with ANY tag in in this list
         not_tagged: matches all states tagged with NONE of these tags
-        keys: matches all states explictly named by key here 
+        keys: matches all states explictly named by key here; only keys for
+            which a state is actually defined are retained
         conjunction:
             "OR": matches any state that is matched by ANY criteria above
             "AND": matches any state that is matched by ALL criteria above
+        restrict: when True (default) all states and keys specified MUST 
+            actually be used by the workflow.
         """
-        _tagged = _not_tagged = _keys = _EMPTY_SET
+        _tagged = _not_tagged = _keys = _EMPTY_SET # matching state ids
         if tagged:
-            assert tagged==[ t for t in tagged if t in self.tags ]
+            wf_tagged = [ t for t in tagged if t in self.tags ]
+            if restrict:
+                assert wf_tagged==tagged
+            # for tagged, we only need to consider known tags
             _tagged = set()
+            if wf_tagged:
+                for state in self._states_by_id.values():
+                    for t in wf_tagged:
+                        if t in state.tags:
+                            _tagged.add(state.id)
+                            break
+        elif not_tagged:
+            if restrict:
+                wf_not_tagged = [ t for t in not_tagged if t in self.tags ]
+                assert wf_not_tagged==not_tagged
+            # for not_tagged, we must also consider all unknown tags
+            _not_tagged = set(self._states_by_id.keys())
             for state in self._states_by_id.values():
-                for t in tagged:
-                    if t in state.tags:
-                        _tagged.add(state.id)
-                        break
-        if not not_tagged:
-            if not (tagged or keys) and conjunction=="OR":
-                # make case of get_state_ids() return all state ids
-                _not_tagged = set(self._states_by_id.keys())
-        else:
-            assert not_tagged==[ t for t in not_tagged if t in self.tags ]
-            _not_tagged = set()
-            for state in self._states_by_id.values():
-                _not_tagged.add(state.id)
                 for t in not_tagged:
                     if t in state.tags:
                         _not_tagged.remove(state.id)
                         break
-        if keys:
-            assert keys==[ k for k in keys if k in self._states_by_id ]
-            _keys = set(keys) # !+copy?
+        elif keys: # state_ids
+            wf_keys = [ k for k in keys if k in self._states_by_id ]
+            if restrict:
+                assert wf_keys==keys
+            # we may only return valid state ids
+            _keys = set(wf_keys)
+        else:
+            # make case of get_state_ids(conjunction="OR") return all state ids
+            _not_tagged = set(self._states_by_id.keys())
         # combine
         assert conjunction in ("OR", "AND"), "Not supported."
         if conjunction=="OR":

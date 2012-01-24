@@ -163,8 +163,8 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
             """
             if interfaces.IWorkflowed.providedBy(instance):
                 wf = interfaces.IWorkflow(instance)
-                if "draft" in wf.tags:
-                    return instance.status in wf.get_state_ids(tagged=["draft"])
+                return instance.status in wf.get_state_ids(tagged=["draft"],
+                    restrict=False)
             return False
         
         min_date_active = None

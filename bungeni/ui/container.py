@@ -415,15 +415,17 @@ class PublicStatesContainerJSONListing(ContainerJSONListing):
     IBusinessSectionLayer, IMembersSectionLayer, IArchiveSectionLayer
     """
     permission = None
-
+    
     def query_add_filters(self, query, *filter_strings):
         """Add filtering on public workflow states
         """
         try:
             workflow = get_workflow(self.context.domain_model.__name__.lower())
-            public_wfstates = workflow.get_state_ids(tagged=["public"])
+            public_wfstates = workflow.get_state_ids(tagged=["public"], 
+                restrict=False)
             if public_wfstates:
-                query = query.filter(self.domain_model.status.in_(public_wfstates))
+                query = query.filter(
+                    self.domain_model.status.in_(public_wfstates))
         except KeyError, e:
             # not workflowed...
             log.warn("PublicStatesContainerJSONListing / get_workflow "
