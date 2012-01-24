@@ -32,7 +32,7 @@ from bungeni.utils.capi import capi
 
 CHANGE_TYPES = ("head", "signatory", "attachedfile", "event")
 CHANGE_ACTIONS = domain.CHANGE_ACTIONS
-
+# ("add", "modify", "workflow", "remove", "version", "reversion")
 
 def checkPermissionChange(interaction, permission, change):
     """checkPermission for a change log entry.
@@ -72,13 +72,8 @@ class ChangeDataProvider(object):
         """
         interaction = getInteraction() # slight performance optimization
         changes = []
-        def append_visible_changes_on_item(item, item_as__parent__=False):
+        def append_visible_changes_on_item(item):
             for c in domain.get_changes(item, *self.include_change_actions):
-                # !+CHANGE.__parent__(mr, dec-2011) when & where should this be
-                # set? For changes direct on parent item, if __parent__ not set
-                # then checkPermission("zope.View") returns False (almost always)
-                if item_as__parent__:
-                    c.__parent__ = item
                 if checkPermissionChange(interaction, "zope.View", c):
                     changes.append(c)
         
@@ -86,7 +81,7 @@ class ChangeDataProvider(object):
         
         # changes direct on head item
         if "head" in self.include_change_types:
-            append_visible_changes_on_item(self.head, item_as__parent__=True)
+            append_visible_changes_on_item(self.head)
         
         # changes on sub-items -- only Parliamentary Content may have sub-items
         if interfaces.IBungeniParliamentaryContent.providedBy(self.head):
@@ -194,41 +189,54 @@ def _get_type_name(change):
         return cname[:-6].lower()
     return cname.lower()
 
+def _format_description_workflow(change):
+    # !+ workflow transition change log stores the (unlocalized) 
+    # human title for the transition's destination workflow state 
+    extras = _eval_as_dict(change.notes)
+    return ('%s <span class="workflow_info">%s</span> '
+        '%s <span class="workflow_info">%s</span>' % (
+            _("from"),
+            _(extras.get("source", None)),
+            _("to"),
+            _(extras.get("destination", None))))
+    
 def _format_description(change):
-    """
+    """Build the (localized) description for display, for each change, per 
+    change type and action.
     """
     change_type_name = _get_type_name(change)
-    # event
     if change_type_name == "event":
+        # description for (event, *)
         return """<a href="event/obj-%s">%s</a>""" % (
-                change.item_id, _(change.description))
-    # workflow
-    elif change.action == "workflow":
-        # description
-        # the workflow transition change log stores the (unlocalized) 
-        # human title for the transition's destination workflow state 
-        # -- here we just localize what is supplied:
-        return _(change.description)
-        # NOTE: we could elaborate an entirely custom description 
-        # e.g. using source/destination and other extras infromation
-    # version
-    elif change.action == "version":
-        extras = _eval_as_dict(change.notes)
-        version_id = extras["version_id"]
-        # description
-        if change_type_name == "attachedfile":
-            _url = "files/obj-%s/versions/obj-%s" % (
-                change.content_id, version_id)
+            change.item_id, _(change.description))
+    elif change_type_name == "attachedfile":
+        file_title = "%s" % (change.head.file_title)
+        # !+ _(change.head.attached_file_type), change.head.file_name)
+        if change.action == "version":
+            version_id = _eval_as_dict(change.notes).get("version_id", None)
+            if version_id:
+                _url = "files/obj-%s/versions/obj-%s" % (
+                    change.content_id, version_id)
+                return """%s: <a href="%s">%s</a>""" % (
+                    file_title, _url, _(change.description))
+            else:
+                return "%s: %s" % (file_title, _(change.description))
+        elif change.action == "workflow":
+            return "%s: %s" % (file_title, _format_description_workflow(change))
         else:
-            _url = "versions/obj-%s" % (version_id)
-        try:
-            return """<a href="%s">%s</a>""" % (
-                _url, _(change.description))
-        except (KeyError,):
-            # no recorded version_id, just localize what is supplied
-            return _(change.description)
+            return "%s: %s" % (file_title, _(change.description))
     else:
-        return _(change.description)
+        if change.action == "version":
+            version_id = _eval_as_dict(change.notes).get("version_id", None)
+            if version_id:
+                _url = "versions/obj-%s" % (version_id)
+                return """<a href="%s">%s</a>""" % (_url, _(change.description))
+            else:
+                return _(change.description)
+        elif change.action == "workflow":
+            return _format_description_workflow(change)
+        else:
+            return _(change.description)
 
 
 class GetterColumn(column.GetterColumn):

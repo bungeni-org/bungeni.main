@@ -56,7 +56,7 @@ def objectNewVersion(ob, event):
     '''
     for attached_file in ob.head.attached_files:
         versions = IVersioned(attached_file)
-        version = versions.create("version created on object versioning: %s" %
-                getattr(ob.change, "description", ""))
+        version = versions.create("Head object change: %s" % (
+            getattr(ob.change, "description", "")))
         version.file_version_id = ob.version_id
 

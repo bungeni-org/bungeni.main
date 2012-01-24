@@ -26,6 +26,9 @@ e.g. a workflow change implies a modify change but should only be logged once
 and using the "logical origin" of the change to determine what action verb to 
 use, that in this example would therefore be "workflow". !+TBD
 
+- !+ Distinguish between automatic and manual version actions?
+
+
 """
 log = __import__("logging").getLogger("bungeni.core.audit")
 
@@ -202,7 +205,8 @@ class _AuditorFactory(object):
             ob.status_date = change_data["date_active"] or datetime.now()
         # as a "base" description, use human readable workflow state title
         wf = IWorkflow(ob) # !+ adapters.get_workflow(ob)
-        description = wf.get_state(event.destination).title
+        description = wf.get_state(event.destination).title # misc.get_wf_state
+        # !+description is not being used by auditlog/timline views
         # extras, that may be used e.g. to elaborate description at runtime
         extras = {
             "source": event.source, 

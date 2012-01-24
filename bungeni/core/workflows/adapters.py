@@ -16,7 +16,7 @@ from bungeni.core.workflow import xmlimport
 from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowed, \
     IStateController, IWorkflowController
 from bungeni.core.workflow.states import StateController, WorkflowController, \
-    get_object_state_rpm , get_head_object_state_rpm
+    get_object_state_rpm, get_head_object_state_rpm
 import bungeni.core.audit
 import bungeni.core.version
 import bungeni.core.interfaces
