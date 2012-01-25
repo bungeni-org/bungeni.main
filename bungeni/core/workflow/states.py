@@ -215,6 +215,8 @@ def get_object_state(context):
     performance-aware adapter -- there is no creation of any adapter instance, 
     just lookup of the object's Workflow instance off which to retrieve 
     existing State instances.
+    
+    Raises interfaces.InvalidStateError.
     """
     return interfaces.IWorkflow(context).get_state(context.status)
 
@@ -227,8 +229,14 @@ def get_object_state_rpm(context):
     Lighweight and high-performance wrapper on get_object_state(context), 
     to *lookup* (note: no creation of any instance) the workflow.states.State 
     singleton instance.
+
+    Raises: zope.component.ComponentLookupError
     """
-    state = get_object_state(context)
+    try:
+        state = get_object_state(context)
+    except interfaces.InvalidStateError, e:
+        # !+NONE_STATE_RPM(mr, jan-2012) return dummy None state as RPM instead?
+        raise zope.component.ComponentLookupError(str(e))
     if state.permissions_from_parent:
         # this state delegates permissions to parent, 
         # so just recurse passing parent item instead
@@ -243,11 +251,17 @@ def get_head_object_state_rpm(sub_context):
     singleton instance for the sub context's head's status.
     
     Note that sub context is NOT workflowed.
+    
+    Raises: zope.component.ComponentLookupError
     """
     # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", "document" 
     # or "item"?
-    return interfaces.IWorkflow(sub_context.head).get_state(sub_context.status)
-        
+    try:
+        return interfaces.IWorkflow(sub_context.head).get_state(sub_context.status)
+    except interfaces.InvalidStateError, e:
+        # !+NONE_STATE_RPM(mr, jan-2012) return dummy None state as RPM instead?
+        raise zope.component.ComponentLookupError(str(e))
+
 
 class Workflow(object):
     """A Workflow instance for a specific document type, defining the possible 
