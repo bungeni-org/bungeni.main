@@ -18,7 +18,6 @@ import zc.table
 
 from bungeni.models import interfaces
 from bungeni.models import domain
-from bungeni.models.utils import is_current_or_delegated_user
 from bungeni.core.workflow.interfaces import InvalidStateError
 from bungeni.ui.forms.interfaces import ISubFormViewletManager
 from bungeni.ui.i18n import _
@@ -33,26 +32,6 @@ from bungeni.utils.capi import capi
 CHANGE_TYPES = ("head", "signatory", "attachedfile", "event")
 CHANGE_ACTIONS = domain.CHANGE_ACTIONS
 # ("add", "modify", "workflow", "remove", "version", "reversion")
-
-def checkPermissionChange(interaction, permission, change):
-    """checkPermission for a change log entry.
-    
-    This is a variation of generic checkPermission that adds special handling 
-    for when the RolePermissionMap lookup for a change record fails becuase
-    change.status is not validly set e.g. on "add" change records.
-    # !+PERMISSION_CHANGE(mr, dec-2011) should be eliminated (ensure status is 
-    # always validly set) or made part of RolePermissionMap's logic.
-    """
-    try:
-        return interaction.checkPermission(permission, change)
-    except InvalidStateError:
-        # No state as RPM for change.status... and as IRolePermission(change) 
-        # uses workflow.state.get_head_object_state_rpm the RPM lookup call 
-        # fails. Whatever this may be due to, we assume that it OK to grant it 
-        # only to the user who actually *affected* the change.
-        # !+PERMISSION_CHANGE(mr, dec-2011) above assumption may not 
-        # necessarily always be appropriate.
-        return is_current_or_delegated_user(change.user)
 
 
 # Data
@@ -74,7 +53,7 @@ class ChangeDataProvider(object):
         changes = []
         def append_visible_changes_on_item(item):
             for c in domain.get_changes(item, *self.include_change_actions):
-                if checkPermissionChange(interaction, "zope.View", c):
+                if interaction.checkPermission("zope.View", c):
                     changes.append(c)
         
         # !+ align checkPermission zope.View with listings of sub item types...
@@ -89,7 +68,7 @@ class ChangeDataProvider(object):
             # changes on item signatories
             if "signatory" in self.include_change_types:
                 signatories = [ s for s in self.head.item_signatories
-                    if checkPermission("zope.View", s)
+                    if interaction.checkPermission("zope.View", s)
                 ]
                 for s in signatories:
                     append_visible_changes_on_item(s)
@@ -97,7 +76,7 @@ class ChangeDataProvider(object):
             # changes on item attachments
             if "attachedfile" in self.include_change_types:
                 attachments = [ f for f in self.head.attached_files
-                    if checkPermission("zope.View", f)
+                    if interaction.checkPermission("zope.View", f)
                 ]
                 for f in attachments:
                     append_visible_changes_on_item(f)
@@ -105,7 +84,7 @@ class ChangeDataProvider(object):
             # changes on item events
             if "event" in self.include_change_types:
                 events = [ e for e in self.head.event_items
-                    if checkPermission("zope.View", e)
+                    if interaction.checkPermission("zope.View", e)
                 ]
                 if events:
                     # !+AuditLogSubs(mr, dec-2011) events not currently audited,

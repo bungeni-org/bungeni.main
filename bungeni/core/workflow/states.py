@@ -220,6 +220,30 @@ def get_object_state(context):
     """
     return interfaces.IWorkflow(context).get_state(context.status)
 
+
+class _NoneStateRPM(State):
+    """A dummy State, as fallback IRolePermissionMap, for when Workflow does 
+    not define one for a given status; to easier handle error/edge cases of 
+    State as IRolePermissionMap, and only methods for defined by this
+    interface, e.g. getRolesForPermission(permission), should ever be called!
+    """
+    # As a minimal concession, we assume it is OK to only grant View access 
+    # to the user who actually owns the target instance.
+    # !+ROLES(mr, jan-2012) retrieve list of roles dynamically
+    permissions = [
+        (0, "zope.View", "bungeni.Clerk"),
+        (0, "zope.View", "bungeni.Speaker"),
+        (1, "zope.View", "bungeni.Owner"),
+        (0, "zope.View", "bungeni.Signatory"),
+        (0, "zope.View", "bungeni.MP"),
+        (0, "zope.View", "bungeni.Minister"),
+        (0, "zope.View", "bungeni.Authenticated"),
+        (0, "zope.View", "bungeni.Anonymous"),
+    ]
+    def __init__(self):
+        pass
+NONE_STATE_RPM = _NoneStateRPM()
+
 def get_object_state_rpm(context):
     """IRolePermissionMap(context) adapter factory. 
     
@@ -230,13 +254,13 @@ def get_object_state_rpm(context):
     to *lookup* (note: no creation of any instance) the workflow.states.State 
     singleton instance.
 
-    Raises: zope.component.ComponentLookupError
+    On lookup error, returns NONE_STATE_RPM, instead of what would be a 
+    zope.component.ComponentLookupError.
     """
     try:
         state = get_object_state(context)
     except interfaces.InvalidStateError, e:
-        # !+NONE_STATE_RPM(mr, jan-2012) return dummy None state as RPM instead?
-        raise zope.component.ComponentLookupError(str(e))
+        return NONE_STATE_RPM
     if state.permissions_from_parent:
         # this state delegates permissions to parent, 
         # so just recurse passing parent item instead
@@ -252,16 +276,15 @@ def get_head_object_state_rpm(sub_context):
     
     Note that sub context is NOT workflowed.
     
-    Raises: zope.component.ComponentLookupError
+    On lookup error, returns NONE_STATE_RPM, instead of what would be a 
+    zope.component.ComponentLookupError.
     """
     # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", "document" 
     # or "item"?
     try:
         return interfaces.IWorkflow(sub_context.head).get_state(sub_context.status)
     except interfaces.InvalidStateError, e:
-        # !+NONE_STATE_RPM(mr, jan-2012) return dummy None state as RPM instead?
-        raise zope.component.ComponentLookupError(str(e))
-
+        return NONE_STATE_RPM
 
 class Workflow(object):
     """A Workflow instance for a specific document type, defining the possible 
