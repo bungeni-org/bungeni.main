@@ -16,7 +16,7 @@ from zope.security.management import getInteraction
 from zc.table import column
 
 from bungeni.core.workflow.interfaces import IStateController
-from bungeni.models.interfaces import IAttachmentable
+from bungeni.models.interfaces import IAttachmentable, IVersion
 from bungeni.models.domain import AttachedFileContainer
 from bungeni.ui.forms.interfaces import ISubFormViewletManager
 from bungeni.ui import browser
@@ -100,14 +100,14 @@ class FileListingMixin(object):
     @property
     def columns(self):
         return [
-            column.GetterColumn(title=_(u"file"),
-                getter=lambda i,f:"%s" % (i.file_title),
-                cell_formatter=lambda g,i,f:'<a href="%s/files/obj-%d">%s</a>' 
+            column.GetterColumn(title=_("file"),
+                getter=lambda i,f: "%s" % (i.file_title),
+                cell_formatter=lambda g,i,f: '<a href="%s/files/obj-%d">%s</a>' 
                     % (f.url, i.attached_file_id, g)),
-            column.GetterColumn(title=_(u"status"), 
-                getter=lambda i,f:i.status),
-            column.GetterColumn(title=_(u"modified"), 
-                getter=lambda i,f:self.date_formatter.format(i.status_date)),
+            column.GetterColumn(title=_("status"), 
+                getter=lambda i,f: i.status),
+            column.GetterColumn(title=_("modified"), 
+                getter=lambda i,f: self.date_formatter.format(i.status_date)),
         ]
     
     def __init__(self):
@@ -162,6 +162,9 @@ class FileListingView(FileListingMixin, browser.BungeniBrowserView):
 @register.viewlet(IAttachmentable, manager=ISubFormViewletManager, 
     name="keep-zca-happy-attachments")
 class FileListingViewlet(FileListingMixin, browser.BungeniItemsViewlet):
+    """Viewlet to list attachments of a given document (head).
+    """
+    # Attachments are records in the attached_files table.
     
     render = z3evoque.PageViewTemplateFile("audit.html#listing_viewlet")
     view_title = "Attachments"
@@ -173,4 +176,26 @@ class FileListingViewlet(FileListingMixin, browser.BungeniItemsViewlet):
         FileListingMixin.__init__(self)
         self.view_title = _(self.__class__.view_title)
         self.for_display = True # bool(self.file_data_items)
+
+
+@register.viewlet(IVersion, manager=ISubFormViewletManager, 
+    name="keep-zca-happy-attachments")
+class VersionFileListingViewlet(FileListingViewlet):
+    """Viewlet to list attachments of a given version of a document.
+    """
+    # Version attachments are records in the attached_file_versions table.
+    
+    @property
+    def columns(self):
+        return [
+            column.GetterColumn(title=_("file"),
+                getter=lambda i,f:"%s" % (i.file_title),
+                cell_formatter=lambda g,i,f:'<a href="%s/files/obj-%d">%s</a>' 
+                    % (f.url, i.content_id, g)),
+            column.GetterColumn(title=_("status"), 
+                getter=lambda i,f:i.status),
+            column.GetterColumn(title=_("modified"), 
+                getter=lambda i,f:self.date_formatter.format(i.status_date)),
+        ]
+
 

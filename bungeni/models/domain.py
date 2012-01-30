@@ -115,8 +115,6 @@ class ItemVersions(Entity):
         #interface.classImplements(factory, getattr(interfaces, "I%s" % (name)))
         return factory
 
-    #files = one2many("files", "bungeni.models.domain.AttachedFileContainer", "file_version_id")
-
 
 # !+PARAMETRIZABLE_DOCTYPES(mr, jun-2011) the quality of a domain type to
 # be auditable or versionable is externalized as a localization parameter, and

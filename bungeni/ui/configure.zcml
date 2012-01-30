@@ -68,6 +68,9 @@
     <class class=".file.FileListingViewlet">
         <require permission="zope.View" attributes="render" />
     </class>
+    <class class=".file.VersionFileListingViewlet">
+        <require permission="zope.View" attributes="render" />
+    </class>
 
     
   <!-- Include Views -->

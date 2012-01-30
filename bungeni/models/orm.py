@@ -71,6 +71,8 @@ def configurable_mappings(kls):
                 ]
             )
         )
+        version_kls.files = one2many("files",
+            "bungeni.models.domain.AttachedFileContainer", "file_version_id")
     # finally, add any properties to the master kls itself
     def mapper_add_configurable_properties(kls):
         kls_mapper = class_mapper(kls)
