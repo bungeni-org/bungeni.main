@@ -308,6 +308,7 @@ See the Bungeni Source Code Style Guide for further details.
 
 <!-- groupsitting -->
 <grant permission="bungeni.sitting.View" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting.Edit" role="bungeni.Clerk" />
 <grant permission="bungeni.sitting.Add" role="bungeni.Clerk" />
 <grant permission="bungeni.sittingschedule.View" role="bungeni.Clerk" />
 <grant permission="bungeni.sittingattendance.Edit" role="bungeni.Clerk" />
