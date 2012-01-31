@@ -21,7 +21,14 @@ Initialise User
    ...        date_of_birth=datetime.datetime.now(),
    ...        language="en",
    ...        gender='M')
-
+   
+Create Participation
+--------------------------------------
+Create a participation
+  >>> from bungeni.core.testing import create_principal, set_interaction
+  >>> user = create_principal("user", "test user", ())
+  >>> set_interaction(user)
+  
 Initialise Group
 ----------------
 
@@ -53,6 +60,7 @@ Generate ODT
    >>> from bungeni.ui.downloaddocument import ReportODT
    >>> from zope.publisher.browser import TestRequest
    >>> request = TestRequest(form=download_form_data)
+   >>> request.setPrincipal(user)
    >>> reportODT = ReportODT(report, request)
    
 To check if ODT is properly generated, we check if the content type of the
@@ -64,8 +72,8 @@ response is set
 Generate PDF
 ------------
    >>> from bungeni.ui.downloaddocument import ReportPDF
-   >>> from zope.publisher.browser import TestRequest
    >>> request = TestRequest(form=download_form_data)
+   >>> request.setPrincipal(user)
    
 To check if PDF is properly generated, we check if the content type of the
 response is set
@@ -91,8 +99,8 @@ Initialise a Bill
 Bill ODT
 --------
    >>> from bungeni.ui.downloaddocument import BungeniContentODT
-   >>> from zope.publisher.browser import TestRequest
-   >>> request = TestRequest()   
+   >>> request = TestRequest()
+   >>> request.setPrincipal(user)
    >>> documentODT = BungeniContentODT(bill, request)
    >>> output = documentODT()
    >>> request.response.getHeader('Content-type')
@@ -102,6 +110,7 @@ Bill PDF
 --------
    >>> from bungeni.ui.downloaddocument import BungeniContentPDF
    >>> request = TestRequest()
+   >>> request.setPrincipal(user)
    >>> documentPDF = BungeniContentPDF(bill, request)
    >>> output = documentPDF()
    >>> request.response.getHeader('Content-type')
@@ -122,6 +131,7 @@ Initialise a Motion
 Motion ODT
 ----------
    >>> request = TestRequest()
+   >>> request.setPrincipal(user)
    >>> documentODT = BungeniContentODT(motion, request)
    >>> output = documentODT()
    >>> request.response.getHeader('Content-type')
@@ -130,6 +140,7 @@ Motion ODT
 Motion PDF
 ----------
    >>> request = TestRequest()
+   >>> request.setPrincipal(user)
    >>> documentPDF = BungeniContentPDF(motion, request)
    >>> output = documentPDF()
    >>> request.response.getHeader('Content-type')
@@ -150,6 +161,7 @@ Initialise a Tabled Document
 Tabled Document ODT
 -------------------
    >>> request = TestRequest()
+   >>> request.setPrincipal(user)
    >>> documentODT = BungeniContentODT(tableddocument, request)
    >>> output = documentODT()
    >>> request.response.getHeader('Content-type')
@@ -158,6 +170,7 @@ Tabled Document ODT
 Tabled Document PDF
 -------------------
    >>> request = TestRequest()
+   >>> request.setPrincipal(user)
    >>> documentPDF = BungeniContentPDF(tableddocument, request)
    >>> output = documentPDF()
    >>> request.response.getHeader('Content-type')
@@ -177,8 +190,8 @@ Initialise an Agenda Item
 
 Agenda Item ODT
 ---------------
-   >>> from zope.publisher.browser import TestRequest
    >>> request = TestRequest()
+   >>> request.setPrincipal(user)
    >>> documentODT = BungeniContentODT(agendaitem, request)
    >>> output = documentODT()
    >>> request.response.getHeader('Content-type')
@@ -186,8 +199,8 @@ Agenda Item ODT
    
 Agenda Item PDF
 ---------------
-   >>> from zope.publisher.browser import TestRequest
    >>> request = TestRequest()
+   >>> request.setPrincipal(user)
    >>> documentPDF = BungeniContentPDF(agendaitem, request)
    >>> output = documentPDF()
    >>> request.response.getHeader('Content-type')
@@ -209,8 +222,8 @@ Initialise a Question
 
 Question ODT
 ------------
-   >>> from zope.publisher.browser import TestRequest
    >>> request = TestRequest()
+   >>> request.setPrincipal(user)
    >>> documentODT = BungeniContentODT(question, request)
    >>> output = documentODT()
    >>> request.response.getHeader('Content-type')
@@ -218,8 +231,8 @@ Question ODT
    
 Question PDF
 ------------
-   >>> from zope.publisher.browser import TestRequest
    >>> request = TestRequest()
+   >>> request.setPrincipal(user)
    >>> documentPDF = BungeniContentPDF(question, request)
    >>> output = documentPDF()
    >>> request.response.getHeader('Content-type')
