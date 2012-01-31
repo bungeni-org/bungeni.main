@@ -50,6 +50,23 @@ def get_changes(auditable, *actions):
 
 #
 
+class HeadParentedMixin(object):
+    @property
+    def __parent__(self):
+        """For sub-objects of an owning "head" object.
+        
+        Returns the head object as the default value for __parent__ (note 
+        hard-setting e.g. self.__parent__ = X, on any instance will simply 
+        override this default behavior for that instance).
+        
+        This default behaviour is needed the roles has a user has via a 
+        sub-object may not include all the same roles the user has on the 
+        head object, that may result in an incorrect permission decision,
+        in particular as permission checking on sub-objects is often bound
+        to permissions on the head object.
+        """
+        return self.head
+
 class Entity(object):
     interface.implements(location.ILocation)
     __name__ = None
@@ -87,7 +104,7 @@ class Entity(object):
 
 #############
 
-class ItemChanges(object):
+class ItemChanges(HeadParentedMixin, object):
     """An audit changelog of events in the lifecycle of a parliamentary content.
     """
     @classmethod
@@ -104,6 +121,8 @@ class ItemChanges(object):
         self.notes = dictionary and repr(dictionary) or None
     extras = property(_get_extras, _set_extras)
 
+
+# !+HeadParentedMixin -- alchemist manipulates __parent__ attribute
 class ItemVersions(Entity):
     """A collection of the versions of a parliamentary content object.
     """
@@ -628,7 +647,7 @@ class AttachedFileType(object):
 '''
 
 # versionable (by default), but not a ParliamentaryItem
-class AttachedFile(Entity):
+class AttachedFile(HeadParentedMixin, Entity):
     """Files attached to a parliamentary item.
     """
     __dynamic_features__ = True # !+ should be False?
@@ -636,11 +655,11 @@ class AttachedFile(Entity):
     # the owner of the "owning" item !+HEAD_DOCUMENT_ITEM
     @property
     def owner_id(self):
-        return self.item.owner_id
+        return self.head.owner_id
     
     @property
     def owner(self):
-        return self.item.owner
+        return self.head.owner
 
 
 # !+ why a parliamentaryItem? Review whole heading idea!
@@ -836,7 +855,7 @@ class DocumentSource(object):
 '''
 
 # !+EventItem(mr, sep-2011) why is this a ParlaimentaryItem?
-class EventItem(ParliamentaryItem):
+class EventItem(HeadParentedMixin, ParliamentaryItem):
     """Bill events with dates and possiblity to upload files.
 
     bill events have a title, description and may be related to a sitting 

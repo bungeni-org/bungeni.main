@@ -416,7 +416,7 @@ mapper(domain.ParliamentaryItem, schema.parliamentary_items,
         "attached_files": relation(domain.AttachedFile,
             # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", 
             # "document", "item"
-            backref=backref("item",
+            backref=backref("head",
                 remote_side=schema.parliamentary_items.c.parliamentary_item_id)
         ),
         "event_items": relation(domain.EventItem,
@@ -425,7 +425,7 @@ mapper(domain.ParliamentaryItem, schema.parliamentary_items,
                     schema.event_items.c.item_id),
             uselist=True,
             # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name
-            backref=backref("item",
+            backref=backref("head",
                 remote_side=schema.parliamentary_items.c.parliamentary_item_id),
         ),
     }

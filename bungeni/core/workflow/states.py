@@ -264,7 +264,7 @@ def get_object_state_rpm(context):
     if state.permissions_from_parent:
         # this state delegates permissions to parent, 
         # so just recurse passing parent item instead
-        return get_object_state_rpm(context.item)
+        return get_object_state_rpm(context.head)
     return state
 
 def get_head_object_state_rpm(sub_context):

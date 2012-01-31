@@ -96,7 +96,7 @@ class ChangeDataProvider(object):
                             self.item_id = event.event_item_id
                             #change_id
                             #self.content
-                            self.head = event.item
+                            self.head = event.head
                             self.action = "add"
                             self.date_audit = self.date_active = \
                                 event.status_date
@@ -177,7 +177,7 @@ def _format_description_workflow(change):
             _("from"),
             _(extras.get("source", None)),
             _("to"),
-            _(extras.get("destination", None))))
+            _(extras.get("destination", None)) ))
     
 def _format_description(change):
     """Build the (localized) description for display, for each change, per 
