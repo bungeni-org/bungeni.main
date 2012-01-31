@@ -286,6 +286,29 @@ def get_head_object_state_rpm(sub_context):
     except interfaces.InvalidStateError, e:
         return NONE_STATE_RPM
 
+
+def assert_roles_mix_limitations(perm, roles, wf_name, obj_key, obj_id=""):
+    """ Validation utility.
+            perm:str, roles:[str]
+        for error message:
+            wf_name:str, obj_key:either("state", "transition"), obj_id:str
+    """
+    ROLE_MIX_LIMITATIONS = {
+        "bungeni.Authenticated": ["bungeni.Anonymous"],
+    }
+    for mix_limited_role in ROLE_MIX_LIMITATIONS:
+        if mix_limited_role in roles:
+            _mixed_roles = roles[:]
+            _mixed_roles.remove(mix_limited_role)
+            for ok_role in ROLE_MIX_LIMITATIONS[mix_limited_role]:
+                if ok_role in _mixed_roles:
+                    _mixed_roles.remove(ok_role)
+            assert not bool(_mixed_roles), "Workflow [%s] %s [%s] " \
+                "mixes disallowed roles %s with role [%s] for " \
+                "permission [%s]" % (
+                    wf_name, obj_key, obj_id, roles, mix_limited_role, perm)
+
+
 class Workflow(object):
     """A Workflow instance for a specific document type, defining the possible 
     states a document may have and the allowed transitions between them.
@@ -340,24 +363,6 @@ class Workflow(object):
     @error.exceptions_as(interfaces.InvalidWorkflow, False)
     def validate(self):
         
-        def assert_roles_mix_limitations(key, st, perm, roles):
-            """ (key:str, st:State/Transition, perm:str, roles:[str]) 
-            """
-            ROLE_MIX_LIMITATIONS = {
-                "bungeni.Authenticated": ["bungeni.Anonymous"],
-            }
-            for mix_limited_role in ROLE_MIX_LIMITATIONS:
-                if mix_limited_role in roles:
-                    _mixed_roles = roles[:]
-                    _mixed_roles.remove(mix_limited_role)
-                    for ok_role in ROLE_MIX_LIMITATIONS[mix_limited_role]:
-                        if ok_role in _mixed_roles:
-                            _mixed_roles.remove(ok_role)
-                    assert not bool(_mixed_roles), "Workflow [%s] %s [%s] " \
-                        "mixes disallowed roles %s with role [%s] for " \
-                        "permission [%s]" % (
-                            self.name, key, st.id, roles, mix_limited_role, perm)
-        
         assert len(self.tags) == len(set(self.tags)), \
             "Workflow [%s] duplicates tags: %s" % (self.name, self.tags)
         
@@ -397,7 +402,7 @@ class Workflow(object):
                     " permission [%s]" % (
                         self.name, s.id, roles, perm)
                 # assert roles mix limitations for state permissions
-                assert_roles_mix_limitations("state", s, perm, roles)
+                assert_roles_mix_limitations(perm, roles, self.name, "state", s.id)
             # tags
             _undeclared_tags = [ tag for tag in s.tags if tag not in self.tags ]
             assert not _undeclared_tags, \
@@ -410,7 +415,7 @@ class Workflow(object):
         # assert roles mix limitations for transitions
         for t in self._transitions_by_id.values():
             roles = t.user_data.get("_roles", [])
-            assert_roles_mix_limitations("transition", t, t.permission, roles)
+            assert_roles_mix_limitations(t.permission, roles, self.name, "transition", t.id)
         
         # ensure that every active state is reachable, 
         # and that every obsolete state is NOT reachable

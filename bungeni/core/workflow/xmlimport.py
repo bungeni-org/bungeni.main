@@ -17,6 +17,7 @@ from zope.i18nmessageid import Message
 from bungeni.core.workflow import interfaces
 from bungeni.core.workflow.states import GRANT, DENY
 from bungeni.core.workflow.states import Feature, State, Transition, Workflow
+from bungeni.core.workflow.states import assert_roles_mix_limitations
 from bungeni.core.workflow.notification import Notification
 from bungeni.utils.capi import capi, bungeni_custom_errors
 from bungeni.ui.utils import debug
@@ -238,14 +239,21 @@ def _load(workflow, name):
                 note=strip_none(f.get("note"))))
     
     # global grants
+    _permission_role_mixes = {}
     for p in workflow.iterchildren("grant"):
         pid = strip_none(p.get("permission"))
         role = strip_none(p.get("role"))
+        # for each global permission, build list of roles it is set to
+        _permission_role_mixes.setdefault(pid, []).append(role)
         #+!assertRegisteredPermission(permission)
         assert pid and role, "Global grant must specify valid permission/role" 
         ZCML_LINES.append(
             '%s<grant permission="%s" role="%s" />' % (ZCML_INDENT, pid, role))
-    
+    for perm, roles in _permission_role_mixes.items():
+        # assert roles mix limitations for state permissions
+        assert_roles_mix_limitations(perm, roles, name, "global grants")
+
+
     # states
     for s in workflow.iterchildren("state"):
         assert_valid_attr_names(s, STATE_ATTRS)
