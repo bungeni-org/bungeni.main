@@ -51,21 +51,37 @@ def get_changes(auditable, *actions):
 #
 
 class HeadParentedMixin(object):
-    @property
-    def __parent__(self):
-        """For sub-objects of an owning "head" object.
-        
-        Returns the head object as the default value for __parent__ (note 
-        hard-setting e.g. self.__parent__ = X, on any instance will simply 
-        override this default behavior for that instance).
-        
-        This default behaviour is needed as the roles a user has via a 
-        sub-object may not include all the same roles the user has on its 
-        head object, that may result in an incorrect permission decision,
-        in particular as permission checking on sub-objects is often bound
-        to permissions on the head object.
-        """
-        return self.head
+    """For sub-objects of a "head" object.
+    
+    Changes the behaviour of __parent__ to by default return the head object 
+    UNLESS a non-None __parent__ is hard-set explicitly set on the sub-instance
+    (e.g. as within an alchemist container listing, alchemist sets the 
+    __parent__ to the container).
+    
+    This default behaviour is needed as the roles a user has via a 
+    sub-object may not include all the same roles the user has on its 
+    head object, that may result in an incorrect permission decision,
+    in particular as permission checking on sub-objects is often bound
+    to permissions on the head object.
+    """
+    # remember if __parent__ has been explicitly set
+    _explicit_parent = None
+    # implement as a "clean" property, using the namespace containment of a 
+    # "temporary" function, that returns a dict to be later used as keyword
+    # arg to define the property with same name as the temporary function.
+    def __parent__():
+        doc = "Returns the Zope 3 canonical location of the instance " \
+            "i.e. the __parent__ object, usually needed to lookup security " \
+            "settings on the instance."
+        def fget(self):
+            return self._explicit_parent or self.head
+        def fset(self, parent):
+            self._explicit_parent = parent
+        def fdel(self):
+            self._explicit_parent = None
+        return locals()
+    __parent__ = property(**__parent__())
+
 
 class Entity(object):
     interface.implements(location.ILocation)
@@ -122,8 +138,7 @@ class ItemChanges(HeadParentedMixin, object):
     extras = property(_get_extras, _set_extras)
 
 
-# !+HeadParentedMixin -- alchemist manipulates __parent__ attribute
-class ItemVersions(Entity):
+class ItemVersions(HeadParentedMixin, Entity):
     """A collection of the versions of a parliamentary content object.
     """
     @classmethod
@@ -334,7 +349,7 @@ class Group(Entity):
             return True
 
 
-class GroupMembership(Entity):
+class GroupMembership(HeadParentedMixin, Entity):
     """A user's membership in a group-abstract basis for 
     ministers, committeemembers, etc.
     """
@@ -564,7 +579,7 @@ class OfficeMember(GroupMembership):
 #    Debates
 #    """
 
-class Address(Entity):
+class Address(HeadParentedMixin, Entity):
     """Address base class
     """
     __dynamic_features__ = False
