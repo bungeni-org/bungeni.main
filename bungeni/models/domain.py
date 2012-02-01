@@ -59,8 +59,8 @@ class HeadParentedMixin(object):
         hard-setting e.g. self.__parent__ = X, on any instance will simply 
         override this default behavior for that instance).
         
-        This default behaviour is needed the roles has a user has via a 
-        sub-object may not include all the same roles the user has on the 
+        This default behaviour is needed as the roles a user has via a 
+        sub-object may not include all the same roles the user has on its 
         head object, that may result in an incorrect permission decision,
         in particular as permission checking on sub-objects is often bound
         to permissions on the head object.

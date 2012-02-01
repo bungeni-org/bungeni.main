@@ -44,9 +44,9 @@ def user_is_context_owner(context):
 def user_may_edit_context_parent(context):
     """Does user have edit permission on the context's parent?
     For a context that is a workflowed sub-object, such as an Attachment or 
-    an Event; context must define an "item" proeprty that returns the parent.
+    an Event; context must define a "head" property that returns the parent.
     """
-    parent = context.item
+    parent = context.head
     permission = "bungeni.%s.Edit" % (parent.__class__.__name__.lower())
     return checkPermission(permission, parent)
 

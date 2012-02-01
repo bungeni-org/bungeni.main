@@ -113,7 +113,7 @@ mapper(domain.User, schema.users,
     properties={
         "user_addresses": relation(domain.UserAddress,
             # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name
-            backref=backref("item", remote_side=schema.users.c.user_id)
+            backref=backref("head", remote_side=schema.users.c.user_id)
         ),
         "subscriptions": relation(domain.ParliamentaryItem,
             secondary=schema.users_parliamentary_items
@@ -161,7 +161,7 @@ mapper(domain.Group, schema.groups,
         ),
         "group_addresses": relation(domain.GroupAddress,
             # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name
-            backref=backref("item", remote_side=schema.groups.c.group_id)
+            backref=backref("head", remote_side=schema.groups.c.group_id)
         ),
         # "keywords": relation(domain.Keyword, secondary=schema.groups_keywords)
     },
@@ -290,7 +290,7 @@ mapper(domain.GroupMembership, schema.user_group_memberships,
     polymorphic_identity="member",
 )
 # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", "document", "item"
-domain.GroupMembership.item = domain.GroupMembership.user
+domain.GroupMembership.head = domain.GroupMembership.user
 
 #!+TYPES_CUSTOM mapper(domain.MemberElectionType, schema.member_election_types)
 
