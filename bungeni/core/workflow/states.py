@@ -285,7 +285,7 @@ def get_head_object_state_rpm(sub_context):
         return interfaces.IWorkflow(sub_context.head).get_state(sub_context.status)
     except interfaces.InvalidStateError, e:
         return NONE_STATE_RPM
-
+    # !+SUBITEM_CHANGES_PERMISSIONS(mr, jan-2012)
 
 def assert_roles_mix_limitations(perm, roles, wf_name, obj_key, obj_id=""):
     """ Validation utility.

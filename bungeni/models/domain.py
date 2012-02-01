@@ -68,7 +68,7 @@ class HeadParentedMixin(object):
     _explicit_parent = None
     # implement as a "clean" property, using the namespace containment of a 
     # "temporary" function, that returns a dict to be later used as keyword
-    # arg to define the property with same name as the temporary function.
+    # args to define a same-named property.
     def __parent__():
         doc = "Returns the Zope 3 canonical location of the instance " \
             "i.e. the __parent__ object, usually needed to lookup security " \

@@ -63,7 +63,7 @@ from bungeni.core.i18n import _
 
 
 def _trace_audit_handler(ah):
-    """Simple decorator to log.debug each call to a (specifically) an
+    """Simple decorator to log.debug each call to (specifically) an 
     audit handler. 
     """
     def _ah(ob, event):
@@ -183,7 +183,17 @@ class _AuditorFactory(object):
                         date_active=change_data["date_active"])
     
     def object_remove(self, ob, event):
-        return self._object_changed("remove", ob)
+        # !+AUDIT_REMOVE(mr, feb-2011) if this is a real delete (of a record 
+        # from the db) then there is really no sense in auditing it at all in 
+        # the first place (really deleting an item should also mean deleting 
+        # what is owned by it e.g. its change records). [Plus, trying to audit
+        # such a deletion gives a sqlalchemy.exc.InvalidRequestError, 
+        # "Instance ... has been deleted".
+        #
+        # If this is a semantic "delete" e.g. to mark the item as obsolete, 
+        # then it would be desireable to audit it as any other change action.
+        #return self._object_changed("remove", ob)
+        log.warn("!+AUDIT_REMOVE not auditing deletion of [%s]" % (ob))
     
     def object_workflow(self, ob, event):
         """
@@ -315,6 +325,13 @@ class _AuditorFactory(object):
         change.content_type = otype
         change.head = ob # attach change to parent object
         change.status = ob.status # remember parent's status at time of change
+        # !+SUBITEM_CHANGES_PERMISSIONS(mr, jan-2012) permission on change 
+        # records for something like item[@draft]->file[@attached]->fileversion 
+        # need to remember also the root item's state, else when item later 
+        # becomes visible to clerk and others, the file itself will also become 
+        # visible to the clerk (CORRECT) but so will ALL changes on the file 
+        # while that file itself was @attached (WRONG!). May best be addressed
+        # when change persistence is reworked along with single document table.
         session.add(change)
         session.flush()
         log.debug("AUDITED [%s] %s" % (action, change.__dict__))
