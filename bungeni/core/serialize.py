@@ -9,7 +9,7 @@ from zope.security.proxy import removeSecurityProxy
 from sqlalchemy.orm import RelationshipProperty, class_mapper
 
 from bungeni.core.workflow.states import get_object_state_rpm, get_head_object_state_rpm
-from bungeni.core.workflow.interfaces import IWorkflow
+from bungeni.core.workflow.interfaces import IWorkflow, IStateController
 from bungeni.models.schema import singular
 from bungeni.alchemist.container import stringKey
 from bungeni.models.interfaces import IAuditable, IVersionable, IAttachmentable
@@ -65,13 +65,24 @@ def publish_to_xml(context):
         parent=None,
         include=include,
         exclude=["file_data", "image", "logo_data", "event_item", 
-            "attached_files"]
+            "attached_files","changes"]
     )
 
     type = IWorkflow(context).name
-     
+    
+    tags = IStateController(context).get_state().tags
+    if tags:
+        data["tags"] = tags
+    
     permissions = get_object_state_rpm(context).permissions
     data["permissions"]= get_permissions_dict(permissions)
+    
+    data["changes"] = []
+    for change in getattr(context, "changes", []):
+        change_dict = obj2dict(change, 0, parent=context)
+        change_permissions = get_head_object_state_rpm(change).permissions
+        change_dict["permissions"] = get_permissions_dict(change_permissions)
+        data["changes"].append(change_dict)
     
     # list of files to zip
     files = []
@@ -96,6 +107,9 @@ def publish_to_xml(context):
                 attachment_dict = obj2dict(attachment, 1,
                     parent=context,
                     exclude=["file_data", "event_item", "versions", "changes"])
+                permissions = get_object_state_rpm(attachment).permissions
+                attachment_dict["permissions"] = \
+                    get_permissions_dict(permissions)
                 # saving attachment to tmp
                 with tmp(delete=False) as f:
                     f.write(attachment.file_data)
