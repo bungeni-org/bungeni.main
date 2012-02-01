@@ -40,7 +40,6 @@
   <grant permission="zope.View" role="bungeni.Clerk" />
   <grant permission="zope.View" role="bungeni.Speaker" />
   <grant permission="zope.View" role="bungeni.Owner" />
-  <grant permission="zope.View" role="bungeni.Authenticated" />
 
   <!-- translation -->
       
