@@ -39,6 +39,7 @@ Supported xapian query operators
 """
 
 import time, simplejson, urllib, urlparse, re
+import xapian as _xapian
 from bungeni.ui import forms
 from ore.xapian import interfaces
 
@@ -87,6 +88,8 @@ from bungeni.models.utils import get_ministries_for_user_in_government
 from bungeni.models.utils import get_principal
 from zope.app.schema.vocabulary import IVocabularyFactory
 from zope.i18n import translate
+
+MINIMAL_PARTIAL_QUERY = 4
 
 ALLOWED_TYPES = {'workspace': ('Question', 'Motion', 'TabledDocument',\
                                'Bill', 'AgendaItem'),\
@@ -381,6 +384,10 @@ class Search(forms.common.BaseForm, ResultListing, HighlightMixin):
         if not search_term:
             self.status = _(u"Invalid Query")
             return
+        
+        # Setting FLAG_PARTIAL to search incomplete words 
+        if len(search_term) > MINIMAL_PARTIAL_QUERY:
+            self.searcher._qp_flags_base |= _xapian.QueryParser.FLAG_PARTIAL
 
         # compose query
         t = time.time()
@@ -506,6 +513,10 @@ class AdvancedPagedSearch(PagedSearch):
         if not search_term:
             self.status = _(u"Invalid Query")
             return
+        
+        # Setting FLAG_PARTIAL to search incomplete words 
+        if len(search_term) > MINIMAL_PARTIAL_QUERY:
+            self.searcher._qp_flags_base |= _xapian.QueryParser.FLAG_PARTIAL
 
         # compose query
         t = time.time()
