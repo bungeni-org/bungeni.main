@@ -1,12 +1,10 @@
 log = __import__("logging").getLogger("bungeni.ui.versions")
 
-import operator
-
 from zope import interface
 from zope import schema
 from zope import formlib
 
-from zope.app.pagetemplate import ViewPageTemplateFile
+#from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.security.proxy import removeSecurityProxy
 from zope.security import checkPermission, canWrite
 from zope.security.interfaces import ForbiddenAttribute
@@ -88,7 +86,7 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
             column.SelectionColumn(
                     lambda item:str(item.version_id), name="selection"),
             column.GetterColumn(title=_(u"version"),
-                    getter=lambda i,f:'%s' % (i.version_id),
+                    getter=lambda i,f:"%s" % (i.version_id),
                     cell_formatter=lambda g,i,f:'<a href="%s/versions/obj-%d">%s</a>' 
                         % (f.url, i.version_id, g)),
             column.GetterColumn(title=_(u"manual"), 
@@ -104,18 +102,20 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
     
     def listing(self):
         # set up table
+        
         values = [ value for value in self._versions.values()
-            if checkPermission("zope.View", value)]
-        formatter = self.formatter_factory(
-            self.context, self.request,
-            values,
+            if checkPermission("zope.View", value) ]
+        
+        formatter = self.formatter_factory(self.context, self.request, values,
             prefix="results",
-            visible_column_names = [c.name for c in self.columns],
-            columns = self.columns, sort_on=(('version',True),))
+            visible_column_names=[ c.name for c in self.columns ],
+            columns=self.columns, 
+            sort_on=(("version", True),)
+        )
 
         # the column getter methods expect an ``url`` attribute
         formatter.url = url.absoluteURL(self.context, self.request)
-        formatter.cssClasses['table'] = "listing grid"
+        formatter.cssClasses["table"] = "listing grid"
         return formatter()
 
     def has_write_permission(self, context):
