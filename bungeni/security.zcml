@@ -2,12 +2,22 @@
 <configure xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="bungeni">
-
+    
+    <!-- AppServer Security Settings -->
+    <include package="zope.securitypolicy" file="meta.zcml" />
+    <include package="zope.securitypolicy" />
+    <securityPolicy component="bungeni.BungeniSecurityPolicy" />
+    
+    <unauthenticatedPrincipal id="zope.anybody" title="Unauthenticated User" />
+    <unauthenticatedGroup id="zope.Anybody" title="Unauthenticated Users" />
+    <authenticatedGroup id="zope.Authenticated" title="Authenticated Users" />
+    <everybodyGroup id="zope.Everybody" title="All Users" />
+    
     <include package="bungeni.models" file="roles.zcml" />
-
-  <!-- Administrator account; we do not authenticate against this
+    
+    <!-- Administrator account; we do not authenticate against this
        principal which is why the password is intentionally left blank -->
-  <!-- principal id="zope.manager"
+    <!-- principal id="zope.manager"
              title="Manager"
              login="admin"
              password_manager="Plain Text"
