@@ -12,8 +12,10 @@
     <authenticatedGroup id="zope.Authenticated" title="Authenticated Users" />
     <everybodyGroup id="zope.Everybody" title="All Users" />
     
+    <include package="bungeni.models" file="auth.zcml"/>
     <include package="bungeni.models" file="roles.zcml" />
     <include package="bungeni.models" file="permissions.zcml" />
+    <include package="bungeni.core.workflows" file="permissions.zcml" />
     
     <!-- Administrator account; we do not authenticate against this
        principal which is why the password is intentionally left blank -->
