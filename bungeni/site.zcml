@@ -36,12 +36,12 @@
     
     <!-- setup database meta configuration -->
     <include package="ore.alchemist" file="meta.zcml" />
-    <include package="ore.alchemist"/>  
+    <include package="ore.alchemist" />
     <include package="alchemist.catalyst" file="meta.zcml" />
     
     <!-- configure menu subsystem -->
-    <include package="z3c.template" file="meta.zcml"/>  
-    <include package="z3c.menu.ready2go" file="meta.zcml" />  
+    <include package="z3c.template" file="meta.zcml" />
+    <include package="z3c.menu.ready2go" file="meta.zcml" />
     <include package="z3c.menu.ready2go" />
     
     <!-- include cookie authentication -->
@@ -53,14 +53,13 @@
     <include package="ore.xapian" />
     
     <!-- App Security -->
-    <include file="security.zcml"/>
+    <include file="security.zcml" />
     
     <!-- Application Configuration -->
-    <include package="zope.browserpage"/>
     <include package="ploned.ui" file="meta.zcml" />
     
     <include package="bungeni.core" />
-    <includeOverrides file="overrides.zcml" package="bungeni.core"/>
+    <includeOverrides file="overrides.zcml" package="bungeni.core" />
     
     <!-- Application Theme -->
     <include package="ploned.ui" />

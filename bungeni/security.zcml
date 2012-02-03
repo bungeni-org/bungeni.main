@@ -5,7 +5,6 @@
     
     <!-- AppServer Security Settings -->
     <include package="zope.securitypolicy" file="meta.zcml" />
-    <include package="zope.securitypolicy" />
     <securityPolicy component="bungeni.BungeniSecurityPolicy" />
     
     <unauthenticatedPrincipal id="zope.anybody" title="Unauthenticated User" />
@@ -14,6 +13,7 @@
     <everybodyGroup id="zope.Everybody" title="All Users" />
     
     <include package="bungeni.models" file="roles.zcml" />
+    <include package="bungeni.models" file="permissions.zcml" />
     
     <!-- Administrator account; we do not authenticate against this
        principal which is why the password is intentionally left blank -->
