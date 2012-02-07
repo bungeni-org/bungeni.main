@@ -71,6 +71,9 @@
     <class class=".file.VersionFileListingViewlet">
         <require permission="zope.View" attributes="render" />
     </class>
+    <class class=".file.VersionFile_HACK_NonListingViewlet">
+        <require permission="zope.View" attributes="render" />
+    </class>
 
     
   <!-- Include Views -->

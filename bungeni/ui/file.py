@@ -6,6 +6,7 @@
 
 $Id$
 """
+log = __import__("logging").getLogger("bungeni.ui.file")
 
 from tempfile import TemporaryFile
 from zope.interface import implements
@@ -16,7 +17,8 @@ from zope.security.management import getInteraction
 from zc.table import column
 
 from bungeni.core.workflow.interfaces import IStateController
-from bungeni.models.interfaces import IAttachmentable, IVersion
+from bungeni.models.interfaces import IAttachmentable, \
+    IVersion, IAttachedFileVersion
 from bungeni.models.domain import AttachedFileContainer
 from bungeni.ui.forms.interfaces import ISubFormViewletManager
 from bungeni.ui import browser
@@ -141,6 +143,7 @@ class FileListingMixin(object):
             visible_column_names=[ c.name for c in self.columns ],
             columns=self.columns
         )
+        # !+LET_BROWSER_RELATIVE_URLS(mr. feb, 2012) ?
         formatter.url = url.absoluteURL(self.context, self.request)
         formatter.cssClasses["table"] = "listing grid"
         return formatter()
@@ -190,12 +193,28 @@ class VersionFileListingViewlet(FileListingViewlet):
         return [
             column.GetterColumn(title=_("file"),
                 getter=lambda i,f:"%s" % (i.file_title),
-                cell_formatter=lambda g,i,f:'<a href="%s/files/obj-%d">%s</a>' 
-                    % (f.url, i.content_id, g)),
+                cell_formatter=lambda g,i,f:'<a href="%s/files/obj-%d/versions/obj-%d">%s</a>' 
+                    % (f.url, i.content_id, i.version_id, g)),
             column.GetterColumn(title=_("status"), 
                 getter=lambda i,f:i.status),
             column.GetterColumn(title=_("modified"), 
                 getter=lambda i,f:self.date_formatter.format(i.status_date)),
         ]
 
+
+# !+IAttachedFileVersion(mr, feb-2012) for some reason AttachedFileVersions 
+# insist on providing also IVersion even after making IAttachedFileVersion 
+# NOT inherit from IVersion.
+# AttachedFileVersions do NOT have attachments, so we do NOT want the
+# VersionFileListingViewlet to trigger for IAttachedFileVersion... but it 
+# would due to implementing also IVersion. So, we "hide" that with the 
+# following dummy/NULL viewlet, that does not display...
+@register.viewlet(IAttachedFileVersion, manager=ISubFormViewletManager, 
+    name="keep-zca-happy-attachments")
+class VersionFile_HACK_NonListingViewlet(FileListingViewlet):
+    def __init__(self, context, request, view, manager):
+        self.for_display = False # bool(self.file_data_items)        
+        log.warn("!+IAttachedFileVersion should NOT be trying to list attachments !!!")
+        from bungeni.ui.utils import debug
+        print self.__class__.__name__, debug.interfaces(context)
 
