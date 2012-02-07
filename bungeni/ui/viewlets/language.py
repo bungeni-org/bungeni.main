@@ -1,31 +1,13 @@
 # encoding: utf-8
 
-from zope import component
 from zope.app.component.hooks import getSite
-from zope.location.interfaces import ILocation
-from zope.dublincore.interfaces import IDCDescriptiveProperties
-from zope.security import proxy
-from zope.viewlet import viewlet
 from zope.app.pagetemplate import ViewPageTemplateFile
-from zope.browsermenu.interfaces import IBrowserMenu
-from zope.app.component.hooks import getSite
 from zope.publisher.browser import BrowserView
 from zope.i18n.negotiator import normalize_lang
 
-from ore.wsgiapp.interfaces import IApplication
-
-from bungeni.alchemist.interfaces import IAlchemistContainer, IAlchemistContent
-from bungeni.alchemist.model import queryModelDescriptor
-from bungeni.alchemist.traversal import ManagedContainerDescriptor
 from bungeni.core.translation import get_all_languages
 from bungeni.core.translation import get_available_translations
-from bungeni.core.app import BungeniApp
-from bungeni.core import location
-
 import bungeni.ui.utils as ui_utils
-
-import datetime
-
 
 class LanguageViewlet(object):
     """Language selection viewlet."""
@@ -39,34 +21,38 @@ class LanguageViewlet(object):
         def css_class(language):
             css_attr = None
             if language == selected:
-                css_attr = 'selected'
+                css_attr = "selected"
             if language in translations:
                 if css_attr:
-                    css_attr = css_attr + ' available'
+                    css_attr = css_attr + " available"
                 else:
-                    css_attr = 'available'
+                    css_attr = "available"
             return css_attr
         
         def language_name(language): 
-            langname = language.get('native', None)
-            if langname == None:
-                langname = language.get('name')
-            return langname
+            return language.get("native", language.get("name"))
 
         translations = get_available_translations(self.context)
-        if hasattr(self.context,'language'):
+        if hasattr(self.context, "language"):
             translations[self.context.language] = None
         languages = get_all_languages()
         selected = normalize_lang(self.request.locale.getLocaleID())
         url = ui_utils.url.absoluteURL(getSite(), self.request)
         
-        self.languages = [{
-            'code': language,
-            'flag': url+languages[language].get('flag', ''),
-            'name': language_name(languages[language]),
-            'css_class': css_class(language),
-            'url': "%s/change-language?language=%s" % (url, language),
-            } for language in languages]
+        self.languages = sorted([
+                {
+                    "code": language,
+                    "flag": url+languages[language].get('flag', ''),
+                    "name": language_name(languages[language]),
+                    "css_class": css_class(language),
+                    "url": "%s/change-language?language=%s" % (
+                        url, language
+                    ),
+                } 
+                for language in languages
+            ], 
+            key=lambda l:l.get("code")
+        )
 
 class ChangeLanguage(BrowserView):
 
@@ -80,6 +66,3 @@ class ChangeLanguage(BrowserView):
             response.expireCookie("I18N_LANGUAGE", path="/")
         url =  self.request.get("HTTP_REFERER", "..")
         return response.redirect(url)
-
-              
-
