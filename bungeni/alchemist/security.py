@@ -15,6 +15,18 @@ $Id$
 log = __import__("logging").getLogger("bungeni.alchemist")
 
 
+# used directly in bungeni
+__all__ = [
+    "schema",                   # alias -> alchemist.security
+    "metadata",                 # alias -> alchemist.security.schema
+    "GlobalPrincipalRoleMap",   # alias -> alchemist.security.role
+    "LocalPrincipalRoleMap",    # alias -> alchemist.security.role
+    "GlobalRolePermissionMap",  # alias -> alchemist.security.permission
+    "LocalRolePermissionMap",   # alias -> alchemist.security.permission
+    "AuthenticatedPrincipalFactory",    # alias -> alchemist.security.auth
+]
+
+
 from alchemist.security import schema
 
 from alchemist.security.auth import AuthenticatedPrincipalFactory

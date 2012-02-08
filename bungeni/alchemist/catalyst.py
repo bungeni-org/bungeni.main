@@ -11,22 +11,48 @@ $Id$
 log = __import__("logging").getLogger("bungeni.alchemist")
 
 
+# used directly in bungeni
+__all__ = [
+    "AddForm",      # alias -> alchemist.catalyst.ui
+    "DisplayForm",  # alias -> alchemist.catalyst.ui
+    "EditForm",     # alias -> alchemist.catalyst.ui
+    
+    "catalyst",     # redefn -> alchemist.catalyst.zcml
+    
+    #!+ALCHEMIST_INTERNAL "CatalystContext",    # alias -> alchemist.catalyst.zcml
+    #!+ALCHEMIST_INTERNAL "ApplySecurity",      # alias -> alchemist.catalyst.domain
+    #!+ALCHEMIST_INTERNAL "getDomainInterfaces",# alias -> alchemist.catalyst.domain
+]
+
+
 from alchemist.catalyst.ui import AddForm
 from alchemist.catalyst.ui import DisplayForm
 from alchemist.catalyst.ui import EditForm
 
+#
+
+from bungeni.alchemist.interfaces import (
+    IAlchemistContainer,
+    IManagedContainer,
+    IIModelInterface,
+)
+from bungeni.alchemist import sa2zs
+from bungeni.alchemist.container import AlchemistContainer
+from bungeni.alchemist.traversal import CollectionTraverser
+
+
 ###
 
 import logging
+import types
+
 from zope import interface, component
+from zope.dottedname.resolve import resolve
 from zope.publisher.interfaces import IPublisherRequest, IPublishTraverse
+from zope.app.security.protectclass import protectName # !+remove
+
 from z3c.traverser.interfaces import ITraverserPlugin
 from z3c.traverser.traverser import PluggableTraverser
-
-from alchemist.traversal.interfaces import IManagedContainer
-from alchemist.traversal.collection import CollectionTraverser
-
-from ore.alchemist import sa2zs, interfaces
 
 from sqlalchemy import orm, __version__ as sa_version
 sa_version = map(int, sa_version.split("."))
@@ -38,6 +64,14 @@ logging_setup = False
 import bungeni.models.interfaces
 import bungeni.ui.content
 
+
+def _get_interface_module_for(ctx):
+    parent_package = ctx.domain_model.__module__.rsplit(".", 1)[0]
+    return resolve("%s.interfaces" % (parent_package))
+
+
+# alchemist.catalyst.zcml 
+
 def catalyst(_context, 
         class_,
         descriptor, 
@@ -47,7 +81,7 @@ def catalyst(_context,
         ui_module=bungeni.ui.content,
         echo=False
     ):
-    from alchemist.catalyst.zcml import CatalystContext
+    from alchemist.catalyst.zcml import CatalystContext #!+ALCHEMIST_INTERNAL
     ctx = CatalystContext()
     ctx.descriptor = descriptor
     ctx.domain_model = class_
@@ -84,7 +118,7 @@ def catalyst(_context,
         # this also creates an adapter between the interface and desc.
         GenerateDomainInterface(ctx)
         
-        from alchemist.catalyst.domain import ApplySecurity
+        from alchemist.catalyst.domain import ApplySecurity #!+ALCHEMIST_INTERNAL
         ApplySecurity(ctx)
         
         # behavior.ApplyIndexing()
@@ -92,8 +126,7 @@ def catalyst(_context,
         # behavior.ApplyVersioning()
         
         # create a container class 
-        from alchemist.catalyst import container
-        container.GenerateContainer(ctx)
+        GenerateContainer(ctx)
         
         # generate collection traversal 
         GenerateCollectionTraversal(ctx)
@@ -105,7 +138,7 @@ def catalyst(_context,
 
 
 def GenerateDomainInterface(ctx, interface_name=None):
-
+    
     # when called from zcml, most likely we'll get a class not an instance
     # if it is a class go ahead and call instantiate it
     if isinstance(ctx.descriptor, type):
@@ -113,8 +146,7 @@ def GenerateDomainInterface(ctx, interface_name=None):
                              
     # if the interface module is none, then use the nearest one to the domain class
     if ctx.interface_module is None:
-        ispec = ctx.domain_model.__module__.rsplit(".",1)[0]+".interfaces"
-        ctx.interface_module = resolve(ispec)
+        ctx.interface_module = _get_interface_module_for(ctx)
     
     # interface for domain model
     if not interface_name:
@@ -125,7 +157,7 @@ def GenerateDomainInterface(ctx, interface_name=None):
             ctx.domain_model.__name__, ctx.interface_module.__name__,
             interface_name))
     
-    from alchemist.catalyst.domain import getDomainInterfaces
+    from alchemist.catalyst.domain import getDomainInterfaces #!+ALCHEMIST_INTERNAL
     bases, implements = getDomainInterfaces(ctx.domain_model)
     
     # use the class"s mapper select table as input for the transformation
@@ -140,8 +172,9 @@ def GenerateDomainInterface(ctx, interface_name=None):
     # if the domain model already implements a model interface, use it
     # instead of generating a new one
     for iface in interface.implementedBy(ctx.domain_model):
-        if (interfaces.IIModelInterface.providedBy(iface) and 
-            iface.__name__ == interface_name):
+        if (IIModelInterface.providedBy(iface) and 
+                iface.__name__ == interface_name
+            ):
             domain_interface = iface
             break
     else:
@@ -204,4 +237,103 @@ def GenerateCollectionTraversal(ctx):
         adapts=(ctx.domain_interface, IPublisherRequest),
         provides=IPublishTraverse
     )
+
+
+# alchemist.catalyst.container
+
+def GenerateContainer(ctx, 
+            container_name=None, 
+            container_iname=None,
+            base_interfaces=()
+        ):
+        """Generate a zope3 container class for a domain model.
+        """
+        # create container
+        container_name = container_name or \
+            "%sContainer" % (ctx.domain_model.__name__)
+        
+        # allow passing in dotted python path
+        if isinstance(ctx.container_module, (str, unicode)):
+            ctx.container_module = resolve(ctx.container_module)
+        
+        # if not present use the domain class's module
+        elif ctx.container_module is None:
+            ctx.container_module = resolve(ctx.domain_model.__module__)
+        
+        # sanity check we have a module for the container
+        assert isinstance(ctx.container_module, types.ModuleType), "Invalid Container"
+        
+        # logging variables
+        msg = (ctx.domain_model.__name__, 
+            ctx.container_module.__name__, container_name)
+        
+        # if we already have a container class, exit                
+        if getattr(ctx.container_module, container_name, None):
+            if ctx.echo:
+                ctx.logger.debug("%s: found container %s.%s, skipping" % msg)
+            ctx.container_class = getattr(ctx.container_module, container_name)
+            return
+        
+        if ctx.echo:
+            ctx.logger.debug("%s: generated container %s.%s" % msg)
+        
+        # if we already have a container class, exit
+        container_class = type(container_name,
+            (AlchemistContainer,),
+            dict(_class=ctx.domain_model,
+            __module__=ctx.container_module.__name__)
+        )
+        setattr(ctx.container_module, container_name, container_class)
+        
+        # save container class on catalyst context
+        ctx.container_class = container_class
+        
+        # interface for container
+        container_iname = container_iname or "I%s" % container_name
+        
+        # if the interface module is none, then use the nearest one to the domain class
+        if ctx.interface_module is None:
+            ctx.interface_module = _get_interface_module_for(ctx)
+
+        msg = (ctx.domain_model.__name__,
+            ctx.container_module.__name__, container_iname)
+        
+        # if we already have a container interface class, skip creation
+        container_interface = getattr(ctx.interface_module, container_iname, None)
+        if container_interface is not None:
+            assert issubclass(container_interface, IAlchemistContainer)
+            if ctx.echo:
+                ctx.logger.debug("%s: skipping container interface %s.%s for" % msg)
+        else:
+            if ctx.echo:
+                ctx.logger.debug("%s: generated container interface %s.%s" % msg)
+            # ensure that our base interfaces include alchemist container 
+            if base_interfaces:
+                assert isinstance(base_interfaces, tuple)
+                found = False
+                for bi in base_interfaces:
+                    found = issubclass(bi, IAlchemistContainer)
+                    if found: break
+                if not found:
+                    base_interfaces = base_interfaces + (IAlchemistContainer,)
+            else:
+                base_interfaces = (IAlchemistContainer,)
+            
+            # create interface
+            container_interface = interface.interface.InterfaceClass(
+                container_iname,
+                bases=base_interfaces,
+                __module__=ctx.interface_module.__name__
+            )
+            # store container interface for catalyst
+            ctx.container_interface = container_interface
+            setattr(ctx.interface_module, container_iname, container_interface)
+        
+        # setup security
+        for n,d in container_interface.namesAndDescriptions(1):
+            protectName(container_class, n, "zope.Public")
+        
+        if not container_interface.implementedBy(container_class):
+            interface.classImplements(container_class, container_interface)
+        ctx.container_interface = container_interface
 

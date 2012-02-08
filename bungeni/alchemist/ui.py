@@ -13,7 +13,17 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.alchemist")
 
-#
+
+# used directly in bungeni
+__all__ = [
+    "DynamicFields",        # alias -> alchemist.ui.core
+    "getSelected",          # alias -> alchemist.ui.core
+    "handle_edit_action",   # alias -> alchemist.ui.core
+    "null_validator",       # alias -> alchemist.ui.core
+    "setUpFields",          # alias -> alchemist.ui.core
+    "unique_columns",       # alias -> alchemist.ui.core
+]
+
 
 from alchemist.ui.core import DynamicFields
 from alchemist.ui.core import getSelected
@@ -22,6 +32,6 @@ from alchemist.ui.core import null_validator
 from alchemist.ui.core import setUpFields
 from alchemist.ui.core import unique_columns
 
-from alchemist.ui.viewlet import EditFormViewlet
+#from alchemist.ui.viewlet import EditFormViewlet
 
 

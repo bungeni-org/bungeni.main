@@ -10,6 +10,21 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.alchemist")
 
+
+# used directly in bungeni
+__all__ = [
+    "queryModelInterface",      # redefn -> ore.alchemist.model
+    "queryModelDescriptor",     # redefn -> ore.alchemist.model
+    "ModelDescriptor",          # redefn -> ore.alchemist.model
+    "IModelDescriptorField",    # redefn -> ore.alchemist.interfaces
+    
+    "Field",
+    "show",
+    "hide",
+    "norm_sorted", 
+]
+
+
 from zope import component, interface, schema
 from zope.interface.interfaces import IInterface
 

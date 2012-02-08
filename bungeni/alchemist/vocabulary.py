@@ -11,5 +11,11 @@ $Id$
 log = __import__("logging").getLogger("bungeni.alchemist")
 
 
+# used directly in bungeni
+__all__ = [
+    "DatabaseSource",   # alias -> ore.alchemist.vocabulary
+]
+
+
 from ore.alchemist.vocabulary import DatabaseSource
 

@@ -349,7 +349,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
     # !+BATCH(mr, sep-2010) this method (plus other support methods here)
     # replaces the combined logic in:
     #   - alchemist.ui.container.ContainerJSONListing.getBatch()
-    #   - ore.alchemist.container.AlchemistContainer.batch()
+    #   - bungeni.alchemist.container.AlchemistContainer.batch()
     def get_batch(self, start, limit):
         """Get the data instances for this batch.
         """
@@ -370,7 +370,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
         self.set_size = query.count()
         # offset and limit
         query = query.offset(start).limit(limit)
-        # ore.alchemist.container.AlchemistContainer.batch()
+        # bungeni.alchemist.container.AlchemistContainer.batch()
         # nodes: [<bungeni.models.domain.Question]
         return [ 
             container.contained(ob, self, container.stringKey(ob))

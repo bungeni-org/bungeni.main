@@ -11,10 +11,26 @@ $Id$
 log = __import__("logging").getLogger("bungeni.alchemist")
 
 
-# alchemist.traversal.managed
-from zope.security.proxy import removeSecurityProxy
+# used directly in bungeni
+__all__ = [
+    "one2many",                     # alias -> alchemist.traversal.managed
+    "ManagedContainerDescriptor",   # alias -> alchemist.traversal.managed
+
+    #!+ALCHEMIST_INTERNAL "One2Many", # alias -> alchemist.traversal.managed
+    #!+ALCHEMIST_INTERNAL "CollectionTraverser", # alias -> alchemist.traversal.collection
+
+    "one2manyindirect",
+]
+
+
+# alchemist.traversal
 from alchemist.traversal.managed import one2many, One2Many
 from alchemist.traversal.managed import ManagedContainerDescriptor
+from alchemist.traversal.collection import CollectionTraverser
+
+#
+
+from zope.security.proxy import removeSecurityProxy
 
 class One2ManyIndirect(One2Many):
     """

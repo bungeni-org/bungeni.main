@@ -12,6 +12,21 @@ $Id$
 log = __import__("logging").getLogger("bungeni.alchemist")
 
 
+# used directly in bungeni
+__all__ = [
+    "IAlchemistContent",    # alias -> ore.alchemist.interfaces
+    "IAlchemistContainer",  # alias -> ore.alchemist.interfaces
+    "IDatabaseEngine",      # alias -> ore.alchemist.interfaces
+    "IRelationChange",      # alias -> ore.alchemist.interfaces
+    "IIModelInterface",     # alias -> ore.alchemist.interfaces
+    "IModelAnnotation",     # alias -> ore.alchemist.interfaces
+    "IModelDescriptor",     # alias -> ore.alchemist.interfaces
+    
+    "IManagedContainer",    # alias -> alchemist.traversal.interfaces
+    "IContentViewManager",    # alias -> alchemist.ui.interfaces
+]
+
+
 # ore.alchemist.interfaces
 
 from ore.alchemist.interfaces import (
@@ -26,5 +41,8 @@ from ore.alchemist.interfaces import (
     IModelDescriptor
 )
 
+from alchemist.traversal.interfaces import IManagedContainer
+
 from alchemist.ui.interfaces import IContentViewManager
+
 
