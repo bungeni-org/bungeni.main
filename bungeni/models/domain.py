@@ -74,7 +74,9 @@ class HeadParentedMixin(object):
             "i.e. the __parent__ object, usually needed to lookup security " \
             "settings on the instance."
         def fget(self):
-            return self._explicit_parent or self.head
+            if self._explicit_parent is None:
+                return self.head
+            return self._explicit_parent
         def fset(self, parent):
             self._explicit_parent = parent
         def fdel(self):
