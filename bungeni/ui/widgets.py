@@ -7,7 +7,6 @@
 $Id$
 $URL$
 """
-
 log = __import__("logging").getLogger("bungeni.ui.widgets")
 
 import sys
@@ -1220,4 +1219,6 @@ class YesNoDisplayWidgetBase(ItemDisplayWidget):
         return self.textForValue(term)
 
 def YesNoDisplayWidget(*attrs, **kw):
-  return CustomWidgetFactory(YesNoDisplayWidgetBase, *attrs, **kw)
+    return CustomWidgetFactory(YesNoDisplayWidgetBase, *attrs, **kw)
+
+

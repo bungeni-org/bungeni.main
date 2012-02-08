@@ -22,6 +22,7 @@ from bungeni.alchemist import model
 from ore.alchemist.container import valueKey
 from ore.alchemist.container import contained
 from ore.alchemist.container import PartialContainer
+from ore.alchemist.container import AlchemistContainer
 
 def stringKey(obj):
     """Replacement of ore.alchemist.container.stringKey

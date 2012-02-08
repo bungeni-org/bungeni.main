@@ -10,7 +10,7 @@ from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent
 from zope.security import proxy, checkPermission
 from zc.resourcelibrary import need
-from ore.alchemist import container
+from bungeni.alchemist.container import contained
 from alchemist.ui import generic
 from bungeni.models import workspace
 from bungeni.core import translation
@@ -153,9 +153,9 @@ class WorkspaceContainerJSONListing(BrowserPage):
             sort_dir=self.sort_dir,
             start=start,
             limit=limit,
-            )
-        results = [container.contained(ob, self, workspace.stringKey(ob))
-                 for ob in results]
+        )
+        results = [ contained(ob, self, workspace.stringKey(ob))
+            for ob in results ]
         results = self.check_permission(results)
         nodes = results[start:start + limit]
         nodes = self.translate_objects(nodes, lang)

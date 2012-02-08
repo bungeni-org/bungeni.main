@@ -5,7 +5,7 @@ from zope import component
 from zope.security.proxy import removeSecurityProxy
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.app.security.settings import Allow
-from ore.alchemist.container import AlchemistContainer, contained
+from bungeni.alchemist.container import AlchemistContainer, contained
 from bungeni.models import interfaces
 from bungeni.alchemist import Session
 from bungeni.ui.utils.common import get_workspace_roles
@@ -274,3 +274,4 @@ class WorkspacePrincipalRoleMap(LocalPrincipalRoleMap):
         else:
             self.object_type = None
             self.oid = None
+

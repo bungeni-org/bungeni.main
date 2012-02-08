@@ -378,34 +378,6 @@ class ParliamentaryItemMinutesViewlet(BungeniAttributeDisplay):
         super(ParliamentaryItemMinutesViewlet, self).update()
 
 
-class InitialQuestionsViewlet(BungeniAttributeDisplay):
-
-    form_name = (u"Initial Questions")
-    view_id = "initial-questions"
-
-    @property
-    def for_display(self):
-        return self.context.supplement_parent_id is not None
-
-    def update(self):
-        if self.context.supplement_parent_id is None:
-            self.context = self.__parent__
-            #self.for_display = False
-            return
-        results = Session().query(domain.Question
-            ).get(self.context.supplement_parent_id)
-        if results:
-            #parent = self.context.__parent__
-            self.context = results
-            #self.context.__parent__ = parent
-            self.form_name = (u"Initial Questions")
-            self.has_data = True
-            #self.for_display =True
-        else:
-            self.has_data = False
-            self.context = None
-        super(InitialQuestionsViewlet, self).update()
-
 '''
 class ResponseViewlet(BungeniAttributeDisplay):
     """Response to question.

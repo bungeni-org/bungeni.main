@@ -432,16 +432,6 @@
      />
 
 
-  <!--
-  <browser:viewlet
-     name="bungeni.viewlet.initialquestion"
-     manager=".interfaces.ISubFormViewletManager"
-     class=".viewlets.InitialQuestionsViewlet"
-     for="bungeni.models.interfaces.IQuestion"
-     permission="bungeni.question.View"
-     weight="5"
-     /-->
-
     <browser:viewlet name="bungeni.viewlet.committees"
         manager="bungeni.alchemist.interfaces.IContentViewManager"
         class=".viewlets.CommitteesViewlet"
