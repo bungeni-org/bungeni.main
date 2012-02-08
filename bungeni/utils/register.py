@@ -21,6 +21,7 @@ $Id$
 """
 
 from zope import component
+from zope.app.security.protectclass import protectName
 
 
 def adapter(adapts=None, provides=None, name=""):
@@ -93,12 +94,17 @@ def viewlet_manager(for_=None, layer=None, view=None, provides=None, name=""):
         return factory
     return _viewlet_manager
 
-def viewlet(for_, layer=None, view=None, manager=None, provides=None, name=""):
+def viewlet(for_, layer=None, view=None, manager=None, provides=None, name="",
+        protect_permission="zope.View",
+        protect_names=["render"]
+    ):
     """Register a browser viewlet, using provideAdapter().
     """
     if provides is None:
         from zope.viewlet.interfaces import IViewlet as provides
     def _viewlet(factory):
+        for name in protect_names:
+            protectName(factory, name, protect_permission)
         component.provideAdapter(factory, 
             adapts=(for_, layer, view, manager),
             provides=provides, 

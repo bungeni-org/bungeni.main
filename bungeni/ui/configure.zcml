@@ -56,23 +56,11 @@
         <require permission="bungeni.auditlog.View" 
             attributes="__call__ browserDefault" />
     </class>
-    <class class=".audit.TimeLineViewlet">
-        <require permission="zope.View" attributes="render" />
-    </class>
     
     <!-- Attachments UI-->
     <class class=".file.FileListingView">
         <require permission="zope.Public" 
             attributes="__call__ browserDefault" />
-    </class>
-    <class class=".file.FileListingViewlet">
-        <require permission="zope.View" attributes="render" />
-    </class>
-    <class class=".file.VersionFileListingViewlet">
-        <require permission="zope.View" attributes="render" />
-    </class>
-    <class class=".file.VersionFile_HACK_NonListingViewlet">
-        <require permission="zope.View" attributes="render" />
     </class>
 
     

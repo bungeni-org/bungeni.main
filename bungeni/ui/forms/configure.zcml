@@ -17,13 +17,6 @@
     See: http://wiki.zope.org/zope3/LocalComponentManagementSimplification
     -->
     
-    <class class=".viewlets.AddressesViewlet">
-        <require permission="zope.View" attributes="render" />
-    </class>
-    <class class=".viewlets.RssLinkViewlet">
-        <require permission="zope.View" attributes="render" />
-    </class>
-
   <!-- /++apidoc++/... but does not work:
 
     xmlns:apidoc="http://namespaces.zope.org/apidoc"
