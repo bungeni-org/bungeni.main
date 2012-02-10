@@ -16,8 +16,6 @@
     <include package="zope.securitypolicy" />
     <securityPolicy component="bungeni.BungeniSecurityPolicy" />
   <include package="bungeni.alchemist" file="meta.zcml"/>
-  <include package="alchemist.catalyst" file="meta.zcml"/>
-  <include package="alchemist.catalyst" />
     
     <!-- Setup Database Connection -->
     <db:engine name="bungeni-db" url="postgres://localhost/bungeni-test" />

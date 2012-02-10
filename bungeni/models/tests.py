@@ -21,7 +21,6 @@ zcml_slug = """
         xmlns:db="http://namespaces.objectrealms.net/rdb"
     >
     <include package="bungeni.alchemist" file="meta.zcml"/>
-    <include package="alchemist.catalyst" file="meta.zcml"/>
     <!-- Setup Database Connection -->
     <db:engine name="bungeni-db" url="postgres://localhost/bungeni-test" />
     <db:bind engine="bungeni-db" metadata="bungeni.models.schema.metadata" />

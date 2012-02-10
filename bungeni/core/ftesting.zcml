@@ -35,7 +35,6 @@
     <adapter factory="bungeni.models.signatories.QuestionSignatoryValidator"/>
     
     <include package="bungeni.alchemist" file="meta.zcml"/>
-    <include package="alchemist.catalyst" file="meta.zcml"/>
     <include package="ore.xapian" file="meta.zcml" />
     <include package="ore.xapian" />
     

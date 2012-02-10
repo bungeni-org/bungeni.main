@@ -37,7 +37,6 @@
     <!-- setup database meta configuration -->
     <include package="ore.alchemist" file="meta.zcml" />
     <include package="ore.alchemist" />
-    <include package="alchemist.catalyst" file="meta.zcml" />
     
     <!-- configure menu subsystem -->
     <include package="z3c.template" file="meta.zcml" />
