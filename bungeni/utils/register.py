@@ -26,11 +26,14 @@ __all__ = [
     "handler",
     "subscription_adapter",
     "viewlet_manager",
-    "viewlet",
-    "view",
+    "viewlet", "PROTECT_VIEWLET_PUBLIC"
+    "view", "PROTECT_VIEW_PUBLIC",
+    "protect",
 ]
 
 from zope import component
+from zope.security import protectclass
+
 
 def adapter(adapts=None, provides=None, name=""):
     """provideAdapter(factory, adapts=None, provides=None, name="")
@@ -102,23 +105,29 @@ def viewlet_manager(for_=None, layer=None, view=None, provides=None, name=""):
         return factory
     return _viewlet_manager
 
+_PROTECT_VIEWLET_DEFAULT = {"zope.View": dict(attributes=["render"])}
+
 def viewlet(for_, layer=None, view=None, manager=None, provides=None, name="",
-        protect={"zope.View": dict(attributes=["render"])}
+        protect=_PROTECT_VIEWLET_DEFAULT, like_class=None
     ):
     """Register a browser viewlet, using provideAdapter(), and protecting 
-    access as specified by the protect dict.
+    access as per protect/like_class.
     
-    protect:
-    - see docstring for protect_class_names for details of allowed values
+    protect - provides convenient default protect for a viewlet:
+    - see docstring for _protect for details of allowed values
     - as default for viewlets, we protect the "render" attr with "zope.View"
     - if protect==None, then no security protection is executed
     - if protect!=None, then factory must be a type, class or module.
     """
     if provides is None:
         from zope.viewlet.interfaces import IViewlet as provides
+    if like_class is not None:
+        # in this case default for protect should be None
+        if protect is _PROTECT_VIEWLET_DEFAULT:
+            protect = None
     def _viewlet(factory):
-        if protect is not None:
-            protect_class_names(factory, protect)
+        if protect is not None or like_class is not None:
+            _protect(factory, protect, like_class)
         component.provideAdapter(factory, 
             adapts=(for_, layer, view, manager),
             provides=provides, 
@@ -126,12 +135,27 @@ def viewlet(for_, layer=None, view=None, manager=None, provides=None, name="",
         return factory
     return _viewlet
 
+# convenience, pre-defined value for a typical public viewlet
+PROTECT_VIEWLET_PUBLIC = {"zope.Public": dict(attributes=["render"])}
+
 
 # view
 # note: layer default is zope.publisher.interfaces.browser.IDefaultBrowserLayer
 
-def view(for_, layer=None, provides=None, name=""):
-    """Register a browser view, using provideAdapter().
+_PROTECT_VIEW_DEFAULT = {
+    "zope.View": dict(attributes=["browserDefault", "__call__"])}
+
+def view(for_, layer=None, provides=None, name="",
+        protect=_PROTECT_VIEW_DEFAULT, like_class=None
+    ):
+    """Register a browser view, using provideAdapter(), and protecting 
+    access as per protect/like_class.
+    
+    protect/like_class - provides convenient default protect for a view:
+    - see docstring for _protect for details of allowed values
+    - as default for views, we protect "__call__, "browser" attrs w. "zope.View"
+    - if protect==None, then no security protection is executed
+    - if protect!=None, then factory must be a type, class or module.
     
     Should be used to replace both browser:view and very similar browser:page.
     Differences between the two are: 
@@ -142,7 +166,13 @@ def view(for_, layer=None, provides=None, name=""):
     """
     if provides is None:
         from zope.publisher.interfaces.browser import IBrowserPublisher as provides
+    if like_class is not None:
+        # in this case default for protect should be None
+        if protect is _PROTECT_VIEW_DEFAULT:
+            protect = None
     def _view(factory):
+        if protect is not None or like_class is not None:
+            _protect(factory, protect, like_class)
         component.provideAdapter(factory, 
             adapts=(for_, layer),
             provides=provides, 
@@ -150,16 +180,37 @@ def view(for_, layer=None, provides=None, name=""):
         return factory
     return _view
 
+# convenience, pre-defined value for a typical public view
+PROTECT_VIEW_PUBLIC = {
+    "zope.Public": dict(attributes=["browserDefault", "__call__"])}
+
+
+
+# protect
+
+def protect(protect=None, like_class=None):
+    """Decorator to register security protections on a class.
+    
+    Intended to be used separately from view/viewlet decorators, as those 
+    already specify default security protections. To use in conjunction with 
+    view/viewlet decorators, specify protect=None on the decorator call.
+    
+    See docstring for _protect for allowed values for protect, like_class.
+    """
+    def _p(cls):
+        _protect(cls, protect, like_class)
+        return cls
+    return _p
+
 
 # utils
 
-from zope.security import protectclass
-
-def protect_class_names(cls, protect):
-    """Set the permission on the particular names of attributes of the cls.
-    Attempt to reset to a different permission on a name raises an error.
+def _protect(cls, protect=None, like_class=None):
+    """Register security protections for cls, as per protect/like_class.
     
     Constraint: cls must be a type, class or module.
+    
+    Attempt to reset to a different permission on a name raises an error.
     
     The protect parameter is a dictionary that can can specify whatever 
     a sequence of class/require zcml directives may specify (except for 
@@ -168,17 +219,33 @@ def protect_class_names(cls, protect):
     
         protect:{
             permission:str: {
-                attributes:[str], # only this is supported currently
-                set_attributes:[str], 
-                interface:Interface,
-                set_schema:Interface
+                attributes:[str], 
+                set_attributes:[str],   # tbd, zope.security.metaconfigure
+                interface:Interface,    # tbd
+                set_schema:Interface    # tbd
             }
         }
         
-        like_class:either(type, class, module)
+        like_class: either(type, class, module)
     
     """
+    assert protect is not None or like_class is not None, \
+        "[%s] params protect [%s] or like_class [%s] may not be both None." % (
+            cls, protect, like_class)
+    assert protect is None or like_class is None, \
+        "[%s] One of params protect [%s] or like_class [%s] must be None." % (
+            cls, protect, like_class)
+    if like_class is not None:
+        protectclass.protectLikeUnto(cls, like_class)
+        return
+    
     for permission in protect:
+        
+        interface = protect[permission].get("interface")
+        if interface:
+            for attr, d in interface.namesAndDescriptions(1):
+                protectclass.protectName(cls, attr, permission)
+        
         attributes = protect[permission].get("attributes")
         if attributes:
             for attr in attributes:
@@ -193,5 +260,8 @@ def protect_class_names(cls, protect):
                                 cls, attr, previous_permission, permission)
                         continue
                 protectclass.protectName(cls, attr, permission)
+        
+        #if set_attributes:
+        #if set_schema:
 
 

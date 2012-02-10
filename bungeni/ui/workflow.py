@@ -286,7 +286,8 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
         self.actions = bindTransitions(self, transition_ids, wfc.workflow)
 
 
-@register.view(interfaces.IWorkflowed, name="workflow")
+@register.view(interfaces.IWorkflowed, name="workflow", 
+    protect=register.PROTECT_VIEW_PUBLIC)
 class WorkflowView(browser.BungeniBrowserView):
     """This view is linked to by the "workflow" context action and dislays the 
     workflow history and the action viewlet with all possible transitions

@@ -100,7 +100,8 @@ class GroupQueryJSON(search.ConstraintQueryJSON):
 '''
 
 
-@register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="settings")
+@register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="settings",
+    protect={"zope.ManageSite": dict(attributes=["browserDefault", "__call__"])})
 class Settings(catalyst.EditForm):
 
     form_fields = form.Fields(interfaces.IBungeniSettings)
@@ -130,7 +131,8 @@ class Settings(catalyst.EditForm):
 ##         return widget()
 
 
-@register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="email-settings")
+@register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="email-settings",
+    like_class=Settings)
 class EmailSettings(catalyst.EditForm):
     
     form_fields = form.Fields(interfaces.IBungeniEmailSettings)
@@ -148,7 +150,6 @@ class UserGroups(BrowserView):
         pass
 
 
-#permission="zope.Public"
 @register.view(None, IBungeniSkin, name="user-settings")
 class UserSettings(catalyst.EditForm):
 
@@ -230,8 +231,9 @@ def generate_doc_for(domain_class, title=None, color=0):
     return doc
 
 
-#permission="zope.ManageSite"
-@register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="report-documentation")
+@register.view(interfaces.IBungeniAdmin, IBungeniSkin, 
+    name="report-documentation", 
+    like_class=Settings)
 class ReportDocumentation(browser.BungeniBrowserView):
     
     render = ViewPageTemplateFile("templates/report-documentation.pt")
@@ -254,7 +256,8 @@ class ReportDocumentation(browser.BungeniBrowserView):
         return self.render()
 
 
-@register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="xapian-settings")
+@register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="xapian-settings",
+    like_class=Settings)
 class XapianSettings(browser.BungeniBrowserView):
     
     render = ViewPageTemplateFile("templates/xapian-settings.pt")
@@ -268,7 +271,8 @@ class XapianSettings(browser.BungeniBrowserView):
         return self.render()
     
 
-@register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="registry-settings")
+@register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="registry-settings",
+    like_class=Settings)
 class RegistrySettings(catalyst.EditForm):
     
     form_fields = form.Fields(interfaces.IBungeniRegistrySettings)

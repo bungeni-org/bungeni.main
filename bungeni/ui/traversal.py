@@ -1,3 +1,5 @@
+# !+ CLEAN OUT THIS FILE PLEASE !
+
 from zope.container.traversal import ContainerTraverser
 from zope.security.checker import ProxyFactory
 from zope.traversing.browser import AbsoluteURL
@@ -10,12 +12,13 @@ from sqlalchemy import extract
 
 from bungeni.models.domain import User
 from bungeni.models.utils import get_db_user_id
-from zope.publisher.interfaces import NotFound
+from zope.publisher.interfaces import IPublishTraverse, NotFound
 
 import datetime
 import traceback
 import sys
-        
+
+from bungeni.utils import register
 
 class SiteTraverser(ContainerTraverser):
     """ Custom traverser for special 'bungeni' section
@@ -89,6 +92,9 @@ class SiteTraverser(ContainerTraverser):
                                                      filter(extract('day',ParliamentaryItem.status_date)==date.day)
 
 
+
+@register.protect({"bungeni.user.Edit": 
+    dict(attributes=["browserDefault"], interface=IPublishTraverse)})
 class ProfileTraverser(ContainerTraverser):
 
     def publishTraverse(self, request, name):

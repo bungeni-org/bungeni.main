@@ -149,7 +149,8 @@ class FileListingMixin(object):
         return formatter()
 
 
-@register.view(AttachedFileContainer, name="index")
+@register.view(AttachedFileContainer, name="index",
+    protect=register.PROTECT_VIEW_PUBLIC)
 class FileListingView(FileListingMixin, browser.BungeniBrowserView):
     
     __call__ = z3evoque.PageViewTemplateFile("audit.html#listing_view")

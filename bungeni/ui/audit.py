@@ -327,7 +327,9 @@ class AuditLogMixin(object):
     #    return auditor.change_class
 
 
-@register.view(interfaces.IAuditable, name="audit-log")
+@register.view(interfaces.IAuditable, name="audit-log",
+    protect={"bungeni.auditlog.View":
+        dict(attributes=["browserDefault", "__call__"])})
 class AuditLogView(AuditLogMixin, browser.BungeniBrowserView):
     """Change Log View for an object
     """
