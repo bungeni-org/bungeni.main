@@ -11,6 +11,8 @@ from zope import interface
 from zope import component
 from zope.security.proxy import removeSecurityProxy
 from zope.dublincore.interfaces import IDCDescriptiveProperties
+import zope.traversing.interfaces
+
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from bungeni.alchemist import Session
 from bungeni.alchemist.interfaces import IAlchemistContainer
@@ -24,7 +26,11 @@ from bungeni.core.translation import ( is_translation, get_language_by_name,
 )
 
 from bungeni.ui.utils import date, misc
+from bungeni.utils import register
 
+
+@register.adapter(adapts=(interface.Interface,), # adapts="*"
+    provides=zope.traversing.interfaces.IPathAdapter)
 class DublinCoreMetadataAdapter(object):
     """Generic dublin core metadata adapter which will retrieve
     metadata attributes lazily.
@@ -100,6 +106,8 @@ class DocumentDescriptiveProperties(DescriptiveProperties):
             IDCDescriptiveProperties(context.owner).title_member
         )
 
+
+@register.adapter()
 class QuestionDescriptiveProperties(DocumentDescriptiveProperties):
     component.adapts(interfaces.IQuestion)
 
@@ -111,7 +119,7 @@ class QuestionDescriptiveProperties(DocumentDescriptiveProperties):
             return self.translate(context, "short_name")
         return "#%d: %s" % (
             context.question_number,
-            self.translate(context,"short_name"))
+            self.translate(context, "short_name"))
 
     @property
     def description(self):
@@ -127,6 +135,7 @@ class QuestionDescriptiveProperties(DocumentDescriptiveProperties):
         return text + "."
 
 
+@register.adapter()
 class BillDescriptiveProperties(DocumentDescriptiveProperties):
     component.adapts(interfaces.IBill)
 
@@ -152,6 +161,7 @@ class BillDescriptiveProperties(DocumentDescriptiveProperties):
         return text + "."
 
 
+@register.adapter()
 class MotionDescriptiveProperties(DocumentDescriptiveProperties):
     component.adapts(interfaces.IMotion)
 
@@ -177,6 +187,7 @@ class MotionDescriptiveProperties(DocumentDescriptiveProperties):
         return text + "."
 
 
+@register.adapter()
 class SittingDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IGroupSitting)
 
@@ -213,6 +224,8 @@ class SittingDescriptiveProperties(DescriptiveProperties):
         )
         return translate_i18n(sitting_title)
 
+
+@register.adapter()
 class ItemScheduleDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IItemSchedule)
 
@@ -229,7 +242,7 @@ class ItemScheduleDescriptiveProperties(DescriptiveProperties):
                  mapping={'start': sitting.start_date,
                           'end': sitting.end_date})
 
-
+@register.adapter()
 class VersionDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IVersion)
     
@@ -247,6 +260,7 @@ class VersionDescriptiveProperties(DescriptiveProperties):
         )
 
 
+@register.adapter()
 class GroupDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IBungeniGroup)
 
@@ -260,6 +274,7 @@ class GroupDescriptiveProperties(DescriptiveProperties):
             self.translate(context, "full_name"))
 
 
+@register.adapter()
 class ContainerDescriptiveProperties(DescriptiveProperties):
     component.adapts(IAlchemistContainer)
 
@@ -269,6 +284,7 @@ class ContainerDescriptiveProperties(DescriptiveProperties):
         return descriptor.container_name
 
 
+@register.adapter()
 class UserDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IBungeniUser)
 
@@ -307,6 +323,8 @@ class UserDescriptiveProperties(DescriptiveProperties):
                 }
         )
 
+
+@register.adapter()
 class GroupMembershipDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IBungeniGroupMembership)
 
@@ -322,6 +340,7 @@ class GroupMembershipDescriptiveProperties(DescriptiveProperties):
             return u"New User"
 
 
+@register.adapter()
 class GroupSittingAttendanceDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IGroupSittingAttendance)
 
@@ -345,6 +364,7 @@ class GroupSittingAttendanceDescriptiveProperties(DescriptiveProperties):
         )
 
 
+@register.adapter()
 class SignatoryDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.ISignatory)
     
@@ -365,6 +385,8 @@ class SignatoryDescriptiveProperties(DescriptiveProperties):
         context = session.merge(removeSecurityProxy(self.context))
         return translate_i18n(misc.get_wf_state(context))
 
+
+@register.adapter()
 class ParliamentSessionDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IParliamentSession)
     
@@ -381,6 +403,7 @@ class ParliamentSessionDescriptiveProperties(DescriptiveProperties):
         return self.translate(context, "full_name")
 
 
+@register.adapter()
 class ConstituencyDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IConstituency)
     
@@ -390,6 +413,8 @@ class ConstituencyDescriptiveProperties(DescriptiveProperties):
         context = session.merge(removeSecurityProxy(self.context))
         return self.translate(context, "name")
 
+
+@register.adapter()
 class ProvinceDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IProvince)
 
@@ -400,6 +425,7 @@ class ProvinceDescriptiveProperties(DescriptiveProperties):
         return self.translate(context, "province")
 
 
+@register.adapter()
 class RegionDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IRegion)
 
@@ -410,6 +436,7 @@ class RegionDescriptiveProperties(DescriptiveProperties):
         return self.translate(context, "region")
 
 
+@register.adapter()
 class ItemScheduleDiscussionDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IItemScheduleDiscussion)
     
@@ -418,6 +445,7 @@ class ItemScheduleDiscussionDescriptiveProperties(DescriptiveProperties):
         return _(u"Discussion")
 
 
+@register.adapter()
 class SittingTypeDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.ISittingType)
 
@@ -426,6 +454,7 @@ class SittingTypeDescriptiveProperties(DescriptiveProperties):
         return self.translate(self.context, "group_sitting_type")
 
 
+@register.adapter()
 class ChangeDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IChange)
     
@@ -438,6 +467,8 @@ class ChangeDescriptiveProperties(DescriptiveProperties):
         return "%s (%s)" %(translate_i18n(self.context.description),
                 self.formatDate(self.context.date_active))
 
+
+@register.adapter()
 class UserAddressDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IUserAddress)
     
@@ -446,6 +477,7 @@ class UserAddressDescriptiveProperties(DescriptiveProperties):
         return _(u"Address")
 
 
+@register.adapter()
 class AgendaItemDescriptiveProperties(DocumentDescriptiveProperties):
     component.adapts(interfaces.IAgendaItem)
     
@@ -458,6 +490,7 @@ class AgendaItemDescriptiveProperties(DocumentDescriptiveProperties):
         )
 
 
+@register.adapter()
 class TabledDocumentDescriptiveProperties(DocumentDescriptiveProperties):
     component.adapts(interfaces.ITabledDocument)
     
@@ -468,6 +501,7 @@ class TabledDocumentDescriptiveProperties(DocumentDescriptiveProperties):
         return self.translate(context, "short_name")
 
 
+@register.adapter()
 class ConstituencyDetailsDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IConstituencyDetail)
 
@@ -481,6 +515,7 @@ class ConstituencyDetailsDescriptiveProperties(DescriptiveProperties):
         )
 
 
+@register.adapter()
 class GroupItemAssignmentDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IGroupItemAssignment)
 
@@ -494,6 +529,7 @@ class GroupItemAssignmentDescriptiveProperties(DescriptiveProperties):
         )
 
 
+@register.adapter()
 class MemberTitleDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IMemberTitle)
 
@@ -504,7 +540,7 @@ class MemberTitleDescriptiveProperties(DescriptiveProperties):
         return self.translate(context.title_type, "title_name")
 
 
-
+@register.adapter()
 class ReportDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IReport)
 
@@ -524,6 +560,8 @@ class ReportDescriptiveProperties(DescriptiveProperties):
             context.end_date.strftime('%Y-%m-%d')
         )
 
+
+@register.adapter()
 class ItemScheduleCategoryDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IItemScheduleCategory)
 
@@ -534,6 +572,7 @@ class ItemScheduleCategoryDescriptiveProperties(DescriptiveProperties):
         return self.translate(context, "short_name")
 
 
+@register.adapter()
 class UserDelegationDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IUserDelegation)
 
@@ -548,9 +587,10 @@ class UserDelegationDescriptiveProperties(DescriptiveProperties):
             return u""
 
 
+@register.adapter()
 class EventItemProperties(DescriptiveProperties):
     component.adapts(interfaces.IEventItem)
-
+    
     @property
     def title(self):
         session = Session()
@@ -558,6 +598,7 @@ class EventItemProperties(DescriptiveProperties):
         return self.translate(context, "short_name")
 
 
+@register.adapter()
 class AttachedFileDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IAttachedFile)
 
@@ -574,6 +615,7 @@ class AttachedFileDescriptiveProperties(DescriptiveProperties):
         return u"%s  (%s)" % (context.file_name, context.file_mimetype)
 
 
+@register.adapter()
 class AttachedFileVersionDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IAttachedFileVersion)
 
@@ -590,6 +632,7 @@ class AttachedFileVersionDescriptiveProperties(DescriptiveProperties):
         return u"%s  (%s)" % (context.file_name, context.file_mimetype)
 
 
+@register.adapter()
 class HeadingDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IHeading)
 
@@ -659,6 +702,8 @@ class AttendanceTypeDescriptiveProperties(DescriptiveProperties):
         return self.translate(context, "attendance_type")
 '''
 
+
+@register.adapter()
 class VenueDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IVenue)
     
@@ -667,6 +712,7 @@ class VenueDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         return self.translate(context, "short_name")
+
 
 ''' !+TYPES_CUSTOM
 class QuestionTypeDescriptiveProperties(DescriptiveProperties):
@@ -697,6 +743,8 @@ class MemberElectionTypeDescriptiveProperties(DescriptiveProperties):
         return self.translate(context, "member_election_type_name")
 '''
 
+
+@register.adapter()
 class TitleTypeDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.ITitleType)
     
@@ -705,3 +753,5 @@ class TitleTypeDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         return self.translate(context, "title_name")
+
+

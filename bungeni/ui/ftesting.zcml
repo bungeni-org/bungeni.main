@@ -27,17 +27,8 @@
   <include package="bungeni_custom.sys" file="openoffice.zcml" />
   <include package="bungeni.core" file="meta.zcml"/>
   <include package="zope.traversing" />
+  
   <bungeni:fs fs_path="fs"/>
-  <adapter factory="bungeni.core.dc.BillDescriptiveProperties" />
-  <adapter factory="bungeni.core.dc.QuestionDescriptiveProperties" />
-  <adapter factory="bungeni.core.dc.MotionDescriptiveProperties" />
-  <adapter factory="bungeni.core.dc.AgendaItemDescriptiveProperties" />
-  <adapter factory="bungeni.core.dc.TabledDocumentDescriptiveProperties" />
-  <adapter factory="bungeni.core.dc.ChangeDescriptiveProperties" />
-  <adapter factory="bungeni.core.dc.ContainerDescriptiveProperties" />
-  <adapter factory="bungeni.core.dc.AttachedFileDescriptiveProperties" />
-  <adapter factory="bungeni.core.dc.SignatoryDescriptiveProperties" />
-  <adapter factory="bungeni.core.dc.UserDescriptiveProperties" />
     <utility name="bungeni.vocabulary.ReportXHTMLTemplates"
         provides="zope.schema.interfaces.IVocabularyFactory"
         component=".vocabulary.report_xhtml_templates"
@@ -46,10 +37,5 @@
         provides="zope.schema.interfaces.IVocabularyFactory"
         component=".vocabulary.document_xhtml_templates"
     />
-  <adapter
-     name="dc"
-     for="*"
-     factory="bungeni.core.dc.DublinCoreMetadataAdapter"
-     provides="zope.traversing.interfaces.IPathAdapter"/>
      
 </configure>

@@ -237,57 +237,6 @@
         <allow interface="zope.publisher.interfaces.IPublishTraverse" />
     </class>
     
-    <!-- dublin core adapters -->
-    <adapter factory=".dc.BillDescriptiveProperties" />
-    <adapter factory=".dc.QuestionDescriptiveProperties" />
-    <adapter factory=".dc.MotionDescriptiveProperties" />
-    <adapter factory=".dc.SittingDescriptiveProperties" />
-    <adapter factory=".dc.ItemScheduleDescriptiveProperties" />
-    <adapter factory=".dc.VersionDescriptiveProperties" />
-    <adapter factory=".dc.GroupDescriptiveProperties" />
-    <adapter factory=".dc.UserDescriptiveProperties" />
-    <adapter factory=".dc.GroupMembershipDescriptiveProperties" />
-    <adapter factory=".dc.GroupSittingAttendanceDescriptiveProperties" />
-    <adapter factory=".dc.ParliamentSessionDescriptiveProperties" />
-    <adapter factory=".dc.ContainerDescriptiveProperties" />
-    <adapter factory=".dc.ItemScheduleDiscussionDescriptiveProperties" />
-    <adapter factory=".dc.SignatoryDescriptiveProperties" />
-    <adapter factory=".dc.SittingTypeDescriptiveProperties" />
-    <adapter factory=".dc.ConstituencyDescriptiveProperties" />
-    <adapter factory=".dc.ChangeDescriptiveProperties" />
-    <adapter factory=".dc.UserAddressDescriptiveProperties" />
-    <adapter factory=".dc.AgendaItemDescriptiveProperties" />
-    <adapter factory=".dc.TabledDocumentDescriptiveProperties" />
-    <adapter factory=".dc.ConstituencyDetailsDescriptiveProperties" />
-    <adapter factory=".dc.GroupItemAssignmentDescriptiveProperties" />
-    <adapter factory=".dc.MemberTitleDescriptiveProperties" />
-    <adapter factory=".dc.ReportDescriptiveProperties" />
-    <adapter factory=".dc.ItemScheduleCategoryDescriptiveProperties" />
-    <adapter factory=".dc.UserDelegationDescriptiveProperties" />
-    <adapter factory=".dc.ProvinceDescriptiveProperties" />
-    <adapter factory=".dc.RegionDescriptiveProperties" />
-    <adapter factory=".dc.AttachedFileDescriptiveProperties" />
-    <adapter factory=".dc.AttachedFileVersionDescriptiveProperties" />
-    <adapter factory=".dc.EventItemProperties" />
-    <adapter factory=".dc.HeadingDescriptiveProperties" />
-    <!-- !+TYPES_CUSTOM
-    <adapter factory=".dc.AddressTypeDescriptiveProperties" />
-    <adapter factory=".dc.PostalAddressTypeDescriptiveProperties" />
-    <adapter factory=".dc.BillTypeDescriptiveProperties" />
-    <adapter factory=".dc.CommitteeTypeDescriptiveProperties" />
-    <adapter factory=".dc.CommitteeTypeStatusDescriptiveProperties" />
-    <adapter factory=".dc.AttendanceTypeDescriptiveProperties" />
-    <adapter factory=".dc.MemberElectionTypeDescriptiveProperties" />
-    <adapter factory=".dc.QuestionTypeDescriptiveProperties" />
-    <adapter factory=".dc.ResponseTypeDescriptiveProperties" />
-    -->
-    <adapter factory=".dc.VenueDescriptiveProperties" />
-    <adapter factory=".dc.TitleTypeDescriptiveProperties" />
-    <adapter name="dc"
-        for="*"
-        factory=".dc.DublinCoreMetadataAdapter"
-        provides="zope.traversing.interfaces.IPathAdapter"
-    />
     
     <!-- browser resource adapters -->
     <view name="rh" 
