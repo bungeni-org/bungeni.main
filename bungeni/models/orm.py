@@ -515,7 +515,9 @@ mapper(domain.ScheduleText, schema.schedule_text)
 
 mapper(domain.ItemScheduleDiscussion, schema.item_schedule_discussions,
     properties={
-        "scheduled_item": relation(domain.ItemSchedule, uselist=False),
+        "scheduled_item": relation(domain.ItemSchedule, uselist=False,
+            backref=backref("itemdiscussions", cascade="all, delete-orphan")
+        ),
     }
 )
 
