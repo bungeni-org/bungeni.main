@@ -30,7 +30,7 @@ from bungeni.utils import register
 
 
 @register.adapter(adapts=(interface.Interface,), # adapts="*"
-    provides=zope.traversing.interfaces.IPathAdapter)
+    provides=zope.traversing.interfaces.IPathAdapter, name="dc")
 class DublinCoreMetadataAdapter(object):
     """Generic dublin core metadata adapter which will retrieve
     metadata attributes lazily.
@@ -241,6 +241,14 @@ class ItemScheduleDescriptiveProperties(DescriptiveProperties):
         return _(u"Scheduled for sitting ($start to $end)",
                  mapping={'start': sitting.start_date,
                           'end': sitting.end_date})
+
+@register.adapter()
+class ScheduleTextDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.IScheduleText)
+    
+    @property
+    def title(self):
+        return self.context.text
 
 @register.adapter()
 class VersionDescriptiveProperties(DescriptiveProperties):
@@ -640,11 +648,7 @@ class HeadingDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return self.translate(context, "short_name")
-
-    @property
-    def description(self):
-        return ""
+        return self.translate(context, "text")
 
 ''' !+TYPES_CUSTOM
 class AddressTypeDescriptiveProperties(DescriptiveProperties):

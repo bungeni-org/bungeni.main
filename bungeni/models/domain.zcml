@@ -145,7 +145,6 @@
         <require permission="zope.View"
             attributes="
                 notice_date
-                
                 motion_id
                 motion_number
                 public
@@ -184,7 +183,6 @@
         <require permission="zope.View"
             attributes="
                 group
-                
                 agenda_item_id
                 group_id
             "
@@ -264,7 +262,24 @@
     </class>
     
     <class class=".domain.Heading">
-        <require like_class=".domain.ParliamentaryItem" />
+        <require permission="zope.View"
+            attributes="
+                heading_id
+                text
+                language
+                status
+                group_id
+            "
+        />
+        <require permission="bungeni.heading.Edit"
+            set_attributes="
+                heading_id
+                text
+                language
+                status
+                group_id
+            "
+        />
     </class>
     
     
@@ -580,6 +595,7 @@
             attributes="
                 schedule_id
                 item_id
+                item_type
                 group_sitting_id
                 category_id
                 planned_order
@@ -593,6 +609,7 @@
         <require permission="bungeni.sittingschedule.Edit"
             set_attributes="
                 item_id
+                item_type
                 group_sitting_id
                 category_id
                 planned_order
@@ -603,11 +620,30 @@
         />
     </class>
     
+    <class class=".domain.ScheduleText">
+        <require permission="zope.View"
+            attributes="
+                schedule_text_id
+                text
+                group_id
+            "
+        />
+        <require permission="bungeni.sittingschedule.Edit"
+            set_attributes="
+            schedule_text_id
+            text
+            group_id
+            "
+        />
+    </class>
+    
     <class class=".domain.ItemScheduleDiscussion">
         <require permission="zope.View"
             attributes="
+                discussion_id
                 schedule_id
                 body_text sitting_time
+                language
             "
         />
         <require permission="bungeni.sittingschedule.itemdiscussion.Edit"
@@ -615,6 +651,7 @@
                 item_id
                 body_text 
                 sitting_time
+                language
             "
         />
     </class>

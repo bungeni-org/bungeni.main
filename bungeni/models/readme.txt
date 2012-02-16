@@ -434,6 +434,7 @@ we may either add the id only:
 
   >>> item_schedule = model.ItemSchedule()
   >>> item_schedule.item_id = bill.bill_id
+  >>> item_schedule.item_type = bill.type
   >>> item_schedule.group_sitting_id = sit.group_sitting_id
   >>> session.add(item_schedule)
   >>> session.flush()

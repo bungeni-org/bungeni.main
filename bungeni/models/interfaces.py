@@ -194,6 +194,9 @@ class IGroupSittingType(interface.Interface):
 class IItemSchedule(interface.Interface):
     pass
 
+class IScheduleText(interface.Interface):
+    pass
+
 class ISittingType(interface.Interface):
     pass
 

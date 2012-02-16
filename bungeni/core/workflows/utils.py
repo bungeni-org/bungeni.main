@@ -5,8 +5,10 @@ import datetime
 
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.app.component.hooks import getSite
-from bungeni.core.workflow.interfaces import IWorkflowController
-from bungeni.core.workflow.interfaces import NoTransitionAvailableError
+from bungeni.core.workflow.interfaces import IWorkflowController, IWorkflow
+from bungeni.core.workflow.interfaces import (NoTransitionAvailableError, 
+    InvalidStateError
+)
 
 import bungeni.models.interfaces as interfaces
 #import bungeni.models.domain as domain
@@ -253,17 +255,13 @@ def schedule_sitting_items(context):
             debug.log_exc_info(sys.exc_info(), log.error)
     
     for schedule in context.item_schedule:
-        item = schedule.item
-        if interfaces.IQuestion.providedBy(item):
-            fireTransitionScheduled(item)
-        elif interfaces.IMotion.providedBy(item):
-            fireTransitionScheduled(item)
-        elif interfaces.IAgendaItem.providedBy(item):
-            fireTransitionScheduled(item)
-        elif interfaces.ITabledDocument.providedBy(item):
-            fireTransitionScheduled(item)
-
-
+        wf = IWorkflow(schedule.item, None)
+        if wf is None: continue
+        try:
+            if wf.get_state("scheduled"):
+                fireTransitionScheduled(schedule.item)
+        except InvalidStateError:
+            pass
 
 #signatories
 def assign_signatory_role(context, owner_login, unset=False):

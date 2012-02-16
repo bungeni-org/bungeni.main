@@ -1,0 +1,9 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      i18n_domain="bungeni" tal:omit-tag="">
+ <hr/>
+  <div class="report_preview" tal:condition="view/available">
+    <h2 i18n:translate="">Agenda Preview</h2>
+    <span tal:replace="structure view/agenda_preview"/>
+  </div>
+</html>

@@ -1,0 +1,24 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      metal:use-macro="context/@@standard_macros/page">
+
+  <div metal:fill-slot="body" i18n:domain="bungeni">
+    <div id="scheduled-item-controls">
+        <div class="hd" i18n:translate=""></div>
+        <div class="bd"></div>
+        <div class="ft">&nbsp;</div>
+    </div>
+    <div>
+        <h1 class="title">
+            <span tal:omit-tag="" i18n:translate="">Agenda</span>&nbsp;:&nbsp;
+            <span tal:omit-tag="" tal:condition="context/venue" 
+                tal:content="context/venue/dc:title"/>
+            <span tal:omit-tag="">&nbsp;:&nbsp;</span>
+            <span tal:omit-tag="" i18n:translate="" 
+                tal:content="view/sitting_dates"/>
+        </h1>
+    </div>
+    <div id="schedule-table"></div>
+    <div id="scheduler-layout" class="yui-layout-doc"></div>
+  </div>
+</html>

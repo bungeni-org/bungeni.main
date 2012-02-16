@@ -39,9 +39,10 @@ $if{ view.visible }
             $for{item in view.items}
             <tr id="row-${item['id']}" class="${item['class']}">
                 <td>
-                    <input type="checkbox" id="${item['id']}" 
-                        class="scheduling-checkbox"
-                        $if{item['class']}checked="checked"$fi />
+                    <input type="checkbox" rel="${item['type']}" 
+                        id="${item['id']}" class="scheduling-checkbox"
+                        $if{item['class']}checked="checked"$fi 
+                    />
                 </td>
                 <td>
                     $if{item['type'] != "heading"}

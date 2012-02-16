@@ -12,7 +12,7 @@ $Id$
 from zope.app.pagetemplate import ViewPageTemplateFile
 
 class ReportPreview(object):
-    """Blocked UI processing message."""
+    """Report preview."""
     
     render = ViewPageTemplateFile("templates/report_preview.pt")
     

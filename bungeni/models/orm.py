@@ -431,10 +431,14 @@ mapper(domain.ParliamentaryItem, schema.parliamentary_items,
     }
 )
 
-mapper(domain.Heading,
-    inherits=domain.ParliamentaryItem,
-    polymorphic_on=schema.parliamentary_items.c.type,
-    polymorphic_identity="heading"
+mapper(domain.Heading, schema.headings,
+    properties={
+        "group": relation(domain.Group, 
+            backref=backref("group",
+                remote_side=schema.headings.c.group_id
+            )
+        )
+    }
 )
 
 #!+TYPES_CUSTOM mapper(domain.QuestionType, schema.question_types)
@@ -503,20 +507,17 @@ mapper(domain.AttachedFile, schema.attached_files)
 
 mapper(domain.ItemSchedule, schema.item_schedules,
     properties={
-        "item": relation(
-            domain.ParliamentaryItem,
-            uselist=False
-        ),
-        "discussion": relation(
-            domain.ItemScheduleDiscussion,
-            uselist=False,
-            cascade="all, delete-orphan"
-        ),
         "sitting": relation(domain.GroupSitting, uselist=False),
     }
 )
 
-mapper(domain.ItemScheduleDiscussion, schema.item_schedule_discussions)
+mapper(domain.ScheduleText, schema.schedule_text)
+
+mapper(domain.ItemScheduleDiscussion, schema.item_schedule_discussions,
+    properties={
+        "scheduled_item": relation(domain.ItemSchedule, uselist=False),
+    }
+)
 
 # items scheduled for a sitting
 # expressed as a join between item and schedule

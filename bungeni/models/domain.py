@@ -18,11 +18,9 @@ from bungeni.alchemist import Session
 from bungeni.alchemist import model
 from bungeni.alchemist.traversal import one2many, one2manyindirect
 import sqlalchemy.sql.expression as sql
+from sqlalchemy.orm import object_mapper
 
 import interfaces
-
-
-#
 
 def object_hierarchy_type(object):
     if isinstance(object, User):
@@ -335,7 +333,15 @@ class Group(Entity):
     #   "bungeni.models.domain.GroupSittingContainer", "group_id")
     
     addresses = one2many("addresses",
-        "bungeni.models.domain.GroupAddressContainer", "group_id")
+        "bungeni.models.domain.GroupAddressContainer", "group_id"
+    )
+    headings = one2many("headings", "bungeni.models.domain.HeadingContainer",
+        "group_id"
+    )
+    schedulingtexts = one2many("schedulingtexts", 
+        "bungeni.models.domain.ScheduleTextContainer",
+        "group_id"
+    )
     def active_membership(self, user_id):
         session = Session()
         query = session.query(GroupMembership).filter(
@@ -678,13 +684,17 @@ class AttachedFile(HeadParentedMixin, Entity):
     def owner(self):
         return self.head.owner
 
-
-# !+ why a parliamentaryItem? Review whole heading idea!
-class Heading(ParliamentaryItem):
+class Heading(Entity):
     """A heading in a report.
     """
     interface.implements(interfaces.ITranslatable)
     __dynamic_features__ = False
+    
+    type = "heading"
+    
+    @property
+    def status_date(self):
+        return None
 
 class _AdmissibleMixin(object):
     """Assumes self._get_workflow_date()
@@ -820,30 +830,6 @@ class MinistryInParliament(object):
     """Auxilliary class to get the parliament and government for a ministry.
     """
 
-class ItemSchedule(Entity):
-    """For which sitting was a parliamentary item scheduled.
-    """
-    discussions = one2many("discussions",
-        "bungeni.models.domain.ItemScheduleDiscussionContainer", "schedule_id")
-
-    @property
-    def getItem(self):
-        s_item = self.item
-        s_item.__parent__ = self
-        return s_item
-
-    @property
-    def getDiscussion(self):
-        s_discussion = self.discussion
-        s_discussion.__parent__ = self
-        return s_discussion
-
-
-class ItemScheduleDiscussion(Entity):
-    """A discussion on a scheduled item.
-    """
-    interface.implements(interfaces.ITranslatable)
-
 # versionable (by default)
 class TabledDocument(ParliamentaryItem, _AdmissibleMixin):
     """Tabled documents:
@@ -895,6 +881,65 @@ class EventItem(HeadParentedMixin, ParliamentaryItem):
     All these "events" they may be listed together, in that case the 
     "workflow" once should be ... e.g. in bold.
     """
+
+
+class ScheduleText(Entity):
+    """Arbitrary text inserted into schedule
+    """
+    type = u"text"
+    interface.implements(interfaces.ITranslatable)
+
+# !+DOMAIN(mb, nov-2011) There should be a global configuration/lookup method
+# for content-type=>domain-class mapping. This is just for convenience.
+DOMAIN_CLASSES = {
+    "bill": Bill,
+    "question": Question,
+    "motion": Motion,
+    "agendaitem": AgendaItem,
+    "tableddocument": TabledDocument,
+    "heading": Heading,
+    "text": ScheduleText
+}
+
+class ItemSchedule(Entity):
+    """For which sitting was a parliamentary item scheduled.
+    """
+    discussions = one2many("discussions",
+        "bungeni.models.domain.ItemScheduleDiscussionContainer", "schedule_id")
+
+    def _get_item(self):
+        """Query for scheduled item by type and ORM mapped primary key
+        """
+        domain_class = DOMAIN_CLASSES.get(self.item_type, None)
+        if domain_class is None:
+            log.error("There is no item assigned to this schedule entry")
+            return None
+        return Session().query(domain_class).get(self.item_id)
+
+    def _set_item(self, schedule_item):
+        mapper = object_mapper(schedule_item)
+        self.item_id = mapper.primary_key_from_instance(schedule_item)[0]
+        self.item_type = schedule_item.type
+
+    item = property(_get_item, _set_item)
+
+    @property
+    def getItem(self):
+        s_item = self.item
+        s_item.__parent__ = self
+        return s_item
+
+    @property
+    def getDiscussion(self):
+        s_discussion = self.discussion
+        s_discussion.__parent__ = self
+        return s_discussion
+        
+class ItemScheduleDiscussion(Entity):
+    """A discussion on a scheduled item.
+    """
+    interface.implements(interfaces.ITranslatable)
+
 
 class HoliDay(object):
     """Is this day a holiday?

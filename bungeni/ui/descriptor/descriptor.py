@@ -16,6 +16,7 @@ from zope.publisher.interfaces import IRequest
 import zope.formlib
 from zope.i18n import translate
 from zc.table import column
+from zope.dublincore.interfaces import IDCDescriptiveProperties
 
 from bungeni.alchemist import Session
 from bungeni.alchemist.model import ModelDescriptor, Field, show, hide
@@ -108,6 +109,12 @@ def combined_name_column(name, title, default=""):
         return "%s [%s]" % (_(item.full_name), item.short_name)
     return column.GetterColumn(title, getter)
 
+def dc_property_column(name, title, property_name="title"):
+    def renderer(value):
+        if value:
+            return getattr(IDCDescriptiveProperties(value), property_name, "")
+        return ""
+    return _column(name, title, renderer)
 
 def _get_related_user(item_user, attr):
     """Get trhe user instance that is related to this item via <attr>,
@@ -334,6 +341,24 @@ def ministry_column(name, title, default=""):
         obj = translation.translate_obj(item.ministry)
         return obj.short_name
     return column.GetterColumn(title, getter)
+
+def scheduled_item_title_column(name, title):
+    def getter(item, formatter):
+        return IDCDescriptiveProperties(item.item).title
+    return column.GetterColumn(title, getter)
+
+def scheduled_item_mover_column(name, title):
+    def getter(item, formatter):
+        if hasattr(item.item, "owner"):
+            return IDCDescriptiveProperties(item.item.owner).title
+        return ""
+    return column.GetterColumn(title, getter)
+
+def scheduled_item_uri_column(name, title):
+    def getter(item, formatter):
+        return IDCDescriptiveProperties(item.item).uri
+    return column.GetterColumn(title, getter)
+
 
 ''' !+TYPES_CUSTOM
 def enumeration_column(name, title,
@@ -2321,7 +2346,7 @@ class HeadingDescriptor(ParliamentaryItemDescriptor):
     container_name = _("Headings")
     
     fields = [
-        Field(name="short_name", # [user-req]
+        Field(name="text", # [user-req]
             modes="view edit add listing",
             localizable=[
                 show("view edit listing"),
@@ -2330,31 +2355,7 @@ class HeadingDescriptor(ParliamentaryItemDescriptor):
             edit_widget=widgets.TextWidget,
             add_widget=widgets.TextWidget,
         ),
-        Field(name="owner_id", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("edit"),
-                hide("listing"),
-                hide("view", "bungeni.Anonymous"),
-            ],
-            property=schema.Choice(title=_("Owner"),
-                source=vocabulary.DatabaseSource(domain.User,
-                    token_field="user_id",
-                    title_field="fullname",
-                    value_field="user_id")
-            ),
-        ),
         LanguageField("language"), # [user-req]
-        Field(name="body_text", # [rtf]
-            modes="view edit add",
-            localizable=[ 
-                show("view edit"), 
-            ],
-            property=schema.Text(title=_("Text")),
-            view_widget=widgets.HTMLDisplay,
-            edit_widget=widgets.RichTextEditor,
-            add_widget=widgets.RichTextEditor,
-        )
     ]
 
 
@@ -2944,6 +2945,7 @@ class SittingDescriptor(ModelDescriptor):
                 ),
                 required=False
             ),
+            listing_column=dc_property_column("venue", _(u"Venue")),
         ),
         Field(name="activity_type",
             modes="view edit add",
@@ -3358,23 +3360,76 @@ class ItemScheduleDescriptor(ModelDescriptor):
     display_name = _("Scheduling")
     container_name = _("Schedulings")
 
+    #!+VOCABULARY(mb, nov-2010) item_id references a variety of content
+    # types identified by the type field. Scheduling 'add items' view suffices
+    # for now providing viewlets with a list of addable objects. TODO:
+    # TODO: validate scheduled items
     fields = [
         Field(name="item_id", # [user-req]
             modes="view edit add listing",
             localizable=[
-                show("view edit listing"),
+                show("view listing"),
             ],
-            property=schema.Choice(title=_("Item"),
-                source=vocabulary.DatabaseSource(domain.ParliamentaryItem,
-                    token_field="parliamentary_item_id",
-                    value_field="parliamentary_item_id",
-                    title_getter=lambda obj: "%s - %s" % (
-                        type(obj).__name__, obj.short_name)
-                )
-            ),
+            property=schema.Int(title=_("Item")),
         ),
+        Field(name="item_title", # [derived]
+            modes="view listing",
+            localizable=[
+                show("view listing")
+            ],
+            property=schema.TextLine(title=_("Title"), required=False),
+            listing_column = scheduled_item_title_column("title", _(u"Title"))
+        ),
+        Field(name="item_mover", # [derived]
+            modes="view listing",
+            localizable=[
+                show("view listing")
+            ],
+            property=schema.TextLine(title=_("Mover"), required=False),
+            listing_column = scheduled_item_mover_column("mover", _(u"Mover"))
+        ),
+        Field(name="item_type",
+            modes="view edit add listing",
+            localizable=[
+                show("view listing")
+            ],
+            property=schema.TextLine(title=_("Item Type")),
+        ),
+        Field(name="item_uri", # [derived]
+            modes="view listing",
+            localizable=[
+                show("view listing"),
+            ],
+            property=schema.TextLine(title=_("uri"), required=False),
+            listing_column=scheduled_item_uri_column("uri", _(u"Item URI"))
+        ),
+
     ]
 
+class ScheduleTextDescriptor(ModelDescriptor):
+    localizable = True
+    display_name = _("Scheduling Texts")
+    container_name = "Scheduling Texts"
+    fields = [
+        Field(name="schedule_text_id",
+            modes="view edit add listing",
+            localizable=[
+                show("view listing")
+            ],
+            property=schema.Int(title=_("Item"))
+        ),
+        Field(name="text", 
+            modes="view edit add listing",
+            localizable=[
+                show("view edit add listing")
+            ],
+            property=schema.Text(title=_(u"Text")),
+            view_widget=widgets.HTMLDisplay,
+            edit_widget=widgets.RichTextEditor,
+            add_widget=widgets.RichTextEditor,
+        ),
+        LanguageField("language")
+    ]
 
 class ItemScheduleDiscussionDescriptor(ModelDescriptor):
     localizable = True
@@ -3384,9 +3439,9 @@ class ItemScheduleDiscussionDescriptor(ModelDescriptor):
     fields = [
         LanguageField("language"),
         Field(name="body_text", label=_("Minutes"), # [rtf]
-            modes="view edit add",
+            modes="view edit add listing",
             localizable=[
-                show("view edit"),
+                show("view edit listing"),
             ],
             property=schema.Text(title=_("Minutes")),
             view_widget=widgets.HTMLDisplay,

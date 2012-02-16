@@ -744,6 +744,15 @@ group_sitting_attendance = rdb.Table("group_sitting_attendance", metadata,
     ),
 )
 
+# headings
+headings = rdb.Table("headings", metadata,
+    rdb.Column("heading_id", rdb.Integer, primary_key=True),
+    rdb.Column("text", rdb.Unicode(512), nullable=False),
+    rdb.Column("status", rdb.Unicode(32)),
+    rdb.Column("language", rdb.String(5), nullable=False),
+    rdb.Column("group_id", rdb.Integer, rdb.ForeignKey("groups.group_id"))
+)
+
 ''' !+TYPES_CUSTOM
 attendance_types = rdb.Table("attendance_types", metadata,
     rdb.Column("attendance_type_id", rdb.Integer, primary_key=True),
@@ -828,10 +837,8 @@ item_member_votes = rdb.Table("item_member_votes", metadata,
 
 item_schedules = rdb.Table("item_schedules", metadata,
     rdb.Column("schedule_id", rdb.Integer, primary_key=True),
-    rdb.Column("item_id", rdb.Integer,
-        rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
-        nullable=False
-    ),
+    rdb.Column("item_id", rdb.Integer, nullable=False),
+    rdb.Column("item_type", rdb.String(30), nullable=False),
     rdb.Column("group_sitting_id", rdb.Integer,
         rdb.ForeignKey("group_sittings.group_sitting_id"),
         nullable=False
@@ -847,13 +854,22 @@ item_schedules = rdb.Table("item_schedules", metadata,
     rdb.Column("item_status", rdb.Unicode(64),)
 )
 
+schedule_text = rdb.Table("schedule_text", metadata,
+    rdb.Column("schedule_text_id", rdb.Integer, primary_key=True),
+    rdb.Column("text", rdb.UnicodeText, nullable=True),
+    rdb.Column("group_id", rdb.Integer, rdb.ForeignKey("groups.group_id"),
+        nullable=True
+    ),
+    rdb.Column("language", rdb.String(5), nullable=False)
+)
+
 # to produce the proceedings:
 # capture the discussion on this item
 
 item_schedule_discussions = rdb.Table("item_schedule_discussions", metadata,
+    rdb.Column("discussion_id", rdb.Integer, primary_key=True),
     rdb.Column("schedule_id", rdb.Integer,
-        rdb.ForeignKey("item_schedules.schedule_id"),
-        primary_key=True),
+        rdb.ForeignKey("item_schedules.schedule_id"),),
     rdb.Column("body_text", rdb.UnicodeText),
     rdb.Column("group_sitting_time", rdb.Time(timezone=False)),
     rdb.Column("language", rdb.String(5),

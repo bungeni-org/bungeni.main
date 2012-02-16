@@ -2,7 +2,6 @@ from lxml import etree
 
 from ore import yuiwidget
 
-import zope
 from zope import schema, component
 from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from zope.publisher.browser import BrowserView
@@ -18,7 +17,7 @@ from bungeni.ui import container, search, browser
 from bungeni.ui.calendar import utils as calendar_utils
 from bungeni.ui.interfaces import IBungeniSkin
 from bungeni.utils import register
-
+from bungeni.ui.i18n import _
 from bungeni.ui.utils.queries import execute_sql
 
 

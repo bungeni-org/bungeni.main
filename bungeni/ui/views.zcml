@@ -382,7 +382,21 @@
         permission="bungeni.sittingschedule.View"
         class=".calendar.browser.GroupSittingScheduleView"
     />
-    
+    <browser:page name="save-schedule"
+        for="bungeni.models.interfaces.IItemScheduleContainer"
+        permission="bungeni.sittingschedule.Edit"
+        class=".calendar.browser.ScheduleAddView"
+    />
+    <browser:page name="save-discussions"
+        for="bungeni.models.interfaces.IItemScheduleDiscussionContainer"
+        permission="bungeni.sittingschedule.itemdiscussion.Edit"
+        class=".calendar.browser.DiscussionAddView"
+    />
+    <browser:page name="schedulable-items-json"
+        for="bungeni.models.interfaces.IGroupSitting"
+        permission="bungeni.sittingschedule.Edit"
+        class=".calendar.browser.SchedulableItemsJSON"
+    />
       <browser:page
      name="schedule_order"
      for="bungeni.models.interfaces.IGroupSitting"

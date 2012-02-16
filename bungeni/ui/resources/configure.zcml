@@ -84,4 +84,42 @@
         include="calendar-extensions.js"
     />
   </resourceLibrary>
+  <resourceLibrary name="scheduler-globals">
+    <directory
+      source="calendar"
+      include="scheduler-globals.js"
+      factory="bungeni.ui.resources.dynamic.DynamicDirectoryFactory"
+    />
+  </resourceLibrary>
+  <resourceLibrary name="bungeni-schedule-config" require="scheduler-globals yui-core yui-datatable">
+    <directory source="calendar" 
+        include="schedule-config.js"
+    />
+  </resourceLibrary>
+  <resourceLibrary name="bungeni-schedule-available-items" require="bungeni-schedule-config yui-tab yui-button yui-container yui-calendar yui-selector">
+    <directory source="calendar" 
+        include="schedule-available-items.js"
+    />
+  </resourceLibrary>  
+  <resourceLibrary name="bungeni-schedule-editor" 
+    require="bungeni-schedule-config yui-container yui-connection yui-menu yui-button yui-rte yui-calendar yui-layout yui-tab yui-selector yui-json">
+    <directory source="calendar" 
+        include="schedule-editor.js
+                 schedule-editor.css"
+    />
+  </resourceLibrary>
+  <resourceLibrary name="bungeni-schedule-discussions" 
+    require="scheduler-globals bungeni-schedule-config yui-container yui-connection yui-button yui-rte yui-layout yui-json">
+    <directory source="calendar" 
+        include="schedule-editor-discussions.js
+                 schedule-editor.css"
+    />
+  </resourceLibrary>
+  <resourceLibrary name="bungeni-schedule-preview" 
+    require="bungeni-schedule-config yui-layout">
+    <directory source="calendar" 
+        include="schedule-preview.js
+                 schedule-editor.css"
+    />
+  </resourceLibrary>
 </configure>

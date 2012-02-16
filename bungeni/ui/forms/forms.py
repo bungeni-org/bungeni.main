@@ -2,12 +2,9 @@
 
 
 import copy
-import datetime
 
 from zc.resourcelibrary import need
-from zope.event import notify
 from zope.formlib import form, namedtemplate
-from zope.lifecycleevent import ObjectCreatedEvent
 from zope import schema, interface
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.security.proxy import removeSecurityProxy
@@ -27,7 +24,6 @@ from bungeni.ui.forms.common import AddForm
 from bungeni.ui.forms.common import EditForm
 from bungeni.ui.forms.common import DeleteForm
 from bungeni.ui.forms.common import DisplayForm
-from zope.formlib.widgets import PasswordWidget
 
 from interfaces import Modified
 from zope import component
@@ -207,7 +203,12 @@ class ItemScheduleContainerDeleteForm(DeleteForm):
     class IDeleteForm(interface.Interface):
         item_id = schema.Int(
             title=_(u"Item ID"),
-            required=True)
+            required=True
+        )
+        item_type = schema.TextLine(
+            title=_(u"Item Type"),
+            required=True
+        )
     form_fields = form.Fields(IDeleteForm)
     
     @form.action(_(u"Delete"))
@@ -217,7 +218,8 @@ class ItemScheduleContainerDeleteForm(DeleteForm):
         sch = session.query(domain.ItemSchedule).filter(
             sql.and_(
                 model_schema.item_schedules.c.group_sitting_id == group_sitting_id,
-                model_schema.item_schedules.c.item_id == data['item_id']
+                model_schema.item_schedules.c.item_id == data['item_id'],
+                model_schema.item_schedules.c.item_type == data['item_type']
             )).all()        
         for i in sch:
             session.delete(i)
@@ -287,10 +289,9 @@ class DiffEditForm(EditForm):
                 # Add display - input widgets pair to list of diff widgets
                 self.diff_widgets.append((widget, display_widget))
                 
-                
 class UserAddressDisplayForm(DisplayForm):
     
     @property
     def page_title(self):
-        #context = removeSecurityProxy(self.context)
         return "%s address" % self.context.logical_address_type.title()
+

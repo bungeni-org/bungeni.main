@@ -1,0 +1,42 @@
+.yui-skin-sam tr.schedule-text-item{
+    background-color: #EBE9D2;
+    text-transform:italic;
+}
+
+.schedule-available-item-filters{
+    margin:0.2em 0em;
+    padding:0.2em;
+}
+
+.schedule-available-item-filters button em {
+    font-style: normal;
+    display: block;
+    text-align: left;
+    white-space: nowrap;
+    width: 10em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+   -o-text-overflow: ellipsis;
+}
+
+label.scheduler-label{
+    display: block;
+    font-size: 13px;
+    height: 15px;
+    margin:0px 0px 2px 0px;
+}
+
+input.scheduler-bigtext{
+    border-radius:1px;
+    border: 1px solid #4D90FE;
+    color: #333;
+    display: inline-block;
+    font-size: 15px;
+    height: 32px;
+    line-height: 27px;
+    margin:2px 0 30px 0;
+    padding:3px 3px 3px 8px;
+    width: 100%;
+    visibility:inherit;
+}
+

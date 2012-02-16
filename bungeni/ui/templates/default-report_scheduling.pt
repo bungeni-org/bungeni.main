@@ -34,18 +34,17 @@
                         tal:condition="python:view.check_option(scheduled.item.type)">
                             <span tal:condition="scheduled/category  | nothing"><hr/></span>
                              <h2 class="reporttitle">
-                                <a tal:attributes="href string:${view/site_url}${scheduled/item/uri}">
+                                <a tal:attributes="href string:${view/site_url}${scheduled/item/dc:uri}">
                                     <span i18n:translate="" tal:replace="scheduled/item/type"/>
                                     <span  tal:replace="scheduled/item/dc:title" />
                                 </a>
                              </h2>
-                            <h3 class="reportmover"
-                            tal:condition="python:view.check_option(scheduled.item.type, 'owner')">
+                            <h3 class="reportmover" tal:condition="scheduled/item/owner|nothing">
                                 <span i18n:translate="" tal:omit-tag="">Moved by</span>
                                 <span i18n:translate="" tal:content="scheduled/item/owner/dc:title_member" 
                                 tal:omit-tag=""/>
                              </h3>
-                            <div tal:condition="scheduled/item/summary | nothing">
+                            <div tal:condition="scheduled/item/summary|nothing">
                                 <h3 class="reportsummary" 
                                 i18n:translate="">
                                     Summary
@@ -55,17 +54,17 @@
                              <div>
                                 <p class="reporttext" 
                                       tal:replace="structure scheduled/item/body_text"
-                                      tal:condition="python:view.check_option(scheduled.item.type, 'text')"/>
+                                      tal:condition="scheduled/item/body_text|nothing"/>
                              </div>
                              <div tal:condition="view/display_minutes">
-                                <div tal:condition="scheduled/discussion/body_text">
+                                <div tal:condition="scheduled/discussion/body_text|nothing">
                                     <h3 class="reportminutes" i18n:translate="">
                                         Minutes
                                     </h3>
                                     <p tal:content="structure scheduled/discussion/body_text"/>
                                 </div>
                              </div>
-                            <div tal:condition="python:view.check_option(scheduled.item.type, 'signatories')" 
+                            <div tal:condition="scheduled/item/signatories|nothing" 
                                 tal:omit-tag="">
                                 <h3 class="reportsignatories" i18n:translate="">
                                     Signatories

@@ -219,9 +219,6 @@ div.yui-cal-nav {
 white-space: normal;
 }
 
-#scheduling-table .yui-overlay, .yui-panel-container {
-    width:725px;
-}
 
 /* .contentActions {
     z-index: 10050; !important;

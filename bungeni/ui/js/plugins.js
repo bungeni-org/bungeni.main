@@ -42,6 +42,7 @@
         $(this).click(function () {
             var target = $('#scheduling-calendar').find("fieldset");
             var id = $(this).attr('id');
+            var item_type = $(this).attr('rel');
             var next_url = $("a[rel=calendar]").attr('href') + "headless=true";
             if ($(this).is(':checked')) {
                 var link = target.find("a[rel=schedule-item]");
@@ -52,7 +53,8 @@
                 $.post(url, {
                     headless: "true",
                     next_url: next_url,
-                    item_id: id
+                    item_id: id,
+                    item_type: item_type
                 }, function (data, status) {
                     $("#kss-spinner").hide();
                     if (status == 'success') {
@@ -70,7 +72,8 @@
                 $.post(url, {
                     headless: "true",
                     next_url: next_url,
-                    item_id: id
+                    item_id: id,
+                    item_type: item_type
                 }, function (data, status) {
                     $("#kss-spinner").hide();
                     if (status == 'success') {

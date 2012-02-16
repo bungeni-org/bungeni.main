@@ -397,7 +397,12 @@ class ContainerJSONListing(ContainerJSONBrowserView):
         lang = translation.get_request_language(request=self.request)
         return self.json_batch(start, limit, lang)
 
-
+#@register.view(IAlchemistContainer, 
+#    layer=ufaces.IMembersSectionLayer, name="jsonlisting") 
+#@register.view(IAlchemistContainer, 
+#    layer=ufaces.IArchiveSectionLayer, name="jsonlisting")
+@register.view(IAlchemistContainer, 
+    layer=ufaces.IBusinessSectionLayer, name="jsonlisting")
 #@register.view(IAlchemistContainer, 
 #    layer=ufaces.IMembersSectionLayer, name="jsonlisting") 
 #@register.view(IAlchemistContainer, 

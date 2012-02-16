@@ -19,7 +19,9 @@ except ImportError:
     import simplejson as json
 
 from zope.event import notify
-from zope.lifecycleevent import ObjectCreatedEvent, ObjectModifiedEvent
+from zope.lifecycleevent import (ObjectCreatedEvent, ObjectModifiedEvent, 
+    ObjectRemovedEvent
+)
 from zope import interface
 from zope import component
 from zope.location.interfaces import ILocation
@@ -28,7 +30,6 @@ from zope.publisher.interfaces import IPublishTraverse
 from zope.publisher.browser import BrowserView
 from zope.browsermenu.interfaces import IBrowserMenu
 from zope.app.pagetemplate import ViewPageTemplateFile
-from zope.app.component.hooks import getSite
 from zope.security.proxy import removeSecurityProxy
 from zope.security.proxy import ProxyFactory
 from zope.security import checkPermission
@@ -46,9 +47,9 @@ from bungeni.core.translation import translate_i18n
 
 from ploned.ui.interfaces import IStructuralView
 from bungeni.ui.browser import BungeniBrowserView
-from bungeni.ui.calendar import utils, config, interfaces
+from bungeni.ui.calendar import utils, config, interfaces, data
 from bungeni.ui.i18n import _
-from bungeni.ui.utils import misc, url, debug
+from bungeni.ui.utils import misc, url, debug, date
 from bungeni.ui.menu import get_actions
 from bungeni.ui.interfaces import IBusinessSectionLayer
 from bungeni.ui.widgets import LanguageLookupWidget
@@ -57,6 +58,9 @@ from bungeni.models import domain
 from bungeni.alchemist.container import stringKey
 from bungeni.alchemist import Session
 #from bungeni.ui import vocabulary
+
+# Filter key names prefix - for available items listings
+FILTER_PREFIX = "filter_"
 
 class TIME_SPAN:
     daily = _(u"Daily")
@@ -111,7 +115,6 @@ def get_sitting_items(sitting, request, include_actions=False):
     schedulings = map(
         removeSecurityProxy,
         sitting.items.batch(order_by=order, limit=None))
-    site_url = url.absoluteURL(getSite(), request)
     for scheduling in schedulings:
         item = ProxyFactory(location_wrapped(scheduling.item, sitting))
        
@@ -321,6 +324,8 @@ class CalendarView(BungeniBrowserView):
         need("dhtmlxscheduler-recurring")
         need("dhtmlxscheduler-year-view")
         need("dhtmlxscheduler-agenda-view")
+        #!+CALENDAR(mb, feb-2012) not in current dhtmlxscheduler release
+        #need("dhtmlxscheduler-week-agenda-view")
         need("dhtmlxscheduler-expand")
         need("bungeni-calendar-extensions")
         need("dhtmlxscheduler-timeline")
@@ -378,111 +383,6 @@ class DailyCalendarView(CalendarView):
             sittings_map = create_sittings_map(sittings, self.request),
             )
 
-class GroupSittingScheduleView(BrowserView):
-    """Group-sitting scheduling view.
-
-    This view presents a sitting and provides a user interface to
-    manage the agenda.
-    """
-
-    template = ViewPageTemplateFile("templates/main.pt")
-    ajax = ViewPageTemplateFile("templates/ajax.pt")
-    
-    _macros = ViewPageTemplateFile("templates/macros.pt")
-    def __init__(self, context, request):
-        super(GroupSittingScheduleView, self).__init__(context, request)
-        self.__parent__ = context
-
-    def __call__(self, timestamp=None):
-        #session = Session()
-        if timestamp is None:
-            # start the week on the first weekday (e.g. Monday)
-            date = utils.datetimedict.fromdate(datetime.date.today())
-        else:
-            try:
-                timestamp = float(timestamp)
-            except:
-                raise TypeError(
-                    "Timestamp must be floating-point (got %s)" % timestamp)
-            date = utils.datetimedict.fromtimestamp(timestamp)
-        #if misc.is_ajax_request(self.request):
-        if self.request.get('headless') == 'true':
-            rendered = self.render(date, template=self.ajax)
-        else:    
-            rendered = self.render(date)
-        # !+SESSION_CLOSE(taras.sterch, july-2011) there is no need to close the 
-        # session. Transaction manager will take care of this. Hope it does not 
-        # brake anything.
-        #session.close()
-        return rendered
-        
-    def reorder_field(self):
-        if self.context.status=="draft_agenda":
-            return 'planned_order'
-        elif self.context.status=="draft_minutes": 
-            return 'real_order'
-        else:
-            return None
-            
-    def render(self, date, template=None):
-        #need('yui-editor')
-        need('yui-connection')
-        need('yui-rte')
-        need('yui-resize')
-        need('yui-button')
-        
-        if template is None:
-            template = self.template
-
-        container = self.context.__parent__
-        #schedule_url = self.request.getURL()
-        container_url = url.absoluteURL(container, self.request)
-        
-        # determine position in container
-        key = stringKey(self.context)
-        keys = list(container.keys())
-        pos = keys.index(key)
-
-        links = {}
-        if pos > 0:
-            links['previous'] = "%s/%s/%s" % (
-                container_url, keys[pos-1], self.__name__)
-        if pos < len(keys) - 1:
-            links['next'] = "%s/%s/%s" % (
-                container_url, keys[pos+1], self.__name__)
-
-        #start_date = utils.datetimedict.fromdatetime(self.context.start_date)
-        #end_date = utils.datetimedict.fromdatetime(self.context.end_date)
-        
-
-        site_url = url.absoluteURL(getSite(), self.request)
-        reorder = "reorder" if self.context.status in \
-                                ["draft_agenda", "draft_minutes"] \
-                            else "dont-reorder"
-        return template(
-            display="sitting",
-            #title=_(u"$A $e, $B $Y", mapping=start_date),
-            title = "%s: %s - %s" % (self.context.group.short_name, 
-                self.context.start_date.strftime('%Y-%m-%d %H:%M'), 
-                self.context.end_date.strftime('%H:%M')),
-            description=_(u"Sitting Info"),
-#            title = u"",
-#            description = u"",
-#
-            links=links,
-            actions=get_sitting_actions(self.context, self.request),
-            items=get_sitting_items(
-                self.context, self.request, include_actions=True),
-            #categories=vocabulary.ItemScheduleCategories(self.context),
-            new_category_url="%s/admin/content/categories/add?next_url=..." % site_url,
-            status=self.context.status,
-            reorder=reorder,
-            )
-            
-    @property
-    def macros(self):
-        return self._macros.macros
-
 class ItemScheduleOrder(BrowserView):
     "Stores new order of schedule items"
     def __call__(self):
@@ -498,6 +398,97 @@ class ItemScheduleOrder(BrowserView):
                 setattr(sch, 'real_order', i+1)
         session.flush()
 
+#
+# Group Scheduler New YUI based Stack UI
+#
+RESOURCE_PERMISSION_MAP = (
+    (["bungeni-schedule-discussions", "bungeni-schedule-available-items"], 
+        "bungeni.sittingschedule.itemdiscussion.Edit"
+    ),
+    (["bungeni-schedule-editor"], "bungeni.sittingschedule.Edit"),
+    (["bungeni-schedule-preview"], "bungeni.sitting.View"),
+)
+class GroupSittingScheduleView(BrowserView):
+    
+    template = ViewPageTemplateFile("templates/scheduler.pt")
+    
+    def __init__(self, context, request):
+        super(GroupSittingScheduleView, self).__init__(context, request)
+    
+    def sitting_dates(self):
+        date_formatter = date.getLocaleFormatter(self.request)
+        time_formatter = date.getLocaleFormatter(self.request, "time", "short")
+        delta = self.context.end_date - self.context.start_date
+        if delta.days == 0:
+            localized_start_date = "%s - %s" %(
+                date_formatter.format(self.context.start_date),
+                time_formatter.format(self.context.start_date)
+            )
+            localized_end_date = time_formatter.format(self.context.end_date)
+        else:
+            localized_start_date = "%s, %s" %(
+                date_formatter.format(self.context.start_date),
+                time_formatter.format(self.context.start_date)
+            )
+            localized_end_date = "%s, %s" %(
+                date_formatter.format(self.context.end_date),
+                time_formatter.format(self.context.end_date)
+            )
+            
+        return _("${localized_start_date} to ${localized_end_date}",
+            mapping = {
+                "localized_start_date" : localized_start_date,
+                "localized_end_date" : localized_end_date,
+            }
+        )
+    
+    def __call__(self):
+        return self.render()
+    
+    def needed_resources(self):
+        """Permission aware resource dependency generation.
+        Determines what user interface is rendered for the sitting.
+        See resource definitions in `bungeni.ui.resources` inside 
+        `configure.zcml`.
+        """
+        needed = None
+        for resource, permission in RESOURCE_PERMISSION_MAP:
+            if checkPermission(permission, self.context):
+                needed = resource
+                break
+        return needed
+    
+    def render(self):
+        _needed = self.needed_resources()
+        if len(_needed):
+            map(need, _needed)
+        return self.template()
+
+class SchedulableItemsJSON(BrowserView):
+    
+    def __init__(self, context, request):
+        super(SchedulableItemsJSON, self).__init__(context, request)
+    
+    def get_json_items(self):
+        item_type = self.request.form.get("type")
+        item_filters = dict(
+            [
+                (filter_key[7:], self.request.form.get(filter_key)) 
+                for filter_key in self.request.form.keys()
+                if filter_key.startswith(FILTER_PREFIX)
+            ]
+        )
+        if item_type is None:
+            return '{"items":[]}'
+        else:
+            items_getter = data.SchedulableItemsGetter(self.context,
+                item_type, item_filters=item_filters
+            )
+        return items_getter.as_json()
+    
+    def __call__(self):
+        self.request.response.setHeader("Content-type", "application/json")
+        return self.get_json_items()
 
 class SittingCalendarView(CalendarView):
     """Sitting calendar view."""
@@ -808,3 +799,155 @@ class DhtmlxCalendarSittingsIcal(DhtmlxCalendarSittings):
         return config.ICAL_DOCUMENT_TEMPLATE % dict(
             event_data = u"\n".join(event_data_list)
         )
+
+def getItemKey(s):
+    return s.rstrip("/")
+
+class ScheduleAddView(BrowserView):
+    """Custom view to persist schedule items modified client side
+    """
+    RECORD_KEY = "%s:%d"
+    messages = []
+    def __init__(self, context, request):
+        super(ScheduleAddView, self).__init__(context, request)
+        self.sitting = self.context.__parent__
+        self.data = json.loads(self.request.form.get("data", "[]"))
+
+    def saveSchedule(self):
+        session = Session()
+        group_sitting_id = self.sitting.group_sitting_id
+        group_id = self.sitting.group_id
+        record_keys = []
+        for (index, data_item_text) in enumerate(self.data):
+            data_item = json.loads(data_item_text)
+            actual_index = index + 1
+            data_schedule_id = data_item.get("schedule_id")
+            data_item_id = data_item.get("item_id")
+            data_item_type = data_item.get("item_type")
+            data_item_text = data_item.get("item_text")
+            
+            if not data_item_id:
+                # create text record before inserting into schedule
+                if data_item_type == u"text":
+                    text_record = domain.ScheduleText(
+                        text=data_item_text,
+                        group_id=group_id,
+                        language=get_default_language()
+                    )
+                    session.add(text_record)
+                    session.flush()
+                    notify(ObjectCreatedEvent(text_record))
+                    data_item_id = text_record.schedule_text_id
+                elif data_item_type == u"heading":
+                    heading_record = domain.Heading(
+                        text=data_item_text,
+                        group_id=group_id,
+                        language=get_default_language()
+                    )
+                    session.add(heading_record)
+                    session.flush()
+                    notify(ObjectCreatedEvent(heading_record))
+                    data_item_id = heading_record.heading_id
+                schedule_record = domain.ItemSchedule(
+                    item_id=data_item_id,
+                    item_type=data_item_type,
+                    planned_order=actual_index,
+                    group_sitting_id=group_sitting_id
+                )
+                session.add(schedule_record)
+                session.flush()
+                notify(ObjectCreatedEvent(schedule_record))
+            else:
+                if data_schedule_id:
+                    current_record = removeSecurityProxy(
+                        self.context.get(getItemKey(data_schedule_id))
+                    )
+                    current_record.planned_order = actual_index
+                    session.add(current_record)
+                    session.flush()
+                    notify(ObjectModifiedEvent(current_record))
+                    
+                    #update text for text records
+                    #!+INTERFACES(Apply this behaviour via shared interface)
+                    if data_item_type in [u"text", u"heading"]:
+                        text_record = removeSecurityProxy(current_record.item)
+                        if text_record.text != data_item_text:
+                            text_record.text = data_item_text
+                            session.add(text_record)
+                            session.flush()
+                            notify(ObjectModifiedEvent(text_record))
+                else:
+                    schedule_record = domain.ItemSchedule(
+                        item_id=data_item_id,
+                        item_type=data_item_type,
+                        planned_order=actual_index,
+                        group_sitting_id=group_sitting_id
+                    )
+                    session.add(schedule_record)
+                    session.flush()
+                    notify(ObjectCreatedEvent(schedule_record))
+            record_keys.append(self.RECORD_KEY % (data_item_type, data_item_id))
+        
+        records_to_delete = filter(
+            lambda item:(self.RECORD_KEY % (item.item_type, item.item_id)
+                not in record_keys
+            ),
+            [removeSecurityProxy(rec) for rec in self.context.values()]
+        )
+        map(session.delete, records_to_delete)
+        map(lambda deleted:notify(ObjectRemovedEvent(deleted)), 
+            records_to_delete
+        )
+        
+    def __call__(self):
+        self.request.response.setHeader("Content-type", "application/json")
+        self.saveSchedule()
+        return json.dumps(dict(messages=self.messages))
+
+class DiscussionAddView(BrowserView):
+    messages = []
+    def __init__(self, context, request):
+        super(DiscussionAddView, self).__init__(context, request)
+        self.data = json.loads(self.request.form.get("data", "[]"))
+    
+    def saveDiscussions(self):
+        session = Session()
+        new_record_keys = []
+        domain_model = removeSecurityProxy(self.context.domain_model)
+        for record in self.data:
+            discussion_text = record.get("body_text", "")
+            object_id = record.get("object_id", None)
+            if object_id:
+                current_record = removeSecurityProxy(
+                    self.context.get(getItemKey(object_id))
+                )
+                current_record.body_text = discussion_text
+                session.add(current_record)
+                session.flush()
+                notify(ObjectModifiedEvent(current_record))
+                new_record_keys.append(stringKey(current_record))
+            else:
+                new_record = domain_model(
+                    body_text = discussion_text,
+                    language = get_default_language()
+                )
+                new_record.scheduled_item = removeSecurityProxy(
+                    self.context.__parent__
+                )
+                session.add(new_record)
+                session.flush()
+                notify(ObjectCreatedEvent(new_record))
+                new_record_keys.append(stringKey(new_record))
+        records_to_delete = [
+            removeSecurityProxy(self.context.get(key))
+            for key in self.context.keys() if key not in new_record_keys
+        ]
+        map(session.delete, records_to_delete)
+        map(lambda deleted:notify(ObjectRemovedEvent(deleted)),
+            records_to_delete
+        )
+    
+    def __call__(self):
+        self.request.response.setHeader("Content-type", "application/json")
+        self.saveDiscussions()
+        return json.dumps(dict(messages=self.messages))
