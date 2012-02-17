@@ -20,7 +20,6 @@
         file=20, event=21, signatory=22
         title=30
         sitting=40, agendaitem=41, attendance=42
-        (assign-)bill=50
         partymember=60, groupmember=61, committeemember=62, officemember=63
         ministry=70
         address=80
@@ -219,14 +218,6 @@
     />
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.ICommittee"
-        title="Assign an item..."
-        action="./assigneditems/add"
-        permission="bungeni.groupitemassignment.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="50"
-    />
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.ICommittee"
         title="Add Sitting..."
         action="./sittings/add"
         permission="bungeni.sitting.Add"
@@ -324,14 +315,6 @@
         order="20"
     />
     <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IMotion"
-        title="Assign motion to a group..."
-        action="./assignedgroups/add"
-        permission="bungeni.groupitemassignment.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="50"
-    />
-    <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IBill"
         title="Add signatory..."
         action="./signatories/add"
@@ -388,31 +371,6 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="20"
     />
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IBill"
-        title="Assign bill to a committee..."
-        action="./assignedgroups/add"
-        permission="bungeni.groupitemassignment.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="50"
-    />
-    
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IGroupGroupItemAssignment"
-        title="Edit"
-        action="./edit"
-        permission="bungeni.groupitemassignment.Edit"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="10"
-    />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IItemGroupItemAssignment"
-        title="Edit"
-        action="./edit"
-        permission="bungeni.groupitemassignment.Edit"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="10"
-    />
     <!--Title types menus-->
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.domain.TitleTypeContainer"
@@ -446,14 +404,6 @@
         order="22"
     />
     <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IQuestion"
-        title="Assign question to a group..."
-        action="./assignedgroups/add"
-        permission="bungeni.groupitemassignment.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="50"
-    />
-    <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.ITabledDocument"
         title="Add file..."
         action="./files/add"
@@ -478,28 +428,12 @@
         order="22"
     />
     <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.ITabledDocument"
-        title="Assign this document to a group..."
-        action="./assignedgroups/add"
-        permission="bungeni.groupitemassignment.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="50"
-    />
-    <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IAgendaItem"
         title="Add file..."
         action="./files/add"
         permission="bungeni.fileattachment.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="20"
-    />
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IAgendaItem"
-        title="Assign agenda item to a group..."
-        action="./assignedgroups/add"
-        permission="bungeni.groupitemassignment.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="50"
     />
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IOffice"

@@ -547,15 +547,7 @@ JSLCaches = {
         JSLCache(49, mfaces.ICommittee, ["Committee"]),
     "bills": 
         JSLCache(99, mfaces.IBill, ["Bill"]),
-    "assigneditems": 
-        JSLCache(49, mfaces.IItemGroupItemAssignment, 
-            ["ItemGroupItemAssignment"], 
-        ),
-    "assignedgroups": 
-        JSLCache(49, mfaces.IGroupGroupItemAssignment,
-            ["GroupGroupItemAssignment"], 
-        ),
-    "signatories": 
+     "signatories": 
         JSLCache(49, mfaces.ISignatory, 
             ["Signatory", "Bill", "Motion", "Question"]
         ),

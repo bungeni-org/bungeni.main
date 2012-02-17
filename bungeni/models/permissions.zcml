@@ -251,11 +251,6 @@
   <permission id="bungeni.signatory.View" title="View a signatory" />
   <meta:redefinePermission from="bungeni.signatory.View" to="zope.View" />
 
-  <permission id="bungeni.groupitemassignment.View" title="View document assigned to a group or committee" />
-  <permission id="bungeni.groupitemassignment.Add" title="Assign a document to a group or committee" />
-  <permission id="bungeni.groupitemassignment.Delete" title="Delete document assignment to a group or committee" />
-  <permission id="bungeni.groupitemassignment.Edit" title="Edit document assignment to a group or committee" />
-  <meta:redefinePermission from="bungeni.groupitemassignment.View" to="zope.View" />
   
   <permission id="bungeni.reports.Edit" title="Permission to generate report" />
   

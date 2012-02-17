@@ -231,12 +231,6 @@ class QuestionsViewlet(SubformViewlet):
 class AgendaItemsViewlet(SubformViewlet):
     sub_attr_name = "agendaitems"
 
-class AssignedItemsViewlet(SubformViewlet):
-    sub_attr_name = "assigneditems"
-
-class AssignedGroupsViewlet(SubformViewlet):
-    sub_attr_name = "assignedgroups"
-
 class MinistriesViewlet(SubformViewlet):
     sub_attr_name = "ministries"
 

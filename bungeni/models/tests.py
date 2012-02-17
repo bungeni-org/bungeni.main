@@ -8,11 +8,11 @@ from zope import component
 import unittest
 
 from zope.testing import doctest, doctestunit
-from zope.app.testing import placelesssetup, ztapi
+from zope.app.testing import placelesssetup
 from zope.configuration import xmlconfig
 
 from bungeni.models import schema, interfaces
-from interfaces import IAssignmentFactory, IContentAssignments, IContextAssignments
+
 from bungeni.core.workflows import adapters
 from bungeni.ui import descriptor
 
@@ -37,27 +37,6 @@ def tearDown(test):
     placelesssetup.tearDown()
     schema.metadata.drop_all(checkfirst=True)
 
-def assignment_tests():
-    import assignment
-    def _setUp(test):
-        setUp(test)
-        ztapi.provideAdapter((interfaces.IBungeniContent, interfaces.IBungeniGroup),
-                              IAssignmentFactory,
-                              assignment.GroupAssignmentFactory)
-
-        ztapi.provideAdapter(interfaces.IBungeniContent,
-                              IContentAssignments,
-                              assignment.ContentAssignments)
-
-        ztapi.provideAdapter(interfaces.IBungeniGroup,
-                              IContextAssignments,
-                              assignment.GroupContextAssignments)
-        
-    return doctestunit.DocFileSuite('assignment.txt',
-                                    setUp = _setUp,
-                                    tearDown = tearDown,
-                                    optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS
-                                    )
 
 def test_suite():
 
@@ -77,9 +56,7 @@ def test_suite():
                                               globs = globs,
                                               optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
         test_suites.append(test_suite)
-            
-    test_suites.append(assignment_tests())
-    
+
     return unittest.TestSuite(test_suites)
 
 if __name__ == '__main__':

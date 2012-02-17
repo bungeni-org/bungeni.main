@@ -419,22 +419,6 @@ class AttendanceType(Entity):
     )
 '''
 
-class GroupItemAssignment(object):
-    """The assignment of a parliamentary content object to a group.
-    """
-    interface.implements(interfaces.ITranslatable)
-
-
-class GroupGroupItemAssignment(GroupItemAssignment):
-    """Assign a group to an item.
-    """
-
-
-class ItemGroupItemAssignment(GroupItemAssignment):
-    """Assign an item to a group.
-    """
-
-
 #############
 
 class Parliament(Group):
@@ -546,8 +530,6 @@ class Committee(Group):
         "bungeni.models.domain.AgendaItemContainer", "group_id")
     sittings = one2many("group_sittings",
         "bungeni.models.domain.GroupSittingContainer", "group_id")
-    assigneditems = one2many("assigneditems",
-        "bungeni.models.domain.ItemGroupItemAssignmentContainer", "group_id")
     title_types = one2many("title_types",
         "bungeni.models.domain.TitleTypeContainer", "group_id")
 
@@ -657,11 +639,8 @@ class ParliamentaryItem(Entity):
         "bungeni.models.domain.SignatoryContainer", "item_id")
     # !+NAMING(mr, jul-2011) plural!
     event = one2many("event",
-        "bungeni.models.domain.EventContainer", "head_id") # !+EVENT_DOC
-    # !+NAMING(mr, jul-2011) inconsistent... should be assigned_groups
-    assignedgroups = one2many("assignedgroups",
-        "bungeni.models.domain.GroupGroupItemAssignmentContainer", "item_id")
-    
+        "bungeni.models.domain.EventItemContainer", "item_id")
+
     # votes
     # schedule
     # object log

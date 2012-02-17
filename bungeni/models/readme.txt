@@ -408,13 +408,6 @@ Note that the questions workflow is tested separated (see workflows/question.txt
   2
   
 
-
-  
-Assignment
-++++++++++
-
-assigning a question to a ministry
-
 Bill
 ----
 

@@ -610,28 +610,6 @@ mapper(domain.GroupAddress, schema.group_addresses,
     },
 )
 
-mapper(domain.GroupItemAssignment, schema.group_item_assignments,
-    properties={
-        "group": relation(domain.Group,
-            primaryjoin=(schema.group_item_assignments.c.group_id ==
-                    schema.groups.c.group_id),
-            backref="group_assignments",
-            lazy=True,
-            uselist=False
-        ),
-        "item": relation(domain.ParliamentaryItem,
-            backref="item_assignments",
-            uselist=False
-        ),
-    }
-)
-mapper(domain.ItemGroupItemAssignment, schema.group_item_assignments,
-    inherits=domain.GroupItemAssignment
-)
-mapper(domain.GroupGroupItemAssignment, schema.group_item_assignments,
-    inherits=domain.GroupItemAssignment
-)
-
 mapper(domain.Report, schema.reports,
     inherits=domain.ParliamentaryItem,
     polymorphic_on=schema.parliamentary_items.c.type,

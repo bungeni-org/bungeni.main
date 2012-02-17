@@ -525,20 +525,6 @@ class ConstituencyDetailsDescriptiveProperties(DescriptiveProperties):
 
 
 @register.adapter()
-class GroupItemAssignmentDescriptiveProperties(DescriptiveProperties):
-    component.adapts(interfaces.IGroupItemAssignment)
-
-    @property
-    def title(self):
-        session = Session()
-        context = session.merge(removeSecurityProxy(self.context))
-        return '%s - %s ' % (
-                self.translate(context.item, "short_name"), 
-                self.translate(context.group, "short_name")
-        )
-
-
-@register.adapter()
 class MemberTitleDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IMemberTitle)
 

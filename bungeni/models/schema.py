@@ -565,37 +565,6 @@ user_group_memberships = rdb.Table("user_group_memberships", metadata,
     rdb.Column("language", rdb.String(5), nullable=False),
 )
 
-# a bill assigned to a committee, a question assigned to a ministry
-group_item_assignments = rdb.Table("group_assignments", metadata,
-    rdb.Column("assignment_id", rdb.Integer,
-        primary_key=True,
-        nullable=False
-    ),
-    rdb.Column("item_id", rdb.Integer,
-        rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
-        nullable=False
-    ),
-    #rdb.Column("object_type", rdb.String(128), nullable=False),
-    rdb.Column("group_id", rdb.Integer,
-        rdb.ForeignKey("groups.group_id"),
-        nullable=False
-    ),
-    rdb.Column("start_date", rdb.Date, default=datetime.now, nullable=False),
-    rdb.Column("end_date", rdb.Date),
-    rdb.Column("due_date", rdb.Date),
-    rdb.Column("status", rdb.String(16)),
-    rdb.Column("status_date", rdb.DateTime(timezone=False),
-        server_default=(text("now()")),
-        nullable=False
-    ),
-    rdb.Column("notes", rdb.UnicodeText),
-    rdb.Column("language", rdb.String(5), nullable=False),
-)
-
-group_item_assignments_index = rdb.Index("grpassign_itemid_idx", 
-    group_item_assignments.c["item_id"]
-)
-
 ##############
 # Titles
 ##############

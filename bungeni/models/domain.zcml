@@ -100,7 +100,6 @@
                 files
                 signatories
                 event
-                assignedgroups
                 submission_date
                 admissible_date
                 
@@ -732,39 +731,6 @@
                 status
             " 
         />
-    </class>
-    
-    <class class=".domain.GroupItemAssignment">
-        <require permission="zope.View"
-            attributes="
-                assignment_id
-                item_id
-                group_id
-                start_date
-                end_date
-                due_date
-                status
-                notes
-            " 
-        />
-        <require permission="bungeni.groupitemassignment.Edit"
-            set_attributes="
-                assignment_id
-                item_id
-                group_id
-                start_date
-                end_date
-                due_date
-                status
-                notes
-            "
-        />
-    </class>
-    <class class=".domain.GroupGroupItemAssignment">
-        <require like_class=".domain.GroupItemAssignment" />
-    </class>
-    <class class=".domain.ItemGroupItemAssignment">
-        <require like_class=".domain.GroupItemAssignment" />
     </class>
     
     <class class=".domain.Constituency" >

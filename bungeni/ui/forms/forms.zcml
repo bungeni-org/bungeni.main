@@ -444,32 +444,6 @@
         permission="bungeni.signatory.Delete"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-    
-    <!-- group item assignments-->
-    <browser:page name="add" 
-        for="bungeni.models.domain.GroupGroupItemAssignmentContainer"
-        class=".common.AddForm"
-        permission="bungeni.groupitemassignment.Add"
-        layer="bungeni.ui.interfaces.IBungeniSkin"
-    />
-    <browser:page name="add"
-        for="bungeni.models.domain.ItemGroupItemAssignmentContainer"
-        class=".common.AddForm"
-        permission="bungeni.groupitemassignment.Add"
-        layer="bungeni.ui.interfaces.IBungeniSkin"
-    />
-    <browser:page name="edit"
-        for="bungeni.models.interfaces.IGroupGroupItemAssignment"
-        class=".common.EditForm"
-        permission="bungeni.groupitemassignment.Edit"
-        layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer"
-    />
-    <browser:page name="edit" 
-        for="bungeni.models.interfaces.IItemGroupItemAssignment"
-        class=".common.EditForm"
-        permission="bungeni.groupitemassignment.Edit"
-        layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer"
-    />
 
     <!-- events -->
     <browser:page name="add" for="bungeni.models.domain.EventContainer"

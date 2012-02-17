@@ -36,9 +36,7 @@ from bungeni.alchemist.container import valueKey
 from bungeni.models.interfaces import ISubRoleAnnotations
 from bungeni.models.interfaces import IBungeniGroup
 from bungeni.models import schema, domain, utils, delegation
-from bungeni.models.interfaces import (ITranslatable, ISignatory,
-    IGroupGroupItemAssignment
-)
+from bungeni.models.interfaces import (ITranslatable, ISignatory,)
 
 from bungeni.core.translation import translate_obj
 from bungeni.core.language import get_default_language
@@ -916,40 +914,6 @@ class CommitteeSource(SpecializedSource):
         return query
 
 
-class CommitteeAssignmentSource(SpecializedSource):
-
-    def constructQuery(self, context):
-        session= Session()
-        trusted=removeSecurityProxy(context)
-        parliament_id = self._get_parliament_id(context)
-        trusted = removeSecurityProxy(context)
-        assigned_committee_ids = []
-        if IGroupGroupItemAssignment.providedBy(trusted):
-            committee_id = getattr(trusted, "group_id", None)
-            if committee_id:
-                query = session.query(domain.Committee).filter(
-                    sql.and_(
-                        domain.Committee.parent_group_id == parliament_id,
-                        domain.Committee.group_id == committee_id
-                    )
-                )
-                return query
-            else:
-                assigned_committee_ids = \
-                    [ comm.group_id for comm in trusted.__parent__.values() ]
-        else:
-            assigned_committee_ids = \
-                [ comm.group_id for comm in trusted.values() ]
-        query = session.query(domain.Committee).filter(
-            sql.and_(
-                domain.Committee.status == 'active',
-                domain.Committee.parent_group_id == parliament_id,
-                sql.not_(
-                    domain.Committee.group_id.in_(assigned_committee_ids)
-                )
-            )
-        )
-        return query
 
 class MotionPartySource(SpecializedSource):
 

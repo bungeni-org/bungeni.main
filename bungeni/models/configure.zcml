@@ -11,9 +11,6 @@
     why is the include="domain.zcml" above commented? 
     -->
     
-    <!-- Assignment Infrastructure -->
-    <include file="assignment.zcml"/>
-    
     <!-- Settings for Users -->
     <adapter for=".interfaces.IBungeniUser"
         factory=".settings.UserSettings"

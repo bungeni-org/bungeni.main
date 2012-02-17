@@ -302,13 +302,6 @@
      weight="60"
      />
 
-    <browser:viewlet name="bungeni.viewlet.assigned-items"
-        manager=".interfaces.ISubFormViewletManager"
-        class=".viewlets.AssignedItemsViewlet"
-        for="bungeni.models.interfaces.ICommittee"
-        permission="zope.View"
-        weight="30"
-    />
 
     <browser:viewlet name="bungeni.viewlet.committee-sittings"
         manager=".interfaces.ISubFormViewletManager"
@@ -509,14 +502,6 @@
         for="bungeni.models.interfaces.IPoliticalGroup"
         permission="zope.View"
         weight="10"
-    />
-
-    <browser:viewlet name="bungeni.viewlet.item-assignments"
-        manager=".interfaces.ISubFormViewletManager"
-        class=".viewlets.AssignedGroupsViewlet"
-        for="bungeni.models.interfaces.IBungeniParliamentaryContent"
-        permission="zope.View"
-        weight="30"
     />
 
   <!--browser:page

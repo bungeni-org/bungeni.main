@@ -54,9 +54,6 @@
         factory=".globalsettings.BungeniSettings"
     />
     
-    <!-- Assignment Infrastructure moved to bungeni.model -->
-    <!--include file="assignment.zcml"/-->
-    
     
     <!-- Searching -->
     <utility component=".index.searcher" />
