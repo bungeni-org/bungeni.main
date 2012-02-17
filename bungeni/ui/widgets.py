@@ -37,9 +37,8 @@ from zc.resourcelibrary import need
 
 from bungeni.alchemist import Session
 from bungeni.models import domain
-from bungeni.core.i18n import _
-from bungeni.ui.i18n import _ as _ui
-from bungeni.ui.utils import url, debug, date
+from bungeni.ui.i18n import _
+from bungeni.ui.utils import url, debug, date, misc
 from bungeni.ui.interfaces import IGenenerateVocabularyDefault
 from bungeni.models.utils import get_db_user_id
 from bungeni.core.language import get_default_language
@@ -60,6 +59,22 @@ class TextWidget(zope.formlib.widgets.TextWidget):
 class LongTextWidget(TextWidget):
     displayWidth = 90
 
+class ComputedTitleWidget(zope.formlib.widgets.DisplayWidget):
+    """Computes a title and renders it if title field is empty
+    """
+    displayWidth = 90
+    def __call__(self):
+        if self._renderedValueSet():
+            value = self._data
+        else:
+            value = self.context.default
+        if (value == self.context.missing_value) or (len(value)==0):
+            context = self.__parent__.context
+            body = getattr(context, "body_text", None)
+            if (body != None) and (body != self.context.missing_value):
+                return misc.text_snippet(body, self.displayWidth)
+            return _(u"Unknown")
+        return super(ComputedTitleWidget, self).__call__()
 
 class HiddenTextWidget(zope.formlib.widgets.TextWidget):
     def __call__(self):
@@ -230,7 +245,7 @@ class FileDisplayWidget(zope.formlib.widgets.DisplayWidget):
     def __call__(self):
         return u'<a href="%s/download"> %s </a>' \
             % (url.absoluteURL(self.__parent__.context, self.request),
-                translate(_ui("download"), context=self.request),
+                translate(_("download"), context=self.request),
             )
 
 class ImageDisplayWidget(zope.formlib.widgets.DisplayWidget):

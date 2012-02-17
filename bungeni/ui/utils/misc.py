@@ -12,13 +12,14 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.ui.utils.misc")
 
-from bungeni.ui.i18n import _
 from types import StringTypes, ListType
-
-from bungeni.core.workflow import interfaces
-
 import os
 import re
+import string
+from lxml import html
+
+from bungeni.core.workflow import interfaces
+from bungeni.ui.i18n import _
 
 REGEX_FOR_SLUGS = re.compile(u"[^\w\.]")
 
@@ -134,3 +135,39 @@ def slugify(string_to_slug):
     slug = unicode(string_to_slug)
     slug = re.sub(REGEX_FOR_SLUGS, u'_', slug)
     return slug
+
+
+def text_snippet(text, length):
+    """Generates a text snippet no longer than `length` from `text`
+    
+    >>> from bungeni.ui.utils.misc import text_snippet
+    >>> text_snippet("", 10)
+    u'No Text'
+    >>> text_snippet("Some Text", 10)
+    u'Some Text'
+    >>> text_snippet("Some Text", 5)
+    u'Some'
+    >>> text_snippet("SomeText", 5)
+    u'SomeT'
+    >>> text_snippet("non ascii and spaces ĆýĊĔ", 30)
+    u'non ascii and spaces \xc4\x86\xc3\xbd\xc4\x8a\xc4\x94'
+    >>> text_snippet("non ascii and spaces ĆýĊĔ", 20)
+    u'non ascii and spaces'
+    >>> text_snippet("<div>HTML</div> Content", 10)
+    u'HTML'
+    >>> text_snippet("<div>HTML</div> Content", 20)
+    u'HTML Content'
+
+    """
+    if not len(text):
+        return _(u"No Text")
+    html_body = html.fromstring(text)
+    html_text = html.tostring(html_body, method="text", encoding=unicode)
+    title = html_text[0:length]
+    if len(title) == length:
+        if (html_text[length] not in (string.whitespace + string.punctuation)):
+            parts = title.split()
+            if len(parts) > 1:
+                parts.pop()
+                title = u" ".join(parts).strip()
+    return title.strip()

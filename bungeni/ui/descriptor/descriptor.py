@@ -2345,6 +2345,7 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
             property=schema.TextLine(title=_("Title")),
             edit_widget=widgets.TextWidget,
             add_widget=widgets.TextWidget,
+            view_widget=widgets.ComputedTitleWidget
         ),
         Field(name="full_name", # [user]
             modes="view edit add",
