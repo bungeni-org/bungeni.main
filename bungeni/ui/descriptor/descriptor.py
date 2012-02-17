@@ -2127,6 +2127,201 @@ class AttachedFileVersionDescriptor(ModelDescriptor):
     )
 
 
+class DocumentDescriptor(ModelDescriptor):
+    localizable = False
+    default_field_order = [
+        "short_title",
+        "long_title",
+        "acronym",
+        "description",
+        "body",
+        "language",
+        #"type",
+        "doc_type",
+        #"doc_procedure",
+        "type_number",
+        #"doc_id",
+        "parliament_id",
+        "owner_id",
+        "registry_number",
+        "uri",
+        "group_id",
+        "status",
+        "status_date",
+        #"amc_signatories",
+        #"amc_attachments",
+        #"amc_events",
+        "submission_date",
+        #"admissable_date",
+        #"signatories", 
+        #"attachments",
+        #"events",
+        # subject
+        # coverage
+        # geolocation
+        # head_id
+        "timestamp",
+    ]
+    fields = [
+        # amc_signatories
+        # amc_attachments
+        # amc_events
+        Field(name="submission_date", # [derived]
+            modes="view listing",
+            localizable=[ show("view listing"), ],
+            property=schema.Date(title=_("Submission Date"), required=False),
+            listing_column=day_column("submission_date", _("Submission Date")),
+        ),
+        #   admissible_date
+        # owner
+        # signatories
+        # attachments
+        # events
+        # doc_id
+        Field(name="parliament_id", # [sys]
+            modes="view listing",
+            localizable=[ hide("view listing"), ],
+            property=schema.Choice(title=_("Parliament"),
+                source=vocabulary.DatabaseSource(domain.Parliament,
+                    token_field="parliament_id",
+                    title_field="short_name", # !+ GROUP_DOC
+                    value_field="parliament_id"
+                ),
+            ),
+        ),
+        Field(name="owner_id", # [user-req]
+            modes="view edit add listing",
+            localizable=[
+                show("edit"),
+                hide("view listing", "bungeni.Anonymous"),
+            ],
+            property=schema.Choice(title=_("Moved by"),
+                description=_("Select the user who moved the document"),
+                source=vocabulary.MemberOfParliamentDelegationSource("owner_id"),
+            ),
+            listing_column=linked_mp_name_column("owner_id", _("Name"), "owner"),
+            add_widget=widgets.MemberDropDownWidget,
+            view_widget=widgets.MemberURLDisplayWidget,
+        ),
+        # type
+        Field(name="doc_type", # [user-req]
+            modes="view edit add listing",
+            localizable=[ 
+                show("view edit listing"), 
+            ],
+            property=schema.Choice(title=_("Document Type"),
+                source=vocabulary.bill_type, # !+PLACEHOLDER_DOC_TYPE
+            ),
+            listing_column=vocabulary_column("doc_type",
+                "Document Type",
+                vocabulary.bill_type # !+PLACEHOLDER_DOC_TYPE
+            ),
+        ),
+        # doc_procedure
+        Field(name="type_number", # [sys]
+            modes="view listing",
+            localizable=[ 
+                show("view"),
+                hide("listing") 
+            ],
+            property=schema.Int(title=_("Sequential Number"), required=False),
+        ),
+        Field(name="registry_number", # [user]
+            modes="view edit listing",
+            localizable=[
+                show("view"),
+                hide("edit listing"),
+            ],
+            property=schema.Int(title=_("Registry number"), required=False),
+        ),
+        Field(name="uri", # [user]
+            modes="view edit listing",
+            localizable=[ 
+                show("view edit"), 
+                hide("listing"), 
+            ],
+            property=schema.Text(title=_("URI"), required=False),
+        ),
+        Field(name="acronym"),
+        Field(name="short_title", # [user-req]
+            modes="view edit add listing",
+            localizable=[
+                show("view edit listing"),
+            ],
+            property=schema.TextLine(title=_("Title")),
+            edit_widget=widgets.TextWidget,
+            add_widget=widgets.TextWidget,
+        ),
+        Field(name="long_title", # [user]
+            modes="view edit add",
+            localizable=[
+                show("view edit add"),
+            ],
+            property=schema.TextLine(title=_("Summary"), required=False),
+            edit_widget=widgets.LongTextWidget,
+            add_widget=widgets.LongTextWidget,
+        ),
+        Field(name="description"),
+        LanguageField("language"), # [user-req]
+        Field(name="body", # [rtf]
+            modes="view edit add",
+            localizable=[ show("view"), ],
+            property=schema.Text(title=_("Text")),
+            view_widget=widgets.HTMLDisplay,
+            edit_widget=widgets.RichTextEditor,
+            add_widget=widgets.RichTextEditor,
+        ),
+        Field(name="status", label=_("Status"), # [sys]
+            modes="view listing",
+            localizable=[
+                show("view listing"),
+            ],
+            property=schema.Choice(title=_("Status"),
+                vocabulary="bungeni.vocabulary.workflow",
+            ),
+            listing_column=workflow_column("status", "Workflow status"),
+        ),
+        Field(name="status_date", label=_("Status date"), # [sys]
+            modes="view listing",
+            localizable=[
+                show("view listing"),
+            ],
+            property=schema.Date(title=_("Status Date"), required=False),
+            listing_column=day_column("status_date", _("Status date")),
+        ),
+        Field(name="group_id", # [user]
+            modes="view edit add listing",
+            localizable=[ 
+                show("view edit add"),
+                hide("listing") 
+            ],
+            property=schema.Choice(title=_("Group"),
+                source=vocabulary.MinistrySource("ministry_id"), # !+PLACEHOLDER_GROUP_SOURCE
+                required=False
+            ),
+        ),
+        # subject
+        # coverage
+        # geolocation
+        # head_id
+        Field(name="timestamp", # [sys]
+            modes="edit",
+            localizable=[ show("edit"), ],
+            property=schema.Datetime(title=_(""), required=False),
+            edit_widget=widgets.HiddenTimestampWidget,
+        ),
+    ]
+
+class EventDescriptor(DocumentDescriptor):
+    localizable = True
+    display_name = _("Event")
+    container_name = _("Events")
+    
+    fields = deepcopy(DocumentDescriptor.fields)
+
+
+#
+
 class ParliamentaryItemDescriptor(ModelDescriptor):
     localizable = False
     
@@ -2740,60 +2935,6 @@ class QuestionVersionDescriptor(VersionDescriptor):
     display_name = _("Question version")
     container_name = _("Versions")
     fields = deepcopy(VersionDescriptor.fields)
-
-
-class EventItemDescriptor(ParliamentaryItemDescriptor):
-    localizable = True
-    display_name = _("Event")
-    container_name = _("Events")
-    fields = [
-        Field(name="short_name", # [user-req]
-            modes="view edit add listing",
-            localizable=[ 
-                show("view edit listing"),
-            ],
-            property=schema.TextLine(title=_("Title")),
-            edit_widget=widgets.TextWidget,
-            add_widget=widgets.TextWidget,
-        ),
-        #!+SCHEMA(murithi, 06-2011) should event items inherit owner?
-        Field(name="owner_id", # [user-req]
-            modes="view edit add listing",
-            localizable=[ 
-                show("edit"),
-                hide("listing"),
-                hide("view", "bungeni.Anonymous"),
-            ],
-            property=schema.Choice(title=_("Owner"),
-                source=vocabulary.DatabaseSource(domain.User,
-                    token_field="user_id",
-                    title_field="fullname",
-                    value_field="user_id"
-                )
-            ),
-        ),
-        LanguageField("language"),
-        Field(name="body_text", # [rtf]
-            modes="view edit add",
-            localizable=[ 
-                show("view edit"),
-            ],
-            property=schema.Text(title=_("Text")),
-            view_widget=widgets.HTMLDisplay,
-            edit_widget=widgets.RichTextEditor,
-            add_widget=widgets.RichTextEditor,
-        ),
-        Field(name="event_date", # [user-req]
-            modes="view edit add listing",
-            localizable=[ 
-                show("view edit listing"),
-            ],
-            property=schema.Datetime(title=_("Date")),
-            listing_column=day_column("event_date", _("Date")),
-            edit_widget=widgets.DateTimeWidget,
-            add_widget=widgets.DateTimeWidget,
-        ),
-    ]
 
 
 class TabledDocumentDescriptor(ParliamentaryItemDescriptor):
@@ -3546,7 +3687,7 @@ def catalyse_descriptors():
             cls = getattr(module, key)
             try:
                 assert IModelDescriptor.implementedBy(cls)
-                # we decorate with the the source code line number for the cls
+                # we decorate with the source code line number for the cls
                 decorated.append((inspect.getsourcelines(cls)[1], cls))
             except (TypeError, AttributeError, AssertionError):
                 debug.log_exc(sys.exc_info(), log_handler=log.debug)

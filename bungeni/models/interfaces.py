@@ -152,8 +152,9 @@ class IVersionContainer(IBungeniContainer):
 class IHeading(IBungeniContent):
     pass
 
-class IEventItem(IBungeniContent):
+class IEvent(IBungeniContent):
     pass
+
 
 # !+IITEMVersion(mr, sep-2011): should IITEMVersion exist at all? if so, 
 # should it inherit from IITEM, or from IVersion? Note that 

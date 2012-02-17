@@ -339,8 +339,8 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="22"
     />
-    <browser:menuItem menu="context_actions"
-        for="bungeni.models.domain.EventItem"
+    <browser:menuItem menu="context_actions" 
+        for="bungeni.models.interfaces.IEvent"
         action="delete"
         title="Delete"
         order="99"
@@ -1219,7 +1219,7 @@
         />
     </browser:menuItems>
     <browser:menuItems menu="context_actions"
-        for="bungeni.models.interfaces.IBungeniContent"
+        for="bungeni.core.workflow.interfaces.IWorkflowed"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         >
         <browser:menuItem action="workflow" title="Workflow" order="20" />

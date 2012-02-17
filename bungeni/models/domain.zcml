@@ -7,6 +7,89 @@
         !+DOMAIN_SCHEMA(mr, aug-2010) keep in sync with domain.py, unittests?
     -->
     
+    <!-- document -->
+    
+    <class class=".domain.Document">
+        <!-- domain / orm / schema -->
+        <require permission="zope.View"
+            attributes="
+                amc_signatories
+                amc_attachments
+                amc_events
+                    assignedgroups
+                    submission_date
+                    admissible_date
+                                    
+                owner
+                signatories
+                attachments
+                events
+                
+                doc_id
+                parliament_id
+                owner_id
+                type
+                doc_type
+                doc_procedure
+                type_number
+                registry_number
+                uri
+                acronym
+                short_title
+                long_title
+                description
+                language
+                body
+                status
+                status_date
+                group_id
+                subject
+                coverage
+                geolocation
+                head_id
+                timestamp
+            "
+        />
+        <require permission="zope.View"
+            set_attributes="timestamp"
+        /><!-- !+TIMESTAMP(mr, jul-2011) granting edit on timestamp to anyone 
+        with view privilege, as an item, while not essentuially being editable 
+        may still be affected by the user's action e.g transited to another 
+        state without "any modifications". Previous to circa r8460, this was 
+        not an issue, and the user was being allowed to set timestamp even if
+        no edit permission on the item.
+        -->
+    </class>
+    
+    <class class=".domain.Event">
+        <require like_class=".domain.Document" />
+        <require permission="bungeni.event.Edit"
+            set_attributes="
+                owner_id
+                type
+                doc_type
+                doc_procedure
+                type_number
+                registry_number
+                uri
+                acronym
+                short_title
+                long_title
+                description
+                language
+                body
+                status
+                status_date
+                group_id
+                subject
+                coverage
+                geolocation
+                head_id
+            "
+        />
+    </class>
+    
+    
     
     <!-- parliamentary items -->
 
@@ -234,30 +317,6 @@
             we use instead the permission used in the transition -->
         <require permission="bungeni.tableddocument.wf.completed.admissible"
             set_attributes="tabled_document_number"
-        />
-    </class>
-    
-    <class class=".domain.EventItem">
-        <require like_class=".domain.ParliamentaryItem" />
-        <require permission="zope.View"
-            attributes="
-                event_item_id
-                item_id
-                event_date
-            "
-        />
-        <require permission="bungeni.event.Edit"
-            set_attributes="
-                event_date
-                parliamentary_item_id
-                owner_id
-                language
-                short_name
-                full_name
-                body_text
-                note
-                receive_notification
-            "
         />
     </class>
     

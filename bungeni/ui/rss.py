@@ -598,15 +598,15 @@ class AkomantosoXMLView(BrowserView):
         if hasattr(ob, "event"):
             if len(ob.event) > 0:
                 lifecycle_element = self.create_element("lifecycle",
-                                                        source="#bungeni")
+                    source="#bungeni")
                 for item in ob.event.values():
                     event_element = self.create_element("event",
-                                                        id="evn%s" % item.event_item_id,
-                                                        type="generation",
-                                                        date=item.event_date.strftime("%Y-%m-%d"),
-                                                        source="orig")
+                        id="evn%s" % item.doc_id,
+                        type="generation",
+                        date=item.event_date.strftime("%Y-%m-%d"),
+                        source="orig")
                     lifecycle_element.appendChild(event_element)
-
+                
                 meta_element.appendChild(lifecycle_element)
 
         #References

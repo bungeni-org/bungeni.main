@@ -62,6 +62,11 @@ def configurable_schema(kls):
     """
     # assign interface (changes property added downstream)
     entity_name = un_camel(kls.__name__)
+    
+    # !+EVENT_DOC same doc table, so no need to create changes/versions/etc...
+    if entity_name in ["event"]:
+        return
+    
     tbl = globals()[plural(entity_name)]
     # auditable
     if interfaces.IAuditable.implementedBy(kls):
@@ -951,6 +956,185 @@ attached_files_index = rdb.Index("attfiles_itemid_idx",
 
 registrySequence = rdb.Sequence("registry_number_sequence", metadata = metadata)
 
+
+# Document:
+# base table for a workflowed parliamentary document
+doc_sequence = rdb.Sequence("doc_sequence")
+doc = rdb.Table("doc", metadata,
+    # DB id
+    rdb.Column("doc_id", rdb.Integer, doc_sequence, primary_key=True),
+    
+    # PARLIAMENT
+    # parliament <=> dc:Publisher
+    # The entity responsible for making the resource available. 
+    # Examples of a Publisher include a person, an organization, or a service.
+    # Typically, the name of a Publisher should be used to indicate the entity.
+    # !+PARLIAMENT_ID should be nullable=False, but fails on creating an Event...
+    rdb.Column("parliament_id", rdb.Integer,
+        rdb.ForeignKey("parliaments.parliament_id"),
+        nullable=True
+    ),
+    # !+bicameral(mr, feb-2012) should parliament_id simply always be 
+    # chamber_id, and then have the concept of a chamber group, each of which
+    # related to the singleton parliament group?
+    #rdb.Column("origin_chamber_id", rdb.Integer,
+    #    rdb.ForeignKey("groups.group_id"), # !+ group (singular), chamber
+    #    nullable=True
+    #),
+    
+    # OWNERSHIP
+    # owner <=> no dc equivalent
+    # The bungeni user that submits (either directly, or someone else submits 
+    # on his/her behalf) the document to Parliament. This is the "data owner" 
+    # of the item (and not necessarily the conceptual owner, that may be an 
+    # entity outside of Parliament). 
+    rdb.Column("owner_id", rdb.Integer,
+        rdb.ForeignKey("users.user_id"),
+        nullable=False
+    ),
+
+    # !+dc:Creator / dc:Author, by default this would be owner, but we can 
+    # sometimes have an external source as the creator of a resource e.g a 
+    # 3rd party entity who prepared a tabled document, or a citizen/etc who 
+    # suggested a question to an MP. See Issue 755.
+    #rdb.Column("creator", rdb.Unicode(1024), nullable=True),
+    # !+dc:Contributor, these are the signatories? external contributors?
+    # !+seconder clarify usage; always 1? overlap with signatories?
+    #rdb.Column("seconder_id", rdb.Integer, rdb.ForeignKey("users.user_id")),
+    
+    # TYPE
+    # sub document type discriminator: string enum
+    # for polymorphic_identity <=> dc:Type
+    rdb.Column("type", rdb.Unicode(128), nullable=False),
+    # document typology: string enum (set by sub document type) 
+    # e.g. oral/written, government/member
+    # For validation of this field, we let upstream logic e.g. UI fields
+    # using zope.schema.Choice combined with a vocabulary, to take 
+    # responsibilty of validating this for *this* document type.
+    rdb.Column("doc_type",
+        rdb.Unicode(128),
+        default=None,
+        nullable=True,
+    ),
+    # document procedure: string enum (set by sub document type) 
+    # e.g. urgent/ordinary, private/public
+    rdb.Column("doc_procedure",
+        rdb.Unicode(128),
+        default=None,
+        nullable=True,
+    ),
+    
+    # IDENTIFICATION
+    # document number e.g question_num, bill_num... a progressive number by type
+    # !+registry_number, what is the relation?
+    rdb.Column("type_number", rdb.Integer, nullable=True),
+    # registry_number <=> dc:Identifier
+    # An unambiguous reference to the resource within a given context. 
+    # Recommended best practice is to identify the resource by means of a 
+    # string or number conforming to a formal identification system.
+    rdb.Column("registry_number", rdb.Unicode(128)),
+    # uri, Akoma Ntoso <=> dc:Source
+    # A Reference to a resource from which the present resource is derived. 
+    # The present resource may be derived from the Source resource in whole or 
+    # part.
+    rdb.Column("uri", rdb.Unicode(1024), nullable=True), 
+    
+    # CONTENT
+    rdb.Column("acronym", rdb.Unicode(48)),
+    # !+LABEL(mr, jan-2011) display label e.g. for link text?
+    # short_title <=> dc:Title !+DescriptiveProperties(mr, jan-2011)
+    # The name given to the resource. Typically, a Title will be a name
+    # by which the resource is formally known.
+    rdb.Column("short_title", rdb.Unicode(512), nullable=False), 
+    # long_title <=> no dc equivalent
+    rdb.Column("long_title", rdb.Unicode(1024), nullable=True),
+    # description <=> dc:Description !+DescriptiveProperties(mr, jan-2011)
+    # An account of the content of the resource. Description may include but is
+    # not limited to: an abstract, table of contents, reference to a graphical
+    # representation of content or a free-text account of the content.
+    rdb.Column("description", rdb.UnicodeText, nullable=True),
+    # original language of the document
+    rdb.Column("language", rdb.String(5), nullable=False),
+    rdb.Column("body", rdb.UnicodeText),
+    
+    # WORKFLOW
+    rdb.Column("status", rdb.Unicode(48)),
+    rdb.Column("status_date", rdb.DateTime(timezone=False),
+        server_default=(text("now()")),
+        nullable=False
+    ),
+    # group responsible to "handle" this document... involves workflow: the 
+    # precise meaning, and validation constraints of this is defined by each 
+    # sub-type e.g. ministry for bill & question, group for agendaitem, ...
+    rdb.Column("group_id", rdb.Integer,
+        rdb.ForeignKey("groups.group_id"),
+        nullable=True
+    ),
+    
+    # !+workflow_note/motivation, should be stored on the change table?
+    # !+personal_note, should be elsewhere, see issue 646 
+    # the reviewer may add a recommendation note
+    #rdb.Column("note", rdb.UnicodeText),
+    
+    # NOTIFICATION
+    #!+receive_notification, must certainly be made obsolete...
+    # Receive  Notifications -> triggers notification on workflow change
+    #rdb.Column("receive_notification", rdb.Boolean,
+    #    default=True
+    #),
+    
+    # COVERAGE
+    # duration that a document may be about
+    #rdb.Column("timespan", nullable=True)
+    # subject <=> dc:Subject
+    # The topic of the content of the resource. Typically, a Subject will be 
+    # expressed as keywords or key phrases or classification codes that describe
+    # the topic of the resource. Recommended best practice is to select a value 
+    # from a controlled vocabulary or formal classification scheme.
+    # Hierarchical Controlled Vocabulary Micro Data Format: 
+    # a triple-colon ":::" separated sequence of *key phrase paths*, each of 
+    # which is a double-colon "::" separated sequence of *key phrases*.
+    rdb.Column("subject", rdb.UnicodeText, nullable=True),
+    # coverage <=> dc:Coverage
+    # The extent or scope of the content of the resource. Coverage will 
+    # typically include spatial location (a place name or geographic co-ords), 
+    # temporal period (a period label, date, or date range) or jurisdiction 
+    # (such as a named administrative entity). Recommended best practice is to 
+    # select a value from a controlled vocabulary (for example, the Thesaurus 
+    # of Geographic Names [Getty Thesaurus of Geographic Names, 
+    # http://www.getty.edu/research/tools/vocabulary/tgn/]). Where appropriate, 
+    # named places or time periods should be used in preference to numeric 
+    # identifiers such as sets of co-ordinates or date ranges.
+    # Value uses same micro format as for "subject".
+    rdb.Column("coverage", rdb.UnicodeText, nullable=True),
+    rdb.Column("geolocation", rdb.UnicodeText, nullable=True),
+    # !+DC(mr, jan-2011) consider addition of:
+    # - Format
+    # - Date, auto derive from workflow audit log
+    # - Rights
+    # - Reference, citations of other resources, implied from body content? 
+    # - Relation, e.g. assigned to a Committee
+    
+    # head document (for sub documents e.g. events)
+    rdb.Column("head_id", rdb.Integer, 
+        rdb.ForeignKey("parliamentary_items.parliamentary_item_id"), 
+        #!+EVENT_DOC: tmp, should be: rdb.ForeignKey("doc.doc_id"),
+        nullable=True
+    ),
+    # (event only?) date, needed? auto derive from workflow audit log?
+    #rdb.Column("date", rdb.DateTime(timezone=False),
+    #    nullable=False
+    #),
+    
+    # DB timestamp of last modification
+    rdb.Column("timestamp", rdb.DateTime(timezone=False),
+        server_default=(text("now()")),
+        nullable=False
+    ),
+)
+doc_index = rdb.Index("doc_status_idx", doc.c["status"])
+
+
 # Parliamentary Items:
 # contains the common fields for motions, questions, bills and agenda items.
 parliamentary_items = rdb.Table("parliamentary_items", metadata,
@@ -1224,35 +1408,6 @@ tabled_documents = rdb.Table("tabled_documents", metadata,
     ),
     rdb.Column("link", rdb.String(2000)),
     rdb.Column("tabled_document_number", rdb.Integer),
-)
-
-
-# Events with dates and possibility to upload files.
-#
-# - events are also a parliamentary_item (of type="event", via fk 
-#   event_item_id) where the attributes title, description are stored
-# - events are related (via fk item_id) to a parliamentary item, that must be a
-#   bill, motion, question or tabled_document i.e NOT agendaitam.
-# - adding event_item to a parliamentary_item is NOT audited as a change 
-#   i.e. there is no record added to the *_changes table [!+ maybe
-#   adding an event should be handled similar to e.g. adding an attachment]. 
-#   But event_items must be included in the timeline of the 
-#   parliamentary_item... so, to be consistent with other (time-stamped) 
-#   timeline changes, the event_date here is defined as a DateTime field
-#   (contrary to most date fields on other parliamentary items). 
-
-event_items = rdb.Table("event_items", metadata,
-    rdb.Column("event_item_id", rdb.Integer,
-        rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
-        primary_key=True
-    ),
-    rdb.Column("item_id", rdb.Integer,
-        rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
-        nullable=False
-    ),
-    rdb.Column("event_date", rdb.DateTime(timezone=False),
-        nullable=False
-    ),
 )
 
 

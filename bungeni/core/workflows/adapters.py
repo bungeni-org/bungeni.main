@@ -36,7 +36,7 @@ WORKFLOW_REG = [ # !+bungeni_custom
     ("agendaitem", interfaces.IAgendaItem),
     ("bill", interfaces.IBill),
     ("committee", interfaces.ICommittee),
-    ("event", interfaces.IEventItem),
+    ("event", interfaces.IEvent),
     ("group", interfaces.IBungeniGroup),
     ("groupsitting", interfaces.IGroupSitting),
     ("membership", interfaces.IBungeniGroupMembership),
@@ -121,7 +121,6 @@ def apply_customization_workflow(name):
         "agendaitem": "agenda_item",
         "attachedfile": "attached_file",
         "tableddocument": "tabled_document",
-        "event": "event_item",
         "groupsitting": "group_sitting",
         "membership": "group_membership",
     }

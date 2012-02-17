@@ -83,7 +83,7 @@ class ChangeDataProvider(object):
             
             # changes on item events
             if "event" in self.include_change_types:
-                events = [ e for e in self.head.event_items
+                events = [ e for e in self.head.events
                     if interaction.checkPermission("zope.View", e)
                 ]
                 if events:
@@ -93,14 +93,14 @@ class ChangeDataProvider(object):
                     class EventChange(domain.ItemChanges):
                         def __init__(self, event):
                             self._event = event
-                            self.item_id = event.event_item_id
+                            self.item_id = event.doc_id
                             #change_id
                             #self.content
                             self.head = event.head
                             self.action = "add"
                             self.date_audit = self.date_active = \
                                 event.status_date
-                            self.description = event.short_name
+                            self.description = event.short_title
                             self.notes = None # self.extras
                             self.user = event.owner
                             self.status = event.status
@@ -120,11 +120,10 @@ class ChangeDataProvider(object):
             f for f in head.files ]
         print "---- !+ATTACHED_FILES", list(head.files.values()), head.files.values()
         # events:
-        print "---- !+EVENT", head.event_items, head.event, [ 
+        print "---- !+EVENT", head.events, head.event, [ 
             e for e in head.event ]
-        # !+ why the two attributes item.event_items, item.event:
-        #   event_items -> EventItem instances ?
-        #   event -> Managed bungeni.models.domain.EventItemContainer
+        # !+ why the two attributes item.events (Event instances), 
+        #   item.event (Managed bungeni.models.domain.EventContainer)
         # !+ why is event (container) singular?
         # signatories:
         print "---- !+AUDITLOG SIGNATORIES", head.itemsignatories, \
@@ -141,7 +140,7 @@ class ChangeDataProvider(object):
         # to Alchemist Managed Container of string ids, e.g:
         #   signatories:[Signatory], amc_signatories:Managed(str)
         #   attached_files, (files->) amc_attached_files
-        #   (event_items->) events, (event->) amc_events
+        #   (events->) events, (event->) amc_events
         # or, adopt pattern: @xxx -> amc_xxx.values()
         '''
 

@@ -471,18 +471,18 @@
         layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer"
     />
 
-    <!-- event items -->
-    <browser:page name="add" for="bungeni.models.domain.EventItemContainer"
+    <!-- events -->
+    <browser:page name="add" for="bungeni.models.domain.EventContainer"
         class=".common.AddForm"
         permission="bungeni.event.Add"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-    <browser:page name="edit" for="bungeni.models.domain.EventItem"
+    <browser:page name="edit" for="bungeni.models.interfaces.IEvent"
         class=".common.EditForm"
         permission="bungeni.event.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-    <browser:page name="delete" for="bungeni.models.domain.EventItem"
+    <browser:page name="delete" for="bungeni.models.interfaces.IEvent"
         class=".common.DeleteForm"
         permission="bungeni.event.Delete"
         layer="bungeni.ui.interfaces.IBungeniSkin"

@@ -3,8 +3,9 @@
 # Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
 """Dublin core metadata adapters for various types
-"""
 
+$Id$
+"""
 log = __import__("logging").getLogger("bungeni.core.dc")
 
 from zope import interface
@@ -29,7 +30,7 @@ from bungeni.ui.utils import date, misc
 from bungeni.utils import register
 
 
-@register.adapter(adapts=(interface.Interface,), # adapts="*"
+@register.adapter(adapts=(interface.Interface,), # for="*"
     provides=zope.traversing.interfaces.IPathAdapter, name="dc")
 class DublinCoreMetadataAdapter(object):
     """Generic dublin core metadata adapter which will retrieve
@@ -596,14 +597,14 @@ class UserDelegationDescriptiveProperties(DescriptiveProperties):
 
 
 @register.adapter()
-class EventItemProperties(DescriptiveProperties):
-    component.adapts(interfaces.IEventItem)
+class EventProperties(DescriptiveProperties):
+    component.adapts(interfaces.IEvent)
     
     @property
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return self.translate(context, "short_name")
+        return self.translate(context, "short_title")
 
 
 @register.adapter()

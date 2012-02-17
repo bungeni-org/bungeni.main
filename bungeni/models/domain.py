@@ -118,7 +118,7 @@ class Entity(object):
     # query gets sorted by sort_name
     #sort_replace = None
 
-#############
+#
 
 class ItemChanges(HeadParentedMixin, object):
     """An audit changelog of events in the lifecycle of a parliamentary content.
@@ -194,7 +194,7 @@ def auditable(kls):
     globals()[change_name] = change_kls
     return kls
 configurable_domain.feature_decorators["audit"] = auditable
-    
+
 def versionable(kls):
     """Decorator for versionable domain types, to collect in one place all
     that is needed for a domain type to be versionable.
@@ -599,12 +599,43 @@ class GroupAddress(Address):
     """Group address (official)
     """
 
+#
 
-
-
-class ItemVotes(object):
+class Document(Entity):
+    """Base class for a workflowed parliamentary document.
     """
+    __dynamic_features__ = True
+    interface.implements(
+        interfaces.IBungeniParliamentaryContent,
+        interfaces.ITranslatable
+    )
+    
+    sort_on = ["doc.status_date"]
+    sort_dir = "desc"
+    
+    sort_replace = {"owner_id": ["last_name", "first_name"]}
+    
+    # !+AlchemistManagedContainer #!+item_id->doc_id
+    #amc_signatories = one2many("amc_signatories",
+    #    "bungeni.models.domain.SignatoryContainer", "item_id")
+    #amc_attachments = one2many("amc_attachments",
+    #    "bungeni.models.domain.AttachedFileContainer", "item_id")
+    #amc_events = one2many("amc_events",
+    #    "bungeni.models.domain.EventContainer", "head_id")
+
+    # !+EVENT_DOC tmp dummy values to avoid attr errors, etc,
+    # until base "doc" gains these features...
+    submission_date = None 
+    signatories = []
+    assignedgroups = []
+    files = []
+
+class Event(HeadParentedMixin, Document):
+    """Base class for an event on a document.
     """
+    #!+parliament_id is (has always been) left null for events, how best to 
+    # handle this, possible related constraint e.g. head_id must NOT be null, 
+    # validation, ... ?
 
 class ParliamentaryItem(Entity):
     """
@@ -615,11 +646,10 @@ class ParliamentaryItem(Entity):
         interfaces.IBungeniParliamentaryContent,
         interfaces.ITranslatable
     )
-    #     interfaces.IHeadFileAttachments)
-
+    
     sort_on = ["parliamentary_items.status_date"]
     sort_dir = "desc"
-
+    
     sort_replace = {"owner_id": ["last_name", "first_name"]}
     files = one2many("files",
         "bungeni.models.domain.AttachedFileContainer", "item_id")
@@ -627,7 +657,7 @@ class ParliamentaryItem(Entity):
         "bungeni.models.domain.SignatoryContainer", "item_id")
     # !+NAMING(mr, jul-2011) plural!
     event = one2many("event",
-        "bungeni.models.domain.EventItemContainer", "item_id")
+        "bungeni.models.domain.EventContainer", "head_id") # !+EVENT_DOC
     # !+NAMING(mr, jul-2011) inconsistent... should be assigned_groups
     assignedgroups = one2many("assignedgroups",
         "bungeni.models.domain.GroupGroupItemAssignmentContainer", "item_id")
@@ -856,31 +886,6 @@ class DocumentSource(object):
     """Document source for a tabled document.
     """
 '''
-
-# !+EventItem(mr, sep-2011) why is this a ParlaimentaryItem?
-class EventItem(HeadParentedMixin, ParliamentaryItem):
-    """Bill events with dates and possiblity to upload files.
-
-    bill events have a title, description and may be related to a sitting 
-    (house, committee or other group sittings)
-    via the sitting they acquire a date
-    and an additional date for items that are not related to a sitting.
-
-    Bill events:
-
-       1. workflow related. e.g. submission, first reading etc. 
-       (here we can use the same mechanism as in questions ... 
-       a comment can be written when clicking (schedule for first reading) 
-       then will appear in the calendar ... and cone schedule it will have 
-       a date
-       2. not workflow related events ... we need for the following fieds:
-              * date
-              * body
-              * attachments
-
-    All these "events" they may be listed together, in that case the 
-    "workflow" once should be ... e.g. in bold.
-    """
 
 
 class ScheduleText(Entity):

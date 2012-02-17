@@ -395,6 +395,50 @@ mapper(domain.ResourceBooking, schema.resourcebookings)
 mapper(domain.Venue, schema.venues)
 
 ##############################
+# Document
+
+mapper(domain.Document, schema.doc,
+    polymorphic_on=schema.doc.c.type, # polymorphic discriminator
+    polymorphic_identity="doc", # polymorphic discriminator value
+    properties={
+        "owner": relation(domain.User,
+            primaryjoin=rdb.and_(schema.doc.c.owner_id ==
+                schema.users.c.user_id),
+            uselist=False,
+            lazy=False),
+        # !+AlchemistManagedContaineror, X same as amc_X.values(), property @X?
+        #"signatories": relation(domain.Signatory,
+        #    backref=backref("head",
+        #       remote_side=schema.doc.c.doc_id),
+        #),
+        #"attachments": relation(domain.AttachedFile,
+        #    backref=backref("head",
+        #        remote_side=schema.doc.c.doc_id)
+        #),
+        #"events": relation(domain.Event, uselist=True),
+        
+        # for sub parliamentary docs, non-null implies a sub doc
+        # !+EVENT_DOC tmp, should be to domain.Document
+        "head": relation(domain.ParliamentaryItem,
+            primaryjoin=rdb.and_(schema.doc.c.head_id ==
+                schema.parliamentary_items.c.parliamentary_item_id),
+            uselist=False,
+            lazy=False),
+    }
+)
+
+mapper(domain.Event,
+    inherits=domain.Document,
+    polymorphic_on=schema.doc.c.type, # polymorphic discriminator
+    polymorphic_identity="event", # polymorphic discriminator value
+)
+#!+EVENTS on parliamentary documents:
+# - behave also "like" a parliamentary document
+# - agendaitems should NOT support events?
+# - event should NOT support event
+
+
+##############################
 # Parliamentary Items
 
 mapper(domain.ParliamentaryItem, schema.parliamentary_items,
@@ -419,15 +463,8 @@ mapper(domain.ParliamentaryItem, schema.parliamentary_items,
             backref=backref("head",
                 remote_side=schema.parliamentary_items.c.parliamentary_item_id)
         ),
-        "event_items": relation(domain.EventItem,
-            primaryjoin=rdb.and_(
-                schema.parliamentary_items.c.parliamentary_item_id ==
-                    schema.event_items.c.item_id),
-            uselist=True,
-            # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name
-            backref=backref("head",
-                remote_side=schema.parliamentary_items.c.parliamentary_item_id),
-        ),
+        # !+EVENT_DOC
+        "events": relation(domain.Event, uselist=True),
     }
 )
 
@@ -465,16 +502,6 @@ mapper(domain.Bill, schema.bills,
     polymorphic_on=schema.parliamentary_items.c.type,
     polymorphic_identity="bill",
     properties={}
-)
-
-mapper(domain.EventItem, schema.event_items,
-    inherits=domain.ParliamentaryItem,
-    inherit_condition=(
-        schema.event_items.c.event_item_id ==
-            schema.parliamentary_items.c.parliamentary_item_id
-    ),
-    polymorphic_on=schema.parliamentary_items.c.type,
-    polymorphic_identity="event"
 )
 
 mapper(domain.AgendaItem, schema.agenda_items,
