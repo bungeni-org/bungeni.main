@@ -1095,7 +1095,7 @@ class _AutoCompleteWidget(ItemsEditWidgetBase):
 def AutoCompleteWidget(*attrs, **kw):
   return CustomWidgetFactory(_AutoCompleteWidget, *attrs, **kw)
 
-
+# !+RENAME (mr, feb-2012) nothing specific to members in this widget!
 class MemberDropDownWidget(DropdownWidget):
 
     interface.implements(IGenenerateVocabularyDefault)

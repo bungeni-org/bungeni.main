@@ -673,11 +673,18 @@ class MinistrySource(SpecializedSource):
 class UserSource(SpecializedSource):
     """ All active users """
     def constructQuery(self, context):
-        session= Session()
-        
+        session = Session()
         users = session.query(domain.User).order_by(
-                domain.User.last_name, domain.User.first_name)
+            domain.User.last_name, domain.User.first_name)
         return users
+
+class GroupSource(SpecializedSource):
+    """ All active groups """
+    def constructQuery(self, context):
+        # !+GROUP_FILTERS, refine, check for active, ...
+        groups = Session().query(domain.Group).order_by(
+            domain.Group.short_name, domain.Group.full_name)
+        return groups
 
 class MembershipUserSource(UserSource):
     """Filter out users already added to a membership container

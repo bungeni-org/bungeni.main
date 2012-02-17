@@ -117,7 +117,7 @@ def dc_property_column(name, title, property_name="title"):
     return _column(name, title, renderer)
 
 def _get_related_user(item_user, attr):
-    """Get trhe user instance that is related to this item via <attr>,
+    """Get the user instance that is related to this item via <attr>,
     or if <attr> is None, return the item_user itself.
     """
     if attr:
@@ -2025,6 +2025,7 @@ class DocumentDescriptor(ModelDescriptor):
             ],
             property=schema.Choice(title=_("Moved by"),
                 description=_("Select the user who moved the document"),
+                # "legal" parliamentary documents may only be moved by an MP
                 source=vocabulary.MemberOfParliamentDelegationSource("owner_id"),
             ),
             listing_column=linked_mp_name_column("owner_id", _("Name"), "owner"),
@@ -2146,9 +2147,27 @@ class EventDescriptor(DocumentDescriptor):
     container_name = _("Events")
     
     fields = deepcopy(DocumentDescriptor.fields)
+    with get_field(fields, "owner_id") as f:
+        # "non-legal" parliamentary documents may only be added by any user
+        f.property = schema.Choice(title=_("Owner"),
+            source=vocabulary.DatabaseSource(domain.User,
+                token_field="user_id",
+                title_field="fullname",
+                value_field="user_id"))
+        f.listing_column = user_name_column("owner_id", _("Name"), "owner")
+        f.view_widget = None
+        # !+ select or autocomplete... ?
+        #f.edit_widget=widgets.AutoCompleteWidget(remote_data=True,
+        #        yui_maxResultsDisplayed=5),
+        #f.add_widget=widgets.AutoCompleteWidget()
+    with get_field(fields, "group_id") as f:
+        f.property=schema.Choice(title=_("Group"),
+            source=vocabulary.GroupSource( 
+                token_field="group_id",
+                title_field="short_name",
+                value_field="group_id")) # !+GROUP_FILTERS
+    del f # remove f from class namespace
 
-
-#
 
 class ParliamentaryItemDescriptor(ModelDescriptor):
     localizable = False
