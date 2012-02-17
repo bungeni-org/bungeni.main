@@ -34,23 +34,22 @@ from bungeni.ui.diff import textDiff
 
 
 FormTemplate = namedtemplate.NamedTemplateImplementation(
-    ViewPageTemplateFile('templates/form.pt')
+    ViewPageTemplateFile("templates/form.pt")
 )
 
 ContentTemplate = namedtemplate.NamedTemplateImplementation(
-    ViewPageTemplateFile('templates/content.pt')
+    ViewPageTemplateFile("templates/content.pt")
 )
 
 def hasDeletePermission(context):
     """Generic check if the user has rights to delete the object. The
     permission must follow the convention:
-    ``bungeni.<classname>.Delete`` where 'classname' is the lowercase
+    ``bungeni.<classname>.Delete`` where "classname" is the lowercase
     of the name of the python class.
     """
-    
     interaction = zope.security.management.getInteraction()
     class_name = context.__class__.__name__ 
-    permission_name = 'bungeni.' + class_name.lower() +'.Delete'
+    permission_name = "bungeni.%s.Delete" % class_name.lower()
     return interaction.checkPermission(permission_name, context)
 
 def set_widget_errors(widgets, errors):
@@ -108,11 +107,11 @@ class ItemScheduleReorderForm(PageForm):
 
     class IReorderForm(interface.Interface):
         mode = schema.Choice(
-            ('up', 'down'),
+            ("up", "down"),
             title=_(u"Direction"),
             required=True)
         field = schema.Choice(
-            ('planned_order', 'real_order'),
+            ("planned_order", "real_order"),
             title=_(u"AM"),
             required=True)
             
@@ -136,8 +135,8 @@ class ItemScheduleReorderForm(PageForm):
         - Next item gets its category cleared 
 
         """
-        field = data['field']
-        mode = data['mode']
+        field = data["field"]
+        mode = data["mode"]
         container = copy.copy(removeSecurityProxy(self.context.__parent__))
         name = self.context.__name__
         schedulings = container.batch(order_by=field, limit=None)
@@ -147,7 +146,8 @@ class ItemScheduleReorderForm(PageForm):
             
         index = ordering.index(name)
 
-        if mode == 'up' and index > 0:
+        # !+LOGIC(mr, feb-2012) what is next for??
+        if mode == "up" and index > 0:
             # if this item has a category assigned, and there's an
             # item after it, swap categories with it
             if  index < len(ordering)-1:
@@ -157,9 +157,8 @@ class ItemScheduleReorderForm(PageForm):
             setattr(self.context, field, getattr(prev, field))
             setattr(prev, field, order)
 
-        if mode == 'down' and index < len(ordering) - 1:
+        if mode == "down" and index < len(ordering) - 1:
             next = container[ordering[index+1]]
- 
 
 class ItemScheduleDeleteForm(DeleteForm):
     def get_subobjects(self):
@@ -178,7 +177,7 @@ class ItemScheduleDeleteForm(DeleteForm):
         2) Delete any discussion items that have been associated to
         this scheduling.
         """
-        field = self.request.form['field']
+        field = self.request.form["field"]
         reorder_form = ItemScheduleReorderForm(self.context, self.request)
         container = copy.copy(removeSecurityProxy(self.context.__parent__))
         subset_query = container.subset_query
@@ -186,7 +185,7 @@ class ItemScheduleDeleteForm(DeleteForm):
             subset_query,
             container.domain_model.planned_order > self.context.planned_order)
         for i in range(len(container) * 2):
-            reorder_form.handle_move.success({'mode': 'down', 'field': field})
+            reorder_form.handle_move.success({"mode": "down", "field": field})
         container.subset_query = subset_query
 
         count = 0
@@ -218,8 +217,8 @@ class ItemScheduleContainerDeleteForm(DeleteForm):
         sch = session.query(domain.ItemSchedule).filter(
             sql.and_(
                 model_schema.item_schedules.c.group_sitting_id == group_sitting_id,
-                model_schema.item_schedules.c.item_id == data['item_id'],
-                model_schema.item_schedules.c.item_type == data['item_type']
+                model_schema.item_schedules.c.item_id == data["item_id"],
+                model_schema.item_schedules.c.item_type == data["item_type"]
             )).all()        
         for i in sch:
             session.delete(i)

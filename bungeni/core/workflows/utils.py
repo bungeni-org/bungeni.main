@@ -256,7 +256,8 @@ def schedule_sitting_items(context):
     
     for schedule in context.item_schedule:
         wf = IWorkflow(schedule.item, None)
-        if wf is None: continue
+        if wf is None: 
+            continue
         try:
             if wf.get_state("scheduled"):
                 fireTransitionScheduled(schedule.item)

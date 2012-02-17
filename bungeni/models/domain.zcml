@@ -689,9 +689,9 @@
         />
         <require permission="bungeni.sittingschedule.Edit"
             set_attributes="
-            schedule_text_id
-            text
-            group_id
+                schedule_text_id
+                text
+                group_id
             "
         />
     </class>

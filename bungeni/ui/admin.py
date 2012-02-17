@@ -42,9 +42,6 @@ class UserFormatter(common.AjaxTableFormatter):
         return self.fields
 '''
 
-class UserListing(BrowserView):
-    pass
-
 
 ''' !+UNUSED_BROKEN(mr, nov-2011) admin/groups, with security declarations
 below, gives:
@@ -142,11 +139,6 @@ class EmailSettings(catalyst.EditForm):
         self.adapters = {interfaces.IBungeniEmailSettings : settings}
         super(EmailSettings, self).update()
 
-
-class UserGroups(BrowserView):
-    
-    def table(self):
-        pass
 
 
 @register.view(None, IBungeniSkin, name="user-settings")

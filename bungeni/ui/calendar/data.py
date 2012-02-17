@@ -20,6 +20,9 @@ from bungeni.alchemist import Session
 from bungeni.ui.i18n import _
 
 #!+CALENDAR(mb, Jan-2012) This should come from capi or workflow configuration
+#!+SCHEDULE(mr, feb-2012) this can already be added as a feature on each 
+# respective workflow e.g. <feature name="schedule" enabled="true" />, and then
+# can be tested for with: workflow.has_feature"schedule")
 SCHEDULABLE_TYPES = ["bill", "question", "motion", "tableddocument", "agendaitem"]
 
 def get_schedulable_types():

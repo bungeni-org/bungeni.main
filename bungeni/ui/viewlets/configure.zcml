@@ -101,45 +101,38 @@
 
   <!-- scheduling -->
 
-<!-- Languages -->
+    <!-- Languages -->
+    
+    <browser:page name="change-language"
+        for="*"
+        permission="zope.Public"
+        class=".language.ChangeLanguage"
+    />
+    
+    <browser:viewlet name="bungeni.content.languages"
+        for="*"
+        permission="zope.Public"
+        manager="ploned.ui.interfaces.IPortalHeaderManager"
+        class=".language.LanguageViewlet"
+    />
+    <browser:viewlet name="bungeni.activity_indicator"
+        for="*"
+        permission="zope.Public"
+        manager="ploned.ui.interfaces.IPortalHeaderManager"
+        class=".enhance.ProcessingViewlet"
+    />
+    <browser:viewlet name="bungeni.reports.preview"
+        for="bungeni.ui.interfaces.IWorkspaceReportGeneration"
+        permission="zope.View"
+        manager="ploned.ui.interfaces.IBelowContentManager"
+        class=".reports.ReportPreview"
+    />
+    <browser:viewlet name="bungeni.scheduling.agenda.preview"
+        for="bungeni.models.interfaces.IGroupSitting"
+        layer="bungeni.ui.interfaces.IConfirmWorkflowChangeLayer"
+        permission="zope.View"
+        manager="ploned.ui.interfaces.IBelowContentManager"
+        class=".schedule.AgendaPreview"
+    />
 
-   <browser:page
-     for="*"
-     permission="zope.Public"
-     name="change-language"
-     class=".language.ChangeLanguage"
-     />
-
-  <browser:viewlet
-     name="bungeni.content.languages"
-     for="*"
-     permission="zope.Public"
-     manager="ploned.ui.interfaces.IPortalHeaderManager"
-     class=".language.LanguageViewlet"
-     />
-
-  <browser:viewlet
-     name="bungeni.activity_indicator"
-     for="*"
-     permission="zope.Public"
-     manager="ploned.ui.interfaces.IPortalHeaderManager"
-     class=".enhance.ProcessingViewlet"
-     />
-
-  <browser:viewlet
-    name="bungeni.reports.preview"
-    for="bungeni.ui.interfaces.IWorkspaceReportGeneration"
-    permission="zope.View"
-    manager="ploned.ui.interfaces.IBelowContentManager"
-    class=".reports.ReportPreview"
-  />
-
-  <browser:viewlet
-    name="bungeni.scheduling.agenda.preview"
-    for="bungeni.models.interfaces.IGroupSitting"
-    layer="bungeni.ui.interfaces.IConfirmWorkflowChangeLayer"
-    permission="zope.View"
-    manager="ploned.ui.interfaces.IBelowContentManager"
-    class=".schedule.AgendaPreview"
-  />
 </configure>

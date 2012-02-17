@@ -51,7 +51,7 @@ def get_wf_state(context, wf_status=None):
     workflow = interfaces.IWorkflow(context, None)
     if workflow is None:
         log.warn("No workflow exists for %s", context)
-        return ""
+        return "" # !+ !!
     if wf_status is None:
         wf_status = interfaces.IStateController(context).get_status()
     return workflow.get_state(wf_status).title

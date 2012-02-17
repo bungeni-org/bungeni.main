@@ -221,7 +221,7 @@ def _protect(cls, protect=None, like_class=None):
             permission:str: {
                 attributes:[str], 
                 set_attributes:[str],   # tbd, zope.security.metaconfigure
-                interface:Interface,    # tbd
+                interface:Interface,
                 set_schema:Interface    # tbd
             }
         }
@@ -235,6 +235,7 @@ def _protect(cls, protect=None, like_class=None):
     assert protect is None or like_class is None, \
         "[%s] One of params protect [%s] or like_class [%s] must be None." % (
             cls, protect, like_class)
+    
     if like_class is not None:
         protectclass.protectLikeUnto(cls, like_class)
         return
@@ -249,7 +250,7 @@ def _protect(cls, protect=None, like_class=None):
         attributes = protect[permission].get("attributes")
         if attributes:
             for attr in attributes:
-                # retrieve cls checker each name (may not be defined on first)
+                # retrieve cls checker on each attr (may not be defined on first)
                 checker = protectclass.getCheckerForInstancesOf(cls)
                 if checker is not None:
                     previous_permission = checker.get_permissions.get(attr)
