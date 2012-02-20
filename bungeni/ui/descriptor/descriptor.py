@@ -986,15 +986,17 @@ class PartyMemberDescriptor(GroupMembershipDescriptor):
 
     fields = [
         Field(name="user_id", # [user-req]
-            modes="view edit add listing",
+            modes="view add listing",
             localizable=[
-                show("view edit listing"),
+                show("view listing"),
             ],
             property=schema.Choice(title=_("Name"),
                 source=vocabulary.MemberOfParliamentSource("user_id",)
             ),
             listing_column=linked_mp_name_column("user_id", _("Name"), "user"),
-            view_widget=widgets.MemberURLDisplayWidget
+            view_widget=widgets.MemberURLDisplayWidget,
+            add_widget=widgets.AutoCompleteWidget(),
+            edit_widget=widgets.AutoCompleteWidget(remote_data=True)
         ),
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
@@ -1376,14 +1378,16 @@ class CommitteeMemberDescriptor(GroupMembershipDescriptor):
 
     fields = [
         Field(name="user_id", # [user-req]
-            modes="view edit add listing",
+            modes="view add listing",
             localizable=[
-                show("view edit listing"),
+                show("view listing"),
             ],
             property=schema.Choice(title=_("Name"),
                 source=vocabulary.MemberOfParliamentSource("user_id")
             ),
             listing_column=user_name_column("user_id", _("Name"), "user"),
+            add_widget = widgets.AutoCompleteWidget(),
+            edit_widget = widgets.AutoCompleteWidget(remote_data=True)
         ),
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
@@ -1728,9 +1732,9 @@ class OfficeMemberDescriptor(GroupMembershipDescriptor):
     
     fields = [
         Field(name="user_id", # [user-req]
-            modes="view edit add listing",
+            modes="view add listing",
             localizable=[
-                show("view edit listing"),
+                show("view listing"),
             ],
             property=schema.Choice(title=_("Name"),
                 source=vocabulary.UserNotMPSource(
@@ -1740,6 +1744,8 @@ class OfficeMemberDescriptor(GroupMembershipDescriptor):
                 )
             ),
             listing_column=user_name_column("user_id", _("Name"), "user"),
+            add_widget=widgets.AutoCompleteWidget(),
+            edit_widget=widgets.AutoCompleteWidget(remote_data=True)
         )
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
@@ -1774,9 +1780,9 @@ class MinisterDescriptor(GroupMembershipDescriptor):
 
     fields = [
         Field(name="user_id", # [user-req]
-            modes="view edit add listing",
+            modes="view add listing",
             localizable=[
-                show("view edit listing"),
+                show("view listing"),
             ],
             property=schema.Choice(title=_("Name"),
                 source=vocabulary.UserSource(
@@ -1786,6 +1792,8 @@ class MinisterDescriptor(GroupMembershipDescriptor):
                 )
             ),
             listing_column=user_name_column("user_id", _("Name"), "user"),
+            add_widget = widgets.AutoCompleteWidget(),
+            edit_widget = widgets.AutoCompleteWidget(remote_data=True)
         )
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
@@ -3125,9 +3133,9 @@ class SignatoryDescriptor(ModelDescriptor):
             ),
         ),
         Field(name="user_id", # [user-req]
-            modes="view edit add listing",
+            modes="view add listing",
             localizable=[
-                show("view edit listing"),
+                show("view listing"),
             ],
             property=schema.Choice(title=_("Signatory"),
                 source=vocabulary.MemberOfParliamentSignatorySource(
@@ -3138,7 +3146,9 @@ class SignatoryDescriptor(ModelDescriptor):
                 _("Signatory"),
                 "user"
             ),
-            view_widget=widgets.MemberURLDisplayWidget
+            view_widget=widgets.MemberURLDisplayWidget,
+            add_widget=widgets.AutoCompleteWidget(),
+            edit_widget=widgets.AutoCompleteWidget(remote_data=True)
         ),
         Field(name="political_party",
             modes="listing",

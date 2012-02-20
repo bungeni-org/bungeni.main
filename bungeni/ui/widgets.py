@@ -1048,7 +1048,9 @@ class _AutoCompleteWidget(ItemsEditWidgetBase):
             term = self.vocabulary.getTerm(self._data)
             kw["value"] = term.token
             kw["text"] = self.textForValue(term)
-        elif self.hasInput() and self.hasValidInput():
+        elif (self.hasInput() and self.hasValidInput() and
+            self.getInputValue() is not None
+        ):
             token = self._data
             if self._data is self._data_marker:
                 token = self.getInputValue()
@@ -1076,12 +1078,24 @@ class _AutoCompleteWidget(ItemsEditWidgetBase):
         </style>
         """
 
+    def setCurrentData(self):
+        """Set current value if available
+        """
+        #!+FORMS(mb, Feb-2012) Investigate why this widget does not have _data
+        # set similar to other widgets - perhaps related to`CustomWidgetFactory`
+        record_data = getattr(removeSecurityProxy(self.__parent__.context),
+            self.__parent__.getName(), self._data_marker
+        )
+        if record_data != self._data_marker:
+            self._data = record_data
+
     def __call__(self):
-        need("yui-datasource")
+        self.setCurrentData()
         need("yui-get")
         need("yui-connection")
         need("yui-animation")
         need("yui-json")
+        need("yui-datasource")
         need("yui-autocomplete")
 
         contents = []
@@ -1115,8 +1129,6 @@ class MemberDropDownWidget(DropdownWidget):
 class LanguageLookupWidget(MemberDropDownWidget):
     def getDefaultVocabularyValue(self):
         return get_default_language()
-
-
 
 class TreeVocabularyWidget(DropdownWidget):
     """
@@ -1235,5 +1247,3 @@ class YesNoDisplayWidgetBase(ItemDisplayWidget):
 
 def YesNoDisplayWidget(*attrs, **kw):
     return CustomWidgetFactory(YesNoDisplayWidgetBase, *attrs, **kw)
-
-
