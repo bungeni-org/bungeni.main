@@ -267,8 +267,7 @@ def ministry_column(name, title, default=""):
         # !+TRANSLATE_ATTR(mr, sep-2010)
         #m = item.ministry
         #return translation.translate_attr(m, m.group_id, "short_name")
-        obj = translation.translate_obj(item.ministry)
-        return obj.short_name
+        return vocabulary.get_translated_group_label(item.ministry)
     return column.GetterColumn(title, getter)
 
 def scheduled_item_title_column(name, title):

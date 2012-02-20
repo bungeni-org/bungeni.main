@@ -639,8 +639,8 @@ class ParliamentaryItem(Entity):
         "bungeni.models.domain.SignatoryContainer", "item_id")
     # !+NAMING(mr, jul-2011) plural!
     event = one2many("event",
-        "bungeni.models.domain.EventContainer", "head_id")
-
+        "bungeni.models.domain.EventContainer", "head_id") # !+EVENT_DOC
+    
     # votes
     # schedule
     # object log

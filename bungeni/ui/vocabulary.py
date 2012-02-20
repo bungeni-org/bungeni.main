@@ -58,6 +58,13 @@ except ImportError:
 import imsvdex.vdex
 
 
+def get_translated_group_label(group):
+    """Get a translated display text to refer to the group.
+    """
+    g = translate_obj(group)
+    return "%s - %s" % (g.short_name, g.full_name)
+
+
 days = [ _('day_%d' % index, default=default) for (index, default) in
          enumerate((u"Mon", u"Tue", u"Wed", u"Thu", u"Fri", u"Sat", u"Sun")) ]
 
@@ -290,10 +297,10 @@ class SpecializedSource(object):
             else:
                 parliament_id = self._get_parliament_id(trusted.__parent__)
         return parliament_id
-            
+    
     def constructQuery(self, context):
         raise NotImplementedError("Must be implemented by subclass.")
-        
+    
     def __call__(self, context=None):
         query = self.constructQuery(context)
         results = query.all()
@@ -307,6 +314,7 @@ class SpecializedSource(object):
                     title = getattr(obj, title_field),
             ))
         return vocabulary.SimpleVocabulary(terms)
+
 
 class Venues(object):
     interface.implements(IVocabularyFactory)
@@ -469,6 +477,7 @@ class MemberOfParliamentImmutableSource(SpecializedSource):
                 ))
         return vocabulary.SimpleVocabulary(terms)
 
+
 class MemberOfParliamentSource(MemberOfParliamentImmutableSource):
     """ you may change the user in this context """
     def constructQuery(self, context):
@@ -516,6 +525,7 @@ class MemberOfParliamentSource(MemberOfParliamentImmutableSource):
                             domain.User.middle_name)
         return query
 
+
 class MemberOfParliamentDelegationSource(MemberOfParliamentSource):
     """ A logged in User will only be able to choose
     himself if he is a member of parliament or those 
@@ -534,7 +544,8 @@ class MemberOfParliamentDelegationSource(MemberOfParliamentSource):
             if len(query.all()) > 0:
                 return query
         return mp_query
-                       
+
+
 class MemberOfParliamentSignatorySource(MemberOfParliamentSource):
     """Vocabulary for selection of signatories - Other MPs
        excluding pre-selected signatories and item owner
@@ -560,8 +571,10 @@ class MemberOfParliamentSignatorySource(MemberOfParliamentSource):
             )
         return mp_query
 
+
 class MinistrySource(SpecializedSource):
-    """ Ministries in the current parliament """
+    """Ministries in the current parliament.
+    """
 
     def __init__(self, value_field):
         self.value_field = value_field
@@ -612,26 +625,22 @@ class MinistrySource(SpecializedSource):
         trusted=removeSecurityProxy(context)
         ministry_id = getattr(trusted, self.value_field, None)
         for ob in results:
-            obj = translate_obj(ob)
             terms.append(
                 vocabulary.SimpleTerm(
-                    value = getattr(obj, 'group_id'), 
-                    token = getattr(obj, 'group_id'),
-                    title = "%s - %s" % (getattr(obj, 'short_name'),
-                            getattr(obj, 'full_name'))
+                    value = getattr(ob, 'group_id'), 
+                    token = getattr(ob, 'group_id'),
+                    title = get_translated_group_label(ob)
                 ))
         if ministry_id:
             if query.filter(domain.Group.group_id == ministry_id).count() == 0:
                 session = Session()
                 ob = session.query(domain.Group).get(ministry_id)
-                obj = translate_obj(ob)
                 terms.append(
                     vocabulary.SimpleTerm(
                         value = getattr(obj, 'group_id'), 
                         token = getattr(obj, 'group_id'),
-                        title = "%s - %s" % (getattr(obj, 'short_name'),
-                                getattr(obj, 'full_name'))
-                ))            
+                        title = get_translated_group_label(ob)
+                ))
         return vocabulary.SimpleVocabulary(terms)
 
 '''class MemberTitleSource(SpecializedSource):
@@ -669,7 +678,7 @@ class MinistrySource(SpecializedSource):
                    ))
         return vocabulary.SimpleVocabulary(terms)'''
 
-                    
+
 class UserSource(SpecializedSource):
     """ All active users """
     def constructQuery(self, context):
@@ -679,12 +688,27 @@ class UserSource(SpecializedSource):
         return users
 
 class GroupSource(SpecializedSource):
-    """ All active groups """
+    """All active groups.
+    """
+    
     def constructQuery(self, context):
         # !+GROUP_FILTERS, refine, check for active, ...
         groups = Session().query(domain.Group).order_by(
             domain.Group.short_name, domain.Group.full_name)
         return groups
+    
+    def __call__(self, context=None):
+        results = self.constructQuery(context).all()
+        terms = []
+        for ob in results:
+            terms.append(
+                vocabulary.SimpleTerm(
+                    value = getattr(ob, "group_id"), 
+                    token = getattr(ob, "group_id"),
+                    title = get_translated_group_label(ob)
+                ))
+        return vocabulary.SimpleVocabulary(terms)
+
 
 class MembershipUserSource(UserSource):
     """Filter out users already added to a membership container
