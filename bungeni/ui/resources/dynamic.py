@@ -128,6 +128,12 @@ def get_globals(group_name, **kwargs):
             ),
             "text_dialog_confirm_action": i18n(OKAY, language),
             "text_dialog_cancel_action": i18n(CANCEL, language),
+            "text_unsaved_changes": i18n(_(u"Schedule has unsaved changes"),
+                language
+            ),
+            "text_unsaved_discussions": i18n(
+                _(u"Do you want to delete unsaved discussions?"), language
+            ),
             "confirm_dialog_title": i18n(_(u"Confirmation Required"), language),
             "confirm_message_delete_discussion": i18n(
                 _(u"Really remove this discussion?"), language

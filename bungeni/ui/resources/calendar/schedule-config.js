@@ -5,6 +5,18 @@
 **/
 YAHOO.namespace("bungeni");
 
+/**
+ * Notify schedule author of unsaved changes
+ */
+window.onbeforeunload = function(ev){
+    $.unblockUI();
+    if (YAHOO.bungeni.unsavedChanges){
+        return scheduler_globals.text_unsaved_changes;
+    }else{
+        return null;
+    }
+}
+
 YAHOO.bungeni.Utils = function(){
     /**
      * @function wrapText
@@ -14,6 +26,7 @@ YAHOO.bungeni.Utils = function(){
         var _el = el || "em";
         return "<" + _el + ">" + text + "</" + _el + ">";
     }
+
     return {
         wrapText: wrapText
     }

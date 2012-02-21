@@ -39,6 +39,15 @@
     }
     
     YAHOO.bungeni.scheduled_item_keys = new Array();
+    YAHOO.bungeni.unsavedChanges = false;
+
+    /**
+     * @function setUnsavedChanges
+     * @description set a flag when schedule changes
+     */
+    var setUnsavedChanges = function(args) {
+        YAHOO.bungeni.unsavedChanges = true;
+    }
 
     /**
      * @function fixDataTableSize
@@ -563,6 +572,7 @@
                 itemsDataTable.refresh();
                 savingDialog.setBody("");
                 savingDialog.hide();
+                YAHOO.bungeni.unsavedChanges = false;
             }
         },
         handleFailure: function(o){
@@ -841,6 +851,9 @@
         itemsDataTable.subscribe("rowDeleteEvent", initShowSchedulerControls);
         itemsDataTable.subscribe("rowAddEvent", highlightTypedRows);
         itemsDataTable.subscribe("rowAddEvent", hideSchedulerControls);
+        itemsDataTable.subscribe("rowAddEvent", setUnsavedChanges);
+        itemsDataTable.subscribe("rowDeleteEvent", setUnsavedChanges);
+        itemsDataTable.subscribe("rowUpdateEvent", setUnsavedChanges);
         //itemsDataTable.subscribe("postRenderEvent", fixDataTableSize);
         var _renderScheduleButtons = function(){
             renderScheduleButtons(controls_container);

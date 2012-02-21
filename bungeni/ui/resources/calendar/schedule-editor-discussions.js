@@ -12,7 +12,10 @@ YAHOO.bungeni.scheduling = function(){
     var Columns = YAHOO.bungeni.config.scheduling.columns;
     var DialogConfig = YAHOO.bungeni.config.dialogs;
     var Formatters = YAHOO.bungeni.config.scheduling.formatters;
-        
+    
+    YAHOO.bungeni.unsavedChanges = false;
+    YAHOO.bungeni.unsavedDiscussions = false;
+    
     var dialogs = function(){
         var blocking = {
             init: function(){
@@ -188,6 +191,7 @@ YAHOO.bungeni.scheduling = function(){
         var RequestObject = {
             handleSuccess: function(o){
                 YAHOO.bungeni.scheduling.dialogs.blocking.hide();
+                YAHOO.bungeni.unsavedChanges = false;
             },
             handleFailure: function(o){
             },
@@ -213,6 +217,12 @@ YAHOO.bungeni.scheduling = function(){
     }();
     
     var handlers = function(){
+        var setUnsavedChanges = function(args){
+            YAHOO.bungeni.unsavedChanges = true;
+        }
+        var setUnsavedDiscussions = function(args){
+            YAHOO.bungeni.unsavedDiscussions = true;
+        }
         var renderDiscussionsTable = function(){
             var dataTable = YAHOO.bungeni.schedule.oDt;
             var index = dataTable.getSelectedRows()[0];
@@ -282,6 +292,15 @@ YAHOO.bungeni.scheduling = function(){
             dDt.subscribe("cellClickEvent", 
                 YAHOO.bungeni.scheduling.handlers.deleteDiscussion
             );
+            dDt.subscribe("rowAddEvent",
+                YAHOO.bungeni.scheduling.handlers.setUnsavedDiscussions
+            );
+            dDt.subscribe("rowDeleteEvent",
+                YAHOO.bungeni.scheduling.handlers.setUnsavedDiscussions
+            );
+            dDt.subscribe("rowUpdateEvent",
+                YAHOO.bungeni.scheduling.handlers.setUnsavedDiscussions
+            );
             add_button.on("click", function(){
                 YAHOO.bungeni.scheduling.discussionEditor.render(dDt);
                 YAHOO.bungeni.scheduling.discussionEditor.setText("");
@@ -312,7 +331,19 @@ YAHOO.bungeni.scheduling = function(){
                 },
                 {
                     text: scheduler_globals.text_dialog_cancel_action,
-                    handler: function(){ this.hide(); }
+                    handler: function(){
+                        if (YAHOO.bungeni.unsavedDiscussions){
+                            var callback = function(){
+                                dialog.hide();
+                            }
+                            YAHOO.bungeni.scheduling.dialogs.confirm.show(
+                                scheduler_globals.text_unsaved_discussions,
+                                callback
+                            )
+                        }else{
+                            this.hide(); 
+                        }
+                    }
                 },
             ]
             dialog.cfg.queueProperty("width", "500px");
@@ -321,6 +352,9 @@ YAHOO.bungeni.scheduling = function(){
             dialog.setBody('');
             dialog.showEvent.subscribe(renderDiscussionsTable);
             dialog.setHeader(scheduler_globals.schedule_discussions_title);
+            dialog.hideEvent.subscribe(function(){
+                YAHOO.bungeni.unsavedDiscussions = false;
+            });
             dialog.render(document.body);
             dialog.show();
             dialog.bringToTop();
@@ -429,6 +463,8 @@ YAHOO.bungeni.scheduling = function(){
         }
 
         return {
+            setUnsavedChanges: setUnsavedChanges,
+            setUnsavedDiscussions: setUnsavedDiscussions,
             showDiscussions: showDiscussions,
             editDiscussion: editDiscussion,
             deleteDiscussion: deleteDiscussion,
@@ -550,6 +586,15 @@ YAHOO.bungeni.scheduling = function(){
                     YAHOO.bungeni.scheduling.handlers.renderScheduleControls
                 );
                 dataTable.doBeforeLoadData  = YAHOO.bungeni.scheduling.handlers.populateScheduledKeys;
+                dataTable.subscribe("rowAddEvent", 
+                    YAHOO.bungeni.scheduling.handlers.setUnsavedChanges
+                );
+                dataTable.subscribe("rowDeleteEvent", 
+                    YAHOO.bungeni.scheduling.handlers.setUnsavedChanges
+                );
+                dataTable.subscribe("rowUpdateEvent", 
+                    YAHOO.bungeni.scheduling.handlers.setUnsavedChanges
+                );
                 
                 return {
                     oDs: dataSource,
