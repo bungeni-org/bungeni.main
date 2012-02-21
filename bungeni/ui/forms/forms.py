@@ -160,44 +160,6 @@ class ItemScheduleReorderForm(PageForm):
         if mode == "down" and index < len(ordering) - 1:
             next = container[ordering[index+1]]
 
-class ItemScheduleDeleteForm(DeleteForm):
-    def get_subobjects(self):
-        items = []
-        discussion = self.context.discussion
-        if discussion is not None:
-            items.append(discussion)
-        return items
-
-    def delete_subobjects(self):
-        """Delete subobjects.
-
-        1) For category maintenance, move the scheduling to the bottom
-        of the container.
-
-        2) Delete any discussion items that have been associated to
-        this scheduling.
-        """
-        field = self.request.form["field"]
-        reorder_form = ItemScheduleReorderForm(self.context, self.request)
-        container = copy.copy(removeSecurityProxy(self.context.__parent__))
-        subset_query = container.subset_query
-        container.subset_query = sql.and_(
-            subset_query,
-            container.domain_model.planned_order > self.context.planned_order)
-        for i in range(len(container) * 2):
-            reorder_form.handle_move.success({"mode": "down", "field": field})
-        container.subset_query = subset_query
-
-        count = 0
-        session = Session()
-        unproxied = removeSecurityProxy(self.context)
-        for key, discussion in unproxied.discussions.items():
-            del unproxied.discussions[key]
-            session.delete(discussion)
-            count += 1
-        #session.close()
-        return count
-        
 class ItemScheduleContainerDeleteForm(DeleteForm):
     class IDeleteForm(interface.Interface):
         item_id = schema.Int(

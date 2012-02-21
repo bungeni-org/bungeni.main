@@ -80,7 +80,7 @@
   <browser:page
      name="delete"
      for="bungeni.models.domain.ItemSchedule"
-     class=".forms.ItemScheduleDeleteForm"
+     class=".forms.DeleteForm"
      permission="bungeni.sittingschedule.item.Delete"
      layer="bungeni.ui.interfaces.IBungeniSkin"
      />
@@ -261,7 +261,7 @@
      /-->
 
 
-  <browser:viewlet
+    <browser:viewlet
      name="bungeni.viewlet.minutes"
      manager="bungeni.alchemist.interfaces.IContentViewManager"
      class=".viewlets.SchedulingMinutesViewlet"

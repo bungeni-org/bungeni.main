@@ -31,6 +31,7 @@ from bungeni.models.utils import get_db_user_id
 from bungeni.models.interfaces import IGroupSitting
 
 from bungeni.core.interfaces import ISchedulingContext
+from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowTransitionEvent
 from bungeni.core.language import get_default_language
 
 from bungeni.ui import widgets
@@ -40,6 +41,8 @@ from bungeni.ui import forms
 from bungeni.ui.interfaces import IWorkspaceReportGeneration
 from bungeni.ui.reporting import generators
 from bungeni.ui.calendar.data import ExpandedSitting
+
+from bungeni.utils import register
 
 class TIME_SPAN:
     daily = _(u"Daily")
@@ -582,15 +585,9 @@ class DefaultReportContent:
 # Event handler that publishes reports on sitting status change
 # if the status is published_agenda or published_minutes
 # it generates report based on the default template and publishes it
-# To disable remove the lines below from ui/configure.zcml
-# <subscriber
-#        for="bungeni.models.interfaces.IGroupSitting
-#          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-#        handler=".reports.default_reports"
-#     />       
-
+@register.handler(adapts=(IGroupSitting, IWorkflowTransitionEvent))
 def default_reports(sitting, event):
-    if sitting.status in ("published_agenda", "published_minutes"):
+    if sitting.status in IWorkflow(sitting).get_state_ids(tagged=["published"]):
         sitting = removeSecurityProxy(sitting)
         sittings = []
         sittings.append(sitting)

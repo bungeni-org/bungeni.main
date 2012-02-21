@@ -108,63 +108,6 @@
         }
     }
     
-    // scheduler handlers for various events
-    /**
-     * @function addTextToSchedule
-     * @description Adds a text record row to the schedule and updates dynamic
-     * cells of the current row.
-     * 
-     */
-    var addTextToSchedule = function(event, item_type){
-        var currentItem = schedulerActions.currentItem;
-        var new_record_index = (
-            (currentItem && itemsDataTable.getTrIndex(currentItem) + 1) || 0
-        );
-        itemsDataTable.addRow(
-            { 
-                item_title: scheduler_globals.initial_editor_text, 
-                item_type: (item_type || "text")
-            }, 
-            new_record_index
-        );
-        var new_record = itemsDataTable.getRecord(
-            itemsDataTable.getTrEl(new_record_index)
-        );
-        var target_columns = [
-            itemsDataTable.getColumn(Columns.MOVE_UP),
-            itemsDataTable.getColumn(Columns.MOVE_DOWN),
-        ]
-        itemsDataTable.unselectAllRows();
-        itemsDataTable.selectRow(new_record);
-        var updated_record = itemsDataTable.getRecord(
-            (new_record_index - 1 )
-        );
-        for (col_index=0; col_index<=(target_columns.length); col_index++){
-            itemsDataTable.updateCell(updated_record, 
-                target_columns[col_index],
-                updated_record.getData()
-            );
-        }
-        //show cell editor
-        itemsDataTable.cancelCellEditor();
-        selected_index = itemsDataTable.getSelectedRows()[0];
-        selected_row = itemsDataTable.getTrEl(selected_index);
-        oRecord = itemsDataTable.getRecord(selected_index);
-        oColumn = itemsDataTable.getColumn(Columns.TITLE);
-        Event.stopEvent(event);
-        itemsDataTable.showCellEditor(
-            itemsDataTable.getCell({ record: oRecord, column: oColumn })
-        );
-    }
-    
-    /**
-     * @method addHeadingToSchedule
-     * @description add a heading record to schedule
-     */
-     var addHeadingToSchedule = function(event){
-         addTextToSchedule(event, "heading");
-     }
-    
     /**
      * @method showCellEditor
      * @description displays an editor to modify text records on the schedule
@@ -613,9 +556,14 @@
     var RequestObject = {
         handleSuccess: function(o){
             savingDialog.setBody(scheduler_globals.saving_dialog_refreshing);
-            itemsDataTable.refresh();
-            savingDialog.setBody("");
-            savingDialog.hide();
+            if (YAHOO.bungeni.scheduled_item_keys.length == 0){
+                //reload page - activate applicable menu actions
+                window.location.reload();
+            }else{
+                itemsDataTable.refresh();
+                savingDialog.setBody("");
+                savingDialog.hide();
+            }
         },
         handleFailure: function(o){
             savingDialog.setBody(scheduler_globals.saving_dialog_exception);
@@ -1064,6 +1012,9 @@
                 }
             }
             headingTab.on("activeChange", initAvailableHeadings);
+            textItemsDialog.showEvent.subscribe(function(){
+                Y$.query("input", headingTab.get("contentEl"))[0].value = "";
+            });
             var textTab = new YAHOO.widget.Tab(
                 { 
                     label:"text",

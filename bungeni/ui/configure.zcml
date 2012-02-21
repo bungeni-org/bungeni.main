@@ -192,12 +192,6 @@
 
     -->
 
-      <subscriber
-        for="bungeni.models.interfaces.IGroupSitting
-          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-        handler=".reports.default_reports"
-     />
-
      <adapter
         for="* zope.publisher.interfaces.http.IHTTPRequest"
         provides="zope.traversing.interfaces.ITraversable"

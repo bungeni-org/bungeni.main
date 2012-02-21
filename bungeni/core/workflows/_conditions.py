@@ -82,6 +82,8 @@ def has_end_date(context):
 def has_venue(context):
     return context.venue is not None
 
+def has_agenda(context):
+    return len(context.items)>0
 
 # question
 
