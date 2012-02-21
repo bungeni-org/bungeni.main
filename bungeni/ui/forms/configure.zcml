@@ -93,7 +93,16 @@
      layer="bungeni.ui.interfaces.IBungeniSkin"
      />
 
-<browser:page
+   <browser:page
+     name="add"
+     for="bungeni.models.interfaces.IHeadingContainer"
+     class=".common.AddForm"
+     permission="bungeni.heading.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+
+
+  <browser:page
      name="delete"
      for="bungeni.models.interfaces.IItemScheduleContainer"
      class=".forms.ItemScheduleContainerDeleteForm"
@@ -101,6 +110,28 @@
      layer="bungeni.ui.interfaces.IBungeniSkin"
      />
 
+
+  <browser:page
+     name="add"
+     for="bungeni.models.interfaces.IGroupSittingContainer"
+     class=".common.AddForm"
+     permission="bungeni.sitting.Add"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+  <browser:page
+     name="edit"
+     for="bungeni.models.domain.GroupSitting"
+     class=".common.EditForm"
+     permission="bungeni.sitting.Edit"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
+  <browser:page
+     name="delete"
+     for="bungeni.models.domain.GroupSitting"
+     class=".common.DeleteForm"
+     permission="bungeni.sitting.Delete"
+     layer="bungeni.ui.interfaces.IBungeniSkin"
+     />
 
   <browser:page
      name="edit"

@@ -128,7 +128,7 @@
                     handle_before_change_view
                 );
                 scheduler.attachEvent("onDblClick", function (event_id, native_event_object){
-                    parent.location = cal_globals.view_url + "/sittings/obj-" + event_id + "/schedule";
+                    parent.location = cal_globals.view_url + "/sittings/obj-" + event_id + "/view";
                 });
                 scheduler.attachEvent("onEventSave", event_save_handler);
                 scheduler.attachEvent("onEventCollision", 

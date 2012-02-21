@@ -630,6 +630,44 @@
     
     
     <!-- other -->
+    <class class=".domain.GroupSitting">
+        <require permission="zope.View"
+            attributes="
+                group_sitting_id
+                group_id
+                short_name
+                short_date
+                end_date
+                group_sitting_type_id
+                recurring_id
+                status
+                status_date
+                venue_id
+                language
+                activity_type
+                meeting_type
+                convocation_type
+            "
+        />
+        <require permission="bungeni.sitting.Edit"
+            set_attributes="
+                group_sitting_id
+                group_id
+                short_name
+                short_date
+                end_date
+                group_sitting_type_id
+                recurring_id
+                status
+                status_date
+                venue_id
+                language
+                activity_type
+                meeting_type
+                convocation_type
+            "
+        />
+    </class>
     
     <class class=".domain.GroupSittingAttendance">
         <require permission="zope.View"
