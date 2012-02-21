@@ -330,6 +330,14 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.event.Delete"
     />
+    <browser:menuItem menu="context_actions" 
+        for="bungeni.models.interfaces.IEvent"
+        action="edit"
+        title="Edit"
+        order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        permission="bungeni.event.Edit"
+    />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IHeading"
         title="Delete"
