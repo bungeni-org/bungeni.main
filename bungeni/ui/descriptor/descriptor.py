@@ -855,7 +855,7 @@ class MpDescriptor(GroupMembershipDescriptor):
             listing_column=user_name_column("user_id", _("Name"), "user"),
             edit_widget=widgets.AutoCompleteWidget(remote_data=True,
                 yui_maxResultsDisplayed=5),
-            add_widget=widgets.AutoCompleteWidget()
+            add_widget=widgets.AutoCompleteWidget(remote_data=True)
         ),
         Field(name="member_election_type", # [user-req]
             modes="view edit add listing",
@@ -994,7 +994,7 @@ class PartyMemberDescriptor(GroupMembershipDescriptor):
             ),
             listing_column=linked_mp_name_column("user_id", _("Name"), "user"),
             view_widget=widgets.MemberURLDisplayWidget,
-            add_widget=widgets.AutoCompleteWidget(),
+            add_widget=widgets.AutoCompleteWidget(remote_data=True),
             edit_widget=widgets.AutoCompleteWidget(remote_data=True)
         ),
     ]
@@ -1385,7 +1385,7 @@ class CommitteeMemberDescriptor(GroupMembershipDescriptor):
                 source=vocabulary.MemberOfParliamentSource("user_id")
             ),
             listing_column=user_name_column("user_id", _("Name"), "user"),
-            add_widget = widgets.AutoCompleteWidget(),
+            add_widget = widgets.AutoCompleteWidget(remote_data=True),
             edit_widget = widgets.AutoCompleteWidget(remote_data=True)
         ),
     ]
@@ -1645,9 +1645,9 @@ class CommitteeStaffDescriptor(GroupMembershipDescriptor):
 
     fields = [
         Field(name="user_id", # [user-req]
-            modes="view edit add listing",
+            modes="view add listing",
             localizable=[
-                show("view edit listing"),
+                show("view listing"),
             ],
             property=schema.Choice(title=_("Name"),
                 source=vocabulary.UserNotMPSource(
@@ -1657,6 +1657,8 @@ class CommitteeStaffDescriptor(GroupMembershipDescriptor):
                 )
             ),
             listing_column=user_name_column("user_id", _("Name"), "user"),
+            add_widget=widgets.AutoCompleteWidget(remote_data=True),
+            edit_widget=widgets.AutoCompleteWidget(remote_data=True)
         ),
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
@@ -1743,7 +1745,7 @@ class OfficeMemberDescriptor(GroupMembershipDescriptor):
                 )
             ),
             listing_column=user_name_column("user_id", _("Name"), "user"),
-            add_widget=widgets.AutoCompleteWidget(),
+            add_widget=widgets.AutoCompleteWidget(remote_data=True),
             edit_widget=widgets.AutoCompleteWidget(remote_data=True)
         )
     ]
@@ -1791,7 +1793,7 @@ class MinisterDescriptor(GroupMembershipDescriptor):
                 )
             ),
             listing_column=user_name_column("user_id", _("Name"), "user"),
-            add_widget = widgets.AutoCompleteWidget(),
+            add_widget = widgets.AutoCompleteWidget(remote_data=True),
             edit_widget = widgets.AutoCompleteWidget(remote_data=True)
         )
     ]
@@ -3146,7 +3148,7 @@ class SignatoryDescriptor(ModelDescriptor):
                 "user"
             ),
             view_widget=widgets.MemberURLDisplayWidget,
-            add_widget=widgets.AutoCompleteWidget(),
+            add_widget=widgets.AutoCompleteWidget(remote_data=True),
             edit_widget=widgets.AutoCompleteWidget(remote_data=True)
         ),
         Field(name="political_party",
