@@ -86,6 +86,7 @@ def configurable_schema(kls):
         # !+ current constrain
         assert change_tbl_name, "May not be IAttachmentable and not IVersionable"
 
+
 def make_changes_table(table, metadata):
     """Create an object log table for an object.
     """
@@ -899,6 +900,10 @@ attached_files = rdb.Table("attached_files", metadata,
         rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
         nullable=False
     ),
+    rdb.Column("dhead_id", rdb.Integer, #!+DHEAD
+        rdb.ForeignKey("doc.doc_id"),
+        nullable=True # !+False, when head_id replaces item_id
+    ),
     # attached_file is NOT a parliamentary_item
     rdb.Column("attached_file_type",
         rdb.Unicode(128),
@@ -961,7 +966,7 @@ doc = rdb.Table("doc", metadata,
         rdb.ForeignKey("users.user_id"),
         nullable=False
     ),
-
+    
     # !+dc:Creator / dc:Author, by default this would be owner, but we can 
     # sometimes have an external source as the creator of a resource e.g a 
     # 3rd party entity who prepared a tabled document, or a citizen/etc who 

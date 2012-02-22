@@ -411,10 +411,8 @@ mapper(domain.Document, schema.doc,
         #    backref=backref("head",
         #       remote_side=schema.doc.c.doc_id),
         #),
-        #"attachments": relation(domain.AttachedFile,
-        #    backref=backref("head",
-        #        remote_side=schema.doc.c.doc_id)
-        #),
+        #!+ "attachments": relation(domain.AttachedFile),
+        "attached_files": relation(domain.AttachedFile),
         #"events": relation(domain.Event, uselist=True),
         
         # for sub parliamentary docs, non-null implies a sub doc
@@ -527,7 +525,15 @@ mapper(domain.TabledDocument, schema.tabled_documents,
 )
 
 #!+TYPES_CUSTOM  mapper(domain.AttachedFileType, schema.attached_file_types)
-mapper(domain.AttachedFile, schema.attached_files)
+mapper(domain.AttachedFile, schema.attached_files,
+    properties={
+        "dhead": relation(domain.Document, #!+DHEAD
+            primaryjoin=(schema.attached_files.c.dhead_id == schema.doc.c.doc_id),
+            uselist=False,
+            lazy=False
+        ),
+    }
+)
 
 #Items scheduled for a sitting expressed as a relation
 # to their item schedule

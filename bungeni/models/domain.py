@@ -597,20 +597,21 @@ class Document(Entity):
     
     sort_replace = {"owner_id": ["last_name", "first_name"]}
     
-    # !+AlchemistManagedContainer #!+item_id->doc_id
+    # !+AlchemistManagedContainer these attribute names are part of public URLs!
+    # !+item_id->head_id
     #amc_signatories = one2many("amc_signatories",
     #    "bungeni.models.domain.SignatoryContainer", "item_id")
     #amc_attachments = one2many("amc_attachments",
-    #    "bungeni.models.domain.AttachedFileContainer", "item_id")
+    files = one2many("files",
+        "bungeni.models.domain.AttachedFileContainer", "dhead_id") # !+DHEAD
     #amc_events = one2many("amc_events",
     #    "bungeni.models.domain.EventContainer", "head_id")
-
+    
     # !+EVENT_DOC tmp dummy values to avoid attr errors, etc,
     # until base "doc" gains these features...
     submission_date = None 
     signatories = []
     assignedgroups = []
-    files = []
 
 class Event(HeadParentedMixin, Document):
     """Base class for an event on a document.
