@@ -565,6 +565,7 @@
     var RequestObject = {
         handleSuccess: function(o){
             savingDialog.setBody(scheduler_globals.saving_dialog_refreshing);
+            YAHOO.bungeni.unsavedChanges = false;
             if (YAHOO.bungeni.scheduled_item_keys.length == 0){
                 //reload page - activate applicable menu actions
                 window.location.reload();
@@ -572,7 +573,6 @@
                 itemsDataTable.refresh();
                 savingDialog.setBody("");
                 savingDialog.hide();
-                YAHOO.bungeni.unsavedChanges = false;
             }
         },
         handleFailure: function(o){
