@@ -33,6 +33,7 @@ def get_globals(group_name, **kwargs):
                 for (name, title) in 
                 sorted(data.get_schedulable_types().iteritems())
              ],
+             "discussable_types": [k for k in data.get_schedulable_types()],
             "types": {
                 "HEADING": "heading",
                 "TEXT": "text"

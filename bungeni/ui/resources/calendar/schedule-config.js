@@ -200,12 +200,16 @@ YAHOO.bungeni.config = function(){
             }
 
             var editDiscussionsFormatter = function(el, record, column, data){
-                if (!el.innerHTML){
-                    var button = new YAHOO.widget.Button({
-                        label: scheduler_globals.column_discussions_edit_button,
-                        id: el.id + "-edit-button"
-                    });
-                    button.appendTo(el);
+                if (scheduler_globals.discussable_types.indexOf(
+                    record.getData()[Columns.TYPE])>=0
+                ){
+                    if (!el.innerHTML){
+                        var button = new YAHOO.widget.Button({
+                            label: scheduler_globals.column_discussions_edit_button,
+                            id: el.id + "-edit-button"
+                        });
+                        button.appendTo(el);
+                    }
                 }
             }
 

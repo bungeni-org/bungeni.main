@@ -314,7 +314,13 @@ YAHOO.bungeni.scheduling = function(){
             if (target_column.field != Columns.DISCUSSION_EDIT){
                 return;
             }
-            var target_row = this.getTrEl(this.getRecord(args.target));
+            var record = this.getRecord(args.target);
+            if(scheduler_globals.discussable_types.indexOf(
+                record.getData()[Columns.TYPE])<0
+            ){
+                return;
+            }
+            var target_row = this.getTrEl(record);
             //#!+SCHEDULING(mb, Feb-2012)
             //force selection of current row - temporary fix around event
             //race conditions - row select and cell click non-determinism
