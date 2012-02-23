@@ -186,7 +186,7 @@
                     <div class="dhx_cal_tab" name="week_tab" id="week_tab"></div>
                     <div class="dhx_cal_tab" name="month_tab" id="month_tab"></div>
                     <div class="dhx_cal_tab" name="year_tab" id="year_tab"></div>
-                    <div class="dhx_cal_tab" name="agenda_tab" id="agenda_tab"></div>
+                    <div class="dhx_cal_tab" name="week_agenda_tab" id="agenda_tab"></div>
                     <div class="dhx_cal_tab" name="venues_tab" id="venues_tab"></div>
                 </div>
                 <div class="dhx_cal_header">
