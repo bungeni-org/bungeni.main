@@ -69,7 +69,7 @@ class TransitionHandler(object):
             data.setdefault("date_active", data.get("date_active", None))
             data.setdefault("registry_number", data.get("registry_number", ""))
             
-            reg_number = data.get("registry_number","")
+            reg_number = data.get("registry_number", "")
             if reg_number:
                 unproxied_context = removeSecurityProxy(context)
                 unproxied_context.registry_number = reg_number

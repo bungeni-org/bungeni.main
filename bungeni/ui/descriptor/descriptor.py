@@ -120,13 +120,12 @@ def _get_related_user(item_user, attr):
     """Get the user instance that is related to this item via <attr>,
     or if <attr> is None, return the item_user itself.
     """
+    assertion_message = "Item User [%s] may not be None" % (item_user)
     if attr:
         item_user = getattr(item_user, attr, None)
-        assert item_user is not None, \
-            "Item [%s] may not have None as [%s]" % (item_user, attr)
-    else:
-        assert item_user is not None, \
-            "Item User [%s] may not be None" % (item_user)
+        assertion_message = "Item [%s] may not have None as [%s]" % (
+            item_user, attr)
+    assert item_user is not None, assertion_message
     return item_user
 
 def user_name_column(name, title, attr):
@@ -1868,6 +1867,7 @@ class GovernmentDescriptor(GroupDescriptor):
     ]
     schema_invariants = [EndAfterStart]
     custom_validators = [validations.validate_government_dates]
+
 
 class AttachedFileDescriptor(ModelDescriptor):
     localizable = True
