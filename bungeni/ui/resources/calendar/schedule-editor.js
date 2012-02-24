@@ -65,6 +65,26 @@
         textItemsDialog.show();
     }
 
+    /**
+     * @method resizeColumns
+     * @description resize datatable columns based on existing ratios
+     */
+     var resizeColumns = function(panel_size){
+         size = panel_size - 15;
+         columns = itemsDataTable.getColumnSet().keys;
+         var prev_width = itemsDataTable.getBdTableEl().clientWidth;
+         var diff_width = size - prev_width;
+         for(k=0;k<columns.length;k++){
+             col = columns[k];
+             itemsDataTable.setColumnWidth(columns[k].field, 
+                Math.round(col.width+((col.width/prev_width)*diff_width))
+             );
+         }
+         itemsDataTable.setAttributes(
+            { "width": size + "px" }, true
+         );
+     }
+
     var insertTextRecord = function(event){
         var tabs = this.tabViewControl;
         var activeTab = tabs.getTab(tabs.get("activeIndex"));
@@ -546,10 +566,7 @@
                         });
 
                     }
-                    schedulePanel.on("resize", function(){
-                        itemsDataTable.setAttributes(
-                            { "width": this.body.clientWidth + "px" }, true
-                        );
+                    schedulePanel.on("endResize", function(){
                         tabDataTable.setAttributes(
                             { "width": itemsPanel.body.clientWidth + "px" }, 
                             true
@@ -897,6 +914,12 @@
         }
         itemsDataTable.subscribe("initEvent", _renderScheduleButtons);
         
+        /* Handle column resizing if containing panel is resized */
+        schedulePanel = schedulerLayout.getUnitByPosition("left");
+        schedulePanel.on("endResize", function(){
+            resizeColumns(this.body.clientWidth);
+        });
+        
         return {
             oDS: itemsDataSource,
             oDT: itemsDataTable,
@@ -935,6 +958,16 @@
         scheduleTextButton.on("click", addTextRecordToSchedule);
         scheduleRemoveButton.appendTo(schedulerActions.body);
         scheduleRemoveButton.on("click", removeSelectedRow);
+        
+        //disable remove button if no context record exists
+        schedulerActions.showEvent.subscribe(function(args){
+            if(this.currentItem==null){
+                scheduleRemoveButton.set("disabled", true);
+            }
+        });
+        schedulerActions.hideEvent.subscribe(function(args){
+            scheduleRemoveButton.set("disabled", false);
+        });
 
         //create delete dialog and controls
         deleteDialog = new YAHOO.widget.SimpleDialog("scheduler-delete-dialog",
