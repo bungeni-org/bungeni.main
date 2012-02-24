@@ -128,6 +128,36 @@
             this.onEventShowCellEditor(event);
         }
     }
+    
+    /**
+     * @method renderRTECellEditor
+     * @description initialize textarea cell editor with an RTE editor on
+     * initial display, then unbind this method when the RTE is rendered for 
+     * the current editor instance.
+     * 
+     * This also overrides the getInputValue method to get the RTE value and
+     * the cell editor show event to populate the shared editor with the
+     * context record value.
+     **/
+     var renderRTECellEditor = function(args){
+        var editor_width = (
+            (schedulerLayout.getUnitByPosition("left").body.clientWidth - 15) + 
+            "px"
+        );
+        rteCellEditor = new YAHOO.widget.Editor(args.editor.textarea,
+            { width: editor_width, autoHeight: true }
+        );
+        rteCellEditor.render();
+        args.editor.getInputValue = function(){
+            value = rteCellEditor.cleanHTML(rteCellEditor.getEditorHTML());
+            rteCellEditor.setEditorHTML("");
+            return value
+        }
+        args.editor.unsubscribe("showEvent", renderRTECellEditor);
+        args.editor.subscribe("showEvent", function(args){
+            rteCellEditor.setEditorHTML(args.editor.textarea.value);
+        });
+     }
 
     /**
      * @method reorderRow
@@ -787,27 +817,34 @@
      * @description renders the schedule to the provided container element
      **/
      var renderSchedule = function(container, controls_container){
+        var container_width = container.clientWidth;
+        var editor = new YAHOO.widget.TextareaCellEditor();
+        editor.subscribe("showEvent", renderRTECellEditor);
         var columnDefinitions = [
             {
                 key : Columns.TYPE, 
                 label : scheduler_globals.column_type,
                 formatter : Formatters.type,
+                width: Math.round(0.10 * container_width)
             },
             {
                 key : Columns.TITLE, 
                 label : scheduler_globals.column_title,
-                editor : new YAHOO.widget.TextareaCellEditor(),
-                formatter : Formatters.title
+                editor : editor,
+                formatter : Formatters.title,
+                width: Math.round(0.60 * container_width)
             },
             {
                 key : Columns.MOVE_UP, 
                 label : "", 
-                formatter : Formatters.moveUp 
+                formatter : Formatters.moveUp,
+                width: Math.round(0.05 * container_width)
             },
             {
                 key:Columns.MOVE_DOWN, 
                 label:"", 
-                formatter : Formatters.moveDown
+                formatter : Formatters.moveDown,
+                width: Math.round(0.05 * container_width)
             },
         ];
         
@@ -831,7 +868,7 @@
             { 
                 selectionMode:"single",
                 scrollable:true,
-                width:(container.clientWidth-15) + "px",
+                width:(container_width-15) + "px",
                 height: (container.clientHeight - 50) + "px"
             }
         );
@@ -854,7 +891,6 @@
         itemsDataTable.subscribe("rowAddEvent", setUnsavedChanges);
         itemsDataTable.subscribe("rowDeleteEvent", setUnsavedChanges);
         itemsDataTable.subscribe("rowUpdateEvent", setUnsavedChanges);
-        //itemsDataTable.subscribe("postRenderEvent", fixDataTableSize);
         var _renderScheduleButtons = function(){
             renderScheduleButtons(controls_container);
             this.unsubscribe("initEvent", _renderScheduleButtons);
@@ -992,8 +1028,6 @@
         textItemsDialog.setBody("");
         textItemsDialog.setHeader(scheduler_globals.text_items_dialog_header);
         textItemsDialog.renderEvent.subscribe(function(){
-            //var rteEditor = new YAHOO.widget.Editor("text-record-input");
-            //rteEditor.render();
             var textRecordTabs = new YAHOO.widget.TabView();
             var headingTab = new YAHOO.widget.Tab(
                 { 
