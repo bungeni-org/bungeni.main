@@ -18,6 +18,38 @@ import domain
 import interfaces
 
 # !+PARAMETRIZABLE_DOCTYPES
+def DOCUMENT_configurable_mappings(kls):
+    name = kls.__name__
+    # auditable, determine properties, map audit class/table
+    if interfaces.IAuditable.implementedBy(kls):
+        audit_kls = getattr(domain, "%sAudit" % (name))
+        #audit_tbl = schema.doc_audit
+        mapper(audit_kls, 
+            inherits=domain.DocAudit,
+            polymorphic_on=schema.doc_audit.c.type, # polymorphic discriminator
+            polymorphic_identity=name.lower(), # polymorphic discriminator value
+        )
+    # add any properties to the master kls itself
+    def mapper_add_configurable_properties(kls):
+        kls_mapper = class_mapper(kls)
+        def configurable_properties(kls, mapper_properties):
+            """Add properties, as per configured features for a domain type.
+            """
+            # auditable
+            if interfaces.IAuditable.implementedBy(kls):
+                audit_kls = getattr(domain, "%sAudit" % (name))
+                mapper_properties["changes"] = relation(audit_kls,
+                    backref="audit_head",
+                    lazy=True,
+                    cascade="all, delete-orphan",
+                    passive_deletes=False
+                )
+            return mapper_properties
+        for key, prop in configurable_properties(kls, {}).items():
+            kls_mapper.add_property(key, prop)
+    mapper_add_configurable_properties(kls)
+
+        
 def configurable_mappings(kls):
     """Add mappings, as per configured features for a domain type.
     
@@ -122,14 +154,14 @@ mapper(domain.User, schema.users,
 )
 
 mapper(domain.AdminUser, schema.admin_users,
-    properties = {
+    properties={
         "user":relation(domain.User)
     }
 )
 
 # The document that the user is being currently editing
 mapper(domain.CurrentlyEditingDocument, schema.currently_editing_document,
-    properties = {
+    properties={
         "user": relation(domain.User, uselist=False),
         "document": relation(domain.ParliamentaryItem, uselist=False)
     }
@@ -137,7 +169,7 @@ mapper(domain.CurrentlyEditingDocument, schema.currently_editing_document,
 
 # Hash for password restore link
 mapper(domain.PasswordRestoreLink, schema.password_restore_link,
-    properties = {
+    properties={
         "user": relation(domain.User, uselist=False),
     }
 )
@@ -416,10 +448,21 @@ mapper(domain.Document, schema.doc,
         #"events": relation(domain.Event, uselist=True),
         
         # for sub parliamentary docs, non-null implies a sub doc
-        # !+EVENT_DOC tmp, should be to domain.Document
+        # !+DOCUMENT tmp, should be to domain.Document
         "head": relation(domain.ParliamentaryItem,
             primaryjoin=rdb.and_(schema.doc.c.head_id ==
                 schema.parliamentary_items.c.parliamentary_item_id),
+            uselist=False,
+            lazy=False),
+    }
+)
+mapper(domain.DocAudit, schema.doc_audit,
+    polymorphic_on=schema.doc_audit.c.type, # polymorphic discriminator
+    polymorphic_identity="doc", # polymorphic discriminator value
+    properties={
+        "audit_user": relation(domain.User,
+            primaryjoin=rdb.and_(schema.doc_audit.c.audit_user_id ==
+                schema.users.c.user_id),
             uselist=False,
             lazy=False),
     }
@@ -461,7 +504,7 @@ mapper(domain.ParliamentaryItem, schema.parliamentary_items,
             backref=backref("head",
                 remote_side=schema.parliamentary_items.c.parliamentary_item_id)
         ),
-        # !+EVENT_DOC
+        # !+DOCUMENT
         "events": relation(domain.Event, uselist=True),
     }
 )

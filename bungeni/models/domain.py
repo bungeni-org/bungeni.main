@@ -159,6 +159,17 @@ class ItemVersions(HeadParentedMixin, Entity):
 # Note: in a simplified one-generic-document-type world, these can be 
 # simplified even further. 
 
+def DOCUMENT_configurable_domain(kls, workflow):
+    assert kls.__dynamic_features__, \
+        "Class [%s] does not allow dynamic features" % (kls)
+    if workflow.has_feature("audit"):
+        interface.classImplements(kls, interfaces.IAuditable)
+        CUSTOM_DECORATED["auditable"].add(kls)
+        # define TYPEAudit class
+        audit_name = "%sAudit" % (kls.__name__)
+        audit_kls = DocAudit.auditFactory(audit_name)
+        globals()[audit_name] = audit_kls
+    return kls
 def configurable_domain(kls, workflow):
     assert kls.__dynamic_features__, \
         "Class [%s] does not allow dynamic features" % (kls)
@@ -588,7 +599,8 @@ class Document(Entity):
     """
     __dynamic_features__ = True
     interface.implements(
-        interfaces.IBungeniParliamentaryContent,
+        interfaces.IDocument,
+        interfaces.IBungeniParliamentaryContent, #!+should be applied as needed?
         interfaces.ITranslatable
     )
     
@@ -607,18 +619,51 @@ class Document(Entity):
     #amc_events = one2many("amc_events",
     #    "bungeni.models.domain.EventContainer", "head_id")
     
-    # !+EVENT_DOC tmp dummy values to avoid attr errors, etc,
+    # !+DOCUMENT tmp dummy values to avoid attr errors, etc,
     # until base "doc" gains these features...
-    submission_date = None 
+    submission_date = None
     signatories = []
+    item_signatories = [] #relation(domain.Signatory)
     assignedgroups = []
 
+# !+alias for simplifying association with schema table (via naming convention)
+Doc = Document
+Doc.__name__ = "Doc"
+
+
+class DocAudit(HeadParentedMixin, Entity):
+    """An audit record for a document.
+    """
+    __dynamic_features__ = False
+    
+    @classmethod
+    def auditFactory(cls, name):
+        factory = type(name, (cls,), {})
+        interface.classImplements(factory, interfaces.IChange) # !+IAudit
+        return factory
+    
+    # !+DOCUMENT
+    @property
+    def head(self): return self.audit_head
+    @property
+    def user(self): return self.audit_user
+    @property
+    def action(self): return self.audit_action
+    @property
+    def date_audit(self): return self.audit_date
+    @property
+    def date_active(self): return self.audit_date_active
+    
+    
 class Event(HeadParentedMixin, Document):
     """Base class for an event on a document.
     """
     #!+parliament_id is (has always been) left null for events, how best to 
     # handle this, possible related constraint e.g. head_id must NOT be null, 
     # validation, ... ?
+    __dynamic_features__ = True
+#EventAudit
+
 
 class ParliamentaryItem(Entity):
     """
@@ -640,7 +685,7 @@ class ParliamentaryItem(Entity):
         "bungeni.models.domain.SignatoryContainer", "item_id")
     # !+NAMING(mr, jul-2011) plural!
     event = one2many("event",
-        "bungeni.models.domain.EventContainer", "head_id") # !+EVENT_DOC
+        "bungeni.models.domain.EventContainer", "head_id") # !+DOCUMENT
     
     # votes
     # schedule

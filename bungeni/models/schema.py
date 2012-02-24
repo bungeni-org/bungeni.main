@@ -62,11 +62,6 @@ def configurable_schema(kls):
     """
     # assign interface (changes property added downstream)
     entity_name = un_camel(kls.__name__)
-    
-    # !+EVENT_DOC same doc table, so no need to create changes/versions/etc...
-    if entity_name in ["event"]:
-        return
-    
     tbl = globals()[plural(entity_name)]
     # auditable
     if interfaces.IAuditable.implementedBy(kls):
@@ -85,6 +80,78 @@ def configurable_schema(kls):
     if interfaces.IAttachmentable.implementedBy(kls):
         # !+ current constrain
         assert change_tbl_name, "May not be IAttachmentable and not IVersionable"
+
+
+def make_audit_table(table, metadata):
+    """Create an audit log table for an archetype.
+    
+    We prefix all additional audit-specific columns with "audit_" to avoid 
+    potential clashing of column names from table being audited.
+    """
+    entity_name = table.name
+    audit_tbl_name = "%s_audit" % (entity_name)
+    head_tbl_fk_column_name = "%s_id" % (entity_name)
+    columns = [
+        rdb.Column("audit_id", rdb.Integer, primary_key=True),
+        # the doc_id of the "owning" doc change being logged
+        rdb.Column("audit_head_id", rdb.Integer, 
+            rdb.ForeignKey(table.c[head_tbl_fk_column_name]),
+            nullable=False,
+            index=True
+        ),
+        rdb.Column("audit_user_id", rdb.Integer, rdb.ForeignKey("users.user_id")),
+        rdb.Column("audit_action", rdb.Unicode(16)),
+        # !+audit_version ? accumulative numeric count, per audit_head_id
+        # !+audit_procedure ? enum: manual/auto/... 
+        # audit datetime, exclusively managed by the system, real datetime of 
+        # when change was actually affected
+        rdb.Column("audit_date", rdb.DateTime(timezone=False),
+            #!+CATALYSE(mr, nov-2010) fails descriptor catalisation
+            #default=functions.current_timestamp(),
+            server_default=(text("now()")),
+            nullable=False
+        ),
+        # user-modifiable effective datetime (defaults to audit_time);
+        # this is the datetime to be used for all intents and purposes other 
+        # than for "forensic" data auditing
+        rdb.Column("audit_date_active", rdb.DateTime(timezone=False),
+            #!+CATALYSE(mr, nov-2010)
+            #default=functions.current_timestamp(),
+            server_default=(text("now()")),
+            nullable=False
+        ),
+        #rdb.Column("description", rdb.UnicodeText), #!+dynamic at runtime
+        # possible explanatory note/remark/comment/observation/recommendation/etc 
+        # about the change, manually added by the user; this is part of the 
+        # audit history of a document and visible to all who have access to this
+        # change record.
+        #!+should be in an external "note" relation? what should note 
+        #  language be (may be different than doc language)?
+        #rdb.Column("audit_note", rdb.UnicodeText),
+        # Workflow State at time of change - visibility of a change record 
+        # depends on permissions of parent object in this specific state.
+        #rdb.Column("status", rdb.Unicode(48)), #!+presumably already on head
+        # for when audit_head is itself a sub-document e.g. events, as knowing 
+        # the status of also the "root" head document may be necessary to 
+        # determine allowed access for *this* change record
+        #rdb.Column("audit_root_status", rdb.Unicode(48)),
+    ]
+    def extend_cols(cols, ext_cols):
+        names = [ c.name for c in cols ]
+        for c in ext_cols:
+            if not c.primary_key:
+                assert c.name not in names, "Duplicate column."
+                names.append(c.name)
+                #!+should ext FK cols also be made an FK here?
+                #!+should special ext col constraints NOT be carried over e.g.
+                #  default value on ext, not/nullable on ext...?
+                cols.append(c.copy())
+    extend_cols(columns, table.columns)
+    # !+additional tables...
+    audit_tbl = rdb.Table(audit_tbl_name, metadata, *columns,
+        useexisting=False
+    )
+    return audit_tbl
 
 
 def make_changes_table(table, metadata):
@@ -1092,7 +1159,7 @@ doc = rdb.Table("doc", metadata,
     # head document (for sub documents e.g. events)
     rdb.Column("head_id", rdb.Integer, 
         rdb.ForeignKey("parliamentary_items.parliamentary_item_id"), 
-        #!+EVENT_DOC: tmp, should be: rdb.ForeignKey("doc.doc_id"),
+        #!+DOCUMENT: tmp, should be: rdb.ForeignKey("doc.doc_id"),
         nullable=True
     ),
     # (event only?) date, needed? auto derive from workflow audit log?
@@ -1107,6 +1174,9 @@ doc = rdb.Table("doc", metadata,
     ),
 )
 doc_index = rdb.Index("doc_status_idx", doc.c["status"])
+
+# doc audit
+doc_audit = make_audit_table(doc, metadata)
 
 
 # Parliamentary Items:

@@ -18,7 +18,7 @@ import zc.table
 
 from bungeni.models import interfaces
 from bungeni.models import domain
-from bungeni.core.workflow.interfaces import InvalidStateError
+from bungeni.core.workflow.interfaces import IWorkflow, InvalidStateError
 from bungeni.ui.forms.interfaces import ISubFormViewletManager
 from bungeni.ui.i18n import _
 from bungeni.ui.descriptor import descriptor
@@ -64,7 +64,8 @@ class ChangeDataProvider(object):
         
         # changes on sub-items -- only Parliamentary Content may have sub-items
         if interfaces.IBungeniParliamentaryContent.providedBy(self.head):
-        
+            hwf = IWorkflow(self.head)
+            
             # changes on item signatories
             if "signatory" in self.include_change_types:
                 signatories = [ s for s in self.head.item_signatories
@@ -74,7 +75,9 @@ class ChangeDataProvider(object):
                     append_visible_changes_on_item(s)
             
             # changes on item attachments
-            if "attachedfile" in self.include_change_types:
+            if ("attachedfile" in self.include_change_types 
+                    and hwf.has_feature("attachment") #!+IAttachmentable?
+                ):
                 attachments = [ f for f in self.head.attached_files
                     if interaction.checkPermission("zope.View", f)
                 ]
@@ -82,31 +85,16 @@ class ChangeDataProvider(object):
                     append_visible_changes_on_item(f)
             
             # changes on item events
-            if "event" in self.include_change_types:
+            if ("event" in self.include_change_types 
+                    # and workflow.has_feature("event"): #!+IEventable?
+                    # at least no recursion, on events on events...
+                    and not interfaces.IEvent.providedBy(self.head)
+                ):
                 events = [ e for e in self.head.events
                     if interaction.checkPermission("zope.View", e)
                 ]
-                if events:
-                    # !+AuditLogSubs(mr, dec-2011) events not currently audited,
-                    # so we temporarily simulate a singular "add" change action 
-                    # and stuff it on an event.changes attribute.
-                    class EventChange(domain.ItemChanges):
-                        def __init__(self, event):
-                            self._event = event
-                            self.item_id = event.doc_id
-                            #change_id
-                            #self.content
-                            self.head = event.head
-                            self.action = "add"
-                            self.date_audit = self.date_active = \
-                                event.status_date
-                            self.description = event.short_title
-                            self.notes = None # self.extras
-                            self.user = event.owner
-                            self.status = event.status
-                    for e in events:
-                        e.changes = [EventChange(e)]
-                        append_visible_changes_on_item(e)
+                for e in events:
+                    append_visible_changes_on_item(e)
         
         # sort aggregated changes by date_active
         changes = [ dc[1] for dc in 
@@ -163,30 +151,35 @@ def _get_type_name(change):
     """
     #return change.head.type # !+ not all heads define such a type attr 
     cname = change.__class__.__name__
-    if cname.endswith("Change"):
+    if cname.endswith("Change"): #!+DOCUMENT
         return cname[:-6].lower()
+    if cname.endswith("Audit"):
+        return cname[:-5].lower()
     return cname.lower()
 
 def _format_description_workflow(change):
     # !+ workflow transition change log stores the (unlocalized) 
     # human title for the transition's destination workflow state 
-    extras = _eval_as_dict(change.notes)
+    extras = _eval_as_dict(getattr(change, "notes", 
+        "{'source':'TBD', 'destination':'TBD'}")) # !+AUDIT_PREVIOUS
     return ('%s <span class="workflow_info">%s</span> '
         '%s <span class="workflow_info">%s</span>' % (
             _("from"),
             _(extras.get("source", None)),
             _("to"),
             _(extras.get("destination", None)) ))
-    
+
 def _format_description(change):
     """Build the (localized) description for display, for each change, per 
     change type and action.
     """
     change_type_name = _get_type_name(change)
+    # !+AUDIT_DESCRIPTIONS... to be redone, dynamic. Note also that current
+    # links within descriptions for audit logs of a sub object are all broken!
     if change_type_name == "event":
         # description for (event, *)
         return """<a href="event/obj-%s">%s</a>""" % (
-            change.item_id, _(change.description))
+            change.audit_head_id, _(change.description))
     elif change_type_name == "attachedfile":
         file_title = "%s" % (change.head.file_title)
         # !+ _(change.head.attached_file_type), change.head.file_name)

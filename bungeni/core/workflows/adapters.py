@@ -135,9 +135,16 @@ def apply_customization_workflow(name):
     wf = get_workflow(name)
     def _apply_customization_workflow(kls):
         # decorate/modify domain/schema/mapping as needed
-        kls = domain.configurable_domain(kls, wf)
-        schema.configurable_schema(kls)
-        orm.configurable_mappings(kls)
+        
+        # !+DOCUMENT same doc table, so no need to create changes/versions/etc...
+        if interfaces.IDocument.implementedBy(kls):
+            domain.DOCUMENT_configurable_domain(kls, wf)
+            orm.DOCUMENT_configurable_mappings(kls)                
+        else:
+            kls = domain.configurable_domain(kls, wf)
+            schema.configurable_schema(kls)
+            orm.configurable_mappings(kls)
+        
         # !+ ok to call set_auditor(kls) more than once?
         # !+ following should be part of the domain.auditable(kls) logic
         if wf.has_feature("audit"):

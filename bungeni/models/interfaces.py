@@ -152,7 +152,12 @@ class IVersionContainer(IBungeniContainer):
 class IHeading(IBungeniContent):
     pass
 
-class IEvent(IBungeniContent):
+class IDocument(IBungeniContent):
+    """Marks instances of domain.Document.
+    Also marks difference between new-style and old-style parliamentary items
+    while in transitory phase.
+    """
+class IEvent(IDocument):
     pass
 
 

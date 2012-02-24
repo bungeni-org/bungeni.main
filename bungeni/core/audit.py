@@ -51,7 +51,7 @@ from bungeni.alchemist import Session
 from bungeni.alchemist.interfaces import IRelationChange
 
 from bungeni.models.utils import get_db_user_id
-from bungeni.models.interfaces import IAuditable
+from bungeni.models.interfaces import IAuditable, IDocument, IEvent
 from bungeni.models import schema
 from bungeni.models import domain
 from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowTransitionEvent
@@ -79,7 +79,10 @@ def _trace_audit_handler(ah):
 @_trace_audit_handler
 def _object_add(ob, event):
     auditor = get_auditor(ob)
-    auditor.object_add(removeSecurityProxy(ob), event)
+    if IDocument.providedBy(ob): # !+DOCUMENT
+        auditor.DOCUMENT_object_add(removeSecurityProxy(ob), event)
+    else:
+        auditor.object_add(removeSecurityProxy(ob), event)
 
 @register.handler(adapts=(IAuditable, IObjectModifiedEvent))
 @_trace_audit_handler
@@ -91,7 +94,28 @@ def _object_modify(ob, event):
             event, orginator))
         return
     auditor = get_auditor(ob)
-    auditor.object_modify(removeSecurityProxy(ob), event)
+    
+    if IEvent.providedBy(ob):
+        print "!+PYTHON_BROKEN_PROXY >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+        print "  0 instance:", ob, "/ provides IEvent (all True):", IEvent.providedBy(ob), IEvent.providedBy(removeSecurityProxy(ob))
+        print "  1 class:", ob.__class__, "/ bases:", ob.__class__.__bases__
+        print "  2 type(class):", type(ob.__class__), "/ type(domain.Event):", type(domain.Event)
+        print "  3 class is... (should be all True):", \
+            ob.__class__ is domain.Event, \
+            removeSecurityProxy(ob.__class__) is domain.Event, \
+            removeSecurityProxy(ob).__class__ is domain.Event
+        print "  4 isinstance checks... (should be all True):", \
+            isinstance(ob, domain.Event), \
+            isinstance(removeSecurityProxy(ob), domain.Event), \
+            isinstance(ob, removeSecurityProxy(ob).__class__), \
+            isinstance(ob, removeSecurityProxy(ob.__class__))
+            #isinstance(ob, ob.__class__) TypeError !!
+        print "!+PYTHON_BROKEN_PROXY <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+    
+    if IDocument.providedBy(ob): # !+DOCUMENT
+        auditor.DOCUMENT_object_modify(removeSecurityProxy(ob), event)
+    else:
+        auditor.object_modify(removeSecurityProxy(ob), event)
 
 @register.handler(adapts=(IAuditable, IObjectRemovedEvent))
 @_trace_audit_handler
@@ -103,7 +127,10 @@ def _object_remove(ob, event):
 @_trace_audit_handler
 def _object_workflow(ob, event):
     auditor = get_auditor(ob)
-    change_id = auditor.object_workflow(removeSecurityProxy(ob), event)
+    if IDocument.providedBy(ob): # !+DOCUMENT
+        change_id = auditor.DOCUMENT_object_workflow(removeSecurityProxy(ob), event)
+    else:
+        change_id = auditor.object_workflow(removeSecurityProxy(ob), event)
     event.change_id = change_id
 
 
@@ -155,6 +182,8 @@ class _AuditorFactory(object):
     
     def object_add(self, ob, event):
         return self._object_changed("add", ob)
+    def DOCUMENT_object_add(self, ob, event):
+        return self._DOCUMENT_object_changed("add", ob)
     
     def object_modify(self, ob, event):
         attrset = []
@@ -166,7 +195,7 @@ class _AuditorFactory(object):
             elif IRelationChange.providedBy(attr):
                 if attr.description:
                     attrset.append(attr.description)
-        attrset.append(getattr(ob, "note", ""))
+        attrset.append(getattr(ob, "note", "")) #!+??
         str_attrset = []
         for a in attrset:
             if type(a) in StringTypes:
@@ -181,6 +210,10 @@ class _AuditorFactory(object):
                         description=description,
                         extras=extras,
                         date_active=change_data["date_active"])
+    def DOCUMENT_object_modify(self, ob, event):
+        change_data = self._get_change_data()
+        return self._DOCUMENT_object_changed("modify", ob, 
+                audit_date_active=change_data["date_active"])
     
     def object_remove(self, ob, event):
         # !+AUDIT_REMOVE(mr, feb-2011) if this is a real delete (of a record 
@@ -230,6 +263,17 @@ class _AuditorFactory(object):
                         date_active=change_data["date_active"])
         # description field is a "building block" for a UI description;
         # extras/notes field becomes interpolation data
+    def DOCUMENT_object_workflow(self, ob, event):
+        change_data = self._get_change_data()
+        # update object's workflow status date (if supported by object)
+        if hasattr(ob, "status_date"):
+            ob.status_date = change_data["date_active"] or datetime.now()
+        # as a "base" description, use human readable workflow state title
+        #wf = IWorkflow(ob) # !+ adapters.get_workflow(ob)
+        #description = wf.get_state(event.destination).title # misc.get_wf_state
+        return self._DOCUMENT_object_changed("workflow", ob, 
+                audit_date_active=change_data["date_active"])
+    
     
     def object_version(self, ob, event):
         """
@@ -241,11 +285,10 @@ class _AuditorFactory(object):
             .versioned # bungeni.core.version.Versioned
         """
         session = Session()
-        session.add(event.version)
-
         # !+version_id At this point, new version instance (at event.version) is not yet 
         # persisted to the db (or added to the session!) so its version_id is
         # still None. We force the issue, by adding it to session and flushing.
+        session.add(event.version)
         session.flush()
         # as base description, record a the version object's title
         description = event.message
@@ -322,7 +365,7 @@ class _AuditorFactory(object):
         change.user_id = user_id
         change.description = description
         change.extras = extras
-        change.content_type = otype
+        change.content_type = otype #!+ ?!
         change.head = ob # attach change to parent object
         change.status = ob.status # remember parent's status at time of change
         # !+SUBITEM_CHANGES_PERMISSIONS(mr, jan-2012) permission on change 
@@ -337,15 +380,51 @@ class _AuditorFactory(object):
         log.debug("AUDITED [%s] %s" % (action, change.__dict__))
         return change.change_id
     
+    def _DOCUMENT_object_changed(self, action, ob, audit_date_active=None):
+        """
+        """
+        domain.assert_valid_change_action(action)
+        user_id = get_db_user_id()
+        assert user_id is not None, "Audit error. No user logged in."
+        session = Session()
+        alog = self.change_class() # !+rename audit_class
+        alog.audit_user_id = user_id
+        alog.audit_action = action
+        alog.audit_head = ob # attach audit log item to parent object
+        alog.audit_date = datetime.now()
+        if audit_date_active:
+            alog.audit_date_active = audit_date_active
+        else:
+            alog.audit_date_active = alog.audit_date
+        def _copy_field_values(source, dest):
+            table = self.change_table
+            for column in table.columns:
+                # skip all fields starting with "audit_"
+                if column.name.startswith("audit_"):
+                    continue
+                # skip all primary keys (audit_head_id managed separately)
+                if column.primary_key: 
+                    continue
+                value = getattr(source, column.name)
+                setattr(dest, column.name, value)
+        # carry over a snapshot of head values
+        _copy_field_values(ob, alog)
+        session.add(alog)
+        session.flush()
+        log.debug("AUDITED [%s] %s" % (action, alog.__dict__))
+        return alog.audit_id
+    
     #
     
     def _getKey(self, ob):
         mapper = orm.object_mapper(ob)
         primary_key = mapper.primary_key_from_instance(ob)[0]
         return primary_key, unicode(ob.__class__.__name__)
-
+    
     def _get_change_data(self):
         """If request defines change_data, use it, else return a dummy dict.
+        
+        !+ui.forms.workflow adds entries for: note, date_active, registry_number
         """
         try:
             cd = IAnnotations(common.get_request()).get("change_data")
@@ -374,8 +453,13 @@ def set_auditor(kls):
     name = kls.__name__
     auditor_name = "%sAuditor" % (name)
     log.debug("Setting AUDITOR %s [for type %s]" % (auditor_name, name))
-    change_kls = getattr(domain, "%sChange" % (name))
-    change_tbl = getattr(schema, "%s_changes" % (schema.un_camel(name)))
+    
+    if IDocument.implementedBy(kls): # !+DOCUMENT
+        change_kls = getattr(domain, "%sAudit" % (name))
+        change_tbl = schema.doc_audit
+    else:
+        change_kls = getattr(domain, "%sChange" % (name))
+        change_tbl = getattr(schema, "%s_changes" % (schema.un_camel(name)))
     globals()[auditor_name] = _AuditorFactory(change_tbl, change_kls)
 
 for kls in domain.CUSTOM_DECORATED["auditable"]:
