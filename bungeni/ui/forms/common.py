@@ -32,7 +32,6 @@ from zope.container.contained import ObjectRemovedEvent
 import sqlalchemy as rdb
 #from bungeni.alchemist.container import stringKey
 #from bungeni.core.workflow.interfaces import IWorkflowController
-#from bungeni.alchemist.ui import handle_edit_action
 from zope.formlib.interfaces import IDisplayWidget
 
 # !+sqlalchemy.exc(mr, jul-2010) why this try/except ?
@@ -723,7 +722,6 @@ class TranslateForm(AddForm):
         #IWorkflowController(version).fireTransition("-draft_translation")
         # redefine form context and proceed with edit action
         #self.setUpAdapters(version)
-        #handle_edit_action(self, action, data)
 
         # commit version such that it gets a version id
         #transaction.commit()
