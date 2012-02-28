@@ -952,6 +952,9 @@ class ItemSchedule(Entity):
         self.item_type = schedule_item.type
 
     item = property(_get_item, _set_item)
+    
+    sort_on = ["planned_order", ]
+    sort_dir = "asc"
 
     @property
     def getItem(self):

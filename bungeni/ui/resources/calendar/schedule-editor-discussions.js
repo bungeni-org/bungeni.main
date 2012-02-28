@@ -12,7 +12,7 @@ YAHOO.bungeni.scheduling = function(){
     var Columns = YAHOO.bungeni.config.scheduling.columns;
     var DialogConfig = YAHOO.bungeni.config.dialogs;
     var Formatters = YAHOO.bungeni.config.scheduling.formatters;
-    
+    var MOVE_COLUMNS = [Columns.MOVE_UP, Columns.MOVE_DOWN];
     YAHOO.bungeni.unsavedChanges = false;
     YAHOO.bungeni.unsavedDiscussions = false;
     
@@ -365,6 +365,45 @@ YAHOO.bungeni.scheduling = function(){
             dialog.show();
             dialog.bringToTop();
         };
+        
+        var moveRecord = function(args){
+            var target_column = this.getColumn(args.target);
+            if (MOVE_COLUMNS.indexOf(target_column.field)<0){
+               return;
+            }
+            var target_record = this.getRecord(args.target);
+            var target_index = this.getTrIndex(target_record);
+            var record_count = this.getRecordSet().getLength();
+            var swap_rows = [];
+            if (target_column.field == Columns.MOVE_UP){
+                if (target_index!=0){
+                    swap_rows = [target_index, (target_index - 1)]
+                }
+            }else{
+                if (target_index != (record_count-1)){
+                    swap_rows = [target_index, (target_index + 1)]
+                }
+            }
+            
+            if (swap_rows.length == 2){
+                var data_0 = this.getRecord(swap_rows[0]).getData();
+                var data_1 = this.getRecord(swap_rows[1]).getData();
+                this.updateRow(swap_rows[0], data_1);
+                this.updateRow(swap_rows[1], data_0);
+                this.unselectAllRows();
+                this.selectRow(swap_rows[1]);
+            }
+        }
+        
+        var customSelectRow = function(args){
+            var target_column = this.getColumn(args.target);
+            if (MOVE_COLUMNS.indexOf(target_column.field)>=0){
+                return;
+            }
+            this.unselectAllRows();
+            this.selectRow(this.getRecord(args.target));
+        }
+        
         var editDiscussion = function(args){
             var column = this.getColumn(args.target);
             if(column.field == Columns.DISCUSSION_EDIT){
@@ -472,6 +511,8 @@ YAHOO.bungeni.scheduling = function(){
             setUnsavedChanges: setUnsavedChanges,
             setUnsavedDiscussions: setUnsavedDiscussions,
             showDiscussions: showDiscussions,
+            moveRecord: moveRecord,
+            customSelectRow: customSelectRow,
             editDiscussion: editDiscussion,
             deleteDiscussion: deleteDiscussion,
             saveDiscussions: saveDiscussions,
@@ -542,6 +583,16 @@ YAHOO.bungeni.scheduling = function(){
                         formatter: Formatters.link
                     },
                     {
+                        key: Columns.MOVE_UP, 
+                        label: "", 
+                        formatter: Formatters.moveUp
+                    },
+                    {
+                        key: Columns.MOVE_DOWN, 
+                        label: "", 
+                        formatter: Formatters.moveDown
+                    },
+                    {
                         key: Columns.DISCUSSION_EDIT,
                         label: "",
                         formatter: Formatters.editDiscussions
@@ -575,7 +626,6 @@ YAHOO.bungeni.scheduling = function(){
                         width:"100%"
                     }
                 );
-                dataTable.subscribe("rowClickEvent", dataTable.onEventSelectRow);
                 dataTable.subscribe("rowMouseoverEvent", 
                     dataTable.onEventHighlightRow
                 );
@@ -583,7 +633,13 @@ YAHOO.bungeni.scheduling = function(){
                     dataTable.onEventUnhighlightRow
                 );
                 dataTable.subscribe("cellClickEvent",
+                    YAHOO.bungeni.scheduling.handlers.customSelectRow
+                );
+                dataTable.subscribe("cellClickEvent",
                     YAHOO.bungeni.scheduling.handlers.showDiscussions
+                );
+                dataTable.subscribe("cellClickEvent",
+                    YAHOO.bungeni.scheduling.handlers.moveRecord
                 );
                 dataTable.subscribe("initEvent", function(){
                     YAHOO.bungeni.Events.scheduleAvailable.fire();

@@ -210,6 +210,8 @@ YAHOO.bungeni.config = function(){
                         });
                         button.appendTo(el);
                     }
+                }else{
+                    el.innerHTML = "";
                 }
             }
 
