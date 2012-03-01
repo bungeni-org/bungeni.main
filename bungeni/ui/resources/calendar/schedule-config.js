@@ -86,6 +86,8 @@ YAHOO.bungeni.config = function(){
         BODY_TEXT : "body_text",
         DISCUSSION_EDIT : "edit_discussion",
         DISCUSSION_DELETE : "delete_discussion",
+        WORKFLOW_STATE : "wf_state",
+        WORKFLOW_ACTIONS : "wf_actions",
     }
     var dialog_config = function(){
         var default_config = {
@@ -259,6 +261,49 @@ YAHOO.bungeni.config = function(){
                 
             }
 
+            /**
+             * @method workflowActionsFormatter
+             * @description render workflow actions available for current
+             * item
+             */
+             var workflowActionsFormatter = function(el, record, column, data){
+                 var index = this.getTrIndex(record);
+                 var rec_data = record.getData();
+                 if (rec_data[Columns.WORKFLOW_STATE]==undefined){
+                     el.innerHTML = "";
+                     return;
+                 }
+                 var actions = rec_data[Columns.WORKFLOW_ACTIONS];
+                 var state_title = rec_data[Columns.WORKFLOW_STATE];
+                 if(actions.length){
+                    var wfActionButton = new YAHOO.widget.Button(
+                        {
+                            type: "menu",
+                            label: BungeniUtils.wrapText(state_title),
+                            id: "wf_action_" + index,
+                            name: "wf_action_" + index,
+                            menu: actions,
+                            container: el,
+                        }
+                    );
+                    wfActionButton.on("selectedMenuItemChange", function(args){
+                            var menuValue = args.newValue;
+                            this.set("label", BungeniUtils.wrapText(
+                                args.newValue.cfg.getProperty("text")
+                            ));
+                        }
+                    );
+                    //!+HACK(add get wf value property to record)
+                    if (!record.getWFStatus){
+                        record.getWFStatus = function(){
+                            var active = wfActionButton.getMenu().activeItem;
+                            return active?active.value:null;
+                        }
+                    }
+                 }else{
+                     el.innerHTML = BungeniUtils.wrapText(state_title);
+                 }
+             }
 
             return {
                 title: itemTitleFormatter,
@@ -271,7 +316,8 @@ YAHOO.bungeni.config = function(){
                 deleteButton: deleteButtonFormatter,
                 link: linkFormatter,
                 availableItemSelect: availableItemSelectFormatter,
-                editDiscussions: editDiscussionsFormatter
+                editDiscussions: editDiscussionsFormatter,
+                workflowActions: workflowActionsFormatter
             }
         }()
     }

@@ -33,7 +33,7 @@ def get_globals(group_name, **kwargs):
                 for (name, title) in 
                 sorted(data.get_schedulable_types().iteritems())
              ],
-             "discussable_types": [k for k in data.get_schedulable_types()],
+            "discussable_types": [k for k in data.get_schedulable_types()],
             "types": {
                 "HEADING": "heading",
                 "TEXT": "text"
@@ -44,7 +44,8 @@ def get_globals(group_name, **kwargs):
             "scheduled_item_context_menu_header": i18n(_(u"Modify Item"), 
                 language
             ),
-            "json_listing_url" : "./items/jsonlisting?sort=sort_planned_order&dir=asc",
+            "json_listing_url" : "./items/jsonlisting",
+            "json_listing_url_meta" : "./items/jsonlisting-schedule",
             "save_schedule_url": "./items/save-schedule",
             "discussions_save_url": "discussions/save-discussions",
             "discussion_items_json_url" : "discussions/jsonlisting",

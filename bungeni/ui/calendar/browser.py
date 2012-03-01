@@ -41,7 +41,9 @@ from zc.resourcelibrary import need
 from bungeni.core.location import location_wrapped
 from bungeni.core.interfaces import ISchedulingContext
 from bungeni.core.schedule import SittingContainerSchedulingContext
-from bungeni.core.workflow.interfaces import IWorkflow
+from bungeni.core.workflow.interfaces import (IWorkflow, 
+    IWorkflowController, InvalidTransitionError
+)
 from bungeni.core.language import get_default_language
 from bungeni.core.translation import translate_i18n
 
@@ -53,11 +55,15 @@ from bungeni.ui.utils import misc, url, debug, date
 from bungeni.ui.menu import get_actions
 from bungeni.ui.interfaces import IBusinessSectionLayer
 from bungeni.ui.widgets import LanguageLookupWidget
+from bungeni.ui.container import ContainerJSONListing
 
 from bungeni.models import domain
+from bungeni.models.interfaces import IItemScheduleContainer
 from bungeni.alchemist.container import stringKey
 from bungeni.alchemist import Session
 #from bungeni.ui import vocabulary
+
+from bungeni.utils import register
 
 # Filter key names prefix - for available items listings
 FILTER_PREFIX = "filter_"
@@ -462,6 +468,38 @@ class GroupSittingScheduleView(BrowserView):
             map(need, _needed)
         return self.template()
 
+@register.view(IItemScheduleContainer, name="jsonlisting-schedule",
+    protect={"bungeni.sittingschedule.itemdiscussion.Edit": dict(
+        attributes=["browserDefault", "__call__"]
+    )}
+)
+class ScheduleJSONListing(ContainerJSONListing):
+    """Returns JSON listing with expanded unlisted properties used in
+    scheduling user interface setup
+    """
+    def _json_values(self, nodes):
+        items = super(ScheduleJSONListing, self)._json_values(nodes)
+        def add_wf_meta(enum):
+            index, item = enum
+            node = nodes[index]
+            wfc = IWorkflowController(node.item, None)
+            if wfc is None:
+                return
+            item["wf_state"] = translate_i18n(
+                wfc.state_controller.get_state().title
+            )
+            item["wf_actions"] = [ 
+                dict(
+                    value=transition, 
+                    text=translate_i18n(
+                        wfc.workflow.get_transition(transition).title
+                    )
+                )
+                for transition in wfc.getFireableTransitionIds()
+            ]
+        map(add_wf_meta, enumerate(items))
+        return items
+
 class SchedulableItemsJSON(BrowserView):
     
     def __init__(self, context, request):
@@ -823,6 +861,7 @@ class ScheduleAddView(BrowserView):
             data_item_id = data_item.get("item_id")
             data_item_type = data_item.get("item_type")
             data_item_text = data_item.get("item_text")
+            data_item_wf_status = data_item.get("wf_status")
             
             if not data_item_id:
                 # create text record before inserting into schedule
@@ -864,6 +903,20 @@ class ScheduleAddView(BrowserView):
                     session.add(current_record)
                     session.flush()
                     notify(ObjectModifiedEvent(current_record))
+                    
+                    #workflow operations
+                    wfc = IWorkflowController(current_record.item, None)
+                    if wfc:
+                        if wfc and data_item_wf_status:
+                            try:
+                                wfc.workflow.get_transition(data_item_wf_status)
+                                wfc.fireTransition(data_item_wf_status)
+                            except InvalidTransitionError:
+                                log.error(
+                                    "Invalid transition [%s] for object: [%s] ",
+                                    data_item_wf_status, current_record
+                                )
+                        wfc.fireAutomatic()
                     
                     #update text for text records
                     #!+INTERFACES(Apply this behaviour via shared interface)

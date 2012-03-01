@@ -1005,7 +1005,9 @@ class ItemSchedule(Entity):
         if domain_class is None:
             log.error("There is no item assigned to this schedule entry")
             return None
-        return Session().query(domain_class).get(self.item_id)
+        item = Session().query(domain_class).get(self.item_id)
+        item.__parent__ = self
+        return item
 
     def _set_item(self, schedule_item):
         self.item_id = get_mapped_object_id(schedule_item)

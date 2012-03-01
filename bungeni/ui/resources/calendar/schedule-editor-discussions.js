@@ -190,10 +190,15 @@ YAHOO.bungeni.scheduling = function(){
         }
         var RequestObject = {
             handleSuccess: function(o){
+                YAHOO.bungeni.scheduling.getScheduleTable().refresh();
                 YAHOO.bungeni.scheduling.dialogs.blocking.hide();
                 YAHOO.bungeni.unsavedChanges = false;
             },
             handleFailure: function(o){
+                YAHOO.bungeni.scheduling.dialogs.blocking.hide();
+                YAHOO.bungeni.scheduling.dialogs.notification.show(
+                    scheduler_globals.saving_dialog_exception
+                );
             },
             startRequest: function(url, data, message){
                 Event.stopEvent(window.event);
@@ -474,12 +479,14 @@ YAHOO.bungeni.scheduling = function(){
             if (record_set.getLength()){
                 var item_data = new Array();
                 for (index in records){
-                    var record_data = records[index].getData();
+                    var record = records[index];
+                    var record_data = record.getData();
                     var save_data = {
                         item_type: record_data.item_type,
                         item_id: record_data.item_id,
                         schedule_id: record_data.object_id,
-                        item_text: record_data.item_title
+                        item_text: record_data.item_title,
+                        wf_status: record.getWFStatus?record.getWFStatus():null
                     }
                     item_data.push(YJSON.stringify(save_data));
                 }
@@ -571,11 +578,7 @@ YAHOO.bungeni.scheduling = function(){
                     {
                         key: Columns.TITLE, 
                         label: scheduler_globals.column_title,
-                        width: 200
-                    },
-                    {
-                        key: Columns.MOVER, 
-                        label: scheduler_globals.column_mover, 
+                        width: 150
                     },
                     {
                         key: Columns.URI, 
@@ -596,10 +599,15 @@ YAHOO.bungeni.scheduling = function(){
                         key: Columns.DISCUSSION_EDIT,
                         label: "",
                         formatter: Formatters.editDiscussions
+                    },
+                    {
+                        key: Columns.WORKFLOW_ACTIONS,
+                        label: "",
+                        formatter: Formatters.workflowActions
                     }
                 ];
                 var dataSource = new YAHOO.util.DataSource(
-                    scheduler_globals.json_listing_url
+                    scheduler_globals.json_listing_url_meta
                 );
                 dataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
                 dataSource.responseSchema = {
@@ -609,8 +617,10 @@ YAHOO.bungeni.scheduling = function(){
                         Columns.TITLE, 
                         Columns.TYPE, 
                         Columns.OBJECT_ID, 
-                        Columns.MOVER, 
-                        Columns.URI
+                        Columns.MOVER,
+                        Columns.URI,
+                        Columns.WORKFLOW_STATE,
+                        Columns.WORKFLOW_ACTIONS
                     ],
                 };
                 var tableContainer = document.createElement("div");

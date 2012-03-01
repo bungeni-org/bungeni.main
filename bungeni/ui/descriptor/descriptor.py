@@ -3403,7 +3403,6 @@ class ItemScheduleDescriptor(ModelDescriptor):
             property=schema.TextLine(title=_("uri"), required=False),
             listing_column=scheduled_item_uri_column("uri", _(u"Item URI"))
         ),
-
     ]
 
 class ScheduleTextDescriptor(ModelDescriptor):
