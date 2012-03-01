@@ -429,6 +429,30 @@ mapper(domain.Venue, schema.venues)
 ##############################
 # Document
 
+def mapper_relation_vertical_property(
+        object_table, object_id_column_name, 
+        vp_name, vp_type, vp_table
+    ):
+    """Return the SQLAlchemy internal mapper property for the vertical property.    
+    """
+    object_type = object_table.name
+    object_id_column = object_table.c[object_id_column_name] 
+    return relation(vp_type,
+            primaryjoin=rdb.and_(
+                object_id_column == vp_table.c.object_id,
+                object_type == vp_table.c.object_type,
+                vp_name == vp_table.c.name,
+            ),
+            foreign_keys=[vp_table.c.object_id],
+            uselist=False,
+            backref="object",
+            cascade="all",
+            single_parent=True,
+            lazy=False)
+
+mapper(domain.vp.Text, schema.vp_text)
+mapper(domain.vp.TranslatedText, schema.vp_translated_text)
+
 mapper(domain.Document, schema.doc,
     polymorphic_on=schema.doc.c.type, # polymorphic discriminator
     polymorphic_identity="doc", # polymorphic discriminator value
@@ -456,6 +480,7 @@ mapper(domain.Document, schema.doc,
             lazy=False),
     }
 )
+
 mapper(domain.DocAudit, schema.doc_audit,
     polymorphic_on=schema.doc_audit.c.type, # polymorphic discriminator
     polymorphic_identity="doc", # polymorphic discriminator value
@@ -465,8 +490,16 @@ mapper(domain.DocAudit, schema.doc_audit,
                 schema.users.c.user_id),
             uselist=False,
             lazy=False),
+        # "internal" mapper property for vertical_property audit_note
+        "_vp_audit_note": mapper_relation_vertical_property(
+            schema.doc_audit, 
+            "audit_id",
+            "audit_note", 
+            domain.vp.TranslatedText,
+            schema.vp_translated_text),
     }
 )
+
 
 mapper(domain.Event,
     inherits=domain.Document,

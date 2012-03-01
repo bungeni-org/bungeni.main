@@ -82,6 +82,23 @@ def configurable_schema(kls):
         assert change_tbl_name, "May not be IAttachmentable and not IVersionable"
 
 
+# vertical properties
+
+vp_text = rdb.Table("vp_text", metadata,
+    rdb.Column("object_id", rdb.Integer, primary_key=True, nullable=False),
+    rdb.Column("object_type", rdb.String(32), primary_key=True, nullable=False),
+    rdb.Column("name", rdb.String(50), primary_key=True, nullable=False,),
+    rdb.Column("value", rdb.UnicodeText),
+)
+vp_translated_text = rdb.Table("vp_translated_text", metadata,
+    rdb.Column("object_id", rdb.Integer, primary_key=True, nullable=False),
+    rdb.Column("object_type", rdb.String(32), primary_key=True, nullable=False),
+    rdb.Column("name", rdb.String(50), primary_key=True, nullable=False,),
+    rdb.Column("value", rdb.UnicodeText),
+    rdb.Column("language", rdb.String(5), nullable=False),
+)
+
+
 def make_audit_table(table, metadata):
     """Create an audit log table for an archetype.
     
@@ -125,9 +142,6 @@ def make_audit_table(table, metadata):
         # about the change, manually added by the user; this is part of the 
         # audit history of a document and visible to all who have access to this
         # change record.
-        #!+should be in an external "note" relation? what should note 
-        #  language be (may be different than doc language)?
-        #rdb.Column("audit_note", rdb.UnicodeText),
         # Workflow State at time of change - visibility of a change record 
         # depends on permissions of parent object in this specific state.
         #rdb.Column("status", rdb.Unicode(48)), #!+presumably already on head

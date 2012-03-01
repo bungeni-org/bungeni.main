@@ -272,7 +272,8 @@ class _AuditorFactory(object):
         #wf = IWorkflow(ob) # !+ adapters.get_workflow(ob)
         #description = wf.get_state(event.destination).title # misc.get_wf_state
         return self._DOCUMENT_object_changed("workflow", ob, 
-                audit_date_active=change_data["date_active"])
+                audit_date_active=change_data["date_active"],
+                audit_note=change_data.get("note", None))
     
     
     def object_version(self, ob, event):
@@ -380,7 +381,10 @@ class _AuditorFactory(object):
         log.debug("AUDITED [%s] %s" % (action, change.__dict__))
         return change.change_id
     
-    def _DOCUMENT_object_changed(self, action, ob, audit_date_active=None):
+    def _DOCUMENT_object_changed(self, action, ob, 
+            audit_date_active=None,
+            audit_note=None
+        ):
         """
         """
         domain.assert_valid_change_action(action)
@@ -396,6 +400,8 @@ class _AuditorFactory(object):
             alog.audit_date_active = audit_date_active
         else:
             alog.audit_date_active = alog.audit_date
+        if audit_note:
+            alog.audit_note = audit_note
         def _copy_field_values(source, dest):
             table = self.change_table
             for column in table.columns:

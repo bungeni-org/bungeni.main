@@ -46,6 +46,9 @@ def get_changes(auditable, *actions):
         assert_valid_change_action(action)
     return [ c for c in auditable.changes if c.action in actions ]
 
+def get_mapped_object_id(ob):
+    return object_mapper(ob).primary_key_from_instance(ob)[0]
+
 #
 
 class HeadParentedMixin(object):
@@ -592,6 +595,58 @@ class GroupAddress(Address):
     """Group address (official)
     """
 
+
+# vertical properties
+
+def vertical_property(object_type, vp_name, vp_type, *args, **kw):
+    """Get the external (non-SQLAlchemy) vertical property (on self.__class__) 
+    as a regular python property.
+    
+    Any additional args/kw are exclusively for instantiation of type_.
+    """
+    _vp_name = "_vp_%s" % (vp_name) # name for SA mapper property for this
+    doc = "VerticalProperty %s of type %s" % (vp_name, vp_type)
+    def fget(self):
+        vp = getattr(self, _vp_name, None)
+        if vp is not None:
+            return vp.value
+    def fset(self, value):
+        setattr(self, _vp_name, 
+            vp_type(self, object_type, vp_name, value, *args, **kw))
+    def fdel(self):
+        setattr(self, _vp_name, None)
+    return property(fget=fget, fset=fset, fdel=fdel, doc=doc)
+
+
+class VerticalProperty(Entity):
+    """Base Vertical Property.
+    """
+    def __init__(self, object_, object_type, name, value):
+        # !+backref sqlalchemy populates a self.object backref, but on flushing
+        self._object = object_
+        # sqlalchemy instruments a property per column, of same name
+        self.object_id = get_mapped_object_id(object_)
+        self.object_type = object_type # the db table's name
+        self.name = name # the domain class's property name
+        self.value = value
+    
+    def __repr__(self):
+        return "<%s %s=%r on %s>" % (self.__class__.__name__, 
+                self.name, self.value, self._object)
+
+class vp(object):
+    class Text(VerticalProperty):
+        """VerticalProperty of type text.
+        """
+    class TranslatedText(VerticalProperty):
+        """VerticalProperty of type translated text.
+        """
+        def __init__(self, object_, object_type, name, value, language=None):
+            VerticalProperty.__init__(self, object_, object_type, name, value)
+            # !+LANGUAGE(mr, mar-2012) using "en" as default... as
+            # get_default_language() is in core, that *depends* on models!
+            self.language = language or "en" # or get_default_language()
+
 #
 
 class Document(Entity):
@@ -642,7 +697,12 @@ class DocAudit(HeadParentedMixin, Entity):
         interface.classImplements(factory, interfaces.IChange) # !+IAudit
         return factory
     
-    # !+DOCUMENT
+    # "audit_note" vertical property -- implemented as external to doc_audit 
+    # because presumably it may have to be translatable, and the initial 
+    # language may not be the same as that of the head object being audited.
+    audit_note = vertical_property("doc_audit", "audit_note", vp.TranslatedText)
+    
+    # !+DOCUMENT tmp properties to "auto-adapt" to older change records...
     @property
     def head(self): return self.audit_head
     @property
@@ -654,7 +714,7 @@ class DocAudit(HeadParentedMixin, Entity):
     @property
     def date_active(self): return self.audit_date_active
     
-    
+
 class Event(HeadParentedMixin, Document):
     """Base class for an event on a document.
     """
@@ -663,6 +723,7 @@ class Event(HeadParentedMixin, Document):
     # validation, ... ?
     __dynamic_features__ = True
 #EventAudit
+
 
 
 class ParliamentaryItem(Entity):
@@ -947,8 +1008,7 @@ class ItemSchedule(Entity):
         return Session().query(domain_class).get(self.item_id)
 
     def _set_item(self, schedule_item):
-        mapper = object_mapper(schedule_item)
-        self.item_id = mapper.primary_key_from_instance(schedule_item)[0]
+        self.item_id = get_mapped_object_id(schedule_item)
         self.item_type = schedule_item.type
 
     item = property(_get_item, _set_item)

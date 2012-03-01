@@ -593,6 +593,7 @@ class WorkflowController(object):
         zope.event.notify(wte)
         # send modified event for original or new object
         ome = zope.lifecycleevent.ObjectModifiedEvent(self.context)
+        # !+ORIGINATOR(mr, feb-2012) better to simply not fire a 2nd event?
         ome.originator = wte # !+ could maybe use OME(o, *descriptions)
         zope.event.notify(ome)
     
