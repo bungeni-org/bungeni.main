@@ -438,17 +438,19 @@ def mapper_relation_vertical_property(
     object_type = object_table.name
     object_id_column = object_table.c[object_id_column_name] 
     return relation(vp_type,
-            primaryjoin=rdb.and_(
-                object_id_column == vp_table.c.object_id,
-                object_type == vp_table.c.object_type,
-                vp_name == vp_table.c.name,
-            ),
-            foreign_keys=[vp_table.c.object_id],
-            uselist=False,
-            backref="object",
-            cascade="all",
-            single_parent=True,
-            lazy=False)
+        primaryjoin=rdb.and_(
+            object_id_column == vp_table.c.object_id,
+            object_type == vp_table.c.object_type,
+            vp_name == vp_table.c.name,
+        ),
+        foreign_keys=[vp_table.c.object_id],
+        uselist=False,
+        # !+abusive, cannot create a same-named backref to multiple tables!
+        backref=object_type,
+        cascade="save-update, merge, delete-orphan",
+        single_parent=True,
+        lazy=True, # !+ setting False gives error in listings
+    )
 
 mapper(domain.vp.Text, schema.vp_text)
 mapper(domain.vp.TranslatedText, schema.vp_translated_text)

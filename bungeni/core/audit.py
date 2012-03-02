@@ -402,12 +402,16 @@ class _AuditorFactory(object):
             alog.audit_date_active = alog.audit_date
         if audit_note:
             alog.audit_note = audit_note
+        ob_kls_dict = ob.__class__.__dict__
         def _copy_field_values(source, dest):
             table = self.change_table
             for column in table.columns:
                 # skip all fields starting with "audit_"
                 if column.name.startswith("audit_"):
                     continue
+                # ok, column must therefore be a proper attribute from ob's class
+                assert column.name in ob_kls_dict, \
+                    "Not in class: %s" % column.name
                 # skip all primary keys (audit_head_id managed separately)
                 if column.primary_key: 
                     continue
