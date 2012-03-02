@@ -129,7 +129,7 @@ class ImageInputWidget(FileWidget):
     _missing = u""
 
 
-    __call__ = ViewPageTemplateFile("templates/imagewidget.pt")
+    __call__ = ViewPageTemplateFile("templates/image-widget.pt")
 
     @property
     def update_action_name(self):
@@ -236,10 +236,10 @@ class NoInputWidget(TextWidget):
         return u""
 
 class FileAddWidget(FileInputWidget):
-    __call__ = ViewPageTemplateFile("templates/addfilewidget.pt")
+    __call__ = ViewPageTemplateFile("templates/add-file-widget.pt")
 
 class FileEditWidget(FileInputWidget):
-    __call__ = ViewPageTemplateFile("templates/editfilewidget.pt")
+    __call__ = ViewPageTemplateFile("templates/edit-file-widget.pt")
 
 class FileDisplayWidget(zope.formlib.widgets.DisplayWidget):
     def __call__(self):
@@ -281,7 +281,7 @@ class RichTextEditor(TextAreaWidget):
 
         # attach behavior to default input widget, disable titlebar
         input_widget_js = u"""
-        <script language="javascript">
+        <script type="text/javascript">
             options={ height:'300px',
                       width:'100%%',
                       dompath:true,
@@ -358,7 +358,7 @@ class SupplementaryQuestionDisplay(zope.formlib.widget.DisplayWidget):
 class SelectDateWidget(zope.formlib.widget.SimpleInputWidget):
     """A more user freindly date input.
     """
-    __call__ = ViewPageTemplateFile("templates/selectdatewidget.pt")
+    __call__ = ViewPageTemplateFile("templates/select-date-widget.pt")
 
     _missing = u""
     minYear = None
@@ -601,7 +601,7 @@ class SelectDateWidget(zope.formlib.widget.SimpleInputWidget):
 class TextDateWidget(SelectDateWidget):
     """Simple date widget input in a text field.
     """
-    __call__ = ViewPageTemplateFile("templates/textdatewidget.pt")
+    __call__ = ViewPageTemplateFile("templates/text-date-widget.pt")
 
     def hasInput(self):
         """Widgets need to determine whether the request contains an input
@@ -662,13 +662,17 @@ class TextDateWidget(SelectDateWidget):
         else:
             value = self._data
         return self._toFormValue(value)
+    
+    @property
+    def date_name(self):
+        return self.name
 
 DateWidget = TextDateWidget
 
 
 class TextDateTimeWidget(TextDateWidget):
     
-    __call__ = ViewPageTemplateFile("templates/textdatetimewidget.pt")
+    __call__ = ViewPageTemplateFile("templates/text-datetime-widget.pt")
     
     @property
     def time_name(self):
@@ -724,7 +728,7 @@ DateTimeWidget = TextDateTimeWidget
 
 class SelectDateTimeWidget(SelectDateWidget):
 
-    __call__ = ViewPageTemplateFile("templates/selectdatetimewidget.pt")
+    __call__ = ViewPageTemplateFile("templates/select-datetime-widget.pt")
 
     @property
     def _hour_name(self):
@@ -800,7 +804,7 @@ class SelectDateTimeWidget(SelectDateWidget):
 class AutocompleteWidget(SingleDataHelper, ItemsWidgetBase):
     """Render a single selection autocomplete widget using YUI Autocomplete.
     """
-    __call__ = ViewPageTemplateFile("templates/autocompletewidget.pt")
+    __call__ = ViewPageTemplateFile("templates/auto-complete-widget.pt")
 
     def __init__(self, field, request):
         vocabulary = field.vocabulary

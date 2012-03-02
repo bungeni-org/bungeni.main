@@ -34,7 +34,6 @@ from bungeni.core import location
 from bungeni.ui.utils import url, debug
 from bungeni.ui import interfaces
 from bungeni.ui import browser
-from bungeni.ui import z3evoque
 
 
 def _get_context_chain(context):
@@ -86,13 +85,9 @@ So, we temporarily default the above to the context.__class__.__name__:
 
 
 class SecondaryNavigationViewlet(browser.BungeniViewlet):
-    
-    # evoque
-    render = z3evoque.ViewTemplateFile("navigation.html#secondary",
-        i18n_domain="bungeni")
-    # zpt
-    #render = ViewPageTemplateFile("templates/secondary-navigation.pt")
-    
+
+    render = ViewPageTemplateFile("templates/secondary-navigation.pt")
+
     def update(self):
         #request = self.request
         context = self.context
@@ -213,12 +208,8 @@ class SecondaryNavigationViewlet(browser.BungeniViewlet):
 
 
 class GlobalSectionsViewlet(browser.BungeniViewlet):
-    
-    # evoque
-    render = z3evoque.ViewTemplateFile("navigation.html#sections")
-    
-    # zpt
-    #render = ViewPageTemplateFile('templates/sections.pt')
+
+    render = ViewPageTemplateFile('templates/sections.pt')
     
     selected_portal_tab = None
     
@@ -265,11 +256,7 @@ class BreadCrumbsViewlet(browser.BungeniViewlet):
     
     Render the breadcrumbs to show a user his current location.
     """
-    # evoque
-    render = z3evoque.ViewTemplateFile("navigation.html#breadcrumbs")
-    
-    # zpt
-    #render = ViewPageTemplateFile( 'templates/breadcrumbs.pt' )
+    render = ViewPageTemplateFile('templates/bread-crumbs.pt')
 
     def __init__(self,  context, request, view, manager):
         self.context = context
@@ -331,11 +318,7 @@ class BreadCrumbsViewlet(browser.BungeniViewlet):
 
 class NavigationTreeViewlet(browser.BungeniViewlet):
     """Render a navigation tree."""
-    
-    # evoque !+ requires evoque svn HEAD
-    #render = z3evoque.ViewTemplateFile("navigation.html#tree")
-    
-    # zpt
+
     render = ViewPageTemplateFile( 'templates/bungeni-navigation-tree.pt' )
     
     path = ()

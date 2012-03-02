@@ -36,7 +36,7 @@ class SignatoriesStatus(object):
     """
     available = True
     
-    render = ViewPageTemplateFile("templates/signatories_status.pt")
+    render = ViewPageTemplateFile("templates/signatories-status.pt")
     
     def update(self):
         self.signature_status = self.getMessage()

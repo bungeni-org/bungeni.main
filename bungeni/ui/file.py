@@ -14,6 +14,7 @@ from zope.publisher.interfaces import IPublishTraverse, NotFound
 from zope.publisher.browser import BrowserView
 from zope.security.proxy import removeSecurityProxy
 from zope.security.management import getInteraction
+from zope.app.pagetemplate import ViewPageTemplateFile
 from zc.table import column
 
 from bungeni.core.workflow.interfaces import IStateController
@@ -23,7 +24,6 @@ from bungeni.models.domain import AttachedFileContainer
 from bungeni.ui.forms.interfaces import ISubFormViewletManager
 from bungeni.ui import browser
 from bungeni.ui.i18n import _
-from bungeni.ui import z3evoque
 from bungeni.ui.utils import date, url
 from bungeni.utils import register
 
@@ -152,10 +152,10 @@ class FileListingMixin(object):
 @register.view(AttachedFileContainer, name="index",
     protect=register.PROTECT_VIEW_PUBLIC)
 class FileListingView(FileListingMixin, browser.BungeniBrowserView):
-    
-    __call__ = z3evoque.PageViewTemplateFile("audit.html#listing_view")
+
+    __call__ = ViewPageTemplateFile("templates/listing-view.pt")
     _page_title = "Attachments"
-    
+
     def __init__(self, context, request):
         browser.BungeniBrowserView.__init__(self, context.__parent__, request)
         FileListingMixin.__init__(self)
@@ -169,8 +169,8 @@ class FileListingViewlet(FileListingMixin, browser.BungeniItemsViewlet):
     """Viewlet to list attachments of a given document (head).
     """
     # Attachments are records in the attached_files table.
-    
-    render = z3evoque.PageViewTemplateFile("audit.html#listing_viewlet")
+
+    render = ViewPageTemplateFile("templates/listing-viewlet.pt")
     view_title = "Attachments"
     view_id = "attachments"
     weight = 50

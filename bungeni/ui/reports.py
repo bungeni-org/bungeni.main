@@ -231,9 +231,9 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
         return self.template()
 
 class ReportView(form.PageForm, DateTimeFormatMixin):
-    main_result_template = ViewPageTemplateFile("templates/main_reports.pt")
+    main_result_template = ViewPageTemplateFile("templates/main-reports.pt")
     result_template = ViewPageTemplateFile(
-        "templates/default-report_sitting.pt"
+        "templates/default-report-sitting.pt"
     )
     display_minutes = None
     include_text = True
@@ -442,7 +442,7 @@ class GroupSittingContextMinutesReportView(ReportView):
 
 class SchedulingContextAgendaReportView(ReportView):
     result_template = ViewPageTemplateFile(
-        "templates/default-report_scheduling.pt"
+        "templates/default-report-scheduling.pt"
     )
     display_minutes = False
     include_text = False
@@ -544,7 +544,7 @@ class SaveReportView(form.PageForm):
 
 class DefaultReportView(BrowserView, DateTimeFormatMixin):
 
-    template = ViewPageTemplateFile("templates/default-report_scheduling.pt")
+    template = ViewPageTemplateFile("templates/default-report-scheduling.pt")
 
     def __init__(self, context, request, include_text=True):
         self.context = context

@@ -1,0 +1,60 @@
+<!-- !+zc.table(miano, March 2012) This template overrides the base
+      zc.table batching template to remove lang attibute from script
+      tag below. This template should be removed once this bug is fixed in
+      zc.table -->
+<script type="text/javascript">
+
+  function zc_table_batching_do_it(el, direction) {
+    var element_name = el.attributes.batch_change_name.value;
+    var element = document.getElementById(element_name);
+    element.value = direction;
+    element.form.submit();
+  }
+
+</script>
+
+<input type="hidden" value="" tal:attributes="
+    name view/batch_change_name;
+    id view/batch_change_name;" />
+<input
+    type="hidden"
+    tal:attributes="
+      name view/batch_start_name;
+      id view/batch_start_name;
+      value view/batch_start;
+    " />
+
+<div
+    style="text-align: center; font-weight: bold"
+    tal:condition="python:
+        (view.items and (
+            (view.previous_batch_start is not None) or
+            (view.next_batch_start is not None)))"
+    i18n:domain="zc.table"
+    class="zc-table-batching-pager">
+  <a
+      style="margin-right: 1ex"
+      tal:attributes="batch_change_name view/batch_change_name"
+      tal:condition="python: view.previous_batch_start is not None"
+      href=""
+      onclick="javascript:zc_table_batching_do_it(this, 'back'); return false"
+      class="zc-table-batching-pager-prev"
+      >&lt; <span i18n:translate="">Prev</span></a>
+  <span
+      style="margin-right: 1ex"
+      tal:condition="python: view.previous_batch_start is None"
+      class="zc-table-batching-pager-prev"
+      >&lt; <span i18n:translate="">Prev</span></span>
+  <a
+      tal:attributes="batch_change_name view/batch_change_name"
+      tal:condition="python: view.next_batch_start is not None"
+      onclick="javascript:zc_table_batching_do_it(this, 'next'); return false"
+      href=""
+      class="zc-table-batching-pager-next"
+      ><span i18n:translate="">Next</span> &gt;</a>
+  <span
+      style="margin-right: 1ex"
+      tal:condition="python: view.next_batch_start is None"
+      class="zc-table-batching-pager-next"
+      ><span i18n:translate="">Next</span> &gt;</span>
+</div>

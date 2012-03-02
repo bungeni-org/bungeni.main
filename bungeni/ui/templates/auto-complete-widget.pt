@@ -1,0 +1,30 @@
+<div xmlns:tal="http://xml.zope.org/namespaces/tal"
+     class="autocomplete-div"
+     tal:define="form_value view/_getFormValue;
+		 inputid string:${view/name};
+		 containerid string:${view/name}-container"
+     tal:attributes="id string:${view/name}-autocomplete">
+  <pre tal:content="view/value"></pre>
+  <script src="http://yui.yahooapis.com/2.8.1/build/autocomplete/autocomplete-min.js"></script>
+  <input type="text" tal:attributes="value form_value; name string:${view/name}; id inputid"/>
+  <div tal:attributes="id containerid"></div>
+  <script type="text/javascript">
+    YAHOO.example["<tal:replace replace="inputid"/>"] = function() {
+    choices = [
+    "Number 1",
+    "And Number 2",
+    ];
+    var oDS = new YAHOO.util.LocalDataSource(choices);
+    oDS.responseSchema = { fields: ['choice'] };
+    var oAC = new YAHOO.widget.AutoComplete(
+    "<tal:replace replace="inputid"/>",
+    "<tal:replace replace="containerid"/>", 
+    oDS
+    );
+    oAC.prehighlightClassName = "yui-ac-prehighlight";
+    oAC.useShadow = true;
+    oAC.useIFrame = true;
+    return {oDS: oDS, oAC: oAC};
+    }();
+  </script>
+</div>

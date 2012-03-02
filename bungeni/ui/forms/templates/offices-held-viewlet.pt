@@ -14,12 +14,12 @@
       </tr>
     </thead>
     <tbody>
-      <tr tal:repeat="result view/get_offices_held">
-        <td tal:content="result/group">  </td>
-        <td tal:content="result/group_type">  </td>
-        <td tal:content="result/member_title">  </td>
-        <td tal:content="result/start_date">  </td>
-        <td tal:content="result/end_date">  </td>
+      <tr tal:repeat="item view/items">
+        <td tal:content="item/group">  </td>
+        <td tal:content="item/group_type">  </td>
+        <td tal:content="item/member_title">  </td>
+        <td tal:content="item/start_date">  </td>
+        <td tal:content="item/end_date">  </td>
       </tr>
     </tbody>
   </table>

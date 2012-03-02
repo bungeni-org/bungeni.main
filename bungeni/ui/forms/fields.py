@@ -6,7 +6,7 @@ from zope import security
 from zope import interface
 from zope.formlib import form
 from zope.i18n import translate
-
+from zope.app.pagetemplate import ViewPageTemplateFile
 from bungeni.core.workflow import interfaces
 from bungeni.alchemist.ui import DynamicFields
 
@@ -16,9 +16,9 @@ from bungeni.alchemist.interfaces import IAlchemistContent
 from bungeni.ui.forms.workflow import bindTransitions
 from bungeni.ui.i18n import _
 from bungeni.ui import browser
-from bungeni.ui import z3evoque
 from bungeni.models.interfaces import ITranslatable
 from bungeni.core.translation import get_translation_for, get_all_languages
+from bungeni.utils import register
 from copy import copy
 
 def filterFields(context, form_fields):
@@ -46,21 +46,14 @@ def filterFields(context, form_fields):
             raise NotImplementedError
     return form_fields.omit(*omit_names)
 
-
+@register.viewlet_manager(name="bungeni.subform.manager")
 class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
         browser.BungeniViewlet
     ):
     """bungeni.subform.manager
     """
-    
-    # evoque
-    render = z3evoque.ViewTemplateFile("form.html#display")
-    # zpt
-    #render = ViewPageTemplateFile("templates/display_form.pt")
 
-    # the instance of the ViewProvideViewletManager
-    provide = z3evoque.ViewProvideViewletManager(
-        default_provider_name="bungeni.subform.manager")
+    render = ViewPageTemplateFile("templates/display-form.pt")
 
     mode = "view"
     form_name = _(u"General")

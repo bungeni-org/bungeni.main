@@ -11,23 +11,20 @@ log = __import__("logging").getLogger("bungeni.ui.audit")
 import sys
 
 from zope.security.proxy import removeSecurityProxy
-from zope.security import checkPermission
 from zope.security.management import getInteraction
 from zc.table import column
+from zope.app.pagetemplate import ViewPageTemplateFile
 import zc.table
 
 from bungeni.models import interfaces
 from bungeni.models import domain
-from bungeni.core.workflow.interfaces import IWorkflow, InvalidStateError
+from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.ui.forms.interfaces import ISubFormViewletManager
 from bungeni.ui.i18n import _
 from bungeni.ui.descriptor import descriptor
 from bungeni.ui.utils import date, debug
 from bungeni.ui import browser
-from bungeni.ui import z3evoque
 from bungeni.utils import register
-from bungeni.utils.capi import capi
-
 
 CHANGE_TYPES = ("head", "signatory", "attachedfile", "event")
 CHANGE_ACTIONS = domain.CHANGE_ACTIONS
@@ -325,19 +322,16 @@ class AuditLogMixin(object):
 class AuditLogView(AuditLogMixin, browser.BungeniBrowserView):
     """Change Log View for an object
     """
-    
-    # evoque
-    __call__ = z3evoque.PageViewTemplateFile("audit.html#listing_view")
-    
-    # zpt
-    #__call__ = ViewPageTemplateFile("templates/changes.pt")
-    
+
+    __call__ = ViewPageTemplateFile("templates/listing-view.pt")
+
     _page_title = "Change Log"
-    
-    visible_column_names = ["user", "action date", "action", "description", "audit date"]
-    include_change_types =  [ t for t in CHANGE_TYPES ]
+
+    visible_column_names = ["user", "action date", "action",
+                            "description", "audit date"]
+    include_change_types = [ t for t in CHANGE_TYPES ]
     include_change_actions = [ a for a in CHANGE_ACTIONS ]
-    
+
     def __init__(self, context, request):
         browser.BungeniBrowserView.__init__(self, context, request)
         AuditLogMixin.__init__(self)
@@ -355,8 +349,7 @@ class TimeLineViewlet(AuditLogMixin, browser.BungeniItemsViewlet):
     view_id = "timeline"
     weight = 20
     
-    # evoque
-    render = z3evoque.PageViewTemplateFile("audit.html#listing_viewlet")
+    render = ViewPageTemplateFile("templates/listing-viewlet.pt")
     
     visible_column_names = ["action date", "description", "user"]
     include_change_types =  [ t for t in CHANGE_TYPES ]

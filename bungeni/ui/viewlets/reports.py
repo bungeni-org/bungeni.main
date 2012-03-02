@@ -14,7 +14,7 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 class ReportPreview(object):
     """Report preview."""
     
-    render = ViewPageTemplateFile("templates/report_preview.pt")
+    render = ViewPageTemplateFile("templates/report-preview.pt")
     
     def update(self):
         self.report_preview = self._parent.generated_content

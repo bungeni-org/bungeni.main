@@ -1,0 +1,13 @@
+<fieldset>
+  <legend i18n:translate=""> Diff
+    <b i18n:translate="" tal:condition="not:options/content_changed">
+      unchanged
+    </b>
+  </legend>
+  <tal:block tal:repeat="table options/tables">
+    <div class="diff">
+      <h4 tal:content="table/title"/>
+      <span tal:replace="structure table/html"/>
+    </div>
+  </tal:block>
+</fieldset>

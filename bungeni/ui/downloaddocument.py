@@ -86,10 +86,10 @@ class DownloadDocument(BrowserView):
     #path to the odt template. Must be set by sub-class
     oo_template_file = None
     #Error page in case of failure to generate document
-    error_template = ViewPageTemplateFile("templates/report_error.pt")
+    error_template = ViewPageTemplateFile("templates/report-error.pt")
     #Custom Template selection UI
     document_template_select = ViewPageTemplateFile(
-        "templates/choose_oo_template.pt"
+        "templates/choose-oo-template.pt"
     )
     #Source document
     document = None
@@ -315,7 +315,7 @@ class ReportPDF(ReportODT):
 #to display from there.
 class BungeniContentODT(DownloadDocument):
     oo_template_file = os.path.dirname(__file__) + "/templates/bungenicontent.odt"  
-    template = ViewPageTemplateFile("templates/bungenicontent.pt")
+    template = ViewPageTemplateFile("templates/bungeni-content.pt")
     document_type = "odt"
     
     def bodyText(self):
@@ -333,7 +333,7 @@ class BungeniContentODT(DownloadDocument):
             
 class BungeniContentPDF(DownloadDocument):
     oo_template_file = os.path.dirname(__file__) + "/templates/bungenicontent.odt"  
-    template = ViewPageTemplateFile("templates/bungenicontent.pt")
+    template = ViewPageTemplateFile("templates/bungeni-content.pt")
     document_type = "pdf"
     
     def bodyText(self):

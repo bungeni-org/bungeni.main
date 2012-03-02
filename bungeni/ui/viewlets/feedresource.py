@@ -5,7 +5,7 @@ class FeedViewlet(ResourceViewletBase, ViewletBase):
     """Base class for feed links eg. RSS, Atom"""
     _feed_type = None
     _href = None
-    index = ViewPageTemplateFile("templates/feedresource.pt")
+    index = ViewPageTemplateFile("templates/feed-resource.pt")
     
     def getURL(self):
         return self._href

@@ -10,12 +10,6 @@
 
   <resourceLibrary name="jquery">
     <directory
-      zcml:condition="not-have devmode"
-      source="jquery"
-      include="jquery.js"
-    />
-    <directory
-      zcml:condition="have devmode"
       source="jquery"
       include="jquery.js"
     />
@@ -122,4 +116,18 @@
                  schedule-editor.css"
     />
   </resourceLibrary>
+  <!-- Search Page resources --> 
+	 <resourceLibrary name="highlight">
+	 	 <directory
+			 source="search/highlight"
+			 include="jquery-highlight-min.js highlight.css"
+		 />
+	 </resourceLibrary>
+	 <resourceLibrary name="advanced-search"
+	                  require="jquery">
+	   <directory
+	    source="search"
+	    include="advanced-search.js"
+	   />
+	 </resourceLibrary>
 </configure>

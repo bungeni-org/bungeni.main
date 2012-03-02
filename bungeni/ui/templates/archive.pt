@@ -1,7 +1,6 @@
 <html xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       metal:use-macro="context/@@standard_macros/page">
-  
   <div metal:fill-slot="body" i18n:domain="bungeni">
     <h1 i18n:translate="">Archive</h1>
     <p i18n:translate="" class="documentDescription">

@@ -1,0 +1,11 @@
+<dt tal:attributes="id string:fieldsetlegend-${view/view_id}">
+  <span tal:content="view/view_title"></span>
+</dt>
+<dd tal:attributes="id string:fieldset-${view/view_id}">
+  <div tal:condition="view/has_data"
+       tal:content="structure view/listing">
+    Changes
+  </div>
+  <p tal:condition="not:view/has_data"
+     tal:content="view/message_no_data" />
+</dd>

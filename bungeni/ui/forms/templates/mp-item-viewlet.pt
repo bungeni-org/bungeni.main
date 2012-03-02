@@ -13,11 +13,14 @@
       </tr>
     </thead>
     <tbody>
-      <tr tal:repeat="result view/results"> 
-          <td> <span tal:content="result/type" />  </td>
-          <td> <a tal:attributes="href result/url" tal:content="result/short_name" /> </td>
-          <td> <span tal:content="result/status" />  </td>
-          <td> <span tal:content="result/submission_date" />  </td>
+      <tr tal:repeat="item view/items"> 
+          <td> <span tal:content="item/type"/></td>
+          <td> 
+	    <a tal:attributes="href item/url"
+	       tal:content="item/short_name"/>
+	  </td>
+          <td><span tal:content="item/status"/></td>
+          <td><span tal:content="item/submission_date"/></td>
       </tr>
     </tbody>
   </table>

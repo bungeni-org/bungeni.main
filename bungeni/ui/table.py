@@ -41,28 +41,25 @@ class TableFormatter(batching.Formatter):
     !+ Currently being used by the Actions workflow, versions, attendace ui.
     """
     table_css_class = "listing grid"
-    
+    #!+zc.table(miano, March 2012) This template overrides the base
+    # zc.table batching template to remove an invalid lang attibute from script
+    # tag in batching.pt. This workaround should be removed once this bug 
+    # is fixed in zc.table
+    batching_template = ViewPageTemplateFile("templates/batching.pt")
+
     def __call__(self):
         return ("""
             <div>
-                <table class="%s" name="%s">
+                <table class="%s">
                  %s
                 </table>
                 %s
-            </div>""" % (self.table_css_class, self.prefix,
+            </div>""" % (self.table_css_class,
                 self.renderContents(), self.renderExtra()))
 
 
 class ContextDataTableFormatter(yuiwidget.table.BaseDataTableFormatter):
 
-    # evoque
-    #script = z3evoque.PageViewTemplateFile("container.html#datatable")
-    # !+NEED_ZC_RESOURCE_LIBRARIES(mr, sep-2010)
-    # Evoque rendering needs to take into account any zc.resourcelibrary
-    # declared additional libs, declared with need() below, see:
-    # zc.resourcelibrary.publication.Response._addDependencies
-
-    # zpt
     script = ViewPageTemplateFile("templates/datatable.pt")
 
     data_view = "/jsonlisting"
@@ -95,7 +92,7 @@ class ContextDataTableFormatter(yuiwidget.table.BaseDataTableFormatter):
                     )
             field_model.append('{key:"%s"}' % (key))
         return ",".join(column_model), ",".join(field_model)
-
+    
     def getDataTableConfig(self):
         config = {}
         config["columns"], config["fields"] = self.getFieldColumns()
@@ -108,10 +105,8 @@ class ContextDataTableFormatter(yuiwidget.table.BaseDataTableFormatter):
 
     def __call__(self):
         need("yui-paginator")
-        return '<div id="%s">\n<table %s>\n%s</table>\n%s</div>' % (
+        return '<div id="%s">\n%s</div>' % (
             self.prefix,
-            self._getCSSClass("table"),
-            self.renderContents(),
             self.script(**self.getDataTableConfig()))
 
 

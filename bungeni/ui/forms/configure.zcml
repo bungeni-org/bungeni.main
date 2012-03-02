@@ -26,7 +26,7 @@
   <apidoc:rootModule module="bungeni" />
   <apidoc:moduleImport allow="true" />
   -->
-
+  <!-- Expose form for use as a macro -->
   <browser:page
      for="*"
      name="alchemist-form"

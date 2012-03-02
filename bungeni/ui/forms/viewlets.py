@@ -9,7 +9,8 @@ $Id$
 log = __import__("logging").getLogger("bungeni.ui.forms.viewlets")
 
 from dateutil import relativedelta
-import datetime, calendar
+import datetime
+import calendar
 from zope import interface
 from zope.viewlet import manager, viewlet
 from zope.app.pagetemplate import ViewPageTemplateFile
@@ -31,11 +32,11 @@ from bungeni.models.utils import get_parliament_for_group_id
 
 from bungeni.ui.i18n import _
 from bungeni.ui import browser
-from bungeni.ui import z3evoque
 from bungeni.ui import table
 from bungeni.ui.utils import common, url, misc, date
 from fields import BungeniAttributeDisplay
-from interfaces import ISubFormViewletManager, ISubformRssSubscriptionViewletManager
+from interfaces import (ISubFormViewletManager,
+                        ISubformRssSubscriptionViewletManager)
 from bungeni.ui.interfaces import IBungeniAuthenticatedSkin, IAdminSectionLayer
 from bungeni.utils import register
 
@@ -133,17 +134,15 @@ class SubFormViewletManager(manager.WeightOrderedViewletManager):
 
 
 class SubformViewlet(table.AjaxContainerListing):
-    """A container listing of the items indicated by "sub_attr_name". 
+    """A container listing of the items indicated by "sub_attr_name".
     """
-    # evoque
-    template = z3evoque.ViewTemplateFile("container.html#generic_sub")
 
-    # zpt
-    #template = ViewPageTemplateFile("templates/generic-sub-container.pt")
+    template = ViewPageTemplateFile("templates/generic-sub-container.pt")
+
     def render(self):
         need("yui-datatable")
         return self.template()
-        
+
     def __init__(self, context, request, view, manager):
         # The parent for SubformViewlets is the context (not the view)
         self.__parent__ = context
@@ -184,7 +183,7 @@ class SubformRssSubscriptionViewletManager(manager.WeightOrderedViewletManager):
 class RssLinkViewlet(viewlet.ViewletBase):
     """Simply renders link for users to subscribe to current paliamentary item.
     """
-    render = ViewPageTemplateFile("templates/rss_link.pt")
+    render = ViewPageTemplateFile("templates/rss-link.pt")
     
     @property
     def already_subscribed(self):
@@ -423,7 +422,8 @@ class WrittenQuestionResponseViewlet(browser.BungeniViewlet):
     mode = "view"
     for_display = True
     form_name = _(u"Response")
-    render = ViewPageTemplateFile("templates/written_question_response.pt")
+    render = ViewPageTemplateFile("templates/written-question-response.pt")
+
     def __init__(self, context, request, view, manager):
         self.request = request
         self.context = context
@@ -433,16 +433,12 @@ class WrittenQuestionResponseViewlet(browser.BungeniViewlet):
         if self.question.response_type == "oral":
             self.for_display = False
         else:
-            if self.question.response_text in (None,""):
+            if self.question.response_text in (None, ""):
                 self.for_display = False
-        
+
 class GroupMembersViewlet(browser.BungeniItemsViewlet):
 
-    # evoque
-    render = z3evoque.ViewTemplateFile("viewlets.html#group_members")
-
-    view_title = _("Members")
-    view_id = "group-members"
+    render = ViewPageTemplateFile("templates/group-members.pt")
 
     def build_member_url(self, member):
         return url.absoluteURL(member, self.request)
@@ -527,11 +523,7 @@ class GroupSittingsViewlet(browser.BungeniItemsViewlet):
     objects.
     """
 
-    # evoque
-    render = z3evoque.ViewTemplateFile("viewlets.html#group_sittings")
-
-    view_title = _("Sittings")
-    view_id = "sittings"
+    render = ViewPageTemplateFile("templates/group-sittings-viewlet.pt")
 
     def _get_items(self):
         def _format_from_to(item):
@@ -562,14 +554,7 @@ class GroupSittingsViewlet(browser.BungeniItemsViewlet):
 
 class OfficesHeldViewlet(browser.BungeniItemsViewlet):
 
-    # evoque
-    render = z3evoque.ViewTemplateFile("viewlets.html#offices_held")
-
-    # zpt
-    #render = ViewPageTemplateFile("templates/offices_held_viewlet.pt")
-
-    view_title = _("Offices held")
-    view_id = "offices-held"
+    render = ViewPageTemplateFile("templates/offices-held-viewlet.pt")
 
     def _get_items(self):
         formatter = self.get_date_formatter("date", "long")
@@ -623,15 +608,8 @@ class MemberItemsViewlet(browser.BungeniItemsViewlet):
         get_workflow("motion").get_state_ids(tagged=["public"]) + \
         get_workflow("question").get_state_ids(tagged=["public"]) + \
         get_workflow("tableddocument").get_state_ids(tagged=["public"])
-    
-    view_title = _("Parliamentary activities")
-    view_id = "mp-items"
 
-    # evoque
-    render = z3evoque.ViewTemplateFile("viewlets.html#mp_items")
-
-    # zpt
-    #render = ViewPageTemplateFile("templates/mp_item_viewlet.pt")
+    render = ViewPageTemplateFile("templates/mp-item-viewlet.pt")
 
     def __init__(self, context, request, view, manager):
         super(MemberItemsViewlet, self).__init__(
@@ -948,5 +926,4 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
         self.monthname = datetime.date.strftime(self.Date, "%B %Y")
         self.items = self._get_items()
 
-    render = ViewPageTemplateFile("templates/session_calendar_viewlet.pt")
-
+    render = ViewPageTemplateFile("templates/session-calendar-viewlet.pt")

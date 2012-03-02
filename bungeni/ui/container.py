@@ -12,9 +12,10 @@ from zope.security import proxy
 from zope.security import checkPermission
 from zope.publisher.browser import BrowserPage
 from zc.resourcelibrary import need
+from zope.app.pagetemplate import ViewPageTemplateFile
 from bungeni.alchemist import model
 from bungeni.alchemist import container
-from bungeni.alchemist.interfaces import IAlchemistContainer 
+from bungeni.alchemist.interfaces import IAlchemistContainer
 
 from bungeni.models import interfaces as mfaces
 from bungeni.models import domain
@@ -26,7 +27,6 @@ from bungeni.ui import interfaces as ufaces
 from bungeni.ui.utils import url, date, debug
 from bungeni.ui import cookies
 from bungeni.ui import browser
-from bungeni.ui import z3evoque
 from bungeni.utils import register
 from bungeni.utils.capi import capi
 
@@ -93,8 +93,7 @@ class AjaxContainerListing(
     """
     formatter_factory = yuiwidget.ContainerDataTableFormatter
 
-    # evoque
-    template = z3evoque.PageViewTemplateFile("container.html#generic")
+    template = ViewPageTemplateFile("templates/generic-container.pt")
 
     def __call__(self):
         need("yui-datatable")

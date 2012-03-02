@@ -8,7 +8,8 @@ $URL$
     <button type="button" id="select-dates-btn" title="Show Calendar">
        <img src="/++resource++calbtn.gif" />
     </button>
-        <script language="javascript" tal:content="structure view/getDateChooserJs">
+        <script type="text/javascript"
+                tal:content="structure view/getDateChooserJs">
         YUI Javascript goes here
         </script>
     <div id="select-dates-container">

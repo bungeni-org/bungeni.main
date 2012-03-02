@@ -39,9 +39,8 @@ from bungeni.ui.table import TableFormatter
 from bungeni.ui.menu import get_actions
 from bungeni.ui.utils import date
 from bungeni.ui import browser
-from bungeni.ui import z3evoque
 from bungeni.ui.utils.url import absoluteURL
-#from zope.app.pagetemplate import ViewPageTemplateFile
+from zope.app.pagetemplate import ViewPageTemplateFile
 from bungeni.ui.i18n import _
 from bungeni.ui.absoluteurl import WorkspaceAbsoluteURLView
 
@@ -133,13 +132,9 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
     # stores old_url of object before transition change
     # we could use HTTP_REFERER but that would mean relying on client input
     _old_url = None
-    
-    # evoque
-    render = z3evoque.ViewTemplateFile("form.html#form")
-    
-    # zpt
-    #render = ViewPageTemplateFile("templates/viewlet.pt")
-    
+
+    render = ViewPageTemplateFile("templates/viewlet.pt")
+
     class IWorkflowForm(zope.interface.Interface):
         note = zope.schema.Text(
             title=_("Comment on workflow change"), required=False)
@@ -293,11 +288,7 @@ class WorkflowView(browser.BungeniBrowserView):
     """This view is linked to by the "workflow" context action and dislays the 
     workflow history and the action viewlet with all possible transitions
     """
-    # evoque
-    template = z3evoque.PageViewTemplateFile("workflow.html#main")
-    
-    # zpt
-    #template = ViewPageTemplateFile("templates/workflow.pt")
+    template = ViewPageTemplateFile("templates/workflow.pt")
     
     _page_title = "Workflow"
     
@@ -324,12 +315,8 @@ class WorkflowChangeStateView(WorkflowView):
     a) when clicking on one of the transition buttons in the workflow form.
     b) when clicking Add of an object (automatic transitions).
     """
-    
-    # evoque
-    ajax_template = z3evoque.PageViewTemplateFile("workflow.html#ajax")
-    
-    # zpt
-    #ajax_template = ViewPageTemplateFile("templates/workflow_ajax.pt")
+
+    ajax_template = ViewPageTemplateFile("templates/workflow-ajax.pt")
 
     def __init__(self, context, request):
         self.context = context

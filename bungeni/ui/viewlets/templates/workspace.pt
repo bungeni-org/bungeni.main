@@ -1,16 +1,18 @@
 <dl class="portlet">
-    <dt class="portletHeader">
-        <span class="portletTopLeft"></span>
-        documents
-        <span class="portletTopRight"></span>
-    </dt>
-    <dd class="portletItem even">
-        <ul class="contentViewsLeftPort">
-            <tal:loop tal:repeat="tab view/tabs">
-            <li>
-                <a tal:attributes="href tab/url"><tal:block replace="tab/title"/></a>
-            </li>
-            </tal:loop>
-        </ul>
-    </dd>
+  <dt class="portletHeader">
+    <span class="portletTopLeft"></span>
+    documents
+    <span class="portletTopRight"></span>
+  </dt>
+  <dd class="portletItem even">
+    <ul class="contentViewsLeftPort">
+      <tal:loop tal:repeat="tab view/tabs">
+	<li>
+	  <a tal:attributes="href tab/url">
+	    <tal:block replace="tab/title"/>
+	  </a>
+	</li>
+      </tal:loop>
+    </ul>
+  </dd>
 </dl>

@@ -1,27 +1,27 @@
 <html xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       i18n:domain="bungeni">
-<metal:eventformhtml define-macro="eventformhtml">
+  <metal:eventformhtml define-macro="eventformhtml">
     <div class="dhl_cal_ltext" style="height:auto;">
-        <table>
-            <metal:block tal:repeat="widget view/partial_event_form/get_widgets">
-                <tr>
-                    <td i18n:translate="" tal:content="nocall:widget/label"></td>
-                    <td>
-                        <span tal:replace="structure widget"/>
-                    </td>
-                </tr>
-            </metal:block>
-        </table>
+      <table>
+	<metal:block tal:repeat="widget view/partial_event_form/get_widgets">
+	  <tr>
+	    <td i18n:translate="" tal:content="nocall:widget/label"></td>
+	    <td>
+	      <span tal:replace="structure widget"/>
+	    </td>
+	  </tr>
+	</metal:block>
+      </table>
     </div>
-</metal:eventformhtml>
-<metal:selectcalendars define-macro="selectcalendars">
+  </metal:eventformhtml>
+  <metal:selectcalendars define-macro="selectcalendars">
     <metal:block tal:repeat="schedule view/other_calendars">
-        <span tal:attributes="style string:background-color:${schedule/color}">
-            <input type="checkbox"
-                tal:attributes="rel schedule/color; value schedule/action"/>
-            <span tal:content="schedule/title" tal:omit-tag=""/>
-        </span>
+      <span tal:attributes="style string:background-color:${schedule/color}">
+	<input type="checkbox"
+	       tal:attributes="rel schedule/color; value schedule/action"/>
+	<span tal:content="schedule/title" tal:omit-tag=""/>
+      </span>
     </metal:block>
-</metal:selectcalendars>
+  </metal:selectcalendars>
 </html>

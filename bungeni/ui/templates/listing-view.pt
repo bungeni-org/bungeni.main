@@ -1,0 +1,18 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      metal:use-macro="context/@@standard_macros/page">
+  <body>
+    <title metal:fill-slot="title"
+	   tal:content="view/page_title"/>
+    <div metal:fill-slot="body">
+      <h2 class="title"
+	  tal:content="view/page_title"> </h2>
+      <div tal:content="structure view/listing"
+           tal:condition="view/has_data">
+        Changes
+      </div>
+      <p tal:content="view/message_no_data"
+         tal:condition="not:view/has_data"/>
+    </div>
+  </body>
+</html>

@@ -16,9 +16,6 @@
 -->
 
     <!-- Application UI -->
-
-    <!-- !+app-index(mr) -:- the names of these two IBungeniApplication views
-       should both be "app-index" -->
     <browser:page name="index"
         for="bungeni.models.interfaces.IBungeniApplication"
         permission="zope.Public"
@@ -812,14 +809,14 @@
       name="index"
       permission="zope.Public"
       class=".errors.SystemError"
-      template="templates/errorpage.pt"
+      template="templates/error-page.pt"
       />
   <browser:page
       for="zope.security.interfaces.IUnauthorized"
       name="index"
       permission="zope.Public"
       class=".errors.Unauthorized"
-      template="templates/errorpage.pt"
+      template="templates/error-page.pt"
       />
     <browser:defaultView
         for="zope.security.interfaces.IUnauthorized"

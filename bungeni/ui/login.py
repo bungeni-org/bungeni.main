@@ -16,7 +16,7 @@ from zope.sendmail.interfaces import ISMTPMailer
 from bungeni.models.domain import User
 from bungeni.alchemist import Session
 from bungeni.models.domain import PasswordRestoreLink
-from bungeni.models.utils import get_db_user, get_db_user_id
+from bungeni.models.utils import get_db_user
 from bungeni.ui.widgets import HiddenTextWidget
 from bungeni.ui import vocabulary
 from bungeni.ui import widgets
@@ -27,8 +27,9 @@ from bungeni.core.app import BungeniApp
 import bungeni.ui.utils as ui_utils
 from bungeni.ui.constraints import check_email
 from zope.interface import invariant
-from bungeni.ui.forms.common import BaseForm, EditForm
+from bungeni.ui.forms.common import BaseForm
 from bungeni.alchemist import ui
+
 
 SECRET_KEY = "bungeni"
 
@@ -37,13 +38,12 @@ class ILoginForm(interface.Interface):
     login = schema.TextLine(title=_(u"Username"))
     password = schema.Password(title=_(u"Password"))
 
+
 class Login(form.FormBase):
     form_fields = form.Fields(ILoginForm)
     prefix = ""
     form_name = _(u"Login")
-    
-    # !+ only used here [ bungeni.ui.login.Login ] ?
-    template = ViewPageTemplateFile("templates/login-form.pt")
+    template = NamedTemplate("alchemist.form")
     
     def __call__(self):
         if not IUnauthenticatedPrincipal.providedBy(self.request.principal):

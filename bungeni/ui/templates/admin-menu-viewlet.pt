@@ -1,11 +1,9 @@
 <dl class="portlet">
-
   <dt class="portletHeader">
     <span class="portletTopLeft"></span>
     Admin
     <span class="portletTopRight"></span>
   </dt>
-
   <dd class="portletItem lastItem">
     <ul class="admin-menu">
       <li> <a href="/admin/users" i18n:translate="">Users</a> </li>
@@ -16,4 +14,3 @@
     <span class="portletBottomRight"></span>
   </dd>
 </dl>
-  

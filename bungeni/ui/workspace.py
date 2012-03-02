@@ -8,7 +8,7 @@ from zope.formlib import form
 from zope.i18n import translate
 from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent
-from zope.security import proxy, checkPermission
+from zope.security import checkPermission
 from zc.resourcelibrary import need
 from bungeni.alchemist.container import contained
 from alchemist.ui import generic
@@ -21,7 +21,6 @@ from bungeni.ui.utils.common import get_workspace_roles
 from bungeni.ui import table
 from bungeni.ui.interfaces import IWorkspaceContentAdapter
 from bungeni.ui.forms.common import AddForm
-from bungeni.models.utils import get_principal
 from bungeni.models.workspace import OBJECT_ROLES
 from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.alchemist.model import queryModelDescriptor
@@ -259,14 +258,14 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
 
 
 class WorkspaceContainerListing(BrowserPage):
-    template = ViewPageTemplateFile("templates/workspace-listing.pt")
+    render = ViewPageTemplateFile("templates/workspace-listing.pt")
     formatter_factory = WorkspaceDataTableFormatter
     columns = []
 
     def __call__(self):
         need("yui-datatable")
         self.context = removeSecurityProxy(self.context)
-        return self.template()
+        return self.render()
 
     def update(self):
         for field in workspace_fields:
@@ -279,9 +278,8 @@ class WorkspaceContainerListing(BrowserPage):
 
     @property
     def formatter(self):
-        context = removeSecurityProxy(self.context)
         formatter = self.formatter_factory(
-            context,
+            self.context,
             self.request,
             (),
             prefix="workspace",

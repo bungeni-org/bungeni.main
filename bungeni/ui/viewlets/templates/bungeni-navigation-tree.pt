@@ -1,8 +1,8 @@
 <dl class="portlet portletNavigationTree">
-<!--
-$Id$
-$URL$
--->
+  <!--
+      $Id$
+      $URL$
+  -->
   
   <dt class="portletHeader">
     <span class="portletTopLeft"></span>
@@ -14,24 +14,20 @@ $URL$
   
   <dd class="portletItem lastItem"
       tal:define="images nocall: context/++resource++portal/images">
-    
     <tal:ignore condition="python:False">
       <metal:subtree define-macro="subtree">
         <tal:block define="is_folderish node/nodes">
-          
           <li tal:define="current node/current;
                           selected node/selected;
                           current python: current and 'navTreeCurrentNode' or ''"
               tal:attributes="class string:navTreeItem visualNoMarker $current">
-
-              <a tal:define="selected python: selected and 'navTreeCurrentItem' or ''"
-                 tal:attributes="href node/url;
-                                 class string:${selected}"
-                ><img width="16" height="16"
-                     tal:define="kind node/kind"
-                     tal:attributes="src string:/@@/portal/images/icon_${kind}.gif"
-                />&nbsp;<span i18n:translate="" tal:replace="node/title" /></a>
-
+	    <a tal:define="selected python: selected and 'navTreeCurrentItem' or ''"
+	       tal:attributes="href node/url;
+			       class string:${selected}"
+	       ><img width="16" height="16"
+	       tal:define="kind node/kind"
+	       tal:attributes="src string:/@@/portal/images/icon_${kind}.gif"
+	       />&nbsp;<span i18n:translate="" tal:replace="node/title" /></a>
             <ul tal:condition="is_folderish"
                 tal:attributes="class string:navTree navTreeLevel${nesting_level} navTreeFolderish">
               <tal:nesting define="nesting_level python: nesting_level + 1">
@@ -45,14 +41,11 @@ $URL$
         </tal:block>
       </metal:subtree>
     </tal:ignore>
-    
     <ul tal:define="global nesting_level python: 1">
       <tal:node tal:repeat="node view/nodes">
         <li metal:use-macro="template/macros/subtree" />
       </tal:node>
     </ul>
-    
   </dd>
-  
 </dl>
 

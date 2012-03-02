@@ -1,0 +1,20 @@
+<dt id="fieldsetlegend-sittings">
+  <span>Sittings</span>
+</dt>
+<dd id="fieldset-sittings">
+  <table class="listing">
+    <thead>
+      <tr>
+	<th>Date</th>
+	<th>Venue</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr tal:repeat="item view/items"> 
+	<td><a tal:attributes="href item/url" 
+	       tal:content="date_from_to"></a></td>
+	<td tal:content="item/venue"></td>
+      </tr>
+    </tbody>
+  </table>
+</dd>

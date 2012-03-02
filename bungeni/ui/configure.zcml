@@ -200,5 +200,12 @@
       />
     
    <!-- Workspace Adapters -->
-   <adapter factory=".workspaceadapters.WorkspaceContentAdapter" /> 
+   <adapter factory=".workspaceadapters.WorkspaceContentAdapter" />
+   <!-- Login Page restore password links -->
+   <browser:viewlet name="bungeni.login.restore.password"
+        view="bungeni.ui.login.Login"
+        permission="zope.View"
+        manager="ploned.ui.interfaces.IBelowContentManager"
+        template="templates/restore-password.pt"
+    />
 </configure>

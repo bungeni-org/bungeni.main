@@ -2,9 +2,7 @@
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       metal:use-macro="context/@@standard_macros/page">
-
   <div metal:fill-slot="body" i18n:domain="bungeni">
     <h1 i18n:translate="">Welcome to Bungeni</h1>
   </div>
-
 </html>

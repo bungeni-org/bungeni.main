@@ -1,0 +1,114 @@
+<metal:block metal:define-macro="form"
+             i18n:domain="bungeni">
+  <dt tal:attributes="id string:fieldsetlegend-display-form-${view/get_view_id}"
+      i18n:translate=""
+      tal:content="view/form_name" />
+  <dd tal:attributes="id string:fieldset-display-form-${view/get_view_id};
+		      class view/getObjectClass">
+    <div id="display_form_spacer"></div>
+    <form action="."
+          tal:attributes="action request/URL" 
+	  method="post"
+	  enctype="multipart/form-data">
+      <dl class="portalMessage info"
+          tal:condition="view/status"
+          tal:define="mtype string:info"
+          tal:attributes="class string:portalMessage ${mtype};">
+        <dt tal:content="python:mtype.capitalize()"
+            i18n:translate="">Info</dt>
+        <dd tal:content="view/status | nothing"
+            i18n:translate="">The status message.</dd>
+      </dl>
+      <dl class="portalMessage info"
+          tal:condition="note"
+          tal:define="mtype string:notes; note view/get_note | nothing"
+          tal:attributes="class string:portalMessage ${mtype};">
+        <dt tal:content="python:mtype.capitalize()"
+            i18n:translate="">Info</dt>
+        <dd tal:content="note" />
+      </dl>
+      <div class="invariant-errors" tal:condition="view/invariantErrors|nothing">
+        <ul>
+          <li tal:repeat="error view/invariantErrors" tal:content="error/message">
+          </li>
+        </ul>
+      </div>
+      <metal:block define-macro="form-body">
+        <metal:block define-slot="pre-fieldset">
+        </metal:block>
+        <fieldset tal:define="widgets view/widgets;
+                              fieldset_name view/fieldset_name|nothing"
+                  tal:omit-tag="not:fieldset_name">
+          <legend tal:condition="fieldset_name"
+                  tal:content="fieldset_name"
+                  i18n:translate="">
+            Form name
+          </legend>
+          <metal:block define-macro="fieldset"> 
+            <metal:block define-slot="top-fieldset">
+            </metal:block>
+	    <tal:block tal:repeat="widget widgets">
+	      <!--div tal:condition="python: not widget.visible">
+		  <div class="error" tal:condition="widget/error" tal:content="widget/error"></div>
+		  <div tal:content="structure widget"></div>
+		  </div-->
+	      <div class="field"
+		   tal:condition="widget/visible"
+		   tal:define="description widget/hint;
+			       error widget/error;
+			       odd repeat/widget/odd;
+			       changed widget/changed | nothing"
+		   tal:attributes="class python:'field'+(error and ' error' or '') + (odd and ' odd' or ' even');
+				   id widget/name">
+		<div class="content-left-column">
+		  <label tal:attributes="for widget/name">
+		    <span i18n:translate=""
+			  tal:content="widget/label">label</span>
+		  </label>
+		  <span class="fieldRequired" title="Required" tal:condition="widget/required"
+			i18n:domain="plone"
+			i18n:translate="label_required"
+			i18n:attributes="title title_required;">
+		    (Required)
+		  </span>
+		</div>
+		<div tal:attributes="class python:'widget'+(error and ' error' or '') + (changed and ' changed' or '') + ' content-right-column'">
+		  <div class="widget" tal:content="structure widget"  >
+		    <input type="text" />
+		  </div>
+		  <div tal:condition="error" 
+		       tal:content="structure error" 
+		       tal:attributes="class python:'errormessage' + (changed and ' changed' or '')">
+		    The Error
+		  </div>
+		</div>
+	      </div>
+	    </tal:block>
+          </metal:block>
+          <div class="field"> </div>
+        </fieldset>
+      </metal:block>
+      <div class="rowspacer"></div>
+      <div id="actionsView">
+        <span class="actionButtons"
+              tal:condition="view/availableActions">
+          <tal:loop tal:repeat="action view/actions">
+	    <input type="submit" class="context"
+		   id="" name=""
+		   tal:attributes="id action/__name__;
+				   name action/__name__;
+				   value python:str(action.label);"
+		   i18n:attributes="value" />
+	  </tal:loop>
+        </span>
+      </div>
+    </form>
+  </dd>
+  <!-- some viewlets are only displayed if they have content -->
+  <div tal:replace="structure provider:bungeni.subform.manager"> 
+    <div class="listing">
+      <em>Subform Title</em>
+      subform contents
+    </div>
+  </div>
+</metal:block>

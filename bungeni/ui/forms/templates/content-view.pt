@@ -1,21 +1,18 @@
 <html xmlns:tal="http://xml.zope.org/namespaces/tal"
-       xmlns:metal="http://xml.zope.org/namespaces/metal"
-       metal:use-macro="context/@@standard_macros/page">
-<body>
-
-  <metal:title fill-slot="title">
-    <title i18n:translate="" tal:content="context/dc:title" />
-  </metal:title>
-
- <div metal:fill-slot="body">
-   <h2 i18n:translate="" tal:content="context/dc:title" />
-   <p class="documentDescription"
-      i18n:translate="" tal:content="context/dc:description" />
-
-   <div tal:replace="structure provider:alchemist.content.view">
-     Form
-   </div>
-   
- </div>
- </body>
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      metal:use-macro="context/@@standard_macros/page">
+  <body>
+    <metal:title fill-slot="title">
+      <title i18n:translate="" tal:content="context/dc:title" />
+    </metal:title>
+    <div metal:fill-slot="body">
+      <h2 i18n:translate="" tal:content="context/dc:title" />
+      <p class="documentDescription"
+	 i18n:translate="" tal:content="context/dc:description" />
+      <div
+	  tal:replace="structure provider:alchemist.content.view">
+	Form
+      </div>
+    </div>
+  </body>
 </html>

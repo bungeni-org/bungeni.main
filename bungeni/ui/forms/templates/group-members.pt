@@ -1,0 +1,35 @@
+<dt id="fieldsetlegend-group-members">
+  <span>Members
+  </span>
+</dt>
+<dd id="fieldset-group-members">
+  <table class="listing">
+    <thead>
+      <tr>
+        <th>Name
+	</th>
+        <th>Start
+	</th>
+        <th>End
+	</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr tal:repeat="item view/items"> 
+        <td>
+	  <a tal:attributes="href item/url"
+             tal:content="item/fullname">
+	  </a>
+	</td>
+        <td>
+	  <span tal:content="item/start_date">
+	  </span>
+	</td>
+        <td>
+	  <span tal:content="item/end_date">
+	  </span>
+	</td>
+      </tr>
+    </tbody>
+  </table>
+</dd>

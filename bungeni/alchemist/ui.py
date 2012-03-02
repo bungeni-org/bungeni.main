@@ -23,9 +23,24 @@ __all__ = [
     "unique_columns",       # alias -> alchemist.ui.core
 ]
 
+# replaces alchemist.ui.core.getSelected
+# !+zc.table(miano, march 2012) This version does not expect base64 encoded
+# values. See bungeni.ui.versions.CustomSelectionColumn
+def getSelected( selection_column, request ):
+    """
+    the formlib selection column implementation wants us to pass a value
+    set.. lame. we manually poke at it to get ids and dereference.
 
+    these pair of functions assume single column integer primary keys
+    """
+    keys = [ k[len(selection_column.prefix)+1:-1] \
+             for k in request.form.keys() \
+             if k.startswith( selection_column.prefix )  \
+             and request.form.get(k,'') == 'on']
+    return map( int, keys ) 
+    
 from alchemist.ui.core import DynamicFields
-from alchemist.ui.core import getSelected
+
 from alchemist.ui.core import null_validator
 from alchemist.ui.core import setUpFields
 from alchemist.ui.core import unique_columns
