@@ -485,6 +485,10 @@ class ScheduleJSONListing(ContainerJSONListing):
             wfc = IWorkflowController(node.item, None)
             if wfc is None:
                 return
+            #!+SCHEDULING_FILTERS(mb, mar-2012) Find a more elegant way to do this
+            # perhaps as a workflow feature
+            if not len(wfc.workflow.get_state_ids(keys=["draft"], restrict=False)):
+                return
             item["wf_state"] = translate_i18n(
                 wfc.state_controller.get_state().title
             )
@@ -854,8 +858,7 @@ class ScheduleAddView(BrowserView):
         group_sitting_id = self.sitting.group_sitting_id
         group_id = self.sitting.group_id
         record_keys = []
-        for (index, data_item_text) in enumerate(self.data):
-            data_item = json.loads(data_item_text)
+        for (index, data_item) in enumerate(self.data):
             actual_index = index + 1
             data_schedule_id = data_item.get("schedule_id")
             data_item_id = data_item.get("item_id")

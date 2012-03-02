@@ -20,24 +20,18 @@
     var textItemsDialog = null;
     var deleteDialog = null;
     var headingsDataTable = null;
-    var DIALOG_CONFIG = YAHOO.bungeni.config.dialogs.default;
+    var DIALOG_CONFIG = YAHOO.bungeni.config.dialogs.config.default;
     var Utils = YAHOO.bungeni.Utils;
     var Columns = YAHOO.bungeni.config.scheduling.columns;
     var Formatters = YAHOO.bungeni.config.scheduling.formatters; 
+    var Handlers = YAHOO.bungeni.config.scheduling.handlers;
+    var Schemas = YAHOO.bungeni.config.schemas;
     var Selectors = YAHOO.bungeni.config.selectors;
     var HIGHLIGHT_TYPES = [
         scheduler_globals.types.HEADING, 
         scheduler_globals.types.TEXT
     ];
-    var HIGHLIGHT_TYPES_CSS_CLASS = "schedule-text-item";
-    var AVAILABLE_ITEMS_SCHEMA = {
-        resultsList : "items",
-        fields : [Columns.ID, Columns.TYPE, Columns.TITLE, Columns.STATUS,
-            Columns.STATUS_DATE, Columns.REGISTRY_NO, Columns.MOVER,
-            Columns.URI
-        ]
-    }
-    
+    var HIGHLIGHT_TYPES_CSS_CLASS = "schedule-text-item";    
     YAHOO.bungeni.scheduled_item_keys = new Array();
     YAHOO.bungeni.unsavedChanges = false;
 
@@ -136,48 +130,6 @@
             this.hide();
         }
     }
-    
-    /**
-     * @method showCellEditor
-     * @description displays an editor to modify text records on the schedule
-     */
-    var showCellEditorHandler = function(event){
-        var target = Event.getTarget(event);
-        var record = this.getRecord(target);
-        if (record.getData().item_type == "text"){
-            this.onEventShowCellEditor(event);
-        }
-    }
-    
-    /**
-     * @method renderRTECellEditor
-     * @description initialize textarea cell editor with an RTE editor on
-     * initial display, then unbind this method when the RTE is rendered for 
-     * the current editor instance.
-     * 
-     * This also overrides the getInputValue method to get the RTE value and
-     * the cell editor show event to populate the shared editor with the
-     * context record value.
-     **/
-     var renderRTECellEditor = function(args){
-        var editor_width = (
-            (schedulerLayout.getUnitByPosition("left").body.clientWidth - 15) + 
-            "px"
-        );
-        rteCellEditor = new YAHOO.widget.Editor(args.editor.textarea,
-            { width: editor_width, autoHeight: true }
-        );
-        rteCellEditor.render();
-        args.editor.getInputValue = function(){
-            value = rteCellEditor.cleanHTML(rteCellEditor.getEditorHTML());
-            rteCellEditor.setEditorHTML("");
-            return value
-        }
-        args.editor.unsubscribe("showEvent", renderRTECellEditor);
-        args.editor.subscribe("showEvent", function(args){
-            rteCellEditor.setEditorHTML(args.editor.textarea.value);
-        });
-     }
 
     /**
      * @method reorderRow
@@ -418,7 +370,7 @@
                         )
                     );
                     tabDataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
-                    tabDataSource.responseSchema = AVAILABLE_ITEMS_SCHEMA;
+                    tabDataSource.responseSchema = Schemas.available_items;
                     var tabDataTable = new YAHOO.widget.DataTable(container_id,
                         availableItemsColumns, tabDataSource, 
                         { 
@@ -667,7 +619,7 @@
                     schedule_id: record_data.object_id,
                     item_text: record_data.item_title
                 }
-                item_data.push(YJSON.stringify(save_data));
+                item_data.push(save_data);
             }
             var post_data = "data=" + YJSON.stringify(item_data);
             RequestObject.startRequest(post_data);
@@ -809,7 +761,7 @@
             scheduler_globals.schedulable_items_json_url + "?type=heading"
         );
         dataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
-        dataSource.responseSchema = AVAILABLE_ITEMS_SCHEMA;
+        dataSource.responseSchema = Schemas.available_items;
         headingsDataTable = new YAHOO.widget.DataTable(data_container,
             columns, dataSource, 
             { 
@@ -836,7 +788,7 @@
      var renderSchedule = function(container, controls_container){
         var container_width = container.clientWidth;
         var editor = new YAHOO.widget.TextareaCellEditor();
-        editor.subscribe("showEvent", renderRTECellEditor);
+        editor.subscribe("showEvent", Handlers.renderRTECellEditor);
         var columnDefinitions = [
             {
                 key : Columns.TYPE, 
@@ -896,7 +848,7 @@
             itemsDataTable.onEventUnhighlightRow
         );
         itemsDataTable.subscribe("rowClickEvent", itemsDataTable.onEventSelectRow);
-        itemsDataTable.subscribe("cellDblclickEvent", showCellEditorHandler);
+        itemsDataTable.subscribe("cellDblclickEvent", Handlers.showCellEditor);
         itemsDataTable.subscribe("cellClickEvent", reorderRow);
         itemsDataTable.subscribe("rowSelectEvent", showSchedulerControls);
         itemsDataTable.subscribe("initEvent", renderAvailableItems);

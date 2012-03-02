@@ -68,6 +68,7 @@ YAHOO.widget.DataTable.prototype.refresh = function(params) {
 
 YAHOO.bungeni.config = function(){
     var lang = YAHOO.lang;
+    var Y$ = YAHOO.util.Selector;
 
     var scheduling_columns = {
         SELECT_ROW : "item_select_row",
@@ -88,23 +89,244 @@ YAHOO.bungeni.config = function(){
         DISCUSSION_DELETE : "delete_discussion",
         WORKFLOW_STATE : "wf_state",
         WORKFLOW_ACTIONS : "wf_actions",
+        ADD_TEXT_RECORD : "add_text_record",
     }
-    var dialog_config = function(){
-        var default_config = {
-            width: "auto",
-            fixedcenter: true,
-            modal: true,
-            visible: false,
-            draggable: false,
-            underlay: "none",
-        }
-        return {
-            default: default_config
-        }
-    }();
+    scheduling_columns.move_columns = [
+        scheduling_columns.MOVE_UP, scheduling_columns.MOVE_DOWN
+    ];
+
+    var _schemas = {
+        available_items : {
+            resultsList : "items",
+            fields : [scheduling_columns.ID, scheduling_columns.TYPE, 
+                scheduling_columns.TITLE, scheduling_columns.STATUS,
+                scheduling_columns.STATUS_DATE, scheduling_columns.REGISTRY_NO, 
+                scheduling_columns.MOVER, scheduling_columns.URI
+            ]
+        }    
+    }
+    
     var element_selectors = {
         "checkbox": "input[type=checkbox]"
     };
+
+    var dialogs = function(){
+        var dialog_config = function(){
+            var default_config = {
+                width: "auto",
+                fixedcenter: true,
+                modal: true,
+                visible: false,
+                draggable: false,
+                underlay: "none",
+            }
+            return {
+                default: default_config
+            }
+        }();
+        var blocking = {
+            init: function(){
+                this.dialog = new YAHOO.widget.SimpleDialog(
+                    "scheduling-blocking", dialog_config.default
+                );
+                this.dialog.setHeader(scheduler_globals.saving_dialog_header);
+                this.dialog.setBody("");
+                this.dialog.cfg.queueProperty("width", "200px");
+                this.dialog.cfg.queueProperty("close", false);
+                this.dialog.cfg.queueProperty("icon",
+                    YAHOO.widget.SimpleDialog.ICON_BLOCK
+                );
+                this.dialog.render(document.body);
+            },
+            show: function(message){
+                if(!this.dialog){
+                    this.init();
+                }
+                this.dialog.setBody(message);
+                this.dialog.show();
+                this.dialog.bringToTop();
+            },
+            hide: function(){
+                this.dialog.hide();
+            }
+        }
+        var notification = {
+            init: function(){
+                this.dialog = new YAHOO.widget.SimpleDialog(
+                    "scheduling-notification", dialog_config.default
+                );
+                this.dialog.setHeader(scheduler_globals.text_warning);
+                this.dialog.setBody("");
+                this.dialog.cfg.queueProperty("width", "200px");
+                this.dialog.cfg.queueProperty("close", false);
+                this.dialog.cfg.queueProperty("icon",
+                    YAHOO.widget.SimpleDialog.ICON_WARN
+                );
+                this.dialog.render(document.body);
+            },
+            show: function(message){
+                if(!this.dialog){
+                    this.init();
+                }
+                this.dialog.setBody(message);
+                this.dialog.show();
+                this.dialog.bringToTop();
+                window.setTimeout(function(){
+                        YAHOO.bungeni.config.dialogs.notification.hide();
+                    }, 1000
+                );
+            },
+            hide: function(){
+                this.dialog.hide();
+            }
+        }
+        var confirm = {
+            init: function(){
+                var buttons = [
+                    {
+                        text: scheduler_globals.delete_dialog_confirm,
+                        handler: function(){
+                            if(this._parent.confirm_callback){
+                                this._parent.confirm_callback();
+                                this._parent.confirm_callback = null;
+                            }
+                            this.hide();
+                        }
+                    },
+                    {
+                        text: scheduler_globals.delete_dialog_cancel,
+                        handler: function(){ 
+                            this._parent.confirm_callback = null;
+                            this.hide(); 
+                        },
+                        default: true
+                    },
+                ];
+                this.dialog = new YAHOO.widget.SimpleDialog(
+                    "scheduling-confirm", dialog_config.default
+                );
+                this.dialog._parent = this;
+                this.dialog.setHeader(scheduler_globals.confirm_dialog_title);
+                this.dialog.setBody("");
+                this.dialog.cfg.queueProperty("width", "200px");
+                this.dialog.cfg.queueProperty("buttons", buttons);
+                this.dialog.render(document.body);
+            },
+            show: function(message, confirm_callback){
+                if(!this.dialog){
+                    this.init();
+                }
+                this.confirm_callback = confirm_callback;
+                this.dialog.setBody(message);
+                this.dialog.show();
+                this.dialog.bringToTop();
+            },
+            hide: function(){
+                this.confirm_callback = null;
+                this.dialog.hide();
+            }
+        }
+        var textrecords = {
+            init: function(){
+                var buttons = [
+                    {
+                        text: scheduler_globals.text_dialog_done_action,
+                        handler: function(){
+                            sDt = YAHOO.bungeni.scheduling.getScheduleTable();
+                            Columns = YAHOO.bungeni.config.scheduling.columns;
+                            var tabs = this.tab_view;
+                            var activeTab = tabs.getTab(tabs.get("activeIndex"));
+                            var recordData = activeTab.getRecordValue();
+                            var total_recs = sDt.getRecordSet().getLength();
+                            if(recordData.value.length){
+                                var selected = sDt.getSelectedRows();
+                                var new_index = 0;
+                                if(selected.length){
+                                    new_index = (sDt.getRecordIndex(selected[0])+1);
+                                }
+                                new_index = (new_index<total_recs)?new_index:null;
+                                for(idx=0; idx<recordData.value.length; idx++){
+                                    var rec_data = recordData.value[idx];
+                                    if (!rec_data){
+                                        continue;
+                                    }
+                                    sDt.addRow(
+                                        { 
+                                            item_title: rec_data, 
+                                            item_type: recordData.type
+                                        }, 
+                                        new_index
+                                    );
+                                    
+                                    var new_record = sDt.getRecord(sDt.getTrEl(new_index));
+                                    var target_columns = [
+                                        sDt.getColumn(Columns.MOVE_UP),
+                                        sDt.getColumn(Columns.MOVE_DOWN),
+                                    ]
+                                    sDt.unselectAllRows();
+                                    sDt.selectRow(new_record);
+                                    if (new_index > 0){
+                                        var updated_record = sDt.getRecord((new_index - 1));
+                                        for (idx=0; idx<=(target_columns.length); idx++){
+                                            sDt.updateCell(
+                                                updated_record, 
+                                                target_columns[idx],
+                                                updated_record.getData()
+                                            );
+                                        }
+                                    }
+                                    if (new_index){
+                                        new_index = new_index + 1;
+                                    }
+                                }
+                                this.hide();
+                            }else{
+                                this.hide();
+                            }
+                        }
+                    },
+                    {
+                        text: scheduler_globals.text_dialog_cancel_action,
+                        handler: function(){ 
+                            this.hide();
+                        },
+                        default: true
+                    },
+                ];
+                this.dialog = new YAHOO.widget.SimpleDialog(
+                    "text-records-dialog", dialog_config.default
+                );
+                this.dialog._parent = this;
+                this.dialog.setHeader(scheduler_globals.text_button_text);
+                this.dialog.setBody("");
+                this.dialog.cfg.queueProperty("width", "500px");
+                this.dialog.cfg.queueProperty("buttons", buttons);
+                this.dialog.renderEvent.subscribe(
+                    YAHOO.bungeni.availableitems.handlers.renderTextRecordsTabs
+                );
+                this.dialog.render(document.body);
+            },
+            show: function(){
+                if(!this.dialog){
+                    this.init();
+                }
+                this.dialog.show();
+                this.dialog.bringToTop();
+            },
+            hide: function(){
+                this.confirm_callback = null;
+                this.dialog.hide();
+            }
+        }
+        return {
+            config: dialog_config,
+            blocking: blocking,
+            confirm: confirm,
+            notification: notification,
+            textrecords: textrecords
+        }
+    }();
+    
     var scheduling_configs = {
         columns : scheduling_columns,
         formatters : function(){
@@ -305,6 +527,21 @@ YAHOO.bungeni.config = function(){
                  }
              }
 
+
+            /**
+             * @method addTextRecordFormatter
+             * @description renders button to add text records to schedule
+             */
+            var addTextRecordFormatter = function(el, record, column, data){
+                if (!el.innerHTML){
+                    var button = new YAHOO.widget.Button({
+                        label: "+",
+                        id: el.id + "-add-text-record-button"
+                    });
+                    button.appendTo(el);
+                }
+            }
+
             return {
                 title: itemTitleFormatter,
                 type: itemTypeFormatter,
@@ -317,13 +554,110 @@ YAHOO.bungeni.config = function(){
                 link: linkFormatter,
                 availableItemSelect: availableItemSelectFormatter,
                 editDiscussions: editDiscussionsFormatter,
-                workflowActions: workflowActionsFormatter
+                workflowActions: workflowActionsFormatter,
+                addTextRecord: addTextRecordFormatter
             }
-        }()
+        }(),
+        handlers: function(){
+            /**
+             * @method _renderRTECellEditor
+             * @description initialize textarea cell editor with an RTE editor on
+             * initial display, then unbind this method when the RTE is rendered for 
+             * the current editor instance.
+             * 
+             * This also overrides the getInputValue method to get the RTE value and
+             * the cell editor show event to populate the shared editor with the
+             * context record value.
+             **/
+             var _renderRTECellEditor = function(args){
+                rteCellEditor = new YAHOO.widget.Editor(args.editor.textarea,
+                    { width: "400px", autoHeight: true }
+                );
+                rteCellEditor.render();
+                args.editor.getInputValue = function(){
+                    value = rteCellEditor.cleanHTML(rteCellEditor.getEditorHTML());
+                    rteCellEditor.setEditorHTML("");
+                    return value
+                }
+                args.editor.unsubscribe("showEvent", _renderRTECellEditor);
+                args.editor.subscribe("showEvent", function(args){
+                    rteCellEditor.setEditorHTML(args.editor.textarea.value);
+                });
+             }
+             
+            /**
+             * @method _showCellEditor
+             * @description displays an editor to modify text records on the schedule
+             */
+            var _showCellEditor = function(args){
+                var column = this.getColumn(args.target);
+                if (column.field != scheduling_columns.TITLE){
+                    return;
+                }
+                var record = this.getRecord(args.target);
+                if (record.getData().item_type == "text"){
+                    this.onEventShowCellEditor(args);
+                }
+            }
+             
+             /**
+              * @method _addTextRecords
+              * @description reusable add text records handler
+              */
+              var _addTextRecord = function(args){
+                  var column = this.getColumn(args.target);
+                  if (column.field != scheduling_columns.ADD_TEXT_RECORD){
+                      return;
+                  }
+                  YAHOO.bungeni.config.dialogs.textrecords.show();
+              }
+             
+             /**
+              * @method _moveRecord
+              * @description swap datatable rows
+              **/
+            var _moveRecord = function(args){
+                var MOVE_COLUMNS = scheduling_columns.move_columns;
+                var target_column = this.getColumn(args.target);
+                if (MOVE_COLUMNS.indexOf(target_column.field)<0){
+                   return;
+                }
+                var target_record = this.getRecord(args.target);
+                var target_index = this.getTrIndex(target_record);
+                var record_count = this.getRecordSet().getLength();
+                var swap_rows = [];
+                if (target_column.field == scheduling_columns.MOVE_UP){
+                    if (target_index!=0){
+                        swap_rows = [target_index, (target_index - 1)]
+                    }
+                }else{
+                    if (target_index != (record_count-1)){
+                        swap_rows = [target_index, (target_index + 1)]
+                    }
+                }
+                
+                if (swap_rows.length == 2){
+                    var data_0 = this.getRecord(swap_rows[0]).getData();
+                    var data_1 = this.getRecord(swap_rows[1]).getData();
+                    this.updateRow(swap_rows[0], data_1);
+                    this.updateRow(swap_rows[1], data_0);
+                    this.unselectAllRows();
+                    this.selectRow(swap_rows[1]);
+                }
+            }
+             
+             return {
+                 renderRTECellEditor: _renderRTECellEditor,
+                 showCellEditor: _showCellEditor,
+                 moveRecord: _moveRecord,
+                 addTextRecord: _addTextRecord
+             }
+        }(),
     }
     return {
+        schemas: _schemas,
         scheduling: scheduling_configs,
-        dialogs: dialog_config,
-        selectors: element_selectors
+        selectors: element_selectors,
+        dialogs: dialogs
     }
 }();

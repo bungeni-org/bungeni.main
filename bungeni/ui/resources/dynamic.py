@@ -16,6 +16,7 @@ RESOURCE_MAPPING = {
 YES = _(u"Yes")
 NO = _(u"No")
 OKAY = _(u"Okay")
+DONE = _(u"Done")
 NOTICE = _(u"Notice")
 WORKING = _(u"Working")
 CANCEL = _(u"Cancel")
@@ -129,6 +130,7 @@ def get_globals(group_name, **kwargs):
                 language
             ),
             "text_dialog_confirm_action": i18n(OKAY, language),
+            "text_dialog_done_action": i18n(DONE, language),
             "text_dialog_cancel_action": i18n(CANCEL, language),
             "text_unsaved_changes": i18n(_(u"Schedule has unsaved changes"),
                 language

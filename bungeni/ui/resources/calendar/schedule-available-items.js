@@ -115,7 +115,7 @@ YAHOO.bungeni.availableitems = function(){
                 if (Object.keys(data_filters).length > 0){
                     dataTable.refresh(data_filters);
                 }else{
-                    YAHOO.bungeni.scheduling.dialogs.notification.show(
+                    YAHOO.bungeni.config.dialogs.notification.show(
                         scheduler_globals.filters_no_filters_message
                     );
                 }
@@ -285,13 +285,119 @@ YAHOO.bungeni.availableitems = function(){
             }
         }
 
+        /**
+         * @method renderTextRecordsTabs
+         * @description renders tabview record onto a dialog to allow selection
+         * and entry of text records i.e. headings and arbitrary text
+         **/
+        var renderTextRecordsTabs = function(args){
+            var tab_view = new YAHOO.widget.TabView();
+            var text_tab = new YAHOO.widget.Tab(
+                { 
+                    label:"text",
+                    content: ("<div id='add-text-record'>" + 
+                        "<textarea id='text-record-value' " +
+                         "name='text-record-value'></textarea></div>"
+                    )
+                }
+            );
+            var heading_tab = new YAHOO.widget.Tab(
+                { 
+                    label:"heading",
+                    content: ("<div id='add-heading-record'>" + 
+                        "<label class='scheduler-label'" + 
+                        " for='heading-record-value'>Heading Text</label>" +
+                        "<input class='scheduler-bigtext' " + 
+                        "id='heading-record-value' name='heading-record-value' " +
+                         "type='text'/></div><div id='headings-available'></div>"
+                    )
+                }
+            );
+            var hDt = null;
+            var initAvailableHeadings = function(){
+                var columns = [
+                    {
+                        key:Columns.NUMBER,
+                        label:"",
+                        formatter:Formatters.counter
+                    },
+                    {
+                        key: Columns.TITLE,
+                        label: scheduler_globals.column_available_headings_title,
+                    },
+                ]
+                var container = this.get("contentEl");
+                var data_container = Y$.query("div#headings-available", container)[0];
+                var dataSource = new YAHOO.util.DataSource(
+                    scheduler_globals.schedulable_items_json_url + "?type=heading"
+                );
+                dataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
+                dataSource.responseSchema = YAHOO.bungeni.config.schemas.available_items;
+                hDt = new YAHOO.widget.DataTable(data_container,
+                    columns, dataSource, 
+                    { 
+                        selectionMode:"standard",
+                        scrollable: true,
+                        initialLoad: true,
+                        width:"468px",
+                        height: "200px",
+                    }
+                );
+                hDt.subscribe("rowMouseoverEvent", hDt.onEventHighlightRow);
+                hDt.subscribe("rowMouseoutEvent", hDt.onEventUnhighlightRow);
+                hDt.subscribe("rowClickEvent", hDt.onEventSelectRow);
+                this.unsubscribe("activeChange", initAvailableHeadings);
+            }
+            heading_tab.on("activeChange", initAvailableHeadings);
+            heading_tab.getRecordValue = function(){
+                var contentEl = this.get("contentEl");
+                var heading_value = Y$.query("input", contentEl)[0].value;
+                var selected_rows = hDt.getSelectedRows();
+                var heading_values = new Array();
+                heading_values.push(heading_value);
+                for(row_id=0; row_id<selected_rows.length; row_id++){
+                    var data = hDt.getRecord(selected_rows[row_id]).getData();
+                    heading_values.push(data.item_title);
+                }
+                return { 
+                    type:scheduler_globals.types.HEADING,
+                    value: heading_values
+                }
+            }
+            
+            var rteEditor = null;
+            text_tab.getRecordValue = function(){
+                return {
+                    type: scheduler_globals.types.TEXT,
+                    value: [ rteEditor.cleanHTML(rteEditor.getEditorHTML()) ]
+                }
+            }
+            Event.onAvailable("add-text-record", function(event){
+                rteEditor = new YAHOO.widget.Editor("text-record-value",
+                    { width: "100%", autoHeight: true }
+                );
+                rteEditor.render();
+            });
+            this.showEvent.subscribe(function(){
+                if(hDt){ hDt.unselectAllRows(); }
+                if(rteEditor){ rteEditor.setEditorHTML(""); }
+                Y$.query("input", heading_tab.get("contentEl"))[0].value = "";
+            });
+            tab_view.addTab(heading_tab);
+            tab_view.addTab(text_tab);
+            tab_view.appendTo(this.body);
+            this.tab_view = tab_view;
+            tab_view.selectTab(0);
+        }
+
         return {
             setFilterMenuSelection: setFilterMenuSelection,
             filterCalendarSetup: filterCalendarSetup,
             getDummyCalendarDate: getDummyCalendarDate,
             dialogPostRender: dialogPostRender,
             addItemToSchedule: addItemToSchedule,
-            checkRows: checkRows
+            checkRows: checkRows,
+            renderTextRecordsTabs: renderTextRecordsTabs
         }
     }();
     

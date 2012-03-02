@@ -10,120 +10,14 @@ YAHOO.bungeni.scheduling = function(){
     var YCM = YAHOO.util.Connect;
     var BungeniUtils = YAHOO.bungeni.Utils;
     var Columns = YAHOO.bungeni.config.scheduling.columns;
-    var DialogConfig = YAHOO.bungeni.config.dialogs;
+    var MOVE_COLUMNS = YAHOO.bungeni.config.scheduling.columns.move_columns;
+    var DialogConfig = YAHOO.bungeni.config.dialogs.config;
+    var Dialogs = YAHOO.bungeni.config.dialogs;
     var Formatters = YAHOO.bungeni.config.scheduling.formatters;
-    var MOVE_COLUMNS = [Columns.MOVE_UP, Columns.MOVE_DOWN];
+    var Handlers = YAHOO.bungeni.config.scheduling.handlers;
     YAHOO.bungeni.unsavedChanges = false;
     YAHOO.bungeni.unsavedDiscussions = false;
-    
-    var dialogs = function(){
-        var blocking = {
-            init: function(){
-                this.dialog = new YAHOO.widget.SimpleDialog(
-                    "scheduling-blocking", DialogConfig.default
-                );
-                this.dialog.setHeader(scheduler_globals.saving_dialog_header);
-                this.dialog.setBody("");
-                this.dialog.cfg.queueProperty("width", "200px");
-                this.dialog.cfg.queueProperty("close", false);
-                this.dialog.cfg.queueProperty("icon",
-                    YAHOO.widget.SimpleDialog.ICON_BLOCK
-                );
-                this.dialog.render(document.body);
-            },
-            show: function(message){
-                if(!this.dialog){
-                    this.init();
-                }
-                this.dialog.setBody(message);
-                this.dialog.show();
-                this.dialog.bringToTop();
-            },
-            hide: function(){
-                this.dialog.hide();
-            }
-        }
-        var notification = {
-            init: function(){
-                this.dialog = new YAHOO.widget.SimpleDialog(
-                    "scheduling-notification", DialogConfig.default
-                );
-                this.dialog.setHeader(scheduler_globals.text_warning);
-                this.dialog.setBody("");
-                this.dialog.cfg.queueProperty("width", "200px");
-                this.dialog.cfg.queueProperty("close", false);
-                this.dialog.cfg.queueProperty("icon",
-                    YAHOO.widget.SimpleDialog.ICON_WARN
-                );
-                this.dialog.render(document.body);
-            },
-            show: function(message){
-                if(!this.dialog){
-                    this.init();
-                }
-                this.dialog.setBody(message);
-                this.dialog.show();
-                this.dialog.bringToTop();
-                window.setTimeout(function(){
-                        YAHOO.bungeni.scheduling.dialogs.notification.hide();
-                    }, 1000
-                );
-            },
-            hide: function(){
-                this.dialog.hide();
-            }
-        }
-        var confirm = {
-            init: function(){
-                var buttons = [
-                    {
-                        text: scheduler_globals.delete_dialog_confirm,
-                        handler: function(){ 
-                            this._parent.confirm_callback();
-                            this._parent.confirm_callback = null;
-                            this.hide();
-                        }
-                    },
-                    {
-                        text: scheduler_globals.delete_dialog_cancel,
-                        handler: function(){ 
-                            this._parent.confirm_callback = null;
-                            this.hide(); 
-                        },
-                        default: true
-                    },
-                ];
-                this.dialog = new YAHOO.widget.SimpleDialog(
-                    "scheduling-confirm", DialogConfig.default
-                );
-                this.dialog._parent = this;
-                this.dialog.setHeader(scheduler_globals.confirm_dialog_title);
-                this.dialog.setBody("");
-                this.dialog.cfg.queueProperty("width", "200px");
-                this.dialog.cfg.queueProperty("buttons", buttons);
-                this.dialog.render(document.body);
-            },
-            show: function(message, confirm_callback){
-                if(!this.dialog){
-                    this.init();
-                }
-                this.confirm_callback = confirm_callback;
-                this.dialog.setBody(message);
-                this.dialog.show();
-                this.dialog.bringToTop();
-            },
-            hide: function(){
-                this.confirm_callback = null;
-                this.dialog.hide();
-            }
-        }
-        return {
-            blocking: blocking,
-            confirm: confirm,
-            notification: notification
-        }
-    }();
-    
+        
     var discussionEditor = function(){
         init = function(){
            this.dialog = new YAHOO.widget.SimpleDialog("discussion-editor",
@@ -191,18 +85,18 @@ YAHOO.bungeni.scheduling = function(){
         var RequestObject = {
             handleSuccess: function(o){
                 YAHOO.bungeni.scheduling.getScheduleTable().refresh();
-                YAHOO.bungeni.scheduling.dialogs.blocking.hide();
+                Dialogs.blocking.hide();
                 YAHOO.bungeni.unsavedChanges = false;
             },
             handleFailure: function(o){
-                YAHOO.bungeni.scheduling.dialogs.blocking.hide();
-                YAHOO.bungeni.scheduling.dialogs.notification.show(
+                Dialogs.blocking.hide();
+                Dialogs.notification.show(
                     scheduler_globals.saving_dialog_exception
                 );
             },
             startRequest: function(url, data, message){
                 Event.stopEvent(window.event);
-                YAHOO.bungeni.scheduling.dialogs.blocking.show(message);
+                Dialogs.blocking.show(message);
                 YCM.asyncRequest("POST", url, callback, data);
                     
             }
@@ -234,7 +128,7 @@ YAHOO.bungeni.scheduling = function(){
             var oData = dataTable.getRecord(index).getData();
             if(oData.object_id == undefined){
                 this.hide();
-                YAHOO.bungeni.scheduling.dialogs.notification.show(
+                Dialogs.notification.show(
                     scheduler_globals.message_item_not_saved
                 );
                 return;
@@ -347,7 +241,7 @@ YAHOO.bungeni.scheduling = function(){
                             var callback = function(){
                                 dialog.hide();
                             }
-                            YAHOO.bungeni.scheduling.dialogs.confirm.show(
+                            Dialogs.confirm.show(
                                 scheduler_globals.text_unsaved_discussions,
                                 callback
                             )
@@ -370,36 +264,7 @@ YAHOO.bungeni.scheduling = function(){
             dialog.show();
             dialog.bringToTop();
         };
-        
-        var moveRecord = function(args){
-            var target_column = this.getColumn(args.target);
-            if (MOVE_COLUMNS.indexOf(target_column.field)<0){
-               return;
-            }
-            var target_record = this.getRecord(args.target);
-            var target_index = this.getTrIndex(target_record);
-            var record_count = this.getRecordSet().getLength();
-            var swap_rows = [];
-            if (target_column.field == Columns.MOVE_UP){
-                if (target_index!=0){
-                    swap_rows = [target_index, (target_index - 1)]
-                }
-            }else{
-                if (target_index != (record_count-1)){
-                    swap_rows = [target_index, (target_index + 1)]
-                }
-            }
-            
-            if (swap_rows.length == 2){
-                var data_0 = this.getRecord(swap_rows[0]).getData();
-                var data_1 = this.getRecord(swap_rows[1]).getData();
-                this.updateRow(swap_rows[0], data_1);
-                this.updateRow(swap_rows[1], data_0);
-                this.unselectAllRows();
-                this.selectRow(swap_rows[1]);
-            }
-        }
-        
+                
         var customSelectRow = function(args){
             var target_column = this.getColumn(args.target);
             if (MOVE_COLUMNS.indexOf(target_column.field)>=0){
@@ -430,7 +295,7 @@ YAHOO.bungeni.scheduling = function(){
                         contextDt.getRecord(args.target)
                     );
                 }
-                YAHOO.bungeni.scheduling.dialogs.confirm.show(
+                Dialogs.confirm.show(
                     scheduler_globals.confirm_message_delete_discussion,
                     delete_callback
                 );
@@ -488,7 +353,7 @@ YAHOO.bungeni.scheduling = function(){
                         item_text: record_data.item_title,
                         wf_status: record.getWFStatus?record.getWFStatus():null
                     }
-                    item_data.push(YJSON.stringify(save_data));
+                    item_data.push(save_data);
                 }
                 var post_data = "data=" + YJSON.stringify(item_data);
                 YAHOO.bungeni.scheduling.discussionEditor.SaveRequest.startRequest(
@@ -497,7 +362,7 @@ YAHOO.bungeni.scheduling = function(){
                     scheduler_globals.saving_schedule_text
                 );
             }else{
-                YAHOO.bungeni.scheduling.dialogs.notification.show(
+                Dialogs.notification.show(
                     scheduler_globals.save_dialog_empty_message
                 );
             }
@@ -518,7 +383,6 @@ YAHOO.bungeni.scheduling = function(){
             setUnsavedChanges: setUnsavedChanges,
             setUnsavedDiscussions: setUnsavedDiscussions,
             showDiscussions: showDiscussions,
-            moveRecord: moveRecord,
             customSelectRow: customSelectRow,
             editDiscussion: editDiscussion,
             deleteDiscussion: deleteDiscussion,
@@ -569,7 +433,14 @@ YAHOO.bungeni.scheduling = function(){
         );
         layout.on("render", function(){
             YAHOO.bungeni.schedule = function(){
+                var editor = new YAHOO.widget.TextareaCellEditor();
+                editor.subscribe("showEvent", Handlers.renderRTECellEditor);
                 var columns = [
+                    {
+                        key: Columns.ADD_TEXT_RECORD, 
+                        label: "",
+                        formatter: Formatters.addTextRecord,
+                    },
                     {
                         key: Columns.TYPE, 
                         label: scheduler_globals.column_type,
@@ -578,6 +449,7 @@ YAHOO.bungeni.scheduling = function(){
                     {
                         key: Columns.TITLE, 
                         label: scheduler_globals.column_title,
+                        editor:editor,
                         width: 150
                     },
                     {
@@ -633,7 +505,8 @@ YAHOO.bungeni.scheduling = function(){
                         summary: "hold down CONTROL key to select multiple items",
                         selectionMode:"single",
                         scrollable:true,
-                        width:"100%"
+                        width:"100%",
+                        height:"450px",
                     }
                 );
                 dataTable.subscribe("rowMouseoverEvent", 
@@ -642,15 +515,15 @@ YAHOO.bungeni.scheduling = function(){
                 dataTable.subscribe("rowMouseoutEvent", 
                     dataTable.onEventUnhighlightRow
                 );
+                dataTable.subscribe("cellDblclickEvent", Handlers.showCellEditor);
                 dataTable.subscribe("cellClickEvent",
                     YAHOO.bungeni.scheduling.handlers.customSelectRow
                 );
                 dataTable.subscribe("cellClickEvent",
                     YAHOO.bungeni.scheduling.handlers.showDiscussions
                 );
-                dataTable.subscribe("cellClickEvent",
-                    YAHOO.bungeni.scheduling.handlers.moveRecord
-                );
+                dataTable.subscribe("cellClickEvent", Handlers.moveRecord);
+                dataTable.subscribe("cellClickEvent", Handlers.addTextRecord);
                 dataTable.subscribe("initEvent", function(){
                     YAHOO.bungeni.Events.scheduleAvailable.fire();
                 });
@@ -684,7 +557,6 @@ YAHOO.bungeni.scheduling = function(){
         handlers: handlers,
         Layout: Layout,
         discussionEditor: discussionEditor,
-        dialogs: dialogs,
         getScheduleTable: getScheduleTable
     }
 }();
