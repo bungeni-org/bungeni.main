@@ -7,8 +7,9 @@
       Current state:
       <em i18n:name="state" tal:content="view/get_wf_state" />.
     </p>
-    <h2 i18n:translate="">History</h2>
-    <tal:history define="viewlet view/history_viewlet">
+    <tal:history define="viewlet view/history_viewlet|nothing" 
+        tal:condition="viewlet">
+      <h2 i18n:translate="">History</h2>
       <p tal:condition="not: viewlet/entries"
          i18n:translate="">
         No history available for this item
