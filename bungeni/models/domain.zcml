@@ -9,7 +9,7 @@
     
     <!-- document -->
     
-    <class class=".domain.Document">
+    <class class=".domain.Doc">
         <!-- domain / orm / schema -->
         <require permission="zope.View"
             attributes="
@@ -62,7 +62,7 @@
     </class>
     
     <class class=".domain.Event">
-        <require like_class=".domain.Document" />
+        <require like_class=".domain.Doc" />
         <require permission="bungeni.event.Edit"
             set_attributes="
                 owner_id
