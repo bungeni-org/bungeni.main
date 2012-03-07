@@ -1,5 +1,5 @@
-<li class="navigation" 
-    tal:attributes="class python:('selected' if item['selected'] else '')"
+<li
+    tal:attributes="class python:('navigation selected' if item['selected'] else 'navigation')"
     tal:repeat="item view/items">
 <!--
 $Id$
