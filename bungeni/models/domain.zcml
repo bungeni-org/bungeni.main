@@ -357,12 +357,15 @@
                 group_id
                 short_name
                 full_name
+                acronym
+                identifier
                 description
                 status
                 status_date
                 start_date
                 end_date
                 type
+                sub_type
                 parent_group_id
                 language
                 custom1
@@ -399,6 +402,9 @@
             set_attributes="
                 short_name
                 full_name
+                acronym
+                identifier
+                sub_type
                 description
                 start_date
                 end_date
@@ -413,6 +419,9 @@
             set_attributes="
                 short_name
                 full_name
+                acronym
+                identifier
+                sub_type
                 description
                 start_date
                 end_date
@@ -434,6 +443,9 @@
             set_attributes="
                 short_name
                 full_name
+                acronym
+                identifier
+                sub_type
                 description
                 start_date
                 end_date
@@ -456,6 +468,9 @@
             set_attributes="
                 short_name
                 full_name
+                acronym
+                identifier
+                sub_type
                 description
                 start_date
                 end_date
@@ -474,7 +489,6 @@
                 assigneditems
                 title_types
                 
-                group_type
                 group_continuity
                 
                 committee_id
@@ -492,11 +506,13 @@
             set_attributes="
                 short_name
                 full_name
+                acronym
+                identifier
                 description
                 start_date
                 end_date
                 
-                group_type
+                sub_type
                 group_continuity
 
                 num_members
@@ -527,6 +543,9 @@
             set_attributes="
                 short_name
                 full_name
+                acronym
+                identifier
+                sub_type
                 description
                 start_date
                 end_date

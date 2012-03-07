@@ -116,7 +116,7 @@ they work.
 The actual committee
   >>> committee_a = model.Committee(short_name=u"committee_1", start_date=datetime.datetime.now())
   >>> committee_a.parent_group_id = parliament.parliament_id
-  >>> committee_a.group_type = "housekeeping"
+  >>> committee_a.sub_type = "housekeeping"
   >>> committee_a.group_continuity = "permanent"
   >>> committee_a.language = "en"
   >>> session.add(committee_a)

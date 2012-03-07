@@ -1066,7 +1066,7 @@ class GroupDescriptor(ModelDescriptor):
     display_name = _("Group")
     container_name = _("Groups")
 
-    _combined_name_title = "%s [%s]" % (_("Name"), _("Acronym"))
+    _combined_name_title = "%s [%s]" % (_("Full Name"), _("Short Name"))
     fields = [
         Field(name="full_name", # [user-req]
             modes="view edit add listing",
@@ -1074,7 +1074,7 @@ class GroupDescriptor(ModelDescriptor):
                 show("view edit"),
                 hide("listing"),
             ],
-            property=schema.TextLine(title=_("Name")),
+            property=schema.TextLine(title=_("Full Name")),
             #listing_column=name_column("full_name", _("Full Name"))
         ),
         Field(name="short_name", # [user-req]
@@ -1083,7 +1083,16 @@ class GroupDescriptor(ModelDescriptor):
                 show("view edit"),
                 hide("listing"),
             ],
-            property=schema.TextLine(title=_("Acronym")),
+            property=schema.TextLine(title=_("Short Name")),
+            #listing_column=name_column("short_name", _("Name"))
+        ),
+        Field(name="acronym", # [user-req]
+            modes="view edit add listing",
+            localizable=[
+                show("view edit"),
+                hide("listing"),
+            ],
+            property=schema.TextLine(title=_("Acronym"), required=False),
             #listing_column=name_column("short_name", _("Name"))
         ),
         Field(name="combined_name", # [derived]
@@ -1151,9 +1160,18 @@ class ParliamentDescriptor(GroupDescriptor):
             localizable=[
                 show("view edit listing"),
             ],
+            property=schema.TextLine(title=_("Short Name"),
+                description=_("Shorter name for the parliament"),
+            ),
+        ),
+        Field(name="identifier", # [user-req]
+            modes="view edit add",
+            localizable=[
+                show("view edit"),
+            ],
             property=schema.TextLine(title=_("Parliament Identifier"),
-                description=_("Unique identifier of each Parliament "
-                    "(e.g. IX Parliament)"),
+                description=_("Unique identifier or number for this Parliament"),
+                required=False
             ),
         ),
         LanguageField("language"), # [user-req]
@@ -1268,7 +1286,17 @@ class CommitteeDescriptor(GroupDescriptor):
     ]
     
     fields.extend([
-        Field(name="group_type", # [user-req]
+        Field(name="identifier", # [user-req]
+            modes="view edit add",
+            localizable=[
+                show("view edit"),
+            ],
+            property=schema.TextLine(title=_("Committee Identifier"),
+                description=_("Unique identifier or number for this Committee"),
+                required=False
+            ),
+        ),
+        Field(name="sub_type", # [user-req]
             modes="view edit add listing",
             localizable=[ 
                 show("view edit listing"), 
@@ -1276,7 +1304,7 @@ class CommitteeDescriptor(GroupDescriptor):
             property=schema.Choice(title=_("Committee Type"),
                 source=vocabulary.committee_type,
             ),
-            listing_column=vocabulary_column("group_type",
+            listing_column=vocabulary_column("sub_type",
                 "Committee Type",
                 vocabulary.committee_type
             ),
@@ -1682,6 +1710,16 @@ class PoliticalPartyDescriptor(GroupDescriptor):
 
     fields = deepcopy(GroupDescriptor.fields)
     fields.extend([
+        Field(name="identifier", # [user-req]
+            modes="view edit add",
+            localizable=[
+                show("view edit"),
+            ],
+            property=schema.TextLine(title=_("Identifier"),
+                description=_("Unique identifier or number for this political party"),
+                required=False
+            ),
+        ),
         Field(name="logo_data", # [img]
             modes="view edit add",
             localizable=[
@@ -1702,7 +1740,17 @@ class PoliticalGroupDescriptor(PoliticalPartyDescriptor):
     container_name = _("political groups")
 
     fields = deepcopy(PoliticalPartyDescriptor.fields)
-
+    fields[fields.index(get_field(fields, "identifier"))] = Field(
+        name="identifier", # [user-req]
+        modes="view edit add",
+        localizable=[
+            show("view edit"),
+        ],
+        property=schema.TextLine(title=_("Identifier"),
+            description=_("Unique identifier or number for this political group"),
+            required=False
+        )
+    )
 
 class OfficeDescriptor(GroupDescriptor):
     localizable = True
@@ -1710,6 +1758,16 @@ class OfficeDescriptor(GroupDescriptor):
     container_name = _("Offices")
     
     fields = [
+        Field(name="identifier", # [user-req]
+            modes="view edit add",
+            localizable=[
+                show("view edit"),
+            ],
+            property=schema.TextLine(title=_("Office Identifier"),
+                description=_("Unique identifier or number for this Office"),
+                required=False
+            ),
+        ),
         Field(name="office_role", # [user-req]
             modes="view edit add listing",
             localizable=[
@@ -1769,6 +1827,17 @@ class MinistryDescriptor(GroupDescriptor):
     container_name = _("Ministries")
 
     fields = deepcopy(GroupDescriptor.fields)
+    fields.extend([
+        Field(name="identifier", # [user-req]
+            modes="view edit add",
+            localizable=[
+                show("view edit"),
+            ],
+            property=schema.TextLine(title=_("Ministry Identifier"),
+                description=_("Unique identifier or number for this Ministry")
+            ),
+        ),
+    ])
     schema_invariants = [EndAfterStart]
     custom_validators = [validations.validate_date_range_within_parent]
 
@@ -1815,19 +1884,33 @@ class GovernmentDescriptor(GroupDescriptor):
     localizable = True
     display_name = _("Government")
     container_name = _("Governments")
+    
+    fields = deepcopy(GroupDescriptor.fields)
+    fields.extend([
+        Field(name="identifier", # [user-req]
+            modes="view edit add",
+            localizable=[
+                show("view edit"),
+            ],
+            property=schema.TextLine(title=_("Government Identifier"),
+                description=_("Unique identifier or number for this Government"),
+                required=False
+            ),
+        ),
+    ])
 
-    fields = [
+    """fields = [
         Field(name="short_name", # [user]
             modes="view edit add listing",
             localizable=[
                 show("view edit add listing"),
             ],
-            property=schema.TextLine(title=_("Name"),
+            property=schema.TextLine(title=_("Short Name"),
                 description=_("Name"),
                 required=False
             ),
         ),
-        Field(name="full_name", label=_("Number"), # [user]
+        Field(name="full_name", label=_("Full Name"), # [user]
             modes="view edit add listing",
             localizable=[
                 show("view edit add listing"),
@@ -1864,7 +1947,7 @@ class GovernmentDescriptor(GroupDescriptor):
             edit_widget=widgets.RichTextEditor,
             add_widget=widgets.RichTextEditor,
         ),
-    ]
+    ]"""
     schema_invariants = [EndAfterStart]
     custom_validators = [validations.validate_government_dates]
 

@@ -483,8 +483,10 @@ constituency_details = rdb.Table("constituency_details", metadata,
 
 groups = rdb.Table("groups", metadata,
     rdb.Column("group_id", rdb.Integer, PrincipalSequence, primary_key=True),
-    rdb.Column("short_name", rdb.Unicode(512), nullable=False), #!+ACRONYM
-    rdb.Column("full_name", rdb.Unicode(1024)), #!+NAME
+    rdb.Column("short_name", rdb.Unicode(512), nullable=False),
+    rdb.Column("full_name", rdb.Unicode(1024)),
+    rdb.Column("acronym", rdb.Unicode(32), nullable=True),
+    rdb.Column("identifier", rdb.Unicode(32), nullable=True),
     rdb.Column("description", rdb.UnicodeText),
     # Workflow State
     rdb.Column("status", rdb.Unicode(32)),
@@ -495,6 +497,7 @@ groups = rdb.Table("groups", metadata,
     rdb.Column("start_date", rdb.Date, nullable=False),
     rdb.Column("end_date", rdb.Date),
     rdb.Column("type", rdb.String(30), nullable=False),
+    rdb.Column("sub_type", rdb.Unicode(128), nullable=True),
     # !+GROUP_PRINCIPAL_ID(ah,sep-2011) adding group principal id to schema
     rdb.Column("group_principal_id", rdb.Unicode(50)),
     rdb.Column("parent_group_id", rdb.Integer,
@@ -552,11 +555,6 @@ committees = rdb.Table("committees", metadata,
     rdb.Column("committee_id", rdb.Integer,
         rdb.ForeignKey("groups.group_id"),
         primary_key=True
-    ),
-    rdb.Column("group_type",
-        rdb.Unicode(128),
-        default="housekeeping",
-        nullable=False,
     ),
     rdb.Column("group_continuity",
         rdb.Unicode(128),
