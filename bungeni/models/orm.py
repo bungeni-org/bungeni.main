@@ -20,15 +20,21 @@ import interfaces
 # !+PARAMETRIZABLE_DOCTYPES
 def DOCUMENT_configurable_mappings(kls):
     name = kls.__name__
+    # instrument any extended attributes as vertical properties
+    for vp_name, vp_type in kls.extended_properties:
+        mapper_add_relation_vertical_property(kls, vp_name, vp_type)
     # auditable, determine properties, map audit class/table
     if interfaces.IAuditable.implementedBy(kls):
         audit_kls = getattr(domain, "%sAudit" % (name))
         #audit_tbl = schema.doc_audit
-        mapper(audit_kls, 
+        audit_kls_mapper = mapper(audit_kls, 
             inherits=domain.DocAudit,
             polymorphic_on=schema.doc_audit.c.type, # polymorphic discriminator
             polymorphic_identity=name.lower(), # polymorphic discriminator value
         )
+        # instrument any extended attributes on kls also on its audit_kls
+        for vp_name, vp_type in kls.extended_properties:
+            mapper_add_relation_vertical_property(audit_kls, vp_name, vp_type)
     # add any properties to the master kls itself
     def mapper_add_configurable_properties(kls):
         kls_mapper = class_mapper(kls)
@@ -429,14 +435,21 @@ mapper(domain.Venue, schema.venues)
 ##############################
 # Document
 
-def mapper_relation_vertical_property(
-        object_table, object_id_column_name, 
-        vp_name, vp_type, vp_table
-    ):
-    """Return the SQLAlchemy internal mapper property for the vertical property.    
+def mapper_add_relation_vertical_property(kls, vp_name, vp_type):
+    """Add the SQLAlchemy internal mapper property for the vertical property.
     """
-    object_type = object_table.name
-    object_id_column = object_table.c[object_id_column_name] 
+    kls_mapper = class_mapper(kls)
+    object_type = kls_mapper.mapped_table.name
+    assert len(kls_mapper.primary_key) == 1
+    object_id_column = kls_mapper.primary_key[0]
+    kls_mapper.add_property("_vp_%s" % (vp_name),
+        relation_vertical_property(
+            object_type, object_id_column, vp_name, vp_type)
+    )
+def relation_vertical_property(object_type, object_id_column, vp_name, vp_type):
+    """Get the SQLAlchemy internal property for the vertical property.
+    """
+    vp_table = class_mapper(vp_type).mapped_table
     return relation(vp_type,
         primaryjoin=rdb.and_(
             object_id_column == vp_table.c.object_id,
@@ -445,17 +458,18 @@ def mapper_relation_vertical_property(
         ),
         foreign_keys=[vp_table.c.object_id],
         uselist=False,
-        # !+abusive, cannot create a same-named backref to multiple tables!
-        backref=object_type,
+        # !+abusive, cannot create a same-named backref to multiple classes!
+        #backref=object_type,
         cascade="save-update, merge, delete-orphan",
         single_parent=True,
         lazy=True, # !+ setting False gives error in listings
     )
 
+
 mapper(domain.vp.Text, schema.vp_text)
 mapper(domain.vp.TranslatedText, schema.vp_translated_text)
 
-mapper(domain.Document, schema.doc,
+mapper(domain.Doc, schema.doc,
     polymorphic_on=schema.doc.c.type, # polymorphic discriminator
     polymorphic_identity="doc", # polymorphic discriminator value
     properties={
@@ -474,7 +488,7 @@ mapper(domain.Document, schema.doc,
         #"events": relation(domain.Event, uselist=True),
         
         # for sub parliamentary docs, non-null implies a sub doc
-        # !+DOCUMENT tmp, should be to domain.Document
+        # !+DOCUMENT tmp, should be to domain.Doc
         "head": relation(domain.ParliamentaryItem,
             primaryjoin=rdb.and_(schema.doc.c.head_id ==
                 schema.parliamentary_items.c.parliamentary_item_id),
@@ -492,19 +506,11 @@ mapper(domain.DocAudit, schema.doc_audit,
                 schema.users.c.user_id),
             uselist=False,
             lazy=False),
-        # "internal" mapper property for vertical_property audit_note
-        "_vp_audit_note": mapper_relation_vertical_property(
-            schema.doc_audit, 
-            "audit_id",
-            "audit_note", 
-            domain.vp.TranslatedText,
-            schema.vp_translated_text),
     }
 )
 
-
 mapper(domain.Event,
-    inherits=domain.Document,
+    inherits=domain.Doc,
     polymorphic_on=schema.doc.c.type, # polymorphic discriminator
     polymorphic_identity="event", # polymorphic discriminator value
 )
@@ -605,7 +611,7 @@ mapper(domain.TabledDocument, schema.tabled_documents,
 #!+TYPES_CUSTOM  mapper(domain.AttachedFileType, schema.attached_file_types)
 mapper(domain.AttachedFile, schema.attached_files,
     properties={
-        "dhead": relation(domain.Document, #!+DHEAD
+        "dhead": relation(domain.Doc, #!+DHEAD
             primaryjoin=(schema.attached_files.c.dhead_id == schema.doc.c.doc_id),
             uselist=False,
             lazy=False
@@ -720,4 +726,5 @@ mapper(domain.Report4Sitting, schema.sitting_reports,
 )
 
 mapper(domain.ObjectTranslation, schema.translations)
+
 

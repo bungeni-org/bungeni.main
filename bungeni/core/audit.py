@@ -390,7 +390,8 @@ class _AuditorFactory(object):
         domain.assert_valid_change_action(action)
         user_id = get_db_user_id()
         assert user_id is not None, "Audit error. No user logged in."
-        session = Session()
+        
+        # audit record meta data
         alog = self.change_class() # !+rename audit_class
         alog.audit_user_id = user_id
         alog.audit_action = action
@@ -402,23 +403,31 @@ class _AuditorFactory(object):
             alog.audit_date_active = alog.audit_date
         if audit_note:
             alog.audit_note = audit_note
-        ob_kls_dict = ob.__class__.__dict__
-        def _copy_field_values(source, dest):
+        
+        # carry over a snapshot of head values
+        def get_field_names_to_audit(kls):
+            names_to_audit = []
             table = self.change_table
             for column in table.columns:
                 # skip all fields starting with "audit_"
                 if column.name.startswith("audit_"):
                     continue
                 # ok, column must therefore be a proper attribute from ob's class
-                assert column.name in ob_kls_dict, \
+                assert column.name in kls.__dict__, \
                     "Not in class: %s" % column.name
                 # skip all primary keys (audit_head_id managed separately)
                 if column.primary_key: 
                     continue
-                value = getattr(source, column.name)
-                setattr(dest, column.name, value)
-        # carry over a snapshot of head values
-        _copy_field_values(ob, alog)
+                names_to_audit.append(column.name)
+            for vp_name, vp_type in kls.extended_properties:
+                names_to_audit.append(vp_name)
+            return names_to_audit
+        def copy_field_values(source, dest):
+            for name in get_field_names_to_audit(source.__class__):
+                setattr(dest, name, getattr(source, name))
+        copy_field_values(ob, alog)
+        
+        session = Session()
         session.add(alog)
         session.flush()
         log.debug("AUDITED [%s] %s" % (action, alog.__dict__))

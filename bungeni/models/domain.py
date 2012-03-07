@@ -94,6 +94,8 @@ class Entity(object):
     # !+ base archetype
     __dynamic_features__ = False
     
+    extended_properties = [] # [(name, type)]
+    
     def __init__(self, **kw):
         try:
             domain_schema = model.queryModelInterface(self.__class__)
@@ -108,7 +110,7 @@ class Entity(object):
                 log.error(
                     "Invalid attribute on %s %s" % (
                         self.__class__.__name__, k))
-    
+        
     # sort_on: the list of column names the query is sorted on by default
     sort_on = None
     
@@ -122,7 +124,7 @@ class Entity(object):
     #sort_replace = None
 
 #
-
+ 
 class ItemChanges(HeadParentedMixin, object):
     """An audit changelog of events in the lifecycle of a parliamentary content.
     """
@@ -169,9 +171,8 @@ def DOCUMENT_configurable_domain(kls, workflow):
         interface.classImplements(kls, interfaces.IAuditable)
         CUSTOM_DECORATED["auditable"].add(kls)
         # define TYPEAudit class
-        audit_name = "%sAudit" % (kls.__name__)
-        audit_kls = DocAudit.auditFactory(audit_name)
-        globals()[audit_name] = audit_kls
+        audit_kls = DocAudit.auditFactory(kls)
+        globals()[audit_kls.__name__] = audit_kls
     return kls
 def configurable_domain(kls, workflow):
     assert kls.__dynamic_features__, \
@@ -596,13 +597,19 @@ class GroupAddress(Address):
     """
 
 
-# vertical properties
+# extended attributes - vertical properties
+
+# !+could use __metaclass__ but that causes internal breaks elsewhere...
+# !+could be a class decorator 
+def instrument_extended_properties(kls, object_type):
+    for vp_name, vp_type in kls.extended_properties:
+        setattr(kls, vp_name, vertical_property(object_type, vp_name, vp_type))
 
 def vertical_property(object_type, vp_name, vp_type, *args, **kw):
-    """Get the external (non-SQLAlchemy) vertical property (on self.__class__) 
-    as a regular python property.
+    """Get the external (non-SQLAlchemy) extended Vertical Property
+    (on self.__class__) as a regular python property.
     
-    Any additional args/kw are exclusively for instantiation of type_.
+    !+ Any additional args/kw are exclusively for instantiation of vp_type.
     """
     _vp_name = "_vp_%s" % (vp_name) # name for SA mapper property for this
     doc = "VerticalProperty %s of type %s" % (vp_name, vp_type)
@@ -616,7 +623,6 @@ def vertical_property(object_type, vp_name, vp_type, *args, **kw):
     def fdel(self):
         setattr(self, _vp_name, None)
     return property(fget=fget, fset=fset, fdel=fdel, doc=doc)
-
 
 class VerticalProperty(Entity):
     """Base Vertical Property.
@@ -635,6 +641,8 @@ class VerticalProperty(Entity):
                 self.name, self.value, self._object)
 
 class vp(object):
+    """A convenient vp namespace.
+    """
     class Text(VerticalProperty):
         """VerticalProperty of type text.
         """
@@ -649,12 +657,12 @@ class vp(object):
 
 #
 
-class Document(Entity):
+class Doc(Entity):
     """Base class for a workflowed parliamentary document.
     """
     __dynamic_features__ = True
     interface.implements(
-        interfaces.IDocument,
+        interfaces.IDocument, # !+IDoc?
         interfaces.IBungeniParliamentaryContent, #!+should be applied as needed?
         interfaces.ITranslatable
     )
@@ -681,9 +689,7 @@ class Document(Entity):
     item_signatories = [] #relation(domain.Signatory)
     assignedgroups = []
 
-# !+alias for simplifying association with schema table (via naming convention)
-Doc = Document
-Doc.__name__ = "Doc"
+instrument_extended_properties(Doc, "doc")
 
 
 class DocAudit(HeadParentedMixin, Entity):
@@ -692,15 +698,27 @@ class DocAudit(HeadParentedMixin, Entity):
     __dynamic_features__ = False
     
     @classmethod
-    def auditFactory(cls, name):
-        factory = type(name, (cls,), {})
+    def auditFactory(cls, doc_kls):
+        # Notes: 
+        # - each "DocAudit" class does inherit from the "Doc" class it audits.
+        # - each auditable subtype of "Doc" gets own dedicated subtype of "DocAudit"
+        #
+        # define a subtype of DocAudit type
+        audit_name = "%sAudit" % (doc_kls.__name__)
+        factory = type(audit_name, (cls,), {})
+        # Instrument any extended properties defined by doc_kls on its audit kls
+        for vp_name, vp_type in doc_kls.extended_properties:
+            setattr(factory, vp_name, 
+                vertical_property("doc_audit", vp_name, vp_type))
         interface.classImplements(factory, interfaces.IChange) # !+IAudit
         return factory
     
     # "audit_note" vertical property -- implemented as external to doc_audit 
     # because presumably it may have to be translatable, and the initial 
     # language may not be the same as that of the head object being audited.
-    audit_note = vertical_property("doc_audit", "audit_note", vp.TranslatedText)
+    extended_properties = [
+        ("audit_note", vp.TranslatedText)
+    ]
     
     # !+DOCUMENT tmp properties to "auto-adapt" to older change records...
     @property
@@ -713,9 +731,9 @@ class DocAudit(HeadParentedMixin, Entity):
     def date_audit(self): return self.audit_date
     @property
     def date_active(self): return self.audit_date_active
-    
+instrument_extended_properties(DocAudit, "doc_audit")
 
-class Event(HeadParentedMixin, Document):
+class Event(HeadParentedMixin, Doc):
     """Base class for an event on a document.
     """
     #!+parliament_id is (has always been) left null for events, how best to 
