@@ -324,6 +324,7 @@
             attributes="
                 heading_id
                 text
+                type
                 language
                 status
                 group_id
@@ -716,8 +717,7 @@
                 planned_order
                 real_order
                 active
-                getItem
-                getDiscussion
+                item
                 item_status
             "
         />

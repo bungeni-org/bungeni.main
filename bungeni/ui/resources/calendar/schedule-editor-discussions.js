@@ -73,14 +73,16 @@ YAHOO.bungeni.scheduling = function(){
                 }
             });
         }
-        render = function(dataTable, mode){
+        render = function(dataTable, mode, hide){
             this.dataTable = dataTable;
             this.mode = mode || MODE_ADD;
             this.mode
             if (!this.dialog){
                 this.init();
             }
-            this.dialog.show();
+            if(!hide){
+                this.dialog.show();
+            }
         }
         var RequestObject = {
             handleSuccess: function(o){
@@ -199,6 +201,9 @@ YAHOO.bungeni.scheduling = function(){
             );
             dDt.subscribe("rowUpdateEvent",
                 YAHOO.bungeni.scheduling.handlers.setUnsavedDiscussions
+            );
+            dDt.subscribe("initEvent",
+                YAHOO.bungeni.scheduling.handlers.initDiscussionsEditor
             );
             add_button.on("click", function(){
                 YAHOO.bungeni.scheduling.discussionEditor.render(dDt);
@@ -327,6 +332,11 @@ YAHOO.bungeni.scheduling = function(){
                 );
             }
         }
+        
+        var initDiscussionsEditor = function(args){
+            YAHOO.bungeni.scheduling.discussionEditor.render(this, MODE_ADD, true);
+        }
+        
         var renderScheduleControls = function(args){
             var container = YAHOO.bungeni.scheduling.Layout.layout.getUnitByPosition("bottom").body;
             var save_button = new YAHOO.widget.Button({
@@ -387,6 +397,7 @@ YAHOO.bungeni.scheduling = function(){
             editDiscussion: editDiscussion,
             deleteDiscussion: deleteDiscussion,
             saveDiscussions: saveDiscussions,
+            initDiscussionsEditor: initDiscussionsEditor,
             renderScheduleControls: renderScheduleControls,
             saveSchedule: saveSchedule,
             populateScheduledKeys: populateScheduledKeys

@@ -1035,18 +1035,6 @@ class ItemSchedule(Entity):
     
     sort_on = ["planned_order", ]
     sort_dir = "asc"
-
-    @property
-    def getItem(self):
-        s_item = self.item
-        s_item.__parent__ = self
-        return s_item
-
-    @property
-    def getDiscussion(self):
-        s_discussion = self.discussion
-        s_discussion.__parent__ = self
-        return s_discussion
         
 class ItemScheduleDiscussion(Entity):
     """A discussion on a scheduled item.
