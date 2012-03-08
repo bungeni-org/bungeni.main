@@ -713,8 +713,8 @@ class DocAudit(HeadParentedMixin, Entity):
         interface.classImplements(factory, interfaces.IChange) # !+IAudit
         return factory
     
-    # "audit_note" vertical property -- implemented as external to doc_audit 
-    # because presumably it may have to be translatable, and the initial 
+    # "audit_note" vertical property -- implemented as external extended 
+    # attribute as presumably it may have to be translatable, and the initial 
     # language may not be the same as that of the head object being audited.
     extended_properties = [
         ("audit_note", vp.TranslatedText)

@@ -279,12 +279,12 @@ def make_vocabulary_table(vocabulary_prefix, metadata, table_suffix="_types",
 
 
 # Progressive number sequences for each parliamentary item type.
-AgendaItemRegistrySequence = rdb.Sequence("agendaitem_registry_sequence", metadata = metadata)
-QuestionRegistrySequence = rdb.Sequence("question_registry_sequence", metadata = metadata)
-MotionRegistrySequence = rdb.Sequence("motion_registry_sequence", metadata = metadata)
-BillRegistrySequence = rdb.Sequence("bill_registry_sequence", metadata = metadata)
-TabledDocumentRegistrySequence = rdb.Sequence("tableddocument_registry_sequence", metadata = metadata)
-ReportRegistrySequence = rdb.Sequence("report_registry_sequence", metadata = metadata)
+AgendaItemRegistrySequence = rdb.Sequence("agendaitem_registry_sequence", metadata=metadata)
+QuestionRegistrySequence = rdb.Sequence("question_registry_sequence", metadata=metadata)
+MotionRegistrySequence = rdb.Sequence("motion_registry_sequence", metadata=metadata)
+BillRegistrySequence = rdb.Sequence("bill_registry_sequence", metadata=metadata)
+TabledDocumentRegistrySequence = rdb.Sequence("tableddocument_registry_sequence", metadata=metadata)
+ReportRegistrySequence = rdb.Sequence("report_registry_sequence", metadata=metadata)
 
 #######################
 # Users 
@@ -1007,7 +1007,7 @@ attached_files_index = rdb.Index("attfiles_itemid_idx",
     attached_files.c["item_id"]
 )
 
-registrySequence = rdb.Sequence("registry_number_sequence", metadata = metadata)
+RegistrySequence = rdb.Sequence("registry_number_sequence", metadata=metadata)
 
 
 # Document:
@@ -1318,7 +1318,7 @@ agenda_items = rdb.Table("agenda_items", metadata,
 )
 
 
-QuestionSequence = rdb.Sequence("question_number_sequence", metadata = metadata)
+QuestionSequence = rdb.Sequence("question_number_sequence", metadata=metadata)
 
 # Approved questions are given a serial number enabling the clerks office
 # to record the order in which questions are received and hence enforce 
@@ -1354,7 +1354,7 @@ questions = rdb.Table("questions", metadata,
     rdb.Column("response_text", rdb.UnicodeText),
 )
 
-MotionSequence = rdb.Sequence("motion_number_sequence", metadata = metadata)
+MotionSequence = rdb.Sequence("motion_number_sequence", metadata=metadata)
 # Number that indicate the order in which motions have been approved 
 # by the Speaker. The Number is reset at the start of each new session
 # with the first motion assigned the number 1
@@ -1455,7 +1455,7 @@ signatories = rdb.Table("signatories", metadata,
 #)
 
 tabled_documentSequence = rdb.Sequence("tabled_document_number_sequence",
-    metadata = metadata
+    metadata=metadata
 )
 tabled_documents = rdb.Table("tabled_documents", metadata,
     rdb.Column("tabled_document_id", rdb.Integer,

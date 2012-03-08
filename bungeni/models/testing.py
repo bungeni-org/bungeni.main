@@ -61,7 +61,7 @@ def setup_db():
     schema.metadata.reflect()
     schema.QuestionSequence.create(db) 
     schema.MotionSequence.create(db)
-    schema.registrySequence.create(db)
+    schema.RegistrySequence.create(db)
     
     schema.AgendaItemRegistrySequence.create(db)
     schema.QuestionRegistrySequence.create(db)
