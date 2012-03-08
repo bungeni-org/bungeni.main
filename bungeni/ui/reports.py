@@ -226,6 +226,7 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
         session = Session()
         session.add(report)
         session.flush()
+        notify(ObjectCreatedEvent(report))
         self.status = _(u"Report has been processed and saved")
         
         return self.template()
