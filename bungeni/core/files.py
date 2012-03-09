@@ -9,11 +9,11 @@ $Id$
 log = __import__("logging").getLogger("bungeni.core.files")
 
 from zope.security.proxy import removeSecurityProxy
-from zope.lifecycleevent import IObjectModifiedEvent, IObjectCreatedEvent
+from zope.lifecycleevent import IObjectCreatedEvent
 from bungeni.alchemist import Session
-from bungeni.models.interfaces import IAttachedFile, IVersion
+from bungeni.models.interfaces import IVersion
 from bungeni.models import domain
-from bungeni.core.interfaces import IVersioned
+from bungeni.core.version import create_version
 from bungeni.utils import register
 
 
@@ -55,8 +55,9 @@ def objectNewVersion(ob, event):
     SAME attachment db record.
     '''
     for attached_file in ob.head.attached_files:
-        versions = IVersioned(attached_file)
-        version = versions.create("Head object change: %s" % (
-            getattr(ob.change, "description", "")))
+        version = create_version(attached_file, 
+            "Head object change: %s" % (getattr(ob.change, "description", "")),
+            manual=False #!+
+        )
         version.file_version_id = ob.version_id
 

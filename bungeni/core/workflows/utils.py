@@ -1,3 +1,11 @@
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""Worklfow utilities
+
+$Id$
+"""
 log = __import__("logging").getLogger("bungeni.core.workflows.utils")
 
 import sys
@@ -13,7 +21,7 @@ from bungeni.core.workflow.interfaces import (NoTransitionAvailableError,
 import bungeni.models.interfaces as interfaces
 #import bungeni.models.domain as domain
 import bungeni.models.utils
-import bungeni.core.interfaces
+import bungeni.core.version
 #import bungeni.core.globalsettings as prefs
 from bungeni.ui.utils import debug
 
@@ -88,11 +96,10 @@ def create_version(context):
     """Create a new version of an object and return it.
     Note: context.status is already updated to destination state.
     """
-    # capi.template_message_version_transition
+    # !+capi.template_message_version_transition
     message_template = "New version on workflow transition to: %(status)s"
     message = message_template % context.__dict__
-    versions = bungeni.core.interfaces.IVersioned(context)
-    versions.create(message)
+    return bungeni.core.version.create_version(context, message, manual=False)
 
 
 @bungeni_custom_errors

@@ -13,7 +13,6 @@ from zope import interface
 from zope import schema
 from zope import formlib
 
-from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.security.proxy import removeSecurityProxy
 from zope.security import checkPermission, canWrite
 from zope.security.interfaces import ForbiddenAttribute
@@ -163,7 +162,7 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
     
     @formlib.form.action(label=_("New Version"), condition=has_write_permission)
     def handle_new_version(self, action, data):
-        self._versions.create(message = data["commit_message"], manual=True)
+        self._versions.create(message=data["commit_message"], manual=True)
         self.status = _(u"New Version Created")
 
     @formlib.form.action(label=_("Revert To"), condition=has_write_permission)

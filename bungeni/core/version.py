@@ -25,6 +25,13 @@ from bungeni.models import domain
 from bungeni.core import interfaces
 
 
+def create_version(context, message, manual=False):
+    """Convenience wrapper on IVersioned(context.create(message, manual)
+    """
+    versions = interfaces.IVersioned(context)
+    return versions.create(message, manual=manual)
+
+
 def get_mapped_table(kls):
     return orm.class_mapper(kls).mapped_table
 
@@ -65,8 +72,7 @@ class Versioned(container.PartialContainer):
         for column in table.columns:
             if canWrite(context, column.name):
                 return True
-        else:
-            return False
+        return False
 
     def create(self, message, manual=False):
         """Store the existing state of the adapted context as a new version.
