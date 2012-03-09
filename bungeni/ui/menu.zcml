@@ -494,7 +494,7 @@
 
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IGroupSitting"
-        title="edit"
+        title="edit sitting"
         action="./edit"
         permission="bungeni.sitting.Edit"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
@@ -964,7 +964,7 @@
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IGroupSitting"
         action="schedule"
-        title="Schedule"
+        title="edit agenda and minutes"
         order="41"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.sittingschedule.View"
