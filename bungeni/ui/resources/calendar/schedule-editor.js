@@ -55,6 +55,13 @@
     }
 
     var addTextRecordToSchedule = function(event){
+        textItemsDialog.selectTab("text");
+        headingsDataTable.unselectAllRows();
+        textItemsDialog.show();
+    }
+    
+    var addHeadingRecordToSchedule = function(event){
+        textItemsDialog.selectTab("headings");
         headingsDataTable.unselectAllRows();
         textItemsDialog.show();
     }
@@ -88,42 +95,30 @@
             var new_record_index = (
                 (currentItem && itemsDataTable.getTrIndex(currentItem) + 1) || 0
             );
-            
-            for(idx=0; idx<recordData.value.length; idx++){
-                var rec_data = recordData.value[idx];
-                if (!rec_data){
-                    continue;
-                }
-                itemsDataTable.addRow(
-                    { 
-                        item_title: rec_data, 
-                        item_type: recordData.type
-                    }, 
-                    new_record_index
+            var new_data_entries = new Array();
+            for(idx=0; idx<(recordData.value.length); idx++){
+                new_data_entries.push({
+                    item_title: recordData.value[idx],
+                    item_type: recordData.type
+                });
+            }
+            itemsDataTable.addRows(new_data_entries, new_record_index);
+            var refresh_columns = [
+                itemsDataTable.getColumn(Columns.MOVE_UP),
+                itemsDataTable.getColumn(Columns.MOVE_DOWN),
+            ]
+            if(new_record_index > 0){
+                var updated_record = itemsDataTable.getRecord(
+                    (new_record_index - 1)
                 );
-                
-                var new_record = itemsDataTable.getRecord(
-                    itemsDataTable.getTrEl(new_record_index)
-                );
-                var target_columns = [
-                    itemsDataTable.getColumn(Columns.MOVE_UP),
-                    itemsDataTable.getColumn(Columns.MOVE_DOWN),
-                ]
-                itemsDataTable.unselectAllRows();
-                itemsDataTable.selectRow(new_record);
-                if (new_record_index > 0){
-                    var updated_record = itemsDataTable.getRecord(
-                        (new_record_index - 1)
+                var record_data = updated_record.getData();
+                for (idx=0; idx<=(refresh_columns.length); idx++){
+                    itemsDataTable.updateCell(
+                        updated_record, 
+                        refresh_columns[idx],
+                        record_data
                     );
-                    for (idx=0; idx<=(target_columns.length); idx++){
-                        itemsDataTable.updateCell(
-                            updated_record, 
-                            target_columns[idx],
-                            updated_record.getData()
-                        );
-                    }
                 }
-                new_record_index = new_record_index + 1;
             }
             this.hide();
         }else{
@@ -901,6 +896,11 @@
                 label: scheduler_globals.text_button_text,
             }
         );
+        var scheduleHeadingButton = new YAHOO.widget.Button(
+            {
+                label: scheduler_globals.heading_button_text,
+            }
+        );
         var scheduleRemoveButton = new YAHOO.widget.Button(
             {
                 label: scheduler_globals.remove_button_text,
@@ -908,6 +908,8 @@
         );
         scheduleTextButton.appendTo(schedulerActions.body);
         scheduleTextButton.on("click", addTextRecordToSchedule);
+        scheduleHeadingButton.appendTo(schedulerActions.body);
+        scheduleHeadingButton.on("click", addHeadingRecordToSchedule);
         scheduleRemoveButton.appendTo(schedulerActions.body);
         scheduleRemoveButton.on("click", removeSelectedRow);
         
@@ -1031,7 +1033,9 @@
                 var heading_value = Y$.query("input", contentEl)[0].value;
                 var selected_rows = headingsDataTable.getSelectedRows();
                 var heading_values = new Array();
-                heading_values.push(heading_value);
+                if (heading_value.length){
+                    heading_values.push(heading_value);
+                }
                 for(row_id=0; row_id<selected_rows.length; row_id++){
                     var data = headingsDataTable.getRecord(
                         selected_rows[row_id]
@@ -1058,9 +1062,11 @@
             );
             var rteEditor = null;
             textTab.getRecordValue = function(){
+                text_value = rteEditor.cleanHTML(rteEditor.getEditorHTML());
+                rteEditor.setEditorHTML("");
                 return {
                     type: scheduler_globals.types.TEXT,
-                    value: [ rteEditor.cleanHTML(rteEditor.getEditorHTML()) ]
+                    value: [ text_value ]
                 }
             }
             textRecordTabs.addTab(headingTab);
@@ -1070,11 +1076,16 @@
                     { width: "100%", autoHeight: false }
                 );
                 rteEditor.render();
+
             });
             textRecordTabs.appendTo(textItemsDialog.body);
             textItemsDialog.tabViewControl = textRecordTabs;
             textRecordTabs.selectTab(0);
-            
+            //select a particular tab before showing items
+            var tab_map = { headings: 0, text: 1 }
+            textItemsDialog.selectTab = function(name){
+                textRecordTabs.selectTab(tab_map[name]);
+            }
         });
         textItemsDialog.render(document.body);
      }
