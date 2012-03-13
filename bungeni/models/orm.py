@@ -460,6 +460,7 @@ def relation_vertical_property(object_type, object_id_column, vp_name, vp_type):
         uselist=False,
         # !+abusive, cannot create a same-named backref to multiple classes!
         #backref=object_type,
+        # sqlalchemy.orm.relationship(cascade="refresh-expire, expunge, delete")
         cascade="save-update, merge, delete-orphan",
         single_parent=True,
         lazy=True, # !+ setting False gives error in listings

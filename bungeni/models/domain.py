@@ -601,9 +601,15 @@ class GroupAddress(Address):
 
 # !+could use __metaclass__ but that causes internal breaks elsewhere...
 # !+could be a class decorator 
-def instrument_extended_properties(kls, object_type):
-    for vp_name, vp_type in kls.extended_properties:
-        setattr(kls, vp_name, vertical_property(object_type, vp_name, vp_type))
+def instrument_extended_properties(cls, object_type, from_class=None):
+    if from_class is None:
+        from_class = cls
+    # ensure cls.__dict__.extended_properties
+    cls.extended_properties = cls.extended_properties[:]
+    for vp_name, vp_type in from_class.extended_properties:
+        if (vp_name, vp_type) not in cls.extended_properties:
+            cls.extended_properties.append((vp_name, vp_type))
+        setattr(cls, vp_name, vertical_property(object_type, vp_name, vp_type))
 
 def vertical_property(object_type, vp_name, vp_type, *args, **kw):
     """Get the external (non-SQLAlchemy) extended Vertical Property
@@ -618,8 +624,10 @@ def vertical_property(object_type, vp_name, vp_type, *args, **kw):
         if vp is not None:
             return vp.value
     def fset(self, value):
-        setattr(self, _vp_name, 
-            vp_type(self, object_type, vp_name, value, *args, **kw))
+        vp = vp_type(self, object_type, vp_name, value, *args, **kw)
+        setattr(self, _vp_name, vp)
+        #!+save-update(mr, mar-2012) does not cascade Session.add() operation!
+        Session().add(vp)
     def fdel(self):
         setattr(self, _vp_name, None)
     return property(fget=fget, fset=fset, fdel=fdel, doc=doc)
@@ -699,17 +707,18 @@ class DocAudit(HeadParentedMixin, Entity):
     
     @classmethod
     def auditFactory(cls, doc_kls):
-        # Notes: 
-        # - each "DocAudit" class does inherit from the "Doc" class it audits.
+        # Notes:
+        # - each "DocAudit" class does NOT inherit from the "Doc" class it audits.
         # - each auditable subtype of "Doc" gets own dedicated subtype of "DocAudit"
-        #
+        # - just as all subtypes of "Doc" are persisted on "doc", so are all 
+        #   subtypes of "DocAudit" persisted on "doc_audit".
+        # 
         # define a subtype of DocAudit type
         audit_name = "%sAudit" % (doc_kls.__name__)
         factory = type(audit_name, (cls,), {})
-        # Instrument any extended properties defined by doc_kls on its audit kls
-        for vp_name, vp_type in doc_kls.extended_properties:
-            setattr(factory, vp_name, 
-                vertical_property("doc_audit", vp_name, vp_type))
+        # Extended properties from cls are inherited... but need to propagate 
+        # onto audit_kls any extended properties defined by doc_kls:
+        instrument_extended_properties(factory, "doc_audit", from_class=doc_kls)
         interface.classImplements(factory, interfaces.IChange) # !+IAudit
         return factory
     
