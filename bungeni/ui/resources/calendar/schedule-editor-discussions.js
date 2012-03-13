@@ -346,6 +346,7 @@ YAHOO.bungeni.scheduling = function(){
             save_button.on("click", function(){
                 YAHOO.bungeni.scheduling.handlers.saveSchedule();
             });
+            this.unsubscribe("initEvent", renderScheduleControls);
         }
         var saveSchedule = function(args){
             var itemsDataTable = YAHOO.bungeni.schedule.oDt;
@@ -534,7 +535,7 @@ YAHOO.bungeni.scheduling = function(){
                     YAHOO.bungeni.scheduling.handlers.showDiscussions
                 );
                 dataTable.subscribe("cellClickEvent", Handlers.moveRecord);
-                dataTable.subscribe("cellClickEvent", Handlers.addTextRecord);
+                //dataTable.subscribe("cellClickEvent", Handlers.addTextRecord);
                 dataTable.subscribe("initEvent", function(){
                     YAHOO.bungeni.Events.scheduleAvailable.fire();
                 });

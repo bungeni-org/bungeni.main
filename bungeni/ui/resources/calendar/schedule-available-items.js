@@ -291,10 +291,11 @@ YAHOO.bungeni.availableitems = function(){
          * and entry of text records i.e. headings and arbitrary text
          **/
         var renderTextRecordsTabs = function(args){
+            var active_tab_id = this._parent.tab_id;
             var tab_view = new YAHOO.widget.TabView();
             var text_tab = new YAHOO.widget.Tab(
                 { 
-                    label:"text",
+                    label:scheduler_globals.type_names.TEXT,
                     content: ("<div id='add-text-record'>" + 
                         "<textarea id='text-record-value' " +
                          "name='text-record-value'></textarea></div>"
@@ -303,7 +304,7 @@ YAHOO.bungeni.availableitems = function(){
             );
             var heading_tab = new YAHOO.widget.Tab(
                 { 
-                    label:"heading",
+                    label:scheduler_globals.type_names.HEADING,
                     content: ("<div id='add-heading-record'>" + 
                         "<label class='scheduler-label'" + 
                         " for='heading-record-value'>Heading Text</label>" +
@@ -354,7 +355,9 @@ YAHOO.bungeni.availableitems = function(){
                 var heading_value = Y$.query("input", contentEl)[0].value;
                 var selected_rows = hDt.getSelectedRows();
                 var heading_values = new Array();
-                heading_values.push(heading_value);
+                if (heading_value){
+                    heading_values.push(heading_value);
+                }
                 for(row_id=0; row_id<selected_rows.length; row_id++){
                     var data = hDt.getRecord(selected_rows[row_id]).getData();
                     heading_values.push(data.item_title);
@@ -383,11 +386,15 @@ YAHOO.bungeni.availableitems = function(){
                 if(rteEditor){ rteEditor.setEditorHTML(""); }
                 Y$.query("input", heading_tab.get("contentEl"))[0].value = "";
             });
+            var tab_map = { "heading" : 0, "text" : 1 }
             tab_view.addTab(heading_tab);
             tab_view.addTab(text_tab);
             tab_view.appendTo(this.body);
             this.tab_view = tab_view;
-            tab_view.selectTab(0);
+            this.selectTab = function(tab_id){
+                tab_view.selectTab((tab_id?(tab_map[tab_id]):0));
+            }
+            tab_view.selectTab((active_tab_id?(tab_map[active_tab_id]):0));
         }
 
         return {
