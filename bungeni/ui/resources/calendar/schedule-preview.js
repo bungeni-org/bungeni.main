@@ -1,3 +1,5 @@
+var SGlobals = scheduler_globals;
+
 /**
  * Render a preview of the Agenda
 */
@@ -6,9 +8,13 @@ YAHOO.bungeni.schedulingpreview = function(){
     var Columns = YAHOO.bungeni.config.scheduling.columns;
     var formatters = YAHOO.bungeni.config.scheduling.formatters;
     var showdiscussions = function(args){
+        var rData = args.record.getData();
+        if(SGlobals.discussable_types.indexOf(rData[Columns.TYPE])<0){
+            return;
+        }
         var data_url = ("./items/" + 
-            args.record.getData()[Columns.OBJECT_ID]+ 
-            scheduler_globals.discussion_items_json_url
+            rData[Columns.OBJECT_ID]+ 
+            SGlobals.discussion_items_json_url
         );
         if(YAHOO.bungeni.schedulingpreview.discussionsDT == undefined){
             var columns = [
@@ -19,7 +25,7 @@ YAHOO.bungeni.schedulingpreview = function(){
                 },
                 {
                     key: Columns.BODY_TEXT,
-                    label: scheduler_globals.column_discussion_text,
+                    label: SGlobals.column_discussion_text,
                     formatter: formatters.longText
                 }
             ]
@@ -61,7 +67,7 @@ YAHOO.bungeni.schedulingpreview = function(){
                         position: "left", 
                         width: 600, 
                         body: '',
-                        header: scheduler_globals.current_schedule_title,
+                        header: SGlobals.current_schedule_title,
                         gutter: "5 5",
                         height: 470,
                         resize: true,
@@ -70,7 +76,7 @@ YAHOO.bungeni.schedulingpreview = function(){
                     { 
                         position: "center", 
                         body: '',
-                        header: scheduler_globals.schedule_discussions_title,
+                        header: SGlobals.schedule_discussions_title,
                         gutter: "5 5",
                         height: 470,
                         collapse: true
@@ -82,11 +88,11 @@ YAHOO.bungeni.schedulingpreview = function(){
             var columns = [
                 {
                     key : Columns.TYPE, 
-                    label : scheduler_globals.column_type,
+                    label : SGlobals.column_type,
                 },
                 {
                     key : Columns.TITLE, 
-                    label : scheduler_globals.column_title,
+                    label : SGlobals.column_title,
                 },
                 {
                     key : Columns.URI, 
@@ -95,7 +101,7 @@ YAHOO.bungeni.schedulingpreview = function(){
                 },
             ];
             var dataSource = new YAHOO.util.DataSource(
-                scheduler_globals.json_listing_url
+                SGlobals.json_listing_url
             );
             dataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
             dataSource.responseSchema = {

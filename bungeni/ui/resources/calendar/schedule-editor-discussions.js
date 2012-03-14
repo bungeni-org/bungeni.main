@@ -542,6 +542,7 @@ YAHOO.bungeni.scheduling = function(){
                 dataTable.subscribe("initEvent", 
                     YAHOO.bungeni.scheduling.handlers.renderScheduleControls
                 );
+                dataTable.subscribe("initEvent", Handlers.attachContextMenu);
                 dataTable.doBeforeLoadData  = YAHOO.bungeni.scheduling.handlers.populateScheduledKeys;
                 dataTable.subscribe("rowAddEvent", 
                     YAHOO.bungeni.scheduling.handlers.setUnsavedChanges

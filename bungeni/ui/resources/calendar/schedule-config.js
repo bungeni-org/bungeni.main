@@ -308,7 +308,6 @@ YAHOO.bungeni.config = function(){
                 }
                 this.dialog.show();
                 this.dialog.bringToTop();
-                console.log(this.dialog.tab_view, tab_id);
             },
             hide: function(){
                 this.confirm_callback = null;
@@ -662,12 +661,48 @@ YAHOO.bungeni.config = function(){
                     this.selectRow(swap_rows[1]);
                 }
             }
+            
+            /*
+             * @method _attachContextMenu
+             * @description context menu for each record
+             **/
+            var _attachContextMenu = function(args){
+                var container = document.createElement("div");
+                container.id = "dt-context-menu-container";
+                document.body.appendChild(container);
+                var menuClickHandler = function(type, args, dt){
+                    var menuItem = args[1];
+                    if (menuItem){
+                        var target = this.contextEventTarget;
+                        var row = dt.getTrEl(target);
+                        var _delete_callback = function(){
+                            dt.deleteRow(row);
+                        }
+                        if(row){
+                            switch(menuItem.index){
+                                case 0: 
+                                YAHOO.bungeni.config.dialogs.confirm.show(
+                                    SGlobals.delete_dialog_text,
+                                    _delete_callback
+                                )
+                            }
+                        } 
+                    }
+                }
+                var contextMenu = new YAHOO.widget.ContextMenu(
+                    "dt-context-menu", { trigger:this.getTbodyEl() }
+                );
+                contextMenu.addItem(SGlobals.remove_button_text);
+                contextMenu.render(container);
+                contextMenu.clickEvent.subscribe(menuClickHandler, this);
+            }
              
              return {
                  renderRTECellEditor: _renderRTECellEditor,
                  showCellEditor: _showCellEditor,
                  moveRecord: _moveRecord,
-                 addTextRecord: _addTextRecord
+                 addTextRecord: _addTextRecord,
+                 attachContextMenu: _attachContextMenu
              }
         }(),
     }
