@@ -700,10 +700,30 @@ class Doc(Entity):
 instrument_extended_properties(Doc, "doc")
 
 
-class DocAudit(HeadParentedMixin, Entity):
-    """An audit record for a document.
+class Change(Entity):
+    """Information about a change.
     """
     __dynamic_features__ = False
+    
+    # change "note" -- as external extended attribute (vertical property) as:
+    # a) presumably it may have to be translatable, and the initial language 
+    #    may not be the same as that of the head object being audited.
+    # b) it will be set very seldom.
+    extended_properties = [
+        ("note", vp.TranslatedText)
+    ]
+
+instrument_extended_properties(Change, "change")
+
+
+class Audit(HeadParentedMixin, Entity):
+    """Base (abstract) audit record for a document.
+    """
+    __dynamic_features__ = False
+    
+class DocAudit(Audit):
+    """An audit record for a document.
+    """
     
     @classmethod
     def auditFactory(cls, doc_kls):
@@ -722,25 +742,12 @@ class DocAudit(HeadParentedMixin, Entity):
         interface.classImplements(factory, interfaces.IChange) # !+IAudit
         return factory
     
-    # "audit_note" vertical property -- implemented as external extended 
-    # attribute as presumably it may have to be translatable, and the initial 
-    # language may not be the same as that of the head object being audited.
-    extended_properties = [
-        ("audit_note", vp.TranslatedText)
-    ]
-    
-    # !+DOCUMENT tmp properties to "auto-adapt" to older change records...
     @property
-    def head(self): return self.audit_head
-    @property
-    def user(self): return self.audit_user
-    @property
-    def action(self): return self.audit_action
-    @property
-    def date_audit(self): return self.audit_date
-    @property
-    def date_active(self): return self.audit_date_active
+    def label(self):
+        return self.short_title
+
 instrument_extended_properties(DocAudit, "doc_audit")
+
 
 class Event(HeadParentedMixin, Doc):
     """Base class for an event on a document.

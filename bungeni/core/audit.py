@@ -94,24 +94,6 @@ def _object_modify(ob, event):
             event, orginator))
         return
     auditor = get_auditor(ob)
-    
-    if IEvent.providedBy(ob):
-        print "!+PYTHON_BROKEN_PROXY >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-        print "  0 instance:", ob, "/ provides IEvent (all True):", IEvent.providedBy(ob), IEvent.providedBy(removeSecurityProxy(ob))
-        print "  1 class:", ob.__class__, "/ bases:", ob.__class__.__bases__
-        print "  2 type(class):", type(ob.__class__), "/ type(domain.Event):", type(domain.Event)
-        print "  3 class is... (should be all True):", \
-            ob.__class__ is domain.Event, \
-            removeSecurityProxy(ob.__class__) is domain.Event, \
-            removeSecurityProxy(ob).__class__ is domain.Event
-        print "  4 isinstance checks... (should be all True):", \
-            isinstance(ob, domain.Event), \
-            isinstance(removeSecurityProxy(ob), domain.Event), \
-            isinstance(ob, removeSecurityProxy(ob).__class__), \
-            isinstance(ob, removeSecurityProxy(ob.__class__))
-            #isinstance(ob, ob.__class__) TypeError !!
-        print "!+PYTHON_BROKEN_PROXY <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-    
     if IDocument.providedBy(ob): # !+DOCUMENT
         auditor.DOCUMENT_object_modify(removeSecurityProxy(ob), event)
     else:
@@ -174,9 +156,9 @@ def _get_auditable_ancestor(obj):
 
 class _AuditorFactory(object):
     
-    def __init__(self, change_table, change_class):
+    def __init__(self, change_table, audit_class):
         self.change_table = change_table
-        self.change_class = change_class
+        self.audit_class = audit_class
     
     # handlers, return the change_id
     
@@ -213,7 +195,7 @@ class _AuditorFactory(object):
     def DOCUMENT_object_modify(self, ob, event):
         change_data = self._get_change_data()
         return self._DOCUMENT_object_changed("modify", ob, 
-                audit_date_active=change_data["date_active"])
+                date_active=change_data["date_active"])
     
     def object_remove(self, ob, event):
         # !+AUDIT_REMOVE(mr, feb-2011) if this is a real delete (of a record 
@@ -272,8 +254,8 @@ class _AuditorFactory(object):
         #wf = IWorkflow(ob) # !+ adapters.get_workflow(ob)
         #description = wf.get_state(event.destination).title # misc.get_wf_state
         return self._DOCUMENT_object_changed("workflow", ob, 
-                audit_date_active=change_data["date_active"],
-                audit_note=change_data.get("note", None))
+                date_active=change_data["date_active"],
+                note=change_data.get("note", None))
     
     
     def object_version(self, ob, event):
@@ -356,7 +338,7 @@ class _AuditorFactory(object):
         user_id = get_db_user_id()
         assert user_id is not None, "Audit error. No user logged in."
         session = Session()
-        change = self.change_class()
+        change = self.audit_class()
         change.action = action
         change.date_audit = datetime.now()
         if date_active:
@@ -382,8 +364,8 @@ class _AuditorFactory(object):
         return change.change_id
     
     def _DOCUMENT_object_changed(self, action, ob, 
-            audit_date_active=None,
-            audit_note=None
+            date_active=None,
+            note=None
         ):
         """
         """
@@ -392,17 +374,20 @@ class _AuditorFactory(object):
         assert user_id is not None, "Audit error. No user logged in."
         
         # audit record meta data
-        alog = self.change_class() # !+rename audit_class
-        alog.audit_user_id = user_id
-        alog.audit_action = action
-        alog.audit_head = ob # attach audit log item to parent object
-        alog.audit_date = datetime.now()
-        if audit_date_active:
-            alog.audit_date_active = audit_date_active
+        ch = domain.Change()
+        ch.user_id = user_id
+        ch.action = action
+        ch.date_audit = datetime.now()
+        if date_active:
+            ch.date_active = date_active
         else:
-            alog.audit_date_active = alog.audit_date
-        if audit_note:
-            alog.audit_note = audit_note
+            ch.date_active = ch.date_audit
+        if note:
+            ch.note = note
+        
+        # audit snapshot
+        au = ch.audit = self.audit_class()
+        au.audit_head = ob # attach audit log item to parent object
         
         # carry over a snapshot of head values
         def get_field_names_to_audit(kls):
@@ -425,13 +410,15 @@ class _AuditorFactory(object):
         def copy_field_values(source, dest):
             for name in get_field_names_to_audit(source.__class__):
                 setattr(dest, name, getattr(source, name))
-        copy_field_values(ob, alog)
+        copy_field_values(ob, au)
         
         session = Session()
-        session.add(alog)
+        session.add(ch)
+        session.add(au)
         session.flush()
-        log.debug("AUDITED [%s] %s" % (action, alog.__dict__))
-        return alog.audit_id
+        log.debug("CHANGE [%s] %s" % (action, ch.__dict__))
+        log.debug("AUDIT [%s] %s" % (au, au.__dict__))
+        return au.audit_id
     
     #
     

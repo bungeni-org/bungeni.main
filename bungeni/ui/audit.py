@@ -12,9 +12,11 @@ import sys
 
 from zope.security.proxy import removeSecurityProxy
 from zope.security.management import getInteraction
+
+import zc.table
 from zc.table import column
 from zope.app.pagetemplate import ViewPageTemplateFile
-import zc.table
+from zope.i18n import translate
 
 from bungeni.models import interfaces
 from bungeni.models import domain
@@ -143,16 +145,23 @@ def _eval_as_dict(s):
         debug.log_exc(sys.exc_info(), log_handler=log.info)
         return {}
 
+def _DOCUMENT_audit(change): #!+
+    try: 
+        return change.audit
+    except AttributeError:
+        return change
+    
 def _get_type_name(change):
     """Get document type name.
     """
+    audit = _DOCUMENT_audit(change)
     #return change.head.type # !+ not all heads define such a type attr 
-    cname = change.__class__.__name__
-    if cname.endswith("Change"): #!+DOCUMENT
-        return cname[:-6].lower()
-    if cname.endswith("Audit"):
-        return cname[:-5].lower()
-    return cname.lower()
+    type_name = audit.__class__.__name__
+    if type_name.endswith("Change"): #!+DOCUMENT
+        return type_name[:-6].lower()
+    if type_name.endswith("Audit"):
+        return type_name[:-5].lower()
+    return type_name.lower()
 
 def _format_description_workflow(change):
     # !+ workflow transition change log stores the (unlocalized) 
@@ -161,24 +170,31 @@ def _format_description_workflow(change):
         "{'source':'TBD', 'destination':'TBD'}")) # !+AUDIT_PREVIOUS
     return ('%s <span class="workflow_info">%s</span> '
         '%s <span class="workflow_info">%s</span>' % (
-            _("from"),
-            _(extras.get("source", None)),
-            _("to"),
-            _(extras.get("destination", None)) ))
+            translate("from"),
+            translate(extras.get("source", None)),
+            translate("to"),
+            translate(extras.get("destination", None)) ))
+
+def _label(audit):
+    try:
+        return translate(audit.label)
+    except AttributeError:
+        return translate(audit.description)
 
 def _format_description(change):
     """Build the (localized) description for display, for each change, per 
     change type and action.
     """
-    change_type_name = _get_type_name(change)
+    audit_type_name = _get_type_name(change)
+    audit = _DOCUMENT_audit(change)
     # !+AUDIT_DESCRIPTIONS... to be redone, dynamic. Note also that current
     # links within descriptions for audit logs of a sub object are all broken!
-    if change_type_name == "event":
+    if audit_type_name == "event":
         # description for (event, *)
         return """<a href="event/obj-%s">%s</a>""" % (
-            change.audit_head_id, _(change.description))
-    elif change_type_name == "attachedfile":
-        file_title = "%s" % (change.head.file_title)
+            audit.audit_head_id, _label(audit))
+    elif audit_type_name == "attachedfile":
+        file_title = "%s" % (audit.head.file_title)
         # !+ _(change.head.attached_file_type), change.head.file_name)
         if change.action == "version":
             version_id = _eval_as_dict(change.notes).get("version_id", None)
@@ -186,25 +202,25 @@ def _format_description(change):
                 _url = "files/obj-%s/versions/obj-%s" % (
                     change.content_id, version_id)
                 return """%s: <a href="%s">%s</a>""" % (
-                    file_title, _url, _(change.description))
+                    file_title, _url, _label(audit))
             else:
-                return "%s: %s" % (file_title, _(change.description))
+                return "%s: %s" % (file_title, _label(audit))
         elif change.action == "workflow":
             return "%s: %s" % (file_title, _format_description_workflow(change))
         else:
-            return "%s: %s" % (file_title, _(change.description))
+            return "%s: %s" % (file_title, _label(audit))
     else:
         if change.action == "version":
             version_id = _eval_as_dict(change.notes).get("version_id", None)
             if version_id:
                 _url = "versions/obj-%s" % (version_id)
-                return """<a href="%s">%s</a>""" % (_url, _(change.description))
+                return """<a href="%s">%s</a>""" % (_url, _label(audit))
             else:
-                return _(change.description)
+                return _label(audit)
         elif change.action == "workflow":
             return _format_description_workflow(change)
         else:
-            return _(change.description)
+            return _label(audit)
 
 
 class GetterColumn(column.GetterColumn):
@@ -311,9 +327,9 @@ class AuditLogMixin(object):
         return formatter()
     
     #@property
-    #def _change_class(self):
+    #def _audit_class(self):
     #    auditor = audit.get_auditor(self.context)
-    #    return auditor.change_class
+    #    return auditor.audit_class
 
 
 @register.view(interfaces.IAuditable, name="audit-log",

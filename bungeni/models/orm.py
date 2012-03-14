@@ -26,10 +26,11 @@ def DOCUMENT_configurable_mappings(kls):
     # auditable, determine properties, map audit class/table
     if interfaces.IAuditable.implementedBy(kls):
         audit_kls = getattr(domain, "%sAudit" % (name))
+        assert issubclass(audit_kls, domain.Audit), \
+            "Audit class %s is not a subclass of %s" % (audit_kls, domain.Audit)
         #audit_tbl = schema.doc_audit
-        audit_kls_mapper = mapper(audit_kls, 
+        mapper(audit_kls, 
             inherits=domain.DocAudit,
-            polymorphic_on=schema.doc_audit.c.type, # polymorphic discriminator
             polymorphic_identity=name.lower(), # polymorphic discriminator value
         )
         # instrument any extended attributes on kls also on its audit_kls
@@ -43,9 +44,16 @@ def DOCUMENT_configurable_mappings(kls):
             """
             # auditable
             if interfaces.IAuditable.implementedBy(kls):
-                audit_kls = getattr(domain, "%sAudit" % (name))
-                mapper_properties["changes"] = relation(audit_kls,
-                    backref="audit_head",
+                # kls.changes <-> change.audit.audit_head :
+                # doc[@TYPE] <-- TYPE_audit <-> audit <-> change
+                mapper_properties["changes"] = relation(domain.Change,
+                    primaryjoin=rdb.and_(
+                        schema.doc.c.doc_id == schema.doc_audit.c.audit_head_id,
+                    ),
+                    secondary=schema.doc_audit,
+                    secondaryjoin=rdb.and_(
+                        schema.doc_audit.c.audit_id == schema.change.c.audit_id,
+                    ),
                     lazy=True,
                     cascade="all, delete-orphan",
                     passive_deletes=False
@@ -495,19 +503,37 @@ mapper(domain.Doc, schema.doc,
                 schema.parliamentary_items.c.parliamentary_item_id),
             uselist=False,
             lazy=False),
+        "audits": relation(domain.DocAudit,
+            primaryjoin=rdb.and_(schema.doc.c.doc_id ==
+                schema.doc_audit.c.audit_head_id),
+            backref="audit_head",
+            uselist=True,
+            lazy=True),
     }
 )
 
-mapper(domain.DocAudit, schema.doc_audit,
-    polymorphic_on=schema.doc_audit.c.type, # polymorphic discriminator
-    polymorphic_identity="doc", # polymorphic discriminator value
+mapper(domain.Audit, schema.audit,
+    polymorphic_on=schema.audit.c.audit_type, # polymorphic discriminator
+    polymorphic_identity="audit", # polymorphic discriminator value
+)
+mapper(domain.Change, schema.change,
     properties={
-        "audit_user": relation(domain.User,
-            primaryjoin=rdb.and_(schema.doc_audit.c.audit_user_id ==
+        "audit": relation(domain.Audit,
+            primaryjoin=rdb.and_(schema.change.c.audit_id ==
+                schema.audit.c.audit_id),
+            backref="change",
+            uselist=False,
+            lazy=True),
+        "user": relation(domain.User,
+            primaryjoin=rdb.and_(schema.change.c.user_id ==
                 schema.users.c.user_id),
             uselist=False,
             lazy=False),
     }
+)
+mapper(domain.DocAudit, schema.doc_audit,
+    inherits=domain.Audit,
+    polymorphic_identity="doc", # polymorphic discriminator value
 )
 
 mapper(domain.Event,

@@ -99,6 +99,60 @@ vp_translated_text = rdb.Table("vp_translated_text", metadata,
 )
 
 
+# audit 
+
+# generic change information
+change = rdb.Table("change", metadata,
+    rdb.Column("audit_id", rdb.Integer, 
+        rdb.ForeignKey("audit.audit_id"), 
+        primary_key=True),
+    rdb.Column("user_id", rdb.Integer, rdb.ForeignKey("users.user_id")),
+    rdb.Column("action", rdb.Unicode(16)),
+    # accumulative count, per (audit_head_id, action) e.g (head=123, "version")=1
+    rdb.Column("seq", rdb.Integer),
+    # !+procedure ? enum: manual/auto/...
+    # audit datetime, exclusively managed by the system, real datetime of 
+    # when change was actually affected
+    rdb.Column("date_audit", rdb.DateTime(timezone=False),
+        #!+CATALYSE(mr, nov-2010) fails descriptor catalisation
+        #default=functions.current_timestamp(),
+        server_default=(text("now()")),
+        nullable=False
+    ),
+    # user-modifiable effective datetime (defaults to audit_time);
+    # this is the datetime to be used for all intents and purposes other 
+    # than for "forensic" data auditing
+    rdb.Column("date_active", rdb.DateTime(timezone=False),
+        #!+CATALYSE(mr, nov-2010)
+        #default=functions.current_timestamp(),
+        server_default=(text("now()")),
+        nullable=False
+    ),
+    
+    #rdb.Column("description", rdb.UnicodeText), #!+dynamic at runtime
+    # possible explanatory note/remark/comment/observation/recommendation/etc 
+    # about the change, manually added by the user; this is part of the 
+    # audit history of a document and visible to all who have access to this
+    # change record.
+    # Workflow State at time of change - visibility of a change record 
+    # depends on permissions of parent object in this specific state.
+    
+    #rdb.Column("status", rdb.Unicode(48)), # !+ use audit.status?
+    # !+presumably already on head for when audit_head is itself a sub-document 
+    # e.g. events, as knowing the status of also the "root" head document may 
+    # be necessary to determine allowed access for *this* change record
+    
+    #rdb.Column("root_status", rdb.Unicode(48)),
+)
+
+
+audit_sequence = rdb.Sequence("audit_sequence")
+audit = rdb.Table("audit", metadata,
+    rdb.Column("audit_id", rdb.Integer, audit_sequence, primary_key=True),
+    # audit_type, for polymorphic_identity
+    rdb.Column("audit_type", rdb.String(30), nullable=False),
+)
+
 def make_audit_table(table, metadata):
     """Create an audit log table for an archetype.
     
@@ -109,52 +163,22 @@ def make_audit_table(table, metadata):
     audit_tbl_name = "%s_audit" % (entity_name)
     head_tbl_fk_column_name = "%s_id" % (entity_name)
     columns = [
-        rdb.Column("audit_id", rdb.Integer, primary_key=True),
-        # the doc_id of the "owning" doc change being logged
+        rdb.Column("audit_id", rdb.Integer, 
+            rdb.ForeignKey("audit.audit_id"), 
+            primary_key=True),
+        # the id of the "owning" doc for which change is being logged
+        # !+ should be left as original i.e. doc_id for case of "doc"?
         rdb.Column("audit_head_id", rdb.Integer, 
             rdb.ForeignKey(table.c[head_tbl_fk_column_name]),
             nullable=False,
             index=True
         ),
-        rdb.Column("audit_user_id", rdb.Integer, rdb.ForeignKey("users.user_id")),
-        rdb.Column("audit_action", rdb.Unicode(16)),
-        # !+audit_version ? accumulative numeric count, per audit_head_id
-        # !+audit_procedure ? enum: manual/auto/... 
-        # audit datetime, exclusively managed by the system, real datetime of 
-        # when change was actually affected
-        rdb.Column("audit_date", rdb.DateTime(timezone=False),
-            #!+CATALYSE(mr, nov-2010) fails descriptor catalisation
-            #default=functions.current_timestamp(),
-            server_default=(text("now()")),
-            nullable=False
-        ),
-        # user-modifiable effective datetime (defaults to audit_time);
-        # this is the datetime to be used for all intents and purposes other 
-        # than for "forensic" data auditing
-        rdb.Column("audit_date_active", rdb.DateTime(timezone=False),
-            #!+CATALYSE(mr, nov-2010)
-            #default=functions.current_timestamp(),
-            server_default=(text("now()")),
-            nullable=False
-        ),
-        #rdb.Column("description", rdb.UnicodeText), #!+dynamic at runtime
-        # possible explanatory note/remark/comment/observation/recommendation/etc 
-        # about the change, manually added by the user; this is part of the 
-        # audit history of a document and visible to all who have access to this
-        # change record.
-        # Workflow State at time of change - visibility of a change record 
-        # depends on permissions of parent object in this specific state.
-        #rdb.Column("status", rdb.Unicode(48)), #!+presumably already on head
-        # for when audit_head is itself a sub-document e.g. events, as knowing 
-        # the status of also the "root" head document may be necessary to 
-        # determine allowed access for *this* change record
-        #rdb.Column("audit_root_status", rdb.Unicode(48)),
     ]
     def extend_cols(cols, ext_cols):
         names = [ c.name for c in cols ]
         for c in ext_cols:
             if not c.primary_key:
-                assert c.name not in names, "Duplicate column."
+                assert c.name not in names, "Duplicate column [%s]." % (c.name)
                 names.append(c.name)
                 #!+should ext FK cols also be made an FK here?
                 #!+should special ext col constraints NOT be carried over e.g.
