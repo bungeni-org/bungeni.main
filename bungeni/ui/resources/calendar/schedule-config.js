@@ -695,6 +695,9 @@ YAHOO.bungeni.config = function(){
                 contextMenu.addItem(SGlobals.remove_button_text);
                 contextMenu.render(container);
                 contextMenu.clickEvent.subscribe(menuClickHandler, this);
+                this.unsubscribe("initEvent",
+                    YAHOO.bungeni.config.scheduling.handlers.attachContextMenu
+                );
             }
              
              return {
