@@ -271,6 +271,29 @@ def schedule_sitting_items(context):
         except InvalidStateError:
             pass
 
+def check_agenda_finalized(context):
+    unfinalized_tags = ["tobescheduled", "scheduled"]
+    def check_finalized(schedule):
+        wfc = IWorkflowController(schedule.item, None)
+        if wfc is None:
+            return True
+        #!+TYPES(mb, march-2012) There might be a more elegant approach here
+        # to filter out 'text records' from the schedule
+        if interfaces.IBungeniParliamentaryContent.providedBy(schedule.item):
+            wfc, wfc.state_controller.get_status(),
+            wfc.workflow.get_state_ids(not_tagged=unfinalized_tags,
+                restrict=False
+            )
+            return (wfc.state_controller.get_status() in 
+                wfc.workflow.get_state_ids(not_tagged=unfinalized_tags,
+                    restrict=False
+                )
+            )
+        else:
+            return True
+    check_list = map(check_finalized, context.items.values())
+    return  (False not in check_list)
+
 #signatories
 def assign_signatory_role(context, owner_login, unset=False):
     log.debug("assign signatory role [%s] user: [%s]",

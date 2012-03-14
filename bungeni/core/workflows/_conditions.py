@@ -85,6 +85,9 @@ def has_venue(context):
 def has_agenda(context):
     return len(context.items)>0
 
+def agenda_finalized(context):
+    return utils.check_agenda_finalized(context)
+
 # question
 
 def is_written_response(context):
