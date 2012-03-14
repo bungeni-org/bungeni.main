@@ -697,13 +697,26 @@ class Doc(Entity):
     item_signatories = [] #relation(domain.Signatory)
     assignedgroups = []
 
+    extended_properties = [
+    ]
 instrument_extended_properties(Doc, "doc")
 
 
-class Change(Entity):
+class Change(HeadParentedMixin, Entity):
     """Information about a change.
     """
     __dynamic_features__ = False
+    interface.implements(
+        interfaces.IChange
+    )
+    
+    @property
+    def head(self):
+        return self.audit.audit_head
+    
+    @property
+    def status(self):
+        return self.audit.status
     
     # change "note" -- as external extended attribute (vertical property) as:
     # a) presumably it may have to be translatable, and the initial language 
@@ -712,7 +725,6 @@ class Change(Entity):
     extended_properties = [
         ("note", vp.TranslatedText)
     ]
-
 instrument_extended_properties(Change, "change")
 
 
@@ -720,7 +732,10 @@ class Audit(HeadParentedMixin, Entity):
     """Base (abstract) audit record for a document.
     """
     __dynamic_features__ = False
-    
+    interface.implements(
+        interfaces.IChange # !+IAudit?
+    )
+
 class DocAudit(Audit):
     """An audit record for a document.
     """
@@ -739,13 +754,14 @@ class DocAudit(Audit):
         # Extended properties from cls are inherited... but need to propagate 
         # onto audit_kls any extended properties defined by doc_kls:
         instrument_extended_properties(factory, "doc_audit", from_class=doc_kls)
-        interface.classImplements(factory, interfaces.IChange) # !+IAudit
         return factory
     
     @property
     def label(self):
         return self.short_title
 
+    extended_properties = [
+    ]
 instrument_extended_properties(DocAudit, "doc_audit")
 
 

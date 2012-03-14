@@ -156,8 +156,8 @@ def _get_auditable_ancestor(obj):
 
 class _AuditorFactory(object):
     
-    def __init__(self, change_table, audit_class):
-        self.change_table = change_table
+    def __init__(self, audit_table, audit_class):
+        self.audit_table = audit_table
         self.audit_class = audit_class
     
     # handlers, return the change_id
@@ -392,7 +392,7 @@ class _AuditorFactory(object):
         # carry over a snapshot of head values
         def get_field_names_to_audit(kls):
             names_to_audit = []
-            table = self.change_table
+            table = self.audit_table
             for column in table.columns:
                 # skip all fields starting with "audit_"
                 if column.name.startswith("audit_"):

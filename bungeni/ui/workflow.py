@@ -65,6 +65,12 @@ class WorkflowVocabulary(object):
 workflow_vocabulary_factory = WorkflowVocabulary()
 
 
+def _label(change):
+    try:
+        return translate(change.audit.label)
+    except AttributeError:
+        return translate(change.description)
+
 class WorkflowHistoryViewlet(viewlet.ViewletBase):
     """Show the current workflow state and the workflow-history.
     """
@@ -89,7 +95,7 @@ class WorkflowHistoryViewlet(viewlet.ViewletBase):
             column.GetterColumn(title=_(u"user"), 
                 getter=lambda i,f:IDCDescriptiveProperties(i.user).title),
             column.GetterColumn(title=_(u"description"), 
-                getter=lambda i,f:i.description),
+                getter=lambda i,f:_label(i)),
         ]
     
     def update(self):

@@ -55,7 +55,7 @@ def DOCUMENT_configurable_mappings(kls):
                         schema.doc_audit.c.audit_id == schema.change.c.audit_id,
                     ),
                     lazy=True,
-                    cascade="all, delete-orphan",
+                    cascade="all",
                     passive_deletes=False
                 )
             return mapper_properties
