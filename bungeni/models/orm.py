@@ -44,11 +44,11 @@ def DOCUMENT_configurable_mappings(kls):
             """
             # auditable
             if interfaces.IAuditable.implementedBy(kls):
-                # kls.changes <-> change.audit.audit_head :
+                # kls.changes <-> change.audit.audit_head=doc:
                 # doc[@TYPE] <-- TYPE_audit <-> audit <-> change
                 mapper_properties["changes"] = relation(domain.Change,
                     primaryjoin=rdb.and_(
-                        schema.doc.c.doc_id == schema.doc_audit.c.audit_head_id,
+                        schema.doc.c.doc_id == schema.doc_audit.c.doc_id,
                     ),
                     secondary=schema.doc_audit,
                     secondaryjoin=rdb.and_(
@@ -504,8 +504,8 @@ mapper(domain.Doc, schema.doc,
             uselist=False,
             lazy=False),
         "audits": relation(domain.DocAudit,
-            primaryjoin=rdb.and_(schema.doc.c.doc_id ==
-                schema.doc_audit.c.audit_head_id),
+            primaryjoin=rdb.and_(schema.doc.c.doc_id == 
+                schema.doc_audit.c.doc_id),
             backref="audit_head",
             uselist=True,
             lazy=True),

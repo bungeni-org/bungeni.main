@@ -734,11 +734,21 @@ class Audit(HeadParentedMixin, Entity):
     interface.implements(
         interfaces.IChange # !+IAudit?
     )
+    
+    head_id_column_name = None
+    def audit_head_id():
+        doc = "Returns the integer of the single PK of the head object."
+        def fget(self):
+            return getattr(self, self.head_id_column_name)
+        def fset(self, head_id):
+            return setattr(self, self.head_id_column_name, head_id)
+        return locals()
+    audit_head_id = property(**audit_head_id())
 
 class DocAudit(Audit):
     """An audit record for a document.
     """
-    
+    head_id_column_name = "doc_id"
     @classmethod
     def auditFactory(cls, doc_kls):
         # Notes:

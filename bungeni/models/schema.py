@@ -166,24 +166,30 @@ def make_audit_table(table, metadata):
         rdb.Column("audit_id", rdb.Integer, 
             rdb.ForeignKey("audit.audit_id"), 
             primary_key=True),
-        # the id of the "owning" doc for which change is being logged
-        # !+ should be left as original i.e. doc_id for case of "doc"?
-        rdb.Column("audit_head_id", rdb.Integer, 
-            rdb.ForeignKey(table.c[head_tbl_fk_column_name]),
-            nullable=False,
-            index=True
-        ),
     ]
     def extend_cols(cols, ext_cols):
         names = [ c.name for c in cols ]
         for c in ext_cols:
+            assert c.name not in names, "Duplicate column [%s]." % (c.name)
+            names.append(c.name)
             if not c.primary_key:
-                assert c.name not in names, "Duplicate column [%s]." % (c.name)
-                names.append(c.name)
-                #!+should ext FK cols also be made an FK here?
                 #!+should special ext col constraints NOT be carried over e.g.
                 #  default value on ext, not/nullable on ext...?
                 cols.append(c.copy())
+            else: 
+                # the single PK id of the "owning" object for which the change
+                # is being logged; we retain the same original column name
+                # i.e. doc_id for case of "doc", and have the audit_head_id 
+                # property always read and write to this.
+                assert c.name == head_tbl_fk_column_name, \
+                    "Inconsistent PK column naming [%s != %s]" % (
+                        head_tbl_fk_column_name, c.name)
+                cols.append(
+                    rdb.Column(c.name, rdb.Integer, 
+                        rdb.ForeignKey(table.c[head_tbl_fk_column_name]),
+                        nullable=False,
+                        index=True
+                    )),
     extend_cols(columns, table.columns)
     # !+additional tables...
     audit_tbl = rdb.Table(audit_tbl_name, metadata, *columns,

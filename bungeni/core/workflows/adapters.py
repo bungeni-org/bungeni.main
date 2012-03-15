@@ -151,7 +151,7 @@ def apply_customization_workflow(name):
             # create/set module-level dedicated auditor singleton for auditable kls
             bungeni.core.audit.set_auditor(kls)
     
-    # !+dynamic_features(mr, mar-2012) necessary?
+    # !+dynamic_features(mr, mar-2012) necessary? Address, ... ?
     if kls.__dynamic_features__:
         _apply_customization_workflow(kls)
 
