@@ -373,22 +373,6 @@ class _AuditorFactory(object):
         user_id = get_db_user_id()
         assert user_id is not None, "Audit error. No user logged in."
         
-        # audit record meta data
-        ch = domain.Change()
-        ch.user_id = user_id
-        ch.action = action
-        ch.date_audit = datetime.now()
-        if date_active:
-            ch.date_active = date_active
-        else:
-            ch.date_active = ch.date_audit
-        if note:
-            ch.note = note
-        
-        # audit snapshot
-        au = ch.audit = self.audit_class()
-        au.audit_head = ob # attach audit log item to parent object
-        
         # carry over a snapshot of head values
         def get_field_names_to_audit(kls):
             names_to_audit = []
@@ -407,17 +391,34 @@ class _AuditorFactory(object):
             for vp_name, vp_type in kls.extended_properties:
                 names_to_audit.append(vp_name)
             return names_to_audit
+        
         def copy_field_values(source, dest):
             for name in get_field_names_to_audit(source.__class__):
                 setattr(dest, name, getattr(source, name))
-        copy_field_values(ob, au)
         
+        # audit snapshot - done first, to ensure a valid audit_id...
+        au = self.audit_class()
+        au.audit_head = ob # attach audit log item to parent object
+        copy_field_values(ob, au)
         session = Session()
-        session.add(ch)
         session.add(au)
+        
+        # audit record meta data
+        ch = domain.Change()
+        ch.audit = au # ensures ch.audit_id, ch.note.object_id
+        ch.user_id = user_id
+        ch.action = action
+        ch.date_audit = datetime.now()
+        if date_active:
+            ch.date_active = date_active
+        else:
+            ch.date_active = ch.date_audit
+        if note:
+            ch.note = note
+        
         session.flush()
-        log.debug("CHANGE [%s] %s" % (action, ch.__dict__))
         log.debug("AUDIT [%s] %s" % (au, au.__dict__))
+        log.debug("CHANGE [%s] %s" % (action, ch.__dict__))
         return au.audit_id
     
     #

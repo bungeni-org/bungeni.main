@@ -521,7 +521,7 @@ mapper(domain.Change, schema.change,
         "audit": relation(domain.Audit,
             primaryjoin=rdb.and_(schema.change.c.audit_id ==
                 schema.audit.c.audit_id),
-            backref="change",
+            backref=backref("change", uselist=False),
             uselist=False,
             lazy=True),
         "user": relation(domain.User,
@@ -531,6 +531,7 @@ mapper(domain.Change, schema.change,
             lazy=False),
     }
 )
+
 mapper(domain.DocAudit, schema.doc_audit,
     inherits=domain.Audit,
     polymorphic_identity="doc", # polymorphic discriminator value
@@ -754,4 +755,8 @@ mapper(domain.Report4Sitting, schema.sitting_reports,
 
 mapper(domain.ObjectTranslation, schema.translations)
 
+
+# !+IChange-vertical-properties special case: 
+# class is NOT workflowed, and in any case __dynamic_features__ = False
+DOCUMENT_configurable_mappings(domain.Change)
 

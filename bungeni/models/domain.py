@@ -626,8 +626,6 @@ def vertical_property(object_type, vp_name, vp_type, *args, **kw):
     def fset(self, value):
         vp = vp_type(self, object_type, vp_name, value, *args, **kw)
         setattr(self, _vp_name, vp)
-        #!+save-update(mr, mar-2012) does not cascade Session.add() operation!
-        Session().add(vp)
     def fdel(self):
         setattr(self, _vp_name, None)
     return property(fget=fget, fset=fset, fdel=fdel, doc=doc)
@@ -645,8 +643,9 @@ class VerticalProperty(Entity):
         self.value = value
     
     def __repr__(self):
-        return "<%s %s=%r on %s>" % (self.__class__.__name__, 
-                self.name, self.value, self._object)
+        return "<%s %s=%r on (%r, %s) at %s>" % (self.__class__.__name__, 
+                self.name, self.value, 
+                self.object_type, self.object_id, hex(id(self._object)))
 
 class vp(object):
     """A convenient vp namespace.

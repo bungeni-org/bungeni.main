@@ -139,7 +139,7 @@ def apply_customization_workflow(name):
         # !+DOCUMENT same doc table, so no need to create changes/versions/etc...
         if interfaces.IDocument.implementedBy(kls):
             domain.DOCUMENT_configurable_domain(kls, wf)
-            orm.DOCUMENT_configurable_mappings(kls)                
+            orm.DOCUMENT_configurable_mappings(kls)
         else:
             kls = domain.configurable_domain(kls, wf)
             schema.configurable_schema(kls)
@@ -151,6 +151,7 @@ def apply_customization_workflow(name):
             # create/set module-level dedicated auditor singleton for auditable kls
             bungeni.core.audit.set_auditor(kls)
     
+    # !+dynamic_features(mr, mar-2012) necessary?
     if kls.__dynamic_features__:
         _apply_customization_workflow(kls)
 

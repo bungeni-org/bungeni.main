@@ -146,7 +146,7 @@ def _eval_as_dict(s):
         return {}
 
 def _DOCUMENT_audit(change): #!+
-    try: 
+    try:
         return change.audit
     except AttributeError:
         return change
@@ -175,24 +175,34 @@ def _format_description_workflow(change):
             translate("to"),
             translate(extras.get("destination", None)) ))
 
-def _label(audit):
-    try:
-        return translate(audit.label)
-    except AttributeError:
-        return translate(audit.description)
-
 def _format_description(change):
     """Build the (localized) description for display, for each change, per 
     change type and action.
     """
     audit_type_name = _get_type_name(change)
     audit = _DOCUMENT_audit(change)
+    
+    def _label(audit):
+        try:
+            return translate(audit.label)
+        except AttributeError:
+            return translate(audit.description)
+    
+    def _note(audit):
+        try:
+            note = audit.change.note
+        except AttributeError:
+            return ""
+        if note:
+            return "(%s)" % (translate(note))
+        return ""
+    
     # !+AUDIT_DESCRIPTIONS... to be redone, dynamic. Note also that current
     # links within descriptions for audit logs of a sub object are all broken!
     if audit_type_name == "event":
         # description for (event, *)
-        return """<a href="event/obj-%s">%s</a>""" % (
-            audit.audit_head_id, _label(audit))
+        return """<a href="event/obj-%s">%s</a> %s""" % (
+            audit.audit_head_id, _label(audit), _note(audit))
     elif audit_type_name == "attachedfile":
         file_title = "%s" % (audit.head.file_title)
         # !+ _(change.head.attached_file_type), change.head.file_name)
@@ -201,26 +211,27 @@ def _format_description(change):
             if version_id:
                 _url = "files/obj-%s/versions/obj-%s" % (
                     change.content_id, version_id)
-                return """%s: <a href="%s">%s</a>""" % (
-                    file_title, _url, _label(audit))
+                return """%s: <a href="%s">%s</a> %s""" % (
+                    file_title, _url, _label(audit), _note(audit))
             else:
-                return "%s: %s" % (file_title, _label(audit))
+                return "%s: %s %s" % (file_title, _label(audit), _note(audit))
         elif change.action == "workflow":
             return "%s: %s" % (file_title, _format_description_workflow(change))
         else:
-            return "%s: %s" % (file_title, _label(audit))
+            return "%s: %s %s" % (file_title, _label(audit), _note(audit))
     else:
         if change.action == "version":
             version_id = _eval_as_dict(change.notes).get("version_id", None)
             if version_id:
                 _url = "versions/obj-%s" % (version_id)
-                return """<a href="%s">%s</a>""" % (_url, _label(audit))
+                return """<a href="%s">%s</a> %s""" % (
+                    _url, _label(audit), _note(audit))
             else:
-                return _label(audit)
+                return "%s %s" % (_label(audit), _note(audit))
         elif change.action == "workflow":
             return _format_description_workflow(change)
         else:
-            return _label(audit)
+            return "%s %s" % (_label(audit), _note(audit))
 
 
 class GetterColumn(column.GetterColumn):
