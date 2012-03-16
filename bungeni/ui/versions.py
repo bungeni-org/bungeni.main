@@ -160,12 +160,16 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
         # e.g. business / questions / <q> / versions / Show Differences
         return "post"
     
-    @formlib.form.action(label=_("New Version"), condition=has_write_permission)
+    @formlib.form.action(label=_("New Version"),
+                         name="new_version",
+                         condition=has_write_permission)
     def handle_new_version(self, action, data):
         self._versions.create(message=data["commit_message"], manual=True)
         self.status = _(u"New Version Created")
 
-    @formlib.form.action(label=_("Revert To"), condition=has_write_permission)
+    @formlib.form.action(label=_("Revert To"),
+                         name="revert_to",
+                         condition=has_write_permission)
     def handle_revert_version(self, action, data):
         selected = getSelected(self.selection_column, self.request)
         if len(selected) != 1:
@@ -174,7 +178,8 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
         version = self._versions.get(selected[0])
         message = data["commit_message"]
         self._versions.revert(version, message)
-        self.status = (_(u"Reverted to Previous Version %s") %(version.version_id))
+        self.status = (_(u"Reverted to Previous Version %s") %
+                       (version.version_id))
 
     @formlib.form.action(
         label=_("Show Differences"), name="diff",
