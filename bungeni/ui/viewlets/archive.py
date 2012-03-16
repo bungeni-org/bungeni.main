@@ -87,7 +87,7 @@ class ArchiveDatesForm(form.PageForm):
         self.widgets["range_start_date"].set_max_date(end)
         self.widgets["range_end_date"].set_max_date(end)
     
-    @form.action(_(u"Filter"), name="filter")
+    @form.action(_(u"Filter"))
     def handle_filter(self, action, data):
         start_date = data.get("range_start_date")
         end_date = data.get("range_end_date")
@@ -117,7 +117,7 @@ class ArchiveDatesForm(form.PageForm):
             "?portal_status_message=%s" % translate(
                 _(u"Date range set")))
 
-    @form.action(_(u"Clear"), name="clear")
+    @form.action(_(u"Clear"))
     def handle_clear(self, action, data):
         cookies.unset_date_range(self.request)
         

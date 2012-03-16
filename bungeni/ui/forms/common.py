@@ -361,18 +361,15 @@ class AddForm(BaseForm, catalyst.AddForm):
 
     @formlib.form.action(
         _(u"Save and view"),
-        name="save_and_view",
         condition=formlib.form.haveInputWidgets)
-    def handle_add_and_view(self, action, data):
+    def handle_add_save(self, action, data):
         ob = self.createAndAdd(data)
         name = self.domain_model.__name__
         if not self._next_url:
             self._next_url = url.absoluteURL(ob, self.request) + \
                 "?portal_status_message=%s added" % name
 
-    @formlib.form.action(_(u"Cancel"),
-                         name="cancel"
-                         validator=ui.null_validator)
+    @formlib.form.action(_(u"Cancel"), validator=ui.null_validator)
     def handle_cancel(self, action, data):
         """Cancelling redirects to the listing."""
         if not self._next_url:
@@ -383,10 +380,8 @@ class AddForm(BaseForm, catalyst.AddForm):
         # brake anything.
         #session.close()
 
-    @formlib.form.action(_(u"Save"),
-                         name="save"
-                         condition=formlib.form.haveInputWidgets)
-    def handle_add(self, action, data):
+    @formlib.form.action(_(u"Save"), condition=formlib.form.haveInputWidgets)
+    def handle_add_edit(self, action, data):
         ob = self.createAndAdd(data)
         name = self.domain_model.__name__
         if not self._next_url:
@@ -394,10 +389,8 @@ class AddForm(BaseForm, catalyst.AddForm):
                              "/edit?portal_status_message=%s Added" % name
 
     @formlib.form.action(
-        _(u"Save and add another"),
-        name="save_and_add_another"
-        condition=formlib.form.haveInputWidgets)
-    def handle_add_and_add_another(self, action, data):
+        _(u"Save and add another"), condition=formlib.form.haveInputWidgets)
+    def handle_add_and_another(self, action, data):
         self.createAndAdd(data)
         name = self.domain_model.__name__
 
@@ -511,16 +504,13 @@ class EditForm(BaseForm, catalyst.EditForm):
         notify(ObjectModifiedEvent(self.context))
         invalidate_caches_for(self.context.__class__.__name__, "edit")
 
-    @formlib.form.action(_(u"Save"),
-                         name="save",
-                         condition=formlib.form.haveInputWidgets)
+    @formlib.form.action(_(u"Save"), condition=formlib.form.haveInputWidgets)
     def handle_edit_save(self, action, data):
         """Saves the document and goes back to edit page"""
         self._do_save(data)
 
-    @formlib.form.action(_(u"Save and view"),
-                         name="save_and_view",
-                         condition=formlib.form.haveInputWidgets)
+    @formlib.form.action(
+        _(u"Save and view"), condition=formlib.form.haveInputWidgets)
     def handle_edit_save_and_view(self, action, data):
         """Saves the  document and redirects to its view page"""
         self._do_save(data)
@@ -529,9 +519,7 @@ class EditForm(BaseForm, catalyst.EditForm):
                 "?portal_status_message= Saved"
         self.request.response.redirect(self._next_url)
 
-    @formlib.form.action(_(u"Cancel"),
-                         name="cancel"
-                         validator=ui.null_validator)
+    @formlib.form.action(_(u"Cancel"), validator=ui.null_validator)
     def handle_edit_cancel(self, action, data):
         """Cancelling redirects to the listing."""
         if not self._next_url:
@@ -679,9 +667,8 @@ class TranslateForm(AddForm):
             # attach widget as ``render_original``
             widget.render_original = display_widget
 
-    @formlib.form.action(_(u"Save translation"),
-                         name="save_translation",
-                         condition=formlib.form.haveInputWidgets)
+    @formlib.form.action(
+        _(u"Save translation"), condition=formlib.form.haveInputWidgets)
     def handle_add_save(self, action, data):
         """After succesful creation of translation, redirect to the
         view."""
@@ -770,8 +757,7 @@ class ReorderForm(PageForm):
     def save_ordering(self, ordering):
         raise NotImplementedError("Must be defined by subclass")
 
-    @formlib.form.action(_(u"Save")
-                         name="save")
+    @formlib.form.action(_(u"Save"))
     def handle_save(self, action, data):
         self.save_ordering(data["ordering"])
 
@@ -820,9 +806,7 @@ class DeleteForm(PageForm):
     def delete_subobjects(self):
         return 0
 
-    @formlib.form.action(_(u"Delete"),
-                         name="delete",
-                         condition=_can_delete_item)
+    @formlib.form.action(_(u"Delete"), condition=_can_delete_item)
     def handle_delete(self, action, data):
         count = self.delete_subobjects()
         container = self.context.__parent__
@@ -863,9 +847,7 @@ class DeleteForm(PageForm):
 
         self.request.response.redirect(next_url)
         
-    @formlib.form.action(_(u"Cancel"),
-                         name="cancel",
-                         validator=ui.null_validator)
+    @formlib.form.action(_(u"Cancel"), validator=ui.null_validator)
     def delete_cancel(self, action, data):
         """Cancelling redirects to the listing."""
         if not self._next_url:

@@ -53,8 +53,7 @@ class Login(form.FormBase):
                         ui_utils.url.absoluteURL(workspace, self.request))
         return super(Login, self).__call__()
             
-    @form.action(_(u"Login"),
-                 name="login")
+    @form.action(_(u"Login"))
     def handle_login(self, action, data):
         if IUnauthenticatedPrincipal.providedBy(self.request.principal):
             self.status = _(u"Invalid account credentials")
@@ -91,8 +90,7 @@ class RestoreLogin(form.FormBase):
         
         return super(RestoreLogin, self).__call__()
             
-    @form.action(_(u"Restore"),
-                 name="restore")
+    @form.action(_(u"Restore"))
     def handle_restore(self, action, data):
         email = data.get("email", "")
         if email:
@@ -136,7 +134,7 @@ class RestorePassword(form.FormBase):
             
         return super(RestorePassword, self).__call__()
             
-    @form.action(_(u"Restore"), name="restore")
+    @form.action(_(u"Restore"))
     def handle_restore(self, action, data):
         site_url = ui_utils.url.absoluteURL(getSite(), self.request)
         login = data.get("login", "")
@@ -219,7 +217,7 @@ class ResetPassword(form.FormBase):
             self.status = _(u"Key expired!")
         return super(ResetPassword, self).__call__()
     
-    @form.action(_(u"Reset"), name="reset")
+    @form.action(_(u"Reset"))
     def handle_reset(self, action, data):
         site_url = ui_utils.url.absoluteURL(getSite(), self.request)
         password = data.get("password", "")
@@ -360,14 +358,13 @@ class Profile(BaseForm):
                 
         self.status = _("Profile data updated")
         
-    @form.action(_(u"Save"), name="save",
-                 condition=form.haveInputWidgets)
+    @form.action(_(u"Save"), condition=form.haveInputWidgets)
     def handle_edit_save(self, action, data):
         """Saves the document and goes back to edit page"""
         self._do_save(data)
 
-    @form.action(_(u"Save and view"), name="save_and_view",
-                 condition=form.haveInputWidgets)
+    @form.action(
+        _(u"Save and view"), condition=form.haveInputWidgets)
     def handle_edit_save_and_view(self, action, data):
         """Saves the  document and redirects to its view page"""
         self._do_save(data)
@@ -376,8 +373,7 @@ class Profile(BaseForm):
                 "?portal_status_message= Saved"
         self.request.response.redirect(self._next_url)
 
-    @form.action(_(u"Cancel"), name="cancel",
-                 validator=ui.null_validator)
+    @form.action(_(u"Cancel"), validator=ui.null_validator)
     def handle_edit_cancel(self, action, data):
         """Cancelling redirects to the listing."""
         if not self._next_url:
@@ -420,8 +416,7 @@ class ChangePasswordForm(BaseForm):
                         )
         return super(ChangePasswordForm, self).__call__()
     
-    @form.action(_(u"Change password"),
-                 name="change_password")
+    @form.action(_(u"Change password"))
     def save_password(self, action, data):
         password = data.get("pswd","")
         confirm_password= data.get("confirm_password","")
