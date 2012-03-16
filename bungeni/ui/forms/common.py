@@ -30,11 +30,7 @@ from zope.container.contained import ObjectRemovedEvent
 import sqlalchemy as rdb
 from zope.formlib.interfaces import IDisplayWidget
 from zope.formlib.namedtemplate import NamedTemplate
-# !+sqlalchemy.exc(mr, jul-2010) why this try/except ?
-try:
-    from sqlalchemy.exceptions import IntegrityError
-except ImportError:
-    from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError
 
 from bungeni.alchemist import Session
 from bungeni.alchemist import catalyst
@@ -50,11 +46,13 @@ from bungeni.core.translation import CurrentLanguageVocabulary
 from bungeni.models.interfaces import IVersion, IBungeniContent
 from bungeni.models import domain
 from bungeni.ui.forms.fields import filterFields
-from bungeni.ui.interfaces import IFormEditLayer, IGenenerateVocabularyDefault
+from bungeni.ui.interfaces import IBungeniSkin, IFormEditLayer, \
+    IGenenerateVocabularyDefault
 from bungeni.ui.i18n import _
 from bungeni.ui import browser
 from bungeni.ui.utils import url
 from bungeni.ui.container import invalidate_caches_for
+from bungeni.utils import register
 
 TRUE_VALS = "true", "1"
 
@@ -252,6 +250,8 @@ class DisplayForm(catalyst.DisplayForm, browser.BungeniBrowserView):
         return self.template()
 
 
+@register.view(domain.AttachedFileContainer, layer=IBungeniSkin, name="add",
+    protect={"bungeni.fileattachment.Add": register.VIEW_DEFAULT_ATTRS})
 class AddForm(BaseForm, catalyst.AddForm):
     """Custom add-form for Bungeni content.
 
@@ -405,7 +405,8 @@ class AddForm(BaseForm, catalyst.AddForm):
             self._next_url = url.absoluteURL(self.context, self.request) + \
                              "/add?portal_status_message=%s Added" % name
 
-
+@register.view(domain.AttachedFile, layer=IBungeniSkin, name="edit",
+    protect={"bungeni.fileattachment.Edit": register.VIEW_DEFAULT_ATTRS})
 class EditForm(BaseForm, catalyst.EditForm):
     """Custom edit-form for Bungeni content.
     """
@@ -774,6 +775,10 @@ class ReorderForm(PageForm):
     def handle_save(self, action, data):
         self.save_ordering(data["ordering"])
 
+
+
+@register.view(domain.AttachedFile, layer=IBungeniSkin, name="delete",
+    protect={"bungeni.fileattachment.Delete": register.VIEW_DEFAULT_ATTRS})
 class DeleteForm(PageForm):
     """Delete-form for Bungeni content.
 

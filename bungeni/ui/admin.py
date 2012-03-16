@@ -22,11 +22,11 @@ from bungeni.ui.utils.queries import execute_sql
 
 
 @register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="settings",
-    protect={"zope.ManageSite": dict(attributes=["browserDefault", "__call__"])})
+    protect={"zope.ManageSite": register.VIEW_DEFAULT_ATTRS})
 class Settings(catalyst.EditForm):
-
+    
     form_fields = form.Fields(interfaces.IBungeniSettings)
-        
+    
     def update(self):
         settings = component.getUtility(interfaces.IBungeniSettings)()
         self.adapters = {interfaces.IBungeniSettings : settings}

@@ -49,8 +49,7 @@ workspace_fields = [
 
 from bungeni.models.interfaces import IWorkspaceContainer # !+NOT_MODELS(mr, dec-2011)
 @register.view(IWorkspaceContainer, name="jsonlisting",
-    protect={"bungeni.workspace.View":
-        dict(attributes=["browserDefault", "__call__"])})
+    protect={"bungeni.workspace.View": register.VIEW_DEFAULT_ATTRS})
 class WorkspaceContainerJSONListing(BrowserPage):
     """Paging, batching, json contents of a workspace container.
     """

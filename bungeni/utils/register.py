@@ -105,7 +105,8 @@ def viewlet_manager(for_=None, layer=None, view=None, provides=None, name=""):
         return factory
     return _viewlet_manager
 
-_PROTECT_VIEWLET_DEFAULT = {"zope.View": dict(attributes=["render"])}
+VIEWLET_DEFAULT_ATTRS = dict(attributes=["render"])
+_PROTECT_VIEWLET_DEFAULT = {"zope.View": VIEWLET_DEFAULT_ATTRS}
 
 def viewlet(for_, layer=None, view=None, manager=None, provides=None, name="",
         protect=_PROTECT_VIEWLET_DEFAULT, like_class=None
@@ -136,14 +137,14 @@ def viewlet(for_, layer=None, view=None, manager=None, provides=None, name="",
     return _viewlet
 
 # convenience, pre-defined value for a typical public viewlet
-PROTECT_VIEWLET_PUBLIC = {"zope.Public": dict(attributes=["render"])}
+PROTECT_VIEWLET_PUBLIC = {"zope.Public": VIEWLET_DEFAULT_ATTRS}
 
 
 # view
 # note: layer default is zope.publisher.interfaces.browser.IDefaultBrowserLayer
 
-_PROTECT_VIEW_DEFAULT = {
-    "zope.View": dict(attributes=["browserDefault", "__call__"])}
+VIEW_DEFAULT_ATTRS = dict(attributes=["browserDefault", "__call__"])
+_PROTECT_VIEW_DEFAULT = {"zope.View": VIEW_DEFAULT_ATTRS}
 
 def view(for_, layer=None, provides=None, name="",
         protect=_PROTECT_VIEW_DEFAULT, like_class=None
@@ -181,8 +182,7 @@ def view(for_, layer=None, provides=None, name="",
     return _view
 
 # convenience, pre-defined value for a typical public view
-PROTECT_VIEW_PUBLIC = {
-    "zope.Public": dict(attributes=["browserDefault", "__call__"])}
+PROTECT_VIEW_PUBLIC = {"zope.Public": VIEW_DEFAULT_ATTRS}
 
 
 

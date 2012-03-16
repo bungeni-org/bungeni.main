@@ -469,10 +469,8 @@ class GroupSittingScheduleView(BrowserView):
         return self.template()
 
 @register.view(IItemScheduleContainer, name="jsonlisting-schedule",
-    protect={"bungeni.sittingschedule.itemdiscussion.Edit": dict(
-        attributes=["browserDefault", "__call__"]
-    )}
-)
+    protect={"bungeni.sittingschedule.itemdiscussion.Edit": 
+        register.VIEW_DEFAULT_ATTRS})
 class ScheduleJSONListing(ContainerJSONListing):
     """Returns JSON listing with expanded unlisted properties used in
     scheduling user interface setup
