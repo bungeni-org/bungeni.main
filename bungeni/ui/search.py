@@ -371,7 +371,7 @@ class Search(forms.common.BaseForm, ResultListing, HighlightMixin):
     def _results(self):
         return map(lambda x: x.object(), self._searchresults)
 
-    @form.action(label=_(u"Search"))
+    @form.action(label=_(u"Search"), name="search")
     def handle_search(self, action, data):
         self.searcher = component.getUtility(interfaces.IIndexSearch)()
         search_term = data['full_text']
@@ -496,7 +496,7 @@ class AdvancedPagedSearch(PagedSearch):
         need("advanced-search")
         super(AdvancedPagedSearch, self).update()
 
-    @form.action(label=_(u"Search"))
+    @form.action(label=_(u"Search"), name="search")
     def handle_search(self, action, data):
         self.searcher = component.getUtility(interfaces.IIndexSearch)()
         search_term = data['full_text']

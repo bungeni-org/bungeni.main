@@ -197,7 +197,7 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
         generator.context = self
         return generator.generateReport()
 
-    @form.action(_(u"Preview"))
+    @form.action(_(u"Preview"), name="preview")
     def handle_preview(self, action, data):
         """Generate preview of the report
         """
@@ -206,7 +206,7 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
         self.status = _(u"See the preview of the report below")
         return self.template()
 
-    @form.action(_(u"Publish"))
+    @form.action(_(u"Publish"), name="publish")
     def handle_publish(self, action, data):
         self.generated_content = self.generateContent(data)
 
@@ -372,7 +372,7 @@ class ReportView(form.PageForm, DateTimeFormatMixin):
                         "date"))
         return errors
 
-    @form.action(_(u"Preview"))
+    @form.action(_(u"Preview"), name="preview")
     def handle_preview(self, action, data):
         self.process_form(data)
         self.save_link = url.absoluteURL(self.context, self.request) + "/save-report"
@@ -502,7 +502,7 @@ class SaveReportView(form.PageForm):
             self.form_fields, self.prefix, self.context, self.request,
                     adapters=self.adapters, ignore_request=ignore_request)
 
-    @form.action(_(u"Save"))
+    @form.action(_(u"Save"), name="save")
     def handle_save(self, action, data):
         report = domain.Report()
         session = Session()

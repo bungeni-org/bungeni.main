@@ -129,17 +129,18 @@ class AttendanceEditor(BungeniBrowserView, forms.common.BaseForm):
     def action_method(self):
         return "post"
     
-    @formlib.form.action(label=_("Save"), condition=has_listing)
+    @formlib.form.action(label=_("Save"), name="save", condition=has_listing)
     def handle_save(self, action, data):
         self.process_attendance()
 
-    @formlib.form.action(label=_("Save and view"), condition=has_listing)
+    @formlib.form.action(label=_("Save and view"), name="save_and_view",
+                         condition=has_listing)
     def handle_save_view(self, action, data):
         self.process_attendance()
         next_url = url.absoluteURL(self.__parent__, self.request)
         self.request.response.redirect(next_url + "/attendance")
     
-    @formlib.form.action(label=_("Cancel"))
+    @formlib.form.action(label=_("Cancel"), name="cancel")
     def handle_cancel(self, action, data):
         next_url = url.absoluteURL(self.__parent__, self.request)
         self.request.response.redirect(next_url)

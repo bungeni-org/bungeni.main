@@ -117,7 +117,7 @@ class ItemScheduleReorderForm(PageForm):
             
     form_fields = form.Fields(IReorderForm)
 
-    @form.action(_(u"Move"))
+    @form.action(_(u"Move"), name="move")
     def handle_move(self, action, data):
         """Move scheduling.
 
