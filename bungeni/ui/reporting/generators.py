@@ -15,6 +15,7 @@ import os
 from copy import deepcopy
 import zope.interface
 from lxml import etree
+from tidylib import tidy_fragment
 
 from bungeni.alchemist.interfaces import IAlchemistContainer
 
@@ -151,13 +152,15 @@ class ReportGeneratorXHTML(_BaseGenerator):
             if typ=="text":
                 node.text = get_element_value(context, src)
             elif typ=="html":
-                html_element = etree.fromstring("<div>%s</div>" % 
-                    get_element_value(context, src, "")
-                )
-                for (key, value) in node.attrib.iteritems():
-                    html_element.attrib[key] = value
-                node.addnext(html_element)
-                node.insert(0, html_element)
+                raw_value = get_element_value(context, src, "")
+                if raw_value:
+                    html_element = etree.fromstring("<div>%s</div>" % 
+                        tidy_fragment(raw_value)[0]
+                    )
+                    for (key, value) in node.attrib.iteritems():
+                        html_element.attrib[key] = value
+                    node.addnext(html_element)
+                    node.insert(0, html_element)
             elif type=="link":
                 url_src = get_attr(node, "url")
                 if url_src:
