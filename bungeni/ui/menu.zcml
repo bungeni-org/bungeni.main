@@ -307,14 +307,6 @@
         order="22"
     />
     <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IMotion"
-        title="Add file..."
-        action="./files/add"
-        permission="bungeni.fileattachment.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="20"
-    />
-    <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IBill"
         title="Add signatory..."
         action="./signatories/add"
@@ -371,14 +363,6 @@
         order="21"
     />
     
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IBill"
-        title="Add file..."
-        action="./files/add"
-        permission="bungeni.fileattachment.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="20"
-    />
     <!--Title types menus-->
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.domain.TitleTypeContainer"
@@ -389,14 +373,6 @@
     />
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IQuestion"
-        title="Add file..."
-        action="./files/add"
-        permission="bungeni.fileattachment.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="20"
-    />
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IQuestion"
         title="Add event..."
         action="./event/add"
         permission="bungeni.event.Add"
@@ -413,14 +389,6 @@
     />
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.ITabledDocument"
-        title="Add file..."
-        action="./files/add"
-        permission="bungeni.fileattachment.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="20"
-    />
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.ITabledDocument"
         title="Add event..."
         action="./event/add"
         permission="bungeni.event.Add"
@@ -434,14 +402,6 @@
         permission="bungeni.signatory.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="22"
-    />
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IAgendaItem"
-        title="Add file..."
-        action="./files/add"
-        permission="bungeni.fileattachment.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="20"
     />
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IOffice"
@@ -831,14 +791,22 @@
         permission="bungeni.bill.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
+    
+    <browser:menuItem menu="additems"
+        for="bungeni.models.interfaces.IAttachmentable"
+        title="Add file..."
+        action="./files/add"
+        permission="bungeni.fileattachment.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="20"
+    />
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.domain.AttachedFileContainer"
         title="Add file..."
         action="./add"
         permission="bungeni.fileattachment.Add"
         layer=".interfaces.IAdminSectionLayer"
-    /> 
-    
+    />
     
     <!-- scheduling context reporting actions -->
     
