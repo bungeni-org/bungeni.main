@@ -250,8 +250,10 @@ class DisplayForm(catalyst.DisplayForm, browser.BungeniBrowserView):
         return self.template()
 
 
-@register.view(domain.AttachedFileContainer, layer=IBungeniSkin, name="add",
+@register.view(domain.AttachmentContainer, layer=IBungeniSkin, name="add",
     protect={"bungeni.fileattachment.Add": register.VIEW_DEFAULT_ATTRS})
+@register.view(domain.AttachedFileContainer, layer=IBungeniSkin, name="add",
+    like_class=domain.AttachmentContainer) #!+DOCUMENT
 class AddForm(BaseForm, catalyst.AddForm):
     """Custom add-form for Bungeni content.
 

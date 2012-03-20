@@ -462,15 +462,15 @@ def set_auditor(kls):
     log.debug("Setting AUDITOR %s [for type %s]" % (auditor_name, name))
     
     if IDocument.implementedBy(kls): # !+DOCUMENT
-        change_kls = getattr(domain, "%sAudit" % (name))
-        change_tbl = schema.doc_audit
+        audit_kls = getattr(domain, "%sAudit" % (name))
+        audit_tbl = getattr(schema, domain.get_audit_table_name(kls))
     else:
-        change_kls = getattr(domain, "%sChange" % (name))
-        change_tbl = getattr(schema, "%s_changes" % (schema.un_camel(name)))
-    globals()[auditor_name] = _AuditorFactory(change_tbl, change_kls)
+        audit_kls = getattr(domain, "%sChange" % (name))
+        audit_tbl = getattr(schema, "%s_changes" % (schema.un_camel(name)))
+    globals()[auditor_name] = _AuditorFactory(audit_tbl, audit_kls)
 
 for kls in domain.CUSTOM_DECORATED["auditable"]:
     set_auditor(kls)
-    
+
 #
 

@@ -32,15 +32,11 @@ def create_version(context, message, manual=False):
     return versions.create(message, manual=manual)
 
 
-def get_mapped_table(kls):
-    return orm.class_mapper(kls).mapped_table
-
-
 class Versioned(container.PartialContainer):
     interface.implements(interfaces.IVersioned)
     
     def _copyFields(self, source, dest):
-        table = get_mapped_table(source.__class__)
+        table = domain.get_mapped_table(source.__class__)
         for column in table.columns:
             if column.primary_key:
                 continue
@@ -50,7 +46,7 @@ class Versioned(container.PartialContainer):
     def _copy_writeableFields(self, source, dest, context):
         """Only revert the fields which the user has edit rights for
         """
-        table = get_mapped_table(source.__class__)
+        table = domain.get_mapped_table(source.__class__)
         for column in table.columns:
             if column.primary_key:
                 continue
@@ -68,7 +64,7 @@ class Versioned(container.PartialContainer):
              assumption is here that if he has the rights on any of the fields
              he may create a version.
         """
-        table = get_mapped_table(context.__class__)
+        table = domain.get_mapped_table(context.__class__)
         for column in table.columns:
             if canWrite(context, column.name):
                 return True

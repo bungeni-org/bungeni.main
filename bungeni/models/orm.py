@@ -19,24 +19,29 @@ import interfaces
 
 # !+PARAMETRIZABLE_DOCTYPES
 def DOCUMENT_configurable_mappings(kls):
+    """Configuration mappings for declarative-model types.
+    """
     name = kls.__name__
-    # instrument any extended attributes as vertical properties
-    for vp_name, vp_type in kls.extended_properties:
-        mapper_add_relation_vertical_property(kls, vp_name, vp_type)
+    mapper_add_relation_vertical_properties(kls)
+    
     # auditable, determine properties, map audit class/table
     if interfaces.IAuditable.implementedBy(kls):
         audit_kls = getattr(domain, "%sAudit" % (name))
-        assert issubclass(audit_kls, domain.Audit), \
-            "Audit class %s is not a subclass of %s" % (audit_kls, domain.Audit)
-        #audit_tbl = schema.doc_audit
-        mapper(audit_kls, 
-            inherits=domain.DocAudit,
-            polymorphic_identity=name.lower(), # polymorphic discriminator value
-        )
-        # instrument any extended attributes on kls also on its audit_kls
+        base_audit_kls = audit_kls.__bases__[0] # domain: base_audit_class(kls)
+        assert issubclass(base_audit_kls, domain.Audit), \
+            "Audit class %s is not a proper subclass of %s" % (
+                audit_kls, domain.Audit)
+        DYNAMIC_SETUP = issubclass(kls, domain.Doc)
+        if DYNAMIC_SETUP:
+            mapper(audit_kls,
+                inherits=base_audit_kls,
+                polymorphic_identity=name.lower(), # polymorphic discriminator value
+            )
+        # propagate any extended attributes on head kls also to its audit_kls
         for vp_name, vp_type in kls.extended_properties:
             mapper_add_relation_vertical_property(audit_kls, vp_name, vp_type)
-    # add any properties to the master kls itself
+    
+    # add any properties to the head kls itself
     def mapper_add_configurable_properties(kls):
         kls_mapper = class_mapper(kls)
         def configurable_properties(kls, mapper_properties):
@@ -46,13 +51,21 @@ def DOCUMENT_configurable_mappings(kls):
             if interfaces.IAuditable.implementedBy(kls):
                 # kls.changes <-> change.audit.audit_head=doc:
                 # doc[@TYPE] <-- TYPE_audit <-> audit <-> change
+                
+                # get head table for kls, and its audit table.
+                tbl = kls_mapper.mapped_table
+                audit_tbl = getattr(schema, "%s_audit" % (tbl.name))
+                
+                # get tbl PK column
+                assert len(tbl.primary_key) == 1
+                pk_col = [ c for c in tbl.primary_key ][0]
                 mapper_properties["changes"] = relation(domain.Change,
                     primaryjoin=rdb.and_(
-                        schema.doc.c.doc_id == schema.doc_audit.c.doc_id,
+                        pk_col == audit_tbl.c.get(pk_col.name),
                     ),
-                    secondary=schema.doc_audit,
+                    secondary=audit_tbl,
                     secondaryjoin=rdb.and_(
-                        schema.doc_audit.c.audit_id == schema.change.c.audit_id,
+                        audit_tbl.c.audit_id == schema.change.c.audit_id,
                     ),
                     lazy=True,
                     cascade="all",
@@ -63,7 +76,7 @@ def DOCUMENT_configurable_mappings(kls):
             kls_mapper.add_property(key, prop)
     mapper_add_configurable_properties(kls)
 
-        
+
 def configurable_mappings(kls):
     """Add mappings, as per configured features for a domain type.
     
@@ -443,6 +456,11 @@ mapper(domain.Venue, schema.venues)
 ##############################
 # Document
 
+def mapper_add_relation_vertical_properties(kls):
+    """Instrument any extended attributes as vertical properties.
+    """
+    for vp_name, vp_type in kls.extended_properties:
+        mapper_add_relation_vertical_property(kls, vp_name, vp_type)
 def mapper_add_relation_vertical_property(kls, vp_name, vp_type):
     """Add the SQLAlchemy internal mapper property for the vertical property.
     """
@@ -492,8 +510,7 @@ mapper(domain.Doc, schema.doc,
         #    backref=backref("head",
         #       remote_side=schema.doc.c.doc_id),
         #),
-        #!+ "attachments": relation(domain.AttachedFile),
-        "attached_files": relation(domain.AttachedFile),
+        "attachments": relation(domain.Attachment),
         #"events": relation(domain.Event, uselist=True),
         
         # for sub parliamentary docs, non-null implies a sub doc
@@ -511,6 +528,9 @@ mapper(domain.Doc, schema.doc,
             lazy=True),
     }
 )
+#!+DOCUMENT alias...
+domain.Doc.attached_files = domain.Doc.attachments
+
 
 mapper(domain.Audit, schema.audit,
     polymorphic_on=schema.audit.c.audit_type, # polymorphic discriminator
@@ -546,6 +566,28 @@ mapper(domain.Event,
 # - behave also "like" a parliamentary document
 # - agendaitems should NOT support events?
 # - event should NOT support event
+
+mapper(domain.Attachment, schema.attachment,
+    properties={
+        "head": relation(domain.Doc,
+            primaryjoin=(schema.attachment.c.head_id == schema.doc.c.doc_id),
+            uselist=False,
+            lazy=False,
+        ),
+        "audits": relation(domain.AttachmentAudit,
+            primaryjoin=rdb.and_(schema.attachment.c.attachment_id == 
+                schema.attachment_audit.c.attachment_id),
+            backref="audit_head",
+            uselist=True,
+            lazy=True,
+            #cascade="all",
+        ),
+    }
+)
+mapper(domain.AttachmentAudit, schema.attachment_audit,
+    inherits=domain.Audit,
+    polymorphic_identity="attachment", # polymorphic discriminator value
+)
 
 
 ##############################
@@ -635,6 +677,7 @@ mapper(domain.TabledDocument, schema.tabled_documents,
     polymorphic_identity="tableddocument",
     properties={}
 )
+
 
 #!+TYPES_CUSTOM  mapper(domain.AttachedFileType, schema.attached_file_types)
 mapper(domain.AttachedFile, schema.attached_files,
@@ -758,5 +801,5 @@ mapper(domain.ObjectTranslation, schema.translations)
 
 # !+IChange-vertical-properties special case: 
 # class is NOT workflowed, and in any case __dynamic_features__ = False
-DOCUMENT_configurable_mappings(domain.Change)
+mapper_add_relation_vertical_properties(domain.Change)
 

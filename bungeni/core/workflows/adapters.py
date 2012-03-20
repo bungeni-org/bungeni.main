@@ -32,7 +32,7 @@ WORKFLOW_REG = [ # !+bungeni_custom
     # !+AttachedFile (mr, jul-2011)
     # a) must be loaded before any other type that *may* support attachments!
     # b) MUST support versions
-    ("attachedfile", interfaces.IAttachedFile),
+    ("attachedfile", interfaces.IAttachedFile), #!+DOCUMENT attachment
     ("agendaitem", interfaces.IAgendaItem),
     ("bill", interfaces.IBill),
     ("committee", interfaces.ICommittee),
@@ -162,6 +162,10 @@ def load_workflows():
         load_workflow(name)
         # !+ address: UserAddress, GroupAddress
         apply_customization_workflow(name)
+        # !+DOCUMENT alias "attachedfile" wf also as "attachment"
+        if name == "attachedfile":
+            provideUtilityWorkflow(get_workflow(name), "attachment")
+            apply_customization_workflow("attachment")
 
 
 def register_workflow_adapters():

@@ -1951,6 +1951,103 @@ class GovernmentDescriptor(GroupDescriptor):
     schema_invariants = [EndAfterStart]
     custom_validators = [validations.validate_government_dates]
 
+class AttachmentDescriptor(ModelDescriptor):
+    localizable = True
+    display_name = _("Attachment")
+    container_name = _("Attachments")
+    default_field_order = [
+        #"attachment_id",
+        #"head_id",
+        "type",
+        "title",
+        "description",
+        "data",
+        "name",
+        "mimetype",
+        "status",
+        "status_date",
+        "language",
+    ]
+    fields = [
+        Field(name="type", # [user-req]
+            modes="view edit add listing",
+            localizable=[
+                show("view edit listing"),
+            ],
+            property=schema.Choice(title=_("Attachment Type"),
+                source=vocabulary.attachment_type,
+            ),
+            listing_column=vocabulary_column("type", 
+                "File Type",
+                vocabulary.attachment_type,
+            ),
+        ),
+        Field(name="title", # [user-req]
+            modes="view edit add listing",
+            localizable=[
+                show("view edit listing"),
+            ],
+            property=schema.TextLine(title=_("Title")),
+            edit_widget=widgets.TextWidget,
+            add_widget=widgets.TextWidget,
+        ),
+        Field(name="description", # [rtf]
+            modes="view edit add",
+            localizable=[
+                show("view edit add"),
+            ],
+            property=schema.Text(title=_("Description"), required=False),
+            view_widget=widgets.HTMLDisplay,
+            edit_widget=widgets.RichTextEditor,
+            add_widget=widgets.RichTextEditor,
+        ),
+        Field(name="data", # [file]
+            modes="view edit add",
+            localizable=[
+                show("view edit"),
+            ],
+            property=schema.Bytes(title=_("File")),
+            description=_("Upload a file"),
+            edit_widget=widgets.FileEditWidget,
+            add_widget=widgets.FileAddWidget,
+            view_widget=widgets.FileDisplayWidget,
+        ),
+        Field(name="name", label="", # [user-req]
+            modes="view edit add listing",
+            localizable=[
+                show("view listing"),
+            ],
+            edit_widget=widgets.NoInputWidget,
+            add_widget=widgets.NoInputWidget,
+        ),
+        Field(name="mimetype", label="", # [user-req]
+            modes="view edit add listing",
+            localizable=[
+                show("view listing"),
+            ],
+            edit_widget=widgets.NoInputWidget,
+            add_widget=widgets.NoInputWidget,
+        ),
+        Field(name="status", label=_("Status"), # [user-req]
+            modes="view edit listing",
+            localizable=[
+                show("view edit listing"),
+            ],
+            property=schema.Choice(title=_("Status"),
+                vocabulary="bungeni.vocabulary.workflow",
+            ),
+            listing_column=workflow_column("status", "Workflow status"),
+        ),
+        Field(name="status_date", label=_("Status date"), # [sys]
+            modes="view listing",
+            localizable=[
+                show("view listing"),
+            ],
+            property=schema.Date(title=_("Status date"), required=False),
+            listing_column=day_column("status_date", _("Status date")),
+        ),
+        LanguageField("language"), # [user-req]
+    ]
 
 class AttachedFileDescriptor(ModelDescriptor):
     localizable = True

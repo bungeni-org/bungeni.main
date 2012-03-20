@@ -161,7 +161,6 @@ def make_audit_table(table, metadata):
     """
     entity_name = table.name
     audit_tbl_name = "%s_audit" % (entity_name)
-    head_tbl_fk_column_name = "%s_id" % (entity_name)
     columns = [
         rdb.Column("audit_id", rdb.Integer, 
             rdb.ForeignKey("audit.audit_id"), 
@@ -181,12 +180,12 @@ def make_audit_table(table, metadata):
                 # is being logged; we retain the same original column name
                 # i.e. doc_id for case of "doc", and have the audit_head_id 
                 # property always read and write to this.
-                assert c.name == head_tbl_fk_column_name, \
+                assert c.name == "%s_id" % (entity_name), \
                     "Inconsistent PK column naming [%s != %s]" % (
-                        head_tbl_fk_column_name, c.name)
+                        "%s_id" % (entity_name), c.name)
                 cols.append(
                     rdb.Column(c.name, rdb.Integer, 
-                        rdb.ForeignKey(table.c[head_tbl_fk_column_name]),
+                        rdb.ForeignKey(table.c[c.name]),
                         nullable=False,
                         index=True
                     )),
@@ -994,6 +993,42 @@ subscriptions = rdb.Table("object_subscriptions", metadata,
     # delivery type
     # rdb.Column("delivery_type", rdb.Integer),
 )
+
+
+# NOT a parliamentary_item
+# !+doc_attachment -- assumption is that attachments ae only for doc?
+attachment = rdb.Table("attachment", metadata,
+    rdb.Column("attachment_id", rdb.Integer, primary_key=True),
+    # the id of the "owning" head document
+    rdb.Column("head_id", rdb.Integer, # !+item_id
+        rdb.ForeignKey("doc.doc_id"),
+        nullable=False
+    ),
+    # attachment_type #!+attached_file_type
+    rdb.Column("type", 
+        rdb.Unicode(128),
+        default="document",
+        nullable=False,
+    ),
+    #rdb.Column("doc_version_id", rdb.Integer), #!+file_version_id !?!?
+    rdb.Column("title", rdb.Unicode(255), nullable=False), #!+file
+    rdb.Column("description", rdb.UnicodeText), #!+file
+    rdb.Column("data", FSBlob(32)), #!+file
+    rdb.Column("name", rdb.String(200)), #!+file
+    rdb.Column("mimetype", rdb.String(127)), #!+file
+    # Workflow State
+    rdb.Column("status", rdb.Unicode(48)),
+    rdb.Column("status_date", rdb.DateTime(timezone=False),
+        server_default=(text("now()")),
+        nullable=False
+    ),
+    rdb.Column("language", rdb.String(5), nullable=False),
+)
+attachment_index = rdb.Index("attachment_head_id_idx", attachment.c["head_id"])
+
+# attachment_audit
+attachment_audit = make_audit_table(attachment, metadata)
+
 
 ''' !+TYPES_CUSTOM 
 attached_file_types = rdb.Table("attached_file_types", metadata,

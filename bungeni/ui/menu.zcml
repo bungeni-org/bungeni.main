@@ -807,6 +807,13 @@
         permission="bungeni.fileattachment.Add"
         layer=".interfaces.IAdminSectionLayer"
     />
+    <browser:menuItem menu="plone_contentmenu"
+        for="bungeni.models.domain.AttachmentContainer"
+        title="Add file..."
+        action="./add"
+        permission="bungeni.fileattachment.Add"
+        layer=".interfaces.IAdminSectionLayer"
+    />
     
     <!-- scheduling context reporting actions -->
     

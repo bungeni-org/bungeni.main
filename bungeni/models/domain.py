@@ -18,7 +18,7 @@ from bungeni.alchemist import Session
 from bungeni.alchemist import model
 from bungeni.alchemist.traversal import one2many, one2manyindirect
 import sqlalchemy.sql.expression as sql
-from sqlalchemy.orm import object_mapper
+from sqlalchemy.orm import class_mapper, object_mapper
 
 import interfaces
 
@@ -45,6 +45,12 @@ def get_changes(auditable, *actions):
     for action in actions:
         assert_valid_change_action(action)
     return [ c for c in auditable.changes if c.action in actions ]
+
+def get_mapped_table(kls):
+    return class_mapper(kls).mapped_table
+
+def get_audit_table_name(kls):
+    return "%s_audit" % (get_mapped_table(kls).name)
 
 def get_mapped_object_id(ob):
     return object_mapper(ob).primary_key_from_instance(ob)[0]
@@ -110,7 +116,7 @@ class Entity(object):
                 log.error(
                     "Invalid attribute on %s %s" % (
                         self.__class__.__name__, k))
-        
+    
     # sort_on: the list of column names the query is sorted on by default
     sort_on = None
     
@@ -124,7 +130,7 @@ class Entity(object):
     #sort_replace = None
 
 #
- 
+
 class ItemChanges(HeadParentedMixin, object):
     """An audit changelog of events in the lifecycle of a parliamentary content.
     """
@@ -167,12 +173,27 @@ class ItemVersions(HeadParentedMixin, Entity):
 def DOCUMENT_configurable_domain(kls, workflow):
     assert kls.__dynamic_features__, \
         "Class [%s] does not allow dynamic features" % (kls)
+    # support classes do not need further dynamic setup
+    DYNAMIC_SETUP = issubclass(kls, Doc) # !+
+    # !+DYNAMIC_SETUP only setup dynamically what may only be set up dynamically
     if workflow.has_feature("audit"):
         interface.classImplements(kls, interfaces.IAuditable)
         CUSTOM_DECORATED["auditable"].add(kls)
-        # define TYPEAudit class
-        audit_kls = DocAudit.auditFactory(kls)
-        globals()[audit_kls.__name__] = audit_kls
+        if DYNAMIC_SETUP:
+            # define {kls}Audit class
+            def base_audit_class(kls):
+                """Identify what should be the BASE audit class (for a {kls}Audit class to 
+                inherit from, and return it.
+                """
+                # !+ may have a deeper inheritance
+                if kls is not Doc and issubclass(kls, Doc):
+                    return DocAudit
+                return Audit
+            audit_kls = base_audit_class(kls).auditFactory(kls)
+            globals()[audit_kls.__name__] = audit_kls
+    if workflow.has_feature("attachment"):
+        if DYNAMIC_SETUP:
+            kls = configurable_domain.feature_decorators["attachment"](kls)
     return kls
 def configurable_domain(kls, workflow):
     assert kls.__dynamic_features__, \
@@ -685,7 +706,7 @@ class Doc(Entity):
     #    "bungeni.models.domain.SignatoryContainer", "item_id")
     #amc_attachments = one2many("amc_attachments",
     files = one2many("files",
-        "bungeni.models.domain.AttachedFileContainer", "dhead_id") # !+DHEAD
+        "bungeni.models.domain.AttachmentContainer", "head_id")
     #amc_events = one2many("amc_events",
     #    "bungeni.models.domain.EventContainer", "head_id")
     
@@ -695,7 +716,7 @@ class Doc(Entity):
     signatories = []
     item_signatories = [] #relation(domain.Signatory)
     assignedgroups = []
-
+    
     extended_properties = [
     ]
 instrument_extended_properties(Doc, "doc")
@@ -735,7 +756,31 @@ class Audit(HeadParentedMixin, Entity):
         interfaces.IChange # !+IAudit?
     )
     
-    head_id_column_name = None
+    @classmethod
+    def auditFactory(cls, auditable_cls):
+        # Notes:
+        # - each "TYPEAudit" class does NOT inherit from the "TYPE" class it audits.
+        # - each "TYPEAudit" class inherits from "Audit"
+        # - each auditable sub-TYPE gets own dedicated sub-type of "TYPEAudit"
+        #   e.g. EventAudit inherits from DocAudit that inherits from Audit.
+        # - just as all subtypes of "Doc" are persisted on "doc" table, so are 
+        #   all subtypes of "DocAudit" persisted on "doc_audit".
+        # 
+        # define a subtype of Audit type
+        audit_factory_name = "%sAudit" % (auditable_cls.__name__)
+        auditable_pk_column = [ c for c in 
+            get_mapped_table(auditable_cls).primary_key ][0]
+        factory = type(audit_factory_name, (cls,), {
+            "head_id_column_name": auditable_pk_column.name })
+        # define a subtype of Audit type
+        audit_table_name = get_audit_table_name(auditable_cls)
+        # Extended properties from cls are inherited... but need to propagate 
+        # onto audit_kls any extended properties defined by auditable_cls:
+        instrument_extended_properties(factory, audit_table_name, 
+            from_class=auditable_cls)
+        return factory
+    
+    head_id_column_name = None # set in cls.auditFactory()
     def audit_head_id():
         doc = "Returns the integer of the single PK of the head object."
         def fget(self):
@@ -748,30 +793,13 @@ class Audit(HeadParentedMixin, Entity):
 class DocAudit(Audit):
     """An audit record for a document.
     """
-    head_id_column_name = "doc_id"
-    @classmethod
-    def auditFactory(cls, doc_kls):
-        # Notes:
-        # - each "DocAudit" class does NOT inherit from the "Doc" class it audits.
-        # - each auditable subtype of "Doc" gets own dedicated subtype of "DocAudit"
-        # - just as all subtypes of "Doc" are persisted on "doc", so are all 
-        #   subtypes of "DocAudit" persisted on "doc_audit".
-        # 
-        # define a subtype of DocAudit type
-        audit_name = "%sAudit" % (doc_kls.__name__)
-        factory = type(audit_name, (cls,), {})
-        # Extended properties from cls are inherited... but need to propagate 
-        # onto audit_kls any extended properties defined by doc_kls:
-        instrument_extended_properties(factory, "doc_audit", from_class=doc_kls)
-        return factory
-    
     @property
     def label(self):
         return self.short_title
 
     extended_properties = [
     ]
-instrument_extended_properties(DocAudit, "doc_audit")
+#instrument_extended_properties(DocAudit, "doc_audit")
 
 
 class Event(HeadParentedMixin, Doc):
@@ -781,7 +809,43 @@ class Event(HeadParentedMixin, Doc):
     # handle this, possible related constraint e.g. head_id must NOT be null, 
     # validation, ... ?
     __dynamic_features__ = True
+    
+    # !+alchemist property not inherited, must be re-instrumented on this class
+    files = one2many("files",
+        "bungeni.models.domain.AttachmentContainer", "head_id")
 #EventAudit
+
+class Attachment(HeadParentedMixin, Entity):
+    """A file attachment to a document. 
+    """
+    __dynamic_features__ = True # !+ should be False?
+    interface.implements(
+        interfaces.IDocument, # !+IDoc?
+        interfaces.IAttachedFile,
+    )
+    
+    # the owner of the "owning" item
+    @property
+    def owner_id(self):
+        return self.head.owner_id
+    
+    @property
+    def owner(self):
+        return self.head.owner
+
+    @property # !+ DOCUMENT, core.dc.AttachedFileDescriptiveProperties
+    def file_title(self):
+        return self.title
+    @property # !+ DOCUMENT, ui/file.py", line 108
+    def attached_file_id(self):
+        return self.attachment_id
+
+class AttachmentAudit(Audit):
+    """An audit record for an attachment.
+    """
+    @property
+    def label(self):
+        return self.title
 
 
 
