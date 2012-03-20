@@ -85,7 +85,7 @@
       factory="bungeni.ui.resources.dynamic.DynamicDirectoryFactory"
     />
   </resourceLibrary>
-  <resourceLibrary name="bungeni-schedule-config" require="scheduler-globals yui-core yui-datatable">
+  <resourceLibrary name="bungeni-schedule-config" require="scheduler-globals yui-core yui-datatable yui-selector">
     <directory source="calendar" 
         include="schedule-config.js"
     />
@@ -96,7 +96,7 @@
     />
   </resourceLibrary>  
   <resourceLibrary name="bungeni-schedule-editor" 
-    require="bungeni-schedule-config yui-container yui-connection yui-menu yui-button yui-rte yui-calendar yui-layout yui-tab yui-selector yui-json">
+    require="bungeni-schedule-config bungeni-schedule-available-items yui-container yui-connection yui-menu yui-button yui-rte yui-calendar yui-layout yui-tab yui-selector yui-json">
     <directory source="calendar" 
         include="schedule-editor.js
                  schedule-editor.css"

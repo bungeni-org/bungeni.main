@@ -43,6 +43,10 @@
         YAHOO.bungeni.unsavedChanges = true;
     }
 
+    YAHOO.bungeni.getScheduleTable = function(){
+        return itemsDataTable;
+    }
+
     /**
      * @function fixDataTableSize
      * @description sets data table size to 100% of its container
@@ -786,6 +790,12 @@
         editor.subscribe("showEvent", Handlers.renderRTECellEditor);
         var columnDefinitions = [
             {
+                key: Columns.ADD_TEXT_RECORD, 
+                label: "",
+                formatter: Formatters.addTextRecord,
+                width: Math.round(0.10 * container_width)
+            },
+            {
                 key : Columns.TYPE, 
                 label : scheduler_globals.column_type,
                 formatter : Formatters.type,
@@ -796,7 +806,7 @@
                 label : scheduler_globals.column_title,
                 editor : editor,
                 formatter : Formatters.title,
-                width: Math.round(0.60 * container_width)
+                width: Math.round(0.50 * container_width)
             },
             {
                 key : Columns.MOVE_UP, 
@@ -845,7 +855,7 @@
         itemsDataTable.subscribe("rowClickEvent", itemsDataTable.onEventSelectRow);
         itemsDataTable.subscribe("cellDblclickEvent", Handlers.showCellEditor);
         itemsDataTable.subscribe("cellClickEvent", reorderRow);
-        itemsDataTable.subscribe("rowSelectEvent", showSchedulerControls);
+        //itemsDataTable.subscribe("rowSelectEvent", showSchedulerControls);
         itemsDataTable.subscribe("initEvent", renderAvailableItems);
         itemsDataTable.subscribe("initEvent", highlightTypedRows);
         itemsDataTable.subscribe("initEvent", initShowSchedulerControls);

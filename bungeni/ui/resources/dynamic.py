@@ -35,17 +35,20 @@ def get_globals(group_name, **kwargs):
                 sorted(data.get_schedulable_types().iteritems())
              ],
             "discussable_types": [k for k in data.get_schedulable_types()],
+            "editable_types": ["text", "minute"],
             "types": {
                 "HEADING": "heading",
-                "TEXT": "text"
+                "TEXT": "text",
+                "MINUTE": "minute",
             },
             "type_names": {
                 "HEADING":i18n(_(u"heading"), language),
                 "TEXT":i18n(_(u"editorial note"), language),
+                "MINUTE":i18n(_(u"minute record"), language),
             },
             "current_schedule_title": i18n(_(u"Agenda"), language),
             "available_items_title": i18n(_(u"Available Items"), language),
-            "schedule_discussions_title": i18n(_(u"Discussions"), language),
+            "schedule_discussions_title": i18n(_(u"Minutes"), language),
             "scheduled_item_context_menu_header": i18n(_(u"Modify Item"), 
                 language
             ),
@@ -56,7 +59,7 @@ def get_globals(group_name, **kwargs):
             "discussion_items_json_url" : "discussions/jsonlisting",
             "schedulable_items_json_url" : "./schedulable-items-json",
             "column_title": i18n(_(u"Title"), language),
-            "column_discussion_text": i18n(_(u"discussion text"), language),
+            "column_discussion_text": i18n(_(u"minute text"), language),
             "column_discussion_text_missing": i18n(_(u"NO TEXT RECORD FOUND"), 
                 language
             ),
@@ -76,13 +79,15 @@ def get_globals(group_name, **kwargs):
             "text_button_text": i18n(_(u"editorial note"), language),
             "text_records_title": i18n(_(u"add text records"), language),
             "heading_button_text": i18n(_(u"heading"), language),
+            "minute_button_text": i18n(_(u"minute record"), language),
+            "new_heading_text": i18n(_(u"custom heading"), language),
             "text_action_view": i18n(VIEW, language),
             "text_moved_by": i18n(_(u"Moved By"), language),
             "remove_button_text": i18n(_(u"remove item"), language),
             "save_button_text": i18n(_(u"save changes"), language),
             "discard_button_text": i18n(_(u"discard changes"), language),
-            "add_discussion_button_text": i18n(_(u"add discussion"), language),
-            "save_discussion_button_text": i18n(_(u"add discussion"), language),
+            "add_discussion_button_text": i18n(_(u"add minute"), language),
+            "save_discussion_button_text": i18n(_(u"add minute"), language),
             "initial_editor_text": i18n(
                 _(u"change this text"), language
             ),
@@ -104,7 +109,7 @@ def get_globals(group_name, **kwargs):
                 language
             ),
             "saving_discussions_text": i18n(
-                _(u"saving changes to discussions..."), 
+                _(u"saving changes to minutes..."), 
                 language
             ),
             "saving_dialog_refreshing": i18n(
@@ -141,16 +146,30 @@ def get_globals(group_name, **kwargs):
                 language
             ),
             "text_unsaved_discussions": i18n(
-                _(u"Do you want to delete unsaved discussions?"), language
+                _(u"Do you want to delete unsaved minute?"), language
             ),
             "confirm_dialog_title": i18n(_(u"Confirmation Required"), language),
             "confirm_message_delete_discussion": i18n(
-                _(u"Really remove this discussion?"), language
+                _(u"Really remove this minute record?"), language
             ),
             "message_item_not_saved": i18n(
-                _(u"You need to save the schedule before adding discussions " 
+                _(u"You need to save the schedule before adding minutes for it." 
                     u"to this item."
                 ),
+                language
+            ),
+            "minutes_header": i18n(_(u"Minutes:"), language),
+            "minutes_unsaved_agenda": i18n(_(u"*Unsaved item. No minute records."),
+                language
+            ),
+            "minutes_no_records": i18n(_(u"No minute records"),
+                language
+            ),
+            "minutes_edit": i18n(_(u"Edit"), language),
+            "minutes_loading": i18n(_(u"Loading minutes..."),
+                language
+            ),
+            "minutes_loading_error": i18n(_(u"unable to load minutes..."),
                 language
             )
         }

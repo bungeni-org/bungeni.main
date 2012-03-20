@@ -39,4 +39,40 @@ input.scheduler-bigtext{
     width: 100%;
     visibility:inherit;
 }
+span.minutes-header{
+    display:block;
+    background-color:#eef;
+    border-top:1px solid #666;
+    color:#666;
+    font-size:10px;
+}
+span.minute-record{
+    display:block;
+    font-size:10px;
+    background-color:#EFEBC3;
+    color:#39361E;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    -o-text-overflow:ellipsis;
+    white-space:nowrap;
+    position:relative;
+}
+span.minute-record-error{
+    display:block;
+    font-size:10px;
+    background-color:#B1BD6B;
+    color:#5A5A5A;
+}
+span.edit-minute-control{
+    position:absolute;
+    right:0;
+    padding:1px;
+    background-color:#fff;
+    border:1px solid #CCC dotted;
+    color:#545450;
+    width:16px;
+    height:16px;
+    background:url("/@@/portal/images/page_white_edit.png") right center no-repeat;
+}
+
 
