@@ -355,7 +355,7 @@
      class=".calendar.browser.CommitteeCalendarView"
     />
     <browser:page
-     for="bungeni.models.interfaces.IBungeniApplication"
+     for="bungeni.core.interfaces.ISchedulingContext"
      permission="zope.View"
      name="schedule"
      class=".calendar.browser.CalendarView"

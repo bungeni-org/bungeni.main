@@ -54,9 +54,14 @@ class WhatsOnBrowserView(BrowserView):
         return formatter.format(self.start_date)
     
     @property
+    def _agenda_public_state_ids(self):
+        return get_workflow("groupsitting").get_state_ids(tagged=["public"])
+
+    @property
     def _agenda_private_state_ids(self):
-        return get_workflow(
-            "groupsitting").get_state_ids(tagged=["agendaprivate"])
+        return get_workflow("groupsitting").get_state_ids(
+            tagged=["agendaprivate"]
+        )
         
     def get_sitting_items(self, sitting):
         s_list = []
@@ -89,7 +94,7 @@ class WhatsOnBrowserView(BrowserView):
                 schema.group_sittings.c.start_date >= self.start_date
             )
         return sql.and_(
-            schema.group_sittings.c.status.in_(self._agenda_private_state_ids),
+            schema.group_sittings.c.status.in_(self._agenda_public_state_ids),
             date_filter_expression
         )
 

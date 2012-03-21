@@ -12,7 +12,7 @@ import operator
 import datetime
 timedelta = datetime.timedelta
 
-from zope import interface
+from zope import interface, component
 from zope import schema
 from zope.formlib import form
 from zope.formlib import namedtemplate
@@ -20,7 +20,6 @@ from zope.formlib.widgets import MultiCheckBoxWidget as _MultiCheckBoxWidget
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.schema.vocabulary import SimpleVocabulary
 from zope.security.proxy import removeSecurityProxy
-from zope.publisher.browser import BrowserView
 from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent
 from zope.app.component.hooks import getSite
@@ -543,45 +542,9 @@ class SaveReportView(form.PageForm):
             back_link = "./"
         self.request.response.redirect(back_link)
 
-class DefaultReportView(BrowserView, DateTimeFormatMixin):
-
-    template = ViewPageTemplateFile("templates/default-report-scheduling.pt")
-
-    def __init__(self, context, request, include_text=True):
-        self.context = context
-        self.request = request
-        self.include_text = include_text
-        self.site_url = url.absoluteURL(getSite(), request)
-
-    @property
-    def sittings(self):
-        return self.context.sittings
-    
-    @property
-    def short_name(self):
-        return self.context.short_name
-    
-    @property
-    def display_minutes(self):
-        return self.context.display_minutes
-
-    def check_option(self, doctype, option=""):
-        """Dummy options check for documents generated without configuration
-        """
-        #!+REPORTS(murithi, aug-2011) persistence of default report template 
-        #options would be an option here. Alternatively, load settings from 
-        # report form schema defaults
-        return True
-
-    
-    def __call__(self):
-        return self.template() 
-
-class DefaultReportContent:
-    def __init__(self, sittings, short_name, display_minutes):
+class SittingReportContext(object):
+    def __init__(self, sittings):
         self.sittings = sittings
-        self.short_name = short_name
-        self.display_minutes = display_minutes
 
 # Event handler that publishes reports on sitting status change
 # if the status is published_agenda or published_minutes
@@ -590,13 +553,10 @@ class DefaultReportContent:
 def default_reports(sitting, event):
     if sitting.status in IWorkflow(sitting).get_state_ids(tagged=["published"]):
         sitting = removeSecurityProxy(sitting)
-        sittings = []
-        sittings.append(sitting)
+        sittings = [ExpandedSitting(sitting)]
+        report_context = SittingReportContext(sittings)
         report = domain.Report()
         session = Session()
-        #!+REPORTS(miano, dec-2010) using test request here is not quite right
-        # TODO : fix this.
-        from zope.publisher.browser import TestRequest
         report.start_date = sitting.start_date
         report.end_date = sitting.end_date
         # owner ID is the ID of the user who performed last workflow change
@@ -606,17 +566,29 @@ def default_reports(sitting, event):
         assert owner_id is not None, \
             "No user is defined. Are you logged in as Admin?"
         report.owner_id = owner_id
-        report.language = get_default_language()
         report.created_date = datetime.datetime.now()
         report.group_id = sitting.group_id
+
+        # generate using html template in bungeni_custom
+        vocabulary = component.queryUtility(
+            schema.interfaces.IVocabularyFactory, 
+            "bungeni.vocabulary.ReportXHTMLTemplates"
+        )
+        preview_template = filter(lambda t: t.title=="Weekly Business",
+            vocabulary.terms
+        )[0]
+        doc_template = preview_template.value
+        generator = generators.ReportGeneratorXHTML(doc_template)
+        generator.context = report_context
+        report.language = generator.language
+
         if sitting.status == 'published_agenda':
-            report.short_name = _(u"Sitting Agenda")
-            drc = DefaultReportContent(sittings, report.short_name, False)
-            report.body_text = DefaultReportView(drc, TestRequest())()
+            report.short_name = generator.title = _(u"Sitting Agenda")
         elif sitting.status == 'published_minutes':
-            report.short_name = _(u"Sitting Votes and Proceedings")
-            drc = DefaultReportContent(sittings, report.short_name, True)
-            report.body_text = DefaultReportView(drc, TestRequest(), False)()
+            report.short_name = generator.title = _(
+                u"Sitting Votes and Proceedings"
+            )
+        report.body_text = generator.generateReport()
         session.add(report)
         session.flush()
         notify(ObjectCreatedEvent(report))
@@ -626,3 +598,5 @@ def default_reports(sitting, event):
         session.add(sr)
         session.flush()
         notify(ObjectCreatedEvent(sr))
+
+

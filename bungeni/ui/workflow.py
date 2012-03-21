@@ -31,7 +31,6 @@ from bungeni.core.workflows.utils import get_mask
 from bungeni.models.interfaces import IAuditable, IWorkspaceContainer, \
     IBungeniParliamentaryContent
 from bungeni.models.domain import ParliamentaryItem, get_changes
-from bungeni.ui.interfaces import IConfirmWorkflowChangeLayer
 from bungeni.ui.forms.workflow import bindTransitions
 from bungeni.ui.forms.common import BaseForm
 from bungeni.ui.widgets import TextDateTimeWidget
@@ -327,7 +326,6 @@ class WorkflowChangeStateView(WorkflowView):
     def __init__(self, context, request):
         self.context = context
         self.request = request
-        zope.interface.alsoProvides(self.request, IConfirmWorkflowChangeLayer)
         super(WorkflowChangeStateView, self).__init__(context, request)
     
     def __call__(self, transition_id=None, headless=False):

@@ -38,9 +38,6 @@ class IWorkspaceCommitteeSchedulingContainer(interface.Interface):
 class IWorkspaceReportGeneration(interface.Interface):
     """Marker for report generation UI"""
 
-class IConfirmWorkflowChangeLayer(IDefaultBrowserLayer):
-    """Manual workflow change context"""
-
 class ISpeakerWorkspace(IBrowserView):
     """Speaker's workspace."""
 class IClerkWorkspace(IBrowserView):

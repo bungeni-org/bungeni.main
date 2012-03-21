@@ -8,6 +8,7 @@ YAHOO.bungeni.scheduling = function(){
     var Event = YAHOO.util.Event;
     var YJSON = YAHOO.lang.JSON;
     var YCM = YAHOO.util.Connect;
+    var SGlobals = scheduler_globals;
     var BungeniUtils = YAHOO.bungeni.Utils;
     var Columns = YAHOO.bungeni.config.scheduling.columns;
     var MOVE_COLUMNS = YAHOO.bungeni.config.scheduling.columns.move_columns;
@@ -16,6 +17,7 @@ YAHOO.bungeni.scheduling = function(){
     var Formatters = YAHOO.bungeni.config.scheduling.formatters;
     var Handlers = YAHOO.bungeni.config.scheduling.handlers;
     YAHOO.bungeni.unsavedChanges = false;
+    var OP_SAVE_MINUTES = "OP_SAVE_MINUTES";
 
     var minuteEditor = function(){
         init = function(){
@@ -25,7 +27,7 @@ YAHOO.bungeni.scheduling = function(){
             this.dialog._parent = this
             var dialogButtons = [
                 {
-                    text: scheduler_globals.save_discussion_button_text,
+                    text: SGlobals.save_discussion_button_text,
                     handler: function(){
                         var text = this._parent.getText();
                         var row_index = this._parent.row;
@@ -48,7 +50,7 @@ YAHOO.bungeni.scheduling = function(){
                     }
                 },
                 {
-                    text: scheduler_globals.text_dialog_cancel_action,
+                    text: SGlobals.text_dialog_cancel_action,
                     handler: function(){ this.hide(); }
                 },
             ]
@@ -56,7 +58,7 @@ YAHOO.bungeni.scheduling = function(){
             this.dialog.cfg.queueProperty("height", "400px");
             this.dialog.cfg.queueProperty("buttons", dialogButtons);
             this.dialog.setBody("<div><textarea name='minutestext' id='minutestext'></textarea></div>");
-            this.dialog.setHeader(scheduler_globals.schedule_discussions_title);
+            this.dialog.setHeader(SGlobals.schedule_discussions_title);
             this.dialog.render(document.body);
             Event.onAvailable("minutestext", function(e){
                 var editor = new YAHOO.widget.Editor("minutestext",
@@ -92,23 +94,29 @@ YAHOO.bungeni.scheduling = function(){
 
         var RequestObject = {
             handleSuccess: function(o){
-                YAHOO.bungeni.scheduling.getScheduleTable().refresh();
+                var sDt = YAHOO.bungeni.scheduling.getScheduleTable();
+                sDt.refresh();
                 Dialogs.blocking.hide();
                 YAHOO.bungeni.unsavedChanges = false;
+                if(this.post_op==OP_SAVE_MINUTES){
+                    for(idx=0;idx<(sDt.getRecordSet().getLength());idx++){
+                        YAHOO.bungeni.scheduling.handlers.saveMinutes(idx);
+                    }
+                }
             },
             handleFailure: function(o){
                 Dialogs.blocking.hide();
                 Dialogs.notification.show(
-                    scheduler_globals.saving_dialog_exception
+                    SGlobals.saving_dialog_exception
                 );
             },
-            startRequest: function(url, data, message){
+            startRequest: function(url, data, message, post_op){
+                this.post_op = post_op;
                 if(window.event){
                     Event.stopEvent(window.event);
                 }
                 Dialogs.blocking.show(message);
                 YCM.asyncRequest("POST", url, callback, data);
-                    
             }
         }
         
@@ -157,7 +165,7 @@ YAHOO.bungeni.scheduling = function(){
                     );
                 }
                 Dialogs.confirm.show(
-                    scheduler_globals.confirm_message_delete_discussion,
+                    SGlobals.confirm_message_delete_discussion,
                     delete_callback
                 );
             }
@@ -166,7 +174,11 @@ YAHOO.bungeni.scheduling = function(){
         var saveMinutes = function(row){
             var sDt = YAHOO.bungeni.scheduling.getScheduleTable();
             var sRecord = sDt.getRecord(row);
-            var cKey = sRecord.getData()[Columns.OBJECT_ID];
+            var sData = sRecord.getData();
+            if(SGlobals.discussable_types.indexOf(sData[Columns.TYPE])<0){
+                return;
+            }
+            var cKey = sData[Columns.OBJECT_ID];
             if (cKey){
                 var mcache = YAHOO.bungeni.scheduling.minutesCache.get(cKey);
                 if (mcache.length){
@@ -181,10 +193,10 @@ YAHOO.bungeni.scheduling = function(){
                     }
                     var post_data = "data=" + YJSON.stringify(item_data);
                     var save_url = ("./items/" + cKey + 
-                        scheduler_globals.discussions_save_url
+                        SGlobals.discussions_save_url
                     );
                     YAHOO.bungeni.scheduling.minuteEditor.SaveRequest.startRequest(
-                        save_url, post_data, scheduler_globals.saving_discussions_text
+                        save_url, post_data, SGlobals.saving_discussions_text
                     );
                 }
             }
@@ -193,7 +205,7 @@ YAHOO.bungeni.scheduling = function(){
         var renderScheduleControls = function(args){
             var container = YAHOO.bungeni.scheduling.Layout.layout.getUnitByPosition("bottom").body;
             var save_button = new YAHOO.widget.Button({
-                label: scheduler_globals.save_button_text,
+                label: SGlobals.save_button_text,
                 container: container
             });
             save_button.on("click", function(){
@@ -221,16 +233,14 @@ YAHOO.bungeni.scheduling = function(){
                 }
                 var post_data = "data=" + YJSON.stringify(item_data);
                 YAHOO.bungeni.scheduling.minuteEditor.SaveRequest.startRequest(
-                    scheduler_globals.save_schedule_url, 
+                    SGlobals.save_schedule_url, 
                     post_data,
-                    scheduler_globals.saving_schedule_text
+                    SGlobals.saving_schedule_text,
+                    OP_SAVE_MINUTES
                 );
-                for(index in records){
-                    YAHOO.bungeni.scheduling.handlers.saveMinutes(index)
-                }
             }else{
                 Dialogs.notification.show(
-                    scheduler_globals.save_dialog_empty_message
+                    SGlobals.save_dialog_empty_message
                 );
             }
         }
@@ -267,7 +277,7 @@ YAHOO.bungeni.scheduling = function(){
                     {
                         position:'top',
                         body: BungeniUtils.wrapText(
-                            scheduler_globals.schedule_discussions_title, "h2"
+                            SGlobals.schedule_discussions_title, "h2"
                         ),
                         footer: '',
                         gutter: "2 2",
@@ -308,12 +318,12 @@ YAHOO.bungeni.scheduling = function(){
                     },
                     {
                         key: Columns.TYPE, 
-                        label: scheduler_globals.column_type,
+                        label: SGlobals.column_type,
                         formatter: Formatters.type,
                     },
                     {
                         key: Columns.TITLE, 
-                        label: scheduler_globals.column_title,
+                        label: SGlobals.column_title,
                         editor:editor,
                         width: 150,
                         formatter: Formatters.title_with_minutes
@@ -345,7 +355,7 @@ YAHOO.bungeni.scheduling = function(){
                     }
                 ];
                 var dataSource = new YAHOO.util.DataSource(
-                    scheduler_globals.json_listing_url_meta
+                    SGlobals.json_listing_url_meta
                 );
                 dataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
                 dataSource.responseSchema = {

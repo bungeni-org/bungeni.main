@@ -127,12 +127,4 @@
         manager="ploned.ui.interfaces.IBelowContentManager"
         class=".reports.ReportPreview"
     />
-    <browser:viewlet name="bungeni.scheduling.agenda.preview"
-        for="bungeni.models.interfaces.IGroupSitting"
-        layer="bungeni.ui.interfaces.IConfirmWorkflowChangeLayer"
-        permission="zope.View"
-        manager="ploned.ui.interfaces.IBelowContentManager"
-        class=".schedule.AgendaPreview"
-    />
-
 </configure>
