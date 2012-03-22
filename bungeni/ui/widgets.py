@@ -1009,8 +1009,14 @@ class _AutoCompleteWidget(ItemsEditWidgetBase):
               "dsname": self.name.replace('.', '_'),
               "oDS": self.oDS,
               "data": self.dataSource,
-              "options": self.options
-              }
+              "options": self.options,
+              "help_text": translate(
+                _(u"start typing to chose $fname...",
+                    mapping = dict(fname=self.context.title)
+                 ),
+                 context=self.request
+              )
+        }
 
         return """
             <script type="text/javascript">
@@ -1019,6 +1025,7 @@ class _AutoCompleteWidget(ItemsEditWidgetBase):
 
                     %(oDS)s
 
+                    var helpText = "%(help_text)s";
                     var oAC = new YAHOO.widget.AutoComplete("%(id)s",
                         "%(id)s.container", oDS);
                     %(options)s
@@ -1030,7 +1037,22 @@ class _AutoCompleteWidget(ItemsEditWidgetBase):
                         var oData = aArgs[2];
                         myHiddenField.value = oData.id;
                     };
+                    var helpTextHandler = function(event, args){
+                        input = args[0].getInputEl();
+                        if(event == "textboxBlur"){
+                            if(!input.value){
+                                input.value = helpText;
+                            }
+                        }else if(event == "textboxFocus"){
+                            if(input.value==helpText){
+                                input.value = "";
+                            }
+                        }
+                    }
                     oAC.itemSelectEvent.subscribe(myHandler);
+                    oAC.textboxBlurEvent.subscribe(helpTextHandler);
+                    oAC.textboxFocusEvent.subscribe(helpTextHandler);
+                    oAC.getInputEl().value = helpText;
                     return {
                         oDS: oDS,
                         oAC: oAC
