@@ -71,8 +71,8 @@ days = [ _('day_%d' % index, default=default) for (index, default) in
 
 def assignable_state_ids():
     _sids = set()
-    for name, iface in adapters.WORKFLOW_REG:
-        wf = adapters.get_workflow(name)
+    for name, ti in adapters.TYPE_REGISTRY:
+        wf = ti.workflow
         _sids.update(wf.get_state_ids(
                 not_tagged=["private", "fail", "terminal"], restrict=False))
     return _sids

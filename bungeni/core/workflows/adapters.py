@@ -25,30 +25,61 @@ from bungeni.utils.capi import capi
 __all__ = ["get_workflow"]
 
 
-WORKFLOW_REG = [ # !+bungeni_custom
-    # (name, iface)
-    ("address", interfaces.IUserAddress),
-    ("address", interfaces.IGroupAddress),
+# !+bungeni_custom -- currently:
+# - association of type key and dedicated interface are hard-wired here
+# - workflow/domain_type/descriptor are added dynamically when loading 
+#   workflows and descriptors
+class TI(object):
+    """Type Info, associates together the following attributes for a given type:
+            workflow_key
+            dedicated interface
+            workflow
+            domain type (model)
+            descriptor
+    Note that a workflow instance may be used by multiple types.
+    """
+    def __init__(self, workflow_key, iface):
+        self.workflow_key = workflow_key # workflow file name
+        self.interface = iface
+        self.workflow = self.domain_model = self.descriptor = None
+    def __str__(self):
+        return str(self.__dict__)
+TYPE_REGISTRY = (
+    # (key, ti), order is important
+    # key is unique for each type, typically lower case of domain class name
+    ("user_address", TI("address", interfaces.IUserAddress)),
+    ("group_address", TI("address", interfaces.IGroupAddress)),
     # !+AttachedFile (mr, jul-2011)
     # a) must be loaded before any other type that *may* support attachments!
     # b) MUST support versions
-    ("attachedfile", interfaces.IAttachedFile), #!+DOCUMENT attachment
-    ("agendaitem", interfaces.IAgendaItem),
-    ("bill", interfaces.IBill),
-    ("committee", interfaces.ICommittee),
-    ("event", interfaces.IEvent),
-    ("group", interfaces.IBungeniGroup),
-    ("groupsitting", interfaces.IGroupSitting),
-    ("membership", interfaces.IBungeniGroupMembership),
-    ("heading", interfaces.IHeading),
-    ("motion", interfaces.IMotion),
-    ("parliament", interfaces.IParliament),
-    ("question", interfaces.IQuestion),
-    ("report", interfaces.IReport),
-    ("tableddocument", interfaces.ITabledDocument),
-    ("user", interfaces.IBungeniUser),
-    ("signatory", interfaces.ISignatory),
-]
+    ("attached_file", TI("attachedfile", interfaces.IAttachedFile)), #!+DOCUMENT attachment
+    ("attachment", TI("attachedfile", interfaces.IAttachedFile)),
+    ("agenda_item", TI("agendaitem", interfaces.IAgendaItem)),
+    ("bill", TI("bill", interfaces.IBill)),
+    ("committee", TI("committee", interfaces.ICommittee)),
+    ("event", TI("event", interfaces.IEvent)),
+    ("group", TI("group", interfaces.IBungeniGroup)),
+    ("group_sitting", TI("groupsitting", interfaces.IGroupSitting)),
+    ("group_membership", TI("membership", interfaces.IBungeniGroupMembership)),
+    ("heading", TI("heading", interfaces.IHeading)),
+    ("motion", TI("motion", interfaces.IMotion)),
+    ("parliament", TI("parliament", interfaces.IParliament)),
+    ("question", TI("question", interfaces.IQuestion)),
+    ("report", TI("report", interfaces.IReport)),
+    ("tabled_document", TI("tableddocument", interfaces.ITabledDocument)),
+    ("user", TI("user", interfaces.IBungeniUser)),
+    ("signatory", TI("signatory", interfaces.ISignatory)),
+)
+def get_type_info(key, exception=KeyError):
+    """Get the TI instance for key. If not found raise exception (if not None).
+    where key:str is the domain type key, underscore-separated lowercase name.
+    """
+    for type_key, ti in TYPE_REGISTRY:
+        if type_key == key:
+            return ti
+    if exception is not None:
+        raise exception("TYPE_REGISTRY has no type registered for key: %s" % (key))
+
 # !+ dedicated interfaces for archetype incantations should be auto-generated, 
 # from specific workflow name/attr... e.g. via:
 # zope.interface.interface.InterfaceClass(iname, bases, __module__)
@@ -74,7 +105,8 @@ def provideAdapterWorkflow(factory, adapts_kls):
 
 
 def load_workflow(name, path_custom_workflows=capi.get_path_for("workflows")):
-    """Setup the Workflow instance, from XML definition, for named workflow.
+    """Setup (once) and return the Workflow instance, from XML definition, 
+    for named workflow.
     """
     # load / register as utility / retrieve
     #
@@ -87,52 +119,38 @@ def load_workflow(name, path_custom_workflows=capi.get_path_for("workflows")):
             log.debug("   STATE: %s %s" % (state_key, state))
             for p in state.permissions:
                 log.debug("          %s" % (p,))
-        # Workflow instances as utilities
+        # register Workflow instance as a named utility
         provideUtilityWorkflow(wf, name)
     else:
         wf = get_workflow(name)
         log.warn("Already Loaded WORKFLOW : %s %s" % (name, wf))
+    return wf
 
-
-def apply_customization_workflow(name):
+def apply_customization_workflow(name, ti):
     """Apply customizations, features as per configuration from a workflow. 
     Must (currently) be run after db setup.
     """
-    # support to infer/get the domain class from the workflow name
+    # support to infer/get the domain class from the type key
     def camel(name):
         """Convert an underscore-separated word to CamelCase.
         """
         return "".join([ s.capitalize() for s in name.split("_") ])
     from bungeni.models import domain, schema, orm
-    def get_domain_kls(workflow_name):
-        """Infer a workflow's target domain kls from the workflow file name, 
-        following underscore naming to camel case convention; names that do 
-        not follow the convention are custom handled, as per mapping below.
+    def get_domain_kls(name):
+        """Infer the target domain kls from the type key, following underscore 
+        naming to camel case convention.
         """
-        # !+ should state it explicitly as a param?
-        # !+ problem with multiple types sharing same workflow e.g. 
-        #    UserAddress, GroupAddress
-        kls_name = camel(
-            get_domain_kls.non_conventional.get(workflow_name, workflow_name))
-        return getattr(domain, kls_name)
-    # !+RENAME_TO_CONVENTION
-    get_domain_kls.non_conventional = {
-        "address": "address", # !+ use common base cls for User & Group addresses
-        "agendaitem": "agenda_item",
-        "attachedfile": "attached_file",
-        "tableddocument": "tabled_document",
-        "groupsitting": "group_sitting",
-        "membership": "group_membership",
-    }
-    # get the domain class
+        return getattr(domain, camel(name))
+    
+    # get the domain class, and associate with type
     kls = get_domain_kls(name)
+    ti.domain_model = kls
     
     # We "mark" the domain class with IWorkflowed, to be able to 
     # register/lookup adapters generically on this single interface.
     classImplements(kls, IWorkflowed)
-    
     # dynamic features from workflow
-    wf = get_workflow(name)
+    wf = ti.workflow
     def _apply_customization_workflow(kls):
         # decorate/modify domain/schema/mapping as needed
         
@@ -158,14 +176,11 @@ def apply_customization_workflow(name):
 
 def load_workflows():
     # workflow instances (+ adapter *factories*)
-    for name, iface in WORKFLOW_REG:
-        load_workflow(name)
-        # !+ address: UserAddress, GroupAddress
-        apply_customization_workflow(name)
-        # !+DOCUMENT alias "attachedfile" wf also as "attachment"
-        if name == "attachedfile":
-            provideUtilityWorkflow(get_workflow(name), "attachment")
-            apply_customization_workflow("attachment")
+    for type_key, ti in TYPE_REGISTRY:
+        # load/get Workflow instance for this key, and associate with type
+        ti.workflow = load_workflow(ti.workflow_key)
+        # adjust domain_model as per workflow, register/associate domain_model
+        apply_customization_workflow(type_key, ti)
 
 
 def register_workflow_adapters():
@@ -208,15 +223,15 @@ def register_workflow_adapters():
     
     # Specific adapters, a specific iface per workflow.
     
-    for name, iface in WORKFLOW_REG:
-        wf = get_workflow(name)
+    for name, ti in TYPE_REGISTRY:
         # Workflows are also the factory of own AdaptedWorkflows
-        provideAdapterWorkflow(wf, iface)
+        provideAdapterWorkflow(ti.workflow, ti.interface)
 
 
 def _setup_all():
     """Do all workflow related setup.
     """
+
     load_workflows()
     # !+zcml_check_regenerate(mr, sep-2011) should be only done *once* and 
     # when *all* workflows are loaded i.e. only first time (on module import).

@@ -3734,6 +3734,9 @@ def catalyse_descriptors():
             yield cls
     
     from bungeni.alchemist.catalyst import catalyst
+    from bungeni.models.schema import un_camel
+    get_type_info = bungeni.core.workflows.adapters.get_type_info
+    
     for descriptor in descriptor_classes():
         descriptor_name = descriptor.__name__
         assert descriptor_name.endswith("Descriptor")
@@ -3741,11 +3744,23 @@ def catalyse_descriptors():
         kls_name = non_conventional.get(desc_prefix, desc_prefix)
         try:
             kls = getattr(domain, kls_name)
+            # !+ mv out of try/except
             catalyst(None, kls, descriptor, echo=True)
+            # TYPE_REGISTRY, add descriptor
+            type_key = un_camel(kls_name)
+            ti = get_type_info(type_key, None)
+            if ti is not None:
+                ti.descriptor = descriptor
         except (Exception,):
             # no corresponding domain class, ignore 
             # e.g. Address, Model, Version
             debug.log_exc(sys.exc_info(), log_handler=log.warn)
+
+    TYPE_REGISTRY = bungeni.core.workflows.adapters.TYPE_REGISTRY
+    m = ("Done all workflow/descriptor related setup... running with:\n"
+        "\n    ".join([ "    %s: %s" % (name, ti)
+            for name, ti in TYPE_REGISTRY ]))
+    log.debug(m)
 
 # !+catalyse_descriptors(mr, jul-2011), fails when this is called here 
 #catalyse_descriptors()
