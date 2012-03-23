@@ -47,8 +47,9 @@ def get_globals(group_name, **kwargs):
                 "MINUTE":i18n(_(u"minute record"), language),
             },
             "current_schedule_title": i18n(_(u"Agenda"), language),
+            "current_schedule_items": i18n(_(u"Scheduled Items"), language),
             "available_items_title": i18n(_(u"Available Items"), language),
-            "schedule_discussions_title": i18n(_(u"Minutes"), language),
+            "schedule_discussions_title": i18n(_(u"Agenda and minutes"), language),
             "scheduled_item_context_menu_header": i18n(_(u"Modify Item"), 
                 language
             ),

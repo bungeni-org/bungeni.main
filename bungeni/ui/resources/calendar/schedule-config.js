@@ -255,7 +255,7 @@ YAHOO.bungeni.config = function(){
                             }
                             if(recordData.value.length){
                                 if(recordData.type == SGlobals.types.MINUTE){
-                                    YAHOO.bungeni.scheduling.minutesCache.add(
+                                    YAHOO.bungeni.agendaconfig.minutesCache.add(
                                         sel_data[Columns.OBJECT_ID],
                                         { body_text: recordData.value[0] }
                                     );
@@ -456,7 +456,7 @@ YAHOO.bungeni.config = function(){
                                             "span", mAttrs + " " + idAttr
                                         );
                                         Event.addListener(edId, "click",
-                                            YAHOO.bungeni.scheduling.handlers.editMinute
+                                            YAHOO.bungeni.agendaconfig.handlers.editMinute
                                         );
                                     }
                                 }else{
@@ -470,7 +470,7 @@ YAHOO.bungeni.config = function(){
                             callback = {
                                 success: function(request, response, payload){
                                     var nHTML = "";
-                                    YAHOO.bungeni.scheduling.minutesCache.set(
+                                    YAHOO.bungeni.agendaconfig.minutesCache.set(
                                         ds_id, response.results
                                     );
                                     render_minutes(response.results);
@@ -483,7 +483,7 @@ YAHOO.bungeni.config = function(){
                                     el.innerHTML = nHTML;
                                 },
                             }
-                            var cached_items = YAHOO.bungeni.scheduling.minutesCache.get(ds_id);
+                            var cached_items = YAHOO.bungeni.agendaconfig.minutesCache.get(ds_id);
                             if(cached_items){
                                 render_minutes(cached_items);
                             }else{
@@ -545,22 +545,6 @@ YAHOO.bungeni.config = function(){
                         id: el.id + "-edit-button"
                     });
                     button.appendTo(el);
-                }
-            }
-
-            var editDiscussionsFormatter = function(el, record, column, data){
-                if (SGlobals.discussable_types.indexOf(
-                    record.getData()[Columns.TYPE])>=0
-                ){
-                    if (!el.innerHTML){
-                        var button = new YAHOO.widget.Button({
-                            label: SGlobals.column_discussions_edit_button,
-                            id: el.id + "-edit-button"
-                        });
-                        button.appendTo(el);
-                    }
-                }else{
-                    el.innerHTML = "";
                 }
             }
 
@@ -679,7 +663,7 @@ YAHOO.bungeni.config = function(){
                             value: SGlobals.types.TEXT
                         },
                     ]
-                    if(YAHOO.bungeni.scheduling!=undefined){
+                    if(YAHOO.bungeni.agendaconfig.minuteEditor!=undefined){
                         menu.push(
                             {
                                 text: SGlobals.minute_button_text,
@@ -719,7 +703,6 @@ YAHOO.bungeni.config = function(){
                 deleteButton: deleteButtonFormatter,
                 link: linkFormatter,
                 availableItemSelect: availableItemSelectFormatter,
-                editDiscussions: editDiscussionsFormatter,
                 workflowActions: workflowActionsFormatter,
                 addTextRecord: addTextRecordFormatter
             }

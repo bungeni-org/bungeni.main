@@ -406,9 +406,7 @@ class ItemScheduleOrder(BrowserView):
 # Group Scheduler New YUI based Stack UI
 #
 RESOURCE_PERMISSION_MAP = (
-    (["bungeni-schedule-discussions", "bungeni-schedule-available-items"], 
-        "bungeni.sittingschedule.itemdiscussion.Edit"
-    ),
+    (["bungeni-schedule-minutes"], "bungeni.sittingschedule.itemdiscussion.Edit"),
     (["bungeni-schedule-editor"], "bungeni.sittingschedule.Edit"),
     (["bungeni-schedule-preview"], "bungeni.sitting.View"),
 )

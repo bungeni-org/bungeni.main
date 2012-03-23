@@ -59,7 +59,7 @@ class SchedulableItemsGetter(object):
     domain_class = None
     
     def __init__(self, context, item_type, filter_states=None, 
-        group_filter=False, item_filters={}
+        group_filter=True, item_filters={}
     ):
         self.context = context
         self.item_type = item_type
@@ -113,9 +113,10 @@ class SchedulableItemsGetter(object):
                     expression = (column==value)
                 items_query = items_query.filter(expression)
         if self.group_filter:
-            items_query = items_query.filter(
-                self.domain_class.group_id==self.group_id
-            )
+            if hasattr(self.domain_class, "group_id") and self.group_id:
+                items_query = items_query.filter(
+                    self.domain_class.group_id==self.group_id
+                )
         return tuple(items_query)
 
 

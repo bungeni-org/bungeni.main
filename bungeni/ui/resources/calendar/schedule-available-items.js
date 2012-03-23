@@ -417,7 +417,7 @@ YAHOO.bungeni.availableitems = function(){
             var tab_map = { "heading" : 0, "text" : 1 , "minute": 2}
             tab_view.addTab(heading_tab);
             tab_view.addTab(text_tab);
-            if(YAHOO.bungeni.scheduling){
+            if(YAHOO.bungeni.agendaconfig.minuteEditor){
                 tab_view.addTab(minute_tab);
             }
             tab_view.appendTo(this.body);
@@ -440,7 +440,7 @@ YAHOO.bungeni.availableitems = function(){
     }();
     
     var renderDt = function(){
-        var container = Scheduling.Layout.layout.getUnitByPosition("center");
+        var container = YAHOO.bungeni.scheduling.Layout.layout.getUnitByPosition("center");
         var Handlers = YAHOO.bungeni.availableitems.handlers;
         var availableItemsColumns = [
             {
