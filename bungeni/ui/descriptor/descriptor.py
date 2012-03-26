@@ -19,7 +19,8 @@ from zc.table import column
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 
 from bungeni.alchemist import Session
-from bungeni.alchemist.model import ModelDescriptor, Field, show, hide
+from bungeni.alchemist.model import ModelDescriptor, Field, show, hide, \
+    queryModelInterface
 
 from bungeni.models import domain
 from bungeni.models.utils import get_db_user_id
@@ -3735,8 +3736,7 @@ def catalyse_descriptors():
     
     from bungeni.alchemist.catalyst import catalyst
     from bungeni.models.schema import un_camel
-    get_type_info = bungeni.core.workflows.adapters.get_type_info
-    
+    from bungeni.core.workflows import adapters
     for descriptor in descriptor_classes():
         descriptor_name = descriptor.__name__
         assert descriptor_name.endswith("Descriptor")
@@ -3746,20 +3746,26 @@ def catalyse_descriptors():
             kls = getattr(domain, kls_name)
             # !+ mv out of try/except
             catalyst(None, kls, descriptor, echo=True)
-            # TYPE_REGISTRY, add descriptor
-            type_key = un_camel(kls_name)
-            ti = get_type_info(type_key, None)
-            if ti is not None:
-                ti.descriptor = descriptor
         except (Exception,):
             # no corresponding domain class, ignore 
             # e.g. Address, Model, Version
             debug.log_exc(sys.exc_info(), log_handler=log.warn)
-
-    TYPE_REGISTRY = bungeni.core.workflows.adapters.TYPE_REGISTRY
+            continue
+        # TYPE_REGISTRY, add descriptor
+        type_key = un_camel(kls_name)
+        ti = adapters.get_type_info(type_key, None)
+        if ti is None:
+            ti = adapters.TI(None, None)
+            ti.domain_model = kls
+            ti.interface = queryModelInterface(kls) # !+
+            adapters.TYPE_REGISTRY.append((type_key, ti))
+        else:
+            assert ti.domain_model is kls
+        ti.descriptor = descriptor
+    
     m = ("Done all workflow/descriptor related setup... running with:\n"
         "\n    ".join([ "    %s: %s" % (name, ti)
-            for name, ti in TYPE_REGISTRY ]))
+            for name, ti in adapters.TYPE_REGISTRY ]))
     log.debug(m)
 
 # !+catalyse_descriptors(mr, jul-2011), fails when this is called here 

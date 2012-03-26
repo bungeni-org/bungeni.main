@@ -25,10 +25,6 @@ from bungeni.utils.capi import capi
 __all__ = ["get_workflow"]
 
 
-# !+bungeni_custom -- currently:
-# - association of type key and dedicated interface are hard-wired here
-# - workflow/domain_type/descriptor are added dynamically when loading 
-#   workflows and descriptors
 class TI(object):
     """Type Info, associates together the following attributes for a given type:
             workflow_key
@@ -36,7 +32,6 @@ class TI(object):
             workflow
             domain type (model)
             descriptor
-    Note that a workflow instance may be used by multiple types.
     """
     def __init__(self, workflow_key, iface):
         self.workflow_key = workflow_key # workflow file name
@@ -44,7 +39,18 @@ class TI(object):
         self.workflow = self.domain_model = self.descriptor = None
     def __str__(self):
         return str(self.__dict__)
-TYPE_REGISTRY = (
+'''
+!+TYPE_REGISTRY externalize further to bungeni_custom, currently:
+- association of type key and dedicated interface are hard-wired here
+- ti.workflow/ti.domain_model/ti.descriptor are added dynamically when 
+  loading workflows and descriptors
+Other Notes:
+- a workflow instance may be used by multiple types
+- some support types are not workflowed--but relevant info for these (type_key, 
+  ti.interface, ti.domain_model, ti.descriptor) are also dynamically added to 
+  this registry (but with None values for ti.workflow_key & ti.workflow)
+'''
+TYPE_REGISTRY = [
     # (key, ti), order is important
     # key is unique for each type, typically lower case of domain class name
     ("user_address", TI("address", interfaces.IUserAddress)),
@@ -69,7 +75,7 @@ TYPE_REGISTRY = (
     ("tabled_document", TI("tableddocument", interfaces.ITabledDocument)),
     ("user", TI("user", interfaces.IBungeniUser)),
     ("signatory", TI("signatory", interfaces.ISignatory)),
-)
+]
 def get_type_info(key, exception=KeyError):
     """Get the TI instance for key. If not found raise exception (if not None).
     where key:str is the domain type key, underscore-separated lowercase name.
