@@ -159,7 +159,29 @@ class CAPI(object):
             # last_checked==0, this is the first check
             return modified_on_first_check
         return (old_last_modified < last_modified)
-
+    
+    # type registry
+    
+    def get_type_info(self, key, exception=KeyError):
+        """Get the TypeInfo instance for key (see core.workflows.adapters.TI). 
+        If not found raise the specified exception (if that is not None).
+        
+        param key:str - the type key,
+            underscore-separated lowercase of domain cls name.
+        """
+        for type_key, ti in self.iter_type_info():
+            if type_key == key:
+                return ti
+        if exception is not None:
+            raise exception(
+                "TYPE_REGISTRY has no type registered for key: %s" % (key))
+    
+    def iter_type_info(self):
+        """Return iterator on all (key, TypeInfo) entries in TYPE_REGISTRY.
+        """
+        from bungeni.core.workflows import adapters
+        for type_key, ti in adapters.TYPE_REGISTRY:
+            yield type_key, ti
 
 # we access all via the singleton instance
 capi = CAPI()
