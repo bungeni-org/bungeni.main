@@ -18,31 +18,40 @@ import zope.event
 
 
 def interfaces(obj):
-    """Dump out list of interfaces for an object..."""
+    """Dump out list of interfaces implemented/provided by obj and its cls.
+    """
     return "\n".join(["",
-        interfaces_implementedBy_class_for(obj),
+        interfaces_implementedBy(obj.__class__),
+        interfaces_implementedBy(obj), # type(obj) may itself be <type 'type'>
         interfaces_providedBy(obj),
         interfaces_directlyProvidedBy(obj),
     ])
-def interfaces_implementedBy_class_for(obj):
-    """Dump out list of interfaces implementedBy an object's class."""
+def interfaces_implementedBy(cls):
+    """Dump out list of interfaces implementedBy cls.
+    """
     return """  interfaces implementedBy %s:
-    %s""" % (obj.__class__, 
-          "\n    ".join(
-          ["%s %s"%(i, id(i)) for i in interface.implementedBy(obj.__class__)]
-          or [ "</>" ] ))
+    %s""" % (cls, 
+        "\n    ".join([
+                "%s %s" % (i, id(i)) 
+                for i in interface.implementedBy(cls) ] or 
+            ["</>"] ))
 def interfaces_providedBy(obj):
-    """Dump out list of interfaces providedBy an object."""
+    """Dump out list of interfaces providedBy obj.
+    """
     return """  interfaces providedBy %s:
     %s""" % (repr(obj), 
-          "\n    ".join(["%s %s"%(i, id(i)) for i in interface.providedBy(obj)]
-          or [ "</>" ] ))
+        "\n    ".join([
+                "%s %s" % (i, id(i)) for i in interface.providedBy(obj) ] or 
+            ["</>"] ))
 def interfaces_directlyProvidedBy(obj):
-    """Dump out list of interfaces directlyProvidedBy an object."""
+    """Dump out list of interfaces directlyProvidedBy obj.
+    """
     return """  interfaces directlyProvidedBy %s:
     %s""" % (repr(obj), 
-          "\n    ".join(["%s %s"%(i, id(i)) for i in interface.directlyProvidedBy(obj)]
-          or [ "</>" ] ))
+        "\n    ".join([
+                "%s %s" % (i, id(i)) 
+                for i in interface.directlyProvidedBy(obj) ] or 
+            ["</>"] ))
 
 
 def location_stack(obj):

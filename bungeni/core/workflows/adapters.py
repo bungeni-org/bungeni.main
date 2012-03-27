@@ -44,6 +44,7 @@ class TI(object):
 - association of type key and dedicated interface are hard-wired here
 - ti.workflow/ti.domain_model/ti.descriptor are added dynamically when 
   loading workflows and descriptors
+- ti.workflow_key AND orm polymorphic_identity value SHOULD be == type_key!
 Other Notes:
 - a workflow instance may be used by multiple types
 - some support types are not workflowed--but relevant info for these (type_key, 
@@ -237,7 +238,7 @@ def register_workflow_adapters():
 def _setup_all():
     """Do all workflow related setup.
     """
-
+    
     load_workflows()
     # !+zcml_check_regenerate(mr, sep-2011) should be only done *once* and 
     # when *all* workflows are loaded i.e. only first time (on module import).
