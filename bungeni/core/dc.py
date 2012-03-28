@@ -244,8 +244,8 @@ class ItemScheduleDescriptiveProperties(DescriptiveProperties):
                           'end': sitting.end_date})
 
 @register.adapter()
-class ScheduleTextDescriptiveProperties(DescriptiveProperties):
-    component.adapts(interfaces.IScheduleText)
+class EditorialNoteDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.IEditorialNote)
     
     @property
     def title(self):

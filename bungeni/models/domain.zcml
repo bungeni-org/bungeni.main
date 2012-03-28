@@ -735,17 +735,17 @@
         />
     </class>
     
-    <class class=".domain.ScheduleText">
+    <class class=".domain.EditorialNote">
         <require permission="zope.View"
             attributes="
-                schedule_text_id
+                editorial_note_id
                 text
                 group_id
             "
         />
         <require permission="bungeni.sittingschedule.Edit"
             set_attributes="
-                schedule_text_id
+                editorial_note_id
                 text
                 group_id
             "

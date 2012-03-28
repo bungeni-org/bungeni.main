@@ -19,17 +19,25 @@ from bungeni.ui.utils import date, common
 from bungeni.alchemist import Session
 from bungeni.ui.i18n import _
 
+from bungeni.utils.capi import capi
+
 #!+CALENDAR(mb, Jan-2012) This should come from capi or workflow configuration
 #!+SCHEDULE(mr, feb-2012) this can already be added as a feature on each 
 # respective workflow e.g. <feature name="schedule" enabled="true" />, and then
 # can be tested for with: workflow.has_feature"schedule")
-SCHEDULABLE_TYPES = ["bill", "question", "motion", "tableddocument", "agendaitem"]
 
 def get_schedulable_types():
+    schedulable_types = filter(
+        lambda ti:(ti[1].workflow and ti[1].workflow.has_feature("schedulable")), 
+        capi.iter_type_info()
+    )
     return dict([
-        (name, 
-         model.queryModelDescriptor(domain.DOMAIN_CLASSES[name]).container_name)
-        for name in SCHEDULABLE_TYPES
+        (type_info.workflow.name, dict(
+            title=type_info.descriptor.container_name,
+            domain_model=type_info.domain_model,
+            workflow=type_info.workflow
+        ))
+        for (type_name, type_info) in schedulable_types
     ])
 
 
@@ -41,14 +49,16 @@ def get_filter_config(tag="tobescheduled"):
                 "label": _(u"choose status"),
                 "menu": [ 
                     { 
-                        "text": IWorkflow(domain.DOMAIN_CLASSES[item_type]()).get_state(status).title, 
+                        "text": type_info.get("workflow").get_state(status).title,
                         "value": status 
                     } 
-                    for status in get_workflow(item_type).get_state_ids(tagged=[tag])
+                    for status in type_info.get("workflow").get_state_ids(
+                        tagged=[tag]
+                    )
                 ]
             }
            ) 
-            for item_type in get_schedulable_types().keys()
+            for (item_type, type_info) in get_schedulable_types().iteritems()
         ]
     )
 
@@ -70,11 +80,16 @@ class SchedulableItemsGetter(object):
         )
         self.group_filter = group_filter
         try:
-            self.domain_class = domain.DOMAIN_CLASSES[item_type]
-        except AttributeError:
-            raise AttributeError("Domain Class mapping has no such type %s" %
-                item_type
+            self.domain_class = get_schedulable_types()[item_type].get(
+                "domain_model"
             )
+        except KeyError:
+            try:
+                self.domain_class = capi.get_type_info(item_type).domain_model
+            except KeyError:
+                raise KeyError("Unable to locate domain class for type %s" %
+                    item_type
+                )
         self.item_filters = item_filters
     
     @property

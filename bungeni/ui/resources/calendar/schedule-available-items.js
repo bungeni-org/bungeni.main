@@ -296,7 +296,7 @@ YAHOO.bungeni.availableitems = function(){
             var tab_view = new YAHOO.widget.TabView();
             var text_tab = new YAHOO.widget.Tab(
                 { 
-                    label:SGlobals.type_names.TEXT,
+                    label:SGlobals.type_names.EDITORIAL_NOTE,
                     content: ("<div id='add-text-record'>" + 
                         "<textarea id='text-record-value' " +
                          "name='text-record-value'></textarea></div>"
@@ -384,7 +384,7 @@ YAHOO.bungeni.availableitems = function(){
             var minuteEditor = null;
             text_tab.getRecordValue = function(){
                 return {
-                    type: SGlobals.types.TEXT,
+                    type: SGlobals.types.EDITORIAL_NOTE,
                     value: [ rteEditor.cleanHTML(rteEditor.getEditorHTML()) ]
                 }
             }
@@ -414,7 +414,10 @@ YAHOO.bungeni.availableitems = function(){
                 if(minuteEditor){ minuteEditor.setEditorHTML(""); }
                 Y$.query("input", heading_tab.get("contentEl"))[0].value = "";
             });
-            var tab_map = { "heading" : 0, "text" : 1 , "minute": 2}
+            var tab_map = {};
+            tab_map[SGlobals.types.HEADING] = 0;
+            tab_map[SGlobals.types.EDITORIAL_NOTE] = 1;
+            tab_map[SGlobals.types.MINUTE] = 2;
             tab_view.addTab(heading_tab);
             tab_view.addTab(text_tab);
             if(YAHOO.bungeni.agendaconfig.minuteEditor){

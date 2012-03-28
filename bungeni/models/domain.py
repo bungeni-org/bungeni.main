@@ -22,6 +22,8 @@ from sqlalchemy.orm import class_mapper, object_mapper
 
 import interfaces
 
+from bungeni.utils.capi import capi
+
 def object_hierarchy_type(object):
     if isinstance(object, User):
         return "user"
@@ -267,6 +269,12 @@ def enable_attachment(kls):
     return kls
 configurable_domain.feature_decorators["attachment"] = enable_attachment
 
+def enable_schedulable(kls):
+    """Decorator for schedulable types
+    """
+    return kls
+configurable_domain.feature_decorators["schedulable"] = enable_schedulable
+
 # !+/PARAMETRIZABLE_DOCTYPES
 
 class User(Entity):
@@ -374,8 +382,8 @@ class Group(Entity):
     headings = one2many("headings", "bungeni.models.domain.HeadingContainer",
         "group_id"
     )
-    schedulingtexts = one2many("schedulingtexts", 
-        "bungeni.models.domain.ScheduleTextContainer",
+    editorial_notes = one2many("editorialnotes", 
+        "bungeni.models.domain.EditorialNoteContainer",
         "group_id"
     )
     def active_membership(self, user_id):
@@ -926,7 +934,7 @@ class AttachedFile(HeadParentedMixin, Entity):
 class Heading(Entity):
     """A heading in a report.
     """
-    interface.implements(interfaces.ITranslatable)
+    interface.implements(interfaces.ITranslatable, interfaces.IScheduleText)
     __dynamic_features__ = False
     
     type = "heading"
@@ -1097,23 +1105,11 @@ class DocumentSource(object):
 '''
 
 
-class ScheduleText(Entity):
+class EditorialNote(Entity):
     """Arbitrary text inserted into schedule
     """
-    type = u"text"
-    interface.implements(interfaces.ITranslatable)
-
-# !+DOMAIN(mb, nov-2011) There should be a global configuration/lookup method
-# for content-type=>domain-class mapping. This is just for convenience.
-DOMAIN_CLASSES = {
-    "bill": Bill,
-    "question": Question,
-    "motion": Motion,
-    "agendaitem": AgendaItem,
-    "tableddocument": TabledDocument,
-    "heading": Heading,
-    "text": ScheduleText
-}
+    type = u"editorial_note"
+    interface.implements(interfaces.ITranslatable, interfaces.IScheduleText)
 
 class ItemSchedule(Entity):
     """For which sitting was a parliamentary item scheduled.
@@ -1124,9 +1120,27 @@ class ItemSchedule(Entity):
     def _get_item(self):
         """Query for scheduled item by type and ORM mapped primary key
         """
-        domain_class = DOMAIN_CLASSES.get(self.item_type, None)
+        try:
+            domain_class = capi.get_type_info(self.item_type).domain_model
+        except KeyError:
+            #!+TYPE REGISTRY(mb, mar-2012) Try to lookup via workflow
+            # stored types and wf names not 100% mapped as at r9131@trunk
+            try:
+                log.debug("Unable to locate type %s from type info lookup." 
+                    "Trying workflow lookup.", self.item_type
+                )
+                domain_class = filter(
+                    lambda ti:(ti[1].workflow and 
+                        ti[1].workflow.name==self.item_type
+                    ),
+                    capi.iter_type_info()
+                )[0][1].domain_model
+            except IndexError:
+                domain_class = None
+                log.error("Unable to located domain  class for item of type %s",
+                    self.item_type
+                )
         if domain_class is None:
-            log.error("There is no item assigned to this schedule entry")
             return None
         item = Session().query(domain_class).get(self.item_id)
         item.__parent__ = self

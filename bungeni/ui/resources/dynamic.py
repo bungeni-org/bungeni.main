@@ -30,20 +30,20 @@ def get_globals(group_name, **kwargs):
     globals_map = {
         "SCHEDULER_GLOBALS" : {
             "schedulable_types": [ 
-                dict(name=name, title=i18n(title, language)) 
-                for (name, title) in 
+                dict(name=name, title=i18n(info.get("title"), language)) 
+                for (name, info) in 
                 sorted(data.get_schedulable_types().iteritems())
              ],
             "discussable_types": [k for k in data.get_schedulable_types()],
-            "editable_types": ["text", "minute"],
+            "editable_types": ["editorial_note", "minute"],
             "types": {
                 "HEADING": "heading",
-                "TEXT": "text",
+                "EDITORIAL_NOTE": "editorial_note",
                 "MINUTE": "minute",
             },
             "type_names": {
                 "HEADING":i18n(_(u"heading"), language),
-                "TEXT":i18n(_(u"editorial note"), language),
+                "EDITORIAL_NOTE":i18n(_(u"editorial note"), language),
                 "MINUTE":i18n(_(u"minute record"), language),
             },
             "current_schedule_title": i18n(_(u"Agenda"), language),
@@ -114,7 +114,7 @@ def get_globals(group_name, **kwargs):
                 language
             ),
             "saving_dialog_refreshing": i18n(
-                _(u"reloading schedule data"), language
+                _(u"reloading schedule..."), language
             ),
             "saving_dialog_exception": i18n(
                 _(u"there was an error while saving the schedule"), language

@@ -3584,12 +3584,12 @@ class ItemScheduleDescriptor(ModelDescriptor):
         ),
     ]
 
-class ScheduleTextDescriptor(ModelDescriptor):
+class EditorialNoteDescriptor(ModelDescriptor):
     localizable = True
-    display_name = _("Scheduling Texts")
-    container_name = "Scheduling Texts"
+    display_name = _("Editorial Note")
+    container_name = "Editorial Notes"
     fields = [
-        Field(name="schedule_text_id",
+        Field(name="editorial_note_id",
             modes="view edit add listing",
             localizable=[
                 show("view listing")

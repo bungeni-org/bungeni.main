@@ -937,8 +937,8 @@ item_schedules = rdb.Table("item_schedules", metadata,
     rdb.Column("item_status", rdb.Unicode(64),)
 )
 
-schedule_text = rdb.Table("schedule_text", metadata,
-    rdb.Column("schedule_text_id", rdb.Integer, primary_key=True),
+editorial_note = rdb.Table("editorial_note", metadata,
+    rdb.Column("editorial_note_id", rdb.Integer, primary_key=True),
     rdb.Column("text", rdb.UnicodeText, nullable=True),
     rdb.Column("group_id", rdb.Integer, rdb.ForeignKey("groups.group_id"),
         nullable=True

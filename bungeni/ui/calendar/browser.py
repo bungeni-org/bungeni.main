@@ -58,12 +58,13 @@ from bungeni.ui.widgets import LanguageLookupWidget
 from bungeni.ui.container import ContainerJSONListing
 
 from bungeni.models import domain
-from bungeni.models.interfaces import IItemScheduleContainer
+from bungeni.models.interfaces import IItemScheduleContainer, IScheduleText
 from bungeni.alchemist.container import stringKey
 from bungeni.alchemist import Session
 #from bungeni.ui import vocabulary
 
 from bungeni.utils import register
+from bungeni.utils.capi import capi
 
 # Filter key names prefix - for available items listings
 FILTER_PREFIX = "filter_"
@@ -245,12 +246,10 @@ class CalendarView(BungeniBrowserView):
     short_name = _(u"Scheduling")
     
     def __init__(self, context, request):
-        log.debug("CalendarView.__init__: %s" % (context))
         super(CalendarView, self).__init__(
             ISchedulingContext(context), request)
     
     def __call__(self, timestamp=None):
-        log.debug("CalendarView.__call__: %s" % (self.context))
         trusted = removeSecurityProxy(self.context)
         trusted.__name__ = self.__name__
         interface.alsoProvides(trusted, ILocation)
@@ -260,8 +259,6 @@ class CalendarView(BungeniBrowserView):
         else:
             self.url = url.absoluteURL(trusted.__parent__, self.request)
         self.title = ISchedulingContext(self.context).label
-        log.debug(debug.interfaces(self))
-        log.debug(debug.location_stack(self))
         return self.render()
         
     def publishTraverse(self, request, name):
@@ -864,26 +861,16 @@ class ScheduleAddView(BrowserView):
             
             if not data_item_id:
                 # create text record before inserting into schedule
-                if data_item_type == u"text":
-                    text_record = domain.ScheduleText(
-                        text=data_item_text,
-                        group_id=group_id,
-                        language=get_default_language()
-                    )
-                    session.add(text_record)
-                    session.flush()
-                    notify(ObjectCreatedEvent(text_record))
-                    data_item_id = text_record.schedule_text_id
-                elif data_item_type == u"heading":
-                    heading_record = domain.Heading(
-                        text=data_item_text,
-                        group_id=group_id,
-                        language=get_default_language()
-                    )
-                    session.add(heading_record)
-                    session.flush()
-                    notify(ObjectCreatedEvent(heading_record))
-                    data_item_id = heading_record.heading_id
+                kls = capi.get_type_info(data_item_type).domain_model
+                text_record = kls(
+                    text=data_item_text,
+                    group_id=group_id,
+                    language=get_default_language()
+                )
+                session.add(text_record)
+                session.flush()
+                notify(ObjectCreatedEvent(text_record))
+                data_item_id = domain.get_mapped_object_id(text_record)
                 schedule_record = domain.ItemSchedule(
                     item_id=data_item_id,
                     item_type=data_item_type,
@@ -918,9 +905,8 @@ class ScheduleAddView(BrowserView):
                         wfc.fireAutomatic()
                     
                     #update text for text records
-                    #!+INTERFACES(Apply this behaviour via shared interface)
-                    if data_item_type in [u"text", u"heading"]:
-                        text_record = removeSecurityProxy(current_record.item)
+                    text_record = removeSecurityProxy(current_record.item)
+                    if IScheduleText.providedBy(text_record):                        
                         if text_record.text != data_item_text:
                             text_record.text = data_item_text
                             session.add(text_record)

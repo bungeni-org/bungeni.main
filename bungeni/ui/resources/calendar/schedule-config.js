@@ -369,7 +369,7 @@ YAHOO.bungeni.config = function(){
                         "<span style='text-align:center;display:block;'><strong>" + 
                         rec_data.item_title + "</strong></span>"
                     );
-                 }else if(rec_data.item_type == SGlobals.types.TEXT){
+                 }else if(rec_data.item_type == SGlobals.types.EDITORIAL_NOTE){
                      el.innerHTML = BungeniUtils.wrapText(rec_data.item_title);
                  }else{
                      if (rec_data.item_uri){
@@ -660,7 +660,7 @@ YAHOO.bungeni.config = function(){
                         },
                         {
                             text: SGlobals.text_button_text,
-                            value: SGlobals.types.TEXT
+                            value: SGlobals.types.EDITORIAL_NOTE
                         },
                     ]
                     if(YAHOO.bungeni.agendaconfig.minuteEditor!=undefined){

@@ -200,8 +200,13 @@ class IGroupSittingType(interface.Interface):
 class IItemSchedule(interface.Interface):
     pass
 
+class IEditorialNote(interface.Interface):
+    """Marker interface for editorial notes in a sitting's agenda"""
+
 class IScheduleText(interface.Interface):
-    pass
+    """Marker interface for text records in and agenda.
+    This covers `IHeading` and `IEditorialNote'` at this point.
+    """
 
 class ISittingType(interface.Interface):
     pass

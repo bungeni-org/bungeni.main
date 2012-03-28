@@ -699,7 +699,7 @@ mapper(domain.ItemSchedule, schema.item_schedules,
     }
 )
 
-mapper(domain.ScheduleText, schema.schedule_text)
+mapper(domain.EditorialNote, schema.editorial_note)
 
 mapper(domain.ItemScheduleDiscussion, schema.item_schedule_discussions,
     properties={
