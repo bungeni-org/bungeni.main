@@ -17,6 +17,14 @@ import schema
 import domain
 import interfaces
 
+
+def polymorphic_identity(cls):
+    """Formalize convention of determining the polymorphic discriminator value 
+    for a domain class as a function of the class name.
+    """
+    return schema.un_camel(cls.__name__)
+
+
 # !+PARAMETRIZABLE_DOCTYPES
 def DOCUMENT_configurable_mappings(kls):
     """Configuration mappings for declarative-model types.
@@ -35,7 +43,7 @@ def DOCUMENT_configurable_mappings(kls):
         if DYNAMIC_SETUP:
             mapper(audit_kls,
                 inherits=base_audit_kls,
-                polymorphic_identity=name.lower(), # polymorphic discriminator value
+                polymorphic_identity=polymorphic_identity(kls)
             )
         # propagate any extended attributes on head kls also to its audit_kls
         for vp_name, vp_type in kls.extended_properties:
@@ -78,7 +86,6 @@ def DOCUMENT_configurable_mappings(kls):
         for key, prop in configurable_properties(kls, {}).items():
             kls_mapper.add_property(key, prop)
     mapper_add_configurable_properties(kls)
-
 
 def configurable_mappings(kls):
     """Add mappings, as per configured features for a domain type.
@@ -228,7 +235,7 @@ mapper(domain.Group, schema.groups,
         # "keywords": relation(domain.Keyword, secondary=schema.groups_keywords)
     },
     polymorphic_on=schema.groups.c.type,
-    polymorphic_identity="group"
+    polymorphic_identity=polymorphic_identity(domain.Group)
 )
 
 # Keywords for groups
@@ -267,37 +274,37 @@ mapper(domain.UserDelegation, schema.user_delegations,
 mapper(domain.Government,
     inherits=domain.Group,
     polymorphic_on=schema.groups.c.type,
-    polymorphic_identity="government"
+    polymorphic_identity=polymorphic_identity(domain.Government)
 )
 
 mapper(domain.Parliament, schema.parliaments,
     inherits=domain.Group,
     polymorphic_on=schema.groups.c.type,
-    polymorphic_identity="parliament"
+    polymorphic_identity=polymorphic_identity(domain.Parliament)
 )
 
 mapper(domain.PoliticalEntity, schema.political_parties,
     inherits=domain.Group,
     polymorphic_on=schema.groups.c.type,
-    polymorphic_identity="political-entity"
+    polymorphic_identity=polymorphic_identity(domain.PoliticalEntity)
 )
 
 mapper(domain.PoliticalParty,
     inherits=domain.PoliticalEntity,
     polymorphic_on=schema.groups.c.type,
-    polymorphic_identity="political-party"
+    polymorphic_identity=polymorphic_identity(domain.PoliticalParty)
 )
 
 mapper(domain.PoliticalGroup,
     inherits=domain.PoliticalEntity,
     polymorphic_on=schema.groups.c.type,
-    polymorphic_identity="political-group"
+    polymorphic_identity=polymorphic_identity(domain.PoliticalGroup)
 )
 
 mapper(domain.Ministry,
     inherits=domain.Group,
     polymorphic_on=schema.groups.c.type,
-    polymorphic_identity="ministry"
+    polymorphic_identity=polymorphic_identity(domain.Ministry)
 )
 
 ''' !+TYPES_CUSTOM
@@ -314,13 +321,13 @@ mapper(domain.CommitteeType, schema.committee_type,
 mapper(domain.Committee, schema.committees,
     inherits=domain.Group,
     polymorphic_on=schema.groups.c.type,
-    polymorphic_identity="committee",
+    polymorphic_identity=polymorphic_identity(domain.Committee)
 )
 
 mapper(domain.Office, schema.offices,
     inherits=domain.Group,
     polymorphic_on=schema.groups.c.type,
-    polymorphic_identity="office"
+    polymorphic_identity=polymorphic_identity(domain.Office)
 )
 
 
@@ -349,7 +356,7 @@ mapper(domain.GroupMembership, schema.user_group_memberships,
         "member_titles":relation(domain.MemberTitle)
     },
     polymorphic_on=schema.user_group_memberships.c.membership_type,
-    polymorphic_identity="member",
+    polymorphic_identity=polymorphic_identity(domain.GroupMembership)
 )
 # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", "document", "item"
 domain.GroupMembership.head = domain.GroupMembership.user
@@ -390,31 +397,31 @@ mapper(domain.MemberOfParliament, schema.parliament_memberships,
             schema.user_group_memberships.c.end_date.label("end_date")),
     },
     polymorphic_on=schema.user_group_memberships.c.membership_type,
-    polymorphic_identity="parliamentmember",
+    polymorphic_identity=polymorphic_identity(domain.MemberOfParliament)
 )
 
 mapper(domain.Minister,
     inherits=domain.GroupMembership,
     polymorphic_on=schema.user_group_memberships.c.membership_type,
-    polymorphic_identity="minister",
+    polymorphic_identity=polymorphic_identity(domain.Minister)
 )
 
 mapper(domain.CommitteeMember,
     inherits=domain.GroupMembership,
     polymorphic_on=schema.user_group_memberships.c.membership_type,
-    polymorphic_identity="committeemember",
+    polymorphic_identity=polymorphic_identity(domain.CommitteeMember)
 )
 
 mapper(domain.PartyMember,
     inherits=domain.GroupMembership,
     polymorphic_on=schema.user_group_memberships.c.membership_type,
-    polymorphic_identity="partymember",
+    polymorphic_identity=polymorphic_identity(domain.PartyMember)
 )
 
 mapper(domain.OfficeMember,
     inherits=domain.GroupMembership,
     polymorphic_on=schema.user_group_memberships.c.membership_type,
-    polymorphic_identity="officemember",
+    polymorphic_identity=polymorphic_identity(domain.OfficeMember)
 )
 
 # staff assigned to a group (committee, ...)
@@ -422,7 +429,7 @@ mapper(domain.OfficeMember,
 mapper(domain.CommitteeStaff,
     inherits=domain.GroupMembership,
     polymorphic_on=schema.user_group_memberships.c.membership_type,
-    polymorphic_identity="committeestaff",
+    polymorphic_identity=polymorphic_identity(domain.CommitteeStaff)
 )
 
 mapper(domain.ParliamentSession, schema.parliament_sessions)
@@ -501,7 +508,7 @@ mapper(domain.vp.TranslatedText, schema.vp_translated_text)
 
 mapper(domain.Doc, schema.doc,
     polymorphic_on=schema.doc.c.type, # polymorphic discriminator
-    polymorphic_identity="doc", # polymorphic discriminator value
+    polymorphic_identity=polymorphic_identity(domain.Doc),
     properties={
         "owner": relation(domain.User,
             primaryjoin=rdb.and_(schema.doc.c.owner_id ==
@@ -549,7 +556,7 @@ domain.Doc.attached_files = domain.Doc.attachments
 
 mapper(domain.Audit, schema.audit,
     polymorphic_on=schema.audit.c.audit_type, # polymorphic discriminator
-    polymorphic_identity="audit", # polymorphic discriminator value
+    polymorphic_identity=polymorphic_identity(domain.Audit)
 )
 mapper(domain.Change, schema.change,
     properties={
@@ -570,7 +577,7 @@ mapper(domain.Change, schema.change,
 vm = mapper(domain.Version,
     inherits=domain.Change,
     polymorphic_on=schema.change.c.action, # polymorphic discriminator
-    polymorphic_identity="version", # polymorphic discriminator value
+    polymorphic_identity=polymorphic_identity(domain.Version)
 )
 # !+polymorphic_identity_multi only allows a single value... but, we can tweak 
 # the version mapper's polymorphic_map to allow multiple values for 
@@ -581,13 +588,13 @@ del vm
 
 mapper(domain.DocAudit, schema.doc_audit,
     inherits=domain.Audit,
-    polymorphic_identity="doc", # polymorphic discriminator value
+    polymorphic_identity=polymorphic_identity(domain.Doc) # on head class
 )
 
 mapper(domain.Event,
     inherits=domain.Doc,
     polymorphic_on=schema.doc.c.type, # polymorphic discriminator
-    polymorphic_identity="event", # polymorphic discriminator value
+    polymorphic_identity=polymorphic_identity(domain.Event)
 )
 #!+EVENTS on parliamentary documents:
 # - behave also "like" a parliamentary document
@@ -628,7 +635,7 @@ mapper(domain.Attachment, schema.attachment,
 )
 mapper(domain.AttachmentAudit, schema.attachment_audit,
     inherits=domain.Audit,
-    polymorphic_identity="attachment", # polymorphic discriminator value
+    polymorphic_identity=polymorphic_identity(domain.Attachment) # on head class
 )
 
 
@@ -637,7 +644,7 @@ mapper(domain.AttachmentAudit, schema.attachment_audit,
 
 mapper(domain.ParliamentaryItem, schema.parliamentary_items,
     polymorphic_on=schema.parliamentary_items.c.type,
-    polymorphic_identity="item",
+    polymorphic_identity=polymorphic_identity(domain.ParliamentaryItem),
     properties={
         "owner": relation(domain.User,
             primaryjoin=rdb.and_(schema.parliamentary_items.c.owner_id ==
@@ -678,7 +685,7 @@ mapper(domain.Heading, schema.headings,
 mapper(domain.Question, schema.questions,
     inherits=domain.ParliamentaryItem,
     polymorphic_on=schema.parliamentary_items.c.type,
-    polymorphic_identity="question",
+    polymorphic_identity=polymorphic_identity(domain.Question),
     properties={
         "ministry": relation(domain.Ministry, lazy=False, join_depth=2),
     }
@@ -687,21 +694,21 @@ mapper(domain.Question, schema.questions,
 mapper(domain.Motion, schema.motions,
     inherits=domain.ParliamentaryItem,
     polymorphic_on=schema.parliamentary_items.c.type,
-    polymorphic_identity="motion",
+    polymorphic_identity=polymorphic_identity(domain.Motion),
     properties={}
 )
 
 mapper(domain.Bill, schema.bills,
     inherits=domain.ParliamentaryItem,
     polymorphic_on=schema.parliamentary_items.c.type,
-    polymorphic_identity="bill",
+    polymorphic_identity=polymorphic_identity(domain.Bill),
     properties={}
 )
 
 mapper(domain.AgendaItem, schema.agenda_items,
     inherits=domain.ParliamentaryItem,
     polymorphic_on=schema.parliamentary_items.c.type,
-    polymorphic_identity="agendaitem",
+    polymorphic_identity=polymorphic_identity(domain.AgendaItem),
     properties={
         "group": relation(domain.Group,
             primaryjoin=(
@@ -716,7 +723,7 @@ mapper(domain.AgendaItem, schema.agenda_items,
 mapper(domain.TabledDocument, schema.tabled_documents,
     inherits=domain.ParliamentaryItem,
     polymorphic_on=schema.parliamentary_items.c.type,
-    polymorphic_identity="tableddocument",
+    polymorphic_identity=polymorphic_identity(domain.TabledDocument),
     properties={}
 )
 
@@ -816,7 +823,7 @@ mapper(domain.GroupAddress, schema.group_addresses,
 mapper(domain.Report, schema.reports,
     inherits=domain.ParliamentaryItem,
     polymorphic_on=schema.parliamentary_items.c.type,
-    polymorphic_identity="report"
+    polymorphic_identity=polymorphic_identity(domain.Report)
 )
 
 mapper(domain.SittingReport, schema.sitting_reports,
