@@ -179,6 +179,7 @@ def DOCUMENT_configurable_domain(kls, workflow):
     DYNAMIC_SETUP = issubclass(kls, Doc) # !+
     # !+DYNAMIC_SETUP only setup dynamically what may only be set up dynamically
     if workflow.has_feature("audit"):
+        # !+auditable(kls)
         interface.classImplements(kls, interfaces.IAuditable)
         CUSTOM_DECORATED["auditable"].add(kls)
         if DYNAMIC_SETUP:
@@ -193,9 +194,16 @@ def DOCUMENT_configurable_domain(kls, workflow):
                 return Audit
             audit_kls = base_audit_class(kls).auditFactory(kls)
             globals()[audit_kls.__name__] = audit_kls
+    if workflow.has_feature("version"):
+        assert workflow.has_feature("audit")
+        # assign interface (versions property added downstream)
+        name = kls.__name__
+        interface.classImplements(kls, interfaces.IVersionable)
+        interface.classImplements(kls, interfaces.IDocVersionable) #!+
+        CUSTOM_DECORATED["versionable"].add(kls)
     if workflow.has_feature("attachment"):
         if DYNAMIC_SETUP:
-            kls = configurable_domain.feature_decorators["attachment"](kls)
+            kls = enable_attachment(kls)
     return kls
 def configurable_domain(kls, workflow):
     assert kls.__dynamic_features__, \
@@ -740,11 +748,11 @@ class Change(HeadParentedMixin, Entity):
     
     @property
     def head(self):
-        return self.audit.audit_head
+        return self.audit.audit_head # orm property
     
     @property
     def status(self):
-        return self.audit.status
+        return self.audit.status # assumption: audit.audit_head is workflowed
     
     # change "note" -- as external extended attribute (vertical property) as:
     # a) presumably it may have to be translatable, and the initial language 
@@ -754,6 +762,15 @@ class Change(HeadParentedMixin, Entity):
         ("note", vp.TranslatedText)
     ]
 instrument_extended_properties(Change, "change")
+
+
+class Version(Change):
+    """A version (a special kind of change action) of an object and 
+    associated change information.
+    """
+    interface.implements(
+        interfaces.IVersion,
+    )
 
 
 class Audit(HeadParentedMixin, Entity):
@@ -797,6 +814,7 @@ class Audit(HeadParentedMixin, Entity):
             return setattr(self, self.head_id_column_name, head_id)
         return locals()
     audit_head_id = property(**audit_head_id())
+
 
 class DocAudit(Audit):
     """An audit record for a document.
@@ -854,8 +872,6 @@ class AttachmentAudit(Audit):
     @property
     def label(self):
         return self.title
-
-
 
 class ParliamentaryItem(Entity):
     """
@@ -1154,7 +1170,7 @@ class ItemSchedule(Entity):
     
     sort_on = ["planned_order", ]
     sort_dir = "asc"
-        
+
 class ItemScheduleDiscussion(Entity):
     """A discussion on a scheduled item.
     """

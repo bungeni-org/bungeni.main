@@ -493,6 +493,9 @@ class IAuditable(interface.Interface):
 class IVersionable(interface.Interface):
     """Marker to apply version feature (requires IAuditable/audit.
     """
+class IDocVersionable(IVersionable):
+    """!+DOCUMENT tmp
+    """
 class IAttachmentable(interface.Interface):
     """Marker to apply attachment feature.
     """

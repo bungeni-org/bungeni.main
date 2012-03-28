@@ -215,6 +215,10 @@ response_type = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm("oral", title="Oral"),
     vocabulary.SimpleTerm("written", title="Written"),
 ])
+change_procedure = vocabulary.SimpleVocabulary([
+    vocabulary.SimpleTerm("a", title="Automatic"),
+    vocabulary.SimpleTerm("m", title="Manual"),
+])
 
 
 class OfficeRoles(object):

@@ -550,7 +550,7 @@ class IViewProvide(zope.interface.Interface):
            or (specify any provider_name we like, here as a literal string): 
              <div tal:replace="structure python:view.provide('my_provider')" />
         
-        The Evoque equivalent of this last variation (with an in-palce literal 
+        The Evoque equivalent of this last variation (with an in-place literal 
         provider name) would be:
             ${view.provide("my_provider")}
         """

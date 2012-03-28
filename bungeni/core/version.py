@@ -22,7 +22,22 @@ from bungeni.alchemist import Session
 from i18n import _
 
 from bungeni.models import domain
-from bungeni.core import interfaces
+from bungeni.core import interfaces, audit
+
+
+def DOCUMENT_create_version(ob):
+    """Establish a new version.
+    If this is a reversion, ob is the older version to revert to.
+    """
+    auditor = audit.get_auditor(ob)
+    auditor.DOCUMENT_object_version(removeSecurityProxy(ob), action="version")
+def DOCUMENT_create_reversion(ob):
+    """Revert to an older version -- ob is the older version to revert to.
+    """
+    ob = removeSecurityProxy(ob)
+    auditor = audit.get_auditor(ob.audit_head)
+    # !+polymorphic_itendity_multi REVERSION action MUST be same as "version"
+    auditor.DOCUMENT_object_version(ob, action="version") #action="reversion")
 
 
 def create_version(context, message, manual=False):
@@ -69,7 +84,7 @@ class Versioned(container.PartialContainer):
             if canWrite(context, column.name):
                 return True
         return False
-
+    
     def create(self, message, manual=False):
         """Store the existing state of the adapted context as a new version.
         """

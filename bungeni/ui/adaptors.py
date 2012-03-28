@@ -18,6 +18,8 @@ from bungeni.models.interfaces import IBungeniParliamentaryContent, \
     IAlchemistContainer
 from bungeni.utils import register
 
+#import bungeni.ui.versions # !+REGISTER
+
 
 ''' !+UNUSED(mr, jan-2012) but time wasted on it anyway.
 from zope import component
@@ -71,3 +73,4 @@ class TimelineRSSValues(RSSValues):
     @property
     def values(self):
         return domain.get_changes(self.context, "modify", "add")
+

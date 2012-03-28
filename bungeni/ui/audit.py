@@ -196,6 +196,8 @@ def _format_description(change):
         if note:
             return "(%s)" % (translate(note))
         return ""
+    def _notes(change):
+        return _eval_as_dict(getattr(change, "notes", "{}"))
     
     # !+AUDIT_DESCRIPTIONS... to be redone, dynamic. Note also that current
     # links within descriptions for audit logs of a sub object are all broken!
@@ -207,7 +209,7 @@ def _format_description(change):
         file_title = "%s" % (audit.head.file_title)
         # !+ _(change.head.attached_file_type), change.head.file_name)
         if change.action == "version":
-            version_id = _eval_as_dict(change.notes).get("version_id", None)
+            version_id = _notes(change).get("version_id", None)
             if version_id:
                 _url = "files/obj-%s/versions/obj-%s" % (
                     change.content_id, version_id)
@@ -221,7 +223,7 @@ def _format_description(change):
             return "%s: %s %s" % (file_title, _label(audit), _note(audit))
     else:
         if change.action == "version":
-            version_id = _eval_as_dict(change.notes).get("version_id", None)
+            version_id = _notes(change).get("version_id", None)
             if version_id:
                 _url = "versions/obj-%s" % (version_id)
                 return """<a href="%s">%s</a> %s""" % (
@@ -249,6 +251,7 @@ class ChangeDataDescriptor(object):
         self.date_formatter = date.getLocaleFormatter(self.request, 
             "dateTime", "short")
     
+    # !+bungeni_custom
     def columns(self):
         return [
             descriptor.user_name_column("user_id", _("user"), "user"),
@@ -275,33 +278,27 @@ class TableFormatter(
 # !+AuditLogView(mr, nov-2011) should inherit from forms.common.BaseForm, 
 # as for VersionLogView?
 class AuditLogMixin(object):
-    """Base view for audit change log for a context.
+    """Base handling of audit change log listing for a context.
     """
     formatter_factory = TableFormatter
     prefix = "container_contents_changes"
     
-    # !+listing bind to declarations in UI configuration (descriptor)
+    # !+bungeni_custom listing bind to UI configuration (descriptor)
     visible_column_names = []
     # !+ParametrizedAuditLog(mr, dec-2011) bungeni_custom parameters:
     # change types X change actions
     include_change_types = []
     include_change_actions = []
     
-    def __init__(self):
-        self._data_items = None # cache
-    
     def columns(self):
         return ChangeDataDescriptor(self.context, self.request).columns()
     
-    _message_no_data = "No Change Data"
+    _message_no_data = _("No Change Data")
     @property
     def message_no_data(self):
-        return _(self.__class__._message_no_data)
+        return translate(self.__class__._message_no_data)
     
-    @property
-    def has_data(self):
-        return bool(self.change_data_items)
-    
+    _data_items = None
     def change_data_items(self):
         if self._data_items is None:
             self._data_items = ChangeDataProvider(self.context, 
@@ -309,6 +306,10 @@ class AuditLogMixin(object):
                     self.include_change_actions
                 ).change_data_items()
         return self._data_items
+    
+    @property
+    def has_data(self):
+        return bool(self.change_data_items)
     
     def listing(self):
         # !+FormatterFactoryAPI(mr, jan-2012) the various formatter factories 

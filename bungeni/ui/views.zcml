@@ -427,9 +427,12 @@
     !+VersionLogView(mr, nov-2011) above zcml page view directive masks the 
     "generic" AjaxContainerListing listing view, and breaks the connection 
     from the corresponding ui descriptor.
+    !+VersionLogView(mr, mar-2012) the import of bungeni.ui.versions happens here!
     !+AuditLogView(mr, nov-2011)
+    !+IDOCUMENT tmp
     -->
-
+    
+    
     <!-- business -->
     <browser:page name="business-index"
         for="*"

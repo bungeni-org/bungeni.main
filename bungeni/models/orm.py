@@ -71,6 +71,9 @@ def DOCUMENT_configurable_mappings(kls):
                     cascade="all",
                     passive_deletes=False
                 )
+            # versionable
+            if interfaces.IVersionable.implementedBy(kls):
+                pass
             return mapper_properties
         for key, prop in configurable_properties(kls, {}).items():
             kls_mapper.add_property(key, prop)
@@ -526,6 +529,18 @@ mapper(domain.Doc, schema.doc,
             backref="audit_head",
             uselist=True,
             lazy=True),
+        "versions": relation(domain.Version,
+           primaryjoin=rdb.and_(
+               schema.doc.c.doc_id ==
+                    schema.doc_audit.c.doc_id,
+            ),
+            secondary=schema.change,
+            secondaryjoin=rdb.and_(
+                schema.change.c.audit_id == schema.doc_audit.c.audit_id,
+            ),
+            #!+backref: version.audit.audit_head
+            uselist=True,
+            lazy=True),
     }
 )
 #!+DOCUMENT alias...
@@ -551,6 +566,18 @@ mapper(domain.Change, schema.change,
             lazy=False),
     }
 )
+
+vm = mapper(domain.Version,
+    inherits=domain.Change,
+    polymorphic_on=schema.change.c.action, # polymorphic discriminator
+    polymorphic_identity="version", # polymorphic discriminator value
+)
+# !+polymorphic_identity_multi only allows a single value... but, we can tweak 
+# the version mapper's polymorphic_map to allow multiple values for 
+# polymorphic_identity (but attachment.versions does not pick up reversions):
+#vm.polymorphic_map["reversion"] = vm.polymorphic_map["version"]
+del vm
+
 
 mapper(domain.DocAudit, schema.doc_audit,
     inherits=domain.Audit,
@@ -582,6 +609,21 @@ mapper(domain.Attachment, schema.attachment,
             lazy=True,
             #cascade="all",
         ),
+        "versions": relation(domain.Version,
+           primaryjoin=rdb.and_(
+               schema.attachment.c.attachment_id ==
+                    schema.attachment_audit.c.attachment_id,
+            ),
+            secondary=schema.change,
+            secondaryjoin=rdb.and_(
+                schema.change.c.audit_id == schema.attachment_audit.c.audit_id,
+            ),
+            #!+backref: version.audit.audit_head
+            #backref="audit_head", !+ERROR: version.audit_head
+            # *** UnmappedColumnError: No column attachment_audit.audit_id is 
+            # configured on mapper Mapper|Version|change...
+            uselist=True,
+            lazy=True),
     }
 )
 mapper(domain.AttachmentAudit, schema.attachment_audit,
@@ -802,4 +844,5 @@ mapper(domain.ObjectTranslation, schema.translations)
 # !+IChange-vertical-properties special case: 
 # class is NOT workflowed, and in any case __dynamic_features__ = False
 mapper_add_relation_vertical_properties(domain.Change)
+
 

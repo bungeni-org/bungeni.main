@@ -104,19 +104,21 @@ vp_translated_text = rdb.Table("vp_translated_text", metadata,
 # generic change information
 change = rdb.Table("change", metadata,
     rdb.Column("audit_id", rdb.Integer, 
-        rdb.ForeignKey("audit.audit_id"), 
+        rdb.ForeignKey("audit.audit_id"),
         primary_key=True),
-    rdb.Column("user_id", rdb.Integer, rdb.ForeignKey("users.user_id")),
-    rdb.Column("action", rdb.Unicode(16)),
-    # accumulative count, per (audit_head_id, action) e.g (head=123, "version")=1
-    rdb.Column("seq", rdb.Integer),
-    # !+procedure ? enum: manual/auto/...
+    rdb.Column("user_id", rdb.Integer, rdb.ForeignKey("users.user_id"), 
+        nullable=False),
+    rdb.Column("action", rdb.Unicode(16), nullable=False),
+    # accumulative count, per (change.audit.audit_head_id, change.action) 
+    # e.g default: 1 + max(seq(head, "version")), see ui.audit _get_seq()
+    rdb.Column("seq", rdb.Integer, nullable=False),
+    rdb.Column("procedure", rdb.String(1), default="a", nullable=False),
     # audit datetime, exclusively managed by the system, real datetime of 
     # when change was actually affected
     rdb.Column("date_audit", rdb.DateTime(timezone=False),
         #!+CATALYSE(mr, nov-2010) fails descriptor catalisation
         #default=functions.current_timestamp(),
-        server_default=(text("now()")),
+        server_default=text("now()"),
         nullable=False
     ),
     # user-modifiable effective datetime (defaults to audit_time);
@@ -125,7 +127,7 @@ change = rdb.Table("change", metadata,
     rdb.Column("date_active", rdb.DateTime(timezone=False),
         #!+CATALYSE(mr, nov-2010)
         #default=functions.current_timestamp(),
-        server_default=(text("now()")),
+        server_default=text("now()"),
         nullable=False
     ),
     
@@ -217,7 +219,7 @@ def make_changes_table(table, metadata):
         rdb.Column("date_audit", rdb.DateTime(timezone=False),
             #!+CATALYSE(mr, nov-2010) fails descriptor catalisation
             #default=functions.current_timestamp(),
-            server_default=(text("now()")),
+            server_default=text("now()"),
             nullable=False
         ),
         # user-modifiable effective date, defaults to same value as audit date;
@@ -226,7 +228,7 @@ def make_changes_table(table, metadata):
         rdb.Column("date_active", rdb.DateTime(timezone=False),
             #!+CATALYSE(mr, nov-2010)
             #default=functions.current_timestamp(),
-            server_default=(text("now()")),
+            server_default=text("now()"),
             nullable=False
         ),
         rdb.Column("description", rdb.UnicodeText),
@@ -520,7 +522,7 @@ groups = rdb.Table("groups", metadata,
     # Workflow State
     rdb.Column("status", rdb.Unicode(32)),
     rdb.Column("status_date", rdb.DateTime(timezone=False),
-        server_default=(text("now()")),
+        server_default=text("now()"),
         nullable=False
     ),
     rdb.Column("start_date", rdb.Date, nullable=False),
@@ -647,7 +649,7 @@ user_group_memberships = rdb.Table("user_group_memberships", metadata,
     # Workflow State
     rdb.Column("status", rdb.Unicode(32)),
     rdb.Column("status_date", rdb.DateTime(timezone=False),
-        server_default=(text("now()")),
+        server_default=text("now()"),
         nullable=False
     ),
     rdb.Column("start_date", rdb.Date,
@@ -745,7 +747,7 @@ def _make_address_table(metadata, fk_key="user"):
         # Workflow State -> determins visibility
         rdb.Column("status", rdb.Unicode(16)),
         rdb.Column("status_date", rdb.DateTime(timezone=False),
-            server_default=(text("now()")),
+            server_default=text("now()"),
             nullable=False
         ),
     )
@@ -790,7 +792,7 @@ group_sittings = rdb.Table("group_sittings", metadata,
     rdb.Column("recurring_id", rdb.Integer),
     rdb.Column("status", rdb.Unicode(48)),
     rdb.Column("status_date", rdb.DateTime(timezone=False),
-        server_default=(text("now()")),
+        server_default=text("now()"),
         nullable=False
     ),
     # venues for sittings
@@ -1019,7 +1021,7 @@ attachment = rdb.Table("attachment", metadata,
     # Workflow State
     rdb.Column("status", rdb.Unicode(48)),
     rdb.Column("status_date", rdb.DateTime(timezone=False),
-        server_default=(text("now()")),
+        server_default=text("now()"),
         nullable=False
     ),
     rdb.Column("language", rdb.String(5), nullable=False),
@@ -1063,7 +1065,7 @@ attached_files = rdb.Table("attached_files", metadata,
     # Workflow State
     rdb.Column("status", rdb.Unicode(48)),
     rdb.Column("status_date", rdb.DateTime(timezone=False),
-        server_default=(text("now()")),
+        server_default=text("now()"),
         nullable=False
     ),
     rdb.Column("language", rdb.String(5), nullable=False),
@@ -1178,7 +1180,7 @@ doc = rdb.Table("doc", metadata,
     # WORKFLOW
     rdb.Column("status", rdb.Unicode(48)),
     rdb.Column("status_date", rdb.DateTime(timezone=False),
-        server_default=(text("now()")),
+        server_default=text("now()"),
         nullable=False
     ),
     # group responsible to "handle" this document... involves workflow: the 
@@ -1246,7 +1248,7 @@ doc = rdb.Table("doc", metadata,
     
     # DB timestamp of last modification
     rdb.Column("timestamp", rdb.DateTime(timezone=False),
-        server_default=(text("now()")),
+        server_default=text("now()"),
         nullable=False
     ),
 )
@@ -1319,7 +1321,7 @@ parliamentary_items = rdb.Table("parliamentary_items", metadata,
     # Workflow State
     rdb.Column("status", rdb.Unicode(48)),
     rdb.Column("status_date", rdb.DateTime(timezone=False),
-        server_default=(text("now()")),
+        server_default=text("now()"),
         nullable=False
     ),
     # registry_number <=> dc:Identifier
@@ -1358,7 +1360,7 @@ parliamentary_items = rdb.Table("parliamentary_items", metadata,
     
     # Timestamp of last modification
     rdb.Column("timestamp", rdb.DateTime(timezone=False),
-        server_default=(text("now()")),
+        server_default=text("now()"),
         nullable=False
     ),
 )

@@ -1181,6 +1181,14 @@
         permission="zope.View"
         order="21"
     />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IDocVersionable"
+        action="version-log"
+        title="Versions"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        permission="zope.View"
+        order="21"
+    /><!-- !+DOCUMENT tmp -->
     
     <!-- bill context actions -->
     <browser:menuItems menu="context_actions"

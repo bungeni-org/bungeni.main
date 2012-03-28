@@ -284,7 +284,17 @@ class _AuditorFactory(object):
         #versions = session.query(vkls
         #            ).filter(vkls.content_id==event.version.content_id
         #            ).order_by(vkls.status_date).all()
+    # !+NO EVENT...
+    def DOCUMENT_object_version(self, ob, action="version"):
+        # action: ("version", "reversion")
+        # !+polymorphic_itendity_multi REVERSION action MUST be same as "version"
+        change_data = self._get_change_data()
+        return self._DOCUMENT_object_changed(action, ob,
+                date_active=change_data.get("date_active"),
+                note=change_data.get("note"),
+                procedure=change_data.get("procedure"))
     
+
     def object_reversion(self, ob, event):
         return self._object_changed("reversion", ob,
             description=event.message)
@@ -365,7 +375,8 @@ class _AuditorFactory(object):
     
     def _DOCUMENT_object_changed(self, action, ob, 
             date_active=None,
-            note=None
+            note=None,
+            procedure="a",
         ):
         """
         """
@@ -392,22 +403,32 @@ class _AuditorFactory(object):
                 names_to_audit.append(vp_name)
             return names_to_audit
         
-        def copy_field_values(source, dest):
-            for name in get_field_names_to_audit(source.__class__):
+        def copy_field_values(head_cls, source, dest):
+            for name in get_field_names_to_audit(head_cls):
                 setattr(dest, name, getattr(source, name))
+        
+        # ensure real head object, in case we are dealing with reversioning 
+        # off an Audit instance
+        head_ob = ob
+        if action == "version" and issubclass(ob.__class__, domain.Audit):
+            # ob is an Audit instance, so need its head_ob
+            head_ob = ob.audit_head
         
         # audit snapshot - done first, to ensure a valid audit_id...
         au = self.audit_class()
-        au.audit_head = ob # attach audit log item to parent object
-        copy_field_values(ob, au)
+        au.audit_head = head_ob # attach audit log item to parent object
+        copy_field_values(head_ob.__class__, ob, au)
         session = Session()
         session.add(au)
         
         # audit record meta data
         ch = domain.Change()
+        ch.seq = 0 # !+ reset below, to avoid sqlalchemy violates not-null constraint
         ch.audit = au # ensures ch.audit_id, ch.note.object_id
         ch.user_id = user_id
         ch.action = action
+        ch.seq = self._get_seq(ch)
+        ch.procedure = procedure
         ch.date_audit = datetime.now()
         if date_active:
             ch.date_active = date_active
@@ -417,11 +438,20 @@ class _AuditorFactory(object):
             ch.note = note
         
         session.flush()
+        
         log.debug("AUDIT [%s] %s" % (au, au.__dict__))
         log.debug("CHANGE [%s] %s" % (action, ch.__dict__))
         return au.audit_id
     
     #
+    
+    def _get_seq(self, ch):
+        """determine and return a next seq number for this (action,  
+        """
+        head = ch.audit.audit_head # ch.head
+        seqs_for_action_to_date = [ c.seq for c in head.changes 
+            if c.action == ch.action and c.seq is not None] or [0]
+        return 1 + max(seqs_for_action_to_date)
     
     def _getKey(self, ob):
         mapper = orm.object_mapper(ob)

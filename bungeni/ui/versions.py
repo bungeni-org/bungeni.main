@@ -16,23 +16,31 @@ from zope import formlib
 from zope.security.proxy import removeSecurityProxy
 from zope.security import checkPermission, canWrite
 from zope.security.interfaces import ForbiddenAttribute
+from zope.security.management import getInteraction
 from zope.app.pagetemplate import ViewPageTemplateFile
+from zope.i18n import translate
+from zope.dublincore.interfaces import IDCDescriptiveProperties
+from zope.annotation.interfaces import IAnnotations
 
 from sqlalchemy import orm
 
 from bungeni.alchemist.interfaces import IIModelInterface
 from bungeni.alchemist.ui import getSelected
 
-from bungeni.ui.i18n import MessageFactory as _
+from bungeni.core.interfaces import IVersioned
+from bungeni.core import version
+from bungeni.models.interfaces import IDocVersionable
+from bungeni.ui.interfaces import IWorkspaceOrAdminSectionLayer
+from bungeni.ui.i18n import _
 from bungeni.ui.utils import date, url
 from bungeni.ui.diff import textDiff
 from bungeni.ui import browser
 from bungeni.ui import forms
+from bungeni.utils import register
 
-from bungeni.core.interfaces import IVersioned
-
+from bungeni.ui import audit
 from zc.table import column, table
-from zope.dublincore.interfaces import IDCDescriptiveProperties
+
 
 '''
 from zope.publisher.browser import BrowserView
@@ -75,6 +83,219 @@ class CustomSelectionColumn(column.SelectionColumn):
     def makeId(self, item):
         return ''.join(self.idgetter(item).split())
 
+
+# versions are a special "audit" case
+
+class VersionDataDescriptor(audit.ChangeDataDescriptor):
+    
+    # !+bungeni_custom
+    def columns(self):
+        return [
+            CustomSelectionColumn(
+                    lambda item:str(item.audit_id), name="selection"),
+            column.GetterColumn(title=_("version"),
+                    getter=lambda i,f:"%s" % (i.audit_id),
+                    cell_formatter=lambda g,i,f:'<a href="%s/versions/obj-%d">%s</a>' 
+                        % (f.url, i.audit_id, i.seq)),
+            column.GetterColumn(title=_("procedure"), 
+                    getter=lambda i,f:i.procedure),
+            column.GetterColumn(title=_("modified"), 
+                    getter=lambda i,f:self.date_formatter.format(i.date_active)),
+            column.GetterColumn(title=_("by"), 
+                    getter=lambda i,f:IDCDescriptiveProperties(i.user).title),
+            column.GetterColumn(title=_("message"), 
+                    #getter=lambda i,f:i.change.description),
+                    getter=lambda i,f:i.note),
+        ]
+
+class VersionLogMixin(object):
+    """Base handling of version log listing for a context.
+    """
+    formatter_factory = audit.TableFormatter
+    prefix = "container_contents_versions"
+    
+    _message_no_data = _("No Version Data")
+    @property
+    def message_no_data(self):
+        return translate(self.__class__._message_no_data)
+    
+    _columns = None
+    def columns(self):
+        if self._columns is None:
+            self._columns = VersionDataDescriptor(self.context, self.request
+                ).columns()
+        return self._columns
+    
+    @property
+    def selection_column(self): 
+        return self.columns()[0]
+    
+    _data_items = None
+    def version_data_items(self):
+        # version log is only concerned with own versions (not of any child 
+        # objects) i.e. only own "version changes"; as "data_provider" we 
+        # simply use the versions attribute on context:
+        if self._data_items is None:
+            interaction = getInteraction()
+            di = [
+                removeSecurityProxy(v) for v in self.context.versions
+                if interaction.checkPermission("zope.View", v) ]
+            di = sorted([ (v.seq, v) for v in di ])
+            di.reverse()
+            self._data_items = [ v for s, v in di ]
+        return self._data_items
+    
+    @property
+    def has_data(self):
+        return bool(self.version_data_items)
+    
+    def listing(self):
+        formatter = self.formatter_factory(self.context, self.request,
+            self.version_data_items(), # formatter.items
+            visible_column_names=[ c.name for c in self.columns() ], #!+self.visible_column_names, 
+            prefix=self.prefix,
+            columns=self.columns()
+        )
+        # visible_column_names & columns -> formatter.visible_columns
+        formatter.url = url.absoluteURL(self.context, self.request)
+        formatter.cssClasses["table"] = "listing grid"
+        return formatter()
+
+@register.view(IDocVersionable, layer=IWorkspaceOrAdminSectionLayer, 
+    name="version-log")
+class DVersionLogView(VersionLogMixin, 
+        browser.BungeniBrowserView, forms.common.BaseForm
+    ):
+    """Version Log View for an object
+    """
+    class IVersionEntry(interface.Interface):
+        commit_message = schema.Text(title=_("Change Message"))
+    form_fields = formlib.form.Fields(IVersionEntry)
+    
+    render = ViewPageTemplateFile("templates/version.pt")
+    
+    _page_title = _("Version Log")
+    
+    diff_view = None
+    
+    def __init__(self, context, request):
+        browser.BungeniBrowserView.__init__(self, context, request)
+        VersionLogMixin.__init__(self)
+        self._page_title = translate(self.__class__._page_title)
+        if hasattr(self.context, "short_name"):
+            self._page_title = "%s: %s" % (
+                self._page_title, translate(self.context.short_name))
+    
+    def has_write_permission(self, context):
+        """Check that  the user has the rights to edit the object, if not we 
+        assume he has no rights to make a version assumption is here that if 
+        he has the rights on any of the fields he may create a version.
+        """
+        trusted = removeSecurityProxy(self.context)
+        # !+extended attributes? get complete list of attribuites off kls, as 
+        # in core.audit...get_field_names_to_audit(kls)
+        # !+ replace with a more explict permission check?
+        table = orm.class_mapper(trusted.__class__).mapped_table
+        for column in table.columns:
+            try:
+                if canWrite(self.context, column.name):
+                    return True
+                else:
+                    return False
+            except ForbiddenAttribute:
+                pass
+        else:
+            return False
+    
+    # !+action_url(mr, jul-2010) - throughout bungeni UI, defined only here
+    @property
+    def action_url(self):
+        # this avoids that "POST"ed forms get a "@@index" appended to action URL
+        return ""
+    # !+action_method(mr, jul-2010) - throughout bungeni UI, defined only here
+    @property
+    def action_method(self):
+        # XXX - for forms that only View information, this should return "get"
+        # e.g. business / questions / <q> / versions / Show Differences
+        return "post"
+    
+    @formlib.form.action(label=_("New Version"), condition=has_write_permission)
+    def handle_new_version(self, action, data):
+        # !+ change_data not yet initialized for version requests
+        change_data = IAnnotations(self.request)["change_data"] = {}
+        change_data["note"] = data["commit_message"]
+        change_data["procedure"] = "m"
+        version.DOCUMENT_create_version(self.context)
+        self.status = _("New Version Created")
+    
+    @formlib.form.action(label=_("Revert To"), condition=has_write_permission)
+    def handle_revert_version(self, action, data):
+        # !+REVERSION must be reviewed, probably obsoleted
+        selected_audit_ids = getSelected(self.selection_column, self.request)
+        if len(selected_audit_ids) != 1:
+            self.status = _("Select one item to revert to")
+            return
+        selected_audit = self.get_version_change(selected_audit_ids[0])
+        # !+ change_data not yet initialized for version requests
+        change_data = IAnnotations(self.request)["change_data"] = {}
+        # !+polymorphic_itendity_multi adding action "qualifier" to note...
+        # there could be a case for an additional column on change table.
+        change_data["note"] = "%s [reversion %s]" % (
+            data["commit_message"], selected_audit_ids[0])
+        change_data["procedure"] = "m"
+        version.DOCUMENT_create_reversion(selected_audit)
+        self.status = _(u"Reverted to Previous Version %s") % (
+            removeSecurityProxy(selected_audit).audit_id)
+    
+    @formlib.form.action(
+        label=_("Show Differences"), name="diff",
+        validator=lambda form, action, data: ())
+    def handle_diff_version(self, action, data):
+        self.status = _("Displaying differences")
+        selected_audit_ids = sorted(getSelected(self.selection_column, self.request))
+        if len(selected_audit_ids) not in (1, 2):
+            self.status = _("Select one or two items to show differences")
+            return
+        source = self.get_version_change(selected_audit_ids[0])
+        try:
+            target = self.get_version_change(selected_audit_ids[1])
+        except IndexError:
+            target = removeSecurityProxy(self.context)
+        diff_view = DiffView(source, target, self.request)
+        self.diff_view = diff_view(
+            *filter(IIModelInterface.providedBy, interface.providedBy(self.context)))
+        log.debug("handle_diff_version: source=%s target=%s \n%s" % (
+                        source, target, self.diff_view))
+    
+    def get_version_change(self, audit_id):
+        for c in self.context.versions:
+            c = removeSecurityProxy(c)
+            if c.audit_id == audit_id:
+                return c
+    
+    def setUpWidgets(self, ignore_request=False):
+        # setup widgets in data entry mode not bound to context
+        actions = self.actions
+        self.actions = []
+        for action in actions:
+            if getattr(action, "condition", None):
+                if action.condition(self, self.context):
+                    self.actions.append(action) 
+            else:
+                self.actions.append(action)
+        if not self.has_write_permission(self.context):
+            self.form_fields = self.form_fields.omit("commit_message")
+        super(DVersionLogView, self).setUpWidgets(self)
+    
+    def __call__(self):
+        self.update()
+        return self.render()
+
+
+
+
+#@register.view(IVersionable, layer=IWorkspaceOrAdminSectionLayer, 
+#    name="version")
 class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
     class IVersionEntry(interface.Interface):
         commit_message = schema.Text(title=_(u"Change Message"))
@@ -87,6 +308,7 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
     diff_view = None
     
     def __init__(self, context, request):
+        # !+context.__parent__ -> <Managed bungeni.models.domain.AttachmentContainer>
         super(VersionLogView, self).__init__(context.__parent__, request)
         # table to display the versions history
         formatter = date.getLocaleFormatter(self.request, "dateTime", "short")
@@ -113,7 +335,6 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
     
     def listing(self):
         # set up table
-        
         values = [ value for value in self._versions.values()
             if checkPermission("zope.View", value) ]
         
@@ -136,7 +357,7 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
              assumption is here that if he has the rights on any of the fields
              he may create a version."""
         trusted = removeSecurityProxy(self.context)
-        table = orm.class_mapper(trusted.__class__).mapped_table
+        table = orm.class_mapper(trusted.__class__).mapped_table #!!!!
         for column in table.columns:
             try:
                 if canWrite(self.context, column.name):
@@ -208,8 +429,7 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
         
         log.debug("handle_diff_version: source=%s target=%s \n%s" % (
                         source, target, self.diff_view))
-
-
+    
     def setUpWidgets(self, ignore_request=False):
         # setup widgets in data entry mode not bound to context
         actions = self.actions
@@ -223,13 +443,13 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
         if not self.has_write_permission(self.context):
             self.form_fields = self.form_fields.omit("commit_message")
         super(VersionLogView, self).setUpWidgets(self)
-        
+    
     @property
     def _versions(self):
         instance = removeSecurityProxy(self.context)
         versions = IVersioned(instance)
         return versions
-        
+    
     def __call__(self):
         self.update()
         return self.render()
