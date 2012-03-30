@@ -285,14 +285,25 @@ class _AuditorFactory(object):
         #            ).filter(vkls.content_id==event.version.content_id
         #            ).order_by(vkls.status_date).all()
     # !+NO EVENT...
-    def DOCUMENT_object_version(self, ob, action="version"):
+    def DOCUMENT_object_version(self, ob, root=False):
+        """ () -> domain.Version
+        """
         # action: ("version", "reversion")
-        # !+polymorphic_itendity_multi REVERSION action MUST be same as "version"
         change_data = self._get_change_data()
-        return self._DOCUMENT_object_changed(action, ob,
+        if root:
+            note = change_data.get("note")
+            # procedure="a" for non-root versions
+            procedure = change_data.get("procedure")
+        else:
+            # root version note is repeated for non-root-versions !+?
+            note = change_data.get("note")
+            # procedure="a" for non-root versions
+            procedure = "a"
+        # !+polymorphic_identity_multi REVERSION action MUST be same as "version"
+        return self._DOCUMENT_object_changed("version", ob,
                 date_active=change_data.get("date_active"),
-                note=change_data.get("note"),
-                procedure=change_data.get("procedure"))
+                note=note,
+                procedure=procedure)
     
 
     def object_reversion(self, ob, event):
@@ -383,7 +394,6 @@ class _AuditorFactory(object):
         domain.assert_valid_change_action(action)
         user_id = get_db_user_id()
         assert user_id is not None, "Audit error. No user logged in."
-        
         # carry over a snapshot of head values
         def get_field_names_to_audit(kls):
             names_to_audit = []
@@ -421,7 +431,8 @@ class _AuditorFactory(object):
         session = Session()
         session.add(au)
         
-        # audit record meta data
+        # change/audit record
+        # !+version Version instances are created as Change instances!
         ch = domain.Change()
         ch.seq = 0 # !+ reset below, to avoid sqlalchemy violates not-null constraint
         ch.audit = au # ensures ch.audit_id, ch.note.object_id
@@ -441,7 +452,7 @@ class _AuditorFactory(object):
         
         log.debug("AUDIT [%s] %s" % (au, au.__dict__))
         log.debug("CHANGE [%s] %s" % (action, ch.__dict__))
-        return au.audit_id
+        return ch
     
     #
     

@@ -76,8 +76,9 @@ def DOCUMENT_configurable_mappings(kls):
                         audit_tbl.c.audit_id == schema.change.c.audit_id,
                     ),
                     lazy=True,
+                    order_by=schema.change.c.audit_id.desc(),
                     cascade="all",
-                    passive_deletes=False
+                    passive_deletes=False,
                 )
             # versionable
             if interfaces.IVersionable.implementedBy(kls):
@@ -529,25 +530,29 @@ mapper(domain.Doc, schema.doc,
             primaryjoin=rdb.and_(schema.doc.c.head_id ==
                 schema.parliamentary_items.c.parliamentary_item_id),
             uselist=False,
-            lazy=False),
+            lazy=False,
+        ),
         "audits": relation(domain.DocAudit,
             primaryjoin=rdb.and_(schema.doc.c.doc_id == 
                 schema.doc_audit.c.doc_id),
             backref="audit_head",
             uselist=True,
-            lazy=True),
+            lazy=True,
+            order_by=schema.doc_audit.c.audit_id.desc(),
+        ),
         "versions": relation(domain.Version,
            primaryjoin=rdb.and_(
-               schema.doc.c.doc_id ==
-                    schema.doc_audit.c.doc_id,
+               schema.doc.c.doc_id == schema.doc_audit.c.doc_id,
             ),
             secondary=schema.change,
             secondaryjoin=rdb.and_(
-                schema.change.c.audit_id == schema.doc_audit.c.audit_id,
+                schema.doc_audit.c.audit_id == schema.change.c.audit_id,
             ),
             #!+backref: version.audit.audit_head
             uselist=True,
-            lazy=True),
+            lazy=True,
+            order_by=schema.change.c.audit_id.desc(),
+        ),
     }
 )
 #!+DOCUMENT alias...
@@ -559,25 +564,46 @@ mapper(domain.Audit, schema.audit,
     polymorphic_identity=polymorphic_identity(domain.Audit)
 )
 mapper(domain.Change, schema.change,
+    #polymorphic_on=schema.change.c.action, # polymorphic discriminator
+    #polymorphic_identity="*" !+
     properties={
         "audit": relation(domain.Audit,
             primaryjoin=rdb.and_(schema.change.c.audit_id ==
                 schema.audit.c.audit_id),
             backref=backref("change", uselist=False),
             uselist=False,
-            lazy=True),
+            lazy=True,
+        ),
         "user": relation(domain.User,
             primaryjoin=rdb.and_(schema.change.c.user_id ==
                 schema.users.c.user_id),
             uselist=False,
-            lazy=False),
+            lazy=False
+        ),
+        "children": relation(domain.Change,
+            primaryjoin=rdb.and_(
+                schema.change.c.audit_id == schema.change_tree.c.parent_id,
+            ),
+            secondary=schema.change_tree,
+            secondaryjoin=rdb.and_(
+                schema.change_tree.c.child_id == schema.change.c.audit_id,
+                # child.action == action, # !+constraint
+            ),
+            backref=backref("parent", 
+                remote_side=[schema.change.c.audit_id], 
+                uselist=False
+            ),
+            uselist=True,
+            lazy=True,
+        ),
     }
 )
+mapper(domain.ChangeTree, schema.change_tree)
 
 vm = mapper(domain.Version,
     inherits=domain.Change,
     polymorphic_on=schema.change.c.action, # polymorphic discriminator
-    polymorphic_identity=polymorphic_identity(domain.Version)
+    polymorphic_identity=polymorphic_identity(domain.Version),
 )
 # !+polymorphic_identity_multi only allows a single value... but, we can tweak 
 # the version mapper's polymorphic_map to allow multiple values for 
@@ -615,6 +641,7 @@ mapper(domain.Attachment, schema.attachment,
             uselist=True,
             lazy=True,
             #cascade="all",
+            order_by=schema.attachment_audit.c.audit_id.desc(),
         ),
         "versions": relation(domain.Version,
            primaryjoin=rdb.and_(
@@ -623,14 +650,16 @@ mapper(domain.Attachment, schema.attachment,
             ),
             secondary=schema.change,
             secondaryjoin=rdb.and_(
-                schema.change.c.audit_id == schema.attachment_audit.c.audit_id,
+                schema.attachment_audit.c.audit_id == schema.change.c.audit_id,
             ),
             #!+backref: version.audit.audit_head
             #backref="audit_head", !+ERROR: version.audit_head
             # *** UnmappedColumnError: No column attachment_audit.audit_id is 
             # configured on mapper Mapper|Version|change...
             uselist=True,
-            lazy=True),
+            lazy=True,
+            order_by=schema.change.c.audit_id.desc(),
+        ),
     }
 )
 mapper(domain.AttachmentAudit, schema.attachment_audit,

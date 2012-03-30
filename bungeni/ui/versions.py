@@ -103,8 +103,7 @@ class VersionDataDescriptor(audit.ChangeDataDescriptor):
                     getter=lambda i,f:self.date_formatter.format(i.date_active)),
             column.GetterColumn(title=_("by"), 
                     getter=lambda i,f:IDCDescriptiveProperties(i.user).title),
-            column.GetterColumn(title=_("message"), 
-                    #getter=lambda i,f:i.change.description),
+            column.GetterColumn(title=_("message"),
                     getter=lambda i,f:i.note),
         ]
 
@@ -137,12 +136,13 @@ class VersionLogMixin(object):
         # simply use the versions attribute on context:
         if self._data_items is None:
             interaction = getInteraction()
-            di = [
+            # sorted desc by sqlalchemy, so following sorting not necessary:
+            #di = sorted([ (v.seq, v) for v in di ])
+            #di.reverse()
+            #self._data_items = [ v for s, v in di ]
+            self._data_items = [
                 removeSecurityProxy(v) for v in self.context.versions
                 if interaction.checkPermission("zope.View", v) ]
-            di = sorted([ (v.seq, v) for v in di ])
-            di.reverse()
-            self._data_items = [ v for s, v in di ]
         return self._data_items
     
     @property
@@ -238,7 +238,7 @@ class DVersionLogView(VersionLogMixin,
         selected_audit = self.get_version_change(selected_audit_ids[0])
         # !+ change_data not yet initialized for version requests
         change_data = IAnnotations(self.request)["change_data"] = {}
-        # !+polymorphic_itendity_multi adding action "qualifier" to note...
+        # !+polymorphic_identity_multi adding action "qualifier" to note...
         # there could be a case for an additional column on change table.
         change_data["note"] = "%s [reversion %s]" % (
             data["commit_message"], selected_audit_ids[0])

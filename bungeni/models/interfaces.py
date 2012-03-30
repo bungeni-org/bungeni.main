@@ -500,6 +500,12 @@ class IAttachmentable(interface.Interface):
     """Marker to apply attachment feature.
     """
 
+FEATURE_INTERFACES = {
+    "audit": IAuditable,
+    "version": IDocVersionable,
+    "attachment": IAttachmentable,
+}
+
 #
 
 ''' !+DATERANGEFILTER(mr, dec-2010) disabled until intention is understood

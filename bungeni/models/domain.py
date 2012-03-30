@@ -705,6 +705,7 @@ class Doc(Entity):
     """Base class for a workflowed parliamentary document.
     """
     __dynamic_features__ = True
+    
     interface.implements(
         interfaces.IDocument, # !+IDoc?
         interfaces.IBungeniParliamentaryContent, #!+should be applied as needed?
@@ -763,6 +764,9 @@ class Change(HeadParentedMixin, Entity):
     ]
 instrument_extended_properties(Change, "change")
 
+class ChangeTree(Entity):
+    """Relates a parent change with a child change.
+    """
 
 class Version(Change):
     """A version (a special kind of change action) of an object and 

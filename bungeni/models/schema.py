@@ -146,7 +146,23 @@ change = rdb.Table("change", metadata,
     
     #rdb.Column("root_status", rdb.Unicode(48)),
 )
-
+# tree to relate change actions across parent and child objects 
+# e.g. to snapshot a version tree of an object and its sub-objects. 
+# Constraint: all related changes must be of same "action".
+change_tree = rdb.Table("change_tree", metadata,
+    rdb.Column("parent_id", rdb.Integer, 
+        rdb.ForeignKey("change.audit_id"), 
+        primary_key=True,
+    ),
+    rdb.Column("child_id", rdb.Integer, 
+        rdb.ForeignKey("change.audit_id"), 
+        primary_key=True,
+    ),
+    rdb.CheckConstraint("""parent_id != child_id""", 
+        name="change_tree_check_not_same",
+    ),
+    #!+rdb.CheckConstraint(parent.change.action == child.change.action),
+)
 
 audit_sequence = rdb.Sequence("audit_sequence")
 audit = rdb.Table("audit", metadata,
