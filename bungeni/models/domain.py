@@ -1137,29 +1137,32 @@ class ItemSchedule(Entity):
     discussions = one2many("discussions",
         "bungeni.models.domain.ItemScheduleDiscussionContainer", "schedule_id")
 
-    def _get_item(self):
-        """Query for scheduled item by type and ORM mapped primary key
-        """
+    def get_item_domain(self):
+        domain_class = None
         try:
             domain_class = capi.get_type_info(self.item_type).domain_model
         except KeyError:
             #!+TYPE REGISTRY(mb, mar-2012) Try to lookup via workflow
-            # stored types and wf names not 100% mapped as at r9131@trunk
-            try:
-                log.debug("Unable to locate type %s from type info lookup." 
-                    "Trying workflow lookup.", self.item_type
-                )
-                domain_class = filter(
-                    lambda ti:(ti[1].workflow and 
-                        ti[1].workflow.name==self.item_type
-                    ),
-                    capi.iter_type_info()
-                )[0][1].domain_model
-            except IndexError:
-                domain_class = None
-                log.error("Unable to located domain  class for item of type %s",
-                    self.item_type
-                )
+            # demo data not synced with polymorphic prop changes in trunk@r9135
+            log.debug("Unable to locate type %s from type info lookup." 
+                "Trying workflow lookup.", self.item_type
+            )
+            for type_key, type_info in capi.iter_type_info():
+                if (type_info.workflow and 
+                    (type_info.workflow.name == self.item_type)
+                ):
+                    domain_class = type_info.domain_model
+                    break
+        if domain_class is None:
+            log.error("Unable to locate domain  class for item of type %s",
+                self.item_type
+            )
+        return domain_class
+
+    def _get_item(self):
+        """Query for scheduled item by type and ORM mapped primary key
+        """
+        domain_class = self.get_item_domain()
         if domain_class is None:
             return None
         item = Session().query(domain_class).get(self.item_id)
