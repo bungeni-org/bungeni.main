@@ -29,12 +29,19 @@ def interfaces(obj):
 def interfaces_implementedBy(cls):
     """Dump out list of interfaces implementedBy cls.
     """
-    return """  interfaces implementedBy %s:
-    %s""" % (cls, 
-        "\n    ".join([
-                "%s %s" % (i, id(i)) 
-                for i in interface.implementedBy(cls) ] or 
-            ["</>"] ))
+    try: 
+        return """  interfaces implementedBy %s:
+        %s""" % (cls, 
+            "\n    ".join([
+                    "%s %s" % (i, id(i)) 
+                    for i in interface.implementedBy(cls) ] or 
+                ["</>"] ))
+    except TypeError:
+        # raise TypeError("ImplementedBy called for non-factory", cls)
+        import sys
+        return """  interfaces implementedBy %s: ***ERROR*** %s""" % (
+            cls, sys.exc_info())
+
 def interfaces_providedBy(obj):
     """Dump out list of interfaces providedBy obj.
     """

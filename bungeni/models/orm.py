@@ -590,7 +590,6 @@ mapper(domain.Change, schema.change,
                 # child.action == action, # !+constraint
             ),
             backref=backref("parent", 
-                remote_side=[schema.change.c.audit_id], 
                 uselist=False
             ),
             uselist=True,

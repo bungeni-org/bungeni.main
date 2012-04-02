@@ -12,6 +12,7 @@ from bungeni.core.workflow.states import get_object_state_rpm, get_head_object_s
 from bungeni.core.workflow.interfaces import IWorkflow, IStateController
 from bungeni.models.schema import singular
 from bungeni.alchemist.container import stringKey
+from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.models.interfaces import IAuditable, IVersionable, IAttachmentable
 
 import os
@@ -64,10 +65,10 @@ def publish_to_xml(context):
     data = obj2dict(context, 1, 
         parent=None,
         include=include,
-        exclude=["file_data", "image", "logo_data", "event", 
-            "attached_files","changes"]
+        exclude=["file_data", "image", "logo_data", "event", "attached_files", 
+            "changes"]
     )
-
+    
     type = IWorkflow(context).name
     
     tags = IStateController(context).get_state().tags
@@ -184,7 +185,10 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[]):
             name += "s"
         if isinstance(value, collections.Iterable):
             res = []
-            for item in value.values():
+            # !+ allowance for non-container-api-conformant alchemist containers
+            if IAlchemistContainer.providedBy(value):
+                value = value.values()
+            for item in value:
                 i = obj2dict(item, 0)
                 if name == "versions":
                     permissions = get_head_object_state_rpm(item).permissions
@@ -193,7 +197,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[]):
             result[name] = res
         else:
             result[name] = value
-            
+    
     # Get mapped attributes
     for property in class_mapper(obj.__class__).iterate_properties:
         if property.key in exclude:
@@ -203,7 +207,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[]):
             continue
         if value is None:
             continue
-    
+        
         if isinstance(property, RelationshipProperty) and depth > 0:
             if isinstance(value, collections.Iterable):
                 result[property.key] = []
