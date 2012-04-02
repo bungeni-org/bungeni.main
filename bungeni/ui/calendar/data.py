@@ -10,11 +10,8 @@ log = __import__("logging").getLogger("bungeni.ui.calendar.data")
 
 import json
 from sqlalchemy import orm, sql
-from bungeni.alchemist import model
-from bungeni.models import domain
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core.workflow.interfaces import IWorkflow
-from bungeni.core.workflows.adapters import get_workflow
 from bungeni.ui.utils import date, common
 from bungeni.alchemist import Session
 from bungeni.ui.i18n import _
@@ -32,12 +29,12 @@ def get_schedulable_types():
         if type_info.workflow and type_info.workflow.has_feature("schedule"):
             schedulable_types.append((key, type_info))
     return dict([
-        (type_info.workflow.name, dict(
+        (type_key, dict(
             title=type_info.descriptor.container_name,
             domain_model=type_info.domain_model,
             workflow=type_info.workflow
         ))
-        for (type_name, type_info) in schedulable_types
+        for (type_key, type_info) in schedulable_types
     ])
 
 
@@ -73,10 +70,10 @@ class SchedulableItemsGetter(object):
     ):
         self.context = context
         self.item_type = item_type
-        self.filter_states = filter_states or get_workflow(
-            item_type
-        ).get_state_ids(
-            tagged=["tobescheduled"]
+        self.filter_states = (filter_states or 
+            capi.get_type_info(item_type).workflow.get_state_ids(
+                tagged=["tobescheduled"]
+            )
         )
         self.group_filter = group_filter
         try:
