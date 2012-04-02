@@ -257,16 +257,15 @@ YAHOO.bungeni.config = function(){
                                 if(recordData.type == SGlobals.types.MINUTE){
                                     YAHOO.bungeni.agendaconfig.minutesCache.add(
                                         sel_data[Columns.OBJECT_ID],
-                                        { body_text: recordData.value[0] }
+                                        recordData.value[0]
                                     );
                                     sDt.updateRow((new_index-1), sel_data);
                                 }else{
                                     var new_data_entries = new Array();
                                     for(idx=0; idx<(recordData.value.length); idx++){
-                                        new_data_entries.push({
-                                            item_title: recordData.value[idx],
-                                            item_type: recordData.type
-                                        });
+                                        var entry = recordData.value[idx];
+                                        entry[Columns.TYPE] = recordData.type;
+                                        new_data_entries.push(entry);
                                     }
                                     sDt.addRows(new_data_entries, new_index);
                                     var refresh_columns = [

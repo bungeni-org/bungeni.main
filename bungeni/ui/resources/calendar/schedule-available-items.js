@@ -364,15 +364,20 @@ YAHOO.bungeni.availableitems = function(){
             heading_tab.on("activeChange", initAvailableHeadings);
             heading_tab.getRecordValue = function(){
                 var contentEl = this.get("contentEl");
-                var heading_value = Y$.query("input", contentEl)[0].value;
+                var custom_value = Y$.query("input", contentEl)[0].value;
                 var selected_rows = hDt.getSelectedRows();
                 var heading_values = new Array();
-                if (heading_value){
+                if (custom_value){
+                    var heading_value = {};
+                    heading_value[Columns.TITLE] = custom_value;
                     heading_values.push(heading_value);
                 }
                 for(row_id=0; row_id<selected_rows.length; row_id++){
                     var data = hDt.getRecord(selected_rows[row_id]).getData();
-                    heading_values.push(data.item_title);
+                    var heading_value = {};
+                    heading_value[Columns.TITLE] = data[Columns.TITLE];
+                    heading_value[Columns.ID] = data[Columns.ID];
+                    heading_values.push(heading_value);
                 }
                 return { 
                     type:SGlobals.types.HEADING,
@@ -383,17 +388,23 @@ YAHOO.bungeni.availableitems = function(){
             var rteEditor = null;
             var minuteEditor = null;
             text_tab.getRecordValue = function(){
+                var record_value = {};
+                record_value[Columns.TITLE] = rteEditor.cleanHTML(
+                    rteEditor.getEditorHTML()
+                );
                 return {
                     type: SGlobals.types.EDITORIAL_NOTE,
-                    value: [ rteEditor.cleanHTML(rteEditor.getEditorHTML()) ]
+                    value: [ record_value ]
                 }
             }
             minute_tab.getRecordValue = function(){
+                var record_value = {};
+                record_value[Columns.BODY_TEXT] = rteEditor.cleanHTML(
+                    rteEditor.getEditorHTML()
+                );
                 return {
                     type: SGlobals.types.MINUTE,
-                    value: [ 
-                        minuteEditor.cleanHTML(minuteEditor.getEditorHTML()) 
-                    ]
+                    value: [ record_value ]
                 }
             }
             Event.onAvailable("add-text-record", function(event){
@@ -409,7 +420,13 @@ YAHOO.bungeni.availableitems = function(){
                 minuteEditor.render();
             });
             this.showEvent.subscribe(function(){
-                if(hDt){ hDt.unselectAllRows(); }
+                if(hDt){ 
+                    hDt.unselectAllRows(); 
+                    if(!YAHOO.bungeni.unsavedChanges){
+                        //refresh headings
+                        hDt.refresh();
+                    }
+                }
                 if(rteEditor){ rteEditor.setEditorHTML(""); }
                 if(minuteEditor){ minuteEditor.setEditorHTML(""); }
                 Y$.query("input", heading_tab.get("contentEl"))[0].value = "";

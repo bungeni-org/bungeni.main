@@ -21,14 +21,16 @@ YAHOO.bungeni.scheduling = function(){
     var RequestObject = {
         handleSuccess: function(o){
             var sDt = YAHOO.bungeni.scheduling.getScheduleTable();
-            Dialogs.blocking.hide();
             YAHOO.bungeni.unsavedChanges = false;
             if(this.post_op){
                 for(idx=0;idx<(sDt.getRecordSet().getLength());idx++){
                     YAHOO.bungeni.agendaconfig.handlers.saveMinutes(idx);
                 }
                 sDt.refresh();
+            }else{
+                sDt.refresh();
             }
+            Dialogs.blocking.hide();
         },
         handleFailure: function(o){
             Dialogs.blocking.hide();
