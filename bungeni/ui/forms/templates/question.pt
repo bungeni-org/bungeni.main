@@ -1,7 +1,0 @@
-<div>
-  <h2 tal:content="view/subject"> Title of the question </h2>
-  <div tal:content="structure view/question_text">
-  The text of the question
-  </div>
-</div>
-      
