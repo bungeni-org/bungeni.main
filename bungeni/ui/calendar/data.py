@@ -27,10 +27,10 @@ from bungeni.utils.capi import capi
 # can be tested for with: workflow.has_feature"schedule")
 
 def get_schedulable_types():
-    schedulable_types = filter(
-        lambda ti:(ti[1].workflow and ti[1].workflow.has_feature("schedulable")), 
-        capi.iter_type_info()
-    )
+    schedulable_types = []
+    for (key, type_info) in capi.iter_type_info():
+        if type_info.workflow and type_info.workflow.has_feature("schedule"):
+            schedulable_types.append((key, type_info))
     return dict([
         (type_info.workflow.name, dict(
             title=type_info.descriptor.container_name,

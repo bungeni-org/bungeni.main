@@ -203,6 +203,10 @@ class IItemSchedule(interface.Interface):
 class IEditorialNote(interface.Interface):
     """Marker interface for editorial notes in a sitting's agenda"""
 
+class ISchedulable(interface.Interface):
+    """Marker interfaces for domain objects that are schedulable
+    """
+
 class IScheduleText(interface.Interface):
     """Marker interface for text records in and agenda.
     This covers `IHeading` and `IEditorialNote'` at this point.
@@ -210,7 +214,6 @@ class IScheduleText(interface.Interface):
 
 class ISittingType(interface.Interface):
     pass
-
 
 class IItemScheduleDiscussion(interface.Interface):
     pass

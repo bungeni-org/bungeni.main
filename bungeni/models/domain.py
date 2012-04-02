@@ -277,11 +277,12 @@ def enable_attachment(kls):
     return kls
 configurable_domain.feature_decorators["attachment"] = enable_attachment
 
-def enable_schedulable(kls):
+def enable_schedule(kls):
     """Decorator for schedulable types
     """
+    interface.classImplements(kls, interfaces.ISchedulable)
     return kls
-configurable_domain.feature_decorators["schedulable"] = enable_schedulable
+configurable_domain.feature_decorators["schedule"] = enable_schedule
 
 # !+/PARAMETRIZABLE_DOCTYPES
 
