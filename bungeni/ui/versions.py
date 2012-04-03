@@ -21,6 +21,7 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.i18n import translate
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.annotation.interfaces import IAnnotations
+from zope.publisher.interfaces.browser import IBrowserPublisher
 
 from sqlalchemy import orm
 
@@ -86,6 +87,7 @@ class CustomSelectionColumn(column.SelectionColumn):
 
 # versions are a special "audit" case
 
+
 class VersionDataDescriptor(audit.ChangeDataDescriptor):
     
     # !+bungeni_custom
@@ -95,8 +97,8 @@ class VersionDataDescriptor(audit.ChangeDataDescriptor):
                     lambda item:str(item.audit_id), name="selection"),
             column.GetterColumn(title=_("version"),
                     getter=lambda i,f:"%s" % (i.audit_id),
-                    cell_formatter=lambda g,i,f:'<a href="%s/versions/obj-%d">%s</a>' 
-                        % (f.url, i.audit_id, i.seq)),
+                    cell_formatter=lambda g,i,f:'<a href="%s/version-log/%s">%s</a>'
+                        % (f.url, i.__name__, i.seq)),
             column.GetterColumn(title=_("procedure"), 
                     getter=lambda i,f:i.procedure),
             column.GetterColumn(title=_("modified"), 
@@ -137,9 +139,6 @@ class VersionLogMixin(object):
         if self._data_items is None:
             interaction = getInteraction()
             # sorted desc by sqlalchemy, so following sorting not necessary:
-            #di = sorted([ (v.seq, v) for v in di ])
-            #di.reverse()
-            #self._data_items = [ v for s, v in di ]
             self._data_items = [
                 removeSecurityProxy(v) for v in self.context.versions
                 if interaction.checkPermission("zope.View", v) ]
@@ -162,18 +161,24 @@ class VersionLogMixin(object):
         return formatter()
 
 @register.view(IDocVersionable, layer=IWorkspaceOrAdminSectionLayer, 
-    name="version-log")
+    name="version-log", 
+    protect={"zope.Public": 
+        dict(attributes=["publishTraverse", "browserDefault", "__call__"])})
 class DVersionLogView(VersionLogMixin, 
-        browser.BungeniBrowserView, forms.common.BaseForm
+        browser.BungeniBrowserView, 
+        forms.common.BaseForm,
     ):
     """Version Log View for an object
     """
+    interface.implements(IBrowserPublisher)
+    
     class IVersionEntry(interface.Interface):
         commit_message = schema.Text(title=_("Change Message"))
     form_fields = formlib.form.Fields(IVersionEntry)
     
     render = ViewPageTemplateFile("templates/version.pt")
     
+    __name__ = "version-log"
     _page_title = _("Version Log")
     
     diff_view = None
@@ -185,6 +190,13 @@ class DVersionLogView(VersionLogMixin,
         if hasattr(self.context, "short_name"):
             self._page_title = "%s: %s" % (
                 self._page_title, translate(self.context.short_name))
+    
+    def publishTraverse(self, request, ver_seq):
+        seq = int(ver_seq[len("ver-"):])
+        for ver in self.context.versions:
+            if ver.seq == seq:
+                removeSecurityProxy(ver).__parent__ = self
+                return ver
     
     def has_write_permission(self, context):
         """Check that  the user has the rights to edit the object, if not we 
@@ -290,8 +302,6 @@ class DVersionLogView(VersionLogMixin,
     def __call__(self):
         self.update()
         return self.render()
-
-
 
 
 #@register.view(IVersionable, layer=IWorkspaceOrAdminSectionLayer, 

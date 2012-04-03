@@ -603,6 +603,26 @@ vm = mapper(domain.Version,
     inherits=domain.Change,
     polymorphic_on=schema.change.c.action, # polymorphic discriminator
     polymorphic_identity=polymorphic_identity(domain.Version),
+    properties={
+        #!+version of an attachment is not attachmentable
+        "attachments": relation(domain.Version,
+            primaryjoin=rdb.and_(
+                schema.change.c.audit_id == schema.change_tree.c.parent_id,
+                #schema.change.c.action == "version", # !+constraint
+            ),
+            secondary=schema.change_tree,
+            secondaryjoin=rdb.and_(
+                schema.change_tree.c.child_id == schema.change.c.audit_id,
+                #"version" == schema.change.c.action, # !+constraint
+            ),
+            #backref=backref("parent", 
+            #    uselist=False
+            #),
+            uselist=True,
+            lazy=True,
+        ),
+        #"events": relation(domain.Event, uselist=True),
+    }
 )
 # !+polymorphic_identity_multi only allows a single value... but, we can tweak 
 # the version mapper's polymorphic_map to allow multiple values for 

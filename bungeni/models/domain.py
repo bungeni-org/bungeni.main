@@ -776,7 +776,23 @@ class Version(Change):
     interface.implements(
         interfaces.IVersion,
     )
-
+    
+    @property
+    def __name__(self):
+        return "ver-%s" % (self.seq)
+    
+    files = one2many("files",
+        "bungeni.models.domain.AttachmentContainer", "head_id")
+    
+    # !+DOCUMENT tmp dummy values to avoid attr errors, etc...
+    def __getattr__(self, name):
+        print "!+DOCUMENT VERSION->AUDIT...", name, self.audit
+        if name.startswith("file_"):
+            name = name[len("file_"):]
+        return getattr(self.audit, name)
+    @property
+    def attached_files(self): return self.attachments
+#!+VERSION_CLASS_PER_AUDIT_TYPE?
 
 class Audit(HeadParentedMixin, Entity):
     """Base (abstract) audit record for a document.
@@ -820,14 +836,21 @@ class Audit(HeadParentedMixin, Entity):
         return locals()
     audit_head_id = property(**audit_head_id())
 
-
 class DocAudit(Audit):
     """An audit record for a document.
     """
     @property
     def label(self):
         return self.short_title
-
+    
+    #!+DOCUMENT
+    @property
+    def short_name(self): return self.short_title
+    @property
+    def full_name(self): return self.long_title
+    @property
+    def body_text(self): return self.body
+    
     extended_properties = [
     ]
 #instrument_extended_properties(DocAudit, "doc_audit")
@@ -877,6 +900,14 @@ class AttachmentAudit(Audit):
     @property
     def label(self):
         return self.title
+    
+    # !+DOCUMENT
+    @property
+    def short_name(self): return self.title
+    @property
+    def full_name(self): return self.title
+    @property
+    def body_text(self): return self.description
 
 class ParliamentaryItem(Entity):
     """

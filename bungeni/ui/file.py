@@ -169,7 +169,7 @@ class FileListingViewlet(FileListingMixin, browser.BungeniItemsViewlet):
     """Viewlet to list attachments of a given document (head).
     """
     # Attachments are records in the attached_files table.
-
+    
     render = ViewPageTemplateFile("templates/listing-viewlet.pt")
     view_title = "Attachments"
     view_id = "attachments"
@@ -189,13 +189,26 @@ class VersionFileListingViewlet(FileListingViewlet):
     """
     # Version attachments are records in the attached_file_versions table.
     
+    def __init__(self, context, request, view, manager):
+        super(VersionFileListingViewlet, self).__init__(context, request, view, manager)
+        # !+AttachmentableVersion viewlet should not trigger for versions
+        # whose head item is not Attachmentable! We only want to display the
+        # list attachments on versions whose head item is Attachmentable...
+        self.for_display = \
+            IAttachmentable.providedBy(removeSecurityProxy(self.context).head)
+    
     @property
     def columns(self):
+        def attachment_version_uri(i):
+            if IAttachedFileVersion.providedBy(i): # !+DOCUMENT
+                return "obj-%d/versions/obj-%d" % (i.content_id, i.version_id)
+            else: # bungeni.models.domain.Version
+                return "obj-%d/version-log/%s" % (i.attachment_id, i.__name__)            
         return [
             column.GetterColumn(title=_("file"),
                 getter=lambda i,f:"%s" % (i.file_title),
-                cell_formatter=lambda g,i,f:'<a href="%s/files/obj-%d/versions/obj-%d">%s</a>' 
-                    % (f.url, i.content_id, i.version_id, g)),
+                cell_formatter=lambda g,i,f:'<a href="%s/files/%s">%s</a>' 
+                    % (f.url, attachment_version_uri(i), g)),
             column.GetterColumn(title=_("status"), 
                 getter=lambda i,f:i.status),
             column.GetterColumn(title=_("modified"), 
