@@ -1,3 +1,5 @@
+# !+ CLEAN UP THIS FILE, MINIMALLY AT LEAST THE SRC CODE FORMATTING !
+
 from sqlalchemy import orm
 from zope.traversing.browser import absoluteURL
 from zope.traversing.browser.absoluteurl import AbsoluteURL
@@ -59,7 +61,7 @@ class BusinessAbsoluteURLView(CustomAbsoluteURL):
     """
     section = "business"
 
-class AttachedFileBusinessAbsoluteURLView(BusinessAbsoluteURLView):
+class AttachmentBusinessAbsoluteURLView(BusinessAbsoluteURLView):
     
     def __str__(self):
         item_id = self.context.item_id

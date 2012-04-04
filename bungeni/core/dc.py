@@ -596,22 +596,22 @@ class EventProperties(DescriptiveProperties):
 
 
 @register.adapter()
-class AttachedFileDescriptiveProperties(DescriptiveProperties):
-    component.adapts(interfaces.IAttachedFile)
+class AttachmentDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.IAttachment)
 
     @property
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return context.file_title
+        return context.title
 
     @property
     def description(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return u"%s  (%s)" % (context.file_name, context.file_mimetype)
+        return u"%s  (%s)" % (context.name, context.mimetype)
 
-
+'''
 @register.adapter()
 class AttachedFileVersionDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IAttachedFileVersion)
@@ -627,7 +627,7 @@ class AttachedFileVersionDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         return u"%s  (%s)" % (context.file_name, context.file_mimetype)
-
+'''
 
 @register.adapter()
 class HeadingDescriptiveProperties(DescriptiveProperties):

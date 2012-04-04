@@ -61,8 +61,8 @@
   />
 
   <adapter
-      for="bungeni.models.interfaces.IAttachedFile"
-      factory=".search.AttachedFileToSearchResult"
+      for="bungeni.models.interfaces.IAttachment"
+      factory=".search.AttachmentToSearchResult"
       trusted="True"
       permission="zope.Public"
       provides=".search.ISearchResult"

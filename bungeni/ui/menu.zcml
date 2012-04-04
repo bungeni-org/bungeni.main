@@ -796,22 +796,15 @@
         for="bungeni.models.interfaces.IAttachmentable"
         title="Add file..."
         action="./files/add"
-        permission="bungeni.fileattachment.Add"
+        permission="bungeni.attachment.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="20"
-    />
-    <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.AttachedFileContainer"
-        title="Add file..."
-        action="./add"
-        permission="bungeni.fileattachment.Add"
-        layer=".interfaces.IAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.domain.AttachmentContainer"
         title="Add file..."
         action="./add"
-        permission="bungeni.fileattachment.Add"
+        permission="bungeni.attachment.Add"
         layer=".interfaces.IAdminSectionLayer"
     />
     
@@ -1212,13 +1205,13 @@
     />
 
     <browser:menuItems menu="context_actions"
-        for="bungeni.models.interfaces.IAttachedFile"
+        for="bungeni.models.interfaces.IAttachment"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer">
         <browser:menuItem action="edit" title="Edit" order="20"
-            permission="bungeni.fileattachment.Edit"
+            permission="bungeni.attachment.Edit"
         />
         <browser:menuItem action="delete" title="Delete" order="30"
-            permission="bungeni.fileattachment.Delete"
+            permission="bungeni.attachment.Delete"
         />
         <browser:menuItem action="download" title="Download" order="40"
             permission="zope.View"

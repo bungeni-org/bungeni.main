@@ -105,7 +105,7 @@
                 
                 owner
                 itemsignatories
-                attached_files
+                attachments
                 
                 parliamentary_item_id
                 parliament_id
@@ -809,35 +809,6 @@
         />
     </class>
     
-    <class class=".domain.AttachedFile">
-        <require permission="zope.View"
-            attributes="
-                attached_file_id
-                item_id
-                file_version_id
-                file_title
-                file_description
-                file_data
-                file_name
-                file_mimetype
-                status
-                status_date
-            "
-        />
-        <require permission="bungeni.fileattachment.Edit"
-            set_attributes="
-                attached_file_id
-                item_id
-                file_version_id
-                file_title
-                file_description
-                file_data
-                file_name
-                file_mimetype
-            "
-        />
-    </class>
-	
     <class class=".domain.User">
         <require permission="zope.View"
             attributes="

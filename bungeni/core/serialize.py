@@ -65,7 +65,7 @@ def publish_to_xml(context):
     data = obj2dict(context, 1, 
         parent=None,
         include=include,
-        exclude=["file_data", "image", "logo_data", "event", "attached_files", 
+        exclude=["data", "image", "logo_data", "event", "attachments", 
             "changes"]
     )
     
@@ -97,27 +97,27 @@ def publish_to_xml(context):
     
     has_attachments = False
     if IAttachmentable.implementedBy(context.__class__):
-        attached_files = getattr(context, "attached_files", None)
-        if attached_files:
+        attachments = getattr(context, "attachments", None)
+        if attachments:
             has_attachments = True
             # add xml file to list of files to zip
             files.append("%s.xml" % (file_path))
-            data["attached_files"] = []
-            for attachment in attached_files:
+            data["attachments"] = []
+            for attachment in attachments:
                 # serializing attachment
                 attachment_dict = obj2dict(attachment, 1,
                     parent=context,
-                    exclude=["file_data", "event", "versions", "changes"])
+                    exclude=["data", "event", "versions", "changes"])
                 permissions = get_object_state_rpm(attachment).permissions
                 attachment_dict["permissions"] = \
                     get_permissions_dict(permissions)
                 # saving attachment to tmp
                 with tmp(delete=False) as f:
-                    f.write(attachment.file_data)
+                    f.write(attachment.data)
                     files.append(f.name)
                     attachment_dict["saved_file"] = \
                         os.path.split(f.name)[-1]  
-                data["attached_files"].append(attachment_dict)
+                data["attachments"].append(attachment_dict)
     
     # saving xml file
     with open("%s.xml" % (file_path), "w") as file:

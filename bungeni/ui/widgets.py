@@ -226,9 +226,9 @@ class FileInputWidget(ImageInputWidget):
             )._toFieldValue((update_action, upload))
         if value is None:
             return self.context.missing_value
-        self.request.form["form.file_mimetype"] = upload.headers.getheader(
+        self.request.form["form.mimetype"] = upload.headers.getheader(
             "Content-Type")
-        self.request.form["form.file_name"] = upload.filename
+        self.request.form["form.name"] = upload.filename
         return value
 
 class NoInputWidget(TextWidget):

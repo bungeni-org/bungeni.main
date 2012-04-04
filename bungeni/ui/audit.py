@@ -28,7 +28,7 @@ from bungeni.ui.utils import date, debug
 from bungeni.ui import browser
 from bungeni.utils import register
 
-CHANGE_TYPES = ("head", "signatory", "attachedfile", "event")
+CHANGE_TYPES = ("head", "signatory", "attachment", "event")
 CHANGE_ACTIONS = domain.CHANGE_ACTIONS
 # ("add", "modify", "workflow", "remove", "version", "reversion")
 
@@ -74,10 +74,10 @@ class ChangeDataProvider(object):
                     append_visible_changes_on_item(s)
             
             # changes on item attachments
-            if ("attachedfile" in self.include_change_types 
+            if ("attachment" in self.include_change_types 
                     and hwf.has_feature("attachment") #!+IAttachmentable?
                 ):
-                attachments = [ f for f in self.head.attached_files
+                attachments = [ f for f in self.head.attachments
                     if interaction.checkPermission("zope.View", f)
                 ]
                 for f in attachments:
@@ -103,9 +103,9 @@ class ChangeDataProvider(object):
         print "==== !+AUDITLOG add optional inclusion of auditing " \
             "of sub-objects for:", head
         # attached files:
-        print "---- !+ATTACHED_FILES", head.attached_files, head.files, [
+        print "---- !+ATTACHMENTS", head.attachments, head.files, [
             f for f in head.files ]
-        print "---- !+ATTACHED_FILES", list(head.files.values()), head.files.values()
+        print "---- !+ATTACHMENTS", list(head.files.values()), head.files.values()
         # events:
         print "---- !+EVENT", head.events, head.event, [ 
             e for e in head.event ]
@@ -126,7 +126,7 @@ class ChangeDataProvider(object):
         # convention for attributes for the real data list or for attributes 
         # to Alchemist Managed Container of string ids, e.g:
         #   signatories:[Signatory], amc_signatories:Managed(str)
-        #   attached_files, (files->) amc_attached_files
+        #   attachments, (files->) amc_attachments
         #   (events->) events, (event->) amc_events
         # or, adopt pattern: @xxx -> amc_xxx.values()
         '''
@@ -205,9 +205,9 @@ def _format_description(change):
         # description for (event, *)
         return """<a href="event/obj-%s">%s</a> %s""" % (
             audit.audit_head_id, _label(audit), _note(audit))
-    elif audit_type_name == "attachedfile":
-        file_title = "%s" % (audit.head.file_title)
-        # !+ _(change.head.attached_file_type), change.head.file_name)
+    elif audit_type_name == "attachment":
+        file_title = "%s" % (audit.audit_head.title)
+        # !+ _(change.head.type), change.head.name)
         if change.action == "version":
             version_id = _notes(change).get("version_id", None)
             if version_id:

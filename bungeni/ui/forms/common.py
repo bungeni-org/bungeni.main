@@ -251,9 +251,7 @@ class DisplayForm(catalyst.DisplayForm, browser.BungeniBrowserView):
 
 
 @register.view(domain.AttachmentContainer, layer=IBungeniSkin, name="add",
-    protect={"bungeni.fileattachment.Add": register.VIEW_DEFAULT_ATTRS})
-@register.view(domain.AttachedFileContainer, layer=IBungeniSkin, name="add",
-    like_class=domain.AttachmentContainer) #!+DOCUMENT
+    protect={"bungeni.attachment.Add": register.VIEW_DEFAULT_ATTRS})
 class AddForm(BaseForm, catalyst.AddForm):
     """Custom add-form for Bungeni content.
 
@@ -404,8 +402,8 @@ class AddForm(BaseForm, catalyst.AddForm):
             self._next_url = url.absoluteURL(self.context, self.request) + \
                              "/add?portal_status_message=%s Added" % name
 
-@register.view(domain.AttachedFile, layer=IBungeniSkin, name="edit",
-    protect={"bungeni.fileattachment.Edit": register.VIEW_DEFAULT_ATTRS})
+@register.view(domain.Attachment, layer=IBungeniSkin, name="edit",
+    protect={"bungeni.attachment.Edit": register.VIEW_DEFAULT_ATTRS})
 class EditForm(BaseForm, catalyst.EditForm):
     """Custom edit-form for Bungeni content.
     """
@@ -771,8 +769,8 @@ class ReorderForm(PageForm):
 
 
 
-@register.view(domain.AttachedFile, layer=IBungeniSkin, name="delete",
-    protect={"bungeni.fileattachment.Delete": register.VIEW_DEFAULT_ATTRS})
+@register.view(domain.Attachment, layer=IBungeniSkin, name="delete",
+    protect={"bungeni.attachment.Delete": register.VIEW_DEFAULT_ATTRS})
 class DeleteForm(PageForm):
     """Delete-form for Bungeni content.
 

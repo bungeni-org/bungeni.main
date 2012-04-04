@@ -37,6 +37,7 @@ Supported xapian query operators
  |  OP_XOR = 3
  |
 """
+# !+ CLEAN UP THIS FILE, MINIMALLY AT LEAST THE SRC CODE FORMATTING !
 
 import time
 import urllib
@@ -78,11 +79,11 @@ MINIMAL_PARTIAL_QUERY = 4
 ALLOWED_TYPES = {'workspace': ('Question', 'Motion', 'TabledDocument',\
                                'Bill', 'AgendaItem'),\
                  'business': ('Question', 'Motion', 'Committee', 'Bill', \
-                              'TabledDocument', 'AgendaItem', 'AttachedFile'),
+                              'TabledDocument', 'AgendaItem', 'Attachment'),
                  'archive': ('Question', 'Motion', 'Committee', \
                              'Bill', 'TabledDocument', 'AgendaItem', \
                              'Parliament', 'PoliticalGroup',
-                             'MemberOfParliament', "AttachedFile"),
+                             'MemberOfParliament', "Attachment"),
                  'members': ('MemberOfParliament', 'PoliticalGroup'),
                  'admin': ('Question', 'Motion', 'Committee', 'Bill', \
                            'TabledDocument', 'AgendaItem', 'Parliament', \
@@ -132,7 +133,7 @@ class IAdvancedSearch(ISearch):
                                          "Goverment",
                                          "Ministry",
                                          "Report",
-                                         "AttachedFile",
+                                         "Attachment",
                                          "Bill",
                                          "GroupSitting",
                                          "PoliticalGroup"), required=False)
@@ -194,18 +195,18 @@ class ParliamentaryItemToSearchResult(object):
         return self.context.body_text
 
 
-class AttachedFileToSearchResult(object):
+class AttachmentToSearchResult(object):
 
     def __init__(self, context):
         self.context = context
 
     @property
     def title(self):
-        return self.context.file_title
+        return self.context.title
 
     @property
     def annotation(self):
-        return self.context.file_description
+        return self.context.description
 
 
 class GroupToSearchResult(object):

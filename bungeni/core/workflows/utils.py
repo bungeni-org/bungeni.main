@@ -64,7 +64,7 @@ def formatted_user_email(user):
 
 def get_owner_pi(context):
     """Get the user who has been previously set as the owner of this item 
-    (must support IOwned i.e. ParliamentaryItem or AttachedFile).
+    (must support IOwned i.e. ParliamentaryItem or Attachment).
     """
     assert interfaces.IOwned.providedBy(context), \
         "Not an Owned (parliamentary) Item: %s" % (context)

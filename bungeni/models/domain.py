@@ -14,6 +14,7 @@ import md5, random, string
 import datetime
 
 from zope import interface, location
+import ore.xapian.interfaces
 from bungeni.alchemist import Session
 from bungeni.alchemist import model
 from bungeni.alchemist.traversal import one2many, one2manyindirect
@@ -23,6 +24,7 @@ from sqlalchemy.orm import class_mapper, object_mapper
 import interfaces
 
 from bungeni.utils.capi import capi
+
 
 def object_hierarchy_type(object):
     if isinstance(object, User):
@@ -266,10 +268,10 @@ def enable_attachment(kls):
     Executed on adapters.load_workflow()
     
     !+ currently assumes that the object is versionable.
-    !+ domain.AttachedFile is the only versionable type that is not a PI.
+    !+ domain.Attachment is the only versionable type that is not a PI.
     """
-    # !+ domain.AttachedFile is versionable, but does not support attachments
-    assert kls is not AttachedFile
+    # !+ domain.Attachment is versionable, but does not support attachments
+    assert kls is not Attachment
     # assign interface (versions property added downstream)
     name = kls.__name__
     interface.classImplements(kls, interfaces.IAttachmentable)
@@ -787,11 +789,7 @@ class Version(Change):
     # !+DOCUMENT tmp dummy values to avoid attr errors, etc...
     def __getattr__(self, name):
         print "!+DOCUMENT VERSION->AUDIT...", name, self.audit
-        if name.startswith("file_"):
-            name = name[len("file_"):]
         return getattr(self.audit, name)
-    @property
-    def attached_files(self): return self.attachments
 #!+VERSION_CLASS_PER_AUDIT_TYPE?
 
 class Audit(HeadParentedMixin, Entity):
@@ -875,7 +873,8 @@ class Attachment(HeadParentedMixin, Entity):
     __dynamic_features__ = True # !+ should be False?
     interface.implements(
         interfaces.IDocument, # !+IDoc?
-        interfaces.IAttachedFile,
+        interfaces.IAttachment,
+        ore.xapian.interfaces.IIndexable, # !+bungeni_custom
     )
     
     # the owner of the "owning" item
@@ -886,13 +885,6 @@ class Attachment(HeadParentedMixin, Entity):
     @property
     def owner(self):
         return self.head.owner
-
-    @property # !+ DOCUMENT, core.dc.AttachedFileDescriptiveProperties
-    def file_title(self):
-        return self.title
-    @property # !+ DOCUMENT, ui/file.py", line 108
-    def attached_file_id(self):
-        return self.attachment_id
 
 class AttachmentAudit(Audit):
     """An audit record for an attachment.
@@ -924,7 +916,7 @@ class ParliamentaryItem(Entity):
     
     sort_replace = {"owner_id": ["last_name", "first_name"]}
     files = one2many("files",
-        "bungeni.models.domain.AttachedFileContainer", "item_id")
+        "bungeni.models.domain.AttachmentContainer", "head_id")
     signatories = one2many("signatories",
         "bungeni.models.domain.SignatoryContainer", "item_id")
     # !+NAMING(mr, jul-2011) plural!
@@ -961,27 +953,8 @@ class ParliamentaryItem(Entity):
         # to overload as appropriate for their respective workflows.
         return self._get_workflow_date("submitted")
 
-''' !+TYPES_CUSTOM
-class AttachedFileType(object):
-    """Type of attachment: image/annex/... 
-    """
-    interface.implements(interfaces.ITranslatable)
-'''
+    attachments= [] # relation(domain.Attachment), #!+PI_TMP_attachments
 
-# versionable (by default), but not a ParliamentaryItem
-class AttachedFile(HeadParentedMixin, Entity):
-    """Files attached to a parliamentary item.
-    """
-    __dynamic_features__ = True # !+ should be False?
-    
-    # the owner of the "owning" item !+HEAD_DOCUMENT_ITEM
-    @property
-    def owner_id(self):
-        return self.head.owner_id
-    
-    @property
-    def owner(self):
-        return self.head.owner
 
 class Heading(Entity):
     """A heading in a report.

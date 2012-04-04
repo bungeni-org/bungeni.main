@@ -127,22 +127,22 @@ def configurable_mappings(kls):
     if interfaces.IAttachmentable.implementedBy(kls):
         # !+ current constrain
         assert version_kls, "May not be IAttachmentable and not IVersionable"
-        class_mapper(version_kls).add_property("attached_files",
-            relation(domain.AttachedFileVersion,
-                primaryjoin=rdb.and_(
-                    version_tbl.c.content_id ==
-                        schema.attached_file_versions.c.item_id,
-                    version_tbl.c.version_id ==
-                        schema.attached_file_versions.c.file_version_id
-                ),
-                foreign_keys=[
-                    schema.attached_file_versions.c.item_id,
-                    schema.attached_file_versions.c.file_version_id
-                ]
-            )
-        )
+        #class_mapper(version_kls).add_property("attachments",
+        #    relation(domain.AttachedFileVersion,
+        #        primaryjoin=rdb.and_(
+        #            version_tbl.c.content_id ==
+        #                schema.attached_file_versions.c.item_id,
+        #            version_tbl.c.version_id ==
+        #                schema.attached_file_versions.c.file_version_id
+        #        ),
+        #        foreign_keys=[
+        #            schema.attached_file_versions.c.item_id,
+        #            schema.attached_file_versions.c.file_version_id
+        #        ]
+        #    )
+        #)
         version_kls.files = one2many("files",
-            "bungeni.models.domain.AttachedFileContainer", "file_version_id")
+            "bungeni.models.domain.AttachmentContainer", "file_version_id")
     # finally, add any properties to the master kls itself
     def mapper_add_configurable_properties(kls):
         kls_mapper = class_mapper(kls)
@@ -555,9 +555,6 @@ mapper(domain.Doc, schema.doc,
         ),
     }
 )
-#!+DOCUMENT alias...
-domain.Doc.attached_files = domain.Doc.attachments
-
 
 mapper(domain.Audit, schema.audit,
     polymorphic_on=schema.audit.c.audit_type, # polymorphic discriminator
@@ -706,12 +703,12 @@ mapper(domain.ParliamentaryItem, schema.parliamentary_items,
         # !+ITEMSIGNATORIES(mr, jan-2011) Adding conventionally named property 
         # that should replace "itemsignatories"...
         "item_signatories": relation(domain.Signatory),
-        "attached_files": relation(domain.AttachedFile,
-            # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", 
-            # "document", "item"
-            backref=backref("head",
-                remote_side=schema.parliamentary_items.c.parliamentary_item_id)
-        ),
+        #"attachments": relation(domain.Attachment, #!+PI_TMP_attachments
+        #    # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", 
+        #    # "document", "item"
+        #    backref=backref("head",
+        #        remote_side=schema.parliamentary_items.c.parliamentary_item_id)
+        #),
         # !+DOCUMENT
         "events": relation(domain.Event, uselist=True),
     }
@@ -775,17 +772,6 @@ mapper(domain.TabledDocument, schema.tabled_documents,
     properties={}
 )
 
-
-#!+TYPES_CUSTOM  mapper(domain.AttachedFileType, schema.attached_file_types)
-mapper(domain.AttachedFile, schema.attached_files,
-    properties={
-        "dhead": relation(domain.Doc, #!+DHEAD
-            primaryjoin=(schema.attached_files.c.dhead_id == schema.doc.c.doc_id),
-            uselist=False,
-            lazy=False
-        ),
-    }
-)
 
 #Items scheduled for a sitting expressed as a relation
 # to their item schedule

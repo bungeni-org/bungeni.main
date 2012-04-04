@@ -124,7 +124,7 @@ class DownloadDocument(BrowserView):
                     self.document.start_date.isoformat(), 
                     self.document.end_date.isoformat()))
             )
-        return u"%s.%s" %(fname, self.document_type)
+        return u"%s.%s" % (fname, self.document_type)
 
     def generateDocumentText(self):
         """Generate document using template from templates stored in
@@ -217,14 +217,14 @@ class DownloadDocument(BrowserView):
         # with the odt/pdf doc or track changes to a doc
         # Add caching by state. items in terminal states do not change
         if cached:
-            d = [ f.file_title for f in self.document.attached_files ]
+            d = [ f.title for f in self.document.attachments ]
             if self.document_type not in d:
-                attached_file = domain.AttachedFile()
-                attached_file.file_title = self.document_type
-                attached_file.file_data = self.generateDoc()
-                attached_file.language = self.document.language
-                attached_file.attached_file_type = "system" # !+ATTACHED_FILE_TYPE_SYSTEM
-                self.document.attached_files.append(attached_file)
+                att = domain.Attachment()
+                att.title = self.document_type
+                att.data = self.generateDoc()
+                att.language = self.document.language
+                att.type = "system" # !+ATTACHED_FILE_TYPE_SYSTEM
+                self.document.attachments.append(att)
                 session = Session()
                 session.add(self.document)
                 session.flush()
@@ -235,11 +235,11 @@ class DownloadDocument(BrowserView):
                 #request eg. auditing. Report attachments are not displayed in 
                 #listings or any other place so not triggering the event 
                 #shouldn't do any harm.
-                #notify(ObjectCreatedEvent(attached_file))
-            for f in self.document.attached_files:
-                if f.file_title == self.document_type: 
+                #notify(ObjectCreatedEvent(att))
+            for f in self.document.attachments:
+                if f.title == self.document_type: 
                     self.setHeader(self.document_type)
-                    return f.file_data.__str__()
+                    return f.data.__str__()
             #If file is not found
             try:
                 return self.error_template()

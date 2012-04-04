@@ -196,7 +196,6 @@ attachment_type = vocabulary.SimpleVocabulary([
     # option in the UI?
     #vocabulary.SimpleTerm("system", title="System"),
 ])
-attached_file_type = attachment_type # !+DOCUMENT
 attendance_type = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm("present", title="Present"),
     vocabulary.SimpleTerm("absence_justified", title="Absence justified"),

@@ -60,9 +60,9 @@
     <!-- Business section -->
     
     <browser:view
-        for="bungeni.models.interfaces.IAttachedFile"
+        for="bungeni.models.interfaces.IAttachment"
         name="get_url"
-        class=".absoluteurl.AttachedFileBusinessAbsoluteURLView"
+        class=".absoluteurl.AttachmentBusinessAbsoluteURLView"
         layer="bungeni.ui.interfaces.IBusinessSectionLayer"
         permission="zope.Public"
         />

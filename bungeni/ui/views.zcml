@@ -51,7 +51,7 @@
     />
 
   <browser:view
-     for="bungeni.models.interfaces.IAttachedFile"
+     for="bungeni.models.interfaces.IAttachment"
      permission="zope.View"
      name="download"
      class=".file.FileDownload"
@@ -64,8 +64,8 @@
      class=".file.FileDownload"
      />
 
-    <browser:view for="bungeni.models.interfaces.IAttachedFile"
-        permission="bungeni.attachedfile.wf.attached.inactive"
+    <browser:view for="bungeni.models.interfaces.IAttachment"
+        permission="bungeni.attachment.wf.attached.inactive"
         name="deactivate"
         class=".file.FileDeactivate"
     /><!-- !+WORKFLOW_TRANSITION(mr, feb-2011) -->

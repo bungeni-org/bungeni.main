@@ -67,8 +67,8 @@
     <adapter for="bungeni.models.interfaces.IBungeniGroup"
         factory=".index.ContentIndexer"
     />
-    <adapter for="bungeni.models.interfaces.IAttachedFile"
-        factory=".index.AttachedFileIndexer"
+    <adapter for="bungeni.models.interfaces.IAttachment"
+        factory=".index.AttachmentIndexer"
     />
     
     <adapter for="bungeni.models.interfaces.IBungeniContent"
@@ -108,10 +108,6 @@
         <implements interface="ore.xapian.interfaces.IIndexable" />
     </class>
     
-    <class class="bungeni.models.domain.AttachedFile">
-        <implements interface="ore.xapian.interfaces.IIndexable" />
-    </class>
-    
     <class class=".content.Section">
         <allow interface="zope.publisher.interfaces.browser.IBrowserPublisher" />
     </class>
@@ -143,9 +139,6 @@
         <implements interface="ore.xapian.interfaces.IIndexable" />
     </class>
     <class class="bungeni.models.domain.TabledDocument">
-        <implements interface="ore.xapian.interfaces.IIndexable" />
-    </class>
-    <class class="bungeni.models.domain.AttachedFile">
         <implements interface="ore.xapian.interfaces.IIndexable" />
     </class>
     <class class="bungeni.models.domain.Report">

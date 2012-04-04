@@ -66,11 +66,10 @@ TYPE_REGISTRY = [
     # - 
     ("user_address", TI("address", interfaces.IUserAddress)),
     ("group_address", TI("address", interfaces.IGroupAddress)),
-    # !+AttachedFile (mr, jul-2011)
+    # !+Attachment (mr, jul-2011)
     # a) must be loaded before any other type that *may* support attachments!
     # b) MUST support versions
-    ("attached_file", TI("attachedfile", interfaces.IAttachedFile)), #!+DOCUMENT attachment
-    ("attachment", TI("attachedfile", interfaces.IAttachedFile)),
+    ("attachment", TI("attachment", interfaces.IAttachment)),
     ("agenda_item", TI("agendaitem", interfaces.IAgendaItem)),
     ("bill", TI("bill", interfaces.IBill)),
     ("committee", TI("committee", interfaces.ICommittee)),

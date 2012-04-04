@@ -412,11 +412,8 @@ class IBungeniEmailSettings(interface.Interface):
         default = False,
     )
 
-class IAttachedFile(IOwned): pass
-#class IAttachedFileVersion(IVersion): pass
-# !+IITEMVersion !+IAttachedFileVersion(mr, sep-2011): IAttachedFileVersion end 
-# up implementing IVersion anyway!
-class IAttachedFileVersion(interface.Interface): pass
+class IAttachment(IOwned): pass
+class IAttachedFileVersion(interface.Interface): pass 
 class IAttachedFileVersionContainer(IVersionContainer): pass
 
 class ISignatory(interface.Interface):

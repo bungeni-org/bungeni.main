@@ -308,7 +308,7 @@ def make_versions_table(table, metadata, secondary_table=None):
 
 # !+/PARAMETRIZABLE_DOCTYPES
 
-
+'''
 def make_vocabulary_table(vocabulary_prefix, metadata, table_suffix="_types",
         column_suffix="_type"
     ):
@@ -323,7 +323,7 @@ def make_vocabulary_table(vocabulary_prefix, metadata, table_suffix="_types",
         ),
         rdb.Column("language", rdb.String(5), nullable=False),
     )
-
+'''
 
 # Progressive number sequences for each parliamentary item type.
 AgendaItemRegistrySequence = rdb.Sequence("agendaitem_registry_sequence", metadata=metadata)
@@ -1047,49 +1047,6 @@ attachment_index = rdb.Index("attachment_head_id_idx", attachment.c["head_id"])
 # attachment_audit
 attachment_audit = make_audit_table(attachment, metadata)
 
-
-''' !+TYPES_CUSTOM 
-attached_file_types = rdb.Table("attached_file_types", metadata,
-    rdb.Column("attached_file_type_id", rdb.Integer, primary_key=True),
-    rdb.Column("attached_file_type_name", rdb.Unicode(40)),
-    rdb.Column("language", rdb.String(5), nullable=False),
-)
-'''
-attached_files = rdb.Table("attached_files", metadata,
-    rdb.Column("attached_file_id", rdb.Integer, primary_key=True),
-    # the id of the "owning" item !+HEAD_DOCUMENT_ITEM
-    rdb.Column("item_id", rdb.Integer,
-        rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
-        nullable=False
-    ),
-    rdb.Column("dhead_id", rdb.Integer, #!+DHEAD
-        rdb.ForeignKey("doc.doc_id"),
-        nullable=True # !+False, when head_id replaces item_id
-    ),
-    # attached_file is NOT a parliamentary_item
-    rdb.Column("attached_file_type",
-        rdb.Unicode(128),
-        default="document",
-        nullable=False,
-    ),
-    rdb.Column("file_version_id", rdb.Integer), # !+ATTACHED_FILE_VERSIONS
-    rdb.Column("file_title", rdb.Unicode(255), nullable=False),
-    rdb.Column("file_description", rdb.UnicodeText),
-    rdb.Column("file_data", FSBlob(32)),
-    rdb.Column("file_name", rdb.String(200)),
-    rdb.Column("file_mimetype", rdb.String(127)),
-    # Workflow State
-    rdb.Column("status", rdb.Unicode(48)),
-    rdb.Column("status_date", rdb.DateTime(timezone=False),
-        server_default=text("now()"),
-        nullable=False
-    ),
-    rdb.Column("language", rdb.String(5), nullable=False),
-)
-attached_files_index = rdb.Index("attfiles_itemid_idx", 
-    attached_files.c["item_id"]
-)
-
 RegistrySequence = rdb.Sequence("registry_number_sequence", metadata=metadata)
 
 
@@ -1135,7 +1092,7 @@ doc = rdb.Table("doc", metadata,
     # suggested a question to an MP. See Issue 755.
     #rdb.Column("creator", rdb.Unicode(1024), nullable=True),
     # !+dc:Contributor, these are the signatories? external contributors?
-    # !+seconder clarify usage; always 1? overlap with signatories?
+    # !+seconder clarify usage (was on motion); always 1? overlapssignatories?
     #rdb.Column("seconder_id", rdb.Integer, rdb.ForeignKey("users.user_id")),
     
     # TYPE

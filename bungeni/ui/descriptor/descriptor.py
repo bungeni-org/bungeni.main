@@ -2048,13 +2048,13 @@ class AttachmentDescriptor(ModelDescriptor):
         LanguageField("language"), # [user-req]
     ]
 
-class AttachedFileDescriptor(ModelDescriptor):
+class AttachmentDescriptor(ModelDescriptor):
     localizable = True
     display_name = _("File")
     container_name = _("Files")
     fields = [
         LanguageField("language"), # [user-req]
-        Field(name="file_title", # [user-req]
+        Field(name="title", # [user-req]
             modes="view edit add listing",
             localizable=[
                 show("view edit listing"),
@@ -2063,7 +2063,7 @@ class AttachedFileDescriptor(ModelDescriptor):
             edit_widget=widgets.TextWidget,
             add_widget=widgets.TextWidget,
         ),
-        Field(name="file_description", # [rtf]
+        Field(name="description", # [rtf]
             modes="view edit add",
             localizable=[
                 show("view edit add"),
@@ -2073,7 +2073,7 @@ class AttachedFileDescriptor(ModelDescriptor):
             edit_widget=widgets.RichTextEditor,
             add_widget=widgets.RichTextEditor,
         ),
-        Field(name="file_data", # [file]
+        Field(name="data", # [file]
             modes="view edit add",
             localizable=[
                 show("view edit"),
@@ -2084,25 +2084,25 @@ class AttachedFileDescriptor(ModelDescriptor):
             add_widget=widgets.FileAddWidget,
             view_widget=widgets.FileDisplayWidget,
         ),
-        Field(name="attached_file_type", # [user-req]
+        Field(name="type", # [user-req]
             modes="view edit add listing",
             localizable=[
                 show("view edit listing"),
             ],
             property=schema.Choice(title=_("File Type"),
-                source=vocabulary.attached_file_type,
+                source=vocabulary.attachment_type,
             ),
-            listing_column=vocabulary_column("attached_file_type",
+            listing_column=vocabulary_column("ype",
                 "File Type",
-                vocabulary.attached_file_type,
+                vocabulary.attachment_type,
             ),
         ),
-        Field(name="file_name", label="", # [user-req]
+        Field(name="name", label="", # [user-req]
             modes="edit add",
             edit_widget=widgets.NoInputWidget,
             add_widget=widgets.NoInputWidget,
         ),
-        Field(name="file_mimetype", label="", # [user-req]
+        Field(name="mimetype", label="", # [user-req]
             modes="edit add",
             edit_widget=widgets.NoInputWidget,
             add_widget=widgets.NoInputWidget,
@@ -2133,7 +2133,7 @@ class AttachedFileVersionDescriptor(ModelDescriptor):
     display_name = _("Attached file version")
     container_name = _("Versions")
     
-    fields = deepcopy(AttachedFileDescriptor.fields)
+    fields = deepcopy(AttachmentDescriptor.fields)
     fields[fields.index(get_field(fields, "status"))] = Field(
         name="status", label=_("Status"), # [user-req]
         modes="view listing",

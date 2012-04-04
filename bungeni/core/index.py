@@ -21,6 +21,8 @@ this module setups the indexing machinery for searches
 $Id$
 """
 
+# !+ CLEAN UP THIS FILE, MINIMALLY AT LEAST THE SRC CODE FORMATTING !
+
 from zope import interface, schema
 from zope.dottedname import resolve
 from zope.security.proxy import removeSecurityProxy
@@ -371,28 +373,28 @@ class ParliamentIndexer(ContentIndexer):
 class TabledDocumentIndexer(ContentIndexer):
     domain_model = domain.TabledDocument
 
-class AttachedFileIndexer(ContentIndexer):
-    domain_model = domain.AttachedFile
+class AttachmentIndexer(ContentIndexer):
+    domain_model = domain.Attachment
     
     @classmethod
     def defineIndexes(self, indexer):
         indexer.add_field_action('doc_text', xappy.FieldActions.INDEX_FREETEXT, weight=5, language='en', spell=True)
         indexer.add_field_action('doc_text', xappy.FieldActions.SORTABLE)
-        super(AttachedFileIndexer, self).defineIndexes(indexer)
+        super(AttachmentIndexer, self).defineIndexes(indexer)
     
     def index(self, doc):    
         # index schema fields
-        super(AttachedFileIndexer, self).index(doc)
-        if self.context.attached_file_type == "document":
+        super(AttachmentIndexer, self).index(doc)
+        if self.context.type == "document":
             
-            if self.context.file_mimetype == 'application/vnd.oasis.opendocument.text':
-                doc.fields.append(xappy.Field('doc_text', readODT(self.context.file_data)))
+            if self.context.mimetype == 'application/vnd.oasis.opendocument.text':
+                doc.fields.append(xappy.Field('doc_text', readODT(self.context.data)))
             
-            if self.context.file_mimetype == 'application/pdf':
-                doc.fields.append(xappy.Field('doc_text', readPDF(self.context.file_data)))
+            if self.context.mimetype == 'application/pdf':
+                doc.fields.append(xappy.Field('doc_text', readPDF(self.context.data)))
             
-            if self.context.file_mimetype == 'text/plain':
-                doc.fields.append(xappy.Field('doc_text', self.context.file_data))
+            if self.context.mimetype == 'text/plain':
+                doc.fields.append(xappy.Field('doc_text', self.context.data))
     
     @classmethod
     def reindexAll(klass, connection, flush_threshold=500):
@@ -479,7 +481,7 @@ def setupFieldDefinitions(indexer):
     GroupIndexer.defineIndexes(indexer)
     CommitteeIndexer.defineIndexes(indexer)
     ParliamentIndexer.defineIndexes(indexer)
-    AttachedFileIndexer.defineIndexes(indexer)
+    AttachmentIndexer.defineIndexes(indexer)
     TabledDocumentIndexer.defineIndexes(indexer)
 
     if interfaces.ENABLE_LOGGING:
@@ -559,7 +561,7 @@ def main():
         #ParliamentMemberIndexer,
         ParliamentIndexer,
         TabledDocumentIndexer,
-        AttachedFileIndexer,
+        AttachmentIndexer,
         #HansardReporterIndexer,
         ]:
         content_indexer.reindexAll(indexer)

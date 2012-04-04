@@ -229,8 +229,8 @@ PERMISSIONS for member principal for "draft" question.status
   ...   checkPermission("bungeni.question.Add", question), 
   ...   checkPermission("zope.View", question), 
   ...   checkPermission("bungeni.question.Delete", question), 
-  ...   checkPermission("bungeni.fileattachment.Add", question), 
-  ...   checkPermission("bungeni.fileattachment.Edit", question),
+  ...   checkPermission("bungeni.attachment.Add", question), 
+  ...   checkPermission("bungeni.attachment.Edit", question),
   ... ]
   [True, True, True, True, True, True]
 

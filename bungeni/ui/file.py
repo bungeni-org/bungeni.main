@@ -20,7 +20,7 @@ from zc.table import column
 from bungeni.core.workflow.interfaces import IStateController
 from bungeni.models.interfaces import IAttachmentable, \
     IVersion, IAttachedFileVersion
-from bungeni.models.domain import AttachedFileContainer
+from bungeni.models.domain import AttachmentContainer
 from bungeni.ui.forms.interfaces import ISubFormViewletManager
 from bungeni.ui import browser
 from bungeni.ui.i18n import _
@@ -59,14 +59,14 @@ class FileDownload(BrowserView):
 
     def __call__(self):
         context = removeSecurityProxy(self.context)
-        mimetype = getattr(context, "file_mimetype", None)
+        mimetype = getattr(context, "mimetype", None)
         if mimetype == None:
             mimetype = "application/octect-stream"
-        filename = getattr(context, "file_name", None)
+        filename = getattr(context, "name", None)
         if filename == None:
-            filename = getattr(context, "file_title", None)
+            filename = getattr(context, "title", None)
         tempfile = TemporaryFile()
-        data = getattr(context, "file_data", None)
+        data = getattr(context, "data", None)
         if data is not None:
             tempfile.write(data)
             tempfile.flush()
@@ -103,9 +103,9 @@ class FileListingMixin(object):
     def columns(self):
         return [
             column.GetterColumn(title=_("file"),
-                getter=lambda i,f: "%s" % (i.file_title),
+                getter=lambda i,f: "%s" % (i.title),
                 cell_formatter=lambda g,i,f: '<a href="%s/files/obj-%d">%s</a>' 
-                    % (f.url, i.attached_file_id, g)),
+                    % (f.url, i.attachment_id, g)),
             column.GetterColumn(title=_("status"), 
                 getter=lambda i,f: i.status),
             column.GetterColumn(title=_("modified"), 
@@ -131,7 +131,7 @@ class FileListingMixin(object):
         if self._data_items is None:
             interaction = getInteraction() # slight performance optimization
             self._data_items = [ f
-                for f in removeSecurityProxy(self.context).attached_files
+                for f in removeSecurityProxy(self.context).attachments
                 if interaction.checkPermission("zope.View", f) 
             ]
         return self._data_items
@@ -149,7 +149,7 @@ class FileListingMixin(object):
         return formatter()
 
 
-@register.view(AttachedFileContainer, name="index",
+@register.view(AttachmentContainer, name="index",
     protect=register.PROTECT_VIEW_PUBLIC)
 class FileListingView(FileListingMixin, browser.BungeniBrowserView):
 
@@ -168,7 +168,7 @@ class FileListingView(FileListingMixin, browser.BungeniBrowserView):
 class FileListingViewlet(FileListingMixin, browser.BungeniItemsViewlet):
     """Viewlet to list attachments of a given document (head).
     """
-    # Attachments are records in the attached_files table.
+    # An Attachment is a record in the attachment table.
     
     render = ViewPageTemplateFile("templates/listing-viewlet.pt")
     view_title = "Attachments"
@@ -187,7 +187,7 @@ class FileListingViewlet(FileListingMixin, browser.BungeniItemsViewlet):
 class VersionFileListingViewlet(FileListingViewlet):
     """Viewlet to list attachments of a given version of a document.
     """
-    # Version attachments are records in the attached_file_versions table.
+    # Version attachments are records in the change + attachment_audit tables
     
     def __init__(self, context, request, view, manager):
         super(VersionFileListingViewlet, self).__init__(context, request, view, manager)
@@ -206,7 +206,7 @@ class VersionFileListingViewlet(FileListingViewlet):
                 return "obj-%d/version-log/%s" % (i.attachment_id, i.__name__)            
         return [
             column.GetterColumn(title=_("file"),
-                getter=lambda i,f:"%s" % (i.file_title),
+                getter=lambda i,f:"%s" % (i.title),
                 cell_formatter=lambda g,i,f:'<a href="%s/files/%s">%s</a>' 
                     % (f.url, attachment_version_uri(i), g)),
             column.GetterColumn(title=_("status"), 

@@ -653,8 +653,8 @@ class AkomantosoXMLView(BrowserView):
             for file in ob.files.values():
                 attachment_element = self.create_element("attachment",
                                                          id="att%s" % file.item_id,
-                                                         href=self.get_frbr_expression_url(ob) + "/" + file.file_name,
-                                                         showAs=file.file_title)
+                                                         href=self.get_frbr_expression_url(ob) + "/" + file.name,
+                                                         showAs=file.title)
                 attachments_element.appendChild(attachment_element)
 
         return bill_element
