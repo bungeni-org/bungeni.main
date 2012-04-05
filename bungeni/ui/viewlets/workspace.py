@@ -26,9 +26,13 @@ class WorkspaceContextNavigation(StructureAwareViewlet):
         app = getSite()
         keys = app["workspace"]["documents"].keys()
         for key in keys:
+            tab_url = url.absoluteURL(app["workspace"]["documents"][key], 
+                self.request
+            )
             tab = {}
             tab["title"] = key
-            tab["url"] = url.absoluteURL(app["workspace"]["documents"][key], self.request)
+            tab["url"] = tab_url
+            tab["active"] = self.request.getURL().startswith(tab_url)
             self.tabs.append(tab)
 
 class SignatoriesStatus(object):

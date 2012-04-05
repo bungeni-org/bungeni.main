@@ -1,18 +1,24 @@
-<dl class="portlet">
+<dl class="portlet portletNavigationTree" i18n:domain="bungeni">
   <dt class="portletHeader">
     <span class="portletTopLeft"></span>
-    documents
+    <a class="tile" i18n:translate="">documents</a>
     <span class="portletTopRight"></span>
   </dt>
-  <dd class="portletItem even">
-    <ul class="contentViewsLeftPort">
-      <tal:loop tal:repeat="tab view/tabs">
-	<li>
-	  <a tal:attributes="href tab/url">
-	    <tal:block replace="tab/title"/>
-	  </a>
-	</li>
-      </tal:loop>
+  <dd class="portletItem lastItem">
+    <ul>
+        <tal:loop tal:repeat="tab view/tabs">
+            <li class="navTreeItem visualNoMarker" 
+                tal:condition="not:tab/active">
+                <a tal:attributes="href tab/url" tal:content="tab/title"
+                i18n:translate=""/>
+            </li>
+            <li class="navTreeItem visualNoMarker navTreeCurrentItem" 
+                tal:condition="tab/active">
+                <a tal:attributes="href tab/url" tal:content="tab/title"
+                    i18n:translate=""
+                />
+            </li>
+        </tal:loop>
     </ul>
   </dd>
 </dl>
