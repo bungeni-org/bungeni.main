@@ -2357,6 +2357,8 @@ class EventDescriptor(DocumentDescriptor):
     del f # remove f from class namespace
 
 
+
+
 class ParliamentaryItemDescriptor(ModelDescriptor):
     localizable = False
     
@@ -2372,7 +2374,7 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
                 ),
             ),
         ),
-        Field(name="short_name", # [user-req]
+        Field(name="short_title", # "short_name", [user-req]
             modes="view edit add listing",
             localizable=[
                 show("view edit listing"),
@@ -2382,7 +2384,7 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
             add_widget=widgets.TextWidget,
             view_widget=widgets.ComputedTitleWidget
         ),
-        Field(name="full_name", # [user]
+        Field(name="long_title", # "full_name", [user]
             modes="view edit add",
             localizable=[
                 show("view edit add"),
@@ -2413,7 +2415,7 @@ class ParliamentaryItemDescriptor(ModelDescriptor):
             view_widget=widgets.MemberURLDisplayWidget,
         ),
         LanguageField("language"), # [user-req]
-        Field(name="body_text", # [rtf]
+        Field(name="body", # "body_text", [rtf]
             modes="view edit add",
             localizable=[ show("view"), ],
             property=schema.Text(title=_("Text")),
@@ -2610,14 +2612,14 @@ class AgendaItemDescriptor(ParliamentaryItemDescriptor):
     ]
     default_field_order = [
         "parliament_id",
-        "short_name",
-        "full_name",
+        #"short_name",
+        #"full_name",
         "registry_number",
         "owner_id",
         "status",
         "status_date",
         "language",
-        "body_text",
+        #"body_text",
         "submission_date",
         "note",
         "receive_notification",
@@ -2631,11 +2633,11 @@ class AgendaItemVersionDescriptor(VersionDescriptor):
     fields = deepcopy(VersionDescriptor.fields)
 
 
-class MotionDescriptor(ParliamentaryItemDescriptor):
+class MotionDescriptor(DocumentDescriptor):
     localizable = True
     display_name = _("Motion")
     container_name = _("Motions")
-    fields = deepcopy(ParliamentaryItemDescriptor.fields)
+    fields = deepcopy(DocumentDescriptor.fields)
     fields.extend([
         AdmissibleDateField(),
         Field(name="notice_date", # [sys]
@@ -2644,14 +2646,6 @@ class MotionDescriptor(ParliamentaryItemDescriptor):
                 show("view listing"),
             ],
             property=schema.Date(title=_("Notice Date"), required=False),
-        ),
-        Field(name="motion_number", # [sys]
-            modes="view listing",
-            localizable=[ 
-                show("view"),
-                hide("listing") 
-            ],
-            property=schema.Int(title=_("Identifier"), required=False),
         ),
         #Field(name="party_id", modes="",
         #    #property = schema.Choice(title=_("Political Party"),
@@ -2662,9 +2656,6 @@ class MotionDescriptor(ParliamentaryItemDescriptor):
         #    #   required=False),
         #),
     ])
-    get_field(fields, "owner_id").localizable = [
-        show("view listing")
-    ]
     get_field(fields, "admissible_date").localizable = [
         show("view"),
         hide("listing"),
@@ -2675,17 +2666,17 @@ class MotionDescriptor(ParliamentaryItemDescriptor):
     ]
     default_field_order = [
 			"parliament_id",
-			"short_name",
-			"full_name",
-			"motion_number",
+			"short_title", #"short_name",
+			"long_title", #"full_name",
+			"type_number",
 			"owner_id",
 			"status",
 			"status_date",
 			"language",
-			"body_text",
+			"body", #"body_text",
 			"submission_date",
-			"note",
-			"receive_notification",
+			#"note",
+			#"receive_notification",
 			"admissible_date",
 			"notice_date",
 			"registry_number",
@@ -2729,7 +2720,7 @@ class BillDescriptor(ParliamentaryItemDescriptor):
     container_name = _("Bills")
 
     fields = deepcopy(ParliamentaryItemDescriptor.fields)
-    with get_field(fields, "body_text") as f:
+    with get_field(fields, "body") as f:
         f.label = _("Statement of Purpose")
         f.property = schema.Text(title=_("Statement of Purpose"), required=False)
     del f # remove f from class namespace
@@ -2787,13 +2778,13 @@ class BillDescriptor(ParliamentaryItemDescriptor):
     
     default_field_order = [
         "parliament_id",
-        "short_name",
-        "full_name",
+        #"short_name",
+        #"full_name",
         "owner_id",
         "status",
         "status_date",
         "language",
-        "body_text",
+        #"body_text",
         "submission_date",
         "note",
         "receive_notification",
@@ -2945,8 +2936,8 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
     default_field_order = [
         "response_text",        
         "parliament_id",
-        "short_name",
-        "full_name",
+        #"short_name",
+        #"full_name",
         "question_number",
         "owner_id",
         "status",
@@ -2954,7 +2945,7 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
         "question_type",
         "response_type",
         "language",
-        "body_text",
+        #"body_text",
         "submission_date",
         "note",
         "receive_notification",
@@ -3001,14 +2992,14 @@ class TabledDocumentDescriptor(ParliamentaryItemDescriptor):
     ]
     default_field_order = [
         "parliament_id",
-        "short_name",
-        "full_name",
+        #"short_name",
+        #"full_name",
         "tabled_document_number",
         "owner_id",
         "status",
         "status_date",
         "language",
-        "body_text",
+        #"body_text",
         "submission_date",
         "note",
         "receive_notification",

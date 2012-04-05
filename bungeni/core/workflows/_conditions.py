@@ -55,7 +55,7 @@ def clerk_receive_notification(context):
     return prefs.getClerksOfficeReceiveNotification()
 
 def owner_receive_notification(context):
-    return context.receive_notification
+    return False #!+DOCUMENT context.receive_notification
 
 def ministry_receive_notification(context):
     return prefs.getMinistriesReceiveNotification() and context.ministry_id
@@ -123,7 +123,7 @@ def not_has_date_of_death(context):
 def user_is_parent_document_owner(context):
     return (
         utils.get_owner_login_pi(context) ==
-        utils.get_owner_login_pi(context.item)
+        utils.get_owner_login_pi(context.head)
     )
 
 def signatory_auto_sign(context):
@@ -140,7 +140,7 @@ def signatory_auto_sign(context):
     # if user adding signatory is not parent document owner, then auto sign
     #!+SIGNATORIES(mb, aug-2011) this could be tricky versus checking if parent
     # document is in a 'working_draft' state
-    if user_is_not_context_owner(context.item):
+    if user_is_not_context_owner(context.head):
         return True
     return False
 
@@ -164,14 +164,14 @@ def pi_signatories_check(context):
 
 def pi_signature_period_expired(context):
     """The document has been submitted"""
-    validator = ISignatoriesValidator(context.item, None)
+    validator = ISignatoriesValidator(context.head, None)
     if validator is not None:
         return validator.expireSignatures()
     return False
 
 def pi_document_redrafted(context):
     """Parent document has been redrafted"""
-    validator = ISignatoriesValidator(context.item, None)
+    validator = ISignatoriesValidator(context.head, None)
     return validator and validator.documentInDraft()
 
 def pi_unsign_signature(context):
@@ -180,7 +180,7 @@ def pi_unsign_signature(context):
     )
 
 def pi_allow_signature(context):
-    validator = ISignatoriesValidator(context.item, None)
+    validator = ISignatoriesValidator(context.head, None)
     if validator is not None:
         return user_is_context_owner(context) and validator.allowSignature()
     return False
@@ -188,7 +188,7 @@ def pi_allow_signature(context):
 def pi_allow_signature_actions(context):
     """allow/disallow other signature actions => such as withdraw and reject
     """
-    validator = ISignatoriesValidator(context.item, None)
+    validator = ISignatoriesValidator(context.head, None)
     if validator is not None:
         return (user_is_context_owner(context) and
             validator.documentSubmitted() and

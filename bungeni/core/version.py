@@ -56,13 +56,21 @@ def version_tree(ob, root=False, reversion=False):
     # ob must be newly versioned if dirty, we always explicitly version root ob
     dirty = root or False
     
+    child_obs = []
     child_versions = []
     # process children (determine via child-implicating features)
     if IAttachmentable.providedBy(ob):
-        for attachment in ob.attachments:
-            child_dirty, child_version = version_tree(attachment)
-            child_versions.append(child_version)
-            dirty = dirty or child_dirty
+        child_obs.extend(ob.attachments)
+    #!+event-as-feature
+    if hasattr(ob, "events") and ob.events:
+        child_obs.extend(ob.events)
+    #!+signatory-as-feature
+    #if hasattr(ob, "item_signatories") and ob.item_signatories:
+    #   child_obs.extend(ob.item_signatories)
+    for child in child_obs:
+        child_dirty, child_version = version_tree(child)
+        child_versions.append(child_version)
+        dirty = dirty or child_dirty
     
     def changed_since_last_version(ob):
         """Does ob need to be freshly versioned?

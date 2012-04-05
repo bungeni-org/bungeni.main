@@ -206,6 +206,9 @@ def DOCUMENT_configurable_domain(kls, workflow):
     if workflow.has_feature("attachment"):
         if DYNAMIC_SETUP:
             kls = enable_attachment(kls)
+    if workflow.has_feature("schedule"):
+        if DYNAMIC_SETUP:
+            kls = enable_schedule(kls)
     return kls
 def configurable_domain(kls, workflow):
     assert kls.__dynamic_features__, \
@@ -224,6 +227,7 @@ CUSTOM_DECORATED = {
     "auditable": set(), # [kls]
     "versionable": set(), # [kls]
     "enable_attachment": set(), # [kls]
+    "enable_schedule": set(), # [kls]
 }
 
 def auditable(kls):
@@ -283,6 +287,7 @@ def enable_schedule(kls):
     """Decorator for schedulable types
     """
     interface.classImplements(kls, interfaces.ISchedulable)
+    CUSTOM_DECORATED["enable_schedule"].add(kls)
     return kls
 configurable_domain.feature_decorators["schedule"] = enable_schedule
 
@@ -715,7 +720,7 @@ class Doc(Entity):
         interfaces.ITranslatable
     )
     
-    sort_on = ["doc.status_date"]
+    sort_on = ["doc.status_date", "doc.type_number"]
     sort_dir = "desc"
     
     sort_replace = {"owner_id": ["last_name", "first_name"]}
@@ -727,19 +732,51 @@ class Doc(Entity):
     #amc_attachments = one2many("amc_attachments",
     files = one2many("files",
         "bungeni.models.domain.AttachmentContainer", "head_id")
+    signatories = one2many("signatories",
+        "bungeni.models.domain.SignatoryContainer", "head_id")
+    # !+NAMING(mr, jul-2011) plural!
+    event = one2many("event",
+        "bungeni.models.domain.EventContainer", "head_id")
     #amc_events = one2many("amc_events",
     #    "bungeni.models.domain.EventContainer", "head_id")
     
     # !+DOCUMENT tmp dummy values to avoid attr errors, etc,
     # until base "doc" gains these features...
     submission_date = None
-    signatories = []
     item_signatories = [] #relation(domain.Signatory)
     assignedgroups = []
+    
+    def _get_workflow_date(self, *states):
+        """ (states:seq(str) -> date
+        Get the date of the most RECENT workflow transition to any one of 
+        the workflow states specified as input parameters. 
+        
+        Returns None if no such workflow states has been transited to as yet.
+        """
+        assert states, "Must specify at least one workflow state."
+        # order of self.changes is reverse chronological (newest first)
+        for c in get_changes(self, "workflow"):
+            if c.audit.status in states:
+                return c.date_active
+    
+    @property
+    def submission_date(self):
+        # As base meaning of "submission_date" we take the most recent date
+        # of workflow transition to "submit" to clerk. Subclasses may need
+        # to overload as appropriate for their respective workflows.
+        return self._get_workflow_date("submitted")
     
     extended_properties = [
     ]
 instrument_extended_properties(Doc, "doc")
+
+
+class AdmissibleMixin(object):
+    """Assumes self._get_workflow_date().
+    """
+    @property
+    def admissible_date(self):
+        return self._get_workflow_date("admissible")
 
 
 class Change(HeadParentedMixin, Entity):
@@ -834,6 +871,7 @@ class Audit(HeadParentedMixin, Entity):
         return locals()
     audit_head_id = property(**audit_head_id())
 
+
 class DocAudit(Audit):
     """An audit record for a document.
     """
@@ -854,6 +892,24 @@ class DocAudit(Audit):
 #instrument_extended_properties(DocAudit, "doc_audit")
 
 
+class Motion(HeadParentedMixin, AdmissibleMixin, Doc):
+    __dynamic_features__ = True
+    
+    # !+alchemist properties not inherited, must be re-instrumented on class
+    files = one2many("files",
+        "bungeni.models.domain.AttachmentContainer", "head_id")
+    signatories = one2many("signatories",
+        "bungeni.models.domain.SignatoryContainer", "head_id")
+    # !+NAMING(mr, jul-2011) plural!
+    event = one2many("event",
+        "bungeni.models.domain.EventContainer", "head_id")
+    
+    @property
+    def notice_date(self):
+        return self._get_workflow_date("scheduled")
+#MotionAudit
+
+
 class Event(HeadParentedMixin, Doc):
     """Base class for an event on a document.
     """
@@ -862,10 +918,11 @@ class Event(HeadParentedMixin, Doc):
     # validation, ... ?
     __dynamic_features__ = True
     
-    # !+alchemist property not inherited, must be re-instrumented on this class
+    # !+alchemist properties not inherited, must be re-instrumented on class
     files = one2many("files",
         "bungeni.models.domain.AttachmentContainer", "head_id")
 #EventAudit
+
 
 class Attachment(HeadParentedMixin, Entity):
     """A file attachment to a document. 
@@ -900,6 +957,8 @@ class AttachmentAudit(Audit):
     def full_name(self): return self.title
     @property
     def body_text(self): return self.description
+
+
 
 class ParliamentaryItem(Entity):
     """
@@ -968,21 +1027,14 @@ class Heading(Entity):
     def status_date(self):
         return None
 
-class _AdmissibleMixin(object):
-    """Assumes self._get_workflow_date()
-    """
-    @property
-    def admissible_date(self):
-        return self._get_workflow_date("admissible")
-
 
 # versionable (by default)
-class AgendaItem(ParliamentaryItem, _AdmissibleMixin):
+class AgendaItem(ParliamentaryItem, AdmissibleMixin):
     """Generic Agenda Item that can be scheduled on a sitting.
     """
 
 # versionable (by default)
-class Question(ParliamentaryItem, _AdmissibleMixin):
+class Question(ParliamentaryItem, AdmissibleMixin):
     #supplementaryquestions = one2many("supplementaryquestions", 
     #"bungeni.models.domain.QuestionContainer", "supplement_parent_id")
     sort_on = ParliamentaryItem.sort_on + ["question_number"]
@@ -992,20 +1044,6 @@ class Question(ParliamentaryItem, _AdmissibleMixin):
             parent = session.query(Question).get(self.supplement_parent_id)
             return parent.short_name
 
-
-# versionable (by default)
-class Motion(ParliamentaryItem, _AdmissibleMixin):
-    sort_on = ParliamentaryItem.sort_on + ["motion_number"]
-    @property
-    def notice_date(self):
-        return self._get_workflow_date("scheduled")
-
-''' !+TYPES_CUSTOM
-class BillType(Entity):
-    """Type of bill: public/ private, ....
-    """
-    interface.implements(interfaces.ITranslatable, interfaces.IBillType)
-'''
 
 # versionable (by default)
 class Bill(ParliamentaryItem):
@@ -1103,7 +1141,7 @@ class MinistryInParliament(object):
     """
 
 # versionable (by default)
-class TabledDocument(ParliamentaryItem, _AdmissibleMixin):
+class TabledDocument(ParliamentaryItem, AdmissibleMixin):
     """Tabled documents:
     a tabled document captures metadata about the document 
     (owner, date, title, description) 

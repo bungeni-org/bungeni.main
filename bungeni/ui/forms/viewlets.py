@@ -630,7 +630,7 @@ class MemberItemsViewlet(browser.BungeniItemsViewlet):
         parliament_id = self.context.group_id
         session = Session()
         # add cosigned items
-        signed_pi_ids = [sgn.item_id for sgn in
+        signed_pi_ids = [sgn.head_id for sgn in
             session.query(domain.Signatory).filter(
                 sql.and_(domain.Signatory.user_id == user_id,
                     domain.Signatory.status.in_(get_workflow(

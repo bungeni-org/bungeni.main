@@ -30,7 +30,7 @@ class StoreNowEditView(BrowserView):
             session.add(currently_editing_document)
 
         # Assigning current document id
-        document_id = self.context.parliamentary_item_id
+        document_id = self.context.doc_id
         currently_editing_document.currently_editing_id = document_id
 
         # And the current date and time

@@ -21,6 +21,7 @@
                     admissible_date
                                     
                 owner
+                files
                 signatories
                 attachments
                 events
@@ -223,41 +224,41 @@
     </class>
     
     <class class=".domain.Motion">
-        <require like_class=".domain.ParliamentaryItem" />
+        <require like_class=".domain.Doc" />
         <require permission="zope.View"
             attributes="
                 notice_date
-                motion_id
-                motion_number
-                public
-                seconder_id
-                party_id
             "
         />
         <require permission="bungeni.motion.Edit"
-            attributes="note"
-        />
-        <require permission="bungeni.motion.Edit"
             set_attributes="
-                parliamentary_item_id 
-                motion_id
                 owner_id
+                type
+                doc_type
+                doc_procedure
+                type_number
+                registry_number
+                uri
+                acronym
+                short_title
+                long_title
+                description
                 language
-                short_name
-                full_name
-                body_text
-                note
-                receive_notification
-                public
-                seconder_id
-                party_id
+                body
+                status
+                status_date
+                group_id
+                subject
+                coverage
+                geolocation
+                head_id
             "
         />
         <!-- !+WORKFLOW_TRANSITION(ah, jan-2011) was bungeni.historical.Edit 
             we use instead the permission used in the "approve" transition -->
-        <require permission="bungeni.motion.wf.completed.admissible"
-            set_attributes="motion_number"
-        />
+        <!--require permission="bungeni.motion.wf.completed.admissible"
+            set_attributes="type_number"
+        /-->
     </class>
     
     <class class=".domain.AgendaItem">

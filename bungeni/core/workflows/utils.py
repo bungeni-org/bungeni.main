@@ -96,6 +96,8 @@ def create_version(context):
     """Create a new version of an object and return it.
     Note: context.status is already updated to destination state.
     """
+    return bungeni.core.version.DOCUMENT_create_version(context)
+    # !+
     # !+capi.template_message_version_transition
     message_template = "New version on workflow transition to: %(status)s"
     message = message_template % context.__dict__
@@ -332,7 +334,7 @@ def pi_unset_signatory_roles(context, all=False):
                     owner_login = get_owner_login_pi(signatory)
                     log.debug("Removing signatory role for [%s] on "
                         "document: [%s]", 
-                        owner_login, signatory.item
+                        owner_login, signatory.head
                     )
                     assign_signatory_role(context, owner_login, unset=True)
             else:

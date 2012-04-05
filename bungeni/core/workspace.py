@@ -139,10 +139,11 @@ def load_workspace(file_name, domain_class):
             else:
                 raise ValueError("Invalid tab - %s", tab.get("id"))
 
-
+# !+bungeni_custom
 def load_workspaces(application, event):
     load_workspace("bill.xml", domain.Bill)
     load_workspace("tableddocument.xml", domain.TabledDocument)
     load_workspace("agendaitem.xml", domain.AgendaItem)
     load_workspace("motion.xml", domain.Motion)
     load_workspace("question.xml", domain.Question)
+

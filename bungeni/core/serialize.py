@@ -3,16 +3,20 @@
 # Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
 """ Utilities to serialize objects to XML
+
+$Id$
 """
+log = __import__("logging").getLogger("bungeni.core.serialize")
 
 from zope.security.proxy import removeSecurityProxy
 from sqlalchemy.orm import RelationshipProperty, class_mapper
 
+from bungeni.alchemist import Session
+from bungeni.alchemist.container import stringKey
+from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.core.workflow.states import get_object_state_rpm, get_head_object_state_rpm
 from bungeni.core.workflow.interfaces import IWorkflow, IStateController
 from bungeni.models.schema import singular
-from bungeni.alchemist.container import stringKey
-from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.models.interfaces import IAuditable, IVersionable, IAttachmentable
 
 import os
@@ -57,8 +61,10 @@ def publish_to_xml(context):
     
     context = removeSecurityProxy(context)
     
+    # !+zope idioms need convolution no further: IVersionable.providedBy(context)
     if IVersionable.implementedBy(context.__class__):
         include.append("versions")
+    # !+zope idioms need convolution no further: IAuditable.providedBy(context)
     if IAuditable.implementedBy(context.__class__):
         include.append("event")
     
@@ -69,14 +75,16 @@ def publish_to_xml(context):
             "changes"]
     )
     
+    # !+please do not use python builtin names as variable names
     type = IWorkflow(context).name
     
+    # !+IWorkflow(context).get_state(context.status).tags
     tags = IStateController(context).get_state().tags
     if tags:
         data["tags"] = tags
     
     permissions = get_object_state_rpm(context).permissions
-    data["permissions"]= get_permissions_dict(permissions)
+    data["permissions"] = get_permissions_dict(permissions)
     
     data["changes"] = []
     for change in getattr(context, "changes", []):

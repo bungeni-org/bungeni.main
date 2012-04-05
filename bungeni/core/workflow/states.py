@@ -244,6 +244,23 @@ class _NoneStateRPM(State):
         pass
 NONE_STATE_RPM = _NoneStateRPM()
 
+
+def _tmp_hack_protected_get_context_head(context):
+    # !+ when a sub-object is initially created, context.head_id is
+    # correctly set but context.head is sometimes not yet...
+    try:
+        assert context.head is not None
+    except AssertionError:
+        if context.head_id is not None:
+            # try force-setting head...
+            log.warn("context [%s] head is None...\n"
+                "    >>> TRYING TO FORCE-SET head FROM [head_id==%s]" % (
+                    context, context.head_id))
+            from bungeni.models import domain
+            context.head = Session().query(domain.Doc).filter(
+                domain.Doc.doc_id==context.head_id).one()
+    return context.head
+
 def get_object_state_rpm(context):
     """IRolePermissionMap(context) adapter factory. 
     
@@ -264,7 +281,8 @@ def get_object_state_rpm(context):
     if state.permissions_from_parent:
         # this state delegates permissions to parent, 
         # so just recurse passing parent item instead
-        return get_object_state_rpm(context.head)
+        head = _tmp_hack_protected_get_context_head(context)
+        return get_object_state_rpm(head)
     return state
 
 def get_head_object_state_rpm(sub_context):
@@ -282,7 +300,8 @@ def get_head_object_state_rpm(sub_context):
     # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", "document" 
     # or "item"?
     try:
-        return interfaces.IWorkflow(sub_context.head).get_state(sub_context.status)
+        head = _tmp_hack_protected_get_context_head(sub_context)
+        return interfaces.IWorkflow(head).get_state(sub_context.status)
     except interfaces.InvalidStateError, e:
         return NONE_STATE_RPM
     # !+SUBITEM_CHANGES_PERMISSIONS(mr, jan-2012)

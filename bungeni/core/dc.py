@@ -165,17 +165,17 @@ class BillDescriptiveProperties(DocumentDescriptiveProperties):
 @register.adapter()
 class MotionDescriptiveProperties(DocumentDescriptiveProperties):
     component.adapts(interfaces.IMotion)
-
+    
     @property
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        if context.motion_number is None:
-            return self.translate(context, "short_name")
+        if context.type_number is None:
+            return self.translate(context, "short_title")
         return "#%d: %s" % (
-            context.motion_number,
-            self.translate(context, "short_name"))
-
+            context.type_number,
+            self.translate(context, "short_title"))
+    
     @property
     def description(self):
         session = Session()

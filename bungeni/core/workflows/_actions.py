@@ -234,8 +234,8 @@ def __make_owner_signatory(context):
     if context.owner_id not in [sgn.user_id for sgn in signatories._query]:
         session = Session()
         signatory = signatories._class()
-        signatory.user_id = context.owner_id,
-        signatory.item_id = context.parliamentary_item_id
+        signatory.user_id = context.owner_id
+        signatory.head_id = context.doc_id
         session.add(signatory)
         session.flush()
         zope.event.notify(zope.lifecycleevent.ObjectCreatedEvent(signatory))
@@ -259,16 +259,16 @@ def _signatory_awaiting_consent(context):
     """Done when parent object is already in submitted_signatories stage.
     Otherwise roles assignment is handled by `__pi_assign_signatory_roles`
     """
-    if context.item.status == u"submitted_signatories":
+    if context.head.status == u"submitted_signatories":
         owner_login = utils.get_owner_login_pi(context)
         utils.assign_owner_role(context, owner_login)
-        utils.assign_signatory_role(context.item, owner_login)
+        utils.assign_signatory_role(context.head, owner_login)
 
 def _signatory_rejected(context):
     #!+SIGNATORIES(mb, aug-2011) Unsetting of roles now handled when
     # document is submitted or redrafted. Deprecate this action if not needed.
     #owner_login = utils.get_owner_login_pi(context)
-    #utils.assign_signatory_role(context.item, owner_login, unset=True)
+    #utils.assign_signatory_role(context.head, owner_login, unset=True)
     return
 
 _signatory_withdrawn = _signatory_rejected

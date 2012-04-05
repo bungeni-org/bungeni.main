@@ -418,14 +418,14 @@ user_delegations = rdb.Table("user_delegations", metadata,
 currently_editing_document = rdb.Table("currently_editing_document", metadata,
     rdb.Column("user_id", rdb.Integer,
         rdb.ForeignKey("users.user_id"),
-        primary_key=True
+        primary_key=True # !+ so, a user can only edit only ONE document at a TIME ?!?!?!?!?
     ),
     rdb.Column("currently_editing_id", rdb.Integer,
-        rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
-        nullable=False
+        rdb.ForeignKey("doc.doc_id"),
+        nullable=False,
     ),
     rdb.Column("editing_date", rdb.DateTime(timezone=False)) 
-) 
+)
 
 #!+TYPES_CUSTOM member_election_types = make_vocabulary_table("member_election", metadata)
 
@@ -1210,9 +1210,8 @@ doc = rdb.Table("doc", metadata,
     
     # head document (for sub documents e.g. events)
     rdb.Column("head_id", rdb.Integer, 
-        rdb.ForeignKey("parliamentary_items.parliamentary_item_id"), 
-        #!+DOCUMENT: tmp, should be: rdb.ForeignKey("doc.doc_id"),
-        nullable=True
+        rdb.ForeignKey("doc.doc_id"), 
+        nullable=True,
     ),
     # (event only?) date, needed? auto derive from workflow audit log?
     #rdb.Column("date", rdb.DateTime(timezone=False),
@@ -1394,6 +1393,7 @@ questions = rdb.Table("questions", metadata,
     rdb.Column("response_text", rdb.UnicodeText),
 )
 
+'''
 MotionSequence = rdb.Sequence("motion_number_sequence", metadata=metadata)
 # Number that indicate the order in which motions have been approved 
 # by the Speaker. The Number is reset at the start of each new session
@@ -1419,17 +1419,8 @@ motions = rdb.Table("motions", metadata,
         rdb.ForeignKey("political_parties.party_id")
     ),
 )
-
-''' !+TYPES_CUSTOM
-bill_types = rdb.Table("bill_types", metadata,
-    rdb.Column("bill_type_id", rdb.Integer, primary_key=True),
-    rdb.Column("bill_type_name", rdb.Unicode(256),
-        nullable=False,
-        unique=True
-    ),
-    rdb.Column("language", rdb.String(5), nullable=False),
-)
 '''
+
 bills = rdb.Table("bills", metadata,
     rdb.Column("bill_id", rdb.Integer,
         rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
@@ -1460,9 +1451,9 @@ signatories = rdb.Table("signatories", metadata,
     rdb.Column("signatory_id", rdb.Integer,
         primary_key=True
     ),
-    # the id of the "owning" item !+HEAD_DOCUMENT_ITEM
-    rdb.Column("item_id", rdb.Integer,
-        rdb.ForeignKey("parliamentary_items.parliamentary_item_id"),
+    # the id of the "owning" head document
+    rdb.Column("head_id", rdb.Integer,
+        rdb.ForeignKey("doc.doc_id"),
         nullable=False,
     ),
     rdb.Column("user_id", rdb.Integer,
@@ -1470,7 +1461,7 @@ signatories = rdb.Table("signatories", metadata,
         nullable=False,
     ),
     rdb.Column("status", rdb.Unicode(32)),
-    rdb.UniqueConstraint("item_id", "user_id")
+    rdb.UniqueConstraint("head_id", "user_id")
 )
 
 

@@ -125,16 +125,19 @@ def getActiveItemSchedule(parliamentary_item_id):
     sorted_results.reverse()
     return [ r for (d, r) in sorted_results ]
 
+
 def setMotionSerialNumber(motion):
     """
      Number that indicate the order in which motions have been approved 
      by the Speaker. The Number is reset at the start of each new session
      with the first motion assigned the number 1
     """
-    session = Session()
-    connection = session.connection(domain.Motion)
-    sequence = rdb.Sequence("motion_number_sequence")
-    motion.motion_number = connection.execute(sequence)
+    motion.type_number = 9999
+    return #!+DOCUMENT sequence
+    #session = Session()
+    #connection = session.connection(domain.Motion)
+    #sequence = rdb.Sequence("motion_number_sequence")
+    #motion.motion_number = connection.execute(sequence)
 
 #
 

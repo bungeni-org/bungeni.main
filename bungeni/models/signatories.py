@@ -68,7 +68,9 @@ class SignatoryValidator(object):
     @property
     def consented_signatories(self):
         return self.consentedSignatories()
-
+    
+    #!+PLEASE_USE_STANDARD_NAMING_CONVENTIONS(mr, apr-2012)
+    
     def requireSignatures(self):
         return self.min_signatories > 0
 
@@ -76,12 +78,11 @@ class SignatoryValidator(object):
         return self.signatories_count > 0
 
     def consentedSignatories(self, status=u"consented"):
-        return len(filter(
-                    lambda cs:cs.status==u"consented", self.signatories
-        ))
-
+        return len(filter(lambda cs:cs.status==u"consented", self.signatories))
+    
     def validateConsentedSignatories(self):
-        return ( (self.consented_signatories >= self.min_signatories) and
+        return (
+            (self.consented_signatories >= self.min_signatories) and
             ((not self.max_signatories) or 
                 (self.consented_signatories <= self.max_signatories)
             )

@@ -201,7 +201,7 @@ mapper(domain.AdminUser, schema.admin_users,
 mapper(domain.CurrentlyEditingDocument, schema.currently_editing_document,
     properties={
         "user": relation(domain.User, uselist=False),
-        "document": relation(domain.ParliamentaryItem, uselist=False)
+        "document": relation(domain.Doc, uselist=False), # !+rename "doc"
     }
 )
 
@@ -517,20 +517,16 @@ mapper(domain.Doc, schema.doc,
             uselist=False,
             lazy=False),
         # !+AlchemistManagedContaineror, X same as amc_X.values(), property @X?
-        #"signatories": relation(domain.Signatory,
-        #    backref=backref("head",
-        #       remote_side=schema.doc.c.doc_id),
-        #),
+        "item_signatories": relation(domain.Signatory), #!+rename!
         "attachments": relation(domain.Attachment),
         #"events": relation(domain.Event, uselist=True),
         
         # for sub parliamentary docs, non-null implies a sub doc
         # !+DOCUMENT tmp, should be to domain.Doc
-        "head": relation(domain.ParliamentaryItem,
-            primaryjoin=rdb.and_(schema.doc.c.head_id ==
-                schema.parliamentary_items.c.parliamentary_item_id),
+        "head": relation(domain.Doc,
+            primaryjoin=rdb.and_(schema.doc.c.head_id == schema.doc.c.doc_id),
             uselist=False,
-            lazy=False,
+            lazy=True,
         ),
         "audits": relation(domain.DocAudit,
             primaryjoin=rdb.and_(schema.doc.c.doc_id == 
@@ -552,6 +548,13 @@ mapper(domain.Doc, schema.doc,
             uselist=True,
             lazy=True,
             order_by=schema.change.c.audit_id.desc(),
+        ),
+        "events": relation(domain.Event, 
+            primaryjoin=rdb.and_(
+               schema.doc.c.doc_id == schema.doc.c.head_id,
+               schema.doc.c.type == polymorphic_identity(domain.Event), # !+
+            ),
+            uselist=True,
         ),
     }
 )
@@ -636,12 +639,18 @@ mapper(domain.DocAudit, schema.doc_audit,
 mapper(domain.Event,
     inherits=domain.Doc,
     polymorphic_on=schema.doc.c.type, # polymorphic discriminator
-    polymorphic_identity=polymorphic_identity(domain.Event)
+    polymorphic_identity=polymorphic_identity(domain.Event),
 )
 #!+EVENTS on parliamentary documents:
 # - behave also "like" a parliamentary document
 # - agendaitems should NOT support events?
 # - event should NOT support event
+
+mapper(domain.Motion, 
+    inherits=domain.Doc,
+    polymorphic_on=schema.doc.c.type, # polymorphic discriminator
+    polymorphic_identity=polymorphic_identity(domain.Motion),
+)
 
 mapper(domain.Attachment, schema.attachment,
     properties={
@@ -699,10 +708,10 @@ mapper(domain.ParliamentaryItem, schema.parliamentary_items,
         # !+NAMING(mr, jul-2011) "itemsignatories" is inconsistent
         # !+ITEMSIGNATORIES(mr, jan-2011) why items here are User and not 
         # Signatory instances? Cleanout...
-        "itemsignatories": relation(domain.User, secondary=schema.signatories),
+        #"itemsignatories": relation(domain.User, secondary=schema.signatories),
         # !+ITEMSIGNATORIES(mr, jan-2011) Adding conventionally named property 
         # that should replace "itemsignatories"...
-        "item_signatories": relation(domain.Signatory),
+        #"item_signatories": relation(domain.Signatory),
         #"attachments": relation(domain.Attachment, #!+PI_TMP_attachments
         #    # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", 
         #    # "document", "item"
@@ -710,7 +719,7 @@ mapper(domain.ParliamentaryItem, schema.parliamentary_items,
         #        remote_side=schema.parliamentary_items.c.parliamentary_item_id)
         #),
         # !+DOCUMENT
-        "events": relation(domain.Event, uselist=True),
+        #"events": relation(domain.Event, uselist=True),
     }
 )
 
@@ -734,13 +743,6 @@ mapper(domain.Question, schema.questions,
     properties={
         "ministry": relation(domain.Ministry, lazy=False, join_depth=2),
     }
-)
-
-mapper(domain.Motion, schema.motions,
-    inherits=domain.ParliamentaryItem,
-    polymorphic_on=schema.parliamentary_items.c.type,
-    polymorphic_identity=polymorphic_identity(domain.Motion),
-    properties={}
 )
 
 mapper(domain.Bill, schema.bills,
@@ -797,7 +799,7 @@ mapper(domain.ItemScheduleDiscussion, schema.item_schedule_discussions,
 
 mapper(domain.Signatory, schema.signatories,
     properties={
-        "item": relation(domain.ParliamentaryItem, uselist=False),
+        "head": relation(domain.Doc, uselist=False),
         "user": relation(domain.User, uselist=False),
     }
 )
