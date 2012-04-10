@@ -399,8 +399,8 @@ YAHOO.bungeni.availableitems = function(){
             }
             minute_tab.getRecordValue = function(){
                 var record_value = {};
-                record_value[Columns.BODY_TEXT] = rteEditor.cleanHTML(
-                    rteEditor.getEditorHTML()
+                record_value[Columns.BODY_TEXT] = minuteEditor.cleanHTML(
+                    minuteEditor.getEditorHTML()
                 );
                 return {
                     type: SGlobals.types.MINUTE,

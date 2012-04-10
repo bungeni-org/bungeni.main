@@ -33,7 +33,9 @@ YAHOO.bungeni.agendaconfig = function(){
                         if (text){
                             var record = sDt.getRecord(row_index);
                             var row_data = record.getData();
-                            var cache_key = row_data[Columns.OBJECT_ID];
+                            var cache_key = YAHOO.bungeni.Utils.slugify(
+                                row_data[Columns.OBJECT_ID]
+                            );
                             var cdata = YAHOO.bungeni.agendaconfig.minutesCache.get(
                                 cache_key
                             );
@@ -70,7 +72,7 @@ YAHOO.bungeni.agendaconfig = function(){
                     var record = sDt.getRecord(row);
                     var row_data = record.getData();
                     var cdata = YAHOO.bungeni.agendaconfig.minutesCache.get(
-                        row_data[Columns.OBJECT_ID]
+                        YAHOO.bungeni.Utils.slugify(row_data[Columns.OBJECT_ID])
                     );
                     editor.setEditorHTML(cdata[minute][Columns.BODY_TEXT]);
                 }
@@ -113,7 +115,7 @@ YAHOO.bungeni.agendaconfig = function(){
             if(SGlobals.discussable_types.indexOf(sData[Columns.TYPE])<0){
                 return;
             }
-            var cKey = sData[Columns.OBJECT_ID];
+            var cKey = YAHOO.bungeni.Utils.slugify(sData[Columns.OBJECT_ID]);
             if (cKey){
                 var mcache = YAHOO.bungeni.agendaconfig.minutesCache.get(cKey);
                 if (mcache.length){
@@ -127,7 +129,7 @@ YAHOO.bungeni.agendaconfig = function(){
                         item_data.push(save_data);
                     }
                     var post_data = "data=" + YJSON.stringify(item_data);
-                    var save_url = ("./items/" + cKey + 
+                    var save_url = ("./items/" + sData[Columns.OBJECT_ID] + 
                         SGlobals.discussions_save_url
                     );
                     YAHOO.bungeni.scheduling.SaveRequest.startRequest(

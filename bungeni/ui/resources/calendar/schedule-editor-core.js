@@ -16,6 +16,7 @@ YAHOO.bungeni.scheduling = function(){
     var Handlers = YAHOO.bungeni.config.scheduling.handlers;
     var AgendaConfig = YAHOO.bungeni.agendaconfig;
     YAHOO.bungeni.unsavedChanges = false;
+    YAHOO.bungeni.reloadView = false;
     YAHOO.bungeni.scheduled_item_keys = new Array();
 
     var RequestObject = {
@@ -28,7 +29,12 @@ YAHOO.bungeni.scheduling = function(){
                 }
                 sDt.refresh();
             }else{
-                sDt.refresh();
+                //reload schedule to reflect workflow actions
+                if (YAHOO.bungeni.reloadView){
+                    window.location.reload();
+                }else{
+                    sDt.refresh();
+                }
             }
             Dialogs.blocking.hide();
         },
@@ -113,6 +119,7 @@ YAHOO.bungeni.scheduling = function(){
 
         var populateScheduledKeys = function(request, response, payload){
             YAHOO.bungeni.scheduled_item_keys = new Array();
+            YAHOO.bungeni.reloadView = !Boolean(response.results.length);
             for(idx in response.results){
                 var record = response.results[idx];
                 YAHOO.bungeni.scheduled_item_keys.push(
