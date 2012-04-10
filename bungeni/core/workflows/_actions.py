@@ -168,8 +168,8 @@ _motion_draft = _motion_working_draft = __pi_create
 _motion_submitted = __pi_submit
 _motion_redraft = __pi_redraft
 
-def _motion_admissible(context):
-    dbutils.setMotionSerialNumber(context)
+def _motion_admissible(motion):
+    dbutils.set_doc_type_number(motion)
 
 
 # question

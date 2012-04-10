@@ -13,6 +13,13 @@ def get_user(user_id):
     assert user_id, "Must have valid user_id"
     return Session().query(domain.User).get(user_id)
 
+def get_max_type_number(domain_model):
+    """Get the current maximum numeric value for this domain_model's type_number.
+    If None (no existing instance as yet defines one) return 0.
+    !+ per parliamentary session
+    """
+    return Session().query(rdb.func.max(domain_model.type_number)).scalar() or 0
+
 
 ''' !+UNUSED(mr, mar-2011)
 def getQuestionWorkflowTrail(question):
@@ -126,18 +133,14 @@ def getActiveItemSchedule(parliamentary_item_id):
     return [ r for (d, r) in sorted_results ]
 
 
-def setMotionSerialNumber(motion):
+def set_doc_type_number(doc):
+    """Sets the number that indicates the order in which docs of this type
+    have been approved by the Speaker to be the current maximum + 1.
+    
+    The number is reset at the start of each new parliamentary session with the 
+    first doc of this type being assigned the number 1.
     """
-     Number that indicate the order in which motions have been approved 
-     by the Speaker. The Number is reset at the start of each new session
-     with the first motion assigned the number 1
-    """
-    motion.type_number = 9999
-    return #!+DOCUMENT sequence
-    #session = Session()
-    #connection = session.connection(domain.Motion)
-    #sequence = rdb.Sequence("motion_number_sequence")
-    #motion.motion_number = connection.execute(sequence)
+    doc.type_number = get_max_type_number(doc.__class__) + 1
 
 #
 

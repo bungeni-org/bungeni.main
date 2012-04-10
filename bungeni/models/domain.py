@@ -48,6 +48,8 @@ def get_changes(auditable, *actions):
     """
     for action in actions:
         assert_valid_change_action(action)
+    # lazy loading - merge to avoid sqlalchemy.orm.exc.DetachedInstanceError
+    auditable = Session().merge(auditable)
     return [ c for c in auditable.changes if c.action in actions ]
 
 def get_mapped_table(kls):
