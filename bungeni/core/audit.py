@@ -457,7 +457,7 @@ class _AuditorFactory(object):
     #
     
     def _get_seq(self, ch):
-        """determine and return a next seq number for this (action,  
+        """determine and return a next seq number for this (head, action)
         """
         head = ch.audit.audit_head # ch.head
         seqs_for_action_to_date = [ c.seq for c in head.changes 

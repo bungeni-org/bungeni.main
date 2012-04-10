@@ -1,3 +1,4 @@
+
 from zope import interface
 from zope import component
 from zope.dublincore.interfaces import IDCDescriptiveProperties
@@ -21,8 +22,8 @@ class WorkspaceContentAdapter(object):
         self.context = removeSecurityProxy(context)
 
     @property
-    def short_name(self):
-        return self.context.short_name
+    def short_title(self):
+        return self.context.short_title
 
     @property
     def type(self):
@@ -44,3 +45,4 @@ class WorkspaceContentAdapter(object):
         request = get_request()
         date_formatter = date.getLocaleFormatter(request, "dateTime", "medium")
         return date_formatter.format(value)
+

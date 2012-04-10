@@ -2266,6 +2266,7 @@ class DocumentDescriptor(ModelDescriptor):
                 show("view edit listing"),
             ],
             property=schema.TextLine(title=_("Title")),
+            #!+view_widget=widgets.ComputedTitleWidget,
             edit_widget=widgets.TextWidget,
             add_widget=widgets.TextWidget,
         ),
@@ -2328,6 +2329,7 @@ class DocumentDescriptor(ModelDescriptor):
             edit_widget=widgets.HiddenTimestampWidget,
         ),
     ]
+
 
 class EventDescriptor(DocumentDescriptor):
     localizable = True
