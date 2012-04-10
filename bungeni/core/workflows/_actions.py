@@ -55,16 +55,13 @@ def __pi_create(context):
 def __pi_submit(context):
     if len(context.signatories) > 0:
         __make_owner_signatory(context)
-    # !+NUMBER_GENERATION(ah, nov-2011) registry number is generated on receive, 
-    # not submit. This needs to be eventually factored into configuration
-    #utils.set_pi_registry_number(context)
     utils.pi_update_signatories(context)
     utils.pi_unset_signatory_roles(context)
 
 # !+NUMBER_GENERATION(ah, nov-2011) - used for parliamentary item transitions
-# to recieved state 
+# to recieved state
 def __pi_received(context):
-    utils.set_pi_registry_number(context)
+    utils.set_doc_registry_number(context)
 
 def __pi_redraft(context):
     """Signatory operations on redraft - Unsetting signatures e.t.c

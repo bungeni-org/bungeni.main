@@ -121,29 +121,41 @@ def get_mask(context):
         return None
 
 
-def set_pi_registry_number(context):
-    """A parliamentary_item's registry_number should be set on the item being 
+# !+REGISTRY(mr, apr-2012) this utility MUST ALWAYS be executed whenever a doc 
+# reaches a state that semantically implies "receive" !!
+def set_doc_registry_number(doc):
+    """A doc's registry_number should be set on the item being 
     submitted to parliament.
     """
-    mask = get_mask(context)
+    # never overwrite a previously set registry_number
+    if doc.registry_number is not None:
+        log.warn("Ignoring attempt to reset doc [%s] registry_number [%s]" % (
+            doc, doc.registry_number))
+        return
+    
+    mask = get_mask(doc)
     if mask == "manual" or mask is None:
         return
     
-    items = re.findall(r"\{(\w+)\}", mask)
+    # ensure that sequences are updated -- independently of whether these are 
+    # used by the mask string templates!
+    registry_number_accumulative = dbutils.get_next_reg()
+    progressive_number_for_type = dbutils.get_next_prog(doc)
+    type_key = doc.type
     
+    # !+ why not just use string.Template ?!
+    items = re.findall(r"\{(\w+)\}", mask)
     for name in items:
         if name == "registry_number":
-            mask = mask.replace("{%s}" % name, str(dbutils.get_next_reg()))
-            continue
+            mask = mask.replace("{%s}" % name, str(registry_number_accumulative))
         if name == "progressive_number":
-            mask = mask.replace("{%s}" % name, 
-                                         str(dbutils.get_next_prog(context)))
-            continue
-        value = getattr(context, name)
-        mask = mask.replace("{%s}" % name, value)
+            mask = mask.replace("{%s}" % name, str(progressive_number_for_type))
+        if name == "type":
+            mask = mask.replace("{%s}" % name, type_key)
     
-    if context.registry_number == None:
-        dbutils.set_pi_registry_number(context, mask)
+    doc.registry_number = mask
+    
+
 
 is_pi_scheduled = dbutils.is_pi_scheduled
 
