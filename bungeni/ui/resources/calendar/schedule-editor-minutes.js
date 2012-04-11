@@ -1,7 +1,6 @@
 /**
  * Schedule editor configuration for use in 'draft minutes' mode.
 **/
-
 YAHOO.bungeni.agendaconfig = function(){
     var Event = YAHOO.util.Event;
     var YJSON = YAHOO.lang.JSON;
