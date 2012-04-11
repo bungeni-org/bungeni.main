@@ -325,14 +325,6 @@ def make_vocabulary_table(vocabulary_prefix, metadata, table_suffix="_types",
     )
 '''
 
-# Progressive number sequences for each parliamentary item type.
-AgendaItemRegistrySequence = rdb.Sequence("agendaitem_registry_sequence", metadata=metadata)
-QuestionRegistrySequence = rdb.Sequence("question_registry_sequence", metadata=metadata)
-MotionRegistrySequence = rdb.Sequence("motion_registry_sequence", metadata=metadata)
-BillRegistrySequence = rdb.Sequence("bill_registry_sequence", metadata=metadata)
-TabledDocumentRegistrySequence = rdb.Sequence("tableddocument_registry_sequence", metadata=metadata)
-ReportRegistrySequence = rdb.Sequence("report_registry_sequence", metadata=metadata)
-
 #######################
 # Users 
 #######################
@@ -1046,8 +1038,6 @@ attachment_index = rdb.Index("attachment_head_id_idx", attachment.c["head_id"])
 
 # attachment_audit
 attachment_audit = make_audit_table(attachment, metadata)
-
-RegistrySequence = rdb.Sequence("registry_number_sequence", metadata=metadata)
 
 
 # Document:

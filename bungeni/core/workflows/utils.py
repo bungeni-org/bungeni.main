@@ -139,17 +139,21 @@ def set_doc_registry_number(doc):
     
     # ensure that sequences are updated -- independently of whether these are 
     # used by the mask string templates!
-    registry_number_accumulative = dbutils.get_next_reg()
-    progressive_number_for_type = dbutils.get_next_prog(doc)
+    #registry_number_general = dbutils.get_next_reg() # all docs
+    #registry_number_specific = dbutils.get_next_prog(doc) # per doc type
+    registry_count_general, registry_count_specific = \
+        dbutils.get_registry_counts(doc.__class__)
+    registry_number_general = 1 + registry_count_general
+    registry_number_specific = 1 + registry_count_specific
     type_key = doc.type
     
     # !+ why not just use string.Template ?!
     items = re.findall(r"\{(\w+)\}", mask)
     for name in items:
         if name == "registry_number":
-            mask = mask.replace("{%s}" % name, str(registry_number_accumulative))
+            mask = mask.replace("{%s}" % name, str(registry_number_general))
         if name == "progressive_number":
-            mask = mask.replace("{%s}" % name, str(progressive_number_for_type))
+            mask = mask.replace("{%s}" % name, str(registry_number_specific))
         if name == "type":
             mask = mask.replace("{%s}" % name, type_key)
     

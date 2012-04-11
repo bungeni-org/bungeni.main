@@ -110,6 +110,9 @@ class RegistrySettings(catalyst.EditForm):
     form_fields = form.Fields(interfaces.IBungeniRegistrySettings)
     
     def update(self):
+        '''
+        # !+REGISTRY(mr, apr-2011) should store these counts (per type) in a generic table
+        # !+RESETTABLE per parliamentary session
         if self.request.method == "POST":
             # !+NUMBER_GENERATION (ah, nov-2011) - Reset the number sequence here.
             # Added the 'false' parameter at the end, otherwise setval() automatically
@@ -130,7 +133,7 @@ class RegistrySettings(catalyst.EditForm):
                 execute_sql("SELECT setval('tableddocument_registry_sequence', 1, false);")
             if self.request.get("form.global_number") == "on":
                 execute_sql("SELECT setval('registry_number_sequence', 1, false);")
-
+        '''
         settings = \
             component.getUtility(interfaces.IBungeniRegistrySettings)()
         self.adapters = {interfaces.IBungeniRegistrySettings : settings}

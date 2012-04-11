@@ -1,6 +1,8 @@
 
 # db specific utilities to retrive values, restriction etc
 # from the db implementation
+
+from zope.security.proxy import removeSecurityProxy
 import sqlalchemy as rdb
 from sqlalchemy.orm import mapper
 from bungeni.alchemist import Session
@@ -16,9 +18,30 @@ def get_user(user_id):
 def get_max_type_number(domain_model):
     """Get the current maximum numeric value for this domain_model's type_number.
     If None (no existing instance as yet defines one) return 0.
-    !+ per parliamentary session
+    !+RESETTABLE per parliamentary session
     """
-    return Session().query(rdb.func.max(domain_model.type_number)).scalar() or 0
+    session = Session()
+    return session.query(rdb.func.max(domain_model.type_number)).scalar() or 0
+
+def get_registry_counts(specific_model):
+    """ kls -> (registry_count_general, registry_count_specific)
+    Returns the general (all docs) and specific (for the type) counts of how
+    many docs have been "registered" (received by parliament) to date.
+
+    !+REGISTRY(mr, apr-2011) should probably have dedicated columns for such 
+    information i.e. seq_received, seq_received_type, seq_approved
+    !+RESETTABLE per parliamentary session
+    !+manually set out-of-sequence numbers may result in non-uniqueness
+    """
+    session = Session()
+    registry_count_general = session.query(
+        rdb.func.count(domain.Doc.registry_number)).filter(
+            domain.Doc.registry_number != None).scalar() or 0
+    specific_model = removeSecurityProxy(specific_model)
+    registry_count_specific = session.query(
+        rdb.func.count(specific_model.registry_number)).filter(
+            specific_model.registry_number != None).scalar() or 0
+    return registry_count_general, registry_count_specific
 
 
 ''' !+UNUSED(mr, mar-2011)
@@ -65,8 +88,10 @@ def removeQuestionFromItemSchedule(question_id):
     if (len(results)==1):
         results[0].active = False
 
-
+'''
 # !+REGISTRY(mr, apr-2011) rework handling of registry and progessive numbers
+# should store these counts (per type) in a generic table
+# !+RESETTABLE per parliamentary session
 def get_next_reg():
     session = Session()
     sequence = rdb.Sequence("registry_number_sequence")
@@ -77,8 +102,9 @@ def get_next_prog(context):
     sequence = rdb.Sequence("%s_registry_sequence" % context.type)
     connection = session.connection(context.__class__)
     return connection.execute(sequence)
+'''
 
-    
+
 def setTabledDocumentSerialNumber(tabled_document):
     session = Session()
     connection = session.connection(domain.TabledDocument)
