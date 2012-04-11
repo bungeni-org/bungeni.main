@@ -522,12 +522,10 @@ mapper(domain.Doc, schema.doc,
         #"events": relation(domain.Event, uselist=True),
         
         # for sub parliamentary docs, non-null implies a sub doc
-        # !+DOCUMENT tmp, should be to domain.Doc
-        "head": relation(domain.Doc,
-            primaryjoin=rdb.and_(schema.doc.c.head_id == schema.doc.c.doc_id),
-            uselist=False,
-            lazy=True,
-        ),
+        #"head": relation(domain.Doc,
+        #    uselist=False,
+        #    lazy=True,
+        #),
         "audits": relation(domain.DocAudit,
             primaryjoin=rdb.and_(schema.doc.c.doc_id == 
                 schema.doc_audit.c.doc_id),
@@ -640,6 +638,18 @@ mapper(domain.Event,
     inherits=domain.Doc,
     polymorphic_on=schema.doc.c.type, # polymorphic discriminator
     polymorphic_identity=polymorphic_identity(domain.Event),
+    properties={
+        "head": relation(domain.Doc,
+            primaryjoin=rdb.and_(
+               schema.doc.c.head_id == schema.doc.c.doc_id,
+               # !+unnecessary (explicit constraint of no events on events)
+               schema.doc.c.type != polymorphic_identity(domain.Event),
+            ),
+            remote_side=schema.doc.c.doc_id,
+            uselist=False,
+            lazy=True,
+        ),
+    },
 )
 #!+EVENTS on parliamentary documents:
 # - behave also "like" a parliamentary document

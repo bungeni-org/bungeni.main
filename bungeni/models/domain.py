@@ -894,7 +894,7 @@ class DocAudit(Audit):
 #instrument_extended_properties(DocAudit, "doc_audit")
 
 
-class Motion(HeadParentedMixin, AdmissibleMixin, Doc):
+class Motion(AdmissibleMixin, Doc):
     __dynamic_features__ = True
     
     # !+alchemist properties not inherited, must be re-instrumented on class
