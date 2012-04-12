@@ -18,7 +18,7 @@ YAHOO.bungeni.scheduling = function(){
     YAHOO.bungeni.unsavedChanges = false;
     YAHOO.bungeni.reloadView = false;
     YAHOO.bungeni.scheduled_item_keys = new Array();
-    YAHOO.bungeni.processed_minute_records = 0;
+    YAHOO.bungeni.processed_agenda_records = 0;
 
     var RequestObject = {
         handleSuccess: function(o){
@@ -26,8 +26,11 @@ YAHOO.bungeni.scheduling = function(){
             var row_count = sDt.getRecordSet().getLength();
             YAHOO.bungeni.unsavedChanges = false;
             if((!this.post_op) && AgendaConfig.minuteEditor){
-                YAHOO.bungeni.processed_minute_records+=1;
-                if (YAHOO.bungeni.processed_minute_records==row_count){
+                YAHOO.bungeni.processed_agenda_records+=1;
+                var cached_minutes_count = AgendaConfig.minutesCache
+                if (YAHOO.bungeni.processed_agenda_records==
+                    YAHOO.bungeni.processed_minute_records
+                ){
                     YAHOO.bungeni.reloadView=true;
                 }
             }
@@ -161,7 +164,6 @@ YAHOO.bungeni.scheduling = function(){
                         width: "600",
                         gutter: "2 2",
                         resize: true,
-                        collapse: true,
                     },
                     {
                         position:'center',
@@ -184,26 +186,29 @@ YAHOO.bungeni.scheduling = function(){
         layout.on("render", function(){
             YAHOO.bungeni.schedule = function(){
                 var editor = new YAHOO.widget.TextareaCellEditor();
+                var container = layout.getUnitByPosition("left");
+                var resizable_panel = layout.getUnitByPosition("left");
+                var init_width = container.body.clientWidth-15;
                 editor.subscribe("showEvent", Handlers.renderRTECellEditor);
                 AgendaConfig.setEditor(editor);
-                var columns = AgendaConfig.getColumns();
+                var columns = AgendaConfig.getColumns(init_width);
                 var dataSource = new YAHOO.util.DataSource(
                     AgendaConfig.AGENDA_DATASOURCE_URL
                 );
                 dataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
                 dataSource.responseSchema = AgendaConfig.AGENDA_SCHEMA;
                 var tableContainer = document.createElement("div");
-                layout.getUnitByPosition("left").body.appendChild(tableContainer);
+                tableContainer.style.width = init_width + "px";
+                container.body.appendChild(tableContainer);
                 var dataTable = new YAHOO.widget.DataTable(
                     tableContainer,
                     columns, dataSource,
                     {
-                        caption: "hold down CONTROL key to select multiple items",
-                        summary: "hold down CONTROL key to select multiple items",
-                        selectionMode:"single",
-                        scrollable:true,
-                        width:"100%",
-                        height:"450px",
+                        selectionMode: "single",
+                        scrollable: true,
+                        width: "100%",
+                        height: (container.body.clientHeight-30) + "px",
+                        MSG_EMPTY: AgendaConfig.EMPTY_AGENDA_MESSAGE
                     }
                 );
                 dataTable.subscribe("rowMouseoverEvent", 
@@ -231,12 +236,20 @@ YAHOO.bungeni.scheduling = function(){
                 dataTable.subscribe("rowAddEvent", 
                     YAHOO.bungeni.scheduling.handlers.setUnsavedChanges
                 );
+                dataTable.subscribe("rowsAddEvent", 
+                    YAHOO.bungeni.scheduling.handlers.setUnsavedChanges
+                );
                 dataTable.subscribe("rowDeleteEvent", 
                     YAHOO.bungeni.scheduling.handlers.setUnsavedChanges
                 );
                 dataTable.subscribe("rowUpdateEvent", 
                     YAHOO.bungeni.scheduling.handlers.setUnsavedChanges
                 );
+                resizable_panel.on("endResize", function(){
+                    Handlers.resizeDataTable(dataTable,
+                        container.body.clientWidth-15
+                    );
+                });
                 
                 return {
                     oDs: dataSource,

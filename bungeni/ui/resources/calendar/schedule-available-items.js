@@ -469,33 +469,41 @@ YAHOO.bungeni.availableitems = function(){
     
     var renderDt = function(){
         var container = YAHOO.bungeni.scheduling.Layout.layout.getUnitByPosition("center");
+        var resizable_panel = YAHOO.bungeni.scheduling.Layout.layout.getUnitByPosition("left");
+        var dt_width = container.body.clientWidth - 15;
         var Handlers = YAHOO.bungeni.availableitems.handlers;
         var availableItemsColumns = [
             {
                 key: Columns.SELECT_ROW, 
                 label: "<input type='checkbox' name='rec-sel-all'/>", 
-                formatter: Formatters.availableItemSelect
+                formatter: Formatters.availableItemSelect,
+                width: (0.05 * dt_width)
             },
             {
                 key: Columns.TITLE,
                 label: SGlobals.column_title,
+                width: (0.4 * dt_width)
             },
             {
                 key: Columns.REGISTRY_NO,
                 label: SGlobals.column_registry_number,
+                width: (0.1 * dt_width)
             },
             {
                 key: Columns.MOVER,
                 label: SGlobals.column_mover,
+                width: (0.1 * dt_width)
             },
             {
                 key: Columns.STATUS,
                 label: SGlobals.column_status,
+                width: (0.1 * dt_width)
             },
             {
                 key: Columns.STATUS_DATE,
                 label: SGlobals.column_status_date,
-                formatter: "date"
+                formatter: "date",
+                width: (0.1 * dt_width)
             },
         ]
         var availableItemsSchema = {
@@ -535,7 +543,7 @@ YAHOO.bungeni.availableitems = function(){
                             selectionMode:"single",
                             scrollable: true,
                             initialLoad: true,
-                            width: (container.body.clientWidth-15) + "px",
+                            width: "100%",
                             height: (container.body.clientHeight-120) + "px",
                         }
                     );
@@ -551,6 +559,12 @@ YAHOO.bungeni.availableitems = function(){
                     //itemsDataTable.subscribe("rowDeleteEvent", function(args){
                     //    uncheckRemovedRows(args, tabDataTable, type);
                     //});
+                    //bind a resize event
+                    resizable_panel.on("endResize", function(){
+                        YAHOO.bungeni.config.scheduling.handlers.resizeDataTable(
+                            tabDataTable, (container.body.clientWidth-15)
+                        );
+                    });
                     renderFilterControls(type, container_filters, tabDataTable);
                 });
             })();

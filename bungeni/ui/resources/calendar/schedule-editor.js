@@ -9,6 +9,7 @@ YAHOO.bungeni.agendaconfig = function(){
     var Columns = YAHOO.bungeni.config.scheduling.columns;
     var Formatters = YAHOO.bungeni.config.scheduling.formatters;
     var Handlers = YAHOO.bungeni.config.scheduling.handlers;
+    var Dialogs = YAHOO.bungeni.config.dialogs;
     var DialogConfig = YAHOO.bungeni.config.dialogs.config;
 
     var editor = null;
@@ -68,6 +69,23 @@ YAHOO.bungeni.agendaconfig = function(){
                 Columns.URI,
             ],
     };
+    var _getEmptyMessage = function(){
+        var h_bind = "YAHOO.bungeni.config.dialogs.textrecords.show(SGlobals.types.HEADING);";
+        var e_bind = "YAHOO.bungeni.config.dialogs.textrecords.show(SGlobals.types.EDITORIAL_NOTE);";
+        return (
+            YAHOO.bungeni.Utils.wrapText(SGlobals.empty_agenda_message, "p") +
+            YAHOO.bungeni.Utils.wrapText("+ " + SGlobals.type_names.HEADING, 
+                "button", ("href='javascript:void(0);' id='init-add-heading' " +
+                    "onclick='" + h_bind + "'"
+                 )
+            ) + 
+            YAHOO.bungeni.Utils.wrapText("+ " + SGlobals.type_names.EDITORIAL_NOTE, 
+                "button", ("href='javascript:void(0);' " + 
+                    "id='init-add-editorial-note' onclick='" + e_bind + "'"
+                )
+            )
+        )
+    }
 
     return {
         setEditor: _setEditor,
@@ -77,5 +95,6 @@ YAHOO.bungeni.agendaconfig = function(){
         AGENDA_DATASOURCE_URL: SGlobals.json_listing_url,
         TITLE_AGENDA: SGlobals.current_schedule_items,
         TITLE_AVAILABLE_ITEMS: SGlobals.available_items_title,
+        EMPTY_AGENDA_MESSAGE: _getEmptyMessage()
     }
 }();

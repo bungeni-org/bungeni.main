@@ -77,6 +77,12 @@ def get_globals(group_name, **kwargs):
             "column_status_date": i18n(_(u"Date"), language),
             "column_registry_number": i18n(_(u"No."), language),
             "column_mover": i18n(_(u"Mover"), language),
+            "empty_agenda_message": i18n(_(u"the agenda is empty. "
+                "add items from below from from the available documents to the"
+                " right"
+            ),
+                language
+            ),
             "text_button_text": i18n(_(u"editorial note"), language),
             "text_records_title": i18n(_(u"add text records"), language),
             "heading_button_text": i18n(_(u"heading"), language),
