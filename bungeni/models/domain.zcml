@@ -91,11 +91,9 @@
     </class>
     
     
-    
     <!-- parliamentary items -->
-
-    <class class=".domain.ParliamentaryItem">
-        <!-- domain / orm / schema -->
+    <!-- class class=".domain.ParliamentaryItem">
+        <!-#- domain / orm / schema -#->
         <require permission="zope.View"
             attributes="
                 files
@@ -137,87 +135,77 @@
         />
         <require permission="zope.View"
             set_attributes="timestamp"
-        /><!-- !+TIMESTAMP(mr, jul-2011) granting edit on timestamp to anyone 
+        /><!-#- !+TIMESTAMP(mr, jul-2011) granting edit on timestamp to anyone 
         with view privilege, as an item, while not essentuially being editable 
         may still be affected by the user's action e.g transited to another 
         state without "any modifications". Previous to circa r8460, this was 
         not an issue, and the user was being allowed to set timestamp even if
         no edit permission on the item.
-        -->
+        -#->
     </class>
+    -->
     
     <class class=".domain.Bill">
-        <require like_class=".domain.ParliamentaryItem" />
+        <require like_class=".domain.Doc" />
         <require permission="zope.View"
             attributes="
                 bill_id
                 doc_type
                 ministry_id
-                identifier
                 publication_date
             "
         />
         <require permission="bungeni.bill.Edit"
-            attributes="note" 
-        />
-        <require permission="bungeni.bill.Edit"
             set_attributes="
-                short_name
+                short_title
                 language
-                body_text
+                body
                 doc_type
                 summary
                 ministry_id
-                full_name
-                receive_notification
+                long_title
                 owner_id
-                note
             "
         />
     </class>
     
+    
     <class class=".domain.Question">
-        <require like_class=".domain.ParliamentaryItem" />
+        <require like_class=".domain.Doc" />
         <require permission="zope.View"
             attributes="
                 ministry
-                question_type
+                doc_type
                 response_type
                 
                 question_id
-                question_number
+                type_number
                 ministry_submit_date
-                supplement_parent_id
                 sitting_time
                 ministry_id
             "
-        />
-        <require permission="bungeni.question.Edit"
-            attributes="note" 
         />
         <require permission="bungeni.response.View"
             attributes="response_text"
         />
         <require permission="bungeni.question.Edit"
             set_attributes="
-                short_name
+                short_title
                 language
-                body_text
+                body
                 ministry_id
                 response_type
-                full_name
-                question_type
-                receive_notification
+                long_title
+                doc_type
                 owner_id
-                note
                 subject
             "
         />
         <!-- !+WORKFLOW_TRANSITION(ah, jan-2011) to be reviewed for now we 
             use the permission used for running transition  -->
-        <require permission="bungeni.question.wf.completed.admissible"
-            set_attributes="question_number"
-        />
+        <!--require permission="bungeni.question.wf.completed.admissible"
+            set_attributes="type_number"
+        /-->
         <require permission="bungeni.response.Edit"
             set_attributes="response_text" 
         />
@@ -262,7 +250,7 @@
     </class>
     
     <class class=".domain.AgendaItem">
-        <require like_class=".domain.ParliamentaryItem" />
+        <require like_class=".domain.Doc" />
         <require permission="zope.View"
             attributes="
                 group
@@ -271,46 +259,33 @@
             "
         />
         <require permission="bungeni.agendaitem.Edit"
-            attributes="note"
-        />
-        <require permission="bungeni.agendaitem.Edit"
              set_attributes="
                 parliamentary_item_id 
                 owner_id
                 language
-                short_name
-                full_name
-                body_text
-                note
-                receive_notification
+                short_title
+                long_title
+                body
                 group_id
             "
         />
     </class>
     
     <class class=".domain.TabledDocument">
-        <require like_class=".domain.ParliamentaryItem" />
+        <require like_class=".domain.Doc" />
         <require permission="zope.View"
             attributes="
                 tabled_document_id
-                link
-                tabled_document_number
             "
-        />
-        <require permission="bungeni.tableddocument.Edit"
-            attributes="note"
         />
         <require permission="bungeni.tableddocument.Edit"
             set_attributes="
                 parliamentary_item_id 
                 owner_id
                 language
-                short_name
-                full_name
-                body_text
-                note
-                receive_notification
-                link
+                short_title
+                long_title
+                body
             "
         />
         <!-- !+WORKFLOW_TRANSITION(ah, jan-2011) was bungeni.historical.Edit 
@@ -758,14 +733,14 @@
             attributes="
                 discussion_id
                 schedule_id
-                body_text sitting_time
+                body sitting_time
                 language
             "
         />
         <require permission="bungeni.sittingschedule.itemdiscussion.Edit"
             set_attributes="
                 item_id
-                body_text 
+                body
                 sitting_time
                 language
             "

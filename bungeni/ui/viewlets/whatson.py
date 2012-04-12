@@ -184,7 +184,7 @@ class WhatsOnBrowserView(BrowserView):
                     "status": str(misc.get_wf_state(schedule.item)),
                     "url": url.set_url_context("/business/%ss/obj-%s" % (
                                         schedule.item.type,
-                                        schedule.item.parliamentary_item_id)),
+                                        schedule.item.doc_id)),
                     "group_type": schedule.sitting.group.type,
                     "group_name": schedule.sitting.group.short_name
                      })

@@ -46,18 +46,18 @@ Initialise Group
   >>> parliament.language = "en"
   >>> session.add( parliament )
   >>> session.flush()
-  >>> len(list(session.query(domain.BillChange)))
+  >>> len([ au for au in session.query(domain.Audit).filter(domain.Audit.audit_type=="bill") ])
   0
 
 Initialise Bill
 -------------------
 
    >>> bill = domain.Bill()
-   >>> bill.body_text = 'THIS IS A TEST'
+   >>> bill.body = "THIS IS A TEST"
    >>> bill.start_date = datetime.datetime.now()
    >>> bill.end_date = datetime.datetime.now()
    >>> bill.note = "This is a test"
-   >>> bill.short_name = "Sitting Agenda"
+   >>> bill.short_title = "Sitting Agenda"
    >>> bill.owner = user
    >>> bill.language = "en"
    >>> bill.created_date = datetime.datetime.now()
@@ -83,17 +83,20 @@ check the audit table for changes:
 !+AUDIT(murithi, may-2011) - With workflow events firing => more changes
 TODO: cater for workflow related changes in changes table
 
-check audit table for "add" change
-  >>> len(list(session.query(domain.BillChange).filter(
-  ...   domain.BillChange.action=="add")))
+check audit table for "add" change for this bill instance
+  >>> len(domain.get_changes(bill, "add"))
   1
 
-  >>> changes_table_count = len(list(session.query(domain.BillChange)))
+  >>> from bungeni.models.testing import get_audit_count_for_type
+  >>> changes_table_count = get_audit_count_for_type("bill")
 
 Select last modification
 ------------------------
-  >>> bill.changes[0].user.login
+  >>> last_change = bill.changes[0]
+  >>> last_change.user.login
   u'jdoe'
+  >>> last_change.action
+  'add'
 
 Broadcase an object modified event
 ----------------------------------
@@ -102,13 +105,17 @@ Broadcase an object modified event
 
 check the audit table: 
 
-  >>> len(list(session.query(domain.BillChange))) == changes_table_count + 1 
+  >>> get_audit_count_for_type("bill") == changes_table_count + 1 
   True
 
 Select last modification
 ------------------------
-  >>> bill.changes[1].user.login
+  >>> session.refresh(bill) # !+ otherwise bill.changes is stale!
+  >>> last_change = bill.changes[0]
+  >>> last_change.user.login
   u'jdoe'
+  >>> last_change.action
+  u'modify'
 
 Clean up
 --------

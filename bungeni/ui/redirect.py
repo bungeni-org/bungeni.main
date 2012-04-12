@@ -93,7 +93,7 @@ class SignatoryReview(BrowserView):
     def __call__(self):
         request = self.request
         context = self.context
-        item_id = context.parliamentary_item_id
+        item_id = context.doc_id
         user_id = get_db_user_id()
         signatories = context.signatories
         _filters = {"user_id": user_id}

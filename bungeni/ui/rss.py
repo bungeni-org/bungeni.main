@@ -153,13 +153,13 @@ class BillRSSView(RSSView):
     channel_description = _(u'Bills')
 
     def get_title(self, item):
-        if item.identifier is None:
-            return item.short_name
-        return "#%d: %s" % (item.identifier,
-                            item.short_name)
+        if item.type_number is None:
+            return item.short_title
+        return "#%d: %s" % (item.type_number,
+                            item.short_title)
 
     def get_description(self, item):
-        return item.body_text or u''
+        return item.body or u''
 
     def get_date(self, item):
         #Since we have only publication date, time will be set to 12:00
@@ -196,14 +196,14 @@ class QuestionRSSView(RSSView):
     channel_description = _(u'Questions')
 
     def get_title(self, item):
-        if item.question_number is None:
-            return item.short_name
+        if item.type_number is None:
+            return item.short_title
         return "#%d: %s" % (
-            item.question_number,
-            item.short_name)
+            item.type_number,
+            item.short_title)
 
     def get_description(self, item):
-        return item.body_text or u''
+        return item.body or u''
 
     def get_date(self, item):
         return item.status_date
@@ -218,14 +218,14 @@ class MotionRSSView(RSSView):
     channel_description = _(u'Motions')
 
     def get_title(self, item):
-        if item.motion_number is None:
-            return item.short_name
+        if item.type_number is None:
+            return item.short_title
         return "#%d: %s" % (
-            item.motion_number,
-            item.short_name)
+            item.type_number,
+            item.short_title)
 
     def get_description(self, item):
-        return item.body_text or u''
+        return item.body or u''
 
     def get_date(self, item):
         return item.status_date
@@ -240,10 +240,10 @@ class TabledDocumentRSSView(RSSView):
     channel_description = _(u'Tabled documents')
 
     def get_title(self, item):
-        return item.short_name
+        return item.short_title
 
     def get_description(self, item):
-        return item.body_text or u''
+        return item.body or u''
 
     def get_date(self, item):
         return item.status_date
@@ -258,11 +258,11 @@ class AgendaItemRSSView(RSSView):
     channel_description = _(u'Agenda items')
 
     def get_title(self, item):
-        return u"%s - %s" % (item.short_name,
+        return u"%s - %s" % (item.short_title,
                              item.group.short_name)
 
     def get_description(self, item):
-        return item.body_text or u''
+        return item.body or u''
 
     def get_date(self, item):
         return item.status_date
@@ -303,11 +303,11 @@ class ReportRSSView(RSSView):
     channel_description = _(u'Reports')
 
     def get_title(self, item):
-        return u'%s: %s - %s' % (item.short_name,
+        return u'%s: %s - %s' % (item.short_title,
             item.start_date, item.end_date)
 
     def get_description(self, item):
-        return item.body_text
+        return item.body
 
     def get_date(self, item):
         return item.status_date
@@ -346,7 +346,7 @@ class TimelineRSSView(RSSView):
         return item.date_audit
 
     def get_title(self, item):
-        return "%s %s %s" % (self.i18n_context.short_name,
+        return "%s %s %s" % (self.i18n_context.short_title,
                              _(u"changes from"),
                              self.format_date(item.date_audit))
 
@@ -362,10 +362,10 @@ class BillTimelineRSSView(TimelineRSSView):
 
     @property
     def channel_title(self):
-        if self.i18n_context.identifier is None:
-            return self.i18n_context.short_name
-        return "#%d: %s" % (self.i18n_context.identifier,
-                            self.i18n_context.short_name)
+        if self.i18n_context.type_number is None:
+            return self.i18n_context.short_title
+        return "#%d: %s" % (self.i18n_context.type_number,
+                            self.i18n_context.short_title)
 
     @property
     def channel_description(self):
@@ -385,10 +385,10 @@ class QuestionTimelineRSSView(TimelineRSSView):
 
     @property
     def channel_title(self):
-        if self.i18n_context.question_number is None:
-            return self.i18n_context.short_name
-        return "#%d: %s" % (self.i18n_context.question_number,
-                            self.i18n_context.short_name)
+        if self.i18n_context.type_number is None:
+            return self.i18n_context.short_title
+        return "#%d: %s" % (self.i18n_context.type_number,
+                            self.i18n_context.short_title)
 
     @property
     def channel_description(self):
@@ -408,10 +408,10 @@ class MotionTimelineRSSView(TimelineRSSView):
 
     @property
     def channel_title(self):
-        if self.i18n_context.motion_number is None:
-            return self.i18n_context.short_name
-        return "#%d: %s" % (self.i18n_context.motion_number,
-                            self.i18n_context.short_name)
+        if self.i18n_context.type_number is None:
+            return self.i18n_context.short_title
+        return "#%d: %s" % (self.i18n_context.type_number,
+                            self.i18n_context.short_title)
 
     @property
     def channel_description(self):
@@ -431,11 +431,11 @@ class TabledDocumentTimelineRSSView(TimelineRSSView):
 
     @property
     def channel_title(self):
-        return self.i18n_context.short_name
+        return self.i18n_context.short_title
 
     @property
     def channel_description(self):
-        return "%s %s" % (self.i18n_context.short_name,
+        return "%s %s" % (self.i18n_context.short_title,
                           _(u"timeline"))
 
 
@@ -446,12 +446,12 @@ class AgendaItemTimelineRSSView(TimelineRSSView):
 
     @property
     def channel_title(self):
-        return u"%s - %s" % (self.i18n_context.short_name,
+        return u"%s - %s" % (self.i18n_context.short_title,
                              self.i18n_context.group.short_name)
 
     @property
     def channel_description(self):
-        return "%s %s" % (self.i18n_context.short_name,
+        return "%s %s" % (self.i18n_context.short_title,
                           _(u"timeline"))
 
 
@@ -595,11 +595,11 @@ class AkomantosoXMLView(BrowserView):
         meta_element.appendChild(self.create_publication_element(ob))
 
         #Lifecycle
-        if hasattr(ob, "event"):
-            if len(ob.event) > 0:
+        if hasattr(ob, "events"):
+            if len(ob.events) > 0:
                 lifecycle_element = self.create_element("lifecycle",
                     source="#bungeni")
-                for item in ob.event.values():
+                for item in ob.events.values():
                     event_element = self.create_element("event",
                         id="evn%s" % item.doc_id,
                         type="generation",
@@ -679,7 +679,7 @@ class AkomantosoXMLView(BrowserView):
         return "ke"
 
     def get_body(self, item):
-        return item.body_text or u''
+        return item.body or u''
 
 
 class AkomantosoBillXMLView(AkomantosoXMLView):
@@ -690,10 +690,10 @@ class AkomantosoBillXMLView(AkomantosoXMLView):
     document_type = "bill"
 
     def get_title(self, item):
-        if item.identifier is None:
-            return item.short_name
-        return "#%d: %s" % (item.identifier,
-                            item.short_name)
+        if item.type_number is None:
+            return item.short_title
+        return "#%d: %s" % (item.type_number,
+                            item.short_title)
 
     def get_frbr_work_url(self, ob):
         return "/%s/bill/%s/main" % (self.get_country(ob),
@@ -776,11 +776,11 @@ class AkomantosoQuestionXMLView(AkomantosoXMLView):
     document_type = "doc"
 
     def get_title(self, item):
-        if item.question_number is None:
-            return item.short_name
+        if item.type_number is None:
+            return item.short_title
         return "#%d: %s" % (
-            item.question_number,
-            item.short_name)
+            item.type_number,
+            item.short_title)
 
     def get_frbr_work_url(self, ob):
         return "/%s/question/%s/main" % (self.get_country(ob),
@@ -863,11 +863,11 @@ class AkomantosoMotionXMLView(AkomantosoXMLView):
     document_type = "doc"
 
     def get_title(self, item):
-        if item.motion_number is None:
-            return item.short_name
+        if item.type_number is None:
+            return item.short_title
         return "#%d: %s" % (
-            item.motion_number,
-            item.short_name)
+            item.type_number,
+            item.short_title)
 
     def get_frbr_work_url(self, ob):
         return "/%s/motion/%s/main" % (self.get_country(ob),
@@ -950,7 +950,7 @@ class AkomantosoTabledDocumentXMLView(AkomantosoXMLView):
     document_type = "doc"
 
     def get_title(self, item):
-        return item.short_name
+        return item.short_title
 
     def get_frbr_work_url(self, ob):
         return "/%s/tableddocument/%s/main" % (self.get_country(ob),
@@ -1033,7 +1033,7 @@ class AkomantosoAgendaItemXMLView(AkomantosoXMLView):
     document_type = "doc"
 
     def get_title(self, item):
-        return u"%s - %s" % (item.short_name,
+        return u"%s - %s" % (item.short_title,
                              item.group.short_name)
 
     def get_frbr_work_url(self, ob):

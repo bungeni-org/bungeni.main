@@ -18,7 +18,7 @@ class BungeniRSSEventView(BrowserView):
         If you have an HTML website that contains the same information as your RSS file, 
         the title of your channel should be the same as the title of your website.
         """
-        return self.context.short_name
+        return self.context.short_title
 
     def rssDescription (self):
         """description

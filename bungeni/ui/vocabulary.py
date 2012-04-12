@@ -916,22 +916,14 @@ class PIAssignmentSource(SpecializedSource):
         trusted = removeSecurityProxy(context)
         existing_item_ids = [assn.item_id for assn in trusted.values()]
         if item_id:
-            query = session.query(domain.ParliamentaryItem).filter(
-                domain.ParliamentaryItem.parliamentary_item_id ==
-                item_id)
+            query = session.query(domain.Doc).filter(
+                domain.Doc.doc_id == item_id)
         else:
-            query = session.query(domain.ParliamentaryItem).filter(
+            query = session.query(domain.Doc).filter(
                     sql.and_(
-                        sql.not_(domain.ParliamentaryItem.status.in_(
-                                _assignable_state_ids
-                            )
-                        ),
-                        sql.not_(
-                            domain.ParliamentaryItem.parliamentary_item_id.in_(
-                                existing_item_ids
-                            )
-                        ),
-                        domain.ParliamentaryItem.parliament_id == parliament_id
+                        sql.not_(domain.Doc.status.in_(_assignable_state_ids)),
+                        sql.not_(domain.Doc.doc_id.in_(existing_item_ids)),
+                        domain.Doc.parliament_id == parliament_id
                     )
                 )
         return query

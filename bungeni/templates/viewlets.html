@@ -18,7 +18,7 @@ $begin{mp_items}
             $for{item in view.items}
             <tr>
                 <td>${i18n(item["type"])}</td>
-                <td><a href="${item['url']}">${item["short_name"]}</a></td>
+                <td><a href="${item['url']}">${item["short_title"]}</a></td>
                 <td>${i18n(item["status"])}</td>
                 <td>${view.formatter.format(item['submission_date'])}</td>
             </tr>

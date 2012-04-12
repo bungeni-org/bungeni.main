@@ -151,14 +151,14 @@ that is created via the UI form.
   
   >>> question = add_content(
   ...     domain.Question,
-  ...     short_name=u"My subject",
-  ...     body_text=u"The question",
+  ...     short_title=u"My subject",
+  ...     body=u"The question",
   ...     owner_id=mp_3.user_id,
   ...     language="en",
-  ...     question_type="ordinary",
+  ...     doc_type="ordinary",
   ...     response_type="written",
   ...     parliament_id=parliament.parliament_id)
-  
+    
   >>> question.__parent__ = app
   
   >>> from bungeni.models.testing import create_sitting
@@ -262,23 +262,22 @@ Setup mock delivery component.
   >>> question.status
   'draft'
   
-  >>> from bungeni.core.interfaces import IVersioned
-  >>> versions = IVersioned(question)
-  >>> version_count = len(versions)
+  >>> version_count = len(question.versions)
   >>> version_count
   0
 
 Transition: "submit"
 
-  >>> question.owner is mp_3
-  True
-  >>> wfc.fireTransition("%s-submitted" % question.status)
-  >>> question.status
-  'submitted'
-  >>> version_count += version_increment_for_state(question)
-  >>> assert version_count == len(versions)
-  >>> version_count # just once, to ensure version_increment_for_state works
-  1
+    >>> question.owner is mp_3
+    True
+    >>> wfc.fireTransition("%s-submitted" % question.status)
+    >>> question.status
+    'submitted'
+    >>> version_count += version_increment_for_state(question)
+    >>> session.refresh(question) # !+ otherwise question.versions is stale
+    >>> assert version_count == len(question.versions)
+    >>> version_count # just once, to ensure version_increment_for_state works
+    1
 
   >>> tuple(qprm.getRolesForPrincipal("member"))
   ((u'bungeni.Owner', PermissionSetting: Allow),)
@@ -291,9 +290,11 @@ Transition: "submit"
 
 Version instances are not workflowed.
 
-    >>> version_1 = list(versions.values())[0]
-    >>> version_1
-    <bungeni.models.domain.QuestionVersion object at ...>
+    >>> version_1 = question.versions[0]
+    >>> version_1 # !+ bungeni.models.domain.Change !!
+    <bungeni.models.domain.Change object at ...>
+    >>> version_1.audit.type
+    'question'
     
     >>> IWorkflow(version_1, None) is None
     True
@@ -311,87 +312,99 @@ in "submitted" state:
 -------------------------------------
 Transition: "receive" (from "submit")
 
-  >>> wfc.fireTransition("%s-received" % question.status)
-  >>> question.status
-  'received'
-  >>> version_count += version_increment_for_state(question)
-  >>> assert version_count == len(versions)
+    >>> wfc.fireTransition("%s-received" % question.status)
+    >>> question.status
+    'received'
+    >>> version_count += version_increment_for_state(question)
+    >>> session.refresh(question) # !+ otherwise question.versions is stale
+    >>> assert version_count == len(question.versions)
+
 
 
 "Needs Clarification to Receive" (from "received" or "incomplete")
 
-  >>> wfc.fireTransition("%s-clarification_required" % question.status)
-  >>> question.status
-  'clarification_required'
-  >>> version_count += version_increment_for_state(question)
-  >>> assert version_count == len(versions)
+    >>> wfc.fireTransition("%s-clarification_required" % question.status)
+    >>> question.status
+    'clarification_required'
+    >>> version_count += version_increment_for_state(question)
+    >>> session.refresh(question) # !+ otherwise question.versions is stale
+    >>> assert version_count == len(question.versions)
+
 
 
 PRINCIPAL: member
 
 Must re-submit:
 
-  >>> set_interaction(member)
-  >>> get_principal_id()
-  'member'
-  >>> wfc.fireTransition("%s-submitted" % question.status)
-  >>> question.status
-  'submitted'
-  >>> version_count += version_increment_for_state(question)
-  >>> assert version_count == len(versions)
+    >>> set_interaction(member)
+    >>> get_principal_id()
+    'member'
+    >>> wfc.fireTransition("%s-submitted" % question.status)
+    >>> question.status
+    'submitted'
+    >>> version_count += version_increment_for_state(question)
+    >>> session.refresh(question) # !+ otherwise question.versions is stale
+    >>> assert version_count == len(question.versions)
+
   
 
 PRINCIPAL: clerk
 
 And re-receive:
 
-  >>> set_interaction(clerk)
-  >>> get_principal_id()
-  'clerk'
-  >>> wfc.fireTransition("%s-received" % question.status)
-  >>> question.status
-  'received'
-  >>> version_count += version_increment_for_state(question)
-  >>> assert version_count == len(versions)
+    >>> set_interaction(clerk)
+    >>> get_principal_id()
+    'clerk'
+    >>> wfc.fireTransition("%s-received" % question.status)
+    >>> question.status
+    'received'
+    >>> version_count += version_increment_for_state(question)
+    >>> session.refresh(question) # !+ otherwise question.versions is stale
+    >>> assert version_count == len(question.versions)
 
 
 "Complete" (from "received" or "incomplete")
 
-  >>> wfc.fireTransition("%s-completed" % question.status)
-  >>> question.status
-  'completed'
-  >>> version_count += version_increment_for_state(question)
-  >>> assert version_count == len(versions)
+    >>> wfc.fireTransition("%s-completed" % question.status)
+    >>> question.status
+    'completed'
+    >>> version_count += version_increment_for_state(question)
+    >>> session.refresh(question) # !+ otherwise question.versions is stale
+    >>> assert version_count == len(question.versions)
+
 
 
 PRINCIPAL: speaker
 
-  >>> set_interaction(speaker)
-  >>> get_principal_id()
-  'speaker'
+    >>> set_interaction(speaker)
+    >>> get_principal_id()
+    'speaker'
 
 "Require recomplete" (from "completed")
 
-  >>> wfc.fireTransition("%s-incomplete" % question.status)
-  >>> question.status
-  'incomplete'
-  >>> version_count += version_increment_for_state(question)
-  >>> assert version_count == len(versions)
+    >>> wfc.fireTransition("%s-incomplete" % question.status)
+    >>> question.status
+    'incomplete'
+    >>> version_count += version_increment_for_state(question)
+    >>> session.refresh(question) # !+ otherwise question.versions is stale
+    >>> assert version_count == len(question.versions)
 
 
 PRINCIPAL: clerk
 
 "Re-complete" (from "incomplete")
 
-  >>> set_interaction(clerk)
-  >>> get_principal_id()
-  'clerk'
+    >>> set_interaction(clerk)
+    >>> get_principal_id()
+    'clerk'
 
-  >>> wfc.fireTransition("%s-completed" % question.status)
-  >>> question.status
-  'completed'
-  >>> version_count += version_increment_for_state(question)
-  >>> assert version_count == len(versions)
+    >>> wfc.fireTransition("%s-completed" % question.status)
+    >>> question.status
+    'completed'
+    >>> version_count += version_increment_for_state(question)
+    >>> session.refresh(question) # !+ otherwise question.versions is stale
+    >>> assert version_count == len(question.versions)
+
 
 
 PRINCIPAL: speaker
@@ -403,11 +416,12 @@ PRINCIPAL: speaker
   'speaker'
 
 
-  >>> wfc.fireTransition("%s-admissible" % question.status)
-  >>> question.status
-  'admissible'
-  >>> version_count += version_increment_for_state(question)
-  >>> assert version_count == len(versions)
+    >>> wfc.fireTransition("%s-admissible" % question.status)
+    >>> question.status
+    'admissible'
+    >>> version_count += version_increment_for_state(question)
+    >>> session.refresh(question) # !+ otherwise question.versions is stale
+    >>> assert version_count == len(question.versions)
 
   
 !+FIRETRANSITION(mr, dec-2010) workflow transitions (only partly) executed in 
@@ -467,7 +481,7 @@ Question conditions
   >>> scheduling = add_content(
   ...     domain.ItemSchedule,
   ...     group_sitting_id=sitting.group_sitting_id,
-  ...     item_id=question.parliamentary_item_id,
+  ...     item_id=question.doc_id,
   ...     item_type=question.type)
   
   >>> _conditions.is_scheduled(question)
@@ -475,12 +489,12 @@ Question conditions
 
 "Is written response / ministry set".
 
-  >>> _conditions.is_written_response(question)
-  False
-
-  >>> question.ministry_id = ministry.group_id
-  >>> _conditions.is_written_response(question)
-  True
+    >>> _conditions.is_written_response(question)
+    False
+    
+    >>> question.ministry_id = ministry.group_id
+    >>> _conditions.is_written_response(question)
+    True
 
 Notifications
 -------------
@@ -518,23 +532,24 @@ Set up a user.
   ...     group_id=ministry.group_id,
   ...     user_id=mp_2.user_id)
 
-  >>> question.receive_notification = False
   >>> question.owner_id = user.user_id
   
 Question received.
   
+  >>> #!+NOTIFICATION_SETTINGS -> currently default is False for owner
   >>> wf.get_state("received").notifications[0](question)
 
 Let's change our setting for receive notification so an email message
 is dispatched.
 
-  >>> question.receive_notification = True
-  >>> wf.get_state("received").notifications[0](question)
-  From: clerks.office@parliament.go.tld
-  To: "John Doe" <john.doe@localhost> 
-  ...
-  Subject: Question received: My subject
-  ...
+    >>> def TRUE(context): return True 
+    >>> wf.get_state("received").notifications[0].condition = TRUE #!+NOTIFICATION_SETTINGS
+    >>> wf.get_state("received").notifications[0](question)
+    From: clerks.office@parliament.go.tld
+    To: "John Doe" <john.doe@localhost> 
+    ...
+    Subject: Question received: My subject
+    ...
   
 Send notification to Clerk's office upon submit.
 
@@ -555,10 +570,11 @@ not notify, so it fails... so, we hard-reset clerks_office_notification to True:
 the question is marked as “completed” and is made available / forwarded
 to the Speaker's Office for reviewing and to make it “admissible”.
 
-  >>> wf.get_state("completed").notifications[0](question)
-  From: clerks.office@parliament.go.tld
-  To: "John Doe" <john.doe@localhost> ...
-  Subject: Question forwarded to Speaker's Office: My subject ...
+    >>> wf.get_state("completed").notifications[0].condition = TRUE #!+NOTIFICATION_SETTINGS
+    >>> wf.get_state("completed").notifications[0](question)
+    From: clerks.office@parliament.go.tld
+    To: "John Doe" <john.doe@localhost> ...
+    Subject: Question forwarded to Speaker's Office: My subject ...
 
 At the same time the question is also forwarded to the ministry.
 
@@ -574,45 +590,51 @@ At the same time the question is also forwarded to the ministry.
   
 A question was rejected by the speakers office.
 
-  >>> wf.get_state("inadmissible").notifications[0](question)
-  From: speakers.office@parliament.go.tld
-  To: "John Doe" <john.doe@localhost> ...
-  Subject: Question rejected: My subject ... 
+    >>> wf.get_state("inadmissible").notifications[0].condition = TRUE #!+NOTIFICATION_SETTINGS
+    >>> wf.get_state("inadmissible").notifications[0](question)
+    From: speakers.office@parliament.go.tld
+    To: "John Doe" <john.doe@localhost> ...
+    Subject: Question rejected: My subject ... 
 
 A question needs clarification by the MP
 
-  >>> wf.get_state("clarification_required").notifications[0](question)
-  From: clerks.office@parliament.go.tld
-  To: "John Doe" <john.doe@localhost> ...
-  Subject: Question needs clarification: My subject ...
+    >>> wf.get_state("clarification_required").notifications[0].condition = TRUE #!+NOTIFICATION_SETTINGS
+    >>> wf.get_state("clarification_required").notifications[0](question)
+    From: clerks.office@parliament.go.tld
+    To: "John Doe" <john.doe@localhost> ...
+    Subject: Question needs clarification: My subject ...
 
 A question was deferred by Clerk's office.
 
-  >>> wf.get_state("deferred").notifications[0](question)
-  From: speakers.office@parliament.go.tld
-  To: "John Doe" <john.doe@localhost> ...
-  Subject: Question deferred: My subject ...
+    >>> wf.get_state("deferred").notifications[0].condition = TRUE #!+NOTIFICATION_SETTINGS
+    >>> wf.get_state("deferred").notifications[0](question)
+    From: speakers.office@parliament.go.tld
+    To: "John Doe" <john.doe@localhost> ...
+    Subject: Question deferred: My subject ...
 
 A question was scheduled by Speakers office.
 
-  >>> wf.get_state("scheduled").notifications[0](question)
-  From: clerks.office@parliament.go.tld
-  To: "John Doe" <john.doe@localhost> ...
-  Subject: Question scheduled: My subject ...
+    >>> wf.get_state("scheduled").notifications[0].condition = TRUE #!+NOTIFICATION_SETTINGS
+    >>> wf.get_state("scheduled").notifications[0](question)
+    From: clerks.office@parliament.go.tld
+    To: "John Doe" <john.doe@localhost> ...
+    Subject: Question scheduled: My subject ...
 
 A question was sent to a ministry for written response.
 
-  >>> wf.get_state("response_pending").notifications[0](question)
-  From: clerks.office@parliament.go.tld
-  To: "John Doe" <john.doe@localhost> ...
-  Subject: Question sent to ministry: My subject ...
+    >>> wf.get_state("response_pending").notifications[0].condition = TRUE #!+NOTIFICATION_SETTINGS
+    >>> wf.get_state("response_pending").notifications[0](question)
+    From: clerks.office@parliament.go.tld
+    To: "John Doe" <john.doe@localhost> ...
+    Subject: Question sent to ministry: My subject ...
 
 A questions answer was reviewed by Clerk's office.
 
-  >>> wf.get_state("response_submitted").notifications[0](question)
-  From: clerks.office@parliament.go.tld
-  To: "John Doe" <john.doe@localhost> ...
-  Subject: Question answered: My subject ...
+    >>> wf.get_state("response_submitted").notifications[0].condition = TRUE #!+NOTIFICATION_SETTINGS
+    >>> wf.get_state("response_submitted").notifications[0](question)
+    From: clerks.office@parliament.go.tld
+    To: "John Doe" <john.doe@localhost> ...
+    Subject: Question answered: My subject ...
 
 
   

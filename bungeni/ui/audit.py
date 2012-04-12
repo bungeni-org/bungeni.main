@@ -89,7 +89,7 @@ class ChangeDataProvider(object):
                     # at least no recursion, on events on events...
                     and not interfaces.IEvent.providedBy(self.head)
                 ):
-                events = [ e for e in self.head.events
+                events = [ e for e in self.head.sa_events
                     if interaction.checkPermission("zope.View", e)
                 ]
                 for e in events:
@@ -107,11 +107,8 @@ class ChangeDataProvider(object):
             f for f in head.files ]
         print "---- !+ATTACHMENTS", list(head.files.values()), head.files.values()
         # events:
-        print "---- !+EVENT", head.events, head.event, [ 
-            e for e in head.event ]
-        # !+ why the two attributes item.events (Event instances), 
-        #   item.event (Managed bungeni.models.domain.EventContainer)
-        # !+ why is event (container) singular?
+        print "---- !+EVENT", head.sa_events, head.events, [ 
+            e for e in head.events ]
         # signatories:
         print "---- !+AUDITLOG SIGNATORIES", head.itemsignatories, \
             [ s.user_id for s in head.itemsignatories ], \
@@ -203,7 +200,7 @@ def _format_description(change):
     # links within descriptions for audit logs of a sub object are all broken!
     if audit_type_name == "event":
         # description for (event, *)
-        return """<a href="event/obj-%s">%s</a> %s""" % (
+        return """<a href="events/obj-%s">%s</a> %s""" % (
             audit.audit_head_id, _label(audit), _note(audit))
     elif audit_type_name == "attachment":
         file_title = "%s" % (audit.audit_head.title)
@@ -362,9 +359,9 @@ class AuditLogView(AuditLogMixin, browser.BungeniBrowserView):
     def __init__(self, context, request):
         browser.BungeniBrowserView.__init__(self, context, request)
         AuditLogMixin.__init__(self)
-        if hasattr(self.context, "short_name"):
+        if hasattr(self.context, "short_title"):
             self._page_title = "%s: %s" % (
-                _(self._page_title), _(self.context.short_name))
+                _(self._page_title), _(self.context.short_title))
         else:
             self._page_title = _(self.__class__._page_title)
 

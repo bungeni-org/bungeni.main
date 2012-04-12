@@ -53,15 +53,15 @@
                     </div>
                      <div>
                         <p class="reporttext" 
-                              tal:replace="structure scheduled/item/body_text"
+                              tal:replace="structure scheduled/item/body"
                               tal:condition="python:view.check_option(scheduled.item.type, 'text')"/>
                      </div>
                      <div tal:condition="view/display_minutes">
-                        <div tal:condition="scheduled/discussion/body_text">
+                        <div tal:condition="scheduled/discussion/body">
                             <h3 class="reportminutes" i18n:translate="">
                                 Minutes
                             </h3>
-                            <p tal:content="structure scheduled/discussion/body_text"/>
+                            <p tal:content="structure scheduled/discussion/body"/>
                         </div>
                      </div>
                     <div tal:condition="python:view.check_option(scheduled.item.type, 'signatories')" 

@@ -214,13 +214,14 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
         else:
             context_group_id = self.context.group_id
 
-        report = domain.Report(short_name = self.title,
-            start_date = self.start_date,
-            end_date = self.end_date,
-            body_text = self.generated_content,
-            owner_id = get_db_user_id(),
-            language = self.language,
-            group_id = context_group_id
+        report = domain.Report(
+            short_title=self.title,
+            start_date=self.start_date,
+            end_date=self.end_date,
+            body=self.generated_content,
+            owner_id=get_db_user_id(),
+            language=self.language,
+            group_id=context_group_id
         )
         session = Session()
         session.add(report)
@@ -375,7 +376,7 @@ class ReportView(form.PageForm, DateTimeFormatMixin):
     def handle_preview(self, action, data):
         self.process_form(data)
         self.save_link = url.absoluteURL(self.context, self.request) + "/save-report"
-        self.body_text = self.result_template()
+        self.body = self.result_template()
         return self.main_result_template()
 
     def process_form(self, data):
@@ -474,7 +475,7 @@ class SaveReportView(form.PageForm):
                                 required=True,
                                 description=u"Report Type"
                         )
-        body_text = schema.Text(title=u"Report Text",
+        body = schema.Text(title=u"Report Text",
                                 required=True,
                                 description=u"Report Type"
                         )
@@ -490,7 +491,7 @@ class SaveReportView(form.PageForm):
         class context:
             start_date = None
             end_date = None
-            body_text = None
+            body = None
             note = None
             short_name = None
             sittings = None
@@ -505,7 +506,7 @@ class SaveReportView(form.PageForm):
     def handle_save(self, action, data):
         report = domain.Report()
         session = Session()
-        report.body_text = data["body_text"]
+        report.body = data["body"]
         report.start_date = data["start_date"]
         report.end_date = data["end_date"]
         report.note = data["note"]
@@ -588,7 +589,7 @@ def default_reports(sitting, event):
             report.short_name = generator.title = _(
                 u"Sitting Votes and Proceedings"
             )
-        report.body_text = generator.generateReport()
+        report.body = generator.generateReport()
         session.add(report)
         session.flush()
         notify(ObjectCreatedEvent(report))

@@ -102,7 +102,7 @@ def combined_name_column(name, title, default=""):
     """An extended name, combining full_name (localized) and short_name columns.
 
     For types that have both a full_name and a short_name attribute:
-    Group, ParliamentaryItem, ParliamentarySession
+    Group, ParliamentarySession
     """
     def getter(item, formatter):
         return "%s [%s]" % (_(item.full_name), item.short_name)
@@ -2238,8 +2238,7 @@ class DocumentDescriptor(ModelDescriptor):
         Field(name="type_number", # [sys]
             modes="view listing",
             localizable=[ 
-                show("view"),
-                hide("listing") 
+                show("view listing"),
             ],
             property=schema.Int(title=_("Sequential Number"), required=False),
         ),
@@ -2310,8 +2309,7 @@ class DocumentDescriptor(ModelDescriptor):
         Field(name="group_id", # [user]
             modes="view edit add listing",
             localizable=[ 
-                show("view edit add"),
-                hide("listing") 
+                show("view edit listing"), 
             ],
             property=schema.Choice(title=_("Group"),
                 source=vocabulary.MinistrySource("ministry_id"), # !+PLACEHOLDER_GROUP_SOURCE
@@ -2359,133 +2357,6 @@ class EventDescriptor(DocumentDescriptor):
     del f # remove f from class namespace
 
 
-
-
-class ParliamentaryItemDescriptor(ModelDescriptor):
-    localizable = False
-    
-    fields = [
-        Field(name="parliament_id", # [sys]
-            modes="view listing",
-            localizable=[ hide("view listing"), ],
-            property=schema.Choice(title=_("Parliament"),
-                source=vocabulary.DatabaseSource(domain.Parliament,
-                    token_field="parliament_id",
-                    title_field="short_name",
-                    value_field="parliament_id"
-                ),
-            ),
-        ),
-        Field(name="short_title", # "short_name", [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit listing"),
-            ],
-            property=schema.TextLine(title=_("Title")),
-            edit_widget=widgets.TextWidget,
-            add_widget=widgets.TextWidget,
-            view_widget=widgets.ComputedTitleWidget
-        ),
-        Field(name="long_title", # "full_name", [user]
-            modes="view edit add",
-            localizable=[
-                show("view edit add"),
-            ],
-            property=schema.TextLine(title=_("Summary"), required=False),
-            edit_widget=widgets.LongTextWidget,
-            add_widget=widgets.LongTextWidget,
-        ),
-        Field(name="registry_number", # [user]
-            modes="view edit listing",
-            localizable=[
-                show("view"),
-                hide("edit listing"),
-            ],
-            property=schema.Int(title=_("Registry number"), required=False),
-        ),
-        Field(name="owner_id", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                hide("view listing", "bungeni.Anonymous"),
-            ],
-            property=schema.Choice(title=_("Moved by"),
-                description=_("Select the user who moved the document"),
-                source=vocabulary.MemberOfParliamentDelegationSource("owner_id"),
-            ),
-            listing_column=linked_mp_name_column("owner_id", _("Name"), "owner"),
-            add_widget=widgets.MemberDropDownWidget,
-            view_widget=widgets.MemberURLDisplayWidget,
-        ),
-        LanguageField("language"), # [user-req]
-        Field(name="body", # "body_text", [rtf]
-            modes="view edit add",
-            localizable=[ show("view"), ],
-            property=schema.Text(title=_("Text")),
-            view_widget=widgets.HTMLDisplay,
-            edit_widget=widgets.RichTextEditor,
-            add_widget=widgets.RichTextEditor,
-        ),
-        Field(name="submission_date", # [derived]
-            modes="view listing",
-            localizable=[ show("view listing"), ],
-            property=schema.Date(title=_("Submission Date"), required=False),
-            listing_column=day_column("submission_date", _("Submission Date")),
-        ),
-        Field(name="timestamp", # [sys]
-            modes="edit",
-            localizable=[ show("edit"), ],
-            property=schema.Datetime(title=_(""), required=False),
-            edit_widget=widgets.HiddenTimestampWidget,
-        ),
-        Field(name="status", label=_("Status"), # [sys]
-            modes="view listing",
-            localizable=[
-                show("view listing"),
-            ],
-            property=schema.Choice(title=_("Status"),
-                vocabulary="bungeni.vocabulary.workflow",
-            ),
-            listing_column=workflow_column("status", "Workflow status"),
-        ),
-        Field(name="status_date", label=_("Status date"), # [sys]
-            modes="view listing",
-            localizable=[
-                show("view listing"),
-            ],
-            property=schema.Date(title=_("Status Date"), required=False),
-            listing_column=day_column("status_date", _("Status date")),
-        ),
-        Field(name="note", label=_("Notes"), # [???]
-            description="Recommendation note",
-            modes="edit add",
-            localizable=[
-                show("edit add"),
-            ],
-            property=schema.Text(title=_("Notes"),
-                description=_("Recommendation note"),
-                required=False
-            ),
-            add_widget=widgets.OneTimeEditWidget,
-            edit_widget=widgets.OneTimeEditWidget,
-        ),
-        Field(name="receive_notification", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit"),
-                hide("listing"),
-            ],
-            property=schema.Choice(title=_("Receive notification"),
-                description=_("Select this option to receive notifications "
-                    "for this item"),
-                source=vocabulary.YesNoSource
-            ),
-            edit_widget=widgets.CheckBoxWidget,
-            add_widget=widgets.CheckBoxWidget,
-            view_widget=widgets.YesNoDisplayWidget(),
-        ),
-    ]
-
-
 ''' !+AuditLogView(mr, nov-2011) change listings do not respect this
 class ChangeDescriptor(ModelDescriptor):
     localizable = False
@@ -2528,12 +2399,13 @@ class ChangeDescriptor(ModelDescriptor):
     ]
 '''
 
+# !+VERSION_CLASS_PER_AUDIT_TYPE(mr, apr-2012)
 # !+VERSION_LISTING(mr, nov-2011) version listings do not respect this
 class VersionDescriptor(ModelDescriptor):
     localizable = False
-
+    
     fields = [
-        Field(name="short_name", # [user-req]
+        Field(name="short_title", # [user-req]
             modes="view edit add listing",
             localizable=[
                 show("view edit listing"),
@@ -2542,7 +2414,7 @@ class VersionDescriptor(ModelDescriptor):
             edit_widget=widgets.TextWidget,
             add_widget=widgets.TextWidget,
         ),
-        Field(name="full_name", # [user-req]
+        Field(name="long_title", # [user-req]
             modes="view edit add listing",
             localizable=[
                 show("view edit"),
@@ -2553,7 +2425,7 @@ class VersionDescriptor(ModelDescriptor):
             add_widget=widgets.LongTextWidget,
         ),
         LanguageField("language"), # [user-req]
-        Field(name="body_text", # [rtf]
+        Field(name="body", # [rtf]
             modes="view edit add",
             localizable=[
                 show("view edit"),
@@ -2575,7 +2447,7 @@ class VersionDescriptor(ModelDescriptor):
     ]
 
 
-class HeadingDescriptor(ParliamentaryItemDescriptor):
+class HeadingDescriptor(ModelDescriptor):
     localizable = True
     display_name = _("Heading")
     container_name = _("Headings")
@@ -2594,16 +2466,13 @@ class HeadingDescriptor(ParliamentaryItemDescriptor):
     ]
 
 
-class AgendaItemDescriptor(ParliamentaryItemDescriptor):
+class AgendaItemDescriptor(DocumentDescriptor):
     localizable = True
     display_name = _("Agenda item")
     container_name = _("Agenda items")
     
-    fields = deepcopy(ParliamentaryItemDescriptor.fields)
+    fields = deepcopy(DocumentDescriptor.fields)
     fields.append(AdmissibleDateField()) # [sys]
-    get_field(fields, "owner_id").localizable = [
-        show("view listing")
-    ]
     get_field(fields, "submission_date").localizable = [
         show("view"),
         hide("listing")
@@ -2614,17 +2483,15 @@ class AgendaItemDescriptor(ParliamentaryItemDescriptor):
     ]
     default_field_order = [
         "parliament_id",
-        #"short_name",
-        #"full_name",
+        "short_title",
+        "long_title",
         "registry_number",
         "owner_id",
         "status",
         "status_date",
         "language",
-        #"body_text",
+        "body",
         "submission_date",
-        "note",
-        "receive_notification",
         "admissible_date"
     ]
 
@@ -2668,17 +2535,15 @@ class MotionDescriptor(DocumentDescriptor):
     ]
     default_field_order = [
 			"parliament_id",
-			"short_title", #"short_name",
-			"long_title", #"full_name",
+			"short_title",
+			"long_title",
 			"type_number",
 			"owner_id",
 			"status",
 			"status_date",
 			"language",
-			"body", #"body_text",
+			"body",
 			"submission_date",
-			#"note",
-			#"receive_notification",
 			"admissible_date",
 			"notice_date",
 			"registry_number",
@@ -2716,19 +2581,19 @@ class BillTypeDescriptor(ModelDescriptor):
     ]
 '''
 
-class BillDescriptor(ParliamentaryItemDescriptor):
+class BillDescriptor(DocumentDescriptor):
     localizable = True
     display_name = _("Bill")
     container_name = _("Bills")
 
-    fields = deepcopy(ParliamentaryItemDescriptor.fields)
+    fields = deepcopy(DocumentDescriptor.fields)
+    # remove "doc_type"
+    fields[:] = [ f for f in fields if f.name not in ("doc_type", "group_id") ]
+    # tweak...
     with get_field(fields, "body") as f:
         f.label = _("Statement of Purpose")
         f.property = schema.Text(title=_("Statement of Purpose"), required=False)
     del f # remove f from class namespace
-    get_field(fields, "owner_id").localizable = [
-        show("view listing")
-    ]
     get_field(fields, "submission_date").localizable = [
         show("view"),
         hide("listing")
@@ -2747,29 +2612,20 @@ class BillDescriptor(ParliamentaryItemDescriptor):
                 vocabulary.bill_type
             ),
         ),
-        Field(name="ministry_id", # [user]
+        Field(name="group_id", # [user]
             modes="view edit add listing",
             localizable=[ 
-                show("view edit add"),
-                hide("listing") 
+                show("view edit add listing"),
             ],
             property=schema.Choice(title=_("Ministry"),
                 source=vocabulary.MinistrySource("ministry_id"),
                 required=False
             ),
         ),
-        Field(name="identifier", # [user]
-            modes="view edit listing",
-            localizable=[ 
-                show("view edit"), 
-                hide("listing"), 
-            ],
-            property=schema.Text(title=_("Identifier"), required=False),
-        ),
         Field(name="publication_date", # [user]
-            modes="view edit add listing",
-            localizable=[ 
-                show("view edit add listing"), 
+            modes="view listing",
+            localizable=[
+                show("view listing"),
             ],
             property=schema.Date(title=_("Publication Date"), required=False),
             edit_widget=widgets.DateWidget,
@@ -2780,19 +2636,16 @@ class BillDescriptor(ParliamentaryItemDescriptor):
     
     default_field_order = [
         "parliament_id",
-        #"short_name",
-        #"full_name",
+        "short_title",
+        "long_title",
         "owner_id",
         "status",
         "status_date",
         "language",
-        #"body_text",
+        "body",
         "submission_date",
-        "note",
-        "receive_notification",
         "doc_type",
-        "ministry_id",
-        "identifier",
+        "group_id",
         "publication_date",
         "registry_number",
     ]
@@ -2831,26 +2684,21 @@ class ResponseTypeDescriptor(ModelDescriptor):
     ]
 '''
 
-class QuestionDescriptor(ParliamentaryItemDescriptor):
+class QuestionDescriptor(DocumentDescriptor):
     localizable = True
     display_name = _("Question")
     container_name = _("Questions")
     
-    fields = deepcopy(ParliamentaryItemDescriptor.fields)
+    fields = deepcopy(DocumentDescriptor.fields)
+    # remove "doc_type"
+    fields[:] = [ f for f in fields if f.name not in ("doc_type", "group_id") ]
     fields.extend([
-        Field(name="question_number", # [sys]
-            modes="view listing",
-            localizable=[ 
-                show("view listing"), 
-            ],
-            property=schema.Int(title=_("Question Number"), required=False),
-        ),
         #Field(name="supplement_parent_id",
         #    label=_("Initial/supplementary question"),
         #    modes="",
         #    view_widget=widgets.SupplementaryQuestionDisplay,
         #),
-        Field(name="ministry_id", # [user-req]
+        Field(name="group_id", # [user-req]
             modes="view edit add listing",
             localizable=[ 
                 show("view edit listing"), 
@@ -2862,7 +2710,7 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
         ),
         AdmissibleDateField(), # [sys]
         Field(name="ministry_submit_date", # [user]
-            modes="view edit listing",
+            modes="view listing",
             localizable=[ 
                 show("view"),
                 hide("listing"),
@@ -2873,7 +2721,7 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
         ),
-        Field(name="question_type", # [user-req]
+        Field(name="doc_type", # [user-req]
             modes="view edit add listing",
             localizable=[ 
                 show("view edit listing"),
@@ -2882,7 +2730,7 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
                 description=_("Choose the type of question"),
                 source=vocabulary.question_type,
             ),
-            listing_column=vocabulary_column("question_type",
+            listing_column=vocabulary_column("doc_type",
                 "Question Type",
                 vocabulary.question_type
             ),
@@ -2928,9 +2776,6 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
             view_widget=widgets.TermsDisplayWidget,
         ),
     ])
-    get_field(fields, "owner_id").localizable = [
-        show("view listing")
-    ]
     get_field(fields, "admissible_date").localizable = [
         show("view"),
         hide("listing"),
@@ -2938,20 +2783,18 @@ class QuestionDescriptor(ParliamentaryItemDescriptor):
     default_field_order = [
         "response_text",        
         "parliament_id",
-        #"short_name",
-        #"full_name",
-        "question_number",
+        "short_title",
+        "long_title",
+        "type_number",
         "owner_id",
         "status",
         "status_date",
-        "question_type",
+        "doc_type",
         "response_type",
         "language",
-        #"body_text",
+        "body",
         "submission_date",
-        "note",
-        "receive_notification",
-        "ministry_id",
+        "group_id",
         "admissible_date",
         "ministry_submit_date",
         "subject",
@@ -2966,24 +2809,14 @@ class QuestionVersionDescriptor(VersionDescriptor):
     fields = deepcopy(VersionDescriptor.fields)
 
 
-class TabledDocumentDescriptor(ParliamentaryItemDescriptor):
+class TabledDocumentDescriptor(DocumentDescriptor):
     localizable = True
     display_name = _("Tabled document")
     container_name = _("Tabled documents")
-    fields = deepcopy(ParliamentaryItemDescriptor.fields)
+    fields = deepcopy(DocumentDescriptor.fields)
     fields.extend([
-        Field(name="tabled_document_number", # [sys]
-            modes="view listing",
-            localizable=[ 
-                show("view listing"),
-            ],
-            property=schema.Int(title=_("Tabled document Number")),
-        ),
         AdmissibleDateField(), # [sys]
     ])
-    get_field(fields, "owner_id").localizable = [
-        show("view listing")
-    ]
     get_field(fields, "submission_date").localizable = [
         show("view"),
         hide("listing")
@@ -2994,17 +2827,15 @@ class TabledDocumentDescriptor(ParliamentaryItemDescriptor):
     ]
     default_field_order = [
         "parliament_id",
-        #"short_name",
-        #"full_name",
-        "tabled_document_number",
+        "short_title",
+        "long_title",
+        "type_number",
         "owner_id",
         "status",
         "status_date",
         "language",
-        #"body_text",
+        "body",
         "submission_date",
-        "note",
-        "receive_notification",
         "admissible_date",
         "registry_number",
     ]
@@ -3081,7 +2912,7 @@ class SittingDescriptor(ModelDescriptor):
             # should still be possible use the generic container listing in
             # combination with a further customized listing_column -- for an
             # example of this see how the listing of the column "owner_id"
-            # is configured in: descriptor.ParliamentaryItemDescriptor
+            # is configured in: descriptor.DocumentDescriptor
 
             # !+CustomListingURL(miano, nov-2010)
             # Since the custom listing column function was missing
@@ -3609,7 +3440,7 @@ class ItemScheduleDiscussionDescriptor(ModelDescriptor):
     
     fields = [
         LanguageField("language"),
-        Field(name="body_text", label=_("Minutes"), # [rtf]
+        Field(name="body", label=_("Minutes"), # [rtf]
             modes="view edit add listing",
             localizable=[
                 show("view edit listing"),
@@ -3627,14 +3458,14 @@ class ItemScheduleDiscussionDescriptor(ModelDescriptor):
     ]
 
 
-class ReportDescriptor(ParliamentaryItemDescriptor):
+class ReportDescriptor(DocumentDescriptor):
     localizable = True
     display_name = _("Report")
     container_name = _("Reports")
     
     fields = [
         LanguageField("language"),
-        Field(name="short_name", label=_("Publications type"), # [user-req]
+        Field(name="short_title", label=_("Publications type"), # [user-req]
             modes="view edit add listing",
             localizable=[
                 show("view edit listing"),
@@ -3661,13 +3492,7 @@ class ReportDescriptor(ParliamentaryItemDescriptor):
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
         ),
-        Field(name="note", label=_("Note"), # [user]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit add listing"),
-            ],
-        ),
-        Field(name="body_text", label=_("Text"), # [rtf]
+        Field(name="body", label=_("Text"), # [rtf]
             modes="view edit add",
             localizable=[
                 show("view edit"),
@@ -3678,6 +3503,7 @@ class ReportDescriptor(ParliamentaryItemDescriptor):
             add_widget=widgets.RichTextEditor,
         ),
     ]
+    default_field_order = [ f.name for f in fields ]
 
 
 class Report4SittingDescriptor(ReportDescriptor):

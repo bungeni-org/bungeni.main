@@ -80,7 +80,7 @@ Questions
   ...     #status=u"admissible",
   ...     language="en",
   ...     owner_id=mp_1.user_id,
-  ...     short_name="question 1")
+  ...     short_title="question 1")
 
 
   >>> from bungeni.core.workflow.interfaces import IWorkflowController
@@ -103,7 +103,7 @@ comment (dec-2010) and update/evolve tests below.
   ...     status=u"admissible",
   ...     language="en",
   ...     owner_id=mp_1.user_id,
-  ...     short_name="question 2")
+  ...     short_title="question 2")
 
   >>> question3 = add_content(
   ...     domain.Question,
@@ -111,7 +111,7 @@ comment (dec-2010) and update/evolve tests below.
   ...     status=u"completed",
   ...     language="en",
   ...     owner_id=mp_1.user_id,
-  ...     short_name="question 3")
+  ...     short_title="question 3")
 
 Get the questions that are in the workflow state:
   

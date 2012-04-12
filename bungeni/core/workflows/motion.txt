@@ -58,7 +58,7 @@ Content creation
 
   >>> motion = add_content(
   ...     domain.Motion,
-  ...     short_name=u"My subject",
+  ...     short_title=u"My subject",
   ...     owner_id = mp_1.user_id,
   ...     language="en")
 
@@ -116,7 +116,7 @@ Conditions
   >>> scheduling = add_content(
   ...     domain.ItemSchedule,
   ...     group_sitting_id=sitting.group_sitting_id,
-  ...     item_id=motion.parliamentary_item_id)
+  ...     item_id=motion.doc_id)
   
   >>> _conditions.is_scheduled(motion)
   True
@@ -214,11 +214,10 @@ Set up a user.
   ...     language="en",
   ...     owner_id=1)
   
-  >>> motion.owner_id = user.user_id
-  >>> motion.receive_notification = False
+    >>> motion.owner_id = user.user_id
+    >>> #!+NOTIFICATION_SETTINGS = False
+    >>> session.flush()
 
-  >>> session.flush()
-  
 Motion received.
   
   >>> notification.SendNotificationToMemberUponReceipt(motion)
@@ -226,11 +225,11 @@ Motion received.
 Let's change our setting for receive notification so an email message
 is dispatched.
 
-  >>> motion.receive_notification = True
-  >>> notification.SendNotificationToMemberUponReceipt(motion)
-  From: clerks.office@parliament.go.tld
-  To: "John Doe" <john.doe@localhost>...
-  Subject: Motion received: My subject...
+    >>> #!+NOTIFICATION_SETTINGS = True
+    >>> notification.SendNotificationToMemberUponReceipt(motion)
+    From: clerks.office@parliament.go.tld
+    To: "John Doe" <john.doe@localhost>...
+    Subject: Motion received: My subject...
   
 Send notification to Clerk's office upon submit.
 

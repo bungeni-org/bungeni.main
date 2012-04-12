@@ -12,6 +12,7 @@ class ClassAndInstanceDescr(object):
             return self.funcs[1](cls)
         return self.funcs[0](inst)
 
+''' !+UNUSED(mr, apr-2012)
 class ShortNameProxy(ProxyBase):
     """This is a non-picklable proxy that can be put around objects to
     change the ``short_name`` attribute.
@@ -42,3 +43,4 @@ class ShortNameProxy(ProxyBase):
     __reduce_ex__ = __reduce__
 
     __providedBy__ = DecoratorSpecificationDescriptor()
+'''

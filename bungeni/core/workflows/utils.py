@@ -64,7 +64,7 @@ def formatted_user_email(user):
 
 def get_owner_pi(context):
     """Get the user who has been previously set as the owner of this item 
-    (must support IOwned i.e. ParliamentaryItem or Attachment).
+    (must support IOwned i.e. Doc or Attachment).
     """
     assert interfaces.IOwned.providedBy(context), \
         "Not an Owned (parliamentary) Item: %s" % (context)
@@ -81,7 +81,7 @@ def assign_owner_role(context, login):
     IPrincipalRoleMap(context).assignRoleToPrincipal("bungeni.Owner", login)
 
 def assign_owner_role_pi(context):
-    """Assign bungeni.Owner role to the ParliamentaryItem.
+    """Assign bungeni.Owner role to the Doc.
     """
     current_user_login = get_principal_id()
     owner_login = get_owner_login_pi(context)
@@ -197,11 +197,6 @@ def getMotionSchedule(context):
 def getQuestionSubmissionAllowed(context):
     return prefs.getQuestionSubmissionAllowed()
 '''
-
-# bill
-def setBillPublicationDate(context):
-    if context.publication_date == None:
-        context.publication_date = datetime.date.today()
 
 '''
 # question, motion, bill, agendaitem, tableddocument

@@ -62,8 +62,8 @@ def version_tree(ob, root=False, reversion=False):
     if IAttachmentable.providedBy(ob):
         child_obs.extend(ob.attachments)
     #!+event-as-feature
-    if hasattr(ob, "events") and ob.events:
-        child_obs.extend(ob.events)
+    if hasattr(ob, "sa_events") and ob.sa_events:
+        child_obs.extend(ob.sa_events)
     #!+signatory-as-feature
     #if hasattr(ob, "item_signatories") and ob.item_signatories:
     #   child_obs.extend(ob.item_signatories)

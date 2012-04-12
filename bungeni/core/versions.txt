@@ -38,7 +38,7 @@ Adding a question.
 
   >>> question = add_content(
   ...     domain.Question,
-  ...     short_name="A question",
+  ...     short_title="A question",
   ...     type="question",
   ...     owner_id=mp_1.user_id,
   ...     language="en")
@@ -60,9 +60,8 @@ In order to create a participation, we need a principal:
 
 Verify that no versions exist yet (assuming questions are IVersionable):
 
-  >>> versions = bungeni.core.interfaces.IVersioned(question)
-  >>> len(tuple(versions.values()))
-  0
+    >>> len(question.versions)
+    0
 
 To be versioned, a question should be in a valid state:
 
@@ -80,8 +79,9 @@ interaction
 
 After creating a version, verify availability:
 
-    >>> version = versions.create("New version created ...")
-    >>> len(tuple(versions.values()))
+    >>> bungeni.core.version.DOCUMENT_create_version(question)
+    >>> session.refresh(question) # !+ otherwise question.versions is stale
+    >>> len(question.versions)
     1
 
 Cleanup

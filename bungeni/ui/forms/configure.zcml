@@ -242,14 +242,6 @@
      permission="zope.View"
      weight="10"
      />
-     <browser:viewlet
-     name="bungeni.viewlet.parliamentaryitemminutes"
-     manager=".interfaces.ISubFormViewletManager"
-     class=".viewlets.ParliamentaryItemMinutesViewlet"
-     for="bungeni.models.interfaces.IBungeniContent"
-     permission="zope.View"
-     weight="10"
-     />
 
     <!--browser:viewlet
      name="bungeni.viewlet.sittingreportdisplay"

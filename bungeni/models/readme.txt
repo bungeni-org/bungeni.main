@@ -383,7 +383,7 @@ Attendance
 Motions
 -------
   >>> motion = model.Motion()
-  >>> motion.short_name = u"Motion"
+  >>> motion.short_title = u"Motion"
   >>> motion.language = 'en'
   >>> motion.owner = mp_1
   >>> session.add(motion)
@@ -397,14 +397,14 @@ Questions
 Note that the questions workflow is tested separated (see workflows/question.txt).
 
   >>> question = model.Question()
-  >>> question.short_name = u"question"
+  >>> question.short_title = u"question"
   >>> question.language = 'en'
   >>> question.owner = mp_2
   >>> question.question_type = "ordinary"
   >>> session.add(question)
   >>> session.flush()
   
-  >>> int(question.question_id)
+  >>> int(question.doc_id)
   2
   
 
@@ -412,7 +412,7 @@ Bill
 ----
 
   >>> bill = model.Bill()
-  >>> bill.short_name = u"Bill"
+  >>> bill.short_title = u"Bill"
   >>> bill.doc_type = "member"
   >>> bill.language = 'en'
   >>> bill.owner = mp_3
@@ -426,14 +426,14 @@ Schedule items for a sitting:
 we may either add the id only:
 
   >>> item_schedule = model.ItemSchedule()
-  >>> item_schedule.item_id = bill.bill_id
+  >>> item_schedule.item_id = bill.doc_id
   >>> item_schedule.item_type = bill.type
   >>> item_schedule.group_sitting_id = sit.group_sitting_id
   >>> session.add(item_schedule)
   >>> session.flush()
   >>> item_schedule.item
   <bungeni.models.domain.Bill object at ...>
-  >>> item_schedule.item.short_name
+  >>> item_schedule.item.short_title
   u'Bill'
   >>> item_schedule.item.type
   'bill'
@@ -449,9 +449,9 @@ or we can add an object:
   >>> item_schedule.item
   <bungeni.models.domain.Question object at ...>
   
-  >>> item_schedule.item_id == question.question_id
+  >>> item_schedule.item_id == question.doc_id
   True
-  >>> item_schedule.item.short_name
+  >>> item_schedule.item.short_title
   u'question'
   >>> item_schedule.item.type
   'question'

@@ -187,9 +187,9 @@ class DVersionLogView(VersionLogMixin,
         browser.BungeniBrowserView.__init__(self, context, request)
         VersionLogMixin.__init__(self)
         self._page_title = translate(self.__class__._page_title)
-        if hasattr(self.context, "short_name"):
+        if hasattr(self.context, "short_title"):
             self._page_title = "%s: %s" % (
-                self._page_title, translate(self.context.short_name))
+                self._page_title, translate(self.context.short_title))
     
     def publishTraverse(self, request, ver_seq):
         seq = int(ver_seq[len("ver-"):])

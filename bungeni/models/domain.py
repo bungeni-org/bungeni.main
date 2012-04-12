@@ -31,8 +31,8 @@ def object_hierarchy_type(object):
         return "user"
     if isinstance(object, Group):
         return "group"
-    if isinstance(object, ParliamentaryItem):
-        return "item"
+    if isinstance(object, Doc):
+        return "doc"
     return ""
 
 
@@ -446,7 +446,7 @@ class CommitteeStaff(GroupMembership):
         "bungeni.models.domain.MemberTitleContainer", "membership_id")
 
 
-# auditable (by default), but not a ParliamentaryItem
+# auditable (by default), but not a Doc
 class GroupSitting(Entity):
     """Scheduled meeting for a group (parliament, committee, etc).
     """
@@ -649,6 +649,8 @@ class GroupAddress(Address):
 # !+could use __metaclass__ but that causes internal breaks elsewhere...
 # !+could be a class decorator 
 def instrument_extended_properties(cls, object_type, from_class=None):
+    # !+class not yet mapped
+    #object_type = class_mapper(cls).local_table.name 
     if from_class is None:
         from_class = cls
     # ensure cls.__dict__.extended_properties
@@ -671,8 +673,12 @@ def vertical_property(object_type, vp_name, vp_type, *args, **kw):
         if vp is not None:
             return vp.value
     def fset(self, value):
-        vp = vp_type(self, object_type, vp_name, value, *args, **kw)
-        setattr(self, _vp_name, vp)
+        vp = getattr(self, _vp_name, None)
+        if vp is not None:
+            vp.value = value
+        else: 
+            vp = vp_type(self, object_type, vp_name, value, *args, **kw)
+            setattr(self, _vp_name, vp)
     def fdel(self):
         setattr(self, _vp_name, None)
     return property(fget=fget, fset=fset, fdel=fdel, doc=doc)
@@ -729,18 +735,12 @@ class Doc(Entity):
     
     # !+AlchemistManagedContainer these attribute names are part of public URLs!
     # !+item_id->head_id
-    #amc_signatories = one2many("amc_signatories",
-    #    "bungeni.models.domain.SignatoryContainer", "item_id")
-    #amc_attachments = one2many("amc_attachments",
     files = one2many("files",
         "bungeni.models.domain.AttachmentContainer", "head_id")
     signatories = one2many("signatories",
         "bungeni.models.domain.SignatoryContainer", "head_id")
-    # !+NAMING(mr, jul-2011) plural!
-    event = one2many("event",
+    events = one2many("events",
         "bungeni.models.domain.EventContainer", "head_id")
-    #amc_events = one2many("amc_events",
-    #    "bungeni.models.domain.EventContainer", "head_id")
     
     # !+DOCUMENT tmp dummy values to avoid attr errors, etc,
     # until base "doc" gains these features...
@@ -810,6 +810,8 @@ class ChangeTree(Entity):
     """Relates a parent change with a child change.
     """
 
+# !+VERSION_CLASS_PER_AUDIT_TYPE(mr, apr-2012) review domain+descriptor for 
+# versions, how to display a version
 class Version(Change):
     """A version (a special kind of change action) of an object and 
     associated change information.
@@ -829,7 +831,7 @@ class Version(Change):
     def __getattr__(self, name):
         print "!+DOCUMENT VERSION->AUDIT...", name, self.audit
         return getattr(self.audit, name)
-#!+VERSION_CLASS_PER_AUDIT_TYPE?
+
 
 class Audit(HeadParentedMixin, Entity):
     """Base (abstract) audit record for a document.
@@ -881,35 +883,132 @@ class DocAudit(Audit):
     def label(self):
         return self.short_title
     
-    #!+DOCUMENT
-    @property
-    def short_name(self): return self.short_title
-    @property
-    def full_name(self): return self.long_title
-    @property
-    def body_text(self): return self.body
-    
     extended_properties = [
     ]
 #instrument_extended_properties(DocAudit, "doc_audit")
 
 
-class Motion(AdmissibleMixin, Doc):
-    __dynamic_features__ = True
-    
-    # !+alchemist properties not inherited, must be re-instrumented on class
+class AgendaItem(AdmissibleMixin, Doc):
+    """Generic Agenda Item that can be scheduled on a sitting.
+    """
+    files = one2many("files",
+        "bungeni.models.domain.AttachmentContainer", "head_id")
+    # !+signatories on AgendaItems?
+    signatories = one2many("signatories",
+        "bungeni.models.domain.SignatoryContainer", "head_id")
+    # !+events on AgendaItems?
+    events = one2many("events",
+        "bungeni.models.domain.EventContainer", "head_id")
+#AgendaItemAudit
+
+class Bill(Doc):
+    """Bill domain type.
+    """
     files = one2many("files",
         "bungeni.models.domain.AttachmentContainer", "head_id")
     signatories = one2many("signatories",
         "bungeni.models.domain.SignatoryContainer", "head_id")
-    # !+NAMING(mr, jul-2011) plural!
-    event = one2many("event",
+    events = one2many("events",
+        "bungeni.models.domain.EventContainer", "head_id")
+    
+    #!+doc_type: default="government", nullable=False,
+    
+    # !+BILL_MINISTRY(fz, oct-2011) the ministry field here logically means the 
+    # bill is presented by the Ministry and so... Ministry should be the author,
+    # not a "field" 
+    def ministry_id():
+        doc = "Related group must be a ministry."
+        def fget(self):
+            return self.group_id
+        def fset(self, ministry_id):
+            # !+validate ministry group constraint
+            self.group_id = ministry_id
+        def fdel(self):
+            self.group_id = None
+        return locals()
+    ministry_id = property(**ministry_id())
+    
+    @property
+    def publication_date(self):
+        return self._get_workflow_date("gazetted")
+
+#BillAudit
+
+class Motion(AdmissibleMixin, Doc):
+    """Motion domain type.
+    """
+    files = one2many("files",
+        "bungeni.models.domain.AttachmentContainer", "head_id")
+    signatories = one2many("signatories",
+        "bungeni.models.domain.SignatoryContainer", "head_id")
+    events = one2many("events",
         "bungeni.models.domain.EventContainer", "head_id")
     
     @property
     def notice_date(self):
         return self._get_workflow_date("scheduled")
 #MotionAudit
+
+class Question(AdmissibleMixin, Doc):
+    """Question domain type.
+    """
+    files = one2many("files",
+        "bungeni.models.domain.AttachmentContainer", "head_id")
+    signatories = one2many("signatories",
+        "bungeni.models.domain.SignatoryContainer", "head_id")
+    events = one2many("events",
+        "bungeni.models.domain.EventContainer", "head_id")
+    
+    #!+doc_type: default="ordinary", nullable=False,
+    #!+response_type: default="oral", nullable=False,
+    
+    def ministry_id():
+        doc = "Related group must be a ministry."
+        def fget(self):
+            return self.group_id
+        def fset(self, ministry_id):
+            # !+validate ministry group constraint
+            self.group_id = ministry_id
+        def fdel(self):
+            self.group_id = None
+        return locals()
+    ministry_id = property(**ministry_id())
+    
+    @property
+    def ministry_submit_date(self):
+        return self._get_workflow_date("response_pending")
+    
+    extended_properties = [
+        ("response_type", vp.Text),
+        ("response_text", vp.TranslatedText),
+    ]
+instrument_extended_properties(Question, "doc")
+
+#QuestionAudit
+
+class TabledDocument(AdmissibleMixin, Doc):
+    """Tabled document: captures metadata about the document (owner, date, 
+    title, description) and can have multiple physical documents attached.
+    
+    The tabled documents form should have the following:
+    - Document title
+    - Document link
+    - Upload field (s)
+    - Document source  / author agency (who is providing the document)
+      (=> new table agencies)
+    
+    - Document submitter (who is submitting the document)
+      (a person -> normally mp can be other user)
+    
+    It must be possible to schedule a tabled document for a sitting.
+    """
+    files = one2many("files",
+        "bungeni.models.domain.AttachmentContainer", "head_id")
+    signatories = one2many("signatories",
+        "bungeni.models.domain.SignatoryContainer", "head_id")
+    events = one2many("events",
+        "bungeni.models.domain.EventContainer", "head_id")
+#TabledDocumentAudit
 
 
 class Event(HeadParentedMixin, Doc):
@@ -954,14 +1053,10 @@ class AttachmentAudit(Audit):
     
     # !+DOCUMENT
     @property
-    def short_name(self): return self.title
-    @property
-    def full_name(self): return self.title
-    @property
-    def body_text(self): return self.description
+    def body(self): return self.description
 
 
-
+'''
 class ParliamentaryItem(Entity):
     """
     """
@@ -1015,7 +1110,7 @@ class ParliamentaryItem(Entity):
         return self._get_workflow_date("submitted")
 
     attachments= [] # relation(domain.Attachment), #!+PI_TMP_attachments
-
+'''
 
 class Heading(Entity):
     """A heading in a report.
@@ -1030,29 +1125,8 @@ class Heading(Entity):
         return None
 
 
-# versionable (by default)
-class AgendaItem(ParliamentaryItem, AdmissibleMixin):
-    """Generic Agenda Item that can be scheduled on a sitting.
-    """
 
-# versionable (by default)
-class Question(ParliamentaryItem, AdmissibleMixin):
-    #supplementaryquestions = one2many("supplementaryquestions", 
-    #"bungeni.models.domain.QuestionContainer", "supplement_parent_id")
-    sort_on = ParliamentaryItem.sort_on + ["question_number"]
-    def getParentQuestion(self):
-        if self.supplement_parent_id:
-            session = Session()
-            parent = session.query(Question).get(self.supplement_parent_id)
-            return parent.short_name
-
-
-# versionable (by default)
-class Bill(ParliamentaryItem):
-    """Bill Domain Type
-    """
-
-# auditable (by default), but not a ParliamentaryItem
+# auditable (by default), but not a Doc
 class Signatory(Entity):
     """Signatories for a Bill or Motion.
     """
@@ -1140,26 +1214,6 @@ class MemberTitle(Entity):
 
 class MinistryInParliament(object):
     """Auxilliary class to get the parliament and government for a ministry.
-    """
-
-# versionable (by default)
-class TabledDocument(ParliamentaryItem, AdmissibleMixin):
-    """Tabled documents:
-    a tabled document captures metadata about the document 
-    (owner, date, title, description) 
-    and can have multiple physical documents attached.
-
-    The tabled documents form should have the following:
-    -Document title
-    -Document link
-    -Upload field (s)
-    -Document source  / author agency (who is providing the document)
-    (=> new table agencies)
-
-    -Document submitter (who is submitting the document)
-    (a person -> normally mp can be other user)
-
-    It must be possible to schedule a tabled document for a sitting.
     """
 
 
@@ -1252,12 +1306,15 @@ class Venue(Entity):
     """
     interface.implements(interfaces.ITranslatable, interfaces.IVenue)
 
-class Report(ParliamentaryItem):
+
+class Report(Doc):
     """Agendas and minutes.
     """
     interface.implements(interfaces.ITranslatable)
-    sort_on = ["end_date"] + ParliamentaryItem.sort_on
+    sort_on = ["end_date"] + Doc.sort_on
 
+# !+SITTING_REPORT(mr, apr-2011) why does SittingReport (mapped as an 
+# association type, and not a Doc in any way) inherit from Report?!
 class SittingReport(Report):
     """Which reports are created for this sitting.
     """
@@ -1265,6 +1322,7 @@ class SittingReport(Report):
 class Report4Sitting(Report):
     """Display reports for a sitting.
     """
+
 
 class ObjectTranslation(object):
     """Get the translations for an Object.

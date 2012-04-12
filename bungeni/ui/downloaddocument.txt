@@ -43,11 +43,11 @@ Initialise a report
 -------------------
    >>> from bungeni.models import domain
    >>> report = domain.Report()
-   >>> report.body_text = "<div class='reporttitle'>THIS IS A TEST</div>"
+   >>> report.body = "<div class='reporttitle'>THIS IS A TEST</div>"
    >>> report.start_date = datetime.datetime.now()
    >>> report.end_date = datetime.datetime.now()
    >>> report.note = "This is a test"
-   >>> report.short_name = "Sitting Agenda"
+   >>> report.short_title = "Sitting Agenda"
    >>> report.owner = mp_1
    >>> report.language = "en"
    >>> report.created_date = datetime.datetime.now()
@@ -86,8 +86,8 @@ response is set
 Initialise a Bill
 -----------------
    >>> bill = domain.Bill()
-   >>> bill.body_text = "<div class='reporttitle'>THIS IS A TEST</div>"
-   >>> bill.short_name = "Test Bill"
+   >>> bill.body = "<div class='reporttitle'>THIS IS A TEST</div>"
+   >>> bill.short_title = "Test Bill"
    >>> bill.owner = mp_1
    >>> bill.doc_type = "government"
    >>> bill.language = "en"
@@ -119,8 +119,8 @@ Bill PDF
 Initialise a Motion
 -------------------
    >>> motion = domain.Motion()
-   >>> motion.body_text = "<div class='reporttitle'>THIS IS A TEST</div>"
-   >>> motion.short_name = "Test motion"
+   >>> motion.body = "<div class='reporttitle'>THIS IS A TEST</div>"
+   >>> motion.short_title = "Test motion"
    >>> motion.owner = mp_1
    >>> motion.language = "en"
    >>> motion.created_date = datetime.datetime.now()
@@ -149,8 +149,8 @@ Motion PDF
 Initialise a Tabled Document
 ----------------------------
    >>> tableddocument = domain.TabledDocument()
-   >>> tableddocument.body_text = "<div class='reporttitle'>THIS IS A TEST</div>"
-   >>> tableddocument.short_name = "Test Tabled Document"
+   >>> tableddocument.body = "<div class='reporttitle'>THIS IS A TEST</div>"
+   >>> tableddocument.short_title = "Test Tabled Document"
    >>> tableddocument.owner = mp_1
    >>> tableddocument.language = "en"
    >>> tableddocument.created_date = datetime.datetime.now()
@@ -179,8 +179,8 @@ Tabled Document PDF
 Initialise an Agenda Item
 -------------------------
    >>> agendaitem = domain.AgendaItem()
-   >>> agendaitem.body_text = "<div class='reporttitle'>THIS IS A TEST</div>"
-   >>> agendaitem.short_name = "Sitting Agenda"
+   >>> agendaitem.body = "<div class='reporttitle'>THIS IS A TEST</div>"
+   >>> agendaitem.short_title = "Sitting Agenda"
    >>> agendaitem.owner = mp_1
    >>> agendaitem.language = "en"
    >>> agendaitem.created_date = datetime.datetime.now()
@@ -210,8 +210,8 @@ Agenda Item PDF
 Initialise a Question
 -------------------------
    >>> question = domain.Question()
-   >>> agendaitem.body_text = "<div class='reporttitle'>THIS IS A TEST</div>"
-   >>> question.short_name = "Sitting Agenda"
+   >>> agendaitem.body = "<div class='reporttitle'>THIS IS A TEST</div>"
+   >>> question.short_title = "Sitting Agenda"
    >>> question.owner = mp_1
    >>> question.language = "en"
    >>> question.question_type = "ordinary"

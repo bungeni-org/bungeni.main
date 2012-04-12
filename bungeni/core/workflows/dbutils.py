@@ -104,40 +104,21 @@ def get_next_prog(context):
     return connection.execute(sequence)
 '''
 
-
-def setTabledDocumentSerialNumber(tabled_document):
-    session = Session()
-    connection = session.connection(domain.TabledDocument)
-    sequence = rdb.Sequence("tabled_document_number_sequence")
-    tabled_document.tabled_document_number = connection.execute(sequence)
+def is_pi_scheduled(doc_id):
+    return len(getActiveItemSchedule(doc_id)) >= 1
     
-def setQuestionSerialNumber(question):
-    """
-     Approved questions are given a serial number enabling the clerks office
-     to record the order in which questions are received and hence enforce 
-     a first come first served policy in placing the questions on the order
-     paper. The serial number is re-initialized at the start of each session
-    """
-    session = Session()
-    connection = session.connection(domain.Question)
-    sequence = rdb.Sequence("question_number_sequence")
-    question.question_number = connection.execute(sequence)
-
-def is_pi_scheduled(parliamentary_item_id):
-    return len(getActiveItemSchedule(parliamentary_item_id)) >= 1
-    
-def getActiveItemSchedule(parliamentary_item_id):
+def getActiveItemSchedule(doc_id):
     """Get active itemSchedule instances for parliamentary item.
     
     Use may also be to get scheduled dates e.g.
-    for item_schedule in getActiveItemSchedule(parliamentary_item_id)
+    for item_schedule in getActiveItemSchedule(doc_id)
         # item_schedule.item_status, item_schedule.item
         s = item_schedule.sitting
         s.start_date, s.end_date, s.status
     """
     session = Session()
     active_filter = rdb.and_(
-        schema.item_schedules.c.item_id == parliamentary_item_id,
+        schema.item_schedules.c.item_id == doc_id,
         schema.item_schedules.c.active == True
     )
     item_schedule = session.query(domain.ItemSchedule).filter(active_filter)

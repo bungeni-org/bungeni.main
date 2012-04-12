@@ -117,10 +117,10 @@ class DownloadDocument(BrowserView):
 
     @property
     def file_name(self):
-        fname = misc.slugify(self.document.short_name)
+        fname = misc.slugify(self.document.short_title)
         if interfaces.IReport.providedBy(self.document):
             fname = misc.slugify(
-                u'-'.join((self.document.short_name, 
+                u'-'.join((self.document.short_title, 
                     self.document.start_date.isoformat(), 
                     self.document.end_date.isoformat()))
             )
@@ -297,7 +297,7 @@ class ReportODT(DownloadDocument):
     document_type = "odt"
     
     def bodyText(self):
-        return self.document.body_text
+        return self.document.body
 
     def __call__(self):
         if self.documentTemplates():

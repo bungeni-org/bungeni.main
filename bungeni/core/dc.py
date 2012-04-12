@@ -111,16 +111,16 @@ class DocumentDescriptiveProperties(DescriptiveProperties):
 @register.adapter()
 class QuestionDescriptiveProperties(DocumentDescriptiveProperties):
     component.adapts(interfaces.IQuestion)
-
+    
     @property
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        if context.question_number is None:
-            return self.translate(context, "short_name")
+        if context.type_number is None:
+            return self.translate(context, "short_title")
         return "#%d: %s" % (
-            context.question_number,
-            self.translate(context, "short_name"))
+            context.type_number,
+            self.translate(context, "short_title"))
 
     @property
     def description(self):
@@ -144,10 +144,10 @@ class BillDescriptiveProperties(DocumentDescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        if context.identifier is None:
-            return self.translate(context, "short_name")
-        return "#%d: %s" % (context.identifier, 
-            self.translate(context, "short_name")
+        if context.type_number is None:
+            return self.translate(context, "short_title")
+        return "#%d: %s" % (context.type_number, 
+            self.translate(context, "short_title")
         )
 
     @property
@@ -496,7 +496,7 @@ class AgendaItemDescriptiveProperties(DocumentDescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return u"%s - %s" % (self.translate(context, "short_name"),
+        return u"%s - %s" % (self.translate(context, "short_title"),
             self.translate(context.group, "short_name")
         )
 
@@ -509,7 +509,7 @@ class TabledDocumentDescriptiveProperties(DocumentDescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return self.translate(context, "short_name")
+        return self.translate(context, "short_title")
 
 
 @register.adapter()
@@ -545,7 +545,7 @@ class ReportDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return u'%s: %s - %s' % (self.translate(context, "short_name"),
+        return u'%s: %s - %s' % (self.translate(context, "short_title"),
             context.start_date, context.end_date)
 
     @property

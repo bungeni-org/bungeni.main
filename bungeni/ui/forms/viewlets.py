@@ -331,21 +331,27 @@ class ParliamentMembershipInfo(BungeniAttributeDisplay):
         super(ParliamentMembershipInfo, self).update()
 '''
 
-class ParliamentaryItemMinutesViewlet(BungeniAttributeDisplay):
+@register.viewlet(interfaces.IBungeniContent, #!+IBungeniParliamentaryContent?
+    layer=IBungeniAuthenticatedSkin, 
+    manager=ISubFormViewletManager,
+    name="doc-minutes")
+class DocMinutesViewlet(BungeniAttributeDisplay):
 
     mode = "view"
     for_display = True
 
     form_name = _(u"Minutes")
     view_id = "minutes"
-
+    
+    weight = 10
+    
     def __init__(self, context, request, view, manager):
         self.request = request
         self.context = context
         self.manager = manager
         trusted = removeSecurityProxy(context)
         try:
-            item_id = trusted.parliamentary_item_id
+            item_id = trusted.doc_id
         except AttributeError:
             self.for_display = False
             return
@@ -368,7 +374,7 @@ class ParliamentaryItemMinutesViewlet(BungeniAttributeDisplay):
             return
 
         self.context.__parent__ = parent
-        super(ParliamentaryItemMinutesViewlet, self).update()
+        super(DocMinutesViewlet, self).update()
 
 
 '''
@@ -516,7 +522,7 @@ class GroupSittingsViewlet(browser.BungeniItemsViewlet):
     essentially stuff all the logic below into a custom column_listing to be 
     used when listing the column -- for an example of this see how the 
     listing of the column "owner_id" (moved by) is configured in:
-    descriptor.ParliamentaryItemDescriptor
+    descriptor.DocumentDescriptor
     
     !+ManagedContainer(mr, oct-2010) this would have been a lot simpler if
     the Group.sittings attribute was simply returning the list of sitting
@@ -616,11 +622,11 @@ class MemberItemsViewlet(browser.BungeniItemsViewlet):
             context, request, view, manager)
         user_id = self.context.user_id
         parliament_id = self.context.group_id
-        self.query = Session().query(domain.ParliamentaryItem).filter(
+        self.query = Session().query(domain.Doc).filter(
             sql.and_(
-                domain.ParliamentaryItem.owner_id == user_id,
-                domain.ParliamentaryItem.parliament_id == parliament_id,
-                domain.ParliamentaryItem.status.in_(self.states),
+                domain.Doc.owner_id == user_id,
+                domain.Doc.parliament_id == parliament_id,
+                domain.Doc.status.in_(self.states),
             ))
         #self.for_display = (self.query.count() > 0)
         self.formatter = self.get_date_formatter("date", "medium")
@@ -641,27 +647,27 @@ class MemberItemsViewlet(browser.BungeniItemsViewlet):
         ]
         if len(signed_pi_ids) > 0:
             self.query = self.query.union(
-                session.query(domain.ParliamentaryItem).filter(
+                session.query(domain.Doc).filter(
                     sql.and_(
-                        domain.ParliamentaryItem.parliament_id == parliament_id,
-                        domain.ParliamentaryItem.status.in_(self.states),
-                        domain.ParliamentaryItem.parliamentary_item_id.in_(
+                        domain.Doc.parliament_id == parliament_id,
+                        domain.Doc.status.in_(self.states),
+                        domain.Doc.doc_id.in_(
                             signed_pi_ids
                         )
                     )
                 )
             )
         self.query = self.query.order_by(
-            domain.ParliamentaryItem.parliamentary_item_id.desc()
+            domain.Doc.doc_id.desc()
         )
 
     @property
     def items(self):
         for item in self.query.all():
             _url = "/business/%ss/obj-%i" % (item.type,
-                item.parliamentary_item_id)
+                item.doc_id)
             yield {"type": item.type,
-                "short_name": item.short_name,
+                "short_title": item.short_title,
                 "status": misc.get_wf_state(item),
                 "submission_date" : item.submission_date,
                 "url": _url }
@@ -856,7 +862,7 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
             data = {}
             data["sittingid"] = ("sid_" + str(result.group_sitting_id))
             data["sid"] = result.group_sitting_id
-            data["short_name"] = "%s - %s" % (
+            data["short_title"] = "%s - %s" % (
                 formatter.format(result.start_date),
                 formatter.format(result.end_date)
             )

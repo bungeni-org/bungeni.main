@@ -185,8 +185,8 @@ mapper(domain.User, schema.users,
             # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name
             backref=backref("head", remote_side=schema.users.c.user_id)
         ),
-        "subscriptions": relation(domain.ParliamentaryItem,
-            secondary=schema.users_parliamentary_items
+        "subscriptions": relation(domain.Doc,
+            secondary=schema.user_doc
         ),
     }
 )
@@ -476,7 +476,7 @@ def mapper_add_relation_vertical_property(kls, vp_name, vp_type):
     """Add the SQLAlchemy internal mapper property for the vertical property.
     """
     kls_mapper = class_mapper(kls)
-    object_type = kls_mapper.mapped_table.name
+    object_type = kls_mapper.local_table.name # kls_mapper.mapped_table.name
     assert len(kls_mapper.primary_key) == 1
     object_id_column = kls_mapper.primary_key[0]
     kls_mapper.add_property("_vp_%s" % (vp_name),
@@ -500,7 +500,9 @@ def relation_vertical_property(object_type, object_id_column, vp_name, vp_type):
         # sqlalchemy.orm.relationship(cascade="refresh-expire, expunge, delete")
         cascade="save-update, merge, delete-orphan",
         single_parent=True,
-        lazy=True, # !+ setting False gives error in listings
+        lazy=True, # !+ True gives DetachedInstanceError in listings, while 
+        # False gives sqlalchemy.exc.ProgrammingError (missing FROM-clause 
+        # entry for table ... ) !!
     )
 
 
@@ -517,10 +519,9 @@ mapper(domain.Doc, schema.doc,
             uselist=False,
             lazy=False),
         # !+AlchemistManagedContaineror, X same as amc_X.values(), property @X?
-        "item_signatories": relation(domain.Signatory), #!+rename!
+        "item_signatories": relation(domain.Signatory), #!+rename sa_signatories
         "attachments": relation(domain.Attachment),
-        #"events": relation(domain.Event, uselist=True),
-        
+        "sa_events": relation(domain.Event, uselist=True),
         # for sub parliamentary docs, non-null implies a sub doc
         #"head": relation(domain.Doc,
         #    uselist=False,
@@ -547,13 +548,12 @@ mapper(domain.Doc, schema.doc,
             lazy=True,
             order_by=schema.change.c.audit_id.desc(),
         ),
-        "events": relation(domain.Event, 
-            primaryjoin=rdb.and_(
-               schema.doc.c.doc_id == schema.doc.c.head_id,
-               schema.doc.c.type == polymorphic_identity(domain.Event), # !+
-            ),
-            uselist=True,
-        ),
+        "group": relation(domain.Group,
+            primaryjoin=schema.doc.c.group_id == schema.groups.c.group_id,
+            #backref="agenda_items",
+            lazy=False,
+            uselist=False,
+        )
     }
 )
 
@@ -597,7 +597,8 @@ mapper(domain.Change, schema.change,
 )
 mapper(domain.ChangeTree, schema.change_tree)
 
-vm = mapper(domain.Version,
+#vm = mapper(domain.Version,
+mapper(domain.Version,
     inherits=domain.Change,
     polymorphic_on=schema.change.c.action, # polymorphic discriminator
     polymorphic_identity=polymorphic_identity(domain.Version),
@@ -619,20 +620,55 @@ vm = mapper(domain.Version,
             uselist=True,
             lazy=True,
         ),
-        #"events": relation(domain.Event, uselist=True),
+        #!+versioned items supporting feature "event":
+        #"sa_events": relation(domain.Event, uselist=True),
     }
 )
 # !+polymorphic_identity_multi only allows a single value... but, we can tweak 
 # the version mapper's polymorphic_map to allow multiple values for 
 # polymorphic_identity (but attachment.versions does not pick up reversions):
 #vm.polymorphic_map["reversion"] = vm.polymorphic_map["version"]
-del vm
+#del vm
 
 
 mapper(domain.DocAudit, schema.doc_audit,
     inherits=domain.Audit,
     polymorphic_identity=polymorphic_identity(domain.Doc) # on head class
 )
+
+mapper(domain.AgendaItem,
+    inherits=domain.Doc,
+    polymorphic_on=schema.doc.c.type,
+    polymorphic_identity=polymorphic_identity(domain.AgendaItem),
+)
+
+mapper(domain.Bill,
+    inherits=domain.Doc,
+    polymorphic_on=schema.doc.c.type,
+    polymorphic_identity=polymorphic_identity(domain.Bill),
+)
+
+mapper(domain.Motion, 
+    inherits=domain.Doc,
+    polymorphic_on=schema.doc.c.type,
+    polymorphic_identity=polymorphic_identity(domain.Motion),
+)
+
+mapper(domain.Question,
+    inherits=domain.Doc,
+    polymorphic_on=schema.doc.c.type,
+    polymorphic_identity=polymorphic_identity(domain.Question),
+    properties={ #!+
+        "ministry": relation(domain.Ministry, lazy=False, join_depth=2),
+    }
+)
+
+mapper(domain.TabledDocument,
+    inherits=domain.Doc,
+    polymorphic_on=schema.doc.c.type,
+    polymorphic_identity=polymorphic_identity(domain.TabledDocument),
+)
+
 
 mapper(domain.Event,
     inherits=domain.Doc,
@@ -653,14 +689,8 @@ mapper(domain.Event,
 )
 #!+EVENTS on parliamentary documents:
 # - behave also "like" a parliamentary document
-# - agendaitems should NOT support events?
-# - event should NOT support event
-
-mapper(domain.Motion, 
-    inherits=domain.Doc,
-    polymorphic_on=schema.doc.c.type, # polymorphic discriminator
-    polymorphic_identity=polymorphic_identity(domain.Motion),
-)
+# - AgendaItem should NOT support Event?
+# - Event should NOT support Event
 
 mapper(domain.Attachment, schema.attachment,
     properties={
@@ -703,36 +733,6 @@ mapper(domain.AttachmentAudit, schema.attachment_audit,
 )
 
 
-##############################
-# Parliamentary Items
-
-mapper(domain.ParliamentaryItem, schema.parliamentary_items,
-    polymorphic_on=schema.parliamentary_items.c.type,
-    polymorphic_identity=polymorphic_identity(domain.ParliamentaryItem),
-    properties={
-        "owner": relation(domain.User,
-            primaryjoin=rdb.and_(schema.parliamentary_items.c.owner_id ==
-                schema.users.c.user_id),
-            uselist=False,
-            lazy=False),
-        # !+NAMING(mr, jul-2011) "itemsignatories" is inconsistent
-        # !+ITEMSIGNATORIES(mr, jan-2011) why items here are User and not 
-        # Signatory instances? Cleanout...
-        #"itemsignatories": relation(domain.User, secondary=schema.signatories),
-        # !+ITEMSIGNATORIES(mr, jan-2011) Adding conventionally named property 
-        # that should replace "itemsignatories"...
-        #"item_signatories": relation(domain.Signatory),
-        #"attachments": relation(domain.Attachment, #!+PI_TMP_attachments
-        #    # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", 
-        #    # "document", "item"
-        #    backref=backref("head",
-        #        remote_side=schema.parliamentary_items.c.parliamentary_item_id)
-        #),
-        # !+DOCUMENT
-        #"events": relation(domain.Event, uselist=True),
-    }
-)
-
 mapper(domain.Heading, schema.headings,
     properties={
         "group": relation(domain.Group, 
@@ -745,44 +745,6 @@ mapper(domain.Heading, schema.headings,
 
 #!+TYPES_CUSTOM mapper(domain.QuestionType, schema.question_types)
 #!+TYPES_CUSTOM mapper(domain.ResponseType, schema.response_types)
-
-mapper(domain.Question, schema.questions,
-    inherits=domain.ParliamentaryItem,
-    polymorphic_on=schema.parliamentary_items.c.type,
-    polymorphic_identity=polymorphic_identity(domain.Question),
-    properties={
-        "ministry": relation(domain.Ministry, lazy=False, join_depth=2),
-    }
-)
-
-mapper(domain.Bill, schema.bills,
-    inherits=domain.ParliamentaryItem,
-    polymorphic_on=schema.parliamentary_items.c.type,
-    polymorphic_identity=polymorphic_identity(domain.Bill),
-    properties={}
-)
-
-mapper(domain.AgendaItem, schema.agenda_items,
-    inherits=domain.ParliamentaryItem,
-    polymorphic_on=schema.parliamentary_items.c.type,
-    polymorphic_identity=polymorphic_identity(domain.AgendaItem),
-    properties={
-        "group": relation(domain.Group,
-            primaryjoin=(
-                schema.agenda_items.c.group_id == schema.groups.c.group_id),
-            backref="agenda_items",
-            lazy=False,
-            uselist=False
-        )
-    }
-)
-
-mapper(domain.TabledDocument, schema.tabled_documents,
-    inherits=domain.ParliamentaryItem,
-    polymorphic_on=schema.parliamentary_items.c.type,
-    polymorphic_identity=polymorphic_identity(domain.TabledDocument),
-    properties={}
-)
 
 
 #Items scheduled for a sitting expressed as a relation
@@ -866,20 +828,21 @@ mapper(domain.GroupAddress, schema.group_addresses,
     },
 )
 
-mapper(domain.Report, schema.reports,
-    inherits=domain.ParliamentaryItem,
-    polymorphic_on=schema.parliamentary_items.c.type,
+
+mapper(domain.Report,
+    inherits=domain.Doc,
+    polymorphic_on=schema.doc.c.type,
     polymorphic_identity=polymorphic_identity(domain.Report)
 )
 
-mapper(domain.SittingReport, schema.sitting_reports,
+mapper(domain.SittingReport, schema.sitting_reports, # !+?
     properties={
         "sitting": relation(domain.GroupSitting,
             backref="reports",
             lazy=True,
             uselist=False
         ),
-        "report": relation(domain.Report,
+        "report": relation(domain.Report, # !+doc.head
             backref="group_sittings",
             lazy=True,
             uselist=False
@@ -887,7 +850,7 @@ mapper(domain.SittingReport, schema.sitting_reports,
     }
 )
 
-mapper(domain.Report4Sitting, schema.sitting_reports,
+mapper(domain.Report4Sitting,
     inherits=domain.Report
 )
 

@@ -59,18 +59,6 @@ def setup_db():
     schema.metadata.drop_all()
     schema.metadata.create_all()
     schema.metadata.reflect()
-    schema.QuestionSequence.create(db) 
-    schema.MotionSequence.create(db)
-    schema.RegistrySequence.create(db)
-    
-    schema.AgendaItemRegistrySequence.create(db)
-    schema.QuestionRegistrySequence.create(db)
-    schema.MotionRegistrySequence.create(db)
-    schema.BillRegistrySequence.create(db)
-    schema.TabledDocumentRegistrySequence.create(db)
-    schema.ReportRegistrySequence.create(db)
-    
-    schema.tabled_documentSequence.create(db)
     security.metadata.bind = db
     security.metadata.drop_all()
     security.metadata.create_all()
@@ -99,4 +87,9 @@ def create_sitting(group_id=1, language="en"):
     session.flush()
     
     return sitting
+
+def get_audit_count_for_type(type_key):
+    session = Session()
+    return len([ au for au in session.query(domain.Audit).filter(
+            domain.Audit.audit_type==type_key) ])
 

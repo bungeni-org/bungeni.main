@@ -74,10 +74,10 @@ class SchedulableItemsViewlet(browser.BungeniItemsViewlet):
         return url.set_url_context("%s/business/%ss/obj-%s" % (
                 url.absoluteURL(getSite(), self.request), 
                 item.type, 
-                item.parliamentary_item_id))
+                item.doc_id))
 
     def _get_item_key(self, item):
-        return item.parliamentary_item_id
+        return item.doc_id
 
     def update(self):
         need("yui-dragdrop")

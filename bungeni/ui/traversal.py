@@ -6,7 +6,7 @@ from zope.traversing.browser import AbsoluteURL
 
 from bungeni.core.content import AkomaNtosoSection
 from bungeni.alchemist import Session
-from bungeni.models.domain import ParliamentaryItem, Bill
+from bungeni.models.domain import Doc, Bill
 
 from sqlalchemy import extract
 
@@ -84,12 +84,12 @@ class SiteTraverser(ContainerTraverser):
             return self.session.query(Bill).filter(Bill.registry_number==id).\
                                             filter(Bill.publication_date==date).\
                                             filter(Bill.language==lang)
-        return self.session.query(ParliamentaryItem).filter(ParliamentaryItem.registry_number==id).\
-                                                     filter(ParliamentaryItem.type==content_type).\
-                                                     filter(ParliamentaryItem.language==lang).\
-                                                     filter(extract('year',ParliamentaryItem.status_date)==date.year).\
-                                                     filter(extract('month',ParliamentaryItem.status_date)==date.month).\
-                                                     filter(extract('day',ParliamentaryItem.status_date)==date.day)
+        return self.session.query(Doc).filter(Doc.registry_number==id).\
+                                                     filter(Doc.type==content_type).\
+                                                     filter(Doc.language==lang).\
+                                                     filter(extract('year',Doc.status_date)==date.year).\
+                                                     filter(extract('month',Doc.status_date)==date.month).\
+                                                     filter(extract('day',Doc.status_date)==date.day)
 
 
 

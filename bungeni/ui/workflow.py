@@ -30,7 +30,7 @@ from bungeni.core.workflow import interfaces
 from bungeni.core.workflows.utils import get_mask
 from bungeni.models.interfaces import IAuditable, IWorkspaceContainer, \
     IBungeniParliamentaryContent
-from bungeni.models.domain import ParliamentaryItem, get_changes
+from bungeni.models.domain import Doc, get_changes
 from bungeni.ui.forms.workflow import bindTransitions
 from bungeni.ui.forms.common import BaseForm
 from bungeni.ui.widgets import TextDateTimeWidget
@@ -212,9 +212,8 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
             reg_number = data.get("registry_number")
             if reg_number:
                 session = Session()
-                num = session.query(ParliamentaryItem
-                    ).filter(ParliamentaryItem.registry_number==reg_number
-                    ).count()
+                num = session.query(Doc
+                        ).filter(Doc.registry_number==reg_number).count()
                 if num != 0:
                     errors.append(zope.interface.Invalid(
                         "This registry number is already taken."))

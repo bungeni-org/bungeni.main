@@ -26,5 +26,5 @@
     <span i18n:translate="">Language</span>:
     <span tal:replace="view/document/language | nothing"/>
   </p>
-  <span tal:replace="view/document/body_text | nothing"/>
+  <span tal:replace="view/document/body | nothing"/>
 </span>

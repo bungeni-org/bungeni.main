@@ -292,8 +292,7 @@ class _AuditorFactory(object):
         change_data = self._get_change_data()
         if root:
             note = change_data.get("note")
-            # procedure="a" for non-root versions
-            procedure = change_data.get("procedure")
+            procedure = change_data.get("procedure", "m")
         else:
             # root version note is repeated for non-root-versions !+?
             note = change_data.get("note")

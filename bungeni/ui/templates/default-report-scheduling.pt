@@ -53,15 +53,15 @@
                             </div>
                              <div>
                                 <p class="reporttext" 
-                                      tal:replace="structure scheduled/item/body_text"
-                                      tal:condition="scheduled/item/body_text|nothing"/>
+                                      tal:replace="structure scheduled/item/body"
+                                      tal:condition="scheduled/item/body|nothing"/>
                              </div>
                              <div tal:condition="view/display_minutes">
-                                <div tal:condition="scheduled/discussion/body_text|nothing">
+                                <div tal:condition="scheduled/discussion/body|nothing">
                                     <h3 class="reportminutes" i18n:translate="">
                                         Minutes
                                     </h3>
-                                    <p tal:content="structure scheduled/discussion/body_text"/>
+                                    <p tal:content="structure scheduled/discussion/body"/>
                                 </div>
                              </div>
                             <div tal:condition="scheduled/item/signatories|nothing" 

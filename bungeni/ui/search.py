@@ -188,11 +188,11 @@ class ParliamentaryItemToSearchResult(object):
 
     @property
     def title(self):
-        return self.context.short_name
+        return self.context.short_title
 
     @property
     def annotation(self):
-        return self.context.body_text
+        return self.context.body
 
 
 class AttachmentToSearchResult(object):
@@ -326,14 +326,14 @@ class Search(forms.common.BaseForm, ResultListing, HighlightMixin):
     def get_title(self, item):
         return "%s %s" % (
             translate_obj(item.head,
-                          self.request.locale.id.language).short_name,
+                          self.request.locale.id.language).short_title,
             _(u"changes from"))
 
     def get_url(self, item):
         site = getSite()
         base_url = absoluteURL(site, self.request)
         return "%s/business/%ss/obj-%s" % (
-            base_url, item.head.type, item.head.parliamentary_item_id)
+            base_url, item.head.type, item.head.doc_id)
 
     def get_user_subscriptions(self):
         """ Getting user subscribed items

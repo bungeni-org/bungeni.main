@@ -100,7 +100,7 @@ def sendNotificationToMP(date):
     questions = session.query(domain.Question).filter(qfilter).all()
     for question in questions:
         mailto = _getMemberOfParliamentEmail(question)
-        if mailto and question.receive_notification:
+        if mailto and True: #!+NOTIFICATION_SETTINGS = True
             msg = MIMEText(text)
             msg['Subject'] = u'Questions pending response'
             msg['From'] = prefs.getAdministratorsEmail()

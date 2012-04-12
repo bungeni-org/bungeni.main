@@ -108,8 +108,6 @@ _bill_draft = _bill_working_draft = __pi_create
 _bill_redraft = __pi_redraft
 _bill_submitted = __pi_submit
 
-def _bill_gazetted(context):
-    utils.setBillPublicationDate(context)
 
 # group
 
@@ -192,11 +190,11 @@ def _question_response_pending(context):
     """
     utils.setMinistrySubmissionDate(context)
 
-def _question_admissible(context):
+def _question_admissible(question):
     """The question is admissible and can be send to ministry,
     or is available for scheduling in a sitting.
     """
-    dbutils.setQuestionSerialNumber(context)
+    dbutils.set_doc_type_number(question)
 
 
 # tableddocument
@@ -208,9 +206,8 @@ _tableddocument_redraft = __pi_redraft
 def _tableddocument_adjourned(context):
     utils.setTabledDocumentHistory(context)
 
-def _tableddocument_admissible(context):
-    dbutils.setTabledDocumentSerialNumber(context)
-
+def _tableddocument_admissible(tabled_document):
+    dbutils.set_doc_type_number(tabled_document)
 
 # user
 

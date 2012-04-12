@@ -358,7 +358,7 @@ class AddForm(BaseForm, catalyst.AddForm):
     def createAndAdd(self, data):
         added_obj = super(AddForm, self).createAndAdd(data)
         return added_obj
-
+    
     @formlib.form.action(
         _(u"Save and view"),
         name="save_and_view",

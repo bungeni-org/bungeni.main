@@ -62,7 +62,7 @@ AttributeError: 'GroupAddress' object has no attribute 'short_name':   File "/ho
                 #title = context.short_name 
 So, we temporarily default the above to the context.__class__.__name__:
                 '''
-                title = getattr(context, "short_name", 
+                title = getattr(context, "short_title", 
                     context.__class__.__name__)
     elif IAlchemistContainer.providedBy(context):
         domain_model = context._class 
@@ -379,7 +379,7 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
                 if props is not None:
                     title = props.title
                 else:
-                    title = context.short_name
+                    title = context.short_title
 
             selected = len(chain) == 0
             

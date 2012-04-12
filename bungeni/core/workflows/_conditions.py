@@ -55,7 +55,7 @@ def clerk_receive_notification(context):
     return prefs.getClerksOfficeReceiveNotification()
 
 def owner_receive_notification(context):
-    return False #!+DOCUMENT context.receive_notification
+    return False #!+NOTIFICATION_SETTINGS
 
 def ministry_receive_notification(context):
     return prefs.getMinistriesReceiveNotification() and context.ministry_id
@@ -63,10 +63,10 @@ def ministry_receive_notification(context):
 
 # parliamentary items
 
-def is_scheduled(context):
-    """Is Parliamentary Item scheduled.
+def is_scheduled(doc):
+    """Is doc scheduled?
     """
-    return utils.is_pi_scheduled(context.parliamentary_item_id)
+    return utils.is_pi_scheduled(doc.doc_id)
 
 
 # group

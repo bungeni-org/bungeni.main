@@ -161,10 +161,10 @@ class Notification(object):
     is exactly equivalent to:
     
         <notification condition="owner_receive_notification"
-            subject="${item.class_name} ${item.status}: ${item.short_name}"
+            subject="${item.class_name} ${item.status}: ${item.short_title}"
             from="${site.clerk_email}"
             to="${item.owner_email}"
-            body="${item.class_name} ${item.status}: ${item.short_name}"
+            body="${item.class_name} ${item.status}: ${item.short_title}"
         />
 
     """
@@ -172,13 +172,13 @@ class Notification(object):
             # resolvable python callable
             condition="owner_receive_notification",
             # i18n, template source
-            subject="${item.class_name} ${item.status}: ${item.short_name}", 
+            subject="${item.class_name} ${item.status}: ${item.short_title}", 
             # template source 
             from_="${site.clerk_email}",
             # template source 
             to="${item.owner_email}",
             # i18n, template source
-            body="${item.class_name} ${item.status}: ${item.short_name}",
+            body="${item.class_name} ${item.status}: ${item.short_title}",
             # documentational note
             note=None
         ):

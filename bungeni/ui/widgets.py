@@ -70,7 +70,7 @@ class ComputedTitleWidget(zope.formlib.widgets.DisplayWidget):
             value = self.context.default
         if (value == self.context.missing_value) or (len(value)==0):
             context = self.__parent__.context
-            body = getattr(context, "body_text", None)
+            body = getattr(context, "body", None)
             if (body != None) and (body != self.context.missing_value):
                 return misc.text_snippet(body, self.displayWidth)
             return _(u"Unknown")

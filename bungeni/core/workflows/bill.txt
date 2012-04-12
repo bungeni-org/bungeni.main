@@ -92,7 +92,7 @@ Content creation
   ...     domain.Bill,
   ...     doc_type="member",
   ...     owner_id=mp_1.user_id,
-  ...     short_name=u"New Bill",
+  ...     short_title=u"New Bill",
   ...     language="en")
 
 Actions
@@ -157,7 +157,7 @@ Conditions
   >>> scheduling = add_content(
   ...     domain.ItemSchedule,
   ...     group_sitting_id=sitting.group_sitting_id,
-  ...     item_id=bill.parliamentary_item_id)
+  ...     item_id=bill.doc_id)
   
   >>> _conditions.is_scheduled(bill)
   True

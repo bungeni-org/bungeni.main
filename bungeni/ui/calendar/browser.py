@@ -132,9 +132,9 @@ def get_sitting_items(sitting, request, include_actions=False):
         discussion = discussions and discussions[0] or None
         truncated_discussion = None
         if ((discussion is not None) 
-           and (discussion.body_text is not None)):
+           and (discussion.body is not None)):
             #truncate discussion to first hundred characters
-            t_discussion = discussion.body_text[0:100]
+            t_discussion = discussion.body[0:100]
             try:
                 #truncate discussion to first two lines
                 index = t_discussion.index("<br>")
@@ -951,21 +951,21 @@ class DiscussionAddView(BrowserView):
         new_record_keys = []
         domain_model = removeSecurityProxy(self.context.domain_model)
         for record in self.data:
-            discussion_text = record.get("body_text", "")
+            discussion_text = record.get("body", "")
             object_id = record.get("object_id", None)
             if object_id:
                 current_record = removeSecurityProxy(
                     self.context.get(getItemKey(object_id))
                 )
-                current_record.body_text = discussion_text
+                current_record.body = discussion_text
                 session.add(current_record)
                 session.flush()
                 notify(ObjectModifiedEvent(current_record))
                 new_record_keys.append(stringKey(current_record))
             else:
                 new_record = domain_model(
-                    body_text = discussion_text,
-                    language = get_default_language()
+                    body=discussion_text,
+                    language=get_default_language()
                 )
                 new_record.scheduled_item = removeSecurityProxy(
                     self.context.__parent__
