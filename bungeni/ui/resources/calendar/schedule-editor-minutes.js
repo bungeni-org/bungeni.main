@@ -218,6 +218,15 @@ YAHOO.bungeni.agendaconfig = function(){
             return _cache;
         }
 
+        var _get_minutes_count = function(){
+            var mcount = 0;
+            var mcache = this.get_cache()
+            for (key in mcache){
+                mcount+=mcache[key].length;
+            }
+            return mcount
+        }
+
         var _get = function(key){
             return _cache[key] || undefined;
         }
@@ -239,6 +248,7 @@ YAHOO.bungeni.agendaconfig = function(){
                 
         return {
             get_cache: _get_cache,
+            get_minutes_count: _get_minutes_count,
             get: _get,
             set: _set,
             update: _update,

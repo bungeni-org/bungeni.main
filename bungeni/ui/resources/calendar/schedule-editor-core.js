@@ -27,7 +27,6 @@ YAHOO.bungeni.scheduling = function(){
             YAHOO.bungeni.unsavedChanges = false;
             if((!this.post_op) && AgendaConfig.minuteEditor){
                 YAHOO.bungeni.processed_agenda_records+=1;
-                var cached_minutes_count = AgendaConfig.minutesCache
                 if (YAHOO.bungeni.processed_agenda_records==
                     YAHOO.bungeni.processed_minute_records
                 ){
@@ -35,19 +34,22 @@ YAHOO.bungeni.scheduling = function(){
                 }
             }
             if(this.post_op){
-                for(idx=0;idx<row_count;idx++){
-                    YAHOO.bungeni.agendaconfig.handlers.saveMinutes(idx);
-                }
-            }else{
-                //reload schedule reflect changes to workflow actions - if any
-                if (YAHOO.bungeni.reloadView){
-                    Dialogs.blocking.show(SGlobals.saving_dialog_refreshing);
-                    window.location.reload();
+                if(AgendaConfig.minutesCache.get_minutes_count()==0){
+                    YAHOO.bungeni.reloadView = true;
                 }else{
-                    if(AgendaConfig.minuteEditor==undefined){
-                        Dialogs.blocking.hide();
-                        sDt.refresh();
+                    for(idx=0;idx<row_count;idx++){
+                        YAHOO.bungeni.agendaconfig.handlers.saveMinutes(idx);
                     }
+                }
+            }
+            //reload schedule reflect changes to workflow actions - if any
+            if (YAHOO.bungeni.reloadView){
+                Dialogs.blocking.show(SGlobals.saving_dialog_refreshing);
+                window.location.reload();
+            }else{
+                if(AgendaConfig.minuteEditor==undefined){
+                    Dialogs.blocking.hide();
+                    sDt.refresh();
                 }
             }
         },
