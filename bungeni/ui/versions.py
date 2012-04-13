@@ -231,7 +231,8 @@ class DVersionLogView(VersionLogMixin,
         # e.g. business / questions / <q> / versions / Show Differences
         return "post"
     
-    @formlib.form.action(label=_("New Version"), condition=has_write_permission)
+    @formlib.form.action(label=_("New Version"), name="new_version",
+        condition=has_write_permission)
     def handle_new_version(self, action, data):
         # !+ change_data not yet initialized for version requests
         change_data = IAnnotations(self.request)["change_data"] = {}
@@ -240,7 +241,8 @@ class DVersionLogView(VersionLogMixin,
         version.DOCUMENT_create_version(self.context)
         self.status = _("New Version Created")
     
-    @formlib.form.action(label=_("Revert To"), condition=has_write_permission)
+    @formlib.form.action(label=_("Revert To"), name="revert_to",
+        condition=has_write_permission)
     def handle_revert_version(self, action, data):
         # !+REVERSION must be reviewed, probably obsoleted
         selected_audit_ids = getSelected(self.selection_column, self.request)
@@ -259,8 +261,7 @@ class DVersionLogView(VersionLogMixin,
         self.status = _(u"Reverted to Previous Version %s") % (
             removeSecurityProxy(selected_audit).audit_id)
     
-    @formlib.form.action(
-        label=_("Show Differences"), name="diff",
+    @formlib.form.action(label=_("Show Differences"), name="diff",
         validator=lambda form, action, data: ())
     def handle_diff_version(self, action, data):
         self.status = _("Displaying differences")
@@ -392,13 +393,13 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
         return "post"
     
     @formlib.form.action(label=_("New Version"), name="new_version",
-                         condition=has_write_permission)
+        condition=has_write_permission)
     def handle_new_version(self, action, data):
         self._versions.create(message=data["commit_message"], manual=True)
         self.status = _(u"New Version Created")
 
     @formlib.form.action(label=_("Revert To"), name="revert_to",
-                         condition=has_write_permission)
+        condition=has_write_permission)
     def handle_revert_version(self, action, data):
         selected = getSelected(self.selection_column, self.request)
         if len(selected) != 1:
@@ -411,7 +412,7 @@ class VersionLogView(browser.BungeniBrowserView, forms.common.BaseForm):
                        (version.version_id))
 
     @formlib.form.action(label=_("Show Differences"), name="diff",
-                         validator=lambda form, action, data: ())
+        validator=lambda form, action, data: ())
     def handle_diff_version(self, action, data):
         self.status = _("Displaying differences")
 
