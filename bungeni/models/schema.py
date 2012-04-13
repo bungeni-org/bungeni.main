@@ -1041,6 +1041,13 @@ doc = rdb.Table("doc", metadata,
     # The entity responsible for making the resource available. 
     # Examples of a Publisher include a person, an organization, or a service.
     # Typically, the name of a Publisher should be used to indicate the entity.
+    # !+CONTAINER_CUSTODIAN_GROUPS(mr, apr-2011) parliament_id and group_id are
+    # conceptually distinct while still being related:
+    # - the general sense of parliament_id seems to be that of the 
+    # "root_container" group (currently this may only be a parliament) in 
+    # which the doc "exists" in
+    # - while the general sense of group_id seems to be that of a kind of
+    # "custodian" group, to which the doc is "assigned to" for handling.
     # !+PARLIAMENT_ID should be nullable=False, but fails on creating an Event...
     rdb.Column("parliament_id", rdb.Integer,
         rdb.ForeignKey("parliaments.parliament_id"),
@@ -1138,6 +1145,7 @@ doc = rdb.Table("doc", metadata,
     # group responsible to "handle" this document... involves workflow: the 
     # precise meaning, and validation constraints of this is defined by each 
     # sub-type e.g. ministry for bill & question, group for agendaitem, ...
+    # !+CONTAINER_CUSTODIAN_GROUPS
     rdb.Column("group_id", rdb.Integer,
         rdb.ForeignKey("groups.group_id"),
         nullable=True

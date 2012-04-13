@@ -2161,7 +2161,7 @@ class DocumentDescriptor(ModelDescriptor):
         "owner_id",
         "registry_number",
         "uri",
-        "group_id",
+        #"group_id", # !+group_id only exposed in specific custom doc types
         "status",
         "status_date",
         #"amc_signatories",
@@ -2306,16 +2306,17 @@ class DocumentDescriptor(ModelDescriptor):
             property=schema.Date(title=_("Status Date"), required=False),
             listing_column=day_column("status_date", _("Status date")),
         ),
-        Field(name="group_id", # [user]
-            modes="view edit add listing",
-            localizable=[ 
-                show("view edit listing"), 
-            ],
-            property=schema.Choice(title=_("Group"),
-                source=vocabulary.MinistrySource("ministry_id"), # !+PLACEHOLDER_GROUP_SOURCE
-                required=False
-            ),
-        ),
+        # !+group_id only exposed in specific custom doc types
+        #Field(name="group_id", # [user]
+        #    modes="view edit add listing",
+        #    localizable=[ 
+        #        show("view edit listing"), 
+        #    ],
+        #    property=schema.Choice(title=_("Group"),
+        #        source=vocabulary.MinistrySource("ministry_id"), # !+PLACEHOLDER_GROUP_SOURCE
+        #        required=False
+        #    ),
+        #),
         # subject
         # coverage
         # geolocation
@@ -2335,6 +2336,22 @@ class EventDescriptor(DocumentDescriptor):
     container_name = _("Events")
     
     fields = deepcopy(DocumentDescriptor.fields)
+    fields.append(
+        Field(name="group_id", # [user]
+            modes="view edit add listing",
+            localizable=[ 
+                show("view edit listing"), 
+            ],
+            property=schema.Choice(title=_("Group"),
+                source=vocabulary.GroupSource( 
+                    token_field="group_id",
+                    title_field="short_name",
+                    value_field="group_id",
+                ),
+                required=False,
+            ),
+        ),
+    )
     with get_field(fields, "owner_id") as f:
         # "non-legal" parliamentary documents may only be added by any user
         f.property = schema.Choice(title=_("Owner"),
@@ -2348,14 +2365,7 @@ class EventDescriptor(DocumentDescriptor):
         #f.edit_widget=widgets.AutoCompleteWidget(remote_data=True,
         #        yui_maxResultsDisplayed=5),
         #f.add_widget=widgets.AutoCompleteWidget()
-    with get_field(fields, "group_id") as f:
-        f.property=schema.Choice(title=_("Group"),
-            source=vocabulary.GroupSource( 
-                token_field="group_id",
-                title_field="short_name",
-                value_field="group_id")) # !+GROUP_FILTERS
     del f # remove f from class namespace
-
 
 ''' !+AuditLogView(mr, nov-2011) change listings do not respect this
 class ChangeDescriptor(ModelDescriptor):
@@ -2588,7 +2598,7 @@ class BillDescriptor(DocumentDescriptor):
 
     fields = deepcopy(DocumentDescriptor.fields)
     # remove "doc_type"
-    fields[:] = [ f for f in fields if f.name not in ("doc_type", "group_id") ]
+    fields[:] = [ f for f in fields if f.name not in ("doc_type",) ]
     # tweak...
     with get_field(fields, "body") as f:
         f.label = _("Statement of Purpose")
@@ -2691,7 +2701,7 @@ class QuestionDescriptor(DocumentDescriptor):
     
     fields = deepcopy(DocumentDescriptor.fields)
     # remove "doc_type"
-    fields[:] = [ f for f in fields if f.name not in ("doc_type", "group_id") ]
+    fields[:] = [ f for f in fields if f.name not in ("doc_type",) ]
     fields.extend([
         #Field(name="supplement_parent_id",
         #    label=_("Initial/supplementary question"),

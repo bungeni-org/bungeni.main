@@ -50,6 +50,7 @@ from bungeni.ui.interfaces import IBungeniSkin, IFormEditLayer, \
     IGenenerateVocabularyDefault
 from bungeni.ui.i18n import _
 from bungeni.ui import browser
+from bungeni.ui import z3evoque
 from bungeni.ui.utils import url
 from bungeni.ui.container import invalidate_caches_for
 from bungeni.utils import register
@@ -233,16 +234,18 @@ class BaseForm(formlib.form.FormBase):
                 unproxied
             )
 
+
 # !+PageForm(mr, jul-2010) converge usage of formlib.form.PageForm to PageForm
 # !+NamedTemplate(mr, jul-2010) converge all views to not use anymore
 # !+alchemist.form(mr, jul-2010) converge all form views to not use anymore
 class PageForm(BaseForm, formlib.form.PageForm, browser.BungeniBrowserView):
-    template = NamedTemplate("alchemist.form")
-
+    template = z3evoque.PageViewTemplateFile("form.html#page")
+    #template = NamedTemplate("alchemist.form")
 
 class DisplayForm(catalyst.DisplayForm, browser.BungeniBrowserView):
-
-    template = ViewPageTemplateFile("templates/content-view.pt")
+    
+    template = z3evoque.PageViewTemplateFile("content.html#view")
+    #template = ViewPageTemplateFile("templates/content-view.pt")
 
     form_name = _("View")
 

@@ -66,23 +66,22 @@ class SchedulableItemsGetter(object):
     domain_class = None
     
     def __init__(self, context, item_type, filter_states=None, 
-        group_filter=True, item_filters={}
-    ):
+            group_filter=True, item_filters={}
+        ):
         self.context = context
         self.item_type = item_type
+        type_info = capi.get_type_info(item_type)
         self.filter_states = (filter_states or 
-            capi.get_type_info(item_type).workflow.get_state_ids(
-                tagged=["tobescheduled"]
-            )
+            type_info.workflow.get_state_ids(tagged=["tobescheduled"])
         )
         self.group_filter = group_filter
         try:
             self.domain_class = get_schedulable_types()[item_type].get(
-                "domain_model"
-            )
+                "domain_model")
         except KeyError:
+            # !+try/except not necessary?
             try:
-                self.domain_class = capi.get_type_info(item_type).domain_model
+                self.domain_class = type_info.domain_model
             except KeyError:
                 raise KeyError("Unable to locate domain class for type %s" %
                     item_type
@@ -91,7 +90,7 @@ class SchedulableItemsGetter(object):
     
     @property
     def group_id(self):
-        parent=self.context
+        parent = self.context
         while parent is not None:
             group_id = getattr(parent, "group_id", None)
             if group_id:
@@ -116,7 +115,7 @@ class SchedulableItemsGetter(object):
                         elif start:
                             expression = (column>=value)
                         elif end:
-                            expression= (column<=value)
+                            expression = (column<=value)
                         else:
                             continue
                     else:
@@ -130,8 +129,7 @@ class SchedulableItemsGetter(object):
                     self.domain_class.group_id==self.group_id
                 )
         return tuple(items_query)
-
-
+    
     def as_json(self):
         date_formatter = date.getLocaleFormatter(common.get_request(), "date",
             "medium"
@@ -198,3 +196,4 @@ class ExpandedSitting(object):
                 )
                 self.grouped[item_group] = []
             self.grouped[item_group].append(scheduled.item)
+
