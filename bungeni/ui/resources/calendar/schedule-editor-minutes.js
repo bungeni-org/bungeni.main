@@ -152,41 +152,17 @@ YAHOO.bungeni.agendaconfig = function(){
     var _getColumns = function(cols_width){
         return [
             {
-                key: Columns.ADD_TEXT_RECORD, 
+                key: Columns.ROW_CONTROLS, 
                 label: "",
-                formatter: Formatters.addTextRecord,
-                width: (0.1*cols_width)
-            },
-            {
-                key: Columns.TYPE, 
-                label: SGlobals.column_type,
-                formatter: Formatters.type,
-                width: (0.07*cols_width)
+                formatter: Formatters.rowControls,
+                width: (0.2*cols_width)
             },
             {
                 key: Columns.TITLE, 
                 label: SGlobals.column_title,
                 editor: this.editor,
                 formatter: Formatters.title_with_minutes,
-                width: (0.2*cols_width)
-            },
-            {
-                key: Columns.URI, 
-                label: "", 
-                formatter: Formatters.link,
-                width: (0.05*cols_width)
-            },
-            {
-                key: Columns.MOVE_UP, 
-                label: "", 
-                formatter: Formatters.moveUp,
-                width: (0.05*cols_width)
-            },
-            {
-                key: Columns.MOVE_DOWN, 
-                label: "", 
-                formatter: Formatters.moveDown,
-                width: (0.05*cols_width)
+                width: (0.45*cols_width)
             },
             {
                 key: Columns.WORKFLOW_ACTIONS,

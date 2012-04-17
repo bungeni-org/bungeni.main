@@ -22,39 +22,20 @@ YAHOO.bungeni.agendaconfig = function(){
         return;
     }
 
-    var _getColumns = function(){
+    var _getColumns = function(cols_width){
         return [
             {
-                key: Columns.ADD_TEXT_RECORD, 
+                key: Columns.ROW_CONTROLS, 
                 label: "",
-                formatter: Formatters.addTextRecord,
-            },
-            {
-                key: Columns.TYPE, 
-                label: SGlobals.column_type,
-                formatter: Formatters.type,
+                formatter: Formatters.rowControls,
+                width: 0.2 * cols_width
             },
             {
                 key: Columns.TITLE, 
                 label: SGlobals.column_title,
                 editor: this.editor,
-                width: 150,
+                width: 0.7 * cols_width,
                 formatter: Formatters.title
-            },
-            {
-                key: Columns.URI, 
-                label: "", 
-                formatter: Formatters.link
-            },
-            {
-                key: Columns.MOVE_UP, 
-                label: "", 
-                formatter: Formatters.moveUp
-            },
-            {
-                key: Columns.MOVE_DOWN, 
-                label: "", 
-                formatter: Formatters.moveDown
             },
         ];
     }

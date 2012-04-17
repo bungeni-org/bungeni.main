@@ -90,8 +90,6 @@ YAHOO.bungeni.config = function(){
         OBJECT_ID : "object_id",
         TYPE : "item_type",
         TITLE : "item_title",
-        MOVE_UP : "item_move_up",
-        MOVE_DOWN : "item_move_down",
         MOVER : "item_mover",
         URI : "item_uri",
         REGISTRY_NO : "registry_number",
@@ -103,11 +101,8 @@ YAHOO.bungeni.config = function(){
         DISCUSSION_DELETE : "delete_discussion",
         WORKFLOW_STATE : "wf_state",
         WORKFLOW_ACTIONS : "wf_actions",
-        ADD_TEXT_RECORD : "add_text_record",
+        ROW_CONTROLS : "row_controls",
     }
-    scheduling_columns.move_columns = [
-        scheduling_columns.MOVE_UP, scheduling_columns.MOVE_DOWN
-    ];
 
     var _schemas = {
         available_items : {
@@ -281,23 +276,6 @@ YAHOO.bungeni.config = function(){
                                         new_data_entries.push(entry);
                                     }
                                     sDt.addRows(new_data_entries, new_index);
-                                    var refresh_columns = [
-                                        sDt.getColumn(Columns.MOVE_UP),
-                                        sDt.getColumn(Columns.MOVE_DOWN),
-                                    ]
-                                    if(new_index > 0){
-                                        var updated_record = sDt.getRecord(
-                                            (new_index - 1)
-                                        );
-                                        var record_data = updated_record.getData();
-                                        for (idx=0; idx<=(refresh_columns.length); idx++){
-                                            sDt.updateCell(
-                                                updated_record, 
-                                                refresh_columns[idx],
-                                                record_data
-                                            );
-                                        }
-                                    }
                                 }
                                 this.hide();
                             }else{
@@ -356,18 +334,6 @@ YAHOO.bungeni.config = function(){
         formatters : function(){
              var BungeniUtils = YAHOO.bungeni.Utils;
              var Columns = scheduling_columns;
-             
-            /**
-             * @method itemTypeFormatter
-             * @description render item type in reduced form
-             */
-             var itemTypeFormatter = function(el, record, column, data){
-                 el.innerHTML = ("<span style='font-size:10px;'>" + 
-                    record.getData()[Columns.TYPE] + 
-                    "</span>"
-                );
-             }
-
 
             /**
              * @method itemTitleFormatter
@@ -401,6 +367,33 @@ YAHOO.bungeni.config = function(){
                  }
              }
              
+            /**
+             * @method itemExtendedFormatter
+             * @description Renders item title plus other metadata
+             **/
+             var itemTitleExtendedFormatter = function(el, record, column, data){
+                 rec_data = record.getData();
+                 var title_parts = [
+                    rec_data[Columns.TITLE],
+                    rec_data[Columns.REGISTRY_NO],
+                    rec_data[Columns.MOVER],
+                    rec_data[Columns.STATUS_DATE]
+                 ];
+                 var tHTML = "";
+                 for (index in title_parts){
+                     var text = title_parts[index];
+                     if(!text){ continue }
+                     if(index>0){
+                         tHTML = tHTML + BungeniUtils.wrapText(text,
+                            "span", 'class="dt_title_unit"'
+                         );
+                      }else{
+                          tHTML = tHTML + BungeniUtils.wrapText(text, "span");
+                      }
+                 }
+                 el.innerHTML = tHTML;
+             }
+             
              /**
               * @method itemTitleMinutesFormatter
               * @method render item title and minutes where applicable
@@ -408,6 +401,7 @@ YAHOO.bungeni.config = function(){
               var itemTitleMinutesFormatter = function(el, record, column, data){
                   var data = record.getData();
                   var record_index = this.getRecordIndex(record);
+                  el.innerHTML = "";
                   if (SGlobals.discussable_types.indexOf(
                         data[Columns.TYPE]
                     )<0
@@ -513,31 +507,6 @@ YAHOO.bungeni.config = function(){
                       el.innerHTML = cHTML;
                   }
               }
-             
-            /**
-             * @method itemMoveFormatter
-             * @description renders controls to move scheduled items up/down the
-             * schedule depending on direction
-             */
-            var itemMoveFormatter = function(el, record, column, data, dir, table){
-                var move_markup = "";
-                var index = table.getTrIndex(record) + 1;
-                var last_row = table.getRecordSet().getLength();
-                var dir_char = (dir=="up")?"&uarr;":"&darr;"
-
-                if (!(((index == 1) && (dir=="up")) || 
-                    ((index == last_row) && (dir=="down"))
-                )){
-                    move_markup = "<span id='up'>" + dir_char + "</span>";
-                }
-                el.innerHTML = move_markup;
-            }
-            var itemMoveUpFormatter = function(el, record, column, data){
-                itemMoveFormatter(el, record, column, data, "up", this);
-            }
-            var itemMoveDownFormatter = function(el, record, column, data){
-                itemMoveFormatter(el, record, column, data, "down", this);
-            }
             
             var countFormatter = function(el, record, column, data){
                 el.innerHTML = this.getTrIndex(record)+1;
@@ -651,20 +620,22 @@ YAHOO.bungeni.config = function(){
 
 
             /**
-             * @method addTextRecordFormatter
-             * @description renders button to add text records to schedule
+             * @method rowControlsFormatter
+             * @description renders controls to add items or move row up/down
              */
-            var addTextRecordFormatter = function(el, record, column, data){
-                if (SGlobals.discussable_types.indexOf(
-                        record.getData()[Columns.TYPE]
-                    )<0
-                ){
-                    if(el.innerHTML){
-                        el.innerHTML="";
-                    }
-                    return;
+            var rowControlsFormatter = function(el, record, column, data){
+                var rdata = record.getData();
+                el.innerHTML = "";
+                var type_el = document.createElement("div");
+                type_el.className = "yui-dt-label";
+                var type_i18n = SGlobals.type_names[rdata[Columns.TYPE].toUpperCase()];
+                if(type_i18n){
+                    type_el.textContent = type_i18n;
+                }else{
+                    type_el.textContent = rdata[Columns.TYPE];
                 }
-                if (!el.innerHTML){
+                el.appendChild(type_el);
+                if (SGlobals.discussable_types.indexOf(rdata[Columns.TYPE])>=0){
                     var menu = [
                         {
                             text: SGlobals.heading_button_text,
@@ -701,14 +672,40 @@ YAHOO.bungeni.config = function(){
                     button.getMenu().subscribe("click", clickHandler);
                     button.appendTo(el);
                 }
+                var rec_index = this.getRecordIndex(record);
+                var rec_size = this.getRecordSet().getLength();
+                var orderButtons = new YAHOO.widget.ButtonGroup({});
+                if(rec_index>0){
+                    orderButtons.addButton({ label: "&uarr;", value: "UP" });
+                }
+                if(rec_index<(rec_size-1)){
+                    orderButtons.addButton({ label: "&darr;", value: "DOWN" });
+                }
+                orderButtons.on("checkedButtonChange", function(ev){
+                    if(ev.newValue){
+                        YAHOO.bungeni.config.scheduling.handlers.moveRow(
+                            ev.newValue.get("value"), 
+                            ev.newValue.get("element")
+                        );
+                        ev.newValue.set("checked", false, true);
+                    }
+                });
+                orderButtons.appendTo(el);
+                var deleteButton = new YAHOO.widget.Button({
+                    label: "x"
+                })
+                deleteButton.on("click", function(){
+                    YAHOO.bungeni.config.scheduling.handlers.removeRow(
+                        deleteButton.get("element")
+                    );
+                });
+                deleteButton.appendTo(el);
             }
 
             return {
                 title: itemTitleFormatter,
+                title_extended: itemTitleExtendedFormatter,
                 title_with_minutes: itemTitleMinutesFormatter,
-                type: itemTypeFormatter,
-                moveUp: itemMoveUpFormatter,
-                moveDown: itemMoveDownFormatter,
                 counter: countFormatter,
                 longText: longTextFormatter,
                 editButton: editButtonFormatter,
@@ -716,7 +713,7 @@ YAHOO.bungeni.config = function(){
                 link: linkFormatter,
                 availableItemSelect: availableItemSelectFormatter,
                 workflowActions: workflowActionsFormatter,
-                addTextRecord: addTextRecordFormatter
+                rowControls: rowControlsFormatter
             }
         }(),
         handlers: function(){
@@ -762,32 +759,17 @@ YAHOO.bungeni.config = function(){
             }
              
              /**
-              * @method _addTextRecord
-              * @description reusable add text records handler
-              */
-              var _addTextRecord = function(args){
-                  var column = this.getColumn(args.target);
-                  if (column.field != scheduling_columns.ADD_TEXT_RECORD){
-                      return;
-                  }
-                  YAHOO.bungeni.config.dialogs.textrecords.show();
-              }
-             
-             /**
-              * @method _moveRecord
+              * @method _moveRow
               * @description swap datatable rows
               **/
-            var _moveRecord = function(args){
-                var MOVE_COLUMNS = scheduling_columns.move_columns;
-                var target_column = this.getColumn(args.target);
-                if (MOVE_COLUMNS.indexOf(target_column.field)<0){
-                   return;
-                }
-                var target_record = this.getRecord(args.target);
-                var target_index = this.getTrIndex(target_record);
-                var record_count = this.getRecordSet().getLength();
+            var _moveRow = function(direction, target){
+                var sDt = YAHOO.bungeni.scheduling.getScheduleTable();
+                var target_row = sDt.getRow(target);
+                var target_record = sDt.getRecord(target_row);
+                var target_index = sDt.getTrIndex(target_row);
+                var record_count = sDt.getRecordSet().getLength();
                 var swap_rows = [];
-                if (target_column.field == scheduling_columns.MOVE_UP){
+                if (direction == "UP"){
                     if (target_index!=0){
                         swap_rows = [target_index, (target_index - 1)]
                     }
@@ -798,52 +780,29 @@ YAHOO.bungeni.config = function(){
                 }
                 
                 if (swap_rows.length == 2){
-                    var data_0 = this.getRecord(swap_rows[0]).getData();
-                    var data_1 = this.getRecord(swap_rows[1]).getData();
-                    this.updateRow(swap_rows[0], data_1);
-                    this.updateRow(swap_rows[1], data_0);
-                    this.unselectAllRows();
-                    this.selectRow(swap_rows[1]);
+                    var data_0 = sDt.getRecord(swap_rows[0]).getData();
+                    var data_1 = sDt.getRecord(swap_rows[1]).getData();
+                    sDt.updateRow(swap_rows[0], data_1);
+                    sDt.updateRow(swap_rows[1], data_0);
+                    sDt.unselectAllRows();
+                    sDt.selectRow(swap_rows[1]);
                 }
             }
             
-            /*
-             * @method _attachContextMenu
-             * @description context menu for each record
+            /**
+             * @method _removeRow
+             * @description removes row from schedule
              **/
-            var _attachContextMenu = function(args){
-                var container = document.createElement("div");
-                container.id = "dt-context-menu-container";
-                document.body.appendChild(container);
-                var menuClickHandler = function(type, args, dt){
-                    var menuItem = args[1];
-                    if (menuItem){
-                        var target = this.contextEventTarget;
-                        var row = dt.getTrEl(target);
-                        var _delete_callback = function(){
-                            dt.deleteRow(row);
-                        }
-                        if(row){
-                            switch(menuItem.index){
-                                case 0: 
-                                YAHOO.bungeni.config.dialogs.confirm.show(
-                                    SGlobals.delete_dialog_text,
-                                    _delete_callback
-                                )
-                            }
-                        } 
-                    }
-                }
-                var contextMenu = new YAHOO.widget.ContextMenu(
-                    "dt-context-menu", { trigger:this.getTbodyEl() }
-                );
-                contextMenu.addItem(SGlobals.remove_button_text);
-                contextMenu.render(container);
-                contextMenu.clickEvent.subscribe(menuClickHandler, this);
-                this.unsubscribe("initEvent",
-                    YAHOO.bungeni.config.scheduling.handlers.attachContextMenu
-                );
-            }
+             var _removeRow = function(target){
+                 var sDt = YAHOO.bungeni.scheduling.getScheduleTable();
+                 var record = sDt.getRecord(target);
+                 var _callback = function(){
+                     sDt.deleteRow(sDt.getRecordIndex(record));
+                 }
+                 YAHOO.bungeni.config.dialogs.confirm.show(
+                    SGlobals.delete_dialog_text, _callback
+                 );
+             }
              
              /**
               * @method _resizeDataTable
@@ -866,10 +825,9 @@ YAHOO.bungeni.config = function(){
              return {
                  renderRTECellEditor: _renderRTECellEditor,
                  showCellEditor: _showCellEditor,
-                 moveRecord: _moveRecord,
-                 addTextRecord: _addTextRecord,
-                 attachContextMenu: _attachContextMenu,
-                 resizeDataTable: _resizeDataTable
+                 moveRow: _moveRow,
+                 removeRow: _removeRow,
+                 resizeDataTable: _resizeDataTable,
              }
         }(),
     }

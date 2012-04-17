@@ -74,5 +74,8 @@ span.edit-minute-control{
     height:16px;
     background:url("/@@/portal/images/page_white_edit.png") right center no-repeat;
 }
-
-
+span.dt_title_unit{
+    padding:0.2em 0.4em;
+    margin-left: 0.3em;
+    border-left: 3px solid #ddd;
+}

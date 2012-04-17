@@ -247,6 +247,9 @@ YAHOO.bungeni.availableitems = function(){
                             (ctx_index && itemsDataTable.getTrIndex(ctx_index)+1) || 0
                         );
                         itemsDataTable.addRow(targetData, new_record_index);
+                        YAHOO.bungeni.scheduling.handlers.refreshCells(
+                            new_record_index
+                        );
                     }
                 }else{
                     var record_set = itemsDataTable.getRecordSet().getRecords();
@@ -482,28 +485,8 @@ YAHOO.bungeni.availableitems = function(){
             {
                 key: Columns.TITLE,
                 label: SGlobals.column_title,
-                width: (0.4 * dt_width)
-            },
-            {
-                key: Columns.REGISTRY_NO,
-                label: SGlobals.column_registry_number,
-                width: (0.1 * dt_width)
-            },
-            {
-                key: Columns.MOVER,
-                label: SGlobals.column_mover,
-                width: (0.1 * dt_width)
-            },
-            {
-                key: Columns.STATUS,
-                label: SGlobals.column_status,
-                width: (0.1 * dt_width)
-            },
-            {
-                key: Columns.STATUS_DATE,
-                label: SGlobals.column_status_date,
-                formatter: "date",
-                width: (0.1 * dt_width)
+                formatter: Formatters.title_extended,
+                width: (0.8 * dt_width)
             },
         ]
         var availableItemsSchema = {
