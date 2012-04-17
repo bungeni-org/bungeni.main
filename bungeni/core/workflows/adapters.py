@@ -75,7 +75,7 @@ TYPE_REGISTRY = [
     ("committee", TI("committee", interfaces.ICommittee)),
     ("event", TI("event", interfaces.IEvent)),
     ("group", TI("group", interfaces.IBungeniGroup)),
-    ("group_sitting", TI("groupsitting", interfaces.IGroupSitting)),
+    ("sitting", TI("sitting", interfaces.ISitting)),
     ("group_membership", TI("membership", interfaces.IBungeniGroupMembership)),
     ("heading", TI("heading", interfaces.IHeading)),
     ("motion", TI("motion", interfaces.IMotion)),

@@ -77,7 +77,7 @@ def has_end_date(context):
     return context.end_date != None
 
 
-# groupsitting
+# sitting
 
 def has_venue(context):
     return context.venue is not None

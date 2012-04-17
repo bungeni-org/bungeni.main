@@ -24,13 +24,12 @@ raise UserWarning("!+BookedResources(mr, oct-2011) needs conceptual+ review!")
 
 
 bookedresources = rdb.join(
-    schema.resources, 
-    schema.resourcebookings, 
+    schema.resources,
+    schema.resourcebookings,
     schema.resources.c.resource_id == schema.resourcebookings.c.resource_id
 ).join(
-    schema.group_sittings, 
-    schema.resourcebookings.c.group_sitting_id == 
-        schema.group_sittings.c.group_sitting_id
+    schema.sitting,
+    schema.resourcebookings.c.sitting_id == schema.sitting.c.sitting_id
 )
 class BookedResources(object):
     """Resources booked for a sitting.
@@ -50,12 +49,12 @@ def get_available_resources(start, end):
     SELECT resources.resource_id AS resources_resource_id
     FROM resources JOIN resourcebookings 
                    ON resources.resource_id = resourcebookings.resource_id 
-                   JOIN group_sittings 
-                   ON resourcebookings.group_sitting_id = group_sittings.group_sitting_id 
-    WHERE group_sittings.start_date BETWEEN :start AND :end 
-          OR group_sittings.end_date BETWEEN :start AND :end
-          OR :start BETWEEN group_sittings.start_date AND group_sittings.end_date
-          OR :end BETWEEN group_sittings.start_date AND group_sittings.end_date
+                   JOIN sitting 
+                   ON resourcebookings.sitting_id = sitting.sitting_id 
+    WHERE sitting.start_date BETWEEN :start AND :end 
+          OR sitting.end_date BETWEEN :start AND :end
+          OR :start BETWEEN sitting.start_date AND sitting.end_date
+          OR :end BETWEEN sitting.start_date AND sitting.end_date
     """ 
     
     sql_resources = """
@@ -75,12 +74,12 @@ def get_unavailable_resources(start, end):
     assert(type(end) == datetime.datetime)
     session = Session()
     b_filter = sql.or_(
-        sql.between(schema.group_sittings.c.start_date, start, end), 
-        sql.between(schema.group_sittings.c.end_date, start, end),
+        sql.between(schema.sitting.c.start_date, start, end), 
+        sql.between(schema.sitting.c.end_date, start, end),
         sql.between(start, 
-            schema.group_sittings.c.start_date, schema.group_sittings.c.end_date),
+            schema.sitting.c.start_date, schema.sitting.c.end_date),
         sql.between(end, 
-            schema.group_sittings.c.start_date, schema.group_sittings.c.end_date)
+            schema.sitting.c.start_date, schema.sitting.c.end_date)
     )
     query = session.query(BookedResources).filter(b_filter)
     resources = query.all()
@@ -88,7 +87,7 @@ def get_unavailable_resources(start, end):
 
 
 def check_bookings(start, end, resource):
-    """Return all group_sittings a resource is booked for in the period.
+    """Return all sitting a resource is booked for in the period.
     """
     assert(type(resource) == domain.Resource)
     assert(type(start) == datetime.datetime)
@@ -97,12 +96,12 @@ def check_bookings(start, end, resource):
     b_filter = sql.and_(
         schema.resources.c.resource_id == resource.resource_id,
         sql.or_(
-            sql.between(schema.group_sittings.c.start_date, start, end), 
-            sql.between(schema.group_sittings.c.end_date, start, end),
+            sql.between(schema.sitting.c.start_date, start, end), 
+            sql.between(schema.sitting.c.end_date, start, end),
             sql.between(start, 
-                schema.group_sittings.c.start_date, schema.group_sittings.c.end_date),
+                schema.sitting.c.start_date, schema.sitting.c.end_date),
             sql.between(end, 
-                schema.group_sittings.c.start_date, schema.group_sittings.c.end_date)
+                schema.sitting.c.start_date, schema.sitting.c.end_date)
         )
     )
     query = session.query(BookedResources).filter(b_filter)
@@ -122,14 +121,14 @@ def check_availability(start, end, resource):
 def book_resource(sitting, resource):
     """Book a resource for a sitting, check if the resource is available first
     """
-    assert(type(sitting) == domain.GroupSitting)
+    assert(type(sitting) == domain.Sitting)
     assert(type(resource) == domain.Resource)
     session = Session()
     # check if resource is already boooked for this sitting
     cq = session.query(domain.ResourceBooking).filter(
             sql.and_(domain.ResourceBooking.resource_id == 
                         resource.resource_id,
-                    domain.ResourceBooking.group_sitting_id == sitting.group_sitting_id))
+                    domain.ResourceBooking.sitting_id == sitting.sitting_id))
     results = cq.all()
     if results:
         # !+DOCTTEST(mr, sep-2010) a doctest depends on this print !
@@ -140,7 +139,7 @@ def book_resource(sitting, resource):
     if check_availability(sitting.start_date, sitting.end_date, resource):
         booking = domain.ResourceBooking()
         booking.resource_id = resource.resource_id
-        booking.group_sitting_id = sitting.group_sitting_id 
+        booking.sitting_id = sitting.sitting_id 
         session.add(booking)
         session.flush()
     else:
@@ -151,13 +150,13 @@ def book_resource(sitting, resource):
 def unbook_resource(sitting, resource):
     """Remove a resource from a sitting.
     """
-    assert(type(sitting) == domain.GroupSitting)
+    assert(type(sitting) == domain.Sitting)
     assert(type(resource) == domain.Resource)
     session = Session()
     cq = session.query(domain.ResourceBooking).filter(
         sql.and_(
             domain.ResourceBooking.resource_id == resource.resource_id,
-            domain.ResourceBooking.group_sitting_id == sitting.group_sitting_id
+            domain.ResourceBooking.sitting_id == sitting.sitting_id
         )
     )
     results = cq.all()

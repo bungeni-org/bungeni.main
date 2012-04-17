@@ -106,7 +106,7 @@ A second session
 Sittings
 ---------
  
-    >>> ssit = model.GroupSitting()
+    >>> ssit = model.Sitting()
     >>> ssit.group_id = parliament.parliament_id
     >>> ssit.start_date = today
     >>> ssit.end_date = tomorrow
@@ -121,7 +121,7 @@ Just check if we get something back because the return value depends on the time
    
 For Edit we need to be sure we do not check for the current data itself.
    
-    >>> ssit2 = model.GroupSitting()
+    >>> ssit2 = model.Sitting()
     >>> ssit2.group_id = parliament.parliament_id
     >>> ssit2.start_date = yesterday
     >>> ssit2.end_date = today

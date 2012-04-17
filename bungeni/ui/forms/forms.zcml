@@ -389,23 +389,23 @@
     />
     
     <!-- sitting attendance -->
-    <browser:page name="view" for="bungeni.models.domain.GroupSittingAttendance"
+    <browser:page name="view" for="bungeni.models.domain.SittingAttendance"
         class=".common.DisplayForm"
         permission="zope.View"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="add" 
-        for="bungeni.models.domain.GroupSittingAttendanceContainer"
+        for="bungeni.models.domain.SittingAttendanceContainer"
         class=".common.AddForm"
         permission="bungeni.sittingattendance.Add"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-    <browser:page name="edit" for="bungeni.models.domain.GroupSittingAttendance"
+    <browser:page name="edit" for="bungeni.models.domain.SittingAttendance"
         class=".common.EditForm"
         permission="bungeni.sittingattendance.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-    <browser:page name="delete" for="bungeni.models.domain.GroupSittingAttendance"
+    <browser:page name="delete" for="bungeni.models.domain.SittingAttendance"
         class=".common.DeleteForm"
         permission="bungeni.sittingattendance.Delete"
         layer="bungeni.ui.interfaces.IBungeniSkin"

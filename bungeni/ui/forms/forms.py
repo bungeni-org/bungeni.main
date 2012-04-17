@@ -175,13 +175,13 @@ class ItemScheduleContainerDeleteForm(DeleteForm):
     @form.action(_(u"Delete"))
     def handle_delete(self, action, data):
         session = Session()
-        group_sitting_id = self.context.__parent__.group_sitting_id
+        sitting_id = self.context.__parent__.sitting_id
         sch = session.query(domain.ItemSchedule).filter(
             sql.and_(
-                model_schema.item_schedules.c.group_sitting_id == group_sitting_id,
+                model_schema.item_schedules.c.sitting_id == sitting_id,
                 model_schema.item_schedules.c.item_id == data["item_id"],
                 model_schema.item_schedules.c.item_type == data["item_type"]
-            )).all()        
+            )).all()
         for i in sch:
             session.delete(i)
         self.request.response.redirect(self.next_url)

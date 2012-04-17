@@ -23,22 +23,23 @@ f.write("""
       i18n:domain="bungeni"> <body>
 """)
 
+# !+ bungeni_custom
 for name in [
-    "bill", 
-    "question", 
-    "motion", 
-    "groupsitting", 
-    "user", 
-    "group", 
-    "address", 
-    "tableddocument", 
-    "agendaitem", 
-    "committee", 
-    "parliament", 
-    "attachedfile", 
-    "event", 
-    "report"
-]:
+        "bill", 
+        "question", 
+        "motion", 
+        "sitting", 
+        "user", 
+        "group", 
+        "address", 
+        "tableddocument", 
+        "agendaitem", 
+        "committee", 
+        "parliament", 
+        "attachedfile", 
+        "event", 
+        "report"
+    ]:
     workflow = get_workflow(name)
     for status, state in workflow.states.items():
         f.write("""<b i18n:translate="">%s</b>""" % (state.title))

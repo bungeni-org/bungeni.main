@@ -2918,7 +2918,7 @@ class SittingDescriptor(ModelDescriptor):
             property=schema.Datetime(title=_("Date")),
             listing_column=date_from_to_column("start_date", _("Start")),
             # !+CustomListingURL(mr, oct-2010) the listing of this type has
-            # been replaced by the custom GroupSittingsViewlet -- but it
+            # been replaced by the custom SittingsViewlet -- but it
             # should still be possible use the generic container listing in
             # combination with a further customized listing_column -- for an
             # example of this see how the listing of the column "owner_id"
@@ -3001,7 +3001,7 @@ class SittingDescriptor(ModelDescriptor):
     ]
 
 
-class GroupSittingTypeDescriptor(ModelDescriptor):
+class SittingTypeDescriptor(ModelDescriptor):
     localizable = False
     display_name = _("Type")
     container_name = _("Types")
@@ -3536,9 +3536,8 @@ def catalyse_descriptors():
     # mapping of unconventional descriptor prefixes to domain type names
     # !+RENAME_TO_CONVENTION
     non_conventional = {
-        "Attendance": "GroupSittingAttendance",
+        "Attendance": "SittingAttendance",
         "Mp": "MemberOfParliament",
-        "Sitting": "GroupSitting",
         "Session": "ParliamentSession",
     }
     def descriptor_classes():

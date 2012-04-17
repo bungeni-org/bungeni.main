@@ -504,12 +504,12 @@ class PoliticalGroupMembersViewlet(GroupMembersViewlet):
         trusted = removeSecurityProxy(self.context)
         return list(trusted.partymembers.values())
 
-class GroupSittingsViewlet(browser.BungeniItemsViewlet):
+class SittingsViewlet(browser.BungeniItemsViewlet):
     """Display the sittings of a group. 
     
     Note 1: to be able to customize the URL for each sitting, this custom 
     viewlet replaces the previous model-introspected container listing:
-        class GroupSittingsViewlet(SubformViewlet):
+        class SittingsViewlet(SubformViewlet):
             sub_attr_name = "sittings"
     so replacing a url of the form: 
             .../committees/obj-59/sittings/obj-17/
@@ -546,10 +546,10 @@ class GroupSittingsViewlet(browser.BungeniItemsViewlet):
             return item.venue and _(item.venue.short_name) or ""
         #
         trusted_context = removeSecurityProxy(self.context)
-        sittings = Session().query(domain.GroupSitting
-            ).filter(domain.GroupSitting.group == trusted_context
-            ).order_by(domain.GroupSitting.start_date.desc())
-        return [{"url": "/business/sittings/obj-%s" % (item.group_sitting_id),
+        sittings = Session().query(domain.Sitting
+            ).filter(domain.Sitting.group == trusted_context
+            ).order_by(domain.Sitting.start_date.desc())
+        return [{"url": "/business/sittings/obj-%s" % (item.sitting_id),
                  "date_from_to": _format_from_to(item),
                  "venue": _format_venue(item)
                 } for item in sittings ]
@@ -761,7 +761,7 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
             context, request, view, manager)
         self.query = None
         self.Date = datetime.date.today() # !+ self.today
-        self.type_query = Session().query(domain.GroupSittingType)
+        self.type_query = Session().query(domain.SittingType)
 
     def _getDisplayDate(self, request):
         display_date = date.getDisplayDate(self.request)
@@ -788,17 +788,14 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
                 end_date = date + relativedelta.relativedelta(day=31)
         else:
             end_date = date + relativedelta.relativedelta(day=31)
-
+        
         s_filter = sql.and_(
-            domain.GroupSitting.group_id == group_id,
-            sql.between(
-                domain.GroupSitting.start_date,
-                start_date, end_date
-            )
+            domain.Sitting.group_id == group_id,
+            sql.between(domain.Sitting.start_date, start_date, end_date)
         )
-        return Session().query(domain.GroupSitting).filter(s_filter).order_by(
-                domain.GroupSitting.start_date)
-
+        return Session().query(domain.Sitting).filter(s_filter).order_by(
+                domain.Sitting.start_date)
+    
     def previous(self):
         """Return link to the previous month, 
         if the session start date is prior to the current month
@@ -854,14 +851,14 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
         #creation of a sitting but is left here because it may be used in the
         #future related to r7243
         #for sit_type in type_results:
-        #    sit_types[sit_type.group_sitting_type_id] = sit_type.group_sitting_type
+        #    sit_types[sit_type.sitting_type_id] = sit_type.sitting_type
         data_list = []
         path = "/calendar/group/sittings/"
         formatter = self.get_date_formatter("time", "short")
         for result in self.query.all():
             data = {}
-            data["sittingid"] = ("sid_" + str(result.group_sitting_id))
-            data["sid"] = result.group_sitting_id
+            data["sittingid"] = ("sid_" + str(result.sitting_id))
+            data["sid"] = result.sitting_id
             data["short_title"] = "%s - %s" % (
                 formatter.format(result.start_date),
                 formatter.format(result.end_date)
@@ -871,10 +868,10 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
             data["start_time"] = result.start_date.time()
             data["end_time"] = result.end_date.time()
             data["day"] = result.start_date.date()
-            data["url"] = (path + "obj-" + str(result.group_sitting_id))
+            data["url"] = (path + "obj-" + str(result.sitting_id))
             data["did"] = ("dlid_" +
                 datetime.datetime.strftime(result.start_date, "%Y-%m-%d")
-                # +"_stid_" + str(result.group_sitting_type)
+                # +"_stid_" + str(result.sitting_type)
             )
             data_list.append(data)
         return data_list

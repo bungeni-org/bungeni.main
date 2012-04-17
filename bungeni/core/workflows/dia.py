@@ -28,7 +28,7 @@ def main(argv):
         "bill",
         "committee",
         "event",
-        "groupsitting",
+        "sitting",
         "group",
         "heading",
         "motion",

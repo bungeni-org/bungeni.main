@@ -365,7 +365,7 @@
                 bills
                 questions
                 motions
-                group_sittings
+                sittings
                 agendaitems
                 tableddocuments
                 preports
@@ -462,7 +462,7 @@
                 committeemembers
                 committeestaff
                 agendaitems
-                group_sittings
+                sittings
                 assigneditems
                 title_types
                 
@@ -626,15 +626,15 @@
     
     
     <!-- other -->
-    <class class=".domain.GroupSitting">
+    <class class=".domain.Sitting">
         <require permission="zope.View"
             attributes="
-                group_sitting_id
+                sitting_id
                 group_id
                 short_name
                 short_date
                 end_date
-                group_sitting_type_id
+                sitting_type_id
                 recurring_id
                 status
                 status_date
@@ -647,12 +647,12 @@
         />
         <require permission="bungeni.sitting.Edit"
             set_attributes="
-                group_sitting_id
+                sitting_id
                 group_id
                 short_name
                 short_date
                 end_date
-                group_sitting_type_id
+                sitting_type_id
                 recurring_id
                 status
                 status_date
@@ -665,17 +665,17 @@
         />
     </class>
     
-    <class class=".domain.GroupSittingAttendance">
+    <class class=".domain.SittingAttendance">
         <require permission="zope.View"
             attributes="
-                group_sitting_id
+                sitting_id
                 member_id
                 attendance_type_id
             "
         />
         <require permission="bungeni.sittingattendance.Edit"
             set_attributes="
-                group_sitting_id
+                sitting_id
                 member_id
                 attendance_type_id
             "
@@ -688,7 +688,7 @@
                 schedule_id
                 item_id
                 item_type
-                group_sitting_id
+                sitting_id
                 category_id
                 planned_order
                 real_order
@@ -701,7 +701,7 @@
             set_attributes="
                 item_id
                 item_type
-                group_sitting_id
+                sitting_id
                 category_id
                 planned_order
                 real_order

@@ -480,7 +480,7 @@ Question conditions
 
   >>> scheduling = add_content(
   ...     domain.ItemSchedule,
-  ...     group_sitting_id=sitting.group_sitting_id,
+  ...     sitting_id=sitting.sitting_id,
   ...     item_id=question.doc_id,
   ...     item_type=question.type)
   

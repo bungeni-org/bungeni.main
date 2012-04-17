@@ -562,7 +562,7 @@ JSLCaches = {
         JSLCache(49, mfaces.IReport, ["Report"]),
     "attendance": 
         # !+NAMING(mr, sep-2010) descriptor name: AttendanceDescriptor
-        JSLCache(99, mfaces.IGroupSittingAttendance, ["GroupSittingAttendance"]),
+        JSLCache(99, mfaces.ISittingAttendance, ["SittingAttendance"]),
     "parliamentmembers": # alias: "current"
         # !+NAMING(mr, sep-2010) descriptor name: MpDescriptor
         JSLCache(99, mfaces.IMemberOfParliament, 
@@ -581,8 +581,7 @@ JSLCaches = {
         # !+NAMING(mr, sep-2010) descriptor name: SessionDescriptor
         JSLCache(49, mfaces.IParliamentSession, ["ParliamentSession"]),
     "sittings": 
-        # !+NAMING(mr) descriptor name: SittingDescriptor
-        JSLCache(49, mfaces.IGroupSitting, ["GroupSitting"]),
+        JSLCache(49, mfaces.ISitting, ["Sitting"]),
     "committeestaff": 
         JSLCache(49, mfaces.ICommitteeStaff, ["CommitteeStaff"]),
     "committeemembers": 

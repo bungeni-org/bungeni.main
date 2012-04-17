@@ -117,27 +117,29 @@ class ISearch(interface.Interface):
 
 class IAdvancedSearch(ISearch):
 
-    language = schema.Choice(title=_("Language"),
-                             values=("en", "fr", "pt", "sw", "it", "en-ke"),
-                             required=False)
-    content_type = schema.Choice(title=_("Content type"),
-                                 values=("Question",
-                                         "MemberOfParliament",
-                                         "Motion",
-                                         "Committee",
-                                         "User",
-                                         "Parliament",
-                                         "AgendaItem",
-                                         "TabledDocument",
-                                         "PoliticalParty",
-                                         "Goverment",
-                                         "Ministry",
-                                         "Report",
-                                         "Attachment",
-                                         "Bill",
-                                         "GroupSitting",
-                                         "PoliticalGroup"), required=False)
-
+    language = schema.Choice(
+        title=_("Language"),
+        values=("en", "fr", "pt", "sw", "it", "en-ke"),
+        required=False)
+    content_type = schema.Choice(
+        title=_("Content type"),
+        values=("Question",
+            "MemberOfParliament",
+            "Motion",
+            "Committee",
+            "User",
+            "Parliament",
+            "AgendaItem",
+            "TabledDocument",
+            "PoliticalParty",
+            "Goverment",
+            "Ministry",
+            "Report",
+            "Attachment",
+            "Bill",
+            "Sitting",
+            "PoliticalGroup"),
+        required=False)
     status_date = schema.Date(title=_("Status date"), required=False)
 
 

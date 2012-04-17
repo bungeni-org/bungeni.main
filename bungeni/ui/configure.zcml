@@ -107,7 +107,7 @@
        factory="bungeni.ui.adaptors.BillAnnotationAdaptor"
        /-->
     <!-- Experimental transcripts support -->
-   <!--class class="bungeni.models.domain.GroupSitting">
+   <!--class class="bungeni.models.domain.Sitting">
     <implements
        interface="bungeni.transcripts.interfaces.ITranscribable"
        />

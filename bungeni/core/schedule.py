@@ -13,9 +13,9 @@ from zope.location.interfaces import ILocation
 from zope.app.publication.traversers import SimpleComponentTraverser
 from bungeni.models.interfaces import IBungeniApplication
 from bungeni.models.interfaces import ICommittee
-from bungeni.models.interfaces import IGroupSittingContainer
+from bungeni.models.interfaces import ISittingContainer
 from bungeni.models.domain import Group
-from bungeni.models.domain import GroupSitting
+from bungeni.models.domain import Sitting
 from bungeni.models import domain
 from bungeni.core.interfaces import ISchedulingContext
 from bungeni.core.interfaces import IWorkspaceScheduling
@@ -103,7 +103,7 @@ class PrincipalGroupSchedulingContext(object):
         unproxied = removeSecurityProxy(sittings)
         unproxied.subset_query = sql.and_(
             unproxied.subset_query,
-            domain.GroupSitting.start_date.between(
+            domain.Sitting.start_date.between(
                 format_date(start_date),
                 format_date(end_date))
             )
@@ -134,7 +134,7 @@ class CommitteeSchedulingContext(PrincipalGroupSchedulingContext):
         return self.__parent__
 
 class SittingContainerSchedulingContext(PrincipalGroupSchedulingContext):
-    component.adapts(IGroupSittingContainer)
+    component.adapts(ISittingContainer)
 
     @property
     def group_id(self):

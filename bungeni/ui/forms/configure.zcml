@@ -110,36 +110,30 @@
      layer="bungeni.ui.interfaces.IBungeniSkin"
      />
 
-
-  <browser:page
-     name="add"
-     for="bungeni.models.interfaces.IGroupSittingContainer"
-     class=".common.AddForm"
-     permission="bungeni.sitting.Add"
-     layer="bungeni.ui.interfaces.IBungeniSkin"
-     />
-  <browser:page
-     name="edit"
-     for="bungeni.models.domain.GroupSitting"
-     class=".common.EditForm"
-     permission="bungeni.sitting.Edit"
-     layer="bungeni.ui.interfaces.IBungeniSkin"
-     />
-  <browser:page
-     name="delete"
-     for="bungeni.models.domain.GroupSitting"
-     class=".common.DeleteForm"
-     permission="bungeni.sitting.Delete"
-     layer="bungeni.ui.interfaces.IBungeniSkin"
-     />
-
-  <browser:page
-     name="edit"
-     for="bungeni.models.domain.ItemSchedule"
-     class=".common.EditForm"
-     permission="bungeni.sittingschedule.Edit"
-     layer="bungeni.ui.interfaces.IBungeniSkin"
-     />
+    <browser:page name="add"
+        for="bungeni.models.interfaces.ISittingContainer"
+        class=".common.AddForm"
+        permission="bungeni.sitting.Add"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    <browser:page name="edit"
+        for="bungeni.models.domain.Sitting"
+        class=".common.EditForm"
+        permission="bungeni.sitting.Edit"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    <browser:page name="delete"
+        for="bungeni.models.domain.Sitting"
+        class=".common.DeleteForm"
+        permission="bungeni.sitting.Delete"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
+    <browser:page name="edit"
+        for="bungeni.models.domain.ItemSchedule"
+        class=".common.EditForm"
+        permission="bungeni.sittingschedule.Edit"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+    />
 
   <browser:page
      name="edit"
@@ -223,13 +217,13 @@
 -->
 
 
-  <!-- GroupSitting -->
+  <!-- Sitting -->
 
   <browser:viewlet
      name="bungeni.viewlet.sittingattendance"
      manager=".interfaces.ISubFormViewletManager"
      class=".viewlets.SittingAttendanceViewlet"
-     for="bungeni.models.interfaces.IGroupSitting"
+     for="bungeni.models.interfaces.ISitting"
      permission="zope.View"
      weight="20"
      />
@@ -238,7 +232,7 @@
      name="bungeni.viewlet.sittingreports"
      manager=".interfaces.ISubFormViewletManager"
      class=".viewlets.SittingReportsViewlet"
-     for="bungeni.models.interfaces.IGroupSitting"
+     for="bungeni.models.interfaces.ISitting"
      permission="zope.View"
      weight="10"
      />
@@ -328,7 +322,7 @@
 
     <browser:viewlet name="bungeni.viewlet.committee-sittings"
         manager=".interfaces.ISubFormViewletManager"
-        class=".viewlets.GroupSittingsViewlet"
+        class=".viewlets.SittingsViewlet"
         for="bungeni.models.interfaces.ICommittee"
         permission="zope.View"
         weight="50"

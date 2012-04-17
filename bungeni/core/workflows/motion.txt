@@ -115,7 +115,7 @@ Conditions
 
   >>> scheduling = add_content(
   ...     domain.ItemSchedule,
-  ...     group_sitting_id=sitting.group_sitting_id,
+  ...     sitting_id=sitting.sitting_id,
   ...     item_id=motion.doc_id)
   
   >>> _conditions.is_scheduled(motion)

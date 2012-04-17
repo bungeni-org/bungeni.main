@@ -127,7 +127,7 @@ class IBungeniContainer(IAlchemistContainer):
     """Parliamentary container.
     """
 
-class IGroupSittingContainer(IBungeniContainer):
+class ISittingContainer(IBungeniContainer):
     pass
 
 class IBungeniGroupMembershipContainer(IBungeniContainer):
@@ -188,13 +188,13 @@ class IMotion(IBungeniContent):
 class IMotionVersionContainer(IVersionContainer): pass
 
 
-class IGroupSitting(interface.Interface):
+class ISitting(interface.Interface):
     pass
 
-class IGroupSittingAttendance(interface.Interface):
+class ISittingAttendance(interface.Interface):
     pass
     
-class IGroupSittingType(interface.Interface):
+class ISittingType(interface.Interface):
     pass
 
 class IItemSchedule(interface.Interface):
@@ -207,9 +207,6 @@ class IScheduleText(interface.Interface):
     """Marker interface for text records in and agenda.
     This covers `IHeading` and `IEditorialNote'` at this point.
     """
-
-class ISittingType(interface.Interface):
-    pass
 
 class IItemScheduleDiscussion(interface.Interface):
     pass

@@ -342,13 +342,13 @@ class Venues(object):
 venues_factory = Venues()
 
 class SittingTypes(SpecializedSource):
-    #domain.SittingType, "group_sitting_type", "group_sitting_type_id",
+    #domain.SittingType, "sitting_type", "sitting_type_id",
     #title_getter=lambda ob: "%s (%s-%s)" % (
-    #    ob.group_sitting_type.capitalize(), ob.start_time, ob.end_time))
+    #    ob.sitting_type.capitalize(), ob.start_time, ob.end_time))
 
     def constructQuery(self, context):
         session= Session()
-        return session.query(domain.GroupSittingType)
+        return session.query(domain.SittingType)
 
     def __call__(self, context=None):
         query = self.constructQuery(context)
@@ -357,10 +357,10 @@ class SittingTypes(SpecializedSource):
         for ob in results:
             obj = translate_obj(ob)
             terms.append(vocabulary.SimpleTerm(
-                    value = obj.group_sitting_type_id, 
-                    token = obj.group_sitting_type,
+                    value = obj.sitting_type_id, 
+                    token = obj.sitting_type,
                     title = "%s (%s-%s)" % (
-                        obj.group_sitting_type, 
+                        obj.sitting_type, 
                         obj.start_time, 
                         obj.end_time),
                 ))
@@ -397,9 +397,9 @@ class TitleTypes(SpecializedSource):
 #XXX
 #SittingTypeOnly = DatabaseSource(
 #    domain.SittingType, 
-#    title_field="group_sitting_type",
-#    token_field="group_sitting_type_id",
-#    value_field="group_sitting_type_id")
+#    title_field="sitting_type",
+#    token_field="sitting_type_id",
+#    value_field="sitting_type_id")
 
 
 class MemberOfParliament(object):
@@ -795,13 +795,13 @@ class SittingAttendanceSource(SpecializedSource):
         else:
             sitting = trusted.__parent__
             group_id = sitting.group_id
-            group_sitting_id = sitting.group_sitting_id
+            sitting_id = sitting.sitting_id
             all_member_ids = sql.select([schema.user_group_memberships.c.user_id], 
                     sql.and_(
                         schema.user_group_memberships.c.group_id == group_id,
                         schema.user_group_memberships.c.active_p == True))
-            attended_ids = sql.select([schema.group_sitting_attendance.c.member_id],
-                     schema.group_sitting_attendance.c.group_sitting_id == group_sitting_id)
+            attended_ids = sql.select([schema.sitting_attendance.c.member_id],
+                     schema.sitting_attendance.c.sitting_id == sitting_id)
             query = session.query(domain.User).filter(
                 sql.and_(domain.User.user_id.in_(all_member_ids),
                     ~ domain.User.user_id.in_(attended_ids))).order_by(

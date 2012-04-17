@@ -392,7 +392,7 @@ class Group(Entity):
     #users = one2many("users", 
     #   "bungeni.models.domain.GroupMembershipContainer", "group_id")
     #sittings = one2many("sittings", 
-    #   "bungeni.models.domain.GroupSittingContainer", "group_id")
+    #   "bungeni.models.domain.SittingContainer", "group_id")
     
     addresses = one2many("addresses",
         "bungeni.models.domain.GroupAddressContainer", "group_id"
@@ -447,26 +447,29 @@ class CommitteeStaff(GroupMembership):
 
 
 # auditable (by default), but not a Doc
-class GroupSitting(Entity):
+class Sitting(Entity):
     """Scheduled meeting for a group (parliament, committee, etc).
     """
-    interface.implements(interfaces.ITranslatable)
+    interface.implements(
+        interfaces.ITranslatable,
+        interfaces.IDocument, # !+IDoc?
+    )
 
     __dynamic_features__ = True # !+ False
 
     attendance = one2many("attendance",
-        "bungeni.models.domain.GroupSittingAttendanceContainer", "group_sitting_id")
+        "bungeni.models.domain.SittingAttendanceContainer", "sitting_id")
     items = one2many("items",
-        "bungeni.models.domain.ItemScheduleContainer", "group_sitting_id")
+        "bungeni.models.domain.ItemScheduleContainer", "sitting_id")
     sreports = one2many("sreports",
-        "bungeni.models.domain.Report4SittingContainer", "group_sitting_id")
+        "bungeni.models.domain.Report4SittingContainer", "sitting_id")
 
-class GroupSittingType(object):
-    """Type of sitting: morning/afternoon/... 
+class SittingType(object):
+    """Type of sitting: morning/afternoon/...
     """
     interface.implements(interfaces.ITranslatable)
 
-class GroupSittingAttendance(object):
+class SittingAttendance(object):
     """A record of attendance at a meeting .
     """
     sort_on = ["last_name", "first_name", "middle_name"]
@@ -503,8 +506,8 @@ class Parliament(Group):
         "bungeni.models.domain.QuestionContainer", "parliament_id")
     motions = one2many("motions",
         "bungeni.models.domain.MotionContainer", "parliament_id")
-    sittings = one2many("group_sittings",
-        "bungeni.models.domain.GroupSittingContainer", "group_id")
+    sittings = one2many("sitting",
+        "bungeni.models.domain.SittingContainer", "group_id")
     agendaitems = one2many("agendaitems",
         "bungeni.models.domain.AgendaItemContainer", "group_id")
     tableddocuments = one2many("tableddocuments",
@@ -590,8 +593,8 @@ class Committee(Group):
         "bungeni.models.domain.CommitteeStaffContainer", "group_id")
     agendaitems = one2many("agendaitems",
         "bungeni.models.domain.AgendaItemContainer", "group_id")
-    sittings = one2many("group_sittings",
-        "bungeni.models.domain.GroupSittingContainer", "group_id")
+    sittings = one2many("sitting",
+        "bungeni.models.domain.SittingContainer", "group_id")
     title_types = one2many("title_types",
         "bungeni.models.domain.TitleTypeContainer", "group_id")
 

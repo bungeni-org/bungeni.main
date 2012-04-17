@@ -190,7 +190,7 @@ class MotionDescriptiveProperties(DocumentDescriptiveProperties):
 
 @register.adapter()
 class SittingDescriptiveProperties(DescriptiveProperties):
-    component.adapts(interfaces.IGroupSitting)
+    component.adapts(interfaces.ISitting)
 
     @property
     def title(self):
@@ -352,8 +352,8 @@ class GroupMembershipDescriptiveProperties(DescriptiveProperties):
 
 
 @register.adapter()
-class GroupSittingAttendanceDescriptiveProperties(DescriptiveProperties):
-    component.adapts(interfaces.IGroupSittingAttendance)
+class SittingAttendanceDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.ISittingAttendance)
 
     @property
     def title(self):
@@ -462,7 +462,7 @@ class SittingTypeDescriptiveProperties(DescriptiveProperties):
 
     @property
     def title(self):
-        return self.translate(self.context, "group_sitting_type")
+        return self.translate(self.context, "sitting_type")
 
 
 @register.adapter()

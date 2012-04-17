@@ -43,7 +43,8 @@ from bungeni.core.translation import is_translation
 from bungeni.core.translation import get_translation_for
 from bungeni.core.translation import CurrentLanguageVocabulary
 #from bungeni.core.interfaces import IVersioned
-from bungeni.models.interfaces import IVersion, IBungeniContent
+from bungeni.models.interfaces import IVersion, IBungeniContent, \
+    ISittingContainer
 from bungeni.models import domain
 from bungeni.ui.forms.fields import filterFields
 from bungeni.ui.interfaces import IBungeniSkin, IFormEditLayer, \
@@ -255,6 +256,8 @@ class DisplayForm(catalyst.DisplayForm, browser.BungeniBrowserView):
 
 @register.view(domain.AttachmentContainer, layer=IBungeniSkin, name="add",
     protect={"bungeni.attachment.Add": register.VIEW_DEFAULT_ATTRS})
+#@register.view(ISittingContainer, layer=IBungeniSkin, name="add",
+#    protect={"bungeni.sitting.Add": register.VIEW_DEFAULT_ATTRS})
 class AddForm(BaseForm, catalyst.AddForm):
     """Custom add-form for Bungeni content.
 
@@ -407,6 +410,8 @@ class AddForm(BaseForm, catalyst.AddForm):
 
 @register.view(domain.Attachment, layer=IBungeniSkin, name="edit",
     protect={"bungeni.attachment.Edit": register.VIEW_DEFAULT_ATTRS})
+#@register.view(domain.Sitting, layer=IBungeniSkin, name="edit",
+#    protect={"bungeni.sitting.Edit": register.VIEW_DEFAULT_ATTRS})
 class EditForm(BaseForm, catalyst.EditForm):
     """Custom edit-form for Bungeni content.
     """
@@ -774,6 +779,8 @@ class ReorderForm(PageForm):
 
 @register.view(domain.Attachment, layer=IBungeniSkin, name="delete",
     protect={"bungeni.attachment.Delete": register.VIEW_DEFAULT_ATTRS})
+#@register.view(domain.Sitting, layer=IBungeniSkin, name="delete",
+#    protect={"bungeni.sitting.Delete": register.VIEW_DEFAULT_ATTRS})
 class DeleteForm(PageForm):
     """Delete-form for Bungeni content.
 

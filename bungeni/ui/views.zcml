@@ -169,9 +169,9 @@
 
   <browser:page
      name="agenda"
-     for="bungeni.models.interfaces.IGroupSitting"
+     for="bungeni.models.interfaces.ISitting"
      permission="bungeni.reports.Edit"
-     class=".reports.GroupSittingContextAgendaReportView"
+     class=".reports.SittingContextAgendaReportView"
      />
   <browser:page
      name="agenda"
@@ -187,9 +187,9 @@
      />
    <browser:page
      name="votes-and-proceedings"
-     for="bungeni.models.interfaces.IGroupSitting"
+     for="bungeni.models.interfaces.ISitting"
      permission="bungeni.reports.Edit"
-     class=".reports.GroupSittingContextMinutesReportView"
+     class=".reports.SittingContextMinutesReportView"
      />
 
     <browser:page
@@ -206,7 +206,7 @@
      />
     <browser:page
      name="save-report"
-     for="bungeni.models.interfaces.IGroupSitting"
+     for="bungeni.models.interfaces.ISitting"
      permission="bungeni.reports.Edit"
      class=".reports.SaveReportView"
      />
@@ -361,7 +361,7 @@
      class=".calendar.browser.CalendarView"
     />
   <browser:page
-     for="bungeni.models.interfaces.IGroupSittingContainer"
+     for="bungeni.models.interfaces.ISittingContainer"
      permission="zope.View"
      name="index"
      class=".calendar.browser.CalendarView"
@@ -375,9 +375,9 @@
         permission="zope.View"
     />
     <browser:page name="schedule"
-        for="bungeni.models.interfaces.IGroupSitting"
+        for="bungeni.models.interfaces.ISitting"
         permission="bungeni.sittingschedule.View"
-        class=".calendar.browser.GroupSittingScheduleView"
+        class=".calendar.browser.SittingScheduleView"
     />
     <browser:page name="save-schedule"
         for="bungeni.models.interfaces.IItemScheduleContainer"
@@ -390,19 +390,19 @@
         class=".calendar.browser.DiscussionAddView"
     />
     <browser:page name="schedulable-items-json"
-        for="bungeni.models.interfaces.IGroupSitting"
+        for="bungeni.models.interfaces.ISitting"
         permission="bungeni.sittingschedule.Edit"
         class=".calendar.browser.SchedulableItemsJSON"
     />
       <browser:page
      name="schedule_order"
-     for="bungeni.models.interfaces.IGroupSitting"
+     for="bungeni.models.interfaces.ISitting"
      class=".calendar.browser.ItemScheduleOrder"
      permission="bungeni.sittingschedule.Edit"
      />
      <browser:page
      name="st-attendance"
-     for="bungeni.models.interfaces.IGroupSitting"
+     for="bungeni.models.interfaces.ISitting"
      class=".attendance.AttendanceEditor"
      permission="bungeni.sittingattendance.Edit"
      />
@@ -582,21 +582,18 @@
     layer=".interfaces.IRSSRepresentationLayer"
      />
 
-   <browser:page
-        name="feed.rss"
+    <browser:page name="feed.rss"
         for="bungeni.models.interfaces.IAgendaItemContainer"
         class=".rss.AgendaItemRSSView"
         permission="zope.View"
-    layer=".interfaces.IRSSRepresentationLayer"
-     />
-
-   <browser:page
-        name="feed.rss"
-        for="bungeni.models.interfaces.IGroupSittingContainer"
+        layer=".interfaces.IRSSRepresentationLayer"
+    />
+    <browser:page name="feed.rss"
+        for="bungeni.models.interfaces.ISittingContainer"
         class=".rss.SittingRSSView"
         permission="zope.View"
-    layer=".interfaces.IRSSRepresentationLayer"
-     />
+        layer=".interfaces.IRSSRepresentationLayer"
+    />
 
    <browser:page
         name="feed.rss"

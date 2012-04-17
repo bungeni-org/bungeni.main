@@ -114,7 +114,7 @@
         provides=".interfaces.IDateRangeFilter"
         factory=".daterange.session_filter"
     />
-    <adapter for=".domain.GroupSitting"
+    <adapter for=".domain.Sitting"
         provides=".interfaces.IDateRangeFilter"
         factory=".daterange.sitting_filter"
     /> 

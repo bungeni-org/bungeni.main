@@ -137,7 +137,7 @@
         layer=".interfaces.IWorkspaceSchedulingSectionLayer"
     />
     <browser:subMenuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.IGroupSitting"
+        for="bungeni.models.interfaces.ISitting"
         title="Reports"
         action="reports"
         permission="zope.View"
@@ -242,7 +242,7 @@
         order="80"
     />
     <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IGroupSittingContainer"
+        for="bungeni.models.interfaces.ISittingContainer"
         title="Add sitting..."
         action="./add"
         permission="bungeni.sitting.Add"
@@ -453,7 +453,7 @@
     />
 
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IGroupSitting"
+        for="bungeni.models.interfaces.ISitting"
         title="Edit sitting"
         action="./edit"
         permission="bungeni.sitting.Edit"
@@ -461,7 +461,7 @@
         order="10"
     />
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IGroupSitting"
+        for="bungeni.models.interfaces.ISitting"
         title="Edit attendance"
         action="./st-attendance"
         permission="bungeni.sittingattendance.Edit"
@@ -469,7 +469,7 @@
         order="98"
     />
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IGroupSitting"
+        for="bungeni.models.interfaces.ISitting"
         title="Delete sitting"
         action="./delete"
         permission="bungeni.sitting.Delete"
@@ -839,13 +839,13 @@
     <!-- group-sitting scheduling view reporting actions -->
     
     <browser:menuItem menu="reporting_actions"
-        for="bungeni.models.interfaces.IGroupSitting"
+        for="bungeni.models.interfaces.ISitting"
         title="Agenda..."
         action="agenda"
         permission="bungeni.reports.Edit"
     />
     <browser:menuItem menu="reporting_actions"
-        for="bungeni.models.interfaces.IGroupSitting"
+        for="bungeni.models.interfaces.ISitting"
         title="Votes and proceedings..."
         action="votes-and-proceedings"
         permission="bungeni.reports.Edit"
@@ -907,7 +907,7 @@
 
   <browser:menuItem
      menu="sitting_actions"
-     for="bungeni.models.interfaces.IGroupSitting"
+     for="bungeni.models.interfaces.ISitting"
      title="Schedule item"
      action="./items/add"
      permission="bungeni.sittingschedule.item.Add"
@@ -915,7 +915,7 @@
 
   <browser:menuItem
      menu="sitting_actions"
-     for="bungeni.models.interfaces.IGroupSitting"
+     for="bungeni.models.interfaces.ISitting"
      title="Remove scheduled item"
      action="./items/delete"
      permission="bungeni.sittingschedule.item.Delete"
@@ -923,14 +923,14 @@
 
   <browser:menuItem
      menu="sitting_actions"
-     for="bungeni.models.interfaces.IGroupSitting"
+     for="bungeni.models.interfaces.ISitting"
      title="Reorder scheduling"
      action="./items/reorder"
      permission="bungeni.sittingschedule.Edit"
      />
 
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IGroupSitting"
+        for="bungeni.models.interfaces.ISitting"
         action="schedule"
         title="Edit agenda and minutes"
         order="41"
@@ -1662,7 +1662,7 @@
         title="RSS"
         permission="zope.View"
         order="44"
-        for="bungeni.models.interfaces.IGroupSittingContainer"
+        for="bungeni.models.interfaces.ISittingContainer"
         layer=".interfaces.IRSSRepresentationLayer"
     />
     <browser:menuItem menu="download_actions"

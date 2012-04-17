@@ -21,8 +21,8 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 from sqlalchemy import sql
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.alchemist import Session
-from bungeni.models.interfaces import IGroupSittingAttendance
-from bungeni.models.domain import GroupSittingAttendance
+from bungeni.models.interfaces import ISittingAttendance
+from bungeni.models.domain import SittingAttendance
 
 from bungeni.ui.browser import BungeniBrowserView
 from bungeni.ui.i18n import _
@@ -171,7 +171,7 @@ class AttendanceEditor(BungeniBrowserView, forms.common.BaseForm):
     def process_attendance(self):
         session = Session()
         trusted = removeSecurityProxy(self.context)
-        gs_id = trusted.group_sitting_id
+        gs_id = trusted.sitting_id
         for selection in self.get_selected():
             member_id = selection.get("user_id")
             if not member_id:
@@ -181,10 +181,10 @@ class AttendanceEditor(BungeniBrowserView, forms.common.BaseForm):
                 continue
             member_id = int(member_id)
             # check existing attendance record
-            query = session.query(GroupSittingAttendance).filter(
+            query = session.query(SittingAttendance).filter(
                 sql.and_(
-                    GroupSittingAttendance.member_id == member_id,
-                    GroupSittingAttendance.group_sitting_id == gs_id
+                    SittingAttendance.member_id == member_id,
+                    SittingAttendance.sitting_id == gs_id
                 )
             )
             result = query.first()
@@ -194,10 +194,10 @@ class AttendanceEditor(BungeniBrowserView, forms.common.BaseForm):
                 zope.event.notify(
                     zope.lifecycleevent.ObjectModifiedEvent(result,
                         zope.lifecycleevent.Attributes(
-                            IGroupSittingAttendance, "attendance_type")))
+                            ISittingAttendance, "attendance_type")))
             else:
-                m_attendance = GroupSittingAttendance()
-                m_attendance.group_sitting_id = gs_id
+                m_attendance = SittingAttendance()
+                m_attendance.sitting_id = gs_id
                 m_attendance.attendance_type = at
                 m_attendance.member_id = member_id
                 session.add(m_attendance)

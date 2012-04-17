@@ -55,11 +55,11 @@ class WhatsOnBrowserView(BrowserView):
     
     @property
     def _agenda_public_state_ids(self):
-        return get_workflow("groupsitting").get_state_ids(tagged=["public"])
+        return get_workflow("sitting").get_state_ids(tagged=["public"])
 
     @property
     def _agenda_private_state_ids(self):
-        return get_workflow("groupsitting").get_state_ids(
+        return get_workflow("sitting").get_state_ids(
             tagged=["agendaprivate"]
         )
         
@@ -82,19 +82,19 @@ class WhatsOnBrowserView(BrowserView):
             return s_list
 
     @property
-    def group_sittings_filter(self):
+    def sitting_filter(self):
         if self.end_date:
             date_filter_expression = sql.between(
-                schema.group_sittings.c.start_date,
+                schema.sitting.c.start_date,
                 self.start_date,
                 self.end_date
             )
         else:
             date_filter_expression = (
-                schema.group_sittings.c.start_date >= self.start_date
+                schema.sitting.c.start_date >= self.start_date
             )
         return sql.and_(
-            schema.group_sittings.c.status.in_(self._agenda_public_state_ids),
+            schema.sitting.c.status.in_(self._agenda_public_state_ids),
             date_filter_expression
         )
 
@@ -103,19 +103,15 @@ class WhatsOnBrowserView(BrowserView):
         #!+QUERIES(mb, nov-2011) to review the extra queries in `get_items`
         formatter = self.request.locale.dates.getFormatter("date", "full") 
         session = Session()
-        query = session.query(domain.GroupSitting).filter(
-            self.group_sittings_filter
-        ).order_by(schema.group_sittings.c.start_date).options(
-            eagerload("group"), 
-            #eagerload("sitting_type"),
-            eagerload("item_schedule")
-        )
-        if not self.end_date:
-            query = query.limit(
-                BungeniSettings(
-                    common.get_application()
-                ).max_sittings_in_business
+        query = session.query(domain.Sitting).filter(self.sitting_filter
+            ).order_by(schema.sitting.c.start_date).options(
+                eagerload("group"), 
+                #eagerload("sitting_type"),
+                eagerload("item_schedule")
             )
+        if not self.end_date:
+            query = query.limit(BungeniSettings(common.get_application()
+                    ).max_sittings_in_business)
         sittings = query.all()
         day = u""
         day_list = []
@@ -130,11 +126,11 @@ class WhatsOnBrowserView(BrowserView):
                 s_dict = {}
             if sitting.group.type == "parliament":
                 _url = url.set_url_context("/business/sittings/obj-%i" % (
-                     sitting.group_sitting_id))
+                     sitting.sitting_id))
             elif sitting.group.type == "committee":
                 _url = url.set_url_context(
                     "/business/committees/obj-%i/sittings/obj-%i"
-                    % (sitting.group.group_id, sitting.group_sitting_id))
+                    % (sitting.group.group_id, sitting.sitting_id))
             else:
                 _url = "#"
             s_list.append({
@@ -154,15 +150,10 @@ class WhatsOnBrowserView(BrowserView):
 
     def get_items(self):
         session = Session()
-        query = session.query(domain.ItemSchedule).join(
-            domain.GroupSitting
-        ).filter(
-            self.group_sittings_filter
-        ).order_by(
-            schema.group_sittings.c.start_date
-        ).options(
-            eagerload("sitting")
-        )
+        query = session.query(domain.ItemSchedule).join(domain.Sitting
+            ).filter(self.sitting_filter
+            ).order_by(schema.sitting.c.start_date
+            ).options(eagerload("sitting"))
         self.itemschedules = query.all()
 
     def get_items_by_type(self, item_type):

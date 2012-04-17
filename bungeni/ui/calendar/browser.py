@@ -77,14 +77,14 @@ class EventPartialForm(object):
     """Partial form for event entry form
     """
     form_fields = form.Fields(interfaces.IEventPartial)
-    form_fields['select_sitting_lang'].custom_widget = LanguageLookupWidget
+    form_fields["select_sitting_lang"].custom_widget = LanguageLookupWidget
 
     def __init__(self, context, request):
         self.context = context
         self.request = request
     
     def get_widgets(self):
-        widgets = form.setUpWidgets(self.form_fields, '', self.context, 
+        widgets = form.setUpWidgets(self.form_fields, "", self.context, 
             self.request, ignore_request=True
         )
         for widget in widgets:
@@ -92,7 +92,7 @@ class EventPartialForm(object):
                 if widget.context.default is None:
                     widget._messageNoValue = _(u"event_form_field_default",
                         default=u"choose ${event_field_title}",
-                        mapping={'event_field_title': widget.context.title}
+                        mapping={"event_field_title": widget.context.title}
                     )
             yield widget
 
@@ -145,46 +145,46 @@ def get_sitting_items(sitting, request, include_actions=False):
         state_title = IWorkflow(item).get_state(item.status).title
         item = removeSecurityProxy(item)
         record = {
-            'title': props.title,
-            'description': props.description,
-            'name': stringKey(scheduling),
-            'status': item.status,
-            'type': item.type.capitalize,
-            'state_title': state_title,
-            'heading': True if item.type == "heading" else False,
-            #'category_id': scheduling.category_id,
-            #'category': scheduling.category,
-            'discussion': discussion,
-            'truncated_discussion': truncated_discussion,
-            'delete_url': "%s/delete" % url.absoluteURL(scheduling, request),
-            'url': url.absoluteURL(item, request),
+            "title": props.title,
+            "description": props.description,
+            "name": stringKey(scheduling),
+            "status": item.status,
+            "type": item.type.capitalize,
+            "state_title": state_title,
+            "heading": True if item.type == "heading" else False,
+            #"category_id": scheduling.category_id,
+            #"category": scheduling.category,
+            "discussion": discussion,
+            "truncated_discussion": truncated_discussion,
+            "delete_url": "%s/delete" % url.absoluteURL(scheduling, request),
+            "url": url.absoluteURL(item, request),
         }
         
         if include_actions:
-            record['actions'] = get_scheduling_actions(scheduling, request)
-            record['workflow'] = get_workflow_actions(item, request)
+            record["actions"] = get_scheduling_actions(scheduling, request)
+            record["workflow"] = get_workflow_actions(item, request)
 
             discussion_actions = get_discussion_actions(discussion, request)
             if discussion_actions:
                 assert len(discussion_actions) == 1
-                record['discussion_action'] = discussion_actions[0]
+                record["discussion_action"] = discussion_actions[0]
             else:
-                record['discussion_action'] = None
+                record["discussion_action"] = None
         items.append(record)
     return items
 
 def create_sittings_map(sittings, request):
     """Returns a dictionary that maps:
 
-      (day, hour) -> {
-         'record'   : sitting database record
-         'actions'  : actions that apply to this sitting
-         'class'    : sitting
-         'span'     : span
-         }
-         
-      (day, hour) -> ``None``
-      
+        (day, hour) -> {
+            "record"   : sitting database record
+            "actions"  : actions that apply to this sitting
+            "class"    : sitting
+            "span"     : span
+        }
+        
+        (day, hour) -> ``None``
+    
     If the mapped value is a sitting, then a sitting begins on that
     day and hour, if it's ``None``, then a sitting is reaching into
     this day and hour.
@@ -218,14 +218,14 @@ def create_sittings_map(sittings, request):
         
         if checkPermission("zope.View", proxied):
             mapping[day, hour] = {
-                'url': link,
-                'record': sitting,
-                'class': u"sitting",
-                'actions': get_sitting_actions(sitting, request),
-                'span': sitting.end_date.hour - sitting.start_date.hour,
-                'formatted_start_time': start_date,
-                'formatted_end_time': end_date,
-                'status' : status,
+                "url": link,
+                "record": sitting,
+                "class": u"sitting",
+                "actions": get_sitting_actions(sitting, request),
+                "span": sitting.end_date.hour - sitting.start_date.hour,
+                "formatted_start_time": start_date,
+                "formatted_end_time": end_date,
+                "status" : status,
             }
             for hour in range(sitting.start_date.hour+1, sitting.end_date.hour):
                 mapping[day, hour] = None
@@ -367,18 +367,18 @@ class DailyCalendarView(CalendarView):
             title = date,
 #
             day={
-                'formatted': datetime.datetime.strftime(date, '%A %d'),
-                'id': datetime.datetime.strftime(date, '%Y-%m-%d'),
-                'today': date == today,
-                'url': "%s/%d" % (calendar_url, date.totimestamp()),
+                "formatted": datetime.datetime.strftime(date, "%A %d"),
+                "id": datetime.datetime.strftime(date, "%Y-%m-%d"),
+                "today": date == today,
+                "url": "%s/%d" % (calendar_url, date.totimestamp()),
                 },
             hours=range(6,21),
             week_no=date.isocalendar()[1],
             week_day=date.weekday(),
             links={
-                'previous': "%s/%d" % (
+                "previous": "%s/%d" % (
                     calendar_url, (date - timedelta(days=1)).totimestamp()),
-                'next': "%s/%d" % (
+                "next": "%s/%d" % (
                     calendar_url, (date + timedelta(days=1)).totimestamp()),
                 },
             sittings_map = create_sittings_map(sittings, self.request),
@@ -387,16 +387,16 @@ class DailyCalendarView(CalendarView):
 class ItemScheduleOrder(BrowserView):
     "Stores new order of schedule items"
     def __call__(self):
-        obj = self.request.form['obj[]']
+        obj = self.request.form["obj[]"]
         session = Session()
         if self.context.status == "draft_agenda":
             for i in range(0,len(obj)):
                 sch = session.query(domain.ItemSchedule).get(obj[i])
-                setattr(sch, 'planned_order', i+1)
+                setattr(sch, "planned_order", i+1)
         elif self.context.status == "draft_minutes":
             for i in range(0,len(obj)):
                 sch = session.query(domain.ItemSchedule).get(obj[i])
-                setattr(sch, 'real_order', i+1)
+                setattr(sch, "real_order", i+1)
         session.flush()
 
 #
@@ -407,12 +407,12 @@ RESOURCE_PERMISSION_MAP = (
     (["bungeni-schedule-editor"], "bungeni.sittingschedule.Edit"),
     (["bungeni-schedule-preview"], "bungeni.sitting.View"),
 )
-class GroupSittingScheduleView(BrowserView):
+class SittingScheduleView(BrowserView):
     
     template = ViewPageTemplateFile("templates/scheduler.pt")
     
     def __init__(self, context, request):
-        super(GroupSittingScheduleView, self).__init__(context, request)
+        super(SittingScheduleView, self).__init__(context, request)
     
     def sitting_dates(self):
         date_formatter = date.getLocaleFormatter(self.request)
@@ -512,7 +512,7 @@ class SchedulableItemsJSON(BrowserView):
             ]
         )
         if item_type is None:
-            return '{"items":[]}'
+            return """{"items":[]}"""
         else:
             items_getter = data.SchedulableItemsGetter(self.context,
                 item_type, item_filters=item_filters
@@ -585,24 +585,21 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         error_message = _(u"Unable to add a sitting. Please make corrections.")
         error_string = u""
         for error in errors:
-            if error.message not in ('', None): 
+            if error.message not in ("", None): 
                 error_string += error.message + "\n"
             else:
                 error_string += error.__str__() + "\n"
         #!+CALENDAR(mb, oct-2011) Include error messages in XML
         #return "%s \n%s" % (error_message, error_string)
         self.template_data.append(
-            dict(action="invalid",
-                ids=data["ids"],
-                group_sitting_id=data["ids"]
-            )
+            dict(action="invalid", ids=data["ids"], sitting_id=data["ids"])
         )
         self.request.response.setHeader("Content-type", "text/xml")
         return self.xml_template()
 
     # The form action strings below do not need to be translated because they are 
     # not visible in the UI.      
-    @form.action(u"insert", failure='insert_sitting_failure_handler')
+    @form.action(u"insert", failure="insert_sitting_failure_handler")
     def handle_insert(self, action, data):
         session = Session()
         self.template_data = []
@@ -636,7 +633,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
                                             recurrence_end_date, data["rec_type"])
             recurrent_sittings = []
             for date in dates:
-                sitting = domain.GroupSitting()
+                sitting = domain.Sitting()
                 sitting.group_id = trusted.group_id
                 sitting.short_name = data.get("short_name", None)
                 sitting.start_date = date
@@ -651,13 +648,15 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
             session.flush()
             for s in recurrent_sittings:    
                 notify(ObjectCreatedEvent(s))
-                self.template_data.append({"group_sitting_id": s.group_sitting_id, 
-                                           "action": "inserted",
-                                           "ids": data["ids"]})
-            self.request.response.setHeader('Content-type', 'text/xml')
+                self.template_data.append({
+                        "sitting_id": s.sitting_id, 
+                        "action": "inserted",
+                        "ids": data["ids"],
+                    })
+            self.request.response.setHeader("Content-type", "text/xml")
             return self.xml_template()
         else:
-            sitting = domain.GroupSitting()
+            sitting = domain.Sitting()
             sitting.short_name = data.get("short_name", None)
             sitting.start_date = data["start_date"].replace(tzinfo=None)
             sitting.end_date = data["end_date"].replace(tzinfo=None)
@@ -670,28 +669,30 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
             session.add(sitting)
             session.flush()
             notify(ObjectCreatedEvent(sitting))
-            self.template_data.append({"group_sitting_id": sitting.group_sitting_id, 
-                                       "action": "inserted",
-                                       "ids": data["ids"]})
-            self.request.response.setHeader('Content-type', 'text/xml')
+            self.template_data.append({
+                    "sitting_id": sitting.sitting_id, 
+                    "action": "inserted",
+                    "ids": data["ids"],
+                })
+            self.request.response.setHeader("Content-type", "text/xml")
             return self.xml_template()
           
     def update_sitting_failure_handler(self, action, data, errors):
         error_string = u""
         error_message = _(u"Error Updating Sitting")
         for error in errors:
-            if error.message not in ('', None): 
+            if error.message not in ("", None): 
                 error_string += error.message + "\n"
             else:
                 error_string += error.__str__() + "\n"  
         return "%s \n%s" % (error_message, error_string)   
         
-    @form.action(u"update", failure='update_sitting_failure_handler')
+    @form.action(u"update", failure="update_sitting_failure_handler")
     def handle_update(self, action, data):
         session = Session()
         self.template_data = []
-        sitting = domain.GroupSitting()
-        sitting = session.query(domain.GroupSitting).get(data["ids"])
+        sitting = domain.Sitting()
+        sitting = session.query(domain.Sitting).get(data["ids"])
         sitting.start_date = data["start_date"].replace(tzinfo=None)
         sitting.end_date = data["end_date"].replace(tzinfo=None)
         if "language" in data.keys():
@@ -705,34 +706,38 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
         # set extra data needed by template
         session.flush()
         notify(ObjectModifiedEvent(sitting))
-        self.template_data.append({"group_sitting_id": sitting.group_sitting_id, 
-                                    "action": "inserted",
-                                    "ids": data["ids"]})
+        self.template_data.append({
+                "sitting_id": sitting.sitting_id, 
+                "action": "inserted",
+                "ids": data["ids"],
+            })
         session.flush()
-        self.request.response.setHeader('Content-type', 'text/xml')
+        self.request.response.setHeader("Content-type", "text/xml")
         return self.xml_template()
         
     def delete_sitting_failure_handler(self, action, data, errors):
         error_string = u""
         for error in errors:
-            if error.message not in ('', None): 
+            if error.message not in ("", None): 
                 error_string += error.message + "\n"
             else:
                 error_string += error.__str__() + "\n"  
         return "%s \n%s" % (error_message, error_string)  
         
-    @form.action(u"delete", failure='delete_sitting_failure_handler')
+    @form.action(u"delete", failure="delete_sitting_failure_handler")
     def handle_delete(self, action, data):
         session = Session()
         self.template_data = []
-        sitting = session.query(domain.GroupSitting).get(data["ids"])
+        sitting = session.query(domain.Sitting).get(data["ids"])
         # set extra data needed by template
         self.template_data = []
         if sitting is not None:
-            self.request.response.setHeader('Content-type', 'text/xml')
-            self.template_data.append({"group_sitting_id": sitting.group_sitting_id, 
-                                       "action": "deleted",
-                                       "ids": data["ids"]})
+            self.request.response.setHeader("Content-type", "text/xml")
+            self.template_data.append({
+                    "sitting_id": sitting.sitting_id, 
+                    "action": "deleted",
+                    "ids": data["ids"],
+                })
             session.delete(sitting)
             session.flush()
             return self.xml_template()
@@ -744,7 +749,7 @@ class DhtmlxCalendarSittings(BrowserView):
     interface.implements(IStructuralView)
     
     content_mimetype = "text/xml"
-    template = ViewPageTemplateFile('templates/dhtmlxcalendarxml.pt')
+    template = ViewPageTemplateFile("templates/dhtmlxcalendarxml.pt")
 
     def __init__(self, context, request):
         super(DhtmlxCalendarSittings, self).__init__(
@@ -765,14 +770,14 @@ class DhtmlxCalendarSittings(BrowserView):
     
     def __call__(self):
         try:
-            date = self.request.get('from')
+            date = self.request.get("from")
             dateobj = datetime.datetime(*time.strptime(date, "%Y-%m-%d")[0:5])
             start_date = utils.datetimedict.fromdate(dateobj)
         except:
             start_date = None
             
         try:
-            date = self.request.get('to')
+            date = self.request.get("to")
             dateobj = datetime.datetime(*time.strptime(date, "%Y-%m-%d")[0:5])
             end_date = utils.datetimedict.fromdate(dateobj)
         except:
@@ -800,7 +805,7 @@ class DhtmlxCalendarSittings(BrowserView):
                     )
                 )
                 self.sittings.append(trusted)
-        self.request.response.setHeader('Content-type', self.content_mimetype)
+        self.request.response.setHeader("Content-type", self.content_mimetype)
         return self.render()
         
     def render(self, template = None):
@@ -848,7 +853,7 @@ class ScheduleAddView(BrowserView):
 
     def saveSchedule(self):
         session = Session()
-        group_sitting_id = self.sitting.group_sitting_id
+        sitting_id = self.sitting.sitting_id
         group_id = self.sitting.group_id
         record_keys = []
         for (index, data_item) in enumerate(self.data):
@@ -875,7 +880,7 @@ class ScheduleAddView(BrowserView):
                     item_id=data_item_id,
                     item_type=data_item_type,
                     planned_order=actual_index,
-                    group_sitting_id=group_sitting_id
+                    sitting_id=sitting_id
                 )
                 session.add(schedule_record)
                 session.flush()
@@ -917,7 +922,7 @@ class ScheduleAddView(BrowserView):
                         item_id=data_item_id,
                         item_type=data_item_type,
                         planned_order=actual_index,
-                        group_sitting_id=group_sitting_id
+                        sitting_id=sitting_id
                     )
                     session.add(schedule_record)
                     session.flush()

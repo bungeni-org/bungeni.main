@@ -5,19 +5,19 @@ from bungeni.core.workflow.interfaces import IWorkflowController
 from sqlalchemy.orm import eagerload
 
 from bungeni.utils import register
-from bungeni.models.interfaces import IGroupSitting
+from bungeni.models.interfaces import ISitting
 from zope.lifecycleevent import IObjectModifiedEvent
 
-@register.handler(adapts=(IGroupSitting, IObjectModifiedEvent))
-def handleSchedule(object, event):
+@register.handler(adapts=(ISitting, IObjectModifiedEvent))
+def handle_schedule(object, event):
     """ move scheduled items from to be scheduled state to schedule when draft 
     agenda is finalised and vice versa
     """
     session = Session()
     s = removeSecurityProxy(object)
-    sitting = session.query(domain.GroupSitting
-        ).options(eagerload("group_sitting_type"), eagerload("item_schedule")
-        ).get(s.group_sitting_id)
+    sitting = session.query(domain.Sitting
+        ).options(eagerload("sitting_type"), eagerload("item_schedule")
+        ).get(s.sitting_id)
     schedulings = map(removeSecurityProxy, sitting.item_schedule)
     if sitting.status == "draft_agenda":
         for sch in schedulings:

@@ -780,8 +780,8 @@ parliament_sessions = rdb.Table("sessions", metadata,
     rdb.Column("language", rdb.String(5), nullable=False),
 )
 
-group_sittings = rdb.Table("group_sittings", metadata,
-    rdb.Column("group_sitting_id", rdb.Integer, primary_key=True),
+sitting = rdb.Table("sitting", metadata,
+    rdb.Column("sitting_id", rdb.Integer, primary_key=True),
     rdb.Column("group_id", rdb.Integer,
         rdb.ForeignKey("groups.group_id"),
         nullable=False
@@ -789,12 +789,12 @@ group_sittings = rdb.Table("group_sittings", metadata,
     rdb.Column("short_name", rdb.Unicode(512)), #!+ACRONYM
     rdb.Column("start_date", rdb.DateTime(timezone=False), nullable=False),
     rdb.Column("end_date", rdb.DateTime(timezone=False), nullable=False),
-    rdb.Column("group_sitting_type_id", rdb.Integer,
-        rdb.ForeignKey("group_sitting_types.group_sitting_type_id")
+    rdb.Column("sitting_type_id", rdb.Integer,
+        rdb.ForeignKey("sitting_types.sitting_type_id")
     ),
     # if a sitting is recurring this is the id of the original sitting
     # there is no foreign key to the original sitting
-    # like rdb.ForeignKey("group_sittings.group_sitting_id")
+    # like rdb.ForeignKey("sitting.sitting_id")
     # to make it possible to delete the original sitting
     rdb.Column("recurring_id", rdb.Integer),
     rdb.Column("status", rdb.Unicode(48)),
@@ -812,17 +812,17 @@ group_sittings = rdb.Table("group_sittings", metadata,
 )
 
 
-group_sitting_types = rdb.Table("group_sitting_types", metadata,
-    rdb.Column("group_sitting_type_id", rdb.Integer, primary_key=True),
-    rdb.Column("group_sitting_type", rdb.Unicode(40)),
+sitting_types = rdb.Table("sitting_types", metadata,
+    rdb.Column("sitting_type_id", rdb.Integer, primary_key=True),
+    rdb.Column("sitting_type", rdb.Unicode(40)),
     rdb.Column("start_time", rdb.Time, nullable=False),
     rdb.Column("end_time", rdb.Time, nullable=False),
     rdb.Column("language", rdb.String(5), nullable=False),
 )
 
-group_sitting_attendance = rdb.Table("group_sitting_attendance", metadata,
-    rdb.Column("group_sitting_id", rdb.Integer,
-        rdb.ForeignKey("group_sittings.group_sitting_id"),
+sitting_attendance = rdb.Table("sitting_attendance", metadata,
+    rdb.Column("sitting_id", rdb.Integer,
+        rdb.ForeignKey("sitting.sitting_id"),
         primary_key=True
     ),
     rdb.Column("member_id", rdb.Integer,
@@ -888,8 +888,8 @@ resourcebookings = rdb.Table("resourcebookings", metadata,
         rdb.ForeignKey("resources.resource_id"),
         primary_key=True
     ),
-    rdb.Column("group_sitting_id", rdb.Integer,
-        rdb.ForeignKey("group_sittings.group_sitting_id"),
+    rdb.Column("sitting_id", rdb.Integer,
+        rdb.ForeignKey("sitting.sitting_id"),
         primary_key=True
     ),
 )
@@ -931,8 +931,8 @@ item_schedules = rdb.Table("item_schedules", metadata,
     rdb.Column("schedule_id", rdb.Integer, primary_key=True),
     rdb.Column("item_id", rdb.Integer, nullable=False),
     rdb.Column("item_type", rdb.String(30), nullable=False),
-    rdb.Column("group_sitting_id", rdb.Integer,
-        rdb.ForeignKey("group_sittings.group_sitting_id"),
+    rdb.Column("sitting_id", rdb.Integer,
+        rdb.ForeignKey("sitting.sitting_id"),
         nullable=False
     ),
     rdb.Column("planned_order", rdb.Integer,
@@ -963,7 +963,7 @@ item_schedule_discussions = rdb.Table("item_schedule_discussions", metadata,
     rdb.Column("schedule_id", rdb.Integer,
         rdb.ForeignKey("item_schedules.schedule_id"),),
     rdb.Column("body", rdb.UnicodeText),
-    rdb.Column("group_sitting_time", rdb.Time(timezone=False)),
+    rdb.Column("sitting_time", rdb.Time(timezone=False)),
     rdb.Column("language", rdb.String(5),
         nullable=False,
         default="en"
@@ -974,8 +974,8 @@ sitting_reports = rdb.Table("sitting_reports", metadata,
     rdb.Column("report_id", rdb.Integer,
         rdb.ForeignKey("doc.doc_id"), primary_key=True
     ),
-    rdb.Column("group_sitting_id", rdb.Integer,
-        rdb.ForeignKey("group_sittings.group_sitting_id"), primary_key=True
+    rdb.Column("sitting_id", rdb.Integer,
+        rdb.ForeignKey("sitting.sitting_id"), primary_key=True
     ),
 )
 

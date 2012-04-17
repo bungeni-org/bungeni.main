@@ -148,12 +148,12 @@ _parliament_active = _group_active
 _parliament_dissolved = _group_dissolved
 
 
-# groupsitting
+# sitting
 
-def _groupsitting_draft_agenda(context):
+def _sitting_draft_agenda(context):
     dbutils.set_real_order(context)
         
-def _groupsitting_published_agenda(context):
+def _sitting_published_agenda(context):
     utils.schedule_sitting_items(context)
 
 

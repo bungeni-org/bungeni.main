@@ -306,7 +306,7 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.group.wf.active.draft" role="bungeni.Speaker" />
 
 
-<!-- groupsitting -->
+<!-- sitting -->
 <grant permission="bungeni.sitting.View" role="bungeni.Clerk" />
 <grant permission="bungeni.sitting.Edit" role="bungeni.Clerk" />
 <grant permission="bungeni.sitting.Add" role="bungeni.Clerk" />
@@ -315,37 +315,37 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.sittingattendance.Add" role="bungeni.Clerk" />
 <grant permission="bungeni.sittingattendance.Delete" role="bungeni.Clerk" />
 
-<permission id="bungeni.groupsitting.wf.sitting.draft_agenda" title="Draft Agenda" />
-<grant permission="bungeni.groupsitting.wf.sitting.draft_agenda" role="bungeni.Clerk" />
-<grant permission="bungeni.groupsitting.wf.sitting.draft_agenda" role="bungeni.Speaker" />
+<permission id="bungeni.sitting.wf.sitting.draft_agenda" title="Draft Agenda" />
+<grant permission="bungeni.sitting.wf.sitting.draft_agenda" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting.wf.sitting.draft_agenda" role="bungeni.Speaker" />
 
-<permission id="bungeni.groupsitting.wf.draft_agenda.published_agenda" title="Finalize Agenda" />
-<grant permission="bungeni.groupsitting.wf.draft_agenda.published_agenda" role="bungeni.Clerk" />
-<grant permission="bungeni.groupsitting.wf.draft_agenda.published_agenda" role="bungeni.Speaker" />
+<permission id="bungeni.sitting.wf.draft_agenda.published_agenda" title="Finalize Agenda" />
+<grant permission="bungeni.sitting.wf.draft_agenda.published_agenda" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting.wf.draft_agenda.published_agenda" role="bungeni.Speaker" />
 
-<permission id="bungeni.groupsitting.wf.draft_agenda.published_agenda_internal" title="Publish Internal Agenda" />
-<grant permission="bungeni.groupsitting.wf.draft_agenda.published_agenda_internal" role="bungeni.Clerk" />
-<grant permission="bungeni.groupsitting.wf.draft_agenda.published_agenda_internal" role="bungeni.Speaker" />
+<permission id="bungeni.sitting.wf.draft_agenda.published_agenda_internal" title="Publish Internal Agenda" />
+<grant permission="bungeni.sitting.wf.draft_agenda.published_agenda_internal" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting.wf.draft_agenda.published_agenda_internal" role="bungeni.Speaker" />
 
-<permission id="bungeni.groupsitting.wf.published_agenda.draft_agenda" title="Redraft Agenda" />
-<grant permission="bungeni.groupsitting.wf.published_agenda.draft_agenda" role="bungeni.Clerk" />
-<grant permission="bungeni.groupsitting.wf.published_agenda.draft_agenda" role="bungeni.Speaker" />
+<permission id="bungeni.sitting.wf.published_agenda.draft_agenda" title="Redraft Agenda" />
+<grant permission="bungeni.sitting.wf.published_agenda.draft_agenda" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting.wf.published_agenda.draft_agenda" role="bungeni.Speaker" />
 
-<permission id="bungeni.groupsitting.wf.published_agenda.draft_minutes" title="Draft Minutes" />
-<grant permission="bungeni.groupsitting.wf.published_agenda.draft_minutes" role="bungeni.Clerk" />
-<grant permission="bungeni.groupsitting.wf.published_agenda.draft_minutes" role="bungeni.Speaker" />
+<permission id="bungeni.sitting.wf.published_agenda.draft_minutes" title="Draft Minutes" />
+<grant permission="bungeni.sitting.wf.published_agenda.draft_minutes" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting.wf.published_agenda.draft_minutes" role="bungeni.Speaker" />
 
-<permission id="bungeni.groupsitting.wf.draft_minutes.published_minutes" title="Publish Minutes" />
-<grant permission="bungeni.groupsitting.wf.draft_minutes.published_minutes" role="bungeni.Clerk" />
-<grant permission="bungeni.groupsitting.wf.draft_minutes.published_minutes" role="bungeni.Speaker" />
+<permission id="bungeni.sitting.wf.draft_minutes.published_minutes" title="Publish Minutes" />
+<grant permission="bungeni.sitting.wf.draft_minutes.published_minutes" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting.wf.draft_minutes.published_minutes" role="bungeni.Speaker" />
 
-<permission id="bungeni.groupsitting.wf.draft_minutes.published_minutes_internal" title="Publish Minutes Internal" />
-<grant permission="bungeni.groupsitting.wf.draft_minutes.published_minutes_internal" role="bungeni.Clerk" />
-<grant permission="bungeni.groupsitting.wf.draft_minutes.published_minutes_internal" role="bungeni.Speaker" />
+<permission id="bungeni.sitting.wf.draft_minutes.published_minutes_internal" title="Publish Minutes Internal" />
+<grant permission="bungeni.sitting.wf.draft_minutes.published_minutes_internal" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting.wf.draft_minutes.published_minutes_internal" role="bungeni.Speaker" />
 
-<permission id="bungeni.groupsitting.wf.published_minutes.draft_minutes" title="Redraft Minutes" />
-<grant permission="bungeni.groupsitting.wf.published_minutes.draft_minutes" role="bungeni.Clerk" />
-<grant permission="bungeni.groupsitting.wf.published_minutes.draft_minutes" role="bungeni.Speaker" />
+<permission id="bungeni.sitting.wf.published_minutes.draft_minutes" title="Redraft Minutes" />
+<grant permission="bungeni.sitting.wf.published_minutes.draft_minutes" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting.wf.published_minutes.draft_minutes" role="bungeni.Speaker" />
 
 
 <!-- membership -->

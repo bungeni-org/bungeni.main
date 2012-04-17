@@ -253,7 +253,7 @@ def dissolveChildGroups(groups, context):
         IWorkflowController(group).fireTransition("active-dissolved", 
             check_security=False)
         
-# groupsitting
+# sitting
 def schedule_sitting_items(context):
     
     # !+fireTransitionToward(mr, dec-2010) sequence of fireTransitionToward 

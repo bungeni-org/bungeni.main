@@ -27,7 +27,7 @@ from zope.app.component.hooks import getSite
 from bungeni.alchemist import Session
 from bungeni.models import domain
 from bungeni.models.utils import get_db_user_id
-from bungeni.models.interfaces import IGroupSitting
+from bungeni.models.interfaces import ISitting
 
 from bungeni.core.interfaces import ISchedulingContext
 from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowTransitionEvent
@@ -170,7 +170,7 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
         return end_date
 
     def buildSittings(self, start_date, end_date):
-        if IGroupSitting.providedBy(self.context):
+        if ISitting.providedBy(self.context):
             trusted = removeSecurityProxy(self.context)
             order="real_order"
             trusted.item_schedule.sort(key=operator.attrgetter(order))
@@ -341,7 +341,7 @@ class ReportView(form.PageForm, DateTimeFormatMixin):
     def validate(self, action, data):
         errors = super(ReportView, self).validate(action, data)
         time_span = self.time_span(data)
-        if IGroupSitting.providedBy(self.context):
+        if ISitting.providedBy(self.context):
             if not self.context.items:
                 errors.append(interface.Invalid(
                 _(u"The sitting has no scheduled items")))
@@ -387,7 +387,7 @@ class ReportView(form.PageForm, DateTimeFormatMixin):
             if "short_name" in data:
                 self.short_name = data["short_name"]
         self.sittings = []
-        if IGroupSitting.providedBy(self.context):
+        if ISitting.providedBy(self.context):
             trusted = removeSecurityProxy(self.context)
             order = "real_order" if self.display_minutes else "planned_order"
             trusted.item_schedule.sort(key=operator.attrgetter(order))
@@ -405,7 +405,7 @@ class ReportView(form.PageForm, DateTimeFormatMixin):
             self.sittings = map(removeSecurityProxy,sittings)
         self.ids = ""
         for sitting in self.sittings:
-            self.ids += str(sitting.group_sitting_id) + ","
+            self.ids += str(sitting.sitting_id) + ","
         def cleanup(string):
             return string.lower().replace(" ", "_")
         for item_type in data["item_types"]:
@@ -428,14 +428,14 @@ class ReportView(form.PageForm, DateTimeFormatMixin):
         except:
             self.group = ISchedulingContext(self.context).get_group()
 
-class GroupSittingContextAgendaReportView(ReportView):
+class SittingContextAgendaReportView(ReportView):
     display_minutes = False
     include_text = False
     short_name = _(u"Sitting Agenda")
     note = ""
     form_fields = ReportView.form_fields.omit("short_name", "date")
 
-class GroupSittingContextMinutesReportView(ReportView):
+class SittingContextMinutesReportView(ReportView):
     display_minutes = True
     short_name = "Sitting Votes and Proceedings"
     note = ""
@@ -526,7 +526,7 @@ class SaveReportView(form.PageForm):
                 ids = data["sittings"].split(",")
                 for id_number in ids:
                     sit_id = int(id_number)
-                    sitting = session.query(domain.GroupSitting).get(sit_id)
+                    sitting = session.query(domain.Sitting).get(sit_id)
                     sr = domain.SittingReport()
                     sr.report = report
                     sr.sitting = sitting
@@ -537,7 +537,7 @@ class SaveReportView(form.PageForm):
                 pass
         session.flush()
         
-        if IGroupSitting.providedBy(self.context):
+        if ISitting.providedBy(self.context):
             back_link = "./schedule"
         else:
             back_link = "./"
@@ -550,7 +550,7 @@ class SittingReportContext(object):
 # Event handler that publishes reports on sitting status change
 # if the status is published_agenda or published_minutes
 # it generates report based on the default template and publishes it
-@register.handler(adapts=(IGroupSitting, IWorkflowTransitionEvent))
+@register.handler(adapts=(ISitting, IWorkflowTransitionEvent))
 def default_reports(sitting, event):
     if sitting.status in IWorkflow(sitting).get_state_ids(tagged=["published"]):
         sitting = removeSecurityProxy(sitting)

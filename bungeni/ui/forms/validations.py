@@ -437,7 +437,7 @@ def validate_venues(action, data, context, container):
     """A venue can only be booked for one sitting at once."""
     
     errors = []
-    if interfaces.IGroupSitting.providedBy(context):
+    if interfaces.ISitting.providedBy(context):
         sitting = context
     else:
         sitting = None
