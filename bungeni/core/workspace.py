@@ -27,7 +27,7 @@ class WorkspaceContainerTraverser(SimpleComponentTraverser):
 
     def publishTraverse(self, request, name):
         """First checks if the name refers to a view of this container,
-           then checks if the me refers to an item in this container,
+           then checks if the name refers to an item in this container,
            else raises a NotFound
         """
         workspace = removeSecurityProxy(self.context)
@@ -127,8 +127,8 @@ def load_workspace(file_name, domain_class):
     item_type = file_name.split(".")[0]
     workspace_tabs.register_item_type(domain_class, item_type)
     workspace = etree.fromstring(open(file_path).read())
-    for state in workspace.iterchildren("state"):
-        for tab in state.iterchildren():
+    for state in workspace.iterchildren(tag="state"):
+        for tab in state.iterchildren(tag="tab"):
             if tab.get("id") in TABS:
                 if tab.get("roles"):
                     roles = tab.get("roles").split()
@@ -137,7 +137,9 @@ def load_workspace(file_name, domain_class):
                             role, tab.get("id"), domain_class, state.get("id")
                             )
             else:
-                raise ValueError("Invalid tab - %s", tab.get("id"))
+                raise ValueError("Invalid tab - %s. state : %s", tab.get("id"),
+                                 state.get("id"))
+
 
 # !+bungeni_custom
 def load_workspaces(application, event):
@@ -146,4 +148,3 @@ def load_workspaces(application, event):
     load_workspace("agendaitem.xml", domain.AgendaItem)
     load_workspace("motion.xml", domain.Motion)
     load_workspace("question.xml", domain.Question)
-

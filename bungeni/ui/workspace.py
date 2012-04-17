@@ -208,7 +208,7 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
         for result in results:
             workflow = IWorkflow(domain_class())
             status_title = translate(
-                str(workflow.get_state(result).title),
+                workflow.get_state(result).title,
                 domain="bungeni",
                 context=self.request
                 )
