@@ -706,6 +706,7 @@ class UserDelegationDescriptor(ModelDescriptor):
         Field(name="delegation_id", # [user-req]
             modes="view edit add listing",
             property=schema.Choice(title=_("User"),
+                # !+vocabulary.UserSource ?
                 source=vocabulary.DatabaseSource(domain.User,
                     token_field="user_id",
                     title_field="fullname",
@@ -2227,11 +2228,11 @@ class DocumentDescriptor(ModelDescriptor):
                 show("view edit listing"), 
             ],
             property=schema.Choice(title=_("Document Type"),
-                source=vocabulary.bill_type, # !+PLACEHOLDER_DOC_TYPE
+                source=vocabulary.doc_type,
             ),
             listing_column=vocabulary_column("doc_type",
                 "Document Type",
-                vocabulary.bill_type # !+PLACEHOLDER_DOC_TYPE
+                vocabulary.doc_type
             ),
         ),
         # doc_procedure
@@ -2340,7 +2341,7 @@ class EventDescriptor(DocumentDescriptor):
         Field(name="group_id", # [user]
             modes="view edit add listing",
             localizable=[ 
-                show("view edit listing"), 
+                show("view edit add listing"), 
             ],
             property=schema.Choice(title=_("Group"),
                 source=vocabulary.GroupSource( 
@@ -2353,18 +2354,36 @@ class EventDescriptor(DocumentDescriptor):
         ),
     )
     with get_field(fields, "owner_id") as f:
-        # "non-legal" parliamentary documents may only be added by any user
-        f.property = schema.Choice(title=_("Owner"),
-            source=vocabulary.DatabaseSource(domain.User,
+        # "non-legal" parliamentary documents may be added by any user
+        f.property = schema.Choice(title=_("Owner"), 
+            # !+GROUP_AS_OWNER(mr, apr-2012) for Event, a common case would be
+            # to able to set a group (of the office/group member creating the 
+            # event) as the owner (but Group is not yet polymorphic with User). 
+            # For now we limit the owner of an Event to be simply the current 
+            # logged in user:
+            source=vocabulary.LoggedInUserSource(
                 token_field="user_id",
                 title_field="fullname",
-                value_field="user_id"))
+                value_field="user_id")
+        )
+        # !+f.localizable changing localizable modes AFTER Field is initialized
+        # gives mismatch error when descriptors are (re-)loaded, e.g. 
+        #f.localizable = [ hide("view edit add listing"), ]
         f.listing_column = user_name_column("owner_id", _("Name"), "owner")
         f.view_widget = None
         # !+ select or autocomplete... ?
         #f.edit_widget=widgets.AutoCompleteWidget(remote_data=True,
         #        yui_maxResultsDisplayed=5),
         #f.add_widget=widgets.AutoCompleteWidget()
+    with get_field(fields, "doc_type") as f:
+        # "non-legal" parliamentary documents may be added by any user
+        f.property = schema.Choice(title=_("Event Type"),
+                source=vocabulary.event_type,
+        )
+        listing_column=vocabulary_column("event_type",
+            "Event Type",
+            vocabulary.event_type
+        )
     del f # remove f from class namespace
 
 ''' !+AuditLogView(mr, nov-2011) change listings do not respect this

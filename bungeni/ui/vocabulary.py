@@ -160,8 +160,14 @@ YesNoSource = vocabulary.SimpleVocabulary([
 
 # !+TYPES_CUSTOM - enum sources to move out to bungeni custom
 
-bill_type = vocabulary.SimpleVocabulary([
+doc_type = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm("government", title="Government Initiative"),
+    vocabulary.SimpleTerm("member", title="Member Initiative"),
+])
+bill_type = doc_type
+event_type = vocabulary.SimpleVocabulary([
+    vocabulary.SimpleTerm("government", title="Government Initiative"),
+    vocabulary.SimpleTerm("committee", title="Committee Initiative"),
     vocabulary.SimpleTerm("member", title="Member Initiative"),
 ])
 committee_type = vocabulary.SimpleVocabulary([
@@ -262,6 +268,9 @@ group_sub_roles = GroupSubRoles()
         
 class DatabaseSource(bungeni.alchemist.vocabulary.DatabaseSource):
     
+    #def __init__(self, domain_model, token_field, value_field, 
+    #    title_field=None, title_getter=None, order_by=None):
+
     def __call__(self, context=None):
         query = self.constructQuery(context)
         results = query.all()
@@ -683,6 +692,16 @@ class MinistrySource(SpecializedSource):
                    ))
         return vocabulary.SimpleVocabulary(terms)'''
 
+
+class LoggedInUserSource(SpecializedSource):
+    """Current (list of 1 item) logged in user.
+    """
+    def constructQuery(self, context):
+        # !+get_db_user(mr, apr-2012) repeat of [utils.get_db_user()], 
+        # but here we must return a query...
+        principal_id = utils.get_principal_id()
+        return Session().query(domain.User).filter(
+            domain.User.login == principal_id)
 
 class UserSource(SpecializedSource):
     """ All active users """
