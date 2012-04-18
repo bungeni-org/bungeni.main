@@ -226,7 +226,15 @@ YAHOO.bungeni.availableitems = function(){
             var target_column = this.getColumn(target);
             if(target_column.field == Columns.SELECT_ROW){
                 var targetRecord = this.getRecord(target);
-                var targetData = targetRecord.getData()
+                var rawTargetData = targetRecord.getData();
+                var targetData = {};
+                var fieldKeys = itemsDataTable.getDataSource().responseSchema.fields;
+                for (index in fieldKeys){
+                    var fieldValue = rawTargetData[fieldKeys[index]];
+                    if(fieldValue){
+                        targetData[fieldKeys[index]] = fieldValue;
+                    }
+                }
                 if (Y$.query(Selectors.checkbox, target, true).checked){
                     //check if item is already scheduled
                     var record_set = itemsDataTable.getRecordSet().getRecords();
@@ -242,14 +250,14 @@ YAHOO.bungeni.availableitems = function(){
                         }
                     }
                     if (!item_in_schedule){
-                        ctx_index = itemsDataTable.getSelectedRows()[0];
-                        var new_record_index = (
-                            (ctx_index && itemsDataTable.getTrIndex(ctx_index)+1) || 0
+                        var selected_rows = itemsDataTable.getSelectedRows();
+                        var insert_index = (
+                            selected_rows.length?(itemsDataTable.getTrIndex(selected_rows[0])+1):0
                         );
-                        itemsDataTable.addRow(targetData, new_record_index);
-                        YAHOO.bungeni.scheduling.handlers.refreshCells(
-                            new_record_index
-                        );
+                        itemsDataTable.addRow(targetData, insert_index);
+                        window.setTimeout(function(){
+                            YAHOO.bungeni.scheduling.handlers.refreshRows();
+                        }, 200);
                     }
                 }else{
                     var record_set = itemsDataTable.getRecordSet().getRecords();
@@ -286,6 +294,9 @@ YAHOO.bungeni.availableitems = function(){
                     this.unselectAllCells();
                     this.selectCell(select_td);
                 }
+                window.setTimeout(function(){
+                    YAHOO.bungeni.scheduling.handlers.refreshRows();
+                }, 500);
             }
         }
 
@@ -514,9 +525,7 @@ YAHOO.bungeni.availableitems = function(){
                 ));
                 Event.onAvailable(container_id, function(event){
                     var tabDataSource = new YAHOO.util.DataSource(
-                        (SGlobals.schedulable_items_json_url 
-                            + "?type="+ type
-                        )
+                        SGlobals.schedulable_items_json_url + "?type="+ type
                     );
                     tabDataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
                     tabDataSource.responseSchema = availableItemsSchema;

@@ -27,6 +27,7 @@ YAHOO.bungeni.agendaconfig = function(){
             {
                 key: Columns.ROW_CONTROLS, 
                 label: "",
+                field: null,
                 formatter: Formatters.rowControls,
                 width: 0.2 * cols_width
             },

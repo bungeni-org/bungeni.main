@@ -170,32 +170,46 @@ YAHOO.bungeni.scheduling = function(){
          * @description Re-renders cells whose markup should change when a new
          * item is added to the agenda.
          **/
-        var refreshCells = function(index, deleted){
+        var refreshCells = function(index, next, deleted){
             var sDt = YAHOO.bungeni.scheduling.getScheduleTable();
+            var sSize = sDt.getRecordSet().getLength();
             if(deleted){
-                var update_index = index?(index-1):0;
+                var update_index = (index==sSize)?(index-1):index;
+            }else if(next){
+                var update_index = index?(index+1):1;
             }else{
-                var update_index = index?(index-1):1;
+                var update_index = index?(index-1):0;
             }
             record = sDt.getRecord(update_index);
             if(record){
                 window.setTimeout(function(){
                         sDt.updateCell(record, 
-                            sDt.getColumn(Columns.ROW_CONTROLS),
-                            record.getData()
+                            sDt.getColumn(Columns.ROW_CONTROLS)
                         );
-                    }, 200
+                    }, 100
                 );
             }
         }
-        
-        
+
+        /**
+         * @method refreshRows
+         * @description Refreshes all rows on datatable to reflect cell changes.
+         * This is a workaround around timing issues with addRow(s) events
+         */
+         var refreshRows = function(){
+            var sDt = YAHOO.bungeni.scheduling.getScheduleTable();
+            var sSize = sDt.getRecordSet().getLength();
+            for (index=0; index<sSize; index++){
+                sDt.updateRow(index, sDt.getRecord(index).getData());
+            }
+         }
+
         /**
          * @method refreshDeleted
          * @description Fire off cell refresh operation after row deletion
          **/
         var refreshDeleted = function(args){
-            YAHOO.bungeni.scheduling.handlers.refreshCells(args.recordIndex, true);
+            YAHOO.bungeni.scheduling.handlers.refreshCells(args.recordIndex, false, true);
         }
 
         return {
@@ -205,7 +219,8 @@ YAHOO.bungeni.scheduling = function(){
             saveSchedule: saveSchedule,
             populateScheduledKeys: populateScheduledKeys,
             refreshCells: refreshCells,
-            refreshDeleted: refreshDeleted
+            refreshRows: refreshRows,
+            refreshDeleted: refreshDeleted,
         }
     }();
     var Layout = { layout:null }
@@ -298,11 +313,11 @@ YAHOO.bungeni.scheduling = function(){
                 dataTable.subscribe("rowDeleteEvent",
                     YAHOO.bungeni.scheduling.handlers.setUnsavedChanges
                 );
+                dataTable.subscribe("rowDeleteEvent",
+                    YAHOO.bungeni.scheduling.handlers.refreshDeleted
+                );
                 dataTable.subscribe("rowUpdateEvent",
                     YAHOO.bungeni.scheduling.handlers.setUnsavedChanges
-                );
-                dataTable.subscribe("rowDeleteEvent", 
-                    YAHOO.bungeni.scheduling.handlers.refreshDeleted
                 );
                 resizable_panel.on("endResize", function(){
                     Handlers.resizeDataTable(dataTable,
