@@ -228,15 +228,16 @@ class OfficeRoles(object):
         roles = getUtilitiesFor(IRole, app)
         for name, role in roles:
             #Roles that must not be assigned to users in an office
-            if name not in ["bungeni.Anonymous",
-                            "bungeni.Authenticated",
-                            "bungeni.Owner",
-                            "zope.Manager",
-                            "zope.Member",
-                            "bungeni.MP",
-                            "bungeni.Minister",
-                            "bungeni.Admin",
-                            ]:
+            if name in ["bungeni.Anonymous",
+                        "bungeni.Authenticated",
+                        "bungeni.Owner",
+                        "zope.Manager",
+                        "zope.Member",
+                        "bungeni.MP",
+                        "bungeni.Minister",
+                        "bungeni.Admin"]:
+                continue
+            if not ISubRoleAnnotations(role).is_sub_role:
                 terms.append(vocabulary.SimpleTerm(name, name, name))
         return vocabulary.SimpleVocabulary(terms)
 

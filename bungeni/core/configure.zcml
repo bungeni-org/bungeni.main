@@ -163,7 +163,16 @@
             ore.wsgiapp.interfaces.IWSGIApplicationCreatedEvent"
         handler=".workspace.load_workspaces"
     />
-    
+    <!--Member title roles-->
+    <subscriber for="bungeni.models.interfaces.IMemberTitle
+            zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+        handler=".roles.member_title_added"
+    />
+    <!--Member title roles-->
+    <subscriber for="bungeni.models.interfaces.IMemberTitle
+            zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+        handler=".roles.member_title_deleted"
+    />
     <!--Traverser for workspace containers-->
     <adapter for="bungeni.models.interfaces.IWorkspaceContainer
             zope.publisher.interfaces.IPublisherRequest"
@@ -205,11 +214,6 @@
     <adapter factory=".schedule.SchedulingContextTraverser" />
     <adapter factory=".schedule.SittingContainerSchedulingContext" />
     <adapter factory=".schedule.WorkspaceSchedulingContext" />
-    
-    <!-- principal roles -->
-    <subscriber handler=".roles.handle_authenticated_principal_created_event"
-        for="repoze.whooze.interfaces.IPrincipalCreated"
-    />
     
     <class class=".schedule.PlenarySchedulingContext">
         <require permission="zope.Public"
