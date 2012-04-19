@@ -786,7 +786,7 @@ sitting = rdb.Table("sitting", metadata,
         rdb.ForeignKey("groups.group_id"),
         nullable=False
     ),
-    rdb.Column("short_name", rdb.Unicode(512)), #!+ACRONYM
+    rdb.Column("short_name", rdb.Unicode(512), nullable=True),
     rdb.Column("start_date", rdb.DateTime(timezone=False), nullable=False),
     rdb.Column("end_date", rdb.DateTime(timezone=False), nullable=False),
     # if a sitting is recurring this is the id of the original sitting

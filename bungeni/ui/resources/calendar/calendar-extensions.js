@@ -80,12 +80,9 @@ function handle_before_change_view(old_mode, old_date, new_mode , new_date){
  */
 function event_save_handler(id, data, is_new_event){
     var error_messages = new Array();
-    //#!I18N(mb, oct-2011) Enable proper I18N of error messages
+    //#!I18N(mb, apr-2012) Bind validation to zope form
     if ((data.venue=="") || (data.venue==undefined)){
         error_messages.push(calendar_globals.venue_required);
-    }
-    if ((data.language=="") || (data.language==undefined)){
-        error_messages.push(calendar_globals.language_required);
     }
     if ((data.language=="") || (data.language==undefined)){
         error_messages.push(calendar_globals.language_required);

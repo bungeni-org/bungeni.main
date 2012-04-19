@@ -56,6 +56,7 @@ from bungeni.ui.menu import get_actions
 from bungeni.ui.interfaces import IBusinessSectionLayer
 from bungeni.ui.widgets import LanguageLookupWidget
 from bungeni.ui.container import ContainerJSONListing
+from bungeni.ui.forms.common import AddForm
 
 from bungeni.models import domain
 from bungeni.models.interfaces import IItemScheduleContainer, IScheduleText
@@ -73,17 +74,17 @@ class TIME_SPAN:
     daily = _(u"Daily")
     weekly = _(u"Weekly")
 
-class EventPartialForm(object):
+class EventPartialForm(AddForm):
     """Partial form for event entry form
     """
-    form_fields = form.Fields(interfaces.IEventPartial)
-    form_fields["select_sitting_lang"].custom_widget = LanguageLookupWidget
-
-    def __init__(self, context, request):
-        self.context = context
-        self.request = request
+    omit_fields = ["start_date", "end_date"]
+    
+    def update_fields(self):
+        self.form_fields["language"].edit_widget = LanguageLookupWidget
+        self.form_fields = self.form_fields.omit(*self.omit_fields)
     
     def get_widgets(self):
+        self.update_fields()
         widgets = form.setUpWidgets(self.form_fields, "", self.context, 
             self.request, ignore_request=True
         )
@@ -272,7 +273,7 @@ class CalendarView(BungeniBrowserView):
 
     @property
     def partial_event_form(self):
-        form = EventPartialForm(self.context, self.request)
+        form = EventPartialForm(domain.Sitting(), self.request)
         return form
 
     @property

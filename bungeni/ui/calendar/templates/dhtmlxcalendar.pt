@@ -80,28 +80,18 @@
                                   
                     },
                     set_value:function(node,value,ev){
-                        //node.childNodes[1].value=ev.type||"";
-                        //node.childNodes[4].value=ev.venue||"";
-                        //node.childNodes[7].value=ev.language||"";
                         $("#short_name").val(ev.short_name||"")
-                        $("#select_sitting_venue").val(ev.venue||"");
-                        $("#select_sitting_lang").val(ev.language||"en");
+                        $("#venue_id").val(ev.venue||"");
+                        $("#language").val(ev.language||"en");
                         $("#activity_type").val(ev.activity_type||"");
                         $("#meeting_type").val(ev.meeting_type||"");
                         $("#convocation_type").val(ev.convocation_type||"");
                     },
                     get_value:function(node,ev){
-                        //ev.type = node.childNodes[1].value;
-                        //var w = node.childNodes[1].selectedIndex;
-                        //ev.text =  node.childNodes[1].options[w].text + ev.status;
-                        //ev.venue = node.childNodes[4].value;
-                        //ev.language = node.childNodes[7].value;
-                        //return node.childNodes[1].value;
-                        //ev.text = $("#select_sitting_type").options[ev.type].text;
                         ev.short_name = $("#short_name").val();
-                        ev.language = $("#select_sitting_lang").val();
-                        ev.venue = $("#select_sitting_venue").val();
-                        ev.text = cal_globals.text_sitting + ' : ' + $("#select_sitting_venue option:selected").text();
+                        ev.language = $("#language").val();
+                        ev.venue = $("#venue_id").val();
+                        ev.text = cal_globals.text_sitting + ' : ' + $("#venue_id option:selected").text();
                         ev.activity_type = $("#activity_type").val();
                         ev.meeting_type = $("#meeting_type").val();
                         ev.convocation_type = $("#convocation_type").val();
@@ -134,7 +124,7 @@
                         if (status && (status!="")){
                             event.color="red";
                             $.blockUI({
-                                message: "This event is unsaved. Please edit",
+                                message: calendar_globals.unsaved_event,
                                 timeout: 2000,
                                 showOverlay: true,
                                 baseZ: 20000,
