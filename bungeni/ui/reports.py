@@ -62,57 +62,63 @@ def horizontalMultiCheckBoxWidget(field, request):
     return widget
 
 def availableItems(context):
-    items = (_(u"Bills"),
-                _(u"Agenda Items"),
-                _(u"Motions"),
-                _(u"Questions"),
-                _(u"Tabled Documents"),
-                )
+    items = (
+        _(u"Bills"),
+        _(u"Agenda Items"),
+        _(u"Motions"),
+        _(u"Questions"),
+        _(u"Tabled Documents"),
+    )
     return SimpleVocabulary.fromValues(items)
 
 def billOptions(context):
-    items = (_(u"Title"),
-             _(u"Summary"),
-             _(u"Text"),
-             _(u"Owner"),
-             _(u"Signatories"),
-            )
+    items = (
+        _(u"Title"),
+        _(u"Summary"),
+        _(u"Text"),
+        _(u"Owner"),
+        _(u"Signatories"),
+    )
     return SimpleVocabulary.fromValues(items)
 
 def agendaOptions(context):
-    items = (_(u"Title"),
-             _(u"Text"),
-             _(u"Owner"),
-            )
+    items = (
+        _(u"Title"),
+        _(u"Text"),
+        _(u"Owner"),
+    )
     return SimpleVocabulary.fromValues(items)
 
 def motionOptions(context):
-    items = (_(u"Title"),
-             _(u"Number"),
-             _(u"Text"),
-             _(u"Owner"),
-             _(u"Signatories"),
-            )
+    items = (
+        _(u"Title"),
+        _(u"Number"),
+        _(u"Text"),
+        _(u"Owner"),
+        _(u"Signatories"),
+    )
     return SimpleVocabulary.fromValues(items)
 
 def tabledDocumentOptions(context):
-    items = (_(u"Title"),
-             _(u"Number"),
-             _(u"Text"),
-             _(u"Owner"),
-             _(u"Signatories"),
-            )
+    items = (
+        _(u"Title"),
+        _(u"Number"),
+        _(u"Text"),
+        _(u"Owner"),
+        _(u"Signatories"),
+    )
     return SimpleVocabulary.fromValues(items)
 
 def questionOptions(context):
-    items = (_(u"Title"),
-             _(u"Number"),
-             _(u"Text"),
-             _(u"Owner"),
-             #"Response",
-             _(u"Type"),
-             _(u"Signatories"),
-            )
+    items = (
+        _(u"Title"),
+        _(u"Number"),
+        _(u"Text"),
+        _(u"Owner"),
+        #"Response",
+        _(u"Type"),
+        _(u"Signatories"),
+    )
     return SimpleVocabulary.fromValues(items)
 
 
@@ -208,18 +214,18 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
     @form.action(_(u"Publish"), name="publish")
     def handle_publish(self, action, data):
         self.generated_content = self.generateContent(data)
-
+        
         if not hasattr(self.context, "group_id"):
             context_group_id = ISchedulingContext(self.context).group_id
         else:
             context_group_id = self.context.group_id
-
+        
         report = domain.Report(
             short_title=self.title,
             start_date=self.start_date,
             end_date=self.end_date,
             body=self.generated_content,
-            owner_id=get_db_user_id(),
+            owner_id=get_db_user_id(), # !+GROUP_AS_OWNER
             language=self.language,
             group_id=context_group_id
         )
@@ -249,13 +255,11 @@ class ReportView(form.PageForm, DateTimeFormatMixin):
 
     class IReportForm(interface.Interface):
         short_name = schema.Choice(
-                    title=_(u"Document Type"),
-                    description=_(u"Type of report to be produced"),
-                    values=["Order of the day",
-                             "Weekly Business",
-                             "Questions of the week"],
-                    required=True
-                    )
+            title=_(u"Document Type"),
+            description=_(u"Type of report to be produced"),
+            values=["Order of the day", "Weekly Business", 
+                "Questions of the week"],
+            required=True)
         date = schema.Date(
             title=_(u"Date"),
             description=_(u"Choose a starting date for this report"),
@@ -287,7 +291,7 @@ class ReportView(form.PageForm, DateTimeFormatMixin):
         note = schema.TextLine(title=u"Note",
             required=False,
             description=u"Optional note regarding this report")
-
+    
     template = namedtemplate.NamedTemplate("alchemist.form")
     form_fields = form.Fields(IReportForm)
     form_fields["item_types"].custom_widget = horizontalMultiCheckBoxWidget
@@ -308,12 +312,14 @@ class ReportView(form.PageForm, DateTimeFormatMixin):
             note = None
             date = None
             short_name = _(u"Order of the day")
-        self.adapters = {
-            self.IReportForm: context
-            }
+        self.adapters = {self.IReportForm: context}
         self.widgets = form.setUpEditWidgets(
-            self.form_fields, self.prefix, self.context, self.request,
-                    adapters=self.adapters, ignore_request=ignore_request)
+            self.form_fields, 
+            self.prefix, 
+            self.context, 
+            self.request,
+            adapters=self.adapters, 
+            ignore_request=ignore_request)
     def update(self):
         super(ReportView, self).update()
         forms.common.set_widget_errors(self.widgets, self.errors)
@@ -324,7 +330,7 @@ class ReportView(form.PageForm, DateTimeFormatMixin):
         elif time_span is TIME_SPAN.weekly:
             return start_date + timedelta(weeks=1)
         raise RuntimeError("Unknown time span: %s" % time_span)
-        
+    
     def time_span(self,data):
         if "short_name" in data:
             if data["short_name"] == u"Order of the day":
@@ -352,30 +358,26 @@ class ReportView(form.PageForm, DateTimeFormatMixin):
             try:
                 ctx = ISchedulingContext(self.context)
             except:
-                errors.append(interface.Invalid(
-                        _(u"You are trying to generate a report "
-                            "outside scheduling")
-                    )
-                )
+                m = u"You are trying to generate a report outside scheduling"
+                errors.append(interface.Invalid(_(m)))
             sittings = ctx.get_sittings(start_date, end_date).values()
             if not sittings:
-                errors.append(interface.Invalid(
-                        _(u"The period selected has no sittings"),
-                                "date"))
+                m = u"The period selected has no sittings"
+                errors.append(interface.Invalid(_(m), "date"))
             
             parliament = queries.get_parliament_by_date_range(
                 start_date, end_date
             )
             if parliament is None:
-                errors.append(interface.Invalid(
-                    _(u"A parliament must be active in the period"),
-                        "date"))
+                m = u"A parliament must be active in the period"
+                errors.append(interface.Invalid(_(m), "date"))
         return errors
-
+    
     @form.action(_(u"Preview"), name="preview")
     def handle_preview(self, action, data):
         self.process_form(data)
-        self.save_link = url.absoluteURL(self.context, self.request) + "/save-report"
+        self.save_link = "%s/save-report" % (
+            url.absoluteURL(self.context, self.request))
         self.body = self.result_template()
         return self.main_result_template()
 
@@ -393,15 +395,15 @@ class ReportView(form.PageForm, DateTimeFormatMixin):
             trusted.item_schedule.sort(key=operator.attrgetter(order))
             self.sittings.append(trusted)
             self.start_date = self.context.start_date
-            self.end_date = self.get_end_date(self.start_date,
-                                                           self.time_span(data))
+            self.end_date = self.get_end_date(
+                self.start_date, self.time_span(data))
         else:
-            self.start_date = data["date"] if "date" in data else \
-                                                datetime.datetime.today().date()
-            self.end_date = self.get_end_date(self.start_date, 
-                                                           self.time_span(data))
+            self.start_date = data["date"] if "date" in data \
+                else datetime.datetime.today().date()
+            self.end_date = self.get_end_date(
+                self.start_date, self.time_span(data))
             sittings = ISchedulingContext(self.context).get_sittings(
-                                        self.start_date, self.end_date).values()
+                self.start_date, self.end_date).values()
             self.sittings = map(removeSecurityProxy,sittings)
         self.ids = ""
         for sitting in self.sittings:
@@ -419,10 +421,11 @@ class ReportView(form.PageForm, DateTimeFormatMixin):
                 ))
                 setattr(self.options, opt_key, True)
         if self.display_minutes:
-            self.link = url.absoluteURL(self.context, self.request) \
-                                                + "/votes-and-proceedings"
+            self.link = "%s/votes-and-proceedings" % (
+                url.absoluteURL(self.context, self.request))
         else :
-            self.link = url.absoluteURL(self.context, self.request) + "/agenda"
+            self.link = "%s/agenda" % (
+                url.absoluteURL(self.context, self.request))
         try:
             self.group = self.context.group
         except:
@@ -468,25 +471,20 @@ class SaveReportView(form.PageForm):
             description=_(u"Choose an end date for this report"),
             required=True)
         note = schema.TextLine(title=u"Note",
-                                required=False,
-                                description=u"Optional note regarding this report"
-                        )
+            description=u"Optional note regarding this report",
+            required=False)
         short_name = schema.TextLine(title=u"Report Type",
-                                required=True,
-                                description=u"Report Type"
-                        )
+            description=u"Report Type",
+            required=True)
         body = schema.Text(title=u"Report Text",
-                                required=True,
-                                description=u"Report Type"
-                        )
-        sittings = schema.TextLine(
-                    title=_(u"Sittings included in this report"),
-                    description=_(u"Sittings included in this report"),
-                    required=False
-                               )
+            description=u"Report Type",
+            required=True)
+        sittings = schema.TextLine(title=_(u"Sittings included in this report"),
+            description=_(u"Sittings included in this report"),
+            required=False)
     template = namedtemplate.NamedTemplate("alchemist.form")
     form_fields = form.Fields(ISaveReportForm)
-
+    
     def setUpWidgets(self, ignore_request=False):
         class context:
             start_date = None
@@ -495,13 +493,16 @@ class SaveReportView(form.PageForm):
             note = None
             short_name = None
             sittings = None
-        self.adapters = {
-            self.ISaveReportForm: context
-            }
+        self.adapters = {self.ISaveReportForm: context}
         self.widgets = form.setUpEditWidgets(
-            self.form_fields, self.prefix, self.context, self.request,
-                    adapters=self.adapters, ignore_request=ignore_request)
-
+            self.form_fields, 
+            self.prefix, 
+            self.context, 
+            self.request,
+            adapters=self.adapters, 
+            ignore_request=ignore_request
+        )
+    
     @form.action(_(u"Save"), name="save")
     def handle_save(self, action, data):
         report = domain.Report()
@@ -511,7 +512,7 @@ class SaveReportView(form.PageForm):
         report.end_date = data["end_date"]
         report.note = data["note"]
         report.short_name = data["short_name"]
-        report.owner_id = get_db_user_id()
+        report.owner_id = get_db_user_id() # !+GROUP_AS_OWNER
         report.language = get_default_language()
         report.created_date = datetime.datetime.now()
         if not hasattr(self.context, "group_id"):
@@ -560,35 +561,30 @@ def default_reports(sitting, event):
         session = Session()
         report.start_date = sitting.start_date
         report.end_date = sitting.end_date
-        # owner ID is the ID of the user who performed last workflow change
-        for change in reversed(domain.get_changes(sitting, "workflow")):
-            owner_id = change.user_id
-            break
-        assert owner_id is not None, \
-            "No user is defined. Are you logged in as Admin?"
-        report.owner_id = owner_id
+        # !+GROUP_AS_OWNER(mr, apr-2012) we assume for now that the "owner" of
+        # the report is the currently logged in user.
+        report.owner_id = get_db_user_id()
         report.created_date = datetime.datetime.now()
         report.group_id = sitting.group_id
-
+        
         # generate using html template in bungeni_custom
         vocabulary = component.queryUtility(
             schema.interfaces.IVocabularyFactory, 
             "bungeni.vocabulary.ReportXHTMLTemplates"
         )
-        preview_template = filter(lambda t: t.title=="Weekly Business",
-            vocabulary.terms
+        preview_template = filter(
+            lambda t: t.title=="Weekly Business", vocabulary.terms
         )[0]
         doc_template = preview_template.value
         generator = generators.ReportGeneratorXHTML(doc_template)
         generator.context = report_context
         report.language = generator.language
-
-        if sitting.status == 'published_agenda':
+        
+        if sitting.status == "published_agenda":
             report.short_name = generator.title = _(u"Sitting Agenda")
-        elif sitting.status == 'published_minutes':
-            report.short_name = generator.title = _(
-                u"Sitting Votes and Proceedings"
-            )
+        elif sitting.status == "published_minutes":
+            report.short_name = generator.title = \
+                _(u"Sitting Votes and Proceedings")
         report.body = generator.generateReport()
         session.add(report)
         session.flush()
