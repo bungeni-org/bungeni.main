@@ -457,15 +457,6 @@ class ItemScheduleDiscussionDescriptiveProperties(DescriptiveProperties):
 
 
 @register.adapter()
-class SittingTypeDescriptiveProperties(DescriptiveProperties):
-    component.adapts(interfaces.ISittingType)
-
-    @property
-    def title(self):
-        return self.translate(self.context, "sitting_type")
-
-
-@register.adapter()
 class ChangeDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IChange)
     

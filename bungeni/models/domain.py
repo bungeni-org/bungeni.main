@@ -464,11 +464,6 @@ class Sitting(Entity):
     sreports = one2many("sreports",
         "bungeni.models.domain.Report4SittingContainer", "sitting_id")
 
-class SittingType(object):
-    """Type of sitting: morning/afternoon/...
-    """
-    interface.implements(interfaces.ITranslatable)
-
 class SittingAttendance(object):
     """A record of attendance at a meeting .
     """

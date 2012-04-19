@@ -437,7 +437,6 @@ mapper(domain.ParliamentSession, schema.parliament_sessions)
 
 mapper(domain.Sitting, schema.sitting,
     properties={
-        "sitting_type": relation(domain.SittingType, uselist=False),
         "group": relation(domain.Group,
             primaryjoin=schema.sitting.c.group_id == schema.groups.c.group_id,
             uselist=False,
@@ -798,7 +797,6 @@ mapper(domain.ConstituencyDetail, schema.constituency_details,
         ),
     }
 )
-mapper(domain.SittingType, schema.sitting_types)
 
 mapper(domain.SittingAttendance, schema.sitting_attendance,
     properties={

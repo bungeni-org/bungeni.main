@@ -789,9 +789,6 @@ sitting = rdb.Table("sitting", metadata,
     rdb.Column("short_name", rdb.Unicode(512)), #!+ACRONYM
     rdb.Column("start_date", rdb.DateTime(timezone=False), nullable=False),
     rdb.Column("end_date", rdb.DateTime(timezone=False), nullable=False),
-    rdb.Column("sitting_type_id", rdb.Integer,
-        rdb.ForeignKey("sitting_types.sitting_type_id")
-    ),
     # if a sitting is recurring this is the id of the original sitting
     # there is no foreign key to the original sitting
     # like rdb.ForeignKey("sitting.sitting_id")
@@ -811,14 +808,6 @@ sitting = rdb.Table("sitting", metadata,
     rdb.Column("convocation_type", rdb.Unicode(1024)),
 )
 
-
-sitting_types = rdb.Table("sitting_types", metadata,
-    rdb.Column("sitting_type_id", rdb.Integer, primary_key=True),
-    rdb.Column("sitting_type", rdb.Unicode(40)),
-    rdb.Column("start_time", rdb.Time, nullable=False),
-    rdb.Column("end_time", rdb.Time, nullable=False),
-    rdb.Column("language", rdb.String(5), nullable=False),
-)
 
 sitting_attendance = rdb.Table("sitting_attendance", metadata,
     rdb.Column("sitting_id", rdb.Integer,

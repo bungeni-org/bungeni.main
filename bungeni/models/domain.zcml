@@ -634,7 +634,6 @@
                 short_name
                 short_date
                 end_date
-                sitting_type_id
                 recurring_id
                 status
                 status_date
@@ -652,7 +651,6 @@
                 short_name
                 short_date
                 end_date
-                sitting_type_id
                 recurring_id
                 status
                 status_date

@@ -761,7 +761,7 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
             context, request, view, manager)
         self.query = None
         self.Date = datetime.date.today() # !+ self.today
-        self.type_query = Session().query(domain.SittingType)
+        self.type_query = Session().query(domain.SittingType) # !+SITTING_VOCABULARIES_XML
 
     def _getDisplayDate(self, request):
         display_date = date.getDisplayDate(self.request)
@@ -845,13 +845,15 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
     def _get_items(self):
         """Return the data of the query.
         """
-        sit_types = {}
+        # !+SITTING_VOCABULARIES_XML
+        sit_types = {} 
         type_results = self.type_query.all()
         #Sitting type is commented out below because it is not set during
         #creation of a sitting but is left here because it may be used in the
         #future related to r7243
         #for sit_type in type_results:
         #    sit_types[sit_type.sitting_type_id] = sit_type.sitting_type
+        # !+/SITTING_VOCABULARIES_XML
         data_list = []
         path = "/calendar/group/sittings/"
         formatter = self.get_date_formatter("time", "short")
@@ -869,13 +871,11 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
             data["end_time"] = result.end_date.time()
             data["day"] = result.start_date.date()
             data["url"] = (path + "obj-" + str(result.sitting_id))
-            data["did"] = ("dlid_" +
-                datetime.datetime.strftime(result.start_date, "%Y-%m-%d")
-                # +"_stid_" + str(result.sitting_type)
-            )
+            data["did"] = "dlid_%s" % (
+                datetime.datetime.strftime(result.start_date, "%Y-%m-%d"))
             data_list.append(data)
         return data_list
-
+    
     def getTdId(self, date):
         """
         return an Id for that td element:
@@ -883,7 +883,7 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
         like tdid-2008-01-17
         """
         return "tdid-" + datetime.date.strftime(date, "%Y-%m-%d")
-
+    
     def getDayClass(self, Date):
         """Return the class settings for that calendar day.
         """

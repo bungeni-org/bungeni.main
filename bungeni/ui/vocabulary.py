@@ -2,9 +2,10 @@
 # Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
 # Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
-"""Vocabulary definitions
-"""
+"""UI Vocabulary handling.
 
+$Id$
+"""
 log = __import__("logging").getLogger("bungeni.ui.vocabulary")
 
 import os
@@ -351,30 +352,6 @@ class Venues(object):
 
 venues_factory = Venues()
 
-class SittingTypes(SpecializedSource):
-    #domain.SittingType, "sitting_type", "sitting_type_id",
-    #title_getter=lambda ob: "%s (%s-%s)" % (
-    #    ob.sitting_type.capitalize(), ob.start_time, ob.end_time))
-
-    def constructQuery(self, context):
-        session= Session()
-        return session.query(domain.SittingType)
-
-    def __call__(self, context=None):
-        query = self.constructQuery(context)
-        results = query.all()
-        terms = []
-        for ob in results:
-            obj = translate_obj(ob)
-            terms.append(vocabulary.SimpleTerm(
-                    value = obj.sitting_type_id, 
-                    token = obj.sitting_type,
-                    title = "%s (%s-%s)" % (
-                        obj.sitting_type, 
-                        obj.start_time, 
-                        obj.end_time),
-                ))
-        return vocabulary.SimpleVocabulary(terms)
 
 class TitleTypes(SpecializedSource):
     def __init__(self):
@@ -404,14 +381,6 @@ class TitleTypes(SpecializedSource):
 
 
         
-#XXX
-#SittingTypeOnly = DatabaseSource(
-#    domain.SittingType, 
-#    title_field="sitting_type",
-#    token_field="sitting_type_id",
-#    value_field="sitting_type_id")
-
-
 class MemberOfParliament(object):
     """ Member of Parliament = user join group membership join parliament"""
     
@@ -1139,6 +1108,8 @@ subject_terms_vocabulary = BaseVDEXVocabulary("subject-terms.vdex")
 #
 # Sitting flat VDEX based vocabularies
 #
+# !+SITTING_VOCABULARIES_XML(mr, apr-2012) term identifiers (what is stored in db)
+# should follow convention i.e. lowercase, no spaces, underscore-separated words!
 sitting_activity_types = FlatVDEXVocabulary("sitting-activity-types.vdex")
 sitting_meeting_types = FlatVDEXVocabulary("sitting-meeting-types.vdex")
 sitting_convocation_types = FlatVDEXVocabulary("sitting-convocation-types.vdex")

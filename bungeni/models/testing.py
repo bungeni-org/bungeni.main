@@ -64,6 +64,9 @@ def setup_db():
     security.metadata.create_all()
     return db
 
+# !+SITTING_VOCABULARIES_XML (mr, apr-2012) whoever added the vdex vocabs that 
+# obsoleted this should update this, and enhancing it for added sitting columns 
+# activity_type  | meeting_type | convocation_type !! Tests broken...
 def create_sitting(group_id=1, language="en"):
     """Sitting to schedule content."""
     
@@ -76,7 +79,7 @@ def create_sitting(group_id=1, language="en"):
     st.language = language
     session.add(st)
     session.flush()
-
+    
     sitting = domain.Sitting()
     sitting.start_date = datetime.datetime.now()
     sitting.end_date = datetime.datetime.now()

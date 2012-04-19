@@ -194,9 +194,6 @@ class ISitting(interface.Interface):
 class ISittingAttendance(interface.Interface):
     pass
     
-class ISittingType(interface.Interface):
-    pass
-
 class IItemSchedule(interface.Interface):
     pass
 

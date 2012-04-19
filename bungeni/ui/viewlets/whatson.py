@@ -105,8 +105,7 @@ class WhatsOnBrowserView(BrowserView):
         session = Session()
         query = session.query(domain.Sitting).filter(self.sitting_filter
             ).order_by(schema.sitting.c.start_date).options(
-                eagerload("group"), 
-                #eagerload("sitting_type"),
+                eagerload("group"),
                 eagerload("item_schedule")
             )
         if not self.end_date:

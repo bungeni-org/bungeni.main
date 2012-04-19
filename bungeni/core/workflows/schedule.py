@@ -16,7 +16,7 @@ def handle_schedule(object, event):
     session = Session()
     s = removeSecurityProxy(object)
     sitting = session.query(domain.Sitting
-        ).options(eagerload("sitting_type"), eagerload("item_schedule")
+        ).options(eagerload("item_schedule")
         ).get(s.sitting_id)
     schedulings = map(removeSecurityProxy, sitting.item_schedule)
     if sitting.status == "draft_agenda":

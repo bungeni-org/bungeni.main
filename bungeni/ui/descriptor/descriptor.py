@@ -2911,24 +2911,6 @@ class SittingDescriptor(ModelDescriptor):
             property=schema.TextLine(title=_(u"Name of activity")),
         ),
         LanguageField("language"),
-        #Sitting type is commented out below because it is not set during
-        #creation of a sitting but is left here because it may be used in the
-        #future related to r7243
-
-        #Field(name="sitting_type_id",
-        #    modes="view edit add listing",
-        #    listing_column=enumeration_column("sitting_type_id",
-        #        _("Sitting Type"),
-        #        item_reference_attr="sitting_type"
-        #    ),
-        #    property=schema.Choice(title=_("Sitting Type"),
-        #        source=vocabulary.SittingTypes(
-        #            token_field="sitting_type_id",
-        #            title_field="sitting_type",
-        #            value_field="sitting_type_id"
-        #        ),
-        #    ),
-        #),
         Field(name="start_date", # [user-req]
             modes="view add listing",
             localizable=[
@@ -3018,12 +3000,6 @@ class SittingDescriptor(ModelDescriptor):
         validations.validate_venues,
         #validations.validate_non_overlapping_sitting
     ]
-
-
-class SittingTypeDescriptor(ModelDescriptor):
-    localizable = False
-    display_name = _("Type")
-    container_name = _("Types")
 
 
 class SessionDescriptor(ModelDescriptor):
