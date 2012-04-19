@@ -82,18 +82,21 @@ function event_save_handler(id, data, is_new_event){
     var error_messages = new Array();
     //#!I18N(mb, oct-2011) Enable proper I18N of error messages
     if ((data.venue=="") || (data.venue==undefined)){
-        error_messages.push("Venue : Select a venue");
+        error_messages.push(calendar_globals.venue_required);
     }
     if ((data.language=="") || (data.language==undefined)){
-        error_messages.push("Language : Select a language");
+        error_messages.push(calendar_globals.language_required);
+    }
+    if ((data.language=="") || (data.language==undefined)){
+        error_messages.push(calendar_globals.language_required);
     }
     if (error_messages.length > 0){
         html_errors = $("<ul style='text-align:justify;margin:5px;'/>");
-        html_errors.append("<h2>Make Corrections</h2>");
+        html_errors.append("<h2>" + calendar_globals.errors_title + "</h2>");
         for (error_key in error_messages){
             html_errors.append("<li>" + error_messages[error_key] + "</li>");
         }
-        html_errors.append('<input type="button" value="Okay" onclick="javascript:$.unblockUI();"/>');
+        html_errors.append('<input type="button" value="' + calendar_globals.message_okay + '" onclick="javascript:$.unblockUI();"/>');
         html_errors.wrap("<div/>");
         $.blockUI({
             message: html_errors.html(),
@@ -110,7 +113,5 @@ function event_save_handler(id, data, is_new_event){
 }
 
 function event_collission_handler(ev, evs){
-    return !confirm(
-        "This timeslot already has another event.\n Do you want to continue?"
-    );
+    return !confirm(calendar_globals.error_collission);
 }

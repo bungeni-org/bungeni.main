@@ -581,10 +581,11 @@ def default_reports(sitting, event):
         report.language = generator.language
         
         if sitting.status == "published_agenda":
-            report.short_name = generator.title = _(u"Sitting Agenda")
+            report.short_title = generator.title = _(u"Sitting Agenda")
         elif sitting.status == "published_minutes":
-            report.short_name = generator.title = \
-                _(u"Sitting Votes and Proceedings")
+            report.short_title = generator.title = _(u"Sitting Votes and "
+                u" Proceedings"
+            )
         report.body = generator.generateReport()
         session.add(report)
         session.flush()

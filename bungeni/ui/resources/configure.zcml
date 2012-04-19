@@ -85,6 +85,13 @@
       factory="bungeni.ui.resources.dynamic.DynamicDirectoryFactory"
     />
   </resourceLibrary>
+  <resourceLibrary name="bungeni-calendar-globals">
+    <directory
+      source="calendar"
+      include="calendar-globals.js"
+      factory="bungeni.ui.resources.dynamic.DynamicDirectoryFactory"
+    />
+  </resourceLibrary>
   <resourceLibrary name="bungeni-schedule-config" require="scheduler-globals yui-core yui-datatable yui-selector">
     <directory source="calendar" 
         include="schedule-config.js"

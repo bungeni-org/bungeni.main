@@ -9,7 +9,8 @@ from bungeni.core.translation import (translate_i18n as i18n,
 from bungeni.ui.calendar import data
 
 RESOURCE_MAPPING = {
-    "scheduler-globals.js": "scheduler_globals"
+    "scheduler-globals.js": "scheduler_globals",
+    "calendar-globals.js": "calendar_globals"
 }
 
 ## some global strings to i18n ##
@@ -179,6 +180,21 @@ def get_globals(group_name, **kwargs):
             "minutes_loading_error": i18n(_(u"unable to load minutes..."),
                 language
             )
+        },
+        "CALENDAR_GLOBALS" : {
+            "unsaved_event": i18n(_(u"This event is unsaved. " 
+                "Edit to make any corrections and then save it"), language
+            ),
+            "errors_title": i18n(_(u"Make Corrections"), language),
+            "venue_required": i18n(_(u"Venue : Select a venue"), language),
+            "language_required": i18n(_(u"Language : Select a language"), 
+                language
+            ),
+            "error_collission": i18n(_(u"This timeslot already has another " 
+                    u"event.\n Do you want to continue?"
+                ), language
+            ),
+            "message_okay": i18n(OKAY, language),
         }
     }
     return globals_map.get(group_name, {})
@@ -212,5 +228,10 @@ class DynamicDirectoryFactory(object):
     def scheduler_globals(self):
         return """var scheduler_globals = %s;""" % json.dumps(
             get_globals("SCHEDULER_GLOBALS", language=self.request_language)
+        )
+
+    def calendar_globals(self):
+        return """var calendar_globals = %s;""" % json.dumps(
+            get_globals("CALENDAR_GLOBALS", language=self.request_language)
         )
 

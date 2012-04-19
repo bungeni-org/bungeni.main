@@ -328,6 +328,7 @@ class CalendarView(BungeniBrowserView):
         need("dhtmlxscheduler-year-view")
         need("dhtmlxscheduler-week-agenda-view")
         need("dhtmlxscheduler-expand")
+        need("bungeni-calendar-globals")
         need("bungeni-calendar-extensions")
         need("dhtmlxscheduler-timeline")
         need("dhtmlxscheduler-tooltip")

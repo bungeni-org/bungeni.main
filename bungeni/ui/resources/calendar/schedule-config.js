@@ -376,6 +376,7 @@ YAHOO.bungeni.config = function(){
                  var title_parts = [
                     rec_data[Columns.TITLE],
                     rec_data[Columns.REGISTRY_NO],
+                    rec_data[Columns.STATUS],
                     rec_data[Columns.MOVER],
                     rec_data[Columns.STATUS_DATE]
                  ];
