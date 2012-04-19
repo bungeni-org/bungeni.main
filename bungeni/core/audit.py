@@ -46,7 +46,7 @@ from zope.annotation.interfaces import IAnnotations
 from zope.security.proxy import removeSecurityProxy
 from zope import lifecycleevent
 
-from sqlalchemy import orm
+import sqlalchemy as rdb
 from bungeni.alchemist import Session
 from bungeni.alchemist.interfaces import IRelationChange
 
@@ -456,15 +456,42 @@ class _AuditorFactory(object):
     #
     
     def _get_seq(self, ch):
-        """determine and return a next seq number for this (head, action)
+        """Determine and return a next seq number for this (head, action).
         """
+        ''' !+ALTERNATE_QUERY_CHANGE_SEQ_MAX, a little faster than head.changes?
+        from time import time
+        t0 = time() # via query using rdb.func.max
+        head_id_column_name = ch.audit.head_id_column_name
+        audit_tbl = rdb.orm.object_mapper(ch.audit).local_table
+        max_seq_alt = Session().query(rdb.func.max(domain.Change.seq)
+            ).join(
+                (audit_tbl, domain.Change.audit_id == audit_tbl.c.audit_id)
+            ).filter(
+                rdb.sql.expression.and_(
+                    domain.Change.action == ch.action,
+                    audit_tbl.c[head_id_column_name] == 
+                        getattr(ch.audit, head_id_column_name)
+                )).scalar() or 0
+        t1 = time() # via head.changes
+        '''
         head = ch.audit.audit_head # ch.head
         seqs_for_action_to_date = [ c.seq for c in head.changes 
             if c.action == ch.action and c.seq is not None] or [0]
-        return 1 + max(seqs_for_action_to_date)
+        max_seq = max(seqs_for_action_to_date)
+        ''' !+ALTERNATE_QUERY_CHANGE_SEQ_MAX
+        t2 = time()
+        print "TIME to determine CHANGE SEQ MAX for (%s=%s, %s)" % (
+            head_id_column_name, getattr(ch.audit, head_id_column_name), ch.action)
+        print "    via RDB.FUNC.MAX = %s" % (t1 - t0)
+        print "    via HEAD.CHANGES = %s" % (t2 - t1)
+        assert max_seq == max_seq_alt, \
+            "Results form alternate ways to get seq are different: %s, %s" % (
+                max_seq_alt, max_seq)
+        '''
+        return max_seq + 1
     
     def _getKey(self, ob):
-        mapper = orm.object_mapper(ob)
+        mapper = rdb.orm.object_mapper(ob)
         primary_key = mapper.primary_key_from_instance(ob)[0]
         return primary_key, unicode(ob.__class__.__name__)
     
