@@ -1314,8 +1314,8 @@
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IPoliticalGroup"
-        action="Edit political party"
-        title="Edit"
+        action="edit"
+        title="Edit political group"
         order="10"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.party.Edit"
