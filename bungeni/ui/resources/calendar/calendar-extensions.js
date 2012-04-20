@@ -79,6 +79,7 @@ function handle_before_change_view(old_mode, old_date, new_mode , new_date){
  *  will be closed.
  */
 function event_save_handler(id, data, is_new_event){
+    delete scheduler._dataprocessor._in_progress[id];
     var error_messages = new Array();
     //#!I18N(mb, apr-2012) Bind validation to zope form
     if ((data.venue=="") || (data.venue==undefined)){
@@ -106,6 +107,9 @@ function event_save_handler(id, data, is_new_event){
         });
         return false;
     }
+    event = scheduler.getEvent(id)
+    event.color="";
+    scheduler.updateEvent(id);
     return  true;
 }
 

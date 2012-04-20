@@ -18,7 +18,7 @@ class IDhtmlxCalendarSittingsEditForm(zope.interface.Interface):
         required=False
     )
     short_name = zope.schema.TextLine(title=u"Name of Activity",
-        description=u"Name of Activity"
+        description=u"Name of Activity", required=False
     )
     start_date = zope.schema.Datetime(
         title=_(u"Start date and time of sitting"),

@@ -123,6 +123,7 @@
                         var status = event["!nativeeditor_status"];
                         if (status && (status!="")){
                             event.color="red";
+                            scheduler.updateEvent(event_id);
                             $.blockUI({
                                 message: calendar_globals.unsaved_event,
                                 timeout: 2000,
