@@ -501,7 +501,7 @@ class Parliament(Group):
         "bungeni.models.domain.QuestionContainer", "parliament_id")
     motions = one2many("motions",
         "bungeni.models.domain.MotionContainer", "parliament_id")
-    sittings = one2many("sitting",
+    sittings = one2many("sittings",
         "bungeni.models.domain.SittingContainer", "group_id")
     agendaitems = one2many("agendaitems",
         "bungeni.models.domain.AgendaItemContainer", "group_id")
@@ -588,7 +588,7 @@ class Committee(Group):
         "bungeni.models.domain.CommitteeStaffContainer", "group_id")
     agendaitems = one2many("agendaitems",
         "bungeni.models.domain.AgendaItemContainer", "group_id")
-    sittings = one2many("sitting",
+    sittings = one2many("sittings",
         "bungeni.models.domain.SittingContainer", "group_id")
     title_types = one2many("title_types",
         "bungeni.models.domain.TitleTypeContainer", "group_id")

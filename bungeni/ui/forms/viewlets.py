@@ -37,60 +37,9 @@ from bungeni.ui.utils import common, url, misc, date
 from fields import BungeniAttributeDisplay
 from interfaces import (ISubFormViewletManager,
                         ISubformRssSubscriptionViewletManager)
-from bungeni.ui.interfaces import IBungeniAuthenticatedSkin, IAdminSectionLayer
+from bungeni.ui.interfaces import IBungeniAuthenticatedSkin
 from bungeni.utils import register
 
-
-''' XXX-INFO-FOR-PLONE - MR - 2010-05-03
-class GroupIdViewlet(browser.BungeniViewlet):
-    """ display the group and parent group
-    principal id """
-    parent_group_principal_id = None
-    my_group_principal_id = None
-    
-    def __init__(self,  context, request, view, manager):
-        self.context = context
-        self.request = request
-        self.__parent__= context
-        self.manager = manager
-        
-    def update(self):
-        session = Session()
-        trusted = removeSecurityProxy(self.context)
-        if interfaces.IParliament.providedBy(trusted):
-            self.parent_group_principal_id = trusted.group_principal_id
-        else:
-            self.parent_group_principal_id = getattr(
-                trusted.parent_group, 'group_principal_id', "")
-        self.my_group_principal_id = trusted.group_principal_id
-        #session.close()
-        
-    render = ViewPageTemplateFile('templates/group_id.pt')
-'''
-''' XXX-INFO-FOR-PLONE - MR - 2010-05-03
-class UserIdViewlet(browser.BungeniViewlet):
-    """ display the users
-    principal id """
-    principal_id = None
-    
-    def __init__(self,  context, request, view, manager):
-
-        self.context = context
-        self.request = request
-        self.__parent__= context
-        self.manager = manager
-        
-    def update(self):
-        session = Session()
-        trusted = removeSecurityProxy(self.context)
-        session.merge(trusted)
-        try:
-            self.principal_id = trusted.user.login
-        except:
-            pass
-        
-    render = ViewPageTemplateFile('templates/user_id.pt')
-'''
 
 def load_formatted_container_items(container, out_format={}, extra_params={}):
     """Load container items and return as a list of formatted dictionary
@@ -117,7 +66,7 @@ def load_formatted_container_items(container, out_format={}, extra_params={}):
 
 # !+SubformViewlet(mr, oct-2010) in this usage case this this should really
 # be made to inherit from browser.BungeniViewlet (but, note that
-# table.AjaxContainerListing already inherits from BungeniBrowserView). 
+# table.AjaxContainerListing already inherits from BungeniBrowserView).
 
 
 @register.viewlet_manager(name="bungeni.subform.manager")
@@ -125,10 +74,10 @@ class SubFormViewletManager(manager.WeightOrderedViewletManager):
     """Display subforms.
     """
     interface.implements(ISubFormViewletManager)
-    
+
     def filter(self, viewlets):
         viewlets = super(SubFormViewletManager, self).filter(viewlets)
-        return [ 
+        return [
             (name, viewlet) for name, viewlet in viewlets
             if viewlet.for_display ]
 
@@ -238,7 +187,11 @@ class CommitteesViewlet(SubformViewlet):
 
 class CommitteeStaffViewlet(SubformViewlet):
     sub_attr_name = "committeestaff"
-    
+
+class CommitteeMembersViewlet(SubformViewlet):
+    sub_attr_name = "committeemembers"
+
+
 @register.viewlet(interfaces.IMemberOfParliament, 
     manager=ISubFormViewletManager, name="keep-zca-happy-addresses")
 @register.viewlet(interfaces.IBungeniGroup, 
@@ -259,6 +212,11 @@ class PartyMemberViewlet(SubformViewlet):
 class OfficeMembersViewlet(SubformViewlet):
     sub_attr_name = "officemembers"
 
+class PoliticalGroupMembersViewlet(SubformViewlet):
+    sub_attr_name = "partymembers"
+
+class SittingsViewlet(SubformViewlet):
+    sub_attr_name = "sittings"
 
 # BungeniAttributeDisplay
 # !+BungeniViewlet(mr) make these inherit from browser.BungeniViewlet
@@ -290,46 +248,6 @@ class PersonInfo(BungeniAttributeDisplay):
         self.context.__parent__ = parent
         super(PersonInfo, self).update()
 
-
-'''
-class ParliamentMembershipInfo(BungeniAttributeDisplay):
-    """ for a given user get his last parliament 
-    membership.
-    """
-    for_display = True
-    mode = "view"
-    form_name = _(u"Parliament Membership")
-    
-    def __init__(self, context, request, view, manager):
-        self.context = context
-        self.request = request
-        self.__parent__ = context.__parent__
-        self.manager = manager
-        self.query = None
-        md = queryModelDescriptor(domain.MemberOfParliament)
-        self.form_fields = md.fields
-        trusted = removeSecurityProxy(self.context)
-        user_id = self.context.user_id
-        parliament_id = trusted.group.parent_group_id
-        self.query = Session().query(domain.MemberOfParliament).filter(
-            sql.and_(
-                domain.MemberOfParliament.user_id == user_id,
-                domain.MemberOfParliament.group_id == parliament_id)
-            ).order_by(
-                domain.MemberOfParliament.start_date.desc()
-            )
-        self.for_display = self.query.count() > 0
-    
-    def update(self):
-        parent = self.context.__parent__
-        try:
-            self.context = self.query.all()[0]
-        except IndexError:
-            self.context = None
-            return
-        self.context.__parent__ = parent
-        super(ParliamentMembershipInfo, self).update()
-'''
 
 @register.viewlet(interfaces.IBungeniContent, #!+IBungeniParliamentaryContent?
     layer=IBungeniAuthenticatedSkin, 
@@ -377,52 +295,6 @@ class DocMinutesViewlet(BungeniAttributeDisplay):
         super(DocMinutesViewlet, self).update()
 
 
-'''
-class ResponseViewlet(BungeniAttributeDisplay):
-    """Response to question.
-    """
-    mode = "view"
-    for_display = True
-    
-    form_name = _(u"Response")
-    
-    add_action = form.Actions(
-        form.Action(_(u"Add response"), success="handle_response_add_action"),
-    )
-    
-    def __init__(self, context, request, view, manager):
-        self.context = context
-        self.request = request
-        self.__parent__ = view
-        self.manager = manager
-        self.query = None
-        md = queryModelDescriptor(domain.Response)
-        self.form_fields = md.fields
-        self.add_url = "%s/responses/add" % url.absoluteURL(
-            self.context, self.request)
-    
-    def handle_response_add_action(self, action, data):
-        self.request.response.redirect(self.add_url)
-    
-    def update(self):
-        context = self.context
-        responses = context.responses
-        if len(responses):
-            self.context = tuple(responses.values())[0]
-            self.has_data = True
-        else:
-            self.context = domain.Response()
-            self.has_data = False
-        super(ResponseViewlet, self).update()
-    
-    def setupActions(self):
-        if self.has_data:
-            super(ResponseViewlet, self).setupActions()
-        else:
-            self.actions = self.add_action.actions
-'''
-
-
 class WrittenQuestionResponseViewlet(browser.BungeniViewlet):
 
     mode = "view"
@@ -441,121 +313,6 @@ class WrittenQuestionResponseViewlet(browser.BungeniViewlet):
         else:
             if self.question.response_text in (None, ""):
                 self.for_display = False
-
-class GroupMembersViewlet(browser.BungeniItemsViewlet):
-
-    render = ViewPageTemplateFile("templates/group-members.pt")
-
-    def build_member_url(self, member):
-        return url.absoluteURL(member, self.request)
-
-    def _get_members(self):
-        """Get the list of members of the context group.
-        """
-        raise NotImplementedError("Must be implemented by subclass.")
-
-    def update(self):
-        group_members = self._get_members()
-        formatter = self.get_date_formatter("date", "long")
-        self.items = [{
-                "fullname": m.user.fullname,
-                "url": self.build_member_url(m),
-                "start_date":
-                    m.start_date and formatter.format(m.start_date) or None,
-                "end_date":
-                    m.end_date and formatter.format(m.end_date) or None
-            }
-            for m in group_members
-        ]
-
-class CommitteeMembersViewlet(GroupMembersViewlet):
-        
-    def _get_members(self):
-        trusted = removeSecurityProxy(self.context)
-        return list(trusted.committeemembers.values())
-
-class PoliticalGroupMembersViewlet(GroupMembersViewlet):
-
-    @property
-    def members_container_url(self):
-        # !+traversal(murithi, mar-2010) ideally no urls should be
-        # hardcoded here. absoluteURL should work for memberships or
-        # members of groups [ to improve on getting urls of children ]
-        if IAdminSectionLayer.providedBy(self.request):
-            trusted = removeSecurityProxy(self.context)
-            m_container = trusted.__parent__.__parent__.parliamentmembers
-            return url.absoluteURL(m_container, self.request)
-        return "/members/current"
-
-    def build_member_url(self, member):
-        if IAdminSectionLayer.providedBy(self.request):
-            return super(PoliticalGroupMembersViewlet, self).build_member_url(
-                member
-            )
-        session = Session()
-        mpkls = domain.MemberOfParliament
-        member_url = "%s/obj-%d/" % (self.members_container_url, 
-            session.query(mpkls).filter(mpkls.user_id == member.user_id).one(
-            ).membership_id
-        )
-        return member_url
-
-    def _get_members(self):
-        trusted = removeSecurityProxy(self.context)
-        return list(trusted.partymembers.values())
-
-class SittingsViewlet(browser.BungeniItemsViewlet):
-    """Display the sittings of a group. 
-    
-    Note 1: to be able to customize the URL for each sitting, this custom 
-    viewlet replaces the previous model-introspected container listing:
-        class SittingsViewlet(SubformViewlet):
-            sub_attr_name = "sittings"
-    so replacing a url of the form: 
-            .../committees/obj-59/sittings/obj-17/
-    with:   /business/sittings/obj-17
-    
-    Note 2: this viewlet should probably be merged or better share the 
-    implementation at: ui.workspace.DraftSittingsViewlet
-    
-    !+CustomListingURL(mr, oct-2010) an alternative way to do this is to 
-    essentially stuff all the logic below into a custom column_listing to be 
-    used when listing the column -- for an example of this see how the 
-    listing of the column "owner_id" (moved by) is configured in:
-    descriptor.DocumentDescriptor
-    
-    !+ManagedContainer(mr, oct-2010) this would have been a lot simpler if
-    the Group.sittings attribute was simply returning the list of sitting
-    objects.
-    """
-
-    render = ViewPageTemplateFile("templates/group-sittings-viewlet.pt")
-
-    def _get_items(self):
-        def _format_from_to(item):
-            start = item.start_date
-            if start:
-                start = dt_formatter.format(start)
-            end = item.end_date
-            if end:
-                end = t_formatter.format(end)
-            return u"%s - %s" % (start, end)
-        dt_formatter = self.get_date_formatter("dateTime", "medium")
-        t_formatter = self.get_date_formatter("time", "medium")
-        def _format_venue(item):
-            return item.venue and _(item.venue.short_name) or ""
-        #
-        trusted_context = removeSecurityProxy(self.context)
-        sittings = Session().query(domain.Sitting
-            ).filter(domain.Sitting.group == trusted_context
-            ).order_by(domain.Sitting.start_date.desc())
-        return [{"url": "/business/sittings/obj-%s" % (item.sitting_id),
-                 "date_from_to": _format_from_to(item),
-                 "venue": _format_venue(item)
-                } for item in sittings ]
-
-    def update(self):
-        self.items = self._get_items()
 
 
 class OfficesHeldViewlet(browser.BungeniItemsViewlet):
