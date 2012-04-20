@@ -65,10 +65,7 @@ workflow_vocabulary_factory = WorkflowVocabulary()
 
 
 def _label(change):
-    try:
-        return translate(change.audit.label)
-    except AttributeError:
-        return translate(change.description)
+    translate(change.audit.label)
 
 class WorkflowHistoryViewlet(viewlet.ViewletBase):
     """Show the current workflow state and the workflow-history.

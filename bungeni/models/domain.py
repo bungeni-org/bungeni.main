@@ -176,42 +176,62 @@ class ItemVersions(HeadParentedMixin, Entity):
 # Note: in a simplified one-generic-document-type world, these can be 
 # simplified even further. 
 
+def CREATE_AUDIT_CLASS_FOR(cls):
+    return cls in CREATE_AUDIT_CLASS_FOR.classes
+CREATE_AUDIT_CLASS_FOR.classes = []
+
+'''
 def DOCUMENT_configurable_domain(kls, workflow):
     assert kls.__dynamic_features__, \
         "Class [%s] does not allow dynamic features" % (kls)
-    # support classes do not need further dynamic setup
-    DYNAMIC_SETUP = issubclass(kls, Doc) # !+
-    # !+DYNAMIC_SETUP only setup dynamically what may only be set up dynamically
     if workflow.has_feature("audit"):
         # !+auditable(kls)
-        interface.classImplements(kls, interfaces.IAuditable)
         CUSTOM_DECORATED["auditable"].add(kls)
-        if DYNAMIC_SETUP:
+        interface.classImplements(kls, interfaces.IAuditable)
+        
+        # If a domain class is explicitly defined, then it is assumed that all 
+        # necessary setup is also taken care of. Typically, only the sub-classes
+        # of an archetype (mapped to a same table) need dynamic creation/setup.
+        def audit_cls_exists_for(auditable_cls):
+            audit_cls_name = "%sAudit" % (auditable_cls.__name__)
+            return bool(globals().get(audit_cls_name))
+        if not audit_cls_exists_for(kls):
+            CREATE_AUDIT_CLASS_FOR.classes.append(kls)
+        
+        if CREATE_AUDIT_CLASS_FOR(kls):
             # define {kls}Audit class
             def base_audit_class(kls):
-                """Identify what should be the BASE audit class (for a {kls}Audit class to 
-                inherit from, and return it.
+                """Identify what should be the BASE audit class for a 
+                {kls}Audit class to inherit from, and return it.
                 """
                 # !+ may have a deeper inheritance
+                # !+ other achetypes
                 if kls is not Doc and issubclass(kls, Doc):
                     return DocAudit
                 return Audit
             audit_kls = base_audit_class(kls).auditFactory(kls)
             globals()[audit_kls.__name__] = audit_kls
+    
     if workflow.has_feature("version"):
+        CUSTOM_DECORATED["versionable"].add(kls)
         assert workflow.has_feature("audit")
         # assign interface (versions property added downstream)
         name = kls.__name__
         interface.classImplements(kls, interfaces.IVersionable)
         interface.classImplements(kls, interfaces.IDocVersionable) #!+
-        CUSTOM_DECORATED["versionable"].add(kls)
+    
     if workflow.has_feature("attachment"):
-        if DYNAMIC_SETUP:
+        CUSTOM_DECORATED["enable_attachment"].add(kls)
+        if CREATE_AUDIT_CLASS_FOR(kls):
             kls = enable_attachment(kls)
+    
     if workflow.has_feature("schedule"):
-        if DYNAMIC_SETUP:
+        CUSTOM_DECORATED["enable_schedule"].add(kls)
+        if CREATE_AUDIT_CLASS_FOR(kls):
             kls = enable_schedule(kls)
     return kls
+'''
+
 def configurable_domain(kls, workflow):
     assert kls.__dynamic_features__, \
         "Class [%s] does not allow dynamic features" % (kls)
@@ -221,7 +241,6 @@ def configurable_domain(kls, workflow):
             kls = configurable_domain.feature_decorators[feature.name](kls)
     return kls
 configurable_domain.feature_decorators = {}
-
 
 # convenience, per decorator name, remember decorated types
 CUSTOM_DECORATED = {
@@ -238,14 +257,29 @@ def auditable(kls):
     
     Executed on adapters.load_workflow()
     """
-    # assign interface (changes property added downstream)
-    name = kls.__name__
-    interface.classImplements(kls, interfaces.IAuditable)
     CUSTOM_DECORATED["auditable"].add(kls)
-    # define TYPEChange class
-    change_name = "%sChange" % (name)
-    change_kls = ItemChanges.makeChangeFactory(change_name)
-    globals()[change_name] = change_kls
+    interface.classImplements(kls, interfaces.IAuditable)
+    # If a domain class is explicitly defined, then it is assumed that all 
+    # necessary setup is also taken care of. Typically, only the sub-classes
+    # of an archetype (mapped to a same table) need dynamic creation/setup.
+    def audit_cls_exists_for(auditable_cls):
+        audit_cls_name = "%sAudit" % (auditable_cls.__name__)
+        return bool(globals().get(audit_cls_name))
+    if not audit_cls_exists_for(kls):
+        CREATE_AUDIT_CLASS_FOR.classes.append(kls)
+    if CREATE_AUDIT_CLASS_FOR(kls):
+        # define {kls}Audit class
+        def base_audit_class(kls):
+            """Identify what should be the BASE audit class for a 
+            {kls}Audit class to inherit from, and return it.
+            """
+            # !+ may have a deeper inheritance
+            # !+ other achetypes
+            if kls is not Doc and issubclass(kls, Doc):
+                return DocAudit
+            return Audit
+        audit_kls = base_audit_class(kls).auditFactory(kls)
+        globals()[audit_kls.__name__] = audit_kls
     return kls
 configurable_domain.feature_decorators["audit"] = auditable
 
@@ -255,17 +289,13 @@ def versionable(kls):
     
     Executed on adapters.load_workflow()
     
-    Note: @versionable implies @auditable, here made explicit
+    Note: @versionable implies @auditable
     """
-    # if @versionable must also be @auditable:
-    kls = auditable(kls)
-    # assign interface (versions property added downstream)
-    name = kls.__name__
-    interface.classImplements(kls, interfaces.IVersionable)
     CUSTOM_DECORATED["versionable"].add(kls)
-    # define TYPEVersion class
-    version_name = "%sVersion" % (name)
-    globals()[version_name] = ItemVersions.makeVersionFactory(version_name)
+    assert interfaces.IAuditable.implementedBy(kls)
+    # assign interface (versions property added downstream)
+    interface.classImplements(kls, interfaces.IVersionable)
+    interface.classImplements(kls, interfaces.IDocVersionable) #!+
     return kls
 configurable_domain.feature_decorators["version"] = versionable
 
@@ -277,19 +307,16 @@ def enable_attachment(kls):
     !+ domain.Attachment is the only versionable type that is not a PI.
     """
     # !+ domain.Attachment is versionable, but does not support attachments
-    assert kls is not Attachment
-    # assign interface (versions property added downstream)
-    name = kls.__name__
-    interface.classImplements(kls, interfaces.IAttachmentable)
     CUSTOM_DECORATED["enable_attachment"].add(kls)
+    interface.classImplements(kls, interfaces.IAttachmentable)
     return kls
 configurable_domain.feature_decorators["attachment"] = enable_attachment
 
 def enable_schedule(kls):
     """Decorator for schedulable types
     """
-    interface.classImplements(kls, interfaces.ISchedulable)
     CUSTOM_DECORATED["enable_schedule"].add(kls)
+    interface.classImplements(kls, interfaces.ISchedulable)
     return kls
 configurable_domain.feature_decorators["schedule"] = enable_schedule
 
@@ -872,15 +899,18 @@ class Audit(HeadParentedMixin, Entity):
             return setattr(self, self.head_id_column_name, head_id)
         return locals()
     audit_head_id = property(**audit_head_id())
-
+    
+    # the label is used to for building display labels and/or descriptions of 
+    # an audit record, but each type names its "label" attribute differently...
+    label_attribute_name = "label"
+    @property
+    def label(self):
+        return getattr(self, self.label_attribute_name)
 
 class DocAudit(Audit):
     """An audit record for a document.
     """
-    @property
-    def label(self):
-        return self.short_title
-    
+    label_attribute_name = "short_title"
     extended_properties = [
     ]
 #instrument_extended_properties(DocAudit, "doc_audit")
@@ -1045,13 +1075,7 @@ class Attachment(HeadParentedMixin, Entity):
 class AttachmentAudit(Audit):
     """An audit record for an attachment.
     """
-    @property
-    def label(self):
-        return self.title
-    
-    # !+DOCUMENT
-    @property
-    def body(self): return self.description
+    label_attribute_name = "title"
 
 
 '''
@@ -1122,13 +1146,14 @@ class Heading(Entity):
     def status_date(self):
         return None
 
-
-
 # auditable (by default), but not a Doc
 class Signatory(Entity):
-    """Signatories for a Bill or Motion.
+    """Signatory for a Bill or Motion or other doc.
     """
-    interface.implements(interfaces.IBungeniContent)
+    interface.implements(
+        interfaces.IBungeniContent,
+        interfaces.IDocument, # !+IDoc?
+    )
     
     __dynamic_features__ = True
     
@@ -1140,6 +1165,18 @@ class Signatory(Entity):
     def owner(self):
         return self.user
 
+class SignatoryAudit(Audit):
+    """An audit record for a signatory.
+    """
+    label_attribute_name = None
+    @property
+    def label(self):
+        return self.user.fullname
+    description = label
+
+    @property
+    def user(self):
+        return self.audit_head.user
 
 #############
 

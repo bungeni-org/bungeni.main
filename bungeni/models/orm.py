@@ -26,7 +26,7 @@ def polymorphic_identity(cls):
 
 
 # !+PARAMETRIZABLE_DOCTYPES
-def DOCUMENT_configurable_mappings(kls):
+def configurable_mappings(kls):
     """Configuration mappings for declarative-model types.
     """
     name = kls.__name__
@@ -39,8 +39,7 @@ def DOCUMENT_configurable_mappings(kls):
         assert issubclass(base_audit_kls, domain.Audit), \
             "Audit class %s is not a proper subclass of %s" % (
                 audit_kls, domain.Audit)
-        DYNAMIC_SETUP = issubclass(kls, domain.Doc)
-        if DYNAMIC_SETUP:
+        if domain.CREATE_AUDIT_CLASS_FOR(kls):
             mapper(audit_kls,
                 inherits=base_audit_kls,
                 polymorphic_identity=polymorphic_identity(kls)
@@ -88,6 +87,7 @@ def DOCUMENT_configurable_mappings(kls):
             kls_mapper.add_property(key, prop)
     mapper_add_configurable_properties(kls)
 
+''' !+DEC
 def configurable_mappings(kls):
     """Add mappings, as per configured features for a domain type.
     
@@ -171,6 +171,7 @@ def configurable_mappings(kls):
             kls_mapper.add_property(key, prop)
     #
     mapper_add_configurable_properties(kls)
+'''
 
 # !+/PARAMETRIZABLE_DOCTYPES
 
@@ -769,11 +770,23 @@ mapper(domain.ItemScheduleDiscussion, schema.item_schedule_discussions,
 # items scheduled for a sitting
 # expressed as a join between item and schedule
 
-mapper(domain.Signatory, schema.signatories,
+mapper(domain.Signatory, schema.signatory,
     properties={
         "head": relation(domain.Doc, uselist=False),
         "user": relation(domain.User, uselist=False),
+        "audits": relation(domain.SignatoryAudit,
+            primaryjoin=rdb.and_(schema.signatory.c.signatory_id == 
+                schema.signatory_audit.c.signatory_id),
+            backref="audit_head",
+            uselist=True,
+            lazy=True,
+            order_by=schema.signatory_audit.c.signatory_id.desc(),
+        ),
     }
+)
+mapper(domain.SignatoryAudit, schema.signatory_audit,
+    inherits=domain.Audit,
+    polymorphic_identity=polymorphic_identity(domain.Signatory), # on head class
 )
 
 #!+TYPES_CUSTOM mapper(domain.BillType, schema.bill_types)

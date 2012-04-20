@@ -35,6 +35,7 @@ def un_camel(name):
 un_camel.first_cap_re = re.compile("(.)([A-Z][a-z]+)")
 un_camel.all_cap_re = re.compile("([a-z0-9])([A-Z])")
 
+# !+ singular/plural still needed?
 def singular(pname):
     """Get the english singular of (plural) name.
     """
@@ -52,9 +53,9 @@ def plural(sname):
 plural.custom = {
     "user_address": "user_addresses",
     "group_address": "group_addresses",
-    "signatory": "signatories",
 }
 
+''' !+DEC
 def configurable_schema(kls):
     """Add tables, as per configured features for a domain type.
     
@@ -80,7 +81,7 @@ def configurable_schema(kls):
     if interfaces.IAttachmentable.implementedBy(kls):
         # !+ current constrain
         assert change_tbl_name, "May not be IAttachmentable and not IVersionable"
-
+'''
 
 # vertical properties
 
@@ -214,7 +215,7 @@ def make_audit_table(table, metadata):
     )
     return audit_tbl
 
-
+''' !+DEC
 def make_changes_table(table, metadata):
     """Create an object log table for an object.
     """
@@ -305,7 +306,7 @@ def make_versions_table(table, metadata, secondary_table=None):
         useexisting=False
     )
     return versions_table
-
+'''
 # !+/PARAMETRIZABLE_DOCTYPES
 
 '''
@@ -1208,7 +1209,7 @@ doc_audit = make_audit_table(doc, metadata)
 
 committee_reports = ()
 
-signatories = rdb.Table("signatories", metadata,
+signatory = rdb.Table("signatory", metadata,
     rdb.Column("signatory_id", rdb.Integer,
         primary_key=True
     ),
@@ -1224,6 +1225,8 @@ signatories = rdb.Table("signatories", metadata,
     rdb.Column("status", rdb.Unicode(32)),
     rdb.UniqueConstraint("head_id", "user_id")
 )
+# attachment_audit
+signatory_audit = make_audit_table(signatory, metadata)
 
 
 # Tabled documents:
