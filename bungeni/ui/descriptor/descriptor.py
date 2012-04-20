@@ -3476,18 +3476,6 @@ class ReportDescriptor(DocumentDescriptor):
                 show("view edit listing"),
             ],
         ),
-        Field(name="start_date", label=_("Sitting Date"), # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit listing"),
-            ],
-            listing_column=datetime_column("start_date", _("Sitting Date")),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget,
-        ),
-        # reports do not go through the workflow so the status date
-        # is the published date ie. they are created and immediately
-        # published
         Field(name="status_date", label=_("Published Date"), # [user-req]
             modes="view edit add listing",
             localizable=[

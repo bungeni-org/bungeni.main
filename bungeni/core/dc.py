@@ -232,7 +232,9 @@ class ItemScheduleDescriptiveProperties(DescriptiveProperties):
 
     @property
     def title(self):
-        return _(u"Item scheduling")
+        session = Session()
+        context = session.merge(removeSecurityProxy(self.context))
+        return IDCDescriptiveProperties(context.item).title
 
     @property
     def description(self):
@@ -242,6 +244,12 @@ class ItemScheduleDescriptiveProperties(DescriptiveProperties):
         return _(u"Scheduled for sitting ($start to $end)",
                  mapping={'start': sitting.start_date,
                           'end': sitting.end_date})
+
+    @property
+    def mover(self):
+        session = Session()
+        context = session.merge(removeSecurityProxy(self.context))
+        return IDCDescriptiveProperties(context.item).mover
 
 @register.adapter()
 class EditorialNoteDescriptiveProperties(DescriptiveProperties):
@@ -536,8 +544,7 @@ class ReportDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return u'%s: %s - %s' % (self.translate(context, "short_title"),
-            context.start_date, context.end_date)
+        return u'%s' % self.translate(context, "short_title")
 
     @property
     def description(self):

@@ -559,8 +559,6 @@ def default_reports(sitting, event):
         report_context = SittingReportContext(sittings)
         report = domain.Report()
         session = Session()
-        report.start_date = sitting.start_date
-        report.end_date = sitting.end_date
         # !+GROUP_AS_OWNER(mr, apr-2012) we assume for now that the "owner" of
         # the report is the currently logged in user.
         report.owner_id = get_db_user_id()
@@ -573,7 +571,7 @@ def default_reports(sitting, event):
             "bungeni.vocabulary.ReportXHTMLTemplates"
         )
         preview_template = filter(
-            lambda t: t.title=="Weekly Business", vocabulary.terms
+            lambda t: t.title=="Sitting Agenda", vocabulary.terms
         )[0]
         doc_template = preview_template.value
         generator = generators.ReportGeneratorXHTML(doc_template)

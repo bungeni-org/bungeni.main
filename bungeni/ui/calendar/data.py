@@ -65,8 +65,11 @@ class SchedulableItemsGetter(object):
     group_filter = False
     domain_class = None
     
+    #!+(SCHEDULING, April-2012) There still needs to be a way to filter 
+    # documents per group - at least for documents that may be created
+    # in various group contexts e.g. AgendaItems, Headings e.t.c
     def __init__(self, context, item_type, filter_states=None, 
-            group_filter=True, item_filters={}
+            group_filter=False, item_filters={}
         ):
         self.context = context
         self.item_type = item_type
