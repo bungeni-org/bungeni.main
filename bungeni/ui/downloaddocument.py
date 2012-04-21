@@ -121,8 +121,8 @@ class DownloadDocument(BrowserView):
         if interfaces.IReport.providedBy(self.document):
             fname = misc.slugify(
                 u'-'.join((self.document.short_title, 
-                    self.document.start_date.isoformat(), 
-                    self.document.end_date.isoformat()))
+                    self.document.status_date.isoformat(), 
+                ))
             )
         return u"%s.%s" % (fname, self.document_type)
 
