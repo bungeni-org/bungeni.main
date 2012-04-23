@@ -18,37 +18,12 @@ class IBungeniRESTSkin(IRESTLayer):
     """Bungeni REST skin."""
 class IWorkspaceContainer(interface.Interface):
     """Marker for a domain object that is also a user's workspace container."""
-class IWorkspaceSectionContext(interface.Interface):
-    """Marker for a section of a workspace."""
-class IWorkspacePIContext(IWorkspaceSectionContext):
-    """Marker for the PI section of a workspace."""
-class IWorkspaceMIContext(IWorkspaceSectionContext):
-    """Marker for the MI section of a workspace."""
-class IWorkspaceArchiveContext(IWorkspaceSectionContext):
-    """Marker for the Archive section of a workspace."""
 
-class IWorkspacePlenaryContainer(interface.Interface):
-    """Marker for a domain object that is also a user's workspace container."""
-
-class IWorkspaceSchedulingContainer(interface.Interface):
-    """Marker"""
-class IWorkspaceCommitteeSchedulingContainer(interface.Interface):
-    """Marker"""
+class IAdministratorWorkspace(IBrowserView): # !+ remove out
+    """Administrator's workspace."""
 
 class IWorkspaceReportGeneration(interface.Interface):
     """Marker for report generation UI"""
-
-class ISpeakerWorkspace(IBrowserView):
-    """Speaker's workspace."""
-class IClerkWorkspace(IBrowserView):
-    """Clerk's workspace."""
-class IAdministratorWorkspace(IBrowserView): # !+ remove out
-    """Administrator's workspace."""
-class IMinisterWorkspace(IBrowserView):
-    """Minister's workspace."""
-class IMPWorkspace(IBrowserView):
-    """MP's workspace."""
-
 
 class IHomePageLayer(IDefaultBrowserLayer):
     """Requests for the Home Page."""
