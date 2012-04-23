@@ -413,7 +413,7 @@ YAHOO.bungeni.availableitems = function(){
             }
             minute_tab.getRecordValue = function(){
                 var record_value = {};
-                record_value[Columns.BODY_TEXT] = minuteEditor.cleanHTML(
+                record_value[Columns.BODY] = minuteEditor.cleanHTML(
                     minuteEditor.getEditorHTML()
                 );
                 return {

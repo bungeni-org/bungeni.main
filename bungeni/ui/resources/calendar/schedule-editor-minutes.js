@@ -39,7 +39,7 @@ YAHOO.bungeni.agendaconfig = function(){
                             var cdata = YAHOO.bungeni.agendaconfig.minutesCache.get(
                                 cache_key
                             );
-                            cdata[minute_index][Columns.BODY_TEXT] = text;
+                            cdata[minute_index][Columns.BODY] = text;
                             YAHOO.bungeni.agendaconfig.minutesCache.set(cache_key,
                                 cdata
                             );
@@ -74,7 +74,7 @@ YAHOO.bungeni.agendaconfig = function(){
                     var cdata = YAHOO.bungeni.agendaconfig.minutesCache.get(
                         YAHOO.bungeni.Utils.slugify(row_data[Columns.OBJECT_ID])
                     );
-                    editor.setEditorHTML(cdata[minute][Columns.BODY_TEXT]);
+                    editor.setEditorHTML(cdata[minute][Columns.BODY]);
                 }
             });
         }
@@ -129,7 +129,7 @@ YAHOO.bungeni.agendaconfig = function(){
                         var minute_data = mcache[index];
                         var save_data = {
                             object_id: minute_data[Columns.OBJECT_ID],
-                            body_text: minute_data[Columns.BODY_TEXT],
+                            body: minute_data[Columns.BODY],
                         }
                         item_data.push(save_data);
                     }

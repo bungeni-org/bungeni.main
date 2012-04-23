@@ -24,7 +24,7 @@ YAHOO.bungeni.schedulingpreview = function(){
                     formatter: formatters.counter
                 },
                 {
-                    key: Columns.BODY_TEXT,
+                    key: Columns.BODY,
                     label: SGlobals.column_discussion_text,
                     formatter: formatters.longText
                 }
@@ -34,7 +34,7 @@ YAHOO.bungeni.schedulingpreview = function(){
             oDs.responseType = YAHOO.util.DataSource.TYPE_JSON;
             oDs.responseSchema = {
                 resultsList: "nodes",
-                fields: [ Columns.OBJECT_ID, Columns.BODY_TEXT ]
+                fields: [ Columns.OBJECT_ID, Columns.BODY ]
             }
 
              YAHOO.bungeni.schedulingpreview.discussionsDT = new YAHOO.widget.DataTable(

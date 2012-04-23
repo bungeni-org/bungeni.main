@@ -97,6 +97,7 @@ YAHOO.bungeni.config = function(){
         STATUS_DATE : "status_date",
         NUMBER : "number",
         BODY_TEXT : "body_text",
+        BODY : "body",
         DISCUSSION_EDIT : "edit_discussion",
         DISCUSSION_DELETE : "delete_discussion",
         WORKFLOW_STATE : "wf_state",
@@ -440,7 +441,7 @@ YAHOO.bungeni.config = function(){
                             oDs.responseType = YAHOO.util.DataSource.TYPE_JSON;
                             oDs.responseSchema = {
                                 resultsList: "nodes",
-                                fields: [ Columns.OBJECT_ID, Columns.BODY_TEXT ]
+                                fields: [ Columns.OBJECT_ID, Columns.BODY ]
                             }
                             var render_minutes = function(items){
                                 var nHTML = "";
@@ -454,7 +455,7 @@ YAHOO.bungeni.config = function(){
                                             "id='" + edId + "'"
                                         );
                                         nHTML = nHTML + BungeniUtils.wrapText(
-                                            (mdata[Columns.BODY_TEXT] +
+                                            (mdata[Columns.BODY] +
                                                 BungeniUtils.wrapText(
                                                     "&nbsp;",
                                                     "span", editAttrs
