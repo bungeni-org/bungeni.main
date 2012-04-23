@@ -11,12 +11,11 @@ log = __import__("logging").getLogger("bungeni.ui.descriptor")
 from copy import deepcopy
 from zope import schema, interface
 
-from zope.security.management import getInteraction
-from zope.publisher.interfaces import IRequest
 import zope.formlib
 from zope.i18n import translate
 from zc.table import column
 from zope.dublincore.interfaces import IDCDescriptiveProperties
+from zope.security.proxy import removeSecurityProxy
 
 from bungeni.alchemist import Session
 from bungeni.alchemist.model import ModelDescriptor, Field, show, hide, \
@@ -37,22 +36,25 @@ from bungeni.ui.fields import VocabularyTextField
 from bungeni.ui import constraints
 from bungeni.ui.forms import validations
 from bungeni.ui.i18n import _
-from bungeni.ui.utils import common, date, misc, debug
+from bungeni.ui.utils import common, date, misc, debug, url
 from bungeni.ui import vocabulary
 from bungeni.utils.capi import capi
+from bungeni.ui.interfaces import IAdminSectionLayer
+from bungeni.alchemist.interfaces import IAlchemistContainer
 
 ###
 # Listing Columns
 #
 
+
 def _column(name, title, renderer, default=""):
     def getter(item, formatter):
-        # item.__parent__.request
         value = getattr(item, name)
         if value:
             return renderer(value)
         return default
     return column.GetterColumn(title, getter)
+
 
 def localized_datetime_column(name, title, default="",
         category="date", # "date" | "time" | "dateTime"
@@ -61,24 +63,27 @@ def localized_datetime_column(name, title, default="",
     def getter(item, formatter):
         value = getattr(item, name)
         if value:
-            request = item.__parent__.request
+            request = common.get_request()
             date_formatter = date.getLocaleFormatter(request, category, length)
             return date_formatter.format(value)
         return default
     return column.GetterColumn(title, getter)
+
+
 def day_column(name, title, default=""):
     return localized_datetime_column(name, title, default, "date", "medium")
+
+
 def datetime_column(name, title, default=""):
     return localized_datetime_column(name, title, default, "dateTime", "medium")
 #def time_column(name, title, default=""):
 #    return localized_datetime_column(name, title, default, "time", "long")
 
 
-
 def date_from_to_column(name, title, default=""):
     format_length = "medium"
     def getter(item, formatter):
-        request = item.__parent__.request
+        request = common.get_request()
         start = getattr(item, "start_date")
         if start:
             start = date.getLocaleFormatter(request,
@@ -98,8 +103,10 @@ def name_column(name, title, default=""):
         return value
     return _column(name, title, renderer, default)
 
+
 def combined_name_column(name, title, default=""):
-    """An extended name, combining full_name (localized) and short_name columns.
+    """An extended name, combining full_name (localized)
+    and short_name columns.
 
     For types that have both a full_name and a short_name attribute:
     Group, ParliamentarySession
@@ -133,6 +140,7 @@ def user_name_column(name, title, attr):
         return item_user.fullname # User.fullname property
     return column.GetterColumn(title, getter)
 
+
 def linked_mp_name_column(name, title, attr):
     """This may be used to customize the default URL generated as part of the
     container listing.
@@ -147,12 +155,22 @@ def linked_mp_name_column(name, title, attr):
         """Get the MemberOfParliament instance for user_id."""
         return Session().query(domain.MemberOfParliament).filter(
             domain.MemberOfParliament.user_id == user_id).one()
+
     def getter(item_user, formatter):
-        item_user = _get_related_user(item_user, attr)
-        mp = get_member_of_parliament(item_user.user_id)
+        related_user = _get_related_user(item_user, attr)
+        request = common.get_request()
+        if IAdminSectionLayer.providedBy(request):
+            parent = item_user
+            while parent and not IAlchemistContainer.providedBy(parent):
+                parent = removeSecurityProxy(parent.__parent__)
+            item_user.__parent__ = parent
+            href = url.absoluteURL(item_user, request)
+        else:
+            mp = get_member_of_parliament(related_user.user_id)
+            href = "/members/current/obj-%s/" % (mp.membership_id)
         return zope.formlib.widget.renderElement("a",
-            contents=item_user.fullname, # User.fullname derived property
-            href="/members/current/obj-%s/" % (mp.membership_id)
+            contents=related_user.fullname,  # User.fullname derived property
+            href=href
         )
     return column.GetterColumn(title, getter)
 
@@ -220,12 +238,9 @@ def inActiveDead_Column(name, title, default):
 def workflow_column(name, title, default=""):
     def getter(item, formatter):
         state_title = misc.get_wf_state(item)
-        interaction = getInteraction()
-        for participation in interaction.participations:
-            if IRequest.providedBy(participation):
-                request = participation
+        request = common.get_request()
         return translate(
-            str(state_title),
+            state_title,
             domain="bungeni",
             context=request)
     return column.GetterColumn(title, getter)
@@ -1134,6 +1149,16 @@ class GroupDescriptor(ModelDescriptor):
             listing_column=day_column("end_date", _("End Date")),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget
+        ),
+        Field(name="status", label=_("Status"), # [sys]
+            modes="view listing",
+            localizable=[
+                show("view listing"),
+            ],
+            property=schema.Choice(title=_("Status"),
+                vocabulary="bungeni.vocabulary.workflow",
+            ),
+            listing_column=workflow_column("status", "Workflow status"),
         ),
     ]
     schema_invariants = [EndAfterStart]
