@@ -553,7 +553,8 @@ class SittingReportContext(object):
 # it generates report based on the default template and publishes it
 @register.handler(adapts=(ISitting, IWorkflowTransitionEvent))
 def default_reports(sitting, event):
-    if sitting.status in IWorkflow(sitting).get_state_ids(tagged=["published"]):
+    wf = IWorkflow(sitting)
+    if sitting.status in wf.get_state_ids(tagged=["published"]):
         sitting = removeSecurityProxy(sitting)
         sittings = [ExpandedSitting(sitting)]
         report_context = SittingReportContext(sittings)
@@ -578,12 +579,13 @@ def default_reports(sitting, event):
         generator.context = report_context
         report.language = generator.language
         
-        if sitting.status == "published_agenda":
-            report.short_title = generator.title = _(u"Sitting Agenda")
-        elif sitting.status == "published_minutes":
+        if sitting.status in wf.get_state_ids(tagged=["publishedminutes"]):
             report.short_title = generator.title = _(u"Sitting Votes and "
                 u" Proceedings"
             )
+        else:
+            report.short_title = generator.title = _(u"Sitting Agenda")
+    
         report.body = generator.generateReport()
         session.add(report)
         session.flush()
