@@ -269,65 +269,13 @@ class HTMLDisplay(zope.formlib.widgets.UnicodeDisplayWidget):
 class RichTextEditor(TextAreaWidget):
 
     def __call__(self):
-        # require yahoo rich text editor and dependencies
-        need("yui-rte")
-        need("yui-resize")
-        need("yui-button")
+        # require tiny-mce
+        need("tiny-mce")
+        need("tiny-mce-config")
         # render default input widget for text
         input_widget = super(RichTextEditor, self).__call__()
-
-        # use "_" instead of "." for js identifiers
-        jsid = self.name.replace(".", "_")
-
-        # attach behavior to default input widget, disable titlebar
-        input_widget_js = u"""
-        <script type="text/javascript">
-            options={ height:'300px',
-                      width:'100%%',
-                      dompath:true,
-                      animate:true,
-                      focusAtStart:false,
-                      markup:'xhtml'};
-            var %(jsid)s_editor = new YAHOO.widget.Editor('%(js_name)s', options);
-            YAHOO.util.Event.on(
-                %(jsid)s_editor.get('element').form,
-                'submit',
-                function(ev) {
-                    %(jsid)s_editor.saveHTML();
-                }
-            );
-            %(jsid)s_editor._defaultToolbar.titlebar = false;
-            %(jsid)s_editor.on('editorContentLoaded', function() {
-              resize = new YAHOO.util.Resize(%(jsid)s_editor.get('element_cont').get('element'), {
-                  handles: ['br'],
-                  autoRatio: true,
-                  status: true,
-                  proxy: true,
-                  setSize: false //This is where the magic happens
-              });
-              resize.on('startResize', function() {
-                  this.hide();
-                  this.set('disabled', true);
-              },  %(jsid)s_editor, true);
-              resize.on('resize', function(args) {
-                  var h = args.height;
-                  var th = (this.toolbar.get('element').clientHeight + 2); //It has a 1px border..
-                  var dh = (this.dompath.clientHeight + 1); //It has a 1px top border..
-                  var newH = (h - th - dh);
-                  this.set('width', args.width + 'px');
-                  this.set('height', newH + 'px');
-                  this.set('disabled', false);
-                  this.show();
-              },  %(jsid)s_editor, true);
-          });
-
-
-            %(jsid)s_editor.render();
-        </script>
-        """
-        return input_widget + \
-            input_widget_js % {"jsid": jsid, "js_name": self.name}
-
+        return input_widget
+        
 class OneTimeEditWidget(TextAreaWidget):
     """
     a text area that is meant to be used once in between edit.

@@ -139,4 +139,12 @@
 	    include="advanced-search.js"
 	   />
 	 </resourceLibrary>
+	 <resourceLibrary
+	    name="tiny-mce-config"
+	    require="tiny-mce">
+	    <directory
+	      source="tinymceconfig"
+	      include="tinymce_config.js"
+	      /> 
+	 </resourceLibrary>
 </configure>

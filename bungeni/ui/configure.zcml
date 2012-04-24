@@ -68,6 +68,7 @@
   <include package="ore.yui"/>
   <include package="ore.yuiwidget"/>
   <include package="zdhtmlxscheduler"/>
+  <include package="z3tinymce"/>
   <!-- Transcripts -->
   <!--include package="bungeni.transcripts"/ -->
   <browser:defaultView
