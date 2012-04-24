@@ -89,7 +89,7 @@ def version_tree(ob, root=False, reversion=False):
             auditor = audit.get_auditor(ob.audit_head)
         else:
             auditor = audit.get_auditor(ob)
-        last_version = auditor.DOCUMENT_object_version(ob, root=root)
+        last_version = auditor.object_version(ob, root=root)
         session = Session()
         for cv in child_versions:
             # relate newly created ob last_version to child versions
@@ -104,21 +104,14 @@ def version_tree(ob, root=False, reversion=False):
     return dirty, last_version
 
 
-def DOCUMENT_create_version(ob):
+def create_version(ob):
     """Establish a new version.
     """
     version_tree(removeSecurityProxy(ob), root=True, reversion=False)
-def DOCUMENT_create_reversion(ob):
+def create_reversion(ob):
     """Revert to an older version -- ob is the older version to revert to.
     """
     version_tree(removeSecurityProxy(ob), root=True, reversion=True)
-
-
-def create_version(context, message, manual=False):
-    """Convenience wrapper on IVersioned(context.create(message, manual)
-    """
-    versions = interfaces.IVersioned(context)
-    return versions.create(message, manual=manual)
 
 
 class Versioned(container.PartialContainer):

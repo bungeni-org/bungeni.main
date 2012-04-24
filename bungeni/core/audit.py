@@ -79,10 +79,7 @@ def _trace_audit_handler(ah):
 @_trace_audit_handler
 def _object_add(ob, event):
     auditor = get_auditor(ob)
-    if IDocument.providedBy(ob): # !+DOCUMENT
-        auditor.DOCUMENT_object_add(removeSecurityProxy(ob), event)
-    else:
-        auditor.object_add(removeSecurityProxy(ob), event)
+    auditor.object_add(removeSecurityProxy(ob), event)
 
 @register.handler(adapts=(IAuditable, IObjectModifiedEvent))
 @_trace_audit_handler
@@ -94,10 +91,7 @@ def _object_modify(ob, event):
             event, orginator))
         return
     auditor = get_auditor(ob)
-    if IDocument.providedBy(ob): # !+DOCUMENT
-        auditor.DOCUMENT_object_modify(removeSecurityProxy(ob), event)
-    else:
-        auditor.object_modify(removeSecurityProxy(ob), event)
+    auditor.object_modify(removeSecurityProxy(ob), event)
 
 @register.handler(adapts=(IAuditable, IObjectRemovedEvent))
 @_trace_audit_handler
@@ -109,13 +103,10 @@ def _object_remove(ob, event):
 @_trace_audit_handler
 def _object_workflow(ob, event):
     auditor = get_auditor(ob)
-    if IDocument.providedBy(ob): # !+DOCUMENT
-        change_id = auditor.DOCUMENT_object_workflow(removeSecurityProxy(ob), event)
-    else:
-        change_id = auditor.object_workflow(removeSecurityProxy(ob), event)
+    change_id = auditor.object_workflow(removeSecurityProxy(ob), event)
     event.change_id = change_id
 
-
+''' !+ versioning of an object is no longer event-based
 @register.handler(adapts=(IAuditable, IVersionCreated))
 @_trace_audit_handler
 def _object_version(ob, event):
@@ -134,6 +125,7 @@ def _object_version(ob, event):
     auditor = get_auditor(ob)
     change_id = auditor.object_version(removeSecurityProxy(ob), event)
     event.version.change_id = change_id
+'''
 
 @register.handler(adapts=(IAuditable, IVersionReverted))
 @_trace_audit_handler
@@ -164,37 +156,10 @@ class _AuditorFactory(object):
     
     def object_add(self, ob, event):
         return self._object_changed("add", ob)
-    def DOCUMENT_object_add(self, ob, event):
-        return self._DOCUMENT_object_changed("add", ob)
     
     def object_modify(self, ob, event):
-        attrset = []
-        for attr in event.descriptions:
-            if lifecycleevent.IAttributes.providedBy(attr):
-                attrset.extend(
-                    [ attr.interface[a].title for a in attr.attributes ]
-                )
-            elif IRelationChange.providedBy(attr):
-                if attr.description:
-                    attrset.append(attr.description)
-        attrset.append(getattr(ob, "note", "")) #!+??
-        str_attrset = []
-        for a in attrset:
-            if type(a) in StringTypes:
-                str_attrset.append(a)
-        description = u", ".join(str_attrset)
         change_data = self._get_change_data()
-        if change_data["note"]:
-            extras = {"comment": change_data["note"]}
-        else:
-            extras = None
         return self._object_changed("modify", ob, 
-                        description=description,
-                        extras=extras,
-                        date_active=change_data["date_active"])
-    def DOCUMENT_object_modify(self, ob, event):
-        change_data = self._get_change_data()
-        return self._DOCUMENT_object_changed("modify", ob, 
                 date_active=change_data["date_active"])
     
     def object_remove(self, ob, event):
@@ -211,41 +176,6 @@ class _AuditorFactory(object):
         log.warn("!+AUDIT_REMOVE not auditing deletion of [%s]" % (ob))
     
     def object_workflow(self, ob, event):
-        """
-        ob: origin domain workflowed object 
-        event: bungeni.core.workflow.states.WorkflowTransitionEvent
-            .object # origin domain workflowed object 
-            .source # source state
-            .destination # destination state
-            .transition # transition
-            .comment #
-        """
-        change_data = self._get_change_data()
-        # if note, attach it on object (if object supports such an attribute)
-        if change_data["note"]:
-            if hasattr(ob, "note"):
-                ob.note = change_data["note"]
-        # update object's workflow status date (if supported by object)
-        if hasattr(ob, "status_date"):
-            ob.status_date = change_data["date_active"] or datetime.now()
-        # as a "base" description, use human readable workflow state title
-        wf = IWorkflow(ob) # !+ adapters.get_workflow(ob)
-        description = wf.get_state(event.destination).title # misc.get_wf_state
-        # !+description is not being used by auditlog/timline views
-        # extras, that may be used e.g. to elaborate description at runtime
-        extras = {
-            "source": event.source, 
-            "destination": event.destination,
-            "transition": event.transition.id,
-            "comment": change_data["note"]
-        }
-        return self._object_changed("workflow", ob, 
-                        description=description,
-                        extras=extras,
-                        date_active=change_data["date_active"])
-        # description field is a "building block" for a UI description;
-        # extras/notes field becomes interpolation data
-    def DOCUMENT_object_workflow(self, ob, event):
         change_data = self._get_change_data()
         # update object's workflow status date (if supported by object)
         if hasattr(ob, "status_date"):
@@ -253,43 +183,18 @@ class _AuditorFactory(object):
         # as a "base" description, use human readable workflow state title
         #wf = IWorkflow(ob) # !+ adapters.get_workflow(ob)
         #description = wf.get_state(event.destination).title # misc.get_wf_state
-        return self._DOCUMENT_object_changed("workflow", ob, 
+        return self._object_changed("workflow", ob, 
                 date_active=change_data["date_active"],
                 note=change_data.get("note", None))
     
     
-    def object_version(self, ob, event):
-        """
-        ob: origin domain workflowed object 
-        event: bungeni.core.interfaces.VersionCreated
-            .object # origin domain workflowed object 
-            .message # title of the version object
-            .version # bungeni.models.domain.*Version
-            .versioned # bungeni.core.version.Versioned
-        """
-        session = Session()
-        # !+version_id At this point, new version instance (at event.version) is not yet 
-        # persisted to the db (or added to the session!) so its version_id is
-        # still None. We force the issue, by adding it to session and flushing.
-        session.add(event.version)
-        session.flush()
-        # as base description, record a the version object's title
-        description = event.message
-        # extras, that may be used e.g. to elaborate description at runtime        
-        extras = {
-            "version_id": event.version.version_id # !+version_id
-        }
-        return self._object_changed("version", ob, description, extras)
-        #vkls = getattr(domain, "%sVersion" % (ob.__class__.__name__))
-        #versions = session.query(vkls
-        #            ).filter(vkls.content_id==event.version.content_id
-        #            ).order_by(vkls.status_date).all()
-    # !+NO EVENT...
-    def DOCUMENT_object_version(self, ob, root=False):
+    def object_version(self, ob, root=False):
         """ () -> domain.Version
+        NOTE: versioing of an object is not event based.
         """
         # action: ("version", "reversion")
         change_data = self._get_change_data()
+        
         if root:
             note = change_data.get("note")
             procedure = change_data.get("procedure", "m")
@@ -299,7 +204,7 @@ class _AuditorFactory(object):
             # procedure="a" for non-root versions
             procedure = "a"
         # !+polymorphic_identity_multi REVERSION action MUST be same as "version"
-        return self._DOCUMENT_object_changed("version", ob,
+        return self._object_changed("version", ob,
                 date_active=change_data.get("date_active"),
                 note=note,
                 procedure=procedure)
@@ -312,83 +217,17 @@ class _AuditorFactory(object):
     #
     
     def _object_changed(self, action, ob, 
-            description="", extras=None, date_active=None):
-        """
-        description: 
-            this is a non-localized string as base description of the log item,
-            offers a (building block) for the description of this log item. 
-            UI components may use this in any of the following ways:
-            - AS IS, optionally localized
-            - as a building block for an elaborated description e.g. for 
-              generating descriptions that are hyperlinks to an event or 
-              version objects
-            - ignore it entirely, and generate a custom description via other
-              means e.g. from the "notes" extras dict.
-        
-        extras: !+CHANGE_EXTRAS(mr, dec-2010)
-            a python dict, containing "extra" information about the log item, 
-            with the "key/value" entries depending on the change "action"; 
-
-            Specific examples, for actions: 
-                workflow: self.object_workflow()
-                    source
-                    destination
-                    transition
-                    comment
-                version: self.object_version()
-                    version_id
-                modify: self.object_modify()
-                    comment
-            
-            For now, this dict is serialized (using repr(), values are assumed 
-            to be simple strings or numbers) as the value of the notes column, 
-            for storing in the db--but if and when the big picture of these 
-            extra keys is understood clearly then the changes table may be 
-            remodeled with dedicated table columns.
-        
-        date_active:
-            the UI for some changes allow the user to manually set the 
-            date_active -- this is what should be used as the *effective* date 
-            i.e. the date to be used for all intents and purposes other than 
-            for data auditing. When not user-modified, the value should be equal 
-            to date_audit. 
-        """
-        domain.assert_valid_change_action(action)
-        oid, otype = self._getKey(ob)
-        user_id = get_db_user_id()
-        assert user_id is not None, "Audit error. No user logged in."
-        session = Session()
-        change = self.audit_class()
-        change.action = action
-        change.date_audit = datetime.now()
-        if date_active:
-            change.date_active = date_active
-        else:
-            change.date_active = change.date_audit
-        change.user_id = user_id
-        change.description = description
-        change.extras = extras
-        change.content_type = otype #!+ ?!
-        change.head = ob # attach change to parent object
-        change.status = ob.status # remember parent's status at time of change
-        # !+SUBITEM_CHANGES_PERMISSIONS(mr, jan-2012) permission on change 
-        # records for something like item[@draft]->file[@attached]->fileversion 
-        # need to remember also the root item's state, else when item later 
-        # becomes visible to clerk and others, the file itself will also become 
-        # visible to the clerk (CORRECT) but so will ALL changes on the file 
-        # while that file itself was @attached (WRONG!). May best be addressed
-        # when change persistence is reworked along with single document table.
-        session.add(change)
-        session.flush()
-        log.debug("AUDITED [%s] %s" % (action, change.__dict__))
-        return change.change_id
-    
-    def _DOCUMENT_object_changed(self, action, ob, 
             date_active=None,
             note=None,
             procedure="a",
         ):
         """
+        date_active:
+            the UI for some changes allow the user to manually set the 
+            date_active -- this is what should be used as the *effective* date 
+            i.e. the date to be used for all intents and purposes other than 
+            for data auditing. When not user-modified, the value should be equal 
+            to date_audit.
         """
         domain.assert_valid_change_action(action)
         user_id = get_db_user_id()
@@ -447,8 +286,15 @@ class _AuditorFactory(object):
         if note:
             ch.note = note
         
-        session.flush()
+        # !+SUBITEM_CHANGES_PERMISSIONS(mr, jan-2012) permission on change 
+        # records for something like item[@draft]->file[@attached]->fileversion 
+        # need to remember also the root item's state, else when item later 
+        # becomes visible to clerk and others, the file itself will also become 
+        # visible to the clerk (CORRECT) but so will ALL changes on the file 
+        # while that file itself was @attached (WRONG!). May best be addressed
+        # when change persistence is reworked along with single document table.
         
+        session.flush()
         log.debug("AUDIT [%s] %s" % (au, au.__dict__))
         log.debug("CHANGE [%s] %s" % (action, ch.__dict__))
         return ch
@@ -527,13 +373,8 @@ def set_auditor(kls):
     name = kls.__name__
     auditor_name = "%sAuditor" % (name)
     log.debug("Setting AUDITOR %s [for type %s]" % (auditor_name, name))
-    
-    if IDocument.implementedBy(kls): # !+DOCUMENT
-        audit_kls = getattr(domain, "%sAudit" % (name))
-        audit_tbl = getattr(schema, domain.get_audit_table_name(kls))
-    else:
-        audit_kls = getattr(domain, "%sChange" % (name))
-        audit_tbl = getattr(schema, "%s_changes" % (schema.un_camel(name)))
+    audit_kls = getattr(domain, "%sAudit" % (name))
+    audit_tbl = getattr(schema, domain.get_audit_table_name(kls))
     globals()[auditor_name] = _AuditorFactory(audit_tbl, audit_kls)
 
 for kls in domain.CUSTOM_DECORATED["auditable"]:

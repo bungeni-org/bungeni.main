@@ -142,42 +142,35 @@ def _eval_as_dict(s):
         debug.log_exc(sys.exc_info(), log_handler=log.info)
         return {}
 
-def _DOCUMENT_audit(change): #!+
-    try:
-        return change.audit
-    except AttributeError:
-        return change
-    
-def _get_type_name(change):
+def _get_type_name(audit):
     """Get document type name.
     """
-    audit = _DOCUMENT_audit(change)
     #return change.head.type # !+ not all heads define such a type attr 
     type_name = audit.__class__.__name__
-    if type_name.endswith("Change"): #!+DOCUMENT
-        return type_name[:-6].lower()
     if type_name.endswith("Audit"):
         return type_name[:-5].lower()
     return type_name.lower()
 
 def _format_description_workflow(change):
-    # !+ workflow transition change log stores the (unlocalized) 
-    # human title for the transition's destination workflow state 
-    extras = _eval_as_dict(getattr(change, "notes", 
-        "{'source':'TBD', 'destination':'TBD'}")) # !+AUDIT_PREVIOUS
-    return ('%s <span class="workflow_info">%s</span> '
+    # !+change.audit.status(mr, apr-2012) use the workflow state's title instead? 
+    # !+workflow_change_action(mr, apr-2012) get previous "from" status?
+    prev_change, prev_status = change.get_seq_previous(), None
+    if prev_change:
+        prev_status = prev_change.audit.status
+    return (
+        '%s <span class="workflow_info">%s</span> '
         '%s <span class="workflow_info">%s</span>' % (
             translate("from"),
-            translate(extras.get("source", None)),
+            translate(prev_status),
             translate("to"),
-            translate(extras.get("destination", None)) ))
+            translate(change.audit.status)))
 
 def _format_description(change):
     """Build the (localized) description for display, for each change, per 
     change type and action.
     """
-    audit_type_name = _get_type_name(change)
-    audit = _DOCUMENT_audit(change)
+    audit = change.audit
+    audit_type_name = _get_type_name(audit)
     
     def _label(audit):
         try:
@@ -255,7 +248,7 @@ class ChangeDataDescriptor(object):
             column.GetterColumn(title="action date",
                 getter=lambda i,f: self.date_formatter.format(i.date_active)),
             column.GetterColumn(title="action", 
-                getter=lambda i,f: "%s / %s" % (_get_type_name(i), i.action)),
+                getter=lambda i,f: "%s / %s" % (_get_type_name(i.audit), i.action)),
             GetterColumn(title="description", 
                 getter=lambda i,f: _format_description(i)),
             column.GetterColumn(title="audit date",

@@ -55,34 +55,6 @@ plural.custom = {
     "group_address": "group_addresses",
 }
 
-''' !+DEC
-def configurable_schema(kls):
-    """Add tables, as per configured features for a domain type.
-    
-    Executed on adapters.load_workflow()
-    """
-    # assign interface (changes property added downstream)
-    entity_name = un_camel(kls.__name__)
-    tbl = globals()[plural(entity_name)]
-    # auditable
-    if interfaces.IAuditable.implementedBy(kls):
-        change_tbl_name = "%s_changes" % (entity_name)
-        globals()[change_tbl_name] = make_changes_table(tbl, metadata)
-    # versionable
-    if interfaces.IVersionable.implementedBy(kls):
-        assert change_tbl_name, "May not be IVersionable and not IAuditable"
-        version_tbl_name = "%s_versions" % (entity_name)
-        secondary_table = None
-        if interfaces.IBungeniParliamentaryContent.implementedBy(kls):
-            secondary_table = parliamentary_items
-        globals()[version_tbl_name] = make_versions_table(
-            tbl, metadata, secondary_table)
-    # attachmentable
-    if interfaces.IAttachmentable.implementedBy(kls):
-        # !+ current constrain
-        assert change_tbl_name, "May not be IAttachmentable and not IVersionable"
-'''
-
 # vertical properties
 
 vp_text = rdb.Table("vp_text", metadata,
@@ -888,7 +860,6 @@ resourcebookings = rdb.Table("resourcebookings", metadata,
 #######################
 # Parliament
 #######################
-# Parliamentary Items
 
 item_votes = rdb.Table("item_votes", metadata,
     rdb.Column("vote_id", rdb.Integer, primary_key=True),

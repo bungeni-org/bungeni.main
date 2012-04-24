@@ -160,15 +160,8 @@ def apply_customization_workflow(name, ti):
     wf = ti.workflow
     def _apply_customization_workflow(kls):
         # decorate/modify domain/schema/mapping as needed
-        
-        # !+DOCUMENT same doc table, so no need to create changes/versions/etc...
-        #if interfaces.IDocument.implementedBy(kls):
         kls = domain.configurable_domain(kls, wf)
         orm.configurable_mappings(kls)
-        #else:
-        #    kls = domain.configurable_domain(kls, wf)
-        #    schema.configurable_schema(kls)
-        #    orm.configurable_mappings(kls)
         
         # !+ ok to call set_auditor(kls) more than once?
         # !+ following should be part of the domain.auditable(kls) logic

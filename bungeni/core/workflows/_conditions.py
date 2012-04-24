@@ -197,6 +197,7 @@ def pi_allow_signature_actions(context):
 
 # auditables
 
+''' !+AUDITABLES_UNUSED(mr, apr-2012)
 def user_is_state_creator(context):
     """Did the current user create current state - based on workflow log?
     """
@@ -219,4 +220,4 @@ def user_is_state_creator_and_owner(context):
 
 def user_is_state_creator_not_owner(context):
     return user_is_state_creator(context) and user_is_not_context_owner(context)
-
+'''

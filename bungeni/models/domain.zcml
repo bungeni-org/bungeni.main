@@ -16,7 +16,6 @@
                 amc_signatories
                 amc_attachments
                 amc_events
-                    assignedgroups
                     submission_date
                     admissible_date
                                     
@@ -90,60 +89,6 @@
         />
     </class>
     
-    
-    <!-- parliamentary items -->
-    <!-- class class=".domain.ParliamentaryItem">
-        <!-#- domain / orm / schema -#->
-        <require permission="zope.View"
-            attributes="
-                files
-                signatories
-                event
-                submission_date
-                admissible_date
-                
-                owner
-                itemsignatories
-                attachments
-                
-                parliamentary_item_id
-                parliament_id
-                owner_id
-                language
-                short_name
-                full_name
-                body_text
-                description
-                subject
-                coverage
-                status
-                status_date
-                registry_number
-                uri
-                receive_notification
-                type
-                geolocation
-                timestamp
-                custom1
-                custom2
-                custom3
-                custom4
-            "
-        />
-        <require permission="zope.ManageContent"
-            attributes="note"
-        />
-        <require permission="zope.View"
-            set_attributes="timestamp"
-        /><!-#- !+TIMESTAMP(mr, jul-2011) granting edit on timestamp to anyone 
-        with view privilege, as an item, while not essentuially being editable 
-        may still be affected by the user's action e.g transited to another 
-        state without "any modifications". Previous to circa r8460, this was 
-        not an issue, and the user was being allowed to set timestamp even if
-        no edit permission on the item.
-        -#->
-    </class>
-    -->
     
     <class class=".domain.Bill">
         <require like_class=".domain.Doc" />
@@ -260,7 +205,7 @@
         />
         <require permission="bungeni.agendaitem.Edit"
              set_attributes="
-                parliamentary_item_id 
+                doc_id 
                 owner_id
                 language
                 short_title
@@ -280,7 +225,7 @@
         />
         <require permission="bungeni.tableddocument.Edit"
             set_attributes="
-                parliamentary_item_id 
+                doc_id 
                 owner_id
                 language
                 short_title

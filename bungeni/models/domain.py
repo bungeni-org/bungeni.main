@@ -137,36 +137,6 @@ class Entity(object):
 
 #
 
-class ItemChanges(HeadParentedMixin, object):
-    """An audit changelog of events in the lifecycle of a parliamentary content.
-    """
-    @classmethod
-    def makeChangeFactory(cls, name):
-        factory = type(name, (cls,), {})
-        interface.classImplements(factory, interfaces.IChange)
-        return factory
-    
-    # !+CHANGE_EXTRAS(mr, dec-2010)
-    def _get_extras(self):
-        if self.notes is not None:
-            return eval(self.notes)
-    def _set_extras(self, dictionary):
-        self.notes = dictionary and repr(dictionary) or None
-    extras = property(_get_extras, _set_extras)
-
-
-class ItemVersions(HeadParentedMixin, Entity):
-    """A collection of the versions of a parliamentary content object.
-    """
-    @classmethod
-    def makeVersionFactory(cls, name):
-        factory = type(name, (cls,), {})
-        interface.classImplements(factory, interfaces.IVersion)
-        # !+IITEMVersion
-        #interface.classImplements(factory, getattr(interfaces, "I%s" % (name)))
-        return factory
-
-
 # !+PARAMETRIZABLE_DOCTYPES(mr, jun-2011) the quality of a domain type to
 # be auditable or versionable is externalized as a localization parameter, and
 # its implementation must thus be completely isolated, depending only on that
@@ -177,60 +147,10 @@ class ItemVersions(HeadParentedMixin, Entity):
 # simplified even further. 
 
 def CREATE_AUDIT_CLASS_FOR(cls):
+    """Is the audit_cls for this kls created dynamically?"""
     return cls in CREATE_AUDIT_CLASS_FOR.classes
 CREATE_AUDIT_CLASS_FOR.classes = []
 
-'''
-def DOCUMENT_configurable_domain(kls, workflow):
-    assert kls.__dynamic_features__, \
-        "Class [%s] does not allow dynamic features" % (kls)
-    if workflow.has_feature("audit"):
-        # !+auditable(kls)
-        CUSTOM_DECORATED["auditable"].add(kls)
-        interface.classImplements(kls, interfaces.IAuditable)
-        
-        # If a domain class is explicitly defined, then it is assumed that all 
-        # necessary setup is also taken care of. Typically, only the sub-classes
-        # of an archetype (mapped to a same table) need dynamic creation/setup.
-        def audit_cls_exists_for(auditable_cls):
-            audit_cls_name = "%sAudit" % (auditable_cls.__name__)
-            return bool(globals().get(audit_cls_name))
-        if not audit_cls_exists_for(kls):
-            CREATE_AUDIT_CLASS_FOR.classes.append(kls)
-        
-        if CREATE_AUDIT_CLASS_FOR(kls):
-            # define {kls}Audit class
-            def base_audit_class(kls):
-                """Identify what should be the BASE audit class for a 
-                {kls}Audit class to inherit from, and return it.
-                """
-                # !+ may have a deeper inheritance
-                # !+ other achetypes
-                if kls is not Doc and issubclass(kls, Doc):
-                    return DocAudit
-                return Audit
-            audit_kls = base_audit_class(kls).auditFactory(kls)
-            globals()[audit_kls.__name__] = audit_kls
-    
-    if workflow.has_feature("version"):
-        CUSTOM_DECORATED["versionable"].add(kls)
-        assert workflow.has_feature("audit")
-        # assign interface (versions property added downstream)
-        name = kls.__name__
-        interface.classImplements(kls, interfaces.IVersionable)
-        interface.classImplements(kls, interfaces.IDocVersionable) #!+
-    
-    if workflow.has_feature("attachment"):
-        CUSTOM_DECORATED["enable_attachment"].add(kls)
-        if CREATE_AUDIT_CLASS_FOR(kls):
-            kls = enable_attachment(kls)
-    
-    if workflow.has_feature("schedule"):
-        CUSTOM_DECORATED["enable_schedule"].add(kls)
-        if CREATE_AUDIT_CLASS_FOR(kls):
-            kls = enable_schedule(kls)
-    return kls
-'''
 
 def configurable_domain(kls, workflow):
     assert kls.__dynamic_features__, \
@@ -767,12 +687,6 @@ class Doc(Entity):
     events = one2many("events",
         "bungeni.models.domain.EventContainer", "head_id")
     
-    # !+DOCUMENT tmp dummy values to avoid attr errors, etc,
-    # until base "doc" gains these features...
-    submission_date = None
-    item_signatories = [] #relation(domain.Signatory)
-    assignedgroups = []
-    
     def _get_workflow_date(self, *states):
         """ (states:seq(str) -> date
         Get the date of the most RECENT workflow transition to any one of 
@@ -818,9 +732,18 @@ class Change(HeadParentedMixin, Entity):
     def head(self):
         return self.audit.audit_head # orm property
     
+    # !+Change.status(mr, apr-2012) needed? keep?
     @property
     def status(self):
         return self.audit.status # assumption: audit.audit_head is workflowed
+    
+    def get_seq_previous(self):
+        """Get the previous change in this seq of actions. 
+        Returns None if no previous.
+        """
+        changes = get_changes(self.head, self.action)
+        for c in changes[1 + changes.index(self):]:
+            return c
     
     # change "note" -- as external extended attribute (vertical property) as:
     # a) presumably it may have to be translatable, and the initial language 
@@ -851,12 +774,6 @@ class Version(Change):
     
     files = one2many("files",
         "bungeni.models.domain.AttachmentContainer", "head_id")
-    
-    # !+DOCUMENT tmp dummy values to avoid attr errors, etc...
-    def __getattr__(self, name):
-        print "!+DOCUMENT VERSION->AUDIT...", name, self.audit
-        return getattr(self.audit, name)
-
 
 class Audit(HeadParentedMixin, Entity):
     """Base (abstract) audit record for a document.
@@ -1078,62 +995,6 @@ class AttachmentAudit(Audit):
     label_attribute_name = "title"
 
 
-'''
-class ParliamentaryItem(Entity):
-    """
-    """
-    __dynamic_features__ = True
-    interface.implements(
-        interfaces.IBungeniContent,
-        interfaces.IBungeniParliamentaryContent,
-        interfaces.ITranslatable
-    )
-    
-    sort_on = ["parliamentary_items.status_date"]
-    sort_dir = "desc"
-    
-    sort_replace = {"owner_id": ["last_name", "first_name"]}
-    files = one2many("files",
-        "bungeni.models.domain.AttachmentContainer", "head_id")
-    signatories = one2many("signatories",
-        "bungeni.models.domain.SignatoryContainer", "item_id")
-    # !+NAMING(mr, jul-2011) plural!
-    event = one2many("event",
-        "bungeni.models.domain.EventContainer", "head_id") # !+DOCUMENT
-    
-    # votes
-    # schedule
-    # object log
-    
-    # changes - @auditable, set as a property
-    # versions - @versionable, set as a property
-
-    def _get_workflow_date(self, *states):
-        """ (states:seq(str) -> date
-        Get the date of the most RECENT workflow transition to any one of 
-        the workflow states specified as input parameters. 
-        
-        Returns None if no such workflow states has been transited to as yet.
-        """
-        assert states, "Must specify at least one workflow state."
-        # merge into Session to avoid sqlalchemy.orm.exc.DetachedInstanceError 
-        # when lazy loading;
-        # order of self.changes is chronological--we want latest first
-        for c in reversed(get_changes(Session().merge(self), "workflow")):
-            if c.extras:
-                if c.extras.get("destination") in states:
-                    return c.date_active
-    
-    @property
-    def submission_date(self):
-        # As base meaning of "submission_date" we take the most recent date
-        # of workflow transition to "submit" to clerk. Subclasses may need
-        # to overload as appropriate for their respective workflows.
-        return self._get_workflow_date("submitted")
-
-    attachments= [] # relation(domain.Attachment), #!+PI_TMP_attachments
-'''
-
 class Heading(Entity):
     """A heading in a report.
     """
@@ -1252,13 +1113,6 @@ class MinistryInParliament(object):
     """
 
 
-''' !+UNUSED_DocumentSource(mr, feb-2011)
-class DocumentSource(object):
-    """Document source for a tabled document.
-    """
-'''
-
-
 class EditorialNote(Entity):
     """Arbitrary text inserted into schedule
     """
@@ -1354,6 +1208,7 @@ class SittingReport(Report):
     """Which reports are created for this sitting.
     """
 
+# !+Report4Sitting((mr, apr-2012) naming!
 class Report4Sitting(Report):
     """Display reports for a sitting.
     """

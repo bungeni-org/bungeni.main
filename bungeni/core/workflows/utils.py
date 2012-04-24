@@ -96,12 +96,10 @@ def create_version(context):
     """Create a new version of an object and return it.
     Note: context.status is already updated to destination state.
     """
-    return bungeni.core.version.DOCUMENT_create_version(context)
-    # !+
+    return bungeni.core.version.create_version(context)
     # !+capi.template_message_version_transition
-    message_template = "New version on workflow transition to: %(status)s"
-    message = message_template % context.__dict__
-    return bungeni.core.version.create_version(context, message, manual=False)
+    #message_template = "New version on workflow transition to: %(status)s"
+    #message = message_template % context.__dict__
 
 
 @bungeni_custom_errors

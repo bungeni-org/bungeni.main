@@ -79,7 +79,7 @@ interaction
 
 After creating a version, verify availability:
 
-    >>> bungeni.core.version.DOCUMENT_create_version(question)
+    >>> bungeni.core.version.create_version(question)
     >>> session.refresh(question) # !+ otherwise question.versions is stale
     >>> len(question.versions)
     1

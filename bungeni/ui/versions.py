@@ -238,7 +238,7 @@ class DVersionLogView(VersionLogMixin,
         change_data = IAnnotations(self.request)["change_data"] = {}
         change_data["note"] = data["commit_message"]
         change_data["procedure"] = "m"
-        version.DOCUMENT_create_version(self.context)
+        version.create_version(self.context)
         self.status = _("New Version Created")
     
     @formlib.form.action(label=_("Revert To"), name="revert_to",
