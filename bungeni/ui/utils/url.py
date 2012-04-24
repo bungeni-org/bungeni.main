@@ -51,6 +51,12 @@ def get_section_name(request=None):
        return url_comps[1]
     return ""
 
+def get_subsection_name(request=None):
+    url_comps = get_destination_url_path(request).split("/")
+    if len(url_comps)>2: 
+       return url_comps[2]
+    return ""
+
 @register.utility(provides=IBodyCSS)
 class BodyCSSClass(object):
     

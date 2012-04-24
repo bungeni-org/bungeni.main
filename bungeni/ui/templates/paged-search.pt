@@ -14,7 +14,7 @@
       <div metal:use-macro="context/@@standard_macros/form">
       </div>
 
-      <a href="advanced-search">Advanced search</a>
+      <a tal:attributes="href view/advanced_search_url">Advanced search</a>
 
       <tal:block condition="python: request.form.get('form.full_text')">
 

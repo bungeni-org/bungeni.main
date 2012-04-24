@@ -124,6 +124,12 @@
     />-->
     
     <browser:page name="search"
+        for="ore.alchemist.interfaces.IAlchemistContainer"
+        permission="zope.View"
+        class=".search.PagedSearch"
+    />
+    
+    <browser:page name="search"
         for="bungeni.core.interfaces.ISearchableSection"
         permission="zope.View"
         class=".search.PagedSearch"
@@ -132,7 +138,7 @@
 
     <!-- Advanced search form -->
     <browser:page name="advanced-search"
-        for="bungeni.core.interfaces.ISection"
+        for="bungeni.core.interfaces.ISearchableSection"
         permission="zope.View"
         class=".search.AdvancedPagedSearch"
     />

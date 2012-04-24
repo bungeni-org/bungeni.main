@@ -42,6 +42,7 @@ Supported xapian query operators
 import time
 import urllib
 import xapian as _xapian
+from urlparse import urljoin
 
 from zope import interface, schema, component
 from zope.publisher.browser import BrowserView
@@ -71,8 +72,10 @@ from bungeni.core import index
 from bungeni.alchemist import Session
 from bungeni.ui import forms
 from bungeni.core.translation import translate_obj
-from bungeni.ui.utils.url import get_section_name
+from bungeni.ui.utils.url import get_section_name, absoluteURL
 from bungeni.models import domain
+
+from ore.alchemist.interfaces import IAlchemistContainer
 
 MINIMAL_PARTIAL_QUERY = 4
 
@@ -349,13 +352,24 @@ class Search(forms.common.BaseForm, ResultListing, HighlightMixin):
     def _searchresults(self):
         section = get_section_name()
         subqueries = []
-
-        # Filter items allowed in current section
-        for tq in ALLOWED_TYPES[section]:
-            subqueries.append(self.searcher.query_field('object_type', tq))
-
-        type_query = self.searcher.query_composite(self.searcher.OP_OR,
-                                                   subqueries)
+        
+        type_filter = ""
+        
+        if IAlchemistContainer.providedBy(self.context):
+            for t in ALLOWED_TYPES["business"]:
+                iface = resolve.resolve("bungeni.models.interfaces.I%sContainer"%t)
+                if iface.providedBy(self.context):
+                    type_filter = t
+                    break
+        
+        if type_filter:
+            type_query = self.searcher.query_field('object_type', type_filter)
+        else:
+            # Filter items allowed in current section
+            for tq in ALLOWED_TYPES[section]:
+                subqueries.append(self.searcher.query_field('object_type', tq))
+                type_query = self.searcher.query_composite(self.searcher.OP_OR, 
+                                                           subqueries)
 
         self.query = self.searcher.query_composite(self.searcher.OP_AND,
                                                    (self.query, type_query,))
@@ -377,8 +391,8 @@ class Search(forms.common.BaseForm, ResultListing, HighlightMixin):
     @form.action(label=_(u"Search"), name="search")
     def handle_search(self, action, data):
         self.searcher = component.getUtility(interfaces.IIndexSearch)()
-        search_term = data['full_text']
-
+        search_term = data["full_text"]
+        
         if not search_term:
             self.status = _(u"Invalid Query")
             return
@@ -443,7 +457,12 @@ class Pager(object):
 
 class PagedSearch(Pager, Search):
     template = ViewPageTemplateFile('templates/paged-search.pt')
-
+    
+    @property
+    def advanced_search_url(self):
+        base_url = absoluteURL(getSite(), self.request)
+        section = get_section_name()
+        return urljoin(base_url, section) + "/advanced-search"
 
 def get_users_vocabulary():
     session = Session()
