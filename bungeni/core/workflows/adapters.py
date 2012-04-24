@@ -142,7 +142,7 @@ def apply_customization_workflow(name, ti):
         """Convert an underscore-separated word to CamelCase.
         """
         return "".join([ s.capitalize() for s in name.split("_") ])
-    from bungeni.models import domain, schema, orm
+    from bungeni.models import domain, orm
     def get_domain_kls(name):
         """Infer the target domain kls from the type key, following underscore 
         naming to camel case convention.
@@ -216,10 +216,6 @@ def register_workflow_adapters():
     # IWorkflowController
     component.provideAdapter(
         WorkflowController, (IWorkflowed,), IWorkflowController)
-    # IVersioned
-    component.provideAdapter(bungeni.core.version.ContextVersioned,
-        (interfaces.IVersionable,),
-        bungeni.core.interfaces.IVersioned)
     
     # Specific adapters, a specific iface per workflow.
     
@@ -231,7 +227,6 @@ def register_workflow_adapters():
 def _setup_all():
     """Do all workflow related setup.
     """
-    
     load_workflows()
     # !+zcml_check_regenerate(mr, sep-2011) should be only done *once* and 
     # when *all* workflows are loaded i.e. only first time (on module import).

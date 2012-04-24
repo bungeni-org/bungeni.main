@@ -11,7 +11,6 @@ log = __import__("logging").getLogger("bungeni.models.orm")
 import sqlalchemy as rdb
 from sqlalchemy.orm import mapper, class_mapper, relation, column_property, \
     backref
-from bungeni.alchemist.traversal import one2many
 
 import schema
 import domain
@@ -536,7 +535,7 @@ mapper(domain.Version,
             uselist=True,
             lazy=True,
         ),
-        #!+versioned items supporting feature "event":
+        #!+versionable items supporting feature "event":
         #"sa_events": relation(domain.Event, uselist=True),
     }
 )

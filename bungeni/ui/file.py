@@ -200,10 +200,8 @@ class VersionFileListingViewlet(FileListingViewlet):
     @property
     def columns(self):
         def attachment_version_uri(i):
-            if IAttachedFileVersion.providedBy(i): # !+DOCUMENT
-                return "obj-%d/versions/obj-%d" % (i.content_id, i.version_id)
-            else: # bungeni.models.domain.Version
-                return "obj-%d/version-log/%s" % (i.attachment_id, i.__name__)            
+            # !+ bungeni.models.domain.Version
+            return "obj-%d/version-log/%s" % (i.attachment_id, i.__name__)            
         return [
             column.GetterColumn(title=_("file"),
                 getter=lambda i,f:"%s" % (i.title),

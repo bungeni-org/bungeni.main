@@ -17,7 +17,6 @@ __all__ = [
     "IAlchemistContent",    # alias -> ore.alchemist.interfaces
     "IAlchemistContainer",  # alias -> ore.alchemist.interfaces
     "IDatabaseEngine",      # alias -> ore.alchemist.interfaces
-    "IRelationChange",      # alias -> ore.alchemist.interfaces
     "IIModelInterface",     # alias -> ore.alchemist.interfaces
     "IModelAnnotation",     # alias -> ore.alchemist.interfaces
     "IModelDescriptor",     # alias -> ore.alchemist.interfaces
@@ -34,7 +33,6 @@ from ore.alchemist.interfaces import (
     IAlchemistContainer,
     
     IDatabaseEngine,
-    IRelationChange,
 
     IIModelInterface,
     IModelAnnotation,

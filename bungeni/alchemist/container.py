@@ -18,7 +18,7 @@ __all__ = [
     "stringKey",            # redefn -> ore.alchemist.container
     "contained",            # redefn -> ore.alchemist.container
     "AlchemistContainer",   # redefn -> ore.alchemist.container
-    "PartialContainer",     # redefn -> ore.alchemist.container
+    #"PartialContainer",     # redefn -> ore.alchemist.container
     
     "ContainerListing",     # alias -> alchemist.ui.container
     "getFields",            # redefn -> alchemist.ui.container
@@ -223,7 +223,7 @@ class AlchemistContainer(Persistent, Contained):
         except exceptions.SQLError:
             return 0
 
-
+''' !+OBSOLETE_VERSIONING
 class PartialContainer(AlchemistContainer):
     """An alchemist container that matches against an arbitrary subset,
     via definition of a query modification function. contents added to this
@@ -245,4 +245,4 @@ class PartialContainer(AlchemistContainer):
     def _query(self):
         query = super(PartialContainer, self)._query 
         return query.filter(self._subset_query)
-
+'''

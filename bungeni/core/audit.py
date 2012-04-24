@@ -37,29 +37,23 @@ __all__ = ["get_auditor", "set_auditor"]
 
 
 from datetime import datetime
-from types import StringTypes
 
 from zope.lifecycleevent import IObjectModifiedEvent, IObjectCreatedEvent, \
     IObjectRemovedEvent
-    
+
 from zope.annotation.interfaces import IAnnotations
 from zope.security.proxy import removeSecurityProxy
-from zope import lifecycleevent
 
 import sqlalchemy as rdb
 from bungeni.alchemist import Session
-from bungeni.alchemist.interfaces import IRelationChange
 
 from bungeni.models.utils import get_db_user_id
-from bungeni.models.interfaces import IAuditable, IDocument, IEvent
+from bungeni.models.interfaces import IAuditable
 from bungeni.models import schema
 from bungeni.models import domain
 from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowTransitionEvent
-from bungeni.core.interfaces import IVersionCreated, IVersionReverted
 from bungeni.ui.utils import common
 from bungeni.utils import register
-
-from bungeni.core.i18n import _
 
 
 def _trace_audit_handler(ah):
@@ -106,7 +100,10 @@ def _object_workflow(ob, event):
     change_id = auditor.object_workflow(removeSecurityProxy(ob), event)
     event.change_id = change_id
 
-''' !+ versioning of an object is no longer event-based
+''' !+OBSOLETE_VERSIONING versioning of an object is no longer event-based
+
+from bungeni.core.interfaces import IVersionCreated, IVersionReverted
+
 @register.handler(adapts=(IAuditable, IVersionCreated))
 @_trace_audit_handler
 def _object_version(ob, event):
@@ -125,7 +122,6 @@ def _object_version(ob, event):
     auditor = get_auditor(ob)
     change_id = auditor.object_version(removeSecurityProxy(ob), event)
     event.version.change_id = change_id
-'''
 
 @register.handler(adapts=(IAuditable, IVersionReverted))
 @_trace_audit_handler
@@ -133,6 +129,7 @@ def _object_reversion(ob, event):
     auditor = get_auditor(ob)
     change_id = auditor.object_reversion(removeSecurityProxy(ob), event)
     event.change_id = change_id
+'''
 
 
 # internal utilities
@@ -190,7 +187,7 @@ class _AuditorFactory(object):
     
     def object_version(self, ob, root=False):
         """ () -> domain.Version
-        NOTE: versioing of an object is not event based.
+        NOTE: versioning of an object is not event based.
         """
         # action: ("version", "reversion")
         change_data = self._get_change_data()
@@ -208,11 +205,6 @@ class _AuditorFactory(object):
                 date_active=change_data.get("date_active"),
                 note=note,
                 procedure=procedure)
-    
-
-    def object_reversion(self, ob, event):
-        return self._object_changed("reversion", ob,
-            description=event.message)
     
     #
     

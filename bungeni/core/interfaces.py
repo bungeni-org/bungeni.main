@@ -1,12 +1,10 @@
-from zope import interface, schema, lifecycleevent
-from zope.component.interfaces import IObjectEvent, ObjectEvent
+from zope import interface, schema
 from zope.location.interfaces import ILocation
 from zope.container.interfaces import IContainer
 from zope.container.interfaces import IContentContainer
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.container.interfaces import IReadContainer
 
-from bungeni.models.interfaces import IVersion
 
 class INavigationProxy(IReadContainer):
     __target__ = interface.Attribute(
@@ -81,9 +79,14 @@ class IWorkspaceDocuments(interface.Interface):
     """Marker inteface for workspace archive"""
 
 
+''' !+OBSOLETE_VERSIONING
 #####################
 # Versioned Object Interfaces
 #
+from zope import lifecycleevent
+from zope.component.interfaces import IObjectEvent, ObjectEvent
+from bungeni.models.interfaces import IVersion
+
 class IVersioned(IContainer):
     """A versioning system interface to an object, versioned is a container 
     of versions.
@@ -124,6 +127,7 @@ class IVersionReverted(IVersionEvent, lifecycleevent.IObjectModifiedEvent):
 class VersionReverted(VersionEvent):
     interface.implements(IVersionReverted)
     descriptions = ()
+'''
 
 
 class ISchedulingContext(ILocation):

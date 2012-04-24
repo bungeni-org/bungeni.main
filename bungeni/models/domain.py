@@ -215,7 +215,6 @@ def versionable(kls):
     assert interfaces.IAuditable.implementedBy(kls)
     # assign interface (versions property added downstream)
     interface.classImplements(kls, interfaces.IVersionable)
-    interface.classImplements(kls, interfaces.IDocVersionable) #!+
     return kls
 configurable_domain.feature_decorators["version"] = versionable
 
@@ -224,7 +223,6 @@ def enable_attachment(kls):
     Executed on adapters.load_workflow()
     
     !+ currently assumes that the object is versionable.
-    !+ domain.Attachment is the only versionable type that is not a PI.
     """
     # !+ domain.Attachment is versionable, but does not support attachments
     CUSTOM_DECORATED["enable_attachment"].add(kls)
@@ -772,8 +770,16 @@ class Version(Change):
     def __name__(self):
         return "ver-%s" % (self.seq)
     
+    # !+ should be only for versionable self.head
     files = one2many("files",
         "bungeni.models.domain.AttachmentContainer", "head_id")
+    
+    # !+VERSION_CLASS_PER_AUDIT_TYPE
+    # !+DOCUMENT tmp dummy values to avoid attr errors, etc...
+    def __getattr__(self, name):
+        print "!+DOCUMENT VERSION->AUDIT...", name, self.audit
+        return getattr(self.audit, name)
+
 
 class Audit(HeadParentedMixin, Entity):
     """Base (abstract) audit record for a document.
@@ -993,6 +999,20 @@ class AttachmentAudit(Audit):
     """An audit record for an attachment.
     """
     label_attribute_name = "title"
+    
+    # !+VERSION_CLASS_PER_AUDIT_TYPE?
+    @property # !+TMP workaround erros
+    def short_title(self):
+        print "!+AttachmentAudit... short_title -> title", self.title, self
+        return self.title
+    @property # !+TMP
+    def long_title(self):
+        print "!+AttachmentAudit... long_title -> title", self.title, self
+        return self.title
+    @property # !+TMP
+    def body(self):
+        print "!+AttachmentAudit... body -> description", self.description, self
+        return self.title
 
 
 class Heading(Entity):

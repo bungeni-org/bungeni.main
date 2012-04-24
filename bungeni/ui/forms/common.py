@@ -42,7 +42,6 @@ from bungeni.core.language import get_default_language
 from bungeni.core.translation import is_translation
 from bungeni.core.translation import get_translation_for
 from bungeni.core.translation import CurrentLanguageVocabulary
-#from bungeni.core.interfaces import IVersioned
 from bungeni.models.interfaces import IVersion, IBungeniContent, \
     ISittingContainer
 from bungeni.models import domain
@@ -709,28 +708,11 @@ class TranslateForm(AddForm):
             translation.field_text = data[form_field]
             session.add(translation)
         session.flush()
-        # !+SESSION_CLOSE(taras.sterch, july-2011) there is no need to close the 
-        # session. Transaction manager will take care of this. Hope it does not 
-        # brake anything.
-        #session.commit()
-        #session.close()
         
         # !+EVENT_DRIVEN_CACHE_INVALIDATION(mr, mar-2011) no translate event
         # invalidate caches for this domain object type
         invalidate_caches_for(trusted.__class__.__name__, "translate")
-
-        #versions = IVersioned(self.context)
-        #version = versions.create("'%s' translation added" % language)
-
-        # reset workflow state
-        #version.status = None
-        #IWorkflowController(version).fireTransition("-draft_translation")
-        # redefine form context and proceed with edit action
-        #self.setUpAdapters(version)
-
-        # commit version such that it gets a version id
-        #transaction.commit()
-
+        
         #if not self._next_url:
         #    self._next_url = ( \
         #        "%s/versions/%s" % (url, stringKey(version)) + \

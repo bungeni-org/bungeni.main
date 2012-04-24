@@ -20,6 +20,8 @@ Imports.
   >>> from bungeni.models import domain
   >>> from bungeni.models import schema
 
+  >>> from bungeni.core.workflows.testing import version_increment_for_state
+
 Motions are versionable.
   
   >>> from zope.interface import classImplements
@@ -133,30 +135,33 @@ this way do not create the expected auditlog.
 
 "Received by clerk". A new version is created.
 
-  >>> actions.receive(motion)
-
-  >>> from bungeni.core.interfaces import IVersioned
-  >>> versions = IVersioned(motion)
-  >>> len(versions)
-  2
+    >>> actions.receive(motion)
+    >>> version_count += version_increment_for_state(motion)
+    >>> session.refresh(motion) # !+ otherwise motion.versions is stale
+    >>> assert version_count == len(motion.versions)
+    >>> version_count # just once, to ensure version_increment_for_state works
+    2
 
 "Require edit by MP".
 
-  >>> actions.require_clarification(motion)
-  >>> len(versions)
-  3
+    >>> actions.require_clarification(motion)
+    >>> version_count += version_increment_for_state(motion)
+    >>> session.refresh(motion) # !+ otherwise motion.versions is stale
+    >>> assert version_count == len(motion.versions)
 
 "Complete".
 
-  >>> actions.complete(motion)
-  >>> len(versions)
-  4
+    >>> actions.complete(motion)
+    >>> version_count += version_increment_for_state(motion)
+    >>> session.refresh(motion) # !+ otherwise motion.versions is stale
+    >>> assert version_count == len(motion.versions)
 
 "Approve".
 
-  >>> actions.approve(motion)
-  >>> len(versions)
-  5
+    >>> actions.approve(motion)
+    >>> version_count += version_increment_for_state(motion)
+    >>> session.refresh(motion) # !+ otherwise motion.versions is stale
+    >>> assert version_count == len(motion.versions)
 
 "Reject".
 
@@ -164,15 +169,17 @@ this way do not create the expected auditlog.
 
 "Require amendment".
 
-  >>> actions.require_recomplete(motion)
-  >>> len(versions)
-  6
+    >>> actions.require_recomplete(motion)
+    >>> version_count += version_increment_for_state(motion)
+    >>> session.refresh(motion) # !+ otherwise motion.versions is stale
+    >>> assert version_count == len(motion.versions)
 
 "MP clarify".
 
-  >>> actions.require_clarification(motion)
-  >>> len(versions)
-  7
+    >>> actions.require_clarification(motion)
+    >>> version_count += version_increment_for_state(motion)
+    >>> session.refresh(motion) # !+ otherwise motion.versions is stale
+    >>> assert version_count == len(motion.versions)
 
 "Schedule".
 

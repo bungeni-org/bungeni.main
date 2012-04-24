@@ -4,6 +4,9 @@ from bungeni.models.utils import get_db_user_id
 from datetime import datetime, timedelta
 from zope.publisher.browser import BrowserView
 
+# !+ register version views
+import bungeni.ui.versions
+
 
 class StoreNowEditView(BrowserView):
     """View that is periodically called

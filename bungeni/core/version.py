@@ -8,22 +8,13 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.core.version")
 
-from zope import interface
-from zope import event
-from zope.lifecycleevent import ObjectCreatedEvent
-from zope.security import canAccess, canWrite
 from zope.security.proxy import removeSecurityProxy
-from zope.security.interfaces import Unauthorized, ForbiddenAttribute
 
-from sqlalchemy import orm
-from bungeni.alchemist import container
 from bungeni.alchemist import Session
-
-from i18n import _
 
 from bungeni.models import domain
 from bungeni.models.interfaces import FEATURE_INTERFACES
-from bungeni.core import interfaces, audit
+from bungeni.core import audit
 
 
 IVersionable = FEATURE_INTERFACES["version"]
@@ -113,6 +104,16 @@ def create_reversion(ob):
     """
     version_tree(removeSecurityProxy(ob), root=True, reversion=True)
 
+
+''' !+OBSOLETE_VERSIONING
+from zope import interface
+from zope import event
+from zope.lifecycleevent import ObjectCreatedEvent
+from zope.security import canWrite
+from zope.security.interfaces import Unauthorized, ForbiddenAttribute
+from sqlalchemy import orm
+from bungeni.alchemist import container
+from bungeni.core import interfaces
 
 class Versioned(container.PartialContainer):
     interface.implements(interfaces.IVersioned)
@@ -224,4 +225,5 @@ def ContextVersioned(context):
     versions.__parent__ = context
     versions.__name__ = "versions"
     return versions
+'''
 

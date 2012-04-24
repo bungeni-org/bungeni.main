@@ -1,7 +1,6 @@
 
 from zope import interface, schema
 from zope.app.container.interfaces import IContainer
-from bungeni.alchemist.interfaces import IAlchemistContent
 from bungeni.alchemist.interfaces import IAlchemistContainer
 from ore.wsgiapp.interfaces import IApplication
 from i18n import _
@@ -143,8 +142,10 @@ class IVersion(interface.Interface):
     """A version of an object is identical in attributes to the actual 
     object, based on that object's domain schema.
     """
+''' !+OBSOLETE_VERSIONING
 class IVersionContainer(IBungeniContainer):
     pass
+'''
 # !+AuditLogView(mr, nov-2011)
 #class IChangeContainer(IBungeniContainer): pass
 
@@ -170,7 +171,7 @@ class IQuestion(IBungeniContent):
     """
 # !+IITEMVersion
 #class IQuestionVersion(IQuestion): pass
-class IQuestionVersionContainer(IVersionContainer): pass
+#!+OBSOLETE_VERSIONING class IQuestionVersionContainer(IVersionContainer): pass
 
 
 class IBill(IBungeniContent):
@@ -178,14 +179,14 @@ class IBill(IBungeniContent):
     """
 # !+IITEMVersion
 #class IBillVersion(IBill): pass
-class IBillVersionContainer(IVersionContainer): pass
+#!+OBSOLETE_VERSIONING class IBillVersionContainer(IVersionContainer): pass
 
 class IMotion(IBungeniContent):
     """Parliamentary Motion.
     """
 # !+IITEMVersion
 #class IMotionVersion(IMotion): pass
-class IMotionVersionContainer(IVersionContainer): pass
+#!+OBSOLETE_VERSIONING class IMotionVersionContainer(IVersionContainer): pass
 
 
 class ISitting(interface.Interface):
@@ -213,12 +214,12 @@ class ITabledDocument(IBungeniContent):
     """
 # !+IITEMVersion
 #class ITabledDocumentVersion(ITabledDocument): pass
-class ITabledDocumentVersionContainer(IVersionContainer): pass
+#!+OBSOLETE_VERSIONING class ITabledDocumentVersionContainer(IVersionContainer): pass
 
 class IAgendaItem(IBungeniContent): pass
 # !+IITEMVersion
 #class IAgendaItemVersion(IAgendaItem): pass
-class IAgendaItemVersionContainer(IVersionContainer): pass
+#!+OBSOLETE_VERSIONING class IAgendaItemVersionContainer(IVersionContainer): pass
 
 class IParliamentSession(interface.Interface):
     pass
@@ -404,7 +405,8 @@ class IBungeniEmailSettings(interface.Interface):
 
 class IAttachment(IOwned): pass
 class IAttachedFileVersion(interface.Interface): pass 
-class IAttachedFileVersionContainer(IVersionContainer): pass
+# !+OBSOLETE_VERSIONING
+#class IAttachedFileVersionContainer(IVersionContainer): pass
 
 class ISignatory(interface.Interface):
     """Signatories for bills, motions, ...
@@ -483,9 +485,6 @@ class IAuditable(interface.Interface):
 class IVersionable(interface.Interface):
     """Marker to apply version feature (requires IAuditable/audit.
     """
-class IDocVersionable(IVersionable):
-    """!+DOCUMENT tmp
-    """
 class IAttachmentable(interface.Interface):
     """Marker to apply attachment feature.
     """
@@ -495,7 +494,7 @@ class ISchedulable(interface.Interface):
 
 FEATURE_INTERFACES = {
     "audit": IAuditable,
-    "version": IDocVersionable,
+    "version": IVersionable,
     "attachment": IAttachmentable,
     "schedule": ISchedulable,
 }
