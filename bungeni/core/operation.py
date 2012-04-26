@@ -63,9 +63,8 @@ class AddOperation( IndexOperation ):
     def process( self, connection ):
         if interfaces.DEBUG_LOG: log.info("Adding %r"%self.document_id )
         instance = self.resolve()
-#        if not instance or instance == interfaces.OP_REQUEUE:
-#            return instance
-
+        if not instance or instance == interfaces.OP_REQUEUE:
+            return instance
         doc = interfaces.IIndexer( instance ).document( connection )
         doc.id = self.document_id
         doc.fields.append( xappy.Field('resolver', self.resolver_id or '' ) )
@@ -78,12 +77,12 @@ class ModifyOperation( IndexOperation ):
     def process( self, connection ):
         if interfaces.DEBUG_LOG: log.info("Modifying %r"%self.document_id )        
         instance = self.resolve()
-#        if not instance or instance == interfaces.OP_REQUEUE:
-#            return instance        
+        if not instance or instance == interfaces.OP_REQUEUE:
+            return instance        
 
         doc = interfaces.IIndexer( instance ).document( connection )
         doc.id = self.document_id        
-        doc.fields.append( xappy.Field('resolver', self.resolver_id ) )
+        doc.fields.append( xappy.Field('resolver', self.resolver_id or '' ) )
         connection.replace(doc)
     
             
@@ -141,6 +140,7 @@ class OperationFactory( object ):
             resolver = component.getUtility( interfaces.IResolver , self.resolver_id ) 
         else:
             resolver = component.getUtility( interfaces.IResolver )
+            
         oid = resolver.id( self.context )
         if not oid:
             raise KeyError( "Key Not Found %r"%( self.context ) )

@@ -102,19 +102,25 @@ class ContentResolver(object):
     def id(self, object): 
         """ defines the xapian 'primary key' """
         #TODO Add the language to the index!
+        string_key = container.stringKey(object)
+        if string_key == "obj-None":
+            session = Session()
+            session.flush()
+            string_key = container.stringKey(object)
         return "%s.%s-%s"%(object.__class__.__module__,
                             object.__class__.__name__,
-                            container.stringKey(object))
+                            string_key)
 
     def resolve(self, id): 
         class_path, oid = id.split('-', 1)
         domain_class = resolve.resolve(class_path)
         session = Session()
         value_key = container.valueKey(oid)
-        obj = session.query(domain_class).get(value_key)
-        if not obj:
-            session.commit()
+
+        if "None" not in value_key:
             obj = session.query(domain_class).get(value_key)
+        else:
+            obj = None
         return obj
 
 class ContentIndexer(object):
