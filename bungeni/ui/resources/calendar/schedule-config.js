@@ -78,6 +78,43 @@ YAHOO.widget.DataTable.prototype.refresh = function(params) {
     );
 };
 
+/**
+ * generate agenda preview button
+ **/
+YAHOO.util.Event.onAvailable("agenda-preview-button", function(event){
+    var preview_button = new YAHOO.widget.Button("agenda-preview-button");
+    var previewPanel = new YAHOO.widget.Panel("agenda-preview-dialog",
+        { 
+            modal: true, 
+            visible: false, 
+            width: "800px", 
+            height: "600px", 
+            fixedcenter:true, 
+            zindex: 2000,
+        }
+    );
+    previewPanel.setHeader(SGlobals.preview_msg_header);
+    preview_button.on("click", function(){
+        YAHOO.bungeni.config.dialogs.blocking.show(SGlobals.preview_msg_generating);
+        var success = function(o){
+            YAHOO.bungeni.config.dialogs.blocking.hide();
+            previewPanel.setBody(o.responseText);
+            previewPanel.show();
+            previewPanel.bringToTop();
+        }
+        var failure = function(o){
+            YAHOO.bungeni.config.dialogs.blocking.hide();
+            YAHOO.bungeni.config.dialogs.notification.show(SGlobals.preview_msg_error);
+        }
+        var callback = {
+            success: success,
+            failure: failure,
+            argument: {}
+        }
+        var request = YAHOO.util.Connect.asyncRequest("GET", "./preview", callback);
+    });
+    previewPanel.render(document.body);
+});
 
 YAHOO.bungeni.config = function(){
     var lang = YAHOO.lang;

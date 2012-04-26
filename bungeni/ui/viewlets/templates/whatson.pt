@@ -42,11 +42,15 @@ $URL$
                     <tal:block tal:repeat="item items">
                         <tal:block tal:condition="not:item/heading">
                         <dd>
-                        <a tal:attributes="href item/url">
+                        <a tal:attributes="href item/url" tal:condition="item/url">
                           <span  i18n:translate="" tal:content="item/item_type_title" />: 
                           <span tal:content="item/name" />
                           (<span  i18n:translate="" tal:content="item/status" />)
                         </a>
+                        <span tal:condition="not:item/url">
+                            <span tal:condition="item/html" tal:replace="structure item/name"/>
+                            <span tal:condition="not:item/html" tal:replace="item/name"/>
+                        </span>
                         </dd>
                         </tal:block>
                         <tal:block tal:condition="item/heading">

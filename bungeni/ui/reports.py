@@ -39,7 +39,7 @@ from bungeni.ui.utils import url, queries, date
 from bungeni.ui import forms
 from bungeni.ui.interfaces import IWorkspaceReportGeneration
 from bungeni.ui.reporting import generators
-from bungeni.ui.calendar.data import ExpandedSitting
+from bungeni.ui.calendar.data import ExpandedSitting, ReportContext
 
 from bungeni.utils import register
 
@@ -186,7 +186,9 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
                 start_date, end_date
             ).values()
             self.sittings = map(removeSecurityProxy, sittings)
-        self.sittings = [ ExpandedSitting(sitting) for sitting in self.sittings ]
+        self.sittings = [ data.ExpandedSitting(sitting) 
+            for sitting in self.sittings 
+        ]
 
     def generateContent(self, data):
         self.start_date = (data.get("start_date") or 
@@ -544,10 +546,6 @@ class SaveReportView(form.PageForm):
             back_link = "./"
         self.request.response.redirect(back_link)
 
-class SittingReportContext(object):
-    def __init__(self, sittings):
-        self.sittings = sittings
-
 # Event handler that publishes reports on sitting status change
 # if the status is published_agenda or published_minutes
 # it generates report based on the default template and publishes it
@@ -556,8 +554,8 @@ def default_reports(sitting, event):
     wf = IWorkflow(sitting)
     if sitting.status in wf.get_state_ids(tagged=["published"]):
         sitting = removeSecurityProxy(sitting)
-        sittings = [ExpandedSitting(sitting)]
-        report_context = SittingReportContext(sittings)
+        sittings = [data.ExpandedSitting(sitting)]
+        report_context = data.ReportContext(sittings=sittings)
         report = domain.Report()
         session = Session()
         # !+GROUP_AS_OWNER(mr, apr-2012) we assume for now that the "owner" of

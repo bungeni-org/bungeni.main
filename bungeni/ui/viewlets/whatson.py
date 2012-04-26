@@ -8,7 +8,7 @@ from bungeni.alchemist.model import queryModelDescriptor
 from sqlalchemy.orm import eagerload
 import sqlalchemy.sql.expression as sql
 
-from bungeni.models import domain, schema
+from bungeni.models import domain, schema, interfaces
 from bungeni.models.settings import BungeniSettings
 from bungeni.core.globalsettings import getCurrentParliamentId
 from bungeni.core.dc import IDCDescriptiveProperties
@@ -72,6 +72,7 @@ class WhatsOnBrowserView(BrowserView):
                 descriptor = queryModelDescriptor(schedule.item.__class__)
                 s_list.append({
                     "name": IDCDescriptiveProperties(schedule.item).title,
+                    "html": interfaces.IScheduleText.providedBy(schedule.item),
                     "status": str(misc.get_wf_state(schedule.item)),
                     "url": IDCDescriptiveProperties(schedule.item).uri,
                     "item_type": schedule.item.type,

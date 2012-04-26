@@ -68,6 +68,10 @@
         title="The 'Calendar' menu - allows user to select a scheduling context"
         class=".menu.CalendarMenu"
     />
+    <browser:menu id="calendar_content_manager"
+        title="The 'Calendar' menu - for management of content used in calendars"
+        class=".menu.CalendarContentMenu"
+    />
     <browser:menu id="context_add_parliamentary_content"
         title="The 'Add' menu - allows user to add content"
         class="ploned.ui.menu.PloneBrowserMenu"
@@ -782,7 +786,7 @@
         title="Add heading..."
         action="./add"
         permission="bungeni.heading.Add"
-        layer=".interfaces.IAdminSectionLayer"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
      />
      <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.domain.BillContainer"
@@ -868,6 +872,11 @@
     <adapter name="plone.contentmenu.calendar"
         for="bungeni.core.interfaces.ISchedulingContext *"
         factory=".menu.CalendarSubMenuItem"
+        provides="ploned.ui.interfaces.IContentMenuItem"
+    />
+    <adapter name="plone.contentmenu.calendar.content"
+        for="bungeni.core.interfaces.ISchedulingContext *"
+        factory=".menu.CalendarContentSubMenuItem"
         provides="ploned.ui.interfaces.IContentMenuItem"
     />
 

@@ -6,12 +6,13 @@
 
 $Id$
 """
-log = __import__("logging").getLogger("bungeni.ui.calendar.data")
+log = __import__("logging").getLogger("bungeni.ui.calendar")
 
 import json
 from sqlalchemy import orm, sql
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core.workflow.interfaces import IWorkflow
+from bungeni.models.interfaces import IParliament, IAgendaItem
 from bungeni.ui.utils import date, common
 from bungeni.alchemist import Session
 from bungeni.ui.i18n import _
@@ -59,6 +60,11 @@ def get_filter_config(tag="tobescheduled"):
         ]
     )
 
+class ReportContext(object):
+    def __init__(self, **kw):
+        for key, value in kw.iteritems():
+            setattr(self, key, value)
+
 class SchedulableItemsGetter(object):
     item_type = None
     filter_states = []
@@ -77,7 +83,10 @@ class SchedulableItemsGetter(object):
         self.filter_states = (filter_states or 
             type_info.workflow.get_state_ids(tagged=["tobescheduled"])
         )
-        self.group_filter = group_filter
+        self.group_filter = (group_filter or 
+            not IParliament.providedBy(context) or
+            IAgendaItem.implementedBy(type_info.domain_model)
+        )
         try:
             self.domain_class = get_schedulable_types()[item_type].get(
                 "domain_model")

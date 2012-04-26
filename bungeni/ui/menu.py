@@ -6,18 +6,20 @@ from zope.app.component.hooks import getSite
 from zope.app.security.interfaces import IUnauthenticatedPrincipal
 from zope.browsermenu.interfaces import IBrowserMenu
 import zope.browsermenu
-from zope.security import checkPermission
+from zope.security import proxy, checkPermission
 from zope.i18n import translate
 import z3c.menu.ready2go.item
 
 from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowController
 
+from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.models.utils import get_db_user_id
-from bungeni.models.interfaces import IVersion
+from bungeni.models.interfaces import IVersion, IScheduleText
 
 from bungeni.core.translation import get_language
 from bungeni.core.translation import get_all_languages
 from bungeni.core.translation import get_available_translations
+from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core import schedule
 
 from bungeni.ui.i18n import  _
@@ -208,7 +210,6 @@ class TranslateMenu(BrowserMenu):
         else:
             return None
 
-
 class WorkflowSubMenuItem(BrowserSubMenuItem):
     title = _(u"label_state", default=u"State:")
     submenuId = "context_workflow"
@@ -334,7 +335,6 @@ class CalendarSubMenuItem(BrowserSubMenuItem):
     def selected(self):
         return False
 
-
 class CalendarMenu(BrowserMenu):
     """Retrieve menu actions for available calendars."""
 
@@ -420,4 +420,48 @@ class CalendarMenu(BrowserMenu):
 
         # sort on title
         results.sort(key=operator.itemgetter("title"))
+        return results
+
+class CalendarContentSubMenuItem(CalendarSubMenuItem):
+    title = _(u"label_calendar_content_manager", default=u"Manage:")
+    submenuId = "calendar_content_manager"
+    order = 10
+    
+    @property
+    def extra(self):
+        return {
+            "id": self.id,
+            "stateTitle": _("Manage Scheduling Content")
+        }
+
+class CalendarContentMenu(BrowserMenu):
+    """Generate menu items within scheduling to access calendar content manager.
+    
+    Allows adding of items such as headings for reuse within scheduling contexts
+    """
+    IDCDescriptiveProperties
+    def getMenuItems(self, context, request):
+        results = []
+        try:
+            items = proxy.removeSecurityProxy(context.__parent__).items()
+        except AttributeError:
+            return results
+        for key, item in items:
+            if not IAlchemistContainer.providedBy(item): continue
+            if not IScheduleText.implementedBy(item.domain_model): continue
+            dc_adapter = IDCDescriptiveProperties(item, None)
+            if dc_adapter:
+                _title = dc_adapter.title
+            else:
+                _title = getattr(item, "title", "Unknown")
+            results.append(dict(
+                title=_title,
+                description=_title,
+                action = url.absoluteURL(item, request),
+                selected=False,
+                icon=None,
+                extra={},
+                submenu=None
+                
+            ))
         return results

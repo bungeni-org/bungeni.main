@@ -406,6 +406,12 @@
      class=".calendar.browser.ItemScheduleOrder"
      permission="bungeni.sittingschedule.Edit"
      />
+      <browser:page
+     name="preview"
+     for="bungeni.models.interfaces.ISitting"
+     class=".calendar.browser.AgendaPreview"
+     permission="zope.View"
+     />
      <browser:page
      name="st-attendance"
      for="bungeni.models.interfaces.ISitting"

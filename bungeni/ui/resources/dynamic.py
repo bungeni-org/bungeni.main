@@ -13,6 +13,8 @@ RESOURCE_MAPPING = {
     "calendar-globals.js": "calendar_globals"
 }
 
+RESOURCE_HEADERS = {}
+
 ## some global strings to i18n ##
 YES = _(u"Yes")
 NO = _(u"No")
@@ -179,7 +181,14 @@ def get_globals(group_name, **kwargs):
             ),
             "minutes_loading_error": i18n(_(u"unable to load minutes..."),
                 language
-            )
+            ),
+            "preview_msg_header": i18n(_(u"agenda preview"), language),
+            "preview_msg_generating": i18n(_(u"generating agenda preview..."), 
+                language
+            ),
+            "preview_msg_error": i18n(_(u"ERROR: Could to generate preview"), 
+                language
+            ),
         },
         "CALENDAR_GLOBALS" : {
             "unsaved_event": i18n(_(u"This event is unsaved. " 
@@ -222,6 +231,9 @@ class DynamicDirectoryFactory(object):
         return lambda:"/@@/%s/%s" % (self.name, name)
     
     def publishTraverse(self, request, name):
+        request.response.setHeader("Content-type", 
+            RESOURCE_HEADERS.get(name, "text/javascript")
+        )
         self.request_language = get_request_language()
         return getattr(self, RESOURCE_MAPPING.get(name))
     

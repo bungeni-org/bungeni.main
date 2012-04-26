@@ -35,6 +35,8 @@ from bungeni.ui.utils import url, common
 from bungeni.models.workspace import WorkspaceContainer
 
 
+from bungeni.utils.capi import capi
+
 def onWSGIApplicationCreatedEvent(application, event):
     """Subscriber to the ore.wsgiapp.interfaces.IWSGIApplicationCreatedEvent.
     """
@@ -43,6 +45,10 @@ def onWSGIApplicationCreatedEvent(application, event):
     log.debug("onWSGIApplicationCreatedEvent: _features: %s" % (
         getConfigContext()._features))
 
+
+def to_locatable_container(domain_class, *domain_containers):
+    provideAdapter(location.ContainerLocation(*domain_containers),
+               (implementedBy(domain_class), ILocation))
 
 class BungeniApp(Application):
     implements(model_interfaces.IBungeniApplication)
@@ -162,6 +168,18 @@ class AppSetup(object):
             title=_(u"Sittings"),
             description=_(u"Plenary Sittings")
         )
+        
+        #!+AUTO CONTAINERS SCHEDULING(mb, April-2012)
+        # type_info missing container name
+        for key, info in capi.iter_type_info():
+            if model_interfaces.IScheduleText.implementedBy(info.domain_model):
+                container_name = "%ss" % key
+                container = "%sContainer" % info.domain_model.__name__
+                workspace["scheduling"][container_name] = getattr(domain, container)()
+                to_locatable_container(info.domain_model, 
+                    workspace["scheduling"][container_name]
+                )
+        
         # Proof-of-concept: support for selective inclusion in breadcrumb trail:
         # a view marked with an attribute __crumb__=False is NOT included in 
         # the breadcrumb trail (see ui/viewlets/navigation.py)
@@ -285,11 +303,6 @@ class AppSetup(object):
             title=_(u"Documents"),
             description=_(u"Browse documents in the archive"),
             default_name="browse-archive")
-            
-        
-        def to_locatable_container(domain_class, *domain_containers):
-            provideAdapter(location.ContainerLocation(*domain_containers),
-                       (implementedBy(domain_class), ILocation))
         
         # archive/records
         documents[u"bills"] = domain.BillContainer()

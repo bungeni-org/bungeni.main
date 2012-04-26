@@ -57,9 +57,10 @@ from bungeni.ui.interfaces import IBusinessSectionLayer
 from bungeni.ui.widgets import LanguageLookupWidget
 from bungeni.ui.container import ContainerJSONListing
 from bungeni.ui.forms.common import AddForm
+from bungeni.ui.reporting import generators
 
 from bungeni.models import domain
-from bungeni.models.interfaces import IItemScheduleContainer, IScheduleText
+from bungeni.models import interfaces as model_interfaces
 from bungeni.alchemist.container import stringKey
 from bungeni.alchemist import Session
 #from bungeni.ui import vocabulary
@@ -465,7 +466,8 @@ class SittingScheduleView(BrowserView):
             map(need, _needed)
         return self.template()
 
-@register.view(IItemScheduleContainer, name="jsonlisting-schedule",
+@register.view(model_interfaces.IItemScheduleContainer, 
+    name="jsonlisting-schedule",
     protect={"bungeni.sittingschedule.itemdiscussion.Edit": 
         register.VIEW_DEFAULT_ATTRS})
 class ScheduleJSONListing(ContainerJSONListing):
@@ -913,7 +915,7 @@ class ScheduleAddView(BrowserView):
                     
                     #update text for text records
                     text_record = removeSecurityProxy(current_record.item)
-                    if IScheduleText.providedBy(text_record):                        
+                    if model_interfaces.IScheduleText.providedBy(text_record):                        
                         if text_record.text != data_item_text:
                             text_record.text = data_item_text
                             session.add(text_record)
@@ -994,3 +996,37 @@ class DiscussionAddView(BrowserView):
         self.request.response.setHeader("Content-type", "application/json")
         self.saveDiscussions()
         return json.dumps(dict(messages=self.messages))
+
+class AgendaPreview(BrowserView):
+    """View to display an agenda preview using HTML template in bungeni_custom
+    """
+    def __init__(self, context, request):
+        super(AgendaPreview, self).__init__(context, request)
+
+    def get_template(self, title="Sitting Agenda"):
+        vocabulary = component.queryUtility(
+            schema.interfaces.IVocabularyFactory, 
+            "bungeni.vocabulary.ReportXHTMLTemplates"
+        )
+        preview_template = filter(
+            lambda t: t.title==title, vocabulary.terms
+        )[0]
+        return preview_template.value
+
+    def generate_preview(self):
+        sitting = removeSecurityProxy(self.context)
+        wf = IWorkflow(sitting)
+        sittings = [data.ExpandedSitting(sitting)]
+        generator = generators.ReportGeneratorXHTML(self.get_template())
+        if sitting.status in wf.get_state_ids(tagged=["publishedminutes"]):
+            title = generator.title = _(u"Sitting Votes and Proceedings")
+        else:
+            title = generator.title = _(u"Sitting Agenda")
+        generator.context = data.ReportContext(
+            sittings=sittings, title=title
+        )
+        return generator.generateReport()
+
+    def __call__(self):
+        self.request.response.setHeader("Content-type", "text/html")
+        return self.generate_preview()
