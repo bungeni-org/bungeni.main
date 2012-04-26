@@ -153,6 +153,8 @@ CREATE_AUDIT_CLASS_FOR.classes = []
 
 
 def configurable_domain(kls, workflow):
+    """Executed on adapters.load_workflow().
+    """
     assert kls.__dynamic_features__, \
         "Class [%s] does not allow dynamic features" % (kls)
     # note: versionable implies auditable
@@ -174,8 +176,6 @@ CUSTOM_DECORATED = {
 def auditable(kls):
     """Decorator for auditable domain types, to collect in one place all
     that is needed for a domain type to be auditale.
-    
-    Executed on adapters.load_workflow()
     """
     CUSTOM_DECORATED["auditable"].add(kls)
     interface.classImplements(kls, interfaces.IAuditable)
@@ -206,22 +206,16 @@ configurable_domain.feature_decorators["audit"] = auditable
 def versionable(kls):
     """Decorator for versionable domain types, to collect in one place all
     that is needed for a domain type to be versionable.
-    
-    Executed on adapters.load_workflow()
-    
     Note: @versionable implies @auditable
     """
-    CUSTOM_DECORATED["versionable"].add(kls)
     assert interfaces.IAuditable.implementedBy(kls)
-    # assign interface (versions property added downstream)
+    CUSTOM_DECORATED["versionable"].add(kls)
     interface.classImplements(kls, interfaces.IVersionable)
     return kls
 configurable_domain.feature_decorators["version"] = versionable
 
 def enable_attachment(kls):
     """Decorator for attachment-feature of domain types.
-    Executed on adapters.load_workflow()
-    
     !+ currently assumes that the object is versionable.
     """
     # !+ domain.Attachment is versionable, but does not support attachments
@@ -231,7 +225,7 @@ def enable_attachment(kls):
 configurable_domain.feature_decorators["attachment"] = enable_attachment
 
 def enable_schedule(kls):
-    """Decorator for schedulable types
+    """Decorator for schedulable types.
     """
     CUSTOM_DECORATED["enable_schedule"].add(kls)
     interface.classImplements(kls, interfaces.ISchedulable)
@@ -719,12 +713,17 @@ class AdmissibleMixin(object):
 
 
 class Change(HeadParentedMixin, Entity):
-    """Information about a change.
+    """Information about a change, along with the snapshot (on self.audit) of 
+    the object attribute values as of *after* the change.
     """
     __dynamic_features__ = False
     interface.implements(
         interfaces.IChange
     )
+    
+    @property
+    def __name__(self):
+        return "%s-%s" % (self.action, self.seq)
     
     @property
     def head(self):
@@ -735,9 +734,9 @@ class Change(HeadParentedMixin, Entity):
     def status(self):
         return self.audit.status # assumption: audit.audit_head is workflowed
     
-    def get_seq_previous(self):
-        """Get the previous change in this seq of actions. 
-        Returns None if no previous.
+    @property
+    def seq_previous(self):
+        """The previous change in this change/action seq or None if no previous.
         """
         changes = get_changes(self.head, self.action)
         for c in changes[1 + changes.index(self):]:
@@ -756,11 +755,14 @@ class ChangeTree(Entity):
     """Relates a parent change with a child change.
     """
 
-# !+VERSION_CLASS_PER_AUDIT_TYPE(mr, apr-2012) review domain+descriptor for 
-# versions, how to display a version
+# !+VERSION_CLASS_PER_TYPE(mr, apr-2012) should there be dedicated Version 
+# type/descriptor, to facilitate UI views for each version type?
 class Version(Change):
-    """A version (a special kind of change action) of an object and 
-    associated change information.
+    """A specialized change type, with the information of a version (a special 
+    kind of change action) of an object.
+    
+    Behaves somewhat like a combined Change and Audit record, as this will 
+    automatically try to resolve additional attrs off self.audit before failing.
     """
     interface.implements(
         interfaces.IVersion,
@@ -770,16 +772,38 @@ class Version(Change):
     def __name__(self):
         return "ver-%s" % (self.seq)
     
-    # !+ should be only for versionable self.head
+    # !+ should only be when type(self.head) is versionable
+    # !+ other features?
     files = one2many("files",
         "bungeni.models.domain.AttachmentContainer", "head_id")
     
-    # !+VERSION_CLASS_PER_AUDIT_TYPE
-    # !+DOCUMENT tmp dummy values to avoid attr errors, etc...
     def __getattr__(self, name):
-        print "!+DOCUMENT VERSION->AUDIT...", name, self.audit
-        return getattr(self.audit, name)
-
+        """Try to pick any attribute not found on the change record off the 
+        related audit snapshot record (as every change record is related to a 
+        type-dedicated audit record). 
+        
+        !+ should this be on Change i.e. for all change actions?
+        !+ possible issue with name clobbering, if an auditable type has a 
+           same-named property as one in in Change or Audit types/tables.
+        """
+        try:
+            return getattr(self.audit, name)
+        except AttributeError:
+            # !+SA_INCORRECT_TYPE_DEBUG strangely, sometimes the type of 
+            # (this change's) self.audit that sqlalchemy returns does not 
+            # correspond to self.head...
+            audit_id = self.audit_id
+            def get_correctly_typed_change(change):
+                for v in change.head.versions:
+                    if v.audit_id == audit_id:
+                        return v
+            correctly_typed_change = get_correctly_typed_change(self)
+            if correctly_typed_change and correctly_typed_change is not self:
+                print "*** %s.%s audit_id=%s INCORRECT TYPE:%s SHOULD HAVE BEEN:%s" % (
+                    type(self).__name__, name, audit_id, self, correctly_typed_change)
+            # !+/SA_INCORRECT_TYPE_DEBUG
+            raise AttributeError("%r object has no attribute %r" % (
+                type(self).__name__, name))
 
 class Audit(HeadParentedMixin, Entity):
     """Base (abstract) audit record for a document.
@@ -838,6 +862,17 @@ class DocAudit(Audit):
     ]
 #instrument_extended_properties(DocAudit, "doc_audit")
 
+class DocVersion(Version):
+    """A version of a document.
+    """
+    files = one2many("files",
+        "bungeni.models.domain.AttachmentContainer", "head_id")
+    #!+eventable items supporting feature "event":
+    
+    submission_date = None # !+bypass error when loading a doc version view
+    # !+ proper logic of this would have to be the value of 
+    # self.head.submission_date at the time of *this* version!
+    
 
 class AgendaItem(AdmissibleMixin, Doc):
     """Generic Agenda Item that can be scheduled on a sitting.
@@ -882,7 +917,6 @@ class Bill(Doc):
     @property
     def publication_date(self):
         return self._get_workflow_date("gazetted")
-
 #BillAudit
 
 class Motion(AdmissibleMixin, Doc):
@@ -934,7 +968,6 @@ class Question(AdmissibleMixin, Doc):
         ("response_text", vp.TranslatedText),
     ]
 instrument_extended_properties(Question, "doc")
-
 #QuestionAudit
 
 class TabledDocument(AdmissibleMixin, Doc):
@@ -994,26 +1027,15 @@ class Attachment(HeadParentedMixin, Entity):
     @property
     def owner(self):
         return self.head.owner
-
+        
 class AttachmentAudit(Audit):
     """An audit record for an attachment.
     """
     label_attribute_name = "title"
-    
-    # !+VERSION_CLASS_PER_AUDIT_TYPE?
-    @property # !+TMP workaround erros
-    def short_title(self):
-        print "!+AttachmentAudit... short_title -> title", self.title, self
-        return self.title
-    @property # !+TMP
-    def long_title(self):
-        print "!+AttachmentAudit... long_title -> title", self.title, self
-        return self.title
-    @property # !+TMP
-    def body(self):
-        print "!+AttachmentAudit... body -> description", self.description, self
-        return self.title
 
+class AttachmentVersion(Version):
+    """A version of an attachment.
+    """
 
 class Heading(Entity):
     """A heading in a report.
@@ -1054,7 +1076,7 @@ class SignatoryAudit(Audit):
     def label(self):
         return self.user.fullname
     description = label
-
+    
     @property
     def user(self):
         return self.audit_head.user

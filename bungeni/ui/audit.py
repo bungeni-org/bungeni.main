@@ -154,14 +154,14 @@ def _get_type_name(audit):
 def _format_description_workflow(change):
     # !+change.audit.status(mr, apr-2012) use the workflow state's title instead? 
     # !+workflow_change_action(mr, apr-2012) get previous "from" status?
-    prev_change, prev_status = change.get_seq_previous(), None
-    if prev_change:
-        prev_status = prev_change.audit.status
+    wf_prev, wf_prev_status = change.seq_previous, None
+    if wf_prev:
+        wf_prev_status = wf_prev.audit.status
     return (
         '%s <span class="workflow_info">%s</span> '
         '%s <span class="workflow_info">%s</span>' % (
             translate("from"),
-            translate(prev_status),
+            translate(wf_prev_status),
             translate("to"),
             translate(change.audit.status)))
 

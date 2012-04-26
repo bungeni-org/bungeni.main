@@ -276,6 +276,7 @@ class RichTextEditor(TextAreaWidget):
         input_widget = super(RichTextEditor, self).__call__()
         return input_widget
         
+''' !+UNUSED(mr, apr-2012)
 class OneTimeEditWidget(TextAreaWidget):
     """
     a text area that is meant to be used once in between edit.
@@ -284,6 +285,7 @@ class OneTimeEditWidget(TextAreaWidget):
 
     """
     __call__ = ViewPageTemplateFile("templates/one-time-textinput-widget.pt")
+'''
 
 '''
 class SupplementaryQuestionDisplay(zope.formlib.widget.DisplayWidget):
@@ -768,6 +770,14 @@ class AutocompleteWidget(SingleDataHelper, ItemsWidgetBase):
 
     def value(self):
         return self._getFormValue()
+'''
+
+''' !+UNUSED - for a "view listing" Field that does not (otherwise need to) 
+define an appropriate property e.g. ChangeDescriptor:user_id.
+from bungeni.core.dc import IDCDescriptiveProperties
+class UserDisplayWidget(zope.formlib.widget.DisplayWidget):
+    def __call__(self):
+        return IDCDescriptiveProperties(self.user).title
 '''
 
 class MemberURLDisplayWidget(zope.formlib.widget.DisplayWidget):

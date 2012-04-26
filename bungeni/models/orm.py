@@ -33,8 +33,11 @@ def configurable_mappings(kls):
     
     # auditable, determine properties, map audit class/table
     if interfaces.IAuditable.implementedBy(kls):
+        # either defined manually or created dynamically in domain.auditable()
         audit_kls = getattr(domain, "%sAudit" % (name))
-        base_audit_kls = audit_kls.__bases__[0] # domain: base_audit_class(kls)
+        # assumption: audit_kls only uses single inheritance (at least for 
+        # those created dynamically in domain.auditable())
+        base_audit_kls = audit_kls.__bases__[0] 
         assert issubclass(base_audit_kls, domain.Audit), \
             "Audit class %s is not a proper subclass of %s" % (
                 audit_kls, domain.Audit)
@@ -433,30 +436,37 @@ mapper(domain.Doc, schema.doc,
                 schema.users.c.user_id),
             uselist=False,
             lazy=False),
-        # !+AlchemistManagedContaineror, X same as amc_X.values(), property @X?
+        # !+AlchemistManagedContainer, X same as amc_X.values(), property @X?
+        # !+ARCHETYPE_MAPPER(mr, apr-2012) keep this mapper property always 
+        # present on predefined archetype mapper, or dynamically instrument it 
+        # on each on mapper of each (sub-archetype) type having this feature?
         "item_signatories": relation(domain.Signatory), #!+rename sa_signatories
-        "attachments": relation(domain.Attachment),
-        "sa_events": relation(domain.Event, uselist=True),
+        "attachments": relation(domain.Attachment), # !+ARCHETYPE_MAPPER
+        "sa_events": relation(domain.Event, uselist=True), # !+ARCHETYPE_MAPPER
         # for sub parliamentary docs, non-null implies a sub doc
         #"head": relation(domain.Doc,
         #    uselist=False,
         #    lazy=True,
         #),
-        "audits": relation(domain.DocAudit,
-            primaryjoin=rdb.and_(schema.doc.c.doc_id == 
-                schema.doc_audit.c.doc_id),
+        "audits": relation(domain.DocAudit, # !+ARCHETYPE_MAPPER
+            primaryjoin=rdb.and_(
+                schema.doc.c.doc_id == schema.doc_audit.c.doc_id
+            ),
             backref="audit_head",
             uselist=True,
             lazy=True,
             order_by=schema.doc_audit.c.audit_id.desc(),
         ),
-        "versions": relation(domain.Version,
-           primaryjoin=rdb.and_(
-               schema.doc.c.doc_id == schema.doc_audit.c.doc_id,
+        "versions": relation(domain.DocVersion, # !+ARCHETYPE_MAPPER
+            primaryjoin=rdb.and_(
+                schema.doc.c.doc_id == schema.doc_audit.c.doc_id,
             ),
-            secondary=schema.change,
+            secondary=schema.doc_audit,
             secondaryjoin=rdb.and_(
-                schema.doc_audit.c.audit_id == schema.change.c.audit_id,
+                schema.doc_audit.c.audit_id == schema.audit.c.audit_id,
+                schema.audit.c.audit_id == schema.change.c.audit_id,
+                # !+NO_INHERIT_VERSION needs this
+                schema.change.c.action == "version",
             ),
             #!+backref: version.audit.audit_head
             uselist=True,
@@ -512,14 +522,32 @@ mapper(domain.Change, schema.change,
 )
 mapper(domain.ChangeTree, schema.change_tree)
 
+''' !+NO_INHERIT_VERSION mapping domain.Version is actually unnecessary then
 #vm = mapper(domain.Version,
 mapper(domain.Version,
     inherits=domain.Change,
     polymorphic_on=schema.change.c.action, # polymorphic discriminator
     polymorphic_identity=polymorphic_identity(domain.Version),
+)
+# !+polymorphic_identity_multi only allows a single value... but, we can tweak 
+# the version mapper's polymorphic_map to allow multiple values for 
+# polymorphic_identity (but attachment.versions does not pick up reversions):
+#vm.polymorphic_map["reversion"] = vm.polymorphic_map["version"]
+#del vm
+'''
+
+mapper(domain.DocAudit, schema.doc_audit,
+    inherits=domain.Audit,
+    polymorphic_identity=polymorphic_identity(domain.Doc) # on head class
+)
+
+mapper(domain.DocVersion,
+    # !+NO_INHERIT_VERSION(mr, apr-2012) inheriting from domain.Version will 
+    # always give an empty doc.versions / attachment.versions / ... lists !
+    inherits=domain.Change,
     properties={
-        #!+version of an attachment is not attachmentable
-        "attachments": relation(domain.Version,
+        # !+ only for versionable doc sub-types that are also attachmentable
+        "attachments": relation(domain.AttachmentVersion, # !+ARCHETYPE_MAPPER
             primaryjoin=rdb.and_(
                 schema.change.c.audit_id == schema.change_tree.c.parent_id,
                 #schema.change.c.action == "version", # !+constraint
@@ -535,20 +563,9 @@ mapper(domain.Version,
             uselist=True,
             lazy=True,
         ),
-        #!+versionable items supporting feature "event":
+        #!+eventable items supporting feature "event":
         #"sa_events": relation(domain.Event, uselist=True),
-    }
-)
-# !+polymorphic_identity_multi only allows a single value... but, we can tweak 
-# the version mapper's polymorphic_map to allow multiple values for 
-# polymorphic_identity (but attachment.versions does not pick up reversions):
-#vm.polymorphic_map["reversion"] = vm.polymorphic_map["version"]
-#del vm
-
-
-mapper(domain.DocAudit, schema.doc_audit,
-    inherits=domain.Audit,
-    polymorphic_identity=polymorphic_identity(domain.Doc) # on head class
+    },
 )
 
 mapper(domain.AgendaItem,
@@ -614,7 +631,7 @@ mapper(domain.Attachment, schema.attachment,
             uselist=False,
             lazy=False,
         ),
-        "audits": relation(domain.AttachmentAudit,
+        "audits": relation(domain.AttachmentAudit, # !+ARCHETYPE_MAPPER
             primaryjoin=rdb.and_(schema.attachment.c.attachment_id == 
                 schema.attachment_audit.c.attachment_id),
             backref="audit_head",
@@ -623,14 +640,17 @@ mapper(domain.Attachment, schema.attachment,
             #cascade="all",
             order_by=schema.attachment_audit.c.audit_id.desc(),
         ),
-        "versions": relation(domain.Version,
-           primaryjoin=rdb.and_(
-               schema.attachment.c.attachment_id ==
+        "versions": relation(domain.AttachmentVersion, # !+ARCHETYPE_MAPPER
+            primaryjoin=rdb.and_(
+                schema.attachment.c.attachment_id ==
                     schema.attachment_audit.c.attachment_id,
             ),
-            secondary=schema.change,
+            secondary=schema.attachment_audit,
             secondaryjoin=rdb.and_(
-                schema.attachment_audit.c.audit_id == schema.change.c.audit_id,
+                schema.attachment_audit.c.audit_id == schema.audit.c.audit_id,
+                schema.audit.c.audit_id == schema.change.c.audit_id,
+                # !+NO_INHERIT_VERSION needs this
+                schema.change.c.action == "version",
             ),
             #!+backref: version.audit.audit_head
             #backref="audit_head", !+ERROR: version.audit_head
@@ -646,7 +666,13 @@ mapper(domain.AttachmentAudit, schema.attachment_audit,
     inherits=domain.Audit,
     polymorphic_identity=polymorphic_identity(domain.Attachment) # on head class
 )
-
+mapper(domain.AttachmentVersion,
+    inherits=domain.Change, # !+NO_INHERIT_VERSION
+    properties={
+        #!+eventable items supporting feature "event":
+        #"sa_events": relation(domain.Event, uselist=True),
+    },
+)
 
 mapper(domain.Heading, schema.headings,
     properties={

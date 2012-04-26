@@ -219,7 +219,7 @@ class Field(object):
     interface.implements(IModelDescriptorField)
     
     # A field in a descriptor must be displayable in at least one of these modes
-    _modes = ["view", "edit", "add", "listing", "search"]
+    _modes = ["view", "edit", "add", "listing"] #!+"search"]
     @classmethod 
     def validated_modes(cls, modes, nullable=False):
         return validated_set("modes", cls._modes, modes, nullable=nullable)
@@ -254,8 +254,18 @@ class Field(object):
     description = "" # str : description for field
     
     # displayable modes
-    modes = validated_set("modes", _modes, "view edit add listing")
-    
+    def modes():
+        doc = "Field.modes property, list of defaulted/validated displayable modes"
+        def fget(self):
+            # in self.__dict__ or in  self.__class__.__dict__
+            return self._modes 
+        def fset(self, str_or_seq):
+            self._modes = self.validated_modes(str_or_seq)
+        def fdel(self):
+            del self._modes
+        return locals()
+    modes = property(**modes())
+
     # the default list of show/hide localization directives -- by default
     # a field is NOT localizable in any mode and for any role.
     localizable = None # [ either(show, hide) ]
@@ -335,7 +345,7 @@ class Field(object):
         
         # parameter integrity
         assert self.name, "Field [%s] must specify a valid name" % (self.name)
-        self.modes = self.validated_modes(self.modes)
+        #self.modes = self.validated_modes(self.modes)
         # Ensure that a field is included in a descriptor only when it is 
         # relevant to the UI i.e. it is displayed in at least one mode -- 
         # this obsoletes/replaces the previous concept of descriptor "omit". 
@@ -422,7 +432,7 @@ class Field(object):
     
     def __getitem__(self, k):
         return self.__dict__[k]
-
+    
     # to allow: with field as f:
     def __enter__(self): 
         return self

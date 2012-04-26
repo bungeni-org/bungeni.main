@@ -1923,56 +1923,6 @@ class GovernmentDescriptor(GroupDescriptor):
             ),
         ),
     ])
-
-    """fields = [
-        Field(name="short_name", # [user]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit add listing"),
-            ],
-            property=schema.TextLine(title=_("Short Name"),
-                description=_("Name"),
-                required=False
-            ),
-        ),
-        Field(name="full_name", label=_("Full Name"), # [user]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit add listing"),
-            ],
-        ),
-        Field(name="start_date", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit listing"),
-            ],
-            property=schema.Date(title=_("In power from")),
-            listing_column=day_column("start_date", _("In power from")),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget
-        ),
-        Field(name="end_date", # [user]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit add listing"),
-            ],
-            property=schema.Date(title=_("In power till"), required=False),
-            listing_column=day_column("end_date", _("In power till")),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget
-        ),
-        LanguageField("language"), # [user-req]
-        Field(name="description", # [rtf]
-            modes="view edit add",
-            localizable=[
-                show("view edit add"),
-            ],
-            property=schema.Text(title=_("Notes"), required=False),
-            view_widget=widgets.HTMLDisplay,
-            edit_widget=widgets.RichTextEditor,
-            add_widget=widgets.RichTextEditor,
-        ),
-    ]"""
     schema_invariants = [EndAfterStart]
     custom_validators = [validations.validate_government_dates]
 
@@ -2038,25 +1988,19 @@ class AttachmentDescriptor(ModelDescriptor):
             view_widget=widgets.FileDisplayWidget,
         ),
         Field(name="name", label="", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view listing"),
-            ],
+            modes="edit add",
             edit_widget=widgets.NoInputWidget,
             add_widget=widgets.NoInputWidget,
         ),
         Field(name="mimetype", label="", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view listing"),
-            ],
+            modes="edit add",
             edit_widget=widgets.NoInputWidget,
             add_widget=widgets.NoInputWidget,
         ),
         Field(name="status", label=_("Status"), # [user-req]
-            modes="view edit listing",
+            modes="view listing",
             localizable=[
-                show("view edit listing"),
+                show("view listing"),
             ],
             property=schema.Choice(title=_("Status"),
                 vocabulary="bungeni.vocabulary.workflow",
@@ -2074,86 +2018,8 @@ class AttachmentDescriptor(ModelDescriptor):
         LanguageField("language"), # [user-req]
     ]
 
-class AttachmentDescriptor(ModelDescriptor):
-    localizable = True
-    display_name = _("File")
-    container_name = _("Files")
-    fields = [
-        LanguageField("language"), # [user-req]
-        Field(name="title", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit listing"),
-            ],
-            property=schema.TextLine(title=_("Title")),
-            edit_widget=widgets.TextWidget,
-            add_widget=widgets.TextWidget,
-        ),
-        Field(name="description", # [rtf]
-            modes="view edit add",
-            localizable=[
-                show("view edit add"),
-            ],
-            property=schema.Text(title=_("Description"), required=False),
-            view_widget=widgets.HTMLDisplay,
-            edit_widget=widgets.RichTextEditor,
-            add_widget=widgets.RichTextEditor,
-        ),
-        Field(name="data", # [file]
-            modes="view edit add",
-            localizable=[
-                show("view edit"),
-            ],
-            property=schema.Bytes(title=_("File")),
-            description=_("Upload a file"),
-            edit_widget=widgets.FileEditWidget,
-            add_widget=widgets.FileAddWidget,
-            view_widget=widgets.FileDisplayWidget,
-        ),
-        Field(name="type", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit listing"),
-            ],
-            property=schema.Choice(title=_("File Type"),
-                source=vocabulary.attachment_type,
-            ),
-            listing_column=vocabulary_column("ype",
-                "File Type",
-                vocabulary.attachment_type,
-            ),
-        ),
-        Field(name="name", label="", # [user-req]
-            modes="edit add",
-            edit_widget=widgets.NoInputWidget,
-            add_widget=widgets.NoInputWidget,
-        ),
-        Field(name="mimetype", label="", # [user-req]
-            modes="edit add",
-            edit_widget=widgets.NoInputWidget,
-            add_widget=widgets.NoInputWidget,
-        ),
-        Field(name="status", label=_("Status"), # [user-req]
-            modes="view edit listing",
-            localizable=[
-                show("view edit listing"),
-            ],
-            property=schema.Choice(title=_("Status"),
-                vocabulary="bungeni.vocabulary.workflow",
-            ),
-            listing_column=workflow_column("status", "Workflow status"),
-        ),
-        Field(name="status_date", label=_("Status date"), # [sys]
-            modes="view listing",
-            localizable=[
-                show("view listing"),
-            ],
-            property=schema.Date(title=_("Status date"), required=False),
-            listing_column=day_column("status_date", _("Status date")),
-        ),
-    ]
 
-
+''' !+VERSION_CLASS_PER_TYPE
 class AttachedFileVersionDescriptor(ModelDescriptor):
     localizable = True
     display_name = _("Attached file version")
@@ -2167,9 +2033,9 @@ class AttachedFileVersionDescriptor(ModelDescriptor):
             show("view listing"),
         ],
     )
+'''
 
-
-class DocumentDescriptor(ModelDescriptor):
+class DocDescriptor(ModelDescriptor):
     localizable = False
     default_field_order = [
         "short_title",
@@ -2356,12 +2222,12 @@ class DocumentDescriptor(ModelDescriptor):
     ]
 
 
-class EventDescriptor(DocumentDescriptor):
+class EventDescriptor(DocDescriptor):
     localizable = True
     display_name = _("Event")
     container_name = _("Events")
     
-    fields = deepcopy(DocumentDescriptor.fields)
+    fields = deepcopy(DocDescriptor.fields)
     fields.append(
         Field(name="group_id", # [user]
             modes="view edit add listing",
@@ -2411,94 +2277,104 @@ class EventDescriptor(DocumentDescriptor):
         )
     del f # remove f from class namespace
 
-''' !+AuditLogView(mr, nov-2011) change listings do not respect this
+
+# !+AuditLogView(mr, nov-2011) change listings do not respect this
 class ChangeDescriptor(ModelDescriptor):
     localizable = False
     fields = [
-        Field(name="change_id", # [sys]
+        Field(name="audit_id", # [sys]
             modes="view listing",
             localizable=[ hide("view listing"), ],
         ),
+        Field(name="user_id",
+            modes="view listing",
+            localizable=[ show("view listing"), ],
+            property=schema.Choice(title=_("User"), 
+                source=vocabulary.UserSource(
+                    token_field="user_id",
+                    title_field="fullname",
+                    value_field="user_id")),
+            view_widget=None,
+            listing_column=user_name_column("user_id", _("Name"), "user"),
+        ),
         Field(name="action",
-            modes="view edit add listing",
-            localizable=[
-                show("view listing"),
-            ],
+            modes="view listing",
+            localizable=[ show("view listing"), ],
+        ),
+        Field(name="seq",
+            modes="view listing",
+            localizable=[ show("view listing"), ],
+        ), 
+        Field(name="procedure",
+            modes="view listing",
+            localizable=[ show("view listing"), ],
         ),
         Field(name="date_audit", # [sys]
-            modes="view add listing",
-            localizable=[ 
-                hide("view listing"), 
-            ],
+            modes="view listing",
+            localizable=[ hide("view listing"), ],
             property=schema.Date(title=u"Audit Date", required=True),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
             listing_column=datetime_column("date_audit", "Date Audit"),
         ),
         Field(name="date_active", # [user]
-            modes="view add edit listing",
-            localizable=[ 
-                show("view add edit listing"), 
-            ],
+            modes="view listing",
+            localizable=[ show("view listing"), ],
             property=schema.Date(title=u"Active Date", required=True),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
             listing_column=datetime_column("date_active", "Date Active"),
         ),
-        Field(name="content_id"), 
-        Field(name="description"),
-        Field(name="notes"),
-        Field(name="user_id"),
-        Field(name="status"),
     ]
-'''
-
-# !+VERSION_CLASS_PER_AUDIT_TYPE(mr, apr-2012)
+    default_field_order = [
+        "user_id",
+        "action",
+        "seq",
+        "procedure",
+        "date_audit",
+        "date_active",
+    ]
 # !+VERSION_LISTING(mr, nov-2011) version listings do not respect this
-class VersionDescriptor(ModelDescriptor):
-    localizable = False
-    
-    fields = [
-        Field(name="short_title", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit listing"),
-            ],
-            property=schema.TextLine(title=_("Title")),
-            edit_widget=widgets.TextWidget,
-            add_widget=widgets.TextWidget,
-        ),
-        Field(name="long_title", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit"),
-                hide("listing"),
-            ],
-            property=schema.TextLine(title=_("Summary")),
-            edit_widget=widgets.LongTextWidget,
-            add_widget=widgets.LongTextWidget,
-        ),
-        LanguageField("language"), # [user-req]
-        Field(name="body", # [rtf]
-            modes="view edit add",
-            localizable=[
-                show("view edit"),
-            ],
-            property=schema.Text(title=_("Text")),
-            view_widget=widgets.HTMLDisplay,
-            edit_widget=widgets.RichTextEditor,
-            add_widget=widgets.RichTextEditor,
-        ),
-        Field(name="note", # [???]
-            description="Recommendation note",
-            modes="edit add",
-            property=schema.Text(title=_("Notes"),
-                description=_("Recommendation note"),
-                required=False
-            ),
-            edit_widget=widgets.OneTimeEditWidget,
-        ),
-    ]
+class VersionDescriptor(ChangeDescriptor):
+    fields = deepcopy(ChangeDescriptor.fields)
+
+''' !+VERSION_CLASS_PER_TYPE(mr, apr-2012)
+- dynamically create a dedicated domain.TypeVersion and a corresponding 
+  TypeVersionDescriptor (building on VersionDescriptor AND TypeDescriptor), for 
+  each versionable domain Type.
+- should have: localizable = True
+- "edit add" mode should NOT be available on any of the audited fields?
+- remove workflow vocabs (on status) (!+ but still display/translate as consistently)
+'''
+class DocVersionDescriptor(VersionDescriptor):
+    """Base UI Descriptor for Doc archetype."""
+    localizable = True
+    default_field_order = \
+        deepcopy(VersionDescriptor.default_field_order) + \
+        deepcopy(DocDescriptor.default_field_order)
+    fields = \
+        deepcopy(VersionDescriptor.fields) + \
+        deepcopy(DocDescriptor.fields)
+    with get_field(fields, "status") as f:
+        f.modes = "view listing"
+        f.localizable = [ show("view listing"), ]
+        f.property = schema.Text(title=_("Status"))
+    del f # remove f from class namespace
+
+class AttachmentVersionDescriptor(VersionDescriptor):
+    """UI Descriptor for Attachment archetype."""
+    localizable = True
+    default_field_order = \
+        deepcopy(VersionDescriptor.default_field_order) + \
+        list(deepcopy(AttachmentDescriptor.default_field_order))
+    fields = \
+        deepcopy(VersionDescriptor.fields) + \
+        deepcopy(AttachmentDescriptor.fields)
+    with get_field(fields, "status") as f:
+        f.modes = "view listing"
+        f.localizable = [ show("view listing"), ]
+        f.property = schema.Text(title=_("Status"))
+    del f # remove f from class namespace
 
 
 class HeadingDescriptor(ModelDescriptor):
@@ -2520,12 +2396,12 @@ class HeadingDescriptor(ModelDescriptor):
     ]
 
 
-class AgendaItemDescriptor(DocumentDescriptor):
+class AgendaItemDescriptor(DocDescriptor):
     localizable = True
     display_name = _("Agenda item")
     container_name = _("Agenda items")
     
-    fields = deepcopy(DocumentDescriptor.fields)
+    fields = deepcopy(DocDescriptor.fields)
     fields.append(AdmissibleDateField()) # [sys]
     get_field(fields, "submission_date").localizable = [
         show("view"),
@@ -2549,18 +2425,19 @@ class AgendaItemDescriptor(DocumentDescriptor):
         "admissible_date"
     ]
 
+''' !+VERSION_CLASS_PER_TYPE
 class AgendaItemVersionDescriptor(VersionDescriptor):
     localizable = True
     display_name = _("Agenda Item version")
     container_name = _("Versions")
     fields = deepcopy(VersionDescriptor.fields)
+'''
 
-
-class MotionDescriptor(DocumentDescriptor):
+class MotionDescriptor(DocDescriptor):
     localizable = True
     display_name = _("Motion")
     container_name = _("Motions")
-    fields = deepcopy(DocumentDescriptor.fields)
+    fields = deepcopy(DocDescriptor.fields)
     fields.extend([
         AdmissibleDateField(),
         Field(name="notice_date", # [sys]
@@ -2603,11 +2480,13 @@ class MotionDescriptor(DocumentDescriptor):
 			"registry_number",
     ]
 
+''' !+VERSION_CLASS_PER_TYPE
 class MotionVersionDescriptor(VersionDescriptor):
     localizable = True
     display_name = _("Motion version")
     container_name = _("Versions")
     fields = deepcopy(VersionDescriptor.fields)
+'''
 
 ''' !+AuditLogView(mr, nov-2011)
 class MotionChangeDescriptor(ChangeDescriptor):
@@ -2635,12 +2514,12 @@ class BillTypeDescriptor(ModelDescriptor):
     ]
 '''
 
-class BillDescriptor(DocumentDescriptor):
+class BillDescriptor(DocDescriptor):
     localizable = True
     display_name = _("Bill")
     container_name = _("Bills")
 
-    fields = deepcopy(DocumentDescriptor.fields)
+    fields = deepcopy(DocDescriptor.fields)
     # remove "doc_type"
     fields[:] = [ f for f in fields if f.name not in ("doc_type",) ]
     # tweak...
@@ -2704,11 +2583,13 @@ class BillDescriptor(DocumentDescriptor):
         "registry_number",
     ]
 
+''' !+VERSION_CLASS_PER_TYPE
 class BillVersionDescriptor(VersionDescriptor):
     localizable = True
     display_name = _("Bill version")
     container_name = _("Versions")
     fields = deepcopy(VersionDescriptor.fields)
+'''
 
 ''' !+TYPES_CUSTOM
 class QuestionTypeDescriptor(ModelDescriptor):
@@ -2738,12 +2619,12 @@ class ResponseTypeDescriptor(ModelDescriptor):
     ]
 '''
 
-class QuestionDescriptor(DocumentDescriptor):
+class QuestionDescriptor(DocDescriptor):
     localizable = True
     display_name = _("Question")
     container_name = _("Questions")
     
-    fields = deepcopy(DocumentDescriptor.fields)
+    fields = deepcopy(DocDescriptor.fields)
     # remove "doc_type"
     fields[:] = [ f for f in fields if f.name not in ("doc_type",) ]
     fields.extend([
@@ -2856,18 +2737,19 @@ class QuestionDescriptor(DocumentDescriptor):
     ]
     custom_validators = []
 
+''' !+VERSION_CLASS_PER_TYPE
 class QuestionVersionDescriptor(VersionDescriptor):
     localizable = True
     display_name = _("Question version")
     container_name = _("Versions")
     fields = deepcopy(VersionDescriptor.fields)
+'''
 
-
-class TabledDocumentDescriptor(DocumentDescriptor):
+class TabledDocumentDescriptor(DocDescriptor):
     localizable = True
     display_name = _("Tabled document")
     container_name = _("Tabled documents")
-    fields = deepcopy(DocumentDescriptor.fields)
+    fields = deepcopy(DocDescriptor.fields)
     fields.extend([
         AdmissibleDateField(), # [sys]
     ])
@@ -2894,11 +2776,13 @@ class TabledDocumentDescriptor(DocumentDescriptor):
         "registry_number",
     ]
 
+''' !+VERSION_CLASS_PER_TYPE
 class TabledDocumentVersionDescriptor(VersionDescriptor):
     localizable = True
     display_name = _("Tabled Document version")
     container_name = _("Versions")
     fields = deepcopy(VersionDescriptor.fields)
+'''
 
 class VenueDescriptor(ModelDescriptor):
     localizable = False
@@ -2948,7 +2832,7 @@ class SittingDescriptor(ModelDescriptor):
             # should still be possible use the generic container listing in
             # combination with a further customized listing_column -- for an
             # example of this see how the listing of the column "owner_id"
-            # is configured in: descriptor.DocumentDescriptor
+            # is configured in: descriptor.DocDescriptor
 
             # !+CustomListingURL(miano, nov-2010)
             # Since the custom listing column function was missing
@@ -3193,9 +3077,10 @@ class SignatoryDescriptor(ModelDescriptor):
         ),
         Field(name="status",
             modes="view listing",
-            localizable = [show("view listing", 
-                "bungeni.Signatory bungeni.Owner bungeni.Clerk"
-            )],
+            localizable = [
+                show("view listing", 
+                    "bungeni.Signatory bungeni.Owner bungeni.Clerk")
+            ],
             property=schema.Choice(title=_("Signature status"), 
                 vocabulary="bungeni.vocabulary.workflow",
                 required=True
@@ -3488,7 +3373,7 @@ class ItemScheduleDiscussionDescriptor(ModelDescriptor):
     ]
 
 
-class ReportDescriptor(DocumentDescriptor):
+class ReportDescriptor(DocDescriptor):
     localizable = True
     display_name = _("Report")
     container_name = _("Reports")
@@ -3582,7 +3467,7 @@ def catalyse_descriptors():
             catalyst(None, kls, descriptor, echo=True)
         except (Exception,):
             # no corresponding domain class, ignore 
-            # e.g. Address, Model, Version
+            # e.g. Address, Model, ...
             debug.log_exc(sys.exc_info(), log_handler=log.warn)
             continue
         # TYPE_REGISTRY, add descriptor
@@ -3597,9 +3482,10 @@ def catalyse_descriptors():
             assert ti.domain_model is kls
         ti.descriptor = descriptor
     
-    m = ("Done all workflow/descriptor related setup... running with:\n"
-        "\n    ".join([ "    %s: %s" % (name, ti)
-            for name, ti in adapters.TYPE_REGISTRY ]))
+    m = ("\n\nDone all workflow/descriptor related setup... running with:\n  " + 
+        "\n  ".join(sorted([ "%s: %s" % (name, ti)
+                for name, ti in adapters.TYPE_REGISTRY ])) + 
+        "\n")
     log.debug(m)
 
 # !+catalyse_descriptors(mr, jul-2011), fails when this is called here 
