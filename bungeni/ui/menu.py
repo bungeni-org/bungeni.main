@@ -439,7 +439,6 @@ class CalendarContentMenu(BrowserMenu):
     
     Allows adding of items such as headings for reuse within scheduling contexts
     """
-    IDCDescriptiveProperties
     def getMenuItems(self, context, request):
         results = []
         try:
