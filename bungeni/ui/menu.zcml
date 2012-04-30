@@ -342,6 +342,22 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.heading.Delete"
     />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IHeading"
+        title="Edit heading"
+        action="edit"
+        order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        permission="bungeni.heading.Edit"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IMemberTitle"
+        title="Edit member title"
+        action="edit"
+        order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        permission="zope.ManageContent"
+    />
      <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IMemberTitle"
         title="Delete member title"
@@ -518,8 +534,16 @@
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IMemberOfParliament"
+        action="edit"
+        title="Edit MP"
+        order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        permission="bungeni.mp.Edit"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IMemberOfParliament"
         action="delete"
-        title="Delete member of parliament"
+        title="Delete MP"
         order="99"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.mp.Delete"
@@ -754,7 +778,14 @@
      permission="bungeni.session.Add"
      order="100"
      />
-
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IParliamentSession"
+        title="Edit session"
+        action="./delete"
+        order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        permission="bungeni.session.Delete"
+    />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IParliamentSession"
         title="Delete session"
@@ -1141,9 +1172,6 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         >
         <browser:menuItem action="view" title="View" order="0" />
-        <browser:menuItem action="edit" title="Edit" order="10"
-            permission="zope.ManageContent"
-        />
     </browser:menuItems>
     <browser:menuItems menu="context_actions"
         for="bungeni.core.workflow.interfaces.IWorkflowed"
@@ -1204,7 +1232,14 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="zope.ManageContent"
     />
-
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IBungeniUser"
+        action="edit"
+        title="Edit user"
+        order="10"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        permission="zope.ManageContent"
+    />
     <browser:menuItems menu="context_actions"
         for="bungeni.models.interfaces.IAttachment"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer">
@@ -1402,10 +1437,34 @@
         permission="zope.ManageContent"
     />
     <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IProvince"
+        action="edit"
+        title="Edit province"
+        order="10"
+        layer=".interfaces.IAdminSectionLayer"
+        permission="zope.ManageContent"
+    />
+    <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IRegion"
         action="delete"
         title="Delete region"
         order="99"
+        layer=".interfaces.IAdminSectionLayer"
+        permission="zope.ManageContent"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IRegion"
+        action="edit"
+        title="Edit region"
+        order="10"
+        layer=".interfaces.IAdminSectionLayer"
+        permission="zope.ManageContent"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IConstituency"
+        action="edit"
+        title="Edit constituency"
+        order="10"
         layer=".interfaces.IAdminSectionLayer"
         permission="zope.ManageContent"
     />
@@ -1427,6 +1486,14 @@
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.ITitleType"
+        action="edit"
+        title="Edit title type"
+        order="10"
+        layer=".interfaces.IAdminSectionLayer"
+        permission="zope.ManageContent"
+    />
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.ITitleType"
         action="delete"
         title="Delete title type"
         order="99"
@@ -1441,7 +1508,14 @@
         layer=".interfaces.IAdminSectionLayer"
         permission="zope.ManageContent"
     />
-    
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IUserDelegation"
+        action="edit"
+        title="Edit user delegation"
+        order="10"
+        layer=".interfaces.IAdminSectionLayer"
+        permission="zope.ManageContent"
+    />
     <browser:menuItem menu="context_actions"
         layer=".interfaces.IBusinessSectionLayer"
         for="bungeni.models.interfaces.ICommittee"
