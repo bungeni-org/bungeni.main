@@ -369,7 +369,7 @@ mapper(domain.Sitting, schema.sitting,
         "item_schedule": relation(domain.ItemSchedule,
             order_by=schema.item_schedules.c.planned_order
         ),
-        "venue": relation(domain.Venue),
+        "venue": relation(domain.Venue, lazy=False),
     }
 )
 
