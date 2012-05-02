@@ -79,7 +79,7 @@ def configurable_mappings(kls):
                     lazy=True,
                     order_by=schema.change.c.audit_id.desc(),
                     cascade="all",
-                    passive_deletes=False,
+                    passive_deletes=False, # SA default
                 )
             # versionable
             if interfaces.IVersionable.implementedBy(kls):
@@ -415,12 +415,15 @@ def relation_vertical_property(object_type, object_id_column, vp_name, vp_type):
         uselist=False,
         # !+abusive, cannot create a same-named backref to multiple classes!
         #backref=object_type,
-        # sqlalchemy.orm.relationship(cascade="refresh-expire, expunge, delete")
-        cascade="save-update, merge, delete-orphan",
+        # sqlalchemy.orm.relationship(cascade="save-update, merge, 
+        #       refresh-expire, expunge, delete, delete-orphan")
+        # False (default) -> "save-update, merge"
+        # "all" -> "save-update, merge, refresh-expire, expunge, delete"
+        cascade="all",
         single_parent=True,
-        lazy=True, # !+ True gives DetachedInstanceError in listings, while 
-        # False gives sqlalchemy.exc.ProgrammingError (missing FROM-clause 
-        # entry for table ... ) !!
+        lazy=True, # !+ False gives sqlalchemy.exc.ProgrammingError 
+        # e.g. in business/questions listing:
+        # (ProgrammingError) missing FROM-clause entry for table "doc"
     )
 
 
@@ -456,6 +459,8 @@ mapper(domain.Doc, schema.doc,
             uselist=True,
             lazy=True,
             order_by=schema.doc_audit.c.audit_id.desc(),
+            cascade="all",
+            passive_deletes=False, # SA default
         ),
         "versions": relation(domain.DocVersion, # !+ARCHETYPE_MAPPER
             primaryjoin=rdb.and_(
@@ -472,6 +477,7 @@ mapper(domain.Doc, schema.doc,
             uselist=True,
             lazy=True,
             order_by=schema.change.c.audit_id.desc(),
+            viewonly=True,
         ),
         "group": relation(domain.Group,
             primaryjoin=schema.doc.c.group_id == schema.groups.c.group_id,
@@ -637,8 +643,9 @@ mapper(domain.Attachment, schema.attachment,
             backref="audit_head",
             uselist=True,
             lazy=True,
-            #cascade="all",
             order_by=schema.attachment_audit.c.audit_id.desc(),
+            cascade="all",
+            passive_deletes=False, # SA default
         ),
         "versions": relation(domain.AttachmentVersion, # !+ARCHETYPE_MAPPER
             primaryjoin=rdb.and_(
@@ -659,6 +666,7 @@ mapper(domain.Attachment, schema.attachment,
             uselist=True,
             lazy=True,
             order_by=schema.change.c.audit_id.desc(),
+            viewonly=True,
         ),
     }
 )
@@ -721,6 +729,8 @@ mapper(domain.Signatory, schema.signatory,
             uselist=True,
             lazy=True,
             order_by=schema.signatory_audit.c.signatory_id.desc(),
+            cascade="all",
+            passive_deletes=False, # SA default
         ),
     }
 )

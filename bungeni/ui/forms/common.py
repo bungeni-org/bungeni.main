@@ -382,11 +382,7 @@ class AddForm(BaseForm, catalyst.AddForm):
         if not self._next_url:
             self._next_url = url.absoluteURL(self.__parent__, self.request)
         self.request.response.redirect(self._next_url)
-        # !+SESSION_CLOSE(taras.sterch, july-2011) there is no need to close the 
-        # session. Transaction manager will take care of this. Hope it does not 
-        # brake anything.
-        #session.close()
-
+    
     @formlib.form.action(_(u"Save"), name="save",
                          condition=formlib.form.haveInputWidgets)
     def handle_add(self, action, data):
@@ -538,11 +534,6 @@ class EditForm(BaseForm, catalyst.EditForm):
         if not self._next_url:
             self._next_url = url.absoluteURL(self.context, self.request)
         self.request.response.redirect(self._next_url)
-        # !+SESSION_CLOSE(taras.sterch, july-2011) there is no need to close the 
-        # session. Transaction manager will take care of this. Hope it does not 
-        # brake anything.
-        #session.close()
-
 
 class TranslateForm(AddForm):
     """Custom translate-form for Bungeni content.
@@ -782,9 +773,11 @@ class DeleteForm(PageForm):
     # zpt
     # !+form_template(mr, jul-2010) this is unused here, but needed by
     # some adapter of this "object delete" view
-    form_template = NamedTemplate("alchemist.form")
-    template = ViewPageTemplateFile("templates/delete.pt")
-
+    # !+locationerror(mr, apr-2012)
+    #form_template = NamedTemplate("alchemist.form")
+    #template = ViewPageTemplateFile("templates/delete.pt")
+    template = z3evoque.PageViewTemplateFile("delete.html")
+    
     _next_url = None
     form_fields = formlib.form.Fields()
 
@@ -814,7 +807,6 @@ class DeleteForm(PageForm):
         session = Session()
         session.delete(trusted)
         count += 1
-
         try:
             session.flush()
         except IntegrityError, e:
@@ -823,15 +815,10 @@ class DeleteForm(PageForm):
             # second phase of the commit
             session.rollback()
             log.critical(e)
-
-            self.status = _(u"Could not delete item due to "
-                            "database integrity error")
-
+            self.status = _(
+                "Could not delete item due to database integrity error. "
+                "You may wish to try deleting any related sub-records first?")
             return self.render()
-        # !+SESSION_CLOSE(taras.sterch, july-2011) there is no need to close the 
-        # session. Transaction manager will take care of this. Hope it does not 
-        # brake anything.
-        #session.close()
         
         #TODO: check that it is removed from the index!
         notify(ObjectRemovedEvent(

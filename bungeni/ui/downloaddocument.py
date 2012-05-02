@@ -322,10 +322,6 @@ class BungeniContentODT(DownloadDocument):
         if not hasattr(self.document,"group"):
             session = Session()
             self.document.group = session.query(domain.Group).get(self.document.parliament_id)
-            # !+SESSION_CLOSE(taras.sterch, july-2011) there is no need to close the 
-            # session. Transaction manager will take care of this. Hope it does not 
-            # brake anything.
-            #session.close()
         return self.template()
     
     def __call__(self):
@@ -340,10 +336,6 @@ class BungeniContentPDF(DownloadDocument):
         if not hasattr(self.document,"group"):
             session = Session()
             self.document.group = session.query(domain.Group).get(self.document.parliament_id)
-            # !+SESSION_CLOSE(taras.sterch, july-2011) there is no need to close the 
-            # session. Transaction manager will take care of this. Hope it does not 
-            # brake anything.
-            #session.close()
         return self.template()
     
     def __call__(self):

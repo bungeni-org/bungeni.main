@@ -110,9 +110,11 @@ class Entity(object):
     
     def __init__(self, **kw):
         try:
-            domain_schema = model.queryModelInterface(self.__class__)
-            known_names = [k for k, d in domain_schema.namesAndDescriptions(1)]
-        except:
+            domain_schema = model.queryModelInterface(type(self))
+            known_names = [ k for k, d in domain_schema.namesAndDescriptions(1) ]
+        except Exception, e:
+            log.error("Failed queryModelInterface(%s): %s: %s" % (
+                type(self), type(e).__name__, e))
             known_names = None
         
         for k, v in kw.items():
