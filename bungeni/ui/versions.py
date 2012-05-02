@@ -33,7 +33,7 @@ from bungeni.models.interfaces import IVersionable
 from bungeni.ui.interfaces import IWorkspaceOrAdminSectionLayer
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import url
-from bungeni.ui.diff import textDiff
+from htmltreediff import html_changes
 from bungeni.ui import browser
 from bungeni.ui import forms
 from bungeni.utils import register
@@ -343,6 +343,7 @@ class DiffView(object):
                 content_changed = True
         return self.template(tables=tables, content_changed=content_changed)
 
+
 def diff(source, target, *interfaces):
     """Get a list of (field, changed, result) 3-tuples, for "diff-able" fields.
     """
@@ -352,16 +353,25 @@ def diff(source, target, *interfaces):
     for iface in interfaces:
         # the order is locked on the order returned by of interface.names()
         for name in iface.names():
-            field = iface[name]
+            #!+VERSIONS(miano, 2 may 2012) something changed in the last couple
+            # of weeks that makes removeSecurityPolicy below required yet
+            # it wasn't before.
+            field = removeSecurityProxy(iface[name])
             # only consider for diffing fields of this type
-            if not isinstance(field, (schema.Text, schema.TextLine, schema.Set)):
+            #!+VERSIONS(miano, 2 May 2012) This was an isinstance check before.
+            # switched it to check on interfaces.
+            if set((schema.interfaces.IText, schema.interfaces.ITextLine,
+                schema.interfaces.ISet)).isdisjoint(
+                    set(interface.providedBy(field))):
                 continue
             bound = field.bind(source)
             source_value = bound.query(source, field.default)
             target_value = bound.query(target, field.default)
             if source_value is None or target_value is None:
                 continue
-            hresult = textDiff(source_value, target_value)
+            #print "XXXXXXXXXXXX", len(source_value), len(target_value)
+            #hresult = textDiff(source_value, target_value)
+            hresult = html_changes(source_value, target_value, pretty=True)
             results.append((field, bool(hresult!=source_value), hresult))
     return results
 
