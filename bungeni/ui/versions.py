@@ -33,11 +33,10 @@ from bungeni.models.interfaces import IVersionable
 from bungeni.ui.interfaces import IWorkspaceOrAdminSectionLayer
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import url
-from htmltreediff import html_changes
 from bungeni.ui import browser
 from bungeni.ui import forms
 from bungeni.utils import register
-
+from bungeni.ui.htmldiff import htmldiff
 from bungeni.ui import audit
 from zc.table import column
 
@@ -369,9 +368,7 @@ def diff(source, target, *interfaces):
             target_value = bound.query(target, field.default)
             if source_value is None or target_value is None:
                 continue
-            #print "XXXXXXXXXXXX", len(source_value), len(target_value)
-            #hresult = textDiff(source_value, target_value)
-            hresult = html_changes(source_value, target_value, pretty=True)
+            hresult = htmldiff(source_value, target_value)
             results.append((field, bool(hresult!=source_value), hresult))
     return results
 
