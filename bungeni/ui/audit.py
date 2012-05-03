@@ -129,8 +129,7 @@ class ChangeDataProvider(object):
         '''
 
 
-# Display Descriptors
-
+''' !+UNUSED
 def _eval_as_dict(s):
     """Utility to eval serialization of a dict, failure returns an empty dict.
     """
@@ -141,19 +140,75 @@ def _eval_as_dict(s):
     except (SyntaxError, TypeError, AssertionError):
         debug.log_exc(sys.exc_info(), log_handler=log.info)
         return {}
+'''
 
-def _get_type_name(audit):
+
+# Audit description formatting
+
+def _get_type_name(change):
     """Get document type name.
     """
     #return change.head.type # !+ not all heads define such a type attr 
-    type_name = audit.__class__.__name__
+    type_name = change.audit.__class__.__name__
     if type_name.endswith("Audit"):
         return type_name[:-5].lower()
     return type_name.lower()
 
-def _format_description_workflow(change):
+def _get_changed_names(change):
+    """Get the names of attributes (including extended attributes) that have
+    been changed since last change. Return empty list if no previous change.
+    """
+    prev = change.previous
+    if prev:
+        prau, chau = prev.audit, change.audit
+        names = [
+            name for name in 
+                prau.__dict__.keys() + [ 
+                vp_name for (vp_name, vp_type) in prau.extended_properties ]
+            if name not in _get_changed_names.IGNORE ]
+        return sorted([ name for name in names
+            if getattr(prau, name) != getattr(chau, name) ])
+    return []
+_get_changed_names.IGNORE = ("_sa_instance_state", "audit_id", "timestamp")
+
+def _label(change):
+    """Get a displayable translated label.
+    """
+    return translate(change.audit.label)
+    
+
+# Audit description format handlers !+bungeni_custom
+#
+# action: "add", "modify", "workflow", "remove", "version", "reversion"
+# change_type: "head", "signatory", "attachment", "event"
+# 
+# api: formatter(change) -> localized string
+# formatter naming convention: _df_{action}[_{change_type}]
+
+_df_add = _label
+def _df_add_event(change):
+    # !+LINKED_SUB_ITEMS_IN_AUDIT_DESCRIPTION
+    return """<a href="events/obj-%s">%s</a>""" % (
+        change.audit.audit_head_id, _label(change))
+
+def _df_modify(change):
+    # !+ rss -> _get_changed_names(change) always returns empty list!
+    changed = _df_modify_head(change)
+    if changed:
+        return "%s: %s" % (_label(change), changed)
+    return _label(change)
+def _df_modify_head(change):
+    changed = _get_changed_names(change)
+    #return '<span class="workflow_info">%s</span>' % (
+    # !+rss_no_markup
+    return '%s' % ", ".join(changed)
+def _df_modify_event(change):
+    return "%s: %s" % (_df_add_event(change), _df_modify_head(change))
+
+def _df_workflow(change):
+    return "%s: %s" % (_label(change), _df_workflow_head(change))
+def _df_workflow_head(change):
     # !+change.audit.status(mr, apr-2012) use the workflow state's title instead? 
-    # !+workflow_change_action(mr, apr-2012) get previous "from" status?
     wf_prev, wf_prev_status = change.seq_previous, None
     if wf_prev:
         wf_prev_status = wf_prev.audit.status
@@ -164,67 +219,41 @@ def _format_description_workflow(change):
             translate(wf_prev_status),
             translate("to"),
             translate(change.audit.status)))
+def _df_workflow_event(change):
+    return "%s: %s" % (_df_add_event(change), _df_workflow_head(change))
 
-def _format_description(change):
+_df_remove = _label
+_df_remove_event = _df_add_event
+
+_df_version = _label
+def _df_version_event(change):
+    return "%s: %d" % (_df_add_event(change), change.seq)
+
+_df_reversion = _label
+_df_reversion_event = _df_version_event
+
+# !+LINKED_SUB_ITEMS_IN_AUDIT_DESCRIPTION(mr, may-2012) should the change 
+# instance for the type know how to generate the URL for the action/type?
+# And, do we need to support both linked and unlinked descriptions 
+# e.g. for audit log (linked) and for rss (unlinked) ?
+# version/*: see "version" column cell_formatter in versions.VersionDataDescriptor
+
+def get_description_formatter(action, change_type):
+    # assert change_type in CHANGE_TYPES
+    # assert action in CHANGE_ACTIONS
+    return globals().get("_df_%s_%s" % (action, change_type), 
+        # failing that, use the generic formatter for action
+        globals().get("_df_%s" % (action)))
+
+def format_description(change, head):
     """Build the (localized) description for display, for each change, per 
     change type and action.
     """
-    audit = change.audit
-    audit_type_name = _get_type_name(audit)
-    
-    def _label(audit):
-        try:
-            return translate(audit.label)
-        except AttributeError:
-            return translate(audit.description)
-    
-    def _note(audit):
-        try:
-            note = audit.change.note
-        except AttributeError:
-            return ""
-        if note:
-            return "(%s)" % (translate(note))
-        return ""
-    def _notes(change):
-        return _eval_as_dict(getattr(change, "notes", "{}"))
-    
-    # !+AUDIT_DESCRIPTIONS... to be redone, dynamic. Note also that current
-    # links within descriptions for audit logs of a sub object are all broken!
-    if audit_type_name == "event":
-        # description for (event, *)
-        return """<a href="events/obj-%s">%s</a> %s""" % (
-            audit.audit_head_id, _label(audit), _note(audit))
-    elif audit_type_name == "attachment":
-        file_title = "%s" % (audit.audit_head.title)
-        # !+ _(change.head.type), change.head.name)
-        if change.action == "version":
-            version_id = _notes(change).get("version_id", None)
-            if version_id:
-                _url = "files/obj-%s/versions/obj-%s" % (
-                    change.content_id, version_id)
-                return """%s: <a href="%s">%s</a> %s""" % (
-                    file_title, _url, _label(audit), _note(audit))
-            else:
-                return "%s: %s %s" % (file_title, _label(audit), _note(audit))
-        elif change.action == "workflow":
-            return "%s: %s" % (file_title, _format_description_workflow(change))
-        else:
-            return "%s: %s %s" % (file_title, _label(audit), _note(audit))
-    else:
-        if change.action == "version":
-            version_id = _notes(change).get("version_id", None)
-            if version_id:
-                _url = "versions/obj-%s" % (version_id)
-                return """<a href="%s">%s</a> %s""" % (
-                    _url, _label(audit), _note(audit))
-            else:
-                return "%s %s" % (_label(audit), _note(audit))
-        elif change.action == "workflow":
-            return _format_description_workflow(change)
-        else:
-            return "%s %s" % (_label(audit), _note(audit))
+    change_type = "head" if head is change.head else _get_type_name(change)
+    return get_description_formatter(change.action, change_type)(change)
 
+
+# Display descriptors
 
 class GetterColumn(column.GetterColumn):
     def cell_formatter(self, value, item, formatter):
@@ -248,9 +277,11 @@ class ChangeDataDescriptor(object):
             column.GetterColumn(title="action date",
                 getter=lambda i,f: self.date_formatter.format(i.date_active)),
             column.GetterColumn(title="action", 
-                getter=lambda i,f: "%s / %s" % (_get_type_name(i.audit), i.action)),
+                getter=lambda i,f: "%s / %s" % (_get_type_name(i), i.action)),
             GetterColumn(title="description", 
-                getter=lambda i,f: _format_description(i)),
+                getter=lambda i,f: format_description(i, self.head)),
+            column.GetterColumn(title="note",
+                getter=lambda i,f: i.note and translate(i.note) or ""),
             column.GetterColumn(title="audit date",
                 getter=lambda i,f: self.date_formatter.format(i.date_audit)),
         ]
@@ -344,8 +375,8 @@ class AuditLogView(AuditLogMixin, browser.BungeniBrowserView):
 
     _page_title = "Change Log"
 
-    visible_column_names = ["user", "action date", "action",
-                            "description", "audit date"]
+    visible_column_names = [
+        "user", "action date", "action", "description", "note", "audit date"]
     include_change_types = [ t for t in CHANGE_TYPES ]
     include_change_actions = [ a for a in CHANGE_ACTIONS ]
 

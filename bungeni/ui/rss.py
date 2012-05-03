@@ -15,7 +15,9 @@ from zope.security.proxy import removeSecurityProxy
 from zope.traversing.browser import absoluteURL
 import re
 import xml.dom.minidom as xmllib
+from bungeni.ui import audit
 import bungeni.ui.adaptors # ensure module is loaded
+
 
 class RSSView(BrowserView):
     """ Base class that can generate
@@ -317,7 +319,10 @@ class TimelineRSSView(RSSView):
     """ Base view for generiting
         feed for timeline of object.
     """
-
+    
+    # !+TIMELINE_RSS(mr, may-2012) seems out of sync data columns available 
+    # for Timeline/AuditLog e.g. no indication of change action...
+    
     def __init__(self, context, request):
         self.i18n_context = translate_obj(context, request.locale.id.language)
         super(TimelineRSSView, self).__init__(context, request)
@@ -327,6 +332,8 @@ class TimelineRSSView(RSSView):
         # Taking object url for timeline item
         item_url = self.get_item_url(self.context)
         for item in self.values:
+            # !+ assert self.context is item.head -> fails !
+            #    assert self.context.doc_id is item.head.doc_id -> succeeds !
             item = removeSecurityProxy(item)
             self.channel_element.appendChild(self.generate_item(self.get_title(item),
                                                                 self.get_description(item),
@@ -340,8 +347,8 @@ class TimelineRSSView(RSSView):
         return formatter.format(date_)
 
     def get_description(self, item):
-        return item.description
-
+        return audit.format_description(item, self.context)
+    
     def get_date(self, item):
         return item.date_audit
 
@@ -652,7 +659,7 @@ class AkomantosoXMLView(BrowserView):
             bill_element.appendChild(attachments_element)
             for file in ob.files.values():
                 attachment_element = self.create_element("attachment",
-                                                         id="att%s" % file.item_id,
+                    id="att%s" % file.attachment_id,
                                                          href=self.get_frbr_expression_url(ob) + "/" + file.name,
                                                          showAs=file.title)
                 attachments_element.appendChild(attachment_element)

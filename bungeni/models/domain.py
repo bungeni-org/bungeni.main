@@ -738,9 +738,17 @@ class Change(HeadParentedMixin, Entity):
     
     @property
     def seq_previous(self):
-        """The previous change in this change/action seq or None if no previous.
+        """The previous change in action seq on self.head. None if no previous.
         """
         changes = get_changes(self.head, self.action)
+        for c in changes[1 + changes.index(self):]:
+            return c
+    
+    @property
+    def previous(self):
+        """The previous change (any action) on self.head. None if no previous.
+        """
+        changes = get_changes(self.head, *CHANGE_ACTIONS)
         for c in changes[1 + changes.index(self):]:
             return c
     
@@ -758,7 +766,9 @@ class ChangeTree(Entity):
     """
 
 # !+VERSION_CLASS_PER_TYPE(mr, apr-2012) should there be dedicated Version 
-# type/descriptor, to facilitate UI views for each version type?
+# type/descriptor, to facilitate UI views for each version type? Or should
+# simply keep a single generic Change type, and handle all "type-specific" 
+# aspects via the self.audit instance (and its type)?
 class Version(Change):
     """A specialized change type, with the information of a version (a special 
     kind of change action) of an object.
@@ -785,8 +795,10 @@ class Version(Change):
         type-dedicated audit record). 
         
         !+ should this be on Change i.e. for all change actions?
-        !+ possible issue with name clobbering, if an auditable type has a 
-           same-named property as one in in Change or Audit types/tables.
+        !+ possible issue with attribute hiding, if an type has a 
+           same-named property as one in in Change type/table, then that one
+           will always be retrieved first (and so the one on the related
+           Audit type/table will be unreachable in this way).
         """
         try:
             return getattr(self.audit, name)
@@ -1008,6 +1020,12 @@ class Event(HeadParentedMixin, Doc):
     # !+alchemist properties not inherited, must be re-instrumented on class
     files = one2many("files",
         "bungeni.models.domain.AttachmentContainer", "head_id")
+    
+    @property
+    def event_date(self):
+        # !+ should this be when first added? if in a "attached" state, the 
+        # latest of these (what is returned here) ? if in "internal"??
+        return self._get_workflow_date("attached")
 #EventAudit
 
 
