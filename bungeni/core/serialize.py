@@ -115,7 +115,7 @@ def publish_to_xml(context):
                 # serializing attachment
                 attachment_dict = obj2dict(attachment, 1,
                     parent=context,
-                    exclude=["data", "event", "versions", "changes"])
+                    exclude=["data", "event", "versions"])
                 permissions = get_object_state_rpm(attachment).permissions
                 attachment_dict["permissions"] = \
                     get_permissions_dict(permissions)
