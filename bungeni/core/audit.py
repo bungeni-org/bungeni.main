@@ -18,8 +18,7 @@ not be logged also as changes on the parent.
     modify
     workflow
     remove
-    version
-    reversion
+    version (includes reversion)
 
 - Each single "logical" change should only generate a single change record 
 e.g. a workflow change implies a modify change but should only be logged once 
@@ -189,7 +188,7 @@ class _AuditorFactory(object):
         """ () -> domain.Version
         NOTE: versioning of an object is not event based.
         """
-        # action: ("version", "reversion")
+        # action: ("version")
         change_data = self._get_change_data()
         
         if root:

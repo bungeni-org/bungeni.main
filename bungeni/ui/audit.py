@@ -20,6 +20,7 @@ from zope.i18n import translate
 
 from bungeni.models import interfaces
 from bungeni.models import domain
+from bungeni.models.schema import un_camel
 from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.ui.forms.interfaces import ISubFormViewletManager
 from bungeni.ui.i18n import _
@@ -30,7 +31,7 @@ from bungeni.utils import register
 
 CHANGE_TYPES = ("head", "signatory", "attachment", "event")
 CHANGE_ACTIONS = domain.CHANGE_ACTIONS
-# ("add", "modify", "workflow", "remove", "version", "reversion")
+# ("add", "modify", "workflow", "remove", "version")
 
 
 # Data
@@ -145,16 +146,16 @@ def _eval_as_dict(s):
 
 # Audit description formatting
 
-def _get_type_name(change):
-    """Get document type name.
+def get_auditable_type_key(change):
+    """Get the type_key of the auditable type that this change audits.
     """
-    #return change.head.type # !+ not all heads define such a type attr 
-    type_name = change.audit.__class__.__name__
-    if type_name.endswith("Audit"):
-        return type_name[:-5].lower()
-    return type_name.lower()
+    #return change.head.type # !+ not all heads define such a type attr
+    name = type(change.audit).__name__
+    if name.endswith("Audit"):
+        name = name[:-5]
+    return un_camel(name)
 
-def _get_changed_names(change):
+def get_changed_attribute_names(change):
     """Get the names of attributes (including extended attributes) that have
     been changed since last change. Return empty list if no previous change.
     """
@@ -165,21 +166,22 @@ def _get_changed_names(change):
             name for name in 
                 prau.__dict__.keys() + [ 
                 vp_name for (vp_name, vp_type) in prau.extended_properties ]
-            if name not in _get_changed_names.IGNORE ]
+            if name not in get_changed_attribute_names.IGNORE ]
         return sorted([ name for name in names
             if getattr(prau, name) != getattr(chau, name) ])
     return []
-_get_changed_names.IGNORE = ("_sa_instance_state", "audit_id", "timestamp")
+get_changed_attribute_names.IGNORE = (
+    "_sa_instance_state", "audit_id", "timestamp")
 
 def _label(change):
-    """Get a displayable translated label.
+    """Get a displayable translated label for this change.
     """
     return translate(change.audit.label)
     
 
 # Audit description format handlers !+bungeni_custom
 #
-# action: "add", "modify", "workflow", "remove", "version", "reversion"
+# action: "add", "modify", "workflow", "remove", "version"
 # change_type: "head", "signatory", "attachment", "event"
 # 
 # api: formatter(change) -> localized string
@@ -192,16 +194,15 @@ def _df_add_event(change):
         change.audit.audit_head_id, _label(change))
 
 def _df_modify(change):
-    # !+ rss -> _get_changed_names(change) always returns empty list!
+    # !+ rss -> get_changed_attribute_names(change) always returns empty list!
     changed = _df_modify_head(change)
     if changed:
         return "%s: %s" % (_label(change), changed)
     return _label(change)
 def _df_modify_head(change):
-    changed = _get_changed_names(change)
-    #return '<span class="workflow_info">%s</span>' % (
-    # !+rss_no_markup
-    return '%s' % ", ".join(changed)
+    changed = get_changed_attribute_names(change)
+    #return '<span class="workflow_info">%s</span>' % (", ".join(changed))
+    return "%s" % (", ".join(changed))
 def _df_modify_event(change):
     return "%s: %s" % (_df_add_event(change), _df_modify_head(change))
 
@@ -225,18 +226,20 @@ def _df_workflow_event(change):
 _df_remove = _label
 _df_remove_event = _df_add_event
 
-_df_version = _label
+def _df_version(change):
+    return "%s: %d" % (_label(change), change.seq)
+def _df_version_head(change):
+    return "%d" % (change.seq)
 def _df_version_event(change):
     return "%s: %d" % (_df_add_event(change), change.seq)
-
-_df_reversion = _label
-_df_reversion_event = _df_version_event
 
 # !+LINKED_SUB_ITEMS_IN_AUDIT_DESCRIPTION(mr, may-2012) should the change 
 # instance for the type know how to generate the URL for the action/type?
 # And, do we need to support both linked and unlinked descriptions 
 # e.g. for audit log (linked) and for rss (unlinked) ?
 # version/*: see "version" column cell_formatter in versions.VersionDataDescriptor
+
+# !+RSS(mr, may-2012) should descriptions for RSS only be CDATA (no markup)?
 
 def get_description_formatter(action, change_type):
     # assert change_type in CHANGE_TYPES
@@ -249,7 +252,7 @@ def format_description(change, head):
     """Build the (localized) description for display, for each change, per 
     change type and action.
     """
-    change_type = "head" if head is change.head else _get_type_name(change)
+    change_type = "head" if head is change.head else get_auditable_type_key(change)
     return get_description_formatter(change.action, change_type)(change)
 
 
@@ -277,7 +280,7 @@ class ChangeDataDescriptor(object):
             column.GetterColumn(title="action date",
                 getter=lambda i,f: self.date_formatter.format(i.date_active)),
             column.GetterColumn(title="action", 
-                getter=lambda i,f: "%s / %s" % (_get_type_name(i), i.action)),
+                getter=lambda i,f: "%s / %s" % (get_auditable_type_key(i), i.action)),
             GetterColumn(title="description", 
                 getter=lambda i,f: format_description(i, self.head)),
             column.GetterColumn(title="note",
@@ -370,11 +373,11 @@ class AuditLogMixin(object):
 class AuditLogView(AuditLogMixin, browser.BungeniBrowserView):
     """Change Log View for an object
     """
-
+    
     __call__ = ViewPageTemplateFile("templates/listing-view.pt")
-
+    
     _page_title = "Change Log"
-
+    
     visible_column_names = [
         "user", "action date", "action", "description", "note", "audit date"]
     include_change_types = [ t for t in CHANGE_TYPES ]

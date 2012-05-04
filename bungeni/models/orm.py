@@ -528,16 +528,18 @@ mapper(domain.Change, schema.change,
 )
 mapper(domain.ChangeTree, schema.change_tree)
 
-''' !+NO_INHERIT_VERSION mapping domain.Version is actually unnecessary then
+''' !+NO_INHERIT_VERSION mapping domain.Version is actually unnecessary
 #vm = mapper(domain.Version,
 mapper(domain.Version,
     inherits=domain.Change,
     polymorphic_on=schema.change.c.action, # polymorphic discriminator
     polymorphic_identity=polymorphic_identity(domain.Version),
 )
-# !+polymorphic_identity_multi only allows a single value... but, we can tweak 
-# the version mapper's polymorphic_map to allow multiple values for 
-# polymorphic_identity (but attachment.versions does not pick up reversions):
+# !+polymorphic_identity_multi only allows a single value... e.g. if needed to 
+# add a 2nd value such as "reversion" would not be able to -- but seems we 
+# should be able to tweak the version mapper's polymorphic_map to allow 
+# multiple values for polymorphic_identity (but does not work anyway 
+# attachment.versions does not pick up reversions):
 #vm.polymorphic_map["reversion"] = vm.polymorphic_map["version"]
 #del vm
 '''

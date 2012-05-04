@@ -36,13 +36,14 @@ def version_tree(ob, root=False, reversion=False):
         is always created. Plus, parameters for other sub-calls are affected
         by whether we are daling with root instance or not.
     
-    reversion:bool -- whether this is a revert to a previous version or not
+    reversion:bool -- whether this is a revert to a previous version or not, in 
+        which case ob is the older version to revert to.
     
     --
     current root types: Doc (only Event...), Attachment 
     current child types: (only Event doc, that may not parent Events), Attachment
     """
-    assert IVersionable.providedBy(ob), "Not versionable! %s" % (ob) # !+?
+    assert IVersionable.providedBy(ob), "Not versionable! %s" % (ob) # !+reversion?
     
     # ob must be newly versioned if dirty, we always explicitly version root ob
     dirty = root or False

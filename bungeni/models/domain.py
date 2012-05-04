@@ -36,7 +36,7 @@ def object_hierarchy_type(object):
     return ""
 
 
-CHANGE_ACTIONS = ("add", "modify", "workflow", "remove", "version", "reversion")
+CHANGE_ACTIONS = ("add", "modify", "workflow", "remove", "version")
 
 def assert_valid_change_action(action):
     assert action in CHANGE_ACTIONS, \
