@@ -291,10 +291,10 @@ Transition: "submit"
 Version instances are not workflowed.
 
     >>> version_1 = question.versions[0]
-    >>> version_1 # !+ bungeni.models.domain.Change !!
-    <bungeni.models.domain.Change object at ...>
-    >>> version_1.audit.type
-    'question'
+    >>> version_1
+    <bungeni.models.domain.DocVersion object at ...>
+    >>> unicode(version_1.audit.type) #!+bin/test -c bungeni.core -t question.txt
+    u'question'
     
     >>> IWorkflow(version_1, None) is None
     True

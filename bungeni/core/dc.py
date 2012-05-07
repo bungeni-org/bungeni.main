@@ -609,7 +609,7 @@ class AttachmentDescriptiveProperties(DescriptiveProperties):
         context = session.merge(removeSecurityProxy(self.context))
         return u"%s  (%s)" % (context.name, context.mimetype)
 
-'''
+''' !+VERSION_CLASS_PER_TYPE
 @register.adapter()
 class AttachedFileVersionDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IAttachedFileVersion)

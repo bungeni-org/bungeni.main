@@ -114,7 +114,7 @@ Select last modification
   >>> last_change = bill.changes[0]
   >>> last_change.user.login
   u'jdoe'
-  >>> last_change.action
+  >>> unicode(last_change.action) #!+bin/test -c bungeni.core -t audit.txt
   u'modify'
 
 Clean up
