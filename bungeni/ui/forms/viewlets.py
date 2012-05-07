@@ -518,7 +518,6 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
             context, request, view, manager)
         self.query = None
         self.Date = datetime.date.today() # !+ self.today
-        self.type_query = Session().query(domain.SittingType) # !+SITTING_VOCABULARIES_XML
 
     def _getDisplayDate(self, request):
         display_date = date.getDisplayDate(self.request)
@@ -602,15 +601,6 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
     def _get_items(self):
         """Return the data of the query.
         """
-        # !+SITTING_VOCABULARIES_XML
-        sit_types = {} 
-        type_results = self.type_query.all()
-        #Sitting type is commented out below because it is not set during
-        #creation of a sitting but is left here because it may be used in the
-        #future related to r7243
-        #for sit_type in type_results:
-        #    sit_types[sit_type.sitting_type_id] = sit_type.sitting_type
-        # !+/SITTING_VOCABULARIES_XML
         data_list = []
         path = "/calendar/group/sittings/"
         formatter = self.get_date_formatter("time", "short")

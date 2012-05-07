@@ -311,18 +311,6 @@ Sittings
 any group can schedule a sitting, a sitting is treated as a physical
 meeting of the group by the system. 
 
- >>> st = model.SittingType()
- >>> st.sitting_type = u"morning"
- >>> st.start_time = datetime.time(8,30)
- >>> st.end_time = datetime.time(12,30)
- >>> st.language = "en"
- >>> session.add(st)
- >>> session.flush()
- 
- >>> int(st.sitting_type_id)
- 1
- 
-
  >>> sit = model.Sitting()
  >>> sit.group_id = committee_a.group_id
  >>> sit.start_date = datetime.datetime.now()
@@ -366,7 +354,6 @@ Sitting in this session
  >>> ssit.group_id = parliament.parliament_id
  >>> ssit.start_date = datetime.datetime.now()
  >>> ssit.end_date = datetime.datetime.now()
- >>> ssit.sitting_type = st
  >>> ssit.language = "en"
  >>> session.add(ssit)
  >>> session.flush() 

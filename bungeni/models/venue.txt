@@ -18,13 +18,6 @@ Sittings
 any group can schedule a sitting, a sitting is treated as a physical
 meeting of the group by the system. 
 
-    >>> st = domain.SittingType()
-    >>> st.sitting_type = u"morning"
-    >>> st.start_time = datetime.time(8,30)
-    >>> st.end_time = datetime.time(12,30) 
-    >>> st.language = "en"
-    >>> session.add(st)
-    >>> st.sitting_type_id
     >>> venue1 = domain.Venue()
     >>> venue1.short_name=u"Venue 1"
     >>> venue1.language = "en"
@@ -41,28 +34,24 @@ meeting of the group by the system.
     >>> sit1 = domain.Sitting()
     >>> sit1.start_date = datetime.datetime(2000,1,1,2,0)
     >>> sit1.end_date = datetime.datetime(2000,1,1,4,0)
-    >>> sit1.sitting_type = st
     >>> sit1.group_id = parliament.group_id
     >>> sit1.language = "en"
     >>> session.add(sit1)
     >>> sit11 = domain.Sitting()
     >>> sit11.start_date = datetime.datetime(2000,1,1,2,0)
     >>> sit11.end_date = datetime.datetime(2000,1,1,4,0)
-    >>> sit11.sitting_type = st
     >>> sit11.group_id = parliament.group_id
     >>> sit11.language = "en"
     >>> session.add(sit11)
     >>> sit2 = domain.Sitting()
     >>> sit2.start_date = datetime.datetime(2000,1,1,5,0)
     >>> sit2.end_date = datetime.datetime(2000,1,1,8,0)
-    >>> sit2.sitting_type = st
     >>> sit2.group_id = parliament.group_id
     >>> sit2.language = "en"
     >>> session.add(sit2)
     >>> sit21 = domain.Sitting()
     >>> sit21.start_date = datetime.datetime(2000,1,1,5,0)
     >>> sit21.end_date = datetime.datetime(2000,1,1,8,0)
-    >>> sit21.sitting_type = st
     >>> sit21.group_id = parliament.group_id
     >>> sit21.language = "en"
     >>> session.add(sit21)
