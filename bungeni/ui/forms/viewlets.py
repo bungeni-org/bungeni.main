@@ -22,6 +22,7 @@ import sqlalchemy.sql.expression as sql
 #from bungeni.alchemist.ui import DynamicFields, EditFormViewlet
 from bungeni.alchemist import Session
 from bungeni.alchemist.model import queryModelDescriptor
+from bungeni.alchemist.interfaces import IContentViewManager
 
 import bungeni.core.globalsettings as prefs
 from bungeni.core.workflows.adapters import get_workflow
@@ -148,17 +149,33 @@ class RssLinkViewlet(viewlet.ViewletBase):
 
 #
 
+@register.viewlet(interfaces.IParliament,
+    manager=IContentViewManager,
+    name="bungeni.viewlet.session")
 class SessionViewlet(SubformViewlet):
     sub_attr_name = "sessions"
+    weight = 50
 
 class SignatoriesViewlet(SubformViewlet):
     sub_attr_name = "signatories"
 
+@register.viewlet(interfaces.IParliament,
+    manager=IContentViewManager,
+    name="bungeni.viewlet.government")
 class GovernmentViewlet(SubformViewlet):
     sub_attr_name = "governments"
+    weight = 40
 
+
+@register.viewlet(interfaces.IParliament,
+    manager=IContentViewManager,
+    name="bungeni.viewlet.member-of-parliament")
+@register.viewlet(interfaces.IConstituency,
+    manager=IContentViewManager,
+    name="bungeni.viewlet.constituency-mp")
 class MemberOfParliamentViewlet(SubformViewlet):
     sub_attr_name = "parliamentmembers"
+    weight = 20
 
 class SittingAttendanceViewlet(SubformViewlet):
     sub_attr_name = "attendance"
@@ -182,8 +199,12 @@ class AgendaItemsViewlet(SubformViewlet):
 class MinistriesViewlet(SubformViewlet):
     sub_attr_name = "ministries"
 
+@register.viewlet(interfaces.IParliament,
+    manager=IContentViewManager,
+    name="bungeni.viewlet.committees")
 class CommitteesViewlet(SubformViewlet):
     sub_attr_name = "committees"
+    weight = 10
 
 class CommitteeStaffViewlet(SubformViewlet):
     sub_attr_name = "committeestaff"
@@ -203,8 +224,12 @@ class AddressesViewlet(SubformViewlet):
     def form_name(self):
         return _(u"Contacts")
 
+@register.viewlet(interfaces.IParliament,
+    manager=IContentViewManager,
+    name="bungeni.viewlet.political-groups")
 class PoliticalGroupsViewlet(SubformViewlet):
     sub_attr_name = "politicalgroups"
+    weight = 30
 
 class PartyMemberViewlet(SubformViewlet):
     sub_attr_name = "partymembers"
@@ -510,14 +535,18 @@ class SchedulingMinutesViewlet(DisplayViewlet):
             self.context, self.request)
 
 
+@register.viewlet(interfaces.IParliamentSession,
+    manager=IContentViewManager,
+    name="bungeni.viewlet.session-sitting-calendar")
 class SessionCalendarViewlet(browser.BungeniItemsViewlet):
     """Display a monthly calendar with all sittings for a session.
     """
+    weight = 20
     def __init__(self, context, request, view, manager):
         super(SessionCalendarViewlet, self).__init__(
             context, request, view, manager)
         self.query = None
-        self.Date = datetime.date.today() # !+ self.today
+        self.Date = None # !+naming(mr, may-2012)
 
     def _getDisplayDate(self, request):
         display_date = date.getDisplayDate(self.request)
@@ -608,7 +637,7 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
             data = {}
             data["sittingid"] = ("sid_" + str(result.sitting_id))
             data["sid"] = result.sitting_id
-            data["short_title"] = "%s - %s" % (
+            data["short_name"] = "%s - %s" % (
                 formatter.format(result.start_date),
                 formatter.format(result.end_date)
             )
@@ -623,6 +652,7 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
             data_list.append(data)
         return data_list
     
+    # !+naming(mr, may-2012)
     def getTdId(self, date):
         """
         return an Id for that td element:
@@ -631,6 +661,7 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
         """
         return "tdid-" + datetime.date.strftime(date, "%Y-%m-%d")
     
+    # !+naming(mr, may-2012)
     def getDayClass(self, Date):
         """Return the class settings for that calendar day.
         """
@@ -649,12 +680,14 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
         if results:
             css_class = css_class + "holyday-date "
         return css_class.strip()
-
+    
+    # !+naming(mr, may-2012)
     def getWeekNo(self, Date):
         """Return the weeknumber for a given date.
         """
         return Date.isocalendar()[1]
-
+    
+    # !+naming(mr, may-2012)
     def getSittings4Day(self, Date):
         """Return the sittings for that day.
         """
@@ -663,7 +696,7 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
             if data["day"] == Date:
                 day_data.append(data)
         return day_data
-
+    
     def update(self):
         """Refresh the query.
         """
@@ -675,5 +708,6 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
             ).monthdatescalendar(self.Date.year, self.Date.month)
         self.monthname = datetime.date.strftime(self.Date, "%B %Y")
         self.items = self._get_items()
-
+    
     render = ViewPageTemplateFile("templates/session-calendar-viewlet.pt")
+

@@ -433,58 +433,7 @@
      permission="zope.View"
      weight="20"
      />
-
-
-    <browser:viewlet name="bungeni.viewlet.committees"
-        manager="bungeni.alchemist.interfaces.IContentViewManager"
-        class=".viewlets.CommitteesViewlet"
-        for="bungeni.models.interfaces.IParliament"
-        permission="zope.View"
-        weight="10"
-    />
-    <browser:viewlet name="bungeni.viewlet.member-of-parliament"
-        manager="bungeni.alchemist.interfaces.IContentViewManager"
-        class=".viewlets.MemberOfParliamentViewlet"
-        for="bungeni.models.interfaces.IParliament"
-        permission="zope.View"
-        weight="20"
-    />
-    <browser:viewlet name="bungeni.viewlet.constituency-mp"
-        manager="bungeni.alchemist.interfaces.IContentViewManager"
-        class=".viewlets.MemberOfParliamentViewlet"
-        for="bungeni.models.interfaces.IConstituency"
-        permission="zope.View"
-        weight="20"
-    />
-    <browser:viewlet name="bungeni.viewlet.political-groups"
-        manager="bungeni.alchemist.interfaces.IContentViewManager"
-        class=".viewlets.PoliticalGroupsViewlet"
-        for="bungeni.models.interfaces.IParliament"
-        permission="zope.View"
-        weight="30"
-    />
-    <browser:viewlet name="bungeni.viewlet.government"
-        manager="bungeni.alchemist.interfaces.IContentViewManager"
-        class=".viewlets.GovernmentViewlet"
-        for="bungeni.models.interfaces.IParliament"
-        permission="zope.View"
-        weight="40"
-    />
-    <browser:viewlet name="bungeni.viewlet.session"
-        manager="bungeni.alchemist.interfaces.IContentViewManager"
-        class=".viewlets.SessionViewlet"
-        for="bungeni.models.interfaces.IParliament"
-        permission="zope.View"
-        weight="50"
-    />
-    <browser:viewlet name="bungeni.viewlet.session-sitting-calendar"
-        manager="bungeni.alchemist.interfaces.IContentViewManager"
-        class=".viewlets.SessionCalendarViewlet"
-        for="bungeni.models.interfaces.IParliamentSession"
-        permission="zope.View"
-        weight="20"
-    />
-
+    
     <browser:viewlet name="bungeni.viewlet.party-members"
         manager="bungeni.alchemist.interfaces.IContentViewManager"
         class=".viewlets.PartyMemberViewlet"
