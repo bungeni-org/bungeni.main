@@ -573,6 +573,7 @@ class OfficeMember(GroupMembership):
 class Address(HeadParentedMixin, Entity):
     """Address base class
     """
+    interface.implements(interfaces.IAddress)
     __dynamic_features__ = False
     # !+ note corresponding tbls exist only for subclasses
 class UserAddress(Address):

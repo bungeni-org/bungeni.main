@@ -523,13 +523,13 @@ class IMemberTitle(interface.Interface):
 class ITitleType(interface.Interface):
     """Title types"""
 
-class _IAddress(interface.Interface):
+class IAddress(interface.Interface):
     """Base marker interface for an Address
     """
-class IGroupAddress(_IAddress):
+class IGroupAddress(IAddress):
     """Marker interface addresses of a group.
     """
-class IUserAddress(_IAddress):
+class IUserAddress(IAddress):
     """Marker interface addresses of a user.
     """
 
