@@ -30,7 +30,7 @@ from zope import component
 from zope.formlib.interfaces import IDisplayWidget
 from zope.schema.interfaces import IText, ITextLine
 from bungeni.ui.widgets import IDiffDisplayWidget
-from bungeni.ui.diff import textDiff
+from bungeni.ui.htmldiff import htmldiff
 
 
 FormTemplate = namedtemplate.NamedTemplateImplementation(
@@ -238,7 +238,7 @@ class DiffEditForm(EditForm):
                 # If field is Text or TextLine we display HTML diff
                 if IText.providedBy(field) or ITextLine.providedBy(field):
                     if value:
-                        diff_val = textDiff(field.get(self.context), value)
+                        diff_val = htmldiff(field.get(self.context), value)
                     else:
                         diff_val = ""
                     display_widget = component.getMultiAdapter(

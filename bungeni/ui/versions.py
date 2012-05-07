@@ -310,10 +310,11 @@ class VersionLogView(VersionLogMixin,
 # The diff() utility is adapted from: z3c.schemadiff.schema.py
 # 
 # The DiffView here is different than the one in schemadiff.browser, as:
-# - the result of a diff is now always being obtained via .diff.textDiff(), so
-#   it is all much simpler -- note that z3c.schemadiff.schema.diff() was 
-#   anayway shortcutting any and all adapter genericity (for IFieldDiff) by 
-#   hard-wiring explicit checks on whether not to call IFieldDiff.html_diff()!
+# - the result of a diff is now always being obtained via from
+# htmldiff.htmldiff(),so it is all much simpler
+# note that z3c.schemadiff.schema.diff() was
+# anyway shortcutting any and all adapter genericity (for IFieldDiff) by
+# hard-wiring explicit checks on whether not to call IFieldDiff.html_diff()!
 # 
 # This implementation also removes all dependencies on the z3c.schemadiff
 # package, that may therefore be removed.
