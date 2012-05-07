@@ -17,6 +17,10 @@ class IDhtmlxCalendarSittingsEditForm(zope.interface.Interface):
     ids = zope.schema.TextLine(title=u"ID", description=u"Sitting ID",
         required=False
     )
+    event_pid = zope.schema.Int(title=u"Parent ID", 
+        description=u"Sitting's Parent ID",
+        required=False, default=0
+    )
     short_name = zope.schema.TextLine(title=u"Name of Activity",
         description=u"Name of Activity", required=False
     )
@@ -46,9 +50,9 @@ class IDhtmlxCalendarSittingsEditForm(zope.interface.Interface):
             u"sittings if any"
         )
     )
-    event_length = zope.schema.TextLine(title=u"Event Length",
+    event_length = zope.schema.Int(title=u"Event Length",
         description = u"Length of event",
-        required=False
+        required=False, default=0
     )
     nativeeditor_status = zope.schema.TextLine(title=u"editor status",
         description = u"Editor Status",

@@ -3,6 +3,9 @@
 <event tal:attributes="id python:s.sitting_id; color string:#${view/event_colour}">
 <start_date><span tal:replace="structure python:s.start_date.strftime('%Y-%m-%d %H:%M')"/></start_date>
 <end_date><span tal:replace="structure python:s.end_date.strftime('%Y-%m-%d %H:%M')"/></end_date>
+<rec_type><span tal:replace="structure python:'&lt;![CDATA['"/><span tal:replace="s/recurring_type|string:none"/><span tal:replace="structure python:']]&gt;'"/></rec_type>
+<event_pid><span tal:replace="structure python:'&lt;![CDATA['"/><span tal:replace="s/recurring_id|string:0"/><span tal:replace="structure python:']]&gt;'"/></event_pid>
+<event_length><span tal:replace="structure python:'&lt;![CDATA['"/><span tal:replace="s/sitting_length|string:0"/><span tal:replace="structure python:']]&gt;'"/></event_length>
 <short_name><span tal:replace="s/short_name"/></short_name>
 <activity_type><span tal:replace="s/activity_type"/></activity_type>
 <meeting_type><span tal:replace="s/meeting_type"/></meeting_type>

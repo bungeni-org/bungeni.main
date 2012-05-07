@@ -39,17 +39,16 @@ Repeat the event every 4 days, stop after 5 occurences
 Repeat the event every workday
     >>> recurrence_type = "week_1___1,2,3,4,5#no"
     >>> generate_recurrence_dates(start_date, end_date, recurrence_type)
-        [datetime.datetime(2010, 10, 2, 10, 0),
+        [datetime.datetime(2010, 10, 4, 10, 0),
          datetime.datetime(2010, 10, 5, 10, 0),
          datetime.datetime(2010, 10, 6, 10, 0), 
          datetime.datetime(2010, 10, 7, 10, 0), 
-         datetime.datetime(2010, 10, 8, 10, 0), 
-         datetime.datetime(2010, 10, 9, 10, 0)]
+         datetime.datetime(2010, 10, 8, 10, 0)]
 
 Repeat the event every workday, stop after 5 occurences
     >>> recurrence_type = "week_1___1,2,3,4,5#5"
     >>> generate_recurrence_dates(start_date, end_date, recurrence_type)
-        [datetime.datetime(2010, 10, 2, 10, 0), 
+        [datetime.datetime(2010, 10, 4, 10, 0), 
          datetime.datetime(2010, 10, 5, 10, 0), 
          datetime.datetime(2010, 10, 6, 10, 0), 
          datetime.datetime(2010, 10, 7, 10, 0), 
@@ -58,17 +57,17 @@ Repeat the event every workday, stop after 5 occurences
 Repeat the event weekly on Mondays, Tuesdays and Saturdays
     >>> recurrence_type = "week_1___1,2,6#no"
     >>> generate_recurrence_dates(start_date, end_date, recurrence_type)
-        [datetime.datetime(2010, 10, 3, 10, 0), 
+        [datetime.datetime(2010, 10, 2, 10, 0), 
+         datetime.datetime(2010, 10, 4, 10, 0), 
          datetime.datetime(2010, 10, 5, 10, 0), 
-         datetime.datetime(2010, 10, 6, 10, 0), 
-         datetime.datetime(2010, 10, 10, 10, 0)]
+         datetime.datetime(2010, 10, 9, 10, 0)]
          
 Repeat the event weekly on Mondays, Tuesdays and Saturdays, stop after 3 occurences
     >>> recurrence_type = "week_1___1,2,6#3"
     >>> generate_recurrence_dates(start_date, end_date, recurrence_type)
-        [datetime.datetime(2010, 10, 3, 10, 0), 
-         datetime.datetime(2010, 10, 5, 10, 0), 
-         datetime.datetime(2010, 10, 6, 10, 0)]
+        [datetime.datetime(2010, 10, 2, 10, 0), 
+         datetime.datetime(2010, 10, 4, 10, 0), 
+         datetime.datetime(2010, 10, 5, 10, 0)]
          
 Repeat every nth day of every month
 nth day being the day in the start date

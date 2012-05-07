@@ -762,11 +762,13 @@ sitting = rdb.Table("sitting", metadata,
     rdb.Column("short_name", rdb.Unicode(512), nullable=True),
     rdb.Column("start_date", rdb.DateTime(timezone=False), nullable=False),
     rdb.Column("end_date", rdb.DateTime(timezone=False), nullable=False),
+    rdb.Column("sitting_length", rdb.Integer),
     # if a sitting is recurring this is the id of the original sitting
     # there is no foreign key to the original sitting
     # like rdb.ForeignKey("sitting.sitting_id")
     # to make it possible to delete the original sitting
     rdb.Column("recurring_id", rdb.Integer),
+    rdb.Column("recurring_type", rdb.String(32)),
     rdb.Column("status", rdb.Unicode(48)),
     rdb.Column("status_date", rdb.DateTime(timezone=False),
         server_default=text("now()"),
