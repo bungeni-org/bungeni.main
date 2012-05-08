@@ -170,7 +170,7 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
             IWorkspaceReportGeneration
         )
         super(ReportBuilder, self).__init__(context, request)
-
+    
     def get_end_date(self, start_date, hours):
         end_date = start_date + datetime.timedelta(seconds=hours*3600)
         return end_date
@@ -246,7 +246,7 @@ class ReportView(form.PageForm, DateTimeFormatMixin):
     )
     display_minutes = None
     include_text = True
-
+    
     def __init__(self, context, request):
         self.site_url = url.absoluteURL(getSite(), request)
         super(ReportView, self).__init__(context, request)

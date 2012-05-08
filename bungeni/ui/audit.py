@@ -240,6 +240,7 @@ def _df_version_event(change):
 # version/*: see "version" column cell_formatter in versions.VersionDataDescriptor
 
 # !+RSS(mr, may-2012) should descriptions for RSS only be CDATA (no markup)?
+# !+AUDIT-TIMELINE-RSS need different change description formatters for each?
 
 def get_description_formatter(action, change_type):
     # assert change_type in CHANGE_TYPES
@@ -382,7 +383,7 @@ class AuditLogView(AuditLogMixin, browser.BungeniBrowserView):
         "user", "action date", "action", "description", "note", "audit date"]
     include_change_types = [ t for t in CHANGE_TYPES ]
     include_change_actions = [ a for a in CHANGE_ACTIONS ]
-
+    
     def __init__(self, context, request):
         browser.BungeniBrowserView.__init__(self, context, request)
         AuditLogMixin.__init__(self)

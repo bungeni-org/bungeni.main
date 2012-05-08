@@ -404,6 +404,7 @@ class IBungeniEmailSettings(interface.Interface):
     )
 
 class IAttachment(IOwned): pass
+# !+VERSION_CLASS_PER_TYPE
 class IAttachedFileVersion(interface.Interface): pass 
 # !+OBSOLETE_VERSIONING
 #class IAttachedFileVersionContainer(IVersionContainer): pass
@@ -477,27 +478,35 @@ class IProxiedDirectory(interface.Interface):
     to that point back to our parent.
     """
 
-# feature markers - apply to a domain model, to declare it implements feature
+# IFeature marker interfaces -- apply to a domain model, to declare that it 
+# implements the feature. To avoid "english language anomalies of derived names" 
+# e.g "schedule" -> ISchedulable, adopt a very KISS feature->interface naming 
+# convention: "schedule" -> IFeatureSchedule
 
-class IAuditable(interface.Interface):
-    """Marker interface to apply audit feature.
+class IFeature(interface.Interface):
+    """Base feature marker interface.
     """
-class IVersionable(interface.Interface):
-    """Marker to apply version feature (requires IAuditable/audit.
+class IAuditable(IFeature):
+    """Marks support for "audit" feature.
     """
-class IAttachmentable(interface.Interface):
-    """Marker to apply attachment feature.
+class IVersionable(IFeature):
+    """Marks support for "version" feature (requires "audit").
     """
-class ISchedulable(interface.Interface):
-    """Marker interfaces for domain objects that are schedulable
+class IAttachmentable(IFeature):
+    """Marks support for "attachment" feature.
     """
-
-FEATURE_INTERFACES = {
-    "audit": IAuditable,
-    "version": IVersionable,
-    "attachment": IAttachmentable,
-    "schedule": ISchedulable,
-}
+class IFeatureEvent(IFeature):
+    """Marks support for "event" feature.
+    """
+class IFeatureSignatory(IFeature):
+    """Marks support for "signatory" feature.
+    """
+class IFeatureSchedule(IFeature):
+    """Marks support for "schedule" feature.
+    """
+class IFeatureAddress(IFeature):
+    """Marks support for "address" feature.
+    """
 
 #
 

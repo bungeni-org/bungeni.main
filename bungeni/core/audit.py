@@ -25,9 +25,6 @@ e.g. a workflow change implies a modify change but should only be logged once
 and using the "logical origin" of the change to determine what action verb to 
 use, that in this example would therefore be "workflow". !+TBD
 
-- !+ Distinguish between automatic and manual version actions?
-
-
 """
 log = __import__("logging").getLogger("bungeni.core.audit")
 
@@ -39,7 +36,6 @@ from datetime import datetime
 
 from zope.lifecycleevent import IObjectModifiedEvent, IObjectCreatedEvent, \
     IObjectRemovedEvent
-
 from zope.annotation.interfaces import IAnnotations
 from zope.security.proxy import removeSecurityProxy
 
@@ -50,7 +46,7 @@ from bungeni.models.utils import get_db_user_id
 from bungeni.models.interfaces import IAuditable
 from bungeni.models import schema
 from bungeni.models import domain
-from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowTransitionEvent
+from bungeni.core.workflow.interfaces import IWorkflowTransitionEvent
 from bungeni.ui.utils import common
 from bungeni.utils import register
 
@@ -366,9 +362,23 @@ def set_auditor(kls):
     log.debug("Setting AUDITOR %s [for type %s]" % (auditor_name, name))
     audit_kls = getattr(domain, "%sAudit" % (name))
     audit_tbl = getattr(schema, domain.get_audit_table_name(kls))
+    # !+debug check of repeat calls
+    auditor = globals().get(auditor_name)
+    if auditor is not None:
+        if (auditor.audit_table, auditor.audit_class) is (audit_tbl, audit_kls):
+            log.warn("SET_AUDITOR: ignoring attempt to reset Auditor for: %s" % audit_kls)
+            return
+        else:
+            log.warn("SET_AUDITOR: resetting auditor for (tbl, kls), \n"
+                "  changed from (%s, %s)\n"
+                "            to (%s, %s)" % (
+                    auditor.audit_table, auditor.audit_class,
+                    audit_tbl, audit_kls))
+    # /debug check of repeat calls
     globals()[auditor_name] = _AuditorFactory(audit_tbl, audit_kls)
 
-for kls in domain.CUSTOM_DECORATED["auditable"]:
+# !+ITER_TYPE_INFO
+for kls in domain.feature_audit.DECORATED:
     set_auditor(kls)
 
 #

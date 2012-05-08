@@ -156,22 +156,17 @@ def apply_customization_workflow(name, ti):
     # We "mark" the domain class with IWorkflowed, to be able to 
     # register/lookup adapters generically on this single interface.
     classImplements(kls, IWorkflowed)
+    
     # dynamic features from workflow
     wf = ti.workflow
-    def _apply_customization_workflow(kls):
-        # decorate/modify domain/schema/mapping as needed
-        kls = domain.configurable_domain(kls, wf)
-        orm.configurable_mappings(kls)
-        
-        # !+ ok to call set_auditor(kls) more than once?
-        # !+ following should be part of the domain.auditable(kls) logic
-        if wf.has_feature("audit"):
-            # create/set module-level dedicated auditor singleton for auditable kls
-            bungeni.core.audit.set_auditor(kls)
+    # decorate/modify domain/schema/mapping as needed
+    kls = domain.configurable_domain(kls, wf)
+    orm.configurable_mappings(kls)
     
-    # !+dynamic_features(mr, mar-2012) necessary? Address, ... ?
-    if kls.__dynamic_features__:
-        _apply_customization_workflow(kls)
+    # !+ following should be part of the domain.feature_audit(kls) logic
+    if wf.has_feature("audit"):
+        # create/set module-level dedicated auditor singleton for auditable kls
+        bungeni.core.audit.set_auditor(kls)
 
 
 def load_workflows():
@@ -195,10 +190,14 @@ def register_workflow_adapters():
     component.provideAdapter(get_object_state_rpm, 
         (IWorkflowed,),
         zope.securitypolicy.interfaces.IRolePermissionMap)
+    
+    # !+VersionRolePermissionMap(mr, may-2012) superfluous, given Version is 
+    # just a kind of Change?
     # IRolePermissionMap adapter for a version of an IWorkflowed object
-    component.provideAdapter(get_head_object_state_rpm, 
-        (interfaces.IVersion,),
-        zope.securitypolicy.interfaces.IRolePermissionMap)
+    #component.provideAdapter(get_head_object_state_rpm, 
+    #    (interfaces.IVersion,),
+    #    zope.securitypolicy.interfaces.IRolePermissionMap)
+    
     # IRolePermissionMap adapter for a change of an IWorkflowed object
     component.provideAdapter(get_head_object_state_rpm, 
         (interfaces.IChange,),

@@ -19,9 +19,6 @@ import interfaces
 
 metadata = rdb.MetaData()
 
-# bills, motions, questions
-ItemSequence = rdb.Sequence("item_sequence")
-
 # users and groups because of the zope users and groups
 PrincipalSequence = rdb.Sequence("principal_sequence")
 

@@ -33,15 +33,16 @@ def configurable_mappings(kls):
     
     # auditable, determine properties, map audit class/table
     if interfaces.IAuditable.implementedBy(kls):
-        # either defined manually or created dynamically in domain.auditable()
+        # either defined manually or created dynamically in domain.feature_audit()
         audit_kls = getattr(domain, "%sAudit" % (name))
         # assumption: audit_kls only uses single inheritance (at least for 
-        # those created dynamically in domain.auditable())
+        # those created dynamically in domain.feature_audit())
         base_audit_kls = audit_kls.__bases__[0] 
         assert issubclass(base_audit_kls, domain.Audit), \
             "Audit class %s is not a proper subclass of %s" % (
                 audit_kls, domain.Audit)
-        if domain.CREATE_AUDIT_CLASS_FOR(kls):
+        # mapper for the audit_cls for this kls, if it was created dynamically
+        if kls in domain.feature_audit.CREATED_AUDIT_CLASS_FOR:
             mapper(audit_kls,
                 inherits=base_audit_kls,
                 polymorphic_identity=polymorphic_identity(kls)
@@ -554,7 +555,7 @@ mapper(domain.DocVersion,
     # always give an empty doc.versions / attachment.versions / ... lists !
     inherits=domain.Change,
     properties={
-        # !+ only for versionable doc sub-types that are also attachmentable
+        # !+ only for versionable doc sub-types that also support "attachment"
         "attachments": relation(domain.AttachmentVersion, # !+ARCHETYPE_MAPPER
             primaryjoin=rdb.and_(
                 schema.change.c.audit_id == schema.change_tree.c.parent_id,
@@ -822,7 +823,7 @@ mapper(domain.ObjectTranslation, schema.translations)
 
 
 # !+IChange-vertical-properties special case: 
-# class is NOT workflowed, and in any case __dynamic_features__ = False
+# class is NOT workflowed, and in any case has no dynamic_features
 mapper_add_relation_vertical_properties(domain.Change)
 
 
