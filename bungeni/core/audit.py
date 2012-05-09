@@ -43,7 +43,7 @@ import sqlalchemy as rdb
 from bungeni.alchemist import Session
 
 from bungeni.models.utils import get_db_user_id
-from bungeni.models.interfaces import IAuditable
+from bungeni.models.interfaces import IFeatureAudit
 from bungeni.models import schema
 from bungeni.models import domain
 from bungeni.core.workflow.interfaces import IWorkflowTransitionEvent
@@ -64,13 +64,13 @@ def _trace_audit_handler(ah):
 
 # change handlers
 
-@register.handler(adapts=(IAuditable, IObjectCreatedEvent))
+@register.handler(adapts=(IFeatureAudit, IObjectCreatedEvent))
 @_trace_audit_handler
 def _object_add(ob, event):
     auditor = get_auditor(ob)
     auditor.object_add(removeSecurityProxy(ob), event)
 
-@register.handler(adapts=(IAuditable, IObjectModifiedEvent))
+@register.handler(adapts=(IFeatureAudit, IObjectModifiedEvent))
 @_trace_audit_handler
 def _object_modify(ob, event):
     # no audit ObjectModifiedEvent if originates from a WorkflowTransitionEvent
@@ -82,13 +82,13 @@ def _object_modify(ob, event):
     auditor = get_auditor(ob)
     auditor.object_modify(removeSecurityProxy(ob), event)
 
-@register.handler(adapts=(IAuditable, IObjectRemovedEvent))
+@register.handler(adapts=(IFeatureAudit, IObjectRemovedEvent))
 @_trace_audit_handler
 def _object_remove(ob, event):
     auditor = get_auditor(ob)
     auditor.object_remove(removeSecurityProxy(ob), event)
 
-@register.handler(adapts=(IAuditable, IWorkflowTransitionEvent))
+@register.handler(adapts=(IFeatureAudit, IWorkflowTransitionEvent))
 @_trace_audit_handler
 def _object_workflow(ob, event):
     auditor = get_auditor(ob)
@@ -99,7 +99,7 @@ def _object_workflow(ob, event):
 
 from bungeni.core.interfaces import IVersionCreated, IVersionReverted
 
-@register.handler(adapts=(IAuditable, IVersionCreated))
+@register.handler(adapts=(IFeatureAudit, IVersionCreated))
 @_trace_audit_handler
 def _object_version(ob, event):
     """When an auditable object is versioned, we audit creation of new version.
@@ -118,7 +118,7 @@ def _object_version(ob, event):
     change_id = auditor.object_version(removeSecurityProxy(ob), event)
     event.version.change_id = change_id
 
-@register.handler(adapts=(IAuditable, IVersionReverted))
+@register.handler(adapts=(IFeatureAudit, IVersionReverted))
 @_trace_audit_handler
 def _object_reversion(ob, event):
     auditor = get_auditor(ob)
@@ -132,7 +132,7 @@ def _object_reversion(ob, event):
 def _get_auditable_ancestor(obj):
     parent = obj.__parent__
     while parent:
-        if  IAuditable.providedBy(parent):
+        if  IFeatureAudit.providedBy(parent):
             return parent
         else:
             parent = getattr(parent, "__parent__", None)

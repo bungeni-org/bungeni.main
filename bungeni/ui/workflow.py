@@ -28,7 +28,7 @@ from bungeni.alchemist.interfaces import IAlchemistContent
 from bungeni.core import globalsettings
 from bungeni.core.workflow import interfaces
 from bungeni.core.workflows.utils import get_mask
-from bungeni.models.interfaces import IAuditable, IWorkspaceContainer, \
+from bungeni.models.interfaces import IFeatureAudit, IWorkspaceContainer, \
     IBungeniParliamentaryContent
 from bungeni.models.domain import Doc, get_changes
 from bungeni.ui.forms.workflow import bindTransitions
@@ -166,7 +166,7 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
             return False
         
         min_date_active = None
-        if IAuditable.providedBy(self.context):
+        if IFeatureAudit.providedBy(self.context):
             instance = removeSecurityProxy(self.context)
             # !+PASTDATAENTRY(mr, jun-2011) offers a way to enter past data 
             # for workflowed items via the UI -- note, ideally we should be 
@@ -253,7 +253,7 @@ class WorkflowActionViewlet(browser.BungeniBrowserView,
         
         if not self.actions: 
             self.form_fields = self.form_fields.omit("note", "date_active")
-        elif not IAuditable.providedBy(self.context):
+        elif not IFeatureAudit.providedBy(self.context):
             self.form_fields = self.form_fields.omit("note", "date_active")
         # !+SUPERFLUOUS_ObejctModifiedEvent(mr, nov-2011) the following update()
         # is causing a ModifiedEvent to be fired, causing a modify change to be 
@@ -296,7 +296,7 @@ class WorkflowView(browser.BungeniBrowserView):
     def update(self, transition_id=None):
         # set up viewlets; the view is rendered from viewlets for
         # historic reasons; this may be refactored anytime.
-        if IAuditable.providedBy(self.context):
+        if IFeatureAudit.providedBy(self.context):
             self.history_viewlet = WorkflowHistoryViewlet(
                 self.context, self.request, self, None)
             self.history_viewlet.update()

@@ -32,7 +32,7 @@ def configurable_mappings(kls):
     mapper_add_relation_vertical_properties(kls)
     
     # auditable, determine properties, map audit class/table
-    if interfaces.IAuditable.implementedBy(kls):
+    if interfaces.IFeatureAudit.implementedBy(kls):
         # either defined manually or created dynamically in domain.feature_audit()
         audit_kls = getattr(domain, "%sAudit" % (name))
         # assumption: audit_kls only uses single inheritance (at least for 
@@ -58,7 +58,7 @@ def configurable_mappings(kls):
             """Add properties, as per configured features for a domain type.
             """
             # auditable
-            if interfaces.IAuditable.implementedBy(kls):
+            if interfaces.IFeatureAudit.implementedBy(kls):
                 # kls.changes <-> change.audit.audit_head=doc:
                 # doc[@TYPE] <-- TYPE_audit <-> audit <-> change
                 
@@ -83,7 +83,7 @@ def configurable_mappings(kls):
                     passive_deletes=False, # SA default
                 )
             # versionable
-            if interfaces.IVersionable.implementedBy(kls):
+            if interfaces.IFeatureVersion.implementedBy(kls):
                 pass
             return mapper_properties
         for key, prop in configurable_properties(kls, {}).items():

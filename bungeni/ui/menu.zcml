@@ -886,7 +886,7 @@
     />
     
     <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IAttachmentable"
+        for="bungeni.models.interfaces.IFeatureAttachment"
         title="Add file..."
         action="./files/add"
         permission="bungeni.attachment.Add"
@@ -970,7 +970,7 @@
     />
 
   <!--adapter
-     for="bungeni.models.interfaces.IVersionable *"
+     for="bungeni.models.interfaces.IFeatureVersion *"
      name="plone.contentmenu.translation"
      factory=".menu.TranslationSubMenuItem"
      provides="ploned.ui.interfaces.IContentMenuItem" /-->
@@ -1254,7 +1254,7 @@
         order="30"
     />
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IAuditable"
+        for="bungeni.models.interfaces.IFeatureAudit"
         action="audit-log"
         title="Audit log"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
@@ -1262,7 +1262,7 @@
         order="22"
     />
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IVersionable"
+        for="bungeni.models.interfaces.IFeatureVersion"
         action="version-log"
         title="Versions"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"

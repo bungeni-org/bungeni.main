@@ -17,7 +17,7 @@ from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.core.workflow.states import get_object_state_rpm, get_head_object_state_rpm
 from bungeni.core.workflow.interfaces import IWorkflow, IStateController
 from bungeni.models.schema import singular
-from bungeni.models.interfaces import IAuditable, IVersionable, IAttachmentable
+from bungeni.models import interfaces
 
 import os
 import collections
@@ -61,11 +61,9 @@ def publish_to_xml(context):
     
     context = removeSecurityProxy(context)
     
-    # !+zope idioms need convolution no further: IVersionable.providedBy(context)
-    if IVersionable.implementedBy(context.__class__):
+    if interfaces.IFeatureVersion.providedBy(context):
         include.append("versions")
-    # !+zope idioms need convolution no further: IAuditable.providedBy(context)
-    if IAuditable.implementedBy(context.__class__):
+    if interfaces.IFeatureAudit.providedBy(context):
         include.append("event")
     
     data = obj2dict(context, 1, 
@@ -104,7 +102,7 @@ def publish_to_xml(context):
     file_path = os.path.join(path, stringKey(context)) 
     
     has_attachments = False
-    if IAttachmentable.implementedBy(context.__class__):
+    if interfaces.IFeatureAttachment.providedBy(context):
         attachments = getattr(context, "attachments", None)
         if attachments:
             has_attachments = True

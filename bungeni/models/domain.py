@@ -151,7 +151,7 @@ class Entity(object):
 def feature_audit(kls):
     """Decorator for domain types to support "audit" feature.
     """
-    interface.classImplements(kls, interfaces.IAuditable)
+    interface.classImplements(kls, interfaces.IFeatureAudit)
     # If a domain class is explicitly defined, then it is assumed that all 
     # necessary setup is also taken care of. Typically, only the sub-classes
     # of an archetype (mapped to a same table) need dynamic creation/setup.
@@ -187,8 +187,8 @@ def feature_version(kls):
     # domain.Version itself may NOT support versions
     assert not interfaces.IVersion.implementedBy(kls)
     # !+ @version requires @audit
-    assert interfaces.IAuditable.implementedBy(kls)
-    interface.classImplements(kls, interfaces.IVersionable)
+    assert interfaces.IFeatureAudit.implementedBy(kls)
+    interface.classImplements(kls, interfaces.IFeatureVersion)
     return kls
 
 def feature_attachment(kls):
@@ -198,7 +198,7 @@ def feature_attachment(kls):
     # !+ domain.Attachment is versionable
     # domain.Attachment itself may NOT support attachments
     assert not interfaces.IAttachment.implementedBy(kls)
-    interface.classImplements(kls, interfaces.IAttachmentable)
+    interface.classImplements(kls, interfaces.IFeatureAttachment)
     return kls
 
 def feature_event(kls):
@@ -900,7 +900,7 @@ class DocVersion(Version):
 class AgendaItem(AdmissibleMixin, Doc):
     """Generic Agenda Item that can be scheduled on a sitting.
     """
-    dynamic_features = ["audit", "version", "schedule"]
+    dynamic_features = ["audit", "version", "attachment", "schedule"]
     files = one2many("files",
         "bungeni.models.domain.AttachmentContainer", "head_id")
     # !+signatories on AgendaItems?

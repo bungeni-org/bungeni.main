@@ -18,7 +18,7 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 from zc.table import column
 
 from bungeni.core.workflow.interfaces import IStateController
-from bungeni.models.interfaces import IAttachmentable, \
+from bungeni.models.interfaces import IFeatureAttachment, \
     IVersion, IAttachedFileVersion
 from bungeni.models.domain import AttachmentContainer
 from bungeni.ui.forms.interfaces import ISubFormViewletManager
@@ -163,7 +163,7 @@ class FileListingView(FileListingMixin, browser.BungeniBrowserView):
 
 
 # for_, layer, view, manager
-@register.viewlet(IAttachmentable, manager=ISubFormViewletManager, 
+@register.viewlet(IFeatureAttachment, manager=ISubFormViewletManager, 
     name="keep-zca-happy-attachments")
 class FileListingViewlet(FileListingMixin, browser.BungeniItemsViewlet):
     """Viewlet to list attachments of a given document (head).
@@ -194,8 +194,8 @@ class VersionFileListingViewlet(FileListingViewlet):
         # !+AttachmentableVersion viewlet should not trigger for versions
         # whose head item is not Attachmentable! We only want to display the
         # list attachments on versions whose head item is Attachmentable...
-        self.for_display = \
-            IAttachmentable.providedBy(removeSecurityProxy(self.context).head)
+        self.for_display = IFeatureAttachment.providedBy(
+            removeSecurityProxy(self.context).head)
     
     @property
     def columns(self):

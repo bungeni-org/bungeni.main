@@ -76,7 +76,7 @@ class ChangeDataProvider(object):
             
             # changes on item attachments
             if ("attachment" in self.include_change_types 
-                    and hwf.has_feature("attachment") #!+IAttachmentable?
+                    and hwf.has_feature("attachment") #!+IFeatureAttachment?
                 ):
                 attachments = [ f for f in self.head.attachments
                     if interaction.checkPermission("zope.View", f)
@@ -369,7 +369,7 @@ class AuditLogMixin(object):
     #    return auditor.audit_class
 
 
-@register.view(interfaces.IAuditable, name="audit-log",
+@register.view(interfaces.IFeatureAudit, name="audit-log",
     protect={"bungeni.auditlog.View": register.VIEW_DEFAULT_ATTRS})
 class AuditLogView(AuditLogMixin, browser.BungeniBrowserView):
     """Change Log View for an object
@@ -394,7 +394,7 @@ class AuditLogView(AuditLogMixin, browser.BungeniBrowserView):
             self._page_title = _(self.__class__._page_title)
 
 
-@register.viewlet(interfaces.IAuditable, manager=ISubFormViewletManager, 
+@register.viewlet(interfaces.IFeatureAudit, manager=ISubFormViewletManager, 
     name="keep-zca-happy-timeline")
 class TimeLineViewlet(AuditLogMixin, browser.BungeniItemsViewlet):
     view_title = "Timeline"
@@ -552,12 +552,12 @@ class ChangeDataTableJSONListingBase(container.ContainerJSONListing):
         return self.json_batch(start, limit, lang)
 
 
-@register.view(interfaces.IAuditable, name="jsonlisting_view")
+@register.view(interfaces.IFeatureAudit, name="jsonlisting_view")
 class ChangeDataTableJSONListingView(ChangeDataTableJSONListingBase, AuditLogView):
     """Json Listing callback for View.
     """
 
-@register.view(interfaces.IAuditable, name="jsonlisting_viewlet")
+@register.view(interfaces.IFeatureAudit, name="jsonlisting_viewlet")
 class ChangeDataTableJSONListingViewlet(ChangeDataTableJSONListingBase, TimeLineViewlet):
     """Json Listing callback for Viewlet.
     """

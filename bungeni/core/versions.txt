@@ -58,7 +58,7 @@ In order to create a participation, we need a principal:
   'mp_1'
 
 
-Verify that no versions exist yet (assuming questions are IVersionable):
+Verify that no versions exist yet (assuming questions are IFeatureVersion):
 
     >>> len(question.versions)
     0

@@ -481,18 +481,18 @@ class IProxiedDirectory(interface.Interface):
 # IFeature marker interfaces -- apply to a domain model, to declare that it 
 # implements the feature. To avoid "english language anomalies of derived names" 
 # e.g "schedule" -> ISchedulable, adopt a very KISS feature->interface naming 
-# convention: "schedule" -> IFeatureSchedule
+# convention: "schedule"->IFeatureSchedule
 
 class IFeature(interface.Interface):
     """Base feature marker interface.
     """
-class IAuditable(IFeature):
+class IFeatureAudit(IFeature):
     """Marks support for "audit" feature.
     """
-class IVersionable(IFeature):
+class IFeatureVersion(IFeature):
     """Marks support for "version" feature (requires "audit").
     """
-class IAttachmentable(IFeature):
+class IFeatureAttachment(IFeature):
     """Marks support for "attachment" feature.
     """
 class IFeatureEvent(IFeature):

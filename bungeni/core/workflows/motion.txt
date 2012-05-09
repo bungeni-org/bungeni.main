@@ -25,8 +25,8 @@ Imports.
 Motions are versionable.
   
   >>> from zope.interface import classImplements
-  >>> from bungeni.models.interfaces import IVersionable
-  >>> classImplements(domain.Motion, IVersionable)
+  >>> from bungeni.models.interfaces import IFeatureVersion
+  >>> classImplements(domain.Motion, IFeatureVersion)
 
 Content creation
 ----------------

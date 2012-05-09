@@ -14,7 +14,7 @@ log = __import__("logging").getLogger("bungeni.core.workflows._conditions")
 
 from zope.security import checkPermission
 from bungeni.alchemist import Session
-from bungeni.models.interfaces import IAuditable, ISignatoriesValidator
+from bungeni.models.interfaces import ISignatoriesValidator
 from bungeni.models import domain
 from bungeni.models import utils as model_utils
 from bungeni.core import globalsettings as prefs
@@ -198,11 +198,12 @@ def pi_allow_signature_actions(context):
 # auditables
 
 ''' !+AUDITABLES_UNUSED(mr, apr-2012)
+from bungeni.models.interfaces import IFeatureAudit
 def user_is_state_creator(context):
     """Did the current user create current state - based on workflow log?
     """
     is_state_creator = False
-    if IAuditable.providedBy(context):
+    if IFeatureAudit.providedBy(context):
         current_user = model_utils.get_db_user()
         if current_user:
             for _object_change in reversed(
