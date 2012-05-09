@@ -728,7 +728,7 @@ div.documentContent div h1:first-child {
 div.documentContent div#content h1.title {
     text-align:center !important;
 }
-div.documentContent div p {
+div.documentContent div p.documentDescription {
     text-align:center !important;
 }
 /*
@@ -1473,10 +1473,10 @@ div.main-column #collage h2 {
     padding: 0 !important;
 }
 .template-workspace .documentDescription {
+    text-align:center;
     font-weight: normal;
     margin-left: auto;
     margin-right: auto;
-    width:480px;
 }
 /*
  * Calendar Styles for logged out view
@@ -1814,3 +1814,7 @@ div.overlay .link-parent { display: none; }
 div.overlay #createGroup legend { display: none; }
 div.overlay #createGroup fieldset { border: none; }
 
+/* member section */
+#image .widget img {
+    max-height:200px;
+}
