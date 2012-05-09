@@ -175,7 +175,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
     """Paging, batching, sorting, json contents of a container.
     """
     permission = "zope.View"
-
+    
     def _get_operator_field_filters(self, field_filter):
         field_filters = [ff for ff in field_filter.strip().split(" ") if ff]
         if "AND" in field_filters:
@@ -205,6 +205,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
         """
         utk = self.utk
         fs = []  # filter string
+        filter_queries = []
         for field in self.fields:
             fn = field.__name__  # field name
             column, kls = None, None
@@ -216,6 +217,12 @@ class ContainerJSONListing(ContainerJSONBrowserView):
             if ff:
                 if fs:
                     fs.append(" AND ")
+                md_field = self.domain_annotation.get(fn) #model descriptor field
+                if md_field:
+                    lc_filter = md_field.listing_column_filter
+                    if lc_filter:
+                        filter_queries.append((lc_filter,ff))
+                        continue
                 if getattr(self.domain_model, "sort_replace", None):
                     if fn in self.domain_model.sort_replace.keys():
                         op, ffs = self._get_operator_field_filters(ff)
@@ -235,7 +242,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
                         fs = [self._getFieldFilter(f_name, [ff], "")]
                     else:
                         fs.append("%s = %s" % (column, ff))
-        return "".join(fs)
+        return ("".join(fs), filter_queries)
 
     def query_add_filters(self, query, *filter_strings):
         """ (filter_sytings) -> query
@@ -260,9 +267,9 @@ class ContainerJSONListing(ContainerJSONBrowserView):
         sort_on = self.sort_on
         if sort_on:
             sort_on = sort_on[5:]
-            # in the domain model you may replace the sort with another column
             sort_replace = getattr(
                 self.domain_model, "sort_replace", None) # dict
+            # in the domain model you may replace the sort with another column
             if sort_replace and (sort_on in sort_replace):
                 sort_on_keys.extend(sort_replace[sort_on])
             elif sort_on in utk:
@@ -360,11 +367,14 @@ class ContainerJSONListing(ContainerJSONBrowserView):
             self.domain_model)
 
         # other filters
-        query = self.query_add_filters(query, self.getFilter())
+        fs, fq = self.getFilter()
+        query = self.query_add_filters(query, fs)
+        for filter_query, filter_string in fq:
+            query = filter_query(query, filter_string)
         # order_by
-        order_by = self.getSort()  # [sort_on_expressions]
-        if order_by:
-            query = query.order_by(order_by)
+        #order_by = self.getSort()  # [sort_on_expressions]
+        #if order_by:
+        #    query = query.order_by(order_by)
         # get total number of items before applying an offset and limit
         self.set_size = query.count()
         # offset and limit

@@ -179,6 +179,10 @@ class IModelDescriptorField(interface.Interface):
         title=u"A Custom Column Widget for Listing Views",
         required=False
     )
+    listing_column_filter = schema.Object(interface.Interface,
+        title=u"A function that filters a listing column on a value",
+        required=False
+    )
     # !+LISTING_WIDGET(mr, nov-2010) why inconsistently named "listing_column"?
     view_widget = schema.Object(interface.Interface,
         title=u"A Custom Widget Factory for Read Views",
@@ -274,6 +278,7 @@ class Field(object):
     property = None # zope.schema.interfaces.IField
     
     listing_column = None   # zc.table.interfaces.IColumn
+    listing_column_filter = None
     
     view_widget = None      # zope.formlib.interaces.IDisplayWidget
     edit_widget = None      # zope.formlib.interfaces.IInputWidget
@@ -313,7 +318,8 @@ class Field(object):
     
     def __init__(self, 
             name=None, label=None, description=None, 
-            modes=None, localizable=None, property=None, listing_column=None, 
+            modes=None, localizable=None, property=None,
+            listing_column=None, listing_column_filter=None,
             view_widget=None, edit_widget=None, add_widget=None, 
             search_widget=None,
             #view_permission=None, edit_permission=None
@@ -334,7 +340,8 @@ class Field(object):
         kw = vars()
         for p in (
                 "name", "label", "description", "modes", 
-                "localizable", "property", "listing_column", 
+                "localizable", "property",
+                "listing_column", "listing_column_filter",
                 "view_widget", "edit_widget", "add_widget", "search_widget", 
                 #"view_permission", "edit_permission"
                 # !+FIELD_PERMISSIONS(mr, nov-2010) deprecated
@@ -359,6 +366,10 @@ class Field(object):
         if listing_column:
             assert "listing" in self.modes, \
                 "Field [%s] sets listing_column but no listing mode" % (
+                    self.name)
+        if listing_column_filter:
+            assert "listing" in self.modes, \
+                "Field [%s] sets listing_column_filter but no listing mode" % (
                     self.name)
         # the default list of show/hide localization directives
         if self.localizable is None:

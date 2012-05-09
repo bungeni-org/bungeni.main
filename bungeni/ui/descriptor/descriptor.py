@@ -10,7 +10,7 @@ log = __import__("logging").getLogger("bungeni.ui.descriptor")
 
 from copy import deepcopy
 from zope import schema, interface
-
+from sqlalchemy.sql import expression
 import zope.formlib
 from zope.i18n import translate
 from zc.table import column
@@ -114,6 +114,16 @@ def combined_name_column(name, title, default=""):
     def getter(item, formatter):
         return "%s [%s]" % (_(item.full_name), item.short_name)
     return column.GetterColumn(title, getter)
+    
+def combined_name_column_filter(query, filter_string):
+    fs = filter_string.strip().split(" ")
+    fc = []
+    for fs_ in fs:
+        fc.extend([domain.Group.full_name.like("%%%s%%" % fs_),
+            domain.Group.short_name.like("%%%s%%" % fs_),]
+        )
+    return query.filter(expression.or_(*fc))      
+    
 
 def dc_property_column(name, title, property_name="title"):
     def renderer(value):
@@ -140,6 +150,15 @@ def user_name_column(name, title, attr):
         return item_user.fullname # User.fullname property
     return column.GetterColumn(title, getter)
 
+def user_name_column_filter(query, filter_string):
+    fs = filter_string.strip().split(" ")
+    fc = []
+    for fs_ in fs:
+        fc.extend([domain.User.first_name.like("%%%s%%" % fs_),
+            domain.User.middle_name.like("%%%s%%" % fs_),
+            domain.User.last_name.like("%%%s%%" % fs_),]
+        )
+    return query.join(domain.User).filter(expression.or_(*fc))
 
 def linked_mp_name_column(name, title, attr):
     """This may be used to customize the default URL generated as part of the
@@ -173,7 +192,17 @@ def linked_mp_name_column(name, title, attr):
             href=href
         )
     return column.GetterColumn(title, getter)
-
+    
+def linked_mp_name_column_filter(query, filter_string):
+    fs = filter_string.strip().split(" ")
+    fc = []
+    for fs_ in fs:
+        fc.extend([domain.User.first_name.like("%%%s%%" % fs_),
+            domain.User.middle_name.like("%%%s%%" % fs_),
+            domain.User.last_name.like("%%%s%%" % fs_),]
+        )
+    return query.join(domain.User).filter(expression.or_(*fc))
+    
 def user_party_column(name, title, default="-"):
     def getter(item, formatter):
         session = Session()
@@ -730,6 +759,7 @@ class UserDelegationDescriptor(ModelDescriptor):
             ),
             listing_column=user_name_column("delegation_id", _("User"),
                 "delegation"),
+            listing_column_filter=user_name_column_filter,
         ),
     ]
 
@@ -867,6 +897,7 @@ class MpDescriptor(GroupMembershipDescriptor):
                 )
             ),
             listing_column=user_name_column("user_id", _("Name"), "user"),
+            listing_column_filter=user_name_column_filter,
             edit_widget=widgets.AutoCompleteWidget(remote_data=True,
                 yui_maxResultsDisplayed=5),
             add_widget=widgets.AutoCompleteWidget(remote_data=True)
@@ -1007,6 +1038,7 @@ class PartyMemberDescriptor(GroupMembershipDescriptor):
                 source=vocabulary.MemberOfParliamentSource("user_id",)
             ),
             listing_column=linked_mp_name_column("user_id", _("Name"), "user"),
+            listing_column_filter=linked_mp_name_column_filter,
             view_widget=widgets.MemberURLDisplayWidget,
             add_widget=widgets.AutoCompleteWidget(remote_data=True),
             edit_widget=widgets.AutoCompleteWidget(remote_data=True)
@@ -1117,7 +1149,8 @@ class GroupDescriptor(ModelDescriptor):
             ],
             property=schema.TextLine(title=_combined_name_title),
             listing_column=combined_name_column("full_name",
-                _combined_name_title)
+                _combined_name_title),
+            listing_column_filter=combined_name_column_filter,
         ),
         LanguageField("language"), # [user-req]
         Field(name="description", # [rtf]
@@ -1437,6 +1470,7 @@ class CommitteeMemberDescriptor(GroupMembershipDescriptor):
                 source=vocabulary.MemberOfParliamentSource("user_id")
             ),
             listing_column=user_name_column("user_id", _("Name"), "user"),
+            listing_column_filter=user_name_column_filter,
             add_widget = widgets.AutoCompleteWidget(remote_data=True),
             edit_widget = widgets.AutoCompleteWidget(remote_data=True)
         ),
@@ -1709,6 +1743,7 @@ class CommitteeStaffDescriptor(GroupMembershipDescriptor):
                 )
             ),
             listing_column=user_name_column("user_id", _("Name"), "user"),
+            listing_column_filter=user_name_column_filter,
             add_widget=widgets.AutoCompleteWidget(remote_data=True),
             edit_widget=widgets.AutoCompleteWidget(remote_data=True)
         ),
@@ -1827,6 +1862,7 @@ class OfficeMemberDescriptor(GroupMembershipDescriptor):
                 )
             ),
             listing_column=user_name_column("user_id", _("Name"), "user"),
+            listing_column_filter=user_name_column_filter,
             add_widget=widgets.AutoCompleteWidget(remote_data=True),
             edit_widget=widgets.AutoCompleteWidget(remote_data=True)
         )
@@ -1886,6 +1922,7 @@ class MinisterDescriptor(GroupMembershipDescriptor):
                 )
             ),
             listing_column=user_name_column("user_id", _("Name"), "user"),
+            listing_column_filter=user_name_column_filter,
             add_widget = widgets.AutoCompleteWidget(remote_data=True),
             edit_widget = widgets.AutoCompleteWidget(remote_data=True)
         )
@@ -2109,6 +2146,7 @@ class DocDescriptor(ModelDescriptor):
                 source=vocabulary.MemberOfParliamentDelegationSource("owner_id"),
             ),
             listing_column=linked_mp_name_column("owner_id", _("Name"), "owner"),
+            listing_column_filter=linked_mp_name_column_filter,
             add_widget=widgets.MemberDropDownWidget,
             view_widget=widgets.MemberURLDisplayWidget,
         ),
@@ -2261,6 +2299,7 @@ class EventDescriptor(DocDescriptor):
         # gives mismatch error when descriptors are (re-)loaded, e.g. 
         #f.localizable = [ hide("view edit add listing"), ]
         f.listing_column = user_name_column("owner_id", _("Name"), "owner")
+        f.listing_column_filter = listing_column_filter=user_name_column_filter
         f.view_widget = None
         # !+ select or autocomplete... ?
         #f.edit_widget=widgets.AutoCompleteWidget(remote_data=True,
@@ -2296,6 +2335,7 @@ class ChangeDescriptor(ModelDescriptor):
                     value_field="user_id")),
             view_widget=None,
             listing_column=user_name_column("user_id", _("Name"), "user"),
+            listing_column_filter=user_name_column_filter,
         ),
         Field(name="action",
             modes="view listing",
@@ -3002,7 +3042,8 @@ class AttendanceDescriptor(ModelDescriptor):
                     value_field="member_id"
                 )
             ),
-            listing_column=user_name_column("member_id", _("Name"), "user")
+            listing_column=user_name_column("member_id", _("Name"), "user"),
+            listing_column_filter=user_name_column_filter,
         ),
         Field(name="attendance_type", # [user-req]
             modes="view edit add listing",
@@ -3064,6 +3105,7 @@ class SignatoryDescriptor(ModelDescriptor):
                 _("Signatory"),
                 "user"
             ),
+            listing_column_filter=linked_mp_name_column_filter,
             view_widget=widgets.MemberURLDisplayWidget,
             add_widget=widgets.AutoCompleteWidget(remote_data=True),
             edit_widget=widgets.AutoCompleteWidget(remote_data=True)
