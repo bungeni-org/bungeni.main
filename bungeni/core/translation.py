@@ -23,6 +23,7 @@ from zope.publisher.interfaces.http import IHTTPRequest
 from zope.i18n import translate as ztranslate
 
 from zope.publisher.browser import BrowserLanguages
+from zope.i18n.locales import locales
 
 from sqlalchemy import orm, sql
 
@@ -99,17 +100,41 @@ def get_language_by_name(name):
 def get_language(translatable):
     return translatable.language
 
-def get_all_languages(filter=None):
+def get_all_languages(language_filter=None):
     """Build a list of all languages.
 
     To-do: the result of this method should be cached indefinitely.
     """
     availability = component.getUtility(ILanguageAvailability)
     _languages = availability.getLanguages(combined=True)
-    if filter is None:
-        filter = ALLOWED_LANGUAGES
+    if language_filter is None:
+        language_filter = ALLOWED_LANGUAGES
     # TypeError if filter is not iterable
-    return dict([ (name, _languages[name]) for name in filter ])
+    def get_lang_data(code):
+        lang_data = _languages[code]
+        if not lang_data.has_key("native"):
+            #try to extract native name from zope
+            lang_parts = code.split("-")
+            lang_code = lang_parts[0]
+            territory = None
+            if len(lang_parts) == 2:
+                territory = lang_parts[1].upper()
+            lang_locale = locales.getLocale(lang_code, territory)
+            if not lang_locale.id.language:
+                return
+            lang_name = lang_locale.displayNames.languages.get(lang_code, 
+                "").capitalize()
+            if not lang_name:
+                return
+            locale_territory = lang_locale.displayNames.territories.get(
+                territory, ""
+            )
+            if locale_territory:
+                lang_data["native"] = u"%s (%s)" %(lang_name, locale_territory)
+            else:
+                lang_data["native"] = lang_name
+        return lang_data
+    return dict([ (name, get_lang_data(name)) for name in language_filter ])
 
 def get_request_language(request=None, default=capi.default_language):
     """Get current request's language; if no request use specified default.
