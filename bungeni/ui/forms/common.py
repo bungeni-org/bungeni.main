@@ -436,7 +436,7 @@ class EditForm(BaseForm, catalyst.EditForm):
             context = self.context
         props = IDCDescriptiveProperties.providedBy(context) \
                 and context or IDCDescriptiveProperties(context)
-
+        
         if self.is_translation:
             language = get_language_by_name(self.context.language)["name"]
             return _(u"edit_translation_legend",
@@ -448,7 +448,7 @@ class EditForm(BaseForm, catalyst.EditForm):
             return _(u"edit_version_legend",
                      default=u'Editing "$title" (version $version)',
                      mapping={"title": translate(props.title, context=self.request),
-                              "version": self.context.version_id})
+                              "version": self.context.seq})
 
         return _(u"edit_item_legend", default=u'Editing "$title"',
                  mapping={"title": translate(props.title, context=self.request)})

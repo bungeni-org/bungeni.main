@@ -14,15 +14,13 @@ from fields import FSBlob
 from sqlalchemy.sql import text #, functions #!+CATALYSE(mr, nov-2010)
 from datetime import datetime
 
-import domain
-import interfaces
 
 metadata = rdb.MetaData()
+
 
 # users and groups because of the zope users and groups
 PrincipalSequence = rdb.Sequence("principal_sequence")
 
-# !+PARAMETRIZABLE_DOCTYPES
 
 def un_camel(name):
     """Convert a CamelCase name to lowercase underscore-separated.
@@ -51,6 +49,7 @@ plural.custom = {
     "user_address": "user_addresses",
     "group_address": "group_addresses",
 }
+
 
 # vertical properties
 
@@ -184,99 +183,6 @@ def make_audit_table(table, metadata):
     )
     return audit_tbl
 
-''' !+DEC
-def make_changes_table(table, metadata):
-    """Create an object log table for an object.
-    """
-    table_name = table.name
-    entity_name = singular(table_name)
-    changes_name = "%s_changes" % (entity_name)
-    fk_id = "%s_id" % (entity_name)
-    changes_table = rdb.Table(changes_name, metadata,
-        rdb.Column("change_id", rdb.Integer, primary_key=True),
-        # the item_id of the "owning" item being logged !+HEAD_DOCUMENT_ITEM
-        rdb.Column("content_id", rdb.Integer, 
-            rdb.ForeignKey(table.c[fk_id]),
-            nullable=False,
-            index=True
-        ),
-        rdb.Column("action", rdb.Unicode(16)),
-        # audit date, exclusively managed by the system
-        rdb.Column("date_audit", rdb.DateTime(timezone=False),
-            #!+CATALYSE(mr, nov-2010) fails descriptor catalisation
-            #default=functions.current_timestamp(),
-            server_default=text("now()"),
-            nullable=False
-        ),
-        # user-modifiable effective date, defaults to same value as audit date;
-        # this is the date to be used for all intents and purposes other than 
-        # for data auditing
-        rdb.Column("date_active", rdb.DateTime(timezone=False),
-            #!+CATALYSE(mr, nov-2010)
-            #default=functions.current_timestamp(),
-            server_default=text("now()"),
-            nullable=False
-        ),
-        rdb.Column("description", rdb.UnicodeText),
-        rdb.Column("notes", rdb.UnicodeText),
-        rdb.Column("user_id", rdb.Integer, rdb.ForeignKey("users.user_id")),
-        # Workflow State at time of change - visibility of a change record 
-        # depends on permissions of parent object in this specific state.
-        rdb.Column("status", rdb.Unicode(48)),
-        #!+SA0.7 rdb.Index("%s_changes_cid_idx" % (entity_name), "content_id"),
-        useexisting=False
-    )
-    return changes_table
-
-def make_versions_table(table, metadata, secondary_table=None):
-    """Create a versions table, requires change log table for which
-    some version metadata information will be stored.
-    
-    A secondary table may be defined if the object mapped to this
-    table consists of a join between two tables.
-    
-    Assumption: table and secondary_table both have only a single surrogate pk.
-    """
-    table_name = table.name
-    entity_name = singular(table_name)
-    versions_name = "%s_versions" % (entity_name)
-    fk_id = "%s_id" % (entity_name)
-    columns = [
-        # the id of this record
-        rdb.Column("version_id", rdb.Integer, primary_key=True),
-        # the item_id of the "owning" item being versioned !+HEAD_DOCUMENT_ITEM
-        rdb.Column("content_id", rdb.Integer, 
-            rdb.ForeignKey(table.c[fk_id]), 
-            nullable=False,
-            index=True
-        ),
-        # the id of the change record triggered by this version !+needed?
-        rdb.Column("change_id", rdb.Integer,
-            rdb.ForeignKey("%s_changes.change_id" % entity_name),
-            #nullable=False # !+VERSION_CHANGE_ID(mr, sep-2011) application 
-            # policy stipulates that a new version is *always* logged also as 
-            # a change, thus this should filed should not be nullable. But, 
-            # setting it so breaks the versions.txt doctest. 
-            # See also related issue: ATTACHED_FILE_VERSIONS
-        ),
-        rdb.Column("manual", rdb.Boolean, nullable=False, default=False),
-    ]
-    def extend_cols(cols, ext_cols):
-        names = [ c.name for c in cols ]
-        for c in ext_cols:
-            if not c.primary_key:
-                assert c.name not in names, "Duplicate column."
-                names.append(c.name)
-                cols.append(c.copy())
-    extend_cols(columns, table.columns)
-    if secondary_table is not None:
-        extend_cols(columns, secondary_table.columns)
-    versions_table = rdb.Table(versions_name, metadata, *columns,
-        useexisting=False
-    )
-    return versions_table
-'''
-# !+/PARAMETRIZABLE_DOCTYPES
 
 '''
 def make_vocabulary_table(vocabulary_prefix, metadata, table_suffix="_types",
@@ -955,11 +861,12 @@ subscriptions = rdb.Table("object_subscriptions", metadata,
 
 
 # NOT a parliamentary_item
-# !+doc_attachment -- assumption is that attachments ae only for doc?
+# !+doc_attachment
 attachment = rdb.Table("attachment", metadata,
     rdb.Column("attachment_id", rdb.Integer, primary_key=True),
     # the id of the "owning" head document
-    rdb.Column("head_id", rdb.Integer, # !+item_id
+    # !+doc_attachment -- this assumes that attachments are only for doc?
+    rdb.Column("head_id", rdb.Integer,
         rdb.ForeignKey("doc.doc_id"),
         nullable=False
     ),
@@ -969,7 +876,6 @@ attachment = rdb.Table("attachment", metadata,
         default="document",
         nullable=False,
     ),
-    #rdb.Column("doc_version_id", rdb.Integer), #!+file_version_id !?!?
     rdb.Column("title", rdb.Unicode(255), nullable=False), #!+file
     rdb.Column("description", rdb.UnicodeText), #!+file
     rdb.Column("data", FSBlob(32)), #!+file

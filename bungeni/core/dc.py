@@ -268,9 +268,7 @@ class VersionDescriptiveProperties(DescriptiveProperties):
         if is_translation(self.context):
             language = get_language_by_name(self.context.language)["name"]
             return "%s %s" % (language, _("translation"))
-        if interfaces.IChange.providedBy(self.context): # !+DOCUMENT tmp
-            return "%s %s" % (_("Version"), self.context.seq)
-        return "%s %s" % (_("Version"), self.context.version_id)
+        return "%s %s" % (_("Version"), self.context.seq)
     
     @property
     def description(self):

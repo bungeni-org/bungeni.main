@@ -239,10 +239,10 @@ def _set_group_local_role(context, unset=False):
         prm.assignRoleToPrincipal(role, group.group_principal_id)
     else:
         prm.unsetRoleForPrincipal(role, group.group_principal_id)
-    
+
 def set_group_local_role(context):
     _set_group_local_role(context, unset=False)
-            
+
 def unset_group_local_role(context):
     _set_group_local_role(context, unset=True)
 
@@ -250,7 +250,7 @@ def dissolveChildGroups(groups, context):
     for group in groups:
         IWorkflowController(group).fireTransition("active-dissolved", 
             check_security=False)
-        
+
 # sitting
 def schedule_sitting_items(context):
     

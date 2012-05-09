@@ -24,7 +24,8 @@ def polymorphic_identity(cls):
     return schema.un_camel(cls.__name__)
 
 
-# !+PARAMETRIZABLE_DOCTYPES
+# Features
+
 def configurable_mappings(kls):
     """Configuration mappings for declarative-model types.
     """
@@ -90,8 +91,8 @@ def configurable_mappings(kls):
             kls_mapper.add_property(key, prop)
     mapper_add_configurable_properties(kls)
 
+# /Features
 
-# !+/PARAMETRIZABLE_DOCTYPES
 
 #user address types
 #!+TYPES_CUSTOM mapper(domain.PostalAddressType, schema.postal_address_types)

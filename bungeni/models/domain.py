@@ -59,6 +59,7 @@ def get_audit_table_name(kls):
     return "%s_audit" % (get_mapped_table(kls).name)
 
 def get_mapped_object_id(ob):
+    # !+ASSUMPTION_SINGLE_COLUMN_PK(mr, may-2012)
     return object_mapper(ob).primary_key_from_instance(ob)[0]
 
 #
@@ -137,16 +138,14 @@ class Entity(object):
     # query gets sorted by sort_name
     #sort_replace = None
 
-#
 
-# !+PARAMETRIZABLE_DOCTYPES(mr, jun-2011) the quality of a domain type to 
-# support a specific feature is externalized as a localization parameter, and
-# its implementation must thus be completely isolated, depending only on that
-# one declaration.
-
-# Feature decorators (as per a deployment's configuration) for domain types to 
-# support a "feature", to collect in one place all that is needed for the 
+# Features (as per a deployment's configuration) - decorators for domain types
+# to support a "feature", to collect in one place all that is needed for the 
 # domain type to support that "feature".
+# 
+# The quality of a domain type to support a specific feature is externalized 
+# as a localization parameter, and its implementation must thus be completely 
+# isolated, depending only on that one declaration.
 
 def feature_audit(kls):
     """Decorator for domain types to support "audit" feature.
@@ -231,7 +230,6 @@ def feature_address(kls):
     interface.classImplements(kls, interfaces.IFeatureAddress)
     return kls
 
-#
 
 def configurable_domain(kls, workflow):
     """Executed on adapters.load_workflow().
@@ -245,7 +243,8 @@ def configurable_domain(kls, workflow):
             kls = feature_decorator(kls)
     return kls
 
-# !+/PARAMETRIZABLE_DOCTYPES
+# /Features
+
 
 class User(Entity):
     """Domain Object For A User. General representation of a person.
@@ -405,7 +404,6 @@ class Sitting(Entity):
     dynamic_features = ["audit", "version", "attachment"]
     interface.implements(
         interfaces.ITranslatable,
-        interfaces.IDocument, # !+IDoc?
     )
     
     attendance = one2many("attendance",
@@ -673,7 +671,7 @@ class Doc(Entity):
     dynamic_features = ["audit", "version", "attachment", "event", 
         "signatory", "schedule"]
     interface.implements(
-        interfaces.IDocument, # !+IDoc?
+        interfaces.IDoc,
         interfaces.IBungeniParliamentaryContent, #!+should be applied as needed?
         interfaces.ITranslatable
     )
@@ -800,9 +798,10 @@ class Version(Change):
         "bungeni.models.domain.AttachmentContainer", "head_id")
     
     def __getattr__(self, name):
-        """Try to pick any attribute not found on the change record off the 
-        related audit snapshot record (as every change record is related to a 
-        type-dedicated audit record). 
+        """Try to pick any attribute (not found on this change record--this 
+        method only gets called when a nonexistent attribute is accessed) off 
+        the related audit snapshot record (as every change record is related 
+        to a type-dedicated audit record).
         
         !+ should this be on Change i.e. for all change actions?
         !+ possible issue with attribute hiding, if an type has a 
@@ -823,8 +822,13 @@ class Version(Change):
                         return v
             correctly_typed_change = get_correctly_typed_change(self)
             if correctly_typed_change and correctly_typed_change is not self:
-                print "*** %s.%s audit_id=%s INCORRECT TYPE:%s SHOULD HAVE BEEN:%s" % (
-                    type(self).__name__, name, audit_id, self, correctly_typed_change)
+                print ("*** %s.%s head/id=%s/%s, audit/id=%s/%s \n"
+                    "    SA INCORRECT TYPE:%s \n"
+                    "    SHOULD HAVE BEEN:%s" % (
+                        type(self).__name__, name, 
+                        self.head, self.head_id, 
+                        self.audit, audit_id, 
+                        self, correctly_typed_change))
             # !+/SA_INCORRECT_TYPE_DEBUG
             raise AttributeError("%r object has no attribute %r" % (
                 type(self).__name__, name))
@@ -1052,7 +1056,6 @@ class Attachment(HeadParentedMixin, Entity):
     """
     dynamic_features = ["audit", "version"]
     interface.implements(
-        interfaces.IDocument, # !+IDoc?
         interfaces.IAttachment,
         ore.xapian.interfaces.IIndexable, # !+bungeni_custom
     )
@@ -1093,7 +1096,6 @@ class Signatory(Entity):
     dynamic_features = ["audit", "version", "attachment"]
     interface.implements(
         interfaces.IBungeniContent,
-        interfaces.IDocument, # !+IDoc?
     )
     
     @property

@@ -119,7 +119,7 @@ class IBungeniContent(IOwned):
     # status: rdb.Unicode(48)
     # status_date: rdb.DateTime(timezone=False)
 
-class IBungeniParliamentaryContent(interface.Interface):
+class IBungeniParliamentaryContent(IOwned):
     """Marker interface for true bungeni parliamentary content"""
 
 class IBungeniContainer(IAlchemistContainer):
@@ -153,12 +153,10 @@ class IVersionContainer(IBungeniContainer):
 class IHeading(IBungeniContent):
     pass
 
-class IDocument(IBungeniContent):
-    """Marks instances of domain.Document.
-    Also marks difference between new-style and old-style parliamentary items
-    while in transitory phase.
+class IDoc(IBungeniContent):
+    """Marks instances of domain.Doc.
     """
-class IEvent(IDocument):
+class IEvent(IDoc):
     pass
 
 
