@@ -278,6 +278,11 @@ class Field(object):
     property = None # zope.schema.interfaces.IField
     
     listing_column = None   # zc.table.interfaces.IColumn
+    
+    # listing_column_filter must be a function that accepts three parameters
+    # 1. an sqlalchemy session query
+    # 2. the string to filter the column on
+    # 3. the sqlalchemy sort expression desc or asc
     listing_column_filter = None
     
     view_widget = None      # zope.formlib.interaces.IDisplayWidget
@@ -503,6 +508,12 @@ class ModelDescriptor(object):
     properties = () # !+USED?
     schema_order = () # !+USED?
     schema_invariants = ()
+    
+    # sort_on: the list of column names the query is sorted on by default
+    sort_on = None
+    
+    # sort_dir = desc | asc
+    sort_dir = "desc"
     
     def __call__(self, iface):
         """Models are also adapters for the underlying objects

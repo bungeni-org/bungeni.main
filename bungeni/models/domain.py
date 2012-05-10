@@ -125,18 +125,6 @@ class Entity(object):
                 log.error(
                     "Invalid attribute on %s %s" % (
                         self.__class__.__name__, k))
-    
-    # sort_on: the list of column names the query is sorted on by default
-    sort_on = None
-    
-    # sort_dir = desc | asc
-    #sort_dir = "desc"
-    
-    # sort_replace: a dictionary that maps one column to another
-    # so when the key is requested in a sort the value gets sorted
-    # eg: {"user_id":"sort_name"} when the sort on user_id is requested the 
-    # query gets sorted by sort_name
-    #sort_replace = None
 
 
 # Features (as per a deployment's configuration) - decorators for domain types
@@ -285,9 +273,6 @@ class User(Entity):
     def fullname(self):
         return "%s %s" % (self.first_name, self.last_name)
 
-    sort_on = ["last_name", "first_name", "middle_name"]
-    sort_replace = {"user_id": ["last_name", "first_name"]}
-    sort_dir = "asc"
     addresses = one2many("addresses",
         "bungeni.models.domain.UserAddressContainer", "user_id")
     delegations = one2many("delegations",
@@ -337,9 +322,7 @@ class Group(Entity):
     """
     dynamic_features = ["address"]
     interface.implements(interfaces.IBungeniGroup, interfaces.ITranslatable)
-    sort_on = ["short_name", "full_name"]
-    sort_dir = "asc"
-    sort_replace = {"group_id": ["short_name", ]}
+    
     #users = one2many("users", 
     #   "bungeni.models.domain.GroupMembershipContainer", "group_id")
     #sittings = one2many("sittings", 
@@ -377,9 +360,7 @@ class GroupMembership(HeadParentedMixin, Entity):
     dynamic_features = []
     interface.implements(
         interfaces.IBungeniGroupMembership, interfaces.ITranslatable)
-    sort_on = ["last_name", "first_name", "middle_name"]
-    sort_replace = {"user_id": ["last_name", "first_name"]}
-    sort_dir = "asc"
+    
     
     @property
     def image(self):
@@ -416,8 +397,6 @@ class Sitting(Entity):
 class SittingAttendance(object):
     """A record of attendance at a meeting .
     """
-    sort_on = ["last_name", "first_name", "middle_name"]
-    sort_replace = {"member_id": ["last_name", "first_name", ]}
 
 ''' !+TYPES_CUSTOM
 class AttendanceType(Entity):
@@ -433,7 +412,7 @@ class AttendanceType(Entity):
 class Parliament(Group):
     """A parliament.
     """
-    sort_on = ["start_date"]
+    
     sessions = one2many("sessions",
         "bungeni.models.domain.ParliamentSessionContainer", "parliament_id")
     committees = one2many("committees",
@@ -464,10 +443,7 @@ class Parliament(Group):
 class MemberOfParliament(GroupMembership):
     """Defined by groupmembership and additional data.
     """
-    sort_on = ["last_name", "first_name", "middle_name"]
-    sort_replace = {"user_id": ["last_name", "first_name"],
-        "constituency_id":["name"], "province_id":["name"],
-        "region_id":["name"], "party_id":["name"]}
+    
     titles = one2many("titles",
         "bungeni.models.domain.MemberTitleContainer", "membership_id")
     addresses = one2manyindirect("addresses", 
@@ -501,7 +477,6 @@ class PartyMember(GroupMembership):
 class Government(Group):
     """A government.
     """
-    sort_on = ["start_date"]
     ministries = one2many("ministries",
         "bungeni.models.domain.MinistryContainer", "parent_group_id")
 
@@ -674,11 +649,6 @@ class Doc(Entity):
         interfaces.IBungeniContent,
         interfaces.ITranslatable
     )
-    
-    sort_on = ["doc.status_date", "doc.type_number"]
-    sort_dir = "desc"
-    
-    sort_replace = {"owner_id": ["last_name", "first_name"]}
     
     # !+AlchemistManagedContainer these attribute names are part of public URLs!
     # !+item_id->head_id
@@ -1146,8 +1116,6 @@ class SignatoryAudit(Audit):
 class ParliamentSession(Entity):
     """
     """
-    sort_on = ["start_date", ]
-    sort_dir = "desc"
     interface.implements(interfaces.ITranslatable)
 
 
@@ -1164,7 +1132,6 @@ class Constituency(Entity):
         "bungeni.models.domain.ConstituencyDetailContainer", "constituency_id")
     parliamentmembers = one2many("parliamentmembers",
         "bungeni.models.domain.MemberOfParliamentContainer", "constituency_id")
-    #sort_replace = {"province_id": ["province"], "region_id": ["region"]}
     interface.implements(interfaces.ITranslatable)
 
 
@@ -1265,8 +1232,7 @@ class ItemSchedule(Entity):
 
     item = property(_get_item, _set_item)
     
-    sort_on = ["planned_order", ]
-    sort_dir = "asc"
+    
 
 class ItemScheduleDiscussion(Entity):
     """A discussion on a scheduled item.
@@ -1303,7 +1269,7 @@ class Report(Doc):
     """
     dynamic_features = ["audit", "version"]
     interface.implements(interfaces.ITranslatable)
-    sort_on = ["end_date"] + Doc.sort_on
+    
 
 # !+SITTING_REPORT(mr, apr-2011) why does SittingReport (mapped as an 
 # association type, and not a Doc in any way) inherit from Report?!

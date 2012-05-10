@@ -115,14 +115,16 @@ def combined_name_column(name, title, default=""):
         return "%s [%s]" % (_(item.full_name), item.short_name)
     return column.GetterColumn(title, getter)
     
-def combined_name_column_filter(query, filter_string):
+def combined_name_column_filter(query, filter_string, sort_dir_func):
     fs = filter_string.strip().split(" ")
     fc = []
     for fs_ in fs:
         fc.extend([domain.Group.full_name.like("%%%s%%" % fs_),
             domain.Group.short_name.like("%%%s%%" % fs_),]
         )
-    return query.filter(expression.or_(*fc))      
+    return query.filter(expression.or_(*fc)).order_by(
+        sort_dir_func(domain.Group.full_name), 
+        sort_dir_func(domain.Group.short_name),)      
     
 
 def dc_property_column(name, title, property_name="title"):
@@ -150,7 +152,7 @@ def user_name_column(name, title, attr):
         return item_user.fullname # User.fullname property
     return column.GetterColumn(title, getter)
 
-def user_name_column_filter(query, filter_string):
+def user_name_column_filter(query, filter_string, sort_dir_func):
     fs = filter_string.strip().split(" ")
     fc = []
     for fs_ in fs:
@@ -158,7 +160,11 @@ def user_name_column_filter(query, filter_string):
             domain.User.middle_name.like("%%%s%%" % fs_),
             domain.User.last_name.like("%%%s%%" % fs_),]
         )
-    return query.join(domain.User).filter(expression.or_(*fc))
+    return query.join(domain.User).filter(expression.or_(*fc)).order_by(
+        sort_dir_func(domain.User.last_name),
+        sort_dir_func(domain.User.first_name),
+        sort_dir_func(domain.User.middle_name),
+    )
 
 def linked_mp_name_column(name, title, attr):
     """This may be used to customize the default URL generated as part of the
@@ -193,7 +199,7 @@ def linked_mp_name_column(name, title, attr):
         )
     return column.GetterColumn(title, getter)
     
-def linked_mp_name_column_filter(query, filter_string):
+def linked_mp_name_column_filter(query, filter_string, sort_dir_func):
     fs = filter_string.strip().split(" ")
     fc = []
     for fs_ in fs:
@@ -201,7 +207,11 @@ def linked_mp_name_column_filter(query, filter_string):
             domain.User.middle_name.like("%%%s%%" % fs_),
             domain.User.last_name.like("%%%s%%" % fs_),]
         )
-    return query.join(domain.User).filter(expression.or_(*fc))
+    return query.join(domain.User).filter(expression.or_(*fc)).order_by(
+        sort_dir_func(domain.User.first_name),
+        sort_dir_func(domain.User.middle_name),
+        sort_dir_func(domain.User.last_name)
+    )
     
 def user_party_column(name, title, default="-"):
     def getter(item, formatter):
@@ -552,6 +562,8 @@ class UserDescriptor(ModelDescriptor):
     localizable = True
     display_name = _("User")
     container_name = _("Users")
+    sort_on = ["user_id"]
+    sort_dir = "asc"
     
     fields = [
         Field(name="user_id", # [sys] for linking item in listing
@@ -766,7 +778,8 @@ class UserDelegationDescriptor(ModelDescriptor):
 
 class GroupMembershipDescriptor(ModelDescriptor):
     localizable = False
-
+    sort_on = ["user_id"]
+    sort_dir = "asc"
     SubstitutionSource = vocabulary.SubstitutionSource(
         token_field="user_id",
         title_field="fullname",
@@ -881,7 +894,7 @@ class MpDescriptor(GroupMembershipDescriptor):
     localizable = True
     display_name = _("Member of parliament")
     container_name = _("Members of parliament")
-    
+    sort_on = ["user_id"]
     fields = [
         Field(name="user_id", # [user-req]
             modes="view edit add listing",
@@ -1112,7 +1125,8 @@ class GroupDescriptor(ModelDescriptor):
     localizable = True
     display_name = _("Group")
     container_name = _("Groups")
-
+    sort_on = ["group_id"]
+    sort_dir = "asc"
     _combined_name_title = "%s [%s]" % (_("Full Name"), _("Short Name"))
     fields = [
         Field(name="full_name", # [user-req]
@@ -1202,7 +1216,7 @@ class ParliamentDescriptor(GroupDescriptor):
     localizable = True
     display_name = _("Parliament")
     container_name = _("Parliaments")
-    
+    sort_on = ["start_date"]
     fields = [
         Field(name="full_name", # [user-req]
             description=_("Parliament name"),
@@ -1946,7 +1960,7 @@ class GovernmentDescriptor(GroupDescriptor):
     localizable = True
     display_name = _("Government")
     container_name = _("Governments")
-    
+    sort_on = ["start_date"]
     fields = deepcopy(GroupDescriptor.fields)
     fields.extend([
         Field(name="identifier", # [user-req]
@@ -2107,6 +2121,8 @@ class DocDescriptor(ModelDescriptor):
         # head_id
         "timestamp",
     ]
+    sort_on = ["status_date", "type_number"]
+    sort_dir = "desc"
     fields = [
         # amc_signatories
         # amc_attachments
@@ -2955,7 +2971,8 @@ class SessionDescriptor(ModelDescriptor):
     localizable = True
     display_name = _("Parliamentary session")
     container_name = _("Parliamentary sessions")
-    
+    sort_on = ["start_date", ]
+    sort_dir = "desc"
     fields = [
         Field(name="short_name", # [user-req]
             modes="view edit add listing",
@@ -3029,6 +3046,7 @@ class AttendanceDescriptor(ModelDescriptor):
     localizable = True
     display_name = _("Sitting attendance")
     container_name = _("Sitting attendances")
+    sort_on = ["member_id"]
     fields = [
         Field(name="member_id", # [user-req]
             modes="view edit add listing",
@@ -3319,7 +3337,8 @@ class ItemScheduleDescriptor(ModelDescriptor):
     localizable = True
     display_name = _("Scheduling")
     container_name = _("Schedulings")
-
+    sort_on = ["planned_order", ]
+    sort_dir = "asc"
     #!+VOCABULARY(mb, nov-2010) item_id references a variety of content
     # types identified by the type field. Scheduling 'add items' view suffices
     # for now providing viewlets with a list of addable objects. TODO:
@@ -3419,7 +3438,7 @@ class ReportDescriptor(DocDescriptor):
     localizable = True
     display_name = _("Report")
     container_name = _("Reports")
-    
+    sort_on = ["end_date"] + DocDescriptor.sort_on
     fields = [
         LanguageField("language"),
         Field(name="short_title", label=_("Publications type"), # [user-req]

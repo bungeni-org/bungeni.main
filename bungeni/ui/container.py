@@ -145,7 +145,7 @@ class ContainerJSONBrowserView(BrowserPage):
             [ (column.key, column) for column in self.table.columns ])
         
         # sort_on defaults: [str]
-        self.defaults_sort_on = getattr(self.domain_model, "sort_on", None)
+        self.defaults_sort_on = getattr(self.domain_annotation, "sort_on", None)
         # sort_on parameter name: str
         # pick off request, if necessary setting it from the first name
         # defined in defaults_sort_on
@@ -157,9 +157,10 @@ class ContainerJSONBrowserView(BrowserPage):
         # domain model, else "desc"
         if not self.request.get("dir"):
             self.request.form["dir"] = unicode(
-                getattr(self.domain_model, "sort_dir", "desc"))
+                getattr(self.domain_annotation, "sort_dir", "desc"))
         self.sort_dir = self.request.get("dir")
-
+        _sort_dir_funcs = dict(asc=sql.asc, desc=sql.desc)
+        self.sort_dir_func = _sort_dir_funcs.get(self.sort_dir, sql.desc)
 
 @register.view(IAlchemistContainer, name="jsontableheaders")
 class ContainerJSONTableHeaders(ContainerJSONBrowserView):
@@ -188,7 +189,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
             field_filters.remove("OR")
         return operator, field_filters
 
-    def _getFieldFilter(self, fieldname, field_filters, operator):
+    def _get_field_filter(self, fieldname, field_filters, operator):
         """If we are filtering for replaced fields we assume
         that they are character fields.
         """
@@ -200,7 +201,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
             return "(%s)" % (fs)
         return ""
 
-    def getFilter(self):
+    def get_filter(self):
         """ () -> str
         """
         utk = self.utk
@@ -215,31 +216,21 @@ class ContainerJSONListing(ContainerJSONBrowserView):
             ff_name = "filter_%s" % (fn)  # field filter name
             ff = self.request.get(ff_name, None)  # field filter
             if ff:
-                if fs:
-                    fs.append(" AND ")
                 md_field = self.domain_annotation.get(fn) #model descriptor field
                 if md_field:
                     lc_filter = md_field.listing_column_filter
                     if lc_filter:
                         filter_queries.append((lc_filter,ff))
                         continue
-                if getattr(self.domain_model, "sort_replace", None):
-                    if fn in self.domain_model.sort_replace.keys():
-                        op, ffs = self._get_operator_field_filters(ff)
-                        rfs = op.join([
-                                self._getFieldFilter(srfn, ffs, " OR ")
-                                for srfn in (  # srfn: sort_replace field_name
-                                    self.domain_model.sort_replace[fn])])
-                        if rfs:
-                            fs.extend(" (%s) " % (rfs))
-                        continue
+                if fs:
+                    fs.append(" AND ")
                 if fn in utk:
                     if kls in (types.String, types.Unicode):
                         op, ffs = self._get_operator_field_filters(ff)
-                        fs = [self._getFieldFilter(str(column), ffs, op)]
+                        fs = [self._get_field_filter(str(column), ffs, op)]
                     elif kls in (types.Date, types.DateTime):
                         f_name = "to_char(%s, 'YYYY-MM-DD')" % (column)
-                        fs = [self._getFieldFilter(f_name, [ff], "")]
+                        fs = [self._get_field_filter(f_name, [ff], "")]
                     else:
                         fs.append("%s = %s" % (column, ff))
         return ("".join(fs), filter_queries)
@@ -252,37 +243,26 @@ class ContainerJSONListing(ContainerJSONBrowserView):
                 query = query.filter(fs)
         return query
 
-    _sort_dir_funcs = dict(asc=sql.asc, desc=sql.desc)
-
-    def getSort(self):
+    def get_sort_keys(self):
         """ server side sort,
         @web_parameter sort - request variable for sort column
         @web_parameter dir - sort direction, only once acceptable value "desc"
         """
-        utk = self.utk
-        sort_dir_func = self._sort_dir_funcs.get(self.sort_dir, sql.desc)
-        sort_on_expressions = []
         sort_on_keys = []
         # first process user specified values
         sort_on = self.sort_on
         if sort_on:
             sort_on = sort_on[5:]
-            sort_replace = getattr(
-                self.domain_model, "sort_replace", None) # dict
-            # in the domain model you may replace the sort with another column
-            if sort_replace and (sort_on in sort_replace):
-                sort_on_keys.extend(sort_replace[sort_on])
-            elif sort_on in utk:
+            md_field = self.domain_annotation.get(sort_on) #model descriptor field
+            if md_field:
                 sort_on_keys.append(sort_on)
-            if sort_on_keys:
-                for sort_on in sort_on_keys:
-                    sort_on_expressions.append(sort_dir_func(sort_on))
+
         # second, process model defaults
         if self.defaults_sort_on:
             for dso in self.defaults_sort_on:
                 if dso not in sort_on_keys:
-                    sort_on_expressions.append(sort_dir_func(dso))
-        return sort_on_expressions
+                    sort_on_keys.append(dso)
+        return sort_on_keys
 
     def get_offsets(self, 
             default_start=0,
@@ -365,16 +345,24 @@ class ContainerJSONListing(ContainerJSONBrowserView):
         # date_range filter (try from: model, then cookie, then request)
         query = query_filter_date_range(context, self.request, query,
             self.domain_model)
-
+        sort_on_expressions = []
         # other filters
-        fs, fq = self.getFilter()
-        query = self.query_add_filters(query, fs)
-        for filter_query, filter_string in fq:
-            query = filter_query(query, filter_string)
-        # order_by
-        #order_by = self.getSort()  # [sort_on_expressions]
-        #if order_by:
-        #    query = query.order_by(order_by)
+        filter_string, lc_filter_queries = self.get_filter()
+        query = self.query_add_filters(query, filter_string)
+        sort_on_keys = self.get_sort_keys()
+        if sort_on_keys:
+            for sort_on in sort_on_keys:
+                md_field = self.domain_annotation.get(sort_on)
+                if md_field:
+                    lc_filter = md_field.listing_column_filter
+                    if not lc_filter:   
+                        sort_on_expressions.append(
+                            self.sort_dir_func(
+                                getattr(self.domain_model, sort_on)))
+        for lc_filter_query, lc_filter_string in lc_filter_queries:
+            query = lc_filter_query(query, lc_filter_string, self.sort_dir_func)
+        if sort_on_expressions:
+            query = query.order_by(sort_on_expressions)
         # get total number of items before applying an offset and limit
         self.set_size = query.count()
         # offset and limit
