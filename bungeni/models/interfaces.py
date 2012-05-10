@@ -119,7 +119,7 @@ class IBungeniContent(IOwned):
     # status: rdb.Unicode(48)
     # status_date: rdb.DateTime(timezone=False)
 
-class IBungeniParliamentaryContent(IOwned):
+class IBungeniParliamentaryContent(IBungeniContent):
     """Marker interface for true bungeni parliamentary content"""
 
 class IBungeniContainer(IAlchemistContainer):
