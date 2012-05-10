@@ -36,9 +36,10 @@ def image_links(content, theme, resource_fetcher, log):
     """
     
     if content('#region-content').html() != None:
-        link_value  = str(content('#region-content').html().encode("utf-8"))
+        link_value  = content('#region-content').html()
         to_replace = 'file-image/image'
         to_replace = ['file-image/image', 'file-image/logo_data']
+        
         for image in to_replace:
             if image in link_value:
                 link_id= content('#portal-breadcrumbs a:last-child')
