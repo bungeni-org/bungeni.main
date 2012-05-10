@@ -106,11 +106,11 @@ class IOfficeMember(IBungeniGroupMembership):
 class IOwned(interface.Interface):
     """Object supports having an "owner" i.e. an owner:user attribute.
     """
-    
+
 class IBungeniContent(IOwned):
     """Parliamentary content
     
-    !+IAlchemistContent(mr, nov-2011) clarify distinction, 
+    !+IBungeniContent(mr, nov-2011) clarify distinction, 
     in intention and use, between the following interfaces: 
     IBungeniParliamentaryContent -> IBungeniContent -> IAlchemistContent
     Should standardize registration on the appropriate one (or on IWorklfowed).
@@ -121,6 +121,8 @@ class IBungeniContent(IOwned):
 
 class IBungeniParliamentaryContent(IBungeniContent):
     """Marker interface for true bungeni parliamentary content"""
+    # !+IBungeniContent(mr, may-2012) drop either IBungeniContent or
+    # IBungeniParliamentaryContent !
 
 class IBungeniContainer(IAlchemistContainer):
     """Parliamentary container.
@@ -153,10 +155,7 @@ class IVersionContainer(IBungeniContainer):
 class IHeading(IBungeniContent):
     pass
 
-class IDoc(IBungeniContent):
-    """Marks instances of domain.Doc.
-    """
-class IEvent(IDoc):
+class IEvent(IBungeniContent):
     pass
 
 

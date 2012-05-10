@@ -165,7 +165,7 @@ def feature_audit(kls):
             {kls}Audit class to inherit from, and return it.
             """
             # !+ may have a deeper inheritance
-            # !+ other achetypes
+            # !+ other archetypes
             if kls is not Doc and issubclass(kls, Doc):
                 return DocAudit
             return Audit
@@ -671,8 +671,7 @@ class Doc(Entity):
     dynamic_features = ["audit", "version", "attachment", "event", 
         "signatory", "schedule"]
     interface.implements(
-        interfaces.IDoc,
-        interfaces.IBungeniParliamentaryContent, #!+should be applied as needed?
+        interfaces.IBungeniContent,
         interfaces.ITranslatable
     )
     
@@ -905,6 +904,10 @@ class AgendaItem(AdmissibleMixin, Doc):
     """Generic Agenda Item that can be scheduled on a sitting.
     """
     dynamic_features = ["audit", "version", "attachment", "schedule"]
+    interface.implements(
+        interfaces.IBungeniParliamentaryContent,
+    )
+    
     files = one2many("files",
         "bungeni.models.domain.AttachmentContainer", "head_id")
     # !+signatories on AgendaItems?
@@ -920,6 +923,10 @@ class Bill(Doc):
     """
     dynamic_features = ["audit", "version", "attachment", "event", 
         "signatory", "schedule"]
+    interface.implements(
+        interfaces.IBungeniParliamentaryContent,
+    )
+    
     files = one2many("files",
         "bungeni.models.domain.AttachmentContainer", "head_id")
     signatories = one2many("signatories",
@@ -954,6 +961,10 @@ class Motion(AdmissibleMixin, Doc):
     """
     dynamic_features = ["audit", "version", "attachment", "event", 
         "signatory", "schedule"]
+    interface.implements(
+        interfaces.IBungeniParliamentaryContent,
+    )
+    
     files = one2many("files",
         "bungeni.models.domain.AttachmentContainer", "head_id")
     signatories = one2many("signatories",
@@ -971,6 +982,10 @@ class Question(AdmissibleMixin, Doc):
     """
     dynamic_features = ["audit", "version", "attachment", "event", 
         "signatory", "schedule"]
+    interface.implements(
+        interfaces.IBungeniParliamentaryContent,
+    )
+    
     files = one2many("files",
         "bungeni.models.domain.AttachmentContainer", "head_id")
     signatories = one2many("signatories",
@@ -1022,6 +1037,10 @@ class TabledDocument(AdmissibleMixin, Doc):
     """
     dynamic_features = ["audit", "version", "attachment", "event", 
         "signatory", "schedule"]
+    interface.implements(
+        interfaces.IBungeniParliamentaryContent,
+    )
+    
     files = one2many("files",
         "bungeni.models.domain.AttachmentContainer", "head_id")
     signatories = one2many("signatories",
@@ -1038,6 +1057,9 @@ class Event(HeadParentedMixin, Doc):
     # handle this, possible related constraint e.g. head_id must NOT be null, 
     # validation, ... ?
     dynamic_features = ["audit", "version", "attachment"]
+    interface.implements(
+        interfaces.IEvent,
+    )
     
     # !+alchemist properties not inherited, must be re-instrumented on class
     files = one2many("files",

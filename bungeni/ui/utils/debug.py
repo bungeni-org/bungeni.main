@@ -37,7 +37,7 @@ def interfaces_implementedBy(cls):
                     for i in interface.implementedBy(cls) ] or 
                 ["</>"] ))
     except TypeError:
-        # raise TypeError("ImplementedBy called for non-factory", cls)
+        # raise TypeError("implementedBy called for non-factory", cls)
         import sys
         return """  interfaces implementedBy %s: ***ERROR*** %s""" % (
             cls, sys.exc_info())
