@@ -186,7 +186,7 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
                 start_date, end_date
             ).values()
             self.sittings = map(removeSecurityProxy, sittings)
-        self.sittings = [ data.ExpandedSitting(sitting) 
+        self.sittings = [ ExpandedSitting(sitting) 
             for sitting in self.sittings 
         ]
 
@@ -554,8 +554,8 @@ def default_reports(sitting, event):
     wf = IWorkflow(sitting)
     if sitting.status in wf.get_state_ids(tagged=["published"]):
         sitting = removeSecurityProxy(sitting)
-        sittings = [data.ExpandedSitting(sitting)]
-        report_context = data.ReportContext(sittings=sittings)
+        sittings = [ExpandedSitting(sitting)]
+        report_context = ReportContext(sittings=sittings)
         report = domain.Report()
         session = Session()
         # !+GROUP_AS_OWNER(mr, apr-2012) we assume for now that the "owner" of
