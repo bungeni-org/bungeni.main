@@ -17,8 +17,7 @@
                 amc_attachments
                 amc_events
                     submission_date
-                    admissible_date
-                                    
+                
                 owner
                 files
                 signatories
@@ -51,10 +50,44 @@
                 timestamp
             "
         />
+        <require permission="zope.ManageContent"
+            set_attributes="
+                doc_type
+                doc_procedure
+                type_number
+                registry_number
+                uri
+                acronym
+                short_title
+                long_title
+                description
+                language
+                body
+                status
+                status_date
+                group_id
+                subject
+                coverage
+                geolocation
+                head_id
+            "
+        /><!-- !+DOC_ATTRIBUTE_ACCESS(mr, may-2012)
+        the following attrs are NEVER modified after creation (and so access
+        declarations for them should NOT be overridden by sub-types):
+            doc_id / parliament_id / owner_id / type
+        timestamp is a special case, handled separately (and sub-types should
+            not need to override).
+        all other Doc base attributes (columns on doc table or properties on 
+            Doc class) such as these listed under set_attributes here, MAY be 
+            modifiable (even if some may logically only be modified once) and 
+            each sub-type must explicitly control. 
+        all other non-base attributes (properties or xtended attributes defined
+            by specific sub-types) must be declared by each sub-type as needed.
+        -->
         <require permission="zope.View"
             set_attributes="timestamp"
         /><!-- !+TIMESTAMP(mr, jul-2011) granting edit on timestamp to anyone 
-        with view privilege, as an item, while not essentuially being editable 
+        with view privilege, as an item, while not essentially being editable 
         may still be affected by the user's action e.g transited to another 
         state without "any modifications". Previous to circa r8460, this was 
         not an issue, and the user was being allowed to set timestamp even if
@@ -64,10 +97,13 @@
     
     <class class=".domain.Event">
         <require like_class=".domain.Doc" />
+        <require permission="zope.View"
+            attributes="
+                event_date
+            "
+        />
         <require permission="bungeni.event.Edit"
             set_attributes="
-                owner_id
-                type
                 doc_type
                 doc_procedure
                 type_number
@@ -95,22 +131,30 @@
         <require like_class=".domain.Doc" />
         <require permission="zope.View"
             attributes="
-                bill_id
-                doc_type
                 ministry_id
                 publication_date
             "
         />
         <require permission="bungeni.bill.Edit"
             set_attributes="
+                doc_type
+                doc_procedure
+                type_number
+                registry_number
+                uri
+                acronym
                 short_title
+                long_title
+                description
                 language
                 body
-                doc_type
-                summary
-                ministry_id
-                long_title
-                owner_id
+                status
+                status_date
+                group_id
+                subject
+                coverage
+                geolocation
+                head_id
             "
         />
     </class>
@@ -120,15 +164,10 @@
         <require like_class=".domain.Doc" />
         <require permission="zope.View"
             attributes="
-                ministry
-                doc_type
-                response_type
-                
-                question_id
-                type_number
+                admissible_date
                 ministry_submit_date
-                sitting_time
                 ministry_id
+                response_type
             "
         />
         <require permission="bungeni.response.View"
@@ -136,15 +175,26 @@
         />
         <require permission="bungeni.question.Edit"
             set_attributes="
+                doc_type
+                doc_procedure
+                type_number
+                registry_number
+                uri
+                acronym
                 short_title
+                long_title
+                description
                 language
                 body
-                ministry_id
-                response_type
-                long_title
-                doc_type
-                owner_id
+                status
+                status_date
+                group_id
                 subject
+                coverage
+                geolocation
+                head_id
+                
+                response_type
             "
         />
         <!-- !+WORKFLOW_TRANSITION(ah, jan-2011) to be reviewed for now we 
@@ -161,13 +211,12 @@
         <require like_class=".domain.Doc" />
         <require permission="zope.View"
             attributes="
+                admissible_date
                 notice_date
             "
         />
         <require permission="bungeni.motion.Edit"
             set_attributes="
-                owner_id
-                type
                 doc_type
                 doc_procedure
                 type_number
@@ -199,20 +248,29 @@
         <require like_class=".domain.Doc" />
         <require permission="zope.View"
             attributes="
-                group
-                agenda_item_id
-                group_id
+                admissible_date
             "
         />
         <require permission="bungeni.agendaitem.Edit"
-             set_attributes="
-                doc_id 
-                owner_id
-                language
+            set_attributes="
+                doc_type
+                doc_procedure
+                type_number
+                registry_number
+                uri
+                acronym
                 short_title
                 long_title
+                description
+                language
                 body
+                status
+                status_date
                 group_id
+                subject
+                coverage
+                geolocation
+                head_id
             "
         />
     </class>
@@ -221,37 +279,39 @@
         <require like_class=".domain.Doc" />
         <require permission="zope.View"
             attributes="
-                tabled_document_id
+                admissible_date
             "
         />
         <require permission="bungeni.tableddocument.Edit"
             set_attributes="
-                doc_id 
-                owner_id
-                language
+                doc_type
+                doc_procedure
+                type_number
+                registry_number
+                uri
+                acronym
                 short_title
                 long_title
+                description
+                language
                 body
+                status
+                status_date
+                group_id
+                subject
+                coverage
+                geolocation
+                head_id
             "
         />
         <!-- !+WORKFLOW_TRANSITION(ah, jan-2011) was bungeni.historical.Edit 
             we use instead the permission used in the transition -->
-        <require permission="bungeni.tableddocument.wf.completed.admissible"
+        <!-- require permission="bungeni.tableddocument.wf.completed.admissible"
             set_attributes="tabled_document_number"
-        />
+        /-->
     </class>
     
     <class class=".domain.Heading">
-        <require permission="zope.View"
-            attributes="
-                heading_id
-                text
-                type
-                language
-                status
-                group_id
-            "
-        />
         <require permission="bungeni.heading.Edit"
             set_attributes="
                 heading_id
