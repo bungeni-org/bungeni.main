@@ -84,7 +84,7 @@ class SchedulableItemsGetter(object):
             type_info.workflow.get_state_ids(tagged=["tobescheduled"])
         )
         self.group_filter = (group_filter or 
-            not IParliament.providedBy(context) or
+            not IParliament.providedBy(context.group) or
             IAgendaItem.implementedBy(type_info.domain_model)
         )
         try:
