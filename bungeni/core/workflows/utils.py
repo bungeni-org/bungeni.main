@@ -163,10 +163,6 @@ is_pi_scheduled = dbutils.is_pi_scheduled
 
 
 # question
-def setMinistrySubmissionDate(context):
-    if context.ministry_submit_date == None:
-        context.ministry_submit_date = datetime.date.today()
-
 def assign_question_minister_role(context):
     assert interfaces.IQuestion.providedBy(context), \
         "Not a Question: %s" % (context)

@@ -188,12 +188,6 @@ def _question_withdrawn(context):
     utils.unschedule_doc(context)
 _question_withdrawn_public = _question_withdrawn
 
-def _question_response_pending(context):
-    """A question sent to a ministry for a written answer, 
-    it cannot be edited, the ministry can add a written response.
-    """
-    utils.setMinistrySubmissionDate(context)
-
 def _question_admissible(question):
     """The question is admissible and can be send to ministry,
     or is available for scheduling in a sitting.
