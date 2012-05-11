@@ -176,12 +176,7 @@ def assign_question_minister_role(context):
             IPrincipalRoleMap(context).assignRoleToPrincipal("bungeni.Minister", 
                 ministry_login_id)
 
-# !+QuestionScheduleHistory(mr, mar-2011) rename appropriately e.g. "unschedule"
-# !+QuestionScheduleHistory(mr, mar-2011) only pertinent if question is 
-# transiting from a shceduled state... is this needed anyway?
-def setQuestionScheduleHistory(context):
-    question_id = context.question_id
-    dbutils.removeQuestionFromItemSchedule(question_id)
+unschedule_doc = dbutils.unschedule_doc
 
 ''' !+UNUSUED (and incorrect) :
 def getQuestionSchedule(context):

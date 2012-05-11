@@ -44,43 +44,17 @@ def get_registry_counts(specific_model):
     return registry_count_general, registry_count_specific
 
 
-''' !+UNUSED(mr, mar-2011)
-def getQuestionWorkflowTrail(question):
-    """Return tha trail of workflow states traversed by the question.
-    
-    Depends on the <ParliamentaryItem>Change.notes attribute being filled 
-    with a serialized python dict containing entries for the workflow's 
-    transition's (source, destination) states.
-    """
-    # !+ note, another way to do it is via raw-SQL:
-    # but, replace all such raw-sql with SA-based fetching.
-    #item_id = context.parliamentary_item_id
-    #from bungeni.ui.utils import queries, statements
-    #sql_timeline = statements.sql_question_timeline
-    #timeline_changes = queries.execute_sql(sql_timeline, item_id=item_id) 
-    session = Session()
-    wf_changes = session.query(domain.QuestionChange
-        ).filter(domain.QuestionChange.content_id==question.question_id
-        ).filter(domain.QuestionChange.action=="workflow"
-        ).order_by(domain.QuestionChange.date).all()
-    states = []
-    for wfc in wf_changes:
-        if wfc.notes:
-            xtras = eval(wfc.notes)
-            for xtra in xtras:
-                states.append(xtra.get("destination"))
-    return states
-'''
-
-def removeQuestionFromItemSchedule(question_id):
-    """
+def unschedule_doc(doc):
+    """ 
     when a question gets postponed the previous schedules of that
     question are invalidated so they do not show up in the schedule 
     calendar any more
     """
+    # only pertinent if doc is transiting from a scheduled state...
+    # !+unschedule(mr, may-2012) review this logic here, seems clunky...
     session = Session()
     active_filter = rdb.and_(
-        schema.item_schedules.c.item_id == question_id,
+        schema.item_schedules.c.item_id == doc.doc_id,
         schema.item_schedules.c.active==True
     )
     item_schedule = session.query(domain.ItemSchedule).filter(active_filter)

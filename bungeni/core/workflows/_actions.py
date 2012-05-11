@@ -177,11 +177,15 @@ _question_draft = _question_working_draft = __question_create
 _question_submitted = __pi_submit
 _question_redraft = __pi_redraft
 
+
+# !+unschedule(mr, may-2012) why does unscheduling only apply to:
+# a) only transitions to withdrawn?
+# b) only to questions?
 def _question_withdrawn(context):
     """A question can be withdrawn by the owner, it is visible to ...
     and cannot be edited by anyone.
     """
-    utils.setQuestionScheduleHistory(context)
+    utils.unschedule_doc(context)
 _question_withdrawn_public = _question_withdrawn
 
 def _question_response_pending(context):
