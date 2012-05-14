@@ -125,16 +125,20 @@ YAHOO.bungeni.scheduling = function(){
                 for (index in records){
                     var record = records[index];
                     var record_data = record.getData();
-                    var save_data = {
-                        item_type: record_data.item_type,
-                        item_id: record_data.item_id,
-                        schedule_id: record_data.object_id,
-                        item_text: record_data.item_title,
-                        wf_status: record.getWFStatus?record.getWFStatus():null
-                    }
+                    var save_data = {};
+                    YAHOO.lang.augmentObject(save_data, record_data,
+                        "item_type", "item_id", "object_id", "item_title"
+                    );
+                    save_data["item_text"] = save_data["item_title"]
+                    save_data["schedule_id"] = save_data["object_id"];
+                    save_data["wf_status"] = record.getWFStatus?record.getWFStatus():null;
+                    delete save_data["item_title"];
+                    delete save_data["object_id"];
                     item_data.push(save_data);
                 }
-                var post_data = "data=" + YJSON.stringify(item_data);
+                var post_data = "data=" + encodeURIComponent(
+                    YJSON.stringify(item_data)
+                );
                 YAHOO.bungeni.scheduling.SaveRequest.startRequest(
                     SGlobals.save_schedule_url, 
                     post_data,

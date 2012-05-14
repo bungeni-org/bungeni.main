@@ -133,7 +133,9 @@ YAHOO.bungeni.agendaconfig = function(){
                         }
                         item_data.push(save_data);
                     }
-                    var post_data = "data=" + YJSON.stringify(item_data);
+                    var post_data = "data=" + encodeURIComponent(
+                        YJSON.stringify(item_data)
+                    );
                     var save_url = ("./items/" + sData[Columns.OBJECT_ID] + 
                         SGlobals.discussions_save_url
                     );
