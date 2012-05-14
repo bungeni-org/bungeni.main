@@ -1271,9 +1271,7 @@ class Report(Doc):
     interface.implements(interfaces.ITranslatable)
     
 
-# !+SITTING_REPORT(mr, apr-2011) why does SittingReport (mapped as an 
-# association type, and not a Doc in any way) inherit from Report?!
-class SittingReport(Report):
+class SittingReport(Entity):
     """Which reports are created for this sitting.
     """
 

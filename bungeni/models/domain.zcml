@@ -10,25 +10,27 @@
     <!-- document -->
     
     <class class=".domain.Doc">
-        <!-- domain / orm / schema -->
+        <!-- domain class / orm mapper properties / schema columns -->
         <require permission="zope.View"
             attributes="
-                amc_signatories
-                amc_attachments
-                amc_events
-                    submission_date
-                
-                owner
                 files
                 signatories
-                attachments
                 events
-                    versions
+                submission_date
                 
+                owner
+                item_signatories
+                attachments
+                sa_events
+                audits
+                versions
+                group
+
                 doc_id
                 parliament_id
                 owner_id
                 type
+                
                 doc_type
                 doc_procedure
                 type_number
