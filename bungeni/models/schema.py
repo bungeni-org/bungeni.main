@@ -677,7 +677,7 @@ sitting = rdb.Table("sitting", metadata,
         server_default=text("now()"),
         nullable=False
     ),
-    # venues for sittings
+    # venue for the sitting
     rdb.Column("venue_id", rdb.Integer, rdb.ForeignKey("venues.venue_id")),
     rdb.Column("language", rdb.String(5), nullable=False),
     # other vocabularies
@@ -836,7 +836,7 @@ item_schedule_discussions = rdb.Table("item_schedule_discussions", metadata,
     ),
 )
 
-sitting_reports = rdb.Table("sitting_reports", metadata,
+sitting_report = rdb.Table("sitting_report", metadata,
     rdb.Column("report_id", rdb.Integer,
         rdb.ForeignKey("doc.doc_id"), primary_key=True
     ),
@@ -1082,8 +1082,6 @@ doc_index = rdb.Index("doc_status_idx", doc.c["status"])
 # doc audit
 doc_audit = make_audit_table(doc, metadata)
 
-
-committee_reports = ()
 
 signatory = rdb.Table("signatory", metadata,
     rdb.Column("signatory_id", rdb.Integer,

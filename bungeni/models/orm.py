@@ -801,7 +801,7 @@ mapper(domain.Report,
     polymorphic_identity=polymorphic_identity(domain.Report)
 )
 
-mapper(domain.SittingReport, schema.sitting_reports, # !+?
+mapper(domain.SittingReport, schema.sitting_report,
     properties={
         "sitting": relation(domain.Sitting,
             backref="reports",
