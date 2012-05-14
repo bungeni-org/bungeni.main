@@ -6,8 +6,9 @@
 
 $Id$
 """
-log = __import__("logging").getLogger("bungeni.core.workflow.state")
+log = __import__("logging").getLogger("bungeni.core.workflow.states")
 
+import sys
 import zope.component
 import zope.interface
 import zope.securitypolicy.interfaces
@@ -251,6 +252,9 @@ def _tmp_hack_protected_get_context_head(context):
     try:
         assert context.head is not None
     except AssertionError:
+        # !+bungeni.ui.utils.debug
+        cls, exc, tb = sys.exc_info()
+        log.warn(""" ***_tmp_/%s [%s] %s """ % (context, cls.__name__, exc))
         if context.head_id is not None:
             # try force-setting head...
             log.warn("context [%s] head is None...\n"
@@ -277,6 +281,10 @@ def get_object_state_rpm(context):
     try:
         state = get_object_state(context)
     except interfaces.InvalidStateError, e:
+        # !+bungeni.ui.utils.debug
+        cls, exc, tb = sys.exc_info()
+        log.error(""" ***get_object_state_rpm/%s [%s] %s """ % (
+            context, cls.__name__, exc))
         return NONE_STATE_RPM
     if state.permissions_from_parent:
         # this state delegates permissions to parent, 
@@ -303,6 +311,10 @@ def get_head_object_state_rpm(sub_context):
         head = _tmp_hack_protected_get_context_head(sub_context)
         return interfaces.IWorkflow(head).get_state(sub_context.status)
     except interfaces.InvalidStateError, e:
+        # !+bungeni.ui.utils.debug
+        cls, exc, tb = sys.exc_info()
+        log.error(""" ***get_head_object_state_rpm/%s [%s] %s """ % (
+            sub_context, cls.__name__, exc))
         return NONE_STATE_RPM
     # !+SUBITEM_CHANGES_PERMISSIONS(mr, jan-2012)
 
@@ -312,7 +324,9 @@ def assert_roles_mix_limitations(perm, roles, wf_name, obj_key, obj_id=""):
         for error message:
             wf_name:str, obj_key:either("state", "transition"), obj_id:str
     """
+    # limitations per permission
     ROLE_MIX_LIMITATIONS = {
+        # if-present: [may-only-have]
         "bungeni.Authenticated": ["bungeni.Anonymous"],
     }
     for mix_limited_role in ROLE_MIX_LIMITATIONS:

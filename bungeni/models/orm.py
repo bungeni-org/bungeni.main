@@ -816,7 +816,7 @@ mapper(domain.SittingReport, schema.sitting_report,
     }
 )
 
-mapper(domain.Report4Sitting, schema.sitting_reports,
+mapper(domain.Report4Sitting, schema.sitting_report,
     inherits=domain.Report
 )
 
