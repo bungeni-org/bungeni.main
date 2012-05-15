@@ -2204,7 +2204,12 @@ class DocDescriptor(ModelDescriptor):
             ],
             property=schema.Text(title=_("URI"), required=False),
         ),
-        Field(name="acronym"),
+        Field(name="acronym",
+            modes="view edit add listing",
+            localizable=[
+                show("view edit add listing"),
+            ],
+        ),
         Field(name="short_title", # [user-req]
             modes="view edit add listing",
             localizable=[
@@ -2224,7 +2229,12 @@ class DocDescriptor(ModelDescriptor):
             edit_widget=widgets.LongTextWidget,
             add_widget=widgets.LongTextWidget,
         ),
-        Field(name="description"),
+        Field(name="description",
+            modes="view edit add listing",
+            localizable=[
+                show("view edit add listing"),
+            ],
+        ),
         LanguageField("language"), # [user-req]
         Field(name="body", # [rtf]
             modes="view edit add",
