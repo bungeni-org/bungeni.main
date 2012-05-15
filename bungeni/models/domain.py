@@ -125,7 +125,13 @@ class Entity(object):
                 log.error(
                     "Invalid attribute on %s %s" % (
                         self.__class__.__name__, k))
-
+    
+    @property
+    def pk(self):
+        """ () -> [(pk_name, pk_value)] -- intended primarily as debug utility.
+        """
+        return [ (c.name, getattr(self, c.name))
+             for c in object_mapper(self).primary_key ]
 
 # Features (as per a deployment's configuration) - decorators for domain types
 # to support a "feature", to collect in one place all that is needed for the 

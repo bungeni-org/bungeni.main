@@ -252,9 +252,10 @@ def _tmp_hack_protected_get_context_head(context):
     try:
         assert context.head is not None
     except AssertionError:
-        # !+bungeni.ui.utils.debug
+        # log it... !+bungeni.ui.utils.debug
         cls, exc, tb = sys.exc_info()
-        log.warn(""" ***_tmp_/%s [%s] %s """ % (context, cls.__name__, exc))
+        log.warn(""" ***_tmp_/%s:%s [%s] %s """ % (
+            type(context).__name__, context.pk, cls.__name__, exc))
         if context.head_id is not None:
             # try force-setting head...
             log.warn("context [%s] head is None...\n"
@@ -281,10 +282,10 @@ def get_object_state_rpm(context):
     try:
         state = get_object_state(context)
     except interfaces.InvalidStateError, e:
-        # !+bungeni.ui.utils.debug
+        # log it... !+bungeni.ui.utils.debug
         cls, exc, tb = sys.exc_info()
-        log.error(""" ***get_object_state_rpm/%s [%s] %s """ % (
-            context, cls.__name__, exc))
+        log.error(""" ***get_object_state_rpm/%s:%s [%s] %s """ % (
+            type(context).__name__, context.pk, cls.__name__, exc))
         return NONE_STATE_RPM
     if state.permissions_from_parent:
         # this state delegates permissions to parent, 
@@ -310,21 +311,28 @@ def get_head_object_state_rpm(sub_context):
     try:
         head = _tmp_hack_protected_get_context_head(sub_context)
         return interfaces.IWorkflow(head).get_state(sub_context.status)
-    except interfaces.InvalidStateError, e:
-        # !+bungeni.ui.utils.debug
-        cls, exc, tb = sys.exc_info()
-        log.error(""" ***get_head_object_state_rpm/%s [%s] %s """ % (
-            sub_context, cls.__name__, exc))
+    except interfaces.InvalidStateError:
+        from bungeni.models.interfaces import IChange
+        if sub_context.status is None and IChange.providedBy(sub_context):
+            # if status is None,then must have an "add" change action... ignore.
+            assert sub_context.action == "add"
+        else:
+            # log it... !+bungeni.ui.utils.debug
+            cls, exc, tb = sys.exc_info()
+            log.error(""" ***get_head_object_state_rpm/%s:%s [%s] %s """ % (
+                type(sub_context).__name__, sub_context.pk, cls.__name__, exc))
         return NONE_STATE_RPM
     # !+SUBITEM_CHANGES_PERMISSIONS(mr, jan-2012)
 
-def assert_roles_mix_limitations(perm, roles, wf_name, obj_key, obj_id=""):
-    """ Validation utility.
-            perm:str, roles:[str]
-        for error message:
-            wf_name:str, obj_key:either("state", "transition"), obj_id:str
+def assert_distinct_permission_scopes(perm, roles, 
+        # only used for error message
+        wf_name, obj_key, obj_id=""
+    ):
+    """Validation utility, see DevProgammingGuide "Distinct permission scopes"
+        perm:str, roles:[str]
+        wf_name:str, obj_key:either("state", "transition"), obj_id:str
     """
-    # limitations per permission
+    # limitations per permission to achieve "distinct permission scopes"
     ROLE_MIX_LIMITATIONS = {
         # if-present: [may-only-have]
         "bungeni.Authenticated": ["bungeni.Anonymous"],
@@ -336,9 +344,8 @@ def assert_roles_mix_limitations(perm, roles, wf_name, obj_key, obj_id=""):
             for ok_role in ROLE_MIX_LIMITATIONS[mix_limited_role]:
                 if ok_role in _mixed_roles:
                     _mixed_roles.remove(ok_role)
-            assert not bool(_mixed_roles), "Workflow [%s] %s [%s] " \
-                "mixes disallowed roles %s with role [%s] for " \
-                "permission [%s]" % (
+            assert not bool(_mixed_roles), "Workflow [%s] %s [%s] MIXES " \
+                "DISALLOWED ROLES %s with role [%s] for permission [%s]" % (
                     wf_name, obj_key, obj_id, roles, mix_limited_role, perm)
 
 
@@ -435,7 +442,8 @@ class Workflow(object):
                     " permission [%s]" % (
                         self.name, s.id, roles, perm)
                 # assert roles mix limitations for state permissions
-                assert_roles_mix_limitations(perm, roles, self.name, "state", s.id)
+                assert_distinct_permission_scopes(perm, roles, 
+                    self.name, "state", s.id)
             # tags
             _undeclared_tags = [ tag for tag in s.tags if tag not in self.tags ]
             assert not _undeclared_tags, \
@@ -448,7 +456,8 @@ class Workflow(object):
         # assert roles mix limitations for transitions
         for t in self._transitions_by_id.values():
             roles = t.user_data.get("_roles", [])
-            assert_roles_mix_limitations(t.permission, roles, self.name, "transition", t.id)
+            assert_distinct_permission_scopes(t.permission, roles, 
+                self.name, "transition", t.id)
         
         # ensure that every active state is reachable, 
         # and that every obsolete state is NOT reachable

@@ -17,7 +17,7 @@ from zope.i18nmessageid import Message
 from bungeni.core.workflow import interfaces
 from bungeni.core.workflow.states import GRANT, DENY
 from bungeni.core.workflow.states import Feature, State, Transition, Workflow
-from bungeni.core.workflow.states import assert_roles_mix_limitations
+from bungeni.core.workflow.states import assert_distinct_permission_scopes
 from bungeni.core.workflow.notification import Notification
 from bungeni.utils.capi import capi, bungeni_custom_errors
 from bungeni.ui.utils import debug
@@ -251,7 +251,7 @@ def _load(workflow, name):
             '%s<grant permission="%s" role="%s" />' % (ZCML_INDENT, pid, role))
     for perm, roles in _permission_role_mixes.items():
         # assert roles mix limitations for state permissions
-        assert_roles_mix_limitations(perm, roles, name, "global grants")
+        assert_distinct_permission_scopes(perm, roles, name, "global grants")
 
 
     # states
