@@ -130,30 +130,6 @@
         component=".vocabulary.venues_factory"
         provides="zope.schema.interfaces.IVocabularyFactory"
     />
-    <utility name="bungeni.vocabulary.AvailableItems"
-        provides="zope.schema.interfaces.IVocabularyFactory"
-        component=".reports.availableItems"
-    />
-    <utility name="bungeni.vocabulary.BillOptions"
-        provides="zope.schema.interfaces.IVocabularyFactory"
-        component=".reports.billOptions"
-    />
-    <utility name="bungeni.vocabulary.MotionOptions"
-        provides="zope.schema.interfaces.IVocabularyFactory"
-        component=".reports.motionOptions"
-    />
-    <utility name="bungeni.vocabulary.AgendaOptions"
-        provides="zope.schema.interfaces.IVocabularyFactory"
-        component=".reports.agendaOptions"
-    />
-    <utility name="bungeni.vocabulary.QuestionOptions"
-        provides="zope.schema.interfaces.IVocabularyFactory"
-        component=".reports.questionOptions"
-    />
-    <utility name="bungeni.vocabulary.TabledDocumentOptions"
-        provides="zope.schema.interfaces.IVocabularyFactory"
-        component=".reports.tabledDocumentOptions"
-    />
     <utility name="bungeni.vocabulary.ReportXHTMLTemplates"
         provides="zope.schema.interfaces.IVocabularyFactory"
         component=".vocabulary.report_xhtml_templates"

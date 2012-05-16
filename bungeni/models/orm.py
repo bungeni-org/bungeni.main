@@ -810,7 +810,7 @@ mapper(domain.SittingReport, schema.sitting_report,
             uselist=False
         ),
         "report": relation(domain.Report, # !+doc.head
-            backref="sitting",
+            backref="sittingreport",
             lazy=True,
             uselist=False
         ),

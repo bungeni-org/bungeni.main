@@ -172,56 +172,6 @@
     />
 
   <!-- Reporting -->
-
-  <browser:page
-     name="agenda"
-     for="bungeni.models.interfaces.ISitting"
-     permission="bungeni.reports.Edit"
-     class=".reports.SittingContextAgendaReportView"
-     />
-  <browser:page
-     name="agenda"
-     for="bungeni.models.interfaces.ICommittee"
-     permission="bungeni.reports.Edit"
-     class=".reports.SchedulingContextAgendaReportView"
-     />
-    <browser:page
-     name="agenda"
-     for="bungeni.core.interfaces.IWorkspaceScheduling"
-     permission="bungeni.reports.Edit"
-     class=".reports.SchedulingContextAgendaReportView"
-     />
-   <browser:page
-     name="votes-and-proceedings"
-     for="bungeni.models.interfaces.ISitting"
-     permission="bungeni.reports.Edit"
-     class=".reports.SittingContextMinutesReportView"
-     />
-
-    <browser:page
-     name="votes-and-proceedings"
-     for="bungeni.models.interfaces.ICommittee"
-     permission="bungeni.reports.Edit"
-     class=".reports.SchedulingContextAgendaReportView"
-     />
-    <browser:page
-     name="votes-and-proceedings"
-     for="bungeni.core.interfaces.IWorkspaceScheduling"
-     permission="bungeni.reports.Edit"
-     class=".reports.SchedulingContextAgendaReportView"
-     />
-    <browser:page
-     name="save-report"
-     for="bungeni.models.interfaces.ISitting"
-     permission="bungeni.reports.Edit"
-     class=".reports.SaveReportView"
-     />
-    <browser:page
-     name="save-report"
-     for="bungeni.core.interfaces.ISection"
-     permission="bungeni.reports.Edit"
-     class=".reports.SaveReportView"
-     />
      <!-- !+Reports(mb, 09-2011) To use one interface for registration. -->
      <browser:page name="report-builder"
         for="*"
@@ -244,91 +194,20 @@
      name="calendar"
      class=".calendar.browser.DhtmlxCalendarScheduleView"
     /> -->
-    <browser:page
-     for="bungeni.models.interfaces.IReport"
-     permission="zope.Public"
-     name="odt"
-     class=".downloaddocument.ReportODT"
-    />
-
-    <browser:page
-     for="bungeni.models.interfaces.IReport"
-     permission="zope.Public"
-     name="pdf"
-     class=".downloaddocument.ReportPDF"
     />
     <browser:page
-     for="bungeni.models.interfaces.IReport4Sitting"
-     permission="zope.Public"
-     name="odt"
-     class=".downloaddocument.ReportODT"
-    />
-    <browser:page
-     for="bungeni.models.interfaces.IReport4Sitting"
-     permission="zope.Public"
-     name="pdf"
-     class=".downloaddocument.ReportPDF"
-    />
-    <browser:page
-     for="bungeni.models.interfaces.IMotion"
+     for="bungeni.models.interfaces.IBungeniContent"
      permission="zope.Public"
      name="odt"
      class=".downloaddocument.BungeniContentODT"
     />
     <browser:page
-     for="bungeni.models.interfaces.IMotion"
+     for="bungeni.models.interfaces.IBungeniContent"
      permission="zope.Public"
      name="pdf"
      class=".downloaddocument.BungeniContentPDF"
     />
-    <browser:page
-     for="bungeni.models.interfaces.IBill"
-     permission="zope.Public"
-     name="odt"
-     class=".downloaddocument.BungeniContentODT"
-    />
-    <browser:page
-     for="bungeni.models.interfaces.IBill"
-     permission="zope.Public"
-     name="pdf"
-     class=".downloaddocument.BungeniContentPDF"
-    />
-    <browser:page
-     for="bungeni.models.interfaces.IQuestion"
-     permission="zope.Public"
-     name="odt"
-     class=".downloaddocument.BungeniContentODT"
-    />
-    <browser:page
-     for="bungeni.models.interfaces.IQuestion"
-     permission="zope.Public"
-     name="pdf"
-     class=".downloaddocument.BungeniContentPDF"
-    />
-    <browser:page
-     for="bungeni.models.interfaces.ITabledDocument"
-     permission="zope.Public"
-     name="odt"
-     class=".downloaddocument.BungeniContentODT"
-    />
-    <browser:page
-     for="bungeni.models.interfaces.ITabledDocument"
-     permission="zope.Public"
-     name="pdf"
-     class=".downloaddocument.BungeniContentPDF"
-    />
-    <browser:page
-     for="bungeni.models.interfaces.IAgendaItem"
-     permission="zope.Public"
-     name="odt"
-     class=".downloaddocument.BungeniContentODT"
-    />
-    <browser:page
-     for="bungeni.models.interfaces.IAgendaItem"
-     permission="zope.Public"
-     name="pdf"
-     class=".downloaddocument.BungeniContentPDF"
-    />
+    
     <browser:page
      for="*"
      permission="zope.Public"

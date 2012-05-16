@@ -17,6 +17,7 @@ import re
 import htmlentitydefs
 import random
 import base64
+import mimetypes
 from tidylib import tidy_fragment
 from lxml import etree
 
@@ -88,9 +89,6 @@ class DownloadDocument(BrowserView):
     #Error page in case of failure to generate document
     error_template = ViewPageTemplateFile("templates/report-error.pt")
     #Custom Template selection UI
-    document_template_select = ViewPageTemplateFile(
-        "templates/choose-oo-template.pt"
-    )
     #Source document
     document = None
     #document type to be produced
@@ -104,13 +102,13 @@ class DownloadDocument(BrowserView):
         super(DownloadDocument, self).__init__(context, request)
 
     def setHeader(self, document_type):
-        content_type_mapping ={"pdf":"application/pdf",
-                               "odt":"application/vnd.oasis.opendocument.text"}
+        """Set Content-type and Content-disposition header
+        """        
         self.request.response.setHeader("Content-type",
-            "%s" % content_type_mapping[document_type]
+            mimetypes.guess_type(self.file_name)[0] or "application/octet-stream"
         )
         self.request.response.setHeader("Content-disposition", 
-            'inline;filename="%s"' % self.file_name
+            'attachment;filename="%s"' % self.file_name
         )
     def bodyText(self):
         """Returns body text of document. Must be implemented by subclass"""
@@ -250,37 +248,11 @@ class DownloadDocument(BrowserView):
                 return self.generateDoc()
             except DocumentGenerationError:
                 return self.error_template()
-        
-    def documentTemplates(self):
-        templates = []
-        templates_path = capi.get_path_for("reporting", "templates", 
-            "templates.xml"
-        )
-        if os.path.exists(templates_path):
-            template_config = etree.fromstring(open(templates_path).read())
-            for template in template_config.iter(tag="template"):
-                location = capi.get_path_for("reporting", "templates", 
-                    template.get("file")
-                )
-                template_file_name = template.get("file")
-                if os.path.exists(location):
-                    template_dict = dict(
-                        title = template.get("name"),
-                        language = template.get("language"),
-                        location = base64.encodestring(template_file_name)
-                    )
-                    templates.append(template_dict)
-                else:
-                    log.error("Template does noet exist. No file found at %s.", 
-                        location
-                    )
-        return templates
 
-    def templateSelected(self):
+    def setupTemplate(self):
         """Check if a template was provided in the request as url/form 
         parameter.
         """
-        template_selected = False
         template_encoded = self.request.form.get("template", "")
         if template_encoded != "":
             template_file_name = base64.decodestring(template_encoded)
@@ -288,26 +260,13 @@ class DownloadDocument(BrowserView):
                 template_file_name
             )
             if os.path.exists(template_path):
-                template_selected = True
                 self.oo_template_file = template_path
-        return template_selected
-
-class ReportODT(DownloadDocument):
-    oo_template_file = os.path.dirname(__file__) + "/templates/agenda.odt"
-    document_type = "odt"
-    
-    def bodyText(self):
-        return self.document.body
 
     def __call__(self):
-        if self.documentTemplates():
-            if not self.templateSelected():
-                return self.document_template_select()
-        return self.documentData(cached=True)
-
-
-class ReportPDF(ReportODT):
-    document_type = "pdf"
+        self.setupTemplate();
+        return self.documentData(cached=False)
+        
+        
 
 #The classes below generate ODT and PDF documents of bungeni content items
 #TODO:This implementation displays a default set of the content item's attributes
@@ -324,8 +283,6 @@ class BungeniContentODT(DownloadDocument):
             self.document.group = session.query(domain.Group).get(self.document.parliament_id)
         return self.template()
     
-    def __call__(self):
-        return self.documentData(cached=False)
             
 class BungeniContentPDF(DownloadDocument):
     oo_template_file = os.path.dirname(__file__) + "/templates/bungenicontent.odt"  
@@ -338,5 +295,3 @@ class BungeniContentPDF(DownloadDocument):
             self.document.group = session.query(domain.Group).get(self.document.parliament_id)
         return self.template()
     
-    def __call__(self):
-        return self.documentData(cached=False)

@@ -546,13 +546,7 @@ class ReportDescriptiveProperties(DescriptiveProperties):
 
     @property
     def description(self):
-        session = Session()
-        context = session.merge(removeSecurityProxy(self.context))
-        return u"%s %s to %s" % (translate_i18n(_(u"Covers")), 
-            context.start_date.strftime('%Y-%m-%d'),
-            context.end_date.strftime('%Y-%m-%d')
-        )
-
+        return self.title
 
 @register.adapter()
 class ItemScheduleCategoryDescriptiveProperties(DescriptiveProperties):

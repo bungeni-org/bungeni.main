@@ -1,5 +1,20 @@
+# encoding: utf-8
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+from __future__ import with_statement
+"""Setup for some bungeni menus
+
+$Id$
+"""
+
+log = __import__("logging").getLogger("bungeni.ui.menu")
+
+import os
 import operator
 import datetime
+from lxml import etree
+import base64
 
 from zope import component
 from zope.app.component.hooks import getSite
@@ -14,17 +29,19 @@ from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowController
 
 from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.models.utils import get_db_user_id
-from bungeni.models.interfaces import IVersion, IScheduleText
+from bungeni.models.interfaces import IVersion, IScheduleText, IBungeniContent
 
-from bungeni.core.translation import get_language
-from bungeni.core.translation import get_all_languages
-from bungeni.core.translation import get_available_translations
+from bungeni.core.translation import (get_language, get_all_languages, 
+    get_available_translations, translate_i18n
+)
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core import schedule
 
 from bungeni.ui.i18n import  _
-from bungeni.ui.utils import url
+from bungeni.ui.utils import url, misc
 from bungeni.ui import interfaces
+
+from bungeni.utils.capi import capi
 
 
 class BrowserMenu(zope.browsermenu.menu.BrowserMenu):
@@ -422,6 +439,118 @@ class CalendarMenu(BrowserMenu):
         results.sort(key=operator.itemgetter("title"))
         return results
 
+class DownloadDocumentSubMenuItem(BrowserSubMenuItem):
+    title = _(u"label_document_download", default=u"download document")
+    submenuId = "context_download_document"
+    order = 8
+    
+    def __new__(cls, context, request):
+        """if IAlchemistContainer.providedBy(context):
+            unproxied = proxy.removeSecurityProxy(context)
+            if not IBungeniContent.implementedBy(unproxied.domain_model):
+                return
+        elif not IBungeniContent.providedBy(context):
+            return
+        """
+        return object.__new__(cls, context, request)
+
+    @property
+    def extra(self):
+        return {}
+    
+    @property
+    def description(self):
+        return ""
+    
+    @property
+    def action(self):
+        return url.absoluteURL(self.context, self.request)
+    
+    def selected(self):
+        return False
+
+i18n_pdf = _(u"Download PDF")
+i18n_odt = _(u"Download ODT")
+i18n_akomantoso = _(u"Akoma Ntoso")
+i18n_rss = _(u"RSS")
+
+class DownloadDocumentMenu(BrowserMenu):
+
+    def documentTemplates(self):
+        templates = []
+        templates_path = capi.get_path_for("reporting", "templates", 
+            "templates.xml"
+        )
+        if os.path.exists(templates_path):
+            template_config = etree.fromstring(open(templates_path).read())
+            for template in template_config.iter(tag="template"):
+                location = capi.get_path_for("reporting", "templates", 
+                    template.get("file")
+                )
+                template_file_name = template.get("file")
+                if os.path.exists(location):
+                    template_dict = dict(
+                        title = template.get("name"),
+                        language = template.get("language"),
+                        location = base64.encodestring(template_file_name)
+                    )
+                    templates.append(template_dict)
+                else:
+                    log.error("Template does not exist. No file found at %s.", 
+                        location
+                    )
+        return templates
+
+    def getMenuItems(self, context, request):
+        results = []
+        _url = url.absoluteURL(context, request)
+        if IBungeniContent.providedBy(context):
+            doc_templates = self.documentTemplates()
+            for doc_type in ["pdf", "odt"]:
+                if doc_templates:
+                    for template in doc_templates:
+                        i18n_title = translate_i18n(globals()["i18n_%s" % doc_type])
+                        results.append(dict(
+                            title="%s [%s]" % (i18n_title,template.get("title")),
+                            description="",
+                            action="%s/%s?template=%s" % (_url, doc_type, 
+                                template.get("location")),
+                            selected=False,
+                            extra = {
+                                "id": "download-%s-%s" %(doc_type,
+                                    misc.slugify(template.get("location"))
+                                ),
+                                "class": "download-document"
+                            },
+                            icon=None,
+                            submenu=None
+                        ))
+                    
+                else:
+                    results.append(dict(
+                        title = doc_type,
+                        description=doc_type,
+                        action = "%s/%s" %(_url, doc_type),
+                        selected=False,
+                        icon=None,
+                        extra={},
+                        submenu=None
+                    ))
+        if interfaces.IRSSRepresentationLayer.providedBy(request):
+            for doc_type in ["akomantoso", "rss"]:
+                results.append(dict(
+                        title = globals()["i18n_%s" % doc_type],
+                        description="",
+                        action = "%s/feed.%s" %(_url, doc_type),
+                        selected=False,
+                        icon=None,
+                        extra={
+                            "id": "download-%s" % doc_type
+                        },
+                        submenu=None
+                ))
+        return results
+        
 class CalendarContentSubMenuItem(CalendarSubMenuItem):
     title = _(u"label_calendar_content_manager", default=u"Manage:")
     submenuId = "calendar_content_manager"
