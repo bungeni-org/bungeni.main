@@ -76,6 +76,7 @@ def get_owner_login_pi(context):
     """
     return get_owner_pi(context).login
 
+#!+PrincipalRoleMapDynamic(mr, may-2012) infer role from context data
 def assign_owner_role(context, login):
     # throws IntegrityError when login is None
     IPrincipalRoleMap(context).assignRoleToPrincipal("bungeni.Owner", login)

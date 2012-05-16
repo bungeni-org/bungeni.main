@@ -207,6 +207,9 @@ def _tableddocument_adjourned(context):
 def _tableddocument_admissible(tabled_document):
     dbutils.set_doc_type_number(tabled_document)
 
+_event_draft = __pi_create
+
+
 # user
 
 def _user_A(context):

@@ -271,12 +271,12 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- event -->
-<grant permission="bungeni.event.Add" role="bungeni.Clerk" />
-<grant permission="bungeni.event.Add" role="bungeni.Speaker" />
-<grant permission="bungeni.event.Edit" role="bungeni.Clerk" />
-<grant permission="bungeni.event.Edit" role="bungeni.Speaker" />
-<grant permission="bungeni.event.Delete" role="bungeni.Clerk" />
-<grant permission="bungeni.event.Delete" role="bungeni.Speaker" />
+
+<permission id="bungeni.event.wf.draft.attached" title="Publish" />
+<grant permission="bungeni.event.wf.draft.attached" role="bungeni.Owner" />
+
+<permission id="bungeni.event.wf.draft.internal" title="Publish Internal" />
+<grant permission="bungeni.event.wf.draft.internal" role="bungeni.Owner" />
 
 <permission id="bungeni.event.wf.attached.internal" title="Publish Internal" />
 <grant permission="bungeni.event.wf.attached.internal" role="bungeni.Clerk" />
