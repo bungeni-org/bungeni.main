@@ -187,18 +187,15 @@ def register_workflow_adapters():
     component.provideAdapter(get_object_state_rpm, 
         (IWorkflowed,),
         zope.securitypolicy.interfaces.IRolePermissionMap)
-    
-    # !+VersionRolePermissionMap(mr, may-2012) superfluous, given Version is 
-    # just a kind of Change?
-    # IRolePermissionMap adapter for a version of an IWorkflowed object
-    #component.provideAdapter(get_head_object_state_rpm, 
-    #    (interfaces.IVersion,),
-    #    zope.securitypolicy.interfaces.IRolePermissionMap)
+    # NOTE: the rpm instance returned by IRolePermissionMap(workflowed) is
+    # different for different values of workflowed.status
     
     # IRolePermissionMap adapter for a change of an IWorkflowed object
     component.provideAdapter(get_head_object_state_rpm, 
         (interfaces.IChange,),
         zope.securitypolicy.interfaces.IRolePermissionMap)
+    # NOTE: the rpm instance returned by IRolePermissionMap(change) is
+    # different for different values of change.head.status
     
     # !+IPrincipalRoleMap(mr, aug-2011) also migrate principal_role_map from 
     # db to be dynamic and based on workflow definitions. Would need to infer

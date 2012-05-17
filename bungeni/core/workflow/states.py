@@ -246,26 +246,6 @@ class _NoneStateRPM(State):
 NONE_STATE_RPM = _NoneStateRPM()
 
 
-def _tmp_hack_protected_get_context_head(context):
-    # !+ when a sub-object is initially created, context.head_id is
-    # correctly set but context.head is sometimes not yet...
-    try:
-        assert context.head is not None
-    except AssertionError:
-        # log it... !+bungeni.ui.utils.debug
-        cls, exc, tb = sys.exc_info()
-        log.warn(""" ***_tmp_/%s:%s [%s] %s """ % (
-            type(context).__name__, context.pk, cls.__name__, exc))
-        if context.head_id is not None:
-            # try force-setting head...
-            log.warn("context [%s] head is None...\n"
-                "    >>> TRYING TO FORCE-SET head FROM [head_id==%s]" % (
-                    context, context.head_id))
-            from bungeni.models import domain
-            context.head = Session().query(domain.Doc).filter(
-                domain.Doc.doc_id==context.head_id).one()
-    return context.head
-
 def get_object_state_rpm(context):
     """IRolePermissionMap(context) adapter factory. 
     
@@ -281,7 +261,7 @@ def get_object_state_rpm(context):
     """
     try:
         state = get_object_state(context)
-    except interfaces.InvalidStateError, e:
+    except interfaces.InvalidStateError:
         # log it... !+bungeni.ui.utils.debug
         cls, exc, tb = sys.exc_info()
         log.error(""" ***get_object_state_rpm/%s:%s [%s] %s """ % (
@@ -290,7 +270,7 @@ def get_object_state_rpm(context):
     if state.permissions_from_parent:
         # this state delegates permissions to parent, 
         # so just recurse passing parent item instead
-        head = _tmp_hack_protected_get_context_head(context)
+        head = context.head
         return get_object_state_rpm(head)
     return state
 
@@ -306,10 +286,8 @@ def get_head_object_state_rpm(sub_context):
     On lookup error, returns NONE_STATE_RPM, instead of what would be a 
     zope.component.ComponentLookupError.
     """
-    # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", "document" 
-    # or "item"?
     try:
-        head = _tmp_hack_protected_get_context_head(sub_context)
+        head = sub_context.head
         return interfaces.IWorkflow(head).get_state(sub_context.status)
     except interfaces.InvalidStateError:
         from bungeni.models.interfaces import IChange
