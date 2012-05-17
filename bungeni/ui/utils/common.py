@@ -97,6 +97,8 @@ def request_cached(f):
         return rc[key]
     return request_cached_f
 def _clear_request_cache():
+    """Called on IEndRequestEvent, via handler ui.publication.on_end_request().
+    """
     rc = getattr(thread_local, "_request_cache", None)
     if rc is not None:
         rc.clear()

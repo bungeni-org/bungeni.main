@@ -76,7 +76,7 @@ def get_owner_login_pi(context):
     """
     return get_owner_pi(context).login
 
-#!+PrincipalRoleMapDynamic(mr, may-2012) infer role from context data
+# !+PrincipalRoleMapDynamic(mr, may-2012) infer role from context data
 def assign_owner_role(context, login):
     # throws IntegrityError when login is None
     IPrincipalRoleMap(context).assignRoleToPrincipal("bungeni.Owner", login)
@@ -164,6 +164,7 @@ is_pi_scheduled = dbutils.is_pi_scheduled
 
 
 # question
+# !+PrincipalRoleMapDynamic(mr, may-2012) infer role from context data
 def assign_question_minister_role(context):
     assert interfaces.IQuestion.providedBy(context), \
         "Not a Question: %s" % (context)
@@ -223,6 +224,7 @@ def get_group_context(context):
         return context
 
 # groups
+# !+PrincipalRoleMapDynamic(mr, may-2012) infer role from context data
 def _set_group_local_role(context, unset=False):
     group = context
     role = get_group_local_role(group)
@@ -240,6 +242,12 @@ def unset_group_local_role(context):
 
 def dissolveChildGroups(groups, context):
     for group in groups:
+        # !+group_dissolve(mr, may-2012) assumes that workflow of EVERY group
+        # type has a state "active" AND a state "dissolved" AND a transition
+        # from first to second AND that the semantic meaning of state 
+        # "dissolved" is indeed dissolution of the group... should probably 
+        # be replaced by a GroupType.dissolve() method that knows how to 
+        # dissolve itself.
         IWorkflowController(group).fireTransition("active-dissolved", 
             check_security=False)
 

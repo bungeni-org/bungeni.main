@@ -167,10 +167,9 @@ that is created via the UI form.
 Set up a security mapping.
 
   >>> qprm = zope.securitypolicy.interfaces.IPrincipalRoleMap(question)
-
-  >>> #zope.securitypolicy.interfaces.IRolePermissionMap  
-  >>> from bungeni.alchemist.security import LocalRolePermissionMap
-  >>> qrpm = LocalRolePermissionMap(question)
+  
+!+IRolePermissionMap is different for different workflow status values...
+  >>> qrpm = zope.securitypolicy.interfaces.IRolePermissionMap(question)
   
 
 Questions transitions 

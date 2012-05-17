@@ -19,10 +19,10 @@ log = __import__("logging").getLogger("bungeni.alchemist")
 __all__ = [
     "schema",                   # alias -> alchemist.security
     "metadata",                 # alias -> alchemist.security.schema
-    "GlobalPrincipalRoleMap",   # alias -> alchemist.security.role
-    "LocalPrincipalRoleMap",    # alias -> alchemist.security.role
-    "GlobalRolePermissionMap",  # alias -> alchemist.security.permission
-    "LocalRolePermissionMap",   # alias -> alchemist.security.permission
+    "GlobalPrincipalRoleMap",   # redefn -> alchemist.security.role
+    "LocalPrincipalRoleMap",    # redefn -> alchemist.security.role
+    #"GlobalRolePermissionMap",  # alias -> alchemist.security.permission
+    #"LocalRolePermissionMap",   # alias -> alchemist.security.permission
     "AuthenticatedPrincipalFactory",    # alias -> alchemist.security.auth
 ]
 
@@ -33,9 +33,49 @@ from alchemist.security.auth import AuthenticatedPrincipalFactory
 
 from alchemist.security.schema import metadata
 
-from alchemist.security.role import GlobalPrincipalRoleMap
-from alchemist.security.role import LocalPrincipalRoleMap
+# !+RolePermissionMap
+#from alchemist.security.permission import GlobalRolePermissionMap
+#from alchemist.security.permission import LocalRolePermissionMap
 
-from alchemist.security.permission import GlobalRolePermissionMap
-from alchemist.security.permission import LocalRolePermissionMap
+
+import zope.security.proxy
+import sqlalchemy.orm
+import alchemist.security.role
+from bungeni.utils import naming
+
+class LocalPrincipalRoleMap(alchemist.security.role.LocalPrincipalRoleMap):
+    
+    def __init__(self, context):
+        #self.context = context
+        context = zope.security.proxy.removeSecurityProxy(context)
+        # !+ASSUMPTION_SINGLE_COLUMN_PK(mr, may-2012)
+        self.oid = sqlalchemy.orm.object_mapper(
+            context).primary_key_from_instance(context)[0]
+        self.object_type = naming.polymorphic_identity(type(context))
+    
+    def getRolesForPrincipal(self, principal_id):
+        """Generator of (role, setting) grants to a principal.
+        """
+        #included_roles = set()
+        for role, setting in super(LocalPrincipalRoleMap, self
+                ).getRolesForPrincipal(principal_id):
+            #included_roles.add(role)
+            yield role, setting
+        # !+PrincipalRoleMapDynamic(mr, may-2012) infer role from context data
+        # - may have a simple logic, made explicit as a callable, per role, to 
+        #   determine dynamically if a principal has the role on a context...
+        # - included_roles, consider a hybrid system with existing db table
+        #   and infer dynamically only for certain subset of roles ?!?
+        # - add an "owner" attribute to group? Or, alternatively, move out 
+        #   all "owner" attributes from other types to this db table??
+        
+    # !+getPrincipalsForRole
+
+
+class GlobalPrincipalRoleMap(LocalPrincipalRoleMap):
+    
+    def __init__(self, context):
+        #self.context = context
+        self.object_type = None
+        self.oid = None
 
