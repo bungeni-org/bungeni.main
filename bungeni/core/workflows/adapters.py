@@ -20,6 +20,7 @@ from bungeni.core.workflow.states import StateController, WorkflowController, \
 import bungeni.core.audit
 import bungeni.core.version
 import bungeni.core.interfaces
+from bungeni.utils import naming
 from bungeni.utils.capi import capi
 
 __all__ = ["get_workflow"]
@@ -138,16 +139,12 @@ def apply_customization_workflow(name, ti):
     Must (currently) be run after db setup.
     """
     # support to infer/get the domain class from the type key
-    def camel(name):
-        """Convert an underscore-separated word to CamelCase.
-        """
-        return "".join([ s.capitalize() for s in name.split("_") ])
     from bungeni.models import domain, orm
     def get_domain_kls(name):
         """Infer the target domain kls from the type key, following underscore 
         naming to camel case convention.
         """
-        return getattr(domain, camel(name))
+        return getattr(domain, naming.camel(name))
     
     # get the domain class, and associate with type
     kls = get_domain_kls(name)

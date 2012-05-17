@@ -15,14 +15,7 @@ from sqlalchemy.orm import mapper, class_mapper, relation, column_property, \
 import schema
 import domain
 import interfaces
-
-
-def polymorphic_identity(cls):
-    """Formalize convention of determining the polymorphic discriminator value 
-    for a domain class as a function of the class name.
-    """
-    return schema.un_camel(cls.__name__)
-
+from bungeni.utils.naming import polymorphic_identity
 
 # Features
 

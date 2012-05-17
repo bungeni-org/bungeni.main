@@ -11,13 +11,12 @@ log = __import__("logging").getLogger("bungeni.core.serialize")
 from zope.security.proxy import removeSecurityProxy
 from sqlalchemy.orm import RelationshipProperty, class_mapper
 
-from bungeni.alchemist import Session
 from bungeni.alchemist.container import stringKey
 from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.core.workflow.states import get_object_state_rpm, get_head_object_state_rpm
 from bungeni.core.workflow.interfaces import IWorkflow, IStateController
-from bungeni.models.schema import singular
 from bungeni.models import interfaces
+from bungeni.utils import naming
 
 import os
 import collections
@@ -164,7 +163,7 @@ def _serialize(parent_elem, data):
 
 def _serialize_list(parent_elem, data_list):
     for i in data_list:
-        item_elem = Element(singular(parent_elem.tag))
+        item_elem = Element(naming.singular(parent_elem.tag))
         parent_elem.append(item_elem)
         _serialize(item_elem, i)
 

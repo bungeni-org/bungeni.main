@@ -41,6 +41,7 @@ from bungeni.ui import vocabulary
 from bungeni.utils.capi import capi
 from bungeni.ui.interfaces import IAdminSectionLayer
 from bungeni.alchemist.interfaces import IAlchemistContainer
+from bungeni.utils import naming
 
 ###
 # Listing Columns
@@ -3525,7 +3526,6 @@ def catalyse_descriptors():
             yield cls
     
     from bungeni.alchemist.catalyst import catalyst
-    from bungeni.models.schema import un_camel
     from bungeni.core.workflows import adapters
     for descriptor in descriptor_classes():
         descriptor_name = descriptor.__name__
@@ -3542,7 +3542,7 @@ def catalyse_descriptors():
             debug.log_exc(sys.exc_info(), log_handler=log.warn)
             continue
         # TYPE_REGISTRY, add descriptor
-        type_key = un_camel(kls_name)
+        type_key = naming.un_camel(kls_name)
         ti = capi.get_type_info(type_key, None)
         if ti is None:
             # non-workflowed type, add TI entry

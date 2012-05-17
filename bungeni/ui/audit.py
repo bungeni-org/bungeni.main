@@ -8,8 +8,6 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.ui.audit")
 
-import sys
-
 from zope.security.proxy import removeSecurityProxy
 from zope.security.management import getInteraction
 
@@ -20,14 +18,13 @@ from zope.i18n import translate
 
 from bungeni.models import interfaces
 from bungeni.models import domain
-from bungeni.models.schema import un_camel
 from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.ui.forms.interfaces import ISubFormViewletManager
 from bungeni.ui.i18n import _
 from bungeni.ui.descriptor import descriptor
-from bungeni.ui.utils import date, debug
+from bungeni.ui.utils import date
 from bungeni.ui import browser
-from bungeni.utils import register
+from bungeni.utils import register, naming
 
 CHANGE_TYPES = ("head", "signatory", "attachment", "event")
 CHANGE_ACTIONS = domain.CHANGE_ACTIONS
@@ -139,6 +136,8 @@ def _eval_as_dict(s):
         assert isinstance(d, dict)
         return d
     except (SyntaxError, TypeError, AssertionError):
+        import sys
+        from bungeni.ui.utils import debug
         debug.log_exc(sys.exc_info(), log_handler=log.info)
         return {}
 '''
@@ -153,7 +152,7 @@ def get_auditable_type_key(change):
     name = type(change.audit).__name__
     if name.endswith("Audit"):
         name = name[:-5]
-    return un_camel(name)
+    return naming.un_camel(name)
 
 def get_changed_attribute_names(change):
     """Get the names of attributes (including extended attributes) that have

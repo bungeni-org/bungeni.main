@@ -8,7 +8,6 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.models.schema")
 
-import re
 import sqlalchemy as rdb
 from fields import FSBlob
 from sqlalchemy.sql import text #, functions #!+CATALYSE(mr, nov-2010)
@@ -20,35 +19,6 @@ metadata = rdb.MetaData()
 
 # users and groups because of the zope users and groups
 PrincipalSequence = rdb.Sequence("principal_sequence")
-
-
-def un_camel(name):
-    """Convert a CamelCase name to lowercase underscore-separated.
-    """
-    s1 = un_camel.first_cap_re.sub(r"\1_\2", name)
-    return un_camel.all_cap_re.sub(r"\1_\2", s1).lower()
-un_camel.first_cap_re = re.compile("(.)([A-Z][a-z]+)")
-un_camel.all_cap_re = re.compile("([a-z0-9])([A-Z])")
-
-# !+ singular/plural still needed?
-def singular(pname):
-    """Get the english singular of (plural) name.
-    """
-    for sname in plural.custom:
-        if plural.custom[sname] == pname:
-            return sname
-    if pname.endswith("s"):
-        return pname[:-1]
-    return pname
-
-def plural(sname):
-    """Get the english plural of (singular) name.
-    """
-    return plural.custom.get(sname, None) or "%ss" % (sname)
-plural.custom = {
-    "user_address": "user_addresses",
-    "group_address": "group_addresses",
-}
 
 
 # vertical properties
