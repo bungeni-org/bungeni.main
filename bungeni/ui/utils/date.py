@@ -12,18 +12,9 @@ $Id: utils.py 6292 2010-03-22 12:33:25Z mario.ruggier $
 
 import datetime
 import re
-from bungeni.ui.i18n import _
 from bungeni.ui.utils import common
 
 # date
-
-def get_date(date):
-    if type(date) == datetime.datetime:
-        return date.date()
-    elif type(date) == datetime.date:
-        return date
-    else:
-        raise TypeError (_("invalid date. choose or type correct date"))
 
 
 def getDisplayDate(request):
