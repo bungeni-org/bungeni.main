@@ -18,6 +18,7 @@ from bungeni.models.interfaces import ISignatoriesValidator
 from bungeni.models import domain
 from bungeni.models import utils as model_utils
 from bungeni.core import globalsettings as prefs
+from bungeni.core.workflow.states import get_object_state
 from bungeni.core.workflows import utils
 from bungeni.ui.interfaces import IFormEditLayer
 from bungeni.ui.utils import common
@@ -39,17 +40,6 @@ def user_is_context_owner(context):
     """
     owner = utils.get_owner_pi(context)
     return model_utils.is_current_or_delegated_user(owner)
-
-
-def user_may_edit_context_parent(context):
-    """Does user have edit permission on the context's parent?
-    For a context that is a workflowed sub-object, such as an Attachment or 
-    an Event; context must define a "head" property that returns the parent.
-    """
-    parent = context.head
-    permission = "bungeni.%s.Edit" % (parent.__class__.__name__.lower())
-    return checkPermission(permission, parent)
-
 
 def clerk_receive_notification(context):
     return prefs.getClerksOfficeReceiveNotification()
@@ -88,6 +78,7 @@ def has_agenda(context):
 def agenda_finalized(context):
     return utils.check_agenda_finalized(context)
 
+
 # question
 
 def is_written_response(context):
@@ -110,6 +101,7 @@ def response_allow_submit(context):
     else:
         return True
 
+
 # user
 
 def has_date_of_death(context):
@@ -119,7 +111,29 @@ def not_has_date_of_death(context):
     return context.date_of_death is None
 
 
-# signatory conditions
+# child items
+
+def context_parent_is_draft(context):
+    """Is parent context in a draft state?
+    A doc is a draft iff its current current state is tagged with "draft".
+    """
+    parent_state = get_object_state(context.head)
+    return "draft" in parent_state.tags
+def context_parent_is_not_draft(context):
+    return not context_parent_is_draft(context)
+
+def user_may_edit_context_parent(context):
+    """Does user have edit permission on the context's parent?
+    For a context that is a workflowed sub-object, such as an Attachment or 
+    an Event.
+    """
+    parent = context.head
+    permission = "bungeni.%s.Edit" % (type(parent).__name__.lower()) # !+polymorphic_identity?
+    return checkPermission(permission, parent)
+
+
+# signatory
+
 def user_is_parent_document_owner(context):
     return (
         utils.get_owner_login_pi(context) ==
@@ -127,8 +141,8 @@ def user_is_parent_document_owner(context):
     )
 
 def signatory_auto_sign(context):
-    """ Determines whether signature is automatically signed when a signatory
-        is added.
+    """Determines whether signature is automatically signed when a signatory
+    is added.
     
     Whenever the signature is that of the document owner, we auto sign.
     Also, signature is signed if parent document is created on behalf of a 
@@ -176,8 +190,7 @@ def pi_document_redrafted(context):
 
 def pi_unsign_signature(context):
     return (pi_document_redrafted(context) and 
-        user_is_not_parent_document_owner(context)
-    )
+        user_is_not_parent_document_owner(context))
 
 def pi_allow_signature(context):
     validator = ISignatoriesValidator(context.head, None)
@@ -194,6 +207,7 @@ def pi_allow_signature_actions(context):
             validator.documentSubmitted() and
             user_is_not_parent_document_owner(context))
     return False
+
 
 # auditables
 

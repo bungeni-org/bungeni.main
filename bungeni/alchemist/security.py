@@ -61,13 +61,15 @@ class LocalPrincipalRoleMap(alchemist.security.role.LocalPrincipalRoleMap):
                 ).getRolesForPrincipal(principal_id):
             #included_roles.add(role)
             yield role, setting
-        # !+PrincipalRoleMapDynamic(mr, may-2012) infer role from context data
+        # !+PrincipalRoleMapDynamic(mr, may-2012) infer all local roles from 
+        # context data:
         # - may have a simple logic, made explicit as a callable, per role, to 
         #   determine dynamically if a principal has the role on a context...
         # - included_roles, consider a hybrid system with existing db table
         #   and infer dynamically only for certain subset of roles ?!?
         # - add an "owner" attribute to group? Or, alternatively, move out 
         #   all "owner" attributes from other types to this db table??
+        # - there should not be any need for global roles? ..., parliament, app.
         
     # !+getPrincipalsForRole
 
