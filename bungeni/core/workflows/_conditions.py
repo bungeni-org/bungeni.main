@@ -41,6 +41,13 @@ def user_is_context_owner(context):
     owner = utils.get_owner_pi(context)
     return model_utils.is_current_or_delegated_user(owner)
 
+def context_is_public(context):
+    """Is the context public i.e. can Anonymous see it?
+    """
+    state = get_object_state(context)
+    # also return False for None (Unset)
+    return bool(state.getSetting("zope.View", "bungeni.Anonymous"))
+
 def clerk_receive_notification(context):
     return prefs.getClerksOfficeReceiveNotification()
 
@@ -121,6 +128,13 @@ def context_parent_is_draft(context):
     return "draft" in parent_state.tags
 def context_parent_is_not_draft(context):
     return not context_parent_is_draft(context)
+
+def context_parent_is_public(context):
+    """Is the parent context public i.e. can Anonymous see it?
+    """
+    return context_is_public(context.head)
+def context_parent_is_not_public(context):
+    return not context_is_public(context.head)
 
 def user_may_edit_context_parent(context):
     """Does user have edit permission on the context's parent?

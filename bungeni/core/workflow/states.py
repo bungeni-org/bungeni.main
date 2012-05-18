@@ -32,15 +32,18 @@ IntAsSetting = {
 }
 
 
-def wrapped_condition(condition):
+def wrapped_condition(condition, parent):
     def test(context):
         if condition is None:
             return True
         try:
-            return condition(context)
+            result = condition(context)
+            log.debug("Trying condition %s of %s... %s" % (
+                condition.__name__, parent, result))
+            return result
         except Exception, e:
             raise interfaces.WorkflowConditionError("%s: %s [%s/%s]" % (
-                e.__class__.__name__, e, context, condition))
+                type(e).__name__, e, context, condition))
     return test
 
 
@@ -109,13 +112,13 @@ class State(object):
         for setting, p, role in self.permissions:
             if p == permission:
                 yield role, IntAsSetting[setting]
-    #def getSetting(self, permission, role):
-    #    """Return the setting for this principal_id, role_id combination.
-    #    """
-    #    for setting, p, r in self.permissions:
-    #        if p == permission and r == role:
-    #            return IntAsSetting[setting]
-    #    #return zope.securitypolicy.interfaces.Unset
+    def getSetting(self, permission, role):
+        """Return boolean for setting for the given permission id and role id.
+        If there is no setting, return None (Unset).
+        """
+        for setting, p, r in self.permissions:
+            if p == permission and r == role:
+                return bool(setting)
     #def getRolesAndPermissions(self):
     # /IRolePermissionMap
     #def getSettingAsBoolean(self, permission, role):
@@ -157,7 +160,7 @@ class Transition(object):
         self.destination = destination
         self.grouping_unique_sources = grouping_unique_sources
         self._raw_condition = condition # remember unwrapped condition
-        self.condition = wrapped_condition(condition)
+        self.condition = wrapped_condition(condition, self)
         self.trigger = trigger
         self.permission = permission
         self.order = order
@@ -172,6 +175,10 @@ class Transition(object):
     
     def __cmp__(self, other):
         return cmp(self.order, other.order)
+    
+    def __str__(self):
+        return "<%s.%s '%s' object at %s>" % (
+            self.__module__, type(self).__name__, self.id, hex(id(self)))
 
 #
 

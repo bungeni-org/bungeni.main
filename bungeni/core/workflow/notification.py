@@ -183,7 +183,7 @@ class Notification(object):
             note=None
         ):
         self.condition = wrapped_condition(
-            capi.get_workflow_condition(condition))
+            capi.get_workflow_condition(condition), self)
         self.subject = subject 
         self.from_ = from_
         self.to = to
