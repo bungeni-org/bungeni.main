@@ -64,7 +64,7 @@ class BusinessAbsoluteURLView(CustomAbsoluteURL):
 class AttachmentBusinessAbsoluteURLView(BusinessAbsoluteURLView):
     
     def __str__(self):
-        item_id = self.context.item_id
+        item_id = self.context.owner_id
         base_url = ui_utils.url.absoluteURL(getSite(), self.request)
         session = Session()
         item = session.query(Doc).filter(Doc.doc_id==item_id).first()

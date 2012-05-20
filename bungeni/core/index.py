@@ -391,16 +391,14 @@ class AttachmentIndexer(ContentIndexer):
     def index(self, doc):    
         # index schema fields
         super(AttachmentIndexer, self).index(doc)
-        if self.context.type == "document":
+        if self.context.mimetype == 'application/vnd.oasis.opendocument.text':
+            doc.fields.append(xappy.Field('doc_text', readODT(self.context.data)))
             
-            if self.context.mimetype == 'application/vnd.oasis.opendocument.text':
-                doc.fields.append(xappy.Field('doc_text', readODT(self.context.data)))
+        if self.context.mimetype == 'application/pdf':
+            doc.fields.append(xappy.Field('doc_text', readPDF(self.context.data)))
             
-            if self.context.mimetype == 'application/pdf':
-                doc.fields.append(xappy.Field('doc_text', readPDF(self.context.data)))
-            
-            if self.context.mimetype == 'text/plain':
-                doc.fields.append(xappy.Field('doc_text', self.context.data))
+        if self.context.mimetype == 'text/plain':
+            doc.fields.append(xappy.Field('doc_text', str(self.context.data)))
     
     @classmethod
     def reindexAll(klass, connection, flush_threshold=500):
