@@ -2313,11 +2313,11 @@ class EventDescriptor(DocDescriptor):
         # "non-legal" parliamentary documents may be added by any user
         f.property = schema.Choice(title=_("Owner"), 
             # !+GROUP_AS_OWNER(mr, apr-2012) for Event, a common case would be
-            # to able to set a group (of the office/group member creating the 
+            # to be able to set a group (of the office/group member creating the 
             # event) as the owner (but Group is not yet polymorphic with User). 
             # For now we limit the owner of an Event to be simply the current 
             # logged in user:
-            source=vocabulary.LoggedInUserSource(
+            source=vocabulary.OwnerOrLoggedInUserSource(
                 token_field="user_id",
                 title_field="fullname",
                 value_field="user_id")

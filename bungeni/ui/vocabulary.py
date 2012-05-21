@@ -662,16 +662,25 @@ class MinistrySource(SpecializedSource):
         return vocabulary.SimpleVocabulary(terms)'''
 
 
-class LoggedInUserSource(SpecializedSource):
-    """Current (list of 1 item) logged in user.
+class OwnerOrLoggedInUserSource(SpecializedSource):
+    """The context owner OR the current logged in user (a list of 1 item).
     """
-    def constructQuery(self, context):
-        # !+get_db_user(mr, apr-2012) repeat of [utils.get_db_user()], 
-        # but here we must return a query...
-        principal_id = utils.get_principal_id()
-        return Session().query(domain.User).filter(
-            domain.User.login == principal_id)
+    def __call__(self, context):
+        if context.owner:
+            user = context.owner
+        else: 
+            user = utils.get_db_user()
+        title_field = self.title_field or self.token_field
+        obj = translate_obj(user)
+        terms = [
+            vocabulary.SimpleTerm(
+                value=getattr(obj, self.value_field), 
+                token=getattr(obj, self.token_field),
+                title=getattr(obj, title_field)),
+        ]
+        return vocabulary.SimpleVocabulary(terms)
 
+    
 class UserSource(SpecializedSource):
     """ All active users """
     def constructQuery(self, context):
