@@ -666,9 +666,10 @@ class OwnerOrLoggedInUserSource(SpecializedSource):
     """The context owner OR the current logged in user (a list of 1 item).
     """
     def __call__(self, context):
-        if context.owner:
-            user = context.owner
-        else: 
+        try:
+            user = removeSecurityProxy(context).owner
+            assert user is not None
+        except (AttributeError, AssertionError):
             user = utils.get_db_user()
         title_field = self.title_field or self.token_field
         obj = translate_obj(user)
@@ -680,9 +681,10 @@ class OwnerOrLoggedInUserSource(SpecializedSource):
         ]
         return vocabulary.SimpleVocabulary(terms)
 
-    
+
 class UserSource(SpecializedSource):
-    """ All active users """
+    """All active users.
+    """
     def constructQuery(self, context):
         session = Session()
         users = session.query(domain.User).order_by(
@@ -835,21 +837,22 @@ class SittingAttendanceSource(SpecializedSource):
         return vocabulary.SimpleVocabulary(terms)
 
 class SubstitutionSource(SpecializedSource):
-    """ active user of the same group """
+    """Active user of the same group.
+    """
     def _get_group_id(self, context):
         trusted = removeSecurityProxy(context)
         group_id = getattr(trusted, 'group_id', None)
         if not group_id:
             group_id = getattr(trusted.__parent__, 'group_id', None)
         return group_id
-
+    
     def _get_user_id(self, context):
         trusted = removeSecurityProxy(context)
         user_id = getattr(trusted, 'user_id', None)
         if not user_id:
             user_id = getattr(trusted.__parent__, 'user_id', None)
         return user_id
-
+    
     def constructQuery(self, context):
         session= Session()
         query = session.query(domain.GroupMembership).order_by(
@@ -864,7 +867,7 @@ class SubstitutionSource(SpecializedSource):
             query = query.filter(
                 domain.GroupMembership.group_id == group_id)
         return query
-
+    
     def __call__(self, context=None):
         query = self.constructQuery(context)
         results = query.all()
