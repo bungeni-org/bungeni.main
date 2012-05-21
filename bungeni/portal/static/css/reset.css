@@ -1196,12 +1196,18 @@ div.main-column #collage h2 {
     margin-right:auto;    
 }
 .template-portal #top-layer #demoWarning {
-    width: 150px;
     height: 18px;
     line-height: 18px;
+    z-index:99888;
+    margin-top:20px;
     margin-left:auto;
     margin-right:auto;
     position:relative;
+}
+.template-portal #top-layer #demoWarning blink {
+    margin-left:0px;
+    text-align:center;
+    white-space: nowrap;
 }
 .template-portal #top-layer ul#portal-personaltools li {
     padding: 0 0 0 .5em;
