@@ -473,6 +473,8 @@ i18n_pdf = _(u"Download PDF")
 i18n_odt = _(u"Download ODT")
 i18n_akomantoso = _(u"Akoma Ntoso")
 i18n_rss = _(u"RSS")
+document_types = ["pdf", "odt"]
+xml_types = ["akomantoso", "rss"]
 
 class DownloadDocumentMenu(BrowserMenu):
 
@@ -506,7 +508,7 @@ class DownloadDocumentMenu(BrowserMenu):
         _url = url.absoluteURL(context, request)
         if IBungeniContent.providedBy(context):
             doc_templates = self.documentTemplates()
-            for doc_type in ["pdf", "odt"]:
+            for doc_type in document_types:
                 if doc_templates:
                     for template in doc_templates:
                         i18n_title = translate_i18n(globals()["i18n_%s" % doc_type])
@@ -537,7 +539,13 @@ class DownloadDocumentMenu(BrowserMenu):
                         submenu=None
                     ))
         if interfaces.IRSSRepresentationLayer.providedBy(request):
-            for doc_type in ["akomantoso", "rss"]:
+            for doc_type in xml_types:
+                if doc_type == "akomantoso":
+                    if IAlchemistContainer.providedBy(context):
+                        if not IBungeniContent.implementedBy(
+                            context.domain_model
+                        ):
+                            continue
                 results.append(dict(
                         title = globals()["i18n_%s" % doc_type],
                         description="",

@@ -1,31 +1,47 @@
-# !+ CLEAN OUT THIS FILE PLEASE ! 
-# THAT INCLUDES INLINING ZCA REGISTRATIONS.
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
-from bungeni.alchemist import Session
-from bungeni.core.interfaces import IRSSValues
-from bungeni.core.translation import translate_obj
-from bungeni.models.domain import User
-from datetime import datetime
-from i18n import _
-from zope.app.component.hooks import getSite
+"""RSS and Akoma Ntoso views for bungeni content(and containers)
+
+$Id$
+"""
+import re
+import time
+import email
+import xml.dom.minidom as xmllib
+
 from zope.component import getAdapter
 from zope.i18n import translate
 from zope.publisher.browser import BrowserView
 from zope.security.proxy import removeSecurityProxy
 from zope.traversing.browser import absoluteURL
-import re
-import xml.dom.minidom as xmllib
+
+from bungeni.alchemist import Session
+from bungeni.alchemist.model import queryModelDescriptor
+from bungeni.models.domain import User
+from bungeni.core.interfaces import IRSSValues
+from bungeni.core.translation import translate_obj
+from bungeni.core.dc import IDCDescriptiveProperties
+
 from bungeni.ui import audit
 import bungeni.ui.adaptors # ensure module is loaded
+from bungeni.ui.i18n import _
 
+AKOMA_NTOSO_TYPES = ["act", "bill", "report", "judgement", "debateRecord", "doc"]
+CUSTOM_FBR_WORK_NAMES = {
+    "bill": "Enactment"
+}
+def get_fbr_work_name(item_type):
+    return CUSTOM_FBR_WORK_NAMES.get(item_type) or "".join(
+        map(unicode.capitalize, item_type.split("_"))
+    )
 
 class RSSView(BrowserView):
     """ Base class that can generate
         RSS item.
     """
 
-    channel_title = u""
-    channel_description = u""
     view_name = u""
 
     def __init__(self, context, request):
@@ -38,6 +54,31 @@ class RSSView(BrowserView):
         rss_element.appendChild(channel_element)
         self.response.appendChild(rss_element)
         self.channel_element = channel_element
+
+    @property
+    def channel_title(self):
+        return queryModelDescriptor(
+            removeSecurityProxy(self.context).domain_model
+        ).container_name
+        
+    @property
+    def channel_description(self):
+        return self.channel_title
+
+    @property
+    def values(self):
+        return getAdapter(self.context, interface=IRSSValues).values
+
+    def get_title(self, item):
+        return IDCDescriptiveProperties(item).title
+
+    def get_description(self, item):
+        return IDCDescriptiveProperties(item).description
+
+    def get_date(self, item):
+        return getattr(item, "publication_date",
+            getattr(item, "status_date", None)
+        )
 
     def __call__(self):
         self.request.response.setHeader('Content-Type', 'application/rss+xml')
@@ -121,199 +162,7 @@ class RSSView(BrowserView):
         return channel_element
 
     def _format_date(self, dt):
-        """ Convert a datetime into an RFC 822 formatted date
-            In stored objects we have only date of pulication,
-            so putting time as 12:00.
-        """
-        return "%s, %02d %s %04d %02d:%02d:%02d GMT" % (
-                ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][dt.weekday()],
-                dt.day,
-                ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                 "Jul", "Aug", "Selangp", "Oct", "Nov", "Dec"][dt.month - 1],
-                dt.year, dt.hour, dt.minute, dt.second)
-
-    @property
-    def values(self):
-        return getAdapter(self.context, interface=IRSSValues).values
-
-    def get_title(self, item):
-        raise NotImplementedError("Should be implemented in child class")
-
-    def get_description(self, item):
-        raise NotImplementedError("Should be implemented in child class")
-
-    def get_date(self, item):
-        raise NotImplementedError("Should be implemented in child class")
-
-
-class BillRSSView(RSSView):
-    """ Generates rss views for
-        bills.
-    """
-
-    channel_title = _(u'Bills')
-    channel_description = _(u'Bills')
-
-    def get_title(self, item):
-        if item.type_number is None:
-            return item.short_title
-        return "#%d: %s" % (item.type_number,
-                            item.short_title)
-
-    def get_description(self, item):
-        return item.body or u''
-
-    def get_date(self, item):
-        #Since we have only publication date, time will be set to 12:00
-        return datetime(item.publication_date.year,
-                        item.publication_date.month,
-                        item.publication_date.day,
-                        12, 0, 0)
-
-
-class CommitteeRSSView(RSSView):
-    """ Generates rss views for
-        committees.
-    """
-
-    channel_title = _(u'Committees')
-    channel_description = _(u'Committees')
-
-    def get_title(self, item):
-        return item.full_name
-
-    def get_description(self, item):
-        return item.description or u''
-
-    def get_date(self, item):
-        return item.status_date
-
-
-class QuestionRSSView(RSSView):
-    """ Generates rss views for
-        questions.
-    """
-
-    channel_title = _(u'Questions')
-    channel_description = _(u'Questions')
-
-    def get_title(self, item):
-        if item.type_number is None:
-            return item.short_title
-        return "#%d: %s" % (
-            item.type_number,
-            item.short_title)
-
-    def get_description(self, item):
-        return item.body or u''
-
-    def get_date(self, item):
-        return item.status_date
-
-
-class MotionRSSView(RSSView):
-    """ Generates rss views for
-        motions.
-    """
-
-    channel_title = _(u'Motions')
-    channel_description = _(u'Motions')
-
-    def get_title(self, item):
-        if item.type_number is None:
-            return item.short_title
-        return "#%d: %s" % (
-            item.type_number,
-            item.short_title)
-
-    def get_description(self, item):
-        return item.body or u''
-
-    def get_date(self, item):
-        return item.status_date
-
-
-class TabledDocumentRSSView(RSSView):
-    """ Generates rss views for
-        tabled documents.
-    """
-
-    channel_title = _(u'Tabled documents')
-    channel_description = _(u'Tabled documents')
-
-    def get_title(self, item):
-        return item.short_title
-
-    def get_description(self, item):
-        return item.body or u''
-
-    def get_date(self, item):
-        return item.status_date
-
-
-class AgendaItemRSSView(RSSView):
-    """ Generates rss views for
-        questions.
-    """
-
-    channel_title = _(u'Agenda items')
-    channel_description = _(u'Agenda items')
-
-    def get_title(self, item):
-        return u"%s - %s" % (item.short_title,
-                             item.group.short_name)
-
-    def get_description(self, item):
-        return item.body or u''
-
-    def get_date(self, item):
-        return item.status_date
-
-
-class SittingRSSView(RSSView):
-    """ Generates rss views for
-        sittings.
-    """
-
-    channel_title = _(u'Sittings')
-    channel_description = _(u'Sittings')
-
-    def get_title(self, item):
-        return "%s %s, %s %s %s" % (_(u"Sitting:"),
-                item.group.short_name,
-                item.start_date.strftime('%Y-%m-%d, %H:%M'),
-                _(u"to"),
-                item.end_date.strftime('%H:%M'))
-
-    def get_description(self, item):
-        return "%s %s (%s %s %s)" % (_(u"Sitting scheduled for"),
-                item.group.short_name,
-                item.start_date.strftime('%Y-%m-%d %H:%M'),
-                _(u"to"),
-                item.end_date.strftime('%H:%M'))
-
-    def get_date(self, item):
-        return item.status_date
-
-
-class ReportRSSView(RSSView):
-    """ Generates rss views for
-        reports.
-    """
-
-    channel_title = _(u'Reports')
-    channel_description = _(u'Reports')
-
-    def get_title(self, item):
-        return u'%s: %s - %s' % (item.short_title,
-            item.start_date, item.end_date)
-
-    def get_description(self, item):
-        return item.body
-
-    def get_date(self, item):
-        return item.status_date
-
+        return email.Utils.formatdate(time.mktime(dt.timetuple()))
 
 class TimelineRSSView(RSSView):
     """ Base view for generiting
@@ -327,6 +176,18 @@ class TimelineRSSView(RSSView):
         self.i18n_context = translate_obj(context, request.locale.id.language)
         super(TimelineRSSView, self).__init__(context, request)
 
+    @property
+    def values(self):
+        return getAdapter(self.i18n_context, interface=IRSSValues).values
+    
+    @property
+    def channel_title(self):
+        return IDCDescriptiveProperties(self.context).title
+
+    @property
+    def channel_description(self):
+        return IDCDescriptiveProperties(self.context).description
+
     def __call__(self):
         self.request.response.setHeader('Content-Type', 'application/rss+xml')
         # Taking object url for timeline item
@@ -335,11 +196,14 @@ class TimelineRSSView(RSSView):
             # !+ assert self.context is item.head -> fails !
             #    assert self.context.doc_id is item.head.doc_id -> succeeds !
             item = removeSecurityProxy(item)
-            self.channel_element.appendChild(self.generate_item(self.get_title(item),
-                                                                self.get_description(item),
-                                                                item_url,
-                                                                self.get_date(item),
-                                                                item_url))
+            self.channel_element.appendChild(
+                self.generate_item(self.get_title(item),
+                    self.get_description(item),
+                    item_url,
+                    self.get_date(item),
+                    item_url
+                )
+            )
         return self.response.toxml("utf-8")
 
     def format_date(self, date_, category="date", length="medium"):
@@ -357,116 +221,11 @@ class TimelineRSSView(RSSView):
                              _(u"changes from"),
                              self.format_date(item.date_audit))
 
-    @property
-    def values(self):
-        return getAdapter(self.i18n_context, interface=IRSSValues).values
-
-
-class BillTimelineRSSView(TimelineRSSView):
-    """ View to generate timeline rss for
-        bill.
-    """
-
-    @property
-    def channel_title(self):
-        if self.i18n_context.type_number is None:
-            return self.i18n_context.short_title
-        return "#%d: %s" % (self.i18n_context.type_number,
-                            self.i18n_context.short_title)
-
-    @property
-    def channel_description(self):
-        text = "%s %s %s" % (_("Submitted by"),
-                            self.i18n_context.owner.first_name,
-                            self.i18n_context.owner.last_name)
-        if self.i18n_context.publication_date:
-            text += " (%s %s)" % (_(u"published on"),
-                                  self.format_date(self.i18n_context.publication_date))
-        return text + "."
-
-
-class QuestionTimelineRSSView(TimelineRSSView):
-    """ View to generate timeline rss for
-        question.
-    """
-
-    @property
-    def channel_title(self):
-        if self.i18n_context.type_number is None:
-            return self.i18n_context.short_title
-        return "#%d: %s" % (self.i18n_context.type_number,
-                            self.i18n_context.short_title)
-
-    @property
-    def channel_description(self):
-        text = "%s %s %s" % (_("Submitted by"),
-                            self.i18n_context.owner.first_name,
-                            self.i18n_context.owner.last_name)
-        if self.i18n_context.admissible_date:
-            text += " (%s %s)" % (_(u"Approved on"),
-                self.format_date(self.i18n_context.admissible_date))
-        return text + "."
-
-
-class MotionTimelineRSSView(TimelineRSSView):
-    """ View to generate timeline rss for
-        motion.
-    """
-
-    @property
-    def channel_title(self):
-        if self.i18n_context.type_number is None:
-            return self.i18n_context.short_title
-        return "#%d: %s" % (self.i18n_context.type_number,
-                            self.i18n_context.short_title)
-
-    @property
-    def channel_description(self):
-        text = "%s %s %s" % (_("Submitted by"),
-                            self.i18n_context.owner.first_name,
-                            self.i18n_context.owner.last_name)
-        if self.i18n_context.notice_date:
-            text += " (%s %s)" % (_(u"notice given on"),
-                                  self.formatDate(self.i18n_context.notice_date))
-        return text + "."
-
-
-class TabledDocumentTimelineRSSView(TimelineRSSView):
-    """ View to generate timeline rss for
-        tabled document.
-    """
-
-    @property
-    def channel_title(self):
-        return self.i18n_context.short_title
-
-    @property
-    def channel_description(self):
-        return "%s %s" % (self.i18n_context.short_title,
-                          _(u"timeline"))
-
-
-class AgendaItemTimelineRSSView(TimelineRSSView):
-    """ View to generate timeline rss for
-        tabled document.
-    """
-
-    @property
-    def channel_title(self):
-        return u"%s - %s" % (self.i18n_context.short_title,
-                             self.i18n_context.group.short_name)
-
-    @property
-    def channel_description(self):
-        return "%s %s" % (self.i18n_context.short_title,
-                          _(u"timeline"))
-
 
 # View classes for rss feed that links to akomantoso
 # item xml representation page
 
-# !+ THIS IS A MIXIN NOT A VIEW, NAME IT ACCORDINGLY!
-class AkomantosoRSSView(object):
+class AkomantosoRSSView(RSSView):
     """ Simple class to set necessary
         view name for item
     """
@@ -508,40 +267,6 @@ class AkomantosoRSSView(object):
         return item_element
 
 
-class AkomantosoBillRSSView(AkomantosoRSSView, BillRSSView):
-    """ View to generate RSS that links
-        to akomantoso XML representation
-        of bill.
-    """
-
-
-class AkomantosoQuestionRSSView(AkomantosoRSSView, QuestionRSSView):
-    """ View to generate RSS that links
-        to akomantoso XML representation
-        of question.
-    """
-
-
-class AkomantosoMotionRSSView(AkomantosoRSSView, MotionRSSView):
-    """ View to generate RSS that links
-        to akomantoso XML representation
-        of motion.
-    """
-
-
-class AkomantosoTabledDocumentRSSView(AkomantosoRSSView, TabledDocumentRSSView):
-    """ View to generate RSS that links
-        to akomantoso XML representation
-        of tabled document.
-    """
-
-
-class AkomantosoAgendaItemRSSView(AkomantosoRSSView, TabledDocumentRSSView):
-    """ View to generate RSS that links
-        to akomantoso XML representation
-        of agenda item.
-    """
-
 # Views to form XML in akomantoso format
 # for certain objects
 
@@ -552,8 +277,7 @@ class AkomantosoXMLView(BrowserView):
     """
 
     xmlns = u"http://www.akomantoso.org/1.0"
-    document_type = "act" # one of: act, bill, report, judgement, debateRecord, doc
-
+    
     def __init__(self, context, request):
         super(AkomantosoXMLView, self).__init__(context, request)
         self.response = xmllib.Document()
@@ -566,6 +290,10 @@ class AkomantosoXMLView(BrowserView):
         self.request.response.setHeader("Content-Type", "text/xml")
         return self.response.toxml("utf-8")
 
+    @property
+    def document_type(self):
+        return self.context.type if type in AKOMA_NTOSO_TYPES else "doc"
+        
     def create_base_structure(self):
         """ Simply creates akomaNtoso tag
         """
@@ -610,7 +338,7 @@ class AkomantosoXMLView(BrowserView):
                     event_element = self.create_element("event",
                         id="evn%s" % item.doc_id,
                         type="generation",
-                        date=item.event_date.strftime("%Y-%m-%d"),
+                        date=item.event_date and item.event_date.strftime("%Y-%m-%d") or "",
                         source="orig")
                     lifecycle_element.appendChild(event_element)
                 
@@ -667,16 +395,113 @@ class AkomantosoXMLView(BrowserView):
         return bill_element
 
     def create_publication_element(self, ob):
-        raise NotImplementedError("Should be implemented in child class")
+        publication_element = self.create_element("publication",
+            name=ob.type,
+            showAs="",
+            date=self.get_publication_date(ob).strftime("%Y-%m-%d")
+        )
+        return publication_element
+
+    def create_frbr_work_element(self, ob):
+        """ Creates FRBRWork element with all
+            necessary children
+        """
+        frbrwork_element = self.response.createElement("FRBRWork")
+
+        frbrwork_element.appendChild(
+            self.create_element("this", value=self.get_frbr_work_url(ob))
+        )
+        frbrwork_element.appendChild(
+            self.create_element("uri", 
+                value=self.get_frbr_work_url(ob).replace("/main", "")
+            )
+        )
+        frbrwork_element.appendChild(
+            self.create_element("date",
+                date=(ob.submission_date or ob.status_date).strftime("%Y-%m-%d"),
+                name=get_fbr_work_name(ob.type)
+            )
+        )
+        frbrwork_element.appendChild(
+            self.create_element("author", href="#parliament")
+        )
+        return frbrwork_element
+
+    def create_frbr_expression_element(self, ob):
+        """ Creates FRBRExpression element with all
+            necessary children
+        """
+        frbr_expression_element = self.response.createElement("FRBRExpression")
+
+        frbr_expression_element.appendChild(
+            self.create_element("this", value=self.get_frbr_expression_url(ob))
+        )
+        frbr_expression_element.appendChild(
+            self.create_element("uri", 
+                value=self.get_frbr_expression_url(ob).replace("/main", "")
+            )
+        )
+        frbr_expression_element.appendChild(
+            self.create_element("date",
+                date=(ob.submission_date or ob.status_date).strftime("%Y-%m-%d"),
+                name="Expression"
+            )
+        )
+        frbr_expression_element.appendChild(
+            self.create_element("author", href="#parliament")
+        )
+        return frbr_expression_element
+
+    def create_frbr_manifestation_element(self, ob):
+        """ Creates FRBRManifestation element with all
+            necessary children
+        """
+        frbr_manifestation_element = self.response.createElement(
+            "FRBRManifestation"
+        )
+        frbr_manifestation_element.appendChild(
+            self.create_element("this", 
+                value=self.get_frbr_manifestation_url(ob)
+            )
+        )
+        frbr_manifestation_element.appendChild(
+            self.create_element("uri", 
+                value=self.get_frbr_manifestation_url(ob).replace(
+                    "/main", ".akn"
+                )
+            )
+        )
+        frbr_manifestation_element.appendChild(
+            self.create_element("date",
+                date=(ob.submission_date or ob.status_date).strftime("%Y-%m-%d"),
+                name="XMLMarkup"
+            )
+        )
+        frbr_manifestation_element.appendChild(
+            self.create_element("author", href="#parliament")
+        )
+        return frbr_manifestation_element
 
     def get_frbr_work_url(self, ob):
-        raise NotImplementedError("Should be implemented in child class")
+        return "/%s/%s/%s/main" % (self.get_country(ob),
+            ob.type,
+            self.get_publication_date(ob).strftime("%Y-%m-%d")
+        )
 
     def get_frbr_expression_url(self, ob):
-        raise NotImplementedError("Should be implemented in child class")
+        return "/%s/%s/%s/%s/%s@/main" % (self.get_country(ob),
+            ob.type,
+            self.get_publication_date(ob).strftime("%Y-%m-%d"),
+            ob.registry_number,
+            ob.language
+        )
 
     def get_frbr_manifestation_url(self, ob):
-        raise NotImplementedError("Should be implemented in child class")
+        return "/%s/%s/%s/%s@/main.xml" % (self.get_country(ob),
+            ob.type,
+            self.get_publication_date(ob).strftime("%Y-%m-%d"),
+            ob.language
+        )
 
     def get_country(self, ob):
         """ No way to determine country
@@ -685,436 +510,19 @@ class AkomantosoXMLView(BrowserView):
         """
         return "ke"
 
+    def get_publication_date(self, item):
+        publication_date = None
+        for attr in ["publication_date", "submission_date", "status_date"]:
+            publication_date = getattr(item, attr, None)
+            if publication_date:
+                break
+        return publication_date
+
+    def get_title(self, item):
+        return IDCDescriptiveProperties(item).title
+
     def get_body(self, item):
         return item.body or u''
-
-
-class AkomantosoBillXMLView(AkomantosoXMLView):
-    """ View for generating XML in akomantoso
-        format for bill object
-    """
-
-    document_type = "bill"
-
-    def get_title(self, item):
-        if item.type_number is None:
-            return item.short_title
-        return "#%d: %s" % (item.type_number,
-                            item.short_title)
-
-    def get_frbr_work_url(self, ob):
-        return "/%s/bill/%s/main" % (self.get_country(ob),
-                                     ob.publication_date.strftime("%Y-%m-%d"))
-
-    def get_frbr_expression_url(self, ob):
-        return "/%s/bill/%s/%s@/main" % (self.get_country(ob),
-                                         ob.publication_date.strftime("%Y-%m-%d"),
-                                         ob.language)
-
-    def get_frbr_manifestation_url(self, ob):
-        return "/%s/bill/%s/%s@/main.xml" % (self.get_country(ob),
-                                             ob.publication_date.strftime("%Y-%m-%d"),
-                                             ob.language)
-
-    def create_frbr_work_element(self, ob):
-        """ Creates FRBRWork element with all
-            necessary children
-        """
-        frbrwork_element = self.response.createElement("FRBRWork")
-
-        frbrwork_element.appendChild(self.create_element("this",
-                                                         value=self.get_frbr_work_url(ob)))
-        frbrwork_element.appendChild(self.create_element("uri",
-                                                         value=self.get_frbr_work_url(ob).replace("/main", "")))
-        frbrwork_element.appendChild(self.create_element("date",
-                                                         date=ob.status_date.strftime("%Y-%m-%d"),
-                                                         name="Enactment"))
-        frbrwork_element.appendChild(self.create_element("author",
-                                                         href="#parliament"))
-        return frbrwork_element
-
-    def create_frbr_expression_element(self, ob):
-        """ Creates FRBRExpression element with all
-            necessary children
-        """
-        frbr_expression_element = self.response.createElement("FRBRExpression")
-
-        frbr_expression_element.appendChild(self.create_element("this",
-                                                         value=self.get_frbr_expression_url(ob)))
-        frbr_expression_element.appendChild(self.create_element("uri",
-                                                         value=self.get_frbr_expression_url(ob).replace("/main", "")))
-        frbr_expression_element.appendChild(self.create_element("date",
-                                                         date=ob.status_date.strftime("%Y-%m-%d"),
-                                                         name="Expression"))
-        frbr_expression_element.appendChild(self.create_element("author",
-                                                         href="#parliament"))
-        return frbr_expression_element
-
-    def create_frbr_manifestation_element(self, ob):
-        """ Creates FRBRManifestation element with all
-            necessary children
-        """
-        frbr_manifestation_element = self.response.createElement("FRBRManifestation")
-        frbr_manifestation_element.appendChild(self.create_element("this",
-                                                         value=self.get_frbr_manifestation_url(ob)))
-        frbr_manifestation_element.appendChild(self.create_element("uri",
-                                                         value=self.get_frbr_manifestation_url(ob).replace("/main", ".akn")))
-        frbr_manifestation_element.appendChild(self.create_element("date",
-                                                         date=ob.status_date.strftime("%Y-%m-%d"),
-                                                         name="XMLMarkup"))
-        frbr_manifestation_element.appendChild(self.create_element("author",
-                                                         href="#parliament"))
-
-        return frbr_manifestation_element
-
-    def create_publication_element(self, ob):
-        publication_element = self.create_element("publication",
-                                                  name="bill",
-                                                  showAs="",
-                                                  date=ob.publication_date.strftime("%Y-%m-%d"))
-        return publication_element
-
-
-class AkomantosoQuestionXMLView(AkomantosoXMLView):
-    """ View for generating XML in akomantoso
-        format for question object
-    """
-
-    document_type = "doc"
-
-    def get_title(self, item):
-        if item.type_number is None:
-            return item.short_title
-        return "#%d: %s" % (
-            item.type_number,
-            item.short_title)
-
-    def get_frbr_work_url(self, ob):
-        return "/%s/question/%s/main" % (self.get_country(ob),
-                                         ob.submission_date.strftime("%Y-%m-%d"))
-
-    def get_frbr_expression_url(self, ob):
-        return "/%s/bill/%s/%s@/main" % (self.get_country(ob),
-                                         ob.submission_date.strftime("%Y-%m-%d"),
-                                         ob.language)
-
-    def get_frbr_manifestation_url(self, ob):
-        return "/%s/bill/%s/%s@/main.xml" % (self.get_country(ob),
-                                             ob.submission_date.strftime("%Y-%m-%d"),
-                                             ob.language)
-
-    def create_frbr_work_element(self, ob):
-        """ Creates FRBRWork element with all
-            necessary children
-        """
-        frbrwork_element = self.response.createElement("FRBRWork")
-
-        frbrwork_element.appendChild(self.create_element("this",
-                                                         value=self.get_frbr_work_url(ob)))
-        frbrwork_element.appendChild(self.create_element("uri",
-                                                         value=self.get_frbr_work_url(ob).replace("/main", "")))
-        frbrwork_element.appendChild(self.create_element("date",
-                                                         date=ob.submission_date.strftime("%Y-%m-%d"),
-                                                         name="Question"))
-        frbrwork_element.appendChild(self.create_element("author",
-                                                         href="#parliament"))
-        return frbrwork_element
-
-    def create_frbr_expression_element(self, ob):
-        """ Creates FRBRExpression element with all
-            necessary children
-        """
-        frbr_expression_element = self.response.createElement("FRBRExpression")
-
-        frbr_expression_element.appendChild(self.create_element("this",
-                                                         value=self.get_frbr_expression_url(ob)))
-        frbr_expression_element.appendChild(self.create_element("uri",
-                                                         value=self.get_frbr_expression_url(ob).replace("/main", "")))
-        frbr_expression_element.appendChild(self.create_element("date",
-                                                         date=ob.submission_date.strftime("%Y-%m-%d"),
-                                                         name="Expression"))
-        frbr_expression_element.appendChild(self.create_element("author",
-                                                         href="#parliament"))
-        return frbr_expression_element
-
-    def create_frbr_manifestation_element(self, ob):
-        """ Creates FRBRManifestation element with all
-            necessary children
-        """
-        frbr_manifestation_element = self.response.createElement("FRBRManifestation")
-        frbr_manifestation_element.appendChild(self.create_element("this",
-                                                         value=self.get_frbr_manifestation_url(ob)))
-        frbr_manifestation_element.appendChild(self.create_element("uri",
-                                                         value=self.get_frbr_manifestation_url(ob).replace("/main", ".akn")))
-        frbr_manifestation_element.appendChild(self.create_element("date",
-                                                         date=ob.submission_date.strftime("%Y-%m-%d"),
-                                                         name="XMLMarkup"))
-        frbr_manifestation_element.appendChild(self.create_element("author",
-                                                         href="#parliament"))
-
-        return frbr_manifestation_element
-
-    def create_publication_element(self, ob):
-        publication_element = self.create_element("publication",
-                                                  name="question",
-                                                  showAs="",
-                                                  date=ob.submission_date.strftime("%Y-%m-%d"))
-        return publication_element
-
-
-class AkomantosoMotionXMLView(AkomantosoXMLView):
-    """ View for generating XML in akomantoso
-        format for motion object
-    """
-
-    document_type = "doc"
-
-    def get_title(self, item):
-        if item.type_number is None:
-            return item.short_title
-        return "#%d: %s" % (
-            item.type_number,
-            item.short_title)
-
-    def get_frbr_work_url(self, ob):
-        return "/%s/motion/%s/main" % (self.get_country(ob),
-                                       ob.submission_date.strftime("%Y-%m-%d"))
-
-    def get_frbr_expression_url(self, ob):
-        return "/%s/motion/%s/%s@/main" % (self.get_country(ob),
-                                           ob.submission_date.strftime("%Y-%m-%d"),
-                                           ob.language)
-
-    def get_frbr_manifestation_url(self, ob):
-        return "/%s/motion/%s/%s@/main.xml" % (self.get_country(ob),
-                                               ob.submission_date.strftime("%Y-%m-%d"),
-                                               ob.language)
-
-    def create_frbr_work_element(self, ob):
-        """ Creates FRBRWork element with all
-            necessary children
-        """
-        frbrwork_element = self.response.createElement("FRBRWork")
-
-        frbrwork_element.appendChild(self.create_element("this",
-                                                         value=self.get_frbr_work_url(ob)))
-        frbrwork_element.appendChild(self.create_element("uri",
-                                                         value=self.get_frbr_work_url(ob).replace("/main", "")))
-        frbrwork_element.appendChild(self.create_element("date",
-                                                         date=ob.submission_date.strftime("%Y-%m-%d"),
-                                                         name="Motion"))
-        frbrwork_element.appendChild(self.create_element("author",
-                                                         href="#parliament"))
-        return frbrwork_element
-
-    def create_frbr_expression_element(self, ob):
-        """ Creates FRBRExpression element with all
-            necessary children
-        """
-        frbr_expression_element = self.response.createElement("FRBRExpression")
-
-        frbr_expression_element.appendChild(self.create_element("this",
-                                                         value=self.get_frbr_expression_url(ob)))
-        frbr_expression_element.appendChild(self.create_element("uri",
-                                                         value=self.get_frbr_expression_url(ob).replace("/main", "")))
-        frbr_expression_element.appendChild(self.create_element("date",
-                                                         date=ob.submission_date.strftime("%Y-%m-%d"),
-                                                         name="Expression"))
-        frbr_expression_element.appendChild(self.create_element("author",
-                                                         href="#parliament"))
-        return frbr_expression_element
-
-    def create_frbr_manifestation_element(self, ob):
-        """ Creates FRBRManifestation element with all
-            necessary children
-        """
-        frbr_manifestation_element = self.response.createElement("FRBRManifestation")
-        frbr_manifestation_element.appendChild(self.create_element("this",
-                                                         value=self.get_frbr_manifestation_url(ob)))
-        frbr_manifestation_element.appendChild(self.create_element("uri",
-                                                         value=self.get_frbr_manifestation_url(ob).replace("/main", ".akn")))
-        frbr_manifestation_element.appendChild(self.create_element("date",
-                                                         date=ob.submission_date.strftime("%Y-%m-%d"),
-                                                         name="XMLMarkup"))
-        frbr_manifestation_element.appendChild(self.create_element("author",
-                                                         href="#parliament"))
-
-        return frbr_manifestation_element
-
-    def create_publication_element(self, ob):
-        publication_element = self.create_element("publication",
-                                                  name="motion",
-                                                  showAs="",
-                                                  date=ob.submission_date.strftime("%Y-%m-%d"))
-        return publication_element
-
-
-class AkomantosoTabledDocumentXMLView(AkomantosoXMLView):
-    """ View for generating XML in akomantoso
-        format for tabled document object
-    """
-
-    document_type = "doc"
-
-    def get_title(self, item):
-        return item.short_title
-
-    def get_frbr_work_url(self, ob):
-        return "/%s/tableddocument/%s/main" % (self.get_country(ob),
-                                               ob.submission_date.strftime("%Y-%m-%d"))
-
-    def get_frbr_expression_url(self, ob):
-        return "/%s/tableddocument/%s/%s@/main" % (self.get_country(ob),
-                                                   ob.submission_date.strftime("%Y-%m-%d"),
-                                                   ob.language)
-
-    def get_frbr_manifestation_url(self, ob):
-        return "/%s/tableddocument/%s/%s@/main.xml" % (self.get_country(ob),
-                                                       ob.submission_date.strftime("%Y-%m-%d"),
-                                                       ob.language)
-
-    def create_frbr_work_element(self, ob):
-        """ Creates FRBRWork element with all
-            necessary children
-        """
-        frbrwork_element = self.response.createElement("FRBRWork")
-
-        frbrwork_element.appendChild(self.create_element("this",
-                                                         value=self.get_frbr_work_url(ob)))
-        frbrwork_element.appendChild(self.create_element("uri",
-                                                         value=self.get_frbr_work_url(ob).replace("/main", "")))
-        frbrwork_element.appendChild(self.create_element("date",
-                                                         date=ob.submission_date.strftime("%Y-%m-%d"),
-                                                         name="TabledDocument"))
-        frbrwork_element.appendChild(self.create_element("author",
-                                                         href="#parliament"))
-        return frbrwork_element
-
-    def create_frbr_expression_element(self, ob):
-        """ Creates FRBRExpression element with all
-            necessary children
-        """
-        frbr_expression_element = self.response.createElement("FRBRExpression")
-
-        frbr_expression_element.appendChild(self.create_element("this",
-                                                         value=self.get_frbr_expression_url(ob)))
-        frbr_expression_element.appendChild(self.create_element("uri",
-                                                         value=self.get_frbr_expression_url(ob).replace("/main", "")))
-        frbr_expression_element.appendChild(self.create_element("date",
-                                                         date=ob.submission_date.strftime("%Y-%m-%d"),
-                                                         name="Expression"))
-        frbr_expression_element.appendChild(self.create_element("author",
-                                                         href="#parliament"))
-        return frbr_expression_element
-
-    def create_frbr_manifestation_element(self, ob):
-        """ Creates FRBRManifestation element with all
-            necessary children
-        """
-        frbr_manifestation_element = self.response.createElement("FRBRManifestation")
-        frbr_manifestation_element.appendChild(self.create_element("this",
-                                                         value=self.get_frbr_manifestation_url(ob)))
-        frbr_manifestation_element.appendChild(self.create_element("uri",
-                                                         value=self.get_frbr_manifestation_url(ob).replace("/main", ".akn")))
-        frbr_manifestation_element.appendChild(self.create_element("date",
-                                                         date=ob.submission_date.strftime("%Y-%m-%d"),
-                                                         name="XMLMarkup"))
-        frbr_manifestation_element.appendChild(self.create_element("author",
-                                                         href="#parliament"))
-
-        return frbr_manifestation_element
-
-    def create_publication_element(self, ob):
-        publication_element = self.create_element("publication",
-                                                  name="tableddocument",
-                                                  showAs="",
-                                                  date=ob.submission_date.strftime("%Y-%m-%d"))
-        return publication_element
-
-
-class AkomantosoAgendaItemXMLView(AkomantosoXMLView):
-    """ View for generating XML in akomantoso
-        format for agenda item object
-    """
-
-    document_type = "doc"
-
-    def get_title(self, item):
-        return u"%s - %s" % (item.short_title,
-                             item.group.short_name)
-
-    def get_frbr_work_url(self, ob):
-        return "/%s/agendaitem/%s/main" % (self.get_country(ob),
-                                           ob.submission_date.strftime("%Y-%m-%d"))
-
-    def get_frbr_expression_url(self, ob):
-        return "/%s/agendaitem/%s/%s@/main" % (self.get_country(ob),
-                                               ob.submission_date.strftime("%Y-%m-%d"),
-                                               ob.language)
-
-    def get_frbr_manifestation_url(self, ob):
-        return "/%s/agendaitem/%s/%s@/main.xml" % (self.get_country(ob),
-                                                   ob.submission_date.strftime("%Y-%m-%d"),
-                                                   ob.language)
-
-    def create_frbr_work_element(self, ob):
-        """ Creates FRBRWork element with all
-            necessary children
-        """
-        frbrwork_element = self.response.createElement("FRBRWork")
-
-        frbrwork_element.appendChild(self.create_element("this",
-                                                         value=self.get_frbr_work_url(ob)))
-        frbrwork_element.appendChild(self.create_element("uri",
-                                                         value=self.get_frbr_work_url(ob).replace("/main", "")))
-        frbrwork_element.appendChild(self.create_element("date",
-                                                         date=ob.submission_date.strftime("%Y-%m-%d"),
-                                                         name="AgendaItem"))
-        frbrwork_element.appendChild(self.create_element("author",
-                                                         href="#parliament"))
-        return frbrwork_element
-
-    def create_frbr_expression_element(self, ob):
-        """ Creates FRBRExpression element with all
-            necessary children
-        """
-        frbr_expression_element = self.response.createElement("FRBRExpression")
-
-        frbr_expression_element.appendChild(self.create_element("this",
-                                                         value=self.get_frbr_expression_url(ob)))
-        frbr_expression_element.appendChild(self.create_element("uri",
-                                                         value=self.get_frbr_expression_url(ob).replace("/main", "")))
-        frbr_expression_element.appendChild(self.create_element("date",
-                                                         date=ob.submission_date.strftime("%Y-%m-%d"),
-                                                         name="Expression"))
-        frbr_expression_element.appendChild(self.create_element("author",
-                                                         href="#parliament"))
-        return frbr_expression_element
-
-    def create_frbr_manifestation_element(self, ob):
-        """ Creates FRBRManifestation element with all
-            necessary children
-        """
-        frbr_manifestation_element = self.response.createElement("FRBRManifestation")
-        frbr_manifestation_element.appendChild(self.create_element("this",
-                                                         value=self.get_frbr_manifestation_url(ob)))
-        frbr_manifestation_element.appendChild(self.create_element("uri",
-                                                         value=self.get_frbr_manifestation_url(ob).replace("/main", ".akn")))
-        frbr_manifestation_element.appendChild(self.create_element("date",
-                                                         date=ob.submission_date.strftime("%Y-%m-%d"),
-                                                         name="XMLMarkup"))
-        frbr_manifestation_element.appendChild(self.create_element("author",
-                                                         href="#parliament"))
-
-        return frbr_manifestation_element
-
-    def create_publication_element(self, ob):
-        publication_element = self.create_element("publication",
-                                                  name="agendaitem",
-                                                  showAs="",
-                                                  date=ob.submission_date.strftime("%Y-%m-%d"))
-        return publication_element
-
 
 class SubscriptionView(BrowserView):
     """ View to manipulate with user's
