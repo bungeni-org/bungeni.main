@@ -1,19 +1,16 @@
-# encoding: utf-8
 """
 $Id$
 """
 
+import unittest
 from zope import interface
 from zope import component
-
-import unittest
-
 from zope.testing import doctest, doctestunit
 from zope.app.testing import placelesssetup
 from zope.configuration import xmlconfig
 from bungeni.models.schema import metadata
 from bungeni.core.workflows import adapters
-from bungeni.ui import descriptor
+import bungeni.ui.descriptor # !+register adapters, dc, ...
 
 import forms.test_dates
 
@@ -23,22 +20,24 @@ zcml_slug = """<configure xmlns="http://namespaces.zope.org/zope">
 """
 
 def setUp(test):
+    print "\n---------- SETUP ----------", test
     placelesssetup.setUp()
     xmlconfig.string(zcml_slug)
     metadata.create_all(checkfirst=True)
-    
+
 def tearDown(test):
+    print "\n---------- TEARDOWN ----------", test
     placelesssetup.tearDown()
     metadata.drop_all(checkfirst=True)
 
 def test_suite():
     doctests = (
-                'forms/readme.txt',
-                #'downloaddocument.txt', #!+DOWNLOAD_DOCUMENT(mb, May-2012)
-                # dublin core adapters do not seem to register during tests
-                'utils/misc.py',
-                'utils/report_tools.py',
-                )
+        "forms/readme.txt",
+        #"downloaddocument.txt", #!+DOWNLOAD_DOCUMENT(mb, May-2012)
+        # dublin core adapters do not seem to register during tests
+        "utils/misc.py",
+        "utils/report_tools.py",
+    )
     docfiles = (
         "bungeni.ui.forms.forms",
     )
@@ -68,7 +67,7 @@ def test_suite():
         test_suites.append(test_suite)
     
     test_suites.append(forms.test_dates.test_suite())
-    return unittest.TestSuite( test_suites )
+    return unittest.TestSuite(test_suites)
 
 
 if __name__ == "__main__":

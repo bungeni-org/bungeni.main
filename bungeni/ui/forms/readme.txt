@@ -159,6 +159,14 @@ Regions and provinces get their primary key with a db sequence:
  >>> session.add(constituency)
  >>> session.flush()
 
+
+    >>> from bungeni.core.testing import refresh_dc_registrations
+    >>> refresh_dc_registrations()
+    >>> from zope.dublincore.interfaces import IDCDescriptiveProperties 
+    >>> IDCDescriptiveProperties(constituency).title
+    u'Nairobi/Westlands'
+
+
 add some users:
     >>> mp_1 = model.User(u"mp_1", 
     ...        first_name=u"a", 

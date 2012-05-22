@@ -1,18 +1,14 @@
-import index
 import zope.interface
 import zope.publisher.interfaces
 import zope.security.management
 import zope.security.testing
-from sqlalchemy import create_engine
-from zope import component
-
-from bungeni.alchemist.interfaces import IDatabaseEngine
-from bungeni import models as model
-from bungeni.ui import descriptor
+    
+import bungeni.ui.descriptor # !+register adapters, dc, ...
 from bungeni.models.testing import setup_db
 
-
+''' !+UNUSED(mr, may-2012)
 def setup_indexer():
+    import index
     store_dir = index.setupStorageDirectory() + "-test"
     # search connection hub
     searcher = index.search.IndexSearch(store_dir)
@@ -20,6 +16,7 @@ def setup_indexer():
     indexer = index.xappy.IndexerConnection(store_dir)
     # field definitions
     index.setupFieldDefinitions(indexer)
+'''
 
 
 def create_principal(id="manager", title="Manager", groups=()):
@@ -44,3 +41,21 @@ def set_interaction(principal):
         zope.security.management.newInteraction(
             create_participation(principal))
     
+def refresh_dc_registrations():
+    """!+DC_REGISTRATIONS(mr, may-2012) for some reason dc adpater registrations
+    are being dropped across test_suites (interference with placelesssetup 
+    setUp() and tearDown() methods!). 
+    
+    As a tmp workaround, a test_suite should call this to reload (and re-reg) 
+    the adapters.
+    
+    Other issues:
+    - why is dc.py in bungeni.core, when it is essentially ui?
+    
+    """
+    import sys
+    assert "bungeni.core.dc" in sys.modules, \
+        "Module [bungeni.core.dc] is not yet loaded, should not be reloading it!"
+    import bungeni.core.dc
+    reload(bungeni.core.dc)
+

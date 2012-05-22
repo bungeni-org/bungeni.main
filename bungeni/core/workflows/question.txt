@@ -21,10 +21,10 @@ Setting up database connection and utilities:
   >>> engine = setup_db()
   >>> from bungeni.alchemist import Session
   >>> session = Session()
-    
+
   >>> from bungeni.core.workflows.testing import setup_security_adapters
   >>> setup_security_adapters()
-  
+
   >>> from bungeni.core.workflows.testing import version_increment_for_state
 
 Principals
@@ -186,7 +186,14 @@ Questions transitions
   >>> wf is IWorkflow(question)
   True
 
-  
+
+    >>> from bungeni.core.testing import refresh_dc_registrations
+    >>> refresh_dc_registrations()
+    >>> from zope.dublincore.interfaces import IDCDescriptiveProperties 
+    >>> IDCDescriptiveProperties(question).description
+    u'Submitted by c cd.'
+
+
 PRINCIPAL: member
 
   >>> set_interaction(member)

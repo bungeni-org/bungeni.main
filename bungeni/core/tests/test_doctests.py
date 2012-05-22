@@ -11,19 +11,18 @@ from zope import component
 from zope.testing import doctest, doctestunit
 from zope.app.testing import placelesssetup
 from zope.configuration import xmlconfig
+#from bungeni.alchemist.security import schema as security
 from bungeni.models.schema import metadata
 from bungeni.core.workflows import adapters
 
 zcml_slug = """
-<configure xmlns="http://namespaces.zope.org/zope"
-    xmlns:db="http://namespaces.objectrealms.net/rdb">
-    
+<configure xmlns="http://namespaces.zope.org/zope">
     <include package="bungeni.core" file="ftesting.zcml" />
-    
 </configure>
 """
 
 def setUp(test):
+    print "\n---------- SETUP ----------", test
     placelesssetup.setUp()
     xmlconfig.string(zcml_slug)
     metadata.create_all(checkfirst=True)
@@ -31,8 +30,10 @@ def setUp(test):
     adapters.register_workflow_adapters()
 
 def tearDown(test):
+    print "\n---------- TEARDOWN ----------", test
     placelesssetup.tearDown()
     metadata.drop_all(checkfirst=True)
+    #security.metadata.drop_all(checkfirst=True)
 
 def test_suite():
     from bungeni.core.app import BungeniApp
@@ -86,6 +87,7 @@ def test_suite():
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS
         )
         test_suites.append(test_suite)
+    
     return unittest.TestSuite(test_suites)
 
 if __name__ == "__main__":
