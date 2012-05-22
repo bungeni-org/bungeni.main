@@ -24,13 +24,6 @@
     
     <!-- The ``bungeni.portal`` package is shared between Bungeni (z3)
         and Plone; part of the configuration is platform-dependent -->
-    
-    <configure zcml:condition="installed bungenicms.plonepas">
-        <browser:resourceDirectory name="portal"
-            directory="static/html/resources"
-            permission="zope2.Public"
-        />
-    </configure>
 
     <configure zcml:condition="not-installed bungenicms.plonepas">
         <browser:resourceDirectory name="portal"
