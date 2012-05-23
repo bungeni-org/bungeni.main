@@ -145,6 +145,6 @@
 	    <directory
 	      source="tinymceconfig"
 	      include="tinymce_config.js"
-	      /> 
+	      />
 	 </resourceLibrary>
 </configure>
