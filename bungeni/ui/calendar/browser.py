@@ -1088,15 +1088,17 @@ class AgendaPreview(BrowserView):
     def __init__(self, context, request):
         super(AgendaPreview, self).__init__(context, request)
 
-    def get_template(self, title="Sitting Agenda"):
+    def get_template(self):
+        wf = IWorkflow(self.context)
         vocabulary = component.queryUtility(
             schema.interfaces.IVocabularyFactory, 
             "bungeni.vocabulary.ReportXHTMLTemplates"
         )
-        preview_template = filter(
-            lambda t: t.title==title, vocabulary.terms
-        )[0]
-        return preview_template.value
+        report_type = "sitting_agenda"
+        if wf.get_state_ids(tagged="publishedminutes"):
+            report_type = "sitting_minutes"
+        term = vocabulary.getTermByFileName(report_type)
+        return term and term.value or vocabulary.terms[0].value
 
     def generate_preview(self):
         sitting = removeSecurityProxy(self.context)

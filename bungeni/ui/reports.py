@@ -251,36 +251,32 @@ def default_reports(sitting, event):
     wf = IWorkflow(sitting)
     if sitting.status in wf.get_state_ids(tagged=["published"]):
         sitting = removeSecurityProxy(sitting)
+        report_type = "sitting_agenda"
+        report_title = _(u"Sitting Agenda")
+        if sitting.status in wf.get_state_ids(tagged=["publishedminutes"]):
+            report_type = "sitting_minutes"
+            report_title =  _(u"Sitting Votes and Proceedings")
         sittings = [ExpandedSitting(sitting)]
         report_context = ReportContext(sittings=sittings)
         report = domain.Report()
+        report.short_title = report_title
         session = Session()
         # !+GROUP_AS_OWNER(mr, apr-2012) we assume for now that the "owner" of
         # the report is the currently logged in user.
         report.owner_id = get_db_user_id()
         report.created_date = datetime.datetime.now()
         report.group_id = sitting.group_id
-        
         # generate using html template in bungeni_custom
         vocabulary = component.queryUtility(
             schema.interfaces.IVocabularyFactory, 
             "bungeni.vocabulary.ReportXHTMLTemplates"
         )
-        preview_template = filter(
-            lambda t: t.title=="Sitting Agenda", vocabulary.terms
-        )[0]
-        doc_template = preview_template.value
+        term = vocabulary.getTermByFileName(report_type)
+        doc_template = term and term.value or vocabulary.terms[0].value
         generator = generators.ReportGeneratorXHTML(doc_template)
+        generator.title = report_title
         generator.context = report_context
         report.language = generator.language
-        
-        if sitting.status in wf.get_state_ids(tagged=["publishedminutes"]):
-            report.short_title = generator.title = _(u"Sitting Votes and "
-                u" Proceedings"
-            )
-        else:
-            report.short_title = generator.title = _(u"Sitting Agenda")
-    
         report.body = generator.generateReport()
         session.add(report)
         session.flush()

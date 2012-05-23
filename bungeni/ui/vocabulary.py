@@ -1173,6 +1173,14 @@ class ReportXHTMLTemplates(object):
                 )
             )
         return vocabulary_terms
+
+    def getTermByFileName(self, file_name):
+        """Get the vocabulary term with the file_name 
+        """
+        for term in self.terms:
+            if os.path.basename(term.value).startswith(file_name):
+                return term
+        return None
     
     def __call__(self, context=None):
         return vocabulary.SimpleVocabulary(self.terms)
