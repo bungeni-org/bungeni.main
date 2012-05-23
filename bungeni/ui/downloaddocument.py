@@ -161,11 +161,9 @@ class DownloadDocument(BrowserView):
             raise DocumentGenerationError(
                 "No template found to generate this document"
             )
-        #!+REPORTS(mrb, OCT-2011) Provide UI to select templates if more than 1
         generator = generators.ReportGeneratorXHTML(doc_template, 
             self.document
         )
-        #return generator.generateReport()
         return generator.generateReport()
 
     def generateDoc(self):

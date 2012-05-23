@@ -2,19 +2,24 @@ Setup
 -----
 Setting up Database Connection and Utilities:
    >>> from zope.component import getMultiAdapter
-   >>> import bungeni.models.domain as model
+   >>> from bungeni.models import domain
    >>> import datetime
    >>> import base64
    >>> import bungeni.models.testing
+   >>> from zope.publisher.browser import TestRequest
+   >>> from bungeni.ui.downloaddocument import BungeniContentODT
+   >>> from bungeni.ui.downloaddocument import BungeniContentPDF
    >>> db = bungeni.models.testing.setup_db()
    >>> from bungeni.alchemist import Session
    >>> download_template_enc = base64.encodestring("agenda.odt")
    >>> download_form_data = dict(template=download_template_enc)
    >>> session = Session()
+   >>> from bungeni.core.testing import refresh_dc_registrations
+   >>> refresh_dc_registrations()
 
 Initialise User
 ---------------
-   >>> mp_1 = model.User(u"mp_1", 
+   >>> mp_1 = domain.User(u"mp_1", 
    ...        first_name=u"a", 
    ...        last_name=u'ab', 
    ...        email=u"mp1@example.com", 
@@ -32,7 +37,7 @@ Create a participation
 Initialise Group
 ----------------
 
-  >>> parliament = model.Parliament(short_name=u"p_1",
+  >>> parliament = domain.Parliament(short_name=u"p_1",
   ...                               start_date=datetime.datetime.now(), 
   ...                               election_date=datetime.datetime.now())
   >>> parliament.language = "en"
@@ -41,7 +46,7 @@ Initialise Group
 
 Initialise a report
 -------------------
-   >>> from bungeni.models import domain
+   >>> from bungeni.models.interfaces import IReport
    >>> report = domain.Report()
    >>> report.body = "<div class='reporttitle'>THIS IS A TEST</div>"
    >>> report.start_date = datetime.datetime.now()
@@ -54,14 +59,13 @@ Initialise a report
    >>> report.group = parliament
    >>> session.add(report)
    >>> session.flush()
-   
+
 Generate ODT
 ------------
-   >>> from bungeni.ui.downloaddocument import ReportODT
    >>> from zope.publisher.browser import TestRequest
    >>> request = TestRequest(form=download_form_data)
    >>> request.setPrincipal(user)
-   >>> reportODT = ReportODT(report, request)
+   >>> reportODT = BungeniContentODT(report, request)
    
 To check if ODT is properly generated, we check if the content type of the
 response is set
@@ -71,14 +75,13 @@ response is set
 
 Generate PDF
 ------------
-   >>> from bungeni.ui.downloaddocument import ReportPDF
    >>> request = TestRequest(form=download_form_data)
    >>> request.setPrincipal(user)
    
 To check if PDF is properly generated, we check if the content type of the
 response is set
-
-   >>> reportPDF = ReportPDF(report, request)
+ 
+   >>> reportPDF = BungeniContentPDF(report, request)
    >>> output = reportPDF()
    >>> request.response.getHeader('Content-type')
    'application/pdf'
@@ -98,7 +101,6 @@ Initialise a Bill
 
 Bill ODT
 --------
-   >>> from bungeni.ui.downloaddocument import BungeniContentODT
    >>> request = TestRequest()
    >>> request.setPrincipal(user)
    >>> documentODT = BungeniContentODT(bill, request)
@@ -108,7 +110,6 @@ Bill ODT
    
 Bill PDF
 --------
-   >>> from bungeni.ui.downloaddocument import BungeniContentPDF
    >>> request = TestRequest()
    >>> request.setPrincipal(user)
    >>> documentPDF = BungeniContentPDF(bill, request)

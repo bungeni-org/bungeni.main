@@ -33,8 +33,7 @@ def tearDown(test):
 def test_suite():
     doctests = (
         "forms/readme.txt",
-        #"downloaddocument.txt", #!+DOWNLOAD_DOCUMENT(mb, May-2012)
-        # dublin core adapters do not seem to register during tests
+        "downloaddocument.txt", #!+DOWNLOAD_DOCUMENT(mb, May-2012)
         "utils/misc.py",
         "utils/report_tools.py",
     )
