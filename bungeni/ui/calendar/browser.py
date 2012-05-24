@@ -1095,7 +1095,7 @@ class AgendaPreview(BrowserView):
             "bungeni.vocabulary.ReportXHTMLTemplates"
         )
         report_type = "sitting_agenda"
-        if wf.get_state_ids(tagged="publishedminutes"):
+        if self.context.status in wf.get_state_ids(tagged=["publishedminutes"]):
             report_type = "sitting_minutes"
         term = vocabulary.getTermByFileName(report_type)
         return term and term.value or vocabulary.terms[0].value
