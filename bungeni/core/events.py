@@ -16,15 +16,12 @@ from zope.security.proxy import removeSecurityProxy
 
 log = __import__("logging").getLogger("bungeni.core.events")
 
-from zope.lifecycleevent import IObjectModifiedEvent, IObjectCreatedEvent, \
-    IObjectRemovedEvent
+from zope.lifecycleevent import IObjectModifiedEvent, IObjectCreatedEvent
 
 from bungeni.alchemist import Session
 from bungeni.models import domain
-from bungeni.models.interfaces import ISignatory, IBungeniGroup, \
+from bungeni.models.interfaces import IBungeniGroup, \
     IBungeniGroupMembership, IBungeniParliamentaryContent
-from bungeni.core.workflows.utils import assign_signatory_role, \
-    get_owner_login_pi
 from bungeni.utils import register
 
 

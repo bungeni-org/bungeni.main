@@ -35,11 +35,12 @@ def user_is_not_context_owner(context):
 def user_is_context_owner(context):
     """Test if current user is the context owner e.g. to check if someone 
     manipulating the context object is other than the owner of the object.
-        
-    A delegate is considered to be an owner of the object
+    
+    Assimption: context is IOwned.
+    
+    A delegate is considered to be an owner of the object.
     """
-    owner = utils.get_owner_pi(context)
-    return model_utils.is_current_or_delegated_user(owner)
+    return model_utils.is_current_or_delegated_user(context.owner)
 
 def context_is_public(context):
     """Is the context public i.e. can Anonymous see it?
@@ -149,10 +150,7 @@ def user_may_edit_context_parent(context):
 # signatory
 
 def user_is_parent_document_owner(context):
-    return (
-        utils.get_owner_login_pi(context) ==
-        utils.get_owner_login_pi(context.head)
-    )
+    return context.owner.login == context.head.owner.login
 
 def signatory_auto_sign(context):
     """Determines whether signature is automatically signed when a signatory

@@ -65,6 +65,7 @@ class TemplateNamespaceItem(object):
     
     @property
     def owner(self):
+        #!+BREAKS_TESTS(mr, may-2012) return context.owner
         return dbutils.get_user(self.context.owner_id)
     
     @property

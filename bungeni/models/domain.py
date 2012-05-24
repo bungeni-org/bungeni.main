@@ -652,7 +652,7 @@ class Doc(Entity):
     dynamic_features = ["audit", "version", "attachment", "event", 
         "signatory", "schedule"]
     interface.implements(
-        interfaces.IBungeniContent,
+        interfaces.IBungeniContent, # IOwned
         interfaces.ITranslatable
     )
     
@@ -1054,7 +1054,7 @@ class Attachment(HeadParentedMixin, Entity):
     """
     dynamic_features = ["audit", "version"]
     interface.implements(
-        interfaces.IAttachment,
+        interfaces.IAttachment, # IOwned
         ore.xapian.interfaces.IIndexable, # !+bungeni_custom
     )
     

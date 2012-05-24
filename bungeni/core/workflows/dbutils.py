@@ -11,6 +11,7 @@ import bungeni.models.schema as schema
 import bungeni.models.interfaces as interfaces
 
 
+#!+BREAKS_TESTS(mr, may-2012) Remove, should probably be using context.owner?
 def get_user(user_id):
     assert user_id, "Must have valid user_id"
     return Session().query(domain.User).get(user_id)

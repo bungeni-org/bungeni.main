@@ -106,6 +106,9 @@ class IOfficeMember(IBungeniGroupMembership):
 class IOwned(interface.Interface):
     """Object supports having an "owner" i.e. an owner:user attribute.
     """
+    def owner():
+        """Get the user instance that is the owner of this item.
+        """
 
 class IBungeniContent(IOwned):
     """Parliamentary content

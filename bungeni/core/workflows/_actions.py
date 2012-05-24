@@ -50,7 +50,7 @@ from bungeni.core.serialize import publish_to_xml
 
 def __pi_create(context):
     #!+utils.setParliamentId(context)
-    utils.assign_owner_role_pi(context)
+    utils.assign_owner_role_to_current_user(context)
 
 def __pi_submit(context):
     if len(context.signatories) > 0:
@@ -69,17 +69,17 @@ def __pi_redraft(context):
     utils.pi_update_signatories(context)
     utils.pi_unset_signatory_roles(context, all=True)
 
-# address
+# sub-item types
 
-def _address_private(context):
-    # !+OWNER_ADDRESS(mr, mov-2010) is this logic correct, also for admin?
-    try:
-        user_login = dbutils.get_user(context.user_id).login
-    except AttributeError:
-        # 'GroupAddress' object has no attribute 'user_id'
-        user_login = utils.get_principal_id()
+_event_draft = __pi_create
+
+def _attachment_draft(context):
+    user_login = utils.get_owner_login(context)
     if user_login:
         utils.assign_owner_role(context, user_login)
+
+_address_private = _attachment_draft
+
 
 ''' !+XML 
 def _address_attached(context):
@@ -207,9 +207,6 @@ def _tableddocument_adjourned(context):
 def _tableddocument_admissible(tabled_document):
     dbutils.set_doc_type_number(tabled_document)
 
-_event_draft = __pi_create
-
-
 # user
 
 def _user_A(context):
@@ -238,7 +235,7 @@ def __make_owner_signatory(context):
 def __pi_submitted_signatories(context):
     __make_owner_signatory(context)
     for signatory in context.signatories.values():
-        owner_login = utils.get_owner_login_pi(signatory)
+        owner_login = signatory.owner.login
         utils.assign_owner_role(signatory, owner_login)
         utils.assign_signatory_role(context, owner_login)
     utils.pi_update_signatories(context)
@@ -255,14 +252,14 @@ def _signatory_awaiting_consent(context):
     Otherwise roles assignment is handled by `__pi_assign_signatory_roles`
     """
     if context.head.status == u"submitted_signatories":
-        owner_login = utils.get_owner_login_pi(context)
+        owner_login = context.owner.login
         utils.assign_owner_role(context, owner_login)
         utils.assign_signatory_role(context.head, owner_login)
 
 def _signatory_rejected(context):
     #!+SIGNATORIES(mb, aug-2011) Unsetting of roles now handled when
     # document is submitted or redrafted. Deprecate this action if not needed.
-    #owner_login = utils.get_owner_login_pi(context)
+    #owner_login = context.owner.login
     #utils.assign_signatory_role(context.head, owner_login, unset=True)
     return
 

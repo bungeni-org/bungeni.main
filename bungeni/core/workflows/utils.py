@@ -62,31 +62,40 @@ def formatted_user_email(user):
 
 # parliamentary item
 
-def get_owner_pi(context):
-    """Get the user who has been previously set as the owner of this item 
-    (must support IOwned i.e. Doc or Attachment).
+def get_owner_login(context):
+    """Get the principal_id of the "owner" of context.
+    
+    If context is IOwned, take its "owner" (user);
+    else, if any defined in PrincipalRoleMap(context), use that (user or group)
+    else use currently logged in principal (user).
     """
-    assert interfaces.IOwned.providedBy(context), \
-        "Not an Owned (parliamentary) Item: %s" % (context)
-    return dbutils.get_user(context.owner_id)
-
-def get_owner_login_pi(context):
-    """Get the login of the user who is the owner of this item.
-    #!+ CLEANOUT, just use get_owner_pi(context).login directly
-    """
-    return get_owner_pi(context).login
+    try:
+        # IOwned e.g. Doc, Attachment, Signatory
+        return context.owner.login
+    except AttributeError:
+        principal_ids = [ pid for pid in 
+            IPrincipalRoleMap(context).getPrincipalsForRole("bungeni.Owner") ]
+        len_pids = len(principal_ids)
+        if len_pids == 1:
+            # use the single Owner role assigned
+            return principal_ids[0]
+        elif not len_pids:
+            # no Owner roles assigned, fallback to currently logged in user
+            return get_principal_id()
+        # multiple Owner roles, force exception
+        assert not len_pids > 1, "Ambiguous, multiple Owner roles assigned."
 
 # !+PrincipalRoleMapDynamic(mr, may-2012) infer role from context data
 def assign_owner_role(context, login):
     # throws IntegrityError when login is None
     IPrincipalRoleMap(context).assignRoleToPrincipal("bungeni.Owner", login)
 
-def assign_owner_role_pi(context):
-    """Assign bungeni.Owner role to the Doc.
+def assign_owner_role_to_current_user(context):
+    """Assign bungeni.Owner role on context to the currently logged in user.
     """
     current_user_login = get_principal_id()
-    owner_login = get_owner_login_pi(context)
-    log.debug("assign_owner_role_pi [%s] user:%s owner:%s" % (
+    owner_login = context.owner.login
+    log.debug("assign_owner_role_to_current_user [%s] user:%s owner:%s" % (
         context, current_user_login, owner_login))
     if current_user_login:
         assign_owner_role(context, current_user_login)
@@ -331,7 +340,7 @@ def pi_unset_signatory_roles(context, all=False):
     """
     if all:
         for signatory in context.signatories.values():
-            owner_login = get_owner_login_pi(signatory)
+            owner_login = signatory.owner.login
             assign_signatory_role(context, owner_login, unset=True)
     else:
         for signatory in context.signatories.values():
@@ -340,7 +349,7 @@ def pi_unset_signatory_roles(context, all=False):
                 if (wfc.state_controller.get_status() 
                         in SIGNATORIES_REJECT_STATES
                     ):
-                    owner_login = get_owner_login_pi(signatory)
+                    owner_login = signatory.owner.login
                     log.debug("Removing signatory role for [%s] on "
                         "document: [%s]", 
                         owner_login, signatory.head
