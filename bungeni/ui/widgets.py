@@ -267,8 +267,8 @@ class HTMLDisplay(zope.formlib.widgets.UnicodeDisplayWidget):
         return unicode(value)
 
 class RichTextEditor(TextAreaWidget):
-
     def __call__(self):
+        self.cssClass = "tinymce"
         # require tiny-mce
         need("tiny-mce")
         need("tiny-mce-config")

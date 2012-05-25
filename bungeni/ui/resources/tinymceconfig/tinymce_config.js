@@ -1,5 +1,6 @@
 tinyMCE.init({
-        mode : "textareas",
+        mode : "specific_textareas",
+        editor_selector : "tinymce",
         theme : "advanced",
         theme_advanced_layout_manager : "SimpleLayout",
         plugins : "autolink,lists,spellchecker,pagebreak,style,layer,table,advhr,advimage,advlink,inlinepopups,insertdatetime,preview,searchreplace,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template",
