@@ -19,6 +19,7 @@ import domain, schema, delegation
 
 # !+ move "contextual" utils to ui.utils.contextual
 
+# !+rename get_request_principal(), get_request_principal_id()
 def get_principal():
     """ () -> either(zope.security.interfaces.IGroupAwarePrincipal, None)
     """
@@ -35,11 +36,12 @@ def get_principal_id():
         return principal.id
 
 
+# !+rename get_request_user(), get_request_user_id()
 def get_db_user(context=None):
     """ get the logged in user 
     Note: context is not used, but accommodated for as a dummy optional input 
     parameter to allow usage of this utility in e.g.
-    bungeni.core.apps.py: container_getter(get_db_user, 'questions')
+    bungeni.core.app: container_getter(get_db_user, "questions")
     """
     principal_id = get_principal_id()
     session = Session()
@@ -66,6 +68,32 @@ def is_current_or_delegated_user(user):
         for d in delegation.get_user_delegations(current_user.user_id):
             if d == user:
                 return True
+
+from zope.securitypolicy.interfaces import IPrincipalRoleMap
+def get_prm_owner_principal_id(context):
+    """Get the principal_id, if any, of the bungeni.Owner for context.
+    Raise ValueError if multiple, return None if none.
+    """
+    principal_ids = [ pid for (pid, setting) in 
+        IPrincipalRoleMap(context).getPrincipalsForRole("bungeni.Owner") 
+        if setting ]
+    len_pids = len(principal_ids)
+    if len_pids > 1:
+        # multiple Owner roles, force exception
+        raise ValueError("Ambiguous, multiple Owner roles assigned.")
+    elif len_pids == 1:
+        return principal_ids[0]
+
+def get_user_for_principal_id(principal_id):
+    """Get the User for this principal_id.
+    """
+    # !+group_principal(mr, may-2012) and when principal_id is for a group?
+    query = Session().query(domain.User).filter(domain.User.login == principal_id)
+    try:
+        return query.one()
+    except rdb.exc.InvalidRequestError:
+        # !+ sqlalchemy.orm.exc NoResultFound, MultipleResultsFound
+        return None
 
 
 # contextual

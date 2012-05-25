@@ -1058,15 +1058,12 @@ class Attachment(HeadParentedMixin, Entity):
         ore.xapian.interfaces.IIndexable, # !+bungeni_custom
     )
     
-    # the owner of the "owning" item
-    @property
-    def owner_id(self):
-        return self.head.owner_id
-    
-    @property
+    @property # !+OWNERSHIP
     def owner(self):
-        return self.head.owner
-        
+        from bungeni.models import utils # !+models should not depend on utils
+        principal_id = utils.get_prm_owner_principal_id(self)
+        return utils.get_user_for_principal_id(principal_id)
+
 class AttachmentAudit(Audit):
     """An audit record for an attachment.
     """
@@ -1093,12 +1090,8 @@ class Signatory(Entity):
     """
     dynamic_features = ["audit", "version", "attachment"]
     interface.implements(
-        interfaces.IBungeniContent,
+        interfaces.IBungeniContent, # IOwned
     )
-    
-    @property
-    def owner_id(self):
-        return self.user_id
     
     @property
     def owner(self):

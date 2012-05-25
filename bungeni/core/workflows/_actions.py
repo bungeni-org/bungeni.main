@@ -48,15 +48,17 @@ from bungeni.core.serialize import publish_to_xml
 
 # parliamentary item, utils
 
-def __pi_create(context):
-    #!+utils.setParliamentId(context)
-    utils.assign_owner_role_to_current_user(context)
+def __create(context):
+    # !+utils.setParliamentId(context)
+    # !+OWNERSHIP(mr, may-2012) should not this be part of the actual 
+    # *creation* logic of the item?
+    utils.assign_role_owner_to_login(context)
 
 def __pi_submit(context):
     if len(context.signatories) > 0:
         __make_owner_signatory(context)
-    utils.pi_update_signatories(context)
-    utils.pi_unset_signatory_roles(context)
+    utils.update_signatories(context)
+    utils.unset_roles_signatory(context)
 
 # !+NUMBER_GENERATION(ah, nov-2011) - used for parliamentary item transitions
 # to recieved state
@@ -66,19 +68,14 @@ def __pi_received(context):
 def __pi_redraft(context):
     """Signatory operations on redraft - Unsetting signatures e.t.c
     """
-    utils.pi_update_signatories(context)
-    utils.pi_unset_signatory_roles(context, all=True)
+    utils.update_signatories(context)
+    utils.unset_roles_signatory(context, all=True)
 
 # sub-item types
 
-_event_draft = __pi_create
-
-def _attachment_draft(context):
-    user_login = utils.get_owner_login(context)
-    if user_login:
-        utils.assign_owner_role(context, user_login)
-
-_address_private = _attachment_draft
+_event_draft = __create
+_attachment_draft = __create
+_address_private = __create
 
 
 ''' !+XML 
@@ -97,14 +94,14 @@ _tableddocument_received = __pi_received
 
 # agendaitem
 
-_agendaitem_draft = _agendaitem_working_draft = __pi_create
+_agendaitem_draft = _agendaitem_working_draft = __create
 _agendaitem_submitted = __pi_submit
 _agendaitem_redraft = __pi_redraft
 
 
 # bill
 
-_bill_draft = _bill_working_draft = __pi_create
+_bill_draft = _bill_working_draft = __create
 _bill_redraft = __pi_redraft
 _bill_submitted = __pi_submit
 
@@ -112,9 +109,7 @@ _bill_submitted = __pi_submit
 # group
 
 def _group_draft(context):
-    user_login = utils.get_principal_id()
-    if user_login:
-        utils.assign_owner_role(context, user_login)
+    utils.assign_role_owner_to_login(context)
     def _deactivate(context):
         utils.unset_group_local_role(context)
     _deactivate(context)
@@ -159,7 +154,7 @@ def _sitting_published_agenda(context):
 
 # motion
 
-_motion_draft = _motion_working_draft = __pi_create
+_motion_draft = _motion_working_draft = __create
 _motion_submitted = __pi_submit
 _motion_redraft = __pi_redraft
 
@@ -170,8 +165,8 @@ def _motion_admissible(motion):
 # question
 
 def __question_create(context):
-    __pi_create(context)
-    utils.assign_question_minister_role(context)
+    __create(context)
+    utils.assign_role_minister_question(context)
     
 _question_draft = _question_working_draft = __question_create
 _question_submitted = __pi_submit
@@ -197,7 +192,7 @@ def _question_admissible(question):
 
 # tableddocument
 
-_tableddocument_draft = _tableddocument_working_draft = __pi_create
+_tableddocument_draft = _tableddocument_working_draft = __create
 _tableddocument_submitted = __pi_submit
 _tableddocument_redraft = __pi_redraft
 
@@ -210,7 +205,7 @@ def _tableddocument_admissible(tabled_document):
 # user
 
 def _user_A(context):
-    utils.assign_owner_role(context, context.login)
+    utils.assign_role("bungeni.Owner", context.login, context)
     context.date_of_death = None
 
 #
@@ -219,7 +214,7 @@ def _user_A(context):
 # signatories
 
 def __make_owner_signatory(context):
-    """Make document owner a default signatory when document is submited to
+    """Make document owner a default signatory when document is submitted to
     signatories for consent.
     """
     signatories = context.signatories
@@ -236,9 +231,9 @@ def __pi_submitted_signatories(context):
     __make_owner_signatory(context)
     for signatory in context.signatories.values():
         owner_login = signatory.owner.login
-        utils.assign_owner_role(signatory, owner_login)
-        utils.assign_signatory_role(context, owner_login)
-    utils.pi_update_signatories(context)
+        utils.assign_role("bungeni.Owner", owner_login, signatory)
+        utils.assign_role("bungeni.Signatory", owner_login, signatory)
+    utils.update_signatories(context)
 
 
 _question_submitted_signatories = __pi_submitted_signatories
@@ -249,29 +244,19 @@ _tableddocument_submitted_signatories = __pi_submitted_signatories
 
 def _signatory_awaiting_consent(context):
     """Done when parent object is already in submitted_signatories stage.
-    Otherwise roles assignment is handled by `__pi_assign_signatory_roles`
     """
     if context.head.status == u"submitted_signatories":
         owner_login = context.owner.login
-        utils.assign_owner_role(context, owner_login)
-        utils.assign_signatory_role(context.head, owner_login)
+        utils.assign_role("bungeni.Owner", owner_login, context)
+        utils.assign_role("bungeni.Signatory", owner_login, context)
 
 def _signatory_rejected(context):
     #!+SIGNATORIES(mb, aug-2011) Unsetting of roles now handled when
     # document is submitted or redrafted. Deprecate this action if not needed.
     #owner_login = context.owner.login
-    #utils.assign_signatory_role(context.head, owner_login, unset=True)
+    #utils.unset_role("bungeni.Signatory", owner_login, signatory)
     return
 
 _signatory_withdrawn = _signatory_rejected
-
-# events
-def _event_private(context):
-    """
-    Assigns owner role to event creator - Limit viewing to owner
-    """
-    login = utils.get_principal_id()
-    if login is not None:
-        utils.assign_owner_role(context, login)
 
 

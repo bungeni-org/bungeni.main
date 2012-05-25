@@ -20,7 +20,7 @@ from bungeni.core.workflow.interfaces import (NoTransitionAvailableError,
 
 import bungeni.models.interfaces as interfaces
 #import bungeni.models.domain as domain
-import bungeni.models.utils
+from bungeni.models.utils import get_principal_id
 import bungeni.core.version
 #import bungeni.core.globalsettings as prefs
 from bungeni.ui.utils import debug
@@ -55,52 +55,37 @@ def get_parliament(context):
 '''
 
 
-get_principal_id = bungeni.models.utils.get_principal_id
-
 def formatted_user_email(user):
     return '"%s %s" <%s>' % (user.first_name, user.last_name, user.email)
 
 # parliamentary item
 
-def get_owner_login(context):
-    """Get the principal_id of the "owner" of context.
-    
-    If context is IOwned, take its "owner" (user);
-    else, if any defined in PrincipalRoleMap(context), use that (user or group)
-    else use currently logged in principal (user).
+def assign_role(role_id, principal_id, context):
+    """Add or activate implied role on this context, for implied principal.
+    !+check if already defined and active, inactive?
+    !+PrincipalRoleMapDynamic(mr, may-2012) infer role from context data
     """
-    try:
-        # IOwned e.g. Doc, Attachment, Signatory
-        return context.owner.login
-    except AttributeError:
-        principal_ids = [ pid for pid in 
-            IPrincipalRoleMap(context).getPrincipalsForRole("bungeni.Owner") ]
-        len_pids = len(principal_ids)
-        if len_pids == 1:
-            # use the single Owner role assigned
-            return principal_ids[0]
-        elif not len_pids:
-            # no Owner roles assigned, fallback to currently logged in user
-            return get_principal_id()
-        # multiple Owner roles, force exception
-        assert not len_pids > 1, "Ambiguous, multiple Owner roles assigned."
+    log.debug("Assigning role [%s] to principal [%s] on [%s]", 
+        role_id, principal_id, context)
+    # throws IntegrityError when principal_id is None
+    IPrincipalRoleMap(context).assignRoleToPrincipal(role_id, principal_id)
+def unset_role(role_id, principal_id, context):
+    log.debug("Unsetting role [%s] for principal [%s] on [%s]", 
+        role_id, principal_id, context)
+    IPrincipalRoleMap(context).unsetRoleForPrincipal(role_id, principal_id)
 
-# !+PrincipalRoleMapDynamic(mr, may-2012) infer role from context data
-def assign_owner_role(context, login):
-    # throws IntegrityError when login is None
-    IPrincipalRoleMap(context).assignRoleToPrincipal("bungeni.Owner", login)
-
-def assign_owner_role_to_current_user(context):
+def assign_role_owner_to_login(context):
     """Assign bungeni.Owner role on context to the currently logged in user.
     """
     current_user_login = get_principal_id()
-    owner_login = context.owner.login
-    log.debug("assign_owner_role_to_current_user [%s] user:%s owner:%s" % (
-        context, current_user_login, owner_login))
-    if current_user_login:
-        assign_owner_role(context, current_user_login)
-    if owner_login and (owner_login != current_user_login):
-        assign_owner_role(context, owner_login)
+    log.debug("assign_role_owner_to_login [%s] user:%s" % (
+        context, current_user_login))
+    assign_role("bungeni.Owner", current_user_login, context)
+    # "owner" from direct user/owner field !+why is this needed here?
+    # !+ owner may still be None for types with no such direct field
+    #owner = context.owner
+    #if owner and (owner.login != current_user_login):
+    #    assign_role("bungeni.Owner", owner.login, context)
 
 def create_version(context):
     """Create a new version of an object and return it.
@@ -174,14 +159,13 @@ is_pi_scheduled = dbutils.is_pi_scheduled
 
 # question
 # !+PrincipalRoleMapDynamic(mr, may-2012) infer role from context data
-def assign_question_minister_role(context):
+def assign_role_minister_question(context):
     assert interfaces.IQuestion.providedBy(context), \
         "Not a Question: %s" % (context)
     if context.ministry is not None:
         ministry_login_id = context.ministry.group_principal_id
         if ministry_login_id:
-            IPrincipalRoleMap(context).assignRoleToPrincipal("bungeni.Minister", 
-                ministry_login_id)
+            assign_role("bungeni.Minister", ministry_login_id, context)
 
 unschedule_doc = dbutils.unschedule_doc
 
@@ -314,47 +298,32 @@ def check_agenda_finalized(context):
     check_list = map(check_finalized, context.items.values())
     return  (False not in check_list)
 
-#signatories
-def assign_signatory_role(context, owner_login, unset=False):
-    log.debug("assign signatory role [%s] user: [%s]",
-        context, owner_login
-    )
-    if unset:
-        IPrincipalRoleMap(context).unsetRoleForPrincipal(
-            u"bungeni.Signatory", owner_login
-        )
-    else:
-        IPrincipalRoleMap(context).assignRoleToPrincipal(u"bungeni.Signatory", 
-            owner_login
-        )
+# signatories
 
-def pi_update_signatories(context):
-    """fire automatic transitions on submission of document"""
+def update_signatories(context):
+    """Fire automatic transitions on submission of parliamentary document.
+    """
     for signatory in context.signatories.values():
         wfc = IWorkflowController(signatory, None)
         if wfc is not None:
             wfc.fireAutomatic()
 
-def pi_unset_signatory_roles(context, all=False):
-    """Unset signatory roles for members who have rejected document
+def unset_roles_signatory(context, all=False):
+    """Unset signatory roles for members who have rejected document.
     """
     if all:
         for signatory in context.signatories.values():
             owner_login = signatory.owner.login
-            assign_signatory_role(context, owner_login, unset=True)
+            unset_role("bungeni.Signatory", owner_login, context)
     else:
         for signatory in context.signatories.values():
             wfc = IWorkflowController(signatory, None)
-            if wfc is not None:
-                if (wfc.state_controller.get_status() 
-                        in SIGNATORIES_REJECT_STATES
-                    ):
-                    owner_login = signatory.owner.login
-                    log.debug("Removing signatory role for [%s] on "
-                        "document: [%s]", 
-                        owner_login, signatory.head
-                    )
-                    assign_signatory_role(context, owner_login, unset=True)
-            else:
+            if wfc is None:
                 log.debug("Unable to get workflow controller for : %s", signatory)
+                continue
+            if wfc.state_controller.get_status() in SIGNATORIES_REJECT_STATES:
+                owner_login = signatory.owner.login
+                log.debug("Removing signatory role for [%s] on document: [%s]", 
+                    owner_login, signatory.head)
+                unset_role("bungeni.Signatory", owner_login, context)
 
