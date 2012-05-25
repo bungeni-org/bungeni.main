@@ -794,7 +794,7 @@ dd#items-to-be-scheduled-dl .formPanel {
     height: 0;
     clear: both;
 }*/
-.formPanel .field,
+.section-bungeni-workspace .formPanel .field,
 #version-history .diff {
     margin: 0 auto !important;
     padding: 0;
