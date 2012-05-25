@@ -427,7 +427,7 @@
 
    <browser:page
       name="feed.rss"
-    for="bungeni.models.interfaces.IBungeniContent"
+    for="bungeni.models.interfaces.IFeatureAudit"
     class=".rss.TimelineRSSView"
     permission="zope.View"
     layer=".interfaces.IRSSRepresentationLayer"

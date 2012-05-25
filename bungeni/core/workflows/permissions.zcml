@@ -37,20 +37,15 @@ See the Bungeni Source Code Style Guide for further details.
 
 
 <!-- attachment -->
-
-<permission id="bungeni.attachment.wf.draft.attached" title="Publish" />
-<grant permission="bungeni.attachment.wf.draft.attached" role="bungeni.Owner" />
-
-<permission id="bungeni.attachment.wf.draft.internal" title="Publish Internal" />
-<grant permission="bungeni.attachment.wf.draft.internal" role="bungeni.Owner" />
-
-<permission id="bungeni.attachment.wf.internal.attached" title="Re-publish" />
-<grant permission="bungeni.attachment.wf.internal.attached" role="bungeni.Clerk" />
-<grant permission="bungeni.attachment.wf.internal.attached" role="bungeni.Owner" />
+<grant permission="bungeni.attachment.Add" role="bungeni.Owner" />
 
 <permission id="bungeni.attachment.wf.attached.internal" title="Publish Internal" />
 <grant permission="bungeni.attachment.wf.attached.internal" role="bungeni.Clerk" />
 <grant permission="bungeni.attachment.wf.attached.internal" role="bungeni.Owner" />
+
+<permission id="bungeni.attachment.wf.internal.attached" title="Re-publish" />
+<grant permission="bungeni.attachment.wf.internal.attached" role="bungeni.Clerk" />
+<grant permission="bungeni.attachment.wf.internal.attached" role="bungeni.Owner" />
 
 <permission id="bungeni.attachment.wf.attached.inactive" title="Deactivate" />
 <grant permission="bungeni.attachment.wf.attached.inactive" role="bungeni.Clerk" />

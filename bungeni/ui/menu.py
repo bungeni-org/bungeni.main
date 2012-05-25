@@ -29,7 +29,9 @@ from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowController
 
 from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.models.utils import get_db_user_id
-from bungeni.models.interfaces import IVersion, IScheduleText, IBungeniContent
+from bungeni.models.interfaces import (IVersion, IScheduleText, IDoc, 
+    IFeatureAudit
+)
 
 from bungeni.core.translation import (get_language, get_all_languages, 
     get_available_translations, translate_i18n
@@ -445,13 +447,6 @@ class DownloadDocumentSubMenuItem(BrowserSubMenuItem):
     order = 8
     
     def __new__(cls, context, request):
-        """if IAlchemistContainer.providedBy(context):
-            unproxied = proxy.removeSecurityProxy(context)
-            if not IBungeniContent.implementedBy(unproxied.domain_model):
-                return
-        elif not IBungeniContent.providedBy(context):
-            return
-        """
         return object.__new__(cls, context, request)
 
     @property
@@ -474,7 +469,9 @@ i18n_odt = _(u"Download ODT")
 i18n_akomantoso = _(u"Akoma Ntoso")
 i18n_rss = _(u"RSS")
 document_types = ["pdf", "odt"]
-xml_types = ["akomantoso", "rss"]
+TYPE_RSS = "rss"
+TYPE_AKOMANTOSO = "akomantoso"
+xml_types = [TYPE_RSS, TYPE_AKOMANTOSO]
 
 class DownloadDocumentMenu(BrowserMenu):
 
@@ -506,7 +503,7 @@ class DownloadDocumentMenu(BrowserMenu):
     def getMenuItems(self, context, request):
         results = []
         _url = url.absoluteURL(context, request)
-        if IBungeniContent.providedBy(context):
+        if IDoc.providedBy(context):
             doc_templates = self.documentTemplates()
             for doc_type in document_types:
                 if doc_templates:
@@ -540,12 +537,22 @@ class DownloadDocumentMenu(BrowserMenu):
                     ))
         if interfaces.IRSSRepresentationLayer.providedBy(request):
             for doc_type in xml_types:
-                if doc_type == "akomantoso":
+                if doc_type == TYPE_AKOMANTOSO:
                     if IAlchemistContainer.providedBy(context):
-                        if not IBungeniContent.implementedBy(
+                        if not IDoc.implementedBy(
                             context.domain_model
                         ):
                             continue
+                elif doc_type == TYPE_RSS:
+                    # rss for content types only availble for auditables
+                    if (IDoc.providedBy(context) and not 
+                        IFeatureAudit.providedBy(context)
+                    ):
+                        continue
+                    elif (IAlchemistContainer.providedBy(context) and not 
+                        IFeatureAudit.implementedBy(context.domain_model)
+                    ):
+                        continue
                 results.append(dict(
                         title = globals()["i18n_%s" % doc_type],
                         description="",

@@ -14,8 +14,9 @@ from zope.security import checkPermission
 from bungeni.core.interfaces import IRSSValues
 from bungeni.core.workflows.adapters import get_workflow
 from bungeni.models import domain
-from bungeni.models.interfaces import IBungeniParliamentaryContent, \
+from bungeni.models.interfaces import (IFeatureAudit, \
     IAlchemistContainer
+)
 from bungeni.utils import register
 
 #import bungeni.ui.versions # !+REGISTER
@@ -66,7 +67,7 @@ class RSSValues(object):
                  and x.status in public_wfstates ]
 
 
-@register.adapter(adapts=(IBungeniParliamentaryContent,), provides=IRSSValues)
+@register.adapter(adapts=(IFeatureAudit,), provides=IRSSValues)
 class TimelineRSSValues(RSSValues):
     """Adapter for getting values to form rss feed out of object's changes.
     """
