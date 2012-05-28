@@ -22,7 +22,8 @@ from bungeni.alchemist.model import ModelDescriptor, Field, show, hide, \
     queryModelInterface
 
 from bungeni.models import domain
-from bungeni.models.utils import get_db_user_id
+from bungeni.models.interfaces import IOwned
+from bungeni.models.utils import get_db_user
 
 # We import bungeni.core.workflows.adapters to ensure that the "states"
 # attribute on each "workflow" module is setup... this is to avoid an error
@@ -227,16 +228,14 @@ def user_party_column(name, title, default="-"):
     return column.GetterColumn(title, getter)
 
 
-def simple_view_column(name, title, default=_(u"view"), 
-        owner_msg=_(u"view")
-    ):
-    """Replace primary key with meaningful title - tests for owner"""
+def simple_view_column(name, title, default=_(u"view"), owner_msg=None):
+    """Replace primary key with meaningful title - tests for owner.
+    """
     def getter(item, formatter):
-        render_value = default
-        if hasattr(item, "owner_id"):
-            if item.owner_id == get_db_user_id():
-                render_value = owner_msg
-        return render_value
+        if IOwned.providedBy(item):
+            if item.owner == get_db_user():
+                return owner_msg or default
+        return default
     return column.GetterColumn(title, getter)
 
 
