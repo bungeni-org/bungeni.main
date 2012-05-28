@@ -128,7 +128,6 @@ def _group_dissolved(context):
     utils.unset_group_local_role(context)
 
 
-
 # committee
 
 _committee_draft = _group_draft
@@ -232,31 +231,13 @@ def __pi_submitted_signatories(context):
     for signatory in context.signatories.values():
         owner_login = signatory.owner.login
         utils.assign_role("bungeni.Owner", owner_login, signatory)
-        utils.assign_role("bungeni.Signatory", owner_login, signatory)
+        utils.assign_role("bungeni.Signatory", owner_login, signatory.head)
     utils.update_signatories(context)
-
 
 _question_submitted_signatories = __pi_submitted_signatories
 _motion_submitted_signatories = __pi_submitted_signatories
 _bill_submitted_signatories = __pi_submitted_signatories
 _agendaitem_submitted_signatories = __pi_submitted_signatories
 _tableddocument_submitted_signatories = __pi_submitted_signatories
-
-def _signatory_awaiting_consent(context):
-    """Done when parent object is already in submitted_signatories stage.
-    """
-    if context.head.status == u"submitted_signatories":
-        owner_login = context.owner.login
-        utils.assign_role("bungeni.Owner", owner_login, context)
-        utils.assign_role("bungeni.Signatory", owner_login, context)
-
-def _signatory_rejected(context):
-    #!+SIGNATORIES(mb, aug-2011) Unsetting of roles now handled when
-    # document is submitted or redrafted. Deprecate this action if not needed.
-    #owner_login = context.owner.login
-    #utils.unset_role("bungeni.Signatory", owner_login, signatory)
-    return
-
-_signatory_withdrawn = _signatory_rejected
 
 
