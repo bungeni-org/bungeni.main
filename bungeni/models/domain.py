@@ -1060,7 +1060,7 @@ class Attachment(HeadParentedMixin, Entity):
     
     @property # !+OWNERSHIP
     def owner(self):
-        from bungeni.models import utils # !+models should not depend on utils
+        from bungeni.models import utils # !+domain should not depend on utils
         principal_id = utils.get_prm_owner_principal_id(self)
         return utils.get_user_for_principal_id(principal_id)
 

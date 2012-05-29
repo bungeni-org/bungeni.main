@@ -202,7 +202,7 @@ class IEditorialNote(interface.Interface):
     """Marker interface for editorial notes in a sitting's agenda"""
 
 class IScheduleText(interface.Interface):
-    """Marker interface for text records in and agenda.
+    """Marker interface for text records e.g. in agenda.
     This covers `IHeading` and `IEditorialNote'` at this point.
     """
 

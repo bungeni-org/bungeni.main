@@ -33,7 +33,6 @@ from bungeni.utils.capi import capi, bungeni_custom_errors
 from ConfigParser import ConfigParser, NoOptionError
 import os
 
-SIGNATORIES_REJECT_STATES = [u"rejected", u"withdrawn"]
 
 ''' !+UNUSED(mr, mar-2011)
 def get_parliament(context):
@@ -316,6 +315,7 @@ def unset_roles_signatory(context, all=False):
             owner_login = signatory.owner.login
             unset_role("bungeni.Signatory", owner_login, context)
     else:
+        SIGNATORIES_REJECT_STATES = [u"rejected", u"withdrawn"] # !+bungeni_custom
         for signatory in context.signatories.values():
             wfc = IWorkflowController(signatory, None)
             if wfc is None:

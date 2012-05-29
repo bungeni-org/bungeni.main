@@ -53,13 +53,13 @@ $end{action_menus}
 
 
 $begin{menu_item}
-    $if{ not submenu or len(submenu) or state }
+    $if{ submenu or state }
         $if{ show_children } 
         <dl class="actionMenu" id="${ menu_item['extra']['id'] }">
             <dt class="actionMenuHeader label-${ state_class }">
         $fi
         $if{ menu_item["action"] } 
-                <a id="${ showchildren and link_id or '' 
+                <a id="${ show_children and link_id or '' 
                    }" href="${ menu_item['url'] or menu_item['action'] 
                    }"$if{ menu_item['description'] 
                        } title="${ i18n(menu_item['description']) 
