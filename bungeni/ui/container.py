@@ -29,6 +29,7 @@ from bungeni.ui import cookies
 from bungeni.ui import browser
 from bungeni.utils import register
 from bungeni.utils.capi import capi
+from bungeni.utils.naming import polymorphic_identity
 
 
 def query_iterator(query, parent, permission=None):
@@ -162,6 +163,7 @@ class ContainerJSONBrowserView(BrowserPage):
         _sort_dir_funcs = dict(asc=sql.asc, desc=sql.desc)
         self.sort_dir_func = _sort_dir_funcs.get(self.sort_dir, sql.desc)
 
+
 @register.view(IAlchemistContainer, name="jsontableheaders")
 class ContainerJSONTableHeaders(ContainerJSONBrowserView):
     def __call__(self):
@@ -256,14 +258,14 @@ class ContainerJSONListing(ContainerJSONBrowserView):
             md_field = self.domain_annotation.get(sort_on) #model descriptor field
             if md_field:
                 sort_on_keys.append(sort_on)
-
+        
         # second, process model defaults
         if self.defaults_sort_on:
             for dso in self.defaults_sort_on:
                 if dso not in sort_on_keys:
                     sort_on_keys.append(dso)
         return sort_on_keys
-
+    
     def get_offsets(self, 
             default_start=0,
             default_limit=capi.default_number_of_listing_items
@@ -408,31 +410,45 @@ class ContainerJSONListing(ContainerJSONBrowserView):
     layer=ufaces.IBusinessSectionLayer, name="jsonlisting")
 class PublicStatesContainerJSONListing(ContainerJSONListing):
     """JSON Listing based on public workflow states.
-
+    
     Given public states only, for viewing no permission checking is needed.
+    
     Given results are the same (for a given set of input parameters) for all
     users, they are cached.
-
+    
     Used for listings for all roles/users in the UI layers:
     IBusinessSectionLayer, IMembersSectionLayer, IArchiveSectionLayer
     """
+    # !+PUBLIC_CONTAINER_VIEW(mr, may-2102) having permission=None is a
+    # somewhat dangerous optimization of avoiding to call checkPermission on
+    # each item (under the ssumption that the state-based logic will never
+    # be faulty. Should rellay be left as "ziope.View". 
+    # In any case, this view class will go away.
     permission = None
     
     def query_add_filters(self, query, *filter_strings):
         """Add filtering on public workflow states
         """
-        try:
-            workflow = get_workflow(self.context.domain_model.__name__.lower())
-            public_wfstates = workflow.get_state_ids(tagged=["public"], 
-                restrict=False)
-            if public_wfstates:
-                query = query.filter(
-                    self.domain_model.status.in_(public_wfstates))
+        ''' !+PUBLIC_CONTAINER_VIEW(mr, may-2102) any errors from following 
+        should NOT be silenced
+        - all public listings are on item types that MUST be workflowed.
+        - "public" listings will anyway go away.
+        '''
+        #try:
+        type_key = polymorphic_identity(self.context.domain_model)
+        workflow = capi.get_type_info(type_key).workflow
+        public_wfstates = workflow.get_state_ids(tagged=["public"], 
+            restrict=False)
+        if public_wfstates:
+            query = query.filter(
+                self.domain_model.status.in_(public_wfstates))
+        ''' !+PUBLIC_CONTAINER_VIEW
         except KeyError, e:
             # not workflowed...
             log.warn("PublicStatesContainerJSONListing / get_workflow "
                 "for %s ERROR: %s: %s:" % (
                     self.context.domain_model, e.__class__.__name__, e))
+        '''
         return super(PublicStatesContainerJSONListing, self
             ).query_add_filters(query, *filter_strings)
     
