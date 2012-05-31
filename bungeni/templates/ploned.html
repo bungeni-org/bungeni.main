@@ -43,7 +43,7 @@ $begin{action_menus} #[ plond/ui/templates/contentmenu.pt ]#
             state_class=menu_item["extra"].get("class", ""),
             state_title=menu_item["extra"].get("stateTitle", None),
             show_children=not menu_item["extra"].get("hideChildren", False),
-            link_id=menu_item["extra"].get("id", "")
+            link_id=menu_item["extra"]["id"]
         }
     </li>
         $rof
@@ -61,7 +61,7 @@ $begin{menu_item}
             <dt class="actionMenuHeader label-${ state_class }">
         $fi
         $if{ menu_item["action"] } 
-                <a id="${ show_children and link_id or '' 
+                <a id="${ link_id or ''
                    }" href="${ menu_item['url'] or menu_item['action'] 
                    }"$if{ menu_item['description'] 
                        } title="${ i18n(menu_item['description']) 
