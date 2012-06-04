@@ -1,4 +1,4 @@
-<dl class="portlet portletNavigationTree" i18n:domain="bungeni">
+<dl class="workspace portlet portletNavigationTree" i18n:domain="bungeni">
   <dt class="portletHeader">
     <span class="portletTopLeft"></span>
     <a class="tile" i18n:translate="">documents</a>
@@ -9,14 +9,17 @@
         <tal:loop tal:repeat="tab view/tabs">
             <li class="navTreeItem visualNoMarker" 
                 tal:condition="not:tab/active">
-                <a tal:attributes="href tab/url" tal:content="tab/title"
-                i18n:translate=""/>
+              <a tal:attributes="href tab/url">
+                <span tal:replace="tab/title" i18n:translate=""/>
+                (<span tal:replace="tab/count"/>)
+              </a>
             </li>
             <li class="navTreeItem visualNoMarker navTreeCurrentItem" 
                 tal:condition="tab/active">
-                <a tal:attributes="href tab/url" tal:content="tab/title"
-                    i18n:translate=""
-                />
+              <a tal:attributes="href tab/url">
+                <span tal:replace="tab/title" i18n:translate=""/>
+                <span id="count"></span>
+              </a>            
             </li>
         </tal:loop>
     </ul>

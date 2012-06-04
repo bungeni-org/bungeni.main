@@ -30,6 +30,10 @@
         return this;
     };
 
+    $.fn.bungeniWorkspaceContainerCount  = function(){
+        
+    };
+
     // when selecting an option on the format "Label
     // (start_time-end_time)", listen to the ``change`` event and
     // update corresponding start- and end time options
@@ -428,10 +432,10 @@
             }
         };
         var fnRequestSent = function (request, callback, tId, caller) {
-                jQuery.blockUI({
+            /* jQuery.blockUI({
                     message: jQuery("#processing_indicatron"),
                     timeout: UNBLOCK_TIMEOUT
-                });
+                    }); */
             };
         datasource.subscribe("requestEvent", fnRequestSent);
         global_status_var = status;
@@ -485,9 +489,12 @@
 
         };
         table = new YAHOO.widget.DataTable(YAHOO.util.Dom.get(table_id), columns, datasource, config);
-        var fnRequestReceived = function (request, response) {
-                jQuery.unblockUI();
-            };
+        var fnRequestReceived = function() {
+            jQuery.unblockUI();
+            var count = this.getState().pagination.totalRecords;
+            var workspace_count = $("dl.workspace li.navTreeCurrentItem a > span#count");
+            workspace_count.html("("+count+")");
+        };
         table.subscribe("postRenderEvent", fnRequestReceived);
         // Update totalRecords on the fly with value from server
         table.handleDataReturnPayload = function (oRequest, oResponse, oPayload) {
@@ -580,39 +587,37 @@
         thEl.innerHTML = "";
         thEl.appendChild(input);
         var item_select = $("#" + item_type_select_id);
-        item_select.change(
-
-        function (event) {
-            var status_select = $("#" + status_select_id);
-            status_select.empty();
-            var i = 0;
-            var item_select_val = $(this).val();
-            if (item_select_val == "") {
-                for (var prop in global_status_var) {
-                    var s = prop.split("+");
-                    if (s.length == 1) {
-                        var option = document.createElement('option');
-                        option.value = prop;
-                        option.text = global_status_var[prop];
-                        status_select.append(option);
+        item_select.change(function (event) {
+                var status_select = $("#" + status_select_id);
+                status_select.empty();
+                var i = 0;
+                var item_select_val = $(this).val();
+                if (item_select_val == "") {
+                    for (var prop in global_status_var) {
+                        var s = prop.split("+");
+                        if (s.length == 1) {
+                            var option = document.createElement('option');
+                            option.value = prop;
+                            option.text = global_status_var[prop];
+                            status_select.append(option);
+                        }
+                    }
+                } else {
+                    var option = document.createElement('option');
+                    option.value = "";
+                    option.text = "-";
+                    status_select.append(option);
+                    for (var prop in global_status_var) {
+                        var s = prop.split("+");
+                        if (s[0] == item_select_val) {
+                            option = document.createElement('option');
+                            option.value = s[1];
+                            option.text = global_status_var[prop];
+                            status_select.append(option);
+                        }
                     }
                 }
-            } else {
-                var option = document.createElement('option');
-                option.value = "";
-                option.text = "-";
-                status_select.append(option);
-                for (var prop in global_status_var) {
-                    var s = prop.split("+");
-                    if (s[0] == item_select_val) {
-                        option = document.createElement('option');
-                        option.value = s[1];
-                        option.text = global_status_var[prop];
-                        status_select.append(option);
-                    }
-                }
-            }
-        });
+            });
         table.sortColumn = function (oColumn, sDir) {
             // Default ascending
             cDir = "asc";

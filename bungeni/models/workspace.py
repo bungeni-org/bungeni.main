@@ -118,14 +118,14 @@ class WorkspaceContainer(AlchemistContainer):
         # TODO : update to support other fields
         column = table.columns[utk["short_title"]]
         return column
-        
+
     def filter_query(self, query, domain_class, kw):
         if kw.get("filter_short_title", None):
             column = self.title_column(domain_class)
             return query.filter("""(lower(%s) LIKE '%%%s%%')""" %
                         (column, kw["filter_short_title"].lower()))
         return query
-        
+
     def order_query(self, query, domain_class, kw, reverse):
         if (kw.get("sort_on", None) and
             hasattr(domain_class, str(kw.get("sort_on")))
@@ -136,8 +136,8 @@ class WorkspaceContainer(AlchemistContainer):
             else:
                 return query.order_by(expression.asc(
                     getattr(domain_class, str(kw.get("sort_on")))))
-        return query                 
-        
+        return query
+
     def _query(self, **kw):
         principal = get_principal()
         roles = get_workspace_roles()
@@ -149,8 +149,7 @@ class WorkspaceContainer(AlchemistContainer):
         reverse = True if (kw.get("sort_dir", "desc") == "desc") else False
         for domain_class, status in group_roles_domain_status.iteritems():
             query = session.query(domain_class).filter(
-                domain_class.status.in_(status)
-                )
+                domain_class.status.in_(status)).enable_eagerloads(False)
             #filter on title
             query = self.filter_query(query, domain_class, kw)
             # Order results
@@ -166,8 +165,7 @@ class WorkspaceContainer(AlchemistContainer):
         for domain_class, status in object_roles_domain_status.iteritems():
             object_roles_results = []
             query = session.query(domain_class).filter(
-                domain_class.status.in_(status)
-                )
+                domain_class.status.in_(status)).enable_eagerloads(False)
             #filter on title
             query = self.filter_query(query, domain_class, kw)
             # Order results
@@ -197,6 +195,33 @@ class WorkspaceContainer(AlchemistContainer):
         for obj in self._query(kw):
             name = stringKey(obj)
             yield (name, contained(obj, self, name))
+
+    def count(self):
+        """Approximate count of items in a container
+        """
+        kw = {}
+        principal = get_principal()
+        roles = get_workspace_roles()
+        group_roles_domain_status = self.item_status_filter(kw, roles)
+        session = Session()
+        count = 0
+        for domain_class, status in group_roles_domain_status.iteritems():
+            query = session.query(domain_class).filter(
+                domain_class.status.in_(status)).enable_eagerloads(False)
+            count = count + query.count()
+        object_roles_domain_status = self.item_status_filter(kw, OBJECT_ROLES)
+        for domain_class, status in object_roles_domain_status.iteritems():
+            object_roles_results = []
+            query = session.query(domain_class).filter(
+                domain_class.status.in_(status)).enable_eagerloads(False)
+            for obj in query.all():
+                prm = IPrincipalRoleMap(obj)
+                for obj_role in OBJECT_ROLES:
+                    if (prm.getSetting(obj_role, principal.id) == Allow):
+                        object_roles_results.append(obj)
+                        break
+            count = count + len(object_roles_results)
+        return count
 
     def check_item(self, domain_class, status):
         roles = get_workspace_roles() + OBJECT_ROLES
