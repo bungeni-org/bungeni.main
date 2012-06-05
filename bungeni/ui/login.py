@@ -249,7 +249,7 @@ class IProfileForm(interface.Interface):
     middle_name = schema.TextLine(title=_(u"Middle name"), required=False)
     email = schema.TextLine(title=_(u"Email"),constraint=check_email)
     description = schema.Text(title=_(u"Biographical notes"), required=False)
-    gender = schema.Choice(title=_("Gender"), vocabulary=vocabulary.Gender)
+    gender = schema.Choice(title=_("Gender"), vocabulary=vocabulary.gender)
     date_of_birth = schema.Date(title=_("Date of Birth"))
     birth_nationality = schema.Choice(title=_("Nationality at Birth"), 
                                       source=countries)

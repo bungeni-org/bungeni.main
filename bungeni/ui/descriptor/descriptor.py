@@ -244,7 +244,7 @@ def member_title_column(name, title, default=""):
         return item.title_type.title_name
     return column.GetterColumn(title, getter)
 
-'''
+''' !+UNUSED
 def current_titles_in_group_column(name, title, default=""):
     def getter(item, formatter):
         value = getattr(item, name)
@@ -263,7 +263,6 @@ def current_titles_in_group_column(name, title, default=""):
                     title_list.append(obj.user_role_name)
         return ", ".join(title_list)
     return column.GetterColumn(title, getter)
-'''
 
 def inActiveDead_Column(name, title, default):
     aid = { "A": _("active"),
@@ -271,6 +270,7 @@ def inActiveDead_Column(name, title, default):
         "D": _("deceased")}
     renderer = lambda x: aid[x]
     return _column(name, title, renderer, default)
+'''
 
 
 
@@ -654,7 +654,7 @@ class UserDescriptor(ModelDescriptor):
                 show("listing"),
             ],
             property=schema.Choice(title=_("Gender"),
-                source=vocabulary.Gender
+                source=vocabulary.gender
             ),
             edit_widget=widgets.CustomRadioWidget,
             add_widget=widgets.CustomRadioWidget
@@ -1674,7 +1674,7 @@ class TitleTypeDescriptor(ModelDescriptor):
             property=schema.Choice(title=_("Only one user may have this title"), 
                 description=_("Limits persons with this title to one"),
                 default=False,
-                source=vocabulary.YesNoSource
+                source=vocabulary.bool_yes_no
             ),
         ),
         Field(name="sort_order",

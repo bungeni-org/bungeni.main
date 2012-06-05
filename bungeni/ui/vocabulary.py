@@ -14,7 +14,7 @@ import hashlib
 from lxml import etree
 
 from zope import interface
-from zope.schema.interfaces import IContextSourceBinder
+from zope.schema.interfaces import IContextSourceBinder, IBaseVocabulary
 from zope.schema import vocabulary
 from zope.security.proxy import removeSecurityProxy
 from zope.app.container.interfaces import IContainer
@@ -66,20 +66,68 @@ def get_translated_group_label(group):
     return "%s - %s" % (g.short_name, g.full_name)
 
 
-days = [ _('day_%d' % index, default=default) for (index, default) in
+days = [ _("day_%d" % index, default=default) for (index, default) in
          enumerate((u"Mon", u"Tue", u"Wed", u"Thu", u"Fri", u"Sat", u"Sun")) ]
 
 
-def assignable_state_ids():
-    _sids = set()
-    for name, ti in adapters.TYPE_REGISTRY:
-        wf = ti.workflow
-        _sids.update(wf.get_state_ids(
-                not_tagged=["private", "fail", "terminal"], restrict=False))
-    return _sids
-_assignable_state_ids = set(assignable_state_ids())
+class VDEXVocabularyMixin(object):
+    def __init__(self, file_name):
+        self.file_name = file_name
+    
+    @property
+    def file_path(self):
+        return capi.get_path_for("vocabularies", self.file_name)
+    
+    @property
+    def vdex(self):
+        # !+ file opened, loaded, per term lookup ?!?
+        ofile = open(self.file_path)
+        vdex = imsvdex.vdex.VDEXManager(file=ofile, lang=capi.default_language)
+        vdex.fallback_to_default_language = True
+        ofile.close()
+        return vdex
+    
+    def getTermById(self, value):
+        return self.vdex.getTermById(value)
+
+class BaseVDEXVocabulary(VDEXVocabularyMixin):
+    """Base class to generate vdex vocabularies
+    
+    vocabulary = BaseVDEXVocabulary(file_name)
+    Register utility for easier reuse
+    """
+    interface.implements(ITreeVocabulary)
+    
+    def generateJSON(self, selected = []):
+        vdict = self.vdex.getVocabularyDict(lang=get_default_language())
+        dynatree_dict = dict_to_dynatree(vdict, selected)
+        return json.dumps(dynatree_dict)
+
+    def validateTerms(self, value_list):
+        for value in value_list:
+            if self.getTermById(value) is None:
+                raise LookupError
+
+class FlatVDEXVocabulary(VDEXVocabularyMixin):
+    # !+VOCABULARY_SOURCE(mr, jun-2012) these interfaces are needed for when 
+    # this vocabulary is used as the value of schema.Choice.source
+    interface.implements(
+        IContextSourceBinder, # __call__
+        IBaseVocabulary # getTerm(value) -> ITerm
+    )
+    def __call__(self, context=None):
+        """Return a context-bound instance that implements ISource.
+        """
+        all_terms = self.vdex.getVocabularyDict(lang=get_default_language())
+        terms = []
+        assert self.vdex.isFlat() is True
+        for (key, data) in all_terms.iteritems():
+            term = vocabulary.SimpleTerm(key, key, data[0])
+            terms.append(term)
+        return vocabulary.SimpleVocabulary(terms)
 
 
+''' !+UNUSED(mr, jun-2012)
 class WeekdaysVocabulary(object):
     interface.implements(IVocabularyFactory)
     
@@ -89,7 +137,6 @@ class WeekdaysVocabulary(object):
             for (index, msg) in enumerate(days)
         ])
 WeekdaysVocabularyFactory = WeekdaysVocabulary()
-
 
 class MonthlyRecurrenceVocabulary(object):
     """This vocabulary provides an option to choose between different
@@ -110,27 +157,20 @@ class MonthlyRecurrenceVocabulary(object):
             (vocabulary.SimpleTerm(
                 nth_day_of_month(day),
                 "day_%d_of_every_month" % day,
-                _(u"Day $number of every month", mapping={'number': day})),
+                _(u"Day $number of every month", mapping={"number": day})),
              vocabulary.SimpleTerm(
                  first_nth_weekday_of_month(weekday),
                  "first_%s_of_every_month" % today.strftime("%a"),
-                 _(u"First $day of every month", mapping={'day': translate(
+                 _(u"First $day of every month", mapping={"day": translate(
                      today.strftime("%A"))})),
         ))
-                
 MonthlyRecurrenceVocabularyFactory = MonthlyRecurrenceVocabulary()
 
-# you have to add title_field to the vocabulary as only this gets 
-# translated, the token_field will NOT get translated
-Gender = vocabulary.SimpleVocabulary([
-    vocabulary.SimpleTerm('M', _(u"Male"), _(u"Male")), 
-    vocabulary.SimpleTerm('F', _(u"Female"), _(u"Female"))
+ElectedNominated = vocabulary.SimpleVocabulary([
+    vocabulary.SimpleTerm('E', _(u"elected"), _(u"elected")),
+    vocabulary.SimpleTerm('N', _(u"nominated"), _(u"nominated")), 
+    vocabulary.SimpleTerm('O', _(u"ex officio"), _(u"ex officio"))
 ])
-#ElectedNominated = vocabulary.SimpleVocabulary([
-#    vocabulary.SimpleTerm('E', _(u"elected"), _(u"elected")),
-#    vocabulary.SimpleTerm('N', _(u"nominated"), _(u"nominated")), 
-#    vocabulary.SimpleTerm('O', _(u"ex officio"), _(u"ex officio"))
-#])
 InActiveDead = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm('A', _(u"active"), _(u"active")),
     vocabulary.SimpleTerm('I', _(u"inactive"), _(u"inactive")),
@@ -140,9 +180,6 @@ ISResponse = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm('I', _(u"initial"), _(u"initial")),
     vocabulary.SimpleTerm('S', _(u"subsequent"), _(u"subsequent"))
 ])
-YesNoSource = vocabulary.SimpleVocabulary([
-    vocabulary.SimpleTerm(True, _(u"Yes"), _(u"Yes")), 
-    vocabulary.SimpleTerm(False, _(u"No"), _(u"No"))])
 #AddressPostalType = vocabulary.SimpleVocabulary([
 #    vocabulary.SimpleTerm("P", _(u"P.O. Box"), _(u"P.O. Box")),
 #    vocabulary.SimpleTerm("S", _(u"Street / Physical"), 
@@ -155,7 +192,17 @@ YesNoSource = vocabulary.SimpleVocabulary([
 #    vocabulary.SimpleTerm("P", _("permanent"), _("permanent")),
 #    vocabulary.SimpleTerm("T", _("temporary"), _("temporary")),
 #])
+'''
 
+# you have to add title_field to the vocabulary.SimpleTerm as only this gets 
+# translated, the token_field will NOT get translated
+
+gender = FlatVDEXVocabulary("gender.vdex")
+#bool_yes_no = FlatVDEXVocabulary("yes_no.vdex")
+# !+ how do you get a VDEX vocab to use booleans as term values?
+bool_yes_no = vocabulary.SimpleVocabulary([
+    vocabulary.SimpleTerm(True, _(u"Yes"), _(u"Yes")), 
+    vocabulary.SimpleTerm(False, _(u"No"), _(u"No"))])
 
 # types
 
@@ -909,6 +956,16 @@ mapper(PartyMembership, party_membership)
 
 class PIAssignmentSource(SpecializedSource):
     
+    # !+STATES_TAGS_ASSUMPTIONS(mr, jun-2012) this aggregates all states of all 
+    # workflows, assumes that a same named state has the same meaning acorss 
+    # worksflows, plus assumes that state tag names have special meaning, plus
+    # assumes that all workflow/states are tagged with tehse tags.
+    assignable_state_ids = set(sid
+        for (name, ti) in adapters.TYPE_REGISTRY
+        for sid in ti.workflow.get_state_ids(
+            not_tagged=["private", "fail", "terminal"], restrict=False)
+    )
+    
     def constructQuery(self, context):
         session= Session()
         trusted=removeSecurityProxy(context)
@@ -922,7 +979,7 @@ class PIAssignmentSource(SpecializedSource):
         else:
             query = session.query(domain.Doc).filter(
                     sql.and_(
-                        sql.not_(domain.Doc.status.in_(_assignable_state_ids)),
+                        sql.not_(domain.Doc.status.in_(self.assignable_state_ids)),
                         sql.not_(domain.Doc.doc_id.in_(existing_item_ids)),
                         domain.Doc.parliament_id == parliament_id
                     )
@@ -1067,61 +1124,11 @@ def dict_to_dynatree(input_dict, selected):
     return retval
 
 
-class VDEXVocabularyMixin(object):
-    def __init__(self, file_name):
-        self.file_name = file_name
-    
-    @property
-    def file_path(self):
-        return capi.get_path_for("vocabularies", self.file_name)
-    
-    @property
-    def vdex(self):
-        ofile = open(self.file_path)
-        vdex = imsvdex.vdex.VDEXManager(file=ofile, lang=capi.default_language)
-        vdex.fallback_to_default_language = True
-        ofile.close()
-        return vdex
-    
-    def getTermById(self, value):
-        return self.vdex.getTermById(value)
-
-class BaseVDEXVocabulary(VDEXVocabularyMixin):
-    """
-    Base class to generate vdex vocabularies
-    
-    vocabulary = BaseVDEXVocabulary(file_name)
-    Register utility for easier reuse
-    """
-    interface.implements(ITreeVocabulary)
-
-    def generateJSON(self, selected = []):
-        vdict = self.vdex.getVocabularyDict(lang=get_default_language())
-        dynatree_dict = dict_to_dynatree(vdict, selected)
-        return json.dumps(dynatree_dict)
-
-    def validateTerms(self, value_list):
-        for value in value_list:
-            if self.getTermById(value) is None:
-                raise LookupError
-
-class FlatVDEXVocabulary(VDEXVocabularyMixin):
-    def __call__(self, context=None):
-        all_terms = self.vdex.getVocabularyDict(lang=get_default_language())
-        terms = []
-        assert self.vdex.isFlat() is True
-        for (key, data) in all_terms.iteritems():
-            term = vocabulary.SimpleTerm(key, key, data[0])
-            terms.append(term)
-        return vocabulary.SimpleVocabulary(terms)
-
 subject_terms_vocabulary = BaseVDEXVocabulary("subject-terms.vdex")
 
 #
 # Sitting flat VDEX based vocabularies
 #
-# !+SITTING_VOCABULARIES_XML(mr, apr-2012) term identifiers (what is stored in db)
-# should follow convention i.e. lowercase, no spaces, underscore-separated words!
 sitting_activity_types = FlatVDEXVocabulary("sitting-activity-types.vdex")
 sitting_meeting_types = FlatVDEXVocabulary("sitting-meeting-types.vdex")
 sitting_convocation_types = FlatVDEXVocabulary("sitting-convocation-types.vdex")
@@ -1175,7 +1182,7 @@ class ReportXHTMLTemplates(object):
         return vocabulary_terms
 
     def getTermByFileName(self, file_name):
-        """Get the vocabulary term with the file_name 
+        """Get the vocabulary term with the file_name.
         """
         for term in self.terms:
             if os.path.basename(term.value).startswith(file_name):
@@ -1211,9 +1218,10 @@ class DocumentXHTMLTemplates(ReportXHTMLTemplates):
         self.updateTermDocTypes()
     
     def updateTermDocTypes(self):
-        """Read configuration options and update terms with doctype property"""
+        """Read configuration options and update terms with doctype property.
+        """
         self.terms = map(update_term_doctype, self.terms)
-    
+
 document_xhtml_templates = DocumentXHTMLTemplates()
 
 

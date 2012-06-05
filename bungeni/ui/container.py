@@ -21,7 +21,6 @@ from bungeni.models import interfaces as mfaces
 from bungeni.models import domain
 
 from bungeni.core import translation
-from bungeni.core.workflows.adapters import get_workflow
 
 from bungeni.ui import interfaces as ufaces
 from bungeni.ui.utils import url, date, debug
