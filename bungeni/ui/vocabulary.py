@@ -69,32 +69,28 @@ def get_translated_group_label(group):
 days = [ _("day_%d" % index, default=default) for (index, default) in
          enumerate((u"Mon", u"Tue", u"Wed", u"Thu", u"Fri", u"Sat", u"Sun")) ]
 
+# vdex 
+
+class VDEXManager(imsvdex.vdex.VDEXManager):
+    default_language = capi.default_language
+    fallback_to_default_language = True
 
 class VDEXVocabularyMixin(object):
     def __init__(self, file_name):
         self.file_name = file_name
+        self.vdex = VDEXManager(file=open(self.file_path))
     
     @property
     def file_path(self):
         return capi.get_path_for("vocabularies", self.file_name)
     
-    @property
-    def vdex(self):
-        # !+ file opened, loaded, per term lookup ?!?
-        ofile = open(self.file_path)
-        vdex = imsvdex.vdex.VDEXManager(file=ofile, lang=capi.default_language)
-        vdex.fallback_to_default_language = True
-        ofile.close()
-        return vdex
-    
     def getTermById(self, value):
         return self.vdex.getTermById(value)
 
-class BaseVDEXVocabulary(VDEXVocabularyMixin):
-    """Base class to generate vdex vocabularies
+class TreeVDEXVocabulary(VDEXVocabularyMixin):
+    """Class to generate hierarchical vdex vocabularies
     
-    vocabulary = BaseVDEXVocabulary(file_name)
-    Register utility for easier reuse
+    vocabulary = TreeVDEXVocabulary(file_name)
     """
     interface.implements(ITreeVocabulary)
     
@@ -109,8 +105,18 @@ class BaseVDEXVocabulary(VDEXVocabularyMixin):
                 raise LookupError
 
 class FlatVDEXVocabulary(VDEXVocabularyMixin):
-    # !+VOCABULARY_SOURCE(mr, jun-2012) these interfaces are needed for when 
-    # this vocabulary is used as the value of schema.Choice.source
+    """ !+VOCABULARY_SOURCE(mr, jun-2012) these interfaces are needed for when 
+    this vocabulary is used as the value of "source" or "vocabulary" for a 
+    schema.Choice field property
+    
+    !+ instances are called in zope.formlib.form.setUpEditWidgets() and a new
+    vocabulary.SimpleVocabulary() for the *current* language is created each
+    time (could be cached).
+    
+    !+ to use POT-based translations instead... could make thsi inherit from
+    vocabulary.SimpleVocabulary() and then only specify a single 
+    default/reference language in teh vdex file.
+    """
     interface.implements(
         IContextSourceBinder, # __call__
         IBaseVocabulary # getTerm(value) -> ITerm
@@ -121,10 +127,13 @@ class FlatVDEXVocabulary(VDEXVocabularyMixin):
         all_terms = self.vdex.getVocabularyDict(lang=get_default_language())
         terms = []
         assert self.vdex.isFlat() is True
-        for (key, data) in all_terms.iteritems():
-            term = vocabulary.SimpleTerm(key, key, data[0])
+        for (key, (caption, children)) in all_terms.iteritems():
+            # assert children is None
+            term = vocabulary.SimpleTerm(key, key, caption)
             terms.append(term)
         return vocabulary.SimpleVocabulary(terms)
+    
+# /vdex
 
 
 ''' !+UNUSED(mr, jun-2012)
@@ -1124,7 +1133,7 @@ def dict_to_dynatree(input_dict, selected):
     return retval
 
 
-subject_terms_vocabulary = BaseVDEXVocabulary("subject-terms.vdex")
+subject_terms_vocabulary = TreeVDEXVocabulary("subject-terms.vdex")
 
 #
 # Sitting flat VDEX based vocabularies

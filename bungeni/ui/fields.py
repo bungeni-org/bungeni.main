@@ -11,7 +11,6 @@ $URL:$
 
 from zope.schema import Text
 from zope.interface import implements
-from zope.component import queryUtility
 from zope.schema.interfaces import ValidationError
 from bungeni.ui.interfaces import IVocabularyTextField, ITreeVocabulary
 from bungeni.ui.i18n import _
@@ -31,14 +30,11 @@ class VocabularyTextField(Text):
         self.vocabulary = vocabulary
         super(VocabularyTextField, self).__init__(**kw)
     
-    def lookupVocabulary(self):
-        return queryUtility(ITreeVocabulary, self.vocabulary)
-    
     def _validate(self, values):
         super(VocabularyTextField, self)._validate(values)
         if values:
             try:
-                self.lookupVocabulary().validateTerms(values.split('\n'))
+                self.vocabulary.validateTerms(values.split('\n'))
             except LookupError:
                 raise InvalidVocabularySelection(values, ())
                 

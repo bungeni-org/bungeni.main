@@ -105,15 +105,16 @@ class ITreeVocabulary(interface.Interface):
     """ Generate tree vocabulary as JSON data.
     Also provides a validation of values
     """
-
+    
     def generateJSON():
         "Generate JSON data from vocabulary"
-
+    
     def getTermById(value):
         "Get the vocabulary term or None"
-
+    
     def validateTerms(value_list):
         "Validate a list of vocabulary terms"
+
 
 class IVocabularyTextField(schema.interfaces.IText):
     """Text field supporting vocabulary """

@@ -1147,9 +1147,7 @@ class TreeVocabularyWidget(DropdownWidget):
             selected = self.getInputValue().split("\n")
         elif self.has_data:
             selected = self._data.split("\n")
-        return self.context.lookupVocabulary().generateJSON(
-            selected=selected
-        )
+        return self.context.vocabulary.generateJSON(selected=selected)
 
     @property
     def has_input(self):

@@ -142,10 +142,6 @@
         provides="zope.schema.interfaces.IVocabularyFactory"
         component=".vocabulary.ParliamentSource"
     />
-    <utility name="bungeni.vocabulary.SubjectTerms"
-        provides="bungeni.ui.interfaces.ITreeVocabulary"
-        component=".vocabulary.subject_terms_vocabulary"
-    />
     <utility name="bungeni.vocabulary.SittingActivityTypes"
         provides="zope.schema.interfaces.IVocabularyFactory"
         component=".vocabulary.sitting_activity_types"

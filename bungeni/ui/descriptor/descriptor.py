@@ -2769,7 +2769,7 @@ class QuestionDescriptor(DocDescriptor):
             ],
             property=VocabularyTextField(title=_("Subject Terms"),
                 description=_("Select Subjects"),
-                vocabulary="bungeni.vocabulary.SubjectTerms",
+                vocabulary=vocabulary.subject_terms_vocabulary,
                 required = False,
             ),
             edit_widget=widgets.TreeVocabularyWidget,
