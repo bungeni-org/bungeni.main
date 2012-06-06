@@ -88,11 +88,7 @@ setup(name='bungeni',
                 'bungeni-sync-index = bungeni.core.index:reset_index',
         ],
     'paste.app_factory' : [
-        'main = bungeni.server.startup:application_factory',
-        'static = bungeni.portal.app:make_static_serving_app'
-        ],
-    'paste.filter_app_factory' : [
-        'deliverance = bungeni.portal.middleware:make_deliverance_middleware'
+        'main = bungeni.server.startup:application_factory'
         ]
     }
  )
