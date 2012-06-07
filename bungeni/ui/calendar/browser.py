@@ -64,7 +64,7 @@ from bungeni.models import domain
 from bungeni.models import interfaces as model_interfaces
 from bungeni.alchemist.container import stringKey
 from bungeni.alchemist import Session
-#from bungeni.ui import vocabulary
+from bungeni.ui import vocabulary
 
 from bungeni.utils import register
 from bungeni.utils.capi import capi
@@ -280,11 +280,8 @@ class CalendarView(BungeniBrowserView):
 
     @property
     def venues_data(self):
-        venues_vocabulary = component.queryUtility(
-            schema.interfaces.IVocabularyFactory, "bungeni.vocabulary.Venues"
-        )
         venue_list = [ {"key": venue.value, "label": venue.title}
-            for venue in venues_vocabulary()
+            for venue in vocabulary.venue_factory()
         ]
         return venue_list
 
@@ -315,7 +312,7 @@ class CalendarView(BungeniBrowserView):
 
     def other_calendars(self):
         """A list of URLs to other calendars - Loaded when selected"""
-        menu = menu=component.queryUtility(IBrowserMenu,"context_calendar")
+        menu = component.queryUtility(IBrowserMenu, "context_calendar")
         if menu is None:
             return []
         items = menu.getMenuItems(self.context, self.request)

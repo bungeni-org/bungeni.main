@@ -11,6 +11,7 @@ import zope.interface
 import zope.schema
 
 from bungeni.core.language import get_default_language
+from bungeni.ui import vocabulary
 from bungeni.ui.i18n import _
 
 class IDhtmlxCalendarSittingsEditForm(zope.interface.Interface):
@@ -35,7 +36,7 @@ class IDhtmlxCalendarSittingsEditForm(zope.interface.Interface):
     )
     venue = zope.schema.Choice(title=_(u"Venue"),
         description=_(u"Venues"),
-        source="bungeni.vocabulary.Venues",
+        source=vocabulary.venue_factory,
         required=True
     )
     language = zope.schema.Choice(title=_(u"Language"),
@@ -60,16 +61,16 @@ class IDhtmlxCalendarSittingsEditForm(zope.interface.Interface):
     )
     activity_type = zope.schema.Choice(title=u"Activity Type",
         description=u"Sitting Activity Type",
-        vocabulary="bungeni.vocabulary.SittingActivityTypes",
+        vocabulary=vocabulary.sitting_activity_types,
         required=False
     )
     meeting_type = zope.schema.Choice(title=u"Meeting Type",
         description=u"Sitting Meeting Type",
-        vocabulary="bungeni.vocabulary.SittingMeetingTypes",
+        vocabulary=vocabulary.sitting_meeting_types,
         required=False
     )
     convocation_type = zope.schema.Choice(title=u"Convocation Type",
         description=u"Convocation Type",
-        vocabulary="bungeni.vocabulary.SittingConvocationTypes",
+        vocabulary=vocabulary.sitting_convocation_types,
         required=False
     )

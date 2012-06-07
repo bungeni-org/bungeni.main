@@ -10,6 +10,7 @@ from bungeni.models.interfaces import IParliament
 
 from bungeni.ui.i18n import _
 from bungeni.ui import cookies
+from bungeni.ui import vocabulary
 from bungeni.ui.widgets import TextDateWidget as DateWidget
 
 
@@ -31,7 +32,7 @@ class ArchiveDatesForm(form.PageForm):
         parliament = schema.Choice(
             title=_(u"Or select"),
             description=_(u"Set date range to that of a given particular parliament"),
-            vocabulary="bungeni.vocabulary.ParliamentSource",
+            vocabulary=vocabulary.parliament_factory,
             required=False)
 
     template = NamedTemplate("alchemist.subform")

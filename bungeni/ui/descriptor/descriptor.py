@@ -676,11 +676,7 @@ class UserDescriptor(ModelDescriptor):
                 hide("listing"),
             ],
             property=schema.Choice(title=_("Country of Birth"),
-                source=vocabulary.DatabaseSource(domain.Country,
-                    token_field="country_id",
-                    title_field="country_name",
-                    value_field="country_id"
-                ),
+                source=vocabulary.country_factory,
             )
         ),
         Field(name="birth_nationality", # [user-req]
@@ -690,11 +686,7 @@ class UserDescriptor(ModelDescriptor):
                 hide("listing"),
             ],
             property=schema.Choice(title=_("Nationality at Birth"),
-                source=vocabulary.DatabaseSource(domain.Country,
-                    token_field="country_id",
-                    title_field="country_name",
-                    value_field="country_id"
-                ),
+                source=vocabulary.country_factory,
             ),
         ),
         Field(name="current_nationality", # [user-req]
@@ -704,11 +696,7 @@ class UserDescriptor(ModelDescriptor):
                 hide("listing"),
             ],
             property=schema.Choice(title=_("Current Nationality"),
-                source=vocabulary.DatabaseSource(domain.Country,
-                    token_field="country_id",
-                    title_field="country_name",
-                    value_field="country_id"
-                ),
+                source=vocabulary.country_factory,
             ),
         ),
         Field(name="date_of_death", # [user]
@@ -1590,11 +1578,7 @@ class AddressDescriptor(ModelDescriptor):
                 show("view edit listing"),
             ],
             property=schema.Choice(title=_("Country"),
-                source=vocabulary.DatabaseSource(domain.Country,
-                    token_field="country_id",
-                    title_field="country_name",
-                    value_field="country_id"
-                ),
+                source=vocabulary.country_factory,
                 required=True
             ),
         ),
@@ -1665,7 +1649,7 @@ class TitleTypeDescriptor(ModelDescriptor):
             modes="view edit add listing",
             property=schema.Choice(title=_("Role"),
                 description=_("Role associated with this title"),
-                vocabulary="bungeni.vocabulary.group_sub_roles",
+                vocabulary=vocabulary.group_sub_role_factory,
                 required=False,
             ),
         ),
@@ -1849,7 +1833,7 @@ class OfficeDescriptor(GroupDescriptor):
             ],
             property=schema.Choice(title=_("Role"),
                 description=_("Role given to members of this office"),
-                vocabulary="bungeni.vocabulary.office_roles"
+                vocabulary=vocabulary.office_role_factory
             ),
         )
     ]
@@ -2941,7 +2925,7 @@ class SittingDescriptor(ModelDescriptor):
             ],
             property=schema.Choice(title=_(u"Activity Type"),
                 description=_(u"Sitting Activity Type"),
-                vocabulary="bungeni.vocabulary.SittingActivityTypes",
+                vocabulary=vocabulary.sitting_activity_types,
                 required=False
             ),
         ),
@@ -2952,7 +2936,7 @@ class SittingDescriptor(ModelDescriptor):
             ],
             property=schema.Choice(title=_(u"Meeting Type"),
                 description=_(u"Sitting Meeting Type"),
-                vocabulary="bungeni.vocabulary.SittingMeetingTypes",
+                vocabulary=vocabulary.sitting_meeting_types,
                 required=False
             ),
         ),
@@ -2963,7 +2947,7 @@ class SittingDescriptor(ModelDescriptor):
             ],
             property=schema.Choice(title=_(u"Convocation Type"),
                 description=_(u"Sitting Convocation Type"),
-                vocabulary="bungeni.vocabulary.SittingConvocationTypes",
+                vocabulary=vocabulary.sitting_convocation_types,
                 required=False
             ),
         ),

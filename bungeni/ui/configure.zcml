@@ -116,19 +116,9 @@
     <!--End Experimental transcripts support -->
 
     <!-- vocabularies -->
-
+    
     <utility name="bungeni.vocabulary.workflow"
         component=".workflow.workflow_vocabulary_factory"
-    />
-    <utility name="bungeni.vocabulary.office_roles"
-        component=".vocabulary.office_roles"
-    />
-    <utility name="bungeni.vocabulary.group_sub_roles"
-        component=".vocabulary.group_sub_roles"
-    />
-    <utility name="bungeni.vocabulary.Venues"
-        component=".vocabulary.venues_factory"
-        provides="zope.schema.interfaces.IVocabularyFactory"
     />
     <utility name="bungeni.vocabulary.ReportXHTMLTemplates"
         provides="zope.schema.interfaces.IVocabularyFactory"
@@ -138,39 +128,13 @@
         provides="zope.schema.interfaces.IVocabularyFactory"
         component=".vocabulary.document_xhtml_templates"
     />
-    <utility name="bungeni.vocabulary.ParliamentSource"
-        provides="zope.schema.interfaces.IVocabularyFactory"
-        component=".vocabulary.ParliamentSource"
-    />
-    <utility name="bungeni.vocabulary.SittingActivityTypes"
-        provides="zope.schema.interfaces.IVocabularyFactory"
-        component=".vocabulary.sitting_activity_types"
-    />
-    <utility name="bungeni.vocabulary.SittingMeetingTypes"
-        provides="zope.schema.interfaces.IVocabularyFactory"
-        component=".vocabulary.sitting_meeting_types"
-    />
-    <utility name="bungeni.vocabulary.SittingConvocationTypes"
-        provides="zope.schema.interfaces.IVocabularyFactory"
-        component=".vocabulary.sitting_convocation_types"
-    />
-    <!--
-   <utility
-      name="bungeni.vocabulary.weekdays"
-      component=".vocabulary.WeekdaysVocabularyFactory" />
-
-   <utility
-      name="bungeni.vocabulary.monthly_recurrence"
-      component=".vocabulary.MonthlyRecurrenceVocabularyFactory" />
-
-    -->
-
-     <adapter
+    
+    
+    <adapter name="widget"
         for="* zope.publisher.interfaces.http.IHTTPRequest"
         provides="zope.traversing.interfaces.ITraversable"
         factory=".widgets.widget"
-        name="widget"
-      />
+    />
     
    <!-- Workspace Adapters -->
    <adapter factory=".workspaceadapters.WorkspaceContentAdapter" />

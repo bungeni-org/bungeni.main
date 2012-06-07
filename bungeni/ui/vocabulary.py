@@ -9,7 +9,6 @@ $Id$
 log = __import__("logging").getLogger("bungeni.ui.vocabulary")
 
 import os
-import datetime
 import hashlib
 from lxml import etree
 
@@ -20,7 +19,6 @@ from zope.security.proxy import removeSecurityProxy
 from zope.app.container.interfaces import IContainer
 from zope.schema.interfaces import IVocabularyFactory
 from zope.component import getUtility
-from zope.i18n import translate
 from zope.component import getUtilitiesFor
 from zope.securitypolicy.interfaces import IRole
 from i18n import _
@@ -29,7 +27,6 @@ from sqlalchemy.orm import mapper
 import sqlalchemy as rdb
 import sqlalchemy.sql.expression as sql
 
-import bungeni.alchemist.vocabulary
 from bungeni.utils.capi import capi
 from bungeni.alchemist import Session
 from bungeni.alchemist.container import valueKey
@@ -45,9 +42,6 @@ from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core.workflows.utils import get_group_local_role
 from bungeni.core.workflows import adapters
 
-from bungeni.ui.calendar.utils import first_nth_weekday_of_month
-from bungeni.ui.calendar.utils import nth_day_of_month
-from bungeni.ui.calendar.utils import nth_day_of_week
 from bungeni.ui.utils import common
 from bungeni.ui.interfaces import ITreeVocabulary
 from bungeni.ui.reporting.generators import BUNGENI_REPORTS_NS
@@ -69,6 +63,25 @@ def get_translated_group_label(group):
 days = [ _("day_%d" % index, default=default) for (index, default) in
          enumerate((u"Mon", u"Tue", u"Wed", u"Thu", u"Fri", u"Sat", u"Sun")) ]
 
+
+class BaseVocabularyFactory(object):
+
+    interface.implements(
+        # IContextSourceBinder is needed for when this vocabulary factory 
+        # instance is used as an ISource e.g. as the value of "source" or
+        # "vocabulary" for a IChoice field property; causes the instance to be 
+        # called with the context on each use.
+        IContextSourceBinder, # __call__(context) -> IVocabulary
+        
+        # IBaseVocabulary (inherits from ISource) is gained "automagically" 
+        # when registering instance as a utility via ZCML
+        IBaseVocabulary, # getTerm(value) -> ITerm
+        
+        # can create vocabularies !+ same as IContextSourceBinder?!
+        IVocabularyFactory, # __call__(context) -> IVocabulary
+    )
+
+
 # vdex 
 
 class VDEXManager(imsvdex.vdex.VDEXManager):
@@ -77,12 +90,8 @@ class VDEXManager(imsvdex.vdex.VDEXManager):
 
 class VDEXVocabularyMixin(object):
     def __init__(self, file_name):
-        self.file_name = file_name
-        self.vdex = VDEXManager(file=open(self.file_path))
-    
-    @property
-    def file_path(self):
-        return capi.get_path_for("vocabularies", self.file_name)
+        self.vdex = VDEXManager(
+            file=open(capi.get_path_for("vocabularies", file_name)))
     
     def getTermById(self, value):
         return self.vdex.getTermById(value)
@@ -104,23 +113,16 @@ class TreeVDEXVocabulary(VDEXVocabularyMixin):
             if self.getTermById(value) is None:
                 raise LookupError
 
-class FlatVDEXVocabulary(VDEXVocabularyMixin):
-    """ !+VOCABULARY_SOURCE(mr, jun-2012) these interfaces are needed for when 
-    this vocabulary is used as the value of "source" or "vocabulary" for a 
-    schema.Choice field property
-    
+class FlatVDEXVocabularyFactory(VDEXVocabularyMixin, BaseVocabularyFactory):
+    """    
     !+ instances are called in zope.formlib.form.setUpEditWidgets() and a new
     vocabulary.SimpleVocabulary() for the *current* language is created each
     time (could be cached).
     
-    !+ to use POT-based translations instead... could make thsi inherit from
+    !+ to use POT-based translations instead... could make this inherit from
     vocabulary.SimpleVocabulary() and then only specify a single 
     default/reference language in teh vdex file.
     """
-    interface.implements(
-        IContextSourceBinder, # __call__
-        IBaseVocabulary # getTerm(value) -> ITerm
-    )
     def __call__(self, context=None):
         """Return a context-bound instance that implements ISource.
         """
@@ -137,6 +139,12 @@ class FlatVDEXVocabulary(VDEXVocabularyMixin):
 
 
 ''' !+UNUSED(mr, jun-2012)
+import datetime
+from zope.i18n import translate
+from bungeni.ui.calendar.utils import first_nth_weekday_of_month
+from bungeni.ui.calendar.utils import nth_day_of_month
+from bungeni.ui.calendar.utils import nth_day_of_week
+
 class WeekdaysVocabulary(object):
     interface.implements(IVocabularyFactory)
     
@@ -206,8 +214,8 @@ ISResponse = vocabulary.SimpleVocabulary([
 # you have to add title_field to the vocabulary.SimpleTerm as only this gets 
 # translated, the token_field will NOT get translated
 
-gender = FlatVDEXVocabulary("gender.vdex")
-#bool_yes_no = FlatVDEXVocabulary("yes_no.vdex")
+gender = FlatVDEXVocabularyFactory("gender.vdex")
+#bool_yes_no = FlatVDEXVocabularyFactory("yes_no.vdex")
 # !+ how do you get a VDEX vocab to use booleans as term values?
 bool_yes_no = vocabulary.SimpleVocabulary([
     vocabulary.SimpleTerm(True, _(u"Yes"), _(u"Yes")), 
@@ -283,14 +291,14 @@ change_procedure = vocabulary.SimpleVocabulary([
 ])
 
 
-class OfficeRoles(object):
-    interface.implements(IVocabularyFactory)
+class OfficeRoleFactory(BaseVocabularyFactory):
     def __call__(self, context=None):
         app = common.get_application()
         terms = []
         roles = getUtilitiesFor(IRole, app)
         for name, role in roles:
-            #Roles that must not be assigned to users in an office
+            # Roles that must not be assigned to users in an office
+            # !+bungeni_custom
             if name in ["bungeni.Anonymous",
                         "bungeni.Authenticated",
                         "bungeni.Owner",
@@ -303,11 +311,10 @@ class OfficeRoles(object):
             if not ISubRoleAnnotations(role).is_sub_role:
                 terms.append(vocabulary.SimpleTerm(name, name, name))
         return vocabulary.SimpleVocabulary(terms)
+office_role_factory = OfficeRoleFactory()
 
-office_roles = OfficeRoles()
 
-class GroupSubRoles(object):
-    interface.implements(IVocabularyFactory)
+class GroupSubRoleFactory(BaseVocabularyFactory):
     def __call__(self, context):
         terms = []
         while not IBungeniGroup.providedBy(context):
@@ -320,14 +327,35 @@ class GroupSubRoles(object):
             print sub_role
             terms.append(vocabulary.SimpleTerm(sub_role, sub_role, sub_role))
         return vocabulary.SimpleVocabulary(terms)
+group_sub_role_factory = GroupSubRoleFactory()
 
-group_sub_roles = GroupSubRoles()
-        
-class DatabaseSource(bungeni.alchemist.vocabulary.DatabaseSource):
+
+# database sources
+
+class DatabaseSource(BaseVocabularyFactory):
+    """A simple implementation of vocabularies on top of a domain model, 
+    ideally should only be used with small skinny tables, 
+    actual value stored is the id.
+    """
     
-    #def __init__(self, domain_model, token_field, value_field, 
-    #    title_field=None, title_getter=None, order_by=None):
-
+    def __init__(self, domain_model, token_field, value_field, 
+            title_field=None, 
+            title_getter=None, 
+            order_by=None
+        ):
+        self.domain_model = domain_model
+        self.token_field = token_field
+        self.value_field = value_field
+        self.title_field = title_field
+        self.title_getter = title_getter
+        self.order_by = order_by
+    
+    def constructQuery(self, context):
+        query = Session().query(self.domain_model)
+        if self.order_by:
+            query = query.order_by(self.order_by)
+        return query
+    
     def __call__(self, context=None):
         query = self.constructQuery(context)
         results = query.all()
@@ -344,12 +372,19 @@ class DatabaseSource(bungeni.alchemist.vocabulary.DatabaseSource):
             ))
         return vocabulary.SimpleVocabulary(terms)
 
-ParliamentSource = DatabaseSource(
-    domain.Parliament, 'short_name', 'parliament_id',
+
+parliament_factory = DatabaseSource(
+    domain.Parliament, "short_name", "parliament_id",
     title_getter=lambda ob: "%s (%s-%s)" % (
         ob.full_name,
         ob.start_date and ob.start_date.strftime("%Y/%m/%d") or "?",
         ob.end_date and ob.end_date.strftime("%Y/%m/%d") or "?"))
+
+country_factory = DatabaseSource(
+    domain.Country, "country_id", "country_id",
+    title_field="country_name",
+)
+
 
 class SpecializedSource(object):
     interface.implements(IContextSourceBinder)
@@ -387,15 +422,9 @@ class SpecializedSource(object):
         return vocabulary.SimpleVocabulary(terms)
 
 
-class Venues(object):
-    interface.implements(IVocabularyFactory)
-    def constructQuery(self, context):
-        session= Session()
-        return session.query(domain.Venue)
-
+class VenueFactory(BaseVocabularyFactory):
     def __call__(self, context=None):
-        query = self.constructQuery(context)
-        results = query.all()
+        results = Session().query(domain.Venue).all()
         terms = []
         for ob in results:
             terms.append(vocabulary.SimpleTerm(
@@ -405,8 +434,7 @@ class Venues(object):
                 )
             )
         return vocabulary.SimpleVocabulary(terms)
-
-venues_factory = Venues()
+venue_factory = VenueFactory()
 
 
 class TitleTypes(SpecializedSource):
@@ -486,7 +514,7 @@ class MemberOfParliamentImmutableSource(SpecializedSource):
                             domain.User.first_name,
                             domain.User.middle_name)
         return query
-
+    
     def __call__(self, context=None):
         query = self.constructQuery(context)
         results = query.all()
@@ -1138,9 +1166,9 @@ subject_terms_vocabulary = TreeVDEXVocabulary("subject-terms.vdex")
 #
 # Sitting flat VDEX based vocabularies
 #
-sitting_activity_types = FlatVDEXVocabulary("sitting-activity-types.vdex")
-sitting_meeting_types = FlatVDEXVocabulary("sitting-meeting-types.vdex")
-sitting_convocation_types = FlatVDEXVocabulary("sitting-convocation-types.vdex")
+sitting_activity_types = FlatVDEXVocabularyFactory("sitting-activity-types.vdex")
+sitting_meeting_types = FlatVDEXVocabularyFactory("sitting-meeting-types.vdex")
+sitting_convocation_types = FlatVDEXVocabularyFactory("sitting-convocation-types.vdex")
 
 #
 # Vocabularies for XML configuration based report generation

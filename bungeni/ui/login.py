@@ -236,13 +236,6 @@ class ResetPassword(form.FormBase):
                 self.status = _(u"Password successfully reset!")
 
 
-countries = vocabulary.DatabaseSource(domain.Country,
-            token_field="country_id",
-            title_field="country_name",
-            value_field="country_id"
-            )
-
-
 class IProfileForm(interface.Interface):
     first_name = schema.TextLine(title=_(u"First name"))
     last_name = schema.TextLine(title=_(u"Last name"))
@@ -251,12 +244,15 @@ class IProfileForm(interface.Interface):
     description = schema.Text(title=_(u"Biographical notes"), required=False)
     gender = schema.Choice(title=_("Gender"), vocabulary=vocabulary.gender)
     date_of_birth = schema.Date(title=_("Date of Birth"))
-    birth_nationality = schema.Choice(title=_("Nationality at Birth"), 
-                                      source=countries)
-    birth_country = schema.Choice(title=_("Country of Birth"), 
-                                  source=countries)
-    current_nationality = schema.Choice(title=_("Current Nationality"), 
-                                        source=countries)
+    birth_nationality = schema.Choice(
+        title=_("Nationality at Birth"), 
+        source=vocabulary.country_factory)
+    birth_country = schema.Choice(
+        title=_("Country of Birth"), 
+        source=vocabulary.country_factory)
+    current_nationality = schema.Choice(
+        title=_("Current Nationality"), 
+        source=vocabulary.country_factory)
     image = schema.Bytes(title=_("Image"))
     
     @invariant
