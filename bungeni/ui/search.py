@@ -55,10 +55,7 @@ from zope.schema.vocabulary import SimpleVocabulary
 from zope.security.checker import canAccess
 from zope.security.checker import ProxyFactory
 from zope.publisher.defaultview import getDefaultViewName
-from zope.traversing.browser import absoluteURL
 from zope.app.component.hooks import getSite
-from zope.schema import vocabulary
-from zope.app.schema.vocabulary import IVocabularyFactory
 from zope.i18n import translate
 from zope.component import queryMultiAdapter
 from zope.dottedname import resolve
@@ -66,14 +63,15 @@ from zc.resourcelibrary import need
 from zc.table import table, column
 
 from ore.xapian import interfaces
-from bungeni.core.i18n import _
-from bungeni.ui.widgets import SelectDateWidget
-from bungeni.core import index
 from bungeni.alchemist import Session
-from bungeni.ui import forms
-from bungeni.core.translation import translate_obj
-from bungeni.ui.utils.url import get_section_name, absoluteURL
 from bungeni.models import domain
+from bungeni.core.i18n import _
+from bungeni.core.translation import translate_obj
+from bungeni.core import index
+from bungeni.ui import forms
+from bungeni.ui import vocabulary
+from bungeni.ui.widgets import SelectDateWidget
+from bungeni.ui.utils.url import get_section_name, absoluteURL
 
 from ore.alchemist.interfaces import IAlchemistContainer
 
@@ -96,9 +94,7 @@ ALLOWED_TYPES = {'workspace': ('Question', 'Motion', 'TabledDocument',\
 
 def get_statuses_vocabulary(klass):
     try:
-        obj = klass()
-        return component.getUtility(IVocabularyFactory,
-                                    name="bungeni.vocabulary.workflow")(obj)
+        return vocabulary.workflow_vocabulary_factory(klass())
     except Exception:
         return None
 
@@ -476,13 +472,13 @@ def get_users_vocabulary():
     terms = []
     for ob in results:
         terms.append(
-            vocabulary.SimpleTerm(
+            SimpleTerm(
                 value = getattr(ob, 'user_id'),
                 token = getattr(ob, 'user_id'),
                 title = "%s %s" % (getattr(ob, 'first_name'),
                         getattr(ob, 'last_name'))
             ))
-    return vocabulary.SimpleVocabulary(terms)
+    return SimpleVocabulary(terms)
 
 
 class AdvancedPagedSearch(PagedSearch):

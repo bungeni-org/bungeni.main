@@ -22,13 +22,12 @@ from tidylib import tidy_fragment
 from lxml import etree
 
 from zope.security.proxy import removeSecurityProxy
-from zope.component import getUtility, queryUtility
+from zope.component import getUtility
 #from zope.lifecycleevent import ObjectCreatedEvent
 #from zope.event import notify
 from zope.component.interfaces import ComponentLookupError
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.publisher.browser import BrowserView
-from zope.schema.interfaces import IVocabularyFactory
 from zope.app.component.hooks import getSite
 
 from interfaces import IOpenOfficeConfig
@@ -41,6 +40,7 @@ from bungeni.utils.capi import capi
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import url, misc
 from bungeni.ui.reporting import generators
+from bungeni.ui import vocabulary
 
 def unescape(text):
     def fixup(m):
@@ -138,11 +138,8 @@ class DownloadDocument(BrowserView):
             if default_templates:
                 return default_templates[0].value
             return  None
-        template_vocabulary = queryUtility(IVocabularyFactory, 
-            "bungeni.vocabulary.DocumentXHTMLTemplates"
-        )
-        
-        doc_templates = [ term.value for term in template_vocabulary() if 
+        template_vocabulary = vocabulary.document_xhtml_template_factory()
+        doc_templates = [ term.value for term in template_vocabulary if 
             self.document.type in term.doctypes
         ]
         log.debug("Looking for templates to generate [%s] report. Found : %s",
@@ -151,7 +148,7 @@ class DownloadDocument(BrowserView):
         if doc_templates:
             doc_template = doc_templates[0]
         else:
-            doc_template = default_template(template_vocabulary())
+            doc_template = default_template(template_vocabulary)
         if doc_template is None:
             self.error_messages.append(
                 _(u"No template for document of type: ${dtype}. Contact admin.",

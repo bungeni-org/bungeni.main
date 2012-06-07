@@ -115,21 +115,7 @@
   </class-->
     <!--End Experimental transcripts support -->
 
-    <!-- vocabularies -->
-    
-    <utility name="bungeni.vocabulary.workflow"
-        component=".workflow.workflow_vocabulary_factory"
-    />
-    <utility name="bungeni.vocabulary.ReportXHTMLTemplates"
-        provides="zope.schema.interfaces.IVocabularyFactory"
-        component=".vocabulary.report_xhtml_templates"
-    />
-    <utility name="bungeni.vocabulary.DocumentXHTMLTemplates"
-        provides="zope.schema.interfaces.IVocabularyFactory"
-        component=".vocabulary.document_xhtml_templates"
-    />
-    
-    
+
     <adapter name="widget"
         for="* zope.publisher.interfaces.http.IHTTPRequest"
         provides="zope.traversing.interfaces.ITraversable"

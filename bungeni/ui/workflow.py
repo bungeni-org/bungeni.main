@@ -14,17 +14,13 @@ import datetime
 from zope.formlib import form
 from zope.viewlet import viewlet
 import zope.interface
-from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
 from zope.security.proxy import removeSecurityProxy
-from zope.app.schema.vocabulary import IVocabularyFactory
 from zope.formlib.widgets import TextAreaWidget
 from zc.table import column
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.i18n import translate
 
 from bungeni.alchemist import Session
-from bungeni.alchemist.interfaces import IAlchemistContainer
-from bungeni.alchemist.interfaces import IAlchemistContent
 from bungeni.core import globalsettings
 from bungeni.core.workflow import interfaces
 from bungeni.core.workflows.utils import get_mask
@@ -44,24 +40,6 @@ from bungeni.ui.i18n import _
 from bungeni.ui.absoluteurl import WorkspaceAbsoluteURLView
 
 from bungeni.utils import register
-
-
-class WorkflowVocabulary(object):
-    zope.interface.implements(IVocabularyFactory)
-
-    def __call__(self, context):
-        if IAlchemistContent.providedBy(context):
-            ctx = context
-        elif  IAlchemistContainer.providedBy(context):
-            domain_model = removeSecurityProxy(context.domain_model)
-            ctx = domain_model()
-        workflow = interfaces.IWorkflow(ctx)
-        items = []
-        for status in workflow.states.keys():
-            items.append(SimpleTerm(status, status, 
-                _(workflow.get_state(status).title)))
-        return SimpleVocabulary(items)
-workflow_vocabulary_factory = WorkflowVocabulary()
 
 
 def _label(change):

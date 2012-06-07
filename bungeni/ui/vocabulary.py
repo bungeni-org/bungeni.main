@@ -30,6 +30,8 @@ import sqlalchemy.sql.expression as sql
 from bungeni.utils.capi import capi
 from bungeni.alchemist import Session
 from bungeni.alchemist.container import valueKey
+from bungeni.alchemist.interfaces import IAlchemistContainer
+from bungeni.alchemist.interfaces import IAlchemistContent
 
 from bungeni.models.interfaces import ISubRoleAnnotations
 from bungeni.models.interfaces import IBungeniGroup
@@ -41,6 +43,7 @@ from bungeni.core.language import get_default_language
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core.workflows.utils import get_group_local_role
 from bungeni.core.workflows import adapters
+from bungeni.core.workflow.interfaces import IWorkflow
 
 from bungeni.ui.utils import common
 from bungeni.ui.interfaces import ITreeVocabulary
@@ -464,7 +467,24 @@ class TitleTypes(SpecializedSource):
         return vocabulary.SimpleVocabulary(terms)
 
 
-        
+class WorkflowVocabularyFactory(BaseVocabularyFactory):
+    def __call__(self, context):
+        if IAlchemistContent.providedBy(context):
+            ctx = context
+        elif  IAlchemistContainer.providedBy(context):
+            domain_model = removeSecurityProxy(context.domain_model)
+            ctx = domain_model()
+        workflow = IWorkflow(ctx)
+        items = []
+        for status in workflow.states.keys():
+            items.append(vocabulary.SimpleTerm(
+                    status, status, _(workflow.get_state(status).title)))
+        return vocabulary.SimpleVocabulary(items)
+workflow_vocabulary_factory = WorkflowVocabularyFactory()
+
+
+
+
 class MemberOfParliament(object):
     """ Member of Parliament = user join group membership join parliament"""
     
@@ -486,8 +506,8 @@ class MemberOfParliamentImmutableSource(SpecializedSource):
         self.value_field = value_field
     
     def constructQuery(self, context):
-        session= Session()
-        trusted=removeSecurityProxy(context)
+        session = Session()
+        trusted = removeSecurityProxy(context)
         user_id = getattr(trusted, self.value_field, None)
         if user_id:
             query = session.query(domain.User
@@ -548,8 +568,8 @@ class MemberOfParliamentImmutableSource(SpecializedSource):
 class MemberOfParliamentSource(MemberOfParliamentImmutableSource):
     """ you may change the user in this context """
     def constructQuery(self, context):
-        session= Session()
-        trusted=removeSecurityProxy(context)
+        session = Session()
+        trusted = removeSecurityProxy(context)
         user_id = getattr(trusted, self.value_field, None)
         parliament_id = self._get_parliament_id(trusted)
         if user_id:
@@ -1174,13 +1194,12 @@ sitting_convocation_types = FlatVDEXVocabularyFactory("sitting-convocation-types
 # Vocabularies for XML configuration based report generation
 #
 
-class ReportXHTMLTemplates(object):
+class ReportXHTMLTemplateFactory(BaseVocabularyFactory):
     """XHTML templates for generation of reports in scheduling.
     
     Templates can be customized/added in:
     `bungeni_custom/reporting/templates/scheduling/`
     """
-    
     terms = []
     template_folder = "scheduling"
     
@@ -1229,7 +1248,7 @@ class ReportXHTMLTemplates(object):
     def __call__(self, context=None):
         return vocabulary.SimpleVocabulary(self.terms)
 
-report_xhtml_templates = ReportXHTMLTemplates()
+report_xhtml_template_factory = ReportXHTMLTemplateFactory()
 
 def update_term_doctype(term):
     template_file = open(term.value)
@@ -1242,7 +1261,7 @@ def update_term_doctype(term):
     template_file.close()
     return term
 
-class DocumentXHTMLTemplates(ReportXHTMLTemplates):
+class DocumentXHTMLTemplateFactory(ReportXHTMLTemplateFactory):
     """XHTML templates for publication of documents in other formats.
     
     Templates can be customized or added in:
@@ -1251,7 +1270,7 @@ class DocumentXHTMLTemplates(ReportXHTMLTemplates):
     template_folder = "documents"
     
     def __init__(self):
-        super(DocumentXHTMLTemplates, self).__init__()
+        super(DocumentXHTMLTemplateFactory, self).__init__()
         self.updateTermDocTypes()
     
     def updateTermDocTypes(self):
@@ -1259,6 +1278,6 @@ class DocumentXHTMLTemplates(ReportXHTMLTemplates):
         """
         self.terms = map(update_term_doctype, self.terms)
 
-document_xhtml_templates = DocumentXHTMLTemplates()
+document_xhtml_template_factory = DocumentXHTMLTemplateFactory()
 
 

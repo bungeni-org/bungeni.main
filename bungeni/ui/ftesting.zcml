@@ -30,14 +30,6 @@
     <include package="bungeni_custom.sys" file="openoffice.zcml" />
     
     <bungeni:fs fs_path="fs" />
-    <utility name="bungeni.vocabulary.ReportXHTMLTemplates"
-        provides="zope.schema.interfaces.IVocabularyFactory"
-        component=".vocabulary.report_xhtml_templates"
-    />
-    <utility name="bungeni.vocabulary.DocumentXHTMLTemplates"
-        provides="zope.schema.interfaces.IVocabularyFactory"
-        component=".vocabulary.document_xhtml_templates"
-    />
 
 </configure>
 
