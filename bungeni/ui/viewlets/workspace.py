@@ -34,12 +34,7 @@ class WorkspaceContextNavigation(StructureAwareViewlet):
             tab["title"] = key
             tab["url"] = tab_url
             tab["active"] = self.request.getURL().startswith(tab_url)
-            # Only count the number of items in the inactive tabs
-            # to avoid running expensive count twice.
-            # Count for the active tab is included in the JSON listing and is
-            # set via Javascript
-            if not tab["active"]:
-                tab["count"] = app["workspace"]["documents"][key].count()
+            tab["count"] = app["workspace"]["documents"][key].count()
             self.tabs.append(tab)
 
 

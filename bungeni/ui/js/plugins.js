@@ -30,10 +30,6 @@
         return this;
     };
 
-    $.fn.bungeniWorkspaceContainerCount  = function(){
-        
-    };
-
     // when selecting an option on the format "Label
     // (start_time-end_time)", listen to the ``change`` event and
     // update corresponding start- and end time options
@@ -273,7 +269,7 @@
                 var table_columns = oSelf.getColumnSet();
                 var qstr = '';
                 for (i = 0; i < table_columns.keys.length; i++) {
-                    var input_id = 'input#input-' + table_columns.keys[i].getId();
+                    var input_id = 'input#input_' + table_columns.keys[i].getKey();
                     qstr = qstr + '&filter_' + table_columns.keys[i].getKey() + '=' + $(input_id).val();
                 }
                 return qstr;
@@ -316,7 +312,6 @@
             MSG_SORTDESC: "Click to filter and sort descending"
         };
         table = new YAHOO.widget.DataTable(YAHOO.util.Dom.get(table_id), columns, datasource, config);
-        table = new YAHOO.widget.DataTable(YAHOO.util.Dom.get(table_id), columns, datasource, config);
         var fnRequestReceived = function (request, response) {
                 jQuery.unblockUI();
             };
@@ -352,18 +347,6 @@
             RequestBuilder(null, table), table.fnFilterCallback);
             //table.getState().pagination.paginator.setPage(1);
         };
-        // create the inputs for column filtering
-        var i = 0;
-        var table_columns = table.getColumnSet();
-        for (i = 0; i < table_columns.keys.length; i++) {
-            var input = document.createElement('input');
-            input.setAttribute('type', 'text');
-            input.setAttribute('name', 'filter_' + table_columns.keys[i].getKey());
-            input.setAttribute('id', 'input-' + table_columns.keys[i].getId());
-            var thEl = table_columns.keys[i].getThEl();
-            thEl.innerHTML = "";
-            thEl.appendChild(input);
-        }
         table.sortColumn = function (oColumn, sDir) {
             // Default ascending
             cDir = "asc";
@@ -401,7 +384,7 @@
             // Send the request
             this.getDataSource().sendRequest(newRequest, oCallback);
         };
-        return true;
+        return table;
     };
 
     $.fn.yuiWorkspaceDataTable = function (context_name, link_url, data_url, fields, columns, table_id, item_type, status, rows_per_page) {
@@ -441,13 +424,13 @@
         global_status_var = status;
         // filter per column  
         var get_text_filter = function (oSelf) {
-                var qstr = '&filter_short_name=' + $("#input-yui-col1").val();
+                var qstr = '&filter_short_title=' + $("#input_short_title").val();
                 return qstr;
             };
         var get_select_filter = function (oSelf) {
-                var item_type = $("#input-yui-col3 option:selected");
+                var item_type = $("#input_type option:selected");
                 var qstr = '&filter_type=' + item_type.val();
-                var status = $("#input-yui-col5 option:selected");
+                var status = $("#input_status option:selected");
                 qstr = qstr + '&filter_status=' + status.val();
                 return qstr;
             };
@@ -491,9 +474,6 @@
         table = new YAHOO.widget.DataTable(YAHOO.util.Dom.get(table_id), columns, datasource, config);
         var fnRequestReceived = function() {
             jQuery.unblockUI();
-            var count = this.getState().pagination.totalRecords;
-            var workspace_count = $("dl.workspace li.navTreeCurrentItem a > span#count");
-            workspace_count.html("("+count+")");
         };
         table.subscribe("postRenderEvent", fnRequestReceived);
         // Update totalRecords on the fly with value from server
@@ -532,7 +512,7 @@
         var input = document.createElement('input');
         input.setAttribute('type', 'text');
         input.setAttribute('name', 'filter_' + name_column.getKey());
-        input.setAttribute('id', 'input-' + name_column.getId());
+        input.setAttribute('id', 'input_' + name_column.getKey());
         var thEl = name_column.getThEl();
         thEl.innerHTML = "";
         thEl.appendChild(input);
@@ -541,7 +521,7 @@
         thEl = type_column.getThEl();
         var item_type_select = document.createElement('select');
         item_type_select.setAttribute('name', 'filter_' + type_column.getKey());
-        var item_type_select_id = 'input-' + type_column.getId();
+        var item_type_select_id = 'input_' + type_column.getKey();
         item_type_select.setAttribute('id', item_type_select_id);
         for (var prop in item_type) {
             var option = document.createElement('option');
@@ -559,7 +539,7 @@
         var status_select = document.createElement('select');
         status_select.setAttribute('type', 'text');
         status_select.setAttribute('name', 'filter_' + status_column.getKey());
-        var status_select_id = 'input-' + status_column.getId();
+        var status_select_id = 'input_' + status_column.getKey();
         status_select.setAttribute('id', status_select_id);
         thEl = status_column.getThEl();
         i = 0;
@@ -582,7 +562,7 @@
         input = document.createElement('input');
         input.setAttribute('type', 'text');
         input.setAttribute('name', 'filter_' + status_date_column.getKey());
-        input.setAttribute('id', 'input-' + status_date_column.getId());
+        input.setAttribute('id', 'input_' + status_date_column.getKey());
         thEl = status_date_column.getThEl();
         thEl.innerHTML = "";
         thEl.appendChild(input);

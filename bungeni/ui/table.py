@@ -1,4 +1,5 @@
 # encoding: utf-8
+import os
 from zope.i18n import translate
 from zope.security import proxy
 from zc.resourcelibrary import need
@@ -9,27 +10,12 @@ from bungeni import alchemist
 from bungeni.ui import container
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import url
+from bungeni.ui.widgets import text_input_search_widget
 from bungeni.utils.capi import capi
+from bungeni.alchemist import model
 
 
-'''!+UNUSED(mr, jan-2012)
-import zope.formlib
-from zc.table import column
-from bungeni.ui.utils import common
-class LinkColumn(column.GetterColumn):
-    def renderCell(self, item, formatter):
-        abs_url = url.absoluteURL(item, common.get_request())
-        title = super(LinkColumn, self).renderCell(item, formatter)
-        if abs_url:
-            link_html = zope.formlib.widget.renderElement("a",
-                contents=title, href=abs_url
-            )
-            return zope.formlib.widget.renderElement("p",
-                contents=link_html
-            )
-        return title
-'''
-
+_path = os.path.split(os.path.abspath(__file__))[0]
 
 class TableFormatter(batching.Formatter):
     """View-level (reloads page) batching.
@@ -59,14 +45,19 @@ class TableFormatter(batching.Formatter):
 
 
 class ContextDataTableFormatter(yuiwidget.table.BaseDataTableFormatter):
-
-    script = ViewPageTemplateFile("templates/datatable.pt")
+    
+    js_file = open(_path + "/templates/datatable.js")
+    script = js_file.read()
+    js_file.close()
 
     data_view = "/jsonlisting"
     prefix = "listing"
+    _fields = None
 
     def getFields(self):
-        return alchemist.container.getFields(self.context)
+        if not self._fields:
+            self._fields = alchemist.container.getFields(self.context)
+        return self._fields
 
     def getFieldColumns(self):
         # get config for data table
@@ -92,7 +83,22 @@ class ContextDataTableFormatter(yuiwidget.table.BaseDataTableFormatter):
                     )
             field_model.append('{key:"%s"}' % (key))
         return ",".join(column_model), ",".join(field_model)
-    
+
+    def get_search_widgets(self):
+        script_html = ""
+        domain_model = proxy.removeSecurityProxy(
+            self.context).domain_model
+        domain_interface = model.queryModelInterface(domain_model)
+        if domain_interface:
+            domain_annotation = model.queryModelDescriptor(domain_interface)
+            for field in domain_annotation.listing_columns:
+                search_widget = domain_annotation.get(field).search_widget
+                if search_widget:
+                    script_html += search_widget(self.prefix, field)
+                else:
+                    script_html += text_input_search_widget(self.prefix, field)
+        return script_html
+
     def getDataTableConfig(self):
         config = {}
         config["columns"], config["fields"] = self.getFieldColumns()
@@ -105,9 +111,10 @@ class ContextDataTableFormatter(yuiwidget.table.BaseDataTableFormatter):
 
     def __call__(self):
         need("yui-paginator")
-        return '<div id="%s">\n%s</div>' % (
+        return '<div id="%s">\n%s%s</div>' % (
             self.prefix,
-            self.script(**self.getDataTableConfig()))
+            self.script % self.getDataTableConfig(),
+            self.get_search_widgets())
 
 
 class AjaxContainerListing(container.AjaxContainerListing):

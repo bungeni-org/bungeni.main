@@ -79,7 +79,6 @@ component.getGlobalSiteManager().registerAdapter(queryModelDescriptor,
     IModelAnnotation # !+IModelDescriptor ?
 )
 
-
 # local utils
 
 class interned(object):
@@ -196,7 +195,7 @@ class IModelDescriptorField(interface.Interface):
         title=u"A Custom Widget Factory for Add Views",
         required=False
     )
-    search_widget = schema.ASCIILine(
+    search_widget = schema.Object(interface.Interface,
         title=u"A Custom Search Widget Factory",
         required=False
     )
@@ -288,7 +287,7 @@ class Field(object):
     view_widget = None      # zope.formlib.interaces.IDisplayWidget
     edit_widget = None      # zope.formlib.interfaces.IInputWidget
     add_widget = None       # zope.formlib.interfaces.IInputWidget
-    search_widget = None    # zope.formlib.interfaces.IInputWidget
+    search_widget = None
     
     # /INIT Parameter Defaults
     

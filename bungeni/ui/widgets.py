@@ -9,7 +9,6 @@ $URL$
 """
 log = __import__("logging").getLogger("bungeni.ui.widgets")
 
-import sys
 import datetime
 import pytz
 import itertools
@@ -24,11 +23,9 @@ from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from zope.interface.common import idatetime
 import zope.security.proxy
 import zope.traversing
-from zope.formlib.widgets import (TextAreaWidget, FileWidget, RadioWidget, 
+from zope.formlib.widgets import (TextAreaWidget, FileWidget, RadioWidget,
     DropdownWidget)
-from zope.formlib.itemswidgets import (SingleDataHelper, ItemsWidgetBase, 
-    ItemsEditWidgetBase,ItemDisplayWidget)
-from zope.formlib.widgets import CheckBoxWidget
+from zope.formlib.itemswidgets import (ItemsEditWidgetBase, ItemDisplayWidget)
 
 from zope.i18n import translate
 
@@ -43,11 +40,8 @@ from bungeni.ui.interfaces import IGenenerateVocabularyDefault
 from bungeni.models.utils import get_db_user_id
 from bungeni.core.language import get_default_language
 
-from zope.formlib.interfaces import IInputWidget, IDisplayWidget
-from zope import component
 
-
-path = os.path.split(os.path.abspath(__file__))[0]
+_path = os.path.split(os.path.abspath(__file__))[0]
 
 class IDiffDisplayWidget(zope.formlib.interfaces.IDisplayWidget):
     """ Marker interface for diff text widgets
@@ -56,6 +50,7 @@ class IDiffDisplayWidget(zope.formlib.interfaces.IDisplayWidget):
 
 class TextWidget(zope.formlib.widgets.TextWidget):
     displayWidth = 60
+
 class LongTextWidget(TextWidget):
     displayWidth = 90
 
@@ -317,7 +312,7 @@ class SelectDateWidget(zope.formlib.widget.SimpleInputWidget):
     minYearDelta = 100
     maxYearDelta = 5
 
-    js_file = open(path + "/templates/yui-calwidget.js", "r")
+    js_file = open(_path + "/templates/yui-calwidget.js", "r")
     js_template = js_file.read()
     js_file.close()
 
@@ -1229,3 +1224,12 @@ class YesNoDisplayWidgetBase(ItemDisplayWidget):
 
 def YesNoDisplayWidget(*attrs, **kw):
     return CustomWidgetFactory(YesNoDisplayWidgetBase, *attrs, **kw)
+
+def text_input_search_widget(table_id, field_id):
+    """ Default search widget
+    displays a text input field
+    """
+    js_file = open(_path + "/templates/text-input-search-widget.js")
+    script = js_file.read()
+    js_file.close()
+    return script % {"table_id":table_id, "field_id":field_id}

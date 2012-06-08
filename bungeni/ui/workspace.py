@@ -1,3 +1,4 @@
+import os
 import time
 import simplejson
 from zope import component
@@ -28,6 +29,7 @@ from bungeni.ui.utils import debug
 from bungeni.utils import register
 from bungeni.utils.capi import capi
 
+_path = os.path.split(os.path.abspath(__file__))[0]
 
 class WorkspaceField(object):
 
@@ -170,8 +172,14 @@ class WorkspaceContainerJSONListing(BrowserPage):
 
 class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
     data_view = "/jsonlisting"
-    script = ViewPageTemplateFile("templates/datatable-workspace.pt")
-    
+
+    js_file = open(_path + "/templates/datatable-workspace.js")
+    script = js_file.read()
+    js_file.close()
+
+    def get_search_widgets(self):
+        return ""
+
     def get_item_types(self):
         workspace_config = component.getUtility(IWorkspaceTabsUtility)
         roles = get_workspace_roles() + OBJECT_ROLES
