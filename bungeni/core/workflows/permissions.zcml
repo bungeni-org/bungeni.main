@@ -263,128 +263,6 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.bill.wf.gazetted.withdrawn" role="bungeni.Clerk" />
 
 
-<!-- committee -->
-<grant permission="bungeni.committee.Edit" role="bungeni.Clerk" />
-<grant permission="bungeni.committee.Add" role="bungeni.Clerk" />
-<grant permission="bungeni.committee.Delete" role="bungeni.Clerk" />
-
-<permission id="bungeni.committee.wf.draft.active" title="Activate" />
-<grant permission="bungeni.committee.wf.draft.active" role="bungeni.Clerk" />
-<grant permission="bungeni.committee.wf.draft.active" role="bungeni.Speaker" />
-
-<permission id="bungeni.committee.wf.active.dissolved" title="Dissolve" />
-<grant permission="bungeni.committee.wf.active.dissolved" role="bungeni.Clerk" />
-<grant permission="bungeni.committee.wf.active.dissolved" role="bungeni.Speaker" />
-
-<permission id="bungeni.committee.wf.active.draft" title="Deactivate" />
-<grant permission="bungeni.committee.wf.active.draft" role="bungeni.Clerk" />
-<grant permission="bungeni.committee.wf.active.draft" role="bungeni.Speaker" />
-
-
-<!-- event -->
-
-<permission id="bungeni.event.wf.draft.attached" title="Publish" />
-<grant permission="bungeni.event.wf.draft.attached" role="bungeni.Owner" />
-
-<permission id="bungeni.event.wf.draft.internal" title="Publish Internal" />
-<grant permission="bungeni.event.wf.draft.internal" role="bungeni.Owner" />
-
-<permission id="bungeni.event.wf.internal.attached" title="Re-publish" />
-<grant permission="bungeni.event.wf.internal.attached" role="bungeni.Clerk" />
-<grant permission="bungeni.event.wf.internal.attached" role="bungeni.Owner" />
-
-<permission id="bungeni.event.wf.attached.internal" title="Publish Internal" />
-<grant permission="bungeni.event.wf.attached.internal" role="bungeni.Clerk" />
-<grant permission="bungeni.event.wf.attached.internal" role="bungeni.Owner" />
-
-<permission id="bungeni.event.wf.attached.inactive" title="Deactivate" />
-<grant permission="bungeni.event.wf.attached.inactive" role="bungeni.Clerk" />
-<grant permission="bungeni.event.wf.attached.inactive" role="bungeni.Owner" />
-
-
-<!-- group -->
-
-<permission id="bungeni.group.wf.draft.active" title="Activate" />
-<grant permission="bungeni.group.wf.draft.active" role="bungeni.Clerk" />
-<grant permission="bungeni.group.wf.draft.active" role="bungeni.Speaker" />
-
-<permission id="bungeni.group.wf.active.dissolved" title="Dissolve" />
-<grant permission="bungeni.group.wf.active.dissolved" role="bungeni.Clerk" />
-<grant permission="bungeni.group.wf.active.dissolved" role="bungeni.Speaker" />
-
-<permission id="bungeni.group.wf.active.draft" title="Deactivate" />
-<grant permission="bungeni.group.wf.active.draft" role="bungeni.Clerk" />
-<grant permission="bungeni.group.wf.active.draft" role="bungeni.Speaker" />
-
-
-<!-- sitting -->
-<grant permission="bungeni.sitting.View" role="bungeni.Clerk" />
-<grant permission="bungeni.sitting.Edit" role="bungeni.Clerk" />
-<grant permission="bungeni.sitting.Add" role="bungeni.Clerk" />
-<grant permission="bungeni.sittingschedule.View" role="bungeni.Clerk" />
-<grant permission="bungeni.sittingattendance.Edit" role="bungeni.Clerk" />
-<grant permission="bungeni.sittingattendance.Add" role="bungeni.Clerk" />
-<grant permission="bungeni.sittingattendance.Delete" role="bungeni.Clerk" />
-
-<permission id="bungeni.sitting.wf.sitting.draft_agenda" title="Draft Agenda" />
-<grant permission="bungeni.sitting.wf.sitting.draft_agenda" role="bungeni.Clerk" />
-<grant permission="bungeni.sitting.wf.sitting.draft_agenda" role="bungeni.Speaker" />
-
-<permission id="bungeni.sitting.wf.draft_agenda.published_agenda" title="Finalize Agenda" />
-<grant permission="bungeni.sitting.wf.draft_agenda.published_agenda" role="bungeni.Clerk" />
-<grant permission="bungeni.sitting.wf.draft_agenda.published_agenda" role="bungeni.Speaker" />
-
-<permission id="bungeni.sitting.wf.draft_agenda.published_agenda_internal" title="Publish Internal Agenda" />
-<grant permission="bungeni.sitting.wf.draft_agenda.published_agenda_internal" role="bungeni.Clerk" />
-<grant permission="bungeni.sitting.wf.draft_agenda.published_agenda_internal" role="bungeni.Speaker" />
-
-<permission id="bungeni.sitting.wf.published_agenda.draft_agenda" title="Redraft Agenda" />
-<grant permission="bungeni.sitting.wf.published_agenda.draft_agenda" role="bungeni.Clerk" />
-<grant permission="bungeni.sitting.wf.published_agenda.draft_agenda" role="bungeni.Speaker" />
-
-<permission id="bungeni.sitting.wf.published_agenda.draft_minutes" title="Draft Minutes" />
-<grant permission="bungeni.sitting.wf.published_agenda.draft_minutes" role="bungeni.Clerk" />
-<grant permission="bungeni.sitting.wf.published_agenda.draft_minutes" role="bungeni.Speaker" />
-
-<permission id="bungeni.sitting.wf.draft_minutes.published_minutes" title="Publish Minutes" />
-<grant permission="bungeni.sitting.wf.draft_minutes.published_minutes" role="bungeni.Clerk" />
-<grant permission="bungeni.sitting.wf.draft_minutes.published_minutes" role="bungeni.Speaker" />
-
-<permission id="bungeni.sitting.wf.draft_minutes.published_minutes_internal" title="Publish Minutes Internal" />
-<grant permission="bungeni.sitting.wf.draft_minutes.published_minutes_internal" role="bungeni.Clerk" />
-<grant permission="bungeni.sitting.wf.draft_minutes.published_minutes_internal" role="bungeni.Speaker" />
-
-<permission id="bungeni.sitting.wf.published_minutes.draft_minutes" title="Redraft Minutes" />
-<grant permission="bungeni.sitting.wf.published_minutes.draft_minutes" role="bungeni.Clerk" />
-<grant permission="bungeni.sitting.wf.published_minutes.draft_minutes" role="bungeni.Speaker" />
-
-
-<!-- membership -->
-
-<permission id="bungeni.membership.wf.attached.internal" title="Publish Internal" />
-<grant permission="bungeni.membership.wf.attached.internal" role="bungeni.Clerk" />
-<grant permission="bungeni.membership.wf.attached.internal" role="bungeni.Owner" />
-
-<permission id="bungeni.membership.wf.internal.attached" title="Re-publish" />
-<grant permission="bungeni.membership.wf.internal.attached" role="bungeni.Clerk" />
-<grant permission="bungeni.membership.wf.internal.attached" role="bungeni.Owner" />
-
-
-<!-- heading -->
-<grant permission="bungeni.heading.Edit" role="bungeni.Clerk" />
-<grant permission="bungeni.heading.Edit" role="bungeni.Speaker" />
-<grant permission="bungeni.heading.Add" role="bungeni.Clerk" />
-<grant permission="bungeni.heading.Add" role="bungeni.Speaker" />
-
-<permission id="bungeni.heading.wf.public.inactive" title="Deactivate" />
-<grant permission="bungeni.heading.wf.public.inactive" role="bungeni.Clerk" />
-<grant permission="bungeni.heading.wf.public.inactive" role="bungeni.Speaker" />
-
-<permission id="bungeni.heading.wf.inactive.public" title="Reactivate" />
-<grant permission="bungeni.heading.wf.inactive.public" role="bungeni.Clerk" />
-<grant permission="bungeni.heading.wf.inactive.public" role="bungeni.Speaker" />
-
-
 <!-- motion -->
 <grant permission="bungeni.motion.View" role="bungeni.Owner" />
 <grant permission="bungeni.motion.View" role="bungeni.Signatory" />
@@ -472,24 +350,6 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.motion.wf.admissible.withdrawn" title="Withdraw" />
 <grant permission="bungeni.motion.wf.admissible.withdrawn" role="bungeni.Clerk" />
 <grant permission="bungeni.motion.wf.admissible.withdrawn" role="bungeni.Owner" />
-
-
-<!-- parliament -->
-<grant permission="bungeni.parliament.Add" role="bungeni.Clerk" />
-<grant permission="bungeni.parliament.Edit" role="bungeni.Clerk" />
-<grant permission="bungeni.parliament.Delete" role="bungeni.Clerk" />
-
-<permission id="bungeni.parliament.wf.draft.active" title="Activate" />
-<grant permission="bungeni.parliament.wf.draft.active" role="bungeni.Clerk" />
-<grant permission="bungeni.parliament.wf.draft.active" role="bungeni.Speaker" />
-
-<permission id="bungeni.parliament.wf.active.dissolved" title="Dissolve" />
-<grant permission="bungeni.parliament.wf.active.dissolved" role="bungeni.Clerk" />
-<grant permission="bungeni.parliament.wf.active.dissolved" role="bungeni.Speaker" />
-
-<permission id="bungeni.parliament.wf.active.draft" title="Deactivate" />
-<grant permission="bungeni.parliament.wf.active.draft" role="bungeni.Clerk" />
-<grant permission="bungeni.parliament.wf.active.draft" role="bungeni.Speaker" />
 
 
 <!-- question -->
@@ -666,6 +526,146 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.tableddocument.wf.submitted.withdrawn" title="Withdraw" />
 <grant permission="bungeni.tableddocument.wf.submitted.withdrawn" role="bungeni.Clerk" />
 <grant permission="bungeni.tableddocument.wf.submitted.withdrawn" role="bungeni.Owner" />
+
+
+<!-- event -->
+
+<permission id="bungeni.event.wf.draft.attached" title="Publish" />
+<grant permission="bungeni.event.wf.draft.attached" role="bungeni.Owner" />
+
+<permission id="bungeni.event.wf.draft.internal" title="Publish Internal" />
+<grant permission="bungeni.event.wf.draft.internal" role="bungeni.Owner" />
+
+<permission id="bungeni.event.wf.internal.attached" title="Re-publish" />
+<grant permission="bungeni.event.wf.internal.attached" role="bungeni.Clerk" />
+<grant permission="bungeni.event.wf.internal.attached" role="bungeni.Owner" />
+
+<permission id="bungeni.event.wf.attached.internal" title="Publish Internal" />
+<grant permission="bungeni.event.wf.attached.internal" role="bungeni.Clerk" />
+<grant permission="bungeni.event.wf.attached.internal" role="bungeni.Owner" />
+
+<permission id="bungeni.event.wf.attached.inactive" title="Deactivate" />
+<grant permission="bungeni.event.wf.attached.inactive" role="bungeni.Clerk" />
+<grant permission="bungeni.event.wf.attached.inactive" role="bungeni.Owner" />
+
+
+<!-- group -->
+
+<permission id="bungeni.group.wf.draft.active" title="Activate" />
+<grant permission="bungeni.group.wf.draft.active" role="bungeni.Clerk" />
+<grant permission="bungeni.group.wf.draft.active" role="bungeni.Speaker" />
+
+<permission id="bungeni.group.wf.active.dissolved" title="Dissolve" />
+<grant permission="bungeni.group.wf.active.dissolved" role="bungeni.Clerk" />
+<grant permission="bungeni.group.wf.active.dissolved" role="bungeni.Speaker" />
+
+<permission id="bungeni.group.wf.active.draft" title="Deactivate" />
+<grant permission="bungeni.group.wf.active.draft" role="bungeni.Clerk" />
+<grant permission="bungeni.group.wf.active.draft" role="bungeni.Speaker" />
+
+
+<!-- membership -->
+
+<permission id="bungeni.membership.wf.attached.internal" title="Publish Internal" />
+<grant permission="bungeni.membership.wf.attached.internal" role="bungeni.Clerk" />
+<grant permission="bungeni.membership.wf.attached.internal" role="bungeni.Owner" />
+
+<permission id="bungeni.membership.wf.internal.attached" title="Re-publish" />
+<grant permission="bungeni.membership.wf.internal.attached" role="bungeni.Clerk" />
+<grant permission="bungeni.membership.wf.internal.attached" role="bungeni.Owner" />
+
+
+<!-- committee -->
+<grant permission="bungeni.committee.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.committee.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.committee.Delete" role="bungeni.Clerk" />
+
+<permission id="bungeni.committee.wf.draft.active" title="Activate" />
+<grant permission="bungeni.committee.wf.draft.active" role="bungeni.Clerk" />
+<grant permission="bungeni.committee.wf.draft.active" role="bungeni.Speaker" />
+
+<permission id="bungeni.committee.wf.active.dissolved" title="Dissolve" />
+<grant permission="bungeni.committee.wf.active.dissolved" role="bungeni.Clerk" />
+<grant permission="bungeni.committee.wf.active.dissolved" role="bungeni.Speaker" />
+
+<permission id="bungeni.committee.wf.active.draft" title="Deactivate" />
+<grant permission="bungeni.committee.wf.active.draft" role="bungeni.Clerk" />
+<grant permission="bungeni.committee.wf.active.draft" role="bungeni.Speaker" />
+
+
+<!-- parliament -->
+<grant permission="bungeni.parliament.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.parliament.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.parliament.Delete" role="bungeni.Clerk" />
+
+<permission id="bungeni.parliament.wf.draft.active" title="Activate" />
+<grant permission="bungeni.parliament.wf.draft.active" role="bungeni.Clerk" />
+<grant permission="bungeni.parliament.wf.draft.active" role="bungeni.Speaker" />
+
+<permission id="bungeni.parliament.wf.active.dissolved" title="Dissolve" />
+<grant permission="bungeni.parliament.wf.active.dissolved" role="bungeni.Clerk" />
+<grant permission="bungeni.parliament.wf.active.dissolved" role="bungeni.Speaker" />
+
+<permission id="bungeni.parliament.wf.active.draft" title="Deactivate" />
+<grant permission="bungeni.parliament.wf.active.draft" role="bungeni.Clerk" />
+<grant permission="bungeni.parliament.wf.active.draft" role="bungeni.Speaker" />
+
+
+<!-- sitting -->
+<grant permission="bungeni.sitting.View" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.sittingschedule.View" role="bungeni.Clerk" />
+<grant permission="bungeni.sittingattendance.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.sittingattendance.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.sittingattendance.Delete" role="bungeni.Clerk" />
+
+<permission id="bungeni.sitting.wf.sitting.draft_agenda" title="Draft Agenda" />
+<grant permission="bungeni.sitting.wf.sitting.draft_agenda" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting.wf.sitting.draft_agenda" role="bungeni.Speaker" />
+
+<permission id="bungeni.sitting.wf.draft_agenda.published_agenda" title="Finalize Agenda" />
+<grant permission="bungeni.sitting.wf.draft_agenda.published_agenda" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting.wf.draft_agenda.published_agenda" role="bungeni.Speaker" />
+
+<permission id="bungeni.sitting.wf.draft_agenda.published_agenda_internal" title="Publish Internal Agenda" />
+<grant permission="bungeni.sitting.wf.draft_agenda.published_agenda_internal" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting.wf.draft_agenda.published_agenda_internal" role="bungeni.Speaker" />
+
+<permission id="bungeni.sitting.wf.published_agenda.draft_agenda" title="Redraft Agenda" />
+<grant permission="bungeni.sitting.wf.published_agenda.draft_agenda" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting.wf.published_agenda.draft_agenda" role="bungeni.Speaker" />
+
+<permission id="bungeni.sitting.wf.published_agenda.draft_minutes" title="Draft Minutes" />
+<grant permission="bungeni.sitting.wf.published_agenda.draft_minutes" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting.wf.published_agenda.draft_minutes" role="bungeni.Speaker" />
+
+<permission id="bungeni.sitting.wf.draft_minutes.published_minutes" title="Publish Minutes" />
+<grant permission="bungeni.sitting.wf.draft_minutes.published_minutes" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting.wf.draft_minutes.published_minutes" role="bungeni.Speaker" />
+
+<permission id="bungeni.sitting.wf.draft_minutes.published_minutes_internal" title="Publish Minutes Internal" />
+<grant permission="bungeni.sitting.wf.draft_minutes.published_minutes_internal" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting.wf.draft_minutes.published_minutes_internal" role="bungeni.Speaker" />
+
+<permission id="bungeni.sitting.wf.published_minutes.draft_minutes" title="Redraft Minutes" />
+<grant permission="bungeni.sitting.wf.published_minutes.draft_minutes" role="bungeni.Clerk" />
+<grant permission="bungeni.sitting.wf.published_minutes.draft_minutes" role="bungeni.Speaker" />
+
+
+<!-- heading -->
+<grant permission="bungeni.heading.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.heading.Edit" role="bungeni.Speaker" />
+<grant permission="bungeni.heading.Add" role="bungeni.Clerk" />
+<grant permission="bungeni.heading.Add" role="bungeni.Speaker" />
+
+<permission id="bungeni.heading.wf.public.inactive" title="Deactivate" />
+<grant permission="bungeni.heading.wf.public.inactive" role="bungeni.Clerk" />
+<grant permission="bungeni.heading.wf.public.inactive" role="bungeni.Speaker" />
+
+<permission id="bungeni.heading.wf.inactive.public" title="Reactivate" />
+<grant permission="bungeni.heading.wf.inactive.public" role="bungeni.Clerk" />
+<grant permission="bungeni.heading.wf.inactive.public" role="bungeni.Speaker" />
 
 
 <!-- user -->
