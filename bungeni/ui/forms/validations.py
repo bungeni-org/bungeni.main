@@ -27,6 +27,13 @@ from zope.security.proxy import removeSecurityProxy
 from interfaces import Modified
 
 
+def logged_errors(errors, vname, logger=log.debug):
+    if errors:
+        logger("\n        ".join(
+                [" %s FAILS ->" % (vname)] + [str(e) for e in errors]))
+    return errors
+
+
 def null_validator(*args, **kwargs):
     return []
 
@@ -49,7 +56,7 @@ def validate_start_date_within_parent(parent, data):
     """Check that the start date is inside the restrictictions.
     It must not start before the contextParents start date or end
     after the contextsParents end date"""
-    errors =[]
+    errors = []
     if data.get("start_date", None):
         start = as_date(data["start_date"])
         if getattr(parent, "start_date", None):
@@ -64,14 +71,14 @@ def validate_start_date_within_parent(parent, data):
                 errors.append(interface.Invalid(
                         _(u"Start date must be prior to (%s)") % pend, 
                         "start_date"))
-    return errors
+    return logged_errors(errors, "validate_start_date_within_parent")
 
 
 def validate_start_date_equals_end_date(action, data, context, container):
     """Check that the start date is inside the restrictictions.
     It must not start before the contextParents start date or end
     after the contextsParents end date"""
-    errors =[]
+    errors = []
     if data.get("start_date", None) and data.get("end_date", None):
         start = as_date(data["end_date"]) 
         end = as_date(data["start_date"])
@@ -79,7 +86,7 @@ def validate_start_date_equals_end_date(action, data, context, container):
             errors.append(interface.Invalid(
                     _(u"End date must be equal to start date"),
                     "end_date"))
-    return errors
+    return logged_errors(errors, "validate_start_date_equals_end_date")
 
     
 def validate_end_date_within_parent(parent, data):
@@ -87,7 +94,7 @@ def validate_end_date_within_parent(parent, data):
     It must not end before the context.Parents start date or end
     after the context.Parents end date
     """
-    errors =[]
+    errors = []
     if data.get("end_date", None):
         end = as_date(data["end_date"])
         if getattr(parent, "start_date", None):
@@ -102,13 +109,13 @@ def validate_end_date_within_parent(parent, data):
                 errors.append(interface.Invalid(
                         _(u"End date must be prior to (%s)") % pend, 
                         "end_date"))
-    return errors
+    return logged_errors(errors, "validate_end_date_within_parent")
 
 
 def validate_date_range_within_parent(action, data, context, container):
     errors = validate_start_date_within_parent(container.__parent__, data)
     errors = errors + validate_end_date_within_parent(container.__parent__, data)
-    return errors
+    return logged_errors(errors, "validate_date_range_within_parent")
 
 
 def as_date(date):
@@ -173,7 +180,7 @@ def validate_party_membership(action, data, context, container):
         errors.append(interface.Invalid(
                 _("The person is a member in (%s) at that date") % overlaps, 
                 "end_date")) 
-    return errors
+    return logged_errors(errors, "validate_party_membership")
 
 
 def validate_parliament_dates(action, data, context, container):
@@ -215,8 +222,8 @@ def validate_parliament_dates(action, data, context, container):
             errors.append(interface.Invalid(
                     _("Another parliament is not yet dissolved (%s)") % overlaps,
                     "election_date"))
-        
-    return errors
+    
+    return logged_errors(errors, "validate_parliament_dates")
 
 def validate_government_dates(action, data, context, container):
     errors = []
@@ -263,20 +270,22 @@ def validate_government_dates(action, data, context, container):
                     _("Another government is not yet dissolved (%s)") % overlaps,
                     "start_date"))
         
-    return errors
-  
+    return logged_errors(errors, "validate_government_dates")
+
+
 def validate_group_membership_dates(action, data, context, container):
-    """ A User must be member of a group only once at a time """
-    errors =[]
+    """A User must be member of a group only once at a time.
+    """
     group_id = container.__parent__.group_id
     if interfaces.IBungeniGroupMembership.providedBy(context):
         group_membership = context
     else:
         group_membership = None
-    #!(murithi, apr-2011) VALIDATION - this may be improved
+    #!+IMPROVE(murithi, apr-2011) VALIDATION
     user_id = data.get("user_id", None)
     if user_id is None:
-        return errors
+        return []
+    errors = []
     if data["start_date"]:
         for r in queries.validate_membership_in_interval(group_membership, 
                     domain.GroupMembership, 
@@ -301,8 +310,8 @@ def validate_group_membership_dates(action, data, context, container):
         overlaps = r.group.short_name
         errors.append(interface.Invalid(
                     _("The person is a member in (%s) at that date") % overlaps, 
-                    "end_date", "user_id")) 
-    return errors
+                    "end_date", "user_id"))
+    return logged_errors(errors, "validate_group_membership_dates")
                  
 
 class GroupMemberTitle(object):
@@ -438,7 +447,7 @@ def validate_member_titles(action, data, context, container):
                         _(u"A person with the title %s already exists") % (
                             overlaps),
                         "end_date"))
-    return errors
+    return logged_errors(errors, "validate_member_titles")
 
 def validate_venues(action, data, context, container):
     """A venue can only be booked for one sitting at once."""
@@ -467,7 +476,7 @@ def validate_venues(action, data, context, container):
                     _(u'Venue "$venue" already booked in this time slot',
                         mapping={"venue": booking.short_name}),
                     "venue_id"))
-    return errors
+    return logged_errors(errors, "validate_venues")
 
 def validate_recurring_sittings(action, data, context, container):
     """Validate recurring sittings.
@@ -533,7 +542,7 @@ def validate_recurring_sittings(action, data, context, container):
             if errors:
                 break
 
-    return errors
+    return logged_errors(errors, "validate_recurring_sittings")
 
 def validate_non_overlapping_sitting(action, data, context, container, *fields):
     start = data.get("start_date")
@@ -549,13 +558,13 @@ def validate_non_overlapping_sitting(action, data, context, container, *fields):
 
     for sitting in queries.get_sittings_between(sittings, start, end):
         if context != sitting:
-            return [interface.Invalid(
+            return logged_errors(
+                [interface.Invalid(
                     _(u"One or more events would be scheduled for $F, which "
                         "overlaps with an existing sitting",
                         mapping={"F":datetimedict.fromdatetime(start)}),
-                *fields)]
-
-
+                *fields)],
+                "validate_non_overlapping_sitting")
     return []
 
 
@@ -595,7 +604,7 @@ def validate_sub_role_unique(action, data, context, container):
             errors.append(interface.Invalid(
                         _(u"A title with %s sub role already exists") % (
                             sub_role_id)))
-    return errors
+    return logged_errors(errors, "validate_sub_role_unique")
 
 def diff_validator(form, context, data):
     """ Custom validator that checks if form timestamp differs from timestamp in db.
@@ -614,5 +623,5 @@ def diff_validator(form, context, data):
             for name, value in data.items():
                 if context.__dict__[name] != value:
                     errors.append(Modified(_(u"Value was changed!"), name))
-    return errors
+    return logged_errors(errors, "diff_validator")
 
