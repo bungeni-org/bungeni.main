@@ -475,7 +475,7 @@ xml_types = [TYPE_RSS, TYPE_AKOMANTOSO]
 
 class DownloadDocumentMenu(BrowserMenu):
 
-    def documentTemplates(self):
+    def documentTemplates(self, locale):
         templates = []
         templates_path = capi.get_path_for("reporting", "templates", 
             "templates.xml"
@@ -483,11 +483,16 @@ class DownloadDocumentMenu(BrowserMenu):
         if os.path.exists(templates_path):
             template_config = etree.fromstring(open(templates_path).read())
             for template in template_config.iter(tag="template"):
-                location = capi.get_path_for("reporting", "templates", 
-                    template.get("file")
-                )
                 template_file_name = template.get("file")
+                template_language = template.get("language", 
+                    capi.default_language
+                )
+                location = capi.get_path_for("reporting", "templates", 
+                    template_file_name
+                )
                 if os.path.exists(location):
+                    if (locale.id.language != template_language):
+                        continue
                     template_dict = dict(
                         title = template.get("name"),
                         language = template.get("language"),
@@ -504,7 +509,7 @@ class DownloadDocumentMenu(BrowserMenu):
         results = []
         _url = url.absoluteURL(context, request)
         if IDoc.providedBy(context):
-            doc_templates = self.documentTemplates()
+            doc_templates = self.documentTemplates(request.locale)
             for doc_type in document_types:
                 if doc_templates:
                     for template in doc_templates:
