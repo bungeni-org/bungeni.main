@@ -3,14 +3,14 @@ This is used to make the workflow actions and states translatable
 it simply builds a pagetemplate which i18nextract will look into 
 to build the pot file. 
 
-To run (from within ~/cinst/bungeni): 
+To run (from within bungeni home folder : default is `~/bungeni_apps/bungeni`): 
 
-$ bin/python src/bungeni.main/bungeni/core/workflows/exctractwfi18n.py
+`$ bin/python src/bungeni.main/bungeni/core/workflows/exctractwfi18n.py`
 
 """
 
 import os
-from bungeni.core.workflows.adapters import get_workflow
+from bungeni.utils.capi import capi
 
 path = os.path.split(os.path.abspath(__file__))[0]
 
@@ -24,23 +24,9 @@ f.write("""
 """)
 
 # !+ bungeni_custom
-for name in [
-        "bill", 
-        "question", 
-        "motion", 
-        "sitting", 
-        "user", 
-        "group", 
-        "address", 
-        "tableddocument", 
-        "agendaitem", 
-        "committee", 
-        "parliament", 
-        "attachedfile", 
-        "event", 
-        "report"
-    ]:
-    workflow = get_workflow(name)
+for type_info in capi.iter_type_info():
+    workflow = type_info[1].workflow
+    if workflow is None: continue
     for status, state in workflow.states.items():
         f.write("""<b i18n:translate="">%s</b>""" % (state.title))
         f.write("\n")
