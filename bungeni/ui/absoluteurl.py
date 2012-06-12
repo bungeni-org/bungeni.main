@@ -15,7 +15,7 @@ from bungeni.models import workspace
 from bungeni.models.utils import get_principal
 from bungeni.ui.utils.common import get_workspace_roles
 from bungeni.core.interfaces import IWorkspaceTabsUtility
-from bungeni.models.workspace import OBJECT_ROLES
+from bungeni.core.workspace import OBJECT_ROLES
 
 class CustomAbsoluteURL(AbsoluteURL):
     section = ""

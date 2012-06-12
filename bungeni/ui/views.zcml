@@ -379,7 +379,7 @@
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="index"
-        for="bungeni.models.interfaces.IWorkspaceContainer"
+        for="bungeni.core.interfaces.IWorkspaceContainer"
         class=".workspace.WorkspaceContainerListing"
         layer="bungeni.ui.interfaces.IBungeniSkin"
         permission="bungeni.workspace.View"

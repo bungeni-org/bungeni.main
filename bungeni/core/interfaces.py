@@ -209,6 +209,9 @@ class ILanguageProvider(interface.Interface):
         """Return a language code.
         """
 
+class IWorkspaceContainer(interface.Interface):
+    """Workspace containers
+    """
 
 class IWorkspaceTabsUtility(interface.Interface):
     def get_role_domains(role, tab):

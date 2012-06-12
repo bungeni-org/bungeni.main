@@ -619,7 +619,3 @@ class ISubRoleAnnotations(interface.Interface):
 
 class ICountry(interface.Interface):
     """Marker interface for Country"""
-
-class IWorkspaceContainer(interface.Interface):
-    pass
-

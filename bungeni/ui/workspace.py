@@ -13,16 +13,15 @@ from zope.security import checkPermission
 from zc.resourcelibrary import need
 from bungeni.alchemist.container import contained
 from alchemist.ui import generic
-from bungeni.models import workspace
-from bungeni.core import translation
+from bungeni.core import workspace, translation
 from bungeni.core.i18n import _
-from bungeni.core.interfaces import IWorkspaceTabsUtility
+from bungeni.core.interfaces import IWorkspaceTabsUtility, IWorkspaceContainer
 from bungeni.ui.utils import url
 from bungeni.ui.utils.common import get_workspace_roles
 from bungeni.ui import table
 from bungeni.ui.interfaces import IWorkspaceContentAdapter
 from bungeni.ui.forms.common import AddForm
-from bungeni.models.workspace import OBJECT_ROLES
+from bungeni.core.workspace import OBJECT_ROLES
 from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.alchemist.model import queryModelDescriptor
 from bungeni.ui.utils import debug
@@ -49,7 +48,6 @@ workspace_fields = [
     ]
 
 
-from bungeni.models.interfaces import IWorkspaceContainer # !+NOT_MODELS(mr, dec-2011)
 @register.view(IWorkspaceContainer, name="jsonlisting",
     protect={"bungeni.workspace.View": register.VIEW_DEFAULT_ATTRS})
 class WorkspaceContainerJSONListing(BrowserPage):

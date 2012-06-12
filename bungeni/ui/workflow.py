@@ -24,7 +24,8 @@ from bungeni.alchemist import Session
 from bungeni.core import globalsettings
 from bungeni.core.workflow import interfaces
 from bungeni.core.workflows.utils import get_mask
-from bungeni.models.interfaces import IFeatureAudit, IWorkspaceContainer, \
+from bungeni.core.interfaces import IWorkspaceContainer
+from bungeni.models.interfaces import IFeatureAudit, \
     IBungeniParliamentaryContent
 from bungeni.models.domain import Doc, get_changes
 from bungeni.ui.forms.workflow import bindTransitions

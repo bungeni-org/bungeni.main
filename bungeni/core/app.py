@@ -11,7 +11,7 @@ log = __import__("logging").getLogger("bungeni.core.app")
 from zope.interface import implements
 from zope.interface import implementedBy
 from zope.component import provideAdapter
-from zope.interface.declarations import alsoProvides 
+from zope.interface.declarations import alsoProvides
 
 from zope.app.appsetup.appsetup import getConfigContext
 from zope.app.component import site
@@ -32,7 +32,7 @@ from bungeni.core.i18n import _
 from bungeni.models.utils import get_current_parliament
 from bungeni.models.utils import container_getter
 from bungeni.ui.utils import url, common
-from bungeni.models.workspace import WorkspaceContainer
+from bungeni.core.workspace import WorkspaceContainer
 
 
 from bungeni.utils.capi import capi
@@ -124,7 +124,7 @@ class AppSetup(object):
             title=_(u"documents"),
             description=_(u"documents"),
             default_name="inbox",
-            marker = interfaces.IWorkspaceDocuments,
+            marker=interfaces.IWorkspaceDocuments,
         )
         workspace["documents"]["draft"] = WorkspaceContainer(
             tab_type="draft",

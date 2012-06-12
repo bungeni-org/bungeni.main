@@ -7,7 +7,7 @@
     <include package="zope.app.authentication" />
     
     <!-- Global/Local Role/Permission/Principal Maps -->
-    <adapter for=".interfaces.IBungeniApplication"
+    <adapter for="bungeni.models.interfaces.IBungeniApplication"
         provides="zope.securitypolicy.interfaces.IPrincipalRoleMap"
         factory="bungeni.alchemist.security.GlobalPrincipalRoleMap"
     />
@@ -21,9 +21,9 @@
         provides="zope.securitypolicy.interfaces.IPrincipalRoleMap"
         factory="bungeni.alchemist.security.LocalPrincipalRoleMap"
     />
-    <adapter for="bungeni.models.interfaces.IWorkspaceContainer"
+    <adapter for="bungeni.core.interfaces.IWorkspaceContainer"
         provides="zope.securitypolicy.interfaces.IPrincipalRoleMap"
-        factory="bungeni.models.workspace.WorkspacePrincipalRoleMap"
+        factory="bungeni.core.workspace.WorkspacePrincipalRoleMap"
     />
     
     <!-- !+RolePermissionMap

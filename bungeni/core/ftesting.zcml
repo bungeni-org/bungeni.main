@@ -26,7 +26,7 @@
     <include package="zope.annotation"/>
     <!-- App configuration -->
     <include package="bungeni.models" />
-    <include package="bungeni.models" file="auth.zcml" />
+    <include package="bungeni.core" file="auth.zcml" />
     <include package="bungeni.models" file="roles.zcml" />
     <include package="bungeni.models" file="permissions.zcml" />
     <include package="bungeni.core.workflows" file="permissions.zcml" />

@@ -16,8 +16,6 @@ class IBungeniAuthenticatedSkin(IBungeniSkin):
     """Skin for authenticated users."""
 class IBungeniRESTSkin(IRESTLayer):
     """Bungeni REST skin."""
-class IWorkspaceContainer(interface.Interface):
-    """Marker for a domain object that is also a user's workspace container."""
 
 class IAdministratorWorkspace(IBrowserView): # !+ remove out
     """Administrator's workspace."""
