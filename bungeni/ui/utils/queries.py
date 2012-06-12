@@ -29,7 +29,7 @@ from bungeni.ui.i18n import _
 # !+ COMBINE ui.utils.{queries, statements} WITH models.{queries, utils}
 # !+ MOVE some models.utils to core.globals
 
-
+''' !+UNUSED
 def execute_sql(sql_statement, **kwargs):
     """Evaluates sql_statement for parameter values specified in kwargs
     and executes it
@@ -38,6 +38,9 @@ def execute_sql(sql_statement, **kwargs):
     connection = session.connection(domain.Parliament)
     query = connection.execute(sql.text(sql_statement), **kwargs)
     return query
+'''
+
+# !+ RENAME APPROPIATELY--these "validation" utilities do no actual "validation"!
 
 def validate_date_in_interval(obj, domain_model, date):
     session = Session()
@@ -101,18 +104,18 @@ def validate_membership_in_interval(obj, domain_model, date, user_id, group_id=N
                 yield result
 
 def validate_open_membership(obj, domain_model, user_id, 
-    group_id=None, parent_id=None, with_parent=False):
+        group_id=None, parent_id=None, with_parent=False
+    ):
     session = Session()
     query = session.query(domain_model).filter(
-            sql.expression.and_(
-            domain_model.end_date == None,
-            domain_model.user_id == user_id)
-            )
+        sql.expression.and_(
+            domain_model.end_date == None, domain_model.user_id == user_id)
+    )
     if group_id:
         query = query.filter(domain_model.group_id == group_id)
     if with_parent:
         query = query.filter(domain_model.parent_group_id == parent_id)
-    results = query.all() 
+    results = query.all()
     if results:
         if obj:
             for result in results:

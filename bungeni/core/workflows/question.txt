@@ -181,7 +181,7 @@ Questions transitions
   <bungeni.core.workflow.states.WorkflowController object at ...>
   >>> wf = wfc.workflow
   >>> wf
-  <bungeni.core.workflow.states.Workflow object at ...>
+  <bungeni.core.workflow.states.Workflow 'question' object at ...>
   >>> from bungeni.core.workflow.interfaces import IWorkflow
   >>> wf is IWorkflow(question)
   True

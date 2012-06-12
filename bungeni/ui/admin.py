@@ -18,7 +18,7 @@ from bungeni.core.index import IndexReset
 from bungeni.ui import browser
 from bungeni.ui.interfaces import IBungeniSkin
 from bungeni.utils import register
-from bungeni.ui.utils.queries import execute_sql
+#from bungeni.ui.utils.queries import execute_sql
 
 
 @register.view(interfaces.IBungeniAdmin, IBungeniSkin, name="settings",

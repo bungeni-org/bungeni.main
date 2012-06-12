@@ -31,6 +31,10 @@ IntAsSetting = {
     0: zope.securitypolicy.interfaces.Deny
 }
 
+def named__str__(self, name):
+    return "<%s.%s '%s' object at %s>" % (
+        self.__module__, type(self).__name__, name, hex(id(self)))
+
 
 def wrapped_condition(condition, parent):
     def test(context):
@@ -177,8 +181,7 @@ class Transition(object):
         return cmp(self.order, other.order)
     
     def __str__(self):
-        return "<%s.%s '%s' object at %s>" % (
-            self.__module__, type(self).__name__, self.id, hex(id(self)))
+        return named__str__(self, self.id)
 
 #
 
@@ -566,7 +569,10 @@ class Workflow(object):
         workflow instance that was registered for that class/interface.
         """
         return self
-
+    
+    def __str__(self):
+        return named__str__(self, self.name)
+    __repr__ = __str__
 
 class WorkflowController(object):
     
