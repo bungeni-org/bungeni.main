@@ -276,24 +276,20 @@ password_restore_link = rdb.Table("password_restore_link", metadata,
     rdb.Column("expiration_date", rdb.DateTime(timezone=False), nullable=False) 
 ) 
 
+
 # specific user classes
 parliament_memberships = rdb.Table("parliament_memberships", metadata,
     rdb.Column("membership_id", rdb.Integer,
         rdb.ForeignKey("user_group_memberships.membership_id"),
         primary_key=True
     ),
-    # the constituency/province/region of the MP as of the time he was elected
-    # !+constituency_id/province_id/region_id/party_id(mr, jul-2011) are also 
-    # defined as mapper properties!
-    rdb.Column("constituency_id", rdb.Integer,
-        rdb.ForeignKey("constituencies.constituency_id")
-    ),
-    rdb.Column("province_id", rdb.Integer,
-        rdb.ForeignKey("provinces.province_id")
-    ),
-    rdb.Column("region_id", rdb.Integer,
-        rdb.ForeignKey("regions.region_id")
-    ),
+    # The region/province/constituency (divisions and order may be in any way 
+    # as appropriate for the given parliamentary territory) for the provenance
+    # of this member of parliament.
+    # Hierarchical Controlled Vocabulary Micro Data Format: 
+    # a triple-colon ":::" separated sequence of *key phrase paths*, each of 
+    # which is a double-colon "::" separated sequence of *key phrases*.
+    rdb.Column("provenance", rdb.UnicodeText, nullable=True),
     # the political party of the MP as of the time he was elected
     rdb.Column("party_id", rdb.Integer,
         rdb.ForeignKey("political_parties.party_id")
@@ -310,34 +306,8 @@ parliament_memberships = rdb.Table("parliament_memberships", metadata,
 
 
 #########################
-# Geo Localities
+# Countries
 #########################
-
-# !+GEO_LOCALITIES(mr, aug-2010) there is no longer any conceptual differences
-# between constituency/region/province entities -- maybe should be reduced to
-# a single table "geo_localities" plus a (parametrizable) type qualifier column.
-# This implies reworking: db schema, "add mp" form, core/ dc.py app.py, etc.
-
-# !+GEO_LOCALITIES(mr, aug-2010) all geo_localities should have start/end dates
-# as well as additional extra (dated) details.
-
-constituencies = rdb.Table("constituencies", metadata,
-    rdb.Column("constituency_id", rdb.Integer, primary_key=True),
-    rdb.Column("name", rdb.Unicode(256), nullable=False),
-    rdb.Column("start_date", rdb.Date, nullable=False),
-    rdb.Column("end_date", rdb.Date),
-    rdb.Column("language", rdb.String(5), nullable=False),
-)
-provinces = rdb.Table("provinces", metadata,
-    rdb.Column("province_id", rdb.Integer, primary_key=True),
-    rdb.Column("province", rdb.Unicode(256), nullable=False), # !+name
-    rdb.Column("language", rdb.String(5), nullable=False),
-)
-regions = rdb.Table("regions", metadata,
-    rdb.Column("region_id", rdb.Integer, primary_key=True),
-    rdb.Column("region", rdb.Unicode(256), nullable=False), # !+name
-    rdb.Column("language", rdb.String(5), nullable=False),
-)
 
 countries = rdb.Table("countries", metadata,
     rdb.Column("country_id", rdb.String(2), primary_key=True),
@@ -347,17 +317,6 @@ countries = rdb.Table("countries", metadata,
     rdb.Column("numcode", rdb.Integer),
     rdb.Column("language", rdb.String(5), nullable=False),
 )
-
-# !+GEO_LOCALITIES_DETAILS(mr, aug-2010) generalize/apply to all geo_localities
-constituency_details = rdb.Table("constituency_details", metadata,
-    rdb.Column("constituency_detail_id", rdb.Integer, primary_key=True),
-    rdb.Column("constituency_id", rdb.Integer,
-        rdb.ForeignKey("constituencies.constituency_id")),
-    rdb.Column("date", rdb.Date, nullable=False),
-    rdb.Column("population", rdb.Integer, nullable=False),
-    rdb.Column("voters", rdb.Integer, nullable=False),
-)
-
 
 #######################
 # Groups

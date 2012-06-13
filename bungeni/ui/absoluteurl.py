@@ -1,18 +1,13 @@
 # !+ CLEAN UP THIS FILE, MINIMALLY AT LEAST THE SRC CODE FORMATTING !
 
-from sqlalchemy import orm
-from zope.traversing.browser import absoluteURL
 from zope.traversing.browser.absoluteurl import AbsoluteURL
 from zope.app.component.hooks import getSite
-from zope.security.proxy import removeSecurityProxy
-from zope.interface import providedBy
 from zope.component import getUtility
 import bungeni.ui.utils as ui_utils
 from bungeni.alchemist.container import stringKey
 from bungeni.alchemist import Session
 from bungeni.models.domain import Doc
 from bungeni.core import workspace
-from bungeni.models.utils import get_principal
 from bungeni.ui.utils.common import get_workspace_roles
 from bungeni.core.interfaces import IWorkspaceTabsUtility
 
@@ -145,14 +140,8 @@ class PoliticalGroupsArchiveAbsoluteURLView(ArchiveAbsoluteURLView):
     """ Custom absolute url for political groups in archive section
     """
     subsection = "politicalgroups"
-    
-    
-class ConstituenciesArchiveAbsoluteURLView(ArchiveAbsoluteURLView):
-    """ Custom absolute url for constituencies in archive section
-    """
-    subsection = "constituencies"
-    
-    
+
+
 class CommitteesArchiveAbsoluteURLView(ArchiveAbsoluteURLView):
     """ Custom absolute url for committees in archive section
     """

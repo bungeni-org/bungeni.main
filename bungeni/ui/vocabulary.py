@@ -483,8 +483,6 @@ class WorkflowVocabularyFactory(BaseVocabularyFactory):
 workflow_vocabulary_factory = WorkflowVocabularyFactory()
 
 
-
-
 class MemberOfParliament(object):
     """ Member of Parliament = user join group membership join parliament"""
     
@@ -1176,7 +1174,8 @@ def dict_to_dynatree(input_dict, selected):
     return retval
 
 
-subject_terms_vocabulary = TreeVDEXVocabulary("subject-terms.vdex")
+subject_terms = TreeVDEXVocabulary("subject-terms.vdex")
+provenance = TreeVDEXVocabulary("provenance.vdex")
 
 #
 # Sitting flat VDEX based vocabularies

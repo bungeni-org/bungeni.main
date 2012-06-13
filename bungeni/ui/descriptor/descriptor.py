@@ -284,27 +284,6 @@ def workflow_column(name, title, default=""):
             context=request)
     return column.GetterColumn(title, getter)
 
-def constituency_column(name, title, default=""):
-    def getter(item, formatter):
-        if item.constituency is None:
-            return default
-        obj = translation.translate_obj(item.constituency)
-        return obj.name
-    return column.GetterColumn(title, getter)
-def province_column(name, title, default=""):
-    def getter(item, formatter):
-        if item.province is None:
-            return default
-        obj = translation.translate_obj(item.province)
-        return obj.province
-    return column.GetterColumn(title, getter)
-def region_column(name, title, default=""):
-    def getter(item, formatter):
-        if item.region is None:
-            return default
-        obj = translation.translate_obj(item.region)
-        return obj.region
-    return column.GetterColumn(title, getter)
 
 def party_column(name, title, default=""):
     def getter(item, formatter):
@@ -928,22 +907,6 @@ class MpDescriptor(GroupMembershipDescriptor):
         ),
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
-
-    constituencySource = vocabulary.DatabaseSource(domain.Constituency,
-        token_field="constituency_id",
-        title_field="name",
-        value_field="constituency_id"
-    )
-    provinceSource = vocabulary.DatabaseSource(domain.Province,
-        token_field="province_id",
-        title_field="province",
-        value_field="province_id"
-    )
-    regionSource = vocabulary.DatabaseSource(domain.Region,
-        token_field="region_id",
-        title_field="region",
-        value_field="region_id"
-    )
     partySource = vocabulary.DatabaseSource(domain.PoliticalParty,
         token_field="party_id",
         title_field="full_name",
@@ -951,42 +914,20 @@ class MpDescriptor(GroupMembershipDescriptor):
     )
 
     fields.extend([
-        Field(name="constituency_id", # [user]
+        Field(name="provenance", # [user]
             modes="view edit add listing",
-            localizable=[
-                show("view edit add listing"),
-            ],
-            property=schema.Choice(title=_("Constituency"),
-                source=constituencySource,
-                required=False
-            ),
-            listing_column=constituency_column("constituency_id",
-                "Constituency"
-            ),
-        ),
-        Field(name="province_id", # [user]
-            modes="view edit add listing",
-            localizable=[
+            localizable=[ 
                 show("view edit add"),
-                hide("listing")
+                hide("listing"),
             ],
-            property=schema.Choice(title=_("Province"),
-                source=provinceSource,
-                required=False
+            property=VocabularyTextField(title=_("Provenance"),
+                description=_("Select Provenance"),
+                vocabulary=vocabulary.provenance,
+                required=False,
             ),
-            listing_column=province_column("province_id", "Province"),
-        ),
-        Field(name="region_id", # [user]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit add"),
-                hide("listing")
-            ],
-            property=schema.Choice(title=_("region"),
-                source=regionSource,
-                required=False
-            ),
-            listing_column=region_column("region_id", "region"),
+            edit_widget=widgets.TreeVocabularyWidget,
+            add_widget=widgets.TreeVocabularyWidget,
+            view_widget=widgets.TermsDisplayWidget,
         ),
         Field(name="party_id", # [user]
             modes="view edit add listing",
@@ -1020,7 +961,7 @@ class MpDescriptor(GroupMembershipDescriptor):
     ])
 
     schema_invariants = GroupMembershipDescriptor.schema_invariants + [
-        MpStartBeforeElection]
+       MpStartBeforeElection]
 
 
 class PartyMemberDescriptor(GroupMembershipDescriptor):
@@ -2753,7 +2694,7 @@ class QuestionDescriptor(DocDescriptor):
             ],
             property=VocabularyTextField(title=_("Subject Terms"),
                 description=_("Select Subjects"),
-                vocabulary=vocabulary.subject_terms_vocabulary,
+                vocabulary=vocabulary.subject_terms,
                 required = False,
             ),
             edit_widget=widgets.TreeVocabularyWidget,
@@ -3144,81 +3085,6 @@ class SignatoryDescriptor(ModelDescriptor):
     ]
 
 
-class ConstituencyDescriptor(ModelDescriptor):
-    localizable = True
-    display_name = _("Constituency")
-    container_name = _("Constituencies")
-    fields = [
-        LanguageField("language"),
-        Field(name="name", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit listing"),
-            ],
-            property=schema.TextLine(title=_("Name"),
-                description=_("Name of the constituency"),
-            ),
-        ),
-        Field(name="start_date", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit listing"),
-            ],
-            property=schema.Date(title=_("Start Date")),
-            listing_column=day_column("start_date", _("Start Date")),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget
-        ),
-        Field(name="end_date", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit add listing"),
-            ],
-            property=schema.Date(title=_("End Date"), required=False),
-            listing_column=day_column("end_date", _("End Date")),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget
-        ),
-    ]
-    schema_invariants = [EndAfterStart]
-
-
-class ProvinceDescriptor(ModelDescriptor):
-    localizable = True
-    display_name = _("Province")
-    container_name = _("Provinces")
-    fields = [
-        LanguageField("language"),
-        Field(name="province", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit listing"),
-            ],
-            property=schema.TextLine(title=_("Province"),
-                description=_("Name of the Province"),
-            ),
-        ),
-    ]
-
-
-class RegionDescriptor(ModelDescriptor):
-    localizable = True
-    display_name = _("Region")
-    container_name = _("Regions")
-    fields = [
-        LanguageField("language"),
-        Field(name="region", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit listing"),
-            ],
-            property=schema.TextLine(title=_("Region"),
-                description=_("Name of the Region"),
-            ),
-        ),
-    ]
-
-
 class CountryDescriptor(ModelDescriptor):
     localizable = True
     display_name = _("Country")
@@ -3242,47 +3108,6 @@ class CountryDescriptor(ModelDescriptor):
             ],
             property=schema.TextLine(title=_("Country"),
                 description=_("Name of the Country")
-            ),
-        ),
-    ]
-
-
-class ConstituencyDetailDescriptor(ModelDescriptor):
-    localizable = True
-    display_name = _("Constituency details")
-    container_name = _("Details")
-    fields = [
-        Field(name="date", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit listing"),
-            ],
-            property=schema.Date(title=_("Date"),
-                description=_("Date the data was submitted from the "
-                    "Constituency"),
-            ),
-            listing_column=day_column("date", "Date"),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget
-        ),
-        Field(name="population", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit listing"),
-            ],
-            property=schema.Int(title=_("Population"),
-                description=_(
-                    "Total Number of People living in this Constituency"),
-            ),
-        ),
-        Field(name="voters", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit listing"),
-            ],
-            property=schema.Int(title=_("Registered Voters"),
-                description=_(
-                    "Number of Voters registered in this Constituency"),
             ),
         ),
     ]

@@ -593,12 +593,7 @@
                 titles
                 addresses
                 
-                constituency
-                constituency_id
-                province
-                province_id
-                region
-                region_id
+                provenance
                 party
                 party_id
                 start_date
@@ -622,9 +617,7 @@
                 replaced_id
                 substitution_type
                 membership_type
-                constituency_id
-                province_id
-                region_id
+                provenance
                 member_election_type
                 election_nomination_date
                 leave_reason
@@ -772,24 +765,6 @@
         />
     </class>
     
-    <class class=".domain.Constituency" >
-        <require permission="zope.View"
-            attributes="
-                constituency_id
-                name
-                start_date
-                end_date
-            "
-        />
-        <require permission="zope.ManageContent"
-            set_attributes="
-                constituency_id
-                name
-                start_date
-                end_date
-            "
-        />
-    </class>
     
     <class class=".domain.User">
         <require permission="zope.View"

@@ -282,24 +282,6 @@ mapper(domain.MemberOfParliament, schema.parliament_memberships,
     inherits=domain.GroupMembership,
     primary_key=[schema.user_group_memberships.c.membership_id],
     properties={
-        "constituency": relation(domain.Constituency,
-            primaryjoin=(schema.parliament_memberships.c.constituency_id ==
-                            schema.constituencies.c.constituency_id),
-            uselist=False,
-            lazy=False),
-        "constituency_id": [schema.parliament_memberships.c.constituency_id],
-        "province": relation(domain.Province,
-            primaryjoin=(schema.parliament_memberships.c.province_id ==
-                            schema.provinces.c.province_id),
-            uselist=False,
-            lazy=False),
-        "province_id": [schema.parliament_memberships.c.province_id],
-        "region": relation(domain.Region,
-            primaryjoin=(schema.parliament_memberships.c.region_id ==
-                            schema.regions.c.region_id),
-            uselist=False,
-            lazy=False),
-        "region_id": [schema.parliament_memberships.c.region_id],
         "party": relation(domain.PoliticalParty,
             primaryjoin=(schema.parliament_memberships.c.party_id ==
                             schema.political_parties.c.party_id),
@@ -745,19 +727,8 @@ mapper(domain.HoliDay, schema.holidays)
 ######################
 #
 
-mapper(domain.Constituency, schema.constituencies)
-mapper(domain.Province, schema.provinces)
-mapper(domain.Region, schema.regions)
 mapper(domain.Country, schema.countries)
-mapper(domain.ConstituencyDetail, schema.constituency_details,
-    properties={
-        "constituency": relation(domain.Constituency,
-            uselist=False,
-            lazy=True,
-            backref="details"
-        ),
-    }
-)
+
 
 mapper(domain.SittingAttendance, schema.sitting_attendance,
     properties={

@@ -331,13 +331,9 @@ class UserDescriptiveProperties(DescriptiveProperties):
         finally:
             if mp_user is None:
                 return self.title
-        dc_constituency = IDCDescriptiveProperties(mp_user.constituency)
-        return _("member_title_with_constituency",
-                default=u"Member of Parliament for ${constituency} (${member})",
-                mapping = {
-                    "constituency": dc_constituency.title,
-                    "member": self.title
-                }
+        return _("member_title_with_provenance",
+            default=u"Member of Parliament for ${provenance} (${member})",
+            mapping={"provenance": mp_user.provenance, "member": self.title}
         )
 
 
@@ -421,39 +417,6 @@ class ParliamentSessionDescriptiveProperties(DescriptiveProperties):
 
 
 @register.adapter()
-class ConstituencyDescriptiveProperties(DescriptiveProperties):
-    component.adapts(interfaces.IConstituency)
-    
-    @property
-    def title(self):
-        session = Session()
-        context = session.merge(removeSecurityProxy(self.context))
-        return self.translate(context, "name")
-
-
-@register.adapter()
-class ProvinceDescriptiveProperties(DescriptiveProperties):
-    component.adapts(interfaces.IProvince)
-
-    @property
-    def title(self):
-        session = Session()
-        context = session.merge(removeSecurityProxy(self.context))
-        return self.translate(context, "province")
-
-
-@register.adapter()
-class RegionDescriptiveProperties(DescriptiveProperties):
-    component.adapts(interfaces.IRegion)
-
-    @property
-    def title(self):
-        session = Session()
-        context = session.merge(removeSecurityProxy(self.context))
-        return self.translate(context, "region")
-
-
-@register.adapter()
 class ItemScheduleDiscussionDescriptiveProperties(DescriptiveProperties):
     component.adapts(interfaces.IItemScheduleDiscussion)
     
@@ -507,20 +470,6 @@ class TabledDocumentDescriptiveProperties(DocumentDescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         return self.translate(context, "short_title")
-
-
-@register.adapter()
-class ConstituencyDetailsDescriptiveProperties(DescriptiveProperties):
-    component.adapts(interfaces.IConstituencyDetail)
-
-    @property
-    def title(self):
-        session = Session()
-        context = session.merge(removeSecurityProxy(self.context))
-        return '%s - %i' % (
-            self.translate(context.constituency, "name"),
-            context.date.year
-        )
 
 
 @register.adapter()

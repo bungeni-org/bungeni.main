@@ -8,8 +8,7 @@ $Id$
 
 Validators API:
     validator(action, data, context, container) -> [error]
-Note: for ADD actions context is always None
-
+# !+ADD actions means context is categorically None
 """
 log = __import__("logging").getLogger("bungeni.ui.forms.validations")
 
@@ -281,6 +280,7 @@ def validate_group_membership_dates(action, data, context, container):
     """A User must be member of a group only once at a time.
     """
     group_id = container.__parent__.group_id
+    # !+ADD actions means context is categorically None 
     if interfaces.IBungeniGroupMembership.providedBy(context):
         group_membership = context
     else:

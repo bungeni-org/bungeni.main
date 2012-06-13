@@ -456,12 +456,6 @@ class ISignatoriesValidator(interface.Interface):
         """Should pending signatures be archived
         """
 
-class IConstituency(interface.Interface):
-    """Constituencies.
-    """
-
-class IConstituencyDetail(interface.Interface):
-    pass
 
 class IItemScheduleCategory(interface.Interface):
     pass
@@ -547,12 +541,6 @@ class IReport(IBungeniContent):
 class IReport4Sitting(IBungeniContent):
     pass
 class IUserDelegation(interface.Interface):
-    pass
-
-class IProvince(interface.Interface):
-    pass
-
-class IRegion(interface.Interface):
     pass
 
 class ITranslatable(interface.Interface):

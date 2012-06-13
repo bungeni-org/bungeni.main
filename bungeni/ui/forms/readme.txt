@@ -133,39 +133,7 @@ Just a quick check that the above validation for yesterday now fails
 
 and the real check
             
-
-
 Parliament members
-Regions and provinces get their primary key with a db sequence:
- 
- >>> region = model.Region()
- >>> region.region = u"Nairobi"
- >>> region.language = "en"
- >>> session.add(region)
- >>> session.flush() 
-
- >>> province = model.Province()
- >>> province.province= u"Central"
- >>> province.language = "en"
- >>> session.add(province)
- >>> session.flush()
-
- >>> constituency = model.Constituency()
- >>> constituency.name = u"Nairobi/Westlands"
- >>> constituency.region_id = 1
- >>> constituency.province_id = 1
- >>> constituency.start_date = today
- >>> constituency.language = "en"
- >>> session.add(constituency)
- >>> session.flush()
-
-
-    >>> from bungeni.core.testing import refresh_dc_registrations
-    >>> refresh_dc_registrations()
-    >>> from zope.dublincore.interfaces import IDCDescriptiveProperties 
-    >>> IDCDescriptiveProperties(constituency).title
-    u'Nairobi/Westlands'
-
 
 add some users:
     >>> mp_1 = model.User(u"mp_1", 
@@ -190,7 +158,7 @@ add some users:
     >>> mp1.group_id = parliament.group_id
     >>> mp1.user_id = mp_1.user_id
     >>> mp1.start_date = today
-    >>> mp1.constituency_id = 1
+    >>> mp1.provenace = "r1::p1::c1"
     >>> mp1.member_election_type = "elected"
     >>> mp1.language = "en"
     >>> session.add(mp1)
@@ -200,7 +168,7 @@ add some users:
     >>> mp2.group_id = parliament.group_id
     >>> mp2.user_id = mp_2.user_id
     >>> mp2.start_date = today
-    >>> mp2.constituency_id = 1
+    >>> mp2.provenance = "r1::p1::c1"
     >>> mp2.member_election_type = "nominated"
     >>> mp2.language = "en"
     >>> session.add(mp2)

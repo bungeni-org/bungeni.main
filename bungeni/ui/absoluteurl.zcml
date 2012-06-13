@@ -155,14 +155,6 @@
         />
 
     <browser:view
-        for="bungeni.models.interfaces.IConstituency"
-        name="get_url"
-        class=".absoluteurl.ConstituenciesArchiveAbsoluteURLView"
-        layer=".interfaces.IArchiveSectionLayer"
-        permission="zope.Public"
-        />
-
-    <browser:view
         for="bungeni.models.interfaces.ICommittee"
         name="get_url"
         class=".absoluteurl.CommitteesArchiveAbsoluteURLView"

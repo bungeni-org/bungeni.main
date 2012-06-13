@@ -1124,44 +1124,13 @@ class ObjectSubscriptions(object):
 
 # ###############
 
-class Constituency(Entity):
-    """A locality region, which elects an MP.
-    """
-    cdetail = one2many("cdetail",
-        "bungeni.models.domain.ConstituencyDetailContainer", "constituency_id")
-    parliamentmembers = one2many("parliamentmembers",
-        "bungeni.models.domain.MemberOfParliamentContainer", "constituency_id")
-    interface.implements(interfaces.ITranslatable)
-
-
-class Region(Entity):
-    """Region of the constituency.
-    """
-    #constituencies = one2many("constituencies",
-    #    "bungeni.models.domain.ConstituencyContainer", "region_id")
-    interface.implements(interfaces.ITranslatable)
-
-class Province(Entity):
-    """
-    Province of the Constituency
-    """
-    #constituencies = one2many("constituencies",
-    #    "bungeni.models.domain.ConstituencyContainer", "province_id")
-    interface.implements(interfaces.ITranslatable)
-
 class Country(object):
-    """Country of Birth.
-    """
-    pass
-
-class ConstituencyDetail(object):
-    """Details of the Constituency like population and voters at a given time.
+    """Country.
     """
     pass
 
 
 # ##########
-
 
 class TitleType(object):
     """Types of titles in groups

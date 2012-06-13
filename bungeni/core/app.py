@@ -158,13 +158,13 @@ class AppSetup(object):
             marker=interfaces.IWorkspaceScheduling,
         )
         workspace["scheduling"]["committees"] = QueryContent(
-            container_getter(get_current_parliament, 'committees'),
+            container_getter(get_current_parliament, "committees"),
             title=_(u"Committees"),
             marker=interfaces.ICommitteeAddContext,
             description=_(u"Committee schedules")
         )
         workspace["scheduling"]["sittings"] = QueryContent(
-            container_getter(get_current_parliament, 'sittings'),
+            container_getter(get_current_parliament, "sittings"),
             title=_(u"Sittings"),
             description=_(u"Plenary Sittings")
         )
@@ -221,32 +221,32 @@ class AppSetup(object):
         alsoProvides(business, interfaces.ISearchableSection)
 
         business[u"committees"] = QueryContent(
-            container_getter(get_current_parliament, 'committees'),
+            container_getter(get_current_parliament, "committees"),
             title=_(u"Committees"),
             marker=interfaces.ICommitteeAddContext,
             description=_(u"View committees created by the current parliament"))
         
         business[u"bills"] = QueryContent(
-            container_getter(get_current_parliament, 'bills'),
+            container_getter(get_current_parliament, "bills"),
             title=_(u"Bills"),
             marker=interfaces.IBillAddContext,
             description=_(u"View bills introduced in the current parliament"))
 
         business[u"questions"] = QueryContent(
-            container_getter(get_current_parliament, 'questions'),
+            container_getter(get_current_parliament, "questions"),
             title=_(u"Questions"),
             marker=interfaces.IQuestionAddContext,
             description=_(u"View questions tabled in the current parliament"))
 
         business[u"motions"] = QueryContent(
-            container_getter(get_current_parliament, 'motions'),
+            container_getter(get_current_parliament, "motions"),
             title=_(u"Motions"),
             marker=interfaces.IMotionAddContext,
             description=_(u"View motions moved in the current parliament"))
 
 
         business[u"tableddocuments"] = QueryContent(
-            container_getter(get_current_parliament, 'tableddocuments'),
+            container_getter(get_current_parliament, "tableddocuments"),
             title=_(u"Tabled documents"),
             marker=interfaces.ITabledDocumentAddContext,
             description=\
@@ -254,7 +254,7 @@ class AppSetup(object):
         )
 
         business[u"agendaitems"] = QueryContent(
-            container_getter(get_current_parliament, 'agendaitems'),
+            container_getter(get_current_parliament, "agendaitems"),
             title=_(u"Agenda items"),
             marker=interfaces.IAgendaItemAddContext,
             description=_(u"View the agenda items of the current parliament"))
@@ -266,13 +266,13 @@ class AppSetup(object):
        #     description=_(u"View the sessions of the current parliament."))
 
         business[u"sittings"] = QueryContent(
-            container_getter(get_current_parliament, 'sittings'),
+            container_getter(get_current_parliament, "sittings"),
             title=_(u"Sittings"),
             description=_(u"View the sittings of the current parliament"))
             
         #Parliamentary reports
         business[u"preports"] = QueryContent(
-            container_getter(get_current_parliament, 'preports'),
+            container_getter(get_current_parliament, "preports"),
             title=_(u"Publications"),
             marker=interfaces.IReportAddContext,
             description=\
@@ -282,14 +282,14 @@ class AppSetup(object):
         
         # members section
         members[u"current"] = QueryContent(
-            container_getter(get_current_parliament, 'parliamentmembers'),
+            container_getter(get_current_parliament, "parliamentmembers"),
             title=_(u"Current"),
             description=_(u"View current parliament members (MPs)"))
         
         alsoProvides(members, interfaces.ISearchableSection)
 
         members[u"political-groups"] = QueryContent(
-            container_getter(get_current_parliament, 'politicalgroups'),
+            container_getter(get_current_parliament, "politicalgroups"),
             title=_(u"Political groups"),
             description=_(u"View current political groups"))
 
@@ -334,9 +334,6 @@ class AppSetup(object):
         to_locatable_container(domain.PoliticalGroup, 
             records[u"politicalgroups"]
         )
-        
-        records[u"constituencies"] = domain.ConstituencyContainer()
-        to_locatable_container(domain.Constituency, records[u"constituencies"])
         
         records[u"committees"] = domain.CommitteeContainer()
         to_locatable_container(domain.Committee, records[u"committees"])
@@ -385,20 +382,11 @@ class AppSetup(object):
         content[u"offices"] = domain.OfficeContainer()
         to_locatable_container(domain.Office, content[u"offices"])
         
-        content[u'users'] = domain.UserContainer()
+        content[u"users"] = domain.UserContainer()
         to_locatable_container(domain.User, content[u"users"])
         
-        content[u'headings'] = domain.HeadingContainer()
+        content[u"headings"] = domain.HeadingContainer()
         to_locatable_container(domain.Heading, content[u"headings"])
-        
-        content[u"constituencies"] = domain.ConstituencyContainer()
-        to_locatable_container(domain.Constituency, content[u"constituencies"])
-        
-        content[u"provinces"] = domain.ProvinceContainer()
-        to_locatable_container(domain.Province, content[u"provinces"])
-        
-        content[u"regions"] = domain.RegionContainer()
-        to_locatable_container(domain.Region, content[u"regions"])
         
         content[u"parties"] = domain.PoliticalPartyContainer()
         to_locatable_container(domain.PoliticalParty, content[u"parties"])

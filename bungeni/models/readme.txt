@@ -32,22 +32,7 @@ get some values in those tables as they are needed later on
  >>> country.country_name
  u'Kenya'
 
-Regions and provinces get their primary key with a db sequence:
- 
- >>> region = model.Region()
- >>> region.region = u"Nairobi"
- >>> region.language = "en" 
- >>> session.add(region)
- >>> session.flush() 
- >>> int(region.region_id)
- 1
- >>> province = model.Province()
- >>> province.province= u"Central"
- >>> province.language = "en" 
- >>> session.add(province)
- >>> session.flush()
- >>> int(province.province_id)
- 1
+Provenance (region/province/constituency) is a (UI) hierarchical UI vocabulary.
 
 Users
 -----
@@ -217,25 +202,6 @@ Groups in a parliament:
 
 
 
-
-
-Constituencies
------------------
-Constituencies have a fk on regions and provinces:
-
-  >>> constituency = model.Constituency()
-  >>> constituency.name = u"Nairobi/Westlands"
-  >>> constituency.start_date = datetime.datetime.now()
-  >>> constituency.language = "en"
-
-  >>> session.add(constituency)
-  >>> session.flush()
- 
-check the pk if it was saved and pk sequence is working
-
- >>> int(constituency.constituency_id)
- 1
- 
 Offices
 --------------------------------
 Test office and office role and sub role creation
@@ -293,10 +259,7 @@ the parliaments group and additional attributes.
   >>> mp4.group_id = parliament.group_id
   >>> mp4.user_id = mp_1.user_id
   >>> mp4.start_date = datetime.datetime.now()
-  >>> mp4.constituency_id = constituency.constituency_id
-  >>> mp4.constituency = constituency
-  >>> mp4.province_id = province.province_id
-  >>> mp4.region_id = region.region_id
+  >>> mp4.provenance = "r1::p2::c3"
   >>> mp4.member_election_type = "elected"
   >>> mp4.language = "en"
   >>> session.add(mp4)

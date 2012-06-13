@@ -147,27 +147,6 @@
   <permission id="bungeni.user.View" title="View user" />
   <meta:redefinePermission from="bungeni.user.View" to="zope.View" />
   
-  <permission id="bungeni.constituency.Add" title="Add constituency" />
-  <permission id="bungeni.constituency.Edit" title="Edit constituency" />
-  <permission id="bungeni.constituency.Delete" title="Delete constituency" />
-  <permission id="bungeni.constituency.View" title="View constituency" />
-  <meta:redefinePermission from="bungeni.constituency.View" to="zope.View" />
-    <!-- !+CONSTITUENCY-Issue666(mr, 23-Jul-2010)
-    The grant below is a temporary workaround to the problem that, 
-    when NOT logged in, clicking on a consituency (below archive/ ) 
-    to view it would result in the following error:
-    
-<class 'zope.security.interfaces.Unauthorized'>:
-(<zope.app.publisher.browser.viewmeta.DisplayForm object at 0xb717c8c>, 'browserDefault', 'zope.View')
-
-    For some reason, this is not needed for any other object -:- this should
-    be removed when it is understood why bungeni.Anonymous does not get 
-    zope.View on domain.Constituency type, as for other anonymously visible 
-    domain types.
-    -->
-    <grant permission="bungeni.constituency.View" role="bungeni.Anonymous" />
-    <!-- /!+CONSTITUENCY-Issue666 -->
-
   <permission id="bungeni.minister.Add" title="Add minister" />
   <permission id="bungeni.minister.Edit" title="Edit minister" />
   <permission id="bungeni.minister.Delete" title="Delete minister" />

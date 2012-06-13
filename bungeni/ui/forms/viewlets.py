@@ -170,9 +170,6 @@ class GovernmentViewlet(SubformViewlet):
 @register.viewlet(interfaces.IParliament,
     manager=IContentViewManager,
     name="bungeni.viewlet.member-of-parliament")
-@register.viewlet(interfaces.IConstituency,
-    manager=IContentViewManager,
-    name="bungeni.viewlet.constituency-mp")
 class MemberOfParliamentViewlet(SubformViewlet):
     sub_attr_name = "parliamentmembers"
     weight = 20
