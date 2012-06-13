@@ -11,7 +11,7 @@
               tal:attributes="class string:navTreeItem string:visualNoMarker $current">
               <a tal:attributes="href tab/url; id python:('workspace-'+tab['title'])">
                 <span tal:replace="tab/title" i18n:translate=""/>
-                (<span tal:replace="tab/count"/>)
+                <!--(<span tal:replace="tab/count"/>)-->
               </a>
             </li>
         </tal:loop>

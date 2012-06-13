@@ -34,7 +34,7 @@ class WorkspaceContextNavigation(StructureAwareViewlet):
             tab["title"] = key
             tab["url"] = tab_url
             tab["active"] = self.request.getURL().startswith(tab_url)
-            tab["count"] = app["workspace"]["documents"][key].count()
+            #tab["count"] = app["workspace"]["documents"][key].count()
             self.tabs.append(tab)
 
 
