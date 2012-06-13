@@ -1226,10 +1226,8 @@ def YesNoDisplayWidget(*attrs, **kw):
     return CustomWidgetFactory(YesNoDisplayWidgetBase, *attrs, **kw)
 
 def text_input_search_widget(table_id, field_id):
-    """ Default search widget
-    displays a text input field
+    """Default search widget displays a text input field.
     """
-    js_file = open(_path + "/templates/text-input-search-widget.js")
-    script = js_file.read()
-    js_file.close()
-    return script % {"table_id":table_id, "field_id":field_id}
+    script = open("%s/templates/text-input-search-widget.js" % (_path)).read()
+    return script % {"table_id": table_id, "field_id": field_id}
+

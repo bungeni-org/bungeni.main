@@ -13,7 +13,7 @@ from bungeni.ui.utils import url
 from bungeni.ui.widgets import text_input_search_widget
 from bungeni.utils.capi import capi
 from bungeni.alchemist import model
-
+from bungeni.utils import naming
 
 _path = os.path.split(os.path.abspath(__file__))[0]
 
@@ -46,19 +46,17 @@ class TableFormatter(batching.Formatter):
 
 class ContextDataTableFormatter(yuiwidget.table.BaseDataTableFormatter):
     
-    js_file = open(_path + "/templates/datatable.js")
-    script = js_file.read()
-    js_file.close()
-
+    script = open("%s/templates/datatable.js" % (_path)).read()
+    
     data_view = "/jsonlisting"
     prefix = "listing"
     _fields = None
-
+    
     def getFields(self):
         if not self._fields:
             self._fields = alchemist.container.getFields(self.context)
         return self._fields
-
+    
     def getFieldColumns(self):
         # get config for data table
         column_model = []
@@ -86,8 +84,7 @@ class ContextDataTableFormatter(yuiwidget.table.BaseDataTableFormatter):
 
     def get_search_widgets(self):
         script_html = ""
-        domain_model = proxy.removeSecurityProxy(
-            self.context).domain_model
+        domain_model = proxy.removeSecurityProxy(self.context).domain_model
         domain_interface = model.queryModelInterface(domain_model)
         if domain_interface:
             domain_annotation = model.queryModelDescriptor(domain_interface)
@@ -123,7 +120,7 @@ class AjaxContainerListing(container.AjaxContainerListing):
     @property
     def prefix(self):
         context = proxy.removeSecurityProxy(self.context)
-        return "container_contents_%s" % (context.__name__)
+        return "container_contents_%s" % (naming.as_identifier(context.__name__))
 
 
 ''' !+UNUSED(mr, nov-2011)

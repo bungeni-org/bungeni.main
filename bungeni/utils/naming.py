@@ -61,3 +61,19 @@ plural.custom = {
 }
 
 
+def is_valid_identifier(name):
+    """Is name a valid identifier ::=  (letter|"_") (letter | digit | "_")*
+    """
+    return is_valid_identifier.RE.match(name)
+is_valid_identifier.RE = re.compile("^[\w_][\w\d_]+$")
+def as_identifier(name):
+    """Ensure name is a valid idenifier (for python, js, etc)... replace any
+    whitespace, "-" and "." with "_".
+    """
+    if not is_valid_identifier(name):
+        name = name.strip(" -."
+            ).replace(" ", "_").replace("-", "_").replace(".", "_")
+    assert is_valid_identifier(name), \
+        '%s ::= (letter|"_") (letter | digit | "_")*' % (name)
+    return name
+
