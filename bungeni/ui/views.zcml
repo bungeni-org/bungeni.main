@@ -40,7 +40,7 @@
     />
     <browser:page name="index"
         for="bungeni.models.interfaces.IBungeniApplication"
-        permission="zope.View"
+        permission="bungeni.workspace.View"
         layer=".interfaces.IBungeniAuthenticatedSkin"
         class=".redirect.WorkspaceRootRedirect"
     />
