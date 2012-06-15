@@ -181,7 +181,7 @@
     />
     <!-- Security declaration for workspace section -->
     <class class=".content.WorkspaceSection">
-        <require permission="bungeni.workspace.View"
+        <require permission="bungeni.ui.workspace.View"
             interface="zope.publisher.interfaces.browser.IBrowserPublisher" />
     </class>
     <!-- Application Setup -->

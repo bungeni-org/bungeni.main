@@ -1,11 +1,26 @@
 <?xml version="1.0"?>
 <configure xmlns="http://namespaces.zope.org/zope"
-           xmlns:meta="http://namespaces.zope.org/meta"
-           xmlns:i18n="http://namespaces.zope.org/i18n"
-           i18n_domain="bungeni">
-  
-  <permission id="bungeni.TranslateContent" title="Translate content" />
-
+    xmlns:meta="http://namespaces.zope.org/meta"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="bungeni"
+    >
+    <!-- 
+    This file `models/permissions.zcml` *defines* permissions only
+    i.e. should NOT contain any grants.
+    
+    Only TYPE.View permissions may be redefined to a generic View permission.
+     
+    See the Bungeni Programming Guide for other security recommendations.
+    -->
+    
+    <!-- ui -->
+    <permission id="bungeni.ui.View" title="View UI page, view, viewlet, menu item" />
+    <!-- !+ should feature UI permissions be per type? -->
+    <permission id="bungeni.ui.audit.View" title="View audit/timeline UI" />
+    <permission id="bungeni.ui.workspace.View" title="View workspace UI" />
+    
+    
+    <!-- types --> 
   <permission id="bungeni.session.Add" title="Add session" />
   <permission id="bungeni.session.Edit" title="Edit session" />
   <permission id="bungeni.session.Delete" title="Delete session" />
@@ -213,9 +228,6 @@
   <permission id="bungeni.event.View" title="View title/event" />
   <meta:redefinePermission from="bungeni.event.View" to="zope.View" />
 
-
-  <permission id="bungeni.auditlog.View" title="View audit log" />
-
 <!--
      who is able to amend, comment? Actually, here we have two steps
      1) the cleark of a committee/chairperson of a committee decide 
@@ -247,9 +259,6 @@
    
   <permission id="bungeni.translation.Add" title="add translation" />
   
-  <!-- Permission to get a workspace -->
-  <permission id="bungeni.workspace.View" title="View workspace"/>
-   
   <include package="bungeni_custom.sys.acl" file="permissions.zcml" />
    
 </configure>

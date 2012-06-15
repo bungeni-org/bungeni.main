@@ -1176,7 +1176,7 @@
         action="audit-log"
         title="Audit log"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.auditlog.View"
+        permission="bungeni.ui.audit.View"
         order="22"
     />
     <browser:menuItem menu="context_actions"

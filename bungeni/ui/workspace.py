@@ -49,7 +49,7 @@ workspace_fields = [
 
 
 @register.view(IWorkspaceContainer, name="jsonlisting",
-    protect={"bungeni.workspace.View": register.VIEW_DEFAULT_ATTRS})
+    protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
 class WorkspaceContainerJSONListing(BrowserPage):
     """Paging, batching, json contents of a workspace container.
     """

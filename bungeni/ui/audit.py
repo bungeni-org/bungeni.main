@@ -387,7 +387,7 @@ class AuditLogMixin(object):
 
 
 @register.view(interfaces.IFeatureAudit, name="audit-log",
-    protect={"bungeni.auditlog.View": register.VIEW_DEFAULT_ATTRS})
+    protect={"bungeni.ui.audit.View": register.VIEW_DEFAULT_ATTRS})
 class AuditLogView(AuditLogMixin, browser.BungeniBrowserView):
     """Change Log View for an object
     """

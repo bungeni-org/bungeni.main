@@ -23,7 +23,12 @@
     - every protection of a UI component with "zope.View" must be reviewed.
     -->
     <grant permission="zope.View" role="bungeni.Anonymous" />
+    <!-- !+UI_VIEWS all authenticated users may view UI components -->
+    <grant permission="bungeni.ui.View" role="bungeni.Authenticated" />
+    <grant permission="bungeni.ui.audit.View" role="bungeni.Authenticated" />
+    <grant permission="bungeni.ui.workspace.View" role="bungeni.Authenticated"/>
     
+
     
     <!-- Administrator account; we do not authenticate against this
        principal which is why the password is intentionally left blank -->
@@ -54,11 +59,6 @@
     <grant permission="zope.View" role="bungeni.MP" />
     <grant permission="zope.View" role="bungeni.Minister" />
     -->
-    
-    <grant permission="bungeni.auditlog.View" role="bungeni.Authenticated" />
-    
-    <!-- Only logged in users get a workspace -->
-    <grant permission="bungeni.workspace.View" role="bungeni.Authenticated"/> 
     
     <!-- content roles -->
     <include package="bungeni_custom.sys.acl" file="parliamentary_meta.zcml" />
