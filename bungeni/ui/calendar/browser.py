@@ -49,12 +49,12 @@ from bungeni.core.language import get_default_language
 from bungeni.core.translation import translate_i18n
 
 from ploned.ui.interfaces import IStructuralView
+from bungeni.ui.interfaces import IBusinessSectionLayer
 from bungeni.ui.browser import BungeniBrowserView
 from bungeni.ui.calendar import utils, config, interfaces, data
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import misc, url, debug, date
 from bungeni.ui.menu import get_actions
-from bungeni.ui.interfaces import IBusinessSectionLayer
 from bungeni.ui.widgets import LanguageLookupWidget
 from bungeni.ui.container import ContainerJSONListing
 from bungeni.ui.forms.common import AddForm
@@ -240,6 +240,11 @@ def create_sittings_map(sittings, request):
 
     return mapping
 
+
+@register.view(model_interfaces.ISittingContainer, 
+    layer=IBusinessSectionLayer, 
+    name="index",
+    protect=register.PROTECT_VIEW_PUBLIC)
 class CalendarView(BungeniBrowserView):
     """Main calendar view."""
 

@@ -1458,6 +1458,7 @@
         action="./schedule"
         title="Committee schedule"
         order="40"
+        permission="zope.Public"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.core.interfaces.ISchedulingContext"
