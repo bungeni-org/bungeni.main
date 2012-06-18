@@ -912,7 +912,6 @@ class MpDescriptor(GroupMembershipDescriptor):
         title_field="full_name",
         value_field="party_id"
     )
-
     fields.extend([
         Field(name="provenance", # [user]
             modes="view edit add listing",

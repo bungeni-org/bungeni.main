@@ -45,16 +45,18 @@ class TranslateUtility(object):
 
 class BaseLanguageProvider(object):
     interface.implements(ILanguageProvider)
-
+    
+    # precedence order (first sorting values first) - subclasses must specify
+    PRECEDENCE = None
+    
     def __call__(self):
         return normalize_lang(self.getLanguage())
-
+    
     def getLanguage(self):
         raise NotImplementedError("Inheriting class must implement this")
 
 class SystemLanguage(BaseLanguageProvider):
-    WEIGHT = 10
-
+    PRECEDENCE = 10
     def getLanguage(self):
         locale = getdefaultlocale()
         try:
@@ -63,14 +65,12 @@ class SystemLanguage(BaseLanguageProvider):
             return None
 
 class ApplicationLanguage(BaseLanguageProvider):
-    WEIGHT = 9
-
+    PRECEDENCE = 9
     def getLanguage(self):
         return capi.default_language
 
 class BrowserLanguage(BaseLanguageProvider):
-    WEIGHT = 8
-
+    PRECEDENCE = 8
     def getLanguage(self):
         request = get_request()
         if request is not None:
@@ -84,30 +84,31 @@ class BrowserLanguage(BaseLanguageProvider):
             return None
 
 class UILanguage(BaseLanguageProvider):
-    WEIGHT = 7
+    PRECEDENCE = 7
     def getLanguage(self):
         return get_request_language()
 
 def get_default_language():
-    # !+LANGUAGE(murithi, mar2011) need to integrate weights in registration
+    # !+LANGUAGE(murithi, mar2011) need to integrate precedence values in registration
     # of utilities but overriding/new classes can also reorder negotiation
     # !+LANGUAGE(mr, apr-2011) what is the relation of this with:
     #   a) capi.default_language ?
-    #   b) self.request.get("language") ?
+    #   b) request.get("language") ?
+    #   c) request.getCookies().get("I18N_LANGUAGE") ?
     default_language = None
     language_providers = getUtilitiesFor(ILanguageProvider)
     provider_list = [(p[0], p[1]) for p in language_providers]
-    sorted_providers = sorted(provider_list, key=lambda p: p[1].WEIGHT)
+    sorted_providers = sorted(provider_list, key=lambda p: p[1].PRECEDENCE)
     for name, provider in sorted_providers:
         _language = provider()
         log.debug("Looking for language in %s found %s", name, _language)
         if _language and (_language in capi.zope_i18n_allowed_languages):
             default_language = _language
-            log.debug("Got default language as %s from provider %s",
-                        _language, name)
+            log.debug(
+                "Got default language as %s from provider %s", _language, name)
             break
     return default_language
-    
+
 def get_base_direction():
     request = get_request()
     ui_lang = request.getCookies().get("I18N_LANGUAGE")
@@ -119,7 +120,7 @@ def get_base_direction():
         return "rtl"
     else:
         return "ltr"
-        
+
 def is_rtl():
     if get_base_direction() == "rtl":
         return True
@@ -131,3 +132,4 @@ def is_rtl():
 class TextDirection(object):
     def get_text_direction(self):
         return get_base_direction()
+

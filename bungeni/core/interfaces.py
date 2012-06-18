@@ -205,6 +205,7 @@ class IFSUtility(IFSUtilitySchema):
 class ILanguageProvider(interface.Interface):
     """Provides a language.
     """
+    PRECEDENCE = interface.Attribute("Preference order, first sorting first")
     def getLanguage():
         """Return a language code.
         """

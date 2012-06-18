@@ -1192,12 +1192,11 @@ class TreeVocabularyWidget(DropdownWidget):
         """ % kw 
 
 
-class TermsDisplayWidget(
-    zope.formlib.widget.UnicodeDisplayWidget
-):
-
-    hint = _(u"selected subject terms")
-
+# !+RENAME TreeTermsDisplayWidget?
+class TermsDisplayWidget(zope.formlib.widget.UnicodeDisplayWidget):
+    
+    hint = _(u"selected subject terms") # !+ should be init param?
+    
     @property
     def has_value(self):
         return (self._data is not None and
@@ -1205,14 +1204,16 @@ class TermsDisplayWidget(
         )
 
     def __call__(self):
-        term_text = u""
-        if self.has_value:
-            for data_value in self._data.split('\n'):
-                term_text = term_text + u"<li>%s</li>" \
-                    % unicode(data_value)
-        else:
+        if not self.has_value:
             return "<span>%s</span>" %(_(u"no subjects"))
-        return  u"<ul>%s</ul>" % term_text
+        
+        lang = get_default_language()
+        term_texts = [
+            self.context.vocabulary.getTermCaptionById(data_value, lang)
+            for data_value in self._data.split("\n")
+        ]
+        return  "<ul>%s</ul>" % (
+            "".join([ "<li>%s</li>" % (t) for t in term_texts ]))
 
 
 class YesNoDisplayWidgetBase(ItemDisplayWidget):

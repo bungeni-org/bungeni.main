@@ -115,6 +115,11 @@ class TreeVDEXVocabulary(VDEXVocabularyMixin):
         for value in value_list:
             if self.getTermById(value) is None:
                 raise LookupError
+    
+    def getTermCaptionById(self, value, lang):
+        """Returns the caption(s) for a given term identifier, in lang.
+        """
+        return self.vdex.getTermCaptionById(value, lang)
 
 class FlatVDEXVocabularyFactory(VDEXVocabularyMixin, BaseVocabularyFactory):
     """    
@@ -130,6 +135,7 @@ class FlatVDEXVocabularyFactory(VDEXVocabularyMixin, BaseVocabularyFactory):
         """Return a context-bound instance that implements ISource.
         """
         all_terms = self.vdex.getVocabularyDict(lang=get_default_language())
+        # self.vdex.getVocabularyDict(lang="*") -> {term_id: ({lang: caption}, children)}
         terms = []
         assert self.vdex.isFlat() is True
         for (key, (caption, children)) in all_terms.iteritems():
