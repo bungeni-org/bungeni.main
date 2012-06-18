@@ -32,7 +32,7 @@ get some values in those tables as they are needed later on
  >>> country.country_name
  u'Kenya'
 
-Provenance (region/province/constituency) is a (UI) hierarchical UI vocabulary.
+Representation (region/province/constituency) is a (UI) hierarchical UI vocabulary.
 
 Users
 -----
@@ -259,7 +259,7 @@ the parliaments group and additional attributes.
   >>> mp4.group_id = parliament.group_id
   >>> mp4.user_id = mp_1.user_id
   >>> mp4.start_date = datetime.datetime.now()
-  >>> mp4.provenance = "r1::p2::c3"
+  >>> mp4.representation = "r1::p2::c3"
   >>> mp4.member_election_type = "elected"
   >>> mp4.language = "en"
   >>> session.add(mp4)

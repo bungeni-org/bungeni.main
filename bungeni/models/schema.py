@@ -284,12 +284,12 @@ parliament_memberships = rdb.Table("parliament_memberships", metadata,
         primary_key=True
     ),
     # The region/province/constituency (divisions and order may be in any way 
-    # as appropriate for the given parliamentary territory) for the provenance
-    # of this member of parliament.
+    # as appropriate for the given parliamentary territory) for the 
+    # representation of this member of parliament.
     # Hierarchical Controlled Vocabulary Micro Data Format: 
     # a triple-colon ":::" separated sequence of *key phrase paths*, each of 
     # which is a double-colon "::" separated sequence of *key phrases*.
-    rdb.Column("provenance", rdb.UnicodeText, nullable=True),
+    rdb.Column("representation", rdb.UnicodeText, nullable=True),
     # the political party of the MP as of the time he was elected
     rdb.Column("party_id", rdb.Integer,
         rdb.ForeignKey("political_parties.party_id")

@@ -331,9 +331,9 @@ class UserDescriptiveProperties(DescriptiveProperties):
         finally:
             if mp_user is None:
                 return self.title
-        return _("member_title_with_provenance",
-            default=u"Member of Parliament for ${provenance} (${member})",
-            mapping={"provenance": mp_user.provenance, "member": self.title}
+        return _("member_title_with_representation",
+            default=u"Member of Parliament for ${representation} (${member})",
+            mapping={"representation": mp_user.representation, "member": self.title}
         )
 
 

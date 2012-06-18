@@ -1181,7 +1181,7 @@ def dict_to_dynatree(input_dict, selected):
 
 
 subject_terms = TreeVDEXVocabulary("subject-terms.vdex")
-provenance = TreeVDEXVocabulary("provenance.vdex")
+representation = TreeVDEXVocabulary("representation.vdex")
 
 #
 # Sitting flat VDEX based vocabularies

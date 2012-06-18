@@ -168,7 +168,7 @@ add some users:
     >>> mp2.group_id = parliament.group_id
     >>> mp2.user_id = mp_2.user_id
     >>> mp2.start_date = today
-    >>> mp2.provenance = "r1::p1::c1"
+    >>> mp2.representation = "r1::p1::c1"
     >>> mp2.member_election_type = "nominated"
     >>> mp2.language = "en"
     >>> session.add(mp2)

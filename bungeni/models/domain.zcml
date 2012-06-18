@@ -593,7 +593,7 @@
                 titles
                 addresses
                 
-                provenance
+                representation
                 party
                 party_id
                 start_date
@@ -617,7 +617,7 @@
                 replaced_id
                 substitution_type
                 membership_type
-                provenance
+                representation
                 member_election_type
                 election_nomination_date
                 leave_reason
