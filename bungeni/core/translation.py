@@ -6,10 +6,10 @@
 # Copyright (C) 2010 UN/DESA - http://www.un.org/esa/desa/
 # Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
 
-'''Utilities to translate content
+"""Utilities to translate content
 
 $Id$
-'''
+"""
 from copy import copy
 
 from zope import component
@@ -20,7 +20,7 @@ from zope.interface import implements
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 from zope.publisher.interfaces.http import IHTTPRequest
-from zope.i18n import translate as ztranslate
+from zope.i18n import translate
 
 from zope.publisher.browser import BrowserLanguages
 from zope.i18n.locales import locales
@@ -74,7 +74,7 @@ class LanguageVocabulary(object):
         items = [ 
             (
                 lang, 
-                (request and get_locale_lang(lang) or languages[lang]['name'])
+                (request and get_locale_lang(lang) or languages[lang]["name"])
             )
             for lang in languages.keys()
         ]
@@ -83,14 +83,15 @@ class LanguageVocabulary(object):
         return SimpleVocabulary(items)
 
 language_vocabulary_factory = LanguageVocabulary()
-
+component.provideUtility(language_vocabulary_factory, IVocabularyFactory, 
+    "language_vocabulary")
 
 class CurrentLanguageVocabulary(LanguageVocabulary):
     def __call__(self, context):
         language = get_language(context)
         languages = get_all_languages(filter=[language])
-        items = [(l, languages[l].get('name', l)) for l in languages]
-        items = [SimpleTerm(i[0], i[0], i[1]) for i in items]
+        items = [ (l, languages[l].get("name", l)) for l in languages ]
+        items = [ SimpleTerm(i[0], i[0], i[1]) for i in items ]
         return SimpleVocabulary(items)
 
 
@@ -211,21 +212,19 @@ def translate_attr(obj, pk, attr_name, lang=None):
 def get_available_translations(context):
     """ returns a dictionary of all
     available translations (key) and the object_id
-    of the object (value)"""
+    of the object (value)
+    """
     trusted = removeSecurityProxy(context)
-    
     class_name = trusted.__class__.__name__
     try:
         mapper = orm.object_mapper(trusted)
         pk = getattr(trusted, mapper.primary_key[0].name)
-        
         session = Session()
         query = session.query(domain.ObjectTranslation).filter(
-            sql.and_(
-                domain.ObjectTranslation.object_id == pk,
-                domain.ObjectTranslation.object_type == class_name)
-                ).distinct().values('lang','object_id')
-            
+                sql.and_(
+                    domain.ObjectTranslation.object_id == pk,
+                    domain.ObjectTranslation.object_type == class_name)
+            ).distinct().values("lang", "object_id")
         return dict(query)
     except:
         return {}
@@ -240,4 +239,5 @@ def translate_i18n(message_id, language=None, domain="bungeni"):
     #!+I18N(murithi, july-2011) should not be used if message ids exist in 
     # translation catalogs and a locale-aware context exists.
     to_language = language or get_request_language()
-    return ztranslate(message_id, target_language=to_language, domain=domain)
+    return translate(message_id, target_language=to_language, domain=domain)
+

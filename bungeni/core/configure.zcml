@@ -251,9 +251,6 @@
     <!-- location -->
     <adapter factory=".location.get_location_from_parent" />
     
-    <!-- translation and language components -->
-    <include file="language.zcml"/>
-    
     <view for=".interfaces.INavigationProxy"
         factory=".vhost.ProxyAwareAbsoluteURL"
         type="zope.publisher.interfaces.http.IHTTPRequest"

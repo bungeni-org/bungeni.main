@@ -20,7 +20,7 @@ from locale import getdefaultlocale
 from bungeni.core.interfaces import ILanguageProvider
 from bungeni.utils.capi import capi
 from bungeni.core.translation import get_request_language
-from bungeni.ui.utils.common import get_request
+from bungeni.ui.utils.common import get_request # !+CORE_UI_DEPENDENCY
 from bungeni.utils import register
 from ploned.ui.interfaces import ITextDirection
 
@@ -32,20 +32,18 @@ class TranslateUtility(object):
     """
     context = None
     domain = None
-
+    
     def __init__(self, context, domain="bungeni"):
         self.context = context
         self.domain = domain
-
+    
     def __call__(self, source_string):
         return translate(source_string, domain=self.domain,
             context=self.context
         )
 
-
 class BaseLanguageProvider(object):
     interface.implements(ILanguageProvider)
-    
     # precedence order (first sorting values first) - subclasses must specify
     PRECEDENCE = None
     
@@ -55,6 +53,7 @@ class BaseLanguageProvider(object):
     def getLanguage(self):
         raise NotImplementedError("Inheriting class must implement this")
 
+@register.utility(provides=ILanguageProvider, name="System Language")
 class SystemLanguage(BaseLanguageProvider):
     PRECEDENCE = 10
     def getLanguage(self):
@@ -64,11 +63,13 @@ class SystemLanguage(BaseLanguageProvider):
         except IndexError:
             return None
 
+@register.utility(provides=ILanguageProvider, name="Application Language")
 class ApplicationLanguage(BaseLanguageProvider):
     PRECEDENCE = 9
     def getLanguage(self):
         return capi.default_language
 
+@register.utility(provides=ILanguageProvider, name="Browser Language")
 class BrowserLanguage(BaseLanguageProvider):
     PRECEDENCE = 8
     def getLanguage(self):
@@ -83,10 +84,12 @@ class BrowserLanguage(BaseLanguageProvider):
         else:
             return None
 
+@register.utility(provides=ILanguageProvider, name="UI Language")
 class UILanguage(BaseLanguageProvider):
     PRECEDENCE = 7
     def getLanguage(self):
         return get_request_language()
+
 
 def get_default_language():
     # !+LANGUAGE(murithi, mar2011) need to integrate precedence values in registration
