@@ -11,13 +11,13 @@ from zope.security.proxy import removeSecurityProxy
 from zope.publisher.interfaces import NotFound
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.app.security.settings import Allow
-
+from zope.securitypolicy.interfaces import IRole
 from bungeni.alchemist import Session
 from bungeni.alchemist.security import LocalPrincipalRoleMap
 from bungeni.alchemist.container import AlchemistContainer, contained
 from bungeni.models import domain
 from bungeni.models import utils
-from bungeni.utils.capi import capi
+from bungeni.utils.capi import capi, bungeni_custom_errors
 from bungeni.core.interfaces import IWorkspaceTabsUtility, IWorkspaceContainer
 from bungeni.ui.utils.common import get_workspace_roles
 
@@ -415,33 +415,34 @@ class WorkspaceTabsUtility():
                     return self.workspaces[role][tab][domain_class]
         return []
 
-
+#@bungeni_custom_errors
 def load_workspace(file_name, domain_class):
     """Loads the workspace configuration for each documemnt"""
-    workspace_tabs = component.getUtility(IWorkspaceTabsUtility)
+    workspace_tabs = component.queryUtility(IWorkspaceTabsUtility, None)
+    if not workspace_tabs:
+        component.provideUtility(WorkspaceTabsUtility())
+        workspace_tabs = component.getUtility(IWorkspaceTabsUtility)
     path = capi.get_path_for("workspace")
     file_path = os.path.join(path, file_name)
     item_type = file_name.split(".")[0]
     workspace_tabs.register_item_type(domain_class, item_type)
     workspace = etree.fromstring(open(file_path).read())
     for state in workspace.iterchildren(tag="state"):
+        
         for tab in state.iterchildren(tag="tab"):
-            if tab.get("id") in TABS:
-                if tab.get("roles"):
-                    roles = tab.get("roles").split()
-                    for role in roles:
-                        workspace_tabs.set_content(
-                            role, tab.get("id"), domain_class, state.get("id")
-                            )
-            else:
-                raise ValueError("Invalid tab - %s. state : %s", tab.get("id"),
-                                 state.get("id"))
+            assert tab.get("id") in TABS, "Workspace configuration error : " \
+                "Invalid tab - %s. file: %s, state : %s" % (
+                tab.get("id"), file_name, state.get("id"))
+            if tab.get("roles"):
+                roles = tab.get("roles").split()
+                for role in roles:
+                    '''assert component.queryUtility(IRole, role, None), \
+                        "Workspace configuration error : " \
+                        "Invalid role - %s. file: %s, state : %s" % (
+                        role, file_name, state.get("id"))'''
+                    workspace_tabs.set_content(role,
+                                           tab.get("id"),
+                                           domain_class,
+                                           state.get("id")
+                                           )
 
-
-# !+bungeni_custom
-def load_workspaces(application, event):
-    load_workspace("bill.xml", domain.Bill)
-    load_workspace("tableddocument.xml", domain.TabledDocument)
-    load_workspace("agendaitem.xml", domain.AgendaItem)
-    load_workspace("motion.xml", domain.Motion)
-    load_workspace("question.xml", domain.Question)

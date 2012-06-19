@@ -11,7 +11,7 @@ from zope.testing import doctest, doctestunit
 from zope.app.testing import placelesssetup
 from zope.configuration import xmlconfig
 
-from bungeni.models import schema, interfaces
+from bungeni.models import schema
 
 from bungeni.core.workflows import adapters
 from bungeni.ui import descriptor

@@ -173,7 +173,6 @@ class IQuestion(IBungeniContent):
 #class IQuestionVersion(IQuestion): pass
 #!+OBSOLETE_VERSIONING class IQuestionVersionContainer(IVersionContainer): pass
 
-
 class IBill(IBungeniContent):
     """Parliamentary Bill.
     """
@@ -501,7 +500,9 @@ class IFeatureSchedule(IFeature):
 class IFeatureAddress(IFeature):
     """Marks support for "address" feature.
     """
-
+class IFeatureWorkspace(IFeature):
+    """Marks support for "workspace" feature.
+    """
 #
 
 ''' !+DATERANGEFILTER(mr, dec-2010) disabled until intention is understood

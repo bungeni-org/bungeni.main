@@ -10,7 +10,9 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.models.domain")
 
-import md5, random, string
+import md5
+import random
+import string
 import datetime
 
 from zope import interface, location
@@ -224,6 +226,11 @@ def feature_address(kls):
     interface.classImplements(kls, interfaces.IFeatureAddress)
     return kls
 
+def feature_workspace(kls):
+    """Decorator for domain types to support "workspace" feature.
+    """
+    interface.classImplements(kls, interfaces.IFeatureWorkspace)
+    return kls
 
 def configurable_domain(kls, workflow):
     """Executed on adapters.load_workflow().
@@ -645,7 +652,8 @@ class vp(object):
             self.language = language or "en" # or get_default_language()
 
 #
-
+#!+(miano, jun 2012) dynamic_features are defined for doc then repeated for
+# every type ?!?
 class Doc(Entity):
     """Base class for a workflowed parliamentary document.
     """
@@ -879,7 +887,8 @@ class DocVersion(Version):
 class AgendaItem(AdmissibleMixin, Doc):
     """Generic Agenda Item that can be scheduled on a sitting.
     """
-    dynamic_features = ["audit", "version", "attachment", "schedule"]
+    dynamic_features = ["audit", "version", "attachment", "schedule",
+                        "workspace"]
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
     )
@@ -898,7 +907,7 @@ class Bill(Doc):
     """Bill domain type.
     """
     dynamic_features = ["audit", "version", "attachment", "event", 
-        "signatory", "schedule"]
+        "signatory", "schedule", "workspace"]
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
     )
@@ -936,7 +945,7 @@ class Motion(AdmissibleMixin, Doc):
     """Motion domain type.
     """
     dynamic_features = ["audit", "version", "attachment", "event", 
-        "signatory", "schedule"]
+        "signatory", "schedule", "workspace"]
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
     )
@@ -957,7 +966,7 @@ class Question(AdmissibleMixin, Doc):
     """Question domain type.
     """
     dynamic_features = ["audit", "version", "attachment", "event", 
-        "signatory", "schedule"]
+        "signatory", "schedule", "workspace"]
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
     )
@@ -1012,7 +1021,7 @@ class TabledDocument(AdmissibleMixin, Doc):
     It must be possible to schedule a tabled document for a sitting.
     """
     dynamic_features = ["audit", "version", "attachment", "event", 
-        "signatory", "schedule"]
+        "signatory", "schedule", "workspace"]
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
     )

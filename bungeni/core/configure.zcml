@@ -158,11 +158,6 @@
             ore.wsgiapp.interfaces.IWSGIApplicationCreatedEvent"
         handler=".app.onWSGIApplicationCreatedEvent"
     />
-    <!--Load Workspace configuration-->
-    <subscriber for="bungeni.models.interfaces.IBungeniApplication
-            ore.wsgiapp.interfaces.IWSGIApplicationCreatedEvent"
-        handler=".workspace.load_workspaces"
-    />
     <!--Member title roles-->
     <subscriber for="bungeni.models.interfaces.IMemberTitle
             zope.lifecycleevent.interfaces.IObjectCreatedEvent"

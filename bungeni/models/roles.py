@@ -11,8 +11,8 @@ log = __import__("logging").getLogger("bungeni.models.roles")
 import zope.annotation
 import zope.component
 import zope.interface
-from zope.securitypolicy.interfaces import IRole 
-from zope.securitypolicy.role import Role 
+from zope.securitypolicy.interfaces import IRole
+from zope.securitypolicy.role import Role
 from bungeni.models import interfaces
 from bungeni.utils import register
 
