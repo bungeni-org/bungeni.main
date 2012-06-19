@@ -462,27 +462,16 @@ class MemberOfParliament(GroupMembership):
     addresses = one2manyindirect("addresses", 
         "bungeni.models.domain.UserAddressContainer", "user_id")
 
-class PoliticalEntity(Group):
-    """Base class for political parties and political groups.
-    """
-    interface.implements(interfaces.ITranslatable)
-    
-class PoliticalParty(PoliticalEntity):
-    """A political party (ouside the parliament).
-    """
-    partymembers = one2many("partymembers",
-        "bungeni.models.domain.PartyMemberContainer", "group_id")
-    title_types = one2many("title_types",
-        "bungeni.models.domain.TitleTypeContainer", "group_id")
-class PoliticalGroup(PoliticalEntity):
+class PoliticalGroup(Group):
     """A political group in a parliament.
     """
-    partymembers = one2many("partymembers",
-        "bungeni.models.domain.PartyMemberContainer", "group_id")
+    interface.implements(interfaces.ITranslatable)
+    members = one2many("members",
+        "bungeni.models.domain.PolitcalGroupMemberContainer", "group_id")
     title_types = one2many("title_types",
         "bungeni.models.domain.TitleTypeContainer", "group_id")
-class PartyMember(GroupMembership):
-    """Member of a political party or group, defined by its group membership.
+class PoliticalGroupMember(GroupMembership):
+    """Member of a political group, defined by its group membership.
     """
     titles = one2many("titles",
         "bungeni.models.domain.MemberTitleContainer", "membership_id")
@@ -1126,10 +1115,11 @@ class ParliamentSession(Entity):
     """
     interface.implements(interfaces.ITranslatable)
 
-
+''' !+SUBSCRIPTIONS(mr, jun-2012) unused
 class ObjectSubscriptions(object):
     """
     """
+'''
 
 # ###############
 

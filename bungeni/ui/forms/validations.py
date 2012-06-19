@@ -134,28 +134,27 @@ def validate_date_range_within_parent(action, data, context, container):
 
 
 
-class AllPartyMemberships(object):
-    """ Helper class to get all partymemberships
-    for all users """
+class AllPoliticalGroupMemberships(object):
+    """Helper class to get all political_group memberships for all users.
+    """
 
-all_party_memberships = rdb.join(
-        schema.user_group_memberships, schema.groups).join(
-           schema.political_parties)
+all_political_group_memberships = rdb.join(
+    schema.user_group_memberships, schema.groups).join(schema.political_group)
         
-rdb.orm.mapper(AllPartyMemberships, all_party_memberships)
+rdb.orm.mapper(AllPoliticalGroupMemberships, all_political_group_memberships)
 
-def validate_party_membership(action, data, context, container):
+def validate_political_group_membership(action, data, context, container):
     errors = []
     parent_id = getattr(container.__parent__, "parent_group_id", None)
-    if interfaces.IPartyMember.providedBy(context):
-        party_member = context
+    if interfaces.IPoliticalGroupMember.providedBy(context):
+        political_group_member = context
         user_id = context.user_id
     else:
-        party_member = None
+        political_group_member = None
         user_id = data["user_id"]
     if data.get("start_date", None):
-        for r in queries.validate_membership_in_interval(party_member, 
-                    AllPartyMemberships, 
+        for r in queries.validate_membership_in_interval(political_group_member, 
+                    AllPoliticalGroupMemberships, 
                     data["start_date"],
                     user_id,
                     parent_id=parent_id,
@@ -165,8 +164,8 @@ def validate_party_membership(action, data, context, container):
                     _("The person is a member in (%s) at that date") % overlaps, 
                     "start_date"))
     if data.get("end_date", None):
-        for r in queries.validate_membership_in_interval(party_member, 
-                    AllPartyMemberships, 
+        for r in queries.validate_membership_in_interval(political_group_member, 
+                    AllPoliticalGroupMemberships, 
                     data["end_date"],
                     user_id,
                     parent_id=parent_id,
@@ -175,8 +174,8 @@ def validate_party_membership(action, data, context, container):
             errors.append(Invalid(
                     _("The person is a member in (%s) at that date") % overlaps, 
                     "end_date"))
-    for r in queries.validate_open_membership(party_member, 
-            AllPartyMemberships, 
+    for r in queries.validate_open_membership(political_group_member, 
+            AllPoliticalGroupMemberships, 
             user_id, 
             parent_id=parent_id, 
             with_parent=True):
@@ -184,7 +183,7 @@ def validate_party_membership(action, data, context, container):
         errors.append(Invalid(
                 _("The person is a member in (%s) at that date") % overlaps, 
                 "end_date")) 
-    return logged_errors(errors, "validate_party_membership")
+    return logged_errors(errors, "validate_political_group_membership")
 
 
 def validate_parliament_dates(action, data, context, container):

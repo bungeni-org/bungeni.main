@@ -346,10 +346,10 @@
      />
 
   <browser:viewlet
-     name="bungeni.viewlet.party-member-personal-info"
+     name="bungeni.viewlet.political-group-member-personal-info"
      manager=".interfaces.ISubFormViewletManager"
      class=".viewlets.PersonInfo"
-     for="bungeni.models.interfaces.IPartyMember"
+     for="bungeni.models.interfaces.IPoliticalGroupMember"
      permission="zope.View"
      weight="20"
      />
@@ -434,14 +434,6 @@
      weight="20"
      />
     
-    <browser:viewlet name="bungeni.viewlet.party-members"
-        manager="bungeni.alchemist.interfaces.IContentViewManager"
-        class=".viewlets.PartyMemberViewlet"
-        for="bungeni.models.interfaces.IPoliticalParty"
-        permission="zope.View"
-        weight="10"
-    />
-
     <!-- !+PartyMemberViewlet(mr, oct-2010)
     This viewlet is replaced with the other viewlet below it, with:
         for="bungeni.models.interfaces.IPoliticalGroup"

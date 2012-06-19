@@ -347,11 +347,3 @@ class UserAdminAbsoluteURLView(AbsoluteURL):
     __call__ = __str__
     
 
-class PoliticalPartyAbsoluteURLView(AbsoluteURL):
-    """ Custom absolute url for users in admin section
-    """
-    def __str__(self):
-        base_url = ui_utils.url.absoluteURL(getSite(), self.request)        
-        return '%s/admin/content/parties/%s' % (base_url, stringKey(self.context))
-
-    __call__ = __str__

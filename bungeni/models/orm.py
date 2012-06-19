@@ -198,20 +198,8 @@ mapper(domain.Parliament, schema.parliaments,
     polymorphic_identity=polymorphic_identity(domain.Parliament)
 )
 
-mapper(domain.PoliticalEntity, schema.political_parties,
+mapper(domain.PoliticalGroup, schema.political_group,
     inherits=domain.Group,
-    polymorphic_on=schema.groups.c.type,
-    polymorphic_identity=polymorphic_identity(domain.PoliticalEntity)
-)
-
-mapper(domain.PoliticalParty,
-    inherits=domain.PoliticalEntity,
-    polymorphic_on=schema.groups.c.type,
-    polymorphic_identity=polymorphic_identity(domain.PoliticalParty)
-)
-
-mapper(domain.PoliticalGroup,
-    inherits=domain.PoliticalEntity,
     polymorphic_on=schema.groups.c.type,
     polymorphic_identity=polymorphic_identity(domain.PoliticalGroup)
 )
@@ -278,16 +266,11 @@ domain.GroupMembership.head = domain.GroupMembership.user
 
 #!+TYPES_CUSTOM mapper(domain.MemberElectionType, schema.member_election_types)
 
+# !+RENAME ParliamentMember
 mapper(domain.MemberOfParliament, schema.parliament_memberships,
     inherits=domain.GroupMembership,
     primary_key=[schema.user_group_memberships.c.membership_id],
     properties={
-        "party": relation(domain.PoliticalParty,
-            primaryjoin=(schema.parliament_memberships.c.party_id ==
-                            schema.political_parties.c.party_id),
-            uselist=False,
-            lazy=False),
-        "party_id": [schema.parliament_memberships.c.party_id],
         "start_date": column_property(
             schema.user_group_memberships.c.start_date.label("start_date")),
         "end_date": column_property(
@@ -309,10 +292,10 @@ mapper(domain.CommitteeMember,
     polymorphic_identity=polymorphic_identity(domain.CommitteeMember)
 )
 
-mapper(domain.PartyMember,
+mapper(domain.PoliticalGroupMember,
     inherits=domain.GroupMembership,
     polymorphic_on=schema.user_group_memberships.c.membership_type,
-    polymorphic_identity=polymorphic_identity(domain.PartyMember)
+    polymorphic_identity=polymorphic_identity(domain.PoliticalGroupMember)
 )
 
 mapper(domain.OfficeMember,

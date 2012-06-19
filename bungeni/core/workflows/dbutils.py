@@ -176,9 +176,8 @@ def deactivateGroupMembers(group):
 
 
 def endChildGroups(group):
-    """ upon dissolution of a parliament for all committees,
-    offices and political groups of this parliament the end date is 
-    set 
+    """Upon dissolution of a parliament for all committees,
+    offices and political groups of this parliament the end date is set 
     or upon dissolution of a government for all ministries 
     of this government the end date is set
     (in order to be able to dissolve those groups)"""
@@ -196,19 +195,15 @@ def endChildGroups(group):
     assert(end_date != None)
     if interfaces.IParliament.providedBy(group):
         parliament_id = group.parliament_id
-        committees = _end_parliament_group(domain.Committee, 
-                    parliament_id,
-                    end_date)
+        committees = _end_parliament_group(
+            domain.Committee, parliament_id, end_date)
         for committee in committees:
             yield committee
-        offices = _end_parliament_group(domain.Office,
-                    parliament_id,
-                    end_date)
+        offices = _end_parliament_group(domain.Office, parliament_id, end_date)
         for office in offices:
             yield office
-        political_groups =  _end_parliament_group(domain.PoliticalGroup,
-                    parliament_id,
-                    end_date)
+        political_groups = _end_parliament_group(
+            domain.PoliticalGroup, parliament_id, end_date)
         for political_group in political_groups:
             yield political_group
     elif interfaces.IGovernment.providedBy(group):
@@ -216,7 +211,7 @@ def endChildGroups(group):
         ministries = session.query(domain.Ministry).filter(
             rdb.and_(domain.Ministry.status == "active",
                 domain.Ministry.parent_group_id == government_id)
-                ).all()
+            ).all()
         for ministry in ministries:
             if ministry.end_date == None:
                 ministry.end_date = end_date

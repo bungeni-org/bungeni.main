@@ -130,7 +130,6 @@ class IAdvancedSearch(ISearch):
             "Parliament",
             "AgendaItem",
             "TabledDocument",
-            "PoliticalParty",
             "Goverment",
             "Ministry",
             "Report",

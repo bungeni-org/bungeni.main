@@ -318,13 +318,5 @@
         permission="zope.Public"
         />
 
-    <browser:view
-        for="bungeni.models.interfaces.IPoliticalParty"
-        name="get_url"
-        class=".absoluteurl.PoliticalPartyAbsoluteURLView"
-        layer=".interfaces.IAdminSectionLayer"
-        permission="zope.Public"
-        />
-        
 </configure>
 

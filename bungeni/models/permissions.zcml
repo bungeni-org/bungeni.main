@@ -108,11 +108,11 @@
   
   <permission id="bungeni.user.AdminRecord" title="Admin User Record" />
   
-  <permission id="bungeni.party.Add" title="Add party" />
-  <permission id="bungeni.party.Edit" title="Edit party" />
-  <permission id="bungeni.party.Delete" title="Delete party" />
-  <permission id="bungeni.party.View" title="View party" />
-  <meta:redefinePermission from="bungeni.party.View" to="zope.View" />
+  <permission id="bungeni.political_group.Add" title="Add party" />
+  <permission id="bungeni.political_group.Edit" title="Edit party" />
+  <permission id="bungeni.political_group.Delete" title="Delete party" />
+  <permission id="bungeni.political_group.View" title="View party" />
+  <meta:redefinePermission from="bungeni.political_group.View" to="zope.View" />
   
   <permission id="bungeni.government.Add" title="Add government" />
   <permission id="bungeni.government.Edit" title="Edit government" />
@@ -189,14 +189,14 @@
   <meta:redefinePermission from="bungeni.committeestaff.Edit" to="bungeni.groupmember.Edit" />
   <meta:redefinePermission from="bungeni.committeestaff.Delete" to="bungeni.groupmember.Delete" />
 
-  <permission id="bungeni.politicalgroupmember.Add" title="Add political group member" />
-  <permission id="bungeni.politicalgroupmember.Edit" title="Edit political group member" />
-  <permission id="bungeni.politicalgroupmember.Delete" title="Delete political group member" />
-  <permission id="bungeni.politicalgroupmember.View" title="View political group member" />
-  <meta:redefinePermission from="bungeni.politicalgroupmember.View" to="bungeni.groupmember.View" />
-  <meta:redefinePermission from="bungeni.politicalgroupmember.Add" to="bungeni.groupmember.Add" />
-  <meta:redefinePermission from="bungeni.politicalgroupmember.Edit" to="bungeni.groupmember.Edit" />
-  <meta:redefinePermission from="bungeni.politicalgroupmember.Delete" to="bungeni.groupmember.Delete" />
+  <permission id="bungeni.political_group_member.Add" title="Add political group member" />
+  <permission id="bungeni.political_group_member.Edit" title="Edit political group member" />
+  <permission id="bungeni.political_group_member.Delete" title="Delete political group member" />
+  <permission id="bungeni.political_group_member.View" title="View political group member" />
+  <meta:redefinePermission from="bungeni.political_group_member.View" to="bungeni.groupmember.View" />
+  <meta:redefinePermission from="bungeni.political_group_member.Add" to="bungeni.groupmember.Add" />
+  <meta:redefinePermission from="bungeni.political_group_member.Edit" to="bungeni.groupmember.Edit" />
+  <meta:redefinePermission from="bungeni.political_group_member.Delete" to="bungeni.groupmember.Delete" />
     
   <permission id="bungeni.address.Add" title="Add address" />
   <permission id="bungeni.address.Edit" title="Edit address" />

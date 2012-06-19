@@ -223,7 +223,7 @@ def user_party_column(name, title, default="-"):
         ).one()
         if mp_obj is not None:
             if mp_obj.party is not None:
-                return translation.translate_obj(mp_obj.party).full_name
+                return vocabulary.party.getTerm(mp_obj.party).title
         return default
     return column.GetterColumn(title, getter)
 
@@ -284,14 +284,6 @@ def workflow_column(name, title, default=""):
             context=request)
     return column.GetterColumn(title, getter)
 
-
-def party_column(name, title, default=""):
-    def getter(item, formatter):
-        obj = item.party
-        if obj is not None:
-            return translation.translate_obj(obj).full_name
-        return "-"
-    return column.GetterColumn(title, getter)
 
 def ministry_column(name, title, default=""):
     def getter(item, formatter):
@@ -907,11 +899,6 @@ class MpDescriptor(GroupMembershipDescriptor):
         ),
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
-    partySource = vocabulary.DatabaseSource(domain.PoliticalParty,
-        token_field="party_id",
-        title_field="full_name",
-        value_field="party_id"
-    )
     fields.extend([
         Field(name="representation", # [user]
             modes="view edit add listing",
@@ -928,16 +915,18 @@ class MpDescriptor(GroupMembershipDescriptor):
             add_widget=widgets.TreeVocabularyWidget,
             view_widget=widgets.TermsDisplayWidget,
         ),
-        Field(name="party_id", # [user]
+        Field(name="party", # [user-req]
             modes="view edit add listing",
-            localizable=[
-                show("view edit add listing"),
+            localizable=[ 
+                show("view edit listing"), 
             ],
             property=schema.Choice(title=_("Political Party"),
-                source=partySource,
-                required=False
+                source=vocabulary.party,
             ),
-            listing_column=party_column("party_id", "Party"),
+            listing_column=vocabulary_column("party",
+                "Political Party",
+                vocabulary.party
+            ),
         ),
         Field(name="leave_reason", # [user]
             modes="view edit add listing",
@@ -963,8 +952,8 @@ class MpDescriptor(GroupMembershipDescriptor):
        MpStartBeforeElection]
 
 
-class PartyMemberDescriptor(GroupMembershipDescriptor):
-    """Membership of a user in a party."""
+class PoliticalGroupMemberDescriptor(GroupMembershipDescriptor):
+    """Membership of a user in a political group."""
     localizable = True
     display_name = _("member")
     container_name = _("members")
@@ -999,55 +988,6 @@ class PartyMemberDescriptor(GroupMembershipDescriptor):
         ),
     ])
 
-
-''' !+UNUSED(mr, oct-2010)
-class MemberOfPartyDescriptor(ModelDescriptor):
-    """Partymemberships of a member of a user."""
-
-    display_name = _("Party membership")
-    container_name = _("Party memberships")
-
-    fields = [
-        Field(name="user_id", modes=""),
-        Field(name="short_name",
-            modes="view edit add listing",
-            property=schema.Text(title=_("Political Party")),
-        ),
-        Field(name="start_date",
-            modes="view edit add listing",
-            property=schema.Date(title=_("Start Date")),
-            listing_column=day_column("start_date", _("Start Date")),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget,
-        ),
-        Field(name="end_date",
-            modes="view edit add listing",
-            property=schema.Date(title=_("End Date"), required=False),
-            listing_column=day_column("end_date", _("End Date")),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget,
-        ),
-        Field(name="active_p",
-            modes="edit add",
-            property=schema.Bool(title=_("Active"), default=True),
-            #label=_("Active"),
-        ),
-        LanguageField("language"),
-        Field(name="notes",
-            property=schema.Text(title=_("Notes"), required=False),
-            view_widget=widgets.HTMLDisplay,
-            edit_widget=widgets.RichTextEditor,
-            add_widget=widgets.RichTextEditor,
-        ),
-        Field(name="substitution_type", modes=""),
-        Field(name="replaced_id", modes=""),
-        Field(name="membership_id", modes=""),
-        Field(name="status", modes=""),
-        Field(name="membership_type", modes=""),
-    ]
-    #schema_invariants = [EndAfterStart]
-    #custom_validators =[validations.validate_date_range_within_parent,]
-'''
 
 class GroupDescriptor(ModelDescriptor):
     localizable = True
@@ -1701,22 +1641,23 @@ class CommitteeStaffDescriptor(GroupMembershipDescriptor):
     ])
 
 
-class PoliticalPartyDescriptor(GroupDescriptor):
-    localizable = False
-    display_name = _("political party")
-    container_name = _("political parties")
-
+class PoliticalGroupDescriptor(GroupDescriptor):
+    localizable = True
+    display_name = _("political group")
+    container_name = _("political groups")
+    
     fields = deepcopy(GroupDescriptor.fields)
     fields.extend([
-        Field(name="identifier", # [user-req]
+        Field(
+            name="identifier", # [user-req]
             modes="view edit add",
             localizable=[
                 show("view edit"),
             ],
             property=schema.TextLine(title=_("Identifier"),
-                description=_("Unique identifier or number for this political party"),
+                description=_("Unique identifier or number for this political group"),
                 required=False
-            ),
+            )
         ),
         Field(name="logo_data", # [img]
             modes="view edit add",
@@ -1731,24 +1672,6 @@ class PoliticalPartyDescriptor(GroupDescriptor):
     schema_invariants = [EndAfterStart]
     custom_validators = [validations.validate_date_range_within_parent]
 
-
-class PoliticalGroupDescriptor(PoliticalPartyDescriptor):
-    localizable = True
-    display_name = _("political group")
-    container_name = _("political groups")
-
-    fields = deepcopy(PoliticalPartyDescriptor.fields)
-    fields[fields.index(get_field(fields, "identifier"))] = Field(
-        name="identifier", # [user-req]
-        modes="view edit add",
-        localizable=[
-            show("view edit"),
-        ],
-        property=schema.TextLine(title=_("Identifier"),
-            description=_("Unique identifier or number for this political group"),
-            required=False
-        )
-    )
 
 class OfficeDescriptor(GroupDescriptor):
     localizable = True
@@ -2437,14 +2360,6 @@ class MotionDescriptor(DocDescriptor):
             ],
             property=schema.Date(title=_("Notice Date"), required=False),
         ),
-        #Field(name="party_id", modes="",
-        #    #property = schema.Choice(title=_("Political Party"),
-        #    #   source=vocabulary.MotionPartySource(
-        #    #     token_field="party_id",
-        #    #     title_field="short_name",
-        #    #     value_field = "party_id"),
-        #    #   required=False),
-        #),
     ])
     get_field(fields, "admissible_date").localizable = [
         show("view"),

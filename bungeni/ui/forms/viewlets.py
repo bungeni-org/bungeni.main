@@ -228,14 +228,11 @@ class PoliticalGroupsViewlet(SubformViewlet):
     sub_attr_name = "politicalgroups"
     weight = 30
 
-class PartyMemberViewlet(SubformViewlet):
-    sub_attr_name = "partymembers"
-
 class OfficeMembersViewlet(SubformViewlet):
     sub_attr_name = "officemembers"
 
 class PoliticalGroupMembersViewlet(SubformViewlet):
-    sub_attr_name = "partymembers"
+    sub_attr_name = "members"
 
 class SittingsViewlet(SubformViewlet):
     sub_attr_name = "sittings"

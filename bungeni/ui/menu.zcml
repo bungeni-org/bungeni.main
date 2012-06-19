@@ -20,7 +20,7 @@
         file=20, event=21, signatory=22
         title=30
         sitting=40, agendaitem=41, attendance=42
-        partymember=60, groupmember=61, committeemember=62, officemember=63
+        groupmember=61, pgroupmember=61, committeemember=62, officemember=63
         ministry=70
         address=80
     -->
@@ -143,45 +143,27 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         submenu="additems"
     />
-    <!-- !+(miano, may 2012) why have partymembership protected by a 
-    politicalgroup permission -->
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IPoliticalParty"
-        title="Add party member..."
-        action="./partymembers/add"
-        permission="bungeni.politicalgroupmember.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="60"
-    />
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IPartyMember"
+        for="bungeni.models.interfaces.IPoliticalGroup"
         action="edit"
-        title="Edit party member"
+        title="Edit political group member"
         order="10"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.politicalgroupmember.Edit"
+        permission="bungeni.political_group_member.Edit"
     />
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IPartyMember"
+        for="bungeni.models.interfaces.IPoliticalGroup"
         action="delete"
-        title="Delete party member"
+        title="Delete political group member"
         order="99"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.politicalgroupmember.Delete"
-    />
-    <browser:menuItem menu="additems"
-        for="bungeni.models.interfaces.IPoliticalParty"
-        title="Add address..."
-        action="./addresses/add"
-        permission="bungeni.address.Add"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        order="61"
+        permission="bungeni.political_group_member.Delete"
     />
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IPoliticalGroup"
         title="Add political group member..."
-        action="./partymembers/add"
-        permission="bungeni.politicalgroupmember.Add"
+        action="./members/add"
+        permission="bungeni.political_group_member.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="61"
     />
@@ -601,17 +583,10 @@
         layer=".interfaces.IAdminSectionLayer"
      />
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.PoliticalPartyContainer"
-        title="Add political party..."
-        action="./add"
-        permission="bungeni.party.Add"
-        layer=".interfaces.IAdminSectionLayer"
-    />
-    <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.domain.PoliticalGroupContainer"
         title="Add political group..."
         action="./add"
-        permission="bungeni.party.Add"
+        permission="bungeni.political_group.Add"
         layer=".interfaces.IAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
@@ -1317,20 +1292,12 @@
         permission="bungeni.committee.Edit"
     />
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IPoliticalParty"
-        action="edit"
-        title="Edit political party"
-        order="10"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.party.Edit"
-    />
-    <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IPoliticalGroup"
         action="edit"
         title="Edit political group"
         order="10"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.party.Edit"
+        permission="bungeni.political_group.Edit"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IParliament"
@@ -1357,20 +1324,12 @@
         permission="bungeni.committee.Delete"
     />
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IPoliticalParty"
-        action="delete"
-        title="Delete political party"
-        order="99"
-        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.party.Delete"
-    />
-    <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IPoliticalGroup"
         action="delete"
         title="Delete political group"
         order="99"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.party.Delete"
+        permission="bungeni.political_group.Delete"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IGovernment"

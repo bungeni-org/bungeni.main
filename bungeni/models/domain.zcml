@@ -369,7 +369,7 @@
                 committees
                 governments
                 parliamentmembers
-                politicalgroups
+                political_groups
                 bills
                 questions
                 motions
@@ -512,19 +512,19 @@
         />
     </class>
     
-    <class class=".domain.PoliticalParty">
+    <class class=".domain.PoliticalGroup">
         <require like_class=".domain.Group" />
         <require permission="zope.View"
             attributes="
-                partmembers 
+                members
                 
-                party_id
+                group_id
                 logo_data
                 logo_name
                 logo_mimetype
             "
         />
-        <require permission="bungeni.party.Edit"
+        <require permission="bungeni.political_group.Edit"
             set_attributes="
                 short_name
                 full_name
@@ -538,15 +538,6 @@
             "
         />
     </class>
-    <class class=".domain.PoliticalGroup">
-        <require like_class=".domain.PoliticalParty" />
-    </class>
-    <!-- !+POLITICAL(mr, jul-2011) clarify usage/implementations of the two 
-    groups PoliticalGroup, PoliticalParty; currently one is a 
-    hacked-and-particlayy-copypasted version of the other i.e. a PoliticalGroup
-    does not have a dedicated political_groups db table (as political_parties)
-    but it has an attribute called partymembers!
-    -->
     
     <!-- group memberships -->
     
@@ -595,7 +586,6 @@
                 
                 representation
                 party
-                party_id
                 start_date
                 end_date
                 member_election_type

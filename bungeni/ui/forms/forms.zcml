@@ -221,43 +221,26 @@
         permission="bungeni.office.Delete"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-    <browser:page name="view" for="bungeni.models.interfaces.IPoliticalParty"
+    
+    <browser:page name="view" for="bungeni.models.interfaces.IPoliticalGroup"
         class=".common.DisplayForm"
         permission="zope.View"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-    <browser:page name="add" 
-        for="bungeni.models.interfaces.IPoliticalPartyContainer"
-        class=".common.AddForm"
-        permission="bungeni.party.Add"
-        layer="bungeni.ui.interfaces.IBungeniSkin"
-    />
-    <browser:page name="edit" for="bungeni.models.interfaces.IPoliticalParty"
-        class=".common.EditForm"
-        permission="bungeni.party.Edit"
-        layer="bungeni.ui.interfaces.IBungeniSkin"
-    />
-    <browser:page name="delete"
-        for="bungeni.models.interfaces.IPoliticalParty"
-        class=".common.DeleteForm"
-        permission="bungeni.party.Delete"
-        layer="bungeni.ui.interfaces.IBungeniSkin"
-    />
-    
     <browser:page name="add"
         for="bungeni.models.interfaces.IPoliticalGroupContainer"
         class=".common.AddForm"
-        permission="bungeni.party.Add"
+        permission="bungeni.political_group.Add"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="edit" for="bungeni.models.interfaces.IPoliticalGroup"
         class=".common.EditForm"
-        permission="bungeni.party.Edit"
+        permission="bungeni.political_group.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="delete" for="bungeni.models.interfaces.IPoliticalGroup"
         class=".common.DeleteForm"
-        permission="bungeni.party.Delete"
+        permission="bungeni.political_group.Delete"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     

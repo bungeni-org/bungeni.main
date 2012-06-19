@@ -538,11 +538,11 @@ if interfaces.DEBUG:
 else:
     searcher.hub.auto_refresh_delta = 10
 
-''' !+WTF(mr, oct-2010) what is this? To start, there is no bungeni.core.util module !'''
+
 def main():
     import logging
     logging.basicConfig()
-
+    
     # setup database connection
     #from bungeni.core import util
     #util.cli_setup()
@@ -550,26 +550,26 @@ def main():
     
     # field definitions
     setupFieldDefinitions(indexer)
-
+    
     # reindex content directly
     for content_indexer in [
-        UserIndexer,
-        BillIndexer,
-        AgendaItemIndexer,
-        PoliticalGroupIndexer,
-        MemberOfParliament,
-        MotionIndexer,
-        QuestionIndexer,
-        GroupIndexer,
-        CommitteeIndexer,
-        #ParliamentMemberIndexer,
-        ParliamentIndexer,
-        TabledDocumentIndexer,
-        AttachmentIndexer,
-        #HansardReporterIndexer,
+            UserIndexer,
+            BillIndexer,
+            AgendaItemIndexer,
+            PoliticalGroupIndexer,
+            MemberOfParliament,
+            MotionIndexer,
+            QuestionIndexer,
+            GroupIndexer,
+            CommitteeIndexer,
+            #ParliamentMemberIndexer,
+            ParliamentIndexer,
+            TabledDocumentIndexer,
+            AttachmentIndexer,
+            #HansardReporterIndexer,
         ]:
         content_indexer.reindexAll(indexer)
-        
+
 def reset_index():
     try:
         main()
@@ -577,7 +577,7 @@ def reset_index():
        import pdb, traceback, sys
        traceback.print_exc()
        pdb.post_mortem(sys.exc_info()[-1]) 
-''' '''
+
 
 class IndexReset(threading.Thread):
     

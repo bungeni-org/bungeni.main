@@ -20,7 +20,7 @@ region, country, province
 --------------------------
 get some values in those tables as they are needed later on
 
- >>> country = model.Country()
+ >>> country = domain.Country()
  >>> country.country_id = 'KE'
  >>> country.country_name = u"Kenya"
  >>> country.iso_name = u"KENYA" 
@@ -39,13 +39,13 @@ Users
 
 First we can create some users.
 
-  >>> user = model.User("jsmith")
+  >>> user = domain.User("jsmith")
   >>>
 
 Members of Parliament
 ---------------------
 
-  >>> mp_1 = model.User(u"mp_1", 
+  >>> mp_1 = domain.User(u"mp_1", 
   ...        first_name=u"a", 
   ...        last_name=u'ab', 
   ...        birth_country="KE",
@@ -53,7 +53,7 @@ Members of Parliament
   ...        date_of_birth=datetime.datetime.now(),
   ...        language="en",
   ...        gender='M')
-  >>> mp_2 = model.User(u"mp_2", 
+  >>> mp_2 = domain.User(u"mp_2", 
   ...        first_name=u"b", 
   ...        last_name=u"bc", 
   ...        birth_country="KE",
@@ -61,7 +61,7 @@ Members of Parliament
   ...        email=u"mp2@example.com",
   ...        language="en",
   ...        gender='M')
-  >>> mp_3 = model.User(u"mp_3",
+  >>> mp_3 = domain.User(u"mp_3",
   ...        first_name=u"c", 
   ...        birth_country="KE",
   ...        last_name=u"cd",
@@ -76,22 +76,22 @@ Groups
 Bungeni uses groups to model any collection of users. The relational inheritance
 features of sqlalchemy to allow for subclassing group, with value storage in a 
 different table. Bungeni uses this feature to model parliaments, committees, 
-political parties, etc. Let's create some groups in the system to examine how
+political groups, etc. Let's create some groups in the system to examine how
 they work.
 
-  >>> parliament = model.Parliament(short_name=u"p_1", start_date=datetime.datetime.now(), election_date=datetime.datetime.now())
+  >>> parliament = domain.Parliament(short_name=u"p_1", start_date=datetime.datetime.now(), election_date=datetime.datetime.now())
   >>> parliament.language = "en"
-  >>> session.add( parliament )
+  >>> session.add(parliament)
   >>> session.flush()
   
-  >>> political_party_a = model.PoliticalParty(short_name=u"pp_1", start_date=datetime.datetime.now())
-  >>> political_party_a.parent_group_id = parliament.parliament_id
-  >>> political_party_a.language = "en"
-  >>> political_party_b = model.PoliticalParty(short_name=u"pp_2", start_date=datetime.datetime.now())
-  >>> political_party_b.parent_group_id = parliament.parliament_id
-  >>> political_party_b.language = "en"
-  >>> session.add(political_party_a)
-  >>> session.add(political_party_b)
+  >>> political_group_a = domain.PoliticalGroup(short_name=u"pp_1", start_date=datetime.datetime.now())
+  >>> political_group_a.parent_group_id = parliament.parliament_id
+  >>> political_group_a.language = "en"
+  >>> political_group_b = domain.PoliticalGroup(short_name=u"pp_2", start_date=datetime.datetime.now())
+  >>> political_group_b.parent_group_id = parliament.parliament_id
+  >>> political_group_b.language = "en"
+  >>> session.add(political_group_a)
+  >>> session.add(political_group_b)
   >>> session.add(mp_1)
   >>> session.add(mp_2)
   >>> session.add(mp_3)
@@ -99,7 +99,7 @@ they work.
 
 
 The actual committee
-  >>> committee_a = model.Committee(short_name=u"committee_1", start_date=datetime.datetime.now())
+  >>> committee_a = domain.Committee(short_name=u"committee_1", start_date=datetime.datetime.now())
   >>> committee_a.parent_group_id = parliament.parliament_id
   >>> committee_a.sub_type = "housekeeping"
   >>> committee_a.group_continuity = "permanent"
@@ -113,14 +113,14 @@ as a user's role/title in a group.
 Let's create some memberships and see what we can do with them.
 
   >>> for mp in [ mp_1, mp_2, mp_3 ]:
-  ...    membership = model.GroupMembership()
+  ...    membership = domain.GroupMembership()
   ...    membership.user = mp
   ...    membership.group = parliament
   ...    membership.language = "en"
   ...    session.add(membership)
-  ...    membership = model.GroupMembership()
+  ...    membership = domain.GroupMembership()
   ...    membership.user = mp
-  ...    membership.group = political_party_a
+  ...    membership.group = political_group_a
   ...    membership.language = "en"
   ...    session.add( membership )
   
@@ -138,7 +138,7 @@ Group and user addresses
 -------------------------
 
 Add a user address
-  >>> user_address_1 = model.UserAddress()
+  >>> user_address_1 = domain.UserAddress()
   >>> user_address_1.user_id = mp_1.user_id
   >>> user_address_1.logical_address_type = "home"
   >>> user_address_1.postal_address_type = "street"
@@ -153,7 +153,7 @@ Add a user address
   1
 
 Add a group address
-  >>> group_address_1 = model.GroupAddress()
+  >>> group_address_1 = domain.GroupAddress()
   >>> group_address_1.group_id = parliament.group_id
   >>> group_address_1.logical_address_type = "home"
   >>> group_address_1.postal_address_type = "street"
@@ -169,7 +169,7 @@ Add a group address
 
 Government
 ----------
-  >>> gov = model.Government(short_name=u"gov_1", start_date=datetime.datetime.now())
+  >>> gov = domain.Government(short_name=u"gov_1", start_date=datetime.datetime.now())
   >>> gov.parent_group_id = parliament.parliament_id
   >>> gov.language = "en"
   >>> session.add(gov)
@@ -180,7 +180,7 @@ Government
 
 Ministries
 -----------
-  >>> ministry = model.Ministry(short_name=u"ministry", start_date=datetime.datetime.now())
+  >>> ministry = domain.Ministry(short_name=u"ministry", start_date=datetime.datetime.now())
   >>> ministry.parent_group_id = gov.group_id
   >>> ministry.language = "en"
   >>> session.add(ministry)
@@ -255,7 +255,7 @@ Members of parliament
 Members of parliament are defined by their membership in
 the parliaments group and additional attributes.
 
-  >>> mp4 = model.MemberOfParliament()
+  >>> mp4 = domain.MemberOfParliament()
   >>> mp4.group_id = parliament.group_id
   >>> mp4.user_id = mp_1.user_id
   >>> mp4.start_date = datetime.datetime.now()
@@ -274,7 +274,7 @@ Sittings
 any group can schedule a sitting, a sitting is treated as a physical
 meeting of the group by the system. 
 
- >>> sit = model.Sitting()
+ >>> sit = domain.Sitting()
  >>> sit.group_id = committee_a.group_id
  >>> sit.start_date = datetime.datetime.now()
  >>> sit.end_date = datetime.datetime.now()
@@ -287,7 +287,7 @@ Sitting attendance
 
 the attendance of a member at a sitting.
 
- >>> gsa = model.SittingAttendance()
+ >>> gsa = domain.SittingAttendance()
  >>> gsa.sitting_id = sit.sitting_id
  >>> gsa.member_id = mp_1.user_id
  >>> gsa.attendance_type = "present"
@@ -298,7 +298,7 @@ Sessions
 -----------
 A parliamentary Session
 
- >>> sess = model.ParliamentSession()
+ >>> sess = domain.ParliamentSession()
  >>> sess.parliament_id = parliament.parliament_id
  >>> sess.short_name = u"First Session"
  >>> sess.full_name = u"First Session XXXX"
@@ -313,7 +313,7 @@ A parliamentary Session
  
 Sitting in this session 
  
- >>> ssit = model.Sitting()
+ >>> ssit = domain.Sitting()
  >>> ssit.group_id = parliament.parliament_id
  >>> ssit.start_date = datetime.datetime.now()
  >>> ssit.end_date = datetime.datetime.now()
@@ -323,7 +323,7 @@ Sitting in this session
  
 Attendance
 
- >>> sgsa = model.SittingAttendance()
+ >>> sgsa = domain.SittingAttendance()
  >>> sgsa.sitting_id = ssit.sitting_id
  >>> sgsa.member_id = mp_1.user_id
  >>> sgsa.attendance_type = "present"
@@ -332,7 +332,7 @@ Attendance
 
 Motions
 -------
-  >>> motion = model.Motion()
+  >>> motion = domain.Motion()
   >>> motion.short_title = u"Motion"
   >>> motion.language = 'en'
   >>> motion.owner = mp_1
@@ -346,7 +346,7 @@ Questions
 
 Note that the questions workflow is tested separated (see workflows/question.txt).
 
-  >>> question = model.Question()
+  >>> question = domain.Question()
   >>> question.short_title = u"question"
   >>> question.language = 'en'
   >>> question.owner = mp_2
@@ -361,7 +361,7 @@ Note that the questions workflow is tested separated (see workflows/question.txt
 Bill
 ----
 
-  >>> bill = model.Bill()
+  >>> bill = domain.Bill()
   >>> bill.short_title = u"Bill"
   >>> bill.doc_type = "member"
   >>> bill.language = 'en'
@@ -375,7 +375,7 @@ Schedule items for a sitting:
 
 we may either add the id only:
 
-  >>> item_schedule = model.ItemSchedule()
+  >>> item_schedule = domain.ItemSchedule()
   >>> item_schedule.item_id = bill.doc_id
   >>> item_schedule.item_type = bill.type
   >>> item_schedule.sitting_id = sit.sitting_id
@@ -389,7 +389,7 @@ we may either add the id only:
   'bill'
       
 or we can add an object: 
-  >>> item_schedule = model.ItemSchedule()
+  >>> item_schedule = domain.ItemSchedule()
   >>> item_schedule.item
   
   >>> item_schedule.item = question

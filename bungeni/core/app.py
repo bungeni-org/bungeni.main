@@ -330,9 +330,9 @@ class AppSetup(object):
         records[u"parliaments"] = domain.ParliamentContainer()
         to_locatable_container(domain.Parliament, records[u"parliaments"])
         
-        records[u"politicalgroups"] = domain.PoliticalGroupContainer()
+        records[u"political-groups"] = domain.PoliticalGroupContainer()
         to_locatable_container(domain.PoliticalGroup, 
-            records[u"politicalgroups"]
+            records[u"political-groups"]
         )
         
         records[u"committees"] = domain.CommitteeContainer()
@@ -388,9 +388,6 @@ class AppSetup(object):
         content[u"headings"] = domain.HeadingContainer()
         to_locatable_container(domain.Heading, content[u"headings"])
         
-        content[u"parties"] = domain.PoliticalPartyContainer()
-        to_locatable_container(domain.PoliticalParty, content[u"parties"])
-
         ''' !+TYPES_CUSTOM
         vocabularies = admin["vocabularies"] = Section(
             title=_(u"vocabularies"),

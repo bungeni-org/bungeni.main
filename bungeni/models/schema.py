@@ -291,9 +291,7 @@ parliament_memberships = rdb.Table("parliament_memberships", metadata,
     # which is a double-colon "::" separated sequence of *key phrases*.
     rdb.Column("representation", rdb.UnicodeText, nullable=True),
     # the political party of the MP as of the time he was elected
-    rdb.Column("party_id", rdb.Integer,
-        rdb.ForeignKey("political_parties.party_id")
-    ),
+    rdb.Column("party", rdb.UnicodeText, nullable=True),
     # is the MP elected, nominated, ex officio member, ...
     rdb.Column("member_election_type",
         rdb.Unicode(128),
@@ -418,10 +416,10 @@ committees = rdb.Table("committees", metadata,
 # still be needed, the planned and more generic "group.root_container" idea 
 # can approximately provide it, and is what should be used. 
 
-# political parties (outside the parliament) and 
-# political groups (inside the parliament)
-political_parties = rdb.Table("political_parties", metadata,
-    rdb.Column("party_id", rdb.Integer,
+
+# political group (inside the parliament)
+political_group = rdb.Table("political_group", metadata,
+    rdb.Column("group_id", rdb.Integer,
         rdb.ForeignKey("groups.group_id"), primary_key=True),
     rdb.Column("logo_data", rdb.Binary),
     rdb.Column("logo_name", rdb.String(127)),
@@ -774,6 +772,7 @@ sitting_report = rdb.Table("sitting_report", metadata,
     ),
 )
 
+''' !+SUBSCRIPTIONS(mr, jun-2012) unused
 # generic subscriptions, to any type
 subscriptions = rdb.Table("object_subscriptions", metadata,
     rdb.Column("subscriptions_id", rdb.Integer, primary_key=True),
@@ -787,7 +786,7 @@ subscriptions = rdb.Table("object_subscriptions", metadata,
     # delivery type
     # rdb.Column("delivery_type", rdb.Integer),
 )
-
+'''
 
 # NOT a parliamentary_item
 # !+doc_attachment

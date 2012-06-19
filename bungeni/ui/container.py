@@ -577,13 +577,9 @@ JSLCaches = {
         JSLCache(99, mfaces.ISittingAttendance, ["SittingAttendance"]),
     "parliamentmembers": # alias: "current"
         # !+NAMING(mr, sep-2010) descriptor name: MpDescriptor
-        JSLCache(99, mfaces.IMemberOfParliament, 
-            ["MemberOfParliament", "PoliticalParty"]
-        ),
+        JSLCache(99, mfaces.IMemberOfParliament, ["MemberOfParliament"]),
     "political-groups": # alias: "politicalgroups"
         JSLCache(49, mfaces.IPoliticalGroup, ["PoliticalGroup"]),
-    "partymembers":
-        JSLCache(49, mfaces.IPartyMember, ["PartyMember"]),        
     "parliaments": 
         JSLCache(49, mfaces.IParliament, ["Parliament"]),
     "governments": 
@@ -601,7 +597,6 @@ JSLCaches = {
         JSLCache(49, mfaces.IMinistry, ["Ministry"]),
 }
 # aliases for same JSLCache instances
-JSLCaches["politicalgroups"] = JSLCaches["political-groups"] # !+ same?
 JSLCaches["current"] = JSLCaches["parliamentmembers"]
 
 

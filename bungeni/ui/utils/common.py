@@ -267,3 +267,4 @@ def list_container_items(container_instance, permission="zope.View"):
                 container_instance, 
                 bungeni.alchemist.container.stringKey(contained)
             )
+

@@ -200,8 +200,6 @@ def get_group_local_role(group):
         return "bungeni.Minister"
     elif interfaces.ICommittee.providedBy(group): 
         return "bungeni.CommitteeMember"
-    elif interfaces.IPoliticalGroup.providedBy(group):
-        return "bungeni.PartyMember"
     elif interfaces.IGovernment.providedBy(group):
         return "bungeni.Government"
     elif interfaces.IOffice.providedBy(group):

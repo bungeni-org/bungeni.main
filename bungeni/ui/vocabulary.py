@@ -1003,7 +1003,7 @@ class SubstitutionSource(SpecializedSource):
         return vocabulary.SimpleVocabulary(terms)
 
 
-# !+MODELS(mr, oct-2011) shouldn't this be elsewhere?
+''' !+MODELS(mr, oct-2011) shouldn't this be elsewhere?
 class PartyMembership(object):
     pass
 
@@ -1013,7 +1013,7 @@ party_membership = sql.join(schema.political_parties, schema.groups,
         schema.groups.c.group_id == schema.user_group_memberships.c.group_id)
 
 mapper(PartyMembership, party_membership)
-
+'''
 
 class PIAssignmentSource(SpecializedSource):
     
@@ -1060,8 +1060,8 @@ class CommitteeSource(SpecializedSource):
         return query
 
 
-
-class MotionPartySource(SpecializedSource):
+''' !+UNUSED
+class MotionPoliticalGroupSource(SpecializedSource):
 
     def constructQuery(self, context):
         session= Session()
@@ -1072,17 +1072,17 @@ class MotionPartySource(SpecializedSource):
         parliament_id = self._get_parliament_id(context)
         
         if user_id: 
-            query = session.query(PartyMembership
+            query = session.query(domain.PoliticalGroupMembership
                ).filter(
-                    sql.and_(PartyMembership.active_p == True,
-                        PartyMembership.user_id == user_id,
-                        PartyMembership.parent_group_id == parliament_id)
+                    sql.and_(domain.PoliticalGroupMembership.active_p == True,
+                        domain.PoliticalGroupMembership.user_id == user_id,
+                        domain.PoliticalGroupMembership.parent_group_id == parliament_id)
                        )
         else:
             query = session.query(domain.PoliticalGroup).filter(
                         domain.PoliticalGroup.parent_group_id == parliament_id)
         return query
-        
+'''
 
 class QuerySource(object):
     """ call a query with an additonal filter and ordering
@@ -1182,6 +1182,7 @@ def dict_to_dynatree(input_dict, selected):
 
 subject_terms = TreeVDEXVocabulary("subject-terms.vdex")
 representation = TreeVDEXVocabulary("representation.vdex")
+party = FlatVDEXVocabularyFactory("party.vdex")
 
 #
 # Sitting flat VDEX based vocabularies
