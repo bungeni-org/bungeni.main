@@ -223,7 +223,7 @@ def user_party_column(name, title, default="-"):
         ).one()
         if mp_obj is not None:
             if mp_obj.party is not None:
-                return vocabulary.party.getTerm(mp_obj.party).title
+                return vocabulary.party.getTermById(mp_obj.party).title
         return default
     return column.GetterColumn(title, getter)
 
