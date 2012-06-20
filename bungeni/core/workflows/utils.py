@@ -200,11 +200,14 @@ def get_group_local_role(group):
         return "bungeni.Minister"
     elif interfaces.ICommittee.providedBy(group): 
         return "bungeni.CommitteeMember"
+    elif interfaces.IPoliticalGroup.providedBy(group):
+        return "bungeni.PoliticalGroupMember"
     elif interfaces.IGovernment.providedBy(group):
         return "bungeni.Government"
     elif interfaces.IOffice.providedBy(group):
         return group.office_role
     else:
+        # fallback to a generic (but unregistered) group membership role
         return "bungeni.GroupMember"
 
 def get_group_context(context):
