@@ -4,6 +4,7 @@ import simplejson
 from zope import component
 from zope.publisher.browser import BrowserPage
 from zope.app.pagetemplate import ViewPageTemplateFile
+from zope.app.component.hooks import getSite
 from zope.security.proxy import removeSecurityProxy
 from zope.formlib import form
 from zope.i18n import translate
@@ -14,6 +15,7 @@ from zc.resourcelibrary import need
 from bungeni.alchemist.container import contained
 from alchemist.ui import generic
 from bungeni.core import workspace, translation
+from bungeni.core.content import WorkspaceSection
 from bungeni.core.i18n import _
 from bungeni.core.interfaces import IWorkspaceTabsUtility, IWorkspaceContainer
 from bungeni.ui.utils import url
@@ -67,7 +69,7 @@ class WorkspaceContainerJSONListing(BrowserPage):
             self.request.form["dir"] = "desc"
         self.sort_dir = self.request.get("dir")
 
-    def get_offsets(self, default_start=0, 
+    def get_offsets(self, default_start=0,
         default_limit=capi.default_number_of_listing_items):
         start = self.request.get("start", default_start)
         limit = self.request.get("limit", default_limit)
@@ -294,6 +296,24 @@ class WorkspaceContainerListing(BrowserPage):
         formatter.table_id = "datacontents"
         return formatter
 
+
+@register.view(WorkspaceSection, name="tabcount",
+    protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
+@register.view(IWorkspaceContainer, name="tabcount",
+    protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
+class WorkspaceTabCount(BrowserPage):
+
+    def __call__(self):
+        data = {}
+        app = getSite()
+        keys = app["workspace"]["documents"].keys()
+        read_from_cache = True
+        if self.request.get("cache") == "false":
+            read_from_cache = False
+        for key in keys:
+            data[key] = app["workspace"]["documents"][key].count(
+                read_from_cache)
+        return simplejson.dumps(data)
 
 class WorkspaceAddForm(AddForm):
 

@@ -312,6 +312,7 @@
             MSG_SORTDESC: "Click to filter and sort descending"
         };
         table = new YAHOO.widget.DataTable(YAHOO.util.Dom.get(table_id), columns, datasource, config);
+
         var fnRequestReceived = function (request, response) {
                 jQuery.unblockUI();
             };
@@ -472,9 +473,26 @@
 
         };
         table = new YAHOO.widget.DataTable(YAHOO.util.Dom.get(table_id), columns, datasource, config);
+        var fn_tab_count_response_success = function(o) {
+            var tab_data = JSON.parse(o.responseText);
+            for (var tab in tab_data){
+                var tab_element = $("dl.workspace li.navTreeItem a#workspace-"+tab+" > span#count");
+                tab_element.html("("+tab_data[tab]+")");
+            }
+        };
+ 
+        var tab_count_callback = {
+            success:fn_tab_count_response_success,
+            failure: function(o) {},
+            argument: []
+        };
+        
         var fnRequestReceived = function() {
             jQuery.unblockUI();
+            var tab_count_url = window.location + "/tabcount";
+            var transaction = YAHOO.util.Connect.asyncRequest('GET', tab_count_url, tab_count_callback, null);
         };
+
         table.subscribe("postRenderEvent", fnRequestReceived);
         // Update totalRecords on the fly with value from server
         table.handleDataReturnPayload = function (oRequest, oResponse, oPayload) {

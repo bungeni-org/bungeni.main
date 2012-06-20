@@ -120,7 +120,7 @@ class AppSetup(object):
         )
         
         alsoProvides(workspace, interfaces.ISearchableSection)
-        workspace["documents"] = Section(
+        workspace["documents"] = WorkspaceSection(
             title=_(u"documents"),
             description=_(u"documents"),
             default_name="inbox",

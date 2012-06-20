@@ -94,6 +94,12 @@ class CAPI(object):
         """
         return int(bc.default_number_of_listing_items)
     
+    @property
+    @bungeni_custom_errors
+    def workspace_tab_count_cache_refresh_time(self):
+        """The duration in seconds between tab count refresh operations"""
+        return int(bc.workspace_tab_count_cache_refresh_time)
+
     # utility methods
     
     def get_root_path(self):
