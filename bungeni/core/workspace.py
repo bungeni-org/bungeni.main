@@ -314,16 +314,15 @@ class WorkspaceContainer(AlchemistContainer):
         item.parliament_id = current_parliament.parliament_id
         session.add(item)
 
-# (SECURITY, miano, july 2011) This factory adapts the workspaces to
+
+# !+SECURITY(miano, july 2011) This factory adapts the workspaces to
 # zope.securitypolicy.interface.IPrincipalRoleMap and is equivalent to the
 # principalrolemap of the current parliament.
 # If/when Bungeni is modified to support bicameral houses this should be
 # modified so that the oid is set to the group_id of the house the current
 # principal in the interaction is a member of.
-
-
 class WorkspacePrincipalRoleMap(LocalPrincipalRoleMap):
-
+    
     def __init__(self, context):
         self.context = context
         current_parliament = utils.get_current_parliament()
@@ -420,9 +419,9 @@ class WorkspaceTabsUtility():
         if role in self.workspaces:
             for tab in self.workspaces[role]:
                 if (domain_class in self.workspaces[role][tab] and
-                    status in self.workspaces[role][tab][domain_class]
+                        status in self.workspaces[role][tab][domain_class]
                     ):
-                        return tab
+                    return tab
         return None
 
     def get_status(self, role, domain_class, tab):
@@ -437,7 +436,8 @@ class WorkspaceTabsUtility():
 
 #@bungeni_custom_errors
 def load_workspace(file_name, domain_class):
-    """Loads the workspace configuration for each documemnt"""
+    """Loads the workspace configuration for each documemnt.
+    """
     workspace_tabs = component.queryUtility(IWorkspaceTabsUtility, None)
     if not workspace_tabs:
         component.provideUtility(WorkspaceTabsUtility())
@@ -448,20 +448,18 @@ def load_workspace(file_name, domain_class):
     workspace_tabs.register_item_type(domain_class, item_type)
     workspace = etree.fromstring(open(file_path).read())
     for state in workspace.iterchildren(tag="state"):
-        #check if state is valid here
         for tab in state.iterchildren(tag="tab"):
             assert tab.get("id") in TABS, "Workspace configuration error : " \
                 "Invalid tab - %s. file: %s, state : %s" % (
-                tab.get("id"), file_name, state.get("id"))
+                    tab.get("id"), file_name, state.get("id"))
             if tab.get("roles"):
                 roles = tab.get("roles").split()
                 for role in roles:
-                    '''assert component.queryUtility(IRole, role, None), \
-                        "Workspace configuration error : " \
-                        "Invalid role - %s. file: %s, state : %s" % (
-                        role, file_name, state.get("id"))'''
-                    workspace_tabs.set_content(role,
-                                           tab.get("id"),
-                                           domain_class,
-                                           state.get("id")
-                                           )
+                    #assert component.queryUtility(IRole, role, None), \
+                    #    "Workspace configuration error : " \
+                    #    "Invalid role - %s. file: %s, state : %s" % (
+                    #        role, file_name, state.get("id"))
+                    workspace_tabs.set_content(role, 
+                        tab.get("id"), domain_class, state.get("id"))
+
+

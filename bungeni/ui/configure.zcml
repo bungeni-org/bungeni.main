@@ -9,10 +9,6 @@
     
     <!-- pakage for resource registration -->
     <include package=".resources" />
-    <!-- Must be included before executing .forms.overrides.zcml otherwise 
-    calling queryModelDescriptor(model_interface) will return None.
-    -->
-    <include package=".descriptor" />
 
     <!-- Handler for JSON Listing Cache invalidation -->
     <subscriber handler=".container.on_invalidate_cache_event"

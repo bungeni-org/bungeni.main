@@ -166,10 +166,10 @@ def apply_customization_workflow(name, ti):
     if wf.has_feature("audit"):
         # create/set module-level dedicated auditor singleton for auditable kls
         bungeni.core.audit.set_auditor(kls)
-
+    
     if wf.has_feature("workspace"):
-        bungeni.core.workspace.load_workspace("%s.xml" % ti.workflow_key,
-                                              ti.domain_model)
+        bungeni.core.workspace.load_workspace("%s.xml" % ti.workflow_key, kls)
+
 
 def load_workflows():
     # workflow instances (+ adapter *factories*)
