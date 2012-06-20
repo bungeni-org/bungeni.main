@@ -42,54 +42,61 @@ class IGroupAdmin(interface.Interface):
     admin views.
     """
 
-# !+NAMING(mr, apr-2011) rename, inconsistent with domain
+# !+NAMING(mr, apr-2011) rename IUser, inconsistent with domain
 class IBungeniUser(interface.Interface):
     """A user in bungeni.
     """
-
-# !+NAMING(mr, apr-2011) rename, inconsistent with domain
+IUser = IBungeniUser
+# !+NAMING(mr, apr-2011) rename IGroup, inconsistent with domain
 class IBungeniGroup(interface.Interface):
     """A group in bungeni.
     """
+class IUserContainer(IAlchemistContainer): pass
 
 class IParliament(IBungeniGroup):
     """Marker interface for group parliament.
     """
+class IParliamentContainer(IAlchemistContainer): pass
 
 class IGovernment(IBungeniGroup):
     """Marker interface for group Government.
     """
+class IGovernmentContainer(IAlchemistContainer): pass
 
 class IMinistry(IBungeniGroup):
-    """ marker interface for group ministry """
+    """Marker interface for group ministry """
+class IMinistryContainer(IAlchemistContainer): pass
 
 class ICommittee(IBungeniGroup):
     """Marker interface for group ministry.
     """
+class ICommitteeContainer(IAlchemistContainer): pass
 
 class IPoliticalGroup(IBungeniGroup):
     """Marker interface for political group (inside parliament).
     """
+class IPoliticalGroupContainer(IAlchemistContainer): pass
 
 class IOffice(IBungeniGroup):
     """Marker interface for a parliamentary office.
     """
+class IOfficeContainer(IAlchemistContainer): pass
 
-class ICommittee(IBungeniGroup):
-    pass
+class ICommittee(IBungeniGroup): pass
+class ICommitteeContainer(IAlchemistContainer): pass
 
 class IBungeniGroupMembership(interface.Interface):
     """Group membership in bungeni.
     """
 
-class IMemberOfParliament(IBungeniGroupMembership):
-    pass
+class IMemberOfParliament(IBungeniGroupMembership): pass
+class IMemberOfParliamentContainer(IAlchemistContainer): pass
 
 class IPoliticalGroupMember(IBungeniGroupMembership):
     pass
 
-class IMinister(IBungeniGroupMembership):
-    pass
+class IMinister(IBungeniGroupMembership): pass
+class IMinisterContainer(IAlchemistContainer): pass
 
 class ICommitteeMember(IBungeniGroupMembership):
     pass
@@ -97,8 +104,8 @@ class ICommitteeMember(IBungeniGroupMembership):
 class ICommitteeStaff(IBungeniGroupMembership):
     pass
 
-class IOfficeMember(IBungeniGroupMembership):
-    pass
+class IOfficeMember(IBungeniGroupMembership): pass
+class IOfficeMemberContainer(IAlchemistContainer): pass
 
 class IOwned(interface.Interface):
     """Object supports having an "owner" i.e. an owner:user attribute.
@@ -152,11 +159,11 @@ class IVersionContainer(IBungeniContainer):
 #class IChangeContainer(IBungeniContainer): pass
 
 
-class IHeading(IBungeniContent):
-    pass
+class IHeading(interface.Interface): pass
+class IHeadingContainer(IAlchemistContainer): pass
 
-class IEvent(IBungeniContent):
-    pass
+class IEvent(IBungeniContent): pass
+class IEventContainer(IBungeniContainer): pass
 
 
 # !+IITEMVersion(mr, sep-2011): should IITEMVersion exist at all? if so, 
@@ -166,6 +173,7 @@ class IEvent(IBungeniContent):
 class IQuestion(IBungeniContent):
     """Parliamentary Question.
     """
+class IQuestionContainer(IBungeniContainer): pass
 # !+IITEMVersion
 #class IQuestionVersion(IQuestion): pass
 #!+OBSOLETE_VERSIONING class IQuestionVersionContainer(IVersionContainer): pass
@@ -173,6 +181,7 @@ class IQuestion(IBungeniContent):
 class IBill(IBungeniContent):
     """Parliamentary Bill.
     """
+class IBillContainer(IBungeniContainer): pass
 # !+IITEMVersion
 #class IBillVersion(IBill): pass
 #!+OBSOLETE_VERSIONING class IBillVersionContainer(IVersionContainer): pass
@@ -180,6 +189,7 @@ class IBill(IBungeniContent):
 class IMotion(IBungeniContent):
     """Parliamentary Motion.
     """
+class IMotionContainer(IBungeniContainer): pass
 # !+IITEMVersion
 #class IMotionVersion(IMotion): pass
 #!+OBSOLETE_VERSIONING class IMotionVersionContainer(IVersionContainer): pass
@@ -188,11 +198,11 @@ class IMotion(IBungeniContent):
 class ISitting(interface.Interface):
     pass
 
-class ISittingAttendance(interface.Interface):
-    pass
+class ISittingAttendance(interface.Interface): pass
+class ISittingAttendanceContainer(IAlchemistContainer): pass
     
-class IItemSchedule(interface.Interface):
-    pass
+class IItemSchedule(interface.Interface): pass
+class IItemScheduleContainer(IAlchemistContainer): pass
 
 class IEditorialNote(interface.Interface):
     """Marker interface for editorial notes in a sitting's agenda"""
@@ -202,23 +212,25 @@ class IScheduleText(interface.Interface):
     This covers `IHeading` and `IEditorialNote'` at this point.
     """
 
-class IItemScheduleDiscussion(interface.Interface):
-    pass
+class IItemScheduleDiscussion(interface.Interface): pass
+class IItemScheduleDiscussionContainer(IAlchemistContainer): pass
 
 class ITabledDocument(IBungeniContent):
     """Tabled document.
     """
+class ITabledDocumentContainer(IBungeniContainer): pass
 # !+IITEMVersion
 #class ITabledDocumentVersion(ITabledDocument): pass
 #!+OBSOLETE_VERSIONING class ITabledDocumentVersionContainer(IVersionContainer): pass
 
 class IAgendaItem(IBungeniContent): pass
+class IAgendaItemContainer(IBungeniContainer): pass
 # !+IITEMVersion
 #class IAgendaItemVersion(IAgendaItem): pass
 #!+OBSOLETE_VERSIONING class IAgendaItemVersionContainer(IVersionContainer): pass
 
-class IParliamentSession(interface.Interface):
-    pass
+class IParliamentSession(interface.Interface): pass
+class IParliamentSessionContainer(IAlchemistContainer): pass
 
 class IBungeniSetup(interface.Interface):
 
@@ -400,6 +412,7 @@ class IBungeniEmailSettings(interface.Interface):
     )
 
 class IAttachment(IOwned): pass
+class IAttachmentContainer(IAlchemistContainer): pass
 # !+VERSION_CLASS_PER_TYPE
 class IAttachedFileVersion(interface.Interface): pass 
 # !+OBSOLETE_VERSIONING
@@ -408,6 +421,7 @@ class IAttachedFileVersion(interface.Interface): pass
 class ISignatory(interface.Interface):
     """Signatories for bills, motions, ...
     """
+class ISignatoryContainer(IAlchemistContainer): pass
 
 class ISignatoriesValidator(interface.Interface):
     """Validation machinery for iterms with signatories"""
@@ -520,26 +534,32 @@ class IChange(interface.Interface):
 
 class IMemberTitle(interface.Interface):
     """Marker for member titles"""
-    
+class IMemberTitleContainer(IAlchemistContainer): pass
+
 class ITitleType(interface.Interface):
     """Title types"""
+class ITitleTypeContainer(IAlchemistContainer): pass
 
 class IAddress(interface.Interface):
     """Base marker interface for an Address
     """
+class IAddressContainer(IAlchemistContainer): pass
 class IGroupAddress(IAddress):
     """Marker interface addresses of a group.
     """
+class IGroupAddressContainer(IAlchemistContainer): pass
 class IUserAddress(IAddress):
     """Marker interface addresses of a user.
     """
+class IUserAddressContainer(IAlchemistContainer): pass
 
-class IReport(IBungeniContent):
-    pass
-class IReport4Sitting(IBungeniContent):
-    pass
-class IUserDelegation(interface.Interface):
-    pass
+class IReport(IBungeniContent): pass
+class IReportContainer(IAlchemistContainer): pass
+
+class IReport4Sitting(IBungeniContent): pass
+
+class IUserDelegation(interface.Interface): pass
+class IUserDelegationContainer(IAlchemistContainer): pass
 
 class ITranslatable(interface.Interface):
     """Marker Interface if an object is translatable.

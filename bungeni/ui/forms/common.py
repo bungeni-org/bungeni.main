@@ -43,7 +43,7 @@ from bungeni.core.translation import is_translation
 from bungeni.core.translation import get_translation_for
 from bungeni.core.translation import CurrentLanguageVocabulary
 from bungeni.models.interfaces import IVersion, IBungeniContent, \
-    ISittingContainer
+    IAttachmentContainer #, ISittingContainer
 from bungeni.models import domain
 from bungeni.ui.forms.fields import filterFields
 from bungeni.ui.interfaces import IBungeniSkin, IFormEditLayer, \
@@ -253,7 +253,7 @@ class DisplayForm(catalyst.DisplayForm, browser.BungeniBrowserView):
         return self.template()
 
 
-@register.view(domain.AttachmentContainer, layer=IBungeniSkin, name="add",
+@register.view(IAttachmentContainer, layer=IBungeniSkin, name="add",
     protect={"bungeni.attachment.Add": register.VIEW_DEFAULT_ATTRS})
 #@register.view(ISittingContainer, layer=IBungeniSkin, name="add",
 #    protect={"bungeni.sitting.Add": register.VIEW_DEFAULT_ATTRS})

@@ -20,7 +20,7 @@ from zc.table import column
 from bungeni.core.workflow.interfaces import IStateController
 from bungeni.models.interfaces import IFeatureAttachment, \
     IVersion, IAttachedFileVersion
-from bungeni.models.domain import AttachmentContainer
+from bungeni.models.interfaces import IAttachmentContainer
 from bungeni.ui.forms.interfaces import ISubFormViewletManager
 from bungeni.ui import browser
 from bungeni.ui.i18n import _
@@ -149,7 +149,7 @@ class FileListingMixin(object):
         return formatter()
 
 
-@register.view(AttachmentContainer, name="index",
+@register.view(IAttachmentContainer, name="index",
     protect=register.PROTECT_VIEW_PUBLIC)
 class FileListingView(FileListingMixin, browser.BungeniBrowserView):
 

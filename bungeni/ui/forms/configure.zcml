@@ -65,13 +65,13 @@
     />
 
     <browser:page name="reorder"
-        for="bungeni.models.domain.ItemScheduleContainer"
+        for="bungeni.models.interfaces.IItemScheduleContainer"
         class=".forms.ItemScheduleContainerReorderForm"
         permission="bungeni.sittingschedule.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="reorder"
-        for="bungeni.models.domain.ItemSchedule"
+        for="bungeni.models.interfaces.IItemSchedule"
         class=".forms.ItemScheduleReorderForm"
         permission="bungeni.sittingschedule.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
@@ -79,7 +79,7 @@
 
   <browser:page
      name="delete"
-     for="bungeni.models.domain.ItemSchedule"
+     for="bungeni.models.interfaces.IItemSchedule"
      class=".forms.DeleteForm"
      permission="bungeni.sittingschedule.item.Delete"
      layer="bungeni.ui.interfaces.IBungeniSkin"
@@ -117,19 +117,19 @@
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="edit"
-        for="bungeni.models.domain.Sitting"
+        for="bungeni.models.interfaces.ISitting"
         class=".common.EditForm"
         permission="bungeni.sitting.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="delete"
-        for="bungeni.models.domain.Sitting"
+        for="bungeni.models.interfaces.ISitting"
         class=".common.DeleteForm"
         permission="bungeni.sitting.Delete"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="edit"
-        for="bungeni.models.domain.ItemSchedule"
+        for="bungeni.models.interfaces.IItemSchedule"
         class=".common.EditForm"
         permission="bungeni.sittingschedule.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
@@ -137,7 +137,7 @@
 
   <browser:page
      name="edit"
-     for="bungeni.models.domain.ItemScheduleDiscussion"
+     for="bungeni.models.interfaces.IItemScheduleDiscussion"
      class=".common.EditForm"
      permission="bungeni.sittingschedule.itemdiscussion.Edit"
      layer="bungeni.ui.interfaces.IBungeniSkin"

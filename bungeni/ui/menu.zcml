@@ -396,7 +396,7 @@
     
     <!--Title types menus-->
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.TitleTypeContainer"
+        for="bungeni.models.interfaces.ITitleTypeContainer"
         title="Add title type..."
         action="./add"
         permission="zope.ManageContent"
@@ -524,35 +524,35 @@
     />
     
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.ParliamentContainer"
+        for="bungeni.models.interfaces.IParliamentContainer"
         title="Add parliament..."
         action="./add"
         permission="bungeni.parliament.Add"
         layer=".interfaces.IAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.CommitteeContainer"
+        for="bungeni.models.interfaces.ICommitteeContainer"
         title="Add committee..."
         action="./add"
         permission="bungeni.committee.Add"
         layer=".interfaces.IAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.ParliamentSessionContainer"
+        for="bungeni.models.interfaces.IParliamentSessionContainer"
         title="Add session..."
         action="./add"
         permission="bungeni.session.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
      />
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.GovernmentContainer"
+        for="bungeni.models.interfaces.IGovernmentContainer"
         title="Add government..."
         action="./add"
         permission="bungeni.government.Add"
         layer=".interfaces.IAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.MemberOfParliamentContainer"
+        for="bungeni.models.interfaces.IMemberOfParliamentContainer"
         title="Add MP..."
         action="./add"
         permission="bungeni.mp.Add"
@@ -576,35 +576,35 @@
     />
       
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.OfficeContainer"
+        for="bungeni.models.interfaces.IOfficeContainer"
         title="Add office..."
         action="./add"
         permission="bungeni.office.Add"
         layer=".interfaces.IAdminSectionLayer"
      />
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.PoliticalGroupContainer"
+        for="bungeni.models.interfaces.IPoliticalGroupContainer"
         title="Add political group..."
         action="./add"
         permission="bungeni.political_group.Add"
         layer=".interfaces.IAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.MinistryContainer"
+        for="bungeni.models.interfaces.IMinistryContainer"
         title="Add ministry..."
         action="./add"
         permission="bungeni.ministry.Add"
         layer=".interfaces.IAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.UserContainer"
+        for="bungeni.models.interfaces.IUserContainer"
         title="Add user..."
         action="./add"
         permission="bungeni.user.Add"
         layer=".interfaces.IAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.CommitteeMemberContainer"
+        for="bungeni.models.interfaces.ICommitteeMemberContainer"
         title="Add committee member..."
         action="./add"
         permission="bungeni.committeemember.Add"
@@ -627,21 +627,21 @@
         permission="bungeni.mp.Delete"
     />
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.CommitteeStaffContainer"
+        for="bungeni.models.interfaces.ICommitteeStaffContainer"
         title="Add committee staff..."
         action="./add"
         permission="bungeni.committeestaff.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.MinisterContainer"
+        for="bungeni.models.interfaces.IMinisterContainer"
         title="Add minister..."
         action="./add"
         permission="bungeni.minister.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.OfficeMemberContainer"
+        for="bungeni.models.interfaces.IOfficeMemberContainer"
         title="Add office member..."
         action="./add"
         permission="bungeni.office.Add"
@@ -650,7 +650,7 @@
     <!-- !+ZCML(mr, nov-2010) How to parametrize title for sub-group type?
     -->
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.GroupAddressContainer"
+        for="bungeni.models.interfaces.IGroupAddressContainer"
         title="Add address..."
         action="./add"
         permission="bungeni.address.Add"
@@ -667,14 +667,14 @@
     />
     -->
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.UserAddressContainer"
+        for="bungeni.models.interfaces.IUserAddressContainer"
         title="Add user address..."
         action="./add"
         permission="bungeni.address.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.User"
+        for="bungeni.models.interfaces.IUser"
         title="Add user address..."
         action="./addresses/add"
         permission="bungeni.address.Add"
@@ -682,7 +682,7 @@
     />
      
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.domain.User"
+        for="bungeni.models.interfaces.IUser"
         title="Edit user"
         action="./edit-profile"
         permission="bungeni.user.Edit"
@@ -691,7 +691,7 @@
     />
     
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.domain.User"
+        for="bungeni.models.interfaces.IUser"
         title="Change password"
         action="./change-password"
         permission="bungeni.user.Edit"
@@ -700,7 +700,7 @@
     />
     
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.domain.UserAddress"
+        for="bungeni.models.interfaces.IUserAddress"
         title="Edit user address"
         action="./edit"
         permission="bungeni.address.Edit"
@@ -709,7 +709,7 @@
     />
     
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.domain.UserAddress"
+        for="bungeni.models.interfaces.IUserAddress"
         title="Delete user address"
         action="./delete"
         permission="bungeni.address.Delete"
@@ -718,21 +718,21 @@
     />
     
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.UserDelegationContainer"
+        for="bungeni.models.interfaces.IUserDelegationContainer"
         title="Add user delegation..."
         action="./add"
         permission="bungeni.delegation.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.MemberTitleContainer"
+        for="bungeni.models.interfaces.IMemberTitleContainer"
         title="Add member title"
         action="./add"
         permission="bungeni.function.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.SignatoryContainer"
+        for="bungeni.models.interfaces.ISignatoryContainer"
         title="Add signatory..."
         action="./add"
         permission="bungeni.signatory.Add"
@@ -747,14 +747,14 @@
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.TabledDocumentContainer"
+        for="bungeni.models.interfaces.ITabledDocumentContainer"
         title="Add tabled document..."
         action="./add"
         permission="bungeni.tableddocument.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.AgendaItemContainer"
+        for="bungeni.models.interfaces.IAgendaItemContainer"
         title="Add agenda item..."
         action="./add"
         permission="bungeni.agendaitem.Add"
@@ -790,28 +790,28 @@
          cannot use browser:menuItems and specify only layer in the sub items !
     -->
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.QuestionContainer"
+        for="bungeni.models.interfaces.IQuestionContainer"
         permission="bungeni.question.Add"
         title="Add question..."
         action="./add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.MotionContainer"
+        for="bungeni.models.interfaces.IMotionContainer"
         title="Add motion..."
         action="./add"
         permission="bungeni.motion.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.HeadingContainer"
+        for="bungeni.models.interfaces.IHeadingContainer"
         title="Add heading..."
         action="./add"
         permission="bungeni.heading.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
      />
      <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.BillContainer"
+        for="bungeni.models.interfaces.IBillContainer"
         title="Add bill..."
         action="./add"
         permission="bungeni.bill.Add"
@@ -827,7 +827,7 @@
         order="20"
     />
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.AttachmentContainer"
+        for="bungeni.models.interfaces.IAttachmentContainer"
         title="Add file..."
         action="./add"
         permission="bungeni.attachment.Add"
@@ -898,7 +898,7 @@
 
   <browser:menuItem
      menu="discussion_actions"
-     for="bungeni.models.domain.ItemScheduleDiscussion"
+     for="bungeni.models.interfaces.IItemScheduleDiscussion"
      title="Edit discussion"
      action="./edit"
      permission="bungeni.sittingschedule.itemdiscussion.Edit"
@@ -1101,7 +1101,7 @@
         submenu="context_actions"
     />
     <browser:subMenuItem menu="plone_contentmenu"
-        for="bungeni.models.domain.Report"
+        for="bungeni.models.interfaces.IReport"
         title="Actions..."
         action="context_actions"
         order="1"

@@ -325,23 +325,23 @@
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     
-    <browser:page name="add" for="bungeni.models.domain.UserAddressContainer"
+    <browser:page name="add" for="bungeni.models.interfaces.IUserAddressContainer"
         class=".common.AddForm"
         permission="bungeni.address.Add"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-    <browser:page name="edit" for="bungeni.models.domain.UserAddress"
+    <browser:page name="edit" for="bungeni.models.interfaces.IUserAddress"
         class=".common.EditForm"
         permission="bungeni.address.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-    <browser:page name="delete" for="bungeni.models.domain.UserAddress"
+    <browser:page name="delete" for="bungeni.models.interfaces.IUserAddress"
         class=".common.DeleteForm"
         permission="bungeni.address.Delete"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     
-    <browser:page name="view" for="bungeni.models.domain.UserAddress"
+    <browser:page name="view" for="bungeni.models.interfaces.IUserAddress"
         class=".forms.UserAddressDisplayForm"
         permission="zope.View"
         layer="bungeni.ui.interfaces.IBungeniSkin"
@@ -354,7 +354,7 @@
         permission="zope.View"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-    <browser:page name="add" for="bungeni.models.domain.UserDelegationContainer"
+    <browser:page name="add" for="bungeni.models.interfaces.IUserDelegationContainer"
         class=".common.AddForm"
         permission="bungeni.delegation.Add"
         layer="bungeni.ui.interfaces.IBungeniSkin"
@@ -372,47 +372,47 @@
     />
     
     <!-- sitting attendance -->
-    <browser:page name="view" for="bungeni.models.domain.SittingAttendance"
+    <browser:page name="view" for="bungeni.models.interfaces.ISittingAttendance"
         class=".common.DisplayForm"
         permission="zope.View"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="add" 
-        for="bungeni.models.domain.SittingAttendanceContainer"
+        for="bungeni.models.interfaces.ISittingAttendanceContainer"
         class=".common.AddForm"
         permission="bungeni.sittingattendance.Add"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-    <browser:page name="edit" for="bungeni.models.domain.SittingAttendance"
+    <browser:page name="edit" for="bungeni.models.interfaces.ISittingAttendance"
         class=".common.EditForm"
         permission="bungeni.sittingattendance.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-    <browser:page name="delete" for="bungeni.models.domain.SittingAttendance"
+    <browser:page name="delete" for="bungeni.models.interfaces.ISittingAttendance"
         class=".common.DeleteForm"
         permission="bungeni.sittingattendance.Delete"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     
     <!-- signatories -->
-    <browser:page name="add" for="bungeni.models.domain.SignatoryContainer"
+    <browser:page name="add" for="bungeni.models.interfaces.ISignatoryContainer"
         class=".common.AddForm"
         permission="bungeni.signatory.Add"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-    <browser:page name="edit" for="bungeni.models.domain.Signatory"
+    <browser:page name="edit" for="bungeni.models.interfaces.ISignatory"
         class=".common.EditForm"
         permission="bungeni.signatory.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
-    <browser:page name="delete" for="bungeni.models.domain.Signatory"
+    <browser:page name="delete" for="bungeni.models.interfaces.ISignatory"
         class=".common.DeleteForm"
         permission="bungeni.signatory.Delete"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
 
     <!-- events -->
-    <browser:page name="add" for="bungeni.models.domain.EventContainer"
+    <browser:page name="add" for="bungeni.models.interfaces.IEventContainer"
         class=".common.AddForm"
         permission="bungeni.event.Add"
         layer="bungeni.ui.interfaces.IBungeniSkin"
