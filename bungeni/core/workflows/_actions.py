@@ -23,11 +23,6 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.core.workflows._actions")
 
-
-import zope.event
-import zope.lifecycleevent
-
-from bungeni.alchemist import Session
 from bungeni.core.workflows import utils
 from bungeni.core.workflows import dbutils
 
@@ -54,22 +49,11 @@ def __create(context):
     # *creation* logic of the item?
     utils.assign_role_owner_to_login(context)
 
-def __pi_submit(context):
-    if len(context.signatories) > 0:
-        __make_owner_signatory(context)
-    utils.update_signatories(context)
-    utils.unset_roles_signatory(context)
 
 # !+NUMBER_GENERATION(ah, nov-2011) - used for parliamentary item transitions
 # to recieved state
 def __pi_received(context):
     utils.set_doc_registry_number(context)
-
-def __pi_redraft(context):
-    """Signatory operations on redraft - Unsetting signatures e.t.c
-    """
-    utils.update_signatories(context)
-    utils.unset_roles_signatory(context, all=True)
 
 # sub-item types
 
@@ -95,15 +79,11 @@ _tableddocument_received = __pi_received
 # agendaitem
 
 _agendaitem_draft = _agendaitem_working_draft = __create
-_agendaitem_submitted = __pi_submit
-_agendaitem_redraft = __pi_redraft
 
 
 # bill
 
 _bill_draft = _bill_working_draft = __create
-_bill_redraft = __pi_redraft
-_bill_submitted = __pi_submit
 
 
 # group
@@ -154,8 +134,6 @@ def _sitting_published_agenda(context):
 # motion
 
 _motion_draft = _motion_working_draft = __create
-_motion_submitted = __pi_submit
-_motion_redraft = __pi_redraft
 
 def _motion_admissible(motion):
     dbutils.set_doc_type_number(motion)
@@ -168,8 +146,6 @@ def __question_create(context):
     utils.assign_role_minister_question(context)
     
 _question_draft = _question_working_draft = __question_create
-_question_submitted = __pi_submit
-_question_redraft = __pi_redraft
 
 
 # !+unschedule(mr, may-2012) why does unscheduling only apply to:
@@ -192,8 +168,6 @@ def _question_admissible(question):
 # tableddocument
 
 _tableddocument_draft = _tableddocument_working_draft = __create
-_tableddocument_submitted = __pi_submit
-_tableddocument_redraft = __pi_redraft
 
 def _tableddocument_adjourned(context):
     utils.setTabledDocumentHistory(context)
@@ -206,38 +180,5 @@ def _tableddocument_admissible(tabled_document):
 def _user_A(context):
     utils.assign_role("bungeni.Owner", context.login, context)
     context.date_of_death = None
-
-#
-
-
-# signatories
-
-def __make_owner_signatory(context):
-    """Make document owner a default signatory when document is submitted to
-    signatories for consent.
-    """
-    signatories = context.signatories
-    if context.owner_id not in [sgn.user_id for sgn in signatories._query]:
-        session = Session()
-        signatory = signatories._class()
-        signatory.user_id = context.owner_id
-        signatory.head_id = context.doc_id
-        session.add(signatory)
-        session.flush()
-        zope.event.notify(zope.lifecycleevent.ObjectCreatedEvent(signatory))
-
-def __pi_submitted_signatories(context):
-    __make_owner_signatory(context)
-    for signatory in context.signatories.values():
-        owner_login = signatory.owner.login
-        utils.assign_role("bungeni.Owner", owner_login, signatory)
-        utils.assign_role("bungeni.Signatory", owner_login, signatory.head)
-    utils.update_signatories(context)
-
-_question_submitted_signatories = __pi_submitted_signatories
-_motion_submitted_signatories = __pi_submitted_signatories
-_bill_submitted_signatories = __pi_submitted_signatories
-_agendaitem_submitted_signatories = __pi_submitted_signatories
-_tableddocument_submitted_signatories = __pi_submitted_signatories
 
 

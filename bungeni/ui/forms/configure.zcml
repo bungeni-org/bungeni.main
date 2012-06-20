@@ -258,7 +258,7 @@
     <browser:viewlet name="bungeni.viewlet.pi-signatories"
         manager=".interfaces.ISubFormViewletManager"
         class=".viewlets.SignatoriesViewlet"
-        for="bungeni.models.interfaces.IBungeniParliamentaryContent"
+        for="bungeni.models.interfaces.IFeatureSignatory"
         permission="zope.View"
         weight="10"
     />

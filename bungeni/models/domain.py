@@ -143,7 +143,7 @@ class Entity(object):
 # as a localization parameter, and its implementation must thus be completely 
 # isolated, depending only on that one declaration.
 
-def feature_audit(kls):
+def feature_audit(kls, **params):
     """Decorator for domain types to support "audit" feature.
     """
     interface.classImplements(kls, interfaces.IFeatureAudit)
@@ -176,7 +176,7 @@ feature_audit.DECORATED = set()
 # keep track of domain classes for which an audit class was created dynamically
 feature_audit.CREATED_AUDIT_CLASS_FOR = set()
 
-def feature_version(kls):
+def feature_version(kls, **params):
     """Decorator for domain types to support "version" feature.
     """
     # domain.Version itself may NOT support versions
@@ -186,7 +186,7 @@ def feature_version(kls):
     interface.classImplements(kls, interfaces.IFeatureVersion)
     return kls
 
-def feature_attachment(kls):
+def feature_attachment(kls, **params):
     """Decorator for domain types to support "attachment" feature.
     !+ currently assumes that kls is versionable.
     """
@@ -196,7 +196,7 @@ def feature_attachment(kls):
     interface.classImplements(kls, interfaces.IFeatureAttachment)
     return kls
 
-def feature_event(kls):
+def feature_event(kls, **params):
     """Decorator for domain types to support "event" feature.
     For Doc types (other than Event itself).
     """
@@ -205,21 +205,25 @@ def feature_event(kls):
     interface.classImplements(kls, interfaces.IFeatureEvent)
     return kls
 
-def feature_signatory(kls):
+def feature_signatory(kls, **params):
     """Decorator for domain types to support "signatory" feature.
     For Doc types.
     """
+    from bungeni.models.signatories import createManagerFactory
     interface.classImplements(kls, interfaces.IFeatureSignatory)
+    kls.signatories = one2many("signatories", 
+        "bungeni.models.domain.SignatoryContainer", "head_id")
+    createManagerFactory(kls, **params)
     return kls
 
-def feature_schedule(kls):
+def feature_schedule(kls, **params):
     """Decorator for domain types to support "schedule" feature.
     For Doc types, means support for being scheduled in a group sitting.
     """
     interface.classImplements(kls, interfaces.IFeatureSchedule)
     return kls
 
-def feature_address(kls):
+def feature_address(kls, **params):
     """Decorator for domain types to support "address" feature.
     For User and Group types, means support for possibility to have addresses.
     """
@@ -241,7 +245,7 @@ def configurable_domain(kls, workflow):
                 "Class [%s] does not allow dynamic feature [%s]" % (
                     kls, feature.name)
             feature_decorator = globals()["feature_%s" % (feature.name)]
-            kls = feature_decorator(kls)
+            kls = feature_decorator(kls, **feature.params)
     return kls
 
 # /Features
@@ -657,8 +661,6 @@ class Doc(Entity):
     # !+item_id->head_id
     files = one2many("files",
         "bungeni.models.domain.AttachmentContainer", "head_id")
-    signatories = one2many("signatories",
-        "bungeni.models.domain.SignatoryContainer", "head_id")
     events = one2many("events",
         "bungeni.models.domain.EventContainer", "head_id")
     
@@ -884,9 +886,6 @@ class AgendaItem(AdmissibleMixin, Doc):
     
     files = one2many("files",
         "bungeni.models.domain.AttachmentContainer", "head_id")
-    # !+signatories on AgendaItems?
-    signatories = one2many("signatories",
-        "bungeni.models.domain.SignatoryContainer", "head_id")
     # !+events on AgendaItems?
     events = one2many("events",
         "bungeni.models.domain.EventContainer", "head_id")
@@ -903,8 +902,6 @@ class Bill(Doc):
     
     files = one2many("files",
         "bungeni.models.domain.AttachmentContainer", "head_id")
-    signatories = one2many("signatories",
-        "bungeni.models.domain.SignatoryContainer", "head_id")
     events = one2many("events",
         "bungeni.models.domain.EventContainer", "head_id")
     
@@ -941,8 +938,7 @@ class Motion(AdmissibleMixin, Doc):
     
     files = one2many("files",
         "bungeni.models.domain.AttachmentContainer", "head_id")
-    signatories = one2many("signatories",
-        "bungeni.models.domain.SignatoryContainer", "head_id")
+
     events = one2many("events",
         "bungeni.models.domain.EventContainer", "head_id")
     
@@ -962,8 +958,6 @@ class Question(AdmissibleMixin, Doc):
     
     files = one2many("files",
         "bungeni.models.domain.AttachmentContainer", "head_id")
-    signatories = one2many("signatories",
-        "bungeni.models.domain.SignatoryContainer", "head_id")
     events = one2many("events",
         "bungeni.models.domain.EventContainer", "head_id")
     
@@ -1017,8 +1011,6 @@ class TabledDocument(AdmissibleMixin, Doc):
     
     files = one2many("files",
         "bungeni.models.domain.AttachmentContainer", "head_id")
-    signatories = one2many("signatories",
-        "bungeni.models.domain.SignatoryContainer", "head_id")
     events = one2many("events",
         "bungeni.models.domain.EventContainer", "head_id")
 #TabledDocumentAudit

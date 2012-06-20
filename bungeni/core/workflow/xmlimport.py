@@ -235,8 +235,14 @@ def _load(workflow, name):
         if feature_enabled and feature_name == "version": 
             assert "audit" in [ fe.name for fe in features if fe.enabled ], \
                 "Workflow [%s] has version but no audit feature" % (name)
+        config = [ cfg for cfg in f.iterchildren("config") ]
+        params = {}
+        assert (len(config)<2), "Feature may only contain one config node"
+        if config:
+            params = dict(config[0].items())
         features.append(Feature(feature_name, enabled=feature_enabled, 
-                note=strip_none(f.get("note"))))
+                note=strip_none(f.get("note")), **params
+        ))
     
     # global grants
     _permission_role_mixes = {}

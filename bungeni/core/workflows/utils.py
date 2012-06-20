@@ -9,7 +9,6 @@ $Id$
 log = __import__("logging").getLogger("bungeni.core.workflows.utils")
 
 import sys
-import datetime
 
 from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.app.component.hooks import getSite
@@ -297,34 +296,4 @@ def check_agenda_finalized(context):
             return True
     check_list = map(check_finalized, context.items.values())
     return  (False not in check_list)
-
-# signatories
-
-def update_signatories(context):
-    """Fire automatic transitions on submission of parliamentary document.
-    """
-    for signatory in context.signatories.values():
-        wfc = IWorkflowController(signatory, None)
-        if wfc is not None:
-            wfc.fireAutomatic()
-
-def unset_roles_signatory(context, all=False):
-    """Unset signatory roles for members who have rejected document.
-    """
-    if all:
-        for signatory in context.signatories.values():
-            owner_login = signatory.owner.login
-            unset_role("bungeni.Signatory", owner_login, context)
-    else:
-        SIGNATORIES_REJECT_STATES = [u"rejected", u"withdrawn"] # !+bungeni_custom
-        for signatory in context.signatories.values():
-            wfc = IWorkflowController(signatory, None)
-            if wfc is None:
-                log.debug("Unable to get workflow controller for : %s", signatory)
-                continue
-            if wfc.state_controller.get_status() in SIGNATORIES_REJECT_STATES:
-                owner_login = signatory.owner.login
-                log.debug("Removing signatory role for [%s] on document: [%s]", 
-                    owner_login, signatory.head)
-                unset_role("bungeni.Signatory", owner_login, context)
 

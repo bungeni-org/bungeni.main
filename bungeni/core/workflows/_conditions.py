@@ -13,8 +13,7 @@ $Id$
 log = __import__("logging").getLogger("bungeni.core.workflows._conditions")
 
 from zope.security import checkPermission
-from bungeni.alchemist import Session
-from bungeni.models.interfaces import ISignatoriesValidator
+from bungeni.models.interfaces import ISignatoryManager
 from bungeni.models import domain
 from bungeni.models import utils as model_utils
 from bungeni.core import globalsettings as prefs
@@ -177,27 +176,27 @@ def user_is_not_parent_document_owner(context):
     return not user_is_parent_document_owner(context)
 
 def pi_has_signatories(context):
-    validator = ISignatoriesValidator(context, None)
+    validator = ISignatoryManager(context, None)
     if validator is not None:
         return validator.validateSignatories()
-    return False
+    return True
 
 def pi_signatories_check(context):
-    validator = ISignatoriesValidator(context, None)
+    validator = ISignatoryManager(context, None)
     if validator is not None:
         return validator.validateConsentedSignatories()
-    return False
+    return True
 
 def pi_signature_period_expired(context):
     """The document has been submitted"""
-    validator = ISignatoriesValidator(context.head, None)
+    validator = ISignatoryManager(context.head, None)
     if validator is not None:
         return validator.expireSignatures()
     return False
 
 def pi_document_redrafted(context):
     """Parent document has been redrafted"""
-    validator = ISignatoriesValidator(context.head, None)
+    validator = ISignatoryManager(context.head, None)
     return validator and validator.documentInDraft()
 
 def pi_unsign_signature(context):
@@ -205,7 +204,7 @@ def pi_unsign_signature(context):
         user_is_not_parent_document_owner(context))
 
 def pi_allow_signature(context):
-    validator = ISignatoriesValidator(context.head, None)
+    validator = ISignatoryManager(context.head, None)
     if validator is not None:
         return user_is_context_owner(context) and validator.allowSignature()
     return False
@@ -213,7 +212,7 @@ def pi_allow_signature(context):
 def pi_allow_signature_actions(context):
     """allow/disallow other signature actions => such as withdraw and reject
     """
-    validator = ISignatoriesValidator(context.head, None)
+    validator = ISignatoryManager(context.head, None)
     if validator is not None:
         return (user_is_context_owner(context) and
             validator.documentSubmitted() and

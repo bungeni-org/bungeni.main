@@ -311,38 +311,6 @@ class IBungeniSettings(interface.Interface):
         default=5,
         min=1
     )
-    bill_signatories_min = schema.Int(
-        title=_(u"Minimum consented signatories for a bill"), default=0
-    )
-    bill_signatories_max = schema.Int(
-        title=_(u"Maximum consented signatories for a bill"), default=0
-    )
-    question_signatories_min = schema.Int(
-        title=_(u"Minimum consented signatories for a question"), default=0
-    )
-    question_signatories_max = schema.Int(
-        title=_(u"Maximum consented signatories for a question"), default=0
-    )
-    motion_signatories_min = schema.Int(
-        title=_(u"Minimum consented signatories for a motion"), default=0
-    )
-    motion_signatories_max = schema.Int(
-        title=_(u"Maximum consented signatories for a motion"), default=0
-    )
-    agendaitem_signatories_min = schema.Int(
-        title=_(u"Minimum consented signatories for an agenda item"), default=0
-    )
-    agendaitem_signatories_max = schema.Int(
-        title=_(u"Maximum consented signatories for an agenda item"), default=0
-    )
-    tableddocument_signatories_min = schema.Int(
-        title=_(u"Minimum consented signatories for a tabled document"), 
-        default=0
-    )
-    tableddocument_signatories_max = schema.Int(
-        title=_(u"Maximum consented signatories for a tabled document"), 
-        default=0
-    )
 
 class IBungeniRegistrySettings(interface.Interface):
 
@@ -423,7 +391,7 @@ class ISignatory(interface.Interface):
     """
 class ISignatoryContainer(IAlchemistContainer): pass
 
-class ISignatoriesValidator(interface.Interface):
+class ISignatoryManager(interface.Interface):
     """Validation machinery for iterms with signatories"""
 
     signatories = interface.Attribute("""signatories iteratable""")
@@ -465,7 +433,17 @@ class ISignatoriesValidator(interface.Interface):
     def expireSignatures():
         """Should pending signatures be archived
         """
-
+    
+    def updateSignatories():
+        """Fire any workflow transitions within current state.
+        This should update all signatures depending on parent document state.
+        """
+    
+    def updateRoles():
+        """Execute any role changes based on changes to parent document"""
+        
+    def workflowActions():
+        """Fire off any changes after workflow change on parent document"""
 
 class IItemScheduleCategory(interface.Interface):
     pass

@@ -15,7 +15,7 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import url
-from bungeni.models.interfaces import ISignatoriesValidator
+from bungeni.models.interfaces import ISignatoryManager
 
 
 class WorkspaceContextNavigation(StructureAwareViewlet):
@@ -54,7 +54,7 @@ class SignatoriesStatus(object):
         of the form {"level": <level> , "message_text": "<i18n_message>"}
         """
         message = {"level": "info", "message_text": u""}
-        validator = ISignatoriesValidator(self.context, None)
+        validator = ISignatoryManager(self.context, None)
         if validator is None:
             return message
         if validator.requireSignatures():

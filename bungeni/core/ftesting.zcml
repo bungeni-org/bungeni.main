@@ -30,11 +30,7 @@
     <include package="bungeni.models" file="roles.zcml" />
     <include package="bungeni.models" file="permissions.zcml" />
     <include package="bungeni.core.workflows" file="permissions.zcml" />
-    
-    <adapter factory="bungeni.models.signatories.BillSignatoryValidator"/>
-    <adapter factory="bungeni.models.signatories.MotionSignatoryValidator"/>
-    <adapter factory="bungeni.models.signatories.QuestionSignatoryValidator"/>
-    
+        
     <include package="bungeni.alchemist" file="meta.zcml"/>
     <include package="ore.xapian" file="meta.zcml" />
     <include package="ore.xapian" />

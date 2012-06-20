@@ -164,6 +164,7 @@ class AppSetup(object):
             description=_(u"Plenary Sittings")
         )
         
+        #!+TIMING
         #!+AUTO CONTAINERS SCHEDULING(mb, April-2012)
         # type_info missing container name
         for key, info in capi.iter_type_info():

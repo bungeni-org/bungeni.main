@@ -152,7 +152,7 @@
 
     <!-- signatories -->
     <browser:page name="signatory-review"
-        for="bungeni.models.interfaces.IBungeniParliamentaryContent"
+        for="bungeni.models.interfaces.IFeatureSignatory"
         permission="zope.View"
         class=".redirect.SignatoryReview"
     />
