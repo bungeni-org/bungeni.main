@@ -1,6 +1,5 @@
 # encoding: utf-8
 
-#from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.security.proxy import removeSecurityProxy
 from zope import security
 from zope import interface
@@ -16,11 +15,11 @@ from bungeni.alchemist.interfaces import IAlchemistContent
 from bungeni.ui.forms.workflow import bindTransitions
 from bungeni.ui.i18n import _
 from bungeni.ui import browser
-from bungeni.ui import z3evoque
 from bungeni.models.interfaces import ITranslatable
 from bungeni.core.translation import get_translation_for, get_all_languages
 from bungeni.utils import register
 from copy import copy
+
 
 def filterFields(context, form_fields):
     omit_names = []
@@ -54,12 +53,8 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
     ):
     """bungeni.subform.manager
     """
-    # the instance of the ViewProvideViewletManager
-    provide = z3evoque.ViewProvideViewletManager(
-        default_provider_name="bungeni.subform.manager")
-    render = z3evoque.ViewTemplateFile("form.html#display")
-    #render = ViewPageTemplateFile("templates/display-form.pt")
-    
+    render = ViewPageTemplateFile("templates/display-form.pt")
+
     mode = "view"
     form_name = _(u"General")
     view_id = "display-item"
@@ -72,7 +67,7 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
         context = removeSecurityProxy(self.context)
         if getattr(context, "note", False):
             return context.note
-    
+
     def setupActions(self):
         return # !+ ??
         wfc = interfaces.IWorkflowController(self.context, None)
@@ -120,7 +115,7 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
                 setattr(context, field_translation.field_name,
                         field_translation.field_text)
         self.widgets = form.setUpEditWidgets(
-            self.form_fields, "" , context, self.request,
+            self.form_fields, "", context, self.request,
             adapters=self.adapters,
             for_display=True,
             ignore_request=ignore_request
@@ -184,4 +179,3 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
         """
         return filter(None,
                 [ error.message for error in self.invariantErrors ])
-
