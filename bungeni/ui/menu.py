@@ -29,7 +29,10 @@ from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowController
 
 from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.models.utils import get_db_user_id
-from bungeni.models.interfaces import (IVersion, IScheduleText, IDoc, 
+from bungeni.models.interfaces import (
+    IVersion, 
+    IScheduleText, 
+    IBungeniParliamentaryContent, 
     IFeatureAudit
 )
 
@@ -508,7 +511,7 @@ class DownloadDocumentMenu(BrowserMenu):
     def getMenuItems(self, context, request):
         results = []
         _url = url.absoluteURL(context, request)
-        if IDoc.providedBy(context):
+        if IBungeniParliamentaryContent.providedBy(context):
             doc_templates = self.documentTemplates(request.locale)
             for doc_type in document_types:
                 if doc_templates:
@@ -544,19 +547,19 @@ class DownloadDocumentMenu(BrowserMenu):
             for doc_type in xml_types:
                 if doc_type == TYPE_AKOMANTOSO:
                     if IAlchemistContainer.providedBy(context):
-                        if not IDoc.implementedBy(
-                            context.domain_model
-                        ):
+                        if not IBungeniParliamentaryContent.implementedBy(
+                                context.domain_model
+                            ):
                             continue
                 elif doc_type == TYPE_RSS:
                     # rss for content types only availble for auditables
-                    if (IDoc.providedBy(context) and not 
-                        IFeatureAudit.providedBy(context)
-                    ):
+                    if (IBungeniParliamentaryContent.providedBy(context) and not
+                            IFeatureAudit.providedBy(context)
+                        ):
                         continue
                     elif (IAlchemistContainer.providedBy(context) and not 
-                        IFeatureAudit.implementedBy(context.domain_model)
-                    ):
+                            IFeatureAudit.implementedBy(context.domain_model)
+                        ):
                         continue
                 results.append(dict(
                         title = globals()["i18n_%s" % doc_type],

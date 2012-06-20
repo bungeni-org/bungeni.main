@@ -855,7 +855,7 @@
         provides="ploned.ui.interfaces.IContentMenuItem"
     />
     <adapter name="plone.contentmenu.downloaddocument"
-        for="bungeni.models.interfaces.IDoc *"
+        for="bungeni.models.interfaces.IBungeniParliamentaryContent *"
         factory=".menu.DownloadDocumentSubMenuItem"
         provides="ploned.ui.interfaces.IContentMenuItem"
     />
