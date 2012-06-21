@@ -492,9 +492,9 @@ class Ministry(Group):
     ministers = one2many("ministers",
         "bungeni.models.domain.MinisterContainer", "group_id")
     questions = one2many("questions",
-        "bungeni.models.domain.QuestionContainer", "ministry_id")
+        "bungeni.models.domain.QuestionContainer", "group_id")
     bills = one2many("bills",
-        "bungeni.models.domain.BillContainer", "ministry_id")
+        "bungeni.models.domain.BillContainer", "group_id")
     title_types = one2many("title_types",
         "bungeni.models.domain.TitleTypeContainer", "group_id")
 class Minister(GroupMembership):
