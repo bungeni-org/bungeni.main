@@ -80,7 +80,7 @@ class AttendanceEditor(BungeniBrowserView, forms.common.BaseForm):
     @property
     def attendance_types(self):
         """ () -> zope.schema.vocabulary.SimpleVocabulary."""
-        from bungeni.ui import vocabulary
+        from bungeni.ui import vocabulary # !+
         return vocabulary.attendance_type
     
     @property

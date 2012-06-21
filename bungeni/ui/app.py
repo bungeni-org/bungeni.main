@@ -16,7 +16,7 @@ from bungeni.utils import register
 
 @register.handler((IBungeniApplication, IWSGIApplicationCreatedEvent))
 def on_wsgi_application_created_event(application, event):
-    """Additional UI setup UI on IWSGIApplicationCreatedEvent.
+    """Additional UI setup on IWSGIApplicationCreatedEvent.
     """
     
     # catalyse descriptors
@@ -26,3 +26,6 @@ def on_wsgi_application_created_event(application, event):
     # ensure register workflow views
     import bungeni.ui.workflow
     
+    # ensure register version views
+    import bungeni.ui.versions
+

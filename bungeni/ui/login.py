@@ -20,7 +20,6 @@ from bungeni.models.utils import get_db_user
 from bungeni.ui.widgets import HiddenTextWidget
 from bungeni.ui import vocabulary
 from bungeni.ui import widgets
-from bungeni.models import domain
 from bungeni.core.i18n import _
 from bungeni.models.settings import EmailSettings
 from bungeni.core.app import BungeniApp

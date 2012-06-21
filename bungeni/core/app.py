@@ -18,9 +18,12 @@ from zope.app.component import site
 from zope.location.interfaces import ILocation
 
 from ore.wsgiapp.app import Application
+from ore.wsgiapp.interfaces import IWSGIApplicationCreatedEvent
 
 from bungeni.models import domain
 from bungeni.models import interfaces as model_interfaces
+from bungeni.models.utils import get_current_parliament
+from bungeni.models.utils import container_getter
 
 from bungeni.core import interfaces
 from bungeni.core import location
@@ -29,20 +32,26 @@ from bungeni.core.content import Section, AdminSection, AkomaNtosoSection, \
     WorkspaceSection
 from bungeni.core.content import QueryContent
 from bungeni.core.i18n import _
-from bungeni.models.utils import get_current_parliament
-from bungeni.models.utils import container_getter
-from bungeni.ui.utils import url, common # !+ core dependency on ui
 from bungeni.core.workspace import WorkspaceContainer
+from bungeni.ui.utils import url, common # !+ core dependency on ui
 from bungeni.utils.capi import capi
+from bungeni.utils import register
 
 
+
+@register.handler(
+    (model_interfaces.IBungeniApplication, IWSGIApplicationCreatedEvent))
 def on_wsgi_application_created_event(application, event):
-    """Subscriber to the ore.wsgiapp.interfaces.IWSGIApplicationCreatedEvent.
+    """Additional setup on IWSGIApplicationCreatedEvent.
     """
+    # import events modules, registering handlers
+    import bungeni.core.events
+    
     initializer = model_interfaces.IBungeniSetup(application)
     initializer.setUp()
     log.debug("on_wsgi_application_created_event: _features: %s" % (
         getConfigContext()._features))
+
 
 def to_locatable_container(domain_class, *domain_containers):
     component.provideAdapter(location.ContainerLocation(*domain_containers),

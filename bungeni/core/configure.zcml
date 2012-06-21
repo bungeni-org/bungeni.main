@@ -153,11 +153,6 @@
         provides="zope.publisher.interfaces.IPublishTraverse"
     />
     
-    <!-- Application Setup Event Dispatcher -->
-    <subscriber for="bungeni.models.interfaces.IBungeniApplication
-            ore.wsgiapp.interfaces.IWSGIApplicationCreatedEvent"
-        handler=".app.on_wsgi_application_created_event"
-    />
     <!--Member title roles-->
     <subscriber for="bungeni.models.interfaces.IMemberTitle
             zope.lifecycleevent.interfaces.IObjectCreatedEvent"
