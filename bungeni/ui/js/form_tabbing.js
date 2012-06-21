@@ -21,13 +21,13 @@ var ploneFormTabbing = {};
 
 ploneFormTabbing._toggleFactory = function(container, tab_ids, panel_ids) {
     return function(e) {
-        jQuery(tab_ids).removeClass('selected');
+        jQuery(tab_ids).parent().removeClass('active');
         jQuery(panel_ids).addClass('hidden');
 
         var orig_id = this.tagName.toLowerCase() == 'a' ? 
             '#' + this.id : jQuery(this).val();
         var id = orig_id.replace(/^#fieldsetlegend-/, "#fieldset-");
-        jQuery(orig_id).addClass('selected');
+        jQuery(orig_id).parent().addClass('active');
         jQuery(id).removeClass('hidden');
 
         jQuery(container).find("input[name=fieldset.current]").val(orig_id);
@@ -67,7 +67,8 @@ ploneFormTabbing._buildTabs = function(container, legends) {
         } else {
             var a = document.createElement("a");
             a.id = this.id;
-            a.href = "#" + this.id;
+            a.href = "#";
+            //a.href = "#" + this.id; //remove anchoring feature
             jQuery(a).click(handler);
             var span = document.createElement("span");
             jQuery(span).text(jQuery(this).text());
@@ -110,7 +111,13 @@ ploneFormTabbing.initSelection = function(){
 
 ploneFormTabbing.initializeDL = function() {
     var tabs = jQuery(ploneFormTabbing._buildTabs(this, jQuery(this).children('dt')));
-    jQuery(this).before(tabs);
+    //jQuery($("#RightPane")).prepend(tabs.wrap("<div></div>"));
+    jQuery($("#portal-column-content > div")).prepend(tabs);
+    
+    //http://stackoverflow.com/questions/268490/jquery-document-createelement-equivalent
+    if ($("#main-wrapper").length < 1) //mainw-wrapper comes only from eXist at the moment
+        $("ul.formTabs").wrap('<div id="tab-menu">');
+    
     jQuery(this).children('dd').addClass('formPanel');
 
     tabs = tabs.find('li.formTab a,option.formTab');
