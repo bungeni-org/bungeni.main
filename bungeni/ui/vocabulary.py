@@ -97,7 +97,20 @@ class VDEXVocabularyMixin(object):
             file=open(capi.get_path_for("vocabularies", file_name)))
     
     def getTermById(self, value):
-        return self.vdex.getTermById(value)
+        term = self.vdex.getTermById(value)
+        if term is None:
+            raise LookupError("This VDEX has no such ID :: %s", value)
+        return term
+    
+    def getTerm(self, value):
+        term = self.getTermById(value)
+        title = self.vdex.getTermCaption(term, lang=get_default_language())
+        return vocabulary.SimpleTerm(value, title, title)
+
+    def getTermCaptionById(self, value, lang=get_default_language()):
+        """Returns the caption(s) for a given term identifier, in lang.
+        """
+        return self.vdex.getTermCaptionById(value, lang)
 
 class TreeVDEXVocabulary(VDEXVocabularyMixin):
     """Class to generate hierarchical vdex vocabularies
@@ -115,11 +128,6 @@ class TreeVDEXVocabulary(VDEXVocabularyMixin):
         for value in value_list:
             if self.getTermById(value) is None:
                 raise LookupError
-    
-    def getTermCaptionById(self, value, lang):
-        """Returns the caption(s) for a given term identifier, in lang.
-        """
-        return self.vdex.getTermCaptionById(value, lang)
 
 class FlatVDEXVocabularyFactory(VDEXVocabularyMixin, BaseVocabularyFactory):
     """    
