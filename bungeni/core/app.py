@@ -32,7 +32,7 @@ from bungeni.core.content import Section, AdminSection, AkomaNtosoSection, \
     WorkspaceSection
 from bungeni.core.content import QueryContent
 from bungeni.core.i18n import _
-from bungeni.core.workspace import WorkspaceContainer
+from bungeni.core.workspace import WorkspaceContainer, load_workspaces
 from bungeni.ui.utils import url, common # !+ core dependency on ui
 from bungeni.utils.capi import capi
 from bungeni.utils import register
@@ -44,6 +44,9 @@ from bungeni.utils import register
 def on_wsgi_application_created_event(application, event):
     """Additional setup on IWSGIApplicationCreatedEvent.
     """
+    # load workspaces
+    load_workspaces()
+    
     # import events modules, registering handlers
     import bungeni.core.events
     
@@ -92,8 +95,8 @@ class AppSetup(object):
         index.setupFieldDefinitions(index.indexer)
         
         sm = site.LocalSiteManager(self.context)
-        self.context.setSiteManager(sm)           
-            
+        self.context.setSiteManager(sm)
+        
         # !+ where is the view name for the app root (slash) set?
         
         # CONVENTION: the action of each site top-section is made to point 

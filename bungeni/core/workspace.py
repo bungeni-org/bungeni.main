@@ -357,7 +357,7 @@ class WorkspaceContainerTraverser(SimpleComponentTraverser):
         raise NotFound(workspace, name)
 
 
-class WorkspaceTabsUtility():
+class WorkspaceTabsUtility(object):
     """This is utility stores the workflow configuration
     """
     interface.implements(IWorkspaceTabsUtility)
@@ -433,15 +433,22 @@ class WorkspaceTabsUtility():
                 if domain_class in self.workspaces[role][tab]:
                     return self.workspaces[role][tab][domain_class]
         return []
+# register a WorkspaceTabsUtility instance
+component.provideUtility(WorkspaceTabsUtility())
 
-#@bungeni_custom_errors
+
+def load_workspaces():
+    from bungeni.core.workflows import adapters
+    for type_key, ti in adapters.TYPE_REGISTRY:
+        workflow = ti.workflow
+        if workflow and workflow.has_feature("workspace"):
+            load_workspace("%s.xml" % ti.workflow_key, ti.domain_model)
+
+@bungeni_custom_errors
 def load_workspace(file_name, domain_class):
     """Loads the workspace configuration for each documemnt.
     """
-    workspace_tabs = component.queryUtility(IWorkspaceTabsUtility, None)
-    if not workspace_tabs:
-        component.provideUtility(WorkspaceTabsUtility())
-        workspace_tabs = component.getUtility(IWorkspaceTabsUtility)
+    workspace_tabs = component.getUtility(IWorkspaceTabsUtility)
     path = capi.get_path_for("workspace")
     file_path = os.path.join(path, file_name)
     item_type = file_name.split(".")[0]
@@ -455,10 +462,10 @@ def load_workspace(file_name, domain_class):
             if tab.get("roles"):
                 roles = tab.get("roles").split()
                 for role in roles:
-                    #assert component.queryUtility(IRole, role, None), \
-                    #    "Workspace configuration error : " \
-                    #    "Invalid role - %s. file: %s, state : %s" % (
-                    #        role, file_name, state.get("id"))
+                    assert component.queryUtility(IRole, role, None), \
+                        "Workspace configuration error : " \
+                        "Invalid role - %s. file: %s, state : %s" % (
+                            role, file_name, state.get("id"))
                     workspace_tabs.set_content(role, 
                         tab.get("id"), domain_class, state.get("id"))
 

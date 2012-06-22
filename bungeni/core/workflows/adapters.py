@@ -136,6 +136,7 @@ def load_workflow(name, path_custom_workflows=capi.get_path_for("workflows")):
         log.warn("Already Loaded WORKFLOW : %s %s" % (name, wf))
     return wf
 
+
 def apply_customization_workflow(name, ti):
     """Apply customizations, features as per configuration from a workflow. 
     Must (currently) be run after db setup.
@@ -166,9 +167,6 @@ def apply_customization_workflow(name, ti):
     if wf.has_feature("audit"):
         # create/set module-level dedicated auditor singleton for auditable kls
         bungeni.core.audit.set_auditor(kls)
-    
-    if wf.has_feature("workspace"):
-        bungeni.core.workspace.load_workspace("%s.xml" % ti.workflow_key, kls)
 
 
 def load_workflows():

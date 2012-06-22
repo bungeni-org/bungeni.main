@@ -4,12 +4,9 @@
            xmlns:i18n="http://namespaces.zope.org/i18n"
            i18n_domain="bungeni.ui">
 
-  <!-- Alchemist UI overrides -->
-  <include package="alchemist.ui" />
+    <!-- Alchemist UI overrides -->
+    <include package="alchemist.ui" />
     
-    <!-- pakage for resource registration -->
-    <include package=".resources" />
-
     <!-- Handler for JSON Listing Cache invalidation -->
     <subscriber handler=".container.on_invalidate_cache_event"
         for="bungeni.alchemist.interfaces.IAlchemistContent
@@ -34,62 +31,46 @@
 
   <!-- TimeZone Definition -->
   <adapter factory=".tz.tzinfo" />
-
-    <!-- Site Skin Definition -->
-    <include file="skin.zcml"/>
-
-  <!-- search -->
-  <include file="search.zcml" />
-
-  <!-- Resources -->
-  <include file="resources.zcml"/>
-
-  <!-- Site Viewlets -->
-  <include package=".viewlets" />
-
-
-  <!-- Include Views -->
-  <include file="views.zcml" />
     
-  <!-- Custom absolute_url -->
-  <include file="absoluteurl.zcml" />
-
-    <!-- Custom forms -->
-    <include package=".forms"/>
-
-    <!-- Admin UI -->
+    
+    <!-- pakage for resource registration -->
+    <include package=".resources" />
+    
+    <!-- Javascript -->
+    <include package="ore.yui"/>
+    <include package="ore.yuiwidget"/>
+    <include package="zdhtmlxscheduler"/>
+    <include package="z3tinymce"/>
+    
+    <!-- Transcripts -->
+    <!-- include package="bungeni.transcripts" /-->
+    
+    <include file="skin.zcml"/>
+    <include file="absoluteurl.zcml" />
+    <include file="resources.zcml"/>
     <include package=".admin"/>
-
-  <!-- Javascript -->
-  <include package="ore.yui"/>
-  <include package="ore.yuiwidget"/>
-  <include package="zdhtmlxscheduler"/>
-  <include package="z3tinymce"/>
-  <!-- Transcripts -->
-  <!--include package="bungeni.transcripts"/ -->
-  <browser:defaultView
-     for="bungeni.models.interfaces.IBungeniApplication"
-     name="index"
-     />
-
-  <browser:defaultView
-     for="bungeni.core.content.Section"
-     name="index"
-     />
-
- <!--rest views interface -->
-  <interface
-     interface=".interfaces.IBungeniRESTSkin"
-     type="bungeni.rest.interfaces.IRESTSkinType"
-     name="brs"
-     />
-
-  <!-- rest views -->
-  <include file="rest.zcml"/>
-
+    <!-- -->
+    <include file="search.zcml" />
+    <include file="views.zcml" />
+    <include package=".viewlets" />
+    <include package=".forms"/>
+    
+    <browser:defaultView name="index"
+        for="bungeni.models.interfaces.IBungeniApplication"
+    />
+    <browser:defaultView name="index" for="bungeni.core.content.Section" />
+    
+    <!-- rest views interface / views -->
+    <interface name="brs" 
+        interface=".interfaces.IBungeniRESTSkin" 
+        type="bungeni.rest.interfaces.IRESTSkinType"
+    />
+    <include file="rest.zcml"/>
+    
     <subscriber handler=".publication.on_before_traverse" trusted="True" />
     <subscriber handler=".publication.on_end_request" trusted="True" />
 
+    
   <!-- Marginalia Settings for bungeni types -->
 
   <!--class class="bungeni.models.domain.Bill">

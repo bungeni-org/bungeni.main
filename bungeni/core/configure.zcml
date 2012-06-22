@@ -15,13 +15,22 @@
     <include package="plone.transforms" />
     
     <include package="bungeni.models" />
+    <include package="bungeni.core.workflows" />
     <include package="bungeni.portal" />
+    
     
     <!-- Application to publish -->
     <utility provides="ore.wsgiapp.interfaces.IApplication"
         factory=".app.BungeniApp"
     />
+    <adapter for="bungeni.models.interfaces.IBungeniApplication"
+        factory=".app.AppSetup"
+    />
+    <class class=".app.BungeniApp">
+        <allow interface="zope.app.container.interfaces.IReadContainer" />
+    </class>
     
+
     <!-- ErrorReportingUtility
     
     Declare zope.error.error.RootErrorReportingUtility as the default
@@ -153,6 +162,7 @@
         provides="zope.publisher.interfaces.IPublishTraverse"
     />
     
+    <!-- Application Setup Event Dispatcher -->
     <!--Member title roles-->
     <subscriber for="bungeni.models.interfaces.IMemberTitle
             zope.lifecycleevent.interfaces.IObjectCreatedEvent"
@@ -174,15 +184,6 @@
         <require permission="bungeni.ui.workspace.View"
             interface="zope.publisher.interfaces.browser.IBrowserPublisher" />
     </class>
-    <!-- Application Setup -->
-    <adapter for="bungeni.models.interfaces.IBungeniApplication"
-        factory=".app.AppSetup"
-    />
-    
-    <class class=".app.BungeniApp">
-        <allow interface="zope.app.container.interfaces.IReadContainer" />
-    </class>
-    
     <class class=".content.Section">
         <allow attributes="title description"
             interface="zope.container.interfaces.IContentContainer" />
@@ -249,7 +250,6 @@
     />
     
     <include file="uri.zcml" />
-    <utility factory="bungeni.core.workspace.WorkspaceTabsUtility" />
-    
+
 </configure>
 
