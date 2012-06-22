@@ -283,14 +283,7 @@ def _load(workflow, name):
         action_name = "_%s_%s" % (name, state_id)
         if hasattr(ACTIONS_MODULE, action_name):
             actions.append(getattr(ACTIONS_MODULE, action_name))
-        # publish (after any custom actions)
-        if strip_none(s.get("publish")) is not None:
-            do_pub = as_bool(strip_none(s.get("publish")))
-            if do_pub is None:
-                raise ValueError("Invalid state value "
-                    '[publish="%s"]' % s.get("publish"))
-            if do_pub:
-                actions.append(ACTIONS_MODULE.publish_to_xml)
+
         # @tags
         tags = (strip_none(s.get("tags")) or "").split()
         # @like_state, permissions
@@ -336,7 +329,8 @@ def _load(workflow, name):
                 strip_none(s.get("note")),
                 actions, permissions, notifications, tags,
                 as_bool(strip_none(s.get("permissions_from_parent")) or "false"),
-                as_bool(strip_none(s.get("obsolete")) or "false")
+                as_bool(strip_none(s.get("obsolete")) or "false"),
+                as_bool(strip_none(s.get("publish")) or "false")
             )
         )
     

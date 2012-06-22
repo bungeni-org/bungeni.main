@@ -9,14 +9,19 @@ $Id$
 log = __import__("logging").getLogger("bungeni.core.serialize")
 
 from zope.security.proxy import removeSecurityProxy
+from zope.lifecycleevent import IObjectModifiedEvent, IObjectCreatedEvent
 from sqlalchemy.orm import RelationshipProperty, class_mapper
 
 from bungeni.alchemist.container import stringKey
 from bungeni.alchemist.interfaces import IAlchemistContainer
-from bungeni.core.workflow.states import get_object_state_rpm, get_head_object_state_rpm
-from bungeni.core.workflow.interfaces import IWorkflow, IStateController
+from bungeni.core.workflow.states import (get_object_state_rpm, 
+    get_head_object_state_rpm
+)
+from bungeni.core.workflow.interfaces import (IWorkflow, IStateController,
+    IWorkflowed, IWorkflowController, InvalidStateError
+)
 from bungeni.models import interfaces
-from bungeni.utils import naming
+from bungeni.utils import register, naming
 
 import os
 import collections
@@ -51,6 +56,16 @@ def get_permissions_dict(permissions):
             "setting": x[0] and "Allow" or "Deny"})
     return results
 
+@register.handler(adapts=(IWorkflowed, IObjectCreatedEvent))
+@register.handler(adapts=(IWorkflowed, IObjectModifiedEvent))
+def publish_handler(ob, event):
+    try:
+        wf_state = IWorkflowController(ob).state_controller.get_state()
+        if wf_state and wf_state.publish:
+            publish_to_xml(ob)
+    except InvalidStateError:
+        log.error("Unable to get workflow state for object %s.", ob)
+    
 
 def publish_to_xml(context):
     """Generates XML for object and saves it to the file. If object contains

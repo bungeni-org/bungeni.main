@@ -70,7 +70,7 @@ class State(object):
     zope.interface.implements(zope.securitypolicy.interfaces.IRolePermissionMap)
     
     def __init__(self, id, title, note, actions, permissions, notifications,
-            tags, permissions_from_parent=False, obsolete=False
+            tags, permissions_from_parent=False, obsolete=False, publish=False
         ):
         self.id = id # status
         self.title = title
@@ -81,6 +81,7 @@ class State(object):
         self.tags = tags # [str]
         self.permissions_from_parent = permissions_from_parent # bool
         self.obsolete = obsolete # bool
+        self.publish = publish
     
     @error.exceptions_as(interfaces.WorkflowStateActionError)
     def execute_actions(self, context):
