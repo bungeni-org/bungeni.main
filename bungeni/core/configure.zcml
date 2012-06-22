@@ -15,7 +15,6 @@
     <include package="plone.transforms" />
     
     <include package="bungeni.models" />
-    <include package="bungeni.core.workflows" />
     <include package="bungeni.portal" />
     
     
