@@ -769,11 +769,7 @@ class DeleteForm(PageForm):
 
     Will redirect back to the container on success.
     """
-    # zpt
-    # !+form_template(mr, jul-2010) this is unused here, but needed by
-    # some adapter of this "object delete" view
-    # !+locationerror(mr, apr-2012)
-    #form_template = NamedTemplate("alchemist.form")
+    form_template = NamedTemplate("alchemist.form")
     template = ViewPageTemplateFile("templates/delete.pt")
     _next_url = None
     form_fields = formlib.form.Fields()

@@ -8,20 +8,20 @@
         <dl class="portalMessage warning"
 	    tal:condition="not: view/status">
           <dt>
-            <p>Delete</p>
+            <p i18:translate="">Delete</p>
           </dt>
-          <dd>
+          <dd i18n:translate="">
             Please confirm that you wish to delete this item.
           </dd>
         </dl>
         <div class="visualClear"><!-- nothing here --></div>
-        <p>The following item will be deleted.</p>
+        <p i18n:translate="">The following item will be deleted.</p>
         <ul>
           <li>
             <a tal:attributes="href view/context/@@absolute_url"
-               tal:content="view/context/dc:title" />
+               tal:content="view/context/dc:title|string:'No title'" />
             <p class="discreet"
-               tal:content="view/context/dc:description"/>
+               tal:content="view/context/dc:description|string:'No description'"/>
           </li>
         </ul>
       </div>
