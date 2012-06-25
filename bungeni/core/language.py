@@ -10,6 +10,7 @@ $URL$
 log = __import__("logging").getLogger("bungeni.core.language")
 
 from zope import interface
+import zope.security
 from zope.app.zapi import getUtilitiesFor
 from zope.publisher.browser import BrowserLanguages
 from zope.i18n.negotiator import normalize_lang
@@ -48,7 +49,8 @@ class BaseLanguageProvider(object):
     PRECEDENCE = None
     
     def __call__(self):
-        return normalize_lang(self.getLanguage())
+        language = self.getLanguage()
+        return normalize_lang(language) if language else None
     
     def getLanguage(self):
         raise NotImplementedError("Inheriting class must implement this")
@@ -73,7 +75,10 @@ class ApplicationLanguage(BaseLanguageProvider):
 class BrowserLanguage(BaseLanguageProvider):
     PRECEDENCE = 8
     def getLanguage(self):
-        request = get_request()
+        try:
+            request = get_request()
+        except zope.security.interfaces.NoInteraction:
+            request=None
         if request is not None:
             browser_langs = BrowserLanguages(request)
             langs = browser_langs.getPreferredLanguages()
@@ -88,8 +93,11 @@ class BrowserLanguage(BaseLanguageProvider):
 class UILanguage(BaseLanguageProvider):
     PRECEDENCE = 7
     def getLanguage(self):
-        return get_request_language()
-
+        try:
+            request = get_request()
+            return get_request_language()
+        except zope.security.interfaces.NoInteraction:
+            return None
 
 def get_default_language():
     # !+LANGUAGE(murithi, mar2011) need to integrate precedence values in registration
