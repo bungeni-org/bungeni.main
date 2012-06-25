@@ -104,14 +104,13 @@ class WhatsOnBrowserView(BrowserView):
         #!+QUERIES(mb, nov-2011) to review the extra queries in `get_items`
         formatter = self.request.locale.dates.getFormatter("date", "full") 
         session = Session()
-        query = session.query(domain.Sitting).filter(self.sitting_filter
-            ).order_by(schema.sitting.c.start_date).options(
-                eagerload("group"),
-                eagerload("item_schedule")
-            )
+        query = session.query(domain.Sitting
+            ).filter(self.sitting_filter
+            ).order_by(schema.sitting.c.start_date
+            ).options(eagerload("group"), eagerload("item_schedule"))
         if not self.end_date:
             query = query.limit(BungeniSettings(common.get_application()
-                    ).max_sittings_in_business)
+                ).max_sittings_in_business)
         sittings = query.all()
         day = u""
         day_list = []
