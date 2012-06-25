@@ -680,19 +680,6 @@ class UserDescriptor(ModelDescriptor):
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget
         ),
-        LanguageField("language"), # [user-req]
-        Field(name="description", # [rtf]
-            modes="view edit add",
-            localizable=[
-                show("view edit add"),
-            ],
-            property=schema.Text(title=_("Biographical notes"),
-                required=False
-            ),
-            view_widget=widgets.HTMLDisplay,
-            edit_widget=widgets.RichTextEditor,
-            add_widget=widgets.RichTextEditor
-        ),
         Field(name="image", # [img]
             # !+LISTING_IMG(mr, apr-2011) TypeError, not JSON serializable
             modes="view edit add",
@@ -705,6 +692,19 @@ class UserDescriptor(ModelDescriptor):
             ),
             view_widget=widgets.ImageDisplayWidget,
             edit_widget=widgets.ImageInputWidget,
+        ),
+        LanguageField("language"), # [user-req]
+        Field(name="description", # [rtf]
+            modes="view edit add",
+            localizable=[
+                show("view edit add"),
+            ],
+            property=schema.Text(title=_("Biographical notes"),
+                required=False
+            ),
+            view_widget=widgets.HTMLDisplay,
+            edit_widget=widgets.RichTextEditor,
+            add_widget=widgets.RichTextEditor
         ),
     ]
     schema_invariants = [DeathBeforeLife]
@@ -996,6 +996,17 @@ class GroupDescriptor(ModelDescriptor):
     sort_on = ["group_id"]
     sort_dir = "asc"
     _combined_name_title = "%s [%s]" % (_("Full Name"), _("Short Name"))
+    default_field_order = [
+        "full_name",
+        "short_name",
+        "acronym",
+        "combined_name",
+        "language",
+        "start_date",
+        "end_date",
+        "status",
+        "description",
+    ]
     fields = [
         Field(name="full_name", # [user-req]
             modes="view edit add listing",
@@ -1085,6 +1096,18 @@ class ParliamentDescriptor(GroupDescriptor):
     display_name = _("Parliament")
     container_name = _("Parliaments")
     sort_on = ["start_date"]
+    default_field_order = [
+        "full_name",
+        "short_name",
+        "identifier", #"acronym",
+        #"combined_name",
+        "language",
+        "election_date",
+        "start_date",
+        "end_date",
+        #"status",
+        "description",
+    ]
     fields = [
         Field(name="full_name", # [user-req]
             description=_("Parliament name"),
@@ -1833,13 +1856,13 @@ class AttachmentDescriptor(ModelDescriptor):
         #"head_id",
         "type",
         "title",
-        "description",
         "data",
         "name",
         "mimetype",
         "status",
         "status_date",
         "language",
+        "description",
     ]
     fields = [
         Field(name="type", # [user-req]
@@ -1940,7 +1963,6 @@ class DocDescriptor(ModelDescriptor):
         "long_title",
         "acronym",
         "description",
-        "body",
         "language",
         #"type",
         "doc_type",
@@ -1958,6 +1980,7 @@ class DocDescriptor(ModelDescriptor):
         #"amc_attachments",
         #"amc_events",
         "submission_date",
+        "body",
         #"admissable_date",
         #"signatories", 
         #"attachments",

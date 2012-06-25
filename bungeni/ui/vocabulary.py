@@ -92,23 +92,35 @@ class VDEXManager(imsvdex.vdex.VDEXManager):
     fallback_to_default_language = True
 
 class VDEXVocabularyMixin(object):
+    
     def __init__(self, file_name):
         self.vdex = VDEXManager(
             file=open(capi.get_path_for("vocabularies", file_name)))
     
+    # zope.schema.interfaces.IBaseVocabulary
+    
+    def getTerm(self, value):
+        """Return the zope.schema.vocabulary.SimpleTerm instance for value.
+        As per zope.schema.interfaces.IBaseVocabulary.
+        """
+        term = self.getTermById(value)
+        title = self.vdex.getTermCaption(term, lang=get_default_language())
+        return vocabulary.SimpleTerm(value, title, title)
+    
+    # imsvdex.vdex.VDEXManager
+    
     def getTermById(self, value):
+        """Return the caption(s) for a given term identifier.
+        As per imsvdex.vdex.VDEXManager.
+        """
         term = self.vdex.getTermById(value)
         if term is None:
             raise LookupError("This VDEX has no such ID :: %s", value)
         return term
     
-    def getTerm(self, value):
-        term = self.getTermById(value)
-        title = self.vdex.getTermCaption(term, lang=get_default_language())
-        return vocabulary.SimpleTerm(value, title, title)
-
     def getTermCaptionById(self, value, lang=get_default_language()):
-        """Returns the caption(s) for a given term identifier, in lang.
+        """Returns the str caption(s) for a given term identifier, in lang.
+        As per imsvdex.vdex.VDEXManager.
         """
         return self.vdex.getTermCaptionById(value, lang)
 
@@ -137,7 +149,7 @@ class FlatVDEXVocabularyFactory(VDEXVocabularyMixin, BaseVocabularyFactory):
     
     !+ to use POT-based translations instead... could make this inherit from
     vocabulary.SimpleVocabulary() and then only specify a single 
-    default/reference language in teh vdex file.
+    default/reference language in the vdex file.
     """
     def __call__(self, context=None):
         """Return a context-bound instance that implements ISource.
