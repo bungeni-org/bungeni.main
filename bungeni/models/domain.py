@@ -470,8 +470,8 @@ class PoliticalGroup(Group):
     """A political group in a parliament.
     """
     interface.implements(interfaces.ITranslatable)
-    members = one2many("members",
-        "bungeni.models.domain.PolitcalGroupMemberContainer", "group_id")
+    group_members = one2many("members",
+        "bungeni.models.domain.PoliticalGroupMemberContainer", "group_id")
     title_types = one2many("title_types",
         "bungeni.models.domain.TitleTypeContainer", "group_id")
 class PoliticalGroupMember(GroupMembership):

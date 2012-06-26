@@ -144,7 +144,7 @@
         submenu="additems"
     />
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IPoliticalGroup"
+        for="bungeni.models.interfaces.IPoliticalGroupMember"
         action="edit"
         title="Edit political group member"
         order="10"
@@ -152,7 +152,7 @@
         permission="bungeni.political_group_member.Edit"
     />
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IPoliticalGroup"
+        for="bungeni.models.interfaces.IPoliticalGroupMember"
         action="delete"
         title="Delete political group member"
         order="99"
@@ -162,10 +162,17 @@
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IPoliticalGroup"
         title="Add political group member..."
-        action="./members/add"
+        action="./group_members/add"
         permission="bungeni.political_group_member.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="61"
+    />
+    <browser:menuItem menu="plone_contentmenu"
+        for="bungeni.models.interfaces.IPoliticalGroupMemberContainer"
+        title="Add political group member..."
+        action="./add"
+        permission="bungeni.political_group_member.Add"
+        layer=".interfaces.IAdminSectionLayer"
     />
     <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IPoliticalGroup"

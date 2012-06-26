@@ -94,6 +94,8 @@ class IMemberOfParliamentContainer(IAlchemistContainer): pass
 
 class IPoliticalGroupMember(IBungeniGroupMembership):
     pass
+class IPoliticalGroupMemberContainer(IAlchemistContainer):
+    pass
 
 class IMinister(IBungeniGroupMembership): pass
 class IMinisterContainer(IAlchemistContainer): pass
