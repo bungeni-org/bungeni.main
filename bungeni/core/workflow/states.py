@@ -11,9 +11,10 @@ log = __import__("logging").getLogger("bungeni.core.workflow.states")
 import sys
 import zope.component
 import zope.interface
-import zope.securitypolicy.interfaces
+from zope.securitypolicy.interfaces import IRole, IRolePermissionMap, \
+    Allow, Deny
 import zope.security.management
-import zope.security.interfaces
+from zope.security.interfaces import Unauthorized, IPermission
 from zope.security.proxy import removeSecurityProxy
 from zope.security.checker import CheckerPublic
 import zope.event
@@ -27,8 +28,8 @@ GRANT, DENY = 1, 0
 
 # we only have 1 or 0 i.e. only Allow or Deny, no Unset.
 IntAsSetting = { 
-    1: zope.securitypolicy.interfaces.Allow,
-    0: zope.securitypolicy.interfaces.Deny
+    1: Allow,
+    0: Deny
 }
 
 def named__str__(self, name):
@@ -67,7 +68,7 @@ class State(object):
     For workflowed objects, we infer the permission setting from the permission
     declarations of each workflow state.
     """
-    zope.interface.implements(zope.securitypolicy.interfaces.IRolePermissionMap)
+    zope.interface.implements(IRolePermissionMap)
     
     def __init__(self, id, title, note, actions, permissions, notifications,
             tags, permissions_from_parent=False, obsolete=False, publish=False
@@ -391,7 +392,8 @@ class Workflow(object):
     
     @error.exceptions_as(interfaces.InvalidWorkflow, False)
     def validate(self):
-        
+        """Verify initial conditions (that may be checked at init time).
+        """
         assert len(self.tags) == len(set(self.tags)), \
             "Workflow [%s] duplicates tags: %s" % (self.name, self.tags)
         
@@ -471,6 +473,31 @@ class Workflow(object):
                 assert len(all_sources)==len(set(all_sources)), "Duplicate " \
                     "sources in grouped transitions [%s] in workflow [%s]" % (
                         grouping, self.name)
+    
+    @error.exceptions_as(interfaces.InvalidWorkflow, False)
+    def validate_permissions_roles(self):
+        """Verify registrations of permissions and roles (when application 
+        finishes loading, and registrations have been executed).
+        """
+        permission_ids, role_ids = set(), set()
+        for s in self._states_by_id.values():
+            # presumably every state (not with permissions_from_parent="true") 
+            # defines exactly the same set of all (permission, role) pairs, so
+            # we just need to verify a first such state.
+            if s.permissions_from_parent:
+                continue
+            for setting, permission_id, role_id in s.permissions:
+                permission_ids.add(permission_id)
+                role_ids.add(role_id)
+            break
+        for permission_id in permission_ids:
+            assert zope.component.queryUtility(IPermission, permission_id), \
+                'Permission "%s" not registered [workflow=%s, state=%s]' % (
+                    permission_id, self.name, s.id)
+        for role_id in role_ids:
+            assert zope.component.queryUtility(IRole, role_id), \
+                'Role "%s" not registered [workflow=%s, state=%s]' % (
+                    role_id, self.name, s.id)
     
     def has_feature(self, name):
         """Does this workflow enable the named feature?
@@ -605,7 +632,7 @@ class WorkflowController(object):
         if check_security:
             checkPermission = self._get_checkPermission()
             if not checkPermission(transition.permission, self.context):
-                raise zope.security.interfaces.Unauthorized(self.context,
+                raise Unauthorized(self.context, 
                     "transition: %s" % transition.id, 
                     transition.permission)
         # now make sure transition can still work in this context

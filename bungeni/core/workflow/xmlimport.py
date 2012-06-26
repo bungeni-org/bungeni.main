@@ -47,15 +47,6 @@ TRANS_ATTRS_OPTIONALS = ("grouping_unique_sources", "condition", "trigger",
     "roles", "order", "require_confirmation", "note")
 TRANS_ATTRS = TRANS_ATTRS_REQUIREDS + TRANS_ATTRS_OPTIONALS
 
-
-''' !+NOT_WORKING... see: zope.security.permission
-from zope.app.security.interfaces import IPermission
-from zope.app import zapi
-def assertRegisteredPermission(permission_id):
-    assert zapi.queryUtility(IPermission, unicode(permission_id)), \
-        'Permission "%s" has not been registered.' % (permission_id)
-'''
-
 #
 
 ZCML_FILENAME = "permissions.zcml"
@@ -250,10 +241,12 @@ def _load(workflow, name):
         role = strip_none(p.get("role"))
         # for each global permission, build list of roles it is set to
         _permission_role_mixes.setdefault(pid, []).append(role)
-        #+!assertRegisteredPermission(permission)
         assert pid and role, "Global grant must specify valid permission/role" 
         ZCML_LINES.append(
             '%s<grant permission="%s" role="%s" />' % (ZCML_INDENT, pid, role))
+        # no real need to check that the permission and role of a global grant 
+        # are properly registered in the system -- an error should be raised 
+        # by the zcml if either is not defined. 
     for perm, roles in _permission_role_mixes.items():
         # assert roles mix limitations for state permissions
         assert_distinct_permission_scopes(perm, roles, name, "global grants")
@@ -303,7 +296,6 @@ def _load(workflow, name):
             for p in s.iterchildren(assign):
                 permission = strip_none(p.get("permission"))
                 role = strip_none(p.get("role"))
-                #+!assertRegisteredPermission(permission)
                 check_add_permission(permissions, like_permissions, 
                     ASSIGNMENTS[i], permission, role)
         if like_state:

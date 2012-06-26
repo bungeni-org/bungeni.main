@@ -29,14 +29,20 @@
   <permission id="bungeni.sitting.Delete" title="Delete sitting" />
   <permission id="bungeni.sitting.View" title="Delete sitting" />
   <meta:redefinePermission from="bungeni.sitting.View" to="zope.View" />
-  
-  <permission id="bungeni.sittingschedule.View" title="View the schedule of a sitting" />
-  <permission id="bungeni.sittingschedule.Edit" title="Reorder items in the schedule of a sitting" />
-  <permission id="bungeni.sittingschedule.item.Add" title="Add an item to a schedule" />
-  <permission id="bungeni.sittingschedule.item.Delete" title="Delete an item from a schedule" />
-  <permission id="bungeni.sittingschedule.itemdiscussion.Edit"
-              title="Edit item scheduling discussion" />
-              
+    
+    <permission id="bungeni.sittingschedule.View" 
+        title="View the schedule of a sitting" />
+    <permission id="bungeni.sittingschedule.Edit" 
+        title="Reorder items in the schedule of a sitting" />
+    <permission id="bungeni.sittingschedule.item.Add" 
+        title="Add an item to a schedule" />
+    <permission id="bungeni.sittingschedule.item.Delete" 
+        title="Delete an item from a schedule" />
+    <permission id="bungeni.sittingschedule.itemdiscussion.View"
+        title="View item scheduling discussion" />
+    <permission id="bungeni.sittingschedule.itemdiscussion.Edit"
+        title="Edit item scheduling discussion" />
+    
   <permission id="bungeni.sittingattendance.View" title="View sitting attendance" />
   <permission id="bungeni.sittingattendance.Add" title="Add sitting attendance" />
   <permission id="bungeni.sittingattendance.Edit" title="Edit sitting attendance" />
