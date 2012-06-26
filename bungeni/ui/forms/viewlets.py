@@ -232,7 +232,7 @@ class OfficeMembersViewlet(SubformViewlet):
     sub_attr_name = "officemembers"
 
 class PoliticalGroupMembersViewlet(SubformViewlet):
-    sub_attr_name = "members"
+    sub_attr_name = "group_members"
 
 class SittingsViewlet(SubformViewlet):
     sub_attr_name = "sittings"
