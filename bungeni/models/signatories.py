@@ -71,7 +71,7 @@ class SignatoryValidator(object):
     min_signatories = 0
     submitted_states = ("submitted_signatories",)
     draft_states = ("draft", "redraft",)
-    expire_states = ("submitted_signatories",)
+    expire_states = ("submitted",)
     open_states = ()
     
     def __init__(self, context):
