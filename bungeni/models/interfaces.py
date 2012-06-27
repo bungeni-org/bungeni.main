@@ -53,6 +53,11 @@ class IBungeniGroup(interface.Interface):
     """
 class IUserContainer(IAlchemistContainer): pass
 
+
+class IBungeniContainer(IAlchemistContainer):
+    """Parliamentary container.
+    """
+
 class IParliament(IBungeniGroup):
     """Marker interface for group parliament.
     """
@@ -85,26 +90,26 @@ class IOfficeContainer(IAlchemistContainer): pass
 class ICommittee(IBungeniGroup): pass
 class ICommitteeContainer(IAlchemistContainer): pass
 
+
 class IBungeniGroupMembership(interface.Interface):
     """Group membership in bungeni.
     """
+class IBungeniGroupMembershipContainer(IBungeniContainer): pass
 
 class IMemberOfParliament(IBungeniGroupMembership): pass
-class IMemberOfParliamentContainer(IAlchemistContainer): pass
+class IMemberOfParliamentContainer(IBungeniGroupMembershipContainer): pass
 
-class IPoliticalGroupMember(IBungeniGroupMembership):
-    pass
-class IPoliticalGroupMemberContainer(IAlchemistContainer):
-    pass
+class IPoliticalGroupMember(IBungeniGroupMembership): pass
+class IPoliticalGroupMemberContainer(IBungeniGroupMembershipContainer): pass
 
 class IMinister(IBungeniGroupMembership): pass
-class IMinisterContainer(IAlchemistContainer): pass
+class IMinisterContainer(IBungeniGroupMembershipContainer): pass
 
-class ICommitteeMember(IBungeniGroupMembership):
-    pass
+class ICommitteeMember(IBungeniGroupMembership): pass
+class ICommitteeMemberContainer(IBungeniGroupMembershipContainer): pass
 
-class ICommitteeStaff(IBungeniGroupMembership):
-    pass
+class ICommitteeStaff(IBungeniGroupMembership): pass
+class ICommitteeStaffContainer(IBungeniGroupMembershipContainer): pass
 
 class IOfficeMember(IBungeniGroupMembership): pass
 class IOfficeMemberContainer(IAlchemistContainer): pass
@@ -133,21 +138,7 @@ class IBungeniParliamentaryContent(IBungeniContent):
     # !+IBungeniContent(mr, may-2012) drop either IBungeniContent or
     # IBungeniParliamentaryContent !
 
-class IBungeniContainer(IAlchemistContainer):
-    """Parliamentary container.
-    """
-
-class ISittingContainer(IBungeniContainer):
-    pass
-
-class IBungeniGroupMembershipContainer(IBungeniContainer):
-    pass
-
-class ICommitteeMemberContainer(IBungeniGroupMembershipContainer):
-    pass
-
-class ICommitteeStaffContainer(IBungeniGroupMembershipContainer):
-    pass
+class ISittingContainer(IBungeniContainer): pass
 
 class IVersion(interface.Interface):
     """A version of an object is identical in attributes to the actual 

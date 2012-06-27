@@ -3299,8 +3299,8 @@ def catalyse_descriptors():
         ti.descriptor = descriptor
     
     m = ("\n\nDone all workflow/descriptor related setup... running with:\n  " + 
-        "\n  ".join(sorted([ "%s: %s" % (name, ti)
-                for name, ti in adapters.TYPE_REGISTRY ])) + 
+        "\n  ".join(sorted([ "%s: %s" % (key, ti)
+                for key, ti in capi.iter_type_info() ])) + 
         "\n")
     log.debug(m)
 

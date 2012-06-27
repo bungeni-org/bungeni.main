@@ -438,8 +438,7 @@ component.provideUtility(WorkspaceTabsUtility())
 
 
 def load_workspaces():
-    from bungeni.core.workflows import adapters
-    for type_key, ti in adapters.TYPE_REGISTRY:
+    for type_key, ti in capi.iter_type_info():
         workflow = ti.workflow
         if workflow and workflow.has_feature("workspace"):
             load_workspace("%s.xml" % ti.workflow_key, ti.domain_model)

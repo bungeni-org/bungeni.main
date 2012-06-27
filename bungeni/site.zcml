@@ -34,8 +34,6 @@
   <include package="z3c.securitytool" />
    -->
     
-    <!-- setup database meta configuration -->
-    <include package="ore.alchemist" file="meta.zcml" />
     <include package="ore.alchemist" />
     
     <!-- configure menu subsystem -->

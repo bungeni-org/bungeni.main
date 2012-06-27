@@ -378,7 +378,6 @@ class GroupMembership(HeadParentedMixin, Entity):
     interface.implements(
         interfaces.IBungeniGroupMembership, interfaces.ITranslatable)
     
-    
     @property
     def image(self):
         return self.user.image
@@ -460,7 +459,6 @@ class Parliament(Group):
 class MemberOfParliament(GroupMembership):
     """Defined by groupmembership and additional data.
     """
-    
     titles = one2many("titles",
         "bungeni.models.domain.MemberTitleContainer", "membership_id")
     addresses = one2manyindirect("addresses", 
@@ -491,8 +489,12 @@ class Ministry(Group):
     """
     ministers = one2many("ministers",
         "bungeni.models.domain.MinisterContainer", "group_id")
+    # !+MINISTRY_ID(mr, jun-2012) alchemist does not want target attribute to 
+    # be a domain class property [ministry_id] so the property corresponding 
+    # directly to the db table column [group_id] is used instead.
     questions = one2many("questions",
         "bungeni.models.domain.QuestionContainer", "group_id")
+    # !+MINISTRY_ID
     bills = one2many("bills",
         "bungeni.models.domain.BillContainer", "group_id")
     title_types = one2many("title_types",
@@ -910,6 +912,7 @@ class Bill(Doc):
     # !+BILL_MINISTRY(fz, oct-2011) the ministry field here logically means the 
     # bill is presented by the Ministry and so... Ministry should be the author,
     # not a "field" 
+    # !+MINISTRY_ID
     def ministry_id():
         doc = "Related group must be a ministry."
         def fget(self):
@@ -964,6 +967,7 @@ class Question(AdmissibleMixin, Doc):
     #!+doc_type: default="ordinary", nullable=False,
     #!+response_type: default="oral", nullable=False,
     
+    # !+MINISTRY_ID
     def ministry_id():
         doc = "Related group must be a ministry."
         def fget(self):

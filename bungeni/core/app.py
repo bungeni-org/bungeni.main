@@ -45,8 +45,7 @@ def on_wsgi_application_created_event(application, event):
     """Additional setup on IWSGIApplicationCreatedEvent.
     """
     # additional workflow validation
-    from bungeni.core.workflows import adapters
-    for type_key, ti in adapters.TYPE_REGISTRY:
+    for type_key, ti in capi.iter_type_info():
         if ti.workflow:
             ti.workflow.validate_permissions_roles()
     

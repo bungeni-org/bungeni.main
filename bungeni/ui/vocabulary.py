@@ -42,7 +42,6 @@ from bungeni.core.translation import translate_obj
 from bungeni.core.language import get_default_language
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core.workflows.utils import get_group_local_role
-from bungeni.core.workflows import adapters
 from bungeni.core.workflow.interfaces import IWorkflow
 
 from bungeni.ui.utils import common
@@ -1039,10 +1038,10 @@ class PIAssignmentSource(SpecializedSource):
     
     # !+STATES_TAGS_ASSUMPTIONS(mr, jun-2012) this aggregates all states of all 
     # workflows, assumes that a same named state has the same meaning acorss 
-    # worksflows, plus assumes that state tag names have special meaning, plus
-    # assumes that all workflow/states are tagged with tehse tags.
+    # workflows, plus assumes that state tag names have special meaning, plus
+    # assumes that all workflow/states are tagged with these tags.
     assignable_state_ids = set(sid
-        for (name, ti) in adapters.TYPE_REGISTRY
+        for (key, ti) in capi.iter_type_info()
         for sid in ti.workflow.get_state_ids(
             not_tagged=["private", "fail", "terminal"], restrict=False)
     )
