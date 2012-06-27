@@ -49,6 +49,9 @@ def on_wsgi_application_created_event(application, event):
         if ti.workflow:
             ti.workflow.validate_permissions_roles()
     
+    # import events module, registering handlers
+    import bungeni.core.workflows.events
+    
     # load workspaces
     load_workspaces()
     

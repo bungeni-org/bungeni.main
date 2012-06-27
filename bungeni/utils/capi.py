@@ -23,6 +23,7 @@ import time
 import os
 from zope.dottedname.resolve import resolve
 from bungeni.utils import error
+from bungeni.core import type_info
 import bungeni_custom as bc
 
 
@@ -168,25 +169,25 @@ class CAPI(object):
     
     # type registry
     
-    def get_type_info(self, key, exception=KeyError):
-        """Get the TypeInfo instance for key (see core.workflows.adapters.TI). 
-        If not found raise the specified exception (if that is not None).
+    def get_type_info(self, discriminator):
+        """Get the TypeInfo instance for discriminator (see core.type_info). 
         
-        param key:str - the type key,
-            underscore-separated lowercase of domain cls name.
+        The discriminator may be any of:
+            type_key: str (the lowercase underscore-separated of domain cls name)
+            workflow: an instance of Workflow, provides IWorkflow
+            interface: provides IInterface
+            domain model: provides IBungeniContent
+            domain model instance: type provides IBungeniContent
+            descriptor: provides IModelDescriptor
+        
+        Raise KeyError if no entry matched.
         """
-        for type_key, ti in self.iter_type_info():
-            if type_key == key:
-                return ti
-        if exception is not None:
-            raise exception(
-                "TYPE_REGISTRY has no type registered for key: %s" % (key))
+        return type_info._get(discriminator)
     
     def iter_type_info(self):
-        """Return iterator on all (key, TypeInfo) entries in TYPE_REGISTRY.
+        """Return iterator on all registered (key, TypeInfo) entries.
         """
-        from bungeni.core.workflows import adapters
-        for type_key, ti in adapters.TYPE_REGISTRY:
+        for type_key, ti in type_info._iter():
             yield type_key, ti
 
 # we access all via the singleton instance

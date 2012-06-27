@@ -66,6 +66,12 @@ def queryModelInterface(cls):
 
 
 def queryModelDescriptor(ob):
+    # !+ fails when ob (and so name derived from it) is an interface...
+    # seems to need thename of the domain model, as that is what the target
+    # adapters are registered under.
+    log.warn("""queryModelDescriptor(object) is DEPRECATED
+        >>>> please replace with: capi.get_type_info(object).descriptor
+        """)
     if not IInterface.providedBy(ob):
         ob = filter(IIModelInterface.providedBy, 
             list(interface.implementedBy(ob)))[0]    

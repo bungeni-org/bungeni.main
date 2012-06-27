@@ -1034,6 +1034,7 @@ party_membership = sql.join(schema.political_parties, schema.groups,
 mapper(PartyMembership, party_membership)
 '''
 
+''' !+ORPHANED(mr, jun-2012) some time prior to r9435
 class PIAssignmentSource(SpecializedSource):
     
     # !+STATES_TAGS_ASSUMPTIONS(mr, jun-2012) this aggregates all states of all 
@@ -1065,7 +1066,7 @@ class PIAssignmentSource(SpecializedSource):
                     )
                 )
         return query
-
+'''
 
 class CommitteeSource(SpecializedSource):
 

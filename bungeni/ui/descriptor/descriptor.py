@@ -28,9 +28,10 @@ from bungeni.models.utils import get_db_user
 # We import bungeni.core.workflows.adapters to ensure that the "states"
 # attribute on each "workflow" module is setup... this is to avoid an error
 # when importing bungeni.ui.descriptor.descriptor from standalone scripts:
-import bungeni.core.workflows.adapters # needed by standalone scripts
+import bungeni.core.workflows.adapters # needed by standalone scripts !+review
 
 from bungeni.core import translation
+from bungeni.core import type_info
 
 from bungeni.ui import widgets
 from bungeni.ui.fields import VocabularyTextField
@@ -3286,15 +3287,13 @@ def catalyse_descriptors():
             # e.g. Address, Model, ...
             debug.log_exc(sys.exc_info(), log_handler=log.warn)
             continue
-        # TYPE_REGISTRY, add descriptor
-        type_key = naming.un_camel(kls_name)
-        ti = capi.get_type_info(type_key, None)
-        if ti is None:
-            # non-workflowed type, add TI entry
-            ti = adapters.TI(None, queryModelInterface(kls))
-            ti.domain_model = kls
-            adapters.TYPE_REGISTRY.append((type_key, ti))
-        else:
+        # add descriptor
+        try:
+            ti = capi.get_type_info(naming.un_camel(kls_name))
+        except KeyError:
+            # no TI entry as yet (a non-workflowed type); add TI entry
+            type_info._add(None, queryModelInterface(kls), None, kls, descriptor)
+            ti = capi.get_type_info(naming.un_camel(kls_name))
             assert ti.domain_model is kls
         ti.descriptor = descriptor
     

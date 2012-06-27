@@ -18,81 +18,10 @@ from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowed, \
 from bungeni.core.workflow.states import StateController, WorkflowController, \
     get_object_state_rpm, get_head_object_state_rpm
 import bungeni.core.audit
-import bungeni.core.version
-import bungeni.core.interfaces
 from bungeni.utils import naming
 from bungeni.utils.capi import capi
 
 __all__ = ["get_workflow"]
-
-
-class TI(object):
-    """TypeInfo, associates together the following attributes for a given type:
-            workflow_key 
-                the workflow file name, should be same as type_key
-                is None for non-workflowed types
-            workflow 
-                same workflow insatnce may be used by multiple types
-                is None for non-workflowed types
-            interface
-                the dedicated interface for the type
-            domain_model
-                the domain class
-            descriptor
-                the descriptor for UI views for the type
-    """
-    def __init__(self, workflow_key, iface):
-        self.workflow_key = workflow_key
-        self.interface = iface
-        self.workflow = self.domain_model = self.descriptor = None
-    def __str__(self):
-        return str(self.__dict__)
-'''
-!+TYPE_REGISTRY externalize further to bungeni_custom, currently:
-- association of type key and dedicated interface are hard-wired here
-- ti.workflow/ti.domain_model/ti.descriptor are added dynamically when 
-  loading workflows and descriptors
-- ti.workflow_key AND orm polymorphic_identity value SHOULD be == type_key!
-
-Usage:
-    from bungeni.utils.capi import capi
-    capi.get_type_info(key) -> TypeInfo
-    capi.iter_type_info() -> iterator of all registered (key, TypeInfo)
-'''
-TYPE_REGISTRY = [
-    # (key, ti)
-    # - order is relevant (dictates workflow loading order)
-    # - the type key, unique for each type, is the underscore-separated 
-    #   lowercase name of the domain_model (the domain class)
-    # - 
-    ("user_address", TI("address", interfaces.IUserAddress)),
-    ("group_address", TI("address", interfaces.IGroupAddress)),
-    # !+Attachment (mr, jul-2011)
-    # a) must be loaded before any other type that *may* support attachments!
-    # b) MUST support versions
-    ("attachment", TI("attachment", interfaces.IAttachment)),
-    ("agenda_item", TI("agendaitem", interfaces.IAgendaItem)),
-    ("bill", TI("bill", interfaces.IBill)),
-    ("motion", TI("motion", interfaces.IMotion)),
-    ("question", TI("question", interfaces.IQuestion)),
-    ("report", TI("report", interfaces.IReport)),
-    ("tabled_document", TI("tableddocument", interfaces.ITabledDocument)),
-    ("event", TI("event", interfaces.IEvent)),
-    ("group", TI("group", interfaces.IBungeniGroup)),
-    ("group_membership", TI("membership", interfaces.IBungeniGroupMembership)),
-    ("committee", TI("committee", interfaces.ICommittee)),
-    ("committee_member", TI("membership", interfaces.ICommitteeMember)),
-    ("committee_staff", TI("membership", interfaces.ICommitteeStaff)),
-    ("parliament", TI("parliament", interfaces.IParliament)),
-    ("sitting", TI("sitting", interfaces.ISitting)),
-    ("heading", TI("heading", interfaces.IHeading)),
-    ("user", TI("user", interfaces.IBungeniUser)),
-    ("signatory", TI("signatory", interfaces.ISignatory)),
-]
-
-# !+ dedicated interfaces for archetype incantations should be auto-generated, 
-# from specific workflow name/attr... e.g. via:
-# zope.interface.interface.InterfaceClass(iname, bases, __module__)
 
 def get_workflow(name):
     """Get the named workflow utility.
@@ -171,7 +100,7 @@ def apply_customization_workflow(name, ti):
 
 def load_workflows():
     # workflow instances (+ adapter *factories*)
-    for type_key, ti in TYPE_REGISTRY:
+    for type_key, ti in capi.iter_type_info():
         # load/get Workflow instance for this key, and associate with type
         ti.workflow = load_workflow(ti.workflow_key)
         # adjust domain_model as per workflow, register/associate domain_model
@@ -215,7 +144,7 @@ def register_workflow_adapters():
     
     # Specific adapters, a specific iface per workflow.
     
-    for name, ti in TYPE_REGISTRY:
+    for name, ti in capi.iter_type_info():
         # Workflows are also the factory of own AdaptedWorkflows
         provideAdapterWorkflow(ti.workflow, ti.interface)
 
@@ -230,8 +159,6 @@ def _setup_all():
     xmlimport.zcml_check_regenerate()
     # cleared by each call to zope.app.testing.placelesssetup.tearDown()
     register_workflow_adapters()
-    # import events module, registering handlers
-    import bungeni.core.workflows.events
 
 # do it, when this module is imported. 
 _setup_all()

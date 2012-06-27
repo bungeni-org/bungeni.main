@@ -533,7 +533,7 @@ class JSLCache(object):
         """Get (cached) descriptor instance for self.model_interface.
         """
         if self._descriptor is None:
-            self._descriptor = model.queryModelDescriptor(self.model_interface)
+            self._descriptor = capi.get_type_info(self.model_interface).descriptor
         return self._descriptor
     
     @property
