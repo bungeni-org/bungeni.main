@@ -202,7 +202,7 @@ def createManagerFactory(domain_class, **params):
         )
         config_type = type(getattr(manager, config_name))
         if config_type in (tuple, list):
-            config_value = map(str.strip, config_value.split(","))
+            config_value = map(str.strip, config_value.split())
         setattr(manager, config_name, config_type(config_value))
     assert (set.intersection(set(manager.submitted_states), 
         set(manager.draft_states), set(manager.expire_states))==set()

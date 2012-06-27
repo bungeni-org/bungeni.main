@@ -1278,9 +1278,9 @@ def update_term_doctype(term):
     doctree = etree.fromstring(template_file.read())
     node = doctree.find("{%s}config/doctypes" % BUNGENI_REPORTS_NS)
     if node is None:
-        term.doctypes = None
+        term.doctypes = []
     else:
-        term.doctypes = [ dtype.strip() for dtype in node.text.split(",") ]
+        term.doctypes = [ dtype.strip() for dtype in node.text.split() ]
     template_file.close()
     return term
 
