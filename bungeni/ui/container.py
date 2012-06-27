@@ -500,23 +500,6 @@ class JSLCache(object):
             @filter_params: [name:str] - query string filter parameter names
         """
         self.cache = evoque.collection.Cache(max_size)
-        log.debug("JSLCache queryModelDescriptor(%s) -> %s" % (
-            model_interface.__name__,
-            model.queryModelDescriptor(model_interface)))
-        '''
-        !+queryModelDescriptor(mr, mar-2011) because of the discrepancy between 
-        test and application ZCML code, when running bungeni.ui unittests 
-        the call to queryModelDescriptor here (i.e. when importing this module) 
-        returns None. To reduce this timing issue, the setting up of the 
-        JSLCache attributes descriptor and filter_params is being postponed 
-        to when it is needed i.e. when they are actually being called
-        and used--which is why they are implemented as properties. They are 
-        themselves cached to minimize the overhead of repeated lookups at 
-        runtime.
-        
-        !+queryModelDescriptor(mr, mar-2011) should be renamed, and behaviour 
-        changed accordingly (raise an error when None) to getModelDescriptor().
-        '''
         self.model_interface = model_interface
         self._descriptor = None
         self._filter_params = None
@@ -619,6 +602,10 @@ EVENT_TYPE_TO_ACTION_MAP = {
     "ObjectModifiedEvent": "edit",
     "WorkflowTransitionEvent": "transition",
 }
+
+from bungeni.alchemist.interfaces import IAlchemistContent
+from zope.component.interfaces import IObjectEvent
+@register.handler((IAlchemistContent, IObjectEvent))
 def on_invalidate_cache_event(instance, event):
     """Invalidate caches affected by creation of this instance.
     See similar handler: core.workflows.initializeWorkflow

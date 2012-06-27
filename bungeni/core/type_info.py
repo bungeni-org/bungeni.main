@@ -12,6 +12,7 @@ $Id$
 log = __import__("logging").getLogger("bungeni.core.type_info")
 
 from zope.interface.interfaces import IInterface
+from zope.security.proxy import removeSecurityProxy
 from bungeni.alchemist.model import IModelDescriptor
 from bungeni.models import interfaces
 from bungeni.core.workflow.interfaces import IWorkflow
@@ -62,17 +63,15 @@ def _get(discriminator):
     
     Usage: capi.get_type_info(discriminator)
     """
+    discriminator = removeSecurityProxy(discriminator)
     getter = None
     
-    if type(discriminator) is type:
-        # class or interface
-        if IInterface.providedBy(discriminator):
-            getter = _get_by_interface
-        elif interfaces.IBungeniContent.implementedBy(discriminator):
-            getter = _get_by_model
-    # instance of something
-    elif isinstance(discriminator, basestring):
+    if isinstance(discriminator, basestring):
         getter = _get_by_type_key
+    elif IInterface.providedBy(discriminator):
+        getter = _get_by_interface
+    elif interfaces.IBungeniContent.implementedBy(discriminator):
+        getter = _get_by_model
     elif interfaces.IBungeniContent.providedBy(discriminator):
         getter = _get_by_instance
     elif IWorkflow.providedBy(discriminator):

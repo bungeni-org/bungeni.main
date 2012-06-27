@@ -46,6 +46,7 @@ def queryModelInterface(cls):
     IIModelInterface interface. If cls is already such an interface it itself 
     is returned.
     """
+    # !+queryModel(mr, jun-2012) replace with capi.get_type_info().interface?
     if not IInterface.providedBy(cls):
         candidates = list(interface.implementedBy(cls))
         ifaces = filter(IIModelInterface.providedBy, candidates)
@@ -66,24 +67,19 @@ def queryModelInterface(cls):
 
 
 def queryModelDescriptor(ob):
-    # !+ fails when ob (and so name derived from it) is an interface...
-    # seems to need thename of the domain model, as that is what the target
-    # adapters are registered under.
-    log.warn("""queryModelDescriptor(object) is DEPRECATED
-        >>>> please replace with: capi.get_type_info(object).descriptor
-        """)
+    #from bungeni.utils.capi import capi
+    #return capi.get_type_info(ob).descriptor
+    log.warn("""queryModelDescriptor(%s) is DEPRECATED
+        >>>> please replace with: capi.get_type_info(%s).descriptor
+        """ % (ob, ob))
+    # !+queryModel fails when ob (and so name derived from it) is an 
+    # interface... seems to need thename of the domain model, as that is what 
+    # the target adapters are registered under:
     if not IInterface.providedBy(ob):
         ob = filter(IIModelInterface.providedBy, 
             list(interface.implementedBy(ob)))[0]    
     name = "%s.%s" % (ob.__module__, ob.__name__)
     return component.queryAdapter(ob, IModelDescriptor, name)
-
-# Register queryModelDescriptor adaptor (to override their upstream ZCML reg)
-# signature: factory, adapts:[iface], provides:iface, name, event=False
-component.getGlobalSiteManager().registerAdapter(queryModelDescriptor, 
-    [IAlchemistContent],
-    IModelAnnotation # !+IModelDescriptor ?
-)
 
 # local utils
 
@@ -492,7 +488,7 @@ class ModelDescriptor(object):
     the class itself, implying there is no instance.fields=[Field] attribute.
     
     Always retrieve the *same* descriptor *instance* for a model class via:
-        queryModelDescriptor(model_interface)
+        capi.get_type_info(model_interface or ...).descriptor
     """
     __metaclass__ = MDType
     interface.implements(IModelDescriptor)
