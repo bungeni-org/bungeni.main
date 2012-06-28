@@ -21,7 +21,7 @@ from bungeni.alchemist import Session
 from bungeni.alchemist.model import ModelDescriptor, Field, show, hide
 
 from bungeni.models import domain
-from bungeni.models.interfaces import IOwned
+import bungeni.models.interfaces
 from bungeni.models.utils import get_db_user
 
 # We import bungeni.core.workflows.adapters to ensure that the "states"
@@ -229,7 +229,7 @@ def simple_view_column(name, title, default=_(u"view"), owner_msg=None):
     """Replace primary key with meaningful title - tests for owner.
     """
     def getter(item, formatter):
-        if IOwned.providedBy(item):
+        if bungeni.models.interfaces.IOwned.providedBy(item):
             if item.owner == get_db_user():
                 return owner_msg or default
         return default
@@ -3254,6 +3254,7 @@ def catalyse_descriptors(module):
         "Mp": "MemberOfParliament",
         "Session": "ParliamentSession",
     }
+    
     def descriptor_classes():
         """A generator of descriptor classes in this module, preserving the
         order of definition.

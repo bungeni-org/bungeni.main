@@ -25,8 +25,6 @@ from sqlalchemy.orm import class_mapper, object_mapper
 
 from bungeni.models import interfaces
 
-from bungeni.utils.capi import capi
-
 
 def object_hierarchy_type(object):
     if isinstance(object, User):
@@ -1161,6 +1159,7 @@ class ItemSchedule(Entity):
     def get_item_domain(self):
         if self.item_type is None:
             return # no item set
+        from bungeni.utils.capi import capi
         return capi.get_type_info(self.item_type).domain_model
     
     def _get_item(self):

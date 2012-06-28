@@ -13,8 +13,9 @@ log = __import__("logging").getLogger("bungeni.core.type_info")
 
 from zope.interface.interfaces import IInterface
 from zope.security.proxy import removeSecurityProxy
-from bungeni.alchemist.model import IModelDescriptor
+from bungeni.alchemist.interfaces import IModelDescriptor
 from bungeni.models import interfaces
+from bungeni.models import domain
 from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.utils import naming
 
@@ -79,9 +80,11 @@ def _get(discriminator):
         getter = _get_by_type_key
     elif IInterface.providedBy(discriminator):
         getter = _get_by_interface
-    elif interfaces.IBungeniContent.implementedBy(discriminator):
+    #!+elif interfaces.IBungeniContent.implementedBy(discriminator):
+    elif issubclass(discriminator, domain.Entity):
         getter = _get_by_model
-    elif interfaces.IBungeniContent.providedBy(discriminator):
+    #!+elif interfaces.IBungeniContent.providedBy(discriminator):
+    elif isinstance(discriminator, domain.Entity):
         getter = _get_by_instance
     elif IWorkflow.providedBy(discriminator):
         getter = _get_by_workflow

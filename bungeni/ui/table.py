@@ -6,12 +6,12 @@ from zc.resourcelibrary import need
 from zc.table import batching
 from zope.app.pagetemplate import ViewPageTemplateFile
 from ore import yuiwidget
-from bungeni import alchemist
 from bungeni.ui import container
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import url
 from bungeni.ui.widgets import text_input_search_widget
 from bungeni.utils.capi import capi
+import bungeni.alchemist
 from bungeni.alchemist import model
 from bungeni.utils import naming
 
@@ -54,7 +54,7 @@ class ContextDataTableFormatter(yuiwidget.table.BaseDataTableFormatter):
     
     def getFields(self):
         if not self._fields:
-            self._fields = alchemist.container.getFields(self.context)
+            self._fields = bungeni.alchemist.container.getFields(self.context)
         return self._fields
     
     def getFieldColumns(self):
