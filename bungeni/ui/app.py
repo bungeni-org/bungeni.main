@@ -20,8 +20,9 @@ def on_wsgi_application_created_event(application, event):
     """
     
     # catalyse descriptors
+    #from bungeni.alchemist import catalyst 
     from bungeni.ui.descriptor import descriptor
-    descriptor.catalyse_descriptors()
+    descriptor.catalyse_descriptors(descriptor) # !+catalyst
     
     # ensure register workflow views
     import bungeni.ui.workflow

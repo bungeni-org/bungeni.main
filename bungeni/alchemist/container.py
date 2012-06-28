@@ -20,7 +20,7 @@ __all__ = [
     "AlchemistContainer",   # redefn -> ore.alchemist.container
     #"PartialContainer",     # redefn -> ore.alchemist.container
     
-    "ContainerListing",     # alias -> alchemist.ui.container
+    "ContainerListing",     # redefn -> alchemist.ui.container
     "getFields",            # redefn -> alchemist.ui.container
 ]
 
@@ -35,6 +35,7 @@ from zope.proxy import sameProxiedObjects
 from zope.location.interfaces import ILocation
 from zope.app.container.contained import Contained, ContainedProxy
 from zope.app.container.interfaces import IContained
+from zope.formlib import form
 from zope.configuration.name import resolve
 from persistent import Persistent
 
@@ -69,7 +70,54 @@ def stringKey(obj):
 
 # alchemist.ui.container
 
-from alchemist.ui.container import ContainerListing
+
+#from zope.app.pagetemplate import ViewPageTemplateFile
+from zope.i18nmessageid import MessageFactory
+_ = MessageFactory("zope")
+import alchemist.ui
+import bungeni.alchemist
+from zc.table import column, table
+class ContainerListing(form.DisplayForm):
+    
+    form_fields = form.Fields()
+    mode = "listing"
+    
+    #index = ViewPageTemplateFile("templates/generic-container.pt")
+    
+    def update(self):
+        context = proxy.removeSecurityProxy(self.context)
+        columns = bungeni.alchemist.ui.setUpColumns(context.domain_model)
+        columns.append(
+            column.GetterColumn(title=_(u"Actions"), 
+                getter=alchemist.ui.container.viewEditLinks))
+        self.columns = columns
+        super(ContainerListing, self).update()
+    
+    def render(self):
+        return self.index()
+    
+    def listing(self):
+        return self.formatter()
+    
+    @property
+    def formatter(self):
+        context = proxy.removeSecurityProxy(self.context)
+        formatter = table.AlternatingRowFormatter(context, self.request,
+            context.values(),
+            prefix="form",
+            columns=self.columns)
+        formatter.cssClasses["table"] = "listing"
+        formatter.table_id = "datacontents"
+        return formatter
+    
+    @property
+    def form_name(self):
+        return "%s %s" % (self.context.domain_model.__name__, self.mode.title())
+    
+    @form.action(_(u"Add"))
+    def handle_add(self, action, data):
+        self.request.response.redirect("add")
+
 
 def getFields(context, interface=None, annotation=None):
     """Generator of all [zope.schema] fields that will be displayed in a 
