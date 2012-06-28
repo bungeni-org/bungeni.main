@@ -31,7 +31,9 @@ def _iter():
     for type_key, ti in TYPE_REGISTRY:
         yield type_key, ti
 
-def _add(workflow_key, iface, workflow, domain_model, descriptor):
+def _add(workflow_key, iface, workflow, domain_model, 
+        descriptor_model, descriptor
+    ):
     """Create and add a TypeInfo instance for supplied information.
     Raise ValueError is an entry exists already.
     """
@@ -45,6 +47,9 @@ def _add(workflow_key, iface, workflow, domain_model, descriptor):
         ti = TI(workflow_key, iface)
         ti.workflow = workflow
         ti.domain_model = domain_model
+        ti.descriptor_model = descriptor_model
+        if descriptor is None and descriptor_model is not None:
+            desciptor = descriptor_model()
         ti.descriptor = descriptor
         TYPE_REGISTRY.append((type_key, ti))
     else:
@@ -63,6 +68,10 @@ def _get(discriminator):
     
     Usage: capi.get_type_info(discriminator)
     """
+    if discriminator is None:
+        m = "type_info._get discriminator is None"
+        log.error(m)
+        raise ValueError(m)
     discriminator = removeSecurityProxy(discriminator)
     getter = None
     
@@ -76,17 +85,20 @@ def _get(discriminator):
         getter = _get_by_instance
     elif IWorkflow.providedBy(discriminator):
         getter = _get_by_workflow
+    elif IModelDescriptor.implementedBy(discriminator):
+        getter = _get_by_descriptor_model
     elif IModelDescriptor.providedBy(discriminator):
         getter = _get_by_descriptor
     
     if getter is None:
-        raise KeyError(
-            "Invalid type info lookup discriminator: %s" % (discriminator))
-    
+        m = "Invalid type info lookup discriminator: %s" % (discriminator)
+        log.error(m)
+        raise KeyError(m)
     ti = getter(discriminator)
     if ti is None:
-        raise KeyError(
-            "No type registered for discriminator: %s" % (discriminator))
+        m = "No type registered for discriminator: %s" % (discriminator)
+        log.error(m)
+        raise KeyError(m)
     return ti
 
 
@@ -110,10 +122,12 @@ def _get_by_workflow(wf):
     for type_key, ti in _iter():
         if wf is ti.workflow:
             return ti
-def _get_by_descriptor(descriptor):
+def _get_by_descriptor_model(descriptor_model):
     for type_key, ti in _iter():
-        if descriptor is ti.descriptor:
+        if descriptor_model is ti.descriptor_model:
             return ti
+def _get_by_descriptor(descriptor):
+    return _get_by_descriptor_model(type(descriptor))
 
 # 
 
@@ -129,13 +143,18 @@ class TI(object):
                 the dedicated interface for the type
             domain_model
                 the domain class
+            descriptor_model
+                the descriptor model for UI views for the type
             descriptor
-                the descriptor for UI views for the type
+                a descriptor instance for UI views for the type
     """
     def __init__(self, workflow_key, iface):
         self.workflow_key = workflow_key
         self.interface = iface
-        self.workflow = self.domain_model = self.descriptor = None
+        self.workflow = None
+        self.domain_model = None
+        self.descriptor_model = None
+        self.descriptor = None
     def __str__(self):
         return str(self.__dict__)
 

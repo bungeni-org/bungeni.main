@@ -528,6 +528,7 @@ class ModelDescriptor(object):
         log.info("Initializing ModelDescriptor: %s" % self)
         self._fields_by_name = {}
         self.sanity_check_fields()
+        log.warn("!+NO_NEED_TO_INSTANTIATE: %s" % (self))
     
     def sanity_check_fields(self):
         """Do necessary checks on all specified Field instances.

@@ -18,8 +18,7 @@ from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.security.proxy import removeSecurityProxy
 
 from bungeni.alchemist import Session
-from bungeni.alchemist.model import ModelDescriptor, Field, show, hide, \
-    queryModelInterface
+from bungeni.alchemist.model import ModelDescriptor, Field, show, hide
 
 from bungeni.models import domain
 from bungeni.models.interfaces import IOwned
@@ -30,8 +29,7 @@ from bungeni.models.utils import get_db_user
 # when importing bungeni.ui.descriptor.descriptor from standalone scripts:
 import bungeni.core.workflows.adapters # needed by standalone scripts !+review
 
-from bungeni.core import translation
-from bungeni.core import type_info
+#from bungeni.core import translation
 
 from bungeni.ui import widgets
 from bungeni.ui.fields import VocabularyTextField
@@ -40,10 +38,8 @@ from bungeni.ui.forms import validations
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import common, date, misc, debug, url
 from bungeni.ui import vocabulary
-from bungeni.utils.capi import capi
 from bungeni.ui.interfaces import IAdminSectionLayer
 from bungeni.alchemist.interfaces import IAlchemistContainer
-from bungeni.utils import naming
 
 ###
 # Listing Columns
@@ -3232,9 +3228,9 @@ class Report4SittingDescriptor(ReportDescriptor):
     fields = deepcopy(ReportDescriptor.fields)
 
 
-# catalyze above descriptors
-def catalyse_descriptors():
-    """Catalyze descriptors above. 
+# !+catalyst
+def catalyse_descriptors(module):
+    """Catalyze descriptor classes in specified module. 
     Relate each descriptor to a domain type via naming convention:
     - if no domain type exists with that name, ignore
     !+ this is probably catalyzing some descriptors unnecessarily... 
@@ -3244,6 +3240,13 @@ def catalyse_descriptors():
     """
     import sys
     import inspect
+    from bungeni.ui.utils import debug
+    from bungeni.alchemist.catalyst import catalyst
+    from bungeni.alchemist.model import IModelDescriptor, queryModelInterface
+    from bungeni.core import type_info
+    from bungeni.utils.capi import capi
+    from bungeni.utils import naming
+    
     # mapping of unconventional descriptor prefixes to domain type names
     # !+RENAME_TO_CONVENTION
     non_conventional = {
@@ -3255,8 +3258,6 @@ def catalyse_descriptors():
         """A generator of descriptor classes in this module, preserving the
         order of definition.
         """
-        from bungeni.alchemist.model import IModelDescriptor
-        module = sys.modules[__name__]
         # dir() returns names in alphabetical order
         decorated = []
         for key in dir(module):
@@ -3271,8 +3272,6 @@ def catalyse_descriptors():
         for cls in [ cls for (line_num, cls) in sorted(decorated) ]:
             yield cls
     
-    from bungeni.alchemist.catalyst import catalyst
-    from bungeni.core.workflows import adapters
     for descriptor in descriptor_classes():
         descriptor_name = descriptor.__name__
         assert descriptor_name.endswith("Descriptor")
@@ -3292,10 +3291,12 @@ def catalyse_descriptors():
             ti = capi.get_type_info(naming.un_camel(kls_name))
         except KeyError:
             # no TI entry as yet (a non-workflowed type); add TI entry
-            type_info._add(None, queryModelInterface(kls), None, kls, descriptor)
+            type_info._add(None, queryModelInterface(kls), None, kls, None, None)
             ti = capi.get_type_info(naming.un_camel(kls_name))
             assert ti.domain_model is kls
-        ti.descriptor = descriptor
+        ti.descriptor_model = descriptor
+        # !+NO_NEED_TO_INSTANTIATE here we cache an instance...
+        ti.descriptor = descriptor()
     
     m = ("\n\nDone all workflow/descriptor related setup... running with:\n  " + 
         "\n  ".join(sorted([ "%s: %s" % (key, ti)
@@ -3303,7 +3304,3 @@ def catalyse_descriptors():
         "\n")
     log.debug(m)
 
-# !+catalyse_descriptors(mr, jul-2011), fails when this is called here 
-#catalyse_descriptors()
-
-#

@@ -1151,34 +1151,18 @@ class EditorialNote(Entity):
     type = u"editorial_note"
     interface.implements(interfaces.ITranslatable, interfaces.IScheduleText)
 
+
 class ItemSchedule(Entity):
     """For which sitting was a parliamentary item scheduled.
     """
     discussions = one2many("discussions",
         "bungeni.models.domain.ItemScheduleDiscussionContainer", "schedule_id")
-
+    
     def get_item_domain(self):
-        domain_class = None
-        try:
-            domain_class = capi.get_type_info(self.item_type).domain_model
-        except KeyError:
-            #!+TYPE REGISTRY(mb, mar-2012) Try to lookup via workflow
-            # demo data not synced with polymorphic prop changes in trunk@r9135
-            log.debug("Unable to locate type %s from type info lookup." 
-                "Trying workflow lookup.", self.item_type
-            )
-            for type_key, type_info in capi.iter_type_info():
-                if (type_info.workflow and 
-                    (type_info.workflow.name == self.item_type)
-                ):
-                    domain_class = type_info.domain_model
-                    break
-        if domain_class is None:
-            log.error("Unable to locate domain  class for item of type %s",
-                self.item_type
-            )
-        return domain_class
-
+        if self.item_type is None:
+            return # no item set
+        return capi.get_type_info(self.item_type).domain_model
+    
     def _get_item(self):
         """Query for scheduled item by type and ORM mapped primary key
         """
@@ -1188,14 +1172,13 @@ class ItemSchedule(Entity):
         item = Session().query(domain_class).get(self.item_id)
         item.__parent__ = self
         return item
-
+    
     def _set_item(self, schedule_item):
         self.item_id = get_mapped_object_id(schedule_item)
         self.item_type = schedule_item.type
 
     item = property(_get_item, _set_item)
-    
-    
+
 
 class ItemScheduleDiscussion(Entity):
     """A discussion on a scheduled item.
