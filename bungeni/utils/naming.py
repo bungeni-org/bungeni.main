@@ -17,13 +17,23 @@ log = __import__("logging").getLogger("bungeni.utils")
 __all__ = ["polymorphic_identity", "camel", "un_camel", "singular", "plural"]
 
 import re
+from zope.interface.interfaces import IInterface
+from zope.dottedname.resolve import resolve
 
 
 def polymorphic_identity(cls):
     """Formalize convention of determining the polymorphic discriminator value 
     for a domain class as a function of the class name.
+    
+    For convenience, the cls parameter may be a normal type or
+    a zope.interface.Iterface, that is specially handled.
     """
-    return un_camel(cls.__name__)
+    name = cls.__name__
+    if IInterface.providedBy(cls):
+        assert name.startswith("I"), \
+            'InterfaceClass %s name does not start with "I"' % (cls)
+        name = name[1:]
+    return un_camel(name)
 
 
 def camel(name):
@@ -76,4 +86,19 @@ def as_identifier(name):
     assert is_valid_identifier(name), \
         '%s ::= (letter|"_") (letter | digit | "_")*' % (name)
     return name
+
+
+def resolve_relative(dotted_relative, obj):
+    """Normalize the relative python path with obj.__module__ or with 
+    obj.__name__, and resolve.
+    
+    Parameters:
+        dotted_relative:str e.g. "..interfaces"
+        obj:either(instance, type, module)
+    
+    Raises AttributeError if obj does not define a __module__ or __name__ attr.
+    """
+    # (instance, type) or (module)
+    module_path = getattr(obj, "__module__", None) or getattr(obj, "__name__")
+    return resolve(dotted_relative, obj.__module__)
 

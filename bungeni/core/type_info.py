@@ -76,16 +76,24 @@ def _get(discriminator):
     discriminator = removeSecurityProxy(discriminator)
     getter = None
     
+    # !+IALCHEMISTCONTENT normalize trickier discriminator cases to type_key
+    if IInterface.providedBy(discriminator):
+        discriminator = naming.polymorphic_identity(discriminator)
+    elif type(discriminator) is type and issubclass(discriminator, domain.Entity):
+        discriminator = naming.polymorphic_identity(discriminator)
+    elif isinstance(discriminator, domain.Entity):
+        discriminator = naming.polymorphic_identity(type(discriminator))
+    
     if isinstance(discriminator, basestring):
         getter = _get_by_type_key
-    elif IInterface.providedBy(discriminator):
-        getter = _get_by_interface
+    #elif IInterface.providedBy(discriminator):
+    #    getter = _get_by_interface
     #!+elif interfaces.IBungeniContent.implementedBy(discriminator):
-    elif issubclass(discriminator, domain.Entity):
-        getter = _get_by_model
+    #elif issubclass(discriminator, domain.Entity):
+    #    getter = _get_by_model
     #!+elif interfaces.IBungeniContent.providedBy(discriminator):
-    elif isinstance(discriminator, domain.Entity):
-        getter = _get_by_instance
+    #elif isinstance(discriminator, domain.Entity):
+    #    getter = _get_by_instance
     elif IWorkflow.providedBy(discriminator):
         getter = _get_by_workflow
     elif IModelDescriptor.implementedBy(discriminator):
@@ -112,6 +120,16 @@ def _get_by_type_key(key):
         if type_key == key:
             return ti
 def _get_by_interface(iface):
+    ''' !+IALCHEMISTCONTENT fails on different interfaces with same name!
+(Pdb) ti.interface
+<InterfaceClass bungeni.models.interfaces.ISession>
+(Pdb) ti.interface.__bases__
+(<InterfaceClass ore.alchemist.interfaces.ITableSchema>, <InterfaceClass ore.alchemist.interfaces.IAlchemistContent>)
+(Pdb) iface
+<InterfaceClass bungeni.models.interfaces.ISession>
+(Pdb) iface.__bases__
+(<InterfaceClass zope.interface.Interface>,)
+    '''
     for type_key, ti in _iter():
         if iface is ti.interface: #!+issubclass(iface, ti.interface)?
             return ti

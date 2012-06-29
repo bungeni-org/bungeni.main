@@ -65,11 +65,6 @@ import bungeni.models.interfaces
 import bungeni.ui.content
 
 
-def _get_interface_module_for(ctx):
-    parent_package = ctx.domain_model.__module__.rsplit(".", 1)[0]
-    return resolve("%s.interfaces" % (parent_package))
-
-
 # alchemist.catalyst.zcml 
 
 def catalyst(_context, 
@@ -145,7 +140,7 @@ def GenerateDomainInterface(ctx, interface_name=None):
                              
     # if the interface module is none, then use the nearest one to the domain class
     if ctx.interface_module is None:
-        ctx.interface_module = _get_interface_module_for(ctx)
+        ctx.interface_module = naming.resolve_relative("..interfaces", ctx)
     
     # interface for domain model
     if not interface_name:
@@ -254,7 +249,6 @@ def GenerateContainer(ctx,
         # allow passing in dotted python path
         if isinstance(ctx.container_module, (str, unicode)):
             ctx.container_module = resolve(ctx.container_module)
-        
         # if not present use the domain class's module
         elif ctx.container_module is None:
             ctx.container_module = resolve(ctx.domain_model.__module__)
@@ -292,8 +286,8 @@ def GenerateContainer(ctx,
         
         # if the interface module is none, then use the nearest one to the domain class
         if ctx.interface_module is None:
-            ctx.interface_module = _get_interface_module_for(ctx)
-
+            ctx.interface_module = naming.resolve_relative("..interfaces", ctx)
+        
         msg = (ctx.domain_model.__name__,
             ctx.container_module.__name__, container_iname)
         

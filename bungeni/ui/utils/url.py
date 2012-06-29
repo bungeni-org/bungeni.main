@@ -17,6 +17,7 @@ from bungeni.ui.utils import common
 from bungeni.utils import register
 from ploned.ui.interfaces import IBodyCSS
 
+
 def get_destination_url_path(request=None):
     """Get the (effective, sans any "traversal namespace notation" components
     and other such "traversal processing instruction" url components) target 
@@ -36,9 +37,9 @@ def get_destination_url_path(request=None):
     # - (@@)) to indicate a view name
     # we need to get rid of them:
     _url = "/".join([ url_component 
-                      for url_component in request.get("PATH_INFO").split("/")
-                      if not url_component.startswith("++") and
-                         not url_component.startswith("@@") ])
+            for url_component in request.get("PATH_INFO").split("/")
+            if not url_component.startswith("++") and 
+                not url_component.startswith("@@") ])
     log.debug(" [get_destination_url_path] %s " % _url)
     return _url
 
@@ -57,31 +58,31 @@ def get_subsection_name(request=None):
        return url_comps[2]
     return ""
 
+
 @register.utility(provides=IBodyCSS)
 class BodyCSSClass(object):
     
     def get_body_css_class(self):
         # Add custom css classes to the list below
-        classes = ["yui-skin-sam",
-                   "section-bungeni-"+get_section_name()]
+        classes = ["yui-skin-sam", "section-bungeni-"+get_section_name()]
         return " ".join(classes)
-        
+
+
 def urljoin(base, action):
     if action is None:
         return
-    if action.startswith('http://') or action.startswith('https://'):
+    if action.startswith("http://") or action.startswith("https://"):
         return action
-    if action.startswith('/'):
+    if action.startswith("/"):
         raise NotImplementedError(action)
-    return "/".join((base, action.lstrip('./')))
+    return "/".join((base, action.lstrip("./")))
 
 
 indexNames = ("index", "index.html", "@@index.html")
 
-
 def absoluteURL(context, request):
     """
-    For cleaner public URLs, we ensure to use an empty string instead of 'index'.
+    For cleaner public URLs, we ensure to use an empty string instead of "index".
     
     Throughout bungeni and ploned packages, this function should ALWAYS be
     used instead of zope.traversing.browser.absoluteURL.
@@ -90,12 +91,11 @@ def absoluteURL(context, request):
     try:
         url = zope.traversing.browser.absoluteURL(context, request).split("/")
     except:
-        return ''
+        return ""
     while url[-1] in indexNames:
-        log.warning(" POPPING: %s -> %s" % ('/'.join(url), url[-1]))
+        log.warning(" POPPING: %s -> %s" % ("/".join(url), url[-1]))
         url.pop()
-    return '/'.join(url)
-
+    return "/".join(url)
 
 def same_path_names(base_path_name, path_name):
     """ (base_path_name, path_name) -> bool
@@ -110,13 +110,12 @@ def same_path_names(base_path_name, path_name):
                 return True
     return base_path_name==path_name
 
-
 def get_menu_item_descriptor(title, selected, url, name=None):
     if name in indexNames:
-        name = ''
+        name = ""
     if name is not None:
         url = "%s/%s" % (url, name)
-    return {'title':title, 'selected':selected, 'url':url}
+    return {"title": title, "selected": selected, "url": url}
 
 
 def set_url_context(url):
