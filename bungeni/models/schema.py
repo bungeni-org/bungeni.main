@@ -569,9 +569,9 @@ user_addresses = _make_address_table(metadata, "user")
 # Activity 
 #
 
-parliament_sessions = rdb.Table("sessions", metadata,
+sessions = rdb.Table("sessions", metadata,
     rdb.Column("session_id", rdb.Integer, primary_key=True),
-    rdb.Column("parliament_id", rdb.Integer,
+    rdb.Column("parliament_id", rdb.Integer, # group_id
         rdb.ForeignKey("parliaments.parliament_id"),
         nullable=False
     ),
@@ -612,7 +612,6 @@ sitting = rdb.Table("sitting", metadata,
     rdb.Column("meeting_type", rdb.Unicode(1024)),
     rdb.Column("convocation_type", rdb.Unicode(1024)),
 )
-
 
 sitting_attendance = rdb.Table("sitting_attendance", metadata,
     rdb.Column("sitting_id", rdb.Integer,

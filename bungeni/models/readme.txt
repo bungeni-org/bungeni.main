@@ -298,7 +298,7 @@ Sessions
 -----------
 A parliamentary Session
 
- >>> sess = domain.ParliamentSession()
+ >>> sess = domain.Session()
  >>> sess.parliament_id = parliament.parliament_id
  >>> sess.short_name = u"First Session"
  >>> sess.full_name = u"First Session XXXX"

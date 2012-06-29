@@ -529,7 +529,7 @@ class SchedulingMinutesViewlet(DisplayViewlet):
             self.context, self.request)
 
 
-@register.viewlet(interfaces.IParliamentSession,
+@register.viewlet(interfaces.ISession,
     manager=IContentViewManager,
     name="bungeni.viewlet.session-sitting-calendar")
 class SessionCalendarViewlet(browser.BungeniItemsViewlet):

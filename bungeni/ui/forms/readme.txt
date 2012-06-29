@@ -74,7 +74,7 @@ Sessions
 -----------
 A parliamentary Session
 
-   >>> sess = model.ParliamentSession()
+   >>> sess = model.Session()
    >>> sess.parliament_id = parliament.parliament_id
    >>> sess.short_name = u"First Session"
    >>> sess.full_name = u"First Session"
@@ -91,7 +91,7 @@ A parliamentary Session
  
 A second session
  
-   >>> sess2 = model.ParliamentSession()
+   >>> sess2 = model.Session()
    >>> sess2.parliament_id = parliament.parliament_id
    >>> sess2.short_name = u"2nd Session"
    >>> sess2.full_name = u"2nd Session"

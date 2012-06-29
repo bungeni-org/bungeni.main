@@ -846,7 +846,7 @@ class MemberElectionTypeDescriptor(ModelDescriptor):
     ]
 '''
 
-class MpDescriptor(GroupMembershipDescriptor):
+class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
     localizable = True
     display_name = _("Member of parliament")
     container_name = _("Members of parliament")
@@ -2911,7 +2911,7 @@ class SessionDescriptor(ModelDescriptor):
 #        ]
 
 
-class AttendanceDescriptor(ModelDescriptor):
+class SittingAttendanceDescriptor(ModelDescriptor):
     localizable = True
     display_name = _("Sitting attendance")
     container_name = _("Sitting attendances")
@@ -3227,81 +3227,4 @@ class Report4SittingDescriptor(ReportDescriptor):
     localizable = True
     fields = deepcopy(ReportDescriptor.fields)
 
-
-# !+catalyst
-def catalyse_descriptors(module):
-    """Catalyze descriptor classes in specified module. 
-    Relate each descriptor to a domain type via naming convention:
-    - if no domain type exists with that name, ignore
-    !+ this is probably catalyzing some descriptors unnecessarily... 
-    !+ if there is a need to be finer grained or for an explicit declaration
-    of what descriptors should be catalyzed, a flag may be added e.g. a 
-    catalyze:bool attribute could be added on Descriptor class.
-    """
-    import sys
-    import inspect
-    from bungeni.ui.utils import debug
-    from bungeni.alchemist.catalyst import catalyst
-    from bungeni.alchemist.model import IModelDescriptor, queryModelInterface
-    from bungeni.core import type_info
-    from bungeni.utils.capi import capi
-    from bungeni.utils import naming
-    
-    # mapping of unconventional descriptor prefixes to domain type names
-    # !+RENAME_TO_CONVENTION
-    non_conventional = {
-        "Attendance": "SittingAttendance",
-        "Mp": "MemberOfParliament",
-        "Session": "ParliamentSession",
-    }
-    
-    def descriptor_classes():
-        """A generator of descriptor classes in this module, preserving the
-        order of definition.
-        """
-        # dir() returns names in alphabetical order
-        decorated = []
-        for key in dir(module):
-            cls = getattr(module, key)
-            try:
-                assert IModelDescriptor.implementedBy(cls)
-                # we decorate with the source code line number for the cls
-                decorated.append((inspect.getsourcelines(cls)[1], cls))
-            except (TypeError, AttributeError, AssertionError):
-                debug.log_exc(sys.exc_info(), log_handler=log.debug)
-        # we yield each cls in order of definition
-        for cls in [ cls for (line_num, cls) in sorted(decorated) ]:
-            yield cls
-    
-    for descriptor in descriptor_classes():
-        descriptor_name = descriptor.__name__
-        assert descriptor_name.endswith("Descriptor")
-        desc_prefix = descriptor_name[0:-len("Descriptor")]
-        kls_name = non_conventional.get(desc_prefix, desc_prefix)
-        try:
-            kls = getattr(domain, kls_name)
-            # !+ mv out of try/except
-            catalyst(None, kls, descriptor, echo=True)
-        except (Exception,):
-            # no corresponding domain class, ignore 
-            # e.g. Address, Model, ...
-            debug.log_exc(sys.exc_info(), log_handler=log.warn)
-            continue
-        # add descriptor
-        try:
-            ti = capi.get_type_info(naming.un_camel(kls_name))
-        except KeyError:
-            # no TI entry as yet (a non-workflowed type); add TI entry
-            type_info._add(None, queryModelInterface(kls), None, kls, None, None)
-            ti = capi.get_type_info(naming.un_camel(kls_name))
-            assert ti.domain_model is kls
-        ti.descriptor_model = descriptor
-        # !+NO_NEED_TO_INSTANTIATE here we cache an instance...
-        ti.descriptor = descriptor()
-    
-    m = ("\n\nDone all workflow/descriptor related setup... running with:\n  " + 
-        "\n  ".join(sorted([ "%s: %s" % (key, ti)
-                for key, ti in capi.iter_type_info() ])) + 
-        "\n")
-    log.debug(m)
 

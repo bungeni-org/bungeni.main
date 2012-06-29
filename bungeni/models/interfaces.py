@@ -222,8 +222,8 @@ class IAgendaItemContainer(IBungeniContainer): pass
 #class IAgendaItemVersion(IAgendaItem): pass
 #!+OBSOLETE_VERSIONING class IAgendaItemVersionContainer(IVersionContainer): pass
 
-class IParliamentSession(interface.Interface): pass
-class IParliamentSessionContainer(IAlchemistContainer): pass
+class ISession(interface.Interface): pass
+class ISessionContainer(IAlchemistContainer): pass
 
 class IBungeniSetup(interface.Interface):
 

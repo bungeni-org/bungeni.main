@@ -138,6 +138,7 @@ def get_parliament_by_date_range(start_date, end_date):
     #session.close()
     return parliament
 
+''' !+UNUSED
 def get_session_by_date_range(start_date, end_date):
     session = Session()
     ps = session.query(domain.ParliamentSession).filter(
@@ -146,7 +147,7 @@ def get_session_by_date_range(start_date, end_date):
          (domain.ParliamentSession.end_date > end_date))).first()
     #session.close()
     return ps 
-
+'''
 
 def get_sittings_between(sittings, start, end):
     modifier = sittings.getQueryModifier()

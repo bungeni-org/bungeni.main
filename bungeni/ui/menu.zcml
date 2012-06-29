@@ -521,7 +521,7 @@
         layer=".interfaces.IAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
-        for="bungeni.models.interfaces.IParliamentSessionContainer"
+        for="bungeni.models.interfaces.ISessionContainer"
         title="Add session..."
         action="./add"
         permission="bungeni.session.Add"
@@ -753,7 +753,7 @@
      order="100"
      />
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IParliamentSession"
+        for="bungeni.models.interfaces.ISession"
         title="Edit session"
         action="./edit"
         order="10"
@@ -761,7 +761,7 @@
         permission="bungeni.session.Delete"
     />
     <browser:menuItem menu="context_actions"
-        for="bungeni.models.interfaces.IParliamentSession"
+        for="bungeni.models.interfaces.ISession"
         title="Delete session"
         action="./delete"
         order="99"

@@ -138,7 +138,6 @@ def catalyst(_context,
 
 
 def GenerateDomainInterface(ctx, interface_name=None):
-    
     # when called from zcml, most likely we'll get a class not an instance
     # if it is a class go ahead and call instantiate it
     if isinstance(ctx.descriptor, type):
@@ -150,7 +149,7 @@ def GenerateDomainInterface(ctx, interface_name=None):
     
     # interface for domain model
     if not interface_name:
-        interface_name = "I%s"%(ctx.domain_model.__name__)
+        interface_name = "I%s" % (ctx.domain_model.__name__)
     
     if ctx.echo:
         ctx.logger.debug("%s: generated interface %s.%s " % (
@@ -336,4 +335,79 @@ def GenerateContainer(ctx,
         if not container_interface.implementedBy(container_class):
             interface.classImplements(container_class, container_interface)
         ctx.container_interface = container_interface
+
+
+def catalyse_descriptors(module):
+    """Catalyze descriptor classes in specified module. 
+    Relate each descriptor to a domain type via naming convention:
+    - if no domain type exists with that name, ignore
+    !+ this is probably catalyzing some descriptors unnecessarily... 
+    !+ if there is a need to be finer grained or for an explicit declaration
+    of what descriptors should be catalysed, a flag may be added e.g. a 
+    catalyse:bool attribute could be added on Descriptor class.
+    """
+    import sys
+    import inspect
+    from bungeni.alchemist.model import IModelDescriptor, queryModelInterface
+    from bungeni.models import domain
+    from bungeni.core.workflow.interfaces import IWorkflowed
+    from bungeni.core import type_info
+    from bungeni.utils.capi import capi
+    from bungeni.utils import naming
+    from bungeni.ui.utils import debug
+    
+    def descriptor_classes():
+        """A generator of descriptor classes in this module, preserving the
+        order of definition.
+        """
+        # dir() returns names in alphabetical order
+        decorated = []
+        for key in dir(module):
+            cls = getattr(module, key)
+            try:
+                assert IModelDescriptor.implementedBy(cls)
+                # we decorate with the source code line number for the cls
+                decorated.append((inspect.getsourcelines(cls)[1], cls))
+            except (TypeError, AttributeError, AssertionError):
+                debug.log_exc(sys.exc_info(), log_handler=log.debug)
+        # we yield each cls in order of definition
+        for cls in [ cls for (line_num, cls) in sorted(decorated) ]:
+            yield cls
+    
+    for descriptor in descriptor_classes():
+        descriptor_name = descriptor.__name__
+        assert descriptor_name.endswith("Descriptor")
+        kls_name = descriptor_name[0:-len("Descriptor")]
+        try:
+            # need a dedicated domain type
+            kls = getattr(domain, kls_name) # AttributeError
+            # only catalyze mapped domain types
+            kls_mapper = orm.class_mapper(kls) # UnmappedClassError
+        except (AttributeError, orm.exc.UnmappedClassError):
+            # no corresponding domain class, ignore e.g. Model
+            # unmapped class e.g. Address
+            debug.log_exc(sys.exc_info(), log_handler=log.warn)
+            continue
+        # catalyse each (domain_model, descriptor) pair
+        catalyst(None, kls, descriptor, echo=True)
+        # type_info, register the descriptor
+        type_key = naming.polymorphic_identity(kls)
+        try:
+            ti = capi.get_type_info(type_key)
+        except KeyError:
+            # no TI entry, must be a non-workflowed domain type
+            #assert not IWorkflowed.implementedBy(kls) #!+report4_sitting fails
+            # add TI entry
+            type_info._add(None, queryModelInterface(kls), None, kls, None, None)
+            ti = capi.get_type_info(type_key)
+            assert ti.domain_model is kls
+        ti.descriptor_model = descriptor
+        # !+NO_NEED_TO_INSTANTIATE here we cache an instance...
+        ti.descriptor = descriptor()
+    
+    m = ("\n\nDone all workflow/descriptor related setup... running with:\n  " + 
+        "\n  ".join(sorted([ "%s: %s" % (key, ti)
+                for key, ti in capi.iter_type_info() ])) + 
+        "\n")
+    log.debug(m)
 

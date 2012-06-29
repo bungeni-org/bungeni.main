@@ -444,11 +444,6 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.question.wf.admissible.withdrawn" role="bungeni.Owner" />
 
 
-<!-- report -->
-<grant permission="bungeni.reports.Edit" role="bungeni.Clerk" />
-<grant permission="bungeni.reports.Edit" role="bungeni.Speaker" />
-
-
 <!-- tableddocument -->
 <grant permission="bungeni.tableddocument.View" role="bungeni.Owner" />
 <grant permission="bungeni.tableddocument.View" role="bungeni.Signatory" />
@@ -547,6 +542,11 @@ See the Bungeni Source Code Style Guide for further details.
 <permission id="bungeni.event.wf.attached.inactive" title="Deactivate" />
 <grant permission="bungeni.event.wf.attached.inactive" role="bungeni.Clerk" />
 <grant permission="bungeni.event.wf.attached.inactive" role="bungeni.Owner" />
+
+
+<!-- report -->
+<grant permission="bungeni.reports.Edit" role="bungeni.Clerk" />
+<grant permission="bungeni.reports.Edit" role="bungeni.Speaker" />
 
 
 <!-- group -->

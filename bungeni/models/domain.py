@@ -17,8 +17,7 @@ import datetime
 
 from zope import interface, location
 import ore.xapian.interfaces
-from bungeni.alchemist import Session
-from bungeni.alchemist import model
+from bungeni import alchemist
 from bungeni.alchemist.traversal import one2many, one2manyindirect
 import sqlalchemy.sql.expression as sql
 from sqlalchemy.orm import class_mapper, object_mapper
@@ -49,7 +48,7 @@ def get_changes(auditable, *actions):
     for action in actions:
         assert_valid_change_action(action)
     # lazy loading - merge to avoid sqlalchemy.orm.exc.DetachedInstanceError
-    auditable = Session().merge(auditable)
+    auditable = alchemist.Session().merge(auditable)
     return [ c for c in auditable.changes if c.action in actions ]
 
 def get_mapped_table(kls):
@@ -111,7 +110,7 @@ class Entity(object):
     
     def __init__(self, **kw):
         try:
-            domain_schema = model.queryModelInterface(type(self))
+            domain_schema = alchemist.model.queryModelInterface(type(self))
             known_names = [ k for k, d in domain_schema.namesAndDescriptions(1) ]
         except Exception, e:
             log.error("Failed queryModelInterface(%s): %s: %s" % (
@@ -354,7 +353,7 @@ class Group(Entity):
         "group_id"
     )
     def active_membership(self, user_id):
-        session = Session()
+        session = alchemist.Session()
         query = session.query(GroupMembership).filter(
             sql.and_(
                 GroupMembership.group_id == self.group_id,
@@ -428,7 +427,7 @@ class Parliament(Group):
     """
     
     sessions = one2many("sessions",
-        "bungeni.models.domain.ParliamentSessionContainer", "parliament_id")
+        "bungeni.models.domain.SessionContainer", "parliament_id")
     committees = one2many("committees",
         "bungeni.models.domain.CommitteeContainer", "parent_group_id")
     governments = one2many("governments",
@@ -1104,7 +1103,7 @@ class SignatoryAudit(Audit):
 
 #############
 
-class ParliamentSession(Entity):
+class Session(Entity):
     """
     """
     interface.implements(interfaces.ITranslatable)
@@ -1168,7 +1167,7 @@ class ItemSchedule(Entity):
         domain_class = self.get_item_domain()
         if domain_class is None:
             return None
-        item = Session().query(domain_class).get(self.item_id)
+        item = alchemist.Session().query(domain_class).get(self.item_id)
         item.__parent__ = self
         return item
     

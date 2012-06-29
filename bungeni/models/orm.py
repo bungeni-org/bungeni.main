@@ -312,7 +312,7 @@ mapper(domain.CommitteeStaff,
     polymorphic_identity=polymorphic_identity(domain.CommitteeStaff)
 )
 
-mapper(domain.ParliamentSession, schema.parliament_sessions)
+mapper(domain.Session, schema.sessions)
 
 mapper(domain.Sitting, schema.sitting,
     properties={
@@ -713,6 +713,7 @@ mapper(domain.HoliDay, schema.holidays)
 mapper(domain.Country, schema.countries)
 
 
+# !+RENAME simply to "Attendance"
 mapper(domain.SittingAttendance, schema.sitting_attendance,
     properties={
         "user": relation(domain.User, uselist=False, lazy=False),

@@ -400,8 +400,8 @@ class SignatoryDescriptiveProperties(DescriptiveProperties):
 
 
 @register.adapter()
-class ParliamentSessionDescriptiveProperties(DescriptiveProperties):
-    component.adapts(interfaces.IParliamentSession)
+class SessionDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.ISession)
     
     @property
     def title(self):

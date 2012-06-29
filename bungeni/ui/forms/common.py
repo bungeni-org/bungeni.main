@@ -6,8 +6,7 @@
 
 $Id$
 """
-
-log = __import__("logging").getLogger("bungeni.ui.forms")
+log = __import__("logging").getLogger("bungeni.ui.forms.common")
 
 #import transaction
 from copy import copy
