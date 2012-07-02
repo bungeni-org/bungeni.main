@@ -12,9 +12,10 @@
     <div metal:fill-slot="body">
       <h2 class="title">
         <span tal:replace="view/page_title"/> 
-        <span i18n:translate tal:condition="view/is_workflowed"
-                             tal:replace="python:view.get_wf_state()"
-                             class="workflow_info"/>
+        <tal:block tal:condition="view/is_workflowed">
+          [<span i18n:translate tal:replace="python:view.get_wf_state()"
+                             class="workflow_info"/>]
+        </tal:block>
       </h2>
       <p class="documentDescription"
 	 i18n:translate="" tal:content="view/page_description" />
