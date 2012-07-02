@@ -25,7 +25,6 @@ __all__ = [
 ]
 
 from alchemist.ui.core import DynamicFields
-
 from alchemist.ui.core import null_validator
 from alchemist.ui.core import setUpFields
 from alchemist.ui.core import unique_columns

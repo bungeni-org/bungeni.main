@@ -18,6 +18,7 @@ import datetime
 from zope import interface, location
 import ore.xapian.interfaces
 from bungeni import alchemist
+from bungeni.alchemist import utils
 from bungeni.alchemist.traversal import one2many, one2manyindirect
 import sqlalchemy.sql.expression as sql
 from sqlalchemy.orm import class_mapper, object_mapper
@@ -51,11 +52,8 @@ def get_changes(auditable, *actions):
     auditable = alchemist.Session().merge(auditable)
     return [ c for c in auditable.changes if c.action in actions ]
 
-def get_mapped_table(kls):
-    return class_mapper(kls).mapped_table
-
 def get_audit_table_name(kls):
-    return "%s_audit" % (get_mapped_table(kls).name)
+    return "%s_audit" % (utils.get_local_table(kls).name)
 
 def get_mapped_object_id(ob):
     # !+ASSUMPTION_SINGLE_COLUMN_PK(mr, may-2012)
@@ -826,7 +824,7 @@ class Audit(HeadParentedMixin, Entity):
         # define a subtype of Audit type
         audit_factory_name = "%sAudit" % (auditable_cls.__name__)
         auditable_pk_column = [ c for c in 
-            get_mapped_table(auditable_cls).primary_key ][0]
+            utils.get_local_table(auditable_cls).primary_key ][0]
         factory = type(audit_factory_name, (cls,), {
             "head_id_column_name": auditable_pk_column.name })
         # define a subtype of Audit type
