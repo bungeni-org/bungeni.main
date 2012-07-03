@@ -47,6 +47,7 @@ from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.ui.utils import common
 from bungeni.ui.interfaces import ITreeVocabulary
 from bungeni.ui.reporting.generators import BUNGENI_REPORTS_NS
+from bungeni.utils import misc
 
 try:
     import json
@@ -150,6 +151,7 @@ class FlatVDEXVocabularyFactory(VDEXVocabularyMixin, BaseVocabularyFactory):
     vocabulary.SimpleVocabulary() and then only specify a single 
     default/reference language in the vdex file.
     """
+    value_cast = unicode
     def __call__(self, context=None):
         """Return a context-bound instance that implements ISource.
         """
@@ -159,10 +161,13 @@ class FlatVDEXVocabularyFactory(VDEXVocabularyMixin, BaseVocabularyFactory):
         assert self.vdex.isFlat() is True
         for (key, (caption, children)) in all_terms.iteritems():
             # assert children is None
-            term = vocabulary.SimpleTerm(key, key, caption)
+            term = vocabulary.SimpleTerm(self.__class__.value_cast(key), key, caption)
             terms.append(term)
         return vocabulary.SimpleVocabulary(terms)
-    
+
+class BoolFlatVDEXVocabularyFactory(FlatVDEXVocabularyFactory):
+    value_cast = staticmethod(misc.as_bool)
+
 # /vdex
 
 
@@ -243,11 +248,8 @@ ISResponse = vocabulary.SimpleVocabulary([
 # translated, the token_field will NOT get translated
 
 gender = FlatVDEXVocabularyFactory("gender.vdex")
-#bool_yes_no = FlatVDEXVocabularyFactory("yes_no.vdex")
-# !+ how do you get a VDEX vocab to use booleans as term values?
-bool_yes_no = vocabulary.SimpleVocabulary([
-    vocabulary.SimpleTerm(True, _(u"Yes"), _(u"Yes")), 
-    vocabulary.SimpleTerm(False, _(u"No"), _(u"No"))])
+bool_yes_no = BoolFlatVDEXVocabularyFactory("yes_no.vdex")
+
 
 # types
 

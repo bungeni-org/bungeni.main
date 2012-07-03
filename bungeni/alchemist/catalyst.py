@@ -16,14 +16,15 @@ __all__ = [
     "AddForm",      # alias -> alchemist.catalyst.ui
     "DisplayForm",  # alias -> alchemist.catalyst.ui
     "EditForm",     # alias -> alchemist.catalyst.ui
-    
-    "catalyst",     # redefn -> alchemist.catalyst.zcml
-    
-    #!+ALCHEMIST_INTERNAL "ApplySecurity",      # alias -> alchemist.catalyst.domain
+    "catalyse_descriptors"
+    #"sa2zs",        # alias -> ore.alchemist !+ALCHEMIST_INTERNAL
+    #"catalyst",     # redefn -> alchemist.catalyst.zcml !+ALCHEMIST_INTERNAL
+    #"ApplySecurity",      # alias -> alchemist.catalyst.domain !+ALCHEMIST_INTERNAL
 ]
 from alchemist.catalyst.ui import AddForm
 from alchemist.catalyst.ui import DisplayForm
 from alchemist.catalyst.ui import EditForm
+from ore.alchemist import sa2zs
 
 # from bungeni.alchemist, used only here
 
@@ -33,7 +34,6 @@ from bungeni.alchemist.interfaces import (
     IManagedContainer,
     IIModelInterface,
 )
-from bungeni.alchemist import sa2zs # ore.alchemist
 from bungeni.alchemist.container import AlchemistContainer
 from bungeni.alchemist.traversal import CollectionTraverser
 from bungeni.alchemist import utils
@@ -52,10 +52,6 @@ from z3c.traverser.interfaces import ITraverserPlugin
 from z3c.traverser.traverser import PluggableTraverser
 
 from sqlalchemy import orm
-
-#
-
-logging_setup = False
 
 import bungeni.models.interfaces
 import bungeni.ui.content
@@ -113,7 +109,9 @@ def catalyse_descriptors(module):
             debug.log_exc(sys.exc_info(), log_handler=log.warn)
             continue
         # catalyse each (domain_model, descriptor) pair
-        ctx = catalyst(CatalystContext(), kls, descriptor, echo=True)
+        ctx = CatalystContext()
+        setup_log(ctx)
+        catalyst(ctx, kls, descriptor)
         # type_info, register the descriptor
         type_key = naming.polymorphic_identity(kls)
         try:
@@ -135,6 +133,18 @@ def catalyse_descriptors(module):
         "\n")
     log.debug(m)
 
+def setup_log(ctx): # !+INI?
+    ctx.logger = log
+    logging.basicConfig()
+    formatter = logging.Formatter("ALCHEMIST: %(module)s -> %(message)s")
+    console = logging.StreamHandler()
+    console.setLevel(logging.DEBUG)
+    console.setFormatter(formatter)
+    ctx.logger.addHandler(console)
+    ctx.logger.setLevel(logging.DEBUG)
+    #console.propagate = False       
+    ctx.logger.propagate = False  
+    
 
 # alchemist.catalyst.zcml 
 
@@ -152,7 +162,7 @@ class CatalystContext(object):
     views = None
     relation_viewlets = None
     logger = None
-    echo = None
+    echo = True
 
 
 def catalyst(ctx,
@@ -162,7 +172,6 @@ def catalyst(ctx,
         interface_module=bungeni.models.interfaces,
         #container_module=None, # !+?
         ui_module=bungeni.ui.content,
-        echo=False
     ):
     ctx.descriptor = descriptor
     ctx.domain_model = kls
@@ -171,26 +180,12 @@ def catalyst(ctx,
     ctx.container_module = None # !+container_module(mr, jul-2011), expected
     # to be defined by alchemist.catalyst.container.GenerateContainer
     ctx.ui_module = ui_module
-    ctx.echo = echo
     
     ctx.views = {} # keyed by view type (add|edit)
-    ctx.relation_viewlets = {} # keyed by relation name 
-    ctx.logger = log
-    ctx.logger.debug("context=%s, class=%s, descriptor=%s, echo=%s" % (
-            ctx, kls, descriptor, echo))
+    ctx.relation_viewlets = {} # keyed by relation name
     
-    global logging_setup # !+INI?
-    if ctx.echo and not logging_setup:
-        logging_setup = True
-        logging.basicConfig()
-        formatter = logging.Formatter("ALCHEMIST: %(module)s -> %(message)s")
-        console = logging.StreamHandler()
-        console.setLevel(logging.DEBUG)
-        console.setFormatter(formatter)
-        ctx.logger.addHandler(console)
-        ctx.logger.setLevel(logging.DEBUG)
-        #console.propagate = False       
-        ctx.logger.propagate = False  
+    ctx.logger.debug("context=%s, class=%s, descriptor=%s, echo=%s" % (
+            ctx, kls, descriptor, ctx.echo))
     
     # create a domain interface if it doesn't already exist 
     # this also creates an adapter between the interface and desc.
@@ -260,8 +255,8 @@ def GenerateDomainInterface(ctx):
         domain_interface = sa2zs.transmute(
             domain_table,
             annotation=ctx.descriptor,
-            interface_name = interface_name,
-            __module__ = ctx.interface_module.__name__,
+            interface_name=interface_name,
+            __module__=ctx.interface_module.__name__,
             bases=bases)
     
     # if we're replacing an existing interface, make sure the new
@@ -275,8 +270,8 @@ def GenerateDomainInterface(ctx):
     # already exists e.g. getattr(ctx.interface_module, interface_name) and
     # whether domain_model provides it... if so, then "splice" extra info from
     # auto-generated interface into the predefined one... 
-    # ELSE adopt policy that if provided, then it must be fullt defined 
-    # (resposibility of user).
+    # ELSE adopt policy that if provided, then it must be fully defined 
+    # (total resposibility of user, never auto-modified!).
     implements.insert(0, domain_interface)
     interface.classImplementsOnly(ctx.domain_model, *implements)
     setattr(ctx.interface_module, interface_name, domain_interface)
@@ -335,8 +330,8 @@ def GenerateContainer(ctx,
         # if we already have a container class, exit
         container_class = type(container_name,
             (AlchemistContainer,),
-            dict(_class=ctx.domain_model,
-            __module__=ctx.container_module.__name__)
+            dict(_class=ctx.domain_model, 
+                __module__=ctx.container_module.__name__)
         )
         setattr(ctx.container_module, container_name, container_class)
         
@@ -346,15 +341,10 @@ def GenerateContainer(ctx,
         # interface for container
         container_iname = container_iname or "I%s" % container_name
         
-        msg = (ctx.domain_model.__name__,
-            ctx.container_module.__name__, container_iname)
-        
-        # if the interface module is none, then use the nearest one to the domain class
-        if ctx.interface_module is None:
-            ctx.interface_module = naming.resolve_relative("..interfaces", ctx)
-        
         # if we already have a container interface class, skip creation
         container_interface = getattr(ctx.interface_module, container_iname, None)
+        msg = (ctx.domain_model.__name__, 
+            ctx.container_module.__name__, container_iname)
         if container_interface is not None:
             assert issubclass(container_interface, IAlchemistContainer)
             if ctx.echo:

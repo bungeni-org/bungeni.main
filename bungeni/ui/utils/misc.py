@@ -21,7 +21,6 @@ from lxml import html
 from bungeni.core.workflow import interfaces
 from bungeni.ui.i18n import _
 
-REGEX_FOR_SLUGS = re.compile(u"[^\w\.]")
 
 # pick data
 
@@ -74,14 +73,6 @@ def makeList(itemIds):
     else:
          raise TypeError(_("Form values must be of type string or list"))
 
-def get_keyed_item(seq, value, key="name"):
-    """Get the item in the sequence that has a {key} entry set to {value}.
-    """
-    for s in seq:
-        if s[key] == value:
-            return s
-        
-
 # object
 
 class bunch(dict):
@@ -112,6 +103,7 @@ class bunch(dict):
                 self[name] = getattr(obj, name)
 
 
+REGEX_FOR_SLUGS = re.compile(u"[^\w\.]")
 def slugify(string_to_slug):
     """Generate slugified versions of a string
     
@@ -131,7 +123,7 @@ def slugify(string_to_slug):
     u'non_ascii_and_spaces_____'
     
     """
-    assert type(string_to_slug) in (unicode, str)
+    assert isinstance(string_to_slug, basestring)
     slug = unicode(string_to_slug)
     slug = re.sub(REGEX_FOR_SLUGS, u'_', slug)
     return slug

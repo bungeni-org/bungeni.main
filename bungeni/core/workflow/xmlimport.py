@@ -21,6 +21,7 @@ from bungeni.core.workflow.states import assert_distinct_permission_scopes
 from bungeni.core.workflow.notification import Notification
 from bungeni.utils.capi import capi, bungeni_custom_errors
 from bungeni.ui.utils import debug
+from bungeni.utils.misc import strip_none, as_bool
 
 #
 
@@ -79,24 +80,6 @@ See the Bungeni Source Code Style Guide for further details.
 </configure>
 """
 
-def strip_none(s):
-    """Ensure non-empty whitespace-stripped string, else None.
-    """
-    if s is not None:
-        return s.strip() or None
-    return None
-
-def as_bool(s):
-    """ (s:str) -> bool
-    """
-    _s = s.lower()
-    if _s == "true":
-        return True
-    elif _s == "false":
-        return False
-    raise TypeError("Invalid bool: %s" % s)
-
-#
 
 def zcml_check_regenerate():
     """Called after all XML workflows have been loaded (see adapers.py).

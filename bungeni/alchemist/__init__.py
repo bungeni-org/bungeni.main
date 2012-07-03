@@ -19,12 +19,7 @@ log = __import__("logging").getLogger("bungeni.alchemist")
 
 # used directly in bungeni
 __all__ = [
-    "sa2zs",    # alias -> ore.alchemist
     "Session",  # alias -> ore.alchemist.session
 ]
-
-
 from ore.alchemist.session import Session
-
-from ore.alchemist import sa2zs
 

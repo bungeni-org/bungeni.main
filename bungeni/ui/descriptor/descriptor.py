@@ -18,6 +18,7 @@ from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.security.proxy import removeSecurityProxy
 
 from bungeni.alchemist import Session
+from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.alchemist.model import ModelDescriptor, Field, show, hide
 
 from bungeni.models import domain
@@ -36,10 +37,11 @@ from bungeni.ui.fields import VocabularyTextField
 from bungeni.ui import constraints
 from bungeni.ui.forms import validations
 from bungeni.ui.i18n import _
-from bungeni.ui.utils import common, date, misc, debug, url
+from bungeni.ui.utils import common, date, debug, url
 from bungeni.ui import vocabulary
 from bungeni.ui.interfaces import IAdminSectionLayer
-from bungeni.alchemist.interfaces import IAlchemistContainer
+from bungeni.utils import misc
+
 
 ###
 # Listing Columns
@@ -272,8 +274,9 @@ def inActiveDead_Column(name, title, default):
 
 
 def workflow_column(name, title, default=""):
+    from bungeni.ui.utils.misc import get_wf_state
     def getter(item, formatter):
-        state_title = misc.get_wf_state(item)
+        state_title = get_wf_state(item)
         request = common.get_request()
         return translate(
             state_title,

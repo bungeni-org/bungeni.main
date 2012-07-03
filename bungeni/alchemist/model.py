@@ -55,8 +55,7 @@ def queryModelInterface(cls):
             for i in candidates:
                 if issubclass(i, IAlchemistContent):
                     ifaces.append(i)
-        if not ifaces:
-            raise SyntaxError("No Model Interface on Domain Object [%s]" % (cls))
+        assert ifaces, "No Model Interface on Domain Object [%s]" % (cls)
         if ifaces:
             assert len(ifaces)==1, "Multiple Model Interfaces on Domain Object"
         #import pdb; pdb.set_trace()
@@ -219,7 +218,7 @@ class IModelDescriptorField(interface.Interface):
         required=False
     )
     '''
-    
+
 class Field(object):
     interface.implements(IModelDescriptorField)
     
