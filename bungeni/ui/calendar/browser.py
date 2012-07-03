@@ -328,19 +328,7 @@ class CalendarView(BungeniBrowserView):
         return items
 
     def render(self, template=None):
-        need("dhtmlxscheduler")
-        need("dhtmlxscheduler-recurring")
-        need("dhtmlxscheduler-year-view")
-        need("dhtmlxscheduler-week-agenda-view")
-        need("dhtmlxscheduler-expand")
-        need("bungeni-calendar-globals")
-        need("bungeni-calendar-extensions")
-        need("dhtmlxscheduler-timeline")
-        need("dhtmlxscheduler-tooltip")
-        need("dhtmlxscheduler-minical")
-        need("dhtmlxscheduler-multisource")
-        need("dhtmlxscheduler-collision")
-        need("multi-calendar-actions")
+        need("bungeni-calendar-bundle")
         if template is None:
             template = self.template
         if (not checkPermission(u"bungeni.sitting.Add", self.context)) or \

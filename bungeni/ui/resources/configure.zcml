@@ -64,18 +64,16 @@
     <directory source="difform"
       include="js/nowediting.js"
     />
-  </resourceLibrary> 
-
-  <resourceLibrary name="multi-calendar-actions" 
-    require="jquery dhtmlxscheduler-multisource">
-    <directory source="calendar"
-        include="calendar-multisource.js"
-    />
   </resourceLibrary>
-  <resourceLibrary name="bungeni-calendar-extensions" 
-    require="dhtmlxscheduler jquery-block-ui">
+  <resourceLibrary name="bungeni-calendar-bundle" 
+    require="jquery dhtmlxscheduler-recurring dhtmlxscheduler-multisource 
+        dhtmlxscheduler-year-view dhtmlxscheduler-week-agenda-view 
+        dhtmlxscheduler-expand bungeni-calendar-globals 
+        dhtmlxscheduler-timeline dhtmlxscheduler-tooltip 
+        dhtmlxscheduler-minical dhtmlxscheduler-collision">
     <directory source="calendar"
-        include="calendar-extensions.js"
+        include="calendar-extensions.js
+                 calendar-multisource.js"
     />
   </resourceLibrary>
   <resourceLibrary name="scheduler-globals">
@@ -92,18 +90,23 @@
       factory="bungeni.ui.resources.dynamic.DynamicDirectoryFactory"
     />
   </resourceLibrary>
-  <resourceLibrary name="bungeni-schedule-config" require="scheduler-globals yui-core yui-datatable yui-selector yui-connection yui-container yui-button">
+  <resourceLibrary name="bungeni-schedule-config" require="scheduler-globals 
+    yui-core yui-datatable yui-selector yui-connection yui-container yui-button">
     <directory source="calendar" 
         include="schedule-config.js"
     />
   </resourceLibrary>
-  <resourceLibrary name="bungeni-schedule-available-items" require="bungeni-schedule-config yui-tab yui-button yui-container yui-calendar">
+  <resourceLibrary name="bungeni-schedule-available-items" 
+    require="bungeni-schedule-config yui-tab yui-button yui-container 
+        yui-calendar">
     <directory source="calendar" 
         include="schedule-available-items.js"
     />
   </resourceLibrary>  
   <resourceLibrary name="bungeni-schedule-editor" 
-    require="bungeni-schedule-config bungeni-schedule-available-items yui-container yui-connection yui-menu yui-button yui-rte yui-calendar yui-layout yui-tab yui-json">
+    require="bungeni-schedule-config bungeni-schedule-available-items 
+        yui-container yui-connection yui-menu yui-button yui-rte yui-calendar 
+        yui-layout yui-tab yui-json">
     <directory source="calendar" 
         include="schedule-editor.js
                  schedule-editor-core.js
@@ -111,7 +114,8 @@
     />
   </resourceLibrary>
   <resourceLibrary name="bungeni-schedule-minutes" 
-    require="bungeni-schedule-config bungeni-schedule-available-items yui-container yui-connection yui-button yui-rte yui-layout yui-json">
+    require="bungeni-schedule-config bungeni-schedule-available-items 
+        yui-container yui-connection yui-button yui-rte yui-layout yui-json">
     <directory source="calendar" 
         include="schedule-editor-minutes.js
                  schedule-editor-core.js
