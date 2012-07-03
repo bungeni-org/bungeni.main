@@ -11,6 +11,7 @@ log = __import__("logging").getLogger("bungeni.core.serialize")
 from zope.security.proxy import removeSecurityProxy
 from zope.lifecycleevent import IObjectModifiedEvent, IObjectCreatedEvent
 from sqlalchemy.orm import RelationshipProperty, class_mapper
+from sqlalchemy.types import Binary
 
 from bungeni.alchemist.container import stringKey
 from bungeni.alchemist.interfaces import IAlchemistContainer
@@ -72,6 +73,10 @@ def publish_to_xml(context):
     attachments - XML is saved in zip archive with all attached files. 
     """
     include = []
+    # list of files to zip
+    files = []
+    #data dict to be published
+    data = {}
     
     context = removeSecurityProxy(context)
     
@@ -80,11 +85,25 @@ def publish_to_xml(context):
     if interfaces.IFeatureAudit.providedBy(context):
         include.append("event")
     
-    data = obj2dict(context, 1, 
-        parent=None,
-        include=include,
-        exclude=["data", "image", "logo_data", "event", "attachments", 
-            "changes"]
+    exclude=["data", "event", "attachments", "changes"]
+    
+    #Include binary fields and include them in the zip of files for this object
+    for column in class_mapper(context.__class__).columns:
+        if column.type.__class__ == Binary:
+            exclude.append(column.key)
+            content = getattr(context, column.key, None)
+            if content:
+                with tmp(delete=False) as f:
+                    f.write(content)
+                    files.append(f.name)
+                    data[column.key] = dict(saved_file=os.path.basename(f.name))
+                
+    data.update(
+        obj2dict(context, 1, 
+            parent=None,
+            include=include,
+            exclude=exclude
+        )
     )
     
     # !+please do not use python builtin names as variable names
@@ -105,8 +124,6 @@ def publish_to_xml(context):
         change_dict["permissions"] = get_permissions_dict(change_permissions)
         data["changes"].append(change_dict)
     
-    # list of files to zip
-    files = []
     # setup path to save serialized data 
     path = os.path.join(setupStorageDirectory(), type)
     if not os.path.exists(path):
@@ -115,11 +132,9 @@ def publish_to_xml(context):
     # xml file path
     file_path = os.path.join(path, stringKey(context)) 
     
-    has_attachments = False
     if interfaces.IFeatureAttachment.providedBy(context):
         attachments = getattr(context, "attachments", None)
         if attachments:
-            has_attachments = True
             # add xml file to list of files to zip
             files.append("%s.xml" % (file_path))
             data["attachments"] = []
@@ -135,20 +150,19 @@ def publish_to_xml(context):
                 with tmp(delete=False) as f:
                     f.write(attachment.data)
                     files.append(f.name)
-                    attachment_dict["saved_file"] = \
-                        os.path.split(f.name)[-1]  
+                    attachment_dict["saved_file"] = os.path.basename(f.name)
                 data["attachments"].append(attachment_dict)
     
     # saving xml file
     with open("%s.xml" % (file_path), "w") as file:
         file.write(serialize(data, name=type))
     
-    # zipping xml and attached files 
-    # unzipped files are removed
-    if has_attachments:
+    # zipping xml, attached files plus any binary fields
+    # also remove the temporary files
+    if files:
         zip = ZipFile("%s.zip" % (file_path), "w")
         for f in files:
-            zip.write(f, os.path.split(f)[-1])
+            zip.write(f, os.path.basename(f))
             os.remove(f)
         zip.close()
 
