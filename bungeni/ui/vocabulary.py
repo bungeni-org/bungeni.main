@@ -64,7 +64,7 @@ def get_translated_group_label(group):
 
 
 days = [ _("day_%d" % index, default=default) for (index, default) in
-         enumerate((u"Mon", u"Tue", u"Wed", u"Thu", u"Fri", u"Sat", u"Sun")) ]
+    enumerate((u"Mon", u"Tue", u"Wed", u"Thu", u"Fri", u"Sat", u"Sun")) ]
 
 
 class BaseVocabularyFactory(object):
@@ -247,79 +247,23 @@ ISResponse = vocabulary.SimpleVocabulary([
 # you have to add title_field to the vocabulary.SimpleTerm as only this gets 
 # translated, the token_field will NOT get translated
 
+bill_type = FlatVDEXVocabularyFactory("bill_type.vdex")
+doc_type = bill_type # placeholder vocabulary, use bill_type as dummy value
+question_type = FlatVDEXVocabularyFactory("question_type.vdex")
+response_type = FlatVDEXVocabularyFactory("response_type.vdex")
+event_type = FlatVDEXVocabularyFactory("event_type.vdex")
+attachment_type = FlatVDEXVocabularyFactory("attachment_type.vdex")
+committee_type = FlatVDEXVocabularyFactory("committee_type.vdex")
+committee_continuity = FlatVDEXVocabularyFactory("committee_continuity.vdex")
+change_procedure = FlatVDEXVocabularyFactory("change_procedure.vdex")
+attendance_type = FlatVDEXVocabularyFactory("attendance_type.vdex")
+member_election_type = FlatVDEXVocabularyFactory("member_election_type.vdex")
+logical_address_type = FlatVDEXVocabularyFactory("logical_address_type.vdex")
+postal_address_type = FlatVDEXVocabularyFactory("postal_address_type.vdex")
 gender = FlatVDEXVocabularyFactory("gender.vdex")
 bool_yes_no = BoolFlatVDEXVocabularyFactory("yes_no.vdex")
 
-
-# types
-
-# !+TYPES_CUSTOM - enum sources to move out to bungeni custom
-
-doc_type = vocabulary.SimpleVocabulary([
-    vocabulary.SimpleTerm("government", title="Government Initiative"),
-    vocabulary.SimpleTerm("member", title="Member Initiative"),
-])
-bill_type = doc_type
-event_type = vocabulary.SimpleVocabulary([
-    vocabulary.SimpleTerm("government", title="Government Initiative"),
-    vocabulary.SimpleTerm("committee", title="Committee Initiative"),
-    vocabulary.SimpleTerm("member", title="Member Initiative"),
-])
-committee_type = vocabulary.SimpleVocabulary([
-    vocabulary.SimpleTerm("housekeeping", title="House Keeping"),
-    vocabulary.SimpleTerm("departmental", title="Departmental"),
-    vocabulary.SimpleTerm("adhoc", title="Ad Hoc"),
-    vocabulary.SimpleTerm("watchdog", title="Watch Dog"),
-    vocabulary.SimpleTerm("liaison", title="Liaison"),
-])
-committee_continuity = vocabulary.SimpleVocabulary([
-    vocabulary.SimpleTerm("permanent", title="Permanent"),
-    vocabulary.SimpleTerm("temporary", title="Temporary"),
-])
-logical_address_type = vocabulary.SimpleVocabulary([
-    vocabulary.SimpleTerm("office", title="Office"),
-    vocabulary.SimpleTerm("home", title="Home"),
-    vocabulary.SimpleTerm("other", title="Other"),
-])
-postal_address_type = vocabulary.SimpleVocabulary([
-    vocabulary.SimpleTerm("street", title="Street/Physical"),
-    vocabulary.SimpleTerm("pobox", title="P.O. Box"),
-    vocabulary.SimpleTerm("military", title="Military"),
-    vocabulary.SimpleTerm("unknown", title="Undefined/Unknown"),
-])
-attachment_type = vocabulary.SimpleVocabulary([
-    vocabulary.SimpleTerm("image", title="Image"),
-    vocabulary.SimpleTerm("annex", title="Annex"),
-    vocabulary.SimpleTerm("document", title="Document"),
-    vocabulary.SimpleTerm("bill", title="Bill"),
-    # !+ATTACHED_FILE_TYPE_SYSTEM(mr, oct-2011) ui/downloaddocument and 
-    # ui/forms/files.py expects this, but should NOT be presented as an 
-    # option in the UI?
-    #vocabulary.SimpleTerm("system", title="System"),
-])
-attendance_type = vocabulary.SimpleVocabulary([
-    vocabulary.SimpleTerm("present", title="Present"),
-    vocabulary.SimpleTerm("absence_justified", title="Absence justified"),
-    vocabulary.SimpleTerm("absent", title="Absent"),
-])
-member_election_type = vocabulary.SimpleVocabulary([
-    vocabulary.SimpleTerm("elected", title="Elected"),
-    vocabulary.SimpleTerm("nominated", title="Nominated"),
-    vocabulary.SimpleTerm("ex_officio", title="Ex officio"),
-])
-question_type = vocabulary.SimpleVocabulary([
-    vocabulary.SimpleTerm("ordinary", title="Ordinary"),
-    vocabulary.SimpleTerm("private_notice", title="Private notice"),
-])
-response_type = vocabulary.SimpleVocabulary([
-    vocabulary.SimpleTerm("oral", title="Oral"),
-    vocabulary.SimpleTerm("written", title="Written"),
-])
-change_procedure = vocabulary.SimpleVocabulary([
-    vocabulary.SimpleTerm("a", title="Automatic"),
-    vocabulary.SimpleTerm("m", title="Manual"),
-])
-
+#
 
 class OfficeRoleFactory(BaseVocabularyFactory):
     def __call__(self, context=None):
@@ -511,17 +455,16 @@ workflow_vocabulary_factory = WorkflowVocabularyFactory()
 
 
 class MemberOfParliament(object):
-    """ Member of Parliament = user join group membership join parliament"""
+    """Member of Parliament = user join group membership join parliament"""
     
 member_of_parliament = rdb.join(schema.user_group_memberships, 
     schema.users,
     schema.user_group_memberships.c.user_id == schema.users.c.user_id
-).join(schema.parliaments, 
-    schema.user_group_memberships.c.group_id == 
-        schema.parliaments.c.parliament_id) 
-
+).join(schema.parliaments,
+    schema.user_group_memberships.c.group_id ==
+        schema.parliaments.c.parliament_id)
 mapper(MemberOfParliament, member_of_parliament)
-        
+
 
 class MemberOfParliamentImmutableSource(SpecializedSource):
     """If a user is already assigned to the context 
@@ -687,7 +630,7 @@ class MemberOfParliamentSignatorySource(MemberOfParliamentSource):
 class MinistrySource(SpecializedSource):
     """Ministries in the current parliament.
     """
-
+    
     def __init__(self, value_field):
         self.value_field = value_field
     
@@ -755,7 +698,8 @@ class MinistrySource(SpecializedSource):
                 ))
         return vocabulary.SimpleVocabulary(terms)
 
-'''class MemberTitleSource(SpecializedSource):
+'''
+class MemberTitleSource(SpecializedSource):
     """ get titles (i.e. roles/functions) in the current context """
     
     def __init__(self, value_field):
@@ -788,7 +732,8 @@ class MinistrySource(SpecializedSource):
                     token = getattr(obj, 'user_role_type_id'),
                     title = getattr(obj, 'user_role_name'),
                    ))
-        return vocabulary.SimpleVocabulary(terms)'''
+        return vocabulary.SimpleVocabulary(terms)
+'''
 
 
 class OwnerOrLoggedInUserSource(SpecializedSource):
@@ -1125,14 +1070,14 @@ class QuerySource(object):
         return value_key
 
     def __init__(self,
-        domain_model, 
-        token_field, 
-        title_field, 
-        value_field, 
-        filter_field, 
-        filter_value=None, 
-        order_by_field=None
-    ):
+            domain_model, 
+            token_field, 
+            title_field, 
+            value_field, 
+            filter_field, 
+            filter_value=None, 
+            order_by_field=None
+        ):
         self.domain_model = domain_model
         self.token_field = token_field
         self.value_field = value_field
@@ -1140,23 +1085,23 @@ class QuerySource(object):
         self.filter_field = filter_field
         self.order_by_field = order_by_field
         self.filter_value = filter_value
-        
+    
     def constructQuery(self, context):
         session = Session()
         trusted=removeSecurityProxy(context)
         if self.filter_value:
             query = session.query(self.domain_model).filter(
                 self.domain_model.c[self.filter_field] == 
-                trusted.__dict__[self.filter_value])
+                    trusted.__dict__[self.filter_value])
         else:
             pfk = self.getValueKey(context)
             query = session.query(self.domain_model)
             query = query.filter(self.domain_model.c[self.filter_field] == pfk)
-            
+        
         query = query.distinct()
         if self.order_by_field:
             query = query.order_by(self.domain_model.c[self.order_by_field])
-            
+        
         return query
         
     def __call__(self, context=None):
