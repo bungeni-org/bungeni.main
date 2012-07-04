@@ -435,11 +435,17 @@ class PublicStatesContainerJSONListing(ContainerJSONListing):
         #try:
         type_key = polymorphic_identity(self.context.domain_model)
         workflow = capi.get_type_info(type_key).workflow
-        public_wfstates = workflow.get_state_ids(tagged=["public"], 
-            restrict=False)
-        if public_wfstates:
-            query = query.filter(
-                self.domain_model.status.in_(public_wfstates))
+        if workflow:
+            public_wfstates = workflow.get_state_ids(tagged=["public"], 
+                restrict=False)
+            if public_wfstates:
+                query = query.filter(
+                    self.domain_model.status.in_(public_wfstates))
+        else:
+            log.warn("PublicStateContainerJSONListing: No workflow was found"
+                " for type with key %s (%s). No public states filter applied.", 
+                type_key, self.context.domain_model 
+            )
         ''' !+PUBLIC_CONTAINER_VIEW
         except KeyError, e:
             # not workflowed...
