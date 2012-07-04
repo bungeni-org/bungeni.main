@@ -92,7 +92,7 @@ Content creation
   ...     domain.Bill,
   ...     doc_type="member",
   ...     owner_id=mp_1.user_id,
-  ...     short_title=u"New Bill",
+  ...     title=u"New Bill",
   ...     language="en")
 
 Actions

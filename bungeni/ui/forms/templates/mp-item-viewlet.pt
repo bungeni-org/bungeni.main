@@ -17,7 +17,7 @@
           <td> <span tal:content="item/type"/></td>
           <td> 
 	    <a tal:attributes="href item/url"
-	       tal:content="item/short_title"/>
+	       tal:content="item/title"/>
 	  </td>
           <td><span tal:content="item/status"/></td>
           <td><span tal:content="item/submission_date"/></td>

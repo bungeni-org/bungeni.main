@@ -443,7 +443,7 @@ class MemberItemsViewlet(browser.BungeniItemsViewlet):
             _url = "/business/%ss/obj-%i" % (item.type,
                 item.doc_id)
             yield {"type": item.type,
-                "short_title": item.short_title,
+                "title": item.title,
                 "status": misc.get_wf_state(item),
                 "submission_date" : item.submission_date,
                 "url": _url }

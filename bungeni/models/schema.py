@@ -914,12 +914,10 @@ doc = rdb.Table("doc", metadata,
     # CONTENT
     rdb.Column("acronym", rdb.Unicode(48)),
     # !+LABEL(mr, jan-2011) display label e.g. for link text?
-    # short_title <=> dc:Title !+DescriptiveProperties(mr, jan-2011)
+    # title <=> dc:Title !+DescriptiveProperties(mr, jan-2011)
     # The name given to the resource. Typically, a Title will be a name
     # by which the resource is formally known.
-    rdb.Column("short_title", rdb.Unicode(512), nullable=False), 
-    # long_title <=> no dc equivalent
-    rdb.Column("long_title", rdb.Unicode(1024), nullable=True),
+    rdb.Column("title", rdb.Unicode(1024), nullable=False),
     # description <=> dc:Description !+DescriptiveProperties(mr, jan-2011)
     # An account of the content of the resource. Description may include but is
     # not limited to: an abstract, table of contents, reference to a graphical

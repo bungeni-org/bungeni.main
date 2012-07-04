@@ -403,9 +403,9 @@ class AuditLogView(AuditLogMixin, browser.BungeniBrowserView):
     def __init__(self, context, request):
         browser.BungeniBrowserView.__init__(self, context, request)
         AuditLogMixin.__init__(self)
-        if hasattr(self.context, "short_title"):
+        if hasattr(self.context, "title"):
             self._page_title = "%s: %s" % (
-                _(self._page_title), _(self.context.short_title))
+                _(self._page_title), _(self.context.title))
         else:
             self._page_title = _(self.__class__._page_title)
 

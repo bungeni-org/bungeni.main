@@ -1959,23 +1959,22 @@ class AttachedFileVersionDescriptor(ModelDescriptor):
 class DocDescriptor(ModelDescriptor):
     localizable = False
     default_field_order = [
-        "short_title",
-        "long_title",
+        "title",
         "acronym",
         "description",
-        "language",
-        #"type",
+        "language", # DB_REQUIRED
+        #"type", # DB_REQUIRED
         "doc_type",
         #"doc_procedure",
         "type_number",
-        #"doc_id",
+        #"doc_id", # DB_REQUIRED
         "parliament_id",
-        "owner_id",
+        "owner_id", # DB_REQUIRED
         "registry_number",
         "uri",
         #"group_id", # !+group_id only exposed in specific custom doc types
         "status",
-        "status_date",
+        "status_date", # DB_REQUIRED
         #"amc_signatories",
         #"amc_attachments",
         #"amc_events",
@@ -1989,7 +1988,7 @@ class DocDescriptor(ModelDescriptor):
         # coverage
         # geolocation
         # head_id
-        "timestamp",
+        "timestamp", # DB_REQUIRED
     ]
     sort_on = ["status_date", "type_number"]
     sort_dir = "desc"
@@ -2080,22 +2079,12 @@ class DocDescriptor(ModelDescriptor):
                 show("view edit add listing"),
             ],
         ),
-        Field(name="short_title", # [user-req]
+        Field(name="title", # [user]
             modes="view edit add listing",
             localizable=[
                 show("view edit listing"),
             ],
-            property=schema.TextLine(title=_("Title")),
-            #!+view_widget=widgets.ComputedTitleWidget,
-            edit_widget=widgets.TextWidget,
-            add_widget=widgets.TextWidget,
-        ),
-        Field(name="long_title", # [user]
-            modes="view edit add",
-            localizable=[
-                show("view edit add"),
-            ],
-            property=schema.TextLine(title=_("Summary"), required=False),
+            property=schema.TextLine(title=_("Title"), required=True),
             edit_widget=widgets.LongTextWidget,
             add_widget=widgets.LongTextWidget,
         ),
@@ -2349,8 +2338,7 @@ class AgendaItemDescriptor(DocDescriptor):
     ]
     default_field_order = [
         "parliament_id",
-        "short_title",
-        "long_title",
+        "title",
         "registry_number",
         "owner_id",
         "status",
@@ -2394,8 +2382,7 @@ class MotionDescriptor(DocDescriptor):
     ]
     default_field_order = [
 			"parliament_id",
-			"short_title",
-			"long_title",
+			"title",
 			"type_number",
 			"owner_id",
 			"status",
@@ -2460,6 +2447,16 @@ class BillDescriptor(DocDescriptor):
         hide("listing")
     ]
     fields.extend([
+        Field(name="short_title", # [user-req]
+            modes="view edit add listing",
+            localizable=[
+                show("view edit listing"),
+            ],
+            property=schema.TextLine(title=_("Short Title")),
+            #!+view_widget=widgets.ComputedTitleWidget,
+            edit_widget=widgets.TextWidget,
+            add_widget=widgets.TextWidget,
+        ),
         Field(name="doc_type", # [user-req]
             modes="view edit add listing",
             localizable=[ 
@@ -2498,7 +2495,7 @@ class BillDescriptor(DocDescriptor):
     default_field_order = [
         "parliament_id",
         "short_title",
-        "long_title",
+        "title",
         "owner_id",
         "status",
         "status_date",
@@ -2646,8 +2643,7 @@ class QuestionDescriptor(DocDescriptor):
     default_field_order = [
         "response_text",        
         "parliament_id",
-        "short_title",
-        "long_title",
+        "title",
         "type_number",
         "owner_id",
         "status",
@@ -2691,8 +2687,7 @@ class TabledDocumentDescriptor(DocDescriptor):
     ]
     default_field_order = [
         "parliament_id",
-        "short_title",
-        "long_title",
+        "title",
         "type_number",
         "owner_id",
         "status",
@@ -3197,7 +3192,7 @@ class ReportDescriptor(DocDescriptor):
     sort_on = ["end_date"] + DocDescriptor.sort_on
     fields = [
         LanguageField("language"),
-        Field(name="short_title", label=_("Publications type"), # [user-req]
+        Field(name="title", label=_("Publications type"), # [user-req]
             modes="view edit add listing",
             localizable=[
                 show("view edit listing"),

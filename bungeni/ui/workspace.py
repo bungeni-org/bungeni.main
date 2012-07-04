@@ -43,7 +43,7 @@ class WorkspaceField(object):
 
 # These are the columns to be displayed in the workspace
 workspace_fields = [
-    WorkspaceField("short_title", _("title")),
+    WorkspaceField("title", _("title")),
     WorkspaceField("type", _("item type")),
     WorkspaceField("status", _("status")),
     WorkspaceField("status_date", _("status date"))
@@ -144,11 +144,11 @@ class WorkspaceContainerJSONListing(BrowserPage):
     
     def get_batch(self, start=0, limit=25, lang=None):
         context = removeSecurityProxy(self.context)
-        filter_short_title = self.request.get("filter_short_title", None)
+        filter_title = self.request.get("filter_title", None)
         filter_type = self.request.get("filter_type", None)
         filter_status = self.request.get("filter_status", None)
         results, self.set_size = context.query(
-            filter_short_title=filter_short_title,
+            filter_title=filter_title,
             filter_type=filter_type,
             filter_status=filter_status,
             sort_on=self.sort_on,

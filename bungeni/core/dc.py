@@ -117,10 +117,10 @@ class QuestionDescriptiveProperties(DocumentDescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         if context.type_number is None:
-            return self.translate(context, "short_title")
+            return self.translate(context, "title")
         return "#%d: %s" % (
             context.type_number,
-            self.translate(context, "short_title"))
+            self.translate(context, "title"))
 
     @property
     def description(self):
@@ -145,9 +145,9 @@ class BillDescriptiveProperties(DocumentDescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         if context.type_number is None:
-            return self.translate(context, "short_title")
+            return self.translate(context, "title")
         return "#%d: %s" % (context.type_number, 
-            self.translate(context, "short_title")
+            self.translate(context, "title")
         )
 
     @property
@@ -171,10 +171,10 @@ class MotionDescriptiveProperties(DocumentDescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         if context.type_number is None:
-            return self.translate(context, "short_title")
+            return self.translate(context, "title")
         return "#%d: %s" % (
             context.type_number,
-            self.translate(context, "short_title"))
+            self.translate(context, "title"))
     
     @property
     def description(self):
@@ -456,7 +456,7 @@ class AgendaItemDescriptiveProperties(DocumentDescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return u"%s - %s" % (self.translate(context, "short_title"),
+        return u"%s - %s" % (self.translate(context, "title"),
             self.translate(context.group, "short_name")
         )
 
@@ -469,7 +469,7 @@ class TabledDocumentDescriptiveProperties(DocumentDescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return self.translate(context, "short_title")
+        return self.translate(context, "title")
 
 
 @register.adapter()
@@ -491,7 +491,7 @@ class ReportDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return u'%s' % self.translate(context, "short_title")
+        return u'%s' % self.translate(context, "title")
 
     @property
     def description(self):
@@ -531,7 +531,7 @@ class EventProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return self.translate(context, "short_title")
+        return self.translate(context, "title")
 
 
 @register.adapter()

@@ -22,8 +22,8 @@ class WorkspaceContentAdapter(object):
         self.context = removeSecurityProxy(context)
 
     @property
-    def short_title(self):
-        return self.context.short_title
+    def title(self):
+        return self.context.title
 
     @property
     def type(self):

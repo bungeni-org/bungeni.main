@@ -861,7 +861,7 @@ class Audit(HeadParentedMixin, Entity):
 class DocAudit(Audit):
     """An audit record for a document.
     """
-    label_attribute_name = "short_title"
+    label_attribute_name = "title"
     extended_properties = [
     ]
 #instrument_extended_properties(DocAudit, "doc_audit")
@@ -929,6 +929,11 @@ class Bill(Doc):
     @property
     def publication_date(self):
         return self._get_workflow_date("gazetted")
+    
+    extended_properties = [
+        ("short_title", vp.TranslatedText),
+    ]
+instrument_extended_properties(Bill, "doc")
 #BillAudit
 
 class Motion(AdmissibleMixin, Doc):

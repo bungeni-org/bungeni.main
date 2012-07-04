@@ -38,7 +38,7 @@ Adding a question.
 
   >>> question = add_content(
   ...     domain.Question,
-  ...     short_title="A question",
+  ...     title="A question",
   ...     type="question",
   ...     owner_id=mp_1.user_id,
   ...     language="en")

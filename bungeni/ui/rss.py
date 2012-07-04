@@ -217,7 +217,7 @@ class TimelineRSSView(RSSView):
         return item.date_audit
 
     def get_title(self, item):
-        return "%s %s %s" % (self.i18n_context.short_title,
+        return "%s %s %s" % (self.i18n_context.title,
                              _(u"changes from"),
                              self.format_date(item.date_audit))
 

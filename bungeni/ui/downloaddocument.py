@@ -115,10 +115,10 @@ class DownloadDocument(BrowserView):
 
     @property
     def file_name(self):
-        fname = misc.slugify(self.document.short_title)
+        fname = misc.slugify(self.document.title)
         if interfaces.IReport.providedBy(self.document):
             fname = misc.slugify(
-                u'-'.join((self.document.short_title, 
+                u'-'.join((self.document.title, 
                     self.document.status_date.isoformat(), 
                 ))
             )

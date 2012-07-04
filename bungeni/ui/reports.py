@@ -140,7 +140,7 @@ class ReportBuilder(form.Form, DateTimeFormatMixin):
             context_group_id = self.context.group_id
         
         report = domain.Report(
-            short_title=self.title,
+            title=self.title,
             start_date=self.start_date,
             end_date=self.end_date,
             body=self.generated_content,
@@ -260,7 +260,7 @@ def default_reports(sitting, event):
         sittings = [ExpandedSitting(sitting)]
         report_context = ReportContext(sittings=sittings)
         report = domain.Report()
-        report.short_title = report_title
+        report.title = report_title
         session = Session()
         # !+GROUP_AS_OWNER(mr, apr-2012) we assume for now that the "owner" of
         # the report is the currently logged in user.

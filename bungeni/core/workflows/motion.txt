@@ -60,7 +60,7 @@ Content creation
 
   >>> motion = add_content(
   ...     domain.Motion,
-  ...     short_title=u"My subject",
+  ...     title=u"My subject",
   ...     owner_id = mp_1.user_id,
   ...     language="en")
 

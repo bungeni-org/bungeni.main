@@ -188,7 +188,7 @@ class ParliamentaryItemToSearchResult(object):
 
     @property
     def title(self):
-        return self.context.short_title
+        return self.context.title
 
     @property
     def annotation(self):
@@ -322,13 +322,12 @@ class Search(forms.common.BaseForm, ResultListing, HighlightMixin):
 
     def get_description(self, item):
         return item.description
-
+    
     def get_title(self, item):
         return "%s %s" % (
-            translate_obj(item.head,
-                          self.request.locale.id.language).short_title,
+            translate_obj(item.head, self.request.locale.id.language).title,
             _(u"changes from"))
-
+    
     def get_url(self, item):
         site = getSite()
         base_url = absoluteURL(site, self.request)

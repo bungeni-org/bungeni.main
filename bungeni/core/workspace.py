@@ -133,14 +133,14 @@ class WorkspaceContainer(AlchemistContainer):
         table = orm.class_mapper(domain_class).mapped_table
         utk = dict([(table.columns[k].key, k) for k in table.columns.keys()])
         # TODO : update to support other fields
-        column = table.columns[utk["short_title"]]
+        column = table.columns[utk["title"]]
         return column
 
     def filter_title(self, query, domain_class, kw):
-        if kw.get("filter_short_title", None):
+        if kw.get("filter_title", None):
             column = self.title_column(domain_class)
             return query.filter("""(lower(%s) LIKE '%%%s%%')""" %
-                        (column, kw["filter_short_title"].lower()))
+                        (column, kw["filter_title"].lower()))
         return query
 
     def order_query(self, query, domain_class, kw, reverse):
@@ -203,10 +203,11 @@ class WorkspaceContainer(AlchemistContainer):
                          reverse=reverse)
         if not first_page:
             count = len(results)
-        if not (kw.get("filter_short_title", None) or
-            kw.get("filter_type", None) or
-            kw.get("filter_status", None) or
-            kw.get("filter_status_date", None)):
+        if not (kw.get("filter_title", None) or
+                kw.get("filter_type", None) or
+                kw.get("filter_status", None) or
+                kw.get("filter_status_date", None)
+            ):
             self.set_tab_count(principal.id, count)
         return (results, count)
 

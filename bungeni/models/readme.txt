@@ -333,7 +333,7 @@ Attendance
 Motions
 -------
   >>> motion = domain.Motion()
-  >>> motion.short_title = u"Motion"
+  >>> motion.title = u"Motion"
   >>> motion.language = 'en'
   >>> motion.owner = mp_1
   >>> session.add(motion)
@@ -347,7 +347,7 @@ Questions
 Note that the questions workflow is tested separated (see workflows/question.txt).
 
   >>> question = domain.Question()
-  >>> question.short_title = u"question"
+  >>> question.title = u"question"
   >>> question.language = 'en'
   >>> question.owner = mp_2
   >>> question.question_type = "ordinary"
@@ -362,7 +362,7 @@ Bill
 ----
 
   >>> bill = domain.Bill()
-  >>> bill.short_title = u"Bill"
+  >>> bill.title = u"Bill"
   >>> bill.doc_type = "member"
   >>> bill.language = 'en'
   >>> bill.owner = mp_3
@@ -383,7 +383,7 @@ we may either add the id only:
   >>> session.flush()
   >>> item_schedule.item
   <bungeni.models.domain.Bill object at ...>
-  >>> item_schedule.item.short_title
+  >>> item_schedule.item.title
   u'Bill'
   >>> item_schedule.item.type
   'bill'
@@ -401,7 +401,7 @@ or we can add an object:
   
   >>> item_schedule.item_id == question.doc_id
   True
-  >>> item_schedule.item.short_title
+  >>> item_schedule.item.title
   u'question'
   >>> item_schedule.item.type
   'question'

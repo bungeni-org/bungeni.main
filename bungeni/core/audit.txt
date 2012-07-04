@@ -57,7 +57,7 @@ Initialise Bill
    >>> bill.start_date = datetime.datetime.now()
    >>> bill.end_date = datetime.datetime.now()
    >>> bill.note = "This is a test"
-   >>> bill.short_title = "Sitting Agenda"
+   >>> bill.title = "Sitting Agenda"
    >>> bill.owner = user
    >>> bill.language = "en"
    >>> bill.created_date = datetime.datetime.now()

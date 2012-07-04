@@ -425,7 +425,7 @@
         global_status_var = status;
         // filter per column  
         var get_text_filter = function (oSelf) {
-                var qstr = '&filter_short_title=' + $("#input_short_title").val();
+                var qstr = '&filter_title=' + $("#input_title").val();
                 return qstr;
             };
         var get_select_filter = function (oSelf) {

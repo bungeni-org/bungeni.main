@@ -151,7 +151,7 @@ that is created via the UI form.
   
   >>> question = add_content(
   ...     domain.Question,
-  ...     short_title=u"My subject",
+  ...     title=u"My subject",
   ...     body=u"The question",
   ...     owner_id=mp_3.user_id,
   ...     language="en",
