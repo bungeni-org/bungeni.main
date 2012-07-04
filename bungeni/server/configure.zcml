@@ -63,7 +63,5 @@
       <include package="zope.app.session" />
     -->
   <!-- Add your own component registrations here -->
-
-  <include file="smtp.zcml" />
   
 </configure>

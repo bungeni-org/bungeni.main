@@ -485,6 +485,9 @@ class IFeatureAddress(IFeature):
 class IFeatureWorkspace(IFeature):
     """Marks support for "workspace" feature.
     """
+class IFeatureNotification(IFeature):
+    """Marks support for "workspace" feature.
+    """
 #
 
 ''' !+DATERANGEFILTER(mr, dec-2010) disabled until intention is understood

@@ -5,6 +5,7 @@
     xmlns:xapian="http://namespaces.objectrealms.net/xapian"
     xmlns:plone="http://namespaces.plone.org/plone"
     xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="bungeni.core">
     
     <include package="ore.xapian" />
@@ -249,6 +250,12 @@
     />
     
     <include file="uri.zcml" />
+    <utility
+     zcml:condition="not-have devmode"
+     factory=".emailnotifications.BungeniSMTPMailer" />
 
+  <utility
+     zcml:condition="have devmode"
+     factory=".emailnotifications.BungeniDummySMTPMailer" />
 </configure>
 

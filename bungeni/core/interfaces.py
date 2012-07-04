@@ -4,7 +4,7 @@ from zope.container.interfaces import IContainer
 from zope.container.interfaces import IContentContainer
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.container.interfaces import IReadContainer
-
+from zope.configuration import fields
 
 class INavigationProxy(IReadContainer):
     __target__ = interface.Attribute(
@@ -235,3 +235,128 @@ class IWorkspaceTabsUtility(interface.Interface):
         """Returns the tab an object should be in, given its domain class,
         status and role
         """
+
+class IMessageQueueConfig(interface.Interface):
+    def get_message_exchange():
+        """Message exchange
+        """
+    def get_task_exchange():
+        """Task exchange
+        """
+    def get_username():
+        """Username to be used to connect to the AMQP server
+        """
+    def get_password():
+        """Password to be used to connect to the AMQP server
+        """
+    def get_host():
+        """AMQP server host
+        """
+    def get_port():
+        """AMQP server port
+        """
+    def get_virtual_host():
+        """AMQP virtual host
+        """
+    def get_channel_max():
+        """Maximum number of channels to allow
+        """
+    def get_frame_max():
+        """Max frame size
+        """
+    def get_heartbeat():
+        """Turn heartbeat checking on or off
+        """
+    def get_number_of_workers():
+        """Get number of task workers
+        """
+    def get_task_queue():
+        """Get name for the task queue
+        """
+
+
+class IMessageQueueConfigSchema(interface.Interface):
+    message_exchange=schema.Text(
+        title=u"Message Exchange",
+        description=u"Fanout Exchange name to be used",
+        required=True,
+        )
+    task_exchange=schema.Text(
+        title=u"Task Queue Exchange",
+        description=u"Direct task queue exchange name to be used",
+        required=True,
+        )
+    username=schema.Text(
+        title=u"Username",
+        description=u"Username to be used to connect to the AMQP server",
+        required=True,
+        default=u"guest"
+        )
+    password=schema.Text(
+        title=u"Password",
+        description=u"Password to be used to connect to the AMQP server",
+        required=True,
+        default=u"guest"
+        )
+    host=schema.Text(
+        title=u"Host",
+        description=u"AMQP Server Host",
+        required=True,
+        default=u"localhost"
+        )
+    port=schema.Int(
+        title=u"Port",
+        description=u"AMQP Server Port Number",
+        required=True,
+        default=5672
+        )
+    virtual_host=schema.Text(
+        title=u"Virtual Host",
+        description=u"Virtual host to use",
+        required=True,
+        default=u"/"
+        )
+    channel_max=schema.Int(
+        title=u"Channel Max",
+        description=u"Maximum number of channels to allow",
+        required=True,
+        default=0
+        )
+    frame_max=schema.Int(
+        title=u"Max frame size",
+        description=u"The maximum byte size for an AMQP Frame",
+        required=True,
+        default=131072
+        )
+    heartbeat=fields.Bool(
+        title=u"Heartbeat",
+        description=u"Turn heartbeat checking on or off",
+        required=True,
+        default=False
+        )
+    number_of_workers=schema.Int(
+        title=u"Number of worker processes",
+        description=u"Number of worker daemon processes",
+        required=True,
+        default=5
+        )
+    task_queue=schema.Text(
+        title=u"Task queue name",
+        description=u"Task queue name",
+        required=True,
+        default=u"task_queue"
+        )
+        
+class INotificationsUtility(interface.Interface):
+    def set_transition_based_notification(domain_class, state, roles):
+        """Set the roles to be notified when a document reaches a certain
+        state
+        """
+    def set_time_based_notification(domain_class, state, roles, time):
+        """Set the roles to be notified after a certain amount of time has
+        elapsed since state was reached
+        """  
+
+class IBungeniMailer(interface.Interface):
+    """Interface for mailer utility
+    """

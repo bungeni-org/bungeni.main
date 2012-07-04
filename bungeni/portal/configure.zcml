@@ -11,6 +11,10 @@
     
     <!-- Setup file storage -->
     <bungeni:fs fs_path="fs" />
+    <!-- Setup notifications -->
+    <bungeni:messagequeue
+      message_exchange="bungeni" 
+      task_exchange="bungeni_notification_tasks"/>
     
     <!-- Setup Database Connection -->
     <!-- load from bungeni_custom -->
