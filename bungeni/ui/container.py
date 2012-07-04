@@ -20,6 +20,7 @@ from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.models import interfaces as mfaces
 from bungeni.models import domain
 
+from bungeni.core.workflow.interfaces import IWorkflowed
 from bungeni.core import translation
 
 from bungeni.ui import interfaces as ufaces
@@ -419,40 +420,26 @@ class PublicStatesContainerJSONListing(ContainerJSONListing):
     """
     # !+PUBLIC_CONTAINER_VIEW(mr, may-2102) having permission=None is a
     # somewhat dangerous optimization of avoiding to call checkPermission on
-    # each item (under the ssumption that the state-based logic will never
-    # be faulty. Should rellay be left as "ziope.View". 
+    # each item (under the assumption that the state-based logic will never
+    # be faulty. Should really be left as "ziope.View". 
     # In any case, this view class will go away.
     permission = None
     
     def query_add_filters(self, query, *filter_strings):
         """Add filtering on public workflow states
         """
-        ''' !+PUBLIC_CONTAINER_VIEW(mr, may-2102) any errors from following 
-        should NOT be silenced
-        - all public listings are on item types that MUST be workflowed.
-        - "public" listings will anyway go away.
-        '''
-        #try:
-        type_key = polymorphic_identity(self.context.domain_model)
-        workflow = capi.get_type_info(type_key).workflow
-        if workflow:
+        if IWorkflowed.implementedBy(self.context.domain_model):
+            type_key = polymorphic_identity(self.context.domain_model)
+            workflow = capi.get_type_info(type_key).workflow
             public_wfstates = workflow.get_state_ids(tagged=["public"], 
                 restrict=False)
             if public_wfstates:
                 query = query.filter(
                     self.domain_model.status.in_(public_wfstates))
         else:
-            log.warn("PublicStateContainerJSONListing: No workflow was found"
-                " for type with key %s (%s). No public states filter applied.", 
-                type_key, self.context.domain_model 
-            )
-        ''' !+PUBLIC_CONTAINER_VIEW
-        except KeyError, e:
-            # not workflowed...
-            log.warn("PublicStatesContainerJSONListing / get_workflow "
-                "for %s ERROR: %s: %s:" % (
-                    self.context.domain_model, e.__class__.__name__, e))
-        '''
+            log.warn("PublicStateContainerJSONListing.query_add_filters called "
+                "a type [%s] that is not workflowed... cannot apply any filters "
+                "on workflow states!" % (self.context.domain_model))
         return super(PublicStatesContainerJSONListing, self
             ).query_add_filters(query, *filter_strings)
     

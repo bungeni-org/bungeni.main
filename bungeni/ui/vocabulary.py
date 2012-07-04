@@ -13,11 +13,14 @@ import hashlib
 from lxml import etree
 
 from zope import interface
-from zope.schema.interfaces import IContextSourceBinder, IBaseVocabulary
+from zope.schema.interfaces import (
+    IContextSourceBinder, 
+    IBaseVocabulary, # IBaseVocabulary(ISource)
+    IVocabulary, # IVocabulary(IIterableVocabulary, IBaseVocabulary)
+    IVocabularyFactory)
 from zope.schema import vocabulary
 from zope.security.proxy import removeSecurityProxy
 from zope.app.container.interfaces import IContainer
-from zope.schema.interfaces import IVocabularyFactory
 from zope.component import getUtility
 from zope.component import getUtilitiesFor
 from zope.securitypolicy.interfaces import IRole
@@ -78,7 +81,7 @@ class BaseVocabularyFactory(object):
         
         # IBaseVocabulary (inherits from ISource) is gained "automagically" 
         # when registering instance as a utility via ZCML
-        IBaseVocabulary, # getTerm(value) -> ITerm
+        IBaseVocabulary, # getTerm(value) -> ITerm, (ISource) __contains__(value)
         
         # can create vocabularies !+ same as IContextSourceBinder?!
         IVocabularyFactory, # __call__(context) -> IVocabulary
@@ -92,12 +95,19 @@ class VDEXManager(imsvdex.vdex.VDEXManager):
     fallback_to_default_language = True
 
 class VDEXVocabularyMixin(object):
+    interface.implements(IBaseVocabulary)
     
     def __init__(self, file_name):
         self.vdex = VDEXManager(
             file=open(capi.get_path_for("vocabularies", file_name)))
     
-    # zope.schema.interfaces.IBaseVocabulary
+    # zope.schema.interfaces.IBaseVocabulary (inherits from ISource)
+    
+    def __contains__(self, value):
+        """Is the value available in this source?
+        As per zope.schema.interfaces.ISource.
+        """
+        return self.vdex.getTermById(value) is not None
     
     def getTerm(self, value):
         """Return the zope.schema.vocabulary.SimpleTerm instance for value.
@@ -111,7 +121,7 @@ class VDEXVocabularyMixin(object):
     
     def getTermById(self, value):
         """Return the caption(s) for a given term identifier.
-        As per imsvdex.vdex.VDEXManager.
+        As per imsvdex.vdex.VDEXManager (well, almost... None is LookupError).
         """
         term = self.vdex.getTermById(value)
         if term is None:
@@ -151,6 +161,20 @@ class FlatVDEXVocabularyFactory(VDEXVocabularyMixin, BaseVocabularyFactory):
     vocabulary.SimpleVocabulary() and then only specify a single 
     default/reference language in the vdex file.
     """
+    interface.implements(IVocabulary) # !+BaseVocabularyFactory should probably 
+    # simply include this, instead of IBaseVocabulary
+    
+    # add __iter__, __len__ (from zope.schema.interfaces.IIterableVocabulary)
+    def __iter__(self):
+        """Return an iterator which provides the 
+        (zope.schema.vocabulary.SimpleTerm) terms from the vocabulary.
+        """
+        for term_value in self.vdex.term_dict:
+            yield self.getTerm(term_value)
+    def __len__(self):
+        """Return the number of valid terms, or sys.maxint."""
+        return len(self.vdex.term_dict)
+    
     value_cast = unicode
     def __call__(self, context=None):
         """Return a context-bound instance that implements ISource.
@@ -159,9 +183,10 @@ class FlatVDEXVocabularyFactory(VDEXVocabularyMixin, BaseVocabularyFactory):
         # self.vdex.getVocabularyDict(lang="*") -> {term_id: ({lang: caption}, children)}
         terms = []
         assert self.vdex.isFlat() is True
+        value_cast = self.__class__.value_cast
         for (key, (caption, children)) in all_terms.iteritems():
             # assert children is None
-            term = vocabulary.SimpleTerm(self.__class__.value_cast(key), key, caption)
+            term = vocabulary.SimpleTerm(value_cast(key), key, caption)
             terms.append(term)
         return vocabulary.SimpleVocabulary(terms)
 
@@ -677,7 +702,7 @@ class MinistrySource(SpecializedSource):
         query = self.constructQuery(context)
         results = query.all()
         terms = []
-        trusted=removeSecurityProxy(context)
+        trusted = removeSecurityProxy(context)
         ministry_id = getattr(trusted, self.value_field, None)
         for ob in results:
             terms.append(
@@ -686,6 +711,10 @@ class MinistrySource(SpecializedSource):
                     token = getattr(ob, "group_id"),
                     title = get_translated_group_label(ob)
                 ))
+        # !+MINISTRY_ID(mr, jul-2012) logic below must be faulty... (a) if this 
+        # is ever executed, it will fail as "obj" is undefined (since long time), 
+        # and (b) it seems to not have failed for a long time, so what is the 
+        # code below trying to do anyway?
         if ministry_id:
             if query.filter(domain.Group.group_id == ministry_id).count() == 0:
                 session = Session()
