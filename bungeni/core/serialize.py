@@ -10,7 +10,7 @@ log = __import__("logging").getLogger("bungeni.core.serialize")
 
 from zope.security.proxy import removeSecurityProxy
 from zope.lifecycleevent import IObjectModifiedEvent, IObjectCreatedEvent
-from sqlalchemy.orm import RelationshipProperty, class_mapper
+from sqlalchemy.orm import RelationshipProperty, ColumnProperty, class_mapper
 from sqlalchemy.types import Binary
 
 from bungeni.alchemist.container import stringKey
@@ -86,9 +86,6 @@ def publish_to_xml(context):
         include.append("event")
     
     exclude = ["data", "event", "attachments", "changes"]
-    exclude += ["image"] # !+r9462 tmp disabling serializing of image as this 
-    # gives a UnicodeDecodeError error, thus breaking also all workflow 
-    # transitions on which the document is set to be serialized.
     
     # include binary fields and include them in the zip of files for this object
     for column in class_mapper(context.__class__).columns:
@@ -263,6 +260,11 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[]):
         else:
             if isinstance(property, RelationshipProperty):
                 continue
+            elif isinstance(property, ColumnProperty):
+                columns = property.columns
+                if len(columns)==1:
+                    if columns[0].type.__class__ == Binary:
+                        continue
             result[property.key] = value
     return result
 
