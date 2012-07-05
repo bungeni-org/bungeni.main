@@ -75,7 +75,7 @@ def publish_to_xml(context):
     include = []
     # list of files to zip
     files = []
-    #data dict to be published
+    # data dict to be published
     data = {}
     
     context = removeSecurityProxy(context)
@@ -85,9 +85,12 @@ def publish_to_xml(context):
     if interfaces.IFeatureAudit.providedBy(context):
         include.append("event")
     
-    exclude=["data", "event", "attachments", "changes"]
+    exclude = ["data", "event", "attachments", "changes"]
+    exclude += ["image"] # !+r9462 tmp disabling serializing of image as this 
+    # gives a UnicodeDecodeError error, thus breaking also all workflow 
+    # transitions on which the document is set to be serialized.
     
-    #Include binary fields and include them in the zip of files for this object
+    # include binary fields and include them in the zip of files for this object
     for column in class_mapper(context.__class__).columns:
         if column.type.__class__ == Binary:
             exclude.append(column.key)
@@ -97,7 +100,7 @@ def publish_to_xml(context):
                     f.write(content)
                     files.append(f.name)
                     data[column.key] = dict(saved_file=os.path.basename(f.name))
-                
+    
     data.update(
         obj2dict(context, 1, 
             parent=None,
