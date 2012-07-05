@@ -110,7 +110,7 @@ def catalyse_descriptors(module):
             continue
         # catalyse each (domain_model, descriptor) pair
         ctx = CatalystContext()
-        setup_log(ctx)
+        #setup_log(ctx) #!+INI
         catalyst(ctx, kls, descriptor)
         # type_info, register the descriptor
         type_key = naming.polymorphic_identity(kls)
@@ -127,13 +127,13 @@ def catalyse_descriptors(module):
         # !+NO_NEED_TO_INSTANTIATE here we cache an instance...
         ti.descriptor = descriptor()
     
-    m = ("\n\nDone all workflow/descriptor related setup... running with:\n  " + 
-        "\n  ".join(sorted([ "%s: %s" % (key, ti)
-                for key, ti in capi.iter_type_info() ])) + 
-        "\n")
-    log.debug(m)
+    m = "\n\nDone all workflow/descriptor setup... running with:\n\n%s\n\n" % (
+            "\n\n".join(sorted(
+                [ "%s: %s" % (key, ti) for key, ti in capi.iter_type_info() ])
+            ))
+    log.debug(m) #!+INI being set up many times... 
 
-def setup_log(ctx): # !+INI?
+def setup_log(ctx):
     ctx.logger = log
     logging.basicConfig()
     formatter = logging.Formatter("ALCHEMIST: %(module)s -> %(message)s")
@@ -162,7 +162,7 @@ class CatalystContext(object):
     views = None
     relation_viewlets = None
     logger = None
-    echo = True
+    echo = False #!+INI True
 
 
 def catalyst(ctx,
@@ -184,7 +184,8 @@ def catalyst(ctx,
     ctx.views = {} # keyed by view type (add|edit)
     ctx.relation_viewlets = {} # keyed by relation name
     
-    ctx.logger.debug("context=%s, class=%s, descriptor=%s, echo=%s" % (
+    #ctx.logger.debug("context=%s, class=%s, descriptor=%s, echo=%s" % ( #!+INI
+    log.debug("context=%s, class=%s, descriptor=%s, echo=%s" % (
             ctx, kls, descriptor, ctx.echo))
     
     # create a domain interface if it doesn't already exist 

@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <workflow
-   id="question-workflow"
-   title="Question Workflow"
-   description=""
-   initial_state="">
+    id="question-workflow"
+    title="Question Workflow"
+    description=""
+    >
 
   <state id="draft" title="a draft response">
   </state>

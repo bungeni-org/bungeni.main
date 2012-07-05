@@ -126,22 +126,17 @@ def load(path_custom_workflows, name):
     file_path = os.path.join(path_custom_workflows, "%s.xml" % (name))
     return _load(etree.fromstring(open(file_path).read()), name)
 
-def _load(workflow, name):
+def _load(workflow, name, domain="bungeni"):
     """ (workflow:etree_doc, name:str) -> Workflow
     """
     # !+ @title, @description
     transitions = []
     states = []
-    domain = strip_none(workflow.get("domain")) 
-    # !+domain(mr, jul-2011) needed?
     wuids = set() # unique IDs in this XML workflow file
     note = strip_none(workflow.get("note"))
     allowed_tags = (strip_none(workflow.get("tags")) or "").split()
     
-    # initial_state, in XML this must be ""
-    assert workflow.get("initial_state") == "", "Workflow [%s] initial_state " \
-        "attribute must be empty string, not [%s]" % (
-            name, workflow.get("initial_state"))
+    # initial_state, in XML indicated a transition source=""
     initial_state = None
     
     ZCML_PROCESSED = bool(name in ZCML_WORKFLOWS_PROCESSED)
