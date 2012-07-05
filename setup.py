@@ -65,6 +65,7 @@ setup(name='bungeni',
                         'z3c.dav',
                         'plone.i18n',
                         'plone.transforms',
+                        'pika',
             # The followning are used by bungeni.ui
                         'zope.app.cache',
                         'plone.memoize',
