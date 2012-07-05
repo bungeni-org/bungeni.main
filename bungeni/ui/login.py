@@ -11,7 +11,7 @@ from zope.app.security.interfaces import IUnauthenticatedPrincipal
 from zope.app.component.hooks import getSite
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.component import getUtility
-from zope.sendmail.interfaces import ISMTPMailer
+from bungeni.core.interfaces import IBungeniMailer
 
 from bungeni.models.domain import User
 from bungeni.alchemist import Session
@@ -99,15 +99,15 @@ class RestoreLogin(form.FormBase):
             user = session.query(User).filter(
                             User.email==email).first()
             if user:
-                mailer = getUtility(ISMTPMailer, name="bungeni.smtp")
+                mailer = getUtility(IBungeniMailer)
                 self.message = _(u"Your login is: ") + user.login
                 
                 text = ViewPageTemplateFile("templates/mail.pt")(self)
                 message = MIMEText(text)
                 message.set_charset("utf-8")
                 message["Subject"] = _(u"Bungeni login restoration")
-                message["From"] = settings.default_sender
-                mailer.send(settings.default_sender, email, str(message))
+                message["To"] = email
+                mailer.send(message)
                 self.status = _(u"Your login was sent to you email.")
             else:
                 self.status = _(u"Wrong email address.")
@@ -169,7 +169,7 @@ class RestorePassword(form.FormBase):
             link.user_id = user.user_id
             session.add(link)
                         
-            mailer = getUtility(ISMTPMailer, name="bungeni.smtp")
+            mailer = getUtility(IBungeniMailer)
                 
                 
             self.message = _(u"Restore password link: ")\
@@ -181,9 +181,8 @@ class RestorePassword(form.FormBase):
             message = MIMEText(text)
             message.set_charset("utf-8")
             message["Subject"] = _(u"Bungeni password restoration")
-            message["From"] = settings.default_sender
-                
-            mailer.send(settings.default_sender, email, str(message))
+            message["To"] = email
+            mailer.send(str(message))
             self.status = _(u"Email was sent!")
         else:
             self.status = _(u"User not found!")

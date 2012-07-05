@@ -70,7 +70,7 @@ class State(object):
     """
     zope.interface.implements(IRolePermissionMap)
     
-    def __init__(self, id, title, note, actions, permissions, notifications,
+    def __init__(self, id, title, note, actions, permissions,
             tags, permissions_from_parent=False, obsolete=False, publish=False
         ):
         self.id = id # status
@@ -78,7 +78,6 @@ class State(object):
         self.note = note
         self.actions = actions # [callable]
         self.permissions = permissions
-        self.notifications = notifications
         self.tags = tags # [str]
         self.permissions_from_parent = permissions_from_parent # bool
         self.obsolete = obsolete # bool
@@ -104,10 +103,6 @@ class State(object):
             if assign == DENY:
                rpm.denyPermissionToRole(permission, role)
         '''
-        # notifications
-        for notification in self.notifications:
-            # call notification to execute
-            notification(context)
     
     # IRolePermissionMap
     #def getPermissionsForRole(self, role_id):

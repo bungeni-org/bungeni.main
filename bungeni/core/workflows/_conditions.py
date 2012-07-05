@@ -48,15 +48,6 @@ def context_is_public(context):
     # also return False for None (Unset)
     return bool(state.getSetting("zope.View", "bungeni.Anonymous"))
 
-def clerk_receive_notification(context):
-    return prefs.getClerksOfficeReceiveNotification()
-
-def owner_receive_notification(context):
-    return False #!+NOTIFICATION_SETTINGS
-
-def ministry_receive_notification(context):
-    return prefs.getMinistriesReceiveNotification() and context.ministry_id
-
 
 # parliamentary items
 

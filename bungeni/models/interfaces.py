@@ -232,39 +232,6 @@ class IBungeniSetup(interface.Interface):
         """
 
 class IBungeniSettings(interface.Interface):
-    speakers_office_email = schema.TextLine(
-        title=_(u"Speaker's Office Email"),
-        default=u"speakers.office@parliament.go.tld"
-    )
-    speakers_office_notification = schema.Bool(
-        title=_(u"Speaker's Office Notification"),
-        description=_(u"Alert the speaker's office when a document is "
-            "submitted"
-        ),
-        default=False
-    )
-    clerks_office_notification = schema.Bool(
-        title=_(u"Clerk's Office Notification"),
-        description=_(u"Alert the clerk's office by e-mail when a document is "
-            "submitted"
-        ),
-        default=False
-    )
-    clerks_office_email = schema.TextLine(
-        title=_(u"Clerks's Office Email"),
-        default=u"clerks.office@parliament.go.tld"
-    )
-    ministries_notification = schema.Bool(
-        title=_(u"Ministries Notification"),
-        description=_(u"Notify concerned ministries by e-mail when a document "
-            "is submitted"
-        ),
-        default=False
-    )
-    administrators_email = schema.TextLine(
-            title=_(u"Administrator's Email"),
-            default=u"admin@parliament.go.tld"
-    )
     question_submission_allowed = schema.Bool(
         title=_(u"Allow Question Submission"),
         default=True
@@ -275,13 +242,6 @@ class IBungeniSettings(interface.Interface):
             "automatically deferred"
         ),
         default=10
-    )
-    days_to_notify_ministry_unanswered = schema.Int(
-        title=_(u"Days to Notify Ministry of Pending Response"),
-        description=_(u"Days after which to notify concerned ministry and  "
-            "clerk's office of questions with pending responses"
-        ),
-        default=5
     )
     days_before_question_schedule = schema.Int(
         title=_(u"Days before question scheduled"),
