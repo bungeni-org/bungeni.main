@@ -21,26 +21,13 @@ var ploneFormTabbing = {};
 
 ploneFormTabbing._toggleFactory = function(container, tab_ids, panel_ids) {
     return function(e) {
-        //main-wrapper comes only from eXist integration at the moment
-        if ($("#main-wrapper").length < 1) {
-            jQuery(tab_ids).parent().removeClass('active');
-        }
-        else {
-            jQuery(tab_ids).removeClass('selected');
-        }
+        jQuery(tab_ids).removeClass('selected');
         jQuery(panel_ids).addClass('hidden');
 
         var orig_id = this.tagName.toLowerCase() == 'a' ? 
             '#' + this.id : jQuery(this).val();
         var id = orig_id.replace(/^#fieldsetlegend-/, "#fieldset-");
-        
-        if ($("#main-wrapper").length < 1) {
-            jQuery(orig_id).parent().addClass('active');
-        }
-        else {
-            jQuery(orig_id).addClass('selected');
-        }
-        
+        jQuery(orig_id).addClass('selected');
         jQuery(id).removeClass('hidden');
 
         jQuery(container).find("input[name=fieldset.current]").val(orig_id);
@@ -123,14 +110,7 @@ ploneFormTabbing.initSelection = function(){
 
 ploneFormTabbing.initializeDL = function() {
     var tabs = jQuery(ploneFormTabbing._buildTabs(this, jQuery(this).children('dt')));
-    if ($("#main-wrapper").length < 1) {
-        jQuery(this).before(tabs);
-    }
-    else {
-        jQuery($("#portal-column-content > div")).prepend(tabs);
-        //http://stackoverflow.com/questions/268490/jquery-document-createelement-equivalent
-        $("ul.formTabs").wrap('<div id="tab-menu">');
-    }
+    jQuery(this).before(tabs);
     jQuery(this).children('dd').addClass('formPanel');
 
     tabs = tabs.find('li.formTab a,option.formTab');
