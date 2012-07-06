@@ -114,15 +114,17 @@ def catalyse_descriptors(module):
         catalyst(ctx, kls, descriptor)
         # type_info, register the descriptor
         type_key = naming.polymorphic_identity(kls)
-        try:
-            ti = capi.get_type_info(type_key)
-        except KeyError:
-            # no TI entry, must be a non-workflowed domain type
-            #assert not IWorkflowed.implementedBy(kls) #!+report4_sitting fails
-            # add TI entry
-            type_info._add(None, ctx.domain_interface, None, kls, None, None)
-            ti = capi.get_type_info(type_key)
-            assert ti.domain_model is kls
+        ti = capi.get_type_info(type_key)
+        # non-workflowed types had not had domain_model set as yet...
+        if (not IWorkflowed.implementedBy(kls) 
+                or ti.domain_model is None # otherwise report4_sitting fails...
+            ):
+            # non-workflowed type - domain_model not set as yet...
+            #assert ti.domain_model is None, "%s domain_model %s is %s not None" % (
+            #    type_key, ti.domain_model, kls)
+            ti.domain_model = kls
+        assert ti.domain_model is kls, "%s domain_model %s is not %s" % (
+                type_key, ti.domain_model, kls)
         ti.descriptor_model = descriptor
         # !+NO_NEED_TO_INSTANTIATE here we cache an instance...
         ti.descriptor = descriptor()
@@ -131,7 +133,7 @@ def catalyse_descriptors(module):
             "\n\n".join(sorted(
                 [ "%s: %s" % (key, ti) for key, ti in capi.iter_type_info() ])
             ))
-    log.debug(m) #!+INI being set up many times... 
+    log.debug(m)
 
 def setup_log(ctx):
     ctx.logger = log

@@ -163,6 +163,10 @@ class IEventContainer(IBungeniContainer): pass
 # should it inherit from IITEM, or from IVersion? Note that 
 # IITEMVersionContainer inherits from IVersionContainer (is used by alchemist).
 
+class IDoc(IBungeniContent):
+    """Doc - dedicated interface.
+    """
+
 class IQuestion(IBungeniContent):
     """Parliamentary Question.
     """

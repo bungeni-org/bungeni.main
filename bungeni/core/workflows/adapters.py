@@ -23,6 +23,7 @@ from bungeni.utils.capi import capi
 
 __all__ = ["get_workflow"]
 
+# !+DEPRECATE(mr, jul-2012) replace with ti.workflow
 def get_workflow(name):
     """Get the named workflow utility.
     """
@@ -70,13 +71,13 @@ def apply_customization_workflow(name, ti):
     """Apply customizations, features as per configuration from a workflow. 
     Must (currently) be run after db setup.
     """
-    # support to infer/get the domain class from the type key
     from bungeni.models import domain, orm
-    def get_domain_kls(name):
+    def get_domain_kls(type_key):
         """Infer the target domain kls from the type key, following underscore 
-        naming to camel case convention.
+        naming to camel case convention, and retrieve the kls from domain.
+        Raise Attribute error if kls not defined on domain.
         """
-        return getattr(domain, naming.camel(name))
+        return getattr(domain, naming.camel(type_key))
     
     # get the domain class, and associate with type
     kls = get_domain_kls(name)
@@ -101,10 +102,11 @@ def apply_customization_workflow(name, ti):
 def load_workflows():
     # workflow instances (+ adapter *factories*)
     for type_key, ti in capi.iter_type_info():
-        # load/get Workflow instance for this key, and associate with type
-        ti.workflow = load_workflow(ti.workflow_key)
-        # adjust domain_model as per workflow, register/associate domain_model
-        apply_customization_workflow(type_key, ti)
+        if ti.workflow_key is not None:
+            # load/get Workflow instance for this key, and associate with type
+            ti.workflow = load_workflow(ti.workflow_key)
+            # adjust domain_model as per workflow, register/associate domain_model
+            apply_customization_workflow(type_key, ti)
 
 
 def register_workflow_adapters():
@@ -154,13 +156,13 @@ def _setup_all():
     """
     load_workflows()
     # !+zcml_check_regenerate(mr, sep-2011) should be only done *once* and 
-    # when *all* workflows are loaded i.e. only first time (on module import).
+    # when *all* workflows are loaded.
     # check/regenerate zcml directives for workflows
     xmlimport.zcml_check_regenerate()
     # cleared by each call to zope.app.testing.placelesssetup.tearDown()
     register_workflow_adapters()
 
-# do it, when this module is imported. 
+# do it (when this module is loaded)
 _setup_all()
 
 #

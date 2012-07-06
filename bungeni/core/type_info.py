@@ -32,6 +32,7 @@ def _iter():
     for type_key, ti in TYPE_REGISTRY:
         yield type_key, ti
 
+''' !+UNUSED
 def _add(workflow_key, iface, workflow, domain_model, 
         descriptor_model, descriptor
     ):
@@ -55,6 +56,7 @@ def _add(workflow_key, iface, workflow, domain_model,
         TYPE_REGISTRY.append((type_key, ti))
     else:
         raise ValueError, "An type entry for [%s] already exists." % (type_key)
+'''
 
 def _get(discriminator):
     """Get the TypeInfo instance for discriminator, that may be any of:
@@ -187,6 +189,11 @@ class TI(object):
 - type_key IS the underscore-separated lowercase of the domain cls name 
   i.e. utils.naming.polymorphic_identity(domain_model)
 - !+ ti.workflow_key SHOULD always be equal to type_key
+- !+ corresponding Container/Version/X interfaces should ALWAYS be auto-generated
+- !+ dedicated interfaces for archetype incantations should be auto-generated, 
+    from specific workflow name/attr... e.g. via:
+    zope.interface.interface.InterfaceClass(iname, bases, __module__)
+- !+ should ti.interface be automatically generated also for system types?
 
 Usage:
     from bungeni.utils.capi import capi
@@ -195,47 +202,71 @@ Usage:
 '''
 TYPE_REGISTRY = [
     # (key, ti)
-    # - order is relevant (dictates workflow loading order)
     # - the type key, unique for each type, is the underscore-separated 
     #   lowercase name of the domain_model (the domain class)
-    # - this is the initial list only... other types added dynamically
+    # - order is relevant (dictates workflow loading order)
+    
+    ## feature "support" types, system types, required
+    
+    # workflowed
     ("user_address", TI("address", interfaces.IUserAddress)),
     ("group_address", TI("address", interfaces.IGroupAddress)),
     # !+Attachment (mr, jul-2011)
     # a) must be loaded before any other type that *may* support attachments!
     # b) MUST support versions
     ("attachment", TI("attachment", interfaces.IAttachment)),
+    ("event", TI("event", interfaces.IEvent)),
+    ("sitting", TI("sitting", interfaces.ISitting)),
+    ("heading", TI("heading", interfaces.IHeading)),
+    ("user", TI("user", interfaces.IBungeniUser)),
+    ("signatory", TI("signatory", interfaces.ISignatory)),
+    
+    # non-workflowed
+    ("user_delegation", TI(None, interfaces.IUserDelegation)),
+    ("title_type", TI(None, interfaces.ITitleType)),
+    ("member_title", TI(None, interfaces.IMemberTitle)),
+    ("doc", TI(None, interfaces.IDoc)),
+    ("doc_version", TI(None, None)), #interfaces.IDocVersion)), #!+IVERSION
+    ("change", TI(None, interfaces.IChange)),
+    ("attachment_version", TI(None, None)), #interfaces.IAttachmentVersion)), #!+IVERSION
+    ("venue", TI(None, interfaces.IVenue)),
+    ("session", TI(None, interfaces.ISession)),
+    ("sitting_attendance", TI(None, interfaces.ISittingAttendance)),
+    ("country", TI(None, interfaces.ICountry)),
+    ("item_schedule", TI(None, interfaces.IItemSchedule)),
+    ("item_schedule_discussion", TI(None, interfaces.IItemScheduleDiscussion)),
+    ("editorial_note", TI(None, interfaces.IEditorialNote)),
+    ("report4_sitting", TI(None, interfaces.IReport4Sitting)),
+    # !+NAMING: member-related -> Group name + "Member" (no + "ship")
+    ("group", TI("group", interfaces.IBungeniGroup)),
+    ("group_membership", TI("membership", interfaces.IBungeniGroupMembership)),
+    
+    
+    ## custom types, optional, always workflowed
+    
+    # archetype: doc
     ("agenda_item", TI("agendaitem", interfaces.IAgendaItem)),
     ("bill", TI("bill", interfaces.IBill)),
     ("motion", TI("motion", interfaces.IMotion)),
     ("question", TI("question", interfaces.IQuestion)),
     ("tabled_document", TI("tableddocument", interfaces.ITabledDocument)),
-    ("event", TI("event", interfaces.IEvent)),
     ("report", TI("report", interfaces.IReport)),
-    #("report4_sitting", TI("report", interfaces.IReport4Sitting)),
-    # !+NAMING: member-related -> Group name + "Member" (no + "ship")
-    ("group", TI("group", interfaces.IBungeniGroup)),
-    ("group_membership", TI("membership", interfaces.IBungeniGroupMembership)),
+    
+    # archetype: group
     ("office", TI("group", interfaces.IOffice)),
-    ("office_member", TI("membership", interfaces.IOfficeMember)),
     ("political_group", TI("group", interfaces.IPoliticalGroup)),
-    ("political_group_member", TI("membership", interfaces.IPoliticalGroupMember)),
     ("ministry", TI("group", interfaces.IMinistry)),
-    ("minister", TI("membership", interfaces.IMinister)),
     ("committee", TI("committee", interfaces.ICommittee)),
-    ("committee_member", TI("membership", interfaces.ICommitteeMember)),
-    ("committee_staff", TI("membership", interfaces.ICommitteeStaff)),
     ("government", TI("group", interfaces.IGovernment)),
     ("parliament", TI("parliament", interfaces.IParliament)),
+    
+    # archetype: member    
+    ("office_member", TI("membership", interfaces.IOfficeMember)),
+    ("political_group_member", TI("membership", interfaces.IPoliticalGroupMember)),
+    ("minister", TI("membership", interfaces.IMinister)),
+    ("committee_member", TI("membership", interfaces.ICommitteeMember)),
+    ("committee_staff", TI("membership", interfaces.ICommitteeStaff)),
     # !+parliament_member
-    ("member_of_parliament", TI("membership", interfaces.IMemberOfParliament)),
-    ("sitting", TI("sitting", interfaces.ISitting)),
-    ("heading", TI("heading", interfaces.IHeading)),
-    ("user", TI("user", interfaces.IBungeniUser)),
-    ("signatory", TI("signatory", interfaces.ISignatory)),
+    ("member_of_parliament", TI("membership", interfaces.IMemberOfParliament)),    
 ]
-
-# !+ dedicated interfaces for archetype incantations should be auto-generated, 
-# from specific workflow name/attr... e.g. via:
-# zope.interface.interface.InterfaceClass(iname, bases, __module__)
 
