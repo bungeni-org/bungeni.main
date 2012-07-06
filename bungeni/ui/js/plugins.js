@@ -230,6 +230,7 @@
         return this;
     };
 
+
     $.fn.yuiDataTable = function (context_name, link_url, data_url, fields, columns, table_id, rows_per_page) {
         if (!YAHOO.widget.DataTable) {
             return console.log("Warning: YAHOO.widget.DataTable module not loaded.");
@@ -388,6 +389,26 @@
         return table;
     };
 
+    var workspace_tab_count_response = function(data) {
+        var tab_data = JSON.parse(data);
+        for (var tab in tab_data){
+            var tab_element = $("dl.workspace li.navTreeItem a#workspace-"+tab+" > span#count");
+            tab_element.html("("+tab_data[tab]+")");
+        }
+    };
+
+    var workspace_tab_count_ajax = function(i, o) {
+        var tab_count_url = "/workspace/tabcount";
+        $.ajax({
+                type: "GET",
+                    url: tab_count_url,
+                    cache: false,
+                    processData: false,
+                    success: function(data){
+                    workspace_tab_count_response(data);
+                }   
+            });
+    }
     $.fn.yuiWorkspaceDataTable = function (context_name, link_url, data_url, fields, columns, table_id, item_type, status, rows_per_page) {
         if (!YAHOO.widget.DataTable) {
             return console.log("Warning: YAHOO.widget.DataTable module not loaded.");
@@ -473,24 +494,13 @@
 
         };
         table = new YAHOO.widget.DataTable(YAHOO.util.Dom.get(table_id), columns, datasource, config);
-        var fn_tab_count_response_success = function(o) {
-            var tab_data = JSON.parse(o.responseText);
-            for (var tab in tab_data){
-                var tab_element = $("dl.workspace li.navTreeItem a#workspace-"+tab+" > span#count");
-                tab_element.html("("+tab_data[tab]+")");
-            }
-        };
+       
  
-        var tab_count_callback = {
-            success:fn_tab_count_response_success,
-            failure: function(o) {},
-            argument: []
-        };
+        
         
         var fnRequestReceived = function() {
             jQuery.unblockUI();
-            var tab_count_url = window.location + "/tabcount";
-            var transaction = YAHOO.util.Connect.asyncRequest('GET', tab_count_url, tab_count_callback, null);
+            workspace_tab_count_ajax();
         };
 
         table.subscribe("postRenderEvent", fnRequestReceived);
@@ -653,5 +663,9 @@
             this.getDataSource().sendRequest(newRequest, oCallback);
         };
         return true;
+    };
+
+    $.fn.workspace_count = function (){
+        workspace_tab_count_ajax();
     };
 })(jQuery);
