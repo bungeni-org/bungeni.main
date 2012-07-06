@@ -8,4 +8,8 @@
     <!-- Cookie based language negotiation like linguaplone -->
     <adapter factory="bungeni.core.translation.BrowserFormLanguages" />
 
+    <utility
+      provides="zope.i18n.interfaces.INegotiator"
+      component=".language.i18n_negotiator"
+      />
 </configure>

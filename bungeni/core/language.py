@@ -13,7 +13,7 @@ from zope import interface
 import zope.security
 from zope.app.zapi import getUtilitiesFor
 from zope.publisher.browser import BrowserLanguages
-from zope.i18n.negotiator import normalize_lang
+from zope.i18n.negotiator import Negotiator, normalize_lang
 from zope.i18n import translate
 
 from locale import getdefaultlocale
@@ -24,7 +24,6 @@ from bungeni.core.translation import get_request_language
 from bungeni.ui.utils.common import get_request # !+CORE_UI_DEPENDENCY
 from bungeni.utils import register
 from ploned.ui.interfaces import ITextDirection
-
 
 class TranslateUtility(object):
     """
@@ -119,6 +118,13 @@ def get_default_language():
                 "Got default language as %s from provider %s", _language, name)
             break
     return default_language
+
+
+class Negotiator(Negotiator):
+    def getLanguage(self, langs, env):
+        return get_default_language()
+
+i18n_negotiator = Negotiator()
 
 def get_base_direction():
     request = get_request()
