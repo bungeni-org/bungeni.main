@@ -106,5 +106,12 @@ class SignatoryReview(BrowserView):
             )
             return request.response.redirect(review_url)
         
-        
+
+class Favicon(BrowserView):
+    """Map requests to favicon.ico to favicon browser resource
+    """
+    def __call__(self):
+        return self.request.response.redirect("/@@/images/favicon.ico",
+            status=301
+        )        
 
