@@ -6,6 +6,11 @@ $(document).ready(
     
     // set up parliament date range selection
     $("select[id=form.parliament]").bungeniTimeRangeSelect(false, false);
+    
+    // run workspace_count on views without a listing
+    if ($(".section-bungeni-workspace").has("#workspace\\.listing").length < 1) {
+        $.fn.workspace_count();
+    }
   }
 );
 
