@@ -382,9 +382,10 @@ def relation_vertical_property(object_type, object_id_column, vp_name, vp_type):
         # "all" -> "save-update, merge, refresh-expire, expunge, delete"
         cascade="all",
         single_parent=True,
-        lazy=True, # !+ False gives sqlalchemy.exc.ProgrammingError 
+        lazy=False, # !+LAZY(mr, jul-2012) gives orm.exc.DetachedInstanceError
         # e.g. in business/questions listing:
-        # (ProgrammingError) missing FROM-clause entry for table "doc"
+        # Parent instance <Question at ...> is not bound to a Session; 
+        # lazy load operation of attribute '_vp_response_type' cannot proceed
     )
 
 

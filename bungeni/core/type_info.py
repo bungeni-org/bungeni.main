@@ -102,12 +102,12 @@ def _get(discriminator):
         getter = _get_by_descriptor
     
     if getter is None:
-        m = "Invalid type info lookup discriminator: %s" % (discriminator)
+        m = "Invalid type info lookup discriminator: %r" % (discriminator)
         log.error(m)
         raise KeyError(m)
     ti = getter(discriminator)
     if ti is None:
-        m = "No type registered for discriminator: %s" % (discriminator)
+        m = "No type registered for discriminator: %r" % (discriminator)
         log.error(m)
         raise KeyError(m)
     return ti

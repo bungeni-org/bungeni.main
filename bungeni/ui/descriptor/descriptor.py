@@ -2450,7 +2450,7 @@ class BillDescriptor(DocDescriptor):
         Field(name="short_title", # [user-req]
             modes="view edit add listing",
             localizable=[
-                show("view edit listing"),
+                show("view edit add listing"),
             ],
             property=schema.TextLine(title=_("Short Title")),
             #!+view_widget=widgets.ComputedTitleWidget,
@@ -2599,7 +2599,7 @@ class QuestionDescriptor(DocDescriptor):
             modes="view edit add listing",
             localizable=[ 
                 show("view edit"),
-                hide("listing")
+                show("listing")
             ],
             property=schema.Choice(title=_("Response Type"),
                 description=_(
