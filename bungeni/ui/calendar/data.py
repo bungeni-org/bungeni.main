@@ -155,7 +155,10 @@ class SchedulableItemsGetter(object):
                 item_title = IDCDescriptiveProperties(item).title,
                 status = IWorkflow(item).get_state(item.status).title,
                 status_date = ( date_formatter.format(item.submission_date) 
-                    if hasattr(item, "submission_date") else None
+                    if (hasattr(item, "submission_date") and 
+                        getattr(item, "submission_date")
+                    )
+                    else None
                 ),
                 registry_number = ( item.registry_number if
                     hasattr(item, "registry_number") else None
