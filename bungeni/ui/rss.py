@@ -117,9 +117,12 @@ class RSSView(BrowserView):
         guid_element.appendChild(self.response.createTextNode(guid))
         item_element.appendChild(guid_element)
 
-        date_element = self.response.createElement("pubDate")
-        date_element.appendChild(self.response.createTextNode(self._format_date(pubDate)))
-        item_element.appendChild(date_element)
+        if pubDate:
+            date_element = self.response.createElement("pubDate")
+            date_element.appendChild(
+                self.response.createTextNode(self._format_date(pubDate))
+            )
+            item_element.appendChild(date_element)
 
         return item_element
 
@@ -259,10 +262,13 @@ class AkomantosoRSSView(RSSView):
         guid_element = self.response.createElement("guid")
         guid_element.appendChild(self.response.createTextNode(guid))
         item_element.appendChild(guid_element)
-
-        date_element = self.response.createElement("pubDate")
-        date_element.appendChild(self.response.createTextNode(self._format_date(pubDate)))
-        item_element.appendChild(date_element)
+        
+        if pubDate:
+            date_element = self.response.createElement("pubDate")
+            date_element.appendChild(
+                self.response.createTextNode(self._format_date(pubDate))
+            )
+            item_element.appendChild(date_element)
 
         return item_element
 
