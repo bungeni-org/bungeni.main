@@ -214,6 +214,10 @@ class IWorkspaceContainer(interface.Interface):
     """Workspace containers
     """
 
+class IWorkspaceUnderConsiderationContainer(interface.Interface):
+    """Workspace documents under consideration contatiner
+    """
+
 class IWorkspaceTabsUtility(interface.Interface):
     def get_role_domains(role, tab):
         """Returns a list of domains that a role will since in a specific

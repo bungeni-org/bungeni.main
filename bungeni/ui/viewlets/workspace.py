@@ -25,9 +25,9 @@ class WorkspaceContextNavigation(StructureAwareViewlet):
     def update(self):
         self.tabs = []
         app = getSite()
-        keys = app["workspace"]["documents"].keys()
+        keys = app["workspace"]["my-documents"].keys()
         for key in keys:
-            tab_url = url.absoluteURL(app["workspace"]["documents"][key],
+            tab_url = url.absoluteURL(app["workspace"]["my-documents"][key],
                 self.request
             )
             tab = {}

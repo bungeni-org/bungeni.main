@@ -17,7 +17,9 @@ from alchemist.ui import generic
 from bungeni.core import workspace, translation
 from bungeni.core.content import WorkspaceSection
 from bungeni.core.i18n import _
-from bungeni.core.interfaces import IWorkspaceTabsUtility, IWorkspaceContainer
+from bungeni.core.interfaces import (IWorkspaceTabsUtility,
+                                     IWorkspaceContainer,
+                                     IWorkspaceUnderConsiderationContainer)
 from bungeni.ui.utils import url
 from bungeni.ui.utils.common import get_workspace_roles
 from bungeni.ui import table
@@ -51,6 +53,8 @@ workspace_fields = [
 
 
 @register.view(IWorkspaceContainer, name="jsonlisting",
+    protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
+@register.view(IWorkspaceUnderConsiderationContainer, name="jsonlisting",
     protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
 class WorkspaceContainerJSONListing(BrowserPage):
     """Paging, batching, json contents of a workspace container.
@@ -297,6 +301,67 @@ class WorkspaceContainerListing(BrowserPage):
         return formatter
 
 
+class WorkspaceUnderConsiderationFormatter(WorkspaceDataTableFormatter):
+
+    def get_item_types(self):
+        result = dict([("", "-")])
+        for type_key, ti in capi.iter_type_info():
+            workflow = ti.workflow
+            if workflow and workflow.has_feature("workspace"):
+                name = ti.descriptor.display_name
+                result[ti.workflow_key] = translate(name, context=self.request)
+        return result
+
+    def get_status(self, item_type):
+        from bungeni.core.workflows.adapters import get_workflow
+        result = {}
+        for type_key, ti in capi.iter_type_info():
+            if (ti.workflow_key == item_type):
+                states = get_workflow(ti.workflow_key).get_state_ids(
+                    tagged=["public"], not_tagged=["terminal"],
+                    conjunction="AND")
+                for state in states:
+                    state_title = translate(
+                        ti.workflow.get_state(state).title,
+                        domain="bungeni",
+                        context=self.request
+                        )
+                    result[state] = state_title
+                break
+        return result
+
+    def getDataTableConfig(self):
+        config = table.ContextDataTableFormatter.getDataTableConfig(self)
+        item_types = self.get_item_types()
+        config["item_types"] = simplejson.dumps(item_types)
+        all_item_status = dict()
+        status = dict([("", "-")])
+        for item_type in item_types:
+            x = self.get_status(item_type)
+            for k, v in x.iteritems():
+                item_status_value = "%s+%s" % (item_type, k)
+                status[item_status_value] = v
+                all_item_status[k] = v
+        status.update(all_item_status)
+        config["status"] = simplejson.dumps(status)
+        return config
+
+class WorkspaceUnderConsiderationListing(WorkspaceContainerListing):
+    formatter_factory = WorkspaceUnderConsiderationFormatter
+    
+    @property
+    def formatter(self):
+        formatter = self.formatter_factory(
+            self.context,
+            self.request,
+            (),
+            prefix="workspace_under_consideration",
+            columns=self.columns,
+        )
+        formatter.cssClasses["table"] = "listing"
+        formatter.table_id = "datacontents"
+        return formatter
+
 @register.view(WorkspaceSection, name="tabcount",
     protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
 @register.view(IWorkspaceContainer, name="tabcount",
@@ -306,12 +371,12 @@ class WorkspaceTabCount(BrowserPage):
     def __call__(self):
         data = {}
         app = getSite()
-        keys = app["workspace"]["documents"].keys()
+        keys = app["workspace"]["my-documents"].keys()
         read_from_cache = True
         if self.request.get("cache") == "false":
             read_from_cache = False
         for key in keys:
-            data[key] = app["workspace"]["documents"][key].count(
+            data[key] = app["workspace"]["my-documents"][key].count(
                 read_from_cache)
         return simplejson.dumps(data)
 

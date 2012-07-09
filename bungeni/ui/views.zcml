@@ -384,7 +384,12 @@
         layer="bungeni.ui.interfaces.IBungeniSkin"
         permission="bungeni.ui.workspace.View"
     />
-    
+    <browser:page name="index"
+        for="bungeni.core.interfaces.IWorkspaceUnderConsiderationContainer"
+        class=".workspace.WorkspaceUnderConsiderationListing"
+        layer="bungeni.ui.interfaces.IBungeniSkin"
+        permission="bungeni.ui.workspace.View"
+    />
     <!-- Workspace Add views -->
     <!-- CONVENTION - view names must follow the following convention
     the word "add", then an undescore(_) then the item type as registered in the

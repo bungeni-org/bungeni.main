@@ -31,7 +31,9 @@ from bungeni.core.content import Section, AdminSection, AkomaNtosoSection, \
     WorkspaceSection
 from bungeni.core.content import QueryContent
 from bungeni.core.i18n import _
-from bungeni.core.workspace import WorkspaceContainer, load_workspaces
+from bungeni.core.workspace import (WorkspaceContainer,
+                                    WorkspaceUnderConsiderationContainer,
+                                    load_workspaces)
 from bungeni.core.notifications import load_notifications
 from bungeni.core.emailnotifications import email_notifications
 from bungeni.ui.utils import url, common # !+ core dependency on ui
@@ -128,41 +130,53 @@ class AppSetup(object):
         workspace = self.context["workspace"] = WorkspaceSection(
             title=_(u"Workspace"),
             description=_(u"Current parliamentary activity"),
-            default_name="documents",
+            default_name="my-documents",
         )
         
         alsoProvides(workspace, interfaces.ISearchableSection)
-        workspace["documents"] = WorkspaceSection(
-            title=_(u"documents"),
-            description=_(u"documents"),
+        workspace["my-documents"] = WorkspaceSection(
+            title=_(u"my documents"),
+            description=_(u"my documents"),
             default_name="inbox",
             marker=interfaces.IWorkspaceDocuments,
         )
-        workspace["documents"]["draft"] = WorkspaceContainer(
+        workspace["my-documents"]["draft"] = WorkspaceContainer(
             tab_type="draft",
             title=_("draft"),
             description=_("draft documents"),
             marker=interfaces.IWorkspaceDraft
         )
-        workspace["documents"]["inbox"] = WorkspaceContainer(
+        workspace["my-documents"]["inbox"] = WorkspaceContainer(
             tab_type="inbox",
             title=_("inbox"),
             description=_("incoming documents"),
             marker=interfaces.IWorkspaceInbox
         )
-        workspace["documents"]["sent"] = WorkspaceContainer(
+        workspace["my-documents"]["sent"] = WorkspaceContainer(
             tab_type="sent",
             title=_("sent"),
             description=_("sent documents"),
             marker=interfaces.IWorkspaceSent
         )
-        workspace["documents"]["archive"] = WorkspaceContainer(
+        workspace["my-documents"]["archive"] = WorkspaceContainer(
             tab_type="archive",
             title=_("archive"),
             description=_("archived documents"),
             marker=interfaces.IWorkspaceArchive
         )
-        
+        workspace["under-consideration"] =  WorkspaceSection(
+            title=_(u"under consideration"),
+            description=_(u"documents under consideration"),
+            default_name="documents",
+            marker=interfaces.IWorkspaceDocuments,
+        )
+
+
+        workspace["under-consideration"]["documents"] = WorkspaceUnderConsiderationContainer(name="documents",
+            title=_(u"Under consideration"),
+            description=_(u"Documents under consideration")
+           )
+
         workspace["scheduling"] = Section(
             title=_(u"Scheduling"),
             description=_(u"Scheduling"),

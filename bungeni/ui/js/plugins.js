@@ -500,7 +500,6 @@
         
         var fnRequestReceived = function() {
             jQuery.unblockUI();
-            workspace_tab_count_ajax();
         };
 
         table.subscribe("postRenderEvent", fnRequestReceived);
@@ -666,6 +665,9 @@
     };
 
     $.fn.workspace_count = function (){
-        workspace_tab_count_ajax();
+        $.each($(this), function (i, o) {
+                workspace_tab_count_ajax();
+                return this;
+            });
     };
 })(jQuery);

@@ -179,6 +179,11 @@
         factory=".workspace.WorkspaceContainerTraverser"
         provides="zope.publisher.interfaces.IPublishTraverse"
     />
+    <adapter for="bungeni.core.interfaces.IWorkspaceUnderConsiderationContainer
+            zope.publisher.interfaces.IPublisherRequest"
+        factory=".workspace.WorkspaceContainerTraverser"
+        provides="zope.publisher.interfaces.IPublishTraverse"
+    />
     <!-- Security declaration for workspace section -->
     <class class=".content.WorkspaceSection">
         <require permission="bungeni.ui.workspace.View"

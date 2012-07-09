@@ -90,16 +90,21 @@ def remember_traversed_context(event):
 mapping_on_path = (
     (re.compile(r'^/$'), interfaces.IHomePageLayer),
     (re.compile(r'^/archive(/.*)?$'), interfaces.IArchiveSectionLayer),
-    # Matches "workspace/" followed by anything but "/scheduling"
-    (re.compile(r'^/workspace(?!/scheduling)(/.*)?$'), 
-        interfaces.IWorkspaceSectionLayer
-    ),
     (re.compile(r'^/profile(/.*)?$'), 
         interfaces.IWorkspaceSectionLayer
-    ),               
+    ), 
+    
+    #matches "workspace/under-consideration"
+    (re.compile(r'^/workspace/under-consideration(/.*)?$'),
+        interfaces.IWorkspaceUnderConsiderationSectionLayer
+    ),
     # Matches "workspace/scheduling"
     (re.compile(r'^/workspace/scheduling(/.*)?$'),
         interfaces.IWorkspaceSchedulingSectionLayer
+    ),
+    #matches "workspace/"
+    (re.compile(r'^/workspace(/.*)?$'),
+        interfaces.IWorkspaceMyDocumentsSectionLayer
     ),
     # Matches "business/" followed by anything but "/whats-on"
     (re.compile(r'^/business(?!/whats-on)(/.*)+$'), 

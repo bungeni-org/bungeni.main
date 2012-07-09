@@ -128,6 +128,7 @@ class SecondaryNavigationViewlet(browser.BungeniViewlet):
         except (Exception,):
             debug.log_exc(sys.exc_info(), log_handler=log.debug)
             return []
+        
         # OK, do any necessary post-processing of each menu item
         local_url = url.absoluteURL(container, self.request)
         site_url = url.absoluteURL(getSite(), self.request)
@@ -154,28 +155,6 @@ class SecondaryNavigationViewlet(browser.BungeniViewlet):
     
     def add_container_menu_items(self, context, container):
         request = self.request
-        # add a menu item for each user workspace, if we are in an 
-        # IWorkspaceSectionLayer 
-        # !+ if user is logged in or if request.layer_data
-        
-        if (interfaces.IWorkspaceSectionLayer.providedBy(request) or
-            interfaces.IWorkspaceSchedulingSectionLayer.providedBy(request)
-        ):
-            try:
-                workspaces = IAnnotations(request)["layer_data"].get("workspaces")
-            except:
-                workspaces = []
-            log.info("%s got user workspaces: %s" % (self, workspaces))
-            base_url_path = "/workspace"
-            for workspace in workspaces:
-                log.info("appending menu item for user workspace: %s" % (
-                    workspace))
-                self.items.append(url.get_menu_item_descriptor(
-                    workspace.full_name,
-                    pos_action_in_url("/workspace/obj-%s" % workspace.group_id,
-                        request.getURL()),
-                    base_url_path,
-                    "obj-%s" % workspace.group_id))
         
         _url = url.absoluteURL(container, request)
         
