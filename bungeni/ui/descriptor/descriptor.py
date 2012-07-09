@@ -990,7 +990,7 @@ class PoliticalGroupMemberDescriptor(GroupMembershipDescriptor):
 
 
 class GroupDescriptor(ModelDescriptor):
-    localizable = True
+    localizable = True # !+ARCHETYPE_LOCALIZATION
     display_name = _("Group")
     container_name = _("Groups")
     sort_on = ["group_id"]
@@ -1957,17 +1957,17 @@ class AttachedFileVersionDescriptor(ModelDescriptor):
 '''
 
 class DocDescriptor(ModelDescriptor):
-    localizable = False
+    localizable = True # !+ARCHETYPE_LOCALIZATION
     
     default_field_order = [
         "title",
+        "type_number",
         "acronym",
         "description",
         "language", # DB_REQUIRED
         #"type", # DB_REQUIRED
         "doc_type",
         #"doc_procedure",
-        "type_number",
         #"doc_id", # DB_REQUIRED
         "parliament_id",
         "owner_id", # DB_REQUIRED
@@ -1999,7 +1999,10 @@ class DocDescriptor(ModelDescriptor):
         # amc_events
         Field(name="submission_date", # [derived]
             modes="view listing",
-            localizable=[ show("view listing"), ],
+            localizable=[ 
+                show("view"),
+                hide("listing")
+            ],
             property=schema.Date(title=_("Submission Date"), required=False),
             listing_column=day_column("submission_date", _("Submission Date")),
         ),
@@ -2056,7 +2059,7 @@ class DocDescriptor(ModelDescriptor):
             localizable=[ 
                 show("view listing"),
             ],
-            property=schema.Int(title=_("Sequential Number"), required=False),
+            property=schema.Int(title=_("Number"), required=False),
         ),
         Field(name="registry_number", # [user]
             modes="view edit listing",
@@ -2077,7 +2080,8 @@ class DocDescriptor(ModelDescriptor):
         Field(name="acronym",
             modes="view edit add listing",
             localizable=[
-                show("view edit add listing"),
+                show("view edit add"),
+                hide("listing"),
             ],
         ),
         Field(name="title", # [user]
@@ -2092,7 +2096,8 @@ class DocDescriptor(ModelDescriptor):
         Field(name="description",
             modes="view edit add listing",
             localizable=[
-                show("view edit add listing"),
+                show("view edit add"),
+                hide("listing"),
             ],
         ),
         LanguageField("language"), # [user-req]
@@ -2329,10 +2334,6 @@ class AgendaItemDescriptor(DocDescriptor):
     
     fields = deepcopy(DocDescriptor.fields)
     fields.append(AdmissibleDateField()) # [sys]
-    get_field(fields, "submission_date").localizable = [
-        show("view"),
-        hide("listing")
-    ]
     get_field(fields, "admissible_date").localizable = [
         show("view"),
         hide("listing"),
@@ -2360,7 +2361,8 @@ class MotionDescriptor(DocDescriptor):
         Field(name="notice_date", # [sys]
             modes="view listing",
             localizable=[ 
-                show("view listing"),
+                show("view"),
+                hide("listing"),
             ],
             property=schema.Date(title=_("Notice Date"), required=False),
         ),
@@ -2368,10 +2370,6 @@ class MotionDescriptor(DocDescriptor):
     get_field(fields, "admissible_date").localizable = [
         show("view"),
         hide("listing"),
-    ]
-    get_field(fields, "submission_date").localizable = [
-        show("view"),
-        hide("listing")
     ]
     default_field_order= DocDescriptor.default_field_order[:]
     default_field_order.insert(
@@ -2427,15 +2425,13 @@ class BillDescriptor(DocDescriptor):
         f.label = _("Statement of Purpose")
         f.property = schema.Text(title=_("Statement of Purpose"), required=False)
     del f # remove f from class namespace
-    get_field(fields, "submission_date").localizable = [
-        show("view"),
-        hide("listing")
-    ]
+    
     fields.extend([
         Field(name="short_title", # [user-req]
             modes="view edit add listing",
             localizable=[
-                show("view edit add listing"),
+                show("view edit add"),
+                hide("listing"),
             ],
             property=schema.TextLine(title=_("Short Title")),
             #!+view_widget=widgets.ComputedTitleWidget,
@@ -2458,7 +2454,8 @@ class BillDescriptor(DocDescriptor):
         Field(name="group_id", # [user]
             modes="view edit add listing",
             localizable=[ 
-                show("view edit add listing"),
+                show("view edit add"),
+                hide("listing"),
             ],
             property=schema.Choice(title=_("Ministry"),
                 source=vocabulary.MinistrySource("ministry_id"),
@@ -2639,10 +2636,6 @@ class TabledDocumentDescriptor(DocDescriptor):
     fields.extend([
         AdmissibleDateField(), # [sys]
     ])
-    get_field(fields, "submission_date").localizable = [
-        show("view"),
-        hide("listing")
-    ]
     get_field(fields, "admissible_date").localizable = [
         show("view"),
         hide("listing"),
