@@ -1958,6 +1958,7 @@ class AttachedFileVersionDescriptor(ModelDescriptor):
 
 class DocDescriptor(ModelDescriptor):
     localizable = False
+    
     default_field_order = [
         "title",
         "acronym",
@@ -2273,7 +2274,7 @@ class VersionDescriptor(ChangeDescriptor):
 '''
 class DocVersionDescriptor(VersionDescriptor):
     """Base UI Descriptor for Doc archetype."""
-    localizable = True
+    localizable = True #!+VERSION_CLASS_PER_TYPE that "inherits" UI desc?
     default_field_order = \
         deepcopy(VersionDescriptor.default_field_order) + \
         deepcopy(DocDescriptor.default_field_order)
@@ -2336,18 +2337,10 @@ class AgendaItemDescriptor(DocDescriptor):
         show("view"),
         hide("listing"),
     ]
-    default_field_order = [
-        "parliament_id",
-        "title",
-        "registry_number",
-        "owner_id",
-        "status",
-        "status_date",
-        "language",
-        "body",
-        "submission_date",
-        "admissible_date"
-    ]
+    default_field_order= DocDescriptor.default_field_order[:]
+    default_field_order.insert(
+        default_field_order.index("submission_date") + 1, "admissible_date")
+
 
 ''' !+VERSION_CLASS_PER_TYPE
 class AgendaItemVersionDescriptor(VersionDescriptor):
@@ -2380,20 +2373,12 @@ class MotionDescriptor(DocDescriptor):
         show("view"),
         hide("listing")
     ]
-    default_field_order = [
-			"parliament_id",
-			"title",
-			"type_number",
-			"owner_id",
-			"status",
-			"status_date",
-			"language",
-			"body",
-			"submission_date",
-			"admissible_date",
-			"notice_date",
-			"registry_number",
-    ]
+    default_field_order= DocDescriptor.default_field_order[:]
+    default_field_order.insert(
+        default_field_order.index("submission_date") + 1, "admissible_date")
+    default_field_order.insert(
+        default_field_order.index("submission_date") + 2, "notice_date")
+
 
 ''' !+VERSION_CLASS_PER_TYPE
 class MotionVersionDescriptor(VersionDescriptor):
@@ -2491,22 +2476,10 @@ class BillDescriptor(DocDescriptor):
             listing_column=day_column("publication_date", "Publication Date"),
         ),
     ])
-    
-    default_field_order = [
-        "parliament_id",
-        "short_title",
-        "title",
-        "owner_id",
-        "status",
-        "status_date",
-        "language",
-        "body",
-        "submission_date",
-        "doc_type",
-        "group_id",
-        "publication_date",
-        "registry_number",
-    ]
+    default_field_order= DocDescriptor.default_field_order[:]
+    default_field_order.insert(
+        default_field_order.index("submission_date") + 1, "publication_date")
+
 
 ''' !+VERSION_CLASS_PER_TYPE
 class BillVersionDescriptor(VersionDescriptor):
@@ -2640,25 +2613,14 @@ class QuestionDescriptor(DocDescriptor):
         show("view"),
         hide("listing"),
     ]
-    default_field_order = [
-        "response_text",        
-        "parliament_id",
-        "title",
-        "type_number",
-        "owner_id",
-        "status",
-        "status_date",
-        "doc_type",
-        "response_type",
-        "language",
-        "body",
-        "submission_date",
-        "group_id",
-        "admissible_date",
-        "ministry_submit_date",
-        "subject",
-        "registry_number",
-    ]
+    default_field_order = DocDescriptor.default_field_order[:]
+    default_field_order.insert(0, "response_text")
+    default_field_order.insert(
+        default_field_order.index("language"), "response_type")
+    default_field_order.insert(
+        default_field_order.index("submission_date") + 1, "admissible_date")
+    default_field_order.insert(
+        default_field_order.index("submission_date") + 2, "ministry_submit_date")
     custom_validators = []
 
 ''' !+VERSION_CLASS_PER_TYPE
@@ -2685,19 +2647,10 @@ class TabledDocumentDescriptor(DocDescriptor):
         show("view"),
         hide("listing"),
     ]
-    default_field_order = [
-        "parliament_id",
-        "title",
-        "type_number",
-        "owner_id",
-        "status",
-        "status_date",
-        "language",
-        "body",
-        "submission_date",
-        "admissible_date",
-        "registry_number",
-    ]
+    default_field_order = DocDescriptor.default_field_order[:]
+    default_field_order.insert(
+        default_field_order.index("submission_date") + 1, "admissible_date")
+
 
 ''' !+VERSION_CLASS_PER_TYPE
 class TabledDocumentVersionDescriptor(VersionDescriptor):
