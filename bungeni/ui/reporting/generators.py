@@ -67,11 +67,9 @@ def get_attr(element, name, namespace=BUNGENI_REPORTS_NS, default=None):
 
 def clean_element(element):
     """Clean out bungeni report namespace tags from document"""
-    REMOVE_ATTRIBUTES = ["type", "source", "url"]
-    for key in REMOVE_ATTRIBUTES:
-        _key = "{%s}%s" % (BUNGENI_REPORTS_NS, key)
-        if _key in element.keys():
-            del element.attrib[_key]
+    for key in element.keys():
+        if BUNGENI_REPORTS_NS in key:
+            del element.attrib[key]
 
 def empty_element(element):
     """Remove an element's children from document tree."""
@@ -187,6 +185,7 @@ class ReportGeneratorXHTML(_BaseGenerator):
             cond = get_attr(root, "condition")
             if cond and not check_exists(context, cond):
                 root.clear()
+                clean_element(root)
                 return root
             iter_children = root.getchildren() or [root]
             if not (root in iter_children):
@@ -240,6 +239,7 @@ class ReportGeneratorXHTML(_BaseGenerator):
                             process_document_tree(child, context)
                     else:
                         process_document_tree(child, context)
+            clean_element(root)
             return root
         process_document_tree(self.report_template, self.context)
         return etree.tostring(self.report_template)
