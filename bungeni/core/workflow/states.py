@@ -548,7 +548,7 @@ class Workflow(object):
                         if t in state.tags:
                             _tagged.add(state.id)
                             break
-        elif not_tagged:
+        if not_tagged:
             if restrict:
                 wf_not_tagged = [ t for t in not_tagged if t in self.tags ]
                 assert wf_not_tagged==not_tagged
