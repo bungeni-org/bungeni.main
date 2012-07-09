@@ -1133,7 +1133,7 @@ class Country(object):
 
 # ##########
 
-class TitleType(object):
+class TitleType(Entity):
     """Types of titles in groups
     """
     interface.implements(interfaces.ITitleType, interfaces.ITranslatable)

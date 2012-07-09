@@ -34,6 +34,7 @@ from bungeni.core import location
 from bungeni.ui.utils import url, debug
 from bungeni.ui import interfaces
 from bungeni.ui import browser
+from bungeni.utils.capi import capi
 
 
 def _get_context_chain(context):
@@ -327,7 +328,7 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
         self.__parent__= view
         self.manager = manager
         self.name = ""
-
+    
     def update(self):
         """Creates a navigation tree for ``context``.
 
@@ -335,20 +336,19 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
         the tree is built. The siblings of managed containers are
         included.
         """
-
         chain = list(self.chain)
         self.nodes = self.expand(chain, include_siblings=False)
 
     def expand(self, chain, include_siblings=True):
         if len(chain) == 0:
             return ()
-
+        
         context = chain.pop()
         items = []
-
+        
         if IApplication.providedBy(context):
             items.extend(self.expand(chain))
-
+        
         elif IAlchemistContent.providedBy(context):
             _url = url.absoluteURL(context, self.request)
             if IDCDescriptiveProperties.providedBy(context):
@@ -359,7 +359,7 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
                     title = props.title
                 else:
                     title = context.title
-
+            
             selected = len(chain) == 0
             
             if chain:
@@ -412,7 +412,7 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
                 containers = [(context.__name__, context)]
                 
             self.expand_containers(items, containers, _url, chain, context)
-
+        
         elif ILocation.providedBy(context):
             _url = url.absoluteURL(context, self.request)
             #props = IDCDescriptiveProperties.providedBy(context) and \
@@ -433,6 +433,7 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
                     pass
             else:
                 nodes = self.expand(chain)
+            
             i_id = getattr(props, "id","N/A")
             items.append({
                     "title": getattr(props, "title", i_id),
@@ -445,14 +446,22 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
 
         elif IReadContainer.providedBy(context):
             items.extend(self.expand(chain))
-
+        
         return items
-
+    
+    def _sort_containers(self, key_containers):
+        """Sort each container by its domain_model's descriptor order."""
+        dsu = [
+            (capi.get_type_info(kc[1].domain_model).descriptor.order, kc)
+            for kc in key_containers ]
+        dsu.sort()
+        return [ kc for (order, kc) in dsu ]
+    
     def expand_containers(self, items, containers, _url, chain=(), context=None):
         #seen_context = False
         current = False
         
-        for key, container in containers:
+        for key, container in self._sort_containers(containers):
             if IAlchemistContainer.providedBy(container):
                 descriptor = queryModelDescriptor(
                     proxy.removeSecurityProxy(container).domain_model)
@@ -467,18 +476,18 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
                 assert IDCDescriptiveProperties.providedBy(container)
                 container = proxy.removeSecurityProxy(container)
                 name = container.title
-
+            
             if context is not None:
                 current = container.__name__ == context.__name__
-
-            selected = len(chain) == 0 and current
-
+            
+            selected = not len(chain) and current
+            
             if current:
                 #seen_context = True
                 nodes = self.expand(chain)
             else:
                 nodes = ()
-
+            
             items.append({
                     "title": name,
                     "url": "%s/%s" % (_url.rstrip("/"), key),

@@ -320,7 +320,6 @@ class Field(object):
     #group = None
     # !+GROUP(mr, oct-2010) not used - determine intention, remove.
     
-    
     def __init__(self, 
             name=None, label=None, description=None, 
             modes=None, localizable=None, property=None,
@@ -508,6 +507,12 @@ class ModelDescriptor(object):
     properties = () # !+USED?
     schema_order = () # !+USED?
     schema_invariants = ()
+    
+    # a means to specify relative order to be used as needed by the usage 
+    # context e.g. when listing different containers for the different types,
+    # you may wish to fix the appearance order. 
+    # A "high" value, as default, such that unset will sort out last...
+    order = 999 # !+bungeni_custom
     
     # sort_on: the list of column names the query is sorted on by default
     sort_on = None

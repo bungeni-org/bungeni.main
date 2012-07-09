@@ -530,6 +530,7 @@ def AdmissibleDateField(name="admissible_date"):
 
 
 class UserDescriptor(ModelDescriptor):
+    order = 4 # top
     localizable = True
     display_name = _("User")
     container_name = _("Users")
@@ -713,6 +714,7 @@ class UserDescriptor(ModelDescriptor):
 
 class UserDelegationDescriptor(ModelDescriptor):
     """Delegate rights to act on behalf of that user."""
+    order = 3 # top
     localizable = True
     display_name = _("Delegate to user")
     container_name = _("Delegations")
@@ -849,7 +851,25 @@ class MemberElectionTypeDescriptor(ModelDescriptor):
     ]
 '''
 
+# !+bungeni_custom, as part of descriptor config?
+_ORDER_BY_CONTAINER_NAMES = [
+    "agendaitems",
+    "bills",
+    "motions",
+    "questions",
+    "tableddocuments",
+    "preports",
+    "sessions",
+    "sittings",
+    "parliamentmembers",
+    "politicalgroups",
+    "committees",
+    "governments",
+    "title_types",
+]
+
 class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
+    order = _ORDER_BY_CONTAINER_NAMES.index("parliamentmembers")
     localizable = True
     display_name = _("Member of parliament")
     container_name = _("Members of parliament")
@@ -1092,6 +1112,7 @@ class GroupDescriptor(ModelDescriptor):
 
 
 class ParliamentDescriptor(GroupDescriptor):
+    order = 1 # top
     localizable = True
     display_name = _("Parliament")
     container_name = _("Parliaments")
@@ -1234,6 +1255,7 @@ class CommitteeTypeDescriptor(ModelDescriptor):
 '''
 
 class CommitteeDescriptor(GroupDescriptor):
+    order = _ORDER_BY_CONTAINER_NAMES.index("committees")
     localizable = True
     display_name = _("Profile")
     container_name = _("Committees")
@@ -1537,6 +1559,7 @@ class UserAddressDescriptor(AddressDescriptor):
     fields = deepcopy(AddressDescriptor.fields)
 
 class TitleTypeDescriptor(ModelDescriptor):
+    order = _ORDER_BY_CONTAINER_NAMES.index("title_types")
     localizable = True
     display_name = _("Title types")
     container_name = _("Title types")
@@ -1665,6 +1688,7 @@ class CommitteeStaffDescriptor(GroupMembershipDescriptor):
 
 
 class PoliticalGroupDescriptor(GroupDescriptor):
+    order = _ORDER_BY_CONTAINER_NAMES.index("politicalgroups")
     localizable = True
     display_name = _("political group")
     container_name = _("political groups")
@@ -1697,6 +1721,7 @@ class PoliticalGroupDescriptor(GroupDescriptor):
 
 
 class OfficeDescriptor(GroupDescriptor):
+    order = 2 # top
     localizable = True
     display_name = _("Office")
     container_name = _("Offices")
@@ -1827,6 +1852,7 @@ class MinisterDescriptor(GroupMembershipDescriptor):
 
 
 class GovernmentDescriptor(GroupDescriptor):
+    order = _ORDER_BY_CONTAINER_NAMES.index("governments")
     localizable = True
     display_name = _("Government")
     container_name = _("Governments")
@@ -2152,6 +2178,7 @@ class DocDescriptor(ModelDescriptor):
 
 
 class EventDescriptor(DocDescriptor):
+    
     localizable = True
     display_name = _("Event")
     container_name = _("Events")
@@ -2309,6 +2336,7 @@ class AttachmentVersionDescriptor(VersionDescriptor):
 
 
 class HeadingDescriptor(ModelDescriptor):
+    order = 3 # top
     localizable = True
     display_name = _("Heading")
     container_name = _("Headings")
@@ -2328,6 +2356,7 @@ class HeadingDescriptor(ModelDescriptor):
 
 
 class AgendaItemDescriptor(DocDescriptor):
+    order = _ORDER_BY_CONTAINER_NAMES.index("agendaitems")
     localizable = True
     display_name = _("Agenda item")
     container_name = _("Agenda items")
@@ -2352,6 +2381,7 @@ class AgendaItemVersionDescriptor(VersionDescriptor):
 '''
 
 class MotionDescriptor(DocDescriptor):
+    order = _ORDER_BY_CONTAINER_NAMES.index("motions")
     localizable = True
     display_name = _("Motion")
     container_name = _("Motions")
@@ -2413,6 +2443,7 @@ class BillTypeDescriptor(ModelDescriptor):
 '''
 
 class BillDescriptor(DocDescriptor):
+    order = _ORDER_BY_CONTAINER_NAMES.index("bills")
     localizable = True
     display_name = _("Bill")
     container_name = _("Bills")
@@ -2515,6 +2546,7 @@ class ResponseTypeDescriptor(ModelDescriptor):
 '''
 
 class QuestionDescriptor(DocDescriptor):
+    order = _ORDER_BY_CONTAINER_NAMES.index("questions")
     localizable = True
     display_name = _("Question")
     container_name = _("Questions")
@@ -2629,6 +2661,7 @@ class QuestionVersionDescriptor(VersionDescriptor):
 '''
 
 class TabledDocumentDescriptor(DocDescriptor):
+    order = _ORDER_BY_CONTAINER_NAMES.index("tableddocuments")
     localizable = True
     display_name = _("Tabled document")
     container_name = _("Tabled documents")
@@ -2677,6 +2710,7 @@ class VenueDescriptor(ModelDescriptor):
     ]
 
 class SittingDescriptor(ModelDescriptor):
+    order = _ORDER_BY_CONTAINER_NAMES.index("sittings")
     localizable = True
     display_name = _("Sitting")
     container_name = _("Sittings")
@@ -2781,6 +2815,7 @@ class SittingDescriptor(ModelDescriptor):
 
 
 class SessionDescriptor(ModelDescriptor):
+    order = _ORDER_BY_CONTAINER_NAMES.index("sessions")
     localizable = True
     display_name = _("Parliamentary session")
     container_name = _("Parliamentary sessions")
@@ -3132,6 +3167,7 @@ class ItemScheduleDiscussionDescriptor(ModelDescriptor):
 
 
 class ReportDescriptor(DocDescriptor):
+    order = _ORDER_BY_CONTAINER_NAMES.index("preports")
     localizable = True
     display_name = _("Report")
     container_name = _("Reports")
