@@ -853,6 +853,7 @@ class MemberElectionTypeDescriptor(ModelDescriptor):
 
 # !+bungeni_custom, as part of descriptor config?
 _ORDER_BY_CONTAINER_NAMES = [
+    0, 1, 2, 3, 4, 5, 6, 7, 8 , 9, # occupy first 10, start this batch from 10
     "agendaitems",
     "bills",
     "motions",
