@@ -68,7 +68,7 @@ So, we temporarily default the above to the context.__class__.__name__:
         try:
             descriptor = capi.get_type_info(domain_model).descriptor
         except ValueError, e:
-            log.warn("TYPE_INFO: no descriptor for model % : [%s]" % (
+            log.warn("TYPE_INFO: no descriptor for model %s : [%s]" % (
                     domain_model, e))
             descriptor = None
             name = ""
