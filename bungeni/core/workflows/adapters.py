@@ -8,6 +8,7 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.core.workflows")
 
+from lxml import etree
 from zope import component
 from zope.interface import classImplements
 import zope.securitypolicy.interfaces
@@ -18,8 +19,9 @@ from bungeni.core.workflow.interfaces import IWorkflow, IWorkflowed, \
 from bungeni.core.workflow.states import StateController, WorkflowController, \
     get_object_state_rpm, get_head_object_state_rpm
 import bungeni.core.audit
-from bungeni.utils import naming
-from bungeni.utils.capi import capi
+from bungeni.utils import naming, misc
+from bungeni.utils.capi import capi, bungeni_custom_errors
+
 
 __all__ = ["get_workflow"]
 
@@ -151,9 +153,45 @@ def register_workflow_adapters():
         provideAdapterWorkflow(ti.workflow, ti.interface)
 
 
+@bungeni_custom_errors
+def register_custom_types():
+    """Extend TYPE_REGISTRY with the declarations from bungeni_custom/types.xml.
+    """
+    from zope.dottedname.resolve import resolve
+    from bungeni.core.type_info import TYPE_REGISTRY, TI
+    def class_name(type_key):
+        return naming.camel(type_key)
+    def interface_name(type_key):
+        return "I%s" % (class_name(type_key))
+    def register_type(elem):
+        if not misc.xml_attr_bool(elem, "enabled", default=True):
+            # not enabled, ignore
+            return
+        type_key = misc.xml_attr_str(elem, "name")
+        workflow_key = misc.xml_attr_str(elem, "workflow", default=type_key)
+        interface = resolve("bungeni.models.interfaces.%s" % (
+                interface_name(type_key)))
+        TYPE_REGISTRY.append((type_key, TI(workflow_key, interface)))
+        log.info("Registering custom type [%s]: %s" % (elem.tag, type_key))
+    
+    # load XML file
+    file_path = capi.get_path_for("types.xml")
+    etypes = etree.fromstring(open(file_path, "r").read().decode("utf-8"))
+    # register types
+    for edoc in etypes.iterchildren("doc"):
+        register_type(edoc)
+    # group/member types
+    for egroup in etypes.iterchildren("group"):
+        register_type(egroup)
+        for emember in egroup.iterchildren("member"):
+            register_type(emember)
+
 def _setup_all():
     """Do all workflow related setup.
     """
+    # extend type registry with custom types
+    register_custom_types()
+    # load the workflows
     load_workflows()
     # !+zcml_check_regenerate(mr, sep-2011) should be only done *once* and 
     # when *all* workflows are loaded.

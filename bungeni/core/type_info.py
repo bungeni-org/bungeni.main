@@ -222,6 +222,9 @@ TYPE_REGISTRY = [
     ("heading", TI("heading", interfaces.IHeading)),
     ("user", TI("user", interfaces.IBungeniUser)),
     ("signatory", TI("signatory", interfaces.ISignatory)),
+    # !+NAMING: member-related -> Group name + "Member" (no + "ship")
+    ("group", TI("group", interfaces.IBungeniGroup)),
+    ("group_membership", TI("membership", interfaces.IBungeniGroupMembership)),
     
     # non-workflowed
     ("user_delegation", TI(None, interfaces.IUserDelegation)),
@@ -239,11 +242,9 @@ TYPE_REGISTRY = [
     ("item_schedule_discussion", TI(None, interfaces.IItemScheduleDiscussion)),
     ("editorial_note", TI(None, interfaces.IEditorialNote)),
     ("report4_sitting", TI(None, interfaces.IReport4Sitting)),
-    # !+NAMING: member-related -> Group name + "Member" (no + "ship")
-    ("group", TI("group", interfaces.IBungeniGroup)),
-    ("group_membership", TI("membership", interfaces.IBungeniGroupMembership)),
-    
-    
+]
+''' Optional types are loaded dynamically rom bungeni_custom:
+
     ## custom types, optional, always workflowed
     
     # archetype: doc
@@ -269,6 +270,6 @@ TYPE_REGISTRY = [
     ("committee_member", TI("membership", interfaces.ICommitteeMember)),
     ("committee_staff", TI("membership", interfaces.ICommitteeStaff)),
     # !+parliament_member
-    ("member_of_parliament", TI("membership", interfaces.IMemberOfParliament)),    
-]
+    ("member_of_parliament", TI("membership", interfaces.IMemberOfParliament)),
+'''
 

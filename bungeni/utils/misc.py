@@ -12,6 +12,15 @@ $Id$
 log = __import__("logging").getLogger("bungeni.utils.misc")
 
 
+# xml attr values
+
+def xml_attr_bool(elem, attr_name, default=False):
+    return as_bool(strip_none(elem.get(attr_name)) or str(default))
+
+def xml_attr_str(elem, attr_name, default=None):
+    return strip_none(elem.get(attr_name)) or default
+
+
 # string / conversion
 
 def strip_none(s):
