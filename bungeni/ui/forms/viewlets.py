@@ -668,8 +668,8 @@ class SessionCalendarViewlet(browser.BungeniItemsViewlet):
             css_class = css_class + "current-date "
         if Date.weekday() in prefs.getWeekendDays():
             css_class = css_class + "weekend-date "
-        query = Session().query(domain.HoliDay
-            ).filter(domain.HoliDay.holiday_date == Date)
+        query = Session().query(domain.Holiday
+            ).filter(domain.Holiday.date == Date)
         results = query.all()
         if results:
             css_class = css_class + "holyday-date "

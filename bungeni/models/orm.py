@@ -706,7 +706,7 @@ mapper(domain.SignatoryAudit, schema.signatory_audit,
 #!+TYPES_CUSTOM mapper(domain.BillType, schema.bill_types)
 #mapper(domain.DocumentSource, schema.document_sources)
 
-mapper(domain.HoliDay, schema.holidays)
+mapper(domain.Holiday, schema.holiday)
 
 ######################
 #

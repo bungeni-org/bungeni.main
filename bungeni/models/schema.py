@@ -1066,10 +1066,10 @@ settings_index = rdb.Index("settings_propsheet_idx",
     settings.c["propertysheet"]
 )
 
-holidays = rdb.Table("holidays", metadata,
+holiday = rdb.Table("holiday", metadata,
     rdb.Column("holiday_id", rdb.Integer, primary_key=True),
-    rdb.Column("holiday_date", rdb.Date, nullable=False),
-    rdb.Column("holiday_name", rdb.Unicode(1024)),
+    rdb.Column("date", rdb.Date, nullable=False),
+    rdb.Column("name", rdb.Unicode(1024)),
     rdb.Column("language", rdb.String(5), nullable=False),
 )
 

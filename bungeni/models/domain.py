@@ -1193,7 +1193,7 @@ class ItemScheduleDiscussion(Entity):
     interface.implements(interfaces.ITranslatable)
 
 
-class HoliDay(object):
+class Holiday(object):
     """Is this day a holiday?
     if a date in in the table it is otherwise not
     """
