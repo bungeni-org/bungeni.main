@@ -75,44 +75,46 @@ def _get(discriminator):
         m = "type_info._get discriminator is None"
         log.error(m)
         raise ValueError(m)
-    discriminator = removeSecurityProxy(discriminator)
+    discri = removeSecurityProxy(discriminator)
     getter = None
     
     # !+IALCHEMISTCONTENT normalize trickier discriminator cases to type_key
-    if IInterface.providedBy(discriminator):
-        discriminator = naming.polymorphic_identity(discriminator)
-    elif type(discriminator) is type and issubclass(discriminator, domain.Entity):
-        discriminator = naming.polymorphic_identity(discriminator)
-    elif isinstance(discriminator, domain.Entity):
-        discriminator = naming.polymorphic_identity(type(discriminator))
+    if IInterface.providedBy(discri):
+        discri = naming.polymorphic_identity(discri)
+    elif type(discri) is type and issubclass(discri, domain.Entity):
+        discri = naming.polymorphic_identity(discri)
+    elif isinstance(discri, domain.Entity):
+        discri = naming.polymorphic_identity(type(discri))
     
-    if isinstance(discriminator, basestring):
+    if isinstance(discri, basestring):
         getter = _get_by_type_key
-    #elif IInterface.providedBy(discriminator):
+    #elif IInterface.providedBy(discri):
     #    getter = _get_by_interface
-    #!+elif interfaces.IBungeniContent.implementedBy(discriminator):
-    #elif issubclass(discriminator, domain.Entity):
+    #!+elif interfaces.IBungeniContent.implementedBy(discri):
+    #elif issubclass(discri, domain.Entity):
     #    getter = _get_by_model
-    #!+elif interfaces.IBungeniContent.providedBy(discriminator):
-    #elif isinstance(discriminator, domain.Entity):
+    #!+elif interfaces.IBungeniContent.providedBy(discri):
+    #elif isinstance(discri, domain.Entity):
     #    getter = _get_by_instance
-    elif IWorkflow.providedBy(discriminator):
+    elif IWorkflow.providedBy(discri):
         getter = _get_by_workflow
-    elif IModelDescriptor.implementedBy(discriminator):
+    elif IModelDescriptor.implementedBy(discri):
         getter = _get_by_descriptor_model
-    elif IModelDescriptor.providedBy(discriminator):
+    elif IModelDescriptor.providedBy(discri):
         getter = _get_by_descriptor
     
-    if getter is None:
+    if getter is not None:
+        ti = getter(discri)
+        if ti is not None:
+            return ti
+        else:
+            m = "No type registered for discriminator: %r" % (discriminator)
+    else: 
         m = "Invalid type info lookup discriminator: %r" % (discriminator)
-        log.error(m)
-        raise KeyError(m)
-    ti = getter(discriminator)
-    if ti is None:
-        m = "No type registered for discriminator: %r" % (discriminator)
-        log.error(m)
-        raise KeyError(m)
-    return ti
+    from bungeni.ui.utils import debug
+    log.debug(debug.interfaces(discriminator))
+    log.error(m)
+    raise KeyError(m)
 
 
 # following getters return "first matching" TypeInfo instance in registry

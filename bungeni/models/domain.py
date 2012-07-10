@@ -411,7 +411,7 @@ class Sitting(Entity):
     sreports = one2many("sreports",
         "bungeni.models.domain.Report4SittingContainer", "sitting_id")
 
-class SittingAttendance(object):
+class SittingAttendance(Entity):
     """A record of attendance at a meeting .
     """
 
@@ -1125,7 +1125,7 @@ class ObjectSubscriptions(object):
 
 # ###############
 
-class Country(object):
+class Country(Entity):
     """Country.
     """
     pass

@@ -239,10 +239,10 @@ def GenerateDomainInterface(ctx):
     
     def get_model_interface(domain_model):
         """Get dedicated interface (name convention) that is marked as a domain
-        model ineterface (provides IIModelInterface) AND is impelemented by the
+        model interface (provides IIModelInterface) AND is impelemented by the
         domain class.
         """
-        interface_name = "I%s" % (domain_model.__name__)
+        interface_name = "I%s" % (domain_model.__name__) #!+naming
         for iface in interface.implementedBy(domain_model):
             if iface.__name__ == interface_name:
                 if IIModelInterface.providedBy(iface):

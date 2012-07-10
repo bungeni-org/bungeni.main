@@ -28,7 +28,6 @@ from ploned.ui.menu import make_absolute
 from ploned.ui.menu import pos_action_in_url
 
 from bungeni.alchemist.interfaces import IAlchemistContainer, IAlchemistContent
-from bungeni.alchemist.model import queryModelDescriptor
 from bungeni.alchemist.traversal import ManagedContainerDescriptor
 from bungeni.core import location
 from bungeni.ui.utils import url, debug
@@ -63,13 +62,14 @@ AttributeError: 'GroupAddress' object has no attribute 'short_name':   File "/ho
                 #title = context.short_name 
 So, we temporarily default the above to the context.__class__.__name__:
                 '''
-                title = getattr(context, "title", 
-                    context.__class__.__name__)
+                title = getattr(context, "title", context.__class__.__name__)
     elif IAlchemistContainer.providedBy(context):
         domain_model = context._class 
         try:
-            descriptor = queryModelDescriptor(domain_model)
-        except:
+            descriptor = capi.get_type_info(domain_model).descriptor
+        except ValueError, e:
+            log.warn("TYPE_INFO: no descriptor for model % : [%s]" % (
+                    domain_model, e))
             descriptor = None
             name = ""
         if descriptor:
@@ -463,13 +463,11 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
         
         for key, container in self._sort_containers(containers):
             if IAlchemistContainer.providedBy(container):
-                descriptor = queryModelDescriptor(
-                    proxy.removeSecurityProxy(container).domain_model)
+                descriptor = capi.get_type_info(container.domain_model).descriptor
                 if descriptor:
                     name = getattr(descriptor, "container_name", None)
                     if name is None:
                         name = getattr(descriptor, "display_name", None)
-                        
                 if not name:
                     name = container.domain_model.__name__
             else:
