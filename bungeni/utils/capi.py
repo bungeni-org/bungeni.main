@@ -42,6 +42,9 @@ class CAPI(object):
     """Accessor class for Bungeni Custom parameters.
     """
     
+    def __init__(self):
+        self.validate_properties()
+    
     # bungeni_custom parameter properties
     
     @property
@@ -64,13 +67,17 @@ class CAPI(object):
     def default_language(self):
         assert bc.default_language in self.zope_i18n_allowed_languages, \
             "Default language [%s] not in allowed languages [%s]" % (
-                self.zope_i18n_allowed_languages,)
+                bc.default_language, self.zope_i18n_allowed_languages,)
         return bc.default_language
         
     @property
     @bungeni_custom_errors
     def right_to_left_languages(self):
-        return tuple(bc.right_to_left_languages.split())        
+        rtl_langs = tuple(bc.right_to_left_languages.split())
+        assert set(rtl_langs).issubset(set(self.zope_i18n_allowed_languages)),\
+            "Right to left languages [%s] not in allowed languages [%s]" % (
+                bc.right_to_left_languages, self.zope_i18n_allowed_languages)
+        return rtl_langs
     
     @property
     @bungeni_custom_errors
@@ -189,6 +196,12 @@ class CAPI(object):
         """
         for type_key, ti in type_info._iter():
             yield type_key, ti
+    
+    def validate_properties(self):
+        """Validate this capi instance.
+        Ensure valid setup of properties at instantiation of CAPI instance
+        """
+        props = self.default_language, self.right_to_left_languages
 
 # we access all via the singleton instance
 capi = CAPI()
