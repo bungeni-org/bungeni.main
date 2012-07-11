@@ -47,9 +47,7 @@
                             $("#date_input_search_widget_%(field_id)s").css({
                                 position: "absolute",
                                 top: pos.top + 20 + "px",
-                                left: (pos.left) + "px",
-                                background: "#DEE7EC",
-                                border: "1px solid #8CACBB"
+                                left: (pos.left) + "px"
                             }).show();
                         }
                         else {
@@ -62,12 +60,18 @@
                 $("#listing_ok").live("click", function(){
                     var listing_start_date = $("#form\\.range_start_date").val();
                     var listing_end_date = $("#form\\.range_end_date").val();
-                    
-                    $('#'+'input_%(field_id)s').val(listing_start_date + " " + listing_end_date);
-                    portletItem.slideUp('fast');
+
+                    if (listing_start_date > listing_end_date) {
+                        alert("Validation error: Start date > End date");
+                    } else {
+                        $('#'+'input_%(field_id)s').val(listing_start_date + " " + listing_end_date);
+                        portletItem.slideUp('fast');
+                    }
                 });
                 
                 $("#listing_clear").live("click", function(){
+                    $("#form\\.range_start_date").val("");
+                    $("#form\\.range_end_date").val("");
                     $('#'+'input_%(field_id)s').val("");
                     portletItem.slideUp('fast');
                 });

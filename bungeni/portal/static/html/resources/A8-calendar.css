@@ -315,3 +315,10 @@ white-space: normal;
 .dhx_cal_navline #venues_tab{
     left:450px;
 }
+
+/* listing calendar dropdown
+-------------------------------------------------------------- */
+#date_input_search_widget_publication_date {
+    background: #DEE7EC;
+    border: 1px solid #8CACBB;
+}
