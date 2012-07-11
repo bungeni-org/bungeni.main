@@ -84,6 +84,7 @@ class ContextDataTableFormatter(yuiwidget.table.BaseDataTableFormatter):
 
     def get_search_widgets(self):
         script_html = ""
+        script_js = ""
         domain_model = proxy.removeSecurityProxy(self.context).domain_model
         domain_interface = model.queryModelInterface(domain_model)
         if domain_interface:
@@ -91,10 +92,12 @@ class ContextDataTableFormatter(yuiwidget.table.BaseDataTableFormatter):
             for field in domain_annotation.listing_columns:
                 search_widget = domain_annotation.get(field).search_widget
                 if search_widget:
-                    script_html += search_widget(self.prefix, field)
+                    s_html, s_js = search_widget(self.prefix, field)
                 else:
-                    script_html += text_input_search_widget(self.prefix, field)
-        return script_html
+                    s_html, s_js = text_input_search_widget(self.prefix, field)
+                script_html += s_html
+                script_js += s_js
+        return script_html, script_js
 
     def getDataTableConfig(self):
         config = {}
@@ -108,10 +111,11 @@ class ContextDataTableFormatter(yuiwidget.table.BaseDataTableFormatter):
 
     def __call__(self):
         need("yui-paginator")
-        return '<div id="%s">\n%s%s</div>' % (
+        script_html, script_js = self.get_search_widgets()
+        return '%s<div id="%s">\n%s%s</div>' % (script_html,
             self.prefix,
             self.script % self.getDataTableConfig(),
-            self.get_search_widgets())
+            script_js)
 
 
 class AjaxContainerListing(container.AjaxContainerListing):

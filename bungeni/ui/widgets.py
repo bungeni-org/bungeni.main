@@ -1231,7 +1231,7 @@ def text_input_search_widget(table_id, field_id):
     """Default search widget displays a text input field.
     """
     script = open("%s/templates/text-input-search-widget.js" % (_path)).read()
-    return script % {"table_id": table_id, "field_id": field_id}
+    return "", script % {"table_id": table_id, "field_id": field_id}
         
 class DateFilterWidget(form.PageForm):
     class IDateRangeSchema(interface.Interface):
@@ -1268,7 +1268,8 @@ class DateFilterWidget(form.PageForm):
         
 def date_input_search_widget(table_id, field_id):
     form = DateFilterWidget(common.get_application(), common.get_request())
+    html = '<div id="date_input_search_widget_%(field_id)s" style="display: none;">%(html)s</div>' \
+        % {"field_id":field_id, "html":form.render()}
     script = open("%s/templates/date-input-search-widget.js" % (_path)).read()
-    return script % {"table_id": table_id, "field_id": field_id, 
-                    "widget_html": form.render()}
+    return html, script % {"table_id": table_id, "field_id": field_id}
 

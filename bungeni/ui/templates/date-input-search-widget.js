@@ -1,4 +1,3 @@
-<div id="date_input_search_widget_%(field_id)s" style="display: none;">%(widget_html)s</div>
 <script type="text/javascript">(function($) {
         $(document).ready(function() {
                 var input = document.createElement("input");
