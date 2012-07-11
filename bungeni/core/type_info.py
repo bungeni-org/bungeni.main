@@ -222,6 +222,8 @@ TYPE_REGISTRY = [
     ("heading", TI("heading", interfaces.IHeading)),
     ("user", TI("user", interfaces.IBungeniUser)),
     ("signatory", TI("signatory", interfaces.ISignatory)),
+    ("report", TI("report", interfaces.IReport4Sitting)),
+    
     # !+NAMING: member-related -> Group name + "Member" (no + "ship")
     ("group", TI("group", interfaces.IBungeniGroup)),
     ("group_membership", TI("membership", interfaces.IBungeniGroupMembership)),
@@ -242,34 +244,7 @@ TYPE_REGISTRY = [
     ("item_schedule_discussion", TI(None, interfaces.IItemScheduleDiscussion)),
     ("editorial_note", TI(None, interfaces.IEditorialNote)),
     ("report4_sitting", TI(None, interfaces.IReport4Sitting)),
+    
+    ## custom types -- loaded dynamically from bungeni_custom/types.xml
 ]
-''' Optional types are loaded dynamically rom bungeni_custom:
-
-    ## custom types, optional, always workflowed
-    
-    # archetype: doc
-    ("agenda_item", TI("agendaitem", interfaces.IAgendaItem)),
-    ("bill", TI("bill", interfaces.IBill)),
-    ("motion", TI("motion", interfaces.IMotion)),
-    ("question", TI("question", interfaces.IQuestion)),
-    ("tabled_document", TI("tableddocument", interfaces.ITabledDocument)),
-    ("report", TI("report", interfaces.IReport)),
-    
-    # archetype: group
-    ("office", TI("group", interfaces.IOffice)),
-    ("political_group", TI("group", interfaces.IPoliticalGroup)),
-    ("ministry", TI("group", interfaces.IMinistry)),
-    ("committee", TI("committee", interfaces.ICommittee)),
-    ("government", TI("group", interfaces.IGovernment)),
-    ("parliament", TI("parliament", interfaces.IParliament)),
-    
-    # archetype: member    
-    ("office_member", TI("membership", interfaces.IOfficeMember)),
-    ("political_group_member", TI("membership", interfaces.IPoliticalGroupMember)),
-    ("minister", TI("membership", interfaces.IMinister)),
-    ("committee_member", TI("membership", interfaces.ICommitteeMember)),
-    ("committee_staff", TI("membership", interfaces.ICommitteeStaff)),
-    # !+parliament_member
-    ("member_of_parliament", TI("membership", interfaces.IMemberOfParliament)),
-'''
 
