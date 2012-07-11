@@ -559,16 +559,12 @@ class Workflow(object):
                     if t in state.tags:
                         _not_tagged.remove(state.id)
                         break
-        elif keys: # state_ids
+        if keys: # state_ids
             wf_keys = [ k for k in keys if k in self._states_by_id ]
             if restrict:
                 assert wf_keys==keys
             # we may only return valid state ids
             _keys = set(wf_keys)
-        else:
-            # make case of get_state_ids(conjunction="OR") return all state ids
-            _not_tagged = set(self._states_by_id.keys())
-        # combine
         assert conjunction in ("OR", "AND"), "Not supported."
         if conjunction=="OR":
             return list(_tagged.union(_not_tagged).union(_keys))
