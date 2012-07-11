@@ -1244,7 +1244,8 @@ class DateFilterWidget(form.PageForm):
             title=_(u"To"),
             description=_(u"Leave blank or set upper limit"),
             required=False)
-    template = NamedTemplate("alchemist.subform")
+    macro_template = NamedTemplate("alchemist.form")
+    template = ViewPageTemplateFile("templates/date-input-search.pt")
     form_fields = form.Fields(IDateRangeSchema, render_context=True)
     form_fields["range_start_date"].custom_widget = DateWidget
     form_fields["range_end_date"].custom_widget = DateWidget
