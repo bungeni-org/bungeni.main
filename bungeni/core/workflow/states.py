@@ -239,14 +239,7 @@ class _NoneStateRPM(State):
     # to the user who actually owns the target instance.
     # !+ROLES(mr, jan-2012) retrieve list of roles dynamically
     permissions = [
-        (0, "zope.View", "bungeni.Clerk"),
-        (0, "zope.View", "bungeni.Speaker"),
         (1, "zope.View", "bungeni.Owner"),
-        (0, "zope.View", "bungeni.Signatory"),
-        (0, "zope.View", "bungeni.MP"),
-        (0, "zope.View", "bungeni.Minister"),
-        (0, "zope.View", "bungeni.Authenticated"),
-        (0, "zope.View", "bungeni.Anonymous"),
     ]
     def __init__(self):
         pass
