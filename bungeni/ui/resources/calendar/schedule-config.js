@@ -11,8 +11,8 @@ var SGlobals = scheduler_globals;
  * Notify schedule author of unsaved changes
  */
 window.onbeforeunload = function(ev){
-    $.unblockUI();
     if (YAHOO.bungeni.unsavedChanges){
+        $.unblockUI();
         return SGlobals.text_unsaved_changes;
     }else{
         return null;
