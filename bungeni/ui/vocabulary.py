@@ -113,6 +113,9 @@ class VDEXVocabularyMixin(object):
         """Return the zope.schema.vocabulary.SimpleTerm instance for value.
         As per zope.schema.interfaces.IBaseVocabulary.
         """
+        # !+NONE_LOOKUPERROR(mr, jul-0212) making vdex try to seem like a 
+        # "schema vocab" with this method gives problems when value is None, 
+        # and vdex does not define a term for None.
         term = self.getTermById(value)
         title = self.vdex.getTermCaption(term, lang=get_default_language())
         return vocabulary.SimpleTerm(value, title, title)
@@ -124,6 +127,7 @@ class VDEXVocabularyMixin(object):
         As per imsvdex.vdex.VDEXManager (well, almost... None is LookupError).
         """
         term = self.vdex.getTermById(value)
+        # !+NONE_LOOKUPERROR(mr, jul-2012) how should one handle a None value?
         if term is None:
             raise LookupError("This VDEX has no such ID :: %s", value)
         return term
@@ -286,6 +290,7 @@ member_election_type = FlatVDEXVocabularyFactory("member_election_type.vdex")
 logical_address_type = FlatVDEXVocabularyFactory("logical_address_type.vdex")
 postal_address_type = FlatVDEXVocabularyFactory("postal_address_type.vdex")
 gender = FlatVDEXVocabularyFactory("gender.vdex")
+marital_status = FlatVDEXVocabularyFactory("marital_status.vdex")
 bool_yes_no = BoolFlatVDEXVocabularyFactory("yes_no.vdex")
 
 #

@@ -148,6 +148,7 @@ def _get_related_user(item_user, attr):
     return item_user
 
 def user_name_column(name, title, attr):
+    # !+FIELD_KEYERROR why cannot use the User.fullname property directly?
     def getter(item_user, formatter):
         item_user = _get_related_user(item_user, attr)
         return item_user.fullname # User.fullname property
@@ -332,7 +333,20 @@ def enumeration_column(name, title,
 
 def vocabulary_column(name, title, vocabulary):
     def getter(context, formatter):
-        return _(vocabulary.getTerm(getattr(context, name)).title)
+        try:
+            return _(vocabulary.getTerm(getattr(context, name)).title)
+        except LookupError:
+            # !+NONE_LOOKUPERROR(mr, jul-2012) probably a vdex, 
+            # and getattr(context, name)...
+            value = getattr(context, name)
+            m = "LookpError: vocabulary [%s] term value [%s] " \
+                "for context [%s.%s]" % (
+                    vocabulary, value, context, name)
+            # we should only have a LookupError on a None value (and it is not 
+            # defined in the vocabulary)
+            assert value is None, m
+            log.warn(m)
+            return None
     return column.GetterColumn(title, getter)
 ''' !+TYPES_CUSTOM_TRANSLATION(mr, nov-2011) issues with how translation for 
 the titles of such enum values should be handled:
@@ -669,6 +683,19 @@ class UserDescriptor(ModelDescriptor):
             ],
             property=schema.Choice(title=_("Current Nationality"),
                 source=vocabulary.country_factory,
+            ),
+        ),
+        Field(name="marital_status", # [user-req]
+            modes="view edit add listing",
+            localizable=[
+                show("view edit add listing"),
+            ],
+            property=schema.Choice(title=_("Marital Status"),
+                source=vocabulary.marital_status,
+            ),
+            listing_column=vocabulary_column("marital_status",
+                "Marital Status",
+                vocabulary.marital_status
             ),
         ),
         Field(name="date_of_death", # [user]

@@ -133,6 +133,9 @@ def getFields(context, interface=None, annotation=None):
         annotation = model.queryModelDescriptor(interface)
     for field_name in annotation.listing_columns:
         yield interface[field_name]
+        # !+FIELD_KEYERROR(mr, jul-2012) throws a KeyError when field_name is 
+        # not part of the interface e.g. if we use a "field property" that is 
+        # implemented as a domain_model.property.
 
 
 # ore.alchemist.container

@@ -286,11 +286,13 @@ class User(Entity):
     def _set_status(self, value):
         self.active_p = value
     status = property(_get_status, _set_status)
-
+    
+    # !+FULLNAME(mr, jul-2012) inconsistent naming
     @property
     def fullname(self):
-        return "%s %s" % (self.first_name, self.last_name)
-
+        return "%s %s %s" % (
+            self.first_name, self.middle_name or "", self.last_name)
+    
     addresses = one2many("addresses",
         "bungeni.models.domain.UserAddressContainer", "user_id")
     delegations = one2many("delegations",

@@ -55,24 +55,24 @@ class Users(REST):
             data = {}
             if len(user_values) == 1:
                 b_user = user_values[0]
-                data =  {
-                    "fullname" : u"%s %s" %(b_user.first_name, b_user.last_name),
-                    "email" : b_user.email or u"",
-                    "description" : b_user.description or u"",
+                data = {
+                    "fullname": b_user.fullname,
+                    "email": b_user.email or u"",
+                    "description": b_user.description or u"",
                     "notification": b_user.receive_notification or False,
-                    }      
+                }
             return self.json_response(data)            
         else:
-                user_values = users.select([users.c.login ],
-                                users.c.active_p == "A").execute()
-                if "user_manager_id" in self.request.keys():
-                    plugin_id = self.request["user_manager_id"]
-                    data = [dict(id=safeencode(r["login"]),
-                                  login=safeencode(r["login"]), 
-                                  pluginid=plugin_id) for r in user_values]
-                else:
-                    data = tuple([safeencode(r["login"]) for r in user_values])
-                return self.json_response(data)
+            user_values = users.select(
+                [users.c.login], users.c.active_p == "A").execute()
+            if "user_manager_id" in self.request.keys():
+                plugin_id = self.request["user_manager_id"]
+                data = [dict(id=safeencode(r["login"]),
+                              login=safeencode(r["login"]), 
+                              pluginid=plugin_id) for r in user_values]
+            else:
+                data = tuple([safeencode(r["login"]) for r in user_values])
+            return self.json_response(data)
 
     def POST(self):
         insert = users.insert()
@@ -172,12 +172,13 @@ class enumerateUsers(REST):
         if max_results != "None" and isinstance(max_results, int):
             query =query.limit(max_results)
             
-        uservalues = [dict(id=safeencode(r.login), 
-                title= u"%s %s" %(r.first_name, r.last_name),
-                fullname= u"%s %s" %(r.first_name, r.last_name),
-                email = (r.email),
+        uservalues = [ 
+            dict(id=safeencode(r.login), 
+                title=u"%s %s" %(r.first_name, r.last_name),
+                fullname=r.fullname,
+                email=r.email,
                 login=safeencode(r.login), pluginid=plugin_id) 
-                for r in query.all()]
+            for r in query.all() ]
         return self.json_response(uservalues)
 
 
