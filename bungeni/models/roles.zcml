@@ -11,17 +11,17 @@
     <!-- custom roles -->
     <include file="meta.zcml" />
     <role id="zope.Manager" title="Site Manager" />
-    <role id="zope.Member" title="Site Member" />
-    <role id="bungeni.Admin" title="Bungeni Admin" />
-    <role id="bungeni.Clerk" title="Clerks Office" />
-    <role id="bungeni.Speaker" title="Speaker Office" />
-    <role id="bungeni.Owner" title="Owner" />
-    <role id="bungeni.MP" title="Member of parliament" />
-    <role id="bungeni.Minister" title="Minister" />
-    <role id="bungeni.Translator" title="Translators Office" />
     <role id="bungeni.Authenticated" title="All authenticated users" />
     <role id="bungeni.Anonymous" title="Bungeni Visitor" />
+    
+    <!-- Document roles -->
+    <role id="bungeni.Owner" title="Owner" />
     <role id="bungeni.Signatory" title="Document Signatory" />
+    
+    <!-- Group roles -->
+    <!-- !+bungeni_custom -->
+    <role id="bungeni.MP" title="Member of parliament" />
+    <role id="bungeni.Minister" title="Minister" />
     <role id="bungeni.PoliticalGroupMember" title="Political Group Member" />
     <role id="bungeni.Government" title="Member of Government" />
     <role id="bungeni.CommitteeMember" title="Committee Member" />

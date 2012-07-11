@@ -302,15 +302,17 @@ class OfficeRoleFactory(BaseVocabularyFactory):
         roles = getUtilitiesFor(IRole, app)
         for name, role in roles:
             # Roles that must not be assigned to users in an office
-            # !+bungeni_custom
             if name in ["bungeni.Anonymous",
                         "bungeni.Authenticated",
                         "bungeni.Owner",
+                        "bungeni.Signatory",
                         "zope.Manager",
-                        "zope.Member",
                         "bungeni.MP",
                         "bungeni.Minister",
-                        "bungeni.Admin"]:
+                        "bungeni.PoliticalGroupMember",
+                        "bungeni.Government",
+                        "bungeni.CommitteeMember",
+                        ]:
                 continue
             if not ISubRoleAnnotations(role).is_sub_role:
                 terms.append(vocabulary.SimpleTerm(name, name, name))

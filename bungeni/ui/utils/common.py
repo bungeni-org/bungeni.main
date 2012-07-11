@@ -39,7 +39,6 @@ def has_feature(feature_name):
     # via zope.configuration.config.ConfigurationMachine.hasFeature(name)
     return getConfigContext().hasFeature(feature_name)
 
-
 def get_request():
     """ () -> either(IRequest, None)
     
@@ -236,7 +235,7 @@ def get_request_context_roles(request):
     else: 
         roles = get_context_roles(context, principal)
         if is_admin(context):
-            roles.append("bungeni.Admin")
+            roles.append("zope.Manager")
     log.debug(""" [get_request_context_roles]
     PRINCIPAL: %s
     CONTEXT: %s

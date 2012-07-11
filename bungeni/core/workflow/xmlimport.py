@@ -368,8 +368,7 @@ def _load(workflow, name, domain="bungeni"):
             tid = "%s.%s" % (sources[0] or "", destination)
             pid = "bungeni.%s.wf.%s" % (name, tid)
             if not ZCML_PROCESSED:
-                # use "bungeni.Clerk" as default list of roles
-                roles = (roles or "bungeni.Clerk").split()
+                roles = roles.split()
                 zcml_transition_permission(pid, title, roles)
                 # remember list of roles from xml
                 kw["_roles"] = roles

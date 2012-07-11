@@ -21,8 +21,6 @@
     <authenticatedGroup id="zope.Authenticated" title="Authenticated Users" />
     <everybodyGroup id="zope.Everybody" title="All Users" />
     
-    <!-- Roles -->
-    <role id="zope.Member" title="Member" />
     <include package="zope.annotation"/>
     <!-- App configuration -->
     <include package="bungeni.models" />
