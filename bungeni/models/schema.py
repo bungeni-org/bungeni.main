@@ -179,7 +179,9 @@ users = rdb.Table("users", metadata,
     rdb.Column("user_id", rdb.Integer, PrincipalSequence, primary_key=True),
     # login is our principal id
     rdb.Column("login", rdb.Unicode(80), unique=True, nullable=True),
-    rdb.Column("titles", rdb.Unicode(32)),
+    rdb.Column("salutation", rdb.Unicode(128)), # !+vocabulary?
+    rdb.Column("title", rdb.Unicode(128)), # !+vocabulary?
+    rdb.Column("titles", rdb.Unicode(32)), # !+TMP to work with preceding demo data 
     rdb.Column("first_name", rdb.Unicode(256), nullable=False),
     rdb.Column("last_name", rdb.Unicode(256), nullable=False),
     rdb.Column("middle_name", rdb.Unicode(256)),

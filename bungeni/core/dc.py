@@ -317,7 +317,7 @@ class UserDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return "%s %s %s" % (self.translate(context,"titles"),
+        return "%s %s %s" % (self.translate(context, "salutation"),
             context.first_name, context.last_name
         )
 
@@ -354,7 +354,7 @@ class GroupMembershipDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         if context.user:
-            return "%s %s %s" % (self.translate(context.user, "titles"),
+            return "%s %s %s" % (self.translate(context.user, "salutation"),
                 context.user.first_name,
                 context.user.last_name)
         else:
@@ -370,7 +370,7 @@ class SittingAttendanceDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         if context.user:
-            return "%s %s %s" % (self.translate(context.user, "titles"),
+            return "%s %s %s" % (self.translate(context.user, "salutation"),
                 context.user.first_name,
                 context.user.last_name)
         else:
@@ -394,7 +394,7 @@ class SignatoryDescriptiveProperties(DescriptiveProperties):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
         if context.user:
-            return "%s %s %s" % (self.translate(context.user, "titles"),
+            return "%s %s %s" % (self.translate(context.user, "salutation"),
                 context.user.first_name,
                 context.user.last_name)
         else:

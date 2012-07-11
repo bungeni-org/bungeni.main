@@ -766,6 +766,8 @@ mapper(domain.SittingReport, schema.sitting_report,
     }
 )
 
+# !+Report4Sitting domain.Report4Sitting inherits from domain.Report, it is 
+# mapped to the ASSOCIATION table schema.sitting_report ?!!
 mapper(domain.Report4Sitting, schema.sitting_report,
     inherits=domain.Report
 )

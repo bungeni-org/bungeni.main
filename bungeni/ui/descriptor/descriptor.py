@@ -561,14 +561,26 @@ class UserDescriptor(ModelDescriptor):
             ],
             listing_column=user_name_column("user_id", _("Name"), None),
         ),
-        Field(name="titles", # [user-req] !+RENAME salutation
+        Field(name="salutation", # [user-req]
             modes="view edit add listing",
             localizable=[ 
-                show("view edit"), 
+                show("view edit add"), 
                 show("listing"), 
             ],
             property=schema.TextLine(title=_("Salutation"),
                 description=_("e.g. Mr. Mrs, Prof. etc."),
+                required=False,
+            ),
+        ),
+        Field(name="title", # [user-req]
+            modes="view edit add listing",
+            localizable=[ 
+                show("view edit add"),
+                show("listing"), 
+            ],
+            property=schema.TextLine(title=_("Title"),
+                description=_("e.g. Chief Advisor, etc."),
+                required=False,
             ),
         ),
         Field(name="first_name", # [user-req]
