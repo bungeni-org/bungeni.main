@@ -13,6 +13,7 @@ from zope import component
 from zope.security.proxy import removeSecurityProxy
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 import zope.traversing.interfaces
+from lxml import html
 
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from bungeni.alchemist import Session
@@ -257,6 +258,13 @@ class EditorialNoteDescriptiveProperties(DescriptiveProperties):
     
     @property
     def title(self):
+        if len(self.context.text.strip())>0:
+            return html.fromstring(self.context.text).text_content()
+        else:
+            return _(u"Editorial Note")
+    
+    @property
+    def description(self):
         return self.context.text
 
 @register.adapter()
