@@ -182,7 +182,7 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
     js_file.close()
 
     def get_search_widgets(self):
-        return ""
+        return "", ""
 
     def get_item_types(self):
         workspace_config = component.getUtility(IWorkspaceTabsUtility)
