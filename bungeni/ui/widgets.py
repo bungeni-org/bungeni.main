@@ -26,16 +26,17 @@ import zope.traversing
 from zope.formlib.widgets import (TextAreaWidget, FileWidget, RadioWidget,
     DropdownWidget)
 from zope.formlib.itemswidgets import (ItemsEditWidgetBase, ItemDisplayWidget)
-
+from zope.formlib import form
+from zope.formlib.namedtemplate import NamedTemplate
 from zope.i18n import translate
-
+from zope import schema
 from zc.resourcelibrary import need
 
 
 from bungeni.alchemist import Session
 from bungeni.models import domain
 from bungeni.ui.i18n import _
-from bungeni.ui.utils import url, debug, date, misc
+from bungeni.ui.utils import url, debug, date, misc, common
 from bungeni.ui.interfaces import IGenenerateVocabularyDefault
 from bungeni.models.utils import get_db_user_id
 from bungeni.core.language import get_default_language
@@ -1231,4 +1232,42 @@ def text_input_search_widget(table_id, field_id):
     """
     script = open("%s/templates/text-input-search-widget.js" % (_path)).read()
     return script % {"table_id": table_id, "field_id": field_id}
+        
+class DateFilterWidget(form.PageForm):
+    class IDateRangeSchema(interface.Interface):
+        range_start_date = schema.Date(
+            title=_(u"From"),
+            description=_(u"Leave blank or set lower limit"),
+            required=False)
+
+        range_end_date = schema.Date(
+            title=_(u"To"),
+            description=_(u"Leave blank or set upper limit"),
+            required=False)
+    template = NamedTemplate("alchemist.subform")
+    form_fields = form.Fields(IDateRangeSchema, render_context=True)
+    form_fields["range_start_date"].custom_widget = DateWidget
+    form_fields["range_end_date"].custom_widget = DateWidget
+    
+    def setUpWidgets(self, ignore_request=False, cookie=None):
+        class context:
+            range_start_date = None
+            range_end_date = None
+        self.adapters = {
+            self.IDateRangeSchema: context,
+            }
+        self.widgets = form.setUpWidgets(
+            self.form_fields, self.prefix, self.context, self.request,
+            form=self, adapters=self.adapters, ignore_request=True)
+            
+    @form.action(_(u"Ok"), name="ok")
+    def handle_filter(self, action, data):
+        #Handled by Javascript
+        pass
+        
+def date_input_search_widget(table_id, field_id):
+    form = DateFilterWidget(common.get_application(), common.get_request())
+    script = open("%s/templates/date-input-search-widget.js" % (_path)).read()
+    return script % {"table_id": table_id, "field_id": field_id, 
+                    "widget_html": form.render()}
 
