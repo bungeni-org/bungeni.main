@@ -88,8 +88,9 @@ YAHOO.util.Event.onAvailable("agenda-preview-button", function(event){
             modal: true, 
             visible: false, 
             width: "800px", 
-            height: "600px", 
-            fixedcenter:true, 
+            height: "auto", 
+            fixedcenter:false, 
+            constraintoviewport: false,
             zindex: 2000,
         }
     );
@@ -700,7 +701,7 @@ YAHOO.bungeni.config = function(){
 
                 var button = new YAHOO.widget.Button({
                     type: "menu",
-                    label: "+",
+                    label: "&nbsp;",
                     id: el.id + "-add-text-record-button",
                     menu: menu
                 });
@@ -712,16 +713,17 @@ YAHOO.bungeni.config = function(){
                         );
                     }
                 }
+                button.addClass("schedule_edit");
                 button.getMenu().subscribe("click", clickHandler);
                 button.appendTo(el);
                 var rec_index = this.getRecordIndex(record);
                 var rec_size = this.getRecordSet().getLength();
                 var orderButtons = new YAHOO.widget.ButtonGroup({});
                 if(rec_index>0){
-                    orderButtons.addButton({ label: "&uarr;", value: "UP" });
+                    orderButtons.addButton({ label: "&nbsp;", value: "UP" }).addClass("schedule_up");
                 }
                 if(rec_index<(rec_size-1)){
-                    orderButtons.addButton({ label: "&darr;", value: "DOWN" });
+                    orderButtons.addButton({ label: "&nbsp;", value: "DOWN" }).addClass("schedule_down");
                 }
                 orderButtons.on("checkedButtonChange", function(ev){
                     if(ev.newValue){
@@ -734,8 +736,9 @@ YAHOO.bungeni.config = function(){
                 });
                 orderButtons.appendTo(el);
                 var deleteButton = new YAHOO.widget.Button({
-                    label: "x"
+                    label: "&nbsp;"
                 })
+                deleteButton.addClass("schedule_delete");
                 deleteButton.on("click", function(){
                     YAHOO.bungeni.config.scheduling.handlers.removeRow(
                         deleteButton.get("element")
