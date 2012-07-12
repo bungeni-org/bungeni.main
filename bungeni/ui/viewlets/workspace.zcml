@@ -10,6 +10,13 @@
         class=".workspace.WorkspaceContextNavigation"
         weight="1"
     />
+    <browser:viewlet name="bungeni.workspace_context_navigation"
+        layer="..interfaces.IWorkspaceMyDocumentsSectionLayer"
+        permission="bungeni.ui.workspace.View"
+        manager="ploned.ui.interfaces.ILeftColumnManager"
+        class=".workspace.WorkspaceContextNavigation"
+        weight="1"
+    />
     <browser:viewlet name="bungeni.workspace_signatory_status"
         for="bungeni.models.interfaces.IBungeniParliamentaryContent"
         layer="..interfaces.IWorkspaceSectionLayer"
