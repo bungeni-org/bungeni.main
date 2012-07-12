@@ -1,0 +1,47 @@
+#[ $Id$ ]#
+#[ was: ui/forms/templates/version.pt ]#
+
+$overlay{ bungeni.html }
+
+$begin{ content }
+<div>
+    <h1>${ i18n("Versions") }</h1>
+    <div id="version-history">
+    $begin{ form }
+        $overlay{ form.html#form }
+        $begin{ pre_fieldset }
+        <label class="discreet" for="form.actions.diff">${ 
+            i18n("Select a version to compare to the current working copy, "
+                 "or make two selections to compare historic versions")
+        }</label>
+        ${ xml(view.listing()) }
+        <br />
+        $if{ view.diff_view is not None }
+            #[
+                The diff output is set as the value of the view's diff_view 
+                variable (prepared separately by the view handler). That output 
+                *should* be already of the same "Quoted String Class" (that 
+                determines how bits of content are auto-escaped when assembling 
+                a template's output) as the calling template being rendered i.e. 
+                as the rendering of this template.
+                
+                But, view.diff_view is always of type "unicode", and so when 
+                this template is rendered with quoting="xml", i.e. qpy.xml as 
+                its quoted-string-class, then view.diff_view unicode string is 
+                auto-escaped to XML when incorporated into the output. 
+                
+                To avoid this happening (when the calling template is rendered
+                with quoting="xml") we hard-declare that view.diff_view is 
+                already of same XML "Quoted String Class" as the calling 
+                template. [This could be specified in the view's handler, but 
+                that would make that less template-engine agnostic.]
+            ]#
+            ${ xml(view.diff_view) }
+        $fi
+        $end{ pre_fieldset }
+    $end{ form }
+    $evoque{ #form }
+    </div>
+</div>
+$end{ content }
+

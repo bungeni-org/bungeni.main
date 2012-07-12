@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+#[ 
+    $Id$ 
+]#
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <title>${ i18n(view.page_title) }</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+
+<link rel="xss" href="bungeni.xss" type="text/xss" media="screen" />
+<link rel="icon" href="/@@/portal/favicon.ico" type="image/png" media="screen" />
+${ xml(view.provide(provider_name="feed-manager")) }
+<!-- common -->
+#[ 
+    resources from "portal", defined in bungeni.portal.configure:
+    <browser:resourceDirectory name="portal" 
+        directory="static/html/resources" permission="zope.Public" />
+
+    !+ it seems that ZPT was previously generating these from:
+    <script src="resources/*.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="resources/*.css" type="text/css" /> 
+
+    outputting, for each resouce:
+    <script src="http://127.0.0.1:8081/++resource++portal/jquery-1.2.6.min.js" 
+        type="text/javascript"></script>
+]#
+<link rel="stylesheet" href="/@@/portal/10-base.css" type="text/css" />
+<link rel="stylesheet" href="/@@/portal/20-public.css" type="text/css" />
+<link rel="stylesheet" href="/@@/portal/30-columns.css" type="text/css" />
+<link rel="stylesheet" href="/@@/portal/40-authoring.css" type="text/css" />
+<link rel="stylesheet" href="/@@/portal/50-portlets.css" type="text/css" />
+<link rel="stylesheet" href="/@@/portal/60-controlpanel.css" type="text/css" />
+<link rel="stylesheet" href="/@@/portal/70-print.css" type="text/css" />
+<link rel="stylesheet" href="/@@/portal/80-navtree.css" type="text/css" />
+<link rel="stylesheet" href="/@@/portal/85-invisibles.css" type="text/css" />
+<link rel="stylesheet" href="/@@/portal/90-forms.css" type="text/css" />
+<link rel="stylesheet" href="/@@/portal/95-plonekss.css" type="text/css" />
+<link rel="stylesheet" href="/@@/portal/A0-bungeni.css" type="text/css" />
+<link rel="stylesheet" href="/@@/portal/A2-scheduling.css" type="text/css" />
+<link rel="stylesheet" href="/@@/portal/A3-clockpick.css" type="text/css" />
+<link rel="stylesheet" href="/@@/portal/A4-plainTable.css" type="text/css" />
+<link rel="stylesheet" href="/@@/portal/A5-report.css" type="text/css" />
+<link rel="stylesheet" href="/@@/portal/A8-calendar.css" type="text/css" />
+<link rel="stylesheet" href="/@@/portal/A9-myinterests.css" type="text/css" />
+<link rel="stylesheet" href="/@@/portal/B0-globalnav.css" type="text/css" />
+<link rel="stylesheet" href="/@@/portal/jquery-ui-1.8.7.custom.css" type="text/css" />
+<!-- /common -->
+
+$if{is_rtl()}
+<link rel="stylesheet" href="/@@/portal/rtl.css" type="text/css" />
+$fi
+
+
+#[
+approaching valid html: validator.w3.org:
+    this view with zpt layout:      30 Errors, 32 warning(s) 
+    this view with this layout:     2 Errors, 1 warning(s) 
+
+slots {
+'plone.htmlhead.title': <function _callback_plone_htmlhead_title at ...>, 
+'title': <function _callback_title at ...>, 
+'column_two_slot': <function _callback_column_two_slot at ...>, 
+'plone.content': <function _callback_plone_content at ...>, 
+'column_one_slot': <function _callback_column_one_slot at ...>, 
+'plone.htmlhead': <function _callback_plone_htmlhead at ...>, 
+'plone.portalfooter': <function _callback_plone_portalfooter at ...>, 
+'plone.portaltop': <function _callback_plone_portaltop at ...>
+} 
+]#
+#[ 
+    NOTE: about the repeated calls to xml() below: 
+    by calling xml(output) we are manually casting the "output" string value 
+    to the qpy.xml <<quoted-no-more>> string class (as per the template 
+    configuration). This should not be required but is needed *for now* 
+    because some of the other templates (for pageviews, viewlets, etc) used 
+    to build this response are not being rendered by evoque, thus the type of 
+    their return value will *not* be the same as this template's 
+    <<quoted-no-more>> string class, and would as a result be incorrectly 
+    escaped. When the whole template evaualtaion stack is evoque, there will 
+    no longer be the need to explicitly declare such returns values as 
+    "escaped".
+    
+    Background: the TAL "equivalent" of of this would be the "structure" 
+    template keyword.
+]#
+
+
+<!-- provider: "plone-js" -->
+${ xml(view.provide(provider_name="plone-js")) }
+
+  </head>
+  #[ !+section-bungeni(mr, aug-2010) shouldn't this be bungeni-section? ]#
+  <body class="yui-skin-sam section-bungeni-${get_section_name()}" 
+    dir="${get_base_direction()}">
+    <div id="visual-portal-wrapper">
+      <div id="portal-top">
+      ${ xml(view.provide(provider_name="plone.portalheader")) }
+      ${ xml(view.provide(provider_name="plone.portaltools")) }
+      </div>
+      
+      <div class="visualClear" id="clear-space-before-wrapper-table"><!-- --></div>
+
+      <div id="portal-columns">
+            $evoque{ #plone_viewlets_td,
+                     td_id="portal-column-one",
+                     plone_viewlet_manager_name="plone.leftcolumn" }
+            
+            <div id="portal-column-content"
+                  $if{views['plone'].have_viewlets(view, 'plone.leftcolumn')
+                 } class="sl"$fi>
+              <div class="$if{ views['plone'].show_editable_border()
+                               }documentEditable$fi">
+                ${ xml(view.provide(provider_name="plone.contentviews")) }
+                <div id="region-content" class="documentContent">
+                  <span id="contentTopLeft"></span>
+                  <span id="contentTopRight"></span>
+                  <a name="documentContent"></a>
+                  
+                  #[ !+ ???
+                  <div id="portal-status-message">
+                    <!-- "plone.statusmessage" -->
+                  </div>]#
+                  
+                  <div id="viewlet-above-content">
+                    ${ xml(view.provide(provider_name="plone.abovecontent")) }
+                  </div>
+                  
+                  <div id="content">
+                  $begin{content} DOCUMENT CONTENT SLOT $end{content} 
+                  $evoque{#content}
+                  </div>
+                  
+                  ${ xml(view.provide(provider_name="plone.belowcontent")) }
+                  <span id="contentBottomLeft"></span>
+                  <span id="contentBottomRight"></span>
+                </div>
+              </div>
+            </div>
+            $evoque{ #plone_viewlets_td,
+                     td_id="portal-column-two",
+                     plone_viewlet_manager_name="plone.rightcolumn" }
+      </div>
+
+      <div class="visualClear" id="clear-space-before-footer"><!-- --></div>
+
+      #[ !+ ???
+      <div id="manage-portlets">
+        <!-- manage portlets -->
+      </div>]#
+      
+      <div id="portal-footer">
+      ${ xml(view.provide(provider_name="plone.portalfooter")) }
+      </div>
+      <div class="visualClear"><!-- --></div>
+    </div>
+    
+    #[ /++resource++portal/spinner.gif ]#
+    <div id="kss-spinner">
+      <img src="/@@/portal/spinner.gif" alt="" />
+    </div>
+
+  </body>
+</html>
+
+$begin{plone_viewlets_td}
+$prefer{ 
+    data=dict(td_id=None, plone_viewlet_manager_name=None) 
+}
+$if{ td_id and 
+     plone_viewlet_manager_name and 
+     views["plone"].have_viewlets(view, plone_viewlet_manager_name) }
+<div id="${td_id}">
+  <div class="visualPadding">
+  ${ xml(view.provide(provider_name=plone_viewlet_manager_name)) }
+  &nbsp;
+</div>
+</div>
+$fi
+$end{plone_viewlets_td}
+

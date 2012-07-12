@@ -1,0 +1,35 @@
+#[ $Id$ ]#
+
+
+#[ was: ui/templates/workflow.pt ]#
+$begin{main}
+    $overlay{ bungeni.html }
+    $begin{content}
+        <h1>${ i18n(view.page_title) }</h1>
+        #[ i18n:name="state" ]#
+        <p>${ i18n("Current state:") } <em>${ view.get_wf_state() }</em></p>
+        
+        $if{ hasattr(view, 'history_viewlet') }
+        <h2>${ i18n("History") }</h2>
+        ${ xml(view.history_viewlet.render()) }
+        $fi
+        ${ xml(view.action_viewlet.render()) }
+    $end{content}
+$end{main}
+
+
+#[ was: ui/templates/workflow_ajax.pt ]#
+$begin{ajax}
+<xhtml-snippet>
+    <span class="state-title">${ state_title }</span>
+    <select name="transition" class="workflow-status">
+        <option disabled="disabled" selected="selected">
+            ${ i18n("Change state...") }
+        </option>
+        $for{ action in actions } 
+        <option value="${action['transition_id']}">${ action["title"] }</option>
+        $rof
+    </select>
+</xhtml-snippet>
+$end{ajax}
+

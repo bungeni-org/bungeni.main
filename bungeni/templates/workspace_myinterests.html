@@ -1,0 +1,21 @@
+#[ $Id$ ]#
+
+$begin{interests}
+<dt class="portletHeader" id="fieldsetlegend-${view.view_id}">
+    <span>${i18n(view.view_title)}</span>
+</dt>
+
+<dd id="fieldset-${view.view_id}" class="portletItem">
+    $for{item in view.items}
+	   <div class="rssItem">
+	   	   <a title="${item["title"]}" href="${item["url"]}">
+	   	   	   ${item["title"]}
+	   	   </a>
+		   <span>
+		   	   ${item["description"]}
+		   </span>
+	   </div>
+	$rof
+</dd>
+$end{interests}
+

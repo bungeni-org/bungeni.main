@@ -1,0 +1,38 @@
+#[ $Id$ ]#
+
+#[ was: ui/forms/templates/content-view.pt ]#
+$begin{view}
+    $overlay{bungeni.html}
+    $begin{content}
+    <div>
+        #[
+            !+SITE_NORMALIZED_TITLE_DESCRIPTION(mr, may-2011) to facilitate 
+            styling, all pages should markup a page title/description 
+            consistently i.e. also container.html#generic.
+        ]#
+        <h2 class="title">${ i18n(view.page_title) }$if{ view.is_workflowed }
+            <span class="workflow_info">[${ i18n(view.get_wf_state()) }]</span> $fi
+            #[ !+CONTENT.RSS(mr, may-2011) shouldn't this also be in 
+                container listings?
+            ]#
+			${ xml(view.provide(provider_name="bungeni.content.rss")) }
+        </h2>
+        #[ if no view.page_translation, avoid translating empty string 
+           as this gives very surprising results ]#
+        <p class="documentDescription">${ i18n(view.page_description or " ") }</p>
+        ${ xml(view.provide(provider_name="alchemist.content.view")) }
+        #[ !+/SITE_NORMALIZED_TITLE_DESCRIPTION ]#
+    </div>
+    $end{content}
+$end{view}
+
+#[ was: ui/forms/templates/content.pt ]#
+$begin{viewlets}
+<dl class="enableFormTabbing">
+    $for{ viewlet in view.viewlets }
+        ${ xml( viewlet.render() ) }
+    $rof
+</dl>
+$end{viewlets}
+
+

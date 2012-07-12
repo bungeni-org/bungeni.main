@@ -1,0 +1,139 @@
+#[  $Id$ ]#
+
+$begin{content_actions} #[ portlet-contentactions.pt ]#
+$if{ len(view.context_actions)>1 }
+<dl class="portlet">
+    <dt class="portletHeader">
+        <span class="portletTopLeft"></span>
+        ${i18n("View")}
+        <span class="portletTopRight"></span>
+    </dt>
+    <dd class="portletItem even">
+        <ul class="contentViewsLeftPort">
+        $for{ action in view.context_actions }
+            <li class="${action['selected'] or 'plain'}">
+                <a href="${ action['url'] or action['action']
+                                        }">${i18n(action['title'])}</a>
+            </li>
+        $rof
+        </ul>
+    </dd>
+    
+    #[
+    <dd class="portletFooter">
+        <span class="portletBottomLeft"></span>
+        &nbsp;
+        <span class="portletBottomRight"></span>
+    </dd>
+    ]#
+</dl>
+$fi
+$end{content_actions}
+
+
+
+$begin{action_menus} #[ plond/ui/templates/contentmenu.pt ]#
+    $if{ view.available() }
+<ul id="contentActionMenus">
+        $for{ menu_item in view.menu() }
+    <li class="${ menu_item['extra']['id'] }">
+        $evoque{ #menu_item,
+            submenu=menu_item["submenu"],
+            state=menu_item["extra"].get("state", None),
+            state_class=menu_item["extra"].get("class", ""),
+            state_title=menu_item["extra"].get("stateTitle", None),
+            show_children=not menu_item["extra"].get("hideChildren", False),
+            link_id=menu_item["extra"]["id"]
+        }
+    </li>
+        $rof
+</ul>
+    $fi
+$end{action_menus}
+
+
+$begin{menu_item}
+    #[ submenu=None means display the item (but no children) 
+       submenu=[] menas do not display anything! ]#
+    $if{ submenu is None or submenu or state }
+        $if{ show_children } 
+        <dl class="actionMenu" id="${ menu_item['extra']['id'] }">
+            <dt class="actionMenuHeader label-${ state_class }">
+        $fi
+        $if{ menu_item["action"] } 
+                <a id="${ link_id or ''
+                   }" href="${ menu_item['url'] or menu_item['action'] 
+                   }"$if{ menu_item['description'] 
+                       } title="${ i18n(menu_item['description']) 
+                   }"$fi>
+        $fi
+                    $evoque{ #menu_item_label, 
+                        menu_item=menu_item, 
+                        css_class="menuTitle" 
+                    }
+        $if{ state_title }
+                    <span$if{ state_class } class="${ state_class }"$fi>
+                        ${ i18n(state_title) }
+                    </span>
+        $fi
+        $if{ show_children and submenu }
+                    <span class="arrowDownAlternative">&#9660;</span>
+        $fi
+        $if{ menu_item["action"] }
+                </a>
+        $fi
+        $if{ show_children }
+            </dt>
+        $fi
+        $if{ submenu }
+            $if{ show_children }
+            <dd class="actionMenuContent">
+            $fi
+                <ul>
+            $for{ sub_menu_item in submenu }
+                    <li class="${ sub_menu_item['extra'].get('separator', 'separator') }">
+                $if{ sub_menu_item["action"] }
+                        <a id="${ sub_menu_item['extra'].get('id', '') 
+                           }" class="${ sub_menu_item.get('selected', '') 
+                           }" href="${ sub_menu_item['url'] or sub_menu_item['action'] 
+                           }"$if{ sub_menu_item['description'] 
+                           } title="${ i18n(sub_menu_item['description']) }"$fi>
+                            $evoque{ #menu_item_label, 
+                                menu_item=sub_menu_item, 
+                                css_class="subMenuTitle" 
+                            }
+                        </a>
+                $else
+                        <div id="${ sub_menu_item['extra'].get('id', '') }"
+                            class="${ sub_menu_item['extra'].get('class', '') }">
+                            $if{ sub_menu_item.get("selected") }&bull;$fi
+                            $evoque{ #menu_item_label, 
+                                menu_item=sub_menu_item,
+                                css_class="subMenuTitle" 
+                            }
+                        </div>
+                $fi
+                    </li>
+            $rof
+                </ul>
+            $if{ show_children }
+            </dd>
+            $fi
+        $fi #[ submenu ]#
+        $if{ show_children }
+        </dl>
+        $fi
+    $fi
+$end{menu_item}
+
+
+$begin{menu_item_label}
+    #[ !+MENU_ICON(mr, aug-2010) remove, icon is always managed via CSS ]#
+    $if{ menu_item["icon"] }
+    <img width="16" height="16"
+         alt="${ menu_item['description'] }" #[ i18n ]#
+         src="${ menu_item['icon'] }" />
+    $fi
+    <span class="${css_class}">${ i18n(menu_item["title"]) }</span>
+$end{menu_item_label}
+

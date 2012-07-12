@@ -1,0 +1,34 @@
+#[ $Id$ ]#
+
+
+#[ was: ui/templates/changes.pt ]#
+$begin{listing_view}
+    $overlay{bungeni.html}
+    $begin{content}
+    <h2>${view.page_title}</h2>
+    $evoque{#listing}
+    $end{content}
+$end{listing_view}
+
+
+$begin{listing_viewlet}
+<dt id="fieldsetlegend-${view.view_id}">
+    <span>${view.view_title}</span>
+</dt>
+<dd id="fieldset-${view.view_id}">
+$evoque{#listing}
+</dd>
+$end{listing_viewlet}
+
+
+
+$begin{listing}
+<div>
+$if{view.has_data}
+    ${xml(view.listing())}
+$else
+    <p>${view.message_no_data}</p>
+$fi
+</div>
+$end{listing}
+

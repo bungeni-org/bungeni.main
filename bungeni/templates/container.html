@@ -1,0 +1,74 @@
+#[ $Id$ ]#
+
+#[ was: ui/templates/generic-container.pt ]#
+$begin{generic}
+    $overlay{bungeni.html}
+    $begin{content}
+    <div>
+        #[ !+SITE_NORMALIZED_TITLE_DESCRIPTION ]#
+        #[ !+form_name(mr, sep-2010) shouldn't this just be view.page_title? ]#
+        <h1 class="title">${ i18n(getattr(view, "form_name", " ")) }</h1>
+        <p class="documentDescription">${ i18n(view.page_description or " ") }</p>
+        <form action="${ request.URL }" 
+            method="post"
+            class="edit-form" 
+            enctype="multipart/form-data"
+            id="alchemist.container.listing">
+            <div>
+            ${ xml(view.listing()) }
+            </div>
+        </form>
+    </div>
+    $end{content}
+$end{generic}
+
+
+#[ was: ui/forms/templates/generic-sub-container.pt ]#
+$begin{generic_sub}
+<dt id="fieldsetlegend-generic-sub-container-${view.view_name}">
+  ${i18n(view.form_name)}
+</dt>
+<dd id="fieldset-generic-sub-container-${view.view_name}">
+    <form action="./${view.view_name}" method="post"
+        class="edit-form" enctype="multipart/form-data"
+        id="alchemist.container.listing"
+        >
+        <div>
+            ${ xml(view.listing()) }
+        </div>
+#[
+        <div id="actionsView">
+            <span class="actionButtons" tal:condition="view/availableActions">
+                <tal:loop tal:repeat="action view/actions">
+	                <input type="submit" class="context" id="" name="" value=""
+		                tal:attributes="id action/__name__;
+                            name action/__name__;
+			           	    value python:str(action.label);"
+		                i18n:attributes="value" />
+                </tal:loop>
+            </span>
+        </div> 
+]#
+    </form>
+</dd>
+$end{generic_sub}
+
+
+#[ was: ui/templates/datatable.pt ]#
+#[ !+NEED_ZC_RESOURCE_LIBRARIES(mr, sep-2010) ]#
+$begin{datatable}
+<script type="text/javascript">
+(function($$) {
+    $$(document).ready(function() {
+        $$(this).yuiDataTable('${context_name}',
+            '${link_url}',
+            '${data_url}',
+            [${fields}],
+            [${columns}],
+            '${table_id}'
+        );
+    });
+})(jQuery);
+</script>
+$end{datatable}
+

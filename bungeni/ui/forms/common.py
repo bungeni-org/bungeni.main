@@ -43,13 +43,13 @@ from bungeni.core.translation import get_translation_for
 from bungeni.core.translation import CurrentLanguageVocabulary
 from bungeni.models.interfaces import IVersion, IBungeniContent, \
     IAttachmentContainer #, ISittingContainer
-
 from bungeni.models import domain
 from bungeni.ui.forms.fields import filterFields
 from bungeni.ui.interfaces import IBungeniSkin, IFormEditLayer, \
     IGenenerateVocabularyDefault
 from bungeni.ui.i18n import _
 from bungeni.ui import browser
+#from bungeni.ui import z3evoque
 from bungeni.ui.utils import url
 from bungeni.ui.container import invalidate_caches_for
 from bungeni.utils import register
@@ -238,17 +238,18 @@ class BaseForm(formlib.form.FormBase):
 # !+NamedTemplate(mr, jul-2010) converge all views to not use anymore
 # !+alchemist.form(mr, jul-2010) converge all form views to not use anymore
 class PageForm(BaseForm, formlib.form.PageForm, browser.BungeniBrowserView):
-     template = NamedTemplate("alchemist.form")
+    #template = z3evoque.PageViewTemplateFile("form.html#page")
+    template = NamedTemplate("alchemist.form")
 
 class DisplayForm(catalyst.DisplayForm, browser.BungeniBrowserView):
     
+    #template = z3evoque.PageViewTemplateFile("content.html#view")
     template = ViewPageTemplateFile("templates/content-view.pt")
 
     form_name = _("View")
 
     def __call__(self):
         return self.template()
-
 
 
 @register.view(IAttachmentContainer, layer=IBungeniSkin, name="add",
@@ -770,6 +771,8 @@ class DeleteForm(PageForm):
     """
     form_template = NamedTemplate("alchemist.form")
     template = ViewPageTemplateFile("templates/delete.pt")
+    #template = z3evoque.PageViewTemplateFile("delete.html")
+    
     _next_url = None
     form_fields = formlib.form.Fields()
 

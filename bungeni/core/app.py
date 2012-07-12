@@ -114,6 +114,17 @@ class AppSetup(object):
         sm = site.LocalSiteManager(self.context)
         self.context.setSiteManager(sm)
         
+        from bungeni.core import language
+        from bungeni.ui import z3evoque
+        z3evoque.set_get_gettext()
+        z3evoque.setup_evoque()
+        z3evoque.domain.set_on_globals("devmode", common.has_feature("devmode"))
+        z3evoque.domain.set_on_globals("absoluteURL", url.absoluteURL)
+        z3evoque.domain.set_on_globals("get_section_name", url.get_section_name)
+        z3evoque.domain.set_on_globals("get_base_direction", 
+            language.get_base_direction)
+        z3evoque.domain.set_on_globals("is_rtl", language.is_rtl)          
+        
         # !+ where is the view name for the app root (slash) set?
         
         # CONVENTION: the action of each site top-section is made to point 

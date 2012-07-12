@@ -1,0 +1,35 @@
+#[ $Id$ ]#
+#[ was: ui/forms/templates/delete.pt ]#
+
+$overlay{ bungeni.html }
+
+$begin{ content }
+<div>
+    <h1>${ i18n("Delete item confirmation") }</h1>
+    $begin{ form }
+        $overlay{ form.html#form }
+        $begin{ pre_fieldset }
+        $if{ not view.status } 
+        <dl class="portalMessage warning">
+            <dt><p>Delete</p></dt>
+            <dd>${
+                i18n("Please confirm that you wish to delete this item.") 
+            }</dd>
+        </dl>
+        $fi
+        <div class="visualClear"><!-- nothing here --></div>
+        <p>${ i18n("The following item will be deleted.") }</p>
+        <ul>
+            <li>
+                <a href="${ 
+                    absoluteURL(view.context, view.request)
+                        }">${ view.page_title }</a>
+                <p class="discreet">${ view.page_description }</a>
+          </li>
+        </ul>
+        $end{ pre_fieldset }
+    $end{ form }
+    $evoque{ #form }
+</div>
+$end{ content }
+

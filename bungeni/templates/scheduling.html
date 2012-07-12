@@ -1,0 +1,65 @@
+#[ $Id$ ]#
+
+#[ was: ui/viewlets/templates/scheduling.pt ]#
+$begin{main}
+<dl class="portlet portletNavigationTree">
+    <dt class="portletHeader">
+        <span class="portletTopLeft"></span>
+        <span class="tile">${view.view_title}</span>
+        <span class="portletTopRight"></span>
+    </dt>
+    <dd id="items-to-be-scheduled-dl"> 
+        <p class="scheduling-dd-description"
+            >${i18n("Add items to schedule by clicking on the checkbox")}</p>
+        <dl class="enableFormTabbing schedule_page">
+            ${ xml(view.provide("bungeni.scheduling")) }
+        </dl>
+    </dd>
+</dl>
+$end{main}
+
+
+#[ was: ui/viewlets/templates/schedulable_items.pt ]#
+$begin{items}
+$if{ view.visible }
+<dt id="fieldsetlegend-${view.view_name}-for-scheduling">
+    ${view.view_title}
+</dt>
+<dd id="fieldset-${view.view_name}-for-scheduling">
+    $if{view.items}
+    <table class="listing grid" id="items-for-scheduling-${view.view_name}">
+        <thead>
+            <tr>
+                <th>${i18n("Schedule")}</th>
+                <th>${i18n("Title")}</th>
+                <th>${i18n("Last modified")}</th>
+            </tr>
+        </thead>
+        <tbody>
+            $for{item in view.items}
+            <tr id="row-${item['id']}" class="${item['class']}">
+                <td>
+                    <input type="checkbox" rel="${item['type']}" 
+                        id="${item['id']}" class="scheduling-checkbox"
+                        $if{item['class']}checked="checked"$fi 
+                    />
+                </td>
+                <td>
+                    $if{item['type'] != "heading"}
+                        <a rel="id" name="${item['id']}" href="${item['url']}"
+                        title="${item['description']}">${item["title"]}</a>
+                    $else
+                        <p rel="id"
+                        name="${item['description']}">${item["title"]}</p>
+                    $fi
+                </td>
+                <td>${item["date"]}</td>
+            </tr>
+            $rof
+        </tbody>
+    </table>
+    $fi
+</dd>
+$fi
+$end{items}
+

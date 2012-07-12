@@ -1,0 +1,66 @@
+#[  $Id$
+    
+    a sample Evoque source file, 
+    demonstrating multiple templates in a single file
+]#
+
+
+#[ was: ui/templates/workspace-section.pt ]#
+$begin{section_page}
+    $overlay{ bungeni.html }
+    $begin{content}
+        <h1>${ i18n(view.page_title) }</h1>
+        ${ xml(view.provide()) }
+    $end{content}
+$end{section_page}
+
+
+#[ was: ui/viewlets/templates/workspace.pt ]#
+$begin{viewlet_manager} 
+<div id="bungeni-workspace">
+    <dl class="portlet workspace-viewlet listing enableFormTabbing">
+    $for{ viewlet in view.viewlets }
+        #[ <div tal:define="odd repeat/viewlet/odd" 
+            tal:attributes="class python: 'item %s' % (odd and 'odd' or 'even')"> ]#
+        ${xml(viewlet.render())}
+        #[ </div> ]#
+    $rof
+    </dl>
+    <div class="visualClear"><!-- nothing here --></div>
+    $if{ not devmode }
+    <script language="javascript" 
+        type="text/javascript">setTimeout("location.reload();", 200000);</script>
+    $fi
+</div>
+$end{viewlet_manager}
+
+
+#[ was: ui/viewlets/templates/workspace_context_navigation.pt ]#
+$begin{context_navigation}
+<dl class="portlet">
+    <dt class="portletHeader">
+        <span class="portletTopLeft"></span>
+        ${view.workspace_title} #[ view must translate this and set it ]#
+        <span class="portletTopRight"></span>
+    </dt>
+    <dd class="portletItem even">
+        <ul class="contentViewsLeftPort">
+        $for{ action in view.sections }
+            <li class="${action['selected'] or 'plain'}">
+                <a href="${ action['url'] or action['action']
+                                        }">${i18n(action['title'])}</a>
+            </li>
+        $rof
+        </ul>
+    </dd>
+    
+    #[
+    <dd class="portletFooter">
+        <span class="portletBottomLeft"></span>
+        &nbsp;
+        <span class="portletBottomRight"></span>
+    </dd>
+    ]#
+</dl>
+$end{context_navigation}
+

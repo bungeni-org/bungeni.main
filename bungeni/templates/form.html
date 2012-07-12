@@ -1,0 +1,319 @@
+#[ $Id$ ]#
+
+
+#[ was: ui/forms/templates/form.pt : macros/header ]#
+$begin{ _widget_header }
+    $prefer{ data=dict(widget=None) } #[ expects that context defines "widget" ]# 
+    <label for="${ widget.name }">
+        <span>${ widget.label }</span>
+    </label>
+    $if{ widget.required } 
+    <span class="fieldRequired" title="${ i18n('title_required') }">
+        ${ i18n("label_required") }
+    </span>
+    $fi
+    $if{ widget.hint }
+    <div class="formHelp">${ i18n(widget.hint) }</div>
+    $fi
+$end{ _widget_header }
+
+
+$begin{ _message }
+    $if{ message }
+    <dl class="portalMessage info">
+        <dt>${ i18n(mtype.capitalize()) }</dt>
+        <dd>${ i18n(message) }</dd>
+    </dl>
+    $fi
+$end{ _message }
+$begin{ _invariant_messages }
+    $if{ view.invariantMessages }
+    <div class="invariant-errors">
+        <ul>
+            $for{ message in view.invariantMessages }
+            <li>${ i18n(message) }</li>
+            $rof
+        </ul>
+    </div>
+    $fi
+$end{ _invariant_messages }
+
+$begin{ _actions }
+<div id="actionsView">
+    $if{ view.availableActions() }
+    <span class="actionButtons">
+        $for{ action in view.actions }
+        <input type="submit" class="context"
+           id="${ action.__name__ }"
+           name="${ action.__name__ }"
+           value="${ i18n(action.label) }" />
+        $rof
+    </span>
+    $fi
+</div>
+$end{ _actions }
+
+
+#[ was: ui/forms/templates/form.pt ]#
+$begin{ form }
+#[ !+i18n_domain(mr) orig ZPT "form" macro declares i18n:domain="alchemist" !?]#
+#[
+inspect(output=True) -:-
+when output=False, dumps out GLOBALS, LOCALS, EXPRESSIONS to 
+evoque_domain.log.info() i.e. evoque logger level should be INFO.
+See: http://evoque.gizmojo.org/syntax/ 
+
+$if{ devmode }<!--
+${ inspect(output=False) }
+-->$fi
+]#
+
+    #[ !+form_description(mr)
+        only ui.forms.common EditForm and TranslateForm define a 
+        "form_description" property -- add to BaseForm? 
+    ]#
+    <p class="documentDescription">${ 
+        i18n(getattr(view, "form_description", " "))
+                                    }</p>
+    
+    <form 
+        #[ !+action_url(mr) throughout bungeni UI, only versions.VersionLogView
+            defines an "action_url" property!
+        ]#
+        action="${ getattr(view, 'action_url', request.URL) }"
+        #[ !+context_class(mr) -- Only instances of a sub-class of
+            bungeni.ui.forms.common.AddForm have a context_class property;
+            either add on all forms, or replace with a generic 
+            getattr(view.context, "domain_model") 
+        ]#
+        class="${
+            getattr(view, 'context_class', context.__class__).__name__.lower()
+                }-form"
+        #[ !+action_method(mr) bungeni forms have no "action_method" property! ]#
+        method="${ getattr(view, 'action_method', 'post') }"
+        #[ !+alchemist-form(mr) why is this id fixed to this value? ]#
+        id="alchemist-form"
+        #[ !+enctype(mr) isn't this only applicable for method="post"? ]#
+        enctype="multipart/form-data"#[ ]#>
+        
+        $evoque{ #_message, message=view.status, mtype="info"}
+        $evoque{ #_invariant_messages }
+
+        #[ !+pre-fieldset(mr) / define-slot="pre-fieldset"
+            fill-slot="pre-fieldset" : only occurs in:
+            bungeni/ui/templates/version.pt
+            bungeni/ui/forms/templates/delete.pt
+        ]#
+        $begin{ pre_fieldset }$end{ pre_fieldset }
+        $evoque{ #pre_fieldset }
+        
+        #[ !+fieldset_name(mr)
+           there are NO bungeni forms with a "fieldset_name" attr !!
+        ]#
+        $if{ getattr(view, "fieldset_name", None) }
+        <fieldset>
+            #[ Form name ]#
+            <legend>${ i18n(view.fieldset_name) }</legend>
+        $fi
+        
+        #[ metal:use-macro="context/@@standard_macros/fieldset
+           only in /src/alchemist.ui/alchemist/ui/templates/subform.pt 
+        ]#
+        $begin{ fieldset }
+            $prefer{ data=dict(side_by_side=False) }
+            
+            #[ !+came_from(mr) only set as a QS variable in portal/login.py ]#
+            $if{ getattr(view, "came_from", None) }
+            <input type="hidden" name="came_from" value="${ view.came_from }" />
+            $fi
+            
+            #[ BaseForm @next_url ]#
+            $if{ view.next_url }
+            <input type="hidden" name="next_url" value="${ view.next_url }" />
+            $fi
+            
+            #[ !+top-fieldset(mr) / define-slot="top-fieldset" 
+                fill-slot="top-fieldset" : no occurances i.e. not used anywhere
+            $begin{ top_fieldset } $end{ top_fieldset }
+            $evoque{ #top_fieldset }
+            ]#
+            
+            $if{ side_by_side } 
+            <table class="listing side-by-side" style="table-layout: fixed">
+            $fi
+            #[ !+widget_groups(mr) redefine on BaseForm to return fallback ]#
+            $for{ name in view.widget_groups or dict(fallback=view.widgets) }
+                $if{ view.legends and view.legends.get(name) }
+                <fieldset>
+                    <legend>${ i18n(view.legends.get(name)) }</legend>
+                $fi
+                $for{ widget in 
+                       (view.widget_groups or dict(fallback=view.widgets)
+                       ).get(name) 
+                    }
+                    #[ !+FIELD(mr, nov-2010) converge into a #_field template ]#
+                    $if{ widget.visible }
+                        $if{ not side_by_side }
+                        <div class="field widget-${
+                                        widget.__class__.__name__.lower() }">
+                            $evoque{ #_widget_header }
+                            #[ !+changed(mr) may not be defined? ]#
+                            <div class="widget${ (
+                    (widget.error() and ' error' or '') +
+                    (getattr(widget, 'changed', '') and ' changed' or '')
+                                ) }">
+                                <div class="widget"> 
+                                    ${ xml(widget()) }
+	                            </div>
+	                            $if{ widget.error() }
+	                            <div class="errormessage${ (
+                    getattr(widget, 'changed', '') and ' changed' or ''
+                                    ) }">
+                                    ${ xml(widget.error()) }
+                                </div>
+                                $fi
+                            </div>
+                        </div>
+                        $else #[ side_by_side ]#
+                        <tr class="field${ (
+                    (widget.error() and ' error' or '') + 
+                    (i%2 and ' odd' or ' even')
+                            ) }">
+                            <th colspan="2">
+                                $evoque{ #_widget_header }
+                            </th>
+                        </tr>
+                        <tr>
+                            <td valign="top" width="30%" style="overflow: auto">
+                                <div>
+                                    ${ xml(widget.render_original()) }
+                                </div>
+                            </td>
+                            <td valign="top">
+                                <div class="widget">
+                                    ${ xml(widget()) }
+                                </div>
+                          </td>
+                        </tr>
+                        $fi
+                    $fi
+                $rof
+                
+                $if{ view.legends and view.legends.get(name) } 
+                </fieldset>
+                $fi
+            $rof
+            $if{ side_by_side }
+            </table>
+            $fi
+        $end{ fieldset }
+        $evoque{ #fieldset, 
+            side_by_side=getattr(view, "side_by_side", False)
+        }
+        
+        #[ !+fieldset_name(mr) 
+           there are NO bungeni forms with a "fieldset_name" attr !!
+        ]#
+        $if{ getattr(view, "fieldset_name", None) }
+        </fieldset>
+        $fi
+        
+        $evoque{ #_actions }
+    </form>
+$end{ form }
+
+
+#[ was: ui/forms/templates/display_form.pt ]#
+$begin{ display }
+    <dt id="fieldsetlegend-display-form-${view.get_view_id()}">${i18n(view.form_name)}</dt>
+    <dd id="fieldset-display-form-${view.get_view_id()}" class="${view.getObjectClass()}">
+        <div id="display_form_spacer"></div>
+        <form action="${ getattr(view, 'action_url', request.URL) }"
+            method="post"
+            enctype="multipart/form-data">
+            $evoque{ #_message, message=view.status, mtype="info" }
+            #[ !+ AttributeError: 'BungeniAttributeDisplay' object has no attribute 'invariantMessages'
+            ]#
+            $evoque{ #_invariant_messages }
+            $evoque{ #_message, message=view.get_note(), mtype="note" }
+            $evoque{ #pre_fieldset }
+            
+            #[ !+fieldset_name(mr) pre... need to recover as in #form? ]#
+            #[ !+fieldset(mr) need to recover this macro?
+             <metal:block define-macro="fieldset"> ... </>
+            ]#
+            $for{ i, widget in enumerate(view.widgets) }
+                #[ !+FIELD(mr, nov-2010) converge into a #_field template ]#
+                $if{ widget.visible }
+                <div class="field${ (widget.error() and ' error' or '' +
+                (i%2 and ' odd' or ' even')) }" id="${widget.name}">
+                    <div class="content-left-column">
+                        <label for="${widget.name}">
+                            <span>${i18n(widget.label)}</span>
+                        </label>
+                        $if{ widget.required }
+                        #[ !+ i18n:domain="plone" ]#
+                        <span class="fieldRequired" 
+                            title="${i18n('title_required')}">
+                            ${i18n('label_required')}
+                        </span>
+                        $fi
+                    </div>
+                    <div class="widget${ (widget.error() and ' error' or '' +
+                (getattr(widget, 'changed', None) and ' changed' or ''))
+                            } content-right-column">
+                        <div class="widget">
+                            ${ xml(widget()) }
+                        </div>
+                        $if{ widget.error() }
+	                    <div class="errormessage${ (
+                getattr(widget, 'changed', None) and ' changed' or '') }">
+                            ${ xml(widget.error()) }
+                        </div>
+                        $fi
+                    </div>
+                </div>
+                $fi
+            $rof
+            #[ !+fieldset_name(mr) post... need to recover as in #form? ]#
+            <div class="rowspacer"></div>
+            $evoque{ #_actions }
+            
+        </form>
+    </dd>
+    #[ some viewlets are only displayed if they have content ]#
+    ${ xml(view.provide(provider_name="bungeni.subform.manager")) }
+$end{ display }
+
+
+
+$begin{ page }
+    $overlay{ bungeni.html }
+    $begin{ content }
+        <div>
+        #[ !+form_name(mr, jul-2010) shouldn't this just be view.page_title? ]#
+        <h1>${ i18n(getattr(view, "form_name", " ")) }</h1>
+        $evoque{ #form }
+        </div>
+    $end{ content }
+$end{ page }
+
+
+#[ 
+    !+form.html(mr) would require that all usage of "form.html#form" 
+    be changed to use "form.html" instead.
+
+    This basically allows that the "form.html" template is evoked directly,
+    that will thus simply delegate to evoking the appropriate nested template.
+    
+    We can also pre-define variables as needed to pass down e.g. here we
+    define "invariantMessages" (that is thus calculated once instead of
+    the view.invariantMessages property being called on each use.
+
+$evoque{ #form, 
+    invariantMessages=view.invariantMessages,
+    fieldset_name=getattr(view, "fieldset_name", None)
+}
+
+]#
+
