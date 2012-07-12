@@ -25,7 +25,6 @@ from bungeni.ui.i18n import _
 from bungeni.ui import browser
 from bungeni.models.interfaces import ITranslatable
 from bungeni.core.translation import get_translation_for, get_all_languages
-from bungeni.utils import register
 from copy import copy
 
 
@@ -58,7 +57,6 @@ def filterFields(context, form_fields):
     return form_fields.omit(*omit_names)
 
 
-@register.viewlet_manager(name="bungeni.subform.manager")
 class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
         browser.BungeniViewlet
     ):
