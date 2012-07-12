@@ -102,9 +102,13 @@ mapping_on_path = (
     (re.compile(r'^/workspace/scheduling(/.*)?$'),
         interfaces.IWorkspaceSchedulingSectionLayer
     ),
-    #matches "workspace/"
-    (re.compile(r'^/workspace(/.*)?$'),
+    #matches "workspace/my-documents"
+    (re.compile(r'^/workspace/my-documents(/.*)?$'),
         interfaces.IWorkspaceMyDocumentsSectionLayer
+    ),
+    #matches "workspace"
+    (re.compile(r'^/workspace(/.*)?$'),
+        interfaces.IWorkspaceSectionLayer
     ),
     # Matches "business/" followed by anything but "/whats-on"
     (re.compile(r'^/business(?!/whats-on)(/.*)+$'), 

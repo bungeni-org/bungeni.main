@@ -4,7 +4,7 @@
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bungeni">
     <browser:viewlet name="bungeni.workspace_context_navigation"
-        layer="..interfaces.IWorkspaceMyDocumentsSectionLayer"
+        for="bungeni.core.interfaces.IWorkspaceContainer"
         permission="bungeni.ui.workspace.View"
         manager="ploned.ui.interfaces.ILeftColumnManager"
         class=".workspace.WorkspaceContextNavigation"
