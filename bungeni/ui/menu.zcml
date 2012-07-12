@@ -62,7 +62,7 @@
         class=".menu.WorkflowMenu"
     />
     <browser:menu id="context_download_document"
-        title="The 'workflow' menu - allows user to execute workflow transitions"
+        title="The 'download' menu - provides options/formats to download a document"
         class=".menu.DownloadDocumentMenu"
     />
     <!-- !+
@@ -838,7 +838,7 @@
         provides="ploned.ui.interfaces.IContentMenuItem"
     />
     <adapter name="plone.contentmenu.downloaddocument"
-        for="bungeni.models.interfaces.IBungeniParliamentaryContent *"
+        for="bungeni.models.interfaces.IFeatureDownload *"
         factory=".menu.DownloadDocumentSubMenuItem"
         provides="ploned.ui.interfaces.IContentMenuItem"
     />

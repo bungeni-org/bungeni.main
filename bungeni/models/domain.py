@@ -237,6 +237,13 @@ def feature_notification(kls):
     interface.classImplements(kls, interfaces.IFeatureNotification)
     return kls
 
+def feature_download(kls):
+    """Decorator for domain types that support downloading as 
+    pdf/odt/rss/akomanoto
+    """
+    interface.classImplements(kls, interfaces.IFeatureDownload)
+    return kls
+
 def configurable_domain(kls, workflow):
     """Executed on adapters.load_workflow().
     """
@@ -884,7 +891,7 @@ class AgendaItem(AdmissibleMixin, Doc):
     """Generic Agenda Item that can be scheduled on a sitting.
     """
     dynamic_features = ["audit", "version", "attachment", "schedule",
-                        "workspace", "notification"]
+                        "workspace", "notification", "download"]
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
     )
@@ -900,7 +907,7 @@ class Bill(Doc):
     """Bill domain type.
     """
     dynamic_features = ["audit", "version", "attachment", "event", 
-        "signatory", "schedule", "workspace", "notification"]
+        "signatory", "schedule", "workspace", "notification", "download"]
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
     )
@@ -942,7 +949,7 @@ class Motion(AdmissibleMixin, Doc):
     """Motion domain type.
     """
     dynamic_features = ["audit", "version", "attachment", "event", 
-        "signatory", "schedule", "workspace", "notification"]
+        "signatory", "schedule", "workspace", "notification", "download"]
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
     )
@@ -962,7 +969,7 @@ class Question(AdmissibleMixin, Doc):
     """Question domain type.
     """
     dynamic_features = ["audit", "version", "attachment", "event", 
-        "signatory", "schedule", "workspace", "notification"]
+        "signatory", "schedule", "workspace", "notification", "download"]
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
     )
@@ -1016,7 +1023,7 @@ class TabledDocument(AdmissibleMixin, Doc):
     It must be possible to schedule a tabled document for a sitting.
     """
     dynamic_features = ["audit", "version", "attachment", "event", 
-        "signatory", "schedule", "workspace", "notification"]
+        "signatory", "schedule", "workspace", "notification", "download"]
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
     )
@@ -1222,7 +1229,7 @@ class Venue(Entity):
 class Report(Doc):
     """Agendas and minutes.
     """
-    dynamic_features = ["audit", "version"]
+    dynamic_features = ["audit", "version", "download"]
     interface.implements(interfaces.ITranslatable)
     
 

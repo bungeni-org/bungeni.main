@@ -452,6 +452,10 @@ class IFeatureWorkspace(IFeature):
 class IFeatureNotification(IFeature):
     """Marks support for "workspace" feature.
     """
+class IFeatureDownload(IFeature):
+    """Marker for classes supporting "download" feature".
+    """
+
 #
 
 ''' !+DATERANGEFILTER(mr, dec-2010) disabled until intention is understood

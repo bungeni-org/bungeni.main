@@ -32,8 +32,8 @@ from bungeni.models.utils import get_db_user_id
 from bungeni.models.interfaces import (
     IVersion, 
     IScheduleText, 
-    IBungeniParliamentaryContent, 
-    IFeatureAudit
+    IFeatureAudit,
+    IFeatureDownload
 )
 
 from bungeni.core.translation import (get_language, get_all_languages, 
@@ -511,7 +511,7 @@ class DownloadDocumentMenu(BrowserMenu):
     def getMenuItems(self, context, request):
         results = []
         _url = url.absoluteURL(context, request)
-        if IBungeniParliamentaryContent.providedBy(context):
+        if IFeatureDownload.providedBy(context):
             doc_templates = self.documentTemplates(request.locale)
             for doc_type in document_types:
                 if doc_templates:
@@ -547,13 +547,13 @@ class DownloadDocumentMenu(BrowserMenu):
             for doc_type in xml_types:
                 if doc_type == TYPE_AKOMANTOSO:
                     if IAlchemistContainer.providedBy(context):
-                        if not IBungeniParliamentaryContent.implementedBy(
+                        if not IFeatureDownload.implementedBy(
                                 context.domain_model
                             ):
                             continue
                 elif doc_type == TYPE_RSS:
                     # rss for content types only availble for auditables
-                    if (IBungeniParliamentaryContent.providedBy(context) and not
+                    if (IFeatureDownload.providedBy(context) and not
                             IFeatureAudit.providedBy(context)
                         ):
                         continue
