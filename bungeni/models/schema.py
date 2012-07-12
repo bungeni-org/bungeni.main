@@ -212,6 +212,7 @@ users = rdb.Table("users", metadata,
     ),
     rdb.Column("salt", rdb.String(24)),
     rdb.Column("description", rdb.UnicodeText),
+    rdb.Column("remarks", rdb.UnicodeText),
     rdb.Column("image", rdb.Binary),
     # !+active_p(mr, sep-2011) why is this "workflow status" column named
     # "active_p" and not "status"? Rename...
