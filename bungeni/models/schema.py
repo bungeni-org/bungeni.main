@@ -178,7 +178,7 @@ def make_vocabulary_table(vocabulary_prefix, metadata, table_suffix="_types",
 users = rdb.Table("users", metadata,
     rdb.Column("user_id", rdb.Integer, PrincipalSequence, primary_key=True),
     # login is our principal id
-    rdb.Column("login", rdb.Unicode(80), unique=True, nullable=True),
+    rdb.Column("login", rdb.Unicode(80), unique=True, nullable=False),
     rdb.Column("salutation", rdb.Unicode(128)), # !+vocabulary?
     rdb.Column("title", rdb.Unicode(128)), # !+vocabulary?
     rdb.Column("titles", rdb.Unicode(32)), # !+TMP to work with preceding demo data 
@@ -223,7 +223,7 @@ users = rdb.Table("users", metadata,
         # default value--it is up to the workflow to decide what this should be!
         #default="A", # active/inactive/deceased
     ),
-    # comment out for now - will be used for user preferences
+    #!+receive_notification comment out for now - will be used for user preferences
     rdb.Column("receive_notification", rdb.Boolean, default=True),
     rdb.Column("language", rdb.String(5), nullable=False),
 )
@@ -546,12 +546,12 @@ def _make_address_table(metadata, fk_key="user"):
             default="street",
             nullable=False,
         ),
-        rdb.Column("street", rdb.Unicode(256), nullable=False),
-        rdb.Column("city", rdb.Unicode(256), nullable=False),
+        rdb.Column("street", rdb.Unicode(256), nullable=True),
+        rdb.Column("city", rdb.Unicode(256), nullable=True),
         rdb.Column("zipcode", rdb.Unicode(20)),
         rdb.Column("country_id", rdb.String(2),
             rdb.ForeignKey("countries.country_id"),
-            nullable=False
+            nullable=True
         ),
         rdb.Column("phone", rdb.Unicode(256)),
         rdb.Column("fax", rdb.Unicode(256)),

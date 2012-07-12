@@ -652,7 +652,8 @@ class UserDescriptor(ModelDescriptor):
                 show("listing"),
             ],
             property=schema.Choice(title=_("Gender"),
-                source=vocabulary.gender
+                source=vocabulary.gender,
+                required=False,
             ),
             edit_widget=widgets.CustomRadioWidget,
             add_widget=widgets.CustomRadioWidget
@@ -663,7 +664,9 @@ class UserDescriptor(ModelDescriptor):
                 show("view edit"), 
                 show("listing"),
             ],
-            property=schema.Date(title=_("Date of Birth")),
+            property=schema.Date(title=_("Date of Birth"), 
+                required=False,
+            ),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget
         ),
@@ -675,6 +678,7 @@ class UserDescriptor(ModelDescriptor):
             ],
             property=schema.Choice(title=_("Country of Birth"),
                 source=vocabulary.country_factory,
+                required=False,
             )
         ),
         Field(name="birth_nationality", # [user-req]
@@ -685,6 +689,7 @@ class UserDescriptor(ModelDescriptor):
             ],
             property=schema.Choice(title=_("Nationality at Birth"),
                 source=vocabulary.country_factory,
+                required=False,
             ),
         ),
         Field(name="current_nationality", # [user-req]
@@ -695,6 +700,7 @@ class UserDescriptor(ModelDescriptor):
             ],
             property=schema.Choice(title=_("Current Nationality"),
                 source=vocabulary.country_factory,
+                required=False,
             ),
         ),
         Field(name="marital_status", # [user-req]
@@ -704,6 +710,7 @@ class UserDescriptor(ModelDescriptor):
             ],
             property=schema.Choice(title=_("Marital Status"),
                 source=vocabulary.marital_status,
+                required=False,
             ),
             listing_column=vocabulary_column("marital_status",
                 "Marital Status",
@@ -728,7 +735,7 @@ class UserDescriptor(ModelDescriptor):
             ],
             property=schema.Bytes(title=_("Image"),
                 description=_("Picture of the person"),
-                required=False
+                required=False,
             ),
             view_widget=widgets.ImageDisplayWidget,
             edit_widget=widgets.ImageInputWidget,
@@ -745,6 +752,16 @@ class UserDescriptor(ModelDescriptor):
             view_widget=widgets.HTMLDisplay,
             edit_widget=widgets.RichTextEditor,
             add_widget=widgets.RichTextEditor
+        ),
+        Field(name="remarks", # [rtf]
+            modes="view edit add",
+            localizable=[
+                show("view edit add"),
+            ],
+            property=schema.Text(title=_("Remarks"), required=False),
+            view_widget=widgets.HTMLDisplay,
+            edit_widget=widgets.RichTextEditor,
+            add_widget=widgets.RichTextEditor,
         ),
     ]
     schema_invariants = [DeathBeforeLife]
@@ -785,7 +802,7 @@ class GroupMembershipDescriptor(ModelDescriptor):
         title_field="fullname",
         value_field="user_id"
     )
-
+    
     fields = [
         Field(name="start_date", # [user-req]
             modes="view edit add listing",
@@ -813,7 +830,10 @@ class GroupMembershipDescriptor(ModelDescriptor):
                 show("edit"),
                 hide("view listing"),
             ],
-            property=schema.Bool(title=_("Active"), default=True),
+            property=schema.Bool(title=_("Active"), 
+                default=True, 
+                required=False,
+            ),
         ),
         LanguageField("language"), # [user-req]
         Field(name="substitution_type", # [user]
@@ -823,7 +843,7 @@ class GroupMembershipDescriptor(ModelDescriptor):
             ],
             property=schema.TextLine(
                 title=_("Type of Substitution"),
-                required=False
+                required=False,
             ),
         ),
         Field(name="replaced_id", # [user]
@@ -834,7 +854,7 @@ class GroupMembershipDescriptor(ModelDescriptor):
             property=schema.Choice(
                 title=_("Substituted by"),
                 source=SubstitutionSource,
-                required=False
+                required=False,
             ),
         ),
         Field(name="status", label=_("Status"), # [sys]
@@ -953,7 +973,9 @@ class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
                 show("view edit"),
                 hide("listing")
             ],
-            property=schema.Date(title=_("Election/Nomination Date")),
+            property=schema.Date(title=_("Election/Nomination Date"),
+                required=False,
+            ),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget
         ),
@@ -982,6 +1004,7 @@ class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
             ],
             property=schema.Choice(title=_("Political Party"),
                 source=vocabulary.party,
+                required=False,
             ),
             listing_column=vocabulary_column("party",
                 "Political Party",
@@ -1074,7 +1097,9 @@ class GroupDescriptor(ModelDescriptor):
                 show("view edit"),
                 hide("listing"),
             ],
-            property=schema.TextLine(title=_("Full Name")),
+            property=schema.TextLine(title=_("Full Name"),
+                required=False,
+            ),
             #listing_column=name_column("full_name", _("Full Name"))
         ),
         Field(name="short_name", # [user-req]
@@ -1100,7 +1125,9 @@ class GroupDescriptor(ModelDescriptor):
             localizable=[
                 show("listing"),
             ],
-            property=schema.TextLine(title=_combined_name_title),
+            property=schema.TextLine(title=_combined_name_title,
+                required=False,
+            ),
             listing_column=combined_name_column("full_name",
                 _combined_name_title),
             listing_column_filter=combined_name_column_filter,
@@ -1176,7 +1203,9 @@ class ParliamentDescriptor(GroupDescriptor):
             localizable=[
                 show("view edit listing"),
             ],
-            property=schema.TextLine(title=_("Name")),
+            property=schema.TextLine(title=_("Name"),
+                required=False,
+            ),
             listing_column=name_column("full_name", "Name"),
         ),
         Field(name="short_name", # [user-req]
@@ -1235,7 +1264,7 @@ class ParliamentDescriptor(GroupDescriptor):
             ],
             property=schema.Date(title=_("In power till"),
                 description=_("Date of the dissolution"),
-                required=False
+                required=False,
             ),
             listing_column=day_column("end_date", _("In power till")),
             edit_widget=widgets.DateWidget,
@@ -1328,6 +1357,7 @@ class CommitteeDescriptor(GroupDescriptor):
             ],
             property=schema.Choice(title=_("Committee Type"),
                 source=vocabulary.committee_type,
+                required=False,
             ),
             listing_column=vocabulary_column("sub_type",
                 "Committee Type",
@@ -1488,7 +1518,7 @@ class AddressDescriptor(ModelDescriptor):
     localizable = False
     display_name = _("Address")
     container_name = _("Addresses")
-
+    
     fields = [
         Field(name="logical_address_type", # [user-req]
             modes="view edit add listing",
@@ -1519,7 +1549,7 @@ class AddressDescriptor(ModelDescriptor):
                 show("view edit"),
                 hide("listing"),
             ],
-            property=schema.Text(title=_("Street"), required=True),
+            property=schema.Text(title=_("Street"), required=False),
             edit_widget=zope.formlib.widgets.TextAreaWidget,
             add_widget=zope.formlib.widgets.TextAreaWidget,
         ),
@@ -1528,7 +1558,7 @@ class AddressDescriptor(ModelDescriptor):
             localizable=[
                 show("view edit listing"),
             ],
-            property=schema.TextLine(title=_("City"), required=True)
+            property=schema.TextLine(title=_("City"), required=False)
         ),
         Field(name="zipcode", # [user-req]
             label=_("Zip Code"),
@@ -1544,7 +1574,7 @@ class AddressDescriptor(ModelDescriptor):
             ],
             property=schema.Choice(title=_("Country"),
                 source=vocabulary.country_factory,
-                required=True
+                required=False
             ),
         ),
         Field(name="phone", # [user]
@@ -1624,7 +1654,8 @@ class TitleTypeDescriptor(ModelDescriptor):
             property=schema.Choice(title=_("Only one user may have this title"), 
                 description=_("Limits persons with this title to one"),
                 default=False,
-                source=vocabulary.bool_yes_no
+                source=vocabulary.bool_yes_no,
+                required=False,
             ),
         ),
         Field(name="sort_order",
@@ -1642,7 +1673,7 @@ class MemberTitleDescriptor(ModelDescriptor):
     localizable = True
     display_name = _("Title")
     container_name = _("Titles")
-
+    
     fields = [
         Field(name="title_type_id", label=_("Title"),
             modes="view edit add listing",
@@ -1844,7 +1875,8 @@ class MinistryDescriptor(GroupDescriptor):
                 show("view edit"),
             ],
             property=schema.TextLine(title=_("Ministry Identifier"),
-                description=_("Unique identifier or number for this Ministry")
+                description=_("Unique identifier or number for this Ministry"),
+                required=False,
             ),
         ),
     ])
@@ -1968,7 +2000,7 @@ class AttachmentDescriptor(ModelDescriptor):
             localizable=[
                 show("view edit"),
             ],
-            property=schema.Bytes(title=_("File")),
+            property=schema.Bytes(title=_("File"), required=False),
             description=_("Upload a file"),
             edit_widget=widgets.FileEditWidget,
             add_widget=widgets.FileAddWidget,
