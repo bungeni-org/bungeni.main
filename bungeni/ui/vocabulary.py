@@ -307,6 +307,7 @@ class OfficeRoleFactory(BaseVocabularyFactory):
                         "bungeni.Owner",
                         "bungeni.Signatory",
                         "zope.Manager",
+                        "bungeni.Admin",
                         "bungeni.MP",
                         "bungeni.Minister",
                         "bungeni.PoliticalGroupMember",

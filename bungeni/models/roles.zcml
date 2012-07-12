@@ -11,6 +11,7 @@
     <!-- custom roles -->
     <include file="meta.zcml" />
     <role id="zope.Manager" title="Site Manager" />
+    <role id="bungeni.Admin" title="Bungeni Admin"/>
     <role id="bungeni.Authenticated" title="All authenticated users" />
     <role id="bungeni.Anonymous" title="Bungeni Visitor" />
     

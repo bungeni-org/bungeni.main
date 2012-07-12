@@ -235,7 +235,7 @@ def get_request_context_roles(request):
     else: 
         roles = get_context_roles(context, principal)
         if is_admin(context):
-            roles.append("zope.Manager")
+            roles.append("bungeni.Admin")
     log.debug(""" [get_request_context_roles]
     PRINCIPAL: %s
     CONTEXT: %s
