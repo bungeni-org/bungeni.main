@@ -671,10 +671,11 @@ class Doc(Entity):
     
     # !+AlchemistManagedContainer these attribute names are part of public URLs!
     # !+item_id->head_id
-    files = one2many("files",
-        "bungeni.models.domain.AttachmentContainer", "head_id")
-    events = one2many("events",
-        "bungeni.models.domain.EventContainer", "head_id")
+    # !+must be defined (dynamically, via feature) on each domain class
+    #files = one2many("files",
+    #    "bungeni.models.domain.AttachmentContainer", "head_id")
+    #events = one2many("events",
+    #    "bungeni.models.domain.EventContainer", "head_id")
     
     def _get_workflow_date(self, *states):
         """ (states:seq(str) -> date
@@ -816,8 +817,10 @@ class Version(Change):
                         self.audit, audit_id, 
                         self, correctly_typed_change))
             # !+/SA_INCORRECT_TYPE_DEBUG
-            raise AttributeError("%r object has no attribute %r" % (
-                type(self).__name__, name))
+            raise AttributeError(
+                "%r [audit_id=%r, audit_type=%r] object has no attribute %r" % (
+                    self, self.audit_id, self.audit_type, name))
+
 
 class Audit(HeadParentedMixin, Entity):
     """Base (abstract) audit record for a document.
@@ -879,8 +882,10 @@ class DocVersion(Version):
     """A version of a document.
     """
     files = one2many("files",
-        "bungeni.models.domain.AttachmentContainer", "head_id")
+        "bungeni.models.domain.AttachmentVersionContainer", "head_id")
     #!+eventable items supporting feature "event":
+    #events = one2many("events",
+    #    "bungeni.models.domain.DocVersionContainer", "head_id")
     
     submission_date = None # !+bypass error when loading a doc version view
     # !+ proper logic of this would have to be the value of 

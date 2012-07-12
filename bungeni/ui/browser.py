@@ -15,6 +15,7 @@ import zope.viewlet.viewlet
 
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core.workflow.interfaces import IWorkflowed
+from bungeni.ui import z3evoque
 from bungeni.ui.utils import date, debug, misc
 from bungeni.ui.i18n import _
 
@@ -39,6 +40,8 @@ class BungeniBrowserView(zope.publisher.browser.BrowserPage):
     
     """
     
+    # the instance of the ViewProvideViewletManager
+    provide = z3evoque.ViewProvideViewletManager()    
     
     @property
     def page_title(self):

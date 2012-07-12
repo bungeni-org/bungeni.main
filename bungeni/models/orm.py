@@ -520,18 +520,20 @@ mapper(domain.DocVersion,
         "attachments": relation(domain.AttachmentVersion, # !+ARCHETYPE_MAPPER
             primaryjoin=rdb.and_(
                 schema.change.c.audit_id == schema.change_tree.c.parent_id,
-                #schema.change.c.action == "version", # !+constraint
             ),
             secondary=schema.change_tree,
             secondaryjoin=rdb.and_(
                 schema.change_tree.c.child_id == schema.change.c.audit_id,
-                #"version" == schema.change.c.action, # !+constraint
+                schema.change.c.audit_id == schema.audit.c.audit_id,
+                schema.audit.c.audit_type == polymorphic_identity(domain.Attachment),
             ),
             #backref=backref("parent", 
             #    uselist=False
             #),
             uselist=True,
             lazy=True,
+            order_by=schema.change.c.audit_id.desc(),
+            viewonly=True,
         ),
         #!+eventable items supporting feature "event":
         #"sa_events": relation(domain.Event, uselist=True),
@@ -640,6 +642,8 @@ mapper(domain.AttachmentAudit, schema.attachment_audit,
 )
 mapper(domain.AttachmentVersion,
     inherits=domain.Change, # !+NO_INHERIT_VERSION
+    polymorphic_on=schema.change.c.action,
+    polymorphic_identity=polymorphic_identity(domain.Version),
     properties={
         #!+eventable items supporting feature "event":
         #"sa_events": relation(domain.Event, uselist=True),
