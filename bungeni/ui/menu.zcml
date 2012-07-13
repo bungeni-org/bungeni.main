@@ -987,6 +987,7 @@
     />
     
     <!-- Workspace add menu items -->
+    <!-- !+should be only one menu item and parametrized by type_key -->
     <browser:menuItem menu="workspace_add_parliamentary_content"
         for="*"
         title="Bill"
@@ -1008,9 +1009,10 @@
     <browser:menuItem menu="workspace_add_parliamentary_content"
         for="*"
         title="Tabled document"
-        action="../../draft/add_tableddocument"
+        action="../../draft/add_tabled_document"
         permission="bungeni.tabled_document.Add"
     />
+    
     
     <!--browser:menuItem
      for="bungeni.alchemist.interfaces.IAlchemistContainer"

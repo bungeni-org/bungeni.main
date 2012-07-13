@@ -406,7 +406,7 @@
         layer="bungeni.ui.interfaces.IBungeniSkin"
         permission="bungeni.motion.Add"
     />
-    <browser:page name="add_tableddocument"
+    <browser:page name="add_tabled_document"
         for="bungeni.core.interfaces.IWorkspaceDraft"
         class=".workspace.WorkspaceAddForm"
         layer="bungeni.ui.interfaces.IBungeniSkin"
