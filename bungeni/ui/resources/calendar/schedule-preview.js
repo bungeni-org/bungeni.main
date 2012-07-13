@@ -71,7 +71,7 @@ YAHOO.bungeni.schedulingpreview = function(){
                         gutter: "5 5",
                         height: 470,
                         resize: true,
-                        collapse: true
+                        collapse: false
                     },
                     { 
                         position: "center", 

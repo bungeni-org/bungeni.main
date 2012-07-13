@@ -13,7 +13,7 @@
     display: block;
     text-align: left;
     white-space: nowrap;
-    width: 10em;
+    width: auto;
     overflow: hidden;
     text-overflow: ellipsis;
    -o-text-overflow: ellipsis;
@@ -80,16 +80,25 @@ span.dt_title_unit{
     border-left: 3px solid #ddd;
 }
 
+.yui-panel-container.yui-simple-dialog {
+  left: 10% !important;
+}
+
 #agenda-preview-dialog_c {
     margin:0 auto !important;
     left:20%;
     top:25%;
 }
 
+.yui-skin-sam #scheduler-layout .yui-layout-wrap .yui-button {
+    margin-top: .20em;
+}
+
 #yui-gen0 .yui-button,
 #yui-gen0 .yui-radio-button {
     float:left;
     display:inline;
+    background: transparent !important;
 }
 
 #yui-gen0 .yui-button, 
@@ -132,4 +141,5 @@ span.dt_title_unit{
     background-position: left;
     padding-left:0px;
     padding-right: 12px;
+    background-color:inherit !important;
 }

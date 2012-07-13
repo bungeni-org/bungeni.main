@@ -331,12 +331,18 @@ YAHOO.bungeni.config = function(){
                     },
                 ];
                 this.dialog = new YAHOO.widget.SimpleDialog(
-                    "text-records-dialog", dialog_config.default
-                );
+                    "text-records-dialog", {
+                    width: "90em",
+                    fixedcenter: false,
+                    modal: true,
+                    visible: false,
+                    draggable: true,
+                    constraintoviewport: true,
+                    monitorresize: true
+                });
                 this.dialog._parent = this;
                 this.dialog.setHeader(SGlobals.text_records_title);
                 this.dialog.setBody("");
-                this.dialog.cfg.queueProperty("width", "500px");
                 this.dialog.cfg.queueProperty("buttons", buttons);
                 this.dialog.renderEvent.subscribe(
                     YAHOO.bungeni.availableitems.handlers.renderTextRecordsTabs
@@ -352,6 +358,7 @@ YAHOO.bungeni.config = function(){
                     this.dialog.selectTab(tab_id);
                 }
                 this.dialog.show();
+                this.dialog.center();
                 this.dialog.bringToTop();
             },
             hide: function(){
