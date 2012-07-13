@@ -19,7 +19,7 @@
       additems menu:
         file=20, event=21, signatory=22
         title=30
-        sitting=40, agendaitem=41, attendance=42
+        sitting=40, agenda_item=41, attendance=42
         groupmember=61, pgroupmember=61, committeemember=62, officemember=63
         ministry=70
         address=80
@@ -218,7 +218,7 @@
         for="bungeni.models.interfaces.ICommittee"
         title="Add agenda item..."
         action="./agendaitems/add"
-        permission="bungeni.agendaitem.Add"
+        permission="bungeni.agenda_item.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         order="41"
     />
@@ -733,14 +733,14 @@
         for="bungeni.models.interfaces.ITabledDocumentContainer"
         title="Add tabled document..."
         action="./add"
-        permission="bungeni.tableddocument.Add"
+        permission="bungeni.tabled_document.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
     <browser:menuItem menu="plone_contentmenu"
         for="bungeni.models.interfaces.IAgendaItemContainer"
         title="Add agenda item..."
         action="./add"
-        permission="bungeni.agendaitem.Add"
+        permission="bungeni.agenda_item.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
     
@@ -822,7 +822,7 @@
         for="bungeni.core.schedule.CommitteeSchedulingContext"
         title="Add agenda item..."
         action="./../agendaitems/add"
-        permission="bungeni.agendaitem.Add"
+        permission="bungeni.agenda_item.Add"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
     />
     <!-- submenu adapters -->
@@ -977,13 +977,13 @@
         for="*"
         title="Agenda item"
         action="agendaitems/add"
-        permission="bungeni.agendaitem.Add"
+        permission="bungeni.agenda_item.Add"
     />
     <browser:menuItem menu="context_add_parliamentary_content"
         for="*"
         title="Tabled document"
         action="tableddocuments/add"
-        permission="bungeni.tableddocument.Add"
+        permission="bungeni.tabled_document.Add"
     />
     
     <!-- Workspace add menu items -->
@@ -1009,7 +1009,7 @@
         for="*"
         title="Tabled document"
         action="../../draft/add_tableddocument"
-        permission="bungeni.tableddocument.Add"
+        permission="bungeni.tabled_document.Add"
     />
     
     <!--browser:menuItem
@@ -1224,7 +1224,7 @@
         title="Edit tabled document"
         order="10"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.tableddocument.Edit"
+        permission="bungeni.tabled_document.Edit"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.ITabledDocument"
@@ -1232,7 +1232,7 @@
         title="Delete tabled document"
         order="99"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.tableddocument.Delete"
+        permission="bungeni.tabled_document.Delete"
      />
      <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IAgendaItem"
@@ -1240,7 +1240,7 @@
         title="Edit agenda item"
         order="10"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.agendaitem.Edit"
+        permission="bungeni.agenda_item.Edit"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IAgendaItem"
@@ -1248,7 +1248,7 @@
         title="Delete agenda item"
         order="99"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
-        permission="bungeni.agendaitem.Delete"
+        permission="bungeni.agenda_item.Delete"
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IParliament"

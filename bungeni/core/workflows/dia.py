@@ -23,7 +23,7 @@ def main(argv):
     # generated dynamically e.g. listing of workflow file definitions.
     workflow_names = [
         "address",
-        "agendaitem",
+        "agenda_item",
         "attachment",
         "bill",
         "committee",
@@ -36,7 +36,7 @@ def main(argv):
         "question",
         "report",
         "signatory",
-        "tableddocument",
+        "tabled_document",
         "user",
     ]
     for name in workflow_names:

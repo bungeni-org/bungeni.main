@@ -173,14 +173,14 @@ class SchedulableMotionsViewlet(SchedulableItemsViewlet):
 class SchedulableTabledDocumentsViewlet(SchedulableItemsViewlet):
     view_name = "tableddocument"
     view_title = _("Tabled documents")
-    states = get_workflow("tableddocument").get_state_ids(tagged=["tobescheduled"])
+    states = get_workflow("tabled_document").get_state_ids(tagged=["tobescheduled"])
     model = domain.TabledDocument
 
 class SchedulableAgendaItemsViewlet(SchedulableItemsViewlet):
     view_name = "agendaitem"
     view_title = _("Agenda items")
     visible = True
-    states = get_workflow("agendaitem").get_state_ids(tagged=["tobescheduled"])
+    states = get_workflow("agenda_item").get_state_ids(tagged=["tobescheduled"])
     model = domain.AgendaItem
     
     def get_group_id(self):

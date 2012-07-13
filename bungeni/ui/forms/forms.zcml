@@ -84,17 +84,17 @@
     <browser:page name="add" 
         for="bungeni.models.interfaces.ITabledDocumentContainer"
         class=".common.AddForm"
-        permission="bungeni.tableddocument.Add"
+        permission="bungeni.tabled_document.Add"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="edit" for="bungeni.models.interfaces.ITabledDocument"
         class=".forms.DiffEditForm"
-        permission="bungeni.tableddocument.Edit"
+        permission="bungeni.tabled_document.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="delete" for="bungeni.models.interfaces.ITabledDocument"
         class=".common.DeleteForm"
-        permission="bungeni.tableddocument.Delete"
+        permission="bungeni.tabled_document.Delete"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     
@@ -106,17 +106,17 @@
     />
     <browser:page name="add" for="bungeni.models.interfaces.IAgendaItemContainer"
         class=".common.AddForm"
-        permission="bungeni.agendaitem.Add"
+        permission="bungeni.agenda_item.Add"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="edit" for="bungeni.models.interfaces.IAgendaItem"
         class=".forms.DiffEditForm"
-        permission="bungeni.agendaitem.Edit"
+        permission="bungeni.agenda_item.Edit"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     <browser:page name="delete" for="bungeni.models.interfaces.IAgendaItem"
         class=".common.DeleteForm"
-        permission="bungeni.agendaitem.Delete"
+        permission="bungeni.agenda_item.Delete"
         layer="bungeni.ui.interfaces.IBungeniSkin"
     />
     

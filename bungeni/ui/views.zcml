@@ -410,7 +410,7 @@
         for="bungeni.core.interfaces.IWorkspaceDraft"
         class=".workspace.WorkspaceAddForm"
         layer="bungeni.ui.interfaces.IBungeniSkin"
-        permission="bungeni.tableddocument.Add"
+        permission="bungeni.tabled_document.Add"
     />
     <browser:page name="add_bill"
         for="bungeni.core.interfaces.IWorkspaceDraft"

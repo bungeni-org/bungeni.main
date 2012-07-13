@@ -181,14 +181,14 @@ def getQuestionSubmissionAllowed(context):
 '''
 
 '''
-# question, motion, bill, agendaitem, tableddocument
+# question, motion, bill, agenda_item, tabled_document
 # !+setParliamentId(mr, mar-2011) this is used in "create" transitions... 
 def setParliamentId(context):
     if not context.parliament_id:
          context.parliament_id = prefs.getCurrentParliamentId()
 '''
 
-# tableddocument
+# tabled_document
 def setTabledDocumentHistory(context):
     pass
 

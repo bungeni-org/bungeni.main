@@ -385,7 +385,7 @@ class CalendarMenu(BrowserMenu):
                      or committee.end_date >= today) and
                    (committee.start_date is None
                     or committee.start_date <= today) and
-                   checkPermission("bungeni.agendaitem.Add", committee) and
+                   checkPermission("bungeni.agenda_item.Add", committee) and
                    (committee.status == "active")):
                     contexts.append(schedule.CommitteeSchedulingContext(
                             committee))

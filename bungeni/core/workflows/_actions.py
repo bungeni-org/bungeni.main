@@ -72,13 +72,13 @@ def _address_attached(context):
 _question_received = __pi_received
 _bill_received = __pi_received
 _motion_received = __pi_received
-_agendaitem_received = __pi_received
-_tableddocument_received = __pi_received
+_agenda_item_received = __pi_received
+_tabled_document_received = __pi_received
 
 
-# agendaitem
+# agenda_item
 
-_agendaitem_draft = _agendaitem_working_draft = __create
+_agenda_item_draft = _agenda_item_working_draft = __create
 
 
 # bill
@@ -165,14 +165,14 @@ def _question_admissible(question):
     dbutils.set_doc_type_number(question)
 
 
-# tableddocument
+# tabled_document
 
-_tableddocument_draft = _tableddocument_working_draft = __create
+_tabled_document_draft = _tabled_document_working_draft = __create
 
-def _tableddocument_adjourned(context):
+def _tabled_document_adjourned(context):
     utils.setTabledDocumentHistory(context)
 
-def _tableddocument_admissible(tabled_document):
+def _tabled_document_admissible(tabled_document):
     dbutils.set_doc_type_number(tabled_document)
 
 # user

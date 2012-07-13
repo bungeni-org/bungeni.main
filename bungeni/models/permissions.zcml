@@ -85,17 +85,17 @@
   <permission id="bungeni.motion.View" title="View Motion" />
   <meta:redefinePermission from="bungeni.motion.View" to="zope.View" />
 
-  <permission id="bungeni.agendaitem.Add" title="Add agenda item" />
-  <permission id="bungeni.agendaitem.Edit" title="Edit agenda item" />
-  <permission id="bungeni.agendaitem.Delete" title="Delete agenda item" />
-  <permission id="bungeni.agendaitem.View" title="View agenda item" />
-  <meta:redefinePermission from="bungeni.agendaitem.View" to="zope.View" />
+  <permission id="bungeni.agenda_item.Add" title="Add agenda item" />
+  <permission id="bungeni.agenda_item.Edit" title="Edit agenda item" />
+  <permission id="bungeni.agenda_item.Delete" title="Delete agenda item" />
+  <permission id="bungeni.agenda_item.View" title="View agenda item" />
+  <meta:redefinePermission from="bungeni.agenda_item.View" to="zope.View" />
   
-  <permission id="bungeni.tableddocument.Add" title="Add tabled document" />
-  <permission id="bungeni.tableddocument.Edit" title="Edit tabled document" />
-  <permission id="bungeni.tableddocument.Delete" title="Delete tabled document" />
-  <permission id="bungeni.tableddocument.View" title="View tabled document" />
-  <meta:redefinePermission from="bungeni.tableddocument.View" to="zope.View" />
+  <permission id="bungeni.tabled_document.Add" title="Add tabled document" />
+  <permission id="bungeni.tabled_document.Edit" title="Edit tabled document" />
+  <permission id="bungeni.tabled_document.Delete" title="Delete tabled document" />
+  <permission id="bungeni.tabled_document.View" title="View tabled document" />
+  <meta:redefinePermission from="bungeni.tabled_document.View" to="zope.View" />
 
   <permission id="bungeni.response.Edit" title="Edit Response" />
   <permission id="bungeni.response.View" title="View Response" />

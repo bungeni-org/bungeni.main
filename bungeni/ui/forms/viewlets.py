@@ -385,11 +385,11 @@ class MemberItemsViewlet(browser.BungeniItemsViewlet):
     """
     # !+ un-hardwire, user defined document types
     states = \
-        get_workflow("agendaitem").get_state_ids(tagged=["public"]) + \
+        get_workflow("agenda_item").get_state_ids(tagged=["public"]) + \
         get_workflow("bill").get_state_ids(tagged=["public"]) + \
         get_workflow("motion").get_state_ids(tagged=["public"]) + \
         get_workflow("question").get_state_ids(tagged=["public"]) + \
-        get_workflow("tableddocument").get_state_ids(tagged=["public"])
+        get_workflow("tabled_document").get_state_ids(tagged=["public"])
 
     render = ViewPageTemplateFile("templates/mp-item-viewlet.pt")
 
