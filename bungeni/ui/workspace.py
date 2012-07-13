@@ -20,6 +20,8 @@ from bungeni.core.i18n import _
 from bungeni.core.interfaces import (IWorkspaceTabsUtility,
                                      IWorkspaceContainer,
                                      IWorkspaceUnderConsiderationContainer)
+from bungeni.alchemist import Session
+from bungeni.models import domain
 from bungeni.ui.utils import url
 from bungeni.ui.utils.common import get_workspace_roles
 from bungeni.ui import table
@@ -31,6 +33,8 @@ from bungeni.alchemist.model import queryModelDescriptor
 from bungeni.ui.utils import debug
 from bungeni.utils import register
 from bungeni.utils.capi import capi
+from bungeni.ui import browser
+from bungeni.core.workspace import stringKey
 
 _path = os.path.split(os.path.abspath(__file__))[0]
 
@@ -412,3 +416,45 @@ class WorkspaceAddForm(AddForm):
 
     def getDomainModel(self):
         return getattr(self, "domain_model", self.context.__class__)
+      
+class MyInterests(browser.BungeniBrowserView):
+    """ Renders subscribed items
+    """
+    render = ViewPageTemplateFile("templates/workspace-interests.pt")
+    _page_title = _("My interests")
+    items = []
+    
+    def __call__(self):
+        self.app = getSite()
+        self.get_items()
+        return self.render()
+
+    def format_date(self, date):
+        return self.get_date_formatter().format(date)
+
+    def get_description(self, item):
+        return item.description
+
+    def get_title(self, item):
+        return "%s %s %s" % (IWorkspaceContentAdapter(item).title,
+                             _(u"changes from"),
+                             IWorkspaceContentAdapter(item).status_date)
+                             
+    def get_url(self, item):
+        item.__parent__ = self.app["workspace"]["under-consideration"]["documents"]
+        item.__name__ = stringKey(item)
+        return url.absoluteURL(item, self.request)
+
+    def get_items(self):
+        """ Getting necessary items
+        """
+        session = Session()
+        user = session.query(domain.User).filter(
+            domain.User.login == self.request.principal.id).first()
+        if user is not None:
+            subscriptions = user.subscriptions
+            subscriptions.sort(key=lambda x: x.status_date, reverse=True)
+            self.items = [{'title': self.get_title(item),
+                           'description': self.get_description(item),
+                           'url':self.get_url(item)}
+                           for item in subscriptions]

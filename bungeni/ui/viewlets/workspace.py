@@ -36,6 +36,31 @@ class WorkspaceContextNavigation(StructureAwareViewlet):
             tab["active"] = self.request.getURL().startswith(tab_url)
             self.tabs.append(tab)
 
+class WorkspaceUnderConsiderationNavigation(StructureAwareViewlet):
+
+    render = ViewPageTemplateFile("templates/workspace-under-consideration.pt")
+
+    def update(self):
+        self.tabs = []
+        app = getSite()
+        keys = app["workspace"]["under-consideration"].keys()
+        for key in keys:
+            tab_url = url.absoluteURL(
+                app["workspace"]["under-consideration"][key], self.request)
+            tab = {}
+            tab["title"] = key
+            tab["url"] = tab_url
+            tab["active"] = self.request.getURL().startswith(tab_url)
+            self.tabs.append(tab)
+        my_interests_tab = {}
+        my_interests_tab_url = url.absoluteURL(
+            app["workspace"]["under-consideration"],
+            self.request) + "/my-interests"
+        my_interests_tab["title"] = "my interests"
+        my_interests_tab["url"] = my_interests_tab_url
+        my_interests_tab["active"] = self.request.getURL().startswith(
+            my_interests_tab_url)
+        self.tabs.append(my_interests_tab)
 
 class SignatoriesStatus(object):
     """Shows the signature status of a document - e.g. number required

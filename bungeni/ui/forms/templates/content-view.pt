@@ -15,6 +15,7 @@
         <tal:block tal:condition="view/is_workflowed">
           [<span i18n:translate tal:replace="python:view.get_wf_state()"
                              class="workflow_info"/>]
+           <span tal:replace="structure provider:bungeni.content.rss" />
         </tal:block>
       </h2>
       <p class="documentDescription"

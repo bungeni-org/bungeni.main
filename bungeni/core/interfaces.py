@@ -76,7 +76,9 @@ class IWorkspaceSent(interface.Interface):
 class IWorkspaceArchive(interface.Interface):
     """Marker inteface for workspace archive"""
 class IWorkspaceDocuments(interface.Interface):
-    """Marker inteface for workspace archive"""
+    """Marker inteface for workspace my-documents"""
+class IWorkspaceUnderConsideration(interface.Interface):
+    """Marker inteface for workspace under consideration"""
 
 
 ''' !+OBSOLETE_VERSIONING

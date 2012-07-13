@@ -179,7 +179,7 @@ class AppSetup(object):
             title=_(u"under consideration"),
             description=_(u"documents under consideration"),
             default_name="documents",
-            marker=interfaces.IWorkspaceDocuments,
+            marker=interfaces.IWorkspaceUnderConsideration,
         )
 
 
