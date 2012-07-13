@@ -205,7 +205,7 @@ def _load(workflow, name, domain="bungeni"):
                 "Workflow [%s] has version but no audit feature" % (name)
         config = [ cfg for cfg in f.iterchildren("config") ]
         params = dict([ (param.get("name"), param.get("value")) for param in 
-            f.iterchildren("param")
+            f.iterchildren("parameter")
         ])
         features.append(Feature(feature_name, enabled=feature_enabled, 
                 note=strip_none(f.get("note")), **params

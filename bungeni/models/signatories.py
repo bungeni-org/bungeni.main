@@ -28,7 +28,7 @@ CONFIGURABLE_PARAMS = ("max_signatories", "min_signatories", "submitted_states",
 OWNER_ROLE = "bungeni.Owner"
 SIGNATORY_ROLE = "bungeni.Signatory"
 SIGNATORIES_REJECT_STATES = [u"rejected", u"withdrawn"]
-SIGNATORY_CONSENTED_STATE = [u"consented"]
+SIGNATORY_CONSENTED_STATES = [u"consented"]
 
 @register.handler(adapts=(interfaces.IFeatureSignatory, IWorkflowTransitionEvent))
 def doc_workflow(ob, event):
@@ -113,7 +113,7 @@ class SignatoryValidator(object):
         return self.signatories_count > 0
 
     def consentedSignatories(self):
-        return len(filter(lambda cs:cs.status==SIGNATORY_CONSENTED_STATE, 
+        return len(filter(lambda cs:cs.status in SIGNATORY_CONSENTED_STATES, 
             self.signatories
         ))
     
