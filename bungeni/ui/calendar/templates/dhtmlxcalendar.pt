@@ -60,14 +60,18 @@
                 //event tooltips
                 var format=scheduler.date.date_to_str(scheduler.config.xml_date); 
                 scheduler.templates.tooltip_text = function(start, end, event){
+                    var extra_text = "";
+                    if (event.event_type=="sitting"){
+                        extra_text = '<br/>' + cal_globals.text_venue + ' : ' + event.venue_name +
+                        '<br/>' + cal_globals.text_activity_type + ' : ' + event.activity_type +
+                        '<br/>' + cal_globals.text_meeting_type + ' : ' + event.meeting_type +
+                        '<br/>' + cal_globals.text_convocation_type + ' : ' + event.convocation_type
+                    }
                     return unescape("%3Cb%3E") + event.short_name + unescape("%3C/b%3E") +
                         '<br/>' + cal_globals.text_group + ' : ' + event.group + 
                         '<br/>' + cal_globals.text_start_date + ' : ' + format(start) + 
                         '<br/>' + cal_globals.text_end_date + ' : ' + format(end) + 
-                        '<br/>' + cal_globals.text_venue + ' : ' + event.venue_name +
-                        '<br/>' + cal_globals.text_activity_type + ' : ' + event.activity_type +
-                        '<br/>' + cal_globals.text_meeting_type + ' : ' + event.meeting_type +
-                        '<br/>' + cal_globals.text_convocation_type + ' : ' + event.convocation_type;
+                        extra_text;
                 };
                 
                 scheduler.init('scheduler_here', null, "week");
@@ -102,7 +106,9 @@
                 
                 scheduler.config.lightbox.sections=[    
                         { name:"description", height:200, type:"my_editor" },
-                        {name:"recurring", height:115, type:"recurring", map_to:"rec_type", button:"recurring"},
+                        { name:"recurring", height:115, type:"recurring", 
+                            map_to:"rec_type", button:"recurring"
+                        },
                         { name:"time", height:72, type:"time", map_to:"auto"}
                     ]
             }
@@ -117,28 +123,12 @@
                 scheduler.attachEvent("onBeforeViewChange", 
                     handle_before_change_view
                 );
-                scheduler.attachEvent("onDblClick", function (event_id, event){
-                    var event = scheduler.getEvent(event_id);
-                    if (event!=undefined){
-                        var status = event["!nativeeditor_status"];
-                        if (status && (status!="")){
-                            event.color="red";
-                            scheduler.updateEvent(event_id);
-                            $.blockUI({
-                                message: calendar_globals.unsaved_event,
-                                timeout: 2000,
-                                showOverlay: true,
-                                baseZ: 20000,
-                            });
-                        }else{
-                            parent.location = cal_globals.view_url + "/sittings/obj-" + event_id + "/view";
-                        }
-                    }
-                });
+                scheduler.attachEvent("onDblClick", event_db_click);
                 scheduler.attachEvent("onEventSave", event_save_handler);
                 scheduler.attachEvent("onEventCollision", 
-                    event_collission_handler
+                    collission_handler
                 );
+                scheduler.attachEvent("onBeforeLightbox", handle_lightbox);
                 var dp = new dataProcessor(location.href+"/dhtmlxcalendaredit");
                 dp.init(scheduler);
             }
@@ -148,17 +138,13 @@
             function cannotEdit()
             {
                 init();
-                scheduler.attachEvent("onDblClick", function (event_id, native_event_object){
-                    parent.location = cal_globals.view_url + "/sittings/obj-"+event_id+"/view";
-                });
+                scheduler.config.readonly = true;
+                scheduler.attachEvent("onDblClick", event_db_click);
                 scheduler.config.icons_select=[]
                 scheduler.config.drag_resize = false;
                 scheduler.config.drag_move = false;
                 scheduler.config.drag_create = false;
                 scheduler.config.dblclick_create = false;
-                //scheduler.config.readonly = true;
-                //scheduler.getEvent("onClick").readonly = true;
-                //scheduler.getEvent("onDblClick").readonly = true;
                 scheduler.attachEvent("onBeforeViewChange", 
                     handle_before_change_view
                 );

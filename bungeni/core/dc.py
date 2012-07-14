@@ -423,6 +423,7 @@ class SessionDescriptiveProperties(DescriptiveProperties):
         context = session.merge(removeSecurityProxy(self.context))
         return self.translate(context, "full_name")
 
+    verbose_title = description
 
 @register.adapter()
 class ItemScheduleDiscussionDescriptiveProperties(DescriptiveProperties):

@@ -113,6 +113,50 @@ function event_save_handler(id, data, is_new_event){
     return  true;
 }
 
-function event_collission_handler(ev, evs){
-    return !confirm(calendar_globals.error_collission);
+/**
+ * show event collission notice only if the colliding event is a sitting
+ */
+function collission_handler(ev, evs){
+    var collission = false;
+    for (index in evs){
+        if (evs[index].event_type == "sitting"){
+            collission = true;
+            break
+        }
+    }
+    if (collission){ return !confirm(calendar_globals.error_collission); }
+    return false;
+}
+
+function handle_lightbox(event_id){
+    event = scheduler.getEvent(event_id);
+    if (event.event_type=="session"){
+        return false;
+    }
+    return true;
+}
+
+
+/**
+ * Change the document location to the sitting(event) if the double clicked 
+ * event is a sitting.
+ */
+function event_db_click(event_id, dom_event){
+    var event = scheduler.getEvent(event_id);
+    if (event!=undefined){
+        if (event.event_type != "sitting"){ return; }
+        var status = event["!nativeeditor_status"];
+        if (status && (status!="") && !scheduler.config.readonly){
+            event.color="red";
+            scheduler.updateEvent(event_id);
+            $.blockUI({
+                message: calendar_globals.unsaved_event,
+                timeout: 2000,
+                showOverlay: true,
+                baseZ: 20000,
+            });
+        }else{
+            parent.location = cal_globals.view_url + "/sittings/obj-" + event_id + "/view";
+        }
+    }    
 }

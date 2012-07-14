@@ -1,15 +1,16 @@
 <data i18n:domain="bungeni">
-<tal:loop tal:repeat="s python:view.sittings">
-<event tal:attributes="id python:s.sitting_id; color string:#${view/event_colour}">
+<tal:loop tal:repeat="s python:view.sittings_and_sessions">
+<event tal:define="event_id s/sitting_id|python:id(s);" tal:attributes="id event_id; color python:view.get_colour(s)">
 <start_date><span tal:replace="structure python:s.start_date.strftime('%Y-%m-%d %H:%M')"/></start_date>
 <end_date><span tal:replace="structure python:s.end_date.strftime('%Y-%m-%d %H:%M')"/></end_date>
-<rec_type><span tal:replace="structure python:'&lt;![CDATA['"/><span tal:replace="s/recurring_type|string:none"/><span tal:replace="structure python:']]&gt;'"/></rec_type>
-<event_pid><span tal:replace="structure python:'&lt;![CDATA['"/><span tal:replace="s/recurring_id|string:0"/><span tal:replace="structure python:']]&gt;'"/></event_pid>
-<event_length><span tal:replace="structure python:'&lt;![CDATA['"/><span tal:replace="s/sitting_length|string:0"/><span tal:replace="structure python:']]&gt;'"/></event_length>
+<rec_type><span tal:replace="structure python:'&lt;![CDATA['"/><span tal:replace="s/recurring_type|string:"/><span tal:replace="structure python:']]&gt;'"/></rec_type>
+<event_pid><span tal:replace="structure python:'&lt;![CDATA['"/><span tal:replace="s/recurring_id|string:"/><span tal:replace="structure python:']]&gt;'"/></event_pid>
+<event_length><span tal:replace="structure python:'&lt;![CDATA['"/><span tal:replace="s/sitting_length|string:"/><span tal:replace="structure python:']]&gt;'"/></event_length>
 <short_name><span tal:replace="s/short_name"/></short_name>
-<activity_type><span tal:replace="s/activity_type"/></activity_type>
-<meeting_type><span tal:replace="s/meeting_type"/></meeting_type>
-<convocation_type><span tal:replace="s/convocation_type"/></convocation_type>
+<event_type><span tal:replace="python:view.get_event_type(s)"/></event_type>
+<activity_type><span tal:replace="s/activity_type|nothing"/></activity_type>
+<meeting_type><span tal:replace="s/meeting_type|nothing"/></meeting_type>
+<convocation_type><span tal:replace="s/convocation_type|nothing"/></convocation_type>
 <text><span tal:replace="structure python:'&lt;![CDATA['"/>
 <tal:activity tal:condition="s/short_name">
 <span tal:replace="s/short_name"/>

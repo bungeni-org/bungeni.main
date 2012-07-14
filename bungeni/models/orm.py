@@ -312,7 +312,11 @@ mapper(domain.CommitteeStaff,
     polymorphic_identity=polymorphic_identity(domain.CommitteeStaff)
 )
 
-mapper(domain.Session, schema.sessions)
+mapper(domain.Session, schema.sessions,
+    properties={
+        "group": relation(domain.Parliament, lazy=False),
+    }
+)
 
 mapper(domain.Sitting, schema.sitting,
     properties={

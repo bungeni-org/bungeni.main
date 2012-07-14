@@ -10,6 +10,7 @@ $Id$
 log = __import__("logging").getLogger("bungeni.ui.calendar")
 
 import time
+import random
 import datetime
 timedelta = datetime.timedelta
 
@@ -837,17 +838,36 @@ class DhtmlxCalendarSittings(BrowserView):
         interface.alsoProvides(self.context, ILocation)
         interface.alsoProvides(self.context, IDCDescriptiveProperties)
         self.__parent__ = context
+          
+    def get_sessions(self):
+        sessions = [ removeSecurityProxy(session) for session in
+            Session().query(domain.Session).all()
+        ]
+        colours = utils.generate_event_colours(len(sessions))
+        for (index, sess) in enumerate(sessions):
+            sess.colour = colours[index]
+        return sessions
+    
+    def get_colour(self, event):
+        hx = event.colour if hasattr(event, "colour") else self.event_colour
+        return "#%s" % hx
+    
+    def get_event_type(self, event):
+        return event.__class__.__name__.lower()
     
     @property
     def event_colour(self):
         if not hasattr(self, "event_color"):
             rq_color = unicode(self.request.form.get("color", ""))
-            assert len(rq_color) <= 6
-            self._event_color = rq_color
-        return self._event_color
+            if rq_color:
+                assert len(rq_color) <= 6
+                self._event_color = rq_colour
+        return self._event_color if hasattr(self, "_event_color") else ""
     
     
-    def __call__(self):
+    @property
+    def sittings_and_sessions(self):
+        event_list = []
         try:
             date = self.request.get("from")
             dateobj = datetime.datetime(*time.strptime(date, "%Y-%m-%d")[0:5])
@@ -870,11 +890,7 @@ class DhtmlxCalendarSittings(BrowserView):
             start_date = utils.datetimedict.fromdate(datetime.date.today())
             days = tuple(start_date + timedelta(days=d) for d in range(7))
             end_date = days[-1]
-        sittings = self.context.get_sittings(
-            start_date,
-            end_date,
-            )
-        self.sittings = []
+        sittings = self.context.get_sittings(start_date, end_date)
         for sitting in sittings.values():
             if checkPermission("zope.View", sitting):
                 trusted = removeSecurityProxy(sitting)
@@ -883,7 +899,10 @@ class DhtmlxCalendarSittings(BrowserView):
                         misc.get_wf_state(trusted, trusted.status)
                     )
                 )
-                self.sittings.append(trusted)
+                event_list.append(trusted)
+        return event_list + self.get_sessions()
+
+    def __call__(self):
         self.request.response.setHeader("Content-type", self.content_mimetype)
         return self.render()
         
@@ -911,7 +930,7 @@ class DhtmlxCalendarSittingsIcal(DhtmlxCalendarSittings):
                 ),
                 event_summary=IDCDescriptiveProperties(sitting).verbose_title,
             )
-            for sitting in self.sittings
+            for sitting in self.sittings_and_sessions
         ]
         return config.ICAL_DOCUMENT_TEMPLATE % dict(
             event_data = u"\n".join(event_data_list)
