@@ -180,6 +180,7 @@ class TI(object):
         self.domain_model = None
         self.descriptor_model = None
         self.descriptor = None
+        self.custom = False # type loaded from custom configuration
     def __str__(self):
         return str(self.__dict__)
 

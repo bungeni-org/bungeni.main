@@ -171,7 +171,9 @@ def register_custom_types():
         workflow_key = misc.xml_attr_str(elem, "workflow", default=type_key)
         interface = resolve("bungeni.models.interfaces.%s" % (
                 interface_name(type_key)))
-        TYPE_REGISTRY.append((type_key, TI(workflow_key, interface)))
+        ti = TI(workflow_key, interface)
+        ti.custom = True
+        TYPE_REGISTRY.append((type_key, ti))
         log.info("Registering custom type [%s]: %s" % (elem.tag, type_key))
     
     # load XML file

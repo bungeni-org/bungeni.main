@@ -25,7 +25,6 @@ from bungeni.alchemist.model import queryModelDescriptor
 from bungeni.alchemist.interfaces import IContentViewManager
 
 import bungeni.core.globalsettings as prefs
-from bungeni.core.workflows.adapters import get_workflow
 
 from bungeni.models import domain, interfaces
 from bungeni.models.utils import get_groups_held_for_user_in_parliament
@@ -40,7 +39,7 @@ from interfaces import (ISubFormViewletManager,
                         ISubformRssSubscriptionViewletManager)
 from bungeni.ui.interfaces import IBungeniAuthenticatedSkin
 from bungeni.utils import register
-
+from bungeni.utils.capi import capi
 
 def load_formatted_container_items(container, out_format={}, extra_params={}):
     """Load container items and return as a list of formatted dictionary
@@ -379,18 +378,20 @@ class OfficesHeldViewlet(browser.BungeniItemsViewlet):
 
 
 
+def _get_public_states_for(*tis):
+    ps = set()
+    for ti in tis:
+        ps.update(ti.workflow.get_state_ids(tagged=["public"]))
+    return list(ps)
+
 class MemberItemsViewlet(browser.BungeniItemsViewlet):
     """A tab with bills, motions etc for an MP 
     (the "parliamentary activities" tab of of the "member" view)
     """
-    # !+ un-hardwire, user defined document types
-    states = \
-        get_workflow("agenda_item").get_state_ids(tagged=["public"]) + \
-        get_workflow("bill").get_state_ids(tagged=["public"]) + \
-        get_workflow("motion").get_state_ids(tagged=["public"]) + \
-        get_workflow("question").get_state_ids(tagged=["public"]) + \
-        get_workflow("tabled_document").get_state_ids(tagged=["public"])
-
+    states = _get_public_states_for( *[ ti 
+        for (key, ti) in capi.iter_type_info() 
+        if ti.custom and issubclass(ti.domain_model, domain.Doc) ] )
+    
     render = ViewPageTemplateFile("templates/mp-item-viewlet.pt")
 
     def __init__(self, context, request, view, manager):
@@ -410,13 +411,14 @@ class MemberItemsViewlet(browser.BungeniItemsViewlet):
     def update(self):
         user_id = self.context.user_id
         parliament_id = self.context.group_id
+        wf = capi.get_type_info("signatory")[1].workflow
         session = Session()
         # add cosigned items
         signed_pi_ids = [sgn.head_id for sgn in
             session.query(domain.Signatory).filter(
                 sql.and_(domain.Signatory.user_id == user_id,
-                    domain.Signatory.status.in_(get_workflow(
-                            "signatory").get_state_ids(tagged=["public"])
+                    domain.Signatory.status.in_(
+                        wf.get_state_ids(tagged=["public"])
                     ),
                 )
             ).all()

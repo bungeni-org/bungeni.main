@@ -152,6 +152,8 @@ class SchedulableHeadingsViewlet(SchedulableItemsViewlet):
             )
         )
 
+# !+Schedulable{TYPE}Viewlets (and their registration) should be just one, 
+# parametrized on type_key
 class SchedulableBillsViewlet(SchedulableItemsViewlet):
     view_name = "bill"
     view_title = _("Bills")
@@ -205,3 +207,4 @@ class SchedulableAgendaItemsViewlet(SchedulableItemsViewlet):
     
     def _item_url(self, item):
         return url.set_url_context(url.absoluteURL(item, self.request))
+

@@ -12,12 +12,12 @@ log = __import__("logging").getLogger("bungeni.ui.adapters")
 # and not "adapter" like everywhere else thoughout the application?
 from zope.security import checkPermission
 from bungeni.core.interfaces import IRSSValues
-from bungeni.core.workflows.adapters import get_workflow
 from bungeni.models import domain
 from bungeni.models.interfaces import (IFeatureAudit, \
     IAlchemistContainer
 )
 from bungeni.utils import register
+from bungeni.utils.capi import capi
 
 #import bungeni.ui.versions # !+REGISTER
 
@@ -59,12 +59,11 @@ class RSSValues(object):
     
     @property
     def values(self):
-        workflow = get_workflow(self.context.domain_model.__name__.lower())
+        workflow = capi.get_type_info(self.context.domain_model).workflow
         public_wfstates = workflow.get_state_ids(tagged=["public"],
             restrict=False)
         return [ x for x in self.context.values()
-            if checkPermission("zope.View", x)
-                 and x.status in public_wfstates ]
+            if checkPermission("zope.View", x) and x.status in public_wfstates ]
 
 
 @register.adapter(adapts=(IFeatureAudit,), provides=IRSSValues)
