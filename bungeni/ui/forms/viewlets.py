@@ -407,11 +407,11 @@ class MemberItemsViewlet(browser.BungeniItemsViewlet):
             ))
         #self.for_display = (self.query.count() > 0)
         self.formatter = self.get_date_formatter("date", "medium")
-
+    
     def update(self):
         user_id = self.context.user_id
         parliament_id = self.context.group_id
-        wf = capi.get_type_info("signatory")[1].workflow
+        wf = capi.get_type_info("signatory").workflow
         session = Session()
         # add cosigned items
         signed_pi_ids = [sgn.head_id for sgn in
@@ -438,7 +438,7 @@ class MemberItemsViewlet(browser.BungeniItemsViewlet):
         self.query = self.query.order_by(
             domain.Doc.doc_id.desc()
         )
-
+    
     @property
     def items(self):
         for item in self.query.all():
