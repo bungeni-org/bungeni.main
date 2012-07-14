@@ -1,0 +1,19 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      metal:use-macro="context/@@standard_macros/page">
+  <body>
+    <div metal:fill-slot="body">
+        <dd class="portletItem" tal:condition="view/items"> 
+            <div class="rssItem" tal:repeat="item view/items">
+                <a tal:attributes="href item/url">
+                    <span tal:replace="item/title"/>
+                </a>
+                <p>
+                    <span tal:replace="item/description"/>
+                </p>
+            </div>      
+        </dd>
+        <p tal:condition="not:view/items">You have not subscribed to any items</p>
+    </div>
+    </body>
+</html>

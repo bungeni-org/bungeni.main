@@ -1,0 +1,19 @@
+<dl class="workspace-under-consideration portlet portletNavigationTree" i18n:domain="bungeni">
+  <dt class="portletHeader">
+    <span class="portletTopLeft"></span>
+    <a class="tile" i18n:translate="">documents</a>
+    <span class="portletTopRight"></span>
+  </dt>
+  <dd class="portletItem lastItem">
+    <ul>
+        <tal:loop tal:repeat="tab view/tabs">
+            <li tal:define="current python: 'navTreeCurrentItem' if tab['active'] else ''" 
+              tal:attributes="class string:navTreeItem string:visualNoMarker $current">
+              <a tal:attributes="href tab/url; id python:('workspace-under-consideration'+tab['title'])">
+                <span tal:replace="tab/title" i18n:translate=""/>
+              </a>
+            </li>
+        </tal:loop>
+    </ul>
+  </dd>
+</dl>
