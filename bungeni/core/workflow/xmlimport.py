@@ -39,7 +39,7 @@ ID_RE = re.compile("^[\w\d_]+$")
 
 FEATURE_ATTRS = ("name", "enabled", "note")
 
-STATE_ATTRS = ("id", "title", "version", "publish", "like_state", "tags", 
+STATE_ATTRS = ("id", "title", "version", "like_state", "tags", 
     "note", "permissions_from_parent", "obsolete")
 
 TRANS_ATTRS_REQUIREDS = ("title", "source", "destination")
@@ -285,7 +285,6 @@ def _load(workflow, name, domain="bungeni"):
                 actions, permissions, tags,
                 as_bool(strip_none(s.get("permissions_from_parent")) or "false"),
                 as_bool(strip_none(s.get("obsolete")) or "false"),
-                as_bool(strip_none(s.get("publish")) or "false")
             )
         )
     

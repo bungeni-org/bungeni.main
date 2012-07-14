@@ -61,8 +61,12 @@ def get_permissions_dict(permissions):
 @register.handler(adapts=(IWorkflowed, IObjectModifiedEvent))
 def publish_handler(ob, event):
     try:
-        wf_state = IWorkflowController(ob).state_controller.get_state()
-        if wf_state and wf_state.publish:
+        wfc = IWorkflowController(ob)
+        wf_state = wfc.state_controller.get_state()
+        if wf_state and (
+            wfc.state_controller.get_status() in 
+            wfc.workflow.get_state_ids(not_tagged=["draft"], restrict=False)
+        ):
             publish_to_xml(ob)
     except InvalidStateError:
         log.error("Unable to get workflow state for object %s.", ob)
