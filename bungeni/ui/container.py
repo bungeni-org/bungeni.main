@@ -431,11 +431,18 @@ class PublicStatesContainerJSONListing(ContainerJSONListing):
         if IWorkflowed.implementedBy(self.context.domain_model):
             type_key = polymorphic_identity(self.context.domain_model)
             workflow = capi.get_type_info(type_key).workflow
-            public_wfstates = workflow.get_state_ids(tagged=["public"], 
-                restrict=False)
-            if public_wfstates:
-                query = query.filter(
-                    self.domain_model.status.in_(public_wfstates))
+            #!+WORKFLOWS(mb, July-2012) skip filter states if no workflow
+            # type_info lookup of workflows will fail if no wf is explicitly
+            # registered. DISCREPANCY
+            # inheriting classes e.g. Report4Sitting implement IWorkflowed
+            # but lookup here fails. TODO rework/review Report4Sitting
+            # also type_info lookup should mirror zope registry lookup
+            if workflow:
+                public_wfstates = workflow.get_state_ids(tagged=["public"], 
+                    restrict=False)
+                if public_wfstates:
+                    query = query.filter(
+                        self.domain_model.status.in_(public_wfstates))
         else:
             log.warn("PublicStateContainerJSONListing.query_add_filters called "
                 "a type [%s] that is not workflowed... cannot apply any filters "
