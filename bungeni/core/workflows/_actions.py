@@ -34,10 +34,6 @@ from bungeni.core.workflows import dbutils
 # not tied to a state name, but to <state> @version bool attribute
 create_version = utils.create_version
 
-# publish document to xml
-# not tied to a state name, but to <state> @publish bool attribute
-from bungeni.core.serialize import publish_to_xml
-
 # /specially handled actions
 
 
@@ -61,12 +57,6 @@ _event_draft = __create
 _attachment_draft = __create
 _address_private = __create
 
-
-''' !+XML 
-def _address_attached(context):
-    # !+XML this is anyway incorrect, what about useraddress (uses same workflow)
-    publish_to_xml(context, type="groupaddress", include=[])
-'''
 
 # !+NUMBER_GENERATION (ah,nov-2011) - generate the number on receiving an item
 _question_received = __pi_received
