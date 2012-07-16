@@ -315,6 +315,8 @@ YAHOO.bungeni.config = function(){
                                         new_data_entries.push(entry);
                                     }
                                     sDt.addRows(new_data_entries, new_index);
+                                    sDt.unselectAllRows();
+                                    sDt.selectRow(new_index+(recordData.value.length-1));
                                 }
                                 this.hide();
                             }else{
