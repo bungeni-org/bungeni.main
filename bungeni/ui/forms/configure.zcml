@@ -145,10 +145,19 @@
 
   <browser:page
      name="translate"
-        for="bungeni.alchemist.interfaces.IAlchemistContent"
+     for="bungeni.alchemist.interfaces.IAlchemistContent"
      class=".common.TranslateForm"
      permission="zope.ManageContent"
      />
+
+  <browser:page
+     name="sign-open-document"
+     for="bungeni.models.interfaces.IFeatureSignatory"
+     class=".common.SignOpenDocumentForm"
+     permission="bungeni.signatory.Append"
+     layer="bungeni.ui.interfaces.IWorkspaceUnderConsiderationSectionLayer"
+     />
+
 
   <!-- content specific add, edit, delete and display forms -->
 

@@ -291,6 +291,7 @@ dl#context_actions.actionMenu .actionMenuContent ul li a#files,
 dl#context_actions.actionMenu .actionMenuContent ul li a#download,
 dl#context_actions.actionMenu .actionMenuContent ul li a#st-attendance,
 dl#context_actions.actionMenu .actionMenuContent ul li a#signatory-review,
+dl#context_actions.actionMenu .actionMenuContent ul li a#sign-open-document,
 dl#context_actions.actionMenu .actionMenuContent ul li a#report-builder{
 	padding: 0 .5em;
 	margin: 0;
@@ -355,6 +356,9 @@ dl#context_actions.actionMenu .actionMenuContent ul li a#st-attendance {
 }
 dl#context_actions.actionMenu .actionMenuContent ul li a#signatory-review {
 	background-image: url(images/consent.png) ;
+}
+dl#context_actions.actionMenu .actionMenuContent ul li a#sign-open-document {
+	background-image: url(images/sign-document.png) ;
 }
 dl#context_actions.actionMenu .actionMenuContent ul li a#report-builder {
 	background-image: url(images/report-builder.png) ;

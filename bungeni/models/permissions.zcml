@@ -251,6 +251,7 @@
   <permission id="bungeni.signatory.Act" title="Consent or reject signature request" />
   <permission id="bungeni.signatory.Delete" title="Delete a signatory" />
   <permission id="bungeni.signatory.Edit" title="Edit a signatory" />
+  <permission id="bungeni.signatory.Append" title="Append signature to a document" />
   <permission id="bungeni.signatory.View" title="View a signatory" />
   <meta:redefinePermission from="bungeni.signatory.View" to="zope.View" />
 

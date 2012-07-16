@@ -1132,6 +1132,14 @@
         order="30"
     />
     <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IFeatureSignatory"
+        action="sign-open-document" 
+        title="Sign Document"
+        layer=".interfaces.IWorkspaceUnderConsiderationSectionLayer"
+        permission="bungeni.signatory.Append"
+        order="30"
+    />
+    <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.IFeatureAudit"
         action="audit-log"
         title="Audit log"

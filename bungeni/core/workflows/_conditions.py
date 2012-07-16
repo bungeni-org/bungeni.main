@@ -158,6 +158,10 @@ def signatory_auto_sign(context):
     # document is in a 'working_draft' state
     if user_is_not_context_owner(context.head):
         return True
+    #!+(mb, Jul-2012) move all signatory logic to signatory manager
+    validator = ISignatoryManager(context)
+    if validator.autoSign():
+        return True
     return False
 
 def signatory_manual_sign(context):

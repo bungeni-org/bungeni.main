@@ -18,7 +18,7 @@ from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from zope.component import getGlobalSiteManager
 
 from bungeni.alchemist import Session
-from bungeni.models import interfaces
+from bungeni.models import interfaces, domain
 from bungeni.utils import register
 from bungeni.core.workflow.interfaces import IWorkflowController, IWorkflowTransitionEvent
 
@@ -29,6 +29,7 @@ OWNER_ROLE = "bungeni.Owner"
 SIGNATORY_ROLE = "bungeni.Signatory"
 SIGNATORIES_REJECT_STATES = [u"rejected", u"withdrawn"]
 SIGNATORY_CONSENTED_STATES = [u"consented"]
+SIGNATORY_CONSENTED_STATE = u"consented"
 
 @register.handler(adapts=(interfaces.IFeatureSignatory, IWorkflowTransitionEvent))
 def doc_workflow(ob, event):
@@ -62,6 +63,31 @@ def make_owner_signatory(context):
         session.add(signatory)
         session.flush()
         zope.event.notify(zope.lifecycleevent.ObjectCreatedEvent(signatory))
+
+def sign_document(context, user_id):
+    """Sign context for this user if they have not already signed
+    """
+    signatories = removeSecurityProxy(context.signatories)
+    signatory = None
+    for sgn in signatories.values():
+        if sgn.user_id == user_id:
+            signatory = removeSecurityProxy(sgn)
+            break
+
+    if not signatory:
+        session = Session()
+        signatory = domain.Signatory()
+        signatory.user_id = user_id
+        signatory.head_id = context.doc_id
+        session.add(signatory)
+        session.flush()
+        zope.event.notify(zope.lifecycleevent.ObjectCreatedEvent(signatory))
+    else:
+        wfc = IWorkflowController(signatory)
+        if not wfc.state_controller.get_status() == SIGNATORY_CONSENTED_STATE:
+            wfc.state_controller.set_status(SIGNATORY_CONSENTED_STATE)
+    return signatory
+        
 
 
 class SignatoryValidator(object):
@@ -128,7 +154,13 @@ class SignatoryValidator(object):
     def allowSignature(self):
         return (not self.max_signatories or 
             (self.consented_signatories < self.max_signatories)
-        ) and self.documentSubmitted()
+        ) and (self.documentSubmitted() or self.autoSign)
+
+    def autoSign(self):
+        return self.wf_status in self.open_states
+
+    def signDocument(self, user_id):
+        return sign_document(self.context, user_id)
 
     def expireSignatures(self):
         return self.wf_status in self.expire_states

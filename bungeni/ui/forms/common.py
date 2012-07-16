@@ -42,8 +42,9 @@ from bungeni.core.translation import is_translation
 from bungeni.core.translation import get_translation_for
 from bungeni.core.translation import CurrentLanguageVocabulary
 from bungeni.models.interfaces import IVersion, IBungeniContent, \
-    IAttachmentContainer #, ISittingContainer
+    IAttachmentContainer, ISignatoryManager #, ISittingContainer
 from bungeni.models import domain
+from bungeni.models.utils import get_db_user_id
 from bungeni.ui.forms.fields import filterFields
 from bungeni.ui.interfaces import IBungeniSkin, IFormEditLayer, \
     IGenenerateVocabularyDefault
@@ -837,3 +838,31 @@ class DeleteForm(PageForm):
             self._next_url = url.absoluteURL(self.context, self.request)
         self.request.response.redirect(self._next_url)
 
+
+class SignOpenDocumentForm(PageForm):
+    """Provides a form to allow signing of a document open for signatures
+    """
+    form_template = NamedTemplate("alchemist.form")
+    template = ViewPageTemplateFile("templates/sign-open-document.pt")
+    form_fields = formlib.form.Fields()
+    
+    def _can_sign_document(self, action):
+        manager = ISignatoryManager(self.context)
+        return manager.allowSignature()
+
+    def nextURL(self):
+        return url.absoluteURL(self.context, self.request)
+  
+    @formlib.form.action(_(u"Sign Document"), name="sign_document", 
+        condition=_can_sign_document)
+    def handle_sign_document(self, action, data):
+        user_id = get_db_user_id()
+        manager = ISignatoryManager(self.context)
+        manager.signDocument(user_id)
+        self.request.response.redirect(self.nextURL())
+        
+    @formlib.form.action(_(u"Cancel"), name="cancel", 
+        validator=ui.null_validator)    
+    def handle_cancel(self, action, data):
+        self.request.response.redirect(self.nextURL())
+    
