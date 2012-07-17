@@ -56,12 +56,12 @@ YAHOO.bungeni.agendaconfig = function(){
         var e_bind = "YAHOO.bungeni.config.dialogs.textrecords.show(SGlobals.types.EDITORIAL_NOTE);";
         return (
             YAHOO.bungeni.Utils.wrapText(SGlobals.empty_agenda_message, "p") +
-            YAHOO.bungeni.Utils.wrapText("+ " + SGlobals.type_names.HEADING, 
+            YAHOO.bungeni.Utils.wrapText("+ " + SGlobals.type_names.heading, 
                 "button", ("href='javascript:void(0);' id='init-add-heading' " +
                     "onclick='" + h_bind + "'"
                  )
             ) + 
-            YAHOO.bungeni.Utils.wrapText("+ " + SGlobals.type_names.EDITORIAL_NOTE, 
+            YAHOO.bungeni.Utils.wrapText("+ " + SGlobals.type_names.editorial_note, 
                 "button", ("href='javascript:void(0);' " + 
                     "id='init-add-editorial-note' onclick='" + e_bind + "'"
                 )

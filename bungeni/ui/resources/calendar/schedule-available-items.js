@@ -312,7 +312,7 @@ YAHOO.bungeni.availableitems = function(){
             var tab_view = new YAHOO.widget.TabView();
             var text_tab = new YAHOO.widget.Tab(
                 { 
-                    label: SGlobals.type_names.EDITORIAL_NOTE,
+                    label: SGlobals.type_names.editorial_note,
                     content: ("<div id='add-text-record'>" + 
                         "<textarea id='text-record-value' " +
                          "name='text-record-value'></textarea></div>"
@@ -321,7 +321,7 @@ YAHOO.bungeni.availableitems = function(){
             );
             var minute_tab = new YAHOO.widget.Tab(
                 { 
-                    label: SGlobals.type_names.MINUTE,
+                    label: SGlobals.type_names.minute,
                     content: ("<div id='add-minute-record'>" + 
                         "<textarea id='minute-record-value' " +
                          "name='minute-record-value'></textarea></div>"
@@ -330,7 +330,7 @@ YAHOO.bungeni.availableitems = function(){
             );
             var heading_tab = new YAHOO.widget.Tab(
                 { 
-                    label: SGlobals.type_names.HEADING,
+                    label: SGlobals.type_names.heading,
                     content: ("<div id='add-heading-record'>" + 
                         "<label class='scheduler-label'" + 
                         " for='heading-record-value'>"+

@@ -384,6 +384,16 @@ YAHOO.bungeni.config = function(){
              var Columns = scheduling_columns;
 
             /**
+             * @method itemTypeFormatter
+             * @description renders internationalized record type
+             **/
+             var itemTypeFormatter = function(el, record, column, data){
+                    rec_data = record.getData();
+                    type_key = rec_data[Columns.TYPE];
+                    el.innerHTML = SGlobals.type_names[rec_data[Columns.TYPE]];
+             }
+
+            /**
              * @method itemTitleFormatter
              * @description renders title, emphasized text for titles and italicized
              * text for text records
@@ -681,13 +691,9 @@ YAHOO.bungeni.config = function(){
                 var rdata = record.getData();
                 el.innerHTML = "";
                 var type_el = document.createElement("div");
+                var type_key = rdata[Columns.TYPE];
                 type_el.className = "yui-dt-label";
-                var type_i18n = SGlobals.type_names[rdata[Columns.TYPE].toUpperCase()];
-                if(type_i18n){
-                    type_el.textContent = type_i18n;
-                }else{
-                    type_el.textContent = rdata[Columns.TYPE];
-                }
+                type_el.textContent = SGlobals.type_names[rdata[Columns.TYPE]];
                 el.appendChild(type_el);
                 var menu = [
                     {
@@ -757,6 +763,7 @@ YAHOO.bungeni.config = function(){
             }
 
             return {
+                type: itemTypeFormatter,
                 title: itemTitleFormatter,
                 title_extended: itemTitleExtendedFormatter,
                 title_with_minutes: itemTitleMinutesFormatter,

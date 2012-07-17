@@ -30,6 +30,15 @@ WARNING = _(u"Warning")
 
 def get_globals(group_name, **kwargs):
     language = kwargs.get("language", "en")
+    type_names = {
+        "heading":i18n(_(u"heading"), language),
+        "editorial_note":i18n(_(u"editorial note"), language),
+        "minute":i18n(_(u"minute record"), language),
+    }
+    type_names.update([
+        (name, i18n(info.get("display_name"), language))
+        for (name, info) in data.get_schedulable_types().iteritems()
+    ])
     globals_map = {
         "SCHEDULER_GLOBALS" : {
             "schedulable_types": [ 
@@ -44,11 +53,7 @@ def get_globals(group_name, **kwargs):
                 "EDITORIAL_NOTE": "editorial_note",
                 "MINUTE": "minute",
             },
-            "type_names": {
-                "HEADING":i18n(_(u"heading"), language),
-                "EDITORIAL_NOTE":i18n(_(u"editorial note"), language),
-                "MINUTE":i18n(_(u"minute record"), language),
-            },
+            "type_names": type_names,
             "current_schedule_title": i18n(_(u"Agenda"), language),
             "current_schedule_items": i18n(_(u"Scheduled Items"), language),
             "available_items_title": i18n(_(u"Available Items"), language),

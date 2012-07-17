@@ -89,6 +89,7 @@ YAHOO.bungeni.schedulingpreview = function(){
                 {
                     key : Columns.TYPE, 
                     label : SGlobals.column_type,
+                    formatter: formatters.type,
                 },
                 {
                     key : Columns.TITLE, 
