@@ -159,7 +159,7 @@ def signatory_auto_sign(context):
     if user_is_not_context_owner(context.head):
         return True
     #!+(mb, Jul-2012) move all signatory logic to signatory manager
-    validator = ISignatoryManager(context)
+    validator = ISignatoryManager(context.head)
     if validator.autoSign():
         return True
     return False
