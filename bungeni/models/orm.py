@@ -409,9 +409,12 @@ mapper(domain.Doc, schema.doc,
         # !+ARCHETYPE_MAPPER(mr, apr-2012) keep this mapper property always 
         # present on predefined archetype mapper, or dynamically instrument it 
         # on each on mapper of each (sub-archetype) type having this feature?
-        "item_signatories": relation(domain.Signatory), #!+rename sa_signatories
-        "attachments": relation(domain.Attachment), # !+ARCHETYPE_MAPPER
-        "sa_events": relation(domain.Event, uselist=True), # !+ARCHETYPE_MAPPER
+        "item_signatories": relation(domain.Signatory, 
+            cascade="all, delete-orphan"), #!+rename sa_signatories
+        "attachments": relation(domain.Attachment, 
+            cascade="all, delete-orphan"), # !+ARCHETYPE_MAPPER
+        "sa_events": relation(domain.Event, uselist=True, 
+            cascade="all, delete-orphan"), # !+ARCHETYPE_MAPPER
         # for sub parliamentary docs, non-null implies a sub doc
         #"head": relation(domain.Doc,
         #    uselist=False,
