@@ -28,6 +28,7 @@ from ploned.ui.menu import make_absolute
 from ploned.ui.menu import pos_action_in_url
 
 from bungeni.alchemist.interfaces import IAlchemistContainer, IAlchemistContent
+from bungeni.core.interfaces import IWorkspaceContainer
 from bungeni.alchemist.traversal import ManagedContainerDescriptor
 from bungeni.core import location
 from bungeni.ui.utils import url, debug
@@ -63,13 +64,18 @@ AttributeError: 'GroupAddress' object has no attribute 'short_name':   File "/ho
 So, we temporarily default the above to the context.__class__.__name__:
                 '''
                 title = getattr(context, "title", context.__class__.__name__)
+    elif IWorkspaceContainer.providedBy(context):
+        # WorkspaceContainer._class is not set (and not unique) and it breaks the
+        # connection between Container -> ContentClass
+        title = context.__name__
     elif IAlchemistContainer.providedBy(context):
         domain_model = context._class 
         try:
             descriptor = capi.get_type_info(domain_model).descriptor
         except ValueError, e:
-            log.warn("TYPE_INFO: no descriptor for model %s : [%s]" % (
-                    domain_model, e))
+            log.warn("TYPE_INFO: no descriptor for model %s "
+                    "[container=%s] [error=%s]" % (
+                        domain_model, context, e))
             descriptor = None
             name = ""
         if descriptor:
