@@ -30,7 +30,12 @@ def get_workflow(name):
     """Get the named workflow utility.
     """
     #return component.getUtility(IWorkflow, name) !+BREAKS_DOCTESTS(mr, apr-2011)
-    return get_workflow._WORKFLOWS[name]
+    log.warn("!+DEPRECATED get_workflow(%r) -> replace with ti.workflow" % (name))
+    try:
+        return capi.get_type_info(name).workflow
+    except KeyError, e:
+        log.error("%s -> trying old get_workflow..." % (e))
+        return get_workflow._WORKFLOWS[name]
 # a mapping of workflow names workflow instances as a supplementary register 
 # of instantiated workflows -- not cleared when componenet registry is cleared
 get_workflow._WORKFLOWS = {} # { name: workflow.states.Workflow }
