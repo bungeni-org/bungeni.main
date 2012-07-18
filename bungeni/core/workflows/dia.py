@@ -2,7 +2,7 @@
 import sys
 from bungeni.core.workflows.adapters import get_workflow
 from bungeni.core.workflow.dot import dot
-
+from bungeni.utils.capi import capi
 
 def write_file(in_folder, file_name, contents):
     f = open(in_folder + file_name, "w")
@@ -19,28 +19,12 @@ def main(argv):
         if not output_folder.endswith("/"):
             output_folder = output_folder + "/"
     
-    #!+bungeni_custom(mr, aug-2011) should be localized parameter, or 
-    # generated dynamically e.g. listing of workflow file definitions.
-    workflow_names = [
-        "address",
-        "agenda_item",
-        "attachment",
-        "bill",
-        "committee",
-        "event",
-        "sitting",
-        "group",
-        "heading",
-        "motion",
-        "parliament", 
-        "question",
-        "report",
-        "signatory",
-        "tabled_document",
-        "user",
-    ]
-    for name in workflow_names:
-        write_file(output_folder, "%s.dot" % name, dot(get_workflow(name)))
+    seen = set()
+    for key, ti in capi.iter_type_info():
+        wf = ti.workflow 
+        if wf and wf not in seen:
+            seen.add(wf)
+            write_file(output_folder, "%s.dot" % ti.workflow_key, dot(wf))
 
 
 if __name__ == "__main__":
