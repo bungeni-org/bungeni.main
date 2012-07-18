@@ -440,7 +440,9 @@ def InactiveNoEndDate(obj):
             )
 
 def MpStartBeforeElection(obj):
-    """For members of parliament start date must be after election."""
+    """MP start date (when set) must be after election."""
+    if obj.election_nomination_date is None:
+        return
     if obj.election_nomination_date > obj.start_date:
         raise interface.Invalid(_("A parliament member has to be "
                 "elected/nominated before she/he can be sworn in"),
