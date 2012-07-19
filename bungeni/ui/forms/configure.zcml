@@ -101,6 +101,28 @@
      layer="bungeni.ui.interfaces.IBungeniSkin"
      />
 
+   <browser:page
+     name="add"
+     for="bungeni.models.interfaces.IVenueContainer"
+     class=".common.AddForm"
+     permission="bungeni.venue.Add"
+     layer="..interfaces.IWorkspaceSchedulingSectionLayer"
+     />
+   <browser:page
+     name="edit"
+     for="bungeni.models.interfaces.IVenue"
+     class=".common.EditForm"
+     permission="bungeni.venue.Edit"
+     layer="..interfaces.IWorkspaceSchedulingSectionLayer"
+     />
+   <browser:page
+     name="delete"
+     for="bungeni.models.interfaces.IVenue"
+     class=".common.DeleteForm"
+     permission="bungeni.venue.Delete"
+     layer="..interfaces.IWorkspaceSchedulingSectionLayer"
+     />
+
 
   <browser:page
      name="delete"

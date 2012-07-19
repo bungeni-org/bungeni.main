@@ -1091,7 +1091,9 @@ class AttachmentVersion(Version):
 class Heading(Entity):
     """A heading in a report.
     """
-    interface.implements(interfaces.ITranslatable, interfaces.IScheduleText)
+    interface.implements(interfaces.ITranslatable, interfaces.IScheduleText,
+        interfaces.IScheduleContent
+    )
     
     type = "heading"
     
@@ -1170,7 +1172,9 @@ class EditorialNote(Entity):
     """Arbitrary text inserted into schedule
     """
     type = u"editorial_note"
-    interface.implements(interfaces.ITranslatable, interfaces.IScheduleText)
+    interface.implements(interfaces.ITranslatable, interfaces.IScheduleText,
+        interfaces.IScheduleContent
+    )
 
 
 class ItemSchedule(Entity):
@@ -1229,7 +1233,9 @@ class ResourceType(object):
 class Venue(Entity):
     """A venue for a sitting.
     """
-    interface.implements(interfaces.ITranslatable, interfaces.IVenue)
+    interface.implements(interfaces.ITranslatable, interfaces.IVenue,
+        interfaces.IScheduleContent
+    )
 
 
 class Report(Doc):

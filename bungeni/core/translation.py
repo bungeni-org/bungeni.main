@@ -89,7 +89,7 @@ component.provideUtility(language_vocabulary_factory, IVocabularyFactory,
 class CurrentLanguageVocabulary(LanguageVocabulary):
     def __call__(self, context):
         language = get_language(context)
-        languages = get_all_languages(filter=[language])
+        languages = get_all_languages([language])
         items = [ (l, languages[l].get("name", l)) for l in languages ]
         items = [ SimpleTerm(i[0], i[0], i[1]) for i in items ]
         return SimpleVocabulary(items)

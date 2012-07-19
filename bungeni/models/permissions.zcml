@@ -73,6 +73,12 @@
   <permission id="bungeni.heading.View" title="View heading" />
   <meta:redefinePermission from="bungeni.heading.View" to="zope.View" />
 
+  <permission id="bungeni.venue.Add" title="Add venue note" />
+  <permission id="bungeni.venue.Edit" title="Edit venue note" />
+  <permission id="bungeni.venue.Delete" title="Delete venue note" />
+  <permission id="bungeni.venue.View" title="View venue note" />
+  <meta:redefinePermission from="bungeni.venue.View" to="zope.View" />
+  
   <permission id="bungeni.editorialnote.Add" title="Add editorial note" />
   <permission id="bungeni.editorialnote.Edit" title="Edit editorial note" />
   <permission id="bungeni.editorialnote.Delete" title="Delete editorial note" />

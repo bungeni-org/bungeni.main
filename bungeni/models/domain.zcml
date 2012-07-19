@@ -694,6 +694,25 @@
         />
     </class>
     
+    <class class=".domain.Venue">
+        <require permission="zope.View"
+            attributes="
+                venue_id
+                short_name
+                description
+                language
+            "
+        />
+        <require permission="bungeni.venue.Edit"
+            set_attributes="
+                venue_id
+                short_name
+                description
+                language
+            "
+        />
+    </class>
+    
     <class class=".domain.EditorialNote">
         <require permission="zope.View"
             attributes="

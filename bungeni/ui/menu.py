@@ -31,7 +31,7 @@ from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.models.utils import get_db_user_id
 from bungeni.models.interfaces import (
     IVersion, 
-    IScheduleText, 
+    IScheduleContent, 
     IFeatureAudit,
     IFeatureDownload
 )
@@ -599,7 +599,7 @@ class CalendarContentMenu(BrowserMenu):
             return results
         for key, item in items:
             if not IAlchemistContainer.providedBy(item): continue
-            if not IScheduleText.implementedBy(item.domain_model): continue
+            if not IScheduleContent.implementedBy(item.domain_model): continue
             dc_adapter = IDCDescriptiveProperties(item, None)
             if dc_adapter:
                 _title = dc_adapter.title

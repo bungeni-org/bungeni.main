@@ -210,7 +210,7 @@ class AppSetup(object):
         #!+AUTO CONTAINERS SCHEDULING(mb, April-2012)
         # type_info missing container name
         for key, info in capi.iter_type_info():
-            if model_interfaces.IScheduleText.implementedBy(info.domain_model):
+            if model_interfaces.IScheduleContent.implementedBy(info.domain_model):
                 container_name = "%ss" % key
                 container = "%sContainer" % info.domain_model.__name__
                 workspace["scheduling"][container_name] = getattr(domain, container)()
@@ -422,10 +422,7 @@ class AppSetup(object):
         
         content[u"users"] = domain.UserContainer()
         to_locatable_container(domain.User, content[u"users"])
-        
-        content[u"headings"] = domain.HeadingContainer()
-        to_locatable_container(domain.Heading, content[u"headings"])
-        
+                
         ''' !+TYPES_CUSTOM
         vocabularies = admin["vocabularies"] = Section(
             title=_(u"vocabularies"),

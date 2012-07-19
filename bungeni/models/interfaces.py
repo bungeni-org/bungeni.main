@@ -209,6 +209,10 @@ class IScheduleText(interface.Interface):
     This covers `IHeading` and `IEditorialNote'` at this point.
     """
 
+class IScheduleContent(interface.Interface):
+    """Marker interface for content that may be managed in scheduling
+    """
+
 class IItemScheduleDiscussion(interface.Interface): pass
 class IItemScheduleDiscussionContainer(IAlchemistContainer): pass
 
@@ -539,6 +543,8 @@ class IMemberElectionType(IBungeniVocabulary):
 
 class IVenue(IBungeniVocabulary):
     """Marker interface for venues vocabulary"""
+class IVenueContainer(IAlchemistContainer): pass
+    
 class ISubRoleDirective(interface.Interface):
     """Define a new sub role."""
     id = schema.Id(
