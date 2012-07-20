@@ -259,8 +259,7 @@ class WorkflowSubMenuItem(BrowserSubMenuItem):
         if wfc is None:
             return {"id": self.id}
         status = wfc.state_controller.get_status()
-        stateTitle = translate(
-            str(wfc.workflow.get_state(status).title),
+        stateTitle = translate(wfc.workflow.get_state(status).title,
             domain="bungeni",
             context=self.request)
         return {
@@ -310,7 +309,7 @@ class WorkflowMenu(BrowserMenu):
             extra = {"id": "workflow-transition-%s" % tid,
                      "separator": None,
                      "class": ""}
-            state_title = translate(str(wf.get_transition(tid).title),
+            state_title = translate(wf.get_transition(tid).title,
                 domain="bungeni",
                 context=request)
             results.append(
