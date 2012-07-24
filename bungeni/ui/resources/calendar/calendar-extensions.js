@@ -144,7 +144,9 @@ function handle_lightbox(event_id){
 function event_db_click(event_id, dom_event){
     var event = scheduler.getEvent(event_id);
     if (event!=undefined){
-        if (event.event_type != "sitting"){ return; }
+        if ((event.event_type != undefined) && (event.event_type != "sitting")){ 
+            return; 
+        }
         var status = event["!nativeeditor_status"];
         if (status && (status!="") && !scheduler.config.readonly){
             event.color="red";
