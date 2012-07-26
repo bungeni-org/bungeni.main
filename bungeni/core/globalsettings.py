@@ -6,6 +6,7 @@ global settings
 
 
 # the schema for the settings is in interfaces
+log = __import__("logging").getLogger("bungeni.core")
 
 import datetime
 
@@ -41,7 +42,20 @@ def get_current_parliament(date=None):
     try:
         return query.one()
     except:
-        pass #XXX raise(_(u"inconsistent data: none or more than one parliament found for this date"))
+        ##XXX raise(_(u"inconsistent data: none or more than one parliament found for this date"))
+        #!+DATA(mb, July-2012) this should get the one active parliament
+        # needs some review if there is more than one parliament active e.g.
+        # bicameral legislatures
+        query = session.query(domain.Parliament).filter(
+            schema.groups.c.status=="active"
+        )
+        try:
+            return query.one()
+        except Exception, e:
+            log.error("Could not find active parliament. Activate a parliament"
+                " in Bungeni admin :: %s", e.__repr__()
+            )
+            raise ValueError("Unable to locate active parliament")
 
 def getCurrentParliamentId(date=None):
     """Return the parliament_id for a given date (or the current for no date)
