@@ -15,6 +15,7 @@ import zc.table
 from zc.table import column
 from zope.app.pagetemplate import ViewPageTemplateFile
 from zope.i18n import translate
+from zope.dublincore.interfaces import IDCDescriptiveProperties
 
 from bungeni.models import interfaces
 from bungeni.models import domain
@@ -394,7 +395,7 @@ class AuditLogView(AuditLogMixin, browser.BungeniBrowserView):
     
     __call__ = ViewPageTemplateFile("templates/listing-view.pt")
     
-    _page_title = "Change Log"
+    _page_title = _("Change Log")
     visible_column_names = [
         "user", "date_active", "object", "description", "note", "date_audit"]
     include_change_types = [ t for t in CHANGE_TYPES ]
@@ -404,11 +405,11 @@ class AuditLogView(AuditLogMixin, browser.BungeniBrowserView):
         browser.BungeniBrowserView.__init__(self, context, request)
         AuditLogMixin.__init__(self)
         if hasattr(self.context, "title"):
+            dc = IDCDescriptiveProperties(self.context, None)
             self._page_title = "%s: %s" % (
-                _(self._page_title), _(self.context.title))
-        else:
-            self._page_title = _(self.__class__._page_title)
-
+                translate(self._page_title), 
+                dc and dc.title or self.context.title
+            )
 
 @register.viewlet(interfaces.IFeatureAudit, manager=ISubFormViewletManager, 
     name="keep-zca-happy-timeline")

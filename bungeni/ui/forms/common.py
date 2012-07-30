@@ -434,8 +434,7 @@ class EditForm(BaseForm, catalyst.EditForm):
             context = self.context.head
         else:
             context = self.context
-        props = IDCDescriptiveProperties.providedBy(context) \
-                and context or IDCDescriptiveProperties(context)
+        props = IDCDescriptiveProperties(context, None) or context
         
         if self.is_translation:
             language = get_language_by_name(self.context.language)["name"]
@@ -449,7 +448,6 @@ class EditForm(BaseForm, catalyst.EditForm):
                      default=u'Editing "$title" (version $version)',
                      mapping={"title": translate(props.title, context=self.request),
                               "version": self.context.seq})
-
         return _(u"edit_item_legend", default=u'Editing "$title"',
                  mapping={"title": translate(props.title, context=self.request)})
 
@@ -552,7 +550,7 @@ class TranslateForm(AddForm):
     def translatable_field_names(self):
         names = ["language"]
         for field in self.model_descriptor.edit_columns:
-            if field.property._type == unicode:
+            if field.property and (field.property._type == unicode):
                 names.append(field.name)
         return names
 

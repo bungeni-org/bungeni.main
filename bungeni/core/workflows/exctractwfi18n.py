@@ -9,7 +9,11 @@ To run (from within bungeni home folder : default is `~/bungeni_apps/bungeni`):
 
 """
 
+import logging
+logging.basicConfig(level=logging.INFO) 
+
 import os
+import bungeni.core.workflows.adapters
 from bungeni.utils.capi import capi
 
 path = os.path.split(os.path.abspath(__file__))[0]
@@ -27,6 +31,7 @@ f.write("""
 for type_info in capi.iter_type_info():
     workflow = type_info[1].workflow
     if workflow is None: continue
+    logging.info("Processing workflow: %s", workflow.name)
     for status, state in workflow.states.items():
         f.write("""<b i18n:translate="">%s</b>""" % (state.title))
         f.write("\n")
@@ -37,4 +42,4 @@ for type_info in capi.iter_type_info():
 f.write("</body></html>")
 f.write("\n")
 f.close()
-
+logging.info("Finished writing workflow names to file %s", f.name)
