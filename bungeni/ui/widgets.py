@@ -1232,8 +1232,18 @@ def text_input_search_widget(table_id, field_id):
     """
     script = open("%s/templates/text-input-search-widget.js" % (_path)).read()
     return "", script % {"table_id": table_id, "field_id": field_id}
-        
+
+
 class DateFilterWidget(form.PageForm):
+
+    macro_template = NamedTemplate("alchemist.form")
+    template = ViewPageTemplateFile("templates/date-input-search.pt")
+
+    def __init__(self, context, request, field_id):
+        self.field_id = field_id
+        self.prefix = "form_%s" % (field_id)
+        super(DateFilterWidget, self).__init__(context, request)
+
     class IDateRangeSchema(interface.Interface):
         range_start_date = schema.Date(
             title=_(u"From"),
@@ -1244,6 +1254,7 @@ class DateFilterWidget(form.PageForm):
             title=_(u"To"),
             description=_(u"Leave blank or set upper limit"),
             required=False)
+
     macro_template = NamedTemplate("alchemist.form")
     template = ViewPageTemplateFile("templates/date-input-search.pt")
     form_fields = form.Fields(IDateRangeSchema, render_context=True)
@@ -1260,16 +1271,22 @@ class DateFilterWidget(form.PageForm):
         self.widgets = form.setUpWidgets(
             self.form_fields, self.prefix, self.context, self.request,
             form=self, adapters=self.adapters, ignore_request=True)
-            
+
     @form.action(_(u"Ok"), name="ok")
-    def handle_filter(self, action, data):
+    def handle_ok(self, action, data):
         #Handled by Javascript
         pass
-        
+
+    @form.action(_(u"Clear"), name="clear")
+    def handle_clear(self, action, data):
+        #Handled by Javascript
+        pass
+
 def date_input_search_widget(table_id, field_id):
-    form = DateFilterWidget(common.get_application(), common.get_request())
+    form = DateFilterWidget(common.get_application(), common.get_request(), field_id)
     html = '<div id="date_input_search_widget_%(field_id)s" style="display: none;">%(html)s</div>' \
         % {"field_id":field_id, "html":form.render()}
     script = open("%s/templates/date-input-search-widget.js" % (_path)).read()
+    print html
     return html, script % {"table_id": table_id, "field_id": field_id}
 

@@ -203,6 +203,35 @@ class ContainerJSONListing(ContainerJSONBrowserView):
             return "(%s)" % (fs)
         return ""
 
+    def get_date_filter_string(self, column, filter_field):
+        ff = filter_field.strip()
+        start_date, end_date = None, None
+        start_date_fs, end_date_fs = "", ""
+        dates = ff.split("->")
+        if ff.startswith("->"):
+            end_date = dates[1]
+        elif ff.endswith("->"):
+            start_date = dates[0]
+        elif len(ff.split("->")) == 2:
+            start_date = dates[0]
+            end_date = dates[1]
+        if start_date:
+            start_date_fs = "%(column_name)s >= to_date( \
+'%(start_date)s', 'YYYY-MM-DD') " % {
+                "column_name": column, "start_date": start_date}
+        if end_date:
+            end_date_fs = "%(column_name)s <= to_date( \
+'%(end_date)s', 'YYYY-MM-DD') " % {
+                "column_name": column, "end_date": end_date}
+        if start_date and end_date:
+            return start_date_fs + " AND " + end_date_fs
+        elif start_date:
+            return start_date_fs
+        elif end_date:
+            return end_date_fs
+        else:
+            return ""
+
     def get_filter(self):
         """ () -> str
         """
@@ -224,15 +253,12 @@ class ContainerJSONListing(ContainerJSONBrowserView):
                     if lc_filter:
                         filter_queries.append((lc_filter,ff))
                         continue
-                if fs:
-                    fs.append(" AND ")
                 if fn in utk:
                     if kls in (types.String, types.Unicode):
                         op, ffs = self._get_operator_field_filters(ff)
                         fs = [self._get_field_filter(str(column), ffs, op)]
                     elif kls in (types.Date, types.DateTime):
-                        f_name = "to_char(%s, 'YYYY-MM-DD')" % (column)
-                        fs = [self._get_field_filter(f_name, [ff], "")]
+                        fs = self.get_date_filter_string(column, ff)
                     else:
                         fs.append("%s = %s" % (column, ff))
         return ("".join(fs), filter_queries)
@@ -256,7 +282,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
         if sort_on:
             sort_on = sort_on[5:]
             md_field = self.domain_annotation.get(sort_on) #model descriptor field
-            if md_field:
+            if (md_field and sort_on in self.utk):
                 sort_on_keys.append(sort_on)
         
         # second, process model defaults

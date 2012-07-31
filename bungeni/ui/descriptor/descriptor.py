@@ -670,7 +670,8 @@ class UserDescriptor(ModelDescriptor):
                 required=False,
             ),
             edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget
+            add_widget=widgets.DateWidget,
+            search_widget=widgets.date_input_search_widget
         ),
         Field(name="birth_country", # [user-req]
             modes="view edit add listing",
@@ -727,7 +728,8 @@ class UserDescriptor(ModelDescriptor):
             ],
             property=schema.Date(title=_("Date of Death"), required=False),
             edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget
+            add_widget=widgets.DateWidget,
+            search_widget=widgets.date_input_search_widget
         ),
         Field(name="image", # [img]
             # !+LISTING_IMG(mr, apr-2011) TypeError, not JSON serializable
@@ -814,7 +816,8 @@ class GroupMembershipDescriptor(ModelDescriptor):
             property=schema.Date(title=_("Start Date")),
             listing_column=day_column("start_date", _("Start Date")),
             edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget
+            add_widget=widgets.DateWidget,
+            search_widget=widgets.date_input_search_widget
         ),
         Field(name="end_date", # [user]
             modes="view edit add listing",
@@ -824,7 +827,8 @@ class GroupMembershipDescriptor(ModelDescriptor):
             property=schema.Date(title=_("End Date"), required=False),
             listing_column=day_column("end_date", _("End Date")),
             edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget
+            add_widget=widgets.DateWidget,
+            search_widget=widgets.date_input_search_widget
         ),
         Field(name="active_p", # [user-req]
             modes="view edit add listing",
@@ -876,6 +880,7 @@ class GroupMembershipDescriptor(ModelDescriptor):
             ],
             property=schema.Date(title=_("Status Date"), required=True),
             listing_column=day_column("status_date", _("Status date")),
+            search_widget=widgets.date_input_search_widget
         ),
         #Field(name="membership_id",
         #    label=_("Roles/Titles"),
@@ -979,7 +984,8 @@ class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
                 required=False,
             ),
             edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget
+            add_widget=widgets.DateWidget,
+            search_widget=widgets.date_input_search_widget
         ),
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
@@ -1153,7 +1159,8 @@ class GroupDescriptor(ModelDescriptor):
             property=schema.Date(title=_("Start Date")),
             listing_column=day_column("start_date", _("Start Date")),
             edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget
+            add_widget=widgets.DateWidget,
+            search_widget=widgets.date_input_search_widget
         ),
         Field(name="end_date",
             modes="view edit add listing", # [user]
@@ -1163,7 +1170,8 @@ class GroupDescriptor(ModelDescriptor):
             property=schema.Date(title=_("End Date"), required=False),
             listing_column=day_column("end_date", _("End Date")),
             edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget
+            add_widget=widgets.DateWidget,
+            search_widget=widgets.date_input_search_widget
         ),
         Field(name="status", label=_("Status"), # [sys]
             modes="view listing",
@@ -1245,7 +1253,8 @@ class ParliamentDescriptor(GroupDescriptor):
                 description=_("Date of the election"),
             ),
             edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget
+            add_widget=widgets.DateWidget,
+            search_widget=widgets.date_input_search_widget
         ),
         Field(name="start_date", # [user-req]
             modes="view edit add listing",
@@ -1257,7 +1266,8 @@ class ParliamentDescriptor(GroupDescriptor):
             ),
             listing_column=day_column("start_date", _("In power from")),
             edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget
+            add_widget=widgets.DateWidget,
+            search_widget=widgets.date_input_search_widget
         ),
         Field(name="end_date", # [user]
             modes="view edit add listing",
@@ -1270,7 +1280,8 @@ class ParliamentDescriptor(GroupDescriptor):
             ),
             listing_column=day_column("end_date", _("In power till")),
             edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget
+            add_widget=widgets.DateWidget,
+            search_widget=widgets.date_input_search_widget
         ),
     ]
     schema_invariants = [
@@ -1444,7 +1455,8 @@ class CommitteeDescriptor(GroupDescriptor):
                 required=False
             ),
             edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget
+            add_widget=widgets.DateWidget,
+            search_widget=widgets.date_input_search_widget
         ),
     ])
     schema_invariants = [
@@ -1695,7 +1707,8 @@ class MemberTitleDescriptor(ModelDescriptor):
             property=schema.Date(title=_("Start Date"), required=True),
             listing_column=day_column("start_date", _("Start Date")),
             edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget
+            add_widget=widgets.DateWidget,
+            search_widget=widgets.date_input_search_widget
         ),
         Field(name="end_date", # [user]
             modes="view edit add listing",
@@ -1705,7 +1718,8 @@ class MemberTitleDescriptor(ModelDescriptor):
             property=schema.Date(title=_("End Date"), required=False),
             listing_column=day_column("end_date", _("End Date")),
             edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget
+            add_widget=widgets.DateWidget,
+            search_widget=widgets.date_input_search_widget
         ),
         LanguageField("language"), # [user-req]
     ]
@@ -2226,6 +2240,7 @@ class DocDescriptor(ModelDescriptor):
             ],
             property=schema.Date(title=_("Status Date"), required=False),
             listing_column=day_column("status_date", _("Status date")),
+            search_widget=widgets.date_input_search_widget
         ),
         # !+group_id only exposed in specific custom doc types
         #Field(name="group_id", # [user]
@@ -2348,6 +2363,7 @@ class ChangeDescriptor(ModelDescriptor):
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
             listing_column=datetime_column("date_audit", "Date Audit"),
+            search_widget=widgets.date_input_search_widget
         ),
         Field(name="date_active", # [user]
             modes="view listing",
@@ -2356,6 +2372,7 @@ class ChangeDescriptor(ModelDescriptor):
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
             listing_column=datetime_column("date_active", "Date Active"),
+            search_widget=widgets.date_input_search_widget
         ),
     ]
     default_field_order = [
@@ -2576,6 +2593,7 @@ class BillDescriptor(DocDescriptor):
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget ,
             listing_column=day_column("publication_date", "Publication Date"),
+            search_widget=widgets.date_input_search_widget
         ),
     ])
     default_field_order= DocDescriptor.default_field_order[:]
@@ -2656,6 +2674,7 @@ class QuestionDescriptor(DocDescriptor):
             ),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
+            search_widget=widgets.date_input_search_widget
         ),
         Field(name="doc_type", # [user-req]
             modes="view edit add listing",
@@ -2919,7 +2938,8 @@ class SessionDescriptor(ModelDescriptor):
             property=schema.Date(title=_("Start Date")),
             listing_column=day_column("start_date", _("Start Date")),
             edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget
+            add_widget=widgets.DateWidget,
+            search_widget=widgets.date_input_search_widget
         ),
         Field(name="end_date", # [user-req]
             modes="view edit add listing",
@@ -2929,7 +2949,8 @@ class SessionDescriptor(ModelDescriptor):
             property=schema.Date(title=_("End Date")),
             listing_column=day_column("end_date", _("End Date")),
             edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget
+            add_widget=widgets.DateWidget,
+            search_widget=widgets.date_input_search_widget
         ),
         LanguageField("language"),
         Field(name="notes", label=_("Notes"), # [rtf]
@@ -3060,8 +3081,7 @@ class SignatoryDescriptor(ModelDescriptor):
         Field(name="status",
             modes="view listing",
             localizable = [
-                show("view listing", 
-                    "bungeni.Signatory bungeni.Owner bungeni.Clerk")
+                show("view listing")
             ],
             property=schema.Choice(title=_("Signature status"), 
                 vocabulary=vocabulary.workflow_vocabulary_factory,
@@ -3262,6 +3282,7 @@ class ReportDescriptor(DocDescriptor):
             listing_column=datetime_column("status_date", _("Published Date")),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
+            search_widget=widgets.date_input_search_widget
         ),
         Field(name="body", label=_("Text"), # [rtf]
             modes="view edit add",

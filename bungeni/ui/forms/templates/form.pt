@@ -145,6 +145,7 @@
               </metal:block>
             </fieldset>
           </metal:block>
+          <metal:block define-macro="form-actions"> 
           <div id="actionsView"> 
             <span class="actionButtons"
                   tal:condition="view/availableActions">
@@ -158,6 +159,7 @@
               </tal:loop>					
             </span>
           </div>
+          </metal:block>
         </form>
       </metal:block>
     </div>

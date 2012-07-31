@@ -318,7 +318,7 @@ white-space: normal;
 
 /* listing calendar dropdown
 -------------------------------------------------------------- */
-#date_input_search_widget_publication_date {
+.date_input_search_widget {
     background: #DEE7EC;
     border: 1px solid #8CACBB;
 }

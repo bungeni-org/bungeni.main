@@ -1,1 +1,2 @@
 <div metal:use-macro="view/macro_template/macros/form-body" />
+<div metal:use-macro="view/macro_template/macros/form-actions" />
