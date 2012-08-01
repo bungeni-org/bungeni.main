@@ -8,6 +8,8 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.core.serialize")
 
+import zope.component
+import zope.schema
 from zope.security.proxy import removeSecurityProxy
 from zope.lifecycleevent import IObjectModifiedEvent, IObjectCreatedEvent
 from sqlalchemy.orm import RelationshipProperty, ColumnProperty, class_mapper
@@ -22,7 +24,7 @@ from bungeni.core.workflow.interfaces import (IWorkflow, IStateController,
     IWorkflowed, IWorkflowController, InvalidStateError
 )
 from bungeni.models import interfaces
-from bungeni.utils import register, naming
+from bungeni.utils import register, naming, capi
 
 import os
 import collections
@@ -202,6 +204,12 @@ def _serialize_list(parent_elem, data_list):
 
 
 def _serialize_dict(parent_elem, data_dict):
+    if data_dict.has_key("displayAs"):
+        parent_elem.tag = "field"
+        parent_elem.attrib["name"] = data_dict.get("name")
+        parent_elem.attrib["displayAs"] = data_dict.get("displayAs")
+        parent_elem.text = unicode(data_dict.get("value"))
+        return
     for k, v in data_dict.iteritems():
         key_elem = Element(k)
         parent_elem.append(key_elem)
@@ -213,6 +221,10 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[]):
     """
     result = {}
     obj = removeSecurityProxy(obj)
+    try:
+        descriptor = capi.capi.get_type_info(obj).descriptor
+    except KeyError:
+        descriptor = None
     
     # Get additional attributes
     for name in include:
@@ -269,6 +281,28 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[]):
                 if len(columns)==1:
                     if columns[0].type.__class__ == Binary:
                         continue
+            if descriptor:
+                if property.key in descriptor.keys():
+                    field = descriptor.get(property.key)
+                    if (field and field.property and
+                        (field.property.__class__ == zope.schema.Choice)
+                    ):
+                                factory = field.property.vocabulary
+                                if factory is None:
+                                    vocab_name = getattr(field.property, 
+                                        "vocabularyName", None)
+                                    factory = zope.component.getUtility(
+                                        zope.schema.interfaces.IVocabularyFactory,
+                                        vocab_name
+                                    )
+                                vocabulary = factory(obj)                                
+                                display_name = vocabulary.getTerm(value).title
+                                result[property.key] = dict(
+                                    name=property.key,
+                                    value=value,
+                                    displayAs=display_name
+                                )
+                                continue
             result[property.key] = value
     return result
 
