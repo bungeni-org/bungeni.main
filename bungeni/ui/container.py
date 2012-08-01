@@ -302,10 +302,11 @@ class ContainerJSONListing(ContainerJSONBrowserView):
 
     def filter_batch_on_properties(self, batch):
         reverse = True if (self.sort_dir == "desc") else False
-        sort_on = self.sort_on[5:]
-        if sort_on not in self.utk:
-            batch.sort(key=lambda x: getattr(x, sort_on),
-            reverse=reverse)
+        if self.sort_on:
+            sort_on = self.sort_on[5:]
+            if sort_on not in self.utk:
+                batch.sort(key=lambda x: getattr(x, sort_on),
+                           reverse=reverse)
         for field_name in self.filter_property_fields:
             md_field = self.domain_annotation.get(field_name)
             ff_name = "filter_%s" % (field_name)
