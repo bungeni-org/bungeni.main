@@ -10,7 +10,7 @@ log = __import__("logging").getLogger("bungeni.ui.descriptor")
 
 from copy import deepcopy
 from zope import schema, interface
-from sqlalchemy.sql import expression
+from sqlalchemy.sql import expression, func
 import zope.formlib
 from zope.i18n import translate
 from zc.table import column
@@ -117,11 +117,11 @@ def combined_name_column(name, title, default=""):
     return column.GetterColumn(title, getter)
     
 def combined_name_column_filter(query, filter_string, sort_dir_func):
-    fs = filter_string.strip().split(" ")
+    fs = filter_string.strip().lower().split(" ")
     fc = []
     for fs_ in fs:
-        fc.extend([domain.Group.full_name.like("%%%s%%" % fs_),
-            domain.Group.short_name.like("%%%s%%" % fs_),]
+        fc.extend([func.lower(domain.Group.full_name).like("%%%s%%" % fs_),
+            func.lower(domain.Group.short_name).like("%%%s%%" % fs_)]
         )
     return query.filter(expression.or_(*fc)).order_by(
         sort_dir_func(domain.Group.full_name), 
@@ -155,14 +155,29 @@ def user_name_column(name, title, attr):
     return column.GetterColumn(title, getter)
 
 def user_name_column_filter(query, filter_string, sort_dir_func):
-    fs = filter_string.strip().split(" ")
+    fs = filter_string.strip().lower().split(" ")
     fc = []
     for fs_ in fs:
-        fc.extend([domain.User.first_name.like("%%%s%%" % fs_),
-            domain.User.middle_name.like("%%%s%%" % fs_),
-            domain.User.last_name.like("%%%s%%" % fs_),]
+        fc.extend([func.lower(domain.User.first_name).like("%%%s%%" % fs_),
+            func.lower(domain.User.middle_name).like("%%%s%%" % fs_),
+            func.lower(domain.User.last_name).like("%%%s%%" % fs_),]
         )
     return query.join(domain.User).filter(expression.or_(*fc)).order_by(
+        sort_dir_func(domain.User.last_name),
+        sort_dir_func(domain.User.first_name),
+        sort_dir_func(domain.User.middle_name),
+    )
+
+
+def user_listing_name_column_filter(query, filter_string, sort_dir_func):
+    fs = filter_string.strip().lower().split(" ")
+    fc = []
+    for fs_ in fs:
+        fc.extend([func.lower(domain.User.first_name).like("%%%s%%" % fs_),
+            func.lower(domain.User.middle_name).like("%%%s%%" % fs_),
+            func.lower(domain.User.last_name).like("%%%s%%" % fs_),]
+        )
+    return query.filter(expression.or_(*fc)).order_by(
         sort_dir_func(domain.User.last_name),
         sort_dir_func(domain.User.first_name),
         sort_dir_func(domain.User.middle_name),
@@ -202,12 +217,12 @@ def linked_mp_name_column(name, title, attr):
     return column.GetterColumn(title, getter)
     
 def linked_mp_name_column_filter(query, filter_string, sort_dir_func):
-    fs = filter_string.strip().split(" ")
+    fs = filter_string.strip().lower().split(" ")
     fc = []
     for fs_ in fs:
-        fc.extend([domain.User.first_name.like("%%%s%%" % fs_),
-            domain.User.middle_name.like("%%%s%%" % fs_),
-            domain.User.last_name.like("%%%s%%" % fs_),]
+        fc.extend([func.lower(domain.User.first_name).like("%%%s%%" % fs_),
+            func.lower(domain.User.middle_name).like("%%%s%%" % fs_),
+            func.lower(domain.User.last_name).like("%%%s%%" % fs_),]
         )
     return query.join(domain.User).filter(expression.or_(*fc)).order_by(
         sort_dir_func(domain.User.first_name),
@@ -562,6 +577,7 @@ class UserDescriptor(ModelDescriptor):
                 show("listing"),
             ],
             listing_column=user_name_column("user_id", _("Name"), None),
+            listing_column_filter=user_listing_name_column_filter
         ),
         Field(name="salutation", # [user-req]
             modes="view edit add listing",
