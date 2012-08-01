@@ -1287,6 +1287,5 @@ def date_input_search_widget(table_id, field_id):
     html = '<div id="date_input_search_widget_%(field_id)s" style="display: none;">%(html)s</div>' \
         % {"field_id":field_id, "html":form.render()}
     script = open("%s/templates/date-input-search-widget.js" % (_path)).read()
-    print html
     return html, script % {"table_id": table_id, "field_id": field_id}
 

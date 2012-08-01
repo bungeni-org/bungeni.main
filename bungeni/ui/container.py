@@ -11,6 +11,7 @@ from ore import yuiwidget
 from zope.security import proxy
 from zope.security import checkPermission
 from zope.publisher.browser import BrowserPage
+from zope.schema.interfaces import IText, IDate, IDatetime
 from zc.resourcelibrary import need
 from zope.app.pagetemplate import ViewPageTemplateFile
 from bungeni.alchemist import model
@@ -178,7 +179,8 @@ class ContainerJSONListing(ContainerJSONBrowserView):
     """Paging, batching, sorting, json contents of a container.
     """
     permission = "zope.View"
-    
+    filter_property_fields = []
+
     def _get_operator_field_filters(self, field_filter):
         field_filters = [ff for ff in field_filter.strip().split(" ") if ff]
         if "AND" in field_filters:
@@ -203,18 +205,22 @@ class ContainerJSONListing(ContainerJSONBrowserView):
             return "(%s)" % (fs)
         return ""
 
-    def get_date_filter_string(self, column, filter_field):
-        ff = filter_field.strip()
+    def get_date_strings(self, date_string):
+        date_str = date_string.strip()
         start_date, end_date = None, None
+        dates = date_str.split("->")
+        if date_str.startswith("->"):
+            end_date = dates[1]
+        elif date_str.endswith("->"):
+            start_date = dates[0]
+        elif len(date_str.split("->")) == 2:
+            start_date = dates[0]
+            end_date = dates[1]
+        return start_date, end_date
+
+    def get_date_filter_string(self, column, filter_field):
+        start_date, end_date = self.get_date_strings(filter_field)
         start_date_fs, end_date_fs = "", ""
-        dates = ff.split("->")
-        if ff.startswith("->"):
-            end_date = dates[1]
-        elif ff.endswith("->"):
-            start_date = dates[0]
-        elif len(ff.split("->")) == 2:
-            start_date = dates[0]
-            end_date = dates[1]
         if start_date:
             start_date_fs = "%(column_name)s >= to_date( \
 '%(start_date)s', 'YYYY-MM-DD') " % {
@@ -261,6 +267,8 @@ class ContainerJSONListing(ContainerJSONBrowserView):
                         fs = self.get_date_filter_string(column, ff)
                     else:
                         fs.append("%s = %s" % (column, ff))
+                else:
+                    self.filter_property_fields.append(fn)
         return ("".join(fs), filter_queries)
 
     def query_add_filters(self, query, *filter_strings):
@@ -284,16 +292,46 @@ class ContainerJSONListing(ContainerJSONBrowserView):
             md_field = self.domain_annotation.get(sort_on) #model descriptor field
             if (md_field and sort_on in self.utk):
                 sort_on_keys.append(sort_on)
-        
+
         # second, process model defaults
         if self.defaults_sort_on:
             for dso in self.defaults_sort_on:
                 if dso not in sort_on_keys:
                     sort_on_keys.append(dso)
         return sort_on_keys
-    
-    def get_offsets(self, 
-            default_start=0,
+
+    def filter_batch_on_properties(self, batch):
+        reverse = True if (self.sort_dir == "desc") else False
+        sort_on = self.sort_on[5:]
+        if sort_on not in self.utk:
+            batch.sort(key=lambda x: getattr(x, sort_on),
+            reverse=reverse)
+        for field_name in self.filter_property_fields:
+            md_field = self.domain_annotation.get(field_name)
+            ff_name = "filter_%s" % (field_name)
+            ff = self.request.get(ff_name, None)
+            if ff and md_field:
+                if (IDate.providedBy(md_field.property) or
+                    IDatetime.providedBy(md_field.property)):
+                    start_date, end_date = self.get_date_strings(ff)
+                    if start_date:
+                        batch = [x for x in batch
+                                 if getattr(x, field_name, None)
+                                 >= datetime.datetime.strptime(
+                                    start_date, "%Y-%m-%d")
+                                 ]
+                    if end_date:
+                        batch = [x for x in batch
+                                 if getattr(x, field_name, None)
+                                 <= datetime.datetime.strptime(
+                                    end_date, "%Y-%m-%d")
+                                 ]
+                elif IText.providedBy(md_field.property):
+                    batch = [x for x in batch
+                             if ff in getattr(x, field_name, None)]
+        return batch
+
+    def get_offsets(self, default_start=0,
             default_limit=capi.default_number_of_listing_items
         ):
         start = self.request.get("start", default_start)
@@ -401,9 +439,11 @@ class ContainerJSONListing(ContainerJSONBrowserView):
             container.contained(ob, self, container.stringKey(ob))
             for ob in query_iterator(query, self.context, self.permission)
         ]
-    
+
+
     def json_batch(self, start, limit, lang):
-        batch = self.get_batch(start, limit) 
+        batch = self.get_batch(start, limit)
+        batch = self.filter_batch_on_properties(batch)
         batch = self.translate_objects(batch, lang) # translate
         batch = self._json_values(batch) # serialize to json
         data = dict(
