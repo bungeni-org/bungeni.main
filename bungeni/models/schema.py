@@ -239,10 +239,12 @@ admin_users = rdb.Table("admin_users", metadata,
 # associations table for many-to-many relation between user and doc
 user_doc = rdb.Table("user_doc", metadata,
     rdb.Column("users_id", rdb.Integer,
-        rdb.ForeignKey("users.user_id")
+        rdb.ForeignKey("users.user_id"),
+        primary_key=True
     ),
     rdb.Column("doc_id", rdb.Integer,
-        rdb.ForeignKey("doc.doc_id")
+        rdb.ForeignKey("doc.doc_id"),
+        primary_key=True
     )
 )
 

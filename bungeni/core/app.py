@@ -33,6 +33,7 @@ from bungeni.core.content import QueryContent
 from bungeni.core.i18n import _
 from bungeni.core.workspace import (WorkspaceContainer,
                                     WorkspaceUnderConsiderationContainer,
+                                    WorkspaceTrackedDocumentsContainer,
                                     load_workspaces)
 from bungeni.core.notifications import load_notifications
 from bungeni.core.emailnotifications import email_notifications
@@ -175,17 +176,22 @@ class AppSetup(object):
             description=_("archived documents"),
             marker=interfaces.IWorkspaceArchive
         )
-        workspace["under-consideration"] =  WorkspaceSection(
+        workspace["under-consideration"] = WorkspaceSection(
             title=_(u"under consideration"),
             description=_(u"documents under consideration"),
             default_name="documents",
             marker=interfaces.IWorkspaceUnderConsideration,
         )
 
-
-        workspace["under-consideration"]["documents"] = WorkspaceUnderConsiderationContainer(name="documents",
+        workspace["under-consideration"]["documents"] = WorkspaceUnderConsiderationContainer(
+            name="documents",
             title=_(u"Under consideration"),
             description=_(u"Documents under consideration")
+           )
+        workspace["under-consideration"]["my-interests"] = WorkspaceTrackedDocumentsContainer(
+            name="my-interests",
+            title=_(u"My Tracked Documents"),
+            description=_(u"Tracked Documents")
            )
 
         workspace["scheduling"] = Section(

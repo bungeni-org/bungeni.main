@@ -17,11 +17,12 @@ from zope.securitypolicy.interfaces import IRole
 from bungeni.alchemist import Session
 from bungeni.alchemist.security import LocalPrincipalRoleMap
 from bungeni.alchemist.container import AlchemistContainer, contained
-from bungeni.models import utils
+from bungeni.models import utils, domain
 from bungeni.utils.capi import capi, bungeni_custom_errors
 from bungeni.core.interfaces import (IWorkspaceTabsUtility,
                                      IWorkspaceContainer,
-                                     IWorkspaceUnderConsiderationContainer)
+                                     IWorkspaceUnderConsiderationContainer,
+                                     IWorkspaceTrackedDocumentsContainer)
 from bungeni.ui.utils.common import get_workspace_roles
 
 
@@ -543,3 +544,29 @@ class WorkspaceUnderConsiderationContainer(WorkspaceBaseContainer):
             return True
         else:
             return False
+
+
+class WorkspaceTrackedDocumentsContainer(WorkspaceUnderConsiderationContainer):
+
+    interface.implements(IWorkspaceTrackedDocumentsContainer)
+
+    def _query(self, **kw):
+        session = Session()
+        user = utils.get_db_user()
+        reverse = True if (kw.get("sort_dir", "desc") == "desc") else False
+        results = []
+        domain_status = self.item_status_filter(kw)
+        for domain_class, status in domain_status.iteritems():
+            query = session.query(domain_class
+                ).filter(domain_class.status.in_(status)
+                ).enable_eagerloads(False
+                ).join(domain.UserSubscription
+                ).filter(domain.UserSubscription.users_id == user.user_id)
+            query = self.filter_title(query, domain_class, kw)
+            query = self.order_query(query, domain_class, kw, reverse)
+            results.extend(query.all())
+        count = len(results)
+        if (kw.get("sort_on", None) and kw.get("sort_dir", None)):
+            results.sort(key=lambda x: getattr(x, str(kw.get("sort_on"))),
+                         reverse=reverse)
+        return (results, count)

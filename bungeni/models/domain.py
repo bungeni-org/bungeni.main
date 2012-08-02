@@ -336,6 +336,9 @@ class PasswordRestoreLink(object):
     def expired(self):
         return self.expiration_date < datetime.datetime.now() 
 
+class UserSubscription(Entity):
+    """The documents a user is tracking"""
+
 #class HansardReporter(User):
 #    """ a reporter who reports on parliamentary procedings
 #    """

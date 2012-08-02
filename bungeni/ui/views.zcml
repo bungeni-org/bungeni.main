@@ -390,12 +390,6 @@
         layer="bungeni.ui.interfaces.IBungeniSkin"
         permission="bungeni.ui.workspace.View"
     />
-    <browser:page name="my-interests"
-        for="bungeni.core.interfaces.IWorkspaceUnderConsideration"
-        class=".workspace.MyInterests"
-        layer="bungeni.ui.interfaces.IBungeniSkin"
-        permission="bungeni.ui.workspace.View"
-    />
     <!-- Workspace Add views -->
     <!-- CONVENTION - view names must follow the following convention
     the word "add", then an undescore(_) then the item type as registered in the

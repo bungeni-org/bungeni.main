@@ -79,7 +79,8 @@ class IWorkspaceDocuments(interface.Interface):
     """Marker inteface for workspace my-documents"""
 class IWorkspaceUnderConsideration(interface.Interface):
     """Marker inteface for workspace under consideration"""
-
+class IWorkspaceTrackedDocumentsContainer(interface.Interface):
+    """Marker interface for tracked documents container"""
 
 ''' !+OBSOLETE_VERSIONING
 #####################
