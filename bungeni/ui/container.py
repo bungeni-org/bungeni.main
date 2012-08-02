@@ -87,6 +87,40 @@ def query_filter_date_range(context, request, query, domain_model):
     return query
 
 
+def get_date_strings(date_string):
+        date_str = date_string.strip()
+        start_date, end_date = None, None
+        dates = date_str.split("->")
+        if date_str.startswith("->"):
+            end_date = dates[1]
+        elif date_str.endswith("->"):
+            start_date = dates[0]
+        elif len(date_str.split("->")) == 2:
+            start_date = dates[0]
+            end_date = dates[1]
+        return start_date, end_date
+
+
+def get_date_filter_string(column, filter_field):
+        start_date, end_date = get_date_strings(filter_field)
+        start_date_fs, end_date_fs = "", ""
+        if start_date:
+            start_date_fs = "%(column_name)s >= to_date( \
+'%(start_date)s', 'YYYY-MM-DD') " % {
+                "column_name": column, "start_date": start_date}
+        if end_date:
+            end_date_fs = "%(column_name)s <= to_date( \
+'%(end_date)s', 'YYYY-MM-DD') " % {
+                "column_name": column, "end_date": end_date}
+        if start_date and end_date:
+            return start_date_fs + " AND " + end_date_fs
+        elif start_date:
+            return start_date_fs
+        elif end_date:
+            return end_date_fs
+        else:
+            return ""
+
 class AjaxContainerListing(
         container.ContainerListing,
         browser.BungeniBrowserView
@@ -205,38 +239,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
             return "(%s)" % (fs)
         return ""
 
-    def get_date_strings(self, date_string):
-        date_str = date_string.strip()
-        start_date, end_date = None, None
-        dates = date_str.split("->")
-        if date_str.startswith("->"):
-            end_date = dates[1]
-        elif date_str.endswith("->"):
-            start_date = dates[0]
-        elif len(date_str.split("->")) == 2:
-            start_date = dates[0]
-            end_date = dates[1]
-        return start_date, end_date
-
-    def get_date_filter_string(self, column, filter_field):
-        start_date, end_date = self.get_date_strings(filter_field)
-        start_date_fs, end_date_fs = "", ""
-        if start_date:
-            start_date_fs = "%(column_name)s >= to_date( \
-'%(start_date)s', 'YYYY-MM-DD') " % {
-                "column_name": column, "start_date": start_date}
-        if end_date:
-            end_date_fs = "%(column_name)s <= to_date( \
-'%(end_date)s', 'YYYY-MM-DD') " % {
-                "column_name": column, "end_date": end_date}
-        if start_date and end_date:
-            return start_date_fs + " AND " + end_date_fs
-        elif start_date:
-            return start_date_fs
-        elif end_date:
-            return end_date_fs
-        else:
-            return ""
+    
 
     def get_filter(self):
         """ () -> str
@@ -264,7 +267,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
                         op, ffs = self._get_operator_field_filters(ff)
                         fs = [self._get_field_filter(str(column), ffs, op)]
                     elif kls in (types.Date, types.DateTime):
-                        fs = self.get_date_filter_string(column, ff)
+                        fs = get_date_filter_string(column, ff)
                     else:
                         fs.append("%s = %s" % (column, ff))
                 else:
@@ -314,7 +317,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
             if ff and md_field:
                 if (IDate.providedBy(md_field.property) or
                     IDatetime.providedBy(md_field.property)):
-                    start_date, end_date = self.get_date_strings(ff)
+                    start_date, end_date = get_date_strings(ff)
                     if start_date:
                         batch = [x for x in batch
                                  if getattr(x, field_name, None)

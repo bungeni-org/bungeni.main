@@ -24,6 +24,7 @@ from bungeni.core.interfaces import (IWorkspaceTabsUtility,
                                      IWorkspaceUnderConsiderationContainer,
                                      IWorkspaceTrackedDocumentsContainer)
 from bungeni.ui.utils.common import get_workspace_roles
+from bungeni.ui.container import get_date_filter_string
 
 
 #!+WORKSPACE(miano, jul 2011)
@@ -98,7 +99,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
                         else:
                             domain_status[domain_class] = status
         return domain_status
-
+    
     def item_status_filter(self, kw, roles):
         domain_status = {}
         if kw.get("filter_type", None):
@@ -157,6 +158,14 @@ class WorkspaceBaseContainer(AlchemistContainer):
                     getattr(domain_class, str(kw.get("sort_on")))))
         return query
 
+    def filter_status_date(self, query, kw):
+        #filter on status_date
+        fs = get_date_filter_string(
+            "status_date", kw.get("filter_status_date", ""))
+        if fs:
+            return query.filter(fs)
+        return query
+
     def _query(self, **kw):
         principal = utils.get_principal()
         roles = get_workspace_roles()
@@ -171,6 +180,8 @@ class WorkspaceBaseContainer(AlchemistContainer):
                 domain_class.status.in_(status)).enable_eagerloads(False)
             #filter on title
             query = self.filter_title(query, domain_class, kw)
+            #filter on status_date
+            query = self.filter_status_date(query, kw)
             # Order results
             query = self.order_query(query, domain_class, kw, reverse)
             # The first page of the results is loaded the most number of times
@@ -187,6 +198,8 @@ class WorkspaceBaseContainer(AlchemistContainer):
                 domain_class.status.in_(status)).enable_eagerloads(False)
             #filter on title
             query = self.filter_title(query, domain_class, kw)
+            #filter on status_date
+            query = self.filter_status_date(query, kw)
             # Order results
             query = self.order_query(query, domain_class, kw, reverse)
             for obj in query.all():
@@ -529,6 +542,8 @@ class WorkspaceUnderConsiderationContainer(WorkspaceBaseContainer):
             query = session.query(domain_class).filter(
                 domain_class.status.in_(status)).enable_eagerloads(False)
             query = self.filter_title(query, domain_class, kw)
+            #filter on status_date
+            query = self.filter_status_date(query, kw)
             query = self.order_query(query, domain_class, kw, reverse)
             results.extend(query.all())
         count = len(results)
@@ -563,6 +578,8 @@ class WorkspaceTrackedDocumentsContainer(WorkspaceUnderConsiderationContainer):
                 ).join(domain.UserSubscription
                 ).filter(domain.UserSubscription.users_id == user.user_id)
             query = self.filter_title(query, domain_class, kw)
+            #filter on status_date
+            query = self.filter_status_date(query, kw)
             query = self.order_query(query, domain_class, kw, reverse)
             results.extend(query.all())
         count = len(results)

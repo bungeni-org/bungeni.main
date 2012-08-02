@@ -456,6 +456,10 @@
                 qstr = qstr + '&filter_status=' + status.val();
                 return qstr;
             };
+        var get_status_date_filter = function (oSelf) {
+                var qstr = '&filter_status_date=' + $("#input_status_date").val();
+                return qstr;
+            };
         // A custom function to translate the js paging request 
         // into a datasource query    
         var RequestBuilder = function (oState, oSelf) {
@@ -469,7 +473,7 @@
                 var startIndex = (oState.pagination) ? oState.pagination.recordOffset : 0;
                 var results = (oState.pagination) ? oState.pagination.rowsPerPage : rows_per_page;
                 // Build custom request
-                return "sort=" + sort + "&dir=" + dir + "&start=" + startIndex + "&limit=" + results + get_text_filter(oSelf) + get_select_filter(oSelf);
+                return "sort=" + sort + "&dir=" + dir + "&start=" + startIndex + "&limit=" + results + get_text_filter(oSelf) + get_select_filter(oSelf)+get_status_date_filter(oSelf);
             };
         config = {
             paginator: new YAHOO.widget.Paginator({
@@ -658,7 +662,7 @@
                     }
                 }
             };
-            newRequest = newRequest + get_text_filter(this) + get_select_filter(this);
+            newRequest = newRequest + get_text_filter(this) + get_select_filter(this)+get_status_date_filter(this);
             this.getDataSource().sendRequest(newRequest, oCallback);
         };
         return true;

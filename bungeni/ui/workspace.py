@@ -20,8 +20,6 @@ from bungeni.core.i18n import _
 from bungeni.core.interfaces import (IWorkspaceTabsUtility,
                                      IWorkspaceContainer,
                                      IWorkspaceUnderConsiderationContainer)
-from bungeni.alchemist import Session
-from bungeni.models import domain
 from bungeni.ui.utils import url
 from bungeni.ui.utils.common import get_workspace_roles
 from bungeni.ui import table
@@ -33,10 +31,11 @@ from bungeni.alchemist.model import queryModelDescriptor
 from bungeni.ui.utils import debug
 from bungeni.utils import register
 from bungeni.utils.capi import capi
-from bungeni.ui import browser
-from bungeni.core.workspace import stringKey
+from bungeni.ui.widgets import date_input_search_widget
+from bungeni.ui.container import get_date_strings
 
 _path = os.path.split(os.path.abspath(__file__))[0]
+
 
 class WorkspaceField(object):
 
@@ -113,19 +112,6 @@ class WorkspaceContainerJSONListing(BrowserPage):
             values.append(d)
         return values
 
-    def get_status_date_filters(self):
-        if self.request.get("filter_status_date"):
-            dates = self.request.get("filter_status_date").split(" ")
-        if dates and len(dates) == 2:
-            try:
-                date_from = time.strptime(dates[0], "%Y/%m/%d")
-                date_to = time.strptime(dates[1], "%Y/%m/%d")
-            except:
-                return None
-            return date_from, date_to
-        else:
-            return None
-
     def translate_objects(self, nodes, lang=None):
         """ (nodes:[ITranslatable]) -> [nodes]
         """
@@ -155,10 +141,12 @@ class WorkspaceContainerJSONListing(BrowserPage):
         filter_title = self.request.get("filter_title", None)
         filter_type = self.request.get("filter_type", None)
         filter_status = self.request.get("filter_status", None)
+        filter_status_date = self.request.get("filter_status_date", "")
         results, self.set_size = context.query(
             filter_title=filter_title,
             filter_type=filter_type,
             filter_status=filter_status,
+            filter_status_date=filter_status_date,
             sort_on=self.sort_on,
             sort_dir=self.sort_dir,
             start=start,
@@ -186,7 +174,7 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
     js_file.close()
 
     def get_search_widgets(self):
-        return "", ""
+        return date_input_search_widget("table", "status_date")
 
     def get_item_types(self):
         workspace_config = component.getUtility(IWorkspaceTabsUtility)
@@ -276,6 +264,7 @@ class WorkspaceContainerListing(BrowserPage):
     render = ViewPageTemplateFile("templates/workspace-listing.pt")
     formatter_factory = WorkspaceDataTableFormatter
     columns = []
+    prefix = "workspace"
 
     def __call__(self):
         need("yui-datatable")
@@ -297,7 +286,7 @@ class WorkspaceContainerListing(BrowserPage):
             self.context,
             self.request,
             (),
-            prefix="workspace",
+            prefix=self.prefix,
             columns=self.columns,
         )
         formatter.cssClasses["table"] = "listing"
@@ -352,19 +341,8 @@ class WorkspaceUnderConsiderationFormatter(WorkspaceDataTableFormatter):
 
 class WorkspaceUnderConsiderationListing(WorkspaceContainerListing):
     formatter_factory = WorkspaceUnderConsiderationFormatter
-    
-    @property
-    def formatter(self):
-        formatter = self.formatter_factory(
-            self.context,
-            self.request,
-            (),
-            prefix="workspace_under_consideration",
-            columns=self.columns,
-        )
-        formatter.cssClasses["table"] = "listing"
-        formatter.table_id = "datacontents"
-        return formatter
+    prefix="workspace_under_consideration"
+
 
 @register.view(WorkspaceSection, name="tabcount",
     protect={"bungeni.ui.workspace.View": register.VIEW_DEFAULT_ATTRS})
