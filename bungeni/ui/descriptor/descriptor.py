@@ -311,7 +311,11 @@ def ministry_column(name, title, default=""):
 
 def scheduled_item_title_column(name, title):
     def getter(item, formatter):
-        return IDCDescriptiveProperties(item.item).title
+        dc = IDCDescriptiveProperties(item.item)
+        return (dc.description
+            if bungeni.models.interfaces.IScheduleText.providedBy(item.item) 
+            else dc.title
+        )
     return column.GetterColumn(title, getter)
 
 def scheduled_item_mover_column(name, title):
