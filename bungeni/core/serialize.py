@@ -16,7 +16,7 @@ from sqlalchemy.orm import RelationshipProperty, ColumnProperty, class_mapper
 from sqlalchemy.types import Binary
 
 from bungeni.alchemist.container import stringKey
-from bungeni.alchemist.interfaces import IAlchemistContainer
+from bungeni.alchemist.interfaces import IAlchemistContainer, IAlchemistContent
 from bungeni.core.workflow.states import (get_object_state_rpm, 
     get_head_object_state_rpm
 )
@@ -221,10 +221,12 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[]):
     """
     result = {}
     obj = removeSecurityProxy(obj)
-    try:
-        descriptor = capi.capi.get_type_info(obj).descriptor
-    except KeyError:
-        descriptor = None
+    descriptor = None
+    if IAlchemistContent.providedBy(obj):
+        try:
+            descriptor = capi.capi.get_type_info(obj).descriptor
+        except KeyError:
+            log.error("Could not get a descriptor for %r", obj)
     
     # Get additional attributes
     for name in include:
