@@ -51,6 +51,20 @@
         layer=".interfaces.IBungeniAuthenticatedSkin"
         class=".redirect.WorkspaceRootRedirect"
     />
+    <browser:page name="workflow-redirect"
+        for="bungeni.core.workflow.interfaces.IWorkflowed"
+        permission="zope.View"
+        layer="bungeni.ui.interfaces.IWorkspaceOrAdminSectionLayer"
+        class=".redirect.WorkflowRedirect"
+    />
+    <browser:page name="workflow-redirect"
+        for="bungeni.models.interfaces.ISitting"
+        permission="zope.View"
+        layer="bungeni.ui.interfaces.IWorkspaceSectionLayer"
+        class=".redirect.WorkflowRedirectSitting"
+    />
+    
+    <!-- file and attachment views -->
     <browser:view for="bungeni.alchemist.interfaces.IAlchemistContent"
         permission="zope.View"
         name="file-image"

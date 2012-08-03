@@ -1,16 +1,24 @@
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""Redirect views
+
+$Id$
+"""
+
 log = __import__("logging").getLogger("bungeni.ui.redirect")
 
 import datetime
 
 from zope.publisher.browser import BrowserView
 from zope import interface
-from zope import component
 from zope.publisher.interfaces import IPublishTraverse
-from zope.annotation.interfaces import IAnnotations
 
 import bungeni.core.globalsettings as prefs
 from bungeni.ui.utils import url, common
 from bungeni.models.utils import get_db_user_id
+from bungeni.core.workflow.interfaces import IWorkflowController
 
 
 class RedirectToCurrent(BrowserView):
@@ -93,7 +101,6 @@ class SignatoryReview(BrowserView):
     def __call__(self):
         request = self.request
         context = self.context
-        item_id = context.doc_id
         user_id = get_db_user_id()
         signatories = context.signatories
         _filters = {"user_id": user_id}
@@ -115,3 +122,21 @@ class Favicon(BrowserView):
             status=301
         )        
 
+class WorkflowRedirect(BrowserView):
+    """Default redirect after workflow transitions (menu based)
+    """
+    redirect_to = "./"
+    def __call__(self):
+        return self.request.response.redirect(self.redirect_to)
+
+class WorkflowRedirectSitting(WorkflowRedirect):
+    """For sittings, we redirect to the schedule editor if we are in edit
+    mode. Otherwise, we redirect to the default view.
+    """
+    @property
+    def redirect_to(self):
+        wfc = IWorkflowController(self.context)
+        if (wfc.state_controller.get_status() in 
+            wfc.workflow.get_state_ids(tagged=["draft"])):
+            return "./schedule"
+        return WorkflowRedirect.redirect_to
