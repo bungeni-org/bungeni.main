@@ -73,6 +73,7 @@
                         '<br/>' + cal_globals.text_end_date + ' : ' + format(end) + 
                         extra_text;
                 };
+                scheduler.templates.event_text = render_event_text;
                 
                 scheduler.init('scheduler_here', null, "week");
                 scheduler.setLoadMode("month");
@@ -118,13 +119,14 @@
             function canEdit()
             {
                 init();
+                scheduler.config.details_on_dblclick = true;
                 scheduler.config.icons_select=["icon_details","icon_delete"]
                 scheduler.config.readonly = false;
                 scheduler.attachEvent("onBeforeViewChange", 
                     handle_before_change_view
                 );
-                scheduler.attachEvent("onDblClick", event_db_click);
                 scheduler.attachEvent("onEventSave", event_save_handler);
+                scheduler.attachEvent("onEventIdChange", re_render_event);
                 scheduler.attachEvent("onEventCollision", 
                     collission_handler
                 );
@@ -139,7 +141,6 @@
             {
                 init();
                 scheduler.config.readonly = true;
-                scheduler.attachEvent("onDblClick", event_db_click);
                 scheduler.config.icons_select=[]
                 scheduler.config.drag_resize = false;
                 scheduler.config.drag_move = false;

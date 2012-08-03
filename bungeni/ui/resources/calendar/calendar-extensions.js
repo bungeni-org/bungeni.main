@@ -94,7 +94,10 @@ function event_save_handler(id, data, is_new_event){
         for (error_key in error_messages){
             html_errors.append("<li>" + error_messages[error_key] + "</li>");
         }
-        html_errors.append('<input type="button" value="' + calendar_globals.message_okay + '" onclick="javascript:$.unblockUI();"/>');
+        html_errors.append('<input type="button" value="' 
+            + calendar_globals.message_okay 
+            + '" onclick="javascript:$.unblockUI();"/>'
+        );
         html_errors.wrap("<div/>");
         $.blockUI({
             message: html_errors.html(),
@@ -136,29 +139,25 @@ function handle_lightbox(event_id){
     return true;
 }
 
+/**
+ * render event text - including link to sitting for sittings with status
+ */
+function render_event_text(start, end, event){
+    text = event.text;
+    var status = event["status"];
+    if(status){
+        url = cal_globals.view_url + "/sittings/obj-" + event.id + "/view";
+        text = text + "<a href='" + url + "'>" + cal_globals.text_view + "</a>";
+    }
+    return text;
+}
 
 /**
- * Change the document location to the sitting(event) if the double clicked 
- * event is a sitting.
+ * Force re-rendering of an event whose ID has changed
+ * Forces re-display of elements.
  */
-function event_db_click(event_id, dom_event){
-    var event = scheduler.getEvent(event_id);
-    if (event!=undefined){
-        if ((event.event_type != undefined) && (event.event_type != "sitting")){ 
-            return; 
-        }
-        var status = event["!nativeeditor_status"];
-        if (status && (status!="") && !scheduler.config.readonly){
-            event.color="red";
-            scheduler.updateEvent(event_id);
-            $.blockUI({
-                message: calendar_globals.unsaved_event,
-                timeout: 2000,
-                showOverlay: true,
-                baseZ: 20000,
-            });
-        }else{
-            parent.location = cal_globals.view_url + "/sittings/obj-" + event_id + "/view";
-        }
-    }    
+function re_render_event(old_id, new_id){
+    event = scheduler.getEvent(new_id);
+    scheduler.clear_event(new_id);
+    scheduler.render_event(event);
 }

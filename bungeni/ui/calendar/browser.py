@@ -311,6 +311,7 @@ class CalendarView(BungeniBrowserView):
             text_meeting_type=translate_i18n(_(u"Meeting Type")),
             text_convocation_type=translate_i18n(_(u"Convocation Type")),
             text_sitting=translate_i18n(_(u"Sitting")),
+            text_view=translate_i18n(_(u"View")),
         )
         return """var cal_globals = %s;var venues_data=%s;""" %(
             json.dumps(cal_globals), json.dumps(self.venues_data)
