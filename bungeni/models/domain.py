@@ -621,7 +621,7 @@ def vertical_property(object_type, vp_name, vp_type, *args, **kw):
         vp = getattr(self, _vp_name, None)
         if vp is not None:
             vp.value = value
-        else: 
+        else:
             vp = vp_type(self, object_type, vp_name, value, *args, **kw)
             setattr(self, _vp_name, vp)
     def fdel(self):
@@ -641,9 +641,10 @@ class VerticalProperty(Entity):
         self.value = value
     
     def __repr__(self):
-        return "<%s %s=%r on (%r, %s) at %s>" % (self.__class__.__name__, 
-                self.name, self.value, 
-                self.object_type, self.object_id, hex(id(self._object)))
+        #!+VP(mb, Aug-2012) Why is reference to self.object_ i.e.
+        # hex(id(self._object)) sometimes not set? e.g. during serialization
+        return "<%s %s=%r on (%r, %s)>" % (self.__class__.__name__, 
+                self.name, self.value, self.object_type, self.object_id)
 
 class vp(object):
     """A convenient vp namespace.
