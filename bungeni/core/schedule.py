@@ -1,4 +1,14 @@
+# Bungeni Parliamentary Information System - http://www.bungeni.org/
+# Copyright (C) 2010 - Africa i-Parliaments - http://www.parliaments.info/
+# Licensed under GNU GPL v2 - http://www.gnu.org/licenses/gpl-2.0.txt
+
+"""Scheduling adapters for various contexts
+
+$Id$
+"""
+
 log = __import__("logging").getLogger("bungeni.core.schedule")
+
 import datetime
 import time
 
@@ -11,17 +21,15 @@ from zope.publisher.interfaces.browser import IHTTPRequest
 from zope.publisher.interfaces import IPublishTraverse
 from zope.location.interfaces import ILocation
 from zope.app.publication.traversers import SimpleComponentTraverser
-from bungeni.models.interfaces import IBungeniApplication
-from bungeni.models.interfaces import ICommittee
-from bungeni.models.interfaces import ISittingContainer
-from bungeni.models.domain import Group
-from bungeni.models.domain import Sitting
+from bungeni.models.interfaces import (IBungeniApplication, IParliament, 
+    ICommittee, ISittingContainer
+)
 from bungeni.models import domain
-from bungeni.core.interfaces import ISchedulingContext
-from bungeni.core.interfaces import IWorkspaceScheduling
-from bungeni.core.interfaces import IDailySchedulingContext
-from bungeni.core.globalsettings import getCurrentParliamentId
-from bungeni.core.globalsettings import get_current_parliament
+from bungeni.core.interfaces import (ISchedulingContext, IWorkspaceScheduling, 
+    IDailySchedulingContext)
+from bungeni.core.globalsettings import (getCurrentParliamentId, 
+    get_current_parliament
+)
 from bungeni.core.i18n import _
 from bungeni.core.proxy import LocationProxy
 from bungeni.ui.calendar import utils
@@ -78,7 +86,7 @@ class PrincipalGroupSchedulingContext(object):
         if group is not None:
             return u"%s (%s)" % (group.short_name, group.full_name)
         return _(u"Unknown user group")
-    
+        
     def get_group(self, name="group"):
         if self.group_id is None:
             return
@@ -120,6 +128,17 @@ class PlenarySchedulingContext(PrincipalGroupSchedulingContext):
     def group_id(self):
         """Return current parliament's group id."""
         return getCurrentParliamentId()
+
+class ParliamentSchedulingContext(PrincipalGroupSchedulingContext):
+    component.adapts(IParliament)
+    
+    @property
+    def group_id(self):
+        """Returns parliament's group id"""
+        return self.__parent__.group_id
+
+    def get_group(self):
+        return self.__parent__
     
 class CommitteeSchedulingContext(PrincipalGroupSchedulingContext):
     component.adapts(ICommittee)

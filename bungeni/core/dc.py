@@ -317,7 +317,9 @@ class UserDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        return "%s %s %s" % (self.translate(context, "salutation"),
+        return "%s %s %s".strip() % (
+            (self.translate(context, "salutation") if context.salutation else 
+                ""), 
             context.first_name, context.last_name
         )
 
@@ -339,10 +341,15 @@ class UserDescriptiveProperties(DescriptiveProperties):
         finally:
             if mp_user is None:
                 return self.title
-        return _("member_title_with_representation",
-            default=u"Member of Parliament for ${representation} (${member})",
-            mapping={"representation": mp_user.representation, "member": self.title}
-        )
+        if mp_user.representation:
+            return _("member_title_with_representation",
+                default=u"Member of Parliament for ${representation}"
+                " (${member})",
+                mapping={"representation": mp_user.representation, 
+                    "member": self.title
+                }
+            )
+        return self.title
 
 
 @register.adapter()

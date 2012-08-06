@@ -28,7 +28,7 @@ from ploned.ui.menu import make_absolute
 from ploned.ui.menu import pos_action_in_url
 
 from bungeni.alchemist.interfaces import IAlchemistContainer, IAlchemistContent
-from bungeni.core.interfaces import IWorkspaceContainer
+from bungeni.core.interfaces import IWorkspaceContainer, ISection
 from bungeni.alchemist.traversal import ManagedContainerDescriptor
 from bungeni.core import location
 from bungeni.ui.utils import url, debug
@@ -38,10 +38,9 @@ from bungeni.utils.capi import capi
 
 
 def _get_context_chain(context):
-    context = proxy.removeSecurityProxy(context)
     chain = []
     while context is not None:
-        chain.append(context)
+        chain.append(proxy.removeSecurityProxy(context))
         context = context.__parent__
     return chain
 
@@ -320,6 +319,12 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
         if not IReadContainer.providedBy(chain[-1]):
             return
 
+        # remove any views from navigation tree
+        if not(IAlchemistContent.providedBy(chain[0]) 
+            or IAlchemistContainer.providedBy(chain[0])
+            or ISection.providedBy(chain[0])):
+                chain.pop(0)
+
         subcontext = chain[-1]
         if (len(chain) > 1 or
             IReadContainer.providedBy(subcontext) and not
@@ -372,10 +377,10 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
                 nodes = self.expand(chain)
             else:
                 kls = context.__class__
-                containers = [
-                    (key, getattr(context, key))
+                containers = [ (key, getattr(context, key))
                     for key, value in kls.__dict__.items()
-                    if isinstance(value, ManagedContainerDescriptor)]
+                    if isinstance(value, ManagedContainerDescriptor)
+                ]
                 nodes = []
                 self.expand_containers(nodes, containers, _url, chain, None)
 
@@ -416,19 +421,13 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
                         if isinstance(value, ManagedContainerDescriptor)]
             else:
                 containers = [(context.__name__, context)]
-                
             self.expand_containers(items, containers, _url, chain, context)
         
         elif ILocation.providedBy(context):
             _url = url.absoluteURL(context, self.request)
-            #props = IDCDescriptiveProperties.providedBy(context) and \
-            #    context or IDCDescriptiveProperties(context)
-            if IDCDescriptiveProperties.providedBy(context):
-                props = IDCDescriptiveProperties(context)
-            else:
-                props = context
-            props = proxy.removeSecurityProxy(props)
-
+            props = (IDCDescriptiveProperties(context, None) or 
+                proxy.removeSecurityProxy(context)
+            )
             selected = len(chain) == 0
             if selected and IReadContainer.providedBy(context):
                 nodes = []
@@ -439,7 +438,6 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
                     pass
             else:
                 nodes = self.expand(chain)
-            
             i_id = getattr(props, "id","N/A")
             items.append({
                     "title": getattr(props, "title", i_id),
@@ -449,10 +447,8 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
                     "kind": "location",
                     "nodes": nodes,
                 })
-
         elif IReadContainer.providedBy(context):
             items.extend(self.expand(chain))
-        
         return items
     
     def _sort_containers(self, key_containers):

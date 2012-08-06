@@ -194,7 +194,7 @@
 
   <!-- Reporting -->
      <!-- !+Reports(mb, 09-2011) To use one interface for registration. -->
-     <browser:page name="report-builder"
+     <browser:page name="create-report"
         for="*"
         permission="bungeni.reports.Edit"
         class=".reports.ReportBuilder"
@@ -254,6 +254,12 @@
      class=".calendar.browser.DhtmlxCalendarSittingsEdit"
     />
 
+  <browser:page
+     for="bungeni.models.interfaces.IParliament"
+     permission="zope.View"
+     name="schedule"
+     class=".calendar.browser.CalendarView"
+    />
   <browser:page
      for="bungeni.models.interfaces.ICommittee"
      permission="zope.View"

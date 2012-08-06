@@ -372,10 +372,14 @@ class CalendarMenu(BrowserMenu):
         contexts = []
         app = getSite()
         today = datetime.date.today()
+        
+        #!+HARDWIRING(mb, Aug-2012) unhardwire committees lookup
         if interfaces.IWorkspaceSchedulingSectionLayer.providedBy(request):
             committees = app["workspace"]["scheduling"]["committees"].values()
-        else:
+        elif interfaces.IBusinessSectionLayer.providedBy(request):
             committees = app["business"]["committees"].values()
+        else:
+            committees = []
 
         user_id = get_db_user_id()
         for committee in committees:
@@ -398,13 +402,15 @@ class CalendarMenu(BrowserMenu):
                             committee))
         for context in contexts:
             context.__name__ = u"schedule"
+        #!+HARDWIRING(mb, Aug-2012) unhardwire committees lookup
         if interfaces.IWorkspaceSchedulingSectionLayer.providedBy(request):
             contexts.append(schedule.ISchedulingContext(
                     app["workspace"]["scheduling"]))
-        else:
+        elif interfaces.IBusinessSectionLayer.providedBy(request):
             contexts.append(schedule.ISchedulingContext(
                     app["business"]["sittings"]))
-        contexts[-1].__name__ = u""
+        if len(contexts):
+            contexts[-1].__name__ = u""
         return contexts
 
     def getMenuItems(self, context, request):

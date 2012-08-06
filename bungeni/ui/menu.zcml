@@ -933,7 +933,14 @@
      action="./items/reorder"
      permission="bungeni.sittingschedule.Edit"
      />
-
+    <browser:menuItem menu="context_actions"
+        for="bungeni.models.interfaces.IBungeniGroup"
+        action="schedule"
+        title="schedule"
+        order="41"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        permission="bungeni.sittingschedule.View"
+     />
     <browser:menuItem menu="context_actions"
         for="bungeni.models.interfaces.ISitting"
         action="schedule"
@@ -941,14 +948,7 @@
         order="41"
         layer=".interfaces.IWorkspaceOrAdminSectionLayer"
         permission="bungeni.sittingschedule.View"
-     /><!-- !+WORKFLOW_TRANSITION(mr, feb-2011) -->
-    <!-- browser:menuItem menu="scheduling_actions"
-        for="bungeni.models.interfaces.IItemSchedule"
-        title="Edit Scheduling"
-        action="./edit?next_url=..."
-        order="40"
-        permission="bungeni.itemschedule.Edit"
-    /-->
+     />     
     <browser:menuItem menu="scheduling_actions"
         for="bungeni.models.interfaces.IItemSchedule"
         title="Delete scheduling"
@@ -956,7 +956,6 @@
         order="41"
         permission="bungeni.sittingschedule.item.Delete"
     />
-
   <browser:menuItem
      menu="scheduling_actions"
      for="bungeni.models.interfaces.IItemSchedule"
@@ -1437,9 +1436,10 @@
     />
     <browser:menuItem menu="context_actions"
         for="bungeni.core.interfaces.ISchedulingContext"
-        action="report-builder"
-        title="Publish reports"
-        permission="zope.View"
+        action="create-report"
+        title="Create reports"
+        permission="bungeni.reports.Edit"
+        layer=".interfaces.IWorkspaceSchedulingSectionLayer"
         order="40"
     />
     
