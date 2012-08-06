@@ -28,6 +28,9 @@
     list-style-image: none !important; 
     line-height: 1em;
 }
+.portletItem > ul {
+	margin-top:12px;
+}
 .navTree {
     list-style: none; 
     list-style-image: none; 
