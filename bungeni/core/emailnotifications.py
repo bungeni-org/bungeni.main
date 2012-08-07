@@ -68,13 +68,13 @@ def get_template(file_name):
 
 
 def get_email_body_text(template, message):
-    body_macro = template.macros[message["status"] + "-body"]
+    body_macro = template.macros[message["status"]["value"] + "-body"]
     body_template = get_template("body.pt")
     return body_template(body_macro=body_macro, **message)
 
 
 def get_email_subject_text(template, message):
-    subject_macro = template.macros[message["status"] + "-subject"]
+    subject_macro = template.macros[message["status"]["value"] + "-subject"]
     subject_template = get_template("subject.pt")
     return subject_template(subject_macro=subject_macro, **message)
 

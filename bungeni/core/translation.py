@@ -14,14 +14,13 @@ from copy import copy
 
 from zope import component
 from zope.security.proxy import removeSecurityProxy
-
+from zope.security.interfaces import NoInteraction
 from zope.app.schema.vocabulary import IVocabularyFactory
 from zope.interface import implements
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 from zope.publisher.interfaces.http import IHTTPRequest
 from zope.i18n import translate
-
 from zope.publisher.browser import BrowserLanguages
 from zope.i18n.locales import locales
 
@@ -174,9 +173,16 @@ def translate_obj(context, lang=None):
     into the specified language or that defined in the request
     -> copy of the object translated into language of the request
     """
-    if lang is None:
-        lang = get_request_language()
     trusted = removeSecurityProxy(context)
+    if lang is None:
+        try:
+            lang = get_request_language()
+        except NoInteraction:
+            log.warn("Returning original object %s. No request was found and"
+                " no target language was provided to get translation.",
+                trusted
+            )
+            return trusted
     translation = get_translation_for(trusted, lang)
     obj = copy(trusted)
     for field_translation in translation:

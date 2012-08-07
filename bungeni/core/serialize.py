@@ -8,8 +8,16 @@ $Id$
 """
 log = __import__("logging").getLogger("bungeni.core.serialize")
 
+import os
+import collections
+from StringIO import StringIO
+from zipfile import ZipFile
+from xml.etree.cElementTree import Element, ElementTree
+from tempfile import NamedTemporaryFile as tmp
+
 import zope.component
 import zope.schema
+from zope.security.interfaces import NoInteraction
 from zope.security.proxy import removeSecurityProxy
 from zope.lifecycleevent import IObjectModifiedEvent, IObjectCreatedEvent
 from sqlalchemy.orm import RelationshipProperty, ColumnProperty, class_mapper
@@ -25,13 +33,6 @@ from bungeni.core.workflow.interfaces import (IWorkflow, IStateController,
 )
 from bungeni.models import interfaces
 from bungeni.utils import register, naming, capi
-
-import os
-import collections
-from StringIO import StringIO
-from zipfile import ZipFile
-from xml.etree.cElementTree import Element, ElementTree
-from tempfile import NamedTemporaryFile as tmp
 
 
 def setupStorageDirectory(part_target="xml_db"):
@@ -297,8 +298,19 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[]):
                                         zope.schema.interfaces.IVocabularyFactory,
                                         vocab_name
                                     )
-                                vocabulary = factory(obj)                                
-                                display_name = vocabulary.getTerm(value).title
+                                #!+VOCABULARIES(mb, Aug-2012)some vocabularies
+                                # expect an interaction to generate values
+                                # todo - update these vocabularies to work 
+                                # with no request e.g. in notification threads 
+                                try:
+                                    vocabulary = factory(obj)                             
+                                    display_name = vocabulary.getTerm(value).title
+                                except NoInteraction:
+                                    log.error("This vocabulary %s expects an"
+                                        "interaction to generate terms.",
+                                        factory
+                                    )
+                                    display_name = value
                                 result[property.key] = dict(
                                     name=property.key,
                                     value=value,
