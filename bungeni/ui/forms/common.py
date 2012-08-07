@@ -47,13 +47,14 @@ from bungeni.models import domain
 from bungeni.models.utils import get_db_user_id
 from bungeni.ui.forms.fields import filterFields
 from bungeni.ui.interfaces import IBungeniSkin, IFormEditLayer, \
-    IGenenerateVocabularyDefault
+    IGenenerateVocabularyDefault, IWorkspaceMyDocumentsSectionLayer
 from bungeni.ui.i18n import _
 from bungeni.ui import browser
 #from bungeni.ui import z3evoque
 from bungeni.ui.utils import url
 from bungeni.ui.container import invalidate_caches_for
 from bungeni.utils import register
+from bungeni.utils.capi import capi
 
 TRUE_VALS = "true", "1"
 
@@ -396,11 +397,16 @@ class AddForm(BaseForm, catalyst.AddForm):
                          name="save_and_add_another",
                          condition=formlib.form.haveInputWidgets)
     def handle_add_and_add_another(self, action, data):
-        self.createAndAdd(data)
+        ob = self.createAndAdd(data)
         name = self.domain_model.__name__
-
         if not self._next_url:
-            self._next_url = url.absoluteURL(self.context, self.request) + \
+            if IWorkspaceMyDocumentsSectionLayer.providedBy(self.request):
+                item_type = capi.get_type_info(ob).workflow_key
+                self._next_url = url.absoluteURL(self.context, self.request) + \
+                             "/add_%s?portal_status_message=%s Added" % \
+                             (item_type, name)
+            else:
+                self._next_url = url.absoluteURL(self.context, self.request) + \
                              "/add?portal_status_message=%s Added" % name
 
 @register.view(domain.Attachment, layer=IBungeniSkin, name="edit",

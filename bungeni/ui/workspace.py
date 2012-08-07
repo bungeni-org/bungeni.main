@@ -32,7 +32,6 @@ from bungeni.ui.utils import debug
 from bungeni.utils import register
 from bungeni.utils.capi import capi
 from bungeni.ui.widgets import date_input_search_widget
-from bungeni.ui.container import get_date_strings
 
 _path = os.path.split(os.path.abspath(__file__))[0]
 
