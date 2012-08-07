@@ -503,6 +503,7 @@
         
         
         var fnRequestReceived = function() {
+            workspace_tab_count_ajax();
             jQuery.unblockUI();
         };
 

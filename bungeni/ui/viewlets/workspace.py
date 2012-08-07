@@ -22,6 +22,7 @@ class WorkspaceContextNavigation(StructureAwareViewlet):
 
     render = ViewPageTemplateFile("templates/workspace.pt")
     folder = "my-documents"
+    css_class = "workpace-listing"
 
     def update(self):
         self.tabs = []
@@ -35,10 +36,15 @@ class WorkspaceContextNavigation(StructureAwareViewlet):
             self.tabs.append(tab)
 
 
+class WorkspaceDocumentNavigation(WorkspaceContextNavigation):
+    css_class = "workspace-documents"
+
+
 class WorkspaceUnderConsiderationNavigation(WorkspaceContextNavigation):
    
     render = ViewPageTemplateFile("templates/workspace-under-consideration.pt")
     folder = "under-consideration"
+    css_class = "workspace-under-consideration"
 
 class SignatoriesStatus(object):
     """Shows the signature status of a document - e.g. number required

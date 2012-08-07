@@ -1,4 +1,4 @@
-<dl class="workspace portlet portletNavigationTree" i18n:domain="bungeni">
+<dl tal:attributes="class string:workspace ${view/css_class} portlet portletNavigationTree" i18n:domain="bungeni">
   <dt class="portletHeader">
     <span class="portletTopLeft"></span>
     <a class="tile" i18n:translate="">documents</a>
