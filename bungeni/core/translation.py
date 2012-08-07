@@ -10,6 +10,8 @@
 
 $Id$
 """
+log = __import__("logging").getLogger("bungeni.core.translation")
+
 from copy import copy
 
 from zope import component
