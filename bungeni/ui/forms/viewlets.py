@@ -21,7 +21,7 @@ import sqlalchemy.sql.expression as sql
 
 #from bungeni.alchemist.ui import DynamicFields, EditFormViewlet
 from bungeni.alchemist import Session
-from bungeni.alchemist.model import queryModelDescriptor
+from bungeni.alchemist import utils
 from bungeni.alchemist.interfaces import IContentViewManager
 
 import bungeni.core.globalsettings as prefs
@@ -254,7 +254,7 @@ class PersonInfo(BungeniAttributeDisplay):
         self.__parent__ = context.__parent__
         self.manager = manager
         self.query = None
-        md = queryModelDescriptor(domain.User)
+        md = utils.get_descriptor(domain.User)
         self.form_fields = md.fields #.select("user_id", "start_date", "end_date")
 
     def update(self):
@@ -480,7 +480,7 @@ class DisplayViewlet(BungeniAttributeDisplay):
             self.context = target
             self.has_data = True
             assert self.factory is not None
-            descriptor = queryModelDescriptor(self.factory)
+            descriptor = utils.get_descriptor(self.factory)
             self.form_fields = descriptor.fields
 
     def update(self):
@@ -512,7 +512,7 @@ class DisplayViewlet(BungeniAttributeDisplay):
 
     @property
     def form_name(self):
-        descriptor = queryModelDescriptor(self.factory)
+        descriptor = utils.get_descriptor(self.factory)
         return descriptor.display_name
 
 

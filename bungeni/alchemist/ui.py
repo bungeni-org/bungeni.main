@@ -22,12 +22,14 @@ __all__ = [
     "setUpFields",          # alias -> alchemist.ui.core
     "unique_columns",       # alias -> alchemist.ui.core
     "setUpColumns",         # redefn -> alchemist.ui.core
+    "createInstance",       # alias -> alchemist.ui.generic
 ]
 
 from alchemist.ui.core import DynamicFields
 from alchemist.ui.core import null_validator
 from alchemist.ui.core import setUpFields
 from alchemist.ui.core import unique_columns
+from alchemist.ui.generic import createInstance
 
 #from alchemist.ui.viewlet import EditFormViewlet
 
@@ -51,7 +53,7 @@ def getSelected(selection_column, request):
 
 from zope import schema
 from zc.table import column
-from bungeni.alchemist import model
+from bungeni.alchemist import model, utils
 import alchemist.ui
 def setUpColumns(domain_model):
     """Use model descriptor on domain model extract columns for table listings
@@ -62,7 +64,7 @@ def setUpColumns(domain_model):
     if not domain_interface:
         raise SyntaxError("Model must have domain interface %r" % (domain_model))
     
-    domain_annotation = model.queryModelDescriptor(domain_interface)
+    domain_annotation = utils.get_descriptor(domain_interface)
     
     field_column_names = \
         domain_annotation and domain_annotation.listing_columns \

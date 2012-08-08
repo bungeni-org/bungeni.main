@@ -18,7 +18,7 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 from bungeni.core.workflow import interfaces
 from bungeni.alchemist.ui import DynamicFields
 
-from bungeni.alchemist.model import queryModelDescriptor
+from bungeni.alchemist import utils
 from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.alchemist.interfaces import IAlchemistContent
 from bungeni.ui.forms.workflow import bindTransitions
@@ -32,7 +32,7 @@ from copy import copy
 def filterFields(context, form_fields):
     omit_names = []
     if IAlchemistContent.providedBy(context):
-        md = queryModelDescriptor(context.__class__)
+        md = utils.get_descriptor(context.__class__)
         for field in form_fields:
             # field:zope.formlib.form.FormField
             try:
@@ -155,9 +155,9 @@ class BungeniAttributeDisplay(DynamicFields, form.SubPageDisplayForm,
         #workspace since the workspace containers have no descriptor
         #defined for them.
         if IAlchemistContent.providedBy(self.context):
-            descriptor = queryModelDescriptor(self.context.__class__)
+            descriptor = utils.get_descriptor(self.context.__class__)
         elif IAlchemistContainer.providedBy(parent):
-            descriptor = queryModelDescriptor(parent.domain_model)
+            descriptor = utils.get_descriptor(parent.domain_model)
         else:
             raise RuntimeError("Unsupported object: %s." % repr(self.context))
 

@@ -13,7 +13,8 @@ from zope.lifecycleevent import ObjectCreatedEvent
 from zope.security import checkPermission
 from zc.resourcelibrary import need
 from bungeni.alchemist.container import contained
-from alchemist.ui import generic
+from bungeni.alchemist.ui import createInstance
+from bungeni.alchemist import utils
 from bungeni.core import workspace, translation
 from bungeni.core.content import WorkspaceSection
 from bungeni.core.i18n import _
@@ -27,7 +28,6 @@ from bungeni.ui.interfaces import IWorkspaceContentAdapter
 from bungeni.ui.forms.common import AddForm
 from bungeni.core.workspace import OBJECT_ROLES
 from bungeni.core.workflow.interfaces import IWorkflow
-from bungeni.alchemist.model import queryModelDescriptor
 from bungeni.ui.utils import debug
 from bungeni.utils import register
 from bungeni.utils.capi import capi
@@ -191,7 +191,7 @@ class WorkspaceDataTableFormatter(table.ContextDataTableFormatter):
         for domain in domains:
             value = workspace_config.get_type(domain)
             if value:
-                descriptor = queryModelDescriptor(domain)
+                descriptor = utils.get_descriptor(domain)
                 name = descriptor.display_name if descriptor else value
                 result[value] = translate(name, context=self.request)
         return result
@@ -368,7 +368,7 @@ class WorkspaceAddForm(AddForm):
         domain_model = removeSecurityProxy(self.domain_model)
         # create the object, inspect data for constructor args
         try:
-            ob = generic.createInstance(domain_model, data)
+            ob = createInstance(domain_model, data)
         except TypeError:
             ob = domain_model()
         # apply any context values

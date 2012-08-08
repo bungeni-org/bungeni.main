@@ -18,7 +18,7 @@ from zope.security.proxy import removeSecurityProxy
 from zope.traversing.browser import absoluteURL
 
 from bungeni.alchemist import Session
-from bungeni.alchemist.model import queryModelDescriptor
+from bungeni.alchemist import utils
 from bungeni.models.domain import User
 from bungeni.core.interfaces import IRSSValues
 from bungeni.core.translation import translate_obj
@@ -57,7 +57,7 @@ class RSSView(BrowserView):
 
     @property
     def channel_title(self):
-        return queryModelDescriptor(
+        return utils.get_descriptor(
             removeSecurityProxy(self.context).domain_model
         ).container_name
         

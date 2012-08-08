@@ -4,7 +4,7 @@ from zope.publisher.browser import BrowserView
 from zope.app.pagetemplate import ViewPageTemplateFile
 
 from bungeni.alchemist import Session
-from bungeni.alchemist.model import queryModelDescriptor
+from bungeni.alchemist import utils
 from sqlalchemy.orm import eagerload
 import sqlalchemy.sql.expression as sql
 
@@ -69,7 +69,7 @@ class WhatsOnBrowserView(BrowserView):
             return s_list
         else:
             for schedule in sitting.item_schedule:
-                descriptor = queryModelDescriptor(schedule.item.__class__)
+                descriptor = utils.get_descriptor(schedule.item.__class__)
                 s_list.append({
                     "name": IDCDescriptiveProperties(schedule.item).title,
                     "html": interfaces.IScheduleText.providedBy(schedule.item),

@@ -14,7 +14,7 @@ from zope.publisher.browser import BrowserPage
 from zope.schema.interfaces import IText, IDate, IDatetime
 from zc.resourcelibrary import need
 from zope.app.pagetemplate import ViewPageTemplateFile
-from bungeni.alchemist import model
+from bungeni.alchemist import model, utils
 from bungeni.alchemist import container
 from bungeni.alchemist.interfaces import IAlchemistContainer
 
@@ -130,22 +130,24 @@ class AjaxContainerListing(
     formatter_factory = yuiwidget.ContainerDataTableFormatter
 
     template = ViewPageTemplateFile("templates/generic-container.pt")
-
+    
     def __call__(self):
         need("yui-datatable")
         self.update()
         return self.template()
-
+    
     @property
     def form_name(self):
         dm = self.context.domain_model
-        return getattr(model.queryModelDescriptor(dm), "container_name",
-            dm.__name__)
-
+        try:
+            return utils.get_descriptor(dm).container_name
+        except KeyError:
+            return dm.__name__
+    
     @property
     def prefix(self):
         return "container_contents"
-
+    
     @property
     def formatter(self):
         context = proxy.removeSecurityProxy(self.context)
@@ -171,8 +173,7 @@ class ContainerJSONBrowserView(BrowserPage):
         self.domain_model = proxy.removeSecurityProxy(
             self.context).domain_model
         self.domain_interface = model.queryModelInterface(self.domain_model)
-        self.domain_annotation = model.queryModelDescriptor(
-            self.domain_interface)
+        self.domain_annotation = utils.get_descriptor(self.domain_interface)
         self.fields = tuple(container.getFields(
             self.context, self.domain_interface, self.domain_annotation))
         # table keys
@@ -586,7 +587,7 @@ class JSLCache(object):
         """Get (cached) descriptor instance for self.model_interface.
         """
         if self._descriptor is None:
-            self._descriptor = capi.get_type_info(self.model_interface).descriptor
+            self._descriptor = utils.get_descriptor(self.model_interface)
         return self._descriptor
     
     @property

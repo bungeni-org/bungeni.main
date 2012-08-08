@@ -10,6 +10,17 @@ log = __import__("logging").getLogger("bungeni.alchemist")
 from sqlalchemy.orm import class_mapper
 
 
+# conveniences on capi.get_type_info
+# - discriminator may be as specified in: core.type_info._get
+# - raises KeyError if not matched
+
+def get_descriptor(discriminator):
+    from bungeni.utils.capi import capi
+    return capi.get_type_info(discriminator).descriptor
+
+
+# sqlalchemy 
+
 def get_local_table(kls):
     """Get the Selectable which this kls's Mapper manages. May be None.
     

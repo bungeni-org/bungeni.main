@@ -16,9 +16,8 @@ import zope.traversing.interfaces
 from lxml import html
 
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
-from bungeni.alchemist import Session
+from bungeni.alchemist import Session, utils
 from bungeni.alchemist.interfaces import IAlchemistContainer
-from bungeni.alchemist.model import queryModelDescriptor
 
 from bungeni.models import interfaces
 from bungeni.models import domain
@@ -305,7 +304,7 @@ class ContainerDescriptiveProperties(DescriptiveProperties):
 
     @property
     def title(self):
-        descriptor = queryModelDescriptor(self.context.domain_model)
+        descriptor = utils.get_descriptor(self.context.domain_model)
         return descriptor.container_name
 
 

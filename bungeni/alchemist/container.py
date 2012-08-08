@@ -25,7 +25,7 @@ __all__ = [
 ]
 
 
-from bungeni.alchemist import Session, model, interfaces
+from bungeni.alchemist import Session, model, interfaces, utils
 
 #
 
@@ -130,7 +130,7 @@ def getFields(context, interface=None, annotation=None):
         domain_model = proxy.removeSecurityProxy(context.domain_model)
         interface = model.queryModelInterface(domain_model)
     if annotation is None:
-        annotation = model.queryModelDescriptor(interface)
+        annotation = utils.get_descriptor(interface)
     for field_name in annotation.listing_columns:
         yield interface[field_name]
         # !+FIELD_KEYERROR(mr, jul-2012) throws a KeyError when field_name is 

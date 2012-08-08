@@ -28,8 +28,9 @@ from ploned.ui.menu import make_absolute
 from ploned.ui.menu import pos_action_in_url
 
 from bungeni.alchemist.interfaces import IAlchemistContainer, IAlchemistContent
-from bungeni.core.interfaces import IWorkspaceContainer, ISection
 from bungeni.alchemist.traversal import ManagedContainerDescriptor
+from bungeni.alchemist import utils
+from bungeni.core.interfaces import IWorkspaceContainer, ISection
 from bungeni.core import location
 from bungeni.ui.utils import url, debug
 from bungeni.ui import interfaces
@@ -70,8 +71,8 @@ So, we temporarily default the above to the context.__class__.__name__:
     elif IAlchemistContainer.providedBy(context):
         domain_model = context._class 
         try:
-            descriptor = capi.get_type_info(domain_model).descriptor
-        except ValueError, e:
+            descriptor = utils.get_descriptor(domain_model)
+        except KeyError, e:
             log.warn("TYPE_INFO: no descriptor for model %s "
                     "[container=%s] [error=%s]" % (
                         domain_model, context, e))
@@ -454,7 +455,7 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
     def _sort_containers(self, key_containers):
         """Sort each container by its domain_model's descriptor order."""
         dsu = [
-            (capi.get_type_info(kc[1].domain_model).descriptor.order, kc)
+            (utils.get_descriptor(kc[1].domain_model).order, kc)
             for kc in key_containers ]
         dsu.sort()
         return [ kc for (order, kc) in dsu ]
@@ -465,7 +466,7 @@ class NavigationTreeViewlet(browser.BungeniViewlet):
         
         for key, container in self._sort_containers(containers):
             if IAlchemistContainer.providedBy(container):
-                descriptor = capi.get_type_info(container.domain_model).descriptor
+                descriptor = utils.get_descriptor(container.domain_model)
                 if descriptor:
                     name = getattr(descriptor, "container_name", None)
                     if name is None:

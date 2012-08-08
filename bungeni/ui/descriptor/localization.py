@@ -14,7 +14,6 @@ import elementtree.ElementTree
 from bungeni.alchemist.model import (
     #ModelDescriptor, 
     IModelDescriptor,
-    #queryModelDescriptor,
     Field,
     show, hide,
     norm_sorted, 

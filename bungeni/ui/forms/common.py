@@ -34,7 +34,7 @@ from sqlalchemy.exc import IntegrityError
 from bungeni.alchemist import Session
 from bungeni.alchemist import catalyst
 from bungeni.alchemist import ui
-from bungeni.alchemist.model import queryModelDescriptor
+from bungeni.alchemist import utils
 from bungeni.alchemist.interfaces import IAlchemistContainer, IAlchemistContent
 from bungeni.core.translation import get_language_by_name
 from bungeni.core.language import get_default_language
@@ -221,7 +221,7 @@ class BaseForm(formlib.form.FormBase):
 
     @cached_property.cachedIn("__cached_descriptor__")
     def model_descriptor(self):
-        return queryModelDescriptor(self.domain_model)
+        return utils.get_descriptor(self.domain_model)
 
     @cached_property.cachedIn("__cached_domain__")
     def domain_model(self):

@@ -26,13 +26,12 @@ from sqlalchemy.orm import (eagerload, RelationshipProperty, ColumnProperty,
 )
 from sqlalchemy.types import Binary
 
-from bungeni.alchemist import Session
+from bungeni.alchemist import Session, utils
 from bungeni.alchemist.interfaces import (IAlchemistContainer, 
     IAlchemistContent
 )
 import domain, schema, delegation
 from bungeni.core.workflow.states import get_head_object_state_rpm
-from bungeni.utils.capi import capi
 
 # !+ move "contextual" utils to ui.utils.contextual
 
@@ -294,9 +293,9 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[]):
     descriptor = None
     if IAlchemistContent.providedBy(obj):
         try:
-            descriptor = capi.get_type_info(obj).descriptor
+            descriptor = utils.get_descriptor(obj)
         except KeyError:
-            log.error("Could not get a descriptor for %r", obj)
+            log.error("Could not get descriptor for IAlchemistContent %r", obj)
     
     # Get additional attributes
     for name in include:

@@ -14,7 +14,6 @@ log = __import__("logging").getLogger("bungeni.alchemist")
 # used directly in bungeni
 __all__ = [
     "queryModelInterface",      # redefn -> ore.alchemist.model
-    "queryModelDescriptor",     # redefn -> ore.alchemist.model
     "ModelDescriptor",          # redefn -> ore.alchemist.model
     "IModelDescriptorField",    # redefn -> ore.alchemist.interfaces
     
@@ -25,12 +24,11 @@ __all__ = [
 ]
 
 
-from zope import component, interface, schema
+from zope import interface, schema
 from zope.interface.interfaces import IInterface
 
 from bungeni.alchemist.interfaces import (
     IAlchemistContent,
-    IModelAnnotation,
     IIModelInterface,
     IModelDescriptor
 )
@@ -64,22 +62,6 @@ def queryModelInterface(cls):
         assert IIModelInterface.providedBy(cls), "Invalid Interface"
         return cls
 
-
-def queryModelDescriptor(ob):
-    log.warn("""queryModelDescriptor(%s) is DEPRECATED, please replace with:
-        >>>> capi.get_type_info(%s).descriptor""" % (ob, ob))
-    from bungeni.utils.capi import capi
-    return capi.get_type_info(ob).descriptor
-    '''
-    # !+queryModel fails when ob (and so name derived from it) is an 
-    # interface... seems to need thename of the domain model, as that is what 
-    # the target adapters are registered under:
-    if not IInterface.providedBy(ob):
-        ob = filter(IIModelInterface.providedBy, 
-            list(interface.implementedBy(ob)))[0]    
-    name = "%s.%s" % (ob.__module__, ob.__name__)
-    return component.queryAdapter(ob, IModelDescriptor, name)
-    '''
 
 # local utils
 
@@ -487,7 +469,7 @@ class ModelDescriptor(object):
     the class itself, implying there is no instance.fields=[Field] attribute.
     
     Always retrieve the *same* descriptor *instance* for a model class via:
-        capi.get_type_info(model_interface or ...).descriptor
+        alchemist.utils.get_descriptor(model_interface or ...)
     """
     __metaclass__ = MDType
     interface.implements(IModelDescriptor)
