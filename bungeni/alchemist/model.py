@@ -66,11 +66,11 @@ def queryModelInterface(cls):
 
 
 def queryModelDescriptor(ob):
-    #from bungeni.utils.capi import capi
-    #return capi.get_type_info(ob).descriptor
-    log.warn("""queryModelDescriptor(%s) is DEPRECATED
-        >>>> please replace with: capi.get_type_info(%s).descriptor
-        """ % (ob, ob))
+    log.warn("""queryModelDescriptor(%s) is DEPRECATED, please replace with:
+        >>>> capi.get_type_info(%s).descriptor""" % (ob, ob))
+    from bungeni.utils.capi import capi
+    return capi.get_type_info(ob).descriptor
+    '''
     # !+queryModel fails when ob (and so name derived from it) is an 
     # interface... seems to need thename of the domain model, as that is what 
     # the target adapters are registered under:
@@ -79,6 +79,7 @@ def queryModelDescriptor(ob):
             list(interface.implementedBy(ob)))[0]    
     name = "%s.%s" % (ob.__module__, ob.__name__)
     return component.queryAdapter(ob, IModelDescriptor, name)
+    '''
 
 # local utils
 

@@ -3101,7 +3101,8 @@ class SignatoryDescriptor(ModelDescriptor):
         Field(name="status",
             modes="view listing",
             localizable = [
-                show("view listing")
+                show("view listing", 
+                    roles="bungeni.Clerk bungeni.Owner bungeni.Signatory")
             ],
             property=schema.Choice(title=_("Signature status"), 
                 vocabulary=vocabulary.workflow_vocabulary_factory,

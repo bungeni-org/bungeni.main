@@ -45,6 +45,13 @@ class CAPI(object):
     def __init__(self):
         self.validate_properties()
     
+    def validate_properties(self):
+        """Validate this capi instance.
+        Ensure valid setup of properties at instantiation of CAPI instance
+        """
+        self.default_language
+        self.right_to_left_languages
+    
     # bungeni_custom parameter properties
     
     @property
@@ -196,12 +203,7 @@ class CAPI(object):
         """
         for type_key, ti in type_info._iter():
             yield type_key, ti
-    
-    def validate_properties(self):
-        """Validate this capi instance.
-        Ensure valid setup of properties at instantiation of CAPI instance
-        """
-        props = self.default_language, self.right_to_left_languages
+
 
 # we access all via the singleton instance
 capi = CAPI()
