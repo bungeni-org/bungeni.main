@@ -22,7 +22,7 @@ from bungeni.models import domain
 from bungeni.core.workflow.interfaces import IWorkflow
 from bungeni.ui.forms.interfaces import ISubFormViewletManager
 from bungeni.ui.i18n import _
-from bungeni.ui.descriptor import descriptor
+from bungeni.ui.descriptor import listing
 from bungeni.ui.utils import date
 from bungeni.ui import browser
 from bungeni.utils import register, naming
@@ -295,7 +295,7 @@ class ChangeDataDescriptor(object):
     # !+bungeni_custom
     def columns(self):
         return [
-            descriptor.user_name_column("user_id", _("user"), "user"),
+            listing.user_name_column("user_id", _("user"), "user"),
             column.GetterColumn(title="date_active",
                 getter=lambda i,f: self.date_formatter.format(i.date_active)),
             column.GetterColumn(title="object", 

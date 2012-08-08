@@ -10,20 +10,12 @@ log = __import__("logging").getLogger("bungeni.ui.descriptor")
 
 from copy import deepcopy
 from zope import schema, interface
-from sqlalchemy.sql import expression, func
 import zope.formlib
-from zope.i18n import translate
-from zc.table import column
-from zope.dublincore.interfaces import IDCDescriptiveProperties
-from zope.security.proxy import removeSecurityProxy
 
-from bungeni.alchemist import Session
-from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.alchemist.model import ModelDescriptor, Field, show, hide
 
 from bungeni.models import domain
 import bungeni.models.interfaces
-from bungeni.models.utils import get_db_user
 
 # We import bungeni.core.workflows.adapters to ensure that the "states"
 # attribute on each "workflow" module is setup... this is to avoid an error
@@ -37,360 +29,11 @@ from bungeni.ui.fields import VocabularyTextField
 from bungeni.ui import constraints
 from bungeni.ui.forms import validations
 from bungeni.ui.i18n import _
-from bungeni.ui.utils import common, date, debug, url
 from bungeni.ui import vocabulary
-from bungeni.ui.interfaces import IAdminSectionLayer
+from bungeni.ui.descriptor import listing
+
 from bungeni.utils import misc
 
-
-###
-# Listing Columns
-#
-
-
-def _column(name, title, renderer, default=""):
-    def getter(item, formatter):
-        value = getattr(item, name)
-        if value:
-            return renderer(value)
-        return default
-    return column.GetterColumn(title, getter)
-
-
-def localized_datetime_column(name, title, default="",
-        category="date", # "date" | "time" | "dateTime"
-        length="medium"     # "short" | "medium" | "long" | "full" | None
-    ):
-    def getter(item, formatter):
-        value = getattr(item, name)
-        if value:
-            request = common.get_request()
-            date_formatter = date.getLocaleFormatter(request, category, length)
-            return date_formatter.format(value)
-        return default
-    return column.GetterColumn(title, getter)
-
-
-def day_column(name, title, default=""):
-    return localized_datetime_column(name, title, default, "date", "medium")
-
-
-def datetime_column(name, title, default=""):
-    return localized_datetime_column(name, title, default, "dateTime", "medium")
-#def time_column(name, title, default=""):
-#    return localized_datetime_column(name, title, default, "time", "long")
-
-
-def date_from_to_column(name, title, default=""):
-    format_length = "medium"
-    def getter(item, formatter):
-        request = common.get_request()
-        start = getattr(item, "start_date")
-        if start:
-            start = date.getLocaleFormatter(request,
-                "dateTime", format_length).format(start)
-        end = getattr(item, "end_date")
-        if end:
-            end = date.getLocaleFormatter(request,
-                "time", format_length).format(end)
-        return "%s - %s" % (start, end)
-    return column.GetterColumn(title, getter)
-
-
-def name_column(name, title, default=""):
-    def renderer(value, size=50):
-        if len(value) > size:
-            return "%s..." % value[:size]
-        return value
-    return _column(name, title, renderer, default)
-
-
-def combined_name_column(name, title, default=""):
-    """An extended name, combining full_name (localized)
-    and short_name columns.
-
-    For types that have both a full_name and a short_name attribute:
-    Group, ParliamentarySession
-    """
-    def getter(item, formatter):
-        return "%s [%s]" % (_(item.full_name), item.short_name)
-    return column.GetterColumn(title, getter)
-    
-def combined_name_column_filter(query, filter_string, sort_dir_func):
-    fs = filter_string.strip().lower().split(" ")
-    fc = []
-    for fs_ in fs:
-        fc.extend([func.lower(domain.Group.full_name).like("%%%s%%" % fs_),
-            func.lower(domain.Group.short_name).like("%%%s%%" % fs_)]
-        )
-    return query.filter(expression.or_(*fc)).order_by(
-        sort_dir_func(domain.Group.full_name), 
-        sort_dir_func(domain.Group.short_name),)      
-    
-
-def dc_property_column(name, title, property_name="title"):
-    def renderer(value):
-        if value:
-            return getattr(IDCDescriptiveProperties(value), property_name, "")
-        return ""
-    return _column(name, title, renderer)
-
-def _get_related_user(item_user, attr):
-    """Get the user instance that is related to this item via <attr>,
-    or if <attr> is None, return the item_user itself.
-    """
-    assertion_message = "Item User [%s] may not be None" % (item_user)
-    if attr:
-        item_user = getattr(item_user, attr, None)
-        assertion_message = "Item [%s] may not have None as [%s]" % (
-            item_user, attr)
-    assert item_user is not None, assertion_message
-    return item_user
-
-def user_name_column(name, title, attr):
-    # !+FIELD_KEYERROR why cannot use the User.fullname property directly?
-    def getter(item_user, formatter):
-        item_user = _get_related_user(item_user, attr)
-        return item_user.fullname # User.fullname property
-    return column.GetterColumn(title, getter)
-
-def user_name_column_filter(query, filter_string, sort_dir_func):
-    fs = filter_string.strip().lower().split(" ")
-    fc = []
-    for fs_ in fs:
-        fc.extend([func.lower(domain.User.first_name).like("%%%s%%" % fs_),
-            func.lower(domain.User.middle_name).like("%%%s%%" % fs_),
-            func.lower(domain.User.last_name).like("%%%s%%" % fs_),]
-        )
-    return query.join(domain.User).filter(expression.or_(*fc)).order_by(
-        sort_dir_func(domain.User.last_name),
-        sort_dir_func(domain.User.first_name),
-        sort_dir_func(domain.User.middle_name),
-    )
-
-
-def user_listing_name_column_filter(query, filter_string, sort_dir_func):
-    fs = filter_string.strip().lower().split(" ")
-    fc = []
-    for fs_ in fs:
-        fc.extend([func.lower(domain.User.first_name).like("%%%s%%" % fs_),
-            func.lower(domain.User.middle_name).like("%%%s%%" % fs_),
-            func.lower(domain.User.last_name).like("%%%s%%" % fs_),]
-        )
-    return query.filter(expression.or_(*fc)).order_by(
-        sort_dir_func(domain.User.last_name),
-        sort_dir_func(domain.User.first_name),
-        sort_dir_func(domain.User.middle_name),
-    )
-
-def linked_mp_name_column(name, title, attr):
-    """This may be used to customize the default URL generated as part of the
-    container listing.
-
-    E.g. instead of the URL to the association view between a signatory (MP)
-    and a bill:
-        /business/bills/obj-169/signatories/obj-1/
-    the direct URL for the MP's "home" view is used instead:
-        /members/current/obj-55/
-    """
-    def get_member_of_parliament(user_id):
-        """Get the MemberOfParliament instance for user_id."""
-        return Session().query(domain.MemberOfParliament).filter(
-            domain.MemberOfParliament.user_id == user_id).one()
-
-    def getter(item_user, formatter):
-        related_user = _get_related_user(item_user, attr)
-        request = common.get_request()
-        if IAdminSectionLayer.providedBy(request):
-            parent = item_user
-            while parent and not IAlchemistContainer.providedBy(parent):
-                parent = removeSecurityProxy(parent.__parent__)
-            item_user.__parent__ = parent
-            href = url.absoluteURL(item_user, request)
-        else:
-            mp = get_member_of_parliament(related_user.user_id)
-            href = "/members/current/obj-%s/" % (mp.membership_id)
-        return zope.formlib.widget.renderElement("a",
-            contents=related_user.fullname,  # User.fullname derived property
-            href=href
-        )
-    return column.GetterColumn(title, getter)
-    
-def linked_mp_name_column_filter(query, filter_string, sort_dir_func):
-    fs = filter_string.strip().lower().split(" ")
-    fc = []
-    for fs_ in fs:
-        fc.extend([func.lower(domain.User.first_name).like("%%%s%%" % fs_),
-            func.lower(domain.User.middle_name).like("%%%s%%" % fs_),
-            func.lower(domain.User.last_name).like("%%%s%%" % fs_),]
-        )
-    return query.join(domain.User).filter(expression.or_(*fc)).order_by(
-        sort_dir_func(domain.User.first_name),
-        sort_dir_func(domain.User.middle_name),
-        sort_dir_func(domain.User.last_name)
-    )
-    
-def user_party_column(name, title, default="-"):
-    def getter(item, formatter):
-        session = Session()
-        mp_obj = session.query(domain.MemberOfParliament).filter(
-            domain.MemberOfParliament.user_id==item.user_id
-        ).one()
-        if mp_obj is not None:
-            if mp_obj.party is not None:
-                return vocabulary.party.getTerm(mp_obj.party).title
-        return default
-    return column.GetterColumn(title, getter)
-
-
-def simple_view_column(name, title, default=_(u"view"), owner_msg=None):
-    """Replace primary key with meaningful title - tests for owner.
-    """
-    def getter(item, formatter):
-        if bungeni.models.interfaces.IOwned.providedBy(item):
-            if item.owner == get_db_user():
-                return owner_msg or default
-        return default
-    return column.GetterColumn(title, getter)
-
-
-def member_title_column(name, title, default=""):
-    def getter(item, formatter):
-        return item.title_type.title_name
-    return column.GetterColumn(title, getter)
-
-''' !+UNUSED
-def current_titles_in_group_column(name, title, default=""):
-    def getter(item, formatter):
-        value = getattr(item, name)
-        today = datetime.date.today()
-        if not value:
-            return default
-        title_list = []
-        for title in item.member_titles:
-            if title.start_date <= today:
-                if title.end_date:
-                    if title.end_date >= today:
-                        obj = translation.translate_obj(title.title_name)
-                        title_list.append(obj.user_role_name)
-                else:
-                    obj = translation.translate_obj(title.title_name)
-                    title_list.append(obj.user_role_name)
-        return ", ".join(title_list)
-    return column.GetterColumn(title, getter)
-
-def inActiveDead_Column(name, title, default):
-    aid = { "A": _("active"),
-        "I": _("inactive"),
-        "D": _("deceased")}
-    renderer = lambda x: aid[x]
-    return _column(name, title, renderer, default)
-'''
-
-
-
-def workflow_column(name, title, default=""):
-    from bungeni.ui.utils.misc import get_wf_state
-    def getter(item, formatter):
-        state_title = get_wf_state(item)
-        request = common.get_request()
-        return translate(
-            state_title,
-            domain="bungeni",
-            context=request)
-    return column.GetterColumn(title, getter)
-
-
-def ministry_column(name, title, default=""):
-    def getter(item, formatter):
-        # !+TRANSLATE_ATTR(mr, sep-2010)
-        #m = item.ministry
-        #return translation.translate_attr(m, m.group_id, "short_name")
-        return vocabulary.get_translated_group_label(item.ministry)
-    return column.GetterColumn(title, getter)
-
-def scheduled_item_title_column(name, title):
-    def getter(item, formatter):
-        dc = IDCDescriptiveProperties(item.item)
-        return (dc.description
-            if bungeni.models.interfaces.IScheduleText.providedBy(item.item) 
-            else dc.title
-        )
-    return column.GetterColumn(title, getter)
-
-def scheduled_item_mover_column(name, title):
-    def getter(item, formatter):
-        if hasattr(item.item, "owner"):
-            return IDCDescriptiveProperties(item.item.owner).title
-        return ""
-    return column.GetterColumn(title, getter)
-
-def scheduled_item_uri_column(name, title):
-    def getter(item, formatter):
-        return IDCDescriptiveProperties(item.item).uri
-    return column.GetterColumn(title, getter)
-
-
-''' !+TYPES_CUSTOM
-def enumeration_column(name, title,
-        item_reference_attr=None, # parent item attribute, for enum
-        enum_value_attr=None, # enum attribute, for desired value
-    ):
-    """Get getter for the enum-value of an enumerated column.
-    """
-    if enum_value_attr is None:
-        # then assume that value-attr on enum is same as enum-attr on parent
-        enum_value_attr = item_reference_attr
-    assert item_reference_attr is not None
-    assert enum_value_attr is not None
-    def getter(item, formatter):
-        enum_obj = getattr(item, item_reference_attr)
-        enum_obj = translation.translate_obj(enum_obj)
-        return getattr(enum_obj, enum_value_attr)
-    return column.GetterColumn(title, getter)
-'''
-
-def vocabulary_column(name, title, vocabulary):
-    def getter(context, formatter):
-        try:
-            return _(vocabulary.getTerm(getattr(context, name)).title)
-        except LookupError:
-            # !+NONE_LOOKUPERROR(mr, jul-2012) probably a vdex, 
-            # and getattr(context, name)...
-            value = getattr(context, name)
-            m = "LookpError: vocabulary [%s] term value [%s] " \
-                "for context [%s.%s]" % (
-                    vocabulary, value, context, name)
-            # we should only have a LookupError on a None value (and it is not 
-            # defined in the vocabulary)
-            assert value is None, m
-            log.warn(m)
-            return None
-    return column.GetterColumn(title, getter)
-''' !+TYPES_CUSTOM_TRANSLATION(mr, nov-2011) issues with how translation for 
-the titles of such enum values should be handled:
-
-- such enum string values probably be considered part of UI (po) as opposed 
-to part of the data (translatable object records in the db)?
-
-- there is some "overlap" in, as in some cases, parent object is translatable 
-while in others it is not. Probably should auto-detect such enum columns, and 
-have them **always & only** auto-translated via UI.
-[Possible implementation may make use of view_widget/edit_widget on Field to
-autohandle how the str-values of these columns will be translated.]
-
-- small issue with pre-existing msgid's e.g. "Office", translations for which 
-are not picked up with _("Office") or equivalent... why?
-'''
-
-''' !+TYPES_CUSTOM
-from zope.dublincore.interfaces import IDCDescriptiveProperties
-def dc_getter(name, title, item_attribute, default=_(u"None")):
-    def getter(item, formatter):
-        obj = getattr(item, item_attribute)
-        return IDCDescriptiveProperties(obj).title
-    return column.GetterColumn(title, getter)
-'''
 
 def get_field(fields, name):
     return misc.get_keyed_item(fields, name, key="name")
@@ -580,8 +223,8 @@ class UserDescriptor(ModelDescriptor):
                 hide("view"),
                 show("listing"),
             ],
-            listing_column=user_name_column("user_id", _("Name"), None),
-            listing_column_filter=user_listing_name_column_filter
+            listing_column=listing.user_name_column("user_id", _("Name"), None),
+            listing_column_filter=listing.user_listing_name_column_filter
         ),
         Field(name="salutation", # [user-req]
             modes="view edit add listing",
@@ -735,7 +378,7 @@ class UserDescriptor(ModelDescriptor):
                 source=vocabulary.marital_status,
                 required=False,
             ),
-            listing_column=vocabulary_column("marital_status",
+            listing_column=listing.vocabulary_column("marital_status",
                 "Marital Status",
                 vocabulary.marital_status
             ),
@@ -810,9 +453,9 @@ class UserDelegationDescriptor(ModelDescriptor):
                     value_field="user_id"
                 )
             ),
-            listing_column=user_name_column("delegation_id", _("User"),
+            listing_column=listing.user_name_column("delegation_id", _("User"),
                 "delegation"),
-            listing_column_filter=user_name_column_filter,
+            listing_column_filter=listing.user_name_column_filter,
         ),
     ]
 
@@ -834,7 +477,7 @@ class GroupMembershipDescriptor(ModelDescriptor):
                 show("view edit listing"),
             ],
             property=schema.Date(title=_("Start Date")),
-            listing_column=day_column("start_date", _("Start Date")),
+            listing_column=listing.day_column("start_date", _("Start Date")),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
             search_widget=widgets.date_input_search_widget
@@ -845,7 +488,7 @@ class GroupMembershipDescriptor(ModelDescriptor):
                 show("view add edit listing"),
             ],
             property=schema.Date(title=_("End Date"), required=False),
-            listing_column=day_column("end_date", _("End Date")),
+            listing_column=listing.day_column("end_date", _("End Date")),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
             search_widget=widgets.date_input_search_widget
@@ -891,7 +534,7 @@ class GroupMembershipDescriptor(ModelDescriptor):
             property=schema.Choice(title=_("Status"),
                 vocabulary=vocabulary.workflow_vocabulary_factory,
             ),
-            listing_column=workflow_column("status", "Workflow status"),
+            listing_column=listing.workflow_column("status", "Workflow status"),
         ),
         Field(name="status_date", label=_("Status date"), # [sys]
             modes="view listing",
@@ -899,16 +542,9 @@ class GroupMembershipDescriptor(ModelDescriptor):
                 show("view listing"),
             ],
             property=schema.Date(title=_("Status Date"), required=True),
-            listing_column=day_column("status_date", _("Status date")),
+            listing_column=listing.day_column("status_date", _("Status date")),
             search_widget=widgets.date_input_search_widget
         ),
-        #Field(name="membership_id",
-        #    label=_("Roles/Titles"),
-        #    modes="",
-        #    listing_column=current_titles_in_group_column("membership_id",
-        #        _("Roles/Titles")
-        #    )
-        #),
     ]
     schema_invariants = [
         EndAfterStart,
@@ -975,8 +611,8 @@ class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
                     value_field="user_id"
                 )
             ),
-            listing_column=user_name_column("user_id", _("Name"), "user"),
-            listing_column_filter=user_name_column_filter,
+            listing_column=listing.user_name_column("user_id", _("Name"), "user"),
+            listing_column_filter=listing.user_name_column_filter,
             edit_widget=widgets.AutoCompleteWidget(remote_data=True,
                 yui_maxResultsDisplayed=5),
             add_widget=widgets.AutoCompleteWidget(remote_data=True)
@@ -989,7 +625,7 @@ class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
             property=schema.Choice(title=_("Election Type"),
                 source=vocabulary.member_election_type
             ),
-            listing_column=vocabulary_column("member_election_type",
+            listing_column=listing.vocabulary_column("member_election_type",
                 "Election Type",
                 vocabulary.member_election_type
             ),
@@ -1034,7 +670,7 @@ class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
                 source=vocabulary.party,
                 required=False,
             ),
-            listing_column=vocabulary_column("party",
+            listing_column=listing.vocabulary_column("party",
                 "Political Party",
                 vocabulary.party
             ),
@@ -1078,8 +714,8 @@ class PoliticalGroupMemberDescriptor(GroupMembershipDescriptor):
             property=schema.Choice(title=_("Name"),
                 source=vocabulary.MemberOfParliamentSource("user_id",)
             ),
-            listing_column=linked_mp_name_column("user_id", _("Name"), "user"),
-            listing_column_filter=linked_mp_name_column_filter,
+            listing_column=listing.linked_mp_name_column("user_id", _("Name"), "user"),
+            listing_column_filter=listing.linked_mp_name_column_filter,
             view_widget=widgets.MemberURLDisplayWidget,
             add_widget=widgets.AutoCompleteWidget(remote_data=True),
             edit_widget=widgets.AutoCompleteWidget(remote_data=True)
@@ -1128,7 +764,6 @@ class GroupDescriptor(ModelDescriptor):
             property=schema.TextLine(title=_("Full Name"),
                 required=False,
             ),
-            #listing_column=name_column("full_name", _("Full Name"))
         ),
         Field(name="short_name", # [user-req]
             modes="view edit add listing",
@@ -1137,7 +772,6 @@ class GroupDescriptor(ModelDescriptor):
                 hide("listing"),
             ],
             property=schema.TextLine(title=_("Short Name")),
-            #listing_column=name_column("short_name", _("Name"))
         ),
         Field(name="acronym", # [user-req]
             modes="view edit add listing",
@@ -1146,7 +780,6 @@ class GroupDescriptor(ModelDescriptor):
                 hide("listing"),
             ],
             property=schema.TextLine(title=_("Acronym"), required=False),
-            #listing_column=name_column("short_name", _("Name"))
         ),
         Field(name="combined_name", # [derived]
             modes="listing",
@@ -1156,9 +789,9 @@ class GroupDescriptor(ModelDescriptor):
             property=schema.TextLine(title=_combined_name_title,
                 required=False,
             ),
-            listing_column=combined_name_column("full_name",
+            listing_column=listing.combined_name_column("full_name",
                 _combined_name_title),
-            listing_column_filter=combined_name_column_filter,
+            listing_column_filter=listing.combined_name_column_filter,
         ),
         LanguageField("language"), # [user-req]
         Field(name="description", # [rtf]
@@ -1177,7 +810,7 @@ class GroupDescriptor(ModelDescriptor):
                 show("view edit listing"),
             ],
             property=schema.Date(title=_("Start Date")),
-            listing_column=day_column("start_date", _("Start Date")),
+            listing_column=listing.day_column("start_date", _("Start Date")),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
             search_widget=widgets.date_input_search_widget
@@ -1188,7 +821,7 @@ class GroupDescriptor(ModelDescriptor):
                 show("view edit add listing"),
             ],
             property=schema.Date(title=_("End Date"), required=False),
-            listing_column=day_column("end_date", _("End Date")),
+            listing_column=listing.day_column("end_date", _("End Date")),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
             search_widget=widgets.date_input_search_widget
@@ -1201,7 +834,7 @@ class GroupDescriptor(ModelDescriptor):
             property=schema.Choice(title=_("Status"),
                 vocabulary=vocabulary.workflow_vocabulary_factory,
             ),
-            listing_column=workflow_column("status", "Workflow status"),
+            listing_column=listing.workflow_column("status", "Workflow status"),
         ),
     ]
     schema_invariants = [EndAfterStart]
@@ -1236,7 +869,7 @@ class ParliamentDescriptor(GroupDescriptor):
             property=schema.TextLine(title=_("Name"),
                 required=False,
             ),
-            listing_column=name_column("full_name", "Name"),
+            listing_column=listing.name_column("full_name", "Name"),
         ),
         Field(name="short_name", # [user-req]
             modes="view edit add listing",
@@ -1284,7 +917,7 @@ class ParliamentDescriptor(GroupDescriptor):
             property=schema.Date(title=_("In power from"),
                 description=_("Date of the swearing in"),
             ),
-            listing_column=day_column("start_date", _("In power from")),
+            listing_column=listing.day_column("start_date", _("In power from")),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
             search_widget=widgets.date_input_search_widget
@@ -1298,7 +931,7 @@ class ParliamentDescriptor(GroupDescriptor):
                 description=_("Date of the dissolution"),
                 required=False,
             ),
-            listing_column=day_column("end_date", _("In power till")),
+            listing_column=listing.day_column("end_date", _("In power till")),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
             search_widget=widgets.date_input_search_widget
@@ -1392,7 +1025,7 @@ class CommitteeDescriptor(GroupDescriptor):
                 source=vocabulary.committee_type,
                 required=False,
             ),
-            listing_column=vocabulary_column("sub_type",
+            listing_column=listing.vocabulary_column("sub_type",
                 "Committee Type",
                 vocabulary.committee_type
             ),
@@ -1405,7 +1038,7 @@ class CommitteeDescriptor(GroupDescriptor):
             property=schema.Choice(title=_("Committee Status Type"),
                 source=vocabulary.committee_continuity,
             ),
-            listing_column=vocabulary_column("group_continuity",
+            listing_column=listing.vocabulary_column("group_continuity",
                 "Committee Status Type",
                 vocabulary.committee_continuity
             ),
@@ -1500,8 +1133,8 @@ class CommitteeMemberDescriptor(GroupMembershipDescriptor):
             property=schema.Choice(title=_("Name"),
                 source=vocabulary.MemberOfParliamentSource("user_id")
             ),
-            listing_column=user_name_column("user_id", _("Name"), "user"),
-            listing_column_filter=user_name_column_filter,
+            listing_column=listing.user_name_column("user_id", _("Name"), "user"),
+            listing_column_filter=listing.user_name_column_filter,
             add_widget = widgets.AutoCompleteWidget(remote_data=True),
             edit_widget = widgets.AutoCompleteWidget(remote_data=True)
         ),
@@ -1563,7 +1196,7 @@ class AddressDescriptor(ModelDescriptor):
             property=schema.Choice(title=_("Address Type"),
                 source=vocabulary.logical_address_type,
             ),
-            listing_column=vocabulary_column("logical_address_type", 
+            listing_column=listing.vocabulary_column("logical_address_type", 
                 "Address Type",
                 vocabulary.logical_address_type
             ),
@@ -1717,7 +1350,7 @@ class MemberTitleDescriptor(ModelDescriptor):
             property=schema.Choice(title=_("Title"),
                 source=vocabulary.TitleTypes(),
                 ),
-            listing_column=member_title_column("title_name", _("Title")),
+            listing_column=listing.member_title_column("title_name", _("Title")),
         ),
         Field(name="start_date", # [user-req]
             modes="view edit add listing",
@@ -1725,7 +1358,7 @@ class MemberTitleDescriptor(ModelDescriptor):
                 show("view edit listing"),
             ],
             property=schema.Date(title=_("Start Date"), required=True),
-            listing_column=day_column("start_date", _("Start Date")),
+            listing_column=listing.day_column("start_date", _("Start Date")),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
             search_widget=widgets.date_input_search_widget
@@ -1736,7 +1369,7 @@ class MemberTitleDescriptor(ModelDescriptor):
                 show("view edit add listing"),
             ],
             property=schema.Date(title=_("End Date"), required=False),
-            listing_column=day_column("end_date", _("End Date")),
+            listing_column=listing.day_column("end_date", _("End Date")),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
             search_widget=widgets.date_input_search_widget
@@ -1773,8 +1406,8 @@ class CommitteeStaffDescriptor(GroupMembershipDescriptor):
                     value_field="user_id"
                 )
             ),
-            listing_column=user_name_column("user_id", _("Name"), "user"),
-            listing_column_filter=user_name_column_filter,
+            listing_column=listing.user_name_column("user_id", _("Name"), "user"),
+            listing_column_filter=listing.user_name_column_filter,
             add_widget=widgets.AutoCompleteWidget(remote_data=True),
             edit_widget=widgets.AutoCompleteWidget(remote_data=True)
         ),
@@ -1877,8 +1510,8 @@ class OfficeMemberDescriptor(GroupMembershipDescriptor):
                     value_field="user_id"
                 )
             ),
-            listing_column=user_name_column("user_id", _("Name"), "user"),
-            listing_column_filter=user_name_column_filter,
+            listing_column=listing.user_name_column("user_id", _("Name"), "user"),
+            listing_column_filter=listing.user_name_column_filter,
             add_widget=widgets.AutoCompleteWidget(remote_data=True),
             edit_widget=widgets.AutoCompleteWidget(remote_data=True)
         )
@@ -1938,8 +1571,8 @@ class MinisterDescriptor(GroupMembershipDescriptor):
                     value_field="user_id"
                 )
             ),
-            listing_column=user_name_column("user_id", _("Name"), "user"),
-            listing_column_filter=user_name_column_filter,
+            listing_column=listing.user_name_column("user_id", _("Name"), "user"),
+            listing_column_filter=listing.user_name_column_filter,
             add_widget = widgets.AutoCompleteWidget(remote_data=True),
             edit_widget = widgets.AutoCompleteWidget(remote_data=True)
         )
@@ -2007,7 +1640,7 @@ class AttachmentDescriptor(ModelDescriptor):
             property=schema.Choice(title=_("Attachment Type"),
                 source=vocabulary.attachment_type,
             ),
-            listing_column=vocabulary_column("type", 
+            listing_column=listing.vocabulary_column("type", 
                 "File Type",
                 vocabulary.attachment_type,
             ),
@@ -2060,7 +1693,7 @@ class AttachmentDescriptor(ModelDescriptor):
             property=schema.Choice(title=_("Status"),
                 vocabulary=vocabulary.workflow_vocabulary_factory,
             ),
-            listing_column=workflow_column("status", "Workflow status"),
+            listing_column=listing.workflow_column("status", "Workflow status"),
         ),
         Field(name="status_date", label=_("Status date"), # [sys]
             modes="view listing",
@@ -2068,7 +1701,7 @@ class AttachmentDescriptor(ModelDescriptor):
                 show("view listing"),
             ],
             property=schema.Date(title=_("Status date"), required=False),
-            listing_column=day_column("status_date", _("Status date")),
+            listing_column=listing.day_column("status_date", _("Status date")),
         ),
         LanguageField("language"), # [user-req]
     ]
@@ -2138,7 +1771,7 @@ class DocDescriptor(ModelDescriptor):
                 hide("listing")
             ],
             property=schema.Date(title=_("Submission Date"), required=False),
-            listing_column=day_column("submission_date", _("Submission Date")),
+            listing_column=listing.day_column("submission_date", _("Submission Date")),
         ),
         #   admissible_date
         # owner
@@ -2168,8 +1801,8 @@ class DocDescriptor(ModelDescriptor):
                 # "legal" parliamentary documents may only be moved by an MP
                 source=vocabulary.MemberOfParliamentDelegationSource("owner_id"),
             ),
-            listing_column=linked_mp_name_column("owner_id", _("Name"), "owner"),
-            listing_column_filter=linked_mp_name_column_filter,
+            listing_column=listing.linked_mp_name_column("owner_id", _("Name"), "owner"),
+            listing_column_filter=listing.linked_mp_name_column_filter,
             add_widget=widgets.MemberDropDownWidget,
             view_widget=widgets.MemberURLDisplayWidget,
         ),
@@ -2182,7 +1815,7 @@ class DocDescriptor(ModelDescriptor):
             property=schema.Choice(title=_("Document Type"),
                 source=vocabulary.doc_type,
             ),
-            listing_column=vocabulary_column("doc_type",
+            listing_column=listing.vocabulary_column("doc_type",
                 "Document Type",
                 vocabulary.doc_type
             ),
@@ -2251,7 +1884,7 @@ class DocDescriptor(ModelDescriptor):
             property=schema.Choice(title=_("Status"),
                 vocabulary=vocabulary.workflow_vocabulary_factory,
             ),
-            listing_column=workflow_column("status", "Workflow status"),
+            listing_column=listing.workflow_column("status", "Workflow status"),
         ),
         Field(name="status_date", label=_("Status date"), # [sys]
             modes="view listing",
@@ -2259,7 +1892,7 @@ class DocDescriptor(ModelDescriptor):
                 show("view listing"),
             ],
             property=schema.Date(title=_("Status Date"), required=False),
-            listing_column=day_column("status_date", _("Status date")),
+            listing_column=listing.day_column("status_date", _("Status date")),
             search_widget=widgets.date_input_search_widget
         ),
         # !+group_id only exposed in specific custom doc types
@@ -2325,8 +1958,8 @@ class EventDescriptor(DocDescriptor):
         # !+f.localizable changing localizable modes AFTER Field is initialized
         # gives mismatch error when descriptors are (re-)loaded, e.g. 
         #f.localizable = [ hide("view edit add listing"), ]
-        f.listing_column = user_name_column("owner_id", _("Name"), "owner")
-        f.listing_column_filter = listing_column_filter=user_name_column_filter
+        f.listing_column = listing.user_name_column("owner_id", _("Name"), "owner")
+        f.listing_column_filter = listing.user_name_column_filter
         f.view_widget = None
         # !+ select or autocomplete... ?
         #f.edit_widget=widgets.AutoCompleteWidget(remote_data=True,
@@ -2337,7 +1970,7 @@ class EventDescriptor(DocDescriptor):
         f.property = schema.Choice(title=_("Event Type"),
                 source=vocabulary.event_type,
         )
-        listing_column=vocabulary_column("event_type",
+        listing_column = listing.vocabulary_column("event_type",
             "Event Type",
             vocabulary.event_type
         )
@@ -2361,8 +1994,8 @@ class ChangeDescriptor(ModelDescriptor):
                     title_field="fullname",
                     value_field="user_id")),
             view_widget=None,
-            listing_column=user_name_column("user_id", _("Name"), "user"),
-            listing_column_filter=user_name_column_filter,
+            listing_column=listing.user_name_column("user_id", _("Name"), "user"),
+            listing_column_filter=listing.user_name_column_filter,
         ),
         Field(name="action",
             modes="view listing",
@@ -2382,7 +2015,7 @@ class ChangeDescriptor(ModelDescriptor):
             property=schema.Date(title=u"Audit Date", required=True),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
-            listing_column=datetime_column("date_audit", "Date Audit"),
+            listing_column=listing.datetime_column("date_audit", "Date Audit"),
             search_widget=widgets.date_input_search_widget
         ),
         Field(name="date_active", # [user]
@@ -2391,7 +2024,7 @@ class ChangeDescriptor(ModelDescriptor):
             property=schema.Date(title=u"Active Date", required=True),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
-            listing_column=datetime_column("date_active", "Date Active"),
+            listing_column=listing.datetime_column("date_active", "Date Active"),
             search_widget=widgets.date_input_search_widget
         ),
     ]
@@ -2588,7 +2221,7 @@ class BillDescriptor(DocDescriptor):
             property=schema.Choice(title=_("Bill Type"),
                 source=vocabulary.bill_type,
             ),
-            listing_column=vocabulary_column("doc_type",
+            listing_column=listing.vocabulary_column("doc_type",
                 "Bill Type",
                 vocabulary.bill_type
             ),
@@ -2612,7 +2245,7 @@ class BillDescriptor(DocDescriptor):
             property=schema.Date(title=_("Publication Date"), required=False),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget ,
-            listing_column=day_column("publication_date", "Publication Date"),
+            listing_column=listing.day_column("publication_date", "Publication Date"),
             search_widget=widgets.date_input_search_widget
         ),
     ])
@@ -2680,7 +2313,7 @@ class QuestionDescriptor(DocDescriptor):
             property=schema.Choice(title=_("Ministry"),
                 source=vocabulary.MinistrySource("ministry_id"),
             ),
-            listing_column=ministry_column("ministry_id" , _("Ministry")),
+            listing_column=listing.ministry_column("ministry_id" , _("Ministry")),
         ),
         AdmissibleDateField(), # [sys]
         Field(name="ministry_submit_date", # [user]
@@ -2705,7 +2338,7 @@ class QuestionDescriptor(DocDescriptor):
                 description=_("Choose the type of question"),
                 source=vocabulary.question_type,
             ),
-            listing_column=vocabulary_column("doc_type",
+            listing_column=listing.vocabulary_column("doc_type",
                 "Question Type",
                 vocabulary.question_type
             ),
@@ -2721,7 +2354,7 @@ class QuestionDescriptor(DocDescriptor):
                     "Choose the type of response expected for this question"),
                 source=vocabulary.response_type
             ),
-            listing_column=vocabulary_column("response_type",
+            listing_column=listing.vocabulary_column("response_type",
                 "Response Type",
                 vocabulary.response_type
             ),
@@ -2842,7 +2475,7 @@ class SittingDescriptor(ModelDescriptor):
                 show("view listing"),
             ],
             property=schema.Datetime(title=_("Date")),
-            listing_column=date_from_to_column("start_date", _("Start")),
+            listing_column=listing.date_from_to_column("start_date", _("Start")),
             # !+CustomListingURL(mr, oct-2010) the listing of this type has
             # been replaced by the custom SittingsViewlet -- but it
             # should still be possible use the generic container listing in
@@ -2882,7 +2515,7 @@ class SittingDescriptor(ModelDescriptor):
                 ),
                 required=False
             ),
-            listing_column=dc_property_column("venue", _(u"Venue")),
+            listing_column=listing.dc_property_column("venue", _(u"Venue")),
         ),
         Field(name="activity_type",
             modes="view edit add",
@@ -2956,7 +2589,7 @@ class SessionDescriptor(ModelDescriptor):
                 show("view edit listing"),
             ],
             property=schema.Date(title=_("Start Date")),
-            listing_column=day_column("start_date", _("Start Date")),
+            listing_column=listing.day_column("start_date", _("Start Date")),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
             search_widget=widgets.date_input_search_widget
@@ -2967,7 +2600,7 @@ class SessionDescriptor(ModelDescriptor):
                 show("view edit listing"),
             ],
             property=schema.Date(title=_("End Date")),
-            listing_column=day_column("end_date", _("End Date")),
+            listing_column=listing.day_column("end_date", _("End Date")),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
             search_widget=widgets.date_input_search_widget
@@ -3023,8 +2656,8 @@ class SittingAttendanceDescriptor(ModelDescriptor):
                     value_field="member_id"
                 )
             ),
-            listing_column=user_name_column("member_id", _("Name"), "user"),
-            listing_column_filter=user_name_column_filter,
+            listing_column=listing.user_name_column("member_id", _("Name"), "user"),
+            listing_column_filter=listing.user_name_column_filter,
         ),
         Field(name="attendance_type", # [user-req]
             modes="view edit add listing",
@@ -3034,7 +2667,7 @@ class SittingAttendanceDescriptor(ModelDescriptor):
             property=schema.Choice(title=_("Attendance"),
                 source=vocabulary.attendance_type,
             ),
-            listing_column=vocabulary_column("attendance_type",
+            listing_column=listing.vocabulary_column("attendance_type",
                 "Attendance",
                 vocabulary.attendance_type
             ),
@@ -3066,9 +2699,9 @@ class SignatoryDescriptor(ModelDescriptor):
     fields = [
         Field(name="signatory_id",
             modes="listing",
-            localizable = [show("listing", "bungeni.Signatory bungeni.Owner")],
-            property = schema.TextLine(title=_("View")),
-            listing_column = simple_view_column("signatory_id", 
+            localizable=[show("listing", "bungeni.Signatory bungeni.Owner")],
+            property=schema.TextLine(title=_("View")),
+            listing_column=listing.simple_view_column("signatory_id", 
                 _(u"review"), _(u"view"), _(u"review")
             ),
         ),
@@ -3082,11 +2715,11 @@ class SignatoryDescriptor(ModelDescriptor):
                     "user_id"
                 ),
             ),
-            listing_column=linked_mp_name_column("user_id",
+            listing_column=listing.linked_mp_name_column("user_id",
                 _("Signatory"),
                 "user"
             ),
-            listing_column_filter=linked_mp_name_column_filter,
+            listing_column_filter=listing.linked_mp_name_column_filter,
             view_widget=widgets.MemberURLDisplayWidget,
             add_widget=widgets.AutoCompleteWidget(remote_data=True),
             edit_widget=widgets.AutoCompleteWidget(remote_data=True)
@@ -3094,7 +2727,7 @@ class SignatoryDescriptor(ModelDescriptor):
         Field(name="political_party",
             modes="listing",
             property=schema.TextLine(title=_(u"political party")),
-            listing_column=user_party_column("political_party",
+            listing_column=listing.user_party_column("political_party",
                 _(u"political party"), _(u"no party")
             )
         ),
@@ -3108,7 +2741,7 @@ class SignatoryDescriptor(ModelDescriptor):
                 vocabulary=vocabulary.workflow_vocabulary_factory,
                 required=True
             ),
-            listing_column = workflow_column("status", "Signature Status"),
+            listing_column=listing.workflow_column("status", "Signature Status"),
         ),
     ]
 
@@ -3204,7 +2837,7 @@ class ItemScheduleDescriptor(ModelDescriptor):
                 show("view listing")
             ],
             property=schema.TextLine(title=_("Title"), required=False),
-            listing_column = scheduled_item_title_column("title", _(u"Title"))
+            listing_column=listing.scheduled_item_title_column("title", _(u"Title"))
         ),
         Field(name="item_mover", # [derived]
             modes="view listing",
@@ -3212,7 +2845,7 @@ class ItemScheduleDescriptor(ModelDescriptor):
                 show("view listing")
             ],
             property=schema.TextLine(title=_("Mover"), required=False),
-            listing_column = scheduled_item_mover_column("mover", _(u"Mover"))
+            listing_column=listing.scheduled_item_mover_column("mover", _(u"Mover"))
         ),
         Field(name="item_type",
             modes="view edit add listing",
@@ -3227,7 +2860,7 @@ class ItemScheduleDescriptor(ModelDescriptor):
                 show("view listing"),
             ],
             property=schema.TextLine(title=_("uri"), required=False),
-            listing_column=scheduled_item_uri_column("uri", _(u"Item URI"))
+            listing_column=listing.scheduled_item_uri_column("uri", _(u"Item URI"))
         ),
     ]
 
@@ -3300,7 +2933,7 @@ class ReportDescriptor(DocDescriptor):
             localizable=[
                 show("view edit listing"),
             ],
-            listing_column=datetime_column("status_date", _("Published Date")),
+            listing_column=listing.datetime_column("status_date", _("Published Date")),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
             search_widget=widgets.date_input_search_widget

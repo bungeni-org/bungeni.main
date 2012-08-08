@@ -17,7 +17,6 @@ from bungeni.models.domain import User
 from bungeni.alchemist import Session
 from bungeni.models.domain import PasswordRestoreLink
 from bungeni.models.utils import get_db_user
-from bungeni.ui.widgets import HiddenTextWidget
 from bungeni.ui import vocabulary
 from bungeni.ui import widgets
 from bungeni.core.i18n import _
@@ -195,7 +194,7 @@ class IResetPasswordForm(interface.Interface):
 
 class ResetPassword(form.FormBase):
     form_fields = form.Fields(IResetPasswordForm)
-    form_fields["key"].custom_widget = HiddenTextWidget
+    form_fields["key"].custom_widget = widgets.HiddenTextWidget
     prefix = ""
     form_name = _(u"Reset Password")
     status = ""
