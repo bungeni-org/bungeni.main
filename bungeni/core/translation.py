@@ -66,9 +66,12 @@ class LanguageVocabulary(object):
     implements(IVocabularyFactory)
 
     def __call__(self, context):
-        request = common.get_request()
+        try:
+            request = common.get_request()
+        except NoInteraction:
+            request = None
         def get_locale_lang(code):
-            if hasattr(request, "locale"):
+            if request and hasattr(request, "locale"):
                 return request.locale.displayNames.languages.get(code)
             return None
         languages = get_all_languages()

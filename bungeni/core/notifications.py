@@ -16,10 +16,9 @@ from zope.component.zcml import handler
 from bungeni.utils.capi import capi, bungeni_custom_errors
 from bungeni.core.interfaces import INotificationsUtility, IMessageQueueConfig
 from bungeni.core.workflow.interfaces import IWorkflowTransitionEvent
-from bungeni.core.serialize import obj2dict
 from bungeni.alchemist import Session
 from bungeni.alchemist.container import contained
-from bungeni.models.utils import get_current_parliament
+from bungeni.models.utils import get_current_parliament, obj2dict
 
 
 class MessageQueueConfig(object):

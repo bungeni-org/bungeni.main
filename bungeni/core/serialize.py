@@ -9,31 +9,37 @@ $Id$
 log = __import__("logging").getLogger("bungeni.core.serialize")
 
 import os
-import collections
 from StringIO import StringIO
 from zipfile import ZipFile
+from threading import Thread
 from xml.etree.cElementTree import Element, ElementTree
 from tempfile import NamedTemporaryFile as tmp
+import simplejson
 
 import zope.component
-import zope.schema
-from zope.security.interfaces import NoInteraction
 from zope.security.proxy import removeSecurityProxy
 from zope.lifecycleevent import IObjectModifiedEvent, IObjectCreatedEvent
-from sqlalchemy.orm import RelationshipProperty, ColumnProperty, class_mapper
+
+from sqlalchemy.orm import class_mapper, object_mapper
 from sqlalchemy.types import Binary
 
+from ore.alchemist.container import valueKey
 from bungeni.alchemist.container import stringKey
-from bungeni.alchemist.interfaces import IAlchemistContainer, IAlchemistContent
+from bungeni.alchemist import Session
 from bungeni.core.workflow.states import (get_object_state_rpm, 
     get_head_object_state_rpm
 )
+from bungeni.core.interfaces import IMessageQueueConfig
 from bungeni.core.workflow.interfaces import (IWorkflow, IStateController,
     IWorkflowed, IWorkflowController, InvalidStateError
 )
+from bungeni.core.notifications import get_mq_connection
 from bungeni.models import interfaces
-from bungeni.utils import register, naming, capi
+from bungeni.models.utils import obj2dict, get_permissions_dict
+from bungeni.utils import register, naming
+from bungeni.utils.capi import capi
 
+import pika
 
 def setupStorageDirectory(part_target="xml_db"):
     """ Returns path to store xml files.
@@ -50,30 +56,6 @@ def setupStorageDirectory(part_target="xml_db"):
     
     return store_dir
 
-
-def get_permissions_dict(permissions):
-    results= []
-    for x in permissions:
-        # !+XML pls read the styleguide
-        results.append({"role": x[2], 
-            "permission": x[1], 
-            "setting": x[0] and "Allow" or "Deny"})
-    return results
-
-@register.handler(adapts=(IWorkflowed, IObjectCreatedEvent))
-@register.handler(adapts=(IWorkflowed, IObjectModifiedEvent))
-def publish_handler(ob, event):
-    try:
-        wfc = IWorkflowController(ob)
-        wf_state = wfc.state_controller.get_state()
-        if wf_state and (
-            wfc.state_controller.get_status() in 
-            wfc.workflow.get_state_ids(not_tagged=["draft"], restrict=False)
-        ):
-            publish_to_xml(ob)
-    except InvalidStateError:
-        log.error("Unable to get workflow state for object %s.", ob)
-    
 
 def publish_to_xml(context):
     """Generates XML for object and saves it to the file. If object contains
@@ -216,107 +198,92 @@ def _serialize_dict(parent_elem, data_dict):
         parent_elem.append(key_elem)
         _serialize(key_elem, v)
 
+#notifications setup for serialization
+SERIALIZE_QUEUE = "bungeni_serialization_queue"
+SERIALIZE_EXCHANGE = "bungeni_serialization_exchange"
+SERIALIZE_ROUTING_KEY = "bungeni_serialization"
 
-def obj2dict(obj, depth, parent=None, include=[], exclude=[]):
-    """ Returns dictionary representation of an object.
+def serialization_notifications_callback(channel, method, properties, body):
+    obj_data = simplejson.loads(body)
+    obj_type = obj_data.get("obj_type")
+    domain_model = None
+    try:
+        domain_model = capi.get_type_info(obj_type).domain_model
+    except KeyError:
+        log.error("Unable to get domain model for type %s", obj_type)
+        return
+    if domain_model is None:
+        log.error("Unable to get domain model for type %s", obj_type)
+    else:
+        obj_key = valueKey(obj_data.get("obj_key"))
+        obj = Session().query(domain_model).get(obj_key)
+        if obj:
+            try:
+                wfc = IWorkflowController(obj)
+                wf_state = wfc.state_controller.get_state()
+                if wf_state and (
+                    wfc.state_controller.get_status() in 
+                    wfc.workflow.get_state_ids(not_tagged=["draft"], 
+                        restrict=False)
+                ):
+                    publish_to_xml(obj)
+            except InvalidStateError:
+                log.error("Unable to get workflow state for object %s.", obj)
+        else:
+            log.error("Unable to query object of type %s with key %s",
+                domain_model, obj_key
+            )
+    channel.basic_ack(delivery_tag=method.delivery_tag)
+
+def serialization_worker():
+    connection = get_mq_connection()
+    if not connection:
+        return
+    channel = connection.channel()
+    channel.basic_qos(prefetch_count=1)
+    channel.basic_consume(serialization_notifications_callback,
+                          queue=SERIALIZE_QUEUE)
+    channel.start_consuming()
+
+@register.handler(adapts=(IWorkflowed, IObjectCreatedEvent))
+@register.handler(adapts=(IWorkflowed, IObjectModifiedEvent))
+def queue_object_serialization(obj, event):
+    unproxied = removeSecurityProxy(obj)
+    mapper = object_mapper(unproxied)
+    primary_key = mapper.primary_key_from_instance(unproxied)
+    message = {
+        "obj_key": primary_key,
+        "obj_type": capi.get_type_info(unproxied).workflow_key,
+    }
+    connection = get_mq_connection()
+    if not connection:
+        return
+    channel = connection.channel()
+    channel.basic_publish(
+        exchange=SERIALIZE_EXCHANGE,
+        routing_key=SERIALIZE_ROUTING_KEY,
+        body=simplejson.dumps(message),
+        properties=pika.BasicProperties(content_type="text/plain",
+            delivery_mode=1
+        )
+    )
+
+def serialization_notifications():
+    """Set up bungnei serialization worker as a daemon.
     """
-    result = {}
-    obj = removeSecurityProxy(obj)
-    descriptor = None
-    if IAlchemistContent.providedBy(obj):
-        try:
-            descriptor = capi.capi.get_type_info(obj).descriptor
-        except KeyError:
-            log.error("Could not get a descriptor for %r", obj)
-    
-    # Get additional attributes
-    for name in include:
-        value = getattr(obj, name, None)
-        if value is None:
-            continue
-        if not name.endswith("s"):
-            name += "s"
-        if isinstance(value, collections.Iterable):
-            res = []
-            # !+ allowance for non-container-api-conformant alchemist containers
-            if IAlchemistContainer.providedBy(value):
-                value = value.values()
-            for item in value:
-                i = obj2dict(item, 0)
-                if name == "versions":
-                    permissions = get_head_object_state_rpm(item).permissions
-                    i["permissions"] = get_permissions_dict(permissions)
-                res.append(i)
-            result[name] = res
-        else:
-            result[name] = value
-    
-    # Get mapped attributes
-    for property in class_mapper(obj.__class__).iterate_properties:
-        if property.key in exclude:
-            continue
-        value = getattr(obj, property.key)
-        if value == parent:
-            continue
-        if value is None:
-            continue
-        
-        if isinstance(property, RelationshipProperty) and depth > 0:
-            if isinstance(value, collections.Iterable):
-                result[property.key] = []
-                for item in value:
-                    result[property.key].append(obj2dict(item, depth-1, 
-                            parent=obj,
-                            include=[],
-                            exclude=exclude + ["changes"]
-                    ))
-            else:
-                result[property.key] = obj2dict(value, depth-1, 
-                    parent=obj,
-                    include=[],
-                    exclude=exclude + ["changes"]
-                )
-        else:
-            if isinstance(property, RelationshipProperty):
-                continue
-            elif isinstance(property, ColumnProperty):
-                columns = property.columns
-                if len(columns)==1:
-                    if columns[0].type.__class__ == Binary:
-                        continue
-            if descriptor:
-                if property.key in descriptor.keys():
-                    field = descriptor.get(property.key)
-                    if (field and field.property and
-                        (field.property.__class__ == zope.schema.Choice)
-                    ):
-                                factory = field.property.vocabulary
-                                if factory is None:
-                                    vocab_name = getattr(field.property, 
-                                        "vocabularyName", None)
-                                    factory = zope.component.getUtility(
-                                        zope.schema.interfaces.IVocabularyFactory,
-                                        vocab_name
-                                    )
-                                #!+VOCABULARIES(mb, Aug-2012)some vocabularies
-                                # expect an interaction to generate values
-                                # todo - update these vocabularies to work 
-                                # with no request e.g. in notification threads 
-                                try:
-                                    vocabulary = factory(obj)                             
-                                    display_name = vocabulary.getTerm(value).title
-                                except NoInteraction:
-                                    log.error("This vocabulary %s expects an"
-                                        "interaction to generate terms.",
-                                        factory
-                                    )
-                                    display_name = value
-                                result[property.key] = dict(
-                                    name=property.key,
-                                    value=value,
-                                    displayAs=display_name
-                                )
-                                continue
-            result[property.key] = value
-    return result
-
+    mq_utility = zope.component.getUtility(IMessageQueueConfig)
+    connection = get_mq_connection()
+    if not connection:
+        return
+    channel = connection.channel()
+    #create exchange
+    channel.exchange_declare(exchange=SERIALIZE_EXCHANGE,
+        type="fanout", durable=True)
+    channel.queue_declare(queue=SERIALIZE_QUEUE, durable=True)
+    channel.queue_bind(queue=SERIALIZE_QUEUE,
+                       exchange=SERIALIZE_EXCHANGE,
+                       routing_key=SERIALIZE_ROUTING_KEY)
+    for i in range(mq_utility.get_number_of_workers()):
+        task_thread = Thread(target=serialization_worker)
+        task_thread.daemon = True
+        task_thread.start()

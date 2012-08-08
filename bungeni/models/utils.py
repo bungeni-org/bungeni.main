@@ -9,13 +9,30 @@ $Id$
 '''
 log = __import__("logging").getLogger("bungeni.models.utils")
 
+import collections
+
+import zope.component
+import zope.schema
+from zope.security.interfaces import NoInteraction
 from zope.security.management import getInteraction
+from zope.security.proxy import removeSecurityProxy
 from zope.publisher.interfaces import IRequest
-from bungeni.alchemist import Session
+from zope.dublincore.interfaces import IDCDescriptiveProperties
+
 import sqlalchemy as rdb
 from sqlalchemy import sql
-from sqlalchemy.orm import eagerload  #, lazyload
+from sqlalchemy.orm import (eagerload, RelationshipProperty, ColumnProperty, 
+    class_mapper
+)
+from sqlalchemy.types import Binary
+
+from bungeni.alchemist import Session
+from bungeni.alchemist.interfaces import (IAlchemistContainer, 
+    IAlchemistContent
+)
 import domain, schema, delegation
+from bungeni.core.workflow.states import get_head_object_state_rpm
+from bungeni.utils.capi import capi
 
 # !+ move "contextual" utils to ui.utils.contextual
 
@@ -200,9 +217,7 @@ def get_groups_held_for_user_in_parliament(user_id, parliament_id):
     """ get the Offices (functions/titles) held by a user """
     session = Session()
     connection = session.connection(domain.Group)
-    all_offices = session.query(domain.Office).all()
     group_ids = get_all_group_ids_in_parliament(parliament_id)
-    #group_ids = [office.group_id for office in all_offices]
     #!+MODELS(miano, 16 march 2011) Why are these queries hardcorded?
     #TODO:Fix this
     offices_held = rdb.select([schema.groups.c.short_name,
@@ -259,5 +274,141 @@ def get_parliament_for_group_id(group_id):
     else:
         return get_parliament_for_group_id(group.parent_group_id)
 
+
+# serialization utilities
+
+def get_permissions_dict(permissions):
+    results= []
+    for x in permissions:
+        # !+XML pls read the styleguide
+        results.append({"role": x[2], 
+            "permission": x[1], 
+            "setting": x[0] and "Allow" or "Deny"})
+    return results
+
+def obj2dict(obj, depth, parent=None, include=[], exclude=[]):
+    """ Returns dictionary representation of a domain object.
+    """
+    result = {}
+    obj = removeSecurityProxy(obj)
+    descriptor = None
+    if IAlchemistContent.providedBy(obj):
+        try:
+            descriptor = capi.get_type_info(obj).descriptor
+        except KeyError:
+            log.error("Could not get a descriptor for %r", obj)
+    
+    # Get additional attributes
+    for name in include:
+        value = getattr(obj, name, None)
+        if value is None:
+            continue
+        if not name.endswith("s"):
+            name += "s"
+        if isinstance(value, collections.Iterable):
+            res = []
+            # !+ allowance for non-container-api-conformant alchemist containers
+            if IAlchemistContainer.providedBy(value):
+                value = value.values()
+            for item in value:
+                i = obj2dict(item, 0)
+                if name == "versions":
+                    permissions = get_head_object_state_rpm(item).permissions
+                    i["permissions"] = get_permissions_dict(permissions)
+                res.append(i)
+            result[name] = res
+        else:
+            result[name] = value
+    
+    # Get mapped attributes
+    mapper = class_mapper(obj.__class__)
+    for property in mapper.iterate_properties:
+        if property.key in exclude:
+            continue
+        value = getattr(obj, property.key)
+        if value == parent:
+            continue
+        if value is None:
+            continue
+        
+        if isinstance(property, RelationshipProperty) and depth > 0:
+            if isinstance(value, collections.Iterable):
+                result[property.key] = []
+                for item in value:
+                    result[property.key].append(obj2dict(item, depth-1, 
+                            parent=obj,
+                            include=[],
+                            exclude=exclude + ["changes"]
+                    ))
+            else:
+                result[property.key] = obj2dict(value, depth-1, 
+                    parent=obj,
+                    include=[],
+                    exclude=exclude + ["changes"]
+                )
+        else:
+            if isinstance(property, RelationshipProperty):
+                continue
+            elif isinstance(property, ColumnProperty):
+                columns = property.columns
+                if len(columns) == 1:
+                    if columns[0].type.__class__ == Binary:
+                        continue
+            if descriptor:
+                columns = property.columns
+                is_foreign = False
+                if len(columns) == 1:
+                    if len(columns[0].foreign_keys):
+                        is_foreign = True
+                if (not is_foreign) and (property.key in descriptor.keys()):
+                    field = descriptor.get(property.key)
+                    if (field and field.property and
+                        (field.property.__class__ == zope.schema.Choice)):
+                                factory = field.property.vocabulary
+                                if factory is None:
+                                    vocab_name = getattr(field.property, 
+                                        "vocabularyName", None)
+                                    factory = zope.component.getUtility(
+                                        zope.schema.interfaces.IVocabularyFactory,
+                                        vocab_name
+                                    )
+                                #!+VOCABULARIES(mb, Aug-2012)some vocabularies
+                                # expect an interaction to generate values
+                                # todo - update these vocabularies to work 
+                                # with no request e.g. in notification threads 
+                                try:
+                                    vocabulary = factory(obj)                             
+                                    display_name = vocabulary.getTerm(value).title
+                                except NoInteraction:
+                                    log.error("This vocabulary %s expects an"
+                                        "interaction to generate terms.",
+                                        factory
+                                    )
+                                    #try to use dc adapter lookup
+                                    display_name = str(value)
+                                    try:
+                                        _prop = mapper.get_property_by_column(
+                                            property.columns[0])
+                                        _prop_value = getattr(obj, _prop.key)
+                                        dc = IDCDescriptiveProperties(
+                                            _prop_value, None)
+                                        if dc:
+                                            display_name = (
+                                                IDCDescriptiveProperties(
+                                                    _prop_value).title
+                                            )
+                                    except KeyError:
+                                        log.warn("No display text found for %s" 
+                                            " on object %s. Unmapped in orm.",
+                                            property.key, obj
+                                        )
+                                result[property.key] = dict(
+                                    name=property.key,
+                                    value=value,
+                                    displayAs=display_name
+                                )
+                                continue
+            result[property.key] = value
+    return result
 
 

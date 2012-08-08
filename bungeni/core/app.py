@@ -37,6 +37,7 @@ from bungeni.core.workspace import (WorkspaceContainer,
                                     load_workspaces)
 from bungeni.core.notifications import load_notifications
 from bungeni.core.emailnotifications import email_notifications
+from bungeni.core.serialize import serialization_notifications
 from bungeni.ui.utils import url, common # !+ core dependency on ui
 from bungeni.utils.capi import capi
 from bungeni.utils import register
@@ -64,6 +65,9 @@ def on_wsgi_application_created_event(application, event):
     
     #load email notifications
     email_notifications()
+
+    #set up serialization notifications
+    serialization_notifications()
 
     # import events modules, registering handlers
     import bungeni.core.events
