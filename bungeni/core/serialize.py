@@ -86,7 +86,6 @@ def publish_to_xml(context):
                     f.write(content)
                     files.append(f.name)
                     data[column.key] = dict(saved_file=os.path.basename(f.name))
-    
     data.update(
         obj2dict(context, 1, 
             parent=None,
@@ -94,18 +93,12 @@ def publish_to_xml(context):
             exclude=exclude
         )
     )
-    
-    # !+please do not use python builtin names as variable names
-    type = IWorkflow(context).name
-    
-    # !+IWorkflow(context).get_state(context.status).tags
+    obj_type = IWorkflow(context).name    
     tags = IStateController(context).get_state().tags
     if tags:
         data["tags"] = tags
-    
     permissions = get_object_state_rpm(context).permissions
     data["permissions"] = get_permissions_dict(permissions)
-    
     data["changes"] = []
     for change in getattr(context, "changes", []):
         change_dict = obj2dict(change, 0, parent=context)
@@ -114,7 +107,7 @@ def publish_to_xml(context):
         data["changes"].append(change_dict)
     
     # setup path to save serialized data 
-    path = os.path.join(setupStorageDirectory(), type)
+    path = os.path.join(setupStorageDirectory(), obj_type)
     if not os.path.exists(path):
         os.makedirs(path)
     
@@ -143,17 +136,17 @@ def publish_to_xml(context):
                 data["attachments"].append(attachment_dict)
     
     # saving xml file
-    with open("%s.xml" % (file_path), "w") as file:
-        file.write(serialize(data, name=type))
+    with open("%s.xml" % (file_path), "w") as xml_file:
+        xml_file.write(serialize(data, name=obj_type))
     
     # zipping xml, attached files plus any binary fields
     # also remove the temporary files
     if files:
-        zip = ZipFile("%s.zip" % (file_path), "w")
+        zip_file = ZipFile("%s.zip" % (file_path), "w")
         for f in files:
-            zip.write(f, os.path.basename(f))
+            zip_file.write(f, os.path.basename(f))
             os.remove(f)
-        zip.close()
+        zip_file.close()
 
 
 def serialize(data, name="object"):
@@ -211,24 +204,13 @@ def serialization_notifications_callback(channel, method, properties, body):
         domain_model = capi.get_type_info(obj_type).domain_model
     except KeyError:
         log.error("Unable to get domain model for type %s", obj_type)
-        return
     if domain_model is None:
         log.error("Unable to get domain model for type %s", obj_type)
     else:
         obj_key = valueKey(obj_data.get("obj_key"))
         obj = Session().query(domain_model).get(obj_key)
         if obj:
-            try:
-                wfc = IWorkflowController(obj)
-                wf_state = wfc.state_controller.get_state()
-                if wf_state and (
-                    wfc.state_controller.get_status() in 
-                    wfc.workflow.get_state_ids(not_tagged=["draft"], 
-                        restrict=False)
-                ):
-                    publish_to_xml(obj)
-            except InvalidStateError:
-                log.error("Unable to get workflow state for object %s.", obj)
+            publish_to_xml(obj)
         else:
             log.error("Unable to query object of type %s with key %s",
                 domain_model, obj_key
@@ -248,6 +230,19 @@ def serialization_worker():
 @register.handler(adapts=(IWorkflowed, IObjectCreatedEvent))
 @register.handler(adapts=(IWorkflowed, IObjectModifiedEvent))
 def queue_object_serialization(obj, event):
+    """Send a message to the serialization queue for non-draft documents
+    """
+    wf_state = None
+    try:
+        wfc = IWorkflowController(obj)
+        wf_state = wfc.state_controller.get_state()
+    except InvalidStateError:
+        log.error("Unable to get workflow state for object %s.", obj)
+        return
+    if wf_state and (
+        wfc.state_controller.get_status() in 
+        wfc.workflow.get_state_ids(tagged=["draft"], restrict=False)):
+        return
     unproxied = removeSecurityProxy(obj)
     mapper = object_mapper(unproxied)
     primary_key = mapper.primary_key_from_instance(unproxied)
@@ -269,7 +264,7 @@ def queue_object_serialization(obj, event):
     )
 
 def serialization_notifications():
-    """Set up bungnei serialization worker as a daemon.
+    """Set up bungeni serialization worker as a daemon.
     """
     mq_utility = zope.component.getUtility(IMessageQueueConfig)
     connection = get_mq_connection()
