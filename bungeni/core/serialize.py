@@ -138,6 +138,7 @@ def publish_to_xml(context):
     # saving xml file
     with open("%s.xml" % (file_path), "w") as xml_file:
         xml_file.write(serialize(data, name=obj_type))
+        xml_file.close()
     
     # zipping xml, attached files plus any binary fields
     # also remove the temporary files
@@ -233,6 +234,13 @@ def queue_object_serialization(obj, event):
     """Send a message to the serialization queue for non-draft documents
     """
     wf_state = None
+    if hasattr(obj, 'head'):
+        #serialize only head object - tree should contain all children
+        head_obj = obj.head
+        if head_obj:
+            if not IWorkflowed.providedBy(head_obj):
+                return
+            obj = head_obj
     try:
         wfc = IWorkflowController(obj)
         wf_state = wfc.state_controller.get_state()
