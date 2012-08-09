@@ -239,9 +239,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
         if fs:
             return "(%s)" % (fs)
         return ""
-
     
-
     def get_filter(self):
         """ () -> str
         """
@@ -255,14 +253,12 @@ class ContainerJSONListing(ContainerJSONBrowserView):
                 column = utk[fn]
                 kls = column.type.__class__
             ff_name = "filter_%s" % (fn)  # field filter name
-            ff = self.request.get(ff_name, None)  # field filter
+            ff = self.request.get(ff_name, "").strip() # field filter
             if ff:
-                md_field = self.domain_annotation.get(fn) #model descriptor field
-                if md_field:
-                    lc_filter = md_field.listing_column_filter
-                    if lc_filter:
-                        filter_queries.append((lc_filter,ff))
-                        continue
+                md_field = self.domain_annotation.get(fn) # model descriptor field
+                if md_field and md_field.listing_column_filter:
+                    filter_queries.append( (md_field.listing_column_filter, ff) )
+                    continue
                 if fn in utk:
                     if kls in (types.String, types.Unicode):
                         op, ffs = self._get_operator_field_filters(ff)

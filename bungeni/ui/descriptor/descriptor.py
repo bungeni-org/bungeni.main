@@ -455,7 +455,7 @@ class UserDelegationDescriptor(ModelDescriptor):
             ),
             listing_column=listing.user_name_column("delegation_id", _("User"),
                 "delegation"),
-            listing_column_filter=listing.user_name_column_filter,
+            listing_column_filter=listing.user_listing_name_column_filter,
         ),
     ]
 
@@ -1995,7 +1995,8 @@ class ChangeDescriptor(ModelDescriptor):
                     value_field="user_id")),
             view_widget=None,
             listing_column=listing.user_name_column("user_id", _("Name"), "user"),
-            listing_column_filter=listing.user_name_column_filter,
+            # !+ audit listing column filtering currently disabled
+            #listing_column_filter=listing.user_name_column_filter,
         ),
         Field(name="action",
             modes="view listing",

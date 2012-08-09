@@ -36,9 +36,30 @@ def _column(name, title, renderer, default=""):
         return default
     return column.GetterColumn(title, getter)
 
+def _multi_attrs_column_filter(instrumented_attributes,
+        query, filter_string, sort_dir_func
+    ):
+    """Generic column query filter logic, applied to the list of the specified 
+    columns for this domain type.
+    
+    instrumented_attributes:[sqlalchemy.orm.attributes.InstrumentedAttribute]
+    query:sqlalchemy.orm.query.Query
+    filter_string:str
+    sort_dir_func:callable(sqlalchemy.orm.attributes.InstrumentedAttribute)
+    """
+    filter_strings = filter_string.lower().split()
+    for fs in filter_strings:
+        query = query.filter(
+            expression.or_( *[
+                func.lower(attr).like("%%%s%%" % fs) 
+                for attr in instrumented_attributes ]
+            ))
+    return query.order_by( 
+        *[ sort_dir_func(attr) for attr in instrumented_attributes ])
+
 
 def localized_datetime_column(name, title, default="",
-        category="date", # "date" | "time" | "dateTime"
+        category="date",    # "date" | "time" | "dateTime"
         length="medium"     # "short" | "medium" | "long" | "full" | None
     ):
     def getter(item, formatter):
@@ -88,25 +109,19 @@ def name_column(name, title, default=""):
 def combined_name_column(name, title, default=""):
     """An extended name, combining full_name (localized)
     and short_name columns.
-
+    
     For types that have both a full_name and a short_name attribute:
     Group, ParliamentarySession
     """
     def getter(item, formatter):
         return "%s [%s]" % (_(item.full_name), item.short_name)
     return column.GetterColumn(title, getter)
-    
+
 def combined_name_column_filter(query, filter_string, sort_dir_func):
-    fs = filter_string.strip().lower().split(" ")
-    fc = []
-    for fs_ in fs:
-        fc.extend([func.lower(domain.Group.full_name).like("%%%s%%" % fs_),
-            func.lower(domain.Group.short_name).like("%%%s%%" % fs_)]
-        )
-    return query.filter(expression.or_(*fc)).order_by(
-        sort_dir_func(domain.Group.full_name), 
-        sort_dir_func(domain.Group.short_name),)      
-    
+    return _multi_attrs_column_filter(
+        [domain.Group.full_name, domain.Group.short_name],
+        query, filter_string, sort_dir_func)
+
 
 def dc_property_column(name, title, property_name="title"):
     def renderer(value):
@@ -136,33 +151,16 @@ def user_name_column(name, title, attr):
     return column.GetterColumn(title, getter)
 
 def user_name_column_filter(query, filter_string, sort_dir_func):
-    fs = filter_string.strip().lower().split(" ")
-    fc = []
-    for fs_ in fs:
-        fc.extend([func.lower(domain.User.first_name).like("%%%s%%" % fs_),
-            func.lower(domain.User.middle_name).like("%%%s%%" % fs_),
-            func.lower(domain.User.last_name).like("%%%s%%" % fs_),]
-        )
-    return query.join(domain.User).filter(expression.or_(*fc)).order_by(
-        sort_dir_func(domain.User.last_name),
-        sort_dir_func(domain.User.first_name),
-        sort_dir_func(domain.User.middle_name),
-    )
+    query = query.join(domain.User)
+    return _multi_attrs_column_filter(
+        [domain.User.last_name, domain.User.first_name, domain.User.middle_name],
+        query, filter_string, sort_dir_func)
 
 
 def user_listing_name_column_filter(query, filter_string, sort_dir_func):
-    fs = filter_string.strip().lower().split(" ")
-    fc = []
-    for fs_ in fs:
-        fc.extend([func.lower(domain.User.first_name).like("%%%s%%" % fs_),
-            func.lower(domain.User.middle_name).like("%%%s%%" % fs_),
-            func.lower(domain.User.last_name).like("%%%s%%" % fs_),]
-        )
-    return query.filter(expression.or_(*fc)).order_by(
-        sort_dir_func(domain.User.last_name),
-        sort_dir_func(domain.User.first_name),
-        sort_dir_func(domain.User.middle_name),
-    )
+    return _multi_attrs_column_filter(
+        [domain.User.last_name, domain.User.first_name, domain.User.middle_name],
+        query, filter_string, sort_dir_func)
 
 
 def linked_mp_name_column(name, title, attr):
@@ -200,18 +198,10 @@ def linked_mp_name_column(name, title, attr):
 
 
 def linked_mp_name_column_filter(query, filter_string, sort_dir_func):
-    fs = filter_string.strip().lower().split(" ")
-    fc = []
-    for fs_ in fs:
-        fc.extend([func.lower(domain.User.first_name).like("%%%s%%" % fs_),
-            func.lower(domain.User.middle_name).like("%%%s%%" % fs_),
-            func.lower(domain.User.last_name).like("%%%s%%" % fs_),]
-        )
-    return query.join(domain.User).filter(expression.or_(*fc)).order_by(
-        sort_dir_func(domain.User.first_name),
-        sort_dir_func(domain.User.middle_name),
-        sort_dir_func(domain.User.last_name)
-    )
+    query = query.join(domain.User)
+    return _multi_attrs_column_filter(
+        [domain.User.first_name, domain.User.middle_name, domain.User.last_name],
+        query, filter_string, sort_dir_func)
 
 
 def user_party_column(name, title, default="-"):
