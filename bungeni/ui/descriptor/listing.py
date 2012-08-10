@@ -45,7 +45,9 @@ def _multi_attrs_column_filter(instrumented_attributes,
     instrumented_attributes:[sqlalchemy.orm.attributes.InstrumentedAttribute]
     query:sqlalchemy.orm.query.Query
     filter_string:str
+        space-separated value to filter the column on
     sort_dir_func:callable(sqlalchemy.orm.attributes.InstrumentedAttribute)
+        the sqlalchemy sort expression desc or asc
     """
     filter_strings = filter_string.lower().split()
     for fs in filter_strings:

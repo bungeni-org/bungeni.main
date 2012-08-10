@@ -215,31 +215,20 @@ class ContainerJSONListing(ContainerJSONBrowserView):
     """
     permission = "zope.View"
     filter_property_fields = []
-
-    def _get_operator_field_filters(self, field_filter):
-        field_filters = [ff for ff in field_filter.strip().split(" ") if ff]
-        if "AND" in field_filters:
-            operator = " AND "
-            while "AND" in field_filters:
-                field_filters.remove("AND")
-        else:
-            operator = " OR "
-        while "OR" in field_filters:
-            field_filters.remove("OR")
-        return operator, field_filters
-
-    def _get_field_filter(self, fieldname, field_filters, operator):
+    
+    def _get_field_filter_string(self, fieldname, field_filters):
         """If we are filtering for replaced fields we assume
         that they are character fields.
         """
-        fs = operator.join([
-                "lower(%s) LIKE '%%%s%%' " % (fieldname, f.lower())
+        fs = " AND ".join([
+                "lower(%s) LIKE '%%%s%%'" % (fieldname, f.lower())
                 for f in field_filters
         ])
         if fs:
             return "(%s)" % (fs)
         return ""
     
+    # !+ change this to filter the sqlalchemy query?
     def get_filter(self):
         """ () -> str
         """
@@ -254,23 +243,28 @@ class ContainerJSONListing(ContainerJSONBrowserView):
                 kls = column.type.__class__
             ff_name = "filter_%s" % (fn)  # field filter name
             ff = self.request.get(ff_name, "").strip() # field filter
-            if ff:
-                md_field = self.domain_annotation.get(fn) # model descriptor field
-                if md_field and md_field.listing_column_filter:
-                    filter_queries.append( (md_field.listing_column_filter, ff) )
-                    continue
+            if not ff:
+                # no filtering on this field
+                continue
+            # OK, add filter for this column...
+            md_field = self.domain_annotation.get(fn) # model descriptor field
+            if md_field and md_field.listing_column_filter:
+                filter_queries.append( (md_field.listing_column_filter, ff) )
+            else:
+                # no md_field.listing_column_filter (or md_field)
                 if fn in utk:
+                    # !+sqlalchemy.types.Unicode inherits from types.String
                     if kls in (types.String, types.Unicode):
-                        op, ffs = self._get_operator_field_filters(ff)
-                        fs = [self._get_field_filter(str(column), ffs, op)]
+                        fs.append(
+                            self._get_field_filter_string(str(column), ff.split()))
                     elif kls in (types.Date, types.DateTime):
-                        fs = get_date_filter_string(column, ff)
+                        fs.append(get_date_filter_string(column, ff))
                     else:
                         fs.append("%s = %s" % (column, ff))
                 else:
                     self.filter_property_fields.append(fn)
-        return ("".join(fs), filter_queries)
-
+        return " AND ".join(fs), filter_queries
+    
     def query_add_filters(self, query, *filter_strings):
         """ (filter_sytings) -> query
         """
@@ -290,7 +284,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
         if sort_on:
             sort_on = sort_on[5:]
             md_field = self.domain_annotation.get(sort_on) #model descriptor field
-            if (md_field and sort_on in self.utk):
+            if md_field and sort_on in self.utk:
                 sort_on_keys.append(sort_on)
 
         # second, process model defaults
@@ -421,8 +415,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
             for sort_on in sort_on_keys:
                 md_field = self.domain_annotation.get(sort_on)
                 if md_field:
-                    lc_filter = md_field.listing_column_filter
-                    if not lc_filter:   
+                    if not md_field.listing_column_filter:
                         sort_on_expressions.append(
                             self.sort_dir_func(
                                 getattr(self.domain_model, sort_on)))
