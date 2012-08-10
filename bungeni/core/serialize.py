@@ -82,10 +82,13 @@ def publish_to_xml(context):
             exclude.append(column.key)
             content = getattr(context, column.key, None)
             if content:
-                with tmp(delete=False) as f:
-                    f.write(content)
-                    files.append(f.name)
-                    data[column.key] = dict(saved_file=os.path.basename(f.name))
+                bfile = tmp(delete=False)
+                bfile.write(content)
+                files.append(bfile.name)
+                data[column.key] = dict(
+                    saved_file=os.path.basename(bfile.name)
+                )
+                bfile.close()
     data.update(
         obj2dict(context, 1, 
             parent=None,
@@ -117,8 +120,6 @@ def publish_to_xml(context):
     if interfaces.IFeatureAttachment.providedBy(context):
         attachments = getattr(context, "attachments", None)
         if attachments:
-            # add xml file to list of files to zip
-            files.append("%s.xml" % (file_path))
             data["attachments"] = []
             for attachment in attachments:
                 # serializing attachment
@@ -129,20 +130,25 @@ def publish_to_xml(context):
                 attachment_dict["permissions"] = \
                     get_permissions_dict(permissions)
                 # saving attachment to tmp
-                with tmp(delete=False) as f:
-                    f.write(attachment.data)
-                    files.append(f.name)
-                    attachment_dict["saved_file"] = os.path.basename(f.name)
+                attached_file = tmp(delete=False)
+                attached_file.write(attachment.data)
+                attached_file.close()
+                files.append(attached_file.name)
+                attachment_dict["saved_file"] = os.path.basename(
+                    attached_file.name
+                )
                 data["attachments"].append(attachment_dict)
     
     # saving xml file
     with open("%s.xml" % (file_path), "w") as xml_file:
         xml_file.write(serialize(data, name=obj_type))
         xml_file.close()
-    
+
     # zipping xml, attached files plus any binary fields
     # also remove the temporary files
     if files:
+        # add xml file to list of files to zip
+        files.append("%s.xml" % (file_path))
         zip_file = ZipFile("%s.zip" % (file_path), "w")
         for f in files:
             zip_file.write(f, os.path.basename(f))
@@ -204,17 +210,19 @@ def serialization_notifications_callback(channel, method, properties, body):
     try:
         domain_model = capi.get_type_info(obj_type).domain_model
     except KeyError:
-        log.error("Unable to get domain model for type %s", obj_type)
+        log.error("Could get domain model for type %s", obj_type)
     if domain_model is None:
-        log.error("Unable to get domain model for type %s", obj_type)
+        log.error("Could not get domain model for type %s", obj_type)
     else:
+        #!+SESSIONS(mb, aug-2012) investigate why on ObjectCreatedEvent,
+        #some objects cannot be queried
         obj_key = valueKey(obj_data.get("obj_key"))
         session = Session()
         obj = session.query(domain_model).get(obj_key)
         if obj:
             publish_to_xml(obj)
         else:
-            log.error("Unable to query object of type %s with key %s",
+            log.error("Could not query object of type %s with key %s",
                 domain_model, obj_key
             )
     channel.basic_ack(delivery_tag=method.delivery_tag)
@@ -251,7 +259,7 @@ def queue_object_serialization(obj, event):
         return
     if wf_state and (
         wfc.state_controller.get_status() in 
-        wfc.workflow.get_state_ids(tagged=["draft"], restrict=False)):
+        wfc.workflow.get_state_ids(tagged=["private"], restrict=False)):
         return
     unproxied = removeSecurityProxy(obj)
     mapper = object_mapper(unproxied)
