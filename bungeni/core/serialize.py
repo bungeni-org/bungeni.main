@@ -209,7 +209,8 @@ def serialization_notifications_callback(channel, method, properties, body):
         log.error("Unable to get domain model for type %s", obj_type)
     else:
         obj_key = valueKey(obj_data.get("obj_key"))
-        obj = Session().query(domain_model).get(obj_key)
+        session = Session()
+        obj = session.query(domain_model).get(obj_key)
         if obj:
             publish_to_xml(obj)
         else:
@@ -217,6 +218,7 @@ def serialization_notifications_callback(channel, method, properties, body):
                 domain_model, obj_key
             )
     channel.basic_ack(delivery_tag=method.delivery_tag)
+    session.close()
 
 def serialization_worker():
     connection = get_mq_connection()

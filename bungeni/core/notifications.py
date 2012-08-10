@@ -186,6 +186,7 @@ def worker():
                                                 ),
                 routing_key="")
         channel.basic_ack(delivery_tag=method.delivery_tag)
+        session.close()
 
     channel.basic_qos(prefetch_count=1)
     mq_utility = component.getUtility(IMessageQueueConfig)
