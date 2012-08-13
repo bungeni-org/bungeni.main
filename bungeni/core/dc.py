@@ -85,9 +85,10 @@ class DescriptiveProperties(object):
     def translate(self, context, name):
         """Gets translated field values
         """
-        lang = get_request_language()
+        lang = (get_request_language(default=None) or 
+            getattr(context, "language", None))
         if not lang:
-            return getattr(context, name)
+            return getattr(context, name, "")
         if interfaces.ITranslatable.providedBy(context):
             if context.language != lang:
                 translation = get_translation_for(context, lang)
@@ -95,7 +96,8 @@ class DescriptiveProperties(object):
                     translation
                 )
                 if translation:
-                    return translation[0].field_text
+                    if translation[0].field_text:
+                        return translation[0].field_text
         return getattr(context, name)
 
 class DocumentDescriptiveProperties(DescriptiveProperties):

@@ -221,16 +221,21 @@ def serialization_notifications_callback(channel, method, properties, body):
         obj = session.query(domain_model).get(obj_key)
         if obj:
             publish_to_xml(obj)
+            channel.basic_ack(delivery_tag=method.delivery_tag)
         else:
-            log.error("Could not query object of type %s with key %s",
+            log.error("Could not query object of type %s with key %s. "
+                "Requeuing message",
                 domain_model, obj_key
+            )
+            #this might be due to an unsaved instance issue see note above
+            channel.basic_reject(delivery_tag=method.delivery_tag,
+                requeue=True
             )
         session.close()
     else:
         log.error("Failed to get class in bungeni.models.domain named %s",
             obj_type
         )
-    channel.basic_ack(delivery_tag=method.delivery_tag)
 
 def serialization_worker():
     connection = get_mq_connection()
@@ -277,7 +282,7 @@ def queue_object_serialization(obj, event):
         routing_key=SERIALIZE_ROUTING_KEY,
         body=simplejson.dumps(message),
         properties=pika.BasicProperties(content_type="text/plain",
-            delivery_mode=1
+            delivery_mode=2
         )
     )
 

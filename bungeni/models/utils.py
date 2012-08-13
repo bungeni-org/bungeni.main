@@ -17,6 +17,7 @@ from zope.security.interfaces import NoInteraction
 from zope.security.management import getInteraction
 from zope.security.proxy import removeSecurityProxy
 from zope.publisher.interfaces import IRequest
+from zope.i18n import translate
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 
 import sqlalchemy as rdb
@@ -32,6 +33,7 @@ from bungeni.alchemist.interfaces import (IAlchemistContainer,
 )
 import domain, schema, delegation
 from bungeni.core.workflow.states import get_head_object_state_rpm
+from bungeni.utils.capi import capi
 
 # !+ move "contextual" utils to ui.utils.contextual
 
@@ -285,9 +287,11 @@ def get_permissions_dict(permissions):
             "setting": x[0] and "Allow" or "Deny"})
     return results
 
-def obj2dict(obj, depth, parent=None, include=[], exclude=[]):
+def obj2dict(obj, depth, parent=None, include=[], exclude=[], lang=None):
     """ Returns dictionary representation of a domain object.
     """
+    if lang is None:
+        lang = getattr(obj, "language", capi.default_language)
     result = {}
     obj = removeSecurityProxy(obj)
     descriptor = None
@@ -310,7 +314,7 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[]):
             if IAlchemistContainer.providedBy(value):
                 value = value.values()
             for item in value:
-                i = obj2dict(item, 0)
+                i = obj2dict(item, 0, lang=lang)
                 if name == "versions":
                     permissions = get_head_object_state_rpm(item).permissions
                     i["permissions"] = get_permissions_dict(permissions)
@@ -337,13 +341,15 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[]):
                     result[property.key].append(obj2dict(item, depth-1, 
                             parent=obj,
                             include=[],
-                            exclude=exclude + ["changes"]
+                            exclude=exclude + ["changes"],
+                            lang=lang
                     ))
             else:
                 result[property.key] = obj2dict(value, depth-1, 
                     parent=obj,
                     include=[],
-                    exclude=exclude + ["changes"]
+                    exclude=exclude + ["changes"],
+                    lang=lang
                 )
         else:
             if isinstance(property, RelationshipProperty):
@@ -363,7 +369,9 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[]):
                     field = descriptor.get(property.key)
                     if (field and field.property and
                         (field.property.__class__ == zope.schema.Choice)):
-                                factory = field.property.vocabulary
+                                factory = (field.property.vocabulary or 
+                                    field.property.source
+                                )
                                 if factory is None:
                                     vocab_name = getattr(field.property, 
                                         "vocabularyName", None)
@@ -374,10 +382,25 @@ def obj2dict(obj, depth, parent=None, include=[], exclude=[]):
                                 #!+VOCABULARIES(mb, Aug-2012)some vocabularies
                                 # expect an interaction to generate values
                                 # todo - update these vocabularies to work 
-                                # with no request e.g. in notification threads 
+                                # with no request e.g. in notification threads
                                 try:
                                     vocabulary = factory(obj)                             
-                                    display_name = vocabulary.getTerm(value).title
+                                    term = vocabulary.getTerm(value)
+                                    if lang:
+                                        if hasattr(factory, "vdex"):
+                                            display_name = (
+                                                factory.vdex.getTermCaption(
+                                                factory.getTermById(value), 
+                                                lang
+                                            ))
+                                        else:
+                                            display_name = translate(
+                                                (term.title or term.value),
+                                                target_language=lang,
+                                                domain="bungeni"
+                                            )
+                                    else:
+                                        display_name = term.title or term.value
                                 except NoInteraction:
                                     log.error("This vocabulary %s expects an"
                                         "interaction to generate terms.",
