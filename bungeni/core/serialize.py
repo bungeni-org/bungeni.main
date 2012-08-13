@@ -34,10 +34,9 @@ from bungeni.core.workflow.interfaces import (IWorkflow, IStateController,
     IWorkflowed, IWorkflowController, InvalidStateError
 )
 from bungeni.core.notifications import get_mq_connection
-from bungeni.models import interfaces
+from bungeni.models import interfaces, domain
 from bungeni.models.utils import obj2dict, get_permissions_dict
 from bungeni.utils import register, naming
-from bungeni.utils.capi import capi
 
 import pika
 
@@ -138,22 +137,29 @@ def publish_to_xml(context):
                     attached_file.name
                 )
                 data["attachments"].append(attachment_dict)
-    
-    # saving xml file
-    with open("%s.xml" % (file_path), "w") as xml_file:
-        xml_file.write(serialize(data, name=obj_type))
-        xml_file.close()
 
+    
     # zipping xml, attached files plus any binary fields
     # also remove the temporary files
     if files:
-        # add xml file to list of files to zip
-        files.append("%s.xml" % (file_path))
+        #generate temporary xml file
+        temp_xml = tmp(delete=False)
+        temp_xml.write(serialize(data, name=obj_type))
+        temp_xml.close()
+        #write attachments/binary fields to zip
         zip_file = ZipFile("%s.zip" % (file_path), "w")
         for f in files:
             zip_file.write(f, os.path.basename(f))
             os.remove(f)
+        #write the xml
+        zip_file.write(temp_xml.name, "%s.xml" % os.path.basename(file_path))
+        os.remove(temp_xml.name) 
         zip_file.close()
+    else:
+        # save serialized xml to file
+        with open("%s.xml" % (file_path), "w") as xml_file:
+            xml_file.write(serialize(data, name=obj_type))
+            xml_file.close()
 
 
 def serialize(data, name="object"):
@@ -206,16 +212,10 @@ SERIALIZE_ROUTING_KEY = "bungeni_serialization"
 def serialization_notifications_callback(channel, method, properties, body):
     obj_data = simplejson.loads(body)
     obj_type = obj_data.get("obj_type")
-    domain_model = None
-    try:
-        domain_model = capi.get_type_info(obj_type).domain_model
-    except KeyError:
-        log.error("Could get domain model for type %s", obj_type)
-    if domain_model is None:
-        log.error("Could not get domain model for type %s", obj_type)
-    else:
-        #!+SESSIONS(mb, aug-2012) investigate why on ObjectCreatedEvent,
-        #some objects cannot be queried
+    domain_model = getattr(domain, obj_type, None)
+    #!+SESSIONS(mb, aug-2012) investigate why on ObjectCreatedEvent,
+    #some objects cannot be queried
+    if domain_model:
         obj_key = valueKey(obj_data.get("obj_key"))
         session = Session()
         obj = session.query(domain_model).get(obj_key)
@@ -225,8 +225,12 @@ def serialization_notifications_callback(channel, method, properties, body):
             log.error("Could not query object of type %s with key %s",
                 domain_model, obj_key
             )
+        session.close()
+    else:
+        log.error("Failed to get class in bungeni.models.domain named %s",
+            obj_type
+        )
     channel.basic_ack(delivery_tag=method.delivery_tag)
-    session.close()
 
 def serialization_worker():
     connection = get_mq_connection()
@@ -244,13 +248,6 @@ def queue_object_serialization(obj, event):
     """Send a message to the serialization queue for non-draft documents
     """
     wf_state = None
-    if hasattr(obj, 'head'):
-        #serialize only head object - tree should contain all children
-        head_obj = obj.head
-        if head_obj:
-            if not IWorkflowed.providedBy(head_obj):
-                return
-            obj = head_obj
     try:
         wfc = IWorkflowController(obj)
         wf_state = wfc.state_controller.get_state()
@@ -264,9 +261,12 @@ def queue_object_serialization(obj, event):
     unproxied = removeSecurityProxy(obj)
     mapper = object_mapper(unproxied)
     primary_key = mapper.primary_key_from_instance(unproxied)
+    #!+CAPI(mb, Aug-2012) capi lookup in as at r9707 fails for some keys
+    #e.g. get_type_info(instance).workflow_key resolves while 
+    #get_type_info(same_workflow_key) raises KeyError
     message = {
         "obj_key": primary_key,
-        "obj_type": capi.get_type_info(unproxied).workflow_key,
+        "obj_type": unproxied.__class__.__name__
     }
     connection = get_mq_connection()
     if not connection:
