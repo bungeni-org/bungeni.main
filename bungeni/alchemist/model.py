@@ -323,6 +323,21 @@ class Field(object):
         CONVENTION: not specifying a parameter or specifying it as None
         are interpreted to be equivalent.
         """
+        
+        # !+modes_localizable_refactor - eliminate modes/displayable param/attr
+        # infer the list of displayable modes from the modes specified in the 
+        # list of localizables
+        # !+ for displayable but not-localizable (e.g. "add" for when column is
+        #    not nullable) add a db-column-validation on load of each field
+        # !+ for now, bridge to old behaviour, to be able to proceed as 
+        # previous, by just setting the modes parameter
+        if modes is None:
+            if localizable is None:
+                localizable = [show(modes=self.__class__._modes[:])]
+            modes = [ mode for loc in localizable for mode in loc.modes ]
+            # !+ ensure unique, normalized order
+        
+        
         # set attribute values
         kw = vars()
         for p in (
@@ -358,6 +373,7 @@ class Field(object):
             assert "listing" in self.modes, \
                 "Field [%s] sets listing_column_filter but no listing mode" % (
                     self.name)
+        # !+modes_localizable_refactor
         # the default list of show/hide localization directives
         if self.localizable is None:
             self.localizable = []

@@ -137,22 +137,25 @@ def _get_related_user(item_user, attr):
     """Get the user instance that is related to this item via <attr>,
     or if <attr> is None, return the item_user itself.
     """
-    assertion_message = "Item User [%s] may not be None" % (item_user)
-    if attr:
-        item_user = getattr(item_user, attr, None)
-        assertion_message = "Item [%s] may not have None as [%s]" % (
-            item_user, attr)
-    assert item_user is not None, assertion_message
-    return item_user
+    assert item_user is not None, \
+        "Item [%s] may not be None" % (item_user)
+    related_user = getattr(item_user, attr, None)
+    assert related_user is not None, \
+        "Item [%s] may not have None as [%s]" % (item_user, attr)
+    return related_user
 
-def user_name_column(name, title, attr):
+def user_name_column(name, title):
+    def getter(user, formatter):
+        return user.fullname # User.fullname property
+    return column.GetterColumn(title, getter)
+def related_user_name_column(name, title, attr):
     # !+FIELD_KEYERROR why cannot use the User.fullname property directly?
     def getter(item_user, formatter):
         item_user = _get_related_user(item_user, attr)
         return item_user.fullname # User.fullname property
     return column.GetterColumn(title, getter)
 
-def user_name_column_filter(query, filter_string, sort_dir_func):
+def related_user_name_column_filter(query, filter_string, sort_dir_func):
     query = query.join(domain.User)
     return _multi_attrs_column_filter(
         [domain.User.last_name, domain.User.first_name, domain.User.middle_name],

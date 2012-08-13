@@ -165,7 +165,6 @@ def DeathBeforeLife(User):
 
 # !+EDIT_AS_VIEW fields in "edit" mode on which user has no Edit permission? 
 
-
 def LanguageField(name="language", modes="view edit add listing", 
         localizable=[ 
             show("view edit"), 
@@ -183,7 +182,6 @@ def LanguageField(name="language", modes="view edit add listing",
         ),
         add_widget=widgets.LanguageLookupWidget,
     )
-
 
 def AdmissibleDateField(name="admissible_date"):
     # [sys]
@@ -218,19 +216,17 @@ class UserDescriptor(ModelDescriptor):
     fields = [
         Field(name="user_id", # [sys] for linking item in listing
             label="Name",
-            modes="view listing",
             localizable=[
+                # add edit -> non-ui
                 hide("view"),
                 show("listing"),
             ],
-            listing_column=listing.user_name_column("user_id", _("Name"), None),
+            listing_column=listing.user_name_column("user_id", _("Name")),
             listing_column_filter=listing.user_listing_name_column_filter
         ),
         Field(name="salutation", # [user-req]
-            modes="view edit add listing",
-            localizable=[ 
-                show("view edit add"), 
-                show("listing"), 
+            localizable=[
+                show("view edit add listing"),
             ],
             property=schema.TextLine(title=_("Salutation"),
                 description=_("e.g. Mr. Mrs, Prof. etc."),
@@ -238,10 +234,8 @@ class UserDescriptor(ModelDescriptor):
             ),
         ),
         Field(name="title", # [user-req]
-            modes="view edit add listing",
-            localizable=[ 
-                show("view edit add"),
-                show("listing"), 
+            localizable=[
+                show("view edit add listing"),
             ],
             property=schema.TextLine(title=_("Title"),
                 description=_("e.g. Chief Advisor, etc."),
@@ -249,15 +243,14 @@ class UserDescriptor(ModelDescriptor):
             ),
         ),
         Field(name="first_name", # [user-req]
-            modes="view edit add listing",
-            localizable=[ 
+            localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view edit"), 
                 hide("listing"),
             ],
             property=schema.TextLine(title=_("First Name"))
         ),
         Field(name="middle_name", # [user]
-            modes="view edit add listing",
             localizable=[
                 show("view edit add"), 
                 hide("listing"),
@@ -265,16 +258,16 @@ class UserDescriptor(ModelDescriptor):
             property=schema.TextLine(title=_("Middle Name"), required=False)
         ),
         Field(name="last_name", # [user-req]
-            modes="view edit add listing",
             localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view edit"), 
                 hide("listing"),
             ],
             property=schema.TextLine(title=_("Last Name"))
         ),
         Field(name="email", # [user-req]
-            modes="view edit add listing",
             localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view edit"), 
                 show("listing"),
             ],
@@ -284,8 +277,8 @@ class UserDescriptor(ModelDescriptor):
             ),
         ),
         Field(name="login", # [user-req]
-            modes="view add listing",
             localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view"),
                 hide("listing"),
             ],
@@ -299,11 +292,12 @@ class UserDescriptor(ModelDescriptor):
             ),
         ),
         Field(name="_password", # [user-req]
-            modes="add",
+            localizable=[
+                show("add"), # db-not-null-ui-add !+?
+            ],
             property=schema.TextLine(title=_("Initial password")),
         ),
         Field(name="national_id", # [user]
-            modes="view edit add listing",
             localizable=[
                 show("view edit add"), 
                 hide("listing"),
@@ -311,9 +305,8 @@ class UserDescriptor(ModelDescriptor):
             property=schema.TextLine(title=_("National Id"), required=False)
         ),
         Field(name="gender", # [user-req]
-            modes="view edit add listing",
             localizable=[
-                show("view edit"), 
+                show("view edit add"), 
                 show("listing"),
             ],
             property=schema.Choice(title=_("Gender"),
@@ -324,9 +317,8 @@ class UserDescriptor(ModelDescriptor):
             add_widget=widgets.CustomRadioWidget
         ),
         Field(name="date_of_birth", # [user-req]
-            modes="view edit add listing",
             localizable=[
-                show("view edit"), 
+                show("view edit add"), 
                 show("listing"),
             ],
             property=schema.Date(title=_("Date of Birth"), 
@@ -337,9 +329,8 @@ class UserDescriptor(ModelDescriptor):
             search_widget=widgets.date_input_search_widget
         ),
         Field(name="birth_country", # [user-req]
-            modes="view edit add listing",
             localizable=[
-                show("view edit"), 
+                show("view edit add"), 
                 hide("listing"),
             ],
             property=schema.Choice(title=_("Country of Birth"),
@@ -348,9 +339,8 @@ class UserDescriptor(ModelDescriptor):
             )
         ),
         Field(name="birth_nationality", # [user-req]
-            modes="view edit add listing",
             localizable=[
-                show("view edit"), 
+                show("view edit add"), 
                 hide("listing"),
             ],
             property=schema.Choice(title=_("Nationality at Birth"),
@@ -359,9 +349,8 @@ class UserDescriptor(ModelDescriptor):
             ),
         ),
         Field(name="current_nationality", # [user-req]
-            modes="view edit add listing",
             localizable=[
-                show("view edit"), 
+                show("view edit add"), 
                 hide("listing"),
             ],
             property=schema.Choice(title=_("Current Nationality"),
@@ -370,7 +359,6 @@ class UserDescriptor(ModelDescriptor):
             ),
         ),
         Field(name="marital_status", # [user-req]
-            modes="view edit add listing",
             localizable=[
                 show("view edit add listing"),
             ],
@@ -384,9 +372,8 @@ class UserDescriptor(ModelDescriptor):
             ),
         ),
         Field(name="date_of_death", # [user]
-            modes="view edit add listing",
             localizable=[
-                show("view"),
+                show("view edit"),
                 hide("add listing"),
             ],
             property=schema.Date(title=_("Date of Death"), required=False),
@@ -396,7 +383,6 @@ class UserDescriptor(ModelDescriptor):
         ),
         Field(name="image", # [img]
             # !+LISTING_IMG(mr, apr-2011) TypeError, not JSON serializable
-            modes="view edit add",
             localizable=[
                 show("view edit add"),
             ],
@@ -409,7 +395,6 @@ class UserDescriptor(ModelDescriptor):
         ),
         LanguageField("language"), # [user-req]
         Field(name="description", # [rtf]
-            modes="view edit add",
             localizable=[
                 show("view edit add"),
             ],
@@ -421,7 +406,6 @@ class UserDescriptor(ModelDescriptor):
             add_widget=widgets.RichTextEditor
         ),
         Field(name="remarks", # [rtf]
-            modes="view edit add",
             localizable=[
                 show("view edit add"),
             ],
@@ -453,7 +437,7 @@ class UserDelegationDescriptor(ModelDescriptor):
                     value_field="user_id"
                 )
             ),
-            listing_column=listing.user_name_column("delegation_id", _("User"),
+            listing_column=listing.related_user_name_column("delegation_id", _("User"),
                 "delegation"),
             listing_column_filter=listing.user_listing_name_column_filter,
         ),
@@ -611,8 +595,8 @@ class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
                     value_field="user_id"
                 )
             ),
-            listing_column=listing.user_name_column("user_id", _("Name"), "user"),
-            listing_column_filter=listing.user_name_column_filter,
+            listing_column=listing.related_user_name_column("user_id", _("Name"), "user"),
+            listing_column_filter=listing.related_user_name_column_filter,
             edit_widget=widgets.AutoCompleteWidget(remote_data=True,
                 yui_maxResultsDisplayed=5),
             add_widget=widgets.AutoCompleteWidget(remote_data=True)
@@ -1133,8 +1117,8 @@ class CommitteeMemberDescriptor(GroupMembershipDescriptor):
             property=schema.Choice(title=_("Name"),
                 source=vocabulary.MemberOfParliamentSource("user_id")
             ),
-            listing_column=listing.user_name_column("user_id", _("Name"), "user"),
-            listing_column_filter=listing.user_name_column_filter,
+            listing_column=listing.related_user_name_column("user_id", _("Name"), "user"),
+            listing_column_filter=listing.related_user_name_column_filter,
             add_widget = widgets.AutoCompleteWidget(remote_data=True),
             edit_widget = widgets.AutoCompleteWidget(remote_data=True)
         ),
@@ -1406,8 +1390,8 @@ class CommitteeStaffDescriptor(GroupMembershipDescriptor):
                     value_field="user_id"
                 )
             ),
-            listing_column=listing.user_name_column("user_id", _("Name"), "user"),
-            listing_column_filter=listing.user_name_column_filter,
+            listing_column=listing.related_user_name_column("user_id", _("Name"), "user"),
+            listing_column_filter=listing.related_user_name_column_filter,
             add_widget=widgets.AutoCompleteWidget(remote_data=True),
             edit_widget=widgets.AutoCompleteWidget(remote_data=True)
         ),
@@ -1510,8 +1494,8 @@ class OfficeMemberDescriptor(GroupMembershipDescriptor):
                     value_field="user_id"
                 )
             ),
-            listing_column=listing.user_name_column("user_id", _("Name"), "user"),
-            listing_column_filter=listing.user_name_column_filter,
+            listing_column=listing.related_user_name_column("user_id", _("Name"), "user"),
+            listing_column_filter=listing.related_user_name_column_filter,
             add_widget=widgets.AutoCompleteWidget(remote_data=True),
             edit_widget=widgets.AutoCompleteWidget(remote_data=True)
         )
@@ -1571,8 +1555,8 @@ class MinisterDescriptor(GroupMembershipDescriptor):
                     value_field="user_id"
                 )
             ),
-            listing_column=listing.user_name_column("user_id", _("Name"), "user"),
-            listing_column_filter=listing.user_name_column_filter,
+            listing_column=listing.related_user_name_column("user_id", _("Name"), "user"),
+            listing_column_filter=listing.related_user_name_column_filter,
             add_widget = widgets.AutoCompleteWidget(remote_data=True),
             edit_widget = widgets.AutoCompleteWidget(remote_data=True)
         )
@@ -1958,8 +1942,8 @@ class EventDescriptor(DocDescriptor):
         # !+f.localizable changing localizable modes AFTER Field is initialized
         # gives mismatch error when descriptors are (re-)loaded, e.g. 
         #f.localizable = [ hide("view edit add listing"), ]
-        f.listing_column = listing.user_name_column("owner_id", _("Name"), "owner")
-        f.listing_column_filter = listing.user_name_column_filter
+        f.listing_column = listing.related_user_name_column("owner_id", _("Name"), "owner")
+        f.listing_column_filter = listing.related_user_name_column_filter
         f.view_widget = None
         # !+ select or autocomplete... ?
         #f.edit_widget=widgets.AutoCompleteWidget(remote_data=True,
@@ -1994,9 +1978,9 @@ class ChangeDescriptor(ModelDescriptor):
                     title_field="fullname",
                     value_field="user_id")),
             view_widget=None,
-            listing_column=listing.user_name_column("user_id", _("Name"), "user"),
+            listing_column=listing.related_user_name_column("user_id", _("Name"), "user"),
             # !+ audit listing column filtering currently disabled
-            #listing_column_filter=listing.user_name_column_filter,
+            #listing_column_filter=listing.related_user_name_column_filter,
         ),
         Field(name="action",
             modes="view listing",
@@ -2657,8 +2641,8 @@ class SittingAttendanceDescriptor(ModelDescriptor):
                     value_field="member_id"
                 )
             ),
-            listing_column=listing.user_name_column("member_id", _("Name"), "user"),
-            listing_column_filter=listing.user_name_column_filter,
+            listing_column=listing.related_user_name_column("member_id", _("Name"), "user"),
+            listing_column_filter=listing.related_user_name_column_filter,
         ),
         Field(name="attendance_type", # [user-req]
             modes="view edit add listing",
