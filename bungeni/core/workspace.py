@@ -203,10 +203,11 @@ class WorkspaceBaseContainer(AlchemistContainer):
             # Order results
             query = self.order_query(query, domain_class, kw, reverse)
             for obj in query.all():
+                if obj in results:
+                    break
                 prm = IPrincipalRoleMap(obj)
                 for obj_role in OBJECT_ROLES:
-                    if (prm.getSetting(obj_role, principal.id) == Allow and
-                            obj not in results):
+                    if (prm.getSetting(obj_role, principal.id) == Allow):
                         object_roles_results.append(obj)
                         break
             if first_page:
@@ -262,10 +263,11 @@ class WorkspaceBaseContainer(AlchemistContainer):
             query = session.query(domain_class).filter(
                 domain_class.status.in_(status)).enable_eagerloads(False)
             for obj in query.all():
+                if obj in results:
+                    break
                 prm = IPrincipalRoleMap(obj)
                 for obj_role in OBJECT_ROLES:
-                    if (prm.getSetting(obj_role, principal.id) == Allow and
-                        obj not in results):
+                    if (prm.getSetting(obj_role, principal.id) == Allow):
                         object_roles_results.append(obj)
                         break
             count = count + len(object_roles_results)
