@@ -367,7 +367,7 @@ class UserDescriptor(ModelDescriptor):
                 required=False,
             ),
             listing_column=listing.vocabulary_column("marital_status",
-                "Marital Status",
+                _("Marital Status"),
                 vocabulary.marital_status
             ),
         ),
@@ -518,7 +518,7 @@ class GroupMembershipDescriptor(ModelDescriptor):
             property=schema.Choice(title=_("Status"),
                 vocabulary=vocabulary.workflow_vocabulary_factory,
             ),
-            listing_column=listing.workflow_column("status", "Workflow status"),
+            listing_column=listing.workflow_column(),
         ),
         Field(name="status_date", label=_("Status date"), # [sys]
             modes="view listing",
@@ -610,7 +610,7 @@ class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
                 source=vocabulary.member_election_type
             ),
             listing_column=listing.vocabulary_column("member_election_type",
-                "Election Type",
+                _("Election Type"),
                 vocabulary.member_election_type
             ),
         ),
@@ -655,7 +655,7 @@ class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
                 required=False,
             ),
             listing_column=listing.vocabulary_column("party",
-                "Political Party",
+                _("Political Party"),
                 vocabulary.party
             ),
         ),
@@ -698,7 +698,8 @@ class PoliticalGroupMemberDescriptor(GroupMembershipDescriptor):
             property=schema.Choice(title=_("Name"),
                 source=vocabulary.MemberOfParliamentSource("user_id",)
             ),
-            listing_column=listing.linked_mp_name_column("user_id", _("Name"), "user"),
+            listing_column=listing.linked_mp_name_column("user_id", _("Name"), 
+                "user"),
             listing_column_filter=listing.linked_mp_name_column_filter,
             view_widget=widgets.MemberURLDisplayWidget,
             add_widget=widgets.AutoCompleteWidget(remote_data=True),
@@ -818,7 +819,7 @@ class GroupDescriptor(ModelDescriptor):
             property=schema.Choice(title=_("Status"),
                 vocabulary=vocabulary.workflow_vocabulary_factory,
             ),
-            listing_column=listing.workflow_column("status", "Workflow status"),
+            listing_column=listing.workflow_column(),
         ),
     ]
     schema_invariants = [EndAfterStart]
@@ -853,7 +854,7 @@ class ParliamentDescriptor(GroupDescriptor):
             property=schema.TextLine(title=_("Name"),
                 required=False,
             ),
-            listing_column=listing.name_column("full_name", "Name"),
+            listing_column=listing.name_column("full_name", _("Name")),
         ),
         Field(name="short_name", # [user-req]
             modes="view edit add listing",
@@ -1010,7 +1011,7 @@ class CommitteeDescriptor(GroupDescriptor):
                 required=False,
             ),
             listing_column=listing.vocabulary_column("sub_type",
-                "Committee Type",
+                _("Committee Type"),
                 vocabulary.committee_type
             ),
         ),
@@ -1023,7 +1024,7 @@ class CommitteeDescriptor(GroupDescriptor):
                 source=vocabulary.committee_continuity,
             ),
             listing_column=listing.vocabulary_column("group_continuity",
-                "Committee Status Type",
+                _("Committee Status Type"),
                 vocabulary.committee_continuity
             ),
         ),
@@ -1181,7 +1182,7 @@ class AddressDescriptor(ModelDescriptor):
                 source=vocabulary.logical_address_type,
             ),
             listing_column=listing.vocabulary_column("logical_address_type", 
-                "Address Type",
+                _("Address Type"),
                 vocabulary.logical_address_type
             ),
         ),
@@ -1625,7 +1626,7 @@ class AttachmentDescriptor(ModelDescriptor):
                 source=vocabulary.attachment_type,
             ),
             listing_column=listing.vocabulary_column("type", 
-                "File Type",
+                _("File Type"),
                 vocabulary.attachment_type,
             ),
         ),
@@ -1677,7 +1678,7 @@ class AttachmentDescriptor(ModelDescriptor):
             property=schema.Choice(title=_("Status"),
                 vocabulary=vocabulary.workflow_vocabulary_factory,
             ),
-            listing_column=listing.workflow_column("status", "Workflow status"),
+            listing_column=listing.workflow_column(),
         ),
         Field(name="status_date", label=_("Status date"), # [sys]
             modes="view listing",
@@ -1800,7 +1801,7 @@ class DocDescriptor(ModelDescriptor):
                 source=vocabulary.doc_type,
             ),
             listing_column=listing.vocabulary_column("doc_type",
-                "Document Type",
+                _("Document Type"),
                 vocabulary.doc_type
             ),
         ),
@@ -1868,7 +1869,7 @@ class DocDescriptor(ModelDescriptor):
             property=schema.Choice(title=_("Status"),
                 vocabulary=vocabulary.workflow_vocabulary_factory,
             ),
-            listing_column=listing.workflow_column("status", "Workflow status"),
+            listing_column=listing.workflow_column(),
         ),
         Field(name="status_date", label=_("Status date"), # [sys]
             modes="view listing",
@@ -1955,7 +1956,7 @@ class EventDescriptor(DocDescriptor):
                 source=vocabulary.event_type,
         )
         listing_column = listing.vocabulary_column("event_type",
-            "Event Type",
+            _("Event Type"),
             vocabulary.event_type
         )
     del f # remove f from class namespace
@@ -2000,7 +2001,8 @@ class ChangeDescriptor(ModelDescriptor):
             property=schema.Date(title=u"Audit Date", required=True),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
-            listing_column=listing.datetime_column("date_audit", "Date Audit"),
+            listing_column=listing.datetime_column("date_audit", 
+            _("Date Audit")),
             search_widget=widgets.date_input_search_widget
         ),
         Field(name="date_active", # [user]
@@ -2009,7 +2011,8 @@ class ChangeDescriptor(ModelDescriptor):
             property=schema.Date(title=u"Active Date", required=True),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
-            listing_column=listing.datetime_column("date_active", "Date Active"),
+            listing_column=listing.datetime_column("date_active", 
+                _("Date Active")),
             search_widget=widgets.date_input_search_widget
         ),
     ]
@@ -2207,7 +2210,7 @@ class BillDescriptor(DocDescriptor):
                 source=vocabulary.bill_type,
             ),
             listing_column=listing.vocabulary_column("doc_type",
-                "Bill Type",
+                _("Bill Type"),
                 vocabulary.bill_type
             ),
         ),
@@ -2230,7 +2233,8 @@ class BillDescriptor(DocDescriptor):
             property=schema.Date(title=_("Publication Date"), required=False),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget ,
-            listing_column=listing.day_column("publication_date", "Publication Date"),
+            listing_column=listing.day_column("publication_date", 
+                _("Publication Date")),
             search_widget=widgets.date_input_search_widget
         ),
     ])
@@ -2324,7 +2328,7 @@ class QuestionDescriptor(DocDescriptor):
                 source=vocabulary.question_type,
             ),
             listing_column=listing.vocabulary_column("doc_type",
-                "Question Type",
+                _("Question Type"),
                 vocabulary.question_type
             ),
         ),
@@ -2340,7 +2344,7 @@ class QuestionDescriptor(DocDescriptor):
                 source=vocabulary.response_type
             ),
             listing_column=listing.vocabulary_column("response_type",
-                "Response Type",
+                _("Response Type"),
                 vocabulary.response_type
             ),
         ),
@@ -2653,7 +2657,7 @@ class SittingAttendanceDescriptor(ModelDescriptor):
                 source=vocabulary.attendance_type,
             ),
             listing_column=listing.vocabulary_column("attendance_type",
-                "Attendance",
+                _("Attendance"),
                 vocabulary.attendance_type
             ),
         ),
@@ -2726,7 +2730,8 @@ class SignatoryDescriptor(ModelDescriptor):
                 vocabulary=vocabulary.workflow_vocabulary_factory,
                 required=True
             ),
-            listing_column=listing.workflow_column("status", "Signature Status"),
+            listing_column=listing.workflow_column("status", 
+                _("Signature status")),
         ),
     ]
 

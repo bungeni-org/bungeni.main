@@ -239,7 +239,7 @@ def member_title_column(name, title, default=""):
     return column.GetterColumn(title, getter)
 
 
-def workflow_column(name, title, default=""):
+def workflow_column(name="status", title=_("Workflow status"), default=""):
     from bungeni.ui.utils.misc import get_wf_state
     def getter(item, formatter):
         state_title = get_wf_state(item)
