@@ -85,9 +85,9 @@ So, we temporarily default the above to the context.__class__.__name__:
         if not name:
             name = getattr(context, "__name__", None)
         title = name
-    elif ILocation.providedBy(context) and \
-         IDCDescriptiveProperties.providedBy(context):
-        title = context.title
+    elif (ILocation.providedBy(context) and
+        IDCDescriptiveProperties.providedBy(context)):
+        title = IDCDescriptiveProperties(context).title
     return title
 
 
