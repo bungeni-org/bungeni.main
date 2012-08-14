@@ -30,6 +30,7 @@
 <venue><span tal:condition="s/venue | nothing" tal:replace="structure python:str(s.venue.venue_id)"/></venue>
 <venue_name><span tal:condition="s/venue | nothing" tal:replace="s/venue/dc:title"/></venue_name>
 <group><span tal:replace="s/group/dc:title"/></group>
+<group_id><span tal:replace="s/group/group_id"/></group_id>
 <status><span tal:condition="s/status | nothing" tal:replace="structure python:s.status"/></status>
 <language><span tal:condition="s/language | nothing" tal:replace="structure python:s.language"/></language>
 </event>

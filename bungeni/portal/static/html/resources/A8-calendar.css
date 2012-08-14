@@ -1,3 +1,36 @@
+
+/* select calendars on dxhtml cal */
+
+/* separate the list from what follows it */
+div#select-calendars {
+  margin-bottom: 1em;
+}
+#select-calendars ol {
+  width: 100%;  /* room for # columns */
+  margin: 0.5em 0 0 1.4em;
+}
+#select-calendars ol li {
+  float: left;
+  width: 20em;  /* accommodate the widest item */
+}
+/* stop the floating after the list */
+#select-calendars br {
+  clear: left;
+}
+#select-calendars ol li span
+{
+  display: block;
+  width: 18em;
+  text-decoration: none;
+}
+#select-calendars ol li a:hover
+{
+  color: #FFF; /* white */
+  background-color: #A52A2A; /* brown */
+}
+/* end of select-calendars */
+
+
 .resize-proxy {
   border-bottom: 10px solid #8CACBB;
 }
@@ -228,22 +261,22 @@ white-space: normal;
     right:auto;  !important;
 }
 .dhx_cal_next_button{
-    left:520px; !important;
+    left:590px; !important;
     right:auto;  !important;
 }
 .dhx_cal_today_button
 {
-    left:560px; !important;
+    left:620px; !important;
 }
 
 .dhx_cal_navline #dhx_minical_icon{
-    left:650px;
+    left:700px;
 }
 
 .dhx_cal_navline #dhx_ical_icon{
     width: 60px;
     height: 18px;
-    left: 680px;
+    left: 725px;
     top: 1px;
     cursor: pointer;
     background: url(images/ical.png) no-repeat;
@@ -251,7 +284,7 @@ white-space: normal;
 
 .dhx_cal_navline .dhx_cal_date
 {
-    left:750px; !important;
+    left:790px; !important;
 }
 .dhx_cal_navline {
     text-transform:capitalize;
@@ -314,6 +347,10 @@ white-space: normal;
 
 .dhx_cal_navline #venues_tab{
     left:450px;
+}
+
+.dhx_cal_navline #committees_tab{
+    left:520px;
 }
 
 /* listing calendar dropdown

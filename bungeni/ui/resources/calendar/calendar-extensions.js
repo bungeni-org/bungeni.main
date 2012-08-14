@@ -113,6 +113,7 @@ function event_save_handler(id, data, is_new_event){
     event = scheduler.getEvent(id)
     event.color="";
     scheduler.updateEvent(id);
+    scheduler.templates.event_text = render_event_text;
     return  true;
 }
 
@@ -158,6 +159,7 @@ function render_event_text(start, end, event){
  */
 function re_render_event(old_id, new_id){
     event = scheduler.getEvent(new_id);
+    event["status"] = "sitting";
     scheduler.clear_event(new_id);
     scheduler.render_event(event);
 }

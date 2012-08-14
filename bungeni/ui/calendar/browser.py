@@ -290,7 +290,15 @@ class CalendarView(BungeniBrowserView):
             for venue in vocabulary.venue_factory()
         ]
         return venue_list
-
+    
+    @property
+    def groups_data(self):
+        group_list = [ {"key": comm.committee_id, 
+            "label": IDCDescriptiveProperties(comm).title}
+            for comm in Session().query(domain.Committee).all()
+        ]
+        return group_list        
+    
     @property
     def ical_url(self):
         return u"/".join(
@@ -313,8 +321,10 @@ class CalendarView(BungeniBrowserView):
             text_sitting=translate_i18n(_(u"Sitting")),
             text_view=translate_i18n(_(u"View")),
         )
-        return """var cal_globals = %s;var venues_data=%s;""" %(
-            json.dumps(cal_globals), json.dumps(self.venues_data)
+        return """var cal_globals = %s;var venues_data=%s;
+            var groups_data=%s;""" %(
+            json.dumps(cal_globals), json.dumps(self.venues_data),
+            json.dumps(self.groups_data)
         )
 
     def other_calendars(self):
@@ -862,7 +872,7 @@ class DhtmlxCalendarSittings(BrowserView):
             rq_color = unicode(self.request.form.get("color", ""))
             if rq_color:
                 assert len(rq_color) <= 6
-                self._event_color = rq_colour
+                self._event_color = rq_color
         return self._event_color if hasattr(self, "_event_color") else ""
     
     

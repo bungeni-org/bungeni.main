@@ -39,6 +39,7 @@
                       
             function init() {
                 scheduler.locale.labels.venues_tab = cal_globals.venues_view_title;
+                scheduler.locale.labels.committees_tab = "Committees";
                 scheduler.config.xml_date="%Y-%m-%d %H:%i";
                 scheduler.config.show_loading=true;
                 scheduler.config.scroll_hour=8;
@@ -54,6 +55,19 @@
                     x_start: 1,
                     y_unit: venues_data,
                     y_property: "venue",
+                    render: "bar"
+                })
+                //create timeline view for committees
+                scheduler.createTimelineView({
+                    name : "committees",
+                    x_unit: "hour",
+                    x_date: "%d %M",
+                    x_step: 24,
+                    x_size: 7,
+                    x_start: 1,
+                    x_length: 6,
+                    y_unit: groups_data,
+                    y_property: "group_id",
                     render: "bar"
                 })
                 
@@ -180,6 +194,7 @@
                     <div class="dhx_cal_tab" name="year_tab" id="year_tab"></div>
                     <div class="dhx_cal_tab" name="week_agenda_tab" id="agenda_tab"></div>
                     <div class="dhx_cal_tab" name="venues_tab" id="venues_tab"></div>
+                    <div class="dhx_cal_tab" name="committees_tab" id="committees_tab"></div>
                 </div>
                 <div class="dhx_cal_header">
                 </div>
