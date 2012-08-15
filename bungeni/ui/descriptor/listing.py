@@ -100,6 +100,9 @@ def date_from_to_column(name, title, default=""):
     return column.GetterColumn(title, getter)
 
 
+
+    
+
 def name_column(name, title, default=""):
     def renderer(value, size=50):
         if len(value) > size:
@@ -119,7 +122,9 @@ def combined_name_column(name, title, default=""):
         return "%s [%s]" % (_(item.full_name), item.short_name)
     return column.GetterColumn(title, getter)
 
-def combined_name_column_filter(query, filter_string, sort_dir_func):
+
+def combined_name_column_filter(query, filter_string, sort_dir_func,
+                                column=None):
     return _multi_attrs_column_filter(
         [domain.Group.full_name, domain.Group.short_name],
         query, filter_string, sort_dir_func)
@@ -155,14 +160,15 @@ def related_user_name_column(name, title, attr):
         return item_user.fullname # User.fullname property
     return column.GetterColumn(title, getter)
 
-def related_user_name_column_filter(query, filter_string, sort_dir_func):
+def related_user_name_column_filter(query, filter_string, sort_dir_func, column=None):
     query = query.join(domain.User)
     return _multi_attrs_column_filter(
         [domain.User.last_name, domain.User.first_name, domain.User.middle_name],
         query, filter_string, sort_dir_func)
 
 
-def user_listing_name_column_filter(query, filter_string, sort_dir_func):
+def user_listing_name_column_filter(query, filter_string, sort_dir_func,
+                                    column=None):
     return _multi_attrs_column_filter(
         [domain.User.last_name, domain.User.first_name, domain.User.middle_name],
         query, filter_string, sort_dir_func)
@@ -202,7 +208,8 @@ def linked_mp_name_column(name, title, attr):
     return column.GetterColumn(title, getter)
 
 
-def linked_mp_name_column_filter(query, filter_string, sort_dir_func):
+def linked_mp_name_column_filter(query, filter_string, sort_dir_func,
+                                 column=None):
     query = query.join(domain.User)
     return _multi_attrs_column_filter(
         [domain.User.first_name, domain.User.middle_name, domain.User.last_name],

@@ -4,7 +4,7 @@ import sys
 import datetime
 import simplejson
 import sqlalchemy.sql.expression as sql
-from sqlalchemy import types, orm
+from sqlalchemy import types, orm, Date, cast
 
 from ore import yuiwidget
 
@@ -88,38 +88,28 @@ def query_filter_date_range(context, request, query, domain_model):
 
 
 def get_date_strings(date_string):
-        date_str = date_string.strip()
-        start_date, end_date = None, None
-        dates = date_str.split("->")
-        if date_str.startswith("->"):
-            end_date = dates[1]
-        elif date_str.endswith("->"):
-            start_date = dates[0]
-        elif len(date_str.split("->")) == 2:
-            start_date = dates[0]
-            end_date = dates[1]
-        return start_date, end_date
+    date_str = date_string.strip()
+    start_date, end_date = None, None
+    dates = date_str.split("->")
+    if date_str.startswith("->"):
+        end_date = dates[1]
+    elif date_str.endswith("->"):
+        start_date = dates[0]
+    elif len(date_str.split("->")) == 2:
+        start_date = dates[0]
+        end_date = dates[1]
+    return start_date, end_date
 
 
-def get_date_filter_string(column, filter_field):
-        start_date, end_date = get_date_strings(filter_field)
-        start_date_fs, end_date_fs = "", ""
-        if start_date:
-            start_date_fs = "%(column_name)s >= to_date( \
-'%(start_date)s', 'YYYY-MM-DD') " % {
-                "column_name": column, "start_date": start_date}
-        if end_date:
-            end_date_fs = "%(column_name)s <= to_date( \
-'%(end_date)s', 'YYYY-MM-DD') " % {
-                "column_name": column, "end_date": end_date}
-        if start_date and end_date:
-            return start_date_fs + " AND " + end_date_fs
-        elif start_date:
-            return start_date_fs
-        elif end_date:
-            return end_date_fs
-        else:
-            return ""
+def string_to_date(date_str):
+    date = None
+    if date_str:
+        try:
+            date = datetime.datetime.strptime(date_str, "%Y-%m-%d").date()
+        except:
+            log.error("The string %s does not conform to the format required" %
+                      date_str)
+    return date
 
 class AjaxContainerListing(
         container.ContainerListing,
@@ -215,25 +205,44 @@ class ContainerJSONListing(ContainerJSONBrowserView):
     """
     permission = "zope.View"
     filter_property_fields = []
-    
-    def _get_field_filter_string(self, fieldname, field_filters):
-        """If we are filtering for replaced fields we assume
-        that they are character fields.
+
+    def string_listing_filter(self, query, filter_string, sort_dir_func,
+                              column):
+        filter_strings = filter_string.lower().split()
+        attr = getattr(self.domain_model, column)
+        for fs in filter_strings:
+            query = query.filter(
+                sql.or_(sql.func.lower(attr).like("%%%s%%" % fs)))
+        return query.order_by(sort_dir_func(attr))
+
+    def exact_string_listing_filter(self, query, filter_string, sort_dir_func,
+                              column):
+        attr = getattr(self.domain_model, column)
+        query = query.filter(attr == filter_string)
+        return query.order_by(sort_dir_func(attr))
+
+    def date_listing_filter(self, query, filter_string, sort_dir_func, column):
         """
-        fs = " AND ".join([
-                "lower(%s) LIKE '%%%s%%'" % (fieldname, f.lower())
-                for f in field_filters
-        ])
-        if fs:
-            return "(%s)" % (fs)
-        return ""
-    
+        query: sqlalchemy query
+        filter_str: string with dates to filter on
+        sort_dir_func: desc or asc
+        column: date column to filter on.
+        """
+        attr = getattr(self.domain_model, column)
+        start_date_str, end_date_str = get_date_strings(filter_string)
+        start_date = string_to_date(start_date_str)
+        end_date = string_to_date(end_date_str)
+        if start_date:
+            query = query.filter(cast(attr, Date) >= start_date)
+        if end_date:
+            query = query.filter(cast(attr, Date) <= end_date)
+        return query.order_by(sort_dir_func(attr))
+
     # !+ change this to filter the sqlalchemy query?
     def get_filter(self):
         """ () -> str
         """
         utk = self.utk
-        fs = []  # filter string
         filter_queries = []
         for field in self.fields:
             fn = field.__name__  # field name
@@ -242,36 +251,31 @@ class ContainerJSONListing(ContainerJSONBrowserView):
                 column = utk[fn]
                 kls = column.type.__class__
             ff_name = "filter_%s" % (fn)  # field filter name
-            ff = self.request.get(ff_name, "").strip() # field filter
+            ff = self.request.get(ff_name, "").strip()  # field filter
             if not ff:
                 # no filtering on this field
                 continue
             # OK, add filter for this column...
-            md_field = self.domain_annotation.get(fn) # model descriptor field
+            md_field = self.domain_annotation.get(fn)  # model descriptor field
             if md_field and md_field.listing_column_filter:
-                filter_queries.append( (md_field.listing_column_filter, ff) )
+                filter_queries.append((md_field.listing_column_filter,
+                                       [ff, None]))
             else:
                 # no md_field.listing_column_filter (or md_field)
                 if fn in utk:
                     # !+sqlalchemy.types.Unicode inherits from types.String
                     if kls in (types.String, types.Unicode):
-                        fs.append(
-                            self._get_field_filter_string(str(column), ff.split()))
+                        filter_queries.append(
+                            (self.string_listing_filter, [ff, fn]))
                     elif kls in (types.Date, types.DateTime):
-                        fs.append(get_date_filter_string(column, ff))
+                        filter_queries.append(
+                            (self.date_listing_filter, [ff, fn]))
                     else:
-                        fs.append("%s = %s" % (column, ff))
+                        filter_queries.append(
+                            (self.exact_string_listing_filter, [ff, fn]))
                 else:
                     self.filter_property_fields.append(fn)
-        return " AND ".join(fs), filter_queries
-    
-    def query_add_filters(self, query, *filter_strings):
-        """ (filter_sytings) -> query
-        """
-        for fs in filter_strings:
-            if fs:
-                query = query.filter(fs)
-        return query
+        return filter_queries
 
     def get_sort_keys(self):
         """ server side sort,
@@ -293,7 +297,9 @@ class ContainerJSONListing(ContainerJSONBrowserView):
                 if dso not in sort_on_keys:
                     sort_on_keys.append(dso)
         return sort_on_keys
-
+    
+    #!+SQLAlchemy(miano, Aug 2012) This should be removed once we upgrade to
+    # sqlalchemy 0.7 and take advantage of Hybrid Properties
     def filter_batch_on_properties(self, batch):
         reverse = True if (self.sort_dir == "desc") else False
         if self.sort_on in self.filter_property_fields:
@@ -308,22 +314,22 @@ class ContainerJSONListing(ContainerJSONBrowserView):
             if ff and md_field:
                 if (IDate.providedBy(md_field.property) or
                     IDatetime.providedBy(md_field.property)):
-                    start_date, end_date = get_date_strings(ff)
+                    start_date_str, end_date_str = get_date_strings(ff)
+                    start_date = string_to_date(start_date_str)
+                    end_date = string_to_date(end_date_str)
                     if start_date:
-                        batch = [x for x in batch
-                                 if getattr(x, field_name, None)
-                                 >= datetime.datetime.strptime(
-                                    start_date, "%Y-%m-%d")
+                        batch = [x for x in batch if (
+                                getattr(x, field_name) and
+                                getattr(x, field_name).date() >= start_date)
                                  ]
                     if end_date:
-                        batch = [x for x in batch
-                                 if getattr(x, field_name, None)
-                                 <= datetime.datetime.strptime(
-                                    end_date, "%Y-%m-%d")
+                        batch = [x for x in batch if (
+                                getattr(x, field_name) and
+                                getattr(x, field_name).date() <= end_date)
                                  ]
                 elif IText.providedBy(md_field.property):
                     batch = [x for x in batch
-                             if ff in getattr(x, field_name, None)]
+                             if ff in getattr(x, field_name)]
         return batch
 
     def get_offsets(self, default_start=0,
@@ -408,8 +414,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
             self.domain_model)
         sort_on_expressions = []
         # other filters
-        filter_string, lc_filter_queries = self.get_filter()
-        query = self.query_add_filters(query, filter_string)
+        lc_filter_queries = self.get_filter()
         sort_on_keys = self.get_sort_keys()
         if sort_on_keys:
             for sort_on in sort_on_keys:
@@ -419,8 +424,10 @@ class ContainerJSONListing(ContainerJSONBrowserView):
                         sort_on_expressions.append(
                             self.sort_dir_func(
                                 getattr(self.domain_model, sort_on)))
-        for lc_filter_query, lc_filter_string in lc_filter_queries:
-            query = lc_filter_query(query, lc_filter_string, self.sort_dir_func)
+        for lc_filter_query, params in lc_filter_queries:
+            filter_string = params[0]
+            column_name = params[1]
+            query = lc_filter_query(query, filter_string, self.sort_dir_func, column_name)
         if sort_on_expressions:
             query = query.order_by(sort_on_expressions)
         # get total number of items before applying an offset and limit

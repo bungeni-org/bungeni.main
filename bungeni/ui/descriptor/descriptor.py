@@ -2241,6 +2241,7 @@ class SittingDescriptor(ModelDescriptor):
             # only used in the archive.
             edit_widget=widgets.DateTimeWidget,
             add_widget=widgets.DateTimeWidget,
+            search_widget=widgets.date_input_search_widget
         ),
         Field(name="end_date", # [user-req]
             modes="view add listing",

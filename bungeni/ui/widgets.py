@@ -1239,9 +1239,8 @@ class DateFilterWidget(form.PageForm):
     macro_template = NamedTemplate("alchemist.form")
     template = ViewPageTemplateFile("templates/date-input-search.pt")
 
-    def __init__(self, context, request, field_id):
-        self.field_id = field_id
-        self.prefix = "form_%s" % (field_id)
+    def __init__(self, context, request, table_id, field_id):
+        self.prefix = "form_%s_%s" % (table_id, field_id)
         super(DateFilterWidget, self).__init__(context, request)
 
     class IDateRangeSchema(interface.Interface):
@@ -1282,10 +1281,13 @@ class DateFilterWidget(form.PageForm):
         #Handled by Javascript
         pass
 
+
 def date_input_search_widget(table_id, field_id):
-    form = DateFilterWidget(common.get_application(), common.get_request(), field_id)
-    html = '<div id="date_input_search_widget_%(field_id)s" style="display: none;">%(html)s</div>' \
-        % {"field_id":field_id, "html":form.render()}
+    form = DateFilterWidget(common.get_application(), common.get_request(),
+                            table_id, field_id)
+    html = '<div id="date_input_search_widget_%(table_id)s_%(field_id)s" style="display: none;">%(html)s</div>' \
+           % {"table_id": table_id,
+              "field_id": field_id,
+              "html": form.render()}
     script = open("%s/templates/date-input-search-widget.js" % (_path)).read()
     return html, script % {"table_id": table_id, "field_id": field_id}
-

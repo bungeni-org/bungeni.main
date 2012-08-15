@@ -270,7 +270,7 @@
                 var table_columns = oSelf.getColumnSet();
                 var qstr = '';
                 for (i = 0; i < table_columns.keys.length; i++) {
-                    var input_id = 'input#input_' + table_columns.keys[i].getKey();
+                    var input_id = 'input#input_'+table_id+'_'+table_columns.keys[i].getKey();
                     qstr = qstr + '&filter_' + table_columns.keys[i].getKey() + '=' + $(input_id).val();
                 }
                 return qstr;
@@ -457,7 +457,7 @@
                 return qstr;
             };
         var get_status_date_filter = function (oSelf) {
-                var qstr = '&filter_status_date=' + $("#input_status_date").val();
+                var qstr = '&filter_status_date=' + $("#input_table_status_date").val();
                 return qstr;
             };
         // A custom function to translate the js paging request 

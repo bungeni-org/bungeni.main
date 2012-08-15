@@ -1,7 +1,7 @@
 log = __import__("logging").getLogger("bungeni.core.workspace")
 import os
 import time
-from sqlalchemy import orm
+from sqlalchemy import orm, Date, cast
 from sqlalchemy.sql import expression
 from lxml import etree
 from collections import namedtuple
@@ -24,7 +24,7 @@ from bungeni.core.interfaces import (IWorkspaceTabsUtility,
                                      IWorkspaceUnderConsiderationContainer,
                                      IWorkspaceTrackedDocumentsContainer)
 from bungeni.ui.utils.common import get_workspace_roles
-from bungeni.ui.container import get_date_filter_string
+from bungeni.ui.container import get_date_strings, string_to_date
 
 
 #!+WORKSPACE(miano, jul 2011)
@@ -158,12 +158,17 @@ class WorkspaceBaseContainer(AlchemistContainer):
                     getattr(domain_class, str(kw.get("sort_on")))))
         return query
 
-    def filter_status_date(self, query, kw):
+    def filter_status_date(self, query, domain_class, kw):
         #filter on status_date
-        fs = get_date_filter_string(
-            "status_date", kw.get("filter_status_date", ""))
-        if fs:
-            return query.filter(fs)
+        attr = getattr(domain_class, "status_date")
+        start_date_str, end_date_str = get_date_strings(
+            kw.get("filter_status_date", ""))
+        start_date = string_to_date(start_date_str)
+        end_date = string_to_date(end_date_str)
+        if start_date:
+            query = query.filter(cast(attr, Date) >= start_date)
+        if end_date:
+            query = query.filter(cast(attr, Date) <= end_date)
         return query
 
     def _query(self, **kw):
@@ -293,7 +298,7 @@ class WorkspaceContainer(WorkspaceBaseContainer):
             #filter on title
             query = self.filter_title(query, domain_class, kw)
             #filter on status_date
-            query = self.filter_status_date(query, kw)
+            query = self.filter_status_date(query, domain_class, kw)
             # Order results
             query = self.order_query(query, domain_class, kw, reverse)
             # The first page of the results is loaded the most number of times
@@ -311,7 +316,7 @@ class WorkspaceContainer(WorkspaceBaseContainer):
             #filter on title
             query = self.filter_title(query, domain_class, kw)
             #filter on status_date
-            query = self.filter_status_date(query, kw)
+            query = self.filter_status_date(query, domain_class, kw)
             # Order results
             query = self.order_query(query, domain_class, kw, reverse)
             for obj in query.all():
@@ -548,7 +553,7 @@ class WorkspaceUnderConsiderationContainer(WorkspaceBaseContainer):
                 domain_class.status.in_(status)).enable_eagerloads(False)
             query = self.filter_title(query, domain_class, kw)
             #filter on status_date
-            query = self.filter_status_date(query, kw)
+            query = self.filter_status_date(query, domain_class, kw)
             query = self.order_query(query, domain_class, kw, reverse)
             results.extend(query.all())
         count = len(results)
@@ -584,7 +589,7 @@ class WorkspaceTrackedDocumentsContainer(WorkspaceUnderConsiderationContainer):
                 ).filter(domain.UserSubscription.users_id == user.user_id)
             query = self.filter_title(query, domain_class, kw)
             #filter on status_date
-            query = self.filter_status_date(query, kw)
+            query = self.filter_status_date(query, domain_class, kw)
             query = self.order_query(query, domain_class, kw, reverse)
             results.extend(query.all())
         count = len(results)

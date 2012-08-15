@@ -4,7 +4,7 @@
                 var input = document.createElement('input');
                 input.setAttribute('type', 'text');
                 input.setAttribute('name', 'filter_%(field_id)s');
-                input.setAttribute('id', 'input_%(field_id)s');
+                input.setAttribute('id', 'input_%(table_id)s_%(field_id)s');
                 if (counter == 0)
                     input.setAttribute('placeholder', '  type to search...');
                 else
