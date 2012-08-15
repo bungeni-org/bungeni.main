@@ -428,14 +428,6 @@ class SittingAttendance(Entity):
     """A record of attendance at a meeting .
     """
 
-''' !+TYPES_CUSTOM
-class AttendanceType(Entity):
-    """Lookup for attendance type.
-    """
-    interface.implements(interfaces.ITranslatable,
-        interfaces.IAttendanceType
-    )
-'''
 
 #############
 
@@ -544,15 +536,6 @@ class CommitteeMember(GroupMembership):
     """
     titles = one2many("titles",
         "bungeni.models.domain.MemberTitleContainer", "membership_id")
-
-''' !+TYPES_CUSTOM
-class CommitteeType(Entity):
-    """Type of Committee.
-    """
-    interface.implements(interfaces.ITranslatable,
-        interfaces.ICommitteeType
-    )
-'''
 
 class Office(Group):
     """Parliamentary Office like speakers office, clerks office etc. 
@@ -1262,49 +1245,4 @@ class Report4Sitting(Report):
 class ObjectTranslation(object):
     """Get the translations for an Object.
     """
-
-
-''' !+TYPES_CUSTOM
-
-#####################
-# DB vocabularies
-######################
-
-class QuestionType(Entity):
-    """Question type
-    """
-    interface.implements(interfaces.ITranslatable, interfaces.IQuestionType)
-
-class ResponseType(Entity):
-    """Response type
-    """
-    interface.implements(interfaces.ITranslatable, interfaces.IResponseType)
-
-class MemberElectionType(Entity):
-    """Member election type
-    """
-    interface.implements(interfaces.ITranslatable, 
-        interfaces.IMemberElectionType
-    )
-
-class AddressType(Entity):
-    """Address Types.
-    """
-    interface.implements(interfaces.ITranslatable, 
-        interfaces.IAddressType
-    )
-class PostalAddressType(Entity):
-    """Postal address type
-    """
-    interface.implements(interfaces.ITranslatable, 
-        interfaces.IPostalAddressType
-    )
-
-class CommitteeTypeStatus(Entity):
-    """Committee type status
-    """
-    interface.implements(interfaces.ITranslatable,
-        interfaces.ICommitteeTypeStatus
-    )
-'''
 

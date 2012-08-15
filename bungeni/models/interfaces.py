@@ -516,30 +516,6 @@ class ITranslatable(interface.Interface):
 class IBungeniVocabulary(interface.Interface):
     """Marker interface for vocabularies managed in admin UI."""
 
-'''!+TYPES_CUSTOM
-class IAddressType(IBungeniVocabulary):
-    """Marker interface for address types vocabulary"""
-class IPostalAddressType(IBungeniVocabulary):
-    """Marker interface for address postal types"""
-
-class IBillType(IBungeniVocabulary):
-    """Marker interface for bill types vocabulary"""
-
-class IQuestionType(IBungeniVocabulary):
-    """Marker interface for question types"""
-class IResponseType(IBungeniVocabulary):
-    """Marker interface for response types"""
-
-class ICommitteeType(IBungeniVocabulary):
-    """Marker interface for committee types vocabulary"""
-
-class ICommitteeTypeStatus(IBungeniVocabulary):
-    """Marker interface for committe type statuses"""
-class IAttendanceType(IBungeniVocabulary):
-    """Marker interface for attendance types vocabulary"""
-class IMemberElectionType(IBungeniVocabulary):
-    """Marker interface for member election types"""
-'''
 
 class IVenue(IBungeniVocabulary):
     """Marker interface for venues vocabulary"""

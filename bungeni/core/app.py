@@ -433,54 +433,5 @@ class AppSetup(object):
         
         content[u"users"] = domain.UserContainer()
         to_locatable_container(domain.User, content[u"users"])
-                
-        ''' !+TYPES_CUSTOM
-        vocabularies = admin["vocabularies"] = Section(
-            title=_(u"vocabularies"),
-            description=_(u"manage vocabularies"),
-            marker=model_interfaces.IBungeniAdmin,
-            default_name="vocabularies")
-        
-        vocabularies[u"address-types"] = domain.AddressTypeContainer()
-        to_locatable_container(domain.AddressType, 
-            vocabularies[u"address-types"]
-        )
-        vocabularies[u"attendance-types"] = domain.AttendanceTypeContainer()
-        to_locatable_container(domain.AttendanceType, 
-            vocabularies[u"attendance-types"]
-        )
-        vocabularies[u"bill-types"] = domain.BillTypeContainer()
-        to_locatable_container(domain.BillType, 
-            vocabularies[u"bill-types"]
-        )
-        vocabularies[u"question-types"] = domain.QuestionTypeContainer()
-        to_locatable_container(domain.QuestionType, 
-            vocabularies[u"question-types"]
-        )
-        vocabularies[u"response-types"] = domain.ResponseTypeContainer()
-        to_locatable_container(domain.ResponseType, 
-            vocabularies[u"response-types"]
-        )
-        vocabularies[u"committee-types"] = domain.CommitteeTypeContainer()
-        to_locatable_container(domain.CommitteeType, 
-            vocabularies[u"committee-types"]
-        )
-        vocabularies[u"committee-types-statuses"] = \
-            domain.CommitteeTypeStatusContainer()
-        to_locatable_container(domain.CommitteeTypeStatus, 
-            vocabularies[u"committee-types-statuses"]
-        )
-        
-        vocabularies[u"venues"] = domain.VenueContainer()
-        to_locatable_container(domain.Venue, vocabularies[u"venues"])
-        
-        vocabularies[u"m-election-types"] = domain.MemberElectionTypeContainer()
-        to_locatable_container(domain.MemberElectionType, 
-            vocabularies[u"m-election-types"]
-        )
-        vocabularies[u"p-address-types"] = domain.PostalAddressTypeContainer()
-        to_locatable_container(domain.PostalAddressType, 
-            vocabularies[u"p-address-types"]
-        )
-        '''
+
 

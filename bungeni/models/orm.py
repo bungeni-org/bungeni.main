@@ -89,9 +89,6 @@ def configurable_mappings(kls):
 # /Features
 
 
-#user address types
-#!+TYPES_CUSTOM mapper(domain.PostalAddressType, schema.postal_address_types)
-
 # Users
 # general representation of a person
 mapper(domain.User, schema.users,
@@ -213,17 +210,6 @@ mapper(domain.Ministry,
     polymorphic_identity=polymorphic_identity(domain.Ministry)
 )
 
-''' !+TYPES_CUSTOM
-mapper(domain.CommitteeTypeStatus, schema.committee_type_status)
-mapper(domain.CommitteeType, schema.committee_type,
-    properties={
-        "committee_type_status": relation(domain.CommitteeTypeStatus,
-            uselist=False, 
-            lazy=False
-        )
-    }
-)
-'''
 mapper(domain.Committee, schema.committees,
     inherits=domain.Group,
     polymorphic_on=schema.groups.c.type,
@@ -267,7 +253,6 @@ mapper(domain.GroupMembership, schema.user_group_memberships,
 # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", "document", "item"
 domain.GroupMembership.head = domain.GroupMembership.user
 
-#!+TYPES_CUSTOM mapper(domain.MemberElectionType, schema.member_election_types)
 
 # !+RENAME ParliamentMember
 mapper(domain.MemberOfParliament, schema.parliament_memberships,
@@ -670,9 +655,6 @@ mapper(domain.Heading, schema.headings,
     }
 )
 
-#!+TYPES_CUSTOM mapper(domain.QuestionType, schema.question_types)
-#!+TYPES_CUSTOM mapper(domain.ResponseType, schema.response_types)
-
 
 #Items scheduled for a sitting expressed as a relation
 # to their item schedule
@@ -717,7 +699,6 @@ mapper(domain.SignatoryAudit, schema.signatory_audit,
     polymorphic_identity=polymorphic_identity(domain.Signatory), # on head class
 )
 
-#!+TYPES_CUSTOM mapper(domain.BillType, schema.bill_types)
 #mapper(domain.DocumentSource, schema.document_sources)
 
 mapper(domain.Holiday, schema.holiday)
@@ -735,7 +716,7 @@ mapper(domain.SittingAttendance, schema.sitting_attendance,
         "sitting": relation(domain.Sitting, uselist=False, lazy=False),
     }
 )
-#!+TYPES_CUSTOM mapper(domain.AttendanceType, schema.attendance_types)
+
 mapper(domain.TitleType, schema.title_types,
     properties={ "group": relation(domain.Group, uselist=False, lazy=False) }
 )
@@ -746,7 +727,6 @@ mapper(domain.MemberTitle, schema.member_titles,
     }
 )
 
-#!+TYPES_CUSTOM mapper(domain.AddressType, schema.address_types)
 mapper(domain.UserAddress, schema.user_addresses,
     properties={
         "country": relation(domain.Country, uselist=False, lazy=False),

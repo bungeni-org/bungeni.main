@@ -444,20 +444,6 @@ class GroupMembershipDescriptor(ModelDescriptor):
         validations.validate_group_membership_dates
     ]
 
-''' !+TYPES_CUSTOM
-class MemberElectionTypeDescriptor(ModelDescriptor):
-    localizable = False
-    display_name = _("Member election type")
-    container_name = _("Member election types")
-
-    fields = [
-        Field(name="member_election_type_name",
-            modes="view edit add listing",
-            property=schema.TextLine(title=_("Election Type"))
-        ),
-        LanguageField("language"), # [user-req]
-    ]
-'''
 
 # !+bungeni_custom, as part of descriptor config?
 _ORDER_BY_CONTAINER_NAMES = [
@@ -831,51 +817,6 @@ class ParliamentDescriptor(GroupDescriptor):
     custom_validators = [validations.validate_parliament_dates]
 
 
-''' !+TYPES_CUSTOM
-class CommitteeTypeStatusDescriptor(ModelDescriptor):
-    localizable = False
-    display_name = _("Committee type status")
-    container_name = _("Committee type statuses")
-
-    fields = [
-        Field(name="committee_type_status_name",
-            modes="view edit add listing",
-            property=schema.TextLine(title=_("Committee type status"))
-        ),
-        LanguageField("language"), # [user-req]
-    ]
-
-class CommitteeTypeDescriptor(ModelDescriptor):
-    localizable = False
-    display_name = _("Committee type")
-    container_name = _("Committee types")
-    
-    fields = [
-        Field(name="committee_type", # [user-req]
-            modes="view edit add listing",
-            property=schema.TextLine(title=_("Committee Type"))
-        ),
-        Field(name="description", # [user-req]
-            modes="view edit add listing",
-            property=schema.Text(title=_("description"))
-        ),
-        Field(name="life_span", # [user-req]
-            modes="view edit add listing",
-            property = schema.TextLine(title=_("life span"))
-        ),
-        Field(name="committee_type_status_id", # [user-req]
-            modes="view edit add listing",
-            property=schema.Choice(title=_("Status"),
-                source=vocabulary.CommitteeTypeStatus
-            ),
-            listing_column = dc_getter("committee_type_status_id",
-                _("Status"), "committee_type_status"
-            )
-        ),
-        LanguageField("language"), # [user-req]
-    ]
-'''
-
 class CommitteeDescriptor(GroupDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("committees")
     localizable = True
@@ -1040,33 +981,6 @@ class CommitteeMemberDescriptor(GroupMembershipDescriptor):
         ),
     ])
 
-''' !+TYPES_CUSTOM
-class AddressTypeDescriptor(ModelDescriptor):
-    localizable = False
-    display_name = _("Address type")
-    container_name = _("Address types")
-
-    fields = [
-        Field(name="address_type_name", # [user-req]
-            modes="view edit add listing",
-            property=schema.TextLine(title=_("Address Type"))
-        ),
-        LanguageField("language"), # [user-req]
-    ]
-
-class PostalAddressTypeDescriptor(ModelDescriptor):
-    localizable = False
-    display_name = _("Postal address type")
-    container_name = _("Postal address types")
-
-    fields = [
-        Field(name="postal_address_type_name",
-            modes="view edit add listing",
-            property=schema.TextLine(title=_("Postal address type name"))
-        ),
-        LanguageField("language"), # [user-req]
-    ]
-'''
 
 class AddressDescriptor(ModelDescriptor):
     localizable = False
@@ -2047,23 +1961,6 @@ class MotionChangeDescriptor(ChangeDescriptor):
     fields = deepcopy(ChangeDescriptor.fields)
 '''
 
-''' !+TYPES_CUSTOM
-class BillTypeDescriptor(ModelDescriptor):
-    localizable = False
-    display_name = _("Bill Type")
-    container_name = _("Bill types")
-
-    fields = [
-        Field(name="bill_type_name", # [user-req]
-            modes="view edit add listing",
-            localizable=[ 
-                show("view edit listing"), 
-            ],
-            property=schema.TextLine(title=_("Bill Type"))
-        ),
-        LanguageField(name="language"),
-    ]
-'''
 
 class BillDescriptor(DocDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("bills")
@@ -2142,33 +2039,6 @@ class BillVersionDescriptor(VersionDescriptor):
     fields = deepcopy(VersionDescriptor.fields)
 '''
 
-''' !+TYPES_CUSTOM
-class QuestionTypeDescriptor(ModelDescriptor):
-    localizable = False
-    display_name = _("Question type")
-    container_name = _("Question types")
-
-    fields = [
-        Field(name="question_type_name",
-            modes="view edit add listing",
-            property=schema.TextLine(title=_("Question Type"))
-        ),
-        LanguageField("language"),
-    ]
-
-class ResponseTypeDescriptor(ModelDescriptor):
-    localizable = False
-    display_name = _("Response type")
-    container_name = _("Response types")
-
-    fields = [
-        Field(name="response_type_name",
-            modes="view edit add listing",
-            property=schema.TextLine(title=_("Response Type"))
-        ),
-        LanguageField("language"),
-    ]
-'''
 
 class QuestionDescriptor(DocDescriptor):
     order = _ORDER_BY_CONTAINER_NAMES.index("questions")
@@ -2554,23 +2424,6 @@ class SittingAttendanceDescriptor(ModelDescriptor):
         ),
     ]
 
-
-''' !+TYPES_CUSTOM
-class AttendanceTypeDescriptor(ModelDescriptor):
-    localizable = False
-    display_name = _("Attendance types")
-    container_name = _("Attendance types")
-    fields = [
-        Field(name="attendance_type", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit listing"),
-            ],
-            property=schema.TextLine(title=_("Attendance type"))
-        ),
-       LanguageField("language"),
-    ]
-'''
 
 class SignatoryDescriptor(ModelDescriptor):
     localizable = True

@@ -154,23 +154,6 @@ def make_audit_table(table, metadata):
     return audit_tbl
 
 
-'''
-def make_vocabulary_table(vocabulary_prefix, metadata, table_suffix="_types",
-        column_suffix="_type"
-    ):
-    table_name = "%s%s" % (vocabulary_prefix, table_suffix)
-    column_key = "%s%s_id" % (vocabulary_prefix, column_suffix)
-    column_name = "%s%s_name" % (vocabulary_prefix , column_suffix)
-    return rdb.Table(table_name, metadata,
-        rdb.Column(column_key, rdb.Integer, primary_key=True),
-        rdb.Column(column_name, rdb.Unicode(256),
-            nullable=False,
-            unique=True
-        ),
-        rdb.Column("language", rdb.String(5), nullable=False),
-    )
-'''
-
 #######################
 # Users 
 #######################
@@ -272,8 +255,6 @@ currently_editing_document = rdb.Table("currently_editing_document", metadata,
     ),
     rdb.Column("editing_date", rdb.DateTime(timezone=False)) 
 )
-
-#!+TYPES_CUSTOM member_election_types = make_vocabulary_table("member_election", metadata)
 
 # password restore links
 password_restore_link = rdb.Table("password_restore_link", metadata,
@@ -383,22 +364,6 @@ parliaments = rdb.Table("parliaments", metadata,
     ),
    rdb.Column("election_date", rdb.Date, nullable=False),
 )
-
-''' !+TYPES_CUSTOM
-committee_type_status = make_vocabulary_table("committee_type_status", metadata,
-    table_suffix="", column_suffix="")
-committee_type = rdb.Table("committee_types", metadata,
-    rdb.Column("committee_type_id", rdb.Integer, primary_key=True),
-    rdb.Column("committee_type", rdb.Unicode(256), nullable=False),
-    rdb.Column("description", rdb.UnicodeText),
-    rdb.Column("life_span", rdb.Unicode(16)),
-    rdb.Column("committee_type_status_id", rdb.Integer,
-        rdb.ForeignKey("committee_type_status.committee_type_status_id"),
-        nullable=False
-    ),
-    rdb.Column("language", rdb.String(5), nullable=False),
-)
-'''
 
 committees = rdb.Table("committees", metadata,
     rdb.Column("committee_id", rdb.Integer,
@@ -520,15 +485,6 @@ member_titles = rdb.Table("member_titles", metadata,
 # Addresses
 ############
 
-''' !+TYPES_CUSTOM 
-address_types = rdb.Table("address_types", metadata,
-    rdb.Column("address_type_id", rdb.Integer, primary_key=True),
-    rdb.Column("address_type_name", rdb.Unicode(40)),
-    rdb.Column("language", rdb.String(5), nullable=False),
-)
-postal_address_types = make_vocabulary_table("postal_address", metadata)
-'''
-
 def _make_address_table(metadata, fk_key="user"):
     assert fk_key in ("user", "group")
     table_name = "%s_addresses" % (fk_key) # e.g. user_addresses
@@ -642,13 +598,6 @@ headings = rdb.Table("headings", metadata,
     rdb.Column("group_id", rdb.Integer, rdb.ForeignKey("groups.group_id"))
 )
 
-''' !+TYPES_CUSTOM
-attendance_types = rdb.Table("attendance_types", metadata,
-    rdb.Column("attendance_type_id", rdb.Integer, primary_key=True),
-    rdb.Column("attendance_type", rdb.Unicode(40), nullable=False),
-    rdb.Column("language", rdb.String(5), nullable=False),
-)
-'''
 
 # venues for sittings:
 

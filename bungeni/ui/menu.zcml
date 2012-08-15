@@ -1504,10 +1504,5 @@
      weight="30"
      /-->
 
-     
-    <!-- !+TYPES_CUSTOM
-    <include file="menu-vocabularies.zcml"/>
-    -->
-    
 </configure>
 

@@ -334,12 +334,4 @@ autohandle how the str-values of these columns will be translated.]
 are not picked up with _("Office") or equivalent... why?
 '''
 
-''' !+TYPES_CUSTOM
-from zope.dublincore.interfaces import IDCDescriptiveProperties
-def dc_getter(name, title, item_attribute, default=_(u"None")):
-    def getter(item, formatter):
-        obj = getattr(item, item_attribute)
-        return IDCDescriptiveProperties(obj).title
-    return column.GetterColumn(title, getter)
-'''
 
