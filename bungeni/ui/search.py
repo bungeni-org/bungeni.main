@@ -94,7 +94,7 @@ ALLOWED_TYPES = {'workspace': ('Question', 'Motion', 'TabledDocument',\
 
 def get_statuses_vocabulary(klass):
     try:
-        return vocabulary.workflow_vocabulary_factory(klass())
+        return vocabulary.workflow_states(klass())
     except Exception:
         return None
 

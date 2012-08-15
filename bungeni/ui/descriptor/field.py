@@ -19,6 +19,7 @@ from bungeni.ui.descriptor import listing, constraints
 VALUETYPE = {
     "text": {},
     "date": {},
+    "bool": {"default": True},
     "language": {},
     "email": {"constraint": constraints.check_email},
     "login": {"min_length": 3, "max_length": 20, "constraint": constraints.check_login},
@@ -33,6 +34,7 @@ RENDERTYPE = {
     "text_line": schema.TextLine,
     "rich_text": schema.Text,
     "date": schema.Date,
+    "bool": schema.Bool,
     "image": schema.Bytes,
     # special other user-conf params: "vocabulary" -> "type:vocabulary, required:True"
     "single_select": schema.Choice, 
@@ -55,6 +57,8 @@ WIDGETS = {
         (None, None, None, None),
     ("date", "date"):
         (None, widgets.DateWidget, widgets.DateWidget, widgets.date_input_search_widget),
+    ("bool", "bool"):
+        (None, None, None, None),
     ("language", "single_select"):
         (None, None, widgets.LanguageLookupWidget, None),
     ("email", "text_line"):

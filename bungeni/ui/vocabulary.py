@@ -485,7 +485,7 @@ class TitleTypes(SpecializedSource):
         return vocabulary.SimpleVocabulary(terms)
 
 
-class WorkflowVocabularyFactory(BaseVocabularyFactory):
+class WorkflowStatesVocabularyFactory(BaseVocabularyFactory):
     def __call__(self, context):
         if IAlchemistContent.providedBy(context):
             ctx = context
@@ -498,7 +498,8 @@ class WorkflowVocabularyFactory(BaseVocabularyFactory):
             items.append(vocabulary.SimpleTerm(
                     status, status, _(workflow.get_state(status).title)))
         return vocabulary.SimpleVocabulary(items)
-workflow_vocabulary_factory = WorkflowVocabularyFactory()
+workflow_states = WorkflowStatesVocabularyFactory()
+component.provideUtility(workflow_states, IVocabularyFactory, "workflow_states")
 
 
 class MemberOfParliament(object):
@@ -1017,12 +1018,14 @@ class SubstitutionSource(SpecializedSource):
         terms = []
         for t in tdict.keys():
             terms.append(
-                vocabulary.SimpleTerm(
-                    value = t, 
-                    token = t,
-                    title = tdict[t]
-                   ))
+                vocabulary.SimpleTerm(value=t, token=t, title=tdict[t]))
         return vocabulary.SimpleVocabulary(terms)
+substitution = SubstitutionSource(
+    token_field="user_id",
+    title_field="fullname",
+    value_field="user_id"
+)
+component.provideUtility(substitution, IVocabularyFactory, "substitution")
 
 
 ''' !+MODELS(mr, oct-2011) shouldn't this be elsewhere?

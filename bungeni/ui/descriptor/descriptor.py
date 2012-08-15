@@ -365,86 +365,72 @@ class GroupMembershipDescriptor(ModelDescriptor):
     sort_on = ["user_id"]
     sort_dir = "asc"
     
-    SubstitutionSource = vocabulary.SubstitutionSource(
-        token_field="user_id",
-        title_field="fullname",
-        value_field="user_id"
-    )
-    
     fields = [
-        Field(name="start_date", # [user-req]
-            modes="view edit add listing",
+        F(name="start_date",
+            label="Start Date",
+            required=True,
+            localizable=[
+                show("add"), # db-not-null-ui-add
+                show("view edit listing"),
+            ],
+            value_type="date",
+            render_type="date",
+            listing_column=listing.day_column("start_date", _("Start Date")),
+        ),
+        F(name="end_date",
+            label="End Date",
+            localizable=[
+                show("view edit add listing"),
+            ],
+            value_type="date",
+            render_type="date",
+            listing_column=listing.day_column("end_date", _("End Date")),
+        ),
+        F(name="active_p",
+            label="Active",
+            localizable=[
+                show("view edit add listing"),
+            ],
+            value_type="bool",
+            render_type="bool",
+        ),
+        LanguageField("language"), # [user-req]
+        F(name="substitution_type", #!+UNUSED? string100
+            label="Type of Substitution",
             localizable=[
                 show("view edit listing"),
             ],
-            property=schema.Date(title=_("Start Date")),
-            listing_column=listing.day_column("start_date", _("Start Date")),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget,
-            search_widget=widgets.date_input_search_widget
+            value_type="text",
+            render_type="text_line",
         ),
-        Field(name="end_date", # [user]
-            modes="view edit add listing",
+        F(name="replaced_id", #!+UNUSED? fk to a membership
+            label="Substituted by",
             localizable=[
-                show("view add edit listing"),
+                show("view edit listing"),
             ],
-            property=schema.Date(title=_("End Date"), required=False),
-            listing_column=listing.day_column("end_date", _("End Date")),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget,
-            search_widget=widgets.date_input_search_widget
+            value_type="text",
+            render_type="single_select",
+            vocabulary="substitution",
         ),
-        Field(name="active_p", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("edit"),
-                hide("view listing"),
-            ],
-            property=schema.Bool(title=_("Active"), 
-                default=True, 
-                required=False,
-            ),
-        ),
-        LanguageField("language"), # [user-req]
-        Field(name="substitution_type", # [user]
-            modes="view edit listing",
-            localizable=[
-                hide("view edit listing"),
-            ],
-            property=schema.TextLine(
-                title=_("Type of Substitution"),
-                required=False,
-            ),
-        ),
-        Field(name="replaced_id", # [user]
-            modes="view edit listing",
-            localizable=[
-                hide("view edit listing"),
-            ],
-            property=schema.Choice(
-                title=_("Substituted by"),
-                source=SubstitutionSource,
-                required=False,
-            ),
-        ),
-        Field(name="status", label=_("Status"), # [sys]
-            modes="view listing",
+        F(name="status",
+            label="Status",
             localizable=[
                 show("view listing"),
             ],
-            property=schema.Choice(title=_("Status"),
-                vocabulary=vocabulary.workflow_vocabulary_factory,
-            ),
+            value_type="text",
+            render_type="single_select",
+            vocabulary="workflow_states",
             listing_column=listing.workflow_column(),
         ),
-        Field(name="status_date", label=_("Status date"), # [sys]
-            modes="view listing",
+        F(name="status_date",
+            label="Status Date",
+            required=True,
             localizable=[
                 show("view listing"),
             ],
-            property=schema.Date(title=_("Status Date"), required=True),
+            value_type="date",
+            render_type="date",
             listing_column=listing.day_column("status_date", _("Status date")),
-            search_widget=widgets.date_input_search_widget
         ),
     ]
     schema_invariants = [
@@ -733,7 +719,7 @@ class GroupDescriptor(ModelDescriptor):
                 show("view listing"),
             ],
             property=schema.Choice(title=_("Status"),
-                vocabulary=vocabulary.workflow_vocabulary_factory,
+                vocabulary="workflow_states",
             ),
             listing_column=listing.workflow_column(),
         ),
@@ -1584,7 +1570,7 @@ class AttachmentDescriptor(ModelDescriptor):
                 show("view listing"),
             ],
             property=schema.Choice(title=_("Status"),
-                vocabulary=vocabulary.workflow_vocabulary_factory,
+                vocabulary="workflow_states",
             ),
             listing_column=listing.workflow_column(),
         ),
@@ -1775,7 +1761,7 @@ class DocDescriptor(ModelDescriptor):
                 show("view listing"),
             ],
             property=schema.Choice(title=_("Status"),
-                vocabulary=vocabulary.workflow_vocabulary_factory,
+                vocabulary="workflow_states",
             ),
             listing_column=listing.workflow_column(),
         ),
@@ -2632,7 +2618,7 @@ class SignatoryDescriptor(ModelDescriptor):
                     roles="bungeni.Clerk bungeni.Owner bungeni.Signatory")
             ],
             property=schema.Choice(title=_("Signature status"), 
-                vocabulary=vocabulary.workflow_vocabulary_factory,
+                vocabulary="workflow_states",
                 required=True
             ),
             listing_column=listing.workflow_column("status", 
