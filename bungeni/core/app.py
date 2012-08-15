@@ -184,13 +184,14 @@ class AppSetup(object):
             title=_(u"under consideration"),
             description=_(u"documents under consideration"),
             default_name="documents",
-            marker=interfaces.IWorkspaceUnderConsideration,
+            marker=interfaces.IWorkspaceUnderConsideration
         )
 
         workspace["under-consideration"]["documents"] = WorkspaceUnderConsiderationContainer(
             name="documents",
             title=_(u"Under consideration"),
-            description=_(u"Documents under consideration")
+            description=_(u"Documents under consideration"),
+            marker=interfaces.IWorkspaceTrackedDocuments
            )
         workspace["under-consideration"]["my-interests"] = WorkspaceTrackedDocumentsContainer(
             name="my-interests",

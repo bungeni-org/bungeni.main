@@ -167,65 +167,7 @@ class WorkspaceBaseContainer(AlchemistContainer):
         return query
 
     def _query(self, **kw):
-        principal = utils.get_principal()
-        roles = get_workspace_roles()
-        group_roles_domain_status = self.item_status_filter(kw, roles)
-        session = Session()
-        results = []
-        count = 0
-        first_page = not kw.get("start", 0)
-        reverse = True if (kw.get("sort_dir", "desc") == "desc") else False
-        for domain_class, status in group_roles_domain_status.iteritems():
-            query = session.query(domain_class).filter(
-                domain_class.status.in_(status)).enable_eagerloads(False)
-            #filter on title
-            query = self.filter_title(query, domain_class, kw)
-            #filter on status_date
-            query = self.filter_status_date(query, kw)
-            # Order results
-            query = self.order_query(query, domain_class, kw, reverse)
-            # The first page of the results is loaded the most number of times
-            # The limit on the query below optimises for when no filter has
-            # been applied by limiting the number of results returned.
-            if first_page:
-                count = count + query.count()
-                query = query.limit(kw.get("limit", 25))
-            results.extend(query.all())
-        object_roles_domain_status = self.item_status_filter(kw, OBJECT_ROLES)
-        for domain_class, status in object_roles_domain_status.iteritems():
-            object_roles_results = []
-            query = session.query(domain_class).filter(
-                domain_class.status.in_(status)).enable_eagerloads(False)
-            #filter on title
-            query = self.filter_title(query, domain_class, kw)
-            #filter on status_date
-            query = self.filter_status_date(query, kw)
-            # Order results
-            query = self.order_query(query, domain_class, kw, reverse)
-            for obj in query.all():
-                if obj in results:
-                    break
-                prm = IPrincipalRoleMap(obj)
-                for obj_role in OBJECT_ROLES:
-                    if (prm.getSetting(obj_role, principal.id) == Allow):
-                        object_roles_results.append(obj)
-                        break
-            if first_page:
-                count = count + len(object_roles_results)
-            results.extend(object_roles_results)
-        # Sort items
-        if (kw.get("sort_on", None) and kw.get("sort_dir", None)):
-            results.sort(key=lambda x: getattr(x, str(kw.get("sort_on"))),
-                         reverse=reverse)
-        if not first_page:
-            count = len(results)
-        if not (kw.get("filter_title", None) or
-                kw.get("filter_type", None) or
-                kw.get("filter_status", None) or
-                kw.get("filter_status_date", None)
-            ):
-            self.set_tab_count(principal.id, count)
-        return (results, count)
+        raise NotImplementedError("Inheriting class must implement this")
 
     def query(self, **kw):
         return self._query(**kw)
@@ -335,6 +277,67 @@ class WorkspaceBaseContainer(AlchemistContainer):
 
 class WorkspaceContainer(WorkspaceBaseContainer):
     interface.implements(IWorkspaceContainer)
+
+    def _query(self, **kw):
+        principal = utils.get_principal()
+        roles = get_workspace_roles()
+        group_roles_domain_status = self.item_status_filter(kw, roles)
+        session = Session()
+        results = []
+        count = 0
+        first_page = not kw.get("start", 0)
+        reverse = True if (kw.get("sort_dir", "desc") == "desc") else False
+        for domain_class, status in group_roles_domain_status.iteritems():
+            query = session.query(domain_class).filter(
+                domain_class.status.in_(status)).enable_eagerloads(False)
+            #filter on title
+            query = self.filter_title(query, domain_class, kw)
+            #filter on status_date
+            query = self.filter_status_date(query, kw)
+            # Order results
+            query = self.order_query(query, domain_class, kw, reverse)
+            # The first page of the results is loaded the most number of times
+            # The limit on the query below optimises for when no filter has
+            # been applied by limiting the number of results returned.
+            if first_page:
+                count = count + query.count()
+                query = query.limit(kw.get("limit", 25))
+            results.extend(query.all())
+        object_roles_domain_status = self.item_status_filter(kw, OBJECT_ROLES)
+        for domain_class, status in object_roles_domain_status.iteritems():
+            object_roles_results = []
+            query = session.query(domain_class).filter(
+                domain_class.status.in_(status)).enable_eagerloads(False)
+            #filter on title
+            query = self.filter_title(query, domain_class, kw)
+            #filter on status_date
+            query = self.filter_status_date(query, kw)
+            # Order results
+            query = self.order_query(query, domain_class, kw, reverse)
+            for obj in query.all():
+                if obj in results:
+                    break
+                prm = IPrincipalRoleMap(obj)
+                for obj_role in OBJECT_ROLES:
+                    if (prm.getSetting(obj_role, principal.id) == Allow):
+                        object_roles_results.append(obj)
+                        break
+            if first_page:
+                count = count + len(object_roles_results)
+            results.extend(object_roles_results)
+        # Sort items
+        if (kw.get("sort_on", None) and kw.get("sort_dir", None)):
+            results.sort(key=lambda x: getattr(x, str(kw.get("sort_on"))),
+                         reverse=reverse)
+        if not first_page:
+            count = len(results)
+        if not (kw.get("filter_title", None) or
+                kw.get("filter_type", None) or
+                kw.get("filter_status", None) or
+                kw.get("filter_status_date", None)
+            ):
+            self.set_tab_count(principal.id, count)
+        return (results, count)
 
 # !+SECURITY(miano, july 2011) This factory adapts the workspaces to
 # zope.securitypolicy.interface.IPrincipalRoleMap and is equivalent to the
