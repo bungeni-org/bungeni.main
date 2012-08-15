@@ -453,7 +453,7 @@ user_group_memberships = rdb.Table("user_group_memberships", metadata,
     # type of membership staff or member
     rdb.Column("membership_type", rdb.String(30),
         default="member",
-        #nullable=False,
+        nullable=False,
     ),
     rdb.Column("language", rdb.String(5), nullable=False),
 )
