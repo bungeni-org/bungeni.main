@@ -9,7 +9,7 @@ $Id$
 log = __import__("logging").getLogger("bungeni.ui.descriptor")
 
 from copy import deepcopy
-from zope import schema, interface
+from zope import schema
 import zope.formlib
 
 from bungeni.alchemist.model import ModelDescriptor, Field, show, hide
@@ -29,7 +29,7 @@ from bungeni.ui.fields import VocabularyTextField
 from bungeni.ui.forms import validations
 from bungeni.ui.i18n import _
 from bungeni.ui import vocabulary
-from bungeni.ui.descriptor import listing
+from bungeni.ui.descriptor import listing, constraints
 from bungeni.ui.descriptor.field import F
 from bungeni.utils import misc
 
@@ -37,88 +37,6 @@ from bungeni.utils import misc
 def get_field(fields, name):
     return misc.get_keyed_item(fields, name, key="name")
     
-
-####
-#  Constraints / Invariants
-#
-
-def ElectionAfterStart(obj):
-    """Start Date must be after Election Date."""
-    if obj.election_date >= obj.start_date:
-        raise interface.Invalid(
-            _("The life of a parliament must start after its election"),
-            "election_date",
-            "start_date"
-        )
-
-def EndAfterStart(obj):
-    """End Date must be after Start Date."""
-    if obj.end_date is None: return
-    if obj.end_date <= obj.start_date:
-        raise interface.Invalid(
-            _("End Date must be after Start Date"),
-            "start_date",
-            "end_date"
-        )
-
-def DissolutionAfterReinstatement(obj):
-    """A committee must be disolved before it can be reinstated."""
-    if (obj.dissolution_date is None) or (obj.reinstatement_date is None):
-        return
-    if obj.dissolution_date > obj.reinstatement_date:
-        raise interface.Invalid(
-            _("A committee must be disolved before it can be reinstated"),
-            "dissolution_date",
-            "reinstatement_date"
-        )
-
-def ActiveAndSubstituted(obj):
-    """A person cannot be active and substituted at the same time."""
-    if obj.active_p and obj.replaced_id:
-        raise interface.Invalid(
-            _("A person cannot be active and substituted at the same time"),
-            "active_p",
-            "replaced_id"
-        )
-
-def SubstitudedEndDate(obj):
-    """If a person is substituted he must have an end date."""
-    if not obj.end_date and obj.replaced_id:
-        raise interface.Invalid(
-            _("If a person is substituted End Date must be set"),
-            "replaced_id",
-            "end_date"
-        )
-
-def InactiveNoEndDate(obj):
-    """If you set a person inactive you must provide an end date."""
-    if not obj.active_p:
-        if not (obj.end_date):
-            raise interface.Invalid(
-                _("If a person is inactive End Date must be set"),
-                "end_date",
-                "active_p"
-            )
-
-def MpStartBeforeElection(obj):
-    """MP start date (when set) must be after election."""
-    if obj.election_nomination_date is None:
-        return
-    if obj.election_nomination_date > obj.start_date:
-        raise interface.Invalid(_("A parliament member has to be "
-                "elected/nominated before she/he can be sworn in"),
-            "election_nomination_date",
-            "start_date"
-        )
-
-def DeathBeforeLife(User):
-    """Check if date of death is after date of birth."""
-    if User.date_of_death is None: return
-    if User.date_of_death < User.date_of_birth:
-        raise interface.Invalid(_("Check dates: death must follow birth"),
-            "date_of_death",
-            "date_of_birth"
-        )
 
 ####
 # Fields
@@ -134,7 +52,7 @@ def DeathBeforeLife(User):
 #   attribute of the domain's class), the domain.zcml setting for that same
 #   class attribute will anyway take precedence.
 #
-# modes:
+# modes: !+
 # - default: "view edit add"
 # - all individual bool params {view, edit, add, listing, search} for each
 #   supported mode are now obsolete
@@ -413,7 +331,7 @@ class UserDescriptor(ModelDescriptor):
             render_type="rich_text",
         ),
     ]
-    schema_invariants = [DeathBeforeLife]
+    schema_invariants = [constraints.DeathBeforeLife]
     custom_validators = [validations.email_validator]
 
 
@@ -530,10 +448,10 @@ class GroupMembershipDescriptor(ModelDescriptor):
         ),
     ]
     schema_invariants = [
-        EndAfterStart,
-        ActiveAndSubstituted,
-        SubstitudedEndDate,
-        InactiveNoEndDate
+        constraints.EndAfterStart,
+        constraints.ActiveAndSubstituted,
+        constraints.SubstitudedEndDate,
+        constraints.InactiveNoEndDate
     ]
     custom_validators = [
         validations.validate_date_range_within_parent,
@@ -678,7 +596,7 @@ class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
     ])
 
     schema_invariants = GroupMembershipDescriptor.schema_invariants + [
-       MpStartBeforeElection]
+       constraints.MpStartBeforeElection]
 
 
 class PoliticalGroupMemberDescriptor(GroupMembershipDescriptor):
@@ -820,7 +738,7 @@ class GroupDescriptor(ModelDescriptor):
             listing_column=listing.workflow_column(),
         ),
     ]
-    schema_invariants = [EndAfterStart]
+    schema_invariants = [constraints.EndAfterStart]
     custom_validators = [validations.validate_date_range_within_parent]
 
 
@@ -921,8 +839,8 @@ class ParliamentDescriptor(GroupDescriptor):
         ),
     ]
     schema_invariants = [
-        EndAfterStart,
-        ElectionAfterStart
+        constraints.EndAfterStart,
+        constraints.ElectionAfterStart
     ]
     custom_validators = [validations.validate_parliament_dates]
 
@@ -1096,7 +1014,7 @@ class CommitteeDescriptor(GroupDescriptor):
         ),
     ])
     schema_invariants = [
-        EndAfterStart,
+        constraints.EndAfterStart,
         #DissolutionAfterReinstatement
     ]
     custom_validators = [validations.validate_date_range_within_parent]
@@ -1361,7 +1279,7 @@ class MemberTitleDescriptor(ModelDescriptor):
     #      if f["name"] not in ("role_title_id",) ]
 
     schema_invariants = [
-        EndAfterStart,
+        constraints.EndAfterStart,
     ]
     custom_validators = [
         validations.validate_date_range_within_parent,
@@ -1437,7 +1355,7 @@ class PoliticalGroupDescriptor(GroupDescriptor):
             edit_widget=widgets.ImageInputWidget
         ),
     ])
-    schema_invariants = [EndAfterStart]
+    schema_invariants = [constraints.EndAfterStart]
     custom_validators = [validations.validate_date_range_within_parent]
 
 
@@ -1530,7 +1448,7 @@ class MinistryDescriptor(GroupDescriptor):
             ),
         ),
     ])
-    schema_invariants = [EndAfterStart]
+    schema_invariants = [constraints.EndAfterStart]
     custom_validators = [validations.validate_date_range_within_parent]
 
 
@@ -1586,7 +1504,7 @@ class GovernmentDescriptor(GroupDescriptor):
             ),
         ),
     ])
-    schema_invariants = [EndAfterStart]
+    schema_invariants = [constraints.EndAfterStart]
     custom_validators = [validations.validate_government_dates]
 
 class AttachmentDescriptor(ModelDescriptor):
@@ -2527,7 +2445,7 @@ class SittingDescriptor(ModelDescriptor):
             ),
         ),
     ]
-    schema_invariants = [EndAfterStart]
+    schema_invariants = [constraints.EndAfterStart]
     custom_validators = [
         validations.validate_date_range_within_parent,
         validations.validate_start_date_equals_end_date,
@@ -2589,7 +2507,7 @@ class SessionDescriptor(ModelDescriptor):
             ],
         )
     ]
-    schema_invariants = [EndAfterStart]
+    schema_invariants = [constraints.EndAfterStart]
     custom_validators = [validations.validate_date_range_within_parent]
 
 
