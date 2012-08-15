@@ -349,6 +349,10 @@ class DatabaseSource(BaseVocabularyFactory):
     actual value stored is the id.
     """
     
+    # !+SOURCE_PARAMS(mr, aug-2012) make order of equivalent params consistent
+    # across DatabaseSource and SpecializedSource to (token, title, value)
+    # !+SOURCE_FACTORY(mr, aug-2012) merge DatabaseSource and SpecializedSource 
+    # down to only one source factory class.
     def __init__(self, domain_model, token_field, value_field, 
             title_field=None, 
             title_getter=None, 
@@ -357,6 +361,9 @@ class DatabaseSource(BaseVocabularyFactory):
         self.domain_model = domain_model
         self.token_field = token_field
         self.value_field = value_field
+        assert title_field is None or title_getter is None, \
+            "DatabaseSource [%s]: EITHER title_field [%s] OR title_getter [%s]" % (
+                title_field, title_getter)
         self.title_field = title_field
         self.title_getter = title_getter
         self.order_by = order_by
@@ -399,16 +406,14 @@ component.provideUtility(country_factory, IVocabularyFactory, "country")
 
 
 
-class SpecializedSource(object):
-    interface.implements(
-        IContextSourceBinder,
-        IVocabularyFactory
-    )
+class SpecializedSource(BaseVocabularyFactory):
     
+    # !+SOURCE_PARAMS(mr, aug-2012) make order of equivalent params consistent
+    # across DatabaseSource and SpecializedSource to (token, title, value)
     def __init__(self, token_field, title_field, value_field):
         self.token_field = token_field
-        self.value_field = value_field
         self.title_field = title_field
+        self.value_field = value_field
     
     def _get_parliament_id(self, context):
         trusted = removeSecurityProxy(context)
@@ -809,6 +814,12 @@ class UserSource(SpecializedSource):
         users = session.query(domain.User).order_by(
             domain.User.last_name, domain.User.first_name)
         return users
+user = UserSource(
+    token_field="user_id", 
+    title_field="fullname", 
+    value_field="user_id"
+)
+component.provideUtility(user, IVocabularyFactory, "user")
 
 class GroupSource(SpecializedSource):
     """All active groups.
@@ -1060,6 +1071,7 @@ class PIAssignmentSource(SpecializedSource):
         return query
 '''
 
+''' !+UNUSED
 class CommitteeSource(SpecializedSource):
 
     def constructQuery(self, context):
@@ -1070,7 +1082,7 @@ class CommitteeSource(SpecializedSource):
             domain.Committee.status == "active",
             domain.Committee.parent_group_id == parliament_id))
         return query
-
+'''
 
 ''' !+UNUSED
 class MotionPoliticalGroupSource(SpecializedSource):

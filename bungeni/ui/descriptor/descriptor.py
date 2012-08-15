@@ -425,18 +425,18 @@ class UserDelegationDescriptor(ModelDescriptor):
     container_name = _("Delegations")
     
     fields = [
-        Field(name="delegation_id", # [user-req]
-            modes="view edit add listing",
-            property=schema.Choice(title=_("User"),
-                # !+vocabulary.UserSource ?
-                source=vocabulary.DatabaseSource(domain.User,
-                    token_field="user_id",
-                    title_field="fullname",
-                    value_field="user_id"
-                )
-            ),
-            listing_column=listing.related_user_name_column("delegation_id", _("User"),
-                "delegation"),
+        F(name="delegation_id",
+            label="User",
+            required=True,
+            localizable=[
+                show("add"), # db-not-null-ui-add
+                show("view edit listing"),
+            ],
+            value_type="text",
+            render_type="single_select",
+            vocabulary="user",
+            listing_column=listing.related_user_name_column("delegation_id", 
+                _("User"), "delegation"),
             listing_column_filter=listing.user_listing_name_column_filter,
         ),
     ]
@@ -446,6 +446,7 @@ class GroupMembershipDescriptor(ModelDescriptor):
     localizable = False
     sort_on = ["user_id"]
     sort_dir = "asc"
+    
     SubstitutionSource = vocabulary.SubstitutionSource(
         token_field="user_id",
         title_field="fullname",
@@ -589,7 +590,7 @@ class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
                 source=vocabulary.MembershipUserSource(
                     token_field="user_id",
                     title_field="fullname",
-                    value_field="user_id"
+                    value_field="user_id",
                 )
             ),
             listing_column=listing.related_user_name_column("user_id", _("Name"), "user"),
@@ -1544,13 +1545,7 @@ class MinisterDescriptor(GroupMembershipDescriptor):
             localizable=[
                 show("view listing"),
             ],
-            property=schema.Choice(title=_("Name"),
-                source=vocabulary.UserSource(
-                    token_field="user_id",
-                    title_field="fullname",
-                    value_field="user_id"
-                )
-            ),
+            property=schema.Choice(title=_("Name"), vocabulary="user"),
             listing_column=listing.related_user_name_column("user_id", _("Name"), "user"),
             listing_column_filter=listing.related_user_name_column_filter,
             add_widget = widgets.AutoCompleteWidget(remote_data=True),
@@ -1933,7 +1928,8 @@ class EventDescriptor(DocDescriptor):
             source=vocabulary.OwnerOrLoggedInUserSource(
                 token_field="user_id",
                 title_field="fullname",
-                value_field="user_id")
+                value_field="user_id",
+            )
         )
         # !+f.localizable changing localizable modes AFTER Field is initialized
         # gives mismatch error when descriptors are (re-)loaded, e.g. 
@@ -1968,11 +1964,7 @@ class ChangeDescriptor(ModelDescriptor):
         Field(name="user_id",
             modes="view listing",
             localizable=[ show("view listing"), ],
-            property=schema.Choice(title=_("User"), 
-                source=vocabulary.UserSource(
-                    token_field="user_id",
-                    title_field="fullname",
-                    value_field="user_id")),
+            property=schema.Choice(title=_("User"), vocabulary="user"),
             view_widget=None,
             listing_column=listing.related_user_name_column("user_id", _("Name"), "user"),
             # !+ audit listing column filtering currently disabled
