@@ -12,7 +12,7 @@ import os
 import hashlib
 from lxml import etree
 
-from zope import interface
+from zope import interface, component
 from zope.schema.interfaces import (
     IContextSourceBinder, 
     IBaseVocabulary, # IBaseVocabulary(ISource)
@@ -100,6 +100,10 @@ class VDEXVocabularyMixin(object):
     def __init__(self, file_name):
         self.vdex = VDEXManager(
             file=open(capi.get_path_for("vocabularies", file_name)))
+        # register each instance as a named utility on IVocabularyFactory
+        assert file_name.endswith(".vdex")
+        component.provideUtility(self,
+            IVocabularyFactory, file_name[:-len(".vdex")])
     
     # zope.schema.interfaces.IBaseVocabulary (inherits from ISource)
     
@@ -391,10 +395,15 @@ country_factory = DatabaseSource(
     domain.Country, "country_id", "country_id",
     title_field="country_name",
 )
+component.provideUtility(country_factory, IVocabularyFactory, "country")
+
 
 
 class SpecializedSource(object):
-    interface.implements(IContextSourceBinder)
+    interface.implements(
+        IContextSourceBinder,
+        IVocabularyFactory
+    )
     
     def __init__(self, token_field, title_field, value_field):
         self.token_field = token_field
@@ -497,7 +506,6 @@ member_of_parliament = rdb.join(schema.user_group_memberships,
     schema.user_group_memberships.c.group_id ==
         schema.parliaments.c.parliament_id)
 mapper(MemberOfParliament, member_of_parliament)
-
 
 class MemberOfParliamentImmutableSource(SpecializedSource):
     """If a user is already assigned to the context 

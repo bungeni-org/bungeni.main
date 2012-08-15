@@ -27,7 +27,7 @@ class FailedRegexMatch(zope.schema.ValidationError):
     def doc(self):
         return self.e_message
 
-class RegexChecker:
+class RegexChecker(object):
     """Regex constraint factory"""
     def __init__(self, regex, e_message):
         assert type(regex) in [str, unicode]

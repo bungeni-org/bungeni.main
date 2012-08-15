@@ -26,12 +26,11 @@ import bungeni.core.workflows.adapters # needed by standalone scripts !+review
 
 from bungeni.ui import widgets
 from bungeni.ui.fields import VocabularyTextField
-from bungeni.ui import constraints
 from bungeni.ui.forms import validations
 from bungeni.ui.i18n import _
 from bungeni.ui import vocabulary
 from bungeni.ui.descriptor import listing
-
+from bungeni.ui.descriptor.field import F
 from bungeni.utils import misc
 
 
@@ -165,31 +164,34 @@ def DeathBeforeLife(User):
 
 # !+EDIT_AS_VIEW fields in "edit" mode on which user has no Edit permission? 
 
-def LanguageField(name="language", modes="view edit add listing", 
-        localizable=[ 
+def LanguageField(name="language", 
+        localizable=[
+            show("add"), # db-not-null-ui-add
             show("view edit"), 
             hide("listing"), 
         ]
     ):
-    # if a different modes param is specified, the localizable param should 
-    # also be specified accordingly
-    return Field(name=name,
-        label=_("Language"),
-        modes=modes,
+    f = F(name=name, 
+        label="Language", 
+        description=None, 
+        required=True,
         localizable=localizable,
-        property=schema.Choice(title=_("Language"),
-            vocabulary="language_vocabulary"
-        ),
-        add_widget=widgets.LanguageLookupWidget,
+        value_type="language",
+        render_type="single_select",
+        vocabulary="language_vocabulary",
     )
+    return f
 
 def AdmissibleDateField(name="admissible_date"):
-    # [sys]
-    return Field(name=name,
-        modes="view listing",
+    return F(name=name, # [derived]
+        label="Admissible Date", 
+        description=None, 
+        required=True,
         localizable=[ show("view listing"), ],
-        property=schema.Date(title=_("Admissible Date"), required=False),
+        value_type="date",
+        render_type="date",
     )
+
 
 ####
 # Descriptors
@@ -214,205 +216,201 @@ class UserDescriptor(ModelDescriptor):
     sort_dir = "asc"
     
     fields = [
-        Field(name="user_id", # [sys] for linking item in listing
+        F(name="user_id", # [sys] for linking item in listing
             label="Name",
+            description=None, 
+            required=True,
             localizable=[
-                # add edit -> non-ui
+                # "add edit" -> non-ui
                 hide("view"),
                 show("listing"),
             ],
             listing_column=listing.user_name_column("user_id", _("Name")),
             listing_column_filter=listing.user_listing_name_column_filter
         ),
-        Field(name="salutation", # [user-req]
+        F(name="salutation", 
+            label="Salutation", 
+            description="e.g. Mr. Mrs, Prof. etc.",
             localizable=[
                 show("view edit add listing"),
             ],
-            property=schema.TextLine(title=_("Salutation"),
-                description=_("e.g. Mr. Mrs, Prof. etc."),
-                required=False,
-            ),
+            value_type="text",
+            render_type="text_line",
         ),
-        Field(name="title", # [user-req]
+        F(name="title", 
+            label="Title",
+            description="e.g. Chief Advisor, etc.",
             localizable=[
                 show("view edit add listing"),
             ],
-            property=schema.TextLine(title=_("Title"),
-                description=_("e.g. Chief Advisor, etc."),
-                required=False,
-            ),
+            value_type="text",
+            render_type="text_line",
         ),
-        Field(name="first_name", # [user-req]
+        F(name="first_name",
+            label="First Name",
             localizable=[
                 show("add"), # db-not-null-ui-add
-                show("view edit"), 
-                hide("listing"),
+                show("view edit listing"),
             ],
-            property=schema.TextLine(title=_("First Name"))
+            value_type="text",
+            render_type="text_line",
         ),
-        Field(name="middle_name", # [user]
+        F(name="middle_name",
+            label="Middle Name",
             localizable=[
-                show("view edit add"), 
+                show("view edit add"),
                 hide("listing"),
             ],
-            property=schema.TextLine(title=_("Middle Name"), required=False)
+            value_type="text",
+            render_type="text_line",
         ),
-        Field(name="last_name", # [user-req]
-            localizable=[
-                show("add"), # db-not-null-ui-add
-                show("view edit"), 
-                hide("listing"),
-            ],
-            property=schema.TextLine(title=_("Last Name"))
-        ),
-        Field(name="email", # [user-req]
+        F(name="last_name",
+            label="Last Name",
             localizable=[
                 show("add"), # db-not-null-ui-add
-                show("view edit"), 
-                show("listing"),
+                show("view edit listing"),
             ],
-            property=schema.TextLine(title=_("Email"),
-                description=_("Email address"),
-                constraint=constraints.check_email,
-            ),
+            value_type="text",
+            render_type="text_line",
         ),
-        Field(name="login", # [user-req]
+        F(name="email",
+            label="Email",
+            description="Email address",
+            required=True,
+            localizable=[
+                show("add"), # db-not-null-ui-add
+                show("view edit listing"),
+            ],
+            value_type="email",
+            render_type="text_line",
+        ),
+        F(name="login",
+            label="Login",
+            description="Must contain only letters, numbers, a period (.) "
+                "and underscore (_). Should start with a letter and be "
+                "between 3 and 20 characters long",
             localizable=[
                 show("add"), # db-not-null-ui-add
                 show("view"),
                 hide("listing"),
             ],
-            property=schema.TextLine(title=_("Login"),
-                description=_("Must contain only letters, numbers, a "
-                    "period(.) and underscore (_). Should start with a letter "
-                    "and be between 3 and 20 characters long"),
-                min_length=3,
-                max_length=20,
-                constraint=constraints.check_login,
-            ),
+            value_type="login",
+            render_type="text_line",
         ),
-        Field(name="_password", # [user-req]
+        F(name="_password",
+            label="Initial password",
             localizable=[
-                show("add"), # db-not-null-ui-add !+?
+                show("add"), # db-not-null-ui-add
             ],
-            property=schema.TextLine(title=_("Initial password")),
+            value_type="password",
+            render_type="text_line",
         ),
-        Field(name="national_id", # [user]
+        F(name="national_id",
+            label="National Id",
             localizable=[
-                show("view edit add"), 
+                show("view edit add"),
                 hide("listing"),
             ],
-            property=schema.TextLine(title=_("National Id"), required=False)
+            value_type="text",
+            render_type="text_line",
         ),
-        Field(name="gender", # [user-req]
+        F(name="gender",
+            label="Gender",
             localizable=[
-                show("view edit add"), 
+                show("view edit add"),
                 show("listing"),
             ],
-            property=schema.Choice(title=_("Gender"),
-                source=vocabulary.gender,
-                required=False,
-            ),
-            edit_widget=widgets.CustomRadioWidget,
-            add_widget=widgets.CustomRadioWidget
+            value_type="text",
+            render_type="radio",
+            vocabulary="gender",
         ),
-        Field(name="date_of_birth", # [user-req]
+        F(name="date_of_birth",
+            label="Date of Birth",
             localizable=[
-                show("view edit add"), 
+                show("view edit add"),
                 show("listing"),
             ],
-            property=schema.Date(title=_("Date of Birth"), 
-                required=False,
-            ),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget,
-            search_widget=widgets.date_input_search_widget
+            value_type="date",
+            render_type="date",
         ),
-        Field(name="birth_country", # [user-req]
+        F(name="birth_country",
+            label="Country of Birth",
             localizable=[
-                show("view edit add"), 
+                show("view edit add"),
                 hide("listing"),
             ],
-            property=schema.Choice(title=_("Country of Birth"),
-                source=vocabulary.country_factory,
-                required=False,
-            )
+            value_type="text",
+            render_type="single_select",
+            vocabulary="country",
         ),
-        Field(name="birth_nationality", # [user-req]
+        F(name="birth_nationality",
+            label="Nationality at Birth",
             localizable=[
-                show("view edit add"), 
+                show("view edit add"),
                 hide("listing"),
             ],
-            property=schema.Choice(title=_("Nationality at Birth"),
-                source=vocabulary.country_factory,
-                required=False,
-            ),
+            value_type="text",
+            render_type="single_select",
+            vocabulary="country",
         ),
-        Field(name="current_nationality", # [user-req]
+        F(name="current_nationality",
+            label="Current Nationality",
             localizable=[
-                show("view edit add"), 
+                show("view edit add"),
                 hide("listing"),
             ],
-            property=schema.Choice(title=_("Current Nationality"),
-                source=vocabulary.country_factory,
-                required=False,
-            ),
+            value_type="text",
+            render_type="single_select",
+            vocabulary="country",
         ),
-        Field(name="marital_status", # [user-req]
+        F(name="marital_status",
+            label="Marital Status",
             localizable=[
                 show("view edit add listing"),
             ],
-            property=schema.Choice(title=_("Marital Status"),
-                source=vocabulary.marital_status,
-                required=False,
-            ),
+            value_type="text",
+            render_type="single_select",
+            vocabulary="marital_status",
             listing_column=listing.vocabulary_column("marital_status",
                 _("Marital Status"),
                 vocabulary.marital_status
             ),
         ),
-        Field(name="date_of_death", # [user]
+        F(name="date_of_death",
+            label="Date of Death",
             localizable=[
                 show("view edit"),
-                hide("add listing"),
+                hide("listing"),
             ],
-            property=schema.Date(title=_("Date of Death"), required=False),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget,
-            search_widget=widgets.date_input_search_widget
+            value_type="date",
+            render_type="date",
         ),
-        Field(name="image", # [img]
+        F(name="image",
+            label="Image",
+            description="Picture of the person",
             # !+LISTING_IMG(mr, apr-2011) TypeError, not JSON serializable
             localizable=[
                 show("view edit add"),
             ],
-            property=schema.Bytes(title=_("Image"),
-                description=_("Picture of the person"),
-                required=False,
-            ),
-            view_widget=widgets.ImageDisplayWidget,
-            edit_widget=widgets.ImageInputWidget,
+            value_type="image",
+            render_type="image",
         ),
         LanguageField("language"), # [user-req]
-        Field(name="description", # [rtf]
+        F(name="description",
+            label="Biographical notes",
             localizable=[
                 show("view edit add"),
             ],
-            property=schema.Text(title=_("Biographical notes"),
-                required=False
-            ),
-            view_widget=widgets.HTMLDisplay,
-            edit_widget=widgets.RichTextEditor,
-            add_widget=widgets.RichTextEditor
+            value_type="text",
+            render_type="rich_text",
         ),
-        Field(name="remarks", # [rtf]
+        F(name="remarks",
+            label="Remarks",
             localizable=[
                 show("view edit add"),
             ],
-            property=schema.Text(title=_("Remarks"), required=False),
-            view_widget=widgets.HTMLDisplay,
-            edit_widget=widgets.RichTextEditor,
-            add_widget=widgets.RichTextEditor,
+            value_type="text",
+            render_type="rich_text",
         ),
     ]
     schema_invariants = [DeathBeforeLife]
@@ -540,7 +538,6 @@ class GroupMembershipDescriptor(ModelDescriptor):
         validations.validate_date_range_within_parent,
         validations.validate_group_membership_dates
     ]
-
 
 ''' !+TYPES_CUSTOM
 class MemberElectionTypeDescriptor(ModelDescriptor):
@@ -1254,16 +1251,14 @@ class AddressDescriptor(ModelDescriptor):
             edit_widget=zope.formlib.widgets.TextAreaWidget,
             add_widget=zope.formlib.widgets.TextAreaWidget,
         ),
-        Field(name="email", # [user-req]
-            modes="view edit add listing",
+        F(name="email",
+            label="Email",
+            description="Email address",
             localizable=[
                 show("view edit add listing"),
             ],
-            property=schema.TextLine(title=_("Email"),
-                description=_("Email address"),
-                constraint=constraints.check_email,
-                required=False
-            ),
+            value_type="email",
+            render_type="text_line",
         ),
         #Field(name="im_id",
         #    property=schema.TextLine(title=_("Instant Messenger Id"),

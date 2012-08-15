@@ -23,7 +23,7 @@ from bungeni.core.i18n import _
 from bungeni.models.settings import EmailSettings
 from bungeni.core.app import BungeniApp
 import bungeni.ui.utils as ui_utils
-from bungeni.ui.constraints import check_email
+from bungeni.ui.descriptor.constraints import check_email
 from zope.interface import invariant
 from bungeni.ui.forms.common import BaseForm
 from bungeni.alchemist import ui
@@ -237,7 +237,7 @@ class IProfileForm(interface.Interface):
     first_name = schema.TextLine(title=_(u"First name"))
     last_name = schema.TextLine(title=_(u"Last name"))
     middle_name = schema.TextLine(title=_(u"Middle name"), required=False)
-    email = schema.TextLine(title=_(u"Email"),constraint=check_email)
+    email = schema.TextLine(title=_(u"Email"), constraint=check_email)
     description = schema.Text(title=_(u"Biographical notes"), required=False)
     gender = schema.Choice(title=_("Gender"), vocabulary=vocabulary.gender)
     date_of_birth = schema.Date(title=_("Date of Birth"))
