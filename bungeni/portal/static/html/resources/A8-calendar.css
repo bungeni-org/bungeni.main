@@ -261,22 +261,22 @@ white-space: normal;
     right:auto;  !important;
 }
 .dhx_cal_next_button{
-    left:590px; !important;
+    left:600px; !important;
     right:auto;  !important;
 }
 .dhx_cal_today_button
 {
-    left:620px; !important;
+    left:630px; !important;
 }
 
 .dhx_cal_navline #dhx_minical_icon{
-    left:700px;
+    left:710px;
 }
 
 .dhx_cal_navline #dhx_ical_icon{
     width: 60px;
     height: 18px;
-    left: 725px;
+    left: 735px;
     top: 1px;
     cursor: pointer;
     background: url(images/ical.png) no-repeat;
@@ -284,7 +284,7 @@ white-space: normal;
 
 .dhx_cal_navline .dhx_cal_date
 {
-    left:790px; !important;
+    left:800px; !important;
 }
 .dhx_cal_navline {
     text-transform:capitalize;
@@ -351,6 +351,7 @@ white-space: normal;
 
 .dhx_cal_navline #committees_tab{
     left:520px;
+    width:70px;
 }
 
 /* listing calendar dropdown

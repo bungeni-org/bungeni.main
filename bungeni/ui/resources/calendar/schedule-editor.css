@@ -121,8 +121,9 @@ span.dt_title_unit{
     background-image: url(/@@/portal/images/move_up.png);
     background-repeat: no-repeat;
     background-position: left;
-    padding-left:0px;
-    padding-right: 10px;
+    margin-top:4px;
+    padding: 0 10px 0 0 !important;
+    height:10px;
     border: none;
 }
 /* up */
@@ -130,13 +131,12 @@ span.dt_title_unit{
     background-image: url(/@@/portal/images/move_down.png);
     background-repeat: no-repeat;
     background-position: left;
-    padding-left:0px;
-    padding-right: 10px;
+    padding: 6px 10px 0 5px !important;
     border: none;
 }
 /* delete */
 #yui-gen0 .yui-button.schedule_delete button {
-    background-image: url(/@@/portal/images/cross.png);
+    background-image: url(/@@/portal/images/unchecked.png);
     background-repeat: no-repeat;
     background-position: left;
     padding-left:0px;

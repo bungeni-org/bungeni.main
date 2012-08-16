@@ -64,7 +64,7 @@
                     x_date: "%d %M",
                     x_step: 24,
                     x_size: 7,
-                    x_start: 1,
+                    x_start: 0,
                     x_length: 6,
                     y_unit: groups_data,
                     y_property: "group_id",
