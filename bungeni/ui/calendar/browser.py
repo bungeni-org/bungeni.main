@@ -64,6 +64,7 @@ from bungeni.ui.reporting import generators
 from bungeni.models import domain
 from bungeni.models import interfaces as model_interfaces
 from bungeni.alchemist.container import stringKey
+from bungeni.alchemist.model import queryModelInterface
 from bungeni.alchemist import Session
 from bungeni.ui import vocabulary
 
@@ -83,8 +84,24 @@ class EventPartialForm(AddForm):
     omit_fields = ["start_date", "end_date"]
     
     def update_fields(self):
+        # !+PERMISSIONS_ON_PARTIAL_CONTEXT(mr, aug-2012)
+        # Using self.model_descriptor._mode_columns(mode) checks columns for
+        # mode for current principal, but as we are dealing with a dummy sitting
+        # instance as context, this will evaluate incorrectly... in particlar,
+        # the call to self.model_descriptor._mode_columns("add") that is 
+        # triggered when setting up the form_fields here in the standard way, 
+        # will give strange results (since "add" localizable mode changes on 
+        # certain that have been introduced since r9722.
+        #
+        # So here we presumably just want the "full generic" set of fields,
+        # so we shortcut the standard machinery to setup form_fields, and 
+        # we use the full set of fields, as defined by the domain interface,
+        # and omitting what we need to omit.
+        #
+        domain_interface = queryModelInterface(self.context.__class__)
+        form_fields = form.Fields(domain_interface)
+        # /PERMISSIONS_ON_PARTIAL_CONTEXT
         self.form_fields["language"].edit_widget = LanguageLookupWidget
-        self.form_fields = self.form_fields.omit(*self.omit_fields)
     
     def get_widgets(self):
         self.update_fields()
@@ -281,6 +298,10 @@ class CalendarView(BungeniBrowserView):
 
     @property
     def partial_event_form(self):
+        # !+PERMISSIONS_ON_PARTIAL_CONTEXT the sitting instance below is only
+        # partially defined (e.g. no sitting_id, parliament_id, status), plus 
+        # not being in any traversal context. 
+        # Checking of permissions/roles on it will give incorrect results.
         form = EventPartialForm(domain.Sitting(), self.request)
         return form
 
