@@ -266,6 +266,12 @@ def ministry_column(name, title, default=""):
         return vocabulary.get_translated_group_label(item.ministry)
     return column.GetterColumn(title, getter)
 
+def ministry_column_filter(query, filter_string, sort_dir_func,
+                                 column=None):
+    query = query.join(domain.Ministry)
+    return _multi_attrs_column_filter(
+        [domain.Ministry.full_name, domain.Ministry.short_name],
+        query, filter_string, sort_dir_func)
 
 def scheduled_item_title_column(name, title):
     def getter(item, formatter):

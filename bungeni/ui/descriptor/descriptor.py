@@ -2012,6 +2012,7 @@ class BillDescriptor(DocDescriptor):
                 source=vocabulary.MinistrySource("ministry_id"),
                 required=False
             ),
+            listing_column_filter=listing.ministry_column_filter
         ),
         Field(name="publication_date", # [user]
             modes="view listing",
@@ -2064,6 +2065,7 @@ class QuestionDescriptor(DocDescriptor):
                 source=vocabulary.MinistrySource("ministry_id"),
             ),
             listing_column=listing.ministry_column("ministry_id" , _("Ministry")),
+            listing_column_filter=listing.ministry_column_filter
         ),
         AdmissibleDateField(), # [sys]
         Field(name="ministry_submit_date", # [user]
