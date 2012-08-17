@@ -99,7 +99,7 @@ class EventPartialForm(AddForm):
         # and omitting what we need to omit.
         #
         domain_interface = queryModelInterface(self.context.__class__)
-        form_fields = form.Fields(domain_interface)
+        self.form_fields = form.Fields(domain_interface)
         # /PERMISSIONS_ON_PARTIAL_CONTEXT
         self.form_fields["language"].edit_widget = LanguageLookupWidget
     
