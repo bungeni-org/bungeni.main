@@ -161,6 +161,21 @@ def publish_to_xml(context):
             xml_file.write(serialize(data, name=obj_type))
             xml_file.close()
 
+    #publish to rabbitmq outputs queue
+    connection = get_mq_connection()
+    if not connection:
+        return
+    channel = connection.channel()
+    publish_file_path = "%s.%s" %(file_path, ("zip" if files else "xml"))
+    channel.basic_publish(
+        exchange=SERIALIZE_OUTPUT_EXCHANGE,
+        routing_key=SERIALIZE_OUTPUT_ROUTING_KEY,
+        body=simplejson.dumps({"type": "file", "location": publish_file_path }),
+        properties=pika.BasicProperties(content_type="text/plain",
+            delivery_mode=2
+        )
+    )
+
 
 def serialize(data, name="object"):
     """ Serializes dictionary to xml.
@@ -208,6 +223,9 @@ def _serialize_dict(parent_elem, data_dict):
 SERIALIZE_QUEUE = "bungeni_serialization_queue"
 SERIALIZE_EXCHANGE = "bungeni_serialization_exchange"
 SERIALIZE_ROUTING_KEY = "bungeni_serialization"
+SERIALIZE_OUTPUT_QUEUE = "bungeni_serialization_output_queue"
+SERIALIZE_OUTPUT_EXCHANGE = "bungeni_serialization_output_exchange"
+SERIALIZE_OUTPUT_ROUTING_KEY = "bungeni_serialization_output"
 
 def serialization_notifications_callback(channel, method, properties, body):
     obj_data = simplejson.loads(body)
@@ -257,7 +275,7 @@ def queue_object_serialization(obj, event):
         wfc = IWorkflowController(obj)
         wf_state = wfc.state_controller.get_state()
     except InvalidStateError:
-        log.error("Unable to get workflow state for object %s.", obj)
+        log.error("Could not get workflow state for object %s.", obj)
         return
     if wf_state and (
         wfc.state_controller.get_status() in 
@@ -299,8 +317,16 @@ def serialization_notifications():
         type="fanout", durable=True)
     channel.queue_declare(queue=SERIALIZE_QUEUE, durable=True)
     channel.queue_bind(queue=SERIALIZE_QUEUE,
-                       exchange=SERIALIZE_EXCHANGE,
-                       routing_key=SERIALIZE_ROUTING_KEY)
+       exchange=SERIALIZE_EXCHANGE,
+       routing_key=SERIALIZE_ROUTING_KEY)
+    #xml outputs channel and queue
+    channel.exchange_declare(exchange=SERIALIZE_OUTPUT_EXCHANGE,
+        type="direct", passive=False)
+    channel.queue_declare(queue=SERIALIZE_OUTPUT_QUEUE, 
+        durable=True, exclusive=False, auto_delete=False)
+    channel.queue_bind(queue=SERIALIZE_OUTPUT_QUEUE,
+        exchange=SERIALIZE_OUTPUT_EXCHANGE,
+        routing_key=SERIALIZE_OUTPUT_ROUTING_KEY)
     for i in range(mq_utility.get_number_of_workers()):
         task_thread = Thread(target=serialization_worker)
         task_thread.daemon = True
