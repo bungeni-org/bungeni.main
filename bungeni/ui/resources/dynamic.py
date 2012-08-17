@@ -67,7 +67,7 @@ def get_globals(group_name, **kwargs):
             "discussions_save_url": "discussions/save-discussions",
             "discussion_items_json_url" : "discussions/jsonlisting",
             "schedulable_items_json_url" : "./schedulable-items-json",
-            "column_title": i18n(_(u"Title"), language),
+            "column_title": i18n(_(u"Description"), language),
             "column_discussion_text": i18n(_(u"minute text"), language),
             "column_discussion_text_missing": i18n(_(u"NO TEXT RECORD FOUND"), 
                 language
