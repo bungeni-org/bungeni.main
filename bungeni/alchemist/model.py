@@ -217,8 +217,10 @@ class Field(object):
         "bungeni.Clerk", "bungeni.Speaker", 
         "bungeni.Owner", # instance + special objects with no mp context
         "bungeni.MP", # parliament 
-        "bungeni.Signatory", #signatory
+        "bungeni.Signatory", # signatory
         "bungeni.Minister", # ministry 
+        "bungeni.CommitteeMember", # committee
+        # !+ other "member" roles?
         #"bungeni.Translator", # parliament
         #"bungeni.Authenticated", # all authenticated users, all above roles
         "bungeni.Anonymous" # unauthenticated user, anonymous
