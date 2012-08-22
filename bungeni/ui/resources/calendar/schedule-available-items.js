@@ -360,6 +360,9 @@ YAHOO.bungeni.availableitems = function(){
                 var dataSource = new YAHOO.util.DataSource(
                     SGlobals.schedulable_items_json_url + "?type=heading"
                 );
+                /*
+                    Heading and editorial poput
+                */
                 dataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
                 dataSource.responseSchema = YAHOO.bungeni.config.schemas.available_items;
                 hDt = new YAHOO.widget.DataTable(data_container,
@@ -368,7 +371,7 @@ YAHOO.bungeni.availableitems = function(){
                         selectionMode:"standard",
                         scrollable: true,
                         initialLoad: true,
-                        width:"468px",
+                        width:"100%",
                         height: "200px",
                     }
                 );
@@ -464,9 +467,11 @@ YAHOO.bungeni.availableitems = function(){
                     if(idx!=t_id){
                         tab_view.deselectTab(idx);
                         tab_view.getTab(idx).setAttributes({disabled: true});
+                        tab_view.getTab(idx).setStyle('display', 'none');
                     }
                 }
                 tab_view.getTab(t_id).setAttributes({disabled: false});
+                tab_view.getTab(t_id).setStyle('display', '');
                 tab_view.selectTab(t_id);
             }
             tab_view.selectTab((active_tab_id?(tab_map[active_tab_id]):0));

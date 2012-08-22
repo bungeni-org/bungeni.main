@@ -164,13 +164,7 @@ YAHOO.bungeni.agendaconfig = function(){
                 label: SGlobals.column_title,
                 editor: this.editor,
                 formatter: Formatters.title_with_minutes,
-                width: (0.45*cols_width)
-            },
-            {
-                key: Columns.WORKFLOW_ACTIONS,
-                label: "",
-                formatter: Formatters.workflowActions,
-                width: (0.2*cols_width)
+                width: (0.72*cols_width)
             }
         ];
     }

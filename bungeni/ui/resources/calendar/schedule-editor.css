@@ -2,6 +2,13 @@
     background-color: #EBE9D2;
     text-transform:italic;
 }
+.yui-overlay.yui-panel .yui-dt-bd {
+    overflow:hidden;
+}
+
+#headings-available table {
+    width:100% !important;
+}
 
 .schedule-available-item-filters{
     margin:0.2em 0em;
@@ -36,7 +43,7 @@ input.scheduler-bigtext{
     line-height: 27px;
     margin:2px 0 30px 0;
     padding:3px 3px 3px 8px;
-    width: 100%;
+    width: 98.8%;
     visibility:inherit;
 }
 span.minutes-header{
@@ -46,10 +53,10 @@ span.minutes-header{
     color:#666;
     font-size:10px;
 }
-span.minute-record{
+.minute-record{
     display:block;
     font-size:10px;
-    background-color:#EFEBC3;
+    background-color:#fcc7a9;
     color:#39361E;
     overflow:hidden;
     text-overflow:ellipsis;
@@ -57,15 +64,20 @@ span.minute-record{
     white-space:nowrap;
     position:relative;
 }
+p span.minute-record{
+    padding-left:20px;
+    height:20px;
+}
 span.minute-record-error{
     display:block;
     font-size:10px;
-    background-color:#B1BD6B;
-    color:#5A5A5A;
+    background-color:#e4702d;
+    color:#ffffff;
 }
 span.edit-minute-control{
     position:absolute;
-    right:0;
+    top:0;
+    left:0;
     padding:1px;
     background-color:#fff;
     border:1px solid #CCC dotted;
@@ -88,6 +100,16 @@ span.dt_title_unit{
     margin:0 auto !important;
     left:20%;
     top:25%;
+}
+
+.yui-skin-sam .yui-dt-data .wf-action-dropdown {
+    clear:both;
+    position:relative;
+    margin-top:0px;
+    margin-left:0px;
+}
+.yui-skin-sam .yui-dt-data .wf-action-dropdown .first-child button {
+    padding-right:20px !important;
 }
 
 .yui-skin-sam #scheduler-layout .yui-layout-wrap .yui-button {

@@ -175,9 +175,13 @@
             <span i18n:translate="">Calendar of </span>
             <span tal:replace="view/title"></span>
           </div>
+          <!--
+           !+DEPRECATED (ao, 22 Aug 2012) No longer being render on the calendar UI
+            Moved to calendar's tabs as 'Committees'
           <div id="select-calendars">
               <span metal:use-macro="view/calendar_macros/selectcalendars"/>
           </div>
+          -->
           <div id="scheduler_here" class="dhx_cal_container" >
                 <div class="dhx_cal_navline">
                     <div class="dhx_cal_prev_button">&nbsp;</div>

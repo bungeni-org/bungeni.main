@@ -81,7 +81,7 @@ class TIME_SPAN:
 class EventPartialForm(AddForm):
     """Partial form for event entry form
     """
-    omit_fields = ["start_date", "end_date"]
+    omit_fields = ["start_date", "end_date", "sitting_id", "group_id", "sitting_length","recurring_id","recurring_type","status","status_date"]
     
     def update_fields(self):
         # !+PERMISSIONS_ON_PARTIAL_CONTEXT(mr, aug-2012)
@@ -100,6 +100,7 @@ class EventPartialForm(AddForm):
         #
         domain_interface = queryModelInterface(self.context.__class__)
         self.form_fields = form.Fields(domain_interface)
+        self.form_fields = self.form_fields.omit(*self.omit_fields)
         # /PERMISSIONS_ON_PARTIAL_CONTEXT
         self.form_fields["language"].edit_widget = LanguageLookupWidget
         self.form_fields = self.form_fields.omit(*self.omit_fields)

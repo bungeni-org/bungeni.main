@@ -490,7 +490,7 @@ YAHOO.bungeni.config = function(){
                           var attrs = "id='"+ ds_id +"' " + mAttrs;
                           cHTML = cHTML + BungeniUtils.wrapText(
                             BungeniUtils.wrapText(SGlobals.minutes_loading,
-                                "span", attrs
+                                "p", attrs
                             ), "div"
                           );
                           Event.onAvailable(ds_id, function(){
@@ -637,51 +637,6 @@ YAHOO.bungeni.config = function(){
                 
             }
 
-            /**
-             * @method workflowActionsFormatter
-             * @description render workflow actions available for current
-             * item
-             */
-             var workflowActionsFormatter = function(el, record, column, data){
-                 var index = this.getTrIndex(record);
-                 var rec_data = record.getData();
-                 if (rec_data[Columns.WORKFLOW_STATE]==undefined){
-                     el.innerHTML = "";
-                     return;
-                 }
-                 var actions = rec_data[Columns.WORKFLOW_ACTIONS];
-                 var state_title = rec_data[Columns.WORKFLOW_STATE];
-                 if(actions.length){
-                    el.innerHTML = "";
-                    var wfActionButton = new YAHOO.widget.Button(
-                        {
-                            type: "menu",
-                            label: BungeniUtils.wrapText(state_title),
-                            id: "wf_action_" + index,
-                            name: "wf_action_" + index,
-                            menu: actions,
-                            container: el,
-                        }
-                    );
-                    wfActionButton.on("selectedMenuItemChange", function(args){
-                            var menuValue = args.newValue;
-                            this.set("label", BungeniUtils.wrapText(
-                                args.newValue.cfg.getProperty("text")
-                            ));
-                        }
-                    );
-                    //!+HACK(add get wf value property to record)
-                    if (!record.getWFStatus){
-                        record.getWFStatus = function(){
-                            var active = wfActionButton.getMenu().activeItem;
-                            return active?active.value:null;
-                        }
-                    }
-                 }else{
-                     el.innerHTML = BungeniUtils.wrapText(state_title);
-                 }
-             }
-
 
             /**
              * @method rowControlsFormatter
@@ -760,6 +715,43 @@ YAHOO.bungeni.config = function(){
                     );
                 });
                 deleteButton.appendTo(el);
+                // adding minutes state
+                var index = this.getTrIndex(record);
+                var rec_data = record.getData();
+                if (rec_data[Columns.WORKFLOW_STATE]!==undefined) {
+                    var actions = rec_data[Columns.WORKFLOW_ACTIONS];
+                    var state_title = rec_data[Columns.WORKFLOW_STATE];
+                    if(actions.length){
+                        var wfActionButton = new YAHOO.widget.Button(
+                            {
+                                type: "menu",
+                                label: BungeniUtils.wrapText(state_title),
+                                id: "wf_action_" + index,
+                                name: "wf_action_" + index,
+                                menu: actions
+                            }
+                        );
+                        wfActionButton.addClass("wf-action-dropdown");
+                        wfActionButton.appendTo(el);
+                        wfActionButton.on("selectedMenuItemChange", function(args){
+                                var menuValue = args.newValue;
+                                this.set("label", BungeniUtils.wrapText(
+                                    args.newValue.cfg.getProperty("text")
+                                ));
+                            }
+                        );
+                        //!+HACK(add get wf value property to record)
+                        if (!record.getWFStatus){
+                            record.getWFStatus = function(){
+                                var active = wfActionButton.getMenu().activeItem;
+                                return active?active.value:null;
+                            }
+                        }
+                     }else{
+                         el.innerHTML = BungeniUtils.wrapText(state_title);
+                     }
+                }
+                 // end of adding minutes state
             }
 
             return {
@@ -773,7 +765,6 @@ YAHOO.bungeni.config = function(){
                 deleteButton: deleteButtonFormatter,
                 link: linkFormatter,
                 availableItemSelect: availableItemSelectFormatter,
-                workflowActions: workflowActionsFormatter,
                 rowControls: rowControlsFormatter
             }
         }(),

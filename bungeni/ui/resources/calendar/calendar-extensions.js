@@ -148,7 +148,7 @@ function render_event_text(start, end, event){
     var status = event["status"];
     if(status){
         url = cal_globals.view_url + "/sittings/obj-" + event.id + "/view";
-        text = text + "<a href='" + url + "'>" + cal_globals.text_view + "</a>";
+        text = text + "<br /><a class='quick-view' href='" + url + "'>" + cal_globals.text_view + "</a>";
     }
     return text;
 }

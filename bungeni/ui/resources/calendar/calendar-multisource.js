@@ -40,6 +40,7 @@ $(document).ready(function(){
     );
     
     $("#committees_tab").click(function() {
+        $.each( groups_data, function(i, n) {
             if (!scheduler.config.readonly){
                 scheduler.config.readonly = true;
                 edit_mode_turned_off = true;
@@ -47,29 +48,13 @@ $(document).ready(function(){
             if (loaded_calendars.length==0){
                 loaded_calendars.push(scheduler._load_url);
             }
-            var ev_color = $(this).attr("rel");
-            var cal_url = $(this).val();
-            var is_checked = $(this).attr("checked");
-            cal_url = cal_url + "/dhtmlxcalendar?uid=" + scheduler.uid() + "&amp;color=" + "00FF00";
-            if (!is_checked){
-                if (loaded_calendars.indexOf(cal_url) < 1){
-                    loaded_calendars.push(cal_url);
-                    scheduler._loaded = {};
-                    scheduler.load(cal_url);
-                }
-            }else{
-                loaded_calendars.pop(cal_url);
-                if (loaded_calendars.length > 0){
-                    scheduler.clearAll();
-                    for (cal_id=0; cal_id<loaded_calendars.length; cal_id++){
-                        scheduler._loaded = {};
-                        scheduler.load(loaded_calendars[cal_id]);
-                    }
-                }
-                if ((loaded_calendars.length == 1) && (edit_mode_turned_off)){
-                    scheduler.config.readonly = false;
-                }
+            var cal_url = "scheduling/committees/obj-"+ n.key +"/schedule";
+            cal_url = cal_url + "/dhtmlxcalendar?uid=" + scheduler.uid() + "&amp;color=none";
+            if (loaded_calendars.indexOf(cal_url) < 1){
+                loaded_calendars.push(cal_url);
+                scheduler._loaded = {};
+                scheduler.load(cal_url);
             }
-        }
-    );
+        });
+    });
 });
