@@ -238,7 +238,6 @@ class ContainerJSONListing(ContainerJSONBrowserView):
             query = query.filter(cast(attr, Date) <= end_date)
         return query.order_by(sort_dir_func(attr))
 
-    # !+ change this to filter the sqlalchemy query?
     def get_filter(self):
         """ () -> str
         """
@@ -395,9 +394,15 @@ class ContainerJSONListing(ContainerJSONBrowserView):
                     d[fn] = v.strftime("%F %I:%M %p")
                 elif isinstance(v, datetime.date):
                     d[fn] = v.strftime("%F")
+
             d["object_id"] = url.set_url_context(container.stringKey(node))
             values.append(d)
         return values
+
+    def query_add_filters(query):
+        """Sub classes can add filters to the query by overriding this method
+        """
+        return query
 
     # !+BATCH(mr, sep-2010) this method (plus other support methods here)
     # replaces the combined logic in:
@@ -408,7 +413,6 @@ class ContainerJSONListing(ContainerJSONBrowserView):
         """
         context = proxy.removeSecurityProxy(self.context)
         query = context._query
-        
         # date_range filter (try from: model, then cookie, then request)
         query = query_filter_date_range(context, self.request, query,
             self.domain_model)
@@ -430,13 +434,15 @@ class ContainerJSONListing(ContainerJSONBrowserView):
             query = lc_filter_query(query, filter_string, self.sort_dir_func, column_name)
         if sort_on_expressions:
             query = query.order_by(sort_on_expressions)
+        #add optional filters, used by sub classes
+        query = self.query_add_filters(query)
         # get total number of items before applying an offset and limit
         self.set_size = query.count()
         # offset and limit
         query = query.offset(start).limit(limit)
         # bungeni.alchemist.container.AlchemistContainer.batch()
         # nodes: [<bungeni.models.domain.Question]
-        return [ 
+        return [
             container.contained(ob, self, container.stringKey(ob))
             for ob in query_iterator(query, self.context, self.permission)
         ]
@@ -492,7 +498,7 @@ class PublicStatesContainerJSONListing(ContainerJSONListing):
     # In any case, this view class will go away.
     permission = None
     
-    def query_add_filters(self, query, *filter_strings):
+    def query_add_filters(self, query):
         """Add filtering on public workflow states
         """
         if IWorkflowed.implementedBy(self.context.domain_model):
@@ -514,8 +520,7 @@ class PublicStatesContainerJSONListing(ContainerJSONListing):
             log.warn("PublicStateContainerJSONListing.query_add_filters called "
                 "a type [%s] that is not workflowed... cannot apply any filters "
                 "on workflow states!" % (self.context.domain_model))
-        return super(PublicStatesContainerJSONListing, self
-            ).query_add_filters(query, *filter_strings)
+        return query
     
     def get_cache_key(self, context, lang, start, limit, sort_direction):
         r = self.request
