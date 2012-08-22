@@ -102,6 +102,7 @@ class EventPartialForm(AddForm):
         self.form_fields = form.Fields(domain_interface)
         # /PERMISSIONS_ON_PARTIAL_CONTEXT
         self.form_fields["language"].edit_widget = LanguageLookupWidget
+        self.form_fields = self.form_fields.omit(*self.omit_fields)
     
     def get_widgets(self):
         self.update_fields()
@@ -300,8 +301,20 @@ class CalendarView(BungeniBrowserView):
     def partial_event_form(self):
         # !+PERMISSIONS_ON_PARTIAL_CONTEXT the sitting instance below is only
         # partially defined (e.g. no sitting_id, parliament_id, status), plus 
-        # not being in any traversal context. 
-        # Checking of permissions/roles on it will give incorrect results.
+        # not being in any traversal context -- so checking of 
+        # permissions/roles on it will give incorrect results.
+        # 
+        # But, in addition, for when the failure was happening, the instantiation
+        # of EventPartialForm is ANYWAY not needed in the first place! 
+        # I.e. should not be done when Member loads the calendar, as Member is 
+        # categorically NOT allowed to add sittings, and so the context 
+        # necessary to add sittings SHOULD not be made available in the 
+        # first place. And, doing the (business logic) call to instantiate the 
+        # EventPartialForm from within the UI template entangles 
+        # buisness with UI logic...
+        # 
+        # So, the intent and the implementation of the business logic of why 
+        # this form is instantiated may need to be reviewed...
         form = EventPartialForm(domain.Sitting(), self.request)
         return form
 

@@ -626,6 +626,8 @@ class MemberOfParliamentSource(MemberOfParliamentImmutableSource):
                             domain.User.first_name,
                             domain.User.middle_name)
         return query
+parliament_member = MemberOfParliamentSource("user_id")
+component.provideUtility(parliament_member, IVocabularyFactory, "parliament_member")
 
 
 class MemberOfParliamentDelegationSource(MemberOfParliamentSource):
@@ -672,6 +674,8 @@ class MemberOfParliamentSignatorySource(MemberOfParliamentSource):
                 )
             )
         return mp_query
+signatory = MemberOfParliamentSignatorySource("user_id")
+component.provideUtility(parliament_member, IVocabularyFactory, "signatory")
 
 
 class MinistrySource(SpecializedSource):
@@ -861,6 +865,13 @@ class MembershipUserSource(UserSource):
                 sql.not_(domain.User.user_id.in_(list(exclude_ids)))
             )
         return users
+member = MembershipUserSource(
+    token_field="user_id",
+    title_field="fullname",
+    value_field="user_id",
+)
+component.provideUtility(member, IVocabularyFactory, "member")
+
 
 class UserNotMPSource(SpecializedSource):
     """ All users that are NOT a MP """
@@ -906,7 +917,14 @@ class UserNotMPSource(SpecializedSource):
                             getattr(ob, "last_name"))
                    ))
         return vocabulary.SimpleVocabulary(terms)
+user_not_mp = UserNotMPSource(
+    token_field="user_id",
+    title_field="fullname",
+    value_field="user_id"
+)
+component.provideUtility(user_not_mp, IVocabularyFactory, "user_not_mp")
 
+                
 class UserNotStaffSource(SpecializedSource):
     """ all users that are NOT staff """
 
@@ -966,6 +984,15 @@ class SittingAttendanceSource(SpecializedSource):
                             getattr(ob, "last_name"))
                    ))
         return vocabulary.SimpleVocabulary(terms)
+sitting_attendance = SittingAttendanceSource(
+    token_field="user_id",
+    title_field="fullname",
+    value_field="member_id"
+)
+component.provideUtility(sitting_attendance, IVocabularyFactory, "sitting_attendance")
+
+
+
 
 class SubstitutionSource(SpecializedSource):
     """Active user of the same group.

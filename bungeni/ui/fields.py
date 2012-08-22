@@ -4,13 +4,15 @@
 
 """Custom fields for some content attributes
 
-$Id:$
-$URL:$
+$Id$
+$URL$
 """
 
 
 from zope.schema import Text
-from zope.interface import implements
+from zope.schema.interfaces import IVocabularyFactory
+from zope.interface import implements    
+from zope.component import getUtility
 from zope.schema.interfaces import ValidationError
 from bungeni.ui.interfaces import IVocabularyTextField, ITreeVocabulary
 from bungeni.ui.i18n import _
@@ -24,10 +26,12 @@ class VocabularyTextField(Text):
     """
     implements(IVocabularyTextField)
     
-    vocabulary = None
+    @property
+    def vocabulary(self):
+        return getUtility(IVocabularyFactory, self.vocabulary_name)
     
     def __init__(self, vocabulary, **kw):
-        self.vocabulary = vocabulary
+        self.vocabulary_name = vocabulary
         super(VocabularyTextField, self).__init__(**kw)
     
     def _validate(self, values):

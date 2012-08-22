@@ -330,8 +330,7 @@ class GroupMemberTitle(object):
 group_member_title = rdb.join(schema.user_group_memberships, 
         schema.member_titles).join(
             schema.title_types)
-            
-                        
+
 rdb.orm.mapper(GroupMemberTitle, group_member_title)
 
 

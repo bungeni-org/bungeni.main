@@ -11,8 +11,10 @@ log = __import__("logging").getLogger("bungeni.ui.descriptor.field")
 from zope import schema
 from bungeni.alchemist.model import ModelDescriptor, Field, show, hide
 from bungeni.ui import widgets
+from bungeni.ui.fields import VocabularyTextField
 from bungeni.ui.i18n import _
 from bungeni.ui.descriptor import listing, constraints
+
 
 # supported value types
 # {str: {property-kwarg:value}}
@@ -25,6 +27,7 @@ VALUETYPE = {
     "login": {"min_length": 3, "max_length": 20, "constraint": constraints.check_login},
     "password": {},
     "image": {},
+    "user": {},
 }
 
 
@@ -39,7 +42,9 @@ RENDERTYPE = {
     # special other user-conf params: "vocabulary" -> "type:vocabulary, required:True"
     "single_select": schema.Choice, 
     "radio": schema.Choice, 
+    "tree_text": VocabularyTextField,
 }
+RENDERTYPE_WITH_VOCABULARIES = ("single_select", "radio", "tree_text")
 
 
 # widget setting per mode, by (value_type, render_type)
@@ -50,13 +55,18 @@ WIDGETS = {
     ("text", "text_line"):
         (None, None, None, None),
     ("text", "rich_text"):
-        (widgets.HTMLDisplay, widgets.RichTextEditor, widgets.RichTextEditor, None),
+        (widgets.HTMLDisplay, widgets.RichTextEditor, widgets.RichTextEditor, 
+            None),
     ("text", "radio"):
         (None, widgets.CustomRadioWidget, widgets.CustomRadioWidget, None),
     ("text", "single_select"):
         (None, None, None, None),
+    ("text", "tree_text"):
+        (widgets.TermsDisplayWidget, widgets.TreeVocabularyWidget, 
+            widgets.TreeVocabularyWidget, None),
     ("date", "date"):
-        (None, widgets.DateWidget, widgets.DateWidget, widgets.date_input_search_widget),
+        (None, widgets.DateWidget, widgets.DateWidget, 
+            widgets.date_input_search_widget),
     ("bool", "bool"):
         (None, None, None, None),
     ("language", "single_select"):
@@ -69,6 +79,9 @@ WIDGETS = {
         (None, None, None, None),
     ("image", "image"):
         (widgets.ImageDisplayWidget, widgets.ImageInputWidget, None, None),
+    ("user", "single_select"):
+        (widgets.MemberURLDisplayWidget, None, widgets.AutoCompleteWidget(),
+            None),
 }
 
 
@@ -129,11 +142,11 @@ def F(name=None, label=None, description=None,
     
     """
     # integrity
-    if render_type in ("single_select", "radio"):
+    if render_type in RENDERTYPE_WITH_VOCABULARIES:
         assert vocabulary, \
             "Vocabulary may not be None for render_type=%r" % (render_type)
     if vocabulary is not None:
-        assert render_type in ("single_select", "radio"), \
+        assert render_type in RENDERTYPE_WITH_VOCABULARIES, \
             "render_type=%r may not have a vocabulary [%r]" % (
                 render_type, vocabulary)
     if value_type is not None:

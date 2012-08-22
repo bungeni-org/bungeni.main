@@ -350,7 +350,7 @@ class UserDelegationDescriptor(ModelDescriptor):
                 show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            value_type="text",
+            value_type="text", # !+ "user"
             render_type="single_select",
             vocabulary="user",
             listing_column=listing.related_user_name_column("delegation_id", 
@@ -414,6 +414,7 @@ class GroupMembershipDescriptor(ModelDescriptor):
         ),
         F(name="status",
             label="Status",
+            required=True,
             localizable=[
                 show("view listing"),
             ],
@@ -470,103 +471,90 @@ class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
     container_name = _("Members of parliament")
     sort_on = ["user_id"]
     fields = [
-        Field(name="user_id", # [user-req]
-            modes="view edit add listing",
+        F(name="user_id",
+            label="Name",
+            required=True,
             localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view listing"),
-                hide("edit"),
             ],
-            property=schema.Choice(title=_("Name"),
-                source=vocabulary.MembershipUserSource(
-                    token_field="user_id",
-                    title_field="fullname",
-                    value_field="user_id",
-                )
-            ),
+            value_type="user",
+            render_type="single_select",
+            vocabulary="member",
             listing_column=listing.related_user_name_column("user_id", _("Name"), "user"),
             listing_column_filter=listing.related_user_name_column_filter,
-            edit_widget=widgets.AutoCompleteWidget(remote_data=True,
-                yui_maxResultsDisplayed=5),
-            add_widget=widgets.AutoCompleteWidget(remote_data=True)
         ),
-        Field(name="member_election_type", # [user-req]
-            modes="view edit add listing",
+        F(name="member_election_type",
+            label="Election Type",
+            required=True,
             localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            property=schema.Choice(title=_("Election Type"),
-                source=vocabulary.member_election_type
-            ),
+            value_type="text",
+            render_type="single_select",
+            vocabulary="member_election_type",
             listing_column=listing.vocabulary_column("member_election_type",
                 _("Election Type"),
                 vocabulary.member_election_type
             ),
         ),
-        Field(name="election_nomination_date", # [user-req]
-            modes="view edit add listing",
+        F(name="election_nomination_date",
+            label="Election/Nomination Date",
+            required=False,
             localizable=[
-                show("view edit"),
-                hide("listing")
+                show("add"), # db-not-null-ui-add
+                show("view edit listing"),
             ],
-            property=schema.Date(title=_("Election/Nomination Date"),
-                required=False,
-            ),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget,
-            search_widget=widgets.date_input_search_widget
+            value_type="date",
+            render_type="date",
+            listing_column=listing.day_column("start_date", _("Start Date")),
         ),
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
     fields.extend([
-        Field(name="representation", # [user]
-            modes="view edit add listing",
-            localizable=[ 
-                show("view edit add"),
+        F(name="representation",
+            label="Representation",
+            description="Select Representation",
+            localizable=[
+                show("add"), # db-not-null-ui-add
+                show("view edit"),
                 hide("listing"),
             ],
-            property=VocabularyTextField(title=_("Representation"),
-                description=_("Select Representation"),
-                vocabulary=vocabulary.representation,
-                required=False,
-            ),
-            edit_widget=widgets.TreeVocabularyWidget,
-            add_widget=widgets.TreeVocabularyWidget,
-            view_widget=widgets.TermsDisplayWidget,
+            value_type="text",
+            render_type="tree_text",
+            vocabulary="representation",
         ),
-        Field(name="party", # [user-req]
-            modes="view edit add listing",
-            localizable=[ 
-                show("view edit listing"), 
+        F(name="party",
+            label="Political Party",
+            localizable=[
+                show("add"), # db-not-null-ui-add
+                show("view edit listing"),
             ],
-            property=schema.Choice(title=_("Political Party"),
-                source=vocabulary.party,
-                required=False,
-            ),
+            value_type="text",
+            render_type="single_select",
+            vocabulary="party",
             listing_column=listing.vocabulary_column("party",
                 _("Political Party"),
                 vocabulary.party
             ),
         ),
-        Field(name="leave_reason", # [user]
-            modes="view edit add listing",
+        F(name="leave_reason",
+            label="Leave Reason",
             localizable=[
                 show("view edit add"),
-                hide("listing")
+                hide("listing"),
             ],
-            property=schema.Text(title=_("Leave Reason"), required=False)
         ),
-        Field(name="notes", # [rtf]
-            modes="view edit add",
+        F(name="notes",
+            label="Notes",
             localizable=[
                 show("view edit add"),
             ],
-            property=schema.Text(title=_("Notes"), required=False),
-            view_widget=widgets.HTMLDisplay,
-            edit_widget=widgets.RichTextEditor,
-            add_widget=widgets.RichTextEditor
+            value_type="text",
+            render_type="rich_text",
         ),
     ])
-
     schema_invariants = GroupMembershipDescriptor.schema_invariants + [
        constraints.MpStartBeforeElection]
 
@@ -576,35 +564,32 @@ class PoliticalGroupMemberDescriptor(GroupMembershipDescriptor):
     localizable = True
     display_name = _("member")
     container_name = _("members")
-
+    
     fields = [
-        Field(name="user_id", # [user-req]
-            modes="view add listing",
+        F(name="user_id",
+            label="Name",
+            required=True,
             localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view listing"),
             ],
-            property=schema.Choice(title=_("Name"),
-                source=vocabulary.MemberOfParliamentSource("user_id",)
-            ),
+            value_type="user",
+            render_type="single_select",
+            vocabulary="parliament_member",
             listing_column=listing.linked_mp_name_column("user_id", _("Name"), 
                 "user"),
             listing_column_filter=listing.linked_mp_name_column_filter,
-            view_widget=widgets.MemberURLDisplayWidget,
-            add_widget=widgets.AutoCompleteWidget(remote_data=True),
-            edit_widget=widgets.AutoCompleteWidget(remote_data=True)
         ),
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
     fields.extend([
-        Field(name="notes", # [rtf]
-            modes="view edit add",
+        F(name="notes",
+            label="Notes",
             localizable=[
                 show("view edit add"),
             ],
-            property=schema.Text(title=_("Notes"), required=False),
-            view_widget=widgets.HTMLDisplay,
-            edit_widget=widgets.RichTextEditor,
-            add_widget=widgets.RichTextEditor,
+            value_type="text",
+            render_type="rich_text",
         ),
     ])
 
@@ -953,31 +938,29 @@ class CommitteeMemberDescriptor(GroupMembershipDescriptor):
     container_name = _("Members")
 
     fields = [
-        Field(name="user_id", # [user-req]
-            modes="view add listing",
+        F(name="user_id",
+            label="Name",
+            required=True,
             localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view listing"),
             ],
-            property=schema.Choice(title=_("Name"),
-                source=vocabulary.MemberOfParliamentSource("user_id")
-            ),
+            value_type="user",
+            render_type="single_select",
+            vocabulary="parliament_member",
             listing_column=listing.related_user_name_column("user_id", _("Name"), "user"),
             listing_column_filter=listing.related_user_name_column_filter,
-            add_widget = widgets.AutoCompleteWidget(remote_data=True),
-            edit_widget = widgets.AutoCompleteWidget(remote_data=True)
         ),
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
     fields.extend([
-        Field(name="notes", # [rtf]
-            modes="view edit add",
+        F(name="notes",
+            label="Notes",
             localizable=[
                 show("view edit add"),
             ],
-            property=schema.TextLine(title=_("Notes"), required=False),
-            view_widget=widgets.HTMLDisplay,
-            edit_widget=widgets.RichTextEditor,
-            add_widget=widgets.RichTextEditor,
+            value_type="text",
+            render_type="rich_text",
         ),
     ])
 
@@ -1193,35 +1176,29 @@ class CommitteeStaffDescriptor(GroupMembershipDescriptor):
     container_name = _("Staff")
 
     fields = [
-        Field(name="user_id", # [user-req]
-            modes="view add listing",
+        F(name="user_id",
+            label="Name",
+            required=True,
             localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view listing"),
             ],
-            property=schema.Choice(title=_("Name"),
-                source=vocabulary.UserNotMPSource(
-                    token_field="user_id",
-                    title_field="fullname",
-                    value_field="user_id"
-                )
-            ),
+            value_type="user",
+            render_type="single_select",
+            vocabulary="user_not_mp",
             listing_column=listing.related_user_name_column("user_id", _("Name"), "user"),
             listing_column_filter=listing.related_user_name_column_filter,
-            add_widget=widgets.AutoCompleteWidget(remote_data=True),
-            edit_widget=widgets.AutoCompleteWidget(remote_data=True)
         ),
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
     fields.extend([
-        Field(name="notes", # [rtf]
-            modes="view edit add",
+        F(name="notes",
+            label="Notes",
             localizable=[
                 show("view edit add"),
             ],
-            property=schema.Text(title=_("Notes"), required=False),
-            view_widget=widgets.HTMLDisplay,
-            edit_widget=widgets.RichTextEditor,
-            add_widget=widgets.RichTextEditor,
+            value_type="text",
+            render_type="rich_text",
         ),
     ])
 
@@ -1297,35 +1274,29 @@ class OfficeMemberDescriptor(GroupMembershipDescriptor):
     container_name = _("Office Members")
     
     fields = [
-        Field(name="user_id", # [user-req]
-            modes="view add listing",
+        F(name="user_id",
+            label="Name",
+            required=True,
             localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view listing"),
             ],
-            property=schema.Choice(title=_("Name"),
-                source=vocabulary.UserNotMPSource(
-                    token_field="user_id",
-                    title_field="fullname",
-                    value_field="user_id"
-                )
-            ),
+            value_type="user",
+            render_type="single_select",
+            vocabulary="user_not_mp",
             listing_column=listing.related_user_name_column("user_id", _("Name"), "user"),
             listing_column_filter=listing.related_user_name_column_filter,
-            add_widget=widgets.AutoCompleteWidget(remote_data=True),
-            edit_widget=widgets.AutoCompleteWidget(remote_data=True)
-        )
+        ),
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
     fields.extend([
-        Field(name="notes", # [user]
-            modes="view edit add listing",
+        F(name="notes",
+            label="Notes",
             localizable=[
                 show("view edit add listing"),
             ],
-            property=schema.Text(title=_("Notes"), required=False),
-            view_widget=widgets.HTMLDisplay,
-            edit_widget=widgets.RichTextEditor,
-            add_widget=widgets.RichTextEditor,
+            value_type="text",
+            render_type="rich_text",
         ),
     ])
 
@@ -1358,29 +1329,29 @@ class MinisterDescriptor(GroupMembershipDescriptor):
     container_name = _("Ministers")
 
     fields = [
-        Field(name="user_id", # [user-req]
-            modes="view add listing",
+        F(name="user_id",
+            label="Name",
+            required=True,
             localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view listing"),
             ],
-            property=schema.Choice(title=_("Name"), vocabulary="user"),
+            value_type="user",
+            render_type="single_select",
+            vocabulary="user",
             listing_column=listing.related_user_name_column("user_id", _("Name"), "user"),
             listing_column_filter=listing.related_user_name_column_filter,
-            add_widget = widgets.AutoCompleteWidget(remote_data=True),
-            edit_widget = widgets.AutoCompleteWidget(remote_data=True)
-        )
+        ),
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
     fields.extend([
-        Field(name="notes", # [img]
-            modes="view edit add",
+        F(name="notes",
+            label="Notes",
             localizable=[
                 show("view edit add"),
             ],
-            property=schema.Text(title=_("Notes"), required=False),
-            view_widget=widgets.HTMLDisplay,
-            edit_widget=widgets.RichTextEditor,
-            add_widget=widgets.RichTextEditor,
+            value_type="text",
+            render_type="rich_text",
         ),
     ])
 
@@ -2359,12 +2330,12 @@ class SessionDescriptor(ModelDescriptor):
             search_widget=widgets.date_input_search_widget
         ),
         LanguageField("language"),
-        Field(name="notes", label=_("Notes"), # [rtf]
-            modes="view edit add",
+        F(name="notes",
+            label="Notes",
             localizable=[
                 show("view edit add"),
             ],
-        )
+        ),
     ]
     schema_invariants = [constraints.EndAfterStart]
     custom_validators = [validations.validate_date_range_within_parent]
@@ -2397,29 +2368,29 @@ class SittingAttendanceDescriptor(ModelDescriptor):
     container_name = _("Sitting attendances")
     sort_on = ["member_id"]
     fields = [
-        Field(name="member_id", # [user-req]
-            modes="view edit add listing",
+        F(name="member_id",
+            label="Member of Parliament",
+            required=True,
             localizable=[
-                show("view edit listing"),
+                show("add"), # db-not-null-ui-add
+                show("view listing"),
             ],
-            property=schema.Choice(title=_("Member of Parliament"),
-                source=vocabulary.SittingAttendanceSource(
-                    token_field="user_id",
-                    title_field="fullname",
-                    value_field="member_id"
-                )
-            ),
+            value_type="user",
+            render_type="single_select",
+            vocabulary="sitting_attendance",
             listing_column=listing.related_user_name_column("member_id", _("Name"), "user"),
             listing_column_filter=listing.related_user_name_column_filter,
         ),
-        Field(name="attendance_type", # [user-req]
-            modes="view edit add listing",
+        F(name="attendance_type",
+            label="Attendance",
+            required=True,
             localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            property=schema.Choice(title=_("Attendance"),
-                source=vocabulary.attendance_type,
-            ),
+            value_type="text",
+            render_type="single_select",
+            vocabulary="attendance_type",
             listing_column=listing.vocabulary_column("attendance_type",
                 _("Attendance"),
                 vocabulary.attendance_type
@@ -2433,50 +2404,49 @@ class SignatoryDescriptor(ModelDescriptor):
     display_name = _("Signatory")
     container_name = _("Signatories")
     fields = [
-        Field(name="signatory_id",
-            modes="listing",
+        F(name="signatory_id",
+            label="View",
+            required=True,
             localizable=[show("listing", "bungeni.Signatory bungeni.Owner")],
-            property=schema.TextLine(title=_("View")),
+            value_type="text",
+            render_type="text_line",
             listing_column=listing.simple_view_column("signatory_id", 
                 _(u"review"), _(u"view"), _(u"review")
             ),
         ),
-        Field(name="user_id", # [user-req]
-            modes="view add listing",
+        F(name="user_id",
+            label="Signatory",
+            required=True,
             localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view listing"),
             ],
-            property=schema.Choice(title=_("Signatory"),
-                source=vocabulary.MemberOfParliamentSignatorySource(
-                    "user_id"
-                ),
-            ),
+            value_type="user",
+            render_type="single_select",
+            vocabulary="signatory",
             listing_column=listing.linked_mp_name_column("user_id",
-                _("Signatory"),
-                "user"
-            ),
+                _("Signatory"), "user"),
             listing_column_filter=listing.linked_mp_name_column_filter,
-            view_widget=widgets.MemberURLDisplayWidget,
-            add_widget=widgets.AutoCompleteWidget(remote_data=True),
-            edit_widget=widgets.AutoCompleteWidget(remote_data=True)
         ),
-        Field(name="political_party",
-            modes="listing",
-            property=schema.TextLine(title=_(u"political party")),
-            listing_column=listing.user_party_column("political_party",
+        F(name="party", # not on schema or domain model
+            label="Political Party",
+            localizable=[ show("listing"), ],
+            value_type="text",
+            render_type="text_line",
+            listing_column=listing.user_party_column("party",
                 _(u"political party"), _(u"no party")
             )
         ),
-        Field(name="status",
-            modes="view listing",
+        F(name="status",
+            label="Status",
+            required=True,
             localizable = [
                 show("view listing", 
                     roles="bungeni.Clerk bungeni.Owner bungeni.Signatory")
             ],
-            property=schema.Choice(title=_("Signature status"), 
-                vocabulary="workflow_states",
-                required=True
-            ),
+            value_type="text",
+            render_type="single_select",
+            vocabulary="workflow_states",
             listing_column=listing.workflow_column("status", 
                 _("Signature status")),
         ),
