@@ -1234,16 +1234,16 @@ def dict_to_dynatree(input_dict, selected):
     return retval
 
 
-subject_terms = TreeVDEXVocabulary("subject-terms.vdex")
+subject_terms = TreeVDEXVocabulary("subject-terms.vdex") # !+naming
 representation = TreeVDEXVocabulary("representation.vdex")
 party = FlatVDEXVocabularyFactory("party.vdex")
 
 #
 # Sitting flat VDEX based vocabularies
 #
-sitting_activity_types = FlatVDEXVocabularyFactory("sitting-activity-types.vdex")
-sitting_meeting_types = FlatVDEXVocabularyFactory("sitting-meeting-types.vdex")
-sitting_convocation_types = FlatVDEXVocabularyFactory("sitting-convocation-types.vdex")
+sitting_activity_types = FlatVDEXVocabularyFactory("sitting-activity-types.vdex") # !+naming
+sitting_meeting_types = FlatVDEXVocabularyFactory("sitting-meeting-types.vdex") # !+naming
+sitting_convocation_types = FlatVDEXVocabularyFactory("sitting-convocation-types.vdex") # !+naming
 
 #
 # Vocabularies for XML configuration based report generation

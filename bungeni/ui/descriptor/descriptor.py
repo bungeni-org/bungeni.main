@@ -2091,20 +2091,16 @@ class QuestionDescriptor(DocDescriptor):
             view_widget=widgets.HTMLDisplay,
             edit_widget=widgets.RichTextEditor,
         ),
-        Field(name="subject", # [user]
-            modes="view edit add listing",
-            localizable=[ 
+        F(name="subject",
+            label="Subject Terms",
+            description="Select Subjects",
+            localizable=[
                 show("view edit add"),
                 hide("listing"),
             ],
-            property=VocabularyTextField(title=_("Subject Terms"),
-                description=_("Select Subjects"),
-                vocabulary=vocabulary.subject_terms,
-                required = False,
-            ),
-            edit_widget=widgets.TreeVocabularyWidget,
-            add_widget=widgets.TreeVocabularyWidget,
-            view_widget=widgets.TermsDisplayWidget,
+            value_type="text",
+            render_type="tree_text",
+            vocabulary="subject-terms", # !+naming
         ),
     ])
     get_field(fields, "admissible_date").localizable = [
