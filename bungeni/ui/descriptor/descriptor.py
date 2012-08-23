@@ -350,7 +350,7 @@ class UserDelegationDescriptor(ModelDescriptor):
                 show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            value_type="text", # !+ "user"
+            value_type="user",
             render_type="single_select",
             vocabulary="user",
             listing_column=listing.related_user_name_column("delegation_id", 
@@ -1568,7 +1568,7 @@ class DocDescriptor(ModelDescriptor):
             listing_column=listing.linked_mp_name_column("owner_id", _("Name"), "owner"),
             listing_column_filter=listing.linked_mp_name_column_filter,
             add_widget=widgets.MemberDropDownWidget,
-            view_widget=widgets.MemberURLDisplayWidget,
+            view_widget=widgets.UserURLDisplayWidget,
         ),
         # type
         Field(name="doc_type", # [user-req]

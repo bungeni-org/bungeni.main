@@ -80,7 +80,7 @@ WIDGETS = {
     ("image", "image"):
         (widgets.ImageDisplayWidget, widgets.ImageInputWidget, None, None),
     ("user", "single_select"):
-        (widgets.MemberURLDisplayWidget, None, widgets.AutoCompleteWidget(),
+        (widgets.UserURLDisplayWidget, None, widgets.AutoCompleteWidget(),
             None),
 }
 
