@@ -553,11 +553,6 @@ class OfficeMember(GroupMembership):
         "bungeni.models.domain.MemberTitleContainer", "membership_id")
 
 
-#class Debate(Entity):
-#    """
-#    Debates
-#    """
-
 class Address(HeadParentedMixin, Entity):
     """Address base class
     """

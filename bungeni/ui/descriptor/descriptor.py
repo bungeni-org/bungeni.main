@@ -152,8 +152,6 @@ class UserDescriptor(ModelDescriptor):
             localizable=[
                 show("view edit add listing"),
             ],
-            value_type="text",
-            render_type="text_line",
         ),
         F(name="title", 
             label="Title",
@@ -161,8 +159,6 @@ class UserDescriptor(ModelDescriptor):
             localizable=[
                 show("view edit add listing"),
             ],
-            value_type="text",
-            render_type="text_line",
         ),
         F(name="first_name",
             label="First Name",
@@ -170,8 +166,6 @@ class UserDescriptor(ModelDescriptor):
                 show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            value_type="text",
-            render_type="text_line",
         ),
         F(name="middle_name",
             label="Middle Name",
@@ -179,8 +173,6 @@ class UserDescriptor(ModelDescriptor):
                 show("view edit add"),
                 hide("listing"),
             ],
-            value_type="text",
-            render_type="text_line",
         ),
         F(name="last_name",
             label="Last Name",
@@ -188,8 +180,6 @@ class UserDescriptor(ModelDescriptor):
                 show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            value_type="text",
-            render_type="text_line",
         ),
         F(name="email",
             label="Email",
@@ -200,7 +190,6 @@ class UserDescriptor(ModelDescriptor):
                 show("view edit listing"),
             ],
             value_type="email",
-            render_type="text_line",
         ),
         F(name="login",
             label="Login",
@@ -213,7 +202,6 @@ class UserDescriptor(ModelDescriptor):
                 hide("listing"),
             ],
             value_type="login",
-            render_type="text_line",
         ),
         F(name="_password",
             label="Initial password",
@@ -221,7 +209,6 @@ class UserDescriptor(ModelDescriptor):
                 show("add"), # db-not-null-ui-add
             ],
             value_type="password",
-            render_type="text_line",
         ),
         F(name="national_id",
             label="National Id",
@@ -229,8 +216,6 @@ class UserDescriptor(ModelDescriptor):
                 show("view edit add"),
                 hide("listing"),
             ],
-            value_type="text",
-            render_type="text_line",
         ),
         F(name="gender",
             label="Gender",
@@ -400,8 +385,6 @@ class GroupMembershipDescriptor(ModelDescriptor):
             localizable=[
                 show("view edit listing"),
             ],
-            value_type="text",
-            render_type="text_line",
         ),
         F(name="replaced_id", #!+UNUSED? fk to a membership
             label="Substituted by",
@@ -431,7 +414,7 @@ class GroupMembershipDescriptor(ModelDescriptor):
             ],
             value_type="date",
             render_type="date",
-            listing_column=listing.day_column("status_date", _("Status date")),
+            listing_column=listing.day_column("status_date", _("Status Date")),
         ),
     ]
     schema_invariants = [
@@ -613,85 +596,72 @@ class GroupDescriptor(ModelDescriptor):
         "description",
     ]
     fields = [
-        Field(name="full_name", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit"),
-                hide("listing"),
-            ],
-            property=schema.TextLine(title=_("Full Name"),
-                required=False,
-            ),
-        ),
-        Field(name="short_name", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit"),
-                hide("listing"),
-            ],
-            property=schema.TextLine(title=_("Short Name")),
-        ),
-        Field(name="acronym", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit"),
-                hide("listing"),
-            ],
-            property=schema.TextLine(title=_("Acronym"), required=False),
-        ),
-        Field(name="combined_name", # [derived]
-            modes="listing",
-            localizable=[
-                show("listing"),
-            ],
-            property=schema.TextLine(title=_combined_name_title,
-                required=False,
-            ),
-            listing_column=listing.combined_name_column("full_name",
-                _combined_name_title),
-            listing_column_filter=listing.combined_name_column_filter,
-        ),
-        LanguageField("language"), # [user-req]
-        Field(name="description", # [rtf]
-            modes="view edit add",
-            localizable=[
-                show("view edit add"),
-            ],
-            property=schema.Text(title=_("Description") , required=False),
-            view_widget=widgets.HTMLDisplay,
-            edit_widget=widgets.RichTextEditor,
-            add_widget=widgets.RichTextEditor,
-        ),
-        Field(name="start_date", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit listing"),
-            ],
-            property=schema.Date(title=_("Start Date")),
-            listing_column=listing.day_column("start_date", _("Start Date")),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget,
-            search_widget=widgets.date_input_search_widget
-        ),
-        Field(name="end_date",
-            modes="view edit add listing", # [user]
+        F(name="full_name",
+            label="Full Name",
             localizable=[
                 show("view edit add listing"),
             ],
-            property=schema.Date(title=_("End Date"), required=False),
-            listing_column=listing.day_column("end_date", _("End Date")),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget,
-            search_widget=widgets.date_input_search_widget
         ),
-        Field(name="status", label=_("Status"), # [sys]
-            modes="view listing",
+        F(name="short_name",
+            label="Short Name",
+            localizable=[
+                show("add"), # db-not-null-ui-add
+                show("view edit listing"),
+            ],
+        ),
+        F(name="acronym",
+            label="Acronym",
+            localizable=[
+                show("view edit add listing"),
+            ],
+        ),
+        F(name="combined_name", # [derived]
+            label="Full Name [Short Name]",
+            localizable=[
+                show("listing"),
+            ],
+            listing_column=listing.combined_name_column("full_name",
+                _("Full Name [Short Name]")),
+            listing_column_filter=listing.combined_name_column_filter,
+        ),
+        LanguageField("language"), # [user-req]
+        F(name="description",
+            label="Description",
+            localizable=[
+                show("view edit add"),
+            ],
+            value_type="text",
+            render_type="rich_text",
+        ),
+        F(name="start_date",
+            label="Start Date",
+            required=True,
+            localizable=[
+                show("view edit add listing"),
+            ],
+            value_type="date",
+            render_type="date",
+            listing_column=listing.day_column("start_date", _("Start Date")),
+        ),
+        F(name="end_date",
+            label="End Date",
+            required=True,
+            localizable=[
+                show("view edit add listing"),
+            ],
+            value_type="date",
+            render_type="date",
+            listing_column=listing.day_column("end_date", _("End Date")),
+        ),
+        F(name="status",
+            label="Status",
+            required=True,
             localizable=[
                 show("view listing"),
             ],
-            property=schema.Choice(title=_("Status"),
-                vocabulary="workflow_states",
-            ),
+            value_type="text",
+            render_type="single_select",
+            vocabulary="workflow_states",
             listing_column=listing.workflow_column(),
         ),
     ]
@@ -749,50 +719,47 @@ class ParliamentDescriptor(GroupDescriptor):
             ),
         ),
         LanguageField("language"), # [user-req]
-        Field(name="description", # [rtf]
-            modes="view edit add",
+        F(name="description",
+            label="Description",
             localizable=[
                 show("view edit add"),
             ],
-            property=schema.Text(title=_("Description"), required=False),
-            view_widget=widgets.HTMLDisplay,
-            edit_widget=widgets.RichTextEditor,
-            add_widget=widgets.RichTextEditor,
+            value_type="text",
+            render_type="rich_text",
         ),
-        Field(name="election_date",
-            property=schema.Date(title=_("Election Date"),
-                description=_("Date of the election"),
-            ),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget,
-            search_widget=widgets.date_input_search_widget
-        ),
-        Field(name="start_date", # [user-req]
-            modes="view edit add listing",
+        F(name="election_date",
+            label="Election Date",
+            description="Date of the election",
+            required=True,
             localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            property=schema.Date(title=_("In power from"),
-                description=_("Date of the swearing in"),
-            ),
-            listing_column=listing.day_column("start_date", _("In power from")),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget,
-            search_widget=widgets.date_input_search_widget
+            value_type="date",
+            render_type="date",
+            listing_column=listing.day_column("start_date", _("Start Date")),
         ),
-        Field(name="end_date", # [user]
-            modes="view edit add listing",
+        F(name="start_date",
+            label="In power from",
+            description="Date of the swearing in",
+            required=True,
+            localizable=[
+                show("add"), # db-not-null-ui-add
+                show("view edit listing"),
+            ],
+            value_type="date",
+            render_type="date",
+            listing_column=listing.day_column("start_date", _("In power from")),
+        ),
+        F(name="end_date",
+            label="In power till",
+            description="Date of the dissolution",
             localizable=[
                 show("view edit add listing"),
             ],
-            property=schema.Date(title=_("In power till"),
-                description=_("Date of the dissolution"),
-                required=False,
-            ),
-            listing_column=listing.day_column("end_date", _("In power till")),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget,
-            search_widget=widgets.date_input_search_widget
+            value_type="date",
+            render_type="date",
+            listing_column=listing.day_column("start_date", _("In power from")),
         ),
     ]
     schema_invariants = [
@@ -810,7 +777,7 @@ class CommitteeDescriptor(GroupDescriptor):
     
     fields = deepcopy(GroupDescriptor.fields)
     get_field(fields, "start_date").localizable = [
-        show("view edit"),
+        show("view edit add"),
         hide("listing")
     ]
     get_field(fields, "end_date").localizable = [
@@ -1059,8 +1026,6 @@ class AddressDescriptor(ModelDescriptor):
             localizable=[
                 show("view edit add listing"),
             ],
-            value_type="email",
-            render_type="text_line",
         ),
         #Field(name="im_id",
         #    property=schema.TextLine(title=_("Instant Messenger Id"),
@@ -1134,27 +1099,26 @@ class MemberTitleDescriptor(ModelDescriptor):
                 ),
             listing_column=listing.member_title_column("title_name", _("Title")),
         ),
-        Field(name="start_date", # [user-req]
-            modes="view edit add listing",
+        F(name="start_date",
+            label="Start Date",
+            required=True,
             localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            property=schema.Date(title=_("Start Date"), required=True),
+            value_type="date",
+            render_type="date",
             listing_column=listing.day_column("start_date", _("Start Date")),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget,
-            search_widget=widgets.date_input_search_widget
         ),
-        Field(name="end_date", # [user]
-            modes="view edit add listing",
+        F(name="end_date",
+            label="End Date",
+            description="Date of the dissolution",
             localizable=[
                 show("view edit add listing"),
             ],
-            property=schema.Date(title=_("End Date"), required=False),
+            value_type="date",
+            render_type="date",
             listing_column=listing.day_column("end_date", _("End Date")),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget,
-            search_widget=widgets.date_input_search_widget
         ),
         LanguageField("language"), # [user-req]
     ]
@@ -1418,15 +1382,13 @@ class AttachmentDescriptor(ModelDescriptor):
             edit_widget=widgets.TextWidget,
             add_widget=widgets.TextWidget,
         ),
-        Field(name="description", # [rtf]
-            modes="view edit add",
+        F(name="description",
+            label="Description",
             localizable=[
                 show("view edit add"),
             ],
-            property=schema.Text(title=_("Description"), required=False),
-            view_widget=widgets.HTMLDisplay,
-            edit_widget=widgets.RichTextEditor,
-            add_widget=widgets.RichTextEditor,
+            value_type="text",
+            render_type="rich_text",
         ),
         Field(name="data", # [file]
             modes="view edit add",
@@ -1449,23 +1411,25 @@ class AttachmentDescriptor(ModelDescriptor):
             edit_widget=widgets.NoInputWidget,
             add_widget=widgets.NoInputWidget,
         ),
-        Field(name="status", label=_("Status"), # [user-req]
-            modes="view listing",
+        F(name="status",
+            label="Status",
+            required=True,
             localizable=[
                 show("view listing"),
             ],
-            property=schema.Choice(title=_("Status"),
-                vocabulary="workflow_states",
-            ),
+            value_type="text",
+            render_type="single_select",
+            vocabulary="workflow_states",
             listing_column=listing.workflow_column(),
         ),
-        Field(name="status_date", label=_("Status date"), # [sys]
-            modes="view listing",
+        F(name="status_date",
+            label="Status Date",
             localizable=[
                 show("view listing"),
             ],
-            property=schema.Date(title=_("Status date"), required=False),
-            listing_column=listing.day_column("status_date", _("Status date")),
+            value_type="date",
+            render_type="date",
+            listing_column=listing.day_column("status_date", _("Status Date")),
         ),
         LanguageField("language"), # [user-req]
     ]
@@ -1528,15 +1492,17 @@ class DocDescriptor(ModelDescriptor):
         # amc_signatories
         # amc_attachments
         # amc_events
-        Field(name="submission_date", # [derived]
-            modes="view listing",
-            localizable=[ 
-                show("view"),
-                hide("listing")
+        F(name="submission_date",
+            label="Submission Date",
+            localizable=[
+                show("view"), 
+                hide("listing"),
             ],
-            property=schema.Date(title=_("Submission Date"), required=False),
+            value_type="date",
+            render_type="date",
             listing_column=listing.day_column("submission_date", _("Submission Date")),
         ),
+
         #   admissible_date
         # owner
         # signatories
@@ -1632,32 +1598,35 @@ class DocDescriptor(ModelDescriptor):
             ],
         ),
         LanguageField("language"), # [user-req]
-        Field(name="body", # [rtf]
-            modes="view edit add",
-            localizable=[ show("view"), ],
-            property=schema.Text(title=_("Text")),
-            view_widget=widgets.HTMLDisplay,
-            edit_widget=widgets.RichTextEditor,
-            add_widget=widgets.RichTextEditor,
+        F(name="body",
+            label="Description",
+            required=True,
+            localizable=[
+                show("view edit add"),
+            ],
+            value_type="text",
+            render_type="rich_text",
         ),
-        Field(name="status", label=_("Status"), # [sys]
-            modes="view listing",
+        F(name="status",
+            label="Status",
+            required=True,
             localizable=[
                 show("view listing"),
             ],
-            property=schema.Choice(title=_("Status"),
-                vocabulary="workflow_states",
-            ),
+            value_type="text",
+            render_type="single_select",
+            vocabulary="workflow_states",
             listing_column=listing.workflow_column(),
         ),
-        Field(name="status_date", label=_("Status date"), # [sys]
-            modes="view listing",
+        F(name="status_date",
+            label="Status Date",
+            required=True,
             localizable=[
                 show("view listing"),
             ],
-            property=schema.Date(title=_("Status Date"), required=False),
-            listing_column=listing.day_column("status_date", _("Status date")),
-            search_widget=widgets.date_input_search_widget
+            value_type="date",
+            render_type="date",
+            listing_column=listing.day_column("status_date", _("Status Date")),
         ),
         # !+group_id only exposed in specific custom doc types
         #Field(name="group_id", # [user]
@@ -1777,8 +1746,7 @@ class ChangeDescriptor(ModelDescriptor):
             property=schema.Date(title=u"Audit Date", required=True),
             edit_widget=widgets.DateWidget,
             add_widget=widgets.DateWidget,
-            listing_column=listing.datetime_column("date_audit", 
-            _("Date Audit")),
+            listing_column=listing.datetime_column("date_audit", _("Date Audit")),
             search_widget=widgets.date_input_search_widget
         ),
         Field(name="date_active", # [user]
@@ -2082,14 +2050,13 @@ class QuestionDescriptor(DocDescriptor):
                 vocabulary.response_type
             ),
         ),
-        Field(name="response_text", # [user-req]
-            modes="edit",
-            property=schema.Text(title=_("Response"),
-                description=_("Response to the Question"),
-                required=False
-            ),
-            view_widget=widgets.HTMLDisplay,
-            edit_widget=widgets.RichTextEditor,
+        F(name="response_text",
+            label="Response",
+            localizable=[
+                show("view edit"),
+            ],
+            value_type="text",
+            render_type="rich_text",
         ),
         F(name="subject",
             label="Subject Terms",
@@ -2337,27 +2304,6 @@ class SessionDescriptor(ModelDescriptor):
     custom_validators = [validations.validate_date_range_within_parent]
 
 
-#class DebateDescriptor (ModelDescriptor):
-#    display_name = _("Debate")
-#    container_name = _("Debate")
-
-#    fields = [
-#        Field(name="sitting_id", modes=""),
-#        Field(name="debate_id", modes=""),
-#        Field(name="short_name",
-#                label=_("Short Name"),
-#                modes="view edit add listing",
-#                listing_column=name_column("short_name",
-#                    _("Name"))),
-#        Field(name="body_text", label=_("Transcript"),
-#              property = schema.Text(title="Transcript"),
-#              view_widget=widgets.HTMLDisplay,
-#              edit_widget=widgets.RichTextEditor,
-#              add_widget=widgets.RichTextEditor,
-#             ),
-#        ]
-
-
 class SittingAttendanceDescriptor(ModelDescriptor):
     localizable = True
     display_name = _("Sitting attendance")
@@ -2404,8 +2350,6 @@ class SignatoryDescriptor(ModelDescriptor):
             label="View",
             required=True,
             localizable=[show("listing", "bungeni.Signatory bungeni.Owner")],
-            value_type="text",
-            render_type="text_line",
             listing_column=listing.simple_view_column("signatory_id", 
                 _(u"review"), _(u"view"), _(u"review")
             ),
@@ -2427,8 +2371,6 @@ class SignatoryDescriptor(ModelDescriptor):
         F(name="party", # not on schema or domain model
             label="Political Party",
             localizable=[ show("listing"), ],
-            value_type="text",
-            render_type="text_line",
             listing_column=listing.user_party_column("party",
                 _(u"political party"), _(u"no party")
             )
@@ -2578,16 +2520,15 @@ class EditorialNoteDescriptor(ModelDescriptor):
                 show("view listing")
             ],
             property=schema.Int(title=_("Item"))
-        ),
-        Field(name="text", 
-            modes="view edit add listing",
+        ),     
+        F(name="text",
+            label="Text",
+            required=True,
             localizable=[
                 show("view edit add listing")
             ],
-            property=schema.Text(title=_(u"Text")),
-            view_widget=widgets.HTMLDisplay,
-            edit_widget=widgets.RichTextEditor,
-            add_widget=widgets.RichTextEditor,
+            value_type="text",
+            render_type="rich_text",
         ),
         LanguageField("language")
     ]
@@ -2599,15 +2540,15 @@ class ItemScheduleDiscussionDescriptor(ModelDescriptor):
     
     fields = [
         LanguageField("language"),
-        Field(name="body", label=_("Minutes"), # [rtf]
-            modes="view edit add listing",
+        F(name="body",
+            label="Minutes",
+            required=True,
             localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            property=schema.Text(title=_("Minutes")),
-            view_widget=widgets.HTMLDisplay,
-            edit_widget=widgets.RichTextEditor,
-            add_widget=widgets.RichTextEditor,
+            value_type="text",
+            render_type="rich_text",
         ),
         #Field(name="sitting_time",
         #    label=_("Sitting time"),
@@ -2641,15 +2582,14 @@ class ReportDescriptor(DocDescriptor):
             add_widget=widgets.DateWidget,
             search_widget=widgets.date_input_search_widget
         ),
-        Field(name="body", label=_("Text"), # [rtf]
-            modes="view edit add",
+        F(name="body",
+            label="Text",
+            required=True,
             localizable=[
-                show("view edit"),
+                show("view edit add"),
             ],
-            property=schema.Text(title=_("Text")),
-            view_widget=widgets.HTMLDisplay,
-            edit_widget=widgets.RichTextEditor,
-            add_widget=widgets.RichTextEditor,
+            value_type="text",
+            render_type="rich_text",
         ),
     ]
     default_field_order = [ f.name for f in fields ]

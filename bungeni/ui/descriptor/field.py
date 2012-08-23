@@ -50,8 +50,6 @@ RENDERTYPE_WITH_VOCABULARIES = ("single_select", "radio", "tree_text")
 # widget setting per mode, by (value_type, render_type)
 # (value, render): (view, edit, add, search) # !+listing, delete
 WIDGETS = {
-    (None, None):
-        (None, None, None, None),
     ("text", "text_line"):
         (None, None, None, None),
     ("text", "rich_text"):
@@ -92,8 +90,8 @@ def F(name=None, label=None, description=None,
         #property=None,
         #view_widget=None, edit_widget=None, add_widget=None, 
         #search_widget=None,
-        value_type=None, 
-        render_type=None, 
+        value_type="text",
+        render_type="text_line",
         vocabulary=None,
         # !+
         listing_column=None, 
