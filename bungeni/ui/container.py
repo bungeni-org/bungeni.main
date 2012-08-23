@@ -399,7 +399,7 @@ class ContainerJSONListing(ContainerJSONBrowserView):
             values.append(d)
         return values
 
-    def query_add_filters(query):
+    def query_add_filters(self, query):
         """Sub classes can add filters to the query by overriding this method
         """
         return query
