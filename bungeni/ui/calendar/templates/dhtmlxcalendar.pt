@@ -53,7 +53,7 @@
                     x_step: 6,
                     x_size: 20,
                     x_start: 1,
-                    y_unit: venues_data,
+                    y_unit: timeline_data.venues,
                     y_property: "venue",
                     render: "bar"
                 })
@@ -61,12 +61,12 @@
                 scheduler.createTimelineView({
                     name : "committees",
                     x_unit: "hour",
-                    x_date: "%d %M",
-                    x_step: 24,
-                    x_size: 7,
+                    x_date: "%d %M %h%a",
+                    x_step: 6,
+                    x_size: 20,
                     x_start: 0,
-                    x_length: 6,
-                    y_unit: groups_data,
+                    x_length: 1,
+                    y_unit: timeline_data.committees,
                     y_property: "group_id",
                     render: "bar"
                 })
@@ -175,13 +175,6 @@
             <span i18n:translate="">Calendar of </span>
             <span tal:replace="view/title"></span>
           </div>
-          <!--
-           !+DEPRECATED (ao, 22 Aug 2012) No longer being render on the calendar UI
-            Moved to calendar's tabs as 'Committees'
-          <div id="select-calendars">
-              <span metal:use-macro="view/calendar_macros/selectcalendars"/>
-          </div>
-          -->
           <div id="scheduler_here" class="dhx_cal_container" >
                 <div class="dhx_cal_navline">
                     <div class="dhx_cal_prev_button">&nbsp;</div>

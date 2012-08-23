@@ -15,17 +15,4 @@
       </table>
     </div>
   </metal:eventformhtml>
-  <metal:selectcalendars define-macro="selectcalendars">
-    <ol>
-        <metal:block tal:repeat="schedule view/other_calendars">
-            <li>
-                <span tal:attributes="style string:background-color:#${schedule/color}">
-                    <input type="checkbox"
-                           tal:attributes="rel schedule/color; value schedule/action"/>
-                    <span tal:content="schedule/title" tal:omit-tag=""/>
-                </span>
-            </li>
-        </metal:block>
-    </ol>
-  </metal:selectcalendars>
 </html>

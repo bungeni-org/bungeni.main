@@ -331,6 +331,7 @@ class CalendarView(BungeniBrowserView):
         group_list = [ {"key": comm.committee_id, 
             "label": IDCDescriptiveProperties(comm).title}
             for comm in Session().query(domain.Committee).all()
+            if comm.committee_id is not self.context.group_id
         ]
         return group_list        
     
@@ -356,23 +357,25 @@ class CalendarView(BungeniBrowserView):
             text_sitting=translate_i18n(_(u"Sitting")),
             text_view=translate_i18n(_(u"View")),
         )
-        return """var cal_globals = %s;var venues_data=%s;
-            var groups_data=%s;""" %(
-            json.dumps(cal_globals), json.dumps(self.venues_data),
-            json.dumps(self.groups_data)
+        return """var cal_globals = %s;
+            var timeline_data = { venues: %s, committees: %s };
+            var group_urls= %s;""" %(
+            json.dumps(cal_globals), 
+            json.dumps(self.venues_data),
+            json.dumps(self.groups_data),
+            json.dumps(self.calendar_urls())
         )
 
-    def other_calendars(self):
+    def calendar_urls(self):
         """A list of URLs to other calendars - Loaded when selected"""
         menu = component.queryUtility(IBrowserMenu, "context_calendar")
         if menu is None:
             return []
         items = menu.getMenuItems(self.context, self.request)
         colors = utils.generate_event_colours(len(items))
-        map(lambda item:item[1].update([("color", colors[item[0]])]),
-            enumerate(items)
-        )
-        return items
+        return [ { "url": item[1]["action"], "color": colors[item[0]] }
+            for item in enumerate(items)
+        ]
 
     def render(self, template=None):
         need("bungeni-calendar-bundle")
@@ -946,7 +949,10 @@ class DhtmlxCalendarSittings(BrowserView):
                     )
                 )
                 event_list.append(trusted)
-        return event_list + self.get_sessions()
+        if model_interfaces.IParliament.providedBy(self.context.get_group()):
+            return event_list + self.get_sessions()
+        else:
+            return event_list
 
     def __call__(self):
         self.request.response.setHeader("Content-type", self.content_mimetype)

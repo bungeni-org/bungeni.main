@@ -1,60 +1,32 @@
-/* Load multiple calendars from sources based on selected checkbox
- * of available calendars.
+/* Load events from multiple sources into same dhtmxscheduler
  */
 var loaded_calendars = Array();
 var edit_mode_turned_off = false;
-$(document).ready(function(){
-    $("input", $("#select-calendars")).change(
-        function(){
-            if (!scheduler.config.readonly){
-                scheduler.config.readonly = true;
-                edit_mode_turned_off = true;
-            }
-            if (loaded_calendars.length==0){
-                loaded_calendars.push(scheduler._load_url);
-            }
-            var ev_color = $(this).attr("rel");
-            var cal_url = $(this).val();
-            var is_checked = $(this).attr("checked");
-            cal_url = cal_url + "/dhtmlxcalendar?uid=" + scheduler.uid() + "&amp;color=" + ev_color;
-            if (is_checked){
-                if (loaded_calendars.indexOf(cal_url) < 1){
-                    loaded_calendars.push(cal_url);
-                    scheduler._loaded = {};
-                    scheduler.load(cal_url);
-                }
-            }else{
-                loaded_calendars.pop(cal_url);
-                if (loaded_calendars.length > 0){
-                    scheduler.clearAll();
-                    for (cal_id=0; cal_id<loaded_calendars.length; cal_id++){
-                        scheduler._loaded = {};
-                        scheduler.load(loaded_calendars[cal_id]);
-                    }
-                }
-                if ((loaded_calendars.length == 1) && (edit_mode_turned_off)){
-                    scheduler.config.readonly = false;
-                }
-            }
-        }
-    );
-    
-    $("#committees_tab").click(function() {
-        $.each( groups_data, function(i, n) {
-            if (!scheduler.config.readonly){
-                scheduler.config.readonly = true;
-                edit_mode_turned_off = true;
-            }
-            if (loaded_calendars.length==0){
-                loaded_calendars.push(scheduler._load_url);
-            }
-            var cal_url = "scheduling/committees/obj-"+ n.key +"/schedule";
-            cal_url = cal_url + "/dhtmlxcalendar?uid=" + scheduler.uid() + "&amp;color=none";
-            if (loaded_calendars.indexOf(cal_url) < 1){
-                loaded_calendars.push(cal_url);
-                scheduler._loaded = {};
-                scheduler.load(cal_url);
-            }
-        });
-    });
-});
+
+/**
+ * We load events when the committees timeline view is selected 
+ */
+var load_groups_events = function(){
+    if (loaded_calendars.length>0){
+        return;
+    }
+    loaded_calendars.push(scheduler._load_url);
+    if (!scheduler.config.readonly){
+        scheduler.config.readonly = true;
+        edit_mode_turned_off = true;
+    }
+        
+    for (index=0; index < group_urls.length; index++){
+        ev_color = group_urls[index].color;
+        cal_url = group_urls[index].url;
+        cal_url = (cal_url + "/dhtmlxcalendar?uid=" + scheduler.uid() + 
+            "&amp;color=" + ev_color
+        );
+        scheduler._loaded = {};
+        scheduler.load(cal_url);
+        loaded_calendars.push(cal_url);
+    }
+    if ((loaded_calendars.length == 1) && (edit_mode_turned_off)){
+        scheduler.config.readonly = false;
+    }
+}
