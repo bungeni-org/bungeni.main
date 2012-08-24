@@ -428,13 +428,13 @@ YAHOO.bungeni.availableitems = function(){
             }
             Event.onAvailable("add-text-record", function(event){
                 rteEditor = new YAHOO.widget.Editor("text-record-value",
-                    { width: "100%", autoHeight: true }
+                    { width: "100%", height: "60px",autoHeight: true }
                 );
                 rteEditor.render();
             });
             Event.onAvailable("add-minute-record", function(event){
                 minuteEditor = new YAHOO.widget.Editor("minute-record-value",
-                    { width: "100%", autoHeight: true }
+                    { width: "100%", height: "60px", autoHeight: true }
                 );
                 minuteEditor.render();
             });
