@@ -15,6 +15,10 @@
     padding:0.2em;
 }
 
+.yui-dt-liner {
+    width:96% !important;
+}
+
 .schedule-available-item-filters button em {
     font-style: normal;
     display: block;
@@ -48,15 +52,15 @@ input.scheduler-bigtext{
 }
 span.minutes-header{
     display:block;
-    background-color:#eef;
+    background-color:#cfcfcf;
     border-top:1px solid #666;
-    color:#666;
+    color:#000000;
     font-size:10px;
 }
 .minute-record{
     display:block;
     font-size:10px;
-    background-color:#fcc7a9;
+    background-color:#e8e8e8;
     color:#39361E;
     overflow:hidden;
     text-overflow:ellipsis;

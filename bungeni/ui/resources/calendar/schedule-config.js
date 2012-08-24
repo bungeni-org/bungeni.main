@@ -751,7 +751,7 @@ YAHOO.bungeni.config = function(){
                          el.innerHTML = BungeniUtils.wrapText(state_title);
                      }
                 }
-                 // end of adding minutes state
+                // end of adding minutes state
             }
 
             return {
@@ -781,7 +781,15 @@ YAHOO.bungeni.config = function(){
              **/
              var _renderRTECellEditor = function(args){
                 rteCellEditor = new YAHOO.widget.Editor(args.editor.textarea,
-                    { width: "400px", autoHeight: true }
+                    { width: "90em", 
+                    height: "60px",
+                    fixedcenter: false,
+                    modal: true,
+                    visible: false,
+                    draggable: true,
+                    constraintoviewport: true,
+                    monitorresize: true,
+                    autoHeight: true }
                 );
                 rteCellEditor.render();
                 args.editor.getInputValue = function(){
