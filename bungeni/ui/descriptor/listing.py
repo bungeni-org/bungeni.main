@@ -276,7 +276,9 @@ def ministry_column_filter(query, filter_string, sort_dir_func,
 def scheduled_item_title_column(name, title):
     def getter(item, formatter):
         dc = IDCDescriptiveProperties(item.item)
-        return dc.description if IScheduleText.providedBy(item.item) else dc.title
+        return (dc.description if (IScheduleText.providedBy(item.item) and
+            dc.description) else dc.title
+        )
     return column.GetterColumn(title, getter)
 
 
