@@ -2380,7 +2380,7 @@ class SignatoryDescriptor(ModelDescriptor):
             required=True,
             localizable = [
                 show("view listing", 
-                    roles="bungeni.Clerk bungeni.Owner bungeni.Signatory")
+                    roles="bungeni.Owner bungeni.Signatory")
             ],
             value_type="text",
             render_type="single_select",

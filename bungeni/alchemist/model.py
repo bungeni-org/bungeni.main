@@ -211,19 +211,12 @@ class Field(object):
     def validated_modes(cls, modes, nullable=False):
         return validated_set("modes", cls._modes, modes, nullable=nullable)
     
-    # The list of roles exposed to localization
+    # Default list of roles that are guaranteed to always be there in Bungeni 
     _roles = [
         "bungeni.Admin", # parliament, has all privileges
-        "bungeni.Clerk", "bungeni.Speaker", 
         "bungeni.Owner", # instance + special objects with no mp context
-        "bungeni.MP", # parliament 
-        "bungeni.Signatory", # signatory
-        "bungeni.Minister", # ministry 
-        "bungeni.CommitteeMember", # committee
-        # !+ other "member" roles?
-        #"bungeni.Translator", # parliament
-        #"bungeni.Authenticated", # all authenticated users, all above roles
-        "bungeni.Anonymous" # unauthenticated user, anonymous
+        "bungeni.Anonymous", # unauthenticated user, anonymous
+        "bungeni.Signatory",
     ]
     @classmethod 
     def validated_roles(cls, roles, nullable=False):

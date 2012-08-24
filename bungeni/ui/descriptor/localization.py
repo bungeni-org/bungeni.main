@@ -10,6 +10,9 @@ log = __import__("logging").getLogger("bungeni.ui.descriptor.localization")
 
 from time import time
 import elementtree.ElementTree
+from zope.component import getUtilitiesFor
+from zope.securitypolicy.interfaces import IRole
+from zope.configuration import xmlconfig
 
 from bungeni.alchemist.model import (
     #ModelDescriptor, 
@@ -32,6 +35,11 @@ DESCRIPTOR_CLASSNAME_POSTFIX = "Descriptor"
 
 ROLES_DEFAULT = " ".join(Field._roles)
 INDENT = " " * 4
+
+zcml_slug = """<configure xmlns="http://namespaces.zope.org/zope">
+    <include package="bungeni" file="site.zcml"/>
+</configure>
+"""
 
 # utils
 
@@ -277,6 +285,13 @@ def serialize_cls(cls, depth=1):
         acc.append('%s<descriptor name="%s" />' % (ind, type_key))
     return acc
 
+def get_defined_roles():
+    xmlconfig.string(zcml_slug)
+    system_roles = ["zope.Manager"]
+    return [name for name, roles in getUtilitiesFor(IRole)
+            if name not in system_roles]
+
+
 def serialize_module(module, depth=0):
     """Return a list of serialization strings, for localizable descriptor 
     classes in module.
@@ -287,13 +302,14 @@ def serialize_module(module, depth=0):
     
     acc = []
     ind = INDENT * depth
+    roles = " ".join(get_defined_roles())
     if _acc:
-        acc.append('%s<ui roles="%s">' % (ind, ROLES_DEFAULT))
+        acc.append('%s<ui roles="%s">' % (ind, roles))
         acc.extend(_acc)
         acc.append("")
         acc.append("%s</ui>" % (ind))
     else:
-        acc.append('%s<ui roles="%s" />' % (ind, ROLES_DEFAULT))
+        acc.append('%s<ui roles="%s" />' % (ind, roles))
     acc.append("") # blank line at end of file
     acc.append("")
     return acc
