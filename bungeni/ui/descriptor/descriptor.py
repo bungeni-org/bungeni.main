@@ -210,6 +210,17 @@ class UserDescriptor(ModelDescriptor):
             ],
             value_type="password",
         ),
+        F(name="status",
+            label="Status",
+            required=True,
+            localizable=[
+                show("view listing"),
+            ],
+            value_type="text",
+            render_type="single_select",
+            vocabulary="workflow_states",
+            listing_column=listing.workflow_column(),
+        ),
         F(name="national_id",
             label="National Id",
             localizable=[
@@ -269,7 +280,8 @@ class UserDescriptor(ModelDescriptor):
         F(name="marital_status",
             label="Marital Status",
             localizable=[
-                show("view edit add listing"),
+                show("view edit add"),
+                hide("listing"),
             ],
             value_type="text",
             render_type="single_select",
@@ -604,6 +616,7 @@ class GroupDescriptor(ModelDescriptor):
         ),
         F(name="short_name",
             label="Short Name",
+            required=True,
             localizable=[
                 show("add"), # db-not-null-ui-add
                 show("view edit listing"),
@@ -688,35 +701,28 @@ class ParliamentDescriptor(GroupDescriptor):
         "description",
     ]
     fields = [
-        Field(name="full_name", # [user-req]
-            description=_("Parliament name"),
-            modes="view edit add listing",
+        F(name="full_name",
+            label="Parliament Name",
             localizable=[
+                show("view edit add listing"),
+            ],
+            listing_column=listing.name_column("full_name", _("Parliament Name")),
+        ),
+        F(name="short_name",
+            label="Short Name",
+            description="Shorter name for the parliament",
+            required=True,
+            localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            property=schema.TextLine(title=_("Name"),
-                required=False,
-            ),
-            listing_column=listing.name_column("full_name", _("Name")),
         ),
-        Field(name="short_name", # [user-req]
-            modes="view edit add listing",
+        F(name="identifier",
+            label="Parliament Identifier",
+            description="Unique identifier or number for this Parliament",
             localizable=[
-                show("view edit listing"),
+                show("view edit add listing"),
             ],
-            property=schema.TextLine(title=_("Short Name"),
-                description=_("Shorter name for the parliament"),
-            ),
-        ),
-        Field(name="identifier", # [user-req]
-            modes="view edit add",
-            localizable=[
-                show("view edit"),
-            ],
-            property=schema.TextLine(title=_("Parliament Identifier"),
-                description=_("Unique identifier or number for this Parliament"),
-                required=False
-            ),
         ),
         LanguageField("language"), # [user-req]
         F(name="description",
@@ -786,110 +792,103 @@ class CommitteeDescriptor(GroupDescriptor):
     ]
     
     fields.extend([
-        Field(name="identifier", # [user-req]
-            modes="view edit add",
+        F(name="identifier",
+            label="Committee Identifier",
+            description="Unique identifier or number for this Committee",
             localizable=[
-                show("view edit"),
+                show("view edit add"),
             ],
-            property=schema.TextLine(title=_("Committee Identifier"),
-                description=_("Unique identifier or number for this Committee"),
-                required=False
-            ),
         ),
-        Field(name="sub_type", # [user-req]
-            modes="view edit add listing",
-            localizable=[ 
-                show("view edit listing"), 
+        F(name="sub_type", # group field, only used in committee
+            label="Committee Type",
+            localizable=[
+                show("view edit add listing"),
             ],
-            property=schema.Choice(title=_("Committee Type"),
-                source=vocabulary.committee_type,
-                required=False,
-            ),
+            value_type="text",
+            render_type="single_select",
+            vocabulary="committee_type",
             listing_column=listing.vocabulary_column("sub_type",
                 _("Committee Type"),
                 vocabulary.committee_type
             ),
         ),
-        Field(name="group_continuity", # [user-req]
-            modes="view edit add listing",
-            localizable=[ 
-                show("view edit listing"), 
+        F(name="group_continuity",
+            label="Committee Status Type",
+            required=True,
+            localizable=[
+                show("add"), # db-not-null-ui-add
+                show("view edit listing"),
             ],
-            property=schema.Choice(title=_("Committee Status Type"),
-                source=vocabulary.committee_continuity,
-            ),
+            value_type="text",
+            render_type="single_select",
+            vocabulary="committee_continuity",
             listing_column=listing.vocabulary_column("group_continuity",
                 _("Committee Status Type"),
                 vocabulary.committee_continuity
             ),
         ),
-        Field(name="num_members", # [user]
-            modes="view edit add listing",
+        F(name="num_members",
+            label="Number of members",
             localizable=[
                 show("view edit add"),
                 hide("listing")
             ],
-            property=schema.Int(title=_("Number of members"), required=False),
+            value_type="number",
+            render_type="number",
         ),
-        Field(name="min_num_members", # [user]
-            modes="view edit add listing",
+        F(name="min_num_members",
+            label="Minimum Number of members",
             localizable=[
                 show("view edit add"),
                 hide("listing")
             ],
-            property=schema.Int(title=_("Minimum Number of Members"),
-                required=False
-            )
+            value_type="number",
+            render_type="number",
         ),
-        Field(name="quorum", # [user]
-            modes="view edit add listing",
+        F(name="quorum",
+            label="Quorum",
             localizable=[
                 show("view edit add"),
                 hide("listing")
             ],
-            property=schema.Int(title=_("Quorum"), required=False)
+            value_type="number",
+            render_type="number",
         ),
-        Field(name="num_clerks", # [user]
-            modes="view edit add listing",
+        F(name="num_clerks",
+            label="Number of clerks",
             localizable=[
                 show("view edit add"),
                 hide("listing")
             ],
-            property=schema.Int(title=_("Number of clerks"), required=False)
+            value_type="number",
+            render_type="number",
         ),
-        Field(name="num_researchers", # [user]
-            modes="view edit add listing",
+        F(name="num_researchers",
+            label="Number of researchers",
             localizable=[
                 show("view edit add"),
                 hide("listing")
             ],
-            property=schema.Int(title=_("Number of researchers"),
-                required=False
-            )
+            value_type="number",
+            render_type="number",
         ),
-        Field(name="proportional_representation", # [user]
-            modes="view edit add listing",
+        F(name="proportional_representation",
+            label="Proportional representation",
             localizable=[
                 show("view edit add"),
                 hide("listing")
             ],
-            property=schema.Bool(title=_("Proportional representation"),
-                default=True,
-                required=False
-            )
+            value_type="bool",
+            render_type="bool",
         ),
-        Field(name="reinstatement_date", # [user]
-            modes="view edit add listing",
+        F(name="reinstatement_date",
+            label="Reinstatement Date",
             localizable=[
                 show("view edit add"),
                 hide("listing")
             ],
-            property=schema.Date(title=_("Reinstatement Date"),
-                required=False
-            ),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget,
-            search_widget=widgets.date_input_search_widget
+            value_type="date",
+            render_type="date",
         ),
     ])
     schema_invariants = [
@@ -938,87 +937,83 @@ class AddressDescriptor(ModelDescriptor):
     container_name = _("Addresses")
     
     fields = [
-        Field(name="logical_address_type", # [user-req]
-            modes="view edit add listing",
+        F(name="logical_address_type",
+            label="Address Type",
+            required=True,
             localizable=[
-                show("view edit listing"), 
+                show("add"), # db-not-null-ui-add
+                show("view edit listing"),
             ],
-            # !+i18n(mr, nov-2011) shouldn't title be translated later?
-            property=schema.Choice(title=_("Address Type"),
-                source=vocabulary.logical_address_type,
-            ),
+            value_type="text",
+            render_type="single_select",
+            vocabulary="logical_address_type",
             listing_column=listing.vocabulary_column("logical_address_type", 
                 _("Address Type"),
                 vocabulary.logical_address_type
             ),
         ),
-        Field(name="postal_address_type", # [user-req]
-            modes="view edit add listing",
-            localizable=[ 
-                show("view edit listing"), 
+        F(name="postal_address_type",
+            label="Postal Address Type",
+            required=True,
+            localizable=[
+                show("add"), # db-not-null-ui-add
+                show("view edit listing"),
             ],
-            property=schema.Choice(title=_("Postal Address Type"),
-                source=vocabulary.postal_address_type,
+            value_type="text",
+            render_type="single_select",
+            vocabulary="postal_address_type",
+            listing_column=listing.vocabulary_column("logical_address_type", 
+                _("Address Type"),
+                vocabulary.logical_address_type
             ),
         ),
-        Field(name="street", # [user-req]
-            modes="view edit add listing",
+        F(name="street",
+            label="Street",
             localizable=[
-                show("view edit"),
+                show("view edit add"),
                 hide("listing"),
             ],
-            property=schema.Text(title=_("Street"), required=False),
-            edit_widget=zope.formlib.widgets.TextAreaWidget,
-            add_widget=zope.formlib.widgets.TextAreaWidget,
+            value_type="text",
+            render_type="text_box",
         ),
-        Field(name="city", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit listing"),
-            ],
-            property=schema.TextLine(title=_("City"), required=False)
-        ),
-        Field(name="zipcode", # [user-req]
-            label=_("Zip Code"),
-            modes="view edit add listing",
-            localizable=[
-                show("view edit listing"),
-            ],
-        ),
-        Field(name="country_id", # [user-req]
-            modes="view edit add listing",
-            localizable=[
-                show("view edit listing"),
-            ],
-            property=schema.Choice(title=_("Country"),
-                source=vocabulary.country_factory,
-                required=False
-            ),
-        ),
-        Field(name="phone", # [user]
-            modes="view edit add listing",
+        F(name="city",
+            label="City",
             localizable=[
                 show("view edit add listing"),
             ],
-            property=schema.Text(title=_("Phone Number(s)"),
-                description=_("Enter one phone number per line"),
-                required=False
-            ),
-            edit_widget=zope.formlib.widgets.TextAreaWidget,
-            add_widget=zope.formlib.widgets.TextAreaWidget,
-            #view_widget=zope.formlib.widgets.ListDisplayWidget,
         ),
-        Field(name="fax", # [user-req]
-            modes="view edit add listing",
+        F(name="zipcode",
+            label="Zip Code",
             localizable=[
                 show("view edit add listing"),
             ],
-            property=schema.Text(title=_("Fax Number(s)"),
-                description=_("Enter one fax number per line"),
-                required=False
-            ),
-            edit_widget=zope.formlib.widgets.TextAreaWidget,
-            add_widget=zope.formlib.widgets.TextAreaWidget,
+        ),
+        F(name="country_id",
+            label="Country",
+            localizable=[
+                show("view edit add listing"),
+            ],
+            value_type="text",
+            render_type="single_select",
+            vocabulary="country",
+        ),
+        F(name="phone",
+            label="Phone Number(s)",
+            description="Enter one phone number per line",
+            localizable=[
+                show("view edit add listing"),
+            ],
+            value_type="text", # !+ phone ?
+            render_type="text_box",
+        ),
+        F(name="fax",
+            label="Fax Number(s)",
+            description="Enter one fax number per line",
+            localizable=[
+                show("view edit add listing"),
+            ],
+            value_type="text", # !+ phone ?
+            render_type="text_box",
         ),
         F(name="email",
             label="Email",
@@ -2168,7 +2163,7 @@ class SittingDescriptor(ModelDescriptor):
             # combination with a further customized listing_column -- for an
             # example of this see how the listing of the column "owner_id"
             # is configured in: descriptor.DocDescriptor
-
+            
             # !+CustomListingURL(miano, nov-2010)
             # Since the custom listing column function was missing
             # the sitting listing was broken in archive.

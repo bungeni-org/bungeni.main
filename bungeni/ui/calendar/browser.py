@@ -64,7 +64,6 @@ from bungeni.ui.reporting import generators
 from bungeni.models import domain
 from bungeni.models import interfaces as model_interfaces
 from bungeni.alchemist.container import stringKey
-from bungeni.alchemist.model import queryModelInterface
 from bungeni.alchemist import Session
 from bungeni.ui import vocabulary
 
@@ -91,18 +90,29 @@ class EventPartialForm(AddForm):
         # the call to self.model_descriptor._mode_columns("add") that is 
         # triggered when setting up the form_fields here in the standard way, 
         # will give strange results (since "add" localizable mode changes on 
-        # certain that have been introduced since r9722.
+        # certain fields that have been introduced since r9722.
         #
-        # So here we presumably just want the "full generic" set of fields,
-        # so we shortcut the standard machinery to setup form_fields, and 
-        # we use the full set of fields, as defined by the domain interface,
-        # and omitting what we need to omit.
+        # We could bypass the descriptor mechanism, by working with all fields,
+        # i.e. something like:
+        #from bungeni.alchemist.model import queryModelInterface
+        #domain_interface = queryModelInterface(self.context.__class__)
+        #self.form_fields = form.Fields(domain_interface)
+        # but that means also deal with further filtering, order etc.
+        # 
+        # So, the field lookup fails when EventPartialForm is ANYWAY not needed 
+        # in the first place! So, for now, we just ignore the error...
         #
-        domain_interface = queryModelInterface(self.context.__class__)
-        self.form_fields = form.Fields(domain_interface)
         self.form_fields = self.form_fields.omit(*self.omit_fields)
         # /PERMISSIONS_ON_PARTIAL_CONTEXT
-        self.form_fields["language"].edit_widget = LanguageLookupWidget
+        try:
+            self.form_fields["language"].edit_widget = LanguageLookupWidget
+        except KeyError, e:
+            # !+PERMISSIONS_ON_PARTIAL_CONTEXT "language" field not included... 
+            # permission for tor this field in "add" mode has been denied for
+            # current user!
+            from bungeni.models.utils import get_principal_id
+            log.error("!+PERMISSIONS_ON_PARTIAL_CONTEXT: user=%r error=%r" % (
+                get_principal_id(), e))
         self.form_fields = self.form_fields.omit(*self.omit_fields)
     
     def get_widgets(self):

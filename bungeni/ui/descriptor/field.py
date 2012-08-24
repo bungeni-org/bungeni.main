@@ -22,6 +22,7 @@ VALUETYPE = {
     "text": {},
     "date": {},
     "bool": {"default": True},
+    "number": {},
     "language": {},
     "email": {"constraint": constraints.check_email},
     "login": {"min_length": 3, "max_length": 20, "constraint": constraints.check_login},
@@ -35,9 +36,11 @@ VALUETYPE = {
 # {str: zope.schema.Field} #!+kw:comma-separated-str
 RENDERTYPE = {
     "text_line": schema.TextLine,
+    "text_box": schema.Text,
     "rich_text": schema.Text,
     "date": schema.Date,
     "bool": schema.Bool,
+    "number": schema.Int,
     "image": schema.Bytes,
     # special other user-conf params: "vocabulary" -> "type:vocabulary, required:True"
     "single_select": schema.Choice, 
@@ -52,6 +55,8 @@ RENDERTYPE_WITH_VOCABULARIES = ("single_select", "radio", "tree_text")
 WIDGETS = {
     ("text", "text_line"):
         (None, None, None, None),
+    ("text", "text_box"):
+        (None, widgets.TextAreaWidget, widgets.TextAreaWidget, None),
     ("text", "rich_text"):
         (widgets.HTMLDisplay, widgets.RichTextEditor, widgets.RichTextEditor, 
             None),
@@ -66,6 +71,8 @@ WIDGETS = {
         (None, widgets.DateWidget, widgets.DateWidget, 
             widgets.date_input_search_widget),
     ("bool", "bool"):
+        (None, None, None, None),
+    ("number", "number"):
         (None, None, None, None),
     ("language", "single_select"):
         (None, None, widgets.LanguageLookupWidget, None),
