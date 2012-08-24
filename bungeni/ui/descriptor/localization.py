@@ -36,10 +36,6 @@ DESCRIPTOR_CLASSNAME_POSTFIX = "Descriptor"
 ROLES_DEFAULT = " ".join(Field._roles)
 INDENT = " " * 4
 
-zcml_slug = """<configure xmlns="http://namespaces.zope.org/zope">
-    <include package="bungeni" file="site.zcml"/>
-</configure>
-"""
 
 # utils
 
@@ -195,7 +191,22 @@ def localize_descriptors():
 
 
 #####
-# Generation of the default localization file
+# Generation of the default localization file -- this code executes only 
+# when this module is run as a standalone process.
+
+def get_defined_roles():
+    zcml_slug = """<configure xmlns="http://namespaces.zope.org/zope">
+        <include package="zope.component" file="meta.zcml" />
+        <includeOverrides package="repoze.whooze" file="overrides.zcml" />
+        <include package="zope.app.security" />
+        <include package="bungeni.server" />
+        <include package="bungeni" file="security.zcml"/>
+    </configure>
+    """
+    xmlconfig.string(zcml_slug)
+    system_roles = ["zope.Manager"]
+    return [ name for name, role in getUtilitiesFor(IRole)
+        if name not in system_roles ]
 
 def serialize_loc(loc, depth=3, localizable_modes=[]):
     """(loc:show/hide directive) -> [str]
@@ -284,13 +295,6 @@ def serialize_cls(cls, depth=1):
     else:
         acc.append('%s<descriptor name="%s" />' % (ind, type_key))
     return acc
-
-def get_defined_roles():
-    xmlconfig.string(zcml_slug)
-    system_roles = ["zope.Manager"]
-    return [name for name, roles in getUtilitiesFor(IRole)
-            if name not in system_roles]
-
 
 def serialize_module(module, depth=0):
     """Return a list of serialization strings, for localizable descriptor 
