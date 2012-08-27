@@ -1159,6 +1159,7 @@
         title="Sign Document"
         layer=".interfaces.IWorkspaceUnderConsiderationSectionLayer"
         permission="bungeni.signatory.Append"
+        filter="context/allow_signatures"
         order="30"
     />
     <browser:menuItem menu="context_actions"

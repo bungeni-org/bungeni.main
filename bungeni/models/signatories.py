@@ -31,6 +31,14 @@ SIGNATORIES_REJECT_STATES = [u"rejected", u"withdrawn"]
 SIGNATORY_CONSENTED_STATES = [u"consented"]
 SIGNATORY_CONSENTED_STATE = u"consented"
 
+def _allow_signatures(self):
+    """Callable on class to check if document is open for signatures.
+    
+    Used in bungeni/ui/menu.zcml to filter out 'sign document action'
+    """
+    manager =interfaces.ISignatoryManager(self)
+    return manager.autoSign()
+
 @register.handler(adapts=(interfaces.IFeatureSignatory, IWorkflowTransitionEvent))
 def doc_workflow(ob, event):
     wfc = IWorkflowController(ob, None)
@@ -241,4 +249,5 @@ def createManagerFactory(domain_class, **params):
     ), "draft, submitted and expired states must be distinct lists"
 
     gsm.registerAdapter(manager, (domain_iface,), interfaces.ISignatoryManager)
+    domain_class.allow_signatures = _allow_signatures
 

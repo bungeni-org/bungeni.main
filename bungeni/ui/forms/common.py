@@ -852,7 +852,7 @@ class SignOpenDocumentForm(PageForm):
     
     def _can_sign_document(self, action):
         manager = ISignatoryManager(self.context)
-        return manager.allowSignature()
+        return manager.autoSign()
 
     def nextURL(self):
         return url.absoluteURL(self.context, self.request)
