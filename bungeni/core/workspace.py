@@ -39,7 +39,7 @@ OBJECT_ROLES = ["bungeni.Owner", "bungeni.Signatory"]
 
 # Tabs that are available in the workspace
 # All logged in users get a workspace with these tabs
-TABS = ["draft", "inbox", "sent", "archive"]
+TABS = ["draft", "inbox", "pending", "archive"]
 
 TabCountRecord = namedtuple('TabCountRecord', ['timestamp', 'count'])
 

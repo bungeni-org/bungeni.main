@@ -168,11 +168,11 @@ class AppSetup(object):
             description=_("incoming documents"),
             marker=interfaces.IWorkspaceInbox
         )
-        workspace["my-documents"]["sent"] = WorkspaceContainer(
-            tab_type="sent",
-            title=_("sent"),
-            description=_("sent documents"),
-            marker=interfaces.IWorkspaceSent
+        workspace["my-documents"]["pending"] = WorkspaceContainer(
+            tab_type="pending",
+            title=_("pending"),
+            description=_("pending documents"),
+            marker=interfaces.IWorkspacePending
         )
         workspace["my-documents"]["archive"] = WorkspaceContainer(
             tab_type="archive",

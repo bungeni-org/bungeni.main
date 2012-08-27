@@ -71,7 +71,7 @@ class IWorkspaceInbox(interface.Interface):
     """Marker inteface for workspace inbox"""
 class IWorkspaceDraft(interface.Interface):
     """Marker inteface for workspace draft"""
-class IWorkspaceSent(interface.Interface):
+class IWorkspacePending(interface.Interface):
     """Marker inteface for workspace sent"""
 class IWorkspaceArchive(interface.Interface):
     """Marker inteface for workspace archive"""
