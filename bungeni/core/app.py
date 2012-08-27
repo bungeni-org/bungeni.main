@@ -189,14 +189,14 @@ class AppSetup(object):
 
         workspace["under-consideration"]["documents"] = WorkspaceUnderConsiderationContainer(
             name="documents",
-            title=_(u"Under consideration"),
-            description=_(u"Documents under consideration"),
+            title=_(u"under consideration"),
+            description=_(u"documents under consideration"),
             marker=interfaces.IWorkspaceTrackedDocuments
            )
-        workspace["under-consideration"]["my-interests"] = WorkspaceTrackedDocumentsContainer(
-            name="my-interests",
-            title=_(u"My Tracked Documents"),
-            description=_(u"Tracked Documents")
+        workspace["under-consideration"]["tracked-documents"] = WorkspaceTrackedDocumentsContainer(
+            name="tracked documents",
+            title=_(u"tracked documents"),
+            description=_(u"tracked documents")
            )
 
         workspace["scheduling"] = Section(
