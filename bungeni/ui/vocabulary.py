@@ -323,6 +323,7 @@ class OfficeRoleFactory(BaseVocabularyFactory):
                 terms.append(vocabulary.SimpleTerm(name, name, name))
         return vocabulary.SimpleVocabulary(terms)
 office_role_factory = OfficeRoleFactory()
+component.provideUtility(office_role_factory, IVocabularyFactory, "office_role")
 
 
 class GroupSubRoleFactory(BaseVocabularyFactory):
@@ -339,7 +340,7 @@ class GroupSubRoleFactory(BaseVocabularyFactory):
             terms.append(vocabulary.SimpleTerm(sub_role, sub_role, sub_role))
         return vocabulary.SimpleVocabulary(terms)
 group_sub_role_factory = GroupSubRoleFactory()
-
+component.provideUtility(group_sub_role_factory, IVocabularyFactory, "group_sub_role")
 
 # database sources
 
@@ -458,7 +459,7 @@ class VenueFactory(BaseVocabularyFactory):
 venue_factory = VenueFactory()
 
 
-class TitleTypes(SpecializedSource):
+class GroupTitleTypesFactory(SpecializedSource):
     def __init__(self):
         pass
         
@@ -483,6 +484,7 @@ class TitleTypes(SpecializedSource):
                     title = obj.title_name,
                 ))
         return vocabulary.SimpleVocabulary(terms)
+component.provideUtility(GroupTitleTypesFactory(), IVocabularyFactory, "group_title_types")
 
 
 class WorkflowStatesVocabularyFactory(BaseVocabularyFactory):

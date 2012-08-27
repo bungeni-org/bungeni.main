@@ -228,9 +228,11 @@ class FileInputWidget(ImageInputWidget):
         self.request.form["form.name"] = upload.filename
         return value
 
+
 class NoInputWidget(TextWidget):
     def __call__(self):
         return u""
+
 
 class FileAddWidget(FileInputWidget):
     __call__ = ViewPageTemplateFile("templates/add-file-widget.pt")

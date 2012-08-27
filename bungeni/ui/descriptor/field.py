@@ -28,6 +28,7 @@ VALUETYPE = {
     "login": {"min_length": 3, "max_length": 20, "constraint": constraints.check_login},
     "password": {},
     "image": {},
+    "file": {},
     "user": {},
 }
 
@@ -42,10 +43,12 @@ RENDERTYPE = {
     "bool": schema.Bool,
     "number": schema.Int,
     "image": schema.Bytes,
+    "file": schema.Bytes,
     # special other user-conf params: "vocabulary" -> "type:vocabulary, required:True"
     "single_select": schema.Choice, 
     "radio": schema.Choice, 
     "tree_text": VocabularyTextField,
+    "no_input": None, # !+
 }
 RENDERTYPE_WITH_VOCABULARIES = ("single_select", "radio", "tree_text")
 
@@ -67,6 +70,8 @@ WIDGETS = {
     ("text", "tree_text"):
         (widgets.TermsDisplayWidget, widgets.TreeVocabularyWidget, 
             widgets.TreeVocabularyWidget, None),
+    ("text", "no_input"):
+        (None, widgets.NoInputWidget, widgets.NoInputWidget, None),
     ("date", "date"):
         (None, widgets.DateWidget, widgets.DateWidget, 
             widgets.date_input_search_widget),
@@ -84,6 +89,8 @@ WIDGETS = {
         (None, None, None, None),
     ("image", "image"):
         (widgets.ImageDisplayWidget, widgets.ImageInputWidget, None, None),
+    ("file", "file"):
+        (widgets.FileDisplayWidget, widgets.FileEditWidget, widgets.FileAddWidget, None),
     ("user", "single_select"):
         (widgets.UserURLDisplayWidget, None, widgets.AutoCompleteWidget(),
             None),
@@ -178,7 +185,7 @@ def F(name=None, label=None, description=None,
         )
     
     # Field.property -- see zope.schema.Field, TextLine, Choice, ...
-    if render_type is not None:
+    if render_type is not None and RENDERTYPE[render_type] is not None:
         RType = RENDERTYPE[render_type]
         property_kwargs = dict(
             title=label,

@@ -658,7 +658,6 @@ class GroupDescriptor(ModelDescriptor):
         ),
         F(name="end_date",
             label="End Date",
-            required=True,
             localizable=[
                 show("view edit add listing"),
             ],
@@ -1043,55 +1042,65 @@ class TitleTypeDescriptor(ModelDescriptor):
     display_name = _("Title types")
     container_name = _("Title types")
     fields = [
-        Field(name="title_name",
-            modes="view edit add listing",
-            property=schema.TextLine(title=_("Name"),
-                description=_("Name"),
-                required=True,
-            ),
+        F(name="title_name",
+            label="Name",
+            required=True,
+            localizable=[
+                show("add"), # db-not-null-ui-add
+                show("view edit listing"),
+            ],
         ),
-        Field(name="role_id", label=_("Role associated with title"),
-            modes="view edit add listing",
-            property=schema.Choice(title=_("Role"),
-                description=_("Role associated with this title"),
-                vocabulary=vocabulary.group_sub_role_factory,
-                required=False,
-            ),
+        F(name="role_id",
+            label="Role",
+            description="Role associated with this title",
+            localizable=[
+                show("view edit add listing"),
+            ],
+            value_type="text",
+            render_type="single_select",
+            vocabulary="group_sub_role",
         ),
-        Field(name="user_unique",
-            modes="view edit add listing",
-            property=schema.Choice(title=_("Only one user may have this title"), 
-                description=_("Limits persons with this title to one"),
-                default=False,
-                source=vocabulary.bool_yes_no,
-                required=False,
-            ),
+        F(name="user_unique",
+            label="Only one user may have this title",
+            description="Limits persons with this title to one",
+            localizable=[
+                show("view edit add listing"),
+            ],
+            value_type="text", # in schema bool w. default=False
+            render_type="single_select",
+            vocabulary="yes_no", 
         ),
-        Field(name="sort_order",
-            modes="view edit add listing",
-            property=schema.Int(title=_("Sort Order"), 
-                description=_("The order in which members with this title "
-                    "will appear relative to other members"),
-                required=True
-            ),
+        F(name="sort_order",
+            label="Sort Order",
+            description="The order in which members with this title " \
+                "will appear relative to other members",
+            required=True,
+            localizable=[
+                show("view edit add listing"),
+            ],
+            value_type="number",
+            render_type="number",
         ),
         LanguageField("language"), # [user-req]
     ]
     #custom_validators = [ validations.validate_sub_role_unique ]
+
 class MemberTitleDescriptor(ModelDescriptor):
     localizable = True
     display_name = _("Title")
     container_name = _("Titles")
     
     fields = [
-        Field(name="title_type_id", label=_("Title"),
-            modes="view edit add listing",
+        F(name="title_type_id",
+            label="Title",
+            required=True,
             localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            property=schema.Choice(title=_("Title"),
-                source=vocabulary.TitleTypes(),
-                ),
+            value_type="text",
+            render_type="single_select",
+            vocabulary="group_title_types",
             listing_column=listing.member_title_column("title_name", _("Title")),
         ),
         F(name="start_date",
@@ -1170,25 +1179,21 @@ class PoliticalGroupDescriptor(GroupDescriptor):
     
     fields = deepcopy(GroupDescriptor.fields)
     fields.extend([
-        Field(
-            name="identifier", # [user-req]
-            modes="view edit add",
-            localizable=[
-                show("view edit"),
-            ],
-            property=schema.TextLine(title=_("Identifier"),
-                description=_("Unique identifier or number for this political group"),
-                required=False
-            )
-        ),
-        Field(name="logo_data", # [img]
-            modes="view edit add",
+        F(name="identifier",
+            label="Identifier",
+            description="Unique identifier or number for this political group",
             localizable=[
                 show("view edit add"),
             ],
-            property=schema.Bytes(title=_("Logo"), required=False),
-            view_widget=widgets.ImageDisplayWidget,
-            edit_widget=widgets.ImageInputWidget
+        ),
+        F(name="logo_data",
+            label="Logo",
+            # !+LISTING_IMG(mr, apr-2011) TypeError, not JSON serializable
+            localizable=[
+                show("view edit add"),
+            ],
+            value_type="image",
+            render_type="image",
         ),
     ])
     schema_invariants = [constraints.EndAfterStart]
@@ -1202,26 +1207,24 @@ class OfficeDescriptor(GroupDescriptor):
     container_name = _("Offices")
     
     fields = [
-        Field(name="identifier", # [user-req]
-            modes="view edit add",
+        F(name="identifier",
+            label="Office Identifier",
+            description="Unique identifier or number for this Office",
             localizable=[
-                show("view edit"),
+                show("view edit add"),
             ],
-            property=schema.TextLine(title=_("Office Identifier"),
-                description=_("Unique identifier or number for this Office"),
-                required=False
-            ),
         ),
-        Field(name="office_role", # [user-req]
-            modes="view edit add listing",
+        F(name="office_role",
+            label="Role",
+            description="Role given to members of this office",
             localizable=[
-                show("view edit listing"),
+                show("view edit add listing"),
             ],
-            property=schema.Choice(title=_("Role"),
-                description=_("Role given to members of this office"),
-                vocabulary=vocabulary.office_role_factory
-            ),
-        )
+            value_type="text",
+            render_type="single_select",
+            vocabulary="office_role",
+        ),
+
     ]
     fields.extend(deepcopy(GroupDescriptor.fields))
     custom_validators = [validations.validate_date_range_within_parent]
@@ -1267,15 +1270,12 @@ class MinistryDescriptor(GroupDescriptor):
 
     fields = deepcopy(GroupDescriptor.fields)
     fields.extend([
-        Field(name="identifier", # [user-req]
-            modes="view edit add",
+        F(name="identifier",
+            label="Ministry Identifier",
+            description="Unique identifier or number for this Ministry",
             localizable=[
-                show("view edit"),
+                show("view edit add"),
             ],
-            property=schema.TextLine(title=_("Ministry Identifier"),
-                description=_("Unique identifier or number for this Ministry"),
-                required=False,
-            ),
         ),
     ])
     schema_invariants = [constraints.EndAfterStart]
@@ -1323,19 +1323,17 @@ class GovernmentDescriptor(GroupDescriptor):
     sort_on = ["start_date"]
     fields = deepcopy(GroupDescriptor.fields)
     fields.extend([
-        Field(name="identifier", # [user-req]
-            modes="view edit add",
+        F(name="identifier",
+            label="Government Identifier",
+            description="Unique identifier or number for this Government",
             localizable=[
-                show("view edit"),
+                show("view edit add"),
             ],
-            property=schema.TextLine(title=_("Government Identifier"),
-                description=_("Unique identifier or number for this Government"),
-                required=False
-            ),
         ),
     ])
     schema_invariants = [constraints.EndAfterStart]
     custom_validators = [validations.validate_government_dates]
+
 
 class AttachmentDescriptor(ModelDescriptor):
     localizable = True
@@ -1355,27 +1353,27 @@ class AttachmentDescriptor(ModelDescriptor):
         "description",
     ]
     fields = [
-        Field(name="type", # [user-req]
-            modes="view edit add listing",
+        F(name="type",
+            label="Attachment Type",
+            required=True,
             localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            property=schema.Choice(title=_("Attachment Type"),
-                source=vocabulary.attachment_type,
-            ),
+            value_type="text",
+            render_type="single_select",
+            vocabulary="attachment_type",
             listing_column=listing.vocabulary_column("type", 
-                _("File Type"),
+                _("Attachment Type"),
                 vocabulary.attachment_type,
             ),
         ),
-        Field(name="title", # [user-req]
-            modes="view edit add listing",
+        F(name="title",
+            label="Title",
             localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            property=schema.TextLine(title=_("Title")),
-            edit_widget=widgets.TextWidget,
-            add_widget=widgets.TextWidget,
         ),
         F(name="description",
             label="Description",
@@ -1385,26 +1383,30 @@ class AttachmentDescriptor(ModelDescriptor):
             value_type="text",
             render_type="rich_text",
         ),
-        Field(name="data", # [file]
-            modes="view edit add",
+        F(name="data",
+            label="File",
+            description="Upload a file",
             localizable=[
-                show("view edit"),
+                show("view edit add"),
             ],
-            property=schema.Bytes(title=_("File"), required=False),
-            description=_("Upload a file"),
-            edit_widget=widgets.FileEditWidget,
-            add_widget=widgets.FileAddWidget,
-            view_widget=widgets.FileDisplayWidget,
+            value_type="file",
+            render_type="file",
         ),
-        Field(name="name", label="", # [user-req]
-            modes="edit add",
-            edit_widget=widgets.NoInputWidget,
-            add_widget=widgets.NoInputWidget,
+        F(name="name",
+            label="Name",
+            localizable=[
+                show("view edit add listing"),
+            ],
+            value_type="text",
+            render_type="no_input",
         ),
-        Field(name="mimetype", label="", # [user-req]
-            modes="edit add",
-            edit_widget=widgets.NoInputWidget,
-            add_widget=widgets.NoInputWidget,
+        F(name="mimetype",
+            label="MIME Type",
+            localizable=[
+                show("view edit add listing"),
+            ],
+            value_type="text",
+            render_type="no_input",
         ),
         F(name="status",
             label="Status",
