@@ -247,11 +247,6 @@ class ResultListing(object):
             getter=lambda i, f:i.percent),
     ]
 
-    @property
-    def search_status(self):
-        return "Found %s Results in %s Documents in %0.5f Seconds" % (
-            len(self.results), self.doc_count, float(self.search_time))
-
     def listing(self):
         columns = self.columns
         formatter = self.formatter_factory(self.context, self.request,
@@ -303,15 +298,24 @@ class Search(forms.common.BaseForm, ResultListing, HighlightMixin):
     form_fields = form.Fields(ISearch, IHighLight)
     #selection_column = columns[0]
 
+    @property
+    def doc_count(self):
+        return len(self._searchresults)
+
+    @property
+    def search_status(self):
+        return _("Found ${total} results in ${search_time} Seconds",
+            mapping={
+                "total": self.doc_count, 
+                "search_time": format(float(self.search_time), "0.5f")
+            }
+        )
+
     def setUpWidgets(self, ignore_request=False):
         # setup widgets in data entry mode not bound to context
         self.adapters = {}
         self.widgets = form.setUpDataWidgets(self.form_fields, self.prefix,
              self.context, self.request, ignore_request=ignore_request)
-
-    @property
-    def doc_count(self):
-        return len(self._searchresults)
 
     def authorized(self, result):
         obj = result.object()
@@ -421,16 +425,19 @@ class Pager(object):
     items_count = 5
 
     @property
-    def _results(self):
+    def page_number(self):
         try:
             page = int(self.request.form.get('page', 1))
         except ValueError:
             page = 1
-        start = self.items_count * (page - 1)
-        end = self.items_count * page
+        return page
+
+    @property
+    def _results(self):
+        start = self.items_count * (self.page_number - 1)
+        end = self.items_count * self.page_number
         return map(lambda x: x.object(),
                    self._searchresults[start:end])
-
 
     @property
     def pages(self):
@@ -451,7 +458,20 @@ class Pager(object):
 
 class PagedSearch(Pager, Search):
     template = ViewPageTemplateFile('templates/paged-search.pt')
-    
+
+    @property
+    def search_status(self):
+        return _("Showing ${page_start} to ${page_end} of ${total} "
+            "results. Search done in ${search_time} seconds.",
+            mapping = {
+                "page_start": self.items_count * (self.page_number-1) + 1,
+                "page_end": (self.items_count * (self.page_number-1) + 
+                    len(self._results)),
+                "total": self.doc_count,
+                "search_time": format(float(self.search_time), "0.5f")
+            }
+        )
+        
     @property
     def advanced_search_url(self):
         base_url = absoluteURL(getSite(), self.request)

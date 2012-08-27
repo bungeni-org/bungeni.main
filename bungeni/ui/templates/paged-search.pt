@@ -20,8 +20,8 @@
 
         <h2 i18n:translate="">Results </h2>
 
-        <div tal:content="view/search_status"></div>
         <tal:block tal:condition="view/results">
+          <div tal:content="view/search_status"></div>
 
           <!-- zc.resourcelibrary -->
           <metal:block tal:content="structure view/highlightscript"/>
