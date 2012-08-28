@@ -20,7 +20,7 @@ from zc.table import column
 from bungeni.alchemist import Session
 from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.models import domain
-from bungeni.models.utils import get_db_user
+from bungeni.models.utils import get_db_user, get_member_of_parliament
 from bungeni.models.interfaces import IOwned, IScheduleText
 from bungeni.ui.interfaces import IAdminSectionLayer
 from bungeni.ui import vocabulary
@@ -184,21 +184,19 @@ def linked_mp_name_column(name, title, attr):
     the direct URL for the MP's "home" view is used instead:
         /members/current/obj-55/
     """
-    def get_member_of_parliament(user_id):
-        """Get the MemberOfParliament instance for user_id."""
-        return Session().query(domain.MemberOfParliament).filter(
-            domain.MemberOfParliament.user_id == user_id).one()
-    
     def getter(item_user, formatter):
         related_user = _get_related_user(item_user, attr)
         request = common.get_request()
+        # !+ replace with: bungeni.ui.widgets._render_link_to_mp_or_user ?
         if IAdminSectionLayer.providedBy(request):
+            # under admin, we link to the natural "view" of the schema relation
             parent = item_user
             while parent and not IAlchemistContainer.providedBy(parent):
                 parent = removeSecurityProxy(parent.__parent__)
             item_user.__parent__ = parent
             href = url.absoluteURL(item_user, request)
         else:
+            # else we link direct to the MP's "public" view
             mp = get_member_of_parliament(related_user.user_id)
             href = "/members/current/obj-%s/" % (mp.membership_id)
         return zope.formlib.widget.renderElement("a",

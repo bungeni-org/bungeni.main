@@ -276,6 +276,24 @@ def get_parliament_for_group_id(group_id):
         return get_parliament_for_group_id(group.parent_group_id)
 
 
+# misc queries
+
+def get_member_of_parliament(user_id):
+    """Get the MemberOfParliament instance for user_id.
+    Raises sqlalchemy.orm.exc.NoResultFound
+    """
+    return Session().query(domain.MemberOfParliament
+        ).filter(domain.MemberOfParliament.user_id == user_id).one()
+
+def get_user(self, user_id):
+    """Get the User instance for user_id.
+    Raises sqlalchemy.orm.exc.NoResultFound
+    """
+    return Session().query(domain.User
+        ).filter(domain.User.user_id == user_id).one()
+
+
+
 # serialization utilities
 
 def get_permissions_dict(permissions):

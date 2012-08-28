@@ -127,7 +127,7 @@ def validate_open_membership(obj, domain_model, user_id,
            for result in results:
                 yield result
 
-
+''' !+UNUSED
 def get_parliament_by_date_range(start_date, end_date):
     session = Session()
     parliament = session.query(domain.Parliament).filter(
@@ -137,6 +137,7 @@ def get_parliament_by_date_range(start_date, end_date):
         order_by(desc(domain.Parliament.election_date)).first()
     #session.close()
     return parliament
+'''
 
 ''' !+UNUSED
 def get_session_by_date_range(start_date, end_date):

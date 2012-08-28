@@ -38,8 +38,9 @@ from bungeni.alchemist import Session
 from bungeni.models import domain
 from bungeni.ui.i18n import _
 from bungeni.ui.utils import url, debug, date, misc, common
-from bungeni.ui.interfaces import IGenenerateVocabularyDefault
-from bungeni.models.utils import get_db_user_id
+from bungeni.ui.interfaces import IGenenerateVocabularyDefault, \
+    IAdminSectionLayer
+from bungeni.models.utils import get_db_user_id, get_user, get_member_of_parliament
 from bungeni.core.language import get_default_language
 
 
@@ -779,66 +780,57 @@ class UserDisplayWidget(zope.formlib.widget.DisplayWidget):
         return IDCDescriptiveProperties(self.user).title
 '''
 
+def _render_link_to_mp_or_user(user_id, context, request):
+    """Render the linked name of a Member of Parliament (or the User)
+    to the MP's (or the User's) "home" view.
+    
+    For use by forms in "view" mode.
+    """
+    try:
+        mp = get_member_of_parliament(user_id)
+        return zope.formlib.widget.renderElement("a",
+            contents=mp.user.fullname,
+            href="/members/current/obj-%s/" % (mp.membership_id))
+    except NoResultFound:
+        # not a member of parliament 
+        #
+        # Note that self.context is the field.property instance, while 
+        # self.context.context is the actual model instance with a "user" 
+        # relation/attribute -- BUT the user instance here may not 
+        # necessarily be the "right" user instance e.g. for case of 
+        # UserDelegation, the user we would want would be the one given by 
+        # the "delegation" attribute. So, we can only retrieve by user_id...
+        user = get_user(user_id)
+        if IAdminSectionLayer.providedBy(request):
+            # for now, only if admin, we link into the admin view...
+            return zope.formlib.widget.renderElement("a",
+                contents=user.fullname,
+                href="/admin/content/users/obj-%s/" % (user_id))
+        else:
+            # !+user_directory_listing_view(mr, aug-2012) link to a canonical
+            # directory listing page for the user (when that is available).
+            # Just the display text (no directory page to link to as yet).
+            return user.fullname
+
+
 class UserURLDisplayWidget(zope.formlib.widget.DisplayWidget):
     """Display the linked name of a Member of Parliament, using as URL the
     MP's "home" view.
 
     For use by forms in "view" mode.
     """
-
-    def get_member_of_parliament(self, user_id):
-        """Get the MemberOfParliament instance for user_id.
-        Raises sqlalchemy.orm.exc.NoResultFound
-        """
-        return Session().query(domain.MemberOfParliament
-            ).filter(domain.MemberOfParliament.user_id == user_id).one()
-    
-    def get_user(self, user_id):
-        """Get the User instance for user_id.
-        
-        Raises sqlalchemy.orm.exc.NoResultFound
-        
-        Note that self.context is the field.property instance,
-        while self.context.context is the actual model instance with a "user" 
-        relation/attribute -- BUT the user instance here may not necessarily 
-        be the "right" user instance e.g. for case of UserDelegation, the user 
-        we would want would be the one given by the "delegation" attribute. 
-        So, we can only retrieve by the user_id...
-        """
-        return Session().query(domain.User
-            ).filter(domain.User.user_id == user_id).one()
     
     def __call__(self):
         # this (user_id) attribute's value IS self._data
         user_id = self._data
-        try:
-            mp = self.get_member_of_parliament(user_id)
-            return zope.formlib.widget.renderElement("a",
-                contents=mp.user.fullname,
-                href="/members/current/obj-%s/" % (mp.membership_id))
-        except NoResultFound:
-            # not a member of parliament 
-            # !+user_directory_listing_view(mr, aug-2012) link to a canonical
-            # directory listing page for the user (when that is available).
-            user = self.get_user(user_id)
-            from bungeni.ui.utils.common import is_admin
-            if is_admin(self.context):
-                # for now, only if admin, we link into the admin view...
-                return zope.formlib.widget.renderElement("a",
-                    contents=user.fullname,
-                    href="/admin/content/users/obj-%s/" % (user_id))
-            else:
-                # no link, just the display text
-                return user.fullname
+        return _render_link_to_mp_or_user(user_id, self.context, self.request)
 
 
 class widget(object):
-
     """Traverce adapter for getting widget by name from form views
     """
-
     interface.implements(zope.traversing.interfaces.ITraversable)
-
+    
     def __init__(self, context, request):
         self.context = zope.security.proxy.removeSecurityProxy(context)
         self.request = request
