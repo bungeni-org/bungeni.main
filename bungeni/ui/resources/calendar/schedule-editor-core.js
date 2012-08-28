@@ -85,6 +85,11 @@ YAHOO.bungeni.scheduling = function(){
             YAHOO.bungeni.unsavedChanges = true;
         }
 
+        var checkAndDoScrolling = function(args) {
+            YAHOO.bungeni.unsavedChanges = true;
+            this.scrollTo(this.getRecordIndex(args.records[0]));
+        }
+
         /**
          * @method customSelectRow
          * @description conditional selection of rows on agenda datatable
@@ -218,6 +223,7 @@ YAHOO.bungeni.scheduling = function(){
 
         return {
             setUnsavedChanges: setUnsavedChanges,
+            checkAndDoScrolling: checkAndDoScrolling,
             customSelectRow: customSelectRow,
             renderScheduleControls: renderScheduleControls,
             saveSchedule: saveSchedule,
@@ -278,13 +284,14 @@ YAHOO.bungeni.scheduling = function(){
                 var tableContainer = document.createElement("div");
                 tableContainer.style.width = init_width + "px";
                 container.body.appendChild(tableContainer);
+                // YUI left pane width is set below
                 var dataTable = new YAHOO.widget.DataTable(
                     tableContainer,
                     columns, dataSource,
                     {
                         selectionMode: "single",
-                        scrollable: true,
-                        width: "100%",
+                        scrollable: 'y',
+                        width: "99.4%",
                         height: (container.body.clientHeight-30) + "px",
                         MSG_EMPTY: AgendaConfig.EMPTY_AGENDA_MESSAGE
                     }
@@ -313,7 +320,7 @@ YAHOO.bungeni.scheduling = function(){
                     YAHOO.bungeni.scheduling.handlers.setUnsavedChanges
                 );
                 dataTable.subscribe("rowsAddEvent", 
-                    YAHOO.bungeni.scheduling.handlers.setUnsavedChanges
+                    YAHOO.bungeni.scheduling.handlers.checkAndDoScrolling
                 );
                 dataTable.subscribe("rowDeleteEvent",
                     YAHOO.bungeni.scheduling.handlers.setUnsavedChanges

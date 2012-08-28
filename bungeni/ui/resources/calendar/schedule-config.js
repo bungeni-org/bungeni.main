@@ -631,7 +631,7 @@ YAHOO.bungeni.config = function(){
                         checked = "checked='checked'";
                     }
                 }
-                el.innerHTML = ("<input type='checkbox' name='rec-sel-" + 
+                el.innerHTML = ("<input type='checkbox' id="+record_key+" name='rec-sel-" + 
                     index +"' " + checked + "/>"
                 );
                 
@@ -708,6 +708,7 @@ YAHOO.bungeni.config = function(){
                 var deleteButton = new YAHOO.widget.Button({
                     label: "&nbsp;"
                 })
+                
                 deleteButton.addClass("schedule_delete");
                 deleteButton.on("click", function(){
                     YAHOO.bungeni.config.scheduling.handlers.removeRow(
@@ -856,9 +857,13 @@ YAHOO.bungeni.config = function(){
              var _removeRow = function(target){
                  var sDt = YAHOO.bungeni.scheduling.getScheduleTable();
                  var record = sDt.getRecord(target);
+                 sdata = record.getData()
+                 sd_id = sdata.item_id + ":" + sdata.item_type;
                  var _callback = function(){
-                     sDt.deleteRow(sDt.getRecordIndex(record));
+                    sDt.deleteRow(sDt.getRecordIndex(record));
+                    document.getElementById(sd_id).checked = false;
                  }
+                 
                  YAHOO.bungeni.config.dialogs.confirm.show(
                     SGlobals.delete_dialog_text, _callback
                  );
