@@ -377,10 +377,10 @@ class SittingAttendanceDescriptiveProperties(DescriptiveProperties):
     def title(self):
         session = Session()
         context = session.merge(removeSecurityProxy(self.context))
-        if context.user:
-            return "%s %s %s" % (self.translate(context.user, "salutation"),
-                context.user.first_name,
-                context.user.last_name)
+        if context.member:
+            user = context.member
+            return "%s %s %s" % (self.translate(user, "salutation"),
+                user.first_name, user.last_name)
         else:
             return u"New User"
     

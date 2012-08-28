@@ -713,9 +713,6 @@ mapper(domain.Country, schema.countries)
 mapper(domain.SittingAttendance, schema.sitting_attendance,
     properties={
         "member": relation(domain.User, uselist=False, lazy=False),
-        # !+INCONSISTENT_NAMING the underlying table colum is member_id! So, 
-        # am adding "member" property, and will be deleting this "user" property
-        "user": relation(domain.User, uselist=False, lazy=False),
         "sitting": relation(domain.Sitting, uselist=False, lazy=False),
     }
 )
