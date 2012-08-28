@@ -4,12 +4,25 @@
 
 """Support for UI Form Fields descriptions in listing mode
 
+The API of the utilities:
+
+    column listing formatter factory
+        naming convention: name ends with "_column"
+        params: name, title [, **kws]
+
+    column listing filter:
+        naming convention: name ends with "_column_filter"
+        params: query, filter_string, sort_dir_func, column=None
+    !+ make filter functions here also factories, to close in field names, etc.
+
+
 $Id$
 """
 log = __import__("logging").getLogger("bungeni.ui.descriptor.listing")
 
 
 from sqlalchemy.sql import expression, func
+from sqlalchemy.exc import ArgumentError
 
 from zope.i18n import translate
 from zope.dublincore.interfaces import IDCDescriptiveProperties
@@ -101,8 +114,6 @@ def date_from_to_column(name, title, default=""):
 
 
 
-    
-
 def name_column(name, title, default=""):
     def renderer(value, size=50):
         if len(value) > size:
@@ -153,27 +164,43 @@ def user_name_column(name, title):
     def getter(user, formatter):
         return user.fullname # User.fullname property
     return column.GetterColumn(title, getter)
-def related_user_name_column(name, title, attr):
+def related_user_name_column(name, title):
+    # mapper property naming convention -- the mapper property on item for 
+    # the related_user must be same as the name without the final "_id".
+    assert name.endswith("_id"), \
+        "related_user_name_column name=%r does not end with %r" % (name, "_id")
+    related_user_attribute_name = name[:-len("_id")]
     # !+FIELD_KEYERROR why cannot use the User.fullname property directly?
     def getter(item_user, formatter):
-        item_user = _get_related_user(item_user, attr)
+        item_user = _get_related_user(item_user, related_user_attribute_name)
         return item_user.fullname # User.fullname property
     return column.GetterColumn(title, getter)
 
 def related_user_name_column_filter(query, filter_string, sort_dir_func, column=None):
-    query = query.join(domain.User)
+    try: 
+        query = query.join(domain.User)
+    except ArgumentError, e:
+        # !+domain.UserDelegation fails on join, cause of 2 fk rels to User.
+        # But, it does not *need* the join... or else it needs to be more 
+        # specific, something like (for which we would need to close field 
+        # name and maybe other info into this filter function):
+        #   query.join( 
+        #       (domain.User, domain.UserDelegation.delegation_id == domain.User.user_id) 
+        #   )
+        # We log, and ignore...
+        log.warn("related_user_name_column_filter: %s -- QUERY:\n%s", e, query)
     return _multi_attrs_column_filter(
         [domain.User.last_name, domain.User.first_name, domain.User.middle_name],
         query, filter_string, sort_dir_func)
 
 
 def user_listing_name_column_filter(query, filter_string, sort_dir_func,
-                                    column=None):
+        column=None):
     return _multi_attrs_column_filter(
         [domain.User.last_name, domain.User.first_name, domain.User.middle_name],
         query, filter_string, sort_dir_func)
 
-
+# !+related_user_name_column also links to mp/user, and merge this to it
 def linked_mp_name_column(name, title, attr):
     """This may be used to customize the default URL generated as part of the
     container listing.
@@ -207,7 +234,7 @@ def linked_mp_name_column(name, title, attr):
 
 
 def linked_mp_name_column_filter(query, filter_string, sort_dir_func,
-                                 column=None):
+        column=None):
     query = query.join(domain.User)
     return _multi_attrs_column_filter(
         [domain.User.first_name, domain.User.middle_name, domain.User.last_name],

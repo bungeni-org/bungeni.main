@@ -54,46 +54,51 @@ RENDERTYPE_WITH_VOCABULARIES = ("single_select", "radio", "tree_text")
 
 
 # widget setting per mode, by (value_type, render_type)
-# (value, render): (view, edit, add, search) # !+listing, delete
+# (value, render): (view, edit, add, search, 
+#   [listing_column_factory, listing_column_filter]) # !+delete
 WIDGETS = {
     ("text", "text_line"):
-        (None, None, None, None),
+        (None, None, None, None, None, None),
     ("text", "text_box"):
-        (None, widgets.TextAreaWidget, widgets.TextAreaWidget, None),
+        (None, widgets.TextAreaWidget, widgets.TextAreaWidget, None, None, None),
     ("text", "rich_text"):
         (widgets.HTMLDisplay, widgets.RichTextEditor, widgets.RichTextEditor, 
-            None),
+            None, None, None),
     ("text", "radio"):
-        (None, widgets.CustomRadioWidget, widgets.CustomRadioWidget, None),
+        (None, widgets.CustomRadioWidget, widgets.CustomRadioWidget, None, None, None),
     ("text", "single_select"):
-        (None, None, None, None),
+        (None, None, None, None, None, None),
     ("text", "tree_text"):
         (widgets.TermsDisplayWidget, widgets.TreeVocabularyWidget, 
-            widgets.TreeVocabularyWidget, None),
+            widgets.TreeVocabularyWidget, None, None, None),
     ("text", "no_input"):
-        (None, widgets.NoInputWidget, widgets.NoInputWidget, None),
+        (None, widgets.NoInputWidget, widgets.NoInputWidget, None, None, None),
     ("date", "date"):
         (None, widgets.DateWidget, widgets.DateWidget, 
-            widgets.date_input_search_widget),
+            widgets.date_input_search_widget,
+            None, None),
     ("bool", "bool"):
-        (None, None, None, None),
+        (None, None, None, None, None, None),
     ("number", "number"):
-        (None, None, None, None),
+        (None, None, None, None, None, None),
     ("language", "single_select"):
-        (None, None, widgets.LanguageLookupWidget, None),
+        (None, None, widgets.LanguageLookupWidget, None, None, None),
     ("email", "text_line"):
-        (None, None, None, None),
+        (None, None, None, None, None, None),
     ("login", "text_line"):
-        (None, None, None, None),
+        (None, None, None, None, None, None),
     ("password", "text_line"):
-        (None, None, None, None),
+        (None, None, None, None, None, None),
     ("image", "image"):
-        (widgets.ImageDisplayWidget, widgets.ImageInputWidget, None, None),
+        (widgets.ImageDisplayWidget, widgets.ImageInputWidget, None, None,
+            None, None),
     ("file", "file"):
-        (widgets.FileDisplayWidget, widgets.FileEditWidget, widgets.FileAddWidget, None),
+        (widgets.FileDisplayWidget, widgets.FileEditWidget, widgets.FileAddWidget, None,
+            None, None),
     ("user", "single_select"):
-        (widgets.UserURLDisplayWidget, None, widgets.AutoCompleteWidget(),
-            None),
+        (widgets.UserURLDisplayWidget, None, widgets.AutoCompleteWidget(), None,
+            listing.related_user_name_column, 
+            listing.related_user_name_column_filter),
 }
 
 
@@ -173,13 +178,23 @@ def F(name=None, label=None, description=None,
     if description:
         description = _(description)
     
+    # Field.*_widgets
+    widgets = WIDGETS[(value_type, render_type)]
+    
+    # !+tmp only if listing_column/listing_column_filter are not specified do 
+    # we generate/reset them
+    listing_column_factory = widgets[4]
+    if listing_column_factory is not None and listing_column is None:
+        listing_column = listing_column_factory(name, label)
+    if listing_column_filter is None:
+        listing_column_filter = widgets[5]
+    
     # Field
     f = Field(name=name, 
             label=label, 
             description=description, 
             #modes=None
             localizable=localizable,
-            # !+tmp
             listing_column=listing_column, 
             listing_column_filter=listing_column_filter,
         )
@@ -196,10 +211,10 @@ def F(name=None, label=None, description=None,
             property_kwargs["vocabulary"] = vocabulary
         property_kwargs.update(VALUETYPE[value_type])
         f.property = RType(**property_kwargs)
-    # Field.*_widgets
-    (f.view_widget, f.edit_widget, f.add_widget, f.search_widget
-        ) = WIDGETS[(value_type, render_type)]
     
+    (f.view_widget, f.edit_widget, f.add_widget, f.search_widget
+        ) = widgets[0:4]
+        
     return f
 
 

@@ -295,7 +295,7 @@ class ChangeDataDescriptor(object):
     # !+bungeni_custom
     def columns(self):
         return [
-            listing.related_user_name_column("user_id", _("user"), "user"),
+            listing.related_user_name_column("user_id", _("user")),
             column.GetterColumn(title="date_active",
                 getter=lambda i,f: self.date_formatter.format(i.date_active)),
             column.GetterColumn(title="object", 

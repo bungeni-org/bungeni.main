@@ -285,7 +285,7 @@ def get_member_of_parliament(user_id):
     return Session().query(domain.MemberOfParliament
         ).filter(domain.MemberOfParliament.user_id == user_id).one()
 
-def get_user(self, user_id):
+def get_user(user_id):
     """Get the User instance for user_id.
     Raises sqlalchemy.orm.exc.NoResultFound
     """

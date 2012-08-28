@@ -350,9 +350,6 @@ class UserDelegationDescriptor(ModelDescriptor):
             value_type="user",
             render_type="single_select",
             vocabulary="user",
-            listing_column=listing.related_user_name_column("delegation_id", 
-                _("User"), "delegation"),
-            listing_column_filter=listing.user_listing_name_column_filter,
         ),
     ]
 
@@ -476,8 +473,6 @@ class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
             value_type="user",
             render_type="single_select",
             vocabulary="member",
-            listing_column=listing.related_user_name_column("user_id", _("Name"), "user"),
-            listing_column_filter=listing.related_user_name_column_filter,
         ),
         F(name="member_election_type",
             label="Election Type",
@@ -568,7 +563,7 @@ class PoliticalGroupMemberDescriptor(GroupMembershipDescriptor):
                 show("add"), # db-not-null-ui-add
                 show("view listing"),
             ],
-            value_type="user",
+            value_type="user", # !+member: constrained by "parent group" OR vocabulary
             render_type="single_select",
             vocabulary="parliament_member",
             listing_column=listing.linked_mp_name_column("user_id", _("Name"), 
@@ -913,8 +908,6 @@ class CommitteeMemberDescriptor(GroupMembershipDescriptor):
             value_type="user",
             render_type="single_select",
             vocabulary="parliament_member",
-            listing_column=listing.related_user_name_column("user_id", _("Name"), "user"),
-            listing_column_filter=listing.related_user_name_column_filter,
         ),
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
@@ -1154,8 +1147,6 @@ class CommitteeStaffDescriptor(GroupMembershipDescriptor):
             value_type="user",
             render_type="single_select",
             vocabulary="user_not_mp",
-            listing_column=listing.related_user_name_column("user_id", _("Name"), "user"),
-            listing_column_filter=listing.related_user_name_column_filter,
         ),
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
@@ -1246,8 +1237,6 @@ class OfficeMemberDescriptor(GroupMembershipDescriptor):
             value_type="user",
             render_type="single_select",
             vocabulary="user_not_mp",
-            listing_column=listing.related_user_name_column("user_id", _("Name"), "user"),
-            listing_column_filter=listing.related_user_name_column_filter,
         ),
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
@@ -1298,8 +1287,6 @@ class MinisterDescriptor(GroupMembershipDescriptor):
             value_type="user",
             render_type="single_select",
             vocabulary="user",
-            listing_column=listing.related_user_name_column("user_id", _("Name"), "user"),
-            listing_column_filter=listing.related_user_name_column_filter,
         ),
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
@@ -1689,7 +1676,7 @@ class EventDescriptor(DocDescriptor):
         # !+f.localizable changing localizable modes AFTER Field is initialized
         # gives mismatch error when descriptors are (re-)loaded, e.g. 
         #f.localizable = [ hide("view edit add listing"), ]
-        f.listing_column = listing.related_user_name_column("owner_id", _("Name"), "owner")
+        f.listing_column = listing.related_user_name_column("owner_id", _("Name"))
         f.listing_column_filter = listing.related_user_name_column_filter
         f.view_widget = None
         # !+ select or autocomplete... ?
@@ -1721,7 +1708,7 @@ class ChangeDescriptor(ModelDescriptor):
             localizable=[ show("view listing"), ],
             property=schema.Choice(title=_("User"), vocabulary="user"),
             view_widget=None,
-            listing_column=listing.related_user_name_column("user_id", _("Name"), "user"),
+            listing_column=listing.related_user_name_column("user_id", _("Name")),
             # !+ audit listing column filtering currently disabled
             #listing_column_filter=listing.related_user_name_column_filter,
         ),
@@ -2317,8 +2304,6 @@ class SittingAttendanceDescriptor(ModelDescriptor):
             value_type="user",
             render_type="single_select",
             vocabulary="sitting_attendance",
-            listing_column=listing.related_user_name_column("member_id", _("Name"), "user"),
-            listing_column_filter=listing.related_user_name_column_filter,
         ),
         F(name="attendance_type",
             label="Attendance",
