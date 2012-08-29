@@ -682,6 +682,12 @@ mapper(domain.Signatory, schema.signatory,
     properties={
         "head": relation(domain.Doc, uselist=False),
         "user": relation(domain.User, uselist=False),
+        "member": relation(domain.MemberOfParliament,
+            primaryjoin=rdb.and_(schema.signatory.c.user_id == 
+                schema.user_group_memberships.c.user_id),
+            secondary=schema.user_group_memberships,
+            uselist=False,
+        ),
         "audits": relation(domain.SignatoryAudit,
             primaryjoin=rdb.and_(schema.signatory.c.signatory_id == 
                 schema.signatory_audit.c.signatory_id),
@@ -698,8 +704,6 @@ mapper(domain.SignatoryAudit, schema.signatory_audit,
     inherits=domain.Audit,
     polymorphic_identity=polymorphic_identity(domain.Signatory), # on head class
 )
-
-#mapper(domain.DocumentSource, schema.document_sources)
 
 mapper(domain.Holiday, schema.holiday)
 

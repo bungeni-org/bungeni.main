@@ -21,15 +21,21 @@ from bungeni.ui.descriptor import listing, constraints
 VALUETYPE = {
     "text": {},
     "date": {},
+    "datetime": {},
     "bool": {"default": True},
     "number": {},
+    "status": {},
     "language": {},
+    "vocabulary": {}, # !+ constraint ?
     "email": {"constraint": constraints.check_email},
     "login": {"min_length": 3, "max_length": 20, "constraint": constraints.check_login},
     "password": {},
     "image": {},
     "file": {},
     "user": {},
+    "member": {},
+    "signatory": {}, # !+
+    "combined_name": {}, # !+
 }
 
 
@@ -58,9 +64,11 @@ RENDERTYPE_WITH_VOCABULARIES = ("single_select", "radio", "tree_text")
 #   [listing_column_factory, listing_column_filter]) # !+delete
 WIDGETS = {
     ("text", "text_line"):
-        (None, None, None, None, None, None),
+        (None, None, None, None, 
+            listing.truncatable_name_column, None),
     ("text", "text_box"):
-        (None, widgets.TextAreaWidget, widgets.TextAreaWidget, None, None, None),
+        (None, widgets.TextAreaWidget, widgets.TextAreaWidget, None, 
+            listing.truncatable_name_column, None),
     ("text", "rich_text"):
         (widgets.HTMLDisplay, widgets.RichTextEditor, widgets.RichTextEditor, 
             None, None, None),
@@ -73,16 +81,28 @@ WIDGETS = {
             widgets.TreeVocabularyWidget, None, None, None),
     ("text", "no_input"):
         (None, widgets.NoInputWidget, widgets.NoInputWidget, None, None, None),
+    ("combined_name", "text_line"):
+        (None, None, None, None, 
+            listing.combined_name_column, 
+            listing.combined_name_column_filter),
     ("date", "date"):
         (None, widgets.DateWidget, widgets.DateWidget, 
             widgets.date_input_search_widget,
-            None, None),
+            listing.date_column, None),
+    ("datetime", "date"):
+        (None, widgets.DateWidget, widgets.DateWidget, 
+            widgets.date_input_search_widget,
+            listing.datetime_column, None),
     ("bool", "bool"):
         (None, None, None, None, None, None),
     ("number", "number"):
         (None, None, None, None, None, None),
+    ("status", "single_select"):
+        (None, None, None, None, listing.workflow_column, None),
     ("language", "single_select"):
         (None, None, widgets.LanguageLookupWidget, None, None, None),
+    ("vocabulary", "single_select"):
+        (None, None, None, None, listing.vocabulary_column, None),
     ("email", "text_line"):
         (None, None, None, None, None, None),
     ("login", "text_line"):
@@ -95,10 +115,22 @@ WIDGETS = {
     ("file", "file"):
         (widgets.FileDisplayWidget, widgets.FileEditWidget, widgets.FileAddWidget, None,
             None, None),
+    ("user", "no_input"): # !+User.user_id
+        (None, None, None, None,
+            listing.user_name_column,
+            listing.user_listing_name_column_filter),
     ("user", "single_select"):
         (widgets.UserURLDisplayWidget, None, widgets.AutoCompleteWidget(), None,
             listing.related_user_name_column, 
             listing.related_user_name_column_filter),
+    ("member", "single_select"): # !+combine with "user"
+        (widgets.UserURLDisplayWidget, None, widgets.AutoCompleteWidget(), None,
+            listing.linked_mp_name_column, 
+            listing.related_user_name_column_filter),
+    ("signatory", "no_input"): # !+Signatory.signatory_id
+        (None, None, None, None,
+            listing.simple_view_column, 
+            None),
 }
 
 
@@ -109,12 +141,11 @@ def F(name=None, label=None, description=None,
         #property=None,
         #view_widget=None, edit_widget=None, add_widget=None, 
         #search_widget=None,
+        #listing_column=None, 
+        #listing_column_filter=None,
         value_type="text",
         render_type="text_line",
         vocabulary=None,
-        # !+
-        listing_column=None, 
-        listing_column_filter=None, #!+tmp
     ):
     """
     A "configuration layer" for Fields, to decouple lower level details from 
@@ -128,9 +159,7 @@ def F(name=None, label=None, description=None,
         modes
         property (along with own parameters)
         view_widget, edit_widget, add_widget, search_widget
-    !+tmp (to be otherwise declared or inferred)
-        listing_column
-        listing_column_filter
+        listing_column, listing_column_filter
     
     Example:
     
@@ -180,13 +209,20 @@ def F(name=None, label=None, description=None,
     
     # Field.*_widgets
     widgets = WIDGETS[(value_type, render_type)]
+
+    # modes    
+    if localizable is not None:
+        # !+ ensure unique, normalized order
+        modes = [ mode for loc in localizable for mode in loc.modes ]
+    else:
+        modes = []
     
-    # !+tmp only if listing_column/listing_column_filter are not specified do 
-    # we generate/reset them
-    listing_column_factory = widgets[4]
-    if listing_column_factory is not None and listing_column is None:
-        listing_column = listing_column_factory(name, label)
-    if listing_column_filter is None:
+    # listing column params
+    listing_column, listing_column_filter = None, None
+    if "listing" in modes:
+        listing_column_factory = widgets[4]
+        if listing_column_factory is not None:
+            listing_column = listing_column_factory(name, label, vocabulary=vocabulary)
         listing_column_filter = widgets[5]
     
     # Field

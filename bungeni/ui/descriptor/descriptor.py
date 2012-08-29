@@ -143,8 +143,8 @@ class UserDescriptor(ModelDescriptor):
                 hide("view"),
                 show("listing"),
             ],
-            listing_column=listing.user_name_column("user_id", _("Name")),
-            listing_column_filter=listing.user_listing_name_column_filter
+            value_type="user",
+            render_type="no_input",
         ),
         F(name="salutation", 
             label="Salutation", 
@@ -216,10 +216,9 @@ class UserDescriptor(ModelDescriptor):
             localizable=[
                 show("view listing"),
             ],
-            value_type="text",
+            value_type="status",
             render_type="single_select",
             vocabulary="workflow_states",
-            listing_column=listing.workflow_column(),
         ),
         F(name="national_id",
             label="National Id",
@@ -283,13 +282,9 @@ class UserDescriptor(ModelDescriptor):
                 show("view edit add"),
                 hide("listing"),
             ],
-            value_type="text",
+            value_type="vocabulary",
             render_type="single_select",
             vocabulary="marital_status",
-            listing_column=listing.vocabulary_column("marital_status",
-                _("Marital Status"),
-                vocabulary.marital_status
-            ),
         ),
         F(name="date_of_death",
             label="Date of Death",
@@ -369,7 +364,6 @@ class GroupMembershipDescriptor(ModelDescriptor):
             ],
             value_type="date",
             render_type="date",
-            listing_column=listing.day_column("start_date", _("Start Date")),
         ),
         F(name="end_date",
             label="End Date",
@@ -378,7 +372,6 @@ class GroupMembershipDescriptor(ModelDescriptor):
             ],
             value_type="date",
             render_type="date",
-            listing_column=listing.day_column("end_date", _("End Date")),
         ),
         F(name="active_p",
             label="Active",
@@ -410,10 +403,9 @@ class GroupMembershipDescriptor(ModelDescriptor):
             localizable=[
                 show("view listing"),
             ],
-            value_type="text",
+            value_type="status",
             render_type="single_select",
             vocabulary="workflow_states",
-            listing_column=listing.workflow_column(),
         ),
         F(name="status_date",
             label="Status Date",
@@ -423,7 +415,6 @@ class GroupMembershipDescriptor(ModelDescriptor):
             ],
             value_type="date",
             render_type="date",
-            listing_column=listing.day_column("status_date", _("Status Date")),
         ),
     ]
     schema_invariants = [
@@ -481,13 +472,9 @@ class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
                 show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            value_type="text",
+            value_type="vocabulary",
             render_type="single_select",
             vocabulary="member_election_type",
-            listing_column=listing.vocabulary_column("member_election_type",
-                _("Election Type"),
-                vocabulary.member_election_type
-            ),
         ),
         F(name="election_nomination_date",
             label="Election/Nomination Date",
@@ -498,7 +485,6 @@ class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
             ],
             value_type="date",
             render_type="date",
-            listing_column=listing.day_column("start_date", _("Start Date")),
         ),
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
@@ -521,13 +507,9 @@ class MemberOfParliamentDescriptor(GroupMembershipDescriptor):
                 show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            value_type="text",
+            value_type="vocabulary",
             render_type="single_select",
             vocabulary="party",
-            listing_column=listing.vocabulary_column("party",
-                _("Political Party"),
-                vocabulary.party
-            ),
         ),
         F(name="leave_reason",
             label="Leave Reason",
@@ -563,12 +545,9 @@ class PoliticalGroupMemberDescriptor(GroupMembershipDescriptor):
                 show("add"), # db-not-null-ui-add
                 show("view listing"),
             ],
-            value_type="user", # !+member: constrained by "parent group" OR vocabulary
+            value_type="member", # !+user: constrained by "parent group" OR vocabulary
             render_type="single_select",
             vocabulary="parliament_member",
-            listing_column=listing.linked_mp_name_column("user_id", _("Name"), 
-                "user"),
-            listing_column_filter=listing.linked_mp_name_column_filter,
         ),
     ]
     fields.extend(deepcopy(GroupMembershipDescriptor.fields))
@@ -628,9 +607,7 @@ class GroupDescriptor(ModelDescriptor):
             localizable=[
                 show("listing"),
             ],
-            listing_column=listing.combined_name_column("full_name",
-                _("Full Name [Short Name]")),
-            listing_column_filter=listing.combined_name_column_filter,
+            value_type="combined_name",
         ),
         LanguageField("language"), # [user-req]
         F(name="description",
@@ -649,7 +626,6 @@ class GroupDescriptor(ModelDescriptor):
             ],
             value_type="date",
             render_type="date",
-            listing_column=listing.day_column("start_date", _("Start Date")),
         ),
         F(name="end_date",
             label="End Date",
@@ -658,7 +634,6 @@ class GroupDescriptor(ModelDescriptor):
             ],
             value_type="date",
             render_type="date",
-            listing_column=listing.day_column("end_date", _("End Date")),
         ),
         F(name="status",
             label="Status",
@@ -666,10 +641,9 @@ class GroupDescriptor(ModelDescriptor):
             localizable=[
                 show("view listing"),
             ],
-            value_type="text",
+            value_type="status",
             render_type="single_select",
             vocabulary="workflow_states",
-            listing_column=listing.workflow_column(),
         ),
     ]
     schema_invariants = [constraints.EndAfterStart]
@@ -700,7 +674,6 @@ class ParliamentDescriptor(GroupDescriptor):
             localizable=[
                 show("view edit add listing"),
             ],
-            listing_column=listing.name_column("full_name", _("Parliament Name")),
         ),
         F(name="short_name",
             label="Short Name",
@@ -737,7 +710,6 @@ class ParliamentDescriptor(GroupDescriptor):
             ],
             value_type="date",
             render_type="date",
-            listing_column=listing.day_column("start_date", _("Start Date")),
         ),
         F(name="start_date",
             label="In power from",
@@ -749,7 +721,6 @@ class ParliamentDescriptor(GroupDescriptor):
             ],
             value_type="date",
             render_type="date",
-            listing_column=listing.day_column("start_date", _("In power from")),
         ),
         F(name="end_date",
             label="In power till",
@@ -759,7 +730,6 @@ class ParliamentDescriptor(GroupDescriptor):
             ],
             value_type="date",
             render_type="date",
-            listing_column=listing.day_column("start_date", _("In power from")),
         ),
     ]
     schema_invariants = [
@@ -798,13 +768,9 @@ class CommitteeDescriptor(GroupDescriptor):
             localizable=[
                 show("view edit add listing"),
             ],
-            value_type="text",
+            value_type="vocabulary",
             render_type="single_select",
             vocabulary="committee_type",
-            listing_column=listing.vocabulary_column("sub_type",
-                _("Committee Type"),
-                vocabulary.committee_type
-            ),
         ),
         F(name="group_continuity",
             label="Committee Status Type",
@@ -813,13 +779,9 @@ class CommitteeDescriptor(GroupDescriptor):
                 show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            value_type="text",
+            value_type="vocabulary",
             render_type="single_select",
             vocabulary="committee_continuity",
-            listing_column=listing.vocabulary_column("group_continuity",
-                _("Committee Status Type"),
-                vocabulary.committee_continuity
-            ),
         ),
         F(name="num_members",
             label="Number of members",
@@ -936,13 +898,9 @@ class AddressDescriptor(ModelDescriptor):
                 show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            value_type="text",
+            value_type="vocabulary",
             render_type="single_select",
             vocabulary="logical_address_type",
-            listing_column=listing.vocabulary_column("logical_address_type", 
-                _("Address Type"),
-                vocabulary.logical_address_type
-            ),
         ),
         F(name="postal_address_type",
             label="Postal Address Type",
@@ -951,13 +909,9 @@ class AddressDescriptor(ModelDescriptor):
                 show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            value_type="text",
+            value_type="vocabulary",
             render_type="single_select",
             vocabulary="postal_address_type",
-            listing_column=listing.vocabulary_column("logical_address_type", 
-                _("Address Type"),
-                vocabulary.logical_address_type
-            ),
         ),
         F(name="street",
             label="Street",
@@ -1091,10 +1045,9 @@ class MemberTitleDescriptor(ModelDescriptor):
                 show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            value_type="text",
+            value_type="vocabulary",
             render_type="single_select",
             vocabulary="group_title_types",
-            listing_column=listing.member_title_column("title_name", _("Title")),
         ),
         F(name="start_date",
             label="Start Date",
@@ -1105,7 +1058,6 @@ class MemberTitleDescriptor(ModelDescriptor):
             ],
             value_type="date",
             render_type="date",
-            listing_column=listing.day_column("start_date", _("Start Date")),
         ),
         F(name="end_date",
             label="End Date",
@@ -1115,7 +1067,6 @@ class MemberTitleDescriptor(ModelDescriptor):
             ],
             value_type="date",
             render_type="date",
-            listing_column=listing.day_column("end_date", _("End Date")),
         ),
         LanguageField("language"), # [user-req]
     ]
@@ -1347,13 +1298,9 @@ class AttachmentDescriptor(ModelDescriptor):
                 show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            value_type="text",
+            value_type="vocabulary",
             render_type="single_select",
             vocabulary="attachment_type",
-            listing_column=listing.vocabulary_column("type", 
-                _("Attachment Type"),
-                vocabulary.attachment_type,
-            ),
         ),
         F(name="title",
             label="Title",
@@ -1401,10 +1348,9 @@ class AttachmentDescriptor(ModelDescriptor):
             localizable=[
                 show("view listing"),
             ],
-            value_type="text",
+            value_type="status",
             render_type="single_select",
             vocabulary="workflow_states",
-            listing_column=listing.workflow_column(),
         ),
         F(name="status_date",
             label="Status Date",
@@ -1413,7 +1359,6 @@ class AttachmentDescriptor(ModelDescriptor):
             ],
             value_type="date",
             render_type="date",
-            listing_column=listing.day_column("status_date", _("Status Date")),
         ),
         LanguageField("language"), # [user-req]
     ]
@@ -1484,7 +1429,6 @@ class DocDescriptor(ModelDescriptor):
             ],
             value_type="date",
             render_type="date",
-            listing_column=listing.day_column("submission_date", _("Submission Date")),
         ),
 
         #   admissible_date
@@ -1515,8 +1459,8 @@ class DocDescriptor(ModelDescriptor):
                 # "legal" parliamentary documents may only be moved by an MP
                 source=vocabulary.MemberOfParliamentDelegationSource("owner_id"),
             ),
-            listing_column=listing.linked_mp_name_column("owner_id", _("Name"), "owner"),
-            listing_column_filter=listing.linked_mp_name_column_filter,
+            listing_column=listing.linked_mp_name_column("owner_id", _("Name")),
+            listing_column_filter=listing.related_user_name_column_filter,
             add_widget=widgets.MemberDropDownWidget,
             view_widget=widgets.UserURLDisplayWidget,
         ),
@@ -1597,10 +1541,9 @@ class DocDescriptor(ModelDescriptor):
             localizable=[
                 show("view listing"),
             ],
-            value_type="text",
+            value_type="status",
             render_type="single_select",
             vocabulary="workflow_states",
-            listing_column=listing.workflow_column(),
         ),
         F(name="status_date",
             label="Status Date",
@@ -1610,7 +1553,6 @@ class DocDescriptor(ModelDescriptor):
             ],
             value_type="date",
             render_type="date",
-            listing_column=listing.day_column("status_date", _("Status Date")),
         ),
         # !+group_id only exposed in specific custom doc types
         #Field(name="group_id", # [user]
@@ -1937,17 +1879,13 @@ class BillDescriptor(DocDescriptor):
             ),
             listing_column_filter=listing.ministry_column_filter
         ),
-        Field(name="publication_date", # [user]
-            modes="view listing",
+        F(name="publication_date",
+            label="Publication Date",
             localizable=[
                 show("view listing"),
             ],
-            property=schema.Date(title=_("Publication Date"), required=False),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget ,
-            listing_column=listing.day_column("publication_date", 
-                _("Publication Date")),
-            search_widget=widgets.date_input_search_widget
+            value_type="date",
+            render_type="date",
         ),
     ])
     default_field_order= DocDescriptor.default_field_order[:]
@@ -2254,27 +2192,25 @@ class SessionDescriptor(ModelDescriptor):
             ],
             property=schema.TextLine(title=_("Full Name"))
         ),
-        Field(name="start_date", # [user-req]
-            modes="view edit add listing",
+        F(name="start_date",
+            label="Start Date",
+            required=True,
             localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            property=schema.Date(title=_("Start Date")),
-            listing_column=listing.day_column("start_date", _("Start Date")),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget,
-            search_widget=widgets.date_input_search_widget
+            value_type="date",
+            render_type="date",
         ),
-        Field(name="end_date", # [user-req]
-            modes="view edit add listing",
+        F(name="end_date",
+            label="End Date",
+            required=True,
             localizable=[
+                show("add"), # "logical" required (even if db allows null)
                 show("view edit listing"),
             ],
-            property=schema.Date(title=_("End Date")),
-            listing_column=listing.day_column("end_date", _("End Date")),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget,
-            search_widget=widgets.date_input_search_widget
+            value_type="date",
+            render_type="date",
         ),
         LanguageField("language"),
         F(name="notes",
@@ -2312,13 +2248,9 @@ class SittingAttendanceDescriptor(ModelDescriptor):
                 show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            value_type="text",
+            value_type="vocabulary",
             render_type="single_select",
             vocabulary="attendance_type",
-            listing_column=listing.vocabulary_column("attendance_type",
-                _("Attendance"),
-                vocabulary.attendance_type
-            ),
         ),
     ]
 
@@ -2332,9 +2264,8 @@ class SignatoryDescriptor(ModelDescriptor):
             label="View",
             required=True,
             localizable=[show("listing", "bungeni.Signatory bungeni.Owner")],
-            listing_column=listing.simple_view_column("signatory_id", 
-                _(u"review"), _(u"view"), _(u"review")
-            ),
+            value_type="signatory",
+            render_type="no_input",
         ),
         F(name="user_id",
             label="Signatory",
@@ -2343,32 +2274,27 @@ class SignatoryDescriptor(ModelDescriptor):
                 show("add"), # db-not-null-ui-add
                 show("view listing"),
             ],
-            value_type="user",
+            value_type="member",
             render_type="single_select",
             vocabulary="signatory",
-            listing_column=listing.linked_mp_name_column("user_id",
-                _("Signatory"), "user"),
-            listing_column_filter=listing.linked_mp_name_column_filter,
         ),
-        F(name="party", # not on schema or domain model
+        F(name="party", # property on domain model
             label="Political Party",
             localizable=[ show("listing"), ],
-            listing_column=listing.user_party_column("party",
-                _(u"political party"), _(u"no party")
-            )
+            value_type="text",
+            render_type="single_select",
+            vocabulary="party",
         ),
         F(name="status",
-            label="Status",
+            label="Signature Status",
             required=True,
             localizable = [
                 show("view listing", 
                     roles="bungeni.Owner bungeni.Signatory")
             ],
-            value_type="text",
+            value_type="status",
             render_type="single_select",
             vocabulary="workflow_states",
-            listing_column=listing.workflow_column("status", 
-                _("Signature status")),
         ),
     ]
 
@@ -2400,45 +2326,6 @@ class CountryDescriptor(ModelDescriptor):
         ),
     ]
 
-
-################
-# Hansard
-################
-
-''' !+UNUSED_Rota(mr, feb-2011)
-class RotaDescriptor(ModelDescriptor):
-    fields = [
-        # !+ Field(name="reporter_id") ??
-        Field(name="identifier",
-            modes="view edit add listing",
-        ), # !+ title=_("Rota Identifier"),
-        Field(name="start_date",
-            modes="view edit add listing",
-            label=_("Start Date"),
-            listing_column=day_column("start_date", _("Start Date")),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget
-        ),
-        Field(name="end_date",
-            modes="view edit add listing",
-            label=_("End Date"),
-            listing_column=day_column("end_date", _("End Date")),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget
-        ),
-    ]
-    schema_invariants = [EndAfterStart]
-'''
-
-''' !+UNUSED_DocumentSource(mr, feb-2011)
-class DocumentSourceDescriptor(ModelDescriptor):
-    display_name = _("Document source")
-    container_name = _("Document sources")
-
-    fields = [
-        Field(name="document_source", label=_("Document Source")),
-    ]
-'''
 
 class ItemScheduleDescriptor(ModelDescriptor):
     localizable = True

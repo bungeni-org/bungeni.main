@@ -8,7 +8,7 @@ The API of the utilities:
 
     column listing formatter factory
         naming convention: name ends with "_column"
-        params: name, title [, **kws]
+        params: name, title, vocabulary=None
 
     column listing filter:
         naming convention: name ends with "_column_filter"
@@ -41,12 +41,14 @@ from bungeni.ui.utils import common, date, url
 from bungeni.ui.i18n import _
 
 
-def _column(name, title, renderer, default=""):
+# support utils 
+
+def _column(name, title, renderer):
     def getter(item, formatter):
         value = getattr(item, name)
         if value:
             return renderer(value)
-        return default
+        return ""
     return column.GetterColumn(title, getter)
 
 def _multi_attrs_column_filter(instrumented_attributes,
@@ -72,8 +74,7 @@ def _multi_attrs_column_filter(instrumented_attributes,
     return query.order_by( 
         *[ sort_dir_func(attr) for attr in instrumented_attributes ])
 
-
-def localized_datetime_column(name, title, default="",
+def _localized_datetime_column(name, title,
         category="date",    # "date" | "time" | "dateTime"
         length="medium"     # "short" | "medium" | "long" | "full" | None
     ):
@@ -83,21 +84,40 @@ def localized_datetime_column(name, title, default="",
             request = common.get_request()
             date_formatter = date.getLocaleFormatter(request, category, length)
             return date_formatter.format(value)
-        return default
+        return ""
     return column.GetterColumn(title, getter)
 
+def _get_related_user(item_user, attr):
+    """Get the user instance that is related to this item via <attr>,
+    or if <attr> is None, return the item_user itself.
+    """
+    assert item_user is not None, \
+        "Item [%s] may not be None" % (item_user)
+    related_user = getattr(item_user, attr, None)
+    assert related_user is not None, \
+        "Item [%s] may not have None as [%s]" % (item_user, attr)
+    return related_user
 
-def day_column(name, title, default=""):
-    return localized_datetime_column(name, title, default, "date", "medium")
+def get_mapper_property_name_for_fk(name_id):
+    # mapper property naming convention -- the mapper property on a type for 
+    # the instance that is related to the type via the underlying fk column 
+    # must be same as the fk column name but without the final "_id".
+    assert name_id.endswith("_id"), \
+        "related_user_name_column name=%r does not end with %r" % (name_id, "_id")
+    return name_id[:-len("_id")]
 
+# column listings & filters
 
-def datetime_column(name, title, default=""):
-    return localized_datetime_column(name, title, default, "dateTime", "medium")
+def date_column(name, title, vocabulary=None):
+    return _localized_datetime_column(name, title, "date", "medium")
+
+def datetime_column(name, title, vocabulary=None):
+    return _localized_datetime_column(name, title, "dateTime", "medium")
 #def time_column(name, title, default=""):
 #    return localized_datetime_column(name, title, default, "time", "long")
 
 
-def date_from_to_column(name, title, default=""):
+def date_from_to_column(name, title, vocabulary=None):
     format_length = "medium"
     def getter(item, formatter):
         request = common.get_request()
@@ -113,16 +133,23 @@ def date_from_to_column(name, title, default=""):
     return column.GetterColumn(title, getter)
 
 
-
-def name_column(name, title, default=""):
-    def renderer(value, size=50):
-        if len(value) > size:
-            return "%s..." % value[:size]
+# !+bungeni_custom a long_text_in_listings_truncate_at parameter?
+def truncatable_name_column(name, title, vocabulary=None, truncate_at=50):
+    def renderer(value):
+        if len(value) > truncate_at:
+            return "%s..." % value[:truncate_at]
         return value
-    return _column(name, title, renderer, default)
+    return _column(name, title, renderer)
 
 
-def combined_name_column(name, title, default=""):
+# !+ rename User.fullname to "combined_name"
+# !+ mv combined_name_column to a property Group.combined_name, merge...
+def user_name_column(name, title, vocabulary=None):
+    def getter(user, formatter):
+        return user.fullname # User.fullname property
+    return column.GetterColumn(title, getter)
+
+def combined_name_column(name, title, vocabulary=None):
     """An extended name, combining full_name (localized)
     and short_name columns.
     
@@ -133,15 +160,13 @@ def combined_name_column(name, title, default=""):
         return "%s [%s]" % (_(item.full_name), item.short_name)
     return column.GetterColumn(title, getter)
 
-
-def combined_name_column_filter(query, filter_string, sort_dir_func,
-                                column=None):
+def combined_name_column_filter(query, filter_string, sort_dir_func, column=None):
     return _multi_attrs_column_filter(
         [domain.Group.full_name, domain.Group.short_name],
         query, filter_string, sort_dir_func)
 
 
-def dc_property_column(name, title, property_name="title"):
+def dc_property_column(name, title, vocabulary=None, property_name="title"):
     def renderer(value):
         if value:
             return getattr(IDCDescriptiveProperties(value), property_name, "")
@@ -149,27 +174,9 @@ def dc_property_column(name, title, property_name="title"):
     return _column(name, title, renderer)
 
 
-def _get_related_user(item_user, attr):
-    """Get the user instance that is related to this item via <attr>,
-    or if <attr> is None, return the item_user itself.
-    """
-    assert item_user is not None, \
-        "Item [%s] may not be None" % (item_user)
-    related_user = getattr(item_user, attr, None)
-    assert related_user is not None, \
-        "Item [%s] may not have None as [%s]" % (item_user, attr)
-    return related_user
-
-def user_name_column(name, title):
-    def getter(user, formatter):
-        return user.fullname # User.fullname property
-    return column.GetterColumn(title, getter)
-def related_user_name_column(name, title):
-    # mapper property naming convention -- the mapper property on item for 
-    # the related_user must be same as the name without the final "_id".
-    assert name.endswith("_id"), \
-        "related_user_name_column name=%r does not end with %r" % (name, "_id")
-    related_user_attribute_name = name[:-len("_id")]
+# !+related_user_name_column - should also link to mp/user? Merge with linked_mp_name_column?
+def related_user_name_column(name, title, vocabulary=None):
+    related_user_attribute_name = get_mapper_property_name_for_fk(name)
     # !+FIELD_KEYERROR why cannot use the User.fullname property directly?
     def getter(item_user, formatter):
         item_user = _get_related_user(item_user, related_user_attribute_name)
@@ -200,8 +207,7 @@ def user_listing_name_column_filter(query, filter_string, sort_dir_func,
         [domain.User.last_name, domain.User.first_name, domain.User.middle_name],
         query, filter_string, sort_dir_func)
 
-# !+related_user_name_column also links to mp/user, and merge this to it
-def linked_mp_name_column(name, title, attr):
+def linked_mp_name_column(name, title, vocabulary=None):
     """This may be used to customize the default URL generated as part of the
     container listing.
 
@@ -211,8 +217,9 @@ def linked_mp_name_column(name, title, attr):
     the direct URL for the MP's "home" view is used instead:
         /members/current/obj-55/
     """
+    related_user_attribute_name = get_mapper_property_name_for_fk(name)
     def getter(item_user, formatter):
-        related_user = _get_related_user(item_user, attr)
+        related_user = _get_related_user(item_user, related_user_attribute_name)
         request = common.get_request()
         # !+ replace with: bungeni.ui.widgets._render_link_to_mp_or_user ?
         if IAdminSectionLayer.providedBy(request):
@@ -233,45 +240,20 @@ def linked_mp_name_column(name, title, attr):
     return column.GetterColumn(title, getter)
 
 
-def linked_mp_name_column_filter(query, filter_string, sort_dir_func,
-        column=None):
-    query = query.join(domain.User)
-    return _multi_attrs_column_filter(
-        [domain.User.first_name, domain.User.middle_name, domain.User.last_name],
-        query, filter_string, sort_dir_func)
-
-
-def user_party_column(name, title, default="-"):
-    def getter(item, formatter):
-        session = Session()
-        mp_obj = session.query(domain.MemberOfParliament).filter(
-            domain.MemberOfParliament.user_id==item.user_id
-        ).one()
-        if mp_obj is not None:
-            if mp_obj.party is not None:
-                return vocabulary.party.getTerm(mp_obj.party).title
-        return default
-    return column.GetterColumn(title, getter)
-
-
-def simple_view_column(name, title, default=_(u"view"), owner_msg=None):
+def simple_view_column(name, title, vocabulary=None):
     """Replace primary key with meaningful title - tests for owner.
     """
+    title = _(title)
+    default = _(u"view")
     def getter(item, formatter):
         if IOwned.providedBy(item):
             if item.owner == get_db_user():
-                return owner_msg or default
+                return title or default
         return default
     return column.GetterColumn(title, getter)
 
 
-def member_title_column(name, title, default=""):
-    def getter(item, formatter):
-        return item.title_type.title_name
-    return column.GetterColumn(title, getter)
-
-
-def workflow_column(name="status", title=_("Workflow status"), default=""):
+def workflow_column(name, title, vocabulary=None):
     from bungeni.ui.utils.misc import get_wf_state
     def getter(item, formatter):
         state_title = get_wf_state(item)
@@ -341,7 +323,11 @@ def enumeration_column(name, title,
 '''
 
 
-def vocabulary_column(name, title, vocabulary):
+def vocabulary_column(name, title, vocabulary=None):
+    if isinstance(vocabulary, basestring): # !+tmp
+        from zope.component import getUtility
+        from zope.schema.interfaces import IVocabularyFactory
+        vocabulary = getUtility(IVocabularyFactory, vocabulary)
     def getter(context, formatter):
         try:
             return _(vocabulary.getTerm(getattr(context, name)).title)
@@ -357,6 +343,11 @@ def vocabulary_column(name, title, vocabulary):
             assert value is None, m
             log.warn(m)
             return None
+        except AttributeError:
+            # !+bungeni.ui.vocabulary.SpecializedSource -> GroupTitleTypesFactory
+            from bungeni.ui.vocabulary import GroupTitleTypesFactory
+            assert isinstance(vocabulary, GroupTitleTypesFactory)
+            return context.title_type.title_name
     return column.GetterColumn(title, getter)
 ''' !+TYPES_CUSTOM_TRANSLATION(mr, nov-2011) issues with how translation for 
 the titles of such enum values should be handled:

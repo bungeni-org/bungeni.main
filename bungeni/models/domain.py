@@ -339,12 +339,6 @@ class PasswordRestoreLink(object):
 class UserSubscription(Entity):
     """The documents a user is tracking"""
 
-#class HansardReporter(User):
-#    """ a reporter who reports on parliamentary procedings
-#    """
-#    rotas
-#    takes
-
 
 ######
 
@@ -1095,6 +1089,10 @@ class Signatory(Entity):
     @property
     def owner(self):
         return self.user
+        
+    @property
+    def party(self):
+        return self.member.party
 
 class SignatoryAudit(Audit):
     """An audit record for a signatory.
