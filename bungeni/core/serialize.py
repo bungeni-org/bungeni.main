@@ -9,6 +9,7 @@ $Id$
 log = __import__("logging").getLogger("bungeni.core.serialize")
 
 import os
+import time
 from StringIO import StringIO
 from zipfile import ZipFile
 from threading import Thread
@@ -234,6 +235,14 @@ def serialization_notifications_callback(channel, method, properties, body):
     #!+SESSIONS(mb, aug-2012) investigate why on ObjectCreatedEvent,
     #some objects cannot be queried
     if domain_model:
+        #!+TRANSACTIONS(mb, Aug-2012) Works around timing with transaction
+        # commits. Messages are fired off to rabbitmq in the middle of a zope
+        # transaction before any db changes are persited. As a result callbacks
+        # access stale data.
+        # Fix is upcoming - amqp messages should be sent as a post-commit hook
+        # on a zope transaction.
+        log.warn("Sleeping for 10s (let zope transaction commit)")
+        time.sleep(10)
         obj_key = valueKey(obj_data.get("obj_key"))
         session = Session()
         obj = session.query(domain_model).get(obj_key)
