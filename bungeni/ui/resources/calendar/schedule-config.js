@@ -315,6 +315,7 @@ YAHOO.bungeni.config = function(){
                                         new_data_entries.push(entry);
                                     }
                                     sDt.addRows(new_data_entries, new_index);
+                                    sDt.scrollTo(sDt.getRow(new_index));
                                     sDt.unselectAllRows();
                                     sDt.selectRow(new_index+(recordData.value.length-1));
                                 }
@@ -465,6 +466,7 @@ YAHOO.bungeni.config = function(){
               var itemTitleMinutesFormatter = function(el, record, column, data){
                   var data = record.getData();
                   var record_index = this.getRecordIndex(record);
+                  el.className += " list-minutes";
                   el.innerHTML = "";
                   if (SGlobals.discussable_types.indexOf(
                         data[Columns.TYPE]
@@ -568,7 +570,7 @@ YAHOO.bungeni.config = function(){
                             ), "span", mAttrs
                           );
                       }
-                      el.innerHTML = cHTML;
+                      el.innerHTML = cHTML ;
                   }
               }
             

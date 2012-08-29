@@ -255,11 +255,11 @@ YAHOO.bungeni.availableitems = function(){
                             selected_rows.length?(itemsDataTable.getTrIndex(selected_rows[0])+1):0
                         );
                         itemsDataTable.addRow(targetData, insert_index);
-                        itemsDataTable.scrollTo(insert_index);
                         itemsDataTable.unselectAllRows();
                         itemsDataTable.selectRow(insert_index);
                         window.setTimeout(function(){
                             YAHOO.bungeni.scheduling.handlers.refreshRows();
+                            itemsDataTable.scrollTo(itemsDataTable.getRow(insert_index));
                         }, 200);
                     }
                 }else{
