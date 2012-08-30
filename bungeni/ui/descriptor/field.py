@@ -22,6 +22,7 @@ VALUETYPE = {
     "text": {},
     "date": {},
     "datetime": {},
+    "timestamp": {}, # !+ is this at all needed? Timestamps should never appear in the UI?
     "bool": {"default": True},
     "number": {},
     "status": {},
@@ -93,6 +94,8 @@ WIDGETS = {
         (None, widgets.DateWidget, widgets.DateWidget, 
             widgets.date_input_search_widget,
             listing.datetime_column, None),
+    ("timestamp", "date"): # !+needed?
+        (None, widgets.HiddenTimestampWidget, None, None, None, None),
     ("bool", "bool"):
         (None, None, None, None, None, None),
     ("number", "number"):

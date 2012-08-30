@@ -54,8 +54,10 @@ class IDiffDisplayWidget(zope.formlib.interfaces.IDisplayWidget):
 class TextWidget(zope.formlib.widgets.TextWidget):
     displayWidth = 60
 
+''' !+UNUSED (was prev used by Doc.title)
 class LongTextWidget(TextWidget):
     displayWidth = 90
+'''
 
 class ComputedTitleWidget(zope.formlib.widgets.DisplayWidget):
     """Computes a title and renders it if title field is empty

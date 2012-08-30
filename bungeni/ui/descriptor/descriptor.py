@@ -1437,97 +1437,93 @@ class DocDescriptor(ModelDescriptor):
         # attachments
         # events
         # doc_id
-        Field(name="parliament_id", # [sys]
-            modes="view listing",
-            localizable=[ hide("view listing"), ],
-            property=schema.Choice(title=_("Parliament"),
-                source=vocabulary.DatabaseSource(domain.Parliament,
-                    token_field="parliament_id",
-                    title_field="short_name", # !+ GROUP_DOC
-                    value_field="parliament_id"
-                ),
-            ),
-        ),
-        Field(name="owner_id", # [user-req]
-            modes="view edit add listing",
+        F(name="parliament_id",
+            label="Parliament",
+            required=True,
             localizable=[
-                show("edit"),
+                hide("view listing"),
+            ],
+            value_type="text",
+            render_type="single_select",
+            vocabulary="parliament",
+        ),
+        F(name="owner_id",
+            label="Moved by",
+            description="Select the user who moved the document",
+            required=True,
+            localizable=[
+                show("add"), # db-not-null-ui-add
+                show("edit"), # !+ displayed in view-mode... how to control this from config?
                 hide("view listing", "bungeni.Anonymous"),
             ],
-            property=schema.Choice(title=_("Moved by"),
-                description=_("Select the user who moved the document"),
-                # "legal" parliamentary documents may only be moved by an MP
-                source=vocabulary.MemberOfParliamentDelegationSource("owner_id"),
-            ),
-            listing_column=listing.linked_mp_name_column("owner_id", _("Name")),
-            listing_column_filter=listing.related_user_name_column_filter,
-            add_widget=widgets.MemberDropDownWidget,
-            view_widget=widgets.UserURLDisplayWidget,
+            value_type="member", # !+user: constrained by "parent group" OR vocabulary
+            render_type="single_select",
+            vocabulary="parliament_member_delegation",
         ),
         # type
-        Field(name="doc_type", # [user-req]
-            modes="view edit add listing",
-            localizable=[ 
-                show("view edit listing"), 
+        F(name="doc_type",
+            label="Document Type",
+            required=True,
+            localizable=[
+                show("view edit add listing"), 
             ],
-            property=schema.Choice(title=_("Document Type"),
-                source=vocabulary.doc_type,
-            ),
-            listing_column=listing.vocabulary_column("doc_type",
-                _("Document Type"),
-                vocabulary.doc_type
-            ),
+            value_type="vocabulary", # !+user: constrained by "parent group" OR vocabulary
+            render_type="single_select",
+            vocabulary="doc_type",
         ),
         # doc_procedure
-        Field(name="type_number", # [sys]
-            modes="view listing",
-            localizable=[ 
-                show("view listing"),
-            ],
-            property=schema.Int(title=_("Number"), required=False),
-        ),
-        Field(name="registry_number", # [user]
-            modes="view edit listing",
+        F(name="type_number",
+            label="Number",
             localizable=[
-                show("view"),
-                hide("edit listing"),
+                show("view listing"), 
             ],
-            property=schema.Int(title=_("Registry number"), required=False),
+            value_type="number",
+            render_type="number",
         ),
-        Field(name="uri", # [user]
-            modes="view edit listing",
-            localizable=[ 
-                show("view edit"), 
-                hide("listing"), 
+        F(name="registry_number",
+            label="Registry Number",
+            localizable=[
+                show("view listing"), 
+                hide("edit"), 
             ],
-            property=schema.Text(title=_("URI"), required=False),
         ),
-        Field(name="acronym",
-            modes="view edit add listing",
+        F(name="uri",
+            label="URI",
+            localizable=[
+                show("view"), 
+                hide("edit listing"), 
+                # !+ should hide-in-edit mean -> if show-in-view then show in view-mode?
+            ],
+        ),
+        F(name="acronym",
+            label="Acronym",
             localizable=[
                 show("view edit add"),
                 hide("listing"),
             ],
         ),
-        Field(name="title", # [user]
-            modes="view edit add listing",
+        F(name="title",
+            label="Title",
+            required=True,
             localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            property=schema.TextLine(title=_("Title"), required=True),
-            edit_widget=widgets.LongTextWidget,
-            add_widget=widgets.LongTextWidget,
+            value_type="text",
+            render_type="text_box",
         ),
-        Field(name="description",
-            modes="view edit add listing",
+        F(name="description",
+            label="Description",
             localizable=[
                 show("view edit add"),
                 hide("listing"),
             ],
+            value_type="text",
+            render_type="text_box",
         ),
         LanguageField("language"), # [user-req]
         F(name="body",
-            label="Description",
+            label="Body",
             required=True,
             localizable=[
                 show("view edit add"),
@@ -1569,11 +1565,14 @@ class DocDescriptor(ModelDescriptor):
         # coverage
         # geolocation
         # head_id
-        Field(name="timestamp", # [sys]
-            modes="edit",
-            localizable=[ show("edit"), ],
-            property=schema.Datetime(title=_(""), required=False),
-            edit_widget=widgets.HiddenTimestampWidget,
+        F(name="timestamp",
+           #label="Timestamp", # !+ no label... as no value is hown! Why shown in first place?
+           required=False,
+           localizable=[
+                show("edit"),
+            ],
+            value_type="timestamp",
+            render_type="date",
         ),
     ]
 

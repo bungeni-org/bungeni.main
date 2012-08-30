@@ -282,6 +282,7 @@ ISResponse = vocabulary.SimpleVocabulary([
 
 bill_type = FlatVDEXVocabularyFactory("bill_type.vdex")
 doc_type = bill_type # placeholder vocabulary, use bill_type as dummy value
+component.provideUtility(doc_type, IVocabularyFactory, "doc_type")
 question_type = FlatVDEXVocabularyFactory("question_type.vdex")
 response_type = FlatVDEXVocabularyFactory("response_type.vdex")
 event_type = FlatVDEXVocabularyFactory("event_type.vdex")
@@ -398,6 +399,8 @@ parliament_factory = DatabaseSource(
         ob.full_name,
         ob.start_date and ob.start_date.strftime("%Y/%m/%d") or "?",
         ob.end_date and ob.end_date.strftime("%Y/%m/%d") or "?"))
+component.provideUtility(parliament_factory, IVocabularyFactory, "parliament")
+
 
 country_factory = DatabaseSource(
     domain.Country, "country_id", "country_id",
@@ -633,13 +636,12 @@ component.provideUtility(parliament_member, IVocabularyFactory, "parliament_memb
 
 
 class MemberOfParliamentDelegationSource(MemberOfParliamentSource):
-    """ A logged in User will only be able to choose
-    himself if he is a member of parliament or those 
-    Persons who gave him rights to act on his behalf"""
+    """A logged in User will only be able to choose himself if he is a member
+    of parliament or those Persons who gave him rights to act on his behalf.
+    """
     def constructQuery(self, context):
         mp_query = super(MemberOfParliamentDelegationSource, 
                 self).constructQuery(context)
-        #XXX clerks cannot yet choose MPs freely
         user_id = utils.get_db_user_id()
         if user_id:
             user_ids = [user_id]
@@ -650,6 +652,9 @@ class MemberOfParliamentDelegationSource(MemberOfParliamentSource):
             if len(query.all()) > 0:
                 return query
         return mp_query
+parliament_member_delegation = MemberOfParliamentDelegationSource("owner_id")
+component.provideUtility(parliament_member_delegation, IVocabularyFactory,
+    "parliament_member_delegation")
 
 
 class MemberOfParliamentSignatorySource(MemberOfParliamentSource):
