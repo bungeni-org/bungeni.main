@@ -2260,12 +2260,16 @@ class SignatoryDescriptor(ModelDescriptor):
     display_name = _("Signatory")
     container_name = _("Signatories")
     fields = [
-        F(name="signatory_id",
-            label="View",
+        F(name="status",
+            label="Signature Status",
             required=True,
-            localizable=[show("listing", "bungeni.Signatory bungeni.Owner")],
-            value_type="signatory",
-            render_type="no_input",
+            localizable = [
+                show("view listing", 
+                    roles="bungeni.Owner bungeni.Signatory")
+            ],
+            value_type="status",
+            render_type="single_select",
+            vocabulary="workflow_states",
         ),
         F(name="user_id",
             label="Signatory",
@@ -2284,17 +2288,6 @@ class SignatoryDescriptor(ModelDescriptor):
             value_type="text",
             render_type="single_select",
             vocabulary="party",
-        ),
-        F(name="status",
-            label="Signature Status",
-            required=True,
-            localizable = [
-                show("view listing", 
-                    roles="bungeni.Owner bungeni.Signatory")
-            ],
-            value_type="status",
-            render_type="single_select",
-            vocabulary="workflow_states",
         ),
     ]
 

@@ -127,10 +127,6 @@ WIDGETS = {
         (widgets.UserURLDisplayWidget, None, widgets.AutoCompleteWidget(), None,
             listing.linked_mp_name_column, 
             listing.related_user_name_column_filter),
-    ("signatory", "no_input"): # !+Signatory.signatory_id
-        (None, None, None, None,
-            listing.simple_view_column, 
-            None),
 }
 
 

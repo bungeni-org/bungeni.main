@@ -240,19 +240,6 @@ def linked_mp_name_column(name, title, vocabulary=None):
     return column.GetterColumn(title, getter)
 
 
-def simple_view_column(name, title, vocabulary=None):
-    """Replace primary key with meaningful title - tests for owner.
-    """
-    title = _(title)
-    default = _(u"view")
-    def getter(item, formatter):
-        if IOwned.providedBy(item):
-            if item.owner == get_db_user():
-                return title or default
-        return default
-    return column.GetterColumn(title, getter)
-
-
 def workflow_column(name, title, vocabulary=None):
     from bungeni.ui.utils.misc import get_wf_state
     def getter(item, formatter):
