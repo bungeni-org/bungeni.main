@@ -234,6 +234,12 @@
   <permission id="bungeni.function.View" title="View title/function" />
   <meta:redefinePermission from="bungeni.function.View" to="zope.View" />
 
+  <permission id="bungeni.groupmemberrole.Add" title="Add Member Role" />
+  <permission id="bungeni.groupmemberrole.Edit" title="Edit Member Role" />
+  <permission id="bungeni.groupmemberrole.Delete" title="Delete Member Role" />
+  <permission id="bungeni.groupmemberrole.View" title="View member Role" />
+  <meta:redefinePermission from="bungeni.groupmemberrole.View" to="zope.View" />
+
   <permission id="bungeni.event.Add" title="Add title/event" />
   <permission id="bungeni.event.Edit" title="Edit title/event" />
   <permission id="bungeni.event.Delete" title="Delete title/event" />

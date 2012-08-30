@@ -2,15 +2,19 @@ from zope.securitypolicy.interfaces import IPrincipalRoleMap
 from bungeni.core.workflows.utils import get_group_context
 
 
-def member_title_added(title, event):
-    if title.title_type.role_id:
-        prm = IPrincipalRoleMap(get_group_context(title.title_type.group))
-        prm.assignRoleToPrincipal(title.title_type.role_id,
-                                  title.member.user.login)
+def group_membership_role_added(group_membership_role, event):
+    if group_membership_role.is_global:
+        prm = IPrincipalRoleMap(
+            get_group_context(group_membership_role.group))
+        prm.assignRoleToPrincipal(
+            group_membership_role.role_id,
+            group_membership_role.member.user.login)
 
 
-def member_title_deleted(title, event):
-    if title.title_type.role_id:
-        prm = IPrincipalRoleMap(get_group_context(title.title_type.group))
-        prm.unsetRoleForPrincipal(title.title_type.role_id,
-                                  title.member.user.login)
+def group_membership_role_deleted(group_membership_role, event):
+    if group_membership_role.is_global:
+        prm = IPrincipalRoleMap(
+            get_group_context(group_membership_role.group))
+        prm.unsetRoleForPrincipal(
+            group_membership_role.role_id,
+            group_membership_role.member.user.login)

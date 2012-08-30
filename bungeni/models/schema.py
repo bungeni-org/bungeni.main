@@ -407,11 +407,20 @@ title_types = rdb.Table("title_types", metadata,
     rdb.Column("title_type_id", rdb.Integer, primary_key=True),
     rdb.Column("group_id", rdb.Integer, 
                 rdb.ForeignKey("groups.group_id"), nullable=False),
-    rdb.Column("role_id", rdb.Unicode(256), nullable=True),
     rdb.Column("title_name", rdb.Unicode(40), nullable=False),
     rdb.Column("user_unique", rdb.Boolean, default=False,), # nullable=False),
     rdb.Column("sort_order", rdb.Integer(2), nullable=False),
     rdb.Column("language", rdb.String(5), nullable=False),
+)
+
+# sub roles to be granted when a document is assigned to a user
+group_membership_role = rdb.Table("group_membership_role", metadata,
+    rdb.Column("membership_id", rdb.Integer,
+               rdb.ForeignKey("user_group_memberships.membership_id"),
+               primary_key=True),
+    rdb.Column("role_id", rdb.Unicode(256), nullable=False,
+               primary_key=True),
+    rdb.Column("is_global", rdb.Boolean, default=False),
 )
 
 #
@@ -461,7 +470,7 @@ user_group_memberships = rdb.Table("user_group_memberships", metadata,
 ##############
 # Titles
 ##############
-# To indicate the role a persons has in a specific context (Ministry, 
+# To indicate the title a persons has in a specific context (Ministry, 
 # Committee, Parliament, ...) and for what period (from - to)
 
 member_titles = rdb.Table("member_titles", metadata,

@@ -245,6 +245,7 @@ mapper(domain.GroupMembership, schema.user_group_memberships,
                 schema.user_group_memberships.c.membership_id),
             uselist=False,
             lazy=True),
+        "sub_roles":relation(domain.GroupMembershipRole),
         "member_titles":relation(domain.MemberTitle)
     },
     polymorphic_on=schema.user_group_memberships.c.membership_type,
@@ -253,6 +254,11 @@ mapper(domain.GroupMembership, schema.user_group_memberships,
 # !+HEAD_DOCUMENT_ITEM(mr, sep-2011) standardize name, "head", "document", "item"
 domain.GroupMembership.head = domain.GroupMembership.user
 
+mapper(domain.GroupMembershipRole, schema.group_membership_role,
+       properties={
+        "member":relation(domain.GroupMembership)
+        }
+)
 
 # !+RENAME ParliamentMember
 mapper(domain.MemberOfParliament, schema.parliament_memberships,

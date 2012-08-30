@@ -96,6 +96,11 @@ class IBungeniGroupMembership(interface.Interface):
     """
 class IBungeniGroupMembershipContainer(IBungeniContainer): pass
 
+class IGroupMembershipRole(interface.Interface):
+    """Group membership sub roles in bungeni.
+    """
+class IGroupMembershipRoleContainer(IBungeniContainer): pass
+
 class IMemberOfParliament(IBungeniGroupMembership): pass
 class IMemberOfParliamentContainer(IBungeniGroupMembershipContainer): pass
 

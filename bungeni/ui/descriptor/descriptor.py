@@ -348,6 +348,29 @@ class UserDelegationDescriptor(ModelDescriptor):
         ),
     ]
 
+class GroupMembershipRoleDescriptor(ModelDescriptor):
+    """Role associated with a group membership
+    """
+    localizable = False
+    display_name = _("sub roles")
+    container_name = _("sub roles")
+    fields = [
+        F(name="role_id",
+          label="sub role",
+          description="the sub role this member will get",
+          required=True,
+          value_type="text",
+          render_type="single_select",
+          vocabulary="group_sub_role"
+          ),
+        F(name="is_global",
+          label="is global",
+          description="whether or not this role is granted globally",
+          required=True,
+          value_type="bool",
+          render_type="bool",
+          )
+        ]
 
 class GroupMembershipDescriptor(ModelDescriptor):
     localizable = False
@@ -996,16 +1019,6 @@ class TitleTypeDescriptor(ModelDescriptor):
                 show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-        ),
-        F(name="role_id",
-            label="Role",
-            description="Role associated with this title",
-            localizable=[
-                show("view edit add listing"),
-            ],
-            value_type="text",
-            render_type="single_select",
-            vocabulary="group_sub_role",
         ),
         F(name="user_unique",
             label="Only one user may have this title",

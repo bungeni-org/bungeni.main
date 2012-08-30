@@ -313,6 +313,14 @@
         order="30"
     />
     <browser:menuItem menu="additems"
+        for="bungeni.models.interfaces.IGroupMembershipRoleContainer"
+        title="Add member role..."
+        action="./add"
+        permission="bungeni.groupmemberrole.Add"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="31"
+    />
+    <browser:menuItem menu="additems"
         for="bungeni.models.interfaces.IMemberOfParliament"
         title="Add address..."
         action="./addresses/add"

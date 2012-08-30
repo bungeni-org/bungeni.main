@@ -11,6 +11,7 @@ log = __import__("logging").getLogger("bungeni.core.dc")
 from zope import interface
 from zope import component
 from zope.security.proxy import removeSecurityProxy
+from zope.securitypolicy.role import IRole
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 import zope.traversing.interfaces
 from lxml import html
@@ -617,4 +618,12 @@ class TitleTypeDescriptiveProperties(DescriptiveProperties):
         context = session.merge(removeSecurityProxy(self.context))
         return self.translate(context, "title_name")
 
-
+@register.adapter()
+class GroupMembershipRoleDescriptiveProperties(DescriptiveProperties):
+    component.adapts(interfaces.IGroupMembershipRole)
+    
+    @property
+    def title(self):
+        session = Session()
+        context = session.merge(removeSecurityProxy(self.context))
+        return component.getUtility(IRole, context.role_id).title
