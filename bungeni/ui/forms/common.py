@@ -67,6 +67,17 @@ def set_widget_errors(widgets, errors):
                 if widget._error is None:
                     widget._error = error
 
+
+def cascade_modifications(obj):
+    """cascade modify events on an object to the direct parent"""
+    if not ILocation.providedBy(obj):
+        return
+    if IAlchemistContainer.providedBy(obj.__parent__):
+        if IAlchemistContent.providedBy(obj.__parent__.__parent__):
+            notify(ObjectModifiedEvent(obj.__parent__.__parent__))
+    elif IAlchemistContent.providedBy(obj.__parent__):
+        notify(ObjectModifiedEvent(obj.__parent__))
+
 class NoPrefix(unicode):
     """The ``formlib`` library insists on concatenating the form
     prefix with field names; we override the ``__add__`` method to
@@ -363,6 +374,7 @@ class AddForm(BaseForm, catalyst.AddForm):
 
     def createAndAdd(self, data):
         added_obj = super(AddForm, self).createAndAdd(data)
+        cascade_modifications(added_obj)
         return added_obj
     
     @formlib.form.action(
@@ -513,6 +525,7 @@ class EditForm(BaseForm, catalyst.EditForm):
         # !+EVENT_DRIVEN_CACHE_INVALIDATION(mr, mar-2011) no modify event
         # invalidate caches for this domain object type
         notify(ObjectModifiedEvent(self.context))
+        cascade_modifications(self.context)
         invalidate_caches_for(self.context.__class__.__name__, "edit")
 
     @formlib.form.action(_(u"Save"), name="save",
@@ -826,6 +839,7 @@ class DeleteForm(PageForm):
         # we have to switch our context here otherwise the deleted object will
         # be merged into the session again and reappear magically
         self.context = container
+        cascade_modifications(container)
         next_url = self.nextURL()
 
         if next_url is None:
