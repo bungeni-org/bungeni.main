@@ -19,7 +19,7 @@ from bungeni.core.workflow.interfaces import IWorkflowTransitionEvent
 from bungeni.alchemist import Session
 from bungeni.alchemist.container import contained
 from bungeni.models.utils import get_current_parliament, obj2dict
-
+import transaction
 
 class MessageQueueConfig(object):
 
@@ -120,7 +120,27 @@ def get_mq_connection():
                   "Notifications will not be sent")
         return None
 
+def post_commit_publish(status, **kwargs):
+    """This is a post-transaction commit hook which sends a message
+    to rabbitmq (only if the transaction commits successfully).
+    """
+    connection = get_mq_connection()
+    if not connection:
+        log.warn("Can't rabbitmq connection. Won't send message")
+        return
+    if status:
+        channel = connection.channel()
+        channel.basic_publish(**kwargs)
+    else:
+        log.error("Transaction did not commit successfully. "
+            "AMQP message will not be sent"
+        )   
+
+
 def queue_transition_based_notification(document, event):
+    connection = get_mq_connection()
+    if not connection:
+        return
     mq_utility = component.getUtility(IMessageQueueConfig)
     domain_class = document.__class__
     unproxied = removeSecurityProxy(document)
@@ -132,17 +152,17 @@ def queue_transition_based_notification(document, event):
         "document_type": notifications_utility.get_type(domain_class),
         "source": event.source,
         "destination": event.destination
-        }
-    connection = get_mq_connection()
-    if not connection:
-        return
-    channel = connection.channel()
-    channel.basic_publish(exchange=str(mq_utility.get_task_exchange()),
-                          routing_key=str(mq_utility.get_task_queue()),
-                          body=simplejson.dumps(message),
-                          properties=pika.BasicProperties(
-            content_type="text/plain",
-            delivery_mode=1))
+    }
+    kwargs = dict(
+        exchange=str(mq_utility.get_task_exchange()),
+        routing_key=str(mq_utility.get_task_queue()),
+        body=simplejson.dumps(message),
+        properties=pika.BasicProperties(
+            content_type="text/plain", delivery_mode=1
+        )
+    )
+    txn = transaction.get()
+    txn.addAfterCommitHook(post_commit_publish, (), kwargs)
 
 
 def worker():

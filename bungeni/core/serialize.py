@@ -9,10 +9,10 @@ $Id$
 log = __import__("logging").getLogger("bungeni.core.serialize")
 
 import os
-import time
 from StringIO import StringIO
 from zipfile import ZipFile
 from threading import Thread
+
 from xml.etree.cElementTree import Element, ElementTree
 from tempfile import NamedTemporaryFile as tmp
 import simplejson
@@ -34,11 +34,14 @@ from bungeni.core.interfaces import IMessageQueueConfig
 from bungeni.core.workflow.interfaces import (IWorkflow, IStateController,
     IWorkflowed, IWorkflowController, InvalidStateError
 )
-from bungeni.core.notifications import get_mq_connection
+from bungeni.core.notifications import (get_mq_connection, 
+    post_commit_publish
+)
 from bungeni.models import interfaces, domain
 from bungeni.models.utils import obj2dict, get_permissions_dict
 from bungeni.utils import register, naming
 
+import transaction
 import pika
 
 def setupStorageDirectory(part_target="xml_db"):
@@ -235,14 +238,6 @@ def serialization_notifications_callback(channel, method, properties, body):
     #!+SESSIONS(mb, aug-2012) investigate why on ObjectCreatedEvent,
     #some objects cannot be queried
     if domain_model:
-        #!+TRANSACTIONS(mb, Aug-2012) Works around timing with transaction
-        # commits. Messages are fired off to rabbitmq in the middle of a zope
-        # transaction before any db changes are persited. As a result callbacks
-        # access stale data.
-        # Fix is upcoming - amqp messages should be sent as a post-commit hook
-        # on a zope transaction.
-        log.warn("Sleeping for 10s (let zope transaction commit)")
-        time.sleep(10)
         obj_key = valueKey(obj_data.get("obj_key"))
         session = Session()
         obj = session.query(domain_model).get(obj_key)
@@ -279,6 +274,12 @@ def serialization_worker():
 def queue_object_serialization(obj, event):
     """Send a message to the serialization queue for non-draft documents
     """
+    connection = get_mq_connection()
+    if not connection:
+        log.warn("Could not get rabbitmq connection. Will not send "
+            "AMQP message for this change."
+        )
+        return
     wf_state = None
     try:
         wfc = IWorkflowController(obj)
@@ -300,11 +301,7 @@ def queue_object_serialization(obj, event):
         "obj_key": primary_key,
         "obj_type": unproxied.__class__.__name__
     }
-    connection = get_mq_connection()
-    if not connection:
-        return
-    channel = connection.channel()
-    channel.basic_publish(
+    kwargs = dict(
         exchange=SERIALIZE_EXCHANGE,
         routing_key=SERIALIZE_ROUTING_KEY,
         body=simplejson.dumps(message),
@@ -312,7 +309,10 @@ def queue_object_serialization(obj, event):
             delivery_mode=2
         )
     )
-
+    txn = transaction.get()
+    txn.addAfterCommitHook(post_commit_publish, (), kwargs)
+ 
+    
 def serialization_notifications():
     """Set up bungeni serialization worker as a daemon.
     """
