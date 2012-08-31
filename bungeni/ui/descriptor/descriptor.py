@@ -1579,13 +1579,12 @@ class DocDescriptor(ModelDescriptor):
         # geolocation
         # head_id
         F(name="timestamp",
-           #label="Timestamp", # !+ no label... as no value is hown! Why shown in first place?
-           required=False,
+           label = u"", # !+ must have "empty" label... as no value is shown!
            localizable=[
                 show("edit"),
             ],
             value_type="timestamp",
-            render_type="date",
+            render_type="datetime",
         ),
     ]
 

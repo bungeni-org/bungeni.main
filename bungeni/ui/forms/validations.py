@@ -595,8 +595,8 @@ def validate_sub_role_unique(action, data, context, container):
     return logged_errors(errors, "validate_sub_role_unique")
 
 def diff_validator(form, context, data):
-    """ Custom validator that checks if form timestamp differs from timestamp in db.
-        Returns list of Modified errors for fields which differs from db values.
+    """Custom validator that checks if form timestamp differs from timestamp in db.
+    Returns list of Modified errors for fields which differs from db values.
     """
     diff = form.request.form.get("diff", "")
     errors = []
@@ -604,7 +604,6 @@ def diff_validator(form, context, data):
     context = removeSecurityProxy(context)    
     current_timestamp = str(data.get("timestamp", ""))
     db_timestamp = str(context.timestamp)
-    
     # if we're in diff mode we don't care if form.timestamp equals db timestamp    
     if (current_timestamp != db_timestamp and diff!="True") or\
        (last_timestamp!=db_timestamp and last_timestamp):

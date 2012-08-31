@@ -47,6 +47,7 @@ RENDERTYPE = {
     "text_box": schema.Text,
     "rich_text": schema.Text,
     "date": schema.Date,
+    "datetime": schema.Datetime,
     "bool": schema.Bool,
     "number": schema.Int,
     "image": schema.Bytes,
@@ -90,11 +91,12 @@ WIDGETS = {
         (None, widgets.DateWidget, widgets.DateWidget, 
             widgets.date_input_search_widget,
             listing.date_column, None),
-    ("datetime", "date"):
+    ("datetime", "datetime"):
         (None, widgets.DateWidget, widgets.DateWidget, 
             widgets.date_input_search_widget,
             listing.datetime_column, None),
-    ("timestamp", "date"): # !+needed?
+    # Used in edit mode (doc) to check if form timestamp differs from db timestamp
+    ("timestamp", "datetime"): 
         (None, widgets.HiddenTimestampWidget, None, None, None, None),
     ("bool", "bool"):
         (None, None, None, None, None, None),
