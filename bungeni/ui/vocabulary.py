@@ -201,6 +201,11 @@ class FlatVDEXVocabularyFactory(VDEXVocabularyMixin, BaseVocabularyFactory):
 class BoolFlatVDEXVocabularyFactory(FlatVDEXVocabularyFactory):
     value_cast = staticmethod(misc.as_bool)
 
+    def getTermById(self, value):
+        """Look up vdex term using unicode of boolean value"""
+        value = unicode(value)
+        return super(BoolFlatVDEXVocabularyFactory, self).getTermById(value)
+
 # /vdex
 
 

@@ -139,6 +139,7 @@ mapper(domain.Group, schema.groups,
         #     rdb.cast(schema.groups.c.group_id, rdb.String)
         #    ).label("group_principal_id")
         #),
+        "titletypes": relation(domain.TitleType),
         "contained_groups": relation(domain.Group,
             backref=backref("parent_group",
                 remote_side=schema.groups.c.group_id)
