@@ -25,7 +25,7 @@ class SubRoleAnnotations(object):
     def __init__(self):
         self.sub_roles = []
         self.is_sub_role = False
-
+        self.parent = None
 
 def sub_role_configure(context, id, title, description, role):
     role_annt = interfaces.ISubRoleAnnotations(
@@ -34,6 +34,7 @@ def sub_role_configure(context, id, title, description, role):
     sub_role = Role(id, title, description)
     sub_role_annt = interfaces.ISubRoleAnnotations(sub_role)
     sub_role_annt.is_sub_role = True
+    sub_role.parent = role
     gsm = zope.component.getGlobalSiteManager()
     gsm.registerUtility(sub_role, IRole, id)
     

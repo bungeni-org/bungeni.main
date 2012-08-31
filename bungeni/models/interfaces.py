@@ -464,7 +464,9 @@ class IFeatureNotification(IFeature):
 class IFeatureDownload(IFeature):
     """Marker for classes supporting "download" feature".
     """
-
+class IFeatureAssignment(IFeature):
+    """Marks support for "assignment" feature
+    """
 #
 
 ''' !+DATERANGEFILTER(mr, dec-2010) disabled until intention is understood

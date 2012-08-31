@@ -244,6 +244,12 @@ def feature_download(kls):
     interface.classImplements(kls, interfaces.IFeatureDownload)
     return kls
 
+def feature_assignment(kls, **params):
+    """Decorator for domain types that support "assignable" feature.
+    """
+    interface.classImplements(kls, interfaces.IFeatureAssignment)
+    return kls
+
 def configurable_domain(kls, workflow):
     """Executed on adapters.load_workflow().
     """
@@ -651,7 +657,7 @@ class Doc(Entity):
     """Base class for a workflowed parliamentary document.
     """
     dynamic_features = ["audit", "version", "attachment", "event", 
-        "signatory", "schedule"]
+        "signatory", "schedule", "assignment"]
     interface.implements(
         interfaces.IBungeniContent, # IOwned
         interfaces.ITranslatable
@@ -884,7 +890,7 @@ class AgendaItem(AdmissibleMixin, Doc):
     """Generic Agenda Item that can be scheduled on a sitting.
     """
     dynamic_features = ["audit", "version", "attachment", "schedule",
-                        "workspace", "notification", "download"]
+                        "workspace", "notification", "download", "assignment"]
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
     )
@@ -900,7 +906,8 @@ class Bill(Doc):
     """Bill domain type.
     """
     dynamic_features = ["audit", "version", "attachment", "event", 
-        "signatory", "schedule", "workspace", "notification", "download"]
+        "signatory", "schedule", "workspace", "notification", "download",
+        "assignment"]
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
     )
@@ -942,7 +949,8 @@ class Motion(AdmissibleMixin, Doc):
     """Motion domain type.
     """
     dynamic_features = ["audit", "version", "attachment", "event", 
-        "signatory", "schedule", "workspace", "notification", "download"]
+        "signatory", "schedule", "workspace", "notification", "download",
+        "assignment"]
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
     )
@@ -962,7 +970,8 @@ class Question(AdmissibleMixin, Doc):
     """Question domain type.
     """
     dynamic_features = ["audit", "version", "attachment", "event", 
-        "signatory", "schedule", "workspace", "notification", "download"]
+        "signatory", "schedule", "workspace", "notification", "download",
+        "assignment"]
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
     )
@@ -1016,7 +1025,8 @@ class TabledDocument(AdmissibleMixin, Doc):
     It must be possible to schedule a tabled document for a sitting.
     """
     dynamic_features = ["audit", "version", "attachment", "event", 
-        "signatory", "schedule", "workspace", "notification", "download"]
+        "signatory", "schedule", "workspace", "notification", "download",
+        "assignment"]
     interface.implements(
         interfaces.IBungeniParliamentaryContent,
     )
