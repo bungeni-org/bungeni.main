@@ -35,7 +35,7 @@ from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.models import domain
 from bungeni.models.utils import get_db_user, get_member_of_parliament
 from bungeni.models.interfaces import IOwned, IScheduleText
-from bungeni.ui.interfaces import IAdminSectionLayer
+from bungeni.ui.interfaces import IWorkspaceSectionLayer, IAdminSectionLayer
 from bungeni.ui import vocabulary
 from bungeni.ui.utils import common, date, url
 from bungeni.ui.i18n import _
@@ -245,10 +245,17 @@ def workflow_column(name, title, vocabulary=None):
     def getter(item, formatter):
         state_title = get_wf_state(item)
         request = common.get_request()
-        return translate(
-            state_title,
-            domain="bungeni",
-            context=request)
+        state_title = translate(state_title, domain="bungeni", context=request)
+        # !+MY_LISTING_ROWS(mr, aug-2012) the following is a (exploratory) 
+        # mechanism to add a distinction between what rows are owned by the 
+        # current user and others. Here it is added only to "status" columns
+        # here, but a generic "row-level" means to mark such rows as different 
+        # from the others may be a useful feature.
+        if IWorkspaceSectionLayer.providedBy(request) and IOwned.providedBy(item):
+            # !+delegation?
+            if item.owner == get_db_user():
+                state_title = "<b>%s</b> *" % (state_title)
+        return state_title
     return column.GetterColumn(title, getter)
 
 
