@@ -1114,19 +1114,57 @@ class _AutoCompleteWidget(ItemsEditWidgetBase):
         return "\n".join(contents)
 
 
-def AutoCompleteWidget(*attrs, **kw):
-    kw.setdefault("remote_data", True)
-    return CustomWidgetFactory(_AutoCompleteWidget, *attrs, **kw)
-  
+# We instantiate an AutoCompleteWidget class customized as we need it
+AutoCompleteWidget = CustomWidgetFactory(_AutoCompleteWidget, remote_data=True)
 
-# !+RENAME (mr, feb-2012) nothing specific to members in this widget!
-class MemberDropDownWidget(DropdownWidget):
+def AutoCompleteWidgetOrSingleChoice(*args, **kws):
+    """A "wrapper" widget, for "edit" mode, that decides dynamically whether to
+    use the AutoCompleteWidget (if multiple options available) or a DropDown
+    (that therefore will have upto only a single option!).
+    
+    Using an auto complete widget (or equivalent variation of) may be needed 
+    some cases, but inapropriate in others e.g. using auto-complete for:
+    - when an MP/User must be selected from entire list of MP/Users (that 
+      will be in the hundreds) e.g. when Clerk is creating a document, or 
+      admin adding a member to a group.
+    - (not ideal, but could be OK) when a delegated must select the
+      delegator on behalf of whom he is creating a document (s/he may have 
+      been delegated multiple times even if the common case would likley be 
+      only once).
+    But, for the very common case of when an MP (or a delegated-only-once user) 
+    is creating an own (delegator's) document, a autocomplete makes no sense 
+    at all--in fact in that case, this only-one-value-possible field should 
+    be set automatically... 
+
+    !+ enhance the only-1-option case to simply set the value and just 
+    display it as if in "view" mode.
+    """
+    field_property = args[0] # should always be zope.schema.Choice
+    if len(field_property.vocabulary) > 1:
+        return AutoCompleteWidget(*args, **kws)
+    else:
+        return UserDropDownWidget(*args, **kws)
+
+
+class VocabularyDefaultDropDownWidget(DropdownWidget):
 
     interface.implements(IGenenerateVocabularyDefault)
 
     def __init__(self, field, request):
-        super(MemberDropDownWidget, self).__init__(field,
-            field.vocabulary, request)
+        super(VocabularyDefaultDropDownWidget, self).__init__(
+            field, field.vocabulary, request)
+
+    def getDefaultVocabularyValue(self):
+        raise NotImplemented
+        
+        user_id = get_db_user_id()
+        try:
+            self.context.vocabulary.getTerm(user_id)
+        except LookupError:
+            return None
+        return user_id
+
+class UserDropDownWidget(VocabularyDefaultDropDownWidget):
 
     def getDefaultVocabularyValue(self):
         user_id = get_db_user_id()
@@ -1136,9 +1174,11 @@ class MemberDropDownWidget(DropdownWidget):
             return None
         return user_id
 
-class LanguageLookupWidget(MemberDropDownWidget):
+class LanguageLookupWidget(VocabularyDefaultDropDownWidget):
+
     def getDefaultVocabularyValue(self):
         return get_default_language()
+
 
 class TreeVocabularyWidget(DropdownWidget):
     """

@@ -125,11 +125,13 @@ WIDGETS = {
             listing.user_name_column,
             listing.user_listing_name_column_filter),
     ("user", "single_select"):
-        (widgets.UserURLDisplayWidget, None, widgets.AutoCompleteWidget(), None,
+        (widgets.UserURLDisplayWidget, None, 
+            widgets.AutoCompleteWidgetOrSingleChoice, None,
             listing.related_user_name_column, 
             listing.related_user_name_column_filter),
     ("member", "single_select"): # !+combine with "user"
-        (widgets.UserURLDisplayWidget, None, widgets.AutoCompleteWidget(), None,
+        (widgets.UserURLDisplayWidget, None, 
+            widgets.AutoCompleteWidgetOrSingleChoice, None,
             listing.linked_mp_name_column, 
             listing.related_user_name_column_filter),
 }
