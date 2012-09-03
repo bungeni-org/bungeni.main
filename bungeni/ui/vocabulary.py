@@ -687,7 +687,7 @@ class MemberOfParliamentSignatorySource(MemberOfParliamentSource):
             )
         return mp_query
 signatory = MemberOfParliamentSignatorySource("user_id")
-component.provideUtility(parliament_member, IVocabularyFactory, "signatory")
+component.provideUtility(signatory, IVocabularyFactory, "signatory")
 
 
 class MinistrySource(SpecializedSource):
