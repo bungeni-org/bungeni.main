@@ -61,11 +61,11 @@ class IAdminSectionLayer(IWorkspaceOrAdminSectionLayer):
 
 class IWorkspaceSectionLayer(IWorkspaceOrAdminSectionLayer):
     """Requests for an object within the workspace section."""
-class IWorkspaceMyDocumentsSectionLayer(IWorkspaceOrAdminSectionLayer):
+class IWorkspaceMyDocumentsSectionLayer(IWorkspaceSectionLayer):
     """Requests for an object within the workspace my documents section"""
-class IWorkspaceUnderConsiderationSectionLayer(IWorkspaceOrAdminSectionLayer):
+class IWorkspaceUnderConsiderationSectionLayer(IWorkspaceSectionLayer):
     """Requests for an object within the workspace under consideration"""
-class IWorkspaceSchedulingSectionLayer(IWorkspaceOrAdminSectionLayer):
+class IWorkspaceSchedulingSectionLayer(IWorkspaceSectionLayer):
     """Requests for an object within the scheduling section."""
     
 class IFeedViewletManager(IViewletManager):
