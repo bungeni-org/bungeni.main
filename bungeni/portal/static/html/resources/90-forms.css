@@ -371,4 +371,22 @@ div.blockOverlay {
     position: fixed;
     opacity: 0.6;
 }
+
+/* hovertext: show longtext/tooltip on hover of (truncated?) parent element */
+* > span.hovertext {
+    display: none
 }
+*:hover > span.hovertext {
+	display: block;
+    position: fixed;
+    top: 45%;
+    left: 25%;
+    width: 50%;
+	padding: .3em;
+	border:2px outset #BBB;
+	color:#000; background:#FF9;
+	text-align: center;
+}
+/* /hovertext */
+
+} /* /@media screen */

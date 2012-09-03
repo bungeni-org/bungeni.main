@@ -135,10 +135,36 @@ def date_from_to_column(name, title, vocabulary=None):
 
 # !+bungeni_custom a long_text_in_listings_truncate_at parameter?
 def truncatable_name_column(name, title, vocabulary=None, truncate_at=50):
+    """Text values may be long, and so can be unwieldy within a listing.
+    This listing column formatter displays a truncated version of that text
+    and will popup the full version fo the text on hover of the direct parent
+    element (that may be anything e.g. <a>, <p>, <div>) that contains the text.
+    
+    The markup for when a text is actually too long, so truncated, is:
+    
+        <X>the full version of long text is quite long ...
+            <span class="untruncated hovertext">
+                the full version of long text is quite long and only
+                displayed on hover of parent
+            </span>
+        </X>
+    
+    The markup for when a text is not long, so NOT truncated, is:
+    
+        <X>
+            <span class="untruncated">
+                the full text
+            </span>
+        </X>
+    """
+    truncated_markup = '%s...<span class="untruncated %s">%s</span>'
+    untruncated_markup = '<span class="untruncated">%s</span>'
     def renderer(value):
-        if len(value) > truncate_at:
-            return "%s..." % value[:truncate_at]
-        return value
+        if len(value) > 3 + truncate_at:
+            return truncated_markup % ( 
+                (value[:truncate_at], "hovertext", value))
+        else:
+            return untruncated_markup % (value)
     return _column(name, title, renderer)
 
 
