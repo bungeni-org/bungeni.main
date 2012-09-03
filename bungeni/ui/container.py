@@ -1,6 +1,5 @@
 log = __import__("logging").getLogger("bungeni.ui.container")
 
-import sys
 import datetime
 import simplejson
 import sqlalchemy.sql.expression as sql
@@ -25,7 +24,7 @@ from bungeni.core.workflow.interfaces import IWorkflowed
 from bungeni.core import translation
 
 from bungeni.ui import interfaces as ufaces
-from bungeni.ui.utils import url, date, debug
+from bungeni.ui.utils import url, date
 from bungeni.ui import cookies
 from bungeni.ui import browser
 from bungeni.utils import register
@@ -347,22 +346,14 @@ class ContainerJSONListing(ContainerJSONBrowserView):
         return start, limit
     
     def translate_objects(self, nodes, lang=None):
-        """ (nodes:[ITranslatable]) -> [nodes]
+        """Translate container items if context domain is translatable
         """
+        if not mfaces.ITranslatable.implementedBy(self.domain_model):
+            return nodes
         # !+ lang should always be valid here... make not optional, assert?
         if lang is None:
             lang = translation.get_request_language(request=self.request)
-        t_nodes = []
-        for node in nodes:
-            try:
-                t_nodes.append(translation.translate_obj(node, lang))
-            except (AssertionError,):  # node is not ITranslatable
-                debug.log_exc_info(sys.exc_info(), log_handler=log.warn)
-                # if a node is not translatable then we assume that NONE of
-                # the nodes are translatable, so we simply break out,
-                # returning the untranslated nodes as is
-                return nodes
-        return t_nodes
+        return [ translation.translate_obj(node, lang) for node in nodes ]
 
     def _json_values(self, nodes):
         """

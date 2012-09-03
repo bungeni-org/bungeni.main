@@ -169,7 +169,7 @@
      name="translate"
      for="bungeni.alchemist.interfaces.IAlchemistContent"
      class=".common.TranslateForm"
-     permission="zope.ManageContent"
+     permission="bungeni.translation.Add"
      />
 
   <browser:page

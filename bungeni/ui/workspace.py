@@ -1,5 +1,4 @@
 import os
-import time
 import simplejson
 from zope import component
 from zope.publisher.browser import BrowserPage
@@ -21,6 +20,7 @@ from bungeni.core.i18n import _
 from bungeni.core.interfaces import (IWorkspaceTabsUtility,
                                      IWorkspaceContainer,
                                      IWorkspaceUnderConsiderationContainer)
+from bungeni.models.interfaces import ITranslatable
 from bungeni.ui.utils import url
 from bungeni.ui.utils.common import get_workspace_roles
 from bungeni.ui import table
@@ -112,21 +112,14 @@ class WorkspaceContainerJSONListing(BrowserPage):
         return values
 
     def translate_objects(self, nodes, lang=None):
-        """ (nodes:[ITranslatable]) -> [nodes]
+        """ Translate container items if translatable
         """
         if lang is None:
             lang = translation.get_request_language(request=self.request)
-        t_nodes = []
-        for node in nodes:
-            try:
-                t_nodes.append(translation.translate_obj(node, lang))
-            except (AssertionError,):  # node is not ITranslatable
-                debug.log_exc_info(sys.exc_info(), log_handler=log.warn)
-                # if a node is not translatable then we assume that NONE of
-                # the nodes are translatable, so we simply break out,
-                # returning the untranslated nodes as is
-                return nodes
-        return t_nodes
+        for index, node in enumerate(nodes):
+            if ITranslatable.providedBy(node):
+                nodes[index] = translation.translate_obj(node, lang)
+        return nodes
     
     def check_permission(self, results):
         viewable = []
