@@ -15,6 +15,14 @@
     padding:0.2em;
 }
 
+.yui-skin-sam .yui-dt-first {
+    vertical-align:top;
+}
+
+.yui-skin-sam .row-heading {
+    background-color:#eeeeee !important;
+}
+
 .list-minutes.yui-dt-liner {
     width:96% !important;
 }
@@ -131,6 +139,16 @@ span.dt_title_unit{
 #yui-gen0 .yui-button span {
     border-style:none;
     border:none;
+}
+
+/* edit */
+#yui-gen0 .yui-button.schedule_noteedit button {
+    background-image: url(/@@/portal/images/page_white_edit.png);
+    background-repeat: no-repeat;
+    background-position: left;
+    padding-left:0px;
+    padding-right: 12px;
+    border: none;
 }
 
 /* edit/add */

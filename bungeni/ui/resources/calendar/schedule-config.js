@@ -318,6 +318,7 @@ YAHOO.bungeni.config = function(){
                                     sDt.scrollTo(sDt.getRow(new_index));
                                     sDt.unselectAllRows();
                                     sDt.selectRow(new_index+(recordData.value.length-1));
+                                    sDt.getTrEl(new_index+(recordData.value.length-1)).className += " row-"+recordData.type;
                                 }
                                 this.hide();
                             }else{
@@ -605,6 +606,16 @@ YAHOO.bungeni.config = function(){
                 }
             }
             
+            var noteEditButtonFormatter = function(el, record, column, data){
+                if (!el.innerHTML){
+                    var button = new YAHOO.widget.Button({
+                        label: SGlobals.column_discussion_noteedit_button,
+                        id: el.id + "-noteedit-button"
+                    });
+                    button.appendTo(el);
+                }
+            }            
+            
             var linkFormatter = function(el, oRecord, oColumn, oData, oDataTable) {
                 if(lang.isString(oData) && (oData > "")) {
                     el.innerHTML = ("<a href=\"" + oData + 
@@ -707,6 +718,7 @@ YAHOO.bungeni.config = function(){
                     }
                 });
                 orderButtons.appendTo(el);
+                
                 var deleteButton = new YAHOO.widget.Button({
                     label: "&nbsp;"
                 })
@@ -718,6 +730,7 @@ YAHOO.bungeni.config = function(){
                     );
                 });
                 deleteButton.appendTo(el);
+                
                 // adding minutes state
                 var index = this.getTrIndex(record);
                 var rec_data = record.getData();
@@ -766,6 +779,7 @@ YAHOO.bungeni.config = function(){
                 longText: longTextFormatter,
                 editButton: editButtonFormatter,
                 deleteButton: deleteButtonFormatter,
+                noteEditButton: noteEditButtonFormatter,
                 link: linkFormatter,
                 availableItemSelect: availableItemSelectFormatter,
                 rowControls: rowControlsFormatter

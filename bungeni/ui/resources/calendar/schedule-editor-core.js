@@ -118,6 +118,19 @@ YAHOO.bungeni.scheduling = function(){
         }
         
         /**
+         * @method addRowClass
+         * @description adds a class to identify row headings
+         **/
+        var addRowClass = function(args){
+            var sSize = YAHOO.bungeni.schedule.oDt.getRecordSet().getLength();
+            for (index=0; index<sSize; index++){
+                row_type = YAHOO.bungeni.schedule.oDt.getRecordSet()._records[index]._oData.item_type;
+                YAHOO.bungeni.schedule.oDt.getTrEl(index).className += " row-"+row_type;
+            }
+            this.unsubscribe("initEvent", renderScheduleControls);
+        }        
+        
+        /**
          * @method saveSchedule
          * @description Saves the agenda to bungeni remote database
          **/
@@ -226,6 +239,7 @@ YAHOO.bungeni.scheduling = function(){
             checkAndDoScrolling: checkAndDoScrolling,
             customSelectRow: customSelectRow,
             renderScheduleControls: renderScheduleControls,
+            addRowClass: addRowClass,
             saveSchedule: saveSchedule,
             populateScheduledKeys: populateScheduledKeys,
             refreshCells: refreshCells,
@@ -311,6 +325,9 @@ YAHOO.bungeni.scheduling = function(){
                 });
                 dataTable.subscribe("initEvent", 
                     YAHOO.bungeni.scheduling.handlers.renderScheduleControls
+                );
+                dataTable.subscribe("initEvent", 
+                    YAHOO.bungeni.scheduling.handlers.addRowClass
                 );
                 dataTable.subscribe("initEvent", 
                     YAHOO.bungeni.agendaconfig.afterDTRender
