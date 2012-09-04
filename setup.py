@@ -78,19 +78,24 @@ setup(name='bungeni',
                         'imsvdex',
                         'zdhtmlxscheduler',
                         'z3tinymce',
-            # The followning packages are used by:
+            # The following packages are used by:
             # bungeni.ui & bungeni.rest                        
                         'simplejson',                                                
+            #i18n tools - script generation during buildout
+                        'lovely.recipe==1.0.0',
             ],
       entry_points =
     {
     'console_scripts' : [
         'bungeni-reset-db = bungeni.core.schema:reset_database',
                 'bungeni-sync-index = bungeni.core.index:reset_index',
-        ],
+    ],
     'paste.app_factory' : [
         'main = bungeni.server.startup:application_factory'
-        ]
+    ],
+    'zc.buildout' : [
+        'i18n = bungeni.utils.i18n:I18n' 
+    ]
     }
  )
 
