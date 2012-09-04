@@ -36,6 +36,10 @@ from bungeni.utils import misc
 
 def get_field(fields, name):
     return misc.get_keyed_item(fields, name, key="name")
+def replace_field(fields, field):
+    return misc.replace_keyed_item(fields, field, key="name")
+def insert_field_after(fields, name, field):
+    fields.insert(fields.index(get_field(fields, name)) + 1, field)
     
 
 ####
@@ -1564,15 +1568,14 @@ class DocDescriptor(ModelDescriptor):
             render_type="date",
         ),
         # !+group_id only exposed in specific custom doc types
-        #Field(name="group_id", # [user]
-        #    modes="view edit add listing",
-        #    localizable=[ 
-        #        show("view edit listing"), 
+        #F(name="group_id",
+        #    label="Group",
+        #    localizable=[
+        #        show("view edit add listing"), 
         #    ],
-        #    property=schema.Choice(title=_("Group"),
-        #        source=vocabulary.MinistrySource("ministry_id"), # !+PLACEHOLDER_GROUP_SOURCE
-        #        required=False
-        #    ),
+        #    value_type="text",
+        #    render_type="single_select",
+        #    vocabulary="group",
         #),
         # subject
         # coverage
@@ -1595,109 +1598,100 @@ class EventDescriptor(DocDescriptor):
     display_name = _("Event")
     container_name = _("Events")
     
+    # !+ phase out default_field_order...
     fields = deepcopy(DocDescriptor.fields)
-    fields.append(
-        Field(name="group_id", # [user]
-            modes="view edit add listing",
-            localizable=[ 
+    insert_field_after(fields, "owner_id",
+        F(name="group_id",
+            label="Group",
+            localizable=[
+                show("view edit add listing"),
+            ],
+            value_type="text",
+            render_type="single_select",
+            vocabulary="group",
+        ))
+    default_field_order = DocDescriptor.default_field_order[:]
+    default_field_order.insert(
+        default_field_order.index("owner_id") + 1, "group_id")
+    replace_field(fields, 
+        # "non-legal" parliamentary documents may be added by any user
+        # !+GROUP_AS_OWNER(mr, apr-2012) for Event, a common case would be
+        # to be able to set a group (of the office/group member creating the 
+        # event) as the owner (but Group is not yet polymorphic with User). 
+        # For now we limit the owner of an Event to be simply the current 
+        # logged in user:
+        F(name="owner_id",
+            label="Owner",
+            required=True,
+            localizable=[
+                show("add"), # db-not-null-ui-add
+                show("edit"), # !+ displayed in view-mode... how to control this from config?
+                hide("view listing", "bungeni.Anonymous"),
+            ],
+            value_type="user", # !+user: constrained by "parent group" OR vocabulary
+            render_type="single_select",
+            vocabulary="owner_or_login",
+        ))
+    replace_field(fields, 
+        F(name="doc_type",
+            label="Event Type",
+            required=True,
+            localizable=[
                 show("view edit add listing"), 
             ],
-            property=schema.Choice(title=_("Group"),
-                source=vocabulary.GroupSource( 
-                    token_field="group_id",
-                    title_field="short_name",
-                    value_field="group_id",
-                ),
-                required=False,
-            ),
-        ),
-    )
-    with get_field(fields, "owner_id") as f:
-        # "non-legal" parliamentary documents may be added by any user
-        f.property = schema.Choice(title=_("Owner"), 
-            # !+GROUP_AS_OWNER(mr, apr-2012) for Event, a common case would be
-            # to be able to set a group (of the office/group member creating the 
-            # event) as the owner (but Group is not yet polymorphic with User). 
-            # For now we limit the owner of an Event to be simply the current 
-            # logged in user:
-            source=vocabulary.OwnerOrLoggedInUserSource(
-                token_field="user_id",
-                title_field="fullname",
-                value_field="user_id",
-            )
-        )
-        # !+f.localizable changing localizable modes AFTER Field is initialized
-        # gives mismatch error when descriptors are (re-)loaded, e.g. 
-        #f.localizable = [ hide("view edit add listing"), ]
-        f.listing_column = listing.related_user_name_column("owner_id", _("Name"))
-        f.listing_column_filter = listing.related_user_name_column_filter
-        f.view_widget = None
-        # !+ select or autocomplete... ?
-        #f.edit_widget=widgets.AutoCompleteWidget(remote_data=True,
-        #        yui_maxResultsDisplayed=5),
-        #f.add_widget=widgets.AutoCompleteWidget()
-    with get_field(fields, "doc_type") as f:
-        # "non-legal" parliamentary documents may be added by any user
-        f.property = schema.Choice(title=_("Event Type"),
-                source=vocabulary.event_type,
-        )
-        listing_column = listing.vocabulary_column("event_type",
-            _("Event Type"),
-            vocabulary.event_type
-        )
-    del f # remove f from class namespace
+            value_type="vocabulary",
+            render_type="single_select",
+            vocabulary="event_type",
+        ))
 
 
 # !+AuditLogView(mr, nov-2011) change listings do not respect this
 class ChangeDescriptor(ModelDescriptor):
     localizable = False
     fields = [
-        Field(name="audit_id", # [sys]
-            modes="view listing",
+        F(name="audit_id",
             localizable=[ hide("view listing"), ],
         ),
-        Field(name="user_id",
-            modes="view listing",
-            localizable=[ show("view listing"), ],
-            property=schema.Choice(title=_("User"), vocabulary="user"),
-            view_widget=None,
-            listing_column=listing.related_user_name_column("user_id", _("Name")),
-            # !+ audit listing column filtering currently disabled
-            #listing_column_filter=listing.related_user_name_column_filter,
+        F(name="user_id",
+            label="User",
+            required=True,
+            localizable=[
+                show("view listing"),
+            ],
+            value_type="user",
+            render_type="single_select",
+            vocabulary="user",
         ),
-        Field(name="action",
-            modes="view listing",
-            localizable=[ show("view listing"), ],
-        ),
-        Field(name="seq",
-            modes="view listing",
-            localizable=[ show("view listing"), ],
-        ), 
-        Field(name="procedure",
-            modes="view listing",
+        F(name="action",
             localizable=[ show("view listing"), ],
         ),
-        Field(name="date_audit", # [sys]
-            modes="view listing",
-            localizable=[ hide("view listing"), ],
-            property=schema.Date(title=u"Audit Date", required=True),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget,
-            listing_column=listing.datetime_column("date_audit", _("Date Audit")),
-            search_widget=widgets.date_input_search_widget
-        ),
-        Field(name="date_active", # [user]
-            modes="view listing",
+        F(name="seq",
             localizable=[ show("view listing"), ],
-            property=schema.Date(title=u"Active Date", required=True),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget,
-            listing_column=listing.datetime_column("date_active", 
-                _("Date Active")),
-            search_widget=widgets.date_input_search_widget
+        ),
+        F(name="procedure",
+            localizable=[ show("view listing"), ],
+        ),
+        F(name="date_audit",
+           label="Date Audit",
+           required=True,
+           localizable=[
+                hide("view listing"),
+            ],
+            value_type="datetime",
+            render_type="datetime",
+        ),
+        F(name="date_active",
+           label="Date Active",
+           required=True,
+           localizable=[
+                show("view listing"),
+            ],
+            value_type="datetime",
+            render_type="datetime",
         ),
     ]
     default_field_order = [
+        #"audit_id",
         "user_id",
         "action",
         "seq",
@@ -1721,31 +1715,22 @@ class DocVersionDescriptor(VersionDescriptor):
     """Base UI Descriptor for Doc archetype."""
     localizable = True #!+VERSION_CLASS_PER_TYPE that "inherits" UI desc?
     default_field_order = \
-        deepcopy(VersionDescriptor.default_field_order) + \
-        deepcopy(DocDescriptor.default_field_order)
+        VersionDescriptor.default_field_order[:] + \
+        DocDescriptor.default_field_order[:]
     fields = \
         deepcopy(VersionDescriptor.fields) + \
         deepcopy(DocDescriptor.fields)
-    with get_field(fields, "status") as f:
-        f.modes = "view listing"
-        f.localizable = [ show("view listing"), ]
-        f.property = schema.Text(title=_("Status"))
-    del f # remove f from class namespace
+
 
 class AttachmentVersionDescriptor(VersionDescriptor):
     """UI Descriptor for Attachment archetype."""
     localizable = True
     default_field_order = \
-        deepcopy(VersionDescriptor.default_field_order) + \
-        list(deepcopy(AttachmentDescriptor.default_field_order))
+        VersionDescriptor.default_field_order[:] + \
+        AttachmentDescriptor.default_field_order[:]
     fields = \
         deepcopy(VersionDescriptor.fields) + \
         deepcopy(AttachmentDescriptor.fields)
-    with get_field(fields, "status") as f:
-        f.modes = "view listing"
-        f.localizable = [ show("view listing"), ]
-        f.property = schema.Text(title=_("Status"))
-    del f # remove f from class namespace
 
 
 class HeadingDescriptor(ModelDescriptor):
@@ -1755,14 +1740,14 @@ class HeadingDescriptor(ModelDescriptor):
     container_name = _("Headings")
     
     fields = [
-        Field(name="text", # [user-req]
-            modes="view edit add listing",
+        F(name="text",
+            label="Title",
+            required=True,
             localizable=[
-                show("view edit listing"),
+                show("add"), # db-not-null-ui-add
+                show("view edit"),
+                hide("listing"),
             ],
-            property=schema.TextLine(title=_("Title")),
-            edit_widget=widgets.TextWidget,
-            add_widget=widgets.TextWidget,
         ),
         LanguageField("language"), # [user-req]
     ]
@@ -1775,12 +1760,8 @@ class AgendaItemDescriptor(DocDescriptor):
     container_name = _("Agenda items")
     
     fields = deepcopy(DocDescriptor.fields)
-    fields.append(AdmissibleDateField()) # [sys]
-    get_field(fields, "admissible_date").localizable = [
-        show("view"),
-        hide("listing"),
-    ]
-    default_field_order= DocDescriptor.default_field_order[:]
+    insert_field_after(fields, "submission_date", AdmissibleDateField())
+    default_field_order = DocDescriptor.default_field_order[:]
     default_field_order.insert(
         default_field_order.index("submission_date") + 1, "admissible_date")
 
@@ -1799,21 +1780,17 @@ class MotionDescriptor(DocDescriptor):
     display_name = _("Motion")
     container_name = _("Motions")
     fields = deepcopy(DocDescriptor.fields)
-    fields.extend([
-        AdmissibleDateField(),
-        Field(name="notice_date", # [sys]
-            modes="view listing",
-            localizable=[ 
-                show("view"),
+    insert_field_after(fields, "submission_date", AdmissibleDateField())
+    insert_field_after(fields, "admissible_date", 
+        F(name="notice_date",
+            label="Notice Date",
+            localizable=[
+                show("view"), 
                 hide("listing"),
             ],
-            property=schema.Date(title=_("Notice Date"), required=False),
-        ),
-    ])
-    get_field(fields, "admissible_date").localizable = [
-        show("view"),
-        hide("listing"),
-    ]
+            value_type="date",
+            render_type="date",
+        ))
     default_field_order= DocDescriptor.default_field_order[:]
     default_field_order.insert(
         default_field_order.index("submission_date") + 1, "admissible_date")
@@ -1845,51 +1822,29 @@ class BillDescriptor(DocDescriptor):
     container_name = _("Bills")
 
     fields = deepcopy(DocDescriptor.fields)
-    # remove "doc_type"
-    fields[:] = [ f for f in fields if f.name not in ("doc_type",) ]
-    # tweak...
-    with get_field(fields, "body") as f:
-        f.label = _("Statement of Purpose")
-        f.property = schema.Text(title=_("Statement of Purpose"), required=False)
-    del f # remove f from class namespace
-    
-    fields.extend([
-        Field(name="short_title", # [user-req]
-            modes="view edit add listing",
+    replace_field(fields, 
+        F(name="doc_type",
+            label="Bill Type",
+            required=True,
+            localizable=[
+                show("view edit add listing"), 
+            ],
+            value_type="vocabulary",
+            render_type="single_select",
+            vocabulary="bill_type",
+        ))
+    replace_field(fields, 
+        F(name="body",
+            label="Statement of Purpose",
+            required=False,
             localizable=[
                 show("view edit add"),
-                hide("listing"),
             ],
-            property=schema.TextLine(title=_("Short Title")),
-            #!+view_widget=widgets.ComputedTitleWidget,
-            edit_widget=widgets.TextWidget,
-            add_widget=widgets.TextWidget,
-        ),
-        Field(name="doc_type", # [user-req]
-            modes="view edit add listing",
-            localizable=[ 
-                show("view edit listing"), 
-            ],
-            property=schema.Choice(title=_("Bill Type"),
-                source=vocabulary.bill_type,
-            ),
-            listing_column=listing.vocabulary_column("doc_type",
-                _("Bill Type"),
-                vocabulary.bill_type
-            ),
-        ),
-        Field(name="group_id", # [user]
-            modes="view edit add listing",
-            localizable=[ 
-                show("view edit add"),
-                hide("listing"),
-            ],
-            property=schema.Choice(title=_("Ministry"),
-                source=vocabulary.MinistrySource("ministry_id"),
-                required=False
-            ),
-            listing_column_filter=listing.ministry_column_filter
-        ),
+            value_type="text",
+            render_type="rich_text",
+        ))
+    default_field_order = DocDescriptor.default_field_order[:]
+    insert_field_after(fields, "submission_date", 
         F(name="publication_date",
             label="Publication Date",
             localizable=[
@@ -1897,11 +1852,33 @@ class BillDescriptor(DocDescriptor):
             ],
             value_type="date",
             render_type="date",
-        ),
-    ])
-    default_field_order= DocDescriptor.default_field_order[:]
+        ))
     default_field_order.insert(
         default_field_order.index("submission_date") + 1, "publication_date")
+    insert_field_after(fields, "publication_date", 
+        F(name="short_title",
+            label="Statement of Purpose",
+            required=True,
+            localizable=[
+                show("view edit add listing"),
+            ],
+        ))
+    default_field_order.insert(
+        default_field_order.index("publication_date") + 1, "short_title")
+    insert_field_after(fields, "short_title", 
+        F(name="group_id",
+            label="Ministry",
+            localizable=[
+                show("view edit add"),
+                hide("listing"),
+            ],
+            value_type="text", #!+group?
+            render_type="single_select",
+            vocabulary="ministry", 
+            #!+listing_column_filter=listing.ministry_column_filter
+        ))
+    default_field_order.insert(
+        default_field_order.index("short_title") + 1, "group_id")
 
 
 ''' !+VERSION_CLASS_PER_TYPE

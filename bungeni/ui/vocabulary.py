@@ -36,16 +36,19 @@ from bungeni.alchemist.container import valueKey
 from bungeni.alchemist.interfaces import IAlchemistContainer
 from bungeni.alchemist.interfaces import IAlchemistContent
 
-from bungeni.models.interfaces import ISubRoleAnnotations
-from bungeni.models.interfaces import IBungeniGroup
 from bungeni.models import schema, domain, utils, delegation
-from bungeni.models.interfaces import (ITranslatable, ISignatory,)
+from bungeni.models.interfaces import (
+    ISubRoleAnnotations,
+    IBungeniGroup,
+    ITranslatable, 
+    ISignatory,
+    IVersion,
+)
 
 from bungeni.core.translation import translate_obj
 from bungeni.core.language import get_default_language
 from bungeni.core.dc import IDCDescriptiveProperties
 from bungeni.core.workflows.utils import get_group_local_role
-from bungeni.core.workflow.interfaces import IWorkflow
 
 from bungeni.ui.utils import common
 from bungeni.ui.interfaces import ITreeVocabulary
@@ -497,17 +500,19 @@ component.provideUtility(GroupTitleTypesFactory(), IVocabularyFactory, "group_ti
 
 class WorkflowStatesVocabularyFactory(BaseVocabularyFactory):
     def __call__(self, context):
-        if IAlchemistContent.providedBy(context):
-            ctx = context
-        elif  IAlchemistContainer.providedBy(context):
-            domain_model = removeSecurityProxy(context.domain_model)
-            ctx = domain_model()
-        workflow = IWorkflow(ctx)
-        items = []
-        for status in workflow.states.keys():
-            items.append(vocabulary.SimpleTerm(
-                    status, status, _(workflow.get_state(status).title)))
-        return vocabulary.SimpleVocabulary(items)
+        if IVersion.providedBy(context):
+            # also provides IAlchemistContent (check must precede)
+            discriminator = removeSecurityProxy(context).head
+        elif IAlchemistContent.providedBy(context):
+            discriminator = context
+        elif IAlchemistContainer.providedBy(context):
+            discriminator = context.domain_model
+        wf = capi.get_type_info(discriminator).workflow
+        terms = [ 
+            vocabulary.SimpleTerm(status, status, _(wf.get_state(status).title))
+            for status in wf.states.keys() 
+        ]
+        return vocabulary.SimpleVocabulary(terms)
 workflow_states = WorkflowStatesVocabularyFactory()
 component.provideUtility(workflow_states, IVocabularyFactory, "workflow_states")
 
@@ -764,6 +769,9 @@ class MinistrySource(SpecializedSource):
                         title = get_translated_group_label(ob)
                 ))
         return vocabulary.SimpleVocabulary(terms)
+ministry = MinistrySource("ministry_id")
+component.provideUtility(ministry, IVocabularyFactory, "ministry")
+
 
 '''
 class MemberTitleSource(SpecializedSource):
@@ -821,6 +829,12 @@ class OwnerOrLoggedInUserSource(SpecializedSource):
                 title=getattr(obj, title_field)),
         ]
         return vocabulary.SimpleVocabulary(terms)
+owner_or_login = OwnerOrLoggedInUserSource(
+    token_field="user_id",
+    title_field="fullname",
+    value_field="user_id"
+)
+component.provideUtility(owner_or_login, IVocabularyFactory, "owner_or_login")
 
 
 class UserSource(SpecializedSource):
@@ -837,6 +851,7 @@ user = UserSource(
     value_field="user_id"
 )
 component.provideUtility(user, IVocabularyFactory, "user")
+
 
 class GroupSource(SpecializedSource):
     """All active groups.
@@ -859,6 +874,12 @@ class GroupSource(SpecializedSource):
                     title = get_translated_group_label(ob)
                 ))
         return vocabulary.SimpleVocabulary(terms)
+group = GroupSource( 
+    token_field="group_id",
+    title_field="short_name",
+    value_field="group_id",
+)
+component.provideUtility(group, IVocabularyFactory, "group")
 
 
 class MembershipUserSource(UserSource):

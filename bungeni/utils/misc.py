@@ -46,11 +46,20 @@ def as_bool(s):
 # list
 
 def get_keyed_item(seq, value, key="name"):
-    """Get the item in the sequence that has a {key} entry set to {value}.
+    """Get the first item in the sequence that has a {key} entry set to {value}.
     """
     for s in seq:
         if s[key] == value:
             return s
         
-
+def replace_keyed_item(seq, replacement_item, key="name"):
+    """Replace the first item in the sequence whose {key} value is same as 
+    replacement_item[{key}].
+    """
+    for s in seq:
+        if s[key] == replacement_item[key]:
+            seq[seq.index(s)] = replacement_item
+            return
+    raise LookupError("No matching item [%s=%r] found in seq: %s" % (
+        key, replacement_item[key], seq))
 
