@@ -14,18 +14,17 @@ import zope.interface
 from zope.securitypolicy.interfaces import IRole
 from zope.securitypolicy.role import Role
 from bungeni.models import interfaces
-from bungeni.utils import register
 
 
-@register.adapter(adapts=(IRole,))
-@zope.annotation.factory
 class SubRoleAnnotations(object):
     zope.interface.implements(interfaces.ISubRoleAnnotations)
-    zope.component.adapts(IRole)  # zope.annotation.factory wants this here
-    def __init__(self):
+    zope.component.adapts(IRole)
+
+    def __init__(self, context):
         self.sub_roles = []
         self.is_sub_role = False
         self.parent = None
+
 
 def sub_role_configure(context, id, title, description, role):
     role_annt = interfaces.ISubRoleAnnotations(
@@ -37,10 +36,11 @@ def sub_role_configure(context, id, title, description, role):
     sub_role.parent = role
     gsm = zope.component.getGlobalSiteManager()
     gsm.registerUtility(sub_role, IRole, id)
-    
-    
+
+
 def sub_role_handler(context, **kw):
     context.action(discriminator=('RegisterSubRoles', kw["id"], kw["role"]),
                    callable=sub_role_configure,
-                   args = (context, kw["id"], kw["title"], getattr(kw, "description", None), kw["role"])
+                   args=(context, kw["id"], kw["title"], getattr(
+                        kw, "description", None), kw["role"])
                    )
