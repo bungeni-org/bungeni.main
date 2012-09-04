@@ -111,10 +111,16 @@ class CAPI(object):
     
     @property
     @bungeni_custom_errors
+    def long_text_column_listings_truncate_at(self):
+        """When listing text columns, only display first so many characters."""
+        return int(bc.long_text_column_listings_truncate_at)
+    
+    @property
+    @bungeni_custom_errors
     def workspace_tab_count_cache_refresh_time(self):
         """The duration in seconds between tab count refresh operations"""
         return int(bc.workspace_tab_count_cache_refresh_time)
-
+    
     # utility methods
     
     def get_root_path(self):

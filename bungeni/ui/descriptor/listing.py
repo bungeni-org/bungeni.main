@@ -39,7 +39,7 @@ from bungeni.ui.interfaces import IWorkspaceSectionLayer, IAdminSectionLayer
 from bungeni.ui import vocabulary
 from bungeni.ui.utils import common, date, url
 from bungeni.ui.i18n import _
-
+from bungeni.utils.capi import capi
 
 # support utils 
 
@@ -133,8 +133,9 @@ def date_from_to_column(name, title, vocabulary=None):
     return column.GetterColumn(title, getter)
 
 
-# !+bungeni_custom a long_text_in_listings_truncate_at parameter?
-def truncatable_name_column(name, title, vocabulary=None, truncate_at=50):
+def truncatable_text_column(name, title, vocabulary=None, 
+        truncate_at=capi.long_text_column_listings_truncate_at
+    ):
     """Text values may be long, and so can be unwieldy within a listing.
     This listing column formatter displays a truncated version of that text
     and will popup the full version fo the text on hover of the direct parent

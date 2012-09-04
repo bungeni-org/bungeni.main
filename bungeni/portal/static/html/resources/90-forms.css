@@ -35,14 +35,14 @@ input {
     vertical-align: top;
     background: transparent;
     font-size: 1em;
-	clear: left;
-	background: #fff;
+    clear: left;
+    background: #fff;
 }
 
 .actionButtons {
-	display: block;
-	height: 25px;
-	padding-left: .5em;
+    display: block;
+    height: 25px;
+    padding-left: .5em;
 }
 
 /* Code to work around IE's lacking support of sub-elements of the input element */
@@ -99,7 +99,7 @@ legend {
 }
 label {
     font-weight: bold !important;
-	color: #444;
+    color: #444;
 }
 optgroup {
   font-style: normal;
@@ -158,26 +158,26 @@ dl.enableFormTabbing dd {
     cursor: pointer;
     font-size: 90%;
     /*padding: 1px 1px 1px 15px;*/
-	padding: 0;
-	padding-right: .25em;
-	padding-left: 15px;
-	line-height: 16px;
-	height: 22px;
+    padding: 0;
+    padding-right: .25em;
+    padding-left: 15px;
+    line-height: 16px;
+    height: 22px;
     text-transform: none;
     border: 1px solid #8cacbb;
-	border-radius: 5px;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
 }
 .context:hover,
 .formControls .actionButtons .button:hover,
 .documentEditable * .context:hover {
-	background-color: #ccf;
+    background-color: #ccf;
 }
 .context:active,
 .formControls .actionButtons .button:active,
 .documentEditable * .context:active {
-	margin-top: 1px;
+    margin-top: 1px;
 }
 .destructive,
 .documentEditable * .destructive {
@@ -225,14 +225,14 @@ input.searchButton {
     margin: 0;
 }
 .field div {
-	margin: .25em 0;
+    margin: .25em 0;
 }
 .yui-overlay,
 .yui-panel-container {width: 200px;}
 
 #form__range_start_date-calendarmenu[style] {
-	z-index: 9 !important;
-	border: 1px solid transparent !important;
+    z-index: 9 !important;
+    border: 1px solid transparent !important;
 }
 .fieldRequired {
     background: url(required.gif) center left no-repeat;
@@ -282,7 +282,7 @@ div.error {
     font-weight: bold;
 }
 input.inputLabelActive {
-	color: #76797c;
+    color: #76797c;
 }
 
 textarea#form\.description {
@@ -295,42 +295,42 @@ tr.selected {
 }
 
 .kupu-save-message {
-	color: white;
-	font-weight: bold;
-	background-color: red;
-	padding: 0.3em;
-	position: fixed;
-	top: 0;
-	right: 0;
-	z-index: 999;
+    color: white;
+    font-weight: bold;
+    background-color: red;
+    padding: 0.3em;
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 999;
 }
 
 div.content-left-column{
-	float: left;
-	width : 30%;
+    float: left;
+    width : 30%;
 }
 div.content-right-column{
-	float: right;
-	width: 70%;
+    float: right;
+    width: 70%;
 }
 
 /*
  * clear all fields to the left so that they begin on a new line.
  */
 form#alchemist-form .field {
-	clear: left;
+    clear: left;
 }
 .section-bungeni-admin form#alchemist-form {
-	position: relative;
-	float: left;
-	width: 100%;
+    position: relative;
+    float: left;
+    width: 100%;
 }
 .section-bungeni-admin form#alchemist-form p {
-	text-align: left;
+    text-align: left;
 }
 .section-bungeni-workspace form#alchemist-form {
-	width: 95%;
-	margin: 0 auto;
+    width: 95%;
+    margin: 0 auto;
 }
 
 /* 
@@ -340,23 +340,23 @@ form#alchemist-form .field {
  */
 form#alchemist-form #field\.form\.registry_number,
 form#alchemist-form #field\.form\.owner_id {
-	float: left;
-	clear: none !important; 
+    float: left;
+    clear: none !important; 
 }
 form#alchemist-form #field\.form\.language {
-	clear: right;
+    clear: right;
 }
 
 #field\.form\.receive_notification div.value {
-	overflow: hidden;
-	height: 20px;
+    overflow: hidden;
+    height: 20px;
 }
 #field\.form\.receive_notification div.value label {
-	float: left;
-	display: block;
+    float: left;
+    display: block;
 }
 #field\.form\.receive_notification div.value br {
-	display: none;
+    display: none;
 }
 /* form processing and action enhancements */
 div.processing_indicatron{
@@ -377,15 +377,15 @@ div.blockOverlay {
     display: none
 }
 *:hover > span.hovertext {
-	display: block;
+    display: block;
     position: fixed;
     top: 45%;
     left: 25%;
     width: 50%;
-	padding: .3em;
-	border:2px outset #BBB;
-	color:#000; background:#FF9;
-	text-align: center;
+    padding: .3em;
+    border:2px outset #BBB;
+    color:#000; background:#FF9;
+    text-align: center;
 }
 /* /hovertext */
 

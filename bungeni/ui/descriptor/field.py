@@ -67,10 +67,10 @@ RENDERTYPE_WITH_VOCABULARIES = ("single_select", "radio", "tree_text")
 WIDGETS = {
     ("text", "text_line"):
         (None, None, None, None, 
-            listing.truncatable_name_column, None),
+            listing.truncatable_text_column, None),
     ("text", "text_box"):
         (None, widgets.TextAreaWidget, widgets.TextAreaWidget, None, 
-            listing.truncatable_name_column, None),
+            listing.truncatable_text_column, None),
     ("text", "rich_text"):
         (widgets.HTMLDisplay, widgets.RichTextEditor, widgets.RichTextEditor, 
             None, None, None),
