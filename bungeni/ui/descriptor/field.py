@@ -23,6 +23,7 @@ VALUETYPE = {
     "date": {},
     "datetime": {},
     "timestamp": {}, # !+ is this at all needed? Timestamps should never appear in the UI?
+    "duration": {}, # !+ this "consumes" 2 columns, so probably have dedicated widget type? entirely 
     "bool": {"default": True},
     "number": {},
     "status": {},
@@ -37,6 +38,7 @@ VALUETYPE = {
     "member": {}, # !+ should be "archetype generic" e.g. should not assume "member of parliament"
     "signatory": {}, # !+
     "combined_name": {}, # !+
+    "group": {},
 }
 
 
@@ -92,9 +94,13 @@ WIDGETS = {
             widgets.date_input_search_widget,
             listing.date_column, None),
     ("datetime", "datetime"):
-        (None, widgets.DateWidget, widgets.DateWidget, 
+        (None, widgets.DateTimeWidget, widgets.DateTimeWidget, 
             widgets.date_input_search_widget,
             listing.datetime_column, None),
+    ("duration", "datetime"):
+        (None, widgets.DateTimeWidget, widgets.DateTimeWidget, 
+            widgets.date_input_search_widget,
+            listing.duration_column, None),
     # Used in edit mode (doc) to check if form timestamp differs from db timestamp
     ("timestamp", "datetime"): 
         (None, widgets.HiddenTimestampWidget, None, None, None, None),
@@ -134,6 +140,10 @@ WIDGETS = {
             widgets.AutoCompleteWidgetOrSingleChoice, None,
             listing.member_linked_name_column, 
             listing.related_user_name_column_filter),
+    ("group", "single_select"):
+        (None, None, None, None,
+            listing.related_group_column,
+            listing.related_group_column_filter),
 }
 
 

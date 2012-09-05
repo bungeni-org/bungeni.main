@@ -61,7 +61,7 @@ except ImportError:
     import simplejson as json
 import imsvdex.vdex
 
-
+# !+combined_name?
 def get_translated_group_label(group):
     """Get a translated display text to refer to the group.
     """
@@ -105,8 +105,9 @@ class VDEXVocabularyMixin(object):
             file=open(capi.get_path_for("vocabularies", file_name)))
         # register each instance as a named utility on IVocabularyFactory
         assert file_name.endswith(".vdex")
-        component.provideUtility(self,
-            IVocabularyFactory, file_name[:-len(".vdex")])
+        # !+tmp to make up for naming inconsistencies e.g. sitting-activity-types.vdex
+        vocabulary_name = file_name[:-len(".vdex")].replace("-", "_")
+        component.provideUtility(self, IVocabularyFactory, vocabulary_name)
     
     # zope.schema.interfaces.IBaseVocabulary (inherits from ISource)
     
@@ -460,25 +461,26 @@ class VenueFactory(BaseVocabularyFactory):
         results = Session().query(domain.Venue).all()
         terms = []
         for ob in results:
-            terms.append(vocabulary.SimpleTerm(
-                    value = ob.venue_id, 
-                    token = ob.venue_id,
-                    title = "%s" % IDCDescriptiveProperties(ob).title
-                )
-            )
+            terms.append(
+                vocabulary.SimpleTerm(
+                    value=ob.venue_id, 
+                    token=ob.venue_id,
+                    title="%s" % IDCDescriptiveProperties(ob).title
+                ))
         return vocabulary.SimpleVocabulary(terms)
 venue_factory = VenueFactory()
+component.provideUtility(venue_factory, IVocabularyFactory, "venue")
 
 
 class GroupTitleTypesFactory(SpecializedSource):
     def __init__(self):
         pass
-        
+    
     def constructQuery(self, context):
         session= Session()
         return session.query(domain.TitleType) \
                 .filter(schema.title_types.c.group_id == context.group_id)
-
+    
     def __call__(self, context=None):
         while not IBungeniGroup.providedBy(context):
             context = context.__parent__

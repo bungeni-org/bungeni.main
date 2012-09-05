@@ -24,6 +24,8 @@ log = __import__("logging").getLogger("bungeni.ui.descriptor.listing")
 from sqlalchemy.sql import expression, func
 from sqlalchemy.exc import ArgumentError
 
+from zope.component import getUtility
+from zope.schema.interfaces import IVocabularyFactory
 from zope.i18n import translate
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.security.proxy import removeSecurityProxy
@@ -36,7 +38,6 @@ from bungeni.models import domain
 from bungeni.models.utils import get_db_user, get_member_of_parliament
 from bungeni.models.interfaces import IOwned, IScheduleText
 from bungeni.ui.interfaces import IWorkspaceSectionLayer, IAdminSectionLayer
-from bungeni.ui import vocabulary
 from bungeni.ui.utils import common, date, url
 from bungeni.ui.i18n import _
 from bungeni.utils.capi import capi
@@ -106,6 +107,10 @@ def get_mapper_property_name_for_fk(name_id):
         "related_user_name_column name=%r does not end with %r" % (name_id, "_id")
     return name_id[:-len("_id")]
 
+def get_vocabulary(vocabulary_name):
+    return getUtility(IVocabularyFactory, vocabulary_name)
+
+
 # column listings & filters
 
 def date_column(name, title, vocabulary=None):
@@ -117,15 +122,16 @@ def datetime_column(name, title, vocabulary=None):
 #    return localized_datetime_column(name, title, default, "time", "long")
 
 
-def date_from_to_column(name, title, vocabulary=None):
+def duration_column(from_name, title, vocabulary=None, to_name="end_date"):
+    # from_name e.g. "start_date"
     format_length = "medium"
     def getter(item, formatter):
         request = common.get_request()
-        start = getattr(item, "start_date")
+        start = getattr(item, from_name)
         if start:
             start = date.getLocaleFormatter(request,
                 "dateTime", format_length).format(start)
-        end = getattr(item, "end_date")
+        end = getattr(item, to_name)
         if end:
             end = date.getLocaleFormatter(request,
                 "time", format_length).format(end)
@@ -193,13 +199,16 @@ def combined_name_column_filter(query, filter_string, sort_dir_func, column=None
         query, filter_string, sort_dir_func)
 
 
+''' !+UNUSED should not be needed - the properly preprpared and localized 
+    "title" of a term should already be defined by the vocabulary!
+    
 def dc_property_column(name, title, vocabulary=None, property_name="title"):
     def renderer(value):
         if value:
             return getattr(IDCDescriptiveProperties(value), property_name, "")
         return ""
     return _column(name, title, renderer)
-
+'''
 
 # !+related_user_name_column - should also link to mp/user? Merge with member_linked_name_column?
 def related_user_name_column(name, title, vocabulary=None):
@@ -285,20 +294,19 @@ def workflow_column(name, title, vocabulary=None):
     return column.GetterColumn(title, getter)
 
 
-# !+ group?
-def ministry_column(name, title, vocabulary=None):
+def related_group_column(name, title, vocabulary):
+    vocabulary_factory = get_vocabulary(vocabulary)
     def getter(item, formatter):
-        # !+TRANSLATE_ATTR(mr, sep-2010)
-        #m = item.ministry
-        #return translation.translate_attr(m, m.group_id, "short_name")
-        return vocabulary.get_translated_group_label(item.ministry)
+        vocabulary = vocabulary_factory(item)
+        return vocabulary.getTerm(getattr(item, name)).title
     return column.GetterColumn(title, getter)
 
-def ministry_column_filter(query, filter_string, sort_dir_func, column=None):
-    query = query.join(domain.Ministry)
+def related_group_column_filter(query, filter_string, sort_dir_func, column=None):
+    query = query.join(domain.Group)
     return _multi_attrs_column_filter(
-        [domain.Ministry.full_name, domain.Ministry.short_name],
+        [domain.Group.full_name, domain.Group.short_name],
         query, filter_string, sort_dir_func)
+
 
 
 def scheduled_item_title_column(name, title):
@@ -324,15 +332,31 @@ def scheduled_item_uri_column(name, title):
     return column.GetterColumn(title, getter)
 
 
-def vocabulary_column(name, title, vocabulary=None):
+def vocabulary_column(name, title, vocabulary):
     """Get getter for the enum-value of an enumerated column.
     """
     if isinstance(vocabulary, basestring): # !+tmp
-        from zope.component import getUtility
-        from zope.schema.interfaces import IVocabularyFactory
-        vocabulary = getUtility(IVocabularyFactory, vocabulary)
-    def getter(context, formatter):
+        vocabulary = get_vocabulary(vocabulary)
+    
+    from bungeni.ui.vocabulary import VDEXVocabularyMixin
+    def getter(context, formatter, vocabulary=vocabulary):
+        
+        # if this is a vocabulary factory, we need to instantiate with context
+        #
+        # !+ but, when context is irrelevant, call-it-as-factory to get a 
+        # context-bound instance seems unnecessarily inefficient! 
+        #
+        # !+ VDEXVocabularyMixin-based FlatVDEXVocabularyFactory and 
+        # TreeVDEXVocabulary (but this is as yet never included in a listing) 
+        # already implement getTerm() -- that is all that is needed here, and 
+        # the term returned is already localized, so we really do not need to 
+        # call-it-as-factory to bind it to context on each lookup...
+        if not isinstance(vocabulary, VDEXVocabularyMixin):
+            if IVocabularyFactory.providedBy(vocabulary):
+                vocabulary = vocabulary(context)
+        
         try:
+            # !+_(): is not term.title below ALWAYS already localized?
             return _(vocabulary.getTerm(getattr(context, name)).title)
         except LookupError:
             # !+NONE_LOOKUPERROR(mr, jul-2012) probably a vdex, 
@@ -346,12 +370,8 @@ def vocabulary_column(name, title, vocabulary=None):
             assert value is None, m
             log.warn(m)
             return None
-        except AttributeError:
-            # !+bungeni.ui.vocabulary.SpecializedSource -> GroupTitleTypesFactory
-            from bungeni.ui.vocabulary import GroupTitleTypesFactory
-            assert isinstance(vocabulary, GroupTitleTypesFactory)
-            return context.title_type.title_name
     return column.GetterColumn(title, getter)
+
 
 ''' !+TYPES_CUSTOM
 def enumeration_column(name, title,
