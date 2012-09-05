@@ -9,18 +9,19 @@ $Id$
 log = __import__("logging").getLogger("bungeni.models.roles")
 
 import zope.annotation
-import zope.component
-import zope.interface
+from  zope.component import adapts
+from zope.interface import implements
 from zope.securitypolicy.interfaces import IRole
 from zope.securitypolicy.role import Role
 from bungeni.models import interfaces
 
 
+@zope.annotation.factory
 class SubRoleAnnotations(object):
-    zope.interface.implements(interfaces.ISubRoleAnnotations)
-    zope.component.adapts(IRole)
+    implements(interfaces.ISubRoleAnnotations)
+    adapts(IRole)
 
-    def __init__(self, context):
+    def __init__(self):
         self.sub_roles = []
         self.is_sub_role = False
         self.parent = None
@@ -33,7 +34,7 @@ def sub_role_configure(context, id, title, description, role):
     sub_role = Role(id, title, description)
     sub_role_annt = interfaces.ISubRoleAnnotations(sub_role)
     sub_role_annt.is_sub_role = True
-    sub_role.parent = role
+    sub_role_annt.parent = role
     gsm = zope.component.getGlobalSiteManager()
     gsm.registerUtility(sub_role, IRole, id)
 

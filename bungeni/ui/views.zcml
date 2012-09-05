@@ -595,5 +595,12 @@
      class=".macros.BungeniCalendarMacros"
      layer=".interfaces.IBungeniSkin"
      permission="zope.View"
-     />    
+     /> 
+
+   <browser:page
+      for="bungeni.models.interfaces.IFeatureAssignment"
+      name="assignment"
+      class=".assignment.AssignmentView"
+      permission="bungeni.assignment.View"
+      />
 </configure>
