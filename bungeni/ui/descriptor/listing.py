@@ -201,10 +201,9 @@ def dc_property_column(name, title, vocabulary=None, property_name="title"):
     return _column(name, title, renderer)
 
 
-# !+related_user_name_column - should also link to mp/user? Merge with linked_mp_name_column?
+# !+related_user_name_column - should also link to mp/user? Merge with member_linked_name_column?
 def related_user_name_column(name, title, vocabulary=None):
     related_user_attribute_name = get_mapper_property_name_for_fk(name)
-    # !+FIELD_KEYERROR why cannot use the User.fullname property directly?
     def getter(item_user, formatter):
         item_user = _get_related_user(item_user, related_user_attribute_name)
         return item_user.fullname # User.fullname property
@@ -228,13 +227,13 @@ def related_user_name_column_filter(query, filter_string, sort_dir_func, column=
         query, filter_string, sort_dir_func)
 
 
-def user_listing_name_column_filter(query, filter_string, sort_dir_func,
+def user_name_column_filter(query, filter_string, sort_dir_func,
         column=None):
     return _multi_attrs_column_filter(
         [domain.User.last_name, domain.User.first_name, domain.User.middle_name],
         query, filter_string, sort_dir_func)
 
-def linked_mp_name_column(name, title, vocabulary=None):
+def member_linked_name_column(name, title, vocabulary=None):
     """This may be used to customize the default URL generated as part of the
     container listing.
 
@@ -276,7 +275,7 @@ def workflow_column(name, title, vocabulary=None):
         # !+MY_LISTING_ROWS(mr, aug-2012) the following is a (exploratory) 
         # mechanism to add a distinction between what rows are owned by the 
         # current user and others. Here it is added only to "status" columns
-        # here, but a generic "row-level" means to mark such rows as different 
+        # but a generic "row-level" means to mark such rows as different 
         # from the others may be a useful feature.
         if IWorkspaceSectionLayer.providedBy(request) and IOwned.providedBy(item):
             # !+delegation?
@@ -286,7 +285,8 @@ def workflow_column(name, title, vocabulary=None):
     return column.GetterColumn(title, getter)
 
 
-def ministry_column(name, title, default=""):
+# !+ group?
+def ministry_column(name, title, vocabulary=None):
     def getter(item, formatter):
         # !+TRANSLATE_ATTR(mr, sep-2010)
         #m = item.ministry
@@ -294,12 +294,12 @@ def ministry_column(name, title, default=""):
         return vocabulary.get_translated_group_label(item.ministry)
     return column.GetterColumn(title, getter)
 
-def ministry_column_filter(query, filter_string, sort_dir_func,
-                                 column=None):
+def ministry_column_filter(query, filter_string, sort_dir_func, column=None):
     query = query.join(domain.Ministry)
     return _multi_attrs_column_filter(
         [domain.Ministry.full_name, domain.Ministry.short_name],
         query, filter_string, sort_dir_func)
+
 
 def scheduled_item_title_column(name, title):
     def getter(item, formatter):
@@ -324,27 +324,9 @@ def scheduled_item_uri_column(name, title):
     return column.GetterColumn(title, getter)
 
 
-''' !+TYPES_CUSTOM
-def enumeration_column(name, title,
-        item_reference_attr=None, # parent item attribute, for enum
-        enum_value_attr=None, # enum attribute, for desired value
-    ):
+def vocabulary_column(name, title, vocabulary=None):
     """Get getter for the enum-value of an enumerated column.
     """
-    if enum_value_attr is None:
-        # then assume that value-attr on enum is same as enum-attr on parent
-        enum_value_attr = item_reference_attr
-    assert item_reference_attr is not None
-    assert enum_value_attr is not None
-    def getter(item, formatter):
-        enum_obj = getattr(item, item_reference_attr)
-        enum_obj = translation.translate_obj(enum_obj)
-        return getattr(enum_obj, enum_value_attr)
-    return column.GetterColumn(title, getter)
-'''
-
-
-def vocabulary_column(name, title, vocabulary=None):
     if isinstance(vocabulary, basestring): # !+tmp
         from zope.component import getUtility
         from zope.schema.interfaces import IVocabularyFactory
@@ -370,7 +352,26 @@ def vocabulary_column(name, title, vocabulary=None):
             assert isinstance(vocabulary, GroupTitleTypesFactory)
             return context.title_type.title_name
     return column.GetterColumn(title, getter)
-''' !+TYPES_CUSTOM_TRANSLATION(mr, nov-2011) issues with how translation for 
+
+''' !+TYPES_CUSTOM
+def enumeration_column(name, title,
+        item_reference_attr=None, # parent item attribute, for enum
+        enum_value_attr=None, # enum attribute, for desired value
+    ):
+    """Get getter for the enum-value of an enumerated column.
+    """
+    if enum_value_attr is None:
+        # then assume that value-attr on enum is same as enum-attr on parent
+        enum_value_attr = item_reference_attr
+    assert item_reference_attr is not None
+    assert enum_value_attr is not None
+    def getter(item, formatter):
+        enum_obj = getattr(item, item_reference_attr)
+        enum_obj = translation.translate_obj(enum_obj)
+        return getattr(enum_obj, enum_value_attr)
+    return column.GetterColumn(title, getter)
+
+!+TYPES_CUSTOM_TRANSLATION(mr, nov-2011) issues with how translation for 
 the titles of such enum values should be handled:
 
 - such enum string values probably be considered part of UI (po) as opposed 
@@ -384,6 +385,7 @@ autohandle how the str-values of these columns will be translated.]
 
 - small issue with pre-existing msgid's e.g. "Office", translations for which 
 are not picked up with _("Office") or equivalent... why?
+
 '''
 
 

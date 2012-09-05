@@ -885,7 +885,7 @@ class CommitteeMemberDescriptor(GroupMembershipDescriptor):
     localizable = True
     display_name = _("Member")
     container_name = _("Members")
-
+    
     fields = [
         F(name="user_id",
             label="Name",
@@ -1421,14 +1421,14 @@ class DocDescriptor(ModelDescriptor):
         #"amc_attachments",
         #"amc_events",
         "submission_date",
+        "subject",
+        "coverage",
+        "geolocation",
         "body",
         #"admissable_date",
         #"signatories", 
         #"attachments",
         #"events",
-        # subject
-        # coverage
-        # geolocation
         # head_id
         "timestamp", # DB_REQUIRED
     ]
@@ -1539,6 +1539,27 @@ class DocDescriptor(ModelDescriptor):
             render_type="text_box",
         ),
         LanguageField("language"), # [user-req]
+        F(name="subject",
+            label="Subject Terms",
+            description="Select Subjects",
+            localizable=[
+                hide("view edit add listing"),
+            ],
+        ),
+        F(name="coverage",
+            label="Coverage",
+            description="Select Coverage",
+            localizable=[
+                hide("view edit add listing"),
+            ],
+        ),
+        F(name="geolocation",
+            label="Geolocation",
+            description="Select Geolocation",
+            localizable=[
+                hide("view edit add listing"),
+            ],
+        ),
         F(name="body",
             label="Body",
             required=True,
@@ -1577,9 +1598,6 @@ class DocDescriptor(ModelDescriptor):
         #    render_type="single_select",
         #    vocabulary="group",
         #),
-        # subject
-        # coverage
-        # geolocation
         # head_id
         F(name="timestamp",
            label = u"", # !+ must have "empty" label... as no value is shown!
@@ -1968,6 +1986,8 @@ class QuestionDescriptor(DocDescriptor):
             value_type="text",
             render_type="rich_text",
         ),
+    ])
+    replace_field(fields, 
         F(name="subject",
             label="Subject Terms",
             description="Select Subjects",
@@ -1977,13 +1997,8 @@ class QuestionDescriptor(DocDescriptor):
             ],
             value_type="text",
             render_type="tree_text",
-            vocabulary="subject-terms", # !+naming
-        ),
-    ])
-    get_field(fields, "admissible_date").localizable = [
-        show("view"),
-        hide("listing"),
-    ]
+            vocabulary="subject_terms",
+        ))    
     default_field_order = DocDescriptor.default_field_order[:]
     default_field_order.insert(0, "response_text")
     default_field_order.insert(

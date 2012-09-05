@@ -34,7 +34,7 @@ VALUETYPE = {
     "image": {},
     "file": {},
     "user": {},
-    "member": {},
+    "member": {}, # !+ should be "archetype generic" e.g. should not assume "member of parliament"
     "signatory": {}, # !+
     "combined_name": {}, # !+
 }
@@ -123,7 +123,7 @@ WIDGETS = {
     ("user", "no_input"): # !+User.user_id
         (None, None, None, None,
             listing.user_name_column,
-            listing.user_listing_name_column_filter),
+            listing.user_name_column_filter),
     ("user", "single_select"):
         (widgets.UserURLDisplayWidget, None, 
             widgets.AutoCompleteWidgetOrSingleChoice, None,
@@ -132,7 +132,7 @@ WIDGETS = {
     ("member", "single_select"): # !+combine with "user"
         (widgets.UserURLDisplayWidget, None, 
             widgets.AutoCompleteWidgetOrSingleChoice, None,
-            listing.linked_mp_name_column, 
+            listing.member_linked_name_column, 
             listing.related_user_name_column_filter),
 }
 

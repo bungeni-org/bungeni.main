@@ -1267,7 +1267,7 @@ def dict_to_dynatree(input_dict, selected):
     return retval
 
 
-subject_terms = TreeVDEXVocabulary("subject-terms.vdex") # !+naming
+subject_terms = TreeVDEXVocabulary("subject_terms.vdex")
 representation = TreeVDEXVocabulary("representation.vdex")
 party = FlatVDEXVocabularyFactory("party.vdex")
 
