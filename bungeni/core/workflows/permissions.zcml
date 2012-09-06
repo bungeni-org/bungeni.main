@@ -664,9 +664,13 @@ See the Bungeni Source Code Style Guide for further details.
 <grant permission="bungeni.tabled_document.wf.scheduled.tabled" role="bungeni.MP" />
 <grant permission="bungeni.tabled_document.wf.scheduled.tabled" role="bungeni.Minister" />
 
-<permission id="bungeni.tabled_document.wf.submitted.withdrawn" title="Withdraw" />
-<grant permission="bungeni.tabled_document.wf.submitted.withdrawn" role="bungeni.Clerk" />
-<grant permission="bungeni.tabled_document.wf.submitted.withdrawn" role="bungeni.Owner" />
+<permission id="bungeni.tabled_document.wf.submitted.withdrawn_internal" title="Withdraw" />
+<grant permission="bungeni.tabled_document.wf.submitted.withdrawn_internal" role="bungeni.Clerk" />
+<grant permission="bungeni.tabled_document.wf.submitted.withdrawn_internal" role="bungeni.Owner" />
+
+<permission id="bungeni.tabled_document.wf.admissible.withdrawn" title="Withdraw" />
+<grant permission="bungeni.tabled_document.wf.admissible.withdrawn" role="bungeni.Clerk" />
+<grant permission="bungeni.tabled_document.wf.admissible.withdrawn" role="bungeni.Owner" />
 
 
 <!-- committee -->

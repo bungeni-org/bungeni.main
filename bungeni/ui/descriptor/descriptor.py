@@ -1886,7 +1886,6 @@ class BillDescriptor(DocDescriptor):
     insert_field_after(fields, "short_title", 
         F(name="group_id",
             label="Ministry",
-            required=True,
             localizable=[
                 show("view edit add listing"),
             ],

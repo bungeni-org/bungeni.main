@@ -142,7 +142,7 @@ WIDGETS = {
             listing.related_user_name_column_filter),
     ("group", "single_select"):
         (None, None, None, None,
-            listing.related_group_column,
+            listing.vocabulary_column, #!+listing.related_group_column,
             listing.related_group_column_filter),
 }
 

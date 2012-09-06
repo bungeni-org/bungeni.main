@@ -295,12 +295,14 @@ def workflow_column(name, title, vocabulary=None):
     return column.GetterColumn(title, getter)
 
 
+''' !+ identical to vocabulary_column!
 def related_group_column(name, title, vocabulary):
     vocabulary_factory = get_vocabulary(vocabulary)
     def getter(item, formatter):
         vocabulary = vocabulary_factory(item)
         return vocabulary.getTerm(getattr(item, name)).title
     return column.GetterColumn(title, getter)
+'''
 
 def related_group_column_filter(query, filter_string, sort_dir_func, column=None):
     query = query.join(domain.Group)
