@@ -105,6 +105,7 @@ class IGenenerateVocabularyDefault(interface.Interface):
         """Get the default value in vocabulary"""
 
 
+# !+ should inherit from IVocabulary (so also Iterable?) ?
 class ITreeVocabulary(interface.Interface):
     """ Generate tree vocabulary as JSON data.
     Also provides a validation of values

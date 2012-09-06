@@ -74,7 +74,7 @@ days = [ _("day_%d" % index, default=default) for (index, default) in
 
 
 class BaseVocabularyFactory(object):
-
+    
     interface.implements(
         # IContextSourceBinder is needed for when this vocabulary factory 
         # instance is used as an ISource e.g. as the value of "source" or
@@ -109,17 +109,18 @@ class VDEXVocabularyMixin(object):
         vocabulary_name = file_name[:-len(".vdex")].replace("-", "_")
         component.provideUtility(self, IVocabularyFactory, vocabulary_name)
     
-    # zope.schema.interfaces.IBaseVocabulary (inherits from ISource)
+    # zope.schema.interfaces.ISource(Interface)
     
     def __contains__(self, value):
-        """Is the value available in this source?
-        As per zope.schema.interfaces.ISource.
+        """Is the value available in this source? 
+        (zope.schema.interfaces.ISource)
         """
         return self.vdex.getTermById(value) is not None
     
+    # zope.schema.interfaces.IBaseVocabulary(ISource)
     def getTerm(self, value):
         """Return the zope.schema.vocabulary.SimpleTerm instance for value.
-        As per zope.schema.interfaces.IBaseVocabulary.
+        (zope.schema.interfaces.IBaseVocabulary)
         """
         # !+NONE_LOOKUPERROR(mr, jul-0212) making vdex try to seem like a 
         # "schema vocab" with this method gives problems when value is None, 
@@ -146,11 +147,13 @@ class VDEXVocabularyMixin(object):
         """
         return self.vdex.getTermCaptionById(value, lang)
 
+# !+NEED_NOT_BE_A_FACTORY, can register on IVocabulary
 class TreeVDEXVocabulary(VDEXVocabularyMixin):
     """Class to generate hierarchical vdex vocabularies
     
     vocabulary = TreeVDEXVocabulary(file_name)
     """
+    # !+ should inherit from IVocabulary (so also Iterable?) ?
     interface.implements(ITreeVocabulary)
     
     def generateJSON(self, selected = []):
@@ -163,6 +166,7 @@ class TreeVDEXVocabulary(VDEXVocabularyMixin):
             if self.getTermById(value) is None:
                 raise LookupError
 
+# !+NEED_NOT_BE_A_FACTORY, can register on IVocabulary
 class FlatVDEXVocabularyFactory(VDEXVocabularyMixin, BaseVocabularyFactory):
     """    
     !+ instances are called in zope.formlib.form.setUpEditWidgets() and a new
@@ -173,23 +177,28 @@ class FlatVDEXVocabularyFactory(VDEXVocabularyMixin, BaseVocabularyFactory):
     vocabulary.SimpleVocabulary() and then only specify a single 
     default/reference language in the vdex file.
     """
-    interface.implements(IVocabulary) # !+BaseVocabularyFactory should probably 
-    # simply include this, instead of IBaseVocabulary
+    interface.implements(IVocabulary) # IVocabulary(IIterableVocabulary, IBaseVocabulary)
+    # !+BaseVocabularyFactory should probably simply include this, instead of IBaseVocabulary?
     
-    # add __iter__, __len__ (from zope.schema.interfaces.IIterableVocabulary)
+    # zope.schema.interfaces.IIterableVocabulary
     def __iter__(self):
         """Return an iterator which provides the 
         (zope.schema.vocabulary.SimpleTerm) terms from the vocabulary.
+        zope.schema.interfaces.IIterableVocabulary
         """
         for term_value in self.vdex.term_dict:
             yield self.getTerm(term_value)
     def __len__(self):
-        """Return the number of valid terms, or sys.maxint."""
+        """Return the number of valid terms, or sys.maxint.
+        zope.schema.interfaces.IIterableVocabulary
+        """
         return len(self.vdex.term_dict)
     
     value_cast = unicode
+    # zope.schema.interfaces.IVocabularyFactory
     def __call__(self, context=None):
         """Return a context-bound instance that implements ISource.
+        zope.schema.interfaces.IVocabularyFactory
         """
         all_terms = self.vdex.getVocabularyDict(lang=get_default_language())
         # self.vdex.getVocabularyDict(lang="*") -> {term_id: ({lang: caption}, children)}

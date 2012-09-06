@@ -42,6 +42,7 @@ from bungeni.ui.utils import common, date, url
 from bungeni.ui.i18n import _
 from bungeni.utils.capi import capi
 
+
 # support utils 
 
 def _column(name, title, renderer):
@@ -356,8 +357,7 @@ def vocabulary_column(name, title, vocabulary):
                 vocabulary = vocabulary(context)
         
         try:
-            # !+_(): is not term.title below ALWAYS already localized?
-            return _(vocabulary.getTerm(getattr(context, name)).title)
+            return vocabulary.getTerm(getattr(context, name)).title
         except LookupError:
             # !+NONE_LOOKUPERROR(mr, jul-2012) probably a vdex, 
             # and getattr(context, name)...
