@@ -327,4 +327,18 @@ if __name__ == "__main__":
     if persisted != regenerated:
         write_custom(persisted, regenerated)
     
+    # Dump msgids from Descriptor Field labels and descriptions (this is 
+    # executed when this module is executed i.e. from within src/bungeni.main:
+    # $ ../../bin/python bungeni/ui/descriptor/localization.py
+    # or, equiavlently when the forms default localization file is regenerated).
+    from os import path
+    from bungeni.ui.descriptor.field import F
+    msgids_py_source_path = __file__
+    msgids_py_source_file_path = path.join(
+        path.dirname(path.abspath(__file__)), "_field_msgids.py")
+    msgids_py_source = "\n".join([ '_(%r)' % msgid for msgid in sorted(F.msgids) ])
+    open(msgids_py_source_file_path, "w").write(msgids_py_source.encode("utf-8"))
+    print "Descriptor Field message IDs:", msgids_py_source_file_path
+    print msgids_py_source
+    print
 

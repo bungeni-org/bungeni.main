@@ -216,9 +216,9 @@ def F(name=None, label=None, description=None,
     
     # i18n attributes
     if label:
-        label = _(label)
+        F.msgids.add(label); label = _(label)
     if description:
-        description = _(description)
+        F.msgids.add(description); description = _(description)
     
     # Field.*_widgets
     widgets = WIDGETS[(value_type, render_type)]
@@ -265,5 +265,5 @@ def F(name=None, label=None, description=None,
         ) = widgets[0:4]
         
     return f
-
+F.msgids = set()
 
