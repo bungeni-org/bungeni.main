@@ -80,39 +80,14 @@ class TIME_SPAN:
 class EventPartialForm(AddForm):
     """Partial form for event entry form
     """
-    omit_fields = ["start_date", "end_date", "sitting_id", "group_id", "sitting_length","recurring_id","recurring_type","status","status_date"]
+    omit_fields = ["start_date", "end_date", "sitting_id", "group_id", 
+        "sitting_length", "recurring_id", "recurring_type", "status",
+            "status_date"
+    ]
     
     def update_fields(self):
-        # !+PERMISSIONS_ON_PARTIAL_CONTEXT(mr, aug-2012)
-        # Using self.model_descriptor._mode_columns(mode) checks columns for
-        # mode for current principal, but as we are dealing with a dummy sitting
-        # instance as context, this will evaluate incorrectly... in particlar,
-        # the call to self.model_descriptor._mode_columns("add") that is 
-        # triggered when setting up the form_fields here in the standard way, 
-        # will give strange results (since "add" localizable mode changes on 
-        # certain fields that have been introduced since r9722.
-        #
-        # We could bypass the descriptor mechanism, by working with all fields,
-        # i.e. something like:
-        #from bungeni.alchemist.model import queryModelInterface
-        #domain_interface = queryModelInterface(self.context.__class__)
-        #self.form_fields = form.Fields(domain_interface)
-        # but that means also deal with further filtering, order etc.
-        # 
-        # So, the field lookup fails when EventPartialForm is ANYWAY not needed 
-        # in the first place! So, for now, we just ignore the error...
-        #
         self.form_fields = self.form_fields.omit(*self.omit_fields)
-        # /PERMISSIONS_ON_PARTIAL_CONTEXT
-        try:
-            self.form_fields["language"].edit_widget = LanguageLookupWidget
-        except KeyError, e:
-            # !+PERMISSIONS_ON_PARTIAL_CONTEXT "language" field not included... 
-            # permission for tor this field in "add" mode has been denied for
-            # current user!
-            from bungeni.models.utils import get_principal_id
-            log.error("!+PERMISSIONS_ON_PARTIAL_CONTEXT: user=%r error=%r" % (
-                get_principal_id(), e))
+        self.form_fields["language"].edit_widget = LanguageLookupWidget
         self.form_fields = self.form_fields.omit(*self.omit_fields)
     
     def get_widgets(self):
@@ -632,7 +607,7 @@ class DhtmlxCalendarSittingsEdit(form.PageForm):
             convocation_type = None
         self.adapters = {
             interfaces.IDhtmlxCalendarSittingsEditForm: context
-            }
+        }
         self.widgets = form.setUpEditWidgets(
             self.form_fields, "", self.context, self.request,
                     adapters=self.adapters, ignore_request=ignore_request) 
