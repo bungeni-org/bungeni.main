@@ -235,8 +235,6 @@ def serialization_notifications_callback(channel, method, properties, body):
     obj_data = simplejson.loads(body)
     obj_type = obj_data.get("obj_type")
     domain_model = getattr(domain, obj_type, None)
-    #!+SESSIONS(mb, aug-2012) investigate why on ObjectCreatedEvent,
-    #some objects cannot be queried
     if domain_model:
         obj_key = valueKey(obj_data.get("obj_key"))
         session = Session()
@@ -246,12 +244,12 @@ def serialization_notifications_callback(channel, method, properties, body):
             channel.basic_ack(delivery_tag=method.delivery_tag)
         else:
             log.error("Could not query object of type %s with key %s. "
-                "Requeuing message",
+                "Check database records - Rejecting message.",
                 domain_model, obj_key
             )
-            #this might be due to an unsaved instance issue see note above
+            #Reject the message
             channel.basic_reject(delivery_tag=method.delivery_tag,
-                requeue=True
+                requeue=False
             )
         session.close()
     else:
