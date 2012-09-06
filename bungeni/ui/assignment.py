@@ -1,3 +1,4 @@
+from sqlalchemy.sql.expression import and_
 from zope.component import getUtility
 from zope.securitypolicy.interfaces import IRole, IPrincipalRoleMap
 from zope.app.security.settings import Allow
@@ -18,11 +19,11 @@ from bungeni.models import domain, utils
 from bungeni.models.interfaces import ISubRoleAnnotations
 
 
-class AssignmentView(BungeniBrowserView, forms.common.BaseForm):
-    """View/Edit form for object AssignmentView
+class AssignmentView(BungeniBrowserView):
+    """View for object assignments
     """
-    form_fields = []
-    render = ViewPageTemplateFile("templates/assignment.pt")
+    disabled = True
+    render = ViewPageTemplateFile("templates/assignment-view.pt")
 
     def __init__(self, context, request):
         self._assignable_roles = []
@@ -81,8 +82,9 @@ class AssignmentView(BungeniBrowserView, forms.common.BaseForm):
 
     def get_users(self, role_id):
         session = Session()
-        gmrs = session.query(domain.GroupMembershipRole).filter(
-            domain.GroupMembershipRole.role_id == role_id).all()
+        gmrs = session.query(domain.GroupMembershipRole).filter(and_(
+            domain.GroupMembershipRole.role_id == role_id,
+            domain.GroupMembershipRole.is_global == False)).all()
         return [gmr.member.user for gmr in gmrs]
 
     @property
@@ -96,9 +98,10 @@ class AssignmentView(BungeniBrowserView, forms.common.BaseForm):
                 title=_("assigned"),
                 getter=lambda i, f: i,
                 cell_formatter=lambda g, i, f: \
-                    '<input type="checkbox" name="%s" %s/>' % (
+                    '<input type="checkbox" name="%s" %s %s/>' % (
                         i["name"],
-                        i["is_assigned"] and ' checked="checked"' or ""),
+                        i["is_assigned"] and ' checked="checked"' or "",
+                        self.disabled and ' disabled="disabled"' or "")
                 )
             ]
 
@@ -108,9 +111,7 @@ class AssignmentView(BungeniBrowserView, forms.common.BaseForm):
 
     def make_id(self, role_id, user_login_id):
         return ".".join(
-            (self.checkbox_prefix,
-             str(role_id).encode("base64"),
-             str(user_login_id).encode("base64")))
+            (self.checkbox_prefix, role_id, user_login_id))
 
     def user_is_assigned(self, user_login, role_id):
         if self.prm.getSetting(role_id, user_login) == Allow:
@@ -137,7 +138,21 @@ class AssignmentView(BungeniBrowserView, forms.common.BaseForm):
             self.tables.append(
                 {"title": getUtility(IRole, role_id).title,
                  "table": self.role_listing(role_id)})
-        super(AssignmentView, self).update()
+
+    def __call__(self):
+        self.update()
+        return self.render()
+
+
+class AssignmentEditView(AssignmentView, forms.common.BaseForm):
+    disabled = False
+    form_fields = []
+
+    render = ViewPageTemplateFile("templates/assignment-edit.pt")
+
+    def update(self):
+        AssignmentView.update(self)
+        forms.common.BaseForm.update(self)
 
     def get_selected(self):
         selected = [
@@ -148,16 +163,25 @@ class AssignmentView(BungeniBrowserView, forms.common.BaseForm):
         ]
         return selected
 
+    def process_assignment(self):
+        print "################", self.request.form.keys()
+        for role_id in self.assignable_roles():
+            for user in self.get_users(role_id):
+                key = self.make_id(user.login, role_id)
+                print "XXXXXXXXXXXXXXXXX", key
+                if key in self.request.form.keys():
+                    print "XXXXXXXXXXXXXXXXXX\nXXXXX\nXXXXX\nXXXXX"
+                    self.prm.assignRoleToPrincipal(role_id, user.login)
+                else:
+                    self.prm.unsetRoleForPrincipal(role_id, user.login)
+
     @formlib.form.action(label=_("Save"), name="save")
     def handle_save(self, action, data):
-        for login_id, role_id in self.get_selected():
-            self.prm.assignRoleToPrincipal(role_id, login_id)
+        self.process_assignment()
+        next_url = url.absoluteURL(self.context, self.request)
+        self.request.response.redirect(next_url)
 
     @formlib.form.action(label=_("Cancel"), name="")
     def handle_cancel(self, action, data):
         next_url = url.absoluteURL(self.context, self.request)
         self.request.response.redirect(next_url)
-
-    def __call__(self):
-        self.update()
-        return self.render()

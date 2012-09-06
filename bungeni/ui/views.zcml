@@ -603,4 +603,11 @@
       class=".assignment.AssignmentView"
       permission="bungeni.assignment.View"
       />
+
+   <browser:page
+      for="bungeni.models.interfaces.IFeatureAssignment"
+      name="edit-assignment"
+      class=".assignment.AssignmentEditView"
+      permission="bungeni.assignment.Edit"
+      />
 </configure>

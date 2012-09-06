@@ -89,6 +89,9 @@
         title="The 'Add' menu - allows user to add content while in workspace"
         class="ploned.ui.menu.PloneBrowserMenu"
     />
+    <browser:menu id="context_assignment"
+        title="Assignment Menu"
+    />
     <!-- 
     Translation language options are dynamic, so we define an adapter to 
     determine these at runtime, for all views of ITranslatable objects.
@@ -1123,7 +1126,14 @@
         permission="zope.View"
         submenu="context_actions"
     />
-    
+    <browser:subMenuItem menu="plone_contentmenu"
+        for="*"
+        title="Assignment"
+        action="context_assignment"
+        order="1"
+        permission="bungeni.assignment.View"
+        submenu="context_assignment"
+    />
     <!-- NOTE: action value on a subMenuItem becomes the id of the HTML
            element for the sub-menu --> 
     
@@ -1459,9 +1469,23 @@
      title="Similar"
      order="30"
       /-->
-     
+    <browser:menuItem menu="context_assignment"
+        for="bungeni.models.interfaces.IFeatureAssignment"
+        action="assignment"
+        title="View Assignment"
+        permission="bungeni.assignment.View"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="1"
+    />
 
-
+   <browser:menuItem menu="context_assignment"
+        for="bungeni.models.interfaces.IFeatureAssignment"
+        action="edit-assignment"
+        title="Edit Assignment"
+        permission="bungeni.assignment.Edit"
+        layer=".interfaces.IWorkspaceOrAdminSectionLayer"
+        order="2"
+    />
 
    <browser:viewlet
      name="login"
@@ -1512,6 +1536,5 @@
      viewName=""
      weight="30"
      /-->
-
 </configure>
 

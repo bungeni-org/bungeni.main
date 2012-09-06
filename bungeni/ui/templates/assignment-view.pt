@@ -1,0 +1,13 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      metal:use-macro="context/@@standard_macros/page">
+  <div metal:fill-slot="body" i18n:domain="bungeni">
+    <h1 i18n:translate="">Assignment</h1>
+    <div id="assignment">
+      <tal:loop tal:repeat="table view/tables">
+        <h1 tal:content="table/title"/>
+        <div tal:replace="structure table/table"/>
+      </tal:loop>
+    </div>
+  </div>
+</html>
