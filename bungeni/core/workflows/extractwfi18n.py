@@ -43,3 +43,4 @@ f.write("</body></html>")
 f.write("\n")
 f.close()
 logging.info("Finished writing workflow names to file %s", f.name)
+

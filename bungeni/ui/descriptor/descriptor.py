@@ -2145,20 +2145,22 @@ class SessionDescriptor(ModelDescriptor):
     sort_on = ["start_date", ]
     sort_dir = "desc"
     fields = [
-        Field(name="short_name", # [user-req]
-            modes="view edit add listing",
+        F(name="short_name",
+            label="Short Name",
+            required=True,
             localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            property=schema.TextLine(title=_("Short Name")),
         ),
-        Field(name="full_name", # [user-req]
-            modes="view edit add listing",
+        F(name="full_name",
+            label="Full Name",
+            required=True,
             localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view edit"),
                 hide("listing"),
             ],
-            property=schema.TextLine(title=_("Full Name"))
         ),
         F(name="start_date",
             label="Start Date",
@@ -2266,24 +2268,23 @@ class CountryDescriptor(ModelDescriptor):
     container_name = _("Countries")
     fields = [
         LanguageField("language"),
-        Field(name="country_id", # [user-req]
-            modes="view edit add",
+        F(name="country_id",
+            label="Country Code",
+            description="Two letter ISO Code for this country e.g. DZ for Algeria",
+            required=True,
             localizable=[
-                show("view edit"),
-            ],
-            property=schema.TextLine(title=_("Country Code"),
-                description=_(
-                    "Two letter ISO Code for this country e.g. DZ for Algeria")
-            )
-        ),
-        Field(name="country_name", # [user-req]
-            modes="view edit add listing",
-            localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
-            property=schema.TextLine(title=_("Country"),
-                description=_("Name of the Country")
-            ),
+        ),
+        F(name="country_name",
+            label="Country",
+            description="Name of the Country",
+            required=True,
+            localizable=[
+                show("add"), # db-not-null-ui-add
+                show("view edit listing"),
+            ],
         ),
     ]
 
