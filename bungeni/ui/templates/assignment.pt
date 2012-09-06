@@ -1,0 +1,32 @@
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      metal:use-macro="context/@@standard_macros/page">
+  <div metal:fill-slot="body" i18n:domain="bungeni">
+    <h1 i18n:translate="">Assignment</h1>
+    <div id="assignment">
+      <div metal:use-macro="context/@@standard_macros/form">
+        <div metal:fill-slot="pre-fieldset">
+          <tal:loop tal:repeat="table view/tables">
+            <h1 tal:content="table/title"/>
+            <div tal:replace="structure table/table"/>
+          </tal:loop>
+        </div>
+        <div metal:fill-slot="actions">
+          <div id="actionsView">
+            <span class="actionButtons"
+                  tal:condition="view/availableActions">
+              <tal:loop tal:repeat="action view/actions">
+                <input type="submit" class="context"
+                       id="" name="" value=""
+                       tal:attributes="id action/__name__;
+                                       name action/__name__;
+                                       value python:str(action.label);"
+                       i18n:attributes="value" />
+              </tal:loop>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</html>
