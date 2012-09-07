@@ -16,6 +16,7 @@ import string
 import datetime
 
 from zope import interface, location
+from zope.dublincore.interfaces import IDCDescriptiveProperties
 import ore.xapian.interfaces
 from bungeni import alchemist
 from bungeni.alchemist import utils
@@ -1225,6 +1226,14 @@ class ItemSchedule(Entity):
     @property
     def item_uri(self):
         return IDCDescriptiveProperties(self.item).uri
+
+    @property
+    def type_heading(self):
+        return self.get_item_domain() == Heading
+    
+    @property
+    def type_document(self):
+        return not self.type_heading
     
 class ItemScheduleDiscussion(Entity):
     """A discussion on a scheduled item.

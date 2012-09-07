@@ -184,9 +184,7 @@ class ReportGeneratorXHTML(_BaseGenerator):
             """
             cond = get_attr(root, "condition")
             if cond and not check_exists(context, cond):
-                root.clear()
-                clean_element(root)
-                return root
+                return None
             iter_children = root.getchildren() or [root]
             if not (root in iter_children):
                 root_typ = get_attr(root, "type")
@@ -234,7 +232,8 @@ class ReportGeneratorXHTML(_BaseGenerator):
                                         iroot = process_document_tree(inner_element, 
                                             item
                                         )
-                                        child.append(iroot)
+                                        if iroot:
+                                            child.append(iroot)
                         else:
                             process_document_tree(child, context)
                     else:
