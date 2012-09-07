@@ -200,7 +200,7 @@ def combined_name_column_filter(query, filter_string, sort_dir_func, column=None
         query, filter_string, sort_dir_func)
 
 
-''' !+UNUSED should not be needed - the properly preprpared and localized 
+''' !+UNUSED should not be needed - the properly prepared and localized 
     "title" of a term should already be defined by the vocabulary!
     
 def dc_property_column(name, title, vocabulary=None, property_name="title"):
@@ -311,7 +311,7 @@ def related_group_column_filter(query, filter_string, sort_dir_func, column=None
         query, filter_string, sort_dir_func)
 
 
-
+''' !+IDCDP
 def scheduled_item_title_column(name, title):
     def getter(item, formatter):
         dc = IDCDescriptiveProperties(item.item)
@@ -320,7 +320,6 @@ def scheduled_item_title_column(name, title):
         )
     return column.GetterColumn(title, getter)
 
-
 def scheduled_item_mover_column(name, title):
     def getter(item, formatter):
         if hasattr(item.item, "owner"):
@@ -328,11 +327,11 @@ def scheduled_item_mover_column(name, title):
         return ""
     return column.GetterColumn(title, getter)
 
-
 def scheduled_item_uri_column(name, title):
     def getter(item, formatter):
         return IDCDescriptiveProperties(item.item).uri
     return column.GetterColumn(title, getter)
+'''
 
 
 def vocabulary_column(name, title, vocabulary):

@@ -9,27 +9,18 @@ $Id$
 log = __import__("logging").getLogger("bungeni.ui.descriptor")
 
 from copy import deepcopy
-from zope import schema
-import zope.formlib
 
-from bungeni.alchemist.model import ModelDescriptor, Field, show, hide
-
-from bungeni.models import domain
-import bungeni.models.interfaces
+from bungeni.alchemist.model import ModelDescriptor, show, hide
 
 # We import bungeni.core.workflows.adapters to ensure that the "states"
 # attribute on each "workflow" module is setup... this is to avoid an error
 # when importing bungeni.ui.descriptor.descriptor from standalone scripts:
 import bungeni.core.workflows.adapters # needed by standalone scripts !+review
 
-#from bungeni.core import translation
-
-from bungeni.ui import widgets
-from bungeni.ui.fields import VocabularyTextField
 from bungeni.ui.forms import validations
 from bungeni.ui.i18n import _
-from bungeni.ui import vocabulary
-from bungeni.ui.descriptor import listing, constraints
+from bungeni.ui import vocabulary # !+
+from bungeni.ui.descriptor import constraints
 from bungeni.ui.descriptor.field import F
 from bungeni.utils import misc
 
@@ -2300,43 +2291,40 @@ class ItemScheduleDescriptor(ModelDescriptor):
     # for now providing viewlets with a list of addable objects. TODO:
     # TODO: validate scheduled items
     fields = [
-        Field(name="item_id", # [user-req]
-            modes="view edit add listing",
+        F(name="item_id",
+            label="Item",
+            required=True,
             localizable=[
+                show("edit add"), # db-not-null-ui-add, pk
                 show("view listing"),
             ],
-            property=schema.Int(title=_("Item")),
+            value_type="number",
+            render_type="number",
         ),
-        Field(name="item_title", # [derived]
-            modes="view listing",
+        F(name="item_title", # derived @item_title
+            label="Title",
             localizable=[
                 show("view listing")
             ],
-            property=schema.TextLine(title=_("Title"), required=False),
-            listing_column=listing.scheduled_item_title_column("title", _(u"Title"))
         ),
-        Field(name="item_mover", # [derived]
-            modes="view listing",
+        F(name="item_mover", # derived @item_mover
+            label="Mover",
             localizable=[
                 show("view listing")
             ],
-            property=schema.TextLine(title=_("Mover"), required=False),
-            listing_column=listing.scheduled_item_mover_column("mover", _(u"Mover"))
         ),
-        Field(name="item_type",
-            modes="view edit add listing",
+        F(name="item_type",
+            label="Item Type",
             localizable=[
-                show("view listing")
-            ],
-            property=schema.TextLine(title=_("Item Type")),
-        ),
-        Field(name="item_uri", # [derived]
-            modes="view listing",
-            localizable=[
+                show("edit add"), # db-not-null-ui-add, pk
                 show("view listing"),
             ],
-            property=schema.TextLine(title=_("uri"), required=False),
-            listing_column=listing.scheduled_item_uri_column("uri", _(u"Item URI"))
+        ),
+        F(name="item_uri", # derived @item_uri
+            label="Item URI",
+            localizable=[
+                show("view listing")
+            ],
         ),
     ]
 
@@ -2345,13 +2333,16 @@ class EditorialNoteDescriptor(ModelDescriptor):
     display_name = _("Editorial Note")
     container_name = "Editorial Notes"
     fields = [
-        Field(name="editorial_note_id",
-            modes="view edit add listing",
+        F(name="editorial_note_id",
+            label="Item",
+            required=True,
             localizable=[
-                show("view listing")
+                show("edit add"), # db-not-null-ui-add, pk
+                show("view listing"),
             ],
-            property=schema.Int(title=_("Item"))
-        ),     
+            value_type="number",
+            render_type="number",
+        ),
         F(name="text",
             label="Text",
             required=True,
@@ -2397,21 +2388,24 @@ class ReportDescriptor(DocDescriptor):
     sort_on = ["end_date"] + DocDescriptor.sort_on
     fields = [
         LanguageField("language"),
-        Field(name="title", label=_("Publications type"), # [user-req]
-            modes="view edit add listing",
+        F(name="title",
+            label="Publications type",
+            required=True,
             localizable=[
+                show("add"), # db-not-null-ui-add
                 show("view edit listing"),
             ],
+            value_type="text",
+            render_type="text_box",
         ),
-        Field(name="status_date", label=_("Published Date"), # [user-req]
-            modes="view edit add listing",
+        F(name="status_date",
+            label="Published Date",
+            required=True,
             localizable=[
-                show("view edit listing"),
+                show("view listing"),
             ],
-            listing_column=listing.datetime_column("status_date", _("Published Date")),
-            edit_widget=widgets.DateWidget,
-            add_widget=widgets.DateWidget,
-            search_widget=widgets.date_input_search_widget
+            value_type="date",
+            render_type="date",
         ),
         F(name="body",
             label="Text",

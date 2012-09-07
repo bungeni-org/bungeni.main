@@ -1190,23 +1190,42 @@ class ItemSchedule(Entity):
         from bungeni.utils.capi import capi
         return capi.get_type_info(self.item_type).domain_model
     
-    def _get_item(self):
-        """Query for scheduled item by type and ORM mapped primary key
-        """
-        domain_class = self.get_item_domain()
-        if domain_class is None:
-            return None
-        item = alchemist.Session().query(domain_class).get(self.item_id)
-        item.__parent__ = self
-        return item
+    def item():
+        doc = "Related (schdulable) item, via item_type and item_id. " \
+            "Currently may be of (doc, heading, editorial_note) type."
+        def fget(self):
+            "Query for scheduled item by type and ORM mapped primary key."
+            domain_class = self.get_item_domain()
+            if domain_class is None:
+                return None
+            schedule_item = alchemist.Session().query(domain_class).get(self.item_id)
+            schedule_item.__parent__ = self
+            return schedule_item
+        def fset(self, schedule_item):
+            self.item_id = get_mapped_object_id(schedule_item)
+            self.item_type = schedule_item.type
+        def fdel(self):
+            raise NotImplementedError
+        return locals()
+    item = property(**item())
     
-    def _set_item(self, schedule_item):
-        self.item_id = get_mapped_object_id(schedule_item)
-        self.item_type = schedule_item.type
-
-    item = property(_get_item, _set_item)
-
-
+    # !+IDCDP(ob).title should probably be the default/fallback for all 
+    # "labels" used to refer to the ob e.g. in listings. 
+    # Then, the 2 props below ca be reduced to just @owner (and reuse @item defined above)
+    @property
+    def item_title(self):
+        return IDCDescriptiveProperties(self.item).title
+    @property
+    def item_mover(self): # !+ item_owner_title
+        # currently item may be (doc, heading, editorial_note) of which 
+        # only doc has an "owner" attribute.
+        schedule_item = self.item
+        if hasattr(schedule_item, "owner"):
+            return IDCDescriptiveProperties(schedule_item.owner).title
+    @property
+    def item_uri(self):
+        return IDCDescriptiveProperties(self.item).uri
+    
 class ItemScheduleDiscussion(Entity):
     """A discussion on a scheduled item.
     """
