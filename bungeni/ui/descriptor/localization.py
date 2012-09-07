@@ -319,18 +319,10 @@ def serialize_module(module, depth=0):
     return acc
 
 
-if __name__ == "__main__":
-    
-    print "Processing localization file: %s" % (CUSTOM_PATH)
-    persisted = read_custom()
-    regenerated = "\n".join(serialize_module(DESCRIPTOR_MODULE))
-    if persisted != regenerated:
-        write_custom(persisted, regenerated)
-    
-    # Dump msgids from Descriptor Field labels and descriptions (this is 
-    # executed when this module is executed i.e. from within src/bungeni.main:
-    # $ ../../bin/python bungeni/ui/descriptor/localization.py
-    # or, equiavlently when the forms default localization file is regenerated.
+def dump_i18n_message_ids():
+    """Dump msgids from Descriptor Field labels and descriptions
+    for internationalization.
+    """
     from os import path
     from bungeni.ui.descriptor.field import F
     msgids_py_source_file_path = path.join(
@@ -339,5 +331,13 @@ if __name__ == "__main__":
     open(msgids_py_source_file_path, "w").write(msgids_py_source.encode("utf-8"))
     print "Descriptor Field message IDs:", msgids_py_source_file_path
     print msgids_py_source
-    print
 
+
+if __name__ == "__main__":
+    
+    print "Processing localization file: %s" % (CUSTOM_PATH)
+    persisted = read_custom()
+    regenerated = "\n".join(serialize_module(DESCRIPTOR_MODULE))
+    if persisted != regenerated:
+        write_custom(persisted, regenerated)
+    dump_i18n_message_ids()
