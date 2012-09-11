@@ -460,6 +460,29 @@ class ContainerJSONListing(ContainerJSONBrowserView):
         lang = translation.get_request_language(request=self.request)
         return self.json_batch(start, limit, lang)
 
+@register.view(IAlchemistContainer, name="jsonlisting-raw")
+class ContainerJSONListingRaw(ContainerJSONListing):
+    """JSON listing for a container with no formatting.
+    Skip passing through descriptor listing column renderers.
+    """
+    def _json_values(self, nodes):
+        """Return nodes as JSON"""
+        values = []
+        for node in nodes:
+            d = {}
+            for field in self.fields:
+                fn = field.__name__
+                d[fn] = getattr(node, fn, None)
+                v = d[fn]
+                if isinstance(v, datetime.datetime):
+                    d[fn] = v.strftime("%F %I:%M %p")
+                elif isinstance(v, datetime.date):
+                    d[fn] = v.strftime("%F")
+
+            d["object_id"] = url.set_url_context(container.stringKey(node))
+            values.append(d)
+        return values
+
 #@register.view(IAlchemistContainer, 
 #    layer=ufaces.IMembersSectionLayer, name="jsonlisting") 
 #@register.view(IAlchemistContainer, 

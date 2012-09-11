@@ -61,11 +61,11 @@ def get_globals(group_name, **kwargs):
             "scheduled_item_context_menu_header": i18n(_(u"Modify Item"), 
                 language
             ),
-            "json_listing_url" : "./items/jsonlisting",
+            "json_listing_url" : "./items/jsonlisting-raw",
             "json_listing_url_meta" : "./items/jsonlisting-schedule",
             "save_schedule_url": "./items/save-schedule",
             "discussions_save_url": "discussions/save-discussions",
-            "discussion_items_json_url" : "discussions/jsonlisting",
+            "discussion_items_json_url" : "discussions/jsonlisting-raw",
             "schedulable_items_json_url" : "./schedulable-items-json",
             "column_title": i18n(_(u"Description"), language),
             "column_discussion_text": i18n(_(u"minute text"), language),

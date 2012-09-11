@@ -10,7 +10,6 @@ $Id$
 log = __import__("logging").getLogger("bungeni.ui.calendar")
 
 import time
-import random
 import datetime
 timedelta = datetime.timedelta
 
@@ -35,7 +34,6 @@ from zope.security.proxy import removeSecurityProxy
 from zope.security.proxy import ProxyFactory
 from zope.security import checkPermission
 from zope.formlib import form
-from zope import schema
 from zope.schema.interfaces import IChoice
 from zc.resourcelibrary import need
 from sqlalchemy.sql.expression import or_
@@ -54,10 +52,10 @@ from bungeni.ui.interfaces import IBusinessSectionLayer
 from bungeni.ui.browser import BungeniBrowserView
 from bungeni.ui.calendar import utils, config, interfaces, data
 from bungeni.ui.i18n import _
-from bungeni.ui.utils import misc, url, debug, date
+from bungeni.ui.utils import misc, url, date
 from bungeni.ui.menu import get_actions
 from bungeni.ui.widgets import LanguageLookupWidget
-from bungeni.ui.container import ContainerJSONListing
+from bungeni.ui.container import ContainerJSONListingRaw
 from bungeni.ui.forms.common import AddForm
 from bungeni.ui.reporting import generators
 
@@ -387,28 +385,28 @@ class DailyCalendarView(CalendarView):
             template = self.template
 
         calendar_url = url.absoluteURL(self.context.__parent__, self.request)
-        date = removeSecurityProxy(self.context.date)
+        cal_date = removeSecurityProxy(self.context.date)
 
         sittings = self.context.get_sittings()
         return template(
             display="daily",
 #            title=_(u"$B $Y", mapping=date),
-            title = date,
+            title = cal_date,
 #
             day={
-                "formatted": datetime.datetime.strftime(date, "%A %d"),
-                "id": datetime.datetime.strftime(date, "%Y-%m-%d"),
-                "today": date == today,
-                "url": "%s/%d" % (calendar_url, date.totimestamp()),
+                "formatted": datetime.datetime.strftime(cal_date, "%A %d"),
+                "id": datetime.datetime.strftime(cal_date, "%Y-%m-%d"),
+                "today": cal_date == today,
+                "url": "%s/%d" % (calendar_url, cal_date.totimestamp()),
                 },
             hours=range(6,21),
             week_no=date.isocalendar()[1],
             week_day=date.weekday(),
             links={
                 "previous": "%s/%d" % (
-                    calendar_url, (date - timedelta(days=1)).totimestamp()),
+                    calendar_url, (cal_date - timedelta(days=1)).totimestamp()),
                 "next": "%s/%d" % (
-                    calendar_url, (date + timedelta(days=1)).totimestamp()),
+                    calendar_url, (cal_date + timedelta(days=1)).totimestamp()),
                 },
             sittings_map = create_sittings_map(sittings, self.request),
             )
@@ -496,7 +494,7 @@ class SittingScheduleView(BrowserView):
     name="jsonlisting-schedule",
     protect={"bungeni.sittingschedule.itemdiscussion.Edit": 
         register.VIEW_DEFAULT_ATTRS})
-class ScheduleJSONListing(ContainerJSONListing):
+class ScheduleJSONListing(ContainerJSONListingRaw):
     """Returns JSON listing with expanded unlisted properties used in
     scheduling user interface setup
     """
