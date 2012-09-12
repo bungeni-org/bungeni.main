@@ -78,45 +78,6 @@ YAHOO.widget.DataTable.prototype.refresh = function(params) {
     );
 };
 
-/**
- * generate agenda preview button
- **/
-YAHOO.util.Event.onAvailable("agenda-preview-button", function(event){
-    var preview_button = new YAHOO.widget.Button("agenda-preview-button");
-    var previewPanel = new YAHOO.widget.Panel("agenda-preview-dialog",
-        { 
-            modal: true, 
-            visible: false, 
-            width: "800px", 
-            height: "auto", 
-            fixedcenter:false, 
-            constraintoviewport: false,
-            zindex: 2000,
-        }
-    );
-    previewPanel.setHeader(SGlobals.preview_msg_header);
-    preview_button.on("click", function(){
-        YAHOO.bungeni.config.dialogs.blocking.show(SGlobals.preview_msg_generating);
-        var success = function(o){
-            YAHOO.bungeni.config.dialogs.blocking.hide();
-            previewPanel.setBody(o.responseText);
-            previewPanel.show();
-            previewPanel.bringToTop();
-        }
-        var failure = function(o){
-            YAHOO.bungeni.config.dialogs.blocking.hide();
-            YAHOO.bungeni.config.dialogs.notification.show(SGlobals.preview_msg_error);
-        }
-        var callback = {
-            success: success,
-            failure: failure,
-            argument: {}
-        }
-        var request = YAHOO.util.Connect.asyncRequest("GET", "./preview", callback);
-    });
-    previewPanel.render(document.body);
-});
-
 YAHOO.bungeni.config = function(){
     var lang = YAHOO.lang;
     var Event = YAHOO.util.Event;
@@ -181,6 +142,8 @@ YAHOO.bungeni.config = function(){
                 this.dialog.setBody("");
                 this.dialog.cfg.queueProperty("width", "200px");
                 this.dialog.cfg.queueProperty("close", false);
+                this.dialog.cfg.queueProperty("fixedcenter", true);
+                this.dialog.cfg.queueProperty("constraintoviewport", true);
                 this.dialog.cfg.queueProperty("icon",
                     YAHOO.widget.SimpleDialog.ICON_BLOCK
                 );
@@ -336,13 +299,12 @@ YAHOO.bungeni.config = function(){
                 ];
                 this.dialog = new YAHOO.widget.SimpleDialog(
                     "text-records-dialog", {
-                    width: "90em",
-                    fixedcenter: false,
                     modal: true,
                     visible: false,
+                    width: "90em",
                     draggable: true,
-                    constraintoviewport: true,
-                    monitorresize: true
+                    fixedcenter: true,
+                    constraintoviewport: false
                 });
                 this.dialog._parent = this;
                 this.dialog.setHeader(SGlobals.text_records_title);
@@ -362,8 +324,8 @@ YAHOO.bungeni.config = function(){
                     this.dialog.selectTab(tab_id);
                 }
                 this.dialog.show();
-                this.dialog.center();
                 this.dialog.bringToTop();
+                this.dialog.center();
             },
             hide: function(){
                 this.confirm_callback = null;
@@ -673,7 +635,8 @@ YAHOO.bungeni.config = function(){
                         value: SGlobals.types.EDITORIAL_NOTE
                     },
                 ]
-                if(YAHOO.bungeni.agendaconfig.minuteEditor!=undefined){
+                if(YAHOO.bungeni.agendaconfig.minuteEditor!=undefined && 
+                    rdata.item_type != 'heading'){
                     menu.push(
                         {
                             text: SGlobals.minute_button_text,

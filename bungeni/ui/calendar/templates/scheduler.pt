@@ -3,10 +3,6 @@
       metal:use-macro="context/@@standard_macros/page">
 
   <div metal:fill-slot="body" i18n:domain="bungeni">
-    <div id="agenda-preview" align="right">
-        <input type="button" id="agenda-preview-button" 
-            i18n:attributes="value" value="preview agenda"/>
-    </div>
     <div>
         <h1 class="title">
             <span tal:omit-tag="" i18n:translate="">Agenda</span>&nbsp;:&nbsp;
