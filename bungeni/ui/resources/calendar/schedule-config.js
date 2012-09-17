@@ -840,7 +840,10 @@ YAHOO.bungeni.config = function(){
                  sd_id = sdata.item_id + ":" + sdata.item_type;
                  var _callback = function(){
                     sDt.deleteRow(sDt.getRecordIndex(record));
-                    document.getElementById(sd_id).checked = false;
+                    select_el = document.getElementById(sd_id);
+                    if (select_el){
+                        select_el.checked = false;
+                    }
                  }
                  
                  YAHOO.bungeni.config.dialogs.confirm.show(
