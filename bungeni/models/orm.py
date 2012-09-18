@@ -327,7 +327,14 @@ mapper(domain.Sitting, schema.sitting,
             schema.sitting.c.end_date.label("end_date")
         ),
         "item_schedule": relation(domain.ItemSchedule,
-            order_by=schema.item_schedules.c.planned_order
+            order_by=schema.item_schedules.c.planned_order,
+            cascade="all"
+        ),
+        "attendance": relation(domain.SittingAttendance,
+            cascade="all"
+        ),
+        "reports": relation(domain.SittingReport,
+            cascade="all"
         ),
         "venue": relation(domain.Venue, lazy=False),
     }
@@ -668,7 +675,8 @@ mapper(domain.Heading, schema.headings,
 
 mapper(domain.ItemSchedule, schema.item_schedules,
     properties={
-        "sitting": relation(domain.Sitting, uselist=False),
+        "sitting": relation(domain.Sitting, uselist=False
+        ),
     }
 )
 
@@ -759,7 +767,6 @@ mapper(domain.Report,
 mapper(domain.SittingReport, schema.sitting_report,
     properties={
         "sitting": relation(domain.Sitting,
-            backref="reports",
             lazy=True,
             uselist=False
         ),
