@@ -16,6 +16,7 @@ YAHOO.bungeni.scheduling = function(){
     var AgendaConfig = YAHOO.bungeni.agendaconfig;
     YAHOO.bungeni.unsavedChanges = false;
     YAHOO.bungeni.reloadView = false;
+    YAHOO.bungeni.saveAndPreview = false;
     YAHOO.bungeni.scheduled_item_keys = new Array();
     YAHOO.bungeni.processed_agenda_records = 0;
 
@@ -44,11 +45,18 @@ YAHOO.bungeni.scheduling = function(){
             //reload schedule reflect changes to workflow actions - if any
             if (YAHOO.bungeni.reloadView){
                 Dialogs.blocking.show(SGlobals.saving_dialog_refreshing);
-                window.location.reload();
+                if (YAHOO.bungeni.saveAndPreview == true) {
+                    setTimeout('window.location.replace(window.location.href+"?preview=yes")', 200);
+                } else {
+                    setTimeout('window.location.replace(window.location.href)', 200);
+                }
             }else{
                 if(AgendaConfig.minuteEditor==undefined){
                     Dialogs.blocking.hide();
                     sDt.refresh();
+                    if (YAHOO.bungeni.saveAndPreview == true) {
+                        YAHOO.bungeni.scheduling.handlers.renderPreview();
+                    }
                 }
             }
         },
@@ -107,52 +115,22 @@ YAHOO.bungeni.scheduling = function(){
          **/
         var renderScheduleControls = function(args){
             var container = YAHOO.bungeni.scheduling.Layout.layout.getUnitByPosition("bottom").body;
+            // add save button
             var save_button = new YAHOO.widget.Button({
                 label: SGlobals.save_button_text,
                 container: container
             });
             save_button.on("click", function(){
-                YAHOO.bungeni.scheduling.handlers.saveSchedule();
+                YAHOO.bungeni.scheduling.handlers.saveSchedule({"preview":false});
             });
-            /**
-             * generate agenda preview button
-             **/
+            // add save and preview button
             var preview_button = new YAHOO.widget.Button({
-                label: SGlobals.preview_msg_header,
+                label: SGlobals.save_and_preview_button_text,
                 container: container
             });
-            var previewPanel = new YAHOO.widget.Panel("agenda-preview-dialog",
-                { 
-                    modal: true, 
-                    visible: false, 
-                    width: "800px", 
-                    height: "auto", 
-                    fixedcenter:false, 
-                    constraintoviewport: false,
-                    zindex: 2000,
-                }
-            );
-            previewPanel.setHeader(SGlobals.preview_msg_header);
             preview_button.on("click", function(){
-                YAHOO.bungeni.config.dialogs.blocking.show(SGlobals.preview_msg_generating);
-                var success = function(o){
-                    YAHOO.bungeni.config.dialogs.blocking.hide();
-                    previewPanel.setBody(o.responseText);
-                    previewPanel.show();
-                    previewPanel.bringToTop();
-                }
-                var failure = function(o){
-                    YAHOO.bungeni.config.dialogs.blocking.hide();
-                    YAHOO.bungeni.config.dialogs.notification.show(SGlobals.preview_msg_error);
-                }
-                var callback = {
-                    success: success,
-                    failure: failure,
-                    argument: {}
-                }
-                var request = YAHOO.util.Connect.asyncRequest("GET", "./preview", callback);
+                YAHOO.bungeni.scheduling.handlers.saveSchedule({"preview":true});
             });
-            previewPanel.render(document.body);
             
             this.unsubscribe("initEvent", renderScheduleControls);
         }
@@ -169,6 +147,43 @@ YAHOO.bungeni.scheduling = function(){
             }
             this.unsubscribe("initEvent", renderScheduleControls);
         }        
+
+        /**
+         * @method renderPreview
+         * @description Launches a pop-out previewing the scheduled items
+         **/
+        var renderPreview = function(args) {
+            var previewPanel = new YAHOO.widget.Panel("agenda-preview-dialog",
+                { 
+                    modal: true, 
+                    visible: false, 
+                    width: "800px", 
+                    height: "auto", 
+                    fixedcenter:false, 
+                    constraintoviewport: false,
+                    zindex: 2000,
+                }
+            );
+            previewPanel.setHeader(SGlobals.preview_msg_header);
+            YAHOO.bungeni.config.dialogs.blocking.show(SGlobals.preview_msg_generating);
+            var success = function(o){
+                YAHOO.bungeni.config.dialogs.blocking.hide();
+                previewPanel.setBody(o.responseText);
+                previewPanel.show();
+                previewPanel.bringToTop();
+            }
+            var failure = function(o){
+                YAHOO.bungeni.config.dialogs.blocking.hide();
+                YAHOO.bungeni.config.dialogs.notification.show(SGlobals.preview_msg_error);
+            }
+            var callback = {
+                success: success,
+                failure: failure,
+                argument: {}
+            }
+            var request = YAHOO.util.Connect.asyncRequest("GET", "./preview", callback);
+            previewPanel.render(document.body);
+        }
         
         /**
          * @method saveSchedule
@@ -203,6 +218,12 @@ YAHOO.bungeni.scheduling = function(){
                     SGlobals.saving_schedule_text,
                     (AgendaConfig.OP_SAVE_MINUTES)?true:false
                 );
+                if (args.preview == true) {
+                    YAHOO.bungeni.saveAndPreview = true;
+                }
+                else {
+                    YAHOO.bungeni.saveAndPreview = false;
+                }
             }else{
                 Dialogs.notification.show(
                     SGlobals.save_dialog_empty_message
@@ -280,6 +301,7 @@ YAHOO.bungeni.scheduling = function(){
             customSelectRow: customSelectRow,
             renderScheduleControls: renderScheduleControls,
             addRowClass: addRowClass,
+            renderPreview: renderPreview,
             saveSchedule: saveSchedule,
             populateScheduledKeys: populateScheduledKeys,
             refreshCells: refreshCells,
@@ -289,6 +311,10 @@ YAHOO.bungeni.scheduling = function(){
     }();
     var Layout = { layout:null }
     Event.onDOMReady(function(){
+        if (window.location.href.indexOf('?preview=') !== -1) {
+            YAHOO.bungeni.scheduling.handlers.renderPreview();
+        }
+            
         var layout = new YAHOO.widget.Layout(
             "scheduler-layout",
             {

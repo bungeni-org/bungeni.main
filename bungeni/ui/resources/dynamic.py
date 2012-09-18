@@ -100,6 +100,7 @@ def get_globals(group_name, **kwargs):
             "text_moved_by": i18n(_(u"Moved By"), language),
             "remove_button_text": i18n(_(u"remove item"), language),
             "save_button_text": i18n(_(u"save changes"), language),
+            "save_and_preview_button_text": i18n(_(u"save and preview"), language),
             "discard_button_text": i18n(_(u"discard changes"), language),
             "add_discussion_button_text": i18n(_(u"add minute"), language),
             "save_discussion_button_text": i18n(_(u"add minute"), language),
