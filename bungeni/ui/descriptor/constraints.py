@@ -122,10 +122,10 @@ def MpStartBeforeElection(obj):
             "start_date"
         )
 
-def DeathBeforeLife(User):
+def DeathBeforeLife(user):
     """Check if date of death is after date of birth."""
-    if User.date_of_death is None: return
-    if User.date_of_death < User.date_of_birth:
+    if user.date_of_death is None: return
+    if user.date_of_death < User.date_of_birth:
         raise Invalid(_("Check dates: death must follow birth"),
             "date_of_death",
             "date_of_birth"

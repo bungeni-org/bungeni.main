@@ -235,6 +235,8 @@ class Field(object):
     label = ""       # str : title for field
     description = "" # str : description for field
     
+    _decl = None # seq((str:name, value)): cache of original (xml) decl attr values
+    
     # displayable modes
     def modes():
         doc = "Field.modes property, list of defaulted/validated displayable modes"
@@ -247,7 +249,7 @@ class Field(object):
             del self._modes
         return locals()
     modes = property(**modes())
-
+    
     # the default list of show/hide localization directives -- by default
     # a field is NOT localizable in any mode and for any role.
     localizable = None # [ either(show, hide) ]
@@ -318,20 +320,14 @@ class Field(object):
         CONVENTION: not specifying a parameter or specifying it as None
         are interpreted to be equivalent.
         """
-        
-        # !+modes_localizable_refactor - eliminate modes/displayable param/attr
-        # infer the list of displayable modes from the modes specified in the 
-        # list of localizables
-        # !+ for displayable but not-localizable (e.g. "add" for when column is
-        #    not nullable) add a db-column-validation on load of each field
-        # !+ for now, bridge to old behaviour, to be able to proceed as 
-        # previous, by just setting the modes parameter
-        if modes is None:
-            if localizable is None:
-                localizable = [show(modes=self.__class__._modes[:])]
-            modes = [ mode for loc in localizable for mode in loc.modes ]
-            # !+ ensure unique, normalized order
-        
+        # !+LOCALIZATION_AND_SCHEMA_INTEGRITY for displayable but not-localizable
+        # (e.g. "add" for when column is not nullable) add a db-column-validation 
+        # on load of each field or catch and handle in a user-friendly way any 
+        # IntegrityErrors downstream
+        if localizable is None:
+            localizable = [show(modes=self.__class__._modes[:])]
+        modes = [ mode for loc in localizable for mode in loc.modes ]
+        # !+ ensure unique, normalized order
         
         # set attribute values
         kw = vars()
@@ -368,13 +364,12 @@ class Field(object):
             assert "listing" in self.modes, \
                 "Field [%s] sets listing_column_filter but no listing mode" % (
                     self.name)
-        # !+modes_localizable_refactor
         # the default list of show/hide localization directives
         if self.localizable is None:
             self.localizable = []
         self.validate_localizable()
     
-    def validate_localizable(self, reference_localizable_modes=None):
+    def validate_localizable(self): #+reference_localizable_modes=None):
         self._localizable_modes = set() # reset cache of localizable modes
         for loc in self.localizable:
             # if modes is still None, we now default to this field's modes
@@ -391,26 +386,7 @@ class Field(object):
             assert (count + len(loc.modes) == len(self._localizable_modes)), \
                 "Field [%s] duplicates mode in localizable directive: %s" % (
                     self.name, loc)
-        for mode in self._localizable_modes:
-            if reference_localizable_modes is not None:
-                # only modes listed here may be localized
-                assert mode in reference_localizable_modes, \
-                    "Field [%s] may only localize mode [%s] if mode is " \
-                    "localizable i.e. one of: %s." % (
-                        self.name, mode, reference_localizable_modes)
-                # must localize all localizable modes
-                assert len(reference_localizable_modes) == \
-                    len(self._localizable_modes), \
-                        "Field [%s] localizable modes mismatch:" \
-                        "\nB: %s\nC: %s" % (
-                            self.name, reference_localizable_modes, 
-                            list(self._localizable_modes))
-            else:
-                # only displayable modes
-                assert mode in self.modes, \
-                    "Field [%s] may only localize mode [%s] if mode is " \
-                    "displayable i.e. one of: %s." % (
-                        self.name, mode, self.modes)
+        # !+LOCALIZATION_AND_SCHEMA_INTEGRITY add db-column-validation here?
     
     def is_displayable(self, mode, user_roles):
         """Does this field pass localization directives for this mode?

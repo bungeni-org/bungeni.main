@@ -216,9 +216,11 @@ def F(name=None, label=None, description=None,
     
     # i18n attributes
     if label:
-        F.msgids.add(label); label = _(label)
+        F.msgids.add(label);
+        label = _(label) # !+unicode
     if description:
-        F.msgids.add(description); description = _(description)
+        F.msgids.add(description)
+        description = _(description) # !+unicode
     
     # Field.*_widgets
     widgets = WIDGETS[(value_type, render_type)]
@@ -247,6 +249,17 @@ def F(name=None, label=None, description=None,
             listing_column=listing_column, 
             listing_column_filter=listing_column_filter,
         )
+    # !+decl remember *as-is* all declarative attr values
+    f._decl = (
+        ("name", name),
+        ("label", label),
+        ("description", description),
+        ("required", required),
+        #("localizable", ),
+        ("value_type", value_type),
+        ("render_type", render_type),
+        ("vocabulary", vocabulary),
+    )
     
     # Field.property -- see zope.schema.Field, TextLine, Choice, ...
     if render_type is not None and RENDERTYPE[render_type] is not None:

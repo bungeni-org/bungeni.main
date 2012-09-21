@@ -142,21 +142,7 @@ def localize_descriptors():
         for f_elem in field_elems:
             fname = xml_attr_str(f_elem, "name")
             f = field_by_name[fname]
-            # check if info-only field attributes are out of sync with bungeni
-            # @displayable, from f.modes:tuple
-            c_displayable_modes = f_elem.get("displayable").split()
-            if is_stale_info(set(f.modes), set(c_displayable_modes),
-                "STALE INFO ATTR [%s.%s.modes]\n B: %s\n C: %s" % (
-                    type_key, fname, f.modes, c_displayable_modes)):
-                f._SERIALIZE_modes = f.modes[:]
-                STALE_INFO = True
-            # @localizable, from f._localizable_modes:set
-            c_localizable_modes = set(f_elem.get("localizable", "").split())
-            if is_stale_info(f._localizable_modes, c_localizable_modes,
-                "STALE INFO ATTR [%s.%s.localizable]\n B: %s\n C: %s" % (
-                    type_key, fname, f._localizable_modes, c_localizable_modes)):
-                f._SERIALIZE_localizable_modes = list(f._localizable_modes)
-                STALE_INFO = True
+            # !+decl label description required value_type render_type vocabulary
             
             clocs = [] # custom_localizable_directives
             for cloc_elem in f_elem.getchildren():
@@ -172,8 +158,7 @@ def localize_descriptors():
             if clocs:
                 f.localizable[:] = clocs
                 try: 
-                    f.validate_localizable(
-                        reference_localizable_modes=list(c_localizable_modes))
+                    f.validate_localizable()
                 except Exception, e:
                     # make error message more useful
                     raise e.__class__("Descriptor [%s] %s" % (type_key, e.message))
@@ -231,41 +216,30 @@ def serialize_field(f, depth=2):
     """
     _acc = []
     field_localizable_modes = []
-    
-    # @modes
-    display_modes = " ".join(f.modes)
-    if hasattr(f, "_SERIALIZE_modes"):
-        display_modes = " ".join(f._SERIALIZE_modes)
-        del f._SERIALIZE_modes
-    
+        
     # @localizable
     for loc in f.localizable:
         _acc.extend(serialize_loc(loc, depth+1, field_localizable_modes))
-    localizable_modes = " ".join(
-        norm_sorted(field_localizable_modes, Field._modes))
-    if hasattr(f, "_SERIALIZE_localizable_modes"):
-        localizable_modes = " ".join(
-            norm_sorted(f._SERIALIZE_localizable_modes, Field._modes))
-        del f._SERIALIZE_localizable_modes
+    
+    # serialize decl attrs
+    attr_strs = []
+    attr_tmpl = '%s="%s"'
+    for name, value in f._decl:
+        if value is not None:
+            if isinstance(value, bool):
+                attr_strs.append(attr_tmpl % (name, str(value).lower()))
+            else: # should all be str
+                attr_strs.append(attr_tmpl % (name, value))
+    decl_attrs = " ".join(attr_strs)
     
     acc = []
     ind = INDENT * depth
     if _acc:
-        if localizable_modes:
-            acc.append('%s<field name="%s" displayable="%s" localizable="%s">' % (
-                ind, f.name, display_modes, localizable_modes))
-        else:
-            acc.append('%s<field name="%s" displayable="%s">' % (
-                ind, f.name, display_modes))
+        acc.append('%s<field %s>' % (ind, decl_attrs))
         acc.extend(_acc)
         acc.append('%s</field>' % (ind))
     else:
-        if localizable_modes:
-            acc.append('%s<field name="%s" displayable="%s" localizable="%s" />' % (
-                ind, f.name, display_modes, localizable_modes))
-        else:
-            acc.append('%s<field name="%s" displayable="%s" />' % (
-                ind, f.name, display_modes))
+        acc.append('%s<field %s />' % (ind, decl_attrs))
     return acc
 
 def serialize_cls(cls, depth=1):
@@ -341,3 +315,4 @@ if __name__ == "__main__":
     if persisted != regenerated:
         write_custom(persisted, regenerated)
     dump_i18n_message_ids()
+
