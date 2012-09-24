@@ -1997,7 +1997,7 @@ class SittingDescriptor(ModelDescriptor):
             label="Date",
             required=True,
             localizable=[
-                show("view add listing"),
+                show("view edit add listing"),
             ],
             value_type="duration", # in listing "consumes" also "end_date"
             render_type="datetime",
@@ -2006,7 +2006,7 @@ class SittingDescriptor(ModelDescriptor):
             label="End",
             required=True,
             localizable=[
-                show("view add listing"),
+                show("view edit add listing"),
             ],
             value_type="datetime", # in listing "consumed" by "start_date"
             render_type="datetime",

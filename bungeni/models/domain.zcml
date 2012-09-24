@@ -617,9 +617,10 @@
                 sitting_id
                 group_id
                 short_name
-                short_date
+                start_date
                 end_date
                 recurring_id
+                recurring_type
                 status
                 status_date
                 venue_id
@@ -634,9 +635,10 @@
                 sitting_id
                 group_id
                 short_name
-                short_date
+                start_date
                 end_date
                 recurring_id
+                recurring_type
                 status
                 status_date
                 venue_id
