@@ -330,7 +330,7 @@ mapper(domain.Sitting, schema.sitting,
             order_by=schema.item_schedules.c.planned_order,
             cascade="all"
         ),
-        "attendance": relation(domain.SittingAttendance,
+        "sa_attendance": relation(domain.SittingAttendance,
             cascade="all"
         ),
         "reports": relation(domain.SittingReport,
