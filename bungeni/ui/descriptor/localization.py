@@ -297,9 +297,13 @@ def dump_i18n_message_ids():
     """
     from os import path
     msgids_py_source_file_path = path.join(
-        path.dirname(path.abspath(__file__)), "_field_msgids.py")
-    msgids_py_source = "\n".join(
-        [ "_(%r)" % msgid for msgid in sorted(naming.MSGIDS) ])
+        path.dirname(path.abspath(__file__)), "_dumped_msgids.py")
+    msgids_py_source_preamble = [
+        "# automatically generated: dump_i18n_message_ids",
+        "from bungeni.ui.i18n import _", 
+        ""]
+    msgids_py_source = "\n".join(msgids_py_source_preamble + [
+            "_(%r)" % msgid for msgid in sorted(naming.MSGIDS) ])
     open(msgids_py_source_file_path, "w").write(msgids_py_source.encode("utf-8"))
     print "Descriptor Field message IDs:", msgids_py_source_file_path
     print msgids_py_source
