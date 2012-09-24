@@ -510,6 +510,7 @@ class ModelDescriptor(object):
     
     def sanity_check_fields(self):
         """Do necessary checks on all specified Field instances.
+        Also updates internally used _fields_by_name mapping.
         """
         self._fields_by_name.clear()
         for f in self.__class__.fields:
@@ -518,11 +519,6 @@ class ModelDescriptor(object):
                 "[%s] Can't have two fields with same name [%s]" % (
                     self.__class__.__name__, name)
             self._fields_by_name[name] = f
-        # !+DESCRIPTOR_VALIDATION(mr, nov-2010) a descriptor may specify a 
-        # field with a name that does not correspond to an attribute on the 
-        # model -- this may be useful, but we do not use it, and any such
-        # occurance is most likely a code error... should we check for such
-        # situations?
     
     # we use self._fields_by_name to define the following methods as this 
     # makes the implementation simpler and faster.
@@ -582,4 +578,5 @@ class ModelDescriptor(object):
     @property
     def container_name(self):
         return _(naming.plural(self.display_name)) # !+unicode
-    
+
+

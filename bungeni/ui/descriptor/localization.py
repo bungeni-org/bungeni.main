@@ -19,12 +19,13 @@ from bungeni.alchemist.model import (
     IModelDescriptor,
     Field,
     show, hide,
-    norm_sorted, 
+    #norm_sorted, 
 )
+from bungeni.ui.descriptor import field
 from bungeni.utils.capi import capi, bungeni_custom_errors
 from bungeni.ui.utils import debug
 from bungeni.utils import naming
-from bungeni.utils.misc import xml_attr_str
+from bungeni.utils.misc import xml_attr_str, xml_attr_bool
 
 # constants 
 
@@ -91,6 +92,7 @@ def get_localizable_descriptor_class(module, type_key):
             descriptor_cls_name)
     return cls
 
+''' !+UNUSED
 def reorder_fields(cls, ordered_field_names, field_by_name):
     """Reorder descriptor class fields.
     """
@@ -112,6 +114,7 @@ def is_stale_info(bval, cval, message):
         log.warn(message)
         return True
     return False
+'''
 
 @bungeni_custom_errors
 def localize_descriptors():
@@ -126,24 +129,20 @@ def localize_descriptors():
     # and reset global "constant"
     ROLES_DEFAULT = " ".join(Field._roles)
     
-    STALE_INFO = False
     for edescriptor in xml.findall("descriptor"):
         type_key = xml_attr_str(edescriptor, "name")
         order = xml_attr_str(edescriptor, "order")
+        # !+capi.get_type_info(type_key).descriptor_model
         cls = get_localizable_descriptor_class(DESCRIPTOR_MODULE, type_key)
         if order is not None:
             cls.order = int(order)
-        field_elems = edescriptor.findall("field")
-        field_by_name = {}
-        reorder_fields(cls, 
-            [ fe.get("name") for fe in field_elems ], 
-            field_by_name)
-        for f_elem in field_elems:
-            fname = xml_attr_str(f_elem, "name")
-            f = field_by_name[fname]
-            # !+decl label description required value_type render_type vocabulary
-            
-            clocs = [] # custom_localizable_directives
+        
+        # rebuild (in desired order) all fields from newly loaded configuration
+        # !+ what about "removed" fields from a sys-descriptor config?
+        fields = []
+        for f_elem in edescriptor.findall("field"):
+            # custom_localizable_directives
+            clocs = []
             for cloc_elem in f_elem.getchildren():
                 modes = xml_attr_str(cloc_elem, "modes")
                 roles = xml_attr_str(cloc_elem, "roles") # ROLES_DEFAULT
@@ -153,22 +152,28 @@ def localize_descriptors():
                     clocs.append(hide(modes=modes, roles=roles))
                 else:
                     assert False, "Unknown directive [%s/%s] %s" % (
-                        type_key, fname, cloc_elem.tag)
-            if clocs:
-                f.localizable[:] = clocs
-                try: 
-                    f.validate_localizable()
-                except Exception, e:
-                    # make error message more useful
-                    raise e.__class__("Descriptor [%s] %s" % (type_key, e.message))
-    
-    if STALE_INFO:
-        # Re-sync info-only attributes, by re-serializing AFTER that all 
-        # descriptor classes have been localized
-        write_custom(read_custom(),
-            "\n".join(serialize_module(DESCRIPTOR_MODULE)))
-        # re-localize, to ensure consistency
-        localize_descriptors()
+                        type_key, xml_attr_str(f_elem, "name"), cloc_elem.tag)
+            
+            fields.append(field.F(
+                    name=xml_attr_str(f_elem, "name"),
+                    label=xml_attr_str(f_elem, "label"),
+                    description=xml_attr_str(f_elem, "description"),
+                    required=xml_attr_bool(f_elem, "required"),
+                    localizable=clocs,
+                    value_type=xml_attr_str(f_elem, "value_type"),
+                    render_type=xml_attr_str(f_elem, "render_type"),
+                    vocabulary=xml_attr_str(f_elem, "vocabulary")
+                ))
+        
+        # !+NO_NEED_TO_INSTANTIATE
+        ti = capi.get_type_info(type_key)
+        assert cls is ti.descriptor_model
+        assert cls is ti.descriptor.__class__
+        # replace contents of descriptor cls fields list, retaining list instance
+        cls.fields[:] = fields
+        # validate/update (existing) descriptor instance 
+        ti.descriptor.sanity_check_fields()
+        # !+/NO_NEED_TO_INSTANTIATE 
     
     log.warn("LOCALIZING DESCRIPTORS...\n           ...DONE [in %s seconds]" % (
         time()-start_time))
